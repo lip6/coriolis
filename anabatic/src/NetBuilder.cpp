@@ -92,18 +92,6 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "NetBuilder".
 
-  map<Component*,AutoSegment*> NetBuilder::_routingPadAutoSegments;
-  vector<AutoSegment*>         NetBuilder::_toFixSegments;
-  unsigned int                 NetBuilder::_degree         = 0;
-
-
-  map<Component*,AutoSegment*>& NetBuilder::getRpLookup ()
-  { return _routingPadAutoSegments; }
-
-  
-  void  NetBuilder::clearRpLookup ()
-  { _routingPadAutoSegments.clear(); }
-
 
   void  NetBuilder::getPositions ( Component* anchor, Point& source, Point& target )
   {
@@ -187,35 +175,23 @@ namespace Anabatic {
   }
 
 
-  void  NetBuilder::fixSegments ()
-  {
-    for ( size_t i=0 ; i<_toFixSegments.size() ; ++i )
-      _toFixSegments[i]->setFlags( AutoSegment::SegFixed );
-    _toFixSegments.clear();
-  }
-
-
-  void  NetBuilder::init ( unsigned int degree )
-  {
-    _degree = degree;
-    _toFixSegments.clear();
-  }
-
-
   NetBuilder::NetBuilder ()
-    : _forks           ()
-    , _connexity       ()
-    , _topology        (0)
-    , _gcell           (NULL)
-    , _sourceContact   (NULL)
-    , _southWestContact(NULL)
-    , _northEastContact(NULL)
-    , _fromHook        (NULL)
-    , _easts           ()
-    , _wests           ()
-    , _norths          ()
-    , _souths          ()
-    , _routingPads     ()
+    : _forks                 ()
+    , _connexity             ()
+    , _topology              (0)
+    , _gcell                 (NULL)
+    , _sourceContact         (NULL)
+    , _southWestContact      (NULL)
+    , _northEastContact      (NULL)
+    , _fromHook              (NULL)
+    , _easts                 ()
+    , _wests                 ()
+    , _norths                ()
+    , _souths                ()
+    , _routingPads           ()
+    , _routingPadAutoSegments()
+    , _toFixSegments         ()
+    , _degree                (0)
   { }
 
 
@@ -228,13 +204,23 @@ namespace Anabatic {
     _southWestContact    = NULL;
     _northEastContact    = NULL;
     _fromHook            = NULL;
-    _easts      .clear();
-    _wests      .clear();
-    _norths     .clear();
-    _souths     .clear();
-    _routingPads.clear();
+    _easts                 .clear();
+    _wests                 .clear();
+    _norths                .clear();
+    _souths                .clear();
+    _routingPads           .clear();
+    _toFixSegments         .clear();
+    _routingPadAutoSegments.clear();
   }
   
+
+  void  NetBuilder::fixSegments ()
+  {
+    for ( size_t i=0 ; i<_toFixSegments.size() ; ++i )
+      _toFixSegments[i]->setFlags( AutoSegment::SegFixed );
+    _toFixSegments.clear();
+  }
+
 
   NetBuilder& NetBuilder::startFrom ( AnabaticEngine* anbt, Hook* fromHook, AutoContact* sourceContact )
   {
@@ -2653,11 +2639,8 @@ namespace Anabatic {
 
     Hook*        sourceHook    = NULL;
     AutoContact* sourceContact = NULL;
-
-    clearRpLookup();
-
-    RoutingPads routingPads = net->getRoutingPads();
-    size_t      degree      = routingPads.getSize();
+    RoutingPads  routingPads   = net->getRoutingPads();
+    size_t       degree        = routingPads.getSize();
 
     if (degree == 0) {
       cmess2 << Warning("Net \"%s\" do not have any RoutingPad (ignored)."
@@ -2676,7 +2659,7 @@ namespace Anabatic {
     size_t unconnecteds = 0;
     size_t connecteds   = 0;
 
-    init( degree );
+    setDegree( degree );
 
     cdebug_log(145,0) << "Start RoutingPad Ring" << endl;
     for ( RoutingPad* startRp : routingPads ) {
@@ -2745,7 +2728,6 @@ namespace Anabatic {
       cdebug_log(145,0) << "Popping (to)   " << sourceContact << endl;
     }
 
-    clearRpLookup();
     Session::revalidate();
   //Breakpoint::stop( 0, "After construct" );
     

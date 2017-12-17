@@ -122,8 +122,6 @@ namespace Anabatic {
     public:
       template< typename BuilderT >
       static  void                          load                   ( AnabaticEngine*, Net* );
-      static  void                          init                   ( unsigned int degree );
-      static  void                          fixSegments            ();
       static  void                          getPositions           ( Component* anchor, Point& source, Point& target );
       static  uint64_t                      checkRoutingPadSize    ( Component* anchor );
       static  Hook*                         getSegmentOppositeHook ( Hook* hook );
@@ -132,6 +130,8 @@ namespace Anabatic {
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
+      inline  void                          setDegree              ( unsigned int degree );
+              void                          fixSegments            ();
               NetBuilder&                   startFrom              ( AnabaticEngine*
                                                                    , Hook*        fromHook
                                                                    , AutoContact* sourceContact=NULL );
@@ -142,14 +142,13 @@ namespace Anabatic {
       inline  GCell*                        getGCell               () const;
       inline  ForkStack&                    getForks               ();
       inline  vector<RoutingPad*>&          getRoutingPads         ();
-      static  map<Component*,AutoSegment*>& getRpLookup            ();
+      inline  map<Component*,AutoSegment*>& getRpLookup            ();
       inline  unsigned int                  getTopology            () const;
       inline  Hook*                         north                  ( size_t i=0 ) const;
       inline  Hook*                         south                  ( size_t i=0 ) const;
       inline  Hook*                         east                   ( size_t i=0 ) const;
       inline  Hook*                         west                   ( size_t i=0 ) const;
       inline  void                          setBothCornerContacts  ( AutoContact* );
-      static  void                          clearRpLookup          ();
               bool                          push                   ( Hook* to, AutoContact* contact, uint64_t flags=0 );
       virtual void                          doRp_AutoContacts      ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags ) = 0;
       virtual AutoContact*                  doRp_Access            ( GCell*, Component*, uint64_t  flags ) = 0;
@@ -270,9 +269,6 @@ namespace Anabatic {
 
     // Attributes.
     private:
-      static map<Component*,AutoSegment*> _routingPadAutoSegments;
-      static vector<AutoSegment*>         _toFixSegments;
-      static unsigned int                 _degree;
              ForkStack                    _forks;
              UConnexity                   _connexity;
              unsigned int                 _topology;
@@ -287,6 +283,9 @@ namespace Anabatic {
              vector<Hook*>                _norths;
              vector<Hook*>                _souths;
              vector<RoutingPad*>          _routingPads;
+             map<Component*,AutoSegment*> _routingPadAutoSegments;
+             vector<AutoSegment*>         _toFixSegments;
+             unsigned int                 _degree;
 
     // Sort classes.
     public:
@@ -324,18 +323,20 @@ namespace Anabatic {
   };
 
 
-  inline NetBuilder::UConnexity  NetBuilder::getConnexity           () const { return _connexity; }
-  inline ForkStack&              NetBuilder::getForks               () { return _forks; }
-  inline unsigned int            NetBuilder::getStateG              () const { return _connexity.fields.globals; }
-  inline GCell*                  NetBuilder::getGCell               () const { return _gcell; }
-  inline Net*                    NetBuilder::getNet                 () const { return _net; }
-  inline unsigned int            NetBuilder::getTopology            () const { return _topology; }
-  inline vector<RoutingPad*>&    NetBuilder::getRoutingPads         () { return _routingPads; }
-  inline Hook*                   NetBuilder::north                  ( size_t i ) const { return (i<_norths.size()) ? _norths[i] : NULL; }
-  inline Hook*                   NetBuilder::south                  ( size_t i ) const { return (i<_souths.size()) ? _souths[i] : NULL; }
-  inline Hook*                   NetBuilder::east                   ( size_t i ) const { return (i<_easts .size()) ? _easts [i] : NULL; }
-  inline Hook*                   NetBuilder::west                   ( size_t i ) const { return (i<_wests .size()) ? _wests [i] : NULL; }
-  inline void                    NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _southWestContact = _northEastContact = ac; }
+  inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }
+  inline ForkStack&                    NetBuilder::getForks               () { return _forks; }
+  inline unsigned int                  NetBuilder::getStateG              () const { return _connexity.fields.globals; }
+  inline GCell*                        NetBuilder::getGCell               () const { return _gcell; }
+  inline Net*                          NetBuilder::getNet                 () const { return _net; }
+  inline unsigned int                  NetBuilder::getTopology            () const { return _topology; }
+  inline vector<RoutingPad*>&          NetBuilder::getRoutingPads         () { return _routingPads; }
+  inline map<Component*,AutoSegment*>& NetBuilder::getRpLookup            () { return _routingPadAutoSegments; }
+  inline Hook*                         NetBuilder::north                  ( size_t i ) const { return (i<_norths.size()) ? _norths[i] : NULL; }
+  inline Hook*                         NetBuilder::south                  ( size_t i ) const { return (i<_souths.size()) ? _souths[i] : NULL; }
+  inline Hook*                         NetBuilder::east                   ( size_t i ) const { return (i<_easts .size()) ? _easts [i] : NULL; }
+  inline Hook*                         NetBuilder::west                   ( size_t i ) const { return (i<_wests .size()) ? _wests [i] : NULL; }
+  inline void                          NetBuilder::setDegree              ( unsigned int degree ) { _degree = degree; }
+  inline void                          NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _southWestContact = _northEastContact = ac; }
 
   template< typename BuilderT >
   void  NetBuilder::load ( AnabaticEngine* engine, Net* net ) {  BuilderT()._load(engine,net); }
