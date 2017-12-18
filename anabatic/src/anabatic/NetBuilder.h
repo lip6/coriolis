@@ -141,10 +141,11 @@ namespace Anabatic {
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
+      inline  bool                          isTwoMetals            () const;
       inline  unsigned int                  getDegree              () const;
       inline  void                          setDegree              ( unsigned int degree );
               void                          fixSegments            ();
-              NetBuilder&                   startFrom              ( AnabaticEngine*
+              NetBuilder&                   setStartHook           ( AnabaticEngine*
                                                                    , Hook*        fromHook
                                                                    , AutoContact* sourceContact=NULL );
               void                          construct              ();
@@ -308,6 +309,7 @@ namespace Anabatic {
              map<Component*,AutoSegment*> _routingPadAutoSegments;
              vector<AutoSegment*>         _toFixSegments;
              unsigned int                 _degree;
+             bool                         _isTwoMetals;
 
     // Sort classes.
     public:
@@ -345,6 +347,7 @@ namespace Anabatic {
   };
 
 
+  inline bool                          NetBuilder::isTwoMetals            () const { return _isTwoMetals; }
   inline unsigned int                  NetBuilder::getDegree              () const { return _degree; }
   inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }
   inline NetBuilder::UConnexity&       NetBuilder::getConnexity           ()       { return _connexity; }

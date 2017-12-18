@@ -192,6 +192,7 @@ namespace Anabatic {
     , _routingPadAutoSegments()
     , _toFixSegments         ()
     , _degree                (0)
+    , _isTwoMetals           (false)
   { }
 
 
@@ -226,12 +227,13 @@ namespace Anabatic {
   }
 
 
-  NetBuilder& NetBuilder::startFrom ( AnabaticEngine* anbt, Hook* fromHook, AutoContact* sourceContact )
+  NetBuilder& NetBuilder::setStartHook ( AnabaticEngine* anbt, Hook* fromHook, AutoContact* sourceContact )
   {
     clear();
 
-    _sourceContact       = sourceContact;
-    _fromHook            = fromHook;
+    _isTwoMetals   = anbt->getConfiguration()->isTwoMetals();
+    _sourceContact = sourceContact;
+    _fromHook      = fromHook;
 
     cdebug_log(145,1) << "NetBuilder::NetBuilder()" << endl;
     cdebug_log(145,0) << "* _fromHook:     " << fromHook << endl;
@@ -381,13 +383,13 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "NetBuilder::construct() [" << _connexity.connexity << "] in " << _gcell << endl;
 
-    if (_gcell->isMatrix()) {
+    if (not isTwoMetals()) {
       _southWestContact = NULL;
       _northEastContact = NULL;
     }
 
     if (not _gcell->isAnalog()) {
-      if (not _gcell->isMatrix() and not _sourceContact) _fromHook = NULL;
+      if (isTwoMetals() and not _sourceContact) _fromHook = NULL;
       
       switch ( _connexity.connexity ) {
         case Conn_1G_1Pad:
@@ -2044,7 +2046,7 @@ namespace Anabatic {
           ++connecteds;
           segmentFound = true;
 
-          startFrom( anabatic, hook, NULL );
+          setStartHook( anabatic, hook, NULL );
           if (getStateG() == 1) {
             if ( (lowestGCell == NULL) or (*getGCell() < *lowestGCell) ) {
               cdebug_log(145,0) << "Potential starting GCell " << getGCell() << endl;
@@ -2072,9 +2074,9 @@ namespace Anabatic {
     }
     cdebug_tabw(145,-1);
 
-    if (startHook == NULL) { startFrom(anabatic,NULL,NULL).singleGCell(anabatic,net); cdebug_tabw(145,-1); return; }
+    if (startHook == NULL) { setStartHook(anabatic,NULL,NULL).singleGCell(anabatic,net); cdebug_tabw(145,-1); return; }
 
-    startFrom( anabatic, startHook, NULL );
+    setStartHook( anabatic, startHook, NULL );
     cdebug_log(145,0) << endl;
     cdebug_log(145,0) << "--------~~~~=={o}==~~~~--------" << endl;
     cdebug_log(145,0) << endl;
@@ -2086,7 +2088,7 @@ namespace Anabatic {
     _forks.pop();
 
     while ( sourceHook ) {
-      startFrom( anabatic, sourceHook, sourceContact );
+      setStartHook( anabatic, sourceHook, sourceContact );
       construct();
 
       sourceHook    = _forks.getFrom();
