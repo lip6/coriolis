@@ -173,6 +173,14 @@ namespace Anabatic {
   Configuration* Configuration::clone () const
   { return new Configuration(*this); }
 
+  bool  Configuration::isTwoMetals () const
+  { return _rg->isTwoMetals(); }
+  
+  bool  Configuration::isHV () const
+  { return _rg->isHV(); }
+  
+  bool  Configuration::isVH () const
+  { return _rg->isVH(); }
 
   bool  Configuration::isGMetal ( const Layer* layer ) const
   { return (layer and ((layer == _gmetalh) or (layer == _gmetalv))); }

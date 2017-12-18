@@ -10,11 +10,11 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./anabatic/NetBuilderHV.h"                     |
+// |  C++ Header  :  "./anabatic/NetBuilderM2.h"                     |
 // +-----------------------------------------------------------------+
 
-#ifndef  ANABATIC_NET_BUILDER_HV_H
-#define  ANABATIC_NET_BUILDER_HV_H
+#ifndef  ANABATIC_NET_BUILDER_M2_H
+#define  ANABATIC_NET_BUILDER_M2_H
 
 #include "anabatic/NetBuilder.h"
 
@@ -23,28 +23,30 @@ namespace Anabatic {
 
 
 // -----------------------------------------------------------------
-// Class  :  "NetBuilderHV".
+// Class  :  "NetBuilderM2".
 
-  class NetBuilderHV : public NetBuilder {
+  class NetBuilderM2 : public NetBuilder {
     public:
-                            NetBuilderHV       ();
-      virtual              ~NetBuilderHV       ();
+                            NetBuilderM2       ();
+      virtual              ~NetBuilderM2       ();
       virtual void          doRp_AutoContacts  ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
       virtual AutoContact*  doRp_Access        ( GCell*, Component*, uint64_t  flags );
     private:                                     
       virtual bool          _do_1G_1M1         ();
-      virtual bool          _do_1G_xM1         ();
+      virtual bool          _do_2G_1M1         ();
       virtual bool          _do_xG             ();
-      virtual bool          _do_2G             ();
+      virtual bool          _do_globalSegment  ();
+    // Should never occur, so just return false.
       virtual bool          _do_xG_1Pad        ();
       virtual bool          _do_1G_1PinM2      ();
-      virtual bool          _do_xG_1M1_1M2     ();
-      virtual bool          _do_xG_xM1_xM3     ();
-      virtual bool          _do_4G_1M2         ();
+      virtual bool          _do_1G_xM1         ();
       virtual bool          _do_xG_xM2         ();
       virtual bool          _do_1G_1M3         ();
       virtual bool          _do_xG_xM3         ();
-      virtual bool          _do_globalSegment  ();
+      virtual bool          _do_xG_1M1_1M2     ();
+      virtual bool          _do_xG_xM1_xM3     ();
+      virtual bool          _do_4G_1M2         ();
+      virtual bool          _do_2G             ();
     public:
       virtual string        getTypeName        () const;
   };
@@ -52,4 +54,4 @@ namespace Anabatic {
 
 }  // Anabatic namespace.
 
-#endif  // ANABATIC_NET_BUILDER_HV_H
+#endif  // ANABATIC_NET_BUILDER_M2_H

@@ -53,6 +53,10 @@ namespace CRL {
     // Constructors & Destructors.
       static  RoutingGauge*       create             ( const char* name );
       virtual void                destroy            ();
+    // Predicates.                                    
+      inline  bool                isTwoMetals        () const;
+      inline  bool                isHV               () const;
+      inline  bool                isVH               () const;
     // Accessors.                                    
               RoutingGauge*       getClone           () const;
       inline  const Name          getName            () const;
@@ -103,6 +107,9 @@ namespace CRL {
   };
 
 
+  inline bool          RoutingGauge::isTwoMetals        () const { return (getDepth() < 3); }
+  inline bool          RoutingGauge::isHV               () const { return not isTwoMetals() and (getLayerGauge(1)->isHorizontal()); }
+  inline bool          RoutingGauge::isVH               () const { return not isTwoMetals() and (getLayerGauge(1)->isVertical()); }
   inline const Name    RoutingGauge::getName            () const { return _name; }
   inline size_t        RoutingGauge::getDepth           () const { return _layerGauges.size(); }
   inline Technology*   RoutingGauge::getTechnology      () const { return _technology; }

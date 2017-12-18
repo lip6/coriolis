@@ -285,6 +285,7 @@ namespace Katana {
     _routingPlanes.reserve( maxDepth );
     for ( size_t depth=0 ; depth < maxDepth ; depth++ ) {
       _routingPlanes.push_back( RoutingPlane::create( this, depth ) );
+      cdebug_log(155,0) << _routingPlanes.back() << endl;
     }
 
     if (not sessionReUse) Session::close();
@@ -524,6 +525,7 @@ namespace Katana {
 #endif
   }
 
+
   void  KatanaEngine::printCompletion () const
   {
     size_t                 routeds          = 0;
@@ -683,7 +685,6 @@ namespace Katana {
 
   void  KatanaEngine::finalizeLayout ()
   {
-
     cdebug_log(155,0) << "KatanaEngine::finalizeLayout()" << endl;
     if (getState() > Anabatic::EngineDriving) return;
 

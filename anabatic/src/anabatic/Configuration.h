@@ -64,6 +64,9 @@ namespace Anabatic {
     // Methods.
               bool               isGMetal            ( const Layer* ) const;
               bool               isGContact          ( const Layer* ) const;
+              bool               isTwoMetals         () const;
+              bool               isHV                () const;
+              bool               isVH                () const;
               const Layer*       getGContactLayer    () const;
               const Layer*       getGHorizontalLayer () const;
               const Layer*       getGVerticalLayer   () const;

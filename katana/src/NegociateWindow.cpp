@@ -230,7 +230,7 @@ namespace Katana {
   {
     _gcells = gcells;
 
-    loadRoutingPads( this );
+    if (not Session::getKatanaEngine()->isChannelMode()) loadRoutingPads( this );
     Session::revalidate();
 
     for ( auto element : Session::getKatanaEngine()->_getAutoSegmentLut() ) {

@@ -195,6 +195,10 @@ namespace Anabatic {
   { }
 
 
+  NetBuilder::~NetBuilder ()
+  { }
+
+
   void  NetBuilder::clear ()
   {
     _connexity.connexity = 0;
@@ -342,10 +346,6 @@ namespace Anabatic {
 
     return *this;
   }
-
-
-  NetBuilder::~NetBuilder ()
-  { }
   
 
   bool  NetBuilder::push ( Hook* toHook, AutoContact* contact, uint64_t flags )
@@ -381,154 +381,105 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "NetBuilder::construct() [" << _connexity.connexity << "] in " << _gcell << endl;
 
-    _southWestContact = NULL;
-    _northEastContact = NULL;
+    if (_gcell->isMatrix()) {
+      _southWestContact = NULL;
+      _northEastContact = NULL;
+    }
 
     if (not _gcell->isAnalog()) {
-      if (_gcell->isMatrix()) {
-        switch ( _connexity.connexity ) {
-          case Conn_1G_1Pad:
-          case Conn_2G_1Pad:
-          case Conn_3G_1Pad:   _do_xG_1Pad  (); break;
-          case Conn_1G_1PinM2: _do_1G_1PinM2(); break;
-          case Conn_1G_1M1:    _do_1G_1M1   (); break;
-          case Conn_1G_2M1:
-          case Conn_1G_3M1:
-          case Conn_1G_4M1:
-          case Conn_1G_5M1:  _do_1G_xM1(); break;
-          case Conn_1G_1M2:
-          case Conn_1G_2M2:
-          case Conn_1G_3M2:
-          case Conn_1G_4M2:  _do_xG_xM2(); break;
-          case Conn_1G_1M3:  _do_1G_1M3(); break;
-          case Conn_1G_2M3:
-          case Conn_1G_3M3:
-          case Conn_1G_4M3:     _do_xG_xM3    (); break;
-          case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
-          case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
-          case Conn_2G_1M1:
-          case Conn_2G_2M1:
-          case Conn_2G_3M1:
-          case Conn_2G_4M1:
-          case Conn_2G_5M1:
-          case Conn_3G_1M1:
-          case Conn_3G_2M1:
-          case Conn_3G_3M1:
-          case Conn_3G_4M1:
-          case Conn_3G_2M3:
-          case Conn_3G_3M3:
-          case Conn_3G_4M3:
-          case Conn_4G_1M1:
-          case Conn_4G_2M1:
-          case Conn_4G_3M1:
-          case Conn_4G_4M1: _do_xG_xM1_xM3(); break;
-          case Conn_4G_1M2: _do_4G_1M2    (); break;
-          case Conn_2G_1M2:
-          case Conn_2G_2M2:
-          case Conn_2G_3M2:
-          case Conn_2G_4M2:
-          case Conn_3G_1M2:
-          case Conn_3G_2M2: _do_xG_xM2(); break;
-          case Conn_2G_1M3:
-          case Conn_2G_2M3:
-          case Conn_2G_3M3:
-          case Conn_2G_4M3:
-          case Conn_3G_1M3:     _do_xG_xM3    (); break;
-          case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
-          case Conn_2G_1PinM2:  _do_xG_xM2    (); break;
-          case Conn_2G:         _do_2G        (); break;
-          case Conn_3G:
-          case Conn_4G:
-            _do_xG();
-            break;
-          default:
-            throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
-                       "      The global routing seems to be defective."
-                     , _connexity.connexity
-                     , _connexity.fields.globals
-                     , _connexity.fields.M1     
-                     , _connexity.fields.M2     
-                     , _connexity.fields.M3
-                     , _connexity.fields.Pin
-                     , _connexity.fields.Pad
-                     , _net->_getString().c_str()
-                     , getString(_gcell).c_str()
-                     );
-            _do_xG();
-        }
-  
-        if (_sourceContact) {
-          AutoContact* targetContact
-            = ( getSegmentHookType(_fromHook) & (NorthBound|EastBound) )
-              ? _northEastContact : _southWestContact ;
-          AutoSegment* globalSegment = AutoSegment::create( _sourceContact
-                                                          , targetContact
-                                                          , static_cast<Segment*>( _fromHook->getComponent() )
-                                                          );
-          globalSegment->setFlags( (_degree == 2) ? AutoSegment::SegBipoint : 0 );
-          cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
-  
-        // HARDCODED VALUE.
-          if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
-            _toFixSegments.push_back( globalSegment );
-        
-          if (_connexity.fields.globals < 2) {
-            cdebug_tabw(145,-1);
-            return;
-          }
-        } else
-          _fromHook = NULL;
-  
-        push( east (), _northEastContact );
-        push( west (), _southWestContact );
-        push( north(), _northEastContact );
-        push( south(), _southWestContact );
-      } else {
-        if (not _sourceContact) _fromHook = NULL;
+      if (not _gcell->isMatrix() and not _sourceContact) _fromHook = NULL;
+      
+      switch ( _connexity.connexity ) {
+        case Conn_1G_1Pad:
+        case Conn_2G_1Pad:
+        case Conn_3G_1Pad: _do_xG_1Pad  (); break;
+        // End xG_1Pad cascaded cases.
 
-        switch ( _connexity.connexity ) {
-          case Conn_1G_1M1: _do_2m_1G_1M1(); break;
-          case Conn_2G_1M1: _do_2m_2G_1M1(); break;
-          default:
-            if (  _connexity.fields.M1
-               or _connexity.fields.M2
-               or _connexity.fields.M3
-               or _connexity.fields.Pin
-               or _connexity.fields.Pad )
-              throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
-                         "      The global routing seems to be defective."
-                       , _connexity.connexity
-                       , _connexity.fields.globals
-                       , _connexity.fields.M1     
-                       , _connexity.fields.M2     
-                       , _connexity.fields.M3
-                       , _connexity.fields.Pin
-                       , _connexity.fields.Pad
-                       , _net->_getString().c_str()
-                       , getString(_gcell).c_str()
-                       );
-            _do_2m_xG();
-        }
-  
-        if (_sourceContact) {
-          Segment*     segment       = static_cast <Segment*> ( _fromHook->getComponent() );
-          AutoSegment* globalSegment = AutoSegment::create( _sourceContact, _southWestContact, segment );
+        case Conn_1G_1M1:  if (_do_1G_1M1()) break;
+        case Conn_1G_2M1:
+        case Conn_1G_3M1:
+        case Conn_1G_4M1:
+        case Conn_1G_5M1:   _do_1G_xM1(); break;
+        // End 1G_xM1 cascaded cases.
 
-          globalSegment->setFlags( (_degree == 2) ? AutoSegment::SegBipoint : 0 );
-          cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
-  
-        // HARDCODED VALUE.
-          if ( (_topology & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
-            _toFixSegments.push_back( globalSegment );
-        
-          if (_connexity.fields.globals < 2) {
-            cdebug_tabw(145,-1);
-            return;
-          }
-        } else
-          _fromHook = NULL;
-        
+        case Conn_1G_1M2:
+        case Conn_1G_2M2:
+        case Conn_1G_3M2:
+        case Conn_1G_4M2:  _do_xG_xM2(); break;
+        // End 1G_xM2 cascaded cases.
+
+        case Conn_1G_1M3:  if (_do_1G_1M3()) break;
+        case Conn_1G_2M3:
+        case Conn_1G_3M3:
+        case Conn_1G_4M3:  _do_xG_xM3(); break;
+        // End 1G_xM3 cascaded cases.
+
+        case Conn_2G_1M1:  if (_do_2G_1M1()) break;
+        case Conn_2G_2M1:
+        case Conn_2G_3M1:
+        case Conn_2G_4M1:
+        case Conn_2G_5M1:
+        case Conn_3G_1M1:
+        case Conn_3G_2M1:
+        case Conn_3G_3M1:
+        case Conn_3G_4M1:
+        case Conn_3G_2M3:
+        case Conn_3G_3M3:
+        case Conn_3G_4M3:
+        case Conn_4G_1M1:
+        case Conn_4G_2M1:
+        case Conn_4G_3M1:
+        case Conn_4G_4M1:  _do_xG_xM1_xM3(); break;
+        // End xG_xM1_xM3 cascaded cases.
+
+        case Conn_4G_1M2:  if (_do_4G_1M2()) break;
+        case Conn_2G_1M2:
+        case Conn_2G_2M2:
+        case Conn_2G_3M2:
+        case Conn_2G_4M2:
+        case Conn_3G_1M2:
+        case Conn_3G_2M2:  _do_xG_xM2(); break;
+        // End xG_xM2 cascaded cases.
+
+        case Conn_2G_1M3:
+        case Conn_2G_2M3:
+        case Conn_2G_3M3:
+        case Conn_2G_4M3:
+        case Conn_3G_1M3:  _do_xG_xM3(); break;
+        // End xG_xM3 cascaded cases.
+
+        case Conn_2G:      if (_do_2G()) break;
+        case Conn_3G:
+        case Conn_4G:     _do_xG(); break;
+        // End xG cascaded cases.
+        // Optimized specific cases.
+        case Conn_1G_1PinM2:  _do_1G_1PinM2 (); break;
+        case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
+        case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_2G_1PinM2:  _do_xG_xM2    (); break;
+        default:
+          throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
+                     "      The global routing seems to be defective."
+                   , _connexity.connexity
+                   , _connexity.fields.globals
+                   , _connexity.fields.M1     
+                   , _connexity.fields.M2     
+                   , _connexity.fields.M3
+                   , _connexity.fields.Pin
+                   , _connexity.fields.Pad
+                   , _net->_getString().c_str()
+                   , getString(_gcell).c_str()
+                   );
+          _do_xG();
       }
+
+      if (not _do_globalSegment()) {
+        cdebug_log(145,0) << "No global generated, finish." << endl;
+        cdebug_tabw(145,-1);
+        return;
+      }
+      cdebug_log(145,0) << "Proceed to next GCell." << endl;
     } else {
       AutoContact* targetContact = NULL;
       if (not _sourceContact) _fromHook = NULL;
@@ -744,50 +695,6 @@ namespace Anabatic {
   }
 
 
-  AutoContact* NetBuilder::doRp_2m_Access ( GCell* gcell, RoutingPad* rp, uint64_t flags )
-  {
-    cdebug_log(145,1) << "doRp_2m_Access()" << endl;
-    cdebug_log(145,0) << rp << endl;
-
-    Point        sourcePosition;
-    Point        targetPosition;
-    const Layer* rpLayer        = rp->getLayer();
-    const Layer* viaLayer       = Session::getDContactLayer();
-    DbU::Unit    viaSide        = Session::getDContactWidth();
-    DbU::Unit    ypitch         = Session::getDVerticalPitch();
-
-    getPositions( rp, sourcePosition, targetPosition );
-
-    if (sourcePosition.getX() > targetPosition.getX()) swap( sourcePosition, targetPosition );
-    if (sourcePosition.getY() > targetPosition.getY()) swap( sourcePosition, targetPosition );
-
-    Point position = rp->getCenter();
-    if (not (flags & Middle)) {
-      if (flags & NorthBound) position = targetPosition;
-      if (flags & SouthBound) position = sourcePosition;
-    }
-
-    DbU::Unit ycontact = (flags & SouthBound) ? gcell->getYMin() : gcell->getYMax()-ypitch;
-
-    AutoContact* rpContact = AutoContactTerminal::create( gcell, rp, rpLayer, position, viaSide, viaSide );
-    AutoContact* contact1  = AutoContactTurn::create( gcell, _net, viaLayer );
-    AutoContact* contact2  = AutoContactTurn::create( gcell, _net, viaLayer );
-    contact1->setPosition( position.getX(), ycontact );
-    contact2->setPosition( position.getX(), ycontact );
-    rpContact->setFlags( CntFixed );
-    contact1 ->setFlags( CntFixed );
-    contact2 ->setFlags( CntFixed );
-
-    AutoSegment* fixed  = AutoSegment::create( rpContact, contact1, Flags::Vertical   );
-    AutoSegment* dogleg = AutoSegment::create( contact1 , contact2, Flags::Horizontal );
-    fixed ->setFlags( AutoSegment::SegFixed );
-    dogleg->setFlags( AutoSegment::SegFixed );
-
-    cdebug_tabw(145,-1);
-    return contact2;
-  }
-
-
   void  NetBuilder::doRp_StairCaseH ( GCell* gcell, Component* rp1, Component* rp2 )
   {
     cdebug_log(145,0) << "doRp_StairCaseH()" << endl;
@@ -856,639 +763,101 @@ namespace Anabatic {
   }
 
 
-  void  NetBuilder::_do_2m_1G_1M1 ()
+  bool  NetBuilder::_do_xG ()
   {
-    cdebug_log(145,1) << "_do_2m_1G_1M1()" << endl;
-
-    uint64_t  flags = NoFlags;
-    if      (north()) flags |= NorthBound;
-    else if (south()) flags |= SouthBound;
-
-    AutoContact* contact = NULL;
-    contact = _northEastContact = doRp_2m_Access( _gcell, _routingPads[0], flags );
-    push( north(), contact, SouthWest );
-    push( south(), contact, SouthWest );
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_2m_2G_1M1 ()
+  
+  bool  NetBuilder::_do_2G ()
   {
-    cdebug_log(145,1) << "_do_2m_2G_1M1()" << endl;
-
-    AutoContact* contact = NULL;
-    contact = doRp_2m_Access( _gcell, _routingPads[0], SouthBound|NorthBound );
-    push( north(), contact, SouthWest|Middle );
-
-    contact = doRp_2m_Access( _gcell, _routingPads[0], SouthBound|NorthBound );
-    push( south(), contact, SouthWest|Middle );
-    
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_2m_xG ()
+  
+  bool  NetBuilder::_do_xG_1Pad ()
   {
-    cdebug_log(145,1) << "_do_2m_xG()" << endl;
-
-    vector<Hook*> hooksNS = _norths;
-    hooksNS.insert( hooksNS.end(), _souths.begin(), _souths.end() );
-    sort( hooksNS.begin(), hooksNS.end(), SortHookByX(NoFlags) );
-
-    const Layer* viaLayer = Session::getDContactLayer();
-    AutoContact* contactW = NULL;
-    AutoContact* contactE = NULL;
-
-  // Simple turn.
-    if (  (west() and not east() and (hooksNS.size() == 1))
-       or (east() and not west() and (hooksNS.size() == 1)) ) {
-      contactW = AutoContactTurn::create( _gcell, _net, viaLayer );
-      push( west()    , contactW, SouthWest );
-      push( east()    , contactW, SouthWest );
-      push( hooksNS[0], contactW, SouthWest );
-      cdebug_tabw(145,-1);
-      return;
-    }
-
-  // Simple HTee.
-    if (west() and east() and (hooksNS.size() == 1)) {
-      contactW = AutoContactHTee::create( _gcell, _net, viaLayer );
-      push( west()    , contactW, SouthWest );
-      push( east()    , contactW, SouthWest );
-      push( hooksNS[0], contactW, SouthWest );
-      cdebug_tabw(145,-1);
-      return;
-    }
-    
-    cdebug_log(145,0) << "West side processing." << endl;
-  // West side processing.
-    if (west()) {
-      contactW =  AutoContactHTee::create( _gcell, _net, viaLayer );
-      push( west()    , contactW, SouthWest );
-      push( hooksNS[0], contactW, SouthWest );
-    } else {
-      contactW =  AutoContactTurn::create( _gcell, _net, viaLayer );
-      push( hooksNS[0], contactW, SouthWest );
-    }
-
-    cdebug_log(145,0) << "Middle processing." << endl;
-  // Middle (North & South) processing.
-    if (hooksNS.size() > 2) {
-      for ( size_t i=1 ; i<hooksNS.size()-1 ; ++i ) {
-        AutoContact* current = AutoContactHTee::create( _gcell, _net, viaLayer );
-        AutoSegment::create( contactW, current, Flags::Horizontal );
-        push( hooksNS[i], current, SouthWest );
-
-        contactW = current;
-      }
-    }
-
-    cdebug_log(145,0) << "East side processing." << endl;
-  // East side processing.
-    if (east()) {
-      contactE =  AutoContactHTee::create( _gcell, _net, viaLayer );
-      push( east(), contactE, SouthWest );
-      if (hooksNS.size() > 1)
-        push( hooksNS[hooksNS.size()-1], contactE, SouthWest );
-    } else {
-      contactE =  AutoContactTurn::create( _gcell, _net, viaLayer );
-      push( hooksNS[hooksNS.size()-1], contactE, SouthWest );
-    }
-
-    AutoSegment::create( contactW, contactE, Flags::Horizontal );
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_xG ()
+  
+  bool  NetBuilder::_do_1G_1PinM2 ()
   {
-    cdebug_log(145,1) << "_do_xG()" << endl;
-
-    const Layer* viaLayer = Session::getDContactLayer();
-
-    if (_connexity.fields.globals == 2) {
-      _southWestContact = _northEastContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-    } else if (_connexity.fields.globals == 3) {
-      if (east() and west()) {
-        _southWestContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-        _northEastContact = AutoContactVTee::create( _gcell, _net, viaLayer );
-        if (south()) swap( _southWestContact, _northEastContact );
-
-        AutoSegment::create( _southWestContact, _northEastContact, Flags::Vertical );
-      } else {
-        _southWestContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-        _northEastContact = AutoContactHTee::create( _gcell, _net, viaLayer );
-        if (west()) swap( _southWestContact, _northEastContact );
-
-        AutoSegment::create( _southWestContact, _northEastContact, Flags::Horizontal );
-      }
-    } else { // fields.globals == 4.
-      AutoContact* turn = AutoContactTurn::create( _gcell, _net, viaLayer );
-      _southWestContact = AutoContactHTee::create( _gcell, _net, viaLayer );
-      _northEastContact = AutoContactVTee::create( _gcell, _net, viaLayer );
-      AutoSegment::create( _southWestContact, turn, Flags::Horizontal );
-      AutoSegment::create( turn, _northEastContact, Flags::Vertical   );
-    } 
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_2G ()
+  
+  bool  NetBuilder::_do_1G_1M1 ()
   {
-    cdebug_log(145,1) << "_do_2G()" << endl;
-
-    const Layer* viaLayer = Session::getDContactLayer();
-
-    if (east() and west()) {
-      _southWestContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-      _northEastContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-      AutoSegment::create( _southWestContact, _northEastContact, Flags::Vertical );
-    } else if (south() and north()) {
-      _southWestContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-      _northEastContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-      AutoSegment::create( _southWestContact, _northEastContact, Flags::Horizontal );
-    } else {
-      _southWestContact = _northEastContact = AutoContactTurn::create( _gcell, _net, viaLayer );
-    }
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_xG_1Pad ()
+  
+  bool  NetBuilder::_do_2G_1M1 ()
   {
-    cdebug_log(145,1) << "_do_xG_1Pad() [Managed Configuration - Optimized] " << _topology << endl;
-    cdebug_log(145,0)   << "_connexity.globals:" << (int)_connexity.fields.globals << endl;
-
-    uint64_t  flags       = NoFlags;
-    bool      eastPad     = false;
-    bool      westPad     = false;
-    bool      northPad    = false;
-    bool      southPad    = false;
-    Instance* padInstance = _routingPads[0]->getOccurrence().getPath().getHeadInstance();
-
-    switch ( padInstance->getTransformation().getOrientation() ) {
-      case Transformation::Orientation::ID: northPad = true; break;
-      case Transformation::Orientation::MY: southPad = true; break;
-      case Transformation::Orientation::YR:
-      case Transformation::Orientation::R3: eastPad  = true; flags |= HAccess; break;
-      case Transformation::Orientation::R1: westPad  = true; flags |= HAccess; break;
-      default:
-        cerr << Warning( "Unmanaged orientation %s for pad <%s>."
-                       , getString(padInstance->getTransformation().getOrientation()).c_str()
-                       , getString(padInstance).c_str() ) << endl;
-        break;
-    }
-    cdebug_log(145,0) << "eastPad:"  << eastPad  << ", "
-                      << "westPad:"  << westPad  << ", "
-                      << "northPad:" << northPad << ", "
-                      << "southPad:" << southPad
-                      << endl;
-
-    AutoContact* source = doRp_AccessPad( _routingPads[0], flags );
-    // Point        position     = _routingPads[0]->getCenter();
-    // AutoContact* source       = NULL;
-    // GCell*       gcell        = Session::getAnabatic()->getGCellGrid()->getGCell(position);
-
-    // source = AutoContactTerminal::create ( gcell
-    //                                      , _routingPads[0]
-    //                                      , Session::getContactLayer(3)
-    //                                      , position
-    //                                      , Session::getViaWidth(3), Session::getViaWidth(3)
-    //                                      );
-    // source->setFlags( CntFixed );
-
-    // if (northPad or eastPad) {
-    //   _southWestContact = _northEastContact = source;
-    //   cdebug_tabw(145,-1);
-    //   return;
-    // }
-
-  // Check for straight lines, which are not managed by _do_xG().
-    if (_connexity.fields.globals == 1) {
-      if (  (westPad and (east() != NULL))
-         or (eastPad and (west() != NULL)) ) {
-        AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        _northEastContact = _southWestContact
-                          = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        AutoSegment::create( source, turn, Flags::Horizontal );
-        AutoSegment::create( turn, _northEastContact, Flags::Vertical );
-        cdebug_tabw(145,-1);
-        return;
-      } else if (  (southPad and (north() != NULL))
-                or (northPad and (south() != NULL)) ) {
-        AutoContact* turn = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        _northEastContact = _southWestContact
-                          = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-        AutoSegment::create( source, turn, Flags::Vertical );
-        AutoSegment::create( turn, _northEastContact, Flags::Horizontal );
-        cdebug_tabw(145,-1);
-        return;
-      }
-    }
-
-    ++_connexity.fields.globals;
-    --_connexity.fields.Pad;
-
-    if (westPad ) _wests .push_back( source->getBodyHook() );
-    if (eastPad ) _easts .push_back( source->getBodyHook() );
-    if (southPad) _souths.push_back( source->getBodyHook() );
-    if (northPad) _norths.push_back( source->getBodyHook() );
-
-    _do_xG();
-
-    if (westPad) {
-      AutoSegment::create( source, _southWestContact, Flags::Horizontal );
-      _wests.clear();
-    }
-    if (eastPad) {
-      AutoSegment::create( source, _northEastContact, Flags::Horizontal );
-      _easts.clear();
-    }
-    if (southPad) {
-      AutoSegment::create( source, _southWestContact, Flags::Vertical );
-      _souths.clear();
-    }
-    if (northPad) {
-      AutoSegment::create( source, _northEastContact, Flags::Vertical );
-      _norths.clear();
-    }
-    --_connexity.fields.globals;
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_1G_1PinM2 ()
+  
+  bool  NetBuilder::_do_1G_xM1 ()
   {
-    cdebug_log(145,1) << "_do_1G_1PinM2() [Managed Configuration - Optimized] " << _topology << endl;
-
-    AutoContact* rpContact = doRp_Access( _gcell, _routingPads[0], NoFlags );
-    AutoContact* turn1     = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-    AutoSegment::create( rpContact, turn1, Flags::Vertical );
-
-    if (north() or south()) {
-      AutoContact* turn2 = AutoContactTurn::create( _gcell, _net, Session::getContactLayer(1) );
-      AutoSegment::create( turn1, turn2, Flags::Horizontal );
-      turn1 = turn2;
-    }
-    _southWestContact = _northEastContact = turn1;
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_xG_1M1_1M2 ()
+  
+  bool  NetBuilder::_do_xG_xM1_xM3 ()
   {
-    cdebug_log(145,1) << "_do_xG_1M1_1M2() [Managed Configuration]" << endl;
-
-    Component* rpL1;
-    Component* rpL2;
-    if (_routingPads[0]->getLayer() == Session::getRoutingLayer(0)) {
-      rpL1 = _routingPads[0];
-      rpL2 = _routingPads[1];
-    } else {
-      rpL1 = _routingPads[1];
-      rpL2 = _routingPads[0];
-    }
-    cdebug_log(145,0) << "rpL1 := " << rpL1 << endl;
-    cdebug_log(145,0) << "rpL2 := " << rpL2 << endl;
-
-    AutoContact* rpL1ContactSource = NULL;
-    AutoContact* rpL1ContactTarget = NULL;
-    AutoContact* rpL2ContactSource = NULL;
-    AutoContact* rpL2ContactTarget = NULL;
-
-    doRp_AutoContacts( _gcell, rpL1, rpL1ContactSource, rpL1ContactTarget, NoFlags );
-    doRp_AutoContacts( _gcell, rpL2, rpL2ContactSource, rpL2ContactTarget, NoFlags );
-
-    const Layer* viaLayer1 = Session::getContactLayer(1);
-    const Layer* viaLayer2 = Session::getContactLayer(2);
-
-    AutoContact* subContact = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-    AutoSegment::create( rpL1ContactSource, subContact, Flags::Horizontal );
-    AutoSegment::create( rpL2ContactSource, subContact, Flags::Vertical );
-
-    if (south() or west()) {
-      doRp_AutoContacts( _gcell, rpL2, rpL2ContactSource, rpL2ContactTarget, DoSourceContact );
-      if (south() and west()) {
-        _southWestContact = AutoContactHTee::create( _gcell, _net, viaLayer2 );
-        AutoSegment::create( rpL2ContactSource, _southWestContact, Flags::Horizontal );
-      } else {
-        if (south()) {
-          _southWestContact = AutoContactTurn::create( _gcell, _net, viaLayer2 );
-          AutoSegment::create( rpL2ContactSource, _southWestContact, Flags::Horizontal );
-        } else {
-          _southWestContact = rpL2ContactSource;
-        }
-      }
-    }
-
-    if (north() or east()) {
-      doRp_AutoContacts( _gcell, rpL2, rpL2ContactSource, rpL2ContactTarget, DoTargetContact );
-      if (north() and east()) {
-        _northEastContact = AutoContactHTee::create( _gcell, _net, viaLayer2 );
-        AutoSegment::create( rpL2ContactTarget, _northEastContact, Flags::Horizontal );
-      } else {
-        if (north()) {
-          _northEastContact = AutoContactTurn::create( _gcell, _net, viaLayer2 );
-          AutoSegment::create( rpL2ContactTarget, _northEastContact, Flags::Horizontal );
-        } else {
-          _northEastContact = rpL2ContactTarget;
-        }
-      }
-    }
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_xG_xM1_xM3 ()
+  
+  bool  NetBuilder::_do_xG_1M1_1M2 ()
   {
-    cdebug_log(145,1) << "_do_xG_"  << (int)_connexity.fields.M1
-                      << "M1_"      << (int)_connexity.fields.M3
-                      << "M3() [G:" << (int)_connexity.fields.globals << " Managed Configuration]" << endl;
-    cdebug_log(145,0) << "_connexity: " << _connexity.connexity << endl;
-    cdebug_log(145,0) << "north:     " << north() << endl;
-    cdebug_log(145,0) << "south:     " << south() << endl;
-    cdebug_log(145,0) << "east:      " << east() << endl;
-    cdebug_log(145,0) << "west:      " << west() << endl;
-
-    if (Session::getAllowedDepth() < 2) {
-    }
-
-    Component* rpM3 = NULL;
-    if (_routingPads[0]->getLayer() == Session::getRoutingLayer(2))
-      rpM3 = _routingPads[0];
-
-    sort( _routingPads.begin(), _routingPads.end(), SortRpByX(NoFlags) ); // increasing X.
-    for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
-      AutoContact* leftContact  = doRp_Access( _gcell, _routingPads[i-1], HAccess );
-      AutoContact* rightContact = doRp_Access( _gcell, _routingPads[i  ], HAccess );
-      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
-
-      if (not rpM3 and (_routingPads[i]->getLayer() == Session::getRoutingLayer(2)))
-        rpM3 = _routingPads[i];
-    }
-
-    const Layer* viaLayer1     = Session::getContactLayer(1);
-    AutoContact* unusedContact = NULL;
-
-    if (rpM3) {
-    // At least one M3 RoutingPad is present: use it.
-      if (west() and not south()) {
-        _southWestContact = doRp_Access( _gcell, _routingPads[0], HAccess );
-      } else if (not west() and south()) {
-        doRp_AutoContacts( _gcell, rpM3, _southWestContact, unusedContact, DoSourceContact );
-      } else if (west() and south()) {
-        AutoContact* rpContact = NULL;
-        doRp_AutoContacts( _gcell, rpM3, rpContact, unusedContact, DoSourceContact );
-        _southWestContact = AutoContactVTee::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( rpContact, _southWestContact, Flags::Vertical );
-      }
-
-      if (east() and not north()) {
-        _northEastContact = doRp_Access( _gcell, _routingPads[_routingPads.size()-1], HAccess );
-      } else if (not east() and north()) {
-        doRp_AutoContacts( _gcell, rpM3, unusedContact, _northEastContact, DoTargetContact );
-      } else if (east() and north()) {
-        AutoContact* rpContact = NULL;
-        doRp_AutoContacts( _gcell, rpM3, unusedContact, rpContact, DoTargetContact );
-        _northEastContact = AutoContactVTee::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( rpContact, _northEastContact, Flags::Vertical );
-      }
-    } else {
-    // All RoutingPad are M1.
-      Component* southWestRp = _routingPads[0];
-      cdebug_log(145,0) << "| Initial S-W Global RP: " << southWestRp << endl;
-      for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
-        if (southWestRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
-        if (_routingPads[i]->getBoundingBox().getHeight() > southWestRp->getBoundingBox().getHeight()) {
-          cdebug_log(145,0) << "| Better RP: " << southWestRp << endl;
-          southWestRp = _routingPads[i];
-        }
-      }
-
-      if (west() and not south()) {
-        _southWestContact = doRp_Access( _gcell, southWestRp, HAccess );
-      } else if (not west() and south()) {
-        AutoContact* rpContact = doRp_Access( _gcell, southWestRp, HAccess );
-        _southWestContact = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( rpContact, _southWestContact, Flags::Horizontal );
-      } else if (west() and south()) {
-        AutoContact* rpContact = doRp_Access( _gcell, southWestRp, HAccess );
-        _southWestContact = AutoContactHTee::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( rpContact, _southWestContact, Flags::Horizontal );
-      }
-
-      Component* northEastRp = _routingPads[_routingPads.size()-1];
-      cdebug_log(145,0) << "| Initial N-E Global RP: " << northEastRp << endl;
-
-      if (_routingPads.size() > 1) {
-        for ( size_t i=_routingPads.size()-1; i != 0 ; ) {
-          i -= 1;
-          if (northEastRp->getBoundingBox().getHeight() >= 4*Session::getPitch(1)) break;
-          if (_routingPads[i]->getBoundingBox().getHeight() > northEastRp->getBoundingBox().getHeight()) {
-            cdebug_log(145,0) << "| Better RP: " << northEastRp << endl;
-            northEastRp = _routingPads[i];
-          }
-        } 
-      }
-
-      if (east() and not north()) {
-        _northEastContact = doRp_Access( _gcell, northEastRp, HAccess );
-      } else if (not east() and north()) {
-        AutoContact* rpContact = doRp_Access( _gcell, northEastRp, HAccess );
-        _northEastContact = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( rpContact, _northEastContact, Flags::Horizontal );
-      } else if (east() and north()) {
-        AutoContact* rpContact = doRp_Access( _gcell, northEastRp, HAccess );
-        _northEastContact = AutoContactHTee::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( rpContact, _northEastContact, Flags::Horizontal );
-      }
-    }
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_4G_1M2 ()
+  
+  bool  NetBuilder::_do_4G_1M2 ()
   {
-    cdebug_log(145,1) << "_do_4G_1M2() [Managed Configuration]" << endl;
-
-    Component* rpL2 = _routingPads[0];
-    cdebug_log(145,0) << "rpL2 := " << rpL2 << endl;
-
-    AutoContact* rpL2ContactSource = NULL;
-    AutoContact* rpL2ContactTarget = NULL;
-
-    doRp_AutoContacts( _gcell, rpL2, rpL2ContactSource, rpL2ContactTarget, DoSourceContact|DoTargetContact );
-
-    const Layer* viaLayer2 = Session::getContactLayer(2);
-
-    _southWestContact = AutoContactHTee::create( _gcell, _net, viaLayer2 );
-    _northEastContact = AutoContactHTee::create( _gcell, _net, viaLayer2 );
-
-    AutoSegment::create( _southWestContact, rpL2ContactSource, Flags::Horizontal );
-    AutoSegment::create( rpL2ContactTarget, _northEastContact, Flags::Horizontal );
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_xG_xM2 ()
+  
+  bool  NetBuilder::_do_xG_xM2 ()
   {
-    cdebug_log(145,1) << "_do_"
-                      << (int)_connexity.fields.globals << "G_"
-                      << (int)_connexity.fields.M2 << "M2() [Managed Configuration - x]" << endl;
-
-    Component* biggestRp = _routingPads[0];
-    for ( size_t i=1 ; i<_routingPads.size() ; ++i ) {
-      doRp_StairCaseH( _gcell, _routingPads[i-1], _routingPads[i] );
-      if (_routingPads[i]->getBoundingBox().getWidth() > biggestRp->getBoundingBox().getWidth())
-        biggestRp = _routingPads[i];
-    }
-
-    const Layer* viaLayer1 = Session::getContactLayer(1);
-    AutoContact* unusedContact = NULL;
-
-    if (west() and not south()) {
-      doRp_AutoContacts( _gcell, _routingPads[0], _southWestContact, unusedContact, DoSourceContact );
-    } else if (not west() and south()) {
-      _southWestContact = doRp_Access( _gcell, biggestRp, NoFlags );
-    } else if (west() and south()) {
-      AutoContact* rpContact = doRp_Access( _gcell, biggestRp, NoFlags );
-      _southWestContact = AutoContactVTee::create( _gcell, _net, viaLayer1 );
-      AutoSegment::create( rpContact, _southWestContact, Flags::Vertical );
-    }
-
-    if (east() and not north()) {
-      doRp_AutoContacts( _gcell, _routingPads[_routingPads.size()-1], _northEastContact, unusedContact, DoSourceContact );
-    } else if (not east() and north()) {
-      _northEastContact = doRp_Access( _gcell, biggestRp, NoFlags );
-    } else if (east() and north()) {
-      AutoContact* rpContact = doRp_Access( _gcell, biggestRp, NoFlags );
-      _northEastContact = AutoContactVTee::create( _gcell, _net, viaLayer1 );
-      AutoSegment::create( rpContact, _northEastContact, Flags::Vertical );
-    }
-
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_1G_1M3 ()
+  
+  bool  NetBuilder::_do_1G_1M3 ()
   {
-    cdebug_log(145,1) << "_do_1G_1M3() [Optimised Configuration]" << endl;
-
-    uint64_t flags = (east() or west()) ? HAccess : NoFlags;
-    flags |= (north()) ? DoTargetContact : NoFlags;
-    flags |= (south()) ? DoSourceContact : NoFlags;
-
-    doRp_AutoContacts( _gcell
-                     , _routingPads[0]
-                     , _southWestContact
-                     , _northEastContact
-                     , flags
-                     );
-    if (not _southWestContact) _southWestContact = _northEastContact;
-    if (not _northEastContact) _northEastContact = _southWestContact;
-
-    cdebug_log(145,0) << "_southWest: " << _southWestContact << endl;
-    cdebug_log(145,0) << "_northEast: " << _northEastContact << endl;
-
-    const Layer* viaLayer1 = Session::getContactLayer(1);
-
-    if (flags & HAccess) {
-    // HARDCODED VALUE.
-      if (_routingPads[0]->getBoundingBox().getHeight() < 3*Session::getPitch(1)) {
-        AutoContact* subContact = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-        AutoSegment::create( _southWestContact, subContact, Flags::Vertical );
-
-        _southWestContact = _northEastContact = subContact;
-      }
-    } else {
-      if (_sourceContact) {
-        if (_sourceContact->getX() != _southWestContact->getX()) {
-          AutoContactTurn* turn1 = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-          AutoContactTurn* turn2 = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-          AutoSegment::create( _southWestContact, turn1, Flags::Vertical );
-          AutoSegment::create( turn1            , turn2, Flags::Horizontal );
-          _southWestContact = _northEastContact = turn2;
-        }
-      }
-    }
-    cdebug_tabw(145,-1);
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
-
-  void  NetBuilder::_do_xG_xM3 ()
+  
+  bool  NetBuilder::_do_xG_xM3 ()
   {
-    cdebug_log(145,1) << "_do_xG_" << (int)_connexity.fields.M3
-                      << "M3() [Managed Configuration]" << endl;
-    cdebug_log(145,0) << "west:"  << west()  << endl;
-    cdebug_log(145,0) << "east:"  << east()  << endl;
-    cdebug_log(145,0) << "south:" << south() << endl;
-    cdebug_log(145,0) << "north:" << north() << endl;
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
+  }
 
-    sort( _routingPads.begin(), _routingPads.end(), SortRpByY(NoFlags) ); // increasing Y.
-    for ( size_t i=1 ; i<_routingPads.size() ; i++ ) {
-      doRp_StairCaseV( _gcell, _routingPads[i-1], _routingPads[i] );
-    }
-
-    const Layer* viaLayer1     = Session::getContactLayer(1);
-    AutoContact* unusedContact = NULL;
-    Component*   rp            = _routingPads[0];
-
-    if (west() and not south()) {
-      _southWestContact = doRp_Access( _gcell, rp, HAccess );
-    } else if (not west() and south()) {
-      doRp_AutoContacts( _gcell, rp, _southWestContact, unusedContact, DoSourceContact );
-      if (_sourceContact) {
-        if (_sourceContact->getX() != _southWestContact->getX()) {
-          cdebug_log(149,0) << "Misaligned South: _source:" << DbU::getValueString(_sourceContact->getX())
-                      << "_southWest:"                << DbU::getValueString(_southWestContact->getX()) << endl;
-
-          AutoContactTurn* turn1 = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-          AutoContactTurn* turn2 = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-          AutoSegment::create( _southWestContact, turn1, Flags::Vertical );
-          AutoSegment::create( turn1            , turn2, Flags::Horizontal );
-          _southWestContact = turn2;
-        }
-      }
-    } else if (west() and south()) {
-      AutoContact* rpContact = NULL;
-      doRp_AutoContacts( _gcell, rp, rpContact, unusedContact, DoSourceContact );
-      _southWestContact = AutoContactVTee::create( _gcell, _net, viaLayer1 );
-      AutoSegment::create( rpContact, _southWestContact, Flags::Vertical );
-    }
-
-    rp = _routingPads[_routingPads.size()-1];
-    if (east() and not north()) {
-      _northEastContact = doRp_Access( _gcell, rp, HAccess );
-    } else if (not east() and north()) {
-      doRp_AutoContacts( _gcell, rp, unusedContact, _northEastContact, DoTargetContact );
-      if (_sourceContact) {
-        if (_sourceContact->getX() != _northEastContact->getX()) {
-          cdebug_log(149,0) << "Misaligned North: _source:" << DbU::getValueString(_sourceContact->getX())
-                      << "_southWest:"                << DbU::getValueString(_northEastContact->getX()) << endl;
-
-          AutoContactTurn* turn1 = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-          AutoContactTurn* turn2 = AutoContactTurn::create( _gcell, _net, viaLayer1 );
-          AutoSegment::create( _northEastContact, turn1, Flags::Vertical   );
-          AutoSegment::create( turn1            , turn2, Flags::Horizontal );
-          _northEastContact = turn2;
-        }
-      }
-    } else if (east() and north()) {
-      AutoContact* rpContact = NULL;
-      doRp_AutoContacts( _gcell, rp, unusedContact, rpContact, DoTargetContact );
-      _northEastContact = AutoContactVTee::create( _gcell, _net, viaLayer1 );
-      AutoSegment::create( rpContact, _northEastContact, Flags::Vertical );
-    }
-
-    cdebug_tabw(145,-1);
+  
+  bool  NetBuilder::_do_globalSegment ()
+  {
+    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    return false;
   }
 
 
@@ -2744,6 +2113,10 @@ namespace Anabatic {
 
   //DebugSession::close();
   }
+
+
+  string  NetBuilder::getTypeName () const
+  { return "NetBuilder"; }
 
 
 } // Anabatic namespace.

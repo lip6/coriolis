@@ -29,6 +29,7 @@
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/Measures.h"
 #include "anabatic/GCell.h"
+#include "anabatic/NetBuilderM2.h"
 #include "anabatic/NetBuilderHV.h"
 #include "anabatic/AnabaticEngine.h"
 
@@ -729,24 +730,42 @@ namespace Anabatic {
     startMeasures();
     openSession();
 
-    for ( Net* net : getCell()->getNets() ) {
-      if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
-        DebugSession::open( net, 144, 160 );
-        AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
-        NetBuilder::load<NetBuilderHV>( this, net );
-        Session::revalidate();
-        DebugSession::close();
+    int gaugeKind = 3;
+    if (getConfiguration()->isTwoMetals()) gaugeKind = 0;
+    if (getConfiguration()->isHV       ()) gaugeKind = 1;
+    if (getConfiguration()->isVH       ()) gaugeKind = 2;
+
+    if (gaugeKind < 2) {
+      for ( Net* net : getCell()->getNets() ) {
+        if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
+          DebugSession::open( net, 144, 160 );
+          AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
+
+          switch ( gaugeKind ) {
+            case 0: NetBuilder::load<NetBuilderM2>( this, net ); break;
+            case 1: NetBuilder::load<NetBuilderHV>( this, net ); break;
+          //case 2: NetBuilder::load<NetBuilderVH>( this, net ); break;
+          }
+
+          Session::revalidate();
+          DebugSession::close();
+        }
       }
+      AutoSegment::setAnalogMode( false );
     }
-    AutoSegment::setAnalogMode( false );
 
 #if defined(CHECK_DATABASE)
     _check ( "after Anabatic loading" );
 #endif
 
     Session::close();
-
     stopMeasures();
+
+    if (gaugeKind > 1) {
+      throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing gauge \"%s\"."
+                 , getString(getConfiguration()->getRoutingGauge()->getName()).c_str() );
+    }
+    
     printMeasures( "load" );
 
     addMeasure<size_t>( getCell(), "Globals", AutoSegment::getGlobalsCount() );

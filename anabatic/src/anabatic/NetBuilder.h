@@ -29,6 +29,7 @@ namespace Hurricane {
 
 namespace Anabatic {
 
+  using std::string;
   using std::vector;
   using std::map;
   using std::endl;
@@ -99,6 +100,16 @@ namespace Anabatic {
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
                          };
+      enum TopologyFlag  { Global_Vertical_End   = 0x00000001
+                         , Global_Horizontal_End = 0x00000002
+                         , Global_Horizontal     = 0x00000004
+                         , Global_Vertical       = 0x00000008
+                         , Global_Turn           = 0x00000010
+                         , Global_Fork           = 0x00000020
+                         , Global_Fixed          = 0x00000040
+                         , Global_End            = Global_Vertical_End | Global_Horizontal_End
+                         , Global_Split          = Global_Horizontal | Global_Vertical | Global_Fork
+                         };
 
     // Connexity Union Type.
       enum ConnexityBits { GlobalBSize = 8
@@ -130,6 +141,7 @@ namespace Anabatic {
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
+      inline  unsigned int                  getDegree              () const;
       inline  void                          setDegree              ( unsigned int degree );
               void                          fixSegments            ();
               NetBuilder&                   startFrom              ( AnabaticEngine*
@@ -138,43 +150,63 @@ namespace Anabatic {
               void                          construct              ();
       inline  unsigned int                  getStateG              () const;
       inline  UConnexity                    getConnexity           () const;
+      inline  UConnexity&                   getConnexity           ();
       inline  Net*                          getNet                 () const;
       inline  GCell*                        getGCell               () const;
+      inline  AutoContact*                  getSourceContact       () const;
+      inline  AutoContact*                  getSouthWestContact    () const;
+      inline  AutoContact*&                 getSouthWestContact    ();
+      inline  AutoContact*                  getNorthEastContact    () const;
+      inline  AutoContact*&                 getNorthEastContact    ();
+      inline  Hook*                         getFromHook            () const;
       inline  ForkStack&                    getForks               ();
       inline  vector<RoutingPad*>&          getRoutingPads         ();
       inline  map<Component*,AutoSegment*>& getRpLookup            ();
       inline  unsigned int                  getTopology            () const;
+      inline  vector<Hook*>&                getNorths              ();
+      inline  vector<Hook*>&                getSouths              ();
       inline  Hook*                         north                  ( size_t i=0 ) const;
       inline  Hook*                         south                  ( size_t i=0 ) const;
       inline  Hook*                         east                   ( size_t i=0 ) const;
       inline  Hook*                         west                   ( size_t i=0 ) const;
+      inline  void                          addToNorths            ( Hook* );
+      inline  void                          addToSouths            ( Hook* );
+      inline  void                          addToEasts             ( Hook* );
+      inline  void                          addToWests             ( Hook* );
+      inline  void                          clearNorths            ();
+      inline  void                          clearSouths            ();
+      inline  void                          clearEasts             ();
+      inline  void                          clearWests             ();
+      inline  void                          setFromHook            ( Hook* );
+      inline  void                          setSouthWestContact    ( AutoContact* );
+      inline  void                          setNorthEastContact    ( AutoContact* );
       inline  void                          setBothCornerContacts  ( AutoContact* );
+      inline  void                          swapCornerContacts     ();
+      inline  void                          addToFixSegments       ( AutoSegment* );
               bool                          push                   ( Hook* to, AutoContact* contact, uint64_t flags=0 );
       virtual void                          doRp_AutoContacts      ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags ) = 0;
       virtual AutoContact*                  doRp_Access            ( GCell*, Component*, uint64_t  flags ) = 0;
       virtual AutoContact*                  doRp_AccessPad         ( RoutingPad*, uint64_t flags );
       virtual AutoContact*                  doRp_AccessAnalog      ( GCell*, RoutingPad*, uint64_t flags );
-              AutoContact*                  doRp_2m_Access         ( GCell*, RoutingPad*, uint64_t flags );
               void                          doRp_StairCaseH        ( GCell*, Component* rp1, Component* rp2 );
               void                          doRp_StairCaseV        ( GCell*, Component* rp1, Component* rp2 );
               void                          singleGCell            ( AnabaticEngine*, Net* );
               void                          _load                  ( AnabaticEngine*, Net* );
     private:                                                       
-              void                          _do_2m_1G_1M1          ();
-              void                          _do_2m_2G_1M1          ();
-              void                          _do_2m_xG              ();
-              void                          _do_xG                 ();
-              void                          _do_2G                 ();
-      virtual void                          _do_xG_1Pad            ();
-      virtual void                          _do_1G_1PinM2          ();
-      virtual void                          _do_1G_1M1             () = 0;
-      virtual void                          _do_1G_xM1             () = 0;
-      virtual void                          _do_xG_xM1_xM3         ();
-      virtual void                          _do_xG_1M1_1M2         ();
-      virtual void                          _do_4G_1M2             ();
-      virtual void                          _do_xG_xM2             ();
-      virtual void                          _do_1G_1M3             ();
-      virtual void                          _do_xG_xM3             ();
+      virtual bool                          _do_xG                 ();
+      virtual bool                          _do_2G                 ();
+      virtual bool                          _do_xG_1Pad            ();
+      virtual bool                          _do_1G_1PinM2          ();
+      virtual bool                          _do_1G_1M1             ();
+      virtual bool                          _do_2G_1M1             ();
+      virtual bool                          _do_1G_xM1             ();
+      virtual bool                          _do_xG_xM1_xM3         ();
+      virtual bool                          _do_xG_1M1_1M2         ();
+      virtual bool                          _do_4G_1M2             ();
+      virtual bool                          _do_xG_xM2             ();
+      virtual bool                          _do_1G_1M3             ();
+      virtual bool                          _do_xG_xM3             ();
+      virtual bool                          _do_globalSegment      ();
               AutoContact*                  _doHChannel            ();
               AutoContact*                  _doVChannel            ();
               AutoContact*                  _doStrut               ();
@@ -184,6 +216,7 @@ namespace Anabatic {
               void                          _doIoPad               ();
               unsigned int                  getNumberGlobals       ();
               unsigned int                  getDeviceNeighbourBound();
+      virtual string                        getTypeName            () const;
     private:
 
 #define CONNEXITY_VALUE( Gs, M1s, M2s, M3s, pads, pins )                 \
@@ -256,17 +289,6 @@ namespace Anabatic {
 
 #undef CONNEXITY_VALUE
 
-      enum TopologyFlag { Global_Vertical_End   = 0x00000001
-                        , Global_Horizontal_End = 0x00000002
-                        , Global_Horizontal     = 0x00000004
-                        , Global_Vertical       = 0x00000008
-                        , Global_Turn           = 0x00000010
-                        , Global_Fork           = 0x00000020
-                        , Global_Fixed          = 0x00000040
-                        , Global_End            = Global_Vertical_End | Global_Horizontal_End
-                        , Global_Split          = Global_Horizontal | Global_Vertical | Global_Fork
-                        };
-
     // Attributes.
     private:
              ForkStack                    _forks;
@@ -323,20 +345,43 @@ namespace Anabatic {
   };
 
 
+  inline unsigned int                  NetBuilder::getDegree              () const { return _degree; }
   inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }
+  inline NetBuilder::UConnexity&       NetBuilder::getConnexity           ()       { return _connexity; }
   inline ForkStack&                    NetBuilder::getForks               () { return _forks; }
   inline unsigned int                  NetBuilder::getStateG              () const { return _connexity.fields.globals; }
   inline GCell*                        NetBuilder::getGCell               () const { return _gcell; }
   inline Net*                          NetBuilder::getNet                 () const { return _net; }
+  inline AutoContact*                  NetBuilder::getSourceContact       () const { return _sourceContact; }
+  inline AutoContact*                  NetBuilder::getSouthWestContact    () const { return _southWestContact; }
+  inline AutoContact*&                 NetBuilder::getSouthWestContact    ()       { return _southWestContact; }
+  inline AutoContact*                  NetBuilder::getNorthEastContact    () const { return _northEastContact; }
+  inline AutoContact*&                 NetBuilder::getNorthEastContact    ()       { return _northEastContact; }
+  inline Hook*                         NetBuilder::getFromHook            () const { return _fromHook; }
   inline unsigned int                  NetBuilder::getTopology            () const { return _topology; }
   inline vector<RoutingPad*>&          NetBuilder::getRoutingPads         () { return _routingPads; }
   inline map<Component*,AutoSegment*>& NetBuilder::getRpLookup            () { return _routingPadAutoSegments; }
+  inline vector<Hook*>&                NetBuilder::getNorths              () { return _norths; }
+  inline vector<Hook*>&                NetBuilder::getSouths              () { return _souths; }
   inline Hook*                         NetBuilder::north                  ( size_t i ) const { return (i<_norths.size()) ? _norths[i] : NULL; }
   inline Hook*                         NetBuilder::south                  ( size_t i ) const { return (i<_souths.size()) ? _souths[i] : NULL; }
   inline Hook*                         NetBuilder::east                   ( size_t i ) const { return (i<_easts .size()) ? _easts [i] : NULL; }
   inline Hook*                         NetBuilder::west                   ( size_t i ) const { return (i<_wests .size()) ? _wests [i] : NULL; }
   inline void                          NetBuilder::setDegree              ( unsigned int degree ) { _degree = degree; }
+  inline void                          NetBuilder::setFromHook            ( Hook* hook ) { _fromHook = hook; }
   inline void                          NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _southWestContact = _northEastContact = ac; }
+  inline void                          NetBuilder::setSouthWestContact    ( AutoContact* ac ) { _southWestContact = ac; }
+  inline void                          NetBuilder::setNorthEastContact    ( AutoContact* ac ) { _northEastContact = ac; }
+  inline void                          NetBuilder::swapCornerContacts     () { std::swap( _southWestContact, _northEastContact ); }
+  inline void                          NetBuilder::addToFixSegments       ( AutoSegment* as ) { _toFixSegments.push_back(as); }
+  inline void                          NetBuilder::addToNorths            ( Hook* hook ) { _norths.push_back(hook); }
+  inline void                          NetBuilder::addToSouths            ( Hook* hook ) { _souths.push_back(hook); }
+  inline void                          NetBuilder::addToEasts             ( Hook* hook ) { _easts .push_back(hook); }
+  inline void                          NetBuilder::addToWests             ( Hook* hook ) { _wests .push_back(hook); }
+  inline void                          NetBuilder::clearNorths            () { _norths.clear(); }
+  inline void                          NetBuilder::clearSouths            () { _souths.clear(); }
+  inline void                          NetBuilder::clearEasts             () { _easts .clear(); }
+  inline void                          NetBuilder::clearWests             () { _wests .clear(); }
 
   template< typename BuilderT >
   void  NetBuilder::load ( AnabaticEngine* engine, Net* net ) {  BuilderT()._load(engine,net); }

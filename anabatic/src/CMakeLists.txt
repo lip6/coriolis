@@ -30,6 +30,7 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/AutoVertical.h
                                      anabatic/Session.h
                                      anabatic/NetBuilder.h
+                                     anabatic/NetBuilderM2.h
                                      anabatic/NetBuilderHV.h
                                      anabatic/ChipTools.h
                       )
@@ -53,6 +54,7 @@ endif ( CHECK_DETERMINISM )
                                      NetConstraints.cpp
                                      NetOptimals.cpp
                                      NetBuilder.cpp
+                                     NetBuilderM2.cpp
                                      NetBuilderHV.cpp
                                      ChipTools.cpp
                                      LayerAssign.cpp
