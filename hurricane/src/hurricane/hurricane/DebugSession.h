@@ -101,6 +101,8 @@ namespace Hurricane {
 
     _singleton->_levels.push( make_pair( cdebug.setMinLevel(minLevel)
                                        , cdebug.setMaxLevel(maxLevel) ) );
+
+  //std::cerr << "DebugSession::open() " << minLevel << ":" << maxLevel << std::endl;
   }
 
 
@@ -112,10 +114,13 @@ namespace Hurricane {
     if ( _singleton->_isTraced(symbol) ) {
       _singleton->_levels.push( make_pair( cdebug.setMinLevel(minLevel)
                                          , cdebug.setMaxLevel(maxLevel) ) );
-    //cerr << "DebugSession::open() " << symbol << "min:" << minLevel << " max:" <<  maxLevel << endl; 
+
+    //std::cerr << "DebugSession::open() " << symbol << " " << minLevel << ":" << maxLevel << std::endl;
     } else {
       _singleton->_levels.push ( make_pair( cdebug.getMinLevel()
                                           , cdebug.getMaxLevel() ) );
+
+    //std::cerr << "DebugSession::open() Same level " << minLevel << ":" << maxLevel << std::endl;
     }
   }
 
@@ -126,6 +131,8 @@ namespace Hurricane {
       cdebug.setMinLevel( _singleton->_levels.top().first  );
       cdebug.setMaxLevel( _singleton->_levels.top().second );
       _singleton->_levels.pop ();
+
+    //std::cerr << "DebugSession::close() " << cdebug.getMinLevel() << ":" << cdebug.getMaxLevel() << std::endl;
     }
   }
 

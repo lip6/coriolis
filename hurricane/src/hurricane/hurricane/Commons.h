@@ -947,9 +947,9 @@ class tstream : public std::ostream {
 
 inline tstream::tstream ( std::ostream& s )
   : std::ostream(s.rdbuf())
-  , _minLevel(0)
-  , _maxLevel(0)
-  , _level(0)
+  , _minLevel  (100000)
+  , _maxLevel  (0)
+  , _level     (0)
   , _tabulation("  ")
 { }  
 

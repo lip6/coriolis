@@ -427,7 +427,6 @@ template<class Element> class IntrusiveSet {
             newLength = min(_size / 5, (unsigned)512);
 
         if (newLength != _length) {
-            // cerr << "Resizing: " << this << " " << _length << " " << newLength << endl;
             unsigned oldLength = _length;
             Element** oldArray = _array;
             _length = newLength;
@@ -438,7 +437,7 @@ template<class Element> class IntrusiveSet {
             for (unsigned index = 0; index < oldLength; index++) {
                 Element* element = oldArray[index];
                 if (not element)
-                  cdebug_log(0,0) << "| bucket:" << setw(4) << index << " empty" << endl;
+                  cdebug_log(0,0) << "| bucket:" << tsetw(4) << index << " empty" << endl;
 
                 while (element) {
                     Element* nextElement = _getNextElement(element);
@@ -447,8 +446,8 @@ template<class Element> class IntrusiveSet {
                     _array[newIndex] = element;
                     element = nextElement;
 
-                    cdebug_log(0,0) << "| bucket:" << setw(4) << index
-                                    << " -> " << setw(4) << newIndex
+                    cdebug_log(0,0) << "| bucket:" << tsetw(4) << index
+                                    << " -> " << tsetw(4) << newIndex
                                     << " + " << element << endl;
                 }
             }

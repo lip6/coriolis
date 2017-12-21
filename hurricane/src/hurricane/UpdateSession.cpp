@@ -147,7 +147,7 @@ void UpdateSession::onNotOwned()
 void Go::invalidate(bool propagateFlag)
 // ************************************
 {
-  cdebug_log(18,1) << "Go::invalidate(" << this << ")" << endl;
+  cdebug_log(18,1) << "Go::invalidate(" << this << ") " << endl;
 
   if (not UPDATOR_STACK or UPDATOR_STACK->empty())
     throw Error( "Can't invalidate go: empty update session stack" );
