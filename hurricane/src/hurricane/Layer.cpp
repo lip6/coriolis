@@ -55,7 +55,7 @@ namespace Hurricane {
                  , _minimalSize(minimalSize)
                  , _minimalSpacing(minimalSpacing)
                  , _nextOfTechnologyLayerMap(NULL)
-                 , _working(false)
+                 , _symbolic(false)
   {
     if ( !_technology )
       throw Error ( "Can't create " + _TName("Layer") + " : null technology" );
@@ -84,20 +84,20 @@ namespace Hurricane {
   { return NULL; } 
 
 
-  Layer* Layer::getMetalAbove ( bool useWorking ) const
-  { return _technology->getMetalAbove(this,useWorking); }
+  Layer* Layer::getMetalAbove ( bool useSymbolic ) const
+  { return _technology->getMetalAbove(this,useSymbolic); }
 
 
-  Layer* Layer::getMetalBelow ( bool useWorking ) const
-  { return _technology->getMetalBelow(this,useWorking); }
+  Layer* Layer::getMetalBelow ( bool useSymbolic ) const
+  { return _technology->getMetalBelow(this,useSymbolic); }
 
 
-  Layer* Layer::getCutAbove ( bool useWorking ) const
-  { return _technology->getCutAbove(this,useWorking); }
+  Layer* Layer::getCutAbove ( bool useSymbolic ) const
+  { return _technology->getCutAbove(this,useSymbolic); }
 
 
-  Layer* Layer::getCutBelow ( bool useWorking ) const
-  { return _technology->getCutBelow(this,useWorking); }
+  Layer* Layer::getCutBelow ( bool useSymbolic ) const
+  { return _technology->getCutBelow(this,useSymbolic); }
 
 
   DbU::Unit  Layer::getEnclosure () const
@@ -246,7 +246,7 @@ namespace Hurricane {
     jsonWrite( writer, "_extractMask"   , getString(_extractMask) );
     jsonWrite( writer, "_minimalSize"   , _minimalSize            );
     jsonWrite( writer, "_minimalSpacing", _minimalSpacing         );
-    jsonWrite( writer, "_working"       , _working                );
+    jsonWrite( writer, "_symbolic"      , _symbolic               );
   }
 
 
@@ -261,7 +261,7 @@ namespace Hurricane {
     add( "_extractMask"   , typeid(string)   );
     add( "_minimalSize"   , typeid(uint64_t) );
     add( "_minimalSpacing", typeid(uint64_t) );
-    add( "_working"       , typeid(uint64_t) );
+    add( "_symbolic"      , typeid(uint64_t) );
   }
 
 

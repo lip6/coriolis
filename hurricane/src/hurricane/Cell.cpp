@@ -837,6 +837,7 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     Net* net = static_cast<Net*>(occurrence.getEntity());
 
     if (net->isClock() and (flags & Flags::NoClockFlatten)) continue;
+    if (net->isPower() or net->isGround() or net->isBlockage()) continue;
 
     HyperNet  hyperNet ( occurrence );
     if ( not occurrence.getPath().isEmpty() ) {

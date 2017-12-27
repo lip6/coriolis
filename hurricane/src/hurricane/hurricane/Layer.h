@@ -68,10 +68,10 @@ namespace Hurricane {
       virtual const Layer*      getTop                       () const;
       virtual const Layer*      getBottom                    () const;
       virtual const Layer*      getOpposite                  ( const Layer* ) const;
-              Layer*            getMetalAbove                ( bool useWorking=true ) const;
-              Layer*            getMetalBelow                ( bool useWorking=true ) const;
-              Layer*            getCutAbove                  ( bool useWorking=true ) const;
-              Layer*            getCutBelow                  ( bool useWorking=true ) const;
+              Layer*            getMetalAbove                ( bool useSymbolic=true ) const;
+              Layer*            getMetalBelow                ( bool useSymbolic=true ) const;
+              Layer*            getCutAbove                  ( bool useSymbolic=true ) const;
+              Layer*            getCutBelow                  ( bool useSymbolic=true ) const;
       virtual DbU::Unit         getEnclosure                 () const;
       virtual DbU::Unit         getExtentionCap              () const;
       virtual DbU::Unit         getExtentionWidth            () const;
@@ -83,10 +83,10 @@ namespace Hurricane {
       inline  bool              below                        ( const Layer* layer ) const;
               bool              contains                     ( const Layer* layer ) const;
               bool              intersect                    ( const Layer* layer ) const;
-      inline  bool              isWorking                    () const;
+      inline  bool              isSymbolic                   () const;
     // Updators
               void              setName                      ( const Name& name );
-      inline  void              setWorking                   ( bool );
+      inline  void              setSymbolic                  ( bool );
               void              setMinimalSize               ( const DbU::Unit& minimalSize );
               void              setMinimalSpacing            ( const DbU::Unit& minimalSpacing );
       virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit );
@@ -112,7 +112,7 @@ namespace Hurricane {
               DbU::Unit         _minimalSize;
               DbU::Unit         _minimalSpacing;
               Layer*            _nextOfTechnologyLayerMap;
-              bool              _working;
+              bool              _symbolic;
 
     protected:
     // Internal: Constructors & Destructors.
@@ -133,7 +133,7 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline  bool                Layer::isWorking                    () const { return _working; }
+  inline  bool                Layer::isSymbolic                   () const { return _symbolic; }
   inline  bool                Layer::above                        ( const Layer* layer ) const { return _mask > layer->getMask(); }
   inline  bool                Layer::below                        ( const Layer* layer ) const { return _mask < layer->getMask(); }
   inline  Technology*         Layer::getTechnology                () const { return _technology; }
@@ -142,7 +142,7 @@ namespace Hurricane {
   inline  const Layer::Mask&  Layer::getExtractMask               () const { return _extractMask; }
   inline  const DbU::Unit&    Layer::getMinimalSize               () const { return _minimalSize; }
   inline  const DbU::Unit&    Layer::getMinimalSpacing            () const { return _minimalSpacing; }
-  inline  void                Layer::setWorking                   ( bool state ) { _working = state; }
+  inline  void                Layer::setSymbolic                  ( bool state ) { _symbolic = state; }
   inline  Layer*              Layer::_getNextOfTechnologyLayerMap () const { return _nextOfTechnologyLayerMap; }
   inline  void                Layer::_setMask                     ( const Mask& mask ) { _mask = mask; }
   inline  void                Layer::_setExtractMask              ( const Mask& extractMask ) { _extractMask = extractMask; }

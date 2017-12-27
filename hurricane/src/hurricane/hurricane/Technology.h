@@ -90,18 +90,18 @@ namespace Hurricane {
               BasicLayers    getBasicLayers          ( const Layer::Mask& ) const;
               RegularLayers  getRegularLayers        () const;
               ViaLayers      getViaLayers            () const;
-              Layer*         getLayer                ( const Layer::Mask&, bool useWorking=true ) const;
-              Layer*         getMetalAbove           ( const Layer*, bool useWorking=true ) const;
-              Layer*         getMetalBelow           ( const Layer*, bool useWorking=true ) const;
-              Layer*         getCutAbove             ( const Layer*, bool useWorking=true ) const;
-              Layer*         getCutBelow             ( const Layer*, bool useWorking=true ) const;
-              Layer*         getViaBetween           ( const Layer*, const Layer* ) const;
+              Layer*         getLayer                ( const Layer::Mask&, bool useSymbolic=true ) const;
+              Layer*         getMetalAbove           ( const Layer*, bool useSymbolic=true ) const;
+              Layer*         getMetalBelow           ( const Layer*, bool useSymbolic=true ) const;
+              Layer*         getCutAbove             ( const Layer*, bool useSymbolic=true ) const;
+              Layer*         getCutBelow             ( const Layer*, bool useSymbolic=true ) const;
+              Layer*         getViaBetween           ( const Layer*, const Layer*, bool useSymbolic=true ) const;
               Layer*         getNthMetal             ( int ) const;
               Layer*         getNthCut               ( int ) const;
     // Updators.
               void           setName                 ( const Name& );
-              bool           setWorkingLayer         ( const Name& );
-              bool           setWorkingLayer         ( const Layer* );
+              bool           setSymbolicLayer        ( const Name& );
+              bool           setSymbolicLayer        ( const Layer* );
     // Others.
       inline  LayerMap&      _getLayerMap            ();
       inline  LayerMaskMap&  _getLayerMaskMap        ();

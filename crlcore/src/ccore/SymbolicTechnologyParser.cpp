@@ -537,34 +537,27 @@ namespace CRL {
   void  SymbolicTechnologyParser::_postLoad ()
   {
   // Fixme.
-    _technology->setWorkingLayer ( "cut0" );
-    _technology->setWorkingLayer ( "cut1" );
-    _technology->setWorkingLayer ( "cut2" );
-    _technology->setWorkingLayer ( "cut3" );
-    _technology->setWorkingLayer ( "cut4" );
-    _technology->setWorkingLayer ( "cut5" );
-    _technology->setWorkingLayer ( "gcut" );
-    _technology->setWorkingLayer ( "POLY" );
-    _technology->setWorkingLayer ( "METAL1" );
-    _technology->setWorkingLayer ( "METAL2" );
-    _technology->setWorkingLayer ( "METAL3" );
-    _technology->setWorkingLayer ( "METAL4" );
-    _technology->setWorkingLayer ( "METAL5" );
-    _technology->setWorkingLayer ( "METAL6" );
-    _technology->setWorkingLayer ( "BLOCKAGE1" );
-    _technology->setWorkingLayer ( "BLOCKAGE2" );
-    _technology->setWorkingLayer ( "BLOCKAGE3" );
-    _technology->setWorkingLayer ( "BLOCKAGE4" );
-    _technology->setWorkingLayer ( "BLOCKAGE5" );
-    _technology->setWorkingLayer ( "BLOCKAGE6" );
-    _technology->setWorkingLayer ( "gmetalh" );
-    _technology->setWorkingLayer ( "gmetalv" );
-    _technology->setWorkingLayer ( "VIA12" );
-    _technology->setWorkingLayer ( "VIA23" );
-    _technology->setWorkingLayer ( "VIA34" );
-    _technology->setWorkingLayer ( "VIA45" );
-    _technology->setWorkingLayer ( "VIA56" );
-    _technology->setWorkingLayer ( "gcontact" );
+    _technology->setSymbolicLayer ( "POLY" );
+    _technology->setSymbolicLayer ( "METAL1" );
+    _technology->setSymbolicLayer ( "METAL2" );
+    _technology->setSymbolicLayer ( "METAL3" );
+    _technology->setSymbolicLayer ( "METAL4" );
+    _technology->setSymbolicLayer ( "METAL5" );
+    _technology->setSymbolicLayer ( "METAL6" );
+    _technology->setSymbolicLayer ( "BLOCKAGE1" );
+    _technology->setSymbolicLayer ( "BLOCKAGE2" );
+    _technology->setSymbolicLayer ( "BLOCKAGE3" );
+    _technology->setSymbolicLayer ( "BLOCKAGE4" );
+    _technology->setSymbolicLayer ( "BLOCKAGE5" );
+    _technology->setSymbolicLayer ( "BLOCKAGE6" );
+    _technology->setSymbolicLayer ( "gmetalh" );
+    _technology->setSymbolicLayer ( "gmetalv" );
+    _technology->setSymbolicLayer ( "VIA12" );
+    _technology->setSymbolicLayer ( "VIA23" );
+    _technology->setSymbolicLayer ( "VIA34" );
+    _technology->setSymbolicLayer ( "VIA45" );
+    _technology->setSymbolicLayer ( "VIA56" );
+    _technology->setSymbolicLayer ( "gcontact" );
   }
 
 

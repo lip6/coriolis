@@ -87,6 +87,7 @@ namespace {
       static       void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
       static       DbU::Unit          getCoreSiteX             ();
       static       DbU::Unit          getCoreSiteY             ();
+      inline       DbU::Unit          getMinTerminalWidth      () const;
       inline       double             getUnitsMicrons          () const;
       inline       DbU::Unit          fromUnitsMicrons         ( double ) const;
       inline       void               setUnitsMicrons          ( double );
@@ -122,11 +123,13 @@ namespace {
                    int                 _nthCut;
                    RoutingGauge*       _routingGauge;
                    CellGauge*          _cellGauge;
+                   DbU::Unit           _minTerminalWidth;
       static       DbU::Unit           _coreSiteX;
       static       DbU::Unit           _coreSiteY;
   };
 
 
+  inline       DbU::Unit       LefParser::getMinTerminalWidth      () const { return _minTerminalWidth; }
   inline       string          LefParser::getLibraryName           () const { return _libraryName; }
   inline       Library*        LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
   inline       Cell*           LefParser::getCell                  () const { return _cell; }
@@ -184,18 +187,19 @@ namespace {
 
 
   LefParser::LefParser ( string file, string libraryName )
-    : _file        (file)
-    , _libraryName (libraryName)
-    , _library     (NULL)
-    , _cell        (NULL)
-    , _net         (NULL)
-    , _busBits     ("()")
-    , _unitsMicrons(0.01)
-    , _errors      ()
-    , _nthMetal    (0)
-    , _nthCut      (0)
-    , _routingGauge(NULL)
-    , _cellGauge   (NULL)
+    : _file            (file)
+    , _libraryName     (libraryName)
+    , _library         (NULL)
+    , _cell            (NULL)
+    , _net             (NULL)
+    , _busBits         ("()")
+    , _unitsMicrons    (0.01)
+    , _errors          ()
+    , _nthMetal        (0)
+    , _nthCut          (0)
+    , _routingGauge    (NULL)
+    , _cellGauge       (NULL)
+    , _minTerminalWidth(DbU::fromPhysical(0.9,DbU::UnitPower::Micro))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
@@ -364,8 +368,10 @@ namespace {
           Cell*  cell        = parser->getCell();
           Net*   blockageNet = cell->getNet( "blockage" );
 
-    if (not blockageNet)
+    if (not blockageNet) {
       blockageNet = Net::create( cell, "blockage" );
+      blockageNet->setType( Net::Type::BLOCKAGE );
+    }
       
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
@@ -472,26 +478,29 @@ namespace {
           continue;
         }
         if (geoms->itemType(igeom) == lefiGeomRectE) {
-          lefiGeomRect* r         = geoms->getRect(igeom);
-          double        w         = r->xh - r->xl;
-          double        h         = r->yh - r->yl;
-          Component*    component = NULL;
+          lefiGeomRect* r          = geoms->getRect(igeom);
+          DbU::Unit     w          = parser->fromUnitsMicrons(r->xh - r->xl);
+          DbU::Unit     h          = parser->fromUnitsMicrons(r->yh - r->yl);
+          Component*    component  = NULL;
+          bool          isExternal = false;
           if (w >= h) {
+            isExternal = (h >= parser->getMinTerminalWidth());
             component = Horizontal::create( net, layer
                                           , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                          , parser->fromUnitsMicrons( h  )
+                                          , h
                                           , parser->fromUnitsMicrons( r->xl )
                                           , parser->fromUnitsMicrons( r->xh )
                                           );
           } else {
+            isExternal = (w >= parser->getMinTerminalWidth());
             component = Vertical::create( net, layer
                                         , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                        , parser->fromUnitsMicrons( w  )
+                                        , w
                                         , parser->fromUnitsMicrons( r->yl )
                                         , parser->fromUnitsMicrons( r->yh )
                                         );
           }
-          NetExternalComponents::setExternal( component );
+          if (isExternal) NetExternalComponents::setExternal( component );
           continue;
         }
 

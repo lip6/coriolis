@@ -150,16 +150,6 @@ Technology* Technology::create(DataBase* dataBase, const Name& name)
     return technology;
 }
 
-// Layer* Technology::getLayer ( Layer::Mask mask ) const
-// // ***************************************************
-// {
-//   LayerMaskMap::const_iterator ilayer = _layerMaskMap.find(mask);
-//   if ( ilayer == _layerMaskMap.end() )
-//     return NULL;
-
-//   return ilayer->second;
-// }
-
 BasicLayer* Technology::getBasicLayer(const Name& name) const
 // **********************************************************
 {
@@ -195,97 +185,107 @@ BasicLayers Technology::getBasicLayers(const Layer::Mask& mask) const
 }
 
 RegularLayers Technology::getRegularLayers() const
-// ***************************************************
+// ***********************************************
 {
     return SubTypeCollection<Layer*, RegularLayer*>(getLayers());
 }
 
 ViaLayers Technology::getViaLayers() const
-// ***************************************************
+// ***************************************
 {
     return SubTypeCollection<Layer*, ViaLayer*>(getLayers());
 }
 
 
-  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useWorking ) const
+  Layer* Technology::getLayer ( const Layer::Mask& mask, bool useSymbolic ) const
   {
-    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( mask );
-    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( mask );
+    Layer* layer = NULL;
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( mask );
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( mask );
     for ( ; lb != ub ; lb++ ) {
-      if ( !useWorking || lb->second->isWorking() ) return lb->second;
+      layer = lb->second;
+      if (not useSymbolic or layer->isSymbolic()) return layer;
     }
-    return NULL;
+    return layer;
   }
 
 
-  Layer* Technology::getMetalAbove ( const Layer* layer, bool useWorking ) const
+  Layer* Technology::getMetalAbove ( const Layer* layer, bool useSymbolic ) const
   {
-    if ( !layer ) return NULL;
+    if (not layer) return NULL;
 
-    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+    Layer* above = NULL;
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( layer->getMask() );
     for ( ; ub != _layerMaskMap.end() ; ub++ ) {
-      if (    _metalMask.contains(ub->second->getMask())
-         && ( !useWorking || ub->second->isWorking() ) )
-        return ub->second;
+      if (_metalMask.contains(ub->second->getMask())) {
+        above = ub->second;
+        if (not useSymbolic or above->isSymbolic()) return above;
+      }
     }
-    return NULL;
+    return above;
   }
 
 
-  Layer* Technology::getMetalBelow ( const Layer* layer, bool useWorking ) const
+  Layer* Technology::getMetalBelow ( const Layer* layer, bool useSymbolic ) const
   {
-    if ( !layer ) return NULL;
+    if (not layer) return NULL;
 
-    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
-    if ( lb->second == layer ) lb--;
+    Layer* below = NULL;
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( layer->getMask() );
+    if (lb->second->getMask() == layer->getMask()) lb--;
     for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
-      if (    _metalMask.contains(lb->second->getMask())
-         && ( !useWorking || lb->second->isWorking() ) )
-        return lb->second;
+      if (_metalMask.contains(lb->second->getMask())) {
+        below = lb->second;
+        if (not useSymbolic or below->isSymbolic()) return below;
+      }
     }
-    return NULL;
+    return below;
   }
 
 
-  Layer* Technology::getCutAbove ( const Layer* layer, bool useWorking ) const
+  Layer* Technology::getCutAbove ( const Layer* layer, bool useSymbolic ) const
   {
-    if ( !layer ) return NULL;
+    if (not layer) return NULL;
 
-    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+    Layer* cut = NULL;
+    LayerMaskMap::const_iterator ub = _layerMaskMap.upper_bound( layer->getMask() );
     for ( ; ub != _layerMaskMap.end() ; ub++ ) {
-      if (    _cutMask.contains(ub->second->getMask())
-         && ( !useWorking || ub->second->isWorking() ) )
-        return ub->second;
+      if (_cutMask.contains(ub->second->getMask())) {
+        cut = ub->second;
+        if (not useSymbolic or cut->isSymbolic()) return cut;
+      }
     }
-    return NULL;
+    return cut;
   }
 
 
-  Layer* Technology::getCutBelow ( const Layer* layer, bool useWorking ) const
+  Layer* Technology::getCutBelow ( const Layer* layer, bool useSymbolic ) const
   {
-    if ( !layer ) return NULL;
+    if (not layer) return NULL;
 
-    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
-    if ( lb->second == layer ) lb--;
+    Layer* cut = NULL;
+    LayerMaskMap::const_iterator lb = _layerMaskMap.lower_bound( layer->getMask() );
+    if (lb->second->getMask() == layer->getMask()) lb--;
     for ( ; lb != _layerMaskMap.begin() ; lb-- ) {
-      if (    _cutMask.contains(lb->second->getMask())
-         && ( !useWorking || lb->second->isWorking() ) )
-        return lb->second;
+      if (_cutMask.contains(lb->second->getMask())) {
+        cut = lb->second;
+        if (not useSymbolic or cut->isSymbolic()) return cut;
+      }
     }
-    return NULL;
+    return cut;
   }
 
 
-  Layer* Technology::getViaBetween ( const Layer* metal1, const Layer* metal2 ) const
+  Layer* Technology::getViaBetween ( const Layer* metal1, const Layer* metal2, bool useSymbolic ) const
   {
-    if ( !metal1 || !metal2 ) return NULL;
-    if (  metal1 ==  metal2 ) return const_cast<Layer*>(metal1);
-    if ( metal1->above(metal2) ) swap ( metal1, metal2 );
+    if (not metal1 or not metal2) return NULL;
+    if (metal1 ==  metal2) return const_cast<Layer*>(metal1);
+    if (metal1->above(metal2)) swap( metal1, metal2 );
 
-    Layer* cutLayer = getCutBelow ( metal2 );
-    if ( !cutLayer ) return NULL;
+    Layer* cutLayer = getCutBelow( metal2, false );
+    if (not cutLayer) return NULL;
 
-    return getLayer ( metal1->getMask() | metal2->getMask() | cutLayer->getMask() ); 
+    return getLayer( metal1->getMask() | metal2->getMask() | cutLayer->getMask(), useSymbolic ); 
   }
 
 
@@ -316,26 +316,26 @@ void Technology::setName(const Name& name)
 }
 
 
-  bool  Technology::setWorkingLayer ( const Name& name )
+  bool  Technology::setSymbolicLayer ( const Name& name )
   {
-    Layer* layer = getLayer ( name );
-    if ( !layer ) return false;
+    Layer* layer = getLayer( name );
+    if (not layer) return false;
 
-    return setWorkingLayer ( layer );
+    return setSymbolicLayer( layer );
   }
 
 
-  bool  Technology::setWorkingLayer ( const Layer* layer )
+  bool  Technology::setSymbolicLayer ( const Layer* layer )
   {
     bool  found = false;
-    LayerMaskMap::iterator lb = _layerMaskMap.lower_bound ( layer->getMask() );
-    LayerMaskMap::iterator ub = _layerMaskMap.upper_bound ( layer->getMask() );
+    LayerMaskMap::iterator lb = _layerMaskMap.lower_bound( layer->getMask() );
+    LayerMaskMap::iterator ub = _layerMaskMap.upper_bound( layer->getMask() );
     for ( ; lb != ub ; lb++ ) {
-      if ( lb->second == layer ) {
-        lb->second->setWorking ( true );
+      if (lb->second == layer) {
+        lb->second->setSymbolic( true );
         found = true;
       } else
-        lb->second->setWorking ( false );
+        lb->second->setSymbolic( false );
     }
     return found;
   }

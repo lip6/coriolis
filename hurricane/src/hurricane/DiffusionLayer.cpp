@@ -293,7 +293,7 @@ namespace Hurricane {
       string       smask            = get<string> ( stack, "_mask"           );
     //DbU::Unit    minimalSize      = get<int64_t>( stack, "_minimalSize"    );
     //DbU::Unit    minimalSpacing   = get<int64_t>( stack, "_minimalSpacing" );
-      bool         isWorking        = get<bool>   ( stack, "_working"        );
+      bool         isSymbolic       = get<bool>   ( stack, "_symbolic"       );
                                     
       BasicLayer*  active           = techno->getBasicLayer( get<string>(stack,"_active"    ) );
       BasicLayer*  diffusion        = techno->getBasicLayer( get<string>(stack,"_diffusion" ) );
@@ -315,7 +315,7 @@ namespace Hurricane {
                                       , diffusion
                                       , well
                                       );
-        layer->setWorking       ( isWorking );
+        layer->setSymbolic      ( isSymbolic );
         layer->setExtentionCap  ( active   , eCapActive      );
         layer->setExtentionCap  ( diffusion, eCapDiffusion   );
         layer->setExtentionWidth( active   , eWidthActive    );

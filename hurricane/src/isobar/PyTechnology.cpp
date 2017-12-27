@@ -134,8 +134,8 @@ extern "C" {
       if (PyString_Check(arg0)) {
         layer = techno->getLayer(Name(PyString_AsString(arg0)));
       } else if (IsPyLayerMask(arg0)) {
-        bool useWorking = (arg1 != NULL) ? PyObject_IsTrue(arg1) : true;
-        layer = techno->getLayer(PYLAYERMASK_O(arg0), useWorking);
+        bool useSymbolic = (arg1 != NULL) ? PyObject_IsTrue(arg1) : true;
+        layer = techno->getLayer(PYLAYERMASK_O(arg0), useSymbolic);
       } else {
         PyErr_SetString(ConstructorError, "invalid number of parameters for getLayer.");
         return NULL;
@@ -188,26 +188,26 @@ extern "C" {
   }
 
 
-  static PyObject* PyTechnology_setWorkingLayer ( PyTechnology *self, PyObject* args ) {
-    cdebug_log(20,0) << "Technology.setWorkingLayer()" << endl;
+  static PyObject* PyTechnology_setSymbolicLayer ( PyTechnology *self, PyObject* args ) {
+    cdebug_log(20,0) << "Technology.setSymbolicLayer()" << endl;
 
-    METHOD_HEAD("Technology.setWorkingLayer()")
+    METHOD_HEAD("Technology.setSymbolicLayer()")
 
     bool rvalue = false;
 
     HTRY
     PyObject* arg0 = NULL;
-    if (PyArg_ParseTuple(args,"O:Technology.setWorkingLayer", &arg0)) {
+    if (PyArg_ParseTuple(args,"O:Technology.setSymbolicLayer", &arg0)) {
       if (PyString_Check(arg0)) {
-        rvalue = techno->setWorkingLayer(Name(PyString_AsString(arg0)));
+        rvalue = techno->setSymbolicLayer(Name(PyString_AsString(arg0)));
       } else if (IsPyLayer(arg0)) {
-        rvalue = techno->setWorkingLayer(PYLAYER_O(arg0));
+        rvalue = techno->setSymbolicLayer(PYLAYER_O(arg0));
       } else {
-        PyErr_SetString(ConstructorError, "Hurricane.setWorkingLayer(): Invalid number of parameters.");
+        PyErr_SetString(ConstructorError, "Hurricane.setSymbolicLayer(): Invalid number of parameters.");
         return NULL;
       }
     } else {
-      PyErr_SetString(ConstructorError, "Hurricane.setWorkingLayer(): Bad parameter type.");
+      PyErr_SetString(ConstructorError, "Hurricane.setSymbolicLayer(): Bad parameter type.");
       return NULL;
     }
     HCATCH
@@ -218,21 +218,21 @@ extern "C" {
 
 
   // Standart Accessors (Attributes).
-  GetNameMethod                (Technology,techno)
-  SetNameMethod                (Technology,techno)
-  predicateFromLayer           (isMetal         ,PyTechnology,Technology)
-  accessorAnyLayerFromName     (getBasicLayer   ,PyTechnology,Technology,BasicLayer  )
-  accessorAnyLayerFromName     (getRegularLayer ,PyTechnology,Technology,RegularLayer)
-  accessorAnyLayerFromName     (getViaLayer     ,PyTechnology,Technology,ViaLayer    )
-  accessorCollectionFromVoid   (getLayers       ,PyTechnology,Technology,Layer       )
-  accessorCollectionFromVoid   (getRegularLayers,PyTechnology,Technology,RegularLayer)
-  accessorCollectionFromVoid   (getViaLayers    ,PyTechnology,Technology,ViaLayer    )
-  accessorLayerFromLayerOptBool(getMetalAbove   ,PyTechnology,Technology)
-  accessorLayerFromLayerOptBool(getMetalBelow   ,PyTechnology,Technology)
-  accessorLayerFromLayerOptBool(getCutAbove     ,PyTechnology,Technology)
-  accessorLayerFromLayerOptBool(getCutBelow     ,PyTechnology,Technology)
-  accessorLayerFromLayerLayer  (getViaBetween   ,PyTechnology,Technology)
-  accessorLayerFromInt         (getNthMetal     ,PyTechnology,Technology)
+  GetNameMethod                     (Technology,techno)
+  SetNameMethod                     (Technology,techno)
+  predicateFromLayer                (isMetal         ,PyTechnology,Technology)
+  accessorAnyLayerFromName          (getBasicLayer   ,PyTechnology,Technology,BasicLayer  )
+  accessorAnyLayerFromName          (getRegularLayer ,PyTechnology,Technology,RegularLayer)
+  accessorAnyLayerFromName          (getViaLayer     ,PyTechnology,Technology,ViaLayer    )
+  accessorCollectionFromVoid        (getLayers       ,PyTechnology,Technology,Layer       )
+  accessorCollectionFromVoid        (getRegularLayers,PyTechnology,Technology,RegularLayer)
+  accessorCollectionFromVoid        (getViaLayers    ,PyTechnology,Technology,ViaLayer    )
+  accessorLayerFromLayerOptBool     (getMetalAbove   ,PyTechnology,Technology)
+  accessorLayerFromLayerOptBool     (getMetalBelow   ,PyTechnology,Technology)
+  accessorLayerFromLayerOptBool     (getCutAbove     ,PyTechnology,Technology)
+  accessorLayerFromLayerOptBool     (getCutBelow     ,PyTechnology,Technology)
+  accessorLayerFromLayerLayerOptBool(getViaBetween   ,PyTechnology,Technology)
+  accessorLayerFromInt              (getNthMetal     ,PyTechnology,Technology)
 
   // Standard destroy (Attribute).
   DBoDestroyAttribute(PyTechnology_destroy, PyTechnology)
@@ -280,8 +280,8 @@ extern "C" {
                             , "Returns Nth metal (zero is nearest substrate)." }
     , { "setName"           , (PyCFunction)PyTechnology_setName         , METH_VARARGS
                             , "Allows to change the technology name." }
-    , { "setWorkingLayer"   , (PyCFunction)PyTechnology_setWorkingLayer , METH_VARARGS
-                            , "Mark a Layer as the working one (by name or by Layer)." }
+    , { "setSymbolicLayer"  , (PyCFunction)PyTechnology_setSymbolicLayer, METH_VARARGS
+                            , "Mark a Layer as the symbolic one (by name or by Layer)." }
     , { "destroy"           , (PyCFunction)PyTechnology_destroy         , METH_NOARGS
                             , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL} /* sentinel */

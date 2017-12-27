@@ -51,7 +51,7 @@ def Alliance ( db ):
     print "    Minimal spacing :", DbU.toLambda(rlayer.getMinimalSpacing())
     print "    Pitch           :", DbU.toLambda(rlayer.getPitch())
     print "    Cut above       :", rlayer.getCutAbove()
-    print "    isWorking       :", rlayer.isWorking()
+    print "    isSymbolic      :", rlayer.isSymbolic()
 
     dlayer = technology.getLayer('NDIF')
     print 'NDIF', dlayer.getMask()

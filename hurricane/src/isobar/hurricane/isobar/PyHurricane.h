@@ -457,9 +457,9 @@ extern "C" {
     HTRY                                                                                \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
                                                                                         \
-    PyObject* arg0       = NULL;                                                        \
-    PyObject* arg1       = NULL;                                                        \
-    bool      useWorking = true;                                                        \
+    PyObject* arg0        = NULL;                                                       \
+    PyObject* arg1        = NULL;                                                       \
+    bool      useSymbolic = true;                                                       \
                                                                                         \
     if (PyArg_ParseTuple( args, "O|O:"#SELF_TYPE"."#FUNC_NAME"()", &arg0, &arg1)) {     \
       if (not IsPyLayer(arg0)) {                                                        \
@@ -468,14 +468,14 @@ extern "C" {
         return NULL;                                                                    \
       }                                                                                 \
       if (arg1 != NULL) {                                                               \
-        useWorking = PyObject_IsTrue(arg1);                                             \
+        useSymbolic = PyObject_IsTrue(arg1);                                            \
       }                                                                                 \
     } else {                                                                            \
       PyErr_SetString ( ConstructorError                                                \
                       , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
       return NULL;                                                                      \
     }                                                                                   \
-    rlayer = const_cast<Layer*>(cobject->FUNC_NAME( PYLAYER_O(arg0), useWorking) );     \
+    rlayer = const_cast<Layer*>(cobject->FUNC_NAME( PYLAYER_O(arg0), useSymbolic) );    \
     HCATCH                                                                              \
                                                                                         \
     if (rlayer == NULL) Py_RETURN_NONE;                                                 \
@@ -508,6 +508,43 @@ extern "C" {
       return NULL;                                                                       \
     }                                                                                    \
     rlayer = const_cast<Layer*>(cobject->FUNC_NAME( PYLAYER_O(arg0), PYLAYER_O(arg1)) ); \
+    HCATCH                                                                               \
+                                                                                         \
+    if (rlayer == NULL) Py_RETURN_NONE;                                                  \
+    return PyLayer_LinkDerived(rlayer);                                                  \
+  }
+
+
+# define  accessorLayerFromLayerLayerOptBool(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)           \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
+  {                                                                                      \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                       \
+                                                                                         \
+    Layer* rlayer = NULL;                                                                \
+                                                                                         \
+    HTRY                                                                                 \
+    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
+                                                                                         \
+    PyObject* arg0        = NULL;                                                        \
+    PyObject* arg1        = NULL;                                                        \
+    PyObject* arg2        = NULL;                                                        \
+    bool      useSymbolic = true;                                                        \
+                                                                                         \
+    if (PyArg_ParseTuple( args, "OO|O:"#SELF_TYPE"."#FUNC_NAME"()", &arg0, &arg1, &arg2)) { \
+      if (not IsPyLayer(arg0) or not IsPyLayer(arg1)) {                                  \
+        PyErr_SetString ( ConstructorError                                               \
+                        , #SELF_TYPE"."#FUNC_NAME"(): First or second argument is not of Layer type." );  \
+        return NULL;                                                                     \
+      }                                                                                  \
+      if (arg2 != NULL) {                                                                \
+        useSymbolic = PyObject_IsTrue(arg2);                                             \
+      }                                                                                  \
+    } else {                                                                             \
+      PyErr_SetString ( ConstructorError                                                 \
+                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
+      return NULL;                                                                       \
+    }                                                                                    \
+    rlayer = const_cast<Layer*>(cobject->FUNC_NAME( PYLAYER_O(arg0), PYLAYER_O(arg1), useSymbolic ) ); \
     HCATCH                                                                               \
                                                                                          \
     if (rlayer == NULL) Py_RETURN_NONE;                                                  \

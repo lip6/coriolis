@@ -385,7 +385,7 @@ namespace Hurricane {
       string       smask          = get<string> ( stack, "_mask"           );
       DbU::Unit    minimalSize    = get<int64_t>( stack, "_minimalSize"    );
       DbU::Unit    minimalSpacing = get<int64_t>( stack, "_minimalSpacing" );
-      bool         isWorking      = get<bool>   ( stack, "_working"        );
+      bool         isSymbolic     = get<bool>   ( stack, "_symbolic"       );
 
       BasicLayer*  basicLayer     = techno->getBasicLayer( get<string>(stack,"_basicLayer" ) );
       DbU::Unit    enclosure      = get<int64_t>( stack, "_enclosure"      );
@@ -398,7 +398,7 @@ namespace Hurricane {
       // Actual creation.
         layer = RegularLayer::create( techno, name );
         layer->setBasicLayer    ( basicLayer );
-        layer->setWorking       ( isWorking );
+        layer->setSymbolic      ( isSymbolic );
         layer->setMinimalSize   ( minimalSize );
         layer->setMinimalSpacing( minimalSpacing );
         layer->setEnclosure     ( basicLayer, enclosure      );

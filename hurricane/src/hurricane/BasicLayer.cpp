@@ -387,7 +387,7 @@ namespace Hurricane {
       string       smask          = get<string> ( stack, "_mask"           );
       DbU::Unit    minimalSize    = get<int64_t>( stack, "_minimalSize"    );
       DbU::Unit    minimalSpacing = get<int64_t>( stack, "_minimalSpacing" );
-      bool         isWorking      = get<bool>   ( stack, "_working"        );
+      bool         isSymbolic     = get<bool>   ( stack, "_symbolic"       );
       string       materialName   = get<string> ( stack, "_material"       );
       unsigned int extractNumber  = get<int64_t>( stack, "_extractNumber"  );
       string       blockageLayer  = get<string> ( stack, "_blockageLayer"  );
@@ -405,7 +405,7 @@ namespace Hurricane {
                                        , minimalSize
                                        , minimalSpacing
                                        );
-        basicLayer->setWorking( isWorking );
+        basicLayer->setSymbolic( isSymbolic );
 
         if (blockageLayer != "no_blockage_layer") {
           JsonTechnology* jtechno = jget<JsonTechnology>( stack );

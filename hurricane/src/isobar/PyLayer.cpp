@@ -129,29 +129,29 @@ extern "C" {
   }
 
 
-# define  accessorLayerFromOptBool(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)              \
+# define  accessorLayerFromOptBool(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                    \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
   {                                                                                     \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                      \
                                                                                         \
     Layer* rlayer = NULL;                                                               \
                                                                                         \
     HTRY                                                                                \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
                                                                                         \
-    PyObject* arg0       = NULL;                                                        \
-    bool      useWorking = true;                                                        \
+    PyObject* arg0        = NULL;                                                       \
+    bool      useSymbolic = true;                                                       \
                                                                                         \
     if (PyArg_ParseTuple( args, "|O:"#SELF_TYPE"."#FUNC_NAME"()", &arg0)) {             \
       if (arg0 != NULL) {                                                               \
-        useWorking = PyObject_IsTrue(arg0);                                             \
+        useSymbolic = PyObject_IsTrue(arg0);                                            \
       }                                                                                 \
     } else {                                                                            \
       PyErr_SetString ( ConstructorError                                                \
                       , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
       return NULL;                                                                      \
     }                                                                                   \
-    rlayer = const_cast<SELF_TYPE*>(cobject->FUNC_NAME(useWorking));                    \
+    rlayer = const_cast<SELF_TYPE*>(cobject->FUNC_NAME(useSymbolic));                   \
     HCATCH                                                                              \
                                                                                         \
     if (rlayer == NULL) Py_RETURN_NONE;                                                 \
@@ -159,10 +159,10 @@ extern "C" {
   }
 
 
-# define  predicateFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)     \
+# define  predicateFromVoid(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)          \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self )   \
   {                                                                    \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;       \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;     \
                                                                        \
     HTRY                                                               \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()") \
@@ -199,7 +199,7 @@ extern "C" {
 # define  updatorFromBasicLayerDbu(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                     \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )     \
   {                                                                                      \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                         \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                       \
                                                                                          \
     HTRY                                                                                 \
     GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                   \
@@ -245,7 +245,7 @@ extern "C" {
   predicateFromLayer          (                          below            ,PyLayer,Layer)
   predicateFromLayer          (                          contains         ,PyLayer,Layer)
   predicateFromLayer          (                          intersect        ,PyLayer,Layer)
-  predicateFromVoid           (                          isWorking        ,PyLayer,Layer)
+  predicateFromVoid           (                          isSymbolic       ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getEnclosure     ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getExtentionCap  ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getExtentionWidth,PyLayer,Layer)
@@ -269,6 +269,7 @@ extern "C" {
   updatorFromBasicLayerDbu(setEnclosure     ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionCap  ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionWidth,PyLayer,Layer)
+  DirectSetBoolAttribute  (PyLayer_setSymbolic,setSymbolic,PyLayer,Layer)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyLayer_destroy, PyLayer)
@@ -319,12 +320,12 @@ extern "C" {
                               , "Tells if the layer fully contains the one passed as argument." }
     , { "intersect"           , (PyCFunction)PyLayer_intersect           , METH_VARARGS
                               , "Tells if the layer share some BasicLayer with the one passed as argument." }
-    , { "isWorking"           , (PyCFunction)PyLayer_isWorking           , METH_NOARGS
-                              , "Tells if the layer is the working one for this BasicLayer." }
+    , { "isSymbolic"          , (PyCFunction)PyLayer_isSymbolic          , METH_NOARGS
+                              , "Tells if the layer is the symbolic one for this BasicLayer." }
     , { "setName"             , (PyCFunction)PyLayer_setName             , METH_VARARGS
                               , "Allows to change the layer name." }
-    , { "setWorking"          , (PyCFunction)PyLayer_setName             , METH_VARARGS
-                              , "Sets the layer as the working one." }
+    , { "setSymbolic"         , (PyCFunction)PyLayer_setSymbolic         , METH_VARARGS
+                              , "Sets the layer as the symbolic one." }
     , { "setMinimalSize"      , (PyCFunction)PyLayer_setMinimalSize      , METH_VARARGS
                               , "Sets the layer minimal size (width)." }
     , { "setMinimalSpacing"   , (PyCFunction)PyLayer_setMinimalSpacing   , METH_VARARGS

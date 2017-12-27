@@ -43,6 +43,7 @@ namespace CRL {
   using Hurricane::JsonTypes;
   using Hurricane::JsonArray;
   using Hurricane::DataBase;
+  using Hurricane::BasicLayer;
   using Hurricane::ViaLayer;
   using Hurricane::getCollection;
 
@@ -219,22 +220,23 @@ namespace CRL {
 
   void  RoutingGauge::addLayerGauge ( RoutingLayerGauge* layerGauge )
   {
-    if ( getLayerGauge(layerGauge->getLayer()) != NULL )
-      throw Error ( dupLayerGauge, getString(layerGauge->getLayer()->getName()).c_str()
-                                 , getString(_name).c_str() );
+    if (getLayerGauge(layerGauge->getLayer()) != NULL)
+      throw Error( dupLayerGauge, getString(layerGauge->getLayer()->getName()).c_str()
+                                , getString(_name).c_str() );
 
-    _layerGauges.push_back ( layerGauge );
+    _layerGauges.push_back( layerGauge );
 
     size_t gaugeSize = _layerGauges.size();
-    if ( gaugeSize > 1 ) {
-      Layer* viaLayer = _technology->getViaBetween(_layerGauges[gaugeSize-2]->getLayer()
-                                                  ,_layerGauges[gaugeSize-1]->getLayer());
-      if ( !viaLayer ) {
-        cerr << Error("Can't find a VIA between Gauge layers %s and %s."
-                     ,getString(_layerGauges[gaugeSize-2]).c_str()
-                     ,getString(_layerGauges[gaugeSize-1]).c_str()) << endl;
+    if (gaugeSize > 1) {
+      Layer* viaLayer = _technology->getViaBetween( _layerGauges[gaugeSize-2]->getLayer()
+                                                  , _layerGauges[gaugeSize-1]->getLayer()
+                                                  , _layerGauges[gaugeSize-1]->getLayer()->isSymbolic() );
+      if (not viaLayer) {
+        cerr << Error( "Can't find a VIA between Gauge layers %s and %s."
+                     , getString(_layerGauges[gaugeSize-2]).c_str()
+                     , getString(_layerGauges[gaugeSize-1]).c_str() ) << endl;
       }
-      _viaLayers.push_back ( viaLayer );
+      _viaLayers.push_back( viaLayer );
     }
   }
 

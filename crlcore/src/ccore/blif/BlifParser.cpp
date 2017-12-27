@@ -373,12 +373,12 @@ namespace {
     else {
       cmess2 << "     " << tab++ << "+ " << cell->getName() << " [.model]" << endl;
 
-      Net* vss = Net::create ( _cell, "vss" );
+      Net* vss = Net::create ( _cell, "gnd!" );
       vss->setExternal( true );
       vss->setGlobal  ( true );
       vss->setType    ( Net::Type::GROUND );
   
-      Net* vdd = Net::create ( _cell, "vdd" );
+      Net* vdd = Net::create ( _cell, "vdd!" );
       vdd->setExternal( true );
       vdd->setGlobal  ( true );
       vdd->setType    ( Net::Type::POWER );
@@ -689,7 +689,7 @@ namespace CRL {
                          , tokenize.lineno()
                          ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vss" );
-          blifModel->getCell()->getNet( "vss" )->addAlias( blifLine[1] );
+          blifModel->getCell()->getNet( "gnd!" )->addAlias( blifLine[1] );
         } else if (tokenize.state() & Tokenize::CoverOne ) {
           cerr << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
                            "          File \"%s.blif\" at line %u."
@@ -698,7 +698,7 @@ namespace CRL {
                          , tokenize.lineno()
                          ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vdd" );
-          blifModel->getCell()->getNet( "vdd" )->addAlias( blifLine[1] );
+          blifModel->getCell()->getNet( "vdd!" )->addAlias( blifLine[1] );
         } else {
           cerr << Error( "Blif::load() Unsupported \".names\" cover construct.\n"
                          "          File \"%s.blif\" at line %u."
