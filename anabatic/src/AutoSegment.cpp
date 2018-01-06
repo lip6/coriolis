@@ -549,7 +549,7 @@ namespace Anabatic {
 
       unsetFlags( SegSourceTop|SegSourceBottom );
       if (contactLayer->getMask() != segmentLayer->getMask())
-        setFlags( (segmentLayer == contactLayer->getTop()) ? SegSourceBottom : SegSourceTop ); 
+        setFlags( (segmentLayer->getMask() == contactLayer->getTop()->getMask()) ? SegSourceBottom : SegSourceTop ); 
       if (source->isTurn() and source->getPerpandicular(this)->isReduced())
         incReduceds();
     }
@@ -562,7 +562,7 @@ namespace Anabatic {
 
       unsetFlags( SegTargetTop|SegTargetBottom );
       if (contactLayer->getMask() != segmentLayer->getMask())
-        setFlags( (segmentLayer == contactLayer->getTop()) ? SegTargetBottom : SegTargetTop ); 
+        setFlags( (segmentLayer->getMask() == contactLayer->getTop()->getMask()) ? SegTargetBottom : SegTargetTop ); 
       if (target->isTurn() and target->getPerpandicular(this)->isReduced())
         incReduceds();
     }
@@ -601,7 +601,7 @@ namespace Anabatic {
   DbU::Unit  AutoSegment::getPPitch () const
   {
     unsigned int depth        = getDepth();
-    DbU::Unit    topPPitch    = Session::getPitch( depth + ( ((_flags & SegSpinTop) and (depth+1 < Session::getDepth())) ? 1 : 0) );
+    DbU::Unit    topPPitch    = Session::getPitch( depth + ( ((_flags & SegSpinTop   ) and (depth+1 < Session::getDepth())) ? 1 : 0) );
     DbU::Unit    bottomPPitch = Session::getPitch( depth - ( ((_flags & SegSpinBottom) and (depth > 0))? 1 : 0) );
 
     return std::max( topPPitch, bottomPPitch );
@@ -613,6 +613,10 @@ namespace Anabatic {
     DbU::Unit mWidth = std::max( Session::getWireWidth(getLayer()), Session::getViaWidth(getLayer()) );
     if (getWidth() <= mWidth) return Session::getExtensionCap( getLayer() );
     return getWidth() / 2;
+#if NEW_WAY
+    if (getWidth() <= mWidth) return mWidth/2 + getPitch()/2;
+    return getWidth()/2 + getPitch()/2;
+#endif
   }
 
 
@@ -730,15 +734,23 @@ namespace Anabatic {
     const Layer* sourceLayer = getAutoSource()->getLayer();
     const Layer* targetLayer = getAutoTarget()->getLayer();
 
-    if (  (_flags & SegSourceTop) and (sourceLayer->getBottom() != getLayer()) ) {
-      cerr << Error("%s\n"
-                    "        Source is not going above, connected to *top* of %s."
+    if (   (_flags & SegSourceTop)
+       and (sourceLayer->getBottom()->getMask() != getLayer()->getMask()) ) {
+      cerr << Error( "%s\n"
+                     "        Source is not going above, connected to *top* of %s.\n"
+                     "        bottom:%s mask:%s\n" 
+                     "        layer:%s mask:%s\n" 
                    , getString(this).c_str()
                    , getString(getAutoSource()).c_str()
+                   , getString(sourceLayer->getBottom()).c_str()
+                   , getString(sourceLayer->getBottom()->getMask()).c_str()
+                   , getString(getLayer()).c_str()
+                   , getString(getLayer()->getMask()).c_str()
                    ) << endl;
       valid = false;
     }
-    if (  (_flags & SegSourceBottom) and (sourceLayer->getTop() != getLayer()) ) {
+    if (   (_flags & SegSourceBottom)
+       and (sourceLayer->getTop()->getMask() != getLayer()->getMask()) ) {
       cerr << Error("%s\n"
                     "        Source is not going below, connected to *bottom* of %s."
                    , getString(this).c_str()
@@ -746,7 +758,8 @@ namespace Anabatic {
                    ) << endl;
       valid = false;
     }
-    if (  (_flags & SegTargetTop) and (targetLayer->getBottom() != getLayer()) ) {
+    if (   (_flags & SegTargetTop)
+       and (targetLayer->getBottom()->getMask() != getLayer()->getMask()) ) {
       cerr << Error("%s\n"
                     "        Target is not going above connected to *top* of %s."
                    , getString(this).c_str()
@@ -754,7 +767,8 @@ namespace Anabatic {
                    ) << endl;
       valid = false;
     }
-    if (  (_flags & SegTargetBottom) and (targetLayer->getTop() != getLayer()) ) {
+    if (   (_flags & SegTargetBottom)
+       and (targetLayer->getTop()->getMask() != getLayer()->getMask()) ) {
       cerr << Error("%s\n"
                     "        Target is not going below, connected to *bottom* of %s."
                    , getString(this).c_str()
@@ -1439,13 +1453,12 @@ namespace Anabatic {
     const Layer* newLayer = Session::getRoutingGauge()->getRoutingLayer(depth);
     if (getLayer() != newLayer) {
       setLayer( newLayer );
-
       getAutoSource()->invalidate( Flags::Topology|Flags::NoCheckLayer );
       getAutoTarget()->invalidate( Flags::Topology|Flags::NoCheckLayer );
     }
 
     if (not (flags & Flags::WithNeighbors)) {
-      cdebug_tabw(149,-1);
+      cdebug_tabw(159,-1);
       return;
     }
 
@@ -1771,9 +1784,14 @@ namespace Anabatic {
       return false;
     }
 
-    source->setLayer( Session::getRoutingLayer(perpandicularDepth) );
-    target->setLayer( Session::getRoutingLayer(perpandicularDepth) );
-    setLayer( Session::getRoutingLayer(perpandicularDepth) );
+    const Layer* layer = Session::getRoutingLayer(perpandicularDepth);
+    DbU::Unit    side  = Session::getWireWidth   (perpandicularDepth);
+    
+    source->setLayer( layer );
+    target->setLayer( layer );
+    setLayer( layer );
+    source->setSizes( side, side );
+    target->setSizes( side, side );
 
     return true;
   }
@@ -2097,20 +2115,21 @@ namespace Anabatic {
   string  AutoSegment::_getStringFlags () const
   {
     string state;
-    state += isFixed         () ?" F":" -";
-    state += isUnsetAxis     () ? "u": "-";
-    state += isStrap         () ? "S": "-";
-    state += isCanonical     () ? "C": "-";
-    state += isGlobal        () ? "G": "-";
-    state += isWeakGlobal    () ? "g": "-";
-    state += isLongLocal     () ? "L": "-";
-    state += isStrongTerminal() ? "T": "-";
-    state += isWeakTerminal1 () ? "W": "-";
-    state += isWeakTerminal2 () ? "w": "-";
-    state += isNotAligned    () ? "A": "-";
-    state += isSlackened     () ? "S": "-";
-    state += isReduced       () ? "r": "-";
-    state += isInvalidated   () ? "i": "-";
+    state += isFixed           () ?" F":" -";
+    state += isUnsetAxis       () ? "u": "-";
+    state += isStrap           () ? "S": "-";
+    state += isCanonical       () ? "C": "-";
+    state += isGlobal          () ? "G": "-";
+    state += isWeakGlobal      () ? "g": "-";
+    state += isLongLocal       () ? "L": "-";
+    state += isStrongTerminal  () ? "T": "-";
+    state += isWeakTerminal1   () ? "W": "-";
+    state += isWeakTerminal2   () ? "w": "-";
+    state += isNotAligned      () ? "A": "-";
+    state += isSlackened       () ? "S": "-";
+    state += isReduced         () ? "r": "-";
+    state += isInvalidated     () ? "i": "-";
+    state += isInvalidatedLayer() ? "l": "-";
 
     if      (_flags & SegSourceTop)    state += 't';
     else if (_flags & SegSourceBottom) state += 'b';

@@ -46,6 +46,7 @@ namespace Anabatic {
   using Hurricane::DebugSession;
   using Hurricane::Transformation;
   using Hurricane::Entity;
+  using Hurricane::Occurrence;
 
 
 // -------------------------------------------------------------------
@@ -60,7 +61,7 @@ namespace Anabatic {
                                                    , DbU::Unit    height
                                                    )
   {
-    cdebug_log(145,1) << "AutoContactTerminal::create(... Point, ...)" << endl;
+    cdebug_log(145,1) << "AutoContactTerminal::create(... Point, ...) " << endl;
     cdebug_log(145,0)   << "@" << point << endl; 
 
     anchor->getBodyHook()->detach();
@@ -85,7 +86,7 @@ namespace Anabatic {
                                                    , const DbU::Unit  height
                                                    )
   {
-    cdebug_log(145,0) << "AutoContactTerminal::create(... x, y, ...)" << endl;
+    cdebug_log(145,0) << "AutoContactTerminal::create(... x, y, ...) " << endl;
     cdebug_log(145,0) << "@ x:" << DbU::getValueString(x) << " y:" << DbU::getValueString(y) << endl; 
 
     _preCreate( gcell, anchor->getNet(), layer );
@@ -195,6 +196,26 @@ namespace Anabatic {
       xMin = xMax
            = vertical->getTargetPosition().getX();
     } else if ( (routingPad = dynamic_cast<RoutingPad*>(component)) ) {
+      Occurrence     occurrence     = routingPad->getOccurrence();
+      Transformation transformation = occurrence.getPath().getTransformation();
+      Segment*       segment        = dynamic_cast<Segment*>( occurrence.getEntity() );
+
+      cdebug_log(145,0) << "Anchor: " << occurrence.getEntity() << endl;
+      cdebug_log(145,0) << "transf: " << transformation << endl;
+
+      if (segment) {
+        Box bb = segment->getBoundingBox();
+        transformation.applyOn( bb );
+        xMin = bb.getXMin();
+        yMin = bb.getYMin();
+        xMax = bb.getXMax();
+        yMax = bb.getYMax();
+      } else {
+        xMin = xMax = component->getPosition().getX();
+        yMin = yMax = component->getPosition().getY();
+      }
+
+#if FOR_SYMBOLIC_LAYERS
       Entity*         entity = routingPad->getOccurrence().getEntity();
       Transformation  transf = routingPad->getOccurrence().getPath().getTransformation();
       cdebug_log(145,0) << "Anchor: " << routingPad << endl;
@@ -238,6 +259,7 @@ namespace Anabatic {
           yMin = yMax = routingPad->getPosition().getY();
           break;
       }
+#endif
     } else {
       xMin = xMax = component->getPosition().getX();
       yMin = yMax = component->getPosition().getY();
@@ -255,7 +277,7 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "| Using (y): "
                       << DbU::getValueString(bb.getYMin()) << " "
-                      << DbU::getValueString(bb.getYMax()) << endl;
+                      << DbU::getValueString(bb.getYMax()) << " " << bb << endl;
 
     cdebug_tabw(145,-1);
     return bb;
@@ -398,7 +420,7 @@ namespace Anabatic {
 
         if (not getUConstraints(Flags::Horizontal).contains(axis)) {
           cdebug_log(145,0) << "Cached: " << _segment << endl;
-          message << "Terminal vertical segment X" << DbU::getValueString(axis)
+          message << "Terminal vertical segment X " << DbU::getValueString(axis)
                   << " axis is outside RoutingPad " << getUConstraints(Flags::Horizontal) << ".";
 
           Flags flags = Flags::NoFlags;

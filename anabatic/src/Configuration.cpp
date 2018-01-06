@@ -22,7 +22,10 @@
 #include "hurricane/Error.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/RoutingPad.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/CellGauge.h"
@@ -46,9 +49,16 @@ namespace Anabatic {
   using  Hurricane::tab;
   using  Hurricane::Warning;
   using  Hurricane::Error;
+  using  Hurricane::Transformation;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
+  using  Hurricane::BasicLayer;
   using  Hurricane::RegularLayer;
+  using  Hurricane::Segment;
+  using  Hurricane::Plug;
+  using  Hurricane::Path;
+  using  Hurricane::Occurrence;
+  using  Hurricane::NetExternalComponents;
   using  CRL::AllianceFramework;
   using  CRL::RoutingGauge;
   using  CRL::RoutingLayerGauge;
@@ -125,12 +135,17 @@ namespace Anabatic {
       if (regularLayer)
         _extensionCaps.push_back( regularLayer->getExtentionCap() );
       else {
-        _extensionCaps.push_back( 0 );
-        cerr << Warning( "Routing layer at depth %d is *not* a RegularLayer, cannot guess extension cap.\n"
-                         "          (%s)"
-                       , depth
-                       , getString(layerGauges[depth]->getLayer()).c_str()
-                       ) << endl;
+        const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( layerGauges[depth]->getLayer() );
+        if (basicLayer) {
+          _extensionCaps.push_back( layerGauges[depth]->getHalfWireWidth() );
+        } else {
+          _extensionCaps.push_back( 0 );
+          cerr << Warning( "Routing layer at depth %d is *not* a RegularLayer, cannot guess extension cap.\n"
+                           "          (%s)"
+                         , depth
+                         , getString(layerGauges[depth]->getLayer()).c_str()
+                         ) << endl;
+        }
       }
     }
   }
@@ -363,6 +378,102 @@ namespace Anabatic {
   float  Configuration::getEdgeHInc () const
   { return _edgeHInc; }
 
+
+  DbU::Unit  Configuration::isOnRoutingGrid ( RoutingPad* rp ) const
+  {
+    Box   ab     = rp->getCell()->getBoundingBox();
+    Box   bb     = rp->getBoundingBox();
+    Point center = rp->getCenter();
+
+    RoutingLayerGauge* gauge = getLayerGauge( 1 );
+    if (gauge->isHorizontal()) return 0;
+
+    DbU::Unit nearestX = gauge->getTrackPosition( ab.getXMin(), ab.getXMax(), center.getX(), Constant::Nearest );
+    if ( (nearestX >= bb.getXMin()) and (nearestX <= bb.getXMax()) ) return 0;
+
+    return nearestX;
+  }
+
+
+  bool  Configuration::selectRpComponent ( RoutingPad* rp ) const
+  {
+    cdebug_log(145,1) << "selectRpComponent(): " << rp << endl;
+    
+    Box                ab             = rp->getCell()->getBoundingBox();
+    const Layer*       metal1         = getLayerGauge( 0 )->getLayer();
+    RoutingLayerGauge* gauge          = getLayerGauge( 1 );
+    Occurrence         occurrence     = rp->getPlugOccurrence();
+    Plug*              plug           = dynamic_cast<Plug*>( occurrence.getEntity() );
+    Net*               masterNet      = plug->getMasterNet();
+    Path               path           = Path( occurrence.getPath(), plug->getInstance() );
+    Transformation     transformation = path.getTransformation();
+
+    Segment*           current        = dynamic_cast<Segment*>( rp->getOccurrence().getEntity() );
+    if (current and (current->getLayer()->getMask() != metal1->getMask())) {
+      cdebug_log(145,0) << "> using default non-metal1 segment." << endl;
+      cdebug_tabw(145,-1);
+      return true;
+    }
+
+    DbU::Unit  bestSpan      = 0;
+    Component* bestComponent = NULL;
+
+    for ( Component* component : masterNet->getComponents() ) {
+      cdebug_log(145,0) << "@ " << component << endl;
+      if (not NetExternalComponents::isExternal(component)) continue;
+
+      Segment* segment = dynamic_cast<Segment*>(component);
+      if (not segment) continue;
+      if (segment->getLayer()->getMask() != metal1->getMask()) continue;
+
+      Box        bb       = transformation.getBox( component->getBoundingBox() );
+      DbU::Unit  trackPos = 0;
+      DbU::Unit  minPos   = DbU::Max;
+      DbU::Unit  maxPos   = DbU::Min;
+      
+      if (gauge->isVertical()) {
+        trackPos = gauge->getTrackPosition( ab.getXMin()
+                                          , ab.getXMax()
+                                          , bb.getCenter().getX()
+                                          , Constant::Nearest );
+        minPos = bb.getXMin();
+        maxPos = bb.getXMax();
+      } else {
+        trackPos = gauge->getTrackPosition( ab.getYMin()
+                                          , ab.getYMax()
+                                          , bb.getCenter().getY()
+                                          , Constant::Nearest );
+        minPos = bb.getYMin();
+        maxPos = bb.getYMax();
+      }
+
+      cdebug_log(145,0) << "| " << occurrence.getPath() << endl;
+      cdebug_log(145,0) << "| " << transformation << endl;
+      cdebug_log(145,0) << "| " << bb << " of:" << segment << endl;
+      cdebug_log(145,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
+        
+      if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
+        if (not bestComponent) bestComponent = component;
+        else {
+          if (bestSpan < maxPos-minPos) {
+            bestComponent = component;
+            bestSpan      = maxPos - minPos;
+          }
+        }
+      }
+    }
+
+    if (bestComponent) {
+      rp->setExternalComponent( bestComponent );
+      cdebug_log(145,0) << "Using best candidate:" << bestComponent << endl;
+      cdebug_tabw(145,-1);
+      return true;
+    }
+
+    cdebug_tabw(145,-1);
+    return false;
+  }
+  
 
   void  Configuration::print ( Cell* cell ) const
   {

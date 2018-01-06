@@ -237,7 +237,7 @@ namespace Anabatic {
 
     vector<Hook*> hooksNS = getNorths();
     hooksNS.insert( hooksNS.end(), getSouths().begin(), getSouths().end() );
-    sort( hooksNS.begin(), hooksNS.end(), SortHookByX(NoFlags) );
+    sortHookByX( hooksNS, NoFlags );
 
     const Layer* viaLayer = Session::getDContactLayer();
     AutoContact* contactW = NULL;
@@ -321,10 +321,14 @@ namespace Anabatic {
       if ( (getTopology() & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
         addToFixSegments( globalSegment );
         
-      if (getConnexity().fields.globals < 2) return false;
+      if (getConnexity().fields.globals < 2) {
+        cdebug_tabw(145,-1);
+        return false;
+      }
     } else
       setFromHook( NULL );
 
+    cdebug_tabw(145,-1);
     return true;
   }
 

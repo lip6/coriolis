@@ -251,15 +251,16 @@ namespace Anabatic {
           if (_horizontal1->isInvalidatedLayer()) {
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
-            depthH1 = rg->getLayerDepth( _horizontal1->getLayer() );
             cdebug_log(145,0) << "Update h1: " << _horizontal1 << endl;
           } else /*if (_vertical1->isInvalidatedLayer())*/ {
           //_vertical1 = static_cast<AutoVertical*>( _vertical1->makeDogleg(this) );
             _vertical1->makeDogleg(this);
-            depthV1 = rg->getLayerDepth( _vertical1->getLayer() );
             cdebug_log(145,0) << "Update v1: " << _vertical1 << endl;
           }
-          delta = abssub ( depthH1, depthV1 );
+          depthH1      = rg->getLayerDepth( _horizontal1->getLayer() );
+          depthV1      = rg->getLayerDepth( _vertical1->getLayer() );
+          depthContact = (depthH1 < depthV1) ? depthH1 : depthH1-1;
+          delta        = abssub ( depthH1, depthV1 );
         }
 
         setLayer ( (delta == 0) ? rg->getRoutingLayer(depthContact) : rg->getContactLayer(depthContact) );

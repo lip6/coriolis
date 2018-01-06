@@ -31,6 +31,7 @@
 #include "anabatic/GCell.h"
 #include "anabatic/NetBuilderM2.h"
 #include "anabatic/NetBuilderHV.h"
+#include "anabatic/NetBuilderVH.h"
 #include "anabatic/AnabaticEngine.h"
 
 
@@ -725,7 +726,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_loadGrByNet ()
   {
-    cmess1 << "  o  Building detailed routing from global." << endl;
+    cmess1 << "  o  Building detailed routing from global. " << endl;
 
     startMeasures();
     openSession();
@@ -735,16 +736,16 @@ namespace Anabatic {
     if (getConfiguration()->isHV       ()) gaugeKind = 1;
     if (getConfiguration()->isVH       ()) gaugeKind = 2;
 
-    if (gaugeKind < 2) {
+    if (gaugeKind < 3) {
       for ( Net* net : getCell()->getNets() ) {
         if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
-          DebugSession::open( net, 144, 160 );
+          DebugSession::open( net, 145, 150 );
           AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
 
           switch ( gaugeKind ) {
             case 0: NetBuilder::load<NetBuilderM2>( this, net ); break;
             case 1: NetBuilder::load<NetBuilderHV>( this, net ); break;
-          //case 2: NetBuilder::load<NetBuilderVH>( this, net ); break;
+            case 2: NetBuilder::load<NetBuilderVH>( this, net ); break;
           }
 
           Session::revalidate();
@@ -761,7 +762,7 @@ namespace Anabatic {
     Session::close();
     stopMeasures();
 
-    if (gaugeKind > 1) {
+    if (gaugeKind > 2) {
       throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing gauge \"%s\"."
                  , getString(getConfiguration()->getRoutingGauge()->getName()).c_str() );
     }

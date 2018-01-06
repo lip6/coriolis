@@ -32,6 +32,7 @@ endif ( CHECK_DETERMINISM )
                                      anabatic/NetBuilder.h
                                      anabatic/NetBuilderM2.h
                                      anabatic/NetBuilderHV.h
+                                     anabatic/NetBuilderVH.h
                                      anabatic/ChipTools.h
                       )
                    set( pyIncludes   )
@@ -56,6 +57,7 @@ endif ( CHECK_DETERMINISM )
                                      NetBuilder.cpp
                                      NetBuilderM2.cpp
                                      NetBuilderHV.cpp
+                                     NetBuilderVH.cpp
                                      ChipTools.cpp
                                      LayerAssign.cpp
                                      PreRouteds.cpp

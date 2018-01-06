@@ -200,10 +200,13 @@ namespace Anabatic {
              inline                  Vertex         ( GCell* );
            //inline                  Vertex         ( size_t id );
              inline                 ~Vertex         ();
+             inline  bool            isAnalog       () const;
              inline  bool            hasDoneAllRps  () const;
              inline  Contact*        hasGContact    ( Net* ) const;
              inline  unsigned int    getId          () const;
              inline  GCell*          getGCell       () const;
+             inline  Box             getBoundingBox () const;
+             inline  Edges           getEdges       ( Flags sides=Flags::AllSides ) const;
              inline  AnabaticEngine* getAnabatic    () const;
              inline  Contact*        getGContact    ( Net* );
                      bool            hasValidStamp  () const;
@@ -216,6 +219,7 @@ namespace Anabatic {
              inline  int             getRpCount     () const;
                      Edge*           getFrom        () const;
              inline  Vertex*         getPredecessor () const;
+             inline  Vertex*         getNeighbor    ( Edge* ) const;
              inline  void            setDistance    ( DbU::Unit );
              inline  void            setStamp       ( int );
              inline  void            setConnexId    ( int );
@@ -334,6 +338,9 @@ namespace Anabatic {
 
   inline Vertex*         Vertex::lookup         ( GCell* gcell ) { return gcell->getObserver<Vertex>(GCell::Observable::Vertex); }
   inline                 Vertex::~Vertex        () { _gcell->setObserver( GCell::Observable::Vertex, NULL ); }
+  inline bool            Vertex::isAnalog       () const { return _gcell->isAnalog(); }
+  inline Box             Vertex::getBoundingBox () const { return _gcell->getBoundingBox(); }
+  inline Edges           Vertex::getEdges       ( Flags sides ) const { return _gcell->getEdges(sides); }
   inline Contact*        Vertex::hasGContact    ( Net* net ) const { return _gcell->hasGContact(net); }
   inline unsigned int    Vertex::getId          () const { return _id; }
   inline GCell*          Vertex::getGCell       () const { return _gcell; }
@@ -360,6 +367,12 @@ namespace Anabatic {
 
   inline Vertex* Vertex::getPredecessor () const
   { return (hasValidStamp() and _from) ? _from->getOpposite(_gcell)->getObserver<Vertex>(GCell::Observable::Vertex) : NULL; }
+
+  inline Vertex* Vertex::getNeighbor ( Edge* edge ) const
+  {
+    GCell* gcell = edge->getOpposite( getGCell() );
+    return (gcell) ? gcell->getObserver<Vertex>(GCell::Observable::Vertex) : NULL;
+  }
 
   inline bool  Vertex::CompareById::operator() ( const Vertex* lhs, const Vertex* rhs ) const
   { return lhs->getId() < rhs->getId(); }

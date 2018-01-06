@@ -507,7 +507,7 @@ namespace Anabatic {
   inline  uint64_t        AutoSegment::_getFlags              () const { return _flags; }
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
-  inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); }
+  inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); _flags|=SegInvalidatedLayer; }
   inline  void            AutoSegment::setOptimalMin          ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }
   inline  void            AutoSegment::setOptimalMax          ( DbU::Unit max ) { _optimalMax = (unsigned int)DbU::getLambda(max-getOrigin()); }
   inline  void            AutoSegment::mergeNativeMin         ( DbU::Unit min ) { _nativeConstraints.getVMin() = std::max( min, _nativeConstraints.getVMin() ); }

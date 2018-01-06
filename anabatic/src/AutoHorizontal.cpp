@@ -466,6 +466,9 @@ namespace Anabatic {
     DbU::Unit targetPosition = _horizontal->getTargetX() + getExtensionCap();
 
     if ( _sourcePosition != sourcePosition ) {
+      cerr << "extensionCap: " << DbU::getValueString(getExtensionCap()) << endl;
+      cerr << "ppitch:       " << DbU::getValueString(getPPitch()) << endl;
+      cerr << "via width:    " << DbU::getValueString(Session::getViaWidth(getLayer())) << endl;
       cerr << Error ( "%s\n        Source position incoherency: "
                       "shadow: %s, real: %s."
                     , _getString().c_str() 

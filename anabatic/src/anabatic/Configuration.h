@@ -24,6 +24,7 @@
 namespace Hurricane {
   class Layer;
   class Cell;
+  class RoutingPad;
 }
 
 namespace CRL {
@@ -43,6 +44,7 @@ namespace Anabatic {
   using  Hurricane::Name;
   using  Hurricane::Layer;
   using  Hurricane::DbU;
+  using  Hurricane::RoutingPad;
   using  Hurricane::Cell;
   using  CRL::CellGauge;
   using  CRL::RoutingGauge;
@@ -118,6 +120,8 @@ namespace Anabatic {
               float              getEdgeCostH        () const;
               float              getEdgeCostK        () const;
               float              getEdgeHInc         () const;
+              DbU::Unit          isOnRoutingGrid     ( RoutingPad* ) const;
+              bool               selectRpComponent   ( RoutingPad* ) const;
       virtual void               print               ( Cell* ) const;
       virtual Record*            _getRecord          () const;
       virtual string             _getString          () const;

@@ -243,14 +243,14 @@ namespace Anabatic {
     DbU::Unit       globalThreshold = Session::getSliceHeight()*3;
     size_t          netCount        = 0;
 
-    for ( size_t i=0 ; i<_segments.size(); ) {
+    for ( size_t i=0 ; i<_segments.size() ; ) {
       if (_segments[i]->getLength() >= globalThreshold) {
         NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
         if (netData->isGlobalRouted()) ++netCount;
-
         anabatic->ripup( _segments[i], Flags::Propagate );
-      } else
+      } else {
         ++i;
+      }
     }
     return netCount;
   }

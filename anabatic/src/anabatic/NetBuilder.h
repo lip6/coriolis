@@ -84,19 +84,20 @@ namespace Anabatic {
       enum FunctionFlags { NoFlags         = (1 <<  0)
                          , SortDecreasing  = (1 <<  1)
                          , HAccess         = (1 <<  2)
-                         , VSmall          = (1 <<  3)
-                         , HSmall          = (1 <<  4)
-                         , Punctual        = (1 <<  5)
-                         , HCollapse       = (1 <<  6)
-                         , VCollapse       = (1 <<  7)
-                         , Terminal        = (1 <<  8)
-                         , DoSourceContact = (1 <<  9)
-                         , DoTargetContact = (1 << 10)
-                         , SouthBound      = (1 << 11)
-                         , NorthBound      = (1 << 12)
-                         , WestBound       = (1 << 13)
-                         , EastBound       = (1 << 14)
-                         , Middle          = (1 << 15)
+                         , HAccessEW       = (1 <<  3)
+                         , VSmall          = (1 <<  4)
+                         , HSmall          = (1 <<  5)
+                         , Punctual        = (1 <<  6)
+                         , HCollapse       = (1 <<  7)
+                         , VCollapse       = (1 <<  8)
+                         , Terminal        = (1 <<  9)
+                         , DoSourceContact = (1 << 10)
+                         , DoTargetContact = (1 << 11)
+                         , SouthBound      = (1 << 12)
+                         , NorthBound      = (1 << 13)
+                         , WestBound       = (1 << 14)
+                         , EastBound       = (1 << 15)
+                         , Middle          = (1 << 16)
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
                          };
@@ -137,11 +138,16 @@ namespace Anabatic {
       static  uint64_t                      checkRoutingPadSize    ( Component* anchor );
       static  Hook*                         getSegmentOppositeHook ( Hook* hook );
       static  uint64_t                      getSegmentHookType     ( Hook* hook );
+      static  void                          sortHookByX            ( vector<Hook*>&       , uint64_t flags=NoFlags );
+      static  void                          sortHookByY            ( vector<Hook*>&       , uint64_t flags=NoFlags );
+      static  void                          sortRpByX              ( vector<RoutingPad*>& , uint64_t flags=NoFlags );
+      static  void                          sortRpByY              ( vector<RoutingPad*>& , uint64_t flags=NoFlags );
     public:
                                             NetBuilder             ();
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
       inline  bool                          isTwoMetals            () const;
+      inline  AnabaticEngine*               getAnabatic            () const;
       inline  unsigned int                  getDegree              () const;
       inline  void                          setDegree              ( unsigned int degree );
               void                          fixSegments            ();
@@ -191,7 +197,6 @@ namespace Anabatic {
       virtual AutoContact*                  doRp_AccessAnalog      ( GCell*, RoutingPad*, uint64_t flags );
               void                          doRp_StairCaseH        ( GCell*, Component* rp1, Component* rp2 );
               void                          doRp_StairCaseV        ( GCell*, Component* rp1, Component* rp2 );
-              void                          singleGCell            ( AnabaticEngine*, Net* );
               void                          _load                  ( AnabaticEngine*, Net* );
     private:                                                       
       virtual bool                          _do_xG                 ();
@@ -208,6 +213,7 @@ namespace Anabatic {
       virtual bool                          _do_1G_1M3             ();
       virtual bool                          _do_xG_xM3             ();
       virtual bool                          _do_globalSegment      ();
+      virtual void                          singleGCell            ( AnabaticEngine*, Net* );
               AutoContact*                  _doHChannel            ();
               AutoContact*                  _doVChannel            ();
               AutoContact*                  _doStrut               ();
@@ -292,6 +298,7 @@ namespace Anabatic {
 
     // Attributes.
     private:
+             AnabaticEngine*              _anabatic;
              ForkStack                    _forks;
              UConnexity                   _connexity;
              unsigned int                 _topology;
@@ -313,41 +320,11 @@ namespace Anabatic {
 
     // Sort classes.
     public:
-      class SortHookByX {
-        public:
-          inline       SortHookByX  ( uint64_t flags );
-          inline bool  operator()   ( Hook* h1, Hook* h2 );
-        protected:
-          uint64_t  _flags;
-      };
-
-      class SortHookByY {
-        public:
-          inline       SortHookByY  ( uint64_t flags );
-          inline bool  operator()   ( Hook* h1, Hook* h2 );
-        protected:
-          uint64_t  _flags;
-      };
-
-      class SortRpByX {
-        public:
-          inline       SortRpByX  ( uint64_t flags );
-          inline bool  operator() ( Component* rp1, Component* rp2 );
-        private:
-          uint64_t  _flags;
-      };
-
-      class SortRpByY {
-        public:
-          inline       SortRpByY  ( uint64_t flags );
-          inline bool  operator() ( Component* rp1, Component* rp2 );
-        protected:
-          uint64_t  _flags;
-      };
   };
 
 
   inline bool                          NetBuilder::isTwoMetals            () const { return _isTwoMetals; }
+  inline AnabaticEngine*               NetBuilder::getAnabatic            () const { return _anabatic; }
   inline unsigned int                  NetBuilder::getDegree              () const { return _degree; }
   inline NetBuilder::UConnexity        NetBuilder::getConnexity           () const { return _connexity; }
   inline NetBuilder::UConnexity&       NetBuilder::getConnexity           ()       { return _connexity; }
@@ -388,102 +365,6 @@ namespace Anabatic {
 
   template< typename BuilderT >
   void  NetBuilder::load ( AnabaticEngine* engine, Net* net ) {  BuilderT()._load(engine,net); }
-
-  
-// -------------------------------------------------------------------
-// Class :  "NetBuilder::SortRpByX".
-
-  inline  NetBuilder::SortRpByX::SortRpByX ( uint64_t flags )
-    : _flags(flags)
-  { }
-
-
-  inline bool  NetBuilder::SortRpByX::operator() ( Component* rp1, Component* rp2 )
-  {
-    DbU::Unit x1 = rp1->getCenter().getX();
-    DbU::Unit x2 = rp2->getCenter().getX();
-
-    if (x1 == x2) return false;
-    return (_flags & NetBuilder::SortDecreasing) xor (x1 < x2);
-  }
-
-
-// -------------------------------------------------------------------
-// Class  :  "NetBuilder::SortRpByY".
-
-  inline  NetBuilder::SortRpByY::SortRpByY  ( uint64_t flags )
-    : _flags(flags)
-  { }
-
-
-  inline bool  NetBuilder::SortRpByY::operator() ( Component* rp1, Component* rp2 )
-  {
-    DbU::Unit y1 = rp1->getCenter().getY();
-    DbU::Unit y2 = rp2->getCenter().getY();
-
-    if (y1 == y2) return false;
-    return (_flags & NetBuilder::SortDecreasing) xor (y1 < y2);
-  }
-
-
-// -------------------------------------------------------------------
-// Class :  "NetBuilder::SortHookByX".
-
-  inline  NetBuilder::SortHookByX::SortHookByX ( uint64_t flags )
-    : _flags(flags)
-  { }
-
-
-  inline bool  NetBuilder::SortHookByX::operator() ( Hook* h1, Hook* h2 )
-  {
-    DbU::Unit   x1  = 0;
-    DbU::Unit   x2  = 0;
-    Horizontal* hh1 = dynamic_cast<Horizontal*>(h1->getComponent());
-    Horizontal* hh2 = dynamic_cast<Horizontal*>(h2->getComponent());
-    Vertical*   vv1 = dynamic_cast<Vertical*>  (h1->getComponent());
-    Vertical*   vv2 = dynamic_cast<Vertical*>  (h2->getComponent());
-
-    if      (hh1) x1 = std::min( hh1->getSource()->getX(), hh1->getTarget()->getX() );
-    else if (vv1) x1 = vv1->getX();
-    else          x1 = h1->getComponent()->getCenter().getX();
-
-    if      (hh2) x2 = std::min( hh2->getSource()->getX(), hh2->getTarget()->getX() );
-    else if (vv2) x2 = vv2->getX();
-    else          x2 = h2->getComponent()->getCenter().getX();
-
-    if (x1 == x2) return false;
-    return (_flags & NetBuilder::SortDecreasing) xor (x1 < x2);
-  }
-
-
-// -------------------------------------------------------------------
-// Class :  "NetBuilder::SortHookByY".
-
-  inline  NetBuilder::SortHookByY::SortHookByY ( uint64_t flags )
-    : _flags(flags)
-  { }
-
-
-  inline bool  NetBuilder::SortHookByY::operator() ( Hook* h1, Hook* h2 )
-  {
-    DbU::Unit   y1  = 0;
-    DbU::Unit   y2  = 0;
-    Horizontal* hh1 = dynamic_cast<Horizontal*>(h1->getComponent());
-    Horizontal* hh2 = dynamic_cast<Horizontal*>(h2->getComponent());
-    Vertical*   vv1 = dynamic_cast<Vertical*>  (h1->getComponent());
-    Vertical*   vv2 = dynamic_cast<Vertical*>  (h2->getComponent());
-
-    if      (vv1) y1 = std::min( vv1->getSource()->getY(), vv1->getTarget()->getY() );
-    else if (hh1) y1 = hh1->getY();
-    else          y1 = h1->getComponent()->getCenter().getX();
-
-    if      (vv2) y2 = std::min( vv2->getSource()->getY(), vv2->getTarget()->getY() );
-    else if (hh2) y2 = hh2->getY();
-    else          y2 = h2->getComponent()->getCenter().getY();
-
-    if (y1 == y2) return false;
-    return (_flags & NetBuilder::SortDecreasing) xor (y1 < y2);
-  }
 
 }
 

@@ -74,6 +74,13 @@ namespace Anabatic {
     cdebug_log(145,1) << getTypeName() << "::doRp_AutoContacts()" << endl;
     cdebug_log(145,0)   << rp << endl;
 
+    RoutingPad* rrp = dynamic_cast<RoutingPad*>( rp );
+    if (not rrp) {
+      cerr << Warning( "%s::doRp_AutoContacts(): %s is *not* a RoutingPad."
+                     , getTypeName().c_str()
+                     , getString(rp).c_str() ) << endl;
+    }
+
     source = target = NULL;
 
     Point        sourcePosition;
@@ -208,7 +215,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_" << (int)getConnexity().fields.M1 << "M1() [Managed Configuration]" << endl;
 
-    sort( getRoutingPads().begin(), getRoutingPads().end(), SortRpByX(NoFlags) ); // increasing X.
+    sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
     for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
       AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
       AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
@@ -507,7 +514,7 @@ namespace Anabatic {
     if (getRoutingPads()[0]->getLayer() == Session::getRoutingLayer(2))
       rpM3 = getRoutingPads()[0];
 
-    sort( getRoutingPads().begin(), getRoutingPads().end(), SortRpByX(NoFlags) ); // increasing X.
+    sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
     for ( size_t i=1 ; i<getRoutingPads().size() ; ++i ) {
       AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
       AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
@@ -721,7 +728,7 @@ namespace Anabatic {
     cdebug_log(145,0) << "south:" << south() << endl;
     cdebug_log(145,0) << "north:" << north() << endl;
 
-    sort( getRoutingPads().begin(), getRoutingPads().end(), SortRpByY(NoFlags) ); // increasing Y.
+    sortRpByY( getRoutingPads(), NoFlags ); // increasing Y.
     for ( size_t i=1 ; i<getRoutingPads().size() ; i++ ) {
       doRp_StairCaseV( getGCell(), getRoutingPads()[i-1], getRoutingPads()[i] );
     }
@@ -801,7 +808,10 @@ namespace Anabatic {
       if ( (getTopology() & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
         addToFixSegments( globalSegment );
         
-      if (getConnexity().fields.globals < 2) return false;
+      if (getConnexity().fields.globals < 2) {
+        cdebug_tabw(145,-1);
+        return false;
+      }
     } else
       setFromHook( NULL );
     
@@ -810,6 +820,7 @@ namespace Anabatic {
     push( north(), getNorthEastContact() );
     push( south(), getSouthWestContact() );
 
+    cdebug_tabw(145,-1);
     return true;
   }
 

@@ -77,6 +77,139 @@ namespace {
     "    No Contact in GCell.\n";
 
 
+  
+// -------------------------------------------------------------------
+// Class :  "NetBuilder::SortRpByX".
+
+  class SortRpByX {
+    public:
+      inline       SortRpByX  ( uint64_t flags );
+      inline bool  operator() ( RoutingPad* rp1, RoutingPad* rp2 );
+    private:
+      uint64_t  _flags;
+  };
+
+
+  inline  SortRpByX::SortRpByX ( uint64_t flags )
+    : _flags(flags)
+  { }
+
+
+  inline bool  SortRpByX::operator() ( RoutingPad* rp1, RoutingPad* rp2 )
+  {
+    DbU::Unit x1 = rp1->getCenter().getX();
+    DbU::Unit x2 = rp2->getCenter().getX();
+
+    if (x1 == x2) return false;
+    return (_flags & NetBuilder::SortDecreasing) xor (x1 < x2);
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "NetBuilder::SortRpByY".
+
+  class SortRpByY {
+    public:
+      inline       SortRpByY  ( uint64_t flags );
+      inline bool  operator() ( RoutingPad* rp1, RoutingPad* rp2 );
+    protected:
+      uint64_t  _flags;
+  };
+
+
+  inline  SortRpByY::SortRpByY  ( uint64_t flags )
+    : _flags(flags)
+  { }
+
+
+  inline bool  SortRpByY::operator() ( RoutingPad* rp1, RoutingPad* rp2 )
+  {
+    DbU::Unit y1 = rp1->getCenter().getY();
+    DbU::Unit y2 = rp2->getCenter().getY();
+
+    if (y1 == y2) return false;
+    return (_flags & NetBuilder::SortDecreasing) xor (y1 < y2);
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "NetBuilder::SortHookByX".
+  
+  class SortHookByX {
+    public:
+      inline       SortHookByX  ( uint64_t flags );
+      inline bool  operator()   ( Hook* h1, Hook* h2 );
+    protected:
+      uint64_t  _flags;
+  };
+
+
+  inline  SortHookByX::SortHookByX ( uint64_t flags )
+    : _flags(flags)
+  { }
+
+
+  inline bool  SortHookByX::operator() ( Hook* h1, Hook* h2 )
+  {
+    DbU::Unit   x1  = 0;
+    DbU::Unit   x2  = 0;
+    Horizontal* hh1 = dynamic_cast<Horizontal*>(h1->getComponent());
+    Horizontal* hh2 = dynamic_cast<Horizontal*>(h2->getComponent());
+    Vertical*   vv1 = dynamic_cast<Vertical*>  (h1->getComponent());
+    Vertical*   vv2 = dynamic_cast<Vertical*>  (h2->getComponent());
+
+    if      (hh1) x1 = std::min( hh1->getSource()->getX(), hh1->getTarget()->getX() );
+    else if (vv1) x1 = vv1->getX();
+    else          x1 = h1->getComponent()->getCenter().getX();
+
+    if      (hh2) x2 = std::min( hh2->getSource()->getX(), hh2->getTarget()->getX() );
+    else if (vv2) x2 = vv2->getX();
+    else          x2 = h2->getComponent()->getCenter().getX();
+
+    if (x1 == x2) return false;
+    return (_flags & NetBuilder::SortDecreasing) xor (x1 < x2);
+  }
+
+
+// -------------------------------------------------------------------
+// Class :  "NetBuilder::SortHookByY".
+
+  class SortHookByY {
+    public:
+      inline       SortHookByY  ( uint64_t flags );
+      inline bool  operator()   ( Hook* h1, Hook* h2 );
+    protected:
+      uint64_t  _flags;
+  };
+
+
+  inline  SortHookByY::SortHookByY ( uint64_t flags )
+    : _flags(flags)
+  { }
+
+
+  inline bool  SortHookByY::operator() ( Hook* h1, Hook* h2 )
+  {
+    DbU::Unit   y1  = 0;
+    DbU::Unit   y2  = 0;
+    Horizontal* hh1 = dynamic_cast<Horizontal*>(h1->getComponent());
+    Horizontal* hh2 = dynamic_cast<Horizontal*>(h2->getComponent());
+    Vertical*   vv1 = dynamic_cast<Vertical*>  (h1->getComponent());
+    Vertical*   vv2 = dynamic_cast<Vertical*>  (h2->getComponent());
+
+    if      (vv1) y1 = std::min( vv1->getSource()->getY(), vv1->getTarget()->getY() );
+    else if (hh1) y1 = hh1->getY();
+    else          y1 = h1->getComponent()->getCenter().getX();
+
+    if      (vv2) y2 = std::min( vv2->getSource()->getY(), vv2->getTarget()->getY() );
+    else if (hh2) y2 = hh2->getY();
+    else          y2 = h2->getComponent()->getCenter().getY();
+
+    if (y1 == y2) return false;
+    return (_flags & NetBuilder::SortDecreasing) xor (y1 < y2);
+  }
+
+
 }  // Anonymous namespace.
 
 
@@ -175,8 +308,25 @@ namespace Anabatic {
   }
 
 
+  void  NetBuilder::sortRpByX ( vector<RoutingPad*>& rps, uint64_t flags )
+  { sort( rps.begin(), rps.end(), SortRpByX(flags) ); }
+  
+
+  void  NetBuilder::sortRpByY ( vector<RoutingPad*>& rps, uint64_t flags )
+  { sort( rps.begin(), rps.end(), SortRpByY(flags) ); }
+  
+
+  void  NetBuilder::sortHookByX ( vector<Hook*>& hooks, uint64_t flags )
+  { sort( hooks.begin(), hooks.end(), SortHookByX(flags) ); }
+  
+
+  void  NetBuilder::sortHookByY ( vector<Hook*>& hooks, uint64_t flags )
+  { sort( hooks.begin(), hooks.end(), SortHookByY(flags) ); }
+
+
   NetBuilder::NetBuilder ()
-    : _forks                 ()
+    : _anabatic              (NULL)
+    , _forks                 ()
     , _connexity             ()
     , _topology              (0)
     , _gcell                 (NULL)
@@ -348,7 +498,7 @@ namespace Anabatic {
 
     return *this;
   }
-  
+    
 
   bool  NetBuilder::push ( Hook* toHook, AutoContact* contact, uint64_t flags )
   {
@@ -767,98 +917,98 @@ namespace Anabatic {
 
   bool  NetBuilder::_do_xG ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_xG() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_2G ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_2G() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_1Pad ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_1Pad() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1PinM2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_1G_1PinM2() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1M1 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_1G_1M1() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_2G_1M1 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_2G_1M1() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_xM1 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_1G_xM1() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_xM1_xM3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_xM1_xM3() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_1M1_1M2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_1M1_1M2() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_4G_1M2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_4G_1M2() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_xM2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_xM2() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1M3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_1G_1M3() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_xM3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_xM3() method *not* reimplemented from base class." << endl;
     return false;
   }
 
   
   bool  NetBuilder::_do_globalSegment ()
   {
-    cdebug_log(145,0) << getTypeName() << "::do_xG() method *not* reimplemented from base class." << endl;
+    cdebug_log(145,0) << getTypeName() << "::_do_globalSegment() method *not* reimplemented from base class." << endl;
     return false;
   }
 
@@ -867,8 +1017,8 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "NetBuilder::singleGCell() " << net << endl;
 
-    vector<Component*>  rpM1s;
-    Component*          rpM2 = NULL;
+    vector<RoutingPad*>  rpM1s;
+    Component*           rpM2 = NULL;
 
     forEach ( RoutingPad*, irp, net->getRoutingPads() ) {
       if (Session::getRoutingGauge()->getLayerDepth(irp->getLayer()) == 1)
@@ -891,18 +1041,18 @@ namespace Anabatic {
       return;
     }
 
-    sort( rpM1s.begin(), rpM1s.end(), SortRpByX(NetBuilder::NoFlags) ); // increasing X.
+    sortRpByX( rpM1s, NetBuilder::NoFlags ); // increasing X.
 
     GCell* gcell1 = anbt->getGCellUnder( (*rpM1s.begin ())->getCenter() );
     GCell* gcell2 = anbt->getGCellUnder( (*rpM1s.rbegin())->getCenter() );
 
     if (not gcell1) {
-      cerr << Error( "No GCell under %s.", getString(rpM1s[0]).c_str() ) << endl;
+      cerr << Error( "No GCell under %s.", getString(*(rpM1s.begin())).c_str() ) << endl;
       cdebug_tabw(145,-1);
       return;
     }
     if (gcell1 != gcell2) {
-      cerr << Error( "Not under a single GCell %s.", getString(rpM1s[0]).c_str() ) << endl;
+      cerr << Error( "Not under a single GCell %s.", getString(*(rpM1s.rbegin())).c_str() ) << endl;
       cdebug_tabw(145,-1);
       return;
     }
@@ -1081,7 +1231,7 @@ namespace Anabatic {
     }
 
     cdebug_log(145,0) << "Sorted hooks:" << endl;
-    sort( hooks.begin(), hooks.end(), SortHookByX(NoFlags) );
+    sortHookByX( hooks, NoFlags );
     
     if (firsthhook) hooks.insert   (hooks.begin(), firsthhook);
     if (lasthhook ) hooks.push_back(lasthhook                );
@@ -1288,7 +1438,7 @@ namespace Anabatic {
     }
     
     cdebug_log(145,0) << "Sorted hooks:" << endl;
-    sort( hooks.begin(), hooks.end(), SortHookByY(NoFlags) );
+    sortHookByY( hooks, NoFlags );
 
     if (firstvhook) hooks.insert   (hooks.begin(), firstvhook);
     if (lastvhook ) hooks.push_back(lastvhook                );
@@ -2007,6 +2157,8 @@ namespace Anabatic {
 
     cdebug_log(149,0) << "NetBuilder::load( " << net << " )" << endl;
     cdebug_tabw(145,1);
+
+    _anabatic = anabatic;
 
     Hook*        sourceHook    = NULL;
     AutoContact* sourceContact = NULL;
