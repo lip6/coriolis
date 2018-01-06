@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Views.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -72,5 +72,5 @@ typedef GenericFilter<View*> ViewFilter;
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

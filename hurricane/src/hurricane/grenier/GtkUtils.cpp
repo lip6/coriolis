@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: GtkUtils.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #include "GtkUtils.h"
@@ -250,5 +250,5 @@ string  GdkKeyvalName ( int keyval )
 } // End of Hurricane namespace.
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

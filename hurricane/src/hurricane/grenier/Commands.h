@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Commands.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_COMMANDS
@@ -58,5 +58,5 @@ typedef GenericFilter<Command*> CommandFilter;
 #endif // HURRICANE_COMMANDS
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Command.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_COMMAND
@@ -89,5 +89,5 @@ SetNestedSlotAdapter(Hurricane::Command)
 #endif // HURRICANE_COMMAND
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

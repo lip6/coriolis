@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2017-2017, All Rights Reserved
+// Copyright (c) BULL S.A. 2017-2018, All Rights Reserved
 //
 // This file is part of Hurricane.
 //

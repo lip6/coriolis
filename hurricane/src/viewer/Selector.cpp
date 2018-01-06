@@ -1,6 +1,6 @@
 //
 // This file is part of the Hurricane Software.
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |

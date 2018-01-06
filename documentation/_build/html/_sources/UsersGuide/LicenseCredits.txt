@@ -42,9 +42,9 @@ Credits & License
 
 |medskip|
 
-The |Hurricane| data-base is copyright© |Bull| 2000-2016 and is
+The |Hurricane| data-base is copyright© |Bull| 2000-2018 and is
 released under the terms of the |LGPL| license. All other tools are
-copyright© |UPMC| 2008-2016 and released under the |GPL|
+copyright© |UPMC| 2008-2018 and released under the |GPL|
 license.
 
 Others important contributors to |Coriolis| are Christophe |Alexandre|,

@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: View.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_VIEW
@@ -391,5 +391,5 @@ SetNestedSlotAdapter(Hurricane::View)
 #endif // HURRICANE_VIEW
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

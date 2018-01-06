@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: MapView.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_MAP_VIEW
@@ -78,5 +78,5 @@ SetNestedSlotAdapter(Hurricane::MapView)
 #endif // HURRICANE_MAP_VIEW
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

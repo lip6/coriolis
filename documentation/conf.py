@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Coriolis'
-copyright = u'2000-2017, UPMC'
+copyright = u'2000-2018, UPMC'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -249,7 +249,7 @@ texinfo_documents = [
 epub_title = u'Coriolis'
 epub_author = u'UPMC'
 epub_publisher = u'UPMC'
-epub_copyright = u'2000-2017, UPMC'
+epub_copyright = u'2000-2018, UPMC'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

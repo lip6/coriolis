@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: View.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 // 21-10-2003 Alignment BULL-LIP6  (Lip6 addded DisplaySlots) (added VisualMaps)
 
@@ -1807,5 +1807,5 @@ Record* View::RubberDisplayType::_GetRecord() const
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

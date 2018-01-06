@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Primitive.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #ifndef HURRICANE_PRIMITIVE
@@ -361,5 +361,5 @@ SetNestedSlotAdapter(Hurricane::Polygon)
 #endif // HURRICANE_PRIMITIVE
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

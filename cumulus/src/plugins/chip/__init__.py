@@ -1,7 +1,7 @@
 # -*- explicit-buffer-name: "__init__.py<cumulus/plugins/chip>" -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2016, All Rights Reserved
+# Copyright (c) UPMC 2014-2018, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |

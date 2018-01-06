@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/Name.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -106,5 +106,5 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::Name 
 
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: Selector.cpp
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************
 
 #include "Selector.h"
@@ -115,5 +115,5 @@ void Selector::_DetachFrom(View* view, bool inDeletion)
 } // End of Hurricane namespace.
 
 // ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2016, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 // ****************************************************************************************************

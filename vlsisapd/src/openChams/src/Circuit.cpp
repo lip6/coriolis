@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the VLSI SAPD Software.
-// Copyright (c) UPMC/LIP6 2009-2016, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2009-2018, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  V L S I   S A P D                              |
