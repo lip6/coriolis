@@ -42,7 +42,7 @@ namespace Hurricane {
 
   class Backtrace {
     public:
-                          Backtrace    ();
+                          Backtrace    ( bool enabled );
                          ~Backtrace    ();
       inline std::string  where        () const;
       inline std::string  textWhere    () const;

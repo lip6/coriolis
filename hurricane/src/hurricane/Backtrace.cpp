@@ -427,9 +427,11 @@ namespace Hurricane {
 //     3 libstdc++.6.dylib 0x9142514b _ZSt9terminatev + 29
 
 
-  Backtrace::Backtrace ()
+  Backtrace::Backtrace ( bool enabled )
     : _stack()
   {
+    if (not enabled) return;
+    
     if (_inConstructor) {
       _stack.push_back( "[BUG] Backtrace::Backtrace(): An error occurred in the backtace *istself*." );
       _stack.push_back( "" );
