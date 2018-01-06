@@ -109,6 +109,7 @@ namespace CRL {
               void                      divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
               unsigned int              getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
               unsigned int              getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
+      inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
               DbU::Unit                 getTrackPosition ( DbU::Unit start, unsigned depth ) const;
     // Hurricane Managment.             
               void                      toJson           ( JsonWriter* ) const;
@@ -181,6 +182,8 @@ namespace CRL {
   inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return _viaWidth; }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return _viaWidth>>1; }
   inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return _obstacleDw; }
+  inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
+                                                                        { return getTrackPosition( start, getTrackIndex(start,stop,position,mode) ); }
 
 
 // -------------------------------------------------------------------

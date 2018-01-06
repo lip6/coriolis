@@ -247,7 +247,13 @@ namespace {
       typedef unordered_map<string,Model*>  Lut; 
       static  Lut                           _blifLut; 
       static  vector<Model*>                _blifOrder; 
+      static  bool                          _staticInit;
+      static  Cell*                         _zero;
+      static  Cell*                         _one;
+      static  Net*                          _masterNetZero;
+      static  Net*                          _masterNetOne;
     public:
+      static  void          staticInit     ();
       static  Model*        find           ( string modelName );
       static  void          orderModels    ();
       static  void          connectModels  ();
@@ -307,6 +313,11 @@ namespace {
 
   Model::Lut      Model::_blifLut;
   vector<Model*>  Model::_blifOrder;
+  bool            Model::_staticInit     = false;
+  Cell*           Model::_zero           = NULL;
+  Cell*           Model::_one            = NULL;
+  Net*            Model::_masterNetZero  = NULL;
+  Net*            Model::_masterNetOne   = NULL;
 
 
   struct CompareByDepth {
@@ -316,6 +327,32 @@ namespace {
         return lhs->getCell()->getId() < rhs->getCell()->getId();
       }
   };
+
+
+  void  Model::staticInit ()
+  {
+    _staticInit = true;
+
+    auto framework = AllianceFramework::get();
+
+    static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
+    static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
+
+    _zero = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
+    _one  = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+
+    if (_zero) {
+      for ( Net* net : _zero->getNets() ) if (not net->isSupply()) { _masterNetZero = net; break; }
+    } else
+      cerr << Warning( "BlifParser::Model::connectSubckts(): The zero (tie high) cell \"%s\" has not been found."
+                     , zeroName.c_str() ) << endl;
+
+    if (_one) {
+      for ( Net* net : _one->getNets() ) if (not net->isSupply()) { _masterNetOne = net; break; }
+    } else
+      cerr << Warning( "BlifParser::Model::connectSubckts(): The one (tie low) cell \"%s\" has not been found."
+                     , oneName.c_str() ) << endl;
+  }
 
 
   Model* Model::find ( string modelName )
@@ -367,6 +404,8 @@ namespace {
     , _subckts()
     , _depth  (0)
   {
+    if (not _staticInit) staticInit();
+    
     _blifLut.insert( make_pair(getString(_cell->getName()), this) );
     if (_cell->isTerminal())
       _depth = 1;
@@ -473,20 +512,7 @@ namespace {
 
   void  Model::connectSubckts ()
   {
-    auto framework = AllianceFramework::get();
-
-    static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
-    static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
-
     unsigned int supplyCount = 0;
-    Cell*        zero        = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
-    Cell*        one         = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
-
-    Net* masterNetZero = NULL;
-    for ( Net* net : zero->getNets() ) if (not net->isSupply()) { masterNetZero = net; break; }
-
-    Net* masterNetOne = NULL;
-    for ( Net* net : one->getNets() ) if (not net->isSupply()) { masterNetOne = net; break; }
 
     for ( Subckt* subckt : _subckts ) {
       if(not subckt->getModel())
@@ -551,27 +577,34 @@ namespace {
                   << " is connected to POWER/GROUND " << plugNet->getName()
                   << " through the alias " << netName
                   << ".";
-          cerr << Warning( message.str() ) << endl;
 
-          if (plugNet->isPower()) {
-            ostringstream insName; insName << "one_" << supplyCount++;
+          if (_masterNetOne) {
+            if (plugNet->isPower()) {
+              ostringstream insName; insName << "one_" << supplyCount++;
 
-            Instance* insOne = Instance::create( _cell, insName.str(), one );
-            Net*      netOne = Net::create( _cell, insName.str() );
+              Instance* insOne = Instance::create( _cell, insName.str(), _one );
+              Net*      netOne = Net::create( _cell, insName.str() );
 
-            insOne->getPlug( masterNetOne )->setNet( netOne );
-            plug->setNet( netOne );
-          }
+              insOne->getPlug( _masterNetOne )->setNet( netOne );
+              plug->setNet( netOne );
+            }
+          } else
+            message << "\n          (no tie high, connexion has been LEFT OPEN)";
 
-          if (plugNet->isGround()) {
-            ostringstream insName; insName << "zero_" << supplyCount++;
+          if (_masterNetZero) {             
+            if (plugNet->isGround()) {
+              ostringstream insName; insName << "zero_" << supplyCount++;
 
-            Instance* insZero = Instance::create( _cell, insName.str(), zero );
-            Net*      netZero = Net::create( _cell, insName.str() );
+              Instance* insZero = Instance::create( _cell, insName.str(), _zero );
+              Net*      netZero = Net::create( _cell, insName.str() );
 
-            insZero->getPlug( masterNetZero )->setNet( netZero );
-            plug->setNet( netZero );
-          }
+              insZero->getPlug( _masterNetZero )->setNet( netZero );
+              plug->setNet( netZero );
+            }
+          } else
+            message << "\n          (no tie low, connexion has been LEFT OPEN)";
+
+          if (not message.str().empty()) cerr << Warning( message.str() ) << endl;
         }
       }
     }

@@ -14,33 +14,34 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <cstdio>
-#include  <cstring>
-#include  <iostream>
-#include  <memory>
-#include  <boost/algorithm/string.hpp>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <memory>
+#include <boost/algorithm/string.hpp>
 #if defined(HAVE_LEFDEF)
 #  include  "lefrReader.hpp"
 #endif
-#include  "hurricane/Error.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/BasicLayer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/NetExternalComponents.h"
-#include  "hurricane/Contact.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/Library.h"
-#include  "hurricane/UpdateSession.h"
-#include  "crlcore/Utilities.h"
-#include  "crlcore/ToolBox.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "crlcore/CellGauge.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "crlcore/LefImport.h"
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/Error.h"
+#include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Net.h"
+#include "hurricane/NetExternalComponents.h"
+#include "hurricane/Contact.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Library.h"
+#include "hurricane/UpdateSession.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/ToolBox.h"
+#include "crlcore/RoutingGauge.h"
+#include "crlcore/CellGauge.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/LefImport.h"
 
 
 #if defined(HAVE_LEFDEF)
@@ -77,6 +78,7 @@ namespace {
       static       Library*           parse                    ( string file );
                                       LefParser                ( string file, string libraryName );
                                      ~LefParser                ();
+      inline       bool               isVH                     () const;
                    Library*           createLibrary            ();
       inline       string             getLibraryName           () const;
       inline       Library*           getLibrary               ( bool create=false );
@@ -102,6 +104,8 @@ namespace {
       inline       void               incNthCut                ();
       inline       RoutingGauge*      getRoutingGauge          () const;
       inline       CellGauge*         getCellGauge             () const;
+      inline       void               addPinSegment            ( string name, Segment* );
+      inline       void               clearPinSegments         ();
     private:                                               
       static       int                _unitsCbk                ( lefrCallbackType_e, lefiUnits*      , lefiUserData );
       static       int                _layerCbk                ( lefrCallbackType_e, lefiLayer*      , lefiUserData );
@@ -109,6 +113,7 @@ namespace {
       static       int                _obstructionCbk          ( lefrCallbackType_e, lefiObstruction*, lefiUserData );
       static       int                _macroCbk                ( lefrCallbackType_e, lefiMacro*      , lefiUserData );
       static       int                _pinCbk                  ( lefrCallbackType_e, lefiPin*        , lefiUserData );
+                   void               _pinPostProcess          ();
     private:                                               
                    string              _file;
                    string              _libraryName;
@@ -117,6 +122,7 @@ namespace {
                    Net*                _net;
                    string              _busBits;
                    double              _unitsMicrons;
+                   map< string, vector<Segment*> >  _pinSegments;
       static       map<string,Layer*>  _layerLut;
                    vector<string>      _errors;
                    int                 _nthMetal;
@@ -129,29 +135,32 @@ namespace {
   };
 
 
-  inline       DbU::Unit       LefParser::getMinTerminalWidth      () const { return _minTerminalWidth; }
-  inline       string          LefParser::getLibraryName           () const { return _libraryName; }
-  inline       Library*        LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
-  inline       Cell*           LefParser::getCell                  () const { return _cell; }
-  inline       void            LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
-  inline       Net*            LefParser::getNet                   () const { return _net; }
-  inline       void            LefParser::setNet                   ( Net* net ) { _net=net; }
-  inline       DbU::Unit       LefParser::fromUnitsMicrons         ( double d ) const { return DbU::fromPhysical(d,DbU::Micro); }
-  inline       double          LefParser::getUnitsMicrons          () const { return _unitsMicrons; }
-  inline       void            LefParser::setUnitsMicrons          ( double precision ) { _unitsMicrons=precision; }
-  inline       int             LefParser::getNthMetal              () const { return _nthMetal; }
-  inline       void            LefParser::incNthMetal              () { ++_nthMetal; }
-  inline       int             LefParser::getNthCut                () const { return _nthCut; }
-  inline       void            LefParser::incNthCut                () { ++_nthCut; }
-  inline       RoutingGauge*   LefParser::getRoutingGauge          () const { return _routingGauge; }
-  inline       CellGauge*      LefParser::getCellGauge             () const { return _cellGauge; }
-  inline       void            LefParser::setCoreSite              ( DbU::Unit x, DbU::Unit y ) { _coreSiteX=x; _coreSiteY=y; }
-  inline       DbU::Unit       LefParser::getCoreSiteX             () { return _coreSiteX; }
-  inline       DbU::Unit       LefParser::getCoreSiteY             () { return _coreSiteY; }
-  inline       bool            LefParser::hasErrors                () const { return not _errors.empty(); }
-  inline const vector<string>& LefParser::getErrors                () const { return _errors; }
-  inline       void            LefParser::pushError                ( const string& error ) { _errors.push_back(error); }
-  inline       void            LefParser::clearErrors              () { return _errors.clear(); }
+  inline       bool              LefParser::isVH                     () const { return _routingGauge->isVH(); }
+  inline       DbU::Unit         LefParser::getMinTerminalWidth      () const { return _minTerminalWidth; }
+  inline       string            LefParser::getLibraryName           () const { return _libraryName; }
+  inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
+  inline       Cell*             LefParser::getCell                  () const { return _cell; }
+  inline       void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
+  inline       Net*              LefParser::getNet                   () const { return _net; }
+  inline       void              LefParser::setNet                   ( Net* net ) { _net=net; }
+  inline       DbU::Unit         LefParser::fromUnitsMicrons         ( double d ) const { return DbU::fromPhysical(d,DbU::Micro); }
+  inline       double            LefParser::getUnitsMicrons          () const { return _unitsMicrons; }
+  inline       void              LefParser::setUnitsMicrons          ( double precision ) { _unitsMicrons=precision; }
+  inline       int               LefParser::getNthMetal              () const { return _nthMetal; }
+  inline       void              LefParser::incNthMetal              () { ++_nthMetal; }
+  inline       int               LefParser::getNthCut                () const { return _nthCut; }
+  inline       void              LefParser::incNthCut                () { ++_nthCut; }
+  inline       RoutingGauge*     LefParser::getRoutingGauge          () const { return _routingGauge; }
+  inline       CellGauge*        LefParser::getCellGauge             () const { return _cellGauge; }
+  inline       void              LefParser::setCoreSite              ( DbU::Unit x, DbU::Unit y ) { _coreSiteX=x; _coreSiteY=y; }
+  inline       DbU::Unit         LefParser::getCoreSiteX             () { return _coreSiteX; }
+  inline       DbU::Unit         LefParser::getCoreSiteY             () { return _coreSiteY; }
+  inline       bool              LefParser::hasErrors                () const { return not _errors.empty(); }
+  inline const vector<string>&   LefParser::getErrors                () const { return _errors; }
+  inline       void              LefParser::pushError                ( const string& error ) { _errors.push_back(error); }
+  inline       void              LefParser::clearErrors              () { return _errors.clear(); }
+  inline       void              LefParser::addPinSegment            ( string name, Segment* s ) { _pinSegments[name].push_back(s); }
+  inline       void              LefParser::clearPinSegments         () { _pinSegments.clear(); }
 
 
   map<string,Layer*>  LefParser::_layerLut;
@@ -199,7 +208,7 @@ namespace {
     , _nthCut          (0)
     , _routingGauge    (NULL)
     , _cellGauge       (NULL)
-    , _minTerminalWidth(DbU::fromPhysical(0.9,DbU::UnitPower::Micro))
+    , _minTerminalWidth(DbU::fromPhysical(Cfg::getParamDouble("lefImport.minTerminalWidth",0.0)->asDouble(),DbU::UnitPower::Micro))
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
@@ -384,21 +393,20 @@ namespace {
         lefiGeomRect* r         = geoms->getRect(igeom);
         double        w         = r->xh - r->xl;
         double        h         = r->yh - r->yl;
-        Component*    component = NULL;
         if (w >= h) {
-          component = Horizontal::create( blockageNet, layer
-                                        , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                        , parser->fromUnitsMicrons( h  )
-                                        , parser->fromUnitsMicrons( r->xl )
-                                        , parser->fromUnitsMicrons( r->xh )
-                                        );
+          Horizontal::create( blockageNet, layer
+                            , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
+                            , parser->fromUnitsMicrons( h  )
+                            , parser->fromUnitsMicrons( r->xl )
+                            , parser->fromUnitsMicrons( r->xh )
+                            );
         } else {
-          component = Vertical::create( blockageNet, layer
-                                      , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                      , parser->fromUnitsMicrons( w  )
-                                      , parser->fromUnitsMicrons( r->yl )
-                                      , parser->fromUnitsMicrons( r->yh )
-                                      );
+          Vertical::create( blockageNet, layer
+                          , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
+                          , parser->fromUnitsMicrons( w  )
+                          , parser->fromUnitsMicrons( r->yl )
+                          , parser->fromUnitsMicrons( r->yh )
+                          );
         }
       }
     }
@@ -428,6 +436,9 @@ namespace {
       height = parser->fromUnitsMicrons( macro->sizeY() );
       cell->setAbutmentBox( Box( 0, 0, width, height ) );
     }
+
+    parser->_pinPostProcess();
+    parser->clearPinSegments();
 
     cerr << "     - " << cellName << " " << DbU::getValueString(width) << " " << DbU::getValueString(height) << endl; 
     parser->setCell( NULL );
@@ -481,26 +492,25 @@ namespace {
           lefiGeomRect* r          = geoms->getRect(igeom);
           DbU::Unit     w          = parser->fromUnitsMicrons(r->xh - r->xl);
           DbU::Unit     h          = parser->fromUnitsMicrons(r->yh - r->yl);
-          Component*    component  = NULL;
-          bool          isExternal = false;
-          if (w >= h) {
-            isExternal = (h >= parser->getMinTerminalWidth());
-            component = Horizontal::create( net, layer
-                                          , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                                          , h
-                                          , parser->fromUnitsMicrons( r->xl )
-                                          , parser->fromUnitsMicrons( r->xh )
-                                          );
-          } else {
-            isExternal = (w >= parser->getMinTerminalWidth());
-            component = Vertical::create( net, layer
-                                        , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                                        , w
-                                        , parser->fromUnitsMicrons( r->yl )
-                                        , parser->fromUnitsMicrons( r->yh )
+          Segment*      segment    = NULL;
+          float         formFactor = (float)w / (float)h;
+          
+          if ( (formFactor > 0.5) and not parser->isVH() ) {
+            segment = Horizontal::create( net, layer
+                                        , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
+                                        , h
+                                        , parser->fromUnitsMicrons( r->xl )
+                                        , parser->fromUnitsMicrons( r->xh )
                                         );
+          } else {
+            segment = Vertical::create( net, layer
+                                      , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
+                                      , w
+                                      , parser->fromUnitsMicrons( r->yl )
+                                      , parser->fromUnitsMicrons( r->yh )
+                                      );
           }
-          if (isExternal) NetExternalComponents::setExternal( component );
+          if (segment) parser->addPinSegment( pin->name(), segment );
           continue;
         }
 
@@ -531,6 +541,69 @@ namespace {
     }
 
     return 0;
+  }
+
+
+  void  LefParser::_pinPostProcess ()
+  {
+    const Layer*              metal1      = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
+    const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
+          Box                 ab          = _cell->getAbutmentBox();
+
+    for ( auto element : _pinSegments ) {
+      string            pinName  = element.first;
+      vector<Segment*>& segments = element.second;
+      vector<Segment*>  ongrids;
+
+      for ( Segment* segment : segments ) {
+        bool isWide = (segment->getWidth() >= getMinTerminalWidth());
+
+        if (not segment->getNet()->isSupply()) {
+          if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
+            Vertical* v = dynamic_cast<Vertical*>( segment );
+            if (v) {
+              DbU::Unit nearestX = gaugeMetal2->getTrackPosition( ab.getXMin()
+                                                                , ab.getXMax()
+                                                                , v->getX()
+                                                                , Constant::Nearest );
+
+              if (nearestX == v->getX()) {
+              } else {
+                DbU::Unit neighbor = nearestX
+                                   + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
+                if (  (v->getX() - v->getHalfWidth() > neighbor)
+                   or (v->getX() + v->getHalfWidth() < neighbor) ) {
+                  ongrids.push_back( Vertical::create( v->getNet()
+                                                     , v->getLayer()
+                                                     , nearestX
+                                                     , _routingGauge->getLayerGauge((size_t)0)->getWireWidth()
+                                                     , v->getDySource()
+                                                     , v->getDyTarget()
+                                                     )
+                                   );
+                  
+                } else {
+                // Unpitched and not wide enough to be under a metal2 track, ignore.
+                }
+
+                continue;
+              }
+            }
+          }
+        }
+      
+        if (isWide) ongrids.push_back( segment );
+      }
+
+      if (ongrids.empty()) {
+        cerr << Warning( "LefParser::_pinPostProcess(): Pin \"%s\" has no terminal ongrid."
+                       , pinName.c_str() ) << endl;
+      } else {
+        for ( Segment* segment : ongrids ) {
+          NetExternalComponents::setExternal( segment );
+        }
+      }
+    }
   }
 
 

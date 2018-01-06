@@ -371,7 +371,7 @@ namespace CRL {
   void  System::_trapSig ( int sig )
   {
     cerr << "\n\n[CRL ERROR] System::_trapSig():\n" << endl;
-    cerr << "Program stack:\n" << Backtrace().textWhere() << endl;
+    cerr << "Program stack:\n" << Backtrace(true).textWhere() << endl;
 
     switch ( sig ) {
       case SIGINT:
