@@ -150,6 +150,7 @@ namespace Katana {
       inline  Box                     getBoundingBox         () const;
       virtual TrackElement*           getNext                () const;
       virtual TrackElement*           getPrevious            () const;
+      virtual DbU::Unit               getExtensionCap        () const;
       virtual DbU::Unit               getAxis                () const = 0;
       inline  DbU::Unit               getSymmetricAxis       ( DbU::Unit ) const;
       inline  DbU::Unit               getSourceU             () const;

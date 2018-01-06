@@ -100,22 +100,21 @@ namespace Katana {
     uint32_t   gaugeDepth = 0;
     if (Session::getLayerGauge(gaugeDepth)->getType() == Constant::PinOnly) ++gaugeDepth;
 
-    bool HV = (Session::getLayerGauge(gaugeDepth)->getDirection() == Constant::Horizontal);
-    hExtension = Session::getLayerGauge( gaugeDepth + (HV?1:0) )->getPitch() / 2;
-    vExtension = Session::getLayerGauge( gaugeDepth + (HV?0:1) )->getPitch() / 2;
+    DbU::Unit extensionCap = ( std::max( Session::getWireWidth(depth), Session::getViaWidth(depth) )
+                             + Session::getPitch(depth) ) / 2;
 
     size_t  trackNumber;
     Box     abutmentBox = katana->getCell()->getAbutmentBox();
   // HARD CODED.
     if (plane->getDirection() == Flags::Horizontal) {
-      plane->_trackMin = abutmentBox.getXMin() - hExtension;
-      plane->_trackMax = abutmentBox.getXMax() + hExtension;
+      plane->_trackMin = abutmentBox.getXMin() - extensionCap;
+      plane->_trackMax = abutmentBox.getXMax() + extensionCap;
       plane->_axisMin  = abutmentBox.getYMin();
       plane->_axisMax  = abutmentBox.getYMax();
       trackNumber      = plane->computeTracksSize();
     } else {
-      plane->_trackMin = abutmentBox.getYMin() - vExtension;
-      plane->_trackMax = abutmentBox.getYMax() + vExtension;
+      plane->_trackMin = abutmentBox.getYMin() - extensionCap;
+      plane->_trackMax = abutmentBox.getYMax() + extensionCap;
       plane->_axisMin  = abutmentBox.getXMin();
       plane->_axisMax  = abutmentBox.getXMax();
       trackNumber      = plane->computeTracksSize();

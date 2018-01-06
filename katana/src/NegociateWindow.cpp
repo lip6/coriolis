@@ -617,7 +617,7 @@ namespace Katana {
     }
     Session::revalidate();
     _computePriorities();
-
+    
     if (not (flags & Flags::PreRoutedStage)) {
       _katana->preProcess();
       Session::revalidate();

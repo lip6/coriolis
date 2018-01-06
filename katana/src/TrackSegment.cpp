@@ -180,6 +180,7 @@ namespace Katana {
   const Layer*   TrackSegment::getLayer             () const { return _base->getLayer(); }
   DbU::Unit      TrackSegment::getPitch             () const { return _base->getPitch(); }
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
+  DbU::Unit      TrackSegment::getExtensionCap      () const { return _base->getExtensionCap(); }
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
   float          TrackSegment::getPriority          () const { return _priority; }

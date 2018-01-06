@@ -299,7 +299,7 @@ namespace {
                                                     , rp->getSourcePosition()
                                                     , DbU::fromLambda(1.0), DbU::fromLambda(1.0)
                                                     );
-          source->setFlags( Anabatic::CntIgnoreAnchor );
+          source->setFlags( Anabatic::CntIgnoreAnchor|Anabatic::CntFixed );
     
           Anabatic::AutoContact* target =
             Anabatic::AutoContactTerminal::create( support->getGCell()
@@ -308,7 +308,7 @@ namespace {
                                                   , rp->getSourcePosition()
                                                   , DbU::fromLambda(1.0), DbU::fromLambda(1.0)
                                                   );
-          target->setFlags( Anabatic::CntIgnoreAnchor );
+          target->setFlags( Anabatic::CntIgnoreAnchor|Anabatic::CntFixed );
           
           AutoSegment* fixedSegment = AutoSegment::create( source, target, Flags::Vertical );
           fixedSegment->setFlags( AutoSegment::SegFixed );

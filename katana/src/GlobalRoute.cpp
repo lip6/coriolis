@@ -27,6 +27,7 @@ namespace {
 
   using std::cerr;
   using std::endl;
+  using std::dec;
   using std::setw;
   using std::setfill;
   using std::left;
@@ -76,17 +77,18 @@ namespace {
       viaCost += 2.5;
     }
 
-    float distance = (float)source->getDistance()
-                   + (congestionCost + viaCost) * (float)edge->getDistance()
-                   + edge->getHistoricCost();
+    float hvDistort = (edge->isHorizontal()) ? 1.0 : 1.0 ;
+    float distance  = (float)source->getDistance()
+                    + (congestionCost + viaCost) * (float)edge->getDistance() * hvDistort
+                    + edge->getHistoricCost();
 
     // Edge* sourceFrom = source->getFrom();
     // if (sourceFrom) {
     //   distance += ((sourceFrom->isHorizontal() xor edge->isHorizontal()) ? 3.0 : 0.0) * (float)Edge::unity;
     // }
-    cdebug_log(112,0) << "cong:"   << congestion
-                      << " ccost:" << congestionCost
-                      << " digitalDistance:" << DbU::getValueString((DbU::Unit)distance) << endl;
+    // cdebug_log(112,0) << "cong:"   << congestion
+    //                   << " ccost:" << congestionCost
+    //                   << " digitalDistance:" << DbU::getValueString((DbU::Unit)distance) << endl;
 
     return (DbU::Unit)distance;
   }
@@ -185,10 +187,11 @@ namespace Katana {
     float edgeHInc = getConfiguration()->getEdgeHInc();
 
     openSession();
-    Dijkstra*        dijkstra = new Dijkstra ( this );
-    DigitalDistance* distance =
+    Dijkstra*           dijkstra = new Dijkstra ( this );
+    DigitalDistance*    distance =
       dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
                                             , getConfiguration()->getEdgeCostK() ));
+    const vector<Edge*>& ovEdges = getOvEdges();
 
     if (isChannelMode())
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*2 );
@@ -208,29 +211,32 @@ namespace Katana {
         ++netCount;
       }
       cmess2 << left << setw(6) << netCount;
-
-      const vector<Edge*>& ovEdges = getOvEdges();
       cmess2 << " ovEdges:" << setw(4) << ovEdges.size();
 
       for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
+      // Session::close();
+      // Breakpoint::stop( 1, "Before riping up overflowed edges." );
+      // openSession();
 
       netCount = 0;
-      size_t iEdge = 0;
-      while ( iEdge < ovEdges.size() ) {
-        Edge* edge = ovEdges[iEdge];
-        netCount += edge->ripup();
+      if (iteration < 10 - 1) {
+        size_t iEdge = 0;
+        while ( iEdge < ovEdges.size() ) {
+          Edge* edge = ovEdges[iEdge];
+          netCount += edge->ripup();
 
-        if (ovEdges.empty()) break;
-        if (ovEdges[iEdge] == edge) {
-          cerr << Error( "AnabaticEngine::globalRoute(): Unable to ripup enough segments of edge:\n"
+          if (ovEdges.empty()) break;
+          if (ovEdges[iEdge] == edge) {
+            cerr << Error( "AnabaticEngine::globalRoute(): Unable to ripup enough segments of edge:\n"
                          "        %s"
-                       , getString(edge).c_str()
-                       ) << endl;
-          ++iEdge;
+                         , getString(edge).c_str()
+                         ) << endl;
+            ++iEdge;
+          }
         }
-      }
 
-      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
+        dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
+      }
 
       cmess2 << " ripup:" << setw(4) << netCount << right;
       suspendMeasures();
@@ -239,10 +245,26 @@ namespace Katana {
       resumeMeasures();
 
       ++iteration;
-    } while ( (netCount > 0) and (iteration < 5) );
+    } while ( (netCount > 0) and (iteration < 10) );
 
     stopMeasures();
     printMeasures( "Dijkstra" );
+
+    if (not ovEdges.empty()) {
+      set< const Net*, Net::CompareByName > nets;
+
+      cerr << "  o  Global routing did not complete, overflowed edges:" << endl;
+      for ( size_t iEdge = 0 ; iEdge<ovEdges.size() ; ++iEdge ) {
+        cerr << "    " << dec << setw(4) << (iEdge+1) << "| " << ovEdges[iEdge] << endl;
+        for ( Segment* segment : ovEdges[iEdge]->getSegments() )
+          nets.insert( segment->getNet() );
+      }
+
+      cerr << "  o  Conflicting nets:" << endl;
+      size_t count = 0;
+      for ( const Net* net : nets )
+        cerr << "    " << dec << setw(4) << (++count) << "| " << net->getName() << endl;
+    }
 
     if (getBlock(0)) {
       getBlock(0)->resizeChannels();

@@ -96,6 +96,7 @@ namespace Katana {
       virtual const Layer*          getLayer               () const;
       virtual DbU::Unit             getPitch               () const;
       virtual DbU::Unit             getPPitch              () const;
+      virtual DbU::Unit             getExtensionCap        () const;
       virtual unsigned long         getFreedomDegree       () const;
       virtual float                 getPriority            () const;
       virtual uint32_t              getDoglegLevel         () const;

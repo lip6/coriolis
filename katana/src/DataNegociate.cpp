@@ -145,7 +145,7 @@ namespace Katana {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
-        _perpandicularFree.intersection( trackFree );
+        _perpandicularFree.intersection( trackFree.inflate(-perpandicular->getExtensionCap()) );
       } else {
         cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
       }
