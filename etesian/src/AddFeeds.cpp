@@ -201,7 +201,9 @@ namespace {
       // Feed is too big, try to find a smaller one.
         int pitch = (int)((xmax-xtie) / getEtesian()->getVerticalPitch());
         for ( ; pitch > 0 ; --pitch ) {
-          feed      = getEtesian()->getFeedCells().getFeed( pitch );
+          feed = getEtesian()->getFeedCells().getFeed( pitch );
+          if (feed == NULL) continue;
+          
           feedWidth = feed->getAbutmentBox().getWidth();
           if (feed != NULL) break;
         }
