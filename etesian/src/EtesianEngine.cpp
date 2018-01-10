@@ -279,17 +279,26 @@ namespace Etesian {
 
       while ( not feedNames.empty() ) {
         size_t cut = feedNames.find( separator );
+        string feedName;
         if (cut != string::npos) {
-          _feedCells.useFeed( DataBase::getDB()->getCell( feedNames.substr(0,cut) ) );
+          feedName  = feedNames.substr( 0, cut );
           feedNames = feedNames.substr( cut+1 );
         } else {
-          _feedCells.useFeed( AllianceFramework::get()->getCell( feedNames, Catalog::State::Views|Catalog::State::Foreign ) );
+          feedName  = feedNames;
           feedNames.clear();
         }
+
+        Cell*  feed = DataBase::getDB()->getCell( feedName );
+        if (not feed)
+          feed = AllianceFramework::get()->getCell( feedName, Catalog::State::Views|Catalog::State::Foreign );
+
+        if (feed)
+          _feedCells.useFeed( feed );
+        else
+          cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" feed cell."
+                         , feedName.c_str()
+                         ) << endl;
       }
-      
-    //_feedCells.useFeed( AllianceFramework::get()->getCell("tie_x0"   ,Catalog::State::Views) );
-    //_feedCells.useFeed( AllianceFramework::get()->getCell("rowend_x0",Catalog::State::Views) );
     }
   }
 
@@ -375,7 +384,7 @@ namespace Etesian {
       static_cast<Instance*>(ioccurrence.getEntity())->destroy();
     }
 
-    DbU::Unit abWidth = rows*getSliceHeight();
+    DbU::Unit abWidth = columns*getSliceHeight();
     DbU::Unit adjust  = abWidth % getVerticalPitch();
     if (adjust) abWidth += getVerticalPitch() - adjust;
 
