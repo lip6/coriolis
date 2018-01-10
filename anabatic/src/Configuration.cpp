@@ -397,7 +397,7 @@ namespace Anabatic {
 
   bool  Configuration::selectRpComponent ( RoutingPad* rp ) const
   {
-    cdebug_log(145,1) << "selectRpComponent(): " << rp << endl;
+    cdebug_log(112,1) << "selectRpComponent(): " << rp << endl;
     
     Box                ab             = rp->getCell()->getBoundingBox();
     const Layer*       metal1         = getLayerGauge( 0 )->getLayer();
@@ -410,16 +410,17 @@ namespace Anabatic {
 
     Segment*           current        = dynamic_cast<Segment*>( rp->getOccurrence().getEntity() );
     if (current and (current->getLayer()->getMask() != metal1->getMask())) {
-      cdebug_log(145,0) << "> using default non-metal1 segment." << endl;
-      cdebug_tabw(145,-1);
+      cdebug_log(112,0) << "> using default non-metal1 segment." << endl;
+      cdebug_tabw(112,-1);
       return true;
     }
 
     DbU::Unit  bestSpan      = 0;
     Component* bestComponent = NULL;
 
+    cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
     for ( Component* component : masterNet->getComponents() ) {
-      cdebug_log(145,0) << "@ " << component << endl;
+      cdebug_log(112,0) << "@ " << component << endl;
       if (not NetExternalComponents::isExternal(component)) continue;
 
       Segment* segment = dynamic_cast<Segment*>(component);
@@ -447,30 +448,27 @@ namespace Anabatic {
         maxPos = bb.getYMax();
       }
 
-      cdebug_log(145,0) << "| " << occurrence.getPath() << endl;
-      cdebug_log(145,0) << "| " << transformation << endl;
-      cdebug_log(145,0) << "| " << bb << " of:" << segment << endl;
-      cdebug_log(145,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
+      cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
+      cdebug_log(112,0) << "| " << transformation << endl;
+      cdebug_log(112,0) << "| " << bb << " of:" << segment << endl;
+      cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
         
       if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        if (not bestComponent) bestComponent = component;
-        else {
-          if (bestSpan < maxPos-minPos) {
-            bestComponent = component;
-            bestSpan      = maxPos - minPos;
-          }
+        if (not bestComponent or (bestSpan > maxPos-minPos)) {
+          bestComponent = component;
+          bestSpan      = maxPos - minPos;
         }
       }
     }
 
     if (bestComponent) {
       rp->setExternalComponent( bestComponent );
-      cdebug_log(145,0) << "Using best candidate:" << bestComponent << endl;
-      cdebug_tabw(145,-1);
+      cdebug_log(112,0) << "Using best candidate:" << bestComponent << endl;
+      cdebug_tabw(112,-1);
       return true;
     }
 
-    cdebug_tabw(145,-1);
+    cdebug_tabw(112,-1);
     return false;
   }
   

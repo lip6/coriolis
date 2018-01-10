@@ -875,11 +875,13 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     if (deepNet) deepNet->_createRoutingPads( flags );
   }
 
+  unsigned int rpFlags = (flags & Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
+    
   for ( size_t i=0 ; i<topHyperNets.size() ; ++i ) {
     Net* net = static_cast<Net*>(topHyperNets[i].getNetOccurrence().getEntity());
 
     for ( Occurrence plugOccurrence : topHyperNets[i].getLeafPlugOccurrences() ) {
-      RoutingPad* rp = RoutingPad::create( net, plugOccurrence, RoutingPad::BiggestArea );
+      RoutingPad* rp = RoutingPad::create( net, plugOccurrence, rpFlags );
       rp->materialize();
 
       if (flags & Flags::WarnOnUnplacedInstances)

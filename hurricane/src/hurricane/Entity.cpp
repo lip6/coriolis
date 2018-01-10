@@ -100,6 +100,9 @@ namespace Hurricane {
       throw Error( "Entity::Entity(): Identifier counter has reached it's limit (%d bits)."
                  , std::numeric_limits<unsigned int>::digits );
     }
+
+    // if (_id == 75060)
+    //   cerr << "Entity::Entity() " << this << endl;
   }
 
 

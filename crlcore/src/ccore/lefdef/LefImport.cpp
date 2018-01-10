@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2017-2018, All Rights Reserved
+// Copyright (c) UPMC 2017-2018, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -381,6 +381,8 @@ namespace {
       blockageNet = Net::create( cell, "blockage" );
       blockageNet->setType( Net::Type::BLOCKAGE );
     }
+
+  //cerr << "       @ _obstructionCbk: " << blockageNet->getName() << endl;
       
     lefiGeometries* geoms = obstruction->geometries();
     for ( int igeom=0 ; igeom < geoms->numItems() ; ++ igeom ) {
@@ -393,21 +395,23 @@ namespace {
         lefiGeomRect* r         = geoms->getRect(igeom);
         double        w         = r->xh - r->xl;
         double        h         = r->yh - r->yl;
+        Segment*      segment   = NULL;
         if (w >= h) {
-          Horizontal::create( blockageNet, layer
-                            , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
-                            , parser->fromUnitsMicrons( h  )
-                            , parser->fromUnitsMicrons( r->xl )
-                            , parser->fromUnitsMicrons( r->xh )
-                            );
+          segment = Horizontal::create( blockageNet, layer
+                                      , parser->fromUnitsMicrons( (r->yl + r->yh)/2 )
+                                      , parser->fromUnitsMicrons( h  )
+                                      , parser->fromUnitsMicrons( r->xl )
+                                      , parser->fromUnitsMicrons( r->xh )
+                                      );
         } else {
-          Vertical::create( blockageNet, layer
-                          , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
-                          , parser->fromUnitsMicrons( w  )
-                          , parser->fromUnitsMicrons( r->yl )
-                          , parser->fromUnitsMicrons( r->yh )
-                          );
+          segment = Vertical::create( blockageNet, layer
+                                    , parser->fromUnitsMicrons( (r->xl + r->xh)/2 )
+                                    , parser->fromUnitsMicrons( w  )
+                                    , parser->fromUnitsMicrons( r->yl )
+                                    , parser->fromUnitsMicrons( r->yh )
+                                    );
         }
+      //cerr << "       | " << segment << endl;
       }
     }
 
@@ -440,7 +444,8 @@ namespace {
     parser->_pinPostProcess();
     parser->clearPinSegments();
 
-    cerr << "     - " << cellName << " " << DbU::getValueString(width) << " " << DbU::getValueString(height) << endl; 
+    cerr << "     - " << cellName
+         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height) << "\n" << endl; 
     parser->setCell( NULL );
 
     return 0;
@@ -451,7 +456,7 @@ namespace {
   {
     LefParser* parser = (LefParser*)ud;
 
-  //cerr << "       + _pinCbk: " << pin->name() << endl;
+  //cerr << "       @ _pinCbk: " << pin->name() << endl;
 
     if (not parser->getCell()) parser->setCell( Cell::create( parser->getLibrary(true), "LefImportTmpCell" ) );
 
@@ -511,6 +516,7 @@ namespace {
                                       );
           }
           if (segment) parser->addPinSegment( pin->name(), segment );
+        //cerr << "       | " << segment << endl;
           continue;
         }
 
@@ -550,6 +556,8 @@ namespace {
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
+  //cerr << "       @ _pinPostProcess" << endl;
+
     for ( auto element : _pinSegments ) {
       string            pinName  = element.first;
       vector<Segment*>& segments = element.second;
@@ -558,6 +566,8 @@ namespace {
       for ( Segment* segment : segments ) {
         bool isWide = (segment->getWidth() >= getMinTerminalWidth());
 
+      //cerr << "       > " << segment << endl;
+        
         if (not segment->getNet()->isSupply()) {
           if (isVH() and (segment->getLayer()->getMask() == metal1->getMask())) {
             Vertical* v = dynamic_cast<Vertical*>( segment );
@@ -571,6 +581,12 @@ namespace {
               } else {
                 DbU::Unit neighbor = nearestX
                                    + ((nearestX > v->getX()) ? 1 : -1) * gaugeMetal2->getPitch();
+
+              //cerr << "       | X:" << DbU::getValueString(v->getX())
+              //     <<  " nearestX:" << DbU::getValueString(nearestX)
+              //     <<  " neighbor:" << DbU::getValueString(neighbor)
+              //     << endl;
+
                 if (  (v->getX() - v->getHalfWidth() > neighbor)
                    or (v->getX() + v->getHalfWidth() < neighbor) ) {
                   ongrids.push_back( Vertical::create( v->getNet()
@@ -581,7 +597,7 @@ namespace {
                                                      , v->getDyTarget()
                                                      )
                                    );
-                  
+                //cerr << "       | " << ongrids[ongrids.size()-1] << endl;
                 } else {
                 // Unpitched and not wide enough to be under a metal2 track, ignore.
                 }

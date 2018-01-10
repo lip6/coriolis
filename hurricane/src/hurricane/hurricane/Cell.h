@@ -74,28 +74,29 @@ class Cell : public Entity {
 
     public: class Flags : public BaseFlags {
       public:
-        enum Flag { NoFlags                 = 0x00000000
-                  , BuildRings              = 0x00000001
-                  , BuildClockRings         = 0x00000002
-                  , BuildSupplyRings        = 0x00000004
-                  , NoClockFlatten          = 0x00000008
-                  , WarnOnUnplacedInstances = 0x00000010
+        enum Flag { NoFlags                 = (1 <<  0)
+                  , BuildRings              = (1 <<  1)
+                  , BuildClockRings         = (1 <<  2)
+                  , BuildSupplyRings        = (1 <<  3)
+                  , NoClockFlatten          = (1 <<  4)
+                  , WarnOnUnplacedInstances = (1 <<  5)
+                  , StayOnPlugs             = (1 <<  6)
                   , MaskRings               = BuildRings|BuildClockRings|BuildSupplyRings
                   // Flags set for Observers.
-                  , CellAboutToChange       = 0x00000100
-                  , CellChanged             = 0x00000200
-                  , CellDestroyed           = 0x00000400
+                  , CellAboutToChange       = (1 << 10)
+                  , CellChanged             = (1 << 11)
+                  , CellDestroyed           = (1 << 12)
                   // Cell states
-                  , Terminal                = 0x00001000
-                  , FlattenLeaf             = 0x00002000
-                  , Pad                     = 0x00004000
-                  , Feed                    = 0x00008000
-                  , FlattenedNets           = 0x00010000
-                  , Placed                  = 0x00020000
-                  , Routed                  = 0x00040000
-                  , MergedQuadTree          = 0x00080000
-                  , SlavedAb                = 0x00100000
-                  , Materialized            = 0x00200000 
+                  , Terminal                = (1 << 20)
+                  , FlattenLeaf             = (1 << 21)
+                  , Pad                     = (1 << 22)
+                  , Feed                    = (1 << 23)
+                  , FlattenedNets           = (1 << 24)
+                  , Placed                  = (1 << 25)
+                  , Routed                  = (1 << 26)
+                  , MergedQuadTree          = (1 << 27)
+                  , SlavedAb                = (1 << 28)
+                  , Materialized            = (1 << 29) 
                   };
 
       public:

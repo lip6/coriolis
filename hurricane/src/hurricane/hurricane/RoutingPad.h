@@ -48,11 +48,11 @@ namespace Hurricane {
   class RoutingPad : public Component {
     public:
       typedef Component Inherit;
-      enum    Flags { BiggestArea       = 0x0001
-                    , HighestLayer      = 0x0002
-                    , LowestLayer       = 0x0004
+      enum    Flags { BiggestArea       = (1 <<  0)
+                    , HighestLayer      = (1 <<  1)
+                    , LowestLayer       = (1 <<  2)
                     , ComponentSelection= BiggestArea|HighestLayer|LowestLayer
-                    , ShowWarning       = 0x0008
+                    , ShowWarning       = (1 <<  4)
                     };
     public:
       static RoutingPad*   create                ( Net*, Occurrence, unsigned int flags=0 );

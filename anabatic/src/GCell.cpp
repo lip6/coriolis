@@ -751,24 +751,24 @@ namespace Anabatic {
     Interval  hspan = getSide( Flags::Horizontal );
     Interval  vspan = getSide( Flags::Vertical );
 
-    if (hspan.getSize() < 3*side) {
-      cerr << Error( "GCell::doGrid(): GCell is too narrow (dx:%s) to build a grid.\n"
-                     "        (%s)"
-                   , DbU::getValueString(hspan.getSize()).c_str()
-                   , getString(this).c_str()
-                   ) << endl;
-      Session::close();
-      return false;
-    }
+    // if (hspan.getSize() < 2*side) {
+    //   cerr << Error( "GCell::doGrid(): GCell is too narrow (dx:%s) to build a grid.\n"
+    //                  "        (%s)"
+    //                , DbU::getValueString(hspan.getSize()).c_str()
+    //                , getString(this).c_str()
+    //                ) << endl;
+    //   Session::close();
+    //   return false;
+    // }
 
-    if (vspan.getSize() < 3*side) {
-      cerr << Error( "GCell::doGrid(): GCell is too narrow (dy:%s) to build a grid.\n"
-                     "        (%s)"
-                   , DbU::getValueString(vspan.getSize()).c_str()
-                   , getString(this).c_str()
-                   ) << endl;
-      return false;
-    }
+    // if (vspan.getSize() < 2*side) {
+    //   cerr << Error( "GCell::doGrid(): GCell is too narrow (dy:%s) to build a grid.\n"
+    //                  "        (%s)"
+    //                , DbU::getValueString(vspan.getSize()).c_str()
+    //                , getString(this).c_str()
+    //                ) << endl;
+    //   return false;
+    // }
 
     GCell*    row    = this;
     GCell*    column = NULL;

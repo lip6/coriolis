@@ -91,15 +91,17 @@ extern "C" {
   DirectGetLongAttribute(PyNet_getY,getY,PyNet,Net)  
   
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyNet_isGlobal  ,isGlobal  ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_isExternal,isExternal,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_isLogical ,isLogical ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_isClock   ,isClock   ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_isGround  ,isGround  ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_isPower   ,isPower   ,PyNet,Net)
-  DirectGetBoolAttribute(PyNet_isSupply  ,isSupply  ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isGlobal    ,isGlobal    ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isExternal  ,isExternal  ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isLogical   ,isLogical   ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isClock     ,isClock     ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isGround    ,isGround    ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isPower     ,isPower     ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isSupply    ,isSupply    ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isAutomatic ,isAutomatic ,PyNet,Net)
+  DirectSetBoolAttribute(PyNet_setAutomatic,setAutomatic,PyNet,Net)
 
-  GetBoundStateAttribute(PyNet_IsPyBound            ,PyNet,Net)
+  GetBoundStateAttribute(PyNet_IsPyBound,PyNet,Net)
   GetNameMethod(Net, net)
 
   // Standart modificators.
@@ -456,9 +458,11 @@ extern "C" {
     , { "isGround"             , (PyCFunction)PyNet_isGround                 , METH_NOARGS , "return true if the net is a ground" }
     , { "isSupply"             , (PyCFunction)PyNet_isSupply                 , METH_NOARGS , "return true if the net is a supply" }
     , { "isBound"              , (PyCFunction)PyNet_IsPyBound                , METH_NOARGS , "return true if the net is bounded to the hurricane net" }
+    , { "isAutomatic"          , (PyCFunction)PyNet_isAutomatic              , METH_NOARGS , "return true if the net is automatic (auto-generated)" }
     , { "setName"              , (PyCFunction)PyNet_setName                  , METH_VARARGS, "Allows to change net name." }
     , { "setGlobal"            , (PyCFunction)PyNet_setGlobal                , METH_VARARGS, "set the net global." }
     , { "setExternal"          , (PyCFunction)PyNet_setExternal              , METH_VARARGS, "set the net external." }
+    , { "setAutomatic"         , (PyCFunction)PyNet_setAutomatic             , METH_VARARGS, "declare the net as automatic (auto-generated)." }
     , { "setType"              , (PyCFunction)PyNet_setType                  , METH_VARARGS, "set the type of the net." }
     , { "setDirection"         , (PyCFunction)PyNet_setDirection             , METH_VARARGS, "set the direction of the net." }
     , { "setPosition"          , (PyCFunction)PyNet_setPosition              , METH_VARARGS, "set the X,Y location of the net." }

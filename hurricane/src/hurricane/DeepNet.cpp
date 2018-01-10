@@ -85,15 +85,16 @@ namespace Hurricane {
 
   size_t  DeepNet::_createRoutingPads ( unsigned int flags )
   {
-    size_t      nbRoutingPads = 0;
-    HyperNet    hyperNet      ( _netOccurrence );
-    RoutingPad* currentRp     = NULL;
-    bool        createRp      = true;
+    size_t        nbRoutingPads = 0;
+    HyperNet      hyperNet      ( _netOccurrence );
+    RoutingPad*   currentRp     = NULL;
+    bool          createRp      = true;
+    unsigned int  rpFlags       = (flags & Cell::Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
 
     for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>(occurrence.getEntity());
       if ( rp and (rp->getCell() == getCell()) ) { createRp = false; break; }
-      if ( dynamic_cast<Segment*   >(occurrence.getEntity()) ) { createRp = false; break; }
+      if ( dynamic_cast<Segment*>(occurrence.getEntity()) ) { createRp = false; break; }
     }
     if (not createRp) return 0;
 

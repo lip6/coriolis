@@ -238,7 +238,7 @@ namespace CRL {
     }
 
     unsigned int tracksNumber = getTrackNumber(start,stop);
-    if ( (unsigned)index >= tracksNumber ) {
+    if ( (unsigned)index > tracksNumber ) {
       cdebug_tabw(100,-1);
       return (tracksNumber > 0) ? tracksNumber-1 : 0;
       // throw Error ( overflowIndex

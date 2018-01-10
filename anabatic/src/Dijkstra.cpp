@@ -1450,7 +1450,6 @@ namespace Anabatic {
 
     vector<RoutingPad*> rps;
     NetRoutingState* state = NetRoutingExtension::get( _net );
-
     
     if (state){
       if (state->isSelfSym()){

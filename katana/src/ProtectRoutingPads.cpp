@@ -16,6 +16,7 @@
 
 #include <map>
 #include <list>
+#include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
@@ -42,6 +43,7 @@
 namespace {
 
   using namespace std;
+  using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
   using Hurricane::DbU;
@@ -68,30 +70,39 @@ namespace {
 
   void  protectRoutingPad ( RoutingPad* rp )
   {
+    cdebug_log(145,1) << "::protectRoutingPad() " << rp << endl;
+    
     Name            padNetName     = "pad";
     Component*      usedComponent  = rp->_getEntityAsComponent();
     Path            path           = rp->getOccurrence().getPath();
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
 
-    if ( CatalogExtension::isPad(masterNet->getCell()) ) {
+    if (Session::getRoutingGauge()->getLayerType(usedComponent->getLayer()) == Constant::PinOnly) {
+      cdebug_tabw(145,-1);
+      return;
+    }
+
+    cdebug_log(145,0) << "masterCell: " << masterNet->getCell() << endl;
+    cdebug_log(145,0) << "masterNet:  " << masterNet << endl;
+
+    if (CatalogExtension::isPad(masterNet->getCell())) {
       if (   rp->getNet()->isPower()
          or (rp->getNet()->getName() == padNetName) )
+        cdebug_tabw(145,-1);
         return;
     }
 
     vector<Segment*> segments;
 
-    for( Segment* segment : masterNet->getSegments() ) {
+    for ( Segment* segment : masterNet->getSegments() ) {
       RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment->getLayer());
-      if ( plane == NULL ) continue;
+      if (not plane) continue;
 
-      if ( usedComponent == dynamic_cast<Component*>(segment) ) continue;
-      if ( not NetExternalComponents::isExternal(segment) ) continue;
+      if (usedComponent == dynamic_cast<Component*>(segment)) continue;
+      if (not NetExternalComponents::isExternal(segment)) continue;
 
-    //cerr << "Looking " << (void*)*isegment << ":" << *isegment << endl;
-
-      segments.push_back ( segment );
+      segments.push_back( segment );
     }
 
     for ( size_t i=0 ; i<segments.size() ; ++i ) {
@@ -105,7 +116,8 @@ namespace {
       Box           bb        ( segments[i]->getBoundingBox() );
 
       transformation.applyOn ( bb );
-    //cinfo << "bb: " << bb << endl;
+
+      cdebug_log(145,0) << "@ " << segments[i] << " bb:" << bb << endl;
 
       if ( direction == Flags::Horizontal ) {
         DbU::Unit axisMin = bb.getYMin() - delta;
@@ -121,6 +133,7 @@ namespace {
                                                    , bb.getXMax()-extension
                                                    );
           TrackFixedSegment::create ( track, segment );
+          cdebug_log(145,0) << "| " << segment << endl;
         }
       } else {
         DbU::Unit axisMin = bb.getXMin() - delta;
@@ -136,9 +149,11 @@ namespace {
                                                , bb.getYMax()-extension
                                                );
           TrackFixedSegment::create ( track, segment );
+          cdebug_log(145,0) << "| " << segment << endl;
         }
       }
     }
+    cdebug_tabw(145,-1);
   }
 
 
@@ -163,6 +178,8 @@ namespace Katana {
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
 
+      DebugSession::open( net, 140, 150 );
+
       NetData* data = getNetData( net );
       if (data and data->isFixed()) continue;
 
@@ -173,6 +190,8 @@ namespace Katana {
 
       for ( size_t i=0 ; i<rps.size() ; ++i )
         protectRoutingPad( rps[i] );
+
+      DebugSession::close();
     }
 
     Session::close();

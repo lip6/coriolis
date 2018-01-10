@@ -451,6 +451,14 @@ namespace Anabatic {
               const Layer* layer = anchor->getLayer();
               cdebug_log(145,0) << "rp: " << rp << endl;
 
+              if (not layer) {
+                cerr << Error( "RoutingPad is still on it's Plug, routing will be incomplete.\n"
+                               "        %s"
+                             , getString(anchor).c_str() )
+                     << endl;
+                continue;
+              }
+
               if      (layer->getMask() == Session::getRoutingLayer(0)->getMask()) _connexity.fields.M1++; // M1 V
               else if (layer->getMask() == Session::getRoutingLayer(1)->getMask()) _connexity.fields.M2++; // M2 H
               else if (layer->getMask() == Session::getRoutingLayer(2)->getMask()) _connexity.fields.M3++; // M3 V
