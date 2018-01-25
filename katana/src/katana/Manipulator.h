@@ -67,6 +67,7 @@ namespace Katana {
              void                 reprocessPerpandiculars ();
              bool                 ripple                  ();
              bool                 minimize                ();
+             bool                 dragMinimize            ();
              bool                 slacken                 ( Flags flags=Flags::NoFlags );
              bool                 pivotUp                 ();
              bool                 pivotDown               ();

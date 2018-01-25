@@ -69,6 +69,7 @@ namespace Katana {
       virtual bool                  isGlobal               () const;
       virtual bool                  isBipoint              () const;
       virtual bool                  isTerminal             () const;
+      virtual bool                  isDrag                 () const;
       virtual bool                  isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
       virtual bool                  isStrap                () const;
       virtual bool                  isSlackened            () const;

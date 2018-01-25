@@ -491,12 +491,20 @@ namespace Anabatic {
   void  AutoSegment::invalidate ( Flags flags )
   {
     if (Session::doDestroyTool()) return;
-    if (flags & Flags::Source) setFlags( SegInvalidatedSource );
-    if (flags & Flags::Target) setFlags( SegInvalidatedTarget );
-    if (isInvalidated()) return;
 
     cdebug_log(149,0) << "AutoSegment::invalidate() " << flags << " " << this << endl;
     cdebug_tabw(149,1);
+
+    if (flags & Flags::Source) setFlags( SegInvalidatedSource );
+    if (flags & Flags::Target) setFlags( SegInvalidatedTarget );
+
+    if ( (getFlags() & SegSourceTerminal) and getAutoSource() and getAutoSource()->canDrag() )
+      getAutoSource()->invalidate();
+
+    if ( (getFlags() & SegTargetTerminal) and getAutoTarget() and getAutoTarget()->canDrag() )
+      getAutoTarget()->invalidate();
+
+    if (isInvalidated()) { cdebug_tabw(149,-1); return; }
 
     _invalidate();
 
@@ -2108,6 +2116,17 @@ namespace Anabatic {
     coherency = checkConstraints()    and coherency;
     coherency = checkDepthSpin()      and coherency;
 
+    if (isDrag() xor (getAutoSource()->canDrag() or getAutoTarget()->canDrag())) {
+      cerr << Error( "%s\n"
+                     "        Discrepency between segment \"drag\" state and it's contacts.\n"
+                     "        source:%s\n" 
+                     "        target:%s" 
+                   , getString(this).c_str()
+                   , getString(getAutoSource()).c_str()
+                   , getString(getAutoTarget()).c_str()
+                   ) << endl;
+      coherency = false;
+    }
     return coherency;
   }
 
@@ -2123,6 +2142,7 @@ namespace Anabatic {
     state += isWeakGlobal      () ? "g": "-";
     state += isLongLocal       () ? "L": "-";
     state += isStrongTerminal  () ? "T": "-";
+    state += isDrag            () ? "D": "-";
     state += isWeakTerminal1   () ? "W": "-";
     state += isWeakTerminal2   () ? "w": "-";
     state += isNotAligned      () ? "A": "-";
@@ -2293,6 +2313,7 @@ namespace Anabatic {
     }
 
     if (wPitch > 1) segment->setFlags( SegWide );
+    if (source->canDrag() or target->canDrag()) segment->setFlags( SegDrag );
 
     return segment;
   }
@@ -2383,6 +2404,7 @@ namespace Anabatic {
       throw Error( badSegment, getString(source).c_str(), getString(target).c_str() );
 
     if (wPitch > 1) segment->setFlags( SegWide );
+    if (source->canDrag() or target->canDrag()) segment->setFlags( SegDrag );
 
     return segment;
   }

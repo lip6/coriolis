@@ -41,6 +41,30 @@ namespace {
   using Anabatic::perpandicularTo;
   using Anabatic::AutoSegment;
   using Anabatic::AutoContactTerminal;
+  using Anabatic::AutoSegments_OnContact;
+  using Anabatic::AutoSegments;
+
+
+  class SortAcByXY {
+    public:
+      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 );
+  };
+
+
+  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 )
+  {
+    DbU::Unit x1 = contact1->getX();
+    DbU::Unit x2 = contact2->getX();
+
+    if (x1 == x2) {
+      DbU::Unit y1 = contact1->getY();
+      DbU::Unit y2 = contact2->getY();
+
+      if (y1 == y2) return false;
+      return (y1 < y2);
+    }
+    return (x1 < x2);
+  }
 
 
   void  getPerpandiculars ( TrackElement*           segment
@@ -323,6 +347,85 @@ namespace {
   }
 
 
+  void  metal2protect ( AutoContactTerminal* contact )
+  {
+    const Layer*  metal2         = Session::getRoutingLayer(1);
+    RoutingPlane* metal3plane    = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
+    DbU::Unit     metal3axis     = metal3plane->getTrackByPosition( contact->getY() )->getAxis();
+    RoutingPad*   rp             = dynamic_cast<RoutingPad*>( contact->getAnchor() );
+    DbU::Unit     viaSideProtect = Session::getViaWidth((size_t)0);
+    Point         position       ( contact->getX(), metal3axis );
+
+    AutoContact* sourceVia12 = AutoContactTerminal::create( contact->getGCell()
+                                                          , rp
+                                                          , metal2
+                                                          , position
+                                                          , viaSideProtect, viaSideProtect
+                                                          );
+    AutoContact* targetVia12 = AutoContactTerminal::create( contact->getGCell()
+                                                          , rp
+                                                          , metal2
+                                                          , position
+                                                          , viaSideProtect, viaSideProtect
+                                                          );
+    
+    AutoSegment* segment = AutoSegment::create( sourceVia12, targetVia12, Flags::Vertical );
+    
+    sourceVia12->setFlags( Anabatic::CntFixed|Anabatic::CntIgnoreAnchor );
+    targetVia12->setFlags( Anabatic::CntFixed|Anabatic::CntIgnoreAnchor );
+    segment->setFlags( AutoSegment::SegFixed );
+
+    Session::getNegociateWindow()->createTrackSegment( segment, Flags::LoadingStage );
+    
+    cdebug_log(145,0) << "Hard protect: " << contact << endl;
+    cdebug_log(145,0) << "X:" << DbU::getValueString(position.getX())
+                      << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
+  }
+
+
+  void  protectAlignedAccesses ( GCell* gcell )
+  {
+    DbU::Unit pitch3 = Session::getPitch( 2 );
+    
+    multiset<AutoContactTerminal*,SortAcByXY>  acTerminals;
+    for ( AutoContact* contact : gcell->getContacts() ) {
+      if (contact->isTerminal() and (Session::getViaDepth(contact->getLayer()) == 0) )
+        acTerminals.insert( dynamic_cast<AutoContactTerminal*>(contact) );
+    }
+
+    AutoContactTerminal* south = NULL;
+    for ( AutoContactTerminal* north : acTerminals ) {
+      if (south) {
+        if (south->canDrag() and north->canDrag() and (south->getX() == north->getX())) {
+        //Interval constraints ( north->getCBYMax() - pitch3, gcell->getYMin() );
+          Interval constraints ( north->getCBYMin() - pitch3, gcell->getYMin() );
+          AutoSegment* terminal = south->getSegment();
+          AutoContact* opposite = terminal->getOppositeAnchor( south );
+
+          for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+            segment->mergeUserConstraints( constraints );
+            cerr << "Apply " << constraints << " to " << segment << endl;
+          }
+
+        //constraints = Interval( south->getCBYMin() + pitch3, gcell->getYMax() );
+          constraints = Interval( south->getCBYMax() + pitch3, gcell->getYMax() );
+          terminal    = north->getSegment();
+          opposite    = terminal->getOppositeAnchor( north );
+
+          for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+            segment->mergeUserConstraints( constraints );
+            cerr << "Apply " << constraints << " to " << segment << endl;
+          }
+        }
+
+      //if (south->getConstraintBox().getHeight() < pitch3*2) metal2protect( south );
+      //if (north->getConstraintBox().getHeight() < pitch3*2) metal2protect( north );
+      }
+      south = north;
+    }
+  }
+
+
 } // End of local namespace.
 
 
@@ -337,6 +440,8 @@ namespace Katana {
 
   void  KatanaEngine::preProcess ()
   {
+  //DebugSession::open( 145, 150 );
+
     for ( size_t i=0 ; i<_routingPlanes.size() ; ++i ) {
       RoutingPlane* plane = _routingPlanes[i];
 
@@ -346,6 +451,11 @@ namespace Katana {
         track = track->getNextTrack();
       }
     }
+
+    for ( GCell* gcell : getGCells() ) protectAlignedAccesses( gcell );
+
+  //DebugSession::close();
+    
     Session::revalidate ();
   }
 

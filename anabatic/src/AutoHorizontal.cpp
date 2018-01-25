@@ -142,40 +142,58 @@ namespace Anabatic {
 
   bool  AutoHorizontal::getConstraints ( DbU::Unit& constraintMin, DbU::Unit& constraintMax ) const
   {
+    cdebug_log(155,1) << "getConstraints() " << this << endl;
+
     constraintMin = getNativeMin();
     constraintMax = getNativeMax();
 
-    cdebug_log(144,0) << "Native constraints: ["
+    cdebug_log(155,0) << "Native constraints: ["
                       << DbU::getValueString(constraintMin) << ":"
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
 
     constraintMin = std::max ( constraintMin, getAutoSource()->getCBYMin() );
     constraintMax = std::min ( constraintMax, getAutoSource()->getCBYMax() );
-    cdebug_log(144,0) << "Merge with source constraints: ["
+    cdebug_log(155,0) << "Merge with source constraints: ["
                       << DbU::getValueString(getAutoSource()->getCBYMin()) << ":"
                       << DbU::getValueString(getAutoSource()->getCBYMax()) << "]"
                       << endl;
 
     constraintMin = std::max ( constraintMin, getAutoTarget()->getCBYMin() );
     constraintMax = std::min ( constraintMax, getAutoTarget()->getCBYMax() );
-    cdebug_log(144,0) << "Merge with target constraints: ["
+    cdebug_log(155,0) << "Merge with target constraints: ["
                       << DbU::getValueString(getAutoTarget()->getCBYMin()) << ":"
                       << DbU::getValueString(getAutoTarget()->getCBYMax()) << "]"
                       << endl;
 
-    constraintMin = std::max ( constraintMin, getUserConstraints().getVMin() );
-    constraintMax = std::min ( constraintMax, getUserConstraints().getVMax() );
-    cdebug_log(144,0) << "Merge with user constraints: ["
-                      << DbU::getValueString(getUserConstraints().getVMin()) << ":"
-                      << DbU::getValueString(getUserConstraints().getVMax()) << "]"
-                      << endl;
+    Interval userConstraints = getUserConstraints();
+    if (not userConstraints.isEmpty()) {
+      constraintMin = std::max ( constraintMin, userConstraints.getVMin() );
+      constraintMax = std::min ( constraintMax, userConstraints.getVMax() );
 
-    cdebug_log(145,0) << "Resulting constraints: " << " ["
+      cdebug_log(155,0) << "Merge with user constraints: ["
+                        << DbU::getValueString(userConstraints.getVMin()) << ":"
+                        << DbU::getValueString(userConstraints.getVMax()) << "]"
+                        << endl;
+    } else
+      cdebug_log(155,0) << "Empty user constraints" << endl;
+
+    cdebug_log(155,0) << "Resulting constraints: ["
                       << DbU::getValueString(constraintMin) << ":"
                       << DbU::getValueString(constraintMax) << "]"
                       << endl;
+
+    if (constraintMin > constraintMax)
+      cerr << Error( "AutoHorizontal::getConstraints(): Invalid interval [%s : %s] -> [%d : %d]\n"
+                     "        on %s"
+                   , DbU::getValueString(constraintMin).c_str()
+                   , DbU::getValueString(constraintMax).c_str()
+                   , constraintMin
+                   , constraintMax
+                   , getString(this).c_str()
+                   ) << endl;
     
+    cdebug_tabw(155,-1);
     return true;
   }
 
@@ -753,6 +771,8 @@ namespace Anabatic {
     GCell*        begin           = autoSource->getGCell();
     GCell*        end             = autoTarget->getGCell();
 
+    if (not autoSource->canDrag()) unsetFlags( SegDrag );
+
     DbU::Unit doglegAxis = (doglegGCell->getXMax() + doglegGCell->getXMin()) / 2;
     if (isLocal())
       doglegAxis = (getSourceX() + getTargetX()) / 2;
@@ -838,6 +858,13 @@ namespace Anabatic {
 
     updateNativeConstraints();
     segment2->updateNativeConstraints();
+
+    if (autoTarget->canDrag()) {
+      Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Horizontal);
+      segment1->mergeUserConstraints( dragConstraints );
+
+      cdebug_log(149,0) << "Perpandical has drag constraints: " << dragConstraints << endl;
+    }
 
     cdebug_tabw(149,-1);
     DebugSession::close();

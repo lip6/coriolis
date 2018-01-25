@@ -79,6 +79,7 @@ namespace Katana {
       inline static void                addRemoveEvent      ( TrackElement* );
       inline static void                addMoveEvent        ( TrackElement* , Track* );
       inline static void                addSortEvent        ( Track*, bool forced=false );
+      inline static void                addLockEvent        ( TrackElement* );
       inline static size_t              revalidate          ();
              static AutoContact*        lookup              ( Contact* );
              static TrackElement*       lookup              ( Segment* );
@@ -89,6 +90,7 @@ namespace Katana {
                     Net*                _getBlockageNet     ();
                     uint32_t            _getRipupCost       ();
                     Anabatic::GCell*    _getGCellUnder      ( DbU::Unit, DbU::Unit );
+                    void                _doLockEvents       ();
                     void                _doRemovalEvents    ();
       virtual       size_t              _revalidate         ();
                     bool                _isEmpty            () const;
@@ -98,6 +100,7 @@ namespace Katana {
                     void                _addRemoveEvent     ( TrackElement* );
                     void                _addMoveEvent       ( TrackElement* , Track* );
                     void                _addSortEvent       ( Track*, bool forced );
+                    void                _addLockEvent       ( TrackElement* );
       virtual       Record*             _getRecord          () const;
       virtual       string              _getTypeName        () const;
     protected:
@@ -115,6 +118,7 @@ namespace Katana {
     // Attributes.
       vector<Event>  _insertEvents;
       vector<Event>  _removeEvents;
+      vector<Event>  _lockEvents;
       set<Track*>    _sortEvents;
     protected:
     // Constructors & Destructors.
@@ -171,6 +175,9 @@ namespace Katana {
 
   inline void  Session::addMoveEvent ( TrackElement* segment, Track* track )
   { get("addMoveEvent()")->_addMoveEvent(segment,track); }
+
+  inline void  Session::addLockEvent ( TrackElement* segment )
+  { get("addLockEvent()")->_addLockEvent(segment); }
 
   inline void  Session::addSortEvent ( Track* track, bool forced )
   { get("addSortEvent()")->_addSortEvent(track,forced); }

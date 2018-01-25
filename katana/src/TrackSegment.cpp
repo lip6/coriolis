@@ -160,6 +160,7 @@ namespace Katana {
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
+  bool           TrackSegment::isDrag               () const { return _base->isDrag(); }
   bool           TrackSegment::isStrongTerminal     ( Flags flags ) const { return _base->isStrongTerminal(flags); }
   bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }

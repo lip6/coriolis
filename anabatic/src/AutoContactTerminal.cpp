@@ -198,13 +198,18 @@ namespace Anabatic {
     } else if ( (routingPad = dynamic_cast<RoutingPad*>(component)) ) {
       Occurrence     occurrence     = routingPad->getOccurrence();
       Transformation transformation = occurrence.getPath().getTransformation();
-      Segment*       segment        = dynamic_cast<Segment*>( occurrence.getEntity() );
+      Horizontal*    horizontal     = dynamic_cast<Horizontal*>( occurrence.getEntity() );
+      Vertical*      vertical       = dynamic_cast<Vertical*  >( occurrence.getEntity() );
 
       cdebug_log(145,0) << "Anchor: " << occurrence.getEntity() << endl;
       cdebug_log(145,0) << "transf: " << transformation << endl;
 
-      if (segment) {
-        Box bb = segment->getBoundingBox();
+      if (horizontal or vertical) {
+        Box bb;
+      // Assume that transformation contains no rotations (for now).
+        if (horizontal) { bb = horizontal->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnHorizontal ); }
+        if (vertical)   { bb = vertical  ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnVertical ); }
+
         transformation.applyOn( bb );
         xMin = bb.getXMin();
         yMin = bb.getYMin();
@@ -295,21 +300,40 @@ namespace Anabatic {
     if (_segment == segment) {
       _segment = NULL;
       setFlags( CntInvalidatedCache );
+      unsetFlags( CntDrag );
     }
   }
 
 
   void  AutoContactTerminal::cacheAttach ( AutoSegment* segment )
   {
+    DebugSession::open( getNet(), 140, 150 );
+
+    cdebug_log(145,1) << _getTypeName() << "::cacheAttach() " << this << endl;
+
     if (_segment) {
       cerr << Bug( "%s::cacheAttach() On %s,\n"
                    "      cache has not been cleared first, cancelled."
                  , _getTypeName().c_str(), getString(this).c_str()
                  ) << endl;
+      cdebug_tabw(145,-1);
+      DebugSession::close();
       return;
     }
     _segment = segment;
     unsetFlags( CntInvalidatedCache  );
+
+    if (  (dynamic_cast<AutoHorizontal*>(_segment) and (getFlags() & CntOnHorizontal))
+       or (dynamic_cast<AutoVertical*>  (_segment) and (getFlags() & CntOnVertical  )) ) {
+      _segment->setFlags( AutoSegment::SegDrag );
+      setFlags( CntDrag );
+
+      cdebug_log(145,0) << "Drag Contact/Segment set" << endl;
+    }
+
+    cdebug_log(145,0) << "Cached:" << _segment << endl;
+    cdebug_tabw(145,-1);
+    DebugSession::close();
   }
 
 
@@ -338,8 +362,16 @@ namespace Anabatic {
     }
     if (horizontals[0] != NULL ) {
       _segment = Session::lookup( horizontals[0] );
+      if (getFlags() & CntOnHorizontal) {
+        setFlags( CntDrag );
+        _segment->setFlags( AutoSegment::SegDrag );
+      }
     } else {
       _segment = Session::lookup( verticals[0] );
+      if (getFlags() & CntOnVertical) {
+        setFlags( CntDrag );
+        _segment->setFlags( AutoSegment::SegDrag );
+      }
     }
     if (_segment == NULL) {
       ostringstream os;
@@ -416,6 +448,18 @@ namespace Anabatic {
           setHeight( anchorBb.getHeight() );
 
           cdebug_log(145,0) << "Contact for wide segment." << endl;
+        }
+
+        if (canDrag()) {
+          AutoContact* opposite      = _segment->getOppositeAnchor(this);
+          AutoSegment* perpandicular = opposite->getPerpandicular( _segment );
+          if (perpandicular) {
+            DbU::Unit y = perpandicular->getAxis();
+            y = std::min( y, getCBYMax() );
+            y = std::max( y, getCBYMin() );
+            setY( y );
+            cdebug_log(145,0) << "Draging to Y @" << DbU::getValueString(y) << endl;
+          }
         }
 
         if (not getUConstraints(Flags::Horizontal).contains(axis)) {

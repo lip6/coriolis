@@ -91,6 +91,8 @@ namespace Katana {
               DbU::Unit      getMinimalPosition  ( size_t index, uint32_t state ) const;
               DbU::Unit      getMaximalPosition  ( size_t index, uint32_t state ) const;
               Interval       getFreeInterval     ( DbU::Unit position, Net* net=NULL ) const;
+              Interval       getNextFree         ( size_t index, Net* net );
+              Interval       getPreviousFree     ( size_t index, Net* net );
               Interval       getOccupiedInterval ( size_t& begin ) const;
               Interval       expandFreeInterval  ( size_t& begin, size_t& end, uint32_t state, Net* ) const;
               void           getBeginIndex       ( DbU::Unit position, size_t& begin, uint32_t& state ) const;

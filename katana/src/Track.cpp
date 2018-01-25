@@ -589,6 +589,42 @@ namespace Katana {
   }
 
 
+  Interval  Track::getNextFree ( size_t index, Net* net )
+  {
+    if (_segments.empty()) return Interval( _min, _max );
+
+    if (index >= _segments.size()) {
+      size_t last = _segments.size()-1;
+      return Interval( getOccupiedInterval(last).getVMax(), _max );
+    }
+
+    Interval occupied = getOccupiedInterval( index );
+    return getFreeInterval( occupied.getVMax()+1, net );
+  }
+
+
+  Interval  Track::getPreviousFree ( size_t index, Net* net )
+  {
+    cdebug_log(155,1) << "Track::getPreviousFree() index:" << index << " " << net << endl;
+
+    if (_segments.empty()) { cdebug_tabw(155,-1); return Interval( _min, _max ); }
+
+    if (index == 0) {
+      size_t   first = 0;
+      Interval free  = Interval( _min, getOccupiedInterval(first).getVMin() );
+      cdebug_tabw(155,-1);
+      return free;
+    }
+
+
+    Interval occupied = getOccupiedInterval( index );
+    cdebug_log(155,0) << "Previous occupied:" << occupied << endl;
+    Interval free = getFreeInterval( occupied.getVMin()-1, net );
+    cdebug_tabw(155,-1);
+    return free;
+  }
+
+
   Interval  Track::getOccupiedInterval ( size_t& begin ) const
   {
     if (begin == npos) return Interval();

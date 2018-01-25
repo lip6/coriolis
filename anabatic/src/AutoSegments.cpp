@@ -93,14 +93,12 @@ namespace Anabatic {
 
 
   bool  AutoSegments_OnContact::Locator::isValid () const
-  { return !_hook; }
+  { return _hook; }
 
 
   void  AutoSegments_OnContact::Locator::progress ()
   {
-    cdebug_log(145,0) << "AutoSegments_OnContact::Locator::progress()" << endl;
-
-    while (_hook and not _hook->isMaster()) {
+    while (_hook) {
       _hook    = _hook->getNextHook(); 
       _element = NULL;
 
@@ -108,7 +106,6 @@ namespace Anabatic {
 
       Segment* segment = dynamic_cast<Segment*>( _hook->getComponent() );
       if (segment) _element = Session::lookup( segment );
-
       if (not _element or (_element == _master)) continue;
 
       break;

@@ -17,19 +17,66 @@
 #include "hurricane/Bug.h"
 #include "hurricane/Point.h"
 #include "hurricane/Error.h"
+#include "hurricane/RoutingPad.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "katana/Session.h"
 #include "katana/Track.h"
 #include "katana/TrackElement.h"
 #include "katana/KatanaEngine.h"
 #include "katana/RoutingPlane.h"
+#include "katana/NegociateWindow.h"
 
 
 namespace {
 
+  using namespace std;
+  using namespace Hurricane;
+  using namespace CRL;
   using namespace Katana;
+  using Anabatic::perpandicularTo;
+  using Anabatic::AutoSegment;
+  using Anabatic::AutoContactTerminal;
+  using Anabatic::AutoSegments_OnContact;
+  using Anabatic::AutoSegments;
 
 
   const char* reopenSession = "Katana::Session::_open(): Session already open for %s (internal error).";
+
+
+  void  metal2protect ( AutoContactTerminal* contact )
+  {
+    const Layer*  metal2         = Session::getRoutingLayer(1);
+    RoutingPlane* metal3plane    = Session::getKatanaEngine()->getRoutingPlaneByIndex( 2 );
+    DbU::Unit     metal3axis     = metal3plane->getTrackByPosition( contact->getY() )->getAxis();
+    RoutingPad*   rp             = dynamic_cast<RoutingPad*>( contact->getAnchor() );
+    DbU::Unit     viaSideProtect = Session::getViaWidth((size_t)0);
+    Point         position       ( contact->getX(), metal3axis );
+
+    AutoContact* sourceVia12 = AutoContactTerminal::create( contact->getGCell()
+                                                          , rp
+                                                          , metal2
+                                                          , position
+                                                          , viaSideProtect, viaSideProtect
+                                                          );
+    AutoContact* targetVia12 = AutoContactTerminal::create( contact->getGCell()
+                                                          , rp
+                                                          , metal2
+                                                          , position
+                                                          , viaSideProtect, viaSideProtect
+                                                          );
+    
+    AutoSegment* segment = AutoSegment::create( sourceVia12, targetVia12, Flags::Vertical );
+    
+    sourceVia12->setFlags( Anabatic::CntFixed|Anabatic::CntIgnoreAnchor );
+    targetVia12->setFlags( Anabatic::CntFixed|Anabatic::CntIgnoreAnchor );
+    segment->setFlags( AutoSegment::SegFixed );
+
+    Session::getNegociateWindow()->createTrackSegment( segment, Flags::NoFlags );
+    
+    cdebug_log(145,0) << "Hard protect: " << contact << endl;
+    cdebug_log(145,0) << "X:" << DbU::getValueString(position.getX())
+                      << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
+  }
 
 
 } // Anonymous namespace.
@@ -149,10 +196,23 @@ namespace Katana {
   }
 
 
+  void  Session::_doLockEvents ()
+  {
+    for ( size_t i=0 ; i<_lockEvents.size() ; ++i ) {
+      AutoContactTerminal* source = dynamic_cast<AutoContactTerminal*>( _lockEvents[i]._segment->base()->getAutoSource() );
+      AutoContactTerminal* target = dynamic_cast<AutoContactTerminal*>( _lockEvents[i]._segment->base()->getAutoTarget() );
+      if (source and source->canDrag()) metal2protect( source );
+      if (target and target->canDrag()) metal2protect( target );
+    }
+    _lockEvents.clear();
+  }
+
+
   size_t  Session::_revalidate ()
   {
     cdebug_log(159,1) << "Katana::Session::_revalidate()" << endl;
 
+    _doLockEvents();
     _doRemovalEvents();
 
     for ( const Event& event : _insertEvents ) {
@@ -299,6 +359,19 @@ namespace Katana {
     cdebug_log(159,0) << "Ripup: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
     _removeEvents.push_back( Event(segment,segment->getTrack()) );
     _addSortEvent( segment->getTrack(), true );
+  }
+
+
+  void  Session::_addLockEvent ( TrackElement* segment )
+  {
+    if (not segment->isTerminal()) {
+      cerr << Bug( " Katana::Session::addLockEvent() : %s is not connected to a terminal."
+                 , getString(segment).c_str() ) << endl;
+      return;
+    }
+
+    cdebug_log(159,0) << "Lock: @" << DbU::getValueString(segment->getAxis()) << " " << segment << endl;
+    _lockEvents.push_back( Event(segment,NULL) );
   }
 
 

@@ -177,8 +177,10 @@ namespace Anabatic {
         cdebug_log(149,0) << "Align on canonical:" << canonical << endl;
 
       //canonical->setAxis( canonical->getAxis(), Flags::Realignate );
-        if (canonical->isUnsetAxis()) canonical->toOptimalAxis( Flags::Realignate|Flags::Propagate );
-        else                          canonical->setAxis( canonical->getAxis(), Flags::Realignate|Flags::Propagate );
+        if (canonical->isUnsetAxis() and not canonical->isFixed())
+          canonical->toOptimalAxis( Flags::Realignate|Flags::Propagate );
+        else
+          canonical->setAxis( canonical->getAxis(), Flags::Realignate|Flags::Propagate );
         aligneds.clear();
         cdebug_tabw(145,-1);
       }

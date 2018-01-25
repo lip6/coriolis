@@ -67,6 +67,9 @@ namespace Anabatic {
                        , CntIgnoreAnchor          = (1 << 11)
                        , CntWeakTerminal          = (1 << 12)
                        , CntUserNativeConstraints = (1 << 13)
+                       , CntOnVertical            = (1 << 14)
+                       , CntOnHorizontal          = (1 << 15)
+                       , CntDrag                  = (1 << 16)
                        };
 
   class AutoContact {
@@ -118,12 +121,14 @@ namespace Anabatic {
       inline  bool             hasBadTopology             () const;
               bool             canDestroy                 ( Flags flags=Flags::NoFlags ) const;
               bool             canMoveUp                  ( const AutoSegment* moved ) const;
+      inline  bool             canDrag                    () const;
     // Accessors.                                        
       inline  Contact*         base                       () const;
       static  size_t           getAllocateds              ();
       static  const Name&      getStaticName              ();
       virtual const Name&      getName                    () const;
       inline  size_t           getId                      () const;
+      inline  Flags            getFlags                   () const;
       virtual Box              getBoundingBox             () const;
       inline  GCell*           getGCell                   () const;
       virtual AutoSegment*     getOpposite                ( const AutoSegment* ) const = 0;
@@ -253,7 +258,9 @@ namespace Anabatic {
   inline bool          AutoContact::isHTee                  () const { return _flags&CntHTee; }
   inline bool          AutoContact::isVTee                  () const { return _flags&CntVTee; }
   inline bool          AutoContact::hasBadTopology          () const { return _flags&CntBadTopology; }
+  inline bool          AutoContact::canDrag                 () const { return _flags&CntDrag; }
   inline size_t        AutoContact::getId                   () const { return _id; }
+  inline Flags         AutoContact::getFlags                () const { return _flags; }
   inline Contact*      AutoContact::base                    () const { return _contact; }
   inline GCell*        AutoContact::getGCell                () const { return _gcell; }
   inline Box           AutoContact::getConstraintBox        () const { return Box(getCBXMin(),getCBYMin(),getCBXMax(),getCBYMax()); }

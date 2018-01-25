@@ -82,26 +82,27 @@ namespace Anabatic {
       static const uint64_t  SegTargetTop         = (1L<<11);
       static const uint64_t  SegTargetBottom      = (1L<<12);
       static const uint64_t  SegIsReduced         = (1L<<13);
-      static const uint64_t  SegLayerChange       = (1L<<14);
-      static const uint64_t  SegSourceTerminal    = (1L<<15);  // Replace Terminal.
-      static const uint64_t  SegTargetTerminal    = (1L<<16);  // Replace Terminal.
+      static const uint64_t  SegDrag              = (1L<<14);
+      static const uint64_t  SegLayerChange       = (1L<<15);
+      static const uint64_t  SegSourceTerminal    = (1L<<16);  // Replace Terminal.
+      static const uint64_t  SegTargetTerminal    = (1L<<17);  // Replace Terminal.
       static const uint64_t  SegStrongTerminal    = SegSourceTerminal|SegTargetTerminal;
-      static const uint64_t  SegWeakTerminal1     = (1L<<17);  // Replace TopologicalEnd.
-      static const uint64_t  SegWeakTerminal2     = (1L<<18);  // Replace TopologicalEnd.
-      static const uint64_t  SegNotSourceAligned  = (1L<<19);
-      static const uint64_t  SegNotTargetAligned  = (1L<<20);
-      static const uint64_t  SegUnbound           = (1L<<21);
-      static const uint64_t  SegHalfSlackened     = (1L<<22);
-      static const uint64_t  SegSlackened         = (1L<<23);
-      static const uint64_t  SegAxisSet           = (1L<<24);
-      static const uint64_t  SegInvalidated       = (1L<<25);
-      static const uint64_t  SegInvalidatedSource = (1L<<26);
-      static const uint64_t  SegInvalidatedTarget = (1L<<27);
-      static const uint64_t  SegInvalidatedLayer  = (1L<<28);
-      static const uint64_t  SegCreated           = (1L<<29);
-      static const uint64_t  SegUserDefined       = (1L<<30);
-      static const uint64_t  SegAnalog            = (1L<<31);
-      static const uint64_t  SegWide              = (1L<<32);
+      static const uint64_t  SegWeakTerminal1     = (1L<<18);  // Replace TopologicalEnd.
+      static const uint64_t  SegWeakTerminal2     = (1L<<19);  // Replace TopologicalEnd.
+      static const uint64_t  SegNotSourceAligned  = (1L<<20);
+      static const uint64_t  SegNotTargetAligned  = (1L<<21);
+      static const uint64_t  SegUnbound           = (1L<<22);
+      static const uint64_t  SegHalfSlackened     = (1L<<23);
+      static const uint64_t  SegSlackened         = (1L<<24);
+      static const uint64_t  SegAxisSet           = (1L<<25);
+      static const uint64_t  SegInvalidated       = (1L<<26);
+      static const uint64_t  SegInvalidatedSource = (1L<<27);
+      static const uint64_t  SegInvalidatedTarget = (1L<<28);
+      static const uint64_t  SegInvalidatedLayer  = (1L<<29);
+      static const uint64_t  SegCreated           = (1L<<30);
+      static const uint64_t  SegUserDefined       = (1L<<31);
+      static const uint64_t  SegAnalog            = (1L<<32);
+      static const uint64_t  SegWide              = (1L<<33);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -183,6 +184,7 @@ namespace Anabatic {
       inline  bool                isWeakTerminal1            () const;
       inline  bool                isWeakTerminal2            () const;
       inline  bool                isTerminal                 () const;
+      inline  bool                isDrag                     () const;
       inline  bool                isNotSourceAligned         () const;
       inline  bool                isNotTargetAligned         () const;
       inline  bool                isNotAligned               () const;
@@ -480,6 +482,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isSourceTerminal       () const { return _flags & SegSourceTerminal; }
   inline  bool            AutoSegment::isTargetTerminal       () const { return _flags & SegTargetTerminal; }
   inline  bool            AutoSegment::isTerminal             () const { return _flags & SegStrongTerminal; }
+  inline  bool            AutoSegment::isDrag                 () const { return _flags & SegDrag; }
   inline  bool            AutoSegment::isNotSourceAligned     () const { return _flags & SegNotSourceAligned; }
   inline  bool            AutoSegment::isNotTargetAligned     () const { return _flags & SegNotTargetAligned; }
   inline  bool            AutoSegment::isNotAligned           () const { return (_flags & SegNotAligned) == SegNotAligned; }

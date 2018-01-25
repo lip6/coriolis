@@ -671,10 +671,10 @@ namespace Katana {
     Interval            toFree            (_segment->getCanonicalInterval());
   //Net*                ripupNet         = NULL;
     set<TrackElement*>  canonicals;
-    DbU::Unit           rightAxisHint    = 0;
-    DbU::Unit           leftAxisHint     = 0;
-    bool                leftIntrication  = false;
-    bool                rightIntrication = false;
+  //DbU::Unit           rightAxisHint    = 0;
+  //DbU::Unit           leftAxisHint     = 0;
+  //bool                leftIntrication  = false;
+  //bool                rightIntrication = false;
     bool                success          = true;
 
     cdebug_log(159,1) << "Manipulator::_insertInTrack(size_t) - " << toFree << endl;
@@ -785,8 +785,8 @@ namespace Katana {
             if ( event3->getTracksFree() == 1 ) {
               cdebug_log(159,0) << "Potential left intrication with other perpandicular." << endl;
               if ( segment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap(getLayer()) ) {
-                leftIntrication = true;
-                leftAxisHint    = segment3->getAxis();
+              //leftIntrication = true;
+              //leftAxisHint    = segment3->getAxis();
               }
             }
           }
@@ -803,8 +803,8 @@ namespace Katana {
             if ( event3->getTracksFree() == 1 ) {
               cdebug_log(159,0) << "Potential right intrication with other perpandicular." << endl;
               if ( segment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap(getLayer()) ) {
-                rightIntrication = true;
-                rightAxisHint    = segment3->getAxis();
+              //rightIntrication = true;
+              //rightAxisHint    = segment3->getAxis();
               }
             }
           }
@@ -1418,6 +1418,103 @@ namespace Katana {
 
     _event->setMinimized();
 
+    return true;
+  }
+
+
+  bool  Manipulator::dragMinimize ()
+  {
+    cdebug_log(159,1) << "Manipulator::dragMinimize() " << _segment << endl; 
+
+    if (_segment->isFixed())    { cdebug_tabw(159,-1); return false; }
+    if (not _segment->isDrag()) { cdebug_tabw(159,-1); return false; }
+
+    Interval termConstraints;
+
+    if (_segment->base()->getAutoSource()->canDrag()) {
+      cdebug_log(159,0) << _segment->base()->getAutoSource() << endl;
+      termConstraints = _segment->base()->getAutoSource()->getUConstraints( _segment->getDirection() );
+      cdebug_log(159,0) << "Terminal Constraints (source): " << termConstraints << endl;
+    }
+    if (_segment->base()->getAutoTarget()->canDrag()) {
+      cdebug_log(159,0) << _segment->base()->getAutoTarget() << endl;
+      termConstraints = _segment->base()->getAutoTarget()->getUConstraints( _segment->getDirection() );
+      cdebug_log(159,0) << "Terminal Constraints (target): " << termConstraints << endl;
+    }
+
+    if (_fsm.getCosts().size() == 0) {
+      cerr << Error( "Manipulator::dragMinimize(): The segment cannot be put in any track.\n"
+                     "        On: %s"
+                   , getString(_segment).c_str()
+                   ) << endl;
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
+    if (_fsm.getCosts().size() > 1)
+      cerr << Error( "Manipulator::dragMinimize(): The segment can be put in more than one track (%d).\n"
+                     "        On: %s"
+                   , _fsm.getCosts().size()
+                   , getString(_segment).c_str()
+                   ) << endl;
+
+    size_t     begin    = _fsm.getBegin( 0 );
+    size_t     end      = _fsm.getEnd  ( 0 );
+    Track*     track    = _fsm.getTrack( 0 );
+    DbU::Unit  axisHint = 0;
+
+    if (termConstraints.getSize() < _segment->getPPitch()*2) {
+      cdebug_log(159,0) << "Constraints less than two perpandicular pitches, lock." << endl;
+
+      for ( ; begin < end ; ++begin ) {
+        cdebug_log(159,0) << "| Ripup:" << track->getSegment(begin) << endl;
+        _fsm.addAction( track->getSegment(begin), SegmentAction::OtherRipup );
+      }
+      _fsm.addAction( _segment, SegmentAction::SelfLock );
+
+      cdebug_tabw(159,-1);
+      return true;
+    }
+
+    for ( ; begin < end ; ++begin ) {
+      TrackElement* conflict = track->getSegment(begin);
+      if (conflict->getCanonicalInterval().intersect( _segment->getCanonicalInterval() )) break; 
+    }
+
+    Interval previousFree = track->getPreviousFree( begin, _segment->getNet() );
+    if (previousFree.intersect(termConstraints))
+      axisHint = previousFree.getCenter();
+    else {
+      Interval nextFree = track->getNextFree( end, _segment->getNet() );
+      if (nextFree.intersect(termConstraints)) {
+        axisHint = nextFree.getCenter();
+      } else {
+        cdebug_log(159,0) << "Neither previous free nor next free can be used." << endl;
+        cdebug_log(159,0) << "| previous:" << previousFree << endl;
+        cdebug_log(159,0) << "| next:    " << nextFree << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    }
+
+    cdebug_log(159,0) << "Axis Hint: " << DbU::getValueString(axisHint) << endl;
+
+    const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
+    for ( size_t i=0 ; i<perpandiculars.size() ; i++ ) {
+      DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
+      if (not data2) continue;
+
+      cdebug_log(159,0) << "  | " << perpandiculars[i] << endl;
+
+      RoutingEvent* event2 = data2->getRoutingEvent();
+      if (not event2) continue;
+
+      _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandWithAxisHint, axisHint );
+    }
+
+    _event->setMinimized();
+
+    cdebug_tabw(159,-1);
     return true;
   }
 

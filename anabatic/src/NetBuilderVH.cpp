@@ -79,6 +79,7 @@ namespace Anabatic {
 
     Point        sourcePosition;
     Point        targetPosition;
+    Net*         net            = rp->getNet();
     const Layer* rpLayer        = rp->getLayer();
     size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
     Flags        direction      = Session::getDirection ( rpDepth );
@@ -111,6 +112,54 @@ namespace Anabatic {
                        , getString(rp).c_str() ) << endl;
       }
     }
+
+#if 0
+  // Quasi-punctual M1 terminal.
+    if (flags & VSmall) {
+      Box                ab             = rp->getCell()->getBoundingBox();
+      RoutingLayerGauge* gaugeMetal3    = Session::getLayerGauge( 2 );
+      DbU::Unit          metal3axis     = gaugeMetal3->getTrackPosition( ab.getYMin()
+                                                                       , ab.getYMax()
+                                                                       , sourcePosition.getY()
+                                                                       , Constant::Nearest );
+      DbU::Unit          viaSideProtect = Session::getViaWidth((size_t)0);
+
+      AutoContact* sourceVia12 = AutoContactTerminal::create( sourceGCell
+                                                            , rp
+                                                            , Session::getContactLayer(0)
+                                                            , sourcePosition
+                                                            , viaSideProtect, viaSideProtect
+                                                            );
+      AutoContact* targetVia12 = AutoContactTerminal::create( targetGCell
+                                                            , rp
+                                                            , Session::getContactLayer(0)
+                                                            , targetPosition
+                                                            , viaSideProtect, viaSideProtect
+                                                            );
+      AutoContact* sourceVia23 = AutoContactTurn::create( sourceGCell, net, Session::getContactLayer(1) );
+      AutoContact* targetVia23 = AutoContactTurn::create( targetGCell, net, Session::getContactLayer(1) );
+      sourceVia23->setY( metal3axis );
+      targetVia23->setY( metal3axis );
+      sourceVia23->setX( sourcePosition.getX() );
+      targetVia23->setX( targetPosition.getX() );
+
+      AutoSegment* segmentS = AutoSegment::create( sourceVia12, sourceVia23, Flags::Vertical );
+      AutoSegment* segmentT = AutoSegment::create( targetVia12, targetVia23, Flags::Vertical );
+      AutoSegment* segmentM = AutoSegment::create( sourceVia23, targetVia23, Flags::Horizontal );
+
+      sourceVia12->setFlags( CntFixed );
+      sourceVia23->setFlags( CntFixed );
+      targetVia12->setFlags( CntFixed );
+      targetVia23->setFlags( CntFixed );
+      segmentS->setFlags( AutoSegment::SegFixed );
+      segmentT->setFlags( AutoSegment::SegFixed );
+      segmentM->setFlags( AutoSegment::SegFixed );
+
+      cdebug_log(145,0) << "Hard protect: " << rp << endl;
+      cdebug_log(145,0) << "X:" << DbU::getValueString(sourcePosition.getX())
+                        << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
+    }
+#endif
 
   // Non-M1 terminal or punctual M1 protections.
     if ( (rpDepth != 0) or ((sourcePosition == targetPosition) and (gridPosition == 0)) ) {

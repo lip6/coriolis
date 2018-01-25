@@ -445,7 +445,7 @@ namespace {
     parser->clearPinSegments();
 
     cerr << "     - " << cellName
-         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height) << "\n" << endl; 
+         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height) << endl; 
     parser->setCell( NULL );
 
     return 0;

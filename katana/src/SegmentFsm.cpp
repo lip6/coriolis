@@ -365,7 +365,9 @@ namespace Katana {
 
     DebugSession::open( _segment->getNet(), 156, 160 );
 
-    if (_type & Perpandicular) {
+    if (_type & Lock) {
+      cdebug_log(159,0) << "* Lock // " << _segment << endl;
+    } else if (_type & Perpandicular) {
       cdebug_log(159,0) << "* Riping Pp " << _segment << endl;
     } else {
       cdebug_log(159,0) << "* Riping // " << _segment << endl;
@@ -392,6 +394,8 @@ namespace Katana {
       DebugSession::close();
       return true;
     }
+
+    if (_type&Lock) Session::addLockEvent( _segment );
 
     if ( (_type & AxisHint) /*and not _segment->isSlackenDogleg()*/ ) {
       cdebug_log(159,0) << "Setting Axis Hint: @" << DbU::getValueString(_axisHint) << endl;
@@ -1177,6 +1181,7 @@ namespace Katana {
     uint32_t    nextState   = data->getState();
     Manipulator manipulator ( segment, *this );
 
+
     switch (data->getState()) {
       case DataNegociate::RipupPerpandiculars:
         nextState = DataNegociate::Minimize;
@@ -1189,7 +1194,10 @@ namespace Katana {
           break;
         }
         nextState = DataNegociate::Dogleg;
-        success = manipulator.minimize();
+        // if (segment->isDrag())
+        //   success = manipulator.dragMinimize();
+        // else
+          success = manipulator.minimize();
         if (success) break;
       case DataNegociate::Dogleg:
         nextState = DataNegociate::Slacken;
@@ -1222,6 +1230,7 @@ namespace Katana {
           }
         }
       case DataNegociate::Unimplemented:
+        if (segment->isDrag()) cerr << "Slacken DRAG:" << segment << endl;
         nextState = DataNegociate::Unimplemented;
         break;
     }

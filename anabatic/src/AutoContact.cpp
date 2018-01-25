@@ -628,6 +628,7 @@ namespace Anabatic {
   //s.insert( 4, getString(_id) );
     s.insert( s.size()-1, (isFixed           ())?" F":" -" );
     s.insert( s.size()-1, (isTerminal        ())? "T": "-" );
+    s.insert( s.size()-1, (canDrag           ())? "D": "-" );
     s.insert( s.size()-1, (isHTee            ())? "h": "-" );
     s.insert( s.size()-1, (isVTee            ())? "v": "-" );
     s.insert( s.size()-1, (isInvalidated     ())? "i": "-" );
