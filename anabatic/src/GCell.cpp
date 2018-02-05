@@ -933,29 +933,47 @@ namespace Anabatic {
 
   void GCell::setSouthWestCorner ( DbU::Unit x, DbU::Unit y )
   {
-    DbU::Unit dx = x - _xmin;
-    DbU::Unit dy = y - _ymin;
+  //DbU::Unit dx = x - _xmin;
+  //DbU::Unit dy = y - _ymin;
 
-    for ( Contact* contact : _gcontacts ) {
-      Point position = contact->getPosition().translate( dx, dy );
+  /*for ( Contact* contact : _gcontacts ) {
+    Point position = contact->getPosition().translate( dx, dy );
 
       for ( Component* component : contact->getSlaveComponents() ) {
         Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
         if (horizontal) {
-          horizontal->setY( position.getY() );
+        horizontal->setY( position.getY() );
         } else {
           Vertical* vertical = dynamic_cast<Vertical*>( component );
-          vertical->setX( position.getX() );
+        vertical->setX( position.getX() );
         }
       }
       
-      if (not contact->getAnchor()) contact->setPosition( position );
-    }
+      if (not contact->getAnchor()) contact->setPosition( Point(x,y) );
+      }*/
 
     _xmin = x;
     _ymin = y;
 
     invalidate( false );
+  }
+
+
+  void GCell::updateGContacts ()
+  {
+    for ( Contact* contact : _gcontacts ) {
+
+      for ( Component* component : contact->getSlaveComponents() ) {
+        Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
+        if (horizontal) {
+          horizontal->setY( _ymin+getHeight()/2 );
+        } else {
+          Vertical* vertical = dynamic_cast<Vertical*>( component );
+          vertical->setX( _xmin+getWidth()/2 );
+        }
+      }
+      if (not contact->getAnchor()) contact->setPosition( Point( _xmin+getWidth()/2, _ymin+getHeight()/2 ) );
+    }
   }
 
 

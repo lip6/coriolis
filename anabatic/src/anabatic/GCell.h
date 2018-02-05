@@ -201,6 +201,7 @@ namespace Anabatic {
                     Contact*              breakGoThrough      ( Net* net );
                     bool                  unrefContact        ( Contact* );
                     void                  setSouthWestCorner  ( DbU::Unit x, DbU::Unit y );
+                    void                  updateGContacts     ();
                     void                  cleanupGlobal       ();
       inline        DbU::Unit             getWidth            () const;
       inline        DbU::Unit             getHeight           () const;
