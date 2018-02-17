@@ -144,6 +144,30 @@ namespace Katana {
   size_t         TrackFixedSegment::getTrackSpan     () const { return 1; }
 
 
+  DbU::Unit  TrackFixedSegment::getSourceAxis () const
+  {
+    const Horizontal* horizontal = dynamic_cast<const Horizontal*>( _segment );
+    if (horizontal) return horizontal->getSourceX();
+
+    const Vertical* vertical = dynamic_cast<const Vertical*>( _segment );
+    if (vertical) return vertical->getSourceY();
+
+    return 0;
+  }
+
+
+  DbU::Unit  TrackFixedSegment::getTargetAxis () const
+  {
+    const Horizontal* horizontal = dynamic_cast<const Horizontal*>( _segment );
+    if (horizontal) return horizontal->getTargetX();
+
+    const Vertical* vertical = dynamic_cast<const Vertical*>( _segment );
+    if (vertical) return vertical->getTargetY();
+
+    return 0;
+  }
+  
+
   unsigned long  TrackFixedSegment::getId () const
   {
     cerr << Error("::getId() called on %s.",_getString().c_str()) << endl;

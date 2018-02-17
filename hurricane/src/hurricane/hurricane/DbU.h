@@ -187,4 +187,43 @@ namespace Hurricane {
 // { w->key( key ); w->write( value ); }
 
 
+template<>
+inline std::string  getString ( const std::pair<Hurricane::DbU::Unit,Hurricane::DbU::Unit>& p )
+{
+  return "const std::pair<DbU::Unit,DbU::Unit>";
+}
+
+
+template<>
+inline Hurricane::Record* getRecord ( const std::pair<Hurricane::DbU::Unit,Hurricane::DbU::Unit>& p )
+{
+  Hurricane::Record* record = NULL;
+  record = new Hurricane::Record ( "const std::pair<DbU::Unit,DbU::Unit>" );
+  record->add( Hurricane::DbU::getValueSlot("first" , &p.first ) );
+  record->add( Hurricane::DbU::getValueSlot("second", &p.second) );
+  return record;
+}
+
+
+template<>
+inline std::string  getString ( const std::array<Hurricane::DbU::Unit*,3>& a )
+{
+  return "const array<DbU::Unit*,3>";
+}
+
+
+template<>
+inline Hurricane::Record* getRecord ( const std::array<Hurricane::DbU::Unit*,3>& a )
+{
+  Hurricane::Record* record = NULL;
+  record = new Hurricane::Record ( "const array<DbU::Unit*,3>" );
+
+  for ( size_t i=0 ; i<a.size() ; ++i ) {
+    std::string label = "[" + getString(i) + "] ";
+    record->add( Hurricane::DbU::getValueSlot(label, a[i]) );
+  }
+  return record;
+}
+
+
 #endif  // HURRICANE_DBU_H

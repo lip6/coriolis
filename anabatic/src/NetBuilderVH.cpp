@@ -311,6 +311,8 @@ namespace Anabatic {
 
   bool  NetBuilderVH::_do_xG_xM1_xM3 ()
   {
+  // Implicit hypothesis : we have at least two globals and at least one terminal.
+    
     cdebug_log(145,1) << getTypeName()
                       << "::_do_xG_"  << (int)getConnexity().fields.M1
                       << "M1_"        << (int)getConnexity().fields.M3
@@ -352,8 +354,12 @@ namespace Anabatic {
     }
 
     if (north() or east()) {
-      rightContact = doRp_Access( getGCell(), getRoutingPads()[iLast], HAccessEW|VSmall );
-      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
+      if (getRoutingPads().size() > 1) {
+        rightContact = doRp_Access( getGCell(), getRoutingPads()[iLast], HAccessEW|VSmall );
+        AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
+      } else {
+        rightContact = leftContact;
+      }
 
       if (north() and east()) {
         setNorthEastContact( AutoContactHTee::create( getGCell(), getNet(), Session::getDContactLayer() ) );
@@ -516,6 +522,7 @@ namespace Anabatic {
 
     cdebug_tabw(145,-1);
   }
+
 
   string  NetBuilderVH::getTypeName () const
   { return "NetBuilderVH"; }

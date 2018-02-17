@@ -66,21 +66,21 @@ namespace Hurricane {
 
     public:
     // Constructor.
-                               DbUSlot       ( const string& name, const DbU::Unit* data );
-                               DbUSlot       (       string& name, const DbU::Unit* data );
+                       DbUSlot       ( const string& name, const DbU::Unit* data );
+                       DbUSlot       (       string& name, const DbU::Unit* data );
     // Accessors.
-      virtual string           getDataString () const;
-      virtual Record*          getDataRecord () const;
-      virtual DbUSlot*         getClone      () const;
+      virtual string   getDataString () const;
+      virtual Record*  getDataRecord () const;
+      virtual DbUSlot* getClone      () const;
 
     protected:
     // Internal: Attributes.
-              const DbU::Unit* _unit;
+      const DbU::Unit* _unit;
 
     private:
     // Internal: Constructors.
-                               DbUSlot      ( const DbUSlot& );
-              DbUSlot&         operator=    ( const DbUSlot& );
+                       DbUSlot      ( const DbUSlot& );
+              DbUSlot& operator=    ( const DbUSlot& );
   };
 
 
@@ -327,7 +327,7 @@ namespace Hurricane {
         case Min: os << "MIN:"; break;
         case Max: os << "MAX:"; break;
         default:
-          os << setprecision(3) << toPhysical(u,_stringModeUnitPower);
+          os << setprecision(4) << toPhysical(u,_stringModeUnitPower);
       }
     } else {
       if (_stringMode != Db)

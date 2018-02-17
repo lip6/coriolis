@@ -52,4 +52,7 @@ namespace Katana {
 
 } // Katana namespace.
 
+
+INSPECTOR_PV_SUPPORT(Katana::Flags)
+
 #endif  // KATANA_CONSTANTS_H

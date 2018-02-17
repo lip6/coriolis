@@ -308,6 +308,11 @@ namespace Katana {
       if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
+
+        if ( (_markers[mbegin]->getRefCount() == 1) and (interval.contains(_markers[mbegin]->getSpan())) ) {
+          cdebug_log(155,0) << "  Total overlap of a one track terminal: infinite cost." << endl;
+          cost.setInfinite();
+        }
       }
     }
 
@@ -391,8 +396,11 @@ namespace Katana {
     if (_segments.empty()) return Interval(_min,_max);
 
     getBeginIndex( position, begin, state );
-    if ( (state == InsideElement) and (_segments[begin]->getNet() != net) )
+    if ( (state == InsideElement) and (_segments[begin]->getNet() != net) ) {
+      cdebug_log(155,0) << "Track::getFreeInterval(): Inside other element @" << begin
+                        << " - " << _segments[begin] << endl;
       return Interval();
+    }
 
     end = begin;
     return expandFreeInterval( begin, end, state, net );
@@ -616,7 +624,6 @@ namespace Katana {
       return free;
     }
 
-
     Interval occupied = getOccupiedInterval( index );
     cdebug_log(155,0) << "Previous occupied:" << occupied << endl;
     Interval free = getFreeInterval( occupied.getVMin()-1, net );
@@ -642,10 +649,10 @@ namespace Katana {
     while ( --i != npos ) {
       if (_segments[i]->getNet() != owner) break;
 
-      cdebug_log(155,0) << "| merge:" << _segments[i] << endl;
-
       _segments[i]->getCanonical ( segmentInterval );
       if (segmentInterval.getVMax() >= mergedInterval.getVMin()) {
+        cdebug_log(155,0) << "| merge (prev):" << _segments[i] << endl;
+
         mergedInterval.merge( segmentInterval );
         begin = i;
       }
@@ -657,6 +664,8 @@ namespace Katana {
 
       _segments[i]->getCanonical( segmentInterval );
       if (segmentInterval.getVMin() > mergedInterval.getVMax()) break;
+
+      cdebug_log(155,0) << "| merge (next):" << _segments[i] << endl;
 
       mergedInterval.merge( segmentInterval );
     }

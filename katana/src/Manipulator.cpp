@@ -143,21 +143,21 @@ namespace Katana {
 
   bool  Manipulator::ripup ( uint32_t type, DbU::Unit axisHint )
   {
-    cdebug_log(159,0) << "Manipulator::ripup() " << endl;
+    cdebug_log(159,1) << "Manipulator::ripup()" << endl;
 
-    if (not canRipup()) return false;
-
-    if (_segment->isFixed()) return false;
-    if (_data == NULL) return true;
+    if (not canRipup())      { cdebug_tabw(159,-1); return false; }
+    if (_segment->isFixed()) { cdebug_tabw(159,-1); return false; }
+    if (_data == NULL)       { cdebug_tabw(159,-1); return true;  }
 
     _fsm.addAction( _segment, type, axisHint );
+    cdebug_tabw(159,-1);
     return true;
   }
 
 
   bool  Manipulator::ripupPerpandiculars ( uint32_t flags )
   {
-    cdebug_log(159,0) << "Manipulator::ripupPerpandiculars() - " << flags << endl;
+    cdebug_log(159,1) << "Manipulator::ripupPerpandiculars() - " << flags << endl;
 
     bool      success                  = true;
     bool      cagedPerpandiculars      = false;
@@ -183,6 +183,8 @@ namespace Katana {
     const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
 
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
+      cdebug_log(159,0) << "| " << perpandiculars[i] << endl;
+
       track = perpandiculars[i]->getTrack();
       if (not track) {
       // The perpandicular is not placed yet.
@@ -202,10 +204,11 @@ namespace Katana {
 
     // Try to ripup the perpandicular.
       DataNegociate* data2 = perpandiculars[i]->getDataNegociate();
-      cdebug_log(159,0) << "| " << perpandiculars[i] << endl;
 
-      if ( (flags & Manipulator::ToMoveUp) and (data2->getState() < DataNegociate::MoveUp) )
+      if ( (flags & Manipulator::ToMoveUp) and (data2->getState() < DataNegociate::MoveUp) ) {
+        cdebug_log(159,0) << "Force move up of perpandicular." << endl;
         data2->setState( DataNegociate::MoveUp );
+      }
         
       if (Manipulator(perpandiculars[i],_fsm).ripup(perpandicularActionFlags)) {
         if (dislodgeCaged) {
@@ -215,6 +218,7 @@ namespace Katana {
       }
 
     // Cannot ripup the perpandicular, try to ripup it's neigbors.
+      cdebug_log(159,0) << "Try to ripup neighbors." << endl;
       size_t begin;
       size_t end;
       track->getOverlapBounds( constraints, begin, end );
@@ -233,6 +237,7 @@ namespace Katana {
           _fsm.addAction( other, SegmentAction::OtherRipup );
         } else {
           cdebug_log(159,0) << "Aborted ripup of perpandiculars, fixed or blocked." << endl;
+          cdebug_tabw(159,-1);
           return false;
         }
       }
@@ -241,6 +246,7 @@ namespace Katana {
     if (cagedPerpandiculars and not placedPerpandiculars) {
       cdebug_log(159,0) << "Aborted ripup of perpandiculars, constraints are due to fixed/blockage." << endl;
       _fsm.addAction( _segment, SegmentAction::SelfRipup );
+      cdebug_tabw(159,-1);
       return true;
     }
 
@@ -250,6 +256,7 @@ namespace Katana {
         _fsm.addAction( perpandiculars[i], perpandicularActionFlags|SegmentAction::EventLevel4 );
       }
       _fsm.addAction( _segment, parallelActionFlags );
+      cdebug_tabw(159,-1);
       return true;
     }
 
@@ -265,13 +272,15 @@ namespace Katana {
     if (_segment->isLocal() and (tracksNb < 2)) success = ripple();
 
     _fsm.addAction( _segment, parallelActionFlags );
+
+    cdebug_tabw(159,-1);
     return success;
   }
 
 
   bool  Manipulator::relax ( Interval interval, uint32_t flags )
   {
-    interval.inflate( - Session::getExtensionCap(getLayer()) );
+    Session::toAxisInterval( interval, Session::getLayerDepth(_segment->getLayer())+1 );
     cdebug_log(159,0) << "Manipulator::relax() of: " << _segment << " " << interval << endl; 
 
     if (_segment->isFixed()) return false;
@@ -784,7 +793,7 @@ namespace Katana {
 
             if ( event3->getTracksFree() == 1 ) {
               cdebug_log(159,0) << "Potential left intrication with other perpandicular." << endl;
-              if ( segment3->getAxis() == segment2->getTargetU() - Session::getExtensionCap(getLayer()) ) {
+              if ( segment3->getAxis() == segment2->getTargetAxis() ) {
               //leftIntrication = true;
               //leftAxisHint    = segment3->getAxis();
               }
@@ -802,7 +811,7 @@ namespace Katana {
               break;
             if ( event3->getTracksFree() == 1 ) {
               cdebug_log(159,0) << "Potential right intrication with other perpandicular." << endl;
-              if ( segment3->getAxis() == segment2->getSourceU() + Session::getExtensionCap(getLayer()) ) {
+              if ( segment3->getAxis() == segment2->getSourceAxis() ) {
               //rightIntrication = true;
               //rightAxisHint    = segment3->getAxis();
               }
@@ -1162,7 +1171,7 @@ namespace Katana {
     } else {
       if (not _segment->canMoveUp(0.5,kflags)) return false;
     }
-    return _segment->moveUp( kflags );
+    return _segment->moveUp( kflags|Flags::Propagate );
   }
 
 
@@ -1463,6 +1472,7 @@ namespace Katana {
     Track*     track    = _fsm.getTrack( 0 );
     DbU::Unit  axisHint = 0;
 
+#if DISABLED
     if (termConstraints.getSize() < _segment->getPPitch()*2) {
       cdebug_log(159,0) << "Constraints less than two perpandicular pitches, lock." << endl;
 
@@ -1475,25 +1485,32 @@ namespace Katana {
       cdebug_tabw(159,-1);
       return true;
     }
+#endif
 
     for ( ; begin < end ; ++begin ) {
       TrackElement* conflict = track->getSegment(begin);
       if (conflict->getCanonicalInterval().intersect( _segment->getCanonicalInterval() )) break; 
     }
 
-    Interval previousFree = track->getPreviousFree( begin, _segment->getNet() );
-    if (previousFree.intersect(termConstraints))
-      axisHint = previousFree.getCenter();
-    else {
-      Interval nextFree = track->getNextFree( end, _segment->getNet() );
-      if (nextFree.intersect(termConstraints)) {
-        axisHint = nextFree.getCenter();
-      } else {
-        cdebug_log(159,0) << "Neither previous free nor next free can be used." << endl;
-        cdebug_log(159,0) << "| previous:" << previousFree << endl;
-        cdebug_log(159,0) << "| next:    " << nextFree << endl;
-        cdebug_tabw(159,-1);
-        return false;
+    if (begin == end) {
+      axisHint = termConstraints.getCenter();
+      cdebug_log(159,0) << "No conflict under canonical interval (?) use terminal center." << endl;
+      cdebug_log(159,0) << "term: " << termConstraints << " center:" << DbU::getValueString(axisHint) << endl;
+    } else {
+      Interval previousFree = track->getPreviousFree( begin, _segment->getNet() );
+      if (previousFree.intersect(termConstraints))
+        axisHint = previousFree.getCenter();
+      else {
+        Interval nextFree = track->getNextFree( end, _segment->getNet() );
+        if (nextFree.intersect(termConstraints)) {
+          axisHint = nextFree.getCenter();
+        } else {
+          cdebug_log(159,0) << "Neither previous free nor next free can be used." << endl;
+          cdebug_log(159,0) << "| previous:" << previousFree << endl;
+          cdebug_log(159,0) << "| next:    " << nextFree << endl;
+          cdebug_tabw(159,-1);
+          return false;
+        }
       }
     }
 
@@ -1511,6 +1528,8 @@ namespace Katana {
 
       _fsm.addAction( perpandiculars[i], SegmentAction::SelfRipupPerpandWithAxisHint, axisHint );
     }
+
+  //_fsm.addAction( _segment, SegmentAction::SelfRipup|SegmentAction::EventLevel3 );
 
     _event->setMinimized();
 
@@ -1536,12 +1555,11 @@ namespace Katana {
       if ( not Manipulator(perpandicular,_fsm).canRipup()
          or (data->getState() >= DataNegociate::MaximumSlack) ) continue;
 
-    // Ugly: ExtensionCap usage.
       if ( moveLeft ) {
-        if ( perpandicular->getTargetU()-Session::getExtensionCap(getLayer()) == _event->getAxisHistory() )
+        if ( perpandicular->getTargetAxis() == _event->getAxisHistory() )
           _fsm.addAction ( perpandicular, SegmentAction::OtherRipupPerpandAndPacking );
       } else {
-        if ( perpandicular->getSourceU()+Session::getExtensionCap(getLayer()) == _event->getAxisHistory() )
+        if ( perpandicular->getSourceAxis() == _event->getAxisHistory() )
           _fsm.addAction ( perpandicular, SegmentAction::OtherRipupPerpandAndPacking );
       }
     }
@@ -1560,6 +1578,7 @@ namespace Katana {
       if (perpandicular->isFixed ()) continue;
       if (perpandicular->isGlobal()) continue;
       if (not data) continue;
+      if (data->getState() >= DataNegociate::RepairFailed) continue;
 
       if (RoutingEvent::getStage() == RoutingEvent::Repair) {
         data->setState( DataNegociate::Repair );

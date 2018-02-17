@@ -51,7 +51,7 @@ extern "C" {
 # define  accessorDbuFromOptBasicLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                \
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
   {                                                                                     \
-    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                      \
                                                                                         \
     DbU::Unit  rvalue = 0;                                                              \
                                                                                         \
@@ -240,13 +240,79 @@ extern "C" {
   }
 
 
+  static PyObject* PyLayer_getEnclosure ( PyLayer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyLayer_getEnclosure()" << endl;
+
+    DbU::Unit  rvalue = 0;
+
+    HTRY
+      METHOD_HEAD("Layer.getEnclosure()")
+  
+      PyObject* arg0 = NULL;
+      PyObject* arg1 = NULL;
+  
+      __cs.init( "Layer.getEnclosure()" );
+      if (PyArg_ParseTuple( args, "O&|O&:Layer.getEnclosure()"
+                          , Converter, &arg0
+                          , Converter, &arg1 )) {
+        if (__cs.getObjectIds() == ":basiclayer:int")
+          rvalue = layer->getEnclosure( PYBASICLAYER_O(arg0), PyAny_AsLong(arg1) );
+        else if  ( __cs.getObjectIds() == ":int" )
+          rvalue = layer->getEnclosure( PyAny_AsLong(arg1) );
+        else {
+          PyErr_SetString ( ConstructorError
+                          , "invalid parameter type for Layer.getEnclosure()." );
+          return NULL;
+        }
+      } else {
+        PyErr_SetString ( ConstructorError
+                        , "Invalid number of parameters passed to Layer.getEnclosure()." );
+        return NULL;
+      }
+    HCATCH
+
+    return PyLong_FromLong(rvalue);
+  }
+
+
+  static PyObject* PyLayer_setEnclosure ( PyLayer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyLayer_setEnclosure()" << endl;
+
+    HTRY
+    METHOD_HEAD("PyLayer.setEnclosure()")
+
+    PyObject* pyBasicLayer = NULL;
+    PyObject* pyDimension  = NULL;
+    uint32_t  flags        = 0;
+
+    if (PyArg_ParseTuple( args, "OOi:Layer.setEnclosure()"
+                        , &pyBasicLayer, &pyDimension, &flags )) {
+      BasicLayer* basicLayer = PYBASICLAYER_O(pyBasicLayer);
+      if (basicLayer == NULL) {
+        PyErr_SetString( ConstructorError
+                       , "Layer.setEnclosure(): First parameter is not of BasicLayer type" );
+        return NULL;
+      }
+      layer->setEnclosure( basicLayer, PyAny_AsLong(pyDimension), flags );
+    } else {
+      PyErr_SetString( ConstructorError
+                     , "Layer.setEnclosure(): Bad parameters types or numbers." );
+      return NULL;
+    }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   GetNameMethod               (Layer, layer)
   predicateFromLayer          (                          above            ,PyLayer,Layer)
   predicateFromLayer          (                          below            ,PyLayer,Layer)
   predicateFromLayer          (                          contains         ,PyLayer,Layer)
   predicateFromLayer          (                          intersect        ,PyLayer,Layer)
   predicateFromVoid           (                          isSymbolic       ,PyLayer,Layer)
-  accessorDbuFromOptBasicLayer(                          getEnclosure     ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getExtentionCap  ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getExtentionWidth,PyLayer,Layer)
   accessorCollectionFromVoid  (                          getBasicLayers   ,PyLayer,Layer,BasicLayer)
@@ -266,7 +332,6 @@ extern "C" {
   SetNameMethod(Layer, layer)
   updatorFromDbu          (setMinimalSize   ,PyLayer,Layer)
   updatorFromDbu          (setMinimalSpacing,PyLayer,Layer)
-  updatorFromBasicLayerDbu(setEnclosure     ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionCap  ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionWidth,PyLayer,Layer)
   DirectSetBoolAttribute  (PyLayer_setSymbolic,setSymbolic,PyLayer,Layer)
@@ -366,6 +431,15 @@ extern "C" {
   extern  void  PyLayer_postModuleInit ()
   {
     PyDict_SetItemString ( PyTypeLayer.tp_dict, "Mask", (PyObject*)&PyTypeLayerMask );
+
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeLayer.tp_dict,Layer::NoFlags       ,"NoFlags"       );
+    LoadObjectConstant(PyTypeLayer.tp_dict,Layer::EnclosureH    ,"EnclosureH"    );
+    LoadObjectConstant(PyTypeLayer.tp_dict,Layer::EnclosureV    ,"EnclosureV"    );
+    LoadObjectConstant(PyTypeLayer.tp_dict,Layer::EnclosureMax  ,"EnclosureMax"  );
+    LoadObjectConstant(PyTypeLayer.tp_dict,Layer::ExtensionCap  ,"ExtensionCap"  );
+    LoadObjectConstant(PyTypeLayer.tp_dict,Layer::ExtensionWidth,"ExtensionWidth");
   }
 
 

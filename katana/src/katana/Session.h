@@ -46,6 +46,7 @@ namespace Katana {
   using Hurricane::Contact;
   using Hurricane::Segment;
   using Hurricane::DbU;
+  using Hurricane::Interval;
   using Anabatic::AutoContact;
   using Anabatic::AutoSegment;
 
@@ -74,6 +75,7 @@ namespace Katana {
       inline static uint32_t            getRipupCost        ();
       inline static Anabatic::GCell*    getGCellUnder       ( DbU::Unit, DbU::Unit );
              static void                setInterrupt        ( bool );
+      inline static Interval&           toAxisInterval      ( Interval&, size_t depth );
       inline static void                addInsertEvent      ( TrackMarker*  , Track* );
       inline static void                addInsertEvent      ( TrackElement* , Track* );
       inline static void                addRemoveEvent      ( TrackElement* );
@@ -90,6 +92,7 @@ namespace Katana {
                     Net*                _getBlockageNet     ();
                     uint32_t            _getRipupCost       ();
                     Anabatic::GCell*    _getGCellUnder      ( DbU::Unit, DbU::Unit );
+                    Interval&           _toAxisInterval     ( Interval&, size_t depth ) const;
                     void                _doLockEvents       ();
                     void                _doRemovalEvents    ();
       virtual       size_t              _revalidate         ();
@@ -163,6 +166,9 @@ namespace Katana {
 
   inline Anabatic::GCell* Session::getGCellUnder ( DbU::Unit x, DbU::Unit y )
   { return get("getGCellUnder()")->_getGCellUnder(x,y); }
+
+  inline Interval& Session::toAxisInterval ( Interval& interval, size_t depth )
+  { return get("getGCellUnder()")->_toAxisInterval(interval,depth); }
 
   inline void  Session::addInsertEvent ( TrackMarker* marker, Track* track )
   { get("addInsertEvent(TrackMarker*)")->_addInsertEvent(marker,track); }

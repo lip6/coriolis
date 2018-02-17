@@ -358,6 +358,8 @@ extern "C" {
   // Standard Attributes.
   GetNameMethod(RoutingGauge,rg)
   accessorVectorFromVoid(getLayerGauges,PyRoutingGauge,RoutingGauge,RoutingLayerGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isSymbolic ,isSymbolic ,PyRoutingGauge,RoutingGauge)
+  DirectSetBoolAttribute(PyRoutingGauge_setSymbolic,setSymbolic,PyRoutingGauge,RoutingGauge)
 
 
   // Standart Destroy (Attribute).
@@ -366,6 +368,8 @@ extern "C" {
   PyMethodDef PyRoutingGauge_Methods[] =
     { { "create"                , (PyCFunction)PyRoutingGauge_create            , METH_VARARGS|METH_STATIC
                                 , "Create a new RoutingGauge." }
+    , { "isSymbolic"            , (PyCFunction)PyRoutingGauge_isSymbolic           , METH_NOARGS
+                                , "The RoutingGauge is for symbolic technology." }
     , { "getName"               , (PyCFunction)PyRoutingGauge_getName           , METH_NOARGS
                                 , "Return the maximum depth of the RoutingGauge." }
     , { "getTechnology"         , (PyCFunction)PyRoutingGauge_getTechnology     , METH_NOARGS
@@ -392,6 +396,8 @@ extern "C" {
                                 , "Return the list of RoutingLayerGauge." }
     , { "addLayerGauge"         , (PyCFunction)PyRoutingGauge_addLayerGauge     , METH_VARARGS
                                 , "Adds a new RoutingLayerGauge to the RoutingGauge." }
+    , { "setSymbolic"           , (PyCFunction)PyRoutingGauge_setSymbolic       , METH_VARARGS
+                                , "Set the symbolic technology state." }
   //, { "destroy"               , (PyCFunction)PyRoutingGauge_destroy          , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}     /* sentinel */

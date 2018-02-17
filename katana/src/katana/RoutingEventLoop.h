@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2018, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -10,7 +10,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/RoutingEventLoop.h"                     |
+// |  C++ Header  :  "./katana/RoutingEventLoop.h"                   |
 // +-----------------------------------------------------------------+
 
 
@@ -22,6 +22,7 @@
 
 namespace Katana {
 
+  class TrackElement;
   class RoutingEvent;
 
 
@@ -33,11 +34,12 @@ namespace Katana {
     public:
       class Element {
         public:
-          inline Element ( size_t id=0, size_t timestamp=0 );
+          inline         Element ( TrackElement* segment, size_t timestamp=0 );
+                 size_t  getId   () const;
         public:
-          size_t  _id;
-          size_t  _timestamp;
-          int     _count;
+          TrackElement* _segment;
+          size_t        _timestamp;
+          int           _count;
       };
       class CompareByTimestamp {
         public:
@@ -48,8 +50,8 @@ namespace Katana {
       inline bool                        isLooping        () const;
       inline int                         getMaxCount      () const;
       inline const std::vector<Element>& getElements      () const;
-             void                        update           ( size_t id );
-             void                        erase            ( size_t id );
+             void                        update           ( TrackElement* );
+             void                        erase            ( TrackElement* );
     private:
       std::vector<Element>  _elements;
       size_t                _depth;
@@ -59,8 +61,8 @@ namespace Katana {
   };
 
 
-  inline RoutingEventLoop::Element::Element ( size_t id, size_t timestamp )
-    : _id(id), _timestamp(timestamp), _count(1)
+  inline RoutingEventLoop::Element::Element ( TrackElement* segment, size_t timestamp )
+    : _segment(segment), _timestamp(timestamp), _count(1)
   { }
 
 

@@ -55,6 +55,8 @@ namespace Katana {
       virtual TrackElement*  getNext                () const;
       virtual TrackElement*  getPrevious            () const;
       virtual DbU::Unit      getAxis                () const;
+      inline  DbU::Unit      getSourceAxis          () const;
+      virtual DbU::Unit      getTargetAxis          () const;
       virtual Interval       getFreeInterval        () const;
       virtual void           addOverlapCost         ( TrackCost& ) const;
       virtual float          getPriority            () const;

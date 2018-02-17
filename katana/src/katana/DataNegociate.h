@@ -49,17 +49,18 @@ namespace Katana {
 
   class DataNegociate {
     public:
-      enum SlackState { RipupPerpandiculars    = 1
-                      , Minimize               = 2
-                      , Dogleg                 = 3
-                      , Slacken                = 4
-                      , ConflictSolveByHistory = 5
-                      , ConflictSolveByPlaceds = 6
-                      , LocalVsGlobal          = 7
-                      , MoveUp                 = 8
-                      , MaximumSlack           = 9
-                      , Unimplemented          =10
-                      , Repair                 =11
+      enum SlackState { RipupPerpandiculars    =  1
+                      , Minimize               =  2
+                      , Dogleg                 =  3
+                      , Slacken                =  4
+                      , ConflictSolveByHistory =  5
+                      , ConflictSolveByPlaceds =  6
+                      , LocalVsGlobal          =  7
+                      , MoveUp                 =  8
+                      , MaximumSlack           =  9
+                      , Unimplemented          = 10
+                      , Repair                 = 11
+                      , RepairFailed           = 12
                       };
     public:
                                           DataNegociate         ( TrackElement* );
@@ -89,6 +90,7 @@ namespace Katana {
       inline void                         resetRipupCount       ();
       inline void                         resetStateCount       ();
              void                         update                ();
+      static string                       getStateString        ( uint32_t state, unsigned int stateCount  );
       static string                       getStateString        ( DataNegociate* );
              Record*                      _getRecord            () const;
              string                       _getString            () const;
@@ -141,6 +143,18 @@ namespace Katana {
 
   inline void  DataNegociate::setState ( uint32_t state, Flags flags )
   {
+    if ( (_state >= Repair) and (state < _state) ) {
+      std::cerr << "Revert DataNegociate state from Repair/RepairFailed to " << getStateString(state,_stateCount).c_str() << std::endl;
+      std::cerr << "On " << _getString() << std::endl;
+
+      std::cerr << *((char*)NULL) << std::endl;
+      
+      throw Hurricane::Error( "Revert DataNegociate state from Repair/RepairFailed to %s."
+                              "        On %s"
+                            , getStateString(state,_stateCount).c_str()
+                            , _getString().c_str()
+                            );
+    }
     if ( (_state != state) or (flags & Flags::ResetCount) ) {
     //std::cerr << "Changing state to:" << state << std::endl;
       _state      = state;
@@ -154,5 +168,8 @@ namespace Katana {
 
 
 }  // Katana namespace.
+
+
+INSPECTOR_P_SUPPORT(Katana::DataNegociate);
 
 #endif  // KATANA_DATA_NEGOCIATE_H

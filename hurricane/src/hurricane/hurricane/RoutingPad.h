@@ -60,7 +60,8 @@ namespace Hurricane {
     public:
     // Accessors.
               bool         isPlacedOccurrence    ( unsigned int flags ) const;
-      inline  Occurrence   getOccurrence         () const { return _occurrence; };
+      inline  bool         isAtTopLevel          () const;
+      inline  Occurrence   getOccurrence         () const;
               Occurrence   getPlugOccurrence     ();
       virtual const Layer* getLayer              () const;
       virtual DbU::Unit    getX                  () const;
@@ -96,6 +97,10 @@ namespace Hurricane {
     // Attributes.
       Occurrence  _occurrence;
   };
+
+  
+  inline  bool        RoutingPad::isAtTopLevel  () const { return _occurrence.getPath().isEmpty(); }
+  inline  Occurrence  RoutingPad::getOccurrence () const { return _occurrence; };
 
 
 // -------------------------------------------------------------------

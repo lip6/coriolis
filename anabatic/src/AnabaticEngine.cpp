@@ -18,6 +18,7 @@
 #include <iostream>
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
@@ -29,10 +30,96 @@
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/Measures.h"
 #include "anabatic/GCell.h"
+#include "anabatic/AutoContactTerminal.h"
 #include "anabatic/NetBuilderM2.h"
 #include "anabatic/NetBuilderHV.h"
 #include "anabatic/NetBuilderVH.h"
 #include "anabatic/AnabaticEngine.h"
+
+
+namespace {
+
+  using namespace Hurricane;
+  using namespace Anabatic;
+
+
+  class SortAcByXY {
+    public:
+      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 );
+  };
+
+
+  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 )
+  {
+    DbU::Unit x1 = contact1->getX();
+    DbU::Unit x2 = contact2->getX();
+
+    if (x1 == x2) {
+      DbU::Unit y1 = contact1->getY();
+      DbU::Unit y2 = contact2->getY();
+
+      if (y1 == y2) return false;
+      return (y1 < y2);
+    }
+    return (x1 < x2);
+  }
+
+
+  void  shear ( AutoSegment* segment )
+  {
+    AutoContact* source    = segment->getAutoSource();
+    AutoContact* target    = segment->getAutoTarget();
+    bool         useSource = true;
+
+    if (segment->isHorizontal()) {
+      if (not source->isTurn() and target->isTurn()) useSource = false;
+    } else {
+      if (not source->isTurn() and target->isTurn()) useSource = false;
+    }
+
+    segment->makeDogleg( (useSource ? source->getGCell() : target->getGCell()) );
+    Session::getDoglegs()[ Session::getDoglegs().size()-2 ]->unsetFlags( AutoSegment::SegAxisSet );
+
+#if BAD_RESULTS
+    AutoContact* source        = segment->getAutoSource();
+    AutoContact* target        = segment->getAutoTarget();
+    AutoSegment* perpandicular = NULL;
+    bool         useSource     = true;
+
+    if (segment->isHorizontal()) {
+      if (source->isTurn()) perpandicular = source->getPerpandicular( segment );
+      else {
+        if (target->isTurn()) { perpandicular = target->getPerpandicular( segment ); useSource = false; }
+        else {
+          if (source->isHTee()) perpandicular = source->getPerpandicular( segment );
+          else {
+            if (target->isHTee()) { perpandicular = target->getPerpandicular( segment ); useSource = false; }
+            else
+              perpandicular = segment;
+          }
+        }
+      }
+    } else {
+      if (source->isTurn()) perpandicular = source->getPerpandicular( segment );
+      else {
+        if (target->isTurn()) { perpandicular = target->getPerpandicular( segment ); useSource = false; }
+        else {
+          if (source->isVTee()) perpandicular = source->getPerpandicular( segment );
+          else {
+            if (target->isVTee()) { perpandicular = target->getPerpandicular( segment ); useSource = false; }
+            else
+              perpandicular = segment;
+          }
+        }
+      }
+    }
+
+    perpandicular->makeDogleg( (useSource ? source->getGCell() : target->getGCell()) );
+#endif
+  }
+
+
+}  // Anonymous namespace.
 
 
 namespace Anabatic {
@@ -40,9 +127,11 @@ namespace Anabatic {
   using std::cerr;
   using std::cout;
   using std::endl;
+  using std::multiset;
   using std::ostringstream;
   using Hurricane::Bug;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::Breakpoint;
   using Hurricane::RegularLayer;
   using Hurricane::Component;
@@ -416,6 +505,7 @@ namespace Anabatic {
     for ( GCell* gcell : _gcells ) _updateLookup( gcell );
   }
 
+
   size_t  AnabaticEngine::getNetsFromEdge ( const Edge* edge, NetSet& nets )
   {
     size_t  count  = 0;
@@ -719,8 +809,133 @@ namespace Anabatic {
       throw Error( badMethod, "Anabatic::loadGlobalRouting()", method, getString(_cell).c_str() );
     }
     cleanupGlobal();
+    relaxOverConstraineds();
 
     _state = EngineActive;
+  }
+
+
+  void  AnabaticEngine::relaxOverConstraineds ()
+  {
+    openSession();
+
+    DbU::Unit           pitch3 = Session::getPitch( 2 );
+    AutoSegment::IdSet  constraineds;
+    AutoSegment::IdSet  processeds;
+    
+    for ( GCell* gcell : _gcells ) {
+    //cerr << "@ " << gcell << endl;
+
+      multiset<AutoContactTerminal*,SortAcByXY>  acTerminals;
+      for ( AutoContact* contact : gcell->getContacts() ) {
+        if (contact->isTerminal() and (Session::getViaDepth(contact->getLayer()) == 0) )
+          acTerminals.insert( dynamic_cast<AutoContactTerminal*>(contact) );
+      }
+
+      AutoContactTerminal* south = NULL;
+      for ( AutoContactTerminal* north : acTerminals ) {
+      //cerr << "@ " << north << endl;
+        if (south) {
+          if (   south->canDrag()
+             and north->canDrag()
+             and (south->getNet() != north->getNet())
+             and (south->getX  () == north->getX  ()) ) {
+          //Interval constraints ( north->getCBYMax() - pitch3, gcell->getYMin() );
+            Interval constraints ( north->getCBYMin() - pitch3, gcell->getYMin() );
+            AutoSegment* terminal = south->getSegment();
+            AutoContact* opposite = terminal->getOppositeAnchor( south );
+
+            for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+              segment->mergeUserConstraints( constraints );
+              constraineds.insert( segment );
+            //cerr << "Apply " << constraints << " to " << segment << endl;
+            }
+
+          //constraints = Interval( south->getCBYMin() + pitch3, gcell->getYMax() );
+            constraints = Interval( south->getCBYMax() + pitch3, gcell->getYMax() );
+            terminal    = north->getSegment();
+            opposite    = terminal->getOppositeAnchor( north );
+
+            for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
+              segment->mergeUserConstraints( constraints );
+              constraineds.insert( segment );
+            //cerr << "Apply " << constraints << " to " << segment << endl;
+            }
+          }
+
+        //if (south->getConstraintBox().getHeight() < pitch3*2) metal2protect( south );
+        //if (north->getConstraintBox().getHeight() < pitch3*2) metal2protect( north );
+        }
+        south = north;
+      }
+    }
+
+    Session::revalidate();
+
+    for ( AutoSegment* constrained : constraineds ) {
+      if (processeds.find(constrained) != processeds.end()) continue;
+      processeds.insert( constrained );
+      
+      Interval              userConstraints ( false );
+      vector<AutoSegment*>  aligneds;
+
+      aligneds.push_back( constrained );
+
+      for ( AutoSegment* aligned : constrained->getAligneds() ) {
+        aligneds.push_back( aligned );
+        processeds.insert( aligned );
+      }
+
+      sort( aligneds.begin(), aligneds.end(), AutoSegment::CompareBySourceU() );
+
+      AutoSegment* previous = NULL;
+      for ( AutoSegment* aligned : aligneds ) {
+        Interval constraints = userConstraints.getIntersection( aligned->getUserConstraints() );
+        cerr << "aligned: " << aligned << " " << aligned->getUserConstraints() << endl;
+
+        if (constraints.getSize() < Session::getPitch(1)) {
+          if (not previous) {
+            cerr << Warning( "protectAlignedAccesses(): Shearing constraints between S/T on\n"
+                             "          %s\n"
+                             "          S:%s\n"
+                             "          T:%s\n"
+                             "          Combined user constraints are too tight [%s : %s]."
+                           , getString(aligned ).c_str()
+                           , getString(aligned->getAutoSource()->getConstraintBox()).c_str()
+                           , getString(aligned->getAutoTarget()->getConstraintBox()).c_str()
+                           , DbU::getValueString(constraints.getVMin()).c_str()
+                           , DbU::getValueString(constraints.getVMax()).c_str()
+                           ) << endl;
+          } else {
+            cerr << Warning( "protectAlignedAccesses(): Shearing constraints between\n"
+                             "          %s\n"
+                             "          %s\n"
+                             "          Combined user constraints are too tight [%s : %s]."
+                           , getString(previous).c_str()
+                           , getString(aligned ).c_str()
+                           , DbU::getValueString(constraints.getVMin()).c_str()
+                           , DbU::getValueString(constraints.getVMax()).c_str()
+                           ) << endl;
+          }
+        //if (previous) {
+        //  if (previous->getAutoTarget() == aligned->getAutoSource()) {
+        //    cerr << "Found a shared contact: " << aligned->getAutoSource() << endl;
+              shear( aligned );
+        //  }
+        //}
+          
+          userConstraints = aligned->getUserConstraints();
+        } else {
+          userConstraints = constraints;
+        }
+
+        previous = aligned;
+      }
+
+      cerr << "Final user constraints:" << userConstraints << endl;
+    }
+
+    Session::close();
   }
 
 

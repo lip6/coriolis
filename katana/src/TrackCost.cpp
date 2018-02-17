@@ -58,6 +58,9 @@ namespace Katana {
     , _selectFlags    (NoFlags)
     , _selectIndex    (0)
   {
+    cdebug_log(159,1) << "TrackCost::TrackCost() - " << refSegment << endl;
+    cdebug_log(159,0) << "  interval1: " << _interval1 << endl;
+    
     std::get<0>( _tracks[0] ) = refTrack;
     _segment1->addOverlapCost( *this );
 
@@ -68,6 +71,7 @@ namespace Katana {
     }
 
     consolidate();
+    cdebug_tabw(159,-1);
   }
 
 

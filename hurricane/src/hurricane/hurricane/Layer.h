@@ -52,6 +52,13 @@ namespace Hurricane {
   class Layer : public DBo {
     public:
       typedef  DBo  Super;
+    public:
+      static   const uint32_t   NoFlags        =  0;
+      static   const uint32_t   EnclosureH     = (1 << 0);
+      static   const uint32_t   EnclosureV     = (1 << 1);
+      static   const uint32_t   EnclosureMax   = (1 << 2);
+      static   const uint32_t   ExtensionCap   = (1 << 3);
+      static   const uint32_t   ExtensionWidth = (1 << 4);
 
     public:
     // Types.
@@ -72,12 +79,14 @@ namespace Hurricane {
               Layer*            getMetalBelow                ( bool useSymbolic=true ) const;
               Layer*            getCutAbove                  ( bool useSymbolic=true ) const;
               Layer*            getCutBelow                  ( bool useSymbolic=true ) const;
-      virtual DbU::Unit         getEnclosure                 () const;
+      virtual DbU::Unit         getEnclosure                 ( uint32_t flags ) const;
       virtual DbU::Unit         getExtentionCap              () const;
       virtual DbU::Unit         getExtentionWidth            () const;
-      virtual DbU::Unit         getEnclosure                 ( const BasicLayer* layer ) const;
+      virtual DbU::Unit         getEnclosure                 ( const BasicLayer* layer, uint32_t flags ) const;
       virtual DbU::Unit         getExtentionCap              ( const BasicLayer* layer ) const;
       virtual DbU::Unit         getExtentionWidth            ( const BasicLayer* layer ) const;
+      virtual DbU::Unit         getTopEnclosure              ( uint32_t flags ) const;
+      virtual DbU::Unit         getBottomEnclosure           ( uint32_t flags ) const;
     // Predicates
       inline  bool              above                        ( const Layer* layer ) const;
       inline  bool              below                        ( const Layer* layer ) const;
@@ -89,7 +98,7 @@ namespace Hurricane {
       inline  void              setSymbolic                  ( bool );
               void              setMinimalSize               ( const DbU::Unit& minimalSize );
               void              setMinimalSpacing            ( const DbU::Unit& minimalSpacing );
-      virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit );
+      virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit, uint32_t flags );
       virtual void              setExtentionCap              ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionWidth            ( const BasicLayer* layer, DbU::Unit );
     // Hurricane Managment.

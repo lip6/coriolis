@@ -81,9 +81,9 @@ namespace Katana {
     }
 
     if ( rpDirection xor (uint64_t)rg->getLayerDirection(rg->getLayerDepth(pad->getLayer())) ) {
-      _weight = (uint32_t)(( pitch / (pitch+DbU::toLambda(trackSpan.getSize())) ) * 100.0) ;
+      _weight = (uint32_t)(( pitch / (pitch+trackSpan.getSize()) ) * 100.0) ;
     } else {
-      _weight = (uint32_t)( (pitch + DbU::toLambda(trackSpan.getSize())) * 20.0 );
+      _weight = (uint32_t)( (pitch + trackSpan.getSize()) * 20.0 );
     }
 
     Track* track = rp->getTrackByPosition ( trackSpan.getVMin() );

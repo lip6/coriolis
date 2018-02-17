@@ -18,6 +18,7 @@
 #include  "hurricane/Bug.h"
 #include  "hurricane/Error.h"
 #include  "hurricane/DebugSession.h"
+#include  "hurricane/ViaLayer.h"
 #include  "hurricane/RoutingPad.h"
 #include  "crlcore/RoutingGauge.h"
 #include  "anabatic/Configuration.h"
@@ -35,6 +36,7 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Bug;
   using Hurricane::DebugSession;
+  using Hurricane::ViaLayer;
   using Hurricane::RoutingPad;
 
 
@@ -330,7 +332,7 @@ namespace Anabatic {
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (sourceSlackened and (doglegs.size() >= 2)) {
-        cdebug_log(149,0) << "AutoHorizontal::_slacken(): Source @" << DbU::getValueString(getSourcePosition()) << endl;
+        cdebug_log(149,0) << "Slackened from source @" << DbU::getValueString(getSourcePosition()) << endl;
         doglegs[doglegs.size()-2]->setAxis( getSourcePosition() );
         success = true;
 
@@ -459,8 +461,8 @@ namespace Anabatic {
 
   void  AutoHorizontal::updatePositions ()
   {
-    _sourcePosition = _horizontal->getSourceX() - getExtensionCap();
-    _targetPosition = _horizontal->getTargetX() + getExtensionCap();
+    _sourcePosition = _horizontal->getSourceX() - getExtensionCap(Flags::Source);
+    _targetPosition = _horizontal->getTargetX() + getExtensionCap(Flags::Target);
   }
 
 
@@ -480,11 +482,11 @@ namespace Anabatic {
   bool  AutoHorizontal::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _horizontal->getSourceX() - getExtensionCap();
-    DbU::Unit targetPosition = _horizontal->getTargetX() + getExtensionCap();
+    DbU::Unit sourcePosition = _horizontal->getSourceX() - getExtensionCap(Flags::Source);
+    DbU::Unit targetPosition = _horizontal->getTargetX() + getExtensionCap(Flags::Target);
 
     if ( _sourcePosition != sourcePosition ) {
-      cerr << "extensionCap: " << DbU::getValueString(getExtensionCap()) << endl;
+      cerr << "extensionCap: " << DbU::getValueString(getExtensionCap(Flags::Source)) << endl;
       cerr << "ppitch:       " << DbU::getValueString(getPPitch()) << endl;
       cerr << "via width:    " << DbU::getValueString(Session::getViaWidth(getLayer())) << endl;
       cerr << Error ( "%s\n        Source position incoherency: "
@@ -791,8 +793,17 @@ namespace Anabatic {
       } while ( gcell and (gcell != end) );
     }
 
-    size_t       depth        = Session::getRoutingGauge()->getLayerDepth( _horizontal->getLayer() );
-    bool         upLayer      = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
+    size_t  depth   = Session::getRoutingGauge()->getLayerDepth( _horizontal->getLayer() );
+    bool    upLayer = true;
+
+    if (Session::getRoutingGauge()->isTwoMetals()) {
+      upLayer = (depth == 0);
+    } else if (Session::getRoutingGauge()->isVH()) {
+      upLayer = (depth < 2);
+    } else {
+      upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
+    }
+
     Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer( depth + ((upLayer)?0:-1) );
     const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer( depth + ((upLayer)?1:-1) );
 
@@ -859,7 +870,7 @@ namespace Anabatic {
     updateNativeConstraints();
     segment2->updateNativeConstraints();
 
-    if (autoTarget->canDrag()) {
+    if (autoTarget->canDrag() and not autoSource->canDrag()) {
       Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Horizontal);
       segment1->mergeUserConstraints( dragConstraints );
 

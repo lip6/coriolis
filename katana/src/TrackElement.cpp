@@ -133,6 +133,7 @@ namespace Katana {
 // Wrapped AutoSegment Functions.
   AutoSegment*   TrackElement::base                 () const { return NULL; }
   bool           TrackElement::isFixed              () const { return false; }
+  bool           TrackElement::isFixedAxis          () const { return false; }
   bool           TrackElement::isLocal              () const { return true; }
   bool           TrackElement::isGlobal             () const { return not isLocal(); }
   bool           TrackElement::isBipoint            () const { return false; }
@@ -162,7 +163,7 @@ namespace Katana {
   uint32_t       TrackElement::getTrackCount        () const { return 0; }
   DbU::Unit      TrackElement::getPitch             () const { return 0; }
   DbU::Unit      TrackElement::getPPitch            () const { return 0; }
-  DbU::Unit      TrackElement::getExtensionCap      () const { return 0; }
+  DbU::Unit      TrackElement::getExtensionCap      ( Flags ) const { return 0; }
   float          TrackElement::getMaxUnderDensity   ( Flags ) const { return 0.0; };
   uint32_t       TrackElement::getDoglegLevel       () const { return 0; }
   TrackElement*  TrackElement::getParent            () const { return NULL; }

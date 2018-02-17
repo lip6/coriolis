@@ -172,9 +172,36 @@ namespace Anabatic {
     if (component == NULL) {
       cerr << Error( "%s is not anchored.", getString(this).c_str() ) << endl;
       cdebug_tabw(145,-1);
-      return _gcell->getBoundingBox ();
+      return _gcell->getBoundingBox();
     }
-    
+
+    RoutingLayerGauge* lg       = Session::getLayerGauge( Session::getLayerDepth(component->getLayer()) );
+    DbU::Unit          xborder  = 0;
+    DbU::Unit          yborder  = 0;
+    const Layer*       viaLayer = Session::getContactLayer( lg->getDepth() );
+
+    if (viaLayer) {
+      if (lg->isHorizontal() and (lg->getDepth() != 0)) {
+        xborder = Session::getViaWidth( lg->getDepth() )/2
+                + viaLayer->getBottomEnclosure( Layer::EnclosureH );
+      } else {
+        yborder = Session::getViaWidth( lg->getDepth() )/2
+                + viaLayer->getBottomEnclosure( Layer::EnclosureV );
+        xborder = Session::getViaWidth( lg->getDepth() )/2
+                + viaLayer->getBottomEnclosure( Layer::EnclosureH );
+
+        if (Session::getRoutingGauge()->isSymbolic()) {
+        // SxLib bug: METAL1 terminal segments are 0.5 lambdas too shorts on
+        // their extremities. Should modificate all the standard cells layout...
+        // HARDCODED.
+          if (Session::getRoutingGauge()->getName() == "msxlib")
+            yborder -= DbU::fromLambda( 1.0 );
+          else
+            yborder -= DbU::fromLambda( 0.5 );
+        }
+      }
+    }
+
     DbU::Unit   xMin;
     DbU::Unit   xMax;
     DbU::Unit   yMin;
@@ -211,6 +238,17 @@ namespace Anabatic {
         if (vertical)   { bb = vertical  ->getBoundingBox(); const_cast<AutoContactTerminal*>(this)->setFlags( CntOnVertical ); }
 
         transformation.applyOn( bb );
+        cdebug_log(145,0) << "Shrink border x:" << DbU::getValueString(xborder)
+                          <<              " y:" << DbU::getValueString(yborder)
+                          << endl;
+
+      // HARDCODED.
+        if (   (Session::getRoutingGauge()->getName() == "sxlib")
+           and (bb.getWidth() == DbU::fromLambda(1.0)) ) {
+          bb.inflate( DbU::fromLambda(0.5), 0 );
+        }
+
+        bb.inflate( -xborder, -yborder );
         xMin = bb.getXMin();
         yMin = bb.getYMin();
         xMax = bb.getXMax();
@@ -298,6 +336,7 @@ namespace Anabatic {
   void  AutoContactTerminal::cacheDetach ( AutoSegment* segment )
   {
     if (_segment == segment) {
+      _segment->unsetFlags( AutoSegment::SegAxisSet );
       _segment = NULL;
       setFlags( CntInvalidatedCache );
       unsetFlags( CntDrag );
@@ -325,7 +364,7 @@ namespace Anabatic {
 
     if (  (dynamic_cast<AutoHorizontal*>(_segment) and (getFlags() & CntOnHorizontal))
        or (dynamic_cast<AutoVertical*>  (_segment) and (getFlags() & CntOnVertical  )) ) {
-      _segment->setFlags( AutoSegment::SegDrag );
+      _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegAxisSet );
       setFlags( CntDrag );
 
       cdebug_log(145,0) << "Drag Contact/Segment set" << endl;
@@ -364,13 +403,13 @@ namespace Anabatic {
       _segment = Session::lookup( horizontals[0] );
       if (getFlags() & CntOnHorizontal) {
         setFlags( CntDrag );
-        _segment->setFlags( AutoSegment::SegDrag );
+        _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
       }
     } else {
       _segment = Session::lookup( verticals[0] );
       if (getFlags() & CntOnVertical) {
         setFlags( CntDrag );
-        _segment->setFlags( AutoSegment::SegDrag );
+        _segment->setFlags( AutoSegment::SegDrag|AutoSegment::SegFixedAxis );
       }
     }
     if (_segment == NULL) {

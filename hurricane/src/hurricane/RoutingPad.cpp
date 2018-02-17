@@ -312,15 +312,17 @@ namespace Hurricane {
 
   Occurrence RoutingPad::getPlugOccurrence ()
   {
-    if (dynamic_cast<Plug*>(_occurrence.getEntity()))
-      return _occurrence;
+    if (dynamic_cast<Plug*>(_occurrence.getEntity())) return _occurrence;
 
     Component* component = static_cast<Component*>(_occurrence.getEntity());
     Net*       net       = component->getNet();
     Path       path      = _occurrence.getPath();
 
-    if ( path.isEmpty() )
-      throw Error("Empty Path => not in an instance");
+    if (path.isEmpty())
+      throw Error( "RoutingPad::getPlugOccurrence(): Empty Path, *not* in an instance for\n"
+                   "        %s"
+                 , getString(this).c_str()
+                 );
 
     Instance* instance = path.getTailInstance();
     Plug*     plug     = instance->getPlug(net);

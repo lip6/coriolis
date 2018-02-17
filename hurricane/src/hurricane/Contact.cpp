@@ -200,19 +200,21 @@ Point Contact::getPosition() const
 Box Contact::getBoundingBox() const
 // ********************************
 {
-  DbU::Unit size = getLayer()->getEnclosure();
+  DbU::Unit enclosureH = getLayer()->getEnclosure( Layer::EnclosureH );
+  DbU::Unit enclosureV = getLayer()->getEnclosure( Layer::EnclosureV );
 
-    return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
+  return Box(getPosition()).inflate(getHalfWidth() + enclosureH, getHalfHeight() + enclosureV);
 }
 
 Box Contact::getBoundingBox(const BasicLayer* basicLayer) const
 // ******************************************************
 {
-    if (!_layer->contains(basicLayer)) return Box();
+  if (not _layer->contains(basicLayer)) return Box();
 
-    DbU::Unit size = getLayer()->getEnclosure(basicLayer);
+  DbU::Unit enclosureH = getLayer()->getEnclosure( basicLayer, Layer::EnclosureH );
+  DbU::Unit enclosureV = getLayer()->getEnclosure( basicLayer, Layer::EnclosureV );
 
-    return Box(getPosition()).inflate(getHalfWidth() + size, getHalfHeight() + size);
+  return Box(getPosition()).inflate(getHalfWidth() + enclosureH, getHalfHeight() + enclosureV );
 }
 
 Component* Contact::getAnchor() const

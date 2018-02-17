@@ -445,20 +445,21 @@ namespace Katana {
   SegmentFsm::SegmentFsm ( RoutingEvent*        event1
                          , RoutingEventQueue&   queue
                          , RoutingEventHistory& history )
-    : _event1     (event1)
-    , _event2     (NULL)
-    , _queue      (queue)
-    , _history    (history)
-    , _state      (0)
-    , _data1      (NULL)
-    , _data2      (NULL)
-    , _constraint ()
-    , _optimal    ()
-    , _costs      ()
-    , _actions    ()
-    , _fullBlocked(true)
-    , _sameAxis   (false)
-    , _useEvent2  (false)
+    : _event1      (event1)
+    , _event2      (NULL)
+    , _queue       (queue)
+    , _history     (history)
+    , _state       (0)
+    , _data1       (NULL)
+    , _data2       (NULL)
+    , _constraint  ()
+    , _optimal     ()
+    , _costs       ()
+    , _actions     ()
+    , _fullBlocked (true)
+    , _sameAxis    (false)
+    , _useEvent2   (false)
+    , _minimizeDrag(false)
   {
     DataSymmetric* symData  = NULL;
     TrackElement*  segment1 = _event1->getSegment();
@@ -1184,53 +1185,70 @@ namespace Katana {
 
     switch (data->getState()) {
       case DataNegociate::RipupPerpandiculars:
-        nextState = DataNegociate::Minimize;
-        success = manipulator.ripupPerpandiculars();
+        if (segment->isDrag() and getCost(0)->isInfinite()) {
+          nextState = DataNegociate::Slacken;
+          success   = manipulator.dragMinimize();
+          if (success) _minimizeDrag = true;
+        } else {
+          nextState = DataNegociate::Minimize;
+          success   = manipulator.ripupPerpandiculars();
+        }
         if (success) break;
       case DataNegociate::Minimize:
-        if (isFullBlocked() and not segment->isTerminal()) {
-          cdebug_log(159,0) << "Is Fully blocked." << endl;
-          nextState = DataNegociate::Unimplemented;
-          break;
+        if (nextState == DataNegociate::Minimize) {
+          if (isFullBlocked() and not segment->isTerminal()) {
+            cdebug_log(159,0) << "Is Fully blocked." << endl;
+            nextState = DataNegociate::Unimplemented;
+            break;
+          }
+          nextState = DataNegociate::Dogleg;
+          success   = manipulator.minimize();
+          if (success) break;
         }
-        nextState = DataNegociate::Dogleg;
-        // if (segment->isDrag())
-        //   success = manipulator.dragMinimize();
-        // else
-          success = manipulator.minimize();
-        if (success) break;
       case DataNegociate::Dogleg:
-        nextState = DataNegociate::Slacken;
-        success = manipulator.makeDogleg();
-        if (success) break;
+        if (nextState == DataNegociate::Dogleg) {
+          nextState = DataNegociate::Slacken;
+          success   = manipulator.makeDogleg();
+          if (success) break;
+        }
       case DataNegociate::Slacken:
-        nextState = DataNegociate::ConflictSolveByPlaceds;
-        success = manipulator.slacken();
-        if (success) break;
+        if (nextState == DataNegociate::Slacken) {
+          nextState = DataNegociate::ConflictSolveByPlaceds;
+          success   = manipulator.slacken();
+          if (success) break;
+        }
       case DataNegociate::ConflictSolveByHistory:
       case DataNegociate::ConflictSolveByPlaceds:
-        nextState = DataNegociate::LocalVsGlobal;
-        success = conflictSolveByHistory();
-        break;
+        if (  (nextState == DataNegociate::ConflictSolveByHistory) 
+           or (nextState == DataNegociate::ConflictSolveByPlaceds) ) {
+          nextState = DataNegociate::LocalVsGlobal;
+          success   = conflictSolveByHistory();
+          break;
+        }
       case DataNegociate::LocalVsGlobal:
-        nextState = DataNegociate::MoveUp;
-        success = solveTerminalVsGlobal();
-        if (success) break;
-        break;
+        if (nextState == DataNegociate::LocalVsGlobal) {
+          nextState = DataNegociate::MoveUp;
+          success   = solveTerminalVsGlobal();
+          if (success) break;
+        }
       case DataNegociate::MoveUp:
-        nextState = DataNegociate::MaximumSlack;
-        success = manipulator.moveUp();
-        if (success) break;
+        if (nextState == DataNegociate::LocalVsGlobal) {
+          nextState = DataNegociate::MaximumSlack;
+          success   = manipulator.moveUp();
+          if (success) break;
+        }
       case DataNegociate::MaximumSlack:
-        if (segment->isStrap()) { 
-          if ( (nextState < DataNegociate::MaximumSlack) or (data->getStateCount() < 2) ) {
-            nextState = DataNegociate::MaximumSlack;
-            success = conflictSolveByPlaceds();
-            if (success) break;
+        if (nextState == DataNegociate::MaximumSlack) {
+          if (segment->isStrap()) { 
+            if ( (nextState < DataNegociate::MaximumSlack) or (data->getStateCount() < 2) ) {
+              nextState = DataNegociate::MaximumSlack;
+              success = conflictSolveByPlaceds();
+              if (success) break;
+            }
           }
         }
       case DataNegociate::Unimplemented:
-        if (segment->isDrag()) cerr << "Slacken DRAG:" << segment << endl;
+      //if (segment->isDrag()) cerr << "Slacken DRAG:" << segment << endl;
         nextState = DataNegociate::Unimplemented;
         break;
     }
@@ -1249,7 +1267,8 @@ namespace Katana {
 
     if (not (flags&NoTransition)) {
       data->setState( nextState );
-      cdebug_log(159,0) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
+      cdebug_log(159,0) << "Incrementing state (after): "
+                        << DataNegociate::getStateString(nextState,data->getStateCount()) << endl;
     }
 
     return success;
@@ -1384,6 +1403,10 @@ namespace Katana {
 
     if (success) {
       actionFlags |= SegmentAction::ResetRipup;
+      if (isMinimizeDrag()) {
+        actionFlags &= ~SegmentAction::EventLevel5;
+        actionFlags |=  SegmentAction::EventLevel3;
+      }
       addAction( segment1, actionFlags );
     } else {
       clearActions();

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) UPMC 2008-2018, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -11,7 +11,7 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./katana/TrackMarker.h"                          |
+// |  C++ Header  :  "./katana/TrackMarker.h"                        |
 // +-----------------------------------------------------------------+
 
 
@@ -31,6 +31,7 @@ namespace Katana {
 
   using Hurricane::Record;
   using Hurricane::DbU;
+  using Hurricane::Interval;
   using Hurricane::RoutingPad;
   using Hurricane::Net;
 
@@ -47,8 +48,10 @@ namespace Katana {
               void         destroy      ();
     public:
               Net*         getNet       () const;
+      inline  uint32_t     getRefCount  () const;
       inline  DbU::Unit    getSourceU   () const;
       inline  DbU::Unit    getTargetU   () const;
+      inline  Interval     getSpan      () const;
       inline  Track*       getTrack     () const;
       inline  uint32_t     getWeight    ( const Track* ) const;
       inline  void         setTrack     ( Track* );
@@ -85,11 +88,13 @@ namespace Katana {
 
 
 // Inline Functions.
-  inline  DbU::Unit     TrackMarker::getSourceU () const { return _sourcePosition; }
-  inline  DbU::Unit     TrackMarker::getTargetU () const { return _targetPosition; }
-  inline  Track*        TrackMarker::getTrack   () const { return _track; }
-  inline  uint32_t      TrackMarker::getWeight  ( const Track* track ) const { return _weight; }
-  inline  void          TrackMarker::setTrack   ( Track* track ) { _track = track; }
+  inline  uint32_t      TrackMarker::getRefCount () const { return _refcount; }
+  inline  DbU::Unit     TrackMarker::getSourceU  () const { return _sourcePosition; }
+  inline  DbU::Unit     TrackMarker::getTargetU  () const { return _targetPosition; }
+  inline  Interval      TrackMarker::getSpan     () const { return Interval(_sourcePosition,_targetPosition); }
+  inline  Track*        TrackMarker::getTrack    () const { return _track; }
+  inline  uint32_t      TrackMarker::getWeight   ( const Track* track ) const { return _weight; }
+  inline  void          TrackMarker::setTrack    ( Track* track ) { _track = track; }
 
   inline bool TrackMarker::Compare::operator() ( const TrackMarker* lhs, const TrackMarker* rhs ) const
   { return markerLess ( lhs->getSourceU(), rhs->getSourceU() ); }

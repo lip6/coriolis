@@ -68,7 +68,14 @@ namespace Katana {
   bool  RoutingEvent::Compare::operator() ( const RoutingEvent* lhs, const RoutingEvent* rhs ) const
   {
     if (lhs == rhs) return false;
-    return RoutingEvent::Key::Compare()( lhs->getKey(), rhs->getKey() );
+    bool value = RoutingEvent::Key::Compare()( lhs->getKey(), rhs->getKey() );
+    // if (  (lhs->getSegment()->base()->getFlags() & AutoSegment::SegFixedAxis)
+    //    or (lhs->getSegment()->base()->getFlags() & AutoSegment::SegFixedAxis)) {
+    //   cerr << "Compare: lhs < rhs = " << value << endl;
+    //   cerr << "  lhs L:" << lhs->getEventLevel() << " " << lhs << endl;
+    //   cerr << "  rhs L:" << rhs->getEventLevel() << " " << rhs << endl;
+    // }
+    return value;
   }
 
 
@@ -87,6 +94,11 @@ namespace Katana {
   // Process all M2 (terminal access) before any others.
   //if ((lhs._layerDepth == 1) and (rhs._layerDepth != 1)) return false;
   //if ((lhs._layerDepth != 1) and (rhs._layerDepth == 1)) return true;
+
+  // For VH gauge, process fixed axis first.
+    if (    (lhs._segFlags & AutoSegment::SegFixedAxis) and not (rhs._segFlags & AutoSegment::SegFixedAxis)) return false;
+    if (not (lhs._segFlags & AutoSegment::SegFixedAxis) and     (rhs._segFlags & AutoSegment::SegFixedAxis)) return true;
+
     if (lhs._layerDepth > rhs._layerDepth) return true;
     if (lhs._layerDepth < rhs._layerDepth) return false;
 
@@ -317,6 +329,11 @@ namespace Katana {
 
     RoutingEvent* fork = NULL;
 
+    if (getState() == DataNegociate::RepairFailed) {
+      cdebug_log(159,0) << "Reschedule: cancelled (RepairFailed) -> " << fork << endl;
+      return NULL;
+    }
+
     if ( (getStage() != Repair) and isUnimplemented() ) {
       cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
       return NULL;
@@ -332,7 +349,8 @@ namespace Katana {
 
       _segment->getDataNegociate()->setRoutingEvent( fork );
 
-      cdebug_log(159,0) << "Reschedule/Fork: -> " << fork << endl;
+      cdebug_log(159,0) << "Reschedule/Fork: -> "
+                        << eventLevel << ":" << fork << endl;
     }
 
     if (fork->_eventLevel < eventLevel)
@@ -364,10 +382,8 @@ namespace Katana {
                               , RoutingEventLoop&    loop
                               )
   {
-    loop.update( _segment->getId() );
+    loop.update( _segment );
     if (loop.isLooping()) {
-        loop.erase( _segment->getId() );
-        setState( DataNegociate::Unimplemented );
 
 #if LOOP_DEBUG
       if (loop.getMaxCount() > 500) {
@@ -391,13 +407,18 @@ namespace Katana {
 
       const vector<RoutingEventLoop::Element>& elements = loop.getElements();
       for ( size_t i=0 ; i<elements.size() ; ++i ) {
-        message << "\n" << setw(10) << elements[i]._count << "| id:" << elements[i]._id;
+        message << "\n" << setw(10) << elements[i]._count << "| " << elements[i]._segment;
       }
-      cbug << message.str() << endl;
+      cerr << message.str() << endl;
 #endif
+
+      loop.erase( _segment );
+      setState( DataNegociate::RepairFailed );
+      setDisabled( true );
     }
 
-    DebugSession::open( _segment->getNet(), 155, 160 );
+  //DebugSession::open( _segment->getNet(), 155, 160 );
+    DebugSession::open( _segment->getNet(), 149, 160 );
 
     cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()
@@ -591,6 +612,7 @@ namespace Katana {
           break;
         default:
           cdebug_log(159,0) << "Repair failed." << endl;
+          setState( DataNegociate::RepairFailed );
           break;
       }
     }

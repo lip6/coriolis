@@ -181,6 +181,23 @@ namespace Katana {
   { return _getKatanaEngine()->getGCellUnder(Point(x,y)); };
 
 
+  Interval& Session::_toAxisInterval ( Interval& interval, size_t depth ) const
+  {
+    RoutingLayerGauge* rg = getLayerGauge(depth);
+    if (not rg) return interval;
+
+    Box ab = getKatanaEngine()->getCell()->getAbutmentBox();
+    DbU::Unit abMin = (rg->isHorizontal()) ? ab.getYMin() : ab.getXMin();
+    DbU::Unit abMax = (rg->isHorizontal()) ? ab.getYMax() : ab.getXMax() ;
+
+    DbU::Unit trackMin = rg->getTrackPosition( abMin, abMax, interval.getVMin(), Constant::Superior );
+    DbU::Unit trackMax = rg->getTrackPosition( abMin, abMax, interval.getVMax(), Constant::Inferior );
+    interval = Interval( trackMin, trackMax );
+
+    return interval;
+  }
+
+
   void  Session::_doRemovalEvents ()
   {
     set<Track*> packTracks;

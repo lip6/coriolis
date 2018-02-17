@@ -49,33 +49,35 @@ namespace Hurricane {
 
     public:
     // Constructor.
-      static  ViaLayer*            create            ( Technology* technology
-                                                     , const Name& name
-                                                     , BasicLayer* bottomLayer
-                                                     , BasicLayer* cutLayer
-                                                     , BasicLayer* topLayer
-                                                     );
-    // Accessors.
-      virtual BasicLayers          getBasicLayers    () const;
-      virtual const Layer*         getTop            () const;
-      virtual const Layer*         getBottom         () const;
-      virtual const Layer*         getOpposite       ( const Layer* ) const;
-      virtual DbU::Unit            getEnclosure      () const;
-      virtual DbU::Unit            getEnclosure      ( const BasicLayer* layer ) const;
+      static  ViaLayer*            create             ( Technology* technology
+                                                      , const Name& name
+                                                      , BasicLayer* bottomLayer
+                                                      , BasicLayer* cutLayer
+                                                      , BasicLayer* topLayer
+                                                      );
+    // Accessors.                                     
+      virtual BasicLayers          getBasicLayers     () const;
+      virtual const Layer*         getTop             () const;
+      virtual const Layer*         getBottom          () const;
+      virtual const Layer*         getOpposite        ( const Layer* ) const;
+      virtual DbU::Unit            getEnclosure       ( uint32_t flags ) const;
+      virtual DbU::Unit            getEnclosure       ( const BasicLayer* layer, uint32_t flags  ) const;
+      virtual DbU::Unit            getTopEnclosure    ( uint32_t flags ) const;
+      virtual DbU::Unit            getBottomEnclosure ( uint32_t flags ) const;
     // Updators.
-      virtual void                 setEnclosure      ( const BasicLayer* layer, DbU::Unit enclosure );
-    // Hurricane Managment.
-      virtual void                 _toJson           ( JsonWriter* ) const;
-      virtual void                 _onDbuChange      ( float scale );
-      virtual string               _getTypeName      () const;
-      virtual string               _getString        () const;
-      virtual Record*              _getRecord        () const;
+      virtual void                 setEnclosure       ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t flags );
+    // Hurricane Managment.                           
+      virtual void                 _toJson            ( JsonWriter* ) const;
+      virtual void                 _onDbuChange       ( float scale );
+      virtual string               _getTypeName       () const;
+      virtual string               _getString         () const;
+      virtual Record*              _getRecord         () const;
 
     private:
     // Internal: Attributes
-              vector<BasicLayer*>  _basicLayers;
-              vector<DbU::Unit>    _enclosures;
-              DbU::Unit            _maximalEnclosure;
+              vector<BasicLayer*>                  _basicLayers;
+              vector< pair<DbU::Unit,DbU::Unit> >  _enclosures;
+              DbU::Unit                            _maximalEnclosure;
 
     protected:
     // Internal: Constructors & Destructors.

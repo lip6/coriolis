@@ -95,9 +95,9 @@ namespace Hurricane {
                      | cutLayer   ->getExtractMask()
                      | topLayer   ->getExtractMask() );
 
-    _enclosures.push_back ( 0 );
-    _enclosures.push_back ( 0 );
-    _enclosures.push_back ( 0 );
+    _enclosures.push_back ( make_pair(0,0) );
+    _enclosures.push_back ( make_pair(0,0) );
+    _enclosures.push_back ( make_pair(0,0) );
   }
 
 
@@ -141,40 +141,82 @@ namespace Hurricane {
   } 
 
 
-  DbU::Unit  ViaLayer::getEnclosure () const
+  DbU::Unit  ViaLayer::getEnclosure ( uint32_t flags ) const
   {
-    return _maximalEnclosure;
+    if (flags & (Layer::EnclosureH|Layer::EnclosureV)) return _maximalEnclosure;
+
+    DbU::Unit enclosure = 0;
+    if (flags & Layer::EnclosureH) {
+      for ( auto element : _enclosures ) enclosure = std::max( enclosure, element.first );
+    }
+    if (flags & Layer::EnclosureV) {
+      for ( auto element : _enclosures ) enclosure = std::max( enclosure, element.second );
+    }
+
+    return enclosure;
   }
 
 
-  DbU::Unit  ViaLayer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  ViaLayer::getEnclosure ( const BasicLayer* layer, uint32_t flags  ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
-      if ( layer == _basicLayers[i] ) return _enclosures[i];
+      if ( _basicLayers[i] == layer ) {
+        
+        if (flags & Layer::EnclosureH) {
+          if (flags & Layer::EnclosureV) return std::max( _enclosures[i].first, _enclosures[i].second );
+          return _enclosures[i].first;
+        }
+        if (flags & Layer::EnclosureV) return _enclosures[i].second;
+      }
     }
 
     return 0;
   }
 
 
-  void  ViaLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure )
+  DbU::Unit  ViaLayer::getTopEnclosure ( uint32_t flags  ) const
   {
+    if (flags & Layer::EnclosureH) {
+      if (flags & Layer::EnclosureV) return std::max( _enclosures[2].first, _enclosures[2].second );
+      return _enclosures[2].first;
+    }
+    if (flags & Layer::EnclosureV) return _enclosures[2].second;
+    return 0;
+  }
+
+
+  DbU::Unit  ViaLayer::getBottomEnclosure ( uint32_t flags  ) const
+  {
+    if (flags & Layer::EnclosureH) {
+      if (flags & Layer::EnclosureV) return std::max( _enclosures[0].first, _enclosures[0].second );
+      return _enclosures[0].first;
+    }
+    if (flags & Layer::EnclosureV) return _enclosures[0].second;
+    return 0;
+  }
+
+
+  void  ViaLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t flags )
+  {
+    _maximalEnclosure = 0;
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
-      if ( layer == _basicLayers[i] ) {
-        _enclosures[i]    = enclosure;
-        _maximalEnclosure = max ( _maximalEnclosure, enclosure );
+      if ( _basicLayers[i] == layer ) {
+        if (flags & Layer::EnclosureH) _enclosures[i].first  = enclosure;
+        if (flags & Layer::EnclosureV) _enclosures[i].second = enclosure;
       }
+      _maximalEnclosure = std::max( _maximalEnclosure, _enclosures[i].first  );
+      _maximalEnclosure = std::max( _maximalEnclosure, _enclosures[i].second );
     }
   }
 
 
   void  ViaLayer::_onDbuChange ( float scale )
   {
-    Layer::_onDbuChange ( scale );
-
-    for ( size_t i=0 ; i<_enclosures.size() ; i++ )
-      _enclosures[i] = (DbU::Unit)( (float)_enclosures[i] * scale );
-
+    Layer::_onDbuChange( scale );
+    for ( size_t i=0 ; i<_enclosures.size() ; i++ ) {
+      _enclosures[i].first  = (DbU::Unit)( (float)_enclosures[i].first  * scale );
+      _enclosures[i].second = (DbU::Unit)( (float)_enclosures[i].second * scale );
+    }
     _maximalEnclosure = (DbU::Unit)( (float)_maximalEnclosure * scale );
   }
 
@@ -209,9 +251,12 @@ namespace Hurricane {
     jsonWrite( w, "_cut"   , _basicLayers[1]->getName() );
     jsonWrite( w, "_top"   , _basicLayers[2]->getName() );
 
-    jsonWrite( w, "_enclosure.bottom", _enclosures[0] );
-    jsonWrite( w, "_enclosure.cut"   , _enclosures[1] );
-    jsonWrite( w, "_enclosure.top"   , _enclosures[2] );
+    jsonWrite( w, "_enclosureH.bottom", _enclosures[0].first  );
+    jsonWrite( w, "_enclosureV.bottom", _enclosures[0].second );
+    jsonWrite( w, "_enclosureH.cut"   , _enclosures[1].first  );
+    jsonWrite( w, "_enclosureV.cut"   , _enclosures[1].second );
+    jsonWrite( w, "_enclosureH.top"   , _enclosures[2].first  );
+    jsonWrite( w, "_enclosureV.top"   , _enclosures[2].second );
   }
 
 
@@ -232,12 +277,15 @@ namespace Hurricane {
 
     cdebug_log(19,0) << "JsonViaLayer::JsonViaLayer()" << endl;
 
-    add( "_bottom"          , typeid(string)  );
-    add( "_cut"             , typeid(string)  );
-    add( "_top"             , typeid(string)  );
-    add( "_enclosure.bottom", typeid(int64_t) );
-    add( "_enclosure.cut"   , typeid(int64_t) );
-    add( "_enclosure.top"   , typeid(int64_t) );
+    add( "_bottom"           , typeid(string)  );
+    add( "_cut"              , typeid(string)  );
+    add( "_top"              , typeid(string)  );
+    add( "_enclosureH.bottom", typeid(int64_t) );
+    add( "_enclosureV.bottom", typeid(int64_t) );
+    add( "_enclosureH.cut"   , typeid(int64_t) );
+    add( "_enclosureV.cut"   , typeid(int64_t) );
+    add( "_enclosureH.top"   , typeid(int64_t) );
+    add( "_enclosureV.top"   , typeid(int64_t) );
   }
 
 
@@ -272,9 +320,12 @@ namespace Hurricane {
       BasicLayer*  bottom         = techno->getBasicLayer( get<string>(stack,"_bottom" ) );
       BasicLayer*  cut            = techno->getBasicLayer( get<string>(stack,"_cut"    ) );
       BasicLayer*  top            = techno->getBasicLayer( get<string>(stack,"_top"    ) );
-      DbU::Unit    bottomEncl     = get<int64_t>( stack, "_enclosure.bottom" );
-      DbU::Unit    cutEncl        = get<int64_t>( stack, "_enclosure.cut"    );
-      DbU::Unit    topEncl        = get<int64_t>( stack, "_enclosure.top"    );
+      DbU::Unit    bottomEnclH    = get<int64_t>( stack, "_enclosureH.bottom" );
+      DbU::Unit    bottomEnclV    = get<int64_t>( stack, "_enclosureV.bottom" );
+      DbU::Unit    cutEnclH       = get<int64_t>( stack, "_enclosureH.cut"    );
+      DbU::Unit    cutEnclV       = get<int64_t>( stack, "_enclosureV.cut"    );
+      DbU::Unit    topEnclH       = get<int64_t>( stack, "_enclosureH.top"    );
+      DbU::Unit    topEnclV       = get<int64_t>( stack, "_enclosureV.top"    );
 
       Layer::Mask mask = Layer::Mask::fromString( smask );
 
@@ -287,9 +338,12 @@ namespace Hurricane {
                                 , top
                                 );
         layer->setSymbolic ( isSymbolic );
-        layer->setEnclosure( bottom, bottomEncl );
-        layer->setEnclosure( cut   , cutEncl    );
-        layer->setEnclosure( top   , topEncl    );
+        layer->setEnclosure( bottom, bottomEnclH , Layer::EnclosureH );
+        layer->setEnclosure( bottom, bottomEnclV , Layer::EnclosureV );
+        layer->setEnclosure( cut   , cutEnclH    , Layer::EnclosureH );
+        layer->setEnclosure( cut   , cutEnclV    , Layer::EnclosureV );
+        layer->setEnclosure( top   , topEnclH    , Layer::EnclosureH );
+        layer->setEnclosure( top   , topEnclV    , Layer::EnclosureV );
 
         if (layer->getMask() != mask) {
           cerr << Error( "JsonViaLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"

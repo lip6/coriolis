@@ -115,8 +115,9 @@ namespace {
 
   void  loadRoutingPads ( NegociateWindow* nw )
   {
-    AllianceFramework* af = AllianceFramework::get ();
-    RoutingGauge*      rg = nw->getKatanaEngine()->getConfiguration()->getRoutingGauge();
+    AllianceFramework* af   = AllianceFramework::get ();
+    RoutingGauge*      rg   = nw->getKatanaEngine()->getConfiguration()->getRoutingGauge();
+    bool               isVH = rg->isVH();
 
     for( Net* net : nw->getCell()->getNets() ) {
       if (net->getType() == Net::Type::POWER ) continue;
@@ -126,9 +127,13 @@ namespace {
 
       for( RoutingPad* rp : net->getRoutingPads() ) {
         size_t depth = rg->getLayerDepth(rp->getLayer());
-        if (depth >  0) continue;
-        if (depth == 0) 
+        if (depth == 0) {
           TrackMarker::create( rp, 1 );
+        //if (isVH) TrackMarker::create( rp, 2 );
+        }
+        if (depth == 1) {
+          TrackMarker::create( rp, 1 );
+        }
       }
     }
   }
@@ -511,9 +516,6 @@ namespace Katana {
         }
       }
 
-      event->process( _eventQueue, _eventHistory, _eventLoop );
-      count++;
-
       if (tty::enabled()) {
         cmess2 << "        <event:" << tty::bold << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << tty::reset
@@ -529,6 +531,9 @@ namespace Katana {
                << endl;
         cmess2.flush();
       }
+
+      event->process( _eventQueue, _eventHistory, _eventLoop );
+      count++;
 
     //if (count and not (count % 500)) {
     //  _pack( count, false );
@@ -580,7 +585,7 @@ namespace Katana {
         event->process( _eventQueue, _eventHistory, _eventLoop );
 
         count++;
-        if (RoutingEvent::getProcesseds() >= limit ) setInterrupt( true );
+        if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
       }
 
       if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;

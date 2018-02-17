@@ -147,16 +147,21 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
 
             try:
                 if len(entry) != 2:
-                    raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
-                                         ,'Must have exactly two fields ("METAL_LAYER", (parameters_list)).'
-                                         ,str(entry)
-                                         ])
+                  raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
+                                       ,'Must have exactly two fields ("METAL_LAYER", (parameters_list)).'
+                                       ,str(entry)
+                                       ])
+
+                if entry[0] == 'symbolic':
+                  gauge.setSymbolic( entry[1] )
+                  continue
+                  
                 if len(entry[1]) != 9:
-                    raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
-                                         ,'Parameters list must have exactly nine fields:'
-                                         ,'  (direction, type, depth, density, offset, pitch, wire_width, via_width, obs_dw)'
-                                         ,str(entry)
-                                         ])
+                  raise ErrorMessage(1,['Malformed entry in <routingGaugesTable[%s]>.' % gaugeName
+                                       ,'Parameters list must have exactly nine fields:'
+                                       ,'  (direction, type, depth, density, offset, pitch, wire_width, via_width, obs_dw)'
+                                       ,str(entry)
+                                       ])
 
                 gauge.addLayerGauge( RoutingLayerGauge.create( technology.getLayer(entry[0])
                                                              , Gauge.toRlGauge(entry[1][0]) # Direction. 

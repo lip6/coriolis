@@ -99,6 +99,7 @@ namespace Katana {
       virtual Segment*                getSegment             () const = 0;
     // Wrapped AutoSegment Functions (when applicable).      
       virtual bool                    isFixed                () const;
+      virtual bool                    isFixedAxis            () const;
       virtual bool                    isHorizontal           () const = 0;
       virtual bool                    isVertical             () const = 0;
       virtual bool                    isWide                 () const;
@@ -151,11 +152,13 @@ namespace Katana {
       inline  Box                     getBoundingBox         () const;
       virtual TrackElement*           getNext                () const;
       virtual TrackElement*           getPrevious            () const;
-      virtual DbU::Unit               getExtensionCap        () const;
+      virtual DbU::Unit               getExtensionCap        ( Flags ) const;
       virtual DbU::Unit               getAxis                () const = 0;
       inline  DbU::Unit               getSymmetricAxis       ( DbU::Unit ) const;
       inline  DbU::Unit               getSourceU             () const;
       inline  DbU::Unit               getTargetU             () const;
+      virtual DbU::Unit               getSourceAxis          () const = 0;
+      virtual DbU::Unit               getTargetAxis          () const = 0;
       inline  DbU::Unit               getLength              () const;
       inline  Interval                getCanonicalInterval   () const;
       virtual Interval                getFreeInterval        () const;

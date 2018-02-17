@@ -67,7 +67,10 @@ namespace {
       cdebug_log(145,0) << "slave component: " << component << endl;
       AutoContact* sourceContact = Session::lookup( dynamic_cast<Contact*>(component) );
       if (sourceContact) {
+        Box  constraintBox = sourceContact->getConstraintBox();
+
         cdebug_log(145,0) << "Start slave: " << sourceContact << endl;
+        cdebug_log(145,0) << "Constraint: " << constraintBox << endl;
 
         set<AutoSegment*>  verticalSegments;
         set<AutoSegment*>  horizontalSegments;
@@ -86,9 +89,6 @@ namespace {
             }
           }
         }
-
-        Box  constraintBox = sourceContact->getConstraintBox();
-        cdebug_log(145,0) << "Contraint: " << constraintBox << endl;
 
         // Propagate constraint through horizontally aligned segments.
         cdebug_log(145,0) << "Propagate constraint on horizontal segments" << endl;

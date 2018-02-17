@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include "hurricane/Bug.h"
+#include "hurricane/ViaLayer.h"
 #include "hurricane/Vertical.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/Configuration.h"
@@ -30,6 +31,7 @@ namespace Anabatic {
   using std::max;
   using Hurricane::Error;
   using Hurricane::Bug;
+  using Hurricane::ViaLayer;
 
 
 // -------------------------------------------------------------------
@@ -258,9 +260,11 @@ namespace Anabatic {
   {
     cdebug_log(149,1) << "AutoVertical::_slacken() " << this << endl;
 
-    if (   not isStrongTerminal()
-       or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < getPitch()*5)) )
-      { cdebug_tabw(149,-1); return false; }
+    if (not isDrag()) {
+      if (   not isStrongTerminal()
+         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < getPitch()*5)) )
+        { cdebug_tabw(149,-1); return false; }
+    }
 
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
     cdebug_log(149,0) << "test:" << (getLength() < getPitch()*5) << endl;
@@ -395,8 +399,8 @@ namespace Anabatic {
 
   void  AutoVertical::updatePositions ()
   {
-    _sourcePosition = _vertical->getSourceY() - getExtensionCap();
-    _targetPosition = _vertical->getTargetY() + getExtensionCap();
+    _sourcePosition = _vertical->getSourceY() - getExtensionCap(Flags::Source);
+    _targetPosition = _vertical->getTargetY() + getExtensionCap(Flags::Target);
   }
 
 
@@ -416,8 +420,8 @@ namespace Anabatic {
   bool  AutoVertical::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _vertical->getSourceY() - getExtensionCap();
-    DbU::Unit targetPosition = _vertical->getTargetY() + getExtensionCap();
+    DbU::Unit sourcePosition = _vertical->getSourceY() - getExtensionCap(Flags::Source);
+    DbU::Unit targetPosition = _vertical->getTargetY() + getExtensionCap(Flags::Target);
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "
@@ -697,8 +701,17 @@ namespace Anabatic {
       } while ( gcell and (gcell != end) );
     }
 
-    size_t       depth        = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
-    bool         upLayer      = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
+    size_t  depth   = Session::getRoutingGauge()->getLayerDepth ( _vertical->getLayer() );
+    bool    upLayer = true;
+
+    if (Session::getRoutingGauge()->isTwoMetals()) {
+      upLayer = (depth == 0);
+    } else if (Session::getRoutingGauge()->isVH()) {
+      upLayer = (depth < 2);
+    } else {
+      upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
+    }
+
     Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer ( depth + ((upLayer)?0:-1) );
     const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer ( depth + ((upLayer)?1:-1) );
 
@@ -767,7 +780,7 @@ namespace Anabatic {
     updateNativeConstraints();
     segment2->updateNativeConstraints();
 
-    if (autoTarget->canDrag()) {
+    if (autoTarget->canDrag() and not autoSource->canDrag()) {
       Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Vertical);
       segment1->mergeUserConstraints( dragConstraints );
 

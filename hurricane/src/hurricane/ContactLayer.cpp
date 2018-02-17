@@ -69,39 +69,37 @@ namespace Hurricane {
                                ,_enclosures()
                                ,_maximalEnclosure(0)
   {
-    if ( !metalLayer     ) throw Error ( nullLayer, getString(name).c_str(), "Metal" );
-    if ( !cutLayer       ) throw Error ( nullLayer, getString(name).c_str(), "Cut" );
-    if ( !activeLayer    ) throw Error ( nullLayer, getString(name).c_str(), "Active" );
-    if ( !diffusionLayer ) throw Error ( nullLayer, getString(name).c_str(), "Diffusion" );
+    if (not metalLayer    ) throw Error ( nullLayer, getString(name).c_str(), "Metal" );
+    if (not cutLayer      ) throw Error ( nullLayer, getString(name).c_str(), "Cut" );
+    if (not activeLayer   ) throw Error ( nullLayer, getString(name).c_str(), "Active" );
+    if (not diffusionLayer) throw Error ( nullLayer, getString(name).c_str(), "Diffusion" );
 
-    _basicLayers.reserve ( 5 );
-    _enclosures .reserve ( 5 );
+    _basicLayers.reserve( 5 );
+    _enclosures .reserve( 5 );
 
   // Have to check wich one is top layer & cutLayer of type cut.
-    _basicLayers.push_back ( metalLayer );
-    _basicLayers.push_back ( cutLayer );
-    _basicLayers.push_back ( activeLayer );
-    _basicLayers.push_back ( diffusionLayer );
+    _basicLayers.push_back( metalLayer );
+    _basicLayers.push_back( cutLayer );
+    _basicLayers.push_back( activeLayer );
+    _basicLayers.push_back( diffusionLayer );
 
-    for ( size_t i=0 ; i<4 ; i++ ) {
-      _enclosures.push_back ( 0 );
-    }
+    for ( size_t i=0 ; i<4 ; i++ ) _enclosures.push_back( make_pair(0,0) );
 
-    _setMask        (  metalLayer    ->getMask()
-                     | cutLayer      ->getMask()
-                     | activeLayer   ->getMask()
-                     | diffusionLayer->getMask() );
-    _setExtractMask (  metalLayer    ->getExtractMask()
-                     | cutLayer      ->getExtractMask()
-                     | activeLayer   ->getExtractMask()
-                     | diffusionLayer->getExtractMask() );
+    _setMask       (  metalLayer    ->getMask()
+                    | cutLayer      ->getMask()
+                    | activeLayer   ->getMask()
+                    | diffusionLayer->getMask() );
+    _setExtractMask(  metalLayer    ->getExtractMask()
+                    | cutLayer      ->getExtractMask()
+                    | activeLayer   ->getExtractMask()
+                    | diffusionLayer->getExtractMask() );
 
-    if ( wellLayer ) {
-      _basicLayers.push_back ( wellLayer );
-      _enclosures .push_back ( 0 );
+    if (wellLayer) {
+      _basicLayers.push_back( wellLayer );
+      _enclosures .push_back( make_pair(0,0) );
 
-      _setMask        ( getMask() | wellLayer->getMask()        );
-      _setExtractMask ( getMask() | wellLayer->getExtractMask() );
+      _setMask       ( getMask() | wellLayer->getMask()        );
+      _setExtractMask( getMask() | wellLayer->getExtractMask() );
     }
   }
 
@@ -134,38 +132,61 @@ namespace Hurricane {
   { return getCollection(_basicLayers); }
 
 
-  DbU::Unit  ContactLayer::getEnclosure () const
-  { return _maximalEnclosure; }
+  DbU::Unit  ContactLayer::getEnclosure ( uint32_t flags ) const
+  {
+    if (flags & (Layer::EnclosureH|Layer::EnclosureV)) return _maximalEnclosure;
+
+    DbU::Unit enclosure = 0;
+    if (flags & Layer::EnclosureH) {
+      for ( auto element : _enclosures ) enclosure = std::max( enclosure, element.first );
+    }
+    if (flags & Layer::EnclosureV) {
+      for ( auto element : _enclosures ) enclosure = std::max( enclosure, element.second );
+    }
+
+    return enclosure;
+  }
 
 
-  DbU::Unit  ContactLayer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  ContactLayer::getEnclosure ( const BasicLayer* layer, uint32_t flags ) const
   {
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
-      if ( _basicLayers[i] == layer )
-        return _enclosures[i];
+      if ( _basicLayers[i] == layer ) {
+        
+        if (flags & Layer::EnclosureH) {
+          if (flags & Layer::EnclosureV) return std::max( _enclosures[i].first, _enclosures[i].second );
+          return _enclosures[i].first;
+        }
+        if (flags & Layer::EnclosureV) return _enclosures[i].second;
+      }
     }
 
     return 0;
   }
 
 
-  void  ContactLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure )
+  void  ContactLayer::setEnclosure ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t flags )
   {
+    _maximalEnclosure = 0;
     for ( size_t i=0 ; i<_basicLayers.size() ; i++ ) {
       if ( _basicLayers[i] == layer ) {
-        _enclosures[i] = enclosure;
-        _maximalEnclosure = max ( _maximalEnclosure, enclosure );
+        if (flags & Layer::EnclosureH) _enclosures[i].first  = enclosure;
+        if (flags & Layer::EnclosureV) _enclosures[i].second = enclosure;
       }
+      _maximalEnclosure = std::max( _maximalEnclosure, _enclosures[i].first  );
+      _maximalEnclosure = std::max( _maximalEnclosure, _enclosures[i].second );
     }
   }
 
 
   void  ContactLayer::_onDbuChange ( float scale )
   {
-    Layer::_onDbuChange ( scale );
-    for ( size_t i=0 ; i<_enclosures.size() ; i++ )
-      _enclosures[i] = (DbU::Unit)( (float)_enclosures[i] * scale );
-    _maximalEnclosure   = (DbU::Unit)( (float)_maximalEnclosure * scale );
+    Layer::_onDbuChange( scale );
+    for ( size_t i=0 ; i<_enclosures.size() ; i++ ) {
+      _enclosures[i].first  = (DbU::Unit)( (float)_enclosures[i].first  * scale );
+      _enclosures[i].second = (DbU::Unit)( (float)_enclosures[i].second * scale );
+    }
+    _maximalEnclosure = (DbU::Unit)( (float)_maximalEnclosure * scale );
   }
 
 
@@ -202,11 +223,16 @@ namespace Hurricane {
     if (_basicLayers.size() == 5) jsonWrite( w, "_well", _basicLayers[4]->getName() );
     else                          jsonWrite( w, "_well", "no_well_layer" );
 
-    jsonWrite( w, "_enclosure.metal"    , _enclosures[0] );
-    jsonWrite( w, "_enclosure.cut"      , _enclosures[1] );
-    jsonWrite( w, "_enclosure.active"   , _enclosures[2] );
-    jsonWrite( w, "_enclosure.diffusion", _enclosures[3] );
-    jsonWrite( w, "_enclosure.well"     , (_basicLayers.size() == 5) ? _enclosures[4] : 0 );
+    jsonWrite( w, "_enclosureH.metal"    , _enclosures[0].first  );
+    jsonWrite( w, "_enclosureV.metal"    , _enclosures[0].second );
+    jsonWrite( w, "_enclosureH.cut"      , _enclosures[1].first  );
+    jsonWrite( w, "_enclosureV.cut"      , _enclosures[1].second );
+    jsonWrite( w, "_enclosureH.active"   , _enclosures[2].first  );
+    jsonWrite( w, "_enclosureV.active"   , _enclosures[2].second );
+    jsonWrite( w, "_enclosureH.diffusion", _enclosures[3].first  );
+    jsonWrite( w, "_enclosureV.diffusion", _enclosures[3].second );
+    jsonWrite( w, "_enclosureH.well"     , (_basicLayers.size() == 5) ? _enclosures[4].first  : 0 );
+    jsonWrite( w, "_enclosureV.well"     , (_basicLayers.size() == 5) ? _enclosures[4].second : 0 );
   }
 
 
@@ -227,16 +253,21 @@ namespace Hurricane {
 
     cdebug_log(19,0) << "JsonContactLayer::JsonContactLayer()" << endl;
 
-    add( "_metal"              , typeid(string)  );
-    add( "_cut"                , typeid(string)  );
-    add( "_active"             , typeid(string)  );
-    add( "_diffusion"          , typeid(string)  );
-    add( "_well"               , typeid(string)  );
-    add( "_enclosure.metal"    , typeid(int64_t) );
-    add( "_enclosure.cut"      , typeid(int64_t) );
-    add( "_enclosure.active"   , typeid(int64_t) );
-    add( "_enclosure.diffusion", typeid(int64_t) );
-    add( "_enclosure.well"     , typeid(int64_t) );
+    add( "_metal"               , typeid(string)  );
+    add( "_cut"                 , typeid(string)  );
+    add( "_active"              , typeid(string)  );
+    add( "_diffusion"           , typeid(string)  );
+    add( "_well"                , typeid(string)  );
+    add( "_enclosureH.metal"    , typeid(int64_t) );
+    add( "_enclosureV.metal"    , typeid(int64_t) );
+    add( "_enclosureH.cut"      , typeid(int64_t) );
+    add( "_enclosureV.cut"      , typeid(int64_t) );
+    add( "_enclosureH.active"   , typeid(int64_t) );
+    add( "_enclosureV.active"   , typeid(int64_t) );
+    add( "_enclosureH.diffusion", typeid(int64_t) );
+    add( "_enclosureV.diffusion", typeid(int64_t) );
+    add( "_enclosureH.well"     , typeid(int64_t) );
+    add( "_enclosureV.well"     , typeid(int64_t) );
   }
 
 
@@ -273,11 +304,16 @@ namespace Hurricane {
       BasicLayer*  active         = techno->getBasicLayer( get<string>(stack,"_active"   ) );
       BasicLayer*  diffusion      = techno->getBasicLayer( get<string>(stack,"_diffusion") );
       BasicLayer*  well           = techno->getBasicLayer( get<string>(stack,"_well"     ) );
-      DbU::Unit    metalEncl      = get<int64_t>( stack, "_enclosure.metal"     );
-      DbU::Unit    cutEncl        = get<int64_t>( stack, "_enclosure.cut"       );
-      DbU::Unit    activeEncl     = get<int64_t>( stack, "_enclosure.active"    );
-      DbU::Unit    diffusionEncl  = get<int64_t>( stack, "_enclosure.diffusion" );
-      DbU::Unit    wellEncl       = get<int64_t>( stack, "_enclosure.well"      );
+      DbU::Unit    metalEnclH     = get<int64_t>( stack, "_enclosureH.metal"     );
+      DbU::Unit    metalEnclV     = get<int64_t>( stack, "_enclosureV.metal"     );
+      DbU::Unit    cutEnclH       = get<int64_t>( stack, "_enclosureH.cut"       );
+      DbU::Unit    cutEnclV       = get<int64_t>( stack, "_enclosureV.cut"       );
+      DbU::Unit    activeEnclH    = get<int64_t>( stack, "_enclosureH.active"    );
+      DbU::Unit    activeEnclV    = get<int64_t>( stack, "_enclosureV.active"    );
+      DbU::Unit    diffusionEnclH = get<int64_t>( stack, "_enclosureH.diffusion" );
+      DbU::Unit    diffusionEnclV = get<int64_t>( stack, "_enclosureV.diffusion" );
+      DbU::Unit    wellEnclH      = get<int64_t>( stack, "_enclosureH.well"      );
+      DbU::Unit    wellEnclV      = get<int64_t>( stack, "_enclosureV.well"      );
 
       Layer::Mask mask = Layer::Mask::fromString( smask );
 
@@ -292,11 +328,18 @@ namespace Hurricane {
                                     , well
                                     );
         layer->setSymbolic ( isSymbolic );
-        layer->setEnclosure( metal    , metalEncl     );
-        layer->setEnclosure( cut      , cutEncl       );
-        layer->setEnclosure( active   , activeEncl    );
-        layer->setEnclosure( diffusion, diffusionEncl );
-        if (well) layer->setEnclosure( well, wellEncl );
+        layer->setEnclosure( metal    , metalEnclH    , Layer::EnclosureH );
+        layer->setEnclosure( metal    , metalEnclV    , Layer::EnclosureV );
+        layer->setEnclosure( cut      , cutEnclH      , Layer::EnclosureH );
+        layer->setEnclosure( cut      , cutEnclV      , Layer::EnclosureV );
+        layer->setEnclosure( active   , activeEnclH   , Layer::EnclosureH );
+        layer->setEnclosure( active   , activeEnclV   , Layer::EnclosureV );
+        layer->setEnclosure( diffusion, diffusionEnclH, Layer::EnclosureH );
+        layer->setEnclosure( diffusion, diffusionEnclV, Layer::EnclosureV );
+        if (well) {
+          layer->setEnclosure( well, wellEnclH, Layer::EnclosureH );
+          layer->setEnclosure( well, wellEnclV, Layer::EnclosureV );
+        }
 
         if (layer->getMask() != mask) {
           cerr << Error( "JsonContactLayer::toData(): Layer mask re-creation discrepency on \"%s\":\n"

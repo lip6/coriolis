@@ -60,6 +60,7 @@ namespace CRL {
     , _layerGauges()
     , _viaLayers  ()
     , _technology (DataBase::getDB()->getTechnology())
+    , _isSymbolic (true)
   { }
 
 
@@ -68,6 +69,7 @@ namespace CRL {
     , _layerGauges()
     , _viaLayers  ()
     , _technology (gauge._technology)
+    , _isSymbolic (gauge._isSymbolic)
   {
   // Make a deep copy of the map.
     for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ )
@@ -283,8 +285,9 @@ namespace CRL {
     if ( record == NULL )
       record = new Record ( getString(this) );
 
-    record->add ( getSlot("_name"     , _name       ) );
-    record->add ( getSlot("_gauges"   ,&_layerGauges) );
+    record->add ( getSlot("_name"      , _name       ) );
+    record->add ( getSlot("_gauges"    ,&_layerGauges) );
+    record->add ( getSlot("_isSymbolic", _isSymbolic ) );
     return ( record );
   }
 

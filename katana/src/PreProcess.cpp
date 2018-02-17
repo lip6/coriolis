@@ -383,49 +383,6 @@ namespace {
   }
 
 
-  void  protectAlignedAccesses ( GCell* gcell )
-  {
-    DbU::Unit pitch3 = Session::getPitch( 2 );
-    
-    multiset<AutoContactTerminal*,SortAcByXY>  acTerminals;
-    for ( AutoContact* contact : gcell->getContacts() ) {
-      if (contact->isTerminal() and (Session::getViaDepth(contact->getLayer()) == 0) )
-        acTerminals.insert( dynamic_cast<AutoContactTerminal*>(contact) );
-    }
-
-    AutoContactTerminal* south = NULL;
-    for ( AutoContactTerminal* north : acTerminals ) {
-      if (south) {
-        if (south->canDrag() and north->canDrag() and (south->getX() == north->getX())) {
-        //Interval constraints ( north->getCBYMax() - pitch3, gcell->getYMin() );
-          Interval constraints ( north->getCBYMin() - pitch3, gcell->getYMin() );
-          AutoSegment* terminal = south->getSegment();
-          AutoContact* opposite = terminal->getOppositeAnchor( south );
-
-          for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
-            segment->mergeUserConstraints( constraints );
-            cerr << "Apply " << constraints << " to " << segment << endl;
-          }
-
-        //constraints = Interval( south->getCBYMin() + pitch3, gcell->getYMax() );
-          constraints = Interval( south->getCBYMax() + pitch3, gcell->getYMax() );
-          terminal    = north->getSegment();
-          opposite    = terminal->getOppositeAnchor( north );
-
-          for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
-            segment->mergeUserConstraints( constraints );
-            cerr << "Apply " << constraints << " to " << segment << endl;
-          }
-        }
-
-      //if (south->getConstraintBox().getHeight() < pitch3*2) metal2protect( south );
-      //if (north->getConstraintBox().getHeight() < pitch3*2) metal2protect( north );
-      }
-      south = north;
-    }
-  }
-
-
 } // End of local namespace.
 
 
@@ -451,8 +408,6 @@ namespace Katana {
         track = track->getNextTrack();
       }
     }
-
-    for ( GCell* gcell : getGCells() ) protectAlignedAccesses( gcell );
 
   //DebugSession::close();
     

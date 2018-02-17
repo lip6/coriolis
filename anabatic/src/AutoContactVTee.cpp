@@ -91,8 +91,11 @@ namespace Anabatic {
   }
 
 
-  AutoSegment* AutoContactVTee::getPerpandicular ( const AutoSegment* ) const
-  { return NULL; }
+  AutoSegment* AutoContactVTee::getPerpandicular ( const AutoSegment* from ) const
+  {
+    if ( (from == _vertical1) or (from == _vertical2) ) return _horizontal1;
+    return NULL;
+  }
 
 
   AutoSegment* AutoContactVTee::getSegment ( unsigned int index ) const

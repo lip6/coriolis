@@ -63,6 +63,7 @@ namespace Katana {
       virtual AutoSegment*          base                   () const;
       virtual Segment*              getSegment             () const;
       virtual bool                  isFixed                () const;
+      virtual bool                  isFixedAxis            () const;
       virtual bool                  isHorizontal           () const;
       virtual bool                  isVertical             () const;
       virtual bool                  isLocal                () const;
@@ -85,11 +86,11 @@ namespace Katana {
       virtual bool                  canDogleg              ();
       virtual bool                  canDogleg              ( Interval );
       virtual bool                  canDogleg              ( Anabatic::GCell*, Flags flags=0 );
-      virtual bool                  canPivotUp             ( float reserve, Flags flags ) const;
-      virtual bool                  canPivotDown           ( float reserve, Flags flags ) const;
-      virtual bool                  canMoveUp              ( float reserve, Flags flags ) const;
+      virtual bool                  canPivotUp             ( float reserve, Flags ) const;
+      virtual bool                  canPivotDown           ( float reserve, Flags ) const;
+      virtual bool                  canMoveUp              ( float reserve, Flags ) const;
       virtual bool                  canSlacken             () const;
-      virtual float                 getMaxUnderDensity     ( Flags flags ) const;
+      virtual float                 getMaxUnderDensity     ( Flags ) const;
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;
       virtual Net*                  getNet                 () const;
@@ -97,7 +98,7 @@ namespace Katana {
       virtual const Layer*          getLayer               () const;
       virtual DbU::Unit             getPitch               () const;
       virtual DbU::Unit             getPPitch              () const;
-      virtual DbU::Unit             getExtensionCap        () const;
+      virtual DbU::Unit             getExtensionCap        ( Flags ) const;
       virtual unsigned long         getFreedomDegree       () const;
       virtual float                 getPriority            () const;
       virtual uint32_t              getDoglegLevel         () const;
@@ -105,6 +106,8 @@ namespace Katana {
       virtual TrackElement*         getPrevious            () const;
       virtual TrackElement*         getParent              () const;
       virtual DbU::Unit             getAxis                () const;
+      virtual DbU::Unit             getSourceAxis          () const;
+      virtual DbU::Unit             getTargetAxis          () const;
       virtual Interval              getFreeInterval        () const;
       virtual Interval              getSourceConstraints   () const;
       virtual Interval              getTargetConstraints   () const;
@@ -137,10 +140,10 @@ namespace Katana {
       virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
       virtual TrackElement*         makeDogleg             ( Interval, Flags& flags );
       virtual void                  _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual bool                  moveAside              ( Flags flags );
+      virtual bool                  moveAside              ( Flags );
       virtual bool                  slacken                ( Flags flags=Flags::NoFlags );
-      virtual bool                  moveUp                 ( Flags flags );
-      virtual bool                  moveDown               ( Flags flags );
+      virtual bool                  moveUp                 ( Flags );
+      virtual bool                  moveDown               ( Flags );
 #if THIS_IS_DISABLED
       virtual void                  desalignate            ();
 #endif

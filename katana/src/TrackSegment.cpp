@@ -154,6 +154,7 @@ namespace Katana {
   AutoSegment*   TrackSegment::base                 () const { return _base; }
   Segment*       TrackSegment::getSegment           () const { return _base->base(); }
   bool           TrackSegment::isFixed              () const { return _base->isFixed(); }
+  bool           TrackSegment::isFixedAxis          () const { return _base->isFixedAxis(); }
   bool           TrackSegment::isHorizontal         () const { return _base->isHorizontal(); }
   bool           TrackSegment::isVertical           () const { return _base->isVertical(); }
   bool           TrackSegment::isLocal              () const { return not _base->isWeakGlobal() and not _base->isGlobal(); }
@@ -181,7 +182,7 @@ namespace Katana {
   const Layer*   TrackSegment::getLayer             () const { return _base->getLayer(); }
   DbU::Unit      TrackSegment::getPitch             () const { return _base->getPitch(); }
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
-  DbU::Unit      TrackSegment::getExtensionCap      () const { return _base->getExtensionCap(); }
+  DbU::Unit      TrackSegment::getExtensionCap      ( Flags flags ) const { return _base->getExtensionCap(flags); }
   DbU::Unit      TrackSegment::getAxis              () const { return _base->getAxis(); }
   unsigned long  TrackSegment::getFreedomDegree     () const { return _freedomDegree; }
   float          TrackSegment::getPriority          () const { return _priority; }
@@ -193,6 +194,24 @@ namespace Katana {
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
   void           TrackSegment::invalidate           () { setFlags( TElemInvalidated ); _base->invalidate(); }
+
+
+  DbU::Unit  TrackSegment::getSourceAxis () const
+  {
+    DbU::Unit sourceAxis = 0;
+    DbU::Unit targetAxis = 0;
+    base()->getEndAxes( sourceAxis, targetAxis );
+    return sourceAxis;
+  }
+
+
+  DbU::Unit  TrackSegment::getTargetAxis () const
+  {
+    DbU::Unit sourceAxis = 0;
+    DbU::Unit targetAxis = 0;
+    base()->getEndAxes( sourceAxis, targetAxis );
+    return targetAxis;
+  }
 
 
   DataNegociate* TrackSegment::getDataNegociate ( Flags flags ) const

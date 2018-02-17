@@ -330,6 +330,45 @@ template<typename Data> inline Hurricane::Record* getRecord ( Data data )
 
 
 // -------------------------------------------------------------------
+// Inspector Support for  :  "[const] std::pair<T,U>&".
+
+template<typename T, typename U>
+inline std::string  getString ( const std::pair<T,U>& p )
+{
+  return "const std::pair<T,U>";
+}
+
+
+template<typename T, typename U>
+inline Hurricane::Record* getRecord ( const std::pair<T,U>& p )
+{
+  Hurricane::Record* record = NULL;
+  record = new Hurricane::Record ( "const std::pair<T,U>" );
+  record->add( getSlot<T>("first" , &p.first ) );
+  record->add( getSlot<U>("second", &p.second) );
+  return record;
+}
+
+
+template<typename T, typename U>
+inline std::string  getString ( std::pair<T,U>& p )
+{
+  return "std::pair<T,U>";
+}
+
+
+template<typename T, typename U>
+inline Hurricane::Record* getRecord ( std::pair<T,U>& p )
+{
+  Hurricane::Record* record = NULL;
+  record = new Hurricane::Record ( "std::pair<T,U>" );
+  record->add( getSlot<T>("first" , &p.first ) );
+  record->add( getSlot<U>("second", &p.second) );
+  return record;
+}
+
+
+// -------------------------------------------------------------------
 // Inspector Support for  :  "[const] std::array<Element>*".
 
 

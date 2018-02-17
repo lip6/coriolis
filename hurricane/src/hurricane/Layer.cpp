@@ -100,7 +100,15 @@ namespace Hurricane {
   { return _technology->getCutBelow(this,useSymbolic); }
 
 
-  DbU::Unit  Layer::getEnclosure () const
+  DbU::Unit  Layer::getEnclosure ( uint32_t ) const
+  { return 0; }
+
+
+  DbU::Unit  Layer::getTopEnclosure ( uint32_t ) const
+  { return 0; }
+
+
+  DbU::Unit  Layer::getBottomEnclosure ( uint32_t ) const
   { return 0; }
 
 
@@ -112,15 +120,15 @@ namespace Hurricane {
   { return 0; }
 
 
-  DbU::Unit  Layer::getEnclosure ( const BasicLayer* layer ) const
+  DbU::Unit  Layer::getEnclosure ( const BasicLayer*, uint32_t ) const
   { return 0; }
 
 
-  DbU::Unit  Layer::getExtentionCap ( const BasicLayer* layer ) const
+  DbU::Unit  Layer::getExtentionCap ( const BasicLayer* ) const
   { return 0; }
 
 
-  DbU::Unit  Layer::getExtentionWidth ( const BasicLayer* layer ) const
+  DbU::Unit  Layer::getExtentionWidth ( const BasicLayer* ) const
   { return 0; }
 
 
@@ -164,7 +172,7 @@ namespace Hurricane {
   }
 
 
-  void  Layer::setEnclosure ( const BasicLayer* layer, DbU::Unit )
+  void  Layer::setEnclosure ( const BasicLayer*, DbU::Unit, uint32_t )
   {
     cerr << "[WARNING] Layer::setEnclosure() musn't be called on "
          << _getTypeName() << ": dummy implementation." << endl;

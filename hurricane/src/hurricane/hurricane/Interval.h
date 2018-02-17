@@ -63,7 +63,7 @@ class Interval {
     public: DbU::Unit& getVMin() {return _vMin;};
     public: DbU::Unit& getVMax() {return _vMax;};
     public: DbU::Unit getCenter() const {return ((_vMin + _vMax) / 2);};
-    public: DbU::Unit getSize() const {return (isEmpty() ? 0 : (_vMax - _vMin));};
+    public: DbU::Unit getSize() const;
     public: DbU::Unit getHalfSize() const {return (getSize() / 2);};
     public: Interval getUnion(const Interval& interval) const;
     public: Interval getIntersection(const Interval& interval) const;
@@ -72,6 +72,7 @@ class Interval {
 // **********
 
     public: bool isEmpty() const { return (_vMax < _vMin);};
+  public: bool isFull() const { return (_vMin == DbU::Min) and (_vMax == DbU::Max); };
     public: bool isPonctual() const { return (_vMax == _vMin);};
     public: bool contains(const DbU::Unit& v) const;
     public: bool contains(const Interval& interval) const;
@@ -102,6 +103,14 @@ class Interval {
     public: Record* _getRecord() const;
 
 };
+
+
+  inline  DbU::Unit  Interval::getSize () const
+  {
+    if (isEmpty()) return 0;
+    if (isFull ()) return DbU::Max;
+    return _vMax - _vMin;
+  }
 
 
 

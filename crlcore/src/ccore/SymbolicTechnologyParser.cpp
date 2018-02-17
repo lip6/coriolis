@@ -383,7 +383,7 @@ namespace CRL {
           switch ( ruleType ) {
             case ExtentionCap:   ruleLayer->setExtentionCap  (basicLayer,DbU::lambda(doubleValue)); break;
             case ExtentionWidth: ruleLayer->setExtentionWidth(basicLayer,DbU::lambda(doubleValue)); break;
-            case Enclosure:      ruleLayer->setEnclosure     (basicLayer,DbU::lambda(doubleValue)); break;
+            case Enclosure:      ruleLayer->setEnclosure     (basicLayer,DbU::lambda(doubleValue),Layer::EnclosureH|Layer::EnclosureV); break;
             case MinimumWidth:   ruleLayer->setMinimalSize   (DbU::lambda(doubleValue)); break;
             case MinimumSide:    ruleLayer->setMinimalSize   (DbU::lambda(doubleValue)); break;
           }

@@ -125,7 +125,7 @@ namespace Katana {
       if (plane->getDirection() == Flags::Horizontal) {
         plane->_tracks.push_back( HorizontalTrack::create( plane, index ) );
       // Ugly: Direct uses of CellGauge (middle tracks 4 & 5 for local use).
-        if (depth == 1) {
+        if ( (depth == 1) and not Session::getRoutingGauge()->isVH() ) {
           switch ( index%10 ) {
             case 4:
             case 5:

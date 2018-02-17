@@ -1476,10 +1476,8 @@ namespace Anabatic {
       if (_densities[i] >= 1.0) _flags |= Flags::Saturated;
     }
 
-    if (ccapacity)
-      _cDensity = ( (float)_contacts.size() ) / ccapacity;
-    else
-      _cDensity = 0;
+    if (ccapacity) _cDensity = ( (float)_contacts.size() ) / ccapacity;
+    else           _cDensity = 0;
     _flags.reset( Flags::Invalidated );
 
     checkDensity();

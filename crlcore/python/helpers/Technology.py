@@ -216,36 +216,59 @@ def loadLayersExtensions ( layersExtensionsTable, confFile ):
                                      ,'Must contains exactly two fields: ( rule_path, value ).'
                                      ,str(rule)
                                      ])
-            if not isinstance(rule[1],int) and not isinstance(rule[1],float):
+            if not isinstance(rule[1],int) \
+               and not isinstance(rule[1],float) \
+               and not isinstance(rule[1],tuple):
                 raise ErrorMessage(1,['Invalid entry in <layersExtensionsTable>.'
-                                     ,'Rule value must be of integer or float type.'
+                                     ,'Rule value must be of integer, float, or pair a of those type.'
                                      ,str(rule)
                                      ])
 
             elements = rule[0].split('.')
-            if len(elements) < 3:
+            if len(elements) == 2:
+              ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Real|LayersLUT.MissingError )
+              subLayer  = None
+            elif len(elements) == 3 or len(elements) == 4:
+              ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Composite|LayersLUT.MissingError  )
+              subLayer  = layersLUT.lookup( elements[1], LayersLUT.Real )
+            else:
                 raise ErrorMessage(1,['Invalid entry in <layersExtensionsTable>.'
-                                     ,'Rule name must contains at least three components: \"LAYER.category.dimension\".'
+                                     ,'Rule name must contains two or three components:'
+                                     ,' * \"COMP_LAYER.category.dimension\".'
+                                     ,' * \"REAL_LAYER.dimension\".'
                                      ,str(rule)
                                      ])
 
-            ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Composite|LayersLUT.MissingError  )
-            subLayer  = layersLUT.lookup( elements[1], LayersLUT.Real )
 
-            if elements[0].startswith('via'): value = toDbU(rule[1])
-            else:                             value = DbU.fromLambda(rule[1])
+            if elements[0].startswith('via') or elements[0].startswith('metal'):
+              if isinstance(rule[1],tuple):
+                value = ( toDbU(rule[1][0]), toDbU(rule[1][1]) )
+              else:
+                value = toDbU(rule[1])
+            else:
+              if isinstance(rule[1],tuple):
+                value = ( DbU.fromLambda(rule[1][0]), DbU.fromLambda(rule[1][1]) )
+              else:
+                value = DbU.fromLambda(rule[1])
 
             if subLayer: ruleTag  = string.join(elements[2:],'.')
             else:        ruleTag  = string.join(elements[1:],'.')
 
-            if   ruleTag == 'extention.cap':   ruleLayer.setExtentionCap  ( subLayer, value )
+            if   ruleTag == 'minimalSpacing':  ruleLayer.setMinimalSpacing( value )
+            elif ruleTag == 'extention.cap':   ruleLayer.setExtentionCap  ( subLayer, value )
             elif ruleTag == 'extention.width': ruleLayer.setExtentionWidth( subLayer, value )
-            elif ruleTag == 'enclosure':       ruleLayer.setEnclosure     ( subLayer, value )
             elif ruleTag == 'minimum.width':   ruleLayer.setMinimalSize   ( value )
             elif ruleTag == 'minimum.side':    ruleLayer.setMinimalSize   ( value )
+            elif ruleTag == 'enclosure':
+              if isinstance(value,tuple):
+                ruleLayer.setEnclosure( subLayer, value[0], Layer.EnclosureH )
+                ruleLayer.setEnclosure( subLayer, value[1], Layer.EnclosureV )
+              else:
+                ruleLayer.setEnclosure( subLayer, value, Layer.EnclosureH|Layer.EnclosureV )
             else: 
                 raise ErrorMessage(1,['Invalid entry in <layersExtensionsTable>.'
                                      ,'Unknown rule kind: \".%s\", should be any of:' % ruleTag
+                                     ,'    * "RULE_HEAD.minimalSpacing"'
                                      ,'    * "RULE_HEAD.extention.cap"'
                                      ,'    * "RULE_HEAD.extention.width"'
                                      ,'    * "RULE_HEAD.enclosure"'

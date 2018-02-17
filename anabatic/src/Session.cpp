@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <sstream>
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Cell.h"
@@ -47,6 +48,7 @@ namespace Anabatic {
   using namespace std;
   using Hurricane::tab;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::ForEachIterator;
   using Hurricane::UpdateSession;
   using Hurricane::Horizontal;
@@ -158,6 +160,7 @@ namespace Anabatic {
 
         canonical->setFlags( AutoSegment::SegCanonical );
         cdebug_log(145,0) << "Canonical: " << canonical << endl;
+        Interval userConstraints = canonical->getUserConstraints();
 
         for ( size_t j=0 ; j<aligneds.size() ; j++ ) {
           if (isWeakGlobal and not aligneds[j]->isGlobal()) aligneds[j]->setFlags  ( AutoSegment::SegWeakGlobal );
@@ -171,10 +174,23 @@ namespace Anabatic {
           }
           aligneds[j]->unsetFlags( AutoSegment::SegCanonical );
           cdebug_log(145,0) << "Secondary: " << aligneds[j] << endl;
+
+          userConstraints.intersection( aligneds[j]->getUserConstraints() );
         }
         if (aligneds.empty()) canonical->setFlags( AutoSegment::SegNotAligned );
 
+        if (not getRoutingGauge()->isSymbolic()
+           and (userConstraints.getSize() < Session::getPitch(1)*2) ) {
+            cerr << Warning( "Session::_canonize(): On %s\n"
+                             "          Combined user constraints are too tight [%s : %s]."
+                           , getString(canonical).c_str()
+                           , DbU::getValueString(userConstraints.getVMin()).c_str()
+                           , DbU::getValueString(userConstraints.getVMax()).c_str()
+                           ) << endl;
+        }
+
         cdebug_log(149,0) << "Align on canonical:" << canonical << endl;
+        cdebug_log(145,0) << "Combined user constraints: " << userConstraints << endl;
 
       //canonical->setAxis( canonical->getAxis(), Flags::Realignate );
         if (canonical->isUnsetAxis() and not canonical->isFixed())
@@ -194,21 +210,19 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "Anabatic::Session::_revalidateTopology()" << endl;
 
-    set<Net*>::iterator inet = _netInvalidateds.begin();
-
-    for ( ; inet != _netInvalidateds.end() ; inet++ ) {
-      cdebug_log(145,0) << "Anabatic::Session::_revalidateTopology(Net*)" << *inet << endl;
-      _anabatic->updateNetTopology    ( *inet );
-      _anabatic->computeNetConstraints( *inet );
-      _anabatic->_computeNetOptimals  ( *inet );
-      _anabatic->_computeNetTerminals ( *inet );
+    for ( Net* net : _netInvalidateds ) {
+      cdebug_log(145,0) << "Anabatic::Session::_revalidateTopology(Net*)" << net << endl;
+      _anabatic->updateNetTopology    ( net );
+      _anabatic->computeNetConstraints( net );
+      _anabatic->_computeNetOptimals  ( net );
+      _anabatic->_computeNetTerminals ( net );
     }
     _canonize ();
 
-    for ( size_t i=0 ; i<_segmentInvalidateds.size() ; ++i ) {
-      if (_segmentInvalidateds[i]->isCanonical()) {
-        if (_segmentInvalidateds[i]->isUnsetAxis()) _segmentInvalidateds[i]->toOptimalAxis();
-        else                                        _segmentInvalidateds[i]->toConstraintAxis();
+    for ( AutoSegment* segment : _segmentInvalidateds ) {
+      if (segment->isCanonical()) {
+        if (segment->isUnsetAxis()) segment->toOptimalAxis();
+        else                        segment->toConstraintAxis();
       }
     }
     

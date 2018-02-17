@@ -398,8 +398,14 @@ namespace Anabatic {
   bool  Configuration::selectRpComponent ( RoutingPad* rp ) const
   {
     cdebug_log(112,1) << "selectRpComponent(): " << rp << endl;
+
+    if (rp->isAtTopLevel()) {
+      cdebug_log(112,0) << "> RP is at top level, must not change it." << endl;
+      cdebug_tabw(112,-1);
+      return true;
+    }
     
-    Box                ab             = rp->getCell()->getBoundingBox();
+    Box                ab             = rp->getCell()->getAbutmentBox();
     const Layer*       metal1         = getLayerGauge( 0 )->getLayer();
     RoutingLayerGauge* gauge          = getLayerGauge( 1 );
     Occurrence         occurrence     = rp->getPlugOccurrence();
@@ -407,8 +413,8 @@ namespace Anabatic {
     Net*               masterNet      = plug->getMasterNet();
     Path               path           = Path( occurrence.getPath(), plug->getInstance() );
     Transformation     transformation = path.getTransformation();
-
     Segment*           current        = dynamic_cast<Segment*>( rp->getOccurrence().getEntity() );
+
     if (current and (current->getLayer()->getMask() != metal1->getMask())) {
       cdebug_log(112,0) << "> using default non-metal1 segment." << endl;
       cdebug_tabw(112,-1);
@@ -439,6 +445,11 @@ namespace Anabatic {
                                           , Constant::Nearest );
         minPos = bb.getXMin();
         maxPos = bb.getXMax();
+
+        cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
+        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
+        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
+        cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
       } else {
         trackPos = gauge->getTrackPosition( ab.getYMin()
                                           , ab.getYMax()
@@ -446,6 +457,11 @@ namespace Anabatic {
                                           , Constant::Nearest );
         minPos = bb.getYMin();
         maxPos = bb.getYMax();
+
+        cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
+        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
+        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
+        cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
       }
 
       cdebug_log(112,0) << "| " << occurrence.getPath() << endl;

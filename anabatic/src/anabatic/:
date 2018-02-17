@@ -405,10 +405,6 @@ namespace Anabatic {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:
-      struct CompareBySourceU : public binary_function<AutoSegment*,AutoSegment*,bool> {
-          bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
-      };
-    public:
       typedef std::set<AutoSegment*,CompareByDepthLength>  DepthLengthSet;
       typedef std::set<AutoSegment*,CompareId>             IdSet;
 

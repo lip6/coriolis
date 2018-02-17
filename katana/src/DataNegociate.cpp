@@ -20,7 +20,9 @@
 #include "hurricane/DebugSession.h"
 #include "anabatic/AutoSegment.h"
 #include "katana/DataNegociate.h"
+#include "katana/RoutingPlane.h"
 #include "katana/RoutingEvent.h"
+#include "katana/KatanaEngine.h"
 
 
 namespace Katana {
@@ -136,16 +138,38 @@ namespace Katana {
     //cerr << "  " << interval << endl;
     //interval.inflate( DbU::fromLambda(-0.5) );
 
-      cdebug_log(159,0)   << "| perpandicular: " << perpandiculars[i] << endl;
-      cdebug_log(159,0)   << "| canonical:     " << perpandicular << endl;
-      cdebug_log(159,1) << "Canonical // interval: " << interval << endl;
+      cdebug_log(159,0) << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug_log(159,1) << "| canonical:     " << perpandicular << endl;
+      cdebug_log(159,0) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
       if (perpandicular->getTrack()) {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
-        _perpandicularFree.intersection( trackFree.inflate(-perpandicular->getExtensionCap()) );
+        _perpandicularFree.intersection
+          ( trackFree.inflate ( -perpandicular->getExtensionCap(Flags::Source)
+                              , -perpandicular->getExtensionCap(Flags::Target)) );
+        cdebug_log(159,0) << "Source cap:"
+                          << DbU::getValueString(perpandicular->getExtensionCap(Flags::Source)) << endl;
+      } else if (perpandicular->isFixedAxis()) {
+        RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
+        Track*        track = plane->getTrackByPosition( perpandicular->getAxis() );
+        if (track and (perpandicular->getAxis() == track->getAxis())) {
+          Interval  trackFree = track->getFreeInterval( perpandicular->getSourceU(), _trackSegment->getNet() );
+          cdebug_log(159,0) << "SourceU: " << DbU::getValueString(perpandicular->getSourceU()) << endl;
+          cdebug_log(159,0) << "Track Perpandicular Free (fixed axis, source): " << trackFree << endl;
+
+          if (trackFree.isEmpty()) {
+            trackFree = track->getFreeInterval( perpandicular->getTargetU(), _trackSegment->getNet() );
+            cdebug_log(159,0) << "TargetU: " << DbU::getValueString(perpandicular->getTargetU()) << endl;
+            cdebug_log(159,0) << "Track Perpandicular Free (fixed axis, target): " << trackFree << endl;
+          }
+
+          _perpandicularFree.intersection
+            ( trackFree.inflate ( -perpandicular->getExtensionCap(Flags::Source)
+                                , -perpandicular->getExtensionCap(Flags::Target)) );
+        }
       } else {
         cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
       }
@@ -252,10 +276,10 @@ namespace Katana {
   }
 
 
-  string  DataNegociate::getStateString ( DataNegociate* data )
+  string  DataNegociate::getStateString ( uint32_t state, unsigned int stateCount )
   {
     ostringstream s;
-    switch ( data->_state ) {
+    switch ( state ) {
       case RipupPerpandiculars:    s << "RipupPerpandiculars";     break;
       case Minimize:               s << "Minimize";                break;
       case Dogleg:                 s << "Dogleg";                  break;
@@ -266,12 +290,19 @@ namespace Katana {
       case MoveUp:                 s << "MoveUp";                  break;
       case MaximumSlack:           s << "MaximumSlack";            break;
       case Unimplemented:          s << "Unimplemented";           break;
-      case Repair:                 s << "REPAIR";                  break;
+      case Repair:                 s << "Repair";                  break;
+      case RepairFailed:           s << "RepairFailed";            break;
       default:
-        s << "Unknown(" << data->_state << ")"; break;
+        s << "Unknown(" << state << ")"; break;
     }
-    s << ":" << data->_stateCount;
+    s << ":" << stateCount;
     return s.str();
+  }
+
+
+  string  DataNegociate::getStateString ( DataNegociate* data )
+  {
+    return getStateString( data->_state, data->_stateCount );
   }
 
 

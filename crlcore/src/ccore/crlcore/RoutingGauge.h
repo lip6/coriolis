@@ -54,6 +54,7 @@ namespace CRL {
       static  RoutingGauge*       create             ( const char* name );
       virtual void                destroy            ();
     // Predicates.                                    
+      inline  bool                isSymbolic         () const;
       inline  bool                isTwoMetals        () const;
       inline  bool                isHV               () const;
       inline  bool                isVH               () const;
@@ -85,6 +86,7 @@ namespace CRL {
     // Methods.                                      
               void                addLayerGauge      ( RoutingLayerGauge* layerGauge );
               void                checkConnexity     () const;
+      inline  void                setSymbolic        ( bool );
     // Hurricane Managment.                          
               void                toJson             ( JsonWriter* ) const;
       virtual Record*             _getRecord         ( Record* record=NULL ) const;
@@ -97,6 +99,7 @@ namespace CRL {
       vector<RoutingLayerGauge*>  _layerGauges;
       vector<Layer*>              _viaLayers;
       Technology*                 _technology;
+      bool                        _isSymbolic;
 
     // Internal - Constructors & Destructors.
                                   RoutingGauge ( const char* name );
@@ -107,6 +110,7 @@ namespace CRL {
   };
 
 
+  inline bool          RoutingGauge::isSymbolic         () const { return _isSymbolic; }
   inline bool          RoutingGauge::isTwoMetals        () const { return (getDepth() < 3); }
   inline bool          RoutingGauge::isHV               () const { return not isTwoMetals() and (getLayerGauge(1)->isHorizontal()); }
   inline bool          RoutingGauge::isVH               () const { return not isTwoMetals() and (getLayerGauge(1)->isVertical()); }
@@ -121,6 +125,7 @@ namespace CRL {
   inline DbU::Unit     RoutingGauge::getLayerOffset     ( size_t depth ) const { return getLayerGauge(depth)->getOffset(); }
   inline DbU::Unit     RoutingGauge::getLayerWireWidth  ( size_t depth ) const { return getLayerGauge(depth)->getWireWidth(); }
   inline DbU::Unit     RoutingGauge::getViaWidth        ( size_t depth ) const { return getLayerGauge(depth)->getViaWidth(); }
+  inline void          RoutingGauge::setSymbolic        ( bool state ) { _isSymbolic=state; }
 
 
 // -------------------------------------------------------------------

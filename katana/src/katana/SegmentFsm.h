@@ -114,6 +114,7 @@ namespace Katana {
                                    ~SegmentFsm             ();
       inline bool                   isFullBlocked          () const;
       inline bool                   isSymmetric            () const;
+      inline bool                   isMinimizeDrag         () const;
       inline RoutingEvent*          getEvent               () const;
       inline RoutingEvent*          getEvent1              () const;
       inline RoutingEvent*          getEvent2              () const;
@@ -187,40 +188,42 @@ namespace Katana {
       bool                          _fullBlocked;
       bool                          _sameAxis;
       bool                          _useEvent2;
+      bool                          _minimizeDrag;
   };
 
 
-  inline bool                   SegmentFsm::isSymmetric   () const { return _event2 != NULL; }
-  inline bool                   SegmentFsm::isFullBlocked () const { return _fullBlocked and _costs.size(); }
-  inline RoutingEvent*          SegmentFsm::getEvent      () const { return (_useEvent2) ? _event2 : _event1; }
-  inline RoutingEvent*          SegmentFsm::getEvent1     () const { return _event1; }
-  inline RoutingEvent*          SegmentFsm::getEvent2     () const { return _event2; }
-  inline RoutingEventQueue&     SegmentFsm::getQueue      () const { return _queue; }
-  inline RoutingEventHistory&   SegmentFsm::getHistory    () const { return _history; }
-  inline uint32_t               SegmentFsm::getState      () const { return _state; }
-  inline TrackElement*          SegmentFsm::getSegment1   () const { return _event1->getSegment(); }
-  inline TrackElement*          SegmentFsm::getSegment2   () const { return (_event2) ? _event2->getSegment() : NULL; }
-  inline DataNegociate*         SegmentFsm::getData       () { return (_useEvent2) ? _data2 : _data1; }
-  inline DataNegociate*         SegmentFsm::getData1      () { return _data1; }
-  inline DataNegociate*         SegmentFsm::getData2      () { return _data2; }
-  inline Interval&              SegmentFsm::getConstraint () { return _constraint; }
-  inline Interval&              SegmentFsm::getOptimal    () { return _optimal; }
-  inline vector<TrackCost*>&    SegmentFsm::getCosts      () { return _costs; }
-  inline TrackCost*             SegmentFsm::getCost       ( size_t icost ) { return _costs[icost]; }
-  inline Track*                 SegmentFsm::getTrack      ( size_t icost, size_t itrack ) { return (_useEvent2) ? getTrack2(icost,itrack) : getTrack1(icost,itrack); }
-  inline size_t                 SegmentFsm::getBegin      ( size_t icost, size_t itrack ) { return (_useEvent2) ? getBegin2(icost,itrack) : getBegin1(icost,itrack); }
-  inline size_t                 SegmentFsm::getEnd        ( size_t icost, size_t itrack ) { return (_useEvent2) ? getEnd2  (icost,itrack) : getEnd1  (icost,itrack); }
-  inline Track*                 SegmentFsm::getTrack1     ( size_t icost, size_t itrack ) { return _costs[icost]->getTrack(itrack,TrackCost::NoFlags  ); }
-  inline Track*                 SegmentFsm::getTrack2     ( size_t icost, size_t itrack ) { return _costs[icost]->getTrack(itrack,TrackCost::Symmetric); }
-  inline size_t                 SegmentFsm::getBegin1     ( size_t icost, size_t itrack ) { return _costs[icost]->getBegin(itrack,TrackCost::NoFlags  ); }
-  inline size_t                 SegmentFsm::getBegin2     ( size_t icost, size_t itrack ) { return _costs[icost]->getBegin(itrack,TrackCost::Symmetric); }
-  inline size_t                 SegmentFsm::getEnd1       ( size_t icost, size_t itrack ) { return _costs[icost]->getEnd  (itrack,TrackCost::NoFlags  ); }
-  inline size_t                 SegmentFsm::getEnd2       ( size_t icost, size_t itrack ) { return _costs[icost]->getEnd  (itrack,TrackCost::Symmetric); }
-  inline vector<SegmentAction>& SegmentFsm::getActions    () { return _actions; }
-  inline void                   SegmentFsm::setState      ( uint32_t state ) { _state = state; }
-  inline void                   SegmentFsm::clearActions  () { _actions.clear(); }
-  inline SegmentFsm&            SegmentFsm::useEvent1     () { _useEvent2 = false; return *this; }
-  inline SegmentFsm&            SegmentFsm::useEvent2     () { _useEvent2 = true ; return *this; }
+  inline bool                   SegmentFsm::isMinimizeDrag () const { return _minimizeDrag; }
+  inline bool                   SegmentFsm::isSymmetric    () const { return _event2 != NULL; }
+  inline bool                   SegmentFsm::isFullBlocked  () const { return _fullBlocked and _costs.size(); }
+  inline RoutingEvent*          SegmentFsm::getEvent       () const { return (_useEvent2) ? _event2 : _event1; }
+  inline RoutingEvent*          SegmentFsm::getEvent1      () const { return _event1; }
+  inline RoutingEvent*          SegmentFsm::getEvent2      () const { return _event2; }
+  inline RoutingEventQueue&     SegmentFsm::getQueue       () const { return _queue; }
+  inline RoutingEventHistory&   SegmentFsm::getHistory     () const { return _history; }
+  inline uint32_t               SegmentFsm::getState       () const { return _state; }
+  inline TrackElement*          SegmentFsm::getSegment1    () const { return _event1->getSegment(); }
+  inline TrackElement*          SegmentFsm::getSegment2    () const { return (_event2) ? _event2->getSegment() : NULL; }
+  inline DataNegociate*         SegmentFsm::getData        () { return (_useEvent2) ? _data2 : _data1; }
+  inline DataNegociate*         SegmentFsm::getData1       () { return _data1; }
+  inline DataNegociate*         SegmentFsm::getData2       () { return _data2; }
+  inline Interval&              SegmentFsm::getConstraint  () { return _constraint; }
+  inline Interval&              SegmentFsm::getOptimal     () { return _optimal; }
+  inline vector<TrackCost*>&    SegmentFsm::getCosts       () { return _costs; }
+  inline TrackCost*             SegmentFsm::getCost        ( size_t icost ) { return _costs[icost]; }
+  inline Track*                 SegmentFsm::getTrack       ( size_t icost, size_t itrack ) { return (_useEvent2) ? getTrack2(icost,itrack) : getTrack1(icost,itrack); }
+  inline size_t                 SegmentFsm::getBegin       ( size_t icost, size_t itrack ) { return (_useEvent2) ? getBegin2(icost,itrack) : getBegin1(icost,itrack); }
+  inline size_t                 SegmentFsm::getEnd         ( size_t icost, size_t itrack ) { return (_useEvent2) ? getEnd2  (icost,itrack) : getEnd1  (icost,itrack); }
+  inline Track*                 SegmentFsm::getTrack1      ( size_t icost, size_t itrack ) { return _costs[icost]->getTrack(itrack,TrackCost::NoFlags  ); }
+  inline Track*                 SegmentFsm::getTrack2      ( size_t icost, size_t itrack ) { return _costs[icost]->getTrack(itrack,TrackCost::Symmetric); }
+  inline size_t                 SegmentFsm::getBegin1      ( size_t icost, size_t itrack ) { return _costs[icost]->getBegin(itrack,TrackCost::NoFlags  ); }
+  inline size_t                 SegmentFsm::getBegin2      ( size_t icost, size_t itrack ) { return _costs[icost]->getBegin(itrack,TrackCost::Symmetric); }
+  inline size_t                 SegmentFsm::getEnd1        ( size_t icost, size_t itrack ) { return _costs[icost]->getEnd  (itrack,TrackCost::NoFlags  ); }
+  inline size_t                 SegmentFsm::getEnd2        ( size_t icost, size_t itrack ) { return _costs[icost]->getEnd  (itrack,TrackCost::Symmetric); }
+  inline vector<SegmentAction>& SegmentFsm::getActions     () { return _actions; }
+  inline void                   SegmentFsm::setState       ( uint32_t state ) { _state = state; }
+  inline void                   SegmentFsm::clearActions   () { _actions.clear(); }
+  inline SegmentFsm&            SegmentFsm::useEvent1      () { _useEvent2 = false; return *this; }
+  inline SegmentFsm&            SegmentFsm::useEvent2      () { _useEvent2 = true ; return *this; }
 
 
 }  // Katana namespace.

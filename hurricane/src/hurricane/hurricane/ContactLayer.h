@@ -59,10 +59,10 @@ namespace Hurricane {
                                            );
     // Accessors.
       virtual BasicLayers   getBasicLayers () const;
-      virtual DbU::Unit     getEnclosure   () const;
-      virtual DbU::Unit     getEnclosure   ( const BasicLayer* layer ) const;
+      virtual DbU::Unit     getEnclosure   ( uint32_t flags ) const;
+      virtual DbU::Unit     getEnclosure   ( const BasicLayer* layer, uint32_t flags ) const;
     // Updators.
-      virtual void          setEnclosure   ( const BasicLayer* layer, DbU::Unit enclosure );
+      virtual void          setEnclosure   ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t flags );
     // Hurricane Managment.
       virtual void          _toJson        ( JsonWriter* ) const;
       virtual void          _onDbuChange   ( float scale );
@@ -72,9 +72,9 @@ namespace Hurricane {
 
     private:
     // Internal: Attributes
-      vector<BasicLayer*>  _basicLayers;
-      vector<DbU::Unit>    _enclosures;
-      DbU::Unit            _maximalEnclosure;
+      vector<BasicLayer*>                  _basicLayers;
+      vector< pair<DbU::Unit,DbU::Unit> >  _enclosures;
+      DbU::Unit                            _maximalEnclosure;
 
     protected:
       ContactLayer ( Technology* technology
