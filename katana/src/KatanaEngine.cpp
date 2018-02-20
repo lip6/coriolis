@@ -453,13 +453,13 @@ namespace Katana {
             axis = segment->getX();
           }
 
-          int elementCapacity = -1;
+          int elementCapacity = 1;
           cdebug_log(159,0) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
           GCellsUnder gcells  = getGCellsUnder( segment );
           if (not gcells->empty()) {
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i )
-              gcells->gcellAt(i)->getEdgeAt( side, axis )->incCapacity( elementCapacity );
+              gcells->gcellAt(i)->getEdgeAt( side, axis )->reserveCapacity( elementCapacity );
           }
         }
       }

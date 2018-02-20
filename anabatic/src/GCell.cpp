@@ -447,6 +447,14 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::isHorizontalPlane ( size_t depth ) const
+  { return _anabatic->getConfiguration()->getLayerGauge(depth)->isHorizontal(); }
+
+
+  bool  GCell::isVerticalPlane ( size_t depth ) const
+  { return _anabatic->getConfiguration()->getLayerGauge(depth)->isVertical(); }
+  
+
   Contact* GCell::hasGContact ( const Net* net ) const
   {
     for ( Contact* contact : _gcontacts ) {
@@ -1128,7 +1136,7 @@ namespace Anabatic {
   }
 
 
-  float  GCell::getHCapacity () const
+  int  GCell::getHCapacity () const
   {
     int capacity = 0;
     if (not _eastEdges.empty()) {
@@ -1136,11 +1144,11 @@ namespace Anabatic {
     } else {
       for ( Edge* edge : _westEdges ) capacity += edge->getCapacity(); 
     }
-    return (float)capacity;
+    return capacity;
   }
 
 
-  float  GCell::getVCapacity () const
+  int  GCell::getVCapacity () const
   {
     int capacity = 0;
     if (not _northEdges.empty()) {
@@ -1148,7 +1156,20 @@ namespace Anabatic {
     } else {
       for ( Edge* edge : _southEdges ) capacity += edge->getCapacity(); 
     }
-    return (float)capacity;
+    return capacity;
+  }
+
+
+  int  GCell::getCapacity ( size_t depth ) const
+  {
+    const vector<Edge*>* edges = NULL;
+    if (isHorizontalPlane(depth)) edges = (_eastEdges .empty()) ? &_westEdges  : &_westEdges;
+    else                          edges = (_northEdges.empty()) ? &_southEdges : &_northEdges;
+
+    int capacity = 0;
+    for ( Edge* edge : *edges ) capacity += edge->getCapacity(depth); 
+
+    return capacity;
   }
 
 
@@ -1171,8 +1192,8 @@ namespace Anabatic {
     float  vdensity = 0.0;
 
     for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
-      if ( i%2 ) { hdensity += _densities[i]; ++hplanes; }
-      else       { vdensity += _densities[i]; ++vplanes; }
+      if (isHorizontalPlane(i)) { hdensity += _densities[i]; ++hplanes; }
+      else                      { vdensity += _densities[i]; ++vplanes; }
     }
 
     if (hplanes) hdensity /= hplanes;
@@ -1197,7 +1218,7 @@ namespace Anabatic {
       float  hdensity = 0.0;
 
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
-        if (i%2) { hdensity += _densities[i]; ++hplanes; }
+        if (isHorizontalPlane(i)) { hdensity += _densities[i]; ++hplanes; }
       }
       if (hplanes) hdensity /= hplanes;
 
@@ -1207,7 +1228,7 @@ namespace Anabatic {
       float  vdensity = 0.0;
 
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
-        if (i%2 == 0) { vdensity += _densities[i]; ++vplanes; }
+        if (isVerticalPlane(i)) { vdensity += _densities[i]; ++vplanes; }
       }
 
       if (vplanes) vdensity /= vplanes;
@@ -1219,11 +1240,11 @@ namespace Anabatic {
       }
     } else if (getAnabatic()->getDensityMode() == MaxHDensity) {
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
-        if ((i%2) and (_densities[i] > density)) density = _densities[i];
+        if (isHorizontalPlane(i) and (_densities[i] > density)) density = _densities[i];
       }
     } else if (getAnabatic()->getDensityMode() == MaxVDensity) {
       for ( size_t i=_pinDepth ; i<_depth ; i++ ) {
-        if ((i%2 == 0) and (_densities[i] > density)) density = _densities[i];
+        if (isVerticalPlane(i) and (_densities[i] > density)) density = _densities[i];
       }
     }
 
@@ -1332,49 +1353,42 @@ namespace Anabatic {
     sort( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
     sort( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
 
-    float                    hcapacity    = getHCapacity ();
-    float                    vcapacity    = getVCapacity ();
-    float                    ccapacity    = hcapacity * vcapacity * 4; 
-    DbU::Unit                width        = getXMax() - getXMin();
-    DbU::Unit                height       = getYMax() - getYMin();
-    DbU::Unit                hpenalty     = 0 /*_box.getWidth () / 3*/;
-    DbU::Unit                vpenalty     = 0 /*_box.getHeight() / 3*/;
-    DbU::Unit                uLengths1    [ _depth ];
-    DbU::Unit                uLengths2    [ _depth ];
-    float                    localCounts  [ _depth ];
-    vector<UsedFragments>    ufragments   ( _depth );
+    float                 ccapacity    = getHCapacity() * getVCapacity() * (_depth-_pinDepth); 
+    DbU::Unit             width        = getXMax() - getXMin();
+    DbU::Unit             height       = getYMax() - getYMin();
+    DbU::Unit             hpenalty     = 0 /*_box.getWidth () / 3*/;
+    DbU::Unit             vpenalty     = 0 /*_box.getHeight() / 3*/;
+    DbU::Unit             uLengths1    [ _depth ];
+    DbU::Unit             uLengths2    [ _depth ];
+    float                 localCounts  [ _depth ];
+    vector<UsedFragments> ufragments   ( _depth );
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
       ufragments[i].setPitch ( Session::getPitch(i) );
       _feedthroughs[i] = 0.0;
+      uLengths1    [i] = 0;
       uLengths2    [i] = 0;
       localCounts  [i] = 0.0;
       _globalsCount[i] = 0.0;
 
-      if (Session::getDirection(i) & Flags::Horizontal) {
-        ufragments[i].setSpan    ( getXMin(), getXMax() );
-        ufragments[i].setCapacity( (size_t)hcapacity );
-      } else {
-        ufragments[i].setSpan    ( getYMin(), getYMax() );
-        ufragments[i].setCapacity( (size_t)vcapacity );
-      }
+      ufragments[i].setCapacity( (size_t)getCapacity(i) );
+      if (isHorizontalPlane(i)) ufragments[i].setSpan( getXMin(), getXMax() );
+      else                      ufragments[i].setSpan( getYMin(), getYMax() );
     }
 
   // Compute wirelength associated to contacts (in DbU::Unit converted to float).
     AutoSegment::DepthLengthSet  processeds;
     for ( AutoContact* contact : _contacts ) {
       for ( size_t i=0 ; i<_depth ; i++ ) uLengths1[i] = 0;
-      contact->getLengths ( uLengths1, processeds );
+      contact->getLengths( uLengths1, processeds );
       for ( size_t i=0 ; i<_depth ; i++ ) {
-        if (Session::getDirection(i) & Flags::Horizontal)
-          uLengths2[i] += uLengths1[i]+hpenalty;
-        else
-          uLengths2[i] += uLengths1[i]+vpenalty; break;
+        if (isHorizontalPlane(i)) uLengths2[i] += uLengths1[i]+hpenalty;
+        else                      uLengths2[i] += uLengths1[i]+vpenalty;
       }
     }
 
   // Add the "pass through" horizontal segments.
-    if ( _hsegments.size() ) {
+    if (not _hsegments.empty()) {
       const Layer* layer = _hsegments[0]->getLayer();
       size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
       size_t       count = 0;
@@ -1398,7 +1412,7 @@ namespace Anabatic {
     }
 
   // Add the "pass through" vertical segments.
-    if ( _vsegments.size() ) {
+    if (not _vsegments.empty()) {
       const Layer* layer = _vsegments[0]->getLayer();
       size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
       size_t       count = 0;
@@ -1406,7 +1420,7 @@ namespace Anabatic {
         _globalsCount[depth] += 1.0;
         ufragments[depth].incGlobals();
 
-        if ( layer != _vsegments[i]->getLayer() ) {
+        if (layer != _vsegments[i]->getLayer()) {
           uLengths2[depth] += count * height;
 
           count = 0;
@@ -1416,18 +1430,16 @@ namespace Anabatic {
         count++;
         _feedthroughs[depth] += 1.0;
       }
-      if ( count ) {
+      if (count) {
         uLengths2[depth] += count * height;
       }
     }
 
   // Add the blockages.
-    for ( size_t i=0 ; i<_depth ; i++ ) {
-      uLengths2[i] += _blockages[i];
-    }
+    for ( size_t i=0 ; i<_depth ; i++ ) uLengths2[i] += _blockages[i];
 
   // Compute the number of non pass-through tracks.
-    if (processeds.size()) {
+    if (not processeds.empty()) {
       AutoSegment::DepthLengthSet::iterator isegment = processeds.begin();
       const Layer* layer = (*isegment)->getLayer();
       DbU::Unit    axis  = (*isegment)->getAxis();
@@ -1451,9 +1463,11 @@ namespace Anabatic {
 
   // Normalize: 0 < d < 1.0 (divide by H/V capacity).
     for ( size_t i=0 ; i<_depth ; i++ ) {
+      int capacity = getCapacity(i);
+      
       if (Session::getDirection(i) & Flags::Horizontal) {
-        if (width) {
-          _densities     [i]  = ((float)uLengths2[i]) / ( hcapacity * (float)width );
+        if (width and capacity) {
+          _densities     [i]  = ((float)uLengths2[i]) / (float)( capacity * width );
           _feedthroughs  [i] += (float)(_blockages[i] / width);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)width;
         } else {
@@ -1462,8 +1476,8 @@ namespace Anabatic {
           _fragmentations[i]  = 0;
         }
       } else {
-        if (height) {
-          _densities     [i]  = ((float)uLengths2[i]) / ( vcapacity * (float)height );
+        if (height and capacity) {
+          _densities     [i]  = ((float)uLengths2[i]) / (float)( capacity * height );
           _feedthroughs  [i] += (float)(_blockages[i] / height);
           _fragmentations[i]  = (float)ufragments[i].getMaxFree().getSize() / (float)height;
         } else {
@@ -1488,17 +1502,16 @@ namespace Anabatic {
 
   void  GCell::truncDensities ()
   {
-    int  hcapacity = (int)getHCapacity();
-    int  vcapacity = (int)getVCapacity();
-    Box  bBox      = getBoundingBox();
+    Box  bBox = getBoundingBox();
 
     for ( size_t i=0 ; i<_depth ; i++ ) {
-      if (Session::getDirection(i) & Flags::Horizontal) {
-        if (_blockages[i] > hcapacity * bBox.getWidth())
-          _blockages[i]  = hcapacity * bBox.getWidth();
+      int capacity = getCapacity(i);
+      if (isHorizontalPlane(i)) {
+        if (_blockages[i] > capacity * bBox.getWidth())
+          _blockages[i]  = capacity * bBox.getWidth();
       } else {
-        if (_blockages[i] > vcapacity * bBox.getHeight())
-          _blockages[i]  = vcapacity * bBox.getHeight();
+        if (_blockages[i] > capacity * bBox.getHeight())
+          _blockages[i]  = capacity * bBox.getHeight();
       }
     }
     _flags &= ~Flags::Saturated;
@@ -1534,9 +1547,7 @@ namespace Anabatic {
   {
     if (isInvalidated()) const_cast<GCell*>(this)->updateDensity();
 
-    float capacity = 0.0;
-    if (Session::getDirection(depth) & Flags::Horizontal) capacity = getHCapacity();
-    else                                                  capacity = getVCapacity();
+    float capacity = getCapacity(depth);
 
     cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
                 << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
@@ -1704,14 +1715,15 @@ namespace Anabatic {
     return false;
   }
   
-  void GCell::setEdgesOccupancy ( unsigned int width, unsigned int height )
+
+  void  GCell::forceEdgesCapacities ( unsigned int hcapacity, unsigned int vcapacity )
   {
-    if (getEastEdge() ) getEastEdge()->setCapacity(width);
-    if (getWestEdge() ) getWestEdge()->setCapacity(width);
-    if (getNorthEdge()) getNorthEdge()->setCapacity(height);
-    if (getSouthEdge()) getSouthEdge()->setCapacity(height);
-    if (getEastEdge() ) getEastEdge()->setRealOccupancy(0);
-    if (getWestEdge() ) getWestEdge()->setRealOccupancy(0);
+    if (getEastEdge() ) getEastEdge ()->forceCapacity( hcapacity );
+    if (getWestEdge() ) getWestEdge ()->forceCapacity( hcapacity );
+    if (getNorthEdge()) getNorthEdge()->forceCapacity( vcapacity );
+    if (getSouthEdge()) getSouthEdge()->forceCapacity( vcapacity );
+    if (getEastEdge() ) getEastEdge ()->setRealOccupancy(0);
+    if (getWestEdge() ) getWestEdge ()->setRealOccupancy(0);
     if (getNorthEdge()) getNorthEdge()->setRealOccupancy(0);
     if (getSouthEdge()) getSouthEdge()->setRealOccupancy(0);
   }

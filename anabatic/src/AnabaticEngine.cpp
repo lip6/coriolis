@@ -293,21 +293,22 @@ namespace Anabatic {
 
   AnabaticEngine::AnabaticEngine ( Cell* cell )
     : Super(cell)
-    , _configuration   (new Configuration())
-    , _chipTools       (cell)
-    , _state           (EngineCreation)
-    , _matrix          ()
-    , _gcells          ()
-    , _ovEdges         ()
-    , _netOrdering     ()
-    , _netDatas        ()
-    , _viewer          (NULL)
-    , _flags           (Flags::DestroyBaseContact)
-    , _stamp           (-1)
-    , _densityMode     (MaxDensity)
-    , _autoSegmentLut  ()
-    , _autoContactLut  ()
-    , _blockageNet     (cell->getNet("blockagenet"))
+    , _configuration    (new Configuration())
+    , _chipTools        (cell)
+    , _state            (EngineCreation)
+    , _matrix           ()
+    , _gcells           ()
+    , _ovEdges          ()
+    , _netOrdering      ()
+    , _netDatas         ()
+    , _viewer           (NULL)
+    , _flags            (Flags::DestroyBaseContact)
+    , _stamp            (-1)
+    , _densityMode      (MaxDensity)
+    , _autoSegmentLut   ()
+    , _autoContactLut   ()
+    , _edgeCapacitiesLut()
+    , _blockageNet      (cell->getNet("blockagenet"))
   {
     _matrix.setCell( cell, _configuration->getSliceHeight() );
     Edge::unity = _configuration->getSliceHeight();
@@ -824,8 +825,6 @@ namespace Anabatic {
     AutoSegment::IdSet  processeds;
     
     for ( GCell* gcell : _gcells ) {
-    //cerr << "@ " << gcell << endl;
-
       multiset<AutoContactTerminal*,SortAcByXY>  acTerminals;
       for ( AutoContact* contact : gcell->getContacts() ) {
         if (contact->isTerminal() and (Session::getViaDepth(contact->getLayer()) == 0) )
@@ -834,13 +833,11 @@ namespace Anabatic {
 
       AutoContactTerminal* south = NULL;
       for ( AutoContactTerminal* north : acTerminals ) {
-      //cerr << "@ " << north << endl;
         if (south) {
           if (   south->canDrag()
              and north->canDrag()
              and (south->getNet() != north->getNet())
              and (south->getX  () == north->getX  ()) ) {
-          //Interval constraints ( north->getCBYMax() - pitch3, gcell->getYMin() );
             Interval constraints ( north->getCBYMin() - pitch3, gcell->getYMin() );
             AutoSegment* terminal = south->getSegment();
             AutoContact* opposite = terminal->getOppositeAnchor( south );
@@ -848,10 +845,8 @@ namespace Anabatic {
             for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
               segment->mergeUserConstraints( constraints );
               constraineds.insert( segment );
-            //cerr << "Apply " << constraints << " to " << segment << endl;
             }
 
-          //constraints = Interval( south->getCBYMin() + pitch3, gcell->getYMax() );
             constraints = Interval( south->getCBYMax() + pitch3, gcell->getYMax() );
             terminal    = north->getSegment();
             opposite    = terminal->getOppositeAnchor( north );
@@ -859,12 +854,8 @@ namespace Anabatic {
             for ( AutoSegment* segment : AutoSegments_OnContact(terminal,opposite->base()) ) {
               segment->mergeUserConstraints( constraints );
               constraineds.insert( segment );
-            //cerr << "Apply " << constraints << " to " << segment << endl;
             }
           }
-
-        //if (south->getConstraintBox().getHeight() < pitch3*2) metal2protect( south );
-        //if (north->getConstraintBox().getHeight() < pitch3*2) metal2protect( north );
         }
         south = north;
       }
@@ -891,32 +882,31 @@ namespace Anabatic {
       AutoSegment* previous = NULL;
       for ( AutoSegment* aligned : aligneds ) {
         Interval constraints = userConstraints.getIntersection( aligned->getUserConstraints() );
-        cerr << "aligned: " << aligned << " " << aligned->getUserConstraints() << endl;
 
         if (constraints.getSize() < Session::getPitch(1)) {
-          if (not previous) {
-            cerr << Warning( "protectAlignedAccesses(): Shearing constraints between S/T on\n"
-                             "          %s\n"
-                             "          S:%s\n"
-                             "          T:%s\n"
-                             "          Combined user constraints are too tight [%s : %s]."
-                           , getString(aligned ).c_str()
-                           , getString(aligned->getAutoSource()->getConstraintBox()).c_str()
-                           , getString(aligned->getAutoTarget()->getConstraintBox()).c_str()
-                           , DbU::getValueString(constraints.getVMin()).c_str()
-                           , DbU::getValueString(constraints.getVMax()).c_str()
-                           ) << endl;
-          } else {
-            cerr << Warning( "protectAlignedAccesses(): Shearing constraints between\n"
-                             "          %s\n"
-                             "          %s\n"
-                             "          Combined user constraints are too tight [%s : %s]."
-                           , getString(previous).c_str()
-                           , getString(aligned ).c_str()
-                           , DbU::getValueString(constraints.getVMin()).c_str()
-                           , DbU::getValueString(constraints.getVMax()).c_str()
-                           ) << endl;
-          }
+        //if (not previous) {
+        //  cerr << Warning( "protectAlignedAccesses(): Shearing constraints between S/T on\n"
+        //                   "          %s\n"
+        //                   "          S:%s\n"
+        //                   "          T:%s\n"
+        //                   "          Combined user constraints are too tight [%s : %s]."
+        //                 , getString(aligned ).c_str()
+        //                 , getString(aligned->getAutoSource()->getConstraintBox()).c_str()
+        //                 , getString(aligned->getAutoTarget()->getConstraintBox()).c_str()
+        //                 , DbU::getValueString(constraints.getVMin()).c_str()
+        //                 , DbU::getValueString(constraints.getVMax()).c_str()
+        //                 ) << endl;
+        //} else {
+        //  cerr << Warning( "protectAlignedAccesses(): Shearing constraints between\n"
+        //                   "          %s\n"
+        //                   "          %s\n"
+        //                   "          Combined user constraints are too tight [%s : %s]."
+        //                 , getString(previous).c_str()
+        //                 , getString(aligned ).c_str()
+        //                 , DbU::getValueString(constraints.getVMin()).c_str()
+        //                 , DbU::getValueString(constraints.getVMax()).c_str()
+        //                 ) << endl;
+        //}
         //if (previous) {
         //  if (previous->getAutoTarget() == aligned->getAutoSource()) {
         //    cerr << "Found a shared contact: " << aligned->getAutoSource() << endl;
@@ -931,8 +921,6 @@ namespace Anabatic {
 
         previous = aligned;
       }
-
-      cerr << "Final user constraints:" << userConstraints << endl;
     }
 
     Session::close();
@@ -1310,6 +1298,34 @@ namespace Anabatic {
   }
 
 
+  EdgeCapacity* AnabaticEngine::_createCapacity ( Flags flags, Interval span )
+  {
+    size_t        depth        = getConfiguration()->getAllowedDepth();
+    EdgeCapacity* edgeCapacity = NULL;
+
+    flags &= Flags::EdgeCapacityMask;
+    EdgeCapacity  key ( this, flags, span, depth );
+
+    auto icap = _edgeCapacitiesLut.find( &key );
+    if (icap != _edgeCapacitiesLut.end()) {
+      edgeCapacity = *icap;
+    } else {
+      edgeCapacity = new EdgeCapacity ( this, flags, span, depth );
+      _edgeCapacitiesLut.insert( edgeCapacity );
+    }
+
+    edgeCapacity->incref();
+    return edgeCapacity;
+  }
+
+  
+  size_t  AnabaticEngine::_unrefCapacity ( EdgeCapacity* capacity )
+  {
+    if (capacity->getref() < 2) _edgeCapacitiesLut.erase( capacity );
+    return capacity->decref();
+  }
+  
+
   void  AnabaticEngine::_check ( Net* net ) const
   {
     cdebug_log(149,1) << "Checking " << net << endl;
@@ -1376,10 +1392,13 @@ namespace Anabatic {
   Record* AnabaticEngine::_getRecord () const
   {
     Record* record = Super::_getRecord();
-    record->add( getSlot("_configuration",  _configuration) );
-    record->add( getSlot("_gcells"       , &_gcells       ) );
-    record->add( getSlot("_matrix"       , &_matrix       ) );
-    record->add( getSlot("_flags"        , &_flags        ) );
+    record->add( getSlot("_configuration"    ,  _configuration     ) );
+    record->add( getSlot("_gcells"           , &_gcells            ) );
+    record->add( getSlot("_matrix"           , &_matrix            ) );
+    record->add( getSlot("_flags"            , &_flags             ) );
+    record->add( getSlot("_autoSegmentLut"   , &_autoSegmentLut    ) );
+    record->add( getSlot("_autoContactLut"   , &_autoContactLut    ) );
+    record->add( getSlot("_edgeCapacitiesLut", &_edgeCapacitiesLut ) );
     return record;
   }
 

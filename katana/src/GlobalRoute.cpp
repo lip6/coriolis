@@ -165,8 +165,8 @@ namespace Katana {
       if (not gcell->isMatrix()) continue;
 
       for ( Edge* edge : gcell->getEdges(Flags::EastSide|Flags::NorthSide) ) {
-        if (edge->isHorizontal()) edge->incCapacity( -getHTracksReservedLocal() );
-        else                      edge->incCapacity( -getVTracksReservedLocal() );
+        if (edge->isHorizontal()) edge->reserveCapacity( getHTracksReservedLocal() );
+        else                      edge->reserveCapacity( getVTracksReservedLocal() );
       }
     }
   }

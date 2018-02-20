@@ -256,6 +256,8 @@ namespace Anabatic {
                     void              _unlink               ( AutoSegment* );
                     AutoContact*      _lookup               ( Contact* ) const;
                     AutoSegment*      _lookup               ( Segment* ) const;
+                    EdgeCapacity*     _createCapacity       ( Flags, Interval );
+                    size_t            _unrefCapacity        ( EdgeCapacity* );
                     void              _loadGrByNet          ();
                     void              _computeNetOptimals   ( Net* );
                     void              _computeNetTerminals  ( Net* );
@@ -294,22 +296,23 @@ namespace Anabatic {
                                       AnabaticEngine        ( const AnabaticEngine& );
                     AnabaticEngine&   operator=             ( const AnabaticEngine& );
     private:
-      static Name              _toolName;
-             Configuration*    _configuration;
-             ChipTools         _chipTools;
-             EngineState       _state;
-             Matrix            _matrix;
-             vector<GCell*>    _gcells;
-             vector<Edge*>     _ovEdges;
-             vector<NetData*>  _netOrdering;
-             NetDatas          _netDatas;
-             CellViewer*       _viewer;
-             Flags             _flags;
-             int               _stamp;
-             uint64_t          _densityMode;
-             AutoSegmentLut    _autoSegmentLut;
-             AutoContactLut    _autoContactLut;
-             Net*              _blockageNet;
+      static Name                _toolName;
+             Configuration*      _configuration;
+             ChipTools           _chipTools;
+             EngineState         _state;
+             Matrix              _matrix;
+             vector<GCell*>      _gcells;
+             vector<Edge*>       _ovEdges;
+             vector<NetData*>    _netOrdering;
+             NetDatas            _netDatas;
+             CellViewer*         _viewer;
+             Flags               _flags;
+             int                 _stamp;
+             uint64_t            _densityMode;
+             AutoSegmentLut      _autoSegmentLut;
+             AutoContactLut      _autoContactLut;
+             EdgeCapacityLut     _edgeCapacitiesLut;
+             Net*                _blockageNet;
   };
 
 

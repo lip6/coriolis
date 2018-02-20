@@ -44,7 +44,8 @@ namespace Anabatic {
       static const BaseFlags  HRailGCell          ; // = (1 << 14);
       static const BaseFlags  VRailGCell          ; // = (1 << 15);
     // Flags for Edge objects states only.                      
-      static const BaseFlags  IllimitedCapacity   ; // = (1 <<  5);
+      static const BaseFlags  NullCapacity        ; // = (1 <<  5);
+      static const BaseFlags  InfiniteCapacity    ; // = (1 <<  6);
     // Flags for Anabatic objects states only.                      
       static const BaseFlags  DemoMode            ; // = (1 <<  5);
       static const BaseFlags  WarnOnGCellOverload ; // = (1 <<  6);
@@ -65,6 +66,7 @@ namespace Anabatic {
       static const BaseFlags  GCellTypeMask       ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|MatrixGCell|IoPadGCell|HRailGCell|VRailGCell;
       static const BaseFlags  RowGCellMask        ; // = StdCellRow|ChannelRow;
       static const BaseFlags  AnalogGCellMask     ; // = DeviceGCell|HChannelGCell|VChannelGCell|StrutGCell|HRailGCell|VRailGCell;
+      static const BaseFlags  EdgeCapacityMask    ; // = Horizontal|Vertical|NullCapacity|InfiniteCapacity ;
     // Flags for functions arguments only.           
       static const BaseFlags  Create              ; // = (1 <<  5);
       static const BaseFlags  WithPerpands        ;

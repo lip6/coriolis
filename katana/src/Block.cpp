@@ -140,7 +140,7 @@ namespace Katana {
       if (channel) {
         channel = channel->vcut( xcut );
         channel->setType( Anabatic::Flags::ChannelRow );
-        channel->getWestEdge()->setFlags( Flags::IllimitedCapacity );
+        channel->getWestEdge()->setFlags( Flags::InfiniteCapacity );
       }
     }
 

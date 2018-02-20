@@ -26,8 +26,8 @@ namespace Hurricane {
   class Segment;
 }
 #include "anabatic/Constants.h"
+#include "anabatic/EdgeCapacity.h"
 #include "anabatic/Edges.h"
-
 
 
 namespace Anabatic {
@@ -60,6 +60,7 @@ namespace Anabatic {
       inline        bool              isHorizontal         () const;
       inline        bool              hasNet               ( const Net* ) const;
       inline        unsigned int      getCapacity          () const;
+      inline        unsigned int      getCapacity          ( size_t depth ) const;
       inline        unsigned int      getRealOccupancy     () const;
       inline        unsigned int      getEstimateOccupancy () const;
       inline        float             getHistoricCost      () const;
@@ -73,8 +74,10 @@ namespace Anabatic {
                     Interval          getSide              () const;
                     Segment*          getSegment           ( const Net* ) const;
       inline const  vector<Segment*>& getSegments          () const;
-      inline        void              setCapacity          ( int );
-      inline        void              incCapacity          ( int );
+    //inline        void              setCapacity          ( int );
+    //inline        void              incCapacity          ( int );
+      inline        void              forceCapacity        ( int );
+      inline        void              reserveCapacity      ( int );
       inline        void              setRealOccupancy     ( int );
                     void              incRealOccupancy     ( int );
                     void              incRealOccupancy2    ( int );
@@ -114,7 +117,8 @@ namespace Anabatic {
     private:
       static  Name              _extensionName;
               Flags             _flags;
-              unsigned int      _capacity;
+              EdgeCapacity*     _capacities;
+              unsigned int      _reservedCapacity;
               unsigned int      _realOccupancy;
               float             _estimateOccupancy;
               float             _historicCost;
@@ -129,7 +133,8 @@ namespace Anabatic {
   inline       bool              Edge::isVertical           () const { return _flags.isset(Flags::Vertical); }
   inline       bool              Edge::isHorizontal         () const { return _flags.isset(Flags::Horizontal); }
   inline       bool              Edge::hasNet               ( const Net* owner ) const { return getSegment(owner); }
-  inline       unsigned int      Edge::getCapacity          () const { return _capacity; }
+  inline       unsigned int      Edge::getCapacity          () const { return (_capacities) ? _capacities->getCapacity()-_reservedCapacity : 0; }
+  inline       unsigned int      Edge::getCapacity          ( size_t depth ) const { return (_capacities) ? _capacities->getCapacity(depth) : 0; }
   inline       unsigned int      Edge::getRealOccupancy     () const { return _realOccupancy; }
   inline       unsigned int      Edge::getEstimateOccupancy () const { return _estimateOccupancy; }
   inline       float             Edge::getHistoricCost      () const { return _historicCost; }
@@ -137,8 +142,10 @@ namespace Anabatic {
   inline       GCell*            Edge::getTarget            () const { return _target; }
   inline       DbU::Unit         Edge::getAxis              () const { return _axis; }
   inline const vector<Segment*>& Edge::getSegments          () const { return _segments; }
-  inline       void              Edge::incCapacity          ( int delta ) { _capacity  = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
-  inline       void              Edge::setCapacity          ( int c     ) { _capacity  = ((int) c > 0) ? c : 0; }
+  inline       void              Edge::forceCapacity        ( int capacity ) { if (_capacities) _capacities->forceCapacity(capacity); }
+  inline       void              Edge::reserveCapacity      ( int delta ) { _reservedCapacity  = ((int)_reservedCapacity+delta > 0) ? _reservedCapacity+delta : 0; }
+//inline       void              Edge::incCapacity          ( int delta ) { _capacity  = ((int)_capacity+delta > 0) ? _capacity+delta : 0; }
+//inline       void              Edge::setCapacity          ( int c     ) { _capacity  = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setRealOccupancy     ( int c     ) { _realOccupancy = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setHistoricCost      ( float hcost ) { _historicCost = hcost; }
   inline const Flags&            Edge::flags                () const { return _flags; }

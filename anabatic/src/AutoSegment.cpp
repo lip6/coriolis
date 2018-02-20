@@ -402,7 +402,7 @@ namespace Anabatic {
 
   void  AutoSegment::_initialize ()
   {
-    cerr << "AutoSegment::_initialize()" << endl;
+  //cerr << "AutoSegment::_initialize()" << endl;
 
     _initialized = true;
     for ( size_t depth=0 ; depth<Session::getDepth() ; ++depth ) {
@@ -412,8 +412,8 @@ namespace Anabatic {
       bool       isVertical     = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
       uint32_t   flags          = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
 
-      cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
-           << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
+    //cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
+    //     << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
 
       *viaToSameCap = Session::getWireWidth(depth)/2;
 
@@ -429,12 +429,12 @@ namespace Anabatic {
           *viaToBottomCap = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flags );
       }
 
-      cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
-      cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
-      if (depth > 0)                                                                          
-        cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
-      cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
-      cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
+    //cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
+    //cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
+    //if (depth > 0)                                                                          
+    //  cerr << "  viaToBottom width:" << DbU::getValueString( Session::getViaWidth(depth-1)/2 ) << endl;
+    //cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
+    //cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
  
       _extensionCaps.push_back( std::array<DbU::Unit*,3>( { viaToTopCap, viaToBottomCap, viaToSameCap } ) );
     }

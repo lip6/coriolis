@@ -43,7 +43,9 @@ namespace Anabatic {
   const BaseFlags  Flags::ChannelRow          = (1L << 13);
   const BaseFlags  Flags::HRailGCell          = (1L << 14);
   const BaseFlags  Flags::VRailGCell          = (1L << 15);
-  const BaseFlags  Flags::IllimitedCapacity   = (1L <<  5);
+// Flags for Edge objects states only.                      
+  const BaseFlags  Flags::NullCapacity        = (1L <<  5);
+  const BaseFlags  Flags::InfiniteCapacity    = (1L <<  6);
 // Flags for Anabatic objects states only.                      
   const BaseFlags  Flags::DemoMode            = (1L <<  5);
   const BaseFlags  Flags::WarnOnGCellOverload = (1L <<  6);
@@ -78,6 +80,10 @@ namespace Anabatic {
                                               | StrutGCell
                                               | HRailGCell
                                               | VRailGCell;
+  const BaseFlags  Flags::EdgeCapacityMask    = Horizontal
+                                              | Vertical
+                                              | NullCapacity
+                                              | InfiniteCapacity ;
 // Flags for functions arguments only.           
   const BaseFlags  Flags::Create              = (1L <<  5);
   const BaseFlags  Flags::WithPerpands        = (1L <<  6);

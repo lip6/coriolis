@@ -64,6 +64,8 @@ namespace Anabatic {
 
   class AnabaticEngine;
   class GCell;
+  
+
 
 
 // -------------------------------------------------------------------
@@ -123,172 +125,176 @@ namespace Anabatic {
           float  _density;
       };
     public:
-      static        uint32_t              getDisplayMode      ();
-      static        void                  setDisplayMode      ( uint32_t );
-      static        Box                   getBorder           ( const GCell*, const GCell* );
-    public:                           
-      static        GCell*                create              ( AnabaticEngine* );
-    public:                           
-      inline        bool                  isSaturated         () const;
-                    bool                  isSaturated         ( size_t depth ) const;
-      inline        bool                  isInvalidated       () const;
-      inline        bool                  isHFlat             () const;
-      inline        bool                  isVFlat             () const;
-      inline        bool                  isFlat              () const;
-      inline        bool                  isDevice            () const;
-      inline        bool                  isHChannel          () const;
-      inline        bool                  isVChannel          () const;
-      inline        bool                  isStrut             () const;
-      inline        bool                  isAnalog            () const;
-      inline        bool                  isMatrix            () const;
-      inline        bool                  isRow               () const;
-      inline        bool                  isIoPad             () const;
-      inline        bool                  isHRail             () const;
-      inline        bool                  isVRail             () const;
-      inline        bool                  isStdCellRow        () const;
-      inline        bool                  isChannelRow        () const;
-                    bool                  isWest              ( GCell* ) const;
-                    bool                  isEast              ( GCell* ) const;
-                    bool                  isNorth             ( GCell* ) const;
-                    bool                  isSouth             ( GCell* ) const;
-                    Contact*              hasGContact         ( const Contact* ) const;
-                    Contact*              hasGContact         ( const Net* ) const;
-      inline        AnabaticEngine*       getAnabatic         () const;
-      inline        Flags                 getType             () const;
-      inline        DbU::Unit             getXMin             () const;
-      inline        DbU::Unit             getYMin             () const;
-      inline        DbU::Unit             getXMax             ( int shrink=0 ) const;
-      inline        DbU::Unit             getYMax             ( int shrink=0 ) const;
-      inline        DbU::Unit             getXCenter          () const;
-      inline        DbU::Unit             getYCenter          () const;
-      inline        DbU::Unit             getConstraintXMax   ( int shrink=0 ) const;
-      inline        DbU::Unit             getConstraintYMax   ( int shrink=0 ) const;
-      inline        Interval              getSide             ( Flags direction, int shrink=0 ) const;
-      inline        Point                 getCenter           () const;
-      inline        Box                   getConstraintBox    () const;
-      inline const  vector<Edge*>&        getWestEdges        () const;
-      inline const  vector<Edge*>&        getEastEdges        () const;
-      inline const  vector<Edge*>&        getNorthEdges       () const;
-      inline const  vector<Edge*>&        getSouthEdges       () const;
-                    Edge*                 getEdgeTo           ( GCell*, Flags sideHint=Flags::AllSides ) const;
-                    Edge*                 getEdgeAt           ( Flags sideHint, DbU::Unit u ) const;
-      inline        Edges                 getEdges            ( Flags sides=Flags::AllSides ) const;
-      inline        GCell*                getWest             () const;
-      inline        GCell*                getEast             () const;
-      inline        GCell*                getSouth            () const;
-      inline        GCell*                getNorth            () const;
+      static        uint32_t              getDisplayMode       ();
+      static        void                  setDisplayMode       ( uint32_t );
+      static        Box                   getBorder            ( const GCell*, const GCell* );
+    public:                                                    
+      static        GCell*                create               ( AnabaticEngine* );
+    public:                                                    
+      inline        bool                  isSaturated          () const;
+                    bool                  isSaturated          ( size_t depth ) const;
+      inline        bool                  isInvalidated        () const;
+      inline        bool                  isHFlat              () const;
+      inline        bool                  isVFlat              () const;
+      inline        bool                  isFlat               () const;
+      inline        bool                  isDevice             () const;
+      inline        bool                  isHChannel           () const;
+      inline        bool                  isVChannel           () const;
+      inline        bool                  isStrut              () const;
+      inline        bool                  isAnalog             () const;
+      inline        bool                  isMatrix             () const;
+      inline        bool                  isRow                () const;
+      inline        bool                  isIoPad              () const;
+      inline        bool                  isHRail              () const;
+      inline        bool                  isVRail              () const;
+      inline        bool                  isStdCellRow         () const;
+      inline        bool                  isChannelRow         () const;
+                    bool                  isWest               ( GCell* ) const;
+                    bool                  isEast               ( GCell* ) const;
+                    bool                  isNorth              ( GCell* ) const;
+                    bool                  isSouth              ( GCell* ) const;
+                    Contact*              hasGContact          ( const Contact* ) const;
+                    Contact*              hasGContact          ( const Net* ) const;
+                    bool                  isHorizontalPlane    ( size_t depth ) const;
+                    bool                  isVerticalPlane      ( size_t depth ) const;
+      inline        AnabaticEngine*       getAnabatic          () const;
+      inline        Flags                 getType              () const;
+      inline        DbU::Unit             getXMin              () const;
+      inline        DbU::Unit             getYMin              () const;
+      inline        DbU::Unit             getXMax              ( int shrink=0 ) const;
+      inline        DbU::Unit             getYMax              ( int shrink=0 ) const;
+      inline        DbU::Unit             getXCenter           () const;
+      inline        DbU::Unit             getYCenter           () const;
+      inline        DbU::Unit             getConstraintXMax    ( int shrink=0 ) const;
+      inline        DbU::Unit             getConstraintYMax    ( int shrink=0 ) const;
+      inline        Interval              getSide              ( Flags direction, int shrink=0 ) const;
+      inline        Point                 getCenter            () const;
+      inline        Box                   getConstraintBox     () const;
+      inline const  vector<Edge*>&        getWestEdges         () const;
+      inline const  vector<Edge*>&        getEastEdges         () const;
+      inline const  vector<Edge*>&        getNorthEdges        () const;
+      inline const  vector<Edge*>&        getSouthEdges        () const;
+                    Edge*                 getEdgeTo            ( GCell*, Flags sideHint=Flags::AllSides ) const;
+                    Edge*                 getEdgeAt            ( Flags sideHint, DbU::Unit u ) const;
+      inline        Edges                 getEdges             ( Flags sides=Flags::AllSides ) const;
+      inline        GCell*                getWest              () const;
+      inline        GCell*                getEast              () const;
+      inline        GCell*                getSouth             () const;
+      inline        GCell*                getNorth             () const;
+                                                               
+                    GCell*                getEastNMatrix       () const;
+                    GCell*                getNorthNMatrix      () const;
+                                                               
+      inline        Edge*                 getWestEdge          () const;
+      inline        Edge*                 getEastEdge          () const;
+      inline        Edge*                 getSouthEdge         () const;
+      inline        Edge*                 getNorthEdge         () const;
+                                                               
+                    GCell*                getWest              ( DbU::Unit y ) const;
+                    GCell*                getEast              ( DbU::Unit y ) const;
+                    GCell*                getSouth             ( DbU::Unit x ) const;
+                    GCell*                getNorth             ( DbU::Unit x ) const;
+                    GCell*                getNeighborAt        ( Flags side, DbU::Unit axis ) const;
+                    GCell*                getUnder             ( DbU::Unit x, DbU::Unit y ) const;
+      inline        GCell*                getUnder             ( Point p ) const;
+                    GCell*                hcut                 ( DbU::Unit y );
+                    GCell*                vcut                 ( DbU::Unit x );
+                    bool                  doGrid               ();
+                    Contact*              getGContact          ( Net* );
+      inline const  vector<Contact*>&     getGContacts         () const;
+                    Contact*              breakGoThrough       ( Net* net );
+                    bool                  unrefContact         ( Contact* );
+                    void                  setSouthWestCorner   ( DbU::Unit x, DbU::Unit y );
+                    void                  cleanupGlobal        ();
+      inline        DbU::Unit             getWidth             () const;
+      inline        DbU::Unit             getHeight            () const;
+    // Detailed routing functions.                             
+                    bool                  hasFreeTrack         ( size_t depth, float reserve ) const;
+      inline        size_t                getDepth             () const;
+                    size_t                getNetCount          () const;
+                    int                   getHCapacity         () const;
+                    int                   getVCapacity         () const;
+                    int                   getCapacity          ( size_t depth ) const;
+                    float                 getDensity           ( Flags flags=Flags::NoFlags ) const;
+                    float                 getDensity           ( size_t depth ) const;
+                    float                 getAverageHVDensity  () const;
+                    float                 getMaxHVDensity      () const;
+      inline        float                 getCDensity          ( Flags flags=Flags::NoFlags ) const;
+      inline        float                 getWDensity          ( size_t depth, Flags flags=Flags::NoFlags  ) const;
+      inline        DbU::Unit             getBlockage          ( size_t depth ) const;
+      inline        float                 getFragmentation     ( size_t depth ) const;
+      inline        float                 getFeedthroughs      ( size_t depth ) const;
+      inline        float                 getGlobalsCount      ( size_t depth ) const;
+      inline  const vector<AutoSegment*>& getHSegments         () const;
+      inline  const vector<AutoSegment*>& getVSegments         () const;
+      inline  const vector<AutoContact*>& getContacts          () const;
+                    AutoSegments          getHStartSegments    ();
+                    AutoSegments          getVStartSegments    ();
+                    AutoSegments          getHStopSegments     ();
+                    AutoSegments          getVStopSegments     ();
+      inline        AutoSegments          getStartSegments     ( Flags direction );
+      inline        AutoSegments          getStopSegments      ( Flags direction );
+                    size_t                getRoutingPads       ( set<RoutingPad*>& );
+      inline  const Key&                  getKey               () const;
+                    size_t                checkDensity         () const;
+                    bool                  checkEdgeSaturation  ( size_t hreserved, size_t vreserved) const;
+                    void                  setType              ( Flags );
+                    void                  addBlockage          ( size_t depth, DbU::Unit );
+      inline        void                  addHSegment          ( AutoSegment* );
+      inline        void                  addVSegment          ( AutoSegment* );
+      inline        void                  addContact           ( AutoContact* );
+                    void                  removeVSegment       ( AutoSegment* );
+                    void                  removeHSegment       ( AutoSegment* );
+                    void                  removeContact        ( AutoContact* );
+                    void                  updateContacts       ();
+                    size_t                updateDensity        ();
+      inline        void                  updateKey            ( size_t depth );
+                    void                  truncDensities       ();
+                    bool                  stepBalance          ( size_t depth, Set& invalidateds );
+                    void                  rpDesaturate         ( set<Net*>& );
+                    bool                  stepDesaturate       ( size_t                    depth
+                                                               , set<Net*>&, AutoSegment*& moved
+                                                               , Flags                     flags=Flags::NoFlags );
+                    bool                  stepNetDesaturate    ( size_t     depth
+                                                               , set<Net*>& globalNets
+                                                               , Set&       invalidateds );
 
-                    GCell*                getEastNMatrix      () const;
-                    GCell*                getNorthNMatrix     () const;
-
-      inline        Edge*                 getWestEdge         () const;
-      inline        Edge*                 getEastEdge         () const;
-      inline        Edge*                 getSouthEdge        () const;
-      inline        Edge*                 getNorthEdge        () const;
-
-                    GCell*                getWest             ( DbU::Unit y ) const;
-                    GCell*                getEast             ( DbU::Unit y ) const;
-                    GCell*                getSouth            ( DbU::Unit x ) const;
-                    GCell*                getNorth            ( DbU::Unit x ) const;
-                    GCell*                getNeighborAt       ( Flags side, DbU::Unit axis ) const;
-                    GCell*                getUnder            ( DbU::Unit x, DbU::Unit y ) const;
-      inline        GCell*                getUnder            ( Point p ) const;
-                    GCell*                hcut                ( DbU::Unit y );
-                    GCell*                vcut                ( DbU::Unit x );
-                    bool                  doGrid              ();
-                    Contact*              getGContact         ( Net* );
-      inline const  vector<Contact*>&     getGContacts        () const;
-                    Contact*              breakGoThrough      ( Net* net );
-                    bool                  unrefContact        ( Contact* );
-                    void                  setSouthWestCorner  ( DbU::Unit x, DbU::Unit y );
-                    void                  cleanupGlobal       ();
-      inline        DbU::Unit             getWidth            () const;
-      inline        DbU::Unit             getHeight           () const;
-    // Detailed routing functions.
-                    bool                  hasFreeTrack        ( size_t depth, float reserve ) const;
-      inline        size_t                getDepth            () const;
-                    size_t                getNetCount         () const;
-                    float                 getHCapacity        () const;
-                    float                 getVCapacity        () const;
-                    float                 getDensity          ( Flags flags=Flags::NoFlags ) const;
-                    float                 getAverageHVDensity () const;
-                    float                 getMaxHVDensity     () const;
-      inline        float                 getCDensity         ( Flags flags=Flags::NoFlags ) const;
-      inline        float                 getWDensity         ( size_t depth, Flags flags=Flags::NoFlags  ) const;
-      inline        DbU::Unit             getBlockage         ( size_t depth ) const;
-      inline        float                 getFragmentation    ( size_t depth ) const;
-      inline        float                 getFeedthroughs     ( size_t depth ) const;
-      inline        float                 getGlobalsCount     ( size_t depth ) const;
-      inline  const vector<AutoSegment*>& getHSegments        () const;
-      inline  const vector<AutoSegment*>& getVSegments        () const;
-      inline  const vector<AutoContact*>& getContacts         () const;
-                    AutoSegments          getHStartSegments   ();
-                    AutoSegments          getVStartSegments   ();
-                    AutoSegments          getHStopSegments    ();
-                    AutoSegments          getVStopSegments    ();
-      inline        AutoSegments          getStartSegments    ( Flags direction );
-      inline        AutoSegments          getStopSegments     ( Flags direction );
-                    size_t                getRoutingPads      ( set<RoutingPad*>& );
-      inline  const Key&                  getKey              () const;
-                    size_t                checkDensity        () const;
-                    bool                  checkEdgeSaturation ( size_t hreserved, size_t vreserved) const;
-                    void                  setType             ( Flags );
-                    void                  addBlockage         ( size_t depth, DbU::Unit );
-      inline        void                  addHSegment         ( AutoSegment* );
-      inline        void                  addVSegment         ( AutoSegment* );
-      inline        void                  addContact          ( AutoContact* );
-                    void                  removeVSegment      ( AutoSegment* );
-                    void                  removeHSegment      ( AutoSegment* );
-                    void                  removeContact       ( AutoContact* );
-                    void                  updateContacts      ();
-                    size_t                updateDensity       ();
-      inline        void                  updateKey           ( size_t depth );
-                    void                  truncDensities      ();
-                    bool                  stepBalance         ( size_t depth, Set& invalidateds );
-                    void                  rpDesaturate        ( set<Net*>& );
-                    bool                  stepDesaturate      ( size_t                    depth
-                                                              , set<Net*>&, AutoSegment*& moved
-                                                              , Flags                     flags=Flags::NoFlags );
-                    bool                  stepNetDesaturate   ( size_t     depth
-                                                              , set<Net*>& globalNets
-                                                              , Set&       invalidateds );
-
-                    void                  setEdgesOccupancy   (unsigned int, unsigned int);
+                    void                  forceEdgesCapacities ( unsigned int hcapacities, unsigned int vcapacities );
     // Misc. functions.
-      inline const  Flags&                flags               () const;
-      inline        Flags&                flags               ();
-                    void                  _add                ( Edge* edge, Flags side );
-                    void                  _remove             ( Edge* edge, Flags side=Flags::AllSides );
-                    void                  _destroyEdges       ();
-    private:                              
-                    void                  _moveEdges          ( GCell* dest, size_t ibegin, Flags flags );
-    public:                                      
-    // Observers.                         
-      template<typename OwnerT>           
-      inline        OwnerT*               getObserver         ( size_t slot );
-      inline        void                  setObserver         ( size_t slot, BaseObserver* );
-      inline        void                  notify              ( unsigned int flags );
-    // ExtensionGo support.                      
-      inline  const Name&                 staticGetName       (); 
-      virtual const Name&                 getName             () const;
-      virtual       void                  translate           ( const DbU::Unit&, const DbU::Unit& );
-      virtual       Box                   getBoundingBox      () const;
-      virtual       void                  invalidate          ( bool propagateFlag=true );
-      virtual       void                  materialize         ();
-    public:                                                
-    // Inspector support.                                  
-      virtual       string                _getTypeName        () const;
-      virtual       string                _getString          () const;
-      virtual       Record*               _getRecord          () const;
-    protected:                                                
-                                          GCell               ( AnabaticEngine*, DbU::Unit xmin, DbU::Unit ymin );
-      virtual                            ~GCell               ();
-                    GCell*                _create             ( DbU::Unit xmin, DbU::Unit ymin );
-      virtual       void                  _postCreate         ();
-      virtual       void                  _preDestroy         ();
-    private:                        
-                                          GCell               ( const GCell& );
-                    GCell&                operator=           ( const GCell& );
+      inline const  Flags&                flags                () const;
+      inline        Flags&                flags                ();
+                    void                  _add                 ( Edge* edge, Flags side );
+                    void                  _remove              ( Edge* edge, Flags side=Flags::AllSides );
+                    void                  _destroyEdges        ();
+    private:                                                   
+                    void                  _moveEdges           ( GCell* dest, size_t ibegin, Flags flags );
+    public:                                                    
+    // Observers.                                              
+      template<typename OwnerT>                                
+      inline        OwnerT*               getObserver          ( size_t slot );
+      inline        void                  setObserver          ( size_t slot, BaseObserver* );
+      inline        void                  notify               ( unsigned int flags );
+    // ExtensionGo support.                                    
+      inline  const Name&                 staticGetName        (); 
+      virtual const Name&                 getName              () const;
+      virtual       void                  translate            ( const DbU::Unit&, const DbU::Unit& );
+      virtual       Box                   getBoundingBox       () const;
+      virtual       void                  invalidate           ( bool propagateFlag=true );
+      virtual       void                  materialize          ();
+    public:                                                    
+    // Inspector support.                                      
+      virtual       string                _getTypeName         () const;
+      virtual       string                _getString           () const;
+      virtual       Record*               _getRecord           () const;
+    protected:                                                 
+                                          GCell                ( AnabaticEngine*, DbU::Unit xmin, DbU::Unit ymin );
+      virtual                            ~GCell                ();
+                    GCell*                _create              ( DbU::Unit xmin, DbU::Unit ymin );
+      virtual       void                  _postCreate          ();
+      virtual       void                  _preDestroy          ();
+    private:                                                   
+                                          GCell                ( const GCell& );
+                    GCell&                operator=            ( const GCell& );
     private:
       static  Name                  _extensionName;
       static  uint32_t              _displayMode;
@@ -362,6 +368,7 @@ namespace Anabatic {
 
   inline       DbU::Unit             GCell::getWidth      () const { return (getXMax()-getXMin()); }
   inline       DbU::Unit             GCell::getHeight     () const { return (getYMax()-getYMin()); }
+  inline       float                 GCell::getDensity    ( size_t depth ) const { return (depth<_depth) ? _densities[depth] : 0.0; }
 
   inline const GCell::Key&           GCell::getKey        () const { return _key; }
   inline       void                  GCell::setType       ( Flags type ) { _flags.reset(Flags::GCellTypeMask); _flags |= (type&Flags::GCellTypeMask); };

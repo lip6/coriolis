@@ -38,7 +38,8 @@ namespace Anabatic {
   Edge::Edge ( GCell* source, GCell* target, Flags flags )
     : Super(source->getCell())
     , _flags            (flags|Flags::Invalidated)
-    , _capacity         (0)
+    , _capacities       (NULL)
+    , _reservedCapacity (0)
     , _realOccupancy    (0)
     , _estimateOccupancy(0.0)
     , _historicCost     (0.0)
@@ -104,6 +105,7 @@ namespace Anabatic {
 
   void  Edge::_preDestroy ()
   {
+    _source->getAnabatic()->_unrefCapacity( _capacities );
     _source->_remove( this, _flags|Flags::Source );
     _target->_remove( this, _flags|Flags::Target );
 
@@ -179,8 +181,8 @@ namespace Anabatic {
   {
     unsigned int occupancy = 0;
     if ((int)_realOccupancy + delta > 0) occupancy = _realOccupancy + delta;
-    if ((_realOccupancy <= _capacity) and (occupancy >  _capacity)) getAnabatic()->addOv   ( this );
-    if ((_realOccupancy >  _capacity) and (occupancy <= _capacity)) getAnabatic()->removeOv( this );
+    if ((_realOccupancy <= getCapacity()) and (occupancy >  getCapacity())) getAnabatic()->addOv   ( this );
+    if ((_realOccupancy >  getCapacity()) and (occupancy <= getCapacity())) getAnabatic()->removeOv( this );
     _realOccupancy = occupancy;
   }
 
@@ -291,13 +293,14 @@ namespace Anabatic {
   {
     cdebug_log(110,1) << "Edge::materialize() " << this << endl;
 
-    Interval side = getSide();
+    Flags    flags = _flags;
+    Interval side  = getSide();
     _axis = side.getCenter();
 
-    if      (getSource()->isStdCellRow() and getTarget()->isStdCellRow()) _capacity = 0;
-    else if (getSource()->isChannelRow() and getTarget()->isChannelRow()) _capacity = 100;
-    else
-      _capacity = getAnabatic()->getCapacity( side, _flags );
+    if      (getSource()->isStdCellRow() and getTarget()->isStdCellRow()) flags |= Flags::NullCapacity;
+    else if (getSource()->isChannelRow() and getTarget()->isChannelRow()) flags |= Flags::InfiniteCapacity;
+
+    _capacities = getAnabatic()->_createCapacity( _flags, side );
 
     _flags.reset( Flags::Invalidated );
     cdebug_log(110,0) << "Edge::materialize() " << this << endl;
@@ -335,12 +338,12 @@ namespace Anabatic {
   bool Edge::isMaxCapacity ( Net* net ) const 
   {
     if (net) {
-      cdebug_log(112,0) << "_capacity:" << _capacity << endl;
+      cdebug_log(112,0) << "_capacity:" << getCapacity() << endl;
 
       Hurricane::NetRoutingState* state = Hurricane::NetRoutingExtension::get( net );
-      return ((_realOccupancy + state->getWPitch()) > _capacity) ? true : false; 
+      return ((_realOccupancy + state->getWPitch()) > getCapacity()) ? true : false; 
     }
-    return (_realOccupancy >= _capacity) ? true : false; 
+    return (_realOccupancy >= getCapacity()) ? true : false; 
   }
 
 
@@ -366,7 +369,7 @@ namespace Anabatic {
     s.insert( s.size()-1, " "   +DbU::getValueString(center.getY()) );
     s.insert( s.size()-1, "] "  +DbU::getValueString(_axis) );
     s.insert( s.size()-1, " "   +getString(_realOccupancy) );
-    s.insert( s.size()-1, "/"   +getString(_capacity) );
+    s.insert( s.size()-1, "/"   +getString(getCapacity()) );
     s.insert( s.size()-1, " h:" +getString(_historicCost) );
     s.insert( s.size()-1, " "   +getString(_flags) );
     return s;
@@ -377,7 +380,8 @@ namespace Anabatic {
   {
     Record* record = Super::_getRecord();
     record->add( getSlot("_flags"            ,  _flags            ) );
-    record->add( getSlot("_capacity"         ,  _capacity         ) );
+    record->add( getSlot("_capacities"       ,  _capacities       ) );
+    record->add( getSlot("_reservedCapacity" ,  _reservedCapacity ) );
     record->add( getSlot("_realOccupancy"    ,  _realOccupancy    ) );
     record->add( getSlot("_estimateOccupancy",  _estimateOccupancy) );
     record->add( getSlot("_source"           ,  _source           ) );

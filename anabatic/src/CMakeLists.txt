@@ -15,6 +15,7 @@ endif ( CHECK_DETERMINISM )
                    set( includes     anabatic/Constants.h
                                      anabatic/Configuration.h
                                      anabatic/Matrix.h
+                                     anabatic/EdgeCapacity.h
                                      anabatic/Edge.h                 anabatic/Edges.h
                                      anabatic/GCell.h               #anabatic/GCells.h
                                      anabatic/AnabaticEngine.h
@@ -39,6 +40,7 @@ endif ( CHECK_DETERMINISM )
                    set( cpps         Constants.cpp
                                      Configuration.cpp
                                      Matrix.cpp
+                                     EdgeCapacity.cpp
                                      Edge.cpp
                                      Edges.cpp
                                      GCell.cpp
