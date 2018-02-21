@@ -246,6 +246,7 @@ namespace Anabatic {
                     void                  removeVSegment       ( AutoSegment* );
                     void                  removeHSegment       ( AutoSegment* );
                     void                  removeContact        ( AutoContact* );
+                    void                  updateGContacts      ();
                     void                  updateContacts       ();
                     size_t                updateDensity        ();
       inline        void                  updateKey            ( size_t depth );
