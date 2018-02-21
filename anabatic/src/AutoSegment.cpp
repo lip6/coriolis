@@ -239,16 +239,20 @@ namespace {
 
   class SideStack {
     public:
-                              SideStack     ( Flags direction, DbU::Unit pitch );
-             const Interval&  getSideAt     ( DbU::Unit ) const;
-      inline const Interval&  getGSide      () const;
-      inline       DbU::Unit  getGSideMin   () const;
-      inline       DbU::Unit  getGSideMax   () const;
-                   void       addGCell      ( const GCell* );
-      inline       void       restrictGSide ( const Interval& );
-                   void       show          () const;
+                              SideStack      ( Flags direction, DbU::Unit pitch );
+      inline       bool       isHoled        () const;
+             const Interval&  getSideAt      ( DbU::Unit ) const;
+      inline const Interval&  getGSide       () const;
+      inline       DbU::Unit  getGSideMin    () const;
+      inline       DbU::Unit  getGSideMax    () const;
+      inline       DbU::Unit  getGSideCenter () const;
+                   void       addGCell       ( const GCell* );
+      inline       bool       intersect      ( const Interval& ) const;
+      inline       void       restrictGSide  ( const Interval& );
+                   void       show           () const;
     private:
       Flags                    _direction;
+      bool                     _holed;
       DbU::Unit                _pitch;
       Interval                 _full;
       Interval                 _gside;
@@ -258,6 +262,7 @@ namespace {
 
   SideStack::SideStack ( Flags direction, DbU::Unit pitch )
     : _direction( (direction & Flags::Horizontal) ? Flags::Vertical : Flags::Horizontal )
+    , _holed    (false)
     , _pitch    (pitch)
     , _full     (false)
     , _gside    (false)
@@ -265,10 +270,13 @@ namespace {
   { }
 
 
-  inline const Interval&  SideStack::getGSide      () const { return _gside; }
-  inline       DbU::Unit  SideStack::getGSideMin   () const { return _gside.getVMin(); }
-  inline       DbU::Unit  SideStack::getGSideMax   () const { return _gside.getVMax(); }
-  inline       void       SideStack::restrictGSide ( const Interval& restrict ) { _gside.intersection( restrict ); }
+  inline       bool       SideStack::isHoled        () const { return _holed; }
+  inline const Interval&  SideStack::getGSide       () const { return _gside; }
+  inline       DbU::Unit  SideStack::getGSideMin    () const { return _gside.getVMin(); }
+  inline       DbU::Unit  SideStack::getGSideMax    () const { return _gside.getVMax(); }
+  inline       DbU::Unit  SideStack::getGSideCenter () const { return _gside.getVMax(); }
+  inline       bool       SideStack::intersect      ( const Interval& side ) const { return _gside.intersect(side); }
+  inline       void       SideStack::restrictGSide  ( const Interval& restrict ) { if (not _holed) _gside.intersection(restrict); }
 
 
   const Interval& SideStack::getSideAt ( DbU::Unit position ) const
@@ -290,7 +298,20 @@ namespace {
     DbU::Unit position = (_direction & Flags::Vertical) ? gcell->getBoundingBox().getXMin()
                                                         : gcell->getBoundingBox().getYMin();
 
-    _gside.intersection( side );
+    if (not _holed and intersect(side)) _gside.intersection( side );
+    else {
+      if (not _holed) {
+        _holed = true;
+        if (side.getVMin() > _gside.getVMax()) _gside = Interval( _gside.getVMax(),   side.getVMin() );
+        else                                   _gside = Interval(   side.getVMax(), _gside.getVMin() );
+      } else {
+        if (not intersect(side)) {
+          if (side.getVMax() < _gside.getVMin()) _gside.merge( side.getVMax() );
+          else                                   _gside.merge( side.getVMin() );
+        }
+      }
+    }
+
     _sides.insert( make_pair(position,side) );
   }
 
@@ -1176,15 +1197,20 @@ namespace Anabatic {
 
         cdebug_log(145,0) << "Using pitch for L/T shrink:" << DbU::getValueString(getPitch()) << endl;
         for ( AutoSegment* aligned : aligneds ) {
+          cdebug_log(145,0) << "@ " << aligned << endl;
+
           aligned->getGCells( gcells );
           for ( GCell* gcell : gcells ) {
             sideStack.addGCell( gcell );
             cdebug_log(145,0) << "| gcellSide:" << sideStack.getGSide() << " (from " << gcell << ")" << endl;
           }
-          if (aligned->isStrongTerminal()) {
+          if (aligned->isStrongTerminal() and not sideStack.isHoled()) {
+            cdebug_log(145,0) << "> Is strong terminal, restrict." << aligned << endl;
+
             Interval terminalConstraints;
             aligned->getConstraints( terminalConstraints );
             sideStack.restrictGSide( terminalConstraints );
+            cdebug_log(145,0) << "| " << terminalConstraints.intersection(sideStack.getGSide()) << endl;
             cdebug_log(145,0) << "| gcellSide:" << sideStack.getGSide() << " (from " << aligned << ")" << endl;
           }
         }
@@ -1274,19 +1300,23 @@ namespace Anabatic {
         cdebug_tabw(145,-1);
       }
   
-      if (attractors.getAttractorsCount()) {
-        optimalMin = attractors.getLowerMedian();
-        optimalMax = attractors.getUpperMedian();
+      if (sideStack.isHoled()) {
+        optimalMin = optimalMax = sideStack.getGSideCenter();
       } else {
-        cdebug_log(145,0) << "No attractors, reverting to GCell bounding box" << endl;
+        if (attractors.getAttractorsCount()) {
+          optimalMin = attractors.getLowerMedian();
+          optimalMax = attractors.getUpperMedian();
+        } else {
+          cdebug_log(145,0) << "No attractors, reverting to GCell bounding box" << endl;
+          
+          optimalMin = 0;
+          optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
+                                        : _gcell->getBoundingBox().getXMax();
+        }
 
-        optimalMin = 0;
-        optimalMax = (isHorizontal()) ? _gcell->getBoundingBox().getYMax()
-                                      : _gcell->getBoundingBox().getXMax();
+        setInBound( sideStack.getGSideMin(), sideStack.getGSideMax(), optimalMin );
+        setInBound( sideStack.getGSideMin(), sideStack.getGSideMax(), optimalMax );
       }
-
-      setInBound( sideStack.getGSideMin(), sideStack.getGSideMax(), optimalMin );
-      setInBound( sideStack.getGSideMin(), sideStack.getGSideMax(), optimalMax );
 
       cdebug_log(145,0) << "optimalMin: " << DbU::getValueString(optimalMin) << endl;
       cdebug_log(145,0) << "optimalMax: " << DbU::getValueString(optimalMax) << endl;

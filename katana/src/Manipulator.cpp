@@ -1263,6 +1263,12 @@ namespace Katana {
         break;
     }
     if (igcell == gcells.size()) return false;
+    if (gcells[igcell]->isDevice()) {
+      if      (igcell > 0)               --igcell;
+      else if (igcell < gcells.size()-1) ++igcell;
+      else return false;
+    }
+    
     if (not _segment->canDogleg(gcells[igcell])) return false;
 
     TrackElement* dogleg   = NULL;

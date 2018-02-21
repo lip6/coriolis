@@ -1286,13 +1286,19 @@ namespace Katana {
       case DataNegociate::RipupPerpandiculars:
       case DataNegociate::Minimize:
       case DataNegociate::Dogleg:
-        cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+        if (NetRoutingExtension::isAnalog(segment->getNet())) {
+          cdebug_log(159,0) << "Global, SegmentFsm / Analogic: Try to dogleg once." << endl;
+          success = manipulator.makeDogleg( segment->getCanonicalInterval().getCenter() );
+          if (success) break;
+        } else {
+          cdebug_log(159,0) << "Global, SegmentFsm: RipupPerpandiculars." << endl;
+        }
         nextState = DataNegociate::Slacken;
         break;
       case DataNegociate::Slacken:
         cdebug_log(159,0) << "Global, SegmentFsm: Slacken "
                           << ((manipulator.getEvent())
-                             ? manipulator.getEvent()->getConstraints() : "(not event yet)") << endl;
+                             ? manipulator.getEvent()->getConstraints() : "(no event yet)") << endl;
         if (   manipulator.getEvent()
            and manipulator.getEvent()->getConstraints().isPonctual()
            and segment->canMoveUp(1.0,Flags::CheckLowUpDensity|Flags::AllowTerminal) ) {
