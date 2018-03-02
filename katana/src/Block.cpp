@@ -342,7 +342,7 @@ namespace Katana {
 
       cmess2 << Dots::asString( rowName.str(), rowTracks.str() ) << endl;
     }
-
+    _katana->_updateGContacts();
     _katana->invalidateRoutingPads();
 
     if (not sessionReUse) Session::close();

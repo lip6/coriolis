@@ -238,6 +238,8 @@ namespace Anabatic {
                          , Conn_2G          = CONNEXITY_VALUE( 2, 0, 0, 0, 0 , 0 )
                          , Conn_3G          = CONNEXITY_VALUE( 3, 0, 0, 0, 0 , 0 )
                          , Conn_4G          = CONNEXITY_VALUE( 4, 0, 0, 0, 0 , 0 )
+                         , Conn_5G          = CONNEXITY_VALUE( 5, 0, 0, 0, 0 , 0 )
+                         , Conn_6G          = CONNEXITY_VALUE( 6, 0, 0, 0, 0 , 0 )
                          , Conn_0G_2M1      = CONNEXITY_VALUE( 0, 2, 0, 0, 0 , 0 )
                          , Conn_1G_1M1      = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 0 )
                          , Conn_1G_2M1      = CONNEXITY_VALUE( 1, 2, 0, 0, 0 , 0 )

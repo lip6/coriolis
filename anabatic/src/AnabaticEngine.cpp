@@ -810,7 +810,8 @@ namespace Anabatic {
       throw Error( badMethod, "Anabatic::loadGlobalRouting()", method, getString(_cell).c_str() );
     }
     cleanupGlobal();
-    relaxOverConstraineds();
+
+    if (not getConfiguration()->isTwoMetals()) relaxOverConstraineds();
 
     _state = EngineActive;
   }

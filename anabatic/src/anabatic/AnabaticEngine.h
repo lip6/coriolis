@@ -280,6 +280,7 @@ namespace Anabatic {
       inline        void              _add                  ( GCell* );
       inline        void              _remove               ( GCell* );
       inline        void              _updateLookup         ( GCell* );
+      inline        void              _updateGContacts      ();
       inline        void              _resizeMatrix         ();
       inline        bool              _inDestroy            () const;
     // Inspector support.                                   
@@ -352,6 +353,7 @@ namespace Anabatic {
   inline const NetDatas&         AnabaticEngine::getNetDatas           () const { return _netDatas; }
   inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
   inline       void              AnabaticEngine::_resizeMatrix         () { _matrix.resize( getCell(), getGCells() ); }
+  inline       void              AnabaticEngine::_updateGContacts      () { for ( GCell* gcell : getGCells() ) gcell->updateGContacts(); }
   inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )
