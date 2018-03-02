@@ -871,10 +871,12 @@ namespace Anabatic {
     segment2->updateNativeConstraints();
 
     if (autoTarget->canDrag() and not autoSource->canDrag()) {
-      Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Horizontal);
-      segment1->mergeUserConstraints( dragConstraints );
+      if (not autoTarget->getGCell()->isDevice()) {
+        Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Horizontal);
+        segment1->mergeUserConstraints( dragConstraints );
 
-      cdebug_log(149,0) << "Perpandical has drag constraints: " << dragConstraints << endl;
+        cdebug_log(149,0) << "Perpandical has drag constraints: " << dragConstraints << endl;
+      }
     }
 
     cdebug_tabw(149,-1);
