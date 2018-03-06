@@ -78,8 +78,10 @@ namespace Anabatic {
 
     int index = xy2maxIndex(x,y);
     cdebug_log(110,0) << "Matrix::getUnder() ("
-                    << DbU::getValueString(x) << " "
-                    << DbU::getValueString(y) << ") index:" << index << endl;
+                      << DbU::getValueString(x) << " "
+                      << DbU::getValueString(y) << ") index:" << index
+                      << " " << ((index < 0) ? NULL : _gcells[index]->getUnder(x,y)) << endl;
+
 
     return (index < 0) ? NULL : _gcells[index]->getUnder(x,y);
   }

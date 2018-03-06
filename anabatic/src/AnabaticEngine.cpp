@@ -239,14 +239,18 @@ namespace Anabatic {
         std::swap( gsource, gtarget );
     }
 
+    cdebug_log(112,0) << "flags:" << side << " axis:" << DbU::getValueString(axis) << endl;
+
     Edge* edge = gsource->getEdgeAt( side, axis );
     while ( edge ) {
       _elements.push_back( Element(edge->getSource(),edge) );
+      cdebug_log(112,0) << "| push:" << edge->getSource() << " from " << edge << endl;
 
       if (edge->getTarget() == gtarget) break;
       edge = edge->getTarget()->getEdgeAt( side, axis );
     } 
     _elements.push_back( Element(gtarget,NULL) );
+    cdebug_log(112,0) << "| push:" << gtarget << " last/target" << endl;
 
     cdebug_tabw(112,-1);
   }
@@ -755,8 +759,13 @@ namespace Anabatic {
 
       GCellsUnder gcells = getGCellsUnder( segment );
       if (not gcells->empty()) {
-        for ( size_t i=0 ; i<gcells->size()-1 ; ++i )
+        for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
+          cdebug_log(112,0) << "| " << gcells->gcellAt(i) << endl;
+          cdebug_log(112,0) << "| " << gcells->edgeAt(i) << endl;
           gcells->edgeAt(i)->remove( segment );
+        }
+      } else {
+        cdebug_log(112,0) << "No GCells under segment." << endl;
       }
 
       Contact* source = dynamic_cast<Contact*>( segment->getSource() );

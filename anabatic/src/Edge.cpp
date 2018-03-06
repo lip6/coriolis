@@ -24,6 +24,30 @@
 #include "anabatic/AnabaticEngine.h"
 
 
+namespace {
+
+  using namespace std;
+  using namespace Hurricane;
+
+
+  class SortSegmentByLength {
+    public:
+      inline bool  operator() ( const Segment*, const Segment* );
+  };
+
+
+  inline bool  SortSegmentByLength::operator() ( const Segment* lhs, const Segment* rhs )
+  {
+    DbU::Unit delta = rhs->getLength() - lhs->getLength();
+    if (delta > 0) return true;
+    if (delta < 0) return false;
+    return (lhs->getId() < rhs->getId());
+  }
+
+  
+}  // Anonymous namespace.
+
+
 namespace Anabatic {
 
   using std::cerr;
@@ -210,8 +234,23 @@ namespace Anabatic {
     DbU::Unit pitch = 0;
     if (h) pitch = Session::getGHorizontalPitch();
     if (v) pitch = Session::getGVerticalPitch();
+
+    int deltaOccupancy = 0;
     
-    incRealOccupancy( segment->getWidth()/pitch );  // Need to take the wire width into account.
+    if (not Session::getRoutingGauge()->isTwoMetals()) deltaOccupancy = segment->getWidth()/pitch;
+    else {
+    // In channel routing, do not increase edge occupancy on terminals,
+    // because the capacity has already been decreased in annotedGlobalGraph (Katana).
+      AutoContact* autoContact = Session::lookup( dynamic_cast<Contact*>(segment->getSource()) );
+      if (not autoContact or (autoContact->getGCell() != _source)) {
+        autoContact = Session::lookup( dynamic_cast<Contact*>(segment->getTarget()) );
+        if (not autoContact or (autoContact->getGCell() != _target)) {
+          deltaOccupancy = segment->getWidth()/pitch;
+        }
+      }
+    }
+
+    incRealOccupancy( deltaOccupancy ); 
   }
 
 
@@ -219,6 +258,9 @@ namespace Anabatic {
   {
     for ( size_t i=0 ; i<_segments.size() ; ++i ) {
       if (_segments[i] == segment) {
+        cdebug_log(110,0) << "On " << this << endl;
+        cdebug_log(110,0) << "| remove:" << segment << endl;
+
         std::swap( _segments[i], _segments[_segments.size()-1] );
         _segments.pop_back();
         incRealOccupancy( -1 );  // Need to take the wire width into account.
@@ -245,13 +287,29 @@ namespace Anabatic {
     DbU::Unit       globalThreshold = Session::getSliceHeight()*3;
     size_t          netCount        = 0;
 
+    sort( _segments.begin(), _segments.end(), SortSegmentByLength() );
+
     for ( size_t i=0 ; i<_segments.size() ; ) {
-      if (_segments[i]->getLength() >= globalThreshold) {
-        NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
-        if (netData->isGlobalRouted()) ++netCount;
-        anabatic->ripup( _segments[i], Flags::Propagate );
-      } else {
+      if (Session::getRoutingGauge()->isTwoMetals()) {
+        AutoContact* autoContact = Session::lookup( dynamic_cast<Contact*>(_segments[i]->getSource()) );
+        if (not autoContact or (autoContact->getGCell() != _source)) {
+          autoContact = Session::lookup( dynamic_cast<Contact*>(_segments[i]->getTarget()) );
+          if (not autoContact or (autoContact->getGCell() != _target)) {
+            NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+            if (netData->isGlobalRouted()) ++netCount;
+            anabatic->ripup( _segments[i], Flags::Propagate );
+            continue;
+          }
+        }
         ++i;
+      } else {
+        if (_segments[i]->getLength() >= globalThreshold) {
+          NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+          if (netData->isGlobalRouted()) ++netCount;
+          anabatic->ripup( _segments[i], Flags::Propagate );
+        } else {
+          ++i;
+        }
       }
     }
     return netCount;

@@ -506,8 +506,16 @@ namespace Anabatic {
   {
     for ( Edge* edge : getEdges(sideHint) ) {
       GCell* side = edge->getOpposite(this);
-      if ( (sideHint & (Flags::WestSide |Flags::EastSide )) and (u < side->getYMax()) ) return edge;
-      if ( (sideHint & (Flags::SouthSide|Flags::NorthSide)) and (u < side->getXMax()) ) return edge;
+      if (   (sideHint.contains(Flags::WestSide) or sideHint.contains(Flags::EastSide ))
+         and (u < side->getYMax()) ) {
+        cdebug_log(112,0) << "H Opposite @" << DbU::getValueString(u) << " is: " << side << endl;
+        return edge;
+      }
+      if (   (sideHint.contains(Flags::SouthSide) or sideHint.contains(Flags::NorthSide))
+         and (u < side->getXMax()) ) {
+        cdebug_log(112,0) << "V Opposite @" << DbU::getValueString(u) << " is: " << side << endl;
+        return edge;
+      }
     }
     return NULL;
   }

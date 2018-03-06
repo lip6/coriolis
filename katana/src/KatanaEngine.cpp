@@ -34,6 +34,7 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/viewer/Script.h"
 #include "crlcore/Measures.h"
 #include "anabatic/AutoContact.h"
@@ -141,6 +142,7 @@ namespace Katana {
   using Hurricane::Layer;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::RoutingPad;
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
   using Hurricane::Cell;
@@ -461,6 +463,32 @@ namespace Katana {
             for ( size_t i=0 ; i<gcells->size()-1 ; ++i )
               gcells->gcellAt(i)->getEdgeAt( side, axis )->reserveCapacity( elementCapacity );
           }
+        }
+      }
+    }
+
+    if (Session::getConfiguration()->isTwoMetals()) {
+      for ( GCell* gcell : getGCells() ) {
+        if (not gcell->isStdCellRow()) continue;
+        
+        set<DbU::Unit>  terminalsX;
+        for ( Component* component : getCell()->getComponentsUnder(gcell->getBoundingBox()) ) {
+          RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
+          if (rp) terminalsX.insert( rp->getX() );
+        }
+
+        unsigned int capacity = 0;
+        if (gcell->getNorthEdge()) {
+          capacity = gcell->getNorthEdge()->getCapacity();
+          if (terminalsX.size() < capacity) capacity = terminalsX.size();
+          else                            --capacity;
+          gcell->getNorthEdge()->reserveCapacity( capacity );
+        }
+        if (gcell->getSouthEdge()) {
+          capacity = gcell->getSouthEdge()->getCapacity();
+          if (terminalsX.size() < capacity) capacity = terminalsX.size();
+          else                            --capacity;
+          gcell->getSouthEdge()->reserveCapacity( capacity );
         }
       }
     }

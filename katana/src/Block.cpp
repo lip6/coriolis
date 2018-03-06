@@ -170,7 +170,6 @@ namespace Katana {
         if (inet == nets.end()) {
           nets.insert( irp.second->getNet() );
         } else {
-          if (southWest->getId() == 2998) DebugSession::close();
           southWest = southWest->vcut( irp.second->getX() );
           southWest->setType( Anabatic::Flags::StdCellRow );
           gcellSplitted = true;
@@ -181,7 +180,6 @@ namespace Katana {
       rps .clear();
       nets.clear();
       if (not gcellSplitted) {
-        if (southWest->getId() == 2998) DebugSession::close();
         southWest = southWest->getEast();
       }
     }
@@ -305,8 +303,7 @@ namespace Katana {
     Session::close();
     _katana->openSession();
 
-    for ( Row* row : _rows )
-      row->routingPadsSubBreak();
+    for ( Row* row : _rows ) row->routingPadsSubBreak();
 
     if (not sessionReUse) Session::close();
   }
