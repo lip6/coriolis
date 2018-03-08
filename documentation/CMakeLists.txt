@@ -11,7 +11,7 @@
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
- find_package(Sphinx    REQUIRED)
+ find_package(Sphinx)
  setup_project_paths(CORIOLIS)
 
  set_cmake_policies()
@@ -21,10 +21,12 @@
 #endif(BUILD_DOC)
  
  add_subdirectory(examples)
- if(BUILD_DOC)
-                 set ( htmlInstallDir  share/doc/coriolis2/en/html/main )
-                 set ( pdfInstallDir   share/doc/coriolis2/en/pdf/main )
+ set( htmlInstallDir  share/doc/coriolis2/en/html/main )
+ set( pdfInstallDir   share/doc/coriolis2/en/pdf/main )
 
+ if(BUILD_DOC)
+   if(SPHINX_EXECUTABLE)
+     message(STATUS "Sphinx has been found, generate the documentation...")
                  set ( pythonCppRst    PythonCpp/pdfHeader.rst
                                        PythonCpp/Introduction.rst
                                        PythonCpp/Configuration.rst
@@ -86,11 +88,12 @@
                        DEPENDS         etc/definitions.rst
                                        etc/SoC-ReST.tex
                                        ${pythonCppRst} )
-  
-             install ( DIRECTORY _build/html/               DESTINATION ${htmlInstallDir} )
-             install ( FILES     RDS/RDS.pdf
-                                 PythonCpp/PythonCpp.pdf
-                                 UsersGuide/UsersGuide.pdf  DESTINATION ${pdfInstallDir} )
-  
+   else(SPHINX_EXECUTABLE)
+     message(STATUS "Sphinx has *not* been found, use the git supplied documentation.")
+   endif(SPHINX_EXECUTABLE)
  endif(BUILD_DOC)
-
+  
+ install( DIRECTORY _build/html/               DESTINATION ${htmlInstallDir} )
+ install( FILES     RDS/RDS.pdf
+                    PythonCpp/PythonCpp.pdf
+                    UsersGuide/UsersGuide.pdf  DESTINATION ${pdfInstallDir} )
