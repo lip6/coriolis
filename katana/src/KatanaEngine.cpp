@@ -140,6 +140,7 @@ namespace Katana {
   using Hurricane::Box;
   using Hurricane::Torus;
   using Hurricane::Layer;
+  using Hurricane::Entity;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
@@ -150,6 +151,7 @@ namespace Katana {
   using CRL::addMeasure;
   using CRL::Measures;
   using CRL::MeasuresSet;
+  using Anabatic::Edge;
   using Anabatic::EngineState;
   using Anabatic::GCellsUnder;
   using Anabatic::AutoContact;
@@ -186,7 +188,9 @@ namespace Katana {
     , _minimumWL      (0.0)
     , _mode           (DigitalMode)
     , _toolSuccess    (false)
-  { }
+  {
+  //Entity::setMemoryLimit( 1024 ); // 1Gb.
+  }
 
 
   void  KatanaEngine::_postCreate ()
@@ -478,17 +482,17 @@ namespace Katana {
         }
 
         unsigned int capacity = 0;
-        if (gcell->getNorthEdge()) {
-          capacity = gcell->getNorthEdge()->getCapacity();
+        Edge*        edge     = gcell->getNorthEdge();
+        if (edge) {
+          capacity = edge->getCapacity();
           if (terminalsX.size() < capacity) capacity = terminalsX.size();
-          else                            --capacity;
-          gcell->getNorthEdge()->reserveCapacity( capacity );
+          edge->reserveCapacity( capacity );
         }
-        if (gcell->getSouthEdge()) {
-          capacity = gcell->getSouthEdge()->getCapacity();
+        edge = gcell->getSouthEdge();
+        if (edge) {
+          capacity = edge->getCapacity();
           if (terminalsX.size() < capacity) capacity = terminalsX.size();
-          else                            --capacity;
-          gcell->getSouthEdge()->reserveCapacity( capacity );
+          edge->reserveCapacity( capacity );
         }
       }
     }

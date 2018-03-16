@@ -13,6 +13,7 @@ Contents:
 .. toctree::
 
    UsersGuide/index.rst
+   PythonTutorial/index.rst
    Stratus/Stratus.rst
    DpGen/DpGen.rst
    Patterns/Patterns.rst

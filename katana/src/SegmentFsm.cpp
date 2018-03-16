@@ -610,6 +610,17 @@ namespace Katana {
     for ( ; (i<_costs.size()) and _costs[i]->isFree() ; i++ );
     _event1->setTracksFree( i );
     if (_event2) _event2->setTracksFree( i );
+
+    // if (not segment1->isDrag()) {
+    //   cdebug_log(159,0) << "Not a draggable segment and _costs.size():" << _costs.size() << endl;
+    //   if (_costs.size() == 1) {
+    //     segment1->base()->setFlags( AutoSegment::SegFixedAxis );
+    //     if (segment2) segment2->base()->setFlags( AutoSegment::SegFixedAxis );
+    //   } else {
+    //     segment1->base()->unsetFlags( AutoSegment::SegFixedAxis );
+    //     if (segment2) segment2->base()->unsetFlags( AutoSegment::SegFixedAxis );
+    //   }
+    // }
   }
 
 

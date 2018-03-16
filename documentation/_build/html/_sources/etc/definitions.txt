@@ -37,6 +37,7 @@
 .. |DEF|                            replace:: :sc:`def`
 .. |Flute|                          replace:: :sc:`Flute`
 .. |MacOS|                          replace:: :sc:`MacOS`
+.. |Darwin|                         replace:: :sc:`Darwin`
 .. |RHEL6|                          replace:: :sc:`rhel6`
 .. |RHEL7|                          replace:: :sc:`rhel7`
 .. |SL6|                            replace:: :sc:`Scientific Linux 6`
@@ -66,6 +67,7 @@
 .. |Am2901|                         replace:: :sc:`Am2901`
 .. |Hurricane|                      replace:: :sc:`Hurricane`
 .. |HurricaneAMS|                   replace:: :sc:`HurricaneAMS`
+.. |CRL|                            replace:: :sc:`crl`
 .. |Alliance|                       replace:: :sc:`Alliance`
 .. |Yosys|                          replace:: :sc:`Yosys`
 .. |GenLib|                         replace:: :sc:`GenLib`

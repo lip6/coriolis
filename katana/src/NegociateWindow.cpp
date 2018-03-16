@@ -544,7 +544,7 @@ namespace Katana {
   //_pack( count, true );
     if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
 
-    if (not _katana->isChannelMode() ) {
+  //if (not _katana->isChannelMode() ) {
       cdebug_log(9000,0) << "Deter| Repair Stage" << endl;
       cmess1 << "     o  Repair Stage." << endl;
 
@@ -589,7 +589,7 @@ namespace Katana {
       }
 
       if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
-    }
+  //}
 
     size_t eventsCount = _eventHistory.size();
 

@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. Make a script runnable through cgt &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Hurricane Python Tutorial" href="index.html"/>
+        <link rel="next" title="Stratus Reference" href="../Stratus/Stratus.html"/>
+        <link rel="prev" title="4. Manipulating Cells, Nets and Components" href="Collections.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UsersGuide/index.html">Coriolis User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane Python Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#generalities">1.1 Generalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#various-kinds-of-constructors">1.2 Various Kinds of Constructors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Environment.html">2. Setting up the Environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Environment.html#setting-up-the-pathes">2.1 Setting up the Pathes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Environment.html#user-s-configurations-file">2.2 User&#8217;s Configurations File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Environment.html#the-techno-py-file">2.2.1 The <span class="cb">techno.py</span> File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Environment.html#the-settings-py-file">2.2.2 The <span class="cb">settings.py</span> File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CellNetComponent.html">3. Creating Cell, Net and Component</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#the-allianceframework-crl-core">3.1 The AllianceFramework (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#session-mechanism-hurricane">3.2 Session Mechanism (Hurricane)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#creating-a-new-cell-crl-core">3.3 Creating a new Cell (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#the-dbu-measurement-unit">3.4 The DbU Measurement Unit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#setting-up-the-abutment-box">3.5 Setting up the Abutment Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#adding-nets-and-components">3.6 Adding Nets and Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CellNetComponent.html#getting-a-layer">3.6.1 Getting a Layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CellNetComponent.html#creating-a-net">3.6.2 Creating a Net</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CellNetComponent.html#creating-a-component">3.6.3 Creating a Component</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#saving-to-disk-crl-core">3.7 Saving to Disk (CRL Core)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Collections.html">4. Manipulating Cells, Nets and Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Collections.html#hurricane-collections">4.1 Hurricane Collections</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Collections.html#restrictions-about-using-collections">4.1.1 Restrictions about using Collections</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Collections.html#loading-a-cell-with-allianceframework">4.2 Loading a Cell with AllianceFramework</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5. Make a script runnable through <span class="cb">cgt</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-breakpoints">5.1 Using Breakpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-complete-example-file">6. The Complete Example File</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonCpp/index.html">Hurricane Python/C++ API Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../lefapi/lefapi.html#implementation-notes">Implementation Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../lefapi/lefapi.html#understanding-units">Understanding Units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lefapi/lefapi.html#callback-calling-order">Callback Calling Order</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Hurricane Python Tutorial</a> &raquo;</li>
+      
+    <li>5. Make a script runnable through <span class="cb">cgt</span></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="make-a-script-runnable-through-cgt">
+<h1>5. Make a script runnable through <span class="cb">cgt</span><a class="headerlink" href="#make-a-script-runnable-through-cgt" title="Permalink to this headline">¶</a></h1>
+<p>To use your you may run it directly like any other <span class="sc">Python</span> script.
+But, for debugging purpose it may be helpful to run it through the
+interactive layout viewer <span class="cb">cgt</span>.</p>
+<p>For <span class="cb">cgt</span> to be able to run your script, you must add to your script
+file a function named <span class="cb">ScriptMain()</span>, which takes a dictionnary
+as sole argument (<span class="cb">**kw</span>). The <code class="docutils literal"><span class="pre">kw</span></code> dictionnary contains, in
+particular, the <a class="reference external" href="../../viewer/classHurricane_1_1CellViewer.html">CellViewer</a> object we are running under with the
+keyword <code class="docutils literal"><span class="pre">editor</span></code>. You can then load your cell into the viewer
+using the menu:</p>
+<ul class="simple">
+<li><span class="fboxtt">Tools</span> <img class="math" src="../_images/math/db2555e54bec0d091b2124dccd645c2d7ddaae68.png" alt="\rightarrow"/> <span class="fboxtt">Python Script</span>. The script
+file name must be given without the <code class="docutils literal"><span class="pre">.py</span></code> extension.</li>
+</ul>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">buildInvertor</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;invertor&#39;</span> <span class="p">)</span>
+    <span class="n">cell</span><span class="o">.</span><span class="n">setTerminal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="c1"># The rest of the script...</span>
+
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">buildInvertor</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<div class="section" id="using-breakpoints">
+<h2>5.1 Using Breakpoints<a class="headerlink" href="#using-breakpoints" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to add breakpoints inside a script by calling the <code class="docutils literal"><span class="pre">Breakpoint.stop()</span></code>
+function. To be able to see exactly what has just been moficated, we must close the
+<a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> just before calling the breakpoint and reopen it just after.
+The <code class="docutils literal"><span class="pre">Breakpoint.stop()</span></code> function takes two arguments:</p>
+<ol class="arabic simple">
+<li>The <code class="docutils literal"><span class="pre">level</span></code> above witch it will be active.</li>
+<li>An informative message about the purpose of the breakpoint.</li>
+</ol>
+<p>We can create a little function to ease the work:</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">doBreak</span> <span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">)</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="the-complete-example-file">
+<h1>6. The Complete Example File<a class="headerlink" href="#the-complete-example-file" title="Permalink to this headline">¶</a></h1>
+<p>The example files can be found in the <code class="docutils literal"><span class="pre">share/doc/coriolis2/examples/scripts/</span></code>
+directory (under the the root of the <span class="sc">Coriolis</span> installation).</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span>   <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span>   <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">toDbU</span> <span class="p">(</span> <span class="n">l</span> <span class="p">):</span> <span class="k">return</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">doBreak</span> <span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">)</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">buildInvertor</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;invertor&#39;</span> <span class="p">)</span>
+    <span class="n">cell</span><span class="o">.</span><span class="n">setTerminal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">technology</span> <span class="o">=</span> <span class="n">DataBase</span><span class="o">.</span><span class="n">getDB</span><span class="p">()</span><span class="o">.</span><span class="n">getTechnology</span><span class="p">()</span>
+    <span class="n">metal1</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;METAL1&quot;</span>     <span class="p">)</span>
+    <span class="n">poly</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;POLY&quot;</span>       <span class="p">)</span>
+    <span class="n">ptrans</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;PTRANS&quot;</span>     <span class="p">)</span>
+    <span class="n">ntrans</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NTRANS&quot;</span>     <span class="p">)</span>
+    <span class="n">pdif</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;PDIF&quot;</span>       <span class="p">)</span>
+    <span class="n">ndif</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NDIF&quot;</span>       <span class="p">)</span>
+    <span class="n">contdifn</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_DIF_N&quot;</span> <span class="p">)</span>
+    <span class="n">contdifp</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_DIF_P&quot;</span> <span class="p">)</span>
+    <span class="n">nwell</span>      <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NWELL&quot;</span>      <span class="p">)</span>
+    <span class="n">contpoly</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_POLY&quot;</span>  <span class="p">)</span>
+    <span class="n">ntie</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NTIE&quot;</span>       <span class="p">)</span>
+
+    <span class="n">net</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;nwell&quot;</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">net</span><span class="p">,</span> <span class="n">nwell</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">7.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">27.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">51.0</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">vdd</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;vdd&quot;</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vdd</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">47.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">h</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">47.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">45.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">pdif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">28.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">46.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">ntie</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">43.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">48.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building vdd.&#39;</span> <span class="p">)</span>
+
+    <span class="n">vss</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;vss&quot;</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vss</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">))</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">h</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vss</span><span class="p">,</span> <span class="n">ndif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">3.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vss</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building vss.&#39;</span> <span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span> <span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">ptrans</span>  <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">26.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">39.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">ntrans</span>  <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">14.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">14.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">26.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">20.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span>   <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">contpoly</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">20.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building i.&#39;</span> <span class="p">)</span>
+
+    <span class="n">nq</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;nq&quot;</span> <span class="p">)</span>
+    <span class="n">nq</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">pdif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">28.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">37.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">ndif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">8.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">30.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building q.&#39;</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">buildInvertor</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Stratus/Stratus.html" class="btn btn-neutral float-right" title="Stratus Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Collections.html" class="btn btn-neutral" title="4. Manipulating Cells, Nets and Components" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Mar 16, 2018.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2018, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

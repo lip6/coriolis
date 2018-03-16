@@ -44,6 +44,8 @@ namespace Hurricane {
                        , NextIdSet    = (1<<1)
                        };
     public:
+      static  void          setMemoryLimit      ( unsigned int );
+      static  void          setIdCounterLimit   ( unsigned int );
       static  unsigned int  getIdCounter        ();
               unsigned int  getNextId           ();
       static  void          setNextId           ( unsigned int );
@@ -63,9 +65,11 @@ namespace Hurricane {
                             Entity              ();
       virtual void          _preDestroy         ();
     private:
+      static  unsigned int   _memoryLimit;
       static  unsigned long  _flags;
       static  unsigned int   _nextId;
       static  unsigned int   _idCounter;
+      static  unsigned int   _idCounterLimit;
               unsigned int   _id;
 
     public:

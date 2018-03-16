@@ -675,15 +675,17 @@ namespace Anabatic {
       size_t iedge = 0;
       for ( ; (iedge < _southEdges.size()) ; ++iedge ) {
         cdebug_log(110,0) << "[" << iedge << "] xmax of:"
-                        << _southEdges[iedge]->getOpposite(this)
-                        << " " << _southEdges[iedge] << endl;
+                          << _southEdges[iedge]->getOpposite(this)
+                          << " " << _southEdges[iedge] << endl;
         if (x <= _southEdges[iedge]->getOpposite(this)->getXMax()) break;
       }
 
       if (      (x <  _southEdges[iedge]->getOpposite(this)->getXMax())
          or (   (x == _southEdges[iedge]->getOpposite(this)->getXMax())
-            and (chunk->getXMax() == getXMax())) )
+            and (chunk->getXMax() == getXMax())) ) {
         Edge::create( _southEdges[iedge]->getOpposite(this), chunk, Flags::Vertical );
+        _southEdges[iedge]->invalidate( false );
+      }
 
       _moveEdges( chunk, iedge+1, Flags::SouthSide );
     }
@@ -697,8 +699,10 @@ namespace Anabatic {
 
       if (      (x <  _northEdges[iedge]->getOpposite(this)->getXMax())
          or (   (x == _northEdges[iedge]->getOpposite(this)->getXMax())
-            and (chunk->getXMax() == getXMax())) )
+            and (chunk->getXMax() == getXMax())) ) {
         Edge::create( chunk, _northEdges[iedge]->getOpposite(this), Flags::Vertical );
+        _northEdges[iedge]->invalidate( false );
+      }
 
       _moveEdges( chunk, iedge+1, Flags::NorthSide );
     }
@@ -733,8 +737,10 @@ namespace Anabatic {
 
       if (      (y <  _westEdges[iedge]->getOpposite(this)->getYMax())
          or (   (y == _westEdges[iedge]->getOpposite(this)->getYMax())
-            and (chunk->getYMax() == getYMax())) )
+            and (chunk->getYMax() == getYMax())) ) {
         Edge::create( _westEdges[iedge]->getOpposite(this), chunk, Flags::Horizontal );
+        _westEdges[iedge]->invalidate( false );
+      }
 
       _moveEdges( chunk, iedge+1, Flags::WestSide );
     }
@@ -746,8 +752,10 @@ namespace Anabatic {
 
       if (      (y <  _eastEdges[iedge]->getOpposite(this)->getYMax())
          or (   (y == _eastEdges[iedge]->getOpposite(this)->getYMax())
-            and (chunk->getYMax() == getYMax())) )
+            and (chunk->getYMax() == getYMax())) ) {
         Edge::create( chunk, _eastEdges[iedge]->getOpposite(this), Flags::Horizontal );
+        _eastEdges[iedge]->invalidate( false );
+      }
 
       _moveEdges( chunk, iedge+1, Flags::EastSide );
     }
@@ -975,20 +983,23 @@ namespace Anabatic {
   }
 
 
-  void GCell::updateGContacts ()
+  void GCell::updateGContacts ( Flags flags )
   {
-    for ( Contact* contact : _gcontacts ) {
+    Point center ( _xmin+getWidth()/2, _ymin+getHeight()/2 );
 
+    for ( Contact* contact : _gcontacts ) {
       for ( Component* component : contact->getSlaveComponents() ) {
         Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
-        if (horizontal) {
-          horizontal->setY( _ymin+getHeight()/2 );
+        if (horizontal and (flags & Flags::Vertical)) {
+          horizontal->setY( center.getY() );
         } else {
           Vertical* vertical = dynamic_cast<Vertical*>( component );
-          vertical->setX( _xmin+getWidth()/2 );
+          if (vertical and (flags & Flags::Horizontal)) {
+            vertical->setX( center.getX() );
+          }
         }
       }
-      if (not contact->getAnchor()) contact->setPosition( Point( _xmin+getWidth()/2, _ymin+getHeight()/2 ) );
+      if (not contact->getAnchor()) contact->setPosition( center );
     }
   }
 
@@ -1026,7 +1037,7 @@ namespace Anabatic {
       if (_gcontacts[i] == unref) {
         if (_gcontacts[i]->getSlaveComponents().getLocator()->isValid()) return false;
         
-        cdebug_log(112,0) << "  Effective destroy." << endl;
+        cdebug_log(112,0) << "  Effective destroy " << (void*)unref << endl;
         std::swap( _gcontacts[i], _gcontacts[_gcontacts.size()-1] );
         _gcontacts[ _gcontacts.size()-1 ]->destroy();
         _gcontacts.pop_back();

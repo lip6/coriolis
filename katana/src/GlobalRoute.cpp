@@ -59,10 +59,20 @@ namespace {
 
   DbU::Unit  DigitalDistance::operator() ( const Vertex* source ,const Vertex* target,const Edge* edge ) const
   {
-    if (edge->getCapacity() <= 0) return Vertex::unreachable;
-
     if (source->getGCell()->isStdCellRow() and target->getGCell()->isStdCellRow())
       return Vertex::unreachable;
+
+    if (edge->getCapacity() <= 0) {
+      if (target->getGCell()->isStdCellRow()
+         and target->hasValidStamp() and (target->getConnexId() >= 0) )
+        return 0;
+
+      if (source->getGCell()->isStdCellRow()
+         and source->hasValidStamp() and (source->getConnexId() >= 0) )
+        return 0;
+      
+      return Vertex::unreachable;
+    }
 
     float congestionCost = 1.0;
     float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
@@ -77,9 +87,14 @@ namespace {
       viaCost += 2.5;
     }
 
+    float edgeDistance = (float)edge->getDistance();
+    if (  (source->getGCell()->isChannelRow() and target->getGCell()->isStdCellRow())
+       or (source->getGCell()->isStdCellRow() and target->getGCell()->isChannelRow()) )
+      edgeDistance *= 10.0;
+
     float hvDistort = (edge->isHorizontal()) ? 1.0 : 1.0 ;
     float distance  = (float)source->getDistance()
-                    + (congestionCost + viaCost) * (float)edge->getDistance() * hvDistort
+                    + (congestionCost + viaCost) * edgeDistance * hvDistort
                     + edge->getHistoricCost();
 
     // Edge* sourceFrom = source->getFrom();
@@ -90,7 +105,7 @@ namespace {
     //                   << " ccost:" << congestionCost
     //                   << " digitalDistance:" << DbU::getValueString((DbU::Unit)distance) << endl;
 
-    return (DbU::Unit)distance;
+    return (distance >= (float)DbU::Max) ? Vertex::unreachable : (DbU::Unit)distance;
   }
 
 
@@ -98,8 +113,7 @@ namespace {
   {
     float congestion = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
     float hCost      = edge->getHistoricCost();
-
-    float alpha = (congestion < 1.0) ? congestion : std::exp( std::log(8)*( congestion - 1 ) );
+    float alpha      = (congestion < 1.0) ? congestion : std::exp( std::log(8)*( congestion - 1 ) );
 
     edge->setHistoricCost( alpha * (hCost + ((congestion < 1.0) ? 0.0 : edgeHInc) ));
 
@@ -194,7 +208,7 @@ namespace Katana {
     const vector<Edge*>& ovEdges = getOvEdges();
 
     if (isChannelMode())
-      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*2 );
+      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*10 );
 
     size_t iteration = 0;
     size_t netCount  = 0;
@@ -214,6 +228,7 @@ namespace Katana {
       cmess2 << " ovEdges:" << setw(4) << ovEdges.size();
 
       for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
+
       // Session::close();
       // Breakpoint::stop( 1, "Before riping up overflowed edges." );
       // openSession();

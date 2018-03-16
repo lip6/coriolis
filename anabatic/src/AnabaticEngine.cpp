@@ -624,6 +624,9 @@ namespace Anabatic {
     Horizontal* horizontals[2];
     Vertical*   verticals  [2];
 
+    cdebug_log(112,1) << "AnabaticEngine::unify(): " << (void*)contact << endl;
+    cdebug_log(112,0) << contact << endl;
+
     for ( Component* slave : contact->getSlaveComponents() ) {
       Horizontal* h = dynamic_cast<Horizontal*>( slave );
       if (h) {
@@ -636,6 +639,8 @@ namespace Anabatic {
           verticals[vCount++] = v;
         } else {
         // Something else depends on this contact.
+          cdebug_log(112,0) << "Cannot unify, still have slave components." << endl;
+          cdebug_tabw(112,-1);
           return false;
         }
       }
@@ -654,7 +659,10 @@ namespace Anabatic {
       if (not gcells1->empty()) {
         for ( size_t i=0 ; i<gcells1->size() ; ++i ) {
           constraints.intersection( gcells1->gcellAt(i)->getSide(Flags::Vertical) );
-          if (constraints.isEmpty()) return false;
+          if (constraints.isEmpty()) {
+            cdebug_tabw(112,-1);
+            return false;
+          }
         }
       }
 
@@ -667,9 +675,12 @@ namespace Anabatic {
       horizontals[1]->destroy();
       horizontals[0]->getTargetHook()->detach();
       horizontals[0]->getTargetHook()->attach( target->getBodyHook() );
+      horizontals[0]->setY( constraints.getCenter() );
     } 
 
     if (vCount == 2) {
+      cdebug_log(112,0) << "Vertical unify of: " << contact << endl;
+      
       if (verticals[0]->getTarget() != contact) std::swap( verticals[0], verticals[1] );
       Interval    constraints ( false );
       GCellsUnder gcells0     = getGCellsUnder( verticals[0] );
@@ -682,7 +693,11 @@ namespace Anabatic {
       if (not gcells1->empty()) {
         for ( size_t i=0 ; i<gcells1->size() ; ++i ) {
           constraints.intersection( gcells1->gcellAt(i)->getSide(Flags::Horizontal) );
-          if (constraints.isEmpty()) return false;
+          if (constraints.isEmpty()) {
+            cdebug_log(112,0) << "Cannot unify, shearing constraints." << endl;
+            cdebug_tabw(112,-1);
+            return false;
+          }
         }
       }
 
@@ -695,10 +710,12 @@ namespace Anabatic {
       verticals[1]->destroy();
       verticals[0]->getTargetHook()->detach();
       verticals[0]->getTargetHook()->attach( target->getBodyHook() );
+      verticals[0]->setX( constraints.getCenter() );
     } 
 
     getGCellUnder( contact->getPosition() )->unrefContact( contact );
 
+    cdebug_tabw(112,-1);
     return true;
   }
 
@@ -713,8 +730,8 @@ namespace Anabatic {
     Contact* end0 = NULL;
     Contact* end1 = NULL;
 
-    vector<Segment*> ripups;
-    ripups.push_back( seed );
+    set<Segment*,Entity::CompareById> ripups;
+    ripups.insert( seed );
 
     vector< pair<Segment*,Component*> > stack;
     if (flags & Flags::Propagate) {
@@ -741,15 +758,19 @@ namespace Anabatic {
       }
 
       if ((slaveCount == 1) and (connected)) {
-        stack .push_back( make_pair(connected,connected->getOppositeAnchor(contact)) );
-        ripups.push_back( connected );
+        if (not ripups.count(connected)) {
+          stack .push_back( make_pair(connected,connected->getOppositeAnchor(contact)) );
+          ripups.insert( connected );
+        }
       } else {
         if (not end0) {
           end0 = contact;
           cdebug_log(112,0) << "end0:" << contact << endl;
         } else {
-          end1 = contact;
-          cdebug_log(112,0) << "end1:" << contact << endl;
+          if (contact != end0) {
+            end1 = contact;
+            cdebug_log(112,0) << "end1:" << contact << endl;
+          }
         }
       }
     }

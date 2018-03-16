@@ -27,25 +27,32 @@
  if(BUILD_DOC)
    if(SPHINX_EXECUTABLE)
      message(STATUS "Sphinx has been found, generate the documentation...")
-                 set ( pythonCppRst    PythonCpp/pdfHeader.rst
-                                       PythonCpp/Introduction.rst
-                                       PythonCpp/Configuration.rst
-                                       PythonCpp/DBoStandalone.rst
-                                       PythonCpp/DBoHierarchy.rst
-                                       PythonCpp/NonDBo.rst
-                                       PythonCpp/DbU.rst
-                                       PythonCpp/Name.rst )
+                 set ( pythonCppRst       PythonCpp/pdfHeader.rst
+                                          PythonCpp/Introduction.rst
+                                          PythonCpp/Configuration.rst
+                                          PythonCpp/DBoStandalone.rst
+                                          PythonCpp/DBoHierarchy.rst
+                                          PythonCpp/NonDBo.rst
+                                          PythonCpp/DbU.rst
+                                          PythonCpp/Name.rst )
+
+                 set ( pythonTutorialRst  PythonTutorial/pdfHeader.rst
+                                          PythonTutorial/Introduction.rst
+                                          PythonTutorial/Environment.rst
+                                          PythonTutorial/CellNetComponent.rst
+                                          PythonTutorial/Collections.rst
+                                          PythonTutorial/CgtScript.rst )
   
-                 set ( usersGuideRst   UsersGuide/pdfHeader.rst
-                                       UsersGuide/LicenseCredits.rst
-                                       UsersGuide/Releases.rst
-                                       UsersGuide/Installation.rst
-                                       UsersGuide/Configuration.rst
-                                       UsersGuide/ViewerTools.rst
-                                       UsersGuide/ScriptsPlugins.rst )
-  
-                 set ( rdsRst          RDS/pdfHeader.rst
-                                       RDS/RDSpage.rst )
+                 set ( usersGuideRst      UsersGuide/pdfHeader.rst
+                                          UsersGuide/LicenseCredits.rst
+                                          UsersGuide/Releases.rst
+                                          UsersGuide/Installation.rst
+                                          UsersGuide/Configuration.rst
+                                          UsersGuide/ViewerTools.rst
+                                          UsersGuide/ScriptsPlugins.rst )
+  				          
+                 set ( rdsRst             RDS/pdfHeader.rst
+                                          RDS/RDSpage.rst )
   
    add_custom_target ( doc_HTML ALL
                           cd ${DOCUMENTATION_SOURCE_DIR}
@@ -63,9 +70,10 @@
                                        Stratus/Stratus.rst
                                        Unicorn/Unicorn.rst
                                        Viewer/Viewer.rst
-                                       ${usersGuideRst}   UsersGuide/index.rst
-                                       ${pythonCppRst}     PythonCpp/index.rst
-                                       ${rdsRst}                 RDS/index.rst
+                                       ${usersGuideRst}      UsersGuide/index.rst
+                                       ${pythonTutorialRst}  PythonTutorial/index.rst
+                                       ${pythonCppRst}       PythonCpp/index.rst
+                                       ${rdsRst}             RDS/index.rst
                      )
   
    add_custom_target ( pdf_UsersGuide  ALL
@@ -74,6 +82,14 @@
                        DEPENDS         etc/definitions.rst
                                        etc/SoC-ReST.tex
                                        ${usersGuideRst} )
+  
+   add_custom_target ( pdf_PythonTutorial  ALL
+                          cd ${DOCUMENTATION_SOURCE_DIR}/PythonTutorial
+                       && ../etc/doPdf.sh ${pythonTutorialRst} PythonTutorial.rst
+                       DEPENDS         etc/definitions.rst
+                                       etc/SoC-ReST.tex
+                                       PythonTutorial/definitions.rst
+                                       ${pythonTutorialRst} )
   
    add_custom_target ( pdf_PythonCpp  ALL
                           cd ${DOCUMENTATION_SOURCE_DIR}/PythonCpp
@@ -87,7 +103,7 @@
                        && ../etc/doPdf.sh ${rdsRst} RDS.rst
                        DEPENDS         etc/definitions.rst
                                        etc/SoC-ReST.tex
-                                       ${pythonCppRst} )
+                                       ${rdsRst} )
    else(SPHINX_EXECUTABLE)
      message(STATUS "Sphinx has *not* been found, use the git supplied documentation.")
    endif(SPHINX_EXECUTABLE)
@@ -95,5 +111,6 @@
   
  install( DIRECTORY _build/html/               DESTINATION ${htmlInstallDir} )
  install( FILES     RDS/RDS.pdf
+                    PythonTutorial/PythonTutorial.pdf
                     PythonCpp/PythonCpp.pdf
                     UsersGuide/UsersGuide.pdf  DESTINATION ${pdfInstallDir} )

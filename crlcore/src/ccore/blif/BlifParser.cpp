@@ -248,12 +248,16 @@ namespace {
       static  Lut                           _blifLut; 
       static  vector<Model*>                _blifOrder; 
       static  bool                          _staticInit;
+      static  string                        _groundName;
+      static  string                        _powerName;
       static  Cell*                         _zero;
       static  Cell*                         _one;
       static  Net*                          _masterNetZero;
       static  Net*                          _masterNetOne;
     public:
       static  void          staticInit     ();
+      static  string        getGroundName  ();
+      static  string        getPowerName   ();
       static  Model*        find           ( string modelName );
       static  void          orderModels    ();
       static  void          connectModels  ();
@@ -314,6 +318,8 @@ namespace {
   Model::Lut      Model::_blifLut;
   vector<Model*>  Model::_blifOrder;
   bool            Model::_staticInit     = false;
+  string          Model::_groundName     = "vss";
+  string          Model::_powerName      = "vdd";
   Cell*           Model::_zero           = NULL;
   Cell*           Model::_one            = NULL;
   Net*            Model::_masterNetZero  = NULL;
@@ -338,8 +344,10 @@ namespace {
     static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
     static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
 
-    _zero = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
-    _one  = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+    _zero       = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
+    _one        = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+    _groundName = Cfg::getParamString("crlcore.groundName","vss")->asString();
+    _powerName  = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
 
     if (_zero) {
       for ( Net* net : _zero->getNets() ) if (not net->isSupply()) { _masterNetZero = net; break; }
@@ -353,6 +361,10 @@ namespace {
       cerr << Warning( "BlifParser::Model::connectSubckts(): The one (tie low) cell \"%s\" has not been found."
                      , oneName.c_str() ) << endl;
   }
+
+
+  string  Model::getGroundName () { return _groundName; }
+  string  Model::getPowerName  () { return _powerName; }
 
 
   Model* Model::find ( string modelName )
@@ -412,15 +424,19 @@ namespace {
     else {
       cmess2 << "     " << tab++ << "+ " << cell->getName() << " [.model]" << endl;
 
-      Net* vss = Net::create ( _cell, "vss" );
-      vss->setExternal( true );
-      vss->setGlobal  ( true );
-      vss->setType    ( Net::Type::GROUND );
+      if (not cell->getNet(_groundName)) {
+        Net* vss = Net::create ( _cell, _groundName );
+        vss->setExternal( true );
+        vss->setGlobal  ( true );
+        vss->setType    ( Net::Type::GROUND );
+      }
   
-      Net* vdd = Net::create ( _cell, "vdd" );
-      vdd->setExternal( true );
-      vdd->setGlobal  ( true );
-      vdd->setType    ( Net::Type::POWER );
+      if (not cell->getNet(_powerName)) {
+        Net* vdd = Net::create ( _cell, _powerName );
+        vdd->setExternal( true );
+        vdd->setGlobal  ( true );
+        vdd->setType    ( Net::Type::POWER );
+      }
     }
   }
 
@@ -722,7 +738,7 @@ namespace CRL {
                          , tokenize.lineno()
                          ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vss" );
-          blifModel->getCell()->getNet( "vss" )->addAlias( blifLine[1] );
+          blifModel->getCell()->getNet( blifModel->getGroundName() )->addAlias( blifLine[1] );
         } else if (tokenize.state() & Tokenize::CoverOne ) {
           cerr << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
                            "          File \"%s.blif\" at line %u."
@@ -731,7 +747,7 @@ namespace CRL {
                          , tokenize.lineno()
                          ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vdd" );
-          blifModel->getCell()->getNet( "vdd" )->addAlias( blifLine[1] );
+          blifModel->getCell()->getNet( blifModel->getPowerName() )->addAlias( blifLine[1] );
         } else {
           cerr << Error( "Blif::load() Unsupported \".names\" cover construct.\n"
                          "          File \"%s.blif\" at line %u."

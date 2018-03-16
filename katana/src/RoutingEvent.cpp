@@ -638,6 +638,12 @@ namespace Katana {
     if (RoutingEvent::getStage() == RoutingEvent::Repair) {
       if (_segment->isStrongTerminal(Flags::Propagate)) {
         cdebug_log(159,0) << "Not expanding on Terminals:" << _constraints << endl;
+      } else if (  _segment->base()->getAutoSource()->isFixed()
+                or _segment->base()->getAutoTarget()->isFixed()) {
+        cdebug_log(159,0) << "Not expanding on fixed segments:" << _constraints << endl;
+      } else if (   Session::getRoutingGauge()->isTwoMetals()
+                and _segment->base()->isHorizontal()) {
+        cdebug_log(159,0) << "Not expanding on horizontal segments in channel mode:" << _constraints << endl;
       } else {
         cdebug_log(159,0) << "Expanding:" << _constraints << endl;
         _constraints.inflate( Session::getSliceHeight() );

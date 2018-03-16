@@ -226,6 +226,31 @@ namespace Anabatic {
   }
 
 
+  bool  Edge::isEnding ( Segment* segment ) const
+  {
+    cdebug_log(112,0) << "Edge::isEnding() " << this << endl;
+    cdebug_log(112,0) << "| Sbb " << _source->getBoundingBox() << endl;
+    cdebug_log(112,0) << "| Tbb " << _target->getBoundingBox() << endl;
+    cdebug_log(112,0) << "| " << segment << endl;
+                                                        
+    Contact* contact = dynamic_cast<Contact*>( segment->getSource() );
+    cdebug_log(112,0) << "| source" << contact << endl;
+    if (contact) {
+      if (  (_source->isStdCellRow() and _source->getBoundingBox().contains(contact->getCenter()))
+         or (_target->isStdCellRow() and _target->getBoundingBox().contains(contact->getCenter())) )
+        return true;
+    }
+    contact = dynamic_cast<Contact*>( segment->getTarget() );
+    cdebug_log(112,0) << "| target" << contact << endl;
+    if (contact) {
+      if (  (_source->isStdCellRow() and _source->getBoundingBox().contains(contact->getCenter()))
+         or (_target->isStdCellRow() and _target->getBoundingBox().contains(contact->getCenter())) )
+        return true;
+    }
+    return false;
+  }
+
+
   void  Edge::add ( Segment* segment )
   {
     _segments.push_back( segment );
@@ -241,13 +266,7 @@ namespace Anabatic {
     else {
     // In channel routing, do not increase edge occupancy on terminals,
     // because the capacity has already been decreased in annotedGlobalGraph (Katana).
-      AutoContact* autoContact = Session::lookup( dynamic_cast<Contact*>(segment->getSource()) );
-      if (not autoContact or (autoContact->getGCell() != _source)) {
-        autoContact = Session::lookup( dynamic_cast<Contact*>(segment->getTarget()) );
-        if (not autoContact or (autoContact->getGCell() != _target)) {
-          deltaOccupancy = segment->getWidth()/pitch;
-        }
-      }
+      if (not isEnding(segment)) deltaOccupancy = segment->getWidth()/pitch;
     }
 
     incRealOccupancy( deltaOccupancy ); 
@@ -263,10 +282,30 @@ namespace Anabatic {
 
         std::swap( _segments[i], _segments[_segments.size()-1] );
         _segments.pop_back();
-        incRealOccupancy( -1 );  // Need to take the wire width into account.
+
+        Horizontal* h = dynamic_cast<Horizontal*>(segment);
+        Vertical*   v = dynamic_cast<Vertical*>(segment);
+        DbU::Unit pitch = 0;
+        if (h) pitch = Session::getGHorizontalPitch();
+        if (v) pitch = Session::getGVerticalPitch();
+
+        int deltaOccupancy = 0;
+    
+        if (not Session::getRoutingGauge()->isTwoMetals()) deltaOccupancy = segment->getWidth()/pitch;
+        else {
+        // In channel routing, do not increase edge occupancy on terminals,
+        // because the capacity has already been decreased in annotedGlobalGraph (Katana).
+          if (not isEnding(segment)) deltaOccupancy = segment->getWidth()/pitch;
+        }
+
+        incRealOccupancy( -deltaOccupancy );
         return;
       }
     }
+
+    cerr << Error( "On %s,\n        segment doesn't belong: %s"
+                 , getString(this).c_str()
+                 , getString(segment).c_str() ) << endl;
   }
 
 
@@ -291,15 +330,11 @@ namespace Anabatic {
 
     for ( size_t i=0 ; i<_segments.size() ; ) {
       if (Session::getRoutingGauge()->isTwoMetals()) {
-        AutoContact* autoContact = Session::lookup( dynamic_cast<Contact*>(_segments[i]->getSource()) );
-        if (not autoContact or (autoContact->getGCell() != _source)) {
-          autoContact = Session::lookup( dynamic_cast<Contact*>(_segments[i]->getTarget()) );
-          if (not autoContact or (autoContact->getGCell() != _target)) {
-            NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
-            if (netData->isGlobalRouted()) ++netCount;
-            anabatic->ripup( _segments[i], Flags::Propagate );
-            continue;
-          }
+        if (not isEnding(_segments[i])) {
+          NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+          if (netData->isGlobalRouted()) ++netCount;
+          anabatic->ripup( _segments[i], Flags::Propagate );
+          continue;
         }
         ++i;
       } else {

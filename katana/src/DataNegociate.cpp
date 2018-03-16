@@ -152,7 +152,7 @@ namespace Katana {
                               , -perpandicular->getExtensionCap(Flags::Target)) );
         cdebug_log(159,0) << "Source cap:"
                           << DbU::getValueString(perpandicular->getExtensionCap(Flags::Source)) << endl;
-      } else if (perpandicular->isFixedAxis()) {
+      } else if (perpandicular->isFixedAxis() /*or _trackSegment->isDogleg()*/) {
         RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandicular->getLayer());
         Track*        track = plane->getTrackByPosition( perpandicular->getAxis() );
         if (track and (perpandicular->getAxis() == track->getAxis())) {

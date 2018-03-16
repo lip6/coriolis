@@ -19,6 +19,7 @@
 
 #include <limits>
 #include "hurricane/Error.h"
+#include "hurricane/Timer.h"
 #include "hurricane/Entity.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Cell.h"
@@ -33,9 +34,19 @@ namespace Hurricane {
 // ****************************************************************************************************
 
 
-  unsigned long  Entity::_flags     = 0;
-  unsigned int   Entity::_nextId    = 0;
-  unsigned int   Entity::_idCounter = 1;
+  unsigned int   Entity::_memoryLimit    = 0;
+  unsigned long  Entity::_flags          = 0;
+  unsigned int   Entity::_nextId         = 0;
+  unsigned int   Entity::_idCounterLimit = 0;
+  unsigned int   Entity::_idCounter      = 1;
+
+
+  void  Entity::setIdCounterLimit ( unsigned int limit )
+  { _idCounterLimit = limit; }
+
+
+  void  Entity::setMemoryLimit ( unsigned int limit )
+  { _memoryLimit = limit; }
 
 
   unsigned int  Entity::getIdCounter ()
@@ -96,11 +107,24 @@ namespace Hurricane {
     : Inherit()
     , _id    (getNextId())
   {
+    if (_idCounterLimit and (_id > _idCounterLimit)) {
+      throw Error( "Entity::Entity(): Identifier counter has reached user's limit (%d)."
+                 , _idCounterLimit );
+    }
     if (_idCounter == std::numeric_limits<unsigned int>::max()) {
-      throw Error( "Entity::Entity(): Identifier counter has reached it's limit (%d bits)."
+      throw Error( "Entity::Entity(): Identifier counter has reached type limit (%d bits)."
                  , std::numeric_limits<unsigned int>::digits );
     }
 
+    size_t memorySize = Timer::getMemorySize();
+    if (_memoryLimit and ((memorySize >> 20) > _memoryLimit)) {
+      throw Error( "Entity::Entity(): Program has reached maximum allowed limit of %dMb."
+                 , _memoryLimit );
+    }
+
+    // if (_id % 10000 == 0) {
+    //   cerr << "Reached id:" << _id << " " << Timer::getStringMemory(memorySize) << endl;
+    // }
     // if (_id == 75060)
     //   cerr << "Entity::Entity() " << this << endl;
   }

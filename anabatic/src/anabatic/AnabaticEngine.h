@@ -280,7 +280,7 @@ namespace Anabatic {
       inline        void              _add                  ( GCell* );
       inline        void              _remove               ( GCell* );
       inline        void              _updateLookup         ( GCell* );
-      inline        void              _updateGContacts      ();
+      inline        void              _updateGContacts      ( Flags flags=Flags::Horizontal|Flags::Vertical );
       inline        void              _resizeMatrix         ();
       inline        bool              _inDestroy            () const;
     // Inspector support.                                   
@@ -353,7 +353,7 @@ namespace Anabatic {
   inline const NetDatas&         AnabaticEngine::getNetDatas           () const { return _netDatas; }
   inline       void              AnabaticEngine::_updateLookup         ( GCell* gcell ) { _matrix.updateLookup(gcell); }
   inline       void              AnabaticEngine::_resizeMatrix         () { _matrix.resize( getCell(), getGCells() ); }
-  inline       void              AnabaticEngine::_updateGContacts      () { for ( GCell* gcell : getGCells() ) gcell->updateGContacts(); }
+  inline       void              AnabaticEngine::_updateGContacts      ( Flags flags ) { for ( GCell* gcell : getGCells() ) gcell->updateGContacts(flags); }
   inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )
@@ -375,10 +375,14 @@ namespace Anabatic {
   inline       int    AnabaticEngine::getStamp () const { return _stamp; }
   inline       int    AnabaticEngine::incStamp () { return ++_stamp; }
 
-  inline void  AnabaticEngine::addOv ( Edge* edge ) { _ovEdges.push_back(edge); }
+  inline void  AnabaticEngine::addOv ( Edge* edge ) {
+    std::cerr << "addOv(): " << edge << endl;
+    _ovEdges.push_back(edge);
+  }
 
   inline void  AnabaticEngine::removeOv ( Edge* edge )
-  { 
+  {
+    std::cerr << "removeOv(): " << edge << endl;
     for ( auto iedge = _ovEdges.begin() ; iedge != _ovEdges.end() ; ++iedge )
       if (*iedge == edge) { _ovEdges.erase(iedge); break; }
   }

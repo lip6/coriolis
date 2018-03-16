@@ -1,7 +1,6 @@
-
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2010, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -19,12 +18,7 @@
 // License along with Hurricane. If not, see
 //                                     <http://www.gnu.org/licenses/>.
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,14 +26,11 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/Breakpoint.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
-# ifndef  __HURRICANE_BREAKPOINT__
-# define  __HURRICANE_BREAKPOINT__
+#ifndef  HURRICANE_BREAKPOINT_H
+#define  HURRICANE_BREAKPOINT_H
 
 #include "hurricane/Commons.h"
 
@@ -74,7 +65,7 @@ namespace Hurricane {
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
 
-# endif // __HURRICANE_BREAKPOINT__
+#endif // HURRICANE_BREAKPOINT_H

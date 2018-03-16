@@ -1154,6 +1154,7 @@ namespace Anabatic {
       if (not (   (sourcePerpand->getAutoSource() == source)
               xor (targetPerpand->getAutoSource() == target) ) ) {
       // This is a U-Turn.
+        cdebug_log(145,0) << "U-Turn special case." << endl;
         DbU::Unit optimal = 0;
 
         if (sourcePerpand->getAutoSource() == source) {
@@ -2373,32 +2374,30 @@ namespace Anabatic {
     AutoSegment* segment;
     Horizontal*  horizontal = dynamic_cast<Horizontal*>( hurricaneSegment );
     Vertical*    vertical   = dynamic_cast<Vertical*  >( hurricaneSegment );
-    AutoContact* reference = source;
+    AutoContact* reference = NULL;
 
     cdebug_log(149,0) << "Source:" << source << endl;
     cdebug_log(149,0) << "Target:" << target << endl;
 
-    if (target->isFixed()) {
-      if (source->isFixed()) {
-        if ( (horizontal) and (source->getY() != target->getY()))
-          cerr << Warning( "Straight AutoHorizontal connecting misaligned contacts:\n"
-                           "          %s\n"
-                           "          %s"
-                         , getString(source).c_str()
-                         , getString(target).c_str()
-                         ) << endl;
-        if ( (vertical) and (source->getX() != target->getX()))
-          cerr << Warning( "Straight AutoVertical connecting misaligned contacts:\n"
-                           "          %s\n"
-                           "          %s"
-                         , getString(source).c_str()
-                         , getString(target).c_str()
-                         ) << endl;
-      } else
-        reference = target;
+    if (source->isFixed() and target->isFixed()) {
+      if ( (horizontal) and (source->getY() != target->getY()))
+        cerr << Warning( "Straight AutoHorizontal connecting misaligned contacts:\n"
+                         "          %s\n"
+                         "          %s"
+                       , getString(source).c_str()
+                       , getString(target).c_str()
+                       ) << endl;
+      if ( (vertical) and (source->getX() != target->getX()))
+        cerr << Warning( "Straight AutoVertical connecting misaligned contacts:\n"
+                         "          %s\n"
+                         "          %s"
+                       , getString(source).c_str()
+                       , getString(target).c_str()
+                       ) << endl;
     }
 
-    if (target->isTerminal()) reference = target;
+    if (target->isFixed() or target->isTerminal()) reference = target;
+    if (source->isFixed() or source->isTerminal()) reference = source;
 
     Contact*     contact     = dynamic_cast<Contact*>( hurricaneSegment->getSource() );
     AutoContact* autoContact = Session::lookup( contact );
@@ -2450,7 +2449,7 @@ namespace Anabatic {
         }
       }
 
-      horizontal->setY( reference->getY() );
+      if (reference) horizontal->setY( reference->getY() );
       segment = new AutoHorizontal ( horizontal );
       segment->_postCreate();
     } else if (vertical) {
@@ -2466,7 +2465,7 @@ namespace Anabatic {
         }
       }
 
-      vertical->setX( reference->getX() );
+      if (reference) vertical->setX( reference->getX() );
       segment = new AutoVertical ( vertical );
       segment->_postCreate();
     } else {
