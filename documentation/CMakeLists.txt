@@ -41,7 +41,11 @@
                                           PythonTutorial/Environment.rst
                                           PythonTutorial/CellNetComponent.rst
                                           PythonTutorial/Collections.rst
-                                          PythonTutorial/CgtScript.rst )
+                                          PythonTutorial/CgtScript.rst
+                                          PythonTutorial/Netlist.rst
+                                          PythonTutorial/RealDesigns.rst
+                                          PythonTutorial/ToolEngines.rst
+                                          PythonTutorial/AdvancedTopics.rst )
   
                  set ( usersGuideRst      UsersGuide/pdfHeader.rst
                                           UsersGuide/LicenseCredits.rst

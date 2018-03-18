@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>3. Creating Cell, Net and Component &mdash; Coriolis 2 documentation</title>
+  <title>3. Making a Standard Cell – Layout &mdash; Coriolis 2 documentation</title>
   
 
   
@@ -34,7 +34,7 @@
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
-        <link rel="up" title="Hurricane Python Tutorial" href="index.html"/>
+        <link rel="up" title="Hurricane+Python Tutorial" href="index.html"/>
         <link rel="next" title="4. Manipulating Cells, Nets and Components" href="Collections.html"/>
         <link rel="prev" title="2. Setting up the Environment" href="Environment.html"/> 
 
@@ -150,10 +150,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane Python Tutorial</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane+Python Tutorial</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Introduction.html">1. Introduction</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Introduction.html#generalities">1.1 Generalities</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Introduction.html#various-kinds-of-constructors">1.2 Various Kinds of Constructors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#terminology">1.1 Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#generalities">1.2 Generalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#various-kinds-of-constructors">1.3 Various Kinds of Constructors</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Environment.html">2. Setting up the Environment</a><ul>
@@ -165,7 +166,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">3. Creating Cell, Net and Component</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3. Making a Standard Cell &#8211; Layout</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#the-allianceframework-crl-core">3.1 The AllianceFramework (CRL Core)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#session-mechanism-hurricane">3.2 Session Mechanism (Hurricane)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-new-cell-crl-core">3.3 Creating a new Cell (CRL Core)</a></li>
@@ -174,10 +175,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#adding-nets-and-components">3.6 Adding Nets and Components</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#getting-a-layer">3.6.1 Getting a Layer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#creating-a-net">3.6.2 Creating a Net</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#creating-a-component">3.6.3 Creating a Component</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">3.6.3 Creating a Component</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#saving-to-disk-crl-core">3.7 Saving to Disk (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-complete-example-file">3.8 The Complete Example File</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Collections.html">4. Manipulating Cells, Nets and Components</a><ul>
@@ -192,7 +194,38 @@
 <li class="toctree-l3"><a class="reference internal" href="CgtScript.html#using-breakpoints">5.1 Using Breakpoints</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="CgtScript.html#the-complete-example-file">6. The Complete Example File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Netlist.html">6. Making a hierarchical Cell &#8211; Netlist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#creating-an-instance">6.1 Creating an Instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#id1">6.2 Creating Nets and connecting to Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#power-supplies-special-case">6.3 Power supplies special case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#creating-the-physical-view-of-a-cell-netlist">6.4 Creating the physical view of a Cell netlist</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#id2">6.4.1 Transformation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#placing-an-instance">6.4.2 Placing an Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#nets-from-plugs-to-routingpads">6.4.3 Nets &#8211; From Plugs to RoutingPads</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#nets-regular-wiring">6.4.4 Nets &#8211; Regular wiring</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#the-complete-example-file">6.5 The Complete Example File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="RealDesigns.html">7. Working in real mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="RealDesigns.html#loading-a-lef-file">7.1 Loading a <span class="sc">lef</span> file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RealDesigns.html#loading-a-blif-file-yosys">7.2 Loading a <span class="sc">blif</span> file &#8211; <span class="sc">Yosys</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ToolEngines.html">8. Tool Engines (CRL Core)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ToolEngines.html#placer-etesian">8.1 Placer &#8211; Etesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ToolEngines.html#router-katana">8.1 Router &#8211; Katana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ToolEngines.html#a-complete-example">8.2  A Complete Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="AdvancedTopics.html">9. Advanced Topics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="AdvancedTopics.html#id1">9.1 Occurrence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="AdvancedTopics.html#id2">9.2 RoutingPads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="AdvancedTopics.html#hypernets">9.3 HyperNets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="AdvancedTopics.html#miscellaeous-trans-hierarchical-functions">9.4 Miscellaeous trans-hierarchical functions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
@@ -295,9 +328,9 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-          <li><a href="index.html">Hurricane Python Tutorial</a> &raquo;</li>
+          <li><a href="index.html">Hurricane+Python Tutorial</a> &raquo;</li>
       
-    <li>3. Creating Cell, Net and Component</li>
+    <li>3. Making a Standard Cell &#8211; Layout</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -308,9 +341,14 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="creating-cell-net-and-component">
-<h1>3. Creating Cell, Net and Component<a class="headerlink" href="#creating-cell-net-and-component" title="Permalink to this headline">¶</a></h1>
-<p>In this part, we well show how to create and save a single <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>.</p>
+  <div class="section" id="making-a-standard-cell-layout">
+<h1>3. Making a Standard Cell &#8211; Layout<a class="headerlink" href="#making-a-standard-cell-layout" title="Permalink to this headline">¶</a></h1>
+<p>In this part, we well show how to create and save a terminal <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>,
+that is, a cell without instances (the end point of a hierarchical
+design). To illustrate the case we will draw the layout of a
+standard cell.</p>
+<p>We will introduce the following classes : <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>
+and it&#8217;s derived classes.</p>
 <div class="section" id="the-allianceframework-crl-core">
 <h2>3.1 The AllianceFramework (CRL Core)<a class="headerlink" href="#the-allianceframework-crl-core" title="Permalink to this headline">¶</a></h2>
 <p>The <span class="sc">Hurricane</span> database only manage objects in memory. To load or save
@@ -442,9 +480,16 @@ not mandatory.</p>
 <span class="n">i</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Unlike some other database models, in <span class="sc">Hurricane</span>,
+<strong>there is no explicit terminal object</strong>, you only need to make the
+net external. For more information about how to connect to an
+external net, see <a class="reference external" href="./Netlist.html#id1">6.2 Creating Nets and connecting to Instances</a>.</p>
 </div>
-<div class="section" id="creating-a-component">
-<h3>3.6.3 Creating a Component<a class="headerlink" href="#creating-a-component" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id1">
+<h3>3.6.3 Creating a Component<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>Finally, we get ready to create a <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>, we will make a <a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a> segment
 of <code class="docutils literal"><span class="pre">METAL1</span></code>.</p>
 <div class="highlight-Python"><div class="highlight"><pre><span></span><span class="n">segment</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">i</span>                         <span class="c1"># The owner Net.</span>
@@ -499,6 +544,116 @@ will be written in the <span class="sc">Alliance</span> <code class="docutils li
 </pre></div>
 </div>
 </div>
+<div class="section" id="the-complete-example-file">
+<h2>3.8 The Complete Example File<a class="headerlink" href="#the-complete-example-file" title="Permalink to this headline">¶</a></h2>
+<p>The example files can be found in the <code class="docutils literal"><span class="pre">share/doc/coriolis2/examples/scripts/</span></code>
+directory (under the the root of the <span class="sc">Coriolis</span> installation).</p>
+<p>The code needed to run it through the <span class="cb">cgt</span> viewer as been added. For the
+explanation of that part of the code, refer to <a class="reference external" href="./CgtScript.html">5. Make a script runnable through cgt</a>.</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span>   <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span>   <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">toDbU</span> <span class="p">(</span> <span class="n">l</span> <span class="p">):</span> <span class="k">return</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">doBreak</span> <span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">)</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">buildInvertor</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;invertor&#39;</span> <span class="p">)</span>
+    <span class="n">cell</span><span class="o">.</span><span class="n">setTerminal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">technology</span> <span class="o">=</span> <span class="n">DataBase</span><span class="o">.</span><span class="n">getDB</span><span class="p">()</span><span class="o">.</span><span class="n">getTechnology</span><span class="p">()</span>
+    <span class="n">metal1</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;METAL1&quot;</span>     <span class="p">)</span>
+    <span class="n">poly</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;POLY&quot;</span>       <span class="p">)</span>
+    <span class="n">ptrans</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;PTRANS&quot;</span>     <span class="p">)</span>
+    <span class="n">ntrans</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NTRANS&quot;</span>     <span class="p">)</span>
+    <span class="n">pdif</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;PDIF&quot;</span>       <span class="p">)</span>
+    <span class="n">ndif</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NDIF&quot;</span>       <span class="p">)</span>
+    <span class="n">contdifn</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_DIF_N&quot;</span> <span class="p">)</span>
+    <span class="n">contdifp</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_DIF_P&quot;</span> <span class="p">)</span>
+    <span class="n">nwell</span>      <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NWELL&quot;</span>      <span class="p">)</span>
+    <span class="n">contpoly</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_POLY&quot;</span>  <span class="p">)</span>
+    <span class="n">ntie</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NTIE&quot;</span>       <span class="p">)</span>
+
+    <span class="n">net</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;nwell&quot;</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">net</span><span class="p">,</span> <span class="n">nwell</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">7.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">27.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">51.0</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">vdd</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;vdd&quot;</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vdd</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">47.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">h</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">47.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">45.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">pdif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">28.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">46.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">ntie</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">43.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">48.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building vdd.&#39;</span> <span class="p">)</span>
+
+    <span class="n">vss</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;vss&quot;</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vss</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">))</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">h</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vss</span><span class="p">,</span> <span class="n">ndif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">3.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vss</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building vss.&#39;</span> <span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span> <span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">ptrans</span>  <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">26.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">39.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">ntrans</span>  <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">14.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">14.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">26.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">20.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span>   <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">contpoly</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">20.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building i.&#39;</span> <span class="p">)</span>
+
+    <span class="n">nq</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;nq&quot;</span> <span class="p">)</span>
+    <span class="n">nq</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">pdif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">28.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">37.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">ndif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">8.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">30.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building q.&#39;</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">saveCell</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">buildInvertor</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -522,7 +677,7 @@ will be written in the <span class="sc">Alliance</span> <code class="docutils li
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Mar 16, 2018.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Mar 18, 2018.
         </small></td>
         <td class="RFooter"></td>
       </tr>

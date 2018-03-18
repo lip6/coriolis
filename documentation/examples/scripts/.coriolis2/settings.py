@@ -13,7 +13,7 @@ parametersTable = \
     , ('misc.verboseLevel1'       , TypeBool      , False   )
     , ('misc.verboseLevel2'       , TypeBool      , True    )
     , ('misc.traceLevel'          , TypeInt       , 1000    )
-    , ('etesian.spaceMargin'      , TypePercentage, 5.0     )
+    , ('etesian.spaceMargin'      , TypePercentage, 30.0    )
     , ('etesian.aspectRatio'      , TypePercentage, 100.0   )
    # Kite parameters.
     , ("kite.eventsLimit"         , TypeInt       , 1000000 )

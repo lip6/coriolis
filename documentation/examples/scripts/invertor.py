@@ -87,6 +87,8 @@ def buildInvertor ( editor ):
     doBreak( 1, 'Done building q.' )
 
     UpdateSession.close()
+
+    AllianceFramework.get().saveCell( cell, Catalog.State.Views )
     return
 
 

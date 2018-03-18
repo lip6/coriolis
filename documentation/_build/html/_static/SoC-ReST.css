@@ -213,15 +213,52 @@ div.code * {
 }
 
 div.note {
+/*
   margin:             8px 2% 0px 2%;
   border:             1px none #ffbb44;
   border-left-width:  4px;
   border-left-style:  solid;
   padding:            1px 10pt 1px 55px;
-/*background:         #fff676 url('/dsk/l1/jpc/pictures/ReST/clipboard.png') no-repeat 0% 50%;;*/
   background:         #ffdd66 url('../_static/images/clipboard.png') no-repeat 0% 50%;;
   font-size:          90%
+ */
+  margin:             8px 10% 0px 2%;
+/*padding:            10px 5pt 1px 35px;*/
+  padding:            1px 10px 5px 35px;
+  border-left:        4px solid #f6b73c;
+  background:         #fff3d4;
+  font-size:          90%
 }
+
+div.note > p.admonition-title {
+  font-family:        "courrier", "andale mono", monospace;
+  font-weight:        bold;
+  font-size:          110%
+}
+
+div.note::before
+{
+/*
+ *position:                relative;
+ *top:                     1px;
+ *display:                 inline-block;
+ *font-family:             'Glyphicons Halflings';
+ *font-style:              normal;
+ *font-weight:             400;
+ *line-height:             1;
+ *-webkit-font-smoothing:  antialiased;
+ *-moz-osx-font-smoothing: grayscale;
+ */
+
+  font-family:             'FontAwesome';
+  content:                  "";
+  font-size:                200%;
+  float:                    left;
+  margin:                   15px 0px 0px -30px;
+  *-webkit-font-smoothing:  antialiased;
+  *-moz-osx-font-smoothing: grayscale;
+}
+
 
 div.error {
   margin:             8px 2% 0px 2%;

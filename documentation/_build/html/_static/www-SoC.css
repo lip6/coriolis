@@ -564,4 +564,13 @@ body.gsummary table td {
   border:            none;
 }
 
+/* Override of the RTD style .*/
+
+.wy-nav-side {
+  width:             350px;
+}
+
+.wy-nav-content {
+  margin:            0px 0px 0px 350px;
+}
 @import 'SoC-ReST.css';

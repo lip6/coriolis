@@ -49,6 +49,7 @@
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MOSIS|                          replace:: :sc:`mosis`
+.. |Blif|                           replace:: :sc:`blif`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -62,6 +63,7 @@
 .. |Sroka|                          replace:: :sc:`Sroka`
 .. |Yifei|                          replace:: :sc:`Yifei`
 
+.. |VLSI|                           replace:: :sc:`vlsi`
 .. |ANSI|                           replace:: :sc:`ansi`
 .. |MIPS|                           replace:: :sc:`mips`
 .. |Am2901|                         replace:: :sc:`Am2901`
@@ -87,6 +89,7 @@
 .. |Knik|                           replace:: :sc:`Knik`
 .. |Katabatic|                      replace:: :sc:`Katabatic`
 .. |Kite|                           replace:: :sc:`Kite`
+.. |Katana|                         replace:: :sc:`Katana`
 .. |Stratus|                        replace:: :sc:`Stratus`
 .. |Stratus1|                       replace:: :sc:`Stratus1`
 .. |Stratus2|                       replace:: :sc:`Stratus2`
@@ -156,6 +159,8 @@
 .. _RapidJSON:                      http://miloyip.github.io/rapidjson/
 .. _Python/C API Reference Manual:  https://docs.python.org/2/c-api/index.html
 .. _Apache License, Version 2.0:    http://www.apache.org/licences/LICENSE-2.0
+.. _FreePDK45:                      https://www.eda.ncsu.edu/wiki/FreePDK45:Contents
+.. _Yosys:                          http://www.clifford.at/yosys/
 
 .. Standard CAO/VLSI Concepts.
 .. |netlist|                        replace:: *netlist*

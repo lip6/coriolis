@@ -23,7 +23,29 @@ All |Hurricane| objects implements the |Python| ``__str__()`` function,
 they print the result of C++ ``::getString()``.
 
 
-1.1 Generalities
+1.1 Terminology
+~~~~~~~~~~~~~~~
+
+In the |Hurricane| database, the *logical* (netlist) and *physical* (layout)
+views are fused. As the main goal of the database is to support place & route
+tools, we usually starts with a *pure* netlist which is progessively enriched
+to become a layout. Cell, in particular, is able to be in any intermediate
+state. Many of our objects have self-explanatory names, but some
+don't. Thus we summarize below the more important ones:
+
+===============  =====================================================
+**Class**        **Meaning**
+===============  =====================================================
+Cell_            The model. A Cell do not have terminals, only nets
+                 flagged as *external*
+Instance_        An instance of a model
+Net_             A grouping of electrically connecteds components
+Plug_            A terminal of an instance
+RoutingPad_      A physical connexion (*pin*) to an instance
+===============  =====================================================
+
+
+1.2 Generalities
 ~~~~~~~~~~~~~~~~
 
 The C++ API has been exported in Python as closely as possible. Meaning
@@ -85,7 +107,7 @@ The equivalent |Python| code will be:
        UpdateSession.close()
 
 
-1.2 Various Kinds of Constructors
+1.3 Various Kinds of Constructors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Regarding the memory allocation, the |Hurricane| database contains two kind of objects.
