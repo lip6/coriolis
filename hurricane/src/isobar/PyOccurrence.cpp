@@ -61,42 +61,44 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyOccurrence_NEW ()"
 
-  PyObject* PyOccurrence_NEW ( PyObject *module, PyObject *args ) {
+  PyObject* PyOccurrence_NEW ( PyObject *module, PyObject *args )
+  {
     cdebug_log(20,0) << "PyOccurrence_NEW()" << endl;
 
     Occurrence* occurrence;
     PyObject*   arg0;
     PyObject*   arg1;
 
-    __cs.init ("Occurrence.Occurrence");
-    if ( ! PyArg_ParseTuple(args,"|O&O&:Occurrence.Occurrence"
-                           ,Converter,&arg0
-                           ,Converter,&arg1
+    __cs.init( "Occurrence.Occurrence" );
+    if (not PyArg_ParseTuple( args,"|O&O&:Occurrence.Occurrence"
+                            , Converter, &arg0
+                            , Converter, &arg1
                            )) {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Occurrence constructor. " );
+        PyErr_SetString( ConstructorError, "More than two parameters given to Occurrence constructor." );
         return NULL;
     }
 
     PyOccurrence* pyOccurrence = NULL;
     HTRY
-    if      ( __cs.getObjectIds() == NO_ARG       ) { occurrence = new Occurrence (); }
-    else if ( __cs.getObjectIds() == ENT_ARG      ) { occurrence = new Occurrence (  PYENTITY_O(arg0) ); }
-    else if ( __cs.getObjectIds() == COMP_PATH_ARG) { occurrence = new Occurrence (  PYSEGMENT_O(arg0)
-                                                                                  , *PYPATH_O(arg1) ); }
-    else if ( __cs.getObjectIds() == ENT_PATH_ARG ) { occurrence = new Occurrence (  PYENTITY_O(arg0)
-                                                                                  , *PYPATH_O(arg1) ); }
-    else {
-      PyErr_SetString ( ConstructorError, "invalid number of parameters for Occurrence constructor. " );
-      return ( NULL );
-    }
-
-    pyOccurrence = PyObject_NEW(PyOccurrence, &PyTypeOccurrence);
-    if (pyOccurrence == NULL) return NULL;
-    
-    pyOccurrence->_object = occurrence;
+      if (  (__cs.getObjectIds() == ENT_ARG      )
+         or (__cs.getObjectIds() == COMP_ARG     ) ) { occurrence = new Occurrence (  EntityCast(arg0) ); }
+      else if (__cs.getObjectIds() == NO_ARG       ) { occurrence = new Occurrence (); }
+      else if (__cs.getObjectIds() == COMP_PATH_ARG) { occurrence = new Occurrence (  EntityCast(arg0)
+                                                                                   , *PYPATH_O(arg1) ); }
+      else if (__cs.getObjectIds() == ENT_PATH_ARG ) { occurrence = new Occurrence (  EntityCast(arg0)
+                                                                                   , *PYPATH_O(arg1) ); }
+      else {
+        PyErr_SetString( ConstructorError, "Bad type(s) of parameters given to Occurrence constructor." );
+        return NULL;
+      }
+  
+      pyOccurrence = PyObject_NEW( PyOccurrence, &PyTypeOccurrence );
+      if (pyOccurrence == NULL) return NULL;
+      
+      pyOccurrence->_object = occurrence;
     HCATCH
 
-    return ( (PyObject*)pyOccurrence );
+    return (PyObject*)pyOccurrence;
   }
 
 
