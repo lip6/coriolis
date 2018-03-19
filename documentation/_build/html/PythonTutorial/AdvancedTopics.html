@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>9. Advanced Topics &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Hurricane+Python Tutorial" href="index.html"/>
+        <link rel="next" title="Stratus Reference" href="../Stratus/Stratus.html"/>
+        <link rel="prev" title="8. Tool Engines (CRL Core)" href="ToolEngines.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UsersGuide/index.html">Coriolis User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hurricane+Python Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#terminology">1.1 Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#generalities">1.2 Generalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Introduction.html#various-kinds-of-constructors">1.3 Various Kinds of Constructors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Environment.html">2. Setting up the Environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Environment.html#setting-up-the-pathes">2.1 Setting up the Pathes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Environment.html#user-s-configurations-file">2.2 User&#8217;s Configurations File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Environment.html#the-techno-py-file">2.2.1 The <span class="cb">techno.py</span> File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Environment.html#the-settings-py-file">2.2.2 The <span class="cb">settings.py</span> File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CellNetComponent.html">3. Making a Standard Cell &#8211; Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#the-allianceframework-crl-core">3.1 The AllianceFramework (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#session-mechanism-hurricane">3.2 Session Mechanism (Hurricane)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#creating-a-new-cell-crl-core">3.3 Creating a new Cell (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#the-dbu-measurement-unit">3.4 The DbU Measurement Unit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#setting-up-the-abutment-box">3.5 Setting up the Abutment Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#adding-nets-and-components">3.6 Adding Nets and Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CellNetComponent.html#getting-a-layer">3.6.1 Getting a Layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CellNetComponent.html#creating-a-net">3.6.2 Creating a Net</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CellNetComponent.html#id1">3.6.3 Creating a Component</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#saving-to-disk-crl-core">3.7 Saving to Disk (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CellNetComponent.html#the-complete-example-file">3.8 The Complete Example File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Collections.html">4. Manipulating Cells, Nets and Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Collections.html#hurricane-collections">4.1 Hurricane Collections</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Collections.html#restrictions-about-using-collections">4.1.1 Restrictions about using Collections</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Collections.html#loading-a-cell-with-allianceframework">4.2 Loading a Cell with AllianceFramework</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CgtScript.html">5. Make a script runnable through <span class="cb">cgt</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CgtScript.html#using-breakpoints">5.1 Using Breakpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Netlist.html">6. Making a hierarchical Cell &#8211; Netlist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#creating-an-instance">6.1 Creating an Instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#id1">6.2 Creating Nets and connecting to Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#power-supplies-special-case">6.3 Power supplies special case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#creating-the-physical-view-of-a-cell-netlist">6.4 Creating the physical view of a Cell netlist</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#id2">6.4.1 Transformation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#placing-an-instance">6.4.2 Placing an Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#nets-from-plugs-to-routingpads">6.4.3 Nets &#8211; From Plugs to RoutingPads</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Netlist.html#nets-regular-wiring">6.4.4 Nets &#8211; Regular wiring</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Netlist.html#the-complete-example-file">6.5 The Complete Example File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="RealDesigns.html">7. Working in real mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="RealDesigns.html#loading-a-lef-file">7.1 Loading a <span class="sc">lef</span> file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="RealDesigns.html#loading-a-blif-file-yosys">7.2 Loading a <span class="sc">blif</span> file &#8211; <span class="sc">Yosys</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ToolEngines.html">8. Tool Engines (CRL Core)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ToolEngines.html#placer-etesian">8.1 Placer &#8211; Etesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ToolEngines.html#router-katana">8.1 Router &#8211; Katana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ToolEngines.html#a-complete-example">8.2  A Complete Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">9. Advanced Topics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">9.1 Occurrence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">9.2 RoutingPads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hypernets">9.3 HyperNets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#miscellaeous-trans-hierarchical-functions">9.4 Miscellaeous trans-hierarchical functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Stratus/Stratus.html">Stratus Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../DpGen/DpGen.html">DpGen Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Patterns/Patterns.html">Patterns Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonCpp/index.html">Hurricane Python/C++ API Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../lefapi/lefapi.html#implementation-notes">Implementation Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../lefapi/lefapi.html#understanding-units">Understanding Units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lefapi/lefapi.html#callback-calling-order">Callback Calling Order</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Hurricane+Python Tutorial</a> &raquo;</li>
+      
+    <li>9. Advanced Topics</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="advanced-topics">
+<h1>9. Advanced Topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h1>
+<p>This is a place holder as well as a reminder to myself to write this part of
+the documentation.</p>
+<div class="section" id="id1">
+<h2>9.1 Occurrence<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>The trans-hierarchical workhorse.</p>
+</div>
+<div class="section" id="id2">
+<h2>9.2 RoutingPads<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p>Unlike the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> that only make connexions between two <strong>adjacent</strong>
+hierarchical levels, <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> can refer to a deeply buried terminal.</p>
+</div>
+<div class="section" id="hypernets">
+<h2>9.3 HyperNets<a class="headerlink" href="#hypernets" title="Permalink to this headline">¶</a></h2>
+<p>This class is part of the <em>virtual flattening</em> mechanisms, it allows to
+go through all the components of a trans-hierarchical net.</p>
+</div>
+<div class="section" id="miscellaeous-trans-hierarchical-functions">
+<h2>9.4 Miscellaeous trans-hierarchical functions<a class="headerlink" href="#miscellaeous-trans-hierarchical-functions" title="Permalink to this headline">¶</a></h2>
+<p>For a starter, how to get all the leaf cells...</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Stratus/Stratus.html" class="btn btn-neutral float-right" title="Stratus Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ToolEngines.html" class="btn btn-neutral" title="8. Tool Engines (CRL Core)" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Mar 18, 2018.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2018, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
