@@ -57,7 +57,10 @@ framework   = CRL.AllianceFramework.get()
 
 def ScriptMain ( **kw ):
   success  = False
-  doStages = kw['doStages']
+  if kw.has_key('doStages'):
+    doStages = kw['doStages']
+  else:
+    doStages = ChipStages
   try:
     cell, editor = plugins.kwParseMain( **kw )
   
