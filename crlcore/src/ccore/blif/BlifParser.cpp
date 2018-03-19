@@ -350,13 +350,15 @@ namespace {
     _powerName  = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
 
     if (_zero) {
-      for ( Net* net : _zero->getNets() ) if (not net->isSupply()) { _masterNetZero = net; break; }
+      for ( Net* net : _zero->getNets() )
+        if (not net->isSupply() and not net->isAutomatic()) { _masterNetZero = net; break; }
     } else
       cerr << Warning( "BlifParser::Model::connectSubckts(): The zero (tie high) cell \"%s\" has not been found."
                      , zeroName.c_str() ) << endl;
 
     if (_one) {
-      for ( Net* net : _one->getNets() ) if (not net->isSupply()) { _masterNetOne = net; break; }
+      for ( Net* net : _one->getNets() )
+        if (not net->isSupply() and not net->isAutomatic()) { _masterNetOne = net; break; }
     } else
       cerr << Warning( "BlifParser::Model::connectSubckts(): The one (tie low) cell \"%s\" has not been found."
                      , oneName.c_str() ) << endl;
