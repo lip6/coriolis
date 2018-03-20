@@ -72,6 +72,7 @@
 #include "hurricane/isobar/PyHorizontal.h"
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyPad.h"
+#include "hurricane/isobar/PyTriangle.h"
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/isobar/PyOccurrenceCollection.h"
@@ -569,7 +570,9 @@ extern "C" {
     PyHorizontal_LinkPyType ();
     PyContact_LinkPyType ();
     PyPin_LinkPyType ();
+    PyTriangle_LinkPyType ();
     PyPlug_LinkPyType ();
+    PyTriangle_LinkPyType ();
     PyBreakpoint_LinkPyType ();
     PyQuery_LinkPyType ();
     PyQueryMask_LinkPyType ();
@@ -652,6 +655,7 @@ extern "C" {
     PYTYPE_READY_SUB ( Pin            , Contact  )
     PYTYPE_READY_SUB ( Plug           , Component)
     PYTYPE_READY_SUB ( Pad            , Component)
+    PYTYPE_READY_SUB ( Triangle       , Component)
 
     // Identifier string can take up to 10 characters !
     __cs.addType ( "intv"       , &PyTypeInterval              , "<Interval>"              , false );
@@ -703,6 +707,7 @@ extern "C" {
     __cs.addType ( "rp"         , &PyTypeRoutingPad            , "<RoutingPad>"            , false, "comp" );
     __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
     __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
+    __cs.addType ( "triangle"   , &PyTypeTriangle              , "<Triangle>"              , false, "comp" );
     __cs.addType ( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
     __cs.addType ( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
     __cs.addType ( "techno"     , &PyTypeTechnology            , "<Technology>"            , false );
@@ -801,6 +806,8 @@ extern "C" {
     PyModule_AddObject ( module, "Pin"                  , (PyObject*)&PyTypePin );
     Py_INCREF ( &PyTypePad );
     PyModule_AddObject ( module, "Pad"                  , (PyObject*)&PyTypePad );
+    Py_INCREF ( &PyTypeTriangle );
+    PyModule_AddObject ( module, "Triangle"             , (PyObject*)&PyTypeTriangle );
     
     
     PyObject* dictionnary = PyModule_GetDict ( module );

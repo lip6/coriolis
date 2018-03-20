@@ -66,6 +66,7 @@
                                    PySegmentCollection.cpp
                                    PyTechnology.cpp
                                    PyTransformation.cpp
+                                   PyTriangle.cpp
                                    PyOrientation.cpp
                                    PyDbU.cpp
                                    PyUpdateSession.cpp
@@ -132,6 +133,7 @@
                                    hurricane/isobar/PySegmentCollection.h
                                    hurricane/isobar/PyTechnology.h
                                    hurricane/isobar/PyTransformation.h
+                                   hurricane/isobar/PyTriangle.h
                                    hurricane/isobar/PyOrientation.h
                                    hurricane/isobar/PyDbU.h
                                    hurricane/isobar/PyUpdateSession.h

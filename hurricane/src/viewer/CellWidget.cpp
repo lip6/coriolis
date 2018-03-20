@@ -39,6 +39,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Triangle.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/ExtensionGo.h"
 
@@ -664,17 +665,32 @@ namespace Hurricane {
     static QRect         rectangle;
     static unsigned int  state;
 
+    const Triangle* triangle = dynamic_cast<const Triangle*>(go);
+    if (triangle) {
+      _goCount++;
+      Box bb = transformation.getBox(triangle->getBoundingBox(basicLayer));
+      rectangle = _cellWidget->dbuToScreenRect( bb );
+      if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
+        QPoint points[3];
+        points[0] = _cellWidget->dbuToScreenPoint( triangle->getPoint(0) );
+        points[1] = _cellWidget->dbuToScreenPoint( triangle->getPoint(1) );
+        points[2] = _cellWidget->dbuToScreenPoint( triangle->getPoint(2) );
+        _cellWidget->drawScreenPolygon( points, 3 );
+      }
+      return;
+    }
+
     const Component* component = dynamic_cast<const Component*>(go);
-    if ( component ) {
+    if (component) {
       _goCount++;
       Box bb = transformation.getBox(component->getBoundingBox(basicLayer));
-      rectangle = _cellWidget->dbuToScreenRect ( bb );
+      rectangle = _cellWidget->dbuToScreenRect( bb );
       state     = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
       switch ( state ) {
         case 0: break;
-        case 1: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
-        case 2: _cellWidget->drawScreenLine ( rectangle.bottomLeft(), rectangle.topLeft    () ); break;
-        case 3: _cellWidget->drawScreenRect ( rectangle ); break;
+        case 1: _cellWidget->drawScreenLine( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
+        case 2: _cellWidget->drawScreenLine( rectangle.bottomLeft(), rectangle.topLeft    () ); break;
+        case 3: _cellWidget->drawScreenRect( rectangle ); break;
       }
 
       if ( _cellWidget->isDrawable("text.component")
@@ -682,9 +698,9 @@ namespace Hurricane {
          and (rectangle.width () > 30)
          and (rectangle.height() > 30) ) {
         const Net* net = component->getNet();
-        if ( not net->isAutomatic() ) {
+        if (not net->isAutomatic()) {
           const char* netName = net->getName()._getSharedName()->_getSString().c_str();
-          _cellWidget->drawDisplayText ( rectangle, netName, BigFont|Bold|Center|Frame );
+          _cellWidget->drawDisplayText( rectangle, netName, BigFont|Bold|Center|Frame );
         }
       }
     }

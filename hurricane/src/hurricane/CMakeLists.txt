@@ -23,7 +23,7 @@
                                 hurricane/DiffusionLayer.h
                                 hurricane/TransistorLayer.h       hurricane/TransistorLayers.h
                                 hurricane/Box.h                   hurricane/Boxes.h
-				hurricane/Torus.h
+                                hurricane/Torus.h
                                 hurricane/Cell.h                  hurricane/Cells.h
                                 hurricane/Collection.h
                                 hurricane/Commons.h
@@ -92,6 +92,7 @@
                                 hurricane/Technology.h
                                 hurricane/Timer.h
                                 hurricane/Transformation.h
+                                hurricane/Triangle.h
                                 hurricane/DbU.h
                                 hurricane/UpdateSession.h
                                 hurricane/VectorCollection.h
@@ -160,6 +161,7 @@
                                 Horizontal.cpp
                                 Pad.cpp
                                 RoutingPad.cpp
+                                Triangle.cpp
                                 NetExternalComponents.cpp
                                 NetRoutingProperty.cpp
                                 Reference.cpp
