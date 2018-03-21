@@ -1068,22 +1068,32 @@ namespace Anabatic {
 
     cdebug_log(145,0) << "singleGCell " << gcell1 << endl;
 
-    AutoContact* turn   = NULL;
+    AutoContact* turn1  = NULL;
+    AutoContact* turn2  = NULL;
     AutoContact* source = NULL;
     AutoContact* target = NULL;
 
     for ( size_t irp=1 ; irp<rpM1s.size() ; ++irp ) {
-      doRp_AutoContacts( gcell1, rpM1s[irp-1], source, turn, DoSourceContact );
-      doRp_AutoContacts( gcell1, rpM1s[irp  ], target, turn, DoSourceContact );
-      AutoSegment::create( source, target, Flags::Horizontal );
+      doRp_AutoContacts( gcell1, rpM1s[irp-1], source, turn1, DoSourceContact );
+      doRp_AutoContacts( gcell1, rpM1s[irp  ], target, turn1, DoSourceContact );
+
+      if (source->getUConstraints(Flags::Vertical).intersect(target->getUConstraints(Flags::Vertical)))
+        AutoSegment::create( source, target, Flags::Horizontal );
+      else {
+        turn1 = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+        turn2 = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+        AutoSegment::create( source, turn1 , Flags::Horizontal );
+        AutoSegment::create( turn1 , turn2 , Flags::Vertical   );
+        AutoSegment::create( turn2 , target, Flags::Horizontal );
+      }
     }
 
     if (rpM2) {
-      doRp_AutoContacts( gcell1, rpM1s[0], source, turn, DoSourceContact );
-      doRp_AutoContacts( gcell1, rpM2    , target, turn, DoSourceContact );
-      turn = AutoContactTurn::create( gcell1, rpM2->getNet(), Session::getContactLayer(1) );
-      AutoSegment::create( source, turn  , Flags::Horizontal );
-      AutoSegment::create( turn  , target, Flags::Vertical );
+      doRp_AutoContacts( gcell1, rpM1s[0], source, turn1, DoSourceContact );
+      doRp_AutoContacts( gcell1, rpM2    , target, turn1, DoSourceContact );
+      turn1 = AutoContactTurn::create( gcell1, rpM2->getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( source, turn1 , Flags::Horizontal );
+      AutoSegment::create( turn1 , target, Flags::Vertical );
     }
 
     cdebug_tabw(145,-1);
