@@ -226,7 +226,7 @@ def loadLayersExtensions ( layersExtensionsTable, confFile ):
 
             elements = rule[0].split('.')
             if len(elements) == 2:
-              ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Real|LayersLUT.MissingError )
+              ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Real|LayersLUT.Composite|LayersLUT.MissingError )
               subLayer  = None
             elif len(elements) == 3 or len(elements) == 4:
               ruleLayer = layersLUT.lookup( elements[0], LayersLUT.Composite|LayersLUT.MissingError  )
@@ -238,7 +238,6 @@ def loadLayersExtensions ( layersExtensionsTable, confFile ):
                                      ,' * \"REAL_LAYER.dimension\".'
                                      ,str(rule)
                                      ])
-
 
             if elements[0].startswith('via') or elements[0].startswith('metal'):
               if isinstance(rule[1],tuple):

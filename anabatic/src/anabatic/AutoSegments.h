@@ -48,6 +48,7 @@ namespace Anabatic {
   using Hurricane::DbU;
   using Hurricane::Box;
   using Hurricane::Hook;
+  using Hurricane::Entity;
   using Hurricane::Component;
   using Hurricane::Contact;
   using Hurricane::Segment;
@@ -70,13 +71,13 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Collections.
 
-  typedef Hurricane::Filter<AutoSegment*>     AutoSegmentHF;
-  typedef Hurricane::Locator<AutoSegment*>    AutoSegmentHL;
-  typedef Hurricane::Collection<AutoSegment*> AutoSegmentHC;
-  typedef GenericCollection<AutoSegment*>     AutoSegments;
-  typedef GenericLocator<AutoSegment*>        AutoSegmentLocator;
-  typedef GenericFilter<AutoSegment*>         AutoSegmentFilter;
-  typedef map<Segment*,AutoSegment*>          AutoSegmentLut;
+  typedef Hurricane::Filter<AutoSegment*>                 AutoSegmentHF;
+  typedef Hurricane::Locator<AutoSegment*>                AutoSegmentHL;
+  typedef Hurricane::Collection<AutoSegment*>             AutoSegmentHC;
+  typedef GenericCollection<AutoSegment*>                 AutoSegments;
+  typedef GenericLocator<AutoSegment*>                    AutoSegmentLocator;
+  typedef GenericFilter<AutoSegment*>                     AutoSegmentFilter;
+  typedef map<Segment*,AutoSegment*,Entity::CompareById>  AutoSegmentLut;
 
 
 // -------------------------------------------------------------------

@@ -38,6 +38,7 @@ namespace Katana {
   using Hurricane::DbU;
   using Hurricane::Point;
   using Hurricane::Interval;
+  using Hurricane::Entity;
   using Hurricane::Net;
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
@@ -114,6 +115,8 @@ namespace Katana {
     return Interval( vmin, vmax );
   }
 
+
+  typedef  std::map<Net*,DataSymmetric*,Entity::CompareById>  DataSymmetricMap;
 
 }  // Katana namespace.
 

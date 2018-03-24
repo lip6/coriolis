@@ -35,6 +35,7 @@ namespace Anabatic {
   using Hurricane::setInBound;
   using Hurricane::tab;
   using Hurricane::Name;
+  using Hurricane::Entity;
   using Hurricane::Net;
   using Hurricane::Component;
   using Hurricane::Components;
@@ -48,7 +49,7 @@ namespace Anabatic {
   class AutoContact;
 
 
-  typedef  std::map<Contact*,AutoContact*>  AutoContactLut;
+  typedef  std::map<Contact*,AutoContact*,Entity::CompareById>  AutoContactLut;
 
 
 // -------------------------------------------------------------------

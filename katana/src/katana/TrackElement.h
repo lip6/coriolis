@@ -45,6 +45,7 @@ namespace Katana {
   using Hurricane::Interval;
   using Hurricane::DbU;
   using Hurricane::Box;
+  using Hurricane::Entity;
   using Hurricane::Net;
   using Hurricane::Layer;
   using Anabatic::GCell;
@@ -56,7 +57,7 @@ namespace Katana {
   class TrackSegment;
 
 
-  typedef  map<Segment*,TrackElement*>  TrackElementLut;
+  typedef  map<Segment*,TrackElement*,Entity::CompareById>  TrackElementLut;
   typedef  void  (SegmentOverlapCostCB)( const TrackElement*, TrackCost& );
 
 

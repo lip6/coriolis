@@ -93,8 +93,7 @@ namespace Katana {
               RoutingPlane*            getRoutingPlaneByLayer     ( const Layer* ) const;
               Track*                   getTrackByPosition         ( const Layer*, DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
               DataSymmetric*           getDataSymmetric           ( Net* );
-      inline  const std::map<Net*,DataSymmetric*>&
-                                       getSymmetrics              () const;
+      inline  const DataSymmetricMap&  getSymmetrics              () const;
       inline  Block*                   getBlock                   ( size_t i ) const;
       inline  void                     printConfiguration         () const;
               void                     printCompletion            () const;
@@ -140,17 +139,17 @@ namespace Katana {
       virtual string                   _getTypeName               () const;
     private:                          
     // Attributes.                    
-      static  Name                          _toolName;
-    protected:                              
-              CellViewer*                   _viewer;
-              Configuration*                _configuration;
-              vector<Block*>                _blocks;
-              vector<RoutingPlane*>         _routingPlanes;
-              NegociateWindow*              _negociateWindow;
-              double                        _minimumWL;
-              std::map<Net*,DataSymmetric*> _symmetrics;
-              uint32_t                      _mode;
-      mutable bool                          _toolSuccess;
+      static  Name                     _toolName;
+    protected:                         
+              CellViewer*              _viewer;
+              Configuration*           _configuration;
+              vector<Block*>           _blocks;
+              vector<RoutingPlane*>    _routingPlanes;
+              NegociateWindow*         _negociateWindow;
+              double                   _minimumWL;
+              DataSymmetricMap         _symmetrics;
+              uint32_t                 _mode;
+      mutable bool                     _toolSuccess;
     protected:
     // Constructors & Destructors.
                             KatanaEngine  ( Cell* );
@@ -180,8 +179,7 @@ namespace Katana {
   inline  uint32_t                      KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
   inline  uint32_t                      KatanaEngine::getRipupLimit           ( uint32_t type ) const { return _configuration->getRipupLimit(type); }
   inline  bool                          KatanaEngine::profileEventCosts       () const { return _configuration->profileEventCosts(); }
-  inline  const std::map<Net*,DataSymmetric*>&
-                                        KatanaEngine::getSymmetrics           () const { return _symmetrics; }
+  inline  const DataSymmetricMap&       KatanaEngine::getSymmetrics           () const { return _symmetrics; }
   inline  Block*                        KatanaEngine::getBlock                ( size_t i ) const { return (i < _blocks.size()) ? _blocks[i] : NULL; }
   inline  NegociateWindow*              KatanaEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KatanaEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }

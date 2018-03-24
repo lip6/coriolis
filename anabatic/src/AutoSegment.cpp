@@ -1143,7 +1143,7 @@ namespace Anabatic {
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
-
+    
     if (isLocal() and source->isTurn() and target->isTurn() and not isUserDefined()) {
       AutoSegment* sourcePerpand = source->getPerpandicular(this);
       AutoSegment* targetPerpand = target->getPerpandicular(this);

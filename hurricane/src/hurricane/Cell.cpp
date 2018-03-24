@@ -1022,8 +1022,8 @@ void Cell::uniquify(unsigned int depth)
     deepNets.pop_back();
   }
 
-  vector<Instance*> toUniquify;
-  set<Cell*>        masterCells;
+  vector<Instance*>               toUniquify;
+  set<Cell*,Entity::CompareById>  masterCells;
 
   for ( Instance* instance : getInstances() ) {
     Cell* masterCell = instance->getMasterCell();

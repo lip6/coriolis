@@ -345,7 +345,7 @@ namespace Vhdl {
     out << "architecture structural of " <<  cellName << " is\n\n";
     ++tab;
 
-    set<Cell*> masterCells;
+    set<Cell*,Hurricane::Entity::CompareById> masterCells;
     forEach ( Instance*, iinstance, getCell()->getInstances() ) {
       masterCells.insert( iinstance->getMasterCell() );
     }
