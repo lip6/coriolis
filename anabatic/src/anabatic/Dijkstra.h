@@ -514,6 +514,7 @@ namespace Anabatic {
       inline void       setSearchAreaHalo  ( DbU::Unit );
              void       load               ( Net* net ); 
              void       run                ( Mode mode=Mode::Standart );
+      inline const VertexSet& getSources         () const;
     private:           
                         Dijkstra           ( const Dijkstra& );
              Dijkstra&  operator=          ( const Dijkstra& );
@@ -579,6 +580,7 @@ namespace Anabatic {
   inline void       Dijkstra::setFlags       ( Flags mask ) { _flags |= mask; }
   inline bool       Dijkstra::needAxisTarget () const { return (_flags & Mode::AxisTarget); }
   inline void       Dijkstra::unsetFlags     ( Flags mask ) { _flags &= ~mask; }
+  inline const VertexSet& Dijkstra::getSources     () const { return _sources; }
 
 }  // Anabatic namespace.
 
