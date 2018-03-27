@@ -1939,7 +1939,7 @@ namespace Anabatic {
     // We did reach another target (different <connexId>).
     // Tag back the path, with a higher <branchId>.
       _traceback( current );
-
+    
       cdebug_tabw(112,-1);
       return true;
     }
@@ -2035,7 +2035,7 @@ namespace Anabatic {
         cdebug_log(112,0) << "@ " << source << endl;
 
         bool isAnalog = source->getGCell()->isAnalog();
-        if (isAnalog) source->resetIntervals();
+      //if (isAnalog) source->resetIntervals();
 
         Edge*         from     = source->getFrom();
         vector<Edge*> aligneds;
@@ -2176,13 +2176,13 @@ namespace Anabatic {
                         << " _connectedsId:" << _connectedsId << endl;
     }
     while ( ((not _targets.empty()) ||  needAxisTarget()) and _propagate(enabledEdges) );
-
+      
     _queue.clear();
     _materialize();
     unsetAxisTargets();
 
     _anabatic->getNetData( _net )->setGlobalRouted( true );
-
+    
     cdebug_tabw(112,-1);
     DebugSession::close();
   }
@@ -2520,7 +2520,7 @@ namespace Anabatic {
  
     //cdebug_log(112,0) << "| " << current << " | " << endl;
       if        (current->isH()){
-        if        (pentry.getX() < current->getIMin()){ 
+        if        (pentry.getX() < current->getIMin()){
           current->setInterv(pentry.getX(), current->getIMax(), current->getIAxis());
           cdebug_log(112,0) << "[Interval update1]: min : " << DbU::getValueString(pentry.getX());
           cdebug_log(112,0) <<                   ", max : " << DbU::getValueString(current->getIMax());
@@ -2530,13 +2530,14 @@ namespace Anabatic {
           cdebug_log(112,0) << "[Interval update2]: min : " << DbU::getValueString(current->getIMin());
           cdebug_log(112,0) <<                   ", max : " << DbU::getValueString(pentry.getX());
           cdebug_log(112,0) <<                   ", axis: " << DbU::getValueString(current->getIAxis()) << endl;
-        }
+        } 
       } else if (current->isV()){
         if        (pentry.getY() < current->getIMin()){ 
           current->setInterv(pentry.getY(), current->getIMax(), current->getIAxis());
           cdebug_log(112,0) << "[Interval update3]: min : " << DbU::getValueString(pentry.getY());
           cdebug_log(112,0) <<                   ", max : " << DbU::getValueString(current->getIMax());
           cdebug_log(112,0) <<                   ", axis: " << DbU::getValueString(current->getIAxis()) << endl;
+
         } else if (pentry.getY() > current->getIMax()){
           current->setInterv(current->getIMin(), pentry.getY(), current->getIAxis());
           cdebug_log(112,0) << "[Interval update4]: min : " << DbU::getValueString(current->getIMin());
@@ -2687,15 +2688,15 @@ namespace Anabatic {
 
   void Dijkstra::_updateRealOccupancy ( Vertex* current )
   {
-    cerr << "void Dijkstra::_updateRealOccupancy ( Vertex* current ): " << current << endl;
+  //cerr << "void Dijkstra::_updateRealOccupancy ( Vertex* current ): " << current << endl;
     GCell* gcurrent = current->getGCell();
     GCell* gnext    = current->getPredecessor()->getGCell();
     Edge*  e        = gcurrent->getEdgeTo(gnext);
 
     NetRoutingState* state = NetRoutingExtension::get( _net );
-    cerr << "e: " << e << endl;
+  //cerr << "e: " << e << endl;
     e->incRealOccupancy2(state->getWPitch());
-    cerr << "e: " << e << endl;
+  //cerr << "e: " << e << endl;
     if (current->getGCell()->getWestEdge()) cerr << "W occupancy: " << current->getGCell()->getWestEdge()->getRealOccupancy()  << "/" << current->getGCell()->getWestEdge()->getCapacity() << endl;
     if (current->getGCell()->getEastEdge()) cerr << "E occupancy: " << current->getGCell()->getEastEdge()->getRealOccupancy()  << "/" << current->getGCell()->getEastEdge()->getCapacity() << endl;
     if (current->getGCell()->getNorthEdge()) cerr << "N occupancy: " << current->getGCell()->getNorthEdge()->getRealOccupancy() << "/" << current->getGCell()->getNorthEdge()->getCapacity() << endl;
