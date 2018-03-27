@@ -579,14 +579,14 @@ namespace Anabatic {
         case Conn_2G_3M1:
         case Conn_2G_4M1:
         case Conn_2G_5M1:
-        case Conn_3G_1M1:
+        case Conn_3G_1M1:  if (_do_xG_1M1()) break;
         case Conn_3G_2M1:
         case Conn_3G_3M1:
         case Conn_3G_4M1:
         case Conn_3G_2M3:
         case Conn_3G_3M3:
         case Conn_3G_4M3:
-        case Conn_4G_1M1:
+        case Conn_4G_1M1:  if (_do_xG_1M1()) break;
         case Conn_4G_2M1:
         case Conn_4G_3M1:
         case Conn_4G_4M1:  _do_xG_xM1_xM3(); break;
@@ -970,6 +970,13 @@ namespace Anabatic {
   {
     cdebug_log(145,0) << getTypeName() << "::_do_1G_xM1() method *not* reimplemented from base class." << endl;
     return false;
+  }
+
+
+  
+  bool  NetBuilder::_do_xG_1M1 ()
+  {
+    return _do_xG_xM1_xM3();
   }
 
   

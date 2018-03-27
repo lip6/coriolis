@@ -110,8 +110,8 @@ namespace Anabatic {
 
   void  AutoContactTurn::_invalidate ( Flags flags )
   {
-    if (_horizontal1) _horizontal1->invalidate();
-    if (_vertical1  ) _vertical1  ->invalidate();
+    if (_horizontal1) _horizontal1->invalidate( flags|Flags::Propagate );
+    if (_vertical1  ) _vertical1  ->invalidate( flags|Flags::Propagate );
   }
 
 

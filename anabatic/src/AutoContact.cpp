@@ -276,6 +276,7 @@ namespace Anabatic {
   {
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
+      cdebug_log(145,0) << "flags:" << flags.asString(FlagsFunction) << endl;
       setFlags( CntInvalidated );
       if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
       Session::invalidate( this );

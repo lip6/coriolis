@@ -376,13 +376,11 @@ namespace Anabatic {
   inline       int    AnabaticEngine::incStamp () { return ++_stamp; }
 
   inline void  AnabaticEngine::addOv ( Edge* edge ) {
-    std::cerr << "addOv(): " << edge << endl;
     _ovEdges.push_back(edge);
   }
 
   inline void  AnabaticEngine::removeOv ( Edge* edge )
   {
-    std::cerr << "removeOv(): " << edge << endl;
     for ( auto iedge = _ovEdges.begin() ; iedge != _ovEdges.end() ; ++iedge )
       if (*iedge == edge) { _ovEdges.erase(iedge); break; }
   }

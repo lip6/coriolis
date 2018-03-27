@@ -329,7 +329,8 @@ namespace Anabatic {
 
   void  AutoContactTerminal::_invalidate ( Flags flags )
   {
-    if (_segment) _segment->invalidate();
+    cdebug_log(145,0) << "flags:" << flags.asString(FlagsFunction) << endl;
+    if (_segment) _segment->invalidate( flags|Flags::Propagate );
   }
 
 

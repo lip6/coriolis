@@ -573,25 +573,32 @@ namespace Anabatic {
   {
     if (Session::doDestroyTool()) return;
 
-    cdebug_log(149,0) << "AutoSegment::invalidate() " << flags << " " << this << endl;
+    cdebug_log(149,0) << "AutoSegment::invalidate() " << flags.asString(FlagsFunction)
+                      << " " << this << endl;
     cdebug_tabw(149,1);
 
     if (flags & Flags::Source) setFlags( SegInvalidatedSource );
     if (flags & Flags::Target) setFlags( SegInvalidatedTarget );
 
-    if ( (getFlags() & SegSourceTerminal) and getAutoSource() and getAutoSource()->canDrag() )
-      getAutoSource()->invalidate();
+    if ( (getFlags() & SegSourceTerminal)
+       and getAutoSource()
+       and getAutoSource()->canDrag()
+       and not getAutoSource()->isInvalidated() )
+      getAutoSource()->invalidate( flags );
 
-    if ( (getFlags() & SegTargetTerminal) and getAutoTarget() and getAutoTarget()->canDrag() )
-      getAutoTarget()->invalidate();
+    if ( (getFlags() & SegTargetTerminal)
+       and getAutoTarget()
+       and getAutoTarget()->canDrag()
+       and not getAutoTarget()->isInvalidated() )
+      getAutoTarget()->invalidate( flags );
 
     if (isInvalidated()) { cdebug_tabw(149,-1); return; }
 
     _invalidate();
 
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach( AutoSegment*, isegment, getAligneds() ) {
-        isegment->_invalidate();
+      for ( AutoSegment* segment : getAligneds(flags & Flags::NoCheckLayer) ) {
+        if (not segment->isInvalidated()) segment->_invalidate();
       }
     }
     cdebug_tabw(149,-1);
@@ -1615,7 +1622,7 @@ namespace Anabatic {
   {
     cdebug_log(149,1) << "_changeDepth() - " << this << endl;
 
-    invalidate( Flags::NoFlags );
+    invalidate( Flags::Topology|Flags::NoCheckLayer );
     setFlags( SegInvalidatedLayer|SegInvalidatedSource|SegInvalidatedTarget );
 
     const Layer* newLayer = Session::getRoutingGauge()->getRoutingLayer(depth);
@@ -1630,26 +1637,26 @@ namespace Anabatic {
       return;
     }
 
-    forEach ( AutoSegment*, isegment, getCachedOnSourceContact(Flags::DirectionMask) ) {
-      if ((*isegment) == this) continue;
-      if ((*isegment)->isGlobal  ()) continue;
-      if ((*isegment)->isTerminal()) continue;
+    for ( AutoSegment* segment : getCachedOnSourceContact(Flags::DirectionMask) ) {
+      if (segment == this) continue;
+      if (segment->isGlobal  ()) continue;
+      if (segment->isTerminal()) continue;
 
-      if (not ((*isegment)->isHorizontal() xor isHorizontal()))
-        (*isegment)->_changeDepth( depth  , Flags::NoFlags );
+      if (not (segment->isHorizontal() xor isHorizontal()))
+        segment->_changeDepth( depth  , Flags::NoFlags );
       else
-        (*isegment)->_changeDepth( depth-1, Flags::NoFlags );
+        segment->_changeDepth( depth-1, Flags::NoFlags );
     }
 
-    forEach ( AutoSegment*, isegment, getCachedOnTargetContact(Flags::DirectionMask) ) {
-      if ((*isegment) == this) continue;
-      if ((*isegment)->isGlobal  ()) continue;
-      if ((*isegment)->isTerminal()) continue;
+    for ( AutoSegment* segment : getCachedOnTargetContact(Flags::DirectionMask) ) {
+      if (segment == this) continue;
+      if (segment->isGlobal  ()) continue;
+      if (segment->isTerminal()) continue;
 
-      if (not ((*isegment)->isHorizontal() xor isHorizontal()))
-        (*isegment)->_changeDepth( depth  , Flags::NoFlags );
+      if (not (segment->isHorizontal() xor isHorizontal()))
+        segment->_changeDepth( depth  , Flags::NoFlags );
       else
-        (*isegment)->_changeDepth( depth-1, Flags::NoFlags );
+        segment->_changeDepth( depth-1, Flags::NoFlags );
     }
 
     vector<GCell*> gcells;

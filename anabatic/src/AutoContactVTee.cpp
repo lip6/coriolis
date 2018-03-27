@@ -114,12 +114,12 @@ namespace Anabatic {
   AutoVertical*   AutoContactVTee::getVertical2   () const { return _vertical2; };
 
 
-  void  AutoContactVTee::_invalidate ( Flags )
+  void  AutoContactVTee::_invalidate ( Flags flags )
   {
-    Flags flags = Flags::Propagate;
+    flags |= Flags::Propagate;
     if (_vertical1 and _vertical2) {
       if (_vertical1->isInvalidated() xor _vertical2->isInvalidated()) 
-        flags = Flags::NoFlags;
+        flags.reset( Flags::NoFlags );
     }
 
     if (_vertical1  ) _vertical1  ->invalidate( flags );
