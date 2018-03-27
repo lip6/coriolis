@@ -304,7 +304,7 @@ namespace Katana {
 
     for ( ;     (mbegin < _markers.size())
             and (_markers[mbegin]->getSourceU() <= interval.getVMax()) ; mbegin++ ) {
-      cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << _markers[mbegin] << endl;
+      cdebug_log(155,0) << "| @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
       if (_markers[mbegin]->getNet() != cost.getNet()) {
         cdebug_log(155,0) << "* Mark: @" << DbU::getValueString(_axis) << " " << _markers[mbegin] << endl;
         cost.incTerminals( _markers[mbegin]->getWeight(this) );
@@ -324,8 +324,11 @@ namespace Katana {
 
     for ( ; begin < end ; begin++ ) {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
+      cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
+      if (overlap.getSize() == 0) continue;
+      
       if (_segments[begin]->getNet() == cost.getNet()) {
-        cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
+        cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
       _segments[begin]->incOverlapCost( cost );

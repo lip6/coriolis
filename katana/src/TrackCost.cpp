@@ -170,6 +170,7 @@ namespace Katana {
     return std::get<1>( _tracks[i + ((flags & Symmetric) ? _span : 0)] );
   }
 
+
   size_t  TrackCost::getEnd ( size_t i, uint32_t flags ) const
   {
     if (i >= _span) return Track::npos;
