@@ -120,9 +120,9 @@ namespace Vst {
   }
 
 
-  typedef  vector<Net*>          PinVector;
-  typedef  map<Name,PinVector>   VectorMap;
-  typedef  map<Cell*,VectorMap>  CellVectorMap;
+  typedef  vector<Net*>                              PinVector;
+  typedef  map<Name,PinVector>                       VectorMap;
+  typedef  map<Cell*,VectorMap,Entity::CompareById>  CellVectorMap;
 
 
   class YaccState {

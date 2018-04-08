@@ -1653,7 +1653,7 @@ class Cell_SubCells : public Collection<Cell*> {
 
         public: typedef Hurricane::Locator<Cell*> Inherit;
 
-        private: set <Cell*> _cellSet;
+        private: set<Cell*,Entity::CompareById> _cellSet;
         private: InstanceLocator _instanceLocator;
 
         public: Locator();

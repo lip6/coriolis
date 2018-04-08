@@ -132,17 +132,29 @@ template<class Key, class Element> class IntrusiveMap {
             public: virtual void progress()
             // ****************************
             {
-                if (_element) {
-                    _element = _map->_getNextElement(_element);
-                    if (!_element) {
-                        unsigned length = _map->_getLength();
-                        if (_index < length) {
-                            do {
-                                _element = _map->_getArray()[_index++];
-                            } while (!_element && (_index < length));
-                        }
-                    }
+              if (_element) {
+                cdebug_log(0,0) << "IntrusiveMap::progress() from:"
+                                << " -> " << tsetw(4) << _index
+                                << " + "  << _map->_getHashValue(_map->_getKey(_element))
+                                << "/"    << _map->_getKey(_element) << ":" << _element << endl;
+
+                _element = _map->_getNextElement(_element);
+                if (!_element) {
+                  unsigned length = _map->_getLength();
+                  if (_index < length) {
+                    do {
+                      cdebug_log(0,0) << "next bucket: " << _index+1 << endl;
+                      _element = _map->_getArray()[_index++];
+                    } while (!_element && (_index < length));
+                  }
+
+                  if (_element)
+                    cdebug_log(0,0) << "IntrusiveMap::progress() to:"
+                                    << " -> " << tsetw(4) << _index
+                                    << " + "  << _map->_getHashValue(_map->_getKey(_element))
+                                    << "/"    << _map->_getKey(_element) << ":" << _element << endl;
                 }
+              }
             };
     
         // Others
@@ -393,7 +405,7 @@ template<class Key, class Element> class IntrusiveMap {
     public: void _remove(Element* element)
     // ***********************************
     {
-        if (_contains(element)) {
+      if (_contains(element)) {
             unsigned index = (_getHashValue(_getKey(element)) / 8) % _length;
             Element* currentElement = _array[index];
             if (currentElement) {
@@ -418,32 +430,41 @@ template<class Key, class Element> class IntrusiveMap {
     public: void _resize()
     // *******************
     {
-        unsigned newLength = _length;
-        double ratio = (double)_size / (double)_length;
-        if (ratio < 3)
-            newLength = max(_size / 8, (unsigned)1);
-        else if (10 < ratio)
-            newLength = min(_size / 5, (unsigned)512);
+      unsigned newLength = _length;
+      double   ratio     = (double)_size / (double)_length;
+      if      (ratio <  3.0) newLength = max(_size / 8, (unsigned)1);
+      else if (ratio > 10.0) newLength = min(_size / 5, (unsigned)512);
 
-        if (newLength != _length) {
-            // cerr << "Resizing: " << this << " " << _length << " " << newLength << endl;
-            unsigned oldLength = _length;
-            Element** oldArray = _array;
-            _length = newLength;
-            _array = new Element*[_length];
-            memset(_array, 0, _length * sizeof(Element*));
-            for (unsigned index = 0; index < oldLength; index++) {
-                Element* element = oldArray[index];
-                while (element) {
-                    Element* nextElement = _getNextElement(element);
-                    unsigned newIndex = (_getHashValue(_getKey(element)) / 8) % _length;
-                    _setNextElement(element, _array[newIndex]);
-                    _array[newIndex] = element;
-                    element = nextElement;
-                }
-            }
-            delete[] oldArray;
+      if (newLength != _length) {
+        cdebug_log(0,0) << "IntrusiveMap::_resize() " << _length << " -> " << newLength << endl;
+
+        unsigned  oldLength = _length;
+        Element** oldArray  = _array;
+        _length = newLength;
+        _array  = new Element* [_length];
+        memset( _array, 0, _length * sizeof(Element*) );
+
+        for ( unsigned index = 0; index < oldLength; ++index ) {
+          Element* element = oldArray[index];
+          if (not element)
+            cdebug_log(0,0) << "| entry:" << tsetw(4) << index << " empty" << endl;
+
+          while ( element ) {
+            Element* nextElement = _getNextElement(element);
+            unsigned newIndex    = (_getHashValue(_getKey(element)) / 8) % _length;
+            _setNextElement(element, _array[newIndex]);
+            _array[ newIndex ] = element;
+
+            cdebug_log(0,0) << "| entry:" << tsetw(4) << index
+                            << " -> " << tsetw(4) << newIndex
+                            << " + "  << _getHashValue(_getKey(element))
+                            << "/"    << _getKey(element) << ":" << element << endl;
+
+            element = nextElement;
+          }
         }
+        delete [] oldArray;
+      }
     };
 
 };

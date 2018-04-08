@@ -69,7 +69,7 @@ void SharedName::release()
 string SharedName::_getString() const
 // **********************************
 {
-    return "<" + _TName("SharedName") + " " + getString(_count) + " " + _string + ">";
+  return "<" + _TName("SharedName") + " " + getString(_count) + " id:" + getString(_id) + " " + _string + ">";
 }
 
 Record* SharedName::_getRecord() const

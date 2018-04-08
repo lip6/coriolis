@@ -444,11 +444,12 @@ template<class Element> class IntrusiveSet {
                     unsigned newIndex = (_getHashValue(element) / 8) % _length;
                     _setNextElement(element, _array[newIndex]);
                     _array[newIndex] = element;
-                    element = nextElement;
 
                     cdebug_log(0,0) << "| bucket:" << tsetw(4) << index
                                     << " -> " << tsetw(4) << newIndex
                                     << " + " << element << endl;
+
+                    element = nextElement;
                 }
             }
             delete[] oldArray;

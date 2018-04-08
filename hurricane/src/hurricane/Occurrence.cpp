@@ -88,8 +88,21 @@ bool Occurrence::operator!=(const Occurrence& occurrence) const
 bool Occurrence::operator<(const Occurrence& occurrence) const
 // ********************************************************
 {
-    return ((_entity < occurrence._entity) ||
-              ((_entity == occurrence._entity) && (_sharedPath < occurrence._sharedPath)));
+  if (not _entity and not occurrence._entity) return false;
+  if (not _entity) return true;
+  if (not occurrence._entity) return false;
+
+  if (_entity->getId() < occurrence._entity->getId()) return true;
+  if (_entity->getId() > occurrence._entity->getId()) return false;
+
+  if (not _sharedPath and not occurrence._sharedPath) return false;
+  if (not _sharedPath) return true;
+  if (not occurrence._sharedPath) return false;
+
+  return _sharedPath->getId() < occurrence._sharedPath->getId();
+  
+//return ((_entity  < occurrence._entity) or 
+//       ((_entity == occurrence._entity) and (_sharedPath < occurrence._sharedPath)));
 }
 
 Cell* Occurrence::getOwnerCell() const

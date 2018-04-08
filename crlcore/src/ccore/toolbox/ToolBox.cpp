@@ -533,9 +533,9 @@ void ConnectPlugHooks(Cell* cell)
 }
 
 
-  size_t  _getInstancesCount ( const Cell* cell, map<const Cell*,size_t>& gatesByMaster )
+  size_t  _getInstancesCount ( const Cell* cell, map<const Cell*,size_t,Entity::CompareById>& gatesByMaster )
   {
-    map<const Cell*,size_t>::iterator imaster = gatesByMaster.find ( cell );
+    map<const Cell*,size_t,Entity::CompareById>::iterator imaster = gatesByMaster.find ( cell );
     if ( imaster != gatesByMaster.end() )
       return imaster->second;
 
@@ -556,7 +556,7 @@ void ConnectPlugHooks(Cell* cell)
 
   size_t  getInstancesCount ( const Cell* cell )
   {
-    map<const Cell*,size_t>  gatesByMaster;
+    map<const Cell*,size_t,Entity::CompareById>  gatesByMaster;
 
     return _getInstancesCount ( cell, gatesByMaster );
   }

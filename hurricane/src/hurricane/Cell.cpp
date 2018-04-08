@@ -996,8 +996,8 @@ Cell* Cell::getClone()
   }
 
   bool isPlaced = true;
-  for ( Instance* iinstance : getInstances() ) {
-    if (iinstance->getClone(clone)->getPlacementStatus() == Instance::PlacementStatus::UNPLACED)
+  for ( Instance* instance : getInstances() ) {
+    if (instance->getClone(clone)->getPlacementStatus() == Instance::PlacementStatus::UNPLACED)
       isPlaced = false;
   }
   if (isPlaced) clone->setFlags( Flags::Placed );

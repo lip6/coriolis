@@ -164,7 +164,7 @@ class Component_ConnexComponents : public Collection<Component*> {
         public: typedef Hurricane::Locator<Component*> Inherit;
 
         private: const Component* _component;
-        private: set<Component*> _componentSet;
+        private: set<Component*,Entity::CompareById> _componentSet;
         private: stack<Component*> _componentStack;
 
         public: Locator(const Component* component = NULL);
@@ -232,7 +232,7 @@ class Component_SlaveComponents : public Collection<Component*> {
         public: typedef Hurricane::Locator<Component*> Inherit;
 
         private: const Component* _component;
-        private: set<Component*> _componentSet;
+        private: set<Component*,Entity::CompareById> _componentSet;
         private: stack<Component*> _componentStack;
 
         public: Locator(const Component* component = NULL);

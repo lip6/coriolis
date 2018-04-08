@@ -23,6 +23,7 @@ namespace CRL {
 
   using namespace std;
   using Hurricane::ForEachIterator;
+  using Hurricane::Entity;
   using Hurricane::Net;
   using Hurricane::Cell;
   using Hurricane::Instance;
@@ -109,16 +110,14 @@ namespace CRL {
     topCell->setName( converter(topCell->getName()) );
 
     vector<Net*> nets;
-    forEach ( Net*, inet, topCell->getNets() ) nets.push_back( *inet );
-    for ( auto net : nets ) {
-      net->setName( converter( net->getName() ) );
-    }
+    for ( Net* net : topCell->getNets() ) nets.push_back( net );
+    for ( auto net : nets ) net->setName( converter( net->getName() ) );
       
-    vector<Instance*> instances;
-    set<Cell*>        models;
-    forEach ( Instance*, iinst, topCell->getInstances() ) {
-      instances.push_back( *iinst );
-      models.insert( iinst->getMasterCell() );
+    vector<Instance*>               instances;
+    set<Cell*,Entity::CompareById>  models;
+    for ( Instance* inst : topCell->getInstances() ) {
+      instances.push_back( inst );
+      models.insert( inst->getMasterCell() );
     }
     for ( auto inst : instances ) inst->setName( converter( inst->getName() ) );
 
