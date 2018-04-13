@@ -771,11 +771,16 @@ namespace Anabatic {
     bool openSession = Session::isOpen();
     if (not openSession) getAnabatic()->openSession();
 
-    DbU::Unit side  = Session::getSliceHeight();
+    DbU::Unit vside = Session::getSliceHeight();
+    DbU::Unit hside = Session::getSliceHeight();
     Interval  hspan = getSide( Flags::Horizontal );
     Interval  vspan = getSide( Flags::Vertical );
 
-    // if (hspan.getSize() < 2*side) {
+    if (hside % Session::getSliceStep()) {
+      hside += Session::getSliceStep() - hside % Session::getSliceStep();
+    }
+
+    // if (hspan.getSize() < 2*hside) {
     //   cerr << Error( "GCell::doGrid(): GCell is too narrow (dx:%s) to build a grid.\n"
     //                  "        (%s)"
     //                , DbU::getValueString(hspan.getSize()).c_str()
@@ -785,7 +790,7 @@ namespace Anabatic {
     //   return false;
     // }
 
-    // if (vspan.getSize() < 2*side) {
+    // if (vspan.getSize() < 2*vside) {
     //   cerr << Error( "GCell::doGrid(): GCell is too narrow (dy:%s) to build a grid.\n"
     //                  "        (%s)"
     //                , DbU::getValueString(vspan.getSize()).c_str()
@@ -796,20 +801,20 @@ namespace Anabatic {
 
     GCell*    row    = this;
     GCell*    column = NULL;
-    DbU::Unit ycut   = vspan.getVMin()+side;
-    for ( ; ycut < vspan.getVMax() ; ycut += side ) {
+    DbU::Unit ycut   = vspan.getVMin()+vside;
+    for ( ; ycut < vspan.getVMax() ; ycut += vside ) {
       column = row;
       row    = row->hcut( ycut );
       row->setType( Flags::MatrixGCell );
 
-      for ( DbU::Unit xcut = hspan.getVMin()+side ; xcut < hspan.getVMax() ; xcut += side ) {
+      for ( DbU::Unit xcut = hspan.getVMin()+hside ; xcut < hspan.getVMax() ; xcut += hside ) {
         column = column->vcut( xcut );
         column->setType( Flags::MatrixGCell );
       }
     }
 
     column = row;
-    for ( DbU::Unit xcut = hspan.getVMin()+side ; xcut < hspan.getVMax() ; xcut += side ) {
+    for ( DbU::Unit xcut = hspan.getVMin()+hside ; xcut < hspan.getVMax() ; xcut += hside ) {
       column = column->vcut( xcut );
       column->setType( Flags::MatrixGCell );
     }
