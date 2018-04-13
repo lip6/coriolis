@@ -327,11 +327,15 @@ namespace Katana {
 
       cdebug_log(159,0) << "* Nearest " << track << endl;
 
+      if (not track)
+        throw Error( "NegociateWindow::createTracksegment(): No track near axis of %s."
+                   , getString(autoSegment).c_str() );
+
       if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
       if (track->getAxis() < uside.getVMin()) track = track->getNextTrack();
 
       if (not track)
-        throw Error( "NegociateWindow::createTracksegment(): No track near axis of %s."
+        throw Error( "NegociateWindow::createTracksegment(): No track near axis of %s (after adjust)." 
                    , getString(autoSegment).c_str() );
 
       cdebug_log(159,0) << "* GCell U-side " << uside << endl;
