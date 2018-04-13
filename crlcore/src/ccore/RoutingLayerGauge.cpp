@@ -174,19 +174,19 @@ namespace CRL {
 
   void  RoutingLayerGauge::divide ( DbU::Unit dividend, long& quotient, long& modulo ) const
   {
-    quotient = ( dividend - _offset ) / _pitch;
+    quotient = ( dividend - _offset ) / _pitch - ((dividend < _offset) ? 1 : 0);
     modulo   = ( dividend - _offset ) % _pitch;
   }
 
 
   unsigned  RoutingLayerGauge::getTrackNumber ( DbU::Unit start, DbU::Unit stop ) const
   {
-    if ( start > stop )
-      throw Error ( badInterval
-                  , getString(this).c_str()
-                  , DbU::getValueString(start).c_str()
-                  , DbU::getValueString(stop).c_str()
-                  );
+    if (start > stop)
+      throw Error( badInterval
+                 , getString(this).c_str()
+                 , DbU::getValueString(start).c_str()
+                 , DbU::getValueString(stop).c_str()
+                 );
 
     long startModulo;
     long startQuotient;
@@ -194,14 +194,26 @@ namespace CRL {
     long stopQuotient;
     long trackNumber;
 
-    divide ( start, startQuotient, startModulo );
-    divide ( stop , stopQuotient , stopModulo  );
+    divide( start, startQuotient, startModulo );
+    divide( stop , stopQuotient , stopModulo  );
 
-    if ( startModulo != 0 ) startQuotient += 1;
+    // cerr << "getTrackNumber() " << getLayer()->getName()
+    //      << " start:" << startQuotient << " modulo:" << startModulo
+    //      << " stop:"  << stopQuotient  << " modulo:" << stopModulo
+    //      << endl;
+
+    if (startModulo != 0) startQuotient += 1;
+    if (stopModulo  == 0) stopQuotient  -= 1;
 
     trackNumber = stopQuotient - startQuotient + 1;
 
-    return ( (trackNumber>0) ? trackNumber : 0 );
+    // cerr << "getTrackNumber() " << getLayer()->getName()
+    //      << " [" << DbU::getValueString(start) << " " << DbU::getValueString(stop)
+    //      << "] tracks:" << trackNumber
+    //      << " start:" << startQuotient << " stop:" << stopQuotient
+    //      << endl;
+
+    return (trackNumber>0) ? trackNumber : 0;
   }
 
 
