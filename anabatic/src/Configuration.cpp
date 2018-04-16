@@ -69,23 +69,25 @@ namespace Anabatic {
 
 
   Configuration::Configuration ( const CellGauge* cg, const RoutingGauge* rg )
-    : _gdepthv        (ndepth)
-    , _gdepthh        (ndepth)
-    , _ddepthv        (ndepth)
-    , _ddepthh        (ndepth)
-    , _ddepthc        (ndepth)
-    , _cg             (NULL)
-    , _rg             (NULL)
-    , _extensionCaps  ()
-    , _saturateRatio  (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
-    , _saturateRp     (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
-    , _globalThreshold(0)
-    , _allowedDepth   (0)
-    , _edgeLength     (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
-    , _edgeWidth      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
-    , _edgeCostH      (Cfg::getParamDouble("anabatic.edgeCostH",  9.0)->asDouble())
-    , _edgeCostK      (Cfg::getParamDouble("anabatic.edgeCostK",-10.0)->asDouble())
-    , _edgeHInc       (Cfg::getParamDouble("anabatic.edgeHInc" , 1.5)->asDouble())
+    : _gdepthv         (ndepth)
+    , _gdepthh         (ndepth)
+    , _ddepthv         (ndepth)
+    , _ddepthh         (ndepth)
+    , _ddepthc         (ndepth)
+    , _cg              (NULL)
+    , _rg              (NULL)
+    , _extensionCaps   ()
+    , _saturateRatio   (Cfg::getParamPercentage("katabatic.saturateRatio",80.0)->asDouble())
+    , _saturateRp      (Cfg::getParamInt       ("katabatic.saturateRp"   ,8   )->asInt())
+    , _globalThreshold (0)
+    , _allowedDepth    (0)
+    , _edgeLength      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
+    , _edgeWidth       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
+    , _edgeCostH       (Cfg::getParamDouble("anabatic.edgeCostH"       ,  9.0)->asDouble())
+    , _edgeCostK       (Cfg::getParamDouble("anabatic.edgeCostK"       ,-10.0)->asDouble())
+    , _edgeHInc        (Cfg::getParamDouble("anabatic.edgeHInc"        ,  1.5)->asDouble())
+    , _edgeHScaling    (Cfg::getParamDouble("anabatic.edgeHScaling"    ,  1.0)->asDouble())
+    , _globalIterations(Cfg::getParamInt   ("anabatic.globalIterations", 10  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -152,23 +154,25 @@ namespace Anabatic {
 
 
   Configuration::Configuration ( const Configuration& other )
-    : _gmetalh        (other._gmetalh)
-    , _gmetalv        (other._gmetalv)
-    , _gcontact       (other._gcontact)
-    , _gdepthv        (other._gdepthv)
-    , _gdepthh        (other._gdepthh)
-    , _ddepthv        (other._ddepthv)
-    , _ddepthh        (other._ddepthh)
-    , _ddepthc        (other._ddepthc)
-    , _cg             (NULL)
-    , _rg             (NULL)
-    , _extensionCaps  (other._extensionCaps)
-    , _saturateRatio  (other._saturateRatio)
-    , _globalThreshold(other._globalThreshold)
-    , _allowedDepth   (other._allowedDepth)
-    , _edgeCostH      (other._edgeCostH)
-    , _edgeCostK      (other._edgeCostK)
-    , _edgeHInc       (other._edgeHInc)
+    : _gmetalh         (other._gmetalh)
+    , _gmetalv         (other._gmetalv)
+    , _gcontact        (other._gcontact)
+    , _gdepthv         (other._gdepthv)
+    , _gdepthh         (other._gdepthh)
+    , _ddepthv         (other._ddepthv)
+    , _ddepthh         (other._ddepthh)
+    , _ddepthc         (other._ddepthc)
+    , _cg              (NULL)
+    , _rg              (NULL)
+    , _extensionCaps   (other._extensionCaps)
+    , _saturateRatio   (other._saturateRatio)
+    , _globalThreshold (other._globalThreshold)
+    , _allowedDepth    (other._allowedDepth)
+    , _edgeCostH       (other._edgeCostH)
+    , _edgeCostK       (other._edgeCostK)
+    , _edgeHInc        (other._edgeHInc)
+    , _edgeHScaling    (other._edgeHScaling)
+    , _globalIterations(other._globalIterations)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -188,14 +192,18 @@ namespace Anabatic {
   Configuration* Configuration::clone () const
   { return new Configuration(*this); }
 
+
   bool  Configuration::isTwoMetals () const
   { return _rg->isTwoMetals(); }
   
+
   bool  Configuration::isHV () const
   { return _rg->isHV(); }
   
+
   bool  Configuration::isVH () const
   { return _rg->isVH(); }
+
 
   bool  Configuration::isGMetal ( const Layer* layer ) const
   { return (layer and ((layer == _gmetalh) or (layer == _gmetalv))); }
@@ -204,14 +212,18 @@ namespace Anabatic {
   bool  Configuration::isGContact ( const Layer* layer ) const
   { return (layer and (layer == _gcontact)); }
 
+
   const Layer* Configuration::getGContactLayer () const
   { return _gcontact; }
+
 
   const Layer* Configuration::getGHorizontalLayer () const
   { return _gmetalh; }
 
+
   const Layer* Configuration::getGVerticalLayer () const
   { return _gmetalv; }
+
 
   size_t  Configuration::getDepth () const
   { return _rg->getDepth(); }
@@ -377,6 +389,14 @@ namespace Anabatic {
 
   float  Configuration::getEdgeHInc () const
   { return _edgeHInc; }
+
+
+  float  Configuration::getEdgeHScaling () const
+  { return _edgeHScaling; }
+
+
+  int  Configuration::getGlobalIterations () const
+  { return _globalIterations; }
 
 
   DbU::Unit  Configuration::isOnRoutingGrid ( RoutingPad* rp ) const

@@ -627,6 +627,15 @@ namespace Anabatic {
     cdebug_log(112,1) << "AnabaticEngine::unify(): " << (void*)contact << endl;
     cdebug_log(112,0) << contact << endl;
 
+    for ( Hook* hook : contact->getBodyHook()->getHooks() ) {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( hook->getComponent() );
+      if (rp) {
+        cdebug_log(112,0) << "Cannot unify, there is a RoutingPad in this GCell." << endl;
+        cdebug_tabw(112,-1);
+        return false;
+      }
+    }
+
     for ( Component* slave : contact->getSlaveComponents() ) {
       Horizontal* h = dynamic_cast<Horizontal*>( slave );
       if (h) {

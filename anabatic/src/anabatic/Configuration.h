@@ -120,6 +120,8 @@ namespace Anabatic {
               float              getEdgeCostH        () const;
               float              getEdgeCostK        () const;
               float              getEdgeHInc         () const;
+              float              getEdgeHScaling     () const;
+              int                getGlobalIterations () const;
               DbU::Unit          isOnRoutingGrid     ( RoutingPad* ) const;
               bool               selectRpComponent   ( RoutingPad* ) const;
       virtual void               print               ( Cell* ) const;
@@ -148,6 +150,8 @@ namespace Anabatic {
       float                   _edgeCostH;
       float                   _edgeCostK;
       float                   _edgeHInc;
+      float                   _edgeHScaling;
+      int                     _globalIterations;
     private:
       Configuration& operator=           ( const Configuration& ) = delete;
       void           _setTopRoutingLayer ( Name name );

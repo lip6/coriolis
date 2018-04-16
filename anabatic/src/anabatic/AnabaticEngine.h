@@ -381,8 +381,9 @@ namespace Anabatic {
 
   inline void  AnabaticEngine::removeOv ( Edge* edge )
   {
-    for ( auto iedge = _ovEdges.begin() ; iedge != _ovEdges.end() ; ++iedge )
-      if (*iedge == edge) { _ovEdges.erase(iedge); break; }
+    for ( auto iedge = _ovEdges.begin() ; iedge != _ovEdges.end() ; ++iedge ) {
+      if (*iedge == edge) { _ovEdges.erase(iedge); return; }
+    }
   }
 
 

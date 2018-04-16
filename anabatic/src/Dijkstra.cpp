@@ -1308,7 +1308,7 @@ namespace Anabatic {
              +  " " + DbU::getValueString(_gcell->getXMax())
              +  " " + DbU::getValueString(_gcell->getYMax()) + "]"
            //+ " rps:" +  getString(_rpCount)
-           //+ " deg:" +  getString(_degree)
+             + " deg:" +  getString(_degree)
              + " connexId:" + ((_connexId >= 0) ? getString(_connexId) : "None")
              + " d:" + ((_distance == unreached) ? "unreached"
                                                  : ((_distance == unreachable) ? "unreachable"
@@ -1515,7 +1515,7 @@ namespace Anabatic {
           vertex->setStamp        ( _stamp );
           vertex->setConnexId     ( _connectedsId );
           vertex->setBranchId     ( 0 );
-          vertex->setDegree       ( 1 );
+          vertex->setDegree       ( 0 );
           vertex->setRpCount      ( 0 );
           vertex->setFrom         ( NULL );
 
@@ -1524,6 +1524,15 @@ namespace Anabatic {
 
           vertex->clearRestriction();
           _targets.insert( vertex );
+        }
+
+        for ( Vertex* vertex : connecteds ) {
+          int degree = 0;
+          for ( Edge* edge : vertex->getGCell()->getEdges() ) {
+            Vertex* neighbor = vertex->getNeighbor( edge );
+            if (vertex->hasValidStamp() and neighbor->hasValidStamp()) ++degree;
+          }
+          vertex->setDegree( degree );
           cdebug_log(112,0) << "| Add: " << vertex << endl;
         }
       }
@@ -1960,6 +1969,7 @@ namespace Anabatic {
   void  Dijkstra::_traceback ( Vertex* current )
   {
     cdebug_log(112,1) << "Dijkstra::_traceback() " << _net << " branchId:" << _sources.size() << endl;
+    cdebug_log(112,0) << "From: " << current << endl;
 
     int branchId = _sources.size();
     _toSources( current, _connectedsId );
@@ -1970,6 +1980,7 @@ namespace Anabatic {
     if (current->isAnalog()) {
       _initiateUpdateIntervals( current );
     } else {
+      current->incDegree();
       current = current->getPredecessor();
       isfirst = false;
     }
@@ -2023,12 +2034,20 @@ namespace Anabatic {
   //cerr << "state: " << state << endl; 
 
     for ( Vertex* startVertex : _sources ) {
-      if (not startVertex->getFrom()) continue;
+      cdebug_log(112,0) << "@ " << startVertex << endl;
+
+      if (not startVertex->getFrom()) {
+        cdebug_log(112,0) << "> skip: no getFrom()." << endl;
+        continue;
+      }
 
       if (   not startVertex->hasGContact(_net)
          and not startVertex->getRpCount()
          and (startVertex->getDegree() < 3)
-         and not startVertex->isAxisTarget() ) continue;
+         and not startVertex->isAxisTarget() ) {
+        cdebug_log(112,0) << "> skip: not a good starting point." << endl;
+        continue;
+      }
 
       Vertex* source = startVertex;
       while ( source ) {
@@ -2048,7 +2067,7 @@ namespace Anabatic {
         cdebug_log(112,0) << "| " << target << endl;
 
         if (target->getConnexId() < 0) {
-          cdebug_log(112,0) << "> " << "break (abort: false start)." << endl;
+          cdebug_log(112,0) << "> break (abort: false start)." << endl;
           break;
         }
 
@@ -2080,14 +2099,9 @@ namespace Anabatic {
           cdebug_log(112,0) << "| " << target << endl;
         }
 
-        Contact* sourceContact = source->getGContact( _net );
-        Contact* targetContact = target->hasGContact( _net );
+        Contact* sourceContact = source->breakGoThrough( _net );
+        Contact* targetContact = target->breakGoThrough( _net );
         Segment* segment       = NULL;
-
-        if (not targetContact) {
-          if (target->getFrom()) targetContact = target->getGContact( _net );
-          else                   targetContact = target->breakGoThrough( _net );
-        }
 
         cdebug_log(112,0) << "> aligneds.front():" << aligneds.front()
                           << " isHorizontal():" << aligneds.front()->isHorizontal() << endl;

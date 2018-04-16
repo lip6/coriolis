@@ -17,6 +17,7 @@
 #include <iostream>
 #include "hurricane/Error.h"
 #include "hurricane/Segment.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "anabatic/Edge.h"
@@ -53,6 +54,7 @@ namespace Anabatic {
   using std::cerr;
   using std::endl;
   using Hurricane::Error;
+  using Hurricane::RoutingPad;
 
 
   Name       Edge::_extensionName = "Anabatic::Edge";
@@ -233,19 +235,50 @@ namespace Anabatic {
     cdebug_log(112,0) << "| Tbb " << _target->getBoundingBox() << endl;
     cdebug_log(112,0) << "| " << segment << endl;
                                                         
-    Contact* contact = dynamic_cast<Contact*>( segment->getSource() );
-    cdebug_log(112,0) << "| source" << contact << endl;
-    if (contact) {
-      if (  (_source->isStdCellRow() and _source->getBoundingBox().contains(contact->getCenter()))
-         or (_target->isStdCellRow() and _target->getBoundingBox().contains(contact->getCenter())) )
-        return true;
-    }
-    contact = dynamic_cast<Contact*>( segment->getTarget() );
-    cdebug_log(112,0) << "| target" << contact << endl;
-    if (contact) {
-      if (  (_source->isStdCellRow() and _source->getBoundingBox().contains(contact->getCenter()))
-         or (_target->isStdCellRow() and _target->getBoundingBox().contains(contact->getCenter())) )
-        return true;
+    if (Session::getRoutingGauge()->isTwoMetals()) {
+      Contact* contact = dynamic_cast<Contact*>( segment->getSource() );
+      cdebug_log(112,0) << "| source" << contact << endl;
+      if (contact) {
+        if (  (_source->isStdCellRow() and _source->getBoundingBox().contains(contact->getCenter()))
+           or (_target->isStdCellRow() and _target->getBoundingBox().contains(contact->getCenter())) )
+          return true;
+      }
+
+      contact = dynamic_cast<Contact*>( segment->getTarget() );
+      cdebug_log(112,0) << "| target" << contact << endl;
+      if (contact) {
+        if (  (_source->isStdCellRow() and _source->getBoundingBox().contains(contact->getCenter()))
+           or (_target->isStdCellRow() and _target->getBoundingBox().contains(contact->getCenter())) )
+          return true;
+      }
+    } else {
+    // This part is not used (yet). We don't call isEnding() when running
+    // in over-the-cell mode.
+      Contact* contact = dynamic_cast<Contact*>( segment->getSource() );
+      cdebug_log(112,0) << "| source" << contact << endl;
+      if (contact) {
+        for ( Hook* hook : contact->getBodyHook()->getHooks() ) {
+          if (dynamic_cast<RoutingPad*>(hook->getComponent())) {
+            if (  _source->getBoundingBox().contains(contact->getCenter())
+               or _target->getBoundingBox().contains(contact->getCenter()) )
+              return true;
+            break;
+          }
+        }
+      }
+
+      contact = dynamic_cast<Contact*>( segment->getTarget() );
+      cdebug_log(112,0) << "| target" << contact << endl;
+      if (contact) {
+        for ( Hook* hook : contact->getBodyHook()->getHooks() ) {
+          if (dynamic_cast<RoutingPad*>(hook->getComponent())) {
+            if (  _source->getBoundingBox().contains(contact->getCenter())
+               or _target->getBoundingBox().contains(contact->getCenter()) )
+              return true;
+            break;
+          }
+        }
+      }
     }
     return false;
   }
@@ -328,8 +361,8 @@ namespace Anabatic {
 
     sort( _segments.begin(), _segments.end(), SortSegmentByLength() );
 
-    for ( size_t i=0 ; i<_segments.size() ; ) {
-      if (Session::getRoutingGauge()->isTwoMetals()) {
+    if (Session::getRoutingGauge()->isTwoMetals()) {
+      for ( size_t i=0 ; i<_segments.size() ; ) {
         if (not isEnding(_segments[i])) {
           NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
           if (netData->isGlobalRouted()) ++netCount;
@@ -337,16 +370,26 @@ namespace Anabatic {
           continue;
         }
         ++i;
-      } else {
-        if (_segments[i]->getLength() >= globalThreshold) {
-          NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
-          if (netData->isGlobalRouted()) ++netCount;
-          anabatic->ripup( _segments[i], Flags::Propagate );
-        } else {
-          ++i;
-        }
       }
+    } else {
+      size_t truncate = (size_t)( (getCapacity()*2) / 3 );
+      while ( _segments.size() > truncate ) {
+        NetData* netData = anabatic->getNetData( _segments[truncate]->getNet() );
+        if (netData->isGlobalRouted()) ++netCount;
+        anabatic->ripup( _segments[truncate], Flags::Propagate );
+      }
+      
+    // for ( size_t i=0 ; i<_segments.size() ; ) {
+    //   if (_segments[i]->getLength() >= globalThreshold) {
+    //     NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+    //     if (netData->isGlobalRouted()) ++netCount;
+    //     anabatic->ripup( _segments[i], Flags::Propagate );
+    //   } else {
+    //     ++i;
+    //   }
+    // }
     }
+
     return netCount;
   }
 

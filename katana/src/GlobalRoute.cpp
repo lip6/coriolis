@@ -41,7 +41,7 @@ namespace {
 
   class DigitalDistance {
     public:
-      inline            DigitalDistance ( float h, float k );
+      inline            DigitalDistance ( float h, float k, float hScaling );
       inline void       setNet          ( Net* );
              DbU::Unit  operator()      ( const Vertex* source ,const Vertex* target,const Edge* edge ) const;
     private:
@@ -49,11 +49,12 @@ namespace {
     //     "KNIK, routeur global pour la plateforme Coriolis", p. 52.
       float  _h;
       float  _k;
+      float  _hScaling;
       Net*   _net;
   };
 
 
-  inline       DigitalDistance::DigitalDistance ( float h, float k ) : _h(h), _k(k), _net(NULL) { }
+  inline       DigitalDistance::DigitalDistance ( float h, float k, float hScaling ) : _h(h), _k(k), _hScaling(hScaling), _net(NULL) { }
   inline void  DigitalDistance::setNet          ( Net* net ) { _net = net; }
 
 
@@ -92,10 +93,10 @@ namespace {
        or (source->getGCell()->isStdCellRow() and target->getGCell()->isChannelRow()) )
       edgeDistance *= 10.0;
 
-    float hvDistort = (edge->isHorizontal()) ? 1.0 : 1.0 ;
-    float distance  = (float)source->getDistance()
-                    + (congestionCost + viaCost) * edgeDistance * hvDistort
-                    + edge->getHistoricCost();
+    float hvScaling = (edge->isHorizontal()) ? _hScaling : 1.0 ;
+    float distance
+      = (float)source->getDistance()
+      + (congestionCost + viaCost + edge->getHistoricCost()) * edgeDistance * hvScaling;
 
     // Edge* sourceFrom = source->getFrom();
     // if (sourceFrom) {
@@ -198,13 +199,15 @@ namespace Katana {
     startMeasures();
     cmess1 << "  o  Running global routing." << endl;
 
-    float edgeHInc = getConfiguration()->getEdgeHInc();
+    float   edgeHInc         = getConfiguration()->getEdgeHInc();
+    size_t  globalIterations = getConfiguration()->getGlobalIterations();;
 
     openSession();
     Dijkstra*           dijkstra = new Dijkstra ( this );
     DigitalDistance*    distance =
       dijkstra->setDistance( DigitalDistance( getConfiguration()->getEdgeCostH()
-                                            , getConfiguration()->getEdgeCostK() ));
+                                            , getConfiguration()->getEdgeCostK()
+                                            , getConfiguration()->getEdgeHScaling() ));
     const vector<Edge*>& ovEdges = getOvEdges();
 
     if (isChannelMode())
@@ -234,13 +237,13 @@ namespace Katana {
       // openSession();
 
       netCount = 0;
-      if (iteration < 10 - 1) {
+      if (iteration < globalIterations - 1) {
         size_t iEdge = 0;
         while ( iEdge < ovEdges.size() ) {
           Edge* edge = ovEdges[iEdge];
           netCount += edge->ripup();
 
-          if (ovEdges.empty()) break;
+          if (iEdge >= ovEdges.size()) break;
           if (ovEdges[iEdge] == edge) {
             cerr << Error( "AnabaticEngine::globalRoute(): Unable to ripup enough segments of edge:\n"
                          "        %s"
@@ -260,7 +263,7 @@ namespace Katana {
       resumeMeasures();
 
       ++iteration;
-    } while ( (netCount > 0) and (iteration < 10) );
+    } while ( (netCount > 0) and (iteration < globalIterations) );
 
     stopMeasures();
     printMeasures( "Dijkstra" );

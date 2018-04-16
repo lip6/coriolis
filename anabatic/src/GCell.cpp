@@ -475,6 +475,9 @@ namespace Anabatic {
 
   Contact* GCell::breakGoThrough ( Net* net )
   {
+    Contact* gcontact = hasGContact( net );
+    if (gcontact) return gcontact;
+
     for ( Edge* edge : _eastEdges ) {
       for ( Segment* segment : edge->getSegments() ) {
         if (segment->getNet() == net) 
@@ -489,7 +492,7 @@ namespace Anabatic {
       }
     }
 
-    return NULL;
+    return getGContact( net );
   }
 
 
