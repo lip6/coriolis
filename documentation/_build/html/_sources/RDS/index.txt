@@ -12,9 +12,9 @@
 **Disclaimer:** This document is still far from complete.
 
 
-=========================================
-Symbolic to Real Conversion in Alliance
-=========================================
+==============================================
+RDS -- Symbolic to Real Conversion in Alliance
+==============================================
 
 Printable version of this document `RDS.pdf <../../../pdf/main/RDS.pdf>`_.
 
