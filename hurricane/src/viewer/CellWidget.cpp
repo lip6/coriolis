@@ -39,7 +39,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
-#include "hurricane/Triangle.h"
+#include "hurricane/Polygon.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/ExtensionGo.h"
 
@@ -665,17 +665,23 @@ namespace Hurricane {
     static QRect         rectangle;
     static unsigned int  state;
 
-    const Triangle* triangle = dynamic_cast<const Triangle*>(go);
-    if (triangle) {
+    const Polygon* polygon = dynamic_cast<const Polygon*>(go);
+    if (polygon) {
       _goCount++;
-      Box bb = transformation.getBox(triangle->getBoundingBox(basicLayer));
+      Box bb = transformation.getBox(polygon->getBoundingBox(basicLayer));
       rectangle = _cellWidget->dbuToScreenRect( bb );
       if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
-        QPoint points[3];
-        points[0] = _cellWidget->dbuToScreenPoint( triangle->getPoint(0) );
-        points[1] = _cellWidget->dbuToScreenPoint( triangle->getPoint(1) );
-        points[2] = _cellWidget->dbuToScreenPoint( triangle->getPoint(2) );
-        _cellWidget->drawScreenPolygon( points, 3 );
+        QPolygon contour;
+        const vector<Point>& points = polygon->getPoints();
+        for ( Point point : points ) contour << _cellWidget->dbuToScreenPoint( point );
+        _cellWidget->drawScreenPolygon( contour );
+        contour.clear();
+
+        if (_cellWidget->dbuToScreenLength(DbU::getPolygonStep()) > 4) {
+          for ( Point point : polygon->getContour() ) 
+            contour << _cellWidget->dbuToScreenPoint( point );
+          _cellWidget->drawScreenPolygon( contour );
+        }
       }
       return;
     }
@@ -1728,6 +1734,12 @@ namespace Hurricane {
   void  CellWidget::drawScreenPolygon ( const QPoint* points, int count, size_t plane )
   {
     _drawingPlanes.painter(plane).drawPolygon ( points, count );
+  }
+
+
+  void  CellWidget::drawScreenPolygon ( const QPolygon& polygon, size_t plane )
+  {
+    _drawingPlanes.painter(plane).drawConvexPolygon ( polygon );
   }
 
 

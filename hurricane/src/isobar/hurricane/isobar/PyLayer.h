@@ -47,6 +47,7 @@ extern "C" {
   extern  void      PyLayer_LinkPyType     ();
   extern  void      PyLayer_postModuleInit ();
   extern  Layer*    PYDERIVEDLAYER_O       ( PyObject* );
+  extern  bool      IsPyDerivedLayer       ( PyObject* );
 
 # define IsPyLayer(v)    ( (v)->ob_type == &PyTypeLayer )
 # define PYLAYER(v)      ( (PyLayer*)(v) )

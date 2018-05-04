@@ -79,7 +79,6 @@ def coriolisConfigure():
                  , ('allianceConfig'       , Alliance.loadAllianceConfig    , SystemMandatory|AllianceHelper)
                  , ('routingGaugesTable'   , Alliance.loadRoutingGaugesTable, SystemMandatory|KiteHelper)
                  , ('cellGaugesTable'      , Alliance.loadCellGaugesTable   , SystemMandatory|KiteHelper)
-                 , ('viewerConfig'         , Technology.loadViewerConfig    , SystemMandatory|TechnologyHelper)
                  , ('realLayersTable'      , Technology.loadRealLayers      , SystemMandatory|TechnologyHelper)
                  , ('compositeLayersTable' , Technology.loadCompositeLayers , SystemMandatory|TechnologyHelper)
                  , ('symbolicLayersTable'  , Technology.tagSymbolicLayers   , SystemMandatory|TechnologyHelper)
@@ -97,8 +96,8 @@ def coriolisConfigure():
 
   Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.ConfigurationFile )
 
-  confFiles = [ (helpers.technoDir+'/alliance.conf'  , SystemFile|AllianceHelper)
-              , (helpers.technoDir+'/technology.conf', SystemFile|TechnologyHelper)
+  confFiles = [ (helpers.technoDir+'/technology.conf', SystemFile|TechnologyHelper)
+              , (helpers.technoDir+'/alliance.conf'  , SystemFile|AllianceHelper)
               , (helpers.technoDir+'/patterns.conf'  , SystemFile|PatternsHelper)
               , (helpers.technoDir+'/display.conf'   , SystemFile|DisplayHelper)
               , (helpers.technoDir+'/misc.conf'      , SystemFile|ConfigurationHelper)

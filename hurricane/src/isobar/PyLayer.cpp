@@ -483,6 +483,19 @@ extern "C" {
   }
 
 
+  extern bool IsPyDerivedLayer ( PyObject* pyObject )
+  {
+    if (IsPyLayer(pyObject)          ) return true;
+    if (IsPyBasicLayer(pyObject)     ) return true;
+    if (IsPyContactLayer(pyObject)   ) return true;
+    if (IsPyViaLayer(pyObject)       ) return true;
+    if (IsPyDiffusionLayer(pyObject) ) return true;
+    if (IsPyRegularLayer(pyObject)   ) return true;
+    if (IsPyTransistorLayer(pyObject)) return true;
+    return false;
+  }
+
+
 #endif  // End of Shared Library Code Part.
 
 }  // extern "C".

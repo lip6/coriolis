@@ -177,11 +177,11 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_getPrecision ( PyObject* )
+  static PyObject* PyDbU_getPrecision ( PyObject* )
   { return Py_BuildValue("I",DbU::getPrecision()); }
 
 
-  extern PyObject* PyDbU_getMaximalPrecision ( PyObject* )
+  static PyObject* PyDbU_getMaximalPrecision ( PyObject* )
   { return Py_BuildValue("I",DbU::getMaximalPrecision()); }
 
 
@@ -189,7 +189,7 @@ extern "C" {
   { return Py_BuildValue("d",DbU::getResolution()); }
 
 
-  extern PyObject* PyDbU_setPrecision ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_setPrecision ( PyObject* , PyObject* args )
   {
     unsigned int  precision = 0;
 
@@ -204,8 +204,32 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
+  
+  static PyObject* PyDbU_getPolygonStep ( PyObject*, PyObject* args )
+  { return PyDbU_FromLong( DbU::getPolygonStep() ); }
 
-  extern PyObject* PyDbU_getUnitPower ( PyObject* , PyObject* args )
+
+  static PyObject* PyDbU_setPolygonStep ( PyObject* , PyObject* args )
+  {
+    HTRY
+      PyObject* pyStep = NULL;
+      __cs.init( "DbU.setPolygonStep" );
+      if (not PyArg_ParseTuple(args,"O&:DbU.setPolygonStep", Converter, &pyStep) ) {
+        PyErr_SetString ( ConstructorError, "DbU.setPolygonStep(): Invalid/bad type parameters ." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == INT_ARG) DbU::setPolygonStep( PyAny_AsLong(pyStep) );
+      else {
+        PyErr_SetString( ConstructorError, "DbU.setPolygonStep(): Invalid type for parameter(s)." );
+        return NULL;
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyDbU_getUnitPower ( PyObject* , PyObject* args )
   {
     double        value = 0.0;
     unsigned int  power = 0;
@@ -222,7 +246,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_setPhysicalsPerGrid ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_setPhysicalsPerGrid ( PyObject* , PyObject* args )
   {
     double        physicalsPerGrid = 0.0;
     unsigned int  power            = 0;
@@ -239,11 +263,11 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_getPhysicalsPerGrid ( PyObject* )
+  static PyObject* PyDbU_getPhysicalsPerGrid ( PyObject* )
   { return Py_BuildValue("d",DbU::getPhysicalsPerGrid()); }
 
 
-  extern PyObject* PyDbU_physicalToGrid ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_physicalToGrid ( PyObject* , PyObject* args )
   {
     double  value   = 0.0;
     int     power   = DbU::Micro;
@@ -261,7 +285,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_setGridsPerLambda ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_setGridsPerLambda ( PyObject* , PyObject* args )
   {
     double  gridsPerLambda = 0.0;
 
@@ -277,15 +301,15 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_getGridsPerLambda ( PyObject* )
+  static PyObject* PyDbU_getGridsPerLambda ( PyObject* )
   { return Py_BuildValue("d",DbU::getGridsPerLambda()); }
 
 
-  extern PyObject* PyDbU_getRealSnapGridStep ( PyObject* )
+  static PyObject* PyDbU_getRealSnapGridStep ( PyObject* )
   { return PyDbU_FromLong(DbU::getRealSnapGridStep()); }
 
 
-  extern PyObject* PyDbU_getOnRealSnapGrid ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_getOnRealSnapGrid ( PyObject* , PyObject* args )
   {
     PyObject*  value  = NULL;
     int        snap   = DbU::Nearest;
@@ -303,7 +327,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_setRealSnapGridStep ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_setRealSnapGridStep ( PyObject* , PyObject* args )
   {
     PyObject* step = NULL;
 
@@ -319,11 +343,11 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_getSymbolicSnapGridStep ( PyObject* )
+  static PyObject* PyDbU_getSymbolicSnapGridStep ( PyObject* )
   { return PyDbU_FromLong(DbU::getSymbolicSnapGridStep()); }
 
 
-  extern PyObject* PyDbU_getOnSymbolicSnapGrid ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_getOnSymbolicSnapGrid ( PyObject* , PyObject* args )
   {
     PyObject*  pyValue = NULL;
     int        snap    = DbU::Nearest;
@@ -341,7 +365,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_setSymbolicSnapGridStep ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_setSymbolicSnapGridStep ( PyObject* , PyObject* args )
   {
     PyObject* step = NULL;
 
@@ -357,7 +381,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_getOnCustomGrid ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_getOnCustomGrid ( PyObject* , PyObject* args )
   {
     PyObject* pyValue = NULL;
     PyObject* pyStep  = NULL;
@@ -427,7 +451,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_getValueString ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_getValueString ( PyObject* , PyObject* args )
   {
     PyObject* value   = NULL;
     int       mode    = DbU::SmartTruncate;
@@ -445,7 +469,7 @@ extern "C" {
   }
 
 
-  extern PyObject* PyDbU_setStringMode ( PyObject* , PyObject* args )
+  static PyObject* PyDbU_setStringMode ( PyObject* , PyObject* args )
   {
     unsigned int  mode  = 0;
     unsigned int  power = DbU::Nano;
@@ -525,6 +549,11 @@ extern "C" {
                                  , "Convert a DbU into a human readable string." }
     , { "setStringMode"          , (PyCFunction)PyDbU_setStringMode          , METH_VARARGS|METH_STATIC
                                  , "Tells what unit to use when converting a DbU into a string." }
+    // Polygon Step Managment.
+    , { "setPolygonStep"         , (PyCFunction)PyDbU_setPolygonStep         , METH_VARARGS|METH_STATIC
+                                 , "Set the approximation step for Polygons." }
+    , { "getPolygonStep"         , (PyCFunction)PyDbU_getPolygonStep         , METH_NOARGS|METH_STATIC
+                                 , "Returns the approximation step used for Polygons." }
     , {NULL, NULL, 0, NULL}      /* sentinel */
     };
 

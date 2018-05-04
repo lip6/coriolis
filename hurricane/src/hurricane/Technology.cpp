@@ -298,10 +298,7 @@ ViaLayers Technology::getViaLayers() const
 
 
   void  Technology::_onDbuChange ( float scale )
-  {
-    forEach ( Layer*, layer, getLayers() )
-      layer->_onDbuChange ( scale );
-  }
+  { for ( Layer* layer : getLayers() ) layer->_onDbuChange( scale ); }
 
 
 void Technology::setName(const Name& name)

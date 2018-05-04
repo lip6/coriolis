@@ -703,6 +703,8 @@ INPUT                  = Generalities.dox \
                          ../../src/hurricane/hurricane/Pads.h \
                          ../../src/hurricane/hurricane/Pad.h \
                          Pad.dox \
+                         ../../src/hurricane/hurricane/Polygon.h \
+                         Polygon.dox \
                          ../../src/hurricane/hurricane/Rubbers.h \
                          ../../src/hurricane/hurricane/Rubber.h \
                          RoutingPad.dox \

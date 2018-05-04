@@ -54,6 +54,7 @@ namespace Hurricane {
   DbU::UnitPower      DbU::_stringModeUnitPower  = DbU::Nano;
   DbU::Unit           DbU::_symbolicSnapGridStep = DbU::fromLambda( 1.0);
   DbU::Unit           DbU::_realSnapGridStep     = DbU::fromGrid  (10.0);
+  DbU::Unit           DbU::_polygonStep          = DbU::fromGrid  ( 1.0);
   const DbU::Unit     DbU::Min                   = std::numeric_limits<DbU::Unit>::min();
   const DbU::Unit     DbU::Max                   = std::numeric_limits<DbU::Unit>::max();
 
@@ -159,7 +160,7 @@ namespace Hurricane {
     _resolution = 1;
     while ( precision-- ) _resolution /= 10;
 
-    if (not (flags & NoTechnoUpdate))
+    if (not (flags & NoTechnoUpdate) and DataBase::getDB()->getTechnology())
       DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda( 1.0) );
@@ -210,7 +211,7 @@ namespace Hurricane {
 
     _gridsPerLambda = gridsPerLambda;
 
-    if (not (flags & NoTechnoUpdate))
+    if (not (flags & NoTechnoUpdate) and DataBase::getDB()->getTechnology())
       DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda(1) );

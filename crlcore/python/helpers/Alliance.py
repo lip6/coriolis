@@ -219,8 +219,6 @@ def loadAllianceConfig ( table, fromFile ):
     af         = AllianceFramework.get()
     db         = DataBase.getDB()
     technology = db.getTechnology()
-    if not technology:
-      technology = Hurricane.Technology.create(db,'Alliance')
 
     _loadAllianceConfig( af, table )
     env = af.getEnvironment()

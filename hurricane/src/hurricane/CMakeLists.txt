@@ -92,7 +92,7 @@
                                 hurricane/Technology.h
                                 hurricane/Timer.h
                                 hurricane/Transformation.h
-                                hurricane/Triangle.h
+                                hurricane/Polygon.h
                                 hurricane/DbU.h
                                 hurricane/UpdateSession.h
                                 hurricane/VectorCollection.h
@@ -161,7 +161,7 @@
                                 Horizontal.cpp
                                 Pad.cpp
                                 RoutingPad.cpp
-                                Triangle.cpp
+                                Polygon.cpp
                                 NetExternalComponents.cpp
                                 NetRoutingProperty.cpp
                                 Reference.cpp

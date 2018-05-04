@@ -40,8 +40,11 @@
 
 namespace Hurricane {
 
+  class DataBase;
+
 
   class DbU {
+      friend class DataBase;
     public:
       enum FunctionFlags { NoFlags        = 0
                          , NoTechnoUpdate = (1<<0)
@@ -85,11 +88,14 @@ namespace Hurricane {
       static        unsigned int        getMaximalPrecision     ();
       static        double              getResolution           ();
       static        void                setPrecision            ( unsigned int precision, unsigned int flags=NoFlags );
-    // Founder Grid Managment.                                  
+    // Foundry Grid Managment.                                  
       static        double              getUnitPower            ( UnitPower p );
       static        void                setPhysicalsPerGrid     ( double gridsPerLambda, UnitPower p );
       static        double              getPhysicalsPerGrid     ();
       static        double              physicalToGrid          ( double physical, UnitPower p );
+    // Huge Polygon Step Managment.                                  
+      static inline DbU::Unit           getPolygonStep          ();
+      static inline void                setPolygonStep          ( DbU::Unit );
     // Lamba Managment.                                         
       static        void                setGridsPerLambda       ( double gridsPerLambda, unsigned int flags=NoFlags );
       static        double              getGridsPerLambda       ();
@@ -142,6 +148,7 @@ namespace Hurricane {
       static DbU::UnitPower      _stringModeUnitPower;
       static DbU::Unit           _realSnapGridStep;
       static DbU::Unit           _symbolicSnapGridStep;
+      static DbU::Unit           _polygonStep;
       static double              _gridMax;
       static double              _lambdaMax;
       static double              _physicalMax;
@@ -161,6 +168,7 @@ namespace Hurricane {
   inline double     DbU::toLambda                ( double u )                   { return toGrid(u)/_gridsPerLambda; }
   inline double     DbU::toPhysical              ( DbU::Unit u, UnitPower p )   { return (_physicalsPerGrid*_resolution*(double)u)/getUnitPower(p); }
   inline double     DbU::toPhysical              ( double u, UnitPower p )      { return (_physicalsPerGrid*_resolution*u)/getUnitPower(p); }
+  inline DbU::Unit  DbU::getPolygonStep          ()                             { return _polygonStep; }
 
 // Old converter naming scheme.
   inline DbU::Unit  DbU::db                      ( DbU::Unit value )            { return fromDb(value); }
@@ -177,6 +185,7 @@ namespace Hurricane {
 
   inline void       DbU::setRealSnapGridStep     ( DbU::Unit step )             { _realSnapGridStep = step; }
   inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )             { _symbolicSnapGridStep = step; }
+  inline void       DbU::setPolygonStep          ( DbU::Unit step )             { _polygonStep = step; }
   inline DbU::Unit  DbU::getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode ) { return getOnCustomGrid(u, grid(1), mode); }
 
 
@@ -221,6 +230,28 @@ inline Hurricane::Record* getRecord ( const std::array<Hurricane::DbU::Unit*,3>&
   for ( size_t i=0 ; i<a.size() ; ++i ) {
     std::string label = "[" + getString(i) + "] ";
     record->add( Hurricane::DbU::getValueSlot(label, a[i]) );
+  }
+  return record;
+}
+
+
+template<>
+inline std::string  getString ( const std::vector<Hurricane::DbU::Unit>* v )
+{
+  std::string name = "const std::vector<DbU::Unit>:";
+  return name + getString<size_t>(v->size());
+}
+
+
+template<>
+inline Hurricane::Record* getRecord ( const std::vector<Hurricane::DbU::Unit>* v )
+{
+  Hurricane::Record* record = NULL;
+  record = new Hurricane::Record ( "const vector<DbU::Unit>" );
+
+  for ( size_t i=0 ; i<v->size() ; ++i ) {
+    std::string label = "[" + getString(i) + "] ";
+    record->add( Hurricane::DbU::getValueSlot(label, &(*v)[i]) );
   }
   return record;
 }

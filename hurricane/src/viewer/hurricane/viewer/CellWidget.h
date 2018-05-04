@@ -190,6 +190,7 @@ namespace Hurricane {
               void                      drawDisplayText            ( const QRect& , const char*, unsigned int flags=0 );
               void                      drawDisplayText            ( const QPoint&, const char*, unsigned int flags=0, int angle=0 );
               void                      drawScreenPolygon          ( const QPoint*, int count,     size_t plane=PlaneId::Working );
+              void                      drawScreenPolygon          ( const QPolygon&,              size_t plane=PlaneId::Working );
               void                      drawScreenLine             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working, bool mode=true );
               void                      drawScreenRect             ( const QPoint&, const QPoint&, size_t plane=PlaneId::Working );
               void                      drawScreenRect             ( const QRect& ,                size_t plane=PlaneId::Working );

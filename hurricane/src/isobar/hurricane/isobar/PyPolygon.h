@@ -10,15 +10,15 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/isobar/PyTriangle.h"                    |
+// |  C++ Header  :  "./hurricane/isobar/PyPolygon.h"                |
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_TRIANGLE_H
-#define PY_TRIANGLE_H
+#ifndef PY_POLYGON_H
+#define PY_POLYGON_H
 
 #include "hurricane/isobar/PyComponent.h"
-#include "hurricane/Triangle.h"
+#include "hurricane/Polygon.h"
 
 
 namespace  Isobar {
@@ -27,30 +27,30 @@ namespace  Isobar {
 
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyTriangle".
+// Python Object  :  "PyPolygon".
 
     typedef struct {
         PyComponent  _baseObject;
-    } PyTriangle;
+    } PyPolygon;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-    extern  PyTypeObject  PyTypeTriangle;
-    extern  PyMethodDef   PyTriangle_Methods[];
+    extern  PyTypeObject  PyTypePolygon;
+    extern  PyMethodDef   PyPolygon_Methods[];
 
-    extern  PyObject* PyTriangle_Link       ( Hurricane::Triangle* object );
-    extern  void      PyTriangle_LinkPyType ();
+    extern  PyObject* PyPolygon_Link       ( Hurricane::Polygon* object );
+    extern  void      PyPolygon_LinkPyType ();
 
 
-#define IsPyTriangle(v)    ( (v)->ob_type == &PyTypeTriangle )
-#define PYTRIANGLE(v)      ( (PyTriangle*)(v) )
-#define PYTRIANGLE_O(v)    ( PYTRIANGLE(v)->_baseObject._baseObject._object )
+#define IsPyPolygon(v)    ( (v)->ob_type == &PyTypePolygon )
+#define PYPOLYGON(v)      ( (PyPolygon*)(v) )
+#define PYPOLYGON_O(v)    ( PYPOLYGON(v)->_baseObject._baseObject._object )
 
 
   }  // extern "C".
 
 }  // Isobar namespace.
 
-#endif // PY_TRIANGLE_H
+#endif // PY_POLYGON_H

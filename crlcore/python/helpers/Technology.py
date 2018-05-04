@@ -7,6 +7,7 @@ import traceback
 import Hurricane
 from   Hurricane import DbU
 from   Hurricane import DataBase
+from   Hurricane import Technology
 from   Hurricane import Layer
 from   Hurricane import BasicLayer
 from   Hurricane import DiffusionLayer
@@ -298,16 +299,6 @@ def tagSymbolicLayers ( symbolicLayersTable, confFile ):
     return
 
 
-def loadViewerConfig ( viewerConfig, confFile ):
-    global technologyFile
-    technologyFile = confFile
-    try:
-        if viewerConfig.has_key('precision'): DbU.setPrecision(viewerConfig['precision'])
-    except Exception, e:
-        ErrorMessage.wrapPrint(e,'In %s:<viewerConfig>.')
-    return
-
-
 def loadGdsLayers ( realLayersTable, confFile ):
     technologyFile   = confFile
     technology = DataBase.getDB().getTechnology()
@@ -345,47 +336,86 @@ def loadGdsLayers ( realLayersTable, confFile ):
     return
 
 
-def loadTechnoConfig (  technoConfig, confFile ):
+def loadTechnoConfig ( technoConfig, confFile ):
     technologyFile = confFile
     technology     = DataBase.getDB().getTechnology()
+    if not technology:
+      name = 'Unknown'
+      if technoConfig.has_key('name'): name = technoConfig['name'] 
+      technology = Technology.create( DataBase.getDB(), name )
 
     gridValue = 1
     gridUnit  = DbU.UnitPowerMicro
-    for key in [ 'gridUnit', 'gridValue', 'gridsPerLambda' ]:
-        try:
-            if key == 'gridUnit':
-                if technoConfig.has_key(key):
-                    gridUnit = technoConfig[key]
-                    if gridUnit != DbU.UnitPowerPico  and \
-                       gridUnit != DbU.UnitPowerNano  and \
-                       gridUnit != DbU.UnitPowerMicro and \
-                       gridUnit != DbU.UnitPowerMilli and \
-                       gridUnit != DbU.UnitPowerUnity and \
-                       gridUnit != DbU.UnitPowerKilo:
-                        raise ErrorMessage(1,'In <technoConfig>, invalid DbU unit power for gridUnit, reseting to Micro.')
-                else:
-                    raise ErrorMessage(1,'<technoConfig> has no <gridUnit> defined, assuming Micro.')
+    for key in [ 'precision'
+               , 'gridUnit'
+               , 'gridValue'
+               , 'gridsPerLambda'
+               , 'symbolicGridStep'
+               , 'polygonStep' ]:
+      try:
+        if key == 'precision':
+          if technoConfig.has_key('precision'):
+            precision = technoConfig['precision']
+            if not isinstance(gridUnit,int):
+                raise ErrorMessage(1,['In <technoConfig>, <precision> must be of type int (and not: %s).'
+                                      % helpers.stype(precision)
+                                     ])
+            DbU.setPrecision(precision)
+          else:
+            raise ErrorMessage(1,'<technoConfig> has no <precision> defined.')
 
-            elif key == 'gridValue':
-                if technoConfig.has_key('gridValue'):
-                    gridValue = technoConfig['gridValue']
-                    if not isinstance(gridUnit,float) and not isinstance(gridUnit,int):
-                        raise ErrorMessage(1,['In <technoConfig>, <gridValue> must be of type float (and not: %s).'
-                                              % helpers.stype(gridValue)
-                                             ])
-                    DbU.setPhysicalsPerGrid(gridValue,gridUnit)
-                else:
-                    raise ErrorMessage(1,'<technoConfig> has no <gridValue> defined.')
+        elif key == 'gridUnit':
+          if technoConfig.has_key(key):
+            gridUnit = technoConfig[key]
+            if gridUnit != DbU.UnitPowerPico  and \
+               gridUnit != DbU.UnitPowerNano  and \
+               gridUnit != DbU.UnitPowerMicro and \
+               gridUnit != DbU.UnitPowerMilli and \
+               gridUnit != DbU.UnitPowerUnity and \
+               gridUnit != DbU.UnitPowerKilo:
+                raise ErrorMessage(1,'In <technoConfig>, invalid DbU unit power for gridUnit, reseting to Micro.')
+          else:
+            raise ErrorMessage(1,'<technoConfig> has no <gridUnit> defined, assuming Micro.')
+
+        elif key == 'gridValue':
+          if technoConfig.has_key('gridValue'):
+            gridValue = technoConfig['gridValue']
+            if not isinstance(gridUnit,float) and not isinstance(gridUnit,int):
+                raise ErrorMessage(1,['In <technoConfig>, <gridValue> must be of type float (and not: %s).'
+                                      % helpers.stype(gridValue)
+                                     ])
+            DbU.setPhysicalsPerGrid(gridValue,gridUnit)
+          else:
+            raise ErrorMessage(1,'<technoConfig> has no <gridValue> defined.')
     
-            elif key == 'gridsPerLambda':
-                if technoConfig.has_key('gridsPerLambda'):
-                    gridsPerLambda = technoConfig['gridsPerLambda']
-                    if not isinstance(gridsPerLambda,int):
-                        raise ErrorMessage(1,['In <technoConfig>, <gridsPerLambda> must be of type int (and not: %s).'
-                                            % helpers.stype(gridsPerLambda)
-                                           ])
-                    DbU.setGridsPerLambda(gridsPerLambda)
+        elif key == 'gridsPerLambda':
+          if technoConfig.has_key('gridsPerLambda'):
+            gridsPerLambda = technoConfig['gridsPerLambda']
+            if not isinstance(gridsPerLambda,int):
+                raise ErrorMessage(1,['In <technoConfig>, <gridsPerLambda> must be of type int (and not: %s).'
+                                    % helpers.stype(gridsPerLambda)
+                                   ])
+            DbU.setGridsPerLambda(gridsPerLambda)
+
+        elif key == 'polygonStep':
+          if technoConfig.has_key('polygonStep'):
+            polygonStep = technoConfig['polygonStep']
+            if not isinstance(polygonStep,float):
+                raise ErrorMessage(1,['In <technoConfig>, <polygonStep> must be of type float (and not: %s).'
+                                    % helpers.stype(polygonStep)
+                                   ])
+            DbU.setPolygonStep( DbU.fromGrid(polygonStep) )
+
+        elif key == 'symbolicGridStep':
+          if technoConfig.has_key('symbolicGridStep'):
+            gridStep = technoConfig['symbolicGridStep']
+            if not isinstance(gridStep,float):
+                raise ErrorMessage(1,['In <technoConfig>, <symbolicGridStep> must be of type float (and not: %s).'
+                                    % helpers.stype(gridStep)
+                                   ])
+            DbU.setSymbolicSnapGridStep( DbU.fromLambda(gridStep) )
     
-        except Exception, e:
-            ErrorMessage.wrapPrint(e)
+      except Exception, e:
+        ErrorMessage.wrapPrint(e)
+
     return

@@ -1,0 +1,53 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Polygon
+  *  \brief        Polygon description (\b API)
+  *
+  *  \section      secPadIntro  Introduction
+  *
+  *                Polygon should be used to create huge convex and manhattanized polygons.
+  *                Manhattanization is done so the real geometric shape is completly included
+  *                in it. The memory representation has been optimized for very large shape
+  *                (compare to the foundry grid) and is inefficient for small ones.
+  *
+  *                The minimal step length for the manhattanisation is set up with
+  *                DbU::setPolygonStep().
+  */
+
+
+
+ /*! \typedef      Polygon::Super
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+
+ /*! \function     Polygon* Polygon::create( Net* net, const Layer* layer, const std::vector<Point>& points );
+  *                Create a polygon of \c layer in \c net. \c points define the vertexes.
+  */
+
+
+ //! \name         Polygon Collection
+ //  \{
+
+ /*! \typedef      Polygons
+  *                Generic collection representing a set of polygons. 
+  */
+
+ /*! \typedef      PolygonLocator
+  *                Generic locator for traversing a collection of polygons. 
+  */
+
+ /*! \typedef      PolygonFilter
+  *                Generic filter allowing to select a subset of polygons matching 
+  *                some criteria. 
+  */
+
+ //  \}
+
+
+ }
