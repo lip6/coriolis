@@ -51,6 +51,7 @@
                                    PyHook.cpp
                                    PyHookCollection.cpp
                                    PyPad.cpp
+                                   PyDiagonal.cpp
                                    PyPath.cpp
                                    PyPin.cpp
                                    PyPinPlacementStatus.cpp
@@ -119,6 +120,7 @@
                                    hurricane/isobar/PyHookCollection.h
                                    hurricane/isobar/PyPad.h
                                    hurricane/isobar/PyPath.h
+                                   hurricane/isobar/PyDiagonal.h
                                    hurricane/isobar/PyPin.h
                                    hurricane/isobar/PyPinPlacementStatus.h
                                    hurricane/isobar/PyPinDirection.h

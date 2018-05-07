@@ -41,11 +41,6 @@ namespace Hurricane {
 
   class Layer;
 
-
-  typedef Hurricane::Filter<Point>      PointHF;
-  typedef Hurricane::Locator<Point>     PointHL;
-  typedef Hurricane::Collection<Point>  PointHC;
-
   
   class Polygon : public Component {
     public:

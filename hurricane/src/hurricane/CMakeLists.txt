@@ -78,6 +78,7 @@
                                 hurricane/Region.h
                                 hurricane/Relation.h
                                 hurricane/RoutingPad.h            hurricane/RoutingPads.h
+                                hurricane/Diagonal.h
                                 hurricane/Rubber.h                hurricane/Rubbers.h
                                 hurricane/Segment.h               hurricane/Segments.h
                                 hurricane/Selectors.h
@@ -161,6 +162,7 @@
                                 Horizontal.cpp
                                 Pad.cpp
                                 RoutingPad.cpp
+                                Diagonal.cpp
                                 Polygon.cpp
                                 NetExternalComponents.cpp
                                 NetRoutingProperty.cpp

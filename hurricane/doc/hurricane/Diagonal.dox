@@ -1,0 +1,32 @@
+
+ // -*- C++ -*-
+
+
+ namespace Hurricane {
+
+ /*! \class        Diagonal
+  *  \brief        Diagonal description (\b API)
+  *
+  *  \section      secDiagonalIntro  Introduction
+  *
+  *                Create 45° or 135° segments.
+  *
+  *                The minimal step length for the manhattanisation is set up with
+  *                DbU::setDiagonalStep().
+  */
+
+
+ /*! \typedef      Diagonal::Super
+  *                Useful for calling upon methods of the base class without 
+  *                knowing it. 
+  */
+
+
+ /*! \function     Diagonal* Diagonal::create( Net* net, const Layer* layer, const Point& source, const Point& target, DbU::Unit width );
+  *                Create a diagonal segment of \c layer in \c net.
+  */
+
+ //  \}
+
+
+ }

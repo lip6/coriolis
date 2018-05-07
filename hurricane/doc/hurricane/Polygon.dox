@@ -7,7 +7,7 @@
  /*! \class        Polygon
   *  \brief        Polygon description (\b API)
   *
-  *  \section      secPadIntro  Introduction
+  *  \section      secPolygonIntro  Introduction
   *
   *                Polygon should be used to create huge convex and manhattanized polygons.
   *                Manhattanization is done so the real geometric shape is completly included

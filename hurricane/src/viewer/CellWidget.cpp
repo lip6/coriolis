@@ -39,6 +39,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Diagonal.h"
 #include "hurricane/Polygon.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/ExtensionGo.h"
@@ -664,6 +665,20 @@ namespace Hurricane {
 
     static QRect         rectangle;
     static unsigned int  state;
+
+    const Diagonal* diagonal = dynamic_cast<const Diagonal*>(go);
+    if (diagonal) {
+      _goCount++;
+      Box bb = transformation.getBox(diagonal->getBoundingBox(basicLayer));
+      rectangle = _cellWidget->dbuToScreenRect( bb );
+      if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
+        QPolygon contour;
+        for ( Point point : diagonal->getContour() )
+          contour << _cellWidget->dbuToScreenPoint( point );
+        _cellWidget->drawScreenPolygon( contour );
+      }
+      return;
+    }
 
     const Polygon* polygon = dynamic_cast<const Polygon*>(go);
     if (polygon) {

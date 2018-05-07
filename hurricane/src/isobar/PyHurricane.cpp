@@ -72,6 +72,7 @@
 #include "hurricane/isobar/PyHorizontal.h"
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyPad.h"
+#include "hurricane/isobar/PyDiagonal.h"
 #include "hurricane/isobar/PyPolygon.h"
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyOccurrence.h"
@@ -565,6 +566,7 @@ extern "C" {
     PyComponent_LinkPyType ();
     PySegment_LinkPyType ();
     PyPad_LinkPyType ();
+    PyDiagonal_LinkPyType ();
     PyRoutingPad_LinkPyType ();
     PyVertical_LinkPyType ();
     PyHorizontal_LinkPyType ();
@@ -655,7 +657,8 @@ extern "C" {
     PYTYPE_READY_SUB ( Pin            , Contact  )
     PYTYPE_READY_SUB ( Plug           , Component)
     PYTYPE_READY_SUB ( Pad            , Component)
-    PYTYPE_READY_SUB ( Polygon       , Component)
+    PYTYPE_READY_SUB ( Diagonal       , Component)
+    PYTYPE_READY_SUB ( Polygon        , Component)
 
     // Identifier string can take up to 10 characters !
     __cs.addType ( "intv"       , &PyTypeInterval              , "<Interval>"              , false );
@@ -707,6 +710,7 @@ extern "C" {
     __cs.addType ( "rp"         , &PyTypeRoutingPad            , "<RoutingPad>"            , false, "comp" );
     __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
     __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
+    __cs.addType ( "diagonal"   , &PyTypeDiagonal              , "<Diagonal>"              , false, "comp" );
     __cs.addType ( "polygon"    , &PyTypePolygon               , "<Polygon>"               , false, "comp" );
     __cs.addType ( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
     __cs.addType ( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
@@ -806,8 +810,10 @@ extern "C" {
     PyModule_AddObject ( module, "Pin"                  , (PyObject*)&PyTypePin );
     Py_INCREF ( &PyTypePad );
     PyModule_AddObject ( module, "Pad"                  , (PyObject*)&PyTypePad );
+    Py_INCREF ( &PyTypeDiagonal );
+    PyModule_AddObject ( module, "Diagonal"             , (PyObject*)&PyTypeDiagonal );
     Py_INCREF ( &PyTypePolygon );
-    PyModule_AddObject ( module, "Polygon"             , (PyObject*)&PyTypePolygon );
+    PyModule_AddObject ( module, "Polygon"              , (PyObject*)&PyTypePolygon );
     
     
     PyObject* dictionnary = PyModule_GetDict ( module );

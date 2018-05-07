@@ -705,6 +705,8 @@ INPUT                  = Generalities.dox \
                          Pad.dox \
                          ../../src/hurricane/hurricane/Polygon.h \
                          Polygon.dox \
+                         ../../src/hurricane/hurricane/Diagonal.h \
+                         Diagonal.dox \
                          ../../src/hurricane/hurricane/Rubbers.h \
                          ../../src/hurricane/hurricane/Rubber.h \
                          RoutingPad.dox \
