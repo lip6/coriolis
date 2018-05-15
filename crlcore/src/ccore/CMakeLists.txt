@@ -25,7 +25,6 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/blif
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst
-                             ${CRLCORE_SOURCE_DIR}/src/ccore/agds
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cif
                              ${CRLCORE_SOURCE_DIR}/src/ccore/spice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/liberty
@@ -48,7 +47,6 @@
                                                crlcore/Banner.h
                                                crlcore/Histogram.h
                                                crlcore/COptions.h
-                                               crlcore/XmlParser.h
                                                crlcore/GdsDriver.h
                                                crlcore/OAParser.h
                                                crlcore/OADriver.h
@@ -63,6 +61,7 @@
                                                crlcore/DefExport.h
                                                crlcore/LefImport.h
                                                crlcore/LefExport.h
+                                               crlcore/Gds.h
                                                crlcore/Blif.h
                                                crlcore/AcmSigda.h
                                                crlcore/Iccad04Lefdef.h
@@ -78,9 +77,6 @@
                                                crlcore/RoutingGauge.h
                                                crlcore/RoutingLayerGauge.h
                                                crlcore/CellGauge.h
-                                               crlcore/SymbolicTechnologyParser.h
-                                               crlcore/RealTechnologyParser.h
-                                               crlcore/GraphicsParser.h
                                                crlcore/AllianceFramework.h
                                                crlcore/ToolEngine.h
                                                crlcore/ToolEngines.h
@@ -96,8 +92,6 @@
                                                Banner.cpp
                                                COptions.cpp
                                                Histogram.cpp
-                                               XmlParser.cpp
-                                               GdsDriver.cpp
                                                OAParserDriver.cpp
                                                CifDriver.cpp
                                                SearchPath.cpp
@@ -108,9 +102,6 @@
                                                RoutingGauge.cpp
                                                CellGauge.cpp
                                                RoutingLayerGauge.cpp
-                                               SymbolicTechnologyParser.cpp
-                                               RealTechnologyParser.cpp
-                                               GraphicsParser.cpp
                                                AllianceFramework.cpp
                                                ToolEngine.cpp
                                                GraphicToolEngine.cpp
@@ -125,7 +116,7 @@
                        set ( ap_cpps           alliance/ap/ApParser.cpp
                                                alliance/ap/ApDriver.cpp
                            )
-                       set ( agds_cpps         agds/AgdsDriver.cpp
+                       set ( gds_cpps          gds/GdsDriver.cpp
                            )
                        set ( cif_cpps          cif/CifDriver.cpp
                            )
@@ -290,7 +281,7 @@
                  add_library ( crlcore  ${ccore_cpps}
                                         ${moc_cpps}
                                         ${ap_cpps}
-                                        ${agds_cpps}
+                                        ${gds_cpps}
                                         ${cif_cpps}
                                         ${toolbox_cpps}
                                         ${vst_parser_cpps}

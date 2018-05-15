@@ -167,7 +167,8 @@ namespace Hurricane {
   BasicLayer::BasicLayer ( Technology*      technology
                          , const Name&      name
                          , const Material&  material
-                         , unsigned         extractNumber
+                         , unsigned         gds2Layer
+                         , unsigned         gds2Datatype
                          , const DbU::Unit& minimalSize
                          , const DbU::Unit& minimalSpacing
                          ) : Layer(technology
@@ -175,7 +176,8 @@ namespace Hurricane {
                                   ,minimalSize
                                   ,minimalSpacing)
                            ,_material      (material)
-                           ,_extractNumber (extractNumber)
+                           ,_gds2Layer     (gds2Layer)
+                           ,_gds2Datatype  (gds2Datatype)
                            ,_blockageLayer (NULL)
                            ,_realName      ("<not associated>")
   { }
@@ -184,13 +186,14 @@ namespace Hurricane {
   BasicLayer* BasicLayer::create ( Technology*      technology
                                  , const Name&      name
                                  , const Material&  material
-                                 , unsigned         extractNumber
+                                 , unsigned         gds2Layer
+                                 , unsigned         gds2Datatype
                                  , const DbU::Unit& minimalSize
                                  , const DbU::Unit& minimalSpacing
                                  )
   {
     BasicLayer* basicLayer =
-      new BasicLayer(technology, name, material, extractNumber, minimalSize, minimalSpacing);
+      new BasicLayer(technology, name, material, gds2Layer, gds2Datatype, minimalSize, minimalSpacing);
 
     basicLayer->_postCreate();
 
@@ -223,8 +226,8 @@ namespace Hurricane {
     if ( _material == Material::metal ) getTechnology()->_getMetalMask().set(getMask());
     if ( _material == Material::cut   ) getTechnology()->_getCutMask  ().set(getMask());
 
-    if (_extractNumber) {
-      Mask extractMask = (1 << _extractNumber);
+    if (_gds2Layer) {
+      Mask extractMask = (1 << _gds2Layer);
 
       if (!extractMask)
         throw Error("Can't create " + _TName("BasicLayer") + " : extract mask capacity overflow");
@@ -267,6 +270,8 @@ namespace Hurricane {
       record->add(getSlot("_material"     , &_material));
       record->add(getSlot("_realName"     , &_realName));
       record->add(getSlot("_blockageLayer",  _blockageLayer));
+      record->add(getSlot("_gds2Layer"    ,  _gds2Layer));
+      record->add(getSlot("_gds2Datatype" ,  _gds2Datatype));
     }
     return record;
   }
@@ -277,7 +282,8 @@ namespace Hurricane {
     Super::_toJson( writer );
 
     jsonWrite( writer, "_material"     , getString(&_material) );
-    jsonWrite( writer, "_extractNumber", _extractNumber        );
+    jsonWrite( writer, "_gds2Layer"    , _gds2Layer            );
+    jsonWrite( writer, "_gds2Datatype" , _gds2Datatype         );
     jsonWrite( writer, "_realName"     , _realName             );
     if (_blockageLayer) {
       jsonWrite( writer, "_blockageLayer", _blockageLayer->getName() );
@@ -354,10 +360,11 @@ namespace Hurricane {
 
     cdebug_log(19,0) << "JsonBasicLayer::JsonBasicLayer()" << endl;
 
-    add( "_material"     , typeid(string) );
-    add( "_extractNumber", typeid(string) );
-    add( "_blockageLayer", typeid(string) );
-    add( "_realName"     , typeid(string) );
+    add( "_material"     , typeid(string)  );
+    add( "_gds2Layer"    , typeid(int64_t) );
+    add( "_gds2Datatype" , typeid(int64_t) );
+    add( "_blockageLayer", typeid(string)  );
+    add( "_realName"     , typeid(string)  );
   }
 
 
@@ -389,7 +396,8 @@ namespace Hurricane {
       DbU::Unit    minimalSpacing = get<int64_t>( stack, "_minimalSpacing" );
       bool         isSymbolic     = get<bool>   ( stack, "_symbolic"       );
       string       materialName   = get<string> ( stack, "_material"       );
-      unsigned int extractNumber  = get<int64_t>( stack, "_extractNumber"  );
+      unsigned int gds2Layer      = get<int64_t>( stack, "_gds2Layer"      );
+      unsigned int gds2Datatype   = get<int64_t>( stack, "_gds2Datatype"   );
       string       blockageLayer  = get<string> ( stack, "_blockageLayer"  );
       string       realName       = get<string> ( stack, "_realName"       );
 
@@ -401,7 +409,8 @@ namespace Hurricane {
         basicLayer = BasicLayer::create( techno
                                        , name
                                        , material
-                                       , extractNumber
+                                       , gds2Layer
+                                       , gds2Datatype
                                        , minimalSize
                                        , minimalSpacing
                                        );

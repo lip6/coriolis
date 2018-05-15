@@ -193,7 +193,7 @@ namespace CRL {
       state = new State ();
       _states [ name ] = state;
     }
-    return ( state );
+    return state;
   }
 
 

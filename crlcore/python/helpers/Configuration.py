@@ -200,10 +200,3 @@ def loadLayout ( layoutData, fromFile ):
         except Exception, e:
             ErrorMessage.wrapPrint(e,'In %s:<layoutTable> at index %d.' % (confFile,entryNo))
     return
-
-
-def loadCompatXml ():
-    xmlConf = helpers.sysConfDir+'/tools.configuration.xml'
-    print 'Load XML', xmlConf
-    Cfg.Configuration.get().readFromFile(xmlConf)
-    return

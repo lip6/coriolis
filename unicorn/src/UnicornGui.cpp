@@ -31,12 +31,12 @@
 #include "crlcore/AcmSigda.h"
 #include "crlcore/Ispd04Bookshelf.h"
 #include "crlcore/Ispd05Bookshelf.h"
+#include "crlcore/Gds.h"
 #include "crlcore/Blif.h"
 #include "crlcore/Iccad04Lefdef.h"
 #include "crlcore/LefImport.h"
 #include "crlcore/DefImport.h"
 #include "crlcore/DefExport.h"
-#include "crlcore/GdsDriver.h"
 #include "unicorn/ImportCell.h"
 #include "unicorn/OpenCellDialog.h"
 #include "unicorn/SaveCellDialog.h"
@@ -61,12 +61,12 @@ namespace Unicorn {
   using CRL::AcmSigda;
   using CRL::Ispd04;
   using CRL::Ispd05;
+  using CRL::Gds;
   using CRL::Blif;
   using CRL::Iccad04Lefdef;
   using CRL::LefImport;
   using CRL::DefImport;
   using CRL::DefExport;
-  using CRL::GdsDriver;
 
 
 // -------------------------------------------------------------------
@@ -298,10 +298,8 @@ namespace Unicorn {
         case ExportCellDialog::AllianceDef:
           DefExport::drive ( cell, DefExport::WithLEF );
           break;
-        case ExportCellDialog::AsciiGds:
-          { GdsDriver gdsDriver ( cell );
-            gdsDriver.save( getString(cell->getName())+".agds" );
-          }
+        case ExportCellDialog::Gds:
+          Gds::save( cell );
           break;
         case ExportCellDialog::Json:
           { //DebugSession::open( 19, 20 );

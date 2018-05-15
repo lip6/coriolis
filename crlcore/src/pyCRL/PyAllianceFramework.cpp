@@ -22,9 +22,6 @@
 #include "crlcore/PyRoutingGauge.h"
 #include "crlcore/PyAllianceLibrary.h"
 #include "crlcore/PyAllianceFramework.h"
-#include "crlcore/GraphicsParser.h"
-#include "crlcore/SymbolicTechnologyParser.h"
-#include "crlcore/RealTechnologyParser.h"
 
 
 namespace  CRL {
@@ -323,6 +320,23 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_isInCatalog ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_isInCatalog ()" << endl;
+
+    char* name = NULL;
+    HTRY
+      METHOD_HEAD("AllianceFramework.isInCatalog()")
+      if ( not PyArg_ParseTuple(args,"s",&name) ) {
+        PyErr_SetString( ConstructorError, "AllianceFramework.isInCatalog(): Invalid number or bad type of parameters.");
+        return NULL;
+      }
+      if (af->isInCatalog(Name(name))) Py_RETURN_TRUE;
+    HCATCH
+    Py_RETURN_FALSE;
+  }
+
+
   static PyObject* PyAllianceFramework_addRoutingGauge ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_addRoutingGauge ()" << endl;
@@ -485,6 +499,8 @@ extern "C" {
                                , "Load in memory all Cells from an Alliance Library." }                           
     , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                , METH_VARARGS
                                , "Tells if a cell name is a Pad." }
+    , { "isInCatalog"          , (PyCFunction)PyAllianceFramework_isInCatalog          , METH_VARARGS
+                               , "Tells if a cell name is referenced in the Catalog." }
     , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
                                , "Add a new cell gauge." }
     , { "getCellGauge"         , (PyCFunction)PyAllianceFramework_getCellGauge         , METH_VARARGS

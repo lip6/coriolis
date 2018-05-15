@@ -8,7 +8,7 @@
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./crlcore/AllianceFramework.h"                 |
 // +-----------------------------------------------------------------+
@@ -63,6 +63,8 @@ namespace CRL {
       static AllianceFramework*       get                      ();
              string                   getPrint                 () const;
     // Predicates.                    
+             Catalog::State*          isInCatalog              ( const Name& );
+             Catalog::State*          isInCatalog              ( string );
       inline bool                     isPOWER                  ( const char*   name );
       inline bool                     isPOWER                  ( const string& name );
       inline bool                     isPOWER                  ( const Name&   name );

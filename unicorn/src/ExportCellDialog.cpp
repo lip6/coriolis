@@ -78,9 +78,9 @@ namespace Unicorn {
     formatLabel->setFont ( Graphics::getNormalFont(true) );
     hLayout2->addWidget ( formatLabel  );
 
-    _formatComboBox->addItem ( tr("JSON (experimental)")   , Json        );
+    _formatComboBox->addItem ( tr("GDSII")                 , Gds         );
     _formatComboBox->addItem ( tr("Alliance compliant DEF"), AllianceDef );
-    _formatComboBox->addItem ( tr("ASCII/GDSII (AGDS)")    , AsciiGds    );
+    _formatComboBox->addItem ( tr("JSON (experimental)")   , Json        );
     hLayout2->addWidget ( _formatComboBox );
 
     QVBoxLayout* vLayout = new QVBoxLayout ();

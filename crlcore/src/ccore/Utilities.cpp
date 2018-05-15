@@ -443,18 +443,6 @@ namespace CRL {
     Utilities::Path     sysConfDir         = getPath("etc");
     Utilities::Path     pythonSitePackages = getPath("pythonSitePackages");
 
-#if XML_NOT_DISABLED
-    bool            systemConfFound = false;
-    Utilities::Path systemConfFile  = sysConfDir / "tools.configuration.xml";
-    if ( systemConfFile.exists() ) {
-      systemConfFound = true;
-      conf->readFromFile ( systemConfFile.string() );
-    } else {
-      cerr << Warning("System configuration file:\n  <%s> not found."
-                     ,systemConfFile.string().c_str()) << endl;
-    }
-#endif
-
   //bool            systemConfFound = false;
     Utilities::Path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";
     if ( systemConfFile.exists() ) {
@@ -468,21 +456,6 @@ namespace CRL {
     } else {
       cerr << Warning("System configuration file:\n  <%s> not found."
                      ,systemConfFile.toString().c_str()) << endl;
-    }
-
-  //bool            homeConfFound = false;
-    Utilities::Path homeConfFile  = getPath("home");
-    homeConfFile /= ".coriolis2.configuration.xml";
-    if ( homeConfFile.exists() ) {
-    //homeConfFound = true;
-      conf->readFromFile ( homeConfFile.toString() );
-    }
-
-  //bool            dotConfFound = false;
-    Utilities::Path dotConfFile  = "./.coriolis2.configuration.xml";
-    if ( dotConfFile.exists() ) {
-    //dotConfFound = true;
-      conf->readFromFile ( dotConfFile.toString() );
     }
 
   // Delayed printing, as we known only now whether VerboseLevel1 is requested.

@@ -308,16 +308,22 @@ def loadGdsLayers ( realLayersTable, confFile ):
         entryNo += 1
 
         try:
-            if len(entry) != 3:
+            if len(entry) != 4:
                 raise ErrorMessage(1,['Malformed entry in <realLayersTable>.'
-                                     ,'Must have exactly three fields: (symb_name,real_name,GDSII_extnb).'
+                                      ,'Must have exactly four fields: (symb_name,real_name,GDSII_layer,GDSII_datatype).'
                                      ,str(entry)
                                      ])
-            symbName, realName, gdsiiExtractNumber = entry
-            if not isinstance(gdsiiExtractNumber,int):
+            symbName, realName, gdsiiLayer,gdsiiDatatype = entry
+            if not isinstance(gdsiiLayer,int):
                 raise ErrorMessage(1,['Incoherency in <realLayersTable> entry.'
-                                     ,'GDSII exctract number is not of int type (%s).' \
-                                          % helpers.stype(gdsiiExtractNumber)
+                                     ,'GDSII layer number is not of int type (%s).' \
+                                          % helpers.stype(gdsiiLayer)
+                                     ,str(entry)
+                                     ])
+            if not isinstance(gdsiiDatatype,int):
+                raise ErrorMessage(1,['Incoherency in <realLayersTable> entry.'
+                                     ,'GDSII layer Datatype is not of int type (%s).' \
+                                          % helpers.stype(gdsiiDatatype)
                                      ,str(entry)
                                      ])
 
@@ -328,8 +334,9 @@ def loadGdsLayers ( realLayersTable, confFile ):
                                           % (symbName,realName)
                                      ,str(entry)
                                      ])
-            basicLayer.setRealName     ( realName )
-            basicLayer.setExtractNumber( gdsiiExtractNumber )
+            basicLayer.setRealName    ( realName )
+            basicLayer.setGds2Layer   ( gdsiiLayer )
+            basicLayer.setGds2Datatype( gdsiiDatatype )
 
         except Exception, e:
             ErrorMessage.wrapPrint(e,'In %s:<gdsLayersTable> at entry %d.' % (technologyFile,entryNo))

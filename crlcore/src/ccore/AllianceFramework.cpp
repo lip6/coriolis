@@ -24,9 +24,6 @@
 #include "hurricane/Instance.h"
 #include "hurricane/viewer/Graphics.h"
 #include "crlcore/Utilities.h"
-#include "crlcore/GraphicsParser.h"
-#include "crlcore/SymbolicTechnologyParser.h"
-#include "crlcore/RealTechnologyParser.h"
 #include "crlcore/CellGauge.h"
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/RoutingLayerGauge.h"
@@ -35,7 +32,9 @@
 
 namespace CRL {
 
+  using namespace std;
   using namespace std::placeholders;
+  using Hurricane::DataBase;
   using Hurricane::Initializer;
   using Hurricane::JsonTypes;
   using Hurricane::JsonArray;
@@ -204,22 +203,6 @@ namespace CRL {
   //cmess1 << "  o  Reading Alliance Environment." << endl;
 
   //_environment.loadFromShell ();
-  //_environment.loadFromXml   ();
-
-    string  userEnvironment = Environment::getEnv ( "HOME", "<HomeDirectory>" );
-  //_environment.loadFromXml ( userEnvironment+"/.environment.alliance.xml", false );
-
-    char cwd[1024];
-    getcwd ( cwd, 1024 );
-    string cwdEnvironment = cwd;
-  //_environment.loadFromXml ( cwdEnvironment+"/.environment.alliance.xml", false );
-
-  //SymbolicTechnologyParser::load ( db, _environment.getSYMBOLIC_TECHNOLOGY() );
-  //RealTechnologyParser::load     ( db, _environment.getREAL_TECHNOLOGY() );
-  //GraphicsParser::load           ( _environment.getDISPLAY() );
-
-  //if ( !_environment.getDisplayStyle().empty() )
-  //  Graphics::setStyle ( _environment.getDisplayStyle() );
   }
 
 
@@ -312,6 +295,14 @@ namespace CRL {
 
   void AllianceFramework::notify ( unsigned flags )
   { _observers.notify( flags ); }
+
+
+  Catalog::State* AllianceFramework::isInCatalog ( const Name& name )
+  { return getCatalog()->getState( name, false ); }
+
+
+  Catalog::State* AllianceFramework::isInCatalog ( string name )
+  { return getCatalog()->getState( Name(name), false ); }
 
 
   AllianceLibrary* AllianceFramework::getAllianceLibrary ( unsigned index )

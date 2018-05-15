@@ -292,13 +292,21 @@ namespace {
     , _connections ()
     , _model       (NULL)
   {
-    Cell* cell = AllianceFramework::get()->getCell( modelName, Catalog::State::Views|Catalog::State::Foreign, 0 );
-    if (cell) {
-      _model = Model::find( getString(cell->getName()) );
+    AllianceFramework* af = AllianceFramework::get();
+    if (af->isInCatalog(modelName)) {
+      _model = Model::find( modelName );
       if (not _model) {
-        _model = new Model ( cell );
+        _model = new Model ( af->getCell( modelName, Catalog::State::Views, 0 ) );
       }
     }
+
+    // Cell* cell = AllianceFramework::get()->getCell( modelName, Catalog::State::Views|Catalog::State::Foreign, 0 );
+    // if (cell) {
+    //   _model = Model::find( getString(cell->getName()) );
+    //   if (not _model) {
+    //     _model = new Model ( cell );
+    //   }
+    // }
   }
 
   inline Model*     Subckt::getModel        () const { return _model; }
@@ -733,21 +741,21 @@ namespace CRL {
         if (tokenize.state() & Tokenize::CoverAlias) {
           blifModel->mergeAlias( blifLine[1], blifLine[2] );
         } else if (tokenize.state() & Tokenize::CoverZero) {
-          cerr << Warning( "Blif::load() Definition of an alias <%s> of VSS in a \".names\". Maybe you should use tie cells?\n"
-                           "          File \"%s.blif\" at line %u."
-                         , blifLine[1].c_str()
-                         , blifFile.c_str()
-                         , tokenize.lineno()
-                         ) << endl;
+          cparanoid << Warning( "Blif::load() Definition of an alias <%s> of VSS in a \".names\". Maybe you should use tie cells?\n"
+                                "          File \"%s.blif\" at line %u."
+                              , blifLine[1].c_str()
+                              , blifFile.c_str()
+                              , tokenize.lineno()
+                              ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vss" );
           blifModel->getCell()->getNet( blifModel->getGroundName() )->addAlias( blifLine[1] );
         } else if (tokenize.state() & Tokenize::CoverOne ) {
-          cerr << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
-                           "          File \"%s.blif\" at line %u."
-                         , blifLine[1].c_str()
-                         , blifFile.c_str()
-                         , tokenize.lineno()
-                         ) << endl;
+          cparanoid << Warning( "Blif::load() Definition of an alias <%s> of VDD in a \".names\". Maybe you should use tie cells?\n"
+                                "          File \"%s.blif\" at line %u."
+                              , blifLine[1].c_str()
+                              , blifFile.c_str()
+                              , tokenize.lineno()
+                              ) << endl;
           //blifModel->mergeAlias( blifLine[1], "vdd" );
           blifModel->getCell()->getNet( blifModel->getPowerName() )->addAlias( blifLine[1] );
         } else {

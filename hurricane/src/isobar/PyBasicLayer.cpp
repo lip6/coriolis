@@ -55,16 +55,18 @@ extern "C" {
     PyObject*     pyTechnology     = NULL;
     char*         name             = NULL;
     PyObject*     pyMaterial       = NULL;
-    unsigned int  extractNumber    = 0;
+    unsigned int  gds2Layer        = 0;
+    unsigned int  gds2Datatype     = 0;
     PyObject*     pyMinimalSize    = NULL;
     PyObject*     pyMinimalSpacing = NULL;
     
     if (PyArg_ParseTuple( args
-                        , "OsO|IOO:BasicLayer.create"
+                        , "OsO|IIOO:BasicLayer.create"
                         , &pyTechnology
                         , &name
                         , &pyMaterial
-                        , &extractNumber
+                        , &gds2Layer
+                        , &gds2Datatype
                         , &pyMinimalSize
                         , &pyMinimalSpacing
                         )) {
@@ -80,7 +82,8 @@ extern "C" {
       basicLayer = BasicLayer::create( PYTECHNOLOGY_O(pyTechnology)
                                      , Name(name)
                                      , *PYMATERIAL_O(pyMaterial)
-                                     , extractNumber
+                                     , gds2Layer
+                                     , gds2Datatype
                                      , (pyMinimalSize)    ? PyAny_AsLong(pyMinimalSize)    : 0
                                      , (pyMinimalSpacing) ? PyAny_AsLong(pyMinimalSpacing) : 0
                                      );
@@ -110,8 +113,9 @@ extern "C" {
 
   updatorFromBasicLayer    (setBlockageLayer,PyBasicLayer,BasicLayer)
   accessorLayerFromVoid    (getBlockageLayer,PyBasicLayer,BasicLayer)
-  DirectSetLongAttribute   (PyBasicLayer_setExtractNumber,setExtractNumber,PyBasicLayer,BasicLayer)
-  DirectSetCStringAttribute(PyBasicLayer_setRealName     ,setRealName     ,PyBasicLayer,BasicLayer)
+  DirectSetLongAttribute   (PyBasicLayer_setGds2Layer   ,setGds2Layer   ,PyBasicLayer,BasicLayer)
+  DirectSetLongAttribute   (PyBasicLayer_setGds2Datatype,setGds2Datatype,PyBasicLayer,BasicLayer)
+  DirectSetCStringAttribute(PyBasicLayer_setRealName    ,setRealName    ,PyBasicLayer,BasicLayer)
 
 
   // Standart destroy (Attribute).
@@ -130,8 +134,10 @@ extern "C" {
                              , "Returns the associated blockage layer, if any." }
     , { "setBlockageLayer"   , (PyCFunction)PyBasicLayer_setBlockageLayer , METH_VARARGS
                              , "Sets the blockage layer associated to this one." }
-    , { "setExtractNumber"   , (PyCFunction)PyBasicLayer_setExtractNumber , METH_VARARGS
-                             , "Sets the layer extract number (for GDSII)." }
+    , { "setGds2Layer"       , (PyCFunction)PyBasicLayer_setGds2Layer     , METH_VARARGS
+                             , "Sets the GDSII layer number." }
+    , { "setGds2Datatype"    , (PyCFunction)PyBasicLayer_setGds2Datatype  , METH_VARARGS
+                             , "Sets the GDSII layer Datatype." }
     , { "setRealName"        , (PyCFunction)PyBasicLayer_setRealName      , METH_VARARGS
                              , "Sets the real name of this layer (as seen in GDSII)." }
     , { "destroy"            , (PyCFunction)PyBasicLayer_destroy          , METH_NOARGS

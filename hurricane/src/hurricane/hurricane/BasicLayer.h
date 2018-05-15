@@ -83,19 +83,22 @@ namespace Hurricane {
       static  BasicLayer*     create                 ( Technology*      technology
                                                      , const Name&      name
                                                      , const Material&  material
-                                                     , unsigned         extractNumber
+                                                     , unsigned         gds2Layer
+                                                     , unsigned         gds2Datatype
                                                      , const DbU::Unit& minimalSize    = 0
                                                      , const DbU::Unit& minimalSpacing = 0
                                                      );
     // Accessors.                                    
       inline  const Material& getMaterial            () const;
-      inline  unsigned        getExtractNumber       () const;
+      inline  unsigned        getGds2Layer           () const;
+      inline  unsigned        getGds2Datatype        () const;
       virtual BasicLayers     getBasicLayers         () const;
       virtual BasicLayer*     getBlockageLayer       () const;
       inline  const Name&     getRealName            () const;
     // Updators                                      
       inline  void            setBlockageLayer       ( BasicLayer* layer);
-      inline  void            setExtractNumber       ( unsigned int );
+      inline  void            setGds2Layer           ( unsigned int );
+      inline  void            setGds2Datatype        ( unsigned int );
       inline  void            setRealName            ( const char* realName);
     // Hurricane Managment.
       virtual void            _toJson                ( JsonWriter* writer ) const;
@@ -107,7 +110,8 @@ namespace Hurricane {
     private:
     // Internal: Attributes
               Material        _material;
-              unsigned        _extractNumber;
+              unsigned        _gds2Layer;
+              unsigned        _gds2Datatype;
               BasicLayer*     _blockageLayer;
               Name            _realName;
 
@@ -116,7 +120,8 @@ namespace Hurricane {
                               BasicLayer             ( Technology*      technology
                                                      , const Name&      name
                                                      , const Material&  material
-                                                     , unsigned         extractNumber
+                                                     , unsigned         gds2Layer
+                                                     , unsigned         gds2Datatype
                                                      , const DbU::Unit& minimalSize    = 0
                                                      , const DbU::Unit& minimalSpacing = 0
                                                      );
@@ -132,10 +137,12 @@ namespace Hurricane {
   inline string          BasicLayer::Material::_getTypeName         () const { return _TName("BasicLayer::Material"); }
   inline const BasicLayer::Material&
                          BasicLayer::getMaterial                    () const { return _material; }
-  inline unsigned        BasicLayer::getExtractNumber               () const { return _extractNumber; }
+  inline unsigned        BasicLayer::getGds2Layer                   () const { return _gds2Layer; }
+  inline unsigned        BasicLayer::getGds2Datatype                () const { return _gds2Datatype; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
   inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; }
-  inline void            BasicLayer::setExtractNumber               ( unsigned int number ) { _extractNumber=number; }
+  inline void            BasicLayer::setGds2Layer                   ( unsigned int number ) { _gds2Layer=number; }
+  inline void            BasicLayer::setGds2Datatype                ( unsigned int number ) { _gds2Datatype=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
 
 

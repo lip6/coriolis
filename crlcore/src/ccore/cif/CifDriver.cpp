@@ -74,7 +74,7 @@ void CifQuery::goCallback(Go* go) {
     else {
         return;
     }
-    Polygon* poly = new Polygon ( layer->getExtractNumber() );
+    Polygon* poly = new Polygon ( layer->getGds2Layer() );
     long xMin = (long)round(DbU::getPhysical(b.getXMin(), DbU::Nano));
     long yMin = (long)round(DbU::getPhysical(b.getYMin(), DbU::Nano));
     long xMax = (long)round(DbU::getPhysical(b.getXMax(), DbU::Nano));

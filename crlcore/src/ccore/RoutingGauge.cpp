@@ -21,7 +21,6 @@
 #include "hurricane/ViaLayer.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
-#include "crlcore/XmlParser.h"
 #include "crlcore/RoutingLayerGauge.h"
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/AllianceFramework.h"
@@ -40,6 +39,7 @@ namespace {
 
 namespace CRL {
 
+  using namespace std;
   using Hurricane::JsonTypes;
   using Hurricane::JsonArray;
   using Hurricane::DataBase;

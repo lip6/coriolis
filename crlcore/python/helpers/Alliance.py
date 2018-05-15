@@ -64,23 +64,6 @@ class Gauge ( object ):
     return None
 
 
-def xmlToConf ( xmlPath ):
-    hasExtention = False
-    components   = xmlPath.split(os.sep)
-    filename     = components[-1]
-    if filename.endswith('.xml'):
-        hasExtention = True
-        filename     = filename[:-4]
-    if filename.endswith('.conf'):
-        hasExtention = True
-        filename     = filename[:-5]
-    filename = filename.replace('.','_')
-    confPath = os.sep.join(components[:-1] + [filename])
-    if hasExtention:
-        confPath += '.conf'
-    return confPath
-
-
 def _loadAllianceConfig ( af, allianceConfig ):
     env = af.getEnvironment()
 

@@ -19,32 +19,6 @@
 #include "crlcore/AllianceFramework.h"
 
 
-namespace {
-
-// const char *missingMandatoryAttr =
-//   "CRoutingGauge::createFromXml () :\n\n"
-//   "    Can't found mandatory attribute \"%s\".\n";
-
-// const char *badAttrValue =
-//   "CRoutingGauge::createFromXml () :\n\n"
-//   "    Invalid value \"%s\" for attribute \"%s\".\n";
-
-// const char *missingCellGaugeTag =
-//   "::createCellGaugeFromXml () :\n\n"
-//   "    Can't found \"cellgauge\" tag.\n"
-//   "    (XML file := \"%s\").\n";
-
-// const char *missingCellGaugeNameAttr =
-//   "::createCellGaugeFromXml () :\n\n"
-//   "    Can't found cellgauge name tag attribute.\n";
-
-// const char *emptyCellGaugeNameAttr =
-//   "::createCellGaugeFromXml () :\n\n"
-//   "    cellgauge name tag attribute is empty.\n";
-
-}  // Anonymous namespace.
-
-
 namespace CRL {
 
   using namespace std;
