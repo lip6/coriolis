@@ -32,7 +32,6 @@
 #ifndef HURRICANE_POLYGON_H
 #define HURRICANE_POLYGON_H
 
-#include "hurricane/Points.h"
 #include "hurricane/Component.h"
 #include "hurricane/Polygons.h"
 
@@ -109,12 +108,14 @@ namespace Hurricane {
       static        Polygon*       create          ( Net*, const Layer*, const std::vector<Point>& );
       static        float          getSlope        ( const Point&, const Point& );
     public:                                        
-      inline        bool           isManhattanized () const;
+      virtual       bool           isNonRectangle  () const;
+      virtual       bool           isManhattanized () const;
       virtual       DbU::Unit      getX            () const;
       virtual       DbU::Unit      getY            () const;
       inline  const vector<Point>& getPoints       () const;
       inline  const vector<Edge*>& getEdges        () const;
-      inline  const Point&         getPoint        ( size_t ) const;
+      virtual       size_t         getPointsSize   () const;
+      virtual       Point          getPoint        ( size_t ) const;
       virtual       Box            getBoundingBox  () const;
       virtual       Box            getBoundingBox  ( const BasicLayer* ) const;
       virtual const Layer*         getLayer        () const;
@@ -124,7 +125,7 @@ namespace Hurricane {
       static        float          getSign         ( const vector<Point>&, size_t );
                     float          getSlope        ( size_t i ) const;
                     void           manhattanize    ();
-      inline        Points         getContour      () const;
+      virtual       Points         getMContour     () const;
       virtual       void           _toJson         ( JsonWriter* ) const;
       static        JsonObject*    getJsonObject   ( unsigned long flags );
       virtual       string         _getTypeName    () const;
@@ -140,11 +141,8 @@ namespace Hurricane {
   };
 
 
-  inline        bool                    Polygon::isManhattanized () const { return not _edges.empty(); }
   inline  const vector<Polygon::Edge*>& Polygon::getEdges        () const { return _edges; }
   inline  const vector<Point>&          Polygon::getPoints       () const { return _points; }
-  inline  const Point&                  Polygon::getPoint        ( size_t i ) const { return _points[ (i<_points.size()) ? i : 0 ]; }
-  inline        Points                  Polygon::getContour      () const { return Points_Manhattan(this); }
 
   inline bool    Polygon::Edge::isClockwise     () const { return (_flags & Polygon::Clockwise); }
   inline bool    Polygon::Edge::isYIncrease     () const { return (_flags & Polygon::YIncrease); }

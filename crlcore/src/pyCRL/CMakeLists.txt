@@ -43,6 +43,7 @@
                                     PyAcmSigda.cpp
                                     PyIspd05.cpp
                                     PyBlif.cpp
+                                    PyGds.cpp
                                     PyLefImport.cpp
                       )	    
                    set( pyIncludes  crlcore/PyBanner.h
@@ -61,6 +62,7 @@
                                     crlcore/PyAcmSigda.h
                                     crlcore/PyIspd05.h
                                     crlcore/PyBlif.h
+                                    crlcore/PyGds.h
                                     crlcore/PyLefImport.h
                       )	         
                    set( depLibs     crlcore

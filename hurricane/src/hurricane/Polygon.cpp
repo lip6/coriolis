@@ -232,8 +232,24 @@ namespace Hurricane {
   }
 
 
+  bool  Polygon::isNonRectangle () const
+  { return true; }
+
+
+  bool  Polygon::isManhattanized () const
+  { return not _edges.empty(); }
+
+
   const Layer* Polygon::getLayer () const
   { return _layer; };
+
+
+  size_t  Polygon::getPointsSize () const
+  { return _points.size(); }
+
+
+  Point  Polygon::getPoint ( size_t i ) const
+  { return _points[ i % _points.size() ]; }
 
 
   DbU::Unit  Polygon::getX () const
@@ -275,6 +291,10 @@ namespace Hurricane {
     if (not _layer->contains(basicLayer)) return Box();
     return getBoundingBox();
   }
+
+  
+  Points  Polygon::getMContour () const
+  { return Points_Manhattan(this); }
 
 
   void  Polygon::translate ( const DbU::Unit& dx, const DbU::Unit& dy )

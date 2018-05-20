@@ -70,6 +70,10 @@ class Box {
     public: DbU::Unit getXCenter() const {return ((_xMin + _xMax) / 2);};
     public: DbU::Unit getYCenter() const {return ((_yMin + _yMax) / 2);};
     public: Point getCenter() const {return Point(getXCenter(), getYCenter());};
+    public: Point getCornerBL() const { return Point(_xMin,_yMin); }
+    public: Point getCornerTL() const { return Point(_xMin,_yMax); }
+    public: Point getCornerTR() const { return Point(_xMax,_yMax); }
+    public: Point getCornerBR() const { return Point(_xMax,_yMin); }
 
     public: DbU::Unit getWidth() const {return (_xMax - _xMin);};
     public: DbU::Unit getHalfWidth() const {return (getWidth() / 2);};

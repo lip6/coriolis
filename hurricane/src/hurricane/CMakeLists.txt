@@ -79,6 +79,7 @@
                                 hurricane/Relation.h
                                 hurricane/RoutingPad.h            hurricane/RoutingPads.h
                                 hurricane/Diagonal.h
+                                hurricane/Rectilinear.h
                                 hurricane/Rubber.h                hurricane/Rubbers.h
                                 hurricane/Segment.h               hurricane/Segments.h
                                 hurricane/Selectors.h
@@ -163,6 +164,7 @@
                                 Pad.cpp
                                 RoutingPad.cpp
                                 Diagonal.cpp
+                                Rectilinear.cpp
                                 Polygon.cpp
                                 NetExternalComponents.cpp
                                 NetRoutingProperty.cpp

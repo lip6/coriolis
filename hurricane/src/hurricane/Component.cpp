@@ -280,6 +280,57 @@ class Component_SlaveComponents : public Collection<Component*> {
 };
 
 
+// -------------------------------------------------------------------
+// Class  :  "Component::Points_Contour".
+
+  Component::Points_Contour::Locator::Locator ( const Component* component )
+    : PointHL ()
+    , _component(component)
+    , _iPoint (0)
+  { }
+
+
+  PointHL* Component::Points_Contour::Locator::getClone () const
+  { return new Locator(*this); }
+
+
+  Point  Component::Points_Contour::Locator::getElement () const
+  { return _component->getPoint(_iPoint); }
+
+
+  bool  Component::Points_Contour::Locator::isValid () const
+  { return (_iPoint < _component->getPointsSize()); }
+
+
+  void  Component::Points_Contour::Locator::progress ()
+  { if (isValid()) ++_iPoint; }
+
+
+  string  Component::Points_Contour::Locator::_getString () const
+  {
+    string s = "<" + _TName("Points_Contour::Locator")
+                   + getString(getElement())
+                   + ">";
+    return s;
+  }
+
+
+  PointHC* Component::Points_Contour::getClone () const
+  { return new Points_Contour(*this); }
+
+
+  PointHL* Component::Points_Contour::getLocator () const
+  { return new Locator(_component); }
+
+
+  string  Component::Points_Contour::_getString () const
+  {
+    string s = "<" + _TName("Points_Contour") + " "
+                   + getString(_component)
+                   + ">";
+    return s;
+  }
+
 
 // ****************************************************************************************************
 // Component implementation
@@ -462,6 +513,35 @@ void Component::_preDestroy()
     cdebug_log(18,0) << "exiting Component::_Predestroy:" << endl;
     cdebug_tabw(18,-1);
 }
+
+
+bool  Component::isNonRectangle () const
+{ return false; }
+
+
+bool  Component::isManhattanized () const
+{ return false; }
+
+
+size_t  Component::getPointsSize () const { return 4; }
+
+
+Point  Component::getPoint ( size_t i ) const
+{
+  Box bb = getBoundingBox();
+  switch ( i % getPointsSize() ) {
+    default:  // To shut up gcc.
+    case 0: return bb.getCornerBL();
+    case 1: return bb.getCornerTL();
+    case 2: return bb.getCornerTR();
+    case 3: return bb.getCornerBR();
+  }
+}
+
+
+Points  Component::getMContour () const
+{ return getContour(); }
+
 
 void Component::_toJson( JsonWriter* writer ) const
 // ************************************************

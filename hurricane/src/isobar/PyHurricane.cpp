@@ -73,6 +73,7 @@
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyPad.h"
 #include "hurricane/isobar/PyDiagonal.h"
+#include "hurricane/isobar/PyRectilinear.h"
 #include "hurricane/isobar/PyPolygon.h"
 #include "hurricane/isobar/PyPath.h"
 #include "hurricane/isobar/PyOccurrence.h"
@@ -572,7 +573,7 @@ extern "C" {
     PyHorizontal_LinkPyType ();
     PyContact_LinkPyType ();
     PyPin_LinkPyType ();
-    PyPolygon_LinkPyType ();
+    PyRectilinear_LinkPyType ();
     PyPlug_LinkPyType ();
     PyPolygon_LinkPyType ();
     PyBreakpoint_LinkPyType ();
@@ -658,6 +659,7 @@ extern "C" {
     PYTYPE_READY_SUB ( Plug           , Component)
     PYTYPE_READY_SUB ( Pad            , Component)
     PYTYPE_READY_SUB ( Diagonal       , Component)
+    PYTYPE_READY_SUB ( Rectilinear    , Component)
     PYTYPE_READY_SUB ( Polygon        , Component)
 
     // Identifier string can take up to 10 characters !
@@ -711,6 +713,7 @@ extern "C" {
     __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
     __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
     __cs.addType ( "diagonal"   , &PyTypeDiagonal              , "<Diagonal>"              , false, "comp" );
+    __cs.addType ( "rectilin"   , &PyTypeRectilinear           , "<Rectilinear>"           , false, "comp" );
     __cs.addType ( "polygon"    , &PyTypePolygon               , "<Polygon>"               , false, "comp" );
     __cs.addType ( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
     __cs.addType ( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
@@ -812,6 +815,8 @@ extern "C" {
     PyModule_AddObject ( module, "Pad"                  , (PyObject*)&PyTypePad );
     Py_INCREF ( &PyTypeDiagonal );
     PyModule_AddObject ( module, "Diagonal"             , (PyObject*)&PyTypeDiagonal );
+    Py_INCREF ( &PyTypeRectilinear );
+    PyModule_AddObject ( module, "Rectilinear"          , (PyObject*)&PyTypeRectilinear );
     Py_INCREF ( &PyTypePolygon );
     PyModule_AddObject ( module, "Polygon"              , (PyObject*)&PyTypePolygon );
     

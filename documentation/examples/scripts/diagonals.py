@@ -76,8 +76,7 @@ def buildDiagonals ( editor ):
 
     UpdateSession.close()
 
-   #AllianceFramework.get().saveCell( cell, Catalog.State.Views )
-   # No saving as we don't have a GDSII driver (yet).
+    Gds.save( cell )
     return
 
 

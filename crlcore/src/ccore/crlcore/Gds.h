@@ -22,17 +22,20 @@
 
 namespace Hurricane {
   class Cell;
+  class Library;
 }
 
 
 namespace CRL {
 
   using Hurricane::Cell;
+  using Hurricane::Library;
 
 
   class Gds {
     public:
       static bool  save ( Cell* );
+      static bool  load ( Library*, std::string gdsPath );
   };
 
 

@@ -17,136 +17,167 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_COMPONENT
-#define HURRICANE_COMPONENT
 
+#ifndef HURRICANE_COMPONENT_H
+#define HURRICANE_COMPONENT_H
+
+#include "hurricane/Points.h"
 #include "hurricane/Go.h"
 #include "hurricane/Components.h"
 #include "hurricane/Hook.h"
 #include "hurricane/Hooks.h"
 #include "hurricane/Interval.h"
 
+
 namespace Hurricane {
 
-class Net;
-class Rubber;
-class Layer;
+  class Net;
+  class Rubber;
+  class Layer;
 
 
-// ****************************************************************************************************
-// Component declaration
-// ****************************************************************************************************
+// -------------------------------------------------------------------
+// Class  :  "Component".
 
-class Component : public Go {
-// ************************
+  class Component : public Go {
+    public:
+      typedef Go Inherit;
 
-// Types
-// *****
+    public:
+      class Points_Contour : public PointHC {
+        public:
+          class Locator : public PointHL {
+            public:
+                               Locator    ( const Component* );
+              inline           Locator    ( const Locator& );
+              virtual Point    getElement () const;
+              virtual PointHL* getClone   () const;
+              virtual bool     isValid    () const;
+              virtual void     progress   ();
+              virtual string   _getString () const;
+            protected:
+              const Component* _component;
+                    size_t     _iPoint;
+          };
+        public:
+          inline           Points_Contour ( const Component* );
+          inline           Points_Contour ( const Points_Contour& );
+          virtual PointHC* getClone       () const;
+    	  virtual PointHL* getLocator     () const;
+          virtual string   _getString     () const;
+        protected:
+          const Component*  _component;
+      };
 
-    public: typedef Go Inherit;
+    public:
+      class BodyHook : public Hook {
+          friend class Component;
+        public:
+          typedef Hook Inherit;
+        public:
+          virtual Component* getComponent () const;
+          virtual bool       isMaster     () const {return true;};
+          virtual string     _getTypeName () const { return "Component::BodyHook"; };
+          virtual string     _getString   () const;
+          static  Hook*      _compToHook  ( Component* );
+        private:
+                             BodyHook     ( Component* );
+      };
 
-    public: class BodyHook : public Hook {
-    // *********************************
-
-        friend class Component;
-
-        public: typedef Hook Inherit;
-
-        private: BodyHook(Component* component);
-
-        public: virtual Component* getComponent() const;
-
-        public: virtual bool isMaster() const {return true;};
-
-        public: virtual string _getTypeName() const { return "Component::BodyHook"; };
-        public: virtual string _getString() const;
-        public: static Hook* _compToHook(Component*);
-
-    };
-
-// Attributes
-// **********
-
-    private: Net* _net;
-    private: Rubber* _rubber;
-    private: BodyHook _bodyHook;
-    private: Component* _nextOfNetComponentSet;
-
-// Constructors
-// ************
-
-    protected: Component(Net* net, bool inPlugCreate = false);
-
-// Accessors
-// *********
-
-    public: virtual Cell* getCell() const;
-    public: Net* getNet() const {return _net;};
-    public: Rubber* getRubber() const {return _rubber;};
-    public: Hook* getBodyHook() {return &_bodyHook;};
-    public: virtual Hooks getHooks() const;
-    public: virtual DbU::Unit getX() const = 0;
-    public: virtual DbU::Unit getY() const = 0;
-    public: virtual Point getPosition() const {return Point(getX(), getY());};
-    public: virtual Point getCenter() const {return getPosition();};
-    public: virtual const Layer* getLayer() const = 0;
-    public: virtual Box getBoundingBox() const = 0;
-    public: virtual Box getBoundingBox(const BasicLayer* basicLayer) const = 0;
-    public: Components getConnexComponents() const;
-    public: Components getSlaveComponents() const;
-
-// Updators
-// ********
-
-    public: virtual void materialize();
-    public: virtual void unmaterialize();
-    public: virtual void invalidate(bool propagateFlag = true);
-    public: virtual void forceId(unsigned int id);
-
-// Filters
-// *******
-
-    public: static ComponentFilter getIsUnderFilter(const Box& area);
-
-// Others
-// ******
-
-    protected: virtual void _postCreate();
-
-    protected: virtual void _preDestroy();
-
-    public: virtual void _toJson ( JsonWriter* ) const;
-    public: virtual void _toJsonSignature(JsonWriter*) const;
-    public: virtual string _getString() const;
-    public: virtual Record* _getRecord() const;
-    public: Component* _getNextOfNetComponentSet() const {return _nextOfNetComponentSet;};
-
-    public: void _setNet(Net* net);
-    public: void _setRubber(Rubber* rubber);
-    public: void _setNextOfNetComponentSet(Component* component) {_nextOfNetComponentSet = component;};
-
-};
-
-
-double  getArea ( Component* component );
-
-
-class JsonComponent : public JsonEntity {
-// ************************************
-
-  public: JsonComponent(unsigned long flags);
-};
+    protected:
+                                    Component                 ( Net* , bool inPlugCreate = false );
+    public:                         
+    // Accessors.                   
+      virtual       bool            isManhattanized           () const;
+      virtual       bool            isNonRectangle            () const;
+      virtual       Cell*           getCell                   () const;
+                    Net*            getNet                    () const { return  _net; };
+                    Rubber*         getRubber                 () const { return  _rubber; };
+                    Hook*           getBodyHook               ()       { return &_bodyHook; };
+      virtual       Hooks           getHooks                  () const;
+      virtual       DbU::Unit       getX                      () const = 0;
+      virtual       DbU::Unit       getY                      () const = 0;
+      virtual       Point           getPosition               () const { return Point( getX(), getY() ); };
+      virtual       Point           getCenter                 () const { return getPosition(); };
+      virtual const Layer*          getLayer                  () const = 0;
+      virtual       size_t          getPointsSize             () const;
+      virtual       Point           getPoint                  ( size_t ) const;
+      virtual       Box             getBoundingBox            () const = 0;
+      virtual       Box             getBoundingBox            ( const BasicLayer* ) const = 0;
+      inline        Points          getContour                () const;
+      virtual       Points          getMContour               () const;
+                    Components      getConnexComponents       () const;
+                    Components      getSlaveComponents        () const;
+    // Mutators.                                              
+      virtual       void            materialize               ();
+      virtual       void            unmaterialize             ();
+      virtual       void            invalidate                ( bool propagateFlag = true );
+      virtual       void            forceId                   ( unsigned int id );
+    // Filters                                                
+      static        ComponentFilter getIsUnderFilter          ( const Box& area );
+    // Others
+    protected:
+      virtual       void            _postCreate               ();
+      virtual       void            _preDestroy               ();
+    public:                         
+      virtual       void            _toJson                   ( JsonWriter* ) const;
+      virtual       void            _toJsonSignature          ( JsonWriter* ) const;
+      virtual       string          _getString                () const;
+      virtual       Record*         _getRecord                () const;
+                    Component*      _getNextOfNetComponentSet () const {return _nextOfNetComponentSet;};
+                    void            _setNet                   ( Net* );
+                    void            _setRubber                ( Rubber* );
+                    void            _setNextOfNetComponentSet ( Component* component ) { _nextOfNetComponentSet = component; };
+    private:
+      Net*       _net;
+      Rubber*    _rubber;
+      BodyHook   _bodyHook;
+      Component* _nextOfNetComponentSet;
+  };
 
 
-} // End of Hurricane namespace.
+  inline Points  Component::getContour () const { return Points_Contour(this); }
+
+  
+  inline Component::Points_Contour::Locator::Locator ( const Locator &locator )
+    : PointHL   ()
+    , _component(locator._component)
+    , _iPoint   (locator._iPoint)
+  { }
+
+
+  inline Component::Points_Contour::Points_Contour ( const Component* component )
+    : PointHC   ()
+    , _component(component)
+  { }
+
+
+  inline Component::Points_Contour::Points_Contour ( const Points_Contour& other )
+    : PointHC   ()
+    , _component(other._component)
+  { }
+
+
+  double  getArea ( Component* component );
+
+
+// -------------------------------------------------------------------
+// Class  :  "JsonComponent".
+
+  class JsonComponent : public JsonEntity {
+    public:
+      JsonComponent ( unsigned long flags );
+  };
+
+
+} // Hurricane namespace.
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Component);
 INSPECTOR_P_SUPPORT(Hurricane::Component::BodyHook);
 
 
-#endif // HURRICANE_COMPONENT
-
+#endif // HURRICANE_COMPONENT_H
 
 // ****************************************************************************************************
 // Copyright (c) BULL S.A. 2000-2018, All Rights Reserved

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2018-2018, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -25,12 +25,12 @@
 // |  Authors     :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/Diagonal.h"                        |
+// |  C++ Header  :  "./hurricane/Rectilinear.h"                     |
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_DIAGONAL_H
-#define HURRICANE_DIAGONAL_H
+#ifndef HURRICANE_RECTILINEAR_H
+#define HURRICANE_RECTILINEAR_H
 
 #include "hurricane/Component.h"
 
@@ -41,36 +41,28 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
-// Class  :  "Diagonal".
+// Class  :  "Rectilinear".
 
-  class Diagonal : public Component {
+  class Rectilinear : public Component {
     public:
       typedef Component Super;
   
     public:
-      static  Diagonal*    create            ( Net*, const Layer*, const Point& source, const Point& target, DbU::Unit width );
+      static  Rectilinear* create            ( Net*, const Layer*, const vector<Point>& );
     // Accessors.
       virtual bool         isNonRectangle    () const;
       virtual DbU::Unit    getX              () const;
       virtual DbU::Unit    getY              () const;
-      virtual DbU::Unit    getSourceX        () const;
-      virtual DbU::Unit    getSourceY        () const;
-      virtual DbU::Unit    getTargetX        () const;
-      virtual DbU::Unit    getTargetY        () const;
-      virtual Point        getSourcePosition () const;
-      virtual Point        getTargetPosition () const;
       virtual Box          getBoundingBox    () const;
       virtual Box          getBoundingBox    ( const BasicLayer* ) const;
       virtual size_t       getPointsSize     () const;
       virtual Point        getPoint          ( size_t i ) const;
-              DbU::Unit    getWidth          () const;
       virtual const Layer* getLayer          () const;
+      inline  Points       getContour        () const;
     // Mutators.
               void         setLayer          ( const Layer* );
-              void         setWidth          ( DbU::Unit );
       virtual void         translate         ( const DbU::Unit& dx, const DbU::Unit& dy );
-              void         setSource         ( Point );
-              void         setTarget         ( Point );
+              void         setPoints         ( const vector<Point>& );
     // Hurricane management.
       virtual void         _toJson           ( JsonWriter* ) const;
       static  JsonObject*  getJsonObject     ( unsigned long flags );
@@ -78,32 +70,29 @@ namespace Hurricane {
       virtual string       _getString        () const;
       virtual Record*      _getRecord        () const;
     protected:                               
-                           Diagonal          ( Net*, const Layer*, const Point& source, const Point& target, DbU::Unit width );
-              void         _updateB          ();
+                           Rectilinear       ( Net*, const Layer*, const vector<Point>& );
     private:
-      const Layer*     _layer;
-            Point      _source;
-            Point      _target;
-            DbU::Unit  _width;
-            DbU::Unit  _B;  // octagon half Y.
+      const Layer*         _layer;
+            vector<Point>  _points;
   };
 
 
 // -------------------------------------------------------------------
-// Class  :  "JsonRoutingDiagonal".
+// Class  :  "JsonRoutingRectilinear".
 
-  class JsonDiagonal : public JsonComponent {
+  class JsonRectilinear : public JsonComponent {
     public:
-      static  void          initialize   ();
-                            JsonDiagonal ( unsigned long flags );
-      virtual std::string   getTypeName  () const;
-      virtual JsonDiagonal* clone        ( unsigned long ) const;
-      virtual void          toData       ( JsonStack& ); 
+      static  void             initialize   ();
+                               JsonRectilinear ( unsigned long flags );
+      virtual std::string      getTypeName  () const;
+      virtual JsonRectilinear* clone        ( unsigned long ) const;
+      virtual void             toData       ( JsonStack& ); 
   };
+
 
 } // Hurricane namespace.
 
 
-INSPECTOR_P_SUPPORT(Hurricane::Diagonal);
+INSPECTOR_P_SUPPORT(Hurricane::Rectilinear);
 
-#endif // HURRICANE_DIAGONAL_H
+#endif // HURRICANE_RECTILINEAR_H

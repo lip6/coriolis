@@ -67,6 +67,7 @@
                                    PySegmentCollection.cpp
                                    PyTechnology.cpp
                                    PyTransformation.cpp
+                                   PyRectilinear.cpp
                                    PyPolygon.cpp
                                    PyOrientation.cpp
                                    PyDbU.cpp
@@ -135,6 +136,7 @@
                                    hurricane/isobar/PySegmentCollection.h
                                    hurricane/isobar/PyTechnology.h
                                    hurricane/isobar/PyTransformation.h
+                                   hurricane/isobar/PyRectilinear.h
                                    hurricane/isobar/PyPolygon.h
                                    hurricane/isobar/PyOrientation.h
                                    hurricane/isobar/PyDbU.h

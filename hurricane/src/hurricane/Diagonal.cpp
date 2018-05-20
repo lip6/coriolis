@@ -78,6 +78,7 @@ namespace Hurricane {
   }
 
 
+  bool         Diagonal::isNonRectangle    () const { return true; }
   DbU::Unit    Diagonal::getX              () const { return (_target.getX() + _source.getX()) / 2; }
   DbU::Unit    Diagonal::getY              () const { return (_target.getX() + _source.getX()) / 2; }
   DbU::Unit    Diagonal::getSourceX        () const { return _source.getX(); }
@@ -274,58 +275,6 @@ namespace Hurricane {
       record->add(           getSlot("_target", &_target) );
     }
     return record;
-  }
-
-
-// -------------------------------------------------------------------
-// Class  :  "Diagonal::Points_Contour".
-
-  Diagonal::Points_Contour::Locator::Locator ( const Diagonal* diagonal )
-    : PointHL ()
-    , _diagonal(diagonal)
-    , _iPoint (0)
-  { }
-
-
-  PointHL* Diagonal::Points_Contour::Locator::getClone () const
-  { return new Locator(*this); }
-
-
-  Point  Diagonal::Points_Contour::Locator::getElement () const
-  { return _diagonal->getPoint(_iPoint); }
-
-
-  bool  Diagonal::Points_Contour::Locator::isValid () const
-  { return (_iPoint < _diagonal->getPointsSize()); }
-
-
-  void  Diagonal::Points_Contour::Locator::progress ()
-  { if (isValid()) ++_iPoint; }
-
-
-  string  Diagonal::Points_Contour::Locator::_getString () const
-  {
-    string s = "<" + _TName("Points_Contour::Locator")
-                   + getString(getElement())
-                   + ">";
-    return s;
-  }
-
-
-  PointHC* Diagonal::Points_Contour::getClone () const
-  { return new Points_Contour(*this); }
-
-
-  PointHL* Diagonal::Points_Contour::getLocator () const
-  { return new Locator(_diagonal); }
-
-
-  string  Diagonal::Points_Contour::_getString () const
-  {
-    string s = "<" + _TName("Points_Contour") + " "
-                   + getString(_diagonal)
-                   + ">";
-    return s;
   }
 
   

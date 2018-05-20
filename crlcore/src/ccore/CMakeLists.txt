@@ -117,6 +117,7 @@
                                                alliance/ap/ApDriver.cpp
                            )
                        set ( gds_cpps          gds/GdsDriver.cpp
+                                               gds/GdsParser.cpp
                            )
                        set ( cif_cpps          cif/CifDriver.cpp
                            )

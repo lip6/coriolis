@@ -40,6 +40,7 @@
 #include "hurricane/Contact.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Diagonal.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/Polygon.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/ExtensionGo.h"
@@ -666,47 +667,30 @@ namespace Hurricane {
     static QRect         rectangle;
     static unsigned int  state;
 
-    const Diagonal* diagonal = dynamic_cast<const Diagonal*>(go);
-    if (diagonal) {
-      _goCount++;
-      Box bb = transformation.getBox(diagonal->getBoundingBox(basicLayer));
-      rectangle = _cellWidget->dbuToScreenRect( bb );
-      if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
-        QPolygon contour;
-        for ( Point point : diagonal->getContour() )
-          contour << _cellWidget->dbuToScreenPoint( point );
-        _cellWidget->drawScreenPolygon( contour );
-      }
-      return;
-    }
-
-    const Polygon* polygon = dynamic_cast<const Polygon*>(go);
-    if (polygon) {
-      _goCount++;
-      Box bb = transformation.getBox(polygon->getBoundingBox(basicLayer));
-      rectangle = _cellWidget->dbuToScreenRect( bb );
-      if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
-        QPolygon contour;
-        const vector<Point>& points = polygon->getPoints();
-        for ( Point point : points ) contour << _cellWidget->dbuToScreenPoint( point );
-        _cellWidget->drawScreenPolygon( contour );
-        contour.clear();
-
-        if (_cellWidget->dbuToScreenLength(DbU::getPolygonStep()) > 4) {
-          for ( Point point : polygon->getContour() ) 
-            contour << _cellWidget->dbuToScreenPoint( point );
-          _cellWidget->drawScreenPolygon( contour );
-        }
-      }
-      return;
-    }
-
     const Component* component = dynamic_cast<const Component*>(go);
     if (component) {
       _goCount++;
       Box bb = transformation.getBox(component->getBoundingBox(basicLayer));
       rectangle = _cellWidget->dbuToScreenRect( bb );
-      state     = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
+
+      if (component->isNonRectangle()) {
+        if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
+          QPolygon contour;
+          for ( Point point : component->getContour() )
+            contour << _cellWidget->dbuToScreenPoint( point );
+          _cellWidget->drawScreenPolygon( contour );
+
+          if (   component->isManhattanized()
+             and (_cellWidget->dbuToScreenLength(DbU::getPolygonStep()) > 4) ) {
+            for ( Point point : component->getMContour() ) 
+              contour << _cellWidget->dbuToScreenPoint( point );
+            _cellWidget->drawScreenPolygon( contour );
+          }
+        }
+        return;
+      }
+
+      state = ( (rectangle.width() > 2) ? 1:0) | ( (rectangle.height() > 2) ? 2:0); 
       switch ( state ) {
         case 0: break;
         case 1: _cellWidget->drawScreenLine( rectangle.bottomLeft(), rectangle.bottomRight() ); break;
