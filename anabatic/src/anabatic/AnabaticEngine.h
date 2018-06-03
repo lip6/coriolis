@@ -240,7 +240,7 @@ namespace Anabatic {
       inline        void              setBlockageNet        ( Net* );
                     void              chipPrep              ();
                     void              setupSpecialNets      ();
-                    void              setupPreRouteds       ();
+                    size_t            setupPreRouteds       ();
                     void              loadGlobalRouting     ( uint32_t method );
                     void              computeNetConstraints ( Net* );
                     void              toOptimals            ( Net* );

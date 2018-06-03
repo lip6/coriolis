@@ -66,11 +66,13 @@ namespace Anabatic {
 
 
 
-  void  AnabaticEngine::setupPreRouteds ()
+  size_t  AnabaticEngine::setupPreRouteds ()
   {
     cmess1 << "  o  Looking for fixed or manually global routed nets." << endl;
 
     openSession();
+
+    size_t toBeRouteds = 0;
 
     for ( Net* net : getCell()->getNets() ) {
       if (net == _blockageNet) continue;
@@ -85,59 +87,58 @@ namespace Anabatic {
       bool   isFixed     = false;
       size_t rpCount     = 0;
 
-      if (net->isDeepNet()) {
-        rpCount = 2;
+      for( Component* component : net->getComponents() ) {
+        if (dynamic_cast<Pin*>(component)) continue;
 
+        const RegularLayer* layer = dynamic_cast<const RegularLayer*>(component->getLayer());
+        if (layer and (layer->getBasicLayer()->getMaterial() == BasicLayer::Material::blockage))
+          continue;
+
+        Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
+        if (horizontal) {
+          segments.push_back( horizontal );
+          isPreRouted = true;
+          if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
+            isFixed = true;
+        } else {
+          Vertical* vertical = dynamic_cast<Vertical*>(component);
+          if (vertical) {
+            isPreRouted = true;
+            segments.push_back( vertical );
+            if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
+              isFixed = true;
+          } else {
+            Contact* contact = dynamic_cast<Contact*>(component);
+            if (contact) {
+              isPreRouted = true;
+              contacts.push_back( contact );
+              if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
+                 or (contact->getHeight() != Session::getViaWidth(contact->getLayer()))
+                 or (contact->getLayer () == Session::getContactLayer(0)) )
+                isFixed = true;
+            } else {
+              RoutingPad* rp = dynamic_cast<RoutingPad*>(component);
+              if (rp) {
+                ++rpCount;
+              } else {
+                // Plug* plug = dynamic_cast<Plug*>(component);
+                // if (plug) {
+                //   cerr << "buildPreRouteds(): " << plug << endl;
+                //   ++rpCount;
+                // }
+              }
+            }
+          }
+        }
+      }
+
+      if ((not isFixed and not isPreRouted) and net->isDeepNet()) {
         Net* rootNet = dynamic_cast<Net*>(
                          dynamic_cast<DeepNet*>(net)->getRootNetOccurrence().getEntity() );
         for( Component* component : rootNet->getComponents() ) {
           if (dynamic_cast<Horizontal*>(component)) { isFixed = true; break; }
           if (dynamic_cast<Vertical*>  (component)) { isFixed = true; break; }
           if (dynamic_cast<Contact*>   (component)) { isFixed = true; break; }
-        }
-      } else {
-        for( Component* component : net->getComponents() ) {
-          if (dynamic_cast<Pin*>(component)) continue;
-
-          const RegularLayer* layer = dynamic_cast<const RegularLayer*>(component->getLayer());
-          if (layer and (layer->getBasicLayer()->getMaterial() == BasicLayer::Material::blockage))
-            continue;
-
-          Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
-          if (horizontal) {
-            segments.push_back( horizontal );
-            isPreRouted = true;
-            if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
-              isFixed = true;
-          } else {
-            Vertical* vertical = dynamic_cast<Vertical*>(component);
-            if (vertical) {
-              isPreRouted = true;
-              segments.push_back( vertical );
-              if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
-                isFixed = true;
-            } else {
-              Contact* contact = dynamic_cast<Contact*>(component);
-              if (contact) {
-                isPreRouted = true;
-                contacts.push_back( contact );
-                if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
-                   or (contact->getHeight() != Session::getViaWidth(contact->getLayer())) )
-                  isFixed = true;
-              } else {
-                RoutingPad* rp = dynamic_cast<RoutingPad*>(component);
-                if (rp) {
-                  ++rpCount;
-                } else {
-                  // Plug* plug = dynamic_cast<Plug*>(component);
-                  // if (plug) {
-                  //   cerr << "buildPreRouteds(): " << plug << endl;
-                  //   ++rpCount;
-                  // }
-                }
-              }
-            }
-          }
         }
       }
 
@@ -156,6 +157,8 @@ namespace Anabatic {
           state->setFlags  ( NetRoutingState::Fixed );
         } else {
           if (rpCount > 1) {
+            ++toBeRouteds;
+            
             cmess2 << "     - <" << net->getName() << "> is manually global routed." << endl;
             for ( auto icontact : contacts ) {
               AutoContact::createFrom( icontact );
@@ -169,10 +172,14 @@ namespace Anabatic {
             }
           }
         }
+      } else {
+        ++toBeRouteds;
       }
     }
 
     Session::close();
+
+    return toBeRouteds;
   }
 
 

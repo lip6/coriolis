@@ -234,10 +234,14 @@ namespace Katana {
       setupRoutingPlanes();
     }
     setupSpecialNets();
-    setupPreRouteds();
-    if (not isChannelMode()) {
-      setupPowerRails();
-      protectRoutingPads();
+    if (not setupPreRouteds()) {
+      setState( Anabatic::EngineDriving );
+      throw Error( "KatanaEngine::digitalInit(): All nets are already routed, doing nothing." );
+    } else {
+      if (not isChannelMode()) {
+        setupPowerRails();
+        protectRoutingPads();
+      }
     }
     _runKatanaInit();
 
