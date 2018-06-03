@@ -46,6 +46,24 @@ namespace  Isobar {
   }
 
 
+  PyObject* VectorToList ( const std::vector<Point>& v )
+  {
+    PyObject* pyList = PyList_New( v.size() );
+
+    for ( size_t i=0 ; i<v.size() ; ++i ) {
+      PyPoint* pyPoint = PyObject_NEW( PyPoint, &PyTypePoint );
+      if (pyPoint == NULL) { return NULL; }
+    
+      HTRY
+        pyPoint->_object = new Point ( v[i] );
+      HCATCH    
+      PyList_SetItem( pyList, i, (PyObject*)pyPoint );
+    }
+
+    return pyList;
+  }
+
+
 extern "C" {
 
 
@@ -120,6 +138,28 @@ extern "C" {
   }
 
 
+  static PyObject* PyPolygon_getSubPolygons ( PyPolygon *self )
+  {
+    cdebug_log(20,0) << "PyPolygon_getSubPolygons()" << endl;
+
+    PyObject* pySubPolygons = NULL;
+
+    METHOD_HEAD( "Polygon.SubPolygons()" )
+    HTRY
+      vector< vector<Point> > subpolygons;
+      polygon->getSubPolygons( subpolygons );
+
+      pySubPolygons = PyList_New( subpolygons.size() );
+
+      for ( size_t i=0 ; i<subpolygons.size() ; ++i ) {
+        PyList_SetItem( pySubPolygons, i, VectorToList( subpolygons[i] ) );
+      }
+    HCATCH    
+
+    return pySubPolygons;
+  }
+
+
   static PyObject* PyPolygon_setPoints ( PyPolygon *self, PyObject* args )
   {
     cdebug_log(20,0) << "Polygon.setPoints()" << endl;
@@ -128,8 +168,6 @@ extern "C" {
       METHOD_HEAD( "Polygon.setPoints()" )
       
       PyObject* arg0 = NULL;
-      PyObject* arg1 = NULL;
-      PyObject* arg2 = NULL;
       if (not PyArg_ParseTuple( args, "O:Polygon.setPoints", &arg0 )) {
         PyErr_SetString( ConstructorError, "Invalid number of parameters for Polygon.setPoints()." );
         return NULL;
@@ -200,6 +238,7 @@ extern "C" {
     , { "getY"          , (PyCFunction)PyPolygon_getY          , METH_NOARGS , "Return the Polygon Y value." }
     , { "getBoundingBox", (PyCFunction)PyPolygon_getBoundingBox, METH_NOARGS , "Return the Polygon Bounding Box." }
     , { "getMContour"   , (PyCFunction)PyPolygon_getMContour   , METH_NOARGS , "Return the points of the manhattanized contour." }
+    , { "getSubPolygons", (PyCFunction)PyPolygon_getSubPolygons, METH_NOARGS , "Return the list of sub-polygons (GDSII compliants)." }
     , { "setPoints"     , (PyCFunction)PyPolygon_setPoints     , METH_VARARGS, "Sets the Polygon Bounding Box." }
     , { "translate"     , (PyCFunction)PyPolygon_translate     , METH_VARARGS, "Translates the Polygon of dx and dy." }
     , { "destroy"       , (PyCFunction)PyPolygon_destroy       , METH_NOARGS
