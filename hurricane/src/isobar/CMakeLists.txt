@@ -60,6 +60,7 @@
                                    PyPlug.cpp
                                    PyPlugCollection.cpp
                                    PyPoint.cpp
+                                   PyPointCollection.cpp
                                    PyReference.cpp
                                    PyReferenceCollection.cpp
                                    PyRoutingPad.cpp
@@ -129,6 +130,7 @@
                                    hurricane/isobar/PyPlug.h
                                    hurricane/isobar/PyPlugCollection.h
                                    hurricane/isobar/PyPoint.h
+                                   hurricane/isobar/PyPointCollection.h
                                    hurricane/isobar/PyReference.h
                                    hurricane/isobar/PyReferenceCollection.h
                                    hurricane/isobar/PyRoutingPad.h

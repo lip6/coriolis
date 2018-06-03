@@ -85,8 +85,8 @@ namespace Hurricane {
         DbU::Unit m = y % DbU::getPolygonStep();
 
         if (m) {
-          if (isClockwise() xor not isXIncrease()) y += DbU::getPolygonStep() - m;
-          else                                     y += -m;
+          if (not isXIncrease()) y += DbU::getPolygonStep() - m;
+          else                   y += -m;
         }
         _steps.push_back( y );
 
@@ -111,8 +111,8 @@ namespace Hurricane {
         DbU::Unit m = x % DbU::getPolygonStep();
 
         if (m) {
-          if (isClockwise() xor isYIncrease()) x += DbU::getPolygonStep() - m;
-          else                                 x += -m;
+          if (isYIncrease()) x += DbU::getPolygonStep() - m;
+          else               x += -m;
         }
         _steps.push_back( x );
 
@@ -131,7 +131,6 @@ namespace Hurricane {
     if (not (_flags & Polygon::YIncrease)) offset = 1 - offset;
       
     Point  point;
-
 
     if (_flags & YSteps) {
       DbU::Unit delta = DbU::getPolygonStep();
@@ -219,7 +218,28 @@ namespace Hurricane {
       sign = nextSign;
     }
 
-    Polygon* triangle = new Polygon ( net, layer, points );
+    size_t istart = 0;
+    for ( size_t i=0 ; i<points.size() ; ++i ) {
+      if (      (points[i].getX() >  points[istart].getX())
+         or (   (points[i].getX() == points[istart].getX())
+            and (points[i].getY() >  points[istart].getY()) ) )
+        istart = i;
+    }
+
+    vector<Point> normalized ( points.size(), Point() );
+    if ( (istart != 0) or (sign > 0.0) ) {
+      if (sign < 0.0) {
+        for ( size_t i=0 ; i<points.size() ; ++i )
+          normalized[ (points.size()-i) % points.size() ] = points[ (istart+i) % points.size() ];
+      } else {
+        for ( size_t i=0 ; i<points.size() ; ++i )
+          normalized[ i ] = points[ (istart+i) % points.size() ];
+      }
+      
+    } else
+      normalized = points;
+
+    Polygon* triangle = new Polygon ( net, layer, normalized );
     triangle->_postCreate();
     triangle->manhattanize();
     return triangle;
@@ -368,17 +388,215 @@ namespace Hurricane {
     for ( Edge* edge : _edges ) delete edge;
     _edges.clear();
 
-    bool clockwise = (getSign(_points,0) <= 0);
-
     for ( size_t i=0 ; i<_points.size() ; ++i ) {
       const Point&    origin     = _points[  i    % _points.size()];
       const Point&    extremity  = _points[ (i+1) % _points.size()];
             bool      dxPositive = (extremity.getX() > origin.getX());
-            uint32_t  flags      = (clockwise xor dxPositive) ? 0 : Above;
-                      flags     |= (clockwise) ? Clockwise : 0;
+            uint32_t  flags      = (dxPositive) ? 0 : Above;
 
       _edges.push_back( new Edge ( origin, extremity, flags ) );
     }
+  }
+
+  
+  void  Polygon::getSubPolygons ( vector< vector<Point> >& subpolygons ) const
+  {
+    static const size_t subPolygonSize = 1000;
+    
+    // cerr << "Polygon::getSubPolygons(): " << this << endl;
+
+    vector<Point> upSide;
+    vector<Point> downSide;
+    Point         first;
+
+    bool firstToDown = false;
+    bool inUpSide    = true;
+    for ( Point p : getMContour() ) {
+      // cerr << "| " << p << endl;
+
+      if (upSide.size() == 1) {
+        if (upSide[0].getX() == p.getX()) {
+          if (not firstToDown) { firstToDown = true; first = upSide[0]; }
+          upSide.pop_back();
+        }
+      }
+          
+      if (inUpSide and not upSide.empty()) {
+        if (upSide.back().getX() < p.getX()) {
+          inUpSide = false;
+          // cerr << "Switch to down side." << endl;
+        }
+      }
+
+      if (inUpSide) {
+        size_t length = upSide.size();
+        if (        (length > 1)
+           and (  ( (upSide[length-2].getX() == upSide[length-1].getX()) and (upSide.back().getX() == p.getX()) )
+               or ( (upSide[length-2].getY() == upSide[length-1].getY()) and (upSide.back().getY() == p.getY()) ) ) ) {
+          upSide.pop_back();
+        } 
+        upSide.push_back( p );
+      } else {
+        size_t length = downSide.size();
+        if (        (length > 1)
+           and (  ( (downSide[length-2].getX() == downSide[length-1].getX()) and (downSide.back().getX() == p.getX()) )
+               or ( (downSide[length-2].getY() == downSide[length-1].getY()) and (downSide.back().getY() == p.getY()) ) ) ) {
+          downSide.pop_back();
+        }
+
+        if (downSide.empty()) {
+          downSide.push_back( upSide.back() );
+          upSide.pop_back();
+        }
+        downSide.push_back( p );
+      }
+    }
+
+    std::reverse( upSide.begin(), upSide.end() );
+    
+    // cerr << "firstToDown:" << firstToDown << endl;
+    if (firstToDown and (first.getX() > downSide.back().getX())) downSide.push_back( first );
+    while ( downSide.size() > 1 ) {
+      size_t length = downSide.size()-1;
+      if (downSide[length-1].getX() != downSide[length].getX()) break;
+      downSide.pop_back();
+    }
+
+    // cerr << "Up side" << endl;
+    // for ( size_t i=0 ; i<upSide.size() ; ++i )
+    //   cerr << "[ " << setw(3) << i << "] " << upSide[i] << endl;
+
+    // cerr << "Down side" << endl;
+    // for ( size_t i=0 ; i<downSide.size() ; ++i )
+    //   cerr << "[ " << setw(3) << i << "] " << downSide[i] << endl;
+
+    vector<Point>* polygon   = NULL;
+    size_t         startUp   = 0;
+    size_t         startDown = 0;
+    size_t         stopUp    = 1;
+    size_t         stopDown  = 1;
+
+    while ( true ) {
+      size_t leftCutUp    = 0;
+      size_t leftCutDown  = 0;
+      size_t rightCutUp   = 0;
+      size_t rightCutDown = 0;
+      size_t downIncrease = 0;
+      size_t upDecrease   = 0;
+
+      if (stopUp - startUp + stopDown - startDown > subPolygonSize) {
+      // carve out a new sub-polygon->
+        // cerr << "New sub polygon:" << endl;
+        // cerr << "    stopUp:" << setw(3) << stopUp   << "   startUp:" << setw(3) << startUp   << endl;
+        // cerr << "  stopDown:" << setw(3) << stopDown << " startDown:" << setw(3) << startDown << endl;
+        
+        subpolygons.push_back( vector<Point>() );
+        polygon = &subpolygons.back();
+
+        if (upSide[startUp].getX() > downSide[startDown].getX()) {
+          polygon->push_back( Point( downSide[startDown].getX(), upSide[startUp].getY() ) );
+          // cerr << "  + " << polygon->back() << endl;
+          leftCutUp = 1;
+        } else {
+          if (upSide[startUp].getX() < downSide[startDown].getX()) {
+            polygon->push_back( Point( upSide[startUp].getX(), downSide[startDown].getY() ) );
+            // cerr << "  + " << polygon->back() << endl;
+            leftCutDown = 1;
+          }
+        }
+
+        if      (upSide[stopUp].getX() > downSide[stopDown].getX()) rightCutUp   = 1;
+        else if (upSide[stopUp].getX() < downSide[stopDown].getX()) rightCutDown = 1;
+
+        if (not leftCutDown and (downSide[startDown+1].getY() > downSide[startDown].getY())) downIncrease = 1;
+        
+        for ( size_t i=startDown+downIncrease ; i<=stopDown-rightCutDown ; ++i ) {
+          polygon->push_back( downSide[i] );
+          // cerr << "  > " << polygon->back() << endl;
+        }
+
+        if (rightCutUp) {
+          polygon->push_back( Point( downSide[stopDown].getX(), upSide[stopUp].getY() ) );
+          // cerr << "  + " << polygon->back() << endl;
+        } else {
+          if (rightCutDown) {
+            polygon->push_back( Point( upSide[stopUp].getX(), downSide[stopDown].getY() ) );
+            // cerr << "  + " << polygon->back() << endl;
+            // cerr << "     Adjust down (cut)" << endl;
+          }
+        }
+        
+        if (not leftCutUp and (upSide[startUp+1].getY() < upSide[startUp].getY())) upDecrease = 1;
+
+        for ( size_t i=rightCutUp ; i<=stopUp-startUp-upDecrease ; ++i ) {
+          polygon->push_back( upSide[stopUp-i] );
+          // cerr << "  < " << polygon->back() << endl;
+        }
+
+        startUp   = stopUp;
+        startDown = stopDown;
+
+        // cerr << "Done sub polygon." << endl;
+      }
+
+      if (upSide[stopUp].getX() == downSide[stopDown].getX()) {
+        stopUp   += 2;
+        stopDown += 2;
+      } else {
+        if (upSide[stopUp].getX() < downSide[stopDown].getX()) stopUp   += 2;
+        else                                                   stopDown += 2;
+      }
+      stopUp   = std::min( stopUp  ,   upSide.size()-1 );
+      stopDown = std::min( stopDown, downSide.size()-1 );
+
+      // cerr << "  stopUp:" << stopUp << " stopDown:" << stopDown << endl;
+
+      if ( (stopUp+5 > upSide.size()) and (stopDown+5 > downSide.size()) ) {
+        stopUp   =   upSide.size() - 1;
+        stopDown = downSide.size() - 1;
+        break;
+      }
+    }
+
+    subpolygons.push_back( vector<Point>() );
+    polygon = &subpolygons.back();
+
+    // cerr << "Last (right) sub polygon:" << endl;
+    // cerr << "    stopUp:" << setw(3) << stopUp   << "   startUp:" << setw(3) << startUp   << endl;
+    // cerr << "  stopDown:" << setw(3) << stopDown << " startDown:" << setw(3) << startDown << endl;
+
+    size_t downIncrease = 0;
+    size_t upDecrease   = 0;
+    size_t leftCutUp    = 0;
+    size_t leftCutDown  = 0;
+
+    if (upSide[startUp].getX() > downSide[startDown].getX()) {
+      polygon->push_back( Point( downSide[startDown].getX(), upSide[startUp].getY() ) );
+      // cerr << "  + " << polygon->back() << endl;
+      leftCutUp = 1;
+    } else {
+      if (upSide[startUp].getX() < downSide[startDown].getX()) {
+        polygon->push_back( Point( upSide[startUp].getX(), downSide[startDown].getY() ) );
+        // cerr << "  + " << polygon->back() << endl;
+        leftCutDown = 1;
+      }
+    }
+
+    if (not leftCutDown and (downSide[startDown+1].getY() > downSide[startDown].getY())) downIncrease = 1;
+
+    for ( size_t i=startDown+downIncrease ; i<=stopDown ; ++i ) {
+      polygon->push_back( downSide[i] );
+      // cerr << "  > " << polygon->back() << endl;
+    }
+        
+    if (not leftCutUp and (upSide[startUp+1].getY() < upSide[startUp].getY())) upDecrease = 1;
+        
+    for ( size_t i=0 ; i<=stopUp-startUp-upDecrease ; ++i ) {
+      polygon->push_back( upSide[stopUp-i] );
+      // cerr << "  < " << polygon->back() << endl;
+    }
+    
+    // cerr << endl;
   }
 
 

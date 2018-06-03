@@ -47,6 +47,9 @@
 # x-----------------------------------------------------------------x
 
 
+from Hurricane import DbU
+
+
 NOSYM       = 1000
 SYM_X       = 1001
 SYM_Y       = 1002
@@ -66,5 +69,5 @@ SOUTH       = 1022
 EAST        = 1023
 WEST        = 1024
 
-MYPITCH     = 5
-MYSLICE     = 50
+MYPITCH     = DbU.fromLambda(  5.0 )
+MYSLICE     = DbU.fromLambda( 50.0 )

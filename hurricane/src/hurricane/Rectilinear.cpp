@@ -56,6 +56,9 @@ namespace Hurricane {
     if (not layer)
       throw Error( "Rectilinear::create(): Can't create, NULL layer" );
 
+    if (points.size() > 1000)
+      throw Error( "Rectilinear::create(): Rectlinear polygons must not exceed 1000 vertexes." );
+
     for ( size_t i=0 ; i<points.size() ; ++i ) {
       size_t j = (i+1) % points.size();
 

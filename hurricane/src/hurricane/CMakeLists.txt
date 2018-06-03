@@ -94,7 +94,7 @@
                                 hurricane/Technology.h
                                 hurricane/Timer.h
                                 hurricane/Transformation.h
-                                hurricane/Polygon.h
+                                hurricane/Polygon.h               hurricane/Polygons.h
                                 hurricane/DbU.h
                                 hurricane/UpdateSession.h
                                 hurricane/VectorCollection.h

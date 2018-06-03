@@ -15,6 +15,7 @@
 
 
 #include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyPointCollection.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyLayer.h"
 #include "hurricane/isobar/PyBox.h"
@@ -169,6 +170,26 @@ extern "C" {
   }
 
 
+  static PyObject* PyPolygon_getMContour ( PyPolygon *self )
+  {
+    cdebug_log(20,0) << "PyPolygon_getMContour()" << endl;
+    METHOD_HEAD( "Polygon.getMContour()" )
+
+    PyPointCollection* pyPointCollection = NULL;
+
+    HTRY
+      Points* points = new Points( polygon->getMContour() );
+
+      pyPointCollection = PyObject_NEW(PyPointCollection, &PyTypePointCollection);
+      if (pyPointCollection == NULL) return NULL;
+
+      pyPointCollection->_object = points;
+    HCATCH
+    
+    return (PyObject*)pyPointCollection;
+  }
+
+
   // ---------------------------------------------------------------
   // PyPolygon Attribute Method table.
 
@@ -178,6 +199,7 @@ extern "C" {
     , { "getX"          , (PyCFunction)PyPolygon_getX          , METH_NOARGS , "Return the Polygon X value." }
     , { "getY"          , (PyCFunction)PyPolygon_getY          , METH_NOARGS , "Return the Polygon Y value." }
     , { "getBoundingBox", (PyCFunction)PyPolygon_getBoundingBox, METH_NOARGS , "Return the Polygon Bounding Box." }
+    , { "getMContour"   , (PyCFunction)PyPolygon_getMContour   , METH_NOARGS , "Return the points of the manhattanized contour." }
     , { "setPoints"     , (PyCFunction)PyPolygon_setPoints     , METH_VARARGS, "Sets the Polygon Bounding Box." }
     , { "translate"     , (PyCFunction)PyPolygon_translate     , METH_VARARGS, "Translates the Polygon of dx and dy." }
     , { "destroy"       , (PyCFunction)PyPolygon_destroy       , METH_NOARGS

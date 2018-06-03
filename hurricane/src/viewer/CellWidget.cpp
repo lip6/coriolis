@@ -685,6 +685,17 @@ namespace Hurricane {
             for ( Point point : component->getMContour() ) 
               contour << _cellWidget->dbuToScreenPoint( point );
             _cellWidget->drawScreenPolygon( contour );
+
+            // const Polygon* polygon = dynamic_cast<const Polygon*>( component );
+            // if (polygon) {
+            //   vector< vector<Point> > subpolygons;
+            //   polygon->getSubPolygons( subpolygons );
+            //   for ( const vector<Point>& sp : subpolygons ) {
+            //     contour.clear();
+            //     for ( Point point : sp ) contour << _cellWidget->dbuToScreenPoint( point );
+            //     _cellWidget->drawScreenPolygon( contour );
+            //   }
+            // }
           }
         }
         return;

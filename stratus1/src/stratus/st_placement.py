@@ -64,10 +64,12 @@ def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
   if ref._x % MYPITCH :
     err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate x is not a mutiple of PITCH.\n"
     raise Exception ( err )
-  
+
   if ref._y % MYSLICE :
-    err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate y is not a mutiple of SLICE.\n"
-    raise Exception ( err )    
+    message = '\n[ERROR] Stratus.Model.Place(): For instance "'  \
+            + ins._name + '", coordinate Y ' + DbU.getValueString(ref._y) + ' (' + str(ref._y) + ')' \
+            + " is not a mutiple of slice " + DbU.getValueString(MYSLICE) + '.'
+    raise Exception( message )
                                             
   # Error message : if ref is not a reference
   if str ( ref.__class__ ) != "st_ref.XY" :
@@ -127,12 +129,16 @@ def PlaceRight ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
   cell = CELLS[-1]
 
   if offsetX % MYPITCH :
-    err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : offsetX is not a mutiple of PITCH.\n"
-    raise Exception ( err )
+    message = '\n[ERROR] Stratus.Model.PlaceRight(): For instance "'  \
+            + ins._name + '", offsetX ' + DbU.getValueString(offsetX) \
+            + " is not a mutiple of pitch " + DbU.getValueString(MYPITCH) + '.'
+    raise Exception( message )
   
   if offsetY % MYSLICE :
-    err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : offsetY is not a mutiple of SLICE.\n"
-    raise Exception ( err )
+    message = '\n[ERROR] Stratus.Model.PlaceRight(): For instance "'  \
+            + ins._name + '", offsetY ' + DbU.getValueString(offsetX) \
+            + " is not a mutiple of slice " + DbU.getValueString(MYSLICE) + '.'
+    raise Exception( message )
   
   if ( plac != PLACED ) and ( plac != FIXED ) :
     err = "\n[Stratus ERROR] PlaceRight : " + ins._name + " : wrong argument for placement type.\n"

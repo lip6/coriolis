@@ -52,7 +52,6 @@ namespace Hurricane {
       static const  uint32_t YIncrease  = (1<<4);
       static const  uint32_t Horizontal = (1<<5);
       static const  uint32_t Vertical   = (1<<6);
-      static const  uint32_t Clockwise  = (1<<7);
 
     public:
       class Edge {
@@ -61,7 +60,6 @@ namespace Hurricane {
           inline size_t  getSize         () const;
                  Point   getPoint        ( size_t i ) const;
           inline bool    isPositiveSlope () const;
-          inline bool    isClockwise     () const;
           inline bool    isYIncrease     () const;
           inline bool    isXIncrease     () const;
           inline bool    isHV            () const;
@@ -118,6 +116,7 @@ namespace Hurricane {
       virtual       Point          getPoint        ( size_t ) const;
       virtual       Box            getBoundingBox  () const;
       virtual       Box            getBoundingBox  ( const BasicLayer* ) const;
+                    void           getSubPolygons  ( vector< vector<Point> >& ) const;
       virtual const Layer*         getLayer        () const;
                     void           setLayer        ( const Layer* layer );
       virtual       void           translate       ( const DbU::Unit& dx, const DbU::Unit& dy );
@@ -144,7 +143,6 @@ namespace Hurricane {
   inline  const vector<Polygon::Edge*>& Polygon::getEdges        () const { return _edges; }
   inline  const vector<Point>&          Polygon::getPoints       () const { return _points; }
 
-  inline bool    Polygon::Edge::isClockwise     () const { return (_flags & Polygon::Clockwise); }
   inline bool    Polygon::Edge::isYIncrease     () const { return (_flags & Polygon::YIncrease); }
   inline bool    Polygon::Edge::isXIncrease     () const { return (_flags & Polygon::XIncrease); }
   inline bool    Polygon::Edge::isPositiveSlope () const { return not ( (_flags & Polygon::XIncrease) xor (_flags & Polygon::YIncrease) ); }

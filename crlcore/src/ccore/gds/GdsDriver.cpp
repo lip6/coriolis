@@ -30,6 +30,8 @@ using namespace std;
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Diagonal.h"
+#include "hurricane/Rectilinear.h"
+#include "hurricane/Polygon.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Net.h"
 #include "hurricane/Cell.h"
@@ -338,6 +340,7 @@ namespace {
                     GdsStream& operator<< ( const BasicLayer* );
                     GdsStream& operator<< ( const Box& );
                     GdsStream& operator<< ( const Points );
+                    GdsStream& operator<< ( const vector<Point>& points );
                     GdsStream& operator<< ( const Cell* );
                     GdsStream& operator<< ( const Transformation& );
     private:
@@ -513,6 +516,20 @@ namespace {
   }
 
 
+  GdsStream& GdsStream::operator<< ( const vector<Point>& points )
+  {
+    GdsRecord record ( GdsRecord::XY );
+    for ( Point p : points ) {
+      record.push( (int32_t)DbU::toGrid(p.getX()) );
+      record.push( (int32_t)DbU::toGrid(p.getY()) );
+    }
+    record.push( (int32_t)DbU::toGrid(points[0].getX()) );
+    record.push( (int32_t)DbU::toGrid(points[0].getY()) );
+    _ostream << record;
+    return *this;
+  }
+
+
   GdsStream& GdsStream::operator<< ( const Cell* cell )
   {
     time_t t   = time( 0 );
@@ -546,23 +563,38 @@ namespace {
 
     for ( Net* net : cell->getNets() ) {
       for ( Component* component : net->getComponents() ) {
-        Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
-        if (diagonal) {
-          for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
-            (*this) << BOUNDARY;
-            (*this) << layer;
-            (*this) << diagonal->getContour();
-            (*this) << ENDEL;
+        Polygon* polygon  = dynamic_cast<Polygon*>(component);
+        if (polygon) {
+          vector< vector<Point> > subpolygons;
+          polygon->getSubPolygons( subpolygons );
+
+          for ( const vector<Point>& subpolygon : subpolygons ) {
+            for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              (*this) << BOUNDARY;
+              (*this) << layer;
+              (*this) << subpolygon;
+              (*this) << ENDEL;
+            }
           }
-        } else if (  dynamic_cast<Horizontal*>(component)
-                  or dynamic_cast<Vertical  *>(component)
-                  or dynamic_cast<Contact   *>(component)
-                  or dynamic_cast<Pad       *>(component)) {
-          for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
-            (*this) << BOUNDARY;
-            (*this) << layer;
-            (*this) << component->getBoundingBox(layer);
-            (*this) << ENDEL;
+        } else {
+          Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
+          if (diagonal) {
+            for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              (*this) << BOUNDARY;
+              (*this) << layer;
+              (*this) << diagonal->getContour();
+              (*this) << ENDEL;
+            }
+          } else if (  dynamic_cast<Horizontal*>(component)
+                    or dynamic_cast<Vertical  *>(component)
+                    or dynamic_cast<Contact   *>(component)
+                    or dynamic_cast<Pad       *>(component)) {
+            for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              (*this) << BOUNDARY;
+              (*this) << layer;
+              (*this) << component->getBoundingBox(layer);
+              (*this) << ENDEL;
+            }
           }
         }
       }

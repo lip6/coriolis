@@ -940,7 +940,7 @@ class top_rf2 ( Model ) :
     global adrange
 
    #HCELL = 50
-    HCELL = DbU.toLambda( self.In[0]._hur_masterCell.getAbutmentBox().getHeight() )
+    HCELL = self.In[0]._hur_masterCell.getAbutmentBox().getHeight()
 
     # placement des lignes de bit en dessous des buffers  
     bottom = 0

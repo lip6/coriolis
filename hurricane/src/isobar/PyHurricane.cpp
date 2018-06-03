@@ -20,6 +20,7 @@
 #include "hurricane/isobar/PyUpdateSession.h"
 #include "hurricane/isobar/PyDbU.h"
 #include "hurricane/isobar/PyPoint.h"
+#include "hurricane/isobar/PyPointCollection.h"
 #include "hurricane/isobar/PyInterval.h"
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyTransformation.h"
@@ -517,6 +518,7 @@ extern "C" {
     PyUpdateSession_LinkPyType ();
     PyDbU_LinkPyType ();
     PyPoint_LinkPyType ();
+    PyPointCollection_LinkPyType ();
     PyInterval_LinkPyType ();
     PyBox_LinkPyType ();
     PyTransformation_LinkPyType ();
@@ -584,6 +586,7 @@ extern "C" {
     PYTYPE_READY ( UpdateSession                 )
     PYTYPE_READY ( DbU                           )
     PYTYPE_READY ( Point                         )
+    PYTYPE_READY ( PointCollection               )
     PYTYPE_READY ( Interval                      )
     PYTYPE_READY ( Box                           )
     PYTYPE_READY ( Transformation                )
@@ -709,6 +712,7 @@ extern "C" {
     __cs.addType ( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
     __cs.addType ( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
     __cs.addType ( "point"      , &PyTypePoint                 , "<Point>"                 , false );
+    __cs.addType ( "points"     , &PyTypePointCollection       , "<Points>"                , false );
     __cs.addType ( "rp"         , &PyTypeRoutingPad            , "<RoutingPad>"            , false, "comp" );
     __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
     __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );

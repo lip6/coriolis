@@ -26,6 +26,7 @@
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyPin.h"
+#include "hurricane/isobar/PyPointCollection.h"
 #include "hurricane/isobar/PyComponentCollection.h"
 
 
@@ -196,6 +197,26 @@ extern "C" {
   }
 
 
+  static PyObject* PyComponent_getContour ( PyComponent *self )
+  {
+    cdebug_log(20,0) << "PyComponent_getContour()" << endl;
+    METHOD_HEAD( "Component.getContour()" )
+
+    PyPointCollection* pyPointCollection = NULL;
+
+    HTRY
+      Points* points = new Points( component->getContour() );
+
+      pyPointCollection = PyObject_NEW(PyPointCollection, &PyTypePointCollection);
+      if (pyPointCollection == NULL) return NULL;
+
+      pyPointCollection->_object = points;
+    HCATCH
+    
+    return (PyObject*)pyPointCollection;
+  }
+
+
   PyMethodDef PyComponent_Methods[] =
     { { "getBodyHook"          , (PyCFunction)PyComponent_getBodyHook        , METH_NOARGS , "Return the component body hook (is a master Hook)." }
     , { "getX"                 , (PyCFunction)PyComponent_getX               , METH_NOARGS , "Return the Component X value." }
@@ -205,8 +226,9 @@ extern "C" {
     , { "getNet"               , (PyCFunction)PyComponent_getNet             , METH_NOARGS , "Returns the net owning the component." }
     , { "getLayer"             , (PyCFunction)PyComponent_getLayer           , METH_NOARGS , "Return the component layer." }
     , { "getBoundingBox"       , (PyCFunction)PyComponent_getBoundingBox     , METH_VARARGS, "Return the component boundingBox (optionally on a BasicLayer)." }
-    , { "getConnexComponents"  , (PyCFunction)PyComponent_getConnexComponents, METH_NOARGS, "All the components connecteds to this one through hyper hooks." }
-    , { "getSlaveComponents"   , (PyCFunction)PyComponent_getSlaveComponents , METH_NOARGS, "All the components anchored directly or indirectly on this one." }
+    , { "getContour"           , (PyCFunction)PyComponent_getContour         , METH_NOARGS , "Return the points of the polygonic contour." }
+    , { "getConnexComponents"  , (PyCFunction)PyComponent_getConnexComponents, METH_NOARGS , "All the components connecteds to this one through hyper hooks." }
+    , { "getSlaveComponents"   , (PyCFunction)PyComponent_getSlaveComponents , METH_NOARGS , "All the components anchored directly or indirectly on this one." }
     , { "destroy"              , (PyCFunction)PyComponent_destroy            , METH_NOARGS
                                , "destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */
