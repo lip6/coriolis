@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DpgenXor2</TITLE>
+<META NAME="description" CONTENT="DpgenXor2">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node16.html">
+<LINK REL="previous" HREF="node14.html">
+<LINK REL="up" HREF="dpgen.html">
+<LINK REL="next" HREF="node16.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node14.html">DpgenOr4</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node16.html">DpgenXnor2</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000150000000000000000">
+DpgenXor2</A>
+</H1> 
+
+<UL>
+<LI><SPAN  CLASS="textbf">Name</SPAN> : DpgenXor2 - Xor2 Macro-Generator
+</LI>
+<LI><SPAN  CLASS="textbf">Synopsys</SPAN> :
+<PRE>
+Generate ( 'DpgenXor2', modelname
+         , param = { 'nbit'       : n
+                   , 'drive'      : d
+                   , 'physical'   : True
+                   , 'behavioral' : True                   
+                   }
+         )
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Description</SPAN> : Generates a <code>n</code> bits two inputs XOR with an output power of <code>d</code> named <code>modelname</code>.
+</LI>
+<LI><SPAN  CLASS="textbf">Terminal Names</SPAN> :
+    
+<UL>
+<LI><SPAN  CLASS="textbf">i0</SPAN> : input (<code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">i1</SPAN> : input (<code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">q</SPAN> : output (<code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">vdd</SPAN> : power
+</LI>
+<LI><SPAN  CLASS="textbf">vss</SPAN> : ground
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Parameters</SPAN> : Parameters are given in the map <code>param</code>.
+    
+<UL>
+<LI><SPAN  CLASS="textbf">nbit</SPAN> (mandatory) : Defines the size of the generator
+</LI>
+<LI><SPAN  CLASS="textbf">drive</SPAN> (optional) : Defines the output power of the gates
+        
+<UL>
+<LI>Valid drive are : 2 or 4
+</LI>
+<LI>If this parameter is not defined, it's value is the smallest one permitted
+        
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">physical</SPAN> (optionnal, default value : False) : In order to generate a layout
+</LI>
+<LI><SPAN  CLASS="textbf">behavioral</SPAN> (optionnal, default value : False) : In order to generate a behavior        
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Behavior</SPAN> :
+<PRE>
+nq &lt;= i0 xor i1
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Example</SPAN> :
+<PRE>
+from stratus import *
+
+class inst_xor2 ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( "in1", 8 )
+    self.in2 = SignalIn  ( "in2", 8 )
+    self.o   = SignalOut (   "o", 8 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenXor2', 'xor2_8'
+             , param = { 'nbit' : 8 
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'xor2_8', 'inst'
+                  , map = { 'i0'  : self.in1
+                          , 'i1'  : self.in2
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</PRE>
+</LI>
+</UL>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

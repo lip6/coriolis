@@ -1,0 +1,87 @@
+\hypertarget{classHurricane_1_1GenericFilter}{}\section{Hurricane\+:\+:Generic\+Filter$<$ Type $>$ Class Template Reference}
+\label{classHurricane_1_1GenericFilter}\index{Hurricane\+::\+Generic\+Filter$<$ Type $>$@{Hurricane\+::\+Generic\+Filter$<$ Type $>$}}
+
+
+Generic \hyperlink{classHurricane_1_1Filter}{Filter} auto-\/pointer.  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Generic\+Filter$<$ Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{classHurricane_1_1GenericFilter__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1GenericFilter_a1aae208fe9937dd3a6f706ceb8b3b9b4}{Generic\+Filter} (const \hyperlink{classHurricane_1_1Filter}{Filter}$<$ Type $>$ \&filter)
+\item 
+\hyperlink{classHurricane_1_1GenericFilter_adf44866e7507f45dd0d612743f2d9a71}{Generic\+Filter} (const \hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter}$<$ Type $>$ \&generic\+Filter)
+\item 
+\hyperlink{classHurricane_1_1GenericFilter_aac847f0c0d6ee640c54847e374287fe1}{Generic\+Filter} (\hyperlink{classHurricane_1_1Filter}{Filter}$<$ Type $>$ $\ast$filter)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Type$>$\newline
+class Hurricane\+::\+Generic\+Filter$<$ Type $>$}
+
+Generic \hyperlink{classHurricane_1_1Filter}{Filter} auto-\/pointer. 
+
+This class is an auto-\/pointer like wrapped around the raw filter. The database systematically returns filters wrapped inside \hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter}.
+
+\begin{DoxyParagraph}{Remark\+:}
+The destruction of a \hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter} triggers the destruction of the raw filter. 
+\end{DoxyParagraph}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHurricane_1_1GenericFilter_a1aae208fe9937dd3a6f706ceb8b3b9b4}\label{classHurricane_1_1GenericFilter_a1aae208fe9937dd3a6f706ceb8b3b9b4}} 
+\index{Hurricane\+::\+Generic\+Filter@{Hurricane\+::\+Generic\+Filter}!Generic\+Filter@{Generic\+Filter}}
+\index{Generic\+Filter@{Generic\+Filter}!Hurricane\+::\+Generic\+Filter@{Hurricane\+::\+Generic\+Filter}}
+\subsubsection{\texorpdfstring{Generic\+Filter()}{GenericFilter()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1GenericFilter}{Hurricane\+::\+Generic\+Filter}$<$ Type $>$\+::\hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter} (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Filter}{Filter}$<$ Type $>$ \&}]{filter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor from a raw \hyperlink{classHurricane_1_1Filter}{Filter}.
+
+\begin{DoxyParagraph}{Remark\+:}
+This constructor build a {\itshape copy} of the raw filter. So the originating filter can be safely deleted. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1GenericFilter_adf44866e7507f45dd0d612743f2d9a71}\label{classHurricane_1_1GenericFilter_adf44866e7507f45dd0d612743f2d9a71}} 
+\index{Hurricane\+::\+Generic\+Filter@{Hurricane\+::\+Generic\+Filter}!Generic\+Filter@{Generic\+Filter}}
+\index{Generic\+Filter@{Generic\+Filter}!Hurricane\+::\+Generic\+Filter@{Hurricane\+::\+Generic\+Filter}}
+\subsubsection{\texorpdfstring{Generic\+Filter()}{GenericFilter()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1GenericFilter}{Hurricane\+::\+Generic\+Filter}$<$ Type $>$\+::\hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter} (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter}$<$ Type $>$ \&}]{filter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor from a raw \hyperlink{classHurricane_1_1Filter}{Filter}.
+
+\begin{DoxyParagraph}{Remark\+:}
+This constructor build a {\itshape copy} of the raw filter. So the originating filter can be safely deleted. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1GenericFilter_aac847f0c0d6ee640c54847e374287fe1}\label{classHurricane_1_1GenericFilter_aac847f0c0d6ee640c54847e374287fe1}} 
+\index{Hurricane\+::\+Generic\+Filter@{Hurricane\+::\+Generic\+Filter}!Generic\+Filter@{Generic\+Filter}}
+\index{Generic\+Filter@{Generic\+Filter}!Hurricane\+::\+Generic\+Filter@{Hurricane\+::\+Generic\+Filter}}
+\subsubsection{\texorpdfstring{Generic\+Filter()}{GenericFilter()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1GenericFilter}{Hurricane\+::\+Generic\+Filter}$<$ Type $>$\+::\hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter} (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Filter}{Filter}$<$ Type $>$ $\ast$}]{filter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Constructor from a raw \hyperlink{classHurricane_1_1Filter}{Filter}.
+
+\begin{DoxyParagraph}{Remark\+:}
+This constructor do not build a copy of the raw filter. So the original raw filter must not be deleted. It\textquotesingle{}s deletion will occurs with the one of the \hyperlink{classHurricane_1_1GenericFilter}{Generic\+Filter}. 
+\end{DoxyParagraph}
+
+
+References Hurricane\+::\+Filter$<$ Type $>$\+::accept(), and Hurricane\+::\+Filter$<$ Type $>$\+::get\+Clone().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Filter.\+h\item 
+Filter.\+dox\end{DoxyCompactItemize}

@@ -1,0 +1,74 @@
+\hypertarget{classKatabatic_1_1GCell_1_1Key}{}\section{G\+Cell\+:\+:Key Class Reference}
+\label{classKatabatic_1_1GCell_1_1Key}\index{G\+Cell\+::\+Key@{G\+Cell\+::\+Key}}
+
+
+\hyperlink{classKatabatic_1_1GCell}{G\+Cell} \hyperlink{classKatabatic_1_1GCell_1_1Key}{Key} -\/ Density Cache.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classKatabatic_1_1GCell_1_1Key_a6efdb05badcc81d3d3013ce4730bbe6e}{Key} (\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$, unsigned int depth)
+\item 
+float \hyperlink{classKatabatic_1_1GCell_1_1Key_a9f45c741b4c738e833fe66fe125592b7}{get\+Density} () const
+\item 
+\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$ \hyperlink{classKatabatic_1_1GCell_1_1Key_a819cf639562a031a1e2e061fe1293d66}{get\+G\+Cell} () const
+\item 
+void \hyperlink{classKatabatic_1_1GCell_1_1Key_a1b9cfb06a645d2b0d93024bc6ff82e9e}{update} (unsigned int depth)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classKatabatic_1_1GCell}{G\+Cell} \hyperlink{classKatabatic_1_1GCell_1_1Key}{Key} -\/ Density Cache. 
+
+This class is used to create a \hyperlink{classKatabatic_1_1GCell}{G\+Cell} internal cache on density, mainly to be used by \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1GCell_1_1Key_a6efdb05badcc81d3d3013ce4730bbe6e}\label{classKatabatic_1_1GCell_1_1Key_a6efdb05badcc81d3d3013ce4730bbe6e}} 
+\index{Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}!Key@{Key}}
+\index{Key@{Key}!Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}}
+\subsubsection{\texorpdfstring{Key()}{Key()}}
+{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1GCell_1_1Key}{Key} (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$}]{owner,  }\item[{unsigned int}]{depth }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em owner} & The \hyperlink{classKatabatic_1_1GCell}{G\+Cell} owning the key. \\
+\hline
+{\em depth} & The layer {\ttfamily depth} of the density to use.\\
+\hline
+\end{DoxyParams}
+\hyperlink{classKatabatic_1_1GCell_1_1Key}{Key} constructor, with an initial value for the cached density. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1GCell_1_1Key_a9f45c741b4c738e833fe66fe125592b7}\label{classKatabatic_1_1GCell_1_1Key_a9f45c741b4c738e833fe66fe125592b7}} 
+\index{Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}!get\+Density@{get\+Density}}
+\index{get\+Density@{get\+Density}!Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}}
+\subsubsection{\texorpdfstring{get\+Density()}{getDensity()}}
+{\footnotesize\ttfamily float get\+Density (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The value of the cached density. \mbox{\Hypertarget{classKatabatic_1_1GCell_1_1Key_a819cf639562a031a1e2e061fe1293d66}\label{classKatabatic_1_1GCell_1_1Key_a819cf639562a031a1e2e061fe1293d66}} 
+\index{Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}!get\+G\+Cell@{get\+G\+Cell}}
+\index{get\+G\+Cell@{get\+G\+Cell}!Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}}
+\subsubsection{\texorpdfstring{get\+G\+Cell()}{getGCell()}}
+{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$ get\+G\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The owning \hyperlink{classKatabatic_1_1GCell}{G\+Cell}. \mbox{\Hypertarget{classKatabatic_1_1GCell_1_1Key_a1b9cfb06a645d2b0d93024bc6ff82e9e}\label{classKatabatic_1_1GCell_1_1Key_a1b9cfb06a645d2b0d93024bc6ff82e9e}} 
+\index{Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}!update@{update}}
+\index{update@{update}!Katabatic\+::\+G\+Cell\+::\+Key@{Katabatic\+::\+G\+Cell\+::\+Key}}
+\subsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void update (\begin{DoxyParamCaption}\item[{unsigned int}]{depth }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} Update the density 
+
+References G\+Cell\+::get\+Index(), and G\+Cell\+::get\+W\+Density().
+
+
+
+Referenced by G\+Cell\+::update\+Key().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+G\+Cell.\+h\item 
+G\+Cell.\+dox\end{DoxyCompactItemize}

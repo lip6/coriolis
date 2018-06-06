@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DpgenRf1d</TITLE>
+<META NAME="description" CONTENT="DpgenRf1d">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node34.html">
+<LINK REL="previous" HREF="node32.html">
+<LINK REL="up" HREF="dpgen.html">
+<LINK REL="next" HREF="node34.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node32.html">DpgenRf1</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node34.html">DpgenFifo</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000330000000000000000">
+DpgenRf1d</A>
+</H1>
+
+<UL>
+<LI><SPAN  CLASS="textbf">Name</SPAN> : DpgenRf1d, DpgenRf1dr0 - Register File with Decoder Macro-Generator
+</LI>
+<LI><SPAN  CLASS="textbf">Synopsys</SPAN> :
+<PRE>
+Generate ( 'DpgenRf1d', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True                   
+                   }
+         )
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Description</SPAN> : Generates a register file of <code>regNumber</code> words of <code>n</code> bits with decoder named <code>modelname</code>.
+</LI>
+<LI><SPAN  CLASS="textbf">Terminal Names</SPAN> :
+    
+<UL>
+<LI><SPAN  CLASS="textbf">ck</SPAN> : clock signal (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">sel</SPAN> : select the write bus (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">wen</SPAN> : write enable (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">ren</SPAN> : read enable (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">adr</SPAN> : the read address (input, <code>Y</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">adw</SPAN> : the write address (input, <code>Y</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">datain0</SPAN> : first write bus (input, <code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">datain1</SPAN> : second write bus (input, <code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">dataout</SPAN> : read bus (output, <code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">vdd</SPAN> : power
+</LI>
+<LI><SPAN  CLASS="textbf">vss</SPAN> : ground
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Parameters</SPAN> : Parameters are given in the map <code>param</code>.
+    
+<UL>
+<LI><SPAN  CLASS="textbf">nbit</SPAN> (mandatory) : Defines the size of the words  (even, between 2 and 64)
+</LI>
+<LI><SPAN  CLASS="textbf">nword</SPAN> (mandatory) : Defines the number of the words (even, between 6 and 32)
+</LI>
+<LI><SPAN  CLASS="textbf">physical</SPAN> (optional, default value : False) : In order to generate a layout    
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">How it works</SPAN> :
+    
+<UL>
+<LI>datain0 and datain1 are the two write busses. Only one is used to actually write the register word, it is selected by the sel signal.
+</LI>
+<LI>When sel is set to zero datain0 is used to write the register word, otherwise it will be datain1
+</LI>
+<LI>adr, adw : the width (Y) of those signals is computed from regNumber : <code>Y = log2(regNumber)</code>
+</LI>
+<LI>wen and ren : write enable and read enable, allows reading and writing when sets to <code>one</code>
+</LI>
+<LI>The DpgenRf1dr0 variant differs from the DpgenRf1d in that the register of address zero is stuck to zero. You can write into it, it will not change the value. When read, it will always return zero
+    
+</LI>
+</UL>    
+</LI>
+<LI><SPAN  CLASS="textbf">Example</SPAN> :
+<PRE>
+from stratus import *
+
+class inst_rf1d ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn  (       "ck", 1 )
+    self.sel     = SignalIn  (      "sel", 1 )
+    self.wen     = SignalIn  (      "wen", 1 )
+    self.ren     = SignalIn  (      "ren", 1 )
+    self.adr     = SignalIn  (      "adr", 4 )
+    self.adw     = SignalIn  (      "adw", 4 )
+    self.datain0 = SignalIn  (  "datain0", 4 )
+    self.datain1 = SignalIn  (  "datain1", 4 )
+    self.dataout = SignalOut (  "dataout", 4 )
+      
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenRf1d', 'rf1d_4_16'
+             , param = { 'nbit'     : 4
+                       , 'nword'    : 16
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'rf1d_4_16', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'sel'     : self.sel
+                          , 'wen'     : self.wen
+                          , 'ren'     : self.ren
+                          , 'adr'     : self.adr
+                          , 'adw'     : self.adw
+                          , 'datain0' : self.datain0
+                          , 'datain1' : self.datain1
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</PRE>
+</LI>
+</UL>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node32.html">DpgenRf1</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node34.html">DpgenFifo</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

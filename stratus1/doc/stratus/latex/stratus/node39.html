@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Register</TITLE>
+<META NAME="description" CONTENT="Register">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node40.html">
+<LINK REL="previous" HREF="node38.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node40.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node38.html">Shifter</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node40.html">Constants</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html921"
+  HREF="node39.html#SECTION00074100000000000000">Name</A>
+<LI><A NAME="tex2html922"
+  HREF="node39.html#SECTION00074200000000000000">Synopsys</A>
+<LI><A NAME="tex2html923"
+  HREF="node39.html#SECTION00074300000000000000">Description</A>
+<LI><A NAME="tex2html924"
+  HREF="node39.html#SECTION00074400000000000000">Example</A>
+<LI><A NAME="tex2html925"
+  HREF="node39.html#SECTION00074500000000000000">Errors</A>
+<LI><A NAME="tex2html926"
+  HREF="node39.html#SECTION00074600000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00074000000000000000"></A>
+    <A NAME="secreg"></A>
+<BR>
+Register
+</H2>
+    
+<H3><A NAME="SECTION00074100000000000000">
+Name</A>
+</H3>
+
+<P>
+Reg - Easy way to instantiate a register
+
+<P>
+
+<H3><A NAME="SECTION00074200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+netOut &lt;= netCk.Reg ( netIn )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00074300000000000000">
+Description</A>
+</H3>
+
+<P>
+This method is a method of net. The net which this method is applied to is the clock of the register. The net given as parameter is the input net. The method returns a net : the output net.
+<BR>
+Note that it is possible to change the generator instanciated with the <code>SetReg</code> method.
+
+<P>
+
+<H3><A NAME="SECTION00074400000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A  = SignalIn  (  "a", 4 )
+    self.S  = SignalOut (  "s", 4 )
+
+    self.Ck = CkIn ( "ck" )
+    
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S &lt;= self.Ck.Reg ( self.A )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00074500000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] Reg : The input net does not have a positive arity.</code>
+<BR>
+The input net must have a positive arity.
+</LI>
+<LI><code>[Stratus ERROR] Reg : The clock does not have a positive arity.</code>
+<BR>
+The clock must have a positive arity.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00074600000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node37.html#secmux"><SPAN  CLASS="textit">Instanciation of a multiplexor</SPAN></A>
+<A HREF="node40.html#secconstant"><SPAN  CLASS="textit">Instanciation of constants</SPAN></A>
+<A HREF="node41.html#secbool"><SPAN  CLASS="textit">Boolean operations</SPAN></A>
+<A HREF="node42.html#secarithmetic"><SPAN  CLASS="textit">Arithmetical operations</SPAN></A>
+<A HREF="node43.html#seccomp"><SPAN  CLASS="textit">Comparison operations</SPAN></A>
+
+<P>
+    <BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

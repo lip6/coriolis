@@ -16,6 +16,7 @@
  setup_boost()
  
  find_package(Libexecinfo REQUIRED)
+ find_package(Doxygen)
 
  if(WITH_OPENMP)
    find_package(OpenMP REQUIRED)
@@ -27,10 +28,4 @@
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
-
- if(BUILD_DOC)
-   find_package(Doxygen)
-#  if(DOXYGEN_FOUND)
-#    add_subdirectory(doc)
-#  endif()
- endif()
+#add_subdirectory(doc)

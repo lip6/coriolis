@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Instances</TITLE>
+<META NAME="description" CONTENT="Instances">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node9.html">
+<LINK REL="previous" HREF="node7.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node9.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node7.html">Nets</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node9.html">Generators</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html208"
+  HREF="node8.html#SECTION00032100000000000000">Name</A>
+<LI><A NAME="tex2html209"
+  HREF="node8.html#SECTION00032200000000000000">Synopsys</A>
+<LI><A NAME="tex2html210"
+  HREF="node8.html#SECTION00032300000000000000">Description</A>
+<LI><A NAME="tex2html211"
+  HREF="node8.html#SECTION00032400000000000000">Parameters</A>
+<LI><A NAME="tex2html212"
+  HREF="node8.html#SECTION00032500000000000000">Example</A>
+<LI><A NAME="tex2html213"
+  HREF="node8.html#SECTION00032600000000000000">Errors</A>
+<LI><A NAME="tex2html214"
+  HREF="node8.html#SECTION00032700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00032000000000000000"></A>
+    <A NAME="secinst"></A>
+<BR>
+Instances
+</H2>
+    
+<H3><A NAME="SECTION00032100000000000000">
+Name</A>
+</H3>
+
+<P>
+Inst - Creation of instances
+
+<P>
+
+<H3><A NAME="SECTION00032200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+Inst ( model
+     , name
+     , map = connectmap 
+     )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00032300000000000000">
+Description</A>
+</H3>
+
+<P>
+Instantiation of an instance. The type of the instance is given by the <code>model</code> parameter. The connexions are made thanks to the <code>connectmap</code> parameters.
+
+<P>
+
+<H3><A NAME="SECTION00032400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>Model</code> : Name of the mastercell of the instance to create (mandatory argument)
+</LI>
+<LI><code>name</code> : Name of the instance (optional)
+<BR>
+When this argument is not defined, the instance has a name created by default. This argument is usefull when one wants to create a layout as well. Indeed, the placement of the instances is much easier when the conceptor has chosen himself the name f the instances.&lt;/para&gt;
+</LI>
+<LI><code>connectmap</code> : Connexions in order to make the netlist
+<BR></LI>
+</UL>
+<code>param</code> and <code>map</code> are dictionnaries as shown in the example below.
+
+<P>
+
+<H3><A NAME="SECTION00032500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+Inst ( 'a2_x2'
+     , map = { 'i0'  : in0
+             , 'i1'  : in1
+             , 'q'   : out
+             , 'vdd' : vdd
+             , 'vss' : vss
+             }
+     )
+</PRE>
+
+<P>
+You can see a concrete example at : <A HREF="node5.html#secexample"><SPAN  CLASS="textit">Example</SPAN></A>
+
+<H3><A NAME="SECTION00032600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>Error in Inst : the model Model does not exist.</code>
+<BR><code>Check CRL_CATA_LIB.</code>
+<BR>
+Either one has made a mistake in the name of the model, either the environment variable is not correct.
+</LI>
+<LI><code>Error in Inst : port does not exist in model Model.</code>
+<BR>
+One port in map is not correct.
+</LI>
+<LI><code>Error in Inst : one input net is not dimensionned.</code>
+<BR>
+The size of the output nets is automatically calculated bus the input nets must be dimensionned before being connected.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00032700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node7.html">Nets</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node9.html">Generators</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

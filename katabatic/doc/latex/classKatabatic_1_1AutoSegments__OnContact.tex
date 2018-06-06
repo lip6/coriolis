@@ -1,0 +1,92 @@
+\hypertarget{classKatabatic_1_1AutoSegments__OnContact}{}\section{Auto\+Segments\+\_\+\+On\+Contact Class Reference}
+\label{classKatabatic_1_1AutoSegments__OnContact}\index{Auto\+Segments\+\_\+\+On\+Contact@{Auto\+Segments\+\_\+\+On\+Contact}}
+
+
+All \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} anchored on a Contact.  
+
+
+
+
+Inheritance diagram for Auto\+Segments\+\_\+\+On\+Contact\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=214pt]{classKatabatic_1_1AutoSegments__OnContact__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classKatabatic_1_1AutoSegments__OnContact_af3f727d0c0fe394da508f52a6c9e4b90}{Auto\+Segments\+\_\+\+On\+Contact} (\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} $\ast$master, \textbf{ Contact} $\ast$contact)
+\item 
+\hyperlink{classKatabatic_1_1AutoSegments__OnContact_ab6ff1773c5335fe496f61f2703a5ac99}{Auto\+Segments\+\_\+\+On\+Contact} (const \hyperlink{classKatabatic_1_1AutoSegments__OnContact}{Auto\+Segments\+\_\+\+On\+Contact} \&)
+\item 
+virtual \hyperlink{namespaceKatabatic_acb3628dc7705fefe38a665cfe43efa6e}{Auto\+Segment\+HC} $\ast$ \hyperlink{classKatabatic_1_1AutoSegments__OnContact_a5b26b0698bdcb40cbf51b250dfb21858}{get\+Clone} () const
+\item 
+virtual \hyperlink{namespaceKatabatic_a40ef13471fd0e797b75d3c436813fe65}{Auto\+Segment\+HL} $\ast$ \hyperlink{classKatabatic_1_1AutoSegments__OnContact_a07665c070fcc269aec02ce842f384483}{get\+Locator} () const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+All \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} anchored on a Contact. 
+
+All \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} Beginning from an \hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}.
+
+A Collection to iterate over all the \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} anchored on {\ttfamily contact}. If supplied, the \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} {\ttfamily master} will be excluded from the list.
+
+\begin{DoxyParagraph}{Remark\+:}
+If a \textbf{ Hurricane\+::\+Segment} is anchored on the {\ttfamily contact}, but is not associated to an \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}, it will be silently skipped.
+\end{DoxyParagraph}
+A Collection to iterate over all the \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} that begin from \hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}. As Auto\+Segments are kept orienteds (source anchor must be lower than target), selecting source anchored Auto\+Segments implies that they are starting from this \hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1AutoSegments__OnContact_af3f727d0c0fe394da508f52a6c9e4b90}\label{classKatabatic_1_1AutoSegments__OnContact_af3f727d0c0fe394da508f52a6c9e4b90}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}!Auto\+Segments\+\_\+\+On\+Contact@{Auto\+Segments\+\_\+\+On\+Contact}}
+\index{Auto\+Segments\+\_\+\+On\+Contact@{Auto\+Segments\+\_\+\+On\+Contact}!Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}}
+\subsubsection{\texorpdfstring{Auto\+Segments\+\_\+\+On\+Contact()}{AutoSegments\_OnContact()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1AutoSegments__OnContact}{Auto\+Segments\+\_\+\+On\+Contact} (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} $\ast$}]{master,  }\item[{\textbf{ Contact} $\ast$}]{contact }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em master} & Exclude this \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} from the Collection. \\
+\hline
+{\em contact} & The Hurricane Contact over which to iterate.\\
+\hline
+\end{DoxyParams}
+Construct a Collection of all the \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} anchored on {\ttfamily contact}.
+
+Create the collection of all Auto\+Segments direcly anchored on {\ttfamily contact}, with exclusion of {\ttfamily master}. \mbox{\Hypertarget{classKatabatic_1_1AutoSegments__OnContact_ab6ff1773c5335fe496f61f2703a5ac99}\label{classKatabatic_1_1AutoSegments__OnContact_ab6ff1773c5335fe496f61f2703a5ac99}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}!Auto\+Segments\+\_\+\+On\+Contact@{Auto\+Segments\+\_\+\+On\+Contact}}
+\index{Auto\+Segments\+\_\+\+On\+Contact@{Auto\+Segments\+\_\+\+On\+Contact}!Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}}
+\subsubsection{\texorpdfstring{Auto\+Segments\+\_\+\+On\+Contact()}{AutoSegments\_OnContact()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1AutoSegments__OnContact}{Auto\+Segments\+\_\+\+On\+Contact} (\begin{DoxyParamCaption}\item[{const \hyperlink{classKatabatic_1_1AutoSegments__OnContact}{Auto\+Segments\+\_\+\+On\+Contact} \&}]{segments }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Copy constructor. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1AutoSegments__OnContact_a5b26b0698bdcb40cbf51b250dfb21858}\label{classKatabatic_1_1AutoSegments__OnContact_a5b26b0698bdcb40cbf51b250dfb21858}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}!get\+Clone@{get\+Clone}}
+\index{get\+Clone@{get\+Clone}!Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}}
+\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+{\footnotesize\ttfamily \hyperlink{namespaceKatabatic_acb3628dc7705fefe38a665cfe43efa6e}{Auto\+Segment\+HC} $\ast$ get\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} A deep copy of the Collection. 
+
+Implements \textbf{ Collection$<$ Type $>$}.
+
+\mbox{\Hypertarget{classKatabatic_1_1AutoSegments__OnContact_a07665c070fcc269aec02ce842f384483}\label{classKatabatic_1_1AutoSegments__OnContact_a07665c070fcc269aec02ce842f384483}} 
+\index{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}!get\+Locator@{get\+Locator}}
+\index{get\+Locator@{get\+Locator}!Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact@{Katabatic\+::\+Auto\+Segments\+\_\+\+On\+Contact}}
+\subsubsection{\texorpdfstring{get\+Locator()}{getLocator()}}
+{\footnotesize\ttfamily \hyperlink{namespaceKatabatic_acb3628dc7705fefe38a665cfe43efa6e}{Auto\+Segment\+HC} $\ast$ get\+Locator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} A deep copy of the Collection Locator. 
+
+Implements \textbf{ Collection$<$ Type $>$}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Auto\+Segments.\+h\item 
+Auto\+Segments.\+dox\end{DoxyCompactItemize}

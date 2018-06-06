@@ -1,0 +1,286 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Example</TITLE>
+<META NAME="description" CONTENT="Example">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="previous" HREF="node4.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node6.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node4.html">Stratus</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node3.html">Introduction</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node6.html">Description of a netlist</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html133"
+  HREF="node5.html#SECTION00022100000000000000">The addaccu circuit</A>
+<LI><A NAME="tex2html134"
+  HREF="node5.html#SECTION00022200000000000000">The data-path</A>
+<LI><A NAME="tex2html135"
+  HREF="node5.html#SECTION00022300000000000000">Description of the circuit with <SPAN  CLASS="textit">Stratus</SPAN> : file addaccu.py</A>
+<LI><A NAME="tex2html136"
+  HREF="node5.html#SECTION00022400000000000000">Creation of the circuit : file test.py</A>
+<LI><A NAME="tex2html137"
+  HREF="node5.html#SECTION00022500000000000000">How to execute the file</A>
+<LI><A NAME="tex2html138"
+  HREF="node5.html#SECTION00022600000000000000">The editor</A>
+<LI><A NAME="tex2html139"
+  HREF="node5.html#SECTION00022700000000000000">Function Param</A>
+<LI><A NAME="tex2html140"
+  HREF="node5.html#SECTION00022800000000000000">How to instanciate your generator in another generator</A>
+<LI><A NAME="tex2html141"
+  HREF="node5.html#SECTION00022900000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00022000000000000000"></A>
+    <A NAME="secexample"></A>
+<BR>
+Example
+</H2>
+    
+<H3><A NAME="SECTION00022100000000000000">
+The addaccu circuit</A>
+</H3>
+
+<P>
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="636" HEIGHT="236" ALIGN="BOTTOM" BORDER="0"
+ SRC="./add1.png"
+ ALT="Image add1">
+
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00022200000000000000">
+The data-path</A>
+</H3>
+
+<P>
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="750" HEIGHT="547" ALIGN="BOTTOM" BORDER="0"
+ SRC="./add2.png"
+ ALT="Image add2">
+
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00022300000000000000">
+Description of the circuit with <SPAN  CLASS="textit">Stratus</SPAN> : file addaccu.py</A>
+</H3>
+
+<P>
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="950" HEIGHT="849" ALIGN="BOTTOM" BORDER="0"
+ SRC="./addaccu1.png"
+ ALT="Image addaccu1">
+
+</DIV>
+
+<P>
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="950" HEIGHT="369" ALIGN="BOTTOM" BORDER="0"
+ SRC="./addaccu2.png"
+ ALT="Image addaccu2">
+
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00022400000000000000">
+Creation of the circuit : file test.py</A>
+</H3>
+
+<P>
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="960" HEIGHT="275" ALIGN="BOTTOM" BORDER="0"
+ SRC="./test.png"
+ ALT="Image test">
+
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00022500000000000000">
+How to execute the file</A>
+</H3>
+
+<P>
+<PRE>
+python test.py -n 4
+</PRE>
+or :
+<PRE>
+chmod u+x test.py
+./test -n 4
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00022600000000000000">
+The editor</A>
+</H3>
+
+<P>
+The method <code>View</code> permits to open an editor in which one can see the cell being created as shown in the picture below.
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="473" HEIGHT="690" ALIGN="BOTTOM" BORDER="0"
+ SRC="./editor.png"
+ ALT="Image editor">
+
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00022700000000000000">
+Function Param</A>
+</H3>
+
+<P>
+This function allows the user to give parameters when creating a cell.
+<BR>
+When one wants to give values to two parameters, one can type on the shell :
+<PRE>
+python test.py -n 4 -w 8
+</PRE>
+The file <code>test.py</code> has then to contain :
+<PRE>
+nbit, nword = Param ( "n", "w" )
+</PRE>
+The letters typed on the shell must be the ones given as parameters of function <code>Param</code>.
+
+<P>
+
+<H3><A NAME="SECTION00022800000000000000">
+How to instanciate your generator in another generator</A>
+</H3>
+
+<P>
+One can create a generator and instantiate it in another generator.
+<BR>
+To do that, the model name of the generator must have the form : "file_name.class_name".
+<BR>
+Note that if the two generators are not in the same directory, the directory of the generator to be instantiated has to be added in the CRL_CATA_LIB environment variable.
+<BR>
+<P>
+For example, in order to instanciate the addaccu created above in a cell :
+<PRE>
+n = 4
+Generate ( "addaccu.addaccu", "my_addaccu_%dbits" % n
+         , param = { 'nbit' : n } )
+
+Inst ( "my_addaccu_%dbits" % n
+     , map = { 'a'    : self.netA
+             , 'b'    : self.netB
+             , 'c'    : self.netC
+             , 'v'    : self.netV
+             , 'cmd'  : self.netCmd
+             , 'cout' : self.netCout
+             , 's'    : self.netS
+             , 'vdd'  : self.vdd
+             , 'vss'  : self.vss
+             }
+     )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00022900000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node10.html#seclayout"><SPAN  CLASS="textit">Layout</SPAN></A>
+<A HREF="node20.html#secroute"><SPAN  CLASS="textit">Place and Route</SPAN></A>
+<A HREF="node44.html#seclibrary"><SPAN  CLASS="textit">Virtual libraty</SPAN></A>
+<A HREF="node35.html#secfacilities"><SPAN  CLASS="textit">Instanciation facilities</SPAN></A>
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node4.html">Stratus</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node3.html">Introduction</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node6.html">Description of a netlist</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

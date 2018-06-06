@@ -8,11 +8,13 @@
                                      tabs.css
                    )
 
+ if(BUILD_DOC and DOXYGEN_FOUND)
  add_custom_target ( doc ALL
                         cd ${KATABATIC_SOURCE_DIR}/doc
                      && ${DOXYGEN_EXECUTABLE} doxyfile
                      && cp -f ${doxExtras} html
                    )
+ endif()
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
            install ( DIRECTORY latex/               DESTINATION ${latexInstallDir} )

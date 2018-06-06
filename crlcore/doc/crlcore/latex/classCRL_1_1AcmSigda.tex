@@ -1,0 +1,54 @@
+\hypertarget{classCRL_1_1AcmSigda}{}\section{C\+RL\+:\+:Acm\+Sigda Class Reference}
+\label{classCRL_1_1AcmSigda}\index{C\+R\+L\+::\+Acm\+Sigda@{C\+R\+L\+::\+Acm\+Sigda}}
+
+
+A Parser of A\+C\+M/\+Sigda 89\textquotesingle{} benchmarks.  
+
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \textbf{ Cell} $\ast$ \hyperlink{classCRL_1_1AcmSigda_a5e61fb60049f5a2dca1f2ca05fd5857a}{load} (std\+::string benchmark)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A Parser of A\+C\+M/\+Sigda 89\textquotesingle{} benchmarks. 
+
+Thoses benches are also known as the M\+C\+NC or I\+S\+C\+A\+S98.
+
+The generic cells have been mapped into the sxlib Alliance library in a straighforward way. \begin{center} \tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Boolean Function}&\textbf{ Sx\+Lib mapping }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Boolean Function}&\textbf{ Sx\+Lib mapping }\\\cline{1-2}
+\endhead
+{\ttfamily N\+OT} &\textbf{ {\ttfamily inv\+\_\+x1} }\\\cline{1-2}
+{\ttfamily B\+U\+FF} &\textbf{ {\ttfamily buff\+\_\+x2} }\\\cline{1-2}
+{\ttfamily A\+ND} &\textbf{ {\ttfamily a2\+\_\+x2}, {\ttfamily a3\+\_\+x2}, {\ttfamily a4\+\_\+x4} }\\\cline{1-2}
+{\ttfamily N\+A\+ND} &\textbf{ {\ttfamily na2\+\_\+x1}, {\ttfamily na3\+\_\+x1}, {\ttfamily na4\+\_\+x1} }\\\cline{1-2}
+{\ttfamily OR} &\textbf{ {\ttfamily o2\+\_\+x2}, {\ttfamily o3\+\_\+x3}, {\ttfamily o4\+\_\+x4} }\\\cline{1-2}
+{\ttfamily N\+OR} &\textbf{ {\ttfamily no2\+\_\+x1}, {\ttfamily no3\+\_\+x1}, {\ttfamily no4\+\_\+x1} }\\\cline{1-2}
+{\ttfamily X\+OR} &\textbf{ {\ttfamily xr2\+\_\+x1} }\\\cline{1-2}
+{\ttfamily X\+N\+OR} &\textbf{ {\ttfamily nxr2\+\_\+x1} }\\\cline{1-2}
+{\ttfamily D\+FF} &\textbf{ {\ttfamily sff1\+\_\+x4} }\\\cline{1-2}
+\end{longtabu}
+\end{center}  
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classCRL_1_1AcmSigda_a5e61fb60049f5a2dca1f2ca05fd5857a}\label{classCRL_1_1AcmSigda_a5e61fb60049f5a2dca1f2ca05fd5857a}} 
+\index{C\+R\+L\+::\+Acm\+Sigda@{C\+R\+L\+::\+Acm\+Sigda}!load@{load}}
+\index{load@{load}!C\+R\+L\+::\+Acm\+Sigda@{C\+R\+L\+::\+Acm\+Sigda}}
+\subsubsection{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily \textbf{ Cell} $\ast$ C\+R\+L\+::\+Acm\+Sigda\+::load (\begin{DoxyParamCaption}\item[{std\+::string}]{benchname }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Load the bench {\ttfamily name} into Coriolis. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Acm\+Sigda.\+h\item 
+Acm\+Sigda.\+dox\end{DoxyCompactItemize}

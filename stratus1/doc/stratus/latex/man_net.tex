@@ -1,0 +1,118 @@
+\subsubsection{Name}
+
+SignalIn, SignalOut ... -- Creation of nets
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+netA = SignalIn ( "a", 4 )
+\end{verbatim}
+
+\subsubsection{Description}
+
+How to create and use nets.
+
+\subsubsection{Nets}
+
+Differents kind of nets are listed below :
+\begin{itemize}
+    \item \verb-SignalIn- : Creation of an input port
+    \item \verb-SignalOut- : Creation of an output port
+    \item \verb-SignalInOut- : Creation of an inout port
+    \item \verb-SignalUnknown- : Creation of an input/output port which direction is not defined
+    \item \verb-TriState- : Creation of a tristate port
+    \item \verb-CkIn- : Creation of a clock port
+    \item \verb-VddIn- : Creation of the vdd alimentation
+    \item \verb-VssIn- : Creation of the vss alimentation
+    \item \verb-Signal- : Creation of an internal net
+\end{itemize}
+        
+\subsubsection{Parameters}
+
+All kind of constructors have the same parameters :
+\begin{itemize}
+    \item \verb-name- : the name of the net (mandatory argument)
+    \item \verb-arity- : the arity of the net (mandatory argument)
+    \item \verb-indice- : for bit vectors only : the LSB bit (optional argument : set to 0 by default)
+\end{itemize}
+
+\indent Only \verb-CkIn-, \verb-VddIn- and \verb-VssIn- do not have the same parameters : there is only the \verb-name- parameter (they are 1 bit nets).
+    
+\subsubsection{Functions and methods}
+
+Some functions/methods are provided in order to handle nets :
+\begin{itemize}
+    \item function \verb-Cat- : Concatenation of nets, beginning with the MSB
+\begin{verbatim}
+Inst ( 'DpgenInv'
+     , map = { 'i0'  : Cat ( A, B )
+             , 'nq'  : S
+             , 'vdd' : vdd
+             , 'vss' : vss
+             }
+     )
+\end{verbatim}
+\indent Or :
+\begin{verbatim}
+tab = []
+tab.append ( A )
+tab.append ( B )
+
+Inst ( 'DpgenInv'
+     , map = { 'i0'  : Cat ( tab )
+             , 'nq'  : S
+             , 'vdd' : vdd
+             , 'vss' : vss
+             }
+     )
+\end{verbatim}
+\indent If A and B are 2 bits nets, the net \verb-myNet- will be such as :
+\begin{verbatim}
+myNet[3] = A[1]
+myNet[2] = A[0]
+myNet[1] = B[1]
+myNet[0] = B[0]
+\end{verbatim}
+    \item function \verb-Extend- : Creation of a net which is an extension of the net which it is applied to
+\begin{verbatim}
+temp    = Signal (     "temp", 5 )
+tempExt = Signal ( "temp_ext", 8 )
+
+tempExt <= temp.Extand ( 8, 'one' )
+\end{verbatim}
+    \item method \verb-Alias- : Creation of an alias name for a net
+\begin{verbatim}
+cin.Alias  ( c_temp[0] )
+cout.Alias ( c_temp[4] )
+for i in range ( 4 ) :
+  Inst ( "Fulladder"
+       , map = { 'a'    : a[i]
+               , 'b'    : b[i]
+               , 'cin'  : c_temp[i]
+               , 'sout' : sout[i]
+               , 'cout' : c_temp[i+1]
+               , 'vdd'  : vdd
+               , 'vss'  : vss
+               }
+       )    
+\end{verbatim}
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{Example}
+
+You can see a concrete example at : \hyperref[ref]{\emph{Example}}{}{Example}{secexample}
+
+\end{htmlonly}
+    
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-Error in SignalIn :-\\\verb-the lenght of the net must be a positive value.-\\One can not create a net with a negative lenght.
+\end{itemize}
+
+\begin{htmlonly}
+\input{see_also}
+\end{htmlonly}

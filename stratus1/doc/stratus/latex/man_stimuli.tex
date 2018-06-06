@@ -1,0 +1,13 @@
+The stimuli used for the simulation are described in a \verb-Stimuli- method. This method is a Python function generator that is automatically called by the \verb-Testbench- method to generate all the stimuli. As a Python function generator, the \verb-yield- instruction have to be used at the end of each stimuli computation.
+
+\subsubsection{Affect value to signals}
+The method \verb-affect- permits to affect a value to a given signal as follow
+\begin{verbatim}
+self._stim.affect(self.Ck,0)
+\end{verbatim}
+
+\subsubsection{Add stimuli}
+The method \verb-add- permits to finish a step of simulation by add all the values to the current stimuli
+\begin{verbatim}
+self._stim.add()
+\end{verbatim}

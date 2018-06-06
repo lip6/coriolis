@@ -23,8 +23,5 @@
 
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
-
- if(BUILD_DOC AND DOXYGEN_FOUND)
-   add_subdirectory(doc)
-   add_subdirectory(examples)
- endif(BUILD_DOC AND DOXYGEN_FOUND)
+ add_subdirectory(doc)
+ add_subdirectory(examples)

@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DpgenNor2mask</TITLE>
+<META NAME="description" CONTENT="DpgenNor2mask">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node23.html">
+<LINK REL="previous" HREF="node21.html">
+<LINK REL="up" HREF="dpgen.html">
+<LINK REL="next" HREF="node23.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node21.html">DpgenNand2mask</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node23.html">DpgenXnor2mask</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000220000000000000000">
+DpgenNor2mask</A>
+</H1> 
+
+<UL>
+<LI><SPAN  CLASS="textbf">Name</SPAN> : DpgenNor2mask - Programmable Mask Macro-Generator
+</LI>
+<LI><SPAN  CLASS="textbf">Synopsys</SPAN> :
+<PRE>
+Generate ( 'DpgenNor2mask', modelname
+         , param = { 'nbit'       : n
+                   , 'const'      : constVal 
+                   , 'physical'   : True
+                   , 'behavioral' : True                   
+                   }
+         )
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Description</SPAN> : Generates a <code>n</code> bits conditionnal NOR mask named <code>modelname</code>.
+</LI>
+<LI><SPAN  CLASS="textbf">Terminal Names</SPAN> :
+    
+<UL>
+<LI><SPAN  CLASS="textbf">cmd</SPAN> : mask control ( 1 bit )
+</LI>
+<LI><SPAN  CLASS="textbf">i0</SPAN> : input ( <code>n</code> bits )
+</LI>
+<LI><SPAN  CLASS="textbf">nq</SPAN> : output ( <code>n</code> bits )
+</LI>
+<LI><SPAN  CLASS="textbf">vdd</SPAN> : power
+</LI>
+<LI><SPAN  CLASS="textbf">vss</SPAN> : ground
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Parameters</SPAN> : Parameters are given in the map <code>param</code>.
+    
+<UL>
+<LI><SPAN  CLASS="textbf">nbit</SPAN> (mandatory) : Defines the size of the generator
+</LI>
+<LI><SPAN  CLASS="textbf">const</SPAN> (mandatory) : Defines the constant (string beginning with 0b, 0x or 0o functions of the basis)
+</LI>
+<LI><SPAN  CLASS="textbf">physical</SPAN> (optional, default value : False) : In order to generate a layout
+</LI>
+<LI><SPAN  CLASS="textbf">behavioral</SPAN> (optional, default value : False) : In order to generate a behavior        
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">How it works</SPAN> :
+    
+<UL>
+<LI>If the <code>cmd</code> signal is set to <code>zero</code>, the mask is NOT applied, so the whole operator behaves like an inverter.
+</LI>
+<LI>If the <code>cmd</code> signal is set to <code>one</code>, the mask is applied, the output is the <SPAN  CLASS="textit">complemented</SPAN> result of the input value <SPAN  CLASS="textit">ORed</SPAN> with the mask (suplied by <code>constVal</code>).
+</LI>
+<LI>The constant <code>constVal</code> is given to the macro-generator call, therefore the value cannot be changed afterward : it's hard wired in the operator.
+</LI>
+<LI>A common error is to give a real constant for the <code>constVal</code> argument. Be aware that it is a character string.
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Behavior</SPAN> :
+<PRE>
+nq &lt;= WITH cmd SELECT not(i0)             WHEN '0',
+                      not(i0 or constVal) WHEN '1';
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Example</SPAN> :
+<PRE>
+from stratus import *
+
+class inst_nor2mask ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   "i", 8 )
+    self.cmd = SignalIn  ( "cmd", 1 )
+    self.o   = SignalOut (   "o", 8 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenNor2mask', 'nor2mask_000111'
+             , param = { 'nbit'     : 8
+                       , 'const'    : "0b000111"
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nor2mask_000111', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</PRE>
+</LI>
+</UL>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node21.html">DpgenNand2mask</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node23.html">DpgenXnor2mask</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

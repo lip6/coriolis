@@ -1,0 +1,76 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenAdsb2f -- Adder/Substractor Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenAdsb2f', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a \verb-n- bits adder/substractor named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{i0} : First operand (input, \verb-n- bits)
+        \item \textbf{i1} : Second operand (input, \verb-n- bits)
+        \item \textbf{q} : Output operand (ouput, \verb-n- bits)
+        \item \textbf{add\_sub} : Select addition or substraction (input, 1 bit)
+        \item \textbf{c31} : Sarry out. In unsigned mode, this is the overflow (output, 1 bit)
+        \item \textbf{c30} : Used to compute overflow in signed mode : \verb-overflow = c31 xor c30- (output, 1 bit)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior
+    \end{itemize}
+    \item \textbf{How it works} :
+    \begin{itemize}
+        \item If the \verb-add_sub- signal is set to \verb-zero-, an addition is performed, otherwise it's a substraction.
+        \item Operation can be either signed or unsigned. In unsigned mode \verb-c31- is the overflow ; in signed mode you have to compute overflow by \emph{XORing} \verb-c31- and \verb-c30-
+    \end{itemize}    
+%    \item \textbf{Behavior} :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_ADSB2F ( Model ) :
+
+  def Interface ( self ) :
+    self.in1 = SignalIn  ( "in1", 8 )
+    self.in2 = SignalIn  ( "in2", 8 )
+    self.out = SignalOut (   "o", 8 )
+    self.as  = SignalIn  (  "as", 1 )
+    self.c0  = SignalOut (  "c0", 1 )
+    self.c1  = SignalOut (  "c1", 1 )
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenAdsb2f', 'adder_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )       
+    self.I = Inst ( 'adder_8', 'inst'
+                  , map = { 'i0'      : self.in1
+                          , 'i1'      : self.in2
+                          , 'add_sub' : self.as
+                          , 'q'       : self.out
+                          , 'c30'     : self.c0
+                          , 'c31'     : self.c1
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )
+      
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

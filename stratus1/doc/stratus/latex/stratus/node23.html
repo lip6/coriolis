@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>PlacePin</TITLE>
+<META NAME="description" CONTENT="PlacePin">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node24.html">
+<LINK REL="previous" HREF="node22.html">
+<LINK REL="up" HREF="node20.html">
+<LINK REL="next" HREF="node24.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node22.html">PlaceContact</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node24.html">PlaceRef</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html609"
+  HREF="node23.html#SECTION00063100000000000000">Name</A>
+<LI><A NAME="tex2html610"
+  HREF="node23.html#SECTION00063200000000000000">Synopsys</A>
+<LI><A NAME="tex2html611"
+  HREF="node23.html#SECTION00063300000000000000">Description</A>
+<LI><A NAME="tex2html612"
+  HREF="node23.html#SECTION00063400000000000000">Parameters</A>
+<LI><A NAME="tex2html613"
+  HREF="node23.html#SECTION00063500000000000000">Example</A>
+<LI><A NAME="tex2html614"
+  HREF="node23.html#SECTION00063600000000000000">Errors</A>
+<LI><A NAME="tex2html615"
+  HREF="node23.html#SECTION00063700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00063000000000000000"></A>
+    <A NAME="secpin"></A>
+<BR>
+PlacePin
+</H2>
+    
+<H3><A NAME="SECTION00063100000000000000">
+Name</A>
+</H3>
+
+<P>
+PlacePin - Places a pin
+
+<P>
+
+<H3><A NAME="SECTION00063200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+PlacePin ( net, layer, direction, point, width, height )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00063300000000000000">
+Description</A>
+</H3>
+
+<P>
+Placement of a pin.
+<BR>
+The pin is located at the coodinates of <code>point</code>, on the layer <code>layer</code>, has a a direction of <code>direction</code> and size of 1 per 1. It belongs to the net <code>net</code>.
+
+<P>
+
+<H3><A NAME="SECTION00063400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>net</code> : Net which the pin belongs to
+</LI>
+<LI><code>layer</code> : Layer of the segment.
+<BR>
+The <code>layer</code> argument is a string wich can take different values, thanks to the technology (file described in HUR_TECHNO_NAME)
+    
+<UL>
+<LI>NWELL, PWELL, ptie, ntie, pdif, ndif, ntrans, ptrans, poly, ALU1, ALU2, ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT, UNDEF, SPL1, TALU1, TALU2, TALU3, TALU4, TALU5, TALU6, POLY, NTIE, PTIE, NDIF, PDIF, PTRANS, NTRANS, CALU1, CALU2, CALU3, CALU4, CALU5, CALU6, CONT_POLY, CONT_DIF_N, CONT_DIF_P, CONT_BODY_N, CONT_BODY_P, via12, via23, via34, via45, via56, via24, via25, via26, via35, via36, via46, CONT_TURN1, CONT_TURN2, CONT_TURN3, CONT_TURN4, CONT_TURN5, CONT_TURN6
+    
+</LI>
+</UL>
+</LI>
+<LI><code>direction</code> : Direction of the pin
+    
+<UL>
+<LI>UNDEFINED, NORTH, SOUTH, EAST, WEST
+    
+</LI>
+</UL>
+</LI>
+<LI><code>point</code> : Coodinates of the pin
+</LI>
+<LI><code>width</code> : Width of the pin
+</LI>
+<LI><code>height</code> : Height of the pin
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00063500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+PlacePin ( myNet, "ALU2", NORTH, XY (10, 0), 2, 2 )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00063600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] PlacePin : Argument layer must be a string.</code>
+</LI>
+<LI><code>[Stratus ERROR] PlacePin : Illegal pin access direction.</code>
+<BR><code>The values are : UNDEFINED, NORTH, SOUTH, EAST, WEST.</code>
+</LI>
+<LI><code>[Stratus ERROR] PlacePin : Wrong argument,</code>
+<BR><code>the coordinates of the pin must be put in a XY object.</code>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00063700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node10.html#seclayout"><SPAN  CLASS="textit">Layout</SPAN></A>
+<A HREF="node21.html#secsegment"><SPAN  CLASS="textit">PlaceSegment</SPAN></A>
+<A HREF="node22.html#seccontact"><SPAN  CLASS="textit">PlaceContact</SPAN></A>
+<A HREF="node24.html#secref"><SPAN  CLASS="textit">PlaceRef</SPAN></A>
+<A HREF="node25.html#secgetref"><SPAN  CLASS="textit">GetRefXY</SPAN></A>
+<A HREF="node26.html#seccopy"><SPAN  CLASS="textit">CopyUpSegment</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node22.html">PlaceContact</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node24.html">PlaceRef</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

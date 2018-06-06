@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DpgenBuse</TITLE>
+<META NAME="description" CONTENT="DpgenBuse">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node21.html">
+<LINK REL="previous" HREF="node19.html">
+<LINK REL="up" HREF="dpgen.html">
+<LINK REL="next" HREF="node21.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node19.html">DpgenNbuse</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node21.html">DpgenNand2mask</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000200000000000000000">
+DpgenBuse</A>
+</H1>
+
+<UL>
+<LI><SPAN  CLASS="textbf">Name</SPAN> : DpgenBuse - Tristate Macro-Generator
+</LI>
+<LI><SPAN  CLASS="textbf">Synopsys</SPAN> :
+<PRE>
+Generate ( 'DpgenBuse', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True         
+                   }
+         )
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Description</SPAN> : Generates a <code>n</code> bits tristate named <code>modelname</code>.
+</LI>
+<LI><SPAN  CLASS="textbf">Terminal Names</SPAN> :
+    
+<UL>
+<LI><SPAN  CLASS="textbf">cmd</SPAN> : select ( 1 bit )
+</LI>
+<LI><SPAN  CLASS="textbf">i0</SPAN> : input ( <code>n</code> bits )
+</LI>
+<LI><SPAN  CLASS="textbf">q</SPAN> : output ( <code>n</code> bits )
+</LI>
+<LI><SPAN  CLASS="textbf">vdd</SPAN> : power
+</LI>
+<LI><SPAN  CLASS="textbf">vss</SPAN> : ground
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Parameters</SPAN> : Parameters are given in the map <code>param</code>.
+    
+<UL>
+<LI><SPAN  CLASS="textbf">nbit</SPAN> (mandatory) : Defines the size of the generator
+</LI>
+<LI><SPAN  CLASS="textbf">physical</SPAN> (optional, default value : False) : In order to generate a layout
+</LI>
+<LI><SPAN  CLASS="textbf">behavioral</SPAN> (optional, default value : False) : In order to generate a behavior        
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Behavior</SPAN> :
+<PRE>
+nts:BLOCK(cmd = '1') BEGIN
+    q &lt;= GUARDED i0;
+END
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Example</SPAN> :
+<PRE>
+from stratus import *
+
+class inst_buse ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   "i", 8 )
+    self.cmd = SignalIn  ( "cmd", 1 )
+    self.o   = SignalOut (   "o", 8 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenBuse', 'buse_8'
+             , param = { 'nbit'     : 8
+                       , 'physical' : True
+                       }
+             )      
+    self.I = Inst ( 'buse_8', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'q'   : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</PRE>
+</LI>
+</UL>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

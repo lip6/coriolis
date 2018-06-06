@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Place and Route</TITLE>
+<META NAME="description" CONTENT="Place and Route">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node35.html">
+<LINK REL="previous" HREF="node19.html">
+<LINK REL="up" HREF="stratus.html">
+<LINK REL="next" HREF="node21.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node19.html">Description of the stimuli</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="stratus.html">Stratus User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node21.html">PlaceSegment</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00060000000000000000"></A>
+<A NAME="secroute"></A>
+<BR>
+Place and Route
+</H1>
+
+<P>
+<BR> <HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html461"
+  HREF="node21.html">PlaceSegment</A>
+<UL>
+<LI><A NAME="tex2html462"
+  HREF="node21.html#SECTION00061100000000000000">Name</A>
+<LI><A NAME="tex2html463"
+  HREF="node21.html#SECTION00061200000000000000">Synopsys</A>
+<LI><A NAME="tex2html464"
+  HREF="node21.html#SECTION00061300000000000000">Description</A>
+<LI><A NAME="tex2html465"
+  HREF="node21.html#SECTION00061400000000000000">Parameters</A>
+<LI><A NAME="tex2html466"
+  HREF="node21.html#SECTION00061500000000000000">Example</A>
+<LI><A NAME="tex2html467"
+  HREF="node21.html#SECTION00061600000000000000">Errors</A>
+<LI><A NAME="tex2html468"
+  HREF="node21.html#SECTION00061700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html469"
+  HREF="node22.html">PlaceContact</A>
+<UL>
+<LI><A NAME="tex2html470"
+  HREF="node22.html#SECTION00062100000000000000">Name</A>
+<LI><A NAME="tex2html471"
+  HREF="node22.html#SECTION00062200000000000000">Synopsys</A>
+<LI><A NAME="tex2html472"
+  HREF="node22.html#SECTION00062300000000000000">Description</A>
+<LI><A NAME="tex2html473"
+  HREF="node22.html#SECTION00062400000000000000">Parameters</A>
+<LI><A NAME="tex2html474"
+  HREF="node22.html#SECTION00062500000000000000">Example</A>
+<LI><A NAME="tex2html475"
+  HREF="node22.html#SECTION00062600000000000000">Errors</A>
+<LI><A NAME="tex2html476"
+  HREF="node22.html#SECTION00062700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html477"
+  HREF="node23.html">PlacePin</A>
+<UL>
+<LI><A NAME="tex2html478"
+  HREF="node23.html#SECTION00063100000000000000">Name</A>
+<LI><A NAME="tex2html479"
+  HREF="node23.html#SECTION00063200000000000000">Synopsys</A>
+<LI><A NAME="tex2html480"
+  HREF="node23.html#SECTION00063300000000000000">Description</A>
+<LI><A NAME="tex2html481"
+  HREF="node23.html#SECTION00063400000000000000">Parameters</A>
+<LI><A NAME="tex2html482"
+  HREF="node23.html#SECTION00063500000000000000">Example</A>
+<LI><A NAME="tex2html483"
+  HREF="node23.html#SECTION00063600000000000000">Errors</A>
+<LI><A NAME="tex2html484"
+  HREF="node23.html#SECTION00063700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html485"
+  HREF="node24.html">PlaceRef</A>
+<UL>
+<LI><A NAME="tex2html486"
+  HREF="node24.html#SECTION00064100000000000000">Name</A>
+<LI><A NAME="tex2html487"
+  HREF="node24.html#SECTION00064200000000000000">Synopsys</A>
+<LI><A NAME="tex2html488"
+  HREF="node24.html#SECTION00064300000000000000">Description</A>
+<LI><A NAME="tex2html489"
+  HREF="node24.html#SECTION00064400000000000000">Parameters</A>
+<LI><A NAME="tex2html490"
+  HREF="node24.html#SECTION00064500000000000000">Example</A>
+<LI><A NAME="tex2html491"
+  HREF="node24.html#SECTION00064600000000000000">Errors</A>
+<LI><A NAME="tex2html492"
+  HREF="node24.html#SECTION00064700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html493"
+  HREF="node25.html">GetRefXY</A>
+<UL>
+<LI><A NAME="tex2html494"
+  HREF="node25.html#SECTION00065100000000000000">Name</A>
+<LI><A NAME="tex2html495"
+  HREF="node25.html#SECTION00065200000000000000">Synopsys</A>
+<LI><A NAME="tex2html496"
+  HREF="node25.html#SECTION00065300000000000000">Description</A>
+<LI><A NAME="tex2html497"
+  HREF="node25.html#SECTION00065400000000000000">Parameters</A>
+<LI><A NAME="tex2html498"
+  HREF="node25.html#SECTION00065500000000000000">Example</A>
+<LI><A NAME="tex2html499"
+  HREF="node25.html#SECTION00065600000000000000">Errors</A>
+<LI><A NAME="tex2html500"
+  HREF="node25.html#SECTION00065700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html501"
+  HREF="node26.html">CopyUpSegment</A>
+<UL>
+<LI><A NAME="tex2html502"
+  HREF="node26.html#SECTION00066100000000000000">Name</A>
+<LI><A NAME="tex2html503"
+  HREF="node26.html#SECTION00066200000000000000">Synopsys</A>
+<LI><A NAME="tex2html504"
+  HREF="node26.html#SECTION00066300000000000000">Description</A>
+<LI><A NAME="tex2html505"
+  HREF="node26.html#SECTION00066400000000000000">Parameters</A>
+<LI><A NAME="tex2html506"
+  HREF="node26.html#SECTION00066500000000000000">Example</A>
+<LI><A NAME="tex2html507"
+  HREF="node26.html#SECTION00066600000000000000">Errors</A>
+<LI><A NAME="tex2html508"
+  HREF="node26.html#SECTION00066700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html509"
+  HREF="node27.html">PlaceCentric</A>
+<UL>
+<LI><A NAME="tex2html510"
+  HREF="node27.html#SECTION00067100000000000000">Name</A>
+<LI><A NAME="tex2html511"
+  HREF="node27.html#SECTION00067200000000000000">Synopsys</A>
+<LI><A NAME="tex2html512"
+  HREF="node27.html#SECTION00067300000000000000">Description</A>
+<LI><A NAME="tex2html513"
+  HREF="node27.html#SECTION00067400000000000000">Parameters</A>
+<LI><A NAME="tex2html514"
+  HREF="node27.html#SECTION00067500000000000000">Errors</A>
+<LI><A NAME="tex2html515"
+  HREF="node27.html#SECTION00067600000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html516"
+  HREF="node28.html">PlaceGlu</A>
+<UL>
+<LI><A NAME="tex2html517"
+  HREF="node28.html#SECTION00068100000000000000">Name</A>
+<LI><A NAME="tex2html518"
+  HREF="node28.html#SECTION00068200000000000000">Synopsys</A>
+<LI><A NAME="tex2html519"
+  HREF="node28.html#SECTION00068300000000000000">Description</A>
+<LI><A NAME="tex2html520"
+  HREF="node28.html#SECTION00068400000000000000">Parameters</A>
+<LI><A NAME="tex2html521"
+  HREF="node28.html#SECTION00068500000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html522"
+  HREF="node29.html">FillCell</A>
+<UL>
+<LI><A NAME="tex2html523"
+  HREF="node29.html#SECTION00069100000000000000">Name</A>
+<LI><A NAME="tex2html524"
+  HREF="node29.html#SECTION00069200000000000000">Synopsys</A>
+<LI><A NAME="tex2html525"
+  HREF="node29.html#SECTION00069300000000000000">Description</A>
+<LI><A NAME="tex2html526"
+  HREF="node29.html#SECTION00069400000000000000">Parameters</A>
+<LI><A NAME="tex2html527"
+  HREF="node29.html#SECTION00069500000000000000">Errors</A>
+<LI><A NAME="tex2html528"
+  HREF="node29.html#SECTION00069600000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html529"
+  HREF="node30.html">Pads</A>
+<UL>
+<LI><A NAME="tex2html530"
+  HREF="node30.html#SECTION000610100000000000000">Name</A>
+<LI><A NAME="tex2html531"
+  HREF="node30.html#SECTION000610200000000000000">Synopsys</A>
+<LI><A NAME="tex2html532"
+  HREF="node30.html#SECTION000610300000000000000">Description</A>
+<LI><A NAME="tex2html533"
+  HREF="node30.html#SECTION000610400000000000000">Parameters</A>
+<LI><A NAME="tex2html534"
+  HREF="node30.html#SECTION000610500000000000000">Example</A>
+<LI><A NAME="tex2html535"
+  HREF="node30.html#SECTION000610600000000000000">Errors</A>
+<LI><A NAME="tex2html536"
+  HREF="node30.html#SECTION000610700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html537"
+  HREF="node31.html">Alimentation rails</A>
+<UL>
+<LI><A NAME="tex2html538"
+  HREF="node31.html#SECTION000611100000000000000">Name</A>
+<LI><A NAME="tex2html539"
+  HREF="node31.html#SECTION000611200000000000000">Synopsys</A>
+<LI><A NAME="tex2html540"
+  HREF="node31.html#SECTION000611300000000000000">Description</A>
+<LI><A NAME="tex2html541"
+  HREF="node31.html#SECTION000611400000000000000">Parameters</A>
+<LI><A NAME="tex2html542"
+  HREF="node31.html#SECTION000611500000000000000">Example</A>
+<LI><A NAME="tex2html543"
+  HREF="node31.html#SECTION000611600000000000000">Errors</A>
+<LI><A NAME="tex2html544"
+  HREF="node31.html#SECTION000611700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html545"
+  HREF="node32.html">Alimentation connectors</A>
+<UL>
+<LI><A NAME="tex2html546"
+  HREF="node32.html#SECTION000612100000000000000">Name</A>
+<LI><A NAME="tex2html547"
+  HREF="node32.html#SECTION000612200000000000000">Synopsys</A>
+<LI><A NAME="tex2html548"
+  HREF="node32.html#SECTION000612300000000000000">Description</A>
+<LI><A NAME="tex2html549"
+  HREF="node32.html#SECTION000612400000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html550"
+  HREF="node33.html">PowerRing</A>
+<UL>
+<LI><A NAME="tex2html551"
+  HREF="node33.html#SECTION000613100000000000000">Name</A>
+<LI><A NAME="tex2html552"
+  HREF="node33.html#SECTION000613200000000000000">Synopsys</A>
+<LI><A NAME="tex2html553"
+  HREF="node33.html#SECTION000613300000000000000">Description</A>
+<LI><A NAME="tex2html554"
+  HREF="node33.html#SECTION000613400000000000000">Parameters</A>
+<LI><A NAME="tex2html555"
+  HREF="node33.html#SECTION000613500000000000000">Example</A>
+<LI><A NAME="tex2html556"
+  HREF="node33.html#SECTION000613600000000000000">Errors</A>
+<LI><A NAME="tex2html557"
+  HREF="node33.html#SECTION000613700000000000000">See Also</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html558"
+  HREF="node34.html">RouteCk</A>
+<UL>
+<LI><A NAME="tex2html559"
+  HREF="node34.html#SECTION000614100000000000000">Name</A>
+<LI><A NAME="tex2html560"
+  HREF="node34.html#SECTION000614200000000000000">Synopsys</A>
+<LI><A NAME="tex2html561"
+  HREF="node34.html#SECTION000614300000000000000">Description</A>
+<LI><A NAME="tex2html562"
+  HREF="node34.html#SECTION000614400000000000000">Parameters</A>
+<LI><A NAME="tex2html563"
+  HREF="node34.html#SECTION000614500000000000000">Errors</A>
+<LI><A NAME="tex2html564"
+  HREF="node34.html#SECTION000614600000000000000">See Also</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

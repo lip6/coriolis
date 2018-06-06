@@ -1,0 +1,241 @@
+
+ \documentclass[11pt]{article}
+
+   \usepackage[latin1]{inputenc}
+   \usepackage[T1]{fontenc}
+   \usepackage{palatino}
+   \usepackage{fancyhdr}
+   \usepackage{float}
+  %\usepackage{subfigure}
+  %\usepackage{wrapfig}
+   \usepackage[dvips]{graphicx}
+  %\usepackage{epsfig}
+   \usepackage[dvips]{hyperref}
+  %\usepackage{multicol}
+   \usepackage{url}
+   \usepackage{html}
+   \usepackage{color}
+   \usepackage[paper=a4paper
+              ,headheight=30pt
+              ]{geometry}
+
+   \definecolor{violet}{rgb}{0.5,0,0.5}
+ 
+  %\setlength{\topmargin}{0cm}
+  %\setlength{\headheight}{1cm}
+  %\setlength{\textheight}{21cm}
+  %\setlength{\textwidth}{16cm}
+  %\setlength{\oddsidemargin}{0cm}
+  %\setlength{\evensidemargin}{0cm}
+  %\setlength{\columnsep}{0.125in}
+  %\setlength{\columnseprule}{0.5pt}
+  %\setlength{\footskip}{1cm}
+   \sloppy
+
+%--------------------------------- page style --------------------------------
+\pagestyle{fancy}
+\rhead{}
+\lhead{}
+\rfoot{\thepage}
+\lfoot{}
+\cfoot{}
+%---------------------------------- document ---------------------------------
+\date   {}
+\title  {Stratus User's Manual}
+\author {Sophie Belloeil}
+
+\begin{document}
+
+%\setlength{\footrulewidth}{0.6pt}
+\maketitle
+
+%%\begin{htmlonly}
+%%  \htmlrule
+%%  \noindent La version imprimable de ce document est disponible ici~: \\
+%%  \begin{center}
+%%    \hyperref[hyper]{http://asim.lip6.fr/~jpc/M1-C++/TME/6/TME6.pdf}{}{}
+%%                    {http://asim.lip6.fr/~jpc/M1-C++/TME/6/TME6.pdf}
+%%  \end{center}
+%%\end{htmlonly}
+
+\tableofchildlinks
+\htmlrule
+
+\section{What's new}
+\input{man_new}
+
+\section{Introduction}
+\label{secintroduction}
+    
+    \subsection{Stratus}
+    \label{secstratus}
+    \input{man_stratus}
+    \subsection{Example}
+    \label{secexample}
+    \input{man_example}
+   
+\section{Description of a netlist}
+\label{secnetlist}
+    
+    \subsection{Nets}
+    \label{secnet}
+    \input{man_net}
+    \subsection{Instances}
+    \label{secinst}
+    \input{man_inst}
+    \subsection{Generators}
+    \label{secgen}
+    \input{man_generate}
+    
+\section{Description of a layout}
+\label{seclayout}
+
+    \subsection{Place}
+    \label{secplace}
+    \input{man_place}
+    \subsection{PlaceTop}
+    \label{sectop}
+    \input{man_place_top}
+    \subsection{PlaceBottom}
+    \label{secbottom}
+    \input{man_place_bottom}
+    \subsection{PlaceRight}
+    \label{secright}
+    \input{man_place_right}
+    \subsection{PlaceLeft}
+    \label{secleft}
+    \input{man_place_left}
+    \subsection{SetRefIns}
+    \label{secsetrefins}
+    \input{man_set_ref_ins}
+    \subsection{DefAb}
+    \label{secdefab}
+    \input{man_def_ab}
+    \subsection{ResizeAb}
+    \label{secresizeab}
+    \input{man_resize_ab}
+    
+\section{Description of the stimuli}
+\label{secstimuli}
+    \input{man_stimuli}
+
+\section{Place and Route}
+\label{secroute}
+
+    \subsection{PlaceSegment}
+    \label{secsegment}
+    \input{man_place_segment}
+    \subsection{PlaceContact}
+    \label{seccontact}
+    \input{man_place_contact}
+    \subsection{PlacePin}
+    \label{secpin}
+    \input{man_place_pin}    
+    \subsection{PlaceRef}
+    \label{secref}
+    \input{man_place_ref}
+    \subsection{GetRefXY}
+    \label{secgetref}
+    \input{man_get_ref}
+    \subsection{CopyUpSegment}
+    \label{seccopy}
+    \input{man_copy_up_segment}    
+    \subsection{PlaceCentric}
+    \label{seccentric}
+    \input{man_place_centric}
+    \subsection{PlaceGlu}
+    \label{secglu}
+    \input{man_place_glu}
+    \subsection{FillCell}
+    \label{secfillcell}
+    \input{man_fill_cell}
+    \subsection{Pads}
+    \label{secpads}
+    \input{man_pads}
+    \subsection{Alimentation rails}
+    \label{secrails}
+    \input{man_alim_rail}
+    \subsection{Alimentation connectors}
+    \label{secconnectors}
+    \input{man_alim_connectors}
+    \subsection{PowerRing}
+    \label{secpowerring}
+    \input{man_power_ring}
+    \subsection{RouteCk}
+    \label{secrouteck}
+    \input{man_route_ck}
+
+\section{Instanciation facilities}
+\label{secfacilities}
+
+    \subsection{Buffer}
+    \label{secbuff}
+    \input{man_buff}
+    \subsection{Multiplexor}
+    \label{secmux}
+    \input{man_mux}
+    \subsection{Shifter}
+    \label{secshift}
+    \input{man_shift}
+    \subsection{Register}
+    \label{secreg}
+    \input{man_reg}    
+    \subsection{Constants}
+    \label{secconstant}
+    \input{man_const}    
+    \subsection{Boolean operations}
+    \label{secbool}
+    \input{man_boolean}
+    \subsection{Arithmetical operations}
+    \label{secarithmetic}
+    \input{man_arithmetic}
+    \subsection{Comparison operations}
+    \label{seccomp}
+    \input{man_comp}
+
+%\section{Developper's manual}
+%\label{secdev}
+%
+%    \subsection{Class Model}
+%    \label{secmodeldev}
+%    \input{man_model_dev}
+%
+%    \subsection{Nets}
+%    \label{secnetdev}
+%    \input{man_net_dev}
+%
+%    \subsection{Instances}
+%    \label{secinstdev}
+%    \input{man_inst_dev}
+
+\section{Virtual library}
+\label{seclibrary}
+\input{man_library}
+
+\begin{htmlonly}
+
+\section{Useful links}
+
+    \subsection{DpGen generators}
+    
+You can find the documentation of the DPGEN library at :\\
+\url{file:../dpgen/index.html}
+
+    \subsection{Arithmetic package of stratus}
+
+You can find the documentation of the arithmetic stratus's package at :\\
+\url{file:////users/outil/arith/latest/modules_stratus/arithmetic/doc/arith/index.html}
+
+    \subsection{Arithmetic generators and some stratus packages}
+
+You can find the documentation of the arithmetic library at :\\
+\url{file:////users/outil/arith/latest/doc/index.html}
+
+    \subsection{Patterns module}
+    
+You can find the documentation of the patterns module :\\
+\url{file:../patterns/index.html}
+
+\end{htmlonly}
+
+\end{document}

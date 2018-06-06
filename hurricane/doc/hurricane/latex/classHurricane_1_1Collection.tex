@@ -1,0 +1,328 @@
+\hypertarget{classHurricane_1_1Collection}{}\section{Hurricane\+:\+:Collection$<$ Type $>$ Class Template Reference}
+\label{classHurricane_1_1Collection}\index{Hurricane\+::\+Collection$<$ Type $>$@{Hurricane\+::\+Collection$<$ Type $>$}}
+
+
+\hyperlink{classHurricane_1_1Collection}{Collection} description ({\bfseries A\+PI})  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Collection$<$ Type $>$\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classHurricane_1_1Collection__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \hyperlink{classHurricane_1_1Collection_aafcf8e05658e245b2a762baa7a59f281}{$\sim$\+Collection} ()
+\item 
+virtual \hyperlink{classHurricane_1_1Collection}{Collection}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Collection_ac75b91d3952b36e14f21174958523924}{get\+Clone} () const =0
+\item 
+virtual \hyperlink{classHurricane_1_1Locator}{Locator}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Collection_a48fd1a0a2b6d2530a87e22ba65aa3152}{get\+Locator} () const =0
+\item 
+virtual unsigned \hyperlink{classHurricane_1_1Collection_a1292aabe88c9aadfdfe21dabddb62c19}{get\+Size} () const
+\item 
+Type \hyperlink{classHurricane_1_1Collection_a846a042646e02a0f77d2ce0f6190288a}{get\+First} () const
+\item 
+\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}$<$ Type $>$ \hyperlink{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}{get\+Sub\+Set} (const \hyperlink{classHurricane_1_1Filter}{Filter}$<$ Type $>$ \&filter) const
+\item 
+{\footnotesize template$<$class Sub\+Type $>$ }\\\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}$<$ Sub\+Type $>$ \hyperlink{classHurricane_1_1Collection_a91d986e21395d4021d927e06f204ab6c}{get\+Sub\+Set} () const
+\item 
+{\footnotesize template$<$class Sub\+Type $>$ }\\\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}$<$ Sub\+Type $>$ \hyperlink{classHurricane_1_1Collection_a673afd14782da82ad03a68366ae1f09b}{get\+Sub\+Set} (const \hyperlink{classHurricane_1_1Filter}{Filter}$<$ Sub\+Type $>$ \&filter) const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Type$>$\newline
+class Hurricane\+::\+Collection$<$ Type $>$}
+
+\hyperlink{classHurricane_1_1Collection}{Collection} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1Collection_secCollectionIntro}{}\subsection{Introduction}\label{classHurricane_1_1Collection_secCollectionIntro}
+Collections introduce the concept of set of elements.
+
+Strictly speaking collections are not containers (in the S\+TL way) but indeed set descriptors. For example, the set of instances called by a cell, which are located within a given rectangular area, will be a subtype of \hyperlink{classHurricane_1_1Collection}{Collection}$<$Instance$\ast$$>$ whose first attribute will be a pointer to the cell and a second attribute the rectangular area.
+
+Main characteristics of Collections\+: 
+\begin{DoxyItemize}
+\item Collections {\bfseries do not own} their elements (they remains when the \hyperlink{classHurricane_1_1Collection}{Collection} is deleted). 
+\item They can only be iterated {\itshape forward}. Once an element is consumed you cannot go back to it. You must restart the collection walktrough instead. 
+\item Collections are very light objects which are built, copied or destroyed very rapidly. 
+\end{DoxyItemize}\hypertarget{classHurricane_1_1Collection_secIterator}{}\subsection{S\+T\+L Iterator Support}\label{classHurricane_1_1Collection_secIterator}
+The Collections now provides a basic iterator support to allow the C++11 {\ttfamily for} contruct\+: 
+\begin{DoxyCode}
+Cell* cell = ...; \textcolor{comment}{// Get a Cell from somewhere.}
+
+\textcolor{keywordflow}{for}( Net* inet : cell->getNets() ) \{
+  cout << \textcolor{stringliteral}{"This is "} << inet;
+  \textcolor{keywordflow}{if} (inet->isExternal())
+    cout << \textcolor{stringliteral}{" [external net]."};
+  cout << endl;
+\}
+\end{DoxyCode}
+ Although the {\ttfamily for\+Each} macro is still retained for backward compatibility, it is advisable to use the C++11 way.\hypertarget{classHurricane_1_1Collection_secForEachMacro}{}\subsection{The for\+Each Macro (obsoleted)}\label{classHurricane_1_1Collection_secForEachMacro}
+Collections are to be used in conjunction with the {\ttfamily for\+Each} macro which allows to easily iterate over the elements. Iteration is done through a simplistic iterator which have overload for the {\ttfamily operator$\ast$()} and {\ttfamily operator-\/$>$()}
+
+The {\ttfamily for\+Each} macro takes three arguments\+: \begin{center} \tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\rowcolor{\tableheadbgcolor}\multicolumn{2}{|p{(\linewidth-\tabcolsep*2-\arrayrulewidth*1)*2/2}|}{\cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily for\+Each(type,iterator,collection)} }}\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}\multicolumn{2}{|p{(\linewidth-\tabcolsep*2-\arrayrulewidth*1)*2/2}|}{\cellcolor{\tableheadbgcolor}\textbf{ {\ttfamily for\+Each(type,iterator,collection)} }}\\\cline{1-2}
+\endhead
+{\ttfamily type} &Element\textquotesingle{}s type of the collection. \\\cline{1-2}
+{\ttfamily iterator} &\hyperlink{classHurricane_1_1Name}{Name} of the iterator\textquotesingle{}s variable. \\\cline{1-2}
+{\ttfamily collection} &An appropriate collection to iterate over, that is, built over {\ttfamily type} elements. \\\cline{1-2}
+\end{longtabu}
+\end{center} 
+
+To use the for\+Each macro outside the \hyperlink{namespaceHurricane}{Hurricane} namespace, the following statement is necessary\+: 
+\begin{DoxyCode}
+\textcolor{keyword}{using} Hurricane::ForEachIterator
+\end{DoxyCode}
+ Here is a small example of a loop\+: 
+\begin{DoxyCode}
+\textcolor{keyword}{using} Hurricane::ForEachIterator;
+
+Cell* cell = ...; \textcolor{comment}{// Get a Cell from somewhere.}
+
+forEach( Net*, inet, cell->getNets() ) \{
+  cout << \textcolor{stringliteral}{"This is "} << (*inet);
+  \textcolor{keywordflow}{if} (inet->isExternal())
+    cout << \textcolor{stringliteral}{" [external net]."};
+  cout << endl;
+\}
+\end{DoxyCode}
+\hypertarget{classHurricane_1_1Collection_secGenericgetCollection}{}\subsection{The Generic get\+Collection}\label{classHurricane_1_1Collection_secGenericgetCollection}
+The collections provide the generic {\ttfamily get\+Collection()} function which allows to convert its argument into a generic collection. It has no specific interest for \hyperlink{namespaceHurricane}{Hurricane} collections, but this function is overloaded for S\+TL containers.
+
+This allows to handle a S\+TL containers like a normal collection as shown in the following example\+: 
+\begin{DoxyCode}
+set<Instance*> instanceSet;
+ 
+\textcolor{comment}{// here we fill the set with the desired instances... }
+ 
+forEach(Instance*, iinstance, getCollection(instanceSet)) \{
+   \textcolor{comment}{// process here each instance of the set}
+   \textcolor{comment}{// (the elements are visited according to the set ordering)}
+\}
+\end{DoxyCode}
+
+
+\begin{DoxyParagraph}{Remark\+:}
+This approach is a little bit less efficient than the use of S\+TL iterators, not much indeed, but has the advantage to be homogeneous with the remaining code (recall\+: the created collection doesn\textquotesingle{}t make a copy of the S\+TL container and its creation time is negligible).
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Caution\+:}
+The returned collection is valid whenever the S\+TL container is valid. Then you should not do the following\+: 
+\begin{DoxyCode}
+GenericCollection<Instance*> getInstances(...)
+\{
+   set<Instance*> instanceSet;
+ 
+   \textcolor{comment}{// we fill the container with the appropriate instances}
+ 
+   \textcolor{keywordflow}{return} getCollection(instanceSet); \textcolor{comment}{// instanceSet deleted after return}
+\}
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+The same will occur anyway if you do\+: 
+\begin{DoxyCode}
+Cell* cell = ...; \textcolor{comment}{// we get the cell}
+ 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} nets = cell->getNets();
+ 
+cell->destroy();
+ 
+forEach(Net*, inet, nets) \{
+   ...
+\}
+\end{DoxyCode}
+\hypertarget{classHurricane_1_1Collection_secCollectionLocators}{}\subsection{Locators}\label{classHurricane_1_1Collection_secCollectionLocators}
+Each type of collection provides an associated \hyperlink{classHurricane_1_1Locator}{Locator} for tracing through the corresponding set of elements.
+
+Each locator moves efficiently through the data structure without building (in the form of a list or any other container type) the set of elements defined by the collection (it may however use a stack (or something else) to manage recursive traces).
+
+The elements are therefore visited in the order with which they are internally stored. No assumptions must be made about this ordering. However, collections representing an S\+TL container are visited in the same order than the container\textquotesingle{}s one.
+
+If you need to visit the objects in a given order, you must first fill a S\+TL container\+: either a vector to be sorted accordingly or a set with the given sort criteria (see the Fill method below). 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Collection_aafcf8e05658e245b2a762baa7a59f281}\label{classHurricane_1_1Collection_aafcf8e05658e245b2a762baa7a59f281}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!````~Collection@{$\sim$\+Collection}}
+\index{````~Collection@{$\sim$\+Collection}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{$\sim$\+Collection()}{~Collection()}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::$\sim$\hyperlink{classHurricane_1_1Collection}{Collection}$<$ Type $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+Destroys the collection but doesn\textquotesingle{}t acts on elements refered by this collection. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Collection_ac75b91d3952b36e14f21174958523924}\label{classHurricane_1_1Collection_ac75b91d3952b36e14f21174958523924}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Clone@{get\+Clone}}
+\index{get\+Clone@{get\+Clone}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1Collection}{Collection}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Allocates and returns a clone (copy) of the collection (whatever be its type).
+
+\begin{DoxyParagraph}{Remark\+:}
+In principle there is no need to use this function. However, if you do so, don\textquotesingle{}t forget to delete the clone after use. It is indeed much easier to use generic collections which do that for you, as we will see later. 
+\end{DoxyParagraph}
+
+
+Referenced by Hurricane\+::\+Generic\+Collection$<$ Element $>$\+::\+Generic\+Collection(), Hurricane\+::\+Sub\+Set\+Collection$<$ Type $>$\+::\+Sub\+Set\+Collection(), Hurricane\+::\+Sub\+Type\+Collection$<$ Type, Sub\+Type $>$\+::\+Sub\+Type\+Collection(), and Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::$\sim$\+Collection().
+
+\mbox{\Hypertarget{classHurricane_1_1Collection_a48fd1a0a2b6d2530a87e22ba65aa3152}\label{classHurricane_1_1Collection_a48fd1a0a2b6d2530a87e22ba65aa3152}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Locator@{get\+Locator}}
+\index{get\+Locator@{get\+Locator}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+Locator()}{getLocator()}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1Locator}{Locator}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+Locator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+Allocates and returns a locator adapted to visit the elements of the collection.
+
+\begin{DoxyParagraph}{Remark\+:}
+In principle there is no need to use this function. Use preferably the macro {\bfseries for\+\_\+each} described below. However, if you do so, don\textquotesingle{}t forget to delete this locator after use, else use generic locators, which do that for you, as we will see later. 
+\end{DoxyParagraph}
+
+
+Referenced by Hurricane\+::\+Generic\+Collection$<$ Element $>$\+::\+Generic\+Collection(), Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::get\+First(), Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::get\+Size(), Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::get\+Sub\+Set(), Hurricane\+::\+Sub\+Set\+Collection$<$ Type $>$\+::\+Sub\+Set\+Collection(), Hurricane\+::\+Sub\+Type\+Collection$<$ Type, Sub\+Type $>$\+::\+Sub\+Type\+Collection(), and Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::$\sim$\+Collection().
+
+\mbox{\Hypertarget{classHurricane_1_1Collection_a1292aabe88c9aadfdfe21dabddb62c19}\label{classHurricane_1_1Collection_a1292aabe88c9aadfdfe21dabddb62c19}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Size@{get\+Size}}
+\index{get\+Size@{get\+Size}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+Size()}{getSize()}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+unsigned \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} the number of objects identified within the collection.
+
+\begin{DoxyParagraph}{Remark\+:}
+Very fast in some cases, but may need to visit the collection in most ones. 
+\end{DoxyParagraph}
+
+
+Referenced by Hurricane\+::\+Generic\+Collection$<$ Element $>$\+::\+Generic\+Collection().
+
+\mbox{\Hypertarget{classHurricane_1_1Collection_a846a042646e02a0f77d2ce0f6190288a}\label{classHurricane_1_1Collection_a846a042646e02a0f77d2ce0f6190288a}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+First@{get\+First}}
+\index{get\+First@{get\+First}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+First()}{getFirst()}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+Type \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+First (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the first element of the collection.
+
+\begin{DoxyParagraph}{Remark\+:}
+The result is meaningful only when the collection is non empty. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}\label{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Sub\+Set@{get\+Sub\+Set}}
+\index{get\+Sub\+Set@{get\+Sub\+Set}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+Sub\+Set()}{getSubSet()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}$<$ Type $>$ \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+Sub\+Set (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Filter}{Filter}$<$ Type $>$ \&}]{filter }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection representing the subset of elements accepted by the filter. 
+\begin{DoxyCode}
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_aa80f3345db8c1395fa04a50737208793}{Cell::getExternalNets}()\textcolor{keyword}{ const}
+\textcolor{keyword}{}\{
+   \textcolor{keywordflow}{return} getNets().\hyperlink{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}{getSubSet}(\hyperlink{classHurricane_1_1Net_a3af91a80e219e37e70229e61dfd385da}{Net::getIsExternalFilter}());
+\}
+\end{DoxyCode}
+ \mbox{\Hypertarget{classHurricane_1_1Collection_a91d986e21395d4021d927e06f204ab6c}\label{classHurricane_1_1Collection_a91d986e21395d4021d927e06f204ab6c}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Sub\+Set@{get\+Sub\+Set}}
+\index{get\+Sub\+Set@{get\+Sub\+Set}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+Sub\+Set()}{getSubSet()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+template$<$class Sub\+Type $>$ \\
+\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}$<$ Sub\+Type $>$ \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+Sub\+Set$<$ Sub\+Type $>$ (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection corresponding to the subset of elements of type {\ttfamily $<$Sub\+Type$>$}.
+
+\begin{DoxyParagraph}{Remark\+:}
+The returned collection is a collection of objects of type {\bfseries Sub\+Type} and not of type {\bfseries Type}.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}
+\hyperlink{namespaceHurricane_a1e6a8ab09f688509bd727b3fee02d0d2}{Contacts} \hyperlink{classHurricane_1_1Net_a9c397596fe9ecbf674712c72e0b9010c}{Net::getContacts}()\textcolor{keyword}{ const}
+\textcolor{keyword}{}\{
+   \textcolor{keywordflow}{return} getComponents().\hyperlink{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}{getSubSet}<Contact*>();
+\}
+\end{DoxyCode}
+ 
+
+Referenced by Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::get\+Sub\+Set().
+
+\mbox{\Hypertarget{classHurricane_1_1Collection_a673afd14782da82ad03a68366ae1f09b}\label{classHurricane_1_1Collection_a673afd14782da82ad03a68366ae1f09b}} 
+\index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Sub\+Set@{get\+Sub\+Set}}
+\index{get\+Sub\+Set@{get\+Sub\+Set}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
+\subsubsection{\texorpdfstring{get\+Sub\+Set()}{getSubSet()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily template$<$class Type$>$ \\
+template$<$class Sub\+Type $>$ \\
+\hyperlink{classHurricane_1_1GenericCollection}{Generic\+Collection}$<$ Sub\+Type $>$ \hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}$<$ Type $>$\+::get\+Sub\+Set$<$ Sub\+Type $>$ (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Filter}{Filter}$<$ Sub\+Type $>$ \&}]{filter }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection representing the subset of elements of type {\ttfamily $<$Sub\+Type$>$} accepted by the filter.
+
+\begin{DoxyParagraph}{Remark\+:}
+The returned collection is a collection of elements of type {\bfseries Sub\+Type} and not of type {\bfseries Type} and the filter must be a filter of elements of type {\bfseries Sub\+Type}.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Sample\+:}
+\hyperlink{classHurricane_1_1Filter}{Filter} \hyperlink{classHurricane_1_1Segment}{Hurricane\+::\+Segment} according to their \hyperlink{classHurricane_1_1Layer}{Layer}. 
+\begin{DoxyCode}
+\textcolor{keyword}{class }IsOnLayer : \textcolor{keyword}{public} Filter<Segment*> \{
+   \textcolor{keyword}{public}:
+      Layer* \_layer;
+   \textcolor{keyword}{public}:
+      IsOnLayer(Layer* layer)
+        : \_layer(layer)
+      \{
+         \textcolor{keywordflow}{if} (!\_layer) \textcolor{keywordflow}{throw} Error(\textcolor{stringliteral}{"Can't create IsOnLayer filter : null layer"});
+      \};
+ 
+      IsOnLayer(\textcolor{keyword}{const} IsOnLayer& isOnLayer)
+        : \_layer(isOnLayer.\_layer)
+      \{ \};
+ 
+      IsOnLayer& operator=(\textcolor{keyword}{const} IsOnLayer& isOnLayer)
+      \{
+         \_layer = isOnLayer.\_layer;
+         \textcolor{keywordflow}{return} *\textcolor{keyword}{this};
+      \};
+ 
+      \textcolor{keyword}{virtual} Filter<Net*>* \hyperlink{classHurricane_1_1Collection_ac75b91d3952b36e14f21174958523924}{getClone}()\textcolor{keyword}{ const}
+\textcolor{keyword}{      }\{
+         \textcolor{keywordflow}{return} \textcolor{keyword}{new} IsOnLayer(*\textcolor{keyword}{this});
+      \};
+ 
+      \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} Accept(Segment* segment)\textcolor{keyword}{ const}
+\textcolor{keyword}{      }\{
+         \textcolor{keywordflow}{return} (segmentgetLayer() == \_layer);
+      \};
+\};
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+And somewher later\+: 
+\begin{DoxyCode}
+Layer* metal = getDataBase()->getTechnology()->getLayer(\textcolor{stringliteral}{"metal"});
+ 
+\hyperlink{namespaceHurricane_a30748fa53a81cb597d4a13d651238716}{Segments} segments = net->getComponents()->getSubSet<Segment*>(IsOnLayer(metal));
+ 
+\textcolor{comment}{// segments represents here the subset of net components}
+\textcolor{comment}{// which are of type Segment and located on layer metal}
+\end{DoxyCode}
+ 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Collection.\+h\item 
+Collection.\+dox\end{DoxyCompactItemize}

@@ -1,0 +1,271 @@
+\hypertarget{classKatabatic_1_1GCellGrid}{}\section{G\+Cell\+Grid Class Reference}
+\label{classKatabatic_1_1GCellGrid}\index{G\+Cell\+Grid@{G\+Cell\+Grid}}
+
+
+\hyperlink{classKatabatic_1_1GCell}{G\+Cell} \hyperlink{classKatabatic_1_1Grid}{Grid}.  
+
+
+
+
+Inheritance diagram for G\+Cell\+Grid\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=156pt]{classKatabatic_1_1GCellGrid__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fe}{Density\+Mode} \{ \newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fead15bf3e5b63f398d76d717a088acd310}{Average\+H\+V\+Density} =1, 
+\newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40feaec0ad06385eae8d1e2dee4f3c9f9f4ed}{Average\+H\+Density} =2, 
+\newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fead1a1d89017d10aeb63d1c05b6fb650dd}{Average\+V\+Density} =3, 
+\newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea8265e053af0708a508ecbce86d1a8165}{Max\+H\+V\+Density} =4, 
+\newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea5f0a89ca367ef98550eaa86c1e32c873}{Max\+V\+Density} =5, 
+\newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea2a6d29b012cc89026c3c0061f87a4f03}{Max\+H\+Density} =6, 
+\newline
+\hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea90a2f4a4ee8558de9f99458ddeab852c}{Max\+Density} =7
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Cell} $\ast$ \hyperlink{classKatabatic_1_1GCellGrid_a55a3a88610ef1af9931e634f77f2403b}{get\+Cell} () const
+\item 
+\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine} $\ast$ \hyperlink{classKatabatic_1_1GCellGrid_a0234fdabe7682546f1201bccd0b5cacf}{get\+Katabatic} () const
+\item 
+unsigned int \hyperlink{classKatabatic_1_1GCellGrid_af1171855a3e928cace78d1534a8d0629}{get\+Density\+Mode} () const
+\item 
+size\+\_\+t \hyperlink{classKatabatic_1_1GCellGrid_a041680c5d171d4c7cb0edba96f0c390f}{get\+H\+Edge\+Capacity} () const
+\item 
+size\+\_\+t \hyperlink{classKatabatic_1_1GCellGrid_ae8e2cf3685ccb0621f4f85c7999834e8}{get\+V\+Edge\+Capacity} () const
+\item 
+\textbf{ Interval} \hyperlink{classKatabatic_1_1GCellGrid_a8272dad8f7d916333f934f3cbde981bb}{get\+U\+Side} (unsigned int) const
+\item 
+size\+\_\+t \hyperlink{classKatabatic_1_1GCellGrid_a88208864ba2268689946a8cb7a86fcb2}{check\+Density} () const
+\item 
+size\+\_\+t \hyperlink{classKatabatic_1_1GCellGrid_a9b3455dce10eb98d0496175dd586528c}{update\+Density} ()
+\item 
+void \hyperlink{classKatabatic_1_1GCellGrid_a032d6eb23f92e3a41a020d18c6bbc02d}{update\+Contacts} (unsigned int flags=\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217af314588109fcc5f5ee1c42e5fd4d0ed5}{Kb\+Open\+Session})
+\item 
+void \hyperlink{classKatabatic_1_1GCellGrid_a86899930041463cf80b713c3ca5b4834}{set\+Density\+Mode} (unsigned int)
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classKatabatic_1_1GCellGrid_a3715b38135ca24745f610bebd3407c10}{\+\_\+post\+Create} ()
+\item 
+void \hyperlink{classKatabatic_1_1GCellGrid_a7c13d9795eafd477994961f8a0d962d0}{\+\_\+pre\+Destroy} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid} $\ast$ \hyperlink{classKatabatic_1_1GCellGrid_a19a45b2e6c6b9ca8898b2fde035d1827}{create} (\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine} $\ast$)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classKatabatic_1_1GCell}{G\+Cell} \hyperlink{classKatabatic_1_1Grid}{Grid}. 
+
+The \hyperlink{classKatabatic_1_1GCell}{G\+Cell} \hyperlink{classKatabatic_1_1Grid}{Grid} of \hyperlink{namespaceKatabatic}{Katabatic}. Although the base template class \hyperlink{classKatabatic_1_1Grid}{Grid} support irregular grid, the \hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid} is regular, following the Knik global router G\+Cells. Only the topmost row and leftmost column may have different height or width to cope with the design real size.
+
+Due to the regular nature of the grid, the horizontal \& vertical edges capacities are all identical, and initialized from the \hyperlink{namespaceKatabatic}{Katabatic} Configuration.
+
+The grid is build from the Knik global routing, so obviously a Knik\+Engine must be attached to the Cell when building the \hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid}. An error is thrown otherwise. 
+
+\subsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fe}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fe}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Density\+Mode@{Density\+Mode}}
+\index{Density\+Mode@{Density\+Mode}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{Density\+Mode}{DensityMode}}
+{\footnotesize\ttfamily enum \hyperlink{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fe}{Density\+Mode}}
+
+Various ways of computing the overall density of a \hyperlink{classKatabatic_1_1GCell}{G\+Cell}. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Average\+H\+V\+Density@{Average\+H\+V\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Average\+H\+V\+Density@{Average\+H\+V\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fead15bf3e5b63f398d76d717a088acd310}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fead15bf3e5b63f398d76d717a088acd310}} 
+Average\+H\+V\+Density&The average density all depths accounted. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Average\+H\+Density@{Average\+H\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Average\+H\+Density@{Average\+H\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40feaec0ad06385eae8d1e2dee4f3c9f9f4ed}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40feaec0ad06385eae8d1e2dee4f3c9f9f4ed}} 
+Average\+H\+Density&The average density of horizontal layers. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Average\+V\+Density@{Average\+V\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Average\+V\+Density@{Average\+V\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fead1a1d89017d10aeb63d1c05b6fb650dd}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fead1a1d89017d10aeb63d1c05b6fb650dd}} 
+Average\+V\+Density&The average density of horizontal layers. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Max\+H\+V\+Density@{Max\+H\+V\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Max\+H\+V\+Density@{Max\+H\+V\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea8265e053af0708a508ecbce86d1a8165}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea8265e053af0708a508ecbce86d1a8165}} 
+Max\+H\+V\+Density&The maximum of the average horizontal \& vertical densities taken as a whole. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Max\+V\+Density@{Max\+V\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Max\+V\+Density@{Max\+V\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea5f0a89ca367ef98550eaa86c1e32c873}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea5f0a89ca367ef98550eaa86c1e32c873}} 
+Max\+V\+Density&The maximum of the average vertical densities taken depth by depth. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Max\+H\+Density@{Max\+H\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Max\+H\+Density@{Max\+H\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea2a6d29b012cc89026c3c0061f87a4f03}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea2a6d29b012cc89026c3c0061f87a4f03}} 
+Max\+H\+Density&The maximum of the average horizontal densities taken depth by depth. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Max\+Density@{Max\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!Max\+Density@{Max\+Density}}}\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea90a2f4a4ee8558de9f99458ddeab852c}\label{classKatabatic_1_1GCellGrid_a07884f5e1af410e98208fed76a2b40fea90a2f4a4ee8558de9f99458ddeab852c}} 
+Max\+Density&The maximum of the average horizontal \& vertical densities taken depth by depth. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a55a3a88610ef1af9931e634f77f2403b}\label{classKatabatic_1_1GCellGrid_a55a3a88610ef1af9931e634f77f2403b}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!get\+Cell@{get\+Cell}}
+\index{get\+Cell@{get\+Cell}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{get\+Cell()}{getCell()}}
+{\footnotesize\ttfamily \textbf{ Cell} $\ast$ get\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} The associated Cell. 
+
+References Entity\+::get\+Cell().
+
+
+
+Referenced by G\+Cell\+::\+Compare\+By\+Density\+::\+Compare\+By\+Density().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a0234fdabe7682546f1201bccd0b5cacf}\label{classKatabatic_1_1GCellGrid_a0234fdabe7682546f1201bccd0b5cacf}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!get\+Katabatic@{get\+Katabatic}}
+\index{get\+Katabatic@{get\+Katabatic}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{get\+Katabatic()}{getKatabatic()}}
+{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine} $\ast$ get\+Katabatic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The associated \hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine}. 
+
+Referenced by G\+Cell\+::step\+Desaturate(), and G\+Cell\+::translate().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_af1171855a3e928cace78d1534a8d0629}\label{classKatabatic_1_1GCellGrid_af1171855a3e928cace78d1534a8d0629}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!get\+Density\+Mode@{get\+Density\+Mode}}
+\index{get\+Density\+Mode@{get\+Density\+Mode}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{get\+Density\+Mode()}{getDensityMode()}}
+{\footnotesize\ttfamily unsigned int get\+Density\+Mode (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The computation mode of the \hyperlink{classKatabatic_1_1GCell}{G\+Cell} densities. 
+
+Referenced by G\+Cell\+::get\+Density().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a041680c5d171d4c7cb0edba96f0c390f}\label{classKatabatic_1_1GCellGrid_a041680c5d171d4c7cb0edba96f0c390f}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!get\+H\+Edge\+Capacity@{get\+H\+Edge\+Capacity}}
+\index{get\+H\+Edge\+Capacity@{get\+H\+Edge\+Capacity}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{get\+H\+Edge\+Capacity()}{getHEdgeCapacity()}}
+{\footnotesize\ttfamily size\+\_\+t get\+H\+Edge\+Capacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The horizontal edge capacity. As the matrix is regular it is identical for all horizontal edges. 
+
+Referenced by G\+Cell\+::check\+Edge\+Saturation().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_ae8e2cf3685ccb0621f4f85c7999834e8}\label{classKatabatic_1_1GCellGrid_ae8e2cf3685ccb0621f4f85c7999834e8}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!get\+V\+Edge\+Capacity@{get\+V\+Edge\+Capacity}}
+\index{get\+V\+Edge\+Capacity@{get\+V\+Edge\+Capacity}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{get\+V\+Edge\+Capacity()}{getVEdgeCapacity()}}
+{\footnotesize\ttfamily size\+\_\+t get\+V\+Edge\+Capacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The vertical edge capacity. As the matrix is regular it is identical for all vertical edges. 
+
+Referenced by G\+Cell\+::check\+Edge\+Saturation().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a8272dad8f7d916333f934f3cbde981bb}\label{classKatabatic_1_1GCellGrid_a8272dad8f7d916333f934f3cbde981bb}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!get\+U\+Side@{get\+U\+Side}}
+\index{get\+U\+Side@{get\+U\+Side}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{get\+U\+Side()}{getUSide()}}
+{\footnotesize\ttfamily \textbf{ Interval} get\+U\+Side (\begin{DoxyParamCaption}\item[{unsigned int}]{direction }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} The side of the whole grid in {\ttfamily direction}. 
+
+References Katabatic\+::\+Kb\+Horizontal, and Katabatic\+::\+Kb\+Vertical.
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a88208864ba2268689946a8cb7a86fcb2}\label{classKatabatic_1_1GCellGrid_a88208864ba2268689946a8cb7a86fcb2}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!check\+Density@{check\+Density}}
+\index{check\+Density@{check\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{check\+Density()}{checkDensity()}}
+{\footnotesize\ttfamily size\+\_\+t check\+Density (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} The number of \hyperlink{classKatabatic_1_1GCell}{G\+Cell} saturateds.
+
+Check all G\+Cells for saturations. 
+
+References G\+Cell\+Density\+Set\+::get\+G\+Cells().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a9b3455dce10eb98d0496175dd586528c}\label{classKatabatic_1_1GCellGrid_a9b3455dce10eb98d0496175dd586528c}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!update\+Density@{update\+Density}}
+\index{update\+Density@{update\+Density}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{update\+Density()}{updateDensity()}}
+{\footnotesize\ttfamily size\+\_\+t update\+Density (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+{\bfseries Returns\+:} The number of \hyperlink{classKatabatic_1_1GCell}{G\+Cell} saturateds.
+
+Force a density update on all the G\+Cells. 
+
+References G\+Cell\+Density\+Set\+::get\+G\+Cells().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a032d6eb23f92e3a41a020d18c6bbc02d}\label{classKatabatic_1_1GCellGrid_a032d6eb23f92e3a41a020d18c6bbc02d}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!update\+Contacts@{update\+Contacts}}
+\index{update\+Contacts@{update\+Contacts}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{update\+Contacts()}{updateContacts()}}
+{\footnotesize\ttfamily void update\+Contacts (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily \hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217af314588109fcc5f5ee1c42e5fd4d0ed5}{Kb\+Open\+Session}} }\end{DoxyParamCaption})}
+
+Force an update on all \hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact} on all the G\+Cells. if {\ttfamily open\+Session} is {\bfseries true}, enclose the update in a \hyperlink{classKatabatic_1_1Session}{Session}. 
+
+References Session\+::close(), G\+Cell\+Density\+Set\+::get\+G\+Cells(), Katabatic\+::\+Kb\+Open\+Session, and Session\+::open().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a86899930041463cf80b713c3ca5b4834}\label{classKatabatic_1_1GCellGrid_a86899930041463cf80b713c3ca5b4834}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!set\+Density\+Mode@{set\+Density\+Mode}}
+\index{set\+Density\+Mode@{set\+Density\+Mode}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{set\+Density\+Mode()}{setDensityMode()}}
+{\footnotesize\ttfamily void set\+Density\+Mode (\begin{DoxyParamCaption}\item[{unsigned int}]{mode }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Sets the density computation mode. \mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a3715b38135ca24745f610bebd3407c10}\label{classKatabatic_1_1GCellGrid_a3715b38135ca24745f610bebd3407c10}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!\+\_\+post\+Create@{\+\_\+post\+Create}}
+\index{\+\_\+post\+Create@{\+\_\+post\+Create}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{\+\_\+post\+Create()}{\_postCreate()}}
+{\footnotesize\ttfamily void \+\_\+post\+Create (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+Perform the \hyperlink{classKatabatic_1_1GCell}{G\+Cell} \& \hyperlink{classKatabatic_1_1GCell}{G\+Cell} vector allocation.
+\begin{DoxyItemize}
+\item Read the horizontal and vertical cut lines from Knik and translate them into \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis}{Base\+Grid\+::\+Axis}.
+\item From the \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis}{Base\+Grid\+::\+Axis}, deduces the exact positions of the G\+Cells and allocate them.
+\item The \hyperlink{classKatabatic_1_1GCell}{G\+Cell} allocation is done in a \char`\"{}row by row\char`\"{} fashion consistent with \hyperlink{classKatabatic_1_1BaseGrid}{Base\+Grid} implicit assumptions. 
+\end{DoxyItemize}
+
+Reimplemented from \hyperlink{classKatabatic_1_1BaseGrid}{Base\+Grid}.
+
+
+
+Referenced by G\+Cell\+Grid\+::create().
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a7c13d9795eafd477994961f8a0d962d0}\label{classKatabatic_1_1GCellGrid_a7c13d9795eafd477994961f8a0d962d0}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!\+\_\+pre\+Destroy@{\+\_\+pre\+Destroy}}
+\index{\+\_\+pre\+Destroy@{\+\_\+pre\+Destroy}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{\+\_\+pre\+Destroy()}{\_preDestroy()}}
+{\footnotesize\ttfamily void \+\_\+pre\+Destroy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+The G\+Cells are deleted at this point. 
+
+Reimplemented from \hyperlink{classKatabatic_1_1BaseGrid}{Base\+Grid}.
+
+\mbox{\Hypertarget{classKatabatic_1_1GCellGrid_a19a45b2e6c6b9ca8898b2fde035d1827}\label{classKatabatic_1_1GCellGrid_a19a45b2e6c6b9ca8898b2fde035d1827}} 
+\index{Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}!create@{create}}
+\index{create@{create}!Katabatic\+::\+G\+Cell\+Grid@{Katabatic\+::\+G\+Cell\+Grid}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1GCellGrid}{G\+Cell\+Grid} $\ast$ create (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1KatabaticEngine}{Katabatic\+Engine} $\ast$}]{ktbt }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}
+
+A\+P\+I-\/space contructor. 
+
+References G\+Cell\+Grid\+::\+\_\+post\+Create(), and grid().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+G\+Cell\+Grid.\+h\item 
+G\+Cell\+Grid.\+cpp\item 
+G\+Cell\+Grid.\+dox\end{DoxyCompactItemize}

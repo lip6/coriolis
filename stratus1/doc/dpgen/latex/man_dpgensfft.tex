@@ -1,0 +1,77 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenSfft -- Static Flip-Flop with Scan-Path Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenSfft', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True
+                   , 'behavioral' : True         
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a n bits static flip-flop with scan-path named \verb-modelname-. The two latches of this flip-flop are static i.e. each one is made of two interters looped togethers.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{scan} : scan-path mode (input, 1 bit)
+        \item \textbf{scin} : scan path in (input, 1 bit)
+        \item \textbf{wen} : write enable (1 bit)
+        \item \textbf{ck} : clock signal (1 bit)
+        \item \textbf{i0} : data input (\verb-n- bits)
+        \item \textbf{q} : output (\verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the a map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior        
+    \end{itemize}
+    \item \textbf{How it works} : 
+    \begin{itemize}
+        \item When scan is set to \verb-one-, it enables the scan-path mode. Note that in scan-path mode, the wen signal is not effective
+        \item scin : the input of the scan-path. This terminal is different from \verb-i0[0]-. The scout is \verb-q[N--\verb-1]- (in the following example this is \verb-q[3]-)
+        \item When wen is set to \verb-one-, it enables the writing of the flip-flop
+    \end{itemize}
+%    \item \textbf{Behavior} :
+%       \begin{verbatim}
+%       \end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_sfft ( Model ) :
+
+  def Interface ( self ) :
+    self.scan = SignalIn  ( "scin", 1 )
+    self.scin = SignalIn  ( "scan", 1 )
+    self.ck   = SignalIn  (   "ck", 1 )
+    self.wen  = SignalIn  (  "wen", 1 )
+    self.i    = SignalIn  (   "in", 4 )
+    self.o    = SignalOut (  "out", 4 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenSfft', 'sfft_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'sfft_4', 'inst'
+                  , map = { "wen"  : self.wen
+                          , "ck"   : self.ck
+                          , "scan" : self.scan
+                          , "scin" : self.scin
+                          , "i0"   : self.i
+                          ,  "q"   : self.o
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

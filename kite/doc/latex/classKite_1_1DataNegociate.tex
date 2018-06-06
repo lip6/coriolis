@@ -1,0 +1,382 @@
+\hypertarget{classKite_1_1DataNegociate}{}\subsection{Data\+Negociate Class Reference}
+\label{classKite_1_1DataNegociate}\index{Data\+Negociate@{Data\+Negociate}}
+
+
+Algorimthmic datas associated the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.  
+
+
+\subsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}{Slack\+State} \{ \newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a19d8d157762b2b73c5274e4865523d29}{Ripup\+Perpandiculars} = 1, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a548e204a4e2ffae50774910737f11380}{Minimize} = 2, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a361bca46d5e7bdf02f50f7ecaa6018a9}{Dogleg} = 3, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a0d4bff02b3163821c0e5f7ad9dd55f36}{Slacken} = 4, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7ae08187cba35efd6229ab8acfd003a600}{Conflict\+Solve\+By\+History} = 5, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7afce071be0ba39626ed1c865789da598b}{Conflict\+Solve\+By\+Placeds} = 6, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7aa54078da5ffb3463f7d6f291b0b0725e}{Local\+Vs\+Global} = 7, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7adfd76a7d65b56ed7ecc0eedf921d6f82}{Move\+Up} = 8, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a9fc7197613f3435d906edf69a73acf38}{Maximum\+Slack} = 9, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7ac64569bb9cffe0532bc43b52d7b6c383}{Unimplemented} =10, 
+\newline
+\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a27b403019a93f9f127cf64a0688a8288}{Repair} =11
+ \}
+\end{DoxyCompactItemize}
+\subsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{classKite_1_1DataNegociate_abeeeb06293c85a902f2b56d1b13d260d}{has\+Routing\+Event} () const
+\item 
+\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$ \hyperlink{classKite_1_1DataNegociate_a831dab8eb708da17b4f1e1a8c057f283}{get\+Routing\+Event} () const
+\item 
+\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1DataNegociate_abc97e384245eab238831f9461968025b}{get\+Track\+Segment} () const
+\item 
+\hyperlink{classKite_1_1Track}{Track} $\ast$ \hyperlink{classKite_1_1DataNegociate_a3f34f9139b8491a0adb531ac3a904171}{get\+Track} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1DataNegociate_a56149c72d0bfe5e33795782b646061b1}{get\+Left\+Min\+Extend} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1DataNegociate_abf06c826acae81494b01b904d3277cc1}{get\+Right\+Min\+Extend} () const
+\item 
+unsigned int \hyperlink{classKite_1_1DataNegociate_a4f6fbcee2499d33394ab54f856c500c0}{get\+Terminals} () const
+\item 
+\textbf{ Net} $\ast$ \hyperlink{classKite_1_1DataNegociate_a692492374623a5c6096b2c4a51190359}{get\+Net} () const
+\item 
+unsigned int \hyperlink{classKite_1_1DataNegociate_a40ec2b23684a0e6e6d7ac9783a269037}{get\+State} () const
+\item 
+unsigned int \hyperlink{classKite_1_1DataNegociate_a6ad2b700f668f8e2e5cd4fbc717d8765}{get\+State\+Count} () const
+\item 
+unsigned int \hyperlink{classKite_1_1DataNegociate_a9832198737bd835fab730ff2b95bbfa0}{get\+Ripup\+Count} () const
+\item 
+unsigned int \hyperlink{classKite_1_1DataNegociate_acdd169f3bd670279f0a891caa809f99a}{get\+State\+And\+Ripup\+Count} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1DataNegociate_af920f8ca7404239772e56d00f779cac6}{get\+Wiring\+Delta} (\textbf{ Db\+U\+::\+Unit} axis) const
+\item 
+const \textbf{ Interval} \& \hyperlink{classKite_1_1DataNegociate_a60d12d642a8d232241a2b07febeb980b}{get\+Perpandicular\+Free} () const
+\item 
+void \hyperlink{classKite_1_1DataNegociate_aafc8cd0dcd351625a12904bed7d5a7d1}{set\+State} (unsigned int, unsigned int flags=0)
+\item 
+void \hyperlink{classKite_1_1DataNegociate_a044867f105053d6231ab13fee23ec7b0}{set\+Routing\+Event} (\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$)
+\item 
+void \hyperlink{classKite_1_1DataNegociate_a45492835bdca93f4e656dcd7ed027825}{set\+Ripup\+Count} (unsigned int)
+\item 
+void \hyperlink{classKite_1_1DataNegociate_ae50c33d207171246319e11e0671bc706}{inc\+Ripup\+Count} ()
+\item 
+void \hyperlink{classKite_1_1DataNegociate_a4f94572b3541ea2d150c75bedc8364ed}{dec\+Ripup\+Count} ()
+\item 
+void \hyperlink{classKite_1_1DataNegociate_a00a11ad9089d2df7b290615921e0c96a}{reset\+Ripup\+Count} ()
+\item 
+void \hyperlink{classKite_1_1DataNegociate_af1e8d229bb1dfcff3151d44d42a8549b}{reset\+State\+Count} ()
+\item 
+void \hyperlink{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}{update} ()
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Algorimthmic datas associated the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. 
+
+The \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} object contains all the informations the negociation algorithm needs to know about a \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. Those informations mostly describe the slackening and ripup state of that segment.
+
+{\bfseries State related datas\+:}
+\begin{DoxyItemize}
+\item The ripup count in the current state. The count is reset to zero at each state transition.
+\item The slackening state (see \hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}{Data\+Negociate\+::\+Slack\+State}). The state indicate the {\bfseries next} topological modification to be applied on the segment should the ripup count reach it\textquotesingle{}s maximal value.
+\item The associated \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. If no \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} is present, it means the segment has been either successufully placed or the algorithm has given up trying to. If present, it is a {\itshape pending} request for placement.
+\end{DoxyItemize}
+
+{\bfseries Topological related datas\+:}
+\begin{DoxyItemize}
+\item {\ttfamily left\+Min\+Extend}, the potential minimal position of the segment left extension. May not be reachable due to other topological constraints.
+\item {\ttfamily right\+Min\+Extend}, the potential minimal position of the segment right extension.
+\item {\ttfamily terminals}, the number of terminals attached to this segment.
+\item {\ttfamily attractors}, a table of coordinates of the end points of the perpandiculars to this segment. Used to compute the wiring delta if we move the axis of the segment.
+\item {\ttfamily perpandiculars}, a {\ttfamily vector} of the perpandicular \hyperlink{classKite_1_1TrackElement}{Track\+Element}. This is a fast-\/access cache. It must be updated each time the topology of the net is modificated.
+\item {\ttfamily perpandicular\+Free}, the free interval defined by the perpandiculars, that is for the sgement axis.
+\end{DoxyItemize}\hypertarget{classKite_1_1DataNegociate_secAttractorsComputation}{}\subsubsection{Perpandiculars, Free, Attractors \& Wiring Delta}\label{classKite_1_1DataNegociate_secAttractorsComputation}
+All those informations are computed and updated by the \hyperlink{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}{Data\+Negociate\+::update()} method, which relies on\+:
+\begin{DoxyItemize}
+\item Auto\+Segment\+::get\+Topological\+Infos()
+\item Auto\+Segment\+::get\+Terminal\+Count()
+\end{DoxyItemize}
+
+They must be reviewed as they do not take advantage of the new Auto\+Segment structuration.
+
+For every perpandicular set of Auto\+Segment to the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} we want to place, get the coordinates of the extremity not connected to the segment and put that coordinate into a table associated with it\textquotesingle{}s {\itshape spin}. The {\itshape spin} tells if the extremity is attracting the segment {\itshape up} or {\itshape down} (for an horizontal segment). The {\itshape spin} is incremented for up and decremented for down. After all the extremities have been processeds, we took into account only the coordinates with a non-\/zero spin, which means they truly attract the segment (whatever the direction).
+
+ The {\itshape wiring delta} is the total wire length needed to connect from the attractors to the segment, should it be placed on {\ttfamily axis}.
+
+\hypertarget{classKite_1_1DataNegociate_secDataNegociateModifications}{}\subsubsection{Modifications History}\label{classKite_1_1DataNegociate_secDataNegociateModifications}
+Main changes in \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} class design\+:
+\begin{DoxyItemize}
+\item Merge in the separate class {\ttfamily Cost}.
+\item Suppress the {\ttfamily Slack\+State\+::\+Desalignate}, due to the simplificated structure of the Auto\+Segment/\+Auto\+Contacts (no more collapseds, or forced alignements). 
+\end{DoxyItemize}
+
+\subsubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Slack\+State@{Slack\+State}}
+\index{Slack\+State@{Slack\+State}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{Slack\+State}{SlackState}}
+{\footnotesize\ttfamily enum \hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}{Slack\+State}}
+
+Describe the various stages of a \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} slackening. The numerical values are choosen so we can increment them as a counter. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Ripup\+Perpandiculars@{Ripup\+Perpandiculars}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Ripup\+Perpandiculars@{Ripup\+Perpandiculars}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a19d8d157762b2b73c5274e4865523d29}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a19d8d157762b2b73c5274e4865523d29}} 
+Ripup\+Perpandiculars&Force perpandiculars to be riped up as well as the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}, then schedule the placement of the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} {\itshape before} it\textquotesingle{}s perpandiculars. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Minimize@{Minimize}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Minimize@{Minimize}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a548e204a4e2ffae50774910737f11380}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a548e204a4e2ffae50774910737f11380}} 
+Minimize&If the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} is made of multiple Track\+Segments with a forced alignement, suppress the alignement constraint.
+
+This should be deprecated now. Try to displace the perpandiculars so the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} is reduced to it\textquotesingle{}s minimal length. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Dogleg@{Dogleg}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Dogleg@{Dogleg}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a361bca46d5e7bdf02f50f7ecaa6018a9}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a361bca46d5e7bdf02f50f7ecaa6018a9}} 
+Dogleg&Break the segment into two smaller ones. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Slacken@{Slacken}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Slacken@{Slacken}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a0d4bff02b3163821c0e5f7ad9dd55f36}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a0d4bff02b3163821c0e5f7ad9dd55f36}} 
+Slacken&Create additional wiring so threre is no more contraints transmitted by the perpandiculars or the terminal contacts. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Conflict\+Solve\+By\+History@{Conflict\+Solve\+By\+History}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Conflict\+Solve\+By\+History@{Conflict\+Solve\+By\+History}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7ae08187cba35efd6229ab8acfd003a600}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7ae08187cba35efd6229ab8acfd003a600}} 
+Conflict\+Solve\+By\+History&Try to solve a conflict between a set of global segments by analysing the event/ripup history. See \hyperlink{classKite_1_1SegmentFsm_a0d9a9926ae67cc7998799347f135e28a}{Segment\+Fsm\+::conflict\+Solve\+By\+History()}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Conflict\+Solve\+By\+Placeds@{Conflict\+Solve\+By\+Placeds}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Conflict\+Solve\+By\+Placeds@{Conflict\+Solve\+By\+Placeds}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7afce071be0ba39626ed1c865789da598b}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7afce071be0ba39626ed1c865789da598b}} 
+Conflict\+Solve\+By\+Placeds&Try to solve a conflict between a set of global segments by analysing the current track context. See \hyperlink{classKite_1_1SegmentFsm_a9c0fa6a9067b6e027e24f38330f627dc}{Segment\+Fsm\+::conflict\+Solve\+By\+Placeds()}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Local\+Vs\+Global@{Local\+Vs\+Global}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Local\+Vs\+Global@{Local\+Vs\+Global}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7aa54078da5ffb3463f7d6f291b0b0725e}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7aa54078da5ffb3463f7d6f291b0b0725e}} 
+Local\+Vs\+Global&To be reviewed. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Move\+Up@{Move\+Up}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Move\+Up@{Move\+Up}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7adfd76a7d65b56ed7ecc0eedf921d6f82}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7adfd76a7d65b56ed7ecc0eedf921d6f82}} 
+Move\+Up&The segment is to be moved up (if possible). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Maximum\+Slack@{Maximum\+Slack}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Maximum\+Slack@{Maximum\+Slack}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a9fc7197613f3435d906edf69a73acf38}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a9fc7197613f3435d906edf69a73acf38}} 
+Maximum\+Slack&The final state, topological modifications are exhausteds, if it cannot place at this point, it never will. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unimplemented@{Unimplemented}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Unimplemented@{Unimplemented}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7ac64569bb9cffe0532bc43b52d7b6c383}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7ac64569bb9cffe0532bc43b52d7b6c383}} 
+Unimplemented&Used only during the development stage, telling that the state is not available yet. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Repair@{Repair}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!Repair@{Repair}}}\mbox{\Hypertarget{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a27b403019a93f9f127cf64a0688a8288}\label{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7a27b403019a93f9f127cf64a0688a8288}} 
+Repair&The router is in repair mode. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsubsection{Member Function Documentation}
+\mbox{\Hypertarget{classKite_1_1DataNegociate_abeeeb06293c85a902f2b56d1b13d260d}\label{classKite_1_1DataNegociate_abeeeb06293c85a902f2b56d1b13d260d}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!has\+Routing\+Event@{has\+Routing\+Event}}
+\index{has\+Routing\+Event@{has\+Routing\+Event}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{has\+Routing\+Event()}{hasRoutingEvent()}}
+{\footnotesize\ttfamily bool has\+Routing\+Event (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if there is a pending \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} for this \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. 
+
+Referenced by Negociate\+Window\+::add\+Routing\+Event().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a831dab8eb708da17b4f1e1a8c057f283}\label{classKite_1_1DataNegociate_a831dab8eb708da17b4f1e1a8c057f283}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Routing\+Event@{get\+Routing\+Event}}
+\index{get\+Routing\+Event@{get\+Routing\+Event}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Routing\+Event()}{getRoutingEvent()}}
+{\footnotesize\ttfamily \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$ get\+Routing\+Event (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The pending \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. {\ttfamily N\+U\+LL} will be returned if there is no pending event, meaning that the segment has been placed. 
+
+Referenced by Routing\+Event\+::clone(), Segment\+Action\+::do\+Action(), Manipulator\+::make\+Dogleg(), and Manipulator\+::relax().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_abc97e384245eab238831f9461968025b}\label{classKite_1_1DataNegociate_abc97e384245eab238831f9461968025b}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Track\+Segment@{get\+Track\+Segment}}
+\index{get\+Track\+Segment@{get\+Track\+Segment}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Track\+Segment()}{getTrackSegment()}}
+{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} $\ast$ get\+Track\+Segment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The associated \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \mbox{\Hypertarget{classKite_1_1DataNegociate_a3f34f9139b8491a0adb531ac3a904171}\label{classKite_1_1DataNegociate_a3f34f9139b8491a0adb531ac3a904171}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Track@{get\+Track}}
+\index{get\+Track@{get\+Track}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Track()}{getTrack()}}
+{\footnotesize\ttfamily \hyperlink{classKite_1_1Track}{Track} $\ast$ get\+Track (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} A proxy accessor for the segment\textquotesingle{}s track. \mbox{\Hypertarget{classKite_1_1DataNegociate_a56149c72d0bfe5e33795782b646061b1}\label{classKite_1_1DataNegociate_a56149c72d0bfe5e33795782b646061b1}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Left\+Min\+Extend@{get\+Left\+Min\+Extend}}
+\index{get\+Left\+Min\+Extend@{get\+Left\+Min\+Extend}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Left\+Min\+Extend()}{getLeftMinExtend()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Left\+Min\+Extend (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The minimum extend possible of the segment\textquotesingle{}s source (left) ending. Computed by \hyperlink{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}{Data\+Negociate\+::update()}. 
+
+Referenced by Manipulator\+::insert\+In\+Track().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_abf06c826acae81494b01b904d3277cc1}\label{classKite_1_1DataNegociate_abf06c826acae81494b01b904d3277cc1}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Right\+Min\+Extend@{get\+Right\+Min\+Extend}}
+\index{get\+Right\+Min\+Extend@{get\+Right\+Min\+Extend}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Right\+Min\+Extend()}{getRightMinExtend()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Right\+Min\+Extend (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The minimum extend possible of the segment\textquotesingle{}s target (right) ending. Computed by \hyperlink{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}{Data\+Negociate\+::update()}. 
+
+Referenced by Manipulator\+::insert\+In\+Track().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a4f6fbcee2499d33394ab54f856c500c0}\label{classKite_1_1DataNegociate_a4f6fbcee2499d33394ab54f856c500c0}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Terminals@{get\+Terminals}}
+\index{get\+Terminals@{get\+Terminals}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Terminals()}{getTerminals()}}
+{\footnotesize\ttfamily unsigned int get\+Terminals (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The number of terminal to which this segment is connected Computed by \hyperlink{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}{Data\+Negociate\+::update()}.
+
+Must be refined\+: direct or indirect?. \mbox{\Hypertarget{classKite_1_1DataNegociate_a692492374623a5c6096b2c4a51190359}\label{classKite_1_1DataNegociate_a692492374623a5c6096b2c4a51190359}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Net@{get\+Net}}
+\index{get\+Net@{get\+Net}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Net()}{getNet()}}
+{\footnotesize\ttfamily \textbf{ Net} $\ast$ get\+Net (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} A cached accessor to the segment\textquotesingle{}s net (for faster access). \mbox{\Hypertarget{classKite_1_1DataNegociate_a40ec2b23684a0e6e6d7ac9783a269037}\label{classKite_1_1DataNegociate_a40ec2b23684a0e6e6d7ac9783a269037}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+State@{get\+State}}
+\index{get\+State@{get\+State}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+State()}{getState()}}
+{\footnotesize\ttfamily unsigned int get\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The current state (see \hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}{Data\+Negociate\+::\+Slack\+State}). 
+
+Referenced by Segment\+Fsm\+::desaturate(), Routing\+Event\+::get\+State(), Manipulator\+::insert\+In\+Track(), and Manipulator\+::ripup\+Perpandiculars().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a6ad2b700f668f8e2e5cd4fbc717d8765}\label{classKite_1_1DataNegociate_a6ad2b700f668f8e2e5cd4fbc717d8765}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+State\+Count@{get\+State\+Count}}
+\index{get\+State\+Count@{get\+State\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+State\+Count()}{getStateCount()}}
+{\footnotesize\ttfamily unsigned int get\+State\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The number of times we have reached the ripup limit while in this stage. 
+
+Referenced by Segment\+Fsm\+::conflict\+Solve\+By\+Placeds(), Segment\+Fsm\+::desaturate(), and Routing\+Event\+::process().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a9832198737bd835fab730ff2b95bbfa0}\label{classKite_1_1DataNegociate_a9832198737bd835fab730ff2b95bbfa0}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Ripup\+Count@{get\+Ripup\+Count}}
+\index{get\+Ripup\+Count@{get\+Ripup\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Ripup\+Count()}{getRipupCount()}}
+{\footnotesize\ttfamily unsigned int get\+Ripup\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The number of times the segment has been riped up in this stage. 
+
+Referenced by Manipulator\+::can\+Ripup(), and Segment\+Action\+::do\+Action().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_acdd169f3bd670279f0a891caa809f99a}\label{classKite_1_1DataNegociate_acdd169f3bd670279f0a891caa809f99a}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+State\+And\+Ripup\+Count@{get\+State\+And\+Ripup\+Count}}
+\index{get\+State\+And\+Ripup\+Count@{get\+State\+And\+Ripup\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+State\+And\+Ripup\+Count()}{getStateAndRipupCount()}}
+{\footnotesize\ttfamily unsigned int get\+State\+And\+Ripup\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyReturn}{Returns}
+A composite number combining the state and the ripup count\+: {\ttfamily (state$<$$<$4)+ripup}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKite_1_1DataNegociate_af920f8ca7404239772e56d00f779cac6}\label{classKite_1_1DataNegociate_af920f8ca7404239772e56d00f779cac6}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Wiring\+Delta@{get\+Wiring\+Delta}}
+\index{get\+Wiring\+Delta@{get\+Wiring\+Delta}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Wiring\+Delta()}{getWiringDelta()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Wiring\+Delta (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{axis }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} The wiring length needed to connect to the attractors if the segment is put on {\ttfamily axis}. The lower, the better... \mbox{\Hypertarget{classKite_1_1DataNegociate_a60d12d642a8d232241a2b07febeb980b}\label{classKite_1_1DataNegociate_a60d12d642a8d232241a2b07febeb980b}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!get\+Perpandicular\+Free@{get\+Perpandicular\+Free}}
+\index{get\+Perpandicular\+Free@{get\+Perpandicular\+Free}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{get\+Perpandicular\+Free()}{getPerpandicularFree()}}
+{\footnotesize\ttfamily const \textbf{ Interval} \& get\+Perpandicular\+Free (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The range of legal positions generated only by the perpandiculars. \mbox{\Hypertarget{classKite_1_1DataNegociate_aafc8cd0dcd351625a12904bed7d5a7d1}\label{classKite_1_1DataNegociate_aafc8cd0dcd351625a12904bed7d5a7d1}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!set\+State@{set\+State}}
+\index{set\+State@{set\+State}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{set\+State()}{setState()}}
+{\footnotesize\ttfamily void set\+State (\begin{DoxyParamCaption}\item[{unsigned int}]{state,  }\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Set or reset the slacking state (see Slack\+State). If the {\ttfamily state} is the same as the current one, the state count is incremented. If the new state changes or {\ttfamily flags} contain Kt\+Reset, the state count is reset to one. 
+
+Referenced by Segment\+Fsm\+::desaturate(), Segment\+Action\+::do\+Action(), Routing\+Event\+::process(), Manipulator\+::relax(), Manipulator\+::repack\+Perpandiculars(), Manipulator\+::ripup\+Perpandiculars(), and Routing\+Event\+::set\+State().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a044867f105053d6231ab13fee23ec7b0}\label{classKite_1_1DataNegociate_a044867f105053d6231ab13fee23ec7b0}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!set\+Routing\+Event@{set\+Routing\+Event}}
+\index{set\+Routing\+Event@{set\+Routing\+Event}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{set\+Routing\+Event()}{setRoutingEvent()}}
+{\footnotesize\ttfamily void set\+Routing\+Event (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$}]{event }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Associate {\ttfamily event} to this \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. 
+
+Referenced by Routing\+Event\+::clone(), Routing\+Event\+::reset\+Processeds(), and Routing\+Event\+::set\+Segment().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a45492835bdca93f4e656dcd7ed027825}\label{classKite_1_1DataNegociate_a45492835bdca93f4e656dcd7ed027825}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!set\+Ripup\+Count@{set\+Ripup\+Count}}
+\index{set\+Ripup\+Count@{set\+Ripup\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{set\+Ripup\+Count()}{setRipupCount()}}
+{\footnotesize\ttfamily void set\+Ripup\+Count (\begin{DoxyParamCaption}\item[{unsigned int}]{count }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Directly sets the ripup count to {\ttfamily count}. 
+
+Referenced by Segment\+Action\+::do\+Action().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_ae50c33d207171246319e11e0671bc706}\label{classKite_1_1DataNegociate_ae50c33d207171246319e11e0671bc706}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!inc\+Ripup\+Count@{inc\+Ripup\+Count}}
+\index{inc\+Ripup\+Count@{inc\+Ripup\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{inc\+Ripup\+Count()}{incRipupCount()}}
+{\footnotesize\ttfamily void inc\+Ripup\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Increment the ripup count. No check is performed for bound limit. 
+
+Referenced by Routing\+Event\+::process().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_a4f94572b3541ea2d150c75bedc8364ed}\label{classKite_1_1DataNegociate_a4f94572b3541ea2d150c75bedc8364ed}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!dec\+Ripup\+Count@{dec\+Ripup\+Count}}
+\index{dec\+Ripup\+Count@{dec\+Ripup\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{dec\+Ripup\+Count()}{decRipupCount()}}
+{\footnotesize\ttfamily void dec\+Ripup\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Decrement the ripup count (will never go below zero). \mbox{\Hypertarget{classKite_1_1DataNegociate_a00a11ad9089d2df7b290615921e0c96a}\label{classKite_1_1DataNegociate_a00a11ad9089d2df7b290615921e0c96a}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!reset\+Ripup\+Count@{reset\+Ripup\+Count}}
+\index{reset\+Ripup\+Count@{reset\+Ripup\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{reset\+Ripup\+Count()}{resetRipupCount()}}
+{\footnotesize\ttfamily void reset\+Ripup\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Reset the ripup count to zero. 
+
+Referenced by Segment\+Action\+::do\+Action().
+
+\mbox{\Hypertarget{classKite_1_1DataNegociate_af1e8d229bb1dfcff3151d44d42a8549b}\label{classKite_1_1DataNegociate_af1e8d229bb1dfcff3151d44d42a8549b}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!reset\+State\+Count@{reset\+State\+Count}}
+\index{reset\+State\+Count@{reset\+State\+Count}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{reset\+State\+Count()}{resetStateCount()}}
+{\footnotesize\ttfamily void reset\+State\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Reset the state count to zero. \mbox{\Hypertarget{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}\label{classKite_1_1DataNegociate_ac5c54df7ed3b930268c8d7752c101725}} 
+\index{Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}!update@{update}}
+\index{update@{update}!Kite\+::\+Data\+Negociate@{Kite\+::\+Data\+Negociate}}
+\paragraph{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void update (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Recompute {\ttfamily left\+Min\+Extend}, {\ttfamily righ\+Min\+Extend}, number of terminals and attractors positions.
+
+\begin{DoxyParagraph}{Remark\+:}
+The constructor do not calls it. It is to the algorithm responsability to call it before using the computed datas. 
+\end{DoxyParagraph}
+
+
+Referenced by Negociate\+Window\+::set\+G\+Cells().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Data\+Negociate.\+h\item 
+Data\+Negociate.\+cpp\item 
+Data\+Negociate.\+dox\end{DoxyCompactItemize}

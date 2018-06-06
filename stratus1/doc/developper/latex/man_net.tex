@@ -1,0 +1,73 @@
+\subsection{Synopsys}
+
+\begin{verbatim}
+netInput = SignalIn ( name, arity )
+\end{verbatim}
+
+\subsection{Description}
+
+Instanciation of net. Differents kind of nets are listed below :
+\begin{itemize}
+    \item \verb-SignalIn- : Creation of an input port
+    \item \verb-SignalOut- : Creation of an output port
+    \item \verb-SignalInOut- : Creation of an inout port
+    \item \verb-SignalUnknown- : Creation of an input/output port which direction is not defined
+    \item \verb-TriState- : Creation of a tristate port
+    \item \verb-CkIn- : Creation of a clock port
+    \item \verb-VddIn- : Creation of the vdd alimentation
+    \item \verb-VssIn- : Creation of the vss alimentation
+    \item \verb-Signal- : Creation of an internal net
+\end{itemize}
+        
+\subsection{Parameters}
+
+\begin{itemize}
+    \item \verb-name- : Name of the net (mandatory argument)
+    \item \verb-arity- : Arity of the net (mandatory argument)
+    \item \verb-indice- : For buses only : the LSB bit (optional argument : set to 0 by default)\\
+\end{itemize}
+
+\indent Only \verb-CkIn, -\verb-VddIn- and \verb-VssIn- do not have the same parameters : there is only the \verb-name- parameter (they are 1 bit nets).
+
+\subsection{Attributes}
+
+\begin{itemize}
+    \item \verb-_name- : Name of the net
+    \item \verb-_arity- : Arity of the net (by default set to 0)
+    \item \verb-_ind- : LSB of the net
+    \item \verb-_ext- : Tells if the net is external or not (True/False)
+    \item \verb-_direct- : If the net is external, tells the direction ("IN", "OUT", "INOUT", "TRISTATE", "UNKNOWN")
+    \item \verb-_h_type- : If the net is an alimentation or a clock, tells the type ("POWER", "GROUND", "CLOCK")
+    \item \verb-_type- : The arithmetic type of the net ( "nr" )
+    \item \verb-_st_cell- : The stratus cell which the net is instanciated in
+    \item \verb-_real_net- : If the net is a part of a net (Sig) it is the real net corresponding
+    \item \verb-_alias- : [] by default. When the net has an alias, it's a tab. Each element of the tab correspond to a bit of the net (from the LSB to the MSB), it'a a dictionnary : the only key is the net which this net is an alias from, the value is the bit of the net
+    \item \verb-_to_merge- : [] by default. The same as \_alias
+    \item \verb-_to_cat- : [] by default. The same as \_alias\\
+\end{itemize}
+
+\indent And, in connection with Hurricane :
+\begin{itemize}
+    \item \verb-_hur_net- : A tab with all the hurricane nets corresponding to the stratus net ; From the LSB to the MSB (for example, with a 1 bit net, one gets the hurricane net by doing : \verb-net._hur_net[0]- ).
+\end{itemize}
+
+\subsection{Methods}
+
+\begin{itemize}
+    \item \verb-Buffer- : Instanciation of a Buffer
+    \item \verb-Shift- : Instanciation of a shifter
+    \item \verb-Mux- : Instanciation of a multiplexor
+    \item \verb-Reg- : Instanciation of a register
+    \item \verb-Eq/Ne- : Instanciation of comparison generator
+    \item \verb-Extend- : A net is extended
+    \item \verb-Alias- : A net is an alias of another net
+    \item \verb-Delete- : Deletion of the Hurricane nets\\
+\end{itemize}
+\indent And the overloards :
+\begin{itemize}
+    \item \_\_init\_\_ : Initialisation of nets
+    \item \_\_le\_\_ : initialisation of a net thanks to <= notation
+    \item \_\_getitem\_\_, \_\_geslice\_\_ : Creation of "Sig" nets : which are part of nets (use of \verb-[]- and \verb-[:]-)
+    \item \_\_and\_\_, \_\_or\_\_, \_\_xor\_\_, \_\_invert\_\_ : boolean operation with \&, |, \^ , ~
+    \item \_\_add\_\_, \_\_mul\_\_, \_\_div\_\_ : arithmetic operators with +, * and /
+\end{itemize}

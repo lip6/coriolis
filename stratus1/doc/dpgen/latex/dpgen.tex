@@ -1,0 +1,142 @@
+\documentclass[12pt]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{palatino}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{subfigure}
+\usepackage{wrapfig}
+\usepackage[dvips]{graphics}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{url}
+\usepackage{html}
+
+\setlength{\topmargin}{0cm}
+\setlength{\headheight}{1cm}
+\setlength{\textheight}{21cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{0cm}
+\setlength{\evensidemargin}{0cm}
+\setlength{\columnsep}{0.125in}
+\setlength{\columnseprule}{0.5pt}
+\setlength{\footskip}{1cm}
+\sloppy
+
+\newcommand{\image}[4]
+%	   {\begin{figure}[htbp]
+	   {\begin{figure}[h!]
+            \includegraphics[width=#2\textwidth]{#1}
+	    \end{figure}
+	   }
+% \image{fig.eps}{scale}
+
+%--------------------------------- page style --------------------------------
+\pagestyle{fancy}
+\rhead{}
+\lhead{}
+\rfoot{\thepage}
+\lfoot{}
+\cfoot{}
+%---------------------------------- document ---------------------------------
+\date   {}
+\title  {Dpgen generators User's Manual}
+\author {Sophie Belloeil}
+
+\begin{document}
+
+\setlength{\footrulewidth}{0.6pt}
+\maketitle
+
+%%\begin{htmlonly}
+%%  \htmlrule
+%%  \noindent La version imprimable de ce document est disponible ici~: \\
+%%  \begin{center}
+%%    \hyperref[hyper]{http://asim.lip6.fr/~jpc/M1-C++/TME/6/TME6.pdf}{}{}
+%%                    {http://asim.lip6.fr/~jpc/M1-C++/TME/6/TME6.pdf}
+%%  \end{center}
+%%\end{htmlonly}
+
+\tableofchildlinks
+\htmlrule
+
+\section{DpgenInv} 
+\input{man_dpgeninv}
+\section{DpgenBuff} 
+\input{man_dpgenbuff}
+\section{DpgenNand2} 
+\input{man_dpgennand2}
+\section{DpgenNand3} 
+\input{man_dpgennand3}
+\section{Dpgennand4}
+\input{man_dpgennand4}
+\section{DpgenAnd2}
+\input{man_dpgenand2}
+\section{DpgenAnd3} 
+\input{man_dpgenand3}
+\section{DpgenAnd4} 
+\input{man_dpgenand4}
+\section{DpgenNor2} 
+\input{man_dpgennor2}
+\section{DpgenNor3} 
+\input{man_dpgennor3}
+\section{DpgenNor4} 
+\input{man_dpgennor4}
+\section{DpgenOr2} 
+\input{man_dpgenor2}
+\section{DpgenOr3} 
+\input{man_dpgenor3}
+\section{DpgenOr4} 
+\input{man_dpgenor4}
+\section{DpgenXor2} 
+\input{man_dpgenxor2}
+\section{DpgenXnor2} 
+\input{man_dpgenxnor2}
+\section{DpgenNmux2}
+\input{man_dpgennmux2}
+\section{DpgenMux2}
+\input{man_dpgenmux2}
+\section{DpgenNbuse} 
+\input{man_dpgennbuse}
+\section{DpgenBuse}
+\input{man_dpgenbuse}
+\section{DpgenNand2mask} 
+\input{man_dpgennand2mask}
+\section{DpgenNor2mask} 
+\input{man_dpgennor2mask}
+\section{DpgenXnor2mask} 
+\input{man_dpgenxnor2mask}
+\section{DpgenAdsb2f} 
+\input{man_dpgenadsb2f}
+\section{DpgenShift} 
+\input{man_dpgenshift}
+\section{DpgenShrot} 
+\input{man_dpgenshrot}
+\section{DpgenNul}
+\input{man_dpgennul}
+\section{DpgenConst}
+\input{man_dpgenconst}
+\section{DpgenRom2}
+\input{man_dpgenrom2}
+\section{DpgenRom4}
+\input{man_dpgenrom4}
+\section{DpgenRam}
+\input{man_dpgenram}
+\section{DpgenRf1}
+\input{man_dpgenrf1}
+\section{DpgenRf1d}
+\input{man_dpgenrf1d}
+\section{DpgenFifo}
+\input{man_dpgenfifo}
+\section{DpgenDff}
+\input{man_dpgendff}
+\section{DpgenDfft}
+\input{man_dpgendfft}
+\section{DpgenSff}
+\input{man_dpgensff}
+\section{DpgenSfft}
+\input{man_dpgensfft}
+
+\end{document}

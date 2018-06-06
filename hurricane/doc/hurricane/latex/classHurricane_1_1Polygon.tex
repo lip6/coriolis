@@ -1,0 +1,59 @@
+\hypertarget{classHurricane_1_1Polygon}{}\section{Hurricane\+:\+:Polygon Class Reference}
+\label{classHurricane_1_1Polygon}\index{Hurricane\+::\+Polygon@{Hurricane\+::\+Polygon}}
+
+
+\hyperlink{classHurricane_1_1Polygon}{Polygon} description ({\bfseries A\+PI})  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Polygon\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classHurricane_1_1Polygon__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \hyperlink{classHurricane_1_1Component}{Component} \hyperlink{classHurricane_1_1Polygon_adac4dcd1480b81e7778775540b95f81c}{Super}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classHurricane_1_1Polygon}{Polygon} $\ast$ \hyperlink{classHurricane_1_1Polygon_ac248679558ff51bf509b28050027b7da}{create} (\hyperlink{classHurricane_1_1Net}{Net} $\ast$, const \hyperlink{classHurricane_1_1Layer}{Layer} $\ast$, const std\+::vector$<$ \hyperlink{classHurricane_1_1Point}{Point} $>$ \&)
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1Polygon}{Polygon} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1Polygon_secPolygonIntro}{}\subsection{Introduction}\label{classHurricane_1_1Polygon_secPolygonIntro}
+\hyperlink{classHurricane_1_1Polygon}{Polygon} should be used to create huge convex and manhattanized polygons. Manhattanization is done so the real geometric shape is completly included in it. The memory representation has been optimized for very large shape (compare to the foundry grid) and is inefficient for small ones.
+
+The minimal step length for the manhattanisation is set up with Db\+U\+::set\+Polygon\+Step(). 
+
+\subsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Polygon_adac4dcd1480b81e7778775540b95f81c}\label{classHurricane_1_1Polygon_adac4dcd1480b81e7778775540b95f81c}} 
+\index{Hurricane\+::\+Polygon@{Hurricane\+::\+Polygon}!Super@{Super}}
+\index{Super@{Super}!Hurricane\+::\+Polygon@{Hurricane\+::\+Polygon}}
+\subsubsection{\texorpdfstring{Super}{Super}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Polygon_adac4dcd1480b81e7778775540b95f81c}{Hurricane\+::\+Polygon\+::\+Super}}
+
+Useful for calling upon methods of the base class without knowing it. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Polygon_ac248679558ff51bf509b28050027b7da}\label{classHurricane_1_1Polygon_ac248679558ff51bf509b28050027b7da}} 
+\index{Hurricane\+::\+Polygon@{Hurricane\+::\+Polygon}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Polygon@{Hurricane\+::\+Polygon}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Polygon}{Polygon} $\ast$ Hurricane\+::\+Polygon\+::create (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Net}{Net} $\ast$}]{net,  }\item[{const \hyperlink{classHurricane_1_1Layer}{Layer} $\ast$}]{layer,  }\item[{const std\+::vector$<$ \hyperlink{classHurricane_1_1Point}{Point} $>$ \&}]{points }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Create a polygon of {\ttfamily layer} in {\ttfamily net}. {\ttfamily points} define the vertexes. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Polygon.\+h\item 
+Polygon.\+dox\end{DoxyCompactItemize}

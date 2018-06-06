@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Shifter</TITLE>
+<META NAME="description" CONTENT="Shifter">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node39.html">
+<LINK REL="previous" HREF="node37.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node39.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node37.html">Multiplexor</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node39.html">Register</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html904"
+  HREF="node38.html#SECTION00073100000000000000">Name</A>
+<LI><A NAME="tex2html905"
+  HREF="node38.html#SECTION00073200000000000000">Synopsys</A>
+<LI><A NAME="tex2html906"
+  HREF="node38.html#SECTION00073300000000000000">Description</A>
+<LI><A NAME="tex2html907"
+  HREF="node38.html#SECTION00073400000000000000">Parameters</A>
+<LI><A NAME="tex2html908"
+  HREF="node38.html#SECTION00073500000000000000">Example</A>
+<LI><A NAME="tex2html909"
+  HREF="node38.html#SECTION00073600000000000000">Errors</A>
+<LI><A NAME="tex2html910"
+  HREF="node38.html#SECTION00073700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00073000000000000000"></A>
+    <A NAME="secshift"></A>
+<BR>
+Shifter
+</H2>
+    
+<H3><A NAME="SECTION00073100000000000000">
+Name</A>
+</H3>
+
+<P>
+Shift - Easy way to instantiate a shifter
+
+<P>
+
+<H3><A NAME="SECTION00073200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+netOut &lt;= netCmd.Shift ( netIn, direction, type )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00073300000000000000">
+Description</A>
+</H3>
+
+<P>
+This method is a method of net. The net which this method is applied to is the command of the shifter, it's the one which defines the number of bits to shift. The net given as parameter is the input net. The other arguments set the different patameters. The method returns a net : the output net.
+<BR>
+Note that it is possible to change the generator instanciated with the <code>SetShift</code> method.
+
+<P>
+
+<H3><A NAME="SECTION00073400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>netIn</code> : the net which is going to be shifted
+</LI>
+<LI><code>direction</code> : this string represents the direction of the shift :
+    
+<UL>
+<LI>"left"
+</LI>
+<LI>"right"
+    
+</LI>
+</UL>
+</LI>
+<LI><code>type</code> : this string represents the type of the shift :
+    
+<UL>
+<LI>"logical" : only "zeros" are put in the net
+</LI>
+<LI>"arith" : meaningful for "right" shift, the values put in the nets are an extension of the MSB
+</LI>
+<LI>"circular" : the values put in the nets are the ones which have just been taken off
+    
+</LI>
+</UL>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00073500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = SignalIn ( "a", 4 )
+    
+    self.Cmd = SignalIn ( "cmd", 2 )
+    
+    self.S1 = SignalOut ( "s1", 4 )
+    self.S2 = SignalOut ( "s2", 4 )
+    self.S3 = SignalOut ( "s3", 4 )
+
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S1 &lt;= self.Cmd.Shift ( self.A, "right", "logical" ) 
+    self.S2 &lt;= self.Cmd.Shift ( self.A, "right", "arith"   ) 
+    
+    self.S3 &lt;= self.Cmd.Shift ( self.A, "left", "circular" )
+</PRE>
+If the value of "a" is "0b1001" and the value of "cmd" is "0b10", we will have :
+
+<UL>
+<LI>"s1" : "0b0010"
+</LI>
+<LI>"s2" : "0b1110"
+</LI>
+<LI>"s3" : "0b0110"
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00073600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] Shift :</code>
+<BR><code>The input net does not have a positive arity.</code>
+<BR>
+The net which is going to be shifted must have a positive arity.
+</LI>
+<LI><code>[Stratus ERROR] Shift :</code>
+<BR><code>The direction parameter must be "left" or "right".</code>
+<BR>
+The "direction" argument is not correct.
+</LI>
+<LI><code>[Stratus ERROR] Shift :</code>
+<BR><code>The type parameter must be "logical" or "arith" or "circular".</code>
+<BR>
+The "type" argument is not correct.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00073700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node37.html#secmux"><SPAN  CLASS="textit">Instanciation of a multiplexor</SPAN></A>
+<A HREF="node39.html#secreg"><SPAN  CLASS="textit">Instanciation of a register</SPAN></A>
+<A HREF="node40.html#secconstant"><SPAN  CLASS="textit">Instanciation of constants</SPAN></A>
+<A HREF="node41.html#secbool"><SPAN  CLASS="textit">Boolean operations</SPAN></A>
+<A HREF="node42.html#secarithmetic"><SPAN  CLASS="textit">Arithmetical operations</SPAN></A>
+<A HREF="node43.html#seccomp"><SPAN  CLASS="textit">Comparison operations</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node37.html">Multiplexor</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node39.html">Register</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

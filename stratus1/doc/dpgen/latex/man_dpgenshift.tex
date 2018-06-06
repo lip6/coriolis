@@ -1,0 +1,69 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenShift -- Shifter Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenShift', modelname
+         , param = { 'nbit'     : n
+                   , 'physical' : True         
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a \verb-n- bits shifter named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{op} : select the kind of shift (input, 2 bits)
+        \item \textbf{shamt} : the shift amount (input, \verb-Y- bits)
+        \item \textbf{i} : value to shift (input, \verb-n- bits)
+        \item \textbf{o} : output (\verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+    \end{itemize}
+    \item \textbf{How it works} :
+    \begin{itemize}
+        \item If the \verb-op[0]- signal is set to \verb-one-, performs a right shift, performs a left shift otherwise.
+        \item If the \verb-op[1]- signal is set to \verb-one-, performs an arithmetic shift (only meaningful in case of a right shift).
+        \item shamt : specifies the shift amount. The width of this signal (\verb-Y-) is computed from the operator's width : \verb-Y = ceil(log2(n)) -- 1
+    \end{itemize}    
+%    \item \textbf{Behavior} :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_shifter ( Model ) :
+
+  def Interface ( self ) :
+    self.instop    = SignalIn  (    "instop", 2 )
+    self.instshamt = SignalIn  ( "instshamt", 2 )
+    self.insti     = SignalIn  (     "insti", 4 )
+    self.insto     = SignalOut (     "insto", 4 )
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenShifter', 'shifter_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'shifter_4', 'inst'
+                  , map = { 'op'    : self.instop
+                          , 'shamt' : self.instshamt
+                          , 'i'     : self.insti
+                          , 'o'     : self.insto
+                          , 'vdd'   : self.vdd
+                          , 'vss'   : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

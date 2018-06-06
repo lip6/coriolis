@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Multiplexor</TITLE>
+<META NAME="description" CONTENT="Multiplexor">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node38.html">
+<LINK REL="previous" HREF="node36.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node38.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node36.html">Buffer</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node38.html">Shifter</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html887"
+  HREF="node37.html#SECTION00072100000000000000">Name</A>
+<LI><A NAME="tex2html888"
+  HREF="node37.html#SECTION00072200000000000000">Synopsys</A>
+<LI><A NAME="tex2html889"
+  HREF="node37.html#SECTION00072300000000000000">Description</A>
+<LI><A NAME="tex2html890"
+  HREF="node37.html#SECTION00072400000000000000">Parameters</A>
+<LI><A NAME="tex2html891"
+  HREF="node37.html#SECTION00072500000000000000">Example</A>
+<LI><A NAME="tex2html892"
+  HREF="node37.html#SECTION00072600000000000000">Errors</A>
+<LI><A NAME="tex2html893"
+  HREF="node37.html#SECTION00072700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00072000000000000000"></A>
+    <A NAME="secmux"></A>
+<BR>
+Multiplexor
+</H2>
+    
+<H3><A NAME="SECTION00072100000000000000">
+Name</A>
+</H3>
+
+<P>
+Mux - Easy way to instantiate a multiplexor
+
+<P>
+
+<H3><A NAME="SECTION00072200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+netOut &lt;= netCmd.Mux ( arg )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00072300000000000000">
+Description</A>
+</H3>
+
+<P>
+This method is a method of net. The net which this method is applied to is the command of the multiplexor. The nets given as parameters are all the input nets. This method returns a net : the output net.
+<BR>
+There are two ways to describe the multiplexor : the argument <code>arg</code> can be a list or a dictionnary.
+<BR>
+Note that it is possible to change the generator instanciated with the <code>SetMux</code> method.
+
+<P>
+
+<H3><A NAME="SECTION00072400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI>List :
+<BR>
+For each value of the command, the corresponding net is specified. All values must be specified.
+<BR>
+For example :
+    <PRE>
+out &lt;= cmd.Mux ( [in0, in1, in2, in3] )
+</PRE>
+    The net out is then initialised like this :
+    <PRE>
+if cmd == 0 : out &lt;= in0
+if cmd == 1 : out &lt;= in1
+if cmd == 2 : out &lt;= in2
+if cmd == 3 : out &lt;= in3
+</PRE>
+</LI>
+<LI>Dictionnary :
+<BR>
+A dictionnary makes the correspondance between a value of the command and the corresponding net.
+<BR>
+For example :
+    <PRE>
+out &lt;= cmd.Mux ( {"0" : in0, "1" : in1, "2" : in2, "3" : in3} )
+</PRE>
+    This initialisation corresponds to the one before.
+    Thanks to the use of a dictionnary, the connections can be clearer :
+    
+<UL>
+<LI><code>'default'</code>: This key of the dictionnary corresponds to all the nets that are not specified
+<BR>
+For example :
+        <PRE>
+out &lt;= cmd.Mux ( {"0" : in0, "default" : in1} )
+</PRE>
+        This notation corresponds to :
+        <PRE>
+if cmd == 0 : out &lt;= in0
+else        : out &lt;= in1
+</PRE>
+        Note that if there is no <code>'default'</code> key specified and that not all the nets are specified, the non specified nets are set to 0.
+</LI>
+<LI><code>#</code> and <code>?</code> : When a key of the dictionnary begins with <code>#</code>, the number after the <code>#</code> has to be binary and each ? in the number means that this bit is not precised
+<BR>
+For example :
+        <PRE>
+out &lt;= cmd.Mux ( {"#01?" : in0, "default" : in1} )
+</PRE>
+        This notation corresponds to :
+        <PRE>
+if cmd in ( 2, 3 ) : out &lt;= in0
+else               : out &lt;= in1
+</PRE>
+</LI>
+<LI><code>,</code> and <code>-</code> : When keys contains thoses symbols, it permits to enumerate intervals
+<BR>
+For example :
+        <PRE>
+out &lt;= cmd.Mux ( {"0,4" : in0, "1-3,5" : in1} )
+</PRE>
+        This notation corresponds to :
+        <PRE>
+if   cmd in ( 0, 4 )      : out &lt;= in0
+elif cmd in ( 1, 2, 3, 5) : out &lt;= in1
+else                      : out &lt;= 0
+</PRE>
+</LI>
+</UL>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00072500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A    = SignalIn  (    "a", 4 )
+    self.B    = SignalIn  (    "b", 4 )
+    self.C    = SignalIn  (    "c", 4 )
+    self.D    = SignalIn  (    "d", 4 )
+    
+    self.Cmd1 = SignalIn  ( "cmd1", 2 )
+    self.Cmd2 = SignalIn  ( "cmd2", 4 )
+    
+    self.S1   = SignalOut (   "s1", 4 )
+    self.S2   = SignalOut (   "s2", 4 )
+
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S1 &lt;= self.Cmd1.Mux ( [sefl.A, self.B, self.C, self.D] ) 
+
+    self.S2 &lt;= self.Cmd2.Mux ( { "0"       : self.A
+                               , "1,5-7"   : self.B
+                               , "#1?1?"   : self.C
+                               , "default" : self.D
+                             } )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00072600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] Mux : all the nets must have the same lenght.</code>
+<BR>
+All the input nets pust have the same lenght.
+</LI>
+<LI><code>[Stratus ERROR] Mux : there are no input nets.</code>
+<BR>
+The input nets seem to have been forgotten.
+</LI>
+<LI><code>[Stratus ERROR] Mux : wrong argument type.</code>
+<BR>
+The connections of the buses are not described by a list nor a dictionnary.
+</LI>
+<LI><code>[Stratus ERROR] Mux :</code>
+<BR><code>the number of nets does not match with the lenght of the command.</code>
+<BR>
+When using a list, the number of nets has to correspond to the number of possible values of the command.
+</LI>
+<LI><code>[Stratus ERROR] Mux : wrong key.</code>
+<BR>
+One of the key of the dictionnary is not un number, neither a list or an interval.
+</LI>
+<LI><code>[Stratus ERROR] Mux :</code>
+<BR><code>when an interval is specified, the second number of the interval</code>
+<BR><code>must be greater than the first one.</code>
+<BR>
+When creating an interval with "-", the second number has to be greater than the first one.
+</LI>
+<LI><code>[Stratus ERROR] Mux :</code>
+<BR><code>the binary number does not match with the lenght of the command.</code>
+<BR>
+When using the <code>#</code> notation, each digit of the binary number corresponds to a wire of the cmd. The leghts have to correspond.
+</LI>
+<LI><code>[Stratus ERROR] Mux : after #, the number has to be binary.</code>
+<BR>
+When using the <code>#</code> notation, the number has to be binary : one can use 0, 1 or ?.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00072700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node38.html#secshift"><SPAN  CLASS="textit">Instanciation of a shifter</SPAN></A>
+<A HREF="node39.html#secreg"><SPAN  CLASS="textit">Instanciation of a register</SPAN></A>
+<A HREF="node40.html#secconstant"><SPAN  CLASS="textit">Instanciation of constants</SPAN></A>
+<A HREF="node41.html#secbool"><SPAN  CLASS="textit">Boolean operations</SPAN></A>
+<A HREF="node42.html#secarithmetic"><SPAN  CLASS="textit">Arithmetical operations</SPAN></A>
+<A HREF="node43.html#seccomp"><SPAN  CLASS="textit">Comparison operations</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node36.html">Buffer</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node38.html">Shifter</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

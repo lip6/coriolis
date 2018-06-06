@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Nets</TITLE>
+<META NAME="description" CONTENT="Nets">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node8.html">Instances</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html189"
+  HREF="node7.html#SECTION00031100000000000000">Name</A>
+<LI><A NAME="tex2html190"
+  HREF="node7.html#SECTION00031200000000000000">Synopsys</A>
+<LI><A NAME="tex2html191"
+  HREF="node7.html#SECTION00031300000000000000">Description</A>
+<LI><A NAME="tex2html192"
+  HREF="node7.html#SECTION00031400000000000000">Nets</A>
+<LI><A NAME="tex2html193"
+  HREF="node7.html#SECTION00031500000000000000">Parameters</A>
+<LI><A NAME="tex2html194"
+  HREF="node7.html#SECTION00031600000000000000">Functions and methods</A>
+<LI><A NAME="tex2html195"
+  HREF="node7.html#SECTION00031700000000000000">Example</A>
+<LI><A NAME="tex2html196"
+  HREF="node7.html#SECTION00031800000000000000">Errors</A>
+<LI><A NAME="tex2html197"
+  HREF="node7.html#SECTION00031900000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00031000000000000000"></A>
+    <A NAME="secnet"></A>
+<BR>
+Nets
+</H2>
+    
+<H3><A NAME="SECTION00031100000000000000">
+Name</A>
+</H3>
+
+<P>
+SignalIn, SignalOut ... - Creation of nets
+
+<P>
+
+<H3><A NAME="SECTION00031200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+netA = SignalIn ( "a", 4 )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00031300000000000000">
+Description</A>
+</H3>
+
+<P>
+How to create and use nets.
+
+<P>
+
+<H3><A NAME="SECTION00031400000000000000">
+Nets</A>
+</H3>
+
+<P>
+Differents kind of nets are listed below :
+
+<UL>
+<LI><code>SignalIn</code> : Creation of an input port
+</LI>
+<LI><code>SignalOut</code> : Creation of an output port
+</LI>
+<LI><code>SignalInOut</code> : Creation of an inout port
+</LI>
+<LI><code>SignalUnknown</code> : Creation of an input/output port which direction is not defined
+</LI>
+<LI><code>TriState</code> : Creation of a tristate port
+</LI>
+<LI><code>CkIn</code> : Creation of a clock port
+</LI>
+<LI><code>VddIn</code> : Creation of the vdd alimentation
+</LI>
+<LI><code>VssIn</code> : Creation of the vss alimentation
+</LI>
+<LI><code>Signal</code> : Creation of an internal net
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00031500000000000000">
+Parameters</A>
+</H3>
+
+<P>
+All kind of constructors have the same parameters :
+
+<UL>
+<LI><code>name</code> : the name of the net (mandatory argument)
+</LI>
+<LI><code>arity</code> : the arity of the net (mandatory argument)
+</LI>
+<LI><code>indice</code> : for bit vectors only : the LSB bit (optional argument : set to 0 by default)
+</LI>
+</UL>
+
+<P>
+Only <code>CkIn</code>, <code>VddIn</code> and <code>VssIn</code> do not have the same parameters : there is only the <code>name</code> parameter (they are 1 bit nets).
+
+<P>
+
+<H3><A NAME="SECTION00031600000000000000">
+Functions and methods</A>
+</H3>
+
+<P>
+Some functions/methods are provided in order to handle nets :
+
+<UL>
+<LI>function <code>Cat</code> : Concatenation of nets, beginning with the MSB
+<PRE>
+Inst ( 'DpgenInv'
+     , map = { 'i0'  : Cat ( A, B )
+             , 'nq'  : S
+             , 'vdd' : vdd
+             , 'vss' : vss
+             }
+     )
+</PRE>
+Or :
+<PRE>
+tab = []
+tab.append ( A )
+tab.append ( B )
+
+Inst ( 'DpgenInv'
+     , map = { 'i0'  : Cat ( tab )
+             , 'nq'  : S
+             , 'vdd' : vdd
+             , 'vss' : vss
+             }
+     )
+</PRE>
+If A and B are 2 bits nets, the net <code>myNet</code> will be such as :
+<PRE>
+myNet[3] = A[1]
+myNet[2] = A[0]
+myNet[1] = B[1]
+myNet[0] = B[0]
+</PRE>
+</LI>
+<LI>function <code>Extend</code> : Creation of a net which is an extension of the net which it is applied to
+<PRE>
+temp    = Signal (     "temp", 5 )
+tempExt = Signal ( "temp_ext", 8 )
+
+tempExt &lt;= temp.Extand ( 8, 'one' )
+</PRE>
+</LI>
+<LI>method <code>Alias</code> : Creation of an alias name for a net
+<PRE>
+cin.Alias  ( c_temp[0] )
+cout.Alias ( c_temp[4] )
+for i in range ( 4 ) :
+  Inst ( "Fulladder"
+       , map = { 'a'    : a[i]
+               , 'b'    : b[i]
+               , 'cin'  : c_temp[i]
+               , 'sout' : sout[i]
+               , 'cout' : c_temp[i+1]
+               , 'vdd'  : vdd
+               , 'vss'  : vss
+               }
+       )
+</PRE>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00031700000000000000">
+Example</A>
+</H3>
+
+<P>
+You can see a concrete example at : <A HREF="node5.html#secexample"><SPAN  CLASS="textit">Example</SPAN></A>
+
+<P>
+
+<H3><A NAME="SECTION00031800000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>Error in SignalIn :</code>
+<BR><code>the lenght of the net must be a positive value.</code>
+<BR>
+One can not create a net with a negative lenght.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00031900000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node8.html">Instances</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

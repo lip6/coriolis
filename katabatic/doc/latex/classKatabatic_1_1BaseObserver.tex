@@ -1,0 +1,46 @@
+\hypertarget{classKatabatic_1_1BaseObserver}{}\section{Base\+Observer Class Reference}
+\label{classKatabatic_1_1BaseObserver}\index{Base\+Observer@{Base\+Observer}}
+
+
+\hyperlink{classKatabatic_1_1Observer}{Observer} Design Pattern, \hyperlink{classKatabatic_1_1Observer}{Observer} part.  
+
+
+
+
+Inheritance diagram for Base\+Observer\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=160pt]{classKatabatic_1_1BaseObserver__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{classKatabatic_1_1BaseObserver_a52e577fb0c4f2e3650928334fb621c2f}{notify} (unsigned int flags)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classKatabatic_1_1Observer}{Observer} Design Pattern, \hyperlink{classKatabatic_1_1Observer}{Observer} part. 
+
+This class is used as a non-\/template base class for the templatized \hyperlink{classKatabatic_1_1Observer}{Observer} one. It is used to avoid propagating template to the whole \hyperlink{classKatabatic_1_1Observable}{Observable} class. It only contains the \hyperlink{classKatabatic_1_1BaseObserver_a52e577fb0c4f2e3650928334fb621c2f}{Observer\+::notify()} virtual method. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classKatabatic_1_1BaseObserver_a52e577fb0c4f2e3650928334fb621c2f}\label{classKatabatic_1_1BaseObserver_a52e577fb0c4f2e3650928334fb621c2f}} 
+\index{Katabatic\+::\+Base\+Observer@{Katabatic\+::\+Base\+Observer}!notify@{notify}}
+\index{notify@{notify}!Katabatic\+::\+Base\+Observer@{Katabatic\+::\+Base\+Observer}}
+\subsubsection{\texorpdfstring{notify()}{notify()}}
+{\footnotesize\ttfamily void notify (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+The method which will be called whenever a change occurs on the \hyperlink{classKatabatic_1_1Observable}{Observable}. 
+
+Referenced by Observable\+::notify().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Observer.\+h\item 
+Observer.\+cpp\item 
+Observer.\+dox\end{DoxyCompactItemize}

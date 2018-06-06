@@ -1,0 +1,65 @@
+\hypertarget{class_open_chams_1_1_parameters}{}\section{Parameters Class Reference}
+\label{class_open_chams_1_1_parameters}\index{Parameters@{Parameters}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_open_chams_1_1_parameters_a9ad9a7acc15a142788270ccd255b5e91}{add\+Parameter} (const std\+::string \&, const std\+::string \&)
+\begin{DoxyCompactList}\small\item\em adds a new value parameter. \end{DoxyCompactList}\item 
+const std\+::string \& \hyperlink{class_open_chams_1_1_parameters_a41b343d6037f531fd92912b453b40f2b}{get\+Value} (const std\+::string \&)
+\begin{DoxyCompactList}\small\item\em returns the value of the parameter named {\ttfamily name}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_parameters_a0f890d16c3b2a0bcbdf060854ea07877}\label{class_open_chams_1_1_parameters_a0f890d16c3b2a0bcbdf060854ea07877}} 
+const std\+::map$<$ std\+::string, std\+::string $>$ \& \hyperlink{class_open_chams_1_1_parameters_a0f890d16c3b2a0bcbdf060854ea07877}{get\+Values} ()
+\begin{DoxyCompactList}\small\item\em returns the map of value parameters. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_parameters_af337ffd75e4f019ce15302c60715d84b}\label{class_open_chams_1_1_parameters_af337ffd75e4f019ce15302c60715d84b}} 
+bool \hyperlink{class_open_chams_1_1_parameters_af337ffd75e4f019ce15302c60715d84b}{is\+Empty} ()
+\begin{DoxyCompactList}\small\item\em returns true if \hyperlink{class_open_chams_1_1_parameters}{Parameters} has no value parameter nor equation parameter. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_parameters_a061bbedbf4fbd963871a388f5e8ebb61}\label{class_open_chams_1_1_parameters_a061bbedbf4fbd963871a388f5e8ebb61}} 
+\hyperlink{class_open_chams_1_1_parameters_a061bbedbf4fbd963871a388f5e8ebb61}{Parameters} ()
+\begin{DoxyCompactList}\small\item\em creates a new set of parameters. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describes a set of \hyperlink{class_open_chams_1_1_parameters}{Parameters}. \hyperlink{class_open_chams_1_1_parameters}{Parameters} consist in two maps associating a parameter name to a double value or a std\+::string (equation). 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_open_chams_1_1_parameters_a9ad9a7acc15a142788270ccd255b5e91}\label{class_open_chams_1_1_parameters_a9ad9a7acc15a142788270ccd255b5e91}} 
+\index{Open\+Chams\+::\+Parameters@{Open\+Chams\+::\+Parameters}!add\+Parameter@{add\+Parameter}}
+\index{add\+Parameter@{add\+Parameter}!Open\+Chams\+::\+Parameters@{Open\+Chams\+::\+Parameters}}
+\subsubsection{\texorpdfstring{add\+Parameter()}{addParameter()}}
+{\footnotesize\ttfamily void add\+Parameter (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{const std\+::string \&}]{value }\end{DoxyParamCaption})}
+
+
+
+adds a new value parameter. 
+
+adds a new equation parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the parameter. \\
+\hline
+{\em value} & the value of the parameter.\\
+\hline
+{\em name} & the name of the parameter. \\
+\hline
+{\em equation} & the equation of the parameter. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_open_chams_1_1_parameters_a41b343d6037f531fd92912b453b40f2b}\label{class_open_chams_1_1_parameters_a41b343d6037f531fd92912b453b40f2b}} 
+\index{Open\+Chams\+::\+Parameters@{Open\+Chams\+::\+Parameters}!get\+Value@{get\+Value}}
+\index{get\+Value@{get\+Value}!Open\+Chams\+::\+Parameters@{Open\+Chams\+::\+Parameters}}
+\subsubsection{\texorpdfstring{get\+Value()}{getValue()}}
+{\footnotesize\ttfamily const string \& get\+Value (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+
+
+returns the value of the parameter named {\ttfamily name}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the parameter double value. 
+\end{DoxyReturn}

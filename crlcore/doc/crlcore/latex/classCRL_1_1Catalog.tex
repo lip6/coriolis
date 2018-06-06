@@ -1,0 +1,108 @@
+\hypertarget{classCRL_1_1Catalog}{}\section{C\+RL\+:\+:Catalog Class Reference}
+\label{classCRL_1_1Catalog}\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+
+
+A Registry to store Alliance Cell metadatas.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classCRL_1_1Catalog_1_1State}{State}
+\begin{DoxyCompactList}\small\item\em An entry to store the Cell \hyperlink{classCRL_1_1Catalog_1_1State}{State} in the \hyperlink{classCRL_1_1Catalog}{Catalog}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCRL_1_1Catalog_a6682f773880c7ca16bdca79057a08e6b}{Catalog} ()
+\item 
+\hyperlink{classCRL_1_1Catalog_a3ad457a2bf6246c3a1d9c3a4730c2696}{$\sim$\+Catalog} ()
+\item 
+\hyperlink{classCRL_1_1Catalog_1_1State}{State} $\ast$ \hyperlink{classCRL_1_1Catalog_a5b04db2b2179d70212dd1b12daa903f9}{get\+State} (const \textbf{ Name} \&name, bool add=false)
+\item 
+void \hyperlink{classCRL_1_1Catalog_afe3ea2153684ed8df029ee896cef6608}{merge\+State} (const \textbf{ Name} \&name, const \hyperlink{classCRL_1_1Catalog_1_1State}{State} \&other)
+\item 
+bool \hyperlink{classCRL_1_1Catalog_ada5b55e7926764fc9c7f5b7d4e6c2cdc}{delete\+State} (const \textbf{ Name} \&name)
+\item 
+void \hyperlink{classCRL_1_1Catalog_aa40bdbaf5b64f56b085bfce72dc89fe6}{clear} ()
+\item 
+bool \hyperlink{classCRL_1_1Catalog_a02ae9d3636235db933a29c08329c5778}{load\+From\+File} (const string \&path, \textbf{ Library} $\ast$library)
+\item 
+map$<$ \textbf{ Name}, \hyperlink{classCRL_1_1Catalog_1_1State}{State} $\ast$ $>$ $\ast$ \hyperlink{classCRL_1_1Catalog_a3e326d2515c01af4fc75e421a3b61a81}{get\+States} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A Registry to store Alliance Cell metadatas. 
+
+The \hyperlink{classCRL_1_1Catalog}{Catalog} is built from the various C\+A\+T\+AL files from the library directories and enriched with the current state of Cell in the database. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classCRL_1_1Catalog_a6682f773880c7ca16bdca79057a08e6b}\label{classCRL_1_1Catalog_a6682f773880c7ca16bdca79057a08e6b}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!Catalog@{Catalog}}
+\index{Catalog@{Catalog}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{Catalog()}{Catalog()}}
+{\footnotesize\ttfamily C\+R\+L\+::\+Catalog\+::\+Catalog (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+A new, empty, \hyperlink{classCRL_1_1Catalog}{Catalog}. Normally, there should only be one \hyperlink{classCRL_1_1Catalog}{Catalog}, attribute of \hyperlink{classCRL_1_1AllianceFramework}{Alliance\+Framework}. \mbox{\Hypertarget{classCRL_1_1Catalog_a3ad457a2bf6246c3a1d9c3a4730c2696}\label{classCRL_1_1Catalog_a3ad457a2bf6246c3a1d9c3a4730c2696}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!````~Catalog@{$\sim$\+Catalog}}
+\index{````~Catalog@{$\sim$\+Catalog}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{$\sim$\+Catalog()}{~Catalog()}}
+{\footnotesize\ttfamily C\+R\+L\+::\+Catalog\+::$\sim$\+Catalog (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Free a \hyperlink{classCRL_1_1Catalog}{Catalog} object. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classCRL_1_1Catalog_a5b04db2b2179d70212dd1b12daa903f9}\label{classCRL_1_1Catalog_a5b04db2b2179d70212dd1b12daa903f9}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!get\+State@{get\+State}}
+\index{get\+State@{get\+State}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{get\+State()}{getState()}}
+{\footnotesize\ttfamily \hyperlink{classCRL_1_1Catalog_1_1State}{State} $\ast$ C\+R\+L\+::\+Catalog\+::get\+State (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{name,  }\item[{bool}]{add = {\ttfamily false} }\end{DoxyParamCaption})}
+
+{\bfseries Returns\+:} the \hyperlink{classCRL_1_1Catalog_1_1State}{State} of the Cell named {\ttfamily name}. If {\ttfamily add} is set to {\bfseries true} and the cell doesn\textquotesingle{}t exist, an entry is created for it. Otherwise, N\+U\+LL is returned. \mbox{\Hypertarget{classCRL_1_1Catalog_afe3ea2153684ed8df029ee896cef6608}\label{classCRL_1_1Catalog_afe3ea2153684ed8df029ee896cef6608}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!merge\+State@{merge\+State}}
+\index{merge\+State@{merge\+State}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{merge\+State()}{mergeState()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Catalog\+::merge\+State (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{name,  }\item[{const \hyperlink{classCRL_1_1Catalog_1_1State}{State} \&}]{other }\end{DoxyParamCaption})}
+
+Merge the \hyperlink{classCRL_1_1Catalog_1_1State}{State} {\ttfamily other} with the current one. It only fills the holes. If the \hyperlink{classCRL_1_1Catalog_1_1State}{State}\textquotesingle{}s Cell or Library is already sets, the ones from {\ttfamily other} are discarteds. Related to the Alliance search path policy where the first Cell found shadows any other one found later. \mbox{\Hypertarget{classCRL_1_1Catalog_ada5b55e7926764fc9c7f5b7d4e6c2cdc}\label{classCRL_1_1Catalog_ada5b55e7926764fc9c7f5b7d4e6c2cdc}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!delete\+State@{delete\+State}}
+\index{delete\+State@{delete\+State}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{delete\+State()}{deleteState()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::delete\+State (\begin{DoxyParamCaption}\item[{const \textbf{ Name} \&}]{name }\end{DoxyParamCaption})}
+
+{\bfseries Returns\+:} {\bfseries true} if an entry has been indeed deleted.
+
+Delete the \hyperlink{classCRL_1_1Catalog_1_1State}{State} associated with Cell {\ttfamily name}. \mbox{\Hypertarget{classCRL_1_1Catalog_aa40bdbaf5b64f56b085bfce72dc89fe6}\label{classCRL_1_1Catalog_aa40bdbaf5b64f56b085bfce72dc89fe6}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!clear@{clear}}
+\index{clear@{clear}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Catalog\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Completly empty the \hyperlink{classCRL_1_1Catalog}{Catalog}. \mbox{\Hypertarget{classCRL_1_1Catalog_a02ae9d3636235db933a29c08329c5778}\label{classCRL_1_1Catalog_a02ae9d3636235db933a29c08329c5778}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!load\+From\+File@{load\+From\+File}}
+\index{load\+From\+File@{load\+From\+File}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{load\+From\+File()}{loadFromFile()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::load\+From\+File (\begin{DoxyParamCaption}\item[{const string \&}]{path,  }\item[{\textbf{ Library} $\ast$}]{library }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & The path to the library catalog file. \\
+\hline
+{\em library} & The library for which we are loading a catalog. {\bfseries Returns\+:} {\bfseries true} if the catalog file has been found and successfully loaded. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classCRL_1_1Catalog_a3e326d2515c01af4fc75e421a3b61a81}\label{classCRL_1_1Catalog_a3e326d2515c01af4fc75e421a3b61a81}} 
+\index{C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}!get\+States@{get\+States}}
+\index{get\+States@{get\+States}!C\+R\+L\+::\+Catalog@{C\+R\+L\+::\+Catalog}}
+\subsubsection{\texorpdfstring{get\+States()}{getStates()}}
+{\footnotesize\ttfamily std\+::map$<$ \textbf{ Hurricane\+::\+Name}, \hyperlink{classCRL_1_1Catalog_1_1State}{State} $\ast$ $>$ $\ast$ C\+R\+L\+::\+Catalog\+::get\+States (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyReturn}{Returns}
+the internal std\+::map$<$$>$ of States. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Catalog.\+h\item 
+Catalog.\+dox\end{DoxyCompactItemize}

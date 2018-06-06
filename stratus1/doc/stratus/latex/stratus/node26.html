@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>CopyUpSegment</TITLE>
+<META NAME="description" CONTENT="CopyUpSegment">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node27.html">
+<LINK REL="previous" HREF="node25.html">
+<LINK REL="up" HREF="node20.html">
+<LINK REL="next" HREF="node27.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node25.html">GetRefXY</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node27.html">PlaceCentric</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html660"
+  HREF="node26.html#SECTION00066100000000000000">Name</A>
+<LI><A NAME="tex2html661"
+  HREF="node26.html#SECTION00066200000000000000">Synopsys</A>
+<LI><A NAME="tex2html662"
+  HREF="node26.html#SECTION00066300000000000000">Description</A>
+<LI><A NAME="tex2html663"
+  HREF="node26.html#SECTION00066400000000000000">Parameters</A>
+<LI><A NAME="tex2html664"
+  HREF="node26.html#SECTION00066500000000000000">Example</A>
+<LI><A NAME="tex2html665"
+  HREF="node26.html#SECTION00066600000000000000">Errors</A>
+<LI><A NAME="tex2html666"
+  HREF="node26.html#SECTION00066700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00066000000000000000"></A>
+    <A NAME="seccopy"></A>
+<BR>
+CopyUpSegment
+</H2>
+    
+<H3><A NAME="SECTION00066100000000000000">
+Name</A>
+</H3>
+
+<P>
+CopyUpSegment - Copies the segment of an instance in the current cell
+
+<P>
+
+<H3><A NAME="SECTION00066200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+CopyUpSegment ( pathname, netname, newnet  )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00066300000000000000">
+Description</A>
+</H3>
+
+<P>
+Duplication of a segment.
+<BR>
+The segment is created with the same cordinates and layer as the segment corresponding to the net <code>netname</code> in the instance found thanks to <code>pathname</code>. It belongs to the net <code>newnet</code>.
+<BR>
+Note that if several segments correspond to the net, they are all going to be copied.
+
+<P>
+
+<H3><A NAME="SECTION00066400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>pathname</code> : The path in order to obtain, from the top cell, the instance the net <code>netname</code> belongs to
+</LI>
+<LI><code>netname</code> : The name of the net which the segment belongs to
+</LI>
+<LI><code>net</code> : The net which the top cell segment os going to belong to
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00066500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+CopuUpSegment ( "my_dpgen_and2.cell_1", "i0", myNet )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00066600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] CopyUpSegment :</code>
+<BR><code>The instance's path must be put with a string.</code>
+</LI>
+<LI><code>[Stratus ERROR] CopyUpSegment :</code>
+<BR><code>The segment must be done with it's name : a string.</code>
+</LI>
+<LI><code>[Stratus ERROR] CopyUpSegment :</code>
+<BR><code>No net found with name ... in masterCell ...</code>
+<BR>
+There is no net with name <code>netname</code> in the instance found thanks to the path <code>pathname</code>.
+</LI>
+<LI><code>[Stratus ERROR] CopyUpSegment :</code>
+<BR><code>No segment found with net ... in masterCell ...</code>
+<BR>
+The net with name <code>netname</code> has no segment. So the copy of segment can not be done.
+</LI>
+<LI><code>[Stratus ERROR] CopyUpSegment :</code>
+<BR><code>the segment of net ... are not of type CALU.</code>
+<BR>
+In other words, the net is not an external net. The copy can be done only with external nets.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00066700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node10.html#seclayout"><SPAN  CLASS="textit">Layout</SPAN></A>
+<A HREF="node21.html#secsegment"><SPAN  CLASS="textit">PlaceSegment</SPAN></A>
+<A HREF="node22.html#seccontact"><SPAN  CLASS="textit">PlaceContact</SPAN></A>
+<A HREF="node23.html#secpin"><SPAN  CLASS="textit">PlacePin</SPAN></A>
+<A HREF="node24.html#secref"><SPAN  CLASS="textit">PlaceRef</SPAN></A>
+<A HREF="node25.html#secgetref"><SPAN  CLASS="textit">GetRefXY</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node25.html">GetRefXY</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node27.html">PlaceCentric</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

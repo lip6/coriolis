@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DpgenRam</TITLE>
+<META NAME="description" CONTENT="DpgenRam">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node32.html">
+<LINK REL="previous" HREF="node30.html">
+<LINK REL="up" HREF="dpgen.html">
+<LINK REL="next" HREF="node32.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node30.html">DpgenRom4</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node32.html">DpgenRf1</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000310000000000000000">
+DpgenRam</A>
+</H1>
+
+<UL>
+<LI><SPAN  CLASS="textbf">Name</SPAN> : DpgenRam - RAM Macro-Generator
+</LI>
+<LI><SPAN  CLASS="textbf">Synopsys</SPAN> :
+<PRE>
+Generate ( 'DpgenRam', modelname
+         , param = { 'nbit'     : n
+                   , 'nword'    : regNumber
+                   , 'physical' : True                   
+                   }
+         )
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Description</SPAN> : Generates a RAM of <code>regNumber</code> words of <code>n</code> bits named <code>modelname</code>.
+</LI>
+<LI><SPAN  CLASS="textbf">Terminal Names</SPAN> :
+    
+<UL>
+<LI><SPAN  CLASS="textbf">ck</SPAN> : clock signal (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">w</SPAN> : write requested (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">selram</SPAN> : select the write bus (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">ad</SPAN> : the address (input, <code>Y</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">datain</SPAN> : write bus (input, <code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">dataout</SPAN> : read bus (output, <code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">vdd</SPAN> : power
+</LI>
+<LI><SPAN  CLASS="textbf">vss</SPAN> : ground
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Parameters</SPAN> : Parameters are given in the map <code>param</code>.
+    
+<UL>
+<LI><SPAN  CLASS="textbf">nbit</SPAN> (mandatory) : Defines the size of the generator
+</LI>
+<LI><SPAN  CLASS="textbf">nword</SPAN> (mandatory) : Defines the size of the words
+</LI>
+<LI><SPAN  CLASS="textbf">physical</SPAN> (optional, default value : False) : In order to generate a layout        
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Example</SPAN> :
+<PRE>
+from stratus import *
+
+class inst_ram ( Model ) :
+
+  def Interface ( self ) :
+    self.ck      = SignalIn  (      "ck",  1 )
+    self.w       = SignalIn  (       "w",  1 )
+    self.selram  = SignalIn  (  "selram",  1 )
+    self.ad      = SignalIn  (      "ad",  5 )
+    self.datain  = SignalIn  (  "datain", 32 )
+    self.dataout = TriState ( "dataout", 32 )
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenRam', 'ram_32_32'
+             , param = { 'nbit'     : 32
+                       , 'nword'    : 32
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'ram_32_32', 'inst'
+                  , map = { 'ck'      : self.ck
+                          , 'w'       : self.w
+                          , 'selram'  : self.selram
+                          , 'ad'      : self.ad
+                          , 'datain'  : self.datain
+                          , 'dataout' : self.dataout
+                          , 'vdd'     : self.vdd
+                          , 'vss'     : self.vss
+                          }
+                  )     
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</PRE>
+</LI>
+</UL>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

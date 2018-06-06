@@ -1,0 +1,156 @@
+\hypertarget{classHurricane_1_1Library}{}\section{Hurricane\+:\+:Library Class Reference}
+\label{classHurricane_1_1Library}\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+
+
+\hyperlink{classHurricane_1_1Library}{Library} description ({\bfseries A\+PI})  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Library\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=174pt]{classHurricane_1_1Library__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \hyperlink{classHurricane_1_1DBo}{D\+Bo} \hyperlink{classHurricane_1_1Library_a30ef446b2da0d405bdf4e11ce67b160f}{Inherit}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$ \hyperlink{classHurricane_1_1Library_a657cbf1ac426ef6def0b5b51f80ed248}{get\+Data\+Base} () const
+\item 
+\hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1Library_a5299d19afc96c535d557b86ba42eaa82}{get\+Library} () const
+\item 
+const \hyperlink{classHurricane_1_1Name}{Name} \& \hyperlink{classHurricane_1_1Library_a13a9c4d0c43e2e1df09b7c0ee59f577f}{get\+Name} () const
+\item 
+\hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1Library_a8589e1ff3db5ef288c3027ceef28636b}{get\+Library} (const \hyperlink{classHurricane_1_1Name}{Name} \&name) const
+\item 
+\hyperlink{namespaceHurricane_a2868a53bbb0507710460ff02fab77cad}{Libraries} \hyperlink{classHurricane_1_1Library_a43b3703b939b7e70261d1f9319db2bb0}{get\+Libraries} () const
+\item 
+\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ \hyperlink{classHurricane_1_1Library_a2e6bb294c611db79e00a5a6ea00974d5}{get\+Cell} (const \hyperlink{classHurricane_1_1Name}{Name} \&name) const
+\item 
+\hyperlink{namespaceHurricane_a8b4ab14b26f36f43d83a50294410b44a}{Cells} \hyperlink{classHurricane_1_1Library_aae3e47aef08e50f9858fb79537f6eb41}{get\+Cells} () const
+\item 
+void \hyperlink{classHurricane_1_1Library_a1181e4e87f42749bdfda253cad658ea9}{set\+Name} (const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1Library_af304234d0347128300df5ad09801229d}{create} (\hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$data\+Base, const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+\item 
+static \hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1Library_a36bc1af0e48307180be81a81d462650e}{create} (\hyperlink{classHurricane_1_1Library}{Library} $\ast$library, const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1Library}{Library} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1Library_secLibraryIntro}{}\subsection{Introduction}\label{classHurricane_1_1Library_secLibraryIntro}
+A library contains a set of symbols, a set of cells and may also contains a set of sub libraries.
+
+A root library exists directly attached to the data\+\_\+base. This root library is the only one which has no parent library. 
+
+\subsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Library_a30ef446b2da0d405bdf4e11ce67b160f}\label{classHurricane_1_1Library_a30ef446b2da0d405bdf4e11ce67b160f}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!Inherit@{Inherit}}
+\index{Inherit@{Inherit}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{Inherit}{Inherit}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Library_a30ef446b2da0d405bdf4e11ce67b160f}{Hurricane\+::\+Library\+::\+Inherit}}
+
+Useful for calling upon methods of the base class without knowing it. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Library_af304234d0347128300df5ad09801229d}\label{classHurricane_1_1Library_af304234d0347128300df5ad09801229d}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Library}{Library} $\ast$ Hurricane\+::\+Library\+::create (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$}]{data\+Base,  }\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns a new root library named {\ttfamily $<$name$>$} for the data base {\ttfamily $<$data\+Base$>$}.
+
+\begin{DoxyParagraph}{Caution\+:}
+Throws an exception if the data base is null, if the name is empty or if the data base already contains a root library. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Library_a36bc1af0e48307180be81a81d462650e}\label{classHurricane_1_1Library_a36bc1af0e48307180be81a81d462650e}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{create()}{create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Library}{Library} $\ast$ Hurricane\+::\+Library\+::create (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Library}{Library} $\ast$}]{library,  }\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns a new sub library named {\ttfamily $<$name$>$} for the library {\ttfamily $<$library$>$}.
+
+\begin{DoxyParagraph}{Caution\+:}
+Throws an exception if the library is null, if the name is empty or if a sub library with same name already exists in the library. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Library_a657cbf1ac426ef6def0b5b51f80ed248}\label{classHurricane_1_1Library_a657cbf1ac426ef6def0b5b51f80ed248}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Data\+Base@{get\+Data\+Base}}
+\index{get\+Data\+Base@{get\+Data\+Base}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Data\+Base()}{getDataBase()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$ Hurricane\+::\+Library\+::get\+Data\+Base (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the data base owning directly or indirectly the library. \mbox{\Hypertarget{classHurricane_1_1Library_a5299d19afc96c535d557b86ba42eaa82}\label{classHurricane_1_1Library_a5299d19afc96c535d557b86ba42eaa82}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Library@{get\+Library}}
+\index{get\+Library@{get\+Library}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Library()}{getLibrary()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Library}{Library} $\ast$ Hurricane\+::\+Library\+::get\+Library (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the library owning the library (N\+U\+LL for the root library). \mbox{\Hypertarget{classHurricane_1_1Library_a13a9c4d0c43e2e1df09b7c0ee59f577f}\label{classHurricane_1_1Library_a13a9c4d0c43e2e1df09b7c0ee59f577f}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Name}{Name} \& Hurricane\+::\+Library\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the name of the library. \mbox{\Hypertarget{classHurricane_1_1Library_a8589e1ff3db5ef288c3027ceef28636b}\label{classHurricane_1_1Library_a8589e1ff3db5ef288c3027ceef28636b}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Library@{get\+Library}}
+\index{get\+Library@{get\+Library}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Library()}{getLibrary()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Library}{Library} $\ast$ Hurricane\+::\+Library\+::get\+Library (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the sub library of name {\ttfamily $<$name$>$} if it exists, else N\+U\+LL. \mbox{\Hypertarget{classHurricane_1_1Library_a43b3703b939b7e70261d1f9319db2bb0}\label{classHurricane_1_1Library_a43b3703b939b7e70261d1f9319db2bb0}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Libraries@{get\+Libraries}}
+\index{get\+Libraries@{get\+Libraries}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Libraries()}{getLibraries()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a2868a53bbb0507710460ff02fab77cad}{Libraries} Hurricane\+::\+Library\+::get\+Libraries (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection of all sub libraries of the library. \mbox{\Hypertarget{classHurricane_1_1Library_a2e6bb294c611db79e00a5a6ea00974d5}\label{classHurricane_1_1Library_a2e6bb294c611db79e00a5a6ea00974d5}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Cell@{get\+Cell}}
+\index{get\+Cell@{get\+Cell}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Cell()}{getCell()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ Hurricane\+::\+Library\+::get\+Cell (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the cell of name {\ttfamily $<$name$>$} if it exists, else N\+U\+LL. \mbox{\Hypertarget{classHurricane_1_1Library_aae3e47aef08e50f9858fb79537f6eb41}\label{classHurricane_1_1Library_aae3e47aef08e50f9858fb79537f6eb41}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!get\+Cells@{get\+Cells}}
+\index{get\+Cells@{get\+Cells}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{get\+Cells()}{getCells()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a8b4ab14b26f36f43d83a50294410b44a}{Cells} Hurricane\+::\+Library\+::get\+Cells (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection of all cells of the library. 
+
+References set\+Name().
+
+\mbox{\Hypertarget{classHurricane_1_1Library_a1181e4e87f42749bdfda253cad658ea9}\label{classHurricane_1_1Library_a1181e4e87f42749bdfda253cad658ea9}} 
+\index{Hurricane\+::\+Library@{Hurricane\+::\+Library}!set\+Name@{set\+Name}}
+\index{set\+Name@{set\+Name}!Hurricane\+::\+Library@{Hurricane\+::\+Library}}
+\subsubsection{\texorpdfstring{set\+Name()}{setName()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Library\+::set\+Name (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})}
+
+Allows to change the library name.
+
+\begin{DoxyParagraph}{Remark\+:}
+Throws an exception if the new name is empty or if the library owning the library (if any) has already a sub library with the same name. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Cells().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Library.\+h\item 
+Library.\+dox\end{DoxyCompactItemize}

@@ -25,14 +25,9 @@
  find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
+ find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(python)
 #add_subdirectory(cmake_modules)
-
-#if(BUILD_DOC)
-#  find_package(Doxygen)
-#  if(DOXYGEN_FOUND)
-#    add_subdirectory(doc)
-#  endif()
-#endif()
+#add_subdirectory(doc)

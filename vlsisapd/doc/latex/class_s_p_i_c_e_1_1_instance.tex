@@ -1,0 +1,104 @@
+\hypertarget{class_s_p_i_c_e_1_1_instance}{}\section{Instance Class Reference}
+\label{class_s_p_i_c_e_1_1_instance}\index{Instance@{Instance}}
+Inheritance diagram for Instance\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_s_p_i_c_e_1_1_instance}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{add\+Connector} (std\+::string connector)
+\begin{DoxyCompactList}\small\item\em adds a connector to the instance. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{add\+Parameter} (std\+::string name, std\+::string value)
+\begin{DoxyCompactList}\small\item\em add a parameter to the instance. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}\label{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}} 
+const std\+::vector$<$ std\+::string $>$ \& \hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{get\+Connectors} ()
+\begin{DoxyCompactList}\small\item\em returns the connectors of the instance. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}\label{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}} 
+std\+::string \hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{get\+Model} ()
+\begin{DoxyCompactList}\small\item\em returns the model of the instance. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}\label{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}} 
+std\+::string \hyperlink{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}{get\+Name} ()
+\begin{DoxyCompactList}\small\item\em returns the name of the instance. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}\label{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}} 
+const std\+::map$<$ std\+::string, std\+::string $>$ \& \hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{get\+Parameters} ()
+\begin{DoxyCompactList}\small\item\em returns the parameters of the instance. \end{DoxyCompactList}\item 
+std\+::string \hyperlink{class_s_p_i_c_e_1_1_instance_a324e4ff99afdcd5972d8c57461d12ef5}{get\+Parameter\+Value} (std\+::string name)
+\begin{DoxyCompactList}\small\item\em returns the value (as string) of a parameter of the instance. \end{DoxyCompactList}\item 
+\hyperlink{class_s_p_i_c_e_1_1_instance_a400232cdfbe82c01dd2830368377492b}{Instance} (std\+::string name, std\+::string model)
+\begin{DoxyCompactList}\small\item\em creates a new instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describes an instance of the global circuit. It is the base class of \hyperlink{class_s_p_i_c_e_1_1_capacitor}{S\+P\+I\+C\+E\+::\+Capacitor}, \hyperlink{class_s_p_i_c_e_1_1_mosfet}{S\+P\+I\+C\+E\+::\+Mosfet} and \hyperlink{class_s_p_i_c_e_1_1_resistor}{S\+P\+I\+C\+E\+::\+Resistor}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_a400232cdfbe82c01dd2830368377492b}\label{class_s_p_i_c_e_1_1_instance_a400232cdfbe82c01dd2830368377492b}} 
+\index{S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}!Instance@{Instance}}
+\index{Instance@{Instance}!S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}}
+\subsubsection{\texorpdfstring{Instance()}{Instance()}}
+{\footnotesize\ttfamily \hyperlink{class_s_p_i_c_e_1_1_instance}{Instance} (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{model }\end{DoxyParamCaption})}
+
+
+
+creates a new instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the instance. \\
+\hline
+{\em model} & the model of the instance. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}\label{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}} 
+\index{S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}!add\+Connector@{add\+Connector}}
+\index{add\+Connector@{add\+Connector}!S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}}
+\subsubsection{\texorpdfstring{add\+Connector()}{addConnector()}}
+{\footnotesize\ttfamily void add\+Connector (\begin{DoxyParamCaption}\item[{std\+::string}]{connector }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+adds a connector to the instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em connector} & the connector to add. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}\label{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}} 
+\index{S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}!add\+Parameter@{add\+Parameter}}
+\index{add\+Parameter@{add\+Parameter}!S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}}
+\subsubsection{\texorpdfstring{add\+Parameter()}{addParameter()}}
+{\footnotesize\ttfamily void add\+Parameter (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{value }\end{DoxyParamCaption})}
+
+
+
+add a parameter to the instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the parameter. \\
+\hline
+{\em value} & the value of the parameter. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_instance_a324e4ff99afdcd5972d8c57461d12ef5}\label{class_s_p_i_c_e_1_1_instance_a324e4ff99afdcd5972d8c57461d12ef5}} 
+\index{S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}!get\+Parameter\+Value@{get\+Parameter\+Value}}
+\index{get\+Parameter\+Value@{get\+Parameter\+Value}!S\+P\+I\+C\+E\+::\+Instance@{S\+P\+I\+C\+E\+::\+Instance}}
+\subsubsection{\texorpdfstring{get\+Parameter\+Value()}{getParameterValue()}}
+{\footnotesize\ttfamily string get\+Parameter\+Value (\begin{DoxyParamCaption}\item[{std\+::string}]{name }\end{DoxyParamCaption})}
+
+
+
+returns the value (as string) of a parameter of the instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the parameter from which to get value. \\
+\hline
+\end{DoxyParams}

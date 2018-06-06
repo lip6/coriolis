@@ -1,0 +1,139 @@
+\hypertarget{namespaceKite}{}\subsection{Kite Namespace Reference}
+\label{namespaceKite}\index{Kite@{Kite}}
+
+
+The namespace dedicated to \hyperlink{namespaceKite}{Kite}.  
+
+
+\subsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate}
+\begin{DoxyCompactList}\small\item\em Algorimthmic datas associated the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1HorizontalTrack}{Horizontal\+Track}
+\begin{DoxyCompactList}\small\item\em Horizontal track managment. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1KiteEngine}{Kite\+Engine}
+\begin{DoxyCompactList}\small\item\em The \hyperlink{namespaceKite}{Kite} Tool. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1Manipulator}{Manipulator}
+\begin{DoxyCompactList}\small\item\em Handle \hyperlink{classKite_1_1TrackElement}{Track\+Element} ripup \& topological modifications. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1NegociateWindow}{Negociate\+Window}
+\begin{DoxyCompactList}\small\item\em Perform the routing, main \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} manager. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}
+\begin{DoxyCompactList}\small\item\em Atomic Placement Request for a \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}
+\begin{DoxyCompactList}\small\item\em History of \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}
+\begin{DoxyCompactList}\small\item\em Simple loop dectector for \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}
+\begin{DoxyCompactList}\small\item\em The priority Queue of \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane}
+\begin{DoxyCompactList}\small\item\em Array of Tracks in one Layer. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1SegmentAction}{Segment\+Action}
+\begin{DoxyCompactList}\small\item\em Store request for an event to be generated on a \hyperlink{classKite_1_1TrackElement}{Track\+Element}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}
+\begin{DoxyCompactList}\small\item\em Pseudo-\/decorator to process a \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1SegmentObserver}{Segment\+Observer}
+\begin{DoxyCompactList}\small\item\em Observer on the base Auto\+Segment. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1Session}{Session}
+\begin{DoxyCompactList}\small\item\em \hyperlink{namespaceKite}{Kite} update \hyperlink{classKite_1_1Session}{Session}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1Track}{Track}
+\begin{DoxyCompactList}\small\item\em Structure managing one routing track. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1TrackElement}{Track\+Element}
+\begin{DoxyCompactList}\small\item\em Abstract Class for all Elements inserted inside a \hyperlink{classKite_1_1Track}{Track}. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1TrackFixedSegment}{Track\+Fixed\+Segment}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classKite_1_1Track}{Track} elements for fixed wires. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1TrackMarker}{Track\+Marker}
+\begin{DoxyCompactList}\small\item\em Tag part of \hyperlink{classKite_1_1Track}{Track} with a weight. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}
+\begin{DoxyCompactList}\small\item\em Derived \textbf{ Katabatic\+::\+Auto\+Segment} for the router. \end{DoxyCompactList}\item 
+class \hyperlink{classKite_1_1VerticalTrack}{Vertical\+Track}
+\begin{DoxyCompactList}\small\item\em Vertical track managment. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef void() \hyperlink{namespaceKite_ac86883c8d5a0f34ab9b4ec6eaaad6c9f}{Segment\+Overlap\+Cost\+CB}(const \hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$, Track\+Cost \&)
+\end{DoxyCompactItemize}
+\subsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47}{Function\+Flags} \{ , \newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47abd49be7700e04e255b30a6cee68535fd}{Kt\+Load\+Global\+Routing} = 0x00000001, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47a0441a09d569a7634f9d1826fa315ddcc}{Kt\+Build\+Global\+Routing} = 0x00000002, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47a766f453d6caa06490196a952762f0bb8}{Kt\+Allow\+Dogleg\+Reuse} = 0x00000004, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47a68e917ff37d4b5cef906303181836404}{Kt\+Data\+Self} = 0x00000008, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47afaf04b2ddbae58557683c20373c0bada}{Kt\+Nearest} = 0x00000010, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47a5d7da665ec1368b29ee9d3e382cd1072}{Kt\+Force} = 0x00000020, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47aeb3b2254e460ac48ce9a57965ba3627b}{Kt\+Reset\+Count} = 0x00000040, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47a8f9c41816abe8ac1da87d930bc12ed5e}{Kt\+With\+Perpands} = 0x00000080, 
+\newline
+\hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47abffa3499a9376f3e9f1de1ab6b8ba37b}{Kt\+With\+Constraints} = 0x00000100
+ \}
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+The namespace dedicated to \hyperlink{namespaceKite}{Kite}. 
+
+\subsubsection{Typedef Documentation}
+\mbox{\Hypertarget{namespaceKite_ac86883c8d5a0f34ab9b4ec6eaaad6c9f}\label{namespaceKite_ac86883c8d5a0f34ab9b4ec6eaaad6c9f}} 
+\index{Kite@{Kite}!Segment\+Overlap\+Cost\+CB@{Segment\+Overlap\+Cost\+CB}}
+\index{Segment\+Overlap\+Cost\+CB@{Segment\+Overlap\+Cost\+CB}!Kite@{Kite}}
+\paragraph{\texorpdfstring{Segment\+Overlap\+Cost\+CB}{SegmentOverlapCostCB}}
+{\footnotesize\ttfamily Segment\+Overlap\+Cost\+CB}
+
+Prototype of overlap cost callback functions.
+
+{\bfseries See also\+:}~ \hyperlink{classKite_1_1TrackElement_a4648fa47d0870cf743436ff6a6239fd9}{Track\+Segment\+::set\+Overlap\+Cost\+C\+B()}, Track\+Segment\+::get\+Overlap\+Cost(). 
+
+\subsubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47}} 
+\index{Kite@{Kite}!Function\+Flags@{Function\+Flags}}
+\index{Function\+Flags@{Function\+Flags}!Kite@{Kite}}
+\paragraph{\texorpdfstring{Function\+Flags}{FunctionFlags}}
+{\footnotesize\ttfamily enum \hyperlink{namespaceKite_acca8fffa3182dea5f94208f454f14b47}{Function\+Flags}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Load\+Global\+Routing@{Kt\+Load\+Global\+Routing}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Load\+Global\+Routing@{Kt\+Load\+Global\+Routing}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47abd49be7700e04e255b30a6cee68535fd}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47abd49be7700e04e255b30a6cee68535fd}} 
+Kt\+Load\+Global\+Routing&Reload the global routing from a preciously saved run ({\ttfamily }.kgr file). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Build\+Global\+Routing@{Kt\+Build\+Global\+Routing}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Build\+Global\+Routing@{Kt\+Build\+Global\+Routing}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47a0441a09d569a7634f9d1826fa315ddcc}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47a0441a09d569a7634f9d1826fa315ddcc}} 
+Kt\+Build\+Global\+Routing&Run the global router Knik. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Allow\+Dogleg\+Reuse@{Kt\+Allow\+Dogleg\+Reuse}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Allow\+Dogleg\+Reuse@{Kt\+Allow\+Dogleg\+Reuse}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47a766f453d6caa06490196a952762f0bb8}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47a766f453d6caa06490196a952762f0bb8}} 
+Kt\+Allow\+Dogleg\+Reuse&Allow sharing of dogleg. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Data\+Self@{Kt\+Data\+Self}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Data\+Self@{Kt\+Data\+Self}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47a68e917ff37d4b5cef906303181836404}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47a68e917ff37d4b5cef906303181836404}} 
+Kt\+Data\+Self&To be documented. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Nearest@{Kt\+Nearest}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Nearest@{Kt\+Nearest}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47afaf04b2ddbae58557683c20373c0bada}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47afaf04b2ddbae58557683c20373c0bada}} 
+Kt\+Nearest&Round the position to the nearest track axis. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Force@{Kt\+Force}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Force@{Kt\+Force}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47a5d7da665ec1368b29ee9d3e382cd1072}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47a5d7da665ec1368b29ee9d3e382cd1072}} 
+Kt\+Force&Force to perform an action ignoring the \char`\"{}up to date\char`\"{} state. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+Reset\+Count@{Kt\+Reset\+Count}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+Reset\+Count@{Kt\+Reset\+Count}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47aeb3b2254e460ac48ce9a57965ba3627b}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47aeb3b2254e460ac48ce9a57965ba3627b}} 
+Kt\+Reset\+Count&Tells to reset a counter. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+With\+Perpands@{Kt\+With\+Perpands}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+With\+Perpands@{Kt\+With\+Perpands}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47a8f9c41816abe8ac1da87d930bc12ed5e}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47a8f9c41816abe8ac1da87d930bc12ed5e}} 
+Kt\+With\+Perpands&Ripup perpandiculars alongside the current segment. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kt\+With\+Constraints@{Kt\+With\+Constraints}!Kite@{Kite}}\index{Kite@{Kite}!Kt\+With\+Constraints@{Kt\+With\+Constraints}}}\mbox{\Hypertarget{namespaceKite_acca8fffa3182dea5f94208f454f14b47abffa3499a9376f3e9f1de1ab6b8ba37b}\label{namespaceKite_acca8fffa3182dea5f94208f454f14b47abffa3499a9376f3e9f1de1ab6b8ba37b}} 
+Kt\+With\+Constraints&Force constraints recomputation. \\
+\hline
+
+\end{DoxyEnumFields}

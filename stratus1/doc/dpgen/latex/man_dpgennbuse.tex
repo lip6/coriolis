@@ -1,0 +1,65 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenNbuse -- Tristate Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenNbuse', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : true
+                   , 'behavioral' : true         
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a \verb-n- bits tristate with an complemented output named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{cmd} : select ( 1 bit )
+        \item \textbf{i0} : input ( \verb-n- bits )
+        \item \textbf{nq} : output ( \verb-n- bits )
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior        
+    \end{itemize}
+    \item \textbf{Behavior} :
+\begin{verbatim}
+nts:BLOCK(cmd = '1') BEGIN
+    nq <= GUARDED not(i0);
+END
+\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_nbuse ( Model ) :
+
+  def Interface ( self ) :
+    self.i   = SignalIn  (   "i", 29 )
+    self.cmd = SignalIn  ( "cmd", 1  )
+    self.o   = SignalOut (   "o", 29 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenNbuse', 'nbuse29'
+             , param = { 'nbit'     : 29
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nbuse29', 'inst'
+                  , map = { 'i0'  : self.i
+                          , 'cmd' : self.cmd
+                          , 'nq'  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+    
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

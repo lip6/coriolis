@@ -30,14 +30,11 @@
  find_package(HURRICANE          REQUIRED)
  find_package(Libexecinfo        REQUIRED)
  find_package(Libbfd)
+#include(UseLATEX)
+ find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(python)
  add_subdirectory(etc)
  add_subdirectory(cmake_modules)
-
- if(BUILD_DOC)
-#  include(UseLATEX)
-   find_package(Doxygen)
-   add_subdirectory(doc)
- endif()
+ add_subdirectory(doc)

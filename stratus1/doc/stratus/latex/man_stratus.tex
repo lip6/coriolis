@@ -1,0 +1,158 @@
+\subsubsection{Name}
+
+Stratus -- Procedural design language based upon \emph{Python}
+
+\subsubsection{Description}
+
+\emph{Stratus} is a set of \emph{Python} methods/functions dedicated to procedural generation purposes. From a user point of view, \emph{Stratus} is a circuit's description  language that allows \emph{Python} programming flow control, variable use, and specialized functions in order to handle vlsi objects.\\
+
+\indent Based upon the \emph{Hurricane} data structures, the \emph{Stratus} language gives the user the ability to describe netlist and layout views.
+
+\subsubsection{Configuration}
+A configuration file can be used to direct the generation process of Stratus. With this file, the user can choose the output format (vst, vhdl...), the simulator (asimut, ghdl...), the standard cell library... This configuration file named \verb-.st_config.py- must be placed either in the HOME directory or in the current directory. This file contains a set of variables used in the process generation of Stratus, as for example :
+\begin{verbatim} 
+format = 'vhdl'
+simulator = 'ghdl'
+\end{verbatim} 
+The default configuration of Stratus uses the Alliance CAD system, ie \verb-'vst'- as \verb-format- and \verb-'asimut'- as \verb-simulator-.
+
+\subsubsection{Description of a cell}
+
+A cell is a hierachical structural description of a circuit in terms of ports (I/Os), signals (nets) and instances.\\
+     
+\indent The description of a cell is done by creating a new class, derivating for class \verb-Model-, with different methods :
+
+\begin{itemize}
+\item Method \verb-Interface- : Description of the external ports of the cell :
+    \begin{itemize}
+        \item SignalIn, SignalOut, ...
+    \end{itemize}
+\item Method \verb-Netlist- : Description of the netlist of the cell :
+    \begin{itemize}
+        \item Inst, Signal
+    \end{itemize}
+\item Method \verb-Layout- : Description of the layout of the cell :
+    \begin{itemize}
+        \item Place, PlaceTop, PlaceBottom, PlaceRight, PlaceLeft ...
+    \end{itemize}
+\item Method \verb-Stimuli- : Description of the simulation stimuli of the cell :
+    \begin{itemize}
+        \item affect, addd ...
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Creation of the cell}
+
+After the description of a cell as a sub-class of \verb-Model-, the cell has to be instantiated. The different methods described before have to be called.
+ 
+\indent Then different methods are provided :
+\begin{itemize}
+    \item Method \verb-View- : Opens/Refreshes the editor in order to see the created layout
+    \item Method \verb-Save- : Saves the created cell in the desired format thanks to the configuration file
+    \begin{itemize}
+        \item no argument : creation of a netlist file %(format file thanks to CRL\_OUT\_LO)
+        \item PHYSICAL : creation of a netlist file AND a layout file %(format files thanks to CRL\_OUT\_LO and CRL\_OUT\_PH)
+        \item STRATUS : creation of a python/stratus file
+        \begin{itemize}
+            \item FileName : optionnal argument when using Save(STRATUS) in order to choose the name of the file to be generated
+            \item Be careful : if one wants to create a stratus file AND a netlist, always use Save(STRATUS) before Save() !
+        \end{itemize}
+    \end{itemize}
+    \item Method \verb-Testbench- : Creates the testbench of the cell using the \verb-Stimuli- method to compute the stimuli. The output format depends of the \verb-format- variable given in the configuration file
+    \item Method \verb-Simul- : Runs the simulation using the simulator named in the configuration file
+\end{itemize}
+
+\subsubsection{Syntax}
+
+A \emph{Stratus} file must have a .py extension and must begin as follow :
+\begin{verbatim}
+#!/usr/bin/env python
+
+from stratus import *
+\end{verbatim}
+
+\indent The description of a cell as a sub-class of \verb-Model- is done as follow :
+\begin{verbatim}
+class myClass ( Model ) :
+    ...
+\end{verbatim}
+    
+\indent The creation of the cell is done by instantiating the previous class as follow :
+\begin{verbatim}
+exemple = myClass ( name, param )
+\end{verbatim}
+
+\indent After the different methods can be called as follow :
+\begin{verbatim}
+exemple.Interface()
+exemple.Netlist()
+exemple.Save()
+    ...
+\end{verbatim}
+
+
+\indent In order to execute a \emph{Stratus} file (named \verb-file- for example), one has two choices :
+\begin{verbatim}
+python file.py
+\end{verbatim}
+\indent Or :
+\begin{verbatim}
+chmod u+x file.py
+./file.py
+\end{verbatim}
+
+\indent The names used in \emph{Stratus}, as arguments to \emph{Stratus} functions, should be alphanumerical, including the underscore. The arguments of \emph{Stratus} are case sensitive, so \textsc{VDD} is not equivalent to \textsc{vdd}.\\
+    
+\indent Vectorized connectors or signal can be used using the \textsc{[n:m]} construct.\\
+
+\subsubsection{Syntax highlighting}
+
+When using vi, it's possible to have the right syntax highlighting :
+
+\begin{itemize}
+    \item Commands to do when you want to change once the coloration of your file :
+\end{itemize}
+\begin{small}
+\begin{verbatim}
+:syntax off
+:source /asim/coriolis/share/etc/stratus.vim
+\end{verbatim}
+\end{small}
+\begin{itemize}
+    \item Modification of your .vimrc in order to have the syntax highlighting each time you open a file :
+\end{itemize}
+\begin{small}
+\begin{verbatim}
+syntax off
+autocmd BufRead,BufNewfile *.py so /asim/coriolis/share/etc/stratus.vim
+syntax on
+\end{verbatim}
+\end{small}
+        
+%\subsubsection{Environment variables}
+%
+%\begin{itemize}
+%    \item CRL\_IN\_LO, default value : \verb-def-
+%    \item CRL\_OUT\_LO, default value : \verb-def-
+%    \item CRL\_IN\_PH, default value : \verb-def-
+%    \item CRL\_OUT\_PH, default value : \verb-def-
+%    \item CRL\_CATA\_LIB, default value : \verb-.-
+%    \item CRL\_CATAL\_NAME, default value : \verb-CATAL-
+%\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{Example}
+
+You can see a concrete example at : \hyperref[ref]{\emph{Example}}{}{Example}{secexample}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{Stimuli}}{}{Stimuli}{secstimuli}
+\hyperref[ref]{\emph{Place and Route}}{}{Place and Route}{secroute}
+\hyperref[ref]{\emph{Virtual librayy}}{}{Virtual library}{seclibrary}
+\hyperref[ref]{\emph{Instanciation facilities}}{}{Instanciation facilities}{secfacilities}
+
+\end{htmlonly}

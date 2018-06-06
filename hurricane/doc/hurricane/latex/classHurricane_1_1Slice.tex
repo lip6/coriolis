@@ -1,0 +1,113 @@
+\hypertarget{classHurricane_1_1Slice}{}\section{Hurricane\+:\+:Slice Class Reference}
+\label{classHurricane_1_1Slice}\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+
+
+\hyperlink{classHurricane_1_1Slice}{Slice} description ({\bfseries A\+PI})  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ \hyperlink{classHurricane_1_1Slice_ae7a75f373a3d4e8878007c38688000f8}{get\+Cell} () const
+\item 
+const \hyperlink{classHurricane_1_1Layer}{Layer} $\ast$ \hyperlink{classHurricane_1_1Slice_a76c011cd461e588474a22fd0026e1f8f}{get\+Layer} () const
+\item 
+const \hyperlink{classHurricane_1_1Box}{Box} \& \hyperlink{classHurricane_1_1Slice_aa1a139b188879c37a8878a2353401d65}{get\+Bounding\+Box} () const
+\item 
+\hyperlink{namespaceHurricane_a4456a34f3bc6766d471c3064ace19759}{Gos} \hyperlink{classHurricane_1_1Slice_abc257f5b91c01c01a618787fd73db97b}{get\+Gos} () const
+\item 
+\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} \hyperlink{classHurricane_1_1Slice_afe7c766d33e16461c3667af88e64773e}{get\+Components} () const
+\item 
+\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} \hyperlink{classHurricane_1_1Slice_af672fc823044869db42a8f2df0672164}{get\+Components\+Under} (const \hyperlink{classHurricane_1_1Box}{Box} \&area) const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1Slice}{Slice} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1Slice_secSliceIntro}{}\subsection{Introduction}\label{classHurricane_1_1Slice_secSliceIntro}
+The slices are objects which split the layout description of a cell into horizontal slices grouping all objects located on a given layer and storing them into a fast geometrical access structure implemented by a quadtree.\hypertarget{classHurricane_1_1Slice_secSliceConstructionAndDestruction}{}\subsection{Construction and destruction}\label{classHurricane_1_1Slice_secSliceConstructionAndDestruction}
+The slices are fully managed by the cells \+: they are neither created nor destroyed by the application programmer.
+
+Components are inserted in a slice (at their creation) and removed from their slice (at their deletion).
+
+Empty slices being automatically deleted, you must never store pointers to them.\hypertarget{classHurricane_1_1Slice_secSliceExample}{}\subsection{Example}\label{classHurricane_1_1Slice_secSliceExample}
+The following example shows how to visit all cell components lying on a given basic layer and whose bounding box intersects some rectangular area. 
+\begin{DoxyCode}
+Cell* cell = ...; \textcolor{comment}{// we get the cell}
+ 
+BasicLayer* basicLayer = ...; \textcolor{comment}{// we get the basic layer}
+ 
+Box area = ...; \textcolor{comment}{// we define the rectangular area}
+ 
+forEach(Slice*, islice, cell->getSlices()) \{
+  \textcolor{keywordflow}{if} (islice->getLayer()->contains(basicLayer)) \{
+    forEach(Component*, icomponent, slice->getComponentsUnder(area)) \{
+      \textcolor{comment}{// ...}
+      \textcolor{comment}{// here we visit all requested components}
+      \textcolor{comment}{// ...}
+    \}
+  \}
+\}
+\end{DoxyCode}
+ 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Slice_ae7a75f373a3d4e8878007c38688000f8}\label{classHurricane_1_1Slice_ae7a75f373a3d4e8878007c38688000f8}} 
+\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}!get\+Cell@{get\+Cell}}
+\index{get\+Cell@{get\+Cell}!Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+\subsubsection{\texorpdfstring{get\+Cell()}{getCell()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ Hurricane\+::\+Slice\+::get\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the cell owning the slice. \mbox{\Hypertarget{classHurricane_1_1Slice_a76c011cd461e588474a22fd0026e1f8f}\label{classHurricane_1_1Slice_a76c011cd461e588474a22fd0026e1f8f}} 
+\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}!get\+Layer@{get\+Layer}}
+\index{get\+Layer@{get\+Layer}!Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+\subsubsection{\texorpdfstring{get\+Layer()}{getLayer()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Layer}{Layer} $\ast$ Hurricane\+::\+Slice\+::get\+Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the layer associated to the slice \+: all components lying in a cell are perforce located on that layer. \mbox{\Hypertarget{classHurricane_1_1Slice_aa1a139b188879c37a8878a2353401d65}\label{classHurricane_1_1Slice_aa1a139b188879c37a8878a2353401d65}} 
+\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}!get\+Bounding\+Box@{get\+Bounding\+Box}}
+\index{get\+Bounding\+Box@{get\+Bounding\+Box}!Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+\subsubsection{\texorpdfstring{get\+Bounding\+Box()}{getBoundingBox()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Box}{Box} Hurricane\+::\+Slice\+::get\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the bounding box of the slice, that is the smallest enclosing rectangle of all its components. 
+
+References Hurricane\+::\+Quad\+Tree\+::get\+Bounding\+Box().
+
+\mbox{\Hypertarget{classHurricane_1_1Slice_abc257f5b91c01c01a618787fd73db97b}\label{classHurricane_1_1Slice_abc257f5b91c01c01a618787fd73db97b}} 
+\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}!get\+Gos@{get\+Gos}}
+\index{get\+Gos@{get\+Gos}!Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+\subsubsection{\texorpdfstring{get\+Gos()}{getGos()}}
+{\footnotesize\ttfamily const \hyperlink{namespaceHurricane_a4456a34f3bc6766d471c3064ace19759}{Gos} Hurricane\+::\+Slice\+::get\+Gos (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection of graphic objects lying on the slice. 
+
+References get\+Components(), get\+Components\+Under(), Hurricane\+::\+Quad\+Tree\+::get\+Gos(), Hurricane\+::\+Quad\+Tree\+::get\+Gos\+Under(), and Hurricane\+::\+Quad\+Tree\+::is\+Empty().
+
+\mbox{\Hypertarget{classHurricane_1_1Slice_afe7c766d33e16461c3667af88e64773e}\label{classHurricane_1_1Slice_afe7c766d33e16461c3667af88e64773e}} 
+\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}!get\+Components@{get\+Components}}
+\index{get\+Components@{get\+Components}!Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+\subsubsection{\texorpdfstring{get\+Components()}{getComponents()}}
+{\footnotesize\ttfamily const \hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} Hurricane\+::\+Slice\+::get\+Components (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of components lying on the slice. 
+
+Referenced by get\+Gos().
+
+\mbox{\Hypertarget{classHurricane_1_1Slice_af672fc823044869db42a8f2df0672164}\label{classHurricane_1_1Slice_af672fc823044869db42a8f2df0672164}} 
+\index{Hurricane\+::\+Slice@{Hurricane\+::\+Slice}!get\+Components\+Under@{get\+Components\+Under}}
+\index{get\+Components\+Under@{get\+Components\+Under}!Hurricane\+::\+Slice@{Hurricane\+::\+Slice}}
+\subsubsection{\texorpdfstring{get\+Components\+Under()}{getComponentsUnder()}}
+{\footnotesize\ttfamily const \hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} Hurricane\+::\+Slice\+::get\+Components\+Under (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{area }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of components of the slice whose bounding box intersects the rectangular region defined by {\ttfamily $<$area$>$}. 
+
+Referenced by get\+Gos().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Slice.\+h\item 
+Slice.\+dox\end{DoxyCompactItemize}

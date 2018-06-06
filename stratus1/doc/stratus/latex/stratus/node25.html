@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>GetRefXY</TITLE>
+<META NAME="description" CONTENT="GetRefXY">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node26.html">
+<LINK REL="previous" HREF="node24.html">
+<LINK REL="up" HREF="node20.html">
+<LINK REL="next" HREF="node26.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node24.html">PlaceRef</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node26.html">CopyUpSegment</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html643"
+  HREF="node25.html#SECTION00065100000000000000">Name</A>
+<LI><A NAME="tex2html644"
+  HREF="node25.html#SECTION00065200000000000000">Synopsys</A>
+<LI><A NAME="tex2html645"
+  HREF="node25.html#SECTION00065300000000000000">Description</A>
+<LI><A NAME="tex2html646"
+  HREF="node25.html#SECTION00065400000000000000">Parameters</A>
+<LI><A NAME="tex2html647"
+  HREF="node25.html#SECTION00065500000000000000">Example</A>
+<LI><A NAME="tex2html648"
+  HREF="node25.html#SECTION00065600000000000000">Errors</A>
+<LI><A NAME="tex2html649"
+  HREF="node25.html#SECTION00065700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00065000000000000000"></A>
+    <A NAME="secgetref"></A>
+<BR>
+GetRefXY
+</H2>
+    
+<H3><A NAME="SECTION00065100000000000000">
+Name</A>
+</H3>
+
+<P>
+GetRefXY - Returns the coordinates of a reference
+
+<P>
+
+<H3><A NAME="SECTION00065200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+GetRefXY ( pathname, refname )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00065300000000000000">
+Description</A>
+</H3>
+
+<P>
+Computation of coordinates.
+<BR>
+The point returned (object XY) represents the location of the reference of name <code>refname</code>  within the coodinates system of the top cell. The reference <code>refname</code> is instanciated in an instance found thanks to <code>pathname</code> which represents an ordered sequence of instances through the hierarchy.
+
+<P>
+
+<H3><A NAME="SECTION00065400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>pathname</code> : The path in order to obtain, from the top cell, the instance the reference <code>refname</code> belongs to
+</LI>
+<LI><code>refname</code> : The name of the reference
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00065500000000000000">
+Example</A>
+</H3>
+
+<P>
+The cell which is being created (the top cell), instanciates a generator with instance name "my_dpgen_and2". This generator instanciates an instance called "cell_1" which the reference "i0_20" belongs to.
+<PRE>
+GetRefXY ( "my_dpgen_and2.cell_1", "i0_20" )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00065600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] GetRefXY :</code>
+<BR><code>The instance's path must be put with a string.</code>
+</LI>
+<LI><code>[Stratus ERROR] GetRefXY :</code>
+<BR><code>The reference must be done with it's name : a string.</code>
+</LI>
+<LI><code>[Stratus ERROR] GetRefXY :</code>
+<BR><code>No reference found with name ... in masterCell ...</code>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00065700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node10.html#seclayout"><SPAN  CLASS="textit">Layout</SPAN></A>
+<A HREF="node21.html#secsegment"><SPAN  CLASS="textit">PlaceSegment</SPAN></A>
+<A HREF="node22.html#seccontact"><SPAN  CLASS="textit">PlaceContact</SPAN></A>
+<A HREF="node23.html#secpin"><SPAN  CLASS="textit">PlacePin</SPAN></A>
+<A HREF="node24.html#secref"><SPAN  CLASS="textit">PlaceRef</SPAN></A>
+<A HREF="node26.html#seccopy"><SPAN  CLASS="textit">CopyUpSegment</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node24.html">PlaceRef</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node26.html">CopyUpSegment</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

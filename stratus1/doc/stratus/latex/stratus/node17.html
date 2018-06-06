@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DefAb</TITLE>
+<META NAME="description" CONTENT="DefAb">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node18.html">
+<LINK REL="previous" HREF="node16.html">
+<LINK REL="up" HREF="node10.html">
+<LINK REL="next" HREF="node18.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node16.html">SetRefIns</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node18.html">ResizeAb</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html417"
+  HREF="node17.html#SECTION00047100000000000000">Name</A>
+<LI><A NAME="tex2html418"
+  HREF="node17.html#SECTION00047200000000000000">Synopsys</A>
+<LI><A NAME="tex2html419"
+  HREF="node17.html#SECTION00047300000000000000">Description</A>
+<LI><A NAME="tex2html420"
+  HREF="node17.html#SECTION00047400000000000000">Parameters</A>
+<LI><A NAME="tex2html421"
+  HREF="node17.html#SECTION00047500000000000000">Example</A>
+<LI><A NAME="tex2html422"
+  HREF="node17.html#SECTION00047600000000000000">Errors</A>
+<LI><A NAME="tex2html423"
+  HREF="node17.html#SECTION00047700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00047000000000000000"></A>
+    <A NAME="secdefab"></A>
+<BR>
+DefAb
+</H2>
+    
+<H3><A NAME="SECTION00047100000000000000">
+Name</A>
+</H3>
+
+<P>
+DefAb - Creates the abutment box of the current cell
+
+<P>
+
+<H3><A NAME="SECTION00047200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+DefAb ( point1, point2 )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00047300000000000000">
+Description</A>
+</H3>
+
+<P>
+This function creates the abutment box of the current cell.
+<BR>
+<P>
+Note that one does not have to call this function before saving in order to create the abutment box. The abutment box is created nevertheless (given to placed instances). This function is usefull if one wants to create an abutment before placing the instances.
+
+<P>
+
+<H3><A NAME="SECTION00047400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>point1</code> : coordinates of the bottom left corner of the created abutment box.
+</LI>
+<LI><code>point2</code> : coordinates of the top right corner of the created abutment box.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00047500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+DefAb ( XY(0, 0), XY(500, 100) )
+
+Place ( self.inst, NOSYM, XY(0, 0) )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00047600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] DefAb : an abutment box already exists.</code>
+<BR><code> Maybe you should use ResizeAb function.</code>
+<BR>
+One has called DefAb but the current cell already has an abutment box.
+<BR>
+In order to modify the current abutment box, the function to call is ResizeAb.
+</LI>
+<LI><code>[Stratus ERROR] DefAb : wrong argument,</code>
+<BR><code> the coordinates must be put in a XY object.</code>
+<BR>
+The type of one of the arguments is not correct. Coordinates must be put in a <code>XY</code> object.
+</LI>
+<LI><code>[Stratus ERROR] DefAb :</code>
+<BR><code>Coordinates of an abutment Box in y must be multiple of the slice.</code>
+<BR><code>Coordinates of an abutment Box in x must be multiple of the pitch.</code>
+<BR>
+One has called DefAb with non authorized values.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00047700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node11.html#secplace"><SPAN  CLASS="textit">Place</SPAN></A>
+<A HREF="node12.html#sectop"><SPAN  CLASS="textit">PlaceTop</SPAN></A>
+<A HREF="node13.html#secbottom"><SPAN  CLASS="textit">PlaceBottom</SPAN></A>
+<A HREF="node14.html#secright"><SPAN  CLASS="textit">PlaceRight</SPAN></A>
+<A HREF="node15.html#secleft"><SPAN  CLASS="textit">PlaceLeft</SPAN></A>
+<A HREF="node16.html#secsetrefins"><SPAN  CLASS="textit">SetRefIns</SPAN></A>
+<A HREF="node18.html#secresizeab"><SPAN  CLASS="textit">ResizeAb</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node16.html">SetRefIns</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node18.html">ResizeAb</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

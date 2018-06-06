@@ -1,0 +1,584 @@
+\hypertarget{classHurricane_1_1Net}{}\section{Hurricane\+:\+:Net Class Reference}
+\label{classHurricane_1_1Net}\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+
+
+\hyperlink{classHurricane_1_1Net}{Net} description ({\bfseries A\+PI})  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Net\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=170pt]{classHurricane_1_1Net__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classHurricane_1_1Net_1_1Direction}{Direction}
+\item 
+class \hyperlink{classHurricane_1_1Net_1_1Type}{Type}
+\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef \hyperlink{classHurricane_1_1Entity}{Entity} \hyperlink{classHurricane_1_1Net_a3f1ac0fcb03638b2ffa9af6a9a58de15}{Inherit}
+\item 
+typedef unsigned \hyperlink{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}{Arity}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const \hyperlink{classHurricane_1_1Name}{Name} \& \hyperlink{classHurricane_1_1Net_aeba73ca641db371dde29baf348b58bba}{get\+Name} () const
+\item 
+const \hyperlink{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}{Arity} \& \hyperlink{classHurricane_1_1Net_a78de2202fcf4f16024b4460ebb7dc907}{get\+Arity} () const
+\item 
+const \hyperlink{classHurricane_1_1Net_1_1Type}{Type} \& \hyperlink{classHurricane_1_1Net_a0fa61dc0ccb67f384f03b35f83d391e7}{get\+Type} () const
+\item 
+const \hyperlink{classHurricane_1_1Net_1_1Direction}{Direction} \& \hyperlink{classHurricane_1_1Net_aa84245d734dfaa572660a1a2c1bfc56e}{get\+Direction} () const
+\item 
+const \hyperlink{classHurricane_1_1Point}{Point} \& \hyperlink{classHurricane_1_1Net_abcfdec9c953d228845fdb9d75e8173cc}{get\+Position} () const
+\item 
+const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \& \hyperlink{classHurricane_1_1Net_a1f8f4c4632614b84a1227a1da8310428}{getX} () const
+\item 
+const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \& \hyperlink{classHurricane_1_1Net_aa97899b408aa47ec22792b5c6d6e9216}{getY} () const
+\item 
+\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} \hyperlink{classHurricane_1_1Net_a1e2d7ef9bab15694870a605e514f26e8}{get\+Components} () const
+\item 
+\hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers} \hyperlink{classHurricane_1_1Net_a6ddbe2697a7fd7a7cd359f97b2ad0223}{get\+Rubbers} () const
+\item 
+Routing\+Pads \hyperlink{classHurricane_1_1Net_a1078d55acf3efa0b3c23cd345cae87fa}{get\+Routing\+Pads} () const
+\item 
+\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} \hyperlink{classHurricane_1_1Net_a88322672c105405a61a78022359178aa}{get\+Plugs} () const
+\item 
+\hyperlink{namespaceHurricane_a1e6a8ab09f688509bd727b3fee02d0d2}{Contacts} \hyperlink{classHurricane_1_1Net_a9c397596fe9ecbf674712c72e0b9010c}{get\+Contacts} () const
+\item 
+\hyperlink{namespaceHurricane_a30748fa53a81cb597d4a13d651238716}{Segments} \hyperlink{classHurricane_1_1Net_aadc5a9ef26d7a72f49fdf22452f3cc58}{get\+Segments} () const
+\item 
+\hyperlink{namespaceHurricane_a146e2d3d34b4035aff422f12e85345b9}{Verticals} \hyperlink{classHurricane_1_1Net_a97f32cf738af9cf107833ca81fe95db8}{get\+Verticals} () const
+\item 
+\hyperlink{namespaceHurricane_a721e644c7d97f2f66049ab062140b855}{Horizontals} \hyperlink{classHurricane_1_1Net_ad8553af888909e1c127e12e68bd000fb}{get\+Horizontals} () const
+\item 
+\hyperlink{namespaceHurricane_abd1f433c44d8b515e1b8a8810aea1610}{Pads} \hyperlink{classHurricane_1_1Net_a564df07be5589bc72dd6eb944855aa2b}{get\+Pads} () const
+\item 
+\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} \hyperlink{classHurricane_1_1Net_a9c835d2f071155521700921d816ac1fa}{get\+Slave\+Plugs} () const
+\item 
+\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} \hyperlink{classHurricane_1_1Net_a08560ffa6b0f5ecc442bf232486dd8ff}{get\+Connected\+Slave\+Plugs} () const
+\item 
+\hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} \hyperlink{classHurricane_1_1Net_aad3f3ea88bdea914cab3f38bdcdb843d}{get\+Unconnected\+Slave\+Plugs} () const
+\item 
+bool \hyperlink{classHurricane_1_1Net_a332e9b311809f75fc0fa3a5f36acebcc}{is\+Global} () const
+\item 
+bool \hyperlink{classHurricane_1_1Net_aeeb3735dd7451bc0054dd68ac21aae47}{is\+External} () const
+\item 
+bool \hyperlink{classHurricane_1_1Net_a9caf25bfa84478157d206979dd521ed4}{is\+Logical} () const
+\item 
+bool \hyperlink{classHurricane_1_1Net_a8807cc000bbbe1c340c71fcbfbb8fe33}{is\+Clock} () const
+\item 
+bool \hyperlink{classHurricane_1_1Net_ab8947fc6c5093341958b94148407c2a2}{is\+Supply} () const
+\item 
+void \hyperlink{classHurricane_1_1Net_a1a39702b9f4d26ba29ad0dafcdddf840}{set\+Name} (\hyperlink{classHurricane_1_1Name}{Name} name)
+\item 
+void \hyperlink{classHurricane_1_1Net_af5dfdca4401902ee7e1e46a1a486da38}{set\+Arity} (const \hyperlink{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}{Arity} \&arity)
+\item 
+void \hyperlink{classHurricane_1_1Net_a35c84afd9dade0cb715602bcf8ec8865}{set\+Global} (bool \hyperlink{classHurricane_1_1Net_a332e9b311809f75fc0fa3a5f36acebcc}{is\+Global})
+\item 
+void \hyperlink{classHurricane_1_1Net_a6a30bc8282ce7e4b936e73a11549fedf}{set\+External} (bool \hyperlink{classHurricane_1_1Net_aeeb3735dd7451bc0054dd68ac21aae47}{is\+External})
+\item 
+void \hyperlink{classHurricane_1_1Net_a83f5ce12291b0ec5ab584d515dd8963c}{set\+Type} (const \hyperlink{classHurricane_1_1Net_1_1Type}{Type} \&type)
+\item 
+void \hyperlink{classHurricane_1_1Net_ac33d13bb0ddc60f369d5bfcffc4bb0f8}{set\+Direction} (const \hyperlink{classHurricane_1_1Net_1_1Direction}{Direction} \&direction)
+\item 
+void \hyperlink{classHurricane_1_1Net_a0a3a3232a74ebced14b14029c5199561}{set\+Position} (const \hyperlink{classHurricane_1_1Point}{Point} \&position)
+\item 
+void \hyperlink{classHurricane_1_1Net_ae46f7e4a9b00b265c06cb6e0ee00b806}{materialize} ()
+\item 
+void \hyperlink{classHurricane_1_1Net_a9e53a3d54b61f7081263e6d7b4fa81b9}{unmaterialize} ()
+\item 
+void \hyperlink{classHurricane_1_1Net_a442f62d23364805f39816cd543284886}{merge} (\hyperlink{classHurricane_1_1Net}{Net} $\ast$net)
+\item 
+\hyperlink{classHurricane_1_1Net}{Net} $\ast$ \hyperlink{classHurricane_1_1Net_a4bd27e6ae22606463491c28437c4068f}{get\+Clone} (\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$clone\+Cell)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classHurricane_1_1Net}{Net} $\ast$ \hyperlink{classHurricane_1_1Net_ac1524cea15e8eacbf992c0cfb9e481db}{create} (\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$cell, const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+\item 
+static \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} \hyperlink{classHurricane_1_1Net_a1730ed1247cd9bce7fcf519ea60dc738}{get\+Is\+Global\+Filter} ()
+\item 
+static \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} \hyperlink{classHurricane_1_1Net_a3af91a80e219e37e70229e61dfd385da}{get\+Is\+External\+Filter} ()
+\item 
+static \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} \hyperlink{classHurricane_1_1Net_a7a2d1c4ab84bf81a16e24557d2342ea5}{get\+Is\+Internal\+Filter} ()
+\item 
+static \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} \hyperlink{classHurricane_1_1Net_afdb2269f3a88923c25264f6f785372a1}{get\+Is\+Clock\+Filter} ()
+\item 
+static \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} \hyperlink{classHurricane_1_1Net_ac241f44abf1f332004dd6103ee1dfa48}{get\+Is\+Supply\+Filter} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1Net}{Net} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1Net_secNetPredefinedFilters}{}\subsection{Predefined filters}\label{classHurricane_1_1Net_secNetPredefinedFilters}
+
+\begin{DoxyItemize}
+\item {\bfseries \hyperlink{classHurricane_1_1Net_a1730ed1247cd9bce7fcf519ea60dc738}{Hurricane\+::\+Net\+::get\+Is\+Global\+Filter}}
+\item {\bfseries \hyperlink{classHurricane_1_1Net_a3af91a80e219e37e70229e61dfd385da}{Hurricane\+::\+Net\+::get\+Is\+External\+Filter}}
+\item {\bfseries \hyperlink{classHurricane_1_1Net_a7a2d1c4ab84bf81a16e24557d2342ea5}{Hurricane\+::\+Net\+::get\+Is\+Internal\+Filter}}
+\item {\bfseries \hyperlink{classHurricane_1_1Net_afdb2269f3a88923c25264f6f785372a1}{Hurricane\+::\+Net\+::get\+Is\+Clock\+Filter}}
+\item {\bfseries \hyperlink{classHurricane_1_1Net_ac241f44abf1f332004dd6103ee1dfa48}{Hurricane\+::\+Net\+::get\+Is\+Supply\+Filter}} 
+\end{DoxyItemize}
+
+\subsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Net_a3f1ac0fcb03638b2ffa9af6a9a58de15}\label{classHurricane_1_1Net_a3f1ac0fcb03638b2ffa9af6a9a58de15}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!Inherit@{Inherit}}
+\index{Inherit@{Inherit}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{Inherit}{Inherit}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Net_a3f1ac0fcb03638b2ffa9af6a9a58de15}{Hurricane\+::\+Net\+::\+Inherit}}
+
+Useful for calling upon methods of the base class without knowing it. \mbox{\Hypertarget{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}\label{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!Arity@{Arity}}
+\index{Arity@{Arity}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{Arity}{Arity}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}{Hurricane\+::\+Net\+::\+Arity}}
+
+This type allows to represent the number of bits associated to a net (a null value meaning undefined). 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Net_ac1524cea15e8eacbf992c0cfb9e481db}\label{classHurricane_1_1Net_ac1524cea15e8eacbf992c0cfb9e481db}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Net}{Net} $\ast$ Hurricane\+::\+Net\+::create (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$}]{cell,  }\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Creates and returns a new net named {\ttfamily $<$name$>$} for the cell {\ttfamily $<$cell$>$}.
+
+\begin{DoxyParagraph}{Caution\+:}
+Throws an exception if the cell is null, if the name empty or if a net with same name already exists. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Net_aeba73ca641db371dde29baf348b58bba}\label{classHurricane_1_1Net_aeba73ca641db371dde29baf348b58bba}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Name}{Name} \& Hurricane\+::\+Net\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the net name. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a78de2202fcf4f16024b4460ebb7dc907}\label{classHurricane_1_1Net_a78de2202fcf4f16024b4460ebb7dc907}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Arity@{get\+Arity}}
+\index{get\+Arity@{get\+Arity}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Arity()}{getArity()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}{Net\+::\+Arity} \& Hurricane\+::\+Net\+::get\+Arity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the signal arity (by default set to 1). \mbox{\Hypertarget{classHurricane_1_1Net_a0fa61dc0ccb67f384f03b35f83d391e7}\label{classHurricane_1_1Net_a0fa61dc0ccb67f384f03b35f83d391e7}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Type@{get\+Type}}
+\index{get\+Type@{get\+Type}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Type()}{getType()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Net_1_1Type}{Net\+::\+Type} \& Hurricane\+::\+Net\+::get\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the signal type (by default set to U\+N\+D\+E\+F\+I\+N\+ED). \mbox{\Hypertarget{classHurricane_1_1Net_aa84245d734dfaa572660a1a2c1bfc56e}\label{classHurricane_1_1Net_aa84245d734dfaa572660a1a2c1bfc56e}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Direction@{get\+Direction}}
+\index{get\+Direction@{get\+Direction}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Direction()}{getDirection()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Net_1_1Direction}{Net\+::\+Direction} \& Hurricane\+::\+Net\+::get\+Direction (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the signal direction (by default set to U\+N\+D\+E\+F\+I\+N\+ED).
+
+\begin{DoxyParagraph}{Remark\+:}
+This direction is meaningfull only for external nets. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Net_abcfdec9c953d228845fdb9d75e8173cc}\label{classHurricane_1_1Net_abcfdec9c953d228845fdb9d75e8173cc}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Position@{get\+Position}}
+\index{get\+Position@{get\+Position}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Position()}{getPosition()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Point}{Point} \& Hurricane\+::\+Net\+::get\+Position (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the X,Y position of the net. This position is used for computing the location of the plugs (on slave instances calling the cell owning this net) having that net as master. \mbox{\Hypertarget{classHurricane_1_1Net_a1f8f4c4632614b84a1227a1da8310428}\label{classHurricane_1_1Net_a1f8f4c4632614b84a1227a1da8310428}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!getX@{getX}}
+\index{getX@{getX}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+X()}{getX()}}
+{\footnotesize\ttfamily const Unit \& Hurricane\+::\+Net\+::getX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} net abscissa. \mbox{\Hypertarget{classHurricane_1_1Net_aa97899b408aa47ec22792b5c6d6e9216}\label{classHurricane_1_1Net_aa97899b408aa47ec22792b5c6d6e9216}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!getY@{getY}}
+\index{getY@{getY}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Y()}{getY()}}
+{\footnotesize\ttfamily const Unit \& Hurricane\+::\+Net\+::getY (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} net ordinate. \mbox{\Hypertarget{classHurricane_1_1Net_a1e2d7ef9bab15694870a605e514f26e8}\label{classHurricane_1_1Net_a1e2d7ef9bab15694870a605e514f26e8}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Components@{get\+Components}}
+\index{get\+Components@{get\+Components}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Components()}{getComponents()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} Hurricane\+::\+Net\+::get\+Components (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s components. \mbox{\Hypertarget{classHurricane_1_1Net_a6ddbe2697a7fd7a7cd359f97b2ad0223}\label{classHurricane_1_1Net_a6ddbe2697a7fd7a7cd359f97b2ad0223}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Rubbers@{get\+Rubbers}}
+\index{get\+Rubbers@{get\+Rubbers}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Rubbers()}{getRubbers()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers} Hurricane\+::\+Net\+::get\+Rubbers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s rubbers. 
+
+References get\+Connected\+Slave\+Plugs(), get\+Contacts(), get\+Horizontals(), get\+Is\+Clock\+Filter(), get\+Is\+External\+Filter(), get\+Is\+Global\+Filter(), get\+Is\+Internal\+Filter(), get\+Is\+Supply\+Filter(), get\+Pads(), get\+Plugs(), get\+Routing\+Pads(), get\+Segments(), get\+Slave\+Plugs(), get\+Unconnected\+Slave\+Plugs(), and get\+Verticals().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a1078d55acf3efa0b3c23cd345cae87fa}\label{classHurricane_1_1Net_a1078d55acf3efa0b3c23cd345cae87fa}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Routing\+Pads@{get\+Routing\+Pads}}
+\index{get\+Routing\+Pads@{get\+Routing\+Pads}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Routing\+Pads()}{getRoutingPads()}}
+{\footnotesize\ttfamily Routing\+Pads Hurricane\+::\+Net\+::get\+Routing\+Pads (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s Routing\+Pads. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a88322672c105405a61a78022359178aa}\label{classHurricane_1_1Net_a88322672c105405a61a78022359178aa}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Plugs@{get\+Plugs}}
+\index{get\+Plugs@{get\+Plugs}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Plugs()}{getPlugs()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} Hurricane\+::\+Net\+::get\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s plugs. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a9c397596fe9ecbf674712c72e0b9010c}\label{classHurricane_1_1Net_a9c397596fe9ecbf674712c72e0b9010c}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Contacts@{get\+Contacts}}
+\index{get\+Contacts@{get\+Contacts}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Contacts()}{getContacts()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a1e6a8ab09f688509bd727b3fee02d0d2}{Contacts} Hurricane\+::\+Net\+::get\+Contacts (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s contacts. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_aadc5a9ef26d7a72f49fdf22452f3cc58}\label{classHurricane_1_1Net_aadc5a9ef26d7a72f49fdf22452f3cc58}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Segments@{get\+Segments}}
+\index{get\+Segments@{get\+Segments}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Segments()}{getSegments()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a30748fa53a81cb597d4a13d651238716}{Segments} Hurricane\+::\+Net\+::get\+Segments (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s segments. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a97f32cf738af9cf107833ca81fe95db8}\label{classHurricane_1_1Net_a97f32cf738af9cf107833ca81fe95db8}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Verticals@{get\+Verticals}}
+\index{get\+Verticals@{get\+Verticals}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Verticals()}{getVerticals()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a146e2d3d34b4035aff422f12e85345b9}{Verticals} Hurricane\+::\+Net\+::get\+Verticals (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s vertical segments. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_ad8553af888909e1c127e12e68bd000fb}\label{classHurricane_1_1Net_ad8553af888909e1c127e12e68bd000fb}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Horizontals@{get\+Horizontals}}
+\index{get\+Horizontals@{get\+Horizontals}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Horizontals()}{getHorizontals()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a721e644c7d97f2f66049ab062140b855}{Horizontals} Hurricane\+::\+Net\+::get\+Horizontals (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s horizontal segments. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a564df07be5589bc72dd6eb944855aa2b}\label{classHurricane_1_1Net_a564df07be5589bc72dd6eb944855aa2b}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Pads@{get\+Pads}}
+\index{get\+Pads@{get\+Pads}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Pads()}{getPads()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_abd1f433c44d8b515e1b8a8810aea1610}{Pads} Hurricane\+::\+Net\+::get\+Pads (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of net\textquotesingle{}s pads. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a9c835d2f071155521700921d816ac1fa}\label{classHurricane_1_1Net_a9c835d2f071155521700921d816ac1fa}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Slave\+Plugs@{get\+Slave\+Plugs}}
+\index{get\+Slave\+Plugs@{get\+Slave\+Plugs}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Slave\+Plugs()}{getSlavePlugs()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} Hurricane\+::\+Net\+::get\+Slave\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of plugs which have this net as master.
+
+\begin{DoxyParagraph}{Remark\+:}
+Meaningfull only for external nets. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a08560ffa6b0f5ecc442bf232486dd8ff}\label{classHurricane_1_1Net_a08560ffa6b0f5ecc442bf232486dd8ff}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Connected\+Slave\+Plugs@{get\+Connected\+Slave\+Plugs}}
+\index{get\+Connected\+Slave\+Plugs@{get\+Connected\+Slave\+Plugs}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Connected\+Slave\+Plugs()}{getConnectedSlavePlugs()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} Hurricane\+::\+Net\+::get\+Connected\+Slave\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of connected plugs which have this net as master.
+
+\begin{DoxyParagraph}{Remark\+:}
+Meaningfull only for external nets. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_aad3f3ea88bdea914cab3f38bdcdb843d}\label{classHurricane_1_1Net_aad3f3ea88bdea914cab3f38bdcdb843d}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Unconnected\+Slave\+Plugs@{get\+Unconnected\+Slave\+Plugs}}
+\index{get\+Unconnected\+Slave\+Plugs@{get\+Unconnected\+Slave\+Plugs}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Unconnected\+Slave\+Plugs()}{getUnconnectedSlavePlugs()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac8335d2057483ee7a935c15a9460c64f}{Plugs} Hurricane\+::\+Net\+::get\+Unconnected\+Slave\+Plugs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of unconnected plugs which have this net as master.
+
+\begin{DoxyParagraph}{Remark\+:}
+Meaningfull only for external nets. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a1730ed1247cd9bce7fcf519ea60dc738}\label{classHurricane_1_1Net_a1730ed1247cd9bce7fcf519ea60dc738}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Is\+Global\+Filter@{get\+Is\+Global\+Filter}}
+\index{get\+Is\+Global\+Filter@{get\+Is\+Global\+Filter}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Is\+Global\+Filter()}{getIsGlobalFilter()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} Hurricane\+::\+Net\+::get\+Is\+Global\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} the filter selecting global nets. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a3af91a80e219e37e70229e61dfd385da}\label{classHurricane_1_1Net_a3af91a80e219e37e70229e61dfd385da}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Is\+External\+Filter@{get\+Is\+External\+Filter}}
+\index{get\+Is\+External\+Filter@{get\+Is\+External\+Filter}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Is\+External\+Filter()}{getIsExternalFilter()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} Hurricane\+::\+Net\+::get\+Is\+External\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} the filter selecting external nets. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a7a2d1c4ab84bf81a16e24557d2342ea5}\label{classHurricane_1_1Net_a7a2d1c4ab84bf81a16e24557d2342ea5}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Is\+Internal\+Filter@{get\+Is\+Internal\+Filter}}
+\index{get\+Is\+Internal\+Filter@{get\+Is\+Internal\+Filter}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Is\+Internal\+Filter()}{getIsInternalFilter()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} Hurricane\+::\+Net\+::get\+Is\+Internal\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} the filter selecting internal nets. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_afdb2269f3a88923c25264f6f785372a1}\label{classHurricane_1_1Net_afdb2269f3a88923c25264f6f785372a1}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Is\+Clock\+Filter@{get\+Is\+Clock\+Filter}}
+\index{get\+Is\+Clock\+Filter@{get\+Is\+Clock\+Filter}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Is\+Clock\+Filter()}{getIsClockFilter()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} Hurricane\+::\+Net\+::get\+Is\+Clock\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} the filter selecting clock nets. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_ac241f44abf1f332004dd6103ee1dfa48}\label{classHurricane_1_1Net_ac241f44abf1f332004dd6103ee1dfa48}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Is\+Supply\+Filter@{get\+Is\+Supply\+Filter}}
+\index{get\+Is\+Supply\+Filter@{get\+Is\+Supply\+Filter}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Is\+Supply\+Filter()}{getIsSupplyFilter()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a0dfd2c5b40325a919d139091312732e9}{Net\+Filter} Hurricane\+::\+Net\+::get\+Is\+Supply\+Filter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} the filter selecting supply nets. 
+
+Referenced by get\+Rubbers().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a332e9b311809f75fc0fa3a5f36acebcc}\label{classHurricane_1_1Net_a332e9b311809f75fc0fa3a5f36acebcc}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!is\+Global@{is\+Global}}
+\index{is\+Global@{is\+Global}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{is\+Global()}{isGlobal()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Net\+::is\+Global (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the net is global else {\bfseries false}. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_aeeb3735dd7451bc0054dd68ac21aae47}\label{classHurricane_1_1Net_aeeb3735dd7451bc0054dd68ac21aae47}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!is\+External@{is\+External}}
+\index{is\+External@{is\+External}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{is\+External()}{isExternal()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Net\+::is\+External (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the net is external else {\bfseries false}. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a9caf25bfa84478157d206979dd521ed4}\label{classHurricane_1_1Net_a9caf25bfa84478157d206979dd521ed4}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!is\+Logical@{is\+Logical}}
+\index{is\+Logical@{is\+Logical}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{is\+Logical()}{isLogical()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Net\+::is\+Logical (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the net is logical else {\bfseries false}. 
+
+References Hurricane\+::\+Net\+::\+Type\+::\+L\+O\+G\+I\+C\+AL.
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a8807cc000bbbe1c340c71fcbfbb8fe33}\label{classHurricane_1_1Net_a8807cc000bbbe1c340c71fcbfbb8fe33}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!is\+Clock@{is\+Clock}}
+\index{is\+Clock@{is\+Clock}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{is\+Clock()}{isClock()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Net\+::is\+Clock (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the net is a clock else {\bfseries false}. 
+
+References Hurricane\+::\+Net\+::\+Type\+::\+C\+L\+O\+CK, Hurricane\+::\+Net\+::\+Type\+::\+G\+R\+O\+U\+ND, and Hurricane\+::\+Net\+::\+Type\+::\+P\+O\+W\+ER.
+
+\mbox{\Hypertarget{classHurricane_1_1Net_ab8947fc6c5093341958b94148407c2a2}\label{classHurricane_1_1Net_ab8947fc6c5093341958b94148407c2a2}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!is\+Supply@{is\+Supply}}
+\index{is\+Supply@{is\+Supply}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{is\+Supply()}{isSupply()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Net\+::is\+Supply (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the net is a supply else {\bfseries false}. 
+
+References Hurricane\+::\+Net\+::\+Type\+::\+C\+L\+O\+CK, Hurricane\+::\+Net\+::\+Direction\+::\+Conn\+Tristate, Hurricane\+::\+Net\+::\+Direction\+::\+Conn\+Wired\+Or, Hurricane\+::\+Net\+::\+Direction\+::\+Dir\+In, Hurricane\+::\+Net\+::\+Direction\+::\+Dir\+Out, get\+Clone(), get\+Name(), Hurricane\+::\+Net\+::\+Type\+::\+G\+R\+O\+U\+ND, Hurricane\+::\+Net\+::\+Direction\+::\+IN, Hurricane\+::\+Net\+::\+Direction\+::\+I\+N\+O\+UT, is\+External(), is\+Global(), Hurricane\+::\+Net\+::\+Type\+::\+L\+O\+G\+I\+C\+AL, materialize(), merge(), Hurricane\+::\+Net\+::\+Direction\+::\+O\+UT, Hurricane\+::\+Net\+::\+Type\+::\+P\+O\+W\+ER, set\+Arity(), set\+Direction(), set\+External(), set\+Global(), set\+Name(), set\+Position(), set\+Type(), Hurricane\+::\+Net\+::\+Direction\+::\+T\+R\+A\+N\+S\+CV, Hurricane\+::\+Net\+::\+Direction\+::\+T\+R\+I\+S\+T\+A\+TE, Hurricane\+::\+Net\+::\+Type\+::\+U\+N\+D\+E\+F\+I\+N\+ED, Hurricane\+::\+Net\+::\+Direction\+::\+U\+N\+D\+E\+F\+I\+N\+ED, unmaterialize(), Hurricane\+::\+Net\+::\+Direction\+::\+W\+O\+R\+\_\+\+I\+N\+O\+UT, and Hurricane\+::\+Net\+::\+Direction\+::\+W\+O\+R\+\_\+\+O\+UT.
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a1a39702b9f4d26ba29ad0dafcdddf840}\label{classHurricane_1_1Net_a1a39702b9f4d26ba29ad0dafcdddf840}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+Name@{set\+Name}}
+\index{set\+Name@{set\+Name}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+Name()}{setName()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+Name (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Name}{Name}}]{name }\end{DoxyParamCaption})}
+
+Allows to change net name.
+
+\begin{DoxyParagraph}{Remark\+:}
+Throws an exception if the new name is empty, or if a net with same net already exists in the cell. 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_af5dfdca4401902ee7e1e46a1a486da38}\label{classHurricane_1_1Net_af5dfdca4401902ee7e1e46a1a486da38}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+Arity@{set\+Arity}}
+\index{set\+Arity@{set\+Arity}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+Arity()}{setArity()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+Arity (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Net_a3a242d929e0c733f90f3f69be8cc427b}{Arity} \&}]{arity }\end{DoxyParamCaption})}
+
+Sets the signal arity to {\ttfamily $<$arity$>$}. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a35c84afd9dade0cb715602bcf8ec8865}\label{classHurricane_1_1Net_a35c84afd9dade0cb715602bcf8ec8865}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+Global@{set\+Global}}
+\index{set\+Global@{set\+Global}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+Global()}{setGlobal()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+Global (\begin{DoxyParamCaption}\item[{bool}]{state }\end{DoxyParamCaption})}
+
+Sets global signal status to {\ttfamily $<$state$>$}. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a6a30bc8282ce7e4b936e73a11549fedf}\label{classHurricane_1_1Net_a6a30bc8282ce7e4b936e73a11549fedf}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+External@{set\+External}}
+\index{set\+External@{set\+External}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+External()}{setExternal()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+External (\begin{DoxyParamCaption}\item[{bool}]{state }\end{DoxyParamCaption})}
+
+Sets the external net status to {\ttfamily $<$state$>$}.
+
+\begin{DoxyParagraph}{Remark\+:}
+This function will throw an exception if the net switches to internal and there is a plug refering to it. 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a83f5ce12291b0ec5ab584d515dd8963c}\label{classHurricane_1_1Net_a83f5ce12291b0ec5ab584d515dd8963c}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+Type@{set\+Type}}
+\index{set\+Type@{set\+Type}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+Type()}{setType()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+Type (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Net_1_1Type}{Type} \&}]{type }\end{DoxyParamCaption})}
+
+Sets the signal type of the net. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_ac33d13bb0ddc60f369d5bfcffc4bb0f8}\label{classHurricane_1_1Net_ac33d13bb0ddc60f369d5bfcffc4bb0f8}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+Direction@{set\+Direction}}
+\index{set\+Direction@{set\+Direction}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+Direction()}{setDirection()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+Direction (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Net_1_1Direction}{Direction} \&}]{direction }\end{DoxyParamCaption})}
+
+Sets the signal direction of the net. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a0a3a3232a74ebced14b14029c5199561}\label{classHurricane_1_1Net_a0a3a3232a74ebced14b14029c5199561}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!set\+Position@{set\+Position}}
+\index{set\+Position@{set\+Position}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{set\+Position()}{setPosition()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::set\+Position (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{position }\end{DoxyParamCaption})}
+
+Sets the X,Y location of the net. By default it is located at the coordinates origin of the cell (point 0,0). 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_ae46f7e4a9b00b265c06cb6e0ee00b806}\label{classHurricane_1_1Net_ae46f7e4a9b00b265c06cb6e0ee00b806}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!materialize@{materialize}}
+\index{materialize@{materialize}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{materialize()}{materialize()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::materialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Materializes all the rubbers and components of a net. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a9e53a3d54b61f7081263e6d7b4fa81b9}\label{classHurricane_1_1Net_a9e53a3d54b61f7081263e6d7b4fa81b9}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!unmaterialize@{unmaterialize}}
+\index{unmaterialize@{unmaterialize}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{unmaterialize()}{unmaterialize()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::unmaterialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+De-\/materializes all rubbers and the components of a net. 
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a442f62d23364805f39816cd543284886}\label{classHurricane_1_1Net_a442f62d23364805f39816cd543284886}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!merge@{merge}}
+\index{merge@{merge}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{merge()}{merge()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Net\+::merge (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Net}{Net} $\ast$}]{net }\end{DoxyParamCaption})}
+
+Merges the net {\ttfamily $<$net$>$} to the net {\ttfamily $<$this$>$} which keeps its characteristics (arity, global, external and direction).
+
+\begin{DoxyParagraph}{Caution\+:}
+An exception is thrown if the {\ttfamily $<$net$>$} is null or equal to {\ttfamily $<$this$>$}, if the two nets don\textquotesingle{}t belong to the same cell or if {\ttfamily $<$net$>$} is external and master net of a connected plug while net {\ttfamily $<$this$>$} is not external.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Remark\+:}
+All the rubbers and the components of the {\ttfamily $<$net$>$} (and also the plugs) become rubbers or components of the net {\ttfamily $<$this$>$}. Nevertheless if for a particular slave instance there was both a plug referencing the {\ttfamily $<$net$>$} and an other plug referencing {\ttfamily $<$this$>$}, the first is deleted to the advantage of the second, because a net can\textquotesingle{}t have more than one plug for a given instance (the rings of the body hooks are then merged).
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Remark\+:}
+Once the merger done the net {\ttfamily $<$net$>$} is definitively deleted. Its properties and those of its deleted plugs, if any, are lost (as well as the ones which could be attached to their occurences). 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Supply().
+
+\mbox{\Hypertarget{classHurricane_1_1Net_a4bd27e6ae22606463491c28437c4068f}\label{classHurricane_1_1Net_a4bd27e6ae22606463491c28437c4068f}} 
+\index{Hurricane\+::\+Net@{Hurricane\+::\+Net}!get\+Clone@{get\+Clone}}
+\index{get\+Clone@{get\+Clone}!Hurricane\+::\+Net@{Hurricane\+::\+Net}}
+\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Net}{Net} $\ast$ Hurricane\+::\+Net\+::get\+Clone (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$}]{clone\+Cell }\end{DoxyParamCaption})}
+
+Build a duplicate of net ({\ttfamily } $<$this$>$) inside a cloned \hyperlink{classHurricane_1_1Cell}{Cell} {\ttfamily } $<$clone\+Cell$>$. The connectivity (\hyperlink{classHurricane_1_1Plug}{Plug}) or components of the original net are {\bfseries not} copied.
+
+\begin{DoxyParagraph}{Remark\+:}
+It is likely that {\ttfamily } $<$clone\+Cell$>$ is a copy of this net\textquotesingle{}s onwer \hyperlink{classHurricane_1_1Cell}{Cell}, but it is not mandatory. 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Supply().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Net.\+h\item 
+Net.\+dox\end{DoxyCompactItemize}

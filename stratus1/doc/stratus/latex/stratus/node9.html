@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Generators</TITLE>
+<META NAME="description" CONTENT="Generators">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="previous" HREF="node8.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node10.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node8.html">Instances</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node10.html">Description of a layout</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html223"
+  HREF="node9.html#SECTION00033100000000000000">Name</A>
+<LI><A NAME="tex2html224"
+  HREF="node9.html#SECTION00033200000000000000">Synopsys</A>
+<LI><A NAME="tex2html225"
+  HREF="node9.html#SECTION00033300000000000000">Description</A>
+<LI><A NAME="tex2html226"
+  HREF="node9.html#SECTION00033400000000000000">Arguments</A>
+<LI><A NAME="tex2html227"
+  HREF="node9.html#SECTION00033500000000000000">Parameters</A>
+<LI><A NAME="tex2html228"
+  HREF="node9.html#SECTION00033600000000000000">Example</A>
+<LI><A NAME="tex2html229"
+  HREF="node9.html#SECTION00033700000000000000">Errors</A>
+<LI><A NAME="tex2html230"
+  HREF="node9.html#SECTION00033800000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00033000000000000000"></A>
+    <A NAME="secgen"></A>
+<BR>
+Generators
+</H2>
+    
+<H3><A NAME="SECTION00033100000000000000">
+Name</A>
+</H3>
+
+<P>
+Generate - Interface with the generators
+
+<P>
+
+<H3><A NAME="SECTION00033200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+Generate ( model, modelname, param = dict )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00033300000000000000">
+Description</A>
+</H3>
+
+<P>
+The  <code>Generate</code>  function call is the generic interface to all generators.
+
+<P>
+
+<H3><A NAME="SECTION00033400000000000000">
+Arguments</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>model</code> : Specifies which generator is to be invoked
+    
+<UL>
+<LI>If the generator belongs to the Dpgen library provided by Stratus, the model name of the generator is simply the name of the class of the generator.
+</LI>
+<LI>If the generator is created by the user, the model name of the generator must have the form : "file_name.class_name". (Note that if the the generator is not in the working directory, the directory of the generator to be instantiated has to be added in the CRL_CATA_LIB environment variable)
+    
+</LI>
+</UL>
+</LI>
+<LI><code>modelname</code> : Specifies the name of the model to be generated
+</LI>
+<LI><code>dict</code> : Specifies the parameters of the generator
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00033500000000000000">
+Parameters</A>
+</H3>
+
+<P>
+Every generator has it's own parameters. They must be described in the map <code>dict</code>.
+<BR>
+Every generator provides a netlist view. Two other views can be generated, if they are provided by the generator. Two parameters have to be given, in order to choose those views :  
+
+<UL>
+<LI>'physical' : True/False, generation of the physical view (optionnal, False by default)
+</LI>
+<LI>'behavioral' : True/False, generation of the behavioral view (optionnal, False by default)
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00033600000000000000">
+Example</A>
+</H3>
+
+<P>
+You can see a concrete example at : <A HREF="node5.html#secexample"><SPAN  CLASS="textit">Example</SPAN></A>
+
+<P>
+
+<H3><A NAME="SECTION00033700000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] Generate : the model must be described in a string.</code>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00033800000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node10.html#seclayout"><SPAN  CLASS="textit">Layout</SPAN></A>
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node8.html">Instances</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node6.html">Description of a netlist</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node10.html">Description of a layout</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

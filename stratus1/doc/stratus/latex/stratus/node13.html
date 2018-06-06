@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>PlaceBottom</TITLE>
+<META NAME="description" CONTENT="PlaceBottom">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node14.html">
+<LINK REL="previous" HREF="node12.html">
+<LINK REL="up" HREF="node10.html">
+<LINK REL="next" HREF="node14.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node12.html">PlaceTop</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node14.html">PlaceRight</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html349"
+  HREF="node13.html#SECTION00043100000000000000">Name</A>
+<LI><A NAME="tex2html350"
+  HREF="node13.html#SECTION00043200000000000000">Synopsys</A>
+<LI><A NAME="tex2html351"
+  HREF="node13.html#SECTION00043300000000000000">Description</A>
+<LI><A NAME="tex2html352"
+  HREF="node13.html#SECTION00043400000000000000">Parameters</A>
+<LI><A NAME="tex2html353"
+  HREF="node13.html#SECTION00043500000000000000">Example</A>
+<LI><A NAME="tex2html354"
+  HREF="node13.html#SECTION00043600000000000000">Errors</A>
+<LI><A NAME="tex2html355"
+  HREF="node13.html#SECTION00043700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00043000000000000000"></A>
+    <A NAME="secbottom"></A>
+<BR>
+PlaceBottom
+</H2>
+    
+<H3><A NAME="SECTION00043100000000000000">
+Name</A>
+</H3>
+
+<P>
+PlaceBottom - Places an instance below the "reference instance"
+
+<P>
+
+<H3><A NAME="SECTION00043200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+PlaceBottom ( ins, sym, offsetX, offsetY )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00043300000000000000">
+Description</A>
+</H3>
+
+<P>
+Placement of an instance.
+<BR>
+The instance has to be instantiated in the method <code>Netlist</code> in order to use the <code>PlaceTop</code> function.
+<BR>
+<P>
+The top left corner of the abutment box of the instance is placed, after beeing symetrized and/or rotated, toward the bottom left corner of the abutment box of the "reference instance". The newly placed instance becomes the "reference instance".
+
+<P>
+
+<H3><A NAME="SECTION00043400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>ins</code> : Instance to place.
+</LI>
+<LI><code>sym</code> : Geometrical operation to be performed on the instance before beeing placed.
+<BR>
+The <code>sym</code> argument can take eight legal values :
+    
+<UL>
+<LI><code>NOSYM</code> : no geometrical operation is performed
+</LI>
+<LI><code>SYM_Y</code> : Y becomes -Y, that means toward X axe symetry
+</LI>
+<LI><code>SYM_X</code> : X becomes -X, that means toward Y axe symetry
+</LI>
+<LI><code>SYMXY</code> : X becomes -X, Y becomes -Y
+</LI>
+<LI><code>ROT_P</code> : a positive 90 degrees rotation takes place
+</LI>
+<LI><code>ROT_M</code> : a negative 90 degrees rotation takes place
+</LI>
+<LI><code>SY_RP</code> : Y becomes -Y, and then a positive 90 degrees rotation takes place
+</LI>
+<LI><code>SY_RM</code> : Y becomes -Y, and then a negative 90 degrees rotation takes place
+    
+</LI>
+</UL>
+</LI>
+<LI><code>offsetX</code> (optionnal) : An offset is put horizontally. The value given as argument must be a multiple of PITCH
+</LI>
+<LI><code>offsetY</code> (optionnal) : An offset is put vertically. The value given as argument must be a multiple of SLICE
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00043500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+Place       ( myInst1, NOSYM, 0, 0 )
+PlaceBottom ( myInst2, SYM_Y       )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00043600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :    
+
+<UL>
+<LI><code>[Stratus ERROR] Placement : the instance doesn't exist.</code>
+<BR>
+The instance must be instanciated in order to be placed.
+</LI>
+<LI><code>[Stratus ERROR] Placement : the first argument is not an instance.</code>
+</LI>
+<LI><code>[Stratus ERROR] Placement : the instance is already placed.</code>
+<BR>
+One can not place an instance twice    
+</LI>
+<LI><code>[Stratus ERROR] PlaceBottom : no previous instance.</code>
+<BR>
+One can use <code>PlaceBottom</code> only if a reference instance exist. Use a <code>Place</code> call before. 
+</LI>
+<LI><code>[Stratus ERROR] PlaceBottom : wrong argument for placement type.</code>
+<BR>
+The symetry given as argument is not correct.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00043700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node11.html#secplace"><SPAN  CLASS="textit">Place</SPAN></A>
+<A HREF="node12.html#sectop"><SPAN  CLASS="textit">PlaceTop</SPAN></A>
+<A HREF="node14.html#secright"><SPAN  CLASS="textit">PlaceRight</SPAN></A>
+<A HREF="node15.html#secleft"><SPAN  CLASS="textit">PlaceLeft</SPAN></A>
+<A HREF="node16.html#secsetrefins"><SPAN  CLASS="textit">SetRefIns</SPAN></A>
+<A HREF="node17.html#secdefab"><SPAN  CLASS="textit">DefAb</SPAN></A>
+<A HREF="node18.html#secresizeab"><SPAN  CLASS="textit">ResizeAb</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node12.html">PlaceTop</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node14.html">PlaceRight</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

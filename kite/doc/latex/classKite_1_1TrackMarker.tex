@@ -1,0 +1,116 @@
+\hypertarget{classKite_1_1TrackMarker}{}\subsection{Track\+Marker Class Reference}
+\label{classKite_1_1TrackMarker}\index{Track\+Marker@{Track\+Marker}}
+
+
+Tag part of \hyperlink{classKite_1_1Track}{Track} with a weight.  
+
+
+\subsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\textbf{ Net} $\ast$ \hyperlink{classKite_1_1TrackMarker_a692492374623a5c6096b2c4a51190359}{get\+Net} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1TrackMarker_ad521ffba761b0e81b7b81b99d62f76f9}{get\+SourceU} () const
+\item 
+\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1TrackMarker_a4d52a506cd19dfa8e22e1dc0695bd960}{get\+TargetU} () const
+\item 
+\hyperlink{classKite_1_1Track}{Track} $\ast$ \hyperlink{classKite_1_1TrackMarker_a3f34f9139b8491a0adb531ac3a904171}{get\+Track} () const
+\item 
+unsigned int \hyperlink{classKite_1_1TrackMarker_a26d951691a2c0f564a4ae842ba200ea5}{get\+Weight} (const \hyperlink{classKite_1_1Track}{Track} $\ast$) const
+\item 
+void \hyperlink{classKite_1_1TrackMarker_abd3d8093f871d3d1a7f24b053648026c}{set\+Track} (\hyperlink{classKite_1_1Track}{Track} $\ast$)
+\end{DoxyCompactItemize}
+\subsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classKite_1_1TrackMarker}{Track\+Marker} $\ast$ \hyperlink{classKite_1_1TrackMarker_ab44a3705a23cba53cf68357de5673c04}{create} (\textbf{ Routing\+Pad} $\ast$, size\+\_\+t depth)
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Detailed Description}
+Tag part of \hyperlink{classKite_1_1Track}{Track} with a weight. 
+
+Track\+Markers are used to assign a cost on a span of \hyperlink{classKite_1_1Track}{Track} telling how strongly a terminal is dependant on that \hyperlink{classKite_1_1Track}{Track} to be accessed. The more \hyperlink{classKite_1_1Track}{Track} a terminal crosses, the less the weight is.
+
+The weight is expressed in hundreth (can also be understood as percentage) of dependency over the \hyperlink{classKite_1_1Track}{Track}. As example, if a terminal can only be accessed trough one \hyperlink{classKite_1_1Track}{Track} is weight on it will be {\ttfamily 100}. 
+
+\subsubsection{Member Function Documentation}
+\mbox{\Hypertarget{classKite_1_1TrackMarker_ab44a3705a23cba53cf68357de5673c04}\label{classKite_1_1TrackMarker_ab44a3705a23cba53cf68357de5673c04}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!create@{create}}
+\index{create@{create}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily create (\begin{DoxyParamCaption}\item[{\textbf{ Routing\+Pad} $\ast$}]{rp,  }\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rp} & The Routing\+Pad to be accessed. \\
+\hline
+{\em depth} & Select the layer depth by which we want to access the Routing\+Pad. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The newly created \hyperlink{classKite_1_1TrackMarker}{Track\+Marker}.
+\end{DoxyReturn}
+This constructor automatically take care of inserting the \hyperlink{classKite_1_1TrackMarker}{Track\+Marker} in the relevant Tracks, so it must be called during a \hyperlink{classKite_1_1Session}{Session}. \mbox{\Hypertarget{classKite_1_1TrackMarker_a692492374623a5c6096b2c4a51190359}\label{classKite_1_1TrackMarker_a692492374623a5c6096b2c4a51190359}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!get\+Net@{get\+Net}}
+\index{get\+Net@{get\+Net}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{get\+Net()}{getNet()}}
+{\footnotesize\ttfamily \textbf{ Net} $\ast$ get\+Net (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} The net of the Routing\+Pad. 
+
+Referenced by Track\+Segment\+::get\+Free\+Interval(), Track\+Segment\+::get\+Next(), and Track\+Segment\+::get\+Previous().
+
+\mbox{\Hypertarget{classKite_1_1TrackMarker_ad521ffba761b0e81b7b81b99d62f76f9}\label{classKite_1_1TrackMarker_ad521ffba761b0e81b7b81b99d62f76f9}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!get\+SourceU@{get\+SourceU}}
+\index{get\+SourceU@{get\+SourceU}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{get\+Source\+U()}{getSourceU()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+SourceU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The span minimum bound. 
+
+Referenced by Track\+Segment\+::\+\_\+check(), and Track\+Marker\+::set\+Track().
+
+\mbox{\Hypertarget{classKite_1_1TrackMarker_a4d52a506cd19dfa8e22e1dc0695bd960}\label{classKite_1_1TrackMarker_a4d52a506cd19dfa8e22e1dc0695bd960}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!get\+TargetU@{get\+TargetU}}
+\index{get\+TargetU@{get\+TargetU}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{get\+Target\+U()}{getTargetU()}}
+{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+TargetU (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The span maximum bound. 
+
+Referenced by Track\+Segment\+::\+\_\+check().
+
+\mbox{\Hypertarget{classKite_1_1TrackMarker_a3f34f9139b8491a0adb531ac3a904171}\label{classKite_1_1TrackMarker_a3f34f9139b8491a0adb531ac3a904171}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!get\+Track@{get\+Track}}
+\index{get\+Track@{get\+Track}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{get\+Track()}{getTrack()}}
+{\footnotesize\ttfamily \hyperlink{classKite_1_1Track}{Track} $\ast$ get\+Track (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The \hyperlink{classKite_1_1Track}{Track} into which the marker is inserted. 
+
+Referenced by Track\+Segment\+::swap\+Track().
+
+\mbox{\Hypertarget{classKite_1_1TrackMarker_a26d951691a2c0f564a4ae842ba200ea5}\label{classKite_1_1TrackMarker_a26d951691a2c0f564a4ae842ba200ea5}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!get\+Weight@{get\+Weight}}
+\index{get\+Weight@{get\+Weight}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{get\+Weight()}{getWeight()}}
+{\footnotesize\ttfamily unsigned int get\+Weight (\begin{DoxyParamCaption}\item[{const \hyperlink{classKite_1_1Track}{Track} $\ast$}]{track }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The associated weight, for now the \hyperlink{classKite_1_1Track}{Track} argument is ignored. \mbox{\Hypertarget{classKite_1_1TrackMarker_abd3d8093f871d3d1a7f24b053648026c}\label{classKite_1_1TrackMarker_abd3d8093f871d3d1a7f24b053648026c}} 
+\index{Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}!set\+Track@{set\+Track}}
+\index{set\+Track@{set\+Track}!Kite\+::\+Track\+Marker@{Kite\+::\+Track\+Marker}}
+\paragraph{\texorpdfstring{set\+Track()}{setTrack()}}
+{\footnotesize\ttfamily void set\+Track (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1Track}{Track} $\ast$}]{track }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Sets the owning \hyperlink{classKite_1_1Track}{Track}. 
+
+Referenced by Track\+Segment\+::detach(), and Track\+Segment\+::swap\+Track().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Track\+Marker.\+h\item 
+Track\+Marker.\+cpp\item 
+Track\+Marker.\+dox\end{DoxyCompactItemize}

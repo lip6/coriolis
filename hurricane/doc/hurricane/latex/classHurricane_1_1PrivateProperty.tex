@@ -1,0 +1,60 @@
+\hypertarget{classHurricane_1_1PrivateProperty}{}\section{Hurricane\+:\+:Private\+Property Class Reference}
+\label{classHurricane_1_1PrivateProperty}\index{Hurricane\+::\+Private\+Property@{Hurricane\+::\+Private\+Property}}
+
+
+\hyperlink{classHurricane_1_1PrivateProperty}{Private\+Property} description ({\bfseries A\+PI})  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Private\+Property\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=226pt]{classHurricane_1_1PrivateProperty__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1DBo}{D\+Bo} $\ast$ \hyperlink{classHurricane_1_1PrivateProperty_a070ea464f4859734163b12a134e2d8f2}{get\+Owner} () const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1PrivateProperty}{Private\+Property} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1PrivateProperty_secPrivatePropertyIntro}{}\subsection{Introduction}\label{classHurricane_1_1PrivateProperty_secPrivatePropertyIntro}
+Private properties are owned by only one data base object.
+
+When a new property is created, it is not yet assigned to any particular object. It becomes effectively the property of an object after the call {\bfseries dbo-\/$>$put(property)}. The property then receives a message {\bfseries on\+Captured\+By} whose argument is the additional owner. From that time onwards, this object becomes partially responsible of the future of the property.
+
+{\bfseries What can happen then ?}
+
+If the property is destroyed \+: The property, being private, informs its owner (if any) of its deletion which detaches it from its property list (if the object is a quark and if this was the last property owned, it has no more reason to exist and automatically deletes itself).
+
+If a property of same name already exist \+: Two properties with the same name can\textquotesingle{}t cohabit, the older one is released by the object which receives the message {\bfseries on\+Released\+By} from that old property and proceeds as required according to the type of property.
+
+If the property changes of owner \+: This one is first captured by the new owner and the released by the older owner (the reason why messages are called upon in this order will be explained later).
+
+If the property owner is destroyed \+: All properties owned by the object are then released. The future of each of those properties is fully driven by their respective messages {\bfseries on\+Released\+By}. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1PrivateProperty_a070ea464f4859734163b12a134e2d8f2}\label{classHurricane_1_1PrivateProperty_a070ea464f4859734163b12a134e2d8f2}} 
+\index{Hurricane\+::\+Private\+Property@{Hurricane\+::\+Private\+Property}!get\+Owner@{get\+Owner}}
+\index{get\+Owner@{get\+Owner}!Hurricane\+::\+Private\+Property@{Hurricane\+::\+Private\+Property}}
+\subsubsection{\texorpdfstring{get\+Owner()}{getOwner()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1DBo}{D\+Bo} $\ast$ Hurricane\+::\+Private\+Property\+::get\+Owner (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\hypertarget{classHurricane_1_1PrivateProperty_secPrivatePropertyDestruction}{}\subsection{Destruction}\label{classHurricane_1_1PrivateProperty_secPrivatePropertyDestruction}
+The property has an owner, this one is informed of the property deletion and detaches it from its property list. If the object is a quark and if this was the last property owned it automatically deletes itself.
+
+\begin{DoxyParagraph}{Remark\+:}
+Once the property is attached to an object this one becomes responsible of its automatic destruction. When a property changes its owner, the old owner delegates this task to the new one. On the other hand, a property which has never been attached to an owner will never be deleted automatically.
+\end{DoxyParagraph}
+{\bfseries Returns\+:} the current owner of the property (or N\+U\+LL if at not been assigned yet). 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Property.\+h\item 
+Private\+Property.\+dox\end{DoxyCompactItemize}

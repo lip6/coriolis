@@ -27,6 +27,4 @@
  
  add_subdirectory(src)
  add_subdirectory(etc)
- if(BUILD_DOC)
-   add_subdirectory(doc)
- endif(BUILD_DOC)
+ add_subdirectory(doc)

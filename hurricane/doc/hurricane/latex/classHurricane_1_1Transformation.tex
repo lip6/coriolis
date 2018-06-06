@@ -1,0 +1,327 @@
+\hypertarget{classHurricane_1_1Transformation}{}\section{Hurricane\+:\+:Transformation Class Reference}
+\label{classHurricane_1_1Transformation}\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+
+
+\hyperlink{classHurricane_1_1Transformation}{Transformation} description ({\bfseries A\+PI})  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1Transformation_a7a28cd6c2f62898bc947dc3f41fe3bcf}{Transformation} ()
+\item 
+\hyperlink{classHurricane_1_1Transformation_a6bb0e856cd0374bd6f38ee835a4744c0}{Transformation} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&tx, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&ty, const \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation} \&orientation=Orientation\+::\+ID)
+\item 
+\hyperlink{classHurricane_1_1Transformation_a01a6844815e536ca38d549a13b6c034f}{Transformation} (const \hyperlink{classHurricane_1_1Point}{Point} \&translation, const \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation} \&orientation=Orientation\+::\+ID)
+\item 
+\hyperlink{classHurricane_1_1Transformation_acd94913a75fd4d3624b89e50acf4962f}{Transformation} (const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&transformation)
+\item 
+\hyperlink{classHurricane_1_1Transformation}{Transformation} \& \hyperlink{classHurricane_1_1Transformation_aad1158c828cc8ad72eb9f17804495cd2}{operator=} (const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&transformation)
+\item 
+bool \hyperlink{classHurricane_1_1Transformation_a6dbb6fe21e65506f35e1ee21d09e8447}{operator==} (const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&transformation) const
+\item 
+bool \hyperlink{classHurricane_1_1Transformation_a7cb2ff77e4297fadbbf357d654de66a6}{operator!=} (const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&transformation) const
+\item 
+const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \& \hyperlink{classHurricane_1_1Transformation_a08e8c1f23a73fcd1eb111c65695e848a}{get\+Tx} () const
+\item 
+const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \& \hyperlink{classHurricane_1_1Transformation_a0915bbf45c26ae91662653ce394ee203}{get\+Ty} () const
+\item 
+\hyperlink{classHurricane_1_1Point}{Point} \hyperlink{classHurricane_1_1Transformation_a45a5133c16af3ce80ffd084b02064013}{get\+Translation} () const
+\item 
+const \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation} \& \hyperlink{classHurricane_1_1Transformation_ad1f4de093e3b87783b2b931444acbb76}{get\+Orientation} () const
+\item 
+\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \hyperlink{classHurricane_1_1Transformation_af3b16accc64a12c5dcd4c099115a93f3}{getX} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&x, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&y) const
+\item 
+\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \hyperlink{classHurricane_1_1Transformation_a8ad883a70823c00772293549b6e611e7}{getY} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&x, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&y) const
+\item 
+\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \hyperlink{classHurricane_1_1Transformation_adcd79ae74399431387d246dce68b8d70}{getX} (const \hyperlink{classHurricane_1_1Point}{Point} \&point) const
+\item 
+\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \hyperlink{classHurricane_1_1Transformation_a87152b7b585cf409950e9aba878143d5}{getY} (const \hyperlink{classHurricane_1_1Point}{Point} \&point) const
+\item 
+\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \hyperlink{classHurricane_1_1Transformation_a2c20ee8506ad770a28c2e2b91e9b0153}{get\+Dx} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&dx, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&dy) const
+\item 
+\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \hyperlink{classHurricane_1_1Transformation_aa03354ff0a204e77863f392da8bb8678}{get\+Dy} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&dx, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&dy) const
+\item 
+\hyperlink{classHurricane_1_1Point}{Point} \hyperlink{classHurricane_1_1Transformation_aea9a0f1d1ffeb4a38accbf0c9287a93f}{get\+Point} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&x, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&y) const
+\item 
+\hyperlink{classHurricane_1_1Point}{Point} \hyperlink{classHurricane_1_1Transformation_a002347125ae10c408aa5e74d3c36d62f}{get\+Point} (const \hyperlink{classHurricane_1_1Point}{Point} \&point) const
+\item 
+\hyperlink{classHurricane_1_1Box}{Box} \hyperlink{classHurricane_1_1Transformation_a1335b209ff017d8bfd6f81ae65ae6cd7}{get\+Box} (const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&x1, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&y1, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&x2, const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&y2) const
+\item 
+\hyperlink{classHurricane_1_1Box}{Box} \hyperlink{classHurricane_1_1Transformation_a4d3ad1601d31e05c76bda4b417445aff}{get\+Box} (const \hyperlink{classHurricane_1_1Point}{Point} \&point1, const \hyperlink{classHurricane_1_1Point}{Point} \&point2) const
+\item 
+\hyperlink{classHurricane_1_1Box}{Box} \hyperlink{classHurricane_1_1Transformation_a051ddd67572c50b3b8edf75f790006e2}{get\+Box} (const \hyperlink{classHurricane_1_1Box}{Box} \&box) const
+\item 
+\hyperlink{classHurricane_1_1Transformation}{Transformation} \hyperlink{classHurricane_1_1Transformation_a12ba0cbe9154661e704ce0f2638f860f}{get\+Transformation} (const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&transformation) const
+\item 
+\hyperlink{classHurricane_1_1Transformation}{Transformation} \hyperlink{classHurricane_1_1Transformation_af9b37e39fb0ba02655eba41fe7779990}{get\+Invert} () const
+\item 
+\hyperlink{classHurricane_1_1Transformation}{Transformation} \& \hyperlink{classHurricane_1_1Transformation_a4d49d9fde0fe04eba9e8f0c7360f2c79}{invert} ()
+\item 
+void \hyperlink{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}{apply\+On} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&x, \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&y) const
+\item 
+void \hyperlink{classHurricane_1_1Transformation_ae73ca0f0e10d85267ef685d94eda9bcc}{apply\+On} (\hyperlink{classHurricane_1_1Point}{Point} \&point) const
+\item 
+void \hyperlink{classHurricane_1_1Transformation_aa3ab2731934330107a3f2a3079f21132}{apply\+On} (\hyperlink{classHurricane_1_1Box}{Box} \&box) const
+\item 
+void \hyperlink{classHurricane_1_1Transformation_a3ac2c40977ecf061b4316ecedc87918a}{apply\+On} (\hyperlink{classHurricane_1_1Transformation}{Transformation} \&transformation) const
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1Transformation}{Transformation} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1Transformation_secTransformationIntro}{}\subsection{Introduction}\label{classHurricane_1_1Transformation_secTransformationIntro}
+\hyperlink{classHurricane_1_1Transformation}{Transformation} objects are a combination of a {\bfseries translation} and an {\bfseries orientation} defined by the new enumeration {\bfseries \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Transformation\+::\+Orientation}} whose different values are described in table below. The {\bfseries orientation} is done {\itshape before} the {\bfseries translation}, which is to say that the orientation is applied in the coordinate system of the model.
+
+The transformation formula is given by\+: \[ \Large \left \{ \begin{array}{r c l l l l l} x' & = & (a \times x) & + & (b \times y) & + & tx \\ y' & = & (c \times x) & + & (d \times y) & + & ty \end{array} \right . \] where x and y are the coordinates of any point, x\textquotesingle{} and y\textquotesingle{} the coordinates of the transformed point, tx and ty the horizontal and vertical components of the translation and where a, b, c and d are the coefficients of the matrix associated to the orientation. See \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation} for the value of a, b, c \& d.
+
+\begin{DoxyParagraph}{Remark\+:}
+{\bfseries Rotations are done counter clock wise} 
+\end{DoxyParagraph}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Transformation_a7a28cd6c2f62898bc947dc3f41fe3bcf}\label{classHurricane_1_1Transformation_a7a28cd6c2f62898bc947dc3f41fe3bcf}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!Transformation@{Transformation}}
+\index{Transformation@{Transformation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{Transformation()}{Transformation()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily Hurricane\+::\+Transformation\+::\+Transformation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Default constructor \+: The translation is null and the orientation is equal to {\bfseries ID}. \mbox{\Hypertarget{classHurricane_1_1Transformation_a6bb0e856cd0374bd6f38ee835a4744c0}\label{classHurricane_1_1Transformation_a6bb0e856cd0374bd6f38ee835a4744c0}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!Transformation@{Transformation}}
+\index{Transformation@{Transformation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{Transformation()}{Transformation()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily Hurricane\+::\+Transformation\+::\+Transformation (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{tx,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{ty,  }\item[{const \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation} \&}]{orientation = {\ttfamily Orientation\+:\+:ID} }\end{DoxyParamCaption})}
+
+Builds a transformation whose translation part is defined by the arguments {\ttfamily $<$xt$>$} and {\ttfamily $<$ty$>$} and whose orientation is defined by {\ttfamily $<$orientation$>$} ({\ttfamily $<$ID$>$} by default). \mbox{\Hypertarget{classHurricane_1_1Transformation_a01a6844815e536ca38d549a13b6c034f}\label{classHurricane_1_1Transformation_a01a6844815e536ca38d549a13b6c034f}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!Transformation@{Transformation}}
+\index{Transformation@{Transformation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{Transformation()}{Transformation()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily Hurricane\+::\+Transformation\+::\+Transformation (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{translation,  }\item[{const \hyperlink{classHurricane_1_1Transformation_1_1Orientation}{Orientation} \&}]{orientation = {\ttfamily Orientation\+:\+:ID} }\end{DoxyParamCaption})}
+
+Builds a transformation whose translation part is defined by the argument {\ttfamily $<$translation$>$} and whose default orientation is {\bfseries ID}.
+
+Builds a transformation whose translation part is defined by the argument {\ttfamily $<$translation$>$} and whose orientation is defined by {\ttfamily $<$orientation$>$}. \mbox{\Hypertarget{classHurricane_1_1Transformation_acd94913a75fd4d3624b89e50acf4962f}\label{classHurricane_1_1Transformation_acd94913a75fd4d3624b89e50acf4962f}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!Transformation@{Transformation}}
+\index{Transformation@{Transformation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{Transformation()}{Transformation()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily Hurricane\+::\+Transformation\+::\+Transformation (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&}]{transformation }\end{DoxyParamCaption})}
+
+Copy constructor. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Transformation_aad1158c828cc8ad72eb9f17804495cd2}\label{classHurricane_1_1Transformation_aad1158c828cc8ad72eb9f17804495cd2}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!operator=@{operator=}}
+\index{operator=@{operator=}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Transformation}{Transformation} \& Hurricane\+::\+Transformation\+::operator= (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&}]{transformation }\end{DoxyParamCaption})}
+
+Assignment operator. \mbox{\Hypertarget{classHurricane_1_1Transformation_a6dbb6fe21e65506f35e1ee21d09e8447}\label{classHurricane_1_1Transformation_a6dbb6fe21e65506f35e1ee21d09e8447}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!operator==@{operator==}}
+\index{operator==@{operator==}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Transformation\+::operator== (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&}]{transformation }\end{DoxyParamCaption}) const}
+
+Two transformations are identical if their translations and orientation are identical. \mbox{\Hypertarget{classHurricane_1_1Transformation_a7cb2ff77e4297fadbbf357d654de66a6}\label{classHurricane_1_1Transformation_a7cb2ff77e4297fadbbf357d654de66a6}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Transformation\+::operator!= (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&}]{transformation }\end{DoxyParamCaption}) const}
+
+Two transformations are different if eitheir their translations or orientation differ. \mbox{\Hypertarget{classHurricane_1_1Transformation_a08e8c1f23a73fcd1eb111c65695e848a}\label{classHurricane_1_1Transformation_a08e8c1f23a73fcd1eb111c65695e848a}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Tx@{get\+Tx}}
+\index{get\+Tx@{get\+Tx}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Tx()}{getTx()}}
+{\footnotesize\ttfamily const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \& Hurricane\+::\+Transformation\+::get\+Tx (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the horizontal component of the translation. \mbox{\Hypertarget{classHurricane_1_1Transformation_a0915bbf45c26ae91662653ce394ee203}\label{classHurricane_1_1Transformation_a0915bbf45c26ae91662653ce394ee203}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Ty@{get\+Ty}}
+\index{get\+Ty@{get\+Ty}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Ty()}{getTy()}}
+{\footnotesize\ttfamily const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \& Hurricane\+::\+Transformation\+::get\+Ty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the vertical component of the translation. \mbox{\Hypertarget{classHurricane_1_1Transformation_a45a5133c16af3ce80ffd084b02064013}\label{classHurricane_1_1Transformation_a45a5133c16af3ce80ffd084b02064013}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Translation@{get\+Translation}}
+\index{get\+Translation@{get\+Translation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Translation()}{getTranslation()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Point}{Point} Hurricane\+::\+Transformation\+::get\+Translation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the translation component of the transformation. \mbox{\Hypertarget{classHurricane_1_1Transformation_ad1f4de093e3b87783b2b931444acbb76}\label{classHurricane_1_1Transformation_ad1f4de093e3b87783b2b931444acbb76}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Orientation@{get\+Orientation}}
+\index{get\+Orientation@{get\+Orientation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Orientation()}{getOrientation()}}
+{\footnotesize\ttfamily const Translation\+::\+Orientation \& Hurricane\+::\+Transformation\+::get\+Orientation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the orientation of the transformation (may be used in a switch). 
+
+References apply\+On(), get\+Box(), get\+Dx(), get\+Dy(), get\+Invert(), get\+Point(), get\+Transformation(), get\+X(), get\+Y(), and invert().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_af3b16accc64a12c5dcd4c099115a93f3}\label{classHurricane_1_1Transformation_af3b16accc64a12c5dcd4c099115a93f3}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!getX@{getX}}
+\index{getX@{getX}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+X()}{getX()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} Hurricane\+::\+Transformation\+::getX (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{x,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{y }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the point abscissa resulting of the transformation application on the point defined by {\ttfamily $<$x$>$} et {\ttfamily $<$y$>$}. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_a8ad883a70823c00772293549b6e611e7}\label{classHurricane_1_1Transformation_a8ad883a70823c00772293549b6e611e7}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!getY@{getY}}
+\index{getY@{getY}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Y()}{getY()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} Hurricane\+::\+Transformation\+::getY (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{x,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{y }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the point ordinate resulting of the transformation application on the point defined by {\ttfamily $<$x$>$} et {\ttfamily $<$y$>$}. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_adcd79ae74399431387d246dce68b8d70}\label{classHurricane_1_1Transformation_adcd79ae74399431387d246dce68b8d70}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!getX@{getX}}
+\index{getX@{getX}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+X()}{getX()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} Hurricane\+::\+Transformation\+::getX (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{point }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the point abscissa resulting of the transformation application on {\ttfamily $<$point$>$}. \mbox{\Hypertarget{classHurricane_1_1Transformation_a87152b7b585cf409950e9aba878143d5}\label{classHurricane_1_1Transformation_a87152b7b585cf409950e9aba878143d5}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!getY@{getY}}
+\index{getY@{getY}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Y()}{getY()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} Hurricane\+::\+Transformation\+::getY (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{point }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the point ordinate resulting of the transformation application on {\ttfamily $<$point$>$}. \mbox{\Hypertarget{classHurricane_1_1Transformation_a2c20ee8506ad770a28c2e2b91e9b0153}\label{classHurricane_1_1Transformation_a2c20ee8506ad770a28c2e2b91e9b0153}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Dx@{get\+Dx}}
+\index{get\+Dx@{get\+Dx}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Dx()}{getDx()}}
+{\footnotesize\ttfamily \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} Hurricane\+::\+Transformation\+::get\+Dx (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{dx,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{dy }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the horizontal component of the vector resulting from the application of the transformation on the vector defined by {\ttfamily $<$dx$>$} et {\ttfamily $<$dy$>$}. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_aa03354ff0a204e77863f392da8bb8678}\label{classHurricane_1_1Transformation_aa03354ff0a204e77863f392da8bb8678}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Dy@{get\+Dy}}
+\index{get\+Dy@{get\+Dy}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Dy()}{getDy()}}
+{\footnotesize\ttfamily \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} Hurricane\+::\+Transformation\+::get\+Dy (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{dx,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{dy }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the vertical component of the vector resulting from the application of the transformation on the vector defined by {\ttfamily $<$dx$>$} et {\ttfamily $<$dy$>$}. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_aea9a0f1d1ffeb4a38accbf0c9287a93f}\label{classHurricane_1_1Transformation_aea9a0f1d1ffeb4a38accbf0c9287a93f}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Point@{get\+Point}}
+\index{get\+Point@{get\+Point}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Point()}{getPoint()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Point}{Point} Hurricane\+::\+Transformation\+::get\+Point (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{x,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{y }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the point resulting from the application of the transformation on the point defined by {\ttfamily $<$dx$>$} et {\ttfamily $<$dy$>$}. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_a002347125ae10c408aa5e74d3c36d62f}\label{classHurricane_1_1Transformation_a002347125ae10c408aa5e74d3c36d62f}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Point@{get\+Point}}
+\index{get\+Point@{get\+Point}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Point()}{getPoint()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Point}{Point} Hurricane\+::\+Transformation\+::get\+Point (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{point }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the point resulting from the application of the transformation on {\ttfamily $<$point$>$}. \mbox{\Hypertarget{classHurricane_1_1Transformation_a1335b209ff017d8bfd6f81ae65ae6cd7}\label{classHurricane_1_1Transformation_a1335b209ff017d8bfd6f81ae65ae6cd7}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Box@{get\+Box}}
+\index{get\+Box@{get\+Box}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Box()}{getBox()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Box}{Box} Hurricane\+::\+Transformation\+::get\+Box (\begin{DoxyParamCaption}\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{x1,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{y1,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{x2,  }\item[{const \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{y2 }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the box resulting from the application of the transformation on the box defined by {\ttfamily $<$x1$>$}, {\ttfamily $<$y1$>$}, {\ttfamily $<$x2$>$} et {\ttfamily $<$y2$>$}. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_a4d3ad1601d31e05c76bda4b417445aff}\label{classHurricane_1_1Transformation_a4d3ad1601d31e05c76bda4b417445aff}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Box@{get\+Box}}
+\index{get\+Box@{get\+Box}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Box()}{getBox()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Box}{Box} Hurricane\+::\+Transformation\+::get\+Box (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{point1,  }\item[{const \hyperlink{classHurricane_1_1Point}{Point} \&}]{point2 }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the box resulting from the application of the transformation on the box defined by {\ttfamily $<$point1$>$} et {\ttfamily $<$point2$>$}. \mbox{\Hypertarget{classHurricane_1_1Transformation_a051ddd67572c50b3b8edf75f790006e2}\label{classHurricane_1_1Transformation_a051ddd67572c50b3b8edf75f790006e2}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Box@{get\+Box}}
+\index{get\+Box@{get\+Box}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Box()}{getBox()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Box}{Box} Hurricane\+::\+Transformation\+::get\+Box (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{box }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the box resulting from the application of the transformation on the box {\ttfamily $<$box$>$}. \mbox{\Hypertarget{classHurricane_1_1Transformation_a12ba0cbe9154661e704ce0f2638f860f}\label{classHurricane_1_1Transformation_a12ba0cbe9154661e704ce0f2638f860f}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Transformation@{get\+Transformation}}
+\index{get\+Transformation@{get\+Transformation}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Transformation()}{getTransformation()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Transformation}{Transformation} Hurricane\+::\+Transformation\+::get\+Transformation (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Transformation}{Transformation} \&}]{transformation }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the transformation resulting from the application of the transformation on the transformation {\ttfamily $<$transformation$>$}. 
+
+Referenced by get\+Orientation(), and Hurricane\+::\+Query\+::get\+Transformation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_af9b37e39fb0ba02655eba41fe7779990}\label{classHurricane_1_1Transformation_af9b37e39fb0ba02655eba41fe7779990}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!get\+Invert@{get\+Invert}}
+\index{get\+Invert@{get\+Invert}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{get\+Invert()}{getInvert()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Transformation}{Transformation} Hurricane\+::\+Transformation\+::get\+Invert (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the inverse transformation. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_a4d49d9fde0fe04eba9e8f0c7360f2c79}\label{classHurricane_1_1Transformation_a4d49d9fde0fe04eba9e8f0c7360f2c79}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!invert@{invert}}
+\index{invert@{invert}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{invert()}{invert()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Transformation}{Transformation} \& Hurricane\+::\+Transformation\+::invert (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+inverts the transformation {\ttfamily $<$this$>$} and returns a reference to it in order to apply in sequence a new function. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}\label{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!apply\+On@{apply\+On}}
+\index{apply\+On@{apply\+On}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{apply\+On()}{applyOn()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Transformation\+::apply\+On (\begin{DoxyParamCaption}\item[{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{x,  }\item[{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit} \&}]{y }\end{DoxyParamCaption}) const}
+
+\hypertarget{classHurricane_1_1Transformation_secTransformationTransformers}{}\subsection{Transformers}\label{classHurricane_1_1Transformation_secTransformationTransformers}
+{\bfseries \hyperlink{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}{Transformation\+::apply\+On}}
+
+{\bfseries \hyperlink{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}{Transformation\+::apply\+On}}
+
+{\bfseries \hyperlink{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}{Transformation\+::apply\+On}}
+
+{\bfseries \hyperlink{classHurricane_1_1Transformation_ad37365bfd47851ca33519bb9a05b5402}{Transformation\+::apply\+On}}
+
+Applies the transformation on the coordinates given in arguments. 
+
+Referenced by get\+Orientation().
+
+\mbox{\Hypertarget{classHurricane_1_1Transformation_ae73ca0f0e10d85267ef685d94eda9bcc}\label{classHurricane_1_1Transformation_ae73ca0f0e10d85267ef685d94eda9bcc}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!apply\+On@{apply\+On}}
+\index{apply\+On@{apply\+On}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{apply\+On()}{applyOn()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Transformation\+::apply\+On (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Point}{Point} \&}]{point }\end{DoxyParamCaption}) const}
+
+Applies the transformation on the point given in argument. \mbox{\Hypertarget{classHurricane_1_1Transformation_aa3ab2731934330107a3f2a3079f21132}\label{classHurricane_1_1Transformation_aa3ab2731934330107a3f2a3079f21132}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!apply\+On@{apply\+On}}
+\index{apply\+On@{apply\+On}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{apply\+On()}{applyOn()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Transformation\+::apply\+On (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Box}{Box} \&}]{box }\end{DoxyParamCaption}) const}
+
+Applies the transformation on the box given in argument. \mbox{\Hypertarget{classHurricane_1_1Transformation_a3ac2c40977ecf061b4316ecedc87918a}\label{classHurricane_1_1Transformation_a3ac2c40977ecf061b4316ecedc87918a}} 
+\index{Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}!apply\+On@{apply\+On}}
+\index{apply\+On@{apply\+On}!Hurricane\+::\+Transformation@{Hurricane\+::\+Transformation}}
+\subsubsection{\texorpdfstring{apply\+On()}{applyOn()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily void Hurricane\+::\+Transformation\+::apply\+On (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Transformation}{Transformation} \&}]{transformation }\end{DoxyParamCaption}) const}
+
+Applies the transformation on the transformation given in argument. This last one becomes then the transformation resulting of the product of those two. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Transformation.\+h\item 
+Transformation.\+dox\end{DoxyCompactItemize}

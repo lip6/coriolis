@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SetRefIns</TITLE>
+<META NAME="description" CONTENT="SetRefIns">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node17.html">
+<LINK REL="previous" HREF="node15.html">
+<LINK REL="up" HREF="node10.html">
+<LINK REL="next" HREF="node17.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node15.html">PlaceLeft</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node17.html">DefAb</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html400"
+  HREF="node16.html#SECTION00046100000000000000">Name</A>
+<LI><A NAME="tex2html401"
+  HREF="node16.html#SECTION00046200000000000000">Synopsys</A>
+<LI><A NAME="tex2html402"
+  HREF="node16.html#SECTION00046300000000000000">Description</A>
+<LI><A NAME="tex2html403"
+  HREF="node16.html#SECTION00046400000000000000">Parameters</A>
+<LI><A NAME="tex2html404"
+  HREF="node16.html#SECTION00046500000000000000">Example</A>
+<LI><A NAME="tex2html405"
+  HREF="node16.html#SECTION00046600000000000000">Errors</A>
+<LI><A NAME="tex2html406"
+  HREF="node16.html#SECTION00046700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00046000000000000000"></A>
+    <A NAME="secsetrefins"></A>
+<BR>
+SetRefIns
+</H2>
+    
+<H3><A NAME="SECTION00046100000000000000">
+Name</A>
+</H3>
+
+<P>
+SetRefIns - Defines the new "reference instance" for placement
+
+<P>
+
+<H3><A NAME="SECTION00046200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+SetRefIns ( ins )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00046300000000000000">
+Description</A>
+</H3>
+
+<P>
+This function defines the new "reference instance", used as starting point in the relative placement functions.
+<BR>
+It's regarding the abutmentbox of the instance <code>ins</code> that the next instance is going to be placed, if using the appropriate functions.
+<BR>
+<P>
+Note that the more recently placed instance becomes automaticaly the "reference instance", if SetRefIns isn't called.
+
+<P>
+
+<H3><A NAME="SECTION00046400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>ins</code> : defines the new "reference instance"
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00046500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+Place      ( myInst1, NOSYM, 0, 0 )
+PlaceRight ( myInst2, NOSYM       )
+
+SetRefIns  ( myInst1 )
+PlaceTop   ( myInst3, SYM_Y       )
+</PRE>
+
+<P>
+<code>myInst3</code> is on top of <code>myInst1</code> instead of <code>myInst2</code>.
+
+<P>
+
+<H3><A NAME="SECTION00046600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] SetRefIns : the instance doesn't exist.</code>
+<BR>
+If the instance has not been instanciated, it is impossible do to any placement from it.
+</LI>
+<LI><code>[Stratus ERROR] SetRefIns : the instance ...is not placed.</code>
+<BR>
+If the instance has not been placed, it is impossible do to any placement from it.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00046700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node11.html#secplace"><SPAN  CLASS="textit">Place</SPAN></A>
+<A HREF="node12.html#sectop"><SPAN  CLASS="textit">PlaceTop</SPAN></A>
+<A HREF="node13.html#secbottom"><SPAN  CLASS="textit">PlaceBottom</SPAN></A>
+<A HREF="node14.html#secright"><SPAN  CLASS="textit">PlaceRight</SPAN></A>
+<A HREF="node15.html#secleft"><SPAN  CLASS="textit">PlaceLeft</SPAN></A>
+<A HREF="node17.html#secdefab"><SPAN  CLASS="textit">DefAb</SPAN></A>
+<A HREF="node18.html#secresizeab"><SPAN  CLASS="textit">ResizeAb</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node15.html">PlaceLeft</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node17.html">DefAb</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

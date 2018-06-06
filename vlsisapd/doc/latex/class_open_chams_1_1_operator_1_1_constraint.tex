@@ -1,0 +1,41 @@
+\hypertarget{class_open_chams_1_1_operator_1_1_constraint}{}\section{Operator\+:\+:Constraint Class Reference}
+\label{class_open_chams_1_1_operator_1_1_constraint}\index{Operator\+::\+Constraint@{Operator\+::\+Constraint}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_open_chams_1_1_operator_1_1_constraint_af99fb5eb2779471fcbad4484cf77a670}{Constraint} (const std\+::string \&ref, const std\+::string \&ref\+Param, double factor)
+\begin{DoxyCompactList}\small\item\em creates a new constraint. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_operator_1_1_constraint_a973fc85365f2d3f07007d88a90d7ab1d}\label{class_open_chams_1_1_operator_1_1_constraint_a973fc85365f2d3f07007d88a90d7ab1d}} 
+double \hyperlink{class_open_chams_1_1_operator_1_1_constraint_a973fc85365f2d3f07007d88a90d7ab1d}{get\+Factor} ()
+\begin{DoxyCompactList}\small\item\em returns the factor of the constraint. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_operator_1_1_constraint_a07cf74adaf661f0aaaa1818d24c2243d}\label{class_open_chams_1_1_operator_1_1_constraint_a07cf74adaf661f0aaaa1818d24c2243d}} 
+const std\+::string \& \hyperlink{class_open_chams_1_1_operator_1_1_constraint_a07cf74adaf661f0aaaa1818d24c2243d}{get\+Ref} ()
+\begin{DoxyCompactList}\small\item\em returns the name of the object referenced by the constraint. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_operator_1_1_constraint_a621539b1a4f31053649031c8034b0bd3}\label{class_open_chams_1_1_operator_1_1_constraint_a621539b1a4f31053649031c8034b0bd3}} 
+const std\+::string \& \hyperlink{class_open_chams_1_1_operator_1_1_constraint_a621539b1a4f31053649031c8034b0bd3}{get\+Ref\+Param} ()
+\begin{DoxyCompactList}\small\item\em returns the name of the parameter referenced by the constraint. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describes a constraint. A constraint is used to set that a parameter\textquotesingle{}s value is defined relative to another parameter value or to an equation\+: device\+A.\+paramI = device\+B.\+paramJ $\ast$ factor device\+A.\+paramI = equation $\ast$ factor 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_open_chams_1_1_operator_1_1_constraint_af99fb5eb2779471fcbad4484cf77a670}\label{class_open_chams_1_1_operator_1_1_constraint_af99fb5eb2779471fcbad4484cf77a670}} 
+\index{Open\+Chams\+::\+Operator\+::\+Constraint@{Open\+Chams\+::\+Operator\+::\+Constraint}!Constraint@{Constraint}}
+\index{Constraint@{Constraint}!Open\+Chams\+::\+Operator\+::\+Constraint@{Open\+Chams\+::\+Operator\+::\+Constraint}}
+\subsubsection{\texorpdfstring{Constraint()}{Constraint()}}
+{\footnotesize\ttfamily \hyperlink{class_open_chams_1_1_operator_1_1_constraint}{Constraint} (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{ref,  }\item[{const std\+::string \&}]{ref\+Param,  }\item[{double}]{factor }\end{DoxyParamCaption})}
+
+
+
+creates a new constraint. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ref} & the reference object (device, instace or circuit). \\
+\hline
+{\em ref\+Param} & the reference parameter. \\
+\hline
+{\em factor} & the factor of the constraint. \\
+\hline
+\end{DoxyParams}

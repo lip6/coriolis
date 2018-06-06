@@ -18,7 +18,4 @@
  find_package(FLEX               REQUIRED)
  
  add_subdirectory(src)
-
- if(BUILD_DOC)
-   add_subdirectory(doc)
- endif()
+ add_subdirectory(doc)

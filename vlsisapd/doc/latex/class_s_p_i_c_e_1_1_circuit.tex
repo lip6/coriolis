@@ -1,0 +1,189 @@
+\hypertarget{class_s_p_i_c_e_1_1_circuit}{}\section{Circuit Class Reference}
+\label{class_s_p_i_c_e_1_1_circuit}\index{Circuit@{Circuit}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_a30fc53c4da54215fdec3ab1b96ea1943}{add\+Include} (std\+::string)
+\begin{DoxyCompactList}\small\item\em adds an include to the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{add\+Instance} (\hyperlink{class_s_p_i_c_e_1_1_instance}{Instance} $\ast$)
+\begin{DoxyCompactList}\small\item\em adds an instance to the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_a49939060cc1cb8e4bfaf003025032096}{add\+Library} (std\+::string file, std\+::string type=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em adds a library to the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_a1abe34b48e2b6e1834a143fdef159cb9}{add\+Option} (std\+::string, std\+::string)
+\begin{DoxyCompactList}\small\item\em adds an option to the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}{add\+Parameter} (std\+::string, std\+::string)
+\begin{DoxyCompactList}\small\item\em adds a parameter to the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_a627cf18c2763bb59f3d7e5142873251c}{add\+Source} (\hyperlink{class_s_p_i_c_e_1_1_source}{Source} $\ast$)
+\begin{DoxyCompactList}\small\item\em adds a source to the circuit. \end{DoxyCompactList}\item 
+\hyperlink{class_s_p_i_c_e_1_1_subckt}{Subckt} $\ast$ \hyperlink{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}{add\+Subckt} (std\+::string)
+\begin{DoxyCompactList}\small\item\em adds a subcircuit to the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a2210ebc37eee536dbe9b44a89690256c}\label{class_s_p_i_c_e_1_1_circuit_a2210ebc37eee536dbe9b44a89690256c}} 
+\hyperlink{class_s_p_i_c_e_1_1_circuit_a2210ebc37eee536dbe9b44a89690256c}{Circuit} ()
+\begin{DoxyCompactList}\small\item\em creates a new circuit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a312beaf640e84589e6644820355c8ed6}\label{class_s_p_i_c_e_1_1_circuit_a312beaf640e84589e6644820355c8ed6}} 
+const string\+\_\+vector \& \hyperlink{class_s_p_i_c_e_1_1_circuit_a312beaf640e84589e6644820355c8ed6}{get\+Includes} ()
+\begin{DoxyCompactList}\small\item\em returns the includes of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a8e6e58ffab876152a740092520c35d73}\label{class_s_p_i_c_e_1_1_circuit_a8e6e58ffab876152a740092520c35d73}} 
+const std\+::vector$<$ \hyperlink{class_s_p_i_c_e_1_1_instance}{Instance} $\ast$ $>$ \& \hyperlink{class_s_p_i_c_e_1_1_circuit_a8e6e58ffab876152a740092520c35d73}{get\+Instances} ()
+\begin{DoxyCompactList}\small\item\em returns the instances of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a3e6a71a711e4796470f1a2a1dc42aef6}\label{class_s_p_i_c_e_1_1_circuit_a3e6a71a711e4796470f1a2a1dc42aef6}} 
+const strpair\+\_\+vector \& \hyperlink{class_s_p_i_c_e_1_1_circuit_a3e6a71a711e4796470f1a2a1dc42aef6}{get\+Libraries} ()
+\begin{DoxyCompactList}\small\item\em returns the libraries of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}\label{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}} 
+const strings\+\_\+map \& \hyperlink{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}{get\+Options} ()
+\begin{DoxyCompactList}\small\item\em returns the options of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}\label{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}} 
+const strings\+\_\+map \& \hyperlink{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}{get\+Parameters} ()
+\begin{DoxyCompactList}\small\item\em returns the parameters of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}\label{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}} 
+const std\+::vector$<$ \hyperlink{class_s_p_i_c_e_1_1_source}{Source} $\ast$ $>$ \& \hyperlink{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}{get\+Sources} ()
+\begin{DoxyCompactList}\small\item\em returns the sources of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_adcc4ca0de68f8ee05f0d5db3b7604930}\label{class_s_p_i_c_e_1_1_circuit_adcc4ca0de68f8ee05f0d5db3b7604930}} 
+const std\+::vector$<$ \hyperlink{class_s_p_i_c_e_1_1_subckt}{Subckt} $\ast$ $>$ \& \hyperlink{class_s_p_i_c_e_1_1_circuit_adcc4ca0de68f8ee05f0d5db3b7604930}{get\+Subckts} ()
+\begin{DoxyCompactList}\small\item\em returns the subckts of the circuit. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_ad19721dd878c04c854a72af12d785741}\label{class_s_p_i_c_e_1_1_circuit_ad19721dd878c04c854a72af12d785741}} 
+std\+::string \hyperlink{class_s_p_i_c_e_1_1_circuit_ad19721dd878c04c854a72af12d785741}{get\+Title} ()
+\begin{DoxyCompactList}\small\item\em returns the title of the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}{set\+Title} (std\+::string)
+\begin{DoxyCompactList}\small\item\em sets the title of the circuit. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class is the root class which means that having this object in hand allows to get/set any information contained in the Spice file parsed/drived. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a30fc53c4da54215fdec3ab1b96ea1943}\label{class_s_p_i_c_e_1_1_circuit_a30fc53c4da54215fdec3ab1b96ea1943}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Include@{add\+Include}}
+\index{add\+Include@{add\+Include}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Include()}{addInclude()}}
+{\footnotesize\ttfamily void add\+Include (\begin{DoxyParamCaption}\item[{std\+::string}]{include }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+adds an include to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em include} & the include to add. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}\label{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Instance@{add\+Instance}}
+\index{add\+Instance@{add\+Instance}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Instance()}{addInstance()}}
+{\footnotesize\ttfamily void add\+Instance (\begin{DoxyParamCaption}\item[{\hyperlink{class_s_p_i_c_e_1_1_instance}{Instance} $\ast$}]{instance }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+adds an instance to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em instance} & the instance to add. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a49939060cc1cb8e4bfaf003025032096}\label{class_s_p_i_c_e_1_1_circuit_a49939060cc1cb8e4bfaf003025032096}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Library@{add\+Library}}
+\index{add\+Library@{add\+Library}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Library()}{addLibrary()}}
+{\footnotesize\ttfamily void add\+Library (\begin{DoxyParamCaption}\item[{std\+::string}]{file,  }\item[{std\+::string}]{type = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+adds a library to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file} & the file describing the library to add. \\
+\hline
+{\em type} & the type if several exist in the same file (this argument is optionnal) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a1abe34b48e2b6e1834a143fdef159cb9}\label{class_s_p_i_c_e_1_1_circuit_a1abe34b48e2b6e1834a143fdef159cb9}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Option@{add\+Option}}
+\index{add\+Option@{add\+Option}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Option()}{addOption()}}
+{\footnotesize\ttfamily void add\+Option (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{value }\end{DoxyParamCaption})}
+
+
+
+adds an option to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the option. \\
+\hline
+{\em value} & the value of the option.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+The value is represented as a std\+::string to keep the optionnal unity. 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}\label{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Parameter@{add\+Parameter}}
+\index{add\+Parameter@{add\+Parameter}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Parameter()}{addParameter()}}
+{\footnotesize\ttfamily void add\+Parameter (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{value }\end{DoxyParamCaption})}
+
+
+
+adds a parameter to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the parameter. \\
+\hline
+{\em value} & the value of the parameter.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+The value is represented as a std\+::string to keep the optionnal unity. 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a627cf18c2763bb59f3d7e5142873251c}\label{class_s_p_i_c_e_1_1_circuit_a627cf18c2763bb59f3d7e5142873251c}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Source@{add\+Source}}
+\index{add\+Source@{add\+Source}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Source()}{addSource()}}
+{\footnotesize\ttfamily void add\+Source (\begin{DoxyParamCaption}\item[{\hyperlink{class_s_p_i_c_e_1_1_source}{Source} $\ast$}]{source }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+adds a source to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em source} & the source to add. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}\label{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Subckt@{add\+Subckt}}
+\index{add\+Subckt@{add\+Subckt}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{add\+Subckt()}{addSubckt()}}
+{\footnotesize\ttfamily \hyperlink{class_s_p_i_c_e_1_1_subckt}{Subckt} $\ast$ add\+Subckt (\begin{DoxyParamCaption}\item[{std\+::string}]{name }\end{DoxyParamCaption})}
+
+
+
+adds a subcircuit to the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & the name of the subckt.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the newly created \hyperlink{class_s_p_i_c_e_1_1_subckt}{Subckt}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}\label{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!set\+Title@{set\+Title}}
+\index{set\+Title@{set\+Title}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{set\+Title()}{setTitle()}}
+{\footnotesize\ttfamily void set\+Title (\begin{DoxyParamCaption}\item[{std\+::string}]{title }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+sets the title of the circuit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em title} & the title of the circuit \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,780 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=latex 2016.3.17)  6 JUN 2018 18:11
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**stratus.tex
+(./stratus.tex
+LaTeX2e <2011/06/27>
+Babel <3.9k> and hyphenation patterns for 2 languages loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2008/03/30 v1.1d Input encoding file
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/palatino.sty
+Package: palatino 2005/04/12 PSNFSS-v9.2a (SPQR) 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip43
+\f@ncyO@elh=\skip44
+\f@ncyO@erh=\skip45
+\f@ncyO@olh=\skip46
+\f@ncyO@orh=\skip47
+\f@ncyO@elf=\skip48
+\f@ncyO@erf=\skip49
+\f@ncyO@olf=\skip50
+\f@ncyO@orf=\skip51
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count87
+\float@exts=\toks16
+\float@box=\box26
+\@float@everytoks=\toks17
+\@floatcapt=\box27
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks18
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: dvips.def on input line 91.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvips.def
+File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2012/05/28 v1.13 Bundle oberdiek, subset hyperref (HO)
+
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2012/05/28 v1.13 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2012/05/28 v1.13 Construct package bundles (HO)
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is not detected.
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode is ignored in DVI mode.
+Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+)
+Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2012/05/28 v1.2 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
+Package atveryend Info: \enddocument detected (standard20110627).
+Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
+Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/auxhook.sty
+Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+)
+\@linkdim=\dimen105
+\Hy@linkcounter=\count88
+\Hy@pagecounter=\count89
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+)
+\Hy@SavedSpaceFactor=\count90
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4443.
+Package hyperref Info: Link nesting OFF on input line 4448.
+Package hyperref Info: Hyper index ON on input line 4451.
+Package hyperref Info: Plain pages OFF on input line 4458.
+Package hyperref Info: Backreferencing OFF on input line 4463.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4688.
+\c@Hy@tempcnt=\count91
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5041.
+\XeTeXLinkMargin=\dimen106
+\Fld@menulength=\count92
+\Field@Width=\dimen107
+\Fld@charsize=\dimen108
+Package hyperref Info: Hyper figures OFF on input line 6295.
+Package hyperref Info: Link nesting OFF on input line 6300.
+Package hyperref Info: Hyper index ON on input line 6303.
+Package hyperref Info: backreferencing OFF on input line 6310.
+Package hyperref Info: Link coloring OFF on input line 6315.
+Package hyperref Info: Link coloring with OCG OFF on input line 6320.
+Package hyperref Info: PDF/A mode OFF on input line 6325.
+LaTeX Info: Redefining \ref on input line 6365.
+LaTeX Info: Redefining \pageref on input line 6369.
+\Hy@abspage=\count93
+\c@Item=\count94
+\c@Hfootnote=\count95
+)
+
+Package hyperref Message: Driver: hdvips.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hdvips.def
+File: hdvips.def 2012/11/06 v6.83m Hyperref driver for dvips
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pdfmark.def
+File: pdfmark.def 2012/11/06 v6.83m Hyperref definitions for pdfmark specials
+\pdf@docset=\toks19
+\pdf@box=\box28
+\pdf@toks=\toks20
+\pdf@defaulttoks=\toks21
+\HyField@AnnotCount=\count96
+\Fld@listcount=\count97
+\c@bookmark@seq@number=\count98
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip52
+))
+(/usr/share/texlive/texmf-local/texmf-compat/tex/latex/html/html.sty
+Package: html 1999/07/19 v1.38 hypertext commands for latex2html (nd, hws, rrm)
+
+\c@lpart=\count99
+\c@lchapter=\count100
+\c@chapter=\count101
+\c@lsection=\count102
+\c@lsubsection=\count103
+\c@lsubsubsection=\count104
+\c@lparagraph=\count105
+\c@lsubparagraph=\count106
+\c@lsubsubparagraph=\count107
+\ptrfile=\write3
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: dvips.def on input line 130.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2010/09/12 v5.6 Page Geometry
+\Gm@cnth=\count108
+\Gm@cntv=\count109
+\c@Gm@tempcnt=\count110
+\Gm@bindingoffset=\dimen109
+\Gm@wd@mp=\dimen110
+\Gm@odd@mp=\dimen111
+\Gm@even@mp=\dimen112
+\Gm@layoutwidth=\dimen113
+\Gm@layoutheight=\dimen114
+\Gm@layouthoffset=\dimen115
+\Gm@layoutvoffset=\dimen116
+\Gm@dimlist=\toks22
+) (./stratus.aux)
+\openout1 = `stratus.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 47.
+LaTeX Font Info:    ... okay on input line 47.
+LaTeX Font Info:    Try loading font information for T1+ppl on input line 47.
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ppl.fd
+File: t1ppl.fd 2001/06/04 font definitions for T1/ppl.
+)
+\AtBeginShipoutBox=\box29
+Package hyperref Info: Link coloring OFF on input line 47.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count111
+)
+LaTeX Info: Redefining \ref on input line 47.
+LaTeX Info: Redefining \pageref on input line 47.
+LaTeX Info: Redefining \nameref on input line 47.
+
+(./stratus.out) (./stratus.out)
+\@outlinefile=\write4
+\openout4 = `stratus.out'.
+
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: dvips
+*geometry* verbose mode - [ preamble ] result:
+* driver: dvips
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(89.62709pt, 418.25368pt, 89.6271pt)
+* v-part:(T,H,B)=(101.40665pt, 591.5302pt, 152.11pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=418.25368pt
+* \textheight=591.5302pt
+* \oddsidemargin=17.3571pt
+* \evensidemargin=17.3571pt
+* \topmargin=-25.86334pt
+* \headheight=30.0pt
+* \headsep=25.0pt
+* \topskip=11.0pt
+* \footskip=30.0pt
+* \marginparwidth=59.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 51.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 51.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 51.
+LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/ppl/b/n' tried instead on input line 64.
+(./man_new.tex
+LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
+(Font)              Font shape `T1/ppl/b/n' tried instead on input line 1.
+LaTeX Font Info:    Try loading font information for OMS+ppl on input line 4.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsppl.fd
+File: omsppl.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 4.
+LaTeX Font Info:    Try loading font information for T1+pcr on input line 5.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
+)) (./man_stratus.tex
+LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <10.95> not available
+(Font)              Font shape `T1/ppl/b/n' tried instead on input line 1.
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--8
+
+ []
+
+[1
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 21--22
+
+ []
+
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 104--105
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 106--107
+
+ []
+
+[3]
+Overfull \hbox (7.74632pt too wide) in paragraph at lines 129--129
+[]\T1/pcr/m/n/10 autocmd BufRead,BufNewfile *.py so /asim/coriolis/share/etc/st
+ratus.vim[] 
+ []
+
+) (./man_example.tex
+File: ./images/add1.eps Graphic file (type eps)
+ <./images/add1.eps> [4]
+File: ./images/add2.eps Graphic file (type eps)
+ <./images/add2.eps> [5]
+LaTeX Font Info:    Font shape `T1/ppl/bx/it' in size <10.95> not available
+(Font)              Font shape `T1/ppl/b/it' tried instead on input line 19.
+File: ./images/addaccu1.eps Graphic file (type eps)
+
+<./images/addaccu1.eps>
+Overfull \hbox (167.2989pt too wide) in paragraph at lines 24--25
+ [][] 
+ []
+
+File: ./images/addaccu2.eps Graphic file (type eps)
+<./images/addaccu2.eps>
+Overfull \hbox (167.2989pt too wide) in paragraph at lines 30--31
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[6]
+File: ./images/test.eps Graphic file (type eps)
+ <./images/test.eps>
+Overfull \hbox (167.2989pt too wide) in paragraph at lines 39--40
+ [][] 
+ []
+
+File: ./images/editor.eps Graphic file (type eps)
+<./images/editor.eps>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[7]
+Underfull \hbox (badness 6188) in paragraph at lines 78--81
+[]\T1/ppl/m/n/10.95 To do that, the model name of the gen-er-a-tor must have th
+e form :
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--81
+
+ []
+
+[8]) (./man_net.tex [9] [10] [11]) (./man_inst.tex
+Underfull \hbox (badness 10000) in paragraph at lines 24--25
+
+ []
+
+[12]) (./man_generate.tex [13]
+Overfull \hbox (49.31085pt too wide) in paragraph at lines 48--49
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Generate : the model must be described in
+ a string. 
+ []
+
+) (./man_place.tex [14]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 45--46
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Placement : the first argument is not an 
+instance. 
+ []
+
+) (./man_place_top.tex [15]
+Underfull \hbox (badness 10000) in paragraph at lines 13--15
+
+ []
+
+[16]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 49--50
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Placement : the first argument is not an 
+instance. 
+ []
+
+
+Overfull \hbox (9.8909pt too wide) in paragraph at lines 52--53
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceTop : wrong argument for placement t
+ype. 
+ []
+
+) (./man_place_bottom.tex
+Underfull \hbox (badness 10000) in paragraph at lines 13--15
+
+ []
+
+[17]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 49--50
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Placement : the first argument is not an 
+instance. 
+ []
+
+
+Overfull \hbox (29.60088pt too wide) in paragraph at lines 52--53
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceBottom : wrong argument for placemen
+t type. 
+ []
+
+) (./man_place_right.tex
+Underfull \hbox (badness 10000) in paragraph at lines 13--15
+
+ []
+
+[18] [19]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 49--50
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Placement : the first argument is not an 
+instance. 
+ []
+
+
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 52--53
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceRight : wrong argument for placement
+ type. 
+ []
+
+) (./man_place_left.tex
+Underfull \hbox (badness 10000) in paragraph at lines 13--15
+
+ []
+
+[20]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 49--50
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Placement : the first argument is not an 
+instance. 
+ []
+
+
+Overfull \hbox (16.46089pt too wide) in paragraph at lines 52--53
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceLeft : wrong argument for placement 
+type. 
+ []
+
+) (./man_set_ref_ins.tex
+Underfull \hbox (badness 10000) in paragraph at lines 13--15
+
+ []
+
+[21]) (./man_def_ab.tex [22]
+Underfull \hbox (badness 10000) in paragraph at lines 13--14
+
+ []
+
+
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 38--39
+[]\T1/pcr/m/n/10.95 Coordinates of an abutment Box in y must be multiple of the
+ slice. 
+ []
+
+
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 38--39
+[]\T1/pcr/m/n/10.95 Coordinates of an abutment Box in x must be multiple of the
+ pitch. 
+ []
+
+) (./man_resize_ab.tex [23]
+Underfull \hbox (badness 10000) in paragraph at lines 13--15
+
+ []
+
+File: ./images/resizeAb.eps Graphic file (type eps)
+<./images/resizeAb.eps>
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 43--44
+[]\T1/pcr/m/n/10.95 Coordinates of an abutment Box in y must be multiple of the
+ slice. 
+ []
+
+
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 43--44
+[]\T1/pcr/m/n/10.95 Coordinates of an abutment Box in x must be multiple of the
+ pitch. 
+ []
+
+
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 44--45
+[]\T1/pcr/m/n/10.95 one of the values of dx1 or dx2 (dy1 or dy2)  is incompatib
+le with 
+ []
+
+
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 44--45
+[]\T1/pcr/m/n/10.95 Coordinates of an abutment Box in x must be multiple of the
+ pitch. 
+ []
+
+[24]) (./man_stimuli.tex
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 3.
+
+) (./man_place_segment.tex [25]
+Underfull \hbox (badness 1292) in paragraph at lines 23--24
+\T1/ppl/m/n/10.95 ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT,
+ []
+
+
+Underfull \hbox (badness 1648) in paragraph at lines 23--24
+\T1/ppl/m/n/10.95 CALU4, CALU5, CALU6, CONT_POLY, CONT_DIF_N, CONT_DIF_P,
+ []
+
+
+Underfull \hbox (badness 4048) in paragraph at lines 23--24
+\T1/ppl/m/n/10.95 CONT_BODY_N, CONT_BODY_P, via12, via23, via34, via45, via56,
+ []
+
+
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 38--39
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceSegment : Argument layer must be a s
+tring. 
+ []
+
+
+Overfull \hbox (49.31085pt too wide) in paragraph at lines 40--41
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceSegment : Segments are vertical or h
+orizontal. 
+ []
+
+) (./man_place_contact.tex [26]
+Underfull \hbox (badness 1292) in paragraph at lines 23--24
+\T1/ppl/m/n/10.95 ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT,
+ []
+
+
+Underfull \hbox (badness 1648) in paragraph at lines 23--24
+\T1/ppl/m/n/10.95 CALU4, CALU5, CALU6, CONT_POLY, CONT_DIF_N, CONT_DIF_P,
+ []
+
+
+Underfull \hbox (badness 4048) in paragraph at lines 23--24
+\T1/ppl/m/n/10.95 CONT_BODY_N, CONT_BODY_P, via12, via23, via34, via45, via56,
+ []
+
+
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 40--41
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PlaceContact : Argument layer must be a s
+tring. 
+ []
+
+) (./man_place_pin.tex [27]
+Underfull \hbox (badness 1292) in paragraph at lines 22--23
+\T1/ppl/m/n/10.95 ALU3, ALU4, ALU5, ALU6, VIA1, VIA2, VIA3, VIA4, VIA5, TEXT,
+ []
+
+
+Underfull \hbox (badness 1648) in paragraph at lines 22--23
+\T1/ppl/m/n/10.95 CALU4, CALU5, CALU6, CONT_POLY, CONT_DIF_N, CONT_DIF_P,
+ []
+
+
+Underfull \hbox (badness 4048) in paragraph at lines 22--23
+\T1/ppl/m/n/10.95 CONT_BODY_N, CONT_BODY_P, via12, via23, via34, via45, via56,
+ []
+
+[28]) (./man_place_ref.tex
+Overfull \hbox (3.3209pt too wide) in paragraph at lines 33--34
+[]\T1/pcr/m/n/10.95 the coordinates of the reference must be put in a XY object
+. 
+ []
+
+) (./man_get_ref.tex [29]) (./man_copy_up_segment.tex [30] [31])
+(./man_place_centric.tex) (./man_place_glu.tex [32]) (./man_fill_cell.tex)
+(./man_pads.tex [33]
+Overfull \hbox (41.64577pt too wide) in paragraph at lines 29--29
+[]         \T1/pcr/m/n/10.95 , self.p_vddeck0, self.p_vsseck1, self.p_vddeck1, 
+self.p_cout[] 
+ []
+
+
+Overfull \hbox (16.46089pt too wide) in paragraph at lines 38--39
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PadNorth : the instance ins is already pl
+aced. 
+ []
+
+
+Overfull \hbox (29.60088pt too wide) in paragraph at lines 39--40
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PadNorth : pad ins must be closer to the 
+center. 
+ []
+
+) (./man_alim_rail.tex [34]) (./man_alim_connectors.tex) (./man_power_ring.tex
+[35]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 31--32
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PowerRing : Pads in the north haven't bee
+n placed. 
+ []
+
+
+Overfull \hbox (9.8909pt too wide) in paragraph at lines 32--33
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] PowerRing : too many rings, not enough sp
+ace. 
+ []
+
+) (./man_route_ck.tex [36]
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 32--33
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] RouteCk : Pads in the north haven't been 
+placed 
+ []
+
+) (./man_buff.tex) (./man_mux.tex [37]
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 38--38
+ []\T1/pcr/m/n/10.95 out <= cmd.Mux ( {"0" : in0, "1" : in1, "2" : in2, "3" : i
+n3} )[] 
+ []
+
+[38] [39]
+Overfull \hbox (8.7958pt too wide) in paragraph at lines 106--106
+[]    \T1/pcr/m/n/10.95 self.S1 <= self.Cmd1.Mux ( [sefl.A, self.B, self.C, sel
+f.D] )[] 
+ []
+
+
+Overfull \hbox (9.8909pt too wide) in paragraph at lines 112--113
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Mux : all the nets must have the same len
+ght. 
+ []
+
+
+Overfull \hbox (36.17087pt too wide) in paragraph at lines 115--116
+[]\T1/pcr/m/n/10.95 the number of nets does not match with the lenght of the co
+mmand. 
+ []
+
+
+Overfull \hbox (29.60088pt too wide) in paragraph at lines 117--118
+[]\T1/pcr/m/n/10.95 when an interval is specified, the second number of the int
+erval 
+ []
+
+[40]
+Overfull \hbox (29.60088pt too wide) in paragraph at lines 118--119
+[]\T1/pcr/m/n/10.95 the binary number does not match with the lenght of the com
+mand. 
+ []
+
+) (./man_shift.tex [41]
+Overfull \hbox (16.46089pt too wide) in paragraph at lines 70--71
+[]\T1/pcr/m/n/10.95 The type parameter must be "logical" or "arith" or "circula
+r". 
+ []
+
+[42]) (./man_reg.tex
+Overfull \hbox (49.31085pt too wide) in paragraph at lines 39--40
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Reg : The input net does not have a posit
+ive arity. 
+ []
+
+
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 40--41
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Reg : The clock does not have a positive 
+arity. 
+ []
+
+[43]) (./man_const.tex [44]
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 69--70
+[]\T1/pcr/m/n/10.95 the argument must be a string representing a number in deci
+mal, 
+ []
+
+) (./man_boolean.tex
+Underfull \hbox (badness 10000) in paragraph at lines 18--19
+
+ []
+
+[45]) (./man_arithmetic.tex [46] [47]) (./man_comp.tex [48]
+Overfull \hbox (23.03088pt too wide) in paragraph at lines 55--56
+[]\T1/pcr/m/n/10.95 the argument must be a string representing a number in deci
+mal, 
+ []
+
+) (./man_library.tex
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 1.
+
+[49] [50]
+Underfull \hbox (badness 10000) in paragraph at lines 39--42
+
+ []
+
+File: images/xml.eps Graphic file (type eps)
+<images/xml.eps> [51]
+Overfull \hbox (42.74086pt too wide) in paragraph at lines 92--93
+[][]\T1/pcr/m/n/10.95 [Stratus ERROR] Virtual library : No file found in order 
+to parse. 
+ []
+
+)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 241.
+ [52]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 241.
+ (./stratus.aux)
+Package atveryend Info: Empty hook `AtVeryEndDocument' on input line 241.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 241.
+Package rerunfilecheck Info: File `stratus.out' has not changed.
+(rerunfilecheck)             Checksum: EE64C131E882A93B2DEE91CDF90A06D8;17266.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 241.
+ ) 
+Here is how much of TeX's memory you used:
+ 6371 strings out of 495026
+ 93652 string characters out of 6181541
+ 197345 words of memory out of 5000000
+ 9417 multiletter control sequences out of 15000+600000
+ 18916 words of font info for 39 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 29i,12n,43p,574b,499s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on stratus.dvi (52 pages, 180312 bytes).

@@ -1,0 +1,49 @@
+\subsubsection{Name}
+
+PlaceRef -- Places a reference
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+PlaceRef ( point, name )
+\end{verbatim}
+
+\subsubsection{Description}
+
+Placement of a reference.\\
+\indent The reference is located at the coordinates of \verb-point-, with name \verb-name-.
+    
+\subsubsection{Parameters}
+
+\begin{itemize}
+    \item \verb-point- : Coodinates of the reference
+    \item \verb-name- : Name of the reference
+\end{itemize}
+    
+\subsubsection{Example}
+
+\begin{verbatim}
+PlaceRef ( XY (10, 0), "myref" )
+\end{verbatim}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] PlaceRef : Wrong argument,-\\\verb-the coordinates of the reference must be put in a XY object.-
+    \item \verb-[Stratus ERROR] PlaceRef : Argument layer must be a string.-
+\end{itemize}
+
+\begin{htmlonly}
+        
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+\hyperref[ref]{\emph{PlaceSegment}}{}{PlaceSegment}{secsegment}
+\hyperref[ref]{\emph{PlaceContact}}{}{PlaceContact}{seccontact}
+\hyperref[ref]{\emph{PlacePin}}{}{PlacePin}{secpin}
+\hyperref[ref]{\emph{GetRefXY}}{}{GetRefXY}{secgetref}
+\hyperref[ref]{\emph{CopyUpSegment}}{}{CopyUpSegment}{seccopy}
+
+\end{htmlonly}

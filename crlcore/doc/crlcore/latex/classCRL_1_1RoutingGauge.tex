@@ -1,0 +1,153 @@
+\hypertarget{classCRL_1_1RoutingGauge}{}\section{C\+RL\+:\+:Routing\+Gauge Class Reference}
+\label{classCRL_1_1RoutingGauge}\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+
+
+Gauge for the detailed routing.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{classCRL_1_1RoutingGauge_a4726a734f9aff09873c4034e5169a93a}{destroy} ()
+\item 
+\hyperlink{classCRL_1_1RoutingGauge}{Routing\+Gauge} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_a210f2ca35bdb8c8e0ccb3a671659554e}{get\+Clone} () const
+\item 
+const \textbf{ Name} \hyperlink{classCRL_1_1RoutingGauge_a9a8eb201ffaca26bb563f7a34846c0c4}{get\+Name} () const
+\item 
+\textbf{ Technology} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_a34cb010c6d36875f4890bddc78fb8861}{get\+Technology} () const
+\item 
+size\+\_\+t \hyperlink{classCRL_1_1RoutingGauge_aed316848ee74c270bf117562e8d5faa0}{get\+Depth} () const
+\item 
+\hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_aa0f0e65f45814ba0104daafbc271a12d}{get\+Layer\+Gauge} (const \textbf{ Layer} $\ast$) const
+\item 
+size\+\_\+t \hyperlink{classCRL_1_1RoutingGauge_ac429c6ad1b2af7c588c60eff35c2d02e}{get\+Layer\+Depth} (const \textbf{ Layer} $\ast$) const
+\item 
+unsigned int \hyperlink{classCRL_1_1RoutingGauge_ac553c4dc3f51576a3128ad42d5a006b2}{get\+Layer\+Direction} (const \textbf{ Layer} $\ast$) const
+\item 
+\hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_a1b6d28bbee28db727ffe13e6205dbae8}{get\+Layer\+Gauge} (size\+\_\+t depth) const
+\item 
+unsigned int \hyperlink{classCRL_1_1RoutingGauge_ab237249b41f605947765118cd1c59635}{get\+Layer\+Direction} (size\+\_\+t depth) const
+\item 
+const \textbf{ Layer} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_a6d6c1951c8728886d3fb702891685b94}{get\+Routing\+Layer} (size\+\_\+t depth) const
+\item 
+\textbf{ Layer} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_a4b603c0fd5f21db1c93d8a747ec1f4ba}{get\+Contact\+Layer} (size\+\_\+t depth) const
+\item 
+const vector$<$ \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$ $>$ \& \hyperlink{classCRL_1_1RoutingGauge_ae8cebef061519fb2df94e3a9dcf09e6e}{get\+Layer\+Gauges} () const
+\item 
+void \hyperlink{classCRL_1_1RoutingGauge_a32313fbc68080e0b7e03b3e06dc1d9c5}{add\+Layer\+Gauge} (\hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$layer\+Gauge)
+\item 
+void \hyperlink{classCRL_1_1RoutingGauge_ae76259fdd9d27d1127ac201c41ab8c20}{check\+Connexity} () const
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classCRL_1_1RoutingGauge}{Routing\+Gauge} $\ast$ \hyperlink{classCRL_1_1RoutingGauge_a7258273728f5db47e422d5914c1c36bd}{create} (const char $\ast$name)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Gauge for the detailed routing. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classCRL_1_1RoutingGauge_a7258273728f5db47e422d5914c1c36bd}\label{classCRL_1_1RoutingGauge_a7258273728f5db47e422d5914c1c36bd}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!create@{create}}
+\index{create@{create}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \hyperlink{classCRL_1_1RoutingGauge}{Routing\+Gauge} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::create (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} A new, empty, gauge named {\ttfamily name}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a4726a734f9aff09873c4034e5169a93a}\label{classCRL_1_1RoutingGauge_a4726a734f9aff09873c4034e5169a93a}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!destroy@{destroy}}
+\index{destroy@{destroy}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{destroy()}{destroy()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Routing\+Gauge\+::destroy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+{\bfseries Returns\+:} destroy the routing gauge. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a210f2ca35bdb8c8e0ccb3a671659554e}\label{classCRL_1_1RoutingGauge_a210f2ca35bdb8c8e0ccb3a671659554e}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Clone@{get\+Clone}}
+\index{get\+Clone@{get\+Clone}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+{\footnotesize\ttfamily \hyperlink{classCRL_1_1RoutingGauge}{Routing\+Gauge} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::get\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} a deep copy of the gauge. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a9a8eb201ffaca26bb563f7a34846c0c4}\label{classCRL_1_1RoutingGauge_a9a8eb201ffaca26bb563f7a34846c0c4}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily const \textbf{ Name} C\+R\+L\+::\+Routing\+Gauge\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the name of the gauge. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a34cb010c6d36875f4890bddc78fb8861}\label{classCRL_1_1RoutingGauge_a34cb010c6d36875f4890bddc78fb8861}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Technology@{get\+Technology}}
+\index{get\+Technology@{get\+Technology}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Technology()}{getTechnology()}}
+{\footnotesize\ttfamily \textbf{ Hurricane\+::\+Technology} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::get\+Technology (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the technology the gauge is built upon. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_aed316848ee74c270bf117562e8d5faa0}\label{classCRL_1_1RoutingGauge_aed316848ee74c270bf117562e8d5faa0}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Depth@{get\+Depth}}
+\index{get\+Depth@{get\+Depth}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Depth()}{getDepth()}}
+{\footnotesize\ttfamily size\+\_\+t C\+R\+L\+::\+Routing\+Gauge\+::get\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the number of routing layers. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_aa0f0e65f45814ba0104daafbc271a12d}\label{classCRL_1_1RoutingGauge_aa0f0e65f45814ba0104daafbc271a12d}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Layer\+Gauge@{get\+Layer\+Gauge}}
+\index{get\+Layer\+Gauge@{get\+Layer\+Gauge}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Layer\+Gauge()}{getLayerGauge()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Gauge (\begin{DoxyParamCaption}\item[{const \textbf{ Layer} $\ast$}]{layer }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} associated with {\ttfamily layer}. N\+U\+LL if {\ttfamily layer} is not managed by the gauge. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_ac429c6ad1b2af7c588c60eff35c2d02e}\label{classCRL_1_1RoutingGauge_ac429c6ad1b2af7c588c60eff35c2d02e}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Layer\+Depth@{get\+Layer\+Depth}}
+\index{get\+Layer\+Depth@{get\+Layer\+Depth}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Layer\+Depth()}{getLayerDepth()}}
+{\footnotesize\ttfamily size\+\_\+t C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Depth (\begin{DoxyParamCaption}\item[{const \textbf{ Layer} $\ast$}]{layer }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the depth of the {\ttfamily layer}. If {\ttfamily layer} is not managed by the gauge, return U\+I\+N\+T\+\_\+\+M\+AX. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_ac553c4dc3f51576a3128ad42d5a006b2}\label{classCRL_1_1RoutingGauge_ac553c4dc3f51576a3128ad42d5a006b2}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Layer\+Direction@{get\+Layer\+Direction}}
+\index{get\+Layer\+Direction@{get\+Layer\+Direction}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Layer\+Direction()}{getLayerDirection()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily unsigned int C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Direction (\begin{DoxyParamCaption}\item[{const \textbf{ Layer} $\ast$}]{layer }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the preferred routing direction for {\ttfamily layer}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a1b6d28bbee28db727ffe13e6205dbae8}\label{classCRL_1_1RoutingGauge_a1b6d28bbee28db727ffe13e6205dbae8}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Layer\+Gauge@{get\+Layer\+Gauge}}
+\index{get\+Layer\+Gauge@{get\+Layer\+Gauge}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Layer\+Gauge()}{getLayerGauge()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Gauge (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} at position {\ttfamily depth}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_ab237249b41f605947765118cd1c59635}\label{classCRL_1_1RoutingGauge_ab237249b41f605947765118cd1c59635}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Layer\+Direction@{get\+Layer\+Direction}}
+\index{get\+Layer\+Direction@{get\+Layer\+Direction}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Layer\+Direction()}{getLayerDirection()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily unsigned int C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Direction (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the preferred routing direction at position {\ttfamily depth}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a6d6c1951c8728886d3fb702891685b94}\label{classCRL_1_1RoutingGauge_a6d6c1951c8728886d3fb702891685b94}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Routing\+Layer@{get\+Routing\+Layer}}
+\index{get\+Routing\+Layer@{get\+Routing\+Layer}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Routing\+Layer()}{getRoutingLayer()}}
+{\footnotesize\ttfamily const \textbf{ Layer} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::get\+Routing\+Layer (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the Layer at position {\ttfamily depth}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a4b603c0fd5f21db1c93d8a747ec1f4ba}\label{classCRL_1_1RoutingGauge_a4b603c0fd5f21db1c93d8a747ec1f4ba}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Contact\+Layer@{get\+Contact\+Layer}}
+\index{get\+Contact\+Layer@{get\+Contact\+Layer}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Contact\+Layer()}{getContactLayer()}}
+{\footnotesize\ttfamily \textbf{ Layer} $\ast$ C\+R\+L\+::\+Routing\+Gauge\+::get\+Contact\+Layer (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the Contact Layer at position {\ttfamily depth}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_ae8cebef061519fb2df94e3a9dcf09e6e}\label{classCRL_1_1RoutingGauge_ae8cebef061519fb2df94e3a9dcf09e6e}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!get\+Layer\+Gauges@{get\+Layer\+Gauges}}
+\index{get\+Layer\+Gauges@{get\+Layer\+Gauges}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{get\+Layer\+Gauges()}{getLayerGauges()}}
+{\footnotesize\ttfamily const std\+::vector$<$ \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$ $>$ \& C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Gauges (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the stack of \hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge}. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_a32313fbc68080e0b7e03b3e06dc1d9c5}\label{classCRL_1_1RoutingGauge_a32313fbc68080e0b7e03b3e06dc1d9c5}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!add\+Layer\+Gauge@{add\+Layer\+Gauge}}
+\index{add\+Layer\+Gauge@{add\+Layer\+Gauge}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{add\+Layer\+Gauge()}{addLayerGauge()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Routing\+Gauge\+::add\+Layer\+Gauge (\begin{DoxyParamCaption}\item[{\hyperlink{classCRL_1_1RoutingLayerGauge}{Routing\+Layer\+Gauge} $\ast$}]{layer\+Gauge }\end{DoxyParamCaption})}
+
+{\bfseries Returns\+:} add a new {\ttfamily layer\+Gauge}, on top of the others. The order of addition is meaningful (it\textquotesingle{}s a stack). The closer to the substrate must be added first. \mbox{\Hypertarget{classCRL_1_1RoutingGauge_ae76259fdd9d27d1127ac201c41ab8c20}\label{classCRL_1_1RoutingGauge_ae76259fdd9d27d1127ac201c41ab8c20}} 
+\index{C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}!check\+Connexity@{check\+Connexity}}
+\index{check\+Connexity@{check\+Connexity}!C\+R\+L\+::\+Routing\+Gauge@{C\+R\+L\+::\+Routing\+Gauge}}
+\subsubsection{\texorpdfstring{check\+Connexity()}{checkConnexity()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Routing\+Gauge\+::check\+Connexity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} Verify that the stacked layers are connex and that contacts between them exists. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Routing\+Gauge.\+h\item 
+Routing\+Gauge.\+dox\end{DoxyCompactItemize}

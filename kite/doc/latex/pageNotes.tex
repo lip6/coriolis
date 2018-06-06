@@ -1,0 +1,95 @@
+\hypertarget{pageNotes_Summary}{}\subsection{Summary}\label{pageNotes_Summary}
+
+\begin{DoxyItemize}
+\item \hyperlink{pageNotes_ssecVariousNotes}{Various Things to Remeber}
+\item \hyperlink{pageNotes_secPendingModifications}{Pending Modifications}
+\item \hyperlink{pageNotes_secModificationsHistory}{Modifications History}
+\item \hyperlink{pageNotes_ssecArchitectureChanges}{Changes in the general architecture}
+\begin{DoxyItemize}
+\item \hyperlink{pageNotes_ssecModificationsKiteEngine}{Changes in Kite\+Engine class design}
+\item \hyperlink{pageNotes_ssecModificationsDataNegociate}{Changes in Data\+Negociate class design}
+\item \hyperlink{pageNotes_ssecModificationsTrackElement}{Changes in Track\+Element class design}
+\item \hyperlink{pageNotes_ssecModificationsTrackSegment}{Changes in Track\+Segment class design}
+\item \hyperlink{pageNotes_ssecModificationsAutoSegment}{Changes in Auto\+Segment class design}
+\item \hyperlink{pageNotes_ssecModificationsAutoContact}{Changes in Auto\+Contact class design}
+\end{DoxyItemize}
+\item \hyperlink{pageNotes_ssecBugBusting}{Bug Solving Memento}
+\item \hyperlink{pageNotes_ssecNanoRoute}{Evaluation with Cadence Nano\+Route}
+\end{DoxyItemize}\hypertarget{pageNotes_ssecVariousNotes}{}\subsection{Various Things to Remember}\label{pageNotes_ssecVariousNotes}
+
+\begin{DoxyItemize}
+\item {\bfseries Determinism checking.} The trace level to get only determinism related log is {\ttfamily 500}. Each line for the determinism is prepended with \textquotesingle{}Deter$\vert$\textquotesingle{}, possible with some leading spaces.
+\item The router only sees/manages the aligned segment sets (through a pseudo-\/ decorator on their canonical segment). So the non-\/canonical segments and the contacts should not be handled at all at this level.
+\item Do do confuse the Session\+::\+Event, events that modificate the state of the \hyperlink{namespaceKite}{Kite} database (insert, move or remove \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} in \hyperlink{classKite_1_1Track}{Track}) and the \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} class which request that a segment must be processed.
+\item In the various processing method of \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}, when a \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} can be inserted inside a \hyperlink{classKite_1_1Track}{Track} a Session\+::\+Event is generated but no further \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}, this end the placement processus of segment (until it is ripped-\/up).
+\item Auto\+Segment do not invalidate their S/T anchor contacts.
+\item Auto\+Contact invalidate their anchored upon Auto\+Segment.
+\item Now that the Hurricane database is deterministic, the router seems to be likewise.
+\item {\bfseries Reduce/raise mechanism}. To manage {\itshape same layer} dogleg this mechanism has been implemented. When a candidate dogleg perpandicular segment length shrink below one pitch it is removed from any track to become {\itshape invisible}. Conversely, when a reduced segment length expand over one pitch generate a new \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} to insert it. All this is managed in the \hyperlink{classKite_1_1Session_a5bd93abe1416952ace15a98dbeeed124}{Session\+::revalidate()} method.
+\end{DoxyItemize}\hypertarget{pageNotes_secPendingModifications}{}\subsection{Pending Modifications}\label{pageNotes_secPendingModifications}
+
+\begin{DoxyItemize}
+\item In \hyperlink{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}{Segment\+Action\+::do\+Action()}, completly disable the movement of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} on it\textquotesingle{}s target \hyperlink{classKite_1_1Track}{Track} axis. This should not be needed as, if the algorithm as worked correctly, the next time it\textquotesingle{}s \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} is processed, the target \hyperlink{classKite_1_1Track}{Track} will have a free space to insert into. Then the \hyperlink{classKite_1_1Track}{Track} insertion will set the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} axis.
+\item Has to complete the lazy evaluation of the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} / \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} / \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}. There is still some redundancy when the key of the \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} is updated.
+\item In \textbf{ Auto\+Contact\+::update\+Topology()} \& \textbf{ Auto\+Contact\+::update\+Geometry()} we could avoid to systematically run through the Hooks to cache the connected segments. This can be done once at the first call of either method (whichever comes first) on the first revalidate. Afterwards the cache can be updated only by \textbf{ Auto\+Contact\+::update\+Topology()}.
+\item The canonization is done in two places, directly on a set of aligneds Auto\+Segments through \textbf{ Auto\+Segment\+::canonize()} and for the whole net Session\+::\+\_\+canonize(), which is called after the initial creation and each time the topology is modificated. The later may be suppressed if we uses more intelligently the former, and gain some more speedup.
+\end{DoxyItemize}\hypertarget{pageNotes_secModificationsHistory}{}\subsection{Modifications History}\label{pageNotes_secModificationsHistory}
+\hypertarget{pageNotes_ssecArchitectureChanges}{}\subsubsection{Changes in the general architecture}\label{pageNotes_ssecArchitectureChanges}
+
+\begin{DoxyItemize}
+\item {\bfseries Lazy Update.} Update of \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} and \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} are now delayed until the event is processed, and systematically done at this point. Thus, the explicit invalidation of those objects is no longer needed. The revalidation is no longer triggered by the revalidation of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.
+\end{DoxyItemize}\hypertarget{pageNotes_ssecModificationsKiteEngine}{}\subsubsection{Changes in Kite\+Engine class design}\label{pageNotes_ssecModificationsKiteEngine}
+
+\begin{DoxyItemize}
+\item Suppress the lookup table of \textbf{ Hurricane\+::\+Segment} toward \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. Instead uses the Observer mecanism between \textbf{ Katabatic\+::\+Auto\+Segment} and \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.
+\end{DoxyItemize}\hypertarget{pageNotes_ssecModificationsDataNegociate}{}\subsubsection{Changes in Data\+Negociate class design}\label{pageNotes_ssecModificationsDataNegociate}
+
+\begin{DoxyItemize}
+\item Merge in the separate class {\ttfamily Cost}.
+\item Suppress the {\ttfamily Slack\+State\+::\+Desalignate}, due to the simplificated structure of the Auto\+Segment/\+Auto\+Contacts (no more collapseds, or forced alignements).
+\item Displace the computation and caching of the perpandiculars and perpandicular free interval from \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} into \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate}. Allows code factorization with the attractors computation, and data size reduction as there is exaclty one \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} but there may be more than one \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} for the same \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.
+\end{DoxyItemize}\hypertarget{pageNotes_ssecModificationsTrackElement}{}\subsubsection{Changes in Track\+Element class design}\label{pageNotes_ssecModificationsTrackElement}
+
+\begin{DoxyItemize}
+\item Due to the simplificated structure of the Katabatic contacts (terminal, turn, vtee \& htee), there\textquotesingle{}s no longer collapsed Auto\+Segment or {\itshape expandable} contacts. The {\bfseries desalignate} feature, relaxing constraints due to collapsed segments or contacts with more than three segments, is no longer implemented. {\bfseries Have to redevelop a method to break long segments linked} {\bfseries by H\+Tee or V\+Tee.}
+\end{DoxyItemize}\hypertarget{pageNotes_ssecModificationsTrackSegment}{}\subsubsection{Changes in Track\+Segment class design}\label{pageNotes_ssecModificationsTrackSegment}
+
+\begin{DoxyItemize}
+\item The method {\ttfamily Track\+Segment\+::\+\_\+post\+Modify()} is merged with \hyperlink{classKite_1_1TrackSegment_a10a45c049d0bd7d01c7eff1c5441c7a2}{Track\+Segment\+::\+\_\+post\+Doglegs()} as, in the context of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} the only used topological modifications goes through the creation of one or more dogleg.
+\end{DoxyItemize}\hypertarget{pageNotes_ssecModificationsAutoSegment}{}\subsubsection{Changes in Auto\+Segment class design}\label{pageNotes_ssecModificationsAutoSegment}
+
+\begin{DoxyItemize}
+\item In \textbf{ Auto\+Segment\+::\+\_\+make\+Dogleg()}, update the local/global status of the involved Auto\+Segment and re-\/canonize only what is necessary. Thus, guarantee that the net\textquotesingle{}s topology is still valid after this method call and no topological update is needed at \hyperlink{classKite_1_1Session}{Session} level (should be {\itshape much} faster). In this method, the code sharing between Auto\+Horizontal and Auto\+Vertical can still be increased (update mechanisms are identicals).
+\item The {\ttfamily id} support is now also implemented at Hurricane level. We may choose to use as a replacement of the one already present in Auto\+Segment. But in that case, we at least must cache the id in the Auto\+Segment. So we will not gain in memory footprint, the only benefit would be to have coherent id number throughout all the tools, but the sequentiality will be lost (this may not be a big issue).
+\end{DoxyItemize}\hypertarget{pageNotes_ssecModificationsAutoContact}{}\subsubsection{Changes in Auto\+Contact class design}\label{pageNotes_ssecModificationsAutoContact}
+
+\begin{DoxyItemize}
+\item In \textbf{ Auto\+Segment\+::invalidate()}, no longer uses collection to walk through attached Auto\+Segment, directly uses the cache. Much simple and efficient as we exactly know what is attached on every kind of contact.
+\end{DoxyItemize}\hypertarget{pageNotes_ssecBugBusting}{}\subsection{Bug Solving Memento}\label{pageNotes_ssecBugBusting}
+{\bfseries L\+UT lookup change\+:} When breaking a \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}, the break may not occurs in the associated canonical Auto\+Segment. In that case the {\ttfamily dogleg\mbox{[}O\mbox{]}} will not match the one that is looked up for the broken (canonical) segment. Thus it was not a bug but a misunderstanding...
+
+{\bfseries Overlap of perpandiculars after a dogleg creation\+:} The axis of the new parallel was not set to the axis of it\textquotesingle{}s parent. This was due to the uses of \textbf{ Auto\+Segment\+::set\+Axis()} in Auto\+Horizontal\+::\+\_\+make\+Dogleg() which silently do nothing on non-\/canonical Auto\+Segment, and at this point, the re-\/canonisation did not yet take place. Now Uses Auto\+Segment\+::\+\_\+set\+Axis() the atomic variant wich works inconditionnaly.\hypertarget{pageNotes_ssecNanoRoute}{}\subsection{Evaluation with Cadence Nano\+Route}\label{pageNotes_ssecNanoRoute}
+To perform a comparison with Nano\+Route the procedure is as follow\+:
+
+
+\begin{DoxyItemize}
+\item Export the design in Alliance {\ttfamily D\+EF} format. It will generate both {\ttfamily D\+EF} file and the supporting {\ttfamily L\+EF} file containing the technology and the abstract of all the standard cell of the design. As Alliance uses symbolic units (lambda), they are translated with the simple rule\+: {\bfseries 1 lambda == 1 micron}.
+\item Run the commands in Nano\+Route\+:
+\begin{DoxyItemize}
+\item {\ttfamily load\+Lef\+File design.\+lef}
+\item {\ttfamily load\+Def\+File design.\+def}
+\item {\ttfamily generate\+Tracks}
+\item {\ttfamily generate\+Vias}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/droute\+Fix\+Antenna 0}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/droute\+Start\+Iteration default}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/route\+Top\+Routing\+Layer default}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/route\+Bottom\+Routing\+Layer 2}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/droute\+End\+Iteration default}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/route\+With\+Timing\+Driven false}
+\item {\ttfamily set\+Nano\+Route\+Mode -\/quiet -\/route\+With\+Si\+Driven false}
+\item {\ttfamily route\+Design -\/global\+Detail}
+\end{DoxyItemize}
+\item To perform as fair a comparison as possible, those commands disable antenna effect protection and disable the use of the {\ttfamily M1} as a routing layer ({\ttfamily -\/route\+Bottom\+Routing\+Layer 2}). Those commands are issued through the graphical interface of Nano\+Route.
+\end{DoxyItemize}
+
+{\itshape To see the resulting layout, do not forget to switch the view mode.} 

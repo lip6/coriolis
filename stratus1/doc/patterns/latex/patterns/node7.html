@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>declar</TITLE>
+<META NAME="description" CONTENT="declar">
+<META NAME="keywords" CONTENT="patterns">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node5.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node6.html">PatWrite</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node5.html">Methods</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node8.html">declar_interface</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html106"
+  HREF="node7.html#SECTION00032100000000000000">Parameters</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00032000000000000000"></A>
+<A NAME="declar"></A>
+<BR>
+declar
+</H2>
+Adds a connector from a Stratus model to the pattern interface. Writes the 
+corresponding connector declaration in the pattern file with name, arity and 
+direction automatically extracted from the connector properties.
+<BR>
+Supported Stratus connectors are:
+
+<UL>
+<LI>SignalIn,
+</LI>
+<LI>SignalOut (only supported if used as an output),
+</LI>
+<LI>VddIn,
+</LI>
+<LI>VssIn,
+</LI>
+<LI>CkIn,
+</LI>
+<LI>SignalInOut,
+</LI>
+<LI>TriState (always an output),
+</LI>
+<LI>Signals.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00032100000000000000">
+Parameters</A>
+</H3>
+
+<UL>
+<LI>connector : can either be a reference to a stratus net or a string 
+containing the name of the stratus net.
+</LI>
+<LI>format : optional format for the connectors values into the pattern file, 
+accepted values are :
+   
+<UL>
+<LI>'B': binary (default),
+</LI>
+<LI>'X': hexadecimal,
+</LI>
+<LI>'O': octal.
+   
+</LI>
+</UL>
+</LI>
+</UL>
+
+<P>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

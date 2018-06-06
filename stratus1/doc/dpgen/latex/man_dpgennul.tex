@@ -1,0 +1,58 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenNul -- Zero Detector Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenNul', modelname
+         , param = { 'nbit'     : n
+                   , 'physical' : True         
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a \verb-n- bits zero detector named \verb-modelname-.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{i0} : value to check (input, \verb-n- bits)
+        \item \textbf{q} : null flag (1 bit)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout        
+    \end{itemize}
+    \item \textbf{Behavior} :
+\begin{verbatim}
+q <= '1' WHEN ( i0 = X"00000000" ) ELSE '0';
+\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_nul ( Model ) :
+
+  def Interface ( self ) :
+    self.i = SignalIn  ( "i", 4 )
+    self.o = SignalOut ( "o", 1 )
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenNul', 'nul_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'nul_4', 'inst'
+                   , map = { 'i0'  : self.i
+                           , 'nul' : self.o
+                           , 'vdd' : self.vdd
+                           , 'vss' : self.vss
+                           }
+                   )
+      
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

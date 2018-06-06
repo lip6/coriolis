@@ -1,0 +1,22 @@
+\BOOKMARK [1][-]{section.1}{Description}{}% 1
+\BOOKMARK [1][-]{section.2}{Syntax}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Declaration part}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Description part}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{Methods}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{PatWrite}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{declar}{section.3}% 7
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Parameters}{subsection.3.2}% 8
+\BOOKMARK [2][-]{subsection.3.3}{declar\137interface}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Parameters}{subsection.3.3}% 10
+\BOOKMARK [2][-]{subsection.3.4}{declar}{section.3}% 11
+\BOOKMARK [3][-]{subsubsection.3.4.1}{Parameters}{subsection.3.4}% 12
+\BOOKMARK [2][-]{subsection.3.5}{affect\137int}{section.3}% 13
+\BOOKMARK [3][-]{subsubsection.3.5.1}{Parameters}{subsection.3.5}% 14
+\BOOKMARK [2][-]{subsection.3.6}{affect\137fix}{section.3}% 15
+\BOOKMARK [3][-]{subsubsection.3.6.1}{Parameters}{subsection.3.6}% 16
+\BOOKMARK [2][-]{subsection.3.7}{affect\137any}{section.3}% 17
+\BOOKMARK [3][-]{subsubsection.3.7.1}{Parameters}{subsection.3.7}% 18
+\BOOKMARK [2][-]{subsection.3.8}{addpat}{section.3}% 19
+\BOOKMARK [2][-]{subsection.3.9}{pattern\137begin}{section.3}% 20
+\BOOKMARK [2][-]{subsection.3.10}{pattern\137end}{section.3}% 21
+\BOOKMARK [1][-]{section.4}{Example}{}% 22

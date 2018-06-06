@@ -1,0 +1,69 @@
+\begin{itemize}
+    \item \textbf{Name} : DpgenSff -- Static Flip-Flop Macro-Generator
+    \item \textbf{Synopsys} :
+\begin{verbatim}
+Generate ( 'DpgenSff', modelname
+         , param = { 'nbit'       : n
+                   , 'physical'   : True         
+                   , 'behavioral' : True         
+                   }
+         )
+\end{verbatim}
+    \item \textbf{Description} : Generates a n bits static flip-flop named \verb-modelname-. The two latches of this flip-flop are static, i.e. each one is made of two interters looped together.
+    \item \textbf{Terminal Names} :
+    \begin{itemize}
+        \item \textbf{wen} : write enable (1 bit)
+        \item \textbf{ck} : clock signal (1 bit)
+        \item \textbf{i0} : data input (\verb-n- bits)
+        \item \textbf{q} : output (\verb-n- bits)
+        \item \textbf{vdd} : power
+        \item \textbf{vss} : ground
+    \end{itemize}
+    \item \textbf{Parameters} : Parameters are given in the map \verb-param-.
+    \begin{itemize}
+        \item \textbf{nbit} (mandatory) : Defines the size of the generator
+        \item \textbf{physical} (optional, default value : False) : In order to generate a layout        
+        \item \textbf{behavioral} (optional, default value : False) : In order to generate a behavior        
+    \end{itemize}
+    \item \textbf{How it works} : 
+    \begin{itemize}
+        \item When wen is set to \verb-one-, enables the writing of the flip-flop
+    \end{itemize}    
+%    \item \textbf{Behavior} :
+%\begin{verbatim}
+%\end{verbatim}
+    \item \textbf{Example} :
+\begin{verbatim}
+from stratus import *
+
+class inst_sff ( Model ) :
+
+  def Interface ( self ) :
+    self.ck  = SignalIn  (  "ck", 1 )
+    self.wen = SignalIn  ( "wen", 1 )
+    self.i   = SignalIn  (   "i", 4 )
+    self.o   = SignalOut (   "o", 4 )
+
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenSff', 'sff_4'
+             , param = { 'nbit'     : 4
+                       , 'physical' : True
+                       }
+             )
+    self.I = Inst ( 'sff_4', 'inst'
+                  , map = { "wen" : self.wen
+                          , "ck"  : self.ck
+                          , "i0"  : self.i
+                          ,  "q"  : self.o
+                          , 'vdd' : self.vdd
+                          , 'vss' : self.vss
+                          }
+                  )
+                
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+\end{verbatim}
+\end{itemize}

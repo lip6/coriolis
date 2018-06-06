@@ -1,0 +1,5 @@
+\form#0:\[ \Large \left \{ \begin{array}{r c l l l l l} x' & = & (a \times x) & + & (b \times y) & + & tx \\ y' & = & (c \times x) & + & (d \times y) & + & ty \end{array} \right . \]
+\form#1:\[ \Large minLevel \leq level < maxLevel \]
+\form#2:\[ \Huge \texttt{minLevel}\ \leq level < \texttt{maxLevel} \]
+\form#3:\[ \Large \texttt{minLevel}\ \leq level < \texttt{maxLevel} \]
+\form#4:\[ minLevel \leq level < maxLevel \]

@@ -1,0 +1,94 @@
+\hypertarget{class_open_chams_1_1_group}{}\section{Group Class Reference}
+\label{class_open_chams_1_1_group}\index{Group@{Group}}
+Inheritance diagram for Group\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_open_chams_1_1_group}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_open_chams_1_1_group_a7cff0c4a6957f23fb1ea4598f4b8a0b8}\label{class_open_chams_1_1_group_a7cff0c4a6957f23fb1ea4598f4b8a0b8}} 
+Align \hyperlink{class_open_chams_1_1_group_a7cff0c4a6957f23fb1ea4598f4b8a0b8}{get\+Align} ()
+\begin{DoxyCompactList}\small\item\em returns the alignment constraint of the group. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_group_ab5ae4a4550c418c974ff6e59967eeec2}\label{class_open_chams_1_1_group_ab5ae4a4550c418c974ff6e59967eeec2}} 
+bool \hyperlink{class_open_chams_1_1_group_ab5ae4a4550c418c974ff6e59967eeec2}{is\+Isolated} ()
+\begin{DoxyCompactList}\small\item\em returns true if the group has an isolation constraint. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_group_aee0abf07a6e9d41f511c648e6eaecea3}\label{class_open_chams_1_1_group_aee0abf07a6e9d41f511c648e6eaecea3}} 
+bool \hyperlink{class_open_chams_1_1_group_aee0abf07a6e9d41f511c648e6eaecea3}{is\+Paired} ()
+\begin{DoxyCompactList}\small\item\em returns true if the group has a pairing constraint. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_group_a9fc27b2bc4da99c723102153c4fbf1c0}{set\+Align} (Align)
+\begin{DoxyCompactList}\small\item\em sets an alignment constraint on the group. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_group_abefcd8ede34b508fe7d42428a618cb02}{set\+Isolated} (bool)
+\begin{DoxyCompactList}\small\item\em sets whether the group has an isolation constraint or not. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_group_aff6de4e5c0da79ad8d0070c03bfd941b}{set\+Paired} (bool)
+\begin{DoxyCompactList}\small\item\em sets whether the group has a pairing constraint or not. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_group_adc93b900e943312e905182fe44f21225}{set\+Root\+Node} (\hyperlink{class_open_chams_1_1_node}{Node} $\ast$)
+\begin{DoxyCompactList}\small\item\em sets the root node of the group. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class describes a group of the placement tree. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_open_chams_1_1_group_a9fc27b2bc4da99c723102153c4fbf1c0}\label{class_open_chams_1_1_group_a9fc27b2bc4da99c723102153c4fbf1c0}} 
+\index{Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}!set\+Align@{set\+Align}}
+\index{set\+Align@{set\+Align}!Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}}
+\subsubsection{\texorpdfstring{set\+Align()}{setAlign()}}
+{\footnotesize\ttfamily void set\+Align (\begin{DoxyParamCaption}\item[{Group\+::\+Align}]{align }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+sets an alignment constraint on the group. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em align} & the value of the alignment constraint can be N\+O\+NE, V\+E\+R\+T\+I\+C\+AL or H\+O\+R\+I\+Z\+O\+N\+T\+AL. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_open_chams_1_1_group_abefcd8ede34b508fe7d42428a618cb02}\label{class_open_chams_1_1_group_abefcd8ede34b508fe7d42428a618cb02}} 
+\index{Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}!set\+Isolated@{set\+Isolated}}
+\index{set\+Isolated@{set\+Isolated}!Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}}
+\subsubsection{\texorpdfstring{set\+Isolated()}{setIsolated()}}
+{\footnotesize\ttfamily void set\+Isolated (\begin{DoxyParamCaption}\item[{bool}]{isolated }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+sets whether the group has an isolation constraint or not. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em isolated} & if true the group has an isolation constraint. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_open_chams_1_1_group_aff6de4e5c0da79ad8d0070c03bfd941b}\label{class_open_chams_1_1_group_aff6de4e5c0da79ad8d0070c03bfd941b}} 
+\index{Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}!set\+Paired@{set\+Paired}}
+\index{set\+Paired@{set\+Paired}!Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}}
+\subsubsection{\texorpdfstring{set\+Paired()}{setPaired()}}
+{\footnotesize\ttfamily void set\+Paired (\begin{DoxyParamCaption}\item[{bool}]{paired }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+sets whether the group has a pairing constraint or not. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em paired} & if true the group has a pairing constraint. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_open_chams_1_1_group_adc93b900e943312e905182fe44f21225}\label{class_open_chams_1_1_group_adc93b900e943312e905182fe44f21225}} 
+\index{Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}!set\+Root\+Node@{set\+Root\+Node}}
+\index{set\+Root\+Node@{set\+Root\+Node}!Open\+Chams\+::\+Group@{Open\+Chams\+::\+Group}}
+\subsubsection{\texorpdfstring{set\+Root\+Node()}{setRootNode()}}
+{\footnotesize\ttfamily void set\+Root\+Node (\begin{DoxyParamCaption}\item[{\hyperlink{class_open_chams_1_1_node}{Node} $\ast$}]{node }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+sets the root node of the group. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & the root node of the group \\
+\hline
+\end{DoxyParams}

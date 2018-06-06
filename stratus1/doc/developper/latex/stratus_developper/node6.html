@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Methods</TITLE>
+<META NAME="description" CONTENT="Methods">
+<META NAME="keywords" CONTENT="stratus_developper">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="previous" HREF="node5.html">
+<LINK REL="up" HREF="node1.html">
+<LINK REL="next" HREF="node7.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node5.html">Attributes</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node1.html">Class Model</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node7.html">Nets</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00015000000000000000">
+Methods</A>
+</H2>
+
+<P>
+Methods of class <code>Model</code> are listed below :
+
+<UL>
+<LI><code>HurricanePlug</code> : Creates the Hurricane cell thanks to the stratus cell.
+<BR>
+Before calling this method, only the stratus cell is created, after this method, both cells are created. This method has to be called before View and Save, and before Layout.
+</LI>
+<LI><code>View</code> : Opens/Refreshes the editor in order to see the created layout
+</LI>
+<LI><code>Quit</code> : Finishes a cell without saving
+</LI>
+<LI><code>Save</code> : Saves the created cell
+<BR>
+If several cells have been created, they are all going to be saved in separated files
+<BR></LI>
+</UL>
+
+<P>
+Some of those methods have to be defined in order to create a new cell :
+
+<UL>
+<LI><code>Interface</code> : Description of the external ports of the cell
+</LI>
+<LI><code>Netlist</code> : Description of the netlist of the cell
+</LI>
+<LI><code>Layout</code> : Description of the layout of the cell
+</LI>
+<LI><code>Vbe</code> : Description of the behavior of the cell
+</LI>
+<LI><code>Pattern</code> : Description of the patterns in order to test the cell
+</LI>
+</UL> 
+
+<P>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

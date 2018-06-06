@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>PlaceRef</TITLE>
+<META NAME="description" CONTENT="PlaceRef">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node25.html">
+<LINK REL="previous" HREF="node23.html">
+<LINK REL="up" HREF="node20.html">
+<LINK REL="next" HREF="node25.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node23.html">PlacePin</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node20.html">Place and Route</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node25.html">GetRefXY</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html626"
+  HREF="node24.html#SECTION00064100000000000000">Name</A>
+<LI><A NAME="tex2html627"
+  HREF="node24.html#SECTION00064200000000000000">Synopsys</A>
+<LI><A NAME="tex2html628"
+  HREF="node24.html#SECTION00064300000000000000">Description</A>
+<LI><A NAME="tex2html629"
+  HREF="node24.html#SECTION00064400000000000000">Parameters</A>
+<LI><A NAME="tex2html630"
+  HREF="node24.html#SECTION00064500000000000000">Example</A>
+<LI><A NAME="tex2html631"
+  HREF="node24.html#SECTION00064600000000000000">Errors</A>
+<LI><A NAME="tex2html632"
+  HREF="node24.html#SECTION00064700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00064000000000000000"></A>
+    <A NAME="secref"></A>
+<BR>
+PlaceRef
+</H2>
+    
+<H3><A NAME="SECTION00064100000000000000">
+Name</A>
+</H3>
+
+<P>
+PlaceRef - Places a reference
+
+<P>
+
+<H3><A NAME="SECTION00064200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+PlaceRef ( point, name )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00064300000000000000">
+Description</A>
+</H3>
+
+<P>
+Placement of a reference.
+<BR>
+The reference is located at the coordinates of <code>point</code>, with name <code>name</code>.
+
+<P>
+
+<H3><A NAME="SECTION00064400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>point</code> : Coodinates of the reference
+</LI>
+<LI><code>name</code> : Name of the reference
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00064500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+PlaceRef ( XY (10, 0), "myref" )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00064600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] PlaceRef : Wrong argument,</code>
+<BR><code>the coordinates of the reference must be put in a XY object.</code>
+</LI>
+<LI><code>[Stratus ERROR] PlaceRef : Argument layer must be a string.</code>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00064700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node10.html#seclayout"><SPAN  CLASS="textit">Layout</SPAN></A>
+<A HREF="node21.html#secsegment"><SPAN  CLASS="textit">PlaceSegment</SPAN></A>
+<A HREF="node22.html#seccontact"><SPAN  CLASS="textit">PlaceContact</SPAN></A>
+<A HREF="node23.html#secpin"><SPAN  CLASS="textit">PlacePin</SPAN></A>
+<A HREF="node25.html#secgetref"><SPAN  CLASS="textit">GetRefXY</SPAN></A>
+<A HREF="node26.html#seccopy"><SPAN  CLASS="textit">CopyUpSegment</SPAN></A>
+
+<P>
+    <BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

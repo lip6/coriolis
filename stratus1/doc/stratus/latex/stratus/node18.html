@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>ResizeAb</TITLE>
+<META NAME="description" CONTENT="ResizeAb">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="previous" HREF="node17.html">
+<LINK REL="up" HREF="node10.html">
+<LINK REL="next" HREF="node19.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node17.html">DefAb</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node19.html">Description of the stimuli</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html432"
+  HREF="node18.html#SECTION00048100000000000000">Name</A>
+<LI><A NAME="tex2html433"
+  HREF="node18.html#SECTION00048200000000000000">Synopsys</A>
+<LI><A NAME="tex2html434"
+  HREF="node18.html#SECTION00048300000000000000">Description</A>
+<LI><A NAME="tex2html435"
+  HREF="node18.html#SECTION00048400000000000000">Parameters</A>
+<LI><A NAME="tex2html436"
+  HREF="node18.html#SECTION00048500000000000000">Example</A>
+<LI><A NAME="tex2html437"
+  HREF="node18.html#SECTION00048600000000000000">Errors</A>
+<LI><A NAME="tex2html438"
+  HREF="node18.html#SECTION00048700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00048000000000000000"></A>
+    <A NAME="secresizeab"></A>
+<BR>
+ResizeAb
+</H2>
+    
+<H3><A NAME="SECTION00048100000000000000">
+Name</A>
+</H3>
+
+<P>
+ResizeAb - Modifies the abutment box of the current cell
+
+<P>
+
+<H3><A NAME="SECTION00048200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+ResizeAb ( dx1, dy1, dx2, dy2 )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00048300000000000000">
+Description</A>
+</H3>
+
+<P>
+This function modifies the abutment box of the current cell.
+<BR>
+The coordinates of the abutment box are the coordinates of the envelop of the abutment boxes of each instance plus the delta values given as argument.
+<BR>
+<P>
+Note that one can not call this function in order to create the abutment box. This fonction only modifies the already created abutment box.
+
+<P>
+
+<H3><A NAME="SECTION00048400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><code>(dx1, dy1)</code> : Values to be substracted to the lower left corner of the previous abutment box.
+</LI>
+<LI><code>(dx2, dy2)</code> : Values to be added to the upper right corner of the previous abutment box.
+</LI>
+</UL>
+
+<P>
+The Values are used as follow :
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER">
+
+</DIV><IMG
+  WIDTH="182" HEIGHT="173" ALIGN="BOTTOM" BORDER="0"
+ SRC="./resizeAb.png"
+ ALT="Image resizeAb">
+
+</DIV>
+
+<P>
+
+<H3><A NAME="SECTION00048500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+% Expansion of the abutment box at the top and the bottom
+ResizeAb ( 0, 100, 0, 100 )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00048600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code> [Stratus ERROR] ResizeAb :</code>
+<BR><code>Coordinates of an abutment Box in y must be multiple of the slice.</code>
+<BR><code>Coordinates of an abutment Box in x must be multiple of the pitch.</code>
+<BR>
+One has called ResizeAb with non authorized values
+</LI>
+<LI><code> [Stratus ERROR] ResizeAb :</code>
+<BR><code>one of the values of dx1 or dx2 (dy1 or dy2)  is incompatible with</code>
+<BR><code>the size of the abutment box.</code>
+<BR><code>Coordinates of an abutment Box in x must be multiple of the pitch.</code>
+<BR>
+One has called ResizeAb with a value which deteriorates the abtument box
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00048700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node11.html#secplace"><SPAN  CLASS="textit">Place</SPAN></A>
+<A HREF="node12.html#sectop"><SPAN  CLASS="textit">PlaceTop</SPAN></A>
+<A HREF="node13.html#secbottom"><SPAN  CLASS="textit">PlaceBottom</SPAN></A>
+<A HREF="node14.html#secright"><SPAN  CLASS="textit">PlaceRight</SPAN></A>
+<A HREF="node15.html#secleft"><SPAN  CLASS="textit">PlaceLeft</SPAN></A>
+<A HREF="node16.html#secsetrefins"><SPAN  CLASS="textit">SetRefIns</SPAN></A>
+<A HREF="node17.html#secdefab"><SPAN  CLASS="textit">DefAb</SPAN></A>
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node17.html">DefAb</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node10.html">Description of a layout</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node19.html">Description of the stimuli</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

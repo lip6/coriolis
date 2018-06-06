@@ -23,17 +23,12 @@
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
+ find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
+#add_subdirectory(doc)
 
-#if(BUILD_DOC)
-#  find_package(Doxygen)
-#  if(DOXYGEN_FOUND)
-#    add_subdirectory(doc)
-#  endif()
-#endif()
- 
  if(CHECK_DATABASE)
    add_definitions(-DCHECK_DATABASE)
    message(STATUS "Checking database enabled (very slow).")

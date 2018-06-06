@@ -1,0 +1,165 @@
+\hypertarget{dtr_dtrPres}{}\section{Presentation}\label{dtr_dtrPres}
+The {\bfseries Design Technology Rules (D\+TR)} format was developped as a part of the Chams Project (\href{http://www-soc.lip6.fr/recherche/cian/chams/}{\tt http\+://www-\/soc.\+lip6.\+fr/recherche/cian/chams/}). It aims at offering a generic description of layout design rules for C\+M\+OS technologies.~\newline
+ \hypertarget{dtr_dtrAutrhos}{}\subsection{Author}\label{dtr_dtrAutrhos}
+Damien Dupuis\+: damien.\+dupuis(at)lip6(.)fr\hypertarget{dtr_dtrLimits}{}\subsection{Limitations}\label{dtr_dtrLimits}
+Only simple rules are supported at the moment. For example the minimum width of a metal layer has only one value, although it should depends on the length of the wire drawned.\hypertarget{dtr_dtrDB}{}\section{Stand alone database structure}\label{dtr_dtrDB}
+The database contains four object \+:
+\begin{DoxyItemize}
+\item \hyperlink{class_d_t_r_1_1_techno}{D\+T\+R\+::\+Techno} contains generic informations such as the name of the technology and the unit used, and the list of all technologic rules.
+\item \hyperlink{class_d_t_r_1_1_rule}{D\+T\+R\+::\+Rule} \& \hyperlink{class_d_t_r_1_1_a_rule}{D\+T\+R\+::\+A\+Rule} respectively describe a symmetrical and an asymmetrical rule.
+\end{DoxyItemize}
+
+The library also use the \hyperlink{class_d_t_r_1_1_d_t_r_exception}{D\+T\+R\+::\+D\+T\+R\+Exception} class to throw excptions.\hypertarget{dtr_dtrParser}{}\subsection{Using the parser}\label{dtr_dtrParser}
+Simply load a technology with static function \hyperlink{class_d_t_r_1_1_techno_acf863c2bdb7f1aacc4422c8155c60d17}{D\+T\+R\+::\+Techno\+::read\+From\+File()} and then get rules (\hyperlink{class_d_t_r_1_1_techno_a4d56a05b47bd6c51e4e18120f49b584b}{D\+T\+R\+::\+Techno\+::get\+Rule()}) or directly values (\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{D\+T\+R\+::\+Techno\+::get\+Value()}).\hypertarget{dtr_dtrDriver}{}\subsection{Using the driver}\label{dtr_dtrDriver}
+Using the driver is very simple, user has to create a \hyperlink{class_d_t_r_1_1_techno}{D\+T\+R\+::\+Techno} object and simply add \hyperlink{class_d_t_r_1_1_rule}{D\+T\+R\+::\+Rule} or \hyperlink{class_d_t_r_1_1_a_rule}{D\+T\+R\+::\+A\+Rule} to it. The adding methods return the newly created Rule so user can set the rule type (\hyperlink{class_d_t_r_1_1_rule_a3568407d7a7890c39b8c9acc1e608535}{D\+T\+R\+::\+Rule\+::set\+Type()}) if necessary. Finally use the \hyperlink{class_d_t_r_1_1_techno_a26b05539dd3345963b8708788b82e2cb}{D\+T\+R\+::\+Techno\+::write\+To\+File()} method to dump the database to file.\hypertarget{dtr_dtrExamples}{}\section{Examples}\label{dtr_dtrExamples}
+As said is the global presentation, V\+L\+SI S\+A\+PD project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a D\+TR file using C++ or Python. The D\+TR file considered is the same for all examples\+: {\ttfamily example.\+dtr.\+xml} 
+\begin{DoxyCodeInclude}
+<\textcolor{keywordtype}{technology} \textcolor{keyword}{name}=\textcolor{stringliteral}{"example"} \textcolor{keyword}{unit}=\textcolor{stringliteral}{"micro"} \textcolor{keyword}{version}=\textcolor{stringliteral}{"rev.A"}>
+   <\textcolor{keywordtype}{physical\_rules}>
+     \textcolor{comment}{<!-- transistor -->}
+     <\textcolor{keywordtype}{rule}  \textcolor{keyword}{name}=\textcolor{stringliteral}{"transistorMinL"}                                         \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.10"}   \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref1"}/> 
+     <\textcolor{keywordtype}{rule}  \textcolor{keyword}{name}=\textcolor{stringliteral}{"transistorMinW"}                                         \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.20"}   \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref2"}/>
+
+     \textcolor{comment}{<!-- minWidth -->}
+     <\textcolor{keywordtype}{rule}  \textcolor{keyword}{name}=\textcolor{stringliteral}{"minWidth"}           \textcolor{keyword}{layer}=\textcolor{stringliteral}{"metal1"}                      \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.15"}   \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref3"}/>
+
+     \textcolor{comment}{<!-- minSpacing -->}
+     <\textcolor{keywordtype}{rule}  \textcolor{keyword}{name}=\textcolor{stringliteral}{"minSpacing"}         \textcolor{keyword}{layer}=\textcolor{stringliteral}{"metal1"}                      \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.20"}   \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref4"}/>
+     <\textcolor{keywordtype}{rule}  \textcolor{keyword}{name}=\textcolor{stringliteral}{"minSpacing"}         \textcolor{keyword}{layer1}=\textcolor{stringliteral}{"active"}   \textcolor{keyword}{layer2}=\textcolor{stringliteral}{"poly"}     \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.10"}   \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref5"}/>
+
+     \textcolor{comment}{<!-- minExtension -->}
+     <\textcolor{keywordtype}{arule} \textcolor{keyword}{name}=\textcolor{stringliteral}{"minExtension"}       \textcolor{keyword}{layer1}=\textcolor{stringliteral}{"poly"}     \textcolor{keyword}{layer2}=\textcolor{stringliteral}{"active"}   \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.20"}   \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref6"}/>
+
+     \textcolor{comment}{<!-- minArea -->}
+     <\textcolor{keywordtype}{rule}  \textcolor{keyword}{name}=\textcolor{stringliteral}{"minArea"}            \textcolor{keyword}{type}=\textcolor{stringliteral}{"area"}       \textcolor{keyword}{layer}=\textcolor{stringliteral}{"metal1"}    \textcolor{keyword}{value}=\textcolor{stringliteral}{"0.100"}  \textcolor{keyword}{ref}=\textcolor{stringliteral}{"ref7"}/>
+  </\textcolor{keywordtype}{physical\_rules}>
+</\textcolor{keywordtype}{technology}>
+
+\end{DoxyCodeInclude}
+
+
+All source codes are available in the {\ttfamily examples} directory.\hypertarget{dtr_dtrC}{}\subsection{C++}\label{dtr_dtrC}
+\hypertarget{dtr_dtrParseC}{}\subsubsection{Parser}\label{dtr_dtrParseC}
+The following code ({\ttfamily parse\+Dtr.\+cpp}) is an example of how to parse a D\+TR file using C++ library. 
+\begin{DoxyCodeInclude}
+\textcolor{preprocessor}{#include <iostream>}
+\textcolor{preprocessor}{#include <string>}
+\textcolor{keyword}{using namespace }\hyperlink{namespacestd}{std};
+
+\textcolor{preprocessor}{#include "vlsisapd/dtr/Techno.h"}
+
+\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} * argv[]) \{
+    \hyperlink{class_d_t_r_1_1_techno}{DTR::Techno}* techno = \hyperlink{class_d_t_r_1_1_techno_acf863c2bdb7f1aacc4422c8155c60d17}{DTR::Techno::readFromFile}(\textcolor{stringliteral}{"./example.dtr.xml"}
+      );
+
+    cerr << \textcolor{stringliteral}{"+-----------------------------+"} << endl
+         << \textcolor{stringliteral}{"| technology:      "} << techno->\hyperlink{class_d_t_r_1_1_techno_a3fd7335faa33dce2f87c7e50eef3e294}{getName}()    <<   \textcolor{stringliteral}{"    |"}   << endl
+         << \textcolor{stringliteral}{"| units:           "} << techno->\hyperlink{class_d_t_r_1_1_techno_a42e12e8f890c03ebf12e754d7e489dcb}{getUnit}()    << \textcolor{stringliteral}{"      |"} << endl
+         << \textcolor{stringliteral}{"| version:         "} << techno->getVersion() << \textcolor{stringliteral}{"      |"} << endl
+         << \textcolor{stringliteral}{"+-----------------------------+"} << endl << endl;
+
+    cerr << \textcolor{stringliteral}{"transistorMinL                = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{getValue}(\textcolor{stringliteral}{"transistorMinL"}) << endl
+         << \textcolor{stringliteral}{"transistorMinW                = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ad5ef5b8e444ab7a86a2e3bff7762c956}{getValueAsString}(\textcolor{stringliteral}{"transistorMinW"}
+      ) << endl
+         << \textcolor{stringliteral}{"minWidth of metal1            = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{getValue}(\textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"}) << endl
+         << \textcolor{stringliteral}{"minSpacing of metal1          = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{getValue}(\textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"}) << endl
+         << \textcolor{stringliteral}{"minSpacing of active vs poly  = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{getValue}(\textcolor{stringliteral}{"minSpacing"}, \textcolor{stringliteral}{"active"}, \textcolor{stringliteral}{"poly"}) 
+      << endl
+         << \textcolor{stringliteral}{"minExtension active over poly = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{getValue}(\textcolor{stringliteral}{"minExtension"}, \textcolor{stringliteral}{"poly"}, \textcolor{stringliteral}{"active"}
+      ) << endl
+         << \textcolor{stringliteral}{"minArea of metal1             = "} << techno->\hyperlink{class_d_t_r_1_1_techno_ac08e2e60dd16750551221ca908001057}{getValue}(\textcolor{stringliteral}{"minArea"}, \textcolor{stringliteral}{"metal1"}) << endl;
+
+    \textcolor{keywordflow}{return} 0;
+\}
+
+\end{DoxyCodeInclude}
+\hypertarget{dtr_dtrDriveC}{}\subsubsection{Driver}\label{dtr_dtrDriveC}
+This C++ code ({\ttfamily drive\+Dtr.\+cpp}) generates a out.\+dtr.\+xml file equivalent to the previous example.\+dtr.\+xml. 
+\begin{DoxyCodeInclude}
+\textcolor{preprocessor}{#include <string>}
+\textcolor{keyword}{using namespace }\hyperlink{namespacestd}{std};
+
+\textcolor{preprocessor}{#include "vlsisapd/dtr/Techno.h"}
+\textcolor{preprocessor}{#include "vlsisapd/dtr/Rules.h"}
+
+\textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} * argv[]) \{
+    \hyperlink{class_d_t_r_1_1_techno}{DTR::Techno}* techno = \textcolor{keyword}{new} \hyperlink{class_d_t_r_1_1_techno}{DTR::Techno}(\textcolor{stringliteral}{"MyTech"}, \textcolor{stringliteral}{"micro"}, \textcolor{stringliteral}{"rev.A"});
+
+    techno->\hyperlink{class_d_t_r_1_1_techno_afa2c8412c365c950649b9f81661ecafd}{addRule} (\textcolor{stringliteral}{"transistorMinL"}, 0.1 , \textcolor{stringliteral}{"ref1"});
+    techno->\hyperlink{class_d_t_r_1_1_techno_afa2c8412c365c950649b9f81661ecafd}{addRule} (\textcolor{stringliteral}{"transistorMinW"}, 0.2 , \textcolor{stringliteral}{"ref2"});
+    techno->\hyperlink{class_d_t_r_1_1_techno_afa2c8412c365c950649b9f81661ecafd}{addRule} (\textcolor{stringliteral}{"minWidth"}      , 0.15, \textcolor{stringliteral}{"ref3"}, \textcolor{stringliteral}{"metal1"});
+    techno->\hyperlink{class_d_t_r_1_1_techno_afa2c8412c365c950649b9f81661ecafd}{addRule} (\textcolor{stringliteral}{"minSpacing"}    , 0.2 , \textcolor{stringliteral}{"ref4"}, \textcolor{stringliteral}{"metal1"});
+    techno->\hyperlink{class_d_t_r_1_1_techno_afa2c8412c365c950649b9f81661ecafd}{addRule} (\textcolor{stringliteral}{"minSpacing"}    , 0.1 , \textcolor{stringliteral}{"ref5"}, \textcolor{stringliteral}{"active"}, \textcolor{stringliteral}{"poly"});
+    techno->\hyperlink{class_d_t_r_1_1_techno_a5f5a790974fe7d3b1c6f1b698ef0a818}{addARule}(\textcolor{stringliteral}{"minExtension"}  , 0.2 , \textcolor{stringliteral}{"ref6"}, \textcolor{stringliteral}{"poly"}  , \textcolor{stringliteral}{"active"});
+    
+    \hyperlink{class_d_t_r_1_1_rule}{DTR::Rule}* rule = techno->\hyperlink{class_d_t_r_1_1_techno_afa2c8412c365c950649b9f81661ecafd}{addRule}(\textcolor{stringliteral}{"minArea"}, 0.1, \textcolor{stringliteral}{"ref7"}, \textcolor{stringliteral}{"metal1"});
+    rule->\hyperlink{class_d_t_r_1_1_rule_a3568407d7a7890c39b8c9acc1e608535}{setType}(\textcolor{stringliteral}{"area"});
+
+    techno->\hyperlink{class_d_t_r_1_1_techno_a26b05539dd3345963b8708788b82e2cb}{writeToFile}(\textcolor{stringliteral}{"./out.dtr.xml"});
+    
+    \textcolor{keywordflow}{return} 0;
+\}
+
+\end{DoxyCodeInclude}
+
+
+\begin{DoxyNote}{Note}
+In order to compile these codes, a C\+Make\+Lists.\+txt file is provided. User must set the \$\+V\+L\+S\+I\+S\+A\+P\+D\+\_\+\+T\+OP variable before running these commands in the directory containing the C\+Make\+Lists.\+txt file\+: 
+\begin{DoxyCode}
+%> mkdir build; cd build
+%> cmake ..
+%> make
+\end{DoxyCode}
+
+\end{DoxyNote}
+\hypertarget{dtr_dtrPython}{}\subsection{Python}\label{dtr_dtrPython}
+\hypertarget{dtr_dtrParsePython}{}\subsubsection{Parser}\label{dtr_dtrParsePython}
+The following python script ({\ttfamily parse\+Dtr.\+py}) is an example of how to parse a D\+TR file using python module. 
+\begin{DoxyCodeInclude}
+\textcolor{keyword}{from} DTR \textcolor{keyword}{import} *
+\textcolor{keyword}{from} decimal \textcolor{keyword}{import} Decimal
+
+techno = Techno.readFromFile(\textcolor{stringliteral}{"./example.dtr.xml"})
+
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"+-----------------------------+"}
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"| technology:      "}+techno.get)   +  \textcolor{stringliteral}{"    |"}
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"| units:           "}+techno.getUnit()   +\textcolor{stringliteral}{"      |"}
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"| version:         "}+techno.getVersion()+\textcolor{stringliteral}{"      |"}
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"+-----------------------------+\(\backslash\)n\(\backslash\)n"}
+
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"transistorMinL                = %s"}%techno.getValue(\textcolor{stringliteral}{"transistorMinL"})
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"transistorMinW                = %s"}%Decimal(techno.getValueAsString(\textcolor{stringliteral}{"transistorMinW"}))
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"minWidth of metal1            = %s"}%techno.getValue(\textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"})
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"minSpacing of metal1          = %s"}%techno.getValue(\textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"})
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"minSpacing of active vs poly  = %s"}%techno.getValue(\textcolor{stringliteral}{"minSpacing"}, \textcolor{stringliteral}{"active"}, \textcolor{stringliteral}{"poly"})
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"minExtension active over poly = %s"}%techno.getValue(\textcolor{stringliteral}{"minExtension"}, \textcolor{stringliteral}{"poly"}, \textcolor{stringliteral}{"active"})
+\textcolor{keywordflow}{print} \textcolor{stringliteral}{"minArea of metal1             = %s"}%techno.getValue(\textcolor{stringliteral}{"minArea"}, \textcolor{stringliteral}{"metal1"})
+
+\textcolor{comment}{# an example of why it is important to use Decimal in python:}
+\textcolor{keywordflow}{print} techno.getValue(\textcolor{stringliteral}{"minArea"}, \textcolor{stringliteral}{"metal1"})*3-0.3 \textcolor{comment}{# returns 5.55111512313e-17}
+\textcolor{keywordflow}{print} Decimal(techno.getValueAsString(\textcolor{stringliteral}{"minArea"}, \textcolor{stringliteral}{"metal1"}))*3-Decimal(\textcolor{stringliteral}{'0.3'}) \textcolor{comment}{# returns 0.000}
+\end{DoxyCodeInclude}
+\hypertarget{dtr_dtrDrivePython}{}\subsubsection{Driver}\label{dtr_dtrDrivePython}
+This python script ({\ttfamily drive\+Dtr.\+py}) generates a out.\+dtr.\+xml file equivalent to the previous example.\+dtr.\+xml. 
+\begin{DoxyCodeInclude}
+\textcolor{keyword}{from} DTR \textcolor{keyword}{import} *
+
+techno = Techno(\textcolor{stringliteral}{"myTech"}, \textcolor{stringliteral}{"micro"}, \textcolor{stringliteral}{"rev.A"})
+
+techno.addRule (\textcolor{stringliteral}{"transistorMinL"}, 0.1 , \textcolor{stringliteral}{"ref1"})
+techno.addRule (\textcolor{stringliteral}{"transistorMinW"}, 0.2 , \textcolor{stringliteral}{"ref2"})
+techno.addRule (\textcolor{stringliteral}{"minWidth"}      , 0.15, \textcolor{stringliteral}{"ref3"}, \textcolor{stringliteral}{"metal1"})
+techno.addRule (\textcolor{stringliteral}{"minSpacing"}    , 0.2 , \textcolor{stringliteral}{"ref4"}, \textcolor{stringliteral}{"metal1"})
+techno.addRule (\textcolor{stringliteral}{"minSpacing"}    , 0.1 , \textcolor{stringliteral}{"ref5"}, \textcolor{stringliteral}{"active"}, \textcolor{stringliteral}{"poly"})
+techno.addARule(\textcolor{stringliteral}{"minExtension"}  , 0.2 , \textcolor{stringliteral}{"ref6"}, \textcolor{stringliteral}{"poly"}, \textcolor{stringliteral}{"active"})
+
+rule = techno.addRule(\textcolor{stringliteral}{"minArea"}, 0.1, \textcolor{stringliteral}{"ref7"}, \textcolor{stringliteral}{"metal1"})
+rule.setType(\textcolor{stringliteral}{"area"})
+
+techno.writeToFile(\textcolor{stringliteral}{"./out.dtr.xml"})
+\end{DoxyCodeInclude}
+
+
+\begin{DoxyNote}{Note}
+In order to run these two scripts ({\ttfamily parse\+Dtr.\+py} \& drive\+Dtr.\+py), user must ensure that \$\+P\+Y\+T\+H\+O\+N\+P\+A\+TH variable points to the directory containing D\+T\+R.\+so module. 
+\end{DoxyNote}

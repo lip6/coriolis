@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Attributes</TITLE>
+<META NAME="description" CONTENT="Attributes">
+<META NAME="keywords" CONTENT="stratus_developper">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node12.html">
+<LINK REL="previous" HREF="node10.html">
+<LINK REL="up" HREF="node7.html">
+<LINK REL="next" HREF="node12.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node10.html">Parameters</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node7.html">Nets</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node12.html">Methods</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00024000000000000000">
+Attributes</A>
+</H2>
+
+<P>
+
+<UL>
+<LI><code>_name</code> : Name of the net
+</LI>
+<LI><code>_arity</code> : Arity of the net (by default set to 0)
+</LI>
+<LI><code>_ind</code> : LSB of the net
+</LI>
+<LI><code>_ext</code> : Tells if the net is external or not (True/False)
+</LI>
+<LI><code>_direct</code> : If the net is external, tells the direction ("IN", "OUT", "INOUT", "TRISTATE", "UNKNOWN")
+</LI>
+<LI><code>_h_type</code> : If the net is an alimentation or a clock, tells the type ("POWER", "GROUND", "CLOCK")
+</LI>
+<LI><code>_type</code> : The arithmetic type of the net ( "nr" )
+</LI>
+<LI><code>_st_cell</code> : The stratus cell which the net is instanciated in
+</LI>
+<LI><code>_real_net</code> : If the net is a part of a net (Sig) it is the real net corresponding
+</LI>
+<LI><code>_alias</code> : [] by default. When the net has an alias, it's a tab. Each element of the tab correspond to a bit of the net (from the LSB to the MSB), it'a a dictionnary : the only key is the net which this net is an alias from, the value is the bit of the net
+</LI>
+<LI><code>_to_merge</code> : [] by default. The same as _alias
+</LI>
+<LI><code>_to_cat</code> : [] by default. The same as _alias
+<BR></LI>
+</UL>
+
+<P>
+And, in connection with Hurricane :
+
+<UL>
+<LI><code>_hur_net</code> : A tab with all the hurricane nets corresponding to the stratus net ; From the LSB to the MSB (for example, with a 1 bit net, one gets the hurricane net by doing : <code>net._hur_net[0]</code> ).
+</LI>
+</UL>
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node10.html">Parameters</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node7.html">Nets</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node12.html">Methods</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

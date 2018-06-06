@@ -31,6 +31,7 @@
  find_package(KITE               REQUIRED)
 #find_package(EQUINOX            REQUIRED)
 #find_package(SOLSTICE           REQUIRED)
+ find_package(Doxygen)
 
  if(WITH_OPENMP)
     find_package(OpenMP REQUIRED)
@@ -43,8 +44,4 @@
  add_subdirectory(src)
  add_subdirectory(python)
  add_subdirectory(cmake_modules)
-
- if(BUILD_DOC)
-   find_package(Doxygen REQUIRED)
-   add_subdirectory(doc)
- endif(BUILD_DOC)
+ add_subdirectory(doc)

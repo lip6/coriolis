@@ -25,17 +25,12 @@
  find_package(VLSISAPD           REQUIRED)
  find_package(Libexecinfo        REQUIRED)
  find_package(Libbfd)
+ find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
+ add_subdirectory(doc)
 #add_subdirectory(tests)
-
- if(BUILD_DOC)
-   find_package(Doxygen)
-   if(DOXYGEN_FOUND)
-     add_subdirectory(doc)
-   endif()
- endif()
  
 #enable_testing()
 #add_test(HurricaneTest ${PROJECT_BINARY_DIR}/tests/htest)

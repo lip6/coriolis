@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Boolean operations</TITLE>
+<META NAME="description" CONTENT="Boolean operations">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node42.html">
+<LINK REL="previous" HREF="node40.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node42.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node40.html">Constants</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node42.html">Arithmetical operations</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html954"
+  HREF="node41.html#SECTION00076100000000000000">Description</A>
+<LI><A NAME="tex2html955"
+  HREF="node41.html#SECTION00076200000000000000">List</A>
+<LI><A NAME="tex2html956"
+  HREF="node41.html#SECTION00076300000000000000">Generators to instantiate</A>
+<LI><A NAME="tex2html957"
+  HREF="node41.html#SECTION00076400000000000000">Example</A>
+<LI><A NAME="tex2html958"
+  HREF="node41.html#SECTION00076500000000000000">Errors</A>
+<LI><A NAME="tex2html959"
+  HREF="node41.html#SECTION00076600000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00076000000000000000"></A>
+    <A NAME="secbool"></A>
+<BR>
+Boolean operations
+</H2>
+    
+<H3><A NAME="SECTION00076100000000000000">
+Description</A>
+</H3>
+
+<P>
+Most common boolean operators can be instantiated without the <code>Inst</code> constructor.
+
+<P>
+
+<H3><A NAME="SECTION00076200000000000000">
+List</A>
+</H3>
+
+<P>
+Boolean operators are listed below :
+
+<UL>
+<LI><code>And2</code> : <code>q &lt;= i0 &amp; i1</code>
+</LI>
+<LI><code>Or2</code>  : <code>q &lt;= i0 | i1</code>
+</LI>
+<LI><code>Xor2</code> : <code>q &lt;= i0 ^ i1</code>
+</LI>
+<LI><code>Inv</code>  : <code>q &lt;= ~i0</code>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00076300000000000000">
+Generators to instantiate</A>
+</H3>
+
+<P>
+One can choose the generator to be used. Some methods are applied to the cell and set the generator used when using <code>&amp;</code>, <code>|</code>, <code>^</code> and <code>~</code>. The generators used by default are the ones from the virtual library.
+<BR>
+<P>
+Methods are :
+
+<UL>
+<LI><code>SetAnd</code>
+</LI>
+<LI><code>SetOr</code>
+</LI>
+<LI><code>SetXor</code>
+</LI>
+<LI><code>SetNot</code>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00076400000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = SignalIn  ( "a", 4 )
+    self.B = SignalIn  ( "b", 4 )
+    self.B = SignalIn  ( "c", 4 )
+    
+    self.S = SignalOut ( "s", 4 )
+
+    self.vdd = VddIn  ( "vdd" )
+    self.vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S &lt;= ( ~self.A &amp; self.B ) | self.C
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00076500000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] &amp; : the nets must have the same lenght.</code>
+<BR>
+When one uses boolean expressions, one has to check that the sizes of both nets are equivalent.
+</LI>
+<LI><code>[Stratus ERROR] : there is no alim.</code>
+<BR>
+The cell being created does not have the alimentation nets. The instanciation is impossible.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00076600000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node37.html#secmux"><SPAN  CLASS="textit">Instanciation of a multiplexor</SPAN></A>
+<A HREF="node38.html#secshift"><SPAN  CLASS="textit">Instanciation of a shifter</SPAN></A>
+<A HREF="node39.html#secreg"><SPAN  CLASS="textit">Instanciation of a register</SPAN></A>
+<A HREF="node40.html#secconstant"><SPAN  CLASS="textit">Instanciation of constants</SPAN></A>
+<A HREF="node42.html#secarithmetic"><SPAN  CLASS="textit">Arithmetical operations</SPAN></A>
+<A HREF="node43.html#seccomp"><SPAN  CLASS="textit">Comparison operations</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node40.html">Constants</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node42.html">Arithmetical operations</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Constants</TITLE>
+<META NAME="description" CONTENT="Constants">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node41.html">
+<LINK REL="previous" HREF="node39.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node41.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node39.html">Register</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node41.html">Boolean operations</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html937"
+  HREF="node40.html#SECTION00075100000000000000">Name</A>
+<LI><A NAME="tex2html938"
+  HREF="node40.html#SECTION00075200000000000000">Synopsys</A>
+<LI><A NAME="tex2html939"
+  HREF="node40.html#SECTION00075300000000000000">Description</A>
+<LI><A NAME="tex2html940"
+  HREF="node40.html#SECTION00075400000000000000">Parameters</A>
+<LI><A NAME="tex2html941"
+  HREF="node40.html#SECTION00075500000000000000">Example</A>
+<LI><A NAME="tex2html942"
+  HREF="node40.html#SECTION00075600000000000000">Errors</A>
+<LI><A NAME="tex2html943"
+  HREF="node40.html#SECTION00075700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00075000000000000000"></A>
+    <A NAME="secconstant"></A>
+<BR>
+Constants
+</H2>
+    
+<H3><A NAME="SECTION00075100000000000000">
+Name</A>
+</H3>
+
+<P>
+Constant - Easy way to instantiate constants
+
+<P>
+
+<H3><A NAME="SECTION00075200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+netOne  &lt;=  One ( 2 )
+    
+net8    &lt;= "8"
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00075300000000000000">
+Description</A>
+</H3>
+
+<P>
+These functions simplify the way to instanciate constants.
+
+<UL>
+<LI>The functions <code>One</code> and<code>Zero</code> permits to initialise all the bits of a net to 'one' or 'zero'.
+</LI>
+<LI>The instanciation of a constant thanks to a string can be done in decimal, hecadecimal or binary.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00075400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+
+<UL>
+<LI>For <code>One</code> and <code>Zero</code> :
+    
+<UL>
+<LI><code>n</code> : the arity of the net
+    
+</LI>
+</UL>
+</LI>
+<LI>For the instanciation of a constant :
+    
+<UL>
+<LI>the constant given must be a string representing :
+        
+<UL>
+<LI>A decimal number
+</LI>
+<LI>A binary number : the string must begin with "0b"
+</LI>
+<LI>An hexadecimal number : the string must begin with "0x"
+        
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00075500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.Ones   = SignalOut (   "ones", 2 )
+    self.Zeros  = SignalOut (  "zeros", 4 )
+    
+    self.Eight  = SignalOut (  "eight", 4 )
+    self.Twentu = SignalOut ( "twenty", 5 )
+    self.Two    = SignalOut (    "two", 5 )
+
+    self.Vdd = VddIn  ( "vdd" )
+    self.Vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+    
+    self.Ones  &lt;=  One ( 2 )
+    self.Zero  &lt;= Zero ( 4 )
+        
+    self.Eight   &lt;= "8"
+    self.Twenty  &lt;= "0x14"
+    self.Two     &lt;= "0b10"
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00075600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] Const :</code>
+<BR><code>the argument must be a string representing a number in decimal,</code>
+<BR><code>binary (0b) or hexa (0x).</code>
+<BR>
+The string given as argument does not have the right form.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00075700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node37.html#secmux"><SPAN  CLASS="textit">Instanciation of a multiplexor</SPAN></A>
+<A HREF="node38.html#secshift"><SPAN  CLASS="textit">Instanciation of a shifter</SPAN></A>
+<A HREF="node39.html#secreg"><SPAN  CLASS="textit">Instanciation of a register</SPAN></A>
+<A HREF="node41.html#secbool"><SPAN  CLASS="textit">Boolean operations</SPAN></A>
+<A HREF="node42.html#secarithmetic"><SPAN  CLASS="textit">Arithmetical operations</SPAN></A>
+<A HREF="node43.html#seccomp"><SPAN  CLASS="textit">Comparison operations</SPAN></A>
+
+<P>
+    
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node39.html">Register</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node41.html">Boolean operations</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

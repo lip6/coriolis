@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Attributes</TITLE>
+<META NAME="description" CONTENT="Attributes">
+<META NAME="keywords" CONTENT="stratus_developper">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node6.html">
+<LINK REL="previous" HREF="node4.html">
+<LINK REL="up" HREF="node1.html">
+<LINK REL="next" HREF="node6.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node4.html">Parameters</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node1.html">Class Model</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node6.html">Methods</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00014000000000000000">
+Attributes</A>
+</H2>
+
+<P>
+
+<UL>
+<LI><code>_name</code> : Name of the cell
+</LI>
+<LI><code>_st_insts</code> : List of all the instances of the cell
+</LI>
+<LI><code>_st_ports</code> : List of all the external nets of the cell (except for alimentations and clock)
+</LI>
+<LI><code>_st_sigs</code> : List of all the internal nets of the cell
+</LI>
+<LI><code>_st_vdds</code>, <code>_st_vsss</code> : Two tabs of the nets which are instancied as <code>VddIn</code> and <code>VssIn</code>
+</LI>
+<LI><code>_st_cks</code> : List of all the nets which are instancied as <code>CkIn</code>
+</LI>
+<LI><code>_st_merge</code> : List of all the internal nets which have to be merged
+</LI>
+<LI><code>_param</code> : The map given as argument at the creation of the cell
+</LI>
+<LI><code>_underCells</code> : List of all the instances which are cells that have to be created 
+</LI>
+<LI><code>_and</code>, <code>_or</code>, <code>_xor</code>, <code>_not</code>, <code>_buff</code>, <code>_mux</code>, <code>_reg</code>, <code>_shift</code>, <code>_comp</code>, <code>_add</code>, <code>_mult</code>, <code>_div</code> : tells which generator to use when using overloard
+</LI>
+<LI><code>_NB_INST</code> : The number of instances of the cell (useful in order to automatically give a name to the instances)
+</LI>
+<LI><code>_TAB_NETS_OUT</code> and <code>_TAB_NETS_CAT</code> : Lists of all the nets automatically created
+</LI>
+<LI><code>_insref</code> : The reference instance (for placement)
+<BR></LI>
+</UL>
+
+<P>
+And, in connection with Hurricane :
+
+<UL>
+<LI><code>_hur_cell</code> : The hurricane cell (None by default)
+</LI>
+<LI><code>_db</code> : The database
+</LI>
+<LI><code>_lib0</code> : <code>self._db.Get_CATA_LIB ( 0 )</code>
+</LI>
+<LI><code>_nb_alims_verticales</code>, <code>_nb_pins</code>, <code>_nb_vdd_pins</code>, <code>_nb_vss_pins</code>, <code>standard_instances_list</code>, <code>pad_north</code>, <code>pad_south</code>, <code>pad_east</code>, <code>pad_west</code> : all place and route stuffs ...
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node4.html">Parameters</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node1.html">Class Model</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node6.html">Methods</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

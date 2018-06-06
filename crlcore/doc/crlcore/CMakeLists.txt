@@ -7,11 +7,13 @@
                                      tabs.css
                    )
 
+ if (BUILD_DOC and DOXYGEN_FOUND)
  add_custom_target ( documentation ALL
                         cd ${CRLCORE_SOURCE_DIR}/doc/crlcore
                      && ${DOXYGEN_EXECUTABLE} doxyfile
                      && cp -f ${doxExtras} html
                    )
+ endif()
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
            install ( DIRECTORY latex/               DESTINATION ${latexInstallDir} )

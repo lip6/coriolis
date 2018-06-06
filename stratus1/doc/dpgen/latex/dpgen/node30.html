@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>DpgenRom4</TITLE>
+<META NAME="description" CONTENT="DpgenRom4">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node31.html">
+<LINK REL="previous" HREF="node29.html">
+<LINK REL="up" HREF="dpgen.html">
+<LINK REL="next" HREF="node31.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node29.html">DpgenRom2</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="dpgen.html">Dpgen generators User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node31.html">DpgenRam</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION000300000000000000000">
+DpgenRom4</A>
+</H1>
+
+<UL>
+<LI><SPAN  CLASS="textbf">Name</SPAN> : DpgenRom4 - 4 words ROM Macro-Generator
+</LI>
+<LI><SPAN  CLASS="textbf">Synopsys</SPAN> :
+<PRE>
+Generate ( 'DpgenRom4', modelname
+         , param = { 'nbit'     : n
+                   , 'val0'     : constVal0
+                   , 'val1'     : constVal1
+                   , 'val2'     : constVal2
+                   , 'val3'     : constVal3
+                   , 'physical' : True                   
+                   }
+         )
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Description</SPAN> : Generates a <code>n</code> bits 4 words optimized ROM named <code>modelname</code>.
+</LI>
+<LI><SPAN  CLASS="textbf">Terminal Names</SPAN> :
+    
+<UL>
+<LI><SPAN  CLASS="textbf">sel1</SPAN> : upper bit of the address of the value (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">sel0</SPAN> : lower bit of the address of the value (input, 1 bit)
+</LI>
+<LI><SPAN  CLASS="textbf">q</SPAN> : the selected word (output, <code>n</code> bits)
+</LI>
+<LI><SPAN  CLASS="textbf">vdd</SPAN> : power
+</LI>
+<LI><SPAN  CLASS="textbf">vss</SPAN> : ground
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Parameters</SPAN> : Parameters are given in the map <code>param</code>.
+    
+<UL>
+<LI><SPAN  CLASS="textbf">nbit</SPAN> (mandatory) : Defines the size of the generator
+</LI>
+<LI><SPAN  CLASS="textbf">val0</SPAN> (mandatory) : Defines the first word
+</LI>
+<LI><SPAN  CLASS="textbf">val1</SPAN> (mandatory) : Defines the second word
+</LI>
+<LI><SPAN  CLASS="textbf">val2</SPAN> (mandatory) : Defines the third word
+</LI>
+<LI><SPAN  CLASS="textbf">val3</SPAN> (mandatory) : Defines the fourth word
+</LI>
+<LI><SPAN  CLASS="textbf">physical</SPAN> (optional, default value : False) : In order to generate a layout        
+    
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="textbf">Behavior</SPAN> :
+<PRE>
+q &lt;= WITH sel1 &amp; sel0 SELECT constVal0  WHEN B"00",
+                             constVal1  WHEN B"01",
+                             constVal2  WHEN B"10",
+                             constVal3  WHEN B"11";
+</PRE>
+</LI>
+<LI><SPAN  CLASS="textbf">Example</SPAN> :
+<PRE>
+from stratus import *
+
+class inst_rom4 ( Model ) :
+
+  def Interface ( self ) :
+    self.sel0 = SignalIn  (    "sel0", 1 )
+    self.sel1 = SignalIn  (    "sel1", 1 )
+    self.q    = SignalOut ( "dataout", 4 )
+    
+    self.vdd = VddIn ( "vdd" )
+    self.vss = VssIn ( "vss" )
+    
+  def Netlist ( self ) :
+    Generate ( 'DpgenRom4', 'rom4_0b1010_0b1100_0b1111_0b0001'
+             , param = { 'nbit'     : 4
+                       , 'val0'     : "0b1010"
+                       , 'val1'     : "0b1100"
+                       , 'val2'     : "0b1111"
+                       , 'val3'     : "0b0001"
+                       , 'physical' : True
+                       }
+             )      
+    self.I = Inst ( 'rom4_0b1010_0b1100_0b1111_0b0001', 'inst'
+                  , map = { 'sel0' : self.sel0
+                          , 'sel1' : self.sel1
+                          , 'q'    : self.q
+                          , 'vdd'  : self.vdd
+                          , 'vss'  : self.vss
+                          }
+                  )
+  
+  def Layout ( self ) :
+    Place ( self.I, NOSYM, Ref(0, 0) )
+</PRE>
+</LI>
+</UL>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

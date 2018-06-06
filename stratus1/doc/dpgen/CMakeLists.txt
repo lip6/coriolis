@@ -1,4 +1,5 @@
-
+                   set ( LATEX_OUTPUT_PATH          ${CMAKE_CURRENT_SOURCE_DIR}/latex )
+ if(BUILD_DOC)
                    set ( LATEX2HTML_CONVERTER_FLAGS "-html_version" "4.0,latin1,unicode"
                                                     "-style" "SoC.css"
                                                     "-init_file" "${CMAKE_CURRENT_SOURCE_DIR}/.latex2html-init"
@@ -43,19 +44,16 @@
                                           man_dpgenxnor2.tex
                                           man_dpgenxor2.tex
                                  )
+ endif()
 
                    set ( htmlInstallDir  share/doc/coriolis2/en/html/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/dpgen )
 
- latex_get_output_path ( output_dir )
 
+        make_directory ( "${LATEX_OUTPUT_PATH}/dpgen" )
+       execute_process ( COMMAND cp -r "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" "${LATEX_OUTPUT_PATH}/dpgen/SoC.css" )
 
-                 #file ( COPY "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" DESTINATION "${output_dir}/README" )
-        make_directory ( "${output_dir}/dpgen" )
-       execute_process ( COMMAND cp -r "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" "${output_dir}/dpgen" )
-
-               install ( FILES ${output_dir}/dpgen.tex
-                               ${output_dir}/dpgen.dvi
-                               ${output_dir}/dpgen.pdf
-                               DESTINATION ${latexInstallDir} )
-               install ( DIRECTORY ${output_dir}/dpgen DESTINATION ${htmlInstallDir} )
+               install ( FILES ${LATEX_OUTPUT_PATH}/dpgen.tex
+                               ${LATEX_OUTPUT_PATH}/dpgen.dvi
+                               ${LATEX_OUTPUT_PATH}/dpgen.pdf DESTINATION ${latexInstallDir} )
+               install ( DIRECTORY ${LATEX_OUTPUT_PATH}/dpgen DESTINATION ${htmlInstallDir} )

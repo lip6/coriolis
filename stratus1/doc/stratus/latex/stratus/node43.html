@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Comparison operations</TITLE>
+<META NAME="description" CONTENT="Comparison operations">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="previous" HREF="node42.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node44.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node42.html">Arithmetical operations</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node44.html">Virtual library</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html984"
+  HREF="node43.html#SECTION00078100000000000000">Name</A>
+<LI><A NAME="tex2html985"
+  HREF="node43.html#SECTION00078200000000000000">Synopsys</A>
+<LI><A NAME="tex2html986"
+  HREF="node43.html#SECTION00078300000000000000">Description</A>
+<LI><A NAME="tex2html987"
+  HREF="node43.html#SECTION00078400000000000000">Parameters</A>
+<LI><A NAME="tex2html988"
+  HREF="node43.html#SECTION00078500000000000000">Example</A>
+<LI><A NAME="tex2html989"
+  HREF="node43.html#SECTION00078600000000000000">Errors</A>
+<LI><A NAME="tex2html990"
+  HREF="node43.html#SECTION00078700000000000000">See Also</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H2><A NAME="SECTION00078000000000000000"></A>
+    <A NAME="seccomp"></A>
+<BR>
+Comparison operations
+</H2>
+    
+<H3><A NAME="SECTION00078100000000000000">
+Name</A>
+</H3>
+
+<P>
+Eq/Ne : Easy way to test the value of the nets
+
+<P>
+
+<H3><A NAME="SECTION00078200000000000000">
+Synopsys</A>
+</H3>
+
+<P>
+<PRE>
+netOut &lt;= net.Eq ( "n" )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00078300000000000000">
+Description</A>
+</H3>
+
+<P>
+Comparaison functions are listed below :
+
+<UL>
+<LI><code>Eq</code> : returns <code>true</code> if the value of the net is equal to <code>n</code>.
+</LI>
+<LI><code>Ne</code> : returns <code>true</code> if the value of the net is different from <code>n</code>.
+</LI>
+</UL>
+Note that it is possible to change the generator instanciated with the <code>SetComp</code> method.
+
+<P>
+
+<H3><A NAME="SECTION00078400000000000000">
+Parameters</A>
+</H3>
+
+<P>
+The constant given as argument must be a string representing :
+
+<UL>
+<LI>A decimal number
+</LI>
+<LI>A binary number : the string must begin with "0b"
+</LI>
+<LI>An hexadecimal number : the string must begin with "0x"
+</LI>
+</UL>    
+
+<P>
+
+<H3><A NAME="SECTION00078500000000000000">
+Example</A>
+</H3>
+
+<P>
+<PRE>
+class essai ( Model ) :
+
+  def Interface ( self ) :
+    self.A = SignalIn  ( "a", 4 )
+    
+    self.S = SignalOut ( "s", 1 )
+    self.T = SignalOut ( "t", 1 )
+
+    self.vdd = VddIn  ( "vdd" )
+    self.vss = VssIn  ( "vss" )
+	
+  def Netlist ( self ) :
+
+    self.S &lt;= self.A.Eq ( "4" )
+
+    self.T &lt;= self.A.Ne ( "1" )
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00078600000000000000">
+Errors</A>
+</H3>
+
+<P>
+Some errors may occur :
+
+<UL>
+<LI><code>[Stratus ERROR] Eq :</code>
+<BR><code>the number does not match with the net's lenght.</code>
+<BR>
+When one uses comparaison functions on one net, one has to check that the number corresponds to the size of the net.
+</LI>
+<LI><code>[Stratus ERROR] Eq :</code>
+<BR><code>the argument must be a string representing a number in decimal,</code>
+<BR><code>binary (0b) or hexa (0x).</code>
+<BR>
+The string given as argument does not have the right form.
+</LI>
+</UL>
+
+<P>
+
+<H3><A NAME="SECTION00078700000000000000">
+See Also</A>
+</H3>
+
+<P>
+<A HREF="node3.html#secintroduction"><SPAN  CLASS="textit">Introduction</SPAN></A>
+<A HREF="node6.html#secnetlist"><SPAN  CLASS="textit">Netlist</SPAN></A>
+<A HREF="node37.html#secmux"><SPAN  CLASS="textit">Instanciation of a multiplexor</SPAN></A>
+<A HREF="node38.html#secshift"><SPAN  CLASS="textit">Instanciation of a shifter</SPAN></A>
+<A HREF="node39.html#secreg"><SPAN  CLASS="textit">Instanciation of a register</SPAN></A>
+<A HREF="node40.html#secconstant"><SPAN  CLASS="textit">Instanciation of constants</SPAN></A>
+<A HREF="node41.html#secbool"><SPAN  CLASS="textit">Boolean operations</SPAN></A>
+<A HREF="node42.html#secarithmetic"><SPAN  CLASS="textit">Arithmetical operations</SPAN></A>
+
+<P>
+
+<P>
+
+<DIV CLASS="navigation">
+<p>
+<hr><table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node42.html">Arithmetical operations</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="node35.html">Instanciation facilities</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node44.html">Virtual library</A></td>
+
+</tr></table>
+<hr>
+
+</DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

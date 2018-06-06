@@ -18,9 +18,7 @@
  find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
- if(BUILD_DOC)
-   find_package(Doxygen)
- endif(BUILD_DOC)
+ find_package(Doxygen)
  
  ADD_SUBDIRECTORY(src)
  ADD_SUBDIRECTORY(cmake_modules)

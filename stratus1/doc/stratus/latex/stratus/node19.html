@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Description of the stimuli</TITLE>
+<META NAME="description" CONTENT="Description of the stimuli">
+<META NAME="keywords" CONTENT="stratus">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node20.html">
+<LINK REL="previous" HREF="node10.html">
+<LINK REL="up" HREF="stratus.html">
+<LINK REL="next" HREF="node20.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%"><B>Previous</B></td>
+<td class="navigation" align="center" width="34%"><B>Up</B></td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%"><A HREF="node18.html">ResizeAb</A></td>
+<td class="navigation" align="center" width="34%"><A HREF="stratus.html">Stratus User's Manual</A></td>
+<td class="navigation" align="right" width="33%"><A HREF="node20.html">Place and Route</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00050000000000000000"></A>
+<A NAME="secstimuli"></A>
+<BR>
+Description of the stimuli
+</H1>
+    The stimuli used for the simulation are described in a <code>Stimuli</code> method. This method is a Python function generator that is automatically called by the <code>Testbench</code> method to generate all the stimuli. As a Python function generator, the <code>yield</code> instruction have to be used at the end of each stimuli computation.
+
+<P>
+
+<H3><A NAME="SECTION00050100000000000000">
+Affect value to signals</A>
+</H3>
+The method <code>affect</code> permits to affect a value to a given signal as follow
+<PRE>
+self._stim.affect(self.Ck,0)
+</PRE>
+
+<P>
+
+<H3><A NAME="SECTION00050200000000000000">
+Add stimuli</A>
+</H3>
+The method <code>add</code> permits to finish a step of simulation by add all the values to the current stimuli
+<PRE>
+self._stim.add()
+</PRE>
+
+<P>
+<BR> <HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><UL>
+<LI><A NAME="tex2html449"
+  HREF="node19.html#SECTION00050100000000000000">Affect value to signals</A>
+<LI><A NAME="tex2html450"
+  HREF="node19.html#SECTION00050200000000000000">Add stimuli</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

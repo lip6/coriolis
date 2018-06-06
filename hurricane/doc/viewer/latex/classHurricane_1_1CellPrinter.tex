@@ -1,0 +1,136 @@
+\hypertarget{classHurricane_1_1CellPrinter}{}\section{Hurricane\+:\+:Cell\+Printer Class Reference}
+\label{classHurricane_1_1CellPrinter}\index{Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}}
+
+
+Widget to generate P\+DF file.  
+
+
+
+
+Inherits Q\+Main\+Window.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1CellPrinter_a9f0d00e4832cdecb1bd4bf494b4072db}{Cell\+Printer} (Q\+Widget $\ast$parent=N\+U\+LL)
+\item 
+virtual \hyperlink{classHurricane_1_1CellPrinter_a2675fd5ed2db15ea7fec703283ff1ad3}{$\sim$\+Cell\+Printer} ()
+\item 
+void \hyperlink{classHurricane_1_1CellPrinter_a7d5c8c373bf63a6f80ad5df0fbd5a702}{set\+Screen\+Cell\+Widget} (\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} $\ast$)
+\item 
+void \hyperlink{classHurricane_1_1CellPrinter_a27a285de4f74f07f78e16cc101f05ef7}{set\+Mode} (int mode)
+\item 
+void \hyperlink{classHurricane_1_1CellPrinter_ac595a0549c1086ab92a3bc56609246ac}{to\+Pdf} (Q\+Printer $\ast$, bool image\+Only=false)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Widget to generate P\+DF file. 
+
+\hypertarget{classHurricane_1_1CellPrinter_secPrinterBasicUsage}{}\subsection{Basic Usage}\label{classHurricane_1_1CellPrinter_secPrinterBasicUsage}
+\hyperlink{classHurricane_1_1CellPrinter}{Cell\+Printer} is a simple Qt Widget to write the contents of a \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} into a Q\+Printer. As it may uses lots of memory (due to the high-\/res bitmaps) it is advisable to delete it immediatly after usage. The same rendering engine is used to both display on screen and onto the printer so it is a \char`\"{}\+What You
+                   See Is What You Get\char`\"{} mode (except for the higher resolution). It optionaly adds a frame and a cartouche (on by default).
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{classHurricane_1_1CellImage}{Cell\+Image}.
+\end{DoxySeeAlso}
+It\textquotesingle{}s use is straigtforward, as shown in the example below. It consist of four steps\+: 
+\begin{DoxyEnumerate}
+\item Widget allocation. 
+\item Bind to a screen \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} (\hyperlink{classHurricane_1_1CellPrinter_a7d5c8c373bf63a6f80ad5df0fbd5a702}{Cell\+Printer\+::set\+Screen\+Cell\+Widget()}). 
+\item Draw into a Q\+Printer (\hyperlink{classHurricane_1_1CellPrinter_ac595a0549c1086ab92a3bc56609246ac}{Cell\+Printer\+::to\+Pdf()}). 
+\item Delete the widget. 
+\end{DoxyEnumerate}
+
+Code example (took from \hyperlink{classHurricane_1_1CellViewer}{Cell\+Viewer})\+: 
+\begin{DoxyCode}
+\textcolor{keywordtype}{void}  CellViewer::printDisplay ()
+\{
+  \textcolor{keywordflow}{if} (\_cellWidget == NULL) \textcolor{keywordflow}{return};
+  \textcolor{keywordflow}{if} (\_cellWidget->getCell() == NULL) \{
+    cerr << Warning(\textcolor{stringliteral}{"Unable to print, no cell loaded yet."}) << endl;
+    \textcolor{keywordflow}{return};
+  \}
+
+  QPrinter printer( QPrinter::ScreenResolution );
+  printer.setPaperSize
+    ( (QPrinter::PaperSize)Cfg::getParamEnumerate(\textcolor{stringliteral}{"viewer.printer.paper"},0)->asInt() );
+  printer.setOutputFileName ( \textcolor{stringliteral}{"unicorn-snapshot.pdf"} );
+
+  QPrintDialog  dialog ( &printer );
+  \textcolor{keywordflow}{if} ( dialog.exec() == QDialog::Accepted ) \{
+    \hyperlink{classHurricane_1_1CellPrinter_a9f0d00e4832cdecb1bd4bf494b4072db}{CellPrinter}* cellPrinter = \textcolor{keyword}{new} \hyperlink{classHurricane_1_1CellPrinter_a9f0d00e4832cdecb1bd4bf494b4072db}{CellPrinter}();
+
+    cellPrinter->setScreenCellWidget( \_cellWidget );
+    cellPrinter->toPdf              ( &printer, \textcolor{keyword}{false} );
+
+    \textcolor{keyword}{delete} cellPrinter;
+  \}
+\}
+\end{DoxyCode}
+
+
+\begin{DoxyParagraph}{Remark\+:}
+The generated P\+DF file are bitmaps, so they can grew very large if you uses paper above A2...
+\end{DoxyParagraph}
+\hypertarget{classHurricane_1_1CellPrinter_secPrinterConfiguration}{}\subsection{Configuration Variables}\label{classHurricane_1_1CellPrinter_secPrinterConfiguration}
+The \hyperlink{classHurricane_1_1CellPrinter}{Cell\+Printer} reads the following configuration variables for it\textquotesingle{}s defaults settings (they are located in {\ttfamily misc.\+conf}, for the system-\/wide settings). 
+\begin{DoxyItemize}
+\item {\ttfamily \char`\"{}viewer.\+printer.\+mode\char`\"{}}, select between the two resolution modes (\textbf{ Cell} or Design). 
+\item {\ttfamily \char`\"{}viewer.\+printer.\+paper\char`\"{}}, the output paper size, should be one value from the Q\+Printer\+::\+Paper\+Size enumeration. 
+\end{DoxyItemize}\hypertarget{classHurricane_1_1CellPrinter_secPrinterImplDetails}{}\subsection{Implementation details}\label{classHurricane_1_1CellPrinter_secPrinterImplDetails}
+This widget is build as a Q\+Main\+Window (top-\/level) one encapsulating only a \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget}. It is configured to never been shown thanks to the {\ttfamily Qt\+::\+W\+A\+\_\+\+Dont\+Show\+On\+Screen} attribute, but all the display computations still takes place as if it actually was.
+
+To obtain a sufficent resolution the Cell\+Printer/\+Cell\+Widget are resized to the resolution of the printed page. For a better look select a display style with patterns of 32x32 pixels, such as {\ttfamily \char`\"{}\+Printer.\+Coriolis\char`\"{}}. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHurricane_1_1CellPrinter_a9f0d00e4832cdecb1bd4bf494b4072db}\label{classHurricane_1_1CellPrinter_a9f0d00e4832cdecb1bd4bf494b4072db}} 
+\index{Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}!Cell\+Printer@{Cell\+Printer}}
+\index{Cell\+Printer@{Cell\+Printer}!Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}}
+\subsubsection{\texorpdfstring{Cell\+Printer()}{CellPrinter()}}
+{\footnotesize\ttfamily Hurricane\+::\+Cell\+Printer\+::\+Cell\+Printer (\begin{DoxyParamCaption}\item[{Q\+Widget $\ast$}]{parent = {\ttfamily NULL} }\end{DoxyParamCaption})}
+
+Construct a \hyperlink{classHurricane_1_1CellPrinter}{Cell\+Printer} window no screen \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} is actually bound. \mbox{\Hypertarget{classHurricane_1_1CellPrinter_a2675fd5ed2db15ea7fec703283ff1ad3}\label{classHurricane_1_1CellPrinter_a2675fd5ed2db15ea7fec703283ff1ad3}} 
+\index{Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}!````~Cell\+Printer@{$\sim$\+Cell\+Printer}}
+\index{````~Cell\+Printer@{$\sim$\+Cell\+Printer}!Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}}
+\subsubsection{\texorpdfstring{$\sim$\+Cell\+Printer()}{~CellPrinter()}}
+{\footnotesize\ttfamily Hurricane\+::\+Cell\+Printer\+::$\sim$\+Cell\+Printer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+Destructor. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1CellPrinter_a7d5c8c373bf63a6f80ad5df0fbd5a702}\label{classHurricane_1_1CellPrinter_a7d5c8c373bf63a6f80ad5df0fbd5a702}} 
+\index{Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}!set\+Screen\+Cell\+Widget@{set\+Screen\+Cell\+Widget}}
+\index{set\+Screen\+Cell\+Widget@{set\+Screen\+Cell\+Widget}!Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}}
+\subsubsection{\texorpdfstring{set\+Screen\+Cell\+Widget()}{setScreenCellWidget()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+Printer\+::set\+Screen\+Cell\+Widget (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} $\ast$}]{screen\+Cell\+Widget }\end{DoxyParamCaption})}
+
+Bind the \hyperlink{classHurricane_1_1CellPrinter}{Cell\+Printer} to the screen \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} {\ttfamily screen\+Cell\+Widget}. It is those contents that will be printed. \mbox{\Hypertarget{classHurricane_1_1CellPrinter_a27a285de4f74f07f78e16cc101f05ef7}\label{classHurricane_1_1CellPrinter_a27a285de4f74f07f78e16cc101f05ef7}} 
+\index{Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}!set\+Mode@{set\+Mode}}
+\index{set\+Mode@{set\+Mode}!Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}}
+\subsubsection{\texorpdfstring{set\+Mode()}{setMode()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+Printer\+::set\+Mode (\begin{DoxyParamCaption}\item[{int}]{mode }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Sets the display mode, that is the resolution that will be used. Two modes are availables\+: 
+\begin{DoxyItemize}
+\item \hyperlink{classHurricane_1_1CellWidget_a4b81fed78775d491c169b649870d9dd7af37fd1c10fd363f0ad04a94dbccd5789}{Cell\+Widget\+::\+Res\+\_\+\+Cell\+Mode}\+: (approx. 150 dpi), best suited for displaying lone \textbf{ Cell} or very small scale designs. 
+\item \hyperlink{classHurricane_1_1CellWidget_a4b81fed78775d491c169b649870d9dd7a0c7c9bd939930fe178b5b8bcd84bdc1e}{Cell\+Widget\+::\+Res\+\_\+\+Design\+Mode}\+: (approx. 300 dpi), for full fledged designs. 
+\end{DoxyItemize}\mbox{\Hypertarget{classHurricane_1_1CellPrinter_ac595a0549c1086ab92a3bc56609246ac}\label{classHurricane_1_1CellPrinter_ac595a0549c1086ab92a3bc56609246ac}} 
+\index{Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}!to\+Pdf@{to\+Pdf}}
+\index{to\+Pdf@{to\+Pdf}!Hurricane\+::\+Cell\+Printer@{Hurricane\+::\+Cell\+Printer}}
+\subsubsection{\texorpdfstring{to\+Pdf()}{toPdf()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+Printer\+::to\+Pdf (\begin{DoxyParamCaption}\item[{Q\+Printer $\ast$}]{printer,  }\item[{bool}]{image\+Only = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em printer} & The Q\+Printer to draw into. \\
+\hline
+{\em image\+Only} & Whether to add the frame \& cartouche or not.\\
+\hline
+\end{DoxyParams}
+Perform the drawing operation on the Q\+Printer. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Cell\+Printer.\+h\item 
+Cell\+Printer.\+dox\end{DoxyCompactItemize}

@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2012 (1.2)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Dpgen generators User's Manual</TITLE>
+<META NAME="description" CONTENT="Dpgen generators User's Manual">
+<META NAME="keywords" CONTENT="dpgen">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2012">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="SoC.css">
+
+<LINK REL="next" HREF="node1.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation">
+<table align="center" width="100%" cellpadding="0" cellspacing="2">
+<tr><td class="navigation" align="left" width="33%">&nbsp;</td>
+<td class="navigation" align="center" width="34%">&nbsp;</td>
+<td class="navigation" align="right" width="33%"><B>Next</B></td>
+
+</tr><tr>
+<td class="navigation" align="left" width="33%">&nbsp;</td>
+<td class="navigation" align="center" width="34%">&nbsp;</td>
+<td class="navigation" align="right" width="33%"><A HREF="node1.html">DpgenInv</A></td>
+
+</tr></table>
+<hr>
+<br>
+</DIV>
+<!--End of Navigation Panel-->
+
+<P>
+ 
+<H1 ALIGN="CENTER">Dpgen generators User's Manual</H1>
+<DIV CLASS="author_info">
+
+<P ALIGN="CENTER"><STRONG>Sophie Belloeil</STRONG></P>
+</DIV>
+
+<P>
+<BR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html3"
+  HREF="node1.html">DpgenInv</A>
+<LI><A NAME="tex2html4"
+  HREF="node2.html">DpgenBuff</A>
+<LI><A NAME="tex2html5"
+  HREF="node3.html">DpgenNand2</A>
+<LI><A NAME="tex2html6"
+  HREF="node4.html">DpgenNand3</A>
+<LI><A NAME="tex2html7"
+  HREF="node5.html">Dpgennand4</A>
+<LI><A NAME="tex2html8"
+  HREF="node6.html">DpgenAnd2</A>
+<LI><A NAME="tex2html9"
+  HREF="node7.html">DpgenAnd3</A>
+<LI><A NAME="tex2html10"
+  HREF="node8.html">DpgenAnd4</A>
+<LI><A NAME="tex2html11"
+  HREF="node9.html">DpgenNor2</A>
+<LI><A NAME="tex2html12"
+  HREF="node10.html">DpgenNor3</A>
+<LI><A NAME="tex2html13"
+  HREF="node11.html">DpgenNor4</A>
+<LI><A NAME="tex2html14"
+  HREF="node12.html">DpgenOr2</A>
+<LI><A NAME="tex2html15"
+  HREF="node13.html">DpgenOr3</A>
+<LI><A NAME="tex2html16"
+  HREF="node14.html">DpgenOr4</A>
+<LI><A NAME="tex2html17"
+  HREF="node15.html">DpgenXor2</A>
+<LI><A NAME="tex2html18"
+  HREF="node16.html">DpgenXnor2</A>
+<LI><A NAME="tex2html19"
+  HREF="node17.html">DpgenNmux2</A>
+<LI><A NAME="tex2html20"
+  HREF="node18.html">DpgenMux2</A>
+<LI><A NAME="tex2html21"
+  HREF="node19.html">DpgenNbuse</A>
+<LI><A NAME="tex2html22"
+  HREF="node20.html">DpgenBuse</A>
+<LI><A NAME="tex2html23"
+  HREF="node21.html">DpgenNand2mask</A>
+<LI><A NAME="tex2html24"
+  HREF="node22.html">DpgenNor2mask</A>
+<LI><A NAME="tex2html25"
+  HREF="node23.html">DpgenXnor2mask</A>
+<LI><A NAME="tex2html26"
+  HREF="node24.html">DpgenAdsb2f</A>
+<LI><A NAME="tex2html27"
+  HREF="node25.html">DpgenShift</A>
+<LI><A NAME="tex2html28"
+  HREF="node26.html">DpgenShrot</A>
+<LI><A NAME="tex2html29"
+  HREF="node27.html">DpgenNul</A>
+<LI><A NAME="tex2html30"
+  HREF="node28.html">DpgenConst</A>
+<LI><A NAME="tex2html31"
+  HREF="node29.html">DpgenRom2</A>
+<LI><A NAME="tex2html32"
+  HREF="node30.html">DpgenRom4</A>
+<LI><A NAME="tex2html33"
+  HREF="node31.html">DpgenRam</A>
+<LI><A NAME="tex2html34"
+  HREF="node32.html">DpgenRf1</A>
+<LI><A NAME="tex2html35"
+  HREF="node33.html">DpgenRf1d</A>
+<LI><A NAME="tex2html36"
+  HREF="node34.html">DpgenFifo</A>
+<LI><A NAME="tex2html37"
+  HREF="node35.html">DpgenDff</A>
+<LI><A NAME="tex2html38"
+  HREF="node36.html">DpgenDfft</A>
+<LI><A NAME="tex2html39"
+  HREF="node37.html">DpgenSff</A>
+<LI><A NAME="tex2html40"
+  HREF="node38.html">DpgenSfft</A>
+<LI><A NAME="tex2html41"
+  HREF="node39.html">About this document ...</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR CLEAR="ALL">
+<HR>
+<P>
+<BR> <HR>
+<ADDRESS>
+Sophie B<small>ELLOEIL</small><br>20051116.1
+</ADDRESS>
+</BODY>
+</HTML>

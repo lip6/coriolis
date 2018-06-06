@@ -26,6 +26,7 @@
  find_package(KNIK REQUIRED)
  find_package(KATABATIC REQUIRED)
  find_package(Libexecinfo REQUIRED)
+ find_package(Doxygen)
  
  if(CHECK_DATABASE)
    add_definitions(-DCHECK_DATABASE)
@@ -37,10 +38,4 @@
  add_subdirectory(src)
  add_subdirectory(python)
  add_subdirectory(cmake_modules)
-
- if(BUILD_DOC)
-   find_package(Doxygen)
-   if(DOXYGEN_FOUND)
-     add_subdirectory(doc)
-   endif()
- endif()
+ add_subdirectory(doc)

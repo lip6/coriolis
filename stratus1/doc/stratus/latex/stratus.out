@@ -1,0 +1,253 @@
+\BOOKMARK [1][-]{section.1}{What's new}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{march 2012}{section.1}% 2
+\BOOKMARK [1][-]{section.2}{Introduction}{}% 3
+\BOOKMARK [2][-]{subsection.2.1}{Stratus}{section.2}% 4
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Name}{subsection.2.1}% 5
+\BOOKMARK [3][-]{subsubsection.2.1.2}{Description}{subsection.2.1}% 6
+\BOOKMARK [3][-]{subsubsection.2.1.3}{Configuration}{subsection.2.1}% 7
+\BOOKMARK [3][-]{subsubsection.2.1.4}{Description of a cell}{subsection.2.1}% 8
+\BOOKMARK [3][-]{subsubsection.2.1.5}{Creation of the cell}{subsection.2.1}% 9
+\BOOKMARK [3][-]{subsubsection.2.1.6}{Syntax}{subsection.2.1}% 10
+\BOOKMARK [3][-]{subsubsection.2.1.7}{Syntax highlighting}{subsection.2.1}% 11
+\BOOKMARK [2][-]{subsection.2.2}{Example}{section.2}% 12
+\BOOKMARK [3][-]{subsubsection.2.2.1}{The addaccu circuit}{subsection.2.2}% 13
+\BOOKMARK [3][-]{subsubsection.2.2.2}{The data-path}{subsection.2.2}% 14
+\BOOKMARK [3][-]{subsubsection.2.2.3}{Description of the circuit with Stratus : file addaccu.py}{subsection.2.2}% 15
+\BOOKMARK [3][-]{subsubsection.2.2.4}{Creation of the circuit : file test.py}{subsection.2.2}% 16
+\BOOKMARK [3][-]{subsubsection.2.2.5}{How to execute the file}{subsection.2.2}% 17
+\BOOKMARK [3][-]{subsubsection.2.2.6}{The editor}{subsection.2.2}% 18
+\BOOKMARK [3][-]{subsubsection.2.2.7}{Function Param}{subsection.2.2}% 19
+\BOOKMARK [3][-]{subsubsection.2.2.8}{How to instanciate your generator in another generator}{subsection.2.2}% 20
+\BOOKMARK [1][-]{section.3}{Description of a netlist}{}% 21
+\BOOKMARK [2][-]{subsection.3.1}{Nets}{section.3}% 22
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Name}{subsection.3.1}% 23
+\BOOKMARK [3][-]{subsubsection.3.1.2}{Synopsys}{subsection.3.1}% 24
+\BOOKMARK [3][-]{subsubsection.3.1.3}{Description}{subsection.3.1}% 25
+\BOOKMARK [3][-]{subsubsection.3.1.4}{Nets}{subsection.3.1}% 26
+\BOOKMARK [3][-]{subsubsection.3.1.5}{Parameters}{subsection.3.1}% 27
+\BOOKMARK [3][-]{subsubsection.3.1.6}{Functions and methods}{subsection.3.1}% 28
+\BOOKMARK [3][-]{subsubsection.3.1.7}{Errors}{subsection.3.1}% 29
+\BOOKMARK [2][-]{subsection.3.2}{Instances}{section.3}% 30
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Name}{subsection.3.2}% 31
+\BOOKMARK [3][-]{subsubsection.3.2.2}{Synopsys}{subsection.3.2}% 32
+\BOOKMARK [3][-]{subsubsection.3.2.3}{Description}{subsection.3.2}% 33
+\BOOKMARK [3][-]{subsubsection.3.2.4}{Parameters}{subsection.3.2}% 34
+\BOOKMARK [3][-]{subsubsection.3.2.5}{Example}{subsection.3.2}% 35
+\BOOKMARK [3][-]{subsubsection.3.2.6}{Errors}{subsection.3.2}% 36
+\BOOKMARK [2][-]{subsection.3.3}{Generators}{section.3}% 37
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Name}{subsection.3.3}% 38
+\BOOKMARK [3][-]{subsubsection.3.3.2}{Synopsys}{subsection.3.3}% 39
+\BOOKMARK [3][-]{subsubsection.3.3.3}{Description}{subsection.3.3}% 40
+\BOOKMARK [3][-]{subsubsection.3.3.4}{Arguments}{subsection.3.3}% 41
+\BOOKMARK [3][-]{subsubsection.3.3.5}{Parameters}{subsection.3.3}% 42
+\BOOKMARK [3][-]{subsubsection.3.3.6}{Errors}{subsection.3.3}% 43
+\BOOKMARK [1][-]{section.4}{Description of a layout}{}% 44
+\BOOKMARK [2][-]{subsection.4.1}{Place}{section.4}% 45
+\BOOKMARK [3][-]{subsubsection.4.1.1}{Name}{subsection.4.1}% 46
+\BOOKMARK [3][-]{subsubsection.4.1.2}{Synopsys}{subsection.4.1}% 47
+\BOOKMARK [3][-]{subsubsection.4.1.3}{Description}{subsection.4.1}% 48
+\BOOKMARK [3][-]{subsubsection.4.1.4}{Parameters}{subsection.4.1}% 49
+\BOOKMARK [3][-]{subsubsection.4.1.5}{Example}{subsection.4.1}% 50
+\BOOKMARK [3][-]{subsubsection.4.1.6}{Errors}{subsection.4.1}% 51
+\BOOKMARK [2][-]{subsection.4.2}{PlaceTop}{section.4}% 52
+\BOOKMARK [3][-]{subsubsection.4.2.1}{Name}{subsection.4.2}% 53
+\BOOKMARK [3][-]{subsubsection.4.2.2}{Synopsys}{subsection.4.2}% 54
+\BOOKMARK [3][-]{subsubsection.4.2.3}{Description}{subsection.4.2}% 55
+\BOOKMARK [3][-]{subsubsection.4.2.4}{Parameters}{subsection.4.2}% 56
+\BOOKMARK [3][-]{subsubsection.4.2.5}{Example}{subsection.4.2}% 57
+\BOOKMARK [3][-]{subsubsection.4.2.6}{Errors}{subsection.4.2}% 58
+\BOOKMARK [2][-]{subsection.4.3}{PlaceBottom}{section.4}% 59
+\BOOKMARK [3][-]{subsubsection.4.3.1}{Name}{subsection.4.3}% 60
+\BOOKMARK [3][-]{subsubsection.4.3.2}{Synopsys}{subsection.4.3}% 61
+\BOOKMARK [3][-]{subsubsection.4.3.3}{Description}{subsection.4.3}% 62
+\BOOKMARK [3][-]{subsubsection.4.3.4}{Parameters}{subsection.4.3}% 63
+\BOOKMARK [3][-]{subsubsection.4.3.5}{Example}{subsection.4.3}% 64
+\BOOKMARK [3][-]{subsubsection.4.3.6}{Errors}{subsection.4.3}% 65
+\BOOKMARK [2][-]{subsection.4.4}{PlaceRight}{section.4}% 66
+\BOOKMARK [3][-]{subsubsection.4.4.1}{Name}{subsection.4.4}% 67
+\BOOKMARK [3][-]{subsubsection.4.4.2}{Synopsys}{subsection.4.4}% 68
+\BOOKMARK [3][-]{subsubsection.4.4.3}{Description}{subsection.4.4}% 69
+\BOOKMARK [3][-]{subsubsection.4.4.4}{Parameters}{subsection.4.4}% 70
+\BOOKMARK [3][-]{subsubsection.4.4.5}{Example}{subsection.4.4}% 71
+\BOOKMARK [3][-]{subsubsection.4.4.6}{Errors}{subsection.4.4}% 72
+\BOOKMARK [2][-]{subsection.4.5}{PlaceLeft}{section.4}% 73
+\BOOKMARK [3][-]{subsubsection.4.5.1}{Name}{subsection.4.5}% 74
+\BOOKMARK [3][-]{subsubsection.4.5.2}{Synopsys}{subsection.4.5}% 75
+\BOOKMARK [3][-]{subsubsection.4.5.3}{Description}{subsection.4.5}% 76
+\BOOKMARK [3][-]{subsubsection.4.5.4}{Parameters}{subsection.4.5}% 77
+\BOOKMARK [3][-]{subsubsection.4.5.5}{Example}{subsection.4.5}% 78
+\BOOKMARK [3][-]{subsubsection.4.5.6}{Errors}{subsection.4.5}% 79
+\BOOKMARK [2][-]{subsection.4.6}{SetRefIns}{section.4}% 80
+\BOOKMARK [3][-]{subsubsection.4.6.1}{Name}{subsection.4.6}% 81
+\BOOKMARK [3][-]{subsubsection.4.6.2}{Synopsys}{subsection.4.6}% 82
+\BOOKMARK [3][-]{subsubsection.4.6.3}{Description}{subsection.4.6}% 83
+\BOOKMARK [3][-]{subsubsection.4.6.4}{Parameters}{subsection.4.6}% 84
+\BOOKMARK [3][-]{subsubsection.4.6.5}{Example}{subsection.4.6}% 85
+\BOOKMARK [3][-]{subsubsection.4.6.6}{Errors}{subsection.4.6}% 86
+\BOOKMARK [2][-]{subsection.4.7}{DefAb}{section.4}% 87
+\BOOKMARK [3][-]{subsubsection.4.7.1}{Name}{subsection.4.7}% 88
+\BOOKMARK [3][-]{subsubsection.4.7.2}{Synopsys}{subsection.4.7}% 89
+\BOOKMARK [3][-]{subsubsection.4.7.3}{Description}{subsection.4.7}% 90
+\BOOKMARK [3][-]{subsubsection.4.7.4}{Parameters}{subsection.4.7}% 91
+\BOOKMARK [3][-]{subsubsection.4.7.5}{Example}{subsection.4.7}% 92
+\BOOKMARK [3][-]{subsubsection.4.7.6}{Errors}{subsection.4.7}% 93
+\BOOKMARK [2][-]{subsection.4.8}{ResizeAb}{section.4}% 94
+\BOOKMARK [3][-]{subsubsection.4.8.1}{Name}{subsection.4.8}% 95
+\BOOKMARK [3][-]{subsubsection.4.8.2}{Synopsys}{subsection.4.8}% 96
+\BOOKMARK [3][-]{subsubsection.4.8.3}{Description}{subsection.4.8}% 97
+\BOOKMARK [3][-]{subsubsection.4.8.4}{Parameters}{subsection.4.8}% 98
+\BOOKMARK [3][-]{subsubsection.4.8.5}{Example}{subsection.4.8}% 99
+\BOOKMARK [3][-]{subsubsection.4.8.6}{Errors}{subsection.4.8}% 100
+\BOOKMARK [1][-]{section.5}{Description of the stimuli}{}% 101
+\BOOKMARK [2][-]{subsubsection.5.0.1}{Affect value to signals}{section.5}% 102
+\BOOKMARK [3][-]{subsubsection.5.0.2}{Add stimuli}{subsubsection.5.0.1}% 103
+\BOOKMARK [1][-]{section.6}{Place and Route}{}% 104
+\BOOKMARK [2][-]{subsection.6.1}{PlaceSegment}{section.6}% 105
+\BOOKMARK [3][-]{subsubsection.6.1.1}{Name}{subsection.6.1}% 106
+\BOOKMARK [3][-]{subsubsection.6.1.2}{Synopsys}{subsection.6.1}% 107
+\BOOKMARK [3][-]{subsubsection.6.1.3}{Description}{subsection.6.1}% 108
+\BOOKMARK [3][-]{subsubsection.6.1.4}{Parameters}{subsection.6.1}% 109
+\BOOKMARK [3][-]{subsubsection.6.1.5}{Example}{subsection.6.1}% 110
+\BOOKMARK [3][-]{subsubsection.6.1.6}{Errors}{subsection.6.1}% 111
+\BOOKMARK [2][-]{subsection.6.2}{PlaceContact}{section.6}% 112
+\BOOKMARK [3][-]{subsubsection.6.2.1}{Name}{subsection.6.2}% 113
+\BOOKMARK [3][-]{subsubsection.6.2.2}{Synopsys}{subsection.6.2}% 114
+\BOOKMARK [3][-]{subsubsection.6.2.3}{Description}{subsection.6.2}% 115
+\BOOKMARK [3][-]{subsubsection.6.2.4}{Parameters}{subsection.6.2}% 116
+\BOOKMARK [3][-]{subsubsection.6.2.5}{Example}{subsection.6.2}% 117
+\BOOKMARK [3][-]{subsubsection.6.2.6}{Errors}{subsection.6.2}% 118
+\BOOKMARK [2][-]{subsection.6.3}{PlacePin}{section.6}% 119
+\BOOKMARK [3][-]{subsubsection.6.3.1}{Name}{subsection.6.3}% 120
+\BOOKMARK [3][-]{subsubsection.6.3.2}{Synopsys}{subsection.6.3}% 121
+\BOOKMARK [3][-]{subsubsection.6.3.3}{Description}{subsection.6.3}% 122
+\BOOKMARK [3][-]{subsubsection.6.3.4}{Parameters}{subsection.6.3}% 123
+\BOOKMARK [3][-]{subsubsection.6.3.5}{Example}{subsection.6.3}% 124
+\BOOKMARK [3][-]{subsubsection.6.3.6}{Errors}{subsection.6.3}% 125
+\BOOKMARK [2][-]{subsection.6.4}{PlaceRef}{section.6}% 126
+\BOOKMARK [3][-]{subsubsection.6.4.1}{Name}{subsection.6.4}% 127
+\BOOKMARK [3][-]{subsubsection.6.4.2}{Synopsys}{subsection.6.4}% 128
+\BOOKMARK [3][-]{subsubsection.6.4.3}{Description}{subsection.6.4}% 129
+\BOOKMARK [3][-]{subsubsection.6.4.4}{Parameters}{subsection.6.4}% 130
+\BOOKMARK [3][-]{subsubsection.6.4.5}{Example}{subsection.6.4}% 131
+\BOOKMARK [3][-]{subsubsection.6.4.6}{Errors}{subsection.6.4}% 132
+\BOOKMARK [2][-]{subsection.6.5}{GetRefXY}{section.6}% 133
+\BOOKMARK [3][-]{subsubsection.6.5.1}{Name}{subsection.6.5}% 134
+\BOOKMARK [3][-]{subsubsection.6.5.2}{Synopsys}{subsection.6.5}% 135
+\BOOKMARK [3][-]{subsubsection.6.5.3}{Description}{subsection.6.5}% 136
+\BOOKMARK [3][-]{subsubsection.6.5.4}{Parameters}{subsection.6.5}% 137
+\BOOKMARK [3][-]{subsubsection.6.5.5}{Example}{subsection.6.5}% 138
+\BOOKMARK [3][-]{subsubsection.6.5.6}{Errors}{subsection.6.5}% 139
+\BOOKMARK [2][-]{subsection.6.6}{CopyUpSegment}{section.6}% 140
+\BOOKMARK [3][-]{subsubsection.6.6.1}{Name}{subsection.6.6}% 141
+\BOOKMARK [3][-]{subsubsection.6.6.2}{Synopsys}{subsection.6.6}% 142
+\BOOKMARK [3][-]{subsubsection.6.6.3}{Description}{subsection.6.6}% 143
+\BOOKMARK [3][-]{subsubsection.6.6.4}{Parameters}{subsection.6.6}% 144
+\BOOKMARK [3][-]{subsubsection.6.6.5}{Example}{subsection.6.6}% 145
+\BOOKMARK [3][-]{subsubsection.6.6.6}{Errors}{subsection.6.6}% 146
+\BOOKMARK [2][-]{subsection.6.7}{PlaceCentric}{section.6}% 147
+\BOOKMARK [3][-]{subsubsection.6.7.1}{Name}{subsection.6.7}% 148
+\BOOKMARK [3][-]{subsubsection.6.7.2}{Synopsys}{subsection.6.7}% 149
+\BOOKMARK [3][-]{subsubsection.6.7.3}{Description}{subsection.6.7}% 150
+\BOOKMARK [3][-]{subsubsection.6.7.4}{Parameters}{subsection.6.7}% 151
+\BOOKMARK [3][-]{subsubsection.6.7.5}{Errors}{subsection.6.7}% 152
+\BOOKMARK [2][-]{subsection.6.8}{PlaceGlu}{section.6}% 153
+\BOOKMARK [3][-]{subsubsection.6.8.1}{Name}{subsection.6.8}% 154
+\BOOKMARK [3][-]{subsubsection.6.8.2}{Synopsys}{subsection.6.8}% 155
+\BOOKMARK [3][-]{subsubsection.6.8.3}{Description}{subsection.6.8}% 156
+\BOOKMARK [3][-]{subsubsection.6.8.4}{Parameters}{subsection.6.8}% 157
+\BOOKMARK [2][-]{subsection.6.9}{FillCell}{section.6}% 158
+\BOOKMARK [3][-]{subsubsection.6.9.1}{Name}{subsection.6.9}% 159
+\BOOKMARK [3][-]{subsubsection.6.9.2}{Synopsys}{subsection.6.9}% 160
+\BOOKMARK [3][-]{subsubsection.6.9.3}{Description}{subsection.6.9}% 161
+\BOOKMARK [3][-]{subsubsection.6.9.4}{Parameters}{subsection.6.9}% 162
+\BOOKMARK [3][-]{subsubsection.6.9.5}{Errors}{subsection.6.9}% 163
+\BOOKMARK [2][-]{subsection.6.10}{Pads}{section.6}% 164
+\BOOKMARK [3][-]{subsubsection.6.10.1}{Name}{subsection.6.10}% 165
+\BOOKMARK [3][-]{subsubsection.6.10.2}{Synopsys}{subsection.6.10}% 166
+\BOOKMARK [3][-]{subsubsection.6.10.3}{Description}{subsection.6.10}% 167
+\BOOKMARK [3][-]{subsubsection.6.10.4}{Parameters}{subsection.6.10}% 168
+\BOOKMARK [3][-]{subsubsection.6.10.5}{Example}{subsection.6.10}% 169
+\BOOKMARK [3][-]{subsubsection.6.10.6}{Errors}{subsection.6.10}% 170
+\BOOKMARK [2][-]{subsection.6.11}{Alimentation rails}{section.6}% 171
+\BOOKMARK [3][-]{subsubsection.6.11.1}{Name}{subsection.6.11}% 172
+\BOOKMARK [3][-]{subsubsection.6.11.2}{Synopsys}{subsection.6.11}% 173
+\BOOKMARK [3][-]{subsubsection.6.11.3}{Description}{subsection.6.11}% 174
+\BOOKMARK [3][-]{subsubsection.6.11.4}{Parameters}{subsection.6.11}% 175
+\BOOKMARK [3][-]{subsubsection.6.11.5}{Example}{subsection.6.11}% 176
+\BOOKMARK [3][-]{subsubsection.6.11.6}{Errors}{subsection.6.11}% 177
+\BOOKMARK [2][-]{subsection.6.12}{Alimentation connectors}{section.6}% 178
+\BOOKMARK [3][-]{subsubsection.6.12.1}{Name}{subsection.6.12}% 179
+\BOOKMARK [3][-]{subsubsection.6.12.2}{Synopsys}{subsection.6.12}% 180
+\BOOKMARK [3][-]{subsubsection.6.12.3}{Description}{subsection.6.12}% 181
+\BOOKMARK [2][-]{subsection.6.13}{PowerRing}{section.6}% 182
+\BOOKMARK [3][-]{subsubsection.6.13.1}{Name}{subsection.6.13}% 183
+\BOOKMARK [3][-]{subsubsection.6.13.2}{Synopsys}{subsection.6.13}% 184
+\BOOKMARK [3][-]{subsubsection.6.13.3}{Description}{subsection.6.13}% 185
+\BOOKMARK [3][-]{subsubsection.6.13.4}{Parameters}{subsection.6.13}% 186
+\BOOKMARK [3][-]{subsubsection.6.13.5}{Example}{subsection.6.13}% 187
+\BOOKMARK [3][-]{subsubsection.6.13.6}{Errors}{subsection.6.13}% 188
+\BOOKMARK [2][-]{subsection.6.14}{RouteCk}{section.6}% 189
+\BOOKMARK [3][-]{subsubsection.6.14.1}{Name}{subsection.6.14}% 190
+\BOOKMARK [3][-]{subsubsection.6.14.2}{Synopsys}{subsection.6.14}% 191
+\BOOKMARK [3][-]{subsubsection.6.14.3}{Description}{subsection.6.14}% 192
+\BOOKMARK [3][-]{subsubsection.6.14.4}{Parameters}{subsection.6.14}% 193
+\BOOKMARK [3][-]{subsubsection.6.14.5}{Errors}{subsection.6.14}% 194
+\BOOKMARK [1][-]{section.7}{Instanciation facilities}{}% 195
+\BOOKMARK [2][-]{subsection.7.1}{Buffer}{section.7}% 196
+\BOOKMARK [3][-]{subsubsection.7.1.1}{Name}{subsection.7.1}% 197
+\BOOKMARK [3][-]{subsubsection.7.1.2}{Synopsys}{subsection.7.1}% 198
+\BOOKMARK [3][-]{subsubsection.7.1.3}{Description}{subsection.7.1}% 199
+\BOOKMARK [3][-]{subsubsection.7.1.4}{Example}{subsection.7.1}% 200
+\BOOKMARK [2][-]{subsection.7.2}{Multiplexor}{section.7}% 201
+\BOOKMARK [3][-]{subsubsection.7.2.1}{Name}{subsection.7.2}% 202
+\BOOKMARK [3][-]{subsubsection.7.2.2}{Synopsys}{subsection.7.2}% 203
+\BOOKMARK [3][-]{subsubsection.7.2.3}{Description}{subsection.7.2}% 204
+\BOOKMARK [3][-]{subsubsection.7.2.4}{Parameters}{subsection.7.2}% 205
+\BOOKMARK [3][-]{subsubsection.7.2.5}{Example}{subsection.7.2}% 206
+\BOOKMARK [3][-]{subsubsection.7.2.6}{Errors}{subsection.7.2}% 207
+\BOOKMARK [2][-]{subsection.7.3}{Shifter}{section.7}% 208
+\BOOKMARK [3][-]{subsubsection.7.3.1}{Name}{subsection.7.3}% 209
+\BOOKMARK [3][-]{subsubsection.7.3.2}{Synopsys}{subsection.7.3}% 210
+\BOOKMARK [3][-]{subsubsection.7.3.3}{Description}{subsection.7.3}% 211
+\BOOKMARK [3][-]{subsubsection.7.3.4}{Parameters}{subsection.7.3}% 212
+\BOOKMARK [3][-]{subsubsection.7.3.5}{Example}{subsection.7.3}% 213
+\BOOKMARK [3][-]{subsubsection.7.3.6}{Errors}{subsection.7.3}% 214
+\BOOKMARK [2][-]{subsection.7.4}{Register}{section.7}% 215
+\BOOKMARK [3][-]{subsubsection.7.4.1}{Name}{subsection.7.4}% 216
+\BOOKMARK [3][-]{subsubsection.7.4.2}{Synopsys}{subsection.7.4}% 217
+\BOOKMARK [3][-]{subsubsection.7.4.3}{Description}{subsection.7.4}% 218
+\BOOKMARK [3][-]{subsubsection.7.4.4}{Example}{subsection.7.4}% 219
+\BOOKMARK [3][-]{subsubsection.7.4.5}{Errors}{subsection.7.4}% 220
+\BOOKMARK [2][-]{subsection.7.5}{Constants}{section.7}% 221
+\BOOKMARK [3][-]{subsubsection.7.5.1}{Name}{subsection.7.5}% 222
+\BOOKMARK [3][-]{subsubsection.7.5.2}{Synopsys}{subsection.7.5}% 223
+\BOOKMARK [3][-]{subsubsection.7.5.3}{Description}{subsection.7.5}% 224
+\BOOKMARK [3][-]{subsubsection.7.5.4}{Parameters}{subsection.7.5}% 225
+\BOOKMARK [3][-]{subsubsection.7.5.5}{Example}{subsection.7.5}% 226
+\BOOKMARK [3][-]{subsubsection.7.5.6}{Errors}{subsection.7.5}% 227
+\BOOKMARK [2][-]{subsection.7.6}{Boolean operations}{section.7}% 228
+\BOOKMARK [3][-]{subsubsection.7.6.1}{Description}{subsection.7.6}% 229
+\BOOKMARK [3][-]{subsubsection.7.6.2}{List}{subsection.7.6}% 230
+\BOOKMARK [3][-]{subsubsection.7.6.3}{Generators to instantiate}{subsection.7.6}% 231
+\BOOKMARK [3][-]{subsubsection.7.6.4}{Example}{subsection.7.6}% 232
+\BOOKMARK [3][-]{subsubsection.7.6.5}{Errors}{subsection.7.6}% 233
+\BOOKMARK [2][-]{subsection.7.7}{Arithmetical operations}{section.7}% 234
+\BOOKMARK [3][-]{subsubsection.7.7.1}{Description}{subsection.7.7}% 235
+\BOOKMARK [3][-]{subsubsection.7.7.2}{List}{subsection.7.7}% 236
+\BOOKMARK [3][-]{subsubsection.7.7.3}{Generators to instantiate}{subsection.7.7}% 237
+\BOOKMARK [3][-]{subsubsection.7.7.4}{Example}{subsection.7.7}% 238
+\BOOKMARK [3][-]{subsubsection.7.7.5}{Errors}{subsection.7.7}% 239
+\BOOKMARK [2][-]{subsection.7.8}{Comparison operations}{section.7}% 240
+\BOOKMARK [3][-]{subsubsection.7.8.1}{Name}{subsection.7.8}% 241
+\BOOKMARK [3][-]{subsubsection.7.8.2}{Synopsys}{subsection.7.8}% 242
+\BOOKMARK [3][-]{subsubsection.7.8.3}{Description}{subsection.7.8}% 243
+\BOOKMARK [3][-]{subsubsection.7.8.4}{Parameters}{subsection.7.8}% 244
+\BOOKMARK [3][-]{subsubsection.7.8.5}{Example}{subsection.7.8}% 245
+\BOOKMARK [3][-]{subsubsection.7.8.6}{Errors}{subsection.7.8}% 246
+\BOOKMARK [1][-]{section.8}{Virtual library}{}% 247
+\BOOKMARK [2][-]{subsubsection.8.0.1}{Description}{section.8}% 248
+\BOOKMARK [3][-]{subsubsection.8.0.2}{List of the generators provided}{subsubsection.8.0.1}% 249
+\BOOKMARK [3][-]{subsubsection.8.0.3}{Mapping file}{subsubsection.8.0.1}% 250
+\BOOKMARK [3][-]{subsubsection.8.0.4}{Generators}{subsubsection.8.0.1}% 251
+\BOOKMARK [3][-]{subsubsection.8.0.5}{Example}{subsubsection.8.0.1}% 252
+\BOOKMARK [3][-]{subsubsection.8.0.6}{Errors}{subsubsection.8.0.1}% 253

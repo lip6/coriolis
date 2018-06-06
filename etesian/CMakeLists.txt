@@ -24,13 +24,8 @@
  find_package(KITE               REQUIRED)
  find_package(COLOQUINTE         REQUIRED)
  find_package(Libexecinfo        REQUIRED)
+ find_package(Doxygen)
  
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
-
- if(BUILD_DOC)
-   find_package(Doxygen)
-#  if(DOXYGEN_FOUND)
-#    add_subdirectory(doc)
-#  endif()
- endif()
+#add_subdirectory(doc)

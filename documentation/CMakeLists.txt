@@ -15,10 +15,6 @@
  setup_project_paths(CORIOLIS)
 
  set_cmake_policies()
-
-#if(BUILD_DOC)
-#  include(UseLATEX)
-#endif(BUILD_DOC)
  
  add_subdirectory(examples)
  set( htmlInstallDir  share/doc/coriolis2/en/html/main )

@@ -1,0 +1,264 @@
+\hypertarget{classHurricane_1_1DBo}{}\section{Hurricane\+:\+:D\+Bo Class Reference}
+\label{classHurricane_1_1DBo}\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+
+
+\hyperlink{classHurricane_1_1DataBase}{Data\+Base} object root class ({\bfseries A\+PI}).  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:D\+Bo\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classHurricane_1_1DBo__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \hyperlink{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}{destroy} ()
+\item 
+\hyperlink{classHurricane_1_1Property}{Property} $\ast$ \hyperlink{classHurricane_1_1DBo_a599f61978df51d1d4c351f6cbd02488d}{get\+Property} (const \hyperlink{classHurricane_1_1Name}{Name} \&) const
+\item 
+\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties} \hyperlink{classHurricane_1_1DBo_aec46894a10e83abb54c495dc4d90f2d3}{get\+Properties} () const
+\item 
+bool \hyperlink{classHurricane_1_1DBo_a1563f094565030c77592ed82f9a9989b}{has\+Property} () const
+\item 
+void \hyperlink{classHurricane_1_1DBo_a8979674f11507cb4c7c5251b41ed72d5}{put} (\hyperlink{classHurricane_1_1Property}{Property} $\ast$)
+\item 
+void \hyperlink{classHurricane_1_1DBo_a7833a1f0b8c704930bdc00861e63cf5e}{remove} (\hyperlink{classHurricane_1_1Property}{Property} $\ast$)
+\item 
+void \hyperlink{classHurricane_1_1DBo_ac35fbb8303b1a78db5ca0fc831fb6a0c}{remove\+Property} (const \hyperlink{classHurricane_1_1Name}{Name} \&)
+\item 
+void \hyperlink{classHurricane_1_1DBo_a3e02f3d665cb0b2120df2fdfe9c3df4f}{clear\+Properties} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1DataBase}{Data\+Base} object root class ({\bfseries A\+PI}). 
+
+\hypertarget{classHurricane_1_1DBo_sDBoIntro}{}\subsection{Introduction}\label{classHurricane_1_1DBo_sDBoIntro}
+All data base objects must be created explicitely by using the provided creation functions and not by calling directly the new operator (which anyway is not provided).
+
+On the same way, they must not be deleted with the delete operator but by calling the destruction function described below.
+
+Those objects can\textquotesingle{}t, either, be duplicated \+: the copy constructor and the assignment operator are not available.
+
+Properties can be attached to those objects (the principles driving the properties management are detailed in the \hyperlink{classHurricane_1_1Property}{Property} class).\hypertarget{classHurricane_1_1DBo_sDBoCreation}{}\subsection{Creation process}\label{classHurricane_1_1DBo_sDBoCreation}
+The data base objects are strongly linked between them and some relations can\textquotesingle{}t be set-\/up by the constructors themselves but must be established a posteriori. {\bfseries Those objects must therefore be built by special functions which take care of that obscure work}.
+
+Indeed, let us imagine a {\bfseries \hyperlink{classHurricane_1_1Go}{Go}} type representing the category of graphic objects and two sub-\/classes {\bfseries Rectangle} and {\bfseries Line} having specific geometric attributes. For eficiency reasons those {\bfseries \hyperlink{classHurricane_1_1Go}{Go}} are stored in a fast access geometric data structure like a {\bfseries \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}}. It would be ideal that the insertion of the {\bfseries \hyperlink{classHurricane_1_1Go}{Go}} within its {\bfseries \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}} be automatic. This could be done in the {\bfseries \hyperlink{classHurricane_1_1Go}{Go}} constructor for instance. But, when this constructor is called upon (by the constructor of sub-\/classes) it is impossible to determine the bounding box of the object because all geometric characteristics are not yet assigned (making the insertion unfeasible).
+
+A possible solution would be to do nothing within the {\bfseries \hyperlink{classHurricane_1_1Go}{Go}} constructor and let the work be done by the sub-\/classes constructors wich could call upon the right insertion function. This solution is neither smart nor consistent because an omission can happen. If a sub-\/type of {\bfseries Line} is created, the insertion being already done in the {\bfseries Line} constructor, it must not be re-\/done for the derived class. Conversely if a new type of {\bfseries \hyperlink{classHurricane_1_1Go}{Go}} is created, insertion processing must not be forgotten. Code omissions or duplications are bound to happen and the code is not homogeneous.
+
+Therefore this insertion must be realized by the {\bfseries \hyperlink{classHurricane_1_1Go}{Go}}, but a posteriori, that is once the object has been fully built. In order to realize such an operation it must, once all derived classes constructors have been called, call upon a function {\bfseries \+\_\+post\+Create} which realizes the additional work and then return the pointer on the new objects (let us recall that all member functions which must not be called directly are prefixed by an underscore).
+
+This process in two steps is realized by the {\bfseries Create} function which is provided for each type of instanciable object. The following example shows its implementation for a net \+: 
+\begin{DoxyCode}
+Net* Net::Create(Cell* cell, \textcolor{keyword}{const} Name& name)
+\{
+   Net* net = \textcolor{keyword}{new} Net(cell, name);
+ 
+   \textcolor{keywordflow}{if} (!net)
+      \textcolor{keywordflow}{throw} Error(\textcolor{stringliteral}{"Can't create Net : allocation failed"});
+ 
+   net->\_postCreate();
+ 
+   \textcolor{keywordflow}{return} net;
+\}
+\end{DoxyCode}
+
+
+Within this function, the net is created in a first time thanks to the constructor spawn by the new operator. If everything goes right the function {\bfseries \+\_\+post\+Create} is called upon the net. This one realizes the additional operations that the constructor couldn\textquotesingle{}t realize and then calls the functions {\bfseries \+\_\+post\+Create} upon the base classe. If everything goes right the net is returned, else an exception is thrown if something abnormal or illegal occurs (i.\+e. a net with the same name already exists). For the example of a {\bfseries Line} \+: the different called constructors will fully characterize the line, then the {\bfseries \+\_\+post\+Create} method on a line will do nothing else than call upon the {\bfseries \+\_\+post\+Create} method of the {\bfseries go} which will insert the line within the {\bfseries \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}} (this is now feasible, the line geometry being fully characterized).\hypertarget{classHurricane_1_1DBo_sDBodestroy}{}\subsection{Deletion process}\label{classHurricane_1_1DBo_sDBodestroy}
+{\bfseries The \hyperlink{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}{destroy()} member function \+:}
+
+Data base ojects can be destroyed only by calling upon this function and not by calling the C++ standard destructor (which indeed is not provided).
+
+A process similar but opposite to the creation process is required. A function {\bfseries \+\_\+pre\+Destroy} must be called upon before the effective object destruction. As a matter of fact, if we take again the case of the {\bfseries Line} for example, the line must be removed from the {\bfseries \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}} before the destruction of its geometric characteristics (inverse of the previous phenomenon). Therefore the destroy function is implemented that way \+: 
+\begin{DoxyCode}
+\textcolor{keywordtype}{void} \hyperlink{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}{DBo::destroy}()
+\textcolor{comment}{// ***************}
+\{
+  \_preDestroy();
+                
+  \textcolor{keyword}{delete} \textcolor{keyword}{this};
+\}
+\end{DoxyCode}
+\hypertarget{classHurricane_1_1DBo_sDBoExtentions}{}\subsection{Extentions}\label{classHurricane_1_1DBo_sDBoExtentions}
+For any new sub-\/type of \hyperlink{classHurricane_1_1DBo}{D\+Bo} you must adhere to the same protocol. That is provide the methods \+\_\+post\+Create and \+\_\+pre\+Destroy calling the methods \+\_\+post\+Create and \+\_\+pre\+Destroy of their base class. Furthermore you must provide when this class is instantiable a creation function (caution \+: only the creation function, if any, must be {\ttfamily public} (and {\ttfamily static}) the others must be {\ttfamily protected}).
+
+Extracted from the .h of a new type of cell. 
+\begin{DoxyCode}
+\textcolor{keyword}{class }MyCell : \textcolor{keyword}{public} Cell \{
+  \textcolor{keyword}{public}:  
+    \textcolor{keyword}{typedef}  Cell  Inherit;
+  \textcolor{keyword}{public}:
+    \textcolor{comment}{// User-accessible creation method.}
+    \textcolor{keyword}{static}  MyCell* Create      (Library* library, \textcolor{keyword}{const} Name& name);
+  \textcolor{keyword}{protected}:
+    \textcolor{comment}{// Internally used constructors & destructors. }
+                    MyCell      (Library* library, \textcolor{keyword}{const} Name& name);
+    \textcolor{keyword}{virtual} \textcolor{keywordtype}{void}    \_postCreate ();
+    \textcolor{keyword}{virtual} \textcolor{keywordtype}{void}    \_preDestroy ();
+\};
+\end{DoxyCode}
+ Extracted from the .cpp for this new type of cell. 
+\begin{DoxyCode}
+MyCell::MyCell(Library* library, \textcolor{keyword}{const} Name&amp; name)
+  : Inherit(library, name)
+\{ \}
+ 
+
+MyCell* MyCell::Create(Library* library, \textcolor{keyword}{const} Name& name)
+\{
+  MyCell* myCell = \textcolor{keyword}{new} MyCell(library, name);
+ 
+  \textcolor{keywordflow}{if} (!myCell) \textcolor{keywordflow}{throw} Error(\textcolor{stringliteral}{"Can't create MyCell : allocation failed"});
+ 
+  myCell->\_postCreate(); \textcolor{comment}{// must not be forgotten!}
+ 
+  \textcolor{keywordflow}{return} myCell;
+\}
+ 
+
+\textcolor{keywordtype}{void}  MyCell::\_postCreate()
+\{
+   Inherit::\_postCreate(); \textcolor{comment}{// must not be forgotten!}
+ 
+   \textcolor{comment}{// complete here the post creation}
+\}
+ 
+
+\textcolor{keywordtype}{void}  MyCell::\_preDestroy()
+\{
+   Inherit::\_preDestroy(); \textcolor{comment}{// must not be forgotten!}
+ 
+   \textcolor{comment}{// complete here the pre-deletion.}
+\}
+\end{DoxyCode}
+
+
+\begin{DoxyParagraph}{Remark\+:}
+The destructor, strictly speaking, is not defined because necessary operations are done within the method {\bfseries \+\_\+pre\+Destroy}. In the implementation of the class {\bfseries My\+Cell} we have only used the type {\bfseries Inherit} (and never {\bfseries \hyperlink{classHurricane_1_1Cell}{Cell}}). This opens the door to hierarchy changes without affecting the code already written.
+\end{DoxyParagraph}
+\hypertarget{classHurricane_1_1DBo_sDBoRemark}{}\subsection{Remark}\label{classHurricane_1_1DBo_sDBoRemark}
+The construction and deletion process of property objects is the same. It is mandatory for any new type of property to adopt the same protocol. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}\label{classHurricane_1_1DBo_a67febf5bf9c8b322674648688639728b}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!destroy@{destroy}}
+\index{destroy@{destroy}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{destroy()}{destroy()}}
+{\footnotesize\ttfamily void Hurricane\+::\+D\+Bo\+::destroy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+The legal method to delete any \hyperlink{classHurricane_1_1DBo}{D\+Bo} object (see \hyperlink{classHurricane_1_1DBo_sDBodestroy}{Deletion process}). \mbox{\Hypertarget{classHurricane_1_1DBo_a599f61978df51d1d4c351f6cbd02488d}\label{classHurricane_1_1DBo_a599f61978df51d1d4c351f6cbd02488d}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!get\+Property@{get\+Property}}
+\index{get\+Property@{get\+Property}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{get\+Property()}{getProperty()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Property}{Property} $\ast$ Hurricane\+::\+D\+Bo\+::get\+Property (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption}) const}
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & \hyperlink{classHurricane_1_1Name}{Name} of the \hyperlink{classHurricane_1_1Property}{Property} to return. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The property of \hyperlink{classHurricane_1_1Name}{Name} {\itshape name} attached to the object, if it exists, else {\ttfamily N\+U\+LL}.
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Remark\+:}
+When writting what follows \+: 
+\begin{DoxyCode}
+forEach(DBo*, idbo, dbos) \{
+  Property* \textcolor{keyword}{property} = idbo->getProperty(\textcolor{stringliteral}{"width"});
+  \textcolor{keywordflow}{if} (property) \{
+    \textcolor{comment}{// do something}
+  \}
+\}
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+There is construction of a name (from a character string) for each visited dbo in order to find the property. It\textquotesingle{}s more efficient to write \+: 
+\begin{DoxyCode}
+Name width = \textcolor{stringliteral}{"width"};
+forEach(DBo*, idbo, dbos) \{
+  Property* \textcolor{keyword}{property} = idbo->getProperty(width);
+  \textcolor{keywordflow}{if} (property) \{
+    \textcolor{comment}{// do something}
+  \}
+\}
+\end{DoxyCode}
+ Or still better \+: 
+\begin{DoxyCode}
+\textcolor{keyword}{static} Name WIDTH = \textcolor{stringliteral}{"width"};
+forEach(DBo*, idbo, dbos) \{
+  Property* \textcolor{keyword}{property} = idbo->getProperty(WIDTH);
+  \textcolor{keywordflow}{if} (property) \{
+    \textcolor{comment}{// do something}
+  \}
+\}
+\end{DoxyCode}
+ This remark applies each time you handle names. \mbox{\Hypertarget{classHurricane_1_1DBo_aec46894a10e83abb54c495dc4d90f2d3}\label{classHurricane_1_1DBo_aec46894a10e83abb54c495dc4d90f2d3}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!get\+Properties@{get\+Properties}}
+\index{get\+Properties@{get\+Properties}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{get\+Properties()}{getProperties()}}
+{\footnotesize\ttfamily Propertes Hurricane\+::\+D\+Bo\+::get\+Properties (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+\begin{DoxyReturn}{Returns}
+The property \hyperlink{classHurricane_1_1Collection}{Collection} associated to the object (possibly empty). 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classHurricane_1_1DBo_a1563f094565030c77592ed82f9a9989b}\label{classHurricane_1_1DBo_a1563f094565030c77592ed82f9a9989b}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!has\+Property@{has\+Property}}
+\index{has\+Property@{has\+Property}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{has\+Property()}{hasProperty()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+D\+Bo\+::has\+Property (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\begin{DoxyReturn}{Returns}
+{\bfseries true} if the object has at least a property, else {\bfseries false}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classHurricane_1_1DBo_a8979674f11507cb4c7c5251b41ed72d5}\label{classHurricane_1_1DBo_a8979674f11507cb4c7c5251b41ed72d5}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!put@{put}}
+\index{put@{put}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{put()}{put()}}
+{\footnotesize\ttfamily void Hurricane\+::\+D\+Bo\+::put (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Property}{Property} $\ast$}]{property }\end{DoxyParamCaption})}
+
+Adds the \hyperlink{classHurricane_1_1Property}{Property} {\itshape property} to the set of object properties. Properties being named, if an other one already exists in the set, with the same name, this last will be in a first step removed from the set.
+
+\begin{DoxyParagraph}{Remark\+:}
+Does nothing if the \hyperlink{classHurricane_1_1Property}{Property} object is already attached to the object.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Caution\+:}
+An exception is thrown if the \hyperlink{classHurricane_1_1Property}{Property} pointer is {\ttfamily N\+U\+LL}. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1DBo_a7833a1f0b8c704930bdc00861e63cf5e}\label{classHurricane_1_1DBo_a7833a1f0b8c704930bdc00861e63cf5e}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!remove@{remove}}
+\index{remove@{remove}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily void Hurricane\+::\+D\+Bo\+::remove (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Property}{Property} $\ast$}]{property }\end{DoxyParamCaption})}
+
+removes the property {\itshape property} from the set of object properties.
+
+\begin{DoxyParagraph}{Remark\+:}
+Does nothing if the \hyperlink{classHurricane_1_1Property}{Property} object is not attached to the object.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Caution\+:}
+An exception is thrown if the \hyperlink{classHurricane_1_1Property}{Property} pointer is {\ttfamily N\+U\+LL}. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1DBo_ac35fbb8303b1a78db5ca0fc831fb6a0c}\label{classHurricane_1_1DBo_ac35fbb8303b1a78db5ca0fc831fb6a0c}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!remove\+Property@{remove\+Property}}
+\index{remove\+Property@{remove\+Property}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{remove\+Property()}{removeProperty()}}
+{\footnotesize\ttfamily void Hurricane\+::\+D\+Bo\+::remove\+Property (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})}
+
+removes the property of name {\itshape name} if it exists. \mbox{\Hypertarget{classHurricane_1_1DBo_a3e02f3d665cb0b2120df2fdfe9c3df4f}\label{classHurricane_1_1DBo_a3e02f3d665cb0b2120df2fdfe9c3df4f}} 
+\index{Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}!clear\+Properties@{clear\+Properties}}
+\index{clear\+Properties@{clear\+Properties}!Hurricane\+::\+D\+Bo@{Hurricane\+::\+D\+Bo}}
+\subsubsection{\texorpdfstring{clear\+Properties()}{clearProperties()}}
+{\footnotesize\ttfamily void Hurricane\+::\+D\+Bo\+::clear\+Properties (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+removes all properties attached to this object. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+Bo.\+h\item 
+D\+Bo.\+dox\end{DoxyCompactItemize}

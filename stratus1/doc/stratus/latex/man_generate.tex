@@ -1,0 +1,59 @@
+\subsubsection{Name}
+
+Generate -- Interface with the generators
+
+\subsubsection{Synopsys}
+
+\begin{verbatim}
+Generate ( model, modelname, param = dict )
+\end{verbatim}
+
+\subsubsection{Description}
+
+The  \verb-Generate-  function call is the generic interface to all generators.
+
+\subsubsection{Arguments}
+
+\begin{itemize}
+    \item \verb-model- : Specifies which generator is to be invoked
+    \begin{itemize}
+        \item If the generator belongs to the Dpgen library provided by Stratus, the model name of the generator is simply the name of the class of the generator.
+        \item If the generator is created by the user, the model name of the generator must have the form : "file\_name.class\_name". (Note that if the the generator is not in the working directory, the directory of the generator to be instantiated has to be added in the CRL\_CATA\_LIB environment variable)
+    \end{itemize}
+    \item \verb-modelname- : Specifies the name of the model to be generated
+    \item \verb-dict- : Specifies the parameters of the generator
+\end{itemize}
+
+\subsubsection{Parameters}
+
+Every generator has it's own parameters. They must be described in the map \verb-dict-.\\
+\indent Every generator provides a netlist view. Two other views can be generated, if they are provided by the generator. Two parameters have to be given, in order to choose those views :  
+\begin{itemize}
+    \item 'physical' : True/False, generation of the physical view (optionnal, False by default)
+    \item 'behavioral' : True/False, generation of the behavioral view (optionnal, False by default)
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{Example}
+
+You can see a concrete example at : \hyperref[ref]{\emph{Example}}{}{Example}{secexample}
+
+\end{htmlonly}
+
+\subsubsection{Errors}
+    
+Some errors may occur :
+\begin{itemize}
+    \item \verb-[Stratus ERROR] Generate : the model must be described in a string.-
+\end{itemize}
+
+\begin{htmlonly}
+
+\subsubsection{See Also}
+
+\hyperref[ref]{\emph{Introduction}}{}{Introduction}{secintroduction}
+\hyperref[ref]{\emph{Netlist}}{}{Netlist}{secnetlist}
+\hyperref[ref]{\emph{Layout}}{}{Layout}{seclayout}
+
+\end{htmlonly}

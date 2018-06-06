@@ -1,0 +1,490 @@
+\hypertarget{classHurricane_1_1Cell}{}\section{Hurricane\+:\+:Cell Class Reference}
+\label{classHurricane_1_1Cell}\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+
+
+The model ({\bfseries A\+PI}).  
+
+
+
+
+Inheritance diagram for Hurricane\+:\+:Cell\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=170pt]{classHurricane_1_1Cell__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1Cell_aa84b97773160a28d3dd69df1e261eecf}{get\+Library} () const
+\item 
+const \hyperlink{classHurricane_1_1Name}{Name} \& \hyperlink{classHurricane_1_1Cell_a01cd4bba972d484496fd297648b8fa0c}{get\+Name} () const
+\item 
+\hyperlink{classHurricane_1_1Instance}{Instance} $\ast$ \hyperlink{classHurricane_1_1Cell_abaf178b24734de37cf0ac31918c096ac}{get\+Instance} (const \hyperlink{classHurricane_1_1Name}{Name} \&name) const
+\item 
+\hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances} \hyperlink{classHurricane_1_1Cell_aa85b3992431b672827167c5d9cb622f2}{get\+Instances} () const
+\item 
+\hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances} \hyperlink{classHurricane_1_1Cell_a5eb16d9d0f340ad71b81d794f6f8525f}{get\+Instances\+Under} (const \hyperlink{classHurricane_1_1Box}{Box} \&area) const
+\item 
+\hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances} \hyperlink{classHurricane_1_1Cell_a7e51bee5db73dd44f788e591a5c175c8}{get\+Slave\+Instances} () const
+\item 
+\hyperlink{classHurricane_1_1Net}{Net} $\ast$ \hyperlink{classHurricane_1_1Cell_a63cb19881279b5af0a4e7dae707ef1bd}{get\+Net} (const \hyperlink{classHurricane_1_1Name}{Name} \&name) const
+\item 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_a8b4728abe83e9ec21d7bee1154218279}{get\+Nets} () const
+\item 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_a1512722d821edc18ff38e673862cd108}{get\+Global\+Nets} () const
+\item 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_aa80f3345db8c1395fa04a50737208793}{get\+External\+Nets} () const
+\item 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_a0da980d28ad60334da94a3966338f873}{get\+Internal\+Nets} () const
+\item 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_a306f28990f9fd4ccee0e9e8ebecf98fc}{get\+Clock\+Nets} () const
+\item 
+\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} \hyperlink{classHurricane_1_1Cell_ac51c8f16de7a4af86feead9f1aecf494}{get\+Supply\+Nets} () const
+\item 
+\hyperlink{classHurricane_1_1Slice}{Slice} $\ast$ \hyperlink{classHurricane_1_1Cell_ac438b5b6b8dbcd868d6bf0deeb469444}{get\+Slice} (const \hyperlink{classHurricane_1_1Layer}{Layer} $\ast$layer) const
+\item 
+\hyperlink{namespaceHurricane_aa4a7e8a563c5687621eb5e57ade1706a}{Slices} \hyperlink{classHurricane_1_1Cell_aba933a81e3cacfc05b7bd1660e2a933a}{get\+Slices} (const \hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask} \&mask=$\sim$0) const
+\item 
+\hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers} \hyperlink{classHurricane_1_1Cell_a56395a189898d5ae2a869d5a5d5dfdbe}{get\+Rubbers} () const
+\item 
+\hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers} \hyperlink{classHurricane_1_1Cell_a58c6e24401d15f375547ad95b5c2c27c}{get\+Rubbers\+Under} (const \hyperlink{classHurricane_1_1Box}{Box} \&area) const
+\item 
+\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} \hyperlink{classHurricane_1_1Cell_a14cb1b1f27e75d4af5b34a9a5956d818}{get\+Components} (const \hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask} \&mask=$\sim$0) const
+\item 
+\hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} \hyperlink{classHurricane_1_1Cell_a0a3c54d755ab36fe74bd032dfd43b53a}{get\+Components\+Under} (const \hyperlink{classHurricane_1_1Box}{Box} \&area, const \hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask} \&mask=$\sim$0) const
+\item 
+\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences} \hyperlink{classHurricane_1_1Cell_ab5bbab0a59106855d61deb94805e6115}{get\+Occurrences} (unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max()) const
+\item 
+\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences} \hyperlink{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}{get\+Occurrences\+Under} (const \hyperlink{classHurricane_1_1Box}{Box} \&area, unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max()) const
+\item 
+const \hyperlink{classHurricane_1_1Box}{Box} \& \hyperlink{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}{get\+Abutment\+Box} () const
+\item 
+bool \hyperlink{classHurricane_1_1Cell_a239354e1b4ad9b751abf5a064e43b0e6}{is\+Called\+By} (\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$cell) const
+\item 
+bool \hyperlink{classHurricane_1_1Cell_aac4e9218b7806f3a0f2d5a55f00abd69}{is\+Terminal} () const
+\item 
+bool \hyperlink{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}{is\+Unique} () const
+\item 
+bool \hyperlink{classHurricane_1_1Cell_a86c21867e9ce896eae72fd2999ce8a2d}{is\+Uniquified} () const
+\item 
+bool \hyperlink{classHurricane_1_1Cell_a0220dbbbe730e6874f7620135e9c10f6}{is\+Uniquify\+Master} () const
+\item 
+void \hyperlink{classHurricane_1_1Cell_ad2c9face922062664110c66ee205eab2}{set\+Name} (const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+\item 
+void \hyperlink{classHurricane_1_1Cell_ab1949e2b708f0bd2d215ab90cfe864e0}{set\+Abutment\+Box} (const \hyperlink{classHurricane_1_1Box}{Box} \&abutment\+Box)
+\item 
+void \hyperlink{classHurricane_1_1Cell_a4591dc37153a835daa42b442221742cb}{set\+Terminal} (bool \hyperlink{classHurricane_1_1Cell_aac4e9218b7806f3a0f2d5a55f00abd69}{is\+Terminal})
+\item 
+void \hyperlink{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}{materialize} ()
+\item 
+void \hyperlink{classHurricane_1_1Cell_a40c9ba4e3fc76b0c4bc58af8dcaddf53}{unmaterialize} ()
+\item 
+\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ \hyperlink{classHurricane_1_1Cell_a092f53c7f517ecc70d9ba375296c5d5b}{get\+Clone} ()
+\item 
+void \hyperlink{classHurricane_1_1Cell_aa113c121813342b6304f3e7fddbc8565}{uniquify} (unsigned int depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max())
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ \hyperlink{classHurricane_1_1Cell_ad803afb3e52bea3bf3d520e353b162e0}{create} (\hyperlink{classHurricane_1_1Library}{Library} $\ast$library, const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The model ({\bfseries A\+PI}). 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1Cell_ad803afb3e52bea3bf3d520e353b162e0}\label{classHurricane_1_1Cell_ad803afb3e52bea3bf3d520e353b162e0}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ Hurricane\+::\+Cell\+::create (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Library}{Library} $\ast$}]{library,  }\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+creates and returns a new \hyperlink{classHurricane_1_1Cell}{Cell} named {\itshape name} for the \hyperlink{classHurricane_1_1Library}{Library} {\itshape library}.
+
+\begin{DoxyParagraph}{Caution\+:}
+Throws an exception if the \hyperlink{classHurricane_1_1Library}{Library} is null, if the \hyperlink{classHurricane_1_1Name}{Name} is empty or if a cell with same name already exists in the \hyperlink{classHurricane_1_1Library}{Library}. 
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classHurricane_1_1Cell_aa84b97773160a28d3dd69df1e261eecf}\label{classHurricane_1_1Cell_aa84b97773160a28d3dd69df1e261eecf}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Library@{get\+Library}}
+\index{get\+Library@{get\+Library}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Library()}{getLibrary()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Library}{Library} $\ast$ Hurricane\+::\+Cell\+::get\+Library (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the \hyperlink{classHurricane_1_1Library}{Library} owning the \hyperlink{classHurricane_1_1Cell}{Cell}. \mbox{\Hypertarget{classHurricane_1_1Cell_a01cd4bba972d484496fd297648b8fa0c}\label{classHurricane_1_1Cell_a01cd4bba972d484496fd297648b8fa0c}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Name}{Name} \& Hurricane\+::\+Cell\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the \hyperlink{classHurricane_1_1Name}{Name} of the \hyperlink{classHurricane_1_1Cell}{Cell}. \mbox{\Hypertarget{classHurricane_1_1Cell_abaf178b24734de37cf0ac31918c096ac}\label{classHurricane_1_1Cell_abaf178b24734de37cf0ac31918c096ac}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Instance@{get\+Instance}}
+\index{get\+Instance@{get\+Instance}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Instance()}{getInstance()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Instance}{Instance} $\ast$ Hurricane\+::\+Cell\+::get\+Instance (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the \hyperlink{classHurricane_1_1Instance}{Instance} of name {\itshape name} if it exists, else {\ttfamily N\+U\+LL}. \mbox{\Hypertarget{classHurricane_1_1Cell_aa85b3992431b672827167c5d9cb622f2}\label{classHurricane_1_1Cell_aa85b3992431b672827167c5d9cb622f2}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Instances@{get\+Instances}}
+\index{get\+Instances@{get\+Instances}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Instances()}{getInstances()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances} Hurricane\+::\+Cell\+::get\+Instances (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all instances called by the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+References get\+Instances\+Under(), get\+Net(), and get\+Slave\+Instances().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a5eb16d9d0f340ad71b81d794f6f8525f}\label{classHurricane_1_1Cell_a5eb16d9d0f340ad71b81d794f6f8525f}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Instances\+Under@{get\+Instances\+Under}}
+\index{get\+Instances\+Under@{get\+Instances\+Under}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Instances\+Under()}{getInstancesUnder()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances} Hurricane\+::\+Cell\+::get\+Instances\+Under (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{area }\end{DoxyParamCaption}) const}
+
+Returns the collection of all instances of the \hyperlink{classHurricane_1_1Cell}{Cell} intersecting the given rectangular {\itshape area}. 
+
+Referenced by get\+Instances().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a7e51bee5db73dd44f788e591a5c175c8}\label{classHurricane_1_1Cell_a7e51bee5db73dd44f788e591a5c175c8}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Slave\+Instances@{get\+Slave\+Instances}}
+\index{get\+Slave\+Instances@{get\+Slave\+Instances}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Slave\+Instances()}{getSlaveInstances()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances} Hurricane\+::\+Cell\+::get\+Slave\+Instances (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of instances whose master is this \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Instances().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a63cb19881279b5af0a4e7dae707ef1bd}\label{classHurricane_1_1Cell_a63cb19881279b5af0a4e7dae707ef1bd}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Net@{get\+Net}}
+\index{get\+Net@{get\+Net}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Net()}{getNet()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Net}{Net} $\ast$ Hurricane\+::\+Cell\+::get\+Net (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Net}{Net} of name {\itshape name} if it exists, else {\ttfamily N\+U\+LL}. 
+
+Referenced by get\+Instances().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a8b4728abe83e9ec21d7bee1154218279}\label{classHurricane_1_1Cell_a8b4728abe83e9ec21d7bee1154218279}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Nets@{get\+Nets}}
+\index{get\+Nets@{get\+Nets}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Nets()}{getNets()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} Hurricane\+::\+Cell\+::get\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+References get\+Clock\+Nets(), get\+External\+Nets(), get\+Global\+Nets(), get\+Internal\+Nets(), and get\+Supply\+Nets().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a1512722d821edc18ff38e673862cd108}\label{classHurricane_1_1Cell_a1512722d821edc18ff38e673862cd108}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Global\+Nets@{get\+Global\+Nets}}
+\index{get\+Global\+Nets@{get\+Global\+Nets}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Global\+Nets()}{getGlobalNets()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} Hurricane\+::\+Cell\+::get\+Global\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all global nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Nets().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_aa80f3345db8c1395fa04a50737208793}\label{classHurricane_1_1Cell_aa80f3345db8c1395fa04a50737208793}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+External\+Nets@{get\+External\+Nets}}
+\index{get\+External\+Nets@{get\+External\+Nets}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+External\+Nets()}{getExternalNets()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} Hurricane\+::\+Cell\+::get\+External\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all external nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Nets().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a0da980d28ad60334da94a3966338f873}\label{classHurricane_1_1Cell_a0da980d28ad60334da94a3966338f873}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Internal\+Nets@{get\+Internal\+Nets}}
+\index{get\+Internal\+Nets@{get\+Internal\+Nets}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Internal\+Nets()}{getInternalNets()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} Hurricane\+::\+Cell\+::get\+Internal\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all internal nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Nets().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a306f28990f9fd4ccee0e9e8ebecf98fc}\label{classHurricane_1_1Cell_a306f28990f9fd4ccee0e9e8ebecf98fc}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Clock\+Nets@{get\+Clock\+Nets}}
+\index{get\+Clock\+Nets@{get\+Clock\+Nets}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Clock\+Nets()}{getClockNets()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} Hurricane\+::\+Cell\+::get\+Clock\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all clock nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Nets().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_ac51c8f16de7a4af86feead9f1aecf494}\label{classHurricane_1_1Cell_ac51c8f16de7a4af86feead9f1aecf494}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Supply\+Nets@{get\+Supply\+Nets}}
+\index{get\+Supply\+Nets@{get\+Supply\+Nets}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Supply\+Nets()}{getSupplyNets()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets} Hurricane\+::\+Cell\+::get\+Supply\+Nets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all supply nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Nets().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_ac438b5b6b8dbcd868d6bf0deeb469444}\label{classHurricane_1_1Cell_ac438b5b6b8dbcd868d6bf0deeb469444}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Slice@{get\+Slice}}
+\index{get\+Slice@{get\+Slice}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Slice()}{getSlice()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Slice}{Slice} $\ast$ Hurricane\+::\+Cell\+::get\+Slice (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Layer}{Layer} $\ast$}]{layer }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the \hyperlink{classHurricane_1_1Slice}{Slice} associated with the \hyperlink{classHurricane_1_1Layer}{Layer} {\itshape layer} if it exists, else {\ttfamily N\+U\+LL}. 
+
+References get\+Components(), get\+Components\+Under(), get\+Occurrences(), get\+Occurrences\+Under(), get\+Rubbers(), get\+Rubbers\+Under(), and get\+Slices().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_aba933a81e3cacfc05b7bd1660e2a933a}\label{classHurricane_1_1Cell_aba933a81e3cacfc05b7bd1660e2a933a}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Slices@{get\+Slices}}
+\index{get\+Slices@{get\+Slices}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Slices()}{getSlices()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_aa4a7e8a563c5687621eb5e57ade1706a}{Slices} Hurricane\+::\+Cell\+::get\+Slices (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask} \&}]{mask = {\ttfamily $\sim$0} }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of slices of a \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a56395a189898d5ae2a869d5a5d5dfdbe}\label{classHurricane_1_1Cell_a56395a189898d5ae2a869d5a5d5dfdbe}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Rubbers@{get\+Rubbers}}
+\index{get\+Rubbers@{get\+Rubbers}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Rubbers()}{getRubbers()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers} Hurricane\+::\+Cell\+::get\+Rubbers (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all Rubbers of a \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a58c6e24401d15f375547ad95b5c2c27c}\label{classHurricane_1_1Cell_a58c6e24401d15f375547ad95b5c2c27c}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Rubbers\+Under@{get\+Rubbers\+Under}}
+\index{get\+Rubbers\+Under@{get\+Rubbers\+Under}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Rubbers\+Under()}{getRubbersUnder()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_af8923abd57508cc44931a00d61b564ad}{Rubbers} Hurricane\+::\+Cell\+::get\+Rubbers\+Under (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{area }\end{DoxyParamCaption}) const}
+
+Returns the collection of all Rubbers of the \hyperlink{classHurricane_1_1Cell}{Cell} intersecting the given rectangular {\itshape area}.
+
+\begin{DoxyParagraph}{Caution\+:}
+Only currently materialized rubbers are taken into account in this collection. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a14cb1b1f27e75d4af5b34a9a5956d818}\label{classHurricane_1_1Cell_a14cb1b1f27e75d4af5b34a9a5956d818}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Components@{get\+Components}}
+\index{get\+Components@{get\+Components}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Components()}{getComponents()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} Hurricane\+::\+Cell\+::get\+Components (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask} \&}]{mask = {\ttfamily $\sim$0} }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all Components of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a0a3c54d755ab36fe74bd032dfd43b53a}\label{classHurricane_1_1Cell_a0a3c54d755ab36fe74bd032dfd43b53a}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Components\+Under@{get\+Components\+Under}}
+\index{get\+Components\+Under@{get\+Components\+Under}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Components\+Under()}{getComponentsUnder()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a7d26d99aeb5dd6d70d51bd35d2473e72}{Components} Hurricane\+::\+Cell\+::get\+Components\+Under (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{area,  }\item[{const \hyperlink{classHurricane_1_1Layer_af5277c670637bd5d910237e7afe01a91}{Layer\+::\+Mask} \&}]{mask = {\ttfamily $\sim$0} }\end{DoxyParamCaption}) const}
+
+Returns the collection of all Components of the \hyperlink{classHurricane_1_1Cell}{Cell} intersecting the given rectangular {\itshape area}.
+
+\begin{DoxyParagraph}{Caution\+:}
+Only currently materialized Components are taken into account in this collection. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_ab5bbab0a59106855d61deb94805e6115}\label{classHurricane_1_1Cell_ab5bbab0a59106855d61deb94805e6115}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Occurrences@{get\+Occurrences}}
+\index{get\+Occurrences@{get\+Occurrences}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Occurrences()}{getOccurrences()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences} Hurricane\+::\+Cell\+::get\+Occurrences (\begin{DoxyParamCaption}\item[{unsigned}]{search\+Depth = {\ttfamily std\+:\+:numeric\+\_\+limits$<$unsigned~int$>$\+:\+:max()} }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all Occurrences belonging to this \hyperlink{classHurricane_1_1Cell}{Cell}.
+
+\begin{DoxyParagraph}{Remark\+:}
+The search depth is decremented each time a hirearchical level is crossed. The search ends when depth becomes null (the value {\ttfamily I\+N\+F\+I\+N\+I\+TE} is equal to {\ttfamily }(unsigned)-\/1) . 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}\label{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Occurrences\+Under@{get\+Occurrences\+Under}}
+\index{get\+Occurrences\+Under@{get\+Occurrences\+Under}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Occurrences\+Under()}{getOccurrencesUnder()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences} Hurricane\+::\+Cell\+::get\+Occurrences\+Under (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{area,  }\item[{unsigned}]{search\+Depth = {\ttfamily std\+:\+:numeric\+\_\+limits$<$unsigned~int$>$\+:\+:max()} }\end{DoxyParamCaption}) const}
+
+Returns the \hyperlink{classHurricane_1_1Collection}{Collection} of all Occurrences belonging to this \hyperlink{classHurricane_1_1Cell}{Cell} and intersecting the given rectangular area.
+
+\begin{DoxyParagraph}{Remark\+:}
+The search depth is decremented each time a hirearchical level is crossed. The search ends when depth becomes null (the value {\ttfamily I\+N\+F\+I\+N\+I\+TE} is equal to {\ttfamily }(unsigned)-\/1) .
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Caution\+:}
+Only occurences corresponding to currently materialized entities are taken into account in this \hyperlink{classHurricane_1_1Collection}{Collection}. 
+\end{DoxyParagraph}
+
+
+Referenced by get\+Slice().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}\label{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Abutment\+Box@{get\+Abutment\+Box}}
+\index{get\+Abutment\+Box@{get\+Abutment\+Box}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Abutment\+Box()}{getAbutmentBox()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Box}{Box} Hurricane\+::\+Cell\+::get\+Abutment\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns Returns the abutment box of the cell (which is defined by the designer unlike the bounding box which is managed dynamically). 
+
+References is\+Called\+By().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a239354e1b4ad9b751abf5a064e43b0e6}\label{classHurricane_1_1Cell_a239354e1b4ad9b751abf5a064e43b0e6}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!is\+Called\+By@{is\+Called\+By}}
+\index{is\+Called\+By@{is\+Called\+By}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{is\+Called\+By()}{isCalledBy()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Cell\+::is\+Called\+By (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Cell}{Cell} $\ast$}]{cell }\end{DoxyParamCaption}) const}
+
+Returns {\bfseries true} if the cell {\ttfamily this} is directly or indirectly called by the \hyperlink{classHurricane_1_1Cell}{Cell} {\itshape cell}. This functions allows to check that there is no cyclic instance calls of cells (it is by default, automatically called when creating an instance). 
+
+Referenced by get\+Abutment\+Box().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_aac4e9218b7806f3a0f2d5a55f00abd69}\label{classHurricane_1_1Cell_aac4e9218b7806f3a0f2d5a55f00abd69}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!is\+Terminal@{is\+Terminal}}
+\index{is\+Terminal@{is\+Terminal}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{is\+Terminal()}{isTerminal()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Cell\+::is\+Terminal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns {\bfseries true} if the \hyperlink{classHurricane_1_1Cell}{Cell} is marked as terminal (meaning that it has no inside or that we dont want to take it into account), else {\bfseries false}. 
+
+References is\+Unique(), is\+Uniquified(), is\+Uniquify\+Master(), set\+Abutment\+Box(), and set\+Name().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}\label{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!is\+Unique@{is\+Unique}}
+\index{is\+Unique@{is\+Unique}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{is\+Unique()}{isUnique()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Cell\+::is\+Unique (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns {\bfseries true} if the \hyperlink{classHurricane_1_1Cell}{Cell} has one or less instances, regardless of it\textquotesingle{}s uniquification state. 
+
+Referenced by is\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a86c21867e9ce896eae72fd2999ce8a2d}\label{classHurricane_1_1Cell_a86c21867e9ce896eae72fd2999ce8a2d}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!is\+Uniquified@{is\+Uniquified}}
+\index{is\+Uniquified@{is\+Uniquified}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{is\+Uniquified()}{isUniquified()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Cell\+::is\+Uniquified (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns {\bfseries true} if this \hyperlink{classHurricane_1_1Cell}{Cell} is the result of an uniquification {\bfseries and} is not the reference (the original) \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by is\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a0220dbbbe730e6874f7620135e9c10f6}\label{classHurricane_1_1Cell_a0220dbbbe730e6874f7620135e9c10f6}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!is\+Uniquify\+Master@{is\+Uniquify\+Master}}
+\index{is\+Uniquify\+Master@{is\+Uniquify\+Master}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{is\+Uniquify\+Master()}{isUniquifyMaster()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Cell\+::is\+Uniquify\+Master (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+Returns {\bfseries true} if the \hyperlink{classHurricane_1_1Cell}{Cell} has been uniquified and this is the original \hyperlink{classHurricane_1_1Cell}{Cell}. The original \hyperlink{classHurricane_1_1Cell}{Cell} can have both normal instances and uniquified instances. 
+
+Referenced by is\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_ad2c9face922062664110c66ee205eab2}\label{classHurricane_1_1Cell_ad2c9face922062664110c66ee205eab2}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!set\+Name@{set\+Name}}
+\index{set\+Name@{set\+Name}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{set\+Name()}{setName()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+::set\+Name (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})}
+
+Allows to change the \hyperlink{classHurricane_1_1Cell}{Cell} \hyperlink{classHurricane_1_1Name}{Name}.
+
+\begin{DoxyParagraph}{Remark\+:}
+Throws an exception if the new {\itshape name} is empty or if the \hyperlink{classHurricane_1_1Library}{Library} owning the \hyperlink{classHurricane_1_1Cell}{Cell} has already a \hyperlink{classHurricane_1_1Cell}{Cell} with the same name. 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_ab1949e2b708f0bd2d215ab90cfe864e0}\label{classHurricane_1_1Cell_ab1949e2b708f0bd2d215ab90cfe864e0}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!set\+Abutment\+Box@{set\+Abutment\+Box}}
+\index{set\+Abutment\+Box@{set\+Abutment\+Box}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{set\+Abutment\+Box()}{setAbutmentBox()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+::set\+Abutment\+Box (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{abutment\+Box }\end{DoxyParamCaption})}
+
+sets \hyperlink{classHurricane_1_1Cell}{Cell} abutment box.
+
+\begin{DoxyParagraph}{Remark\+:}
+At the \hyperlink{classHurricane_1_1Cell}{Cell} creation the abutment box is empty. This one must be set through this function. It is possible also, once fixed, to reset it to empty (undefined) by passing an empty \hyperlink{classHurricane_1_1Box}{Box} as argument. 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a4591dc37153a835daa42b442221742cb}\label{classHurricane_1_1Cell_a4591dc37153a835daa42b442221742cb}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!set\+Terminal@{set\+Terminal}}
+\index{set\+Terminal@{set\+Terminal}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{set\+Terminal()}{setTerminal()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+::set\+Terminal (\begin{DoxyParamCaption}\item[{bool}]{state }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+sets \hyperlink{classHurricane_1_1Cell}{Cell} terminal status to {\itshape state}. 
+
+References get\+Clone(), materialize(), uniquify(), and unmaterialize().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}\label{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!materialize@{materialize}}
+\index{materialize@{materialize}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{materialize()}{materialize()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+::materialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+materializes all components of all the nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by set\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a40c9ba4e3fc76b0c4bc58af8dcaddf53}\label{classHurricane_1_1Cell_a40c9ba4e3fc76b0c4bc58af8dcaddf53}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!unmaterialize@{unmaterialize}}
+\index{unmaterialize@{unmaterialize}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{unmaterialize()}{unmaterialize()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+::unmaterialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+De-\/materializes all components of all the nets of the \hyperlink{classHurricane_1_1Cell}{Cell}. 
+
+Referenced by set\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_a092f53c7f517ecc70d9ba375296c5d5b}\label{classHurricane_1_1Cell_a092f53c7f517ecc70d9ba375296c5d5b}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Clone@{get\+Clone}}
+\index{get\+Clone@{get\+Clone}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Cell}{Cell} $\ast$ Hurricane\+::\+Cell\+::get\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Build a duplicate of the \hyperlink{classHurricane_1_1Cell}{Cell}. The database keep track of all the duplicate of one original \hyperlink{classHurricane_1_1Cell}{Cell}. The name of a duplicate is generated by appending {\ttfamily \textquotesingle{}\+\_\+u\+XX\textquotesingle{}} where {\ttfamily \textquotesingle{}XX\textquotesingle{}} is the number of the duplicate.
+
+Only logical information (netlist) and instance\textquotesingle{}s placements gets duplicated. {\itshape No physical components will be duplicated.} 
+
+Referenced by set\+Terminal().
+
+\mbox{\Hypertarget{classHurricane_1_1Cell_aa113c121813342b6304f3e7fddbc8565}\label{classHurricane_1_1Cell_aa113c121813342b6304f3e7fddbc8565}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!uniquify@{uniquify}}
+\index{uniquify@{uniquify}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{uniquify()}{uniquify()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Cell\+::uniquify (\begin{DoxyParamCaption}\item[{unsigned int}]{depth = {\ttfamily std\+:\+:numeric\+\_\+limits$<$unsigned~int$>$\+:\+:max()} }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em depth} & Recursively perform the uniquification until that hierarchical depth.\\
+\hline
+\end{DoxyParams}
+Multiple instances of a same model are modificated so that each instance has it\textquotesingle{}s own {\itshape unique} copy of the model.
+
+This is equivalent to a flatten operation, but without destroying the intermediate level of hierarchy. Only the {\bfseries netlist} and instance\textquotesingle{}s placements gets duplicated. {\itshape No physical components will be duplicated.}
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{classHurricane_1_1Cell_a092f53c7f517ecc70d9ba375296c5d5b}{Cell\+::get\+Clone()}, \hyperlink{classHurricane_1_1Instance_adf28fcd01f6ff89c5435e83482f66d4c}{Instance\+::uniquify()}. 
+\end{DoxySeeAlso}
+
+
+Referenced by set\+Terminal().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Cell.\+h\item 
+Cell.\+dox\end{DoxyCompactItemize}

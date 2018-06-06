@@ -7,11 +7,13 @@
                                      tabs.css
                    )
 
+ if (BUILD_DOC and DOXYGEN_FOUND)
  add_custom_target ( documentation ALL
                         cd ${UNICORN_SOURCE_DIR}/doc/unicorn
                      && ${DOXYGEN_EXECUTABLE} doxyfile
                      && cp -f ${doxExtras} html
                    )
+ endif()
 
            install ( DIRECTORY html/                DESTINATION ${htmlInstallDir} )
            install ( DIRECTORY latex/               DESTINATION ${latexInstallDir} )

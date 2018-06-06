@@ -1,0 +1,137 @@
+\hypertarget{classHurricane_1_1QuadTree}{}\section{Hurricane\+:\+:Quad\+Tree Class Reference}
+\label{classHurricane_1_1QuadTree}\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+
+
+\hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree} description ({\bfseries A\+PI})  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classHurricane_1_1QuadTree_a91303ebe7740d87429c74205181ac702}{Quad\+Tree} ()
+\item 
+\hyperlink{classHurricane_1_1QuadTree_a3f0c6d7849185a9881bdb3b022fe1777}{$\sim$\+Quad\+Tree} ()
+\item 
+const \hyperlink{classHurricane_1_1Box}{Box} \& \hyperlink{classHurricane_1_1QuadTree_a80806e2d7e99fee07d0335697ed9b82b}{get\+Bounding\+Box} () const
+\item 
+\hyperlink{namespaceHurricane_a4456a34f3bc6766d471c3064ace19759}{Gos} \hyperlink{classHurricane_1_1QuadTree_a571dd774ee953dfebb3d4162f98c679c}{get\+Gos} () const
+\item 
+\hyperlink{namespaceHurricane_a4456a34f3bc6766d471c3064ace19759}{Gos} \hyperlink{classHurricane_1_1QuadTree_ae6a48f63ef2e6b5ec562afe267c85fe3}{get\+Gos\+Under} (const \hyperlink{classHurricane_1_1Box}{Box} \&area) const
+\item 
+bool \hyperlink{classHurricane_1_1QuadTree_a9d942a3c16a775a9ea576ef7dc753ac9}{is\+Empty} () const
+\item 
+void \hyperlink{classHurricane_1_1QuadTree_ac39f6a095f3b4148b36b92d2b0906f16}{insert} (\hyperlink{classHurricane_1_1Go}{Go} $\ast$go)
+\item 
+void \hyperlink{classHurricane_1_1QuadTree_af646d2864c70f6456d845c2d6a8d1785}{remove} (\hyperlink{classHurricane_1_1Go}{Go} $\ast$go)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree} description ({\bfseries A\+PI}) 
+
+\hypertarget{classHurricane_1_1QuadTree_secQuadTreeIntro}{}\subsection{Introduction}\label{classHurricane_1_1QuadTree_secQuadTreeIntro}
+Quadtrees are efficient hierarchical data structures for the geometrical access of gos.
+
+\begin{DoxyParagraph}{Important\+:}
+You must not change the bounding box of an object already present in the quadtree, because its localization within the tree depends on it. Therefore, if an object is modified, you must in a firts time remove it from the quadtree, apply the changes then re-\/insert it in the quadtree, at the right place which depends of its new bounding box. 
+\end{DoxyParagraph}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_a91303ebe7740d87429c74205181ac702}\label{classHurricane_1_1QuadTree_a91303ebe7740d87429c74205181ac702}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!Quad\+Tree@{Quad\+Tree}}
+\index{Quad\+Tree@{Quad\+Tree}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{Quad\+Tree()}{QuadTree()}}
+{\footnotesize\ttfamily Hurricane\+::\+Quad\+Tree\+::\+Quad\+Tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Default constructor \+: the quadtree is initially empty (objects will be inserted or removed on demand). \mbox{\Hypertarget{classHurricane_1_1QuadTree_a3f0c6d7849185a9881bdb3b022fe1777}\label{classHurricane_1_1QuadTree_a3f0c6d7849185a9881bdb3b022fe1777}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!````~Quad\+Tree@{$\sim$\+Quad\+Tree}}
+\index{````~Quad\+Tree@{$\sim$\+Quad\+Tree}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{$\sim$\+Quad\+Tree()}{~QuadTree()}}
+{\footnotesize\ttfamily Hurricane\+::\+Quad\+Tree\+::$\sim$\+Quad\+Tree (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Destroys the quadtree and its sub-\/quadtrees but doesn\textquotesingle{}t touch to the contained objects, they will ibe only detached from their respective quadtree nodes. 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_a80806e2d7e99fee07d0335697ed9b82b}\label{classHurricane_1_1QuadTree_a80806e2d7e99fee07d0335697ed9b82b}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!get\+Bounding\+Box@{get\+Bounding\+Box}}
+\index{get\+Bounding\+Box@{get\+Bounding\+Box}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{get\+Bounding\+Box()}{getBoundingBox()}}
+{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Box}{Box} Hurricane\+::\+Quad\+Tree\+::get\+Bounding\+Box (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the quadtree bounding box, that is the minimal bounding box including all objects of the quad tree (this bounding box is updated dynamically). 
+
+Referenced by Hurricane\+::\+Slice\+::get\+Bounding\+Box().
+
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_a571dd774ee953dfebb3d4162f98c679c}\label{classHurricane_1_1QuadTree_a571dd774ee953dfebb3d4162f98c679c}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!get\+Gos@{get\+Gos}}
+\index{get\+Gos@{get\+Gos}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{get\+Gos()}{getGos()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a4456a34f3bc6766d471c3064ace19759}{Gos} Hurricane\+::\+Quad\+Tree\+::get\+Gos (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of graphical objects contained in the quadtree. 
+
+Referenced by Hurricane\+::\+Slice\+::get\+Gos().
+
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_ae6a48f63ef2e6b5ec562afe267c85fe3}\label{classHurricane_1_1QuadTree_ae6a48f63ef2e6b5ec562afe267c85fe3}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!get\+Gos\+Under@{get\+Gos\+Under}}
+\index{get\+Gos\+Under@{get\+Gos\+Under}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{get\+Gos\+Under()}{getGosUnder()}}
+{\footnotesize\ttfamily \hyperlink{namespaceHurricane_a4456a34f3bc6766d471c3064ace19759}{Gos} Hurricane\+::\+Quad\+Tree\+::get\+Gos\+Under (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1Box}{Box} \&}]{area }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} the collection of graphical objects contained in the quadtree and whose bounding box intersects the rectangular region defined by {\ttfamily $<$area$>$}. 
+
+Referenced by Hurricane\+::\+Slice\+::get\+Gos().
+
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_a9d942a3c16a775a9ea576ef7dc753ac9}\label{classHurricane_1_1QuadTree_a9d942a3c16a775a9ea576ef7dc753ac9}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!is\+Empty@{is\+Empty}}
+\index{is\+Empty@{is\+Empty}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{is\+Empty()}{isEmpty()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Quad\+Tree\+::is\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the quadtree doesn\textquotesingle{}t contain any object, else {\bfseries false}. 
+
+References insert().
+
+
+
+Referenced by Hurricane\+::\+Slice\+::get\+Gos().
+
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_ac39f6a095f3b4148b36b92d2b0906f16}\label{classHurricane_1_1QuadTree_ac39f6a095f3b4148b36b92d2b0906f16}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!insert@{insert}}
+\index{insert@{insert}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Quad\+Tree\+::insert (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Go}{Go} $\ast$}]{go }\end{DoxyParamCaption})}
+
+inserts the graphic object within the quadtree (if not yet inserted).
+
+\begin{DoxyParagraph}{Caution\+:}
+If the graphic object pointer is N\+U\+LL an exception is thrown.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Remark\+:}
+When the number of objects contained in a quadtree leaf is greater than some threshold, this leaf is split into four balanced sub-\/quadtrees. This recursive division provides a faster access even for very large quadtrees (to the detriment of some memory loss). 
+\end{DoxyParagraph}
+
+
+Referenced by is\+Empty().
+
+\mbox{\Hypertarget{classHurricane_1_1QuadTree_af646d2864c70f6456d845c2d6a8d1785}\label{classHurricane_1_1QuadTree_af646d2864c70f6456d845c2d6a8d1785}} 
+\index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!remove@{remove}}
+\index{remove@{remove}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
+\subsubsection{\texorpdfstring{remove()}{remove()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Quad\+Tree\+::remove (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Go}{Go} $\ast$}]{go }\end{DoxyParamCaption})}
+
+removes the object from the quadtree.
+
+\begin{DoxyParagraph}{Caution\+:}
+If the graphic object is N\+U\+LL an exception is thrown.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Remark\+:}
+When the number of objects included in the quadtree goes below an other threshold, the inverse behaviour happens \+: the sub-\/quadtrees are deleted and the contained objects are taken in charge by this quadtree node (and memory is released to the system). 
+\end{DoxyParagraph}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Quad\+Tree.\+h\item 
+Quad\+Tree.\+dox\end{DoxyCompactItemize}

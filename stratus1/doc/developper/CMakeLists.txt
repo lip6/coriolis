@@ -1,4 +1,6 @@
 
+                   set ( LATEX_OUTPUT_PATH          ${CMAKE_CURRENT_SOURCE_DIR}/latex )
+ if(BUILD_DOC)
                    set ( LATEX2HTML_CONVERTER_FLAGS "-html_version" "4.0,latin1"
                                                     "-style" "SoC.css"
                                                     "-init_file" "${CMAKE_CURRENT_SOURCE_DIR}/.latex2html-init"
@@ -11,19 +13,15 @@
                                                 man_stratus.tex
                                                 see_also.tex
                        )
+ endif()
 
                    set ( htmlInstallDir  share/doc/coriolis2/en/html/ )
                    set ( latexInstallDir share/doc/coriolis2/en/latex/stratus_developper )
 
- latex_get_output_path ( output_dir )
+        make_directory ( "${LATEX_OUTPUT_PATH}/stratus_developper" )
+       execute_process ( COMMAND cp -r "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" "${LATEX_OUTPUT_PATH}/stratus_developper/SoC.css" )
 
-
-                 #file ( COPY "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" DESTINATION "${output_dir}/README" )
-        make_directory ( "${output_dir}/stratus_developper" )
-       execute_process ( COMMAND cp -r "${CMAKE_CURRENT_SOURCE_DIR}/SoC.css" "${output_dir}/stratus_developper" )
-
-               install ( FILES ${output_dir}/stratus_developper.tex
-                               ${output_dir}/stratus_developper.dvi
-                               ${output_dir}/stratus_developper.pdf
-                               DESTINATION ${latexInstallDir} )
-               install ( DIRECTORY ${output_dir}/stratus_developper DESTINATION ${htmlInstallDir} )
+               install ( FILES ${LATEX_OUTPUT_PATH}/stratus_developper.tex
+                               ${LATEX_OUTPUT_PATH}/stratus_developper.dvi
+                               ${LATEX_OUTPUT_PATH}/stratus_developper.pdf DESTINATION ${latexInstallDir} )
+               install ( DIRECTORY ${LATEX_OUTPUT_PATH}/stratus_developper DESTINATION ${htmlInstallDir} )
