@@ -1,5 +1,5 @@
 
- if(BUILD_DOC and DOXYGEN_FOUND)
+ if(BUILD_DOC AND DOXYGEN_FOUND)
  add_custom_target( doc ALL
                     cd ${VLSISAPD_SOURCE_DIR}/doc && ${DOXYGEN_EXECUTABLE} doxyfile )
  endif()
