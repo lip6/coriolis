@@ -26,10 +26,11 @@ using namespace std;
 
 #include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/Warning.h"
-#include "hurricane/Net.h"
-#include "hurricane/Cell.h"
 #include "hurricane/Plug.h"
+#include "hurricane/Net.h"
 #include "hurricane/Instance.h"
+#include "hurricane/Cell.h"
+#include "hurricane/Library.h"
 #include "hurricane/UpdateSession.h"
 using namespace Hurricane;
 
@@ -220,6 +221,7 @@ namespace {
       typedef  vector< pair<string,string> >  Connections;
     public:
                                 Subckt          ( string modelName, string instanceName );
+      static Model*             createModel     ( string modelName );
       inline string             getModelName    () const;
       inline string             getInstanceName () const;
       inline const Connections& getConnections  () const;
@@ -286,28 +288,39 @@ namespace {
 // Class  :  "::Subckt" (implementation).
 
 
+  Model*  Subckt::createModel ( string modelName )
+  {
+    Cell*  cell  = NULL;
+    Model* model = NULL;
+    if (Blif::getLibraries().empty()) {
+      AllianceFramework* af = AllianceFramework::get();
+      if (af->isInCatalog(modelName)) {
+        model = Model::find( modelName );
+        if (not model) {
+          model = new Model ( af->getCell( modelName, Catalog::State::Views, 0 ) );
+        }
+      }
+    } else {
+      for ( Library* library : Blif::getLibraries() ) {
+        cell = library->getCell( modelName );
+        if (cell) {
+          model = new Model ( cell );
+          break;
+        }
+      }
+    }
+
+    return model;
+  }
+
+
   Subckt::Subckt ( string modelName, string instanceName )
     : _modelName   (modelName)
     , _instanceName(instanceName)
     , _connections ()
-    , _model       (NULL)
-  {
-    AllianceFramework* af = AllianceFramework::get();
-    if (af->isInCatalog(modelName)) {
-      _model = Model::find( modelName );
-      if (not _model) {
-        _model = new Model ( af->getCell( modelName, Catalog::State::Views, 0 ) );
-      }
-    }
+    , _model       (createModel(modelName))
+  { }
 
-    // Cell* cell = AllianceFramework::get()->getCell( modelName, Catalog::State::Views|Catalog::State::Foreign, 0 );
-    // if (cell) {
-    //   _model = Model::find( getString(cell->getName()) );
-    //   if (not _model) {
-    //     _model = new Model ( cell );
-    //   }
-    // }
-  }
 
   inline Model*     Subckt::getModel        () const { return _model; }
   inline string     Subckt::getModelName    () const { return _modelName; }
@@ -641,6 +654,13 @@ namespace {
 
 
 namespace CRL {
+
+
+  vector<Library*>  Blif::_libraries;
+
+
+  void  Blif::add ( Library* library )
+  { if (library) _libraries.push_back( library ); }
 
 
   Cell* Blif::load ( string cellPath )

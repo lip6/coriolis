@@ -16,6 +16,7 @@
 
 #include "crlcore/PyBlif.h"
 #include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyLibrary.h"
 #include <string>
 #include <sstream>
 
@@ -40,7 +41,12 @@ namespace  CRL {
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
+  using Isobar::PyCell;
   using Isobar::PyCell_Link;
+  using Isobar::PyTypeCell;
+  using Isobar::PyLibrary;
+  using Isobar::PyLibrary_Link;
+  using Isobar::PyTypeLibrary;
 
 
 extern "C" {
@@ -51,6 +57,27 @@ extern "C" {
 // +=================================================================+
 // |               "PyBlif" Python Module Code Part                  |
 // +=================================================================+
+
+
+  static PyObject* PyBlif_add ( PyObject*, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyBlif_add()" << endl;
+
+    HTRY
+      PyObject* pyLibrary = NULL;
+      if (PyArg_ParseTuple( args, "O:Blif.add", &pyLibrary )) {
+        if (not IsPyLibrary(pyLibrary)) {
+          PyErr_SetString( ConstructorError, "Blif.add(): Argument is not of Library type." );
+          return NULL;
+        }
+        Blif::add( PYLIBRARY_O(pyLibrary) );
+      } else {
+        PyErr_SetString( ConstructorError, "Blif.add(): bad number of parameters." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
 
 
   static PyObject* PyBlif_load ( PyObject*, PyObject* args )
@@ -80,6 +107,8 @@ extern "C" {
   PyMethodDef PyBlif_Methods[] =
     { { "load"                , (PyCFunction)PyBlif_load     , METH_VARARGS|METH_STATIC
                               , "Load a complete Blif design." }
+    , { "add"                 , (PyCFunction)PyBlif_add      , METH_VARARGS|METH_STATIC
+                              , "Add a Library into which lookup master cells.." }
   //, { "destroy"             , (PyCFunction)PyBlif_destroy  , METH_VARARGS
   //                          , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
@@ -94,7 +123,7 @@ extern "C" {
 
 
 // +=================================================================+
-// |              "PyBlif" Shared Library Code Part              |
+// |                "PyBlif" Shared Library Code Part                |
 // +=================================================================+
 
   // Type Definition.

@@ -38,26 +38,35 @@
 #ifndef  CRL_BLIF_H
 #define  CRL_BLIF_H
 
-# include  <string>
+#include <string>
+#include <vector>
 
 
 namespace Hurricane {
   class Cell;
+  class Library;
 }
 
 
 namespace CRL {
 
   using Hurricane::Cell;
+  using Hurricane::Library;
 
 
   class Blif {
     public:
-      static Cell*  load ( std::string netlist );
+      static              Cell*                  load         ( std::string netlist );
+      static              void                   add          ( Library* );
+      static inline const std::vector<Library*>& getLibraries ();
+    private:
+      static std::vector<Library*>  _libraries;
   };
 
+  
+  inline const std::vector<Library*>& Blif::getLibraries () { return _libraries; }
 
-} // End of CRL namespace.
 
+} // CRL namespace.
 
-# endif
+#endif  // CRL_BLIF_H
