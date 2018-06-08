@@ -1632,6 +1632,13 @@ namespace Anabatic {
       getAutoTarget()->invalidate( Flags::Topology|Flags::NoCheckLayer );
     }
 
+    vector<GCell*> gcells;
+    getGCells( gcells );
+    for ( size_t i=0 ; i<gcells.size() ; ++i ) {
+      gcells[i]->flags() |= Flags::Invalidated;
+      cdebug_log(159,0) << "changeDepth() " << gcells[i] << this << " " << endl;
+    }
+
     if (not (flags & Flags::WithNeighbors)) {
       cdebug_tabw(159,-1);
       return;
@@ -1658,11 +1665,6 @@ namespace Anabatic {
       else
         segment->_changeDepth( depth-1, Flags::NoFlags );
     }
-
-    vector<GCell*> gcells;
-    getGCells( gcells );
-    for ( size_t i=0 ; i<gcells.size() ; ++i )
-      gcells[i]->invalidate();
 
     cdebug_tabw(149,-1);
   }

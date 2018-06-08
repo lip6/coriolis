@@ -844,6 +844,7 @@ namespace Anabatic {
   {
     cdebug_log(110,1) << "GCell::invalidate() " << this << endl;
     Super::invalidate( propagateFlag );
+    _flags |= Flags::Invalidated;
 
     cdebug_log(110,1) << "West side."  << endl; for ( Edge* edge : _westEdges  ) edge->invalidate(); cdebug_tabw(110,-1);
     cdebug_log(110,1) << "East side."  << endl; for ( Edge* edge : _eastEdges  ) edge->invalidate(); cdebug_tabw(110,-1);
@@ -1595,10 +1596,10 @@ namespace Anabatic {
     float capacity = getCapacity(depth);
 
     cdebug_log(149,0) << "  | hasFreeTrack [" << getId() << "] depth:" << depth << " "
-                << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
-              //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
-                << " " << _feedthroughs[depth] << " vs. " << capacity
-                << " " << this << endl;
+                      << Session::getRoutingGauge()->getRoutingLayer(depth)->getName()
+                    //<< " " << (_densities[depth]*capacity) << " vs. " << capacity
+                      << " " << _feedthroughs[depth] << " vs. " << capacity
+                      << " " << this << endl;
     
     return (_feedthroughs[depth] + 0.99 + reserve <= capacity);
   }

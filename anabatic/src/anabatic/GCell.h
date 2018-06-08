@@ -363,7 +363,7 @@ namespace Anabatic {
   inline       GCell*                GCell::getUnder      ( Point p ) const { return getUnder(p.getX(),p.getY()); }
   inline const vector<Contact*>&     GCell::getGContacts  () const { return _gcontacts; }
   inline        size_t               GCell::getDepth      () const { return _depth; }
-  inline const vector<AutoSegment*>& GCell::getVSegments  () const { return _vsegments; }
+         const vector<AutoSegment*>& GCell::getVSegments  () const { return _vsegments; }
   inline const vector<AutoSegment*>& GCell::getHSegments  () const { return _hsegments; }
   inline const vector<AutoContact*>& GCell::getContacts   () const { return _contacts; }
 
@@ -442,11 +442,11 @@ namespace Anabatic {
   inline  DbU::Unit  GCell::getBlockage ( size_t depth ) const
   { return (depth<_depth) ? _blockages[depth] : 0; }
 
-  inline  void  GCell::addVSegment ( AutoSegment* segment )
-  { _flags |= Flags::Invalidated; _vsegments.push_back(segment); }
-
   inline  void  GCell::addHSegment ( AutoSegment* segment )
   { _flags |= Flags::Invalidated; _hsegments.push_back(segment); }
+
+  inline void  GCell::addVSegment ( AutoSegment* segment )
+  { _flags |= Flags::Invalidated; _vsegments.push_back(segment); }
 
   inline  void  GCell::addContact ( AutoContact* contact )
   { _flags |= Flags::Invalidated; _contacts.push_back(contact); }
