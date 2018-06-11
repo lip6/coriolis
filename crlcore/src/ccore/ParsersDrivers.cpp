@@ -169,8 +169,8 @@ namespace CRL {
     registerSlot ( "ap"   , (CellParser_t*)apParser       , "ap"   );
     registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vst"  );
     registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vbe"  );
-    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhd"  );
-    registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhdl" );
+  //registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhd"  );
+  //registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhdl" );
     registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi"  );
     registerSlot ( "oa"   , (CellParser_t*)OpenAccess::oaCellParser  , "oa" );
   //registerSlot ( "oa"   , (LibraryParser_t*)OpenAccess::oaLibParser, "oa" );

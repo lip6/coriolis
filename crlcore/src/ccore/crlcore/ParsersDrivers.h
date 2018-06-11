@@ -2,38 +2,25 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2009, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ParsersDrivers.h"                       |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./crlcore/ParsersDrivers.h"               |
+// +-----------------------------------------------------------------+
 
 
+#ifndef CRL_PARSERS_DRIVERS_H_
+#define CRL_PARSERS_DRIVERS_H
 
-
-# ifndef __CRL_PARSERS_DRIVERS_H__
-#   define __CRL_PARSERS_DRIVERS_H__
-
-
-# include  <string>
-# include  <map>
-
-# include  "hurricane/Name.h"
-
+#include  <string>
+#include  <map>
+#include  "hurricane/Name.h"
 namespace Hurricane {
   class Library;
   class Cell;
@@ -42,11 +29,9 @@ namespace Hurricane {
 
 namespace CRL {
 
-
   using Hurricane::Name;
   using Hurricane::Cell;
   using Hurricane::Library;
-
 
   class Environment;
   class Catalog;
@@ -217,10 +202,6 @@ namespace CRL {
   extern const char* BadInputMode;
   extern const char* BadOutputMode;
 
+}  // CRL namespace.
 
-
-
-}
-
-
-# endif
+#endif  // CRL_PARSERS_DRIVERS_H
