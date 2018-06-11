@@ -199,6 +199,119 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::_layerAssignNoGlobalM2V ( Net* net, set<Net*>& globalNets, unsigned long& total, unsigned long& global )
+  {
+    cdebug_log(149,0) << "Anabatic::_layerAssignNoGlobalM2V ( " << net << " )" << endl;
+    cdebug_tabw(145,1);
+
+    bool               isGlobalNet = false;
+    unsigned long      netGlobal   = 0;
+    unsigned long      netTotal    = 0;
+    set<AutoContact*>  globalContacts;
+
+    for ( Segment* baseSegment : net->getSegments() ) {
+      ++netTotal;
+
+      AutoSegment* segment = Session::lookup( baseSegment );
+
+      if (not segment or segment->isLocal()) continue;
+
+      isGlobalNet = true;
+      netTotal    = 0;
+      globalNets.insert( net );
+      break;
+    }
+
+    if (isGlobalNet) {
+      vector<AutoSegment*> horizontals;
+
+      for ( Segment* baseSegment : net->getSegments() ) {
+        AutoSegment* segment = Session::lookup( baseSegment );
+        if (not segment or not segment->isCanonical()) continue;
+
+        if (segment->isHorizontal()) horizontals.push_back( segment );
+      }
+
+      for ( AutoSegment* horizontal : horizontals ) {
+        vector<AutoSegment*> collapseds;
+        vector<AutoSegment*> perpandiculars;
+        vector<AutoSegment*> northBounds;
+        vector<AutoSegment*> southBounds;
+        DbU::Unit            leftBound;
+        DbU::Unit            rightBound;
+        bool                 hasNorth = false;
+        bool                 hasSouth = false;
+
+        AutoSegment::getTopologicalInfos( horizontal
+                                        , collapseds
+                                        , perpandiculars
+                                        , leftBound
+                                        , rightBound
+                                        );
+
+        for ( AutoSegment* perpandicular : perpandiculars ) {
+          if (Session::getLayerDepth(perpandicular->getLayer()) > 2) continue;
+
+          bool hasGlobal = false;
+          for ( AutoSegment* aligned : perpandicular->getAligneds(Flags::NoCheckLayer|Flags::WithSelf) ) {
+            if (aligned->isGlobal()) { hasGlobal = true; break; }
+          }
+          if (not hasGlobal) continue;
+
+          // if (perpandicular->getSourceY() == horizontal->getAxis()) {
+          //   hasNorth = true;
+          //   if (hasGlobal) northBounds.push_back( perpandicular );
+          // } else {
+          //   hasSouth = true;
+          //   if (hasGlobal) southBounds.push_back( perpandicular );
+          // }
+          
+          if (  perpandicular->getAutoSource()->getGCell()->getNorth()
+             != perpandicular->getAutoTarget()->getGCell()) {
+            perpandicular->changeDepth( 3, Flags::Propagate );
+            ++netGlobal;
+            continue;
+          }
+        }
+
+        // if (hasSouth and hasNorth) {
+        //   if (not northBounds.empty()) {
+        //     for ( AutoSegment* perpandicular : northBounds )
+        //       perpandicular->changeDepth( 3, Flags::Propagate );
+        //   } else {
+        //     for ( AutoSegment* perpandicular : southBounds )
+        //       perpandicular->changeDepth( 3, Flags::Propagate );
+        //   }
+        // }
+      }
+    }
+
+    total  += netTotal;
+    global += netGlobal;
+
+    cdebug_tabw(145,-1);
+  }
+
+
+  void  AnabaticEngine::_layerAssignNoGlobalM2V ( unsigned long& total, unsigned long& global, set<Net*>& globalNets )
+  {
+    cmess1 << "  o  Assign Layer (no global vertical metal2)." << endl;
+
+    for ( Net* net : getCell()->getNets() ) {
+      DebugSession::open( net, 145, 150 );
+
+      NetRoutingState* state = NetRoutingExtension::get( net );
+      if (not state or state->isAutomaticGlobalRoute()) {
+        _layerAssignNoGlobalM2V( net, globalNets, total, global );
+      } else {
+        cdebug_log(145,0) << net << " is not automatic routed, skipped." << endl;
+      }
+
+      DebugSession::close();
+    }
+  }
+
+
 #if THIS_IS_DISABLED
   void  AnabaticEngine::moveULeft ( AutoSegment* seed, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
@@ -486,8 +599,9 @@ namespace Anabatic {
 
     if (Session::getAllowedDepth() >= 3) {
       switch ( method ) {
-        case EngineLayerAssignByLength: _layerAssignByLength( total, global, globalNets ); break;
-        case EngineLayerAssignByTrunk:  _layerAssignByTrunk ( total, global, globalNets ); break;
+        case EngineLayerAssignByLength:    _layerAssignByLength    ( total, global, globalNets ); break;
+        case EngineLayerAssignByTrunk:     _layerAssignByTrunk     ( total, global, globalNets ); break;
+        case EngineLayerAssignNoGlobalM2V: _layerAssignNoGlobalM2V ( total, global, globalNets ); break;
         case EngineNoNetLayerAssign:    break;
         default:
           stopMeasures();

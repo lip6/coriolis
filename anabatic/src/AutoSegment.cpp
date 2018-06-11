@@ -1636,11 +1636,11 @@ namespace Anabatic {
     getGCells( gcells );
     for ( size_t i=0 ; i<gcells.size() ; ++i ) {
       gcells[i]->flags() |= Flags::Invalidated;
-      cdebug_log(159,0) << "changeDepth() " << gcells[i] << this << " " << endl;
+      cdebug_log(149,0) << "changeDepth() " << gcells[i] << this << " " << endl;
     }
 
     if (not (flags & Flags::WithNeighbors)) {
-      cdebug_tabw(159,-1);
+      cdebug_tabw(149,-1);
       return;
     }
 

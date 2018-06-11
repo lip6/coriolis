@@ -79,7 +79,6 @@ namespace Anabatic {
 
     Point        sourcePosition;
     Point        targetPosition;
-    Net*         net            = rp->getNet();
     const Layer* rpLayer        = rp->getLayer();
     size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
     Flags        direction      = Session::getDirection ( rpDepth );

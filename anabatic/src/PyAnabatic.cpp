@@ -71,11 +71,12 @@ extern "C" {
     PyObject* dictionnary = PyModule_GetDict(module);
     PyObject* constant;
 
-    LoadObjectConstant( dictionnary,EngineLoadGrByNet        ,"EngineLoadGrByNet"         );
-    LoadObjectConstant( dictionnary,EngineLoadGrByGCell      ,"EngineLoadGrByGCell"       );
-    LoadObjectConstant( dictionnary,EngineLayerAssignByLength,"EngineLayerAssignByLength" );
-    LoadObjectConstant( dictionnary,EngineLayerAssignByTrunk ,"EngineLayerAssignByTrunk"  );
-    LoadObjectConstant( dictionnary,EngineNoNetLayerAssign   ,"EngineNoNetLayerAssign"    );
+    LoadObjectConstant( dictionnary,EngineLoadGrByNet           ,"EngineLoadGrByNet"            );
+    LoadObjectConstant( dictionnary,EngineLoadGrByGCell         ,"EngineLoadGrByGCell"          );
+    LoadObjectConstant( dictionnary,EngineLayerAssignByLength   ,"EngineLayerAssignByLength"    );
+    LoadObjectConstant( dictionnary,EngineLayerAssignByTrunk    ,"EngineLayerAssignByTrunk"     );
+    LoadObjectConstant( dictionnary,EngineLayerAssignNoGlobalM2V,"EngineLayerAssignNoGlobalM2V" );
+    LoadObjectConstant( dictionnary,EngineNoNetLayerAssign      ,"EngineNoNetLayerAssign"       );
   }
 
   

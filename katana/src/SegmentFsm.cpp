@@ -908,7 +908,12 @@ namespace Katana {
       cdebug_log(159,0) << "* " << track << " [" << begin << ":" << end << "]" << endl;
 
       for ( ; (begin < end) ; ++begin ) {
-        other = track->getSegment( begin );
+        other         = track->getSegment( begin );
+        otherIsGlobal =    otherIsGlobal
+                        or other->isGlobal()
+                        or other->isBlockage()
+                        or other->isFixed()
+                        or other->isFixedAxis();
 
         if (other->getNet() == segment->getNet()) {
           cdebug_log(159,0) << "  | " << begin << " Same net: " << " " << other << endl;
@@ -935,7 +940,7 @@ namespace Katana {
           otherIsGlobal = other->isGlobal() or other->isBlockage() or other->isFixed();
         } else {
           otherOverlap.merge(other->getCanonicalInterval());
-          otherIsGlobal = otherIsGlobal or other->isGlobal() or other->isBlockage() or other->isFixed();
+          otherIsGlobal = otherIsGlobal or other->isGlobal() or other->isBlockage() or other->isFixed() or other->isFixedAxis();
         }
       }
       if (not otherOverlap.isEmpty()) {

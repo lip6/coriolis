@@ -122,11 +122,12 @@ namespace Anabatic {
                        , EngineGutted        = 6
                        };
 
-  enum EngineAlgorithm { EngineLoadGrByNet         = (1 <<  0)
-                       , EngineLoadGrByGCell       = (1 <<  1)
-                       , EngineLayerAssignByLength = (1 <<  2)
-                       , EngineLayerAssignByTrunk  = (1 <<  3)
-                       , EngineNoNetLayerAssign    = (1 <<  4)
+  enum EngineAlgorithm { EngineLoadGrByNet            = (1 <<  0)
+                       , EngineLoadGrByGCell          = (1 <<  1)
+                       , EngineLayerAssignByLength    = (1 <<  2)
+                       , EngineLayerAssignByTrunk     = (1 <<  3)
+                       , EngineLayerAssignNoGlobalM2V = (1 <<  4)
+                       , EngineNoNetLayerAssign       = (1 <<  5)
                        };
 
 

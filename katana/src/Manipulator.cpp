@@ -188,8 +188,19 @@ namespace Katana {
       track = perpandiculars[i]->getTrack();
       if (not track) {
       // The perpandicular is not placed yet.
-        if (flags & Manipulator::PerpandicularsFirst) {
-          _fsm.addAction( perpandiculars[i], perpandicularActionFlags );
+        if (perpandiculars[i]->isFixedAxis()) {
+          RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(perpandiculars[i]->getLayer());
+          Track*        track = plane->getTrackByPosition( perpandiculars[i]->getAxis() );
+          if (track) {
+            TrackElement* other = track->getSegment( _segment->getAxis() );
+            if (other and (other->getNet() != _segment->getNet()) ) {
+              _fsm.addAction( other, SegmentAction::OtherRipup );
+            }
+          }
+        } else {
+          if (flags & Manipulator::PerpandicularsFirst) {
+            _fsm.addAction( perpandiculars[i], perpandicularActionFlags );
+          }
         }
         continue;
       }
