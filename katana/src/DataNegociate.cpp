@@ -243,6 +243,10 @@ namespace Katana {
     cdebug_log(159,0) << s.str() << endl;
     cdebug_log(159,0) << "Perpandicular Free: " << _perpandicularFree << endl;
 
+    cdebug_log(159,0) << "Perpandiculars: " << endl;
+    for ( TrackElement* perpand : _perpandiculars ) {
+      cdebug_log(159,0) << "| " << perpand << endl;
+    }
 
     cdebug_tabw(159,-1);
     DebugSession::close();

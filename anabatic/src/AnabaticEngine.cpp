@@ -878,7 +878,7 @@ namespace Anabatic {
              and north->canDrag()
              and (south->getNet() != north->getNet())
              and (south->getX  () == north->getX  ()) ) {
-            Interval constraints ( north->getCBYMin() - pitch3, gcell->getYMin() );
+            Interval constraints ( gcell->getYMin(), north->getCBYMin() /*- pitch3*/ );
             AutoSegment* terminal = south->getSegment();
             AutoContact* opposite = terminal->getOppositeAnchor( south );
 
@@ -887,7 +887,7 @@ namespace Anabatic {
               constraineds.insert( segment );
             }
 
-            constraints = Interval( south->getCBYMax() + pitch3, gcell->getYMax() );
+            constraints = Interval( south->getCBYMax() /*+ pitch3*/, gcell->getYMax() );
             terminal    = north->getSegment();
             opposite    = terminal->getOppositeAnchor( north );
 
@@ -919,7 +919,7 @@ namespace Anabatic {
 
       sort( aligneds.begin(), aligneds.end(), AutoSegment::CompareBySourceU() );
 
-      AutoSegment* previous = NULL;
+    //AutoSegment* previous = NULL;
       for ( AutoSegment* aligned : aligneds ) {
         Interval constraints = userConstraints.getIntersection( aligned->getUserConstraints() );
 
@@ -959,7 +959,7 @@ namespace Anabatic {
           userConstraints = constraints;
         }
 
-        previous = aligned;
+      //previous = aligned;
       }
     }
 
@@ -971,6 +971,8 @@ namespace Anabatic {
   {
     cmess1 << "  o  Building detailed routing from global. " << endl;
 
+    size_t shortNets = 0;
+
     startMeasures();
     openSession();
 
@@ -981,6 +983,10 @@ namespace Anabatic {
 
     if (gaugeKind < 3) {
       for ( Net* net : getCell()->getNets() ) {
+        if (NetRoutingExtension::isShortNet(net)) {
+          AutoSegment::setShortNetMode( true );
+          ++shortNets;
+        }
         if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {
           DebugSession::open( net, 145, 150 );
           AutoSegment::setAnalogMode( NetRoutingExtension::isAnalog(net) );
@@ -994,8 +1000,9 @@ namespace Anabatic {
           Session::revalidate();
           DebugSession::close();
         }
+        AutoSegment::setAnalogMode  ( false );
+        AutoSegment::setShortNetMode( false );
       }
-      AutoSegment::setAnalogMode( false );
     }
 
 #if defined(CHECK_DATABASE)
@@ -1004,6 +1011,8 @@ namespace Anabatic {
 
     Session::close();
     stopMeasures();
+
+    cmess2 << Dots::asSizet("     - Short nets",shortNets) << endl;
 
     if (gaugeKind > 2) {
       throw Error( "AnabaticEngine::_loadGrByNet(): Unsupported kind of routing gauge \"%s\"."

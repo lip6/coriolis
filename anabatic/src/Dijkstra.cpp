@@ -2028,6 +2028,10 @@ namespace Anabatic {
   {
     cdebug_log(112,1) << "Dijkstra::_materialize() " << _net << " _sources:" << _sources.size() << endl;
 
+    if (_sources.size() < 2)
+      NetRoutingExtension::create( _net )->setFlags( NetRoutingState::ShortNet
+                                                   | NetRoutingState::AutomaticGlobalRoute );
+
     if (_sources.size() < 2) { cdebug_tabw(112,-1); return; }
 
     NetRoutingState* state = NetRoutingExtension::get( _net );

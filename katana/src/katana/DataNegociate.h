@@ -143,18 +143,16 @@ namespace Katana {
 
   inline void  DataNegociate::setState ( uint32_t state, Flags flags )
   {
-    if ( (_state >= Repair) and (state < _state) ) {
-      std::cerr << "Revert DataNegociate state from Repair/RepairFailed to " << getStateString(state,_stateCount).c_str() << std::endl;
-      std::cerr << "On " << _getString() << std::endl;
+    // if ( (_state >= Repair) and (state < _state) ) {
+    //   std::cerr << "Revert DataNegociate state from Repair/RepairFailed to " << getStateString(state,_stateCount).c_str() << std::endl;
+    //   std::cerr << "On " << _getString() << std::endl;
 
-      std::cerr << *((char*)NULL) << std::endl;
-      
-      throw Hurricane::Error( "Revert DataNegociate state from Repair/RepairFailed to %s."
-                              "        On %s"
-                            , getStateString(state,_stateCount).c_str()
-                            , _getString().c_str()
-                            );
-    }
+    //   throw Hurricane::Error( "Revert DataNegociate state from Repair/RepairFailed to %s."
+    //                           "        On %s"
+    //                         , getStateString(state,_stateCount).c_str()
+    //                         , _getString().c_str()
+    //                         );
+    // }
     if ( (_state != state) or (flags & Flags::ResetCount) ) {
     //std::cerr << "Changing state to:" << state << std::endl;
       _state      = state;

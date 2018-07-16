@@ -117,7 +117,7 @@ namespace {
   {
     AllianceFramework* af   = AllianceFramework::get ();
     RoutingGauge*      rg   = nw->getKatanaEngine()->getConfiguration()->getRoutingGauge();
-    bool               isVH = rg->isVH();
+  //bool               isVH = rg->isVH();
 
     for( Net* net : nw->getCell()->getNets() ) {
       if (net->getType() == Net::Type::POWER ) continue;
@@ -529,7 +529,7 @@ namespace Katana {
         cmess2.flush ();
       } else {
         cmess2 << "        <event:" << right << setw(8) << setfill('0')
-               << RoutingEvent::getProcesseds()-1 << setfill(' ') << " "
+               << RoutingEvent::getProcesseds() << setfill(' ') << " "
                << event->getEventLevel() << ":" << event->getPriority() << "> "
                << event->getSegment()
                << endl;

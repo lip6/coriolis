@@ -157,6 +157,14 @@ namespace Katana {
   { return Session::get("lookup(AutoSegment*)")->_getKatanaEngine()->_lookup ( segment ); }
 
 
+  void  Session::addShortDogleg ( TrackElement* segmentA, TrackElement* segmentB )
+  { Session::get("addShortDogleg(AutoSegment*)")->_getKatanaEngine()->_addShortDogleg( segmentA, segmentB ); }
+
+  
+  TrackElement* Session::getDoglegPaired ( TrackElement* segment )
+  { return Session::get("getDoglegPaired(AutoSegment*)")->_getKatanaEngine()->_getDoglegPaired( segment ); }
+
+
   void  Session::setInterrupt ( bool state )
   { Session::get("setInterrupt()")->_getKatanaEngine()->setInterrupt(state); }
 

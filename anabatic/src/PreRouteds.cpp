@@ -152,7 +152,8 @@ namespace Anabatic {
           state->setFlags  ( NetRoutingState::Unconnected );
 
         if (isFixed) {
-          cmess2 << "     - <" << net->getName() << "> is fixed." << endl;
+          if (rpCount > 1)
+            cmess2 << "     - <" << net->getName() << "> is fixed." << endl;
           state->unsetFlags( NetRoutingState::ManualGlobalRoute );
           state->setFlags  ( NetRoutingState::Fixed );
         } else {

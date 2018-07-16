@@ -75,11 +75,13 @@ namespace Katana {
       virtual bool                  isStrap                () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
+      virtual bool                  isShortDogleg          () const;
       virtual bool                  isReduced              () const;
       virtual bool                  isUTurn                () const;
       virtual bool                  isUserDefined          () const;
       virtual bool                  isAnalog               () const;
       virtual bool                  isWide                 () const;
+      virtual bool                  isShortNet             () const;
       virtual bool                  isPriorityLocked       () const;
     // Predicates.
       virtual bool                  hasSymmetric           () const;
@@ -96,6 +98,7 @@ namespace Katana {
       virtual Net*                  getNet                 () const;
       virtual DbU::Unit             getWidth               () const;
       virtual const Layer*          getLayer               () const;
+      virtual unsigned int          getDepth               () const;
       virtual DbU::Unit             getPitch               () const;
       virtual DbU::Unit             getPPitch              () const;
       virtual DbU::Unit             getExtensionCap        ( Flags ) const;
@@ -138,7 +141,7 @@ namespace Katana {
       virtual void                  setAxis                ( DbU::Unit, uint32_t flags );
       virtual TrackElement*         makeDogleg             ();
       virtual TrackElement*         makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual TrackElement*         makeDogleg             ( Interval, Flags& flags );
+      virtual Flags                 makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags flags );
       virtual void                  _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
       virtual bool                  moveAside              ( Flags );
       virtual bool                  slacken                ( Flags flags=Flags::NoFlags );

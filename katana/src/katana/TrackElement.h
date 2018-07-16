@@ -57,6 +57,7 @@ namespace Katana {
   class TrackSegment;
 
 
+  typedef  map<TrackElement*,TrackElement*>                 TrackElementPairing;
   typedef  map<Segment*,TrackElement*,Entity::CompareById>  TrackElementLut;
   typedef  void  (SegmentOverlapCostCB)( const TrackElement*, TrackCost& );
 
@@ -69,13 +70,14 @@ namespace Katana {
                          , TElemFixed        = (1 <<  2)
                          , TElemLocked       = (1 <<  4)
                          , TElemRouted       = (1 <<  5)
-                         , TElemSourceDogleg = (1 <<  6)
-                         , TElemTargetDogleg = (1 <<  7)
-                         , TElemAlignBottom  = (1 <<  8)
-                         , TElemAlignCenter  = (1 <<  9)
-                         , TElemAlignTop     = (1 << 10)
-                         , TElemRipple       = (1 << 11)
-                         , TElemInvalidated  = (1 << 12)
+                         , TElemShortDogleg  = (1 <<  6)
+                         , TElemSourceDogleg = (1 <<  7)
+                         , TElemTargetDogleg = (1 <<  8)
+                         , TElemAlignBottom  = (1 <<  9)
+                         , TElemAlignCenter  = (1 << 10)
+                         , TElemAlignTop     = (1 << 11)
+                         , TElemRipple       = (1 << 12)
+                         , TElemInvalidated  = (1 << 13)
                          };
 
 
@@ -113,10 +115,12 @@ namespace Katana {
       virtual bool                    isStrap                () const;
       virtual bool                    isSlackened            () const;
       virtual bool                    isDogleg               () const;
+      virtual bool                    isShortDogleg          () const;
       virtual bool                    isReduced              () const;
       virtual bool                    isUTurn                () const;
       virtual bool                    isUserDefined          () const;
       virtual bool                    isAnalog               () const;
+      virtual bool                    isShortNet             () const;
       virtual bool                    isPriorityLocked       () const = 0;
     // Predicates.                                           
       inline  bool                    isCreated              () const;
@@ -143,6 +147,7 @@ namespace Katana {
       virtual Net*                    getNet                 () const = 0;
       virtual DbU::Unit               getWidth               () const = 0;
       virtual const Layer*            getLayer               () const = 0;
+      virtual unsigned int            getDepth               () const;
       virtual DbU::Unit               getPitch               () const;
       virtual DbU::Unit               getPPitch              () const;
       virtual size_t                  getTrackSpan           () const = 0;
@@ -200,7 +205,7 @@ namespace Katana {
       virtual TrackElement*           makeDogleg             ();
       inline  bool                    makeDogleg             ( Anabatic::GCell* );
       virtual TrackElement*           makeDogleg             ( Anabatic::GCell*, TrackElement*& perpandicular, TrackElement*& parallel );
-      virtual TrackElement*           makeDogleg             ( Interval, Flags& flags );
+      virtual Flags                   makeDogleg             ( Interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags flags );
       virtual void                    _postDoglegs           ( TrackElement*& perpandicular, TrackElement*& parallel );
       virtual bool                    moveAside              ( Flags flags );
       virtual bool                    slacken                ( Flags flags=Flags::NoFlags );

@@ -49,7 +49,8 @@ namespace Katana {
                        , LocalRipupLimit      = 1
                        , GlobalRipupLimit     = 2
                        , LongGlobalRipupLimit = 3
-                       , RipupLimitsTableSize = 4
+                       , ShortNetRipupLimit   = 4
+                       , RipupLimitsTableSize = 5
                        };                     
       enum Constants   { MaxMetalDepth        = 20 };
       enum Flag        { UseClockTree         = (1 << 0) };

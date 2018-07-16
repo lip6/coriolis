@@ -140,6 +140,7 @@ namespace Katana {
   Flags          TrackFixedSegment::getDirection     () const { return getTrack()->getDirection(); }
   DbU::Unit      TrackFixedSegment::getWidth         () const { return _segment->getWidth(); }
   const Layer*   TrackFixedSegment::getLayer         () const { return _segment->getLayer(); }
+  unsigned int   TrackFixedSegment::getDepth         () const { return Session::getLayerDepth(getLayer()); }
   Interval       TrackFixedSegment::getFreeInterval  () const { return Interval(); }
   size_t         TrackFixedSegment::getTrackSpan     () const { return 1; }
 

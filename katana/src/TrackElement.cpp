@@ -143,11 +143,13 @@ namespace Katana {
   bool           TrackElement::isStrap              () const { return false; }
   bool           TrackElement::isSlackened          () const { return false; }
   bool           TrackElement::isDogleg             () const { return false; }
+  bool           TrackElement::isShortDogleg        () const { return false; }
   bool           TrackElement::isReduced            () const { return false; }
   bool           TrackElement::isUTurn              () const { return false; }
   bool           TrackElement::isUserDefined        () const { return false; }
   bool           TrackElement::isAnalog             () const { return false; }
   bool           TrackElement::isWide               () const { return false; }
+  bool           TrackElement::isShortNet           () const { return false; }
 // Predicates.
   bool           TrackElement::hasSymmetric         () const { return false; }
   bool           TrackElement::canSlacken           () const { return false; }
@@ -161,6 +163,7 @@ namespace Katana {
   unsigned long  TrackElement::getId                () const { return 0; }
   unsigned long  TrackElement::getFreedomDegree     () const { return 0; }
   uint32_t       TrackElement::getTrackCount        () const { return 0; }
+  unsigned int   TrackElement::getDepth             () const { return 0; }
   DbU::Unit      TrackElement::getPitch             () const { return 0; }
   DbU::Unit      TrackElement::getPPitch            () const { return 0; }
   DbU::Unit      TrackElement::getExtensionCap      ( Flags ) const { return 0; }
@@ -190,7 +193,7 @@ namespace Katana {
   void           TrackElement::updatePPitch         () { }
   void           TrackElement::setAxis              ( DbU::Unit, uint32_t flags ) { }
   TrackElement*  TrackElement::makeDogleg           () { return NULL; }
-  TrackElement*  TrackElement::makeDogleg           ( Interval, Flags&  ) { return NULL; }
+  Flags          TrackElement::makeDogleg           ( Interval, TrackElement*&, TrackElement*&, Flags  ) { return Flags::NoFlags; }
   TrackElement*  TrackElement::makeDogleg           ( Anabatic::GCell*, TrackElement*&, TrackElement*& ) { return NULL; }
   void           TrackElement::_postDoglegs         ( TrackElement*&, TrackElement*& ) { }
   bool           TrackElement::moveAside            ( Flags ) { return false; }

@@ -86,6 +86,8 @@ namespace Katana {
              static AutoContact*        lookup              ( Contact* );
              static TrackElement*       lookup              ( Segment* );
              static TrackElement*       lookup              ( AutoSegment* );
+             static void                addShortDogleg      ( TrackElement*, TrackElement* );
+             static TrackElement*       getDoglegPaired     ( TrackElement* );
              static Session*            _open               ( KatanaEngine* );
     private:                                                
                     KatanaEngine*       _getKatanaEngine    ();

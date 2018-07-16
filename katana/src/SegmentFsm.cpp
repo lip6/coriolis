@@ -776,6 +776,7 @@ namespace Katana {
       and (not _event2 or Manipulator(getSegment2(),*this).canRipup(flags));
   }
 
+
   bool  SegmentFsm::conflictSolveByHistory ()
   {
     bool          success = false;
@@ -976,23 +977,31 @@ namespace Katana {
         continue;
       }
 
-      if (other->isGlobal()) {
-        cdebug_log(159,0) << "conflictSolveByPlaceds() - Conflict with global, other move up" << endl;
-        if ((success = Manipulator(other,*this).moveUp())) break;
-      }
-
-      cdebug_log(159,0) << "conflictSolveByPlaceds() - Relaxing self" << endl;
-
-      if (Manipulator(segment,*this).relax(overlap0,relaxFlags)) {
-        success = true;
-        break;
-      } else {
-        if ( not canMoveUp
-           and (relaxFlags != Manipulator::NoExpand)
-           and Manipulator(segment,*this).relax(overlap0,Manipulator::NoExpand|Manipulator::NoDoglegReuse) ) {
-          cdebug_log(159,0) << "Cannot move up but successful narrow breaking." << endl;
+      if (Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
+        if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
+          cerr << "Break using ShortDogleg." << endl;
           success = true;
           break;
+        }
+      } else {
+        if (other->isGlobal()) {
+          cdebug_log(159,0) << "conflictSolveByPlaceds() - Conflict with global, other move up" << endl;
+          if ((success = Manipulator(other,*this).moveUp())) break;
+        }
+        
+        cdebug_log(159,0) << "conflictSolveByPlaceds() - Relaxing self" << endl;
+        
+        if (Manipulator(segment,*this).relax(overlap0,relaxFlags)) {
+          success = true;
+          break;
+        } else {
+          if ( not canMoveUp
+             and (relaxFlags != Manipulator::NoExpand)
+             and Manipulator(segment,*this).relax(overlap0,Manipulator::NoExpand|Manipulator::NoDoglegReuse) ) {
+            cdebug_log(159,0) << "Cannot move up but successful narrow breaking." << endl;
+            success = true;
+            break;
+          }
         }
       }
     }
@@ -1181,10 +1190,10 @@ namespace Katana {
     if (not success and (nextState != DataNegociate::Unimplemented))
       success = manipulator.ripupPerpandiculars(Manipulator::ToRipupLimit);
 
-    if (not (flags&NoTransition)) {
+    // if (not (flags&NoTransition)) {
       data->setState( nextState );
       cdebug_log(159,0) << "Incrementing state (after): " << nextState << " count:" << data->getStateCount() << endl;
-    }
+    // }
 
     return success;
   }
@@ -1281,11 +1290,11 @@ namespace Katana {
       if (solveFullBlockages()) nextState = DataNegociate::MoveUp;
     }
 
-    if (not (flags&NoTransition)) {
+    // if (not (flags&NoTransition)) {
       data->setState( nextState );
       cdebug_log(159,0) << "Incrementing state (after): "
                         << DataNegociate::getStateString(nextState,data->getStateCount()) << endl;
-    }
+    // }
 
     return success;
   }
@@ -1368,7 +1377,7 @@ namespace Katana {
       if (solveFullBlockages()) nextState = DataNegociate::MoveUp;
     }
 
-    if (not (flags&NoTransition)) {
+  //if (not (flags&NoTransition)) {
       if (data->getChildSegment()) {
         TrackElement* child = segment;
         cdebug_log(159,0) << "Incrementing state of childs (after): " << endl;
@@ -1387,7 +1396,7 @@ namespace Katana {
         cdebug_log(159,0) << "Incrementing state (after): " << segment << endl;
         cdebug_log(159,0) << "| " << nextState << " count:" << data->getStateCount() << endl;
       }
-    }
+  //}
 
     return success;
   }
@@ -1405,6 +1414,13 @@ namespace Katana {
 
     if (_data2) {
       cdebug_log(159,0) << "Symmetric segments are not allowed to slacken (yet)" << endl;
+      cdebug_tabw(159,-1);
+      DebugSession::close();
+      return false;
+    }
+
+    if (segment1->isShortNet()) {
+      cdebug_log(159,0) << "Short net segments are not allowed to slacken" << endl;
       cdebug_tabw(159,-1);
       DebugSession::close();
       return false;

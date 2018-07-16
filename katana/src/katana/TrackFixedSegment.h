@@ -50,6 +50,7 @@ namespace Katana {
       virtual Flags          getDirection           () const;
       virtual Net*           getNet                 () const;
       virtual DbU::Unit      getWidth               () const;
+      virtual unsigned int   getDepth               () const;
       virtual const Layer*   getLayer               () const;
       virtual size_t         getTrackSpan           () const;
       virtual TrackElement*  getNext                () const;

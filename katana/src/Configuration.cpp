@@ -52,6 +52,7 @@ namespace Katana {
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 5)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("katana.longGlobalRipupLimit" , 5)->asInt();
+    _ripupLimits[ShortNetRipupLimit]   = Cfg::getParamInt("katana.shortNetRipupLimit"   ,16)->asInt();
 
     // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
     //   ostringstream paramName;

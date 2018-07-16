@@ -1084,9 +1084,31 @@ namespace Anabatic {
       doRp_AutoContacts( gcell1, rpM1s[irp-1], source, turn1, DoSourceContact );
       doRp_AutoContacts( gcell1, rpM1s[irp  ], target, turn1, DoSourceContact );
 
-      if (source->getUConstraints(Flags::Vertical).intersect(target->getUConstraints(Flags::Vertical)))
+      if (source->getUConstraints(Flags::Vertical).intersect(target->getUConstraints(Flags::Vertical))) {
+        uint64_t flags = checkRoutingPadSize( rpM1s[irp-1] );
+        if ((flags & VSmall) or Session::getConfiguration()->isVH()) {
+          if (Session::getConfiguration()->isHV()) {
+            turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+            AutoSegment::create( source, turn1, Flags::Horizontal   );
+            source = turn1;
+          }
+          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+          AutoSegment::create( source, turn1 , Flags::Vertical   );
+          source = turn1;
+        }
+        flags = checkRoutingPadSize( rpM1s[irp] );
+        if ((flags & VSmall) or Session::getConfiguration()->isVH()) {
+          if (Session::getConfiguration()->isHV()) {
+            turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+            AutoSegment::create( target, turn1, Flags::Horizontal   );
+            target = turn1;
+          }
+          turn1  = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
+          AutoSegment::create( target, turn1 , Flags::Vertical   );
+          target = turn1;
+        }
         AutoSegment::create( source, target, Flags::Horizontal );
-      else {
+      } else {
         turn1 = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
         turn2 = AutoContactTurn::create( gcell1, rpM1s[irp]->getNet(), Session::getDContactLayer() );
         AutoSegment::create( source, turn1 , Flags::Horizontal );

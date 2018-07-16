@@ -616,12 +616,13 @@ namespace Anabatic {
       globalNets.clear();
       Session::revalidate();
   
-      if (getConfiguration()->getAllowedDepth() > 2) {
+      if (   (method != EngineLayerAssignNoGlobalM2V) 
+         and (getConfiguration()->getAllowedDepth() > 2) ) {
         for ( size_t depth=1 ; depth <= getConfiguration()->getAllowedDepth()-2; ++depth ) {
           _desaturate( depth, globalNets, total, global );
           if ( (depth > 1) and ((depth-1)%2 == 1) ) Session::revalidate();
         }
-  
+        
         globalNets.clear ();
         Session::revalidate();
       }

@@ -166,11 +166,13 @@ namespace Katana {
   bool           TrackSegment::isStrap              () const { return _base->isStrap(); }
   bool           TrackSegment::isSlackened          () const { return _base->isSlackened(); }
   bool           TrackSegment::isDogleg             () const { return _base->isDogleg(); }
+  bool           TrackSegment::isShortDogleg        () const { return _flags & TElemShortDogleg; }
   bool           TrackSegment::isReduced            () const { return _base->isReduced(); }
   bool           TrackSegment::isUserDefined        () const { return _base->isUserDefined(); }
   bool           TrackSegment::isUTurn              () const { return _base->isUTurn(); }
   bool           TrackSegment::isAnalog             () const { return _base->isAnalog(); }
   bool           TrackSegment::isWide               () const { return _base->isWide(); }
+  bool           TrackSegment::isShortNet           () const { return _base->isShortNet(); }
   bool           TrackSegment::isPriorityLocked     () const { return _flags & PriorityLocked; }
 // Predicates.
   bool           TrackSegment::hasSymmetric         () const { return _symmetric != NULL; }
@@ -180,6 +182,7 @@ namespace Katana {
   Net*           TrackSegment::getNet               () const { return _base->getNet(); }
   DbU::Unit      TrackSegment::getWidth             () const { return _base->getWidth(); }
   const Layer*   TrackSegment::getLayer             () const { return _base->getLayer(); }
+  unsigned int   TrackSegment::getDepth             () const { return _base->getDepth(); }
   DbU::Unit      TrackSegment::getPitch             () const { return _base->getPitch(); }
   DbU::Unit      TrackSegment::getPPitch            () const { return _ppitch; }
   DbU::Unit      TrackSegment::getExtensionCap      ( Flags flags ) const { return _base->getExtensionCap(flags); }
@@ -894,16 +897,21 @@ namespace Katana {
   }
 
 
-  TrackElement* TrackSegment::makeDogleg ( Interval interval, Flags& flags )
+  Flags  TrackSegment::makeDogleg ( Interval interval, TrackElement*& perpandicular, TrackElement*& parallel, Flags flags )
   {
-    TrackElement* perpandicular = NULL;
-    TrackElement* parallel      = NULL;
+    perpandicular = NULL;
+    parallel      = NULL;
 
     cdebug_log(159,0) << "TrackSegment::makeDogleg(Interval)" << endl;
-    flags = base()->makeDogleg( interval );
+    flags |= base()->makeDogleg( interval );
     _postDoglegs( perpandicular, parallel );
 
-    return perpandicular;
+    if (flags & Flags::ShortDogleg) {
+      parallel->setFlags( TElemShortDogleg );
+      Session::addShortDogleg( this, parallel );
+    }
+
+    return flags;
   }
 
 

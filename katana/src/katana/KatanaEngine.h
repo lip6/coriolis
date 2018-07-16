@@ -132,6 +132,8 @@ namespace Katana {
               void                     _computeCagedConstraints   ();
               TrackElement*            _lookup                    ( Segment* ) const;
       inline  TrackElement*            _lookup                    ( AutoSegment* ) const;
+      inline  void                     _addShortDogleg            ( TrackElement*, TrackElement* );
+      inline  TrackElement*            _getDoglegPaired           ( TrackElement* ) const;
               bool                     _check                     ( uint32_t& overlap, const char* message=NULL ) const;
               void                     _check                     ( Net* ) const;
       virtual Record*                  _getRecord                 () const;
@@ -147,6 +149,7 @@ namespace Katana {
               vector<RoutingPlane*>    _routingPlanes;
               NegociateWindow*         _negociateWindow;
               double                   _minimumWL;
+              TrackElementPairing      _shortDoglegs;
               DataSymmetricMap         _symmetrics;
               uint32_t                 _mode;
       mutable bool                     _toolSuccess;
@@ -194,6 +197,19 @@ namespace Katana {
   inline  void                          KatanaEngine::setPostEventCb          ( Configuration::PostEventCb_t cb ) { _configuration->setPostEventCb(cb); }
   inline  void                          KatanaEngine::printConfiguration      () const { _configuration->print(getCell()); }
   inline  TrackElement*                 KatanaEngine::_lookup                 ( AutoSegment* segment ) const { return segment->getObserver<TrackElement>(AutoSegment::Observable::TrackSegment); }
+
+  inline  void  KatanaEngine::_addShortDogleg ( TrackElement* segmentA, TrackElement* segmentB )
+  {
+    _shortDoglegs.insert( std::make_pair(segmentA,segmentB) );
+    _shortDoglegs.insert( std::make_pair(segmentB,segmentA) );
+  }
+
+  inline  TrackElement* KatanaEngine::_getDoglegPaired ( TrackElement* segment ) const
+  {
+    auto ipaired = _shortDoglegs.find( segment );
+    if (ipaired != _shortDoglegs.end()) return ipaired->second;
+    return NULL;
+  }
 
 
 // Variables.

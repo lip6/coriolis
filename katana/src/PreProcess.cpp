@@ -208,6 +208,7 @@ namespace {
     Interval constraints ( minConstraint, maxConstraint );
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
       cdebug_log(159,0) << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
+      cerr << "Caged: " << constraints << " " << perpandiculars[iperpand] << endl;
       perpandiculars[iperpand]->base()->mergeUserConstraints( constraints );
       if (perpandiculars[iperpand]->base()->getUserConstraints().isEmpty()) {
         cdebug_log(159,0) << "Cumulative caged constraints are too tight on " << perpandiculars[iperpand] << endl;

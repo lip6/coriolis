@@ -415,6 +415,7 @@ namespace Katana {
       loop.erase( _segment );
       setState( DataNegociate::RepairFailed );
       setDisabled( true );
+      setProcessed();
     }
 
   //DebugSession::open( _segment->getNet(), 155, 160 );
@@ -594,18 +595,30 @@ namespace Katana {
     if (fsm.getCosts().size() and fsm.getCost(0)->isFree()) {
       cdebug_log(159,0) << "Insert in free space." << endl;
       fsm.bindToTrack( 0 );
+
+      cdebug_log(159,0) << "Re-try perpandiculars:" << endl;
+      for ( TrackElement* perpandicular : getPerpandiculars() ) {
+        if (not perpandicular->getTrack() ) {
+          cdebug_log(159,0) << "| " << perpandicular << endl;
+          fsm.addAction( perpandicular, SegmentAction::SelfInsert );
+          DataNegociate* data = perpandicular->getDataNegociate();
+          if (data) data->setState( DataNegociate::Repair );
+        }
+      }
+      fsm.doActions();
+      queue.commit();
     } else {
       switch ( fsm.getData()->getStateCount() ) {
         case 1:
         // First try: minimize.
-          Manipulator(_segment,fsm).minimize ();
+          Manipulator(_segment,fsm).minimize();
           fsm.addAction( _segment, SegmentAction::SelfInsert );
           fsm.doActions();
           queue.commit();
           break;
         case 2:
         // Second try: failed re-inserted first.
-          Manipulator(_segment,fsm).repackPerpandiculars ();
+          Manipulator(_segment,fsm).repackPerpandiculars();
           fsm.addAction( _segment, SegmentAction::SelfInsert );
           fsm.doActions();
           queue.commit();
@@ -650,6 +663,18 @@ namespace Katana {
         cdebug_log(159,0) << "Expanding (after):" << _constraints << endl;
       }
     }
+
+    if (_segment->isShortDogleg()) {
+      TrackElement* parallel = Session::getDoglegPaired( _segment );
+      if (parallel and parallel->getTrack()) {
+        Interval delta ( parallel->getAxis() - _segment->getPitch()
+                       , parallel->getAxis() + _segment->getPitch() );
+        _constraints.intersection( delta );
+        cdebug_log(159,0) << "Short parallel to: " << parallel << endl;
+        cdebug_log(159,0) << "Constraints restricted to: " << delta << endl;
+      }
+    }
+
     cdebug_log(159,0) << "| Raw Track Constraint: " << _constraints
                       << " [" << _constraints.getVMin()
                       <<  "," << _constraints.getVMax() << "]" << endl;

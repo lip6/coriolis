@@ -105,6 +105,7 @@ namespace Anabatic {
       static const uint64_t  SegUserDefined       = (1L<<32);
       static const uint64_t  SegAnalog            = (1L<<33);
       static const uint64_t  SegWide              = (1L<<34);
+      static const uint64_t  SegShortNet          = (1L<<35);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -135,6 +136,7 @@ namespace Anabatic {
     public:
              static  void                setAnalogMode              ( bool );
              static  bool                getAnalogMode              ();
+             static  void                setShortNetMode            ( bool );
       inline static  DbU::Unit           getViaToTopCap             ( size_t depth );
       inline static  DbU::Unit           getViaToBottomCap          ( size_t depth );
       inline static  DbU::Unit           getViaToSameCap            ( size_t depth );
@@ -216,6 +218,7 @@ namespace Anabatic {
                      bool                isUTurn                    () const;
       inline         bool                isAnalog                   () const;
       inline         bool                isWide                     () const;
+      inline         bool                isShortNet                 () const;
              virtual bool                _canSlacken                () const = 0;
                      bool                canReduce                  () const;
                      bool                mustRaise                  () const;
@@ -358,6 +361,7 @@ namespace Anabatic {
       static size_t                        _allocateds;
       static size_t                        _globalsCount;
       static bool                          _analogMode;
+      static bool                          _shortNetMode;
       static bool                          _initialized;
       static vector< array<DbU::Unit*,3> > _extensionCaps;
     // Internal: Attributes.      
@@ -525,6 +529,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isUserDefined          () const { return _flags & SegUserDefined; }
   inline  bool            AutoSegment::isAnalog               () const { return _flags & SegAnalog; }
   inline  bool            AutoSegment::isWide                 () const { return _flags & SegWide; }
+  inline  bool            AutoSegment::isShortNet             () const { return _flags & SegShortNet; }
   inline  void            AutoSegment::setFlags               ( uint64_t flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags             ( uint64_t flags ) { _flags &= ~flags; }
                                                               

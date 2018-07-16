@@ -48,17 +48,18 @@ namespace Katana {
                  , LocalAndTopDepth   = (1 <<  3)
                  , ZeroCost           = (1 <<  4)
                  , Analog             = (1 <<  5)
-                 , Symmetric          = (1 <<  6)
-                 , ForGlobal          = (1 <<  7)
-                 , Blockage           = (1 <<  8)
-                 , Fixed              = (1 <<  9)
-                 , Infinite           = (1 << 10)
-                 , HardOverlap        = (1 << 11)
-                 , Overlap            = (1 << 12)
-                 , LeftOverlap        = (1 << 13)
-                 , RightOverlap       = (1 << 14)
-                 , OverlapGlobal      = (1 << 15)
-                 , GlobalEnclosed     = (1 << 16)
+                 , ShortNet           = (1 <<  6)
+                 , Symmetric          = (1 <<  7)
+                 , ForGlobal          = (1 <<  8)
+                 , Blockage           = (1 <<  9)
+                 , Fixed              = (1 << 10)
+                 , Infinite           = (1 << 11)
+                 , HardOverlap        = (1 << 12)
+                 , Overlap            = (1 << 13)
+                 , LeftOverlap        = (1 << 14)
+                 , RightOverlap       = (1 << 15)
+                 , OverlapGlobal      = (1 << 16)
+                 , GlobalEnclosed     = (1 << 17)
                  , MergeMask          = ForGlobal     |Blockage|Fixed       |Infinite
                                        |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
                                        |GlobalEnclosed
@@ -87,6 +88,8 @@ namespace Katana {
                                 ~TrackCost          ();
       inline       bool          isForGlobal        () const;
       inline       bool          isBlockage         () const;
+      inline       bool          isAnalog           () const;
+      inline       bool          isShortNet         () const;
       inline       bool          isFixed            () const;
       inline       bool          isInfinite         () const;
       inline       bool          isOverlap          () const;
@@ -179,6 +182,8 @@ namespace Katana {
 // Inline Functions.
   inline       bool          TrackCost::isForGlobal        () const { return _flags & ForGlobal; }
   inline       bool          TrackCost::isBlockage         () const { return _flags & Blockage; }
+  inline       bool          TrackCost::isAnalog           () const { return _flags & Analog; }
+  inline       bool          TrackCost::isShortNet         () const { return _flags & ShortNet; }
   inline       bool          TrackCost::isFixed            () const { return _flags & Fixed; }
   inline       bool          TrackCost::isInfinite         () const { return _flags & Infinite; }
   inline       bool          TrackCost::isOverlap          () const { return _flags & Overlap; }

@@ -34,6 +34,7 @@ namespace Katana {
       static const Hurricane::BaseFlags  WithConstraints;
       static const Hurricane::BaseFlags  MoveToLeft;
       static const Hurricane::BaseFlags  MoveToRight;
+      static const Hurricane::BaseFlags  ShortDogleg;
       static const Hurricane::BaseFlags  LoadingStage;
       static const Hurricane::BaseFlags  SlowMotion;
       static const Hurricane::BaseFlags  PreRoutedStage;

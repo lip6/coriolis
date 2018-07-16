@@ -505,7 +505,12 @@ namespace Katana {
     if (message) cerr << "     o  Checking Track - " << message << endl;
     cdebug_log(155,0) << (void*)this << ":" << this << endl;
 
+
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
+      Interval trackRange   ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
+                            , _segments[i]->getAxis() + (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2 );
+      bool     inTrackRange = trackRange.contains( _axis );
+
       if (_segments[i]) {
         if (i) {
           if (_segments[i-1] == _segments[i]) {
@@ -519,14 +524,15 @@ namespace Katana {
                << _segments[i] << " is detached." << endl;
           coherency = false;
         } else { 
-          if (_segments[i]->getTrack() != this) {
+          if ( (_segments[i]->getTrack() != this) and not inTrackRange ) {
             cerr << "[CHECK] incoherency at " << i << " "
                  << _segments[i] << " is in track "
                  << _segments[i]->getTrack() << endl;
             coherency = false;
+            cerr << _segments[i]->getTrackSpan() << endl;
           }
         }
-        if (_segments[i]->getAxis() != getAxis()) {
+        if ( (_segments[i]->getAxis() != getAxis()) and not inTrackRange ) {
           cerr << "[CHECK] incoherency at " << i << " "
                << _segments[i] << " is not on Track axis "
                << DbU::getValueString(getAxis()) << "." << endl;

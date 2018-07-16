@@ -1226,7 +1226,7 @@ namespace Katana {
   }
 
 
-  bool  Manipulator::makeDogleg ( Interval overlap )
+  bool  Manipulator::makeDogleg ( Interval overlap, Flags flags )
   {
     cdebug_log(159,0) << "Manipulator::makeDogleg(Interval) " << _segment << endl; 
     cdebug_log(159,0) << overlap << endl;
@@ -1234,11 +1234,15 @@ namespace Katana {
     if (    _segment->isFixed  ()       ) return false;
     if (not _segment->canDogleg(overlap)) return false;
 
-    Flags         flags      = Flags::NoFlags;
-    TrackElement* dogleg     = _segment->makeDogleg(overlap,flags);
+    TrackElement* dogleg   = NULL;
+    TrackElement* parallel = NULL;
+    _segment->makeDogleg( overlap, dogleg, parallel, flags );
     if (dogleg) {
       cdebug_log(159,0) << "Manipulator::makeDogleg(Interval) - Push dogleg to the "
                   << ((flags&Flags::DoglegOnLeft)?"left":"right") << endl;
+      if (flags & Flags::ShortDogleg)
+        Session::addShortDogleg( _segment, parallel );
+      
       if (_segment->isTerminal()) {
         Anabatic::AutoContact* contact =
           (flags&Flags::DoglegOnLeft) ? _segment->base()->getAutoSource()

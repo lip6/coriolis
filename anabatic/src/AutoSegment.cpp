@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/DataBase.h"
@@ -32,7 +33,6 @@
 
 
 namespace {
-
 
   using namespace std;
   using namespace CRL;
@@ -413,12 +413,14 @@ namespace Anabatic {
   size_t                         AutoSegment::_allocateds    = 0;
   size_t                         AutoSegment::_globalsCount  = 0;
   bool                           AutoSegment::_analogMode    = false;
+  bool                           AutoSegment::_shortNetMode  = false;
   bool                           AutoSegment::_initialized   = false;
   vector< array<DbU::Unit*,3> >  AutoSegment::_extensionCaps;
 
 
-  void  AutoSegment::setAnalogMode ( bool state ) { _analogMode = state; }
-  bool  AutoSegment::getAnalogMode () { return _analogMode; }
+  void  AutoSegment::setAnalogMode   ( bool state ) { _analogMode = state; }
+  bool  AutoSegment::getAnalogMode   () { return _analogMode; }
+  void  AutoSegment::setShortNetMode ( bool state ) { _shortNetMode = state; }
 
 
   void  AutoSegment::_initialize ()
@@ -491,6 +493,7 @@ namespace Anabatic {
     if (source->isTerminal()) setFlags( SegSourceTerminal );
     if (target->isTerminal()) setFlags( SegTargetTerminal );
     if (_analogMode)          setFlags( SegAnalog );
+    if (_shortNetMode)        setFlags( SegShortNet );
 
     source->invalidate( Flags::Topology );
   }
@@ -982,9 +985,11 @@ namespace Anabatic {
 
   void  AutoSegment::mergeUserConstraints ( const Interval& constraints )
   {
+    DebugSession::open( getNet(), 149, 160 );
     cdebug_log(149,0) << "mergeUserConstraints() " << this << endl;
     cdebug_log(149,0) << "| " << constraints << " merged with " << _userConstraints << endl;
     _userConstraints.intersection(constraints);
+    DebugSession::close();
   }
 
 
@@ -2327,6 +2332,8 @@ namespace Anabatic {
     if      (_flags & SegTargetTop)    state += 't';
     else if (_flags & SegTargetBottom) state += 'b';
     else state += '-';
+
+    state += isShortNet        () ? "s": "-";
 
     return state;
   }

@@ -186,6 +186,8 @@ namespace Katana {
     , _routingPlanes  ()
     , _negociateWindow(NULL)
     , _minimumWL      (0.0)
+    , _shortDoglegs   ()
+    , _symmetrics     ()
     , _mode           (DigitalMode)
     , _toolSuccess    (false)
   {
@@ -348,7 +350,8 @@ namespace Katana {
   {
     if (segment->isBlockage()) return 0;
 
-    if (segment->isStrap ()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isStrap   ()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isShortNet()) return _configuration->getRipupLimit( Configuration::ShortNetRipupLimit );
     if (segment->isGlobal()) {
       vector<GCell*> gcells;
       segment->getGCells( gcells );

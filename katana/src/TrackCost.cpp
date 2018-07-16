@@ -243,6 +243,8 @@ namespace Katana {
     s +=          string ( (isOverlap()       )?"o":"-" );
     s +=          string ( (isOverlapGlobal() )?"g":"-" );
     s +=          string ( (isGlobalEnclosed())?"e":"-" );
+    s +=          string ( (isAnalog        ())?"a":"-" );
+    s +=          string ( (isShortNet      ())?"N":"-" );
     s += " "    + getString(_terminals);
     s += "/"    + /*DbU::getValueString(_delta)*/       getString(_delta);
     s += "-"    + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);

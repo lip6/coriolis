@@ -49,6 +49,7 @@ namespace Hurricane {
                  , Symmetric            = (1<< 7)
                  , SymmetricMaster      = (1<< 8)
                  , Analog               = (1<< 9)
+                 , ShortNet             = (1<<10)
                  };
     public:
       inline  bool          isExcluded             () const;
@@ -63,6 +64,7 @@ namespace Hurricane {
       inline  bool          isSymMaster            () const;
       inline  bool          isSymSlave             () const;
       inline  bool          isAnalog               () const;
+      inline  bool          isShortNet             () const;
       inline  Net*          getNet                 () const;
       inline  Net*          getSymNet              () const;
       inline  DbU::Unit     getSymAxis             () const;
@@ -103,6 +105,7 @@ namespace Hurricane {
   inline bool          NetRoutingState::isSymVertical          () const { return _flags & Vertical; }
   inline bool          NetRoutingState::isSymMaster            () const { return _flags & SymmetricMaster; }
   inline bool          NetRoutingState::isAnalog               () const { return _flags & Analog; }
+  inline bool          NetRoutingState::isShortNet             () const { return _flags & ShortNet; }
   inline Net*          NetRoutingState::getSymNet              () const { return _symNet; }
   inline DbU::Unit     NetRoutingState::getSymAxis             () const { return _axis; }
   inline uint32_t      NetRoutingState::getFlags               () const { return _flags; };
@@ -177,6 +180,7 @@ namespace Hurricane {
       static inline  bool             isSymVertical          ( const Net* );
       static inline  bool             isSymMaster            ( const Net* );
       static inline  bool             isAnalog               ( const Net* );
+      static inline  bool             isShortNet             ( const Net* );
       static inline  uint32_t         getFlags               ( const Net* );
       static inline  Net*             getSymNet              ( const Net* );
       static inline  DbU::Unit        getSymAxis             ( const Net* );
@@ -263,6 +267,13 @@ namespace Hurricane {
   {
     NetRoutingState* state = get( net );
     return (state == NULL) ? false : state->isAnalog();
+  }
+
+
+  inline bool  NetRoutingExtension::isShortNet ( const Net* net )
+  {
+    NetRoutingState* state = get( net );
+    return (state == NULL) ? false : state->isShortNet();
   }
 
 
