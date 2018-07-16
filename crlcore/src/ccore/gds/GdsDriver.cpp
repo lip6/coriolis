@@ -329,11 +329,13 @@ namespace {
     public:
                                GdsStream  ( string filename );
                               ~GdsStream  ();
+             inline int32_t    toGdsDbu   ( DbU::Unit ) const;
       static inline GdsRecord  PROPATTR   ( int16_t );
       static inline GdsRecord  DATATYPE   ( int16_t );
       static inline GdsRecord  PROPVALUE  ( string );
       static inline GdsRecord  STRNAME    ( string );
       static inline GdsRecord  STRNAME    ( const Name& );
+      static inline GdsRecord  LIBNAME    ( string );
       static inline GdsRecord  SNAME      ( string );
       static inline GdsRecord  SNAME      ( const Name& );
                     GdsStream& operator<< ( const GdsRecord& );
@@ -345,6 +347,8 @@ namespace {
                     GdsStream& operator<< ( const Transformation& );
     private:
       ofstream  _ostream;
+      double    _dbuPerUu;
+      double    _metricDbU;
   };
 
   
@@ -359,12 +363,16 @@ namespace {
   inline GdsRecord  GdsStream::PROPVALUE ( string s )      { return GdsRecord(GdsRecord::PROPVALUE,s); }
   inline GdsRecord  GdsStream::STRNAME   ( string s )      { return GdsRecord(GdsRecord::STRNAME,s); }
   inline GdsRecord  GdsStream::STRNAME   ( const Name& n ) { return GdsRecord(GdsRecord::STRNAME,getString(n)); }
+  inline GdsRecord  GdsStream::LIBNAME   ( string s )      { return GdsRecord(GdsRecord::LIBNAME,s); }
   inline GdsRecord  GdsStream::SNAME     ( string s )      { return GdsRecord(GdsRecord::SNAME,s); }
   inline GdsRecord  GdsStream::SNAME     ( const Name& n ) { return GdsRecord(GdsRecord::SNAME,getString(n)); }
+  inline int32_t    GdsStream::toGdsDbu  ( DbU::Unit v )   const { return DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU; }
 
 
   GdsStream::GdsStream ( string filename )
-    : _ostream()
+    : _ostream  ()
+    , _dbuPerUu (Cfg::getParamDouble("gdsDriver.dbuPerUu" ,0.001)->asDouble())  // 1000
+    , _metricDbU(Cfg::getParamDouble("gdsDriver.metricDbu",10e-9)->asDouble())  // 1um.
   {
     _ostream.open( filename, ios_base::out );
 
@@ -377,25 +385,29 @@ namespace {
 
     record = GdsRecord( GdsRecord::BGNLIB );
   // Last modification time.
-    record.push( now->tm_year+1900 );
-    record.push( now->tm_mon   );
-    record.push( now->tm_mday  );
-    record.push( now->tm_hour  );
-    record.push( now->tm_sec   );
+    record.push( (uint16_t)now->tm_year+1900 );
+    record.push( (uint16_t)now->tm_mon   );
+    record.push( (uint16_t)now->tm_mday  );
+    record.push( (uint16_t)now->tm_hour  );
+    record.push( (uint16_t)now->tm_sec   );
   // Last access time.
-    record.push( now->tm_year+1900 );
-    record.push( now->tm_mon   );
-    record.push( now->tm_mday  );
-    record.push( now->tm_hour  );
-    record.push( now->tm_sec   );
+    record.push( (uint16_t)now->tm_year+1900 );
+    record.push( (uint16_t)now->tm_mon   );
+    record.push( (uint16_t)now->tm_mday  );
+    record.push( (uint16_t)now->tm_hour  );
+    record.push( (uint16_t)now->tm_sec   );
     _ostream << record;
+
+    _ostream << LIBNAME( "LIB" );
 
   // Generate a GDSII which coordinates are relatives to the um.
     double gridPerUu = 10e-6 / DbU::getPhysicalsPerGrid();
 
     record = GdsRecord( GdsRecord::UNITS );
-    record.push( gridPerUu );
-    record.push( DbU::getPhysicalsPerGrid() );
+    record.push( _dbuPerUu );
+    record.push( _metricDbU );
+  //record.push( gridPerUu );
+  //record.push( DbU::getPhysicalsPerGrid() );
     _ostream << record;
   }
 
@@ -474,8 +486,8 @@ namespace {
     }
 
     record = GdsRecord( GdsRecord::XY );
-    record.push( (int32_t)DbU::toGrid(transf.getTx()) );
-    record.push( (int32_t)DbU::toGrid(transf.getTy()) );
+    record.push( (int32_t)toGdsDbu(transf.getTx()) );
+    record.push( (int32_t)toGdsDbu(transf.getTy()) );
 
     _ostream << record;
     return *this;
@@ -493,8 +505,8 @@ namespace {
         case 2: p = Point( box.getXMax(), box.getYMax() ); break;
         case 3: p = Point( box.getXMax(), box.getYMin() ); break;
       }
-      record.push( (int32_t)DbU::toGrid(p.getX()) );
-      record.push( (int32_t)DbU::toGrid(p.getY()) );
+      record.push( (int32_t)toGdsDbu(p.getX()) );
+      record.push( (int32_t)toGdsDbu(p.getY()) );
     }
     _ostream << record;
     return *this;
@@ -506,11 +518,11 @@ namespace {
     GdsRecord record ( GdsRecord::XY );
     Point first = points.getFirst();
     for ( Point p : points ) {
-      record.push( (int32_t)DbU::toGrid(p.getX()) );
-      record.push( (int32_t)DbU::toGrid(p.getY()) );
+      record.push( (int32_t)toGdsDbu(p.getX()) );
+      record.push( (int32_t)toGdsDbu(p.getY()) );
     }
-    record.push( (int32_t)DbU::toGrid(first.getX()) );
-    record.push( (int32_t)DbU::toGrid(first.getY()) );
+    record.push( (int32_t)toGdsDbu(first.getX()) );
+    record.push( (int32_t)toGdsDbu(first.getY()) );
     _ostream << record;
     return *this;
   }
@@ -520,11 +532,11 @@ namespace {
   {
     GdsRecord record ( GdsRecord::XY );
     for ( Point p : points ) {
-      record.push( (int32_t)DbU::toGrid(p.getX()) );
-      record.push( (int32_t)DbU::toGrid(p.getY()) );
+      record.push( (int32_t)toGdsDbu(p.getX()) );
+      record.push( (int32_t)toGdsDbu(p.getY()) );
     }
-    record.push( (int32_t)DbU::toGrid(points[0].getX()) );
-    record.push( (int32_t)DbU::toGrid(points[0].getY()) );
+    record.push( (int32_t)toGdsDbu(points[0].getX()) );
+    record.push( (int32_t)toGdsDbu(points[0].getY()) );
     _ostream << record;
     return *this;
   }
@@ -537,17 +549,17 @@ namespace {
 
     GdsRecord record ( GdsRecord::BGNSTR );
   // Last modification time.
-    record.push( now->tm_year+1900 );
-    record.push( now->tm_mon );
-    record.push( now->tm_mday);
-    record.push( now->tm_hour);
-    record.push( now->tm_sec );
+    record.push( (uint16_t)now->tm_year+1900 );
+    record.push( (uint16_t)now->tm_mon );
+    record.push( (uint16_t)now->tm_mday);
+    record.push( (uint16_t)now->tm_hour);
+    record.push( (uint16_t)now->tm_sec );
   // Last access time.
-    record.push( now->tm_year+1900 );
-    record.push( now->tm_mon );
-    record.push( now->tm_mday);
-    record.push( now->tm_hour);
-    record.push( now->tm_sec );
+    record.push( (uint16_t)now->tm_year+1900 );
+    record.push( (uint16_t)now->tm_mon );
+    record.push( (uint16_t)now->tm_mday);
+    record.push( (uint16_t)now->tm_hour);
+    record.push( (uint16_t)now->tm_sec );
     _ostream << record;
 
     _ostream << STRNAME(cell->getName());
