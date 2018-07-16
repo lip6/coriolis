@@ -75,8 +75,7 @@ SystemMandatory     = 0x0100
 
 
 def coriolisConfigure():
-  confHelpers  = ( ('technoConfig'         , Technology.loadTechnoConfig    , SystemMandatory|TechnologyHelper)
-                 , ('allianceConfig'       , Alliance.loadAllianceConfig    , SystemMandatory|AllianceHelper)
+  confHelpers  = ( ('allianceConfig'       , Alliance.loadAllianceConfig    , SystemMandatory|AllianceHelper)
                  , ('routingGaugesTable'   , Alliance.loadRoutingGaugesTable, SystemMandatory|KiteHelper)
                  , ('cellGaugesTable'      , Alliance.loadCellGaugesTable   , SystemMandatory|KiteHelper)
                  , ('realLayersTable'      , Technology.loadRealLayers      , SystemMandatory|TechnologyHelper)
@@ -90,6 +89,8 @@ def coriolisConfigure():
                  , ('parametersTable'      , Configuration.loadParameters   , ConfigurationHelper)
                  , ('layoutTable'          , Configuration.loadLayout       , ConfigurationHelper)
                  )
+
+                 # ('technoConfig'         , Technology.loadTechnoConfig    , SystemMandatory|TechnologyHelper)
 
   print '       o  Running configuration hook: coriolisConfigure().'
  #print '          - sysConfDir: <%s>' % helpers.sysConfDir

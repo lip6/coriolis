@@ -295,23 +295,9 @@ def overload ( defaultParameters, parameters ):
   return tuple(overloadParameters)
 
 
-
-def lambdaMode ():
-  global unitsLambda
-  unitsLambda = true
-  return
-
-
-def micronsMode ():
-  global unitsLambda
-  unitsLambda = False
-  return
-
-
-def toDbU ( value ):
-  global unitsLambda
-  if unitsLambda: return Hurricane.DbU.fromLambda( value )
-  return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerMicro )
+def l ( value ): return Hurricane.DbU.fromLambda( value )
+def u ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerMicro )
+def n ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerNano  )
 
 
 def initTechno ( argQuiet ):

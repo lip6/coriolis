@@ -17,7 +17,6 @@ from   Hurricane import ContactLayer
 from   Hurricane import ViaLayer
 from   CRL       import AllianceFramework
 from   helpers   import ErrorMessage
-from   helpers   import toDbU
 
 
 technologyFile = '<No technology file specified>'
@@ -217,7 +216,8 @@ def loadLayersExtensions ( layersExtensionsTable, confFile ):
                                      ,'Must contains exactly two fields: ( rule_path, value ).'
                                      ,str(rule)
                                      ])
-            if not isinstance(rule[1],int) \
+            if not     isinstance(rule[1],int  ) \
+               and not isinstance(rule[1],long ) \
                and not isinstance(rule[1],float) \
                and not isinstance(rule[1],tuple):
                 raise ErrorMessage(1,['Invalid entry in <layersExtensionsTable>.'
@@ -240,16 +240,8 @@ def loadLayersExtensions ( layersExtensionsTable, confFile ):
                                      ,str(rule)
                                      ])
 
-            if elements[0].startswith('via') or elements[0].startswith('metal'):
-              if isinstance(rule[1],tuple):
-                value = ( toDbU(rule[1][0]), toDbU(rule[1][1]) )
-              else:
-                value = toDbU(rule[1])
-            else:
-              if isinstance(rule[1],tuple):
-                value = ( DbU.fromLambda(rule[1][0]), DbU.fromLambda(rule[1][1]) )
-              else:
-                value = DbU.fromLambda(rule[1])
+            if isinstance(rule[1],tuple): value = ( rule[1][0], rule[1][1] )
+            else:                         value =   rule[1]
 
             if subLayer: ruleTag  = string.join(elements[2:],'.')
             else:        ruleTag  = string.join(elements[1:],'.')
@@ -343,8 +335,7 @@ def loadGdsLayers ( realLayersTable, confFile ):
     return
 
 
-def loadTechnoConfig ( technoConfig, confFile ):
-    technologyFile = confFile
+def initTechno ( technoConfig ):
     technology     = DataBase.getDB().getTechnology()
     if not technology:
       name = 'Unknown'
