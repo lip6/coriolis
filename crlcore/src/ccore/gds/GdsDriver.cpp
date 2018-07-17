@@ -401,7 +401,8 @@ namespace {
     _ostream << LIBNAME( "LIB" );
 
   // Generate a GDSII which coordinates are relatives to the um.
-    double gridPerUu = 10e-6 / DbU::getPhysicalsPerGrid();
+  // Bug correction courtesy of M. Koefferlein (KLayout).
+    double gridPerUu = DbU::getPhysicalsPerGrid() / 1e-6;
 
     record = GdsRecord( GdsRecord::UNITS );
     record.push( _dbuPerUu );
