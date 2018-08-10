@@ -204,7 +204,7 @@ namespace Cfg {
 
   inline void  Parameter::registerCb ( void* tag, ParameterChangedCb_t cb )
   {
-    _callbacks.push_back(make_pair(tag,cb)); cb(this);
+    _callbacks.push_back(std::make_pair(tag,cb)); cb(this);
   }
 
   inline void  Parameter::unregisterCb ( void* tag )
