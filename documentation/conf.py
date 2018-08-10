@@ -66,6 +66,7 @@ release = '2'
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build', 'UsersGuide/UsersGuide.rst', 'UsersGuide/pdfHeader.rst'
                             , 'PythonCpp/PythonCpp.rst'  , 'PythonCpp/pdfHeader.rst'
+                            , 'Stratus/Stratus.rst'  , 'Stratus/pdfHeader.rst'
                             , 'RDS/RDS.rst'              , 'RDS/pdfHeader.rst'  ]
 
 # The reST default role (used for this markup: `text`) to use for all documents.

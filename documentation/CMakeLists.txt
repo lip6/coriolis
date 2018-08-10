@@ -42,6 +42,12 @@
   
                  set ( rdsRst          RDS/pdfHeader.rst
                                        RDS/RDSpage.rst )
+
+                 set (stratusRst       Stratus/pdfHeader.rst
+                                       Stratus/Developper.rst
+                                       Stratus/Language.rst
+                                       Stratus/DpGen.rst
+                                       Stratus/Patterns.rst )
   
    add_custom_target ( doc_HTML ALL
                           cd ${DOCUMENTATION_SOURCE_DIR}
@@ -53,15 +59,13 @@
                                 ../_static/SoC-ReST.css
                                 ../_static/pygments.css
                                 CrlCore/CrlCore.rst
-                                DpGen/DpGen.rst
                                 Hurricane/Hurricane.rst
-                                Patterns/Patterns.rst
-                                Stratus/Stratus.rst
                                 Unicorn/Unicorn.rst
                                 Viewer/Viewer.rst
                                 ${usersGuideRst} UsersGuide/index.rst
                                 ${pythonCppRst}   PythonCpp/index.rst
                                 ${rdsRst}               RDS/index.rst
+                                ${stratusRst}       stratus/index.rst
                      )
   
    add_custom_target ( pdf_UsersGuide  ALL
@@ -86,10 +90,19 @@
     add_dependencies ( pdf_RDS       ../etc/definitions.rst
                                      ../etc/SoC-ReST.tex
                                      ${pythonCppRst} )
+
+    add_custom_target ( pdf_Stratus  ALL
+                           cd ${DOCUMENTATION_SOURCE_DIR}/Stratus
+                           && ../etc/doPdf.sh ${stratusRst} Stratus.rst
+                     )
+    add_dependencies ( pdf_Stratus       ../etc/definitions.rst
+                                     ../etc/SoC-ReST.tex
+                                     ${StratusRst} )
   
              install ( DIRECTORY _build/html/               DESTINATION ${htmlInstallDir} )
              install ( FILES     RDS/RDS.pdf
                                  PythonCpp/PythonCpp.pdf
+                                 Stratus/Stratus.pdf
                                  UsersGuide/UsersGuide.pdf  DESTINATION ${pdfInstallDir} )
   
  endif(BUILD_DOC)
