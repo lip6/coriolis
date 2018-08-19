@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1Property}{}\section{Hurricane\+:\+:Property Class Reference}
-\label{classHurricane_1_1Property}\index{Hurricane\+::\+Property@{Hurricane\+::\+Property}}
+\hypertarget{classHurricane_1_1Property}{\section{Hurricane\-:\-:Property Class Reference}
+\label{classHurricane_1_1Property}\index{Hurricane\-::\-Property@{Hurricane\-::\-Property}}
+}
 
 
-\hyperlink{classHurricane_1_1Property}{Property} description ({\bfseries A\+PI})  
+\hyperlink{classHurricane_1_1Property}{Property} description ({\bfseries A\-P\-I})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Property\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Property\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -19,36 +20,36 @@ Inheritance diagram for Hurricane\+:\+:Property\+:\nopagebreak
 \item 
 virtual void \hyperlink{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}{destroy} ()
 \item 
-virtual \hyperlink{classHurricane_1_1Name}{Name} \hyperlink{classHurricane_1_1Property_a2759e2003c15d417b925092bc253ddd1}{get\+Name} () const =0
+virtual \hyperlink{classHurricane_1_1Name}{Name} \hyperlink{classHurricane_1_1Property_a2759e2003c15d417b925092bc253ddd1}{get\-Name} () const =0
 \item 
-virtual void \hyperlink{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}{on\+Captured\+By} (\hyperlink{classHurricane_1_1DBo}{D\+Bo} $\ast$owner)=0
+virtual void \hyperlink{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}{on\-Captured\-By} (\hyperlink{classHurricane_1_1DBo}{D\-Bo} $\ast$owner)=0
 \item 
-virtual void \hyperlink{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}{on\+Released\+By} (\hyperlink{classHurricane_1_1DBo}{D\+Bo} $\ast$owner)=0
+virtual void \hyperlink{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}{on\-Released\-By} (\hyperlink{classHurricane_1_1DBo}{D\-Bo} $\ast$owner)=0
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1Property}{Property} description ({\bfseries A\+PI}) 
+\hyperlink{classHurricane_1_1Property}{Property} description ({\bfseries A\-P\-I}) 
 
 \hypertarget{classHurricane_1_1Property_secPropertyIntro}{}\subsection{Introduction}\label{classHurricane_1_1Property_secPropertyIntro}
 Properties can be attached to the data base objects. Those properties must have a name in order to access them unambiguously. Of course only one property of a given name can be attached to an object.
 
-In a first step we define two great categories of properties \+: the private properties which can be attached to only one object and the shared properties which can be attached to a large number of objects.
+In a first step we define two great categories of properties \-: the private properties which can be attached to only one object and the shared properties which can be attached to a large number of objects.
 
 We will detail separately their respective behaviour, but we ensure that the management of each of those two property categories is absolutely secure. That is, on one side you can destroy explicitely a property (and the objects will be notified) and on the other side the properties will be automatically destroyed when no more object reference them.
 
-\begin{DoxyParagraph}{Remark\+:}
+\begin{DoxyParagraph}{Remark\-:}
 By overloading some messages, as we will see later, it is possible to set up different behaviours (like avoid the automatic delete).
 \end{DoxyParagraph}
 \hypertarget{classHurricane_1_1Property_secPropertyTheQuarks}{}\subsection{The Quarks}\label{classHurricane_1_1Property_secPropertyTheQuarks}
-As we shall see, the occurences are very simple objects which are used to designate some entity of the virtually unfolded hierarchy. Indeed, those occurences, which are built and deleted very quickly, are very volatile objects to which obvioulsy we can\textquotesingle{}t attach properties directly.
+As we shall see, the occurences are very simple objects which are used to designate some entity of the virtually unfolded hierarchy. Indeed, those occurences, which are built and deleted very quickly, are very volatile objects to which obvioulsy we can't attach properties directly.
 
-But the interest of occurences is precisely to be able to attach them properties. In order to be able to do that, properties must be stored in a secure place where we could find them when needed. The quarks are here for that purpose \+: they are subtypes of data base object and therefore can store the properties attached to occurences.
+But the interest of occurences is precisely to be able to attach them properties. In order to be able to do that, properties must be stored in a secure place where we could find them when needed. The quarks are here for that purpose \-: they are subtypes of data base object and therefore can store the properties attached to occurences.
 
-\begin{DoxyParagraph}{Important\+:}
+\begin{DoxyParagraph}{Important\-:}
 only one quark is attached to all occurences which refer the same entity of the virtually unfolded hierarchy. This means that a property placed on an occurence can be read by any other occurence which refers the same entity of the virtually unfolded hierarchy.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+:}
+\begin{DoxyParagraph}{Remark\-:}
 Those quarks are also volatile objects because their only reason to exist is that at least one property is attached to them.
 \end{DoxyParagraph}
 \hypertarget{classHurricane_1_1Property_secPropertyHowThatWorks}{}\subsection{How that works}\label{classHurricane_1_1Property_secPropertyHowThatWorks}
@@ -56,45 +57,45 @@ We will detail the way properties are managed by analysing more precisely what h
 
 {\bfseries Accessing a property by its name} 
 \begin{DoxyCode}
-Property* \hyperlink{classHurricane_1_1DBo_a599f61978df51d1d4c351f6cbd02488d}{DBo::getProperty}(\textcolor{keyword}{const} Name& name) \textcolor{keyword}{const};
+Property* \hyperlink{classHurricane_1_1DBo_a0026da8391fae433ce069c2ba6455fe8}{DBo::getProperty}(\textcolor{keyword}{const} Name& name) \textcolor{keyword}{const};
 \end{DoxyCode}
- This member function returns the property of name {\ttfamily $<$name$>$} if there is one attached to the object, else N\+U\+LL. 
+ This member function returns the property of name {\ttfamily $<$name$>$} if there is one attached to the object, else N\-U\-L\-L. 
 \begin{DoxyCode}
-Property* \hyperlink{classHurricane_1_1Occurrence_ab2b36b219037a2310f6527a35a9a266f}{Occurrence::getProperty}(\textcolor{keyword}{const} Name& name) \textcolor{keyword}{const};
+Property* \hyperlink{classHurricane_1_1Occurrence_a3e8c1bca059393ee3ba319850d96e416}{Occurrence::getProperty}(\textcolor{keyword}{const} Name& name) \textcolor{keyword}{const};
 \end{DoxyCode}
  This function searches in a first time the quark representing the occurence.
 
-If the quark doesn\textquotesingle{}t exist, this means there is no property attached to that occurence, then the function returns N\+U\+LL.
+If the quark doesn't exist, this means there is no property attached to that occurence, then the function returns N\-U\-L\-L.
 
 If the quark does exist, the function returns the property of name {\ttfamily $<$name$>$} attached to the quark, if any, by calling the previous function (because quarks are data base objects).
 
 {\bfseries Accessing the set of all properties} 
 \begin{DoxyCode}
-\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties}  \hyperlink{classHurricane_1_1DBo_aec46894a10e83abb54c495dc4d90f2d3}{DBo::getProperties}() \textcolor{keyword}{const};
+\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties}  \hyperlink{classHurricane_1_1DBo_acafb68a90cdddb0921e742f3bab3da6b}{DBo::getProperties}() \textcolor{keyword}{const};
 \end{DoxyCode}
  Return the collection of properties attached to the object (possibly empty). 
 \begin{DoxyCode}
-\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties}  \hyperlink{classHurricane_1_1Occurrence_acbf59d6c01804e01f66d076c149abb49}{Occurrence::getProperties}() \textcolor{keyword}{const};
+\hyperlink{namespaceHurricane_afd7bca6dad4be54b7c03b0463e6c0004}{Properties}  \hyperlink{classHurricane_1_1Occurrence_acec4179d4ec2718570f17462aa0beb70}{Occurrence::getProperties}() \textcolor{keyword}{const};
 \end{DoxyCode}
  This function searches in a first time the quark representing the occurence.
 
-If the quark doesn\textquotesingle{}t exist, this means there is no property attached to that occurence, then the function returns an empty property collection.
+If the quark doesn't exist, this means there is no property attached to that occurence, then the function returns an empty property collection.
 
 If the quark does exist, the function returns the property collection attached to the quark, by calling the previous function (the returned collection is inevitably non empty, else the quark would not exist).
 
 {\bfseries Does the object have properties ?} 
 \begin{DoxyCode}
-\textcolor{keywordtype}{bool} \hyperlink{classHurricane_1_1DBo_a1563f094565030c77592ed82f9a9989b}{DBo::hasProperty}() \textcolor{keyword}{const};
+\textcolor{keywordtype}{bool} \hyperlink{classHurricane_1_1DBo_af03127d0697ce89e3640b5c3429d7752}{DBo::hasProperty}() \textcolor{keyword}{const};
 \end{DoxyCode}
  Return {\bfseries true} if the object owns at least a property, else {\bfseries false}. 
 \begin{DoxyCode}
-\textcolor{keywordtype}{bool} \hyperlink{classHurricane_1_1Occurrence_a0c1c6cfdf47f33166d108e2311d74e48}{Occurrence::hasProperty}() \textcolor{keyword}{const};
+\textcolor{keywordtype}{bool} \hyperlink{classHurricane_1_1Occurrence_a08cad18e47bd4bfee46fedeb4e85f502}{Occurrence::hasProperty}() \textcolor{keyword}{const};
 \end{DoxyCode}
  This function searches the quark representing the occurence.
 
 If the quark does exist it means there is at least a property assigned to it and the function returns {\bfseries true}, else it returns {\bfseries false}.
 
-{\bfseries Adding a property \+: things becomes a little harder} 
+{\bfseries Adding a property \-: things becomes a little harder} 
 \begin{DoxyCode}
 \textcolor{keywordtype}{void} \hyperlink{classHurricane_1_1DBo_a8979674f11507cb4c7c5251b41ed72d5}{DBo::put}(Property* property);
 \end{DoxyCode}
@@ -104,17 +105,17 @@ If the quark does exist it means there is at least a property assigned to it and
 \end{DoxyCode}
  This function searches the quark representing the occurence.
 
-If the quark doesn\textquotesingle{}t exist it is automatically created in order to attach this first property.
+If the quark doesn't exist it is automatically created in order to attach this first property.
 
 once the quark has been got or created, we can add the property with the previous function.
 
-Two important things might happen then \+: The property is already owned by an other object (may be a quark) and that property is not a shared one {\bfseries and/or} the object owns already a property with the same name.
+Two important things might happen then \-: The property is already owned by an other object (may be a quark) and that property is not a shared one {\bfseries and/or} the object owns already a property with the same name.
 
 Therefore it may happen, within this step, that adding a property to an object leads to the deletion of an other property on that object {\bfseries (name unicity)} or on an other object {\bfseries (unicity of owner for a private property)}.
 
-Which behaviour should we have in such conditions ? Shall we destroy the property which has been detached ? There is no unique behaviour which matches all needs. In order to solve this problem the properties must answer to two specific messages which are \+: {\bfseries \hyperlink{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}{on\+Captured\+By(\+D\+Bo$\ast$ dbo)}} when the property is attached to an object and {\bfseries on\+Released\+By(D\+Bo$\ast$ dbo)} when it is detached from the object. It is within that last message that the decision about the future of the property must be taken.
+Which behaviour should we have in such conditions ? Shall we destroy the property which has been detached ? There is no unique behaviour which matches all needs. In order to solve this problem the properties must answer to two specific messages which are \-: {\bfseries \hyperlink{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}{on\-Captured\-By(\-D\-Bo$\ast$ dbo)}} when the property is attached to an object and {\bfseries on\-Released\-By(D\-Bo$\ast$ dbo)} when it is detached from the object. It is within that last message that the decision about the future of the property must be taken.
 
-\begin{DoxyParagraph}{Remark\+:}
+\begin{DoxyParagraph}{Remark\-:}
 We will detail below those messages for both private and shared properties.
 \end{DoxyParagraph}
 {\bfseries Removing a property} 
@@ -127,12 +128,12 @@ We will detail below those messages for both private and shared properties.
 \end{DoxyCode}
  The function searches for the quark associated to the occurence.
 
-If the quark doesn\textquotesingle{}t exist, there is nothing to do, the occurence has no properties.
+If the quark doesn't exist, there is nothing to do, the occurence has no properties.
 
 Else the property is removed from the set of quark properties by calling the previous function. Furthermore if this removed property is the last one, the quark is automatically deleted.
 
-\begin{DoxyParagraph}{Important\+:}
-The message {\bfseries on\+Released\+By} is called upon as explained above. This call will decide of the future of the removed property.
+\begin{DoxyParagraph}{Important\-:}
+The message {\bfseries on\-Released\-By} is called upon as explained above. This call will decide of the future of the removed property.
 \end{DoxyParagraph}
 {\bfseries Clearing all properties} 
 \begin{DoxyCode}
@@ -146,24 +147,24 @@ The message {\bfseries on\+Released\+By} is called upon as explained above. This
 
 If the quark exist it is simply destroyed after removing all its private properties and detaching it from all its shared properties (wich may lead to their removal). Without quark the occurence looses all its properties.
 
-\begin{DoxyParagraph}{Important\+:}
-Here again the message {\bfseries on\+Released\+By} is called upon for each removed property.
+\begin{DoxyParagraph}{Important\-:}
+Here again the message {\bfseries on\-Released\-By} is called upon for each removed property.
 \end{DoxyParagraph}
 \hypertarget{classHurricane_1_1Property_secPropertyCreationProcess}{}\subsection{Creation process}\label{classHurricane_1_1Property_secPropertyCreationProcess}
 The creation process is similar to the data base objects creation one. Therefore a property must be created by the special function {\bfseries Create} and not by the usual new (which is not available).\hypertarget{classHurricane_1_1Property_secPropertyDeletionProcess}{}\subsection{Deletion process}\label{classHurricane_1_1Property_secPropertyDeletionProcess}
-{\bfseries \hyperlink{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}{Hurricane\+::\+Property\+::destroy}}\hypertarget{classHurricane_1_1Property_secPropertyNaming}{}\subsection{Naming Conventions}\label{classHurricane_1_1Property_secPropertyNaming}
+{\bfseries \hyperlink{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}{Hurricane\-::\-Property\-::destroy}}\hypertarget{classHurricane_1_1Property_secPropertyNaming}{}\subsection{Naming Conventions}\label{classHurricane_1_1Property_secPropertyNaming}
 Properties being named and the their management being based on that name, it could occur conflicts between \hyperlink{namespaceHurricane}{Hurricane} which use some properties and the different tools which will be plugged above, or between different tools themselves.
 
 In order to avoid that you must take some precautions in the choice of the property names.
 
-So \hyperlink{namespaceHurricane}{Hurricane} uses properties prefixed by the string \char`\"{}\+Hurricane\+::\char`\"{},like for instance \char`\"{}\+Hurricane\+::\+Selector\char`\"{} for the property of type Selector.
+So \hyperlink{namespaceHurricane}{Hurricane} uses properties prefixed by the string \char`\"{}\-Hurricane\-::\char`\"{},like for instance \char`\"{}\-Hurricane\-::\-Selector\char`\"{} for the property of type Selector.
 
 So I suggest that different tools use a similar namming strategy which would keep confident all the community of {\bfseries {\itshape hurricaners}}
 
-\begin{DoxyParagraph}{Remark\+:}
-Using names like \char`\"{}\+Zen\+Tek\+::\+Timing\+Node\char`\"{} for the Timing\+Node type property managed by tools from the Zen\+Tek society decreases name conflicts, unless with other tools from the same society. A property name \char`\"{}\+Society\+Name\+::\+Tool\+Name\+::\+Property\+Name\char`\"{} would be more secure.
+\begin{DoxyParagraph}{Remark\-:}
+Using names like \char`\"{}\-Zen\-Tek\-::\-Timing\-Node\char`\"{} for the Timing\-Node type property managed by tools from the Zen\-Tek society decreases name conflicts, unless with other tools from the same society. A property name \char`\"{}\-Society\-Name\-::\-Tool\-Name\-::\-Property\-Name\char`\"{} would be more secure.
 \end{DoxyParagraph}
-Furthermore, if the community adopts this convention it will be possible to simplify some parts of the code by avoiding for example calls to the macro {\bfseries is\+\_\+a} to check that the collected property is of the expected type, as shown in the following example \+: 
+Furthermore, if the community adopts this convention it will be possible to simplify some parts of the code by avoiding for example calls to the macro {\bfseries is\-\_\-a} to check that the collected property is of the expected type, as shown in the following example \-: 
 \begin{DoxyCode}
 Property* \textcolor{keyword}{property} = occurence.getProperty(\textcolor{stringliteral}{"Hurricane::Selector"});
  
@@ -172,7 +173,7 @@ Property* \textcolor{keyword}{property} = occurence.getProperty(\textcolor{strin
   \textcolor{comment}{// ...}
 \}
 \end{DoxyCode}
- Which could become \+: 
+ Which could become \-: 
 \begin{DoxyCode}
 Selector* selector = (Selector*)occurence.getProperty(\textcolor{stringliteral}{"Hurricane::Selector"});
  
@@ -181,19 +182,19 @@ Selector* selector = (Selector*)occurence.getProperty(\textcolor{stringliteral}{
 \}
 \end{DoxyCode}
 \hypertarget{classHurricane_1_1Property_secPropertyRemarks}{}\subsection{Remarks}\label{classHurricane_1_1Property_secPropertyRemarks}
-The name of properties being of type \hyperlink{classHurricane_1_1Name}{Name} and not of type string, the comparison between two names operates on their pointers and not on their character strings. The length of the name doesn\textquotesingle{}t affect the comparison performance.
+The name of properties being of type \hyperlink{classHurricane_1_1Name}{Name} and not of type string, the comparison between two names operates on their pointers and not on their character strings. The length of the name doesn't affect the comparison performance.
 
 on the other hand, the time to create a property name depends obviously of its length and of the number of names (which fortunately are managed by efficient map containers).
 
 Therefore in order to avoid building names at each property access, you must provide a specific function which returns a \hyperlink{classHurricane_1_1Name}{Name} object allocated once and once only.
 
-As a matter of fact if you write, like in the previous example \+: 
+As a matter of fact if you write, like in the previous example \-: 
 \begin{DoxyCode}
 Property* \textcolor{keyword}{property} = occurence.getProperty(\textcolor{stringliteral}{"Hurricane::Selector"});
 \end{DoxyCode}
  Each time the name is built and this will degrade performance.
 
-on the other hand if the following static member function is provided \+: 
+on the other hand if the following static member function is provided \-: 
 \begin{DoxyCode}
 \textcolor{keyword}{const} Name& Selector::getPropertyName ()
 \{
@@ -201,19 +202,19 @@ on the other hand if the following static member function is provided \+:
   \textcolor{keywordflow}{return} NAME;
 \}
 \end{DoxyCode}
- You could write later \+: 
+ You could write later \-: 
 \begin{DoxyCode}
 Property* \textcolor{keyword}{property} = occurence.getProperty(Selector::getPropertyName());
 \end{DoxyCode}
- This approach is much more efficient and presents an other interest \+: you don\textquotesingle{}t need to know the name of the property being handled. This allows to change property names without affecting existing code.
+ This approach is much more efficient and presents an other interest \-: you don't need to know the name of the property being handled. This allows to change property names without affecting existing code.
 
 Therefore I propose, for every new instanciable property (whose name depends of the property type), that a static member function be systematically provided.
 
-Furthermore, both \hyperlink{classHurricane_1_1StandardPrivateProperty}{Standard\+Private\+Property} and \hyperlink{classHurricane_1_1StandardSharedProperty}{Standard\+Shared\+Property} have, as we shall see later, an attribute giving their name. Here again, for accessing the propety, a name must be created.
+Furthermore, both \hyperlink{classHurricane_1_1StandardPrivateProperty}{Standard\-Private\-Property} and \hyperlink{classHurricane_1_1StandardSharedProperty}{Standard\-Shared\-Property} have, as we shall see later, an attribute giving their name. Here again, for accessing the propety, a name must be created.
 
-So I propose also that a global function (which can\textquotesingle{}t be a static member function) be defined for each new property name.
+So I propose also that a global function (which can't be a static member function) be defined for each new property name.
 
-That way, by defining (i.\+e. for the property Object\+Id) the function \+: 
+That way, by defining (i.\-e. for the property Object\-Id) the function \-: 
 \begin{DoxyCode}
 \textcolor{keyword}{const} Name& getObjectIdPropertyName ()
 \{
@@ -221,55 +222,59 @@ That way, by defining (i.\+e. for the property Object\+Id) the function \+:
   \textcolor{keywordflow}{return} NAME;
 \}
 \end{DoxyCode}
- You can write later \+: 
+ You can write later \-: 
 \begin{DoxyCode}
 Property* \textcolor{keyword}{property} = occurence.getProperty(getObjectIdPropertyName());
 \end{DoxyCode}
  
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}\label{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}} 
-\index{Hurricane\+::\+Property@{Hurricane\+::\+Property}!destroy@{destroy}}
-\index{destroy@{destroy}!Hurricane\+::\+Property@{Hurricane\+::\+Property}}
-\subsubsection{\texorpdfstring{destroy()}{destroy()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Property\+::destroy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
-
-Like the data base objects, properties can be destroyed by calling upon this function and not the standard C++ destructor (which is not available). \mbox{\Hypertarget{classHurricane_1_1Property_a2759e2003c15d417b925092bc253ddd1}\label{classHurricane_1_1Property_a2759e2003c15d417b925092bc253ddd1}} 
-\index{Hurricane\+::\+Property@{Hurricane\+::\+Property}!get\+Name@{get\+Name}}
-\index{get\+Name@{get\+Name}!Hurricane\+::\+Property@{Hurricane\+::\+Property}}
-\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Name}{Name} Hurricane\+::\+Property\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
-{\bfseries Returns\+:} the name of the property \+: this method must absolutely be overloaded for all new property classes, because the property name is not a \char`\"{}wired in\char`\"{} attribute. A property being a real object, this name derives naturally from the property type name (so don\textquotesingle{}t loose room uselessly to store it in a record slot). \mbox{\Hypertarget{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}\label{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}} 
-\index{Hurricane\+::\+Property@{Hurricane\+::\+Property}!on\+Captured\+By@{on\+Captured\+By}}
-\index{on\+Captured\+By@{on\+Captured\+By}!Hurricane\+::\+Property@{Hurricane\+::\+Property}}
-\subsubsection{\texorpdfstring{on\+Captured\+By()}{onCapturedBy()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Property\+::on\+Captured\+By (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1DBo}{D\+Bo} $\ast$}]{dbo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
+\hypertarget{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}{\index{Hurricane\-::\-Property@{Hurricane\-::\-Property}!destroy@{destroy}}
+\index{destroy@{destroy}!Hurricane::Property@{Hurricane\-::\-Property}}
+\subsubsection[{destroy}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Property\-::destroy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classHurricane_1_1Property_ab60362699e6c6ea35ace45dbd1075a2f}
+Like the data base objects, properties can be destroyed by calling upon this function and not the standard C++ destructor (which is not available). \hypertarget{classHurricane_1_1Property_a2759e2003c15d417b925092bc253ddd1}{\index{Hurricane\-::\-Property@{Hurricane\-::\-Property}!get\-Name@{get\-Name}}
+\index{get\-Name@{get\-Name}!Hurricane::Property@{Hurricane\-::\-Property}}
+\subsubsection[{get\-Name}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Name} Hurricane\-::\-Property\-::get\-Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Property_a2759e2003c15d417b925092bc253ddd1}
+{\bfseries Returns\-:} the name of the property \-: this method must absolutely be overloaded for all new property classes, because the property name is not a \char`\"{}wired in\char`\"{} attribute. A property being a real object, this name derives naturally from the property type name (so don't loose room uselessly to store it in a record slot). \hypertarget{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}{\index{Hurricane\-::\-Property@{Hurricane\-::\-Property}!on\-Captured\-By@{on\-Captured\-By}}
+\index{on\-Captured\-By@{on\-Captured\-By}!Hurricane::Property@{Hurricane\-::\-Property}}
+\subsubsection[{on\-Captured\-By}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Property\-::on\-Captured\-By (
+\begin{DoxyParamCaption}
+\item[{{\bf D\-Bo} $\ast$}]{dbo}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}
 This message is called upon when the property is added to the properties of {\ttfamily $<$dbo$>$}.
 
 By default this function does nothing particular, but it must be overloaded for all property sub-\/classes. We will detail later the reaction to this message as taken by the private and shared property classes.
 
-\begin{DoxyParagraph}{Remark\+:}
+\begin{DoxyParagraph}{Remark\-:}
 This message being already overloaded for private and shared property classes there is no need to overload it again when specializing any of those two classes. 
 \end{DoxyParagraph}
-\mbox{\Hypertarget{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}\label{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}} 
-\index{Hurricane\+::\+Property@{Hurricane\+::\+Property}!on\+Released\+By@{on\+Released\+By}}
-\index{on\+Released\+By@{on\+Released\+By}!Hurricane\+::\+Property@{Hurricane\+::\+Property}}
-\subsubsection{\texorpdfstring{on\+Released\+By()}{onReleasedBy()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Property\+::on\+Released\+By (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1DBo}{D\+Bo} $\ast$}]{dbo }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
+\hypertarget{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}{\index{Hurricane\-::\-Property@{Hurricane\-::\-Property}!on\-Released\-By@{on\-Released\-By}}
+\index{on\-Released\-By@{on\-Released\-By}!Hurricane::Property@{Hurricane\-::\-Property}}
+\subsubsection[{on\-Released\-By}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Property\-::on\-Released\-By (
+\begin{DoxyParamCaption}
+\item[{{\bf D\-Bo} $\ast$}]{dbo}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}
 This message is called upon when the property is removed from the {\ttfamily $<$dbo$>$} properties.
 
-\begin{DoxyParagraph}{Important\+:}
+\begin{DoxyParagraph}{Important\-:}
 The argument {\ttfamily $<$dbo$>$} is not (or no more) necessarily the owner of the property which receives the message. The processing to be done in reaction to this message often depends on this observation. We will better understand this subtlety when studying private properties.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+:}
+\begin{DoxyParagraph}{Remark\-:}
 This message being already overloaded for private and shared property classes there is no need to overload it again when specializing any of those two classes. 
 \end{DoxyParagraph}
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Property.\+h\item 
-Property.\+dox\end{DoxyCompactItemize}
+Property.\-h\item 
+Property.\-dox\end{DoxyCompactItemize}

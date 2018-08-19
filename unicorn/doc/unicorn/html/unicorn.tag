@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
+  <compound kind="namespace">
+    <name>Unicorn</name>
+    <filename>namespaceUnicorn.html</filename>
+    <class kind="class">Unicorn::UnicornGui</class>
+  </compound>
   <compound kind="class">
     <name>Unicorn::UnicornGui</name>
     <filename>classUnicorn_1_1UnicornGui.html</filename>
@@ -40,9 +45,16 @@
       <arglist>()</arglist>
     </member>
   </compound>
-  <compound kind="namespace">
-    <name>Unicorn</name>
-    <filename>namespaceUnicorn.html</filename>
-    <class kind="class">Unicorn::UnicornGui</class>
+  <compound kind="dir">
+    <name>src</name>
+    <path>/dsk/l1/jpc/coriolis-2.x/src/coriolis/unicorn/src/</path>
+    <filename>dir_68267d1309a1af8e8297ef4c3efbcdba.html</filename>
+    <dir>unicorn</dir>
+  </compound>
+  <compound kind="dir">
+    <name>unicorn</name>
+    <path>/dsk/l1/jpc/coriolis-2.x/src/coriolis/unicorn/src/unicorn/</path>
+    <filename>dir_4aa09a10ca668c28f3c8e57fb374580b.html</filename>
+    <file>UnicornGui.h</file>
   </compound>
 </tagfile>

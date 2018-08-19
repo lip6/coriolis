@@ -1,130 +1,145 @@
-\hypertarget{classHurricane_1_1JsonObject}{}\section{Hurricane\+:\+:Json\+Object Class Reference}
-\label{classHurricane_1_1JsonObject}\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
+\hypertarget{classHurricane_1_1JsonObject}{\section{Hurricane\-:\-:Json\-Object Class Reference}
+\label{classHurricane_1_1JsonObject}\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}}
+}
 
 
-Support for J\+S\+ON export.  
+Support for J\-S\-O\-N export.  
 
 
 
 
-Inherited by Hurricane\+::\+Cell\+::\+Slaveds\+Relation\+::\+Json\+Property, Hurricane\+::\+Cell\+::\+Slaveds\+Relation\+::\+Json\+Property\+Ref, Hurricane\+::\+Cell\+::\+Uniquify\+Relation\+::\+Json\+Property, Hurricane\+::\+Cell\+::\+Uniquify\+Relation\+::\+Json\+Property\+Ref, Hurricane\+::\+Json\+Base\+Array$<$ T $>$, Hurricane\+::\+Json\+Box, Hurricane\+::\+Json\+D\+Bo, Hurricane\+::\+Json\+Dummy, Hurricane\+::\+Json\+Entity\+Ref, Hurricane\+::\+Json\+Key, Hurricane\+::\+Json\+Occurrence, Hurricane\+::\+Json\+Plug\+Ref, Hurricane\+::\+Json\+Point, Hurricane\+::\+Json\+Transformation, and Hurricane\+::\+Standard\+Private\+Property$<$ Value, Json\+State $>$\+::\+Json\+Property.
+Inherited by Hurricane\-::\-Cell\-::\-Slaveds\-Relation\-::\-Json\-Property, Hurricane\-::\-Cell\-::\-Slaveds\-Relation\-::\-Json\-Property\-Ref, Hurricane\-::\-Cell\-::\-Uniquify\-Relation\-::\-Json\-Property, Hurricane\-::\-Cell\-::\-Uniquify\-Relation\-::\-Json\-Property\-Ref, Hurricane\-::\-Json\-Base\-Array$<$ T $>$, Hurricane\-::\-Json\-Box, Hurricane\-::\-Json\-D\-Bo, Hurricane\-::\-Json\-Dummy, Hurricane\-::\-Json\-Entity\-Ref, Hurricane\-::\-Json\-Key, Hurricane\-::\-Json\-Occurrence, Hurricane\-::\-Json\-Plug\-Ref, Hurricane\-::\-Json\-Point, Hurricane\-::\-Json\-Transformation, and Hurricane\-::\-Standard\-Private\-Property$<$ Value, Json\-State $>$\-::\-Json\-Property.
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}{Json\+Object} (unsigned long flags)
+\hyperlink{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}{Json\-Object} (unsigned long flags)
 \item 
-virtual bool \hyperlink{classHurricane_1_1JsonObject_a8f0949b75f5900e4ef87196e949cfa6b}{is\+Dummy} () const
+virtual bool \hyperlink{classHurricane_1_1JsonObject_a50c65287719a2de329ac71d24844dc18}{is\-Dummy} () const 
 \item 
-virtual std\+::string \hyperlink{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{get\+Type\+Name} () const =0
+virtual std\-::string \hyperlink{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{get\-Type\-Name} () const =0
 \item 
-std\+::string \hyperlink{classHurricane_1_1JsonObject_a34c4e38611238021df8cc69fc32f5e48}{get\+Stack\+Name} () const
+std\-::string \hyperlink{classHurricane_1_1JsonObject_a4f17c16c25d15c1da3c5f2d5bdfb99be}{get\-Stack\-Name} () const 
 \item 
-bool \hyperlink{classHurricane_1_1JsonObject_a6ac9230d36590f83fbe1561b6c1bb0e5}{check} (\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&, std\+::string fname) const
+bool \hyperlink{classHurricane_1_1JsonObject_a7cd25bbf8408c39892eb4e641a21deda}{check} (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack} \&, std\-::string fname) const 
 \item 
-bool \hyperlink{classHurricane_1_1JsonObject_ac0b8816eab2cbcabf18d5421a59aa780}{has} (const std\+::string \&key) const
+bool \hyperlink{classHurricane_1_1JsonObject_a193d12233331484a7dd321a4fd5cde21}{has} (const std\-::string \&key) const 
 \item 
-void \hyperlink{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{add} (const std\+::string \&key, std\+::type\+\_\+index tid)
+void \hyperlink{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{add} (const std\-::string \&key, std\-::type\-\_\-index tid)
 \item 
-void \hyperlink{classHurricane_1_1JsonObject_a6435e5a8655a6b42b61d55e7fd673c65}{remove} (const std\+::string \&key)
+void \hyperlink{classHurricane_1_1JsonObject_a6435e5a8655a6b42b61d55e7fd673c65}{remove} (const std\-::string \&key)
 \item 
-{\footnotesize template$<$typename T $>$ }\\T \hyperlink{classHurricane_1_1JsonObject_af599fb8e2f3aca9c00dc628927367cb8}{get} (\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&, const std\+::string \&key) const
+{\footnotesize template$<$typename T $>$ }\\T \hyperlink{classHurricane_1_1JsonObject_aff9bf12c689466c693d513e43a62c38a}{get} (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack} \&, const std\-::string \&key) const 
 \item 
-{\footnotesize template$<$typename T $>$ }\\T $\ast$ \hyperlink{classHurricane_1_1JsonObject_a7a3fe903ceb00a3ebff66d1696edf682}{jget} (\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&) const
+{\footnotesize template$<$typename T $>$ }\\T $\ast$ \hyperlink{classHurricane_1_1JsonObject_a387979924e099a418d2567a639ae25cf}{jget} (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack} \&) const 
 \item 
-void \hyperlink{classHurricane_1_1JsonObject_a380ea9ac8689e1e9cad892edf0024c08}{copy\+Attrs} (const \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$, bool reset=false)
+void \hyperlink{classHurricane_1_1JsonObject_a380ea9ac8689e1e9cad892edf0024c08}{copy\-Attrs} (const \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} $\ast$, bool reset=false)
 \item 
 void \hyperlink{classHurricane_1_1JsonObject_a5f11139263926dbd8fe87b9c4480bdae}{clear} ()
 \item 
-std\+::string \hyperlink{classHurricane_1_1JsonObject_aa4d6d0502f0f25e614ef50ac3dd76263}{get\+Name} () const
+std\-::string \hyperlink{classHurricane_1_1JsonObject_aff05a24b06a22554d7b22126ba906e72}{get\-Name} () const 
 \item 
-void \hyperlink{classHurricane_1_1JsonObject_aeda98a478720cf29e532e2a11f6f54c5}{set\+Name} (const std\+::string \&)
+void \hyperlink{classHurricane_1_1JsonObject_aeda98a478720cf29e532e2a11f6f54c5}{set\-Name} (const std\-::string \&)
 \item 
-{\footnotesize template$<$typename T $>$ }\\T \hyperlink{classHurricane_1_1JsonObject_ab1a1aaaa583d5c8f7adbc9c9d0eeeebf}{get\+Object} () const
+{\footnotesize template$<$typename T $>$ }\\T \hyperlink{classHurricane_1_1JsonObject_a95dfe1c35371ee28cfdeba8f290d1d7f}{get\-Object} () const 
 \item 
-{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}{set\+Object} (T)
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}{set\-Object} (T)
 \item 
-bool \hyperlink{classHurricane_1_1JsonObject_a4bb80844dcd175ad16cf92ee29064850}{is\+Bound} () const
+bool \hyperlink{classHurricane_1_1JsonObject_aba8ed550f36d6a62bf9fe45838b101f8}{is\-Bound} () const 
 \item 
-virtual \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$ \hyperlink{classHurricane_1_1JsonObject_a939cfbae43f7b0d994648d07bdba2b32}{clone} (unsigned long flags) const =0
+virtual \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} $\ast$ \hyperlink{classHurricane_1_1JsonObject_a939cfbae43f7b0d994648d07bdba2b32}{clone} (unsigned long flags) const =0
 \item 
-virtual void \hyperlink{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{to\+Data} (\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&)
+virtual void \hyperlink{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{to\-Data} (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack} \&)
 \item 
-unsigned int \hyperlink{classHurricane_1_1JsonObject_a3819d0c96ee99277e4cc8d349dc4155c}{preset\+Id} (\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&)
+unsigned int \hyperlink{classHurricane_1_1JsonObject_a3819d0c96ee99277e4cc8d349dc4155c}{preset\-Id} (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack} \&)
 \item 
-{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classHurricane_1_1JsonObject_ace589494452d9d797506286613642cd4}{update} (\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&, T)
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{classHurricane_1_1JsonObject_ace589494452d9d797506286613642cd4}{update} (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack} \&, T)
 \item 
-\hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$ \hyperlink{classHurricane_1_1JsonObject_a5216e5f5d74f8dbf8665eef8a78b2fe1}{set\+Flags} (unsigned long mask)
+\hyperlink{classHurricane_1_1JsonObject}{Json\-Object} $\ast$ \hyperlink{classHurricane_1_1JsonObject_a5216e5f5d74f8dbf8665eef8a78b2fe1}{set\-Flags} (unsigned long mask)
 \item 
-\hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$ \hyperlink{classHurricane_1_1JsonObject_a8346b1c958574275fe17f9c4cb40ee8b}{reset\+Flags} (unsigned long mask)
+\hyperlink{classHurricane_1_1JsonObject}{Json\-Object} $\ast$ \hyperlink{classHurricane_1_1JsonObject_a8346b1c958574275fe17f9c4cb40ee8b}{reset\-Flags} (unsigned long mask)
 \item 
-bool \hyperlink{classHurricane_1_1JsonObject_a267c55a1989a9907e25632d820681779}{isset\+Flags} (unsigned long mask) const
+bool \hyperlink{classHurricane_1_1JsonObject_adede141746ee05a131aa6d0c673a7c03}{isset\-Flags} (unsigned long mask) const 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Support for J\+S\+ON export. 
+Support for J\-S\-O\-N export. 
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}\label{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!Json\+Object@{Json\+Object}}
-\index{Json\+Object@{Json\+Object}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{Json\+Object()}{JsonObject()}}
-{\footnotesize\ttfamily Hurricane\+::\+Json\+Object\+::\+Json\+Object (\begin{DoxyParamCaption}\item[{unsigned long}]{flags }\end{DoxyParamCaption})}
-
+\hypertarget{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!Json\-Object@{Json\-Object}}
+\index{Json\-Object@{Json\-Object}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{Json\-Object}]{\setlength{\rightskip}{0pt plus 5cm}Hurricane\-::\-Json\-Object\-::\-Json\-Object (
+\begin{DoxyParamCaption}
+\item[{unsigned long}]{flags}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}
 
 \begin{DoxyParams}{Parameters}
 {\em flags} & Flags sets by derived classes.\\
 \hline
 \end{DoxyParams}
-Base object to be used by all J\+S\+ON parsers. Provides helpers functions. Store three separated lists of requirements/attributes needes to build the object.
+Base object to be used by all J\-S\-O\-N parsers. Provides helpers functions. Store three separated lists of requirements/attributes needes to build the object.
 \begin{DoxyItemize}
-\item {\ttfamily stackeds} \+: thoses are {\bfseries not} attributes of the current object, but other objects that are expected to be already in the stack. They are needed to build the current object. Their key must start with a {\ttfamily \textquotesingle{}}.\textquotesingle{} character.
-\item {\ttfamily attributes} \+: the simple attributes of the object. Their key must start with a {\ttfamily \textquotesingle{}\+\_\+\textquotesingle{}}.
-\item {\ttfamily collections} \+: any container, collection or whatever set of other objects part of the current object. Their key must start with a {\ttfamily \textquotesingle{}+\textquotesingle{}} character.
+\item {\ttfamily stackeds} \-: thoses are {\bfseries not} attributes of the current object, but other objects that are expected to be already in the stack. They are needed to build the current object. Their key must start with a {\ttfamily '}.' character.
+\item {\ttfamily attributes} \-: the simple attributes of the object. Their key must start with a {\ttfamily '\-\_\-'}.
+\item {\ttfamily collections} \-: any container, collection or whatever set of other objects part of the current object. Their key must start with a {\ttfamily '+'} character.
 \end{DoxyItemize}
 
-For adding a requirement/attribute, see \hyperlink{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{Json\+Object\+::add()}. 
+For adding a requirement/attribute, see \hyperlink{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{Json\-Object\-::add()}. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a8f0949b75f5900e4ef87196e949cfa6b}\label{classHurricane_1_1JsonObject_a8f0949b75f5900e4ef87196e949cfa6b}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!is\+Dummy@{is\+Dummy}}
-\index{is\+Dummy@{is\+Dummy}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{is\+Dummy()}{isDummy()}}
-{\footnotesize\ttfamily bool Hurricane\+::\+Json\+Object\+::is\+Dummy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+\hypertarget{classHurricane_1_1JsonObject_a50c65287719a2de329ac71d24844dc18}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!is\-Dummy@{is\-Dummy}}
+\index{is\-Dummy@{is\-Dummy}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{is\-Dummy}]{\setlength{\rightskip}{0pt plus 5cm}bool Hurricane\-::\-Json\-Object\-::is\-Dummy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classHurricane_1_1JsonObject_a50c65287719a2de329ac71d24844dc18}
+{\bfseries Returns\-:} {\bfseries true} if the concrete object is of type {\ttfamily Json\-Dummy}, {\bfseries false} otherwise. \hypertarget{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!get\-Type\-Name@{get\-Type\-Name}}
+\index{get\-Type\-Name@{get\-Type\-Name}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{get\-Type\-Name}]{\setlength{\rightskip}{0pt plus 5cm}string Hurricane\-::\-Json\-Object\-::get\-Type\-Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}
+{\bfseries Returns\-:} The typename of the concrete object, that is, the value of the {\ttfamily }  key of the J\-S\-O\-N object. 
 
-{\bfseries Returns\+:} {\bfseries true} if the concrete object is of type {\ttfamily Json\+Dummy}, {\bfseries false} otherwise. \mbox{\Hypertarget{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}\label{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!get\+Type\+Name@{get\+Type\+Name}}
-\index{get\+Type\+Name@{get\+Type\+Name}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{get\+Type\+Name()}{getTypeName()}}
-{\footnotesize\ttfamily string Hurricane\+::\+Json\+Object\+::get\+Type\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+Referenced by get\-Stack\-Name().
 
-{\bfseries Returns\+:} The typename of the concrete object, that is, the value of the {\ttfamily }  key of the J\+S\+ON object. 
+\hypertarget{classHurricane_1_1JsonObject_a4f17c16c25d15c1da3c5f2d5bdfb99be}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!get\-Stack\-Name@{get\-Stack\-Name}}
+\index{get\-Stack\-Name@{get\-Stack\-Name}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{get\-Stack\-Name}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string Hurricane\-::\-Json\-Object\-::get\-Stack\-Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a4f17c16c25d15c1da3c5f2d5bdfb99be}
+{\bfseries Returns\-:} The key with which the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object will be pushed on the parser stack.
 
-Referenced by clear().
+If the current object is associated to an attribute (that is, a key in J\-S\-O\-N), then the {\ttfamily name} attribute of the \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} should have been set, and it will be returned here.
 
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a34c4e38611238021df8cc69fc32f5e48}\label{classHurricane_1_1JsonObject_a34c4e38611238021df8cc69fc32f5e48}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!get\+Stack\+Name@{get\+Stack\+Name}}
-\index{get\+Stack\+Name@{get\+Stack\+Name}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{get\+Stack\+Name()}{getStackName()}}
-{\footnotesize\ttfamily std\+::string Hurricane\+::\+Json\+Object\+::get\+Stack\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+If the {\ttfamily name} attribute has not been set (for example, because we are in an array). Then the typename (\hyperlink{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{Json\-Object\-::get\-Type\-Name()}), prefixed by a {\ttfamily '}.' character will be returned.
 
-{\bfseries Returns\+:} The key with which the \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object will be pushed on the parser stack.
-
-If the current object is associated to an attribute (that is, a key in J\+S\+ON), then the {\ttfamily name} attribute of the \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} should have been set, and it will be returned here.
-
-If the {\ttfamily name} attribute has not been set (for example, because we are in an array). Then the typename (\hyperlink{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{Json\+Object\+::get\+Type\+Name()}), prefixed by a {\ttfamily \textquotesingle{}}.\textquotesingle{} character will be returned.
-
-If the \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} is, for instance, a Json\+Box (typename\+: {\ttfamily \char`\"{}\+Box\char`\"{}}) \+:
+If the \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} is, for instance, a Json\-Box (typename\-: {\ttfamily \char`\"{}\-Box\char`\"{}}) \-:
 \begin{DoxyItemize}
-\item If {\ttfamily name} is set to {\ttfamily \char`\"{}\+\_\+abutment\+Box\char`\"{}}, the box will be stacked with that key.
-\item If {\ttfamily name} is {\bfseries not} set, then the key will be {\ttfamily \char`\"{}.\+Box\char`\"{}}. 
-\end{DoxyItemize}\mbox{\Hypertarget{classHurricane_1_1JsonObject_a6ac9230d36590f83fbe1561b6c1bb0e5}\label{classHurricane_1_1JsonObject_a6ac9230d36590f83fbe1561b6c1bb0e5}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!check@{check}}
-\index{check@{check}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{check()}{check()}}
-{\footnotesize\ttfamily bool Hurricane\+::\+Json\+Object\+::check (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&}]{,  }\item[{std\+::string}]{fname }\end{DoxyParamCaption}) const}
+\item If {\ttfamily name} is set to {\ttfamily \char`\"{}\-\_\-abutment\-Box\char`\"{}}, the box will be stacked with that key.
+\item If {\ttfamily name} is {\bfseries not} set, then the key will be {\ttfamily \char`\"{}.\-Box\char`\"{}}. 
+\end{DoxyItemize}
 
+References get\-Type\-Name().
+
+
+
+Referenced by update().
+
+\hypertarget{classHurricane_1_1JsonObject_a7cd25bbf8408c39892eb4e641a21deda}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!check@{check}}
+\index{check@{check}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{check}]{\setlength{\rightskip}{0pt plus 5cm}bool Hurricane\-::\-Json\-Object\-::check (
+\begin{DoxyParamCaption}
+\item[{{\bf Json\-Stack} \&}]{, }
+\item[{std\-::string}]{fname}
+\end{DoxyParamCaption}
+) const}}\label{classHurricane_1_1JsonObject_a7cd25bbf8408c39892eb4e641a21deda}
 
 \begin{DoxyParams}{Parameters}
 {\em stack} & Where the objects already parsed are stored. \\
@@ -135,12 +150,13 @@ If the \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} is, for instance, 
 \begin{DoxyReturn}{Returns}
 {\bfseries true} if the check is successful.
 \end{DoxyReturn}
-Check that the {\ttfamily stack} actually contains all the objects (i.\+e. attributes) needed to build the current object. The list of {\itshape attributes} is built using the \hyperlink{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{Json\+Object\+::add()} function. If an attribute is missing, a warning is issued, but the parser will try to continue. \mbox{\Hypertarget{classHurricane_1_1JsonObject_ac0b8816eab2cbcabf18d5421a59aa780}\label{classHurricane_1_1JsonObject_ac0b8816eab2cbcabf18d5421a59aa780}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!has@{has}}
-\index{has@{has}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{has()}{has()}}
-{\footnotesize\ttfamily bool Hurricane\+::\+Json\+Object\+::has (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{key }\end{DoxyParamCaption}) const}
-
+Check that the {\ttfamily stack} actually contains all the objects (i.\-e. attributes) needed to build the current object. The list of {\itshape attributes} is built using the \hyperlink{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{Json\-Object\-::add()} function. If an attribute is missing, a warning is issued, but the parser will try to continue. \hypertarget{classHurricane_1_1JsonObject_a193d12233331484a7dd321a4fd5cde21}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!has@{has}}
+\index{has@{has}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{has}]{\setlength{\rightskip}{0pt plus 5cm}bool Hurricane\-::\-Json\-Object\-::has (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{key}
+\end{DoxyParamCaption}
+) const}}\label{classHurricane_1_1JsonObject_a193d12233331484a7dd321a4fd5cde21}
 
 \begin{DoxyParams}{Parameters}
 {\em key} & The key name to search for. \\
@@ -149,12 +165,14 @@ Check that the {\ttfamily stack} actually contains all the objects (i.\+e. attri
 \begin{DoxyReturn}{Returns}
 {\bfseries true} if the object possess such a key. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}\label{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!add@{add}}
-\index{add@{add}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{add()}{add()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Json\+Object\+::add (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{key,  }\item[{std\+::type\+\_\+index}]{tid }\end{DoxyParamCaption})}
-
+\hypertarget{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!add@{add}}
+\index{add@{add}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{add}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Json\-Object\-::add (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{key, }
+\item[{std\-::type\-\_\-index}]{tid}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1JsonObject_a39ed04c118b19f1b6010b7f3336c360f}
 
 \begin{DoxyParams}{Parameters}
 {\em key} & The requirement/attribute to add. \\
@@ -162,31 +180,33 @@ Check that the {\ttfamily stack} actually contains all the objects (i.\+e. attri
 {\em tid} & The type index of the attribute.\\
 \hline
 \end{DoxyParams}
-Adds a new requirement or attribute to the object. The first character of the key tells which kind it is\+:
+Adds a new requirement or attribute to the object. The first character of the key tells which kind it is\-:
 \begin{DoxyItemize}
-\item {\ttfamily \textquotesingle{}}.\textquotesingle{} \+: a requirement (not part of the object) that must be present in the stack.
-\item {\ttfamily \textquotesingle{}\+\_\+\textquotesingle{}} \+: a simple attribute of the object.
-\item {\ttfamily \textquotesingle{}+\textquotesingle{}} \+: belongs to a collection or container.
+\item {\ttfamily '}.' \-: a requirement (not part of the object) that must be present in the stack.
+\item {\ttfamily '\-\_\-'} \-: a simple attribute of the object.
+\item {\ttfamily '+'} \-: belongs to a collection or container.
 \end{DoxyItemize}
 
-A more detailed description could be found in \hyperlink{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}{Json\+Object\+::\+Json\+Object()}. \mbox{\Hypertarget{classHurricane_1_1JsonObject_a6435e5a8655a6b42b61d55e7fd673c65}\label{classHurricane_1_1JsonObject_a6435e5a8655a6b42b61d55e7fd673c65}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!remove@{remove}}
-\index{remove@{remove}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{remove()}{remove()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Json\+Object\+::remove (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{key }\end{DoxyParamCaption})}
-
+A more detailed description could be found in \hyperlink{classHurricane_1_1JsonObject_a57d9c022204b30d4b253c2588f2c1215}{Json\-Object\-::\-Json\-Object()}. \hypertarget{classHurricane_1_1JsonObject_a6435e5a8655a6b42b61d55e7fd673c65}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!remove@{remove}}
+\index{remove@{remove}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{remove}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Json\-Object\-::remove (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{key}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1JsonObject_a6435e5a8655a6b42b61d55e7fd673c65}
 
 \begin{DoxyParams}{Parameters}
 {\em key} & The key of the requirement/attribute to remove.\\
 \hline
 \end{DoxyParams}
-Removes an attribute from the current object. \mbox{\Hypertarget{classHurricane_1_1JsonObject_af599fb8e2f3aca9c00dc628927367cb8}\label{classHurricane_1_1JsonObject_af599fb8e2f3aca9c00dc628927367cb8}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!get@{get}}
-\index{get@{get}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{get()}{get()}}
-{\footnotesize\ttfamily template$<$typename T $>$ \\
-T Hurricane\+::\+Json\+Object\+::get (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&}]{stack,  }\item[{const std\+::string \&}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
+Removes an attribute from the current object. \hypertarget{classHurricane_1_1JsonObject_aff9bf12c689466c693d513e43a62c38a}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!get@{get}}
+\index{get@{get}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T Hurricane\-::\-Json\-Object\-::get (
+\begin{DoxyParamCaption}
+\item[{{\bf Json\-Stack} \&}]{stack, }
+\item[{const std\-::string \&}]{key}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_aff9bf12c689466c693d513e43a62c38a}
 
 \begin{DoxyParams}{Parameters}
 {\em stack} & The object stack of the parser. \\
@@ -200,35 +220,37 @@ The first object associated with {\ttfamily key}, starting {\itshape from the to
 Retrieve requirements or attributes from the parser stack.
 \begin{DoxyItemize}
 \item If no element with a corresponding key is found, an empty element of type {\ttfamily T} is returned (by calling the default {\ttfamily T} constructor).
-\item If an element matching the key is found, {\bfseries but} it\textquotesingle{}s type do not match {\ttfamily T}, an exception from {\ttfamily any\+\_\+cast$<$$>$} will be thrown. 
+\item If an element matching the key is found, {\bfseries but} it's type do not match {\ttfamily T}, an exception from {\ttfamily any\-\_\-cast$<$$>$} will be thrown. 
 \end{DoxyItemize}
 
-References Hurricane\+::\+Json\+Stack\+::as(), and Hurricane\+::\+Json\+Stack\+::rhas().
+References Hurricane\-::\-Json\-Stack\-::as(), and Hurricane\-::\-Json\-Stack\-::rhas().
 
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a7a3fe903ceb00a3ebff66d1696edf682}\label{classHurricane_1_1JsonObject_a7a3fe903ceb00a3ebff66d1696edf682}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!jget@{jget}}
-\index{jget@{jget}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{jget()}{jget()}}
-{\footnotesize\ttfamily template$<$typename T $>$ \\
-T $\ast$ Hurricane\+::\+Json\+Object\+::jget (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&}]{stack }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1JsonObject_a387979924e099a418d2567a639ae25cf}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!jget@{jget}}
+\index{jget@{jget}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{jget}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T $\ast$ Hurricane\-::\-Json\-Object\-::jget (
+\begin{DoxyParamCaption}
+\item[{{\bf Json\-Stack} \&}]{stack}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a387979924e099a418d2567a639ae25cf}
 
 \begin{DoxyParams}{Parameters}
-{\em stack} & The parser stack. {\bfseries Returns\+:} the first \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} that can be cast into type {\ttfamily T$\ast$}.\\
+{\em stack} & The parser stack. {\bfseries Returns\-:} the first \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} that can be cast into type {\ttfamily T$\ast$}.\\
 \hline
 \end{DoxyParams}
-Search the \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} stack, from the top, the first object that can be cast into type {\ttfamily T$\ast$}. Base classes can be used here, as the {\ttfamily dynamic\+\_\+cast$<$$>$} operator is used to perform the casts.
+Search the \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} stack, from the top, the first object that can be cast into type {\ttfamily T$\ast$}. Base classes can be used here, as the {\ttfamily dynamic\-\_\-cast$<$$>$} operator is used to perform the casts.
 
 This function {\bfseries always} return a pointer (never a value). 
 
-References Hurricane\+::\+Json\+Stack\+::jobjects().
+References Hurricane\-::\-Json\-Stack\-::jobjects().
 
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a380ea9ac8689e1e9cad892edf0024c08}\label{classHurricane_1_1JsonObject_a380ea9ac8689e1e9cad892edf0024c08}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!copy\+Attrs@{copy\+Attrs}}
-\index{copy\+Attrs@{copy\+Attrs}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{copy\+Attrs()}{copyAttrs()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Json\+Object\+::copy\+Attrs (\begin{DoxyParamCaption}\item[{const \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$}]{other,  }\item[{bool}]{reset = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1JsonObject_a380ea9ac8689e1e9cad892edf0024c08}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!copy\-Attrs@{copy\-Attrs}}
+\index{copy\-Attrs@{copy\-Attrs}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{copy\-Attrs}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Json\-Object\-::copy\-Attrs (
+\begin{DoxyParamCaption}
+\item[{const {\bf Json\-Object} $\ast$}]{other, }
+\item[{bool}]{reset = {\ttfamily false}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a380ea9ac8689e1e9cad892edf0024c08}
 
 \begin{DoxyParams}{Parameters}
 {\em other} & The object from which to copy attributes. \\
@@ -236,78 +258,80 @@ References Hurricane\+::\+Json\+Stack\+::jobjects().
 {\em reset} & Whether to keep or erase the original attributes of the object.\\
 \hline
 \end{DoxyParams}
-Copy the attributes from {\ttfamily other} into the current object. {\bfseries Only} the {\bfseries attributes} are copied. Neither the requirements, nor the collections. By default, the attributes are added to the existing one of the object, but if {\ttfamily reset} is {\bfseries true}, the original ones will be suppresseds. \mbox{\Hypertarget{classHurricane_1_1JsonObject_a5f11139263926dbd8fe87b9c4480bdae}\label{classHurricane_1_1JsonObject_a5f11139263926dbd8fe87b9c4480bdae}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!clear@{clear}}
-\index{clear@{clear}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{clear()}{clear()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Json\+Object\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+Copy the attributes from {\ttfamily other} into the current object. {\bfseries Only} the {\bfseries attributes} are copied. Neither the requirements, nor the collections. By default, the attributes are added to the existing one of the object, but if {\ttfamily reset} is {\bfseries true}, the original ones will be suppresseds. \hypertarget{classHurricane_1_1JsonObject_a5f11139263926dbd8fe87b9c4480bdae}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!clear@{clear}}
+\index{clear@{clear}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{clear}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Json\-Object\-::clear (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a5f11139263926dbd8fe87b9c4480bdae}
+Removes all requirements/attributes/collections of the object. Also unbind it from any generated \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object. \hypertarget{classHurricane_1_1JsonObject_aff05a24b06a22554d7b22126ba906e72}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!get\-Name@{get\-Name}}
+\index{get\-Name@{get\-Name}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{get\-Name}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string Hurricane\-::\-Json\-Object\-::get\-Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_aff05a24b06a22554d7b22126ba906e72}
+{\bfseries Returns\-:} The name of the whole object as attribute.
 
-Removes all requirements/attributes/collections of the object. Also unbind it from any generated \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object. 
-
-References get\+Type\+Name().
-
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_aa4d6d0502f0f25e614ef50ac3dd76263}\label{classHurricane_1_1JsonObject_aa4d6d0502f0f25e614ef50ac3dd76263}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!get\+Name@{get\+Name}}
-\index{get\+Name@{get\+Name}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
-{\footnotesize\ttfamily std\+::string Hurricane\+::\+Json\+Object\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-{\bfseries Returns\+:} The name of the whole object as attribute.
-
-During the parsing of the J\+S\+ON structure, excepted when in an array, an object is associated with a key. This is the string returned by this function. It is called {\ttfamily \hyperlink{classHurricane_1_1JsonObject_aa4d6d0502f0f25e614ef50ac3dd76263}{get\+Name()}} instead of {\ttfamily get\+Key()} to avoid confusing with the attributes keys. \mbox{\Hypertarget{classHurricane_1_1JsonObject_aeda98a478720cf29e532e2a11f6f54c5}\label{classHurricane_1_1JsonObject_aeda98a478720cf29e532e2a11f6f54c5}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!set\+Name@{set\+Name}}
-\index{set\+Name@{set\+Name}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{set\+Name()}{setName()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Json\+Object\+::set\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+During the parsing of the J\-S\-O\-N structure, excepted when in an array, an object is associated with a key. This is the string returned by this function. It is called {\ttfamily \hyperlink{classHurricane_1_1JsonObject_aff05a24b06a22554d7b22126ba906e72}{get\-Name()}} instead of {\ttfamily get\-Key()} to avoid confusing with the attributes keys. \hypertarget{classHurricane_1_1JsonObject_aeda98a478720cf29e532e2a11f6f54c5}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!set\-Name@{set\-Name}}
+\index{set\-Name@{set\-Name}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{set\-Name}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Json\-Object\-::set\-Name (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_aeda98a478720cf29e532e2a11f6f54c5}
 
 \begin{DoxyParams}{Parameters}
 {\em name} & Set the key associated to this object.\\
 \hline
 \end{DoxyParams}
-See \hyperlink{classHurricane_1_1JsonObject_aa4d6d0502f0f25e614ef50ac3dd76263}{Json\+Object\+::get\+Name()} for the meaning of the name (key). \mbox{\Hypertarget{classHurricane_1_1JsonObject_ab1a1aaaa583d5c8f7adbc9c9d0eeeebf}\label{classHurricane_1_1JsonObject_ab1a1aaaa583d5c8f7adbc9c9d0eeeebf}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!get\+Object@{get\+Object}}
-\index{get\+Object@{get\+Object}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{get\+Object()}{getObject()}}
-{\footnotesize\ttfamily template$<$typename T $>$ \\
-T Hurricane\+::\+Json\+Object\+::get\+Object (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+See \hyperlink{classHurricane_1_1JsonObject_aff05a24b06a22554d7b22126ba906e72}{Json\-Object\-::get\-Name()} for the meaning of the name (key). \hypertarget{classHurricane_1_1JsonObject_a95dfe1c35371ee28cfdeba8f290d1d7f}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!get\-Object@{get\-Object}}
+\index{get\-Object@{get\-Object}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{get\-Object}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ T Hurricane\-::\-Json\-Object\-::get\-Object (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a95dfe1c35371ee28cfdeba8f290d1d7f}
+{\bfseries Returns\-:} The associated \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object.
 
-{\bfseries Returns\+:} The associated \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object.
-
-Once all the attributes have been gathered, the creation of the \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object is triggered by calling \hyperlink{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{Json\+Object\+::to\+Data()}. We keep track of that \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object by storing it (or a pointer to it) in an {\ttfamily boost\+::any} field of the \hyperlink{classHurricane_1_1JsonObject}{Json\+Object}. \mbox{\Hypertarget{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}\label{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!set\+Object@{set\+Object}}
-\index{set\+Object@{set\+Object}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{set\+Object()}{setObject()}}
-{\footnotesize\ttfamily template$<$typename T $>$ \\
-void Hurricane\+::\+Json\+Object\+::set\+Object (\begin{DoxyParamCaption}\item[{T}]{t }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+Once all the attributes have been gathered, the creation of the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object is triggered by calling \hyperlink{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{Json\-Object\-::to\-Data()}. We keep track of that \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object by storing it (or a pointer to it) in an {\ttfamily boost\-::any} field of the \hyperlink{classHurricane_1_1JsonObject}{Json\-Object}. \hypertarget{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!set\-Object@{set\-Object}}
+\index{set\-Object@{set\-Object}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{set\-Object}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Hurricane\-::\-Json\-Object\-::set\-Object (
+\begin{DoxyParamCaption}
+\item[{T}]{t}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}
 
 \begin{DoxyParams}{Parameters}
-{\em T} & The \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object.\\
+{\em T} & The \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object.\\
 \hline
 \end{DoxyParams}
-Associate the constructed \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object {\ttfamily T} to the J\+S\+ON object (for later access). \mbox{\Hypertarget{classHurricane_1_1JsonObject_a4bb80844dcd175ad16cf92ee29064850}\label{classHurricane_1_1JsonObject_a4bb80844dcd175ad16cf92ee29064850}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!is\+Bound@{is\+Bound}}
-\index{is\+Bound@{is\+Bound}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{is\+Bound()}{isBound()}}
-{\footnotesize\ttfamily bool Hurricane\+::\+Json\+Object\+::is\+Bound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-{\bfseries Returns\+:} {\bfseries true} if a \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object is associated to the J\+S\+ON object (see \hyperlink{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}{Json\+Object\+::set\+Object()}). \mbox{\Hypertarget{classHurricane_1_1JsonObject_a939cfbae43f7b0d994648d07bdba2b32}\label{classHurricane_1_1JsonObject_a939cfbae43f7b0d994648d07bdba2b32}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!clone@{clone}}
-\index{clone@{clone}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{clone()}{clone()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$ Hurricane\+::\+Json\+Object\+::clone (\begin{DoxyParamCaption}\item[{unsigned long}]{flags }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
-{\bfseries Returns\+:} a new {\bfseries empty} object {\itshape of the same dynamic type} as the source one.
+Associate the constructed \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object {\ttfamily T} to the J\-S\-O\-N object (for later access). \hypertarget{classHurricane_1_1JsonObject_aba8ed550f36d6a62bf9fe45838b101f8}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!is\-Bound@{is\-Bound}}
+\index{is\-Bound@{is\-Bound}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{is\-Bound}]{\setlength{\rightskip}{0pt plus 5cm}bool Hurricane\-::\-Json\-Object\-::is\-Bound (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_aba8ed550f36d6a62bf9fe45838b101f8}
+{\bfseries Returns\-:} {\bfseries true} if a \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object is associated to the J\-S\-O\-N object (see \hyperlink{classHurricane_1_1JsonObject_aa8e23d2445b90cced19a97d50372314c}{Json\-Object\-::set\-Object()}). \hypertarget{classHurricane_1_1JsonObject_a939cfbae43f7b0d994648d07bdba2b32}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!clone@{clone}}
+\index{clone@{clone}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{clone}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Json\-Object} $\ast$ Hurricane\-::\-Json\-Object\-::clone (
+\begin{DoxyParamCaption}
+\item[{unsigned long}]{flags}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1JsonObject_a939cfbae43f7b0d994648d07bdba2b32}
+{\bfseries Returns\-:} a new {\bfseries empty} object {\itshape of the same dynamic type} as the source one.
 
 This is not a true clone operation in the sense that the datas of the original object are not copied. The cloning is about the type, and is the result of a call to the {\ttfamily new} operator.
 
-This method must be overloaded in each concrete derived class. \mbox{\Hypertarget{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}\label{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!to\+Data@{to\+Data}}
-\index{to\+Data@{to\+Data}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{to\+Data()}{toData()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Json\+Object\+::to\+Data (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&}]{stack }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
-
+This method must be overloaded in each concrete derived class. \hypertarget{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!to\-Data@{to\-Data}}
+\index{to\-Data@{to\-Data}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{to\-Data}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Json\-Object\-::to\-Data (
+\begin{DoxyParamCaption}
+\item[{{\bf Json\-Stack} \&}]{stack}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}
 
 \begin{DoxyParams}{Parameters}
 {\em The} & parser object stack.\\
@@ -315,45 +339,48 @@ This method must be overloaded in each concrete derived class. \mbox{\Hypertarge
 \end{DoxyParams}
 This method must be overloaded in each concrete derived class.
 
-Creates the \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object. The requirements and attributes must be on top of the stack, they are popped, the \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object is created from them and the result is then pushed back. \mbox{\Hypertarget{classHurricane_1_1JsonObject_a3819d0c96ee99277e4cc8d349dc4155c}\label{classHurricane_1_1JsonObject_a3819d0c96ee99277e4cc8d349dc4155c}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!preset\+Id@{preset\+Id}}
-\index{preset\+Id@{preset\+Id}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{preset\+Id()}{presetId()}}
-{\footnotesize\ttfamily unsigned int Hurricane\+::\+Json\+Object\+::preset\+Id (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&}]{stack }\end{DoxyParamCaption})}
-
+Creates the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object. The requirements and attributes must be on top of the stack, they are popped, the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object is created from them and the result is then pushed back. \hypertarget{classHurricane_1_1JsonObject_a3819d0c96ee99277e4cc8d349dc4155c}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!preset\-Id@{preset\-Id}}
+\index{preset\-Id@{preset\-Id}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{preset\-Id}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int Hurricane\-::\-Json\-Object\-::preset\-Id (
+\begin{DoxyParamCaption}
+\item[{{\bf Json\-Stack} \&}]{stack}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1JsonObject_a3819d0c96ee99277e4cc8d349dc4155c}
 
 \begin{DoxyParams}{Parameters}
-{\em stack} & The parser object stack. {\bfseries Returns\+:} the {\itshape next id} that has been set.\\
+{\em stack} & The parser object stack. {\bfseries Returns\-:} the {\itshape next id} that has been set.\\
 \hline
 \end{DoxyParams}
-This is a helper for Json\+Stack\+::to\+Data().
+This is a helper for Json\-Stack\-::to\-Data().
 
-In blob mode, the \hyperlink{classHurricane_1_1DataBase}{Data\+Base} must be restored {\itshape as is}, including the {\ttfamily ids} of all the Entities (see \hyperlink{classHurricane_1_1Entity}{Entity}). This function read from the stack the {\ttfamily \+\_\+id} attribute and sets it so that the next \hyperlink{classHurricane_1_1Entity}{Entity} created will use it. \mbox{\Hypertarget{classHurricane_1_1JsonObject_ace589494452d9d797506286613642cd4}\label{classHurricane_1_1JsonObject_ace589494452d9d797506286613642cd4}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!update@{update}}
-\index{update@{update}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{update()}{update()}}
-{\footnotesize\ttfamily template$<$typename T $>$ \\
-void Hurricane\+::\+Json\+Object\+::update (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack} \&}]{stack,  }\item[{T}]{hobject }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+In blob mode, the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} must be restored {\itshape as is}, including the {\ttfamily ids} of all the Entities (see \hyperlink{classHurricane_1_1Entity}{Entity}). This function read from the stack the {\ttfamily \-\_\-id} attribute and sets it so that the next \hyperlink{classHurricane_1_1Entity}{Entity} created will use it. \hypertarget{classHurricane_1_1JsonObject_ace589494452d9d797506286613642cd4}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!update@{update}}
+\index{update@{update}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void Hurricane\-::\-Json\-Object\-::update (
+\begin{DoxyParamCaption}
+\item[{{\bf Json\-Stack} \&}]{stack, }
+\item[{T}]{hobject}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_ace589494452d9d797506286613642cd4}
 
 \begin{DoxyParams}{Parameters}
 {\em stack} & parser object stack. \\
 \hline
-{\em hobject} & the newly created \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object.\\
+{\em hobject} & the newly created \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object.\\
 \hline
 \end{DoxyParams}
-This is a helper for Json\+Stack\+::to\+Data().
+This is a helper for Json\-Stack\-::to\-Data().
 
-Pop the attributes from the stack. Push the newly created object and bind it to the \hyperlink{classHurricane_1_1JsonObject}{Json\+Object}. 
+Pop the attributes from the stack. Push the newly created object and bind it to the \hyperlink{classHurricane_1_1JsonObject}{Json\-Object}. 
 
-References Hurricane\+::\+Json\+Stack\+::pop\+\_\+back(), and Hurricane\+::\+Json\+Stack\+::push\+\_\+back().
+References get\-Stack\-Name(), Hurricane\-::\-Json\-Stack\-::pop\-\_\-back(), and Hurricane\-::\-Json\-Stack\-::push\-\_\-back().
 
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a5216e5f5d74f8dbf8665eef8a78b2fe1}\label{classHurricane_1_1JsonObject_a5216e5f5d74f8dbf8665eef8a78b2fe1}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!set\+Flags@{set\+Flags}}
-\index{set\+Flags@{set\+Flags}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{set\+Flags()}{setFlags()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$ Hurricane\+::\+Json\+Object\+::set\+Flags (\begin{DoxyParamCaption}\item[{unsigned long}]{mask }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1JsonObject_a5216e5f5d74f8dbf8665eef8a78b2fe1}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!set\-Flags@{set\-Flags}}
+\index{set\-Flags@{set\-Flags}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{set\-Flags}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Json\-Object} $\ast$ Hurricane\-::\-Json\-Object\-::set\-Flags (
+\begin{DoxyParamCaption}
+\item[{unsigned long}]{mask}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a5216e5f5d74f8dbf8665eef8a78b2fe1}
 
 \begin{DoxyParams}{Parameters}
 {\em mask} & Flag(s) to be raised. \\
@@ -362,12 +389,13 @@ References Hurricane\+::\+Json\+Stack\+::pop\+\_\+back(), and Hurricane\+::\+Jso
 \begin{DoxyReturn}{Returns}
 The current object. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a8346b1c958574275fe17f9c4cb40ee8b}\label{classHurricane_1_1JsonObject_a8346b1c958574275fe17f9c4cb40ee8b}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!reset\+Flags@{reset\+Flags}}
-\index{reset\+Flags@{reset\+Flags}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{reset\+Flags()}{resetFlags()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1JsonObject}{Json\+Object} $\ast$ Hurricane\+::\+Json\+Object\+::reset\+Flags (\begin{DoxyParamCaption}\item[{unsigned long}]{mask }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1JsonObject_a8346b1c958574275fe17f9c4cb40ee8b}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!reset\-Flags@{reset\-Flags}}
+\index{reset\-Flags@{reset\-Flags}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{reset\-Flags}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Json\-Object} $\ast$ Hurricane\-::\-Json\-Object\-::reset\-Flags (
+\begin{DoxyParamCaption}
+\item[{unsigned long}]{mask}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_a8346b1c958574275fe17f9c4cb40ee8b}
 
 \begin{DoxyParams}{Parameters}
 {\em mask} & Flag(s) to be lowered. \\
@@ -376,12 +404,13 @@ The current object.
 \begin{DoxyReturn}{Returns}
 The current object. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classHurricane_1_1JsonObject_a267c55a1989a9907e25632d820681779}\label{classHurricane_1_1JsonObject_a267c55a1989a9907e25632d820681779}} 
-\index{Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}!isset\+Flags@{isset\+Flags}}
-\index{isset\+Flags@{isset\+Flags}!Hurricane\+::\+Json\+Object@{Hurricane\+::\+Json\+Object}}
-\subsubsection{\texorpdfstring{isset\+Flags()}{issetFlags()}}
-{\footnotesize\ttfamily bool Hurricane\+::\+Json\+Object\+::isset\+Flags (\begin{DoxyParamCaption}\item[{unsigned long}]{mask }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1JsonObject_adede141746ee05a131aa6d0c673a7c03}{\index{Hurricane\-::\-Json\-Object@{Hurricane\-::\-Json\-Object}!isset\-Flags@{isset\-Flags}}
+\index{isset\-Flags@{isset\-Flags}!Hurricane::JsonObject@{Hurricane\-::\-Json\-Object}}
+\subsubsection[{isset\-Flags}]{\setlength{\rightskip}{0pt plus 5cm}bool Hurricane\-::\-Json\-Object\-::isset\-Flags (
+\begin{DoxyParamCaption}
+\item[{unsigned long}]{mask}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1JsonObject_adede141746ee05a131aa6d0c673a7c03}
 
 \begin{DoxyParams}{Parameters}
 {\em mask} & The combination of flags to be checked. \\
@@ -392,7 +421,7 @@ The current object.
 \end{DoxyReturn}
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Json\+Object.\+h\item 
-Json\+Object.\+dox\end{DoxyCompactItemize}
+Json\-Object.\-h\item 
+Json\-Object.\-dox\end{DoxyCompactItemize}

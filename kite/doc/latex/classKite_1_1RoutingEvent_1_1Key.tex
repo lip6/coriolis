@@ -1,50 +1,56 @@
-\hypertarget{classKite_1_1RoutingEvent_1_1Key}{}\subsection{Routing\+Event\+:\+:Key Class Reference}
-\label{classKite_1_1RoutingEvent_1_1Key}\index{Routing\+Event\+::\+Key@{Routing\+Event\+::\+Key}}
+\hypertarget{classKite_1_1RoutingEvent_1_1Key}{\subsection{Routing\-Event\-:\-:Key Class Reference}
+\label{classKite_1_1RoutingEvent_1_1Key}\index{Routing\-Event\-::\-Key@{Routing\-Event\-::\-Key}}
+}
 
 
-\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} cached key for maps.  
+\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} cached key for maps.  
 
 
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{classKite_1_1RoutingEvent_1_1Key_a398c66b87a5575dba86c92c7fad4a857}{update} (const \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$)
+void \hyperlink{classKite_1_1RoutingEvent_1_1Key_a398c66b87a5575dba86c92c7fad4a857}{update} (const \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} $\ast$)
 \end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} cached key for maps. 
+\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} cached key for maps. 
 
-The key is used as a cache in \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}, that is, the \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} attributes could be modificated without the key changing. It is important for the key to remain stable as it used in the various event queue as the sorting attribute. The key should be updated only when the \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} is temporarily whidrawn from the queue.
+The key is used as a cache in \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}, that is, the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} attributes could be modificated without the key changing. It is important for the key to remain stable as it used in the various event queue as the sorting attribute. The key should be updated only when the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} is temporarily whidrawn from the queue.
 
-Cached attributes\+: (used in that lexicographical order for sorting)
+Cached attributes\-: (used in that lexicographical order for sorting)
 \begin{DoxyItemize}
-\item {\bfseries 1} -- {\ttfamily event\+Level}.
-\item {\bfseries 2} -- {\ttfamily can\+Ripple}.
+\item {\bfseries 1} -- {\ttfamily event\-Level}.
+\item {\bfseries 2} -- {\ttfamily can\-Ripple}.
 \item {\bfseries 3} -- {\ttfamily priority}.
 \item {\bfseries 4} -- {\ttfamily length}.
-\item {\bfseries 5} -- {\ttfamily is\+Horizontal}.
+\item {\bfseries 5} -- {\ttfamily is\-Horizontal}.
 \item {\bfseries 6} -- {\ttfamily axis}.
-\item {\bfseries 7} -- {\ttfamily sourceU}.
+\item {\bfseries 7} -- {\ttfamily source\-U}.
 \item {\bfseries 8} -- {\ttfamily net} (name).
 \item {\bfseries 9} -- {\ttfamily id}.
-\item {\bfseries X} -- {\ttfamily slacken\+Strap} {\bfseries unused}.
-\item {\bfseries X} -- {\ttfamily tracks\+Nb} {\bfseries unused}.
+\item {\bfseries X} -- {\ttfamily slacken\-Strap} {\bfseries unused}.
+\item {\bfseries X} -- {\ttfamily tracks\-Nb} {\bfseries unused}.
 \end{DoxyItemize}
 
-It is internally managed by \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} and the queue. 
+It is internally managed by \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} and the queue. 
 
 \subsubsection{Member Function Documentation}
-\mbox{\Hypertarget{classKite_1_1RoutingEvent_1_1Key_a398c66b87a5575dba86c92c7fad4a857}\label{classKite_1_1RoutingEvent_1_1Key_a398c66b87a5575dba86c92c7fad4a857}} 
-\index{Kite\+::\+Routing\+Event\+::\+Key@{Kite\+::\+Routing\+Event\+::\+Key}!update@{update}}
-\index{update@{update}!Kite\+::\+Routing\+Event\+::\+Key@{Kite\+::\+Routing\+Event\+::\+Key}}
-\paragraph{\texorpdfstring{update()}{update()}}
-{\footnotesize\ttfamily update (\begin{DoxyParamCaption}\item[{const \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$}]{event }\end{DoxyParamCaption})}
-
+\hypertarget{classKite_1_1RoutingEvent_1_1Key_a398c66b87a5575dba86c92c7fad4a857}{\index{Kite\-::\-Routing\-Event\-::\-Key@{Kite\-::\-Routing\-Event\-::\-Key}!update@{update}}
+\index{update@{update}!Kite::RoutingEvent::Key@{Kite\-::\-Routing\-Event\-::\-Key}}
+\paragraph[{update}]{\setlength{\rightskip}{0pt plus 5cm}update (
+\begin{DoxyParamCaption}
+\item[{const {\bf Routing\-Event} $\ast$}]{event}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1RoutingEvent_1_1Key_a398c66b87a5575dba86c92c7fad4a857}
 Cache the value of the key from {\ttfamily event}. 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+Referenced by Routing\-Event\-::update\-Key().
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Routing\+Event.\+h\item 
-Routing\+Event.\+cpp\item 
-Routing\+Event.\+dox\end{DoxyCompactItemize}
+Routing\-Event.\-h\item 
+Routing\-Event.\-cpp\item 
+Routing\-Event.\-dox\end{DoxyCompactItemize}

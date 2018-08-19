@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1SharedProperty}{}\section{Hurricane\+:\+:Shared\+Property Class Reference}
-\label{classHurricane_1_1SharedProperty}\index{Hurricane\+::\+Shared\+Property@{Hurricane\+::\+Shared\+Property}}
+\hypertarget{classHurricane_1_1SharedProperty}{\section{Hurricane\-:\-:Shared\-Property Class Reference}
+\label{classHurricane_1_1SharedProperty}\index{Hurricane\-::\-Shared\-Property@{Hurricane\-::\-Shared\-Property}}
+}
 
 
-\hyperlink{classHurricane_1_1SharedProperty}{Shared\+Property} description ({\bfseries A\+PI})  
+\hyperlink{classHurricane_1_1SharedProperty}{Shared\-Property} description ({\bfseries A\-P\-I})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Shared\+Property\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Shared\-Property\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -18,23 +19,23 @@ Inheritance diagram for Hurricane\+:\+:Shared\+Property\+:\nopagebreak
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1SharedProperty}{Shared\+Property} description ({\bfseries A\+PI}) 
+\hyperlink{classHurricane_1_1SharedProperty}{Shared\-Property} description ({\bfseries A\-P\-I}) 
 
 \hypertarget{classHurricane_1_1SharedProperty_secSharedPropertyIntro}{}\subsection{Introduction}\label{classHurricane_1_1SharedProperty_secSharedPropertyIntro}
 Shared properties can be attached to many objects of the data base.
 
-When a new property is created, it is not yet assigned to any particular object. It becomes effectively the property of an object after the call {\bfseries dbo-\/$>$Put(property)}. The property then receives a message {\bfseries On\+Captured\+By} whose argument is the additional owner. From that time onwards, this object becomes partially responsible of the future of the property.
+When a new property is created, it is not yet assigned to any particular object. It becomes effectively the property of an object after the call {\bfseries dbo-\/$>$Put(property)}. The property then receives a message {\bfseries On\-Captured\-By} whose argument is the additional owner. From that time onwards, this object becomes partially responsible of the future of the property.
 
 {\bfseries What can happen then ?}
 
-If the property is destroyed \+: The property being shared, it informs its owners of its deletion. Each of those owners detaches it from the list of its properties. If the object is a quark and that property is the last one it owns, it automatically deletes itself.
+If the property is destroyed \-: The property being shared, it informs its owners of its deletion. Each of those owners detaches it from the list of its properties. If the object is a quark and that property is the last one it owns, it automatically deletes itself.
 
-If a property of same name already exist \+: Two properties with the same name can\textquotesingle{}t cohabit, the older one is released by the object which receives the message {\bfseries On\+Released\+By} from that old property and proceeds as required according to the type of property.
+If a property of same name already exist \-: Two properties with the same name can't cohabit, the older one is released by the object which receives the message {\bfseries On\-Released\-By} from that old property and proceeds as required according to the type of property.
 
-If the property is attached to a new owner \+: Being shared, the property is simply captured by this new owner.
+If the property is attached to a new owner \-: Being shared, the property is simply captured by this new owner.
 
-If one of the owners of the property is destroyed \+: The properties captured by this object are then released. The future of those properties is here completely managed by the different messages {\bfseries On\+Released\+By} which are associated to them. If the deleted object is the last owner of a shared property, this one is automatically deleted. 
+If one of the owners of the property is destroyed \-: The properties captured by this object are then released. The future of those properties is here completely managed by the different messages {\bfseries On\-Released\-By} which are associated to them. If the deleted object is the last owner of a shared property, this one is automatically deleted. 
 
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 
-Property.\+h\end{DoxyCompactItemize}
+Property.\-h\end{DoxyCompactItemize}

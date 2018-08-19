@@ -53,6 +53,12 @@
   				          
                  set ( rdsRst             RDS/pdfHeader.rst
                                           RDS/RDSpage.rst )
+
+                 set (stratusRst          Stratus/pdfHeader.rst
+                                          Stratus/Developper.rst
+                                          Stratus/Language.rst
+                                          Stratus/DpGen.rst
+                                          Stratus/Patterns.rst )
   
    add_custom_target ( doc_HTML ALL
                           cd ${DOCUMENTATION_SOURCE_DIR}
@@ -64,16 +70,14 @@
                                        _static/SoC-ReST.css
                                        _static/pygments.css
                                        CrlCore/CrlCore.rst
-                                       DpGen/DpGen.rst
                                        Hurricane/Hurricane.rst
-                                       Patterns/Patterns.rst
-                                       Stratus/Stratus.rst
                                        Unicorn/Unicorn.rst
                                        Viewer/Viewer.rst
                                        ${usersGuideRst}      UsersGuide/index.rst
                                        ${pythonTutorialRst}  PythonTutorial/index.rst
                                        ${pythonCppRst}       PythonCpp/index.rst
                                        ${rdsRst}             RDS/index.rst
+                                       ${stratusRst}         Stratus/index.rst
                      )
   
    add_custom_target ( pdf_UsersGuide  ALL
@@ -90,6 +94,13 @@
                                        etc/SoC-ReST.tex
                                        PythonTutorial/definitions.rst
                                        ${pythonTutorialRst} )
+  
+   add_custom_target ( pdf_Stratus  ALL
+                          cd ${DOCUMENTATION_SOURCE_DIR}/Stratus
+                       && ../etc/doPdf.sh ${stratusRst} Stratus.rst
+                       DEPENDS         etc/definitions.rst
+                                       etc/SoC-ReST.tex
+                                       ${stratusRst} )
   
    add_custom_target ( pdf_PythonCpp  ALL
                           cd ${DOCUMENTATION_SOURCE_DIR}/PythonCpp

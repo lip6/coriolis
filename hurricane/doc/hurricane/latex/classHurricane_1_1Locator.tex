@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1Locator}{}\section{Hurricane\+:\+:Locator$<$ Type $>$ Class Template Reference}
-\label{classHurricane_1_1Locator}\index{Hurricane\+::\+Locator$<$ Type $>$@{Hurricane\+::\+Locator$<$ Type $>$}}
+\hypertarget{classHurricane_1_1Locator}{\section{Hurricane\-:\-:Locator$<$ Type $>$ Class Template Reference}
+\label{classHurricane_1_1Locator}\index{Hurricane\-::\-Locator$<$ Type $>$@{Hurricane\-::\-Locator$<$ Type $>$}}
+}
 
 
-\hyperlink{classHurricane_1_1Locator}{Locator} description ({\bfseries A\+PI})  
+\hyperlink{classHurricane_1_1Locator}{Locator} description ({\bfseries A\-P\-I})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Locator$<$ Type $>$\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Locator$<$ Type $>$\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -17,31 +18,30 @@ Inheritance diagram for Hurricane\+:\+:Locator$<$ Type $>$\+:\nopagebreak
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-virtual Type \hyperlink{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}{get\+Element} () const =0
+virtual Type \hyperlink{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}{get\-Element} () const =0
 \item 
-virtual \hyperlink{classHurricane_1_1Locator}{Locator}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Locator_a83779aa300e3de011bf3b93be8a48d83}{get\+Clone} () const =0
+virtual \hyperlink{classHurricane_1_1Locator}{Locator}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Locator_a83779aa300e3de011bf3b93be8a48d83}{get\-Clone} () const =0
 \item 
-virtual bool \hyperlink{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}{is\+Valid} () const =0
+virtual bool \hyperlink{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}{is\-Valid} () const =0
 \item 
 virtual void \hyperlink{classHurricane_1_1Locator_ad8d72c1625a343a50520792c96fa1ca1}{progress} ()=0
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$class Type$>$\newline
-class Hurricane\+::\+Locator$<$ Type $>$}
+\subsubsection*{template$<$class Type$>$class Hurricane\-::\-Locator$<$ Type $>$}
 
-\hyperlink{classHurricane_1_1Locator}{Locator} description ({\bfseries A\+PI}) 
+\hyperlink{classHurricane_1_1Locator}{Locator} description ({\bfseries A\-P\-I}) 
 
 \hypertarget{classHurricane_1_1Locator_secLocatorIntro}{}\subsection{Introduction}\label{classHurricane_1_1Locator_secLocatorIntro}
 Locators are objects which allow to walk efficiently through the data structure.
 
 Locators are indeed algorithms. They do not hold a list of elements but the way to go from one element to the next. As such, they are very light in memory, contrary to containers. Locators are the workhorse of \hyperlink{classHurricane_1_1Collection}{Collection}, and while they can be used directly, this is not the recommended way.\hypertarget{classHurricane_1_1Locator_secLocatorGeneralConcepts}{}\subsection{General concepts}\label{classHurricane_1_1Locator_secLocatorGeneralConcepts}
-{\bfseries Initialization} In order to get a locator, you must \+: either ask the collection to provide a locator for visiting the elements of its described set, or build a clone of an existing locator allowing to visit the remaining elements starting from the current position of that locator.
+{\bfseries Initialization} In order to get a locator, you must \-: either ask the collection to provide a locator for visiting the elements of its described set, or build a clone of an existing locator allowing to visit the remaining elements starting from the current position of that locator.
 
-{\bfseries End of walk indicator} The predicate {\bfseries \hyperlink{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}{is\+Valid()}} returns {\bfseries true} if the locator refers an element of the set, {\bfseries false} when all the elements have been visited.
+{\bfseries End of walk indicator} The predicate {\bfseries \hyperlink{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}{is\-Valid()}} returns {\bfseries true} if the locator refers an element of the set, {\bfseries false} when all the elements have been visited.
 
-{\bfseries getting the current element} The current element is obtained by the accessor {\bfseries \hyperlink{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}{get\+Element()}}. There is no risk to call this function when the visit is finished or the locator is non initialized (the returned value is meaningless).
+{\bfseries getting the current element} The current element is obtained by the accessor {\bfseries \hyperlink{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}{get\-Element()}}. There is no risk to call this function when the visit is finished or the locator is non initialized (the returned value is meaningless).
 
 {\bfseries Walk progression} The function {\bfseries \hyperlink{classHurricane_1_1Locator_ad8d72c1625a343a50520792c96fa1ca1}{progress()}} moves forward the locator on the next element of the set (does nothing if called after the last element).\hypertarget{classHurricane_1_1Locator_secLocatorUsageExamples}{}\subsection{Usage examples}\label{classHurricane_1_1Locator_secLocatorUsageExamples}
 The following sample code shows how to trace the nets of a given cell 
@@ -88,64 +88,48 @@ Cell* cell = ...; \textcolor{comment}{// we get a cell}
    \textcolor{keyword}{delete} locator1;
 \}
 \end{DoxyCode}
- \begin{DoxyParagraph}{Remark\+:}
-Those examples are given in order to explain how locators work. We will see in the following how to do that more simply by using generic locators, or even simpler by using the for\+Each macros. 
+ \begin{DoxyParagraph}{Remark\-:}
+Those examples are given in order to explain how locators work. We will see in the following how to do that more simply by using generic locators, or even simpler by using the for\-Each macros. 
 \end{DoxyParagraph}
 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}\label{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}} 
-\index{Hurricane\+::\+Locator@{Hurricane\+::\+Locator}!get\+Element@{get\+Element}}
-\index{get\+Element@{get\+Element}!Hurricane\+::\+Locator@{Hurricane\+::\+Locator}}
-\subsubsection{\texorpdfstring{get\+Element()}{getElement()}}
-{\footnotesize\ttfamily template$<$class Type$>$ \\
-Type \hyperlink{classHurricane_1_1Locator}{Hurricane\+::\+Locator}$<$ Type $>$\+::get\+Element (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
-{\bfseries Returns\+:} the current element (or the value {\bfseries Type()} when the locator is not or no longer valid). 
-
-Referenced by Hurricane\+::\+Generic\+Locator$<$ Element $>$\+::\+Generic\+Locator().
-
-\mbox{\Hypertarget{classHurricane_1_1Locator_a83779aa300e3de011bf3b93be8a48d83}\label{classHurricane_1_1Locator_a83779aa300e3de011bf3b93be8a48d83}} 
-\index{Hurricane\+::\+Locator@{Hurricane\+::\+Locator}!get\+Clone@{get\+Clone}}
-\index{get\+Clone@{get\+Clone}!Hurricane\+::\+Locator@{Hurricane\+::\+Locator}}
-\subsubsection{\texorpdfstring{get\+Clone()}{getClone()}}
-{\footnotesize\ttfamily template$<$class Type$>$ \\
-\hyperlink{classHurricane_1_1Locator}{Locator}$<$ Type $>$ $\ast$ \hyperlink{classHurricane_1_1Locator}{Hurricane\+::\+Locator}$<$ Type $>$\+::get\+Clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
+\hypertarget{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}{\index{Hurricane\-::\-Locator@{Hurricane\-::\-Locator}!get\-Element@{get\-Element}}
+\index{get\-Element@{get\-Element}!Hurricane::Locator@{Hurricane\-::\-Locator}}
+\subsubsection[{get\-Element}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Type$>$ Type {\bf Hurricane\-::\-Locator}$<$ Type $>$\-::get\-Element (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Locator_aa2202b4cf461a7c3b666da10bc96219f}
+{\bfseries Returns\-:} the current element (or the value {\bfseries Type()} when the locator is not or no longer valid). \hypertarget{classHurricane_1_1Locator_a83779aa300e3de011bf3b93be8a48d83}{\index{Hurricane\-::\-Locator@{Hurricane\-::\-Locator}!get\-Clone@{get\-Clone}}
+\index{get\-Clone@{get\-Clone}!Hurricane::Locator@{Hurricane\-::\-Locator}}
+\subsubsection[{get\-Clone}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Type$>$ {\bf Locator}$<$ Type $>$ $\ast$ {\bf Hurricane\-::\-Locator}$<$ Type $>$\-::get\-Clone (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Locator_a83779aa300e3de011bf3b93be8a48d83}
 This function allocates and returns a new locator that will have the same visiting course than the remaining one of the locator being cloned.
 
-\begin{DoxyParagraph}{Remark\+:}
+\begin{DoxyParagraph}{Remark\-:}
 In principle there is no need to call this function, but if you do so you must not forget to release the clone after its use or, from it, build a generic locator which will do that for you (to be explained later). 
 \end{DoxyParagraph}
-
-
-Referenced by Hurricane\+::\+Generic\+Locator$<$ Element $>$\+::\+Generic\+Locator().
-
-\mbox{\Hypertarget{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}\label{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}} 
-\index{Hurricane\+::\+Locator@{Hurricane\+::\+Locator}!is\+Valid@{is\+Valid}}
-\index{is\+Valid@{is\+Valid}!Hurricane\+::\+Locator@{Hurricane\+::\+Locator}}
-\subsubsection{\texorpdfstring{is\+Valid()}{isValid()}}
-{\footnotesize\ttfamily template$<$class Type$>$ \\
-bool \hyperlink{classHurricane_1_1Locator}{Hurricane\+::\+Locator}$<$ Type $>$\+::is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
-{\bfseries Returns\+:} {\bfseries true} while the walk has not exhausted the set of elements, else {\bfseries false}. 
-
-Referenced by Hurricane\+::\+Generic\+Locator$<$ Element $>$\+::\+Generic\+Locator().
-
-\mbox{\Hypertarget{classHurricane_1_1Locator_ad8d72c1625a343a50520792c96fa1ca1}\label{classHurricane_1_1Locator_ad8d72c1625a343a50520792c96fa1ca1}} 
-\index{Hurricane\+::\+Locator@{Hurricane\+::\+Locator}!progress@{progress}}
-\index{progress@{progress}!Hurricane\+::\+Locator@{Hurricane\+::\+Locator}}
-\subsubsection{\texorpdfstring{progress()}{progress()}}
-{\footnotesize\ttfamily template$<$class Type$>$ \\
-void \hyperlink{classHurricane_1_1Locator}{Hurricane\+::\+Locator}$<$ Type $>$\+::progress (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
+\hypertarget{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}{\index{Hurricane\-::\-Locator@{Hurricane\-::\-Locator}!is\-Valid@{is\-Valid}}
+\index{is\-Valid@{is\-Valid}!Hurricane::Locator@{Hurricane\-::\-Locator}}
+\subsubsection[{is\-Valid}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Type$>$ bool {\bf Hurricane\-::\-Locator}$<$ Type $>$\-::is\-Valid (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Locator_abb6e5255372e22e31bf0a8e4cae93f87}
+{\bfseries Returns\-:} {\bfseries true} while the walk has not exhausted the set of elements, else {\bfseries false}. \hypertarget{classHurricane_1_1Locator_ad8d72c1625a343a50520792c96fa1ca1}{\index{Hurricane\-::\-Locator@{Hurricane\-::\-Locator}!progress@{progress}}
+\index{progress@{progress}!Hurricane::Locator@{Hurricane\-::\-Locator}}
+\subsubsection[{progress}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Type$>$ void {\bf Hurricane\-::\-Locator}$<$ Type $>$\-::progress (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classHurricane_1_1Locator_ad8d72c1625a343a50520792c96fa1ca1}
 Moves forward the locator to the following element. 
 
-Referenced by Hurricane\+::\+Generic\+Locator$<$ Element $>$\+::\+Generic\+Locator().
-
-
-
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Locator.\+h\item 
-Locator.\+dox\end{DoxyCompactItemize}
+Locator.\-h\item 
+Locator.\-dox\end{DoxyCompactItemize}

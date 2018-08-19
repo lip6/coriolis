@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1Quark}{}\section{Hurricane\+:\+:Quark Class Reference}
-\label{classHurricane_1_1Quark}\index{Hurricane\+::\+Quark@{Hurricane\+::\+Quark}}
+\hypertarget{classHurricane_1_1Quark}{\section{Hurricane\-:\-:Quark Class Reference}
+\label{classHurricane_1_1Quark}\index{Hurricane\-::\-Quark@{Hurricane\-::\-Quark}}
+}
 
 
-\hyperlink{classHurricane_1_1Quark}{Quark} description ({\bfseries A\+PI})  
+\hyperlink{classHurricane_1_1Quark}{Quark} description ({\bfseries A\-P\-I})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Quark\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Quark\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -17,19 +18,19 @@ Inheritance diagram for Hurricane\+:\+:Quark\+:\nopagebreak
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-const \hyperlink{classHurricane_1_1Occurrence}{Occurrence} \& \hyperlink{classHurricane_1_1Quark_a22ee192574dae1546ec17d6c549b2ca0}{get\+Occurrence} () const
+const \hyperlink{classHurricane_1_1Occurrence}{Occurrence} \& \hyperlink{classHurricane_1_1Quark_afcc704c57f9ecda5dccbb96abc5d0357}{get\-Occurrence} () const 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1Quark}{Quark} description ({\bfseries A\+PI}) 
+\hyperlink{classHurricane_1_1Quark}{Quark} description ({\bfseries A\-P\-I}) 
 
 \hypertarget{classHurricane_1_1Quark_secQuarkIntro}{}\subsection{Introduction}\label{classHurricane_1_1Quark_secQuarkIntro}
-As explained in the Occurence class, occurences are very simple objects used to designate any entity of the virtually unfolded hierarchy. However, those occurences, which are built and deleted very easily, are very volatile objects to which we can\textquotesingle{}t, of course, attach properties directly.
+As explained in the Occurence class, occurences are very simple objects used to designate any entity of the virtually unfolded hierarchy. However, those occurences, which are built and deleted very easily, are very volatile objects to which we can't, of course, attach properties directly.
 
 But the usefullness of occurences lies in their ability to attach them properties.
 
-In order to do that, properties must be stored in a secure place, where they can be found when needed. That is the purpose of quarks \+: they are data base objects and then can own the properties of the occurences.\hypertarget{classHurricane_1_1Quark_secQuarkImportant}{}\subsection{Important}\label{classHurricane_1_1Quark_secQuarkImportant}
+In order to do that, properties must be stored in a secure place, where they can be found when needed. That is the purpose of quarks \-: they are data base objects and then can own the properties of the occurences.\hypertarget{classHurricane_1_1Quark_secQuarkImportant}{}\subsection{Important}\label{classHurricane_1_1Quark_secQuarkImportant}
 A quark designates all occurences refering to the same entity of the virtually unfolded hierarchy.
 
 This means that a property put on an occurence can be recovered by an other occurence refering the same entity of the virtually unfolded hierarchy.\hypertarget{classHurricane_1_1Quark_secQuarkConstructionAndDestruction}{}\subsection{Construction and destruction}\label{classHurricane_1_1Quark_secQuarkConstructionAndDestruction}
@@ -39,8 +40,8 @@ They are themselves volatile because they need to exist only if there is at leas
 
 An occurence may have, during its life, different quarks representing it.
 
-Nevertheless, it is possible to destroy a quark. This one will carry away with it the destruction of all its owned properties (like any other data base object). This is equivalent to destroying the properties associated to the occurences whom it is the unique representative. Conceptually, it is wiser to use the call \+: {\bfseries occurence.\+clear\+Properties()} which does the same.\hypertarget{classHurricane_1_1Quark_secQuarkExample}{}\subsection{Example}\label{classHurricane_1_1Quark_secQuarkExample}
-The following sample code shows how to print the set of owners of a shared property \+: 
+Nevertheless, it is possible to destroy a quark. This one will carry away with it the destruction of all its owned properties (like any other data base object). This is equivalent to destroying the properties associated to the occurences whom it is the unique representative. Conceptually, it is wiser to use the call \-: {\bfseries occurence.\-clear\-Properties()} which does the same.\hypertarget{classHurricane_1_1Quark_secQuarkExample}{}\subsection{Example}\label{classHurricane_1_1Quark_secQuarkExample}
+The following sample code shows how to print the set of owners of a shared property \-: 
 \begin{DoxyCode}
 Property* \textcolor{keyword}{property} = ...; \textcolor{comment}{// we get a property}
  
@@ -56,15 +57,16 @@ Property* \textcolor{keyword}{property} = ...; \textcolor{comment}{// we get a p
  
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1Quark_a22ee192574dae1546ec17d6c549b2ca0}\label{classHurricane_1_1Quark_a22ee192574dae1546ec17d6c549b2ca0}} 
-\index{Hurricane\+::\+Quark@{Hurricane\+::\+Quark}!get\+Occurrence@{get\+Occurrence}}
-\index{get\+Occurrence@{get\+Occurrence}!Hurricane\+::\+Quark@{Hurricane\+::\+Quark}}
-\subsubsection{\texorpdfstring{get\+Occurrence()}{getOccurrence()}}
-{\footnotesize\ttfamily const \hyperlink{classHurricane_1_1Occurrence}{Occurrence} \& Hurricane\+::\+Quark\+::get\+Occurrence (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classHurricane_1_1Quark_afcc704c57f9ecda5dccbb96abc5d0357}{\index{Hurricane\-::\-Quark@{Hurricane\-::\-Quark}!get\-Occurrence@{get\-Occurrence}}
+\index{get\-Occurrence@{get\-Occurrence}!Hurricane::Quark@{Hurricane\-::\-Quark}}
+\subsubsection[{get\-Occurrence}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Occurrence} \& Hurricane\-::\-Quark\-::get\-Occurrence (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1Quark_afcc704c57f9ecda5dccbb96abc5d0357}
+{\bfseries Returns\-:} an occurence of which this quark is a representative. 
 
-{\bfseries Returns\+:} an occurence of which this quark is a representative. 
-
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Quark.\+h\item 
-Quark.\+dox\end{DoxyCompactItemize}
+Quark.\-h\item 
+Quark.\-dox\end{DoxyCompactItemize}

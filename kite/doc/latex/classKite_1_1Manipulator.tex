@@ -1,417 +1,407 @@
-\hypertarget{classKite_1_1Manipulator}{}\subsection{Manipulator Class Reference}
+\hypertarget{classKite_1_1Manipulator}{\subsection{Manipulator Class Reference}
 \label{classKite_1_1Manipulator}\index{Manipulator@{Manipulator}}
+}
 
 
-Handle \hyperlink{classKite_1_1TrackElement}{Track\+Element} ripup \& topological modifications.  
+Handle \hyperlink{classKite_1_1TrackElement}{Track\-Element} ripup \& topological modifications.  
 
 
 \subsubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}{Function\+Flag} \{ \newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}{To\+Ripup\+Limit} = 0x0001, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Allow\+Expand} = 0x0002, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d972ea7eb37fa1b58a9b3b805241ffd}{No\+Expand} = 0x0004, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}{Perpandiculars\+First} = 0x0008, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d49b8eaa1014c8d0169a22b2f675b4d}{To\+Move\+Up} = 0x0010, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a195c742e60b541424ed7b231e9736803}{Allow\+Local\+Move\+Up} = 0x0020, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ad16eaf385267fc57b0deba7cf2c49244}{Allow\+Terminal\+Move\+Up} = 0x0040, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a03c3d2cc0e6cfcf5cb2022d70a07f510}{Allow\+Short\+Pivot\+Up} = 0x0080, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab254c6d61bbff307a2eb6592e1546131}{No\+Dogleg\+Reuse} = 0x0100, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}{Left\+Axis\+Hint} = 0x0200, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}{Right\+Axis\+Hint} = 0x0400, 
-\newline
-\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217aeea607aabb515b52c3b29df30b079d21}{Not\+On\+Last\+Ripup} = 0x0800
+enum \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}{Function\-Flag} \{ \\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}{To\-Ripup\-Limit} = 0x0001, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Allow\-Expand} = 0x0002, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d972ea7eb37fa1b58a9b3b805241ffd}{No\-Expand} = 0x0004, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}{Perpandiculars\-First} = 0x0008, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d49b8eaa1014c8d0169a22b2f675b4d}{To\-Move\-Up} = 0x0010, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a195c742e60b541424ed7b231e9736803}{Allow\-Local\-Move\-Up} = 0x0020, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ad16eaf385267fc57b0deba7cf2c49244}{Allow\-Terminal\-Move\-Up} = 0x0040, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a03c3d2cc0e6cfcf5cb2022d70a07f510}{Allow\-Short\-Pivot\-Up} = 0x0080, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab254c6d61bbff307a2eb6592e1546131}{No\-Dogleg\-Reuse} = 0x0100, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}{Left\-Axis\-Hint} = 0x0200, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}{Right\-Axis\-Hint} = 0x0400, 
+\\*
+\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217aeea607aabb515b52c3b29df30b079d21}{Not\-On\-Last\-Ripup} = 0x0800
  \}
 \end{DoxyCompactItemize}
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classKite_1_1Manipulator_ac02c770e24b6ff747867adcb7c4da92e}{Manipulator} (\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$, \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm} \&)
+\hyperlink{classKite_1_1Manipulator_ac02c770e24b6ff747867adcb7c4da92e}{Manipulator} (\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$, \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm} \&)
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1Manipulator_a506a4d1cef59fc35984c1c88e0c0f6df}{get\+Segment} () const
+\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1Manipulator_ad2d369e354ca1f9ff118851da69c7efc}{get\-Segment} () const 
 \item 
-\hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} $\ast$ \hyperlink{classKite_1_1Manipulator_a54ca9d3c6d8ea145e053a37be8be8753}{get\+Data} () const
+\hyperlink{classKite_1_1DataNegociate}{Data\-Negociate} $\ast$ \hyperlink{classKite_1_1Manipulator_aabb85a33d14a70586f4a2ca2dee566f0}{get\-Data} () const 
 \item 
-\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$ \hyperlink{classKite_1_1Manipulator_a513f39c546ef4be0d13787cdace4eadf}{get\+Event} () const
+\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} $\ast$ \hyperlink{classKite_1_1Manipulator_a279d639cfaa447720f30991496f706a0}{get\-Event} () const 
 \item 
-bool \hyperlink{classKite_1_1Manipulator_acae2506c976194aef762d27900c97b02}{can\+Ripup} (unsigned int flags=0) const
+bool \hyperlink{classKite_1_1Manipulator_aa1b59e12dd58840e11e1056cab4261b7}{can\-Ripup} (unsigned int flags=0) const 
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a722e514efb92d4a05e4f4d9e1fe7f94b}{is\+Caged} (\textbf{ Db\+U\+::\+Unit}) const
+bool \hyperlink{classKite_1_1Manipulator_af977361f4d90967fec7fbf1e778d01bb}{is\-Caged} ({\bf Db\-U\-::\-Unit}) const 
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a370b5a5373d3019510d4ec22f44c76c2}{ripup} (unsigned int type, \textbf{ Db\+U\+::\+Unit} axis\+Hint=0)
+bool \hyperlink{classKite_1_1Manipulator_a370b5a5373d3019510d4ec22f44c76c2}{ripup} (unsigned int type, {\bf Db\-U\-::\-Unit} axis\-Hint=0)
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a147c24aa53f561c10d5d24b82b03448a}{ripup\+Perpandiculars} (unsigned int flags=0)
+bool \hyperlink{classKite_1_1Manipulator_a147c24aa53f561c10d5d24b82b03448a}{ripup\-Perpandiculars} (unsigned int flags=0)
 \item 
-void \hyperlink{classKite_1_1Manipulator_a9721ea909a9b11297dea855e1ba82a55}{repack\+Perpandiculars} ()
+void \hyperlink{classKite_1_1Manipulator_a9721ea909a9b11297dea855e1ba82a55}{repack\-Perpandiculars} ()
 \item 
 bool \hyperlink{classKite_1_1Manipulator_af46102d49a7aa0c163de1bf143807794}{ripple} ()
 \item 
 bool \hyperlink{classKite_1_1Manipulator_aa61f08642d981761687635be108b9837}{minimize} ()
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a82897c077e4c0d4281c3dce3e37ab997}{slacken} (unsigned int flags=Kb\+No\+Flags)
+bool \hyperlink{classKite_1_1Manipulator_a82897c077e4c0d4281c3dce3e37ab997}{slacken} (unsigned int flags=Kb\-No\-Flags)
 \item 
-bool \hyperlink{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}{pivot\+Up} ()
+bool \hyperlink{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}{pivot\-Up} ()
 \item 
-bool \hyperlink{classKite_1_1Manipulator_ac3b48ad16d9b9b63d1c68e526ceb42e8}{pivot\+Down} ()
+bool \hyperlink{classKite_1_1Manipulator_ac3b48ad16d9b9b63d1c68e526ceb42e8}{pivot\-Down} ()
 \item 
-bool \hyperlink{classKite_1_1Manipulator_ac954731e16188acb6984f348bf2d9d20}{move\+Up} (unsigned int flags=0)
+bool \hyperlink{classKite_1_1Manipulator_ac954731e16188acb6984f348bf2d9d20}{move\-Up} (unsigned int flags=0)
 \item 
-bool \hyperlink{classKite_1_1Manipulator_af4d93a43ea18ae124da71072c66d1e0a}{make\+Dogleg} ()
+bool \hyperlink{classKite_1_1Manipulator_af4d93a43ea18ae124da71072c66d1e0a}{make\-Dogleg} ()
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a97e56b831481ef65309f6e3b7e3f4f3d}{make\+Dogleg} (\textbf{ Db\+U\+::\+Unit})
+bool \hyperlink{classKite_1_1Manipulator_a97e56b831481ef65309f6e3b7e3f4f3d}{make\-Dogleg} ({\bf Db\-U\-::\-Unit})
 \item 
-bool \hyperlink{classKite_1_1Manipulator_af7b3305693dab195d0c5d075821fbb30}{make\+Dogleg} (\textbf{ Interval})
+bool \hyperlink{classKite_1_1Manipulator_af7b3305693dab195d0c5d075821fbb30}{make\-Dogleg} ({\bf Interval})
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a8b5b69fd5762d5a0cbc4ceea4d1b68c1}{relax} (\textbf{ Interval}, unsigned int flags=\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Allow\+Expand})
+bool \hyperlink{classKite_1_1Manipulator_a8b5b69fd5762d5a0cbc4ceea4d1b68c1}{relax} ({\bf Interval}, unsigned int flags=\hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Allow\-Expand})
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a7140b507da2cab137d968a037bed19df}{insert\+In\+Track} (size\+\_\+t)
+bool \hyperlink{classKite_1_1Manipulator_a7140b507da2cab137d968a037bed19df}{insert\-In\-Track} (size\-\_\-t)
 \item 
-bool \hyperlink{classKite_1_1Manipulator_aba69c61ccb330e26aaa8211f0454795f}{shrink\+To\+Track} (size\+\_\+t, unsigned int flags=0, \textbf{ Db\+U\+::\+Unit} left\+Axis\+Hint=0, \textbf{ Db\+U\+::\+Unit} right\+Axis\+Hint=0)
+bool \hyperlink{classKite_1_1Manipulator_aba69c61ccb330e26aaa8211f0454795f}{shrink\-To\-Track} (size\-\_\-t, unsigned int flags=0, {\bf Db\-U\-::\-Unit} left\-Axis\-Hint=0, {\bf Db\-U\-::\-Unit} right\-Axis\-Hint=0)
 \item 
-bool \hyperlink{classKite_1_1Manipulator_a76d3956660cfa624696e2a5f2916cd22}{force\+To\+Track} (size\+\_\+t)
+bool \hyperlink{classKite_1_1Manipulator_a76d3956660cfa624696e2a5f2916cd22}{force\-To\-Track} (size\-\_\-t)
 \item 
-bool \hyperlink{classKite_1_1Manipulator_add26b688d75a99a1ae781787eead08d5}{force\+Over\+Locals} ()
+bool \hyperlink{classKite_1_1Manipulator_add26b688d75a99a1ae781787eead08d5}{force\-Over\-Locals} ()
 \end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-Handle \hyperlink{classKite_1_1TrackElement}{Track\+Element} ripup \& topological modifications. 
+Handle \hyperlink{classKite_1_1TrackElement}{Track\-Element} ripup \& topological modifications. 
 
 \hypertarget{classKite_1_1Manipulator_secManipStruct}{}\subsubsection{Manipulator Structure}\label{classKite_1_1Manipulator_secManipStruct}
-A \hyperlink{classKite_1_1Manipulator}{Manipulator} basically binds together a \hyperlink{classKite_1_1TrackElement}{Track\+Element}, it\textquotesingle{}s \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} and \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} (cached for fast access), and {\bfseries a} \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}.
+A \hyperlink{classKite_1_1Manipulator}{Manipulator} basically binds together a \hyperlink{classKite_1_1TrackElement}{Track\-Element}, it's \hyperlink{classKite_1_1DataNegociate}{Data\-Negociate} and \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} (cached for fast access), and {\bfseries a} \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}.
 
-{\itshape The \hyperlink{classKite_1_1TrackElement}{Track\+Element} may differs from the one of the \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}.} This can occurs when manipulating perpandiculars or segments from other nets in conflict. For example\+: \hyperlink{classKite_1_1Manipulator_a722e514efb92d4a05e4f4d9e1fe7f94b}{Manipulator\+::is\+Caged()}.
+{\itshape The \hyperlink{classKite_1_1TrackElement}{Track\-Element} may differs from the one of the \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}.} This can occurs when manipulating perpandiculars or segments from other nets in conflict. For example\-: \hyperlink{classKite_1_1Manipulator_af977361f4d90967fec7fbf1e778d01bb}{Manipulator\-::is\-Caged()}.
 
-In the following documentation, the segment {\itshape which is associated to the \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}} will be called the {\itshape reference segment}.\hypertarget{classKite_1_1Manipulator_secManipDelayed}{}\subsubsection{Delayed Modifications}\label{classKite_1_1Manipulator_secManipDelayed}
-It is important to note that when a \hyperlink{classKite_1_1Manipulator}{Manipulator} is called to modificate a \hyperlink{classKite_1_1TrackElement}{Track\+Element}, nothing is actually done by the \hyperlink{classKite_1_1Manipulator}{Manipulator} itself. Instead, the \hyperlink{classKite_1_1Manipulator}{Manipulator} create the relevant \hyperlink{classKite_1_1SegmentAction}{Segment\+Action} (s) that are stored in the \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}. The action themselves are done at the end of the \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm} lifecycle (wrapped inside a \hyperlink{classKite_1_1Session}{Session}).
+In the following documentation, the segment {\itshape which is associated to the \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}} will be called the {\itshape reference segment}.\hypertarget{classKite_1_1Manipulator_secManipDelayed}{}\subsubsection{Delayed Modifications}\label{classKite_1_1Manipulator_secManipDelayed}
+It is important to note that when a \hyperlink{classKite_1_1Manipulator}{Manipulator} is called to modificate a \hyperlink{classKite_1_1TrackElement}{Track\-Element}, nothing is actually done by the \hyperlink{classKite_1_1Manipulator}{Manipulator} itself. Instead, the \hyperlink{classKite_1_1Manipulator}{Manipulator} create the relevant \hyperlink{classKite_1_1SegmentAction}{Segment\-Action} (s) that are stored in the \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}. The action themselves are done at the end of the \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm} lifecycle (wrapped inside a \hyperlink{classKite_1_1Session}{Session}).
 
 This is not true! When dogleg are created, the topology is immediatly modificated. That way of doing must be clarified. 
 
 \subsubsection{Member Enumeration Documentation}
-\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Function\+Flag@{Function\+Flag}}
-\index{Function\+Flag@{Function\+Flag}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{Function\+Flag}{FunctionFlag}}
-{\footnotesize\ttfamily enum \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}{Function\+Flag}}
-
-The various flags that can be passed to the \hyperlink{classKite_1_1Manipulator}{Manipulator} methods. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{To\+Ripup\+Limit@{To\+Ripup\+Limit}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!To\+Ripup\+Limit@{To\+Ripup\+Limit}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}} 
-To\+Ripup\+Limit&The ripup limit must be immediatly to it\textquotesingle{}s limit for the current state. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Allow\+Expand@{Allow\+Expand}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Allow\+Expand@{Allow\+Expand}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}} 
-Allow\+Expand&Allow break points for dogleg not to be exactly on the requested position. Meaning that they are moved to the least congested G\+Cell. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{No\+Expand@{No\+Expand}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!No\+Expand@{No\+Expand}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d972ea7eb37fa1b58a9b3b805241ffd}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d972ea7eb37fa1b58a9b3b805241ffd}} 
-No\+Expand&Breakpoints for dogleg are kept right where they are requested. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Perpandiculars\+First@{Perpandiculars\+First}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Perpandiculars\+First@{Perpandiculars\+First}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}} 
-Perpandiculars\+First&Reorder the events so that perpandiculars segments are re-\/processed before their reference segment. By default this is the other way around. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{To\+Move\+Up@{To\+Move\+Up}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!To\+Move\+Up@{To\+Move\+Up}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d49b8eaa1014c8d0169a22b2f675b4d}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d49b8eaa1014c8d0169a22b2f675b4d}} 
-To\+Move\+Up&Try to move up ripped up segments. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Allow\+Local\+Move\+Up@{Allow\+Local\+Move\+Up}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Allow\+Local\+Move\+Up@{Allow\+Local\+Move\+Up}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a195c742e60b541424ed7b231e9736803}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a195c742e60b541424ed7b231e9736803}} 
-Allow\+Local\+Move\+Up&Allow local segments to be moved up (forbidden by default). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Allow\+Terminal\+Move\+Up@{Allow\+Terminal\+Move\+Up}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Allow\+Terminal\+Move\+Up@{Allow\+Terminal\+Move\+Up}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ad16eaf385267fc57b0deba7cf2c49244}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ad16eaf385267fc57b0deba7cf2c49244}} 
-Allow\+Terminal\+Move\+Up&Allow terminal segments to be moved up (forbidden by default). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Allow\+Short\+Pivot\+Up@{Allow\+Short\+Pivot\+Up}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Allow\+Short\+Pivot\+Up@{Allow\+Short\+Pivot\+Up}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a03c3d2cc0e6cfcf5cb2022d70a07f510}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a03c3d2cc0e6cfcf5cb2022d70a07f510}} 
-Allow\+Short\+Pivot\+Up&Allow short segment yo be pivoted up. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{No\+Dogleg\+Reuse@{No\+Dogleg\+Reuse}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!No\+Dogleg\+Reuse@{No\+Dogleg\+Reuse}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab254c6d61bbff307a2eb6592e1546131}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab254c6d61bbff307a2eb6592e1546131}} 
-No\+Dogleg\+Reuse&When creating a dogleg, the default behavior is {\itshape not} to create a new one if there\textquotesingle{}s already one in the same G\+Cell. If this flag is set, a second dogleg will be created. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Left\+Axis\+Hint@{Left\+Axis\+Hint}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Left\+Axis\+Hint@{Left\+Axis\+Hint}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}} 
-Left\+Axis\+Hint&An explicit left axis hint has been supplied as argument. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Right\+Axis\+Hint@{Right\+Axis\+Hint}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Right\+Axis\+Hint@{Right\+Axis\+Hint}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}} 
-Right\+Axis\+Hint&An explicit right axis hint has been supplied as argument. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Not\+On\+Last\+Ripup@{Not\+On\+Last\+Ripup}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Not\+On\+Last\+Ripup@{Not\+On\+Last\+Ripup}}}\mbox{\Hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217aeea607aabb515b52c3b29df30b079d21}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217aeea607aabb515b52c3b29df30b079d21}} 
-Not\+On\+Last\+Ripup&The reference segment has still more than one ripup to go for the given state. \\
-\hline
-
-\end{DoxyEnumFields}
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Function\-Flag@{Function\-Flag}}
+\index{Function\-Flag@{Function\-Flag}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{Function\-Flag}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Function\-Flag}}}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217}
+The various flags that can be passed to the \hyperlink{classKite_1_1Manipulator}{Manipulator} methods. \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{To\-Ripup\-Limit@{To\-Ripup\-Limit}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!To\-Ripup\-Limit@{To\-Ripup\-Limit}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}{To\-Ripup\-Limit}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}
+}]The ripup limit must be immediatly to it's limit for the current state. \index{Allow\-Expand@{Allow\-Expand}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Allow\-Expand@{Allow\-Expand}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Allow\-Expand}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}
+}]Allow break points for dogleg not to be exactly on the requested position. Meaning that they are moved to the least congested G\-Cell. \index{No\-Expand@{No\-Expand}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!No\-Expand@{No\-Expand}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d972ea7eb37fa1b58a9b3b805241ffd}{No\-Expand}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d972ea7eb37fa1b58a9b3b805241ffd}
+}]Breakpoints for dogleg are kept right where they are requested. \index{Perpandiculars\-First@{Perpandiculars\-First}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Perpandiculars\-First@{Perpandiculars\-First}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}{Perpandiculars\-First}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}
+}]Reorder the events so that perpandiculars segments are re-\/processed before their reference segment. By default this is the other way around. \index{To\-Move\-Up@{To\-Move\-Up}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!To\-Move\-Up@{To\-Move\-Up}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d49b8eaa1014c8d0169a22b2f675b4d}{To\-Move\-Up}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6d49b8eaa1014c8d0169a22b2f675b4d}
+}]Try to move up ripped up segments. \index{Allow\-Local\-Move\-Up@{Allow\-Local\-Move\-Up}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Allow\-Local\-Move\-Up@{Allow\-Local\-Move\-Up}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a195c742e60b541424ed7b231e9736803}{Allow\-Local\-Move\-Up}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a195c742e60b541424ed7b231e9736803}
+}]Allow local segments to be moved up (forbidden by default). \index{Allow\-Terminal\-Move\-Up@{Allow\-Terminal\-Move\-Up}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Allow\-Terminal\-Move\-Up@{Allow\-Terminal\-Move\-Up}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ad16eaf385267fc57b0deba7cf2c49244}{Allow\-Terminal\-Move\-Up}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ad16eaf385267fc57b0deba7cf2c49244}
+}]Allow terminal segments to be moved up (forbidden by default). \index{Allow\-Short\-Pivot\-Up@{Allow\-Short\-Pivot\-Up}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Allow\-Short\-Pivot\-Up@{Allow\-Short\-Pivot\-Up}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a03c3d2cc0e6cfcf5cb2022d70a07f510}{Allow\-Short\-Pivot\-Up}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a03c3d2cc0e6cfcf5cb2022d70a07f510}
+}]Allow short segment yo be pivoted up. \index{No\-Dogleg\-Reuse@{No\-Dogleg\-Reuse}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!No\-Dogleg\-Reuse@{No\-Dogleg\-Reuse}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab254c6d61bbff307a2eb6592e1546131}{No\-Dogleg\-Reuse}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab254c6d61bbff307a2eb6592e1546131}
+}]When creating a dogleg, the default behavior is {\itshape not} to create a new one if there's already one in the same G\-Cell. If this flag is set, a second dogleg will be created. \index{Left\-Axis\-Hint@{Left\-Axis\-Hint}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Left\-Axis\-Hint@{Left\-Axis\-Hint}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}{Left\-Axis\-Hint}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}
+}]An explicit left axis hint has been supplied as argument. \index{Right\-Axis\-Hint@{Right\-Axis\-Hint}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Right\-Axis\-Hint@{Right\-Axis\-Hint}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}{Right\-Axis\-Hint}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}
+}]An explicit right axis hint has been supplied as argument. \index{Not\-On\-Last\-Ripup@{Not\-On\-Last\-Ripup}!Kite\-::\-Manipulator@{Kite\-::\-Manipulator}}\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Not\-On\-Last\-Ripup@{Not\-On\-Last\-Ripup}}\item[{\em 
+\hypertarget{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217aeea607aabb515b52c3b29df30b079d21}{Not\-On\-Last\-Ripup}\label{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217aeea607aabb515b52c3b29df30b079d21}
+}]The reference segment has still more than one ripup to go for the given state. \end{description}
+\end{Desc}
 
 
 \subsubsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classKite_1_1Manipulator_ac02c770e24b6ff747867adcb7c4da92e}\label{classKite_1_1Manipulator_ac02c770e24b6ff747867adcb7c4da92e}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!Manipulator@{Manipulator}}
-\index{Manipulator@{Manipulator}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{Manipulator()}{Manipulator()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1Manipulator}{Manipulator} (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$}]{segment,  }\item[{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm} \&}]{fsm }\end{DoxyParamCaption})}
-
+\hypertarget{classKite_1_1Manipulator_ac02c770e24b6ff747867adcb7c4da92e}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!Manipulator@{Manipulator}}
+\index{Manipulator@{Manipulator}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{Manipulator}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Manipulator} (
+\begin{DoxyParamCaption}
+\item[{{\bf Track\-Element} $\ast$}]{segment, }
+\item[{{\bf Segment\-Fsm} \&}]{fsm}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_ac02c770e24b6ff747867adcb7c4da92e}
 
 \begin{DoxyParams}{Parameters}
-{\em segment} & The \hyperlink{classKite_1_1TrackElement}{Track\+Element} to manipulate. \\
+{\em segment} & The \hyperlink{classKite_1_1TrackElement}{Track\-Element} to manipulate. \\
 \hline
-{\em fsm} & The associated \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}.\\
+{\em fsm} & The associated \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}.\\
 \hline
 \end{DoxyParams}
 Construct a new \hyperlink{classKite_1_1Manipulator}{Manipulator} on {\ttfamily segment}. 
 
-Referenced by Manipulator\+::force\+Over\+Locals(), Manipulator\+::force\+To\+Track(), Manipulator\+::insert\+In\+Track(), Manipulator\+::minimize(), Manipulator\+::ripup\+Perpandiculars(), and Manipulator\+::shrink\+To\+Track().
+Referenced by Manipulator\-::force\-Over\-Locals(), Manipulator\-::force\-To\-Track(), Manipulator\-::insert\-In\-Track(), Manipulator\-::ripup\-Perpandiculars(), and Manipulator\-::shrink\-To\-Track().
 
 
 
 \subsubsection{Member Function Documentation}
-\mbox{\Hypertarget{classKite_1_1Manipulator_a506a4d1cef59fc35984c1c88e0c0f6df}\label{classKite_1_1Manipulator_a506a4d1cef59fc35984c1c88e0c0f6df}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!get\+Segment@{get\+Segment}}
-\index{get\+Segment@{get\+Segment}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{get\+Segment()}{getSegment()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ get\+Segment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKite_1_1Manipulator_ad2d369e354ca1f9ff118851da69c7efc}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!get\-Segment@{get\-Segment}}
+\index{get\-Segment@{get\-Segment}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{get\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Element} $\ast$ get\-Segment (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Manipulator_ad2d369e354ca1f9ff118851da69c7efc}
+{\bfseries Returns\-:} The working \hyperlink{classKite_1_1TrackElement}{Track\-Element}. \hypertarget{classKite_1_1Manipulator_aabb85a33d14a70586f4a2ca2dee566f0}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!get\-Data@{get\-Data}}
+\index{get\-Data@{get\-Data}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{get\-Data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Data\-Negociate} $\ast$ get\-Data (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Manipulator_aabb85a33d14a70586f4a2ca2dee566f0}
+{\bfseries Returns\-:} The \hyperlink{classKite_1_1DataNegociate}{Data\-Negociate} of the \hyperlink{classKite_1_1TrackElement}{Track\-Element} (act as a cache). \hypertarget{classKite_1_1Manipulator_a279d639cfaa447720f30991496f706a0}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!get\-Event@{get\-Event}}
+\index{get\-Event@{get\-Event}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{get\-Event}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event} $\ast$ get\-Event (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Manipulator_a279d639cfaa447720f30991496f706a0}
+{\bfseries Returns\-:} The \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} associated to the \hyperlink{classKite_1_1TrackElement}{Track\-Element} (act as a cache). \hypertarget{classKite_1_1Manipulator_aa1b59e12dd58840e11e1056cab4261b7}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!can\-Ripup@{can\-Ripup}}
+\index{can\-Ripup@{can\-Ripup}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{can\-Ripup}]{\setlength{\rightskip}{0pt plus 5cm}bool can\-Ripup (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{flags = {\ttfamily 0}}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Manipulator_aa1b59e12dd58840e11e1056cab4261b7}
+{\bfseries Returns\-:} {\bfseries true} if the maximum ripup, for the given \hyperlink{classKite_1_1SegmentFsm_a5d74787dedbc4e11c1ab15bf487e61f8}{Segment\-Fsm\-::\-State} has not been reached. If {\ttfamily flags} contains Manipulator\-::\-Has\-Next\-Ripup, return {\bfseries true} {\bfseries only} if it still have at least one ripup to go. 
 
-{\bfseries Returns\+:} The working \hyperlink{classKite_1_1TrackElement}{Track\+Element}. \mbox{\Hypertarget{classKite_1_1Manipulator_a54ca9d3c6d8ea145e053a37be8be8753}\label{classKite_1_1Manipulator_a54ca9d3c6d8ea145e053a37be8be8753}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!get\+Data@{get\+Data}}
-\index{get\+Data@{get\+Data}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{get\+Data()}{getData()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} $\ast$ get\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+Referenced by Manipulator\-::force\-To\-Track(), and Manipulator\-::ripup().
 
-{\bfseries Returns\+:} The \hyperlink{classKite_1_1DataNegociate}{Data\+Negociate} of the \hyperlink{classKite_1_1TrackElement}{Track\+Element} (act as a cache). \mbox{\Hypertarget{classKite_1_1Manipulator_a513f39c546ef4be0d13787cdace4eadf}\label{classKite_1_1Manipulator_a513f39c546ef4be0d13787cdace4eadf}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!get\+Event@{get\+Event}}
-\index{get\+Event@{get\+Event}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{get\+Event()}{getEvent()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} $\ast$ get\+Event (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKite_1_1Manipulator_af977361f4d90967fec7fbf1e778d01bb}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!is\-Caged@{is\-Caged}}
+\index{is\-Caged@{is\-Caged}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{is\-Caged}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Caged (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{axis}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Manipulator_af977361f4d90967fec7fbf1e778d01bb}
+{\bfseries Returns\-:} {\bfseries true} if the segment is enclosed (in it's \hyperlink{classKite_1_1Track}{Track}) by two fixed or blockage segments which at least one is closer than 10 lambdas from {\ttfamily axis}. Mostly used to know if a perpandicular is actually restricting the axis span of a reference segment. 
 
-{\bfseries Returns\+:} The \hyperlink{classKite_1_1RoutingEvent}{Routing\+Event} associated to the \hyperlink{classKite_1_1TrackElement}{Track\+Element} (act as a cache). \mbox{\Hypertarget{classKite_1_1Manipulator_acae2506c976194aef762d27900c97b02}\label{classKite_1_1Manipulator_acae2506c976194aef762d27900c97b02}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!can\+Ripup@{can\+Ripup}}
-\index{can\+Ripup@{can\+Ripup}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{can\+Ripup()}{canRipup()}}
-{\footnotesize\ttfamily bool can\+Ripup (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption}) const}
+Referenced by Manipulator\-::ripup\-Perpandiculars().
 
-{\bfseries Returns\+:} {\bfseries true} if the maximum ripup, for the given \hyperlink{classKite_1_1SegmentFsm_a5d74787dedbc4e11c1ab15bf487e61f8}{Segment\+Fsm\+::\+State} has not been reached. If {\ttfamily flags} contains Manipulator\+::\+Has\+Next\+Ripup, return {\bfseries true} {\bfseries only} if it still have at least one ripup to go. 
-
-Referenced by Manipulator\+::force\+To\+Track(), and Manipulator\+::ripup().
-
-\mbox{\Hypertarget{classKite_1_1Manipulator_a722e514efb92d4a05e4f4d9e1fe7f94b}\label{classKite_1_1Manipulator_a722e514efb92d4a05e4f4d9e1fe7f94b}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!is\+Caged@{is\+Caged}}
-\index{is\+Caged@{is\+Caged}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{is\+Caged()}{isCaged()}}
-{\footnotesize\ttfamily bool is\+Caged (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{axis }\end{DoxyParamCaption}) const}
-
-{\bfseries Returns\+:} {\bfseries true} if the segment is enclosed (in it\textquotesingle{}s \hyperlink{classKite_1_1Track}{Track}) by two fixed or blockage segments which at least one is closer than 10 lambdas from {\ttfamily axis}. Mostly used to know if a perpandicular is actually restricting the axis span of a reference segment. 
-
-Referenced by Manipulator\+::ripup\+Perpandiculars().
-
-\mbox{\Hypertarget{classKite_1_1Manipulator_a370b5a5373d3019510d4ec22f44c76c2}\label{classKite_1_1Manipulator_a370b5a5373d3019510d4ec22f44c76c2}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!ripup@{ripup}}
-\index{ripup@{ripup}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{ripup()}{ripup()}}
-{\footnotesize\ttfamily bool ripup (\begin{DoxyParamCaption}\item[{unsigned int}]{type,  }\item[{\textbf{ Db\+U\+::\+Unit}}]{axis\+Hint = {\ttfamily 0} }\end{DoxyParamCaption})}
-
+\hypertarget{classKite_1_1Manipulator_a370b5a5373d3019510d4ec22f44c76c2}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!ripup@{ripup}}
+\index{ripup@{ripup}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{ripup}]{\setlength{\rightskip}{0pt plus 5cm}bool ripup (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{type, }
+\item[{{\bf Db\-U\-::\-Unit}}]{axis\-Hint = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a370b5a5373d3019510d4ec22f44c76c2}
 
 \begin{DoxyParams}{Parameters}
 {\em type} & The type of ripup action. \\
 \hline
-{\em axis\+Hint} & An indication as where to move the riped up segment. \\
+{\em axis\-Hint} & An indication as where to move the riped up segment. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 {\bfseries true} if the operation has succedeed.
 \end{DoxyReturn}
-If the \hyperlink{classKite_1_1TrackElement}{Track\+Element} can be ripped up, schedule a ripup action, possibly with a hint for the preferred axis position. 
+If the \hyperlink{classKite_1_1TrackElement}{Track\-Element} can be ripped up, schedule a ripup action, possibly with a hint for the preferred axis position. 
 
-Referenced by Manipulator\+::force\+Over\+Locals(), Manipulator\+::force\+To\+Track(), Manipulator\+::insert\+In\+Track(), and Manipulator\+::ripup\+Perpandiculars().
+Referenced by Manipulator\-::force\-Over\-Locals(), Manipulator\-::force\-To\-Track(), Manipulator\-::insert\-In\-Track(), and Manipulator\-::ripup\-Perpandiculars().
 
-\mbox{\Hypertarget{classKite_1_1Manipulator_a147c24aa53f561c10d5d24b82b03448a}\label{classKite_1_1Manipulator_a147c24aa53f561c10d5d24b82b03448a}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!ripup\+Perpandiculars@{ripup\+Perpandiculars}}
-\index{ripup\+Perpandiculars@{ripup\+Perpandiculars}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{ripup\+Perpandiculars()}{ripupPerpandiculars()}}
-{\footnotesize\ttfamily bool ripup\+Perpandiculars (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption})}
-
-Schedule a ripup of all the perpandiculars of the reference segment. {\ttfamily flags} that modificate the behavior\+:
+\hypertarget{classKite_1_1Manipulator_a147c24aa53f561c10d5d24b82b03448a}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!ripup\-Perpandiculars@{ripup\-Perpandiculars}}
+\index{ripup\-Perpandiculars@{ripup\-Perpandiculars}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{ripup\-Perpandiculars}]{\setlength{\rightskip}{0pt plus 5cm}bool ripup\-Perpandiculars (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{flags = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a147c24aa53f561c10d5d24b82b03448a}
+Schedule a ripup of all the perpandiculars of the reference segment. {\ttfamily flags} that modificate the behavior\-:
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}{Manipulator\+::\+Perpandiculars\+First} \+: the queue will be reordered so that all the perpandiculars are re-\/processed (placed) before the reference segment.
-\item \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}{Manipulator\+::\+To\+Ripup\+Limit} \+: the ripup count of the reference segment is set to the limit (i.\+e. only one more attempt before a slackening occurs).
+\item \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217acdaeb48fa352f2898aa225b618ca26d4}{Manipulator\-::\-Perpandiculars\-First} \-: the queue will be reordered so that all the perpandiculars are re-\/processed (placed) before the reference segment.
+\item \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a6c00c46010d69247a3edc18b70d700fa}{Manipulator\-::\-To\-Ripup\-Limit} \-: the ripup count of the reference segment is set to the limit (i.\-e. only one more attempt before a slackening occurs).
 \end{DoxyItemize}
 
-The method will fails (return {\bfseries false}) if at least one perpandicular can\textquotesingle{}t be changed of track (i.\+e. ripped up) {\bfseries and} none of it\textquotesingle{}s neighbors could be ripped up either. Meaning that the free span on that track cannot be changed. 
+The method will fails (return {\bfseries false}) if at least one perpandicular can't be changed of track (i.\-e. ripped up) {\bfseries and} none of it's neighbors could be ripped up either. Meaning that the free span on that track cannot be changed. 
 
-Referenced by Segment\+Fsm\+::conflict\+Solve\+By\+Placeds(), Segment\+Fsm\+::desaturate(), and Routing\+Event\+::process().
+Referenced by Segment\-Fsm\-::conflict\-Solve\-By\-Placeds().
 
-\mbox{\Hypertarget{classKite_1_1Manipulator_a9721ea909a9b11297dea855e1ba82a55}\label{classKite_1_1Manipulator_a9721ea909a9b11297dea855e1ba82a55}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!repack\+Perpandiculars@{repack\+Perpandiculars}}
-\index{repack\+Perpandiculars@{repack\+Perpandiculars}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{repack\+Perpandiculars()}{repackPerpandiculars()}}
-{\footnotesize\ttfamily bool repack\+Perpandiculars (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-Ripup all the perpandiculars of the reference segment, except fixed or globals. The reference segment is rescheduled first (before it\textquotesingle{}s perpandicular).
+\hypertarget{classKite_1_1Manipulator_a9721ea909a9b11297dea855e1ba82a55}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!repack\-Perpandiculars@{repack\-Perpandiculars}}
+\index{repack\-Perpandiculars@{repack\-Perpandiculars}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{repack\-Perpandiculars}]{\setlength{\rightskip}{0pt plus 5cm}bool repack\-Perpandiculars (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a9721ea909a9b11297dea855e1ba82a55}
+Ripup all the perpandiculars of the reference segment, except fixed or globals. The reference segment is rescheduled first (before it's perpandicular).
 
 This function may be used to find a better placement, maximizing the overlap of the various perpandiculars.
 
-Ripup all perpandiculars and the reference segment itself for a complete re-\/placement. The reference segment will be reprocessed {\itshape before} it\textquotesingle{}s perpandiculars. 
+Ripup all perpandiculars and the reference segment itself for a complete re-\/placement. The reference segment will be reprocessed {\itshape before} it's perpandiculars. \hypertarget{classKite_1_1Manipulator_af46102d49a7aa0c163de1bf143807794}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!ripple@{ripple}}
+\index{ripple@{ripple}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{ripple}]{\setlength{\rightskip}{0pt plus 5cm}bool ripple (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_af46102d49a7aa0c163de1bf143807794}
+{\bfseries Returns\-:} true if the reference segment is local.
 
-Referenced by Routing\+Event\+::process().
+Applies only on reference segments that are of local type. Tries to make room for the reference segment by ripping up it's neigbors on the parallels tracks. On a vertical plane, left neigbors are shifted one track left (trough axis hint) and right ones, one track right. Note that they are ripped up and the shift is just a hint, there's no guarantee that the router can honor it. 
 
-\mbox{\Hypertarget{classKite_1_1Manipulator_af46102d49a7aa0c163de1bf143807794}\label{classKite_1_1Manipulator_af46102d49a7aa0c163de1bf143807794}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!ripple@{ripple}}
-\index{ripple@{ripple}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{ripple()}{ripple()}}
-{\footnotesize\ttfamily bool ripple (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+Referenced by Manipulator\-::ripup\-Perpandiculars().
 
-{\bfseries Returns\+:} true if the reference segment is local.
-
-Applies only on reference segments that are of local type. Tries to make room for the reference segment by ripping up it\textquotesingle{}s neigbors on the parallels tracks. On a vertical plane, left neigbors are shifted one track left (trough axis hint) and right ones, one track right. Note that they are ripped up and the shift is just a hint, there\textquotesingle{}s no guarantee that the router can honor it. 
-
-Referenced by Manipulator\+::ripup\+Perpandiculars().
-
-\mbox{\Hypertarget{classKite_1_1Manipulator_aa61f08642d981761687635be108b9837}\label{classKite_1_1Manipulator_aa61f08642d981761687635be108b9837}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!minimize@{minimize}}
-\index{minimize@{minimize}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{minimize()}{minimize()}}
-{\footnotesize\ttfamily bool minimize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-{\bfseries Returns\+:} true if the reference segment can be mimized in a suitable track hole.
+\hypertarget{classKite_1_1Manipulator_aa61f08642d981761687635be108b9837}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!minimize@{minimize}}
+\index{minimize@{minimize}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{minimize}]{\setlength{\rightskip}{0pt plus 5cm}bool minimize (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_aa61f08642d981761687635be108b9837}
+{\bfseries Returns\-:} true if the reference segment can be mimized in a suitable track hole.
 
 Compute the miminal span of the reference segment, summing up contraints from source anchor and target anchors (if any) and perpandiculars. Then find holes in the avalaible tracks, and check if one is suitable for the miminized segment (try first the biggest hole).
 
-This operation can only be called once on a segment (a flag is set in the event). 
+This operation can only be called once on a segment (a flag is set in the event). \hypertarget{classKite_1_1Manipulator_a82897c077e4c0d4281c3dce3e37ab997}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!slacken@{slacken}}
+\index{slacken@{slacken}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{slacken}]{\setlength{\rightskip}{0pt plus 5cm}bool slacken (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{flags = {\ttfamily KbNoFlags}}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a82897c077e4c0d4281c3dce3e37ab997}
+Simple proxy towards Track\-Element\-::slacken().
 
-Referenced by Segment\+Fsm\+::desaturate(), and Routing\+Event\+::process().
-
-\mbox{\Hypertarget{classKite_1_1Manipulator_a82897c077e4c0d4281c3dce3e37ab997}\label{classKite_1_1Manipulator_a82897c077e4c0d4281c3dce3e37ab997}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!slacken@{slacken}}
-\index{slacken@{slacken}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{slacken()}{slacken()}}
-{\footnotesize\ttfamily bool slacken (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily KbNoFlags} }\end{DoxyParamCaption})}
-
-Simple proxy towards Track\+Element\+::slacken().
-
-To be reviewed. 
-
-Referenced by Segment\+Fsm\+::desaturate().
-
-\mbox{\Hypertarget{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}\label{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!pivot\+Up@{pivot\+Up}}
-\index{pivot\+Up@{pivot\+Up}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{pivot\+Up()}{pivotUp()}}
-{\footnotesize\ttfamily bool pivot\+Up (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
+To be reviewed. \hypertarget{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!pivot\-Up@{pivot\-Up}}
+\index{pivot\-Up@{pivot\-Up}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{pivot\-Up}]{\setlength{\rightskip}{0pt plus 5cm}bool pivot\-Up (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}
 Tries to move up the reference segment. The segment will be moved up only if a half track is free (for a local) or a full track is free (for a global).
 
 This function do not modifies/create perpandiculars. 
 
-Referenced by Segment\+Fsm\+::solve\+Full\+Blockages().
+Referenced by Segment\-Fsm\-::solve\-Full\-Blockages().
 
-\mbox{\Hypertarget{classKite_1_1Manipulator_ac3b48ad16d9b9b63d1c68e526ceb42e8}\label{classKite_1_1Manipulator_ac3b48ad16d9b9b63d1c68e526ceb42e8}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!pivot\+Down@{pivot\+Down}}
-\index{pivot\+Down@{pivot\+Down}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{pivot\+Down()}{pivotDown()}}
-{\footnotesize\ttfamily bool pivot\+Down (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+\hypertarget{classKite_1_1Manipulator_ac3b48ad16d9b9b63d1c68e526ceb42e8}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!pivot\-Down@{pivot\-Down}}
+\index{pivot\-Down@{pivot\-Down}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{pivot\-Down}]{\setlength{\rightskip}{0pt plus 5cm}bool pivot\-Down (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_ac3b48ad16d9b9b63d1c68e526ceb42e8}
+Tries to move down the reference segment. The segment will be moved up only if {\itshape two} track are free (whether global or local). Is is more restrictive than \hyperlink{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}{Manipulator\-::pivot\-Up()}.
 
-Tries to move down the reference segment. The segment will be moved up only if {\itshape two} track are free (whether global or local). Is is more restrictive than \hyperlink{classKite_1_1Manipulator_ad590137c4e7e8d5ad2a6f510e0d70e81}{Manipulator\+::pivot\+Up()}.
-
-This function do not modifies/create perpandiculars. \mbox{\Hypertarget{classKite_1_1Manipulator_ac954731e16188acb6984f348bf2d9d20}\label{classKite_1_1Manipulator_ac954731e16188acb6984f348bf2d9d20}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!move\+Up@{move\+Up}}
-\index{move\+Up@{move\+Up}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{move\+Up()}{moveUp()}}
-{\footnotesize\ttfamily bool move\+Up (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption})}
-
-Tries to move up a segment, if there is enough space in the \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane} above and in the same direction.
+This function do not modifies/create perpandiculars. \hypertarget{classKite_1_1Manipulator_ac954731e16188acb6984f348bf2d9d20}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!move\-Up@{move\-Up}}
+\index{move\-Up@{move\-Up}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{move\-Up}]{\setlength{\rightskip}{0pt plus 5cm}bool move\-Up (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{flags = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_ac954731e16188acb6984f348bf2d9d20}
+Tries to move up a segment, if there is enough space in the \hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane} above and in the same direction.
 
 This function may modificate perpandiculars in order to maintain connexity.
 
 To be reviewed. 
 
-Referenced by Segment\+Fsm\+::desaturate(), and Segment\+Fsm\+::solve\+Full\+Blockages().
+Referenced by Segment\-Fsm\-::solve\-Full\-Blockages().
 
-\mbox{\Hypertarget{classKite_1_1Manipulator_af4d93a43ea18ae124da71072c66d1e0a}\label{classKite_1_1Manipulator_af4d93a43ea18ae124da71072c66d1e0a}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!make\+Dogleg@{make\+Dogleg}}
-\index{make\+Dogleg@{make\+Dogleg}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{make\+Dogleg()}{makeDogleg()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
-{\footnotesize\ttfamily bool make\+Dogleg (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+\hypertarget{classKite_1_1Manipulator_af4d93a43ea18ae124da71072c66d1e0a}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!make\-Dogleg@{make\-Dogleg}}
+\index{make\-Dogleg@{make\-Dogleg}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{make\-Dogleg}]{\setlength{\rightskip}{0pt plus 5cm}bool make\-Dogleg (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_af4d93a43ea18ae124da71072c66d1e0a}
+{\bfseries Returns\-:} {\bfseries false} if the segment is {\itshape not} local or the dogleg cannot be done.
 
-{\bfseries Returns\+:} {\bfseries false} if the segment is {\itshape not} local or the dogleg cannot be done.
-
-For {\itshape local} reference segment only, look in the first track candidate for other segment overlapping and break the reference accordingly. 
-
-Referenced by Segment\+Fsm\+::desaturate().
-
-\mbox{\Hypertarget{classKite_1_1Manipulator_a97e56b831481ef65309f6e3b7e3f4f3d}\label{classKite_1_1Manipulator_a97e56b831481ef65309f6e3b7e3f4f3d}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!make\+Dogleg@{make\+Dogleg}}
-\index{make\+Dogleg@{make\+Dogleg}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{make\+Dogleg()}{makeDogleg()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
-{\footnotesize\ttfamily bool make\+Dogleg (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{position }\end{DoxyParamCaption})}
-
-Create a dogleg in the G\+Cell under {\ttfamily position}. \mbox{\Hypertarget{classKite_1_1Manipulator_af7b3305693dab195d0c5d075821fbb30}\label{classKite_1_1Manipulator_af7b3305693dab195d0c5d075821fbb30}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!make\+Dogleg@{make\+Dogleg}}
-\index{make\+Dogleg@{make\+Dogleg}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{make\+Dogleg()}{makeDogleg()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
-{\footnotesize\ttfamily bool make\+Dogleg (\begin{DoxyParamCaption}\item[{\textbf{ Interval}}]{overlap }\end{DoxyParamCaption})}
-
-Create a dogleg to avoid the obstructed interval {\ttfamily overlap}. \mbox{\Hypertarget{classKite_1_1Manipulator_a8b5b69fd5762d5a0cbc4ceea4d1b68c1}\label{classKite_1_1Manipulator_a8b5b69fd5762d5a0cbc4ceea4d1b68c1}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!relax@{relax}}
-\index{relax@{relax}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{relax()}{relax()}}
-{\footnotesize\ttfamily bool relax (\begin{DoxyParamCaption}\item[{\textbf{ Interval}}]{overlap,  }\item[{unsigned int}]{flags = {\ttfamily \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Allow\+Expand}} }\end{DoxyParamCaption})}
-
+For {\itshape local} reference segment only, look in the first track candidate for other segment overlapping and break the reference accordingly. \hypertarget{classKite_1_1Manipulator_a97e56b831481ef65309f6e3b7e3f4f3d}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!make\-Dogleg@{make\-Dogleg}}
+\index{make\-Dogleg@{make\-Dogleg}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{make\-Dogleg}]{\setlength{\rightskip}{0pt plus 5cm}bool make\-Dogleg (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{position}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a97e56b831481ef65309f6e3b7e3f4f3d}
+Create a dogleg in the G\-Cell under {\ttfamily position}. \hypertarget{classKite_1_1Manipulator_af7b3305693dab195d0c5d075821fbb30}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!make\-Dogleg@{make\-Dogleg}}
+\index{make\-Dogleg@{make\-Dogleg}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{make\-Dogleg}]{\setlength{\rightskip}{0pt plus 5cm}bool make\-Dogleg (
+\begin{DoxyParamCaption}
+\item[{{\bf Interval}}]{overlap}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_af7b3305693dab195d0c5d075821fbb30}
+Create a dogleg to avoid the obstructed interval {\ttfamily overlap}. \hypertarget{classKite_1_1Manipulator_a8b5b69fd5762d5a0cbc4ceea4d1b68c1}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!relax@{relax}}
+\index{relax@{relax}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{relax}]{\setlength{\rightskip}{0pt plus 5cm}bool relax (
+\begin{DoxyParamCaption}
+\item[{{\bf Interval}}]{overlap, }
+\item[{unsigned int}]{flags = {\ttfamily {\bf Allow\-Expand}}}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a8b5b69fd5762d5a0cbc4ceea4d1b68c1}
 Break the reference segment so it can detour around the interval {\ttfamily overlap}. If {\ttfamily overlap} is completly enclosed inside the span of the reference segment two dogleg will be created. If the overlap occurs only on one side of the reference segment, only one dogleg will be created.
 
-If {\ttfamily flags} contains \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Manipulator\+::\+Allow\+Expand}, the dogleg are not created exactly at the edges of the overlap but on the lowest density G\+Cell (outside the overlap interval).
+If {\ttfamily flags} contains \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a41880b9f6652400677e21c8681f97675}{Manipulator\-::\-Allow\-Expand}, the dogleg are not created exactly at the edges of the overlap but on the lowest density G\-Cell (outside the overlap interval).
 
-The axis of the created dogleg are sets so that the broken part of the segment completly enclose {\ttfamily overlap}. That is, the orignal segment no longer intersect with {\ttfamily overlap}. So the min dogleg is pushed to the left and the max to the right if they are in the same G\+Cell as the min/max of {\ttfamily overlap}. Otherwise (they have been expanded), they are put in the center of the G\+Cell.
+The axis of the created dogleg are sets so that the broken part of the segment completly enclose {\ttfamily overlap}. That is, the orignal segment no longer intersect with {\ttfamily overlap}. So the min dogleg is pushed to the left and the max to the right if they are in the same G\-Cell as the min/max of {\ttfamily overlap}. Otherwise (they have been expanded), they are put in the center of the G\-Cell.
 
-We do not allow to dogleg twice in the same G\+Cell, so if min or max is in respectively the first or last G\+Cell, it is not done. Moreover if there is only one dogleg {\itshape and} it is in the first or last G\+Cell, the relax method is cancelled (and returns {\bfseries false}). It means that this is the segment which is likely to be enclosed inside {\ttfamily overlap}.
+We do not allow to dogleg twice in the same G\-Cell, so if min or max is in respectively the first or last G\-Cell, it is not done. Moreover if there is only one dogleg {\itshape and} it is in the first or last G\-Cell, the relax method is cancelled (and returns {\bfseries false}). It means that this is the segment which is likely to be enclosed inside {\ttfamily overlap}.
 
-{\bfseries Important\+:} The doglegs are created immediatly and not in a delayed fashion like the \hyperlink{classKite_1_1SegmentAction}{Segment\+Action}.
+{\bfseries Important\-:} The doglegs are created immediatly and not in a delayed fashion like the \hyperlink{classKite_1_1SegmentAction}{Segment\-Action}.
 
-    \mbox{\Hypertarget{classKite_1_1Manipulator_a7140b507da2cab137d968a037bed19df}\label{classKite_1_1Manipulator_a7140b507da2cab137d968a037bed19df}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!insert\+In\+Track@{insert\+In\+Track}}
-\index{insert\+In\+Track@{insert\+In\+Track}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{insert\+In\+Track()}{insertInTrack()}}
-{\footnotesize\ttfamily bool insert\+In\+Track (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{i }\end{DoxyParamCaption})}
+    \hypertarget{classKite_1_1Manipulator_a7140b507da2cab137d968a037bed19df}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!insert\-In\-Track@{insert\-In\-Track}}
+\index{insert\-In\-Track@{insert\-In\-Track}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{insert\-In\-Track}]{\setlength{\rightskip}{0pt plus 5cm}bool insert\-In\-Track (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a7140b507da2cab137d968a037bed19df}
+Try to insert the reference segment in the track at index {\ttfamily i} (in the cost table from \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}). The insertion is done by ripping up overlapping segment or shrinking them to left/right if possible.
 
-Try to insert the reference segment in the track at index {\ttfamily i} (in the cost table from \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}). The insertion is done by ripping up overlapping segment or shrinking them to left/right if possible.
+This operation ripup the processed segment neighbors (and their perpandiculars). \hypertarget{classKite_1_1Manipulator_aba69c61ccb330e26aaa8211f0454795f}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!shrink\-To\-Track@{shrink\-To\-Track}}
+\index{shrink\-To\-Track@{shrink\-To\-Track}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{shrink\-To\-Track}]{\setlength{\rightskip}{0pt plus 5cm}bool shrink\-To\-Track (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i, }
+\item[{unsigned int}]{flags = {\ttfamily 0}, }
+\item[{{\bf Db\-U\-::\-Unit}}]{left\-Axis\-Hint = {\ttfamily 0}, }
+\item[{{\bf Db\-U\-::\-Unit}}]{right\-Axis\-Hint = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_aba69c61ccb330e26aaa8211f0454795f}
+Attempt to minimize the reference segment to fit into the track. For this operation to succeed, the minimal span of the segment must not overlap any other segment already in the track. To reach the minimal span the perpandiculars are ripped up with an axis hint which is the center of the minimal span or the explicit value given as arguments {\ttfamily left\-Axis\-Hint} and {\ttfamily right\-Axis\-Hint} if {\ttfamily flags} contains respectively \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}{Manipulator\-::\-Left\-Axis\-Hint} or \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}{Manipulator\-::\-Right\-Axis\-Hint}.
 
-This operation ripup the processed segment neighbors (and their perpandiculars). \mbox{\Hypertarget{classKite_1_1Manipulator_aba69c61ccb330e26aaa8211f0454795f}\label{classKite_1_1Manipulator_aba69c61ccb330e26aaa8211f0454795f}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!shrink\+To\+Track@{shrink\+To\+Track}}
-\index{shrink\+To\+Track@{shrink\+To\+Track}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{shrink\+To\+Track()}{shrinkToTrack()}}
-{\footnotesize\ttfamily bool shrink\+To\+Track (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{i,  }\item[{unsigned int}]{flags = {\ttfamily 0},  }\item[{\textbf{ Db\+U\+::\+Unit}}]{left\+Axis\+Hint = {\ttfamily 0},  }\item[{\textbf{ Db\+U\+::\+Unit}}]{right\+Axis\+Hint = {\ttfamily 0} }\end{DoxyParamCaption})}
+This operation ripup the processed segment itself and its perpandiculars. \hypertarget{classKite_1_1Manipulator_a76d3956660cfa624696e2a5f2916cd22}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!force\-To\-Track@{force\-To\-Track}}
+\index{force\-To\-Track@{force\-To\-Track}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{force\-To\-Track}]{\setlength{\rightskip}{0pt plus 5cm}bool force\-To\-Track (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{i}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_a76d3956660cfa624696e2a5f2916cd22}
+Try to insert the reference segment in the track at index {\ttfamily i} (in the cost table from \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}). The insertion is done by {\itshape forcibly} ripping up the overlapping segments {\bfseries and} their perpandiculars.
 
-Attempt to minimize the reference segment to fit into the track. For this operation to succeed, the minimal span of the segment must not overlap any other segment already in the track. To reach the minimal span the perpandiculars are ripped up with an axis hint which is the center of the minimal span or the explicit value given as arguments {\ttfamily left\+Axis\+Hint} and {\ttfamily right\+Axis\+Hint} if {\ttfamily flags} contains respectively \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217ab525fc8ee72323922f991c26e098bd5a}{Manipulator\+::\+Left\+Axis\+Hint} or \hyperlink{classKite_1_1Manipulator_a2af2ad6b6441614038caf59d04b3b217a4412082ce8109b740834fe21e7a671fb}{Manipulator\+::\+Right\+Axis\+Hint}.
-
-This operation ripup the processed segment itself and its perpandiculars. \mbox{\Hypertarget{classKite_1_1Manipulator_a76d3956660cfa624696e2a5f2916cd22}\label{classKite_1_1Manipulator_a76d3956660cfa624696e2a5f2916cd22}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!force\+To\+Track@{force\+To\+Track}}
-\index{force\+To\+Track@{force\+To\+Track}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{force\+To\+Track()}{forceToTrack()}}
-{\footnotesize\ttfamily bool force\+To\+Track (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{i }\end{DoxyParamCaption})}
-
-Try to insert the reference segment in the track at index {\ttfamily i} (in the cost table from \hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}). The insertion is done by {\itshape forcibly} ripping up the overlapping segments {\bfseries and} their perpandiculars.
-
-This operation ripup the processed segment neighbors (and their perpandiculars). \mbox{\Hypertarget{classKite_1_1Manipulator_add26b688d75a99a1ae781787eead08d5}\label{classKite_1_1Manipulator_add26b688d75a99a1ae781787eead08d5}} 
-\index{Kite\+::\+Manipulator@{Kite\+::\+Manipulator}!force\+Over\+Locals@{force\+Over\+Locals}}
-\index{force\+Over\+Locals@{force\+Over\+Locals}!Kite\+::\+Manipulator@{Kite\+::\+Manipulator}}
-\paragraph{\texorpdfstring{force\+Over\+Locals()}{forceOverLocals()}}
-{\footnotesize\ttfamily bool force\+Over\+Locals (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
+This operation ripup the processed segment neighbors (and their perpandiculars). \hypertarget{classKite_1_1Manipulator_add26b688d75a99a1ae781787eead08d5}{\index{Kite\-::\-Manipulator@{Kite\-::\-Manipulator}!force\-Over\-Locals@{force\-Over\-Locals}}
+\index{force\-Over\-Locals@{force\-Over\-Locals}!Kite::Manipulator@{Kite\-::\-Manipulator}}
+\paragraph[{force\-Over\-Locals}]{\setlength{\rightskip}{0pt plus 5cm}bool force\-Over\-Locals (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Manipulator_add26b688d75a99a1ae781787eead08d5}
 Loop over all the candidate tracks and, insert in the first which all conflicting segments are locals (rip them up). 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Manipulator.\+h\item 
-Manipulator.\+cpp\item 
-Manipulator.\+dox\end{DoxyCompactItemize}
+Manipulator.\-h\item 
+Manipulator.\-cpp\item 
+Manipulator.\-dox\end{DoxyCompactItemize}

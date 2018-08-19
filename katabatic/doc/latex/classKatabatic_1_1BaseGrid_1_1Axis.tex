@@ -1,71 +1,86 @@
-\hypertarget{classKatabatic_1_1BaseGrid_1_1Axis}{}\section{Base\+Grid\+:\+:Axis Class Reference}
-\label{classKatabatic_1_1BaseGrid_1_1Axis}\index{Base\+Grid\+::\+Axis@{Base\+Grid\+::\+Axis}}
+\hypertarget{classKatabatic_1_1BaseGrid_1_1Axis}{\section{Base\-Grid\-:\-:Axis Class Reference}
+\label{classKatabatic_1_1BaseGrid_1_1Axis}\index{Base\-Grid\-::\-Axis@{Base\-Grid\-::\-Axis}}
+}
 
 
-Graduations on a \hyperlink{classKatabatic_1_1BaseGrid}{Base\+Grid} \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis}{Axis} (H or V).  
+Graduations on a \hyperlink{classKatabatic_1_1BaseGrid}{Base\-Grid} \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis}{Axis} (H or V).  
 
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_ada526136545060f41e8b9228ce1c5895}{add\+Graduation} (\textbf{ Db\+U\+::\+Unit})
+void \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_ada526136545060f41e8b9228ce1c5895}{add\-Graduation} ({\bf Db\-U\-::\-Unit})
 \item 
 void \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}{sort} ()
 \item 
-unsigned int \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a9be1e4285daa77fe397767c097fbdc66}{get\+Size} () const
+unsigned int \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_af55b3790622878d65ed5ff2bb2b3fcc4}{get\-Size} () const 
 \item 
-unsigned int \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a2a6bd524227130d8ccf482aa2c484a42}{get\+Graduation\+Number} (\textbf{ Db\+U\+::\+Unit} pos, bool \&on\+Graduation) const
+unsigned int \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a5c8a687396db80839515c1f04c205f9e}{get\-Graduation\-Number} ({\bf Db\-U\-::\-Unit} pos, bool \&on\-Graduation) const 
 \item 
-const \textbf{ Db\+U\+::\+Unit} \& \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a074a4f61306b88baac6bbf54b0b3212c}{operator\mbox{[}$\,$\mbox{]}} (unsigned int i) const
+const {\bf Db\-U\-::\-Unit} \& \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a15b53d212638c335c75fe7fd0390716c}{operator\mbox{[}$\,$\mbox{]}} (unsigned int i) const 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Graduations on a \hyperlink{classKatabatic_1_1BaseGrid}{Base\+Grid} \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis}{Axis} (H or V). 
+Graduations on a \hyperlink{classKatabatic_1_1BaseGrid}{Base\-Grid} \hyperlink{classKatabatic_1_1BaseGrid_1_1Axis}{Axis} (H or V). 
 
-Describe the list of graduations on either X or Y axis of a \hyperlink{classKatabatic_1_1BaseGrid}{Base\+Grid}. Graduations correspond to cut lines and may not be evenly spaced.
+Describe the list of graduations on either X or Y axis of a \hyperlink{classKatabatic_1_1BaseGrid}{Base\-Grid}. Graduations correspond to cut lines and may not be evenly spaced.
 
-Graduations are internally stored into a vector that needs to be sorted whenever new graduations are added (\hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}{Base\+Grid\+::\+Axis\+::sort()}). 
+Graduations are internally stored into a vector that needs to be sorted whenever new graduations are added (\hyperlink{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}{Base\-Grid\-::\-Axis\-::sort()}). 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_ada526136545060f41e8b9228ce1c5895}\label{classKatabatic_1_1BaseGrid_1_1Axis_ada526136545060f41e8b9228ce1c5895}} 
-\index{Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}!add\+Graduation@{add\+Graduation}}
-\index{add\+Graduation@{add\+Graduation}!Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}}
-\subsubsection{\texorpdfstring{add\+Graduation()}{addGraduation()}}
-{\footnotesize\ttfamily void add\+Graduation (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{pos }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_ada526136545060f41e8b9228ce1c5895}{\index{Katabatic\-::\-Base\-Grid\-::\-Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}!add\-Graduation@{add\-Graduation}}
+\index{add\-Graduation@{add\-Graduation}!Katabatic::BaseGrid::Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}}
+\subsubsection[{add\-Graduation}]{\setlength{\rightskip}{0pt plus 5cm}void add\-Graduation (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{pos}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1BaseGrid_1_1Axis_ada526136545060f41e8b9228ce1c5895}
+Adds a new graduation. After adding new graduations, do not forget to perform a sort. 
 
-Adds a new graduation. After adding new graduations, do not forget to perform a sort. \mbox{\Hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}\label{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}} 
-\index{Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}!sort@{sort}}
-\index{sort@{sort}!Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}}
-\subsubsection{\texorpdfstring{sort()}{sort()}}
-{\footnotesize\ttfamily void sort (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+Referenced by G\-Cell\-Grid\-::\-\_\-post\-Create().
 
-Re-\/order the graduations after an addition. \mbox{\Hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a9be1e4285daa77fe397767c097fbdc66}\label{classKatabatic_1_1BaseGrid_1_1Axis_a9be1e4285daa77fe397767c097fbdc66}} 
-\index{Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}!get\+Size@{get\+Size}}
-\index{get\+Size@{get\+Size}!Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}}
-\subsubsection{\texorpdfstring{get\+Size()}{getSize()}}
-{\footnotesize\ttfamily size\+\_\+t get\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}{\index{Katabatic\-::\-Base\-Grid\-::\-Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}!sort@{sort}}
+\index{sort@{sort}!Katabatic::BaseGrid::Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}}
+\subsubsection[{sort}]{\setlength{\rightskip}{0pt plus 5cm}void sort (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKatabatic_1_1BaseGrid_1_1Axis_a47fdc9eea42b6975cdc835bb2e08810e}
+Re-\/order the graduations after an addition. 
 
-{\bfseries Returns\+:} The number of graduations on the axis. \mbox{\Hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a2a6bd524227130d8ccf482aa2c484a42}\label{classKatabatic_1_1BaseGrid_1_1Axis_a2a6bd524227130d8ccf482aa2c484a42}} 
-\index{Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}!get\+Graduation\+Number@{get\+Graduation\+Number}}
-\index{get\+Graduation\+Number@{get\+Graduation\+Number}!Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}}
-\subsubsection{\texorpdfstring{get\+Graduation\+Number()}{getGraduationNumber()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Graduation\+Number (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{pos,  }\item[{bool \&}]{on\+Graduation }\end{DoxyParamCaption}) const}
+Referenced by G\-Cell\-Grid\-::\-\_\-post\-Create().
 
-{\bfseries Returns\+:} The index of the graduation which is immediatly inferior or equal to {\ttfamily pos}. In case of strict equality, {\ttfamily on\+Graduation} is set to {\bfseries true}. 
+\hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_af55b3790622878d65ed5ff2bb2b3fcc4}{\index{Katabatic\-::\-Base\-Grid\-::\-Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}!get\-Size@{get\-Size}}
+\index{get\-Size@{get\-Size}!Katabatic::BaseGrid::Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}}
+\subsubsection[{get\-Size}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t get\-Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1BaseGrid_1_1Axis_af55b3790622878d65ed5ff2bb2b3fcc4}
+{\bfseries Returns\-:} The number of graduations on the axis. 
 
-References Db\+U\+::get\+Value\+String().
+Referenced by G\-Cell\-Grid\-::\-\_\-post\-Create().
 
-\mbox{\Hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a074a4f61306b88baac6bbf54b0b3212c}\label{classKatabatic_1_1BaseGrid_1_1Axis_a074a4f61306b88baac6bbf54b0b3212c}} 
-\index{Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}!operator\mbox{[}\mbox{]}@{operator[]}}
-\index{operator\mbox{[}\mbox{]}@{operator[]}!Katabatic\+::\+Base\+Grid\+::\+Axis@{Katabatic\+::\+Base\+Grid\+::\+Axis}}
-\subsubsection{\texorpdfstring{operator[]()}{operator[]()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{unsigned int}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a5c8a687396db80839515c1f04c205f9e}{\index{Katabatic\-::\-Base\-Grid\-::\-Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}!get\-Graduation\-Number@{get\-Graduation\-Number}}
+\index{get\-Graduation\-Number@{get\-Graduation\-Number}!Katabatic::BaseGrid::Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}}
+\subsubsection[{get\-Graduation\-Number}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Graduation\-Number (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{pos, }
+\item[{bool \&}]{on\-Graduation}
+\end{DoxyParamCaption}
+) const}}\label{classKatabatic_1_1BaseGrid_1_1Axis_a5c8a687396db80839515c1f04c205f9e}
+{\bfseries Returns\-:} The index of the graduation which is immediatly inferior or equal to {\ttfamily pos}. In case of strict equality, {\ttfamily on\-Graduation} is set to {\bfseries true}. \hypertarget{classKatabatic_1_1BaseGrid_1_1Axis_a15b53d212638c335c75fe7fd0390716c}{\index{Katabatic\-::\-Base\-Grid\-::\-Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}!operator\mbox{[}$\,$\mbox{]}@{operator[]}}
+\index{operator\mbox{[}$\,$\mbox{]}@{operator[]}!Katabatic::BaseGrid::Axis@{Katabatic\-::\-Base\-Grid\-::\-Axis}}
+\subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} operator\mbox{[}$\,$\mbox{]} (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{index}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1BaseGrid_1_1Axis_a15b53d212638c335c75fe7fd0390716c}
+{\bfseries Returns\-:} The graduation at {\ttfamily index}. 
 
-{\bfseries Returns\+:} The graduation at {\ttfamily index}. 
-
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Grid.\+h\item 
-Grid.\+cpp\item 
-Grid.\+dox\end{DoxyCompactItemize}
+Grid.\-h\item 
+Grid.\-cpp\item 
+Grid.\-dox\end{DoxyCompactItemize}

@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1RegularLayer}{}\section{Hurricane\+:\+:Regular\+Layer Class Reference}
-\label{classHurricane_1_1RegularLayer}\index{Hurricane\+::\+Regular\+Layer@{Hurricane\+::\+Regular\+Layer}}
+\hypertarget{classHurricane_1_1RegularLayer}{\section{Hurricane\-:\-:Regular\-Layer Class Reference}
+\label{classHurricane_1_1RegularLayer}\index{Hurricane\-::\-Regular\-Layer@{Hurricane\-::\-Regular\-Layer}}
+}
 
 
-\hyperlink{classHurricane_1_1RegularLayer}{Regular\+Layer} description ({\bfseries A\+PI})  
+\hyperlink{classHurricane_1_1RegularLayer}{Regular\-Layer} description ({\bfseries A\-P\-I})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Regular\+Layer\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Regular\-Layer\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -17,51 +18,54 @@ Inheritance diagram for Hurricane\+:\+:Regular\+Layer\+:\nopagebreak
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer} $\ast$ \hyperlink{classHurricane_1_1RegularLayer_a148c5839b544c2a0aa5d25be5958dfaf}{get\+Basic\+Layer} () const
+\hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$ \hyperlink{classHurricane_1_1RegularLayer_ae912940c6bd8cfd4286bb40a91a76b5e}{get\-Basic\-Layer} () const 
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{classHurricane_1_1RegularLayer}{Regular\+Layer} $\ast$ \hyperlink{classHurricane_1_1RegularLayer_a88c2d5516f42b033ae2fdc0797e3dae1}{create} (\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$technology, const \hyperlink{classHurricane_1_1Name}{Name} \&name)
+static \hyperlink{classHurricane_1_1RegularLayer}{Regular\-Layer} $\ast$ \hyperlink{classHurricane_1_1RegularLayer_a88c2d5516f42b033ae2fdc0797e3dae1}{create} (\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$technology, const \hyperlink{classHurricane_1_1Name}{Name} \&name)
 \end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1RegularLayer}{Regular\+Layer} description ({\bfseries A\+PI}) 
+\hyperlink{classHurricane_1_1RegularLayer}{Regular\-Layer} description ({\bfseries A\-P\-I}) 
 
 For a more complete description of the Layers objects, please refer to \hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}.
 
-\hyperlink{classHurricane_1_1RegularLayer}{Regular\+Layer} is a symbolic layer that contains exactly one \hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}. The accessors functions\+: 
+\hyperlink{classHurricane_1_1RegularLayer}{Regular\-Layer} is a symbolic layer that contains exactly one \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer}. The accessors functions\-: 
 \begin{DoxyItemize}
-\item Regular\+Layer\+::get\+Top() 
-\item Regular\+Layer\+::get\+Bottom() 
-\item Regular\+Layer\+::get\+Opposite() 
-\end{DoxyItemize}All returns that \hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}.
+\item Regular\-Layer\-::get\-Top() 
+\item Regular\-Layer\-::get\-Bottom() 
+\item Regular\-Layer\-::get\-Opposite() 
+\end{DoxyItemize}All returns that \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer}.
 
 It have one enclose, extention cap \& extension width. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1RegularLayer_a88c2d5516f42b033ae2fdc0797e3dae1}\label{classHurricane_1_1RegularLayer_a88c2d5516f42b033ae2fdc0797e3dae1}} 
-\index{Hurricane\+::\+Regular\+Layer@{Hurricane\+::\+Regular\+Layer}!create@{create}}
-\index{create@{create}!Hurricane\+::\+Regular\+Layer@{Hurricane\+::\+Regular\+Layer}}
-\subsubsection{\texorpdfstring{create()}{create()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1RegularLayer}{Regular\+Layer} $\ast$ Hurricane\+::\+Regular\+Layer\+::create (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$}]{technology,  }\item[{const \hyperlink{classHurricane_1_1Name}{Name} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
+\hypertarget{classHurricane_1_1RegularLayer_a88c2d5516f42b033ae2fdc0797e3dae1}{\index{Hurricane\-::\-Regular\-Layer@{Hurricane\-::\-Regular\-Layer}!create@{create}}
+\index{create@{create}!Hurricane::RegularLayer@{Hurricane\-::\-Regular\-Layer}}
+\subsubsection[{create}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Regular\-Layer} $\ast$ Hurricane\-::\-Regular\-Layer\-::create (
+\begin{DoxyParamCaption}
+\item[{{\bf Technology} $\ast$}]{technology, }
+\item[{const {\bf Name} \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classHurricane_1_1RegularLayer_a88c2d5516f42b033ae2fdc0797e3dae1}
 creates and returns a new regular layer named {\ttfamily $<$name$>$}.
 
-\begin{DoxyParagraph}{Caution\+:}
+\begin{DoxyParagraph}{Caution\-:}
 Throws an exception if the technology is null, if the name is empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 
 \end{DoxyParagraph}
-\mbox{\Hypertarget{classHurricane_1_1RegularLayer_a148c5839b544c2a0aa5d25be5958dfaf}\label{classHurricane_1_1RegularLayer_a148c5839b544c2a0aa5d25be5958dfaf}} 
-\index{Hurricane\+::\+Regular\+Layer@{Hurricane\+::\+Regular\+Layer}!get\+Basic\+Layer@{get\+Basic\+Layer}}
-\index{get\+Basic\+Layer@{get\+Basic\+Layer}!Hurricane\+::\+Regular\+Layer@{Hurricane\+::\+Regular\+Layer}}
-\subsubsection{\texorpdfstring{get\+Basic\+Layer()}{getBasicLayer()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer} $\ast$ Hurricane\+::\+Regular\+Layer\+::get\+Basic\+Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classHurricane_1_1RegularLayer_ae912940c6bd8cfd4286bb40a91a76b5e}{\index{Hurricane\-::\-Regular\-Layer@{Hurricane\-::\-Regular\-Layer}!get\-Basic\-Layer@{get\-Basic\-Layer}}
+\index{get\-Basic\-Layer@{get\-Basic\-Layer}!Hurricane::RegularLayer@{Hurricane\-::\-Regular\-Layer}}
+\subsubsection[{get\-Basic\-Layer}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Basic\-Layer} $\ast$ Hurricane\-::\-Regular\-Layer\-::get\-Basic\-Layer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1RegularLayer_ae912940c6bd8cfd4286bb40a91a76b5e}
+{\bfseries Returns\-:} the one associated \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer}. 
 
-{\bfseries Returns\+:} the one associated \hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}. 
-
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Regular\+Layer.\+h\item 
-Regular\+Layer.\+dox\end{DoxyCompactItemize}
+Regular\-Layer.\-h\item 
+Regular\-Layer.\-dox\end{DoxyCompactItemize}

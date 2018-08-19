@@ -213,10 +213,6 @@ class Builder:
             if self._ninja:
                 command  = [ "ninja-build" ]
            #command += [ "DESTDIR=%s" % self.installDir ]
-            if self._enableDoc == "ON":
-               #if tool.name == "crlcore" or tool.name == "stratus1":
-                if tool.name == "stratus1":
-                    command += [ "dvi", "safepdf", "html" ]
             command += self._makeArguments
             print "Make/Ninja command:", command
             sys.stdout.flush ()

@@ -73,10 +73,6 @@ install: FORCE
 	  cd build.dir/$$tool;                                    \
 	  makeArgs="";                                            \
 	  cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=OFF";  \
-	  if [ "$$tool" = "stratus1" ]; then                      \
-	    makeArgs="dvi safepdf html";                          \
-	    cmakeArgs="$$commonCMakeArgs -D BUILD_DOC:STRING=ON"; \
-	  fi;                                                     \
 	  if [    "$$tool" = "hurricane"                          \
 	       -o "$$tool" = "crlcore"                            \
 	       -o "$$tool" = "unicorn"   ]; then                  \

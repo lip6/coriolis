@@ -1,5 +1,6 @@
-\hypertarget{classKatabatic_1_1Observable}{}\section{Observable Class Reference}
+\hypertarget{classKatabatic_1_1Observable}{\section{Observable Class Reference}
 \label{classKatabatic_1_1Observable}\index{Observable@{Observable}}
+}
 
 
 \hyperlink{classKatabatic_1_1Observer}{Observer} Design Pattern, Subject part.  
@@ -10,11 +11,11 @@
 \item 
 \hyperlink{classKatabatic_1_1Observable_a6438e92e07db169a97ed3eba36788dc4}{Observable} ()
 \item 
-{\footnotesize template$<$typename T $>$ }\\T $\ast$ \hyperlink{classKatabatic_1_1Observable_acc0b7276e09628f2b101ecf751aacd2a}{get\+Observer} ()
+{\footnotesize template$<$typename T $>$ }\\T $\ast$ \hyperlink{classKatabatic_1_1Observable_acc0b7276e09628f2b101ecf751aacd2a}{get\-Observer} ()
 \item 
-void \hyperlink{classKatabatic_1_1Observable_a783fda85eeabe9c660881f236f162767}{add\+Observer} (\hyperlink{classKatabatic_1_1BaseObserver}{Base\+Observer} $\ast$)
+void \hyperlink{classKatabatic_1_1Observable_a783fda85eeabe9c660881f236f162767}{add\-Observer} (\hyperlink{classKatabatic_1_1BaseObserver}{Base\-Observer} $\ast$)
 \item 
-void \hyperlink{classKatabatic_1_1Observable_acaa5a7fc7fa631e3006a42006d753f43}{remove\+Observer} (\hyperlink{classKatabatic_1_1BaseObserver}{Base\+Observer} $\ast$)
+void \hyperlink{classKatabatic_1_1Observable_acaa5a7fc7fa631e3006a42006d753f43}{remove\-Observer} (\hyperlink{classKatabatic_1_1BaseObserver}{Base\-Observer} $\ast$)
 \item 
 void \hyperlink{classKatabatic_1_1Observable_a52e577fb0c4f2e3650928334fb621c2f}{notify} (unsigned int flags)
 \end{DoxyCompactItemize}
@@ -23,59 +24,64 @@ void \hyperlink{classKatabatic_1_1Observable_a52e577fb0c4f2e3650928334fb621c2f}{
 \subsection{Detailed Description}
 \hyperlink{classKatabatic_1_1Observer}{Observer} Design Pattern, Subject part. 
 
-\hyperlink{classKatabatic_1_1Observable}{Observable} is the implementation of the {\itshape subject} part of the \hyperlink{classKatabatic_1_1Observer}{Observer} design pattern. For the time beeing it\textquotesingle{}s a simplificated version that allows only one \hyperlink{classKatabatic_1_1Observer}{Observer} to watch the subject.
+\hyperlink{classKatabatic_1_1Observable}{Observable} is the implementation of the {\itshape subject} part of the \hyperlink{classKatabatic_1_1Observer}{Observer} design pattern. For the time beeing it's a simplificated version that allows only one \hyperlink{classKatabatic_1_1Observer}{Observer} to watch the subject.
 
-\hyperlink{classKatabatic_1_1Observable}{Observable} is designed to be an attribute of the subject, not one of it\textquotesingle{}s base class.
+\hyperlink{classKatabatic_1_1Observable}{Observable} is designed to be an attribute of the subject, not one of it's base class.
 
-This implantation is completly generic and has nothing specific to \hyperlink{namespaceKatabatic}{Katabatic}. It may be moved sometimes in Hurricane at Property level in \textbf{ Hurricane\+::\+D\+Bo}.
+This implantation is completly generic and has nothing specific to \hyperlink{namespaceKatabatic}{Katabatic}. It may be moved sometimes in {\bf Hurricane} at Property level in {\bf Hurricane\-::\-D\-Bo}.
 
-{\bfseries Note to Myself\+:} \hyperlink{classKatabatic_1_1Observer}{Observer} pattern is the one behind signal/slots. 
+{\bfseries Note to Myself\-:} \hyperlink{classKatabatic_1_1Observer}{Observer} pattern is the one behind signal/slots. 
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1Observable_a6438e92e07db169a97ed3eba36788dc4}\label{classKatabatic_1_1Observable_a6438e92e07db169a97ed3eba36788dc4}} 
-\index{Katabatic\+::\+Observable@{Katabatic\+::\+Observable}!Observable@{Observable}}
-\index{Observable@{Observable}!Katabatic\+::\+Observable@{Katabatic\+::\+Observable}}
-\subsubsection{\texorpdfstring{Observable()}{Observable()}}
-{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1Observable}{Observable} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classKatabatic_1_1Observable_a6438e92e07db169a97ed3eba36788dc4}{\index{Katabatic\-::\-Observable@{Katabatic\-::\-Observable}!Observable@{Observable}}
+\index{Observable@{Observable}!Katabatic::Observable@{Katabatic\-::\-Observable}}
+\subsubsection[{Observable}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Observable} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observable_a6438e92e07db169a97ed3eba36788dc4}
 Default and only constructor. The copy constructor is disabled (made private and unimplemented). 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1Observable_acc0b7276e09628f2b101ecf751aacd2a}\label{classKatabatic_1_1Observable_acc0b7276e09628f2b101ecf751aacd2a}} 
-\index{Katabatic\+::\+Observable@{Katabatic\+::\+Observable}!get\+Observer@{get\+Observer}}
-\index{get\+Observer@{get\+Observer}!Katabatic\+::\+Observable@{Katabatic\+::\+Observable}}
-\subsubsection{\texorpdfstring{get\+Observer()}{getObserver()}}
-{\footnotesize\ttfamily T $\ast$ get\+Observer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKatabatic_1_1Observable_acc0b7276e09628f2b101ecf751aacd2a}{\index{Katabatic\-::\-Observable@{Katabatic\-::\-Observable}!get\-Observer@{get\-Observer}}
+\index{get\-Observer@{get\-Observer}!Katabatic::Observable@{Katabatic\-::\-Observable}}
+\subsubsection[{get\-Observer}]{\setlength{\rightskip}{0pt plus 5cm}T $\ast$ get\-Observer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observable_acc0b7276e09628f2b101ecf751aacd2a}
+{\bfseries Returns\-:} The (only) observer, {\ttfamily N\-U\-L\-L} if there is none. It is the object of which the \hyperlink{classKatabatic_1_1Observer}{Observer} is an attribute, that is, it's {\itshape owner}, and not the \hyperlink{classKatabatic_1_1Observer}{Observer} itself which is returned. \hypertarget{classKatabatic_1_1Observable_a783fda85eeabe9c660881f236f162767}{\index{Katabatic\-::\-Observable@{Katabatic\-::\-Observable}!add\-Observer@{add\-Observer}}
+\index{add\-Observer@{add\-Observer}!Katabatic::Observable@{Katabatic\-::\-Observable}}
+\subsubsection[{add\-Observer}]{\setlength{\rightskip}{0pt plus 5cm}void add\-Observer (
+\begin{DoxyParamCaption}
+\item[{{\bf Base\-Observer} $\ast$}]{observer}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observable_a783fda85eeabe9c660881f236f162767}
+Adds an observer. If more than one is added, throw an error. \hypertarget{classKatabatic_1_1Observable_acaa5a7fc7fa631e3006a42006d753f43}{\index{Katabatic\-::\-Observable@{Katabatic\-::\-Observable}!remove\-Observer@{remove\-Observer}}
+\index{remove\-Observer@{remove\-Observer}!Katabatic::Observable@{Katabatic\-::\-Observable}}
+\subsubsection[{remove\-Observer}]{\setlength{\rightskip}{0pt plus 5cm}void remove\-Observer (
+\begin{DoxyParamCaption}
+\item[{{\bf Base\-Observer} $\ast$}]{observer}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observable_acaa5a7fc7fa631e3006a42006d753f43}
+Removes an observer. If the observer do not belong to this observable, throw an exception. \hypertarget{classKatabatic_1_1Observable_a52e577fb0c4f2e3650928334fb621c2f}{\index{Katabatic\-::\-Observable@{Katabatic\-::\-Observable}!notify@{notify}}
+\index{notify@{notify}!Katabatic::Observable@{Katabatic\-::\-Observable}}
+\subsubsection[{notify}]{\setlength{\rightskip}{0pt plus 5cm}void notify (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{flags}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observable_a52e577fb0c4f2e3650928334fb621c2f}
+Used by the subject to signal a change in it's state to the observers. The {\ttfamily flags} parameter can be used to indicates what kind of change is occuring. Values for {\ttfamily flags} are defined between the subject and the observers. 
 
-{\bfseries Returns\+:} The (only) observer, {\ttfamily N\+U\+LL} if there is none. It is the object of which the \hyperlink{classKatabatic_1_1Observer}{Observer} is an attribute, that is, it\textquotesingle{}s {\itshape owner}, and not the \hyperlink{classKatabatic_1_1Observer}{Observer} itself which is returned. \mbox{\Hypertarget{classKatabatic_1_1Observable_a783fda85eeabe9c660881f236f162767}\label{classKatabatic_1_1Observable_a783fda85eeabe9c660881f236f162767}} 
-\index{Katabatic\+::\+Observable@{Katabatic\+::\+Observable}!add\+Observer@{add\+Observer}}
-\index{add\+Observer@{add\+Observer}!Katabatic\+::\+Observable@{Katabatic\+::\+Observable}}
-\subsubsection{\texorpdfstring{add\+Observer()}{addObserver()}}
-{\footnotesize\ttfamily void add\+Observer (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1BaseObserver}{Base\+Observer} $\ast$}]{observer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Adds an observer. If more than one is added, throw an error. \mbox{\Hypertarget{classKatabatic_1_1Observable_acaa5a7fc7fa631e3006a42006d753f43}\label{classKatabatic_1_1Observable_acaa5a7fc7fa631e3006a42006d753f43}} 
-\index{Katabatic\+::\+Observable@{Katabatic\+::\+Observable}!remove\+Observer@{remove\+Observer}}
-\index{remove\+Observer@{remove\+Observer}!Katabatic\+::\+Observable@{Katabatic\+::\+Observable}}
-\subsubsection{\texorpdfstring{remove\+Observer()}{removeObserver()}}
-{\footnotesize\ttfamily void remove\+Observer (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1BaseObserver}{Base\+Observer} $\ast$}]{observer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Removes an observer. If the observer do not belong to this observable, throw an exception. \mbox{\Hypertarget{classKatabatic_1_1Observable_a52e577fb0c4f2e3650928334fb621c2f}\label{classKatabatic_1_1Observable_a52e577fb0c4f2e3650928334fb621c2f}} 
-\index{Katabatic\+::\+Observable@{Katabatic\+::\+Observable}!notify@{notify}}
-\index{notify@{notify}!Katabatic\+::\+Observable@{Katabatic\+::\+Observable}}
-\subsubsection{\texorpdfstring{notify()}{notify()}}
-{\footnotesize\ttfamily void notify (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Used by the subject to signal a change in it\textquotesingle{}s state to the observers. The {\ttfamily flags} parameter can be used to indicates what kind of change is occuring. Values for {\ttfamily flags} are defined between the subject and the observers. 
-
-References Base\+Observer\+::notify().
+References Base\-Observer\-::notify().
 
 
 
-Referenced by Auto\+Segment\+::\+\_\+invalidate(), Auto\+Segment\+::\+\_\+post\+Create(), Auto\+Segment\+::\+\_\+pre\+Destroy(), and Auto\+Segment\+::revalidate().
+Referenced by Auto\-Segment\-::\-\_\-invalidate(), Auto\-Segment\-::\-\_\-post\-Create(), Auto\-Segment\-::\-\_\-pre\-Destroy(), and Auto\-Segment\-::revalidate().
 
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Observer.\+h\item 
-Observer.\+dox\end{DoxyCompactItemize}
+Observer.\-h\item 
+Observer.\-dox\end{DoxyCompactItemize}

@@ -1,48 +1,50 @@
-\hypertarget{classKatabatic_1_1GCellDensitySet}{}\section{G\+Cell\+Density\+Set Class Reference}
-\label{classKatabatic_1_1GCellDensitySet}\index{G\+Cell\+Density\+Set@{G\+Cell\+Density\+Set}}
+\hypertarget{classKatabatic_1_1GCellDensitySet}{\section{G\-Cell\-Density\-Set Class Reference}
+\label{classKatabatic_1_1GCellDensitySet}\index{G\-Cell\-Density\-Set@{G\-Cell\-Density\-Set}}
+}
 
 
-\hyperlink{classKatabatic_1_1GCell}{G\+Cell} Set, sorted by density.  
+\hyperlink{classKatabatic_1_1GCell}{G\-Cell} Set, sorted by density.  
 
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}{G\+Cell\+Density\+Set} (unsigned int depth)
+\hyperlink{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}{G\-Cell\-Density\-Set} (unsigned int depth)
 \item 
-\hyperlink{classKatabatic_1_1GCellDensitySet_a5d97169315528fca978d5e65a3cc8130}{G\+Cell\+Density\+Set} (unsigned int depth, const std\+::vector$<$ \hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$$>$ \&)
+\hyperlink{classKatabatic_1_1GCellDensitySet_ada8d6c973310b9c4f66ec3c5b611bdf9}{G\-Cell\-Density\-Set} (unsigned int depth, const std\-::vector$<$ \hyperlink{classKatabatic_1_1GCell}{G\-Cell} $\ast$ $>$ \&)
 \item 
-\hyperlink{classKatabatic_1_1GCellDensitySet_aef015ff8dc7d34fcb907281f71bb0003}{$\sim$\+G\+Cell\+Density\+Set} ()
+\hyperlink{classKatabatic_1_1GCellDensitySet_aef015ff8dc7d34fcb907281f71bb0003}{$\sim$\-G\-Cell\-Density\-Set} ()
 \item 
-bool \hyperlink{classKatabatic_1_1GCellDensitySet_a644718bb2fb240de962dc3c9a1fdf0dc}{empty} () const
+bool \hyperlink{classKatabatic_1_1GCellDensitySet_ac6e61de369e994009e36f344f99c15ad}{empty} () const 
 \item 
-size\+\_\+t \hyperlink{classKatabatic_1_1GCellDensitySet_a259cb5a711406a8c3e5d937eb9350cca}{size} () const
+size\-\_\-t \hyperlink{classKatabatic_1_1GCellDensitySet_aac782da1f912bceb5d8ad00c8dc892ac}{size} () const 
 \item 
-const std\+::set$<$ \hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$, G\+Cell\+::\+Compare\+By\+Key $>$ \& \hyperlink{classKatabatic_1_1GCellDensitySet_a8bac89a45c1449ebdb28a778993cb8e5}{get\+G\+Cells} () const
+const std\-::set$<$ \hyperlink{classKatabatic_1_1GCell}{G\-Cell} \\*
+$\ast$, G\-Cell\-::\-Compare\-By\-Key $>$ \& \hyperlink{classKatabatic_1_1GCellDensitySet_a4ee769ef70539275bf4b500461250af0}{get\-G\-Cells} () const 
 \item 
-void \hyperlink{classKatabatic_1_1GCellDensitySet_a6b97afb6d814ba80a24a49b3ad8e540b}{insert} (\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$)
+void \hyperlink{classKatabatic_1_1GCellDensitySet_a6b97afb6d814ba80a24a49b3ad8e540b}{insert} (\hyperlink{classKatabatic_1_1GCell}{G\-Cell} $\ast$)
 \item 
-void \hyperlink{classKatabatic_1_1GCellDensitySet_a743f7f98fe31b8a1c134aff01ba03acb}{erase} (\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$)
+void \hyperlink{classKatabatic_1_1GCellDensitySet_a743f7f98fe31b8a1c134aff01ba03acb}{erase} (\hyperlink{classKatabatic_1_1GCell}{G\-Cell} $\ast$)
 \item 
-void \hyperlink{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}{unqueue} (\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$)
+void \hyperlink{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}{unqueue} (\hyperlink{classKatabatic_1_1GCell}{G\-Cell} $\ast$)
 \item 
 void \hyperlink{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}{requeue} ()
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\hyperlink{classKatabatic_1_1GCell}{G\+Cell} Set, sorted by density. 
+\hyperlink{classKatabatic_1_1GCell}{G\-Cell} Set, sorted by density. 
 
-A small container helper to manage a set of \hyperlink{classKatabatic_1_1GCell}{G\+Cell} sorted by density on a specific layer {\ttfamily depth}.
+A small container helper to manage a set of \hyperlink{classKatabatic_1_1GCell}{G\-Cell} sorted by density on a specific layer {\ttfamily depth}.
 
-The helper is implemented in term of a set. Once inserted in a set an element must not have is sorting key changed. But \hyperlink{classKatabatic_1_1GCell}{G\+Cell} density may change due to \hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment} modifications during the lifetime of the set. To circumvent this problem, the \hyperlink{classKatabatic_1_1GCell}{G\+Cell} provide a key attribute to be used specifically with \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set}. This key act as a cached copy of the \hyperlink{classKatabatic_1_1GCell}{G\+Cell} density which is updated {\itshape only} by a call to \hyperlink{classKatabatic_1_1GCell_a11beff0f0bec06d0f3e080969516dfc3}{G\+Cell\+::update\+Key()} (and {\itshape not} \hyperlink{classKatabatic_1_1GCell_a9b3455dce10eb98d0496175dd586528c}{G\+Cell\+::update\+Density()}). \hyperlink{classKatabatic_1_1GCell}{G\+Cell} which density have changed and key has to be updated must be signaled to set with the G\+Cell\+Density\+Queue\+::unqueue() method. When we want to update the sorting of the set on the new densities, we call \hyperlink{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}{G\+Cell\+Density\+Set\+::requeue()} which, for each invalidated \hyperlink{classKatabatic_1_1GCell}{G\+Cell} do\+:
+The helper is implemented in term of a set. Once inserted in a set an element must not have is sorting key changed. But \hyperlink{classKatabatic_1_1GCell}{G\-Cell} density may change due to \hyperlink{classKatabatic_1_1AutoSegment}{Auto\-Segment} modifications during the lifetime of the set. To circumvent this problem, the \hyperlink{classKatabatic_1_1GCell}{G\-Cell} provide a key attribute to be used specifically with \hyperlink{classKatabatic_1_1GCellDensitySet}{G\-Cell\-Density\-Set}. This key act as a cached copy of the \hyperlink{classKatabatic_1_1GCell}{G\-Cell} density which is updated {\itshape only} by a call to \hyperlink{classKatabatic_1_1GCell_a11beff0f0bec06d0f3e080969516dfc3}{G\-Cell\-::update\-Key()} (and {\itshape not} \hyperlink{classKatabatic_1_1GCell_a9b3455dce10eb98d0496175dd586528c}{G\-Cell\-::update\-Density()}). \hyperlink{classKatabatic_1_1GCell}{G\-Cell} which density have changed and key has to be updated must be signaled to set with the G\-Cell\-Density\-Queue\-::unqueue() method. When we want to update the sorting of the set on the new densities, we call \hyperlink{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}{G\-Cell\-Density\-Set\-::requeue()} which, for each invalidated \hyperlink{classKatabatic_1_1GCell}{G\-Cell} do\-:
 \begin{DoxyItemize}
-\item Remove the \hyperlink{classKatabatic_1_1GCell}{G\+Cell} from the set.
-\item Update the key (call \hyperlink{classKatabatic_1_1GCell_a11beff0f0bec06d0f3e080969516dfc3}{G\+Cell\+::update\+Key()}).
-\item Reinsert the \hyperlink{classKatabatic_1_1GCell}{G\+Cell} in the set (thus with the updated key).
+\item Remove the \hyperlink{classKatabatic_1_1GCell}{G\-Cell} from the set.
+\item Update the key (call \hyperlink{classKatabatic_1_1GCell_a11beff0f0bec06d0f3e080969516dfc3}{G\-Cell\-::update\-Key()}).
+\item Reinsert the \hyperlink{classKatabatic_1_1GCell}{G\-Cell} in the set (thus with the updated key).
 \end{DoxyItemize}
 
-Typical usage\+: 
+Typical usage\-: 
 \begin{DoxyCode}
 \hyperlink{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}{GCellDensitySet} gcells ( 2, *(getGCellGrid()->getGCellVector()) );
 
@@ -65,93 +67,92 @@ Typical usage\+:
  
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}\label{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!G\+Cell\+Density\+Set@{G\+Cell\+Density\+Set}}
-\index{G\+Cell\+Density\+Set@{G\+Cell\+Density\+Set}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{G\+Cell\+Density\+Set()}{GCellDensitySet()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set} (\begin{DoxyParamCaption}\item[{unsigned int}]{depth }\end{DoxyParamCaption})}
+\hypertarget{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!G\-Cell\-Density\-Set@{G\-Cell\-Density\-Set}}
+\index{G\-Cell\-Density\-Set@{G\-Cell\-Density\-Set}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{G\-Cell\-Density\-Set}]{\setlength{\rightskip}{0pt plus 5cm}{\bf G\-Cell\-Density\-Set} (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{depth}
+\end{DoxyParamCaption}
+)}}\label{classKatabatic_1_1GCellDensitySet_ad74cbb404ad28f734f5759462aa9f363}
+Create a new empty \hyperlink{classKatabatic_1_1GCellDensitySet}{G\-Cell\-Density\-Set}, sorting on density of layer {\ttfamily depth}. \hypertarget{classKatabatic_1_1GCellDensitySet_ada8d6c973310b9c4f66ec3c5b611bdf9}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!G\-Cell\-Density\-Set@{G\-Cell\-Density\-Set}}
+\index{G\-Cell\-Density\-Set@{G\-Cell\-Density\-Set}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{G\-Cell\-Density\-Set}]{\setlength{\rightskip}{0pt plus 5cm}{\bf G\-Cell\-Density\-Set} (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{depth, }
+\item[{const std\-::vector$<$ {\bf G\-Cell} $\ast$ $>$ \&}]{gcells}
+\end{DoxyParamCaption}
+)}}\label{classKatabatic_1_1GCellDensitySet_ada8d6c973310b9c4f66ec3c5b611bdf9}
+Create a new empty \hyperlink{classKatabatic_1_1GCellDensitySet}{G\-Cell\-Density\-Set}, sorting on density of layer {\ttfamily depth}. Load the queue with the G\-Cells supplied in the {\ttfamily gcells} vector. 
 
-Create a new empty \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set}, sorting on density of layer {\ttfamily depth}. \mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a5d97169315528fca978d5e65a3cc8130}\label{classKatabatic_1_1GCellDensitySet_a5d97169315528fca978d5e65a3cc8130}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!G\+Cell\+Density\+Set@{G\+Cell\+Density\+Set}}
-\index{G\+Cell\+Density\+Set@{G\+Cell\+Density\+Set}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{G\+Cell\+Density\+Set()}{GCellDensitySet()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set} (\begin{DoxyParamCaption}\item[{unsigned int}]{depth,  }\item[{const std\+::vector$<$ \hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$$>$ \&}]{gcells }\end{DoxyParamCaption})}
+References G\-Cell\-Density\-Set\-::requeue().
 
-Create a new empty \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set}, sorting on density of layer {\ttfamily depth}. Load the queue with the G\+Cells supplied in the {\ttfamily gcells} vector. 
-
-References G\+Cell\+Density\+Set\+::requeue().
-
-\mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_aef015ff8dc7d34fcb907281f71bb0003}\label{classKatabatic_1_1GCellDensitySet_aef015ff8dc7d34fcb907281f71bb0003}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!````~G\+Cell\+Density\+Set@{$\sim$\+G\+Cell\+Density\+Set}}
-\index{````~G\+Cell\+Density\+Set@{$\sim$\+G\+Cell\+Density\+Set}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{$\sim$\+G\+Cell\+Density\+Set()}{~GCellDensitySet()}}
-{\footnotesize\ttfamily $\sim$\hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-Delete a \hyperlink{classKatabatic_1_1GCellDensitySet}{G\+Cell\+Density\+Set}, if the queue is not empty, issue a warning. 
+\hypertarget{classKatabatic_1_1GCellDensitySet_aef015ff8dc7d34fcb907281f71bb0003}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!$\sim$\-G\-Cell\-Density\-Set@{$\sim$\-G\-Cell\-Density\-Set}}
+\index{$\sim$\-G\-Cell\-Density\-Set@{$\sim$\-G\-Cell\-Density\-Set}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{$\sim$\-G\-Cell\-Density\-Set}]{\setlength{\rightskip}{0pt plus 5cm}$\sim${\bf G\-Cell\-Density\-Set} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKatabatic_1_1GCellDensitySet_aef015ff8dc7d34fcb907281f71bb0003}
+Delete a \hyperlink{classKatabatic_1_1GCellDensitySet}{G\-Cell\-Density\-Set}, if the queue is not empty, issue a warning. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a644718bb2fb240de962dc3c9a1fdf0dc}\label{classKatabatic_1_1GCellDensitySet_a644718bb2fb240de962dc3c9a1fdf0dc}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!empty@{empty}}
-\index{empty@{empty}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{empty()}{empty()}}
-{\footnotesize\ttfamily bool empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKatabatic_1_1GCellDensitySet_ac6e61de369e994009e36f344f99c15ad}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!empty@{empty}}
+\index{empty@{empty}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{empty}]{\setlength{\rightskip}{0pt plus 5cm}bool empty (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1GCellDensitySet_ac6e61de369e994009e36f344f99c15ad}
+{\bfseries Returns\-:} {\bfseries true} if the queue is empty. \hypertarget{classKatabatic_1_1GCellDensitySet_aac782da1f912bceb5d8ad00c8dc892ac}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!size@{size}}
+\index{size@{size}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{size}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1GCellDensitySet_aac782da1f912bceb5d8ad00c8dc892ac}
+{\bfseries Returns\-:} the numbers of elements in the queue. \hypertarget{classKatabatic_1_1GCellDensitySet_a4ee769ef70539275bf4b500461250af0}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!get\-G\-Cells@{get\-G\-Cells}}
+\index{get\-G\-Cells@{get\-G\-Cells}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{get\-G\-Cells}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::set$<$ {\bf G\-Cell} $\ast$, G\-Cell\-::\-Compare\-By\-Key $>$ \& get\-G\-Cells (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1GCellDensitySet_a4ee769ef70539275bf4b500461250af0}
+{\bfseries Returns\-:} the list of G\-Cells currently in the queue. \hypertarget{classKatabatic_1_1GCellDensitySet_a6b97afb6d814ba80a24a49b3ad8e540b}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!insert@{insert}}
+\index{insert@{insert}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{insert}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t insert (
+\begin{DoxyParamCaption}
+\item[{{\bf G\-Cell} $\ast$}]{gcell}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1GCellDensitySet_a6b97afb6d814ba80a24a49b3ad8e540b}
+Insert {\ttfamily gcell} into the set. \hypertarget{classKatabatic_1_1GCellDensitySet_a743f7f98fe31b8a1c134aff01ba03acb}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!erase@{erase}}
+\index{erase@{erase}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{erase}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t erase (
+\begin{DoxyParamCaption}
+\item[{{\bf G\-Cell} $\ast$}]{gcell}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1GCellDensitySet_a743f7f98fe31b8a1c134aff01ba03acb}
+Remove {\ttfamily gcell} from the set. \hypertarget{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!unqueue@{unqueue}}
+\index{unqueue@{unqueue}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{unqueue}]{\setlength{\rightskip}{0pt plus 5cm}void unqueue (
+\begin{DoxyParamCaption}
+\item[{{\bf G\-Cell} $\ast$}]{gcell}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}
+Invalidate {\ttfamily gcell}. The density of {\ttfamily gcell} may have changed and needs to be reinserted into the queue. It is temporarily set asides until the next call to \hyperlink{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}{G\-Cell\-Density\-Set\-::requeue()}. \hypertarget{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}{\index{Katabatic\-::\-G\-Cell\-Density\-Set@{Katabatic\-::\-G\-Cell\-Density\-Set}!requeue@{requeue}}
+\index{requeue@{requeue}!Katabatic::GCellDensitySet@{Katabatic\-::\-G\-Cell\-Density\-Set}}
+\subsubsection[{requeue}]{\setlength{\rightskip}{0pt plus 5cm}void requeue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}
+Reinsert in the queue all the G\-Cells that have been previously invalidated by a call to \hyperlink{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}{G\-Cell\-Density\-Set\-::unqueue()}. This function calls \hyperlink{classKatabatic_1_1GCell_a11beff0f0bec06d0f3e080969516dfc3}{G\-Cell\-::update\-Key()} before reinserting the \hyperlink{classKatabatic_1_1GCell}{G\-Cell}. 
 
-{\bfseries Returns\+:} {\bfseries true} if the queue is empty. \mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a259cb5a711406a8c3e5d937eb9350cca}\label{classKatabatic_1_1GCellDensitySet_a259cb5a711406a8c3e5d937eb9350cca}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!size@{size}}
-\index{size@{size}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{size()}{size()}}
-{\footnotesize\ttfamily size\+\_\+t size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-{\bfseries Returns\+:} the numbers of elements in the queue. 
-
-Referenced by G\+Cell\+Density\+Set\+::requeue().
-
-\mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a8bac89a45c1449ebdb28a778993cb8e5}\label{classKatabatic_1_1GCellDensitySet_a8bac89a45c1449ebdb28a778993cb8e5}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!get\+G\+Cells@{get\+G\+Cells}}
-\index{get\+G\+Cells@{get\+G\+Cells}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{get\+G\+Cells()}{getGCells()}}
-{\footnotesize\ttfamily const std\+::set$<$ \hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$, G\+Cell\+::\+Compare\+By\+Key $>$ \& get\+G\+Cells (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-{\bfseries Returns\+:} the list of G\+Cells currently in the queue. 
-
-Referenced by G\+Cell\+Grid\+::check\+Density(), G\+Cell\+Grid\+::update\+Contacts(), and G\+Cell\+Grid\+::update\+Density().
-
-\mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a6b97afb6d814ba80a24a49b3ad8e540b}\label{classKatabatic_1_1GCellDensitySet_a6b97afb6d814ba80a24a49b3ad8e540b}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!insert@{insert}}
-\index{insert@{insert}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{insert()}{insert()}}
-{\footnotesize\ttfamily size\+\_\+t insert (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$}]{gcell }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Insert {\ttfamily gcell} into the set. \mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a743f7f98fe31b8a1c134aff01ba03acb}\label{classKatabatic_1_1GCellDensitySet_a743f7f98fe31b8a1c134aff01ba03acb}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!erase@{erase}}
-\index{erase@{erase}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{erase()}{erase()}}
-{\footnotesize\ttfamily size\+\_\+t erase (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$}]{gcell }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Remove {\ttfamily gcell} from the set. \mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}\label{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!unqueue@{unqueue}}
-\index{unqueue@{unqueue}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{unqueue()}{unqueue()}}
-{\footnotesize\ttfamily void unqueue (\begin{DoxyParamCaption}\item[{\hyperlink{classKatabatic_1_1GCell}{G\+Cell} $\ast$}]{gcell }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Invalidate {\ttfamily gcell}. The density of {\ttfamily gcell} may have changed and needs to be reinserted into the queue. It is temporarily set asides until the next call to \hyperlink{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}{G\+Cell\+Density\+Set\+::requeue()}. \mbox{\Hypertarget{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}\label{classKatabatic_1_1GCellDensitySet_ac84efe46d8a3c409e85bc3420240c3c2}} 
-\index{Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}!requeue@{requeue}}
-\index{requeue@{requeue}!Katabatic\+::\+G\+Cell\+Density\+Set@{Katabatic\+::\+G\+Cell\+Density\+Set}}
-\subsubsection{\texorpdfstring{requeue()}{requeue()}}
-{\footnotesize\ttfamily void requeue (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-Reinsert in the queue all the G\+Cells that have been previously invalidated by a call to \hyperlink{classKatabatic_1_1GCellDensitySet_a89099ec88eadcadb942b7d64a6ffd7ee}{G\+Cell\+Density\+Set\+::unqueue()}. This function calls \hyperlink{classKatabatic_1_1GCell_a11beff0f0bec06d0f3e080969516dfc3}{G\+Cell\+::update\+Key()} before reinserting the \hyperlink{classKatabatic_1_1GCell}{G\+Cell}. 
-
-References G\+Cell\+Density\+Set\+::size().
-
-
-
-Referenced by G\+Cell\+Density\+Set\+::\+G\+Cell\+Density\+Set().
+Referenced by G\-Cell\-Density\-Set\-::\-G\-Cell\-Density\-Set().
 
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-G\+Cell.\+h\item 
-G\+Cell.\+cpp\item 
-G\+Cell.\+dox\end{DoxyCompactItemize}
+G\-Cell.\-h\item 
+G\-Cell.\-cpp\item 
+G\-Cell.\-dox\end{DoxyCompactItemize}

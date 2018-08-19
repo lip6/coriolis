@@ -9,9 +9,7 @@ Comprenhensive Table of Contents
 .. toctree::
 
    UsersGuide/index.rst
-   Stratus/Stratus.rst
-   DpGen/DpGen.rst
-   Patterns/Patterns.rst
+   Stratus/index.rst
    Hurricane/Hurricane.rst
    Viewer/Viewer.rst
    CrlCore/CrlCore.rst

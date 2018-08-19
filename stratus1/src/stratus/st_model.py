@@ -43,7 +43,7 @@ def setEditor ( editor ):
 #######################
 ##### Class Model #####
 #######################
-class Model :
+class Model() :
  
   ##########################
   ##### Initialisation #####
@@ -447,16 +447,13 @@ class Model :
     if views == STRATUS :
       self.exportStratus ( fileName )
 
-    elif netlistFormat in ['vst','vhd'] :
+    elif netlistFormat == 'vst' :
       UpdateSession.open()
   
       hurCell = self._hur_cell
   
       if str ( hurCell.getName() ) != "__Scratch__" :
-        if netlistFormat == 'vst' :
-          FRAMEWORK.saveCell ( hurCell, views|CRL.Catalog.State.Logical )
-        else :
-          self.exportVHD()
+        FRAMEWORK.saveCell ( hurCell, views|CRL.Catalog.State.Logical )
   
       if len ( CELLS ) == 0 :
         err = "\n[Stratus ERROR] Save : CELLS stack is empty.\n"
@@ -469,8 +466,8 @@ class Model :
     elif netlistFormat == 'stratus' :
       self.exportStratus ( fileName )
 
-    elif netlistFormat == 'vlog' :
-      raise Exception('Format %s not yet implemented' % netlistFormat)
+    elif netlistFormat in ['vhd','vlog','json'] :
+      self.export(netlistFormat)
 
     else :
       raise Exception('Unrecognized format %s' % netlistFormat)
@@ -722,6 +719,14 @@ class Model :
     ##### End ##### 
     file.close ()
 
+  ##### Export the given database in the given format
+  def export ( self, format):
+    from st_export import write
+
+    if format not in ['vhd','vlog','json']:
+      raise "Unrecognized format %s" %(format)
+    write(self,format)
+    
   ##### Create a IEEE VHDL file given the database #####
   def exportVHD ( self ) :
 

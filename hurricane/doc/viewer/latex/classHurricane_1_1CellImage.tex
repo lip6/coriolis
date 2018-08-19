@@ -1,5 +1,6 @@
-\hypertarget{classHurricane_1_1CellImage}{}\section{Hurricane\+:\+:Cell\+Image Class Reference}
-\label{classHurricane_1_1CellImage}\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
+\hypertarget{classHurricane_1_1CellImage}{\section{Hurricane\-:\-:Cell\-Image Class Reference}
+\label{classHurricane_1_1CellImage}\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}}
+}
 
 
 Widget to generate Image files.  
@@ -7,26 +8,26 @@ Widget to generate Image files.
 
 
 
-Inherits Q\+Main\+Window.
+Inherits Q\-Main\-Window.
 
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}{Flags} \{ \hyperlink{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703a5463e21b19fa7d390bfe239121195879}{Show\+Scale} =0x0001
+enum \hyperlink{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}{Flags} \{ \hyperlink{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703a5463e21b19fa7d390bfe239121195879}{Show\-Scale} =0x0001
  \}
 \end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classHurricane_1_1CellImage_a3f73f1a3a90d4625a5e0b31711affc34}{Cell\+Image} (Q\+Widget $\ast$parent=N\+U\+LL)
+\hyperlink{classHurricane_1_1CellImage_a3f73f1a3a90d4625a5e0b31711affc34}{Cell\-Image} (Q\-Widget $\ast$parent=N\-U\-L\-L)
 \item 
-virtual \hyperlink{classHurricane_1_1CellImage_af83b3547b7e72661ca28f8a8dbdd2edd}{$\sim$\+Cell\+Image} ()
+virtual \hyperlink{classHurricane_1_1CellImage_af83b3547b7e72661ca28f8a8dbdd2edd}{$\sim$\-Cell\-Image} ()
 \item 
-void \hyperlink{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}{set\+Screen\+Cell\+Widget} (\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} $\ast$)
+void \hyperlink{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}{set\-Screen\-Cell\-Widget} (\hyperlink{classHurricane_1_1CellWidget}{Cell\-Widget} $\ast$)
 \item 
-void \hyperlink{classHurricane_1_1CellImage_aefcd1a8382907eaf13b6aeeaae0c3a6e}{set\+Mode} (int mode)
+void \hyperlink{classHurricane_1_1CellImage_aefcd1a8382907eaf13b6aeeaae0c3a6e}{set\-Mode} (int mode)
 \item 
-Q\+Image $\ast$ \hyperlink{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}{to\+Image} (unsigned int flags=0)
+Q\-Image $\ast$ \hyperlink{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}{to\-Image} (unsigned int flags=0)
 \end{DoxyCompactItemize}
 
 
@@ -34,23 +35,23 @@ Q\+Image $\ast$ \hyperlink{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a
 Widget to generate Image files. 
 
 \hypertarget{classHurricane_1_1CellImage_secImageBasicUsage}{}\subsection{Basic Usage}\label{classHurricane_1_1CellImage_secImageBasicUsage}
-\hyperlink{classHurricane_1_1CellImage}{Cell\+Image} is a simple Qt Widget to write the contents of a \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} into a Q\+Image. As it may uses lots of memory (due to the high-\/res bitmaps) it is advisable to delete it immediatly after usage. The same rendering engine is used to both display on screen and onto the image so it is a \char`\"{}\+What You
+\hyperlink{classHurricane_1_1CellImage}{Cell\-Image} is a simple Qt Widget to write the contents of a \hyperlink{classHurricane_1_1CellWidget}{Cell\-Widget} into a Q\-Image. As it may uses lots of memory (due to the high-\/res bitmaps) it is advisable to delete it immediatly after usage. The same rendering engine is used to both display on screen and onto the image so it is a \char`\"{}\-What You
                    See Is What You Get\char`\"{} mode (except for the higher resolution).
 
-\begin{DoxySeeAlso}{See also}
-\hyperlink{classHurricane_1_1CellPrinter}{Cell\+Printer}.
+\begin{DoxySeeAlso}{See Also}
+\hyperlink{classHurricane_1_1CellPrinter}{Cell\-Printer}.
 \end{DoxySeeAlso}
-It\textquotesingle{}s use is straigtforward, as shown in the example below. It consist of six steps\+: 
+It's use is straigtforward, as shown in the example below. It consist of six steps\-: 
 \begin{DoxyEnumerate}
 \item Widget allocation. 
-\item Bind to a screen \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} (\hyperlink{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}{Cell\+Image\+::set\+Screen\+Cell\+Widget()}). 
-\item Draw into a Q\+Image (\hyperlink{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}{Cell\+Image\+::to\+Image()}). 
+\item Bind to a screen \hyperlink{classHurricane_1_1CellWidget}{Cell\-Widget} (\hyperlink{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}{Cell\-Image\-::set\-Screen\-Cell\-Widget()}). 
+\item Draw into a Q\-Image (\hyperlink{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}{Cell\-Image\-::to\-Image()}). 
 \item Delete the widget. 
-\item Save the Q\+Image or do whatever you want with it. 
-\item Delete the Q\+Image. 
+\item Save the Q\-Image or do whatever you want with it. 
+\item Delete the Q\-Image. 
 \end{DoxyEnumerate}
 
-Code example (took from \hyperlink{classHurricane_1_1CellViewer}{Cell\+Viewer})\+: 
+Code example (took from \hyperlink{classHurricane_1_1CellViewer}{Cell\-Viewer})\-: 
 \begin{DoxyCode}
 \textcolor{keywordtype}{void}  CellViewer::imageDisplay ()
 \{
@@ -79,83 +80,86 @@ Code example (took from \hyperlink{classHurricane_1_1CellViewer}{Cell\+Viewer})\
 \}
 \end{DoxyCode}
 \hypertarget{classHurricane_1_1CellImage_secImageConfiguration}{}\subsection{Configuration Variables}\label{classHurricane_1_1CellImage_secImageConfiguration}
-The \hyperlink{classHurricane_1_1CellImage}{Cell\+Image} reads the following configuration variables for it\textquotesingle{}s defaults settings (they are located in {\ttfamily misc.\+conf}, for the system-\/wide settings). 
+The \hyperlink{classHurricane_1_1CellImage}{Cell\-Image} reads the following configuration variables for it's defaults settings (they are located in {\ttfamily misc.\-conf}, for the system-\/wide settings). 
 \begin{DoxyItemize}
-\item {\ttfamily \char`\"{}viewer.\+printer.\+mode\char`\"{}}, select between the two resolution modes (\textbf{ Cell} or Design). 
+\item {\ttfamily \char`\"{}viewer.\-printer.\-mode\char`\"{}}, select between the two resolution modes ({\bf Cell} or Design). 
 \end{DoxyItemize}\hypertarget{classHurricane_1_1CellImage_secImageImplDetails}{}\subsection{Implementation details}\label{classHurricane_1_1CellImage_secImageImplDetails}
-This widget is build as a Q\+Main\+Window (top-\/level) one encapsulating only a \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget}. It is configured to never been shown thanks to the {\ttfamily Qt\+::\+W\+A\+\_\+\+Dont\+Show\+On\+Screen} attribute, but all the display computations still takes place as if it actually was.
+This widget is build as a Q\-Main\-Window (top-\/level) one encapsulating only a \hyperlink{classHurricane_1_1CellWidget}{Cell\-Widget}. It is configured to never been shown thanks to the {\ttfamily Qt\-::\-W\-A\-\_\-\-Dont\-Show\-On\-Screen} attribute, but all the display computations still takes place as if it actually was.
 
-The \hyperlink{classHurricane_1_1CellImage}{Cell\+Image} returns a newly allocated Q\+Image, it is the responsability of the caller to delete it after usage.
+The \hyperlink{classHurricane_1_1CellImage}{Cell\-Image} returns a newly allocated Q\-Image, it is the responsability of the caller to delete it after usage.
 
-To obtain a sufficent resolution the Cell\+Image/\+Cell\+Widget are resized to the resolution of the printed page. For a better look select a display style with patterns of 32x32 pixels, such as {\ttfamily \char`\"{}\+Image.\+Coriolis\char`\"{}}. 
+To obtain a sufficent resolution the Cell\-Image/\-Cell\-Widget are resized to the resolution of the printed page. For a better look select a display style with patterns of 32x32 pixels, such as {\ttfamily \char`\"{}\-Image.\-Coriolis\char`\"{}}. 
 
 \subsection{Member Enumeration Documentation}
-\mbox{\Hypertarget{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}\label{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}} 
-\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!Flags@{Flags}}
-\index{Flags@{Flags}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
-\subsubsection{\texorpdfstring{Flags}{Flags}}
-{\footnotesize\ttfamily enum \hyperlink{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}{Hurricane\+::\+Cell\+Image\+::\+Flags}}
-
-Some flags to tweak the image display. \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Show\+Scale@{Show\+Scale}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!Show\+Scale@{Show\+Scale}}}\mbox{\Hypertarget{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703a5463e21b19fa7d390bfe239121195879}\label{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703a5463e21b19fa7d390bfe239121195879}} 
-Show\+Scale&Adds a false color scale at the bottom of the image. Useful if you draw a density map for instance. \\
-\hline
-
-\end{DoxyEnumFields}
+\hypertarget{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}{\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!Flags@{Flags}}
+\index{Flags@{Flags}!Hurricane::CellImage@{Hurricane\-::\-Cell\-Image}}
+\subsubsection[{Flags}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Hurricane\-::\-Cell\-Image\-::\-Flags}}}\label{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703}
+Some flags to tweak the image display. \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{Show\-Scale@{Show\-Scale}!Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}}\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!Show\-Scale@{Show\-Scale}}\item[{\em 
+\hypertarget{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703a5463e21b19fa7d390bfe239121195879}{Show\-Scale}\label{classHurricane_1_1CellImage_a5836ca863f8bc47702ca040ac8897703a5463e21b19fa7d390bfe239121195879}
+}]Adds a false color scale at the bottom of the image. Useful if you draw a density map for instance. \end{description}
+\end{Desc}
 
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classHurricane_1_1CellImage_a3f73f1a3a90d4625a5e0b31711affc34}\label{classHurricane_1_1CellImage_a3f73f1a3a90d4625a5e0b31711affc34}} 
-\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!Cell\+Image@{Cell\+Image}}
-\index{Cell\+Image@{Cell\+Image}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
-\subsubsection{\texorpdfstring{Cell\+Image()}{CellImage()}}
-{\footnotesize\ttfamily Hurricane\+::\+Cell\+Image\+::\+Cell\+Image (\begin{DoxyParamCaption}\item[{Q\+Widget $\ast$}]{parent = {\ttfamily NULL} }\end{DoxyParamCaption})}
-
-Construct a \hyperlink{classHurricane_1_1CellImage}{Cell\+Image} window no screen \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} is actually bound. \mbox{\Hypertarget{classHurricane_1_1CellImage_af83b3547b7e72661ca28f8a8dbdd2edd}\label{classHurricane_1_1CellImage_af83b3547b7e72661ca28f8a8dbdd2edd}} 
-\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!````~Cell\+Image@{$\sim$\+Cell\+Image}}
-\index{````~Cell\+Image@{$\sim$\+Cell\+Image}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
-\subsubsection{\texorpdfstring{$\sim$\+Cell\+Image()}{~CellImage()}}
-{\footnotesize\ttfamily Hurricane\+::\+Cell\+Image\+::$\sim$\+Cell\+Image (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
-
+\hypertarget{classHurricane_1_1CellImage_a3f73f1a3a90d4625a5e0b31711affc34}{\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!Cell\-Image@{Cell\-Image}}
+\index{Cell\-Image@{Cell\-Image}!Hurricane::CellImage@{Hurricane\-::\-Cell\-Image}}
+\subsubsection[{Cell\-Image}]{\setlength{\rightskip}{0pt plus 5cm}Hurricane\-::\-Cell\-Image\-::\-Cell\-Image (
+\begin{DoxyParamCaption}
+\item[{Q\-Widget $\ast$}]{parent = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1CellImage_a3f73f1a3a90d4625a5e0b31711affc34}
+Construct a \hyperlink{classHurricane_1_1CellImage}{Cell\-Image} window no screen \hyperlink{classHurricane_1_1CellWidget}{Cell\-Widget} is actually bound. \hypertarget{classHurricane_1_1CellImage_af83b3547b7e72661ca28f8a8dbdd2edd}{\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!$\sim$\-Cell\-Image@{$\sim$\-Cell\-Image}}
+\index{$\sim$\-Cell\-Image@{$\sim$\-Cell\-Image}!Hurricane::CellImage@{Hurricane\-::\-Cell\-Image}}
+\subsubsection[{$\sim$\-Cell\-Image}]{\setlength{\rightskip}{0pt plus 5cm}Hurricane\-::\-Cell\-Image\-::$\sim$\-Cell\-Image (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classHurricane_1_1CellImage_af83b3547b7e72661ca28f8a8dbdd2edd}
 Destructor. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}\label{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}} 
-\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!set\+Screen\+Cell\+Widget@{set\+Screen\+Cell\+Widget}}
-\index{set\+Screen\+Cell\+Widget@{set\+Screen\+Cell\+Widget}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
-\subsubsection{\texorpdfstring{set\+Screen\+Cell\+Widget()}{setScreenCellWidget()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Cell\+Image\+::set\+Screen\+Cell\+Widget (\begin{DoxyParamCaption}\item[{\hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} $\ast$}]{screen\+Cell\+Widget }\end{DoxyParamCaption})}
-
-Bind the \hyperlink{classHurricane_1_1CellImage}{Cell\+Image} to the screen \hyperlink{classHurricane_1_1CellWidget}{Cell\+Widget} {\ttfamily screen\+Cell\+Widget}. It is those contents that will be printed. \mbox{\Hypertarget{classHurricane_1_1CellImage_aefcd1a8382907eaf13b6aeeaae0c3a6e}\label{classHurricane_1_1CellImage_aefcd1a8382907eaf13b6aeeaae0c3a6e}} 
-\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!set\+Mode@{set\+Mode}}
-\index{set\+Mode@{set\+Mode}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
-\subsubsection{\texorpdfstring{set\+Mode()}{setMode()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Cell\+Image\+::set\+Mode (\begin{DoxyParamCaption}\item[{int}]{mode }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
-Sets the display mode, that is the resolution that will be used. Two modes are availables\+: 
+\hypertarget{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}{\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!set\-Screen\-Cell\-Widget@{set\-Screen\-Cell\-Widget}}
+\index{set\-Screen\-Cell\-Widget@{set\-Screen\-Cell\-Widget}!Hurricane::CellImage@{Hurricane\-::\-Cell\-Image}}
+\subsubsection[{set\-Screen\-Cell\-Widget}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Cell\-Image\-::set\-Screen\-Cell\-Widget (
+\begin{DoxyParamCaption}
+\item[{{\bf Cell\-Widget} $\ast$}]{screen\-Cell\-Widget}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1CellImage_a3e140125664a1088020d9bedc7de0f4e}
+Bind the \hyperlink{classHurricane_1_1CellImage}{Cell\-Image} to the screen \hyperlink{classHurricane_1_1CellWidget}{Cell\-Widget} {\ttfamily screen\-Cell\-Widget}. It is those contents that will be printed. \hypertarget{classHurricane_1_1CellImage_aefcd1a8382907eaf13b6aeeaae0c3a6e}{\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!set\-Mode@{set\-Mode}}
+\index{set\-Mode@{set\-Mode}!Hurricane::CellImage@{Hurricane\-::\-Cell\-Image}}
+\subsubsection[{set\-Mode}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Cell\-Image\-::set\-Mode (
+\begin{DoxyParamCaption}
+\item[{int}]{mode}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1CellImage_aefcd1a8382907eaf13b6aeeaae0c3a6e}
+Sets the display mode, that is the resolution that will be used. Two modes are availables\-: 
 \begin{DoxyItemize}
-\item \hyperlink{classHurricane_1_1CellWidget_a4b81fed78775d491c169b649870d9dd7af37fd1c10fd363f0ad04a94dbccd5789}{Cell\+Widget\+::\+Res\+\_\+\+Cell\+Mode}\+: (approx. 150 dpi), best suited for displaying lone \textbf{ Cell} or very small scale designs. 
-\item \hyperlink{classHurricane_1_1CellWidget_a4b81fed78775d491c169b649870d9dd7a0c7c9bd939930fe178b5b8bcd84bdc1e}{Cell\+Widget\+::\+Res\+\_\+\+Design\+Mode}\+: (approx. 300 dpi), for full fledged designs. 
-\end{DoxyItemize}\mbox{\Hypertarget{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}\label{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}} 
-\index{Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}!to\+Image@{to\+Image}}
-\index{to\+Image@{to\+Image}!Hurricane\+::\+Cell\+Image@{Hurricane\+::\+Cell\+Image}}
-\subsubsection{\texorpdfstring{to\+Image()}{toImage()}}
-{\footnotesize\ttfamily Q\+Image $\ast$ Hurricane\+::\+Cell\+Image\+::to\+Image (\begin{DoxyParamCaption}\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption})}
-
+\item \hyperlink{classHurricane_1_1CellWidget_a4b81fed78775d491c169b649870d9dd7af37fd1c10fd363f0ad04a94dbccd5789}{Cell\-Widget\-::\-Res\-\_\-\-Cell\-Mode}\-: (approx. 150 dpi), best suited for displaying lone {\bf Cell} or very small scale designs. 
+\item \hyperlink{classHurricane_1_1CellWidget_a4b81fed78775d491c169b649870d9dd7a0c7c9bd939930fe178b5b8bcd84bdc1e}{Cell\-Widget\-::\-Res\-\_\-\-Design\-Mode}\-: (approx. 300 dpi), for full fledged designs. 
+\end{DoxyItemize}\hypertarget{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}{\index{Hurricane\-::\-Cell\-Image@{Hurricane\-::\-Cell\-Image}!to\-Image@{to\-Image}}
+\index{to\-Image@{to\-Image}!Hurricane::CellImage@{Hurricane\-::\-Cell\-Image}}
+\subsubsection[{to\-Image}]{\setlength{\rightskip}{0pt plus 5cm}Q\-Image $\ast$ Hurricane\-::\-Cell\-Image\-::to\-Image (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{flags = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}\label{classHurricane_1_1CellImage_a90ed9b8a07f4302cbeecf52a95ef5578}
 
 \begin{DoxyParams}{Parameters}
 {\em flags} & Control some tweaks.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-A newly allocated Q\+Image displaying the contents of the bound {\ttfamily screen\+Cell\+Widget}. The deletion of the Q\+Image is left to caller.
+A newly allocated Q\-Image displaying the contents of the bound {\ttfamily screen\-Cell\-Widget}. The deletion of the Q\-Image is left to caller.
 \end{DoxyReturn}
-Availables flags\+: 
+Availables flags\-: 
 \begin{DoxyItemize}
-\item Show\+Scale\+: display a false color scale at the bottom of the image. Useful if you draw a density map for instance. 
+\item Show\-Scale\-: display a false color scale at the bottom of the image. Useful if you draw a density map for instance. 
 \end{DoxyItemize}
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Cell\+Image.\+h\item 
-Cell\+Image.\+dox\end{DoxyCompactItemize}
+Cell\-Image.\-h\item 
+Cell\-Image.\-dox\end{DoxyCompactItemize}

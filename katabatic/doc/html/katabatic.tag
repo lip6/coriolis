@@ -1,5 +1,972 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
+  <compound kind="group">
+    <name>grpSynthHierarchy</name>
+    <title>Synthetic Class Hierarchy</title>
+    <filename>group__grpSynthHierarchy.html</filename>
+  </compound>
+  <compound kind="group">
+    <name>LoadGlobalRouting</name>
+    <title>Global Routing Loading</title>
+    <filename>group__LoadGlobalRouting.html</filename>
+    <class kind="class">anonymous_namespace{LoadGrByNet.cpp}::GCellTopology</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>LocalFunctionFlag</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaec07c7f30c801c3b0f72193757250d64</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>NoFlags</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64add44bf8d6f7bbe1393d76b940b85294b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>HAccess</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64a5c3692a6c886c6293a3c9f240b60a5d9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>VSmall</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64a260f6bf57246879aed7febfe83c9dacc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>HSmall</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64af1a4f1cb841460f20d26dcf902247fb8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>Punctual</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64a65b52a199afe857e3d551dbac8b293b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>DoSourceContact</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64aece46caaf822b33d7db94bb2dd16a30d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>DoTargetContact</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64aeb33c01c5e62df73de6b11888b17a5f2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>checkRoutingPadSize</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaad5d32b07d1d53ecc8642e4b10df9605</anchor>
+      <arglist>(Component *anchor)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>doRp_AutoContacts</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gae9cae408ea16a3f7c77c3d75f0242f19</anchor>
+      <arglist>(GCell *, Component *, AutoContact *&amp;source, AutoContact *&amp;target, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static AutoContact *</type>
+      <name>doRp_Access</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gada6d3c694b8d741b6504b7c3da166357</anchor>
+      <arglist>(GCell *, Component *, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static AutoContact *</type>
+      <name>doRp_AccessPad</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga60edeea78b56db072fc26a58a7afbcd4</anchor>
+      <arglist>(RoutingPad *, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>doRp_StairCaseH</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga3291d84592215974fe4052c00304bdb1</anchor>
+      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>doRp_StairCaseV</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga6361fb0e90f35cd59063a1ee971ef2a9</anchor>
+      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_1Pad</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gabe00ab10a0dab8a3d2de0709e61e4e7d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaaa6d4ccd2eadfb6bc3e2cc98cfaf2cca</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_1G_1M1</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gad24a03e87e269f16dcc28d8c2d9f1cfb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_1G_xM1</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga97942453a1bc5b01106aa380271fd7fc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_1M1_1M2</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gae60ed4e27ad89a1e2ff2cd6415ef33f1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_xM1_xM3</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaf9b009520f54099668ac9d12f2c85257</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_xM2</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga532d1c6b530e0375078ea2d6ea3c6024</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_1G_1M3</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga2519ef984b3d19f123827a9b12651672</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_xM3</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga007efc725aae31782204a44949765cb4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>singleGCell</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga3973291866b39c10cea5ca17f7d174fb</anchor>
+      <arglist>(KatabaticEngine *ktbt, Net *net)</arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>anonymous_namespace{AutoSegment.cpp}</name>
+    <filename>namespaceanonymous__namespace_02AutoSegment_8cpp_03.html</filename>
+  </compound>
+  <compound kind="namespace">
+    <name>anonymous_namespace{ChipTools.cpp}</name>
+    <filename>namespaceanonymous__namespace_02ChipTools_8cpp_03.html</filename>
+  </compound>
+  <compound kind="namespace">
+    <name>anonymous_namespace{GCell.cpp}</name>
+    <filename>namespaceanonymous__namespace_02GCell_8cpp_03.html</filename>
+  </compound>
+  <compound kind="namespace">
+    <name>anonymous_namespace{KatabaticEngine.cpp}</name>
+    <filename>namespaceanonymous__namespace_02KatabaticEngine_8cpp_03.html</filename>
+  </compound>
+  <compound kind="namespace">
+    <name>anonymous_namespace{LoadGrByNet.cpp}</name>
+    <filename>namespaceanonymous__namespace_02LoadGrByNet_8cpp_03.html</filename>
+    <class kind="class">anonymous_namespace{LoadGrByNet.cpp}::GCellTopology</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>LocalFunctionFlag</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaec07c7f30c801c3b0f72193757250d64</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>NoFlags</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64add44bf8d6f7bbe1393d76b940b85294b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>HAccess</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64a5c3692a6c886c6293a3c9f240b60a5d9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>VSmall</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64a260f6bf57246879aed7febfe83c9dacc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>HSmall</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64af1a4f1cb841460f20d26dcf902247fb8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>Punctual</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64a65b52a199afe857e3d551dbac8b293b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>DoSourceContact</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64aece46caaf822b33d7db94bb2dd16a30d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>DoTargetContact</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ggaec07c7f30c801c3b0f72193757250d64aeb33c01c5e62df73de6b11888b17a5f2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>checkRoutingPadSize</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaad5d32b07d1d53ecc8642e4b10df9605</anchor>
+      <arglist>(Component *anchor)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>singleGCell</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga3973291866b39c10cea5ca17f7d174fb</anchor>
+      <arglist>(KatabaticEngine *ktbt, Net *net)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>anonymous_namespace{LoadGrByNet.cpp}::GCellTopology</name>
+    <filename>classanonymous__namespace_02LoadGrByNet_8cpp_03_1_1GCellTopology.html</filename>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>doRp_AutoContacts</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gae9cae408ea16a3f7c77c3d75f0242f19</anchor>
+      <arglist>(GCell *, Component *, AutoContact *&amp;source, AutoContact *&amp;target, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static AutoContact *</type>
+      <name>doRp_Access</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gada6d3c694b8d741b6504b7c3da166357</anchor>
+      <arglist>(GCell *, Component *, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static AutoContact *</type>
+      <name>doRp_AccessPad</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga60edeea78b56db072fc26a58a7afbcd4</anchor>
+      <arglist>(RoutingPad *, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>doRp_StairCaseH</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga3291d84592215974fe4052c00304bdb1</anchor>
+      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>doRp_StairCaseV</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga6361fb0e90f35cd59063a1ee971ef2a9</anchor>
+      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaaa6d4ccd2eadfb6bc3e2cc98cfaf2cca</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_1Pad</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gabe00ab10a0dab8a3d2de0709e61e4e7d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_1G_1M1</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gad24a03e87e269f16dcc28d8c2d9f1cfb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_1G_xM1</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga97942453a1bc5b01106aa380271fd7fc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_xM1_xM3</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gaf9b009520f54099668ac9d12f2c85257</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_1M1_1M2</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>gae60ed4e27ad89a1e2ff2cd6415ef33f1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_xM2</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga532d1c6b530e0375078ea2d6ea3c6024</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_1G_1M3</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga2519ef984b3d19f123827a9b12651672</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>_do_xG_xM3</name>
+      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
+      <anchor>ga007efc725aae31782204a44949765cb4</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>anonymous_namespace{Session.cpp}</name>
+    <filename>namespaceanonymous__namespace_02Session_8cpp_03.html</filename>
+  </compound>
+  <compound kind="namespace">
+    <name>Katabatic</name>
+    <filename>namespaceKatabatic.html</filename>
+    <class kind="class">Katabatic::BaseObserver</class>
+    <class kind="class">Katabatic::Observer</class>
+    <class kind="class">Katabatic::Observable</class>
+    <class kind="class">Katabatic::AutoContact</class>
+    <class kind="class">Katabatic::LocatorHelper</class>
+    <class kind="class">Katabatic::AutoContactTerminal</class>
+    <class kind="class">Katabatic::AutoContactTurn</class>
+    <class kind="class">Katabatic::AutoContactHTee</class>
+    <class kind="class">Katabatic::AutoContactVTee</class>
+    <class kind="class">Katabatic::AutoSegment</class>
+    <class kind="class">Katabatic::AutoSegments_OnContact</class>
+    <class kind="class">Katabatic::AutoSegments_Aligneds</class>
+    <class kind="class">Katabatic::AutoSegments_Perpandiculars</class>
+    <class kind="class">Katabatic::AutoSegments_AnchorOnGCell</class>
+    <class kind="class">Katabatic::AutoSegments_IsAccountable</class>
+    <class kind="class">Katabatic::AutoSegments_InDirection</class>
+    <class kind="class">Katabatic::AutoHorizontal</class>
+    <class kind="class">Katabatic::AutoVertical</class>
+    <class kind="class">Katabatic::GCell</class>
+    <class kind="class">Katabatic::GCellDensitySet</class>
+    <class kind="class">Katabatic::BaseGrid</class>
+    <class kind="class">Katabatic::Grid</class>
+    <class kind="class">Katabatic::GCellGrid</class>
+    <class kind="class">Katabatic::Session</class>
+    <class kind="class">Katabatic::ChipTools</class>
+    <class kind="class">Katabatic::KatabaticEngine</class>
+    <member kind="typedef">
+      <type>Hurricane::Filter&lt; AutoSegment * &gt;</type>
+      <name>AutoSegmentHF</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a790418bb65a9a13859868df3e8f53598</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>Hurricane::Locator&lt; AutoSegment * &gt;</type>
+      <name>AutoSegmentHL</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a40ef13471fd0e797b75d3c436813fe65</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>Hurricane::Collection&lt; AutoSegment * &gt;</type>
+      <name>AutoSegmentHC</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>acb3628dc7705fefe38a665cfe43efa6e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericCollection&lt; AutoSegment * &gt;</type>
+      <name>AutoSegments</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2221b0ddbc24f331809fc86f98e38041</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericLocator&lt; AutoSegment * &gt;</type>
+      <name>AutoSegmentLocator</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ace866cc8e09faf80f71a4087bb8e5870</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericFilter&lt; AutoSegment * &gt;</type>
+      <name>AutoSegmentFilter</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a13ffc994c98e1a878e61a927de0509c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericCollection&lt; GCell * &gt;</type>
+      <name>GCells</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab68f9dfbbc79fd999773beef8561bc31</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericLocator&lt; GCell * &gt;</type>
+      <name>GCellLocator</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ae192ef170a0ad390902e435ac1e6796a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>GenericFilter&lt; GCell * &gt;</type>
+      <name>GCellFilter</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a7d07e23d45818a2ae5f6881ce0ec7403</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>FunctionFlag</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbOpenSession</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217af314588109fcc5f5ee1c42e5fd4d0ed5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbRealignate</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a45a219697151531a23e997b11118e08a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbNativeConstraints</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217af1d61226371622b8063fe47c63cd9dff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbForceMove</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217acf76914f1ec05633965f0ac6b1c89959</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbHorizontal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a1a9045673c5d3c30b067100f1440ae1b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbVertical</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a284cad95203a27172838b09e396e3590</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbWithPerpands</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217ae2d033c8f78b61468c827de8db5fe839</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbSource</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a8c8fd7a68cd428639057fbc6dbb8c46a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbTarget</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a041350b28d805a40d048fa0be9994a26</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbWarnOnError</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217aa5153b2cc25ebccca8616ce20ecd727a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbPropagate</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a3f95c1f06fe0b58b44ccbc57d99f2a5d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbUseAboveLayer</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217af756099f1bbe259dd1bf22067dc40eac</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbUseBelowLayer</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a41cbd981337678e042354f340bfae25d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbDoglegOnLeft</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a67bb7c53bbbc73a0e2d1f3f3e16ab679</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbDoglegOnRight</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217afe7fcb4c332f36e477433169b3d3f515</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>KbHalfSlacken</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a2af2ad6b6441614038caf59d04b3b217a1d6ccf82d04758a0922270d4f469066a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>EngineState</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>EngineCreation</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaa8bae41ad2fa29aaa5020b985b13416e0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>EngineGlobalLoaded</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaa5e262eba2c323c8ab5365b5e1364fc1e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>EngineActive</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaad4f7e86648b59223202a64bde4eda4c7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>EngineDriving</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaae21d68495c3c349ad351ba9692b40bd1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>EnginePreDestroying</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaafee0f47ec435d9c4e49b98a47683ad03</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>EngineGutted</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaafb5f961d4cad2bb9fbda71204061c877</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>AutoContactFlag</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntFixed</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24a66205741ac37bce922c730c95f6984af</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntTerminal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24a59ca560e6a04e6401054626b8b8f74bc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntTurn</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24aa0a37bdfa4c0097ebfb5f69e612fa57b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntHTee</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24ad8d6114e340ad8064617cc3c7b5e62f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntVTee</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24ac8b5263851e6e160bff135cc6ecd45c5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntInvalidated</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24a16ebc32170107fe230ddcc2dcbaab66f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntInvalidatedCache</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24a03218a60eff8f1960babe7e2a300301a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntInCreationStage</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24a803ca5191d4aba9d1f53aeec8d137359</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>CntBadTopology</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a4950b7142b9024cae2693cd44bccdc24abe577b4e6bc01e6a506a303ad8ccdf38</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>AutoSegmentFlag</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegHorizontal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a275eb973fc7a219eb34d2031309ff75c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegFixed</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4aa291777ea80e37ea23e785870d8833ed</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegGlobal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a940d92cb98a61e671a94204701767868</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegWeakGlobal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a16ef6f2b6b9e44559e41f04c652919ad</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegCanonical</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a296b371b45ade66cd1d44bc8898e64d9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegBipoint</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a2d969cfff8aa7da1ac3486924f4786d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegDogleg</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4ab3a62f799073ef374df7aaa26514c09b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegStrap</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a8c676eccde69f8a431ffaf2ffcae7209</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegSourceTop</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4ae5f763897c8e6221dcc8177816c72b33</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegSourceBottom</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a29f1952fe978a9fdd1902a6fcd085b44</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegTargetTop</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a100b7ff78619133970733fedbb34ffa8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegTargetBottom</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4ae600c6015187dddac3860fcc008a2213</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegIsReduced</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4af4dd1db46475e4a16555fb6978a85580</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegLayerChange</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4afc9fc027fe8f457520c3fe6fb1144b2b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegStrongTerminal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a93251a6b8197685e2aaf77a760851557</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegWeakTerminal1</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a7b3e09b8ab4cf676fd308535d7fba892</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegWeakTerminal2</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a32f77fa2da27348bcfc294a039efd766</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegNotSourceAligned</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a286b96fc8ab2377a2caf92c82352b0c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegNotTargetAligned</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4ac5042810c9268798def84444d31968ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegSlackened</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4ac47f838c52b3b33b1150eb53133c2383</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegAxisSet</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a86d22dbc8fbc045a1e12e25ba357e1d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegInvalidated</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a3c1d76fecee6a8bd5e12ce3fec013827</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegInvalidatedLayer</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a11c86dd3185eb251b2f3ce536cc2ab34</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegCreated</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a01513b74d37a8721370cf7b91fb419ad</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegWeakTerminal</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a419e7722198b077c1f71d6c47e2fc2ab</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <type>@</type>
+      <name>SegNotAligned</name>
+      <anchorfile>namespaceKatabatic.html</anchorfile>
+      <anchor>a94585537ee1724ea9315578ec54380f4a637e0426170a532feac45548e009325d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::BaseObserver</name>
+    <filename>classKatabatic_1_1BaseObserver.html</filename>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>notify</name>
+      <anchorfile>classKatabatic_1_1BaseObserver.html</anchorfile>
+      <anchor>a52e577fb0c4f2e3650928334fb621c2f</anchor>
+      <arglist>(unsigned int flags)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::Observer</name>
+    <filename>classKatabatic_1_1Observer.html</filename>
+    <templarg></templarg>
+    <base>Katabatic::BaseObserver</base>
+    <member kind="function">
+      <type></type>
+      <name>Observer</name>
+      <anchorfile>classKatabatic_1_1Observer.html</anchorfile>
+      <anchor>ab05ec12517c51952960dd4f324499b44</anchor>
+      <arglist>(const T *owner)</arglist>
+    </member>
+    <member kind="function">
+      <type>T *</type>
+      <name>getOwner</name>
+      <anchorfile>classKatabatic_1_1Observer.html</anchorfile>
+      <anchor>a1515e4d637164e6589f550164c304fe1</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <docanchor file="classKatabatic_1_1Observer" title="Observer Implementation Notes">secImplObserver</docanchor>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::Observable</name>
+    <filename>classKatabatic_1_1Observable.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Observable</name>
+      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
+      <anchor>a6438e92e07db169a97ed3eba36788dc4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>T *</type>
+      <name>getObserver</name>
+      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
+      <anchor>acc0b7276e09628f2b101ecf751aacd2a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addObserver</name>
+      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
+      <anchor>a783fda85eeabe9c660881f236f162767</anchor>
+      <arglist>(BaseObserver *)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>removeObserver</name>
+      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
+      <anchor>acaa5a7fc7fa631e3006a42006d753f43</anchor>
+      <arglist>(BaseObserver *)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>notify</name>
+      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
+      <anchor>a52e577fb0c4f2e3650928334fb621c2f</anchor>
+      <arglist>(unsigned int flags)</arglist>
+    </member>
+  </compound>
   <compound kind="class">
     <name>Katabatic::AutoContact</name>
     <filename>classKatabatic_1_1AutoContact.html</filename>
@@ -21,99 +988,99 @@
       <type>Component *</type>
       <name>getAnchor</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a142af2208e8c058c672bbad3640a6c46</anchor>
-      <arglist>() const</arglist>
+      <anchor>afa2c2abdef6c96ffc359707919be5d9f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Net *</type>
       <name>getNet</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a692492374623a5c6096b2c4a51190359</anchor>
-      <arglist>() const</arglist>
+      <anchor>adf3e1a980233163de0ca34a5c3575998</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>const Layer *</type>
       <name>getLayer</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ab045567c4f529dca7790d66c17c3084f</anchor>
-      <arglist>() const</arglist>
+      <anchor>a304ee4e02745811e04ac6fb688bf834f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getX</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a00b8f54c8171f6699e57de1b8c18eeb1</anchor>
-      <arglist>() const</arglist>
+      <anchor>a852afe759ce2cb8cb9c0524fc1e23387</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getY</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a4580de6b074712e400d5d238ce3af054</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac597d25a34a79fb4393211c70f5a1bc3</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getDx</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ad1ef5843ef3eabe27e548f24ca222876</anchor>
-      <arglist>() const</arglist>
+      <anchor>a2589fed9c8789a650f5dc102b762aa57</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getDy</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ae4046e6ed80cbba54a48953ef4d2ca6d</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab9233926e07b704773511774b1992602</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Point</type>
       <name>getCenter</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ac2ba7fbe2fad7d4910aa71ee034078e7</anchor>
-      <arglist>() const</arglist>
+      <anchor>a9e97a8efe26be94cbe5202c7f345e175</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Point</type>
       <name>getPosition</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a4fa9bb12d79f6645884d567986c9b0a5</anchor>
-      <arglist>() const</arglist>
+      <anchor>a2b1a75d102c6f88eaa432064efd04e27</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getWidth</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a9c63fe7288748eaf5332ca796a36d872</anchor>
-      <arglist>() const</arglist>
+      <anchor>aa018d3e74791b77d2def527248b9b00a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getHalfWidth</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a5a345a7129c2a07f10f9f10c959616b9</anchor>
-      <arglist>() const</arglist>
+      <anchor>af2daf0fed893337f82e93363ae17bf14</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getHeight</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a3ade412549810d29d5ce3c860fc965b9</anchor>
-      <arglist>() const</arglist>
+      <anchor>ae66967177ea58702fc89e9563f73bfb4</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getHalfHeight</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a3ab7b800879862100636b003a5d168f3</anchor>
-      <arglist>() const</arglist>
+      <anchor>a68048c464a03e8bbc9ae9ec74b037561</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Components</type>
       <name>getSlaveComponents</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ad59f45aaefd5acc8fb9795d4c0e49a7f</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5e6d3b7991ce74215e3e0a0ae6c07645</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -203,113 +1170,113 @@
       <type>bool</type>
       <name>isInCreationStage</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a77e5036ce0c3628f5bf65e729ba875ba</anchor>
-      <arglist>() const</arglist>
+      <anchor>a8a8f27ca267d07ae56abff162a3b3ae0</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isInvalidated</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ac540608485240ff88970131ebc02c1ab</anchor>
-      <arglist>() const</arglist>
+      <anchor>a54f713d06c43bebf4e0dfef06e347531</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isInvalidatedCache</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a6d1120fc8800af5d269e72ce5c3ba629</anchor>
-      <arglist>() const</arglist>
+      <anchor>af715dc65deddf045ec1743a529393224</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isTurn</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a249530ac086dbf92f981887cc633facf</anchor>
-      <arglist>() const</arglist>
+      <anchor>aa7c7bc6592b91fe675acb9b793b1188e</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isTee</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ae4ba7bc2888f990818cbdb808260c47e</anchor>
-      <arglist>(unsigned int direction) const</arglist>
+      <anchor>a8fd7a3439896837a5af19d408162ca62</anchor>
+      <arglist>(unsigned int direction) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isHTee</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>aeb66931d535cbd3d0f9bc525968e15f5</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac2131e4356f7d7c6e4ada597307f1d95</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isVTee</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ae38846b6213cccbc6f008b175b4604b0</anchor>
-      <arglist>() const</arglist>
+      <anchor>a938932aae592e22efdc9b275ad5a4094</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isFixed</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>afd7362b850709bed8b61c1aa22399f97</anchor>
-      <arglist>() const</arglist>
+      <anchor>af5e7d3badddf2ec07159f1d83426d4c1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>hasBadTopology</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>acc77b6de9050a86dc41e25888c8f81f6</anchor>
-      <arglist>() const</arglist>
+      <anchor>a1aebd841bb4796ac0f4264d6a694d6fa</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>canDestroy</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>af783b79a1398450e28e2ea55c3eb8476</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>aa1d158503e0663092922e38651b8c9f5</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>canMoveUp</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a69d29e4d230a0111ca18e6e661a48f8b</anchor>
-      <arglist>(const AutoSegment *moved) const</arglist>
+      <anchor>a3b30ff8ac1916f6cf9f9be735a3d9c3a</anchor>
+      <arglist>(const AutoSegment *moved) const </arglist>
     </member>
     <member kind="function">
       <type>Contact *</type>
       <name>base</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ab422116c7edfacedd31711c96e3ec95b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a7f6571edacd5e4120cc9b87abd23082a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual const Name &amp;</type>
       <name>getName</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a9e76ae5cee9320b65251387419c9432b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5e23c46b801d3049b349b68774a0d298</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>getId</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a1e57c42301b9e58648863e7d5dc055e7</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac0015de06fff235f96ec1cf68444f7a4</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Box</type>
       <name>getBoundingBox</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ab5d8bf98ab5af6fcfebea1b9f446d5d7</anchor>
-      <arglist>() const</arglist>
+      <anchor>a3b9694bf093e3ea16e4a8c8126a8d4db</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>GCell *</type>
       <name>getGCell</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a819cf639562a031a1e2e061fe1293d66</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab45ccfee0f781ec16c50672663d36141</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual AutoSegment *</type>
@@ -336,15 +1303,15 @@
       <type>unsigned int</type>
       <name>getMinDepth</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ada381cbb88211a7f63d30691b669b5e1</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5b16a639914ac05e0cb7032f918278b0</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>getMaxDepth</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ac350bb9d2d038287530fcf474987ba55</anchor>
-      <arglist>() const</arglist>
+      <anchor>a625d8d6b12c514f8cf1bc217cc20d743</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -357,57 +1324,57 @@
       <type>virtual Box</type>
       <name>getNativeConstraintBox</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a00ed934305dd186a284b7a13b5798cb6</anchor>
-      <arglist>() const</arglist>
+      <anchor>a762d33db26927e6db939a7420bb95743</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Interval</type>
       <name>getUConstraints</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ab1fd3fec6dd56d40217b8a5ecacb1719</anchor>
-      <arglist>(unsigned int direction) const</arglist>
+      <anchor>aaa2758181c73fb81e43550dea6b03041</anchor>
+      <arglist>(unsigned int direction) const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getCBXMin</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a347244bd3f3a59881a2dee9801c74618</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0c391297a64d0ae15c14a6e803b0316e</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getCBXMax</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a798750f964050c53c269a2e56d44b690</anchor>
-      <arglist>() const</arglist>
+      <anchor>a20ab0da1716ecd002f3abc76285dd5a1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getCBYMin</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ad7ee1befb03ee85f237a36e2f5ab8e45</anchor>
-      <arglist>() const</arglist>
+      <anchor>acd040eea296d73195a2065819ba02ebc</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getCBYMax</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>a4e4061a17285b0c08c31cfee65947cb6</anchor>
-      <arglist>() const</arglist>
+      <anchor>a25bae06d071e2e19696d3e950956d785</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Box</type>
       <name>getConstraintBox</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ae9d087a6cd3d459d7f4bea6bc8b08b49</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0d59519da5ced04bca8f2849c9f9a890</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Box &amp;</type>
       <name>intersectConstraintBox</name>
       <anchorfile>classKatabatic_1_1AutoContact.html</anchorfile>
-      <anchor>ac2fe070a286356a24baa466b4fe5b74d</anchor>
-      <arglist>(Box &amp;box) const</arglist>
+      <anchor>a2b4fffa1c238d8379a3418012e4f60f0</anchor>
+      <arglist>(Box &amp;box) const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -526,51 +1493,37 @@
     <docanchor file="classKatabatic_1_1AutoContact" title="Notes - Differences from Katabatic 2">secDiffFromKatabatic2</docanchor>
   </compound>
   <compound kind="class">
-    <name>Katabatic::AutoContactHTee</name>
-    <filename>classKatabatic_1_1AutoContactHTee.html</filename>
-    <base>Katabatic::AutoContact</base>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegment *</type>
-      <name>getOpposite</name>
-      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
-      <anchor>ac9c9b04e245a1109e297510a3968b7ac</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+    <name>Katabatic::LocatorHelper</name>
+    <filename>classKatabatic_1_1LocatorHelper.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>LocatorHelper</name>
+      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
+      <anchor>af44c2fcc73d387e3e3b5c334f25b070b</anchor>
+      <arglist>(AutoContact *, unsigned int flags=0)</arglist>
     </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegment *</type>
-      <name>getPerpandicular</name>
-      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
-      <anchor>ad99dd549214e43b6509fd8e3aefae919</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>isValid</name>
+      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
+      <anchor>aac1b70a2ed67ead038c4d3f5ac4d8a81</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegment *</type>
+    <member kind="function">
+      <type>AutoSegment *</type>
       <name>getSegment</name>
-      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
-      <anchor>a99fa8a78e97a29f2fb5730eaaa59acfc</anchor>
-      <arglist>(unsigned int) const</arglist>
+      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
+      <anchor>a7da801ed643439613cecc7b0f5d9e0d6</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>updateGeometry</name>
-      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
-      <anchor>a3e218f6934c51380fb15d0e2bd380071</anchor>
+    <member kind="function">
+      <type>void</type>
+      <name>progress</name>
+      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
+      <anchor>a1be98ae64bededebc29a04f257024ebe</anchor>
       <arglist>()</arglist>
     </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>updateTopology</name>
-      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
-      <anchor>af5bf1f5e71204ef84346e4e036175431</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static AutoContactHTee *</type>
-      <name>create</name>
-      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
-      <anchor>a9b42579ac2487765c83e31f7ca3ee562</anchor>
-      <arglist>(GCell *, Net *, const Layer *)</arglist>
-    </member>
+    <docanchor file="classKatabatic_1_1LocatorHelper" title="Implementation Details">secLocHelperImplementation</docanchor>
   </compound>
   <compound kind="class">
     <name>Katabatic::AutoContactTerminal</name>
@@ -580,29 +1533,29 @@
       <type>virtual Box</type>
       <name>getNativeConstraintBox</name>
       <anchorfile>classKatabatic_1_1AutoContactTerminal.html</anchorfile>
-      <anchor>a00ed934305dd186a284b7a13b5798cb6</anchor>
-      <arglist>() const</arglist>
+      <anchor>a762d33db26927e6db939a7420bb95743</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getSegment</name>
       <anchorfile>classKatabatic_1_1AutoContactTerminal.html</anchorfile>
-      <anchor>a99fa8a78e97a29f2fb5730eaaa59acfc</anchor>
-      <arglist>(unsigned int) const</arglist>
+      <anchor>a2f7d64767002f3bf2bbdf2f8f0e80105</anchor>
+      <arglist>(unsigned int) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getOpposite</name>
       <anchorfile>classKatabatic_1_1AutoContactTerminal.html</anchorfile>
-      <anchor>ac9c9b04e245a1109e297510a3968b7ac</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+      <anchor>aaf175a76573a5e3505b24fb2a8b0414f</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getPerpandicular</name>
       <anchorfile>classKatabatic_1_1AutoContactTerminal.html</anchorfile>
-      <anchor>ad99dd549214e43b6509fd8e3aefae919</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+      <anchor>a68e80545d3d25400be8f08d059ba21f5</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
@@ -641,22 +1594,22 @@
       <type>virtual AutoSegment *</type>
       <name>getOpposite</name>
       <anchorfile>classKatabatic_1_1AutoContactTurn.html</anchorfile>
-      <anchor>ac9c9b04e245a1109e297510a3968b7ac</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+      <anchor>aaf175a76573a5e3505b24fb2a8b0414f</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getPerpandicular</name>
       <anchorfile>classKatabatic_1_1AutoContactTurn.html</anchorfile>
-      <anchor>ad99dd549214e43b6509fd8e3aefae919</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+      <anchor>a68e80545d3d25400be8f08d059ba21f5</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getSegment</name>
       <anchorfile>classKatabatic_1_1AutoContactTurn.html</anchorfile>
-      <anchor>a99fa8a78e97a29f2fb5730eaaa59acfc</anchor>
-      <arglist>(unsigned int) const</arglist>
+      <anchor>a2f7d64767002f3bf2bbdf2f8f0e80105</anchor>
+      <arglist>(unsigned int) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
@@ -681,6 +1634,53 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>Katabatic::AutoContactHTee</name>
+    <filename>classKatabatic_1_1AutoContactHTee.html</filename>
+    <base>Katabatic::AutoContact</base>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegment *</type>
+      <name>getOpposite</name>
+      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
+      <anchor>aaf175a76573a5e3505b24fb2a8b0414f</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegment *</type>
+      <name>getPerpandicular</name>
+      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
+      <anchor>a68e80545d3d25400be8f08d059ba21f5</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegment *</type>
+      <name>getSegment</name>
+      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
+      <anchor>a2f7d64767002f3bf2bbdf2f8f0e80105</anchor>
+      <arglist>(unsigned int) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>updateGeometry</name>
+      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
+      <anchor>a3e218f6934c51380fb15d0e2bd380071</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>updateTopology</name>
+      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
+      <anchor>af5bf1f5e71204ef84346e4e036175431</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static AutoContactHTee *</type>
+      <name>create</name>
+      <anchorfile>classKatabatic_1_1AutoContactHTee.html</anchorfile>
+      <anchor>a9b42579ac2487765c83e31f7ca3ee562</anchor>
+      <arglist>(GCell *, Net *, const Layer *)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>Katabatic::AutoContactVTee</name>
     <filename>classKatabatic_1_1AutoContactVTee.html</filename>
     <base>Katabatic::AutoContact</base>
@@ -688,22 +1688,22 @@
       <type>virtual AutoSegment *</type>
       <name>getOpposite</name>
       <anchorfile>classKatabatic_1_1AutoContactVTee.html</anchorfile>
-      <anchor>ac9c9b04e245a1109e297510a3968b7ac</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+      <anchor>aaf175a76573a5e3505b24fb2a8b0414f</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getPerpandicular</name>
       <anchorfile>classKatabatic_1_1AutoContactVTee.html</anchorfile>
-      <anchor>ad99dd549214e43b6509fd8e3aefae919</anchor>
-      <arglist>(const AutoSegment *) const</arglist>
+      <anchor>a68e80545d3d25400be8f08d059ba21f5</anchor>
+      <arglist>(const AutoSegment *) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
       <name>getSegment</name>
       <anchorfile>classKatabatic_1_1AutoContactVTee.html</anchorfile>
-      <anchor>a99fa8a78e97a29f2fb5730eaaa59acfc</anchor>
-      <arglist>(unsigned int) const</arglist>
+      <anchor>a2f7d64767002f3bf2bbdf2f8f0e80105</anchor>
+      <arglist>(unsigned int) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
@@ -725,200 +1725,6 @@
       <anchorfile>classKatabatic_1_1AutoContactVTee.html</anchorfile>
       <anchor>ab6932aef1faf4881375cc989f5cd9c2c</anchor>
       <arglist>(GCell *, Net *, const Layer *)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::AutoHorizontal</name>
-    <filename>classKatabatic_1_1AutoHorizontal.html</filename>
-    <base>Katabatic::AutoSegment</base>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>_canSlacken</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a2ced98fb06f208aa88c0962a706e64db</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>canMoveULeft</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a9b0c21eeb26c256876592ba63438da74</anchor>
-      <arglist>(float reserve=0.0) const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>canMoveURight</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>ad0c972e34d6bac47bd9276a7d6e053d8</anchor>
-      <arglist>(float reserve=0.0) const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Segment *</type>
-      <name>base</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a9e651c17b47f82166a02865c9296a2df</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Segment *</type>
-      <name>base</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a6f14a3faa93f2c610ea0d2cc7d903706</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Horizontal *</type>
-      <name>getHorizontal</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a659b8ed90de679564924afe07af478de</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual DbU::Unit</type>
-      <name>getSourceU</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>ad521ffba761b0e81b7b81b99d62f76f9</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual DbU::Unit</type>
-      <name>getTargetU</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a4d52a506cd19dfa8e22e1dc0695bd960</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual DbU::Unit</type>
-      <name>getDuSource</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a760500b1fd027c71f5362dd8c0b01ea7</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual DbU::Unit</type>
-      <name>getDuTarget</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a76e349c14c904b3300a15caa1ee8b680</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Interval</type>
-      <name>getSpanU</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a0b5ac47ab175815e1a9bc07f2517614a</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>getConstraints</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a16737e7f2b77f8595fd2b607fac0f2f5</anchor>
-      <arglist>(DbU::Unit &amp;min, DbU::Unit &amp;max) const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Interval</type>
-      <name>getSourceConstraints</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a3239751f475bc65adb9d56f6c771ebb0</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Interval</type>
-      <name>getTargetConstraints</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>ad2b5aeb2604548378c8d78c60862091f</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual unsigned int</type>
-      <name>getDirection</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a0dd7cf705ace42c662c289955313b2e9</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual size_t</type>
-      <name>getGCells</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>accdaef4410043f64da247a94a309733e</anchor>
-      <arglist>(vector&lt; GCell *&gt; &amp;) const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>setDuSource</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a756616a1967c5ad8efd08be96d18f25d</anchor>
-      <arglist>(DbU::Unit)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>setDuTarget</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a9df2ef68c1fbf4159cc837be5c699b53</anchor>
-      <arglist>(DbU::Unit)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>updateOrient</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a59058f4593049c583c5b3698ff81b299</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>updatePositions</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a9662a77c2ed8553d6a0312c5292060ad</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>checkPositions</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a6575c17bfa589c087215c87678e5719c</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>checkConstraints</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a8aef8f4bbafe3426840f9ebf31bb3b81</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual unsigned int</type>
-      <name>_makeDogleg</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a36c0eecad40d3559b5378caefec6a7e0</anchor>
-      <arglist>(GCell *, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>moveULeft</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a1fa2421b74bf0eb934b7002fd3da2321</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>moveURight</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>aa469e37853e31f8b1bc817518c896d62</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>_postCreate</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a3715b38135ca24745f610bebd3407c10</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>_preDestroy</name>
-      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
-      <anchor>a7c13d9795eafd477994961f8a0d962d0</anchor>
-      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -956,29 +1762,29 @@
       <type>Cell *</type>
       <name>getCell</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a55a3a88610ef1af9931e634f77f2403b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a148fdf09f18e7adb39a73c747f165266</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Net *</type>
       <name>getNet</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a692492374623a5c6096b2c4a51190359</anchor>
-      <arglist>() const</arglist>
+      <anchor>adf3e1a980233163de0ca34a5c3575998</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>const Layer *</type>
       <name>getLayer</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ab045567c4f529dca7790d66c17c3084f</anchor>
-      <arglist>() const</arglist>
+      <anchor>a304ee4e02745811e04ac6fb688bf834f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Box</type>
       <name>getBoundingBox</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a63a3ab1e6501bbad68b9efd4998e48c0</anchor>
-      <arglist>() const</arglist>
+      <anchor>a4e70b34c1b87c093c4405d9d2e924a05</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Hook *</type>
@@ -998,99 +1804,99 @@
       <type>Contact *</type>
       <name>getSource</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a497ea2ceeddb939dbc84eae0e7862335</anchor>
-      <arglist>() const</arglist>
+      <anchor>a6f00fc7f0357778613214c4e57d9bc2f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Contact *</type>
       <name>getTarget</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a0862c201bd7d8e5427e44ca2427c2fe6</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac92a1ae33842aab5d067b393dd2596fe</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Component *</type>
       <name>getOppositeAnchor</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a9216d4467c2d4e0c7b9d9a8b8e798bee</anchor>
-      <arglist>(Component *) const</arglist>
+      <anchor>a898ede38fc37409371bff9d7dc7f917a</anchor>
+      <arglist>(Component *) const </arglist>
     </member>
     <member kind="function">
       <type>Components</type>
       <name>getAnchors</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a7339a1ebc7d46384bc4e1317af84bea1</anchor>
-      <arglist>() const</arglist>
+      <anchor>a7b72661b3586b369ebf3adc59a5239c2</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getX</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a00b8f54c8171f6699e57de1b8c18eeb1</anchor>
-      <arglist>() const</arglist>
+      <anchor>a852afe759ce2cb8cb9c0524fc1e23387</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getY</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a4580de6b074712e400d5d238ce3af054</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac597d25a34a79fb4393211c70f5a1bc3</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getWidth</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a9c63fe7288748eaf5332ca796a36d872</anchor>
-      <arglist>() const</arglist>
+      <anchor>aa018d3e74791b77d2def527248b9b00a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getLength</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ab1ca7adfc68761c749a16f65c9aa4088</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5370f2cf21823e1fa58d0627ee53c483</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getSourcePosition</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a8a88dc051a8d324aff8763609957dcaa</anchor>
-      <arglist>() const</arglist>
+      <anchor>a60c1e9c6cda9445e409e00ff22b1f52c</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getTargetPosition</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a65dea76b4efad9d3caa78be44e96c94c</anchor>
-      <arglist>() const</arglist>
+      <anchor>a2b6bdf8fa83a7ce4cafa61314bee4e43</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getSourceX</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a8a8e127557d70de70f9efb488be30d1a</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab160396298a1a51b9988ad246dc2a47f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getSourceY</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ae913463a76d08b079611a993cebea1a9</anchor>
-      <arglist>() const</arglist>
+      <anchor>a232af840ba84faa0b1411ba1c3a418f1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getTargetX</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a8e6462b43ca9eaeea1e08866cec59a8c</anchor>
-      <arglist>() const</arglist>
+      <anchor>ae80b70bf8e29a74d8a5f61d1257c6cf2</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getTargetY</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a003e545e792e8bf22d264bcb3bc90547</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0917c7f78a251822ea0ac6f48298d1c5</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -1110,148 +1916,148 @@
       <type>bool</type>
       <name>isHorizontal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a21b9cefd33ae22e4c2070ad441bdd30b</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac46ac3b48d712750c7888b48964ac189</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isVertical</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>abd54544ef1710ee4b67cfb021d73446c</anchor>
-      <arglist>() const</arglist>
+      <anchor>a2bb30e82aad1f321af4a065338775f36</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isGlobal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a19ba379112d6b29faa45c5eefbf38500</anchor>
-      <arglist>() const</arglist>
+      <anchor>a017b1ead8e5988dd0e491cae93ac510c</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isLocal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>add556a145a89fdbcea82346abfb873dc</anchor>
-      <arglist>() const</arglist>
+      <anchor>a69fb7e260ed2bc6fa82bfe12c2aeec5a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isFixed</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>afd7362b850709bed8b61c1aa22399f97</anchor>
-      <arglist>() const</arglist>
+      <anchor>af5e7d3badddf2ec07159f1d83426d4c1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isBipoint</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a72741158d19af38e84c5e9c08f91270f</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab5035e6d84cf3ec7b519a5acb109efaa</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isWeakTerminal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>aef3a61d223be84ac336c4f7bc64884ba</anchor>
-      <arglist>() const</arglist>
+      <anchor>ae5574df7051a09ce3338cbe8481b8af3</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isStrongTerminal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a4605c9284168f0a62fa48aa2d3ae5ee9</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>acc92dc6f1ef0c36e7330f38726297b35</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isLayerChange</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a772596f5d5fa897822dbd0da37024735</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0ddce124ab6b4cd97e59db077e7a2eac</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isSpinTop</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a3776b8258ab6544c9551d0714fcc75d2</anchor>
-      <arglist>() const</arglist>
+      <anchor>aaff91f5124850956e44501facf668556</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isSpinBottom</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ab786dbdb67ea727369b1a988497c01d1</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0330666095b102f61bc957eefae34c4f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isSpinTopOrBottom</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a90d934f7275aed35f4ecb157c6950d6f</anchor>
-      <arglist>() const</arglist>
+      <anchor>ad5a5ba75ef6654f9352cca1e4b0aff51</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isReduced</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a461c31a8d12458939b78ccecb3b8c299</anchor>
-      <arglist>() const</arglist>
+      <anchor>aca1e1b7dece8c71dcdc1ce786a0958e3</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isStrap</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a62d61c231cf404a814ae37665fa8164f</anchor>
-      <arglist>() const</arglist>
+      <anchor>a4721fcbe9c93ed5392afd9a756b989a8</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isDogleg</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a75d91371e5281dd21f60ff39ae70a3e5</anchor>
-      <arglist>() const</arglist>
+      <anchor>a172b2394f9c2cbaaf5bc4b19e0e76e65</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isInvalidated</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ac540608485240ff88970131ebc02c1ab</anchor>
-      <arglist>() const</arglist>
+      <anchor>a54f713d06c43bebf4e0dfef06e347531</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isInvalidatedLayer</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a77b075644356f016105b3050b031a2ec</anchor>
-      <arglist>() const</arglist>
+      <anchor>a52c4108abf5e0622a216c2d81c47b9bb</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isCreated</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>af7d9cf1d7581b1cab04cf38c64f0f72a</anchor>
-      <arglist>() const</arglist>
+      <anchor>a6a7e35dd5a9ca99ca879e424ce42b902</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isCanonical</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>af6d3008d345195a99e0341f0379c33b7</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab671233e7112693ae31541190d1d251d</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isUnsetAxis</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a2bd22f431b7cf3695babab78fc3b4c9e</anchor>
-      <arglist>() const</arglist>
+      <anchor>a436eb0e5951f681ce68e429ab671e582</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isSlackened</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a782cff57d3fe10e758d19ee65a06643d</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab1f9e0bca70dea59558459a003a62d88</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
@@ -1264,15 +2070,15 @@
       <type>bool</type>
       <name>canReduce</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>af1a231b2324a486d4ef61b247886cdeb</anchor>
-      <arglist>() const</arglist>
+      <anchor>a6191fe9409cee6c5a0429ebb9e653ea4</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>mustRaise</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a449ebb156fd51b04bbc029a657b4cded</anchor>
-      <arglist>() const</arglist>
+      <anchor>abe32548ca8d41da334413928405fec87</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
@@ -1299,29 +2105,29 @@
       <type>bool</type>
       <name>canMoveUp</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a6482341a342eb6e6b3b43f13fd4436f6</anchor>
-      <arglist>(float reserve=0.0, unsigned int flags=0) const</arglist>
+      <anchor>a02e6ec81411b250d60dccc0da39964a6</anchor>
+      <arglist>(float reserve=0.0, unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>canPivotUp</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a6cca3afced729492cae6649a92dc7e88</anchor>
-      <arglist>(float reserve=0.0, unsigned int flags=0) const</arglist>
+      <anchor>af76432e1e58e015bde917134757003f9</anchor>
+      <arglist>(float reserve=0.0, unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>canPivotDown</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a24de580d1a371b8d27640cbc3431990b</anchor>
-      <arglist>(float reserve=0.0, unsigned int flags=0) const</arglist>
+      <anchor>a1c810a1a6860202d94c670999546c4b8</anchor>
+      <arglist>(float reserve=0.0, unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>canSlacken</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>adec088de3c4c47a28ee9d58eb6d9cf85</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>a46f380673fde750e88aad991168a35fd</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
@@ -1341,8 +2147,8 @@
       <type>unsigned long</type>
       <name>getId</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>afdedcef127ad2a3677a5b48d7d3453f3</anchor>
-      <arglist>() const</arglist>
+      <anchor>ae68c47fdf838be02cbf6660cd25a0806</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual unsigned int</type>
@@ -1355,57 +2161,57 @@
       <type>GCell *</type>
       <name>getGCell</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a819cf639562a031a1e2e061fe1293d66</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab45ccfee0f781ec16c50672663d36141</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual size_t</type>
       <name>getGCells</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a8ca0022e253d355817d46a057ae01625</anchor>
-      <arglist>(vector&lt; GCell *&gt; &amp;) const =0</arglist>
+      <anchor>ad9d24f97e55e2f538ed1c907bee99e81</anchor>
+      <arglist>(vector&lt; GCell * &gt; &amp;) const =0</arglist>
     </member>
     <member kind="function">
       <type>AutoContact *</type>
       <name>getAutoSource</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a2ca3fac97e325ec8a55d3e03a2ce11a6</anchor>
-      <arglist>() const</arglist>
+      <anchor>afb5b4d8bddc75cd604c7a68aa5943c12</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>AutoContact *</type>
       <name>getAutoTarget</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>afa494ddc031f4dd1c24999ff83fb878c</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5a35baf84e1e3531c38a6132fb8118fb</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>AutoContact *</type>
       <name>getOppositeAnchor</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a2c5b0faacc768bf61e17eb72a4ccc248</anchor>
-      <arglist>(AutoContact *) const</arglist>
+      <anchor>ac2d254eb530ff299dad804100198cc24</anchor>
+      <arglist>(AutoContact *) const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>getPerpandicularsBound</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a206b53c34f57945b6c7bdb711101e38f</anchor>
-      <arglist>(set&lt; AutoSegment *&gt; &amp;)</arglist>
+      <anchor>a5a63602ccc44f51012f10d138e1480c4</anchor>
+      <arglist>(set&lt; AutoSegment * &gt; &amp;)</arglist>
     </member>
     <member kind="function">
       <type>AutoSegment *</type>
       <name>getParent</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a58c1170381b915930188608dab311442</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0ca0f04492f7365856ccceb905968bb5</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getAxis</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ab5b5aaa5b318369feee6003dbad039c2</anchor>
-      <arglist>() const</arglist>
+      <anchor>af85576c58c70007850ad56e238e8d266</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual DbU::Unit</type>
@@ -1439,15 +2245,15 @@
       <type>DbU::Unit</type>
       <name>getOrigin</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ab5fb22520af4b94f2ae984304fa64c26</anchor>
-      <arglist>() const</arglist>
+      <anchor>acedb5dbab9d0c872dc476fdbefff431c</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getExtremity</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a5b81aad92361558c3b9e60fd501b89ba</anchor>
-      <arglist>() const</arglist>
+      <anchor>a6cf0ef9d591a27428ad29332e188b616</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual Interval</type>
@@ -1460,8 +2266,8 @@
       <type>Interval</type>
       <name>getMinSpanU</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>acc329583aa1546ed5a01e0628f3ca6ad</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0599f720e9aac305ecae20c7f4526c58</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual Interval</type>
@@ -1488,50 +2294,50 @@
       <type>bool</type>
       <name>getConstraints</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a29c3a56daaf4c78aa3ae6edbde37dd42</anchor>
-      <arglist>(Interval &amp;i) const</arglist>
+      <anchor>a61a7442901868f6167e5b5303d8f1736</anchor>
+      <arglist>(Interval &amp;i) const </arglist>
     </member>
     <member kind="function">
       <type>const Interval &amp;</type>
       <name>getUserConstraints</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>aa7cf8d4df6a5d945dd180d45e8bbcedf</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5a69d84299029f9fd381a85d9de0a488</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getSlack</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a8789ebe71b2ff3d0265f5319a3be5afb</anchor>
-      <arglist>() const</arglist>
+      <anchor>a15034a21dff23562fd70a83599a16d3a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getOptimalMin</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a9405b4f5345d116f71c40ba2c16097d0</anchor>
-      <arglist>() const</arglist>
+      <anchor>a2786cefb5df6ac92dcbb081c55ae50e6</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getOptimalMax</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a1bada13dd4460386d4bed22c1a4b3921</anchor>
-      <arglist>() const</arglist>
+      <anchor>a9bea24981e7eaafb5746015355bf44f7</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Interval &amp;</type>
       <name>getOptimal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a110201bd7c64ed78522cfb3f7b142431</anchor>
-      <arglist>(Interval &amp;i) const</arglist>
+      <anchor>abc07fe91810925f4a0191cd245cc85b6</anchor>
+      <arglist>(Interval &amp;i) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getCost</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>a0e3a02c7a9c1bd559fda628d596b00cd</anchor>
-      <arglist>(DbU::Unit axis) const</arglist>
+      <anchor>aaa87df41319c74dd180039708f68ff7e</anchor>
+      <arglist>(DbU::Unit axis) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegment *</type>
@@ -1719,8 +2525,8 @@
       <type>void</type>
       <name>computeOptimal</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>aa902247a1e967e52cc3ab087cd52b366</anchor>
-      <arglist>(set&lt; AutoSegment *&gt; &amp;processeds)</arglist>
+      <anchor>a7654ca2b0787b8a9eac8629bf9218761</anchor>
+      <arglist>(set&lt; AutoSegment * &gt; &amp;processeds)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -1824,8 +2630,8 @@
       <type>unsigned int</type>
       <name>_getFlags</name>
       <anchorfile>classKatabatic_1_1AutoSegment.html</anchorfile>
-      <anchor>ae5b4a4f67d480cd5c9ce104e73e73da9</anchor>
-      <arglist>() const</arglist>
+      <anchor>ade0d97282e43595452ae8ac326d99752</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" protection="protected" static="yes">
       <type>static void</type>
@@ -1841,117 +2647,6 @@
     <docanchor file="classKatabatic_1_1AutoSegment" title="Main Attributes of AutoSegments">secASAttributes</docanchor>
     <docanchor file="classKatabatic_1_1AutoSegment" title="Implementation Details">secASImplementation</docanchor>
     <docanchor file="classKatabatic_1_1AutoSegment" title="Methods Classification">secASMethodsClassif</docanchor>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::AutoSegments_Aligneds</name>
-    <filename>classKatabatic_1_1AutoSegments__Aligneds.html</filename>
-    <base>Hurricane::Collection</base>
-    <member kind="function">
-      <type></type>
-      <name>AutoSegments_Aligneds</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
-      <anchor>a97d48d49a2372cf289d321e6abf81c2d</anchor>
-      <arglist>(AutoSegment *, unsigned int flags=KbNoFlags)</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>AutoSegments_Aligneds</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
-      <anchor>aade683d2c99dc069e2cd5c8b942f8912</anchor>
-      <arglist>(const AutoSegments_Aligneds &amp;)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegmentHC *</type>
-      <name>getClone</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
-      <anchor>a5b26b0698bdcb40cbf51b250dfb21858</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegmentHL *</type>
-      <name>getLocator</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
-      <anchor>a07665c070fcc269aec02ce842f384483</anchor>
-      <arglist>() const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::AutoSegments_AnchorOnGCell</name>
-    <filename>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</filename>
-    <base>Hurricane::Collection</base>
-    <member kind="function">
-      <type></type>
-      <name>AutoSegments_AnchorOnGCell</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
-      <anchor>a41a8dace22db3bdd8ecbf1850344f885</anchor>
-      <arglist>(GCell *fcell, unsigned int flags)</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>AutoSegments_AnchorOnGCell</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
-      <anchor>a4597cd793ef7f6a5be546b24863f99e8</anchor>
-      <arglist>(const AutoSegments_AnchorOnGCell &amp;)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegmentHC *</type>
-      <name>getClone</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
-      <anchor>a5b26b0698bdcb40cbf51b250dfb21858</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegmentHL *</type>
-      <name>getLocator</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
-      <anchor>a07665c070fcc269aec02ce842f384483</anchor>
-      <arglist>() const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::AutoSegments_InDirection</name>
-    <filename>classKatabatic_1_1AutoSegments__InDirection.html</filename>
-    <base>Hurricane::Filter</base>
-    <member kind="function">
-      <type></type>
-      <name>AutoSegments_InDirection</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__InDirection.html</anchorfile>
-      <anchor>ad51ecb756fa52e994c47dffcdb21c136</anchor>
-      <arglist>(unsigned int direction)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegmentHF *</type>
-      <name>getClone</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__InDirection.html</anchorfile>
-      <anchor>a0a6021852a0c5681a7b53dce6b2b87a4</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>accept</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__InDirection.html</anchorfile>
-      <anchor>adfb5e1308226f0b97fb6825e3eab11a9</anchor>
-      <arglist>(AutoSegment *segment) const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::AutoSegments_IsAccountable</name>
-    <filename>classKatabatic_1_1AutoSegments__IsAccountable.html</filename>
-    <base>Hurricane::Filter</base>
-    <member kind="function" virtualness="virtual">
-      <type>virtual AutoSegmentHF *</type>
-      <name>getClone</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__IsAccountable.html</anchorfile>
-      <anchor>a0a6021852a0c5681a7b53dce6b2b87a4</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>accept</name>
-      <anchorfile>classKatabatic_1_1AutoSegments__IsAccountable.html</anchorfile>
-      <anchor>a360f3816925114260aeb7ccdab0ea69e</anchor>
-      <arglist>(AutoSegment *) const</arglist>
-    </member>
   </compound>
   <compound kind="class">
     <name>Katabatic::AutoSegments_OnContact</name>
@@ -1975,15 +2670,48 @@
       <type>virtual AutoSegmentHC *</type>
       <name>getClone</name>
       <anchorfile>classKatabatic_1_1AutoSegments__OnContact.html</anchorfile>
-      <anchor>a5b26b0698bdcb40cbf51b250dfb21858</anchor>
-      <arglist>() const</arglist>
+      <anchor>a75133d1052f09538e168f7f4f717c740</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegmentHL *</type>
       <name>getLocator</name>
       <anchorfile>classKatabatic_1_1AutoSegments__OnContact.html</anchorfile>
-      <anchor>a07665c070fcc269aec02ce842f384483</anchor>
-      <arglist>() const</arglist>
+      <anchor>aa0952035e19936102da08deed796eed9</anchor>
+      <arglist>() const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::AutoSegments_Aligneds</name>
+    <filename>classKatabatic_1_1AutoSegments__Aligneds.html</filename>
+    <base>Hurricane::Collection</base>
+    <member kind="function">
+      <type></type>
+      <name>AutoSegments_Aligneds</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
+      <anchor>a97d48d49a2372cf289d321e6abf81c2d</anchor>
+      <arglist>(AutoSegment *, unsigned int flags=KbNoFlags)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>AutoSegments_Aligneds</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
+      <anchor>aade683d2c99dc069e2cd5c8b942f8912</anchor>
+      <arglist>(const AutoSegments_Aligneds &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegmentHC *</type>
+      <name>getClone</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
+      <anchor>a75133d1052f09538e168f7f4f717c740</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegmentHL *</type>
+      <name>getLocator</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__Aligneds.html</anchorfile>
+      <anchor>aa0952035e19936102da08deed796eed9</anchor>
+      <arglist>() const </arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2008,15 +2736,287 @@
       <type>virtual AutoSegmentHC *</type>
       <name>getClone</name>
       <anchorfile>classKatabatic_1_1AutoSegments__Perpandiculars.html</anchorfile>
-      <anchor>a5b26b0698bdcb40cbf51b250dfb21858</anchor>
-      <arglist>() const</arglist>
+      <anchor>a75133d1052f09538e168f7f4f717c740</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual AutoSegmentHL *</type>
       <name>getLocator</name>
       <anchorfile>classKatabatic_1_1AutoSegments__Perpandiculars.html</anchorfile>
-      <anchor>a07665c070fcc269aec02ce842f384483</anchor>
-      <arglist>() const</arglist>
+      <anchor>aa0952035e19936102da08deed796eed9</anchor>
+      <arglist>() const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::AutoSegments_AnchorOnGCell</name>
+    <filename>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</filename>
+    <base>Hurricane::Collection</base>
+    <member kind="function">
+      <type></type>
+      <name>AutoSegments_AnchorOnGCell</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
+      <anchor>a41a8dace22db3bdd8ecbf1850344f885</anchor>
+      <arglist>(GCell *fcell, unsigned int flags)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>AutoSegments_AnchorOnGCell</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
+      <anchor>a4597cd793ef7f6a5be546b24863f99e8</anchor>
+      <arglist>(const AutoSegments_AnchorOnGCell &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegmentHC *</type>
+      <name>getClone</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
+      <anchor>a75133d1052f09538e168f7f4f717c740</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegmentHL *</type>
+      <name>getLocator</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__AnchorOnGCell.html</anchorfile>
+      <anchor>aa0952035e19936102da08deed796eed9</anchor>
+      <arglist>() const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::AutoSegments_IsAccountable</name>
+    <filename>classKatabatic_1_1AutoSegments__IsAccountable.html</filename>
+    <base>Hurricane::Filter</base>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegmentHF *</type>
+      <name>getClone</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__IsAccountable.html</anchorfile>
+      <anchor>afcbca92b72aff15ded94fe7c815de1ff</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>accept</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__IsAccountable.html</anchorfile>
+      <anchor>ae826b0a72ecbf23d8c50409892d26759</anchor>
+      <arglist>(AutoSegment *) const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::AutoSegments_InDirection</name>
+    <filename>classKatabatic_1_1AutoSegments__InDirection.html</filename>
+    <base>Hurricane::Filter</base>
+    <member kind="function">
+      <type></type>
+      <name>AutoSegments_InDirection</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__InDirection.html</anchorfile>
+      <anchor>ad51ecb756fa52e994c47dffcdb21c136</anchor>
+      <arglist>(unsigned int direction)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual AutoSegmentHF *</type>
+      <name>getClone</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__InDirection.html</anchorfile>
+      <anchor>afcbca92b72aff15ded94fe7c815de1ff</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>accept</name>
+      <anchorfile>classKatabatic_1_1AutoSegments__InDirection.html</anchorfile>
+      <anchor>a9e516170369269efd0277930871bfa6b</anchor>
+      <arglist>(AutoSegment *segment) const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::AutoHorizontal</name>
+    <filename>classKatabatic_1_1AutoHorizontal.html</filename>
+    <base>Katabatic::AutoSegment</base>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>_canSlacken</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>ab0c6fe24404afe19268a7b796fa74bec</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>canMoveULeft</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>aa9e85f38a842d1966eb72afccb446676</anchor>
+      <arglist>(float reserve=0.0) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>canMoveURight</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a7559a856712400a9325665842e0bcd64</anchor>
+      <arglist>(float reserve=0.0) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Segment *</type>
+      <name>base</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a9e651c17b47f82166a02865c9296a2df</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Segment *</type>
+      <name>base</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>adcd751c3ec393fabdef5ede0ffff6f2d</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Horizontal *</type>
+      <name>getHorizontal</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a659b8ed90de679564924afe07af478de</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual DbU::Unit</type>
+      <name>getSourceU</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a3932d5ce9094ead510e4e33bd4e78e1a</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual DbU::Unit</type>
+      <name>getTargetU</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a8e5f2a51f56c6bdb74024ac77c08a22a</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual DbU::Unit</type>
+      <name>getDuSource</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a44998a5f0d71597006fe4f3ffed8e3d1</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual DbU::Unit</type>
+      <name>getDuTarget</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a4f505a59109fc6087696f483ccc7f9dc</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Interval</type>
+      <name>getSpanU</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a9409a4b64c21fa8b1517149728f0a4c1</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>getConstraints</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>aff207f4cc3c3682ed57369fdfe157d2d</anchor>
+      <arglist>(DbU::Unit &amp;min, DbU::Unit &amp;max) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Interval</type>
+      <name>getSourceConstraints</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a3c24695921b612a57c5ac60ff0aa3878</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Interval</type>
+      <name>getTargetConstraints</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>aaa70ba865e312fb30f81fa7f973a0376</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual unsigned int</type>
+      <name>getDirection</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a09d03fbca9ab891c2f25bdae7f89a899</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual size_t</type>
+      <name>getGCells</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>ab681dca7dc930e06cacc2de85bf99166</anchor>
+      <arglist>(vector&lt; GCell * &gt; &amp;) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDuSource</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a756616a1967c5ad8efd08be96d18f25d</anchor>
+      <arglist>(DbU::Unit)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setDuTarget</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a9df2ef68c1fbf4159cc837be5c699b53</anchor>
+      <arglist>(DbU::Unit)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>updateOrient</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a59058f4593049c583c5b3698ff81b299</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>updatePositions</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a9662a77c2ed8553d6a0312c5292060ad</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>checkPositions</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>acfbdc94b1e84bd192087df53ead1f06f</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>checkConstraints</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a46576c7c5c5146f8fa53a821b0766994</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual unsigned int</type>
+      <name>_makeDogleg</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a36c0eecad40d3559b5378caefec6a7e0</anchor>
+      <arglist>(GCell *, unsigned int flags)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>moveULeft</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a1fa2421b74bf0eb934b7002fd3da2321</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>moveURight</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>aa469e37853e31f8b1bc817518c896d62</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>_postCreate</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a3715b38135ca24745f610bebd3407c10</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>_preDestroy</name>
+      <anchorfile>classKatabatic_1_1AutoHorizontal.html</anchorfile>
+      <anchor>a7c13d9795eafd477994961f8a0d962d0</anchor>
+      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2027,22 +3027,22 @@
       <type>virtual bool</type>
       <name>_canSlacken</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a2ced98fb06f208aa88c0962a706e64db</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab0c6fe24404afe19268a7b796fa74bec</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
       <name>canMoveULeft</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a9b0c21eeb26c256876592ba63438da74</anchor>
-      <arglist>(float reserve=0.0) const</arglist>
+      <anchor>aa9e85f38a842d1966eb72afccb446676</anchor>
+      <arglist>(float reserve=0.0) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
       <name>canMoveURight</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>ad0c972e34d6bac47bd9276a7d6e053d8</anchor>
-      <arglist>(float reserve=0.0) const</arglist>
+      <anchor>a7559a856712400a9325665842e0bcd64</anchor>
+      <arglist>(float reserve=0.0) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Segment *</type>
@@ -2055,8 +3055,8 @@
       <type>virtual Segment *</type>
       <name>base</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a6f14a3faa93f2c610ea0d2cc7d903706</anchor>
-      <arglist>() const</arglist>
+      <anchor>adcd751c3ec393fabdef5ede0ffff6f2d</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Vertical *</type>
@@ -2069,71 +3069,71 @@
       <type>virtual DbU::Unit</type>
       <name>getSourceU</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>ad521ffba761b0e81b7b81b99d62f76f9</anchor>
-      <arglist>() const</arglist>
+      <anchor>a3932d5ce9094ead510e4e33bd4e78e1a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getTargetU</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a4d52a506cd19dfa8e22e1dc0695bd960</anchor>
-      <arglist>() const</arglist>
+      <anchor>a8e5f2a51f56c6bdb74024ac77c08a22a</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getDuSource</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a760500b1fd027c71f5362dd8c0b01ea7</anchor>
-      <arglist>() const</arglist>
+      <anchor>a44998a5f0d71597006fe4f3ffed8e3d1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual DbU::Unit</type>
       <name>getDuTarget</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a76e349c14c904b3300a15caa1ee8b680</anchor>
-      <arglist>() const</arglist>
+      <anchor>a4f505a59109fc6087696f483ccc7f9dc</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Interval</type>
       <name>getSpanU</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a0b5ac47ab175815e1a9bc07f2517614a</anchor>
-      <arglist>() const</arglist>
+      <anchor>a9409a4b64c21fa8b1517149728f0a4c1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
       <name>getConstraints</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a16737e7f2b77f8595fd2b607fac0f2f5</anchor>
-      <arglist>(DbU::Unit &amp;min, DbU::Unit &amp;max) const</arglist>
+      <anchor>aff207f4cc3c3682ed57369fdfe157d2d</anchor>
+      <arglist>(DbU::Unit &amp;min, DbU::Unit &amp;max) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Interval</type>
       <name>getSourceConstraints</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a3239751f475bc65adb9d56f6c771ebb0</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>a3c24695921b612a57c5ac60ff0aa3878</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Interval</type>
       <name>getTargetConstraints</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>ad2b5aeb2604548378c8d78c60862091f</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>aaa70ba865e312fb30f81fa7f973a0376</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual unsigned int</type>
       <name>getDirection</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a0dd7cf705ace42c662c289955313b2e9</anchor>
-      <arglist>() const</arglist>
+      <anchor>a09d03fbca9ab891c2f25bdae7f89a899</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual size_t</type>
       <name>getGCells</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>accdaef4410043f64da247a94a309733e</anchor>
-      <arglist>(vector&lt; GCell *&gt; &amp;) const</arglist>
+      <anchor>ab681dca7dc930e06cacc2de85bf99166</anchor>
+      <arglist>(vector&lt; GCell * &gt; &amp;) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
@@ -2167,15 +3167,15 @@
       <type>virtual bool</type>
       <name>checkPositions</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a6575c17bfa589c087215c87678e5719c</anchor>
-      <arglist>() const</arglist>
+      <anchor>acfbdc94b1e84bd192087df53ead1f06f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
       <name>checkConstraints</name>
       <anchorfile>classKatabatic_1_1AutoVertical.html</anchorfile>
-      <anchor>a8aef8f4bbafe3426840f9ebf31bb3b81</anchor>
-      <arglist>() const</arglist>
+      <anchor>a46576c7c5c5146f8fa53a821b0766994</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual unsigned int</type>
@@ -2214,241 +3214,6 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>Katabatic::BaseGrid::Axis</name>
-    <filename>classKatabatic_1_1BaseGrid_1_1Axis.html</filename>
-    <member kind="function">
-      <type>void</type>
-      <name>addGraduation</name>
-      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
-      <anchor>ada526136545060f41e8b9228ce1c5895</anchor>
-      <arglist>(DbU::Unit)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>sort</name>
-      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
-      <anchor>a47fdc9eea42b6975cdc835bb2e08810e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getSize</name>
-      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
-      <anchor>a9be1e4285daa77fe397767c097fbdc66</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getGraduationNumber</name>
-      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
-      <anchor>a2a6bd524227130d8ccf482aa2c484a42</anchor>
-      <arglist>(DbU::Unit pos, bool &amp;onGraduation) const</arglist>
-    </member>
-    <member kind="function">
-      <type>const DbU::Unit &amp;</type>
-      <name>operator[]</name>
-      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
-      <anchor>a074a4f61306b88baac6bbf54b0b3212c</anchor>
-      <arglist>(unsigned int i) const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::BaseGrid</name>
-    <filename>classKatabatic_1_1BaseGrid.html</filename>
-    <class kind="class">Katabatic::BaseGrid::Axis</class>
-    <member kind="function">
-      <type>void</type>
-      <name>destroy</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a3a80b6032f86a56bec74609034b3246f</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>const Box &amp;</type>
-      <name>getBoundingBox</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a4b6cf5a28d88d7ad3e6ddeac28a35a0b</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getColumns</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>aeaf0dae788f4c997e6172f9c734e3a91</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getRows</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a4bad6abc58473d953258a3230506291a</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getRawSize</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a47cf844f090417180d0bae098133565e</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getIndex</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>aae84726d9984c1df9905fc97d9b34f28</anchor>
-      <arglist>(unsigned int c, unsigned int r) const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getRow</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a8108a276ab72226244d302fb1b59f3f1</anchor>
-      <arglist>(unsigned int) const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getColumn</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a21a8582c0c89a61d1963262fa053bc1b</anchor>
-      <arglist>(unsigned int) const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Axis &amp;</type>
-      <name>getXGrads</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>a1e3eea49f6f58fb8d0b3fa73f5cf3fd7</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Axis &amp;</type>
-      <name>getYGrads</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>ab11d8b83eaa19f5fe6fecc63a8bb203e</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type></type>
-      <name>BaseGrid</name>
-      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
-      <anchor>ac479157e8ac115074615167e8a4a2789</anchor>
-      <arglist>(const Box &amp;)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::BaseObserver</name>
-    <filename>classKatabatic_1_1BaseObserver.html</filename>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>notify</name>
-      <anchorfile>classKatabatic_1_1BaseObserver.html</anchorfile>
-      <anchor>a52e577fb0c4f2e3650928334fb621c2f</anchor>
-      <arglist>(unsigned int flags)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::ChipTools</name>
-    <filename>classKatabatic_1_1ChipTools.html</filename>
-    <member kind="function">
-      <type></type>
-      <name>ChipTools</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>a5296f5ccb380869255d774b70e237686</anchor>
-      <arglist>(Cell *)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>isChip</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>ab6b7bc2b47ead460ac00a531451dc9cf</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>Cell *</type>
-      <name>getCell</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>a55a3a88610ef1af9931e634f77f2403b</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>Instance *</type>
-      <name>getCore</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>a8be5c4aecbe9b97ed2eb9557b046b091</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Box &amp;</type>
-      <name>getChipBb</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>ada9182cc0bcdb47b156a29cf42d08651</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Box &amp;</type>
-      <name>getLeftPadsBb</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>aa6b5ac93ecf1ee9f94f5176664dcf4bf</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Box &amp;</type>
-      <name>getRightPadsBb</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>a07e88c4c6a615019e618af327829f4d0</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Box &amp;</type>
-      <name>getTopPadsBb</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>ad31ff1dbfdf55216d684b4032a73db6b</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Box &amp;</type>
-      <name>getBottomPadsBb</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>aad46c56aeb14b07fcdfe93b51c554828</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Torus &amp;</type>
-      <name>getCorona</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>a19c65013cccd38e5d4169fc25454b938</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>intersectVPads</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>a708cdae658a916324059d321fafeaa7d</anchor>
-      <arglist>(const Box &amp;) const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>intersectHPads</name>
-      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
-      <anchor>aeead79862ba27f1219a3cbb3ef6999d2</anchor>
-      <arglist>(const Box &amp;) const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::GCell::CompareByDensity</name>
-    <filename>classKatabatic_1_1GCell_1_1CompareByDensity.html</filename>
-    <member kind="function">
-      <type></type>
-      <name>CompareByDensity</name>
-      <anchorfile>classKatabatic_1_1GCell_1_1CompareByDensity.html</anchorfile>
-      <anchor>a3a51c3a473276097f23c5f58c6800f9b</anchor>
-      <arglist>(unsigned int depth)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::GCell::CompareByIndex</name>
-    <filename>classKatabatic_1_1GCell_1_1CompareByIndex.html</filename>
-  </compound>
-  <compound kind="class">
     <name>Katabatic::GCell</name>
     <filename>classKatabatic_1_1GCell.html</filename>
     <class kind="class">Katabatic::GCell::CompareByDensity</class>
@@ -2465,106 +3230,106 @@
       <type>virtual const Name &amp;</type>
       <name>getName</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a9e76ae5cee9320b65251387419c9432b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a5e23c46b801d3049b349b68774a0d298</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isSaturated</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a9f274f17cf9166e997d306b120618fdf</anchor>
-      <arglist>() const</arglist>
+      <anchor>a9e283a15a7f03a2e4184f6c8bd4e9340</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isSaturated</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a49b7bd2f05abd94436177558fd0f97d8</anchor>
-      <arglist>(unsigned int depth) const</arglist>
+      <anchor>a18ae2575758a4a5e4a42f145309a34de</anchor>
+      <arglist>(unsigned int depth) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isValid</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a5bc2a781be2586924afce4e4a4ea6697</anchor>
-      <arglist>() const</arglist>
+      <anchor>aac1b70a2ed67ead038c4d3f5ac4d8a81</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>isAboveDensity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a0e0a7b382b06e230051965bcb78ed21c</anchor>
-      <arglist>(float threshold) const</arglist>
+      <anchor>aed5c1b0b1a63be3064f3eff2d24b4abd</anchor>
+      <arglist>(float threshold) const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>hasFreeTrack</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ac2275a015db51cc12dd53fb13d22ca4f</anchor>
-      <arglist>(size_t depth, float reserve) const</arglist>
+      <anchor>abe5a85792463184f487b42efd80cc25e</anchor>
+      <arglist>(size_t depth, float reserve) const </arglist>
     </member>
     <member kind="function">
       <type>GCellGrid *</type>
       <name>getGCellGrid</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a9a56286f633fddd702d66563de457a4a</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0702328522e94ca9705222cd5b9e9c6d</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>getDepth</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a6c4d9081746b8daa3e45e5e3dd185b60</anchor>
-      <arglist>() const</arglist>
+      <anchor>ad43be8bb2a3c8247405feef4fa973734</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>getIndex</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a762de91e7869ca544ff034b99fc2e0a6</anchor>
-      <arglist>() const</arglist>
+      <anchor>a3d2cc17c5b9eb2ca96ab10b6313391ad</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>getRow</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ad26f8bcf642c2620ac525cc04c8376c0</anchor>
-      <arglist>() const</arglist>
+      <anchor>a14db4e8542de7da785abec87fa65d6a4</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>getColumn</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ac5b1a776c3eafa7f68d31292615011fa</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0035603802c53109ab0581ac39239932</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>GCell *</type>
       <name>getLeft</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a633722329744550b6da94c3b6fb97484</anchor>
-      <arglist>() const</arglist>
+      <anchor>a0aba3a4c02ade1a0af6d4956b2d4d944</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>GCell *</type>
       <name>getRight</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>abdeb6b4a351f8b292894d3f0c24f105d</anchor>
-      <arglist>() const</arglist>
+      <anchor>a23fdbef3699158d88da408ad8c23d091</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>GCell *</type>
       <name>getUp</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a335506a314a2330b5a354906e798e60c</anchor>
-      <arglist>() const</arglist>
+      <anchor>a43374e26fb08fb4a4d47599e1f81e293</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>GCell *</type>
       <name>getDown</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ae448c9d6d028e967d7bd5a1bfdd05311</anchor>
-      <arglist>() const</arglist>
+      <anchor>a303e94e8090f008b434e785af9a34eb5</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
@@ -2577,127 +3342,127 @@
       <type>virtual Box</type>
       <name>getBoundingBox</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ab5d8bf98ab5af6fcfebea1b9f446d5d7</anchor>
-      <arglist>() const</arglist>
+      <anchor>a3b9694bf093e3ea16e4a8c8126a8d4db</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getX</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a00b8f54c8171f6699e57de1b8c18eeb1</anchor>
-      <arglist>() const</arglist>
+      <anchor>a852afe759ce2cb8cb9c0524fc1e23387</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getY</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a4580de6b074712e400d5d238ce3af054</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac597d25a34a79fb4393211c70f5a1bc3</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getXMax</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>aaf7ff16cd2fd5a3fa4c5221efb9b9b76</anchor>
-      <arglist>() const</arglist>
+      <anchor>ae58d4705ca2370ad5e0912d9e92e94da</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getYMax</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a096a92c18156eac4268efb50496a2d18</anchor>
-      <arglist>() const</arglist>
+      <anchor>a98f8c479d4789850a926d87443e56e00</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Interval</type>
       <name>getSide</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a10f3dd5001b2015e34a9aacdacf6eae6</anchor>
-      <arglist>(unsigned int) const</arglist>
+      <anchor>a46861e2e666df89cd2e6eaa7ee146bcf</anchor>
+      <arglist>(unsigned int) const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getHCapacity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ad0dda8d59162b90040263fc55d7da714</anchor>
-      <arglist>() const</arglist>
+      <anchor>a75e5f7e9b993087270e8b21eb1e71e8d</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getVCapacity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a3994e204ebccf8aa12899e0c5ef4112b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a4f58e38dbcd75ae549f3ce9526ce97e1</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getDensity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ad31c16c87377e164728a0df55e21f96b</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>abdc872b796225ad9d6414f59b6d503c1</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getCDensity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ae56b981fad5960835faef809ec282cfa</anchor>
-      <arglist>(unsigned int flags=0) const</arglist>
+      <anchor>a35c9f813f00788d8093faa5c37c846e3</anchor>
+      <arglist>(unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getWDensity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>aa64538731e911c60eeaea557be1c7740</anchor>
-      <arglist>(unsigned int depth, unsigned int flags=0) const</arglist>
+      <anchor>acfacab8f1d78e38ece30b4d2c63cf6d9</anchor>
+      <arglist>(unsigned int depth, unsigned int flags=0) const </arglist>
     </member>
     <member kind="function">
       <type>DbU::Unit</type>
       <name>getBlockage</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ab37ffda5a2e1ba60931d32c29237bd33</anchor>
-      <arglist>(unsigned int depth) const</arglist>
+      <anchor>a3cd78c51e165f5242bb99ab5033ff871</anchor>
+      <arglist>(unsigned int depth) const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getFragmentation</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a44ec8d16030b5900bd0ccc02652b727f</anchor>
-      <arglist>(unsigned int depth) const</arglist>
+      <anchor>ab154601770f4c29260c19364f130d534</anchor>
+      <arglist>(unsigned int depth) const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getFeedthroughs</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a14feed45699c8dc406251519dc08bc79</anchor>
-      <arglist>(unsigned int depth) const</arglist>
+      <anchor>a1b246f4d67f6a21d391d2f366d184092</anchor>
+      <arglist>(unsigned int depth) const </arglist>
     </member>
     <member kind="function">
       <type>float</type>
       <name>getGlobalsCount</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a4785bcc49da76fc38f6940f5b1cc5b17</anchor>
-      <arglist>(unsigned int depth) const</arglist>
+      <anchor>a315f23abf15d879459eab98a6eeece12</anchor>
+      <arglist>(unsigned int depth) const </arglist>
     </member>
     <member kind="function">
       <type>const vector&lt; AutoSegment * &gt; &amp;</type>
       <name>getHSegments</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a81575302a8794958c310dc101807e9c5</anchor>
-      <arglist>() const</arglist>
+      <anchor>ad885baf0428b0ffa73738e60b9fb6956</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>const vector&lt; AutoSegment * &gt; &amp;</type>
       <name>getVSegments</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ac3c357d72a24990494758dcc216e3b1e</anchor>
-      <arglist>() const</arglist>
+      <anchor>a2c54706769cb88ca13d233726ded6f2f</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>const vector&lt; AutoContact * &gt; &amp;</type>
       <name>getContacts</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>aacf50ce6dcef3a7523453725af7feeae</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac2d662a9bbf5b80eb92776e4bce06ec5</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>AutoSegments</type>
@@ -2745,29 +3510,29 @@
       <type>size_t</type>
       <name>getRoutingPads</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a3bda8c3dbb2896a0e6e57f974d0c1cad</anchor>
-      <arglist>(set&lt; RoutingPad *&gt; &amp;)</arglist>
+      <anchor>a63d53a84324e393e7d7b3e73548ed6bf</anchor>
+      <arglist>(set&lt; RoutingPad * &gt; &amp;)</arglist>
     </member>
     <member kind="function">
       <type>const Key &amp;</type>
       <name>getKey</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>ade1e79e88bf4f4c173ffd083dd5470c9</anchor>
-      <arglist>() const</arglist>
+      <anchor>ab17b3f4c7e2558bc29ea026925fd6fd6</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>checkDensity</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a88208864ba2268689946a8cb7a86fcb2</anchor>
-      <arglist>() const</arglist>
+      <anchor>a8f5167eb40def2cfa878913743079f03</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>checkEdgeSaturation</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>af4dcc99733b7ea77e8c3c7da9ac3cd3c</anchor>
-      <arglist>(size_t hreserved, size_t vreserved) const</arglist>
+      <anchor>a0fb331311568ccb14d2005065575dc28</anchor>
+      <arglist>(size_t hreserved, size_t vreserved) const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -2843,22 +3608,22 @@
       <type>void</type>
       <name>rpDesaturate</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a11f07f57cc33fcd4b2d310145c778801</anchor>
-      <arglist>(set&lt; Net *&gt; &amp;)</arglist>
+      <anchor>a8785f0ae0bc6de278281c353734b67b7</anchor>
+      <arglist>(set&lt; Net * &gt; &amp;)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>stepDesaturate</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>a5ae4d250ebecf59aa98fb068d848be14</anchor>
-      <arglist>(unsigned int depth, set&lt; Net *&gt; &amp;, AutoSegment *&amp;moved, unsigned int flags=0)</arglist>
+      <anchor>a1256c28423a9a260d320e25b3fc1bf57</anchor>
+      <arglist>(unsigned int depth, set&lt; Net * &gt; &amp;, AutoSegment *&amp;moved, unsigned int flags=0)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>stepNetDesaturate</name>
       <anchorfile>classKatabatic_1_1GCell.html</anchorfile>
-      <anchor>abe4cf4a81bb78e9b479992336a999a07</anchor>
-      <arglist>(unsigned int depth, set&lt; Net *&gt; &amp;globalNets, SetIndex &amp;invalidateds)</arglist>
+      <anchor>aab5b30c49b0453db495337931cf284a9</anchor>
+      <arglist>(unsigned int depth, set&lt; Net * &gt; &amp;globalNets, SetIndex &amp;invalidateds)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static size_t</type>
@@ -2891,6 +3656,53 @@
     <docanchor file="classKatabatic_1_1GCell" title="GCell Implantation">secGCellImplantation</docanchor>
   </compound>
   <compound kind="class">
+    <name>Katabatic::GCell::CompareByDensity</name>
+    <filename>classKatabatic_1_1GCell_1_1CompareByDensity.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>CompareByDensity</name>
+      <anchorfile>classKatabatic_1_1GCell_1_1CompareByDensity.html</anchorfile>
+      <anchor>a3a51c3a473276097f23c5f58c6800f9b</anchor>
+      <arglist>(unsigned int depth)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::GCell::CompareByIndex</name>
+    <filename>classKatabatic_1_1GCell_1_1CompareByIndex.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::GCell::Key</name>
+    <filename>classKatabatic_1_1GCell_1_1Key.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Key</name>
+      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
+      <anchor>a6efdb05badcc81d3d3013ce4730bbe6e</anchor>
+      <arglist>(GCell *, unsigned int depth)</arglist>
+    </member>
+    <member kind="function">
+      <type>float</type>
+      <name>getDensity</name>
+      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
+      <anchor>a31deef556a6aa5e519d3c79bd9c383c0</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCell *</type>
+      <name>getGCell</name>
+      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
+      <anchor>ab45ccfee0f781ec16c50672663d36141</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>update</name>
+      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
+      <anchor>a1b9cfb06a645d2b0d93024bc6ff82e9e</anchor>
+      <arglist>(unsigned int depth)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>Katabatic::GCellDensitySet</name>
     <filename>classKatabatic_1_1GCellDensitySet.html</filename>
     <member kind="function">
@@ -2904,8 +3716,8 @@
       <type></type>
       <name>GCellDensitySet</name>
       <anchorfile>classKatabatic_1_1GCellDensitySet.html</anchorfile>
-      <anchor>a5d97169315528fca978d5e65a3cc8130</anchor>
-      <arglist>(unsigned int depth, const std::vector&lt; GCell *&gt; &amp;)</arglist>
+      <anchor>ada8d6c973310b9c4f66ec3c5b611bdf9</anchor>
+      <arglist>(unsigned int depth, const std::vector&lt; GCell * &gt; &amp;)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -2918,22 +3730,22 @@
       <type>bool</type>
       <name>empty</name>
       <anchorfile>classKatabatic_1_1GCellDensitySet.html</anchorfile>
-      <anchor>a644718bb2fb240de962dc3c9a1fdf0dc</anchor>
-      <arglist>() const</arglist>
+      <anchor>ac6e61de369e994009e36f344f99c15ad</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>size</name>
       <anchorfile>classKatabatic_1_1GCellDensitySet.html</anchorfile>
-      <anchor>a259cb5a711406a8c3e5d937eb9350cca</anchor>
-      <arglist>() const</arglist>
+      <anchor>aac782da1f912bceb5d8ad00c8dc892ac</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>const std::set&lt; GCell *, GCell::CompareByKey &gt; &amp;</type>
       <name>getGCells</name>
       <anchorfile>classKatabatic_1_1GCellDensitySet.html</anchorfile>
-      <anchor>a8bac89a45c1449ebdb28a778993cb8e5</anchor>
-      <arglist>() const</arglist>
+      <anchor>a4ee769ef70539275bf4b500461250af0</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -2965,6 +3777,210 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>Katabatic::BaseGrid</name>
+    <filename>classKatabatic_1_1BaseGrid.html</filename>
+    <class kind="class">Katabatic::BaseGrid::Axis</class>
+    <member kind="function">
+      <type>void</type>
+      <name>destroy</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a3a80b6032f86a56bec74609034b3246f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const Box &amp;</type>
+      <name>getBoundingBox</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a895132a706d822c43d6ec747c3266f74</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getColumns</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>ae2bf24a99431664bb5897b122bb15b43</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getRows</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>ab7e3c454272e9a8f2c803e24454d7303</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getRawSize</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>ac25c519161036ae2d004fcc78abf7856</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getIndex</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a5ffadea177995aedb4152f58b9dd391d</anchor>
+      <arglist>(unsigned int c, unsigned int r) const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getRow</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a3a813e40c392fb62c5b1b86d11f1dcb4</anchor>
+      <arglist>(unsigned int) const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getColumn</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a3ae31ad99809b916f386fe9bde67c6f2</anchor>
+      <arglist>(unsigned int) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Axis &amp;</type>
+      <name>getXGrads</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a5731a526d261c2fa798a2c836cfeb9d1</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Axis &amp;</type>
+      <name>getYGrads</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>a40fe4841176c132346564b3d4c942668</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type></type>
+      <name>BaseGrid</name>
+      <anchorfile>classKatabatic_1_1BaseGrid.html</anchorfile>
+      <anchor>ac479157e8ac115074615167e8a4a2789</anchor>
+      <arglist>(const Box &amp;)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::BaseGrid::Axis</name>
+    <filename>classKatabatic_1_1BaseGrid_1_1Axis.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>addGraduation</name>
+      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
+      <anchor>ada526136545060f41e8b9228ce1c5895</anchor>
+      <arglist>(DbU::Unit)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sort</name>
+      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
+      <anchor>a47fdc9eea42b6975cdc835bb2e08810e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getSize</name>
+      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
+      <anchor>af55b3790622878d65ed5ff2bb2b3fcc4</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>getGraduationNumber</name>
+      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
+      <anchor>a5c8a687396db80839515c1f04c205f9e</anchor>
+      <arglist>(DbU::Unit pos, bool &amp;onGraduation) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const DbU::Unit &amp;</type>
+      <name>operator[]</name>
+      <anchorfile>classKatabatic_1_1BaseGrid_1_1Axis.html</anchorfile>
+      <anchor>a15b53d212638c335c75fe7fd0390716c</anchor>
+      <arglist>(unsigned int i) const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::Grid</name>
+    <filename>classKatabatic_1_1Grid.html</filename>
+    <templarg>GCellT</templarg>
+    <base>Katabatic::BaseGrid</base>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCell</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>ae9a2132d74bd6a15002a3917f57516ae</anchor>
+      <arglist>(unsigned int index) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCell</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a40a8afc66df78d74cb080eacfe1322e2</anchor>
+      <arglist>(const Point p) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCell</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a1295cff651e7319a380bde52deddd360</anchor>
+      <arglist>(const Point p1, const Point p2) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCellLeft</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a2ae58a243a3f62f0f28e4e2b4b2bb308</anchor>
+      <arglist>(const GCellT *gcell) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCellRight</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a71483ce8b6a02771e89b410711179740</anchor>
+      <arglist>(const GCellT *gcell) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCellUp</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a6af56d56284dd6fde6e3a6c781cb4faf</anchor>
+      <arglist>(const GCellT *gcell) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellT *</type>
+      <name>getGCellDown</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a594f0986971454bc9655d9943126ae8c</anchor>
+      <arglist>(const GCellT *gcell) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GenericCollection&lt; GCellT * &gt;</type>
+      <name>getGCells</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a24b4ab5b46b56ee744cf4c368a114d95</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericCollection&lt; GCellT * &gt;</type>
+      <name>getGCellsColumn</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>aa8d0393323104d48c089a8429b254689</anchor>
+      <arglist>(unsigned int column, unsigned int rowStart, unsigned int rowStop)</arglist>
+    </member>
+    <member kind="function">
+      <type>GenericCollection&lt; GCellT * &gt;</type>
+      <name>getGCellsRow</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a35e2075302cdb696945f05c5bcc817a0</anchor>
+      <arglist>(unsigned int row, unsigned int columnStart, unsigned int columnStop)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type></type>
+      <name>Grid</name>
+      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
+      <anchor>a1b772cc784f7110caca47acb76dcec62</anchor>
+      <arglist>(const Box &amp;)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>Katabatic::GCellGrid</name>
     <filename>classKatabatic_1_1GCellGrid.html</filename>
     <base>Grid&lt; GCell &gt;</base>
@@ -2976,84 +3992,49 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <type>@</type>
       <name>AverageHVDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40fead15bf3e5b63f398d76d717a088acd310</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <type>@</type>
       <name>AverageHDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40feaec0ad06385eae8d1e2dee4f3c9f9f4ed</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <type>@</type>
       <name>AverageVDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40fead1a1d89017d10aeb63d1c05b6fb650dd</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <type>@</type>
       <name>MaxHVDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40fea8265e053af0708a508ecbce86d1a8165</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <type>@</type>
       <name>MaxVDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40fea5f0a89ca367ef98550eaa86c1e32c873</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <type>@</type>
       <name>MaxHDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40fea2a6d29b012cc89026c3c0061f87a4f03</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>MaxDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40fea90a2f4a4ee8558de9f99458ddeab852c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>AverageHVDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40fead15bf3e5b63f398d76d717a088acd310</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>AverageHDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40feaec0ad06385eae8d1e2dee4f3c9f9f4ed</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>AverageVDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40fead1a1d89017d10aeb63d1c05b6fb650dd</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>MaxHVDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40fea8265e053af0708a508ecbce86d1a8165</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>MaxVDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40fea5f0a89ca367ef98550eaa86c1e32c873</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>MaxHDensity</name>
-      <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a07884f5e1af410e98208fed76a2b40fea2a6d29b012cc89026c3c0061f87a4f03</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
+      <type>@</type>
       <name>MaxDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
       <anchor>a07884f5e1af410e98208fed76a2b40fea90a2f4a4ee8558de9f99458ddeab852c</anchor>
@@ -3063,50 +4044,50 @@
       <type>Cell *</type>
       <name>getCell</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a55a3a88610ef1af9931e634f77f2403b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a148fdf09f18e7adb39a73c747f165266</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>KatabaticEngine *</type>
       <name>getKatabatic</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a0234fdabe7682546f1201bccd0b5cacf</anchor>
-      <arglist>() const</arglist>
+      <anchor>af6f266b5c40e2dd7d387b5d4fcb5f196</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>getDensityMode</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>af1171855a3e928cace78d1534a8d0629</anchor>
-      <arglist>() const</arglist>
+      <anchor>a412fc9ba0a5d19ee3e7949c1ed6199ee</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>getHEdgeCapacity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a041680c5d171d4c7cb0edba96f0c390f</anchor>
-      <arglist>() const</arglist>
+      <anchor>a09721f6fc7df7727a63ddbc4552ad0d9</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>getVEdgeCapacity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>ae8e2cf3685ccb0621f4f85c7999834e8</anchor>
-      <arglist>() const</arglist>
+      <anchor>aee0cab79d66553ad9b2a7fc2bf8725be</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>Interval</type>
       <name>getUSide</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a8272dad8f7d916333f934f3cbde981bb</anchor>
-      <arglist>(unsigned int) const</arglist>
+      <anchor>a371dfcfdfa4043649a81e1ff35287528</anchor>
+      <arglist>(unsigned int) const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>checkDensity</name>
       <anchorfile>classKatabatic_1_1GCellGrid.html</anchorfile>
-      <anchor>a88208864ba2268689946a8cb7a86fcb2</anchor>
-      <arglist>() const</arglist>
+      <anchor>a8f5167eb40def2cfa878913743079f03</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
@@ -3150,727 +4131,6 @@
       <anchor>a19a45b2e6c6b9ca8898b2fde035d1827</anchor>
       <arglist>(KatabaticEngine *)</arglist>
     </member>
-  </compound>
-  <compound kind="class">
-    <name>anonymous_namespace{LoadGrByNet.cpp}::GCellTopology</name>
-    <filename>classanonymous__namespace_02LoadGrByNet_8cpp_03_1_1GCellTopology.html</filename>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>doRp_AutoContacts</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gae9cae408ea16a3f7c77c3d75f0242f19</anchor>
-      <arglist>(GCell *, Component *, AutoContact *&amp;source, AutoContact *&amp;target, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static AutoContact *</type>
-      <name>doRp_Access</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gada6d3c694b8d741b6504b7c3da166357</anchor>
-      <arglist>(GCell *, Component *, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static AutoContact *</type>
-      <name>doRp_AccessPad</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga60edeea78b56db072fc26a58a7afbcd4</anchor>
-      <arglist>(RoutingPad *, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>doRp_StairCaseH</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga3291d84592215974fe4052c00304bdb1</anchor>
-      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>doRp_StairCaseV</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga6361fb0e90f35cd59063a1ee971ef2a9</anchor>
-      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_xG</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaaa6d4ccd2eadfb6bc3e2cc98cfaf2cca</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_xG_1Pad</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gabe00ab10a0dab8a3d2de0709e61e4e7d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_1G_1M1</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gad24a03e87e269f16dcc28d8c2d9f1cfb</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_1G_xM1</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga97942453a1bc5b01106aa380271fd7fc</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_xG_xM1_xM3</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaf9b009520f54099668ac9d12f2c85257</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_xG_1M1_1M2</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gae60ed4e27ad89a1e2ff2cd6415ef33f1</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_xG_xM2</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga532d1c6b530e0375078ea2d6ea3c6024</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_1G_1M3</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga2519ef984b3d19f123827a9b12651672</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>_do_xG_xM3</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga007efc725aae31782204a44949765cb4</anchor>
-      <arglist>()</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::Grid</name>
-    <filename>classKatabatic_1_1Grid.html</filename>
-    <templarg>GCellT</templarg>
-    <base>Katabatic::BaseGrid</base>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a98650c11b4aa0c6107c4d890dff61587</anchor>
-      <arglist>(unsigned int index) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a0ee3cd2fb8c66458b0d00e39826921da</anchor>
-      <arglist>(const Point p) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a1beb5c490b2e651eab49178297b6cda2</anchor>
-      <arglist>(const Point p1, const Point p2) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCellLeft</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>ae5041816e75468b69bb0bbf24a4e8eca</anchor>
-      <arglist>(const GCellT *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCellRight</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a0e9bba0feb437dca932d59703298358e</anchor>
-      <arglist>(const GCellT *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCellUp</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a3a22f2bce9124765eb937b78c90059a0</anchor>
-      <arglist>(const GCellT *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellT *</type>
-      <name>getGCellDown</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a4288eb8b1357d9800341b82df6b23944</anchor>
-      <arglist>(const GCellT *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericCollection&lt; GCellT * &gt;</type>
-      <name>getGCells</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a24b4ab5b46b56ee744cf4c368a114d95</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericCollection&lt; GCellT * &gt;</type>
-      <name>getGCellsColumn</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>aa8d0393323104d48c089a8429b254689</anchor>
-      <arglist>(unsigned int column, unsigned int rowStart, unsigned int rowStop)</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericCollection&lt; GCellT * &gt;</type>
-      <name>getGCellsRow</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a35e2075302cdb696945f05c5bcc817a0</anchor>
-      <arglist>(unsigned int row, unsigned int columnStart, unsigned int columnStop)</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type></type>
-      <name>Grid</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a1b772cc784f7110caca47acb76dcec62</anchor>
-      <arglist>(const Box &amp;)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Grid&lt; GCell &gt;</name>
-    <filename>classKatabatic_1_1Grid.html</filename>
-    <base>Katabatic::BaseGrid</base>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a98650c11b4aa0c6107c4d890dff61587</anchor>
-      <arglist>(unsigned int index) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a0ee3cd2fb8c66458b0d00e39826921da</anchor>
-      <arglist>(const Point p) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a1beb5c490b2e651eab49178297b6cda2</anchor>
-      <arglist>(const Point p1, const Point p2) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCellLeft</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>ae5041816e75468b69bb0bbf24a4e8eca</anchor>
-      <arglist>(const GCell *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCellRight</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a0e9bba0feb437dca932d59703298358e</anchor>
-      <arglist>(const GCell *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCellUp</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a3a22f2bce9124765eb937b78c90059a0</anchor>
-      <arglist>(const GCell *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCellDown</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a4288eb8b1357d9800341b82df6b23944</anchor>
-      <arglist>(const GCell *gcell) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericCollection&lt; GCell *&gt;</type>
-      <name>getGCells</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a24b4ab5b46b56ee744cf4c368a114d95</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericCollection&lt; GCell *&gt;</type>
-      <name>getGCellsColumn</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>aa8d0393323104d48c089a8429b254689</anchor>
-      <arglist>(unsigned int column, unsigned int rowStart, unsigned int rowStop)</arglist>
-    </member>
-    <member kind="function">
-      <type>GenericCollection&lt; GCell *&gt;</type>
-      <name>getGCellsRow</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a35e2075302cdb696945f05c5bcc817a0</anchor>
-      <arglist>(unsigned int row, unsigned int columnStart, unsigned int columnStop)</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type></type>
-      <name>Grid</name>
-      <anchorfile>classKatabatic_1_1Grid.html</anchorfile>
-      <anchor>a1b772cc784f7110caca47acb76dcec62</anchor>
-      <arglist>(const Box &amp;)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::KatabaticEngine</name>
-    <filename>classKatabatic_1_1KatabaticEngine.html</filename>
-    <base>CRL::ToolEngine</base>
-    <member kind="typedef">
-      <type>set&lt; Net *, NetCompareByName &gt;</type>
-      <name>NetSet</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a92ed88f9aecd2f195089c4029fa8bcc7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>isGMetal</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a83a7793270669d2669222eac2caa7f93</anchor>
-      <arglist>(const Layer *) const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>isChip</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ab6b7bc2b47ead460ac00a531451dc9cf</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>isInDemoMode</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a0141bff96a4778a806d4eba5d256c32a</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>doWarnOnGCellOverload</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a9dec164d53fdee77f0f008133ecbd97f</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>doDestroyBaseContact</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a6bb0ac3c0ec9720a3519d43491939f97</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>doDestroyBaseSegment</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a54d58d645317d43371f6b0bec1815e6b</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>doDestroyTool</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a867e6dbfea5e5895a01ef71c66398b26</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual const Name &amp;</type>
-      <name>getName</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a9e76ae5cee9320b65251387419c9432b</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>EngineState</type>
-      <name>getState</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a878e8b694aa243a767c2f232799ec9b3</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getFlags</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a7132cd3f405dc24b3897b4396c8ecc92</anchor>
-      <arglist>(unsigned int mask) const</arglist>
-    </member>
-    <member kind="function">
-      <type>Configuration *</type>
-      <name>getKatabaticConfiguration</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>adccd6ceec2c68234d3a824ad7ae3954e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual Configuration *</type>
-      <name>getConfiguration</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a9a7fbadfe526875680f698c76adfb128</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>RoutingGauge *</type>
-      <name>getRoutingGauge</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a171ed6fac01ac5067d4f1b770cc419cf</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>RoutingLayerGauge *</type>
-      <name>getLayerGauge</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a0b7c308ac7fccc21dd0401c6ce70a586</anchor>
-      <arglist>(size_t depth) const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Layer *</type>
-      <name>getRoutingLayer</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>afa7ea850397e87889733ac959833b49f</anchor>
-      <arglist>(size_t depth) const</arglist>
-    </member>
-    <member kind="function">
-      <type>Layer *</type>
-      <name>getContactLayer</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a4c4549515aef37e81f2cc6537b931edc</anchor>
-      <arglist>(size_t depth) const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCellGrid *</type>
-      <name>getGCellGrid</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a9a56286f633fddd702d66563de457a4a</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const NetSet &amp;</type>
-      <name>getRoutingNets</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a8f661928f8f709552c8486d68ac33c55</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>DbU::Unit</type>
-      <name>getGlobalThreshold</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a094b479155d3f30ec54e252c35dcffa3</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>float</type>
-      <name>getSaturateRatio</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a44d2c1fbd97dd09b102b461e906367a0</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>getSaturateRp</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a61977cc1fd981e7f1c6125189ed20509</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>DbU::Unit</type>
-      <name>getExtensionCap</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ad9072cfa6215c92c9a9842270cf677c5</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const ChipTools &amp;</type>
-      <name>getChipTools</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a423f5f2214c8b9fe73da9a86b6f6d9b9</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>xmlWriteGCellGrid</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>aecbe8bdcc61024a7539de3ea932c5e06</anchor>
-      <arglist>(ostream &amp;)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>xmlWriteGCellGrid</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a78394ac380a0fa462f268dcc2becc50e</anchor>
-      <arglist>(const string &amp;)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setState</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a2391b9bfcb773398b9661b5ac0ef1a30</anchor>
-      <arglist>(EngineState state)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setFlags</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>aeb14f94914af58657a0dc2f50ec98df5</anchor>
-      <arglist>(unsigned int)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>unsetFlags</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a1a6fac115cb81db48e3ac9ffa0721bb5</anchor>
-      <arglist>(unsigned int)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setGlobalThreshold</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a1bd1e0104b73d4c558b0e121002796a6</anchor>
-      <arglist>(DbU::Unit)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setSaturateRatio</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ac2b780e06975ce8a0d6ca96f20cb971f</anchor>
-      <arglist>(float)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setSaturateRp</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ade227e828b8c8fbfce478e353ca3ca59</anchor>
-      <arglist>(size_t)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>printMeasures</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a2ea4b4fc379fb85a13890db451cbf93a</anchor>
-      <arglist>(const string &amp;) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>refresh</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a1e9bb62be35c6a415a1950c72c1964ef</anchor>
-      <arglist>(unsigned int flags=KbOpenSession)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>createDetailedGrid</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a1b7d8ed09a198f7afd6e3ac911f6eb37</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>makePowerRails</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>aaba3b9450c85634131146fb507089f2d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>loadGlobalRouting</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a583925cfe4bbadcc1c24fe619debce09</anchor>
-      <arglist>(unsigned int method)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>slackenBorder</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a145b36b18fc9149980c5d6bd4bd10e0d</anchor>
-      <arglist>(Box bb, Layer::Mask, unsigned int flags)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>slackenBlockIos</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ac40754d4a9bd0cf327b5fa088e993897</anchor>
-      <arglist>(Instance *core)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>moveUpNetTrunk</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ac934a049003c9d5d2380f44ff393e458</anchor>
-      <arglist>(AutoSegment *, set&lt; Net *&gt; &amp;globalNets, GCell::SetIndex &amp;invalidateds)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>layerAssign</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a77833ce938a430785ba869eedbc2300c</anchor>
-      <arglist>(unsigned int method)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>computeNetConstraints</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a6957a5830a4d6f1b2daf83a7d98df601</anchor>
-      <arglist>(Net *)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>toOptimals</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ad6b9f7d94ee4a88f12c485e48d1e644a</anchor>
-      <arglist>(Net *)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>finalizeLayout</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a468eddb683c04cfeea1c5124a39e1f86</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static KatabaticEngine *</type>
-      <name>create</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>ab877a64c314024602cfb04631ebfbfc4</anchor>
-      <arglist>(Cell *)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static const Name &amp;</type>
-      <name>staticGetName</name>
-      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
-      <anchor>a802eee6265da8d536db52d412f8a4afd</anchor>
-      <arglist>()</arglist>
-    </member>
-    <docanchor file="classKatabatic_1_1KatabaticEngine" title="States of KatabaticEngine">secEngineStates</docanchor>
-    <docanchor file="classKatabatic_1_1KatabaticEngine" title="KatabaticEngine Implementation Details">secEngineImpl</docanchor>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::GCell::Key</name>
-    <filename>classKatabatic_1_1GCell_1_1Key.html</filename>
-    <member kind="function">
-      <type></type>
-      <name>Key</name>
-      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
-      <anchor>a6efdb05badcc81d3d3013ce4730bbe6e</anchor>
-      <arglist>(GCell *, unsigned int depth)</arglist>
-    </member>
-    <member kind="function">
-      <type>float</type>
-      <name>getDensity</name>
-      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
-      <anchor>a9f45c741b4c738e833fe66fe125592b7</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>GCell *</type>
-      <name>getGCell</name>
-      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
-      <anchor>a819cf639562a031a1e2e061fe1293d66</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>update</name>
-      <anchorfile>classKatabatic_1_1GCell_1_1Key.html</anchorfile>
-      <anchor>a1b9cfb06a645d2b0d93024bc6ff82e9e</anchor>
-      <arglist>(unsigned int depth)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::LocatorHelper</name>
-    <filename>classKatabatic_1_1LocatorHelper.html</filename>
-    <member kind="function">
-      <type></type>
-      <name>LocatorHelper</name>
-      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
-      <anchor>af44c2fcc73d387e3e3b5c334f25b070b</anchor>
-      <arglist>(AutoContact *, unsigned int flags=0)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>isValid</name>
-      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
-      <anchor>a5bc2a781be2586924afce4e4a4ea6697</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>AutoSegment *</type>
-      <name>getSegment</name>
-      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
-      <anchor>ad0f8becc4187c833b6f6c5f902f8aaa5</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>progress</name>
-      <anchorfile>classKatabatic_1_1LocatorHelper.html</anchorfile>
-      <anchor>a1be98ae64bededebc29a04f257024ebe</anchor>
-      <arglist>()</arglist>
-    </member>
-    <docanchor file="classKatabatic_1_1LocatorHelper" title="Implementation Details">secLocHelperImplementation</docanchor>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::Observable</name>
-    <filename>classKatabatic_1_1Observable.html</filename>
-    <member kind="function">
-      <type></type>
-      <name>Observable</name>
-      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
-      <anchor>a6438e92e07db169a97ed3eba36788dc4</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>T *</type>
-      <name>getObserver</name>
-      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
-      <anchor>acc0b7276e09628f2b101ecf751aacd2a</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>addObserver</name>
-      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
-      <anchor>a783fda85eeabe9c660881f236f162767</anchor>
-      <arglist>(BaseObserver *)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>removeObserver</name>
-      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
-      <anchor>acaa5a7fc7fa631e3006a42006d753f43</anchor>
-      <arglist>(BaseObserver *)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>notify</name>
-      <anchorfile>classKatabatic_1_1Observable.html</anchorfile>
-      <anchor>a52e577fb0c4f2e3650928334fb621c2f</anchor>
-      <arglist>(unsigned int flags)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>Katabatic::Observer</name>
-    <filename>classKatabatic_1_1Observer.html</filename>
-    <templarg></templarg>
-    <base>Katabatic::BaseObserver</base>
-    <member kind="function">
-      <type></type>
-      <name>Observer</name>
-      <anchorfile>classKatabatic_1_1Observer.html</anchorfile>
-      <anchor>ab05ec12517c51952960dd4f324499b44</anchor>
-      <arglist>(const T *owner)</arglist>
-    </member>
-    <member kind="function">
-      <type>T *</type>
-      <name>getOwner</name>
-      <anchorfile>classKatabatic_1_1Observer.html</anchorfile>
-      <anchor>ac29b8f99d632058c95784fd7233b8474</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <docanchor file="classKatabatic_1_1Observer" title="Observer Implementation Notes">secImplObserver</docanchor>
   </compound>
   <compound kind="class">
     <name>Katabatic::Session</name>
@@ -4115,770 +4375,467 @@
     </member>
     <docanchor file="classKatabatic_1_1Session" title="Session Algorithm">secSessionAlgo</docanchor>
   </compound>
-  <compound kind="namespace">
-    <name>anonymous_namespace{AutoSegment.cpp}</name>
-    <filename>namespaceanonymous__namespace_02AutoSegment_8cpp_03.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>anonymous_namespace{ChipTools.cpp}</name>
-    <filename>namespaceanonymous__namespace_02ChipTools_8cpp_03.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>anonymous_namespace{GCell.cpp}</name>
-    <filename>namespaceanonymous__namespace_02GCell_8cpp_03.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>anonymous_namespace{KatabaticEngine.cpp}</name>
-    <filename>namespaceanonymous__namespace_02KatabaticEngine_8cpp_03.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>anonymous_namespace{LoadGrByNet.cpp}</name>
-    <filename>namespaceanonymous__namespace_02LoadGrByNet_8cpp_03.html</filename>
-    <class kind="class">anonymous_namespace{LoadGrByNet.cpp}::GCellTopology</class>
-    <member kind="enumeration">
+  <compound kind="class">
+    <name>Katabatic::ChipTools</name>
+    <filename>classKatabatic_1_1ChipTools.html</filename>
+    <member kind="function">
       <type></type>
-      <name>LocalFunctionFlag</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaec07c7f30c801c3b0f72193757250d64</anchor>
+      <name>ChipTools</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a5296f5ccb380869255d774b70e237686</anchor>
+      <arglist>(Cell *)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isChip</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a390b4da0f5d92dc7586dbb35fb33f105</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>Cell *</type>
+      <name>getCell</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a148fdf09f18e7adb39a73c747f165266</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>Instance *</type>
+      <name>getCore</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a9b0b85c44c108a2a17a01d86f17e1db9</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Box &amp;</type>
+      <name>getChipBb</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a31b90ca92688051b3a99b1adc13fa311</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Box &amp;</type>
+      <name>getLeftPadsBb</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>ab211c70912b6a16c03ca1e2e06c90b0b</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Box &amp;</type>
+      <name>getRightPadsBb</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>ae6f1937b84779a9d96fc08f0d5752390</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Box &amp;</type>
+      <name>getTopPadsBb</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>aa21203c8ef37b4f3e4e82e6cc1ef8c64</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Box &amp;</type>
+      <name>getBottomPadsBb</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>aaff5b9fb64c2344b6ab0aaf5e5e36caf</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Torus &amp;</type>
+      <name>getCorona</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a3db402fb2e0839749fe524882d77eddd</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>intersectVPads</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a2aea3372bc7e8ec1d0a70681544d8202</anchor>
+      <arglist>(const Box &amp;) const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>intersectHPads</name>
+      <anchorfile>classKatabatic_1_1ChipTools.html</anchorfile>
+      <anchor>a6af8e197289a2a6c5e3aab0a658c4969</anchor>
+      <arglist>(const Box &amp;) const </arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Katabatic::KatabaticEngine</name>
+    <filename>classKatabatic_1_1KatabaticEngine.html</filename>
+    <base>CRL::ToolEngine</base>
+    <member kind="typedef">
+      <type>set&lt; Net *, NetCompareByName &gt;</type>
+      <name>NetSet</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a92ed88f9aecd2f195089c4029fa8bcc7</anchor>
       <arglist></arglist>
     </member>
-    <member kind="enumvalue">
-      <name>NoFlags</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64add44bf8d6f7bbe1393d76b940b85294b</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>isGMetal</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a2f4d1f8df0e5dc9c7ad9ec6f31438790</anchor>
+      <arglist>(const Layer *) const </arglist>
     </member>
-    <member kind="enumvalue">
-      <name>HAccess</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a5c3692a6c886c6293a3c9f240b60a5d9</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>isChip</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a390b4da0f5d92dc7586dbb35fb33f105</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="enumvalue">
-      <name>VSmall</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a260f6bf57246879aed7febfe83c9dacc</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>isInDemoMode</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>af3c979bc4832c7e9e9b5a1e749e038ff</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="enumvalue">
-      <name>HSmall</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64af1a4f1cb841460f20d26dcf902247fb8</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>doWarnOnGCellOverload</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>aef1c27657e9afe69d832ec7c31c546a8</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="enumvalue">
-      <name>Punctual</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a65b52a199afe857e3d551dbac8b293b9</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>doDestroyBaseContact</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a6ab936a51a682d97d3885fc2805531ce</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="enumvalue">
-      <name>DoSourceContact</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64aece46caaf822b33d7db94bb2dd16a30d</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>doDestroyBaseSegment</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a217f87950b30061709e80f5fce58b5a8</anchor>
+      <arglist>() const </arglist>
     </member>
-    <member kind="enumvalue">
-      <name>DoTargetContact</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64aeb33c01c5e62df73de6b11888b17a5f2</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>doDestroyTool</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ae979c1db2aa0d919e58d2d7e1b246c5e</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual const Name &amp;</type>
+      <name>getName</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a5e23c46b801d3049b349b68774a0d298</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>EngineState</type>
+      <name>getState</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>aed8728c9a7c5c82507eb717490e814d6</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
-      <name>checkRoutingPadSize</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaad5d32b07d1d53ecc8642e4b10df9605</anchor>
-      <arglist>(Component *anchor)</arglist>
+      <name>getFlags</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>af7b5043686805e83dbbd84fd687e25be</anchor>
+      <arglist>(unsigned int mask) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Configuration *</type>
+      <name>getKatabaticConfiguration</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>adccd6ceec2c68234d3a824ad7ae3954e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual Configuration *</type>
+      <name>getConfiguration</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a9a7fbadfe526875680f698c76adfb128</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>RoutingGauge *</type>
+      <name>getRoutingGauge</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ae03bde33b07beff91870e3922696ff8f</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>RoutingLayerGauge *</type>
+      <name>getLayerGauge</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a93f9c18075b02f7fd7ba03d951f6be56</anchor>
+      <arglist>(size_t depth) const </arglist>
+    </member>
+    <member kind="function">
+      <type>const Layer *</type>
+      <name>getRoutingLayer</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a3dcc03dc20b0bdca03772901316ba6b3</anchor>
+      <arglist>(size_t depth) const </arglist>
+    </member>
+    <member kind="function">
+      <type>Layer *</type>
+      <name>getContactLayer</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a2b7ddb281e0b785b5d28d284bdd1f77c</anchor>
+      <arglist>(size_t depth) const </arglist>
+    </member>
+    <member kind="function">
+      <type>GCellGrid *</type>
+      <name>getGCellGrid</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a0702328522e94ca9705222cd5b9e9c6d</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const NetSet &amp;</type>
+      <name>getRoutingNets</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a7b752887b598b0244207f36eb13b9149</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>DbU::Unit</type>
+      <name>getGlobalThreshold</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ae375ec4d6fe84babba01c056a32d5a83</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>float</type>
+      <name>getSaturateRatio</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a1563b5789b3cd5db8dc6fc1cc069dc82</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>getSaturateRp</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a929aa539d03f19c7edbf6b34d7ec30a3</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>DbU::Unit</type>
+      <name>getExtensionCap</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a7b6417a63eaf4f4d3f423dbdb8c13302</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>const ChipTools &amp;</type>
+      <name>getChipTools</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a53565592ca14ec9f302d068327d846c8</anchor>
+      <arglist>() const </arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>singleGCell</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga3973291866b39c10cea5ca17f7d174fb</anchor>
-      <arglist>(KatabaticEngine *ktbt, Net *net)</arglist>
-    </member>
-  </compound>
-  <compound kind="namespace">
-    <name>anonymous_namespace{Session.cpp}</name>
-    <filename>namespaceanonymous__namespace_02Session_8cpp_03.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>Katabatic</name>
-    <filename>namespaceKatabatic.html</filename>
-    <class kind="class">Katabatic::AutoContact</class>
-    <class kind="class">Katabatic::AutoContactHTee</class>
-    <class kind="class">Katabatic::AutoContactTerminal</class>
-    <class kind="class">Katabatic::AutoContactTurn</class>
-    <class kind="class">Katabatic::AutoContactVTee</class>
-    <class kind="class">Katabatic::AutoHorizontal</class>
-    <class kind="class">Katabatic::AutoSegment</class>
-    <class kind="class">Katabatic::AutoSegments_Aligneds</class>
-    <class kind="class">Katabatic::AutoSegments_AnchorOnGCell</class>
-    <class kind="class">Katabatic::AutoSegments_InDirection</class>
-    <class kind="class">Katabatic::AutoSegments_IsAccountable</class>
-    <class kind="class">Katabatic::AutoSegments_OnContact</class>
-    <class kind="class">Katabatic::AutoSegments_Perpandiculars</class>
-    <class kind="class">Katabatic::AutoVertical</class>
-    <class kind="class">Katabatic::BaseGrid</class>
-    <class kind="class">Katabatic::BaseObserver</class>
-    <class kind="class">Katabatic::ChipTools</class>
-    <class kind="class">Katabatic::GCell</class>
-    <class kind="class">Katabatic::GCellDensitySet</class>
-    <class kind="class">Katabatic::GCellGrid</class>
-    <class kind="class">Katabatic::Grid</class>
-    <class kind="class">Katabatic::KatabaticEngine</class>
-    <class kind="class">Katabatic::LocatorHelper</class>
-    <class kind="class">Katabatic::Observable</class>
-    <class kind="class">Katabatic::Observer</class>
-    <class kind="class">Katabatic::Session</class>
-    <member kind="typedef">
-      <type>Hurricane::Filter&lt; AutoSegment * &gt;</type>
-      <name>AutoSegmentHF</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a790418bb65a9a13859868df3e8f53598</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Hurricane::Locator&lt; AutoSegment * &gt;</type>
-      <name>AutoSegmentHL</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a40ef13471fd0e797b75d3c436813fe65</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Hurricane::Collection&lt; AutoSegment * &gt;</type>
-      <name>AutoSegmentHC</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>acb3628dc7705fefe38a665cfe43efa6e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>GenericCollection&lt; AutoSegment * &gt;</type>
-      <name>AutoSegments</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2221b0ddbc24f331809fc86f98e38041</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>GenericLocator&lt; AutoSegment * &gt;</type>
-      <name>AutoSegmentLocator</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ace866cc8e09faf80f71a4087bb8e5870</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>GenericFilter&lt; AutoSegment * &gt;</type>
-      <name>AutoSegmentFilter</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a13ffc994c98e1a878e61a927de0509c8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>GenericCollection&lt; GCell * &gt;</type>
-      <name>GCells</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab68f9dfbbc79fd999773beef8561bc31</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>GenericLocator&lt; GCell * &gt;</type>
-      <name>GCellLocator</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ae192ef170a0ad390902e435ac1e6796a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>GenericFilter&lt; GCell * &gt;</type>
-      <name>GCellFilter</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a7d07e23d45818a2ae5f6881ce0ec7403</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>FunctionFlag</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbOpenSession</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217af314588109fcc5f5ee1c42e5fd4d0ed5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbRealignate</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a45a219697151531a23e997b11118e08a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbNativeConstraints</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217af1d61226371622b8063fe47c63cd9dff</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbForceMove</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217acf76914f1ec05633965f0ac6b1c89959</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbHorizontal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a1a9045673c5d3c30b067100f1440ae1b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbVertical</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a284cad95203a27172838b09e396e3590</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbWithPerpands</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217ae2d033c8f78b61468c827de8db5fe839</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbSource</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a8c8fd7a68cd428639057fbc6dbb8c46a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbTarget</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a041350b28d805a40d048fa0be9994a26</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbWarnOnError</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217aa5153b2cc25ebccca8616ce20ecd727a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbPropagate</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a3f95c1f06fe0b58b44ccbc57d99f2a5d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbUseAboveLayer</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217af756099f1bbe259dd1bf22067dc40eac</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbUseBelowLayer</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a41cbd981337678e042354f340bfae25d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbDoglegOnLeft</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a67bb7c53bbbc73a0e2d1f3f3e16ab679</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbDoglegOnRight</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217afe7fcb4c332f36e477433169b3d3f515</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>KbHalfSlacken</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a2af2ad6b6441614038caf59d04b3b217a1d6ccf82d04758a0922270d4f469066a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>EngineState</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cda</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>EngineCreation</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaa8bae41ad2fa29aaa5020b985b13416e0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>EngineGlobalLoaded</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaa5e262eba2c323c8ab5365b5e1364fc1e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>EngineActive</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaad4f7e86648b59223202a64bde4eda4c7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>EngineDriving</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaae21d68495c3c349ad351ba9692b40bd1</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>EnginePreDestroying</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaafee0f47ec435d9c4e49b98a47683ad03</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>EngineGutted</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>ab9e409db5feff0bdbc85e90e2a029cdaafb5f961d4cad2bb9fbda71204061c877</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>AutoContactFlag</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntFixed</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24a66205741ac37bce922c730c95f6984af</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntTerminal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24a59ca560e6a04e6401054626b8b8f74bc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntTurn</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24aa0a37bdfa4c0097ebfb5f69e612fa57b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntHTee</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24ad8d6114e340ad8064617cc3c7b5e62f3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntVTee</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24ac8b5263851e6e160bff135cc6ecd45c5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntInvalidated</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24a16ebc32170107fe230ddcc2dcbaab66f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntInvalidatedCache</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24a03218a60eff8f1960babe7e2a300301a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntInCreationStage</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24a803ca5191d4aba9d1f53aeec8d137359</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CntBadTopology</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a4950b7142b9024cae2693cd44bccdc24abe577b4e6bc01e6a506a303ad8ccdf38</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>AutoSegmentFlag</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegHorizontal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a275eb973fc7a219eb34d2031309ff75c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegFixed</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4aa291777ea80e37ea23e785870d8833ed</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegGlobal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a940d92cb98a61e671a94204701767868</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegWeakGlobal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a16ef6f2b6b9e44559e41f04c652919ad</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegCanonical</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a296b371b45ade66cd1d44bc8898e64d9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegBipoint</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a2d969cfff8aa7da1ac3486924f4786d2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegDogleg</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4ab3a62f799073ef374df7aaa26514c09b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegStrap</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a8c676eccde69f8a431ffaf2ffcae7209</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegSourceTop</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4ae5f763897c8e6221dcc8177816c72b33</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegSourceBottom</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a29f1952fe978a9fdd1902a6fcd085b44</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegTargetTop</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a100b7ff78619133970733fedbb34ffa8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegTargetBottom</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4ae600c6015187dddac3860fcc008a2213</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegIsReduced</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4af4dd1db46475e4a16555fb6978a85580</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegLayerChange</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4afc9fc027fe8f457520c3fe6fb1144b2b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegStrongTerminal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a93251a6b8197685e2aaf77a760851557</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegWeakTerminal1</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a7b3e09b8ab4cf676fd308535d7fba892</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegWeakTerminal2</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a32f77fa2da27348bcfc294a039efd766</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegNotSourceAligned</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a286b96fc8ab2377a2caf92c82352b0c8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegNotTargetAligned</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4ac5042810c9268798def84444d31968ea</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegSlackened</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4ac47f838c52b3b33b1150eb53133c2383</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegAxisSet</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a86d22dbc8fbc045a1e12e25ba357e1d1</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegInvalidated</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a3c1d76fecee6a8bd5e12ce3fec013827</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegInvalidatedLayer</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a11c86dd3185eb251b2f3ce536cc2ab34</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegCreated</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a01513b74d37a8721370cf7b91fb419ad</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegWeakTerminal</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a419e7722198b077c1f71d6c47e2fc2ab</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>SegNotAligned</name>
-      <anchorfile>namespaceKatabatic.html</anchorfile>
-      <anchor>a94585537ee1724ea9315578ec54380f4a637e0426170a532feac45548e009325d</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="group">
-    <name>grpSynthHierarchy</name>
-    <title>Synthetic Class Hierarchy</title>
-    <filename>group__grpSynthHierarchy.html</filename>
-  </compound>
-  <compound kind="group">
-    <name>LoadGlobalRouting</name>
-    <title>Global Routing Loading</title>
-    <filename>group__LoadGlobalRouting.html</filename>
-    <class kind="class">anonymous_namespace{LoadGrByNet.cpp}::GCellTopology</class>
-    <member kind="enumeration">
-      <type></type>
-      <name>LocalFunctionFlag</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaec07c7f30c801c3b0f72193757250d64</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>NoFlags</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64add44bf8d6f7bbe1393d76b940b85294b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HAccess</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a5c3692a6c886c6293a3c9f240b60a5d9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>VSmall</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a260f6bf57246879aed7febfe83c9dacc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HSmall</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64af1a4f1cb841460f20d26dcf902247fb8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Punctual</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a65b52a199afe857e3d551dbac8b293b9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DoSourceContact</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64aece46caaf822b33d7db94bb2dd16a30d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DoTargetContact</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64aeb33c01c5e62df73de6b11888b17a5f2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>NoFlags</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64add44bf8d6f7bbe1393d76b940b85294b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HAccess</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a5c3692a6c886c6293a3c9f240b60a5d9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>VSmall</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a260f6bf57246879aed7febfe83c9dacc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>HSmall</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64af1a4f1cb841460f20d26dcf902247fb8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>Punctual</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64a65b52a199afe857e3d551dbac8b293b9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DoSourceContact</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64aece46caaf822b33d7db94bb2dd16a30d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DoTargetContact</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ggaec07c7f30c801c3b0f72193757250d64aeb33c01c5e62df73de6b11888b17a5f2</anchor>
-      <arglist></arglist>
+      <name>xmlWriteGCellGrid</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>aecbe8bdcc61024a7539de3ea932c5e06</anchor>
+      <arglist>(ostream &amp;)</arglist>
     </member>
     <member kind="function">
-      <type>unsigned int</type>
-      <name>checkRoutingPadSize</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaad5d32b07d1d53ecc8642e4b10df9605</anchor>
-      <arglist>(Component *anchor)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>doRp_AutoContacts</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gae9cae408ea16a3f7c77c3d75f0242f19</anchor>
-      <arglist>(GCell *, Component *, AutoContact *&amp;source, AutoContact *&amp;target, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static AutoContact *</type>
-      <name>doRp_Access</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gada6d3c694b8d741b6504b7c3da166357</anchor>
-      <arglist>(GCell *, Component *, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static AutoContact *</type>
-      <name>doRp_AccessPad</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga60edeea78b56db072fc26a58a7afbcd4</anchor>
-      <arglist>(RoutingPad *, unsigned int flags)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>doRp_StairCaseH</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga3291d84592215974fe4052c00304bdb1</anchor>
-      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>doRp_StairCaseV</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga6361fb0e90f35cd59063a1ee971ef2a9</anchor>
-      <arglist>(GCell *, Component *rp1, Component *rp2)</arglist>
-    </member>
-    <member kind="function" protection="private">
       <type>void</type>
-      <name>_do_xG_1Pad</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gabe00ab10a0dab8a3d2de0709e61e4e7d</anchor>
-      <arglist>()</arglist>
+      <name>xmlWriteGCellGrid</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a78394ac380a0fa462f268dcc2becc50e</anchor>
+      <arglist>(const string &amp;)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_xG</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaaa6d4ccd2eadfb6bc3e2cc98cfaf2cca</anchor>
-      <arglist>()</arglist>
+      <name>setState</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a2391b9bfcb773398b9661b5ac0ef1a30</anchor>
+      <arglist>(EngineState state)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_1G_1M1</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gad24a03e87e269f16dcc28d8c2d9f1cfb</anchor>
-      <arglist>()</arglist>
+      <name>setFlags</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>aeb14f94914af58657a0dc2f50ec98df5</anchor>
+      <arglist>(unsigned int)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_1G_xM1</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga97942453a1bc5b01106aa380271fd7fc</anchor>
-      <arglist>()</arglist>
+      <name>unsetFlags</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a1a6fac115cb81db48e3ac9ffa0721bb5</anchor>
+      <arglist>(unsigned int)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_xG_1M1_1M2</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gae60ed4e27ad89a1e2ff2cd6415ef33f1</anchor>
-      <arglist>()</arglist>
+      <name>setGlobalThreshold</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a1bd1e0104b73d4c558b0e121002796a6</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_xG_xM1_xM3</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>gaf9b009520f54099668ac9d12f2c85257</anchor>
-      <arglist>()</arglist>
+      <name>setSaturateRatio</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ac2b780e06975ce8a0d6ca96f20cb971f</anchor>
+      <arglist>(float)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_xG_xM2</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga532d1c6b530e0375078ea2d6ea3c6024</anchor>
-      <arglist>()</arglist>
+      <name>setSaturateRp</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ade227e828b8c8fbfce478e353ca3ca59</anchor>
+      <arglist>(size_t)</arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_1G_1M3</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga2519ef984b3d19f123827a9b12651672</anchor>
-      <arglist>()</arglist>
+      <name>printMeasures</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a1b196d124bb66595a760ccc9b901d78b</anchor>
+      <arglist>(const string &amp;) const </arglist>
     </member>
-    <member kind="function" protection="private">
+    <member kind="function">
       <type>void</type>
-      <name>_do_xG_xM3</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga007efc725aae31782204a44949765cb4</anchor>
+      <name>refresh</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a1e9bb62be35c6a415a1950c72c1964ef</anchor>
+      <arglist>(unsigned int flags=KbOpenSession)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>createDetailedGrid</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a1b7d8ed09a198f7afd6e3ac911f6eb37</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>singleGCell</name>
-      <anchorfile>group__LoadGlobalRouting.html</anchorfile>
-      <anchor>ga3973291866b39c10cea5ca17f7d174fb</anchor>
-      <arglist>(KatabaticEngine *ktbt, Net *net)</arglist>
+      <name>makePowerRails</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>aaba3b9450c85634131146fb507089f2d</anchor>
+      <arglist>()</arglist>
     </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>loadGlobalRouting</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a583925cfe4bbadcc1c24fe619debce09</anchor>
+      <arglist>(unsigned int method)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>slackenBorder</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a145b36b18fc9149980c5d6bd4bd10e0d</anchor>
+      <arglist>(Box bb, Layer::Mask, unsigned int flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>slackenBlockIos</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ac40754d4a9bd0cf327b5fa088e993897</anchor>
+      <arglist>(Instance *core)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>moveUpNetTrunk</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>abb2b28adfaca2cc36716db41b093f355</anchor>
+      <arglist>(AutoSegment *, set&lt; Net * &gt; &amp;globalNets, GCell::SetIndex &amp;invalidateds)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>layerAssign</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a77833ce938a430785ba869eedbc2300c</anchor>
+      <arglist>(unsigned int method)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>computeNetConstraints</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a6957a5830a4d6f1b2daf83a7d98df601</anchor>
+      <arglist>(Net *)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>toOptimals</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ad6b9f7d94ee4a88f12c485e48d1e644a</anchor>
+      <arglist>(Net *)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>finalizeLayout</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a468eddb683c04cfeea1c5124a39e1f86</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static KatabaticEngine *</type>
+      <name>create</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>ab877a64c314024602cfb04631ebfbfc4</anchor>
+      <arglist>(Cell *)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const Name &amp;</type>
+      <name>staticGetName</name>
+      <anchorfile>classKatabatic_1_1KatabaticEngine.html</anchorfile>
+      <anchor>a802eee6265da8d536db52d412f8a4afd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <docanchor file="classKatabatic_1_1KatabaticEngine" title="States of KatabaticEngine">secEngineStates</docanchor>
+    <docanchor file="classKatabatic_1_1KatabaticEngine" title="KatabaticEngine Implementation Details">secEngineImpl</docanchor>
+  </compound>
+  <compound kind="dir">
+    <name>katabatic</name>
+    <path>/dsk/l1/jpc/coriolis-2.x/src/coriolis/katabatic/src/katabatic/</path>
+    <filename>dir_46a5d811a0c60e95b7acaa92d73c003a.html</filename>
+    <file>AutoContact.h</file>
+    <file>AutoContactHTee.h</file>
+    <file>AutoContactTerminal.h</file>
+    <file>AutoContactTurn.h</file>
+    <file>AutoContactVTee.h</file>
+    <file>AutoHorizontal.h</file>
+    <file>AutoSegment.h</file>
+    <file>AutoSegments.h</file>
+    <file>AutoVertical.h</file>
+    <file>ChipTools.h</file>
+    <file>Constants.h</file>
+    <file>GCell.h</file>
+    <file>GCellGrid.h</file>
+    <file>GCells.h</file>
+    <file>Grid.h</file>
+    <file>KatabaticEngine.h</file>
+    <file>Observer.h</file>
+    <file>Session.h</file>
+  </compound>
+  <compound kind="dir">
+    <name>src</name>
+    <path>/dsk/l1/jpc/coriolis-2.x/src/coriolis/katabatic/src/</path>
+    <filename>dir_68267d1309a1af8e8297ef4c3efbcdba.html</filename>
+    <dir>katabatic</dir>
+    <file>AutoContact.cpp</file>
+    <file>AutoContactHTee.cpp</file>
+    <file>AutoContactTerminal.cpp</file>
+    <file>AutoContactTurn.cpp</file>
+    <file>AutoContactVTee.cpp</file>
+    <file>AutoHorizontal.cpp</file>
+    <file>AutoSegment.cpp</file>
+    <file>AutoVertical.cpp</file>
+    <file>ChipTools.cpp</file>
+    <file>GCell.cpp</file>
+    <file>GCellGrid.cpp</file>
+    <file>Grid.cpp</file>
+    <file>KatabaticEngine.cpp</file>
+    <file>LoadGrByNet.cpp</file>
+    <file>Observer.cpp</file>
+    <file>Session.cpp</file>
   </compound>
   <compound kind="page">
     <name>index</name>

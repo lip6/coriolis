@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1DataBase}{}\section{Hurricane\+:\+:Data\+Base Class Reference}
-\label{classHurricane_1_1DataBase}\index{Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}}
+\hypertarget{classHurricane_1_1DataBase}{\section{Hurricane\-:\-:Data\-Base Class Reference}
+\label{classHurricane_1_1DataBase}\index{Hurricane\-::\-Data\-Base@{Hurricane\-::\-Data\-Base}}
+}
 
 
-The whole \hyperlink{classHurricane_1_1DataBase}{Data\+Base} ({\bfseries A\+PI}).  
+The whole \hyperlink{classHurricane_1_1DataBase}{Data\-Base} ({\bfseries A\-P\-I}).  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Data\+Base\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Data\-Base\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -17,21 +18,21 @@ Inheritance diagram for Hurricane\+:\+:Data\+Base\+:\nopagebreak
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$ \hyperlink{classHurricane_1_1DataBase_a144480c54b0f9fbda57622ad6767ab8a}{get\+Technology} () const
+\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$ \hyperlink{classHurricane_1_1DataBase_aaa93d6bfa0123b3e2a8d29cf26fa7f66}{get\-Technology} () const 
 \item 
-\hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1DataBase_a4469391a3c5ae82caf090f1bdac4f29b}{get\+Root\+Library} () const
+\hyperlink{classHurricane_1_1Library}{Library} $\ast$ \hyperlink{classHurricane_1_1DataBase_a74b7602a076d8806f40aa6557a5b79ed}{get\-Root\-Library} () const 
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$ \hyperlink{classHurricane_1_1DataBase_af0210f9bb13faf06e12eb135eeea9b06}{create} ()
+static \hyperlink{classHurricane_1_1DataBase}{Data\-Base} $\ast$ \hyperlink{classHurricane_1_1DataBase_af0210f9bb13faf06e12eb135eeea9b06}{create} ()
 \item 
-static \hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$ \hyperlink{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}{get\+DB} ()
+static \hyperlink{classHurricane_1_1DataBase}{Data\-Base} $\ast$ \hyperlink{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}{get\-D\-B} ()
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-The whole \hyperlink{classHurricane_1_1DataBase}{Data\+Base} ({\bfseries A\+PI}). 
+The whole \hyperlink{classHurricane_1_1DataBase}{Data\-Base} ({\bfseries A\-P\-I}). 
 
 The unique purpose of this object is to handle, at any time, directly or indirectly, the whole set of currently allocated objects of the data base.
 
@@ -41,58 +42,54 @@ The data base must be created explicitely (it is possible to derive a sub-\/type
 
 The Database object handles both the \hyperlink{classHurricane_1_1Technology}{Technology} and the root \hyperlink{classHurricane_1_1Library}{Library}.
 
-\begin{DoxyParagraph}{Caution\+:}
-Destroying the \hyperlink{classHurricane_1_1DataBase}{Data\+Base} object destroys all data base objects. 
+\begin{DoxyParagraph}{Caution\-:}
+Destroying the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object destroys all data base objects. 
 \end{DoxyParagraph}
 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1DataBase_af0210f9bb13faf06e12eb135eeea9b06}\label{classHurricane_1_1DataBase_af0210f9bb13faf06e12eb135eeea9b06}} 
-\index{Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}!create@{create}}
-\index{create@{create}!Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}}
-\subsubsection{\texorpdfstring{create()}{create()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$ Hurricane\+::\+Data\+Base\+::create (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+\hypertarget{classHurricane_1_1DataBase_af0210f9bb13faf06e12eb135eeea9b06}{\index{Hurricane\-::\-Data\-Base@{Hurricane\-::\-Data\-Base}!create@{create}}
+\index{create@{create}!Hurricane::DataBase@{Hurricane\-::\-Data\-Base}}
+\subsubsection[{create}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Data\-Base} $\ast$ Hurricane\-::\-Data\-Base\-::create (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classHurricane_1_1DataBase_af0210f9bb13faf06e12eb135eeea9b06}
+creates and returns a pointer to a new \hyperlink{classHurricane_1_1DataBase}{Data\-Base}.
 
-creates and returns a pointer to a new \hyperlink{classHurricane_1_1DataBase}{Data\+Base}.
-
-\begin{DoxyParagraph}{Caution\+:}
+\begin{DoxyParagraph}{Caution\-:}
 An exception is thrown if a Database already exists. 
 \end{DoxyParagraph}
-\mbox{\Hypertarget{classHurricane_1_1DataBase_a144480c54b0f9fbda57622ad6767ab8a}\label{classHurricane_1_1DataBase_a144480c54b0f9fbda57622ad6767ab8a}} 
-\index{Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}!get\+Technology@{get\+Technology}}
-\index{get\+Technology@{get\+Technology}!Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}}
-\subsubsection{\texorpdfstring{get\+Technology()}{getTechnology()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Technology}{Technology} $\ast$ Hurricane\+::\+Data\+Base\+::get\+Technology (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1DataBase_aaa93d6bfa0123b3e2a8d29cf26fa7f66}{\index{Hurricane\-::\-Data\-Base@{Hurricane\-::\-Data\-Base}!get\-Technology@{get\-Technology}}
+\index{get\-Technology@{get\-Technology}!Hurricane::DataBase@{Hurricane\-::\-Data\-Base}}
+\subsubsection[{get\-Technology}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Technology} $\ast$ Hurricane\-::\-Data\-Base\-::get\-Technology (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1DataBase_aaa93d6bfa0123b3e2a8d29cf26fa7f66}
 \begin{DoxyReturn}{Returns}
-the \hyperlink{classHurricane_1_1Technology}{Technology} if it exists, else {\ttfamily N\+U\+LL}. 
+the \hyperlink{classHurricane_1_1Technology}{Technology} if it exists, else {\ttfamily N\-U\-L\-L}. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classHurricane_1_1DataBase_a4469391a3c5ae82caf090f1bdac4f29b}\label{classHurricane_1_1DataBase_a4469391a3c5ae82caf090f1bdac4f29b}} 
-\index{Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}!get\+Root\+Library@{get\+Root\+Library}}
-\index{get\+Root\+Library@{get\+Root\+Library}!Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}}
-\subsubsection{\texorpdfstring{get\+Root\+Library()}{getRootLibrary()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1Technology}{Technology} $\ast$ Hurricane\+::\+Data\+Base\+::get\+Root\+Library (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classHurricane_1_1DataBase_a74b7602a076d8806f40aa6557a5b79ed}{\index{Hurricane\-::\-Data\-Base@{Hurricane\-::\-Data\-Base}!get\-Root\-Library@{get\-Root\-Library}}
+\index{get\-Root\-Library@{get\-Root\-Library}!Hurricane::DataBase@{Hurricane\-::\-Data\-Base}}
+\subsubsection[{get\-Root\-Library}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Technology} $\ast$ Hurricane\-::\-Data\-Base\-::get\-Root\-Library (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1DataBase_a74b7602a076d8806f40aa6557a5b79ed}
 \begin{DoxyReturn}{Returns}
-the root \hyperlink{classHurricane_1_1Library}{Library} if it exists, else {\ttfamily N\+U\+LL}. 
+the root \hyperlink{classHurricane_1_1Library}{Library} if it exists, else {\ttfamily N\-U\-L\-L}. 
 \end{DoxyReturn}
+\hypertarget{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}{\index{Hurricane\-::\-Data\-Base@{Hurricane\-::\-Data\-Base}!get\-D\-B@{get\-D\-B}}
+\index{get\-D\-B@{get\-D\-B}!Hurricane::DataBase@{Hurricane\-::\-Data\-Base}}
+\subsubsection[{get\-D\-B}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Data\-Base} $\ast$ Hurricane\-::\-Data\-Base\-::get\-D\-B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}
+This static function returns the current \hyperlink{classHurricane_1_1DataBase}{Data\-Base}, if it has been created and not destroyed, else {\ttfamily N\-U\-L\-L}. 
 
-
-References get\+D\+B().
-
-\mbox{\Hypertarget{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}\label{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}} 
-\index{Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}!get\+DB@{get\+DB}}
-\index{get\+DB@{get\+DB}!Hurricane\+::\+Data\+Base@{Hurricane\+::\+Data\+Base}}
-\subsubsection{\texorpdfstring{get\+D\+B()}{getDB()}}
-{\footnotesize\ttfamily \hyperlink{classHurricane_1_1DataBase}{Data\+Base} $\ast$ Hurricane\+::\+Data\+Base\+::get\+DB (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
-This static function returns the current \hyperlink{classHurricane_1_1DataBase}{Data\+Base}, if it has been created and not destroyed, else {\ttfamily N\+U\+LL}. 
-
-Referenced by get\+Root\+Library().
-
-
-
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Data\+Base.\+h\item 
-Data\+Base.\+dox\end{DoxyCompactItemize}
+Data\-Base.\-h\item 
+Data\-Base.\-dox\end{DoxyCompactItemize}

@@ -1,5 +1,6 @@
-\hypertarget{classKatabatic_1_1Observer}{}\section{Observer$<$ T $>$ Class Template Reference}
+\hypertarget{classKatabatic_1_1Observer}{\section{Observer$<$ T $>$ Class Template Reference}
 \label{classKatabatic_1_1Observer}\index{Observer$<$ T $>$@{Observer$<$ T $>$}}
+}
 
 
 \hyperlink{classKatabatic_1_1Observer}{Observer} Design Pattern, \hyperlink{classKatabatic_1_1Observer}{Observer} part.  
@@ -7,7 +8,7 @@
 
 
 
-Inheritance diagram for Observer$<$ T $>$\+:\nopagebreak
+Inheritance diagram for Observer$<$ T $>$\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -19,38 +20,39 @@ Inheritance diagram for Observer$<$ T $>$\+:\nopagebreak
 \item 
 \hyperlink{classKatabatic_1_1Observer_ab05ec12517c51952960dd4f324499b44}{Observer} (const T $\ast$owner)
 \item 
-T $\ast$ \hyperlink{classKatabatic_1_1Observer_ac29b8f99d632058c95784fd7233b8474}{get\+Owner} () const
+T $\ast$ \hyperlink{classKatabatic_1_1Observer_a1515e4d637164e6589f550164c304fe1}{get\-Owner} () const 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$typename T$>$\newline
-class Katabatic\+::\+Observer$<$ T $>$}
+\subsubsection*{template$<$typename T$>$class Katabatic\-::\-Observer$<$ T $>$}
 
 \hyperlink{classKatabatic_1_1Observer}{Observer} Design Pattern, \hyperlink{classKatabatic_1_1Observer}{Observer} part. 
 
-{\bfseries First, a warning about names\+:} although this class is named \hyperlink{classKatabatic_1_1Observer}{Observer}, it is intended to be an attribute nested inside the whole object which is indeed, the true \hyperlink{classKatabatic_1_1Observer}{Observer}. This nesting object is called, most of the time the {\bfseries owner} in the following. But sometimes, for simplification it may also be called the \hyperlink{classKatabatic_1_1Observer}{Observer}.\hypertarget{classKatabatic_1_1Observer_secImplObserver}{}\subsection{Observer Implementation Notes}\label{classKatabatic_1_1Observer_secImplObserver}
+{\bfseries First, a warning about names\-:} although this class is named \hyperlink{classKatabatic_1_1Observer}{Observer}, it is intended to be an attribute nested inside the whole object which is indeed, the true \hyperlink{classKatabatic_1_1Observer}{Observer}. This nesting object is called, most of the time the {\bfseries owner} in the following. But sometimes, for simplification it may also be called the \hyperlink{classKatabatic_1_1Observer}{Observer}.\hypertarget{classKatabatic_1_1Observer_secImplObserver}{}\subsection{Observer Implementation Notes}\label{classKatabatic_1_1Observer_secImplObserver}
 To retrieve the {\itshape owner} from the \hyperlink{classKatabatic_1_1Observer}{Observer} attribute, we uses the offset from the attribute in the {\itshape owner}. This offset is computed once and for all the first time the template constructor is called. 
 
 \subsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1Observer_ab05ec12517c51952960dd4f324499b44}\label{classKatabatic_1_1Observer_ab05ec12517c51952960dd4f324499b44}} 
-\index{Katabatic\+::\+Observer@{Katabatic\+::\+Observer}!Observer@{Observer}}
-\index{Observer@{Observer}!Katabatic\+::\+Observer@{Katabatic\+::\+Observer}}
-\subsubsection{\texorpdfstring{Observer()}{Observer()}}
-{\footnotesize\ttfamily \hyperlink{classKatabatic_1_1Observer}{Observer} (\begin{DoxyParamCaption}\item[{const T $\ast$}]{owner }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
-
+\hypertarget{classKatabatic_1_1Observer_ab05ec12517c51952960dd4f324499b44}{\index{Katabatic\-::\-Observer@{Katabatic\-::\-Observer}!Observer@{Observer}}
+\index{Observer@{Observer}!Katabatic::Observer@{Katabatic\-::\-Observer}}
+\subsubsection[{Observer}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Observer} (
+\begin{DoxyParamCaption}
+\item[{const T $\ast$}]{owner}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observer_ab05ec12517c51952960dd4f324499b44}
 The owner of the oberver is needed to compute, on the first creation only, the offset of the \hyperlink{classKatabatic_1_1Observer}{Observer} attribute inside the {\ttfamily owner} complete object. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classKatabatic_1_1Observer_ac29b8f99d632058c95784fd7233b8474}\label{classKatabatic_1_1Observer_ac29b8f99d632058c95784fd7233b8474}} 
-\index{Katabatic\+::\+Observer@{Katabatic\+::\+Observer}!get\+Owner@{get\+Owner}}
-\index{get\+Owner@{get\+Owner}!Katabatic\+::\+Observer@{Katabatic\+::\+Observer}}
-\subsubsection{\texorpdfstring{get\+Owner()}{getOwner()}}
-{\footnotesize\ttfamily T $\ast$ get\+Owner (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKatabatic_1_1Observer_a1515e4d637164e6589f550164c304fe1}{\index{Katabatic\-::\-Observer@{Katabatic\-::\-Observer}!get\-Owner@{get\-Owner}}
+\index{get\-Owner@{get\-Owner}!Katabatic::Observer@{Katabatic\-::\-Observer}}
+\subsubsection[{get\-Owner}]{\setlength{\rightskip}{0pt plus 5cm}T $\ast$ get\-Owner (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1Observer_a1515e4d637164e6589f550164c304fe1}
+{\bfseries Returns\-:} The owner of the observer. 
 
-{\bfseries Returns\+:} The owner of the observer. 
-
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Observer.\+h\item 
-Observer.\+dox\end{DoxyCompactItemize}
+Observer.\-h\item 
+Observer.\-dox\end{DoxyCompactItemize}

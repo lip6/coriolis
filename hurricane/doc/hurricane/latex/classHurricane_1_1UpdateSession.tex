@@ -1,13 +1,14 @@
-\hypertarget{classHurricane_1_1UpdateSession}{}\section{Hurricane\+:\+:Update\+Session Class Reference}
-\label{classHurricane_1_1UpdateSession}\index{Hurricane\+::\+Update\+Session@{Hurricane\+::\+Update\+Session}}
+\hypertarget{classHurricane_1_1UpdateSession}{\section{Hurricane\-:\-:Update\-Session Class Reference}
+\label{classHurricane_1_1UpdateSession}\index{Hurricane\-::\-Update\-Session@{Hurricane\-::\-Update\-Session}}
+}
 
 
-\hyperlink{classHurricane_1_1UpdateSession}{Update\+Session} description ({\bfseries A\+PI})  
+\hyperlink{classHurricane_1_1UpdateSession}{Update\-Session} description ({\bfseries A\-P\-I})  
 
 
 
 
-Inheritance diagram for Hurricane\+:\+:Update\+Session\+:\nopagebreak
+Inheritance diagram for Hurricane\-:\-:Update\-Session\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -18,29 +19,29 @@ Inheritance diagram for Hurricane\+:\+:Update\+Session\+:\nopagebreak
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1UpdateSession}{Update\+Session} description ({\bfseries A\+PI}) 
+\hyperlink{classHurricane_1_1UpdateSession}{Update\-Session} description ({\bfseries A\-P\-I}) 
 
 \hypertarget{classHurricane_1_1UpdateSession_secUpdateSessionMechanism}{}\subsection{Update Session Mechanism}\label{classHurricane_1_1UpdateSession_secUpdateSessionMechanism}
-Here is only an outline of the \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session} mechanism. The classes involved are\+:
+Here is only an outline of the \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session} mechanism. The classes involved are\-:
 \begin{DoxyItemize}
 \item \hyperlink{classHurricane_1_1Go}{Go} (Graphical Objects and their sub-\/classes).
-\item \hyperlink{classHurricane_1_1Cell}{Cell} and it\textquotesingle{}s Quad\+Tree(s). Note that the \hyperlink{classHurricane_1_1Cell}{Cell} is {\itshape not} a \hyperlink{classHurricane_1_1Go}{Go}.
-\item \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session}.
+\item \hyperlink{classHurricane_1_1Cell}{Cell} and it's Quad\-Tree(s). Note that the \hyperlink{classHurricane_1_1Cell}{Cell} is {\itshape not} a \hyperlink{classHurricane_1_1Go}{Go}.
+\item \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session}.
 \end{DoxyItemize}
 
-When a \hyperlink{classHurricane_1_1Go}{Go} is to be displayed, it has to be inserted inside one of the \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree} of it\textquotesingle{}s owner \hyperlink{classHurricane_1_1Cell}{Cell}. \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree} allows fast geometric queries which are used extensively to perform the display. If a \hyperlink{classHurricane_1_1Go}{Go} is {\bfseries not} inserted in a \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree} it will {\bfseries not} be displayed at all or be included in any geometric query. When we insert a \hyperlink{classHurricane_1_1Go}{Go} in a \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}, we talk about {\bfseries materialization}. So a \hyperlink{classHurricane_1_1Go}{Go} can be in two states\+: {\bfseries materialized} or {\bfseries unmaterialized}. The default behavior is to materialize a \hyperlink{classHurricane_1_1Go}{Go} as soon as it is created.
+When a \hyperlink{classHurricane_1_1Go}{Go} is to be displayed, it has to be inserted inside one of the \hyperlink{classHurricane_1_1QuadTree}{Quad\-Tree} of it's owner \hyperlink{classHurricane_1_1Cell}{Cell}. \hyperlink{classHurricane_1_1QuadTree}{Quad\-Tree} allows fast geometric queries which are used extensively to perform the display. If a \hyperlink{classHurricane_1_1Go}{Go} is {\bfseries not} inserted in a \hyperlink{classHurricane_1_1QuadTree}{Quad\-Tree} it will {\bfseries not} be displayed at all or be included in any geometric query. When we insert a \hyperlink{classHurricane_1_1Go}{Go} in a \hyperlink{classHurricane_1_1QuadTree}{Quad\-Tree}, we talk about {\bfseries materialization}. So a \hyperlink{classHurricane_1_1Go}{Go} can be in two states\-: {\bfseries materialized} or {\bfseries unmaterialized}. The default behavior is to materialize a \hyperlink{classHurricane_1_1Go}{Go} as soon as it is created.
 
-Now comes the \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session} mechanism. When the characteristics of a \hyperlink{classHurricane_1_1Go}{Go} are changed, it may be needed to update it\textquotesingle{}s position inside the \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree}, or even to change of \hyperlink{classHurricane_1_1QuadTree}{Quad\+Tree} (in case of a \hyperlink{classHurricane_1_1Layer}{Layer} change). Basically, the mechanism proceed in three stages\+:
+Now comes the \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session} mechanism. When the characteristics of a \hyperlink{classHurricane_1_1Go}{Go} are changed, it may be needed to update it's position inside the \hyperlink{classHurricane_1_1QuadTree}{Quad\-Tree}, or even to change of \hyperlink{classHurricane_1_1QuadTree}{Quad\-Tree} (in case of a \hyperlink{classHurricane_1_1Layer}{Layer} change). Basically, the mechanism proceed in three stages\-:
 
 
 \begin{DoxyItemize}
-\item Start a new \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session} (it\textquotesingle{}s a \hyperlink{classHurricane_1_1SharedProperty}{Shared\+Property}).
-\item When a \hyperlink{classHurricane_1_1Go}{Go} is changed, the {\ttfamily invalidate()} method is called, that {\itshape unmaterialize()} it, then adds it to the current \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session}. This is done by adding the \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session}, as a property, to the \hyperlink{classHurricane_1_1Go}{Go}. The \hyperlink{classHurricane_1_1Go}{Go} owner (it\textquotesingle{}s \hyperlink{classHurricane_1_1Cell}{Cell}) is also notified a {\ttfamily Cell\+::\+Flags\+::\+Cell\+About\+To\+Change}.
-\item On closing the \hyperlink{classHurricane_1_1UpdateSession}{Update\+Session}, all the stored Gos are {\bfseries materialized} again. The owner \hyperlink{classHurricane_1_1Cell}{Cell} and their instances are then send a notification {\ttfamily Cell\+::\+Flags\+::\+Cell\+Changed}.
+\item Start a new \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session} (it's a \hyperlink{classHurricane_1_1SharedProperty}{Shared\-Property}).
+\item When a \hyperlink{classHurricane_1_1Go}{Go} is changed, the {\ttfamily invalidate()} method is called, that {\itshape unmaterialize()} it, then adds it to the current \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session}. This is done by adding the \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session}, as a property, to the \hyperlink{classHurricane_1_1Go}{Go}. The \hyperlink{classHurricane_1_1Go}{Go} owner (it's \hyperlink{classHurricane_1_1Cell}{Cell}) is also notified a {\ttfamily Cell\-::\-Flags\-::\-Cell\-About\-To\-Change}.
+\item On closing the \hyperlink{classHurricane_1_1UpdateSession}{Update\-Session}, all the stored Gos are {\bfseries materialized} again. The owner \hyperlink{classHurricane_1_1Cell}{Cell} and their instances are then send a notification {\ttfamily Cell\-::\-Flags\-::\-Cell\-Changed}.
 \end{DoxyItemize}
 
-It is very important to notice that the Cells gets change notifications only when a \hyperlink{classHurricane_1_1Go}{Go} is {\itshape changed}, not when it is {\itshape created}. If we want the \hyperlink{classHurricane_1_1Cell}{Cell} to be notified, we must invalidate it manually. This is particularly critical when working with Extension\+Go. 
+It is very important to notice that the Cells gets change notifications only when a \hyperlink{classHurricane_1_1Go}{Go} is {\itshape changed}, not when it is {\itshape created}. If we want the \hyperlink{classHurricane_1_1Cell}{Cell} to be notified, we must invalidate it manually. This is particularly critical when working with Extension\-Go. 
 
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
 \item 
-Update\+Session.\+h\end{DoxyCompactItemize}
+Update\-Session.\-h\end{DoxyCompactItemize}

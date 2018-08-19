@@ -1,105 +1,80 @@
-\hypertarget{classHurricane_1_1Net_1_1Direction}{}\section{Hurricane\+:\+:Net\+:\+:Direction Class Reference}
-\label{classHurricane_1_1Net_1_1Direction}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}
+\hypertarget{classHurricane_1_1Net_1_1Direction}{\section{Hurricane\-:\-:Net\-:\-:Direction Class Reference}
+\label{classHurricane_1_1Net_1_1Direction}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}
+}
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}{Code} \{ \newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a36971421023586a2b5b019f468d699ba}{Dir\+In} = 0x0001, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1135f8c6a05d3801c43684bc195f66f0}{Dir\+Out} = 0x0002, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a368b35a5f289879ad5c6862dfebc1b96}{Dir\+Undefined} = 0x0000, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4afa0b4523129378e11f6e9bdc72fba627}{Conn\+Tristate} = 0x0100, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a03861307a54d5204f34c74365aa58f04}{Conn\+Wired\+Or} = 0x0200, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ad15ab42a0127de740e1c2c05841c153a}{U\+N\+D\+E\+F\+I\+N\+ED} = Dir\+Undefined, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aae6e926e7787f90824a4ee961e6ddac1}{IN} = Dir\+In, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2dac58452d767718df817bcf65906969}{O\+UT} = Dir\+Out, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aa88aea57d992b95a08c24716b5265afd}{I\+N\+O\+UT} = Dir\+In $\vert$ Dir\+Out, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a71a487a8129c354630d5e989d3994c98}{T\+R\+I\+S\+T\+A\+TE} = Dir\+Out $\vert$ Conn\+Tristate, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ab8965ba57b68fc4b58c428fc4c8da397}{T\+R\+A\+N\+S\+CV} = Dir\+In $\vert$ Dir\+Out $\vert$ Conn\+Tristate, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1cc48f96bc28740eb7f0d7ba7e2b237c}{W\+O\+R\+\_\+\+O\+UT} = Dir\+Out $\vert$ Conn\+Wired\+Or, 
-\newline
-\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2fbc95d7882aab3453d5549493763c3c}{W\+O\+R\+\_\+\+I\+N\+O\+UT} = Dir\+In $\vert$ Dir\+Out $\vert$ Conn\+Wired\+Or
+enum \hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}{Code} \{ \\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a36971421023586a2b5b019f468d699ba}{Dir\-In} = 0x0001, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1135f8c6a05d3801c43684bc195f66f0}{Dir\-Out} = 0x0002, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a368b35a5f289879ad5c6862dfebc1b96}{Dir\-Undefined} = 0x0000, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4afa0b4523129378e11f6e9bdc72fba627}{Conn\-Tristate} = 0x0100, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a03861307a54d5204f34c74365aa58f04}{Conn\-Wired\-Or} = 0x0200, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ad15ab42a0127de740e1c2c05841c153a}{U\-N\-D\-E\-F\-I\-N\-E\-D} = Dir\-Undefined, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aae6e926e7787f90824a4ee961e6ddac1}{I\-N} = Dir\-In, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2dac58452d767718df817bcf65906969}{O\-U\-T} = Dir\-Out, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aa88aea57d992b95a08c24716b5265afd}{I\-N\-O\-U\-T} = Dir\-In $|$ Dir\-Out, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a71a487a8129c354630d5e989d3994c98}{T\-R\-I\-S\-T\-A\-T\-E} = Dir\-Out $|$ Conn\-Tristate, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ab8965ba57b68fc4b58c428fc4c8da397}{T\-R\-A\-N\-S\-C\-V} = Dir\-In $|$ Dir\-Out $|$ Conn\-Tristate, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1cc48f96bc28740eb7f0d7ba7e2b237c}{W\-O\-R\-\_\-\-O\-U\-T} = Dir\-Out $|$ Conn\-Wired\-Or, 
+\\*
+\hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2fbc95d7882aab3453d5549493763c3c}{W\-O\-R\-\_\-\-I\-N\-O\-U\-T} = Dir\-In $|$ Dir\-Out $|$ Conn\-Wired\-Or
  \}
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Encapsulate the \hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}{Net\+::\+Direction\+::\+Code} enumeration that defines the signal direction. This direction is meaningful for external nets only. 
+Encapsulate the \hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}{Net\-::\-Direction\-::\-Code} enumeration that defines the signal direction. This direction is meaningful for external nets only. 
 
 \subsection{Member Enumeration Documentation}
-\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}} 
-\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!Code@{Code}}
-\index{Code@{Code}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}
-\subsubsection{\texorpdfstring{Code}{Code}}
-{\footnotesize\ttfamily enum \hyperlink{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}{Hurricane\+::\+Net\+::\+Direction\+::\+Code}}
-
-This enumeration defines the signal direction inside the \hyperlink{classHurricane_1_1Net_1_1Direction}{Net\+::\+Direction}. It is build upon two kind of atomic flags, one telling were the sources and sinks are located regarding the \hyperlink{classHurricane_1_1Cell}{Cell} and the other indicating the nature of the driver (normal, tristate, wired-\/or). \begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Dir\+In@{Dir\+In}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!Dir\+In@{Dir\+In}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a36971421023586a2b5b019f468d699ba}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a36971421023586a2b5b019f468d699ba}} 
-Dir\+In&There is at least one sink on this net ({\itshape atomic}). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Dir\+Out@{Dir\+Out}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!Dir\+Out@{Dir\+Out}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1135f8c6a05d3801c43684bc195f66f0}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1135f8c6a05d3801c43684bc195f66f0}} 
-Dir\+Out&There is at least one source on this net ({\itshape atomic}). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Dir\+Undefined@{Dir\+Undefined}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!Dir\+Undefined@{Dir\+Undefined}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a368b35a5f289879ad5c6862dfebc1b96}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a368b35a5f289879ad5c6862dfebc1b96}} 
-Dir\+Undefined&Undefined direction ({\itshape atomic}). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Conn\+Tristate@{Conn\+Tristate}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!Conn\+Tristate@{Conn\+Tristate}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4afa0b4523129378e11f6e9bdc72fba627}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4afa0b4523129378e11f6e9bdc72fba627}} 
-Conn\+Tristate&The sources are {\bfseries tristates}, this a bus ({\itshape atomic}). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Conn\+Wired\+Or@{Conn\+Wired\+Or}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!Conn\+Wired\+Or@{Conn\+Wired\+Or}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a03861307a54d5204f34c74365aa58f04}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a03861307a54d5204f34c74365aa58f04}} 
-Conn\+Wired\+Or&The sources are {\bfseries wired or}, this a bus ({\itshape atomic}). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{U\+N\+D\+E\+F\+I\+N\+ED@{U\+N\+D\+E\+F\+I\+N\+ED}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!U\+N\+D\+E\+F\+I\+N\+ED@{U\+N\+D\+E\+F\+I\+N\+ED}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ad15ab42a0127de740e1c2c05841c153a}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ad15ab42a0127de740e1c2c05841c153a}} 
-U\+N\+D\+E\+F\+I\+N\+ED&Undefined direction. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{IN@{IN}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!IN@{IN}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aae6e926e7787f90824a4ee961e6ddac1}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aae6e926e7787f90824a4ee961e6ddac1}} 
-IN&There must be only sinks inside and a single permanent driver outside. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{O\+UT@{O\+UT}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!O\+UT@{O\+UT}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2dac58452d767718df817bcf65906969}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2dac58452d767718df817bcf65906969}} 
-O\+UT&There must be no driver outside and a single permanent driver inside (and no sinks inside). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{I\+N\+O\+UT@{I\+N\+O\+UT}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!I\+N\+O\+UT@{I\+N\+O\+UT}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aa88aea57d992b95a08c24716b5265afd}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aa88aea57d992b95a08c24716b5265afd}} 
-I\+N\+O\+UT&There must be one permanent driver inside withs at least one sink inside. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{T\+R\+I\+S\+T\+A\+TE@{T\+R\+I\+S\+T\+A\+TE}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!T\+R\+I\+S\+T\+A\+TE@{T\+R\+I\+S\+T\+A\+TE}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a71a487a8129c354630d5e989d3994c98}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a71a487a8129c354630d5e989d3994c98}} 
-T\+R\+I\+S\+T\+A\+TE&An O\+UT signal with a tristate driver (bus). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{T\+R\+A\+N\+S\+CV@{T\+R\+A\+N\+S\+CV}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!T\+R\+A\+N\+S\+CV@{T\+R\+A\+N\+S\+CV}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ab8965ba57b68fc4b58c428fc4c8da397}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ab8965ba57b68fc4b58c428fc4c8da397}} 
-T\+R\+A\+N\+S\+CV&An I\+N\+O\+UT signal with a tristate driver (bus). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{W\+O\+R\+\_\+\+O\+UT@{W\+O\+R\+\_\+\+O\+UT}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!W\+O\+R\+\_\+\+O\+UT@{W\+O\+R\+\_\+\+O\+UT}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1cc48f96bc28740eb7f0d7ba7e2b237c}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1cc48f96bc28740eb7f0d7ba7e2b237c}} 
-W\+O\+R\+\_\+\+O\+UT&An O\+UT signal with a wired-\/or driver (bus). \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{W\+O\+R\+\_\+\+I\+N\+O\+UT@{W\+O\+R\+\_\+\+I\+N\+O\+UT}!Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}}\index{Hurricane\+::\+Net\+::\+Direction@{Hurricane\+::\+Net\+::\+Direction}!W\+O\+R\+\_\+\+I\+N\+O\+UT@{W\+O\+R\+\_\+\+I\+N\+O\+UT}}}\mbox{\Hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2fbc95d7882aab3453d5549493763c3c}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2fbc95d7882aab3453d5549493763c3c}} 
-W\+O\+R\+\_\+\+I\+N\+O\+UT&An I\+N\+O\+UT signal with a wired-\/or driver (bus). \\
-\hline
-
-\end{DoxyEnumFields}
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}{\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!Code@{Code}}
+\index{Code@{Code}!Hurricane::Net::Direction@{Hurricane\-::\-Net\-::\-Direction}}
+\subsubsection[{Code}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Hurricane\-::\-Net\-::\-Direction\-::\-Code}}}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4}
+This enumeration defines the signal direction inside the \hyperlink{classHurricane_1_1Net_1_1Direction}{Net\-::\-Direction}. It is build upon two kind of atomic flags, one telling were the sources and sinks are located regarding the \hyperlink{classHurricane_1_1Cell}{Cell} and the other indicating the nature of the driver (normal, tristate, wired-\/or). \begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{Dir\-In@{Dir\-In}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!Dir\-In@{Dir\-In}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a36971421023586a2b5b019f468d699ba}{Dir\-In}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a36971421023586a2b5b019f468d699ba}
+}]There is at least one sink on this net ({\itshape atomic}). \index{Dir\-Out@{Dir\-Out}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!Dir\-Out@{Dir\-Out}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1135f8c6a05d3801c43684bc195f66f0}{Dir\-Out}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1135f8c6a05d3801c43684bc195f66f0}
+}]There is at least one source on this net ({\itshape atomic}). \index{Dir\-Undefined@{Dir\-Undefined}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!Dir\-Undefined@{Dir\-Undefined}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a368b35a5f289879ad5c6862dfebc1b96}{Dir\-Undefined}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a368b35a5f289879ad5c6862dfebc1b96}
+}]Undefined direction ({\itshape atomic}). \index{Conn\-Tristate@{Conn\-Tristate}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!Conn\-Tristate@{Conn\-Tristate}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4afa0b4523129378e11f6e9bdc72fba627}{Conn\-Tristate}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4afa0b4523129378e11f6e9bdc72fba627}
+}]The sources are {\bfseries tristates}, this a bus ({\itshape atomic}). \index{Conn\-Wired\-Or@{Conn\-Wired\-Or}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!Conn\-Wired\-Or@{Conn\-Wired\-Or}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a03861307a54d5204f34c74365aa58f04}{Conn\-Wired\-Or}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a03861307a54d5204f34c74365aa58f04}
+}]The sources are {\bfseries wired or}, this a bus ({\itshape atomic}). \index{U\-N\-D\-E\-F\-I\-N\-E\-D@{U\-N\-D\-E\-F\-I\-N\-E\-D}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!U\-N\-D\-E\-F\-I\-N\-E\-D@{U\-N\-D\-E\-F\-I\-N\-E\-D}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ad15ab42a0127de740e1c2c05841c153a}{U\-N\-D\-E\-F\-I\-N\-E\-D}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ad15ab42a0127de740e1c2c05841c153a}
+}]Undefined direction. \index{I\-N@{I\-N}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!I\-N@{I\-N}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aae6e926e7787f90824a4ee961e6ddac1}{I\-N}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aae6e926e7787f90824a4ee961e6ddac1}
+}]There must be only sinks inside and a single permanent driver outside. \index{O\-U\-T@{O\-U\-T}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!O\-U\-T@{O\-U\-T}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2dac58452d767718df817bcf65906969}{O\-U\-T}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2dac58452d767718df817bcf65906969}
+}]There must be no driver outside and a single permanent driver inside (and no sinks inside). \index{I\-N\-O\-U\-T@{I\-N\-O\-U\-T}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!I\-N\-O\-U\-T@{I\-N\-O\-U\-T}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aa88aea57d992b95a08c24716b5265afd}{I\-N\-O\-U\-T}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4aa88aea57d992b95a08c24716b5265afd}
+}]There must be one permanent driver inside withs at least one sink inside. \index{T\-R\-I\-S\-T\-A\-T\-E@{T\-R\-I\-S\-T\-A\-T\-E}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!T\-R\-I\-S\-T\-A\-T\-E@{T\-R\-I\-S\-T\-A\-T\-E}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a71a487a8129c354630d5e989d3994c98}{T\-R\-I\-S\-T\-A\-T\-E}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a71a487a8129c354630d5e989d3994c98}
+}]An O\-U\-T signal with a tristate driver (bus). \index{T\-R\-A\-N\-S\-C\-V@{T\-R\-A\-N\-S\-C\-V}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!T\-R\-A\-N\-S\-C\-V@{T\-R\-A\-N\-S\-C\-V}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ab8965ba57b68fc4b58c428fc4c8da397}{T\-R\-A\-N\-S\-C\-V}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4ab8965ba57b68fc4b58c428fc4c8da397}
+}]An I\-N\-O\-U\-T signal with a tristate driver (bus). \index{W\-O\-R\-\_\-\-O\-U\-T@{W\-O\-R\-\_\-\-O\-U\-T}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!W\-O\-R\-\_\-\-O\-U\-T@{W\-O\-R\-\_\-\-O\-U\-T}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1cc48f96bc28740eb7f0d7ba7e2b237c}{W\-O\-R\-\_\-\-O\-U\-T}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a1cc48f96bc28740eb7f0d7ba7e2b237c}
+}]An O\-U\-T signal with a wired-\/or driver (bus). \index{W\-O\-R\-\_\-\-I\-N\-O\-U\-T@{W\-O\-R\-\_\-\-I\-N\-O\-U\-T}!Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}}\index{Hurricane\-::\-Net\-::\-Direction@{Hurricane\-::\-Net\-::\-Direction}!W\-O\-R\-\_\-\-I\-N\-O\-U\-T@{W\-O\-R\-\_\-\-I\-N\-O\-U\-T}}\item[{\em 
+\hypertarget{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2fbc95d7882aab3453d5549493763c3c}{W\-O\-R\-\_\-\-I\-N\-O\-U\-T}\label{classHurricane_1_1Net_1_1Direction_a5b34d7c3ac52628861af3a46f781fae4a2fbc95d7882aab3453d5549493763c3c}
+}]An I\-N\-O\-U\-T signal with a wired-\/or driver (bus). \end{description}
+\end{Desc}
 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Net.\+h\item 
-Net.\+dox\end{DoxyCompactItemize}
+Net.\-h\item 
+Net.\-dox\end{DoxyCompactItemize}

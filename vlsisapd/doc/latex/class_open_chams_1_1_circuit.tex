@@ -1,67 +1,72 @@
-\hypertarget{class_open_chams_1_1_circuit}{}\section{Circuit Class Reference}
+\hypertarget{class_open_chams_1_1_circuit}{\section{Circuit Class Reference}
 \label{class_open_chams_1_1_circuit}\index{Circuit@{Circuit}}
+}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{class_open_chams_1_1_circuit_a7c1c09f44cf215dc17d3dd2518e32389}{add\+Simul\+Model} (unsigned, \hyperlink{class_open_chams_1_1_simul_model_a450696a95d6cb29d7723838846948340}{Simul\+Model\+::\+Base}, \hyperlink{class_open_chams_1_1_simul_model_a2256f5bba1c1c69a92b933aa501df470}{Simul\+Model\+::\+Version}, std\+::string)
-\begin{DoxyCompactList}\small\item\em adds a \hyperlink{class_open_chams_1_1_simul_model}{Simul\+Model} to the circuit. \end{DoxyCompactList}\item 
-void \hyperlink{class_open_chams_1_1_circuit_a55234deef1d06c617a519a575ce33608}{add\+Sub\+Circuit\+Path} (std\+::string)
-\begin{DoxyCompactList}\small\item\em adds a path to circuit\textquotesingle{}s subcircuit paths list. \end{DoxyCompactList}\item 
-\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a725a691b0117c4b913b54e7bfd92832f}{create\+Layout} ()
+void \hyperlink{class_open_chams_1_1_circuit_a7c1c09f44cf215dc17d3dd2518e32389}{add\-Simul\-Model} (unsigned, \hyperlink{class_open_chams_1_1_simul_model_a450696a95d6cb29d7723838846948340}{Simul\-Model\-::\-Base}, \hyperlink{class_open_chams_1_1_simul_model_a2256f5bba1c1c69a92b933aa501df470}{Simul\-Model\-::\-Version}, std\-::string)
+\begin{DoxyCompactList}\small\item\em adds a \hyperlink{class_open_chams_1_1_simul_model}{Simul\-Model} to the circuit. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_circuit_a55234deef1d06c617a519a575ce33608}{add\-Sub\-Circuit\-Path} (std\-::string)
+\begin{DoxyCompactList}\small\item\em adds a path to circuit's subcircuit paths list. \end{DoxyCompactList}\item 
+\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a725a691b0117c4b913b54e7bfd92832f}{create\-Layout} ()
 \begin{DoxyCompactList}\small\item\em creates a new empty layout and associates it to the circuit. \end{DoxyCompactList}\item 
-\hyperlink{class_open_chams_1_1_netlist}{Netlist} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a3f11671c7ea7b4e2cc3487bd7954b667}{create\+Netlist} ()
+\hyperlink{class_open_chams_1_1_netlist}{Netlist} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a3f11671c7ea7b4e2cc3487bd7954b667}{create\-Netlist} ()
 \begin{DoxyCompactList}\small\item\em creates a new empty netlist and associates it to the circuit. \end{DoxyCompactList}\item 
-\hyperlink{class_open_chams_1_1_schematic}{Schematic} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a57a79a9916df4512648bb195decb7250}{create\+Schematic} ()
+\hyperlink{class_open_chams_1_1_schematic}{Schematic} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a57a79a9916df4512648bb195decb7250}{create\-Schematic} ()
 \begin{DoxyCompactList}\small\item\em creates a new empty schematic and associates it to the circuit. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a403a908943f9a3e820fd25a86d00531d}\label{class_open_chams_1_1_circuit_a403a908943f9a3e820fd25a86d00531d}} 
-\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a403a908943f9a3e820fd25a86d00531d}{get\+Layout} ()
-\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_layout}{Layout} object associated to the circuit or N\+U\+LL if it does not exist. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a2858c0c4e8b5108f041237cf5a802029}\label{class_open_chams_1_1_circuit_a2858c0c4e8b5108f041237cf5a802029}} 
-const std\+::string \& \hyperlink{class_open_chams_1_1_circuit_a2858c0c4e8b5108f041237cf5a802029}{get\+Name} ()
+\hypertarget{class_open_chams_1_1_circuit_a403a908943f9a3e820fd25a86d00531d}{\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a403a908943f9a3e820fd25a86d00531d}{get\-Layout} ()}\label{class_open_chams_1_1_circuit_a403a908943f9a3e820fd25a86d00531d}
+
+\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_layout}{Layout} object associated to the circuit or N\-U\-L\-L if it does not exist. \end{DoxyCompactList}\item 
+\hypertarget{class_open_chams_1_1_circuit_a2858c0c4e8b5108f041237cf5a802029}{const std\-::string \& \hyperlink{class_open_chams_1_1_circuit_a2858c0c4e8b5108f041237cf5a802029}{get\-Name} ()}\label{class_open_chams_1_1_circuit_a2858c0c4e8b5108f041237cf5a802029}
+
 \begin{DoxyCompactList}\small\item\em returns the name of the circuit. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a4085d6a7b6958ffdd7ab5df7e6d6e53f}\label{class_open_chams_1_1_circuit_a4085d6a7b6958ffdd7ab5df7e6d6e53f}} 
-\hyperlink{class_open_chams_1_1_netlist}{Netlist} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a4085d6a7b6958ffdd7ab5df7e6d6e53f}{get\+Netlist} ()
-\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_netlist}{Netlist} object associated to the circuit or N\+U\+LL if it does not exist. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a2e51ad4344607fc279c5c8cda4edae02}\label{class_open_chams_1_1_circuit_a2e51ad4344607fc279c5c8cda4edae02}} 
-\hyperlink{class_open_chams_1_1_parameters}{Parameters} \hyperlink{class_open_chams_1_1_circuit_a2e51ad4344607fc279c5c8cda4edae02}{get\+Parameters} ()
-\begin{DoxyCompactList}\small\item\em returns all circuit\textquotesingle{}s parameters. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_af6f967a5685ac92fe760f4eb95c8c51f}\label{class_open_chams_1_1_circuit_af6f967a5685ac92fe760f4eb95c8c51f}} 
-\hyperlink{class_open_chams_1_1_schematic}{Schematic} $\ast$ \hyperlink{class_open_chams_1_1_circuit_af6f967a5685ac92fe760f4eb95c8c51f}{get\+Schematic} ()
-\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_schematic}{Schematic} object associated to the circuit or N\+U\+LL if it does not exist. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a0ce52bc8747f684ec0123faa8ff97b6d}\label{class_open_chams_1_1_circuit_a0ce52bc8747f684ec0123faa8ff97b6d}} 
-\hyperlink{class_open_chams_1_1_sizing}{Sizing} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a0ce52bc8747f684ec0123faa8ff97b6d}{get\+Sizing} ()
-\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_sizing}{Sizing} object associated to the circuit or N\+U\+LL if it does not exist. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a3538c326d799dd26fbb17c4ac6c4647e}\label{class_open_chams_1_1_circuit_a3538c326d799dd26fbb17c4ac6c4647e}} 
-const std\+::string \& \hyperlink{class_open_chams_1_1_circuit_a3538c326d799dd26fbb17c4ac6c4647e}{get\+Techno} ()
+\hypertarget{class_open_chams_1_1_circuit_a4085d6a7b6958ffdd7ab5df7e6d6e53f}{\hyperlink{class_open_chams_1_1_netlist}{Netlist} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a4085d6a7b6958ffdd7ab5df7e6d6e53f}{get\-Netlist} ()}\label{class_open_chams_1_1_circuit_a4085d6a7b6958ffdd7ab5df7e6d6e53f}
+
+\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_netlist}{Netlist} object associated to the circuit or N\-U\-L\-L if it does not exist. \end{DoxyCompactList}\item 
+\hypertarget{class_open_chams_1_1_circuit_a2e51ad4344607fc279c5c8cda4edae02}{\hyperlink{class_open_chams_1_1_parameters}{Parameters} \hyperlink{class_open_chams_1_1_circuit_a2e51ad4344607fc279c5c8cda4edae02}{get\-Parameters} ()}\label{class_open_chams_1_1_circuit_a2e51ad4344607fc279c5c8cda4edae02}
+
+\begin{DoxyCompactList}\small\item\em returns all circuit's parameters. \end{DoxyCompactList}\item 
+\hypertarget{class_open_chams_1_1_circuit_af6f967a5685ac92fe760f4eb95c8c51f}{\hyperlink{class_open_chams_1_1_schematic}{Schematic} $\ast$ \hyperlink{class_open_chams_1_1_circuit_af6f967a5685ac92fe760f4eb95c8c51f}{get\-Schematic} ()}\label{class_open_chams_1_1_circuit_af6f967a5685ac92fe760f4eb95c8c51f}
+
+\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_schematic}{Schematic} object associated to the circuit or N\-U\-L\-L if it does not exist. \end{DoxyCompactList}\item 
+\hypertarget{class_open_chams_1_1_circuit_a0ce52bc8747f684ec0123faa8ff97b6d}{\hyperlink{class_open_chams_1_1_sizing}{Sizing} $\ast$ \hyperlink{class_open_chams_1_1_circuit_a0ce52bc8747f684ec0123faa8ff97b6d}{get\-Sizing} ()}\label{class_open_chams_1_1_circuit_a0ce52bc8747f684ec0123faa8ff97b6d}
+
+\begin{DoxyCompactList}\small\item\em returns the \hyperlink{class_open_chams_1_1_sizing}{Sizing} object associated to the circuit or N\-U\-L\-L if it does not exist. \end{DoxyCompactList}\item 
+\hypertarget{class_open_chams_1_1_circuit_a3538c326d799dd26fbb17c4ac6c4647e}{const std\-::string \& \hyperlink{class_open_chams_1_1_circuit_a3538c326d799dd26fbb17c4ac6c4647e}{get\-Techno} ()}\label{class_open_chams_1_1_circuit_a3538c326d799dd26fbb17c4ac6c4647e}
+
 \begin{DoxyCompactList}\small\item\em returns the technology. \end{DoxyCompactList}\item 
-const std\+::string \& \hyperlink{class_open_chams_1_1_circuit_a6650bf10e394fe2d6fa1d50e247da296}{get\+Value} (const std\+::string \&)
-\begin{DoxyCompactList}\small\item\em returns the value of the circuit\textquotesingle{}s parameter named {\ttfamily name}. \end{DoxyCompactList}\item 
-void \hyperlink{class_open_chams_1_1_circuit_a4babcbc5b9f7797cc0befb675d5f538c}{set\+Layout} (\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$)
-\begin{DoxyCompactList}\small\item\em sets the circuit\textquotesingle{}s layout. \end{DoxyCompactList}\item 
-void \hyperlink{class_open_chams_1_1_circuit_ab065572c5c1d9beb304324f2d2d8b525}{set\+Sizing} (\hyperlink{class_open_chams_1_1_sizing}{Sizing} $\ast$)
-\begin{DoxyCompactList}\small\item\em sets the circuit\textquotesingle{}s sizing. \end{DoxyCompactList}\item 
-bool \hyperlink{class_open_chams_1_1_circuit_a2eb07935ec946a07edcee2255b781193}{write\+To\+File} (std\+::string file\+Path)
+const std\-::string \& \hyperlink{class_open_chams_1_1_circuit_a6650bf10e394fe2d6fa1d50e247da296}{get\-Value} (const std\-::string \&)
+\begin{DoxyCompactList}\small\item\em returns the value of the circuit's parameter named {\ttfamily name}. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_circuit_a4babcbc5b9f7797cc0befb675d5f538c}{set\-Layout} (\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$)
+\begin{DoxyCompactList}\small\item\em sets the circuit's layout. \end{DoxyCompactList}\item 
+void \hyperlink{class_open_chams_1_1_circuit_ab065572c5c1d9beb304324f2d2d8b525}{set\-Sizing} (\hyperlink{class_open_chams_1_1_sizing}{Sizing} $\ast$)
+\begin{DoxyCompactList}\small\item\em sets the circuit's sizing. \end{DoxyCompactList}\item 
+bool \hyperlink{class_open_chams_1_1_circuit_a2eb07935ec946a07edcee2255b781193}{write\-To\-File} (std\-::string file\-Path)
 \begin{DoxyCompactList}\small\item\em writes the database to file. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{class_open_chams_1_1_circuit}{Circuit} $\ast$ \hyperlink{class_open_chams_1_1_circuit_ad0aa3183bdea59e62f69c295026b7fe7}{read\+From\+File} (const std\+::string file\+Path)
+static \hyperlink{class_open_chams_1_1_circuit}{Circuit} $\ast$ \hyperlink{class_open_chams_1_1_circuit_ad0aa3183bdea59e62f69c295026b7fe7}{read\-From\-File} (const std\-::string file\-Path)
 \begin{DoxyCompactList}\small\item\em creates and returns a \hyperlink{class_open_chams_1_1_circuit}{Circuit} object based on a database source file. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-This class is the root class whihch means that having this object in hand allows to get/set any information contained in the Open\+Chams file parsed/drived. 
+This class is the root class whihch means that having this object in hand allows to get/set any information contained in the Open\-Chams file parsed/drived. 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a7c1c09f44cf215dc17d3dd2518e32389}\label{class_open_chams_1_1_circuit_a7c1c09f44cf215dc17d3dd2518e32389}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!add\+Simul\+Model@{add\+Simul\+Model}}
-\index{add\+Simul\+Model@{add\+Simul\+Model}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{add\+Simul\+Model()}{addSimulModel()}}
-{\footnotesize\ttfamily void add\+Simul\+Model (\begin{DoxyParamCaption}\item[{unsigned}]{id,  }\item[{\hyperlink{class_open_chams_1_1_simul_model_a450696a95d6cb29d7723838846948340}{Simul\+Model\+::\+Base}}]{base,  }\item[{\hyperlink{class_open_chams_1_1_simul_model_a2256f5bba1c1c69a92b933aa501df470}{Simul\+Model\+::\+Version}}]{version,  }\item[{std\+::string}]{file\+Path }\end{DoxyParamCaption})}
+\hypertarget{class_open_chams_1_1_circuit_a7c1c09f44cf215dc17d3dd2518e32389}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!add\-Simul\-Model@{add\-Simul\-Model}}
+\index{add\-Simul\-Model@{add\-Simul\-Model}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{add\-Simul\-Model}]{\setlength{\rightskip}{0pt plus 5cm}void add\-Simul\-Model (
+\begin{DoxyParamCaption}
+\item[{unsigned}]{id, }
+\item[{{\bf Simul\-Model\-::\-Base}}]{base, }
+\item[{{\bf Simul\-Model\-::\-Version}}]{version, }
+\item[{std\-::string}]{file\-Path}
+\end{DoxyParamCaption}
+)}}\label{class_open_chams_1_1_circuit_a7c1c09f44cf215dc17d3dd2518e32389}
 
 
-
-adds a \hyperlink{class_open_chams_1_1_simul_model}{Simul\+Model} to the circuit. 
+adds a \hyperlink{class_open_chams_1_1_simul_model}{Simul\-Model} to the circuit. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -71,25 +76,27 @@ adds a \hyperlink{class_open_chams_1_1_simul_model}{Simul\+Model} to the circuit
 \hline
 {\em version} & the simulation model version. \\
 \hline
-{\em file\+Path} & the path to the netlist used by simulation model. \\
+{\em file\-Path} & the path to the netlist used by simulation model. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a55234deef1d06c617a519a575ce33608}\label{class_open_chams_1_1_circuit_a55234deef1d06c617a519a575ce33608}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!add\+Sub\+Circuit\+Path@{add\+Sub\+Circuit\+Path}}
-\index{add\+Sub\+Circuit\+Path@{add\+Sub\+Circuit\+Path}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{add\+Sub\+Circuit\+Path()}{addSubCircuitPath()}}
-{\footnotesize\ttfamily void add\+Sub\+Circuit\+Path (\begin{DoxyParamCaption}\item[{std\+::string}]{path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{class_open_chams_1_1_circuit_a55234deef1d06c617a519a575ce33608}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!add\-Sub\-Circuit\-Path@{add\-Sub\-Circuit\-Path}}
+\index{add\-Sub\-Circuit\-Path@{add\-Sub\-Circuit\-Path}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{add\-Sub\-Circuit\-Path}]{\setlength{\rightskip}{0pt plus 5cm}void add\-Sub\-Circuit\-Path (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{path}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_open_chams_1_1_circuit_a55234deef1d06c617a519a575ce33608}
 
 
+adds a path to circuit's subcircuit paths list. 
 
-adds a path to circuit\textquotesingle{}s subcircuit paths list. 
-
-Sub\+Circuit\+Paths are used to define where to search the xml file describing subcircuits used in current circuit. \mbox{\Hypertarget{class_open_chams_1_1_circuit_a725a691b0117c4b913b54e7bfd92832f}\label{class_open_chams_1_1_circuit_a725a691b0117c4b913b54e7bfd92832f}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!create\+Layout@{create\+Layout}}
-\index{create\+Layout@{create\+Layout}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{create\+Layout()}{createLayout()}}
-{\footnotesize\ttfamily \hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$ create\+Layout (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
+Sub\-Circuit\-Paths are used to define where to search the xml file describing subcircuits used in current circuit. \hypertarget{class_open_chams_1_1_circuit_a725a691b0117c4b913b54e7bfd92832f}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!create\-Layout@{create\-Layout}}
+\index{create\-Layout@{create\-Layout}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{create\-Layout}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Layout} $\ast$ create\-Layout (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_open_chams_1_1_circuit_a725a691b0117c4b913b54e7bfd92832f}
 
 
 creates a new empty layout and associates it to the circuit. 
@@ -97,12 +104,13 @@ creates a new empty layout and associates it to the circuit.
 \begin{DoxyReturn}{Returns}
 the newly created layout. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a3f11671c7ea7b4e2cc3487bd7954b667}\label{class_open_chams_1_1_circuit_a3f11671c7ea7b4e2cc3487bd7954b667}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!create\+Netlist@{create\+Netlist}}
-\index{create\+Netlist@{create\+Netlist}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{create\+Netlist()}{createNetlist()}}
-{\footnotesize\ttfamily \hyperlink{class_open_chams_1_1_netlist}{Netlist} $\ast$ create\+Netlist (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
+\hypertarget{class_open_chams_1_1_circuit_a3f11671c7ea7b4e2cc3487bd7954b667}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!create\-Netlist@{create\-Netlist}}
+\index{create\-Netlist@{create\-Netlist}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{create\-Netlist}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Netlist} $\ast$ create\-Netlist (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_open_chams_1_1_circuit_a3f11671c7ea7b4e2cc3487bd7954b667}
 
 
 creates a new empty netlist and associates it to the circuit. 
@@ -110,12 +118,13 @@ creates a new empty netlist and associates it to the circuit.
 \begin{DoxyReturn}{Returns}
 the newly created netlist. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a57a79a9916df4512648bb195decb7250}\label{class_open_chams_1_1_circuit_a57a79a9916df4512648bb195decb7250}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!create\+Schematic@{create\+Schematic}}
-\index{create\+Schematic@{create\+Schematic}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{create\+Schematic()}{createSchematic()}}
-{\footnotesize\ttfamily \hyperlink{class_open_chams_1_1_schematic}{Schematic} $\ast$ create\+Schematic (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
+\hypertarget{class_open_chams_1_1_circuit_a57a79a9916df4512648bb195decb7250}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!create\-Schematic@{create\-Schematic}}
+\index{create\-Schematic@{create\-Schematic}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{create\-Schematic}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Schematic} $\ast$ create\-Schematic (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_open_chams_1_1_circuit_a57a79a9916df4512648bb195decb7250}
 
 
 creates a new empty schematic and associates it to the circuit. 
@@ -123,81 +132,86 @@ creates a new empty schematic and associates it to the circuit.
 \begin{DoxyReturn}{Returns}
 the newly created schematic. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a6650bf10e394fe2d6fa1d50e247da296}\label{class_open_chams_1_1_circuit_a6650bf10e394fe2d6fa1d50e247da296}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!get\+Value@{get\+Value}}
-\index{get\+Value@{get\+Value}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{get\+Value()}{getValue()}}
-{\footnotesize\ttfamily const std\+::string \& get\+Value (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{class_open_chams_1_1_circuit_a6650bf10e394fe2d6fa1d50e247da296}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!get\-Value@{get\-Value}}
+\index{get\-Value@{get\-Value}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{get\-Value}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::string \& get\-Value (
+\begin{DoxyParamCaption}
+\item[{const std\-::string \&}]{name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_open_chams_1_1_circuit_a6650bf10e394fe2d6fa1d50e247da296}
 
 
-
-returns the value of the circuit\textquotesingle{}s parameter named {\ttfamily name}. 
+returns the value of the circuit's parameter named {\ttfamily name}. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em name} & the name of the parameter. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_ad0aa3183bdea59e62f69c295026b7fe7}\label{class_open_chams_1_1_circuit_ad0aa3183bdea59e62f69c295026b7fe7}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!read\+From\+File@{read\+From\+File}}
-\index{read\+From\+File@{read\+From\+File}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{read\+From\+File()}{readFromFile()}}
-{\footnotesize\ttfamily \hyperlink{class_open_chams_1_1_circuit}{Circuit} $\ast$ read\+From\+File (\begin{DoxyParamCaption}\item[{const std\+::string}]{file\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
-
+\hypertarget{class_open_chams_1_1_circuit_ad0aa3183bdea59e62f69c295026b7fe7}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!read\-From\-File@{read\-From\-File}}
+\index{read\-From\-File@{read\-From\-File}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{read\-From\-File}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Circuit} $\ast$ read\-From\-File (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{file\-Path}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}}\label{class_open_chams_1_1_circuit_ad0aa3183bdea59e62f69c295026b7fe7}
 
 
 creates and returns a \hyperlink{class_open_chams_1_1_circuit}{Circuit} object based on a database source file. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em file\+Path} & the source file name.\\
+{\em file\-Path} & the source file name.\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 the newly created \hyperlink{class_open_chams_1_1_circuit}{Circuit}. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a4babcbc5b9f7797cc0befb675d5f538c}\label{class_open_chams_1_1_circuit_a4babcbc5b9f7797cc0befb675d5f538c}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!set\+Layout@{set\+Layout}}
-\index{set\+Layout@{set\+Layout}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{set\+Layout()}{setLayout()}}
-{\footnotesize\ttfamily void set\+Layout (\begin{DoxyParamCaption}\item[{\hyperlink{class_open_chams_1_1_layout}{Layout} $\ast$}]{layout }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{class_open_chams_1_1_circuit_a4babcbc5b9f7797cc0befb675d5f538c}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!set\-Layout@{set\-Layout}}
+\index{set\-Layout@{set\-Layout}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{set\-Layout}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Layout (
+\begin{DoxyParamCaption}
+\item[{{\bf Layout} $\ast$}]{layout}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_open_chams_1_1_circuit_a4babcbc5b9f7797cc0befb675d5f538c}
 
 
-
-sets the circuit\textquotesingle{}s layout. 
+sets the circuit's layout. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em layout} & the layout of the circuit. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_ab065572c5c1d9beb304324f2d2d8b525}\label{class_open_chams_1_1_circuit_ab065572c5c1d9beb304324f2d2d8b525}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!set\+Sizing@{set\+Sizing}}
-\index{set\+Sizing@{set\+Sizing}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{set\+Sizing()}{setSizing()}}
-{\footnotesize\ttfamily void set\+Sizing (\begin{DoxyParamCaption}\item[{\hyperlink{class_open_chams_1_1_sizing}{Sizing} $\ast$}]{sizing }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{class_open_chams_1_1_circuit_ab065572c5c1d9beb304324f2d2d8b525}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!set\-Sizing@{set\-Sizing}}
+\index{set\-Sizing@{set\-Sizing}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{set\-Sizing}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Sizing (
+\begin{DoxyParamCaption}
+\item[{{\bf Sizing} $\ast$}]{sizing}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_open_chams_1_1_circuit_ab065572c5c1d9beb304324f2d2d8b525}
 
 
-
-sets the circuit\textquotesingle{}s sizing. 
+sets the circuit's sizing. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em sizing} & the sizing of the circuit. \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{class_open_chams_1_1_circuit_a2eb07935ec946a07edcee2255b781193}\label{class_open_chams_1_1_circuit_a2eb07935ec946a07edcee2255b781193}} 
-\index{Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}!write\+To\+File@{write\+To\+File}}
-\index{write\+To\+File@{write\+To\+File}!Open\+Chams\+::\+Circuit@{Open\+Chams\+::\+Circuit}}
-\subsubsection{\texorpdfstring{write\+To\+File()}{writeToFile()}}
-{\footnotesize\ttfamily bool write\+To\+File (\begin{DoxyParamCaption}\item[{std\+::string}]{file\+Path }\end{DoxyParamCaption})}
-
+\hypertarget{class_open_chams_1_1_circuit_a2eb07935ec946a07edcee2255b781193}{\index{Open\-Chams\-::\-Circuit@{Open\-Chams\-::\-Circuit}!write\-To\-File@{write\-To\-File}}
+\index{write\-To\-File@{write\-To\-File}!OpenChams::Circuit@{Open\-Chams\-::\-Circuit}}
+\subsubsection[{write\-To\-File}]{\setlength{\rightskip}{0pt plus 5cm}bool write\-To\-File (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{file\-Path}
+\end{DoxyParamCaption}
+)}}\label{class_open_chams_1_1_circuit_a2eb07935ec946a07edcee2255b781193}
 
 
 writes the database to file. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em file\+Path} & the destination file. \\
+{\em file\-Path} & the destination file. \\
 \hline
 \end{DoxyParams}

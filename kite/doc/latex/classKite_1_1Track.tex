@@ -1,5 +1,6 @@
-\hypertarget{classKite_1_1Track}{}\subsection{Track Class Reference}
+\hypertarget{classKite_1_1Track}{\subsection{Track Class Reference}
 \label{classKite_1_1Track}\index{Track@{Track}}
+}
 
 
 Structure managing one routing track.  
@@ -7,7 +8,7 @@ Structure managing one routing track.
 
 
 
-Inheritance diagram for Track\+:\nopagebreak
+Inheritance diagram for Track\-:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -17,129 +18,129 @@ Inheritance diagram for Track\+:\nopagebreak
 \subsubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Index\+State} \{ \newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}{Begin\+Is\+Track\+Min} = 0x00000001, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}{Begin\+Is\+Segment\+Min} = 0x00000002, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}{Begin\+Is\+Segment\+Max} = 0x00000004, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}{End\+Is\+Track\+Max} = 0x00000008, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}{End\+Is\+Segment\+Min} = 0x00000010, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}{End\+Is\+Next\+Segment\+Min} = 0x00000020, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}{End\+Is\+Segment\+Max} = 0x00000040, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}{Before\+First\+Element} = Begin\+Is\+Track\+Min $\vert$\+End\+Is\+Segment\+Min, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}{Inside\+Element} = Begin\+Is\+Segment\+Min$\vert$\+End\+Is\+Segment\+Max, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}{Outside\+Element} = Begin\+Is\+Segment\+Max$\vert$\+End\+Is\+Next\+Segment\+Min, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}{After\+Last\+Element} = Begin\+Is\+Segment\+Max$\vert$\+End\+Is\+Track\+Max, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}{Empty\+Track} = Begin\+Is\+Track\+Min $\vert$\+End\+Is\+Track\+Max, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}{Begin\+Mask} = Begin\+Is\+Track\+Min $\vert$\+Begin\+Is\+Segment\+Min$\vert$\+Begin\+Is\+Segment\+Max, 
-\newline
-\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}{End\+Mask} = End\+Is\+Track\+Max $\vert$\+End\+Is\+Segment\+Min $\vert$\+End\+Is\+Next\+Segment\+Min$\vert$\+End\+Is\+Segment\+Max
+enum \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Index\-State} \{ \\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}{Begin\-Is\-Track\-Min} = 0x00000001, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}{Begin\-Is\-Segment\-Min} = 0x00000002, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}{Begin\-Is\-Segment\-Max} = 0x00000004, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}{End\-Is\-Track\-Max} = 0x00000008, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}{End\-Is\-Segment\-Min} = 0x00000010, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}{End\-Is\-Next\-Segment\-Min} = 0x00000020, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}{End\-Is\-Segment\-Max} = 0x00000040, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}{Before\-First\-Element} = Begin\-Is\-Track\-Min $|$\-End\-Is\-Segment\-Min, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}{Inside\-Element} = Begin\-Is\-Segment\-Min$|$\-End\-Is\-Segment\-Max, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}{Outside\-Element} = Begin\-Is\-Segment\-Max$|$\-End\-Is\-Next\-Segment\-Min, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}{After\-Last\-Element} = Begin\-Is\-Segment\-Max$|$\-End\-Is\-Track\-Max, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}{Empty\-Track} = Begin\-Is\-Track\-Min $|$\-End\-Is\-Track\-Max, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}{Begin\-Mask} = Begin\-Is\-Track\-Min $|$\-Begin\-Is\-Segment\-Min$|$\-Begin\-Is\-Segment\-Max, 
+\\*
+\hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}{End\-Mask} = End\-Is\-Track\-Max $|$\-End\-Is\-Segment\-Min $|$\-End\-Is\-Next\-Segment\-Min$|$\-End\-Is\-Segment\-Max
  \}
 \end{DoxyCompactItemize}
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-virtual bool \hyperlink{classKite_1_1Track_a9d3db1f8a5aca58f8f54d291faebf873}{is\+Horizontal} () const =0
+virtual bool \hyperlink{classKite_1_1Track_a9d3db1f8a5aca58f8f54d291faebf873}{is\-Horizontal} () const =0
 \item 
-virtual bool \hyperlink{classKite_1_1Track_a6fa2bf0568a2b295dd7cd1f7207247d5}{is\+Vertical} () const =0
+virtual bool \hyperlink{classKite_1_1Track_a6fa2bf0568a2b295dd7cd1f7207247d5}{is\-Vertical} () const =0
 \item 
-bool \hyperlink{classKite_1_1Track_a6835a410623b90e8abec4c7a4e0905b3}{is\+Local\+Assigned} () const
+bool \hyperlink{classKite_1_1Track_ac9f5f43a21bc7b63a1237e10b5a6a53b}{is\-Local\-Assigned} () const 
 \item 
-\hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane} $\ast$ \hyperlink{classKite_1_1Track_a056650e788f5235d0c4cc49e870f29b4}{get\+Routing\+Plane} () const
+\hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane} $\ast$ \hyperlink{classKite_1_1Track_a3f7a5bbb3140598c747b1526998e6be7}{get\-Routing\-Plane} () const 
 \item 
-\hyperlink{classKite_1_1KiteEngine}{Kite\+Engine} $\ast$ \hyperlink{classKite_1_1Track_af7373bd3a4ee8fcf28a316230ed37fc0}{get\+Kite\+Engine} () const
+\hyperlink{classKite_1_1KiteEngine}{Kite\-Engine} $\ast$ \hyperlink{classKite_1_1Track_a9ccc00efc7079210bc25122921382da4}{get\-Kite\-Engine} () const 
 \item 
-virtual unsigned int \hyperlink{classKite_1_1Track_ae35b78590ed6aa546b626ef95f28c533}{get\+Direction} () const =0
+virtual unsigned int \hyperlink{classKite_1_1Track_ae35b78590ed6aa546b626ef95f28c533}{get\-Direction} () const =0
 \item 
-size\+\_\+t \hyperlink{classKite_1_1Track_ac6f0fd2129f44fe6c0c6eaca9766e1a3}{get\+Index} () const
+size\-\_\-t \hyperlink{classKite_1_1Track_a65742a66b3c3b66d5b619db492469900}{get\-Index} () const 
 \item 
-unsigned int \hyperlink{classKite_1_1Track_a6c4d9081746b8daa3e45e5e3dd185b60}{get\+Depth} () const
+unsigned int \hyperlink{classKite_1_1Track_ad43be8bb2a3c8247405feef4fa973734}{get\-Depth} () const 
 \item 
-const \textbf{ Layer} $\ast$ \hyperlink{classKite_1_1Track_ab468d5fc5ad722f437b81decc8209ab7}{get\+Layer} () const
+const {\bf Layer} $\ast$ \hyperlink{classKite_1_1Track_ac1bbd63624eb1b4e394301c92adef62c}{get\-Layer} () const 
 \item 
-const \textbf{ Layer} $\ast$ \hyperlink{classKite_1_1Track_aa719edbfb0c3d2f294cf658f1c6bfb37}{get\+Blockage\+Layer} () const
+const {\bf Layer} $\ast$ \hyperlink{classKite_1_1Track_aceadd4784a0ae6394d2c75433f81ce59}{get\-Blockage\-Layer} () const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_ab5b5aaa5b318369feee6003dbad039c2}{get\+Axis} () const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_af85576c58c70007850ad56e238e8d266}{get\-Axis} () const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_a71f401dbc8d152b50522ee459ef63441}{get\+Min} () const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_a75e87715af5a758c37e5f1faeaf7ccc1}{get\-Min} () const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_a7fdc462696aede86c051edfaa6268e9a}{get\+Max} () const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_a204f3392bd6abab056796ecdae72ce54}{get\-Max} () const 
 \item 
-\hyperlink{classKite_1_1Track}{Track} $\ast$ \hyperlink{classKite_1_1Track_a1b8af68504f2de84cb85cf25e30f93bd}{get\+Next\+Track} () const
+\hyperlink{classKite_1_1Track}{Track} $\ast$ \hyperlink{classKite_1_1Track_ab83ae7101fae68a7db48b96a82cc42f5}{get\-Next\-Track} () const 
 \item 
-\hyperlink{classKite_1_1Track}{Track} $\ast$ \hyperlink{classKite_1_1Track_a984171d836a7f61df95e74beeddcf6b5}{get\+Previous\+Track} () const
+\hyperlink{classKite_1_1Track}{Track} $\ast$ \hyperlink{classKite_1_1Track_a0647664eabb2f70005585316c3681b7f}{get\-Previous\-Track} () const 
 \item 
-size\+\_\+t \hyperlink{classKite_1_1Track_a9be1e4285daa77fe397767c097fbdc66}{get\+Size} () const
+size\-\_\-t \hyperlink{classKite_1_1Track_af55b3790622878d65ed5ff2bb2b3fcc4}{get\-Size} () const 
 \item 
-virtual \textbf{ Point} \hyperlink{classKite_1_1Track_a2a033f90e528d3d07aa33694dd733200}{get\+Position} (\textbf{ Db\+U\+::\+Unit} coordinate) const =0
+virtual {\bf Point} \hyperlink{classKite_1_1Track_a2a033f90e528d3d07aa33694dd733200}{get\-Position} ({\bf Db\-U\-::\-Unit} coordinate) const =0
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1Track_acb93796a96c9737133fb5d90837ab81d}{get\+Segment} (size\+\_\+t index) const
+\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1Track_ac2216be50494af61a7b16d20dd8cc5dd}{get\-Segment} (size\-\_\-t index) const 
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1Track_a6962a27db7ae946217ea692983fc6a8c}{get\+Segment} (\textbf{ Db\+U\+::\+Unit} position) const
+\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1Track_aa8a5a7f28e71bce3676d4a051ab1d6c6}{get\-Segment} ({\bf Db\-U\-::\-Unit} position) const 
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1Track_af3db59591bef3c690ace92c114a4e4aa}{get\+Next} (size\+\_\+t \&index, \textbf{ Net} $\ast$) const
+\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1Track_afaad0c947c459bab3b7ef742aaa5c59f}{get\-Next} (size\-\_\-t \&index, {\bf Net} $\ast$) const 
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1Track_a290fcfe6131730d216951a3b5207d777}{get\+Previous} (size\+\_\+t \&index, \textbf{ Net} $\ast$) const
+\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1Track_a4ebcb68fdea325b48de96a417a86d896}{get\-Previous} (size\-\_\-t \&index, {\bf Net} $\ast$) const 
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$ \hyperlink{classKite_1_1Track_a72e18efeecb4641a1ad2989d80b48fec}{get\+Next\+Fixed} (size\+\_\+t \&index) const
+\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1Track_a13493827f36a960f3c443ff2b8ea0143}{get\-Next\-Fixed} (size\-\_\-t \&index) const 
 \item 
-size\+\_\+t \hyperlink{classKite_1_1Track_a73cdc70609df1c89393542f301746622}{find} (const \hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$) const
+size\-\_\-t \hyperlink{classKite_1_1Track_a92159b77cb6e17d1c81fe6b907953387}{find} (const \hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$) const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_ab26eeaf466b6b5ba863f73abb3fbfa9a}{get\+Source\+Position} (vector$<$ \hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$$>$\+::iterator) const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_a67e86dd6909fb12706787ea738355fdf}{get\-Source\-Position} (vector$<$ \hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ $>$\-::iterator) const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_a22b708f606d8d95b52e297d7bc2cab55}{get\+Minimal\+Position} (size\+\_\+t index, unsigned int state) const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_a00032371424630b4fd99dc1c443ee1f3}{get\-Minimal\-Position} (size\-\_\-t index, unsigned int state) const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_a68124797edd88ebaf3c9aa00d6ee7822}{get\+Maximal\+Position} (size\+\_\+t index, unsigned int state) const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_a5c9424f73f1fafa422c8dca99c7216bd}{get\-Maximal\-Position} (size\-\_\-t index, unsigned int state) const 
 \item 
-\textbf{ Interval} \hyperlink{classKite_1_1Track_aa9c09467d45d95b3ac2b58f09c04ff8d}{get\+Free\+Interval} (\textbf{ Db\+U\+::\+Unit} position, \textbf{ Net} $\ast$net=N\+U\+LL) const
+{\bf Interval} \hyperlink{classKite_1_1Track_a95a9fad401e395a6b0f73e755db6ddad}{get\-Free\-Interval} ({\bf Db\-U\-::\-Unit} position, {\bf Net} $\ast$net=N\-U\-L\-L) const 
 \item 
-\textbf{ Interval} \hyperlink{classKite_1_1Track_ae87a2e7c9632b60737162295542e3e93}{get\+Occupied\+Interval} (size\+\_\+t \&begin) const
+{\bf Interval} \hyperlink{classKite_1_1Track_aeb4b9c2a20ec5f82da8781b11982ae7d}{get\-Occupied\-Interval} (size\-\_\-t \&begin) const 
 \item 
-\textbf{ Interval} \hyperlink{classKite_1_1Track_a225a347d3fba958b5f95ffbc2da499c5}{expand\+Free\+Interval} (size\+\_\+t \&begin, size\+\_\+t \&end, unsigned int state, \textbf{ Net} $\ast$) const
+{\bf Interval} \hyperlink{classKite_1_1Track_aead0aa746d8c8ce14a11161baa1aafc4}{expand\-Free\-Interval} (size\-\_\-t \&begin, size\-\_\-t \&end, unsigned int state, {\bf Net} $\ast$) const 
 \item 
-void \hyperlink{classKite_1_1Track_a33a6c0eebb0d4d50f639ae49a4d6252f}{get\+Begin\+Index} (\textbf{ Db\+U\+::\+Unit} position, size\+\_\+t \&begin, unsigned int \&state) const
+void \hyperlink{classKite_1_1Track_a7386d7acfcd1dfbeb906bd4c482d797e}{get\-Begin\-Index} ({\bf Db\-U\-::\-Unit} position, size\-\_\-t \&begin, unsigned int \&state) const 
 \item 
-void \hyperlink{classKite_1_1Track_aeeb787cb8a5ccbedc8697ea6811af2f6}{get\+Overlap\+Bounds} (\textbf{ Interval}, size\+\_\+t \&begin, size\+\_\+t \&end) const
+void \hyperlink{classKite_1_1Track_a414e800da5aa8b03eb82aa0dba883f7f}{get\-Overlap\-Bounds} ({\bf Interval}, size\-\_\-t \&begin, size\-\_\-t \&end) const 
 \item 
-Track\+Cost \hyperlink{classKite_1_1Track_a74d6a29b342d6f5924e20290b5274271}{get\+Overlap\+Cost} (\textbf{ Interval}, \textbf{ Net} $\ast$, size\+\_\+t begin, size\+\_\+t end, unsigned int flags) const
+Track\-Cost \hyperlink{classKite_1_1Track_a91b5c29bec3f74b1194473d1eb274086}{get\-Overlap\-Cost} ({\bf Interval}, {\bf Net} $\ast$, size\-\_\-t begin, size\-\_\-t end, unsigned int flags) const 
 \item 
-Track\+Cost \hyperlink{classKite_1_1Track_a7f113e53fbd0654e8ecf8927ead9e4fc}{get\+Overlap\+Cost} (\textbf{ Interval}, \textbf{ Net} $\ast$, unsigned int flags) const
+Track\-Cost \hyperlink{classKite_1_1Track_ae8e0a72955bd05677d82738ad032526d}{get\-Overlap\-Cost} ({\bf Interval}, {\bf Net} $\ast$, unsigned int flags) const 
 \item 
-Track\+Cost \hyperlink{classKite_1_1Track_a5084e62b188e6c62ccd32a860e6ac711}{get\+Overlap\+Cost} (\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$, unsigned int flags) const
+Track\-Cost \hyperlink{classKite_1_1Track_ac930c18bbcb0b25f2b5360f6ce6741e7}{get\-Overlap\-Cost} (\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$, unsigned int flags) const 
 \item 
-void \hyperlink{classKite_1_1Track_ae94f77eac7cb5be9cb94d37380203913}{get\+Terminal\+Weight} (\textbf{ Interval}, \textbf{ Net} $\ast$, size\+\_\+t \&count, unsigned int \&weight) const
+void \hyperlink{classKite_1_1Track_a8b274bcf60589230f36f9798cce1e7d7}{get\-Terminal\-Weight} ({\bf Interval}, {\bf Net} $\ast$, size\-\_\-t \&count, unsigned int \&weight) const 
 \item 
-\textbf{ Db\+U\+::\+Unit} \hyperlink{classKite_1_1Track_ac0514a53e47d579ae5897113e94cbb13}{get\+Source\+Position} (size\+\_\+t index) const
+{\bf Db\-U\-::\-Unit} \hyperlink{classKite_1_1Track_a6807aafaa83c1a2687c48d02510ced3a}{get\-Source\-Position} (size\-\_\-t index) const 
 \item 
-bool \hyperlink{classKite_1_1Track_a711798bd60e6e58a99c61f7c6ee9c63a}{check} (unsigned int \&overlaps, const char $\ast$message=N\+U\+LL) const
+bool \hyperlink{classKite_1_1Track_ad21778972fbdf5cbffb470b2e36f9fcf}{check} (unsigned int \&overlaps, const char $\ast$message=N\-U\-L\-L) const 
 \item 
 void \hyperlink{classKite_1_1Track_a893f1101c650c08c98612515c2b1a89c}{invalidate} ()
 \item 
-void \hyperlink{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{insert} (\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$)
+void \hyperlink{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{insert} (\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$)
 \item 
-void \hyperlink{classKite_1_1Track_a31e8f4502866435ac898c7eec741175f}{insert} (\hyperlink{classKite_1_1TrackMarker}{Track\+Marker} $\ast$)
+void \hyperlink{classKite_1_1Track_a31e8f4502866435ac898c7eec741175f}{insert} (\hyperlink{classKite_1_1TrackMarker}{Track\-Marker} $\ast$)
 \item 
-void \hyperlink{classKite_1_1Track_a8b5d93406ef581c1be022417238a89ca}{set\+Segment} (\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$, size\+\_\+t)
+void \hyperlink{classKite_1_1Track_a8b5d93406ef581c1be022417238a89ca}{set\-Segment} (\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$, size\-\_\-t)
 \item 
-size\+\_\+t \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{do\+Removal} ()
+size\-\_\-t \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{do\-Removal} ()
 \item 
-void \hyperlink{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{do\+Reorder} ()
+void \hyperlink{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{do\-Reorder} ()
 \end{DoxyCompactItemize}
 \subsubsection*{Static Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-static const size\+\_\+t \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{npos} = (size\+\_\+t)-\/1
+static const size\-\_\-t \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{npos} = (size\-\_\-t)-\/1
 \end{DoxyCompactItemize}
 
 
@@ -149,499 +150,546 @@ Structure managing one routing track.
 \hypertarget{classKite_1_1Track_secTrackPurpose}{}\subsubsection{Track Purpose}\label{classKite_1_1Track_secTrackPurpose}
 We use an array of {\itshape regularly spaced} \hyperlink{classKite_1_1Track}{Track} as a geometrical fast access structure. It allows to know whether an area is used or not. The whole area may be seen as a set of adjoining tiles of fixed {\itshape width} but variable {\itshape length}.
 
-The figure {\bfseries (1.\+b)} show, for an horizontal, track the relation between {\ttfamily y,min,max} and the occupied area of the plane. {\ttfamily min} and {\ttfamily max} must take into account segment extensions ({\ttfamily e}) and the minimal distance between two rectangles ({\ttfamily MD}) of the same layer. We assume that the width of the segment, augmented of all it\textquotesingle{}s contraints is no greater than {\ttfamily TS} (in fact it\textquotesingle{}s how {\ttfamily TS} must be calculated).
+The figure {\bfseries (1.\-b)} show, for an horizontal, track the relation between {\ttfamily y,min,max} and the occupied area of the plane. {\ttfamily min} and {\ttfamily max} must take into account segment extensions ({\ttfamily e}) and the minimal distance between two rectangles ({\ttfamily M\-D}) of the same layer. We assume that the width of the segment, augmented of all it's contraints is no greater than {\ttfamily T\-S} (in fact it's how {\ttfamily T\-S} must be calculated).
 
-For the whole track array, see \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane}.
+For the whole track array, see \hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane}.
 
 \hypertarget{classKite_1_1Track_secTrackImplementation}{}\subsubsection{Track Implementation}\label{classKite_1_1Track_secTrackImplementation}
-A \hyperlink{classKite_1_1Track}{Track} is implemented with a sorted vector of \hyperlink{classKite_1_1TrackElement}{Track\+Element}. Track\+Elements from differents nets must not overlap. The sorting order is defined as follow\+:
+A \hyperlink{classKite_1_1Track}{Track} is implemented with a sorted vector of \hyperlink{classKite_1_1TrackElement}{Track\-Element}. Track\-Elements from differents nets must not overlap. The sorting order is defined as follow\-:
 \begin{DoxyItemize}
-\item Track\+Elements are sorted by increasing source ({\itshape min}) positions.
-\item In case of overlap (i.\+e. belongs to the same net), if they share the same source position, then they are sorted by {\itshape decreasing} length. This way, the longest one will be the first encountered when walking through the \hyperlink{classKite_1_1Track}{Track} in increasing index order.
+\item Track\-Elements are sorted by increasing source ({\itshape min}) positions.
+\item In case of overlap (i.\-e. belongs to the same net), if they share the same source position, then they are sorted by {\itshape decreasing} length. This way, the longest one will be the first encountered when walking through the \hyperlink{classKite_1_1Track}{Track} in increasing index order.
 \end{DoxyItemize}
 
-Figure {\bfseries 2.\+b} shows the details of the \hyperlink{classKite_1_1Track}{Track} {\bfseries \mbox{[}1\mbox{]}} of figure {\bfseries 1.\+a}. Net {\bfseries $<$d$>$} show an exemple of overlapping.
+Figure {\bfseries 2.\-b} shows the details of the \hyperlink{classKite_1_1Track}{Track} {\bfseries \mbox{[}1\mbox{]}} of figure {\bfseries 1.\-a}. Net {\bfseries $<$d$>$} show an exemple of overlapping.
 
  
 \begin{DoxyImage}
 \includegraphics[width=0.7\textwidth]{Track-1}
-\doxyfigcaption{Track Structure}
+\caption{Track Structure}
 \end{DoxyImage}
 
 
-In addition to the Track\+Segments, the \hyperlink{classKite_1_1Track}{Track} also manage additionnal informations through a second vector of Track\+Markers. \hyperlink{classKite_1_1TrackMarker}{Track\+Marker} are currently used only to hints at how strongly a terminal is dependant on that portion of \hyperlink{classKite_1_1Track}{Track} to be accessed.\hypertarget{classKite_1_1Track_ssecTrackIndexes}{}\paragraph{Indexes vs. Iterators}\label{classKite_1_1Track_ssecTrackIndexes}
+In addition to the Track\-Segments, the \hyperlink{classKite_1_1Track}{Track} also manage additionnal informations through a second vector of Track\-Markers. \hyperlink{classKite_1_1TrackMarker}{Track\-Marker} are currently used only to hints at how strongly a terminal is dependant on that portion of \hyperlink{classKite_1_1Track}{Track} to be accessed.\hypertarget{classKite_1_1Track_ssecTrackIndexes}{}\paragraph{Indexes vs. Iterators}\label{classKite_1_1Track_ssecTrackIndexes}
 Numerical indexes have been prefered over iterators because they can be used more easily by objects other the \hyperlink{classKite_1_1Track}{Track} itself for referencing. So internal managment follow the same rule, handling indexes or reference to indexes.\hypertarget{classKite_1_1Track_ssecTrackUpdate}{}\paragraph{Update Mechanism}\label{classKite_1_1Track_ssecTrackUpdate}
-When a \hyperlink{classKite_1_1TrackElement}{Track\+Element} is normaly inserted in a \hyperlink{classKite_1_1Track}{Track}, a two way link is established. The \hyperlink{classKite_1_1Track}{Track} has an entry in it\textquotesingle{}s vector refering to \hyperlink{classKite_1_1TrackElement}{Track\+Element}, and conversely, the \hyperlink{classKite_1_1TrackElement}{Track\+Element} has it\textquotesingle{}s {\ttfamily track} field pointing to it\textquotesingle{}s owning \hyperlink{classKite_1_1Track}{Track}.
+When a \hyperlink{classKite_1_1TrackElement}{Track\-Element} is normaly inserted in a \hyperlink{classKite_1_1Track}{Track}, a two way link is established. The \hyperlink{classKite_1_1Track}{Track} has an entry in it's vector refering to \hyperlink{classKite_1_1TrackElement}{Track\-Element}, and conversely, the \hyperlink{classKite_1_1TrackElement}{Track\-Element} has it's {\ttfamily track} field pointing to it's owning \hyperlink{classKite_1_1Track}{Track}.
 
-{\bfseries \hyperlink{classKite_1_1TrackElement}{Track\+Element} Removal}
+{\bfseries \hyperlink{classKite_1_1TrackElement}{Track\-Element} Removal}
 
-To remove a \hyperlink{classKite_1_1TrackElement}{Track\+Element} from a \hyperlink{classKite_1_1Track}{Track}, we break one of those two links\+: the \hyperlink{classKite_1_1TrackElement}{Track\+Element} cease to refer to the owning \hyperlink{classKite_1_1Track}{Track}, marking him for removal which will occurs at the next track revalidation (\hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\+::do\+Removal()}). In figure {\bfseries 3}, the \hyperlink{classKite_1_1TrackElement}{Track\+Element} belonging to net {\bfseries $<$b$>$} is marked for removal.
+To remove a \hyperlink{classKite_1_1TrackElement}{Track\-Element} from a \hyperlink{classKite_1_1Track}{Track}, we break one of those two links\-: the \hyperlink{classKite_1_1TrackElement}{Track\-Element} cease to refer to the owning \hyperlink{classKite_1_1Track}{Track}, marking him for removal which will occurs at the next track revalidation (\hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\-::do\-Removal()}). In figure {\bfseries 3}, the \hyperlink{classKite_1_1TrackElement}{Track\-Element} belonging to net {\bfseries $<$b$>$} is marked for removal.
 
- {\bfseries \hyperlink{classKite_1_1TrackElement}{Track\+Element} Insertion}
+ {\bfseries \hyperlink{classKite_1_1TrackElement}{Track\-Element} Insertion}
 
-When a \hyperlink{classKite_1_1TrackElement}{Track\+Element} is inserted into a \hyperlink{classKite_1_1Track}{Track}, the two way link is immediatly created (but the \hyperlink{classKite_1_1TrackElement}{Track\+Element} is not yet at it\textquotesingle{}s final place in the \hyperlink{classKite_1_1Track}{Track}\textquotesingle{}s vector). Before inserting a \hyperlink{classKite_1_1TrackElement}{Track\+Element} we check that it\textquotesingle{}s been already detached ({\ttfamily track} field to {\ttfamily N\+U\+LL}).
+When a \hyperlink{classKite_1_1TrackElement}{Track\-Element} is inserted into a \hyperlink{classKite_1_1Track}{Track}, the two way link is immediatly created (but the \hyperlink{classKite_1_1TrackElement}{Track\-Element} is not yet at it's final place in the \hyperlink{classKite_1_1Track}{Track}'s vector). Before inserting a \hyperlink{classKite_1_1TrackElement}{Track\-Element} we check that it's been already detached ({\ttfamily track} field to {\ttfamily N\-U\-L\-L}).
 
-It is at that step that the \hyperlink{classKite_1_1TrackElement}{Track\+Element} axis is actually updated through a call to \hyperlink{classKite_1_1TrackElement_a45e685b1e3ee630d24bf43746553af4c}{Track\+Element\+::set\+Axis()}.
+It is at that step that the \hyperlink{classKite_1_1TrackElement}{Track\-Element} axis is actually updated through a call to \hyperlink{classKite_1_1TrackElement_a45e685b1e3ee630d24bf43746553af4c}{Track\-Element\-::set\-Axis()}.
 
 {\bfseries Revalidation Sequence}
 
-After a \hyperlink{classKite_1_1Track}{Track} has been modificated either the \hyperlink{classKite_1_1Track}{Track} element vector or the Marker\+Element vector (or both) has been invalidateds. Revalidation take place in three steps\+:
+After a \hyperlink{classKite_1_1Track}{Track} has been modificated either the \hyperlink{classKite_1_1Track}{Track} element vector or the Marker\-Element vector (or both) has been invalidateds. Revalidation take place in three steps\-:
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\+::do\+Removal()}, remove all \hyperlink{classKite_1_1TrackElement}{Track\+Element} marked for removal.
-\item \hyperlink{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{Track\+::insert()}, insert the \hyperlink{classKite_1_1TrackElement}{Track\+Element} into their new \hyperlink{classKite_1_1Track}{Track}.
-\item \hyperlink{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{Track\+::do\+Reorder()}, sort the \hyperlink{classKite_1_1TrackElement}{Track\+Element} of the vector, that is, put the newly inserted elements at their right place.
+\item \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\-::do\-Removal()}, remove all \hyperlink{classKite_1_1TrackElement}{Track\-Element} marked for removal.
+\item \hyperlink{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{Track\-::insert()}, insert the \hyperlink{classKite_1_1TrackElement}{Track\-Element} into their new \hyperlink{classKite_1_1Track}{Track}.
+\item \hyperlink{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{Track\-::do\-Reorder()}, sort the \hyperlink{classKite_1_1TrackElement}{Track\-Element} of the vector, that is, put the newly inserted elements at their right place.
 \end{DoxyItemize}
 
-Each step must be done {\itshape for all Tracks} before proceeding to the next. This way a \hyperlink{classKite_1_1TrackElement}{Track\+Element} {\ttfamily track} field doesn\textquotesingle{}t get set {\itshape before} it has been actually removed from it\textquotesingle{}s previous \hyperlink{classKite_1_1Track}{Track}.\hypertarget{classKite_1_1Track_ssecTrackOperations}{}\paragraph{Main Operations on Tracks}\label{classKite_1_1Track_ssecTrackOperations}
-{\bfseries Helper Function\+:} \hyperlink{classKite_1_1Track_a33a6c0eebb0d4d50f639ae49a4d6252f}{Track\+::get\+Begin\+Index()}
+Each step must be done {\itshape for all Tracks} before proceeding to the next. This way a \hyperlink{classKite_1_1TrackElement}{Track\-Element} {\ttfamily track} field doesn't get set {\itshape before} it has been actually removed from it's previous \hyperlink{classKite_1_1Track}{Track}.\hypertarget{classKite_1_1Track_ssecTrackOperations}{}\paragraph{Main Operations on Tracks}\label{classKite_1_1Track_ssecTrackOperations}
+{\bfseries Helper Function\-:} \hyperlink{classKite_1_1Track_a7386d7acfcd1dfbeb906bd4c482d797e}{Track\-::get\-Begin\-Index()}
 
-Return in {\ttfamily begin} the index of the \hyperlink{classKite_1_1TrackElement}{Track\+Element} whose minimum is immediately below the requested {\ttfamily position} on the \hyperlink{classKite_1_1Track}{Track} axis. The second returned parameter {\ttfamily state} is a set of flags to tell how the {\ttfamily begin} index has to be interpreted.
+Return in {\ttfamily begin} the index of the \hyperlink{classKite_1_1TrackElement}{Track\-Element} whose minimum is immediately below the requested {\ttfamily position} on the \hyperlink{classKite_1_1Track}{Track} axis. The second returned parameter {\ttfamily state} is a set of flags to tell how the {\ttfamily begin} index has to be interpreted.
 
-{\bfseries Helper Function\+:} \hyperlink{classKite_1_1Track_ae87a2e7c9632b60737162295542e3e93}{Track\+::get\+Occupied\+Interval()}
+{\bfseries Helper Function\-:} \hyperlink{classKite_1_1Track_aeb4b9c2a20ec5f82da8781b11982ae7d}{Track\-::get\-Occupied\-Interval()}
 
-Returns the complete interval of a set of overlapping \hyperlink{classKite_1_1TrackElement}{Track\+Element} from the same net. 
+Returns the complete interval of a set of overlapping \hyperlink{classKite_1_1TrackElement}{Track\-Element} from the same net. 
 
 \subsubsection{Member Enumeration Documentation}
-\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!Index\+State@{Index\+State}}
-\index{Index\+State@{Index\+State}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{Index\+State}{IndexState}}
-{\footnotesize\ttfamily enum \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Index\+State}}
-
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{\index{Kite\-::\-Track@{Kite\-::\-Track}!Index\-State@{Index\-State}}
+\index{Index\-State@{Index\-State}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{Index\-State}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Index\-State}}}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}
 Indicates how to compute the bounds of the interval enclosing a given {\ttfamily position} on track axis.
 
 \begin{DoxyNote}{Note}
 According to {\itshape position}, the interval can be a free interval or a used interval. 
 \end{DoxyNote}
-\begin{DoxyEnumFields}{Enumerator}
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Begin\+Is\+Track\+Min@{Begin\+Is\+Track\+Min}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Begin\+Is\+Track\+Min@{Begin\+Is\+Track\+Min}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}} 
-Begin\+Is\+Track\+Min&(implies {\ttfamily begin=0}) there is no \hyperlink{classKite_1_1TrackElement}{Track\+Element} {\itshape before} {\ttfamily position} \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Begin\+Is\+Segment\+Min@{Begin\+Is\+Segment\+Min}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Begin\+Is\+Segment\+Min@{Begin\+Is\+Segment\+Min}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}} 
-Begin\+Is\+Segment\+Min&The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Begin\+Is\+Segment\+Max@{Begin\+Is\+Segment\+Max}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Begin\+Is\+Segment\+Max@{Begin\+Is\+Segment\+Max}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}} 
-Begin\+Is\+Segment\+Max&The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{End\+Is\+Track\+Max@{End\+Is\+Track\+Max}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!End\+Is\+Track\+Max@{End\+Is\+Track\+Max}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}} 
-End\+Is\+Track\+Max&There is no \hyperlink{classKite_1_1TrackElement}{Track\+Element} {\itshape after} {\ttfamily position}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{End\+Is\+Segment\+Min@{End\+Is\+Segment\+Min}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!End\+Is\+Segment\+Min@{End\+Is\+Segment\+Min}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}} 
-End\+Is\+Segment\+Min&The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{End\+Is\+Next\+Segment\+Min@{End\+Is\+Next\+Segment\+Min}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!End\+Is\+Next\+Segment\+Min@{End\+Is\+Next\+Segment\+Min}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}} 
-End\+Is\+Next\+Segment\+Min&The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}. So the maximum is given by the {\ttfamily minimum} of the {\itshape next} \hyperlink{classKite_1_1TrackElement}{Track\+Element}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{End\+Is\+Segment\+Max@{End\+Is\+Segment\+Max}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!End\+Is\+Segment\+Max@{End\+Is\+Segment\+Max}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}} 
-End\+Is\+Segment\+Max&The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Before\+First\+Element@{Before\+First\+Element}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Before\+First\+Element@{Before\+First\+Element}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}} 
-Before\+First\+Element&the {\ttfamily position} is before the first \hyperlink{classKite_1_1TrackElement}{Track\+Element}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Inside\+Element@{Inside\+Element}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Inside\+Element@{Inside\+Element}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}} 
-Inside\+Element&the {\ttfamily position} is inside a \hyperlink{classKite_1_1TrackElement}{Track\+Element}. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Outside\+Element@{Outside\+Element}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Outside\+Element@{Outside\+Element}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}} 
-Outside\+Element&the {\ttfamily position} is in free zone between two Track\+Elements. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{After\+Last\+Element@{After\+Last\+Element}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!After\+Last\+Element@{After\+Last\+Element}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}} 
-After\+Last\+Element&the position is after the end of the last element. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Empty\+Track@{Empty\+Track}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Empty\+Track@{Empty\+Track}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}} 
-Empty\+Track&the track is still empty. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{Begin\+Mask@{Begin\+Mask}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!Begin\+Mask@{Begin\+Mask}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}} 
-Begin\+Mask&To extract the {\itshape begin} part from a combination of flags. \\
-\hline
-
-\raisebox{\heightof{T}}[0pt][0pt]{\index{End\+Mask@{End\+Mask}!Kite\+::\+Track@{Kite\+::\+Track}}\index{Kite\+::\+Track@{Kite\+::\+Track}!End\+Mask@{End\+Mask}}}\mbox{\Hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}} 
-End\+Mask&To extract the {\itshape end} part from a combination of flags. \\
-\hline
-
-\end{DoxyEnumFields}
+\begin{Desc}
+\item[Enumerator]\par
+\begin{description}
+\index{Begin\-Is\-Track\-Min@{Begin\-Is\-Track\-Min}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Begin\-Is\-Track\-Min@{Begin\-Is\-Track\-Min}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}{Begin\-Is\-Track\-Min}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}
+}](implies {\ttfamily begin=0}) there is no \hyperlink{classKite_1_1TrackElement}{Track\-Element} {\itshape before} {\ttfamily position} \index{Begin\-Is\-Segment\-Min@{Begin\-Is\-Segment\-Min}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Begin\-Is\-Segment\-Min@{Begin\-Is\-Segment\-Min}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}{Begin\-Is\-Segment\-Min}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}
+}]The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}. \index{Begin\-Is\-Segment\-Max@{Begin\-Is\-Segment\-Max}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Begin\-Is\-Segment\-Max@{Begin\-Is\-Segment\-Max}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}{Begin\-Is\-Segment\-Max}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}
+}]The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}. \index{End\-Is\-Track\-Max@{End\-Is\-Track\-Max}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!End\-Is\-Track\-Max@{End\-Is\-Track\-Max}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}{End\-Is\-Track\-Max}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}
+}]There is no \hyperlink{classKite_1_1TrackElement}{Track\-Element} {\itshape after} {\ttfamily position}. \index{End\-Is\-Segment\-Min@{End\-Is\-Segment\-Min}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!End\-Is\-Segment\-Min@{End\-Is\-Segment\-Min}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}{End\-Is\-Segment\-Min}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}
+}]The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position}. \index{End\-Is\-Next\-Segment\-Min@{End\-Is\-Next\-Segment\-Min}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!End\-Is\-Next\-Segment\-Min@{End\-Is\-Next\-Segment\-Min}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}{End\-Is\-Next\-Segment\-Min}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}
+}]The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}. So the maximum is given by the {\ttfamily minimum} of the {\itshape next} \hyperlink{classKite_1_1TrackElement}{Track\-Element}. \index{End\-Is\-Segment\-Max@{End\-Is\-Segment\-Max}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!End\-Is\-Segment\-Max@{End\-Is\-Segment\-Max}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}{End\-Is\-Segment\-Max}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}
+}]The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}. \index{Before\-First\-Element@{Before\-First\-Element}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Before\-First\-Element@{Before\-First\-Element}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}{Before\-First\-Element}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}
+}]the {\ttfamily position} is before the first \hyperlink{classKite_1_1TrackElement}{Track\-Element}. \index{Inside\-Element@{Inside\-Element}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Inside\-Element@{Inside\-Element}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}{Inside\-Element}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}
+}]the {\ttfamily position} is inside a \hyperlink{classKite_1_1TrackElement}{Track\-Element}. \index{Outside\-Element@{Outside\-Element}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Outside\-Element@{Outside\-Element}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}{Outside\-Element}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}
+}]the {\ttfamily position} is in free zone between two Track\-Elements. \index{After\-Last\-Element@{After\-Last\-Element}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!After\-Last\-Element@{After\-Last\-Element}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}{After\-Last\-Element}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}
+}]the position is after the end of the last element. \index{Empty\-Track@{Empty\-Track}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Empty\-Track@{Empty\-Track}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}{Empty\-Track}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}
+}]the track is still empty. \index{Begin\-Mask@{Begin\-Mask}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!Begin\-Mask@{Begin\-Mask}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}{Begin\-Mask}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}
+}]To extract the {\itshape begin} part from a combination of flags. \index{End\-Mask@{End\-Mask}!Kite\-::\-Track@{Kite\-::\-Track}}\index{Kite\-::\-Track@{Kite\-::\-Track}!End\-Mask@{End\-Mask}}\item[{\em 
+\hypertarget{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}{End\-Mask}\label{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}
+}]To extract the {\itshape end} part from a combination of flags. \end{description}
+\end{Desc}
 
 
 \subsubsection{Member Function Documentation}
-\mbox{\Hypertarget{classKite_1_1Track_a9d3db1f8a5aca58f8f54d291faebf873}\label{classKite_1_1Track_a9d3db1f8a5aca58f8f54d291faebf873}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!is\+Horizontal@{is\+Horizontal}}
-\index{is\+Horizontal@{is\+Horizontal}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{is\+Horizontal()}{isHorizontal()}}
-{\footnotesize\ttfamily bool is\+Horizontal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+\hypertarget{classKite_1_1Track_a9d3db1f8a5aca58f8f54d291faebf873}{\index{Kite\-::\-Track@{Kite\-::\-Track}!is\-Horizontal@{is\-Horizontal}}
+\index{is\-Horizontal@{is\-Horizontal}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{is\-Horizontal}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Horizontal (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classKite_1_1Track_a9d3db1f8a5aca58f8f54d291faebf873}
+{\bfseries Returns\-:} {\bfseries true} if the \hyperlink{classKite_1_1Track}{Track} in horizontal direction. 
 
-{\bfseries Returns\+:} {\bfseries true} if the \hyperlink{classKite_1_1Track}{Track} in horizontal direction. 
-
-Implemented in \hyperlink{classKite_1_1HorizontalTrack_a21b9cefd33ae22e4c2070ad441bdd30b}{Horizontal\+Track}, and \hyperlink{classKite_1_1VerticalTrack_a21b9cefd33ae22e4c2070ad441bdd30b}{Vertical\+Track}.
-
-
-
-Referenced by Track\+Fixed\+Segment\+::is\+Horizontal().
-
-\mbox{\Hypertarget{classKite_1_1Track_a6fa2bf0568a2b295dd7cd1f7207247d5}\label{classKite_1_1Track_a6fa2bf0568a2b295dd7cd1f7207247d5}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!is\+Vertical@{is\+Vertical}}
-\index{is\+Vertical@{is\+Vertical}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{is\+Vertical()}{isVertical()}}
-{\footnotesize\ttfamily bool is\+Vertical (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
-{\bfseries Returns\+:} {\bfseries true} if the \hyperlink{classKite_1_1Track}{Track} in vertical direction. 
-
-Implemented in \hyperlink{classKite_1_1HorizontalTrack_abd54544ef1710ee4b67cfb021d73446c}{Horizontal\+Track}, and \hyperlink{classKite_1_1VerticalTrack_abd54544ef1710ee4b67cfb021d73446c}{Vertical\+Track}.
+Implemented in \hyperlink{classKite_1_1HorizontalTrack_ac46ac3b48d712750c7888b48964ac189}{Horizontal\-Track}, and \hyperlink{classKite_1_1VerticalTrack_ac46ac3b48d712750c7888b48964ac189}{Vertical\-Track}.
 
 
 
-Referenced by Track\+Fixed\+Segment\+::is\+Vertical().
+Referenced by Track\-Fixed\-Segment\-::is\-Horizontal().
 
-\mbox{\Hypertarget{classKite_1_1Track_a6835a410623b90e8abec4c7a4e0905b3}\label{classKite_1_1Track_a6835a410623b90e8abec4c7a4e0905b3}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!is\+Local\+Assigned@{is\+Local\+Assigned}}
-\index{is\+Local\+Assigned@{is\+Local\+Assigned}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{is\+Local\+Assigned()}{isLocalAssigned()}}
-{\footnotesize\ttfamily bool is\+Local\+Assigned (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKite_1_1Track_a6fa2bf0568a2b295dd7cd1f7207247d5}{\index{Kite\-::\-Track@{Kite\-::\-Track}!is\-Vertical@{is\-Vertical}}
+\index{is\-Vertical@{is\-Vertical}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{is\-Vertical}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Vertical (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classKite_1_1Track_a6fa2bf0568a2b295dd7cd1f7207247d5}
+{\bfseries Returns\-:} {\bfseries true} if the \hyperlink{classKite_1_1Track}{Track} in vertical direction. 
 
-{\bfseries Returns\+:} {\bfseries true} is the \hyperlink{classKite_1_1Track}{Track} should be preferentially used for local routing. \mbox{\Hypertarget{classKite_1_1Track_a056650e788f5235d0c4cc49e870f29b4}\label{classKite_1_1Track_a056650e788f5235d0c4cc49e870f29b4}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Routing\+Plane@{get\+Routing\+Plane}}
-\index{get\+Routing\+Plane@{get\+Routing\+Plane}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Routing\+Plane()}{getRoutingPlane()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane} $\ast$ get\+Routing\+Plane (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
-
-{\bfseries Returns\+:} The \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane} owning this \hyperlink{classKite_1_1Track}{Track}. \mbox{\Hypertarget{classKite_1_1Track_af7373bd3a4ee8fcf28a316230ed37fc0}\label{classKite_1_1Track_af7373bd3a4ee8fcf28a316230ed37fc0}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Kite\+Engine@{get\+Kite\+Engine}}
-\index{get\+Kite\+Engine@{get\+Kite\+Engine}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Kite\+Engine()}{getKiteEngine()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1KiteEngine}{Kite\+Engine} $\ast$ get\+Kite\+Engine (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
-
-{\bfseries Returns\+:} The \hyperlink{classKite_1_1KiteEngine}{Kite\+Engine} owning this \hyperlink{classKite_1_1Track}{Track}. \mbox{\Hypertarget{classKite_1_1Track_ae35b78590ed6aa546b626ef95f28c533}\label{classKite_1_1Track_ae35b78590ed6aa546b626ef95f28c533}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Direction@{get\+Direction}}
-\index{get\+Direction@{get\+Direction}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Direction()}{getDirection()}}
-{\footnotesize\ttfamily unsigned int get\+Direction (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
-
-{\bfseries Returns\+:} The direction of the \hyperlink{classKite_1_1Track}{Track}, either Katabatic\+::\+Kb\+Horizontal or Katabatic\+::\+Kb\+Vertical. 
-
-Implemented in \hyperlink{classKite_1_1HorizontalTrack_a0dd7cf705ace42c662c289955313b2e9}{Horizontal\+Track}, and \hyperlink{classKite_1_1VerticalTrack_a0dd7cf705ace42c662c289955313b2e9}{Vertical\+Track}.
+Implemented in \hyperlink{classKite_1_1HorizontalTrack_a2bb30e82aad1f321af4a065338775f36}{Horizontal\-Track}, and \hyperlink{classKite_1_1VerticalTrack_a2bb30e82aad1f321af4a065338775f36}{Vertical\-Track}.
 
 
 
-Referenced by Track\+Fixed\+Segment\+::get\+Direction().
+Referenced by Track\-Fixed\-Segment\-::is\-Vertical().
 
-\mbox{\Hypertarget{classKite_1_1Track_ac6f0fd2129f44fe6c0c6eaca9766e1a3}\label{classKite_1_1Track_ac6f0fd2129f44fe6c0c6eaca9766e1a3}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Index@{get\+Index}}
-\index{get\+Index@{get\+Index}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Index()}{getIndex()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane} $\ast$ get\+Index (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKite_1_1Track_ac9f5f43a21bc7b63a1237e10b5a6a53b}{\index{Kite\-::\-Track@{Kite\-::\-Track}!is\-Local\-Assigned@{is\-Local\-Assigned}}
+\index{is\-Local\-Assigned@{is\-Local\-Assigned}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{is\-Local\-Assigned}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Local\-Assigned (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_ac9f5f43a21bc7b63a1237e10b5a6a53b}
+{\bfseries Returns\-:} {\bfseries true} is the \hyperlink{classKite_1_1Track}{Track} should be preferentially used for local routing. \hypertarget{classKite_1_1Track_a3f7a5bbb3140598c747b1526998e6be7}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Routing\-Plane@{get\-Routing\-Plane}}
+\index{get\-Routing\-Plane@{get\-Routing\-Plane}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Routing\-Plane}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Plane} $\ast$ get\-Routing\-Plane (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_a3f7a5bbb3140598c747b1526998e6be7}
+{\bfseries Returns\-:} The \hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane} owning this \hyperlink{classKite_1_1Track}{Track}. 
 
-{\bfseries Returns\+:} The index of this \hyperlink{classKite_1_1Track}{Track} in the \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane} \hyperlink{classKite_1_1Track}{Track} vector. 
+Referenced by Track\-::get\-Next\-Track(), and Track\-::get\-Previous\-Track().
 
-Referenced by Track\+::check().
+\hypertarget{classKite_1_1Track_a9ccc00efc7079210bc25122921382da4}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Kite\-Engine@{get\-Kite\-Engine}}
+\index{get\-Kite\-Engine@{get\-Kite\-Engine}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Kite\-Engine}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Kite\-Engine} $\ast$ get\-Kite\-Engine (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a9ccc00efc7079210bc25122921382da4}
+{\bfseries Returns\-:} The \hyperlink{classKite_1_1KiteEngine}{Kite\-Engine} owning this \hyperlink{classKite_1_1Track}{Track}. \hypertarget{classKite_1_1Track_ae35b78590ed6aa546b626ef95f28c533}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Direction@{get\-Direction}}
+\index{get\-Direction@{get\-Direction}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Direction}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int get\-Direction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classKite_1_1Track_ae35b78590ed6aa546b626ef95f28c533}
+{\bfseries Returns\-:} The direction of the \hyperlink{classKite_1_1Track}{Track}, either {\bf Katabatic\-::\-Kb\-Horizontal} or {\bf Katabatic\-::\-Kb\-Vertical}. 
 
-\mbox{\Hypertarget{classKite_1_1Track_a6c4d9081746b8daa3e45e5e3dd185b60}\label{classKite_1_1Track_a6c4d9081746b8daa3e45e5e3dd185b60}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Depth@{get\+Depth}}
-\index{get\+Depth@{get\+Depth}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Depth()}{getDepth()}}
-{\footnotesize\ttfamily unsigned int get\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+Implemented in \hyperlink{classKite_1_1HorizontalTrack_a09d03fbca9ab891c2f25bdae7f89a899}{Horizontal\-Track}, and \hyperlink{classKite_1_1VerticalTrack_a09d03fbca9ab891c2f25bdae7f89a899}{Vertical\-Track}.
 
-{\bfseries Returns\+:} The depth (as given by the Routing\+Gauge) of the \hyperlink{classKite_1_1Track}{Track}\textquotesingle{}s layer. \mbox{\Hypertarget{classKite_1_1Track_ab468d5fc5ad722f437b81decc8209ab7}\label{classKite_1_1Track_ab468d5fc5ad722f437b81decc8209ab7}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Layer@{get\+Layer}}
-\index{get\+Layer@{get\+Layer}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Layer()}{getLayer()}}
-{\footnotesize\ttfamily \textbf{ Layer} $\ast$ get\+Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The {\ttfamily Layer} of the \hyperlink{classKite_1_1Track}{Track}. \mbox{\Hypertarget{classKite_1_1Track_aa719edbfb0c3d2f294cf658f1c6bfb37}\label{classKite_1_1Track_aa719edbfb0c3d2f294cf658f1c6bfb37}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Blockage\+Layer@{get\+Blockage\+Layer}}
-\index{get\+Blockage\+Layer@{get\+Blockage\+Layer}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Blockage\+Layer()}{getBlockageLayer()}}
-{\footnotesize\ttfamily \textbf{ Layer} $\ast$ get\+Blockage\+Layer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} The associated blockage {\ttfamily Layer} to the \hyperlink{classKite_1_1Track}{Track}\textquotesingle{}s layer. \mbox{\Hypertarget{classKite_1_1Track_ab5b5aaa5b318369feee6003dbad039c2}\label{classKite_1_1Track_ab5b5aaa5b318369feee6003dbad039c2}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Axis@{get\+Axis}}
-\index{get\+Axis@{get\+Axis}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Axis()}{getAxis()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Axis (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+Referenced by Track\-Fixed\-Segment\-::get\-Direction().
 
-{\bfseries Returns\+:} The Axis of the \hyperlink{classKite_1_1Track}{Track}. 
+\hypertarget{classKite_1_1Track_a65742a66b3c3b66d5b619db492469900}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Index@{get\-Index}}
+\index{get\-Index@{get\-Index}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Index}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Plane} $\ast$ get\-Index (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_a65742a66b3c3b66d5b619db492469900}
+{\bfseries Returns\-:} The index of this \hyperlink{classKite_1_1Track}{Track} in the \hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane} \hyperlink{classKite_1_1Track}{Track} vector. 
 
-Referenced by Track\+Marker\+::create(), Negociate\+Window\+::create\+Track\+Segment(), Track\+Fixed\+Segment\+::get\+Axis(), Routing\+Event\+::revalidate(), Manipulator\+::ripup\+Perpandiculars(), and Segment\+Fsm\+::\+Segment\+Fsm().
+Referenced by Track\-::check(), Track\-::get\-Next\-Track(), and Track\-::get\-Previous\-Track().
 
-\mbox{\Hypertarget{classKite_1_1Track_a71f401dbc8d152b50522ee459ef63441}\label{classKite_1_1Track_a71f401dbc8d152b50522ee459ef63441}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Min@{get\+Min}}
-\index{get\+Min@{get\+Min}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Min()}{getMin()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKite_1_1Track_ad43be8bb2a3c8247405feef4fa973734}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Depth@{get\-Depth}}
+\index{get\-Depth@{get\-Depth}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Depth}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int get\-Depth (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ad43be8bb2a3c8247405feef4fa973734}
+{\bfseries Returns\-:} The depth (as given by the Routing\-Gauge) of the \hyperlink{classKite_1_1Track}{Track}'s layer. \hypertarget{classKite_1_1Track_ac1bbd63624eb1b4e394301c92adef62c}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Layer@{get\-Layer}}
+\index{get\-Layer@{get\-Layer}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Layer}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Layer} $\ast$ get\-Layer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ac1bbd63624eb1b4e394301c92adef62c}
+{\bfseries Returns\-:} The {\ttfamily Layer} of the \hyperlink{classKite_1_1Track}{Track}. 
 
-{\bfseries Returns\+:} The minimal allowed coordinate of the \hyperlink{classKite_1_1Track}{Track}. 
+Referenced by Track\-::insert().
 
-Referenced by Manipulator\+::minimize().
+\hypertarget{classKite_1_1Track_aceadd4784a0ae6394d2c75433f81ce59}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Blockage\-Layer@{get\-Blockage\-Layer}}
+\index{get\-Blockage\-Layer@{get\-Blockage\-Layer}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Blockage\-Layer}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Layer} $\ast$ get\-Blockage\-Layer (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_aceadd4784a0ae6394d2c75433f81ce59}
+{\bfseries Returns\-:} The associated blockage {\ttfamily Layer} to the \hyperlink{classKite_1_1Track}{Track}'s layer. 
 
-\mbox{\Hypertarget{classKite_1_1Track_a7fdc462696aede86c051edfaa6268e9a}\label{classKite_1_1Track_a7fdc462696aede86c051edfaa6268e9a}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Max@{get\+Max}}
-\index{get\+Max@{get\+Max}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Max()}{getMax()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Max (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+Referenced by Track\-::insert().
 
-{\bfseries Returns\+:} The maximal allowed coordinate of the \hyperlink{classKite_1_1Track}{Track}. \mbox{\Hypertarget{classKite_1_1Track_a1b8af68504f2de84cb85cf25e30f93bd}\label{classKite_1_1Track_a1b8af68504f2de84cb85cf25e30f93bd}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Next\+Track@{get\+Next\+Track}}
-\index{get\+Next\+Track@{get\+Next\+Track}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Next\+Track()}{getNextTrack()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1Track}{Track} $\ast$ get\+Next\+Track (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+\hypertarget{classKite_1_1Track_af85576c58c70007850ad56e238e8d266}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Axis@{get\-Axis}}
+\index{get\-Axis@{get\-Axis}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Axis}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Axis (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_af85576c58c70007850ad56e238e8d266}
+{\bfseries Returns\-:} The Axis of the \hyperlink{classKite_1_1Track}{Track}. 
 
-{\bfseries Returns\+:} The next \hyperlink{classKite_1_1Track}{Track} in the {\ttfamily \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane}} vector. That is the one with the axis immediatly superior. 
+Referenced by Track\-::check(), Negociate\-Window\-::create\-Track\-Segment(), Track\-Fixed\-Segment\-::get\-Axis(), Vertical\-Track\-::get\-Position(), Horizontal\-Track\-::get\-Position(), Track\-::insert(), Routing\-Event\-::revalidate(), Manipulator\-::ripup\-Perpandiculars(), and Segment\-Fsm\-::\-Segment\-Fsm().
 
-Referenced by Track\+Marker\+::create(), Negociate\+Window\+::create\+Track\+Segment(), Routing\+Event\+::revalidate(), and Manipulator\+::ripup\+Perpandiculars().
+\hypertarget{classKite_1_1Track_a75e87715af5a758c37e5f1faeaf7ccc1}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Min@{get\-Min}}
+\index{get\-Min@{get\-Min}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Min}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Min (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_a75e87715af5a758c37e5f1faeaf7ccc1}
+{\bfseries Returns\-:} The minimal allowed coordinate of the \hyperlink{classKite_1_1Track}{Track}. 
 
-\mbox{\Hypertarget{classKite_1_1Track_a984171d836a7f61df95e74beeddcf6b5}\label{classKite_1_1Track_a984171d836a7f61df95e74beeddcf6b5}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Previous\+Track@{get\+Previous\+Track}}
-\index{get\+Previous\+Track@{get\+Previous\+Track}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Previous\+Track()}{getPreviousTrack()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1Track}{Track} $\ast$ get\+Previous\+Track (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+Referenced by Manipulator\-::minimize().
 
-{\bfseries Returns\+:} The previous \hyperlink{classKite_1_1Track}{Track} in the {\ttfamily \hyperlink{classKite_1_1RoutingPlane}{Routing\+Plane}} vector. That is the one with the axis immediatly inferior. 
+\hypertarget{classKite_1_1Track_a204f3392bd6abab056796ecdae72ce54}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Max@{get\-Max}}
+\index{get\-Max@{get\-Max}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Max}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Max (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_a204f3392bd6abab056796ecdae72ce54}
+{\bfseries Returns\-:} The maximal allowed coordinate of the \hyperlink{classKite_1_1Track}{Track}. \hypertarget{classKite_1_1Track_ab83ae7101fae68a7db48b96a82cc42f5}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Next\-Track@{get\-Next\-Track}}
+\index{get\-Next\-Track@{get\-Next\-Track}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Next\-Track}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track} $\ast$ get\-Next\-Track (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ab83ae7101fae68a7db48b96a82cc42f5}
+{\bfseries Returns\-:} The next \hyperlink{classKite_1_1Track}{Track} in the {\ttfamily \hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane}} vector. That is the one with the axis immediatly superior. 
 
-Referenced by Negociate\+Window\+::create\+Track\+Segment().
+Referenced by Negociate\-Window\-::create\-Track\-Segment(), Routing\-Event\-::revalidate(), and Manipulator\-::ripup\-Perpandiculars().
 
-\mbox{\Hypertarget{classKite_1_1Track_a9be1e4285daa77fe397767c097fbdc66}\label{classKite_1_1Track_a9be1e4285daa77fe397767c097fbdc66}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Size@{get\+Size}}
-\index{get\+Size@{get\+Size}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Size()}{getSize()}}
-{\footnotesize\ttfamily size\+\_\+t get\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+\hypertarget{classKite_1_1Track_a0647664eabb2f70005585316c3681b7f}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Previous\-Track@{get\-Previous\-Track}}
+\index{get\-Previous\-Track@{get\-Previous\-Track}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Previous\-Track}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track} $\ast$ get\-Previous\-Track (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a0647664eabb2f70005585316c3681b7f}
+{\bfseries Returns\-:} The previous \hyperlink{classKite_1_1Track}{Track} in the {\ttfamily \hyperlink{classKite_1_1RoutingPlane}{Routing\-Plane}} vector. That is the one with the axis immediatly inferior. 
 
-{\bfseries Returns\+:} The total number of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} in the \hyperlink{classKite_1_1Track}{Track}. \mbox{\Hypertarget{classKite_1_1Track_a2a033f90e528d3d07aa33694dd733200}\label{classKite_1_1Track_a2a033f90e528d3d07aa33694dd733200}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Position@{get\+Position}}
-\index{get\+Position@{get\+Position}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Position()}{getPosition()}}
-{\footnotesize\ttfamily \textbf{ Point} get\+Position (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{position }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+Referenced by Negociate\-Window\-::create\-Track\-Segment().
 
-{\bfseries Returns\+:} the point at {\ttfamily }(position,\hyperlink{classKite_1_1Track_ab5b5aaa5b318369feee6003dbad039c2}{get\+Axis()}) for horizontal \hyperlink{classKite_1_1Track}{Track} at or {\ttfamily }(\hyperlink{classKite_1_1Track_ab5b5aaa5b318369feee6003dbad039c2}{get\+Axis()},position) for vertical \hyperlink{classKite_1_1Track}{Track}. 
+\hypertarget{classKite_1_1Track_af55b3790622878d65ed5ff2bb2b3fcc4}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Size@{get\-Size}}
+\index{get\-Size@{get\-Size}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Size}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t get\-Size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1Track_af55b3790622878d65ed5ff2bb2b3fcc4}
+{\bfseries Returns\-:} The total number of \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} in the \hyperlink{classKite_1_1Track}{Track}. 
 
-Implemented in \hyperlink{classKite_1_1HorizontalTrack_a6ab4f8026e4500918aa8721f1199f8b6}{Horizontal\+Track}, and \hyperlink{classKite_1_1VerticalTrack_a6ab4f8026e4500918aa8721f1199f8b6}{Vertical\+Track}.
+Referenced by Track\-::get\-Maximal\-Position(), and Track\-::get\-Segment().
 
-\mbox{\Hypertarget{classKite_1_1Track_acb93796a96c9737133fb5d90837ab81d}\label{classKite_1_1Track_acb93796a96c9737133fb5d90837ab81d}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Segment@{get\+Segment}}
-\index{get\+Segment@{get\+Segment}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Segment()}{getSegment()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} $\ast$ get\+Segment (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index }\end{DoxyParamCaption}) const}
+\hypertarget{classKite_1_1Track_a2a033f90e528d3d07aa33694dd733200}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Position@{get\-Position}}
+\index{get\-Position@{get\-Position}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Point} get\-Position (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{position}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classKite_1_1Track_a2a033f90e528d3d07aa33694dd733200}
+{\bfseries Returns\-:} the point at {\ttfamily }(position,\hyperlink{classKite_1_1Track_af85576c58c70007850ad56e238e8d266}{get\-Axis()}) for horizontal \hyperlink{classKite_1_1Track}{Track} at or {\ttfamily }(\hyperlink{classKite_1_1Track_af85576c58c70007850ad56e238e8d266}{get\-Axis()},position) for vertical \hyperlink{classKite_1_1Track}{Track}. 
 
+Implemented in \hyperlink{classKite_1_1HorizontalTrack_a87f1520092c5421a57aa2468d2814c09}{Horizontal\-Track}, and \hyperlink{classKite_1_1VerticalTrack_a87f1520092c5421a57aa2468d2814c09}{Vertical\-Track}.
+
+\hypertarget{classKite_1_1Track_ac2216be50494af61a7b16d20dd8cc5dd}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Segment@{get\-Segment}}
+\index{get\-Segment@{get\-Segment}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Segment} $\ast$ get\-Segment (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{index}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ac2216be50494af61a7b16d20dd8cc5dd}
 
 \begin{DoxyParams}{Parameters}
-{\em index} & The index of the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \\
+{\em index} & The index of the \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} at {\itshape index}. The result will be {\ttfamily N\+U\+LL} in the follwing cases \+:
+The \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} at {\itshape index}. The result will be {\ttfamily N\-U\-L\-L} in the follwing cases \-:
 \begin{DoxyItemize}
 \item {\itshape index} is outside the sorted zone.
 \item {\itshape index} points to a hole in the \hyperlink{classKite_1_1Track}{Track}.
-\item {\itshape index} is equal to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\+::npos}. 
+\item {\itshape index} is equal to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\-::npos}. 
 \end{DoxyItemize}
 \end{DoxyReturn}
 
 
-Referenced by Segment\+Fsm\+::conflict\+Solve\+By\+Placeds(), Negociate\+Window\+::create\+Track\+Segment(), Segment\+Fsm\+::desaturate(), Manipulator\+::force\+Over\+Locals(), Manipulator\+::force\+To\+Track(), Manipulator\+::insert\+In\+Track(), Manipulator\+::make\+Dogleg(), Manipulator\+::minimize(), and Manipulator\+::shrink\+To\+Track().
+Referenced by Segment\-Fsm\-::conflict\-Solve\-By\-Placeds(), Negociate\-Window\-::create\-Track\-Segment(), Segment\-Fsm\-::desaturate(), Manipulator\-::force\-Over\-Locals(), Manipulator\-::force\-To\-Track(), Track\-::get\-Segment(), Manipulator\-::insert\-In\-Track(), Manipulator\-::make\-Dogleg(), Manipulator\-::minimize(), and Manipulator\-::shrink\-To\-Track().
 
-\mbox{\Hypertarget{classKite_1_1Track_a6962a27db7ae946217ea692983fc6a8c}\label{classKite_1_1Track_a6962a27db7ae946217ea692983fc6a8c}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Segment@{get\+Segment}}
-\index{get\+Segment@{get\+Segment}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Segment()}{getSegment()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} $\ast$ get\+Segment (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{position }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_aa8a5a7f28e71bce3676d4a051ab1d6c6}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Segment@{get\-Segment}}
+\index{get\-Segment@{get\-Segment}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Segment} $\ast$ get\-Segment (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{position}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_aa8a5a7f28e71bce3676d4a051ab1d6c6}
 
 \begin{DoxyParams}{Parameters}
 {\em position} & The position where to search. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} whose starting point is immediatly inferior to {\itshape position}. 
+The \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} whose starting point is immediatly inferior to {\itshape position}. 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classKite_1_1Track_af3db59591bef3c690ace92c114a4e4aa}\label{classKite_1_1Track_af3db59591bef3c690ace92c114a4e4aa}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Next@{get\+Next}}
-\index{get\+Next@{get\+Next}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Next()}{getNext()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} $\ast$ get\+Next (\begin{DoxyParamCaption}\item[{size\+\_\+t \&}]{index,  }\item[{\textbf{ Net} $\ast$}]{net }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_afaad0c947c459bab3b7ef742aaa5c59f}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Next@{get\-Next}}
+\index{get\-Next@{get\-Next}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Next}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Segment} $\ast$ get\-Next (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t \&}]{index, }
+\item[{{\bf Net} $\ast$}]{net}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_afaad0c947c459bab3b7ef742aaa5c59f}
 
 \begin{DoxyParams}{Parameters}
-{\em index} & Index of the starting \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \\
+{\em index} & Index of the starting \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. \\
 \hline
 {\em net} & A {\ttfamily Net} to ignore. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The next \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ({\ttfamily N\+U\+LL} if not found).
+The next \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ({\ttfamily N\-U\-L\-L} if not found).
 \end{DoxyReturn}
-Find, starting from \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} at {\itshape index} the next \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ignoring \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} from {\itshape net}. {\itshape index} is modified to point on the returned \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. If there\textquotesingle{}s no next \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ({\ttfamily N\+U\+LL}) then index is set to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\+::npos}. 
+Find, starting from \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} at {\itshape index} the next \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ignoring \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} from {\itshape net}. {\itshape index} is modified to point on the returned \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. If there's no next \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ({\ttfamily N\-U\-L\-L}) then index is set to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\-::npos}. 
 
-Referenced by Track\+Fixed\+Segment\+::get\+Next(), and Track\+Segment\+::get\+Next().
+Referenced by Track\-::expand\-Free\-Interval(), Track\-Fixed\-Segment\-::get\-Next(), Track\-Segment\-::get\-Next(), Track\-Element\-::get\-Next(), and Track\-::get\-Next\-Fixed().
 
-\mbox{\Hypertarget{classKite_1_1Track_a290fcfe6131730d216951a3b5207d777}\label{classKite_1_1Track_a290fcfe6131730d216951a3b5207d777}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Previous@{get\+Previous}}
-\index{get\+Previous@{get\+Previous}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Previous()}{getPrevious()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} $\ast$ get\+Previous (\begin{DoxyParamCaption}\item[{size\+\_\+t \&}]{index,  }\item[{\textbf{ Net} $\ast$}]{net }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_a4ebcb68fdea325b48de96a417a86d896}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Previous@{get\-Previous}}
+\index{get\-Previous@{get\-Previous}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Previous}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Segment} $\ast$ get\-Previous (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t \&}]{index, }
+\item[{{\bf Net} $\ast$}]{net}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a4ebcb68fdea325b48de96a417a86d896}
 
 \begin{DoxyParams}{Parameters}
-{\em index} & Index of the starting \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \\
+{\em index} & Index of the starting \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. \\
 \hline
 {\em net} & A {\ttfamily Net} to ignore. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The previous \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ({\ttfamily N\+U\+LL} if not found).
+The previous \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ({\ttfamily N\-U\-L\-L} if not found).
 \end{DoxyReturn}
-find, starting from \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} at {\itshape index} the previous \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ignoring \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} from {\itshape net}. {\itshape index} is modified to point on the returned \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. If there\textquotesingle{}s no previous \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ({\ttfamily N\+U\+LL}) then index is set to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\+::npos}. 
+find, starting from \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} at {\itshape index} the previous \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ignoring \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} from {\itshape net}. {\itshape index} is modified to point on the returned \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. If there's no previous \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ({\ttfamily N\-U\-L\-L}) then index is set to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\-::npos}. 
 
-Referenced by Track\+Fixed\+Segment\+::get\+Previous(), and Track\+Segment\+::get\+Previous().
+Referenced by Track\-::expand\-Free\-Interval(), Track\-Fixed\-Segment\-::get\-Previous(), Track\-Segment\-::get\-Previous(), and Track\-Element\-::get\-Previous().
 
-\mbox{\Hypertarget{classKite_1_1Track_a72e18efeecb4641a1ad2989d80b48fec}\label{classKite_1_1Track_a72e18efeecb4641a1ad2989d80b48fec}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Next\+Fixed@{get\+Next\+Fixed}}
-\index{get\+Next\+Fixed@{get\+Next\+Fixed}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Next\+Fixed()}{getNextFixed()}}
-{\footnotesize\ttfamily \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} $\ast$ get\+Next\+Fixed (\begin{DoxyParamCaption}\item[{size\+\_\+t \&}]{index }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_a13493827f36a960f3c443ff2b8ea0143}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Next\-Fixed@{get\-Next\-Fixed}}
+\index{get\-Next\-Fixed@{get\-Next\-Fixed}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Next\-Fixed}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Segment} $\ast$ get\-Next\-Fixed (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t \&}]{index}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a13493827f36a960f3c443ff2b8ea0143}
 
 \begin{DoxyParams}{Parameters}
-{\em index} & Index of the starting \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \\
+{\em index} & Index of the starting \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The first previous {\itshape Fixed} \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.
+The first previous {\itshape Fixed} \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}.
 \end{DoxyReturn}
-find, starting from \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} at {\itshape index} the first previous with a {\itshape Fixed} attribute set. {\itshape index} is modified to point on the returned \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. If there\textquotesingle{}s no previous \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} ({\ttfamily N\+U\+LL}) then index is set to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\+::npos}. \mbox{\Hypertarget{classKite_1_1Track_a73cdc70609df1c89393542f301746622}\label{classKite_1_1Track_a73cdc70609df1c89393542f301746622}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!find@{find}}
-\index{find@{find}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{find()}{find()}}
-{\footnotesize\ttfamily size\+\_\+t find (\begin{DoxyParamCaption}\item[{const \hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$}]{element }\end{DoxyParamCaption}) const}
+find, starting from \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} at {\itshape index} the first previous with a {\itshape Fixed} attribute set. {\itshape index} is modified to point on the returned \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. If there's no previous \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ({\ttfamily N\-U\-L\-L}) then index is set to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\-::npos}. \hypertarget{classKite_1_1Track_a92159b77cb6e17d1c81fe6b907953387}{\index{Kite\-::\-Track@{Kite\-::\-Track}!find@{find}}
+\index{find@{find}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{find}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t find (
+\begin{DoxyParamCaption}
+\item[{const {\bf Track\-Element} $\ast$}]{element}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a92159b77cb6e17d1c81fe6b907953387}
+{\bfseries Returns\-:} the {\itshape index} of {\itshape element} inside the \hyperlink{classKite_1_1Track}{Track}. If the {\itshape element} do not belongs to the \hyperlink{classKite_1_1Track}{Track}, return \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\-::npos}. \hypertarget{classKite_1_1Track_a67e86dd6909fb12706787ea738355fdf}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Source\-Position@{get\-Source\-Position}}
+\index{get\-Source\-Position@{get\-Source\-Position}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Source\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Source\-Position (
+\begin{DoxyParamCaption}
+\item[{vector$<$ {\bf Track\-Element} $\ast$ $>$\-::iterator}]{it}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a67e86dd6909fb12706787ea738355fdf}
+{\bfseries Returns\-:} The source position of \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} pointed by iterator {\itshape it}. If {\itshape it} is equal to {\ttfamily end()} , returns zero. \hypertarget{classKite_1_1Track_a00032371424630b4fd99dc1c443ee1f3}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Minimal\-Position@{get\-Minimal\-Position}}
+\index{get\-Minimal\-Position@{get\-Minimal\-Position}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Minimal\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Minimal\-Position (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{index, }
+\item[{unsigned int}]{state}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a00032371424630b4fd99dc1c443ee1f3}
+{\bfseries Returns\-:} Extract the minimal position from the interval at {\ttfamily index} in accordance to {\ttfamily state} hinting.
 
-{\bfseries Returns\+:} the {\itshape index} of {\itshape element} inside the \hyperlink{classKite_1_1Track}{Track}. If the {\itshape element} do not belongs to the \hyperlink{classKite_1_1Track}{Track}, return \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\+::npos}. \mbox{\Hypertarget{classKite_1_1Track_ab26eeaf466b6b5ba863f73abb3fbfa9a}\label{classKite_1_1Track_ab26eeaf466b6b5ba863f73abb3fbfa9a}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Source\+Position@{get\+Source\+Position}}
-\index{get\+Source\+Position@{get\+Source\+Position}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Source\+Position()}{getSourcePosition()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Source\+Position (\begin{DoxyParamCaption}\item[{vector$<$ \hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$$>$\+::iterator}]{it }\end{DoxyParamCaption}) const}
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Track\-::\-Index\-State}. \hypertarget{classKite_1_1Track_a5c9424f73f1fafa422c8dca99c7216bd}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Maximal\-Position@{get\-Maximal\-Position}}
+\index{get\-Maximal\-Position@{get\-Maximal\-Position}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Maximal\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Maximal\-Position (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{index, }
+\item[{unsigned int}]{state}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a5c9424f73f1fafa422c8dca99c7216bd}
+{\bfseries Returns\-:} Extract the maximal position from the interval at {\ttfamily index} in accordance to {\ttfamily state} hinting.
 
-{\bfseries Returns\+:} The source position of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} pointed by iterator {\itshape it}. If {\itshape it} is equal to {\ttfamily end()} , returns zero. \mbox{\Hypertarget{classKite_1_1Track_a22b708f606d8d95b52e297d7bc2cab55}\label{classKite_1_1Track_a22b708f606d8d95b52e297d7bc2cab55}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Minimal\+Position@{get\+Minimal\+Position}}
-\index{get\+Minimal\+Position@{get\+Minimal\+Position}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Minimal\+Position()}{getMinimalPosition()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Minimal\+Position (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index,  }\item[{unsigned int}]{state }\end{DoxyParamCaption}) const}
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Track\-::\-Index\-State}. 
 
-{\bfseries Returns\+:} Extract the minimal position from the interval at {\ttfamily index} in accordance to {\ttfamily state} hinting.
+Referenced by Track\-::expand\-Free\-Interval().
 
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Track\+::\+Index\+State}. \mbox{\Hypertarget{classKite_1_1Track_a68124797edd88ebaf3c9aa00d6ee7822}\label{classKite_1_1Track_a68124797edd88ebaf3c9aa00d6ee7822}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Maximal\+Position@{get\+Maximal\+Position}}
-\index{get\+Maximal\+Position@{get\+Maximal\+Position}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Maximal\+Position()}{getMaximalPosition()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Maximal\+Position (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index,  }\item[{unsigned int}]{state }\end{DoxyParamCaption}) const}
-
-{\bfseries Returns\+:} Extract the maximal position from the interval at {\ttfamily index} in accordance to {\ttfamily state} hinting.
-
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bca}{Track\+::\+Index\+State}. \mbox{\Hypertarget{classKite_1_1Track_aa9c09467d45d95b3ac2b58f09c04ff8d}\label{classKite_1_1Track_aa9c09467d45d95b3ac2b58f09c04ff8d}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Free\+Interval@{get\+Free\+Interval}}
-\index{get\+Free\+Interval@{get\+Free\+Interval}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Free\+Interval()}{getFreeInterval()}}
-{\footnotesize\ttfamily \textbf{ Interval} get\+Free\+Interval (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{position,  }\item[{\textbf{ Net} $\ast$}]{net = {\ttfamily NULL} }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_a95a9fad401e395a6b0f73e755db6ddad}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Free\-Interval@{get\-Free\-Interval}}
+\index{get\-Free\-Interval@{get\-Free\-Interval}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Free\-Interval}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Interval} get\-Free\-Interval (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{position, }
+\item[{{\bf Net} $\ast$}]{net = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a95a9fad401e395a6b0f73e755db6ddad}
 
 \begin{DoxyParams}{Parameters}
 {\em position} & where fo find a free interval. \\
 \hline
-{\em net} & for which net to find the free interval. {\bfseries Returns\+:} The longuest free interval enclosing {\itshape position} (may be empty). \\
+{\em net} & for which net to find the free interval. {\bfseries Returns\-:} The longuest free interval enclosing {\itshape position} (may be empty). \\
 \hline
 \end{DoxyParams}
-\mbox{\Hypertarget{classKite_1_1Track_ae87a2e7c9632b60737162295542e3e93}\label{classKite_1_1Track_ae87a2e7c9632b60737162295542e3e93}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Occupied\+Interval@{get\+Occupied\+Interval}}
-\index{get\+Occupied\+Interval@{get\+Occupied\+Interval}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Occupied\+Interval()}{getOccupiedInterval()}}
-{\footnotesize\ttfamily \textbf{ Interval} get\+Occupied\+Interval (\begin{DoxyParamCaption}\item[{size\+\_\+t \&}]{begin }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_aeb4b9c2a20ec5f82da8781b11982ae7d}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Occupied\-Interval@{get\-Occupied\-Interval}}
+\index{get\-Occupied\-Interval@{get\-Occupied\-Interval}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Occupied\-Interval}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Interval} get\-Occupied\-Interval (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t \&}]{begin}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_aeb4b9c2a20ec5f82da8781b11982ae7d}
 
 \begin{DoxyParams}{Parameters}
-{\em begin} & index of one of the \hyperlink{classKite_1_1TrackElement}{Track\+Element} set. May be modificated. {\bfseries Returns\+:} the whole interval used by a set of overlaping \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.\\
+{\em begin} & index of one of the \hyperlink{classKite_1_1TrackElement}{Track\-Element} set. May be modificated. {\bfseries Returns\-:} the whole interval used by a set of overlaping \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}.\\
 \hline
 \end{DoxyParams}
-As \hyperlink{classKite_1_1TrackElement}{Track\+Element} from a same net can overlap, the interval of one of them do not give the full extend of the \hyperlink{classKite_1_1Track}{Track} occupation at this point. This function looks for all overlaping segments and returns the merged interval. Additionnaly it sets {\ttfamily begin} to the index of the lowest \hyperlink{classKite_1_1TrackElement}{Track\+Element} of the set.
+As \hyperlink{classKite_1_1TrackElement}{Track\-Element} from a same net can overlap, the interval of one of them do not give the full extend of the \hyperlink{classKite_1_1Track}{Track} occupation at this point. This function looks for all overlaping segments and returns the merged interval. Additionnaly it sets {\ttfamily begin} to the index of the lowest \hyperlink{classKite_1_1TrackElement}{Track\-Element} of the set.
 
- \mbox{\Hypertarget{classKite_1_1Track_a225a347d3fba958b5f95ffbc2da499c5}\label{classKite_1_1Track_a225a347d3fba958b5f95ffbc2da499c5}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!expand\+Free\+Interval@{expand\+Free\+Interval}}
-\index{expand\+Free\+Interval@{expand\+Free\+Interval}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{expand\+Free\+Interval()}{expandFreeInterval()}}
-{\footnotesize\ttfamily \textbf{ Interval} expand\+Free\+Interval (\begin{DoxyParamCaption}\item[{size\+\_\+t \&}]{begin,  }\item[{size\+\_\+t \&}]{end,  }\item[{unsigned int}]{state,  }\item[{\textbf{ Net} $\ast$}]{net }\end{DoxyParamCaption}) const}
+ 
 
+Referenced by Track\-::expand\-Free\-Interval(), Track\-::get\-Begin\-Index(), and Track\-::get\-Overlap\-Bounds().
+
+\hypertarget{classKite_1_1Track_aead0aa746d8c8ce14a11161baa1aafc4}{\index{Kite\-::\-Track@{Kite\-::\-Track}!expand\-Free\-Interval@{expand\-Free\-Interval}}
+\index{expand\-Free\-Interval@{expand\-Free\-Interval}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{expand\-Free\-Interval}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Interval} expand\-Free\-Interval (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t \&}]{begin, }
+\item[{size\-\_\-t \&}]{end, }
+\item[{unsigned int}]{state, }
+\item[{{\bf Net} $\ast$}]{net}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_aead0aa746d8c8ce14a11161baa1aafc4}
 
 \begin{DoxyParams}{Parameters}
-{\em begin} & the lowest used \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \\
+{\em begin} & the lowest used \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. \\
 \hline
-{\em end} & the highest used \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. \\
+{\em end} & the highest used \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. \\
 \hline
 {\em state} & tells how to interpret the {\ttfamily begin} \& {\ttfamily end} indexes. \\
 \hline
-{\em net} & the for wich we seek place. {\bfseries Returns\+:} The longuest free interval between {\ttfamily }\mbox{]}begin,end\mbox{[} .\\
+{\em net} & the for wich we seek place. {\bfseries Returns\-:} The longuest free interval between {\ttfamily }\mbox{]}begin,end\mbox{[} .\\
 \hline
 \end{DoxyParams}
 Starting from the initial {\ttfamily \mbox{[}begin,end\mbox{]}} interval, expand the interval to encompass all free space or segments belonging to {\ttfamily net}. {\ttfamily state} may be used to compute the interval bounds from {\ttfamily begin} and {\ttfamily end} instead of directly using the returned {\ttfamily interval}.
 
 \begin{DoxyNote}{Note}
-{\ttfamily }\mbox{]}begin,end\mbox{[} must define a free interval between two \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. 
+{\ttfamily }\mbox{]}begin,end\mbox{[} must define a free interval between two \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. 
 \end{DoxyNote}
-\mbox{\Hypertarget{classKite_1_1Track_a33a6c0eebb0d4d50f639ae49a4d6252f}\label{classKite_1_1Track_a33a6c0eebb0d4d50f639ae49a4d6252f}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Begin\+Index@{get\+Begin\+Index}}
-\index{get\+Begin\+Index@{get\+Begin\+Index}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Begin\+Index()}{getBeginIndex()}}
-{\footnotesize\ttfamily void get\+Begin\+Index (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{position,  }\item[{size\+\_\+t \&}]{begin,  }\item[{unsigned int \&}]{state }\end{DoxyParamCaption}) const}
 
+
+Referenced by Track\-::get\-Free\-Interval().
+
+\hypertarget{classKite_1_1Track_a7386d7acfcd1dfbeb906bd4c482d797e}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Begin\-Index@{get\-Begin\-Index}}
+\index{get\-Begin\-Index@{get\-Begin\-Index}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Begin\-Index}]{\setlength{\rightskip}{0pt plus 5cm}void get\-Begin\-Index (
+\begin{DoxyParamCaption}
+\item[{{\bf Db\-U\-::\-Unit}}]{position, }
+\item[{size\-\_\-t \&}]{begin, }
+\item[{unsigned int \&}]{state}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a7386d7acfcd1dfbeb906bd4c482d797e}
 
 \begin{DoxyParams}{Parameters}
 {\em position} & The position where to search. \\
 \hline
-{\em begin} & Index of the immediatly inferior \hyperlink{classKite_1_1TrackElement}{Track\+Element}. \\
+{\em begin} & Index of the immediatly inferior \hyperlink{classKite_1_1TrackElement}{Track\-Element}. \\
 \hline
 {\em state} & how to interpret the returned {\ttfamily begin}.\\
 \hline
 \end{DoxyParams}
-Return in {\ttfamily begin} the index of the \hyperlink{classKite_1_1TrackElement}{Track\+Element} whose minimum is immediately below the requested {\ttfamily position} on the \hyperlink{classKite_1_1Track}{Track} axis. The second returned parameter {\ttfamily state} is a set of flags to tell how the {\ttfamily begin} index has to be interpreted.
+Return in {\ttfamily begin} the index of the \hyperlink{classKite_1_1TrackElement}{Track\-Element} whose minimum is immediately below the requested {\ttfamily position} on the \hyperlink{classKite_1_1Track}{Track} axis. The second returned parameter {\ttfamily state} is a set of flags to tell how the {\ttfamily begin} index has to be interpreted.
 
-Flags for the {\ttfamily state} are\+:
+Flags for the {\ttfamily state} are\-:
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}{Track\+::\+Begin\+Is\+Track\+Min} \+: (implies {\ttfamily begin=0}) there is no \hyperlink{classKite_1_1TrackElement}{Track\+Element} {\itshape before} {\ttfamily position}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}{Track\+::\+End\+Is\+Segment\+Min} \+: The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}{Track\+::\+Begin\+Is\+Segment\+Min} \+: The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}{Track\+::\+End\+Is\+Segment\+Max} \+: The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}{Track\+::\+Begin\+Is\+Segment\+Max} \+: The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}{Track\+::\+End\+Is\+Next\+Segment\+Min} \+: The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}. So the maximum is given by the {\ttfamily minimum} of the {\itshape next} \hyperlink{classKite_1_1TrackElement}{Track\+Element}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}{Track\+::\+End\+Is\+Track\+Max} \+: There is no \hyperlink{classKite_1_1TrackElement}{Track\+Element} {\itshape after} {\ttfamily position}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b61f6a736a067f2124ee5bd5cb8ac71}{Track\-::\-Begin\-Is\-Track\-Min} \-: (implies {\ttfamily begin=0}) there is no \hyperlink{classKite_1_1TrackElement}{Track\-Element} {\itshape before} {\ttfamily position}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa24e6a845af9d42451a2c41f2f8d388d1}{Track\-::\-End\-Is\-Segment\-Min} \-: The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa2558894ee6c661f4c13276cc8f2464a4}{Track\-::\-Begin\-Is\-Segment\-Min} \-: The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaab507ecf157f576817fafc5e7deb71629}{Track\-::\-End\-Is\-Segment\-Max} \-: The {\ttfamily begin} segment starts {\itshape before} {\ttfamily position} and ends {\itshape after}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8b6241764173838bf07e69fb78b688a4}{Track\-::\-Begin\-Is\-Segment\-Max} \-: The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa03aebc159f233b883124bd19fdd2ea0f}{Track\-::\-End\-Is\-Next\-Segment\-Min} \-: The {\ttfamily begin} segment starts and ends {\itshape before} {\ttfamily position}. So the maximum is given by the {\ttfamily minimum} of the {\itshape next} \hyperlink{classKite_1_1TrackElement}{Track\-Element}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa405dc0d4b2391506d0dcc4a75d5f1ba2}{Track\-::\-End\-Is\-Track\-Max} \-: There is no \hyperlink{classKite_1_1TrackElement}{Track\-Element} {\itshape after} {\ttfamily position}.
 \end{DoxyItemize}
 
-Based on the previous flags, we build the {\ttfamily state} parameter\+:
+Based on the previous flags, we build the {\ttfamily state} parameter\-:
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}{Track\+::\+Before\+First\+Element} \+: the {\ttfamily position} is before the first \hyperlink{classKite_1_1TrackElement}{Track\+Element}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}{Track\+::\+Inside\+Element} \+: the {\ttfamily position} is inside a \hyperlink{classKite_1_1TrackElement}{Track\+Element}.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}{Track\+::\+Outside\+Element} \+: the {\ttfamily position} is in free zone between two Track\+Elements.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}{Track\+::\+After\+Last\+Element} \+: the position is after the end of the last element.
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}{Track\+::\+Empty\+Track} \+: the track is still empty.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa5c7f72d6942ae38d66f530bea1063adf}{Track\-::\-Before\-First\-Element} \-: the {\ttfamily position} is before the first \hyperlink{classKite_1_1TrackElement}{Track\-Element}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa36e625d718c74f5ff503638360ba1166}{Track\-::\-Inside\-Element} \-: the {\ttfamily position} is inside a \hyperlink{classKite_1_1TrackElement}{Track\-Element}.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa55d08f66f21334eb8c0dca170f1cb8a4}{Track\-::\-Outside\-Element} \-: the {\ttfamily position} is in free zone between two Track\-Elements.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa3fc579452c9779cd2865d5019a61c6a5}{Track\-::\-After\-Last\-Element} \-: the position is after the end of the last element.
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaaa697b71e325cea0980e9555654f8f3cf}{Track\-::\-Empty\-Track} \-: the track is still empty.
 \end{DoxyItemize}
 
-To separate flags relevant to {\itshape begin} and {\itshape end} informations, two masks are provideds\+:
+To separate flags relevant to {\itshape begin} and {\itshape end} informations, two masks are provideds\-:
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}{Track\+::\+Begin\+Mask}
-\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}{Track\+::\+End\+Mask}
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa8621fa6a5b7a491fd1bf8dd7f0dd3589}{Track\-::\-Begin\-Mask}
+\item \hyperlink{classKite_1_1Track_af4bdc8469c0fee386fc2ff30e0666bcaa0b5a81972d3a6718c3d68199467d2d11}{Track\-::\-End\-Mask}
 \end{DoxyItemize}
 
- {\bfseries Reminder for myself\+:} The \hyperlink{classKite_1_1Track_a33a6c0eebb0d4d50f639ae49a4d6252f}{Track\+::get\+Begin\+Index()} function relies on the \href{http://www.sgi.com/tech/stl/}{\tt S\+TL} {\ttfamily lower\+\_\+bound()} function. {\ttfamily lower\+\_\+bound()} finds the \hyperlink{classKite_1_1TrackElement}{Track\+Element} immediately {\itshape superior} to {\ttfamily position} (shown on Figure {\bfseries 3} by the {\ttfamily LB} label in white on black).
+ {\bfseries Reminder for myself\-:} The \hyperlink{classKite_1_1Track_a7386d7acfcd1dfbeb906bd4c482d797e}{Track\-::get\-Begin\-Index()} function relies on the \href{http://www.sgi.com/tech/stl/}{\tt S\-T\-L} {\ttfamily lower\-\_\-bound()} function. {\ttfamily lower\-\_\-bound()} finds the \hyperlink{classKite_1_1TrackElement}{Track\-Element} immediately {\itshape superior} to {\ttfamily position} (shown on Figure {\bfseries 3} by the {\ttfamily L\-B} label in white on black).
 
-The relation between the returned {\ttfamily begin} index and the position is given through the {\ttfamily state} parameter. \mbox{\Hypertarget{classKite_1_1Track_aeeb787cb8a5ccbedc8697ea6811af2f6}\label{classKite_1_1Track_aeeb787cb8a5ccbedc8697ea6811af2f6}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Overlap\+Bounds@{get\+Overlap\+Bounds}}
-\index{get\+Overlap\+Bounds@{get\+Overlap\+Bounds}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Overlap\+Bounds()}{getOverlapBounds()}}
-{\footnotesize\ttfamily void get\+Overlap\+Bounds (\begin{DoxyParamCaption}\item[{\textbf{ Interval}}]{interval,  }\item[{size\+\_\+t \&}]{begin,  }\item[{size\+\_\+t \&}]{end }\end{DoxyParamCaption}) const}
+The relation between the returned {\ttfamily begin} index and the position is given through the {\ttfamily state} parameter. 
 
+Referenced by Track\-::get\-Free\-Interval(), Track\-::get\-Overlap\-Bounds(), and Track\-::get\-Segment().
+
+\hypertarget{classKite_1_1Track_a414e800da5aa8b03eb82aa0dba883f7f}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Overlap\-Bounds@{get\-Overlap\-Bounds}}
+\index{get\-Overlap\-Bounds@{get\-Overlap\-Bounds}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Overlap\-Bounds}]{\setlength{\rightskip}{0pt plus 5cm}void get\-Overlap\-Bounds (
+\begin{DoxyParamCaption}
+\item[{{\bf Interval}}]{interval, }
+\item[{size\-\_\-t \&}]{begin, }
+\item[{size\-\_\-t \&}]{end}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a414e800da5aa8b03eb82aa0dba883f7f}
 
 \begin{DoxyParams}{Parameters}
 {\em interval} & the overlaping interval. \\
@@ -651,16 +699,21 @@ The relation between the returned {\ttfamily begin} index and the position is gi
 {\em end} & where to store the ending bound.\\
 \hline
 \end{DoxyParams}
-find the range of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} intersecting {\itshape interval}. Note that when the {\itshape interval} lower bound crosses a set of overlaping intervals from the same {\ttfamily Net}, the interval at {\itshape begin} will crosses the lower bound but some following of the same {\ttfamily Net} may not. 
+find the range of \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} intersecting {\itshape interval}. Note that when the {\itshape interval} lower bound crosses a set of overlaping intervals from the same {\ttfamily Net}, the interval at {\itshape begin} will crosses the lower bound but some following of the same {\ttfamily Net} may not. 
 
-Referenced by Negociate\+Window\+::create\+Track\+Segment().
+Referenced by Negociate\-Window\-::create\-Track\-Segment(), and Track\-::get\-Overlap\-Cost().
 
-\mbox{\Hypertarget{classKite_1_1Track_a74d6a29b342d6f5924e20290b5274271}\label{classKite_1_1Track_a74d6a29b342d6f5924e20290b5274271}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Overlap\+Cost@{get\+Overlap\+Cost}}
-\index{get\+Overlap\+Cost@{get\+Overlap\+Cost}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Overlap\+Cost()}{getOverlapCost()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
-{\footnotesize\ttfamily Track\+Cost get\+Overlap\+Cost (\begin{DoxyParamCaption}\item[{\textbf{ Interval}}]{interval,  }\item[{\textbf{ Net} $\ast$}]{net,  }\item[{size\+\_\+t}]{begin,  }\item[{size\+\_\+t}]{end,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_a91b5c29bec3f74b1194473d1eb274086}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Overlap\-Cost@{get\-Overlap\-Cost}}
+\index{get\-Overlap\-Cost@{get\-Overlap\-Cost}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Overlap\-Cost}]{\setlength{\rightskip}{0pt plus 5cm}Track\-Cost get\-Overlap\-Cost (
+\begin{DoxyParamCaption}
+\item[{{\bf Interval}}]{interval, }
+\item[{{\bf Net} $\ast$}]{net, }
+\item[{size\-\_\-t}]{begin, }
+\item[{size\-\_\-t}]{end, }
+\item[{unsigned int}]{flags}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a91b5c29bec3f74b1194473d1eb274086}
 
 \begin{DoxyParams}{Parameters}
 {\em interval} & the overlaping interval. \\
@@ -677,12 +730,19 @@ Referenced by Negociate\+Window\+::create\+Track\+Segment().
 \begin{DoxyReturn}{Returns}
 The cost of the overlap.
 \end{DoxyReturn}
-Compute the cost of the overlap of {\itshape interval} with the range {\ttfamily }\mbox{[}begin,end\mbox{]} of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}. Any \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} belonging to {\itshape net} will be ignored. \mbox{\Hypertarget{classKite_1_1Track_a7f113e53fbd0654e8ecf8927ead9e4fc}\label{classKite_1_1Track_a7f113e53fbd0654e8ecf8927ead9e4fc}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Overlap\+Cost@{get\+Overlap\+Cost}}
-\index{get\+Overlap\+Cost@{get\+Overlap\+Cost}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Overlap\+Cost()}{getOverlapCost()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
-{\footnotesize\ttfamily Track\+Cost get\+Overlap\+Cost (\begin{DoxyParamCaption}\item[{\textbf{ Interval}}]{interval,  }\item[{\textbf{ Net} $\ast$}]{net,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption}) const}
+Compute the cost of the overlap of {\itshape interval} with the range {\ttfamily }\mbox{[}begin,end\mbox{]} of \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}. Any \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} belonging to {\itshape net} will be ignored. 
 
+Referenced by Track\-::get\-Overlap\-Cost().
+
+\hypertarget{classKite_1_1Track_ae8e0a72955bd05677d82738ad032526d}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Overlap\-Cost@{get\-Overlap\-Cost}}
+\index{get\-Overlap\-Cost@{get\-Overlap\-Cost}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Overlap\-Cost}]{\setlength{\rightskip}{0pt plus 5cm}Track\-Cost get\-Overlap\-Cost (
+\begin{DoxyParamCaption}
+\item[{{\bf Interval}}]{interval, }
+\item[{{\bf Net} $\ast$}]{net, }
+\item[{unsigned int}]{flags}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ae8e0a72955bd05677d82738ad032526d}
 
 \begin{DoxyParams}{Parameters}
 {\em interval} & the overlaping interval. \\
@@ -692,12 +752,14 @@ Compute the cost of the overlap of {\itshape interval} with the range {\ttfamily
 {\em flags} & passed to the overlap cost function.\\
 \hline
 \end{DoxyParams}
-Compute the overlap cost of {\itshape interval} with \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} from the current \hyperlink{classKite_1_1Track}{Track}, ignoring thoses belonging to {\itshape net}. \mbox{\Hypertarget{classKite_1_1Track_a5084e62b188e6c62ccd32a860e6ac711}\label{classKite_1_1Track_a5084e62b188e6c62ccd32a860e6ac711}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Overlap\+Cost@{get\+Overlap\+Cost}}
-\index{get\+Overlap\+Cost@{get\+Overlap\+Cost}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Overlap\+Cost()}{getOverlapCost()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
-{\footnotesize\ttfamily Track\+Cost get\+Overlap\+Cost (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$}]{segment,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption}) const}
-
+Compute the overlap cost of {\itshape interval} with \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} from the current \hyperlink{classKite_1_1Track}{Track}, ignoring thoses belonging to {\itshape net}. \hypertarget{classKite_1_1Track_ac930c18bbcb0b25f2b5360f6ce6741e7}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Overlap\-Cost@{get\-Overlap\-Cost}}
+\index{get\-Overlap\-Cost@{get\-Overlap\-Cost}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Overlap\-Cost}]{\setlength{\rightskip}{0pt plus 5cm}Track\-Cost get\-Overlap\-Cost (
+\begin{DoxyParamCaption}
+\item[{{\bf Track\-Element} $\ast$}]{segment, }
+\item[{unsigned int}]{flags}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ac930c18bbcb0b25f2b5360f6ce6741e7}
 
 \begin{DoxyParams}{Parameters}
 {\em segment} & under which to compute overlap cost. \\
@@ -705,12 +767,16 @@ Compute the overlap cost of {\itshape interval} with \hyperlink{classKite_1_1Tra
 {\em flags} & passed to the overlap cost function.\\
 \hline
 \end{DoxyParams}
-Compute the overlap cost of {\ttfamily segment} with \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} from the current \hyperlink{classKite_1_1Track}{Track} (interval and net are deduced from {\ttfamily segment}). \mbox{\Hypertarget{classKite_1_1Track_ae94f77eac7cb5be9cb94d37380203913}\label{classKite_1_1Track_ae94f77eac7cb5be9cb94d37380203913}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Terminal\+Weight@{get\+Terminal\+Weight}}
-\index{get\+Terminal\+Weight@{get\+Terminal\+Weight}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Terminal\+Weight()}{getTerminalWeight()}}
-{\footnotesize\ttfamily void get\+Terminal\+Weight (\begin{DoxyParamCaption}\item[{\textbf{ Interval}}]{interval,  }\item[{\textbf{ Net} $\ast$}]{net,  }\item[{size\+\_\+t \&}]{count,  }\item[{unsigned int \&}]{weight }\end{DoxyParamCaption}) const}
-
+Compute the overlap cost of {\ttfamily segment} with \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} from the current \hyperlink{classKite_1_1Track}{Track} (interval and net are deduced from {\ttfamily segment}). \hypertarget{classKite_1_1Track_a8b274bcf60589230f36f9798cce1e7d7}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Terminal\-Weight@{get\-Terminal\-Weight}}
+\index{get\-Terminal\-Weight@{get\-Terminal\-Weight}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Terminal\-Weight}]{\setlength{\rightskip}{0pt plus 5cm}void get\-Terminal\-Weight (
+\begin{DoxyParamCaption}
+\item[{{\bf Interval}}]{interval, }
+\item[{{\bf Net} $\ast$}]{net, }
+\item[{size\-\_\-t \&}]{count, }
+\item[{unsigned int \&}]{weight}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a8b274bcf60589230f36f9798cce1e7d7}
 
 \begin{DoxyParams}{Parameters}
 {\em interval} & under which to compute terminal weight. \\
@@ -722,23 +788,26 @@ Compute the overlap cost of {\ttfamily segment} with \hyperlink{classKite_1_1Tra
 {\em weight} & incremented of the sum of the weight of the track markers under the {\ttfamily interval}.\\
 \hline
 \end{DoxyParams}
-Compute and return the sum of the weight of the track markers (see \hyperlink{classKite_1_1TrackMarker}{Track\+Marker}) under {\ttfamily interval} ignoring {\ttfamily net} (that is, {\itshape for} {\ttfamily net}).
+Compute and return the sum of the weight of the track markers (see \hyperlink{classKite_1_1TrackMarker}{Track\-Marker}) under {\ttfamily interval} ignoring {\ttfamily net} (that is, {\itshape for} {\ttfamily net}).
 
-\begin{DoxyParagraph}{Remark\+:}
-The referenced variables {\ttfamily count} and {\ttfamily weight} are {\bfseries not} reset to zero by this function. It is of the caller\textquotesingle{}s responsability. 
+\begin{DoxyParagraph}{Remark\-:}
+The referenced variables {\ttfamily count} and {\ttfamily weight} are {\bfseries not} reset to zero by this function. It is of the caller's responsability. 
 \end{DoxyParagraph}
-\mbox{\Hypertarget{classKite_1_1Track_ac0514a53e47d579ae5897113e94cbb13}\label{classKite_1_1Track_ac0514a53e47d579ae5897113e94cbb13}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!get\+Source\+Position@{get\+Source\+Position}}
-\index{get\+Source\+Position@{get\+Source\+Position}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{get\+Source\+Position()}{getSourcePosition()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} get\+Source\+Position (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index }\end{DoxyParamCaption}) const}
-
-{\bfseries Returns\+:} The source position of \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} at index {\itshape index}. If {\itshape index} is equal to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\+::npos}, returns zero. \mbox{\Hypertarget{classKite_1_1Track_a711798bd60e6e58a99c61f7c6ee9c63a}\label{classKite_1_1Track_a711798bd60e6e58a99c61f7c6ee9c63a}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!check@{check}}
-\index{check@{check}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{check()}{check()}}
-{\footnotesize\ttfamily bool check (\begin{DoxyParamCaption}\item[{unsigned int \&}]{overlaps,  }\item[{const char $\ast$}]{message = {\ttfamily NULL} }\end{DoxyParamCaption}) const}
-
+\hypertarget{classKite_1_1Track_a6807aafaa83c1a2687c48d02510ced3a}{\index{Kite\-::\-Track@{Kite\-::\-Track}!get\-Source\-Position@{get\-Source\-Position}}
+\index{get\-Source\-Position@{get\-Source\-Position}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{get\-Source\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Db\-U\-::\-Unit} get\-Source\-Position (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{index}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_a6807aafaa83c1a2687c48d02510ced3a}
+{\bfseries Returns\-:} The source position of \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} at index {\itshape index}. If {\itshape index} is equal to \hyperlink{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{Track\-::npos}, returns zero. \hypertarget{classKite_1_1Track_ad21778972fbdf5cbffb470b2e36f9fcf}{\index{Kite\-::\-Track@{Kite\-::\-Track}!check@{check}}
+\index{check@{check}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{check}]{\setlength{\rightskip}{0pt plus 5cm}bool check (
+\begin{DoxyParamCaption}
+\item[{unsigned int \&}]{overlaps, }
+\item[{const char $\ast$}]{message = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+) const}}\label{classKite_1_1Track_ad21778972fbdf5cbffb470b2e36f9fcf}
 
 \begin{DoxyParams}{Parameters}
 {\em overlaps} & The number of overlaping segments. \\
@@ -749,83 +818,91 @@ The referenced variables {\ttfamily count} and {\ttfamily weight} are {\bfseries
 \begin{DoxyReturn}{Returns}
 {\bfseries true} if the \hyperlink{classKite_1_1Track}{Track} contains no incoherencies.
 \end{DoxyReturn}
-Perform a complete \hyperlink{classKite_1_1Track}{Track} check. Looks for the following incoherencies \+:
+Perform a complete \hyperlink{classKite_1_1Track}{Track} check. Looks for the following incoherencies \-:
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} do not refers this \hyperlink{classKite_1_1Track}{Track}.
-\item \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} is detached (\hyperlink{classKite_1_1TrackElement_a3f34f9139b8491a0adb531ac3a904171}{Track\+Segment\+::get\+Track()} is {\ttfamily N\+U\+LL}).
-\item \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} is hollow, this one is very unlikely as hollow \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} are only created for the {\ttfamily lower\+\_\+bound()}.
-\item {\ttfamily N\+U\+LL} pointers (should never occurs, nevertheless...)
-\item Two consecutive \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} from different {\ttfamily Net} must not overlap.
-\item For \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} starting from the same position, the longuest must be first. 
-\end{DoxyItemize}\mbox{\Hypertarget{classKite_1_1Track_a893f1101c650c08c98612515c2b1a89c}\label{classKite_1_1Track_a893f1101c650c08c98612515c2b1a89c}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!invalidate@{invalidate}}
-\index{invalidate@{invalidate}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{invalidate()}{invalidate()}}
-{\footnotesize\ttfamily void invalidate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+\item \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} do not refers this \hyperlink{classKite_1_1Track}{Track}.
+\item \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} is detached (\hyperlink{classKite_1_1TrackElement_abfd8de286baf41eea066220773c7046d}{Track\-Segment\-::get\-Track()} is {\ttfamily N\-U\-L\-L}).
+\item \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} is hollow, this one is very unlikely as hollow \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} are only created for the {\ttfamily lower\-\_\-bound()}.
+\item {\ttfamily N\-U\-L\-L} pointers (should never occurs, nevertheless...)
+\item Two consecutive \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} from different {\ttfamily Net} must not overlap.
+\item For \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} starting from the same position, the longuest must be first. 
+\end{DoxyItemize}\hypertarget{classKite_1_1Track_a893f1101c650c08c98612515c2b1a89c}{\index{Kite\-::\-Track@{Kite\-::\-Track}!invalidate@{invalidate}}
+\index{invalidate@{invalidate}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{invalidate}]{\setlength{\rightskip}{0pt plus 5cm}void invalidate (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Track_a893f1101c650c08c98612515c2b1a89c}
+Inconditionnaly invalidate the \hyperlink{classKite_1_1Track}{Track}, regardless if it has been modificated. The \hyperlink{classKite_1_1Track}{Track} will be forced to be revalidated on closure of the current session. \hypertarget{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{\index{Kite\-::\-Track@{Kite\-::\-Track}!insert@{insert}}
+\index{insert@{insert}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{insert}]{\setlength{\rightskip}{0pt plus 5cm}void insert (
+\begin{DoxyParamCaption}
+\item[{{\bf Track\-Element} $\ast$}]{segment}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}
+Adds {\itshape segment} to the \hyperlink{classKite_1_1Track}{Track}. Must only be used inside a \hyperlink{classKite_1_1Session}{Session}. They must appears {\itshape after} \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\-::do\-Removal()} and {\itshape before} \hyperlink{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{Track\-::do\-Reorder()}.
 
-Inconditionnaly invalidate the \hyperlink{classKite_1_1Track}{Track}, regardless if it has been modificated. The \hyperlink{classKite_1_1Track}{Track} will be forced to be revalidated on closure of the current session. \mbox{\Hypertarget{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}\label{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!insert@{insert}}
-\index{insert@{insert}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{insert()}{insert()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily void insert (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$}]{segment }\end{DoxyParamCaption})}
-
-Adds {\itshape segment} to the \hyperlink{classKite_1_1Track}{Track}. Must only be used inside a \hyperlink{classKite_1_1Session}{Session}. They must appears {\itshape after} \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\+::do\+Removal()} and {\itshape before} \hyperlink{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{Track\+::do\+Reorder()}.
-
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Session}{Kite\+::\+Session}. \mbox{\Hypertarget{classKite_1_1Track_a31e8f4502866435ac898c7eec741175f}\label{classKite_1_1Track_a31e8f4502866435ac898c7eec741175f}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!insert@{insert}}
-\index{insert@{insert}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{insert()}{insert()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily void insert (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1TrackMarker}{Track\+Marker} $\ast$}]{marker }\end{DoxyParamCaption})}
-
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Session}{Kite\-::\-Session}. \hypertarget{classKite_1_1Track_a31e8f4502866435ac898c7eec741175f}{\index{Kite\-::\-Track@{Kite\-::\-Track}!insert@{insert}}
+\index{insert@{insert}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{insert}]{\setlength{\rightskip}{0pt plus 5cm}void insert (
+\begin{DoxyParamCaption}
+\item[{{\bf Track\-Marker} $\ast$}]{marker}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Track_a31e8f4502866435ac898c7eec741175f}
 Adds {\itshape marker} to the \hyperlink{classKite_1_1Track}{Track}. Must only be used inside a \hyperlink{classKite_1_1Session}{Session}.
 
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Session}{Kite\+::\+Session}. \mbox{\Hypertarget{classKite_1_1Track_a8b5d93406ef581c1be022417238a89ca}\label{classKite_1_1Track_a8b5d93406ef581c1be022417238a89ca}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!set\+Segment@{set\+Segment}}
-\index{set\+Segment@{set\+Segment}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{set\+Segment()}{setSegment()}}
-{\footnotesize\ttfamily void set\+Segment (\begin{DoxyParamCaption}\item[{\hyperlink{classKite_1_1TrackElement}{Track\+Element} $\ast$}]{element,  }\item[{size\+\_\+t}]{index }\end{DoxyParamCaption})}
-
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Session}{Kite\-::\-Session}. \hypertarget{classKite_1_1Track_a8b5d93406ef581c1be022417238a89ca}{\index{Kite\-::\-Track@{Kite\-::\-Track}!set\-Segment@{set\-Segment}}
+\index{set\-Segment@{set\-Segment}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{set\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Segment (
+\begin{DoxyParamCaption}
+\item[{{\bf Track\-Element} $\ast$}]{element, }
+\item[{size\-\_\-t}]{index}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Track_a8b5d93406ef581c1be022417238a89ca}
 Directly affect the \hyperlink{classKite_1_1Track}{Track} entry at position {\ttfamily index} to {\ttfamily element} (use with great care).
 
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Session}{Kite\+::\+Session}. 
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Session}{Kite\-::\-Session}. 
 
-Referenced by Track\+Segment\+::swap\+Track().
+Referenced by Track\-Segment\-::swap\-Track().
 
-\mbox{\Hypertarget{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}\label{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!do\+Removal@{do\+Removal}}
-\index{do\+Removal@{do\+Removal}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{do\+Removal()}{doRemoval()}}
-{\footnotesize\ttfamily size\+\_\+t do\+Removal (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+\hypertarget{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{\index{Kite\-::\-Track@{Kite\-::\-Track}!do\-Removal@{do\-Removal}}
+\index{do\-Removal@{do\-Removal}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{do\-Removal}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t do\-Removal (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}
+{\bfseries Returns\-:} The number of removeds \hyperlink{classKite_1_1TrackSegment}{Track\-Segment}.
 
-{\bfseries Returns\+:} The number of removeds \hyperlink{classKite_1_1TrackSegment}{Track\+Segment}.
+Suppress all the \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} that have been withdraw from the \hyperlink{classKite_1_1Track}{Track}. \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} must be withdraw trough the \hyperlink{classKite_1_1TrackSegment_ac295bade8aee589f6718dfa79edc2a34}{Track\-Segment\-::detach()} method which sets their owning \hyperlink{classKite_1_1Track}{Track} to {\ttfamily N\-U\-L\-L} (the removal criterion). It uses the \href{http://www.sgi.com/tech/stl/}{\tt S\-T\-L} {\itshape remove\-\_\-if} algorithm that put all the to be removed elements at the end of the vector.
 
-Suppress all the \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} that have been withdraw from the \hyperlink{classKite_1_1Track}{Track}. \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} must be withdraw trough the \hyperlink{classKite_1_1TrackSegment_ac295bade8aee589f6718dfa79edc2a34}{Track\+Segment\+::detach()} method which sets their owning \hyperlink{classKite_1_1Track}{Track} to {\ttfamily N\+U\+LL} (the removal criterion). It uses the \href{http://www.sgi.com/tech/stl/}{\tt S\+TL} {\itshape remove\+\_\+if} algorithm that put all the to be removed elements at the end of the vector.
-
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Session}{Kite\+::\+Session}. \mbox{\Hypertarget{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}\label{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!do\+Reorder@{do\+Reorder}}
-\index{do\+Reorder@{do\+Reorder}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{do\+Reorder()}{doReorder()}}
-{\footnotesize\ttfamily void do\+Reorder (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
-
-(Re)sort the \hyperlink{classKite_1_1TrackElement}{Track\+Element} of the vector. Must be called {\itshape after\+:} 
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Session}{Kite\-::\-Session}. \hypertarget{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}{\index{Kite\-::\-Track@{Kite\-::\-Track}!do\-Reorder@{do\-Reorder}}
+\index{do\-Reorder@{do\-Reorder}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{do\-Reorder}]{\setlength{\rightskip}{0pt plus 5cm}void do\-Reorder (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classKite_1_1Track_aaccb9224f5b38ecd8506fd1eec9ef5ca}
+(Re)sort the \hyperlink{classKite_1_1TrackElement}{Track\-Element} of the vector. Must be called {\itshape after\-:} 
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\+::do\+Removal()} so no detached \hyperlink{classKite_1_1TrackSegment}{Track\+Segment} are presents.
-\item All calls to \hyperlink{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{Track\+::insert()}, as the newly inserted elements are put at the back of the vector.
+\item \hyperlink{classKite_1_1Track_abfffcd781865b94f62f27a1e7be99a38}{Track\-::do\-Removal()} so no detached \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} are presents.
+\item All calls to \hyperlink{classKite_1_1Track_aa392ba7cf1e3e485aac11cf326e31918}{Track\-::insert()}, as the newly inserted elements are put at the back of the vector.
 \end{DoxyItemize}
 
-{\bfseries See also\+:}~ \hyperlink{classKite_1_1Session}{Kite\+::\+Session}. 
+{\bfseries See also\-:}~ \hyperlink{classKite_1_1Session}{Kite\-::\-Session}. 
 
 \subsubsection{Member Data Documentation}
-\mbox{\Hypertarget{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}\label{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}} 
-\index{Kite\+::\+Track@{Kite\+::\+Track}!npos@{npos}}
-\index{npos@{npos}!Kite\+::\+Track@{Kite\+::\+Track}}
-\paragraph{\texorpdfstring{npos}{npos}}
-{\footnotesize\ttfamily npos = (size\+\_\+t)-\/1\hspace{0.3cm}{\ttfamily [static]}}
-
+\hypertarget{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}{\index{Kite\-::\-Track@{Kite\-::\-Track}!npos@{npos}}
+\index{npos@{npos}!Kite::Track@{Kite\-::\-Track}}
+\paragraph[{npos}]{\setlength{\rightskip}{0pt plus 5cm}npos = (size\-\_\-t)-\/1\hspace{0.3cm}{\ttfamily [static]}}}\label{classKite_1_1Track_ae0070ea45b2592ce3701ab9e486e58a0}
 A special index value (greatest integer) meaning that an index is invalid. 
 
-The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+Referenced by Track\-::expand\-Free\-Interval(), Track\-::find(), Track\-::get\-Next(), Track\-::get\-Occupied\-Interval(), Track\-::get\-Overlap\-Bounds(), Track\-::get\-Overlap\-Cost(), Track\-::get\-Previous(), Track\-::get\-Segment(), and Track\-::get\-Source\-Position().
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
 \item 
-Track.\+h\item 
-Track.\+cpp\item 
-Track.\+dox\end{DoxyCompactItemize}
+Track.\-h\item 
+Track.\-cpp\item 
+Track.\-dox\end{DoxyCompactItemize}
