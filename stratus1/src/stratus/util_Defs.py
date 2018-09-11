@@ -47,11 +47,12 @@
 # x-----------------------------------------------------------------x
 
 
+from Hurricane    import DbU
 from st_placement import Place, NOSYM, SYM_Y, FIXED
 from st_ref       import XY
 from util_Gen     import F_MSB_FIRST
 
-Y_SLICE        = 50
+Y_SLICE        = DbU.fromLambda(50.0)
 
 # for DpgenAdder
 F_ADDER_CIN    = 0x00000001

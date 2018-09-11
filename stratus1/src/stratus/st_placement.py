@@ -79,7 +79,7 @@ def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
   if ( plac != PLACED ) and ( plac != FIXED ) : raise Exception ( "\n[Stratus ERROR] Place : wrong argument for placement type.\n" )
     
  #placement ( ins, sym, getUnit(ref._x), getUnit(ref._y), plac, cell = cell )
-  placement ( ins, sym, DbU_lambda(ref._x), DbU_lambda(ref._y), plac, cell = cell )
+  placement ( ins, sym, ref._x, ref._y, plac, cell = cell )
     
 ###############
 def PlaceTop ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
@@ -117,7 +117,7 @@ def PlaceTop ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
     if vertical ( cell._insref._sym ) : y += height ( cell._insref )
     else                              : y += width  ( cell._insref )
    
-  placement ( ins, symetry, x + DbU_lambda ( offsetX ), y + DbU_lambda ( offsetY ), plac )
+  placement ( ins, symetry, x + offsetX, y + offsetY, plac )
     
 #################
 def PlaceRight ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
@@ -159,7 +159,7 @@ def PlaceRight ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
     if vertical ( cell._insref._sym ) : y -= height ( cell._insref )
     else                              : y -= width  ( cell._insref )
     
-  placement ( ins, symetry, x + DbU_lambda ( offsetX ), y + DbU_lambda ( offsetY ), plac )
+  placement ( ins, symetry, x + offsetX, y + offsetY, plac )
 
 ################
 def PlaceLeft ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
@@ -199,7 +199,7 @@ def PlaceLeft ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
     if  vertical ( cell._insref._sym ) : y -= height ( cell._insref )
     else                               : y -= width  ( cell._insref )
     
-  placement ( ins, symetry, x - DbU_lambda ( offsetX ), y + DbU_lambda ( offsetY ), plac, fonction = "Left" )
+  placement ( ins, symetry, x - offsetX, y + offsetY, plac, fonction = "Left" )
 
 ##################
 def PlaceBottom ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
@@ -239,7 +239,7 @@ def PlaceBottom ( ins, symetry, offsetX = 0, offsetY = 0, plac = FIXED ) :
     if vertical ( cell._insref._sym )  : y -= height ( cell._insref )
     else                               : y -= width  ( cell._insref )
  
-  placement ( ins, symetry, x + DbU_lambda ( offsetX ), y - DbU_lambda ( offsetY ), plac, fonction = "Bottom" )
+  placement ( ins, symetry, x + offsetX, y - offsetY, plac, fonction = "Bottom" )
 
 #################
 def SetRefIns ( ins ) :
@@ -299,12 +299,7 @@ def DefAb ( ref1, ref2 ) :
           + ". Maybe you should use ResizeAb function.\n"
     raise Exception ( err )
 
-  cell._hur_cell.setAbutmentBox ( Box ( DbU_lambda ( x1 )
-                                      , DbU_lambda ( y1 )
-                                      , DbU_lambda ( x2 )
-                                      , DbU_lambda ( y2 )
-                                      )
-                                )
+  cell._hur_cell.setAbutmentBox ( Box ( x1, y1, x2, y2 ) )
     
   UpdateSession.close ()
       
@@ -312,6 +307,11 @@ def DefAb ( ref1, ref2 ) :
 def ResizeAb ( dx1, dy1, dx2, dy2 ) :
   global CELLS
   from st_model import CELLS
+
+  print "ResizeAb()", DbU.getValueString(dx1) \
+                    , DbU.getValueString(dy1) \
+                    , DbU.getValueString(dx2) \
+                    , DbU.getValueString(dy2)
 
   global MYSLICE, MYPITCH
   
@@ -332,10 +332,10 @@ def ResizeAb ( dx1, dy1, dx2, dy2 ) :
   old_ymin =  ab.getYMin()
   old_ymax =  ab.getYMax()
 
-  new_xmin = old_xmin - DbU_lambda ( dx1 )
-  new_ymin = old_ymin - DbU_lambda ( dy1 )
-  new_xmax = old_xmax + DbU_lambda ( dx2 )
-  new_ymax = old_ymax + DbU_lambda ( dy2 )
+  new_xmin = old_xmin - dx1
+  new_ymin = old_ymin - dy1
+  new_xmax = old_xmax + dx2
+  new_ymax = old_ymax + dy2
     
   if new_xmin >= new_xmax :
     err = "\n[Stratus ERROR] ResizeAb : one of the values of dx1 or dx2  is incompatible with the size of the abutment box.\n"
@@ -365,12 +365,7 @@ def DefInstanceAb ( instance, x1, y1, x2, y2 ) :
         + "                 : Coordinates of an abutment Box in x must be multiple of the pitch.\n"
     raise Exception ( err )
     
-  cell.setAbutmentBox ( Box ( DbU_lambda ( x1 )
-                            , DbU_lambda ( y1 )
-                            , DbU_lambda ( x2 )
-                            , DbU_lambda ( y2 )
-                            )
-                      )
+  cell.setAbutmentBox ( Box ( x1, y1, x2, y2 ) )
     
   
 ####################################
