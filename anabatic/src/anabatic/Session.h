@@ -96,10 +96,12 @@ namespace Anabatic {
       static  inline const Layer*                getDVerticalLayer     ();
       static  inline DbU::Unit                   getDVerticalWidth     ();
       static  inline DbU::Unit                   getDVerticalPitch     ();
+      static  inline DbU::Unit                   getDVerticalOffset    ();
       static  inline size_t                      getDHorizontalDepth   ();
       static  inline const Layer*                getDHorizontalLayer   ();
       static  inline DbU::Unit                   getDHorizontalWidth   ();
       static  inline DbU::Unit                   getDHorizontalPitch   ();
+      static  inline DbU::Unit                   getDHorizontalOffset  ();
       static  inline size_t                      getDContactDepth      ();
       static  inline const Layer*                getDContactLayer      ();
       static  inline DbU::Unit                   getDContactWidth      ();
@@ -232,10 +234,12 @@ namespace Anabatic {
   inline const Layer*                Session::getDVerticalLayer    ()                     { return getConfiguration()->getDVerticalLayer(); }
   inline DbU::Unit                   Session::getDVerticalWidth    ()                     { return getConfiguration()->getDVerticalWidth(); }
   inline DbU::Unit                   Session::getDVerticalPitch    ()                     { return getConfiguration()->getDVerticalPitch(); }
+  inline DbU::Unit                   Session::getDVerticalOffset   ()                     { return getConfiguration()->getDVerticalOffset(); }
   inline size_t                      Session::getDHorizontalDepth  ()                     { return getConfiguration()->getDHorizontalDepth(); }
   inline const Layer*                Session::getDHorizontalLayer  ()                     { return getConfiguration()->getDHorizontalLayer(); }
   inline DbU::Unit                   Session::getDHorizontalWidth  ()                     { return getConfiguration()->getDHorizontalWidth(); }
   inline DbU::Unit                   Session::getDHorizontalPitch  ()                     { return getConfiguration()->getDHorizontalPitch(); }
+  inline DbU::Unit                   Session::getDHorizontalOffset ()                     { return getConfiguration()->getDHorizontalOffset(); }
   inline size_t                      Session::getDContactDepth     ()                     { return getConfiguration()->getDContactDepth(); }
   inline const Layer*                Session::getDContactLayer     ()                     { return getConfiguration()->getDContactLayer(); }
   inline DbU::Unit                   Session::getDContactWidth     ()                     { return getConfiguration()->getDContactWidth(); }

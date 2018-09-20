@@ -26,6 +26,7 @@
                         -DPYTHON_SITE_PACKAGES="${PYTHON_SITE_PACKAGES}"
                       )
 
+                   set( pyConstCpps PyConstant.cpp )
                    set( pyCpps      PyCRL.cpp
                                     PyBanner.cpp
                                     PyCatalog.cpp
@@ -75,6 +76,13 @@
                         "${pyIncludes}"
                         "pycrlcore;1.0;1"
                         CRL
+                        "${depLibs}"
+                        include/coriolis2/crlcore
+                      )
+     add_python_module( "${pyConstCpps}"
+                        "crlcore/PyRoutingLayerGauge.h"
+                        "pycrlconst;1.0;1"
+                        Constant
                         "${depLibs}"
                         include/coriolis2/crlcore
                       )

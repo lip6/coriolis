@@ -59,75 +59,77 @@ namespace Anabatic {
       static const size_t  ndepth = (size_t)-1;
     public:
     // Constructor & Destructor.
-                                 Configuration       ( const CellGauge* cg=NULL, const RoutingGauge* rg=NULL );
-                                 Configuration       ( const Configuration& );
-      virtual                   ~Configuration       ();
-      virtual Configuration*     clone               () const;
+                                 Configuration        ( const CellGauge* cg=NULL, const RoutingGauge* rg=NULL );
+                                 Configuration        ( const Configuration& );
+      virtual                   ~Configuration        ();
+      virtual Configuration*     clone                () const;
     // Methods.
-              bool               isGMetal            ( const Layer* ) const;
-              bool               isGContact          ( const Layer* ) const;
-              bool               isTwoMetals         () const;
-              bool               isHV                () const;
-              bool               isVH                () const;
-              const Layer*       getGContactLayer    () const;
-              const Layer*       getGHorizontalLayer () const;
-              const Layer*       getGVerticalLayer   () const;
-      inline  size_t             getGVerticalDepth   () const;
-      inline  DbU::Unit          getGVerticalPitch   () const;
-      inline  size_t             getGHorizontalDepth () const;
-      inline  DbU::Unit          getGHorizontalPitch () const;
-      inline  size_t             getDVerticalDepth   () const;
-      inline  const Layer*       getDVerticalLayer   () const;
-      inline  DbU::Unit          getDVerticalWidth   () const;
-      inline  DbU::Unit          getDVerticalPitch   () const;
-      inline  size_t             getDHorizontalDepth () const;
-      inline  const Layer*       getDHorizontalLayer () const;
-      inline  DbU::Unit          getDHorizontalWidth () const;
-      inline  DbU::Unit          getDHorizontalPitch () const;
-      inline  size_t             getDContactDepth    () const;
-      inline  const Layer*       getDContactLayer    () const;
-      inline  DbU::Unit          getDContactWidth    () const;
-      inline  DbU::Unit          getDContactPitch    () const;
-              size_t             getDepth            () const;
-              size_t             getAllowedDepth     () const;
-              size_t             getLayerDepth       ( const Layer* ) const;
-              CellGauge*         getCellGauge        () const;
-              RoutingGauge*      getRoutingGauge     () const;
-              RoutingLayerGauge* getLayerGauge       ( size_t depth ) const;
-              const Layer*       getRoutingLayer     ( size_t depth ) const;
-              Layer*             getContactLayer     ( size_t depth ) const;
-              DbU::Unit          getSliceHeight      () const;
-              DbU::Unit          getSliceStep        () const;
-              DbU::Unit          getPitch            ( size_t depth, Flags flags ) const;
-              DbU::Unit          getOffset           ( size_t depth ) const;
-              DbU::Unit          getWireWidth        ( size_t depth ) const;
-              DbU::Unit          getExtensionCap     ( size_t depth ) const;
-              Flags              getDirection        ( size_t depth ) const;
-              DbU::Unit          getPitch            ( const Layer*, Flags flags ) const;
-              DbU::Unit          getOffset           ( const Layer* ) const;
-              DbU::Unit          getWireWidth        ( const Layer* ) const;
-              DbU::Unit          getExtensionCap     ( const Layer* ) const;
-              Flags              getDirection        ( const Layer* ) const;
-              float              getSaturateRatio    () const;
-              size_t             getSaturateRp       () const;
-              DbU::Unit          getGlobalThreshold  () const;
-              void               setAllowedDepth     ( size_t );
-              void               setSaturateRatio    ( float );
-              void               setSaturateRp       ( size_t );
-              void               setGlobalThreshold  ( DbU::Unit );
-              DbU::Unit          getEdgeLength       () const;
-              DbU::Unit          getEdgeWidth        () const;
-              float              getEdgeCostH        () const;
-              float              getEdgeCostK        () const;
-              float              getEdgeHInc         () const;
-              float              getEdgeHScaling     () const;
-              int                getGlobalIterations () const;
-              DbU::Unit          isOnRoutingGrid     ( RoutingPad* ) const;
-              bool               selectRpComponent   ( RoutingPad* ) const;
-      virtual void               print               ( Cell* ) const;
-      virtual Record*            _getRecord          () const;
-      virtual string             _getString          () const;
-      virtual string             _getTypeName        () const;
+              bool               isGMetal             ( const Layer* ) const;
+              bool               isGContact           ( const Layer* ) const;
+              bool               isTwoMetals          () const;
+              bool               isHV                 () const;
+              bool               isVH                 () const;
+              const Layer*       getGContactLayer     () const;
+              const Layer*       getGHorizontalLayer  () const;
+              const Layer*       getGVerticalLayer    () const;
+      inline  size_t             getGVerticalDepth    () const;
+      inline  DbU::Unit          getGVerticalPitch    () const;
+      inline  size_t             getGHorizontalDepth  () const;
+      inline  DbU::Unit          getGHorizontalPitch  () const;
+      inline  size_t             getDVerticalDepth    () const;
+      inline  const Layer*       getDVerticalLayer    () const;
+      inline  DbU::Unit          getDVerticalWidth    () const;
+      inline  DbU::Unit          getDVerticalPitch    () const;
+      inline  DbU::Unit          getDVerticalOffset   () const;
+      inline  size_t             getDHorizontalDepth  () const;
+      inline  const Layer*       getDHorizontalLayer  () const;
+      inline  DbU::Unit          getDHorizontalWidth  () const;
+      inline  DbU::Unit          getDHorizontalPitch  () const;
+      inline  DbU::Unit          getDHorizontalOffset () const;
+      inline  size_t             getDContactDepth     () const;
+      inline  const Layer*       getDContactLayer     () const;
+      inline  DbU::Unit          getDContactWidth     () const;
+      inline  DbU::Unit          getDContactPitch     () const;
+              size_t             getDepth             () const;
+              size_t             getAllowedDepth      () const;
+              size_t             getLayerDepth        ( const Layer* ) const;
+              CellGauge*         getCellGauge         () const;
+              RoutingGauge*      getRoutingGauge      () const;
+              RoutingLayerGauge* getLayerGauge        ( size_t depth ) const;
+              const Layer*       getRoutingLayer      ( size_t depth ) const;
+              Layer*             getContactLayer      ( size_t depth ) const;
+              DbU::Unit          getSliceHeight       () const;
+              DbU::Unit          getSliceStep         () const;
+              DbU::Unit          getPitch             ( size_t depth, Flags flags ) const;
+              DbU::Unit          getOffset            ( size_t depth ) const;
+              DbU::Unit          getWireWidth         ( size_t depth ) const;
+              DbU::Unit          getExtensionCap      ( size_t depth ) const;
+              Flags              getDirection         ( size_t depth ) const;
+              DbU::Unit          getPitch             ( const Layer*, Flags flags ) const;
+              DbU::Unit          getOffset            ( const Layer* ) const;
+              DbU::Unit          getWireWidth         ( const Layer* ) const;
+              DbU::Unit          getExtensionCap      ( const Layer* ) const;
+              Flags              getDirection         ( const Layer* ) const;
+              float              getSaturateRatio     () const;
+              size_t             getSaturateRp        () const;
+              DbU::Unit          getGlobalThreshold   () const;
+              void               setAllowedDepth      ( size_t );
+              void               setSaturateRatio     ( float );
+              void               setSaturateRp        ( size_t );
+              void               setGlobalThreshold   ( DbU::Unit );
+              DbU::Unit          getEdgeLength        () const;
+              DbU::Unit          getEdgeWidth         () const;
+              float              getEdgeCostH         () const;
+              float              getEdgeCostK         () const;
+              float              getEdgeHInc          () const;
+              float              getEdgeHScaling      () const;
+              int                getGlobalIterations  () const;
+              DbU::Unit          isOnRoutingGrid      ( RoutingPad* ) const;
+              bool               selectRpComponent    ( RoutingPad* ) const;
+      virtual void               print                ( Cell* ) const;
+      virtual Record*            _getRecord           () const;
+      virtual string             _getString           () const;
+      virtual string             _getTypeName         () const;
     protected:
     // Attributes.
       const Layer*            _gmetalh;
@@ -158,22 +160,24 @@ namespace Anabatic {
   };
 
 
-  inline  size_t       Configuration::getGHorizontalDepth () const { return _gdepthh; }
-  inline  size_t       Configuration::getGVerticalDepth   () const { return _gdepthv; }
-  inline  DbU::Unit    Configuration::getGHorizontalPitch () const { return getPitch( getGHorizontalDepth(), Flags::NoFlags ); }
-  inline  DbU::Unit    Configuration::getGVerticalPitch   () const { return getPitch( getGVerticalDepth  (), Flags::NoFlags ); }
-  inline  size_t       Configuration::getDVerticalDepth   () const { return _ddepthv; }
-  inline  const Layer* Configuration::getDVerticalLayer   () const { return getRoutingLayer( getDVerticalDepth() ); }
-  inline  DbU::Unit    Configuration::getDVerticalWidth   () const { return getWireWidth   ( getDVerticalDepth() ); }
-  inline  DbU::Unit    Configuration::getDVerticalPitch   () const { return getPitch       ( getDVerticalDepth(), Flags::NoFlags ); }
-  inline  size_t       Configuration::getDHorizontalDepth () const { return _ddepthh; }
-  inline  const Layer* Configuration::getDHorizontalLayer () const { return getRoutingLayer( getDHorizontalDepth() ); }
-  inline  DbU::Unit    Configuration::getDHorizontalWidth () const { return getWireWidth   ( getDHorizontalDepth() ); }
-  inline  DbU::Unit    Configuration::getDHorizontalPitch () const { return getPitch       ( getDHorizontalDepth(), Flags::NoFlags ); }
-  inline  size_t       Configuration::getDContactDepth    () const { return _ddepthc; }
-  inline  const Layer* Configuration::getDContactLayer    () const { return getContactLayer( getDContactDepth() ); }
-  inline  DbU::Unit    Configuration::getDContactWidth    () const { return getWireWidth   ( getDContactDepth() ); }
-  inline  DbU::Unit    Configuration::getDContactPitch    () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
+  inline  size_t       Configuration::getGHorizontalDepth  () const { return _gdepthh; }
+  inline  size_t       Configuration::getGVerticalDepth    () const { return _gdepthv; }
+  inline  DbU::Unit    Configuration::getGHorizontalPitch  () const { return getPitch( getGHorizontalDepth(), Flags::NoFlags ); }
+  inline  DbU::Unit    Configuration::getGVerticalPitch    () const { return getPitch( getGVerticalDepth  (), Flags::NoFlags ); }
+  inline  size_t       Configuration::getDVerticalDepth    () const { return _ddepthv; }
+  inline  const Layer* Configuration::getDVerticalLayer    () const { return getRoutingLayer( getDVerticalDepth() ); }
+  inline  DbU::Unit    Configuration::getDVerticalWidth    () const { return getWireWidth   ( getDVerticalDepth() ); }
+  inline  DbU::Unit    Configuration::getDVerticalPitch    () const { return getPitch       ( getDVerticalDepth(), Flags::NoFlags ); }
+  inline  DbU::Unit    Configuration::getDVerticalOffset   () const { return getOffset      ( getDVerticalDepth() ); }
+  inline  size_t       Configuration::getDHorizontalDepth  () const { return _ddepthh; }
+  inline  const Layer* Configuration::getDHorizontalLayer  () const { return getRoutingLayer( getDHorizontalDepth() ); }
+  inline  DbU::Unit    Configuration::getDHorizontalWidth  () const { return getWireWidth   ( getDHorizontalDepth() ); }
+  inline  DbU::Unit    Configuration::getDHorizontalPitch  () const { return getPitch       ( getDHorizontalDepth(), Flags::NoFlags ); }
+  inline  DbU::Unit    Configuration::getDHorizontalOffset () const { return getOffset      ( getDHorizontalDepth() ); }
+  inline  size_t       Configuration::getDContactDepth     () const { return _ddepthc; }
+  inline  const Layer* Configuration::getDContactLayer     () const { return getContactLayer( getDContactDepth() ); }
+  inline  DbU::Unit    Configuration::getDContactWidth     () const { return getWireWidth   ( getDContactDepth() ); }
+  inline  DbU::Unit    Configuration::getDContactPitch     () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
 
 
 } // Anabatic namespace.

@@ -363,6 +363,7 @@ namespace Anabatic {
                                                          , ab.getXMax()
                                                          , p.getX()
                                                          , Constant::Nearest ) );
+    
     if (x < constraint.getXMin()) x += lg->getPitch();
     if (x > constraint.getXMax()) x -= lg->getPitch();
 

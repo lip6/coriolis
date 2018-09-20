@@ -254,6 +254,23 @@ extern "C" {
   }
 
 
+  static PyObject* PyCellViewer_removeHistory ( PyCellViewer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCellViewer_removeHistory ()" << endl;
+
+    HTRY
+      METHOD_HEAD("CellViewer.removeHistory()")
+  
+      PyCell* cell;
+      if ( not ParseOneArg("CellViewer.removeHistory()",args,CELL_ARG,(PyObject**)&cell) ) {
+        return NULL;
+      }
+      cw->removeHistory ( PYCELL_O(cell) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // PyCellViewer Attribute Method table.
 
@@ -280,6 +297,8 @@ extern "C" {
                               , "Triggers a full redraw of the visible area." }
     , { "refresh"             , (PyCFunction)PyCellViewer_refresh             , METH_NOARGS
                               , "Fit the contents to the viewer's visible area." }
+    , { "removeHistory"       , (PyCFunction)PyCellViewer_removeHistory       , METH_VARARGS
+                              , "Remove a Cell from the viewer's history." }
     , { "destroy"             , (PyCFunction)PyCellViewer_destroy             , METH_NOARGS
                               , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

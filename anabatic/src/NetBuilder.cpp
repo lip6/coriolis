@@ -829,23 +829,26 @@ namespace Anabatic {
     size_t       rpDepth  = Session::getLayerDepth( rpLayer );
     DbU::Unit    viaSide  = Session::getViaWidth  ( rpDepth );
     Point        position = rp->getCenter();
-    Point        onGrid   = Session::getNearestGridPoint( position, gcell->getConstraintBox() );
+    position.translate( -Session::getDVerticalOffset(), -Session::getDHorizontalOffset() );
 
-    AutoContact* contact = AutoContactTerminal::create( gcell, rp, rpLayer, position, viaSide, viaSide );
+    Point        onGrid   = Session::getNearestGridPoint( position, gcell->getConstraintBox() );
+    AutoContact* contact  = AutoContactTerminal::create( gcell, rp, rpLayer, position, viaSide, viaSide );
 
     if (position != onGrid) {
       cerr << Bug( "NetBuilder::doRp_AccessAnalog(): RoutingPad is not under any grid point.\n"
                    "      %s\n"
-                   "      Using nearest grid point: %s"
+                   "      %s shifted to nearest grid point %s"
                  , getString(rp).c_str()
+                 , getString(position).c_str()
                  , getString(onGrid).c_str()
                  ) << endl;
       contact->forceOnGrid( onGrid );
     }
 
-    if (rpDepth != 1) {
-      cerr << Bug( "NetBuilder::doRp_AccessAnalog(): RoutingPad must be in METAL2 layer.\n"
+    if (rpDepth != Session::getDHorizontalDepth()) {
+      cerr << Bug( "NetBuilder::doRp_AccessAnalog(): RoutingPad must be in %s layer.\n"
                    "      %s"
+                 , getString(Session::getDHorizontalLayer()->getName()).c_str()
                  , getString(rp).c_str()
                  ) << endl;
     }

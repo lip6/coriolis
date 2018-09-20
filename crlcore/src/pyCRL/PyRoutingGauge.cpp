@@ -360,6 +360,8 @@ extern "C" {
   accessorVectorFromVoid(getLayerGauges,PyRoutingGauge,RoutingGauge,RoutingLayerGauge)
   DirectGetBoolAttribute(PyRoutingGauge_isSymbolic ,isSymbolic ,PyRoutingGauge,RoutingGauge)
   DirectSetBoolAttribute(PyRoutingGauge_setSymbolic,setSymbolic,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isHV       ,isHV       ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isVH       ,isVH       ,PyRoutingGauge,RoutingGauge)
 
 
   // Standart Destroy (Attribute).
@@ -368,8 +370,12 @@ extern "C" {
   PyMethodDef PyRoutingGauge_Methods[] =
     { { "create"                , (PyCFunction)PyRoutingGauge_create            , METH_VARARGS|METH_STATIC
                                 , "Create a new RoutingGauge." }
-    , { "isSymbolic"            , (PyCFunction)PyRoutingGauge_isSymbolic           , METH_NOARGS
+    , { "isSymbolic"            , (PyCFunction)PyRoutingGauge_isSymbolic        , METH_NOARGS
                                 , "The RoutingGauge is for symbolic technology." }
+    , { "isHV"                  , (PyCFunction)PyRoutingGauge_isHV              , METH_NOARGS
+                                , "The first routing layer (metal2) is horizontal." }
+    , { "isVH"                  , (PyCFunction)PyRoutingGauge_isVH              , METH_NOARGS
+                                , "The first routing layer (metal2) is vertical." }
     , { "getName"               , (PyCFunction)PyRoutingGauge_getName           , METH_NOARGS
                                 , "Return the maximum depth of the RoutingGauge." }
     , { "getTechnology"         , (PyCFunction)PyRoutingGauge_getTechnology     , METH_NOARGS

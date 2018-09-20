@@ -984,7 +984,7 @@ namespace Anabatic {
     if (gaugeKind < 3) {
       for ( Net* net : getCell()->getNets() ) {
         if (NetRoutingExtension::isShortNet(net)) {
-          AutoSegment::setShortNetMode( true );
+        //AutoSegment::setShortNetMode( true );
           ++shortNets;
         }
         if (NetRoutingExtension::isAutomaticGlobalRoute(net)) {

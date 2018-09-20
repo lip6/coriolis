@@ -225,7 +225,6 @@ namespace CRL {
     long  index;
 
     divide ( position-start, index, modulo );
-
     cdebug_log(100,0) << "index := " << index << endl;
 
     if ( index < 0 ) {

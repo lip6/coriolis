@@ -8,7 +8,7 @@
 // |            G D S I I / Hurricane  Interface                     |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :   "./gds/GdsDriver.cpp"                          |
 // +-----------------------------------------------------------------+
@@ -49,6 +49,17 @@ using namespace CRL;
 namespace {
 
   using namespace std;
+
+
+  bool hasLayout ( const Cell* cell )
+  {
+    for ( Net* net : cell->getNets() ) {
+      for ( Component* component : net->getComponents() ) {
+        if (dynamic_cast<Plug*>(component) == NULL) return true;
+      }
+    }
+    return false;
+  } 
 
 
 // -------------------------------------------------------------------
@@ -545,6 +556,10 @@ namespace {
 
   GdsStream& GdsStream::operator<< ( const Cell* cell )
   {
+  // Temporay patch for "amsOTA".
+    if (cell->getName() == "control_r") return *this;
+    if (not hasLayout(cell)) return *this;
+    
     time_t t   = time( 0 );
     tm*    now = localtime( &t );
 
@@ -566,6 +581,9 @@ namespace {
     _ostream << STRNAME(cell->getName());
 
     for ( Instance* instance : cell->getInstances() ) {
+      if (instance->getMasterCell()->getName() == "control_r") continue;
+      if (not hasLayout(instance->getMasterCell())) continue;
+
       if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) continue;
 
       (*this) << SREF;
