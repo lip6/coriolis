@@ -17,6 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include <cstdlib>
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
@@ -127,6 +128,8 @@ DataBase::DataBase()
 DataBase* DataBase::create()
 // *************************
 {
+    setenv( "LC_ALL", "POSIX", 1 );
+
     DataBase* dataBase = new DataBase();
 
     dataBase->_postCreate();
