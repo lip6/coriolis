@@ -11,6 +11,7 @@ GRTAGS
 .dir-locals.el
 .projectile
 
+lefdef/src/lef/lef/lef.tab.h
 
 man/
 rtf/

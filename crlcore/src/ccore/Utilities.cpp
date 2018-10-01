@@ -318,14 +318,14 @@ namespace CRL {
     Utilities::Path crlcoreDir = pythonSitePackages / "crlcore";
     Utilities::Path stratusDir = pythonSitePackages / "stratus";
     Utilities::Path cumulusDir = pythonSitePackages / "cumulus";
-    Utilities::Path pharosDir  = pythonSitePackages / "pharos";
+    Utilities::Path oroshiDir  = pythonSitePackages / "oroshi";
 
     Isobar::Script::addPath ( sysConfDir.toString() );
     Isobar::Script::addPath ( pythonSitePackages.toString() );
     Isobar::Script::addPath ( crlcoreDir.toString() );
     Isobar::Script::addPath ( stratusDir.toString() );
     Isobar::Script::addPath ( cumulusDir.toString() );
-    Isobar::Script::addPath ( pharosDir.toString() );
+    Isobar::Script::addPath ( oroshiDir.toString() );
 
   // Triggers Configuration singleton creation.
     Cfg::Configuration::get ();

@@ -46,9 +46,16 @@ def isderived ( derived, base ):
     return False
 
 
-def truncPath ( path, maxlength=70 ):
+def truncPath ( path, maxlength=80 ):
     if len(path) < maxlength: return path
-    return '.../'+os.sep.join(path.split(os.sep)[-4:])
+    components = path.split(os.sep)
+    trunc      = ''
+    for i in range(-1,-len(components),-1):
+      if len(trunc)+len(components[i]) >= maxlength: break
+      if not len(trunc): trunc = components[i]
+      else:              trunc = os.path.join( components[i], trunc ) 
+        
+    return '...' + os.sep + trunc
 
 
 def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):

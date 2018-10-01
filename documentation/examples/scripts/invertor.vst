@@ -1,0 +1,26 @@
+
+-- =======================================================================
+-- Coriolis Structural VHDL Driver
+-- Generated on Jul 11, 2018, 16:03
+-- 
+-- To be interoperable with Alliance, it uses it's special VHDL subset.
+-- ("man vhdl" under Alliance for more informations)
+-- =======================================================================
+
+entity invertor is
+  port ( i   : linkage bit
+       ; nq  : linkage bit
+       ; vdd : linkage bit
+       ; vss : linkage bit
+       );
+end invertor;
+
+architecture structural of invertor is
+
+  signal nwell :  bit;
+
+
+begin
+
+end structural;
+

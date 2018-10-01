@@ -159,12 +159,8 @@ def autoLocate ():
     locations  = [ os.path.abspath(os.path.dirname(sys.argv[0]))
                  , os.environ['HOME']+'/coriolis-2.x/src/coriolis/bootstrap'
                  , os.environ['HOME']+'/coriolis/src/coriolis/bootstrap'
-                 , os.environ['HOME']+'/chams-1.x/src/coriolis/bootstrap'
-                 , os.environ['HOME']+'/chams/src/coriolis/bootstrap'
                  , '/users/outil/coriolis/coriolis-2.x/src/coriolis/bootstrap'
                  , os.environ['HOME']+'/coriolis-2.x/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
-                 , os.environ['HOME']+'/chams-1.x/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
-                 , os.environ['HOME']+'/chams/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
                  , '/users/outil/coriolis/coriolis-2.x/'+osType+'/Release.Shared/install/'+libDir+'/'+sitePackage
                  ]
     

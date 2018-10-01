@@ -102,6 +102,12 @@
                                 hurricane/Views.h
                                 hurricane/Warning.h
                                 hurricane/TextTranslator.h
+                                hurricane/DeviceDescriptor.h
+                                hurricane/ModelDescriptor.h
+                                hurricane/Rule.h
+                                hurricane/UnitRule.h
+                                hurricane/PhysicalRule.h
+                                hurricane/TwoLayersPhysicalRule.h
                      )
                  set ( cpps     Record.cpp
                                 Slot.cpp
@@ -187,6 +193,11 @@
                                 Marker.cpp
                                 Timer.cpp
                                 TextTranslator.cpp
+                                DeviceDescriptor.cpp
+                                Rule.cpp
+                                UnitRule.cpp
+                                PhysicalRule.cpp
+                                TwoLayersPhysicalRule.cpp
                  )
     
            add_library ( hurricane ${cpps} )

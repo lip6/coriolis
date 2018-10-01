@@ -50,13 +50,10 @@
   *                <tr> <td>Solstice            <td>\c     160 <td>\c     170
   *                <tr> <td>Equinox             <td>\c     170 <td>\c     180
   *                <tr> <td>Unicorn             <td>\c     180 <td>\c     190
-  *                <tr> <th colspan=3>\b C++ / CHAMS
+  *                <tr> <th colspan=3>\b C++ / Analog
   *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
-  *                <tr> <td>HurricaneAMS        <td>\c     500 <td>\c     510
-  *                <tr> <td>amsCore             <td>\c     510 <td>\c     520
-  *                <tr> <td>Pharos              <td>\c     520 <td>\c     530
-  *                <tr> <td>Isis                <td>\c     530 <td>\c     540
-  *                <tr> <td>Horus               <td>\c     530 <td>\c     540
+  *                <tr> <td>Analog              <td>\c     500 <td>\c     510
+  *                <tr> <td>oroshi              <td>\c     510 <td>\c     520
   *                <tr> <th colspan=3>\b Python Wrappers / Coriolis
   *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
   *                <tr> <td>Isobar              <td>\c      20 <td>\c      30
@@ -69,13 +66,10 @@
   *                <tr> <td>Solstice/Python     <td>\c      42 <td>\c      44
   *                <tr> <td>Equinox/Python      <td>\c      44 <td>\c      46
   *                <tr> <td>Unicorn/Python      <td>\c      46 <td>\c      48
-  *                <tr> <th colspan=3>\b Python Wrappers / CHAMS
+  *                <tr> <th colspan=3>\b Python Wrappers / Analog
   *                <tr> <th>\b Tool/Library     <th>\b Minimum <th>\b Maximum
-  *                <tr> <td>isobarAMS           <td>\c      48 <td>\c      50
-  *                <tr> <td>amsCore             <td>\c      50 <td>\c      51
-  *                <tr> <td>Pharos/Python       <td>\c      52 <td>\c      60
-  *                <tr> <td>Isis/Python         <td>\c      60 <td>\c      61
-  *                <tr> <td>Horus/Python        <td>\c      61 <td>\c      62
+  *                <tr> <td>Analog              <td>\c      48 <td>\c      50
+                  <tr> <td>oroshi/ÿthon         <td>\c      50 <td>\c      51
   *                <tr> <th colspan=3>\b Special levels
   *                <tr> <td>Determinim check    <td>\c    9000 <td>\c    9001
   *                <tr> <td>JSON parsers/drivers<td>\c      19 <td>\c      20
