@@ -20,7 +20,6 @@
 #include "hurricane/UpdateSession.h"
 #include "hurricane/analog/MetaTransistor.h"
 #include "hurricane/analog/Transistor.h"
-#include "hurricane/analog/TransistorArguments.h"
 
 namespace Analog {
 
@@ -105,23 +104,7 @@ namespace Analog {
   }
   
   
-  Arguments* Transistor::getArguments ()
-  {
-    const bitset<4> bs(getBulkType());
-  
-    return new TransistorArguments ( isNMOS()
-                                   , isBulkConnected()
-                                   , isSourceFirst()
-                                   , bs.to_string()
-                                   , getW()
-                                   , getL()
-                                   , getM()
-                                   , getExternalDummy()
-                                   );
-  }
-  
-  
-  unsigned int Transistor:: getRestriction ( Hurricane::Net* net ) const
+  unsigned int  Transistor::getRestriction ( Hurricane::Net* net ) const
   {
     Name netName = net->getName();
     Name nameS   = Name(string("S" ));
@@ -176,18 +159,18 @@ namespace Analog {
   }
   
   
-  bool Transistor::isSame(Transistor* ts)
+  bool Transistor::isSame ( Transistor* ts )
   {
-    StepParameter*       w1    = dynamic_cast<StepParameter*      >(this->getParameter("W"));
-    StepParameter*       l1    = dynamic_cast<StepParameter*      >(this->getParameter("L"));
-    FormFactorParameter* m1    = dynamic_cast<FormFactorParameter*>(this->getParameter("M"));
-    ChoiceParameter*     ls1   = dynamic_cast<ChoiceParameter*    >(this->getParameter("Layout Styles"));
-    StepParameter*       nerc1 = dynamic_cast<StepParameter*      >(this->getParameter("NERC"));
-    StepParameter*       nirc1 = dynamic_cast<StepParameter*      >(this->getParameter("NIRC"));
-    StepParameter*       b1    = dynamic_cast<StepParameter*      >(this->getParameter("B.w" ));
-    StepParameter*       g1    = dynamic_cast<StepParameter*      >(this->getParameter("G.w"));
-    StepParameter*       d1    = dynamic_cast<StepParameter*      >(this->getParameter("D.w"));
-    StepParameter*       s1    = dynamic_cast<StepParameter*      >(this->getParameter("S.w" ));
+    StepParameter*       w1    = dynamic_cast<StepParameter*      >(getParameter("W"));
+    StepParameter*       l1    = dynamic_cast<StepParameter*      >(getParameter("L"));
+    FormFactorParameter* m1    = dynamic_cast<FormFactorParameter*>(getParameter("M"));
+    ChoiceParameter*     ls1   = dynamic_cast<ChoiceParameter*    >(getParameter("Layout Styles"));
+    StepParameter*       nerc1 = dynamic_cast<StepParameter*      >(getParameter("NERC"));
+    StepParameter*       nirc1 = dynamic_cast<StepParameter*      >(getParameter("NIRC"));
+    StepParameter*       b1    = dynamic_cast<StepParameter*      >(getParameter("B.w" ));
+    StepParameter*       g1    = dynamic_cast<StepParameter*      >(getParameter("G.w"));
+    StepParameter*       d1    = dynamic_cast<StepParameter*      >(getParameter("D.w"));
+    StepParameter*       s1    = dynamic_cast<StepParameter*      >(getParameter("S.w" ));
   
     StepParameter*       w2    = dynamic_cast<StepParameter*      >(ts->getParameter("W"));
     StepParameter*       l2    = dynamic_cast<StepParameter*      >(ts->getParameter("L"));

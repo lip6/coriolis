@@ -32,7 +32,6 @@ namespace Analog {
               unsigned int     getN              () const;
               unsigned int     getM              () const;
       virtual Hurricane::Name  getDeviceName     () const;
-      virtual Arguments*       getArguments      ();
               void             setExternalDummy  ( const bool );
               bool             getExternalDummy  () const;
     protected:                                   

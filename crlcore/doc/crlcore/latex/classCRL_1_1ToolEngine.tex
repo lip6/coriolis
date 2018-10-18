@@ -1,6 +1,5 @@
-\hypertarget{classCRL_1_1ToolEngine}{\section{C\-R\-L\-:\-:Tool\-Engine Class Reference}
-\label{classCRL_1_1ToolEngine}\index{C\-R\-L\-::\-Tool\-Engine@{C\-R\-L\-::\-Tool\-Engine}}
-}
+\hypertarget{classCRL_1_1ToolEngine}{}\section{C\+RL\+:\+:Tool\+Engine Class Reference}
+\label{classCRL_1_1ToolEngine}\index{C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}}
 
 
 Base Class of all Coriolis Tools.  
@@ -8,64 +7,59 @@ Base Class of all Coriolis Tools.
 
 
 
-Inherits {\bf Hurricane\-::\-D\-Bo}.
+Inherits \textbf{ Hurricane\+::\+D\+Bo}.
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-virtual const {\bf Name} \& \hyperlink{classCRL_1_1ToolEngine_a98c8fd84e7ea36d25287c08b75e9d5e7}{get\-Name} () const =0
+virtual const \textbf{ Name} \& \mbox{\hyperlink{classCRL_1_1ToolEngine_a98c8fd84e7ea36d25287c08b75e9d5e7}{get\+Name}} () const =0
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{namespaceCRL_ae49bc0c5f113bba964680768556dd1b3}{Tool\-Engines} \hyperlink{classCRL_1_1ToolEngine_afb78e8f180ecc36ff8fa4e91e7885d37}{get} (const {\bf Cell} $\ast$cell)
+static \mbox{\hyperlink{namespaceCRL_ae49bc0c5f113bba964680768556dd1b3}{Tool\+Engines}} \mbox{\hyperlink{classCRL_1_1ToolEngine_afb78e8f180ecc36ff8fa4e91e7885d37}{get}} (const \textbf{ Cell} $\ast$cell)
 \item 
-static \hyperlink{classCRL_1_1ToolEngine}{Tool\-Engine} $\ast$ \hyperlink{classCRL_1_1ToolEngine_a1c2261333735f6fd59b51708516b8b23}{get} (const {\bf Cell} $\ast$cell, const {\bf Name} \&name)
+static \mbox{\hyperlink{classCRL_1_1ToolEngine}{Tool\+Engine}} $\ast$ \mbox{\hyperlink{classCRL_1_1ToolEngine_a1c2261333735f6fd59b51708516b8b23}{get}} (const \textbf{ Cell} $\ast$cell, const \textbf{ Name} \&name)
 \item 
-static void \hyperlink{classCRL_1_1ToolEngine_a3ce4d591198922c56a328bced79dd921}{destroy\-All} ()
+static void \mbox{\hyperlink{classCRL_1_1ToolEngine_a3ce4d591198922c56a328bced79dd921}{destroy\+All}} ()
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 Base Class of all Coriolis Tools. 
 
-\hyperlink{classCRL_1_1ToolEngine}{Tool\-Engine} is the base class of all tools for coriolis, used for Mauka, Knik, Kite, ...
+\mbox{\hyperlink{classCRL_1_1ToolEngine}{Tool\+Engine}} is the base class of all tools for coriolis, used for Mauka, Knik, Kite, ...
 
 Provides the basic mechanism for finding a tool and hooking it through a relation on a Cell. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classCRL_1_1ToolEngine_afb78e8f180ecc36ff8fa4e91e7885d37}{\index{C\-R\-L\-::\-Tool\-Engine@{C\-R\-L\-::\-Tool\-Engine}!get@{get}}
-\index{get@{get}!CRL::ToolEngine@{C\-R\-L\-::\-Tool\-Engine}}
-\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Tool\-Engines} C\-R\-L\-::\-Tool\-Engine\-::get (
-\begin{DoxyParamCaption}
-\item[{const {\bf Cell} $\ast$}]{cell}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classCRL_1_1ToolEngine_afb78e8f180ecc36ff8fa4e91e7885d37}
-{\bfseries Returns\-:} The Collection of all Tool\-Engines hooked {\ttfamily cell}. \hypertarget{classCRL_1_1ToolEngine_a1c2261333735f6fd59b51708516b8b23}{\index{C\-R\-L\-::\-Tool\-Engine@{C\-R\-L\-::\-Tool\-Engine}!get@{get}}
-\index{get@{get}!CRL::ToolEngine@{C\-R\-L\-::\-Tool\-Engine}}
-\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Tool\-Engine} $\ast$ C\-R\-L\-::\-Tool\-Engine\-::get (
-\begin{DoxyParamCaption}
-\item[{const {\bf Cell} $\ast$}]{cell, }
-\item[{const {\bf Name} \&}]{name}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classCRL_1_1ToolEngine_a1c2261333735f6fd59b51708516b8b23}
-{\bfseries Returns\-:} The \hyperlink{classCRL_1_1ToolEngine}{Tool\-Engine} of type {\ttfamily name} hooked {\ttfamily cell} ({\ttfamily N\-U\-L\-L} if not present). \hypertarget{classCRL_1_1ToolEngine_a3ce4d591198922c56a328bced79dd921}{\index{C\-R\-L\-::\-Tool\-Engine@{C\-R\-L\-::\-Tool\-Engine}!destroy\-All@{destroy\-All}}
-\index{destroy\-All@{destroy\-All}!CRL::ToolEngine@{C\-R\-L\-::\-Tool\-Engine}}
-\subsubsection[{destroy\-All}]{\setlength{\rightskip}{0pt plus 5cm}void C\-R\-L\-::\-Tool\-Engine\-::destroy\-All (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classCRL_1_1ToolEngine_a3ce4d591198922c56a328bced79dd921}
-Destroy all the Tool\-Engines that have been created. Should be called only in prelude to database destruction. \hypertarget{classCRL_1_1ToolEngine_a98c8fd84e7ea36d25287c08b75e9d5e7}{\index{C\-R\-L\-::\-Tool\-Engine@{C\-R\-L\-::\-Tool\-Engine}!get\-Name@{get\-Name}}
-\index{get\-Name@{get\-Name}!CRL::ToolEngine@{C\-R\-L\-::\-Tool\-Engine}}
-\subsubsection[{get\-Name}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Hurricane\-::\-Name} \& C\-R\-L\-::\-Tool\-Engine\-::get\-Name (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classCRL_1_1ToolEngine_a98c8fd84e7ea36d25287c08b75e9d5e7}
-{\bfseries Returns\-:} The name of the \hyperlink{classCRL_1_1ToolEngine}{Tool\-Engine}. This is pure virtual function to be overloaded in concrete tools. Each \hyperlink{classCRL_1_1ToolEngine}{Tool\-Engine} must return an unique identifier. 
+\mbox{\Hypertarget{classCRL_1_1ToolEngine_afb78e8f180ecc36ff8fa4e91e7885d37}\label{classCRL_1_1ToolEngine_afb78e8f180ecc36ff8fa4e91e7885d37}} 
+\index{C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}!get@{get}}
+\index{get@{get}!C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}}
+\subsubsection{\texorpdfstring{get()}{get()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceCRL_ae49bc0c5f113bba964680768556dd1b3}{Tool\+Engines}} C\+R\+L\+::\+Tool\+Engine\+::get (\begin{DoxyParamCaption}\item[{const \textbf{ Cell} $\ast$}]{cell }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+{\bfseries Returns\+:} The Collection of all Tool\+Engines hooked {\ttfamily cell}. \mbox{\Hypertarget{classCRL_1_1ToolEngine_a1c2261333735f6fd59b51708516b8b23}\label{classCRL_1_1ToolEngine_a1c2261333735f6fd59b51708516b8b23}} 
+\index{C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}!get@{get}}
+\index{get@{get}!C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}}
+\subsubsection{\texorpdfstring{get()}{get()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classCRL_1_1ToolEngine}{Tool\+Engine}} $\ast$ C\+R\+L\+::\+Tool\+Engine\+::get (\begin{DoxyParamCaption}\item[{const \textbf{ Cell} $\ast$}]{cell,  }\item[{const \textbf{ Name} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classCRL_1_1ToolEngine}{Tool\+Engine}} of type {\ttfamily name} hooked {\ttfamily cell} ({\ttfamily N\+U\+LL} if not present). \mbox{\Hypertarget{classCRL_1_1ToolEngine_a3ce4d591198922c56a328bced79dd921}\label{classCRL_1_1ToolEngine_a3ce4d591198922c56a328bced79dd921}} 
+\index{C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}!destroy\+All@{destroy\+All}}
+\index{destroy\+All@{destroy\+All}!C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}}
+\subsubsection{\texorpdfstring{destroy\+All()}{destroyAll()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Tool\+Engine\+::destroy\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Destroy all the Tool\+Engines that have been created. Should be called only in prelude to database destruction. \mbox{\Hypertarget{classCRL_1_1ToolEngine_a98c8fd84e7ea36d25287c08b75e9d5e7}\label{classCRL_1_1ToolEngine_a98c8fd84e7ea36d25287c08b75e9d5e7}} 
+\index{C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}!get\+Name@{get\+Name}}
+\index{get\+Name@{get\+Name}!C\+R\+L\+::\+Tool\+Engine@{C\+R\+L\+::\+Tool\+Engine}}
+\subsubsection{\texorpdfstring{get\+Name()}{getName()}}
+{\footnotesize\ttfamily const \textbf{ Hurricane\+::\+Name} \& C\+R\+L\+::\+Tool\+Engine\+::get\+Name (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+{\bfseries Returns\+:} The name of the \mbox{\hyperlink{classCRL_1_1ToolEngine}{Tool\+Engine}}. This is pure virtual function to be overloaded in concrete tools. Each \mbox{\hyperlink{classCRL_1_1ToolEngine}{Tool\+Engine}} must return an unique identifier. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Tool\-Engine.\-h\item 
-Tool\-Engine.\-dox\end{DoxyCompactItemize}
+Tool\+Engine.\+h\item 
+Tool\+Engine.\+dox\end{DoxyCompactItemize}

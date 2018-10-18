@@ -17,7 +17,6 @@
 #include "hurricane/UpdateSession.h"
 #include "hurricane/analog/MetaCapacitor.h"
 #include "hurricane/analog/MIMCapacitor.h"
-#include "hurricane/analog/CapacitorArguments.h"
 
 namespace Analog {
   
@@ -89,13 +88,6 @@ namespace Analog {
 
   Name MIMCapacitor::getDeviceName () const
   { return _capacitorName; }
-
-  
-  Arguments* MIMCapacitor::getArguments () 
-  {
-    CapacitorArguments* cArgs = new CapacitorArguments( isMIM(), isPIP(), isMOM(), _c->getValue() );
-    return cArgs;
-  }
 
 
 }  // Analog namespace.

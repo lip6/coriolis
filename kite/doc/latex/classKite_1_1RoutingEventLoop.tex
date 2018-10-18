@@ -1,117 +1,109 @@
-\hypertarget{classKite_1_1RoutingEventLoop}{\subsection{Routing\-Event\-Loop Class Reference}
-\label{classKite_1_1RoutingEventLoop}\index{Routing\-Event\-Loop@{Routing\-Event\-Loop}}
-}
+\hypertarget{classKite_1_1RoutingEventLoop}{}\subsection{Routing\+Event\+Loop Class Reference}
+\label{classKite_1_1RoutingEventLoop}\index{Routing\+Event\+Loop@{Routing\+Event\+Loop}}
 
 
-Simple loop dectector for \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}.  
+Simple loop dectector for \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}.  
 
 
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classKite_1_1RoutingEventLoop_aa33efa06ccc2175e35eff7ac6dadffb6}{Routing\-Event\-Loop} (size\-\_\-t depth=10, int limit=20)
+\mbox{\hyperlink{classKite_1_1RoutingEventLoop_aa33efa06ccc2175e35eff7ac6dadffb6}{Routing\+Event\+Loop}} (size\+\_\+t depth=10, int limit=20)
 \item 
-bool \hyperlink{classKite_1_1RoutingEventLoop_aad73ed3e38029feb236cae2527cb5f4e}{is\-Looping} () const 
+bool \mbox{\hyperlink{classKite_1_1RoutingEventLoop_a78155a2b0119ac92d377fa404e348a98}{is\+Looping}} () const
 \item 
-int \hyperlink{classKite_1_1RoutingEventLoop_a62ba5a4c63978e4c8c71fdf0205700a5}{get\-Max\-Count} () const 
+int \mbox{\hyperlink{classKite_1_1RoutingEventLoop_a5744f7f01d26947fb0765bc5d1e2c3bd}{get\+Max\+Count}} () const
 \item 
-const std\-::vector$<$ Element $>$ \& \hyperlink{classKite_1_1RoutingEventLoop_a110c8ec6ec51ce13950962d1d79051fc}{get\-Elements} () const 
+const std\+::vector$<$ Element $>$ \& \mbox{\hyperlink{classKite_1_1RoutingEventLoop_a7411a9e20edba3f3eeceb237dec86ff3}{get\+Elements}} () const
 \item 
-void \hyperlink{classKite_1_1RoutingEventLoop_ad684b7c05480897bdbd86a5fb8363c72}{update} (size\-\_\-t id)
+void \mbox{\hyperlink{classKite_1_1RoutingEventLoop_ad684b7c05480897bdbd86a5fb8363c72}{update}} (size\+\_\+t id)
 \item 
-void \hyperlink{classKite_1_1RoutingEventLoop_a9b6582ce996327c65bf532396ca11b61}{erase} (size\-\_\-t id)
+void \mbox{\hyperlink{classKite_1_1RoutingEventLoop_a9b6582ce996327c65bf532396ca11b61}{erase}} (size\+\_\+t id)
 \end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-Simple loop dectector for \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}. 
+Simple loop dectector for \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}. 
 
-The \hyperlink{classKite_1_1RoutingEventLoop}{Routing\-Event\-Loop} can be roughly understood as a truncated histogram of the {\ttfamily depth} last (in the time meaning) greatest riped up elements.
+The \mbox{\hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}} can be roughly understood as a truncated histogram of the {\ttfamily depth} last (in the time meaning) greatest riped up elements.
 
-The loop detector keep track of the {\ttfamily depth} \hyperlink{classKite_1_1TrackElement}{Track\-Element} with the greatest processing count. \hyperlink{classKite_1_1TrackElement}{Track\-Element} are just identified through the {\ttfamily id} of their associated Auto\-Segment. Each entry in the loop table contains\-:
+The loop detector keep track of the {\ttfamily depth} \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} with the greatest processing count. \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} are just identified through the {\ttfamily id} of their associated Auto\+Segment. Each entry in the loop table contains\+:
 \begin{DoxyItemize}
-\item The {\ttfamily id} of the associated \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} ({\bf Katabatic\-::\-Auto\-Segment}).
+\item The {\ttfamily id} of the associated \mbox{\hyperlink{classKite_1_1TrackSegment}{Track\+Segment}} (\textbf{ Katabatic\+::\+Auto\+Segment}).
 \item The {\ttfamily count} of times it has been processed
 \item The {\ttfamily timestamp} of the latest time it has been updated.
 \end{DoxyItemize}
 
 The table (implemented as {\ttfamily vector$<$$>$}) it kept sorted on the timestamp (decreasing). Whenever there is more than {\ttfamily depth} elements in the table, the oldest one are discarted (regardless of their count). Obviously, there are pathological cases into which a loop cannot be detected, but so far it has not happened so a more robust approach seems not necessary at this time.
 
-Whenever the count of an element reaches {\ttfamily count\-Limit}, the looping flag is set. It will remains set unless the faulty element is manually removed. 
+Whenever the count of an element reaches {\ttfamily count\+Limit}, the looping flag is set. It will remains set unless the faulty element is manually removed. 
 
 \subsubsection{Constructor \& Destructor Documentation}
-\hypertarget{classKite_1_1RoutingEventLoop_aa33efa06ccc2175e35eff7ac6dadffb6}{\index{Kite\-::\-Routing\-Event\-Loop@{Kite\-::\-Routing\-Event\-Loop}!Routing\-Event\-Loop@{Routing\-Event\-Loop}}
-\index{Routing\-Event\-Loop@{Routing\-Event\-Loop}!Kite::RoutingEventLoop@{Kite\-::\-Routing\-Event\-Loop}}
-\paragraph[{Routing\-Event\-Loop}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event\-Loop} (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{depth = {\ttfamily 10}, }
-\item[{int}]{count\-Limit = {\ttfamily 20}}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventLoop_aa33efa06ccc2175e35eff7ac6dadffb6}
-Construct a loop detector that handle {\ttfamily depth} differents segments and has a looping threshold of {\ttfamily count\-Limit}. 
+\mbox{\Hypertarget{classKite_1_1RoutingEventLoop_aa33efa06ccc2175e35eff7ac6dadffb6}\label{classKite_1_1RoutingEventLoop_aa33efa06ccc2175e35eff7ac6dadffb6}} 
+\index{Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}!Routing\+Event\+Loop@{Routing\+Event\+Loop}}
+\index{Routing\+Event\+Loop@{Routing\+Event\+Loop}!Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}}
+\paragraph{\texorpdfstring{Routing\+Event\+Loop()}{RoutingEventLoop()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{depth = {\ttfamily 10},  }\item[{int}]{count\+Limit = {\ttfamily 20} }\end{DoxyParamCaption})}
+
+Construct a loop detector that handle {\ttfamily depth} differents segments and has a looping threshold of {\ttfamily count\+Limit}. 
 
 \subsubsection{Member Function Documentation}
-\hypertarget{classKite_1_1RoutingEventLoop_aad73ed3e38029feb236cae2527cb5f4e}{\index{Kite\-::\-Routing\-Event\-Loop@{Kite\-::\-Routing\-Event\-Loop}!is\-Looping@{is\-Looping}}
-\index{is\-Looping@{is\-Looping}!Kite::RoutingEventLoop@{Kite\-::\-Routing\-Event\-Loop}}
-\paragraph[{is\-Looping}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Looping (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1RoutingEventLoop_aad73ed3e38029feb236cae2527cb5f4e}
-{\bfseries Returns\-:} {\bfseries true} if the loop threshold has been reached for at least one element. 
+\mbox{\Hypertarget{classKite_1_1RoutingEventLoop_a78155a2b0119ac92d377fa404e348a98}\label{classKite_1_1RoutingEventLoop_a78155a2b0119ac92d377fa404e348a98}} 
+\index{Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}!is\+Looping@{is\+Looping}}
+\index{is\+Looping@{is\+Looping}!Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}}
+\paragraph{\texorpdfstring{is\+Looping()}{isLooping()}}
+{\footnotesize\ttfamily bool is\+Looping (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by Routing\-Event\-::process().
+{\bfseries Returns\+:} {\bfseries true} if the loop threshold has been reached for at least one element. 
 
-\hypertarget{classKite_1_1RoutingEventLoop_a62ba5a4c63978e4c8c71fdf0205700a5}{\index{Kite\-::\-Routing\-Event\-Loop@{Kite\-::\-Routing\-Event\-Loop}!get\-Max\-Count@{get\-Max\-Count}}
-\index{get\-Max\-Count@{get\-Max\-Count}!Kite::RoutingEventLoop@{Kite\-::\-Routing\-Event\-Loop}}
-\paragraph[{get\-Max\-Count}]{\setlength{\rightskip}{0pt plus 5cm}int get\-Max\-Count (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1RoutingEventLoop_a62ba5a4c63978e4c8c71fdf0205700a5}
+Referenced by Routing\+Event\+::process().
+
+\mbox{\Hypertarget{classKite_1_1RoutingEventLoop_a5744f7f01d26947fb0765bc5d1e2c3bd}\label{classKite_1_1RoutingEventLoop_a5744f7f01d26947fb0765bc5d1e2c3bd}} 
+\index{Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}!get\+Max\+Count@{get\+Max\+Count}}
+\index{get\+Max\+Count@{get\+Max\+Count}!Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}}
+\paragraph{\texorpdfstring{get\+Max\+Count()}{getMaxCount()}}
+{\footnotesize\ttfamily int get\+Max\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
 The maximal count an element as reached so far. 
 
-Referenced by Routing\-Event\-::process().
+Referenced by Routing\+Event\+::process().
 
-\hypertarget{classKite_1_1RoutingEventLoop_a110c8ec6ec51ce13950962d1d79051fc}{\index{Kite\-::\-Routing\-Event\-Loop@{Kite\-::\-Routing\-Event\-Loop}!get\-Elements@{get\-Elements}}
-\index{get\-Elements@{get\-Elements}!Kite::RoutingEventLoop@{Kite\-::\-Routing\-Event\-Loop}}
-\paragraph[{get\-Elements}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::vector$<$ Element $>$ \& get\-Elements (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1RoutingEventLoop_a110c8ec6ec51ce13950962d1d79051fc}
+\mbox{\Hypertarget{classKite_1_1RoutingEventLoop_a7411a9e20edba3f3eeceb237dec86ff3}\label{classKite_1_1RoutingEventLoop_a7411a9e20edba3f3eeceb237dec86ff3}} 
+\index{Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}!get\+Elements@{get\+Elements}}
+\index{get\+Elements@{get\+Elements}!Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}}
+\paragraph{\texorpdfstring{get\+Elements()}{getElements()}}
+{\footnotesize\ttfamily const std\+::vector$<$ Element $>$ \& get\+Elements (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
 The complete table elements. 
 
-Referenced by Routing\-Event\-::process().
+Referenced by Routing\+Event\+::process().
 
-\hypertarget{classKite_1_1RoutingEventLoop_ad684b7c05480897bdbd86a5fb8363c72}{\index{Kite\-::\-Routing\-Event\-Loop@{Kite\-::\-Routing\-Event\-Loop}!update@{update}}
-\index{update@{update}!Kite::RoutingEventLoop@{Kite\-::\-Routing\-Event\-Loop}}
-\paragraph[{update}]{\setlength{\rightskip}{0pt plus 5cm}void update (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{id}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventLoop_ad684b7c05480897bdbd86a5fb8363c72}
+\mbox{\Hypertarget{classKite_1_1RoutingEventLoop_ad684b7c05480897bdbd86a5fb8363c72}\label{classKite_1_1RoutingEventLoop_ad684b7c05480897bdbd86a5fb8363c72}} 
+\index{Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}!update@{update}}
+\index{update@{update}!Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}}
+\paragraph{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void update (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{id }\end{DoxyParamCaption})}
+
 Update the loop, telling that element {\ttfamily id} has appreared one more time. 
 
-Referenced by Routing\-Event\-::process().
+Referenced by Routing\+Event\+::process().
 
-\hypertarget{classKite_1_1RoutingEventLoop_a9b6582ce996327c65bf532396ca11b61}{\index{Kite\-::\-Routing\-Event\-Loop@{Kite\-::\-Routing\-Event\-Loop}!erase@{erase}}
-\index{erase@{erase}!Kite::RoutingEventLoop@{Kite\-::\-Routing\-Event\-Loop}}
-\paragraph[{erase}]{\setlength{\rightskip}{0pt plus 5cm}void erase (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{id}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventLoop_a9b6582ce996327c65bf532396ca11b61}
+\mbox{\Hypertarget{classKite_1_1RoutingEventLoop_a9b6582ce996327c65bf532396ca11b61}\label{classKite_1_1RoutingEventLoop_a9b6582ce996327c65bf532396ca11b61}} 
+\index{Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}!erase@{erase}}
+\index{erase@{erase}!Kite\+::\+Routing\+Event\+Loop@{Kite\+::\+Routing\+Event\+Loop}}
+\paragraph{\texorpdfstring{erase()}{erase()}}
+{\footnotesize\ttfamily void erase (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{id }\end{DoxyParamCaption})}
+
 Remove the entry related to element {\ttfamily id} in the table. The state of the table is fully recomputed after the removal (looping flag \& maximum count).
 
-This method is used when a loop has been encountered, presumably on element {\ttfamily id}, and we want to continue. To avoid the loop detector yelling at each check, the associated \hyperlink{classKite_1_1TrackElement}{Track\-Element} should be invalidated and it's reference removed from the table. 
+This method is used when a loop has been encountered, presumably on element {\ttfamily id}, and we want to continue. To avoid the loop detector yelling at each check, the associated \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} should be invalidated and it\textquotesingle{}s reference removed from the table. 
 
-Referenced by Routing\-Event\-::process().
+Referenced by Routing\+Event\+::process().
 
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Routing\-Event\-Loop.\-h\item 
-Routing\-Event\-Loop.\-cpp\item 
-Routing\-Event\-Loop.\-dox\end{DoxyCompactItemize}
+Routing\+Event\+Loop.\+h\item 
+Routing\+Event\+Loop.\+cpp\item 
+Routing\+Event\+Loop.\+dox\end{DoxyCompactItemize}

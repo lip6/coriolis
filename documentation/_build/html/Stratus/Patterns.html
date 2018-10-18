@@ -1,0 +1,815 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Patterns module User’s Guide &mdash; Coriolis 2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/SoC.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Coriolis 2 documentation" href="../index.html"/>
+        <link rel="up" title="Stratus : Netlist Capture Language" href="index.html"/>
+        <link rel="next" title="DpGen generators manual" href="DpGen.html"/>
+        <link rel="prev" title="Stratus Developper’s Guide" href="Developper.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Coriolis
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../UsersGuide/index.html">Coriolis User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/LicenseCredits.html">Credits &amp; License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Releases.html">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1475">Release 1.0.1475</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-1963">Release 1.0.1963</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-0-1">Release v2.0.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Installation.html">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#building-coriolis">Building Coriolis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#packaging-coriolis">Packaging Coriolis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#hooking-up-into-alliance">Hooking up into <span class="sc">Alliance</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Installation.html#setting-up-the-environment-coriolisenv-py">Setting up the Environment (coriolisEnv.py)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#viewer-tools">Viewer &amp; Tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#stratus-netlist-capture"><span class="sc">Stratus</span> Netlist Capture</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#cgt-command-line-options">Cgt Command Line Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#miscellaneous-settings">Miscellaneous Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-controller">The Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-look-tab">The Look Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-filter-tab">The Filter Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-layers-go-tab">The Layers&amp;Go Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-netlist-tab">The Netlist Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-selection-tab">The Selection Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-inspector-tab">The Inspector Tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ViewerTools.html#the-settings-tab">The Settings Tab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html">Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#plugins">Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#chip-placement">Chip Placement</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#clock-tree">Clock Tree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#recursive-save-rsave">Recursive-Save (RSave)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/ScriptsPlugins.html#a-simple-example-am2901">A Simple Example: AM2901</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonTutorial/index.html">Hurricane+Python Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Introduction.html#terminology">1.1 Terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Introduction.html#generalities">1.2 Generalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Introduction.html#various-kinds-of-constructors">1.3 Various Kinds of Constructors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/Environment.html">2. Setting up the Environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#setting-up-the-pathes">2.1 Setting up the Pathes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#user-s-configurations-file">2.2 User&#8217;s Configurations File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Environment.html#the-techno-py-file">2.2.1 The <span class="cb">techno.py</span> File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Environment.html#the-settings-py-file">2.2.2 The <span class="cb">settings.py</span> File</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html">3. Making a Standard Cell &#8211; Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#the-allianceframework-crl-core">3.1 The AllianceFramework (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#session-mechanism-hurricane">3.2 Session Mechanism (Hurricane)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#creating-a-new-cell-crl-core">3.3 Creating a new Cell (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#the-dbu-measurement-unit">3.4 The DbU Measurement Unit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#setting-up-the-abutment-box">3.5 Setting up the Abutment Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#adding-nets-and-components">3.6 Adding Nets and Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#getting-a-layer">3.6.1 Getting a Layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#creating-a-net">3.6.2 Creating a Net</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#id1">3.6.3 Creating a Component</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#saving-to-disk-crl-core">3.7 Saving to Disk (CRL Core)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CellNetComponent.html#the-complete-example-file">3.8 The Complete Example File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/Collections.html">4. Manipulating Cells, Nets and Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Collections.html#hurricane-collections">4.1 Hurricane Collections</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Collections.html#restrictions-about-using-collections">4.1.1 Restrictions about using Collections</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Collections.html#loading-a-cell-with-allianceframework">4.2 Loading a Cell with AllianceFramework</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/CgtScript.html">5. Make a script runnable through <span class="cb">cgt</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/CgtScript.html#using-breakpoints">5.1 Using Breakpoints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/Netlist.html">6. Making a hierarchical Cell &#8211; Netlist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Netlist.html#creating-an-instance">6.1 Creating an Instance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Netlist.html#id1">6.2 Creating Nets and connecting to Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Netlist.html#power-supplies-special-case">6.3 Power supplies special case</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Netlist.html#creating-the-physical-view-of-a-cell-netlist">6.4 Creating the physical view of a Cell netlist</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Netlist.html#id2">6.4.1 Transformation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Netlist.html#placing-an-instance">6.4.2 Placing an Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Netlist.html#nets-from-plugs-to-routingpads">6.4.3 Nets &#8211; From Plugs to RoutingPads</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Netlist.html#nets-regular-wiring">6.4.4 Nets &#8211; Regular wiring</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Netlist.html#the-complete-example-file">6.5 The Complete Example File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/RealDesigns.html">7. Working in real mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/RealDesigns.html#loading-a-lef-file">7.1 Loading a <span class="sc">lef</span> file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/RealDesigns.html#loading-a-blif-file-yosys">7.2 Loading a <span class="sc">blif</span> file &#8211; <span class="sc">Yosys</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/ToolEngines.html">8. Tool Engines (CRL Core)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/ToolEngines.html#placer-etesian">8.1 Placer &#8211; Etesian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/ToolEngines.html#router-katana">8.1 Router &#8211; Katana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/ToolEngines.html#a-complete-example">8.2  A Complete Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/AdvancedTopics.html">9. Advanced Topics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/AdvancedTopics.html#id1">9.1 Occurrence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/AdvancedTopics.html#id2">9.2 RoutingPads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/AdvancedTopics.html#hypernets">9.3 HyperNets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/AdvancedTopics.html#miscellaeous-trans-hierarchical-functions">9.4 Miscellaeous trans-hierarchical functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Stratus : Netlist Capture Language</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Language.html">Stratus User&#8217;s Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#introduction">Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#stratus">Stratus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#description-of-a-netlist">Description of a netlist</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#nets">Nets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#instances">Instances</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#generators">Generators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#description-of-a-layout">Description of a layout</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#place">Place</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placetop">PlaceTop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placebottom">PlaceBottom</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placeright">PlaceRight</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placeleft">PlaceLeft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#setrefins">SetRefIns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#defab">DefAb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#resizeab">ResizeAb</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#patterns-generation-extension">Patterns generation extension</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#description-of-the-stimuli">Description of the stimuli</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#place-and-route">Place and Route</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placesegment">PlaceSegment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placecontact">PlaceContact</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placepin">PlacePin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placeref">PlaceRef</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#getrefxy">GetRefXY</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#copyupsegment">CopyUpSegment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placecentric">PlaceCentric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#placeglu">PlaceGlu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#fillcell">FillCell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#pads">Pads</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#alimentation-rails">Alimentation rails</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#alimentation-connectors">Alimentation connectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#powerring">PowerRing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#routeck">RouteCk</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#instanciation-facilities">Instanciation facilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#buffer">Buffer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#multiplexor">Multiplexor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#shifter">Shifter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#register">Register</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#constants">Constants</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#boolean-operations">Boolean operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#arithmetical-operations">Arithmetical operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#comparison-operations">Comparison operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#virtual-library">Virtual library</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Language.html#useful-links">Useful links</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#dpgen-generators">DpGen generators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#arithmetic-package-of-stratus">Arithmetic package of stratus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#arithmetic-generators-and-some-stratus-packages">Arithmetic generators and some stratus packages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Language.html#patterns-module">Patterns module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Developper.html">Stratus Developper&#8217;s Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Developper.html#class-model">Class Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#synopsys">Synopsys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#attributes">Attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#methods">Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Developper.html#nets">Nets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id1">Synopsys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id2">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id3">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id4">Attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id5">Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Developper.html#instances">Instances</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id6">Synopsys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id7">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id8">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id9">Attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Developper.html#id10">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Patterns module User&#8217;s Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syntax">Syntax</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#declaration-part">Declaration part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#description-part">Description part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#methods">Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#patwrite">PatWrite</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#declar">declar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#declar-interface">declar_interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">declar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#affect-int">affect_int</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#affect-fix">affect_fix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#affect-any">affect_any</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#addpat">addpat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pattern-begin">pattern_begin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pattern-end">pattern_end</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="DpGen.html">DpGen generators manual</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgeninv">DpgenInv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenbuff">DpgenBuff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennand2">DpgenNand2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennand3">DpgenNand3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennand4">Dpgennand4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenand2">DpgenAnd2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenand3">DpgenAnd3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenand4">DpgenAnd4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennor2">DpgenNor2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennor3">DpgenNor3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennor4">DpgenNor4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenor2">DpgenOr2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenor3">DpgenOr3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenor4">DpgenOr4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenxor2">DpgenXor2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenxnor2">DpgenXnor2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennmux2">DpgenNmux2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenmux2">DpgenMux2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennbuse">DpgenNbuse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenbuse">DpgenBuse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennand2mask">DpgenNand2mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennor2mask">DpgenNor2mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenxnor2mask">DpgenXnor2mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenadsb2f">DpgenAdsb2f</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenshift">DpgenShift</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenshrot">DpgenShrot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgennul">DpgenNul</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenconst">DpgenConst</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenrom2">DpgenRom2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenrom4">DpgenRom4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenram">DpgenRam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenrf1">DpgenRf1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenrf1d">DpgenRf1d</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgenfifo">DpgenFifo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgendff">DpgenDff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgendfft">DpgenDfft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgensff">DpgenSff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="DpGen.html#dpgensfft">DpgenSfft</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Katabatic/Katabatic.html">Katabatic Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Kite/Kite.html">Kite Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Unicorn/Unicorn.html">Unicorn Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PythonCpp/index.html">Hurricane Python/C++ API Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Introduction.html">1. Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#first-a-disclaimer">1.1 First, A Disclaimer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#about-technical-choices">1.2 About Technical Choices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/Introduction.html#botched-design">1.3 Botched Design</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Configuration.html">2. Basic File Structure and CMake configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoStandalone.html">3. Case 1 - DBo Derived, Standalone</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-header-file">3.1 Class Associated Header File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#class-associated-file">3.2 Class Associated File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#head-of-the-file">3.2.1 Head of the file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-python-module-part">3.2.2 The Python Module Part</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-type-linking">3.2.3 Python Type Linking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#the-shared-library-part">3.2.4 The Shared Library Part</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoStandalone.html#python-module-c-namespace">3.3 Python Module (C++ namespace)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html">4. Case 2 - Hierarchy of DBo Derived Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-header">4.1 Base Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#base-class-file">4.2 Base Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-header">4.3 Intermediate Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#intermediate-class-file">4.4 Intermediate Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-header">4.5 Terminal Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#terminal-class-file">4.6 Terminal Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/DBoHierarchy.html#python-module">4.8 Python Module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/NonDBo.html">5. Case 3 - Non-DBo Standalone Classe</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-header">5.1 Class Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#class-file">5.2 Class File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonCpp/NonDBo.html#id1">5.2 Class File</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/DbU.html">6. Encapsulating DbU</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../PythonCpp/Name.html">7. No C++ Hurricane::Name encapsulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../RDS/index.html">RDS &#8211; Symbolic to Real Conversion in Alliance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html">Symbolic Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-components">Symbolic Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#symbolic-segments">Symbolic Segments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../RDS/RDSpage.html#the-rds-file">The RDS File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#physical-grid-lambda-value">Physical Grid &amp; Lambda Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-segment-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_SEGMENT</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-via-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_VIA</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-hole-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_HOLE</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-to-rds-bigvia-metal-table">The <code class="docutils literal"><span class="pre">MBK_TO_RDS_BIGVIA_METAL</span></code> table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../RDS/RDSpage.html#the-mbk-wiresetting-table">The <code class="docutils literal"><span class="pre">MBK_WIRESETTING</span></code> table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Analog/Analog.html">Hurricane/Analog Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Oroshi/Oroshi.html">Oroshi Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefapi/lefapi.html">LEF API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../lefapi/lefapi.html#implementation-notes">Implementation Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../lefapi/lefapi.html#understanding-units">Understanding Units</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../lefapi/lefapi.html#callback-calling-order">Callback Calling Order</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../defapi/defapi.html">DEF API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lefdef/lefdef.html">LEF/DEF Language Reference</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Coriolis</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Stratus : Netlist Capture Language</a> &raquo;</li>
+      
+    <li>Patterns module User&#8217;s Guide</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="patterns-module-user-s-guide">
+<h1>Patterns module User&#8217;s Guide<a class="headerlink" href="#patterns-module-user-s-guide" title="Permalink to this headline">¶</a></h1>
+<p>Roselyne Chotin-Avot</p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The patterns module of <em>Stratus</em> is a set of <em>Python</em> classes and
+methods that allows a procedural description of input pattern file for
+the logic simulator. The <em>Stratus</em> <code class="docutils literal"><span class="pre">Pattern</span></code> method produces a pattern
+description file as output. The file generated by <code class="docutils literal"><span class="pre">Pattern</span></code> method is
+in pat format, so IT IS STRONGLY RECOMMENDED TO SEE pat(5) manual BEFORE
+TO USE IT.</p>
+</div>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h2>
+<p>From a user point of view, <code class="docutils literal"><span class="pre">Pattern</span></code> method is a pattern description
+language using all standard <em>Python</em> facilities. Here follows the
+description of the <code class="docutils literal"><span class="pre">Pattern</span></code> method.
+A pat format file can be divided in two parts : declaration and
+description part.
+The declaration part is the list of inputs, outputs, internal signals
+and registers. Inputs are to be forced to a certain value and all the
+others are to be observed during simulation.
+The description part is a set of patterns, where each pattern defines
+the value of inputs and outputs. The pattern number represents actually
+the absolute time for the simulator.
+Similarly, a <code class="docutils literal"><span class="pre">Pattern</span></code> method can be divided in two parts :
+declaration and description part. Methods related to the declaration
+must be called before any function related to the description part.</p>
+<div class="section" id="declaration-part">
+<h3>Declaration part<a class="headerlink" href="#declaration-part" title="Permalink to this headline">¶</a></h3>
+<p>The first thing you should do in this part is to instantiate the class
+<code class="docutils literal"><span class="pre">Patwrite</span></code> to have access to all patterns declaration and description
+methods. The constructor of this class take as parameters the name of
+pattern output file and the <em>Stratus</em> cell that is described (see
+<code class="docutils literal"><span class="pre">PatWrite</span></code> [patwrite]).
+Then, this part allows you to declare the inputs, the outputs, and
+internal observing points (see <code class="docutils literal"><span class="pre">declar</span></code>[declar] and
+<code class="docutils literal"><span class="pre">declar_interface</span></code> [declar:sub:<cite>i</cite>nterface]).</p>
+</div>
+<div class="section" id="description-part">
+<h3>Description part<a class="headerlink" href="#description-part" title="Permalink to this headline">¶</a></h3>
+<p>After all signals are declared, you can begin the description part (see
+<code class="docutils literal"><span class="pre">pattern_begin</span></code> [pattern:sub:<cite>b</cite>egin]). In this part you have to
+define input values which are to be applied to the inputs of the circuit
+or output values which are to be compare with the values produced during
+the simulation. (see <code class="docutils literal"><span class="pre">affect</span></code> [affect], <code class="docutils literal"><span class="pre">affect_any</span></code>
+[affect:sub:<cite>a</cite>ny], <code class="docutils literal"><span class="pre">affect_int</span></code> [affect:sub:<cite>i</cite>nt] and
+<code class="docutils literal"><span class="pre">affect_fix</span></code> [affect:sub:<cite>f</cite>ix]). <code class="docutils literal"><span class="pre">Pattern</span></code> method describes the
+stimulus by event : only signal transitions are described. After each
+event there is a new input in the pattern file (see <code class="docutils literal"><span class="pre">addpat</span></code>
+[addpat]). Last thing you should do in this part is to generate the
+output file (see <code class="docutils literal"><span class="pre">pattern_end</span></code> [pattern:sub:<cite>e</cite>nd]).</p>
+</div>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="patwrite">
+<h3>PatWrite<a class="headerlink" href="#patwrite" title="Permalink to this headline">¶</a></h3>
+<p>This class is used to create patterns for <em>Stratus</em> models. Currently it
+only supports Alliance “.pat” pattern format. Patterns time stamps are
+in the “absolute date” format, “relative date” isn’t allowed. Legal time
+unit are ps (default), ns, us and ms. The constructor takes as
+parameters the pattern output filename and an optional reference to
+Stratus cell.</p>
+</div>
+<div class="section" id="declar">
+<h3>declar<a class="headerlink" href="#declar" title="Permalink to this headline">¶</a></h3>
+<p>Adds a connector from a Stratus model to the pattern interface. Writes
+the corresponding connector declaration in the pattern file with name,
+arity and direction automatically extracted from the connector
+properties.
+Supported Stratus connectors are:</p>
+<ul class="simple">
+<li>SignalIn,</li>
+<li>SignalOut (only supported if used as an output),</li>
+<li>VddIn,</li>
+<li>VssIn,</li>
+<li>CkIn,</li>
+<li>SignalInOut,</li>
+<li>TriState (always an output),</li>
+<li>Signals.</li>
+</ul>
+<div class="section" id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>connector : can either be a reference to a stratus net or a string
+containing the name of the stratus net.</li>
+<li>format : optional format for the connectors values into the pattern
+file, accepted values are :<ul>
+<li>’B’: binary (default),</li>
+<li>’X’: hexadecimal,</li>
+<li>’O’: octal.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="declar-interface">
+<h3>declar_interface<a class="headerlink" href="#declar-interface" title="Permalink to this headline">¶</a></h3>
+<p>Adds all the connectors from a Stratus model to the pattern interface.
+Write the corresponding connector declaration in the pattern file with
+name, arity and direction directly taken from the connector proprieties.</p>
+<div class="section" id="id1">
+<h4>Parameters<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>cell : the tested Stratus model reference. Optional if a reference to
+the tested Stratus model was given during instanciation[patwrite].</li>
+<li>format : optional format for the connectors values into the pattern
+file, accepted values are :<ul>
+<li>’B’: binary (default),</li>
+<li>’X’: hexadecimal,</li>
+<li>’O’: octal.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h3>declar<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Affect a string value to a connector.</p>
+<div class="section" id="id3">
+<h4>Parameters<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>connector : <em>Stratus</em> connector</li>
+<li>value : string to affect to connector</li>
+</ul>
+</div>
+</div>
+<div class="section" id="affect-int">
+<h3>affect_int<a class="headerlink" href="#affect-int" title="Permalink to this headline">¶</a></h3>
+<p>Affect an integer (CA2) value to a connector. Convert the 2’s complement
+value to the corresponding binary value. The binary size is taken from
+the connector arity. If the connector is an output, the binary value is
+preceded by “?”.</p>
+<div class="section" id="id4">
+<h4>Parameters<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>connector : <em>Stratus</em> connector.</li>
+<li>value : 2’s complement value to affect to the connector.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="affect-fix">
+<h3>affect_fix<a class="headerlink" href="#affect-fix" title="Permalink to this headline">¶</a></h3>
+<p>Affect a fixed point value to a connector. Convert the floating point
+input value to the corresponding fixed point value with
+word_length=connector.arity() and integer_word_length=iwl. If the
+connector is an output, the binary value is preceded by “?”.</p>
+<div class="section" id="id5">
+<h4>Parameters<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>connector : <em>Stratus</em> connector.</li>
+<li>value : floating point value to convert and asign to connector.</li>
+<li>iwl : integer word length</li>
+</ul>
+</div>
+</div>
+<div class="section" id="affect-any">
+<h3>affect_any<a class="headerlink" href="#affect-any" title="Permalink to this headline">¶</a></h3>
+<p>Disable comparison between this connector value and the one calculated
+during simulation.</p>
+<div class="section" id="id6">
+<h4>Parameters<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>connector : <em>Stratus</em> connector.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="addpat">
+<h3>addpat<a class="headerlink" href="#addpat" title="Permalink to this headline">¶</a></h3>
+<p>Adds a pattern in the pattern file.</p>
+</div>
+<div class="section" id="pattern-begin">
+<h3>pattern_begin<a class="headerlink" href="#pattern-begin" title="Permalink to this headline">¶</a></h3>
+<p>Mark the end of the interface declaration and the beginning of the test
+vectors.</p>
+</div>
+<div class="section" id="pattern-end">
+<h3>pattern_end<a class="headerlink" href="#pattern-end" title="Permalink to this headline">¶</a></h3>
+<p>Mark the end of the test vectors and of the patterns file.</p>
+</div>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">Pattern</span></code> method for an addaccu</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># initialisation</span>
+    <span class="n">pat</span> <span class="o">=</span> <span class="n">PatWrite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="o">+</span><span class="s1">&#39;.pat&#39;</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># declaration of ports</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">declar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ck</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">declar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">declar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">declar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">declar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vdd</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">declar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vss</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+
+    <span class="c1"># use of pat.declar_interface(self) has the same effect</span>
+
+    <span class="c1"># description beginning</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">pattern_begin</span><span class="p">()</span>
+
+    <span class="c1"># affect vdd and vss values</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vdd</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vss</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># first pattern : load an initial value</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ck</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># add the pattern in the pattern file</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">addpat</span><span class="p">()</span>
+    <span class="c1"># compute next event</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ck</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">addpat</span><span class="p">()</span>
+
+    <span class="c1"># compute 22 cycle of accumulation</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">22</span><span class="p">):</span>
+       <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ck</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+       <span class="n">pat</span><span class="o">.</span><span class="n">addpat</span><span class="p">()</span>
+       <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ck</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+       <span class="n">pat</span><span class="o">.</span><span class="n">affect_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">5</span><span class="p">)</span>
+       <span class="n">pat</span><span class="o">.</span><span class="n">addpat</span><span class="p">()</span>
+
+    <span class="c1"># end of the description</span>
+    <span class="n">pat</span><span class="o">.</span><span class="n">pattern_end</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="DpGen.html" class="btn btn-neutral float-right" title="DpGen generators manual" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Developper.html" class="btn btn-neutral" title="Stratus Developper’s Guide" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <table class="footer1">
+      <tr>
+        <td class="LFooter"><small>
+          Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 18, 2018.
+        </small></td>
+        <td class="RFooter"></td>
+      </tr>
+    </table>
+    <table class="footer2">
+      <tr>
+        <td class="LFooter">Coriolis 2 Documentation</td>
+        <td class="RFooter"><small>
+              &copy; Copyright 2000-2018, UPMC.
+        </small></td>
+      </tr>
+    </table>
+  </div>
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

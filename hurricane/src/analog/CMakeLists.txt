@@ -13,11 +13,9 @@
                        )
 
                    set( cpps        AnalogCellExtension.cpp
-                                    BJTArguments.cpp
                                     BJT.cpp
                                     BJTFamily.cpp
                                     BJTFamilyNames.cpp
-                                    CapacitorArguments.cpp
                                     CapacitorFamily.cpp
                                     CapacitorFamilyNames.cpp
                                     Cascode.cpp
@@ -35,16 +33,12 @@
                                     MetaTransistor.cpp
                                     MIMCapacitor.cpp
                                     SimpleCurrentMirror.cpp
-                                    TransistorArguments.cpp
                                     Transistor.cpp
                                     TransistorFamily.cpp
                                     TransistorFamilyNames.cpp
-                                    TransistorMultiArguments.cpp
                                     TransistorPair.cpp
                       )
                    set( pyCpps      PyAnalog.cpp
-                                    PyBJTArguments.cpp
-                                    PyCapacitorArguments.cpp
                                     PyCapacitorFamily.cpp
                                     PyCapacitorParameter.cpp
                                     PyCascode.cpp
@@ -64,19 +58,14 @@
                                     PySimpleCurrentMirror.cpp
                                     PySpinBoxParameter.cpp
                                     PyStepParameter.cpp
-                                    PyTransistorArguments.cpp
                                     PyTransistor.cpp
                                     PyTransistorFamily.cpp
-                                    PyTransistorMultiArguments.cpp
                                     PyTransistorPair.cpp
                       )
                    set( includes    hurricane/analog/AnalogCellExtension.h
-                                    hurricane/analog/Arguments.h
-                                    hurricane/analog/BJTArguments.h
                                     hurricane/analog/BJTFamily.h
                                     hurricane/analog/BJTFamilyNames.h
                                     hurricane/analog/BJT.h
-                                    hurricane/analog/CapacitorArguments.h
                                     hurricane/analog/CapacitorFamily.h
                                     hurricane/analog/CapacitorFamilyNames.h
                                     hurricane/analog/CapacitorParameter.h
@@ -84,7 +73,6 @@
                                     hurricane/analog/ChoiceParameter.h
                                     hurricane/analog/Choices.h
                                     hurricane/analog/CommonDrain.h
-                                    hurricane/analog/CommonGate.h
                                     hurricane/analog/CommonGatePair.h
                                     hurricane/analog/CommonSourcePair.h
                                     hurricane/analog/CrossCoupledPair.h
@@ -101,16 +89,12 @@
                                     hurricane/analog/SimpleCurrentMirror.h
                                     hurricane/analog/SpinBoxParameter.h
                                     hurricane/analog/StepParameter.h
-                                    hurricane/analog/TransistorArguments.h
                                     hurricane/analog/TransistorFamily.h
                                     hurricane/analog/TransistorFamilyNames.h
                                     hurricane/analog/Transistor.h
-                                    hurricane/analog/TransistorMultiArguments.h
                                     hurricane/analog/TransistorPair.h
                       )
-                   set( pyIncludes  hurricane/analog/PyBJTArguments.h
-                                    hurricane/analog/PyCapacitorArguments.h
-                                    hurricane/analog/PyCapacitorFamily.h
+                   set( pyIncludes  hurricane/analog/PyCapacitorFamily.h
                                     hurricane/analog/PyCapacitorParameter.h
                                     hurricane/analog/PyCascode.h
                                     hurricane/analog/PyChoiceParameter.h
@@ -129,10 +113,8 @@
                                     hurricane/analog/PySimpleCurrentMirror.h
                                     hurricane/analog/PySpinBoxParameter.h
                                     hurricane/analog/PyStepParameter.h
-                                    hurricane/analog/PyTransistorArguments.h
                                     hurricane/analog/PyTransistorFamily.h
                                     hurricane/analog/PyTransistor.h
-                                    hurricane/analog/PyTransistorMultiArguments.h
                                     hurricane/analog/PyTransistorPair.h
                       )
 

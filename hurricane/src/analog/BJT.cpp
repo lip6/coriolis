@@ -19,7 +19,6 @@
 #include "hurricane/Name.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/analog/BJT.h"
-#include "hurricane/analog/BJTArguments.h"
 
 
 namespace Analog {
@@ -78,16 +77,6 @@ namespace Analog {
 
   Name  BJT::getDeviceName () const
   { return _bjt; }
-
-
-  Arguments* BJT::getArguments ()
-  {
-    bool isNPN           = (getType() == BJTFamily::NPN); 
-    bool isExternalDummy = (_externalDummy->getValue() == 1);
-
-    BJTArguments* bjtArgs = new BJTArguments( isNPN, isExternalDummy, _m->getValue(), _n->getValue() );
-    return bjtArgs;
-  }
 
 
   unsigned int  BJT::getM () const

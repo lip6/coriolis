@@ -41,6 +41,10 @@ namespace Analog {
   }
 
 
+  string  AnalogData::_getString () const
+  { return "<AnalogData>"; }
+  
+
   template<>
   Name  StandardPrivateProperty<AnalogCellExtensionDatas>::_name = "Analog::CellExtension";
 

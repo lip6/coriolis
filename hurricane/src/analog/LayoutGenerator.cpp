@@ -24,15 +24,7 @@
 #include "hurricane/isobar/PyBox.h"
 #include "hurricane/viewer/Script.h"
 #include "hurricane/analog/Device.h"
-#include "hurricane/analog/TransistorArguments.h"
-#include "hurricane/analog/TransistorMultiArguments.h"
-#include "hurricane/analog/CapacitorArguments.h"
 #include "hurricane/analog/PyDevice.h"
-#include "hurricane/analog/PyTransistorArguments.h"
-#include "hurricane/analog/PyTransistorMultiArguments.h"
-#include "hurricane/analog/PyBJTArguments.h"
-#include "hurricane/analog/BJTArguments.h"
-#include "hurricane/analog/PyCapacitorArguments.h"
 #include "hurricane/analog/LayoutGenerator.h"
 
 
@@ -63,10 +55,7 @@ namespace Analog {
 
 
   void  LayoutGenerator::Logger::popError ( const string& text )
-  {
-    string error = "! " + text;
-    cerr << error << endl;
-  }
+  { cerr << text << endl; }
 
 
   void  LayoutGenerator::Logger::popScriptError ()
@@ -164,18 +153,17 @@ namespace Analog {
   
       checkFunctions();
   
-      PyObject* pyArgsCheck  = NULL;
-      PyObject* pyArgsLayout = NULL;
-      if (not toPyArguments(_device->getArguments(),pyArgsCheck,pyArgsLayout,NoFlags)) {
+      PyObject* pyArgs = NULL;
+      if (not toPyArguments(pyArgs,NoFlags)) {
         finalize( ShowTimeTag );
         return false;
       }
       
-      if (not callCheckCoherency(pyArgsCheck,ShowError)) {
+      if (not callCheckCoherency(pyArgs,ShowError)) {
         return false;
       }
   
-      if (not callLayout(pyArgsLayout)) {
+      if (not callLayout(pyArgs)) {
         cerr << "Layout failed" << endl; cerr.flush();
         return false;
       }
@@ -234,107 +222,13 @@ namespace Analog {
   }
   
   
-  bool  LayoutGenerator::toPyArguments ( Arguments* args, PyObject*& pyArgsCheck, PyObject*& pyArgsLayout, unsigned int flags )
+  bool  LayoutGenerator::toPyArguments ( PyObject*& pyArgs, unsigned int flags )
   {
-    PyObject* pyArgs = NULL;
-  
-    if (dynamic_cast<TransistorMultiArguments*>(args)) {
-      TransistorMultiArguments*   tmArgs   = static_cast<TransistorMultiArguments*>(args);
-      PyTransistorMultiArguments* pyTmArgs = PyObject_NEW( PyTransistorMultiArguments, &PyTypeTransistorMultiArguments );
-      pyTmArgs->_object = tmArgs;
-      pyArgs = (PyObject*)pyTmArgs;
-    } else if (dynamic_cast<TransistorArguments*>(args)) {
-      TransistorArguments*   tArgs   = static_cast<TransistorArguments*>(args);
-      PyTransistorArguments* pyTArgs = PyObject_NEW( PyTransistorArguments, &PyTypeTransistorArguments );
-      pyTArgs->_object = tArgs;
-      pyArgs = (PyObject*)pyTArgs;
-    } else if (dynamic_cast<CapacitorArguments*>(args)) {
-      CapacitorArguments*   cArgs   = static_cast<CapacitorArguments*>(args);
-      PyCapacitorArguments* pyCArgs = PyObject_NEW( PyCapacitorArguments, &PyTypeCapacitorArguments );
-      pyCArgs->_object = cArgs;
-      pyArgs = (PyObject*)pyCArgs;
-    } else {
-      popError( "Bad arguments" );
-      return false;
-    }
-  
-    PyObject* pyDevice = PyDevice_Link( _device );
-  
-    pyArgsCheck  = PyTuple_New( 1 );
-    PyTuple_SetItem( pyArgsCheck , 0, (PyObject*)pyArgs );
-  
-    pyArgsLayout = PyTuple_New( 3 );
-    PyTuple_SetItem( pyArgsLayout, 0, pyDevice );
-    PyTuple_SetItem( pyArgsLayout, 1, (PyObject*)pyArgs );
-    PyTuple_SetItem( pyArgsLayout, 2, (flags & ComputeBbOnly) ? Py_True : Py_False );
+    pyArgs= PyTuple_New( 2 );
+    PyTuple_SetItem( pyArgs, 0, PyDevice_Link(_device) );
+    PyTuple_SetItem( pyArgs, 1, (flags & ComputeBbOnly) ? Py_True : Py_False );
   
     return true;
-  }
-  
-  
-  void  LayoutGenerator::pyTransistorArguments ( TransistorArguments* tArgs
-                                               , unsigned             m
-                                               , PyObject*&           pArgsCheck
-                                               , PyObject*&           pArgsLayout
-                                               , unsigned int         flags
-                                               )
-  {
-    pArgsCheck  = PyTuple_New( 1 );
-    pArgsLayout = PyTuple_New( 3 );
-  
-    PyObject* pyDevice = PyDevice_Link( _device );
-    PyTuple_SetItem( pArgsLayout, 0, pyDevice );
-  
-    tArgs->setM( m );
-  
-    PyTransistorArguments* pyTArgs = PyObject_NEW( PyTransistorArguments, &PyTypeTransistorArguments );
-    pyTArgs->_object = tArgs;
-    PyTuple_SetItem( pArgsCheck , 0, (PyObject*)pyTArgs );
-    PyTuple_SetItem( pArgsLayout, 1, (PyObject*)pyTArgs );
-    PyTuple_SetItem( pArgsLayout, 2, (flags & ComputeBbOnly) ? Py_True : Py_False );
-  }
-  
-  
-  void LayoutGenerator::pyTransistorMultiArguments ( TransistorMultiArguments* dpArgs
-                                                   , unsigned                  m
-                                                   , PyObject*&                pArgsCheck
-                                                   , PyObject*&                pArgsLayout
-                                                   , unsigned int              flags
-                                                   )
-  {
-    pArgsCheck  = PyTuple_New( 1 );
-    pArgsLayout = PyTuple_New( 3 );
-  
-    PyObject* pyDevice = PyDevice_Link( _device );
-    PyTuple_SetItem( pArgsLayout, 0, pyDevice );
-  
-    dpArgs->setM( m );
-  
-    PyTransistorMultiArguments* pyTArgs = PyObject_NEW( PyTransistorMultiArguments, &PyTypeTransistorMultiArguments );
-    pyTArgs->_object = dpArgs;
-    PyTuple_SetItem( pArgsCheck , 0, (PyObject*)pyTArgs );
-    PyTuple_SetItem( pArgsLayout, 1, (PyObject*)pyTArgs );
-    PyTuple_SetItem( pArgsLayout, 2, (flags & ComputeBbOnly) ? Py_True : Py_False );
-  }
-  
-  
-  void  LayoutGenerator::pyCapacitorArguments ( CapacitorArguments* cArgs
-                                              , PyObject*&          pArgsCheck
-                                              , PyObject*&          pArgsLayout
-                                              , unsigned int        flags
-                                              )
-  {
-    pArgsCheck  = PyTuple_New( 1 );
-    pArgsLayout = PyTuple_New( 3 );
-  
-    PyObject* pyDevice = PyDevice_Link( _device );
-    PyTuple_SetItem( pArgsLayout, 0, pyDevice );
-  
-    PyCapacitorArguments* pyCArgs = PyObject_NEW( PyCapacitorArguments, &PyTypeCapacitorArguments );
-    pyCArgs->_object = cArgs;
-    PyTuple_SetItem( pArgsCheck , 0, (PyObject*)pyCArgs );
-    PyTuple_SetItem( pArgsLayout, 1, (PyObject*)pyCArgs );
-    PyTuple_SetItem( pArgsLayout, 2, (flags & ComputeBbOnly) ? Py_True : Py_False );
   }
   
   
@@ -363,10 +257,10 @@ namespace Analog {
   }
   
   
-  bool  LayoutGenerator::callLayout ( PyObject* pArgsLayout )
+  bool  LayoutGenerator::callLayout ( PyObject* pArgs )
   {
-    _matrix = _script->callFunction( "layout", pArgsLayout );
-    if ((not _matrix) or (IsPyCapacitorArguments(pArgsLayout))) {
+    _matrix = _script->callFunction( "layout", pArgs );
+    if (not _matrix) {
       string code = "print ' -- Script FAILED --', time.strftime('%H:%M:%S',time.localtime())";
       PyRun_SimpleString( code.c_str() );
       finalize( NoFlags );

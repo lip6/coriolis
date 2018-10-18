@@ -217,7 +217,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::setRestricted    () 
+  void Vertex::setRestricted () 
   {
     setNRestricted();
     setSRestricted();
@@ -235,7 +235,7 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::hasRP( Net* net ) const 
+  bool Vertex::hasRP ( Net* net ) const 
   { 
     if (getGCell() != NULL ){
       Cell* cell   = getGCell()->getAnabatic()->getCell();
@@ -251,7 +251,7 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::hasVRP( Net* net ) const 
+  bool Vertex::hasVRP ( Net* net ) const 
   {
     if (getGCell() != NULL){
       Cell* cell   = getGCell()->getAnabatic()->getCell();
@@ -271,7 +271,7 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::hasHRP( Net* net ) const 
+  bool Vertex::hasHRP ( Net* net ) const 
   {
     if (getGCell() != NULL){
       Cell* cell   = getGCell()->getAnabatic()->getCell();
@@ -347,7 +347,7 @@ namespace Anabatic {
   }
 
 
-  Point Vertex::getNextPathPoint( Point pcurr, const Vertex* vnext ) const
+  Point Vertex::getNextPathPoint ( Point pcurr, const Vertex* vnext ) const
   {
     cdebug_log(112,1) << "Point Dijkstra::getNextPathPoint( Point pcurr, const Vertex* vnext )" << endl;
     if (vnext == NULL){
@@ -456,7 +456,7 @@ namespace Anabatic {
   }
 
 
-  Point Vertex::getStartPathPoint( const Vertex* next ) const
+  Point Vertex::getStartPathPoint ( const Vertex* next ) const
   {
     cdebug_log(112,1) << "Point Vertex::getStartPathPoint( const Vertex* next ) const:" << this << endl;
     
@@ -669,7 +669,7 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::isH() const
+  bool Vertex::isH () const
   {
     GCell* gcell = getGCell();
     if      (gcell->isDevice())   return isiHorizontal();
@@ -679,7 +679,7 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::isV() const
+  bool Vertex::isV () const
   {
     GCell* gcell = getGCell();
     if      (gcell->isDevice())   return isiVertical();
@@ -866,7 +866,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::createAData()       
+  void Vertex::createAData ()       
   {
     if (!getGCell()->isMatrix()){
       if (_adata == NULL) _adata = GRAData::create();
@@ -874,14 +874,14 @@ namespace Anabatic {
   }
 
 
-  bool Vertex::isiSet() const
+  bool Vertex::isiSet () const
   {
     if (_adata) return _adata->isiSet();
     else        return false;
   }
 
 
-  DbU::Unit Vertex::getIAxis() const
+  DbU::Unit Vertex::getIAxis () const
   {
     if (_adata)  return _adata->getIAxis();
     else {
@@ -907,7 +907,7 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit Vertex::getIMax() const
+  DbU::Unit Vertex::getIMax () const
   {
     if (_adata){
       return _adata->getIMax();
@@ -941,26 +941,25 @@ namespace Anabatic {
 
 
 
-  DbU::Unit Vertex::getIMin() const
+  DbU::Unit Vertex::getIMin () const
   {
     if (_adata){
       return _adata->getIMin();
     } else {
-    //cdebug_log(112,0) << "DbU::Unit Vertex::getIMin() const: Digital vertex. " <<  endl;
-      if (_from){
+      if (_from) {
         GCell*  gcurr = getGCell();
         GCell*  gprev = _from->getOpposite(gcurr);
-        Vertex* vprev = gprev->getObserver<Vertex>(GCell::Observable::Vertex);
+        Vertex* vprev = gprev->getObserver<Vertex>( GCell::Observable::Vertex );
         if (isH()){
-          if      (isNorth(vprev)||isSouth(vprev)||isEast (vprev)) return getGCell()->getXCenter();
-          else if (isWest (vprev))                                 return getGCell()->getXMin();
+          if      (isNorth(vprev) or isSouth(vprev) or isEast (vprev)) return getGCell()->getXCenter();
+          else if (isWest (vprev))                                     return getGCell()->getXMin();
           else {
             cdebug_log(112,0) << "DbU::Unit Vertex::getIMin() const: Not a neighbour GCell. " <<  endl;
             return 0;
           }
         } else {
-          if      (isWest(vprev)||isEast(vprev)||isNorth (vprev)) return getGCell()->getYCenter();
-          else if (isSouth (vprev))                               return getGCell()->getYMin();
+          if      (isWest (vprev) or isEast(vprev) or isNorth (vprev)) return getGCell()->getYCenter();
+          else if (isSouth(vprev))                                     return getGCell()->getYMin();
           else {
             cdebug_log(112,0) << "DbU::Unit Vertex::getIMin() const: Not a neighbour GCell. " <<  endl;
             return 0;
@@ -974,7 +973,7 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit Vertex::getPIAxis() const
+  DbU::Unit Vertex::getPIAxis () const
   {
     if (_adata){
       return _adata->getPIAxis();
@@ -1010,7 +1009,7 @@ namespace Anabatic {
   }
   
 
-  DbU::Unit Vertex::getPIMax() const 
+  DbU::Unit Vertex::getPIMax () const 
   {
     if (_adata){
       return _adata->getPIMax();
@@ -1044,7 +1043,7 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit Vertex::getPIMin() const
+  DbU::Unit Vertex::getPIMin () const
   {
     if (_adata){
       return _adata->getPIMin();
@@ -1078,7 +1077,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::setInterv( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
+  void Vertex::setInterv ( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
   {
     if (_adata){
       _adata->setInterv(min, max, axis);
@@ -1088,7 +1087,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::setIntervfrom( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
+  void Vertex::setIntervfrom ( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
   {
     if (_adata){
       _adata->setIntervfrom(min, max, axis);
@@ -1098,7 +1097,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::setIntervfrom2( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
+  void Vertex::setIntervfrom2 ( DbU::Unit min, DbU::Unit max, DbU::Unit axis )
   {
     if (_adata){
       _adata->setIntervfrom2(min, max, axis);
@@ -1108,7 +1107,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::resetIntervals() 
+  void Vertex::resetIntervals () 
   {
     if (_adata){
       _adata->resetIntervals();
@@ -1119,7 +1118,7 @@ namespace Anabatic {
   }
 
 
-  void Vertex::clearFrom2() 
+  void Vertex::clearFrom2 () 
   {
     if (_adata){
       _adata->clearFrom2();
@@ -1451,13 +1450,11 @@ namespace Anabatic {
     vector<RoutingPad*> rps;
     NetRoutingState* state = NetRoutingExtension::get( _net );
     
-    if (state){
-      if (state->isSelfSym()){
+    if (state) {
+      if (state->isSelfSym()) {
         cdebug_log(112,0) << "Dijkstra::SELF SYMMETRY CASE " << DbU::getValueString(state->getSymAxis()) << endl;
       }
-    } /*else {
-        cerr << "Error: No RoutingExtension for net: " << _net << endl;
-    }*/
+    }
 
     for ( Component* component : _net->getComponents() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
@@ -1469,6 +1466,8 @@ namespace Anabatic {
         continue; 
       }
     }
+
+    if (rps.size() < 2) return;
 
     for ( auto rp : rps ) {
       if (not _anabatic->getConfiguration()->selectRpComponent(rp))

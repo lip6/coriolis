@@ -1,45 +1,42 @@
-\hypertarget{class_open_chams_1_1_schematic}{\section{Schematic Class Reference}
+\hypertarget{class_open_chams_1_1_schematic}{}\section{Schematic Class Reference}
 \label{class_open_chams_1_1_schematic}\index{Schematic@{Schematic}}
-}
 \subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}
+class \mbox{\hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}}
 \end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{class_open_chams_1_1_schematic_ac7fc9f5cdf1e22c53d42e6606e1af8ef}{add\-Instance} (const std\-::string \&instance\-Name, double x, double y, const std\-::string \&orient)
+void \mbox{\hyperlink{class_open_chams_1_1_schematic_ac7fc9f5cdf1e22c53d42e6606e1af8ef}{add\+Instance}} (const std\+::string \&instance\+Name, double x, double y, const std\+::string \&orient)
 \begin{DoxyCompactList}\small\item\em adds schematic informations for an instance. \end{DoxyCompactList}\item 
-\hypertarget{class_open_chams_1_1_schematic_afa015b02922d82de9c44e8ffe8dc5d56}{const std\-::map$<$ std\-::string, \\*
-\hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos} $\ast$ $>$ \& \hyperlink{class_open_chams_1_1_schematic_afa015b02922d82de9c44e8ffe8dc5d56}{get\-Instances} ()}\label{class_open_chams_1_1_schematic_afa015b02922d82de9c44e8ffe8dc5d56}
-
-\begin{DoxyCompactList}\small\item\em returns the map of instance's \hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}. \end{DoxyCompactList}\item 
-\hypertarget{class_open_chams_1_1_schematic_adab62a25face462baec9a7fffb2b6158}{bool \hyperlink{class_open_chams_1_1_schematic_adab62a25face462baec9a7fffb2b6158}{has\-No\-Instances} ()}\label{class_open_chams_1_1_schematic_adab62a25face462baec9a7fffb2b6158}
-
-\begin{DoxyCompactList}\small\item\em returns true if the schematc has no \hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}. \end{DoxyCompactList}\item 
-\hyperlink{class_open_chams_1_1_schematic_a88d7382ee58bc8d509a8f9b05a57e8b3}{Schematic} (\hyperlink{class_open_chams_1_1_circuit}{Circuit} $\ast$)
+\mbox{\Hypertarget{class_open_chams_1_1_schematic_afa015b02922d82de9c44e8ffe8dc5d56}\label{class_open_chams_1_1_schematic_afa015b02922d82de9c44e8ffe8dc5d56}} 
+const std\+::map$<$ std\+::string, \mbox{\hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}} $\ast$ $>$ \& \mbox{\hyperlink{class_open_chams_1_1_schematic_afa015b02922d82de9c44e8ffe8dc5d56}{get\+Instances}} ()
+\begin{DoxyCompactList}\small\item\em returns the map of instance\textquotesingle{}s \mbox{\hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}}. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_open_chams_1_1_schematic_adab62a25face462baec9a7fffb2b6158}\label{class_open_chams_1_1_schematic_adab62a25face462baec9a7fffb2b6158}} 
+bool \mbox{\hyperlink{class_open_chams_1_1_schematic_adab62a25face462baec9a7fffb2b6158}{has\+No\+Instances}} ()
+\begin{DoxyCompactList}\small\item\em returns true if the schematc has no \mbox{\hyperlink{class_open_chams_1_1_schematic_1_1_infos}{Infos}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_open_chams_1_1_schematic_a88d7382ee58bc8d509a8f9b05a57e8b3}{Schematic}} (\mbox{\hyperlink{class_open_chams_1_1_circuit}{Circuit}} $\ast$)
 \begin{DoxyCompactList}\small\item\em creates a new schematic. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 This class describes schematic informations.
 
-The \hyperlink{class_open_chams_1_1_schematic}{Schematic} object is used to store all informations relative to schematic of the circuit.
+The \mbox{\hyperlink{class_open_chams_1_1_schematic}{Schematic}} object is used to store all informations relative to schematic of the circuit.
 
 \begin{DoxyNote}{Note}
-The \hyperlink{class_open_chams_1_1_schematic}{Schematic} object is optionnal in \hyperlink{class_open_chams_1_1_circuit}{Circuit}. 
+The \mbox{\hyperlink{class_open_chams_1_1_schematic}{Schematic}} object is optionnal in \mbox{\hyperlink{class_open_chams_1_1_circuit}{Circuit}}. 
 \end{DoxyNote}
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{class_open_chams_1_1_schematic_a88d7382ee58bc8d509a8f9b05a57e8b3}{\index{Open\-Chams\-::\-Schematic@{Open\-Chams\-::\-Schematic}!Schematic@{Schematic}}
-\index{Schematic@{Schematic}!OpenChams::Schematic@{Open\-Chams\-::\-Schematic}}
-\subsubsection[{Schematic}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Schematic} (
-\begin{DoxyParamCaption}
-\item[{{\bf Circuit} $\ast$}]{circuit}
-\end{DoxyParamCaption}
-)}}\label{class_open_chams_1_1_schematic_a88d7382ee58bc8d509a8f9b05a57e8b3}
+\mbox{\Hypertarget{class_open_chams_1_1_schematic_a88d7382ee58bc8d509a8f9b05a57e8b3}\label{class_open_chams_1_1_schematic_a88d7382ee58bc8d509a8f9b05a57e8b3}} 
+\index{Open\+Chams\+::\+Schematic@{Open\+Chams\+::\+Schematic}!Schematic@{Schematic}}
+\index{Schematic@{Schematic}!Open\+Chams\+::\+Schematic@{Open\+Chams\+::\+Schematic}}
+\subsubsection{\texorpdfstring{Schematic()}{Schematic()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_open_chams_1_1_schematic}{Schematic}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_open_chams_1_1_circuit}{Circuit}} $\ast$}]{circuit }\end{DoxyParamCaption})}
+
 
 
 creates a new schematic. 
@@ -52,23 +49,19 @@ creates a new schematic.
 
 
 \subsection{Member Function Documentation}
-\hypertarget{class_open_chams_1_1_schematic_ac7fc9f5cdf1e22c53d42e6606e1af8ef}{\index{Open\-Chams\-::\-Schematic@{Open\-Chams\-::\-Schematic}!add\-Instance@{add\-Instance}}
-\index{add\-Instance@{add\-Instance}!OpenChams::Schematic@{Open\-Chams\-::\-Schematic}}
-\subsubsection[{add\-Instance}]{\setlength{\rightskip}{0pt plus 5cm}void add\-Instance (
-\begin{DoxyParamCaption}
-\item[{const std\-::string \&}]{instance\-Name, }
-\item[{double}]{x, }
-\item[{double}]{y, }
-\item[{const std\-::string \&}]{orient}
-\end{DoxyParamCaption}
-)}}\label{class_open_chams_1_1_schematic_ac7fc9f5cdf1e22c53d42e6606e1af8ef}
+\mbox{\Hypertarget{class_open_chams_1_1_schematic_ac7fc9f5cdf1e22c53d42e6606e1af8ef}\label{class_open_chams_1_1_schematic_ac7fc9f5cdf1e22c53d42e6606e1af8ef}} 
+\index{Open\+Chams\+::\+Schematic@{Open\+Chams\+::\+Schematic}!add\+Instance@{add\+Instance}}
+\index{add\+Instance@{add\+Instance}!Open\+Chams\+::\+Schematic@{Open\+Chams\+::\+Schematic}}
+\subsubsection{\texorpdfstring{add\+Instance()}{addInstance()}}
+{\footnotesize\ttfamily void add\+Instance (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{instance\+Name,  }\item[{double}]{x,  }\item[{double}]{y,  }\item[{const std\+::string \&}]{orient }\end{DoxyParamCaption})}
+
 
 
 adds schematic informations for an instance. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em name} & the instance's name to which the schematic informations are associated. \\
+{\em name} & the instance\textquotesingle{}s name to which the schematic informations are associated. \\
 \hline
 {\em x} & the x coordinate. \\
 \hline

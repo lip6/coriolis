@@ -26,7 +26,6 @@ namespace Analog {
     public:
       typedef TransistorFamily Super;
     public:
-      virtual Arguments* getArguments   ();
       inline  long       getMint        () const;
       inline  void       setMint        ( long );
     protected:

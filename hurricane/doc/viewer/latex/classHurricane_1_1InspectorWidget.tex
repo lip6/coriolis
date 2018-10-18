@@ -1,76 +1,72 @@
-\hypertarget{classHurricane_1_1InspectorWidget}{\section{Hurricane\-:\-:Inspector\-Widget Class Reference}
-\label{classHurricane_1_1InspectorWidget}\index{Hurricane\-::\-Inspector\-Widget@{Hurricane\-::\-Inspector\-Widget}}
-}
+\hypertarget{classHurricane_1_1InspectorWidget}{}\section{Hurricane\+:\+:Inspector\+Widget Class Reference}
+\label{classHurricane_1_1InspectorWidget}\index{Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}}
 
 
-A Widget to browse through the {\bf Hurricane} objetcs.  
+A Widget to browse through the Hurricane objetcs.  
 
 
 
 
-Inherits Q\-Widget.
+Inherits Q\+Widget.
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classHurricane_1_1InspectorWidget_a6071f331a8d27bf45103aa91981e4ebb}{Inspector\-Widget} (Q\-Widget $\ast$parent=N\-U\-L\-L)
+\mbox{\hyperlink{classHurricane_1_1InspectorWidget_a6071f331a8d27bf45103aa91981e4ebb}{Inspector\+Widget}} (Q\+Widget $\ast$parent=N\+U\+LL)
 \item 
-void \hyperlink{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}{set\-Root\-Record} (Record $\ast$)
+void \mbox{\hyperlink{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}{set\+Root\+Record}} (Record $\ast$)
 \item 
-void \hyperlink{classHurricane_1_1InspectorWidget_a79914005284bdc8426c90f3440714bb4}{set\-Root\-Occurrence} ({\bf Occurrence} \&)
+void \mbox{\hyperlink{classHurricane_1_1InspectorWidget_a79914005284bdc8426c90f3440714bb4}{set\+Root\+Occurrence}} (\textbf{ Occurrence} \&)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-A Widget to browse through the {\bf Hurricane} objetcs. 
+A Widget to browse through the Hurricane objetcs. 
 
 \hypertarget{classHurricane_1_1InspectorWidget_secInspectorMM}{}\subsection{Inspector Memory Management}\label{classHurricane_1_1InspectorWidget_secInspectorMM}
 In order to keep the memory footprint of the Inspector as small as possible only the currently viewed Record is allocated. The only exception is the root Record itself, which we must kept for it has not been passed as a Slot but as a Record. Be aware however, that the root Record is destroyed the moment the Inspector is, so do not uses the root Record in context from which the Inspector has been spawned.
 
-The history from the root Record to the deepest reached level of the data structure is kept in a vector of Slots. We choose Slot over Record because they are lightweight object. Slots containts only a name (usually the object's attribute name) and a pointer to that attribute. The Record associated to the attribute is generated on demand. To have a completly uniform history we must create a special Slot from the root Record, unlike others this Slot contains directly the Record and not the attribute pointer it has been generated from.
+The history from the root Record to the deepest reached level of the data structure is kept in a vector of Slots. We choose Slot over Record because they are lightweight object. Slots containts only a name (usually the object\textquotesingle{}s attribute name) and a pointer to that attribute. The Record associated to the attribute is generated on demand. To have a completly uniform history we must create a special Slot from the root Record, unlike others this Slot contains directly the Record and not the attribute pointer it has been generated from.
 
-When an Inspector windows is closed by the window manager, the widget is not simply hidden, it is fully destroyed (see the Q\-Widget {\ttfamily Qt\-::\-W\-A\-\_\-\-Delete\-On\-Close} attribute). Thus, pointers to an Inspector Widget are not to be kept.
+When an Inspector windows is closed by the window manager, the widget is not simply hidden, it is fully destroyed (see the Q\+Widget {\ttfamily Qt\+::\+W\+A\+\_\+\+Delete\+On\+Close} attribute). Thus, pointers to an Inspector Widget are not to be kept.
 
 Any number of Inspector could be created simultanously, even on the same datas. Slot \& Record beeing on demand, expandables, objects. 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classHurricane_1_1InspectorWidget_a6071f331a8d27bf45103aa91981e4ebb}{\index{Hurricane\-::\-Inspector\-Widget@{Hurricane\-::\-Inspector\-Widget}!Inspector\-Widget@{Inspector\-Widget}}
-\index{Inspector\-Widget@{Inspector\-Widget}!Hurricane::InspectorWidget@{Hurricane\-::\-Inspector\-Widget}}
-\subsubsection[{Inspector\-Widget}]{\setlength{\rightskip}{0pt plus 5cm}Hurricane\-::\-Inspector\-Widget\-::\-Inspector\-Widget (
-\begin{DoxyParamCaption}
-\item[{Q\-Widget $\ast$}]{parent = {\ttfamily NULL}}
-\end{DoxyParamCaption}
-)}}\label{classHurricane_1_1InspectorWidget_a6071f331a8d27bf45103aa91981e4ebb}
-Construct a \hyperlink{classHurricane_1_1InspectorWidget}{Inspector\-Widget}. The root Record to browse must be sets immediatly afterwards with the \hyperlink{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}{set\-Root\-Record()} method. 
+\mbox{\Hypertarget{classHurricane_1_1InspectorWidget_a6071f331a8d27bf45103aa91981e4ebb}\label{classHurricane_1_1InspectorWidget_a6071f331a8d27bf45103aa91981e4ebb}} 
+\index{Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}!Inspector\+Widget@{Inspector\+Widget}}
+\index{Inspector\+Widget@{Inspector\+Widget}!Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}}
+\subsubsection{\texorpdfstring{Inspector\+Widget()}{InspectorWidget()}}
+{\footnotesize\ttfamily Hurricane\+::\+Inspector\+Widget\+::\+Inspector\+Widget (\begin{DoxyParamCaption}\item[{Q\+Widget $\ast$}]{parent = {\ttfamily NULL} }\end{DoxyParamCaption})}
+
+Construct a \mbox{\hyperlink{classHurricane_1_1InspectorWidget}{Inspector\+Widget}}. The root Record to browse must be sets immediatly afterwards with the \mbox{\hyperlink{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}{set\+Root\+Record()}} method. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}{\index{Hurricane\-::\-Inspector\-Widget@{Hurricane\-::\-Inspector\-Widget}!set\-Root\-Record@{set\-Root\-Record}}
-\index{set\-Root\-Record@{set\-Root\-Record}!Hurricane::InspectorWidget@{Hurricane\-::\-Inspector\-Widget}}
-\subsubsection[{set\-Root\-Record}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Inspector\-Widget\-::set\-Root\-Record (
-\begin{DoxyParamCaption}
-\item[{Record $\ast$}]{record}
-\end{DoxyParamCaption}
-)}}\label{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}
+\mbox{\Hypertarget{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}\label{classHurricane_1_1InspectorWidget_aebc3241d7cf15d3e2ca7478c278c6a35}} 
+\index{Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}!set\+Root\+Record@{set\+Root\+Record}}
+\index{set\+Root\+Record@{set\+Root\+Record}!Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}}
+\subsubsection{\texorpdfstring{set\+Root\+Record()}{setRootRecord()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Inspector\+Widget\+::set\+Root\+Record (\begin{DoxyParamCaption}\item[{Record $\ast$}]{record }\end{DoxyParamCaption})}
+
 Sets the root record of the Inspector.
 
-\begin{DoxyParagraph}{Remark\-:}
-The previous root record is freed. 
+\begin{DoxyParagraph}{Remark\+: The previous root record is freed.}
+
 \end{DoxyParagraph}
-\hypertarget{classHurricane_1_1InspectorWidget_a79914005284bdc8426c90f3440714bb4}{\index{Hurricane\-::\-Inspector\-Widget@{Hurricane\-::\-Inspector\-Widget}!set\-Root\-Occurrence@{set\-Root\-Occurrence}}
-\index{set\-Root\-Occurrence@{set\-Root\-Occurrence}!Hurricane::InspectorWidget@{Hurricane\-::\-Inspector\-Widget}}
-\subsubsection[{set\-Root\-Occurrence}]{\setlength{\rightskip}{0pt plus 5cm}void Hurricane\-::\-Inspector\-Widget\-::set\-Root\-Occurrence (
-\begin{DoxyParamCaption}
-\item[{{\bf Occurrence} \&}]{occurrence}
-\end{DoxyParamCaption}
-)}}\label{classHurricane_1_1InspectorWidget_a79914005284bdc8426c90f3440714bb4}
-Build a Record from the {\bf Occurrence} and set it as the root Record.
+\mbox{\Hypertarget{classHurricane_1_1InspectorWidget_a79914005284bdc8426c90f3440714bb4}\label{classHurricane_1_1InspectorWidget_a79914005284bdc8426c90f3440714bb4}} 
+\index{Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}!set\+Root\+Occurrence@{set\+Root\+Occurrence}}
+\index{set\+Root\+Occurrence@{set\+Root\+Occurrence}!Hurricane\+::\+Inspector\+Widget@{Hurricane\+::\+Inspector\+Widget}}
+\subsubsection{\texorpdfstring{set\+Root\+Occurrence()}{setRootOccurrence()}}
+{\footnotesize\ttfamily void Hurricane\+::\+Inspector\+Widget\+::set\+Root\+Occurrence (\begin{DoxyParamCaption}\item[{\textbf{ Occurrence} \&}]{occurrence }\end{DoxyParamCaption})}
 
-\begin{DoxyParagraph}{Remark\-:}
-The previous root record is freed. 
+Build a Record from the \textbf{ Occurrence} and set it as the root Record.
+
+\begin{DoxyParagraph}{Remark\+: The previous root record is freed.}
+
 \end{DoxyParagraph}
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Inspector\-Widget.\-h\item 
-Inspector\-Widget.\-dox\end{DoxyCompactItemize}
+Inspector\+Widget.\+h\item 
+Inspector\+Widget.\+dox\end{DoxyCompactItemize}

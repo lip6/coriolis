@@ -37,7 +37,6 @@ namespace Analog {
       inline  double           getCBorder        () const;
       inline  double           getCParasite      () const;
       virtual Hurricane::Name  getDeviceName     () const;
-      virtual Arguments*       getArguments      ();
     protected:
                                MIMCapacitor      (       Hurricane::Library*
                                                  , const Hurricane::Name&

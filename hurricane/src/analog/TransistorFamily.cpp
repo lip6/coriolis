@@ -34,7 +34,7 @@ namespace Analog {
     , _externalDummy      (NULL)
     , _sourceFirst        (NULL)
     , _bulkType           (NULL)
-  {}
+  { }
   
   
   void  TransistorFamily::_postCreate ( const Name& deviceName )
@@ -44,24 +44,24 @@ namespace Analog {
     Choices sourceChoices;
   //sourceChoices << "Yes" << "No";
     sourceChoices << "";
-    _sourceFirst = addMCheckBoxParameter("Source First", sourceChoices);
+    _sourceFirst = addMCheckBoxParameter( "Source First", sourceChoices );
       
     Choices bulkChoices;
     bulkChoices << "North" << "South" << "East" << "West";
-    _bulkType = addMCheckBoxParameter("Bulk Type", bulkChoices);
+    _bulkType = addMCheckBoxParameter( "Bulk Type", bulkChoices );
   
-    Technology* atechno        = DataBase::getDB()->getTechnology();
-    DbU::Unit   transistorMinL = atechno->getPhysicalRule("transistorMinL").getValue();
-    DbU::Unit   transistorMaxL = atechno->getPhysicalRule("transistorMaxL").getValue();
-    DbU::Unit   transistorMinW = atechno->getPhysicalRule("transistorMinW").getValue();
-    DbU::Unit   transistorMaxW = atechno->getPhysicalRule("transistorMaxW").getValue();
+    Technology* techno         = DataBase::getDB()->getTechnology();
+    DbU::Unit   transistorMinL = techno->getPhysicalRule( "transistorMinL" ).getValue();
+    DbU::Unit   transistorMaxL = techno->getPhysicalRule( "transistorMaxL" ).getValue();
+    DbU::Unit   transistorMinW = techno->getPhysicalRule( "transistorMinW" ).getValue();
+    DbU::Unit   transistorMaxW = techno->getPhysicalRule( "transistorMaxW" ).getValue();
   
-    _w             = addStepParameter      ("W", transistorMinW, transistorMaxW, DbU::grid(1));
-    _l             = addStepParameter      ("L", transistorMinL, transistorMaxL, DbU::grid(1));
-    _m             = addFormFactorParameter("M", 1, 10);
-    _externalDummy = addSpinBoxParameter   ("ExternalDummy", 0, 6);
-   addStepParameter("NERC" , 1, 1, 1);
-   addStepParameter("NIRC" , 1, 1, 1);
+    _w             = addStepParameter      ( "W", transistorMinW, transistorMaxW, DbU::grid(1) );
+    _l             = addStepParameter      ( "L", transistorMinL, transistorMaxL, DbU::grid(1) );
+    _m             = addFormFactorParameter( "M", 1, 10 );
+    _externalDummy = addSpinBoxParameter   ( "ExternalDummy", 0, 6 );
+    addStepParameter( "NERC" , 1, 1, 1 );
+    addStepParameter( "NIRC" , 1, 1, 1 );
   }
   
   

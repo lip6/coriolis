@@ -1,6 +1,5 @@
-\hypertarget{classHurricane_1_1Initializer}{\section{Hurricane\-:\-:Initializer$<$ T $>$ Class Template Reference}
-\label{classHurricane_1_1Initializer}\index{Hurricane\-::\-Initializer$<$ T $>$@{Hurricane\-::\-Initializer$<$ T $>$}}
-}
+\hypertarget{classHurricane_1_1Initializer}{}\section{Hurricane\+:\+:Initializer$<$ T $>$ Class Template Reference}
+\label{classHurricane_1_1Initializer}\index{Hurricane\+::\+Initializer$<$ T $>$@{Hurricane\+::\+Initializer$<$ T $>$}}
 
 
 Register a static initialization function.  
@@ -9,33 +8,34 @@ Register a static initialization function.
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classHurricane_1_1Initializer_ab80fdb7c17aaf5bd3facdf3f0f9d12ae}{Initializer} (unsigned int order)
+\mbox{\hyperlink{classHurricane_1_1Initializer_ab80fdb7c17aaf5bd3facdf3f0f9d12ae}{Initializer}} (unsigned int order)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-\subsubsection*{template$<$typename T$>$class Hurricane\-::\-Initializer$<$ T $>$}
+\subsubsection*{template$<$typename T$>$\newline
+class Hurricane\+::\+Initializer$<$ T $>$}
 
 Register a static initialization function. 
 
 \hypertarget{classHurricane_1_1Initializer_secInitializerMechanism}{}\subsection{Initializer Mechanism}\label{classHurricane_1_1Initializer_secInitializerMechanism}
 In C++, there is currently no way to guarantee the order into which the static initialization (variables) in various modules will be done.
 
-The \hyperlink{classHurricane_1_1Initializer}{Initializer} template class provide a way to perform a static initialization across multiple modules in an ordered fashion, thus solving potential dependency problems between initialisation. 
+The \mbox{\hyperlink{classHurricane_1_1Initializer}{Initializer}} template class provide a way to perform a static initialization across multiple modules in an ordered fashion, thus solving potential dependency problems between initialisation. 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classHurricane_1_1Initializer_ab80fdb7c17aaf5bd3facdf3f0f9d12ae}{\index{Hurricane\-::\-Initializer@{Hurricane\-::\-Initializer}!Initializer@{Initializer}}
-\index{Initializer@{Initializer}!Hurricane::Initializer@{Hurricane\-::\-Initializer}}
-\subsubsection[{Initializer}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ {\bf Hurricane\-::\-Initializer}$<$ T $>$\-::{\bf Initializer} (
-\begin{DoxyParamCaption}
-\item[{unsigned int}]{order}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classHurricane_1_1Initializer_ab80fdb7c17aaf5bd3facdf3f0f9d12ae}
-Register a static initializer for the template type {\ttfamily T}. \hyperlink{classHurricane_1_1Initializer}{Initializer} is a object that must be kept in a {\ttfamily static} variable in a compilation unit (i.\-e. a {\ttfamily }.cpp file).
+\mbox{\Hypertarget{classHurricane_1_1Initializer_ab80fdb7c17aaf5bd3facdf3f0f9d12ae}\label{classHurricane_1_1Initializer_ab80fdb7c17aaf5bd3facdf3f0f9d12ae}} 
+\index{Hurricane\+::\+Initializer@{Hurricane\+::\+Initializer}!Initializer@{Initializer}}
+\index{Initializer@{Initializer}!Hurricane\+::\+Initializer@{Hurricane\+::\+Initializer}}
+\subsubsection{\texorpdfstring{Initializer()}{Initializer()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{classHurricane_1_1Initializer}{Hurricane\+::\+Initializer}}$<$ T $>$\+::\mbox{\hyperlink{classHurricane_1_1Initializer}{Initializer}} (\begin{DoxyParamCaption}\item[{unsigned int}]{order }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-The template type {\ttfamily T} (a class) must provide a static function named {\ttfamily initialize}, with exactly the following signature\-: {\ttfamily void T\-::initialize()}. 
+Register a static initializer for the template type {\ttfamily T}. \mbox{\hyperlink{classHurricane_1_1Initializer}{Initializer}} is a object that must be kept in a {\ttfamily static} variable in a compilation unit (i.\+e. a {\ttfamily }.cpp file).
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The template type {\ttfamily T} (a class) must provide a static function named {\ttfamily initialize}, with exactly the following signature\+: {\ttfamily void T\+::initialize()}. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Initializer.\-h\item 
-Initializer.\-dox\end{DoxyCompactItemize}
+Initializer.\+h\item 
+Initializer.\+dox\end{DoxyCompactItemize}

@@ -1,23 +1,23 @@
 \hypertarget{spice_spicePres}{}\section{Presentation}\label{spice_spicePres}
-The {\bfseries Spice} format was developped at the University of California, Berkeley. This parser/driver consists in a subset of S\-P\-I\-C\-E3 netlist format. (see \href{http://en.wikipedia.org/wiki/SPICE}{\tt http\-://en.\-wikipedia.\-org/wiki/\-S\-P\-I\-C\-E} for more informations).\par
+The {\bfseries Spice} format was developped at the University of California, Berkeley. This parser/driver consists in a subset of S\+P\+I\+C\+E3 netlist format. (see \href{http://en.wikipedia.org/wiki/SPICE}{\tt http\+://en.\+wikipedia.\+org/wiki/\+S\+P\+I\+CE} for more informations).~\newline
  \hypertarget{spice_spiceAutrhos}{}\subsection{Author}\label{spice_spiceAutrhos}
-Damien Dupuis\-: damien.\-dupuis(at)lip6(.)fr\hypertarget{spice_spiceDB}{}\section{Stand alone database structure}\label{spice_spiceDB}
-The database consists in several objects\-:
+Damien Dupuis\+: damien.\+dupuis(at)lip6(.)fr\hypertarget{spice_spiceDB}{}\section{Stand alone database structure}\label{spice_spiceDB}
+The database consists in several objects\+:
 \begin{DoxyItemize}
-\item \hyperlink{class_s_p_i_c_e_1_1_circuit}{S\-P\-I\-C\-E\-::\-Circuit}
-\item \hyperlink{class_s_p_i_c_e_1_1_spice_exception}{S\-P\-I\-C\-E\-::\-Spice\-Exception}
-\item \hyperlink{class_s_p_i_c_e_1_1_subckt}{S\-P\-I\-C\-E\-::\-Subckt}
-\item \hyperlink{class_s_p_i_c_e_1_1_instance}{S\-P\-I\-C\-E\-::\-Instance}
-\item \hyperlink{class_s_p_i_c_e_1_1_mosfet}{S\-P\-I\-C\-E\-::\-Mosfet}
-\item \hyperlink{class_s_p_i_c_e_1_1_capacitor}{S\-P\-I\-C\-E\-::\-Capacitor}
-\item \hyperlink{class_s_p_i_c_e_1_1_resistor}{S\-P\-I\-C\-E\-::\-Resistor}
-\item \hyperlink{class_s_p_i_c_e_1_1_source}{S\-P\-I\-C\-E\-::\-Source}
-\item \hyperlink{class_s_p_i_c_e_1_1_voltage}{S\-P\-I\-C\-E\-::\-Voltage}
-\item \hyperlink{class_s_p_i_c_e_1_1_current}{S\-P\-I\-C\-E\-::\-Current}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{S\+P\+I\+C\+E\+::\+Circuit}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_spice_exception}{S\+P\+I\+C\+E\+::\+Spice\+Exception}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{S\+P\+I\+C\+E\+::\+Subckt}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{S\+P\+I\+C\+E\+::\+Instance}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{S\+P\+I\+C\+E\+::\+Mosfet}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor}{S\+P\+I\+C\+E\+::\+Capacitor}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor}{S\+P\+I\+C\+E\+::\+Resistor}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_source}{S\+P\+I\+C\+E\+::\+Source}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_voltage}{S\+P\+I\+C\+E\+::\+Voltage}}
+\item \mbox{\hyperlink{class_s_p_i_c_e_1_1_current}{S\+P\+I\+C\+E\+::\+Current}}
 \end{DoxyItemize}\hypertarget{spice_spiceParser}{}\subsection{Using the parser}\label{spice_spiceParser}
-Simply load an Spice netlist file using the static function S\-P\-I\-C\-E\-::\-Circuit\-::read\-From\-File().\hypertarget{spice_spiceDriver}{}\subsection{Using the driver}\label{spice_spiceDriver}
-Using the driver is very simple, user has to create a \hyperlink{class_s_p_i_c_e_1_1_circuit}{S\-P\-I\-C\-E\-::\-Circuit} object and simply add others Spice objects like \hyperlink{class_s_p_i_c_e_1_1_subckt}{S\-P\-I\-C\-E\-::\-Subckt} or \hyperlink{class_s_p_i_c_e_1_1_instance}{S\-P\-I\-C\-E\-::\-Instance} to it. Includes, libraries and parameters can also be added to \hyperlink{class_s_p_i_c_e_1_1_circuit}{S\-P\-I\-C\-E\-::\-Circuit}. Finally use the S\-P\-I\-C\-E\-::\-Circuit\-::write\-To\-File() method to dump the database to file.\hypertarget{spice_spiceExamples}{}\section{Examples}\label{spice_spiceExamples}
-As said is the global presentation, V\-L\-S\-I S\-A\-P\-D project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a S\-P\-I\-C\-E file using C++ or Python. The S\-P\-I\-C\-E file considered describes a simple Miller O\-T\-A\-: {\ttfamily O\-T\-A\-\_\-miller.\-spi} 
+Simply load an Spice netlist file using the static function S\+P\+I\+C\+E\+::\+Circuit\+::read\+From\+File().\hypertarget{spice_spiceDriver}{}\subsection{Using the driver}\label{spice_spiceDriver}
+Using the driver is very simple, user has to create a \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{S\+P\+I\+C\+E\+::\+Circuit}} object and simply add others Spice objects like \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{S\+P\+I\+C\+E\+::\+Subckt}} or \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{S\+P\+I\+C\+E\+::\+Instance}} to it. Includes, libraries and parameters can also be added to \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{S\+P\+I\+C\+E\+::\+Circuit}}. Finally use the S\+P\+I\+C\+E\+::\+Circuit\+::write\+To\+File() method to dump the database to file.\hypertarget{spice_spiceExamples}{}\section{Examples}\label{spice_spiceExamples}
+As said is the global presentation, V\+L\+SI S\+A\+PD project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a S\+P\+I\+CE file using C++ or Python. The S\+P\+I\+CE file considered describes a simple Miller O\+TA\+: {\ttfamily O\+T\+A\+\_\+miller.\+spi} 
 \begin{DoxyCodeInclude}
 * Single-ended two-stage amplifier
 
@@ -49,14 +49,14 @@ CC1   vout 2   CC\_VALUE
 
 All source codes are available in the {\ttfamily examples} directory.\hypertarget{spice_spiceC}{}\subsection{C++}\label{spice_spiceC}
 \hypertarget{spice_spiceParseC}{}\subsubsection{Parser}\label{spice_spiceParseC}
-The following code ({\ttfamily parse\-Spice.\-cpp}) is an example of how to parse a S\-P\-I\-C\-E file using C++ library. 
+The following code ({\ttfamily parse\+Spice.\+cpp}) is an example of how to parse a S\+P\+I\+CE file using C++ library. 
 \begin{DoxyCodeInclude}
 \textcolor{preprocessor}{#include <cstdlib>}
 \textcolor{preprocessor}{#include <iostream>}
 \textcolor{preprocessor}{#include <string>}
 \textcolor{preprocessor}{#include <map>}
 \textcolor{preprocessor}{#include <vector>}
-\textcolor{keyword}{using namespace }std;
+\textcolor{keyword}{using namespace }\mbox{\hyperlink{namespacestd}{std}};
 
 \textcolor{preprocessor}{#include "vlsisapd/spice/Circuit.h"}
 \textcolor{preprocessor}{#include "vlsisapd/spice/SpiceException.h"}
@@ -75,104 +75,104 @@ The following code ({\ttfamily parse\-Spice.\-cpp}) is an example of how to pars
         exit(1);
     \}
 
-    \hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}* circuit = NULL;
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}}* circuit = NULL;
     \textcolor{keywordflow}{try} \{
         circuit = SPICE::Circuit::readFromFile(file);
-    \} \textcolor{keywordflow}{catch} (\hyperlink{class_s_p_i_c_e_1_1_spice_exception}{SPICE::SpiceException}& e) \{
+    \} \textcolor{keywordflow}{catch} (\mbox{\hyperlink{class_s_p_i_c_e_1_1_spice_exception}{SPICE::SpiceException}}& e) \{
         cerr << e.what() << endl;
         exit(48);
     \}
 
 \textcolor{comment}{//    if (!circuit) cerr << "circuit is NULL !!" << endl;}
     \textcolor{comment}{// TITLE}
-    cerr << \textcolor{stringliteral}{"+ "} << circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_ad19721dd878c04c854a72af12d785741}{getTitle}() << endl;
+    cerr << \textcolor{stringliteral}{"+ "} << circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_ad19721dd878c04c854a72af12d785741}{getTitle}}() << endl;
     \textcolor{comment}{// INCLUDES}
-    vector<string> includes = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a312beaf640e84589e6644820355c8ed6}{getIncludes}();
+    vector<string> includes = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a312beaf640e84589e6644820355c8ed6}{getIncludes}}();
     \textcolor{keywordflow}{if} (includes.size()) \{
         cerr << \textcolor{stringliteral}{"| + includes"} << endl;
         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0 ; i < includes.size() ; i++)
             cerr << \textcolor{stringliteral}{"| | "} << includes[i] << endl;
     \}
     \textcolor{comment}{// LIBRARIES}
-    vector<pair<string, string> > libs = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a3e6a71a711e4796470f1a2a1dc42aef6}{getLibraries}();
+    vector<pair<string, string> > libs = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a3e6a71a711e4796470f1a2a1dc42aef6}{getLibraries}}();
     \textcolor{keywordflow}{if} (libs.size()) \{
         cerr << \textcolor{stringliteral}{"| + libraries"} << endl;
         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0 ; i < libs.size() ; i++)
             cerr << \textcolor{stringliteral}{"| | "} << libs[i].first << \textcolor{stringliteral}{" "} << libs[i].second << endl;
     \}
     \textcolor{comment}{// PARAMETERS}
-    map<string, string> params = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}{getParameters}();
+    map<string, string> params = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}{getParameters}}();
     \textcolor{keywordflow}{if} (params.size()) \{
         cerr << \textcolor{stringliteral}{"| + parameters"} << endl;
         \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it = params.begin() ; it != params.end() ; ++it)
             cerr << \textcolor{stringliteral}{"| | "} << (*it).first << \textcolor{stringliteral}{" = "} << (*it).second << endl;
     \}
     \textcolor{comment}{// OPTIONS}
-    map<string, string> opts = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}{getOptions}();
+    map<string, string> opts = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}{getOptions}}();
     \textcolor{keywordflow}{if} (opts.size()) \{
         cerr << \textcolor{stringliteral}{"| + options"} << endl;
         \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it = opts.begin() ; it != opts.end() ; ++it)
             cerr << \textcolor{stringliteral}{"| | "} << (*it).first << \textcolor{stringliteral}{" = "} << (*it).second << endl;
     \}
     \textcolor{comment}{// SOURCES}
-    vector<SPICE::Source*> sources = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}{getSources}();
+    vector<SPICE::Source*> sources = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}{getSources}}();
     \textcolor{keywordflow}{if} (sources.size()) \{
         cerr << \textcolor{stringliteral}{"| + sources"} << endl;
         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0 ; i < sources.size() ; i++) \{
-            \hyperlink{class_s_p_i_c_e_1_1_source}{SPICE::Source}* s = sources[i];
-            cerr << \textcolor{stringliteral}{"| | "} <<  s->\hyperlink{class_s_p_i_c_e_1_1_source_ac0fc966d4386ddb71d99361e3fccb311}{getName}() << \textcolor{stringliteral}{" "} << s->\hyperlink{class_s_p_i_c_e_1_1_source_a1adb347b9a2c2da556e4417ab0eec0e1}{getPositive}() << \textcolor{stringliteral}{" "} << s->
-      \hyperlink{class_s_p_i_c_e_1_1_source_a8b4ab73ed1d99c533aa22af0a37ebb0d}{getNegative}() << \textcolor{stringliteral}{" "} << s->\hyperlink{class_s_p_i_c_e_1_1_source_a4c052cb2622c580a250b2c783a436882}{getValue}() << endl;
+            \mbox{\hyperlink{class_s_p_i_c_e_1_1_source}{SPICE::Source}}* s = sources[i];
+            cerr << \textcolor{stringliteral}{"| | "} <<  s->\mbox{\hyperlink{class_s_p_i_c_e_1_1_source_ac0fc966d4386ddb71d99361e3fccb311}{getName}}() << \textcolor{stringliteral}{" "} << s->\mbox{\hyperlink{class_s_p_i_c_e_1_1_source_a1adb347b9a2c2da556e4417ab0eec0e1}{getPositive}}() << \textcolor{stringliteral}{" "} << s->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_source_a8b4ab73ed1d99c533aa22af0a37ebb0d}{getNegative}}() << \textcolor{stringliteral}{" "} << s->\mbox{\hyperlink{class_s_p_i_c_e_1_1_source_a4c052cb2622c580a250b2c783a436882}{getValue}}() << endl;
         \}
 
     \}
     \textcolor{comment}{// SUBCKTS}
-    vector<SPICE::Subckt*> subs = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_adcc4ca0de68f8ee05f0d5db3b7604930}{getSubckts}();
+    vector<SPICE::Subckt*> subs = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_adcc4ca0de68f8ee05f0d5db3b7604930}{getSubckts}}();
     \textcolor{keywordflow}{if} (subs.size()) \{
         cerr << \textcolor{stringliteral}{"| + subckts"} << endl;
         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0 ; i < subs.size() ; i++) \{
-            \hyperlink{class_s_p_i_c_e_1_1_subckt}{SPICE::Subckt}* sub = subs[i];
-            cerr << \textcolor{stringliteral}{"| | + "} << sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_af55b1fe10eacd22c7ff3544b5ed32ef3}{getName}(); 
-            \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} j = 0 ; j < sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_a5df00fe6eb5e287abef28c76ce88bd1e}{getInterfaces}().size() ; j++)
-                cerr << \textcolor{stringliteral}{" "} << sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_a5df00fe6eb5e287abef28c76ce88bd1e}{getInterfaces}()[j];
-            \textcolor{keywordflow}{if} (sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().size()) \{
+            \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{SPICE::Subckt}}* sub = subs[i];
+            cerr << \textcolor{stringliteral}{"| | + "} << sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_af55b1fe10eacd22c7ff3544b5ed32ef3}{getName}}(); 
+            \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} j = 0 ; j < sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a5df00fe6eb5e287abef28c76ce88bd1e}{getInterfaces}}().size() ; j++)
+                cerr << \textcolor{stringliteral}{" "} << sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a5df00fe6eb5e287abef28c76ce88bd1e}{getInterfaces}}()[j];
+            \textcolor{keywordflow}{if} (sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().size()) \{
                 cerr << \textcolor{stringliteral}{" param:"};
-                \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it = sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().begin() ; 
-      it != sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().end() ; ++it)
+                \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it = sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().begin() ; 
+      it != sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().end() ; ++it)
                     cerr << \textcolor{stringliteral}{" "} << (*it).first << \textcolor{stringliteral}{"="} << (*it).second;
             \}
             cerr << endl;
-            \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} j = 0 ; j < sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_a8e6e58ffab876152a740092520c35d73}{getInstances}().size() ; j++) \{
-                \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* inst = sub->\hyperlink{class_s_p_i_c_e_1_1_subckt_a8e6e58ffab876152a740092520c35d73}{getInstances}()[j];
-                cerr << \textcolor{stringliteral}{"| | | + "} << inst->\hyperlink{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}{getName}();
+            \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} j = 0 ; j < sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a8e6e58ffab876152a740092520c35d73}{getInstances}}().size() ; j++) \{
+                \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* inst = sub->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a8e6e58ffab876152a740092520c35d73}{getInstances}}()[j];
+                cerr << \textcolor{stringliteral}{"| | | + "} << inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}{getName}}();
                 \textcolor{keywordflow}{if} (dynamic\_cast<SPICE::Mosfet*>(inst)) \{
-                    \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}* mos = \textcolor{keyword}{static\_cast<}\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}*\textcolor{keyword}{>}(inst);
-                    cerr << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_mosfet_a7265f0565b8368070a3f09c6197a4e9b}{getDrain}() << \textcolor{stringliteral}{" "} << mos->
-      \hyperlink{class_s_p_i_c_e_1_1_mosfet_a796d77755aac0828419f55ba2226bf15}{getGrid}() << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_mosfet_a1791f52b6b5043823c6f3376e8453e3a}{getSource}() << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_mosfet_a56484a169335450d6043ee20086ead93}{getBulk}() << \textcolor{stringliteral}{" "} << mos->
-      \hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}();
+                    \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}* mos = \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}*\textcolor{keyword}{>}(inst);
+                    cerr << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a7265f0565b8368070a3f09c6197a4e9b}{getDrain}}() << \textcolor{stringliteral}{" "} << mos->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a796d77755aac0828419f55ba2226bf15}{getGrid}}() << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a1791f52b6b5043823c6f3376e8453e3a}{getSource}}() << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a56484a169335450d6043ee20086ead93}{getBulk}}() << \textcolor{stringliteral}{" "} << mos->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}}();
                     \textcolor{keywordtype}{int} k = 0;
                     \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it =mos->
-      \hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().begin() ; it != mos->\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().end(); ++it, k++) \{
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().begin() ; it != mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().end(); ++it, k++) \{
                         \textcolor{keywordflow}{if} (k%6 == 0)
                             cerr << endl << \textcolor{stringliteral}{"| | | | +"};
                         cerr << \textcolor{stringliteral}{" "} << (*it).first << \textcolor{stringliteral}{"="} << (*it).second;
                     \}
                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (dynamic\_cast<SPICE::Resistor*>(inst)) \{
-                    \hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}* res = \textcolor{keyword}{static\_cast<}
-      \hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}*\textcolor{keyword}{>}(inst);
-                    cerr << \textcolor{stringliteral}{" "} << res->\hyperlink{class_s_p_i_c_e_1_1_resistor_ab57aa52f48a5a56c89dd49eae66c1a0f}{getFirst}() << \textcolor{stringliteral}{" "} << res->
-      \hyperlink{class_s_p_i_c_e_1_1_resistor_a9665313821b2fca41e14b9865133af7f}{getSecond}() << \textcolor{stringliteral}{" "} << res->\hyperlink{class_s_p_i_c_e_1_1_resistor_a4c052cb2622c580a250b2c783a436882}{getValue}();
+                    \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}}* res = \textcolor{keyword}{static\_cast<}
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}}*\textcolor{keyword}{>}(inst);
+                    cerr << \textcolor{stringliteral}{" "} << res->\mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor_ab57aa52f48a5a56c89dd49eae66c1a0f}{getFirst}}() << \textcolor{stringliteral}{" "} << res->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor_a9665313821b2fca41e14b9865133af7f}{getSecond}}() << \textcolor{stringliteral}{" "} << res->\mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor_a4c052cb2622c580a250b2c783a436882}{getValue}}();
                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (dynamic\_cast<SPICE::Capacitor*>(inst)) \{
-                    \hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}* capa = \textcolor{keyword}{static\_cast<}
-      \hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}*\textcolor{keyword}{>}(inst);
-                    cerr << \textcolor{stringliteral}{" "} << capa->\hyperlink{class_s_p_i_c_e_1_1_capacitor_a1adb347b9a2c2da556e4417ab0eec0e1}{getPositive}() << \textcolor{stringliteral}{" "} << capa->
-      \hyperlink{class_s_p_i_c_e_1_1_capacitor_a8b4ab73ed1d99c533aa22af0a37ebb0d}{getNegative}() << \textcolor{stringliteral}{" "} << capa->\hyperlink{class_s_p_i_c_e_1_1_capacitor_a4c052cb2622c580a250b2c783a436882}{getValue}();
+                    \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}}* capa = \textcolor{keyword}{static\_cast<}
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}}*\textcolor{keyword}{>}(inst);
+                    cerr << \textcolor{stringliteral}{" "} << capa->\mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor_a1adb347b9a2c2da556e4417ab0eec0e1}{getPositive}}() << \textcolor{stringliteral}{" "} << capa->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor_a8b4ab73ed1d99c533aa22af0a37ebb0d}{getNegative}}() << \textcolor{stringliteral}{" "} << capa->\mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor_a4c052cb2622c580a250b2c783a436882}{getValue}}();
                 \} \textcolor{keywordflow}{else} \{
-                    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} k = 0 ; k < inst->\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}().size() ; k++)
-                        cerr << \textcolor{stringliteral}{" "} << inst->\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}()[k];
-                    cerr << \textcolor{stringliteral}{" "} << inst->\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}();
+                    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} k = 0 ; k < inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}}().size() ; k++)
+                        cerr << \textcolor{stringliteral}{" "} << inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}}()[k];
+                    cerr << \textcolor{stringliteral}{" "} << inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}}();
                     \textcolor{keywordtype}{int} l = 0;
                     \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it = inst->
-      \hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().begin() ; it != inst->\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().end() ; ++it, l++) \{
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().begin() ; it != inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().end() ; ++it, l++) \{
                         \textcolor{keywordflow}{if} (l%6 == 0)
                             cerr << endl << \textcolor{stringliteral}{"| | | | +"};
                         cerr << \textcolor{stringliteral}{" "} << (*it).first << \textcolor{stringliteral}{"="} << (*it).second;
@@ -183,40 +183,40 @@ The following code ({\ttfamily parse\-Spice.\-cpp}) is an example of how to pars
         \}
     \}
     \textcolor{comment}{// INSTANCES}
-    vector<SPICE::Instance*> insts = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a8e6e58ffab876152a740092520c35d73}{getInstances}();
+    vector<SPICE::Instance*> insts = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a8e6e58ffab876152a740092520c35d73}{getInstances}}();
     \textcolor{keywordflow}{if} (insts.size()) \{
         cerr << \textcolor{stringliteral}{"| + instances"} << endl;
         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0 ; i < insts.size() ; i++) \{
-            \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* inst = insts[i];
-            cerr << \textcolor{stringliteral}{"| | + "} << inst->\hyperlink{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}{getName}();
+            \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* inst = insts[i];
+            cerr << \textcolor{stringliteral}{"| | + "} << inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_ac0fc966d4386ddb71d99361e3fccb311}{getName}}();
             \textcolor{keywordflow}{if} (dynamic\_cast<SPICE::Mosfet*>(inst)) \{
-                \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}* mos = \textcolor{keyword}{static\_cast<}\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}*\textcolor{keyword}{>}(inst);
-                cerr << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_mosfet_a7265f0565b8368070a3f09c6197a4e9b}{getDrain}() << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_mosfet_a796d77755aac0828419f55ba2226bf15}{getGrid}() << \textcolor{stringliteral}{" "} << mos->
-      \hyperlink{class_s_p_i_c_e_1_1_mosfet_a1791f52b6b5043823c6f3376e8453e3a}{getSource}() << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_mosfet_a56484a169335450d6043ee20086ead93}{getBulk}() << \textcolor{stringliteral}{" "} << mos->\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}();
+                \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}* mos = \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}*\textcolor{keyword}{>}(inst);
+                cerr << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a7265f0565b8368070a3f09c6197a4e9b}{getDrain}}() << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a796d77755aac0828419f55ba2226bf15}{getGrid}}() << \textcolor{stringliteral}{" "} << mos->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a1791f52b6b5043823c6f3376e8453e3a}{getSource}}() << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet_a56484a169335450d6043ee20086ead93}{getBulk}}() << \textcolor{stringliteral}{" "} << mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}}();
                 \textcolor{keywordtype}{int} j = 0;
-                \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it =mos->\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().begin() ; it
-       != mos->\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().end(); ++it, j++) \{
+                \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it =mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().begin() ; it
+       != mos->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().end(); ++it, j++) \{
                     \textcolor{keywordflow}{if} (j%6 == 0)
                         cerr << endl << \textcolor{stringliteral}{"| | | | +"};
                     cerr << \textcolor{stringliteral}{" "} << (*it).first << \textcolor{stringliteral}{"="} << (*it).second;
                 \}
             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (dynamic\_cast<SPICE::Resistor*>(inst)) \{
-                \hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}* res = \textcolor{keyword}{static\_cast<}
-      \hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}*\textcolor{keyword}{>}(inst);
-                cerr << \textcolor{stringliteral}{" "} << res->\hyperlink{class_s_p_i_c_e_1_1_resistor_ab57aa52f48a5a56c89dd49eae66c1a0f}{getFirst}() << \textcolor{stringliteral}{" "} << res->\hyperlink{class_s_p_i_c_e_1_1_resistor_a9665313821b2fca41e14b9865133af7f}{getSecond}() << \textcolor{stringliteral}{" "} << res->
-      \hyperlink{class_s_p_i_c_e_1_1_resistor_a4c052cb2622c580a250b2c783a436882}{getValue}();
+                \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}}* res = \textcolor{keyword}{static\_cast<}
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor}{SPICE::Resistor}}*\textcolor{keyword}{>}(inst);
+                cerr << \textcolor{stringliteral}{" "} << res->\mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor_ab57aa52f48a5a56c89dd49eae66c1a0f}{getFirst}}() << \textcolor{stringliteral}{" "} << res->\mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor_a9665313821b2fca41e14b9865133af7f}{getSecond}}() << \textcolor{stringliteral}{" "} << res->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_resistor_a4c052cb2622c580a250b2c783a436882}{getValue}}();
             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (dynamic\_cast<SPICE::Capacitor*>(inst)) \{
-                \hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}* capa = \textcolor{keyword}{static\_cast<}
-      \hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}*\textcolor{keyword}{>}(inst);
-                cerr << \textcolor{stringliteral}{" "} << capa->\hyperlink{class_s_p_i_c_e_1_1_capacitor_a1adb347b9a2c2da556e4417ab0eec0e1}{getPositive}() << \textcolor{stringliteral}{" "} << capa->
-      \hyperlink{class_s_p_i_c_e_1_1_capacitor_a8b4ab73ed1d99c533aa22af0a37ebb0d}{getNegative}() << \textcolor{stringliteral}{" "} << capa->\hyperlink{class_s_p_i_c_e_1_1_capacitor_a4c052cb2622c580a250b2c783a436882}{getValue}();
+                \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}}* capa = \textcolor{keyword}{static\_cast<}
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}}*\textcolor{keyword}{>}(inst);
+                cerr << \textcolor{stringliteral}{" "} << capa->\mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor_a1adb347b9a2c2da556e4417ab0eec0e1}{getPositive}}() << \textcolor{stringliteral}{" "} << capa->
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor_a8b4ab73ed1d99c533aa22af0a37ebb0d}{getNegative}}() << \textcolor{stringliteral}{" "} << capa->\mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor_a4c052cb2622c580a250b2c783a436882}{getValue}}();
             \} \textcolor{keywordflow}{else} \{
-                \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} k = 0 ; k < inst->\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}().size() ; k++)
-                    cerr << \textcolor{stringliteral}{" "} << inst->\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}()[k];
-                cerr << \textcolor{stringliteral}{" "} << inst->\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}();
+                \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} k = 0 ; k < inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}}().size() ; k++)
+                    cerr << \textcolor{stringliteral}{" "} << inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_acce8940edeaa3d79c522006f987e0711}{getConnectors}}()[k];
+                cerr << \textcolor{stringliteral}{" "} << inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_afc74cbe93df9c473a53db83a325f8f9d}{getModel}}();
                 \textcolor{keywordtype}{int} l = 0;
                 \textcolor{keywordflow}{for} (map<string, string>::const\_iterator it = inst->
-      \hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().begin() ; it != inst->\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}().end() ; ++it, l++) \{
+      \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().begin() ; it != inst->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_aee7d59083b78d31ac5c19ab508da91e0}{getParameters}}().end() ; ++it, l++) \{
                     \textcolor{keywordflow}{if} (l%6 == 0)
                         cerr << endl << \textcolor{stringliteral}{"| | | +"};
                     cerr << \textcolor{stringliteral}{" "} << (*it).first << \textcolor{stringliteral}{"="} << (*it).second;
@@ -230,138 +230,138 @@ The following code ({\ttfamily parse\-Spice.\-cpp}) is an example of how to pars
 
 \end{DoxyCodeInclude}
 \hypertarget{spice_spiceDriveC}{}\subsubsection{Driver}\label{spice_spiceDriveC}
-This C++ code ({\ttfamily drive\-Spice.\-cpp}) generates an my\-O\-T\-A.\-spi file equivalent to the included one. 
+This C++ code ({\ttfamily drive\+Spice.\+cpp}) generates an my\+O\+T\+A.\+spi file equivalent to the included one. 
 \begin{DoxyCodeInclude}
 \textcolor{preprocessor}{#include <string>}
-\textcolor{keyword}{using namespace }std;
+\textcolor{keyword}{using namespace }\mbox{\hyperlink{namespacestd}{std}};
 
 \textcolor{preprocessor}{#include "vlsisapd/spice/Circuit.h"}
 \textcolor{preprocessor}{#include "vlsisapd/spice/Subckt.h"}
 \textcolor{preprocessor}{#include "vlsisapd/spice/Instances.h"}
 
 \textcolor{keywordtype}{int} main(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} * argv[]) \{
-    \hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}* circuit = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}();
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}{setTitle}(\textcolor{stringliteral}{"* Single-ended two-stage amplifier"});
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}}* circuit = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}}();
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}{setTitle}}(\textcolor{stringliteral}{"* Single-ended two-stage amplifier"});
 
     \textcolor{comment}{// PARAMS}
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"CC\_VALUE"}, \textcolor{stringliteral}{"2.8794pF"});
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"L\_VALUE"} , \textcolor{stringliteral}{"0.340e-6"});
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"CC\_VALUE"}, \textcolor{stringliteral}{"2.8794pF"});
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"L\_VALUE"} , \textcolor{stringliteral}{"0.340e-6"});
 
     \textcolor{comment}{// SUBCKTS}
     \textcolor{comment}{// CurrentMirror}
-    \hyperlink{class_s_p_i_c_e_1_1_subckt}{SPICE::Subckt}* CM = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}{addSubckt}(\textcolor{stringliteral}{"currentMirrorPMOS"});
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"d1"});
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"d2"});
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"s1"});
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"s2"});
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{SPICE::Subckt}}* CM = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}{addSubckt}}(\textcolor{stringliteral}{"currentMirrorPMOS"});
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"d1"});
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"d2"});
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"s1"});
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"s2"});
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* cmP3 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"P3"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* cmP3 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"P3"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"
       psvt"});
-    cmP3->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-    cmP3->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-    cmP3->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-    cmP3->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-    cmP3->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(cmP3);
+    cmP3->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+    cmP3->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+    cmP3->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+    cmP3->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+    cmP3->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(cmP3);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* cmP4 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"P4"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* cmP4 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"P4"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"
       psvt"});
-    cmP4->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-    cmP4->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-    cmP4->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-    cmP4->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-    cmP4->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-    CM->\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(cmP4);
+    cmP4->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+    cmP4->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+    cmP4->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+    cmP4->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+    cmP4->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+    CM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(cmP4);
 
     \textcolor{comment}{// DifferentialPair}
-    \hyperlink{class_s_p_i_c_e_1_1_subckt}{SPICE::Subckt}* DP = circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}{addSubckt}(\textcolor{stringliteral}{"diffPairNMOS"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"d1"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"d2"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"g1"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"g2"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"s"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}(\textcolor{stringliteral}{"b"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{SPICE::Subckt}}* DP = circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a0d1352e46d4537ce1e5f651de40e91a6}{addSubckt}}(\textcolor{stringliteral}{"diffPairNMOS"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"d1"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"d2"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"g1"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"g2"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"s"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ac162264683fa3d9b3384d3e8cc291fa2}{addInterface}}(\textcolor{stringliteral}{"b"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_ab3ab147a16bc490ce96db905a4ca271c}{addParameter}}(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* dpN1 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"N1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"g1"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* dpN1 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"N1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"g1"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt
       "});
-    dpN1->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-    dpN1->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-    dpN1->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-    dpN1->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-    dpN1->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(dpN1);
+    dpN1->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+    dpN1->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+    dpN1->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+    dpN1->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+    dpN1->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(dpN1);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* dpN2 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"N2"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"g2"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* dpN2 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"N2"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"g2"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt
       "});
-    dpN2->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-    dpN2->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-    dpN2->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-    dpN2->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-    dpN2->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-    DP->\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(dpN2);
+    dpN2->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+    dpN2->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+    dpN2->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+    dpN2->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+    dpN2->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+    DP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(dpN2);
 
     \textcolor{comment}{//INSTANCES}
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* iCM = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}(\textcolor{stringliteral}{"CM"}, \textcolor{stringliteral}{"currentMirrorPMOS"});
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"1"});
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"2"});
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"vdd"});
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"vdd"});
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.889618e-06"});
-    iCM->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"2"}           );
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(iCM);
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* iCM = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}(\textcolor{stringliteral}{"CM"}, \textcolor{stringliteral}{"currentMirrorPMOS"});
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"1"});
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"2"});
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"vdd"});
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"vdd"});
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.889618e-06"});
+    iCM->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"2"}           );
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(iCM);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* iDP = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}(\textcolor{stringliteral}{"DP"}, \textcolor{stringliteral}{"diffPairNMOS"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"1"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"2"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"vim"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"vip"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"3"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}(\textcolor{stringliteral}{"vss"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"7.683346e-07"});
-    iDP->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(iDP);
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* iDP = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}(\textcolor{stringliteral}{"DP"}, \textcolor{stringliteral}{"diffPairNMOS"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"1"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"2"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"vim"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"vip"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"3"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_af9aeca34e780851a2b024df7c5ff5b54}{addConnector}}(\textcolor{stringliteral}{"vss"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"7.683346e-07"});
+    iDP->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(iDP);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* iP6 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"P6"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* iP6 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"P6"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"
       psvt"});
-    iP6->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-    iP6->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.558995e-05"});
-    iP6->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"20"}          );
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(iP6);
+    iP6->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+    iP6->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.558995e-05"});
+    iP6->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"20"}          );
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(iP6);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* iN5 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"N5"}, \textcolor{stringliteral}{"3"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* iN5 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"N5"}, \textcolor{stringliteral}{"3"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"
       nsvt"});
-    iN5->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-    iN5->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
-    iN5->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(iN5);
+    iN5->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+    iN5->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
+    iN5->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(iN5);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* iN7 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"N7"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* iN7 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"N7"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"
       nsvt"});
-    iN7->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-    iN7->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"1.069083e-05"});
-    iN7->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"16"}          );
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(iN7);
+    iN7->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+    iN7->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"1.069083e-05"});
+    iN7->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"16"}          );
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(iN7);
 
-    \hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}* iN8 = \textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}(\textcolor{stringliteral}{"N8"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"
+    \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{SPICE::Instance}}* iN8 = \textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_mosfet}{SPICE::Mosfet}}(\textcolor{stringliteral}{"N8"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"
       nsvt"});
-    iN8->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-    iN8->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
-    iN8->\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(iN8);
+    iN8->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+    iN8->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
+    iN8->\mbox{\hyperlink{class_s_p_i_c_e_1_1_instance_a8d69bbbea5ece0949e100c464e412f20}{addParameter}}(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(iN8);
 
-    circuit->\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}(\textcolor{keyword}{new} \hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}(\textcolor{stringliteral}{"C1"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"CC\_VALUE"}));
+    circuit->\mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a7bb4a4532643568ab1ac2c229185a88e}{addInstance}}(\textcolor{keyword}{new} \mbox{\hyperlink{class_s_p_i_c_e_1_1_capacitor}{SPICE::Capacitor}}(\textcolor{stringliteral}{"C1"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"CC\_VALUE"}));
 
     circuit->writeToFile(\textcolor{stringliteral}{"./myOTA.spi"});
     \textcolor{keywordflow}{return} 0;
@@ -371,7 +371,7 @@ This C++ code ({\ttfamily drive\-Spice.\-cpp}) generates an my\-O\-T\-A.\-spi fi
 
 
 \begin{DoxyNote}{Note}
-In order to compile these codes, a C\-Make\-Lists.\-txt file is provided. User must set the \$\-V\-L\-S\-I\-S\-A\-P\-D\-\_\-\-T\-O\-P variable before running these commands in the directory containing the C\-Make\-Lists.\-txt file\-: 
+In order to compile these codes, a C\+Make\+Lists.\+txt file is provided. User must set the \$\+V\+L\+S\+I\+S\+A\+P\+D\+\_\+\+T\+OP variable before running these commands in the directory containing the C\+Make\+Lists.\+txt file\+: 
 \begin{DoxyCode}
 %> mkdir build; cd build
 %> cmake ..
@@ -381,255 +381,255 @@ In order to compile these codes, a C\-Make\-Lists.\-txt file is provided. User m
 \end{DoxyNote}
 \hypertarget{spice_spicePython}{}\subsection{Python}\label{spice_spicePython}
 \hypertarget{spice_spiceParsePython}{}\subsubsection{Parser}\label{spice_spiceParsePython}
-The following python script ({\ttfamily parse\-Spice.\-py}) is an example of how to parse a S\-P\-I\-C\-E file using python module. 
+The following python script ({\ttfamily parse\+Spice.\+py}) is an example of how to parse a S\+P\+I\+CE file using python module. 
 \begin{DoxyCodeInclude}
-1 \textcolor{keyword}{import} sys
-2 
-3 \textcolor{keyword}{from} SPICE \textcolor{keyword}{import} *
-4 
-5 \textcolor{keyword}{def }printContents(circuit):
-6   \textcolor{keywordflow}{print} \textcolor{stringliteral}{"+"}, circuit.title
-7 
-8   \textcolor{keywordflow}{if} len(circuit.getIncludes()):
-9     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + includes"}
-10     \textcolor{keywordflow}{for} include \textcolor{keywordflow}{in} circuit.getIncludes():
-11       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| |"}, include
-12 
-13   \textcolor{keywordflow}{if} len(circuit.getLibraries()):
-14     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + libraries"}
-15     \textcolor{keywordflow}{for} (lib, typ) \textcolor{keywordflow}{in} circuit.getLibraries():
-16       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| |"}, lib, typ
-17 
-18   \textcolor{keywordflow}{if} len(circuit.getParameters()):
-19     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + parameters"}
-20     \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} circuit.getParameters().items():
-21       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | %s=%s"}%(name, value)
-22 
-23   \textcolor{keywordflow}{if} len(circuit.getOptions()):
-24     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + options"}
-25     \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} circuit.getOptions().items():
-26       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | %s=%s"}%(name, value)
-27 
-28   \textcolor{keywordflow}{if} len(circuit.getSources()):
-29     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + sources"}
-30     \textcolor{keywordflow}{for} source \textcolor{keywordflow}{in} circuit.getSources():
-31       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| |"}, source.getName(), source.getPositive(), source.getNegative(), source.getValue()
-32 
-33   \textcolor{keywordflow}{if} len(circuit.getSubckts()):
-34     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + subckts"}
-35     \textcolor{keywordflow}{for} sub \textcolor{keywordflow}{in} circuit.getSubckts():
-36       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | +"}, sub.getName(),
-37       \textcolor{keywordflow}{for} interf \textcolor{keywordflow}{in} sub.getInterfaces():
-38         \textcolor{keywordflow}{print} interf,
-39       \textcolor{keywordflow}{if} len(sub.getParameters()):
-40           \textcolor{keywordflow}{print} \textcolor{stringliteral}{"param:"},
-41           \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} sub.getParameters().items():
-42             \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name,value),
-43       \textcolor{keywordflow}{print}
-44       \textcolor{keywordflow}{for} inst \textcolor{keywordflow}{in} sub.getInstances():
-45           \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | +"}, inst.getName(),
-46           \textcolor{keywordflow}{if} isinstance(inst, Mosfet):
-47             \textcolor{keywordflow}{print} inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel(),
-48             i = 0
-49             \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
-50               \textcolor{keywordflow}{if} i%6 == 0:
-51                 \textcolor{keywordflow}{print} 
-52                 \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
-53               \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
-54               i += 1
-55           \textcolor{keywordflow}{elif} isinstance(inst, Resistor):
-56             \textcolor{keywordflow}{print} inst.getFirst(), inst.getSecond(), inst.getValue(),
-57           \textcolor{keywordflow}{elif} isinstance(inst, Capacitor):
-58             \textcolor{keywordflow}{print} inst.getPositive(), inst.getNegative(), inst.getValue(),
-59           \textcolor{keywordflow}{else}:
-60             \textcolor{keywordflow}{for} conn \textcolor{keywordflow}{in} inst.getConnectors():
-61               \textcolor{keywordflow}{print} conn,
-62             \textcolor{keywordflow}{print} inst.getModel(),
-63             i = 0
-64             \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
-65               \textcolor{keywordflow}{if} i%6 == 0:
-66                 \textcolor{keywordflow}{print} 
-67                 \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
-68               \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
-69               i += 1
-70           \textcolor{keywordflow}{print}
-71 
-72   \textcolor{keywordflow}{if} len(circuit.getInstances()):
-73     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + instances"}
-74     \textcolor{keywordflow}{for} inst \textcolor{keywordflow}{in} circuit.getInstances():
-75       \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | +"}, inst.getName(),
-76       \textcolor{keywordflow}{if} isinstance(inst, Mosfet):
-77         \textcolor{keywordflow}{print} inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel(),
-78         i = 0
-79         \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
-80           \textcolor{keywordflow}{if} i%6 == 0:
-81             \textcolor{keywordflow}{print} 
-82             \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
-83           \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
-84           i += 1
-85       \textcolor{keywordflow}{elif} isinstance(inst, Resistor):
-86         \textcolor{keywordflow}{print} inst.getFirst(), inst.getSecond(), inst.getValue(),
-87       \textcolor{keywordflow}{elif} isinstance(inst, Capacitor):
-88         \textcolor{keywordflow}{print} inst.getPositive(), inst.getNegative(), inst.getValue(),
-89       \textcolor{keywordflow}{else}:
-90         \textcolor{keywordflow}{for} conn \textcolor{keywordflow}{in} inst.getConnectors():
-91           \textcolor{keywordflow}{print} conn,
-92         \textcolor{keywordflow}{print} inst.getModel(),
-93         i = 0
-94         \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
-95           \textcolor{keywordflow}{if} i%6 == 0:
-96             \textcolor{keywordflow}{print} 
-97             \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
-98           \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
-99           i += 1
-100       \textcolor{keywordflow}{print}
-101 
-102 \textcolor{keyword}{def }usage():
-103     \textcolor{keywordflow}{print} \textcolor{stringliteral}{"usage:"}, sys.argv[0], \textcolor{stringliteral}{"[filename]"}
-104     sys.exit(48)
-105 
-106 \textcolor{keyword}{def }main():
-107   \textcolor{keywordflow}{if} len(sys.argv) == 1:
-108     filename = \textcolor{stringliteral}{"./OTA\_miller.spi"}
-109   \textcolor{keywordflow}{elif} len(sys.argv) == 2:
-110     filename = sys.argv[1]
-111   \textcolor{keywordflow}{else}:
-112     usage()
-113 
-114   circuit = Circuit.readFromFile(filename)
-115   printContents(circuit)
-116 
-117 
-118 \textcolor{keywordflow}{if} \_\_name\_\_ == \textcolor{stringliteral}{"\_\_main\_\_"}:
-119   main()
-120 
+\textcolor{keyword}{import} sys
+
+\textcolor{keyword}{from} SPICE \textcolor{keyword}{import} *
+
+\textcolor{keyword}{def }printContents(circuit):
+  \textcolor{keywordflow}{print} \textcolor{stringliteral}{"+"}, circuit.title
+
+  \textcolor{keywordflow}{if} len(circuit.getIncludes()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + includes"}
+    \textcolor{keywordflow}{for} include \textcolor{keywordflow}{in} circuit.getIncludes():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| |"}, include
+
+  \textcolor{keywordflow}{if} len(circuit.getLibraries()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + libraries"}
+    \textcolor{keywordflow}{for} (lib, typ) \textcolor{keywordflow}{in} circuit.getLibraries():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| |"}, lib, typ
+
+  \textcolor{keywordflow}{if} len(circuit.getParameters()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + parameters"}
+    \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} circuit.getParameters().items():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | %s=%s"}%(name, value)
+
+  \textcolor{keywordflow}{if} len(circuit.getOptions()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + options"}
+    \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} circuit.getOptions().items():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | %s=%s"}%(name, value)
+
+  \textcolor{keywordflow}{if} len(circuit.getSources()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + sources"}
+    \textcolor{keywordflow}{for} source \textcolor{keywordflow}{in} circuit.getSources():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| |"}, source.getName(), source.getPositive(), source.getNegative(), source.getValue()
+
+  \textcolor{keywordflow}{if} len(circuit.getSubckts()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + subckts"}
+    \textcolor{keywordflow}{for} sub \textcolor{keywordflow}{in} circuit.getSubckts():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | +"}, sub.getName(),
+      \textcolor{keywordflow}{for} interf \textcolor{keywordflow}{in} sub.getInterfaces():
+        \textcolor{keywordflow}{print} interf,
+      \textcolor{keywordflow}{if} len(sub.getParameters()):
+          \textcolor{keywordflow}{print} \textcolor{stringliteral}{"param:"},
+          \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} sub.getParameters().items():
+            \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name,value),
+      \textcolor{keywordflow}{print}
+      \textcolor{keywordflow}{for} inst \textcolor{keywordflow}{in} sub.getInstances():
+          \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | +"}, inst.getName(),
+          \textcolor{keywordflow}{if} isinstance(inst, Mosfet):
+            \textcolor{keywordflow}{print} inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel(),
+            i = 0
+            \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
+              \textcolor{keywordflow}{if} i%6 == 0:
+                \textcolor{keywordflow}{print} 
+                \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
+              \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
+              i += 1
+          \textcolor{keywordflow}{elif} isinstance(inst, Resistor):
+            \textcolor{keywordflow}{print} inst.getFirst(), inst.getSecond(), inst.getValue(),
+          \textcolor{keywordflow}{elif} isinstance(inst, Capacitor):
+            \textcolor{keywordflow}{print} inst.getPositive(), inst.getNegative(), inst.getValue(),
+          \textcolor{keywordflow}{else}:
+            \textcolor{keywordflow}{for} conn \textcolor{keywordflow}{in} inst.getConnectors():
+              \textcolor{keywordflow}{print} conn,
+            \textcolor{keywordflow}{print} inst.getModel(),
+            i = 0
+            \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
+              \textcolor{keywordflow}{if} i%6 == 0:
+                \textcolor{keywordflow}{print} 
+                \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
+              \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
+              i += 1
+          \textcolor{keywordflow}{print}
+
+  \textcolor{keywordflow}{if} len(circuit.getInstances()):
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| + instances"}
+    \textcolor{keywordflow}{for} inst \textcolor{keywordflow}{in} circuit.getInstances():
+      \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | +"}, inst.getName(),
+      \textcolor{keywordflow}{if} isinstance(inst, Mosfet):
+        \textcolor{keywordflow}{print} inst.getDrain(), inst.getGrid(), inst.getSource(), inst.getBulk(), inst.getModel(),
+        i = 0
+        \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
+          \textcolor{keywordflow}{if} i%6 == 0:
+            \textcolor{keywordflow}{print} 
+            \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
+          \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
+          i += 1
+      \textcolor{keywordflow}{elif} isinstance(inst, Resistor):
+        \textcolor{keywordflow}{print} inst.getFirst(), inst.getSecond(), inst.getValue(),
+      \textcolor{keywordflow}{elif} isinstance(inst, Capacitor):
+        \textcolor{keywordflow}{print} inst.getPositive(), inst.getNegative(), inst.getValue(),
+      \textcolor{keywordflow}{else}:
+        \textcolor{keywordflow}{for} conn \textcolor{keywordflow}{in} inst.getConnectors():
+          \textcolor{keywordflow}{print} conn,
+        \textcolor{keywordflow}{print} inst.getModel(),
+        i = 0
+        \textcolor{keywordflow}{for} (name, value) \textcolor{keywordflow}{in} inst.getParameters().items():
+          \textcolor{keywordflow}{if} i%6 == 0:
+            \textcolor{keywordflow}{print} 
+            \textcolor{keywordflow}{print} \textcolor{stringliteral}{"| | | | +"},
+          \textcolor{keywordflow}{print} \textcolor{stringliteral}{"%s=%s"}%(name, value),
+          i += 1
+      \textcolor{keywordflow}{print}
+
+\textcolor{keyword}{def }usage():
+    \textcolor{keywordflow}{print} \textcolor{stringliteral}{"usage:"}, sys.argv[0], \textcolor{stringliteral}{"[filename]"}
+    sys.exit(48)
+
+\textcolor{keyword}{def }main():
+  \textcolor{keywordflow}{if} len(sys.argv) == 1:
+    filename = \textcolor{stringliteral}{"./OTA\_miller.spi"}
+  \textcolor{keywordflow}{elif} len(sys.argv) == 2:
+    filename = sys.argv[1]
+  \textcolor{keywordflow}{else}:
+    usage()
+
+  circuit = Circuit.readFromFile(filename)
+  printContents(circuit)
+
+
+\textcolor{keywordflow}{if} \_\_name\_\_ == \textcolor{stringliteral}{"\_\_main\_\_"}:
+  main()
+
 \end{DoxyCodeInclude}
 \hypertarget{spice_spiceDrivePython}{}\subsubsection{Driver}\label{spice_spiceDrivePython}
-This python script ({\ttfamily drive\-Spice.\-py}) generates an my\-O\-T\-A.\-spi file equivalent to the included one. 
+This python script ({\ttfamily drive\+Spice.\+py}) generates an my\+O\+T\+A.\+spi file equivalent to the included one. 
 \begin{DoxyCodeInclude}
-1 \textcolor{keyword}{from} SPICE \textcolor{keyword}{import} *
-2 
-3 circuit = Circuit()
-4 
-5 circuit.title = \textcolor{stringliteral}{'* Single-ended two-stage amplifier'}
-6 
-7 \textcolor{comment}{# PARAMS}
-8 circuit.addParameter(\textcolor{stringliteral}{"CC\_VALUE"}, \textcolor{stringliteral}{"2.8794pF"});
-9 circuit.addParameter(\textcolor{stringliteral}{"L\_VALUE"} , \textcolor{stringliteral}{"0.340e-6"});
-10 
-11 \textcolor{comment}{# SUBCKTS}
-12 \textcolor{comment}{# CurrentMirror}
-13 CM = circuit.addSubckt(\textcolor{stringliteral}{"currentMirrorPMOS"});
-14 CM.addInterface(\textcolor{stringliteral}{"d1"});
-15 CM.addInterface(\textcolor{stringliteral}{"d2"});
-16 CM.addInterface(\textcolor{stringliteral}{"s1"});
-17 CM.addInterface(\textcolor{stringliteral}{"s2"});
-18 CM.addParameter(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-19 CM.addParameter(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-20 CM.addParameter(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
-21 CM.addParameter(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
-22 CM.addParameter(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
-23 
-24 cmP3 = Mosfet(\textcolor{stringliteral}{"P3"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"psvt"});
-25 cmP3.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-26 cmP3.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-27 cmP3.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-28 cmP3.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-29 cmP3.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-30 CM.addInstance(cmP3);
-31 
-32 cmP4 = Mosfet(\textcolor{stringliteral}{"P4"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"psvt"});
-33 cmP4.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-34 cmP4.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-35 cmP4.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-36 cmP4.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-37 cmP4.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-38 CM.addInstance(cmP4);
-39 
-40 \textcolor{comment}{# DifferentialPair}
-41 DP = circuit.addSubckt(\textcolor{stringliteral}{"diffPairNMOS"});
-42 DP.addInterface(\textcolor{stringliteral}{"d1"});
-43 DP.addInterface(\textcolor{stringliteral}{"d2"});
-44 DP.addInterface(\textcolor{stringliteral}{"g1"});
-45 DP.addInterface(\textcolor{stringliteral}{"g2"});
-46 DP.addInterface(\textcolor{stringliteral}{"s"});
-47 DP.addInterface(\textcolor{stringliteral}{"b"});
-48 DP.addParameter(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-49 DP.addParameter(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
-50 DP.addParameter(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
-51 DP.addParameter(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
-52 DP.addParameter(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
-53 
-54 dpN1 = Mosfet(\textcolor{stringliteral}{"N1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"g1"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt"});
-55 dpN1.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-56 dpN1.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-57 dpN1.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-58 dpN1.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-59 dpN1.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-60 DP.addInstance(dpN1);
-61 
-62 dpN2 = Mosfet(\textcolor{stringliteral}{"N2"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"g2"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt"});
-63 dpN2.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
-64 dpN2.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
-65 dpN2.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
-66 dpN2.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
-67 dpN2.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
-68 DP.addInstance(dpN2);
-69 
-70 \textcolor{comment}{# INSTANCES}
-71 iCM = Instance(\textcolor{stringliteral}{"CM"}, \textcolor{stringliteral}{"currentMirrorPMOS"});
-72 iCM.addConnector(\textcolor{stringliteral}{"1"});
-73 iCM.addConnector(\textcolor{stringliteral}{"2"});
-74 iCM.addConnector(\textcolor{stringliteral}{"vdd"});
-75 iCM.addConnector(\textcolor{stringliteral}{"vdd"});
-76 iCM.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-77 iCM.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.889618e-06"});
-78 iCM.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"2"}           );
-79 circuit.addInstance(iCM);
-80 
-81 iDP = Instance(\textcolor{stringliteral}{"DP"}, \textcolor{stringliteral}{"diffPairNMOS"});
-82 iDP.addConnector(\textcolor{stringliteral}{"1"});
-83 iDP.addConnector(\textcolor{stringliteral}{"2"});
-84 iDP.addConnector(\textcolor{stringliteral}{"vim"});
-85 iDP.addConnector(\textcolor{stringliteral}{"vip"});
-86 iDP.addConnector(\textcolor{stringliteral}{"3"});
-87 iDP.addConnector(\textcolor{stringliteral}{"vss"});
-88 iDP.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-89 iDP.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"7.683346e-07"});
-90 iDP.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
-91 circuit.addInstance(iDP);
-92 
-93 iP6 = Mosfet(\textcolor{stringliteral}{"P6"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"psvt"});
-94 iP6.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-95 iP6.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.558995e-05"});
-96 iP6.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"20"}          );
-97 circuit.addInstance(iP6);
-98 
-99 iN5 = Mosfet(\textcolor{stringliteral}{"N5"}, \textcolor{stringliteral}{"3"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"nsvt"});
-100 iN5.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-101 iN5.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
-102 iN5.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
-103 circuit.addInstance(iN5);
-104 
-105 iN7 = Mosfet(\textcolor{stringliteral}{"N7"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"nsvt"});
-106 iN7.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-107 iN7.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"1.069083e-05"});
-108 iN7.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"16"}          );
-109 circuit.addInstance(iN7);
-110 
-111 iN8 = Mosfet(\textcolor{stringliteral}{"N8"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"nsvt"});
-112 iN8.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
-113 iN8.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
-114 iN8.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
-115 circuit.addInstance(iN8);
-116 
-117 capa = Capacitor(\textcolor{stringliteral}{"C1"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"CC\_VALUE"})
-118 circuit.addInstance(capa);
-119 
-120 circuit.writeToFile(\textcolor{stringliteral}{"./myOTA.spi"});
+\textcolor{keyword}{from} SPICE \textcolor{keyword}{import} *
+
+circuit = Circuit()
+
+circuit.title = \textcolor{stringliteral}{'* Single-ended two-stage amplifier'}
+
+\textcolor{comment}{# PARAMS}
+circuit.addParameter(\textcolor{stringliteral}{"CC\_VALUE"}, \textcolor{stringliteral}{"2.8794pF"});
+circuit.addParameter(\textcolor{stringliteral}{"L\_VALUE"} , \textcolor{stringliteral}{"0.340e-6"});
+
+\textcolor{comment}{# SUBCKTS}
+\textcolor{comment}{# CurrentMirror}
+CM = circuit.addSubckt(\textcolor{stringliteral}{"currentMirrorPMOS"});
+CM.addInterface(\textcolor{stringliteral}{"d1"});
+CM.addInterface(\textcolor{stringliteral}{"d2"});
+CM.addInterface(\textcolor{stringliteral}{"s1"});
+CM.addInterface(\textcolor{stringliteral}{"s2"});
+CM.addParameter(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+CM.addParameter(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+CM.addParameter(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
+CM.addParameter(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
+CM.addParameter(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
+
+cmP3 = Mosfet(\textcolor{stringliteral}{"P3"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"s1"}, \textcolor{stringliteral}{"psvt"});
+cmP3.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+cmP3.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+cmP3.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+cmP3.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+cmP3.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+CM.addInstance(cmP3);
+
+cmP4 = Mosfet(\textcolor{stringliteral}{"P4"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"s2"}, \textcolor{stringliteral}{"psvt"});
+cmP4.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+cmP4.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+cmP4.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+cmP4.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+cmP4.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+CM.addInstance(cmP4);
+
+\textcolor{comment}{# DifferentialPair}
+DP = circuit.addSubckt(\textcolor{stringliteral}{"diffPairNMOS"});
+DP.addInterface(\textcolor{stringliteral}{"d1"});
+DP.addInterface(\textcolor{stringliteral}{"d2"});
+DP.addInterface(\textcolor{stringliteral}{"g1"});
+DP.addInterface(\textcolor{stringliteral}{"g2"});
+DP.addInterface(\textcolor{stringliteral}{"s"});
+DP.addInterface(\textcolor{stringliteral}{"b"});
+DP.addParameter(\textcolor{stringliteral}{"l\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+DP.addParameter(\textcolor{stringliteral}{"w\_val"}   , \textcolor{stringliteral}{"0.0"}   );
+DP.addParameter(\textcolor{stringliteral}{"nf\_val"}  , \textcolor{stringliteral}{"1"}     );
+DP.addParameter(\textcolor{stringliteral}{"aeq\_val"} , \textcolor{stringliteral}{"100e-6"});
+DP.addParameter(\textcolor{stringliteral}{"temp\_val"}, \textcolor{stringliteral}{"27"}    );
+
+dpN1 = Mosfet(\textcolor{stringliteral}{"N1"}, \textcolor{stringliteral}{"d1"}, \textcolor{stringliteral}{"g1"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt"});
+dpN1.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+dpN1.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+dpN1.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+dpN1.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+dpN1.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+DP.addInstance(dpN1);
+
+dpN2 = Mosfet(\textcolor{stringliteral}{"N2"}, \textcolor{stringliteral}{"d2"}, \textcolor{stringliteral}{"g2"}, \textcolor{stringliteral}{"s"}, \textcolor{stringliteral}{"b"}, \textcolor{stringliteral}{"nsvt"});
+dpN2.addParameter(\textcolor{stringliteral}{"l"}       , \textcolor{stringliteral}{"l\_val"}         );
+dpN2.addParameter(\textcolor{stringliteral}{"wf"}      , \textcolor{stringliteral}{"\{w\_val/nf\_val\}"});
+dpN2.addParameter(\textcolor{stringliteral}{"nf"}      , \textcolor{stringliteral}{"nf\_val"}        );
+dpN2.addParameter(\textcolor{stringliteral}{"aeq"}     , \textcolor{stringliteral}{"aeq\_val"}       );
+dpN2.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringliteral}{"temp\_val"}      );
+DP.addInstance(dpN2);
+
+\textcolor{comment}{# INSTANCES}
+iCM = Instance(\textcolor{stringliteral}{"CM"}, \textcolor{stringliteral}{"currentMirrorPMOS"});
+iCM.addConnector(\textcolor{stringliteral}{"1"});
+iCM.addConnector(\textcolor{stringliteral}{"2"});
+iCM.addConnector(\textcolor{stringliteral}{"vdd"});
+iCM.addConnector(\textcolor{stringliteral}{"vdd"});
+iCM.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+iCM.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.889618e-06"});
+iCM.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"2"}           );
+circuit.addInstance(iCM);
+
+iDP = Instance(\textcolor{stringliteral}{"DP"}, \textcolor{stringliteral}{"diffPairNMOS"});
+iDP.addConnector(\textcolor{stringliteral}{"1"});
+iDP.addConnector(\textcolor{stringliteral}{"2"});
+iDP.addConnector(\textcolor{stringliteral}{"vim"});
+iDP.addConnector(\textcolor{stringliteral}{"vip"});
+iDP.addConnector(\textcolor{stringliteral}{"3"});
+iDP.addConnector(\textcolor{stringliteral}{"vss"});
+iDP.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+iDP.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"7.683346e-07"});
+iDP.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
+circuit.addInstance(iDP);
+
+iP6 = Mosfet(\textcolor{stringliteral}{"P6"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"vdd"}, \textcolor{stringliteral}{"psvt"});
+iP6.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+iP6.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"3.558995e-05"});
+iP6.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"20"}          );
+circuit.addInstance(iP6);
+
+iN5 = Mosfet(\textcolor{stringliteral}{"N5"}, \textcolor{stringliteral}{"3"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"nsvt"});
+iN5.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+iN5.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
+iN5.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
+circuit.addInstance(iN5);
+
+iN7 = Mosfet(\textcolor{stringliteral}{"N7"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"nsvt"});
+iN7.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+iN7.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"1.069083e-05"});
+iN7.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"16"}          );
+circuit.addInstance(iN7);
+
+iN8 = Mosfet(\textcolor{stringliteral}{"N8"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"4"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"vss"}, \textcolor{stringliteral}{"nsvt"});
+iN8.addParameter(\textcolor{stringliteral}{"l\_val"} , \textcolor{stringliteral}{"L\_VALUE"}     );
+iN8.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}{"2.536703e-06"});
+iN8.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"4"}           );
+circuit.addInstance(iN8);
+
+capa = Capacitor(\textcolor{stringliteral}{"C1"}, \textcolor{stringliteral}{"vout"}, \textcolor{stringliteral}{"2"}, \textcolor{stringliteral}{"CC\_VALUE"})
+circuit.addInstance(capa);
+
+circuit.writeToFile(\textcolor{stringliteral}{"./myOTA.spi"});
 \end{DoxyCodeInclude}
 
 
 \begin{DoxyNote}{Note}
-In order to run these two scripts ({\ttfamily parse\-Spice.\-py} \& drive\-Spice.\-py), user must ensure that \$\-P\-Y\-T\-H\-O\-N\-P\-A\-T\-H variable points to the directory containing S\-P\-I\-C\-E.\-so module. 
+In order to run these two scripts ({\ttfamily parse\+Spice.\+py} \& drive\+Spice.\+py), user must ensure that \$\+P\+Y\+T\+H\+O\+N\+P\+A\+TH variable points to the directory containing S\+P\+I\+C\+E.\+so module. 
 \end{DoxyNote}

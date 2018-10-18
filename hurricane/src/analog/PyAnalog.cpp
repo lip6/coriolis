@@ -31,9 +31,6 @@
 #include "hurricane/analog/PyCapacitorFamily.h"
 #include "hurricane/analog/PyMIMCapacitor.h"
 
-#include "hurricane/analog/PyTransistorArguments.h"
-#include "hurricane/analog/PyTransistorMultiArguments.h"
-#include "hurricane/analog/PyCapacitorArguments.h"
 #include "hurricane/analog/PyParameter.h"
 #include "hurricane/analog/PyCapacitorParameter.h"
 #include "hurricane/analog/PyChoiceParameter.h"
@@ -84,9 +81,6 @@ extern "C" {
     PyCascode_LinkPyType();
     PyMIMCapacitor_LinkPyType();
 
-    PyTransistorArguments_LinkPyType();
-    PyTransistorMultiArguments_LinkPyType();
-    PyCapacitorArguments_LinkPyType();
     PyParameter_LinkPyType();
     PyCapacitorParameter_LinkPyType();
     PyChoiceParameter_LinkPyType();
@@ -97,9 +91,6 @@ extern "C" {
     PyCapacitorFamily_LinkPyType();
     PyLayoutGenerator_LinkPyType();
 
-    PYTYPE_READY( TransistorArguments )
-    PYTYPE_READY( TransistorMultiArguments )
-    PYTYPE_READY( CapacitorArguments )
     PYTYPE_READY( Parameter )
     PYTYPE_READY( LayoutGenerator )
 
@@ -143,9 +134,6 @@ extern "C" {
     __cs.addType( "cfamily"  , &PyTypeCapacitorFamily         , "<CapacitorFamily>"         , false, "device" );
     __cs.addType( "mimcapa"  , &PyTypeMIMCapacitor            , "<MIMCapacitor>"            , false, "cfamily" );
 
-    __cs.addType( "transarg" , &PyTypeTransistorArguments     , "<TransistorArguments>"     , false );
-    __cs.addType( "transmarg", &PyTypeTransistorMultiArguments, "<TransistorMultiArguments>", false );
-    __cs.addType( "capaarg"  , &PyTypeCapacitorArguments      , "<CapacitorArguments>"      , false );
     __cs.addType( "parameter", &PyTypeParameter               , "<Parameter>"               , false );
     __cs.addType( "capapar"  , &PyTypeCapacitorParameter      , "<CapacitorParameter>"      , false, "parameter" );
     __cs.addType( "choicepar", &PyTypeChoiceParameter         , "<CapacitorParameter>"      , false, "parameter" );
@@ -218,8 +206,6 @@ extern "C" {
 
   //Py_INCREF( &PyTypeDevice );
   //PyModule_AddObject( module, "Device"             , (PyObject*)&PyTypeDevice );
-  //Py_INCREF( &PyTypeTransistorArguments );
-  //PyModule_AddObject( module, "TransistorArguments", (PyObject*)&PyTypeTransistorArguments );
   
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //trace_off();

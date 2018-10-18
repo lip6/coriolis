@@ -1,126 +1,117 @@
-\hypertarget{classKite_1_1RoutingEventHistory}{\subsection{Routing\-Event\-History Class Reference}
-\label{classKite_1_1RoutingEventHistory}\index{Routing\-Event\-History@{Routing\-Event\-History}}
-}
+\hypertarget{classKite_1_1RoutingEventHistory}{}\subsection{Routing\+Event\+History Class Reference}
+\label{classKite_1_1RoutingEventHistory}\index{Routing\+Event\+History@{Routing\+Event\+History}}
 
 
-History of \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}.  
+History of \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}.  
 
 
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classKite_1_1RoutingEventHistory_af286a3887c4925a37eadc8018d584aa3}{Routing\-Event\-History} ()
+\mbox{\hyperlink{classKite_1_1RoutingEventHistory_af286a3887c4925a37eadc8018d584aa3}{Routing\+Event\+History}} ()
 \item 
-\hyperlink{classKite_1_1RoutingEventHistory_a5a7671b3e27e93b018cf407a7eba9ce7}{$\sim$\-Routing\-Event\-History} ()
+\mbox{\hyperlink{classKite_1_1RoutingEventHistory_a5a7671b3e27e93b018cf407a7eba9ce7}{$\sim$\+Routing\+Event\+History}} ()
 \item 
-bool \hyperlink{classKite_1_1RoutingEventHistory_ac6e61de369e994009e36f344f99c15ad}{empty} () const 
+bool \mbox{\hyperlink{classKite_1_1RoutingEventHistory_a644718bb2fb240de962dc3c9a1fdf0dc}{empty}} () const
 \item 
-size\-\_\-t \hyperlink{classKite_1_1RoutingEventHistory_aac782da1f912bceb5d8ad00c8dc892ac}{size} () const 
+size\+\_\+t \mbox{\hyperlink{classKite_1_1RoutingEventHistory_a259cb5a711406a8c3e5d937eb9350cca}{size}} () const
 \item 
-\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} $\ast$ \hyperlink{classKite_1_1RoutingEventHistory_a9ce7f1401ea13073d9b6fa00a97ed773}{get\-Nth} (size\-\_\-t) const 
+\mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$ \mbox{\hyperlink{classKite_1_1RoutingEventHistory_a81fbd6a845cb991db9f03f13edb14a50}{get\+Nth}} (size\+\_\+t) const
 \item 
-\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} $\ast$ \hyperlink{classKite_1_1RoutingEventHistory_a575fe1cb5a74febfd081169e18d6ad6e}{get\-R\-Nth} (size\-\_\-t) const 
+\mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$ \mbox{\hyperlink{classKite_1_1RoutingEventHistory_abf422c3119f0b121ce124aff979eafff}{get\+R\+Nth}} (size\+\_\+t) const
 \item 
-void \hyperlink{classKite_1_1RoutingEventHistory_ac802427673567526d06af911e94f7216}{push} (\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} $\ast$)
+void \mbox{\hyperlink{classKite_1_1RoutingEventHistory_ac802427673567526d06af911e94f7216}{push}} (\mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$)
 \item 
-void \hyperlink{classKite_1_1RoutingEventHistory_ac8bb3912a3ce86b15842e79d0b421204}{clear} ()
+void \mbox{\hyperlink{classKite_1_1RoutingEventHistory_ac8bb3912a3ce86b15842e79d0b421204}{clear}} ()
 \end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-History of \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}. 
+History of \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}. 
 
-An history of all the routing events. We can afford to keep an history because while one event is a relatively big object, there is not that much of them (their number is roughly proportional to the number of Track\-Segments).
+An history of all the routing events. We can afford to keep an history because while one event is a relatively big object, there is not that much of them (their number is roughly proportional to the number of Track\+Segments).
 
 One event is likely to appear more than one time in the history, in fact it will apprears each time it is ripped up.
 
-Lastly, it is a way to keep track of all the allocated Routing\-Events. When history is deleted it will deleted all the events that it knows of. 
+Lastly, it is a way to keep track of all the allocated Routing\+Events. When history is deleted it will deleted all the events that it knows of. 
 
 \subsubsection{Constructor \& Destructor Documentation}
-\hypertarget{classKite_1_1RoutingEventHistory_af286a3887c4925a37eadc8018d584aa3}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!Routing\-Event\-History@{Routing\-Event\-History}}
-\index{Routing\-Event\-History@{Routing\-Event\-History}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{Routing\-Event\-History}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event\-History} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventHistory_af286a3887c4925a37eadc8018d584aa3}
-Construct an empty \hyperlink{classKite_1_1RoutingEventHistory}{Routing\-Event\-History}. \hypertarget{classKite_1_1RoutingEventHistory_a5a7671b3e27e93b018cf407a7eba9ce7}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!$\sim$\-Routing\-Event\-History@{$\sim$\-Routing\-Event\-History}}
-\index{$\sim$\-Routing\-Event\-History@{$\sim$\-Routing\-Event\-History}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{$\sim$\-Routing\-Event\-History}]{\setlength{\rightskip}{0pt plus 5cm}$\sim${\bf Routing\-Event\-History} (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventHistory_a5a7671b3e27e93b018cf407a7eba9ce7}
-Delete a \hyperlink{classKite_1_1RoutingEventHistory}{Routing\-Event\-History}.
+\mbox{\Hypertarget{classKite_1_1RoutingEventHistory_af286a3887c4925a37eadc8018d584aa3}\label{classKite_1_1RoutingEventHistory_af286a3887c4925a37eadc8018d584aa3}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!Routing\+Event\+History@{Routing\+Event\+History}}
+\index{Routing\+Event\+History@{Routing\+Event\+History}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{Routing\+Event\+History()}{RoutingEventHistory()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\begin{DoxyParagraph}{Remark\-:}
-The deletion of this object triggers the deletion of all the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} that are referenced in it. 
+Construct an empty \mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}}. \mbox{\Hypertarget{classKite_1_1RoutingEventHistory_a5a7671b3e27e93b018cf407a7eba9ce7}\label{classKite_1_1RoutingEventHistory_a5a7671b3e27e93b018cf407a7eba9ce7}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!````~Routing\+Event\+History@{$\sim$\+Routing\+Event\+History}}
+\index{````~Routing\+Event\+History@{$\sim$\+Routing\+Event\+History}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{$\sim$\+Routing\+Event\+History()}{~RoutingEventHistory()}}
+{\footnotesize\ttfamily $\sim$\mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Delete a \mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}}.
+
+\begin{DoxyParagraph}{Remark\+: The deletion of this object triggers the deletion of}
+all the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} that are referenced in it. 
 \end{DoxyParagraph}
 
 
 \subsubsection{Member Function Documentation}
-\hypertarget{classKite_1_1RoutingEventHistory_ac6e61de369e994009e36f344f99c15ad}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!empty@{empty}}
-\index{empty@{empty}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{empty}]{\setlength{\rightskip}{0pt plus 5cm}bool empty (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1RoutingEventHistory_ac6e61de369e994009e36f344f99c15ad}
-{\bfseries Returns\-:} {\bfseries true} if the history is empty. \hypertarget{classKite_1_1RoutingEventHistory_aac782da1f912bceb5d8ad00c8dc892ac}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!size@{size}}
-\index{size@{size}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{size}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t size (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1RoutingEventHistory_aac782da1f912bceb5d8ad00c8dc892ac}
-{\bfseries Returns\-:} the number of events in the history. 
+\mbox{\Hypertarget{classKite_1_1RoutingEventHistory_a644718bb2fb240de962dc3c9a1fdf0dc}\label{classKite_1_1RoutingEventHistory_a644718bb2fb240de962dc3c9a1fdf0dc}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!empty@{empty}}
+\index{empty@{empty}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{empty()}{empty()}}
+{\footnotesize\ttfamily bool empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by Routing\-Event\-History\-::get\-Nth(), and Routing\-Event\-History\-::get\-R\-Nth().
+{\bfseries Returns\+:} {\bfseries true} if the history is empty. \mbox{\Hypertarget{classKite_1_1RoutingEventHistory_a259cb5a711406a8c3e5d937eb9350cca}\label{classKite_1_1RoutingEventHistory_a259cb5a711406a8c3e5d937eb9350cca}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!size@{size}}
+\index{size@{size}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily size\+\_\+t size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classKite_1_1RoutingEventHistory_a9ce7f1401ea13073d9b6fa00a97ed773}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!get\-Nth@{get\-Nth}}
-\index{get\-Nth@{get\-Nth}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{get\-Nth}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event} $\ast$ get\-Nth (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{pos}
-\end{DoxyParamCaption}
-) const}}\label{classKite_1_1RoutingEventHistory_a9ce7f1401ea13073d9b6fa00a97ed773}
-{\bfseries Returns\-:} The event at index {\ttfamily pos} from the beginning of the history ({\ttfamily N\-U\-L\-L} if {\ttfamily pos} exeed the size). \hypertarget{classKite_1_1RoutingEventHistory_a575fe1cb5a74febfd081169e18d6ad6e}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!get\-R\-Nth@{get\-R\-Nth}}
-\index{get\-R\-Nth@{get\-R\-Nth}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{get\-R\-Nth}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event} $\ast$ get\-R\-Nth (
-\begin{DoxyParamCaption}
-\item[{size\-\_\-t}]{pos}
-\end{DoxyParamCaption}
-) const}}\label{classKite_1_1RoutingEventHistory_a575fe1cb5a74febfd081169e18d6ad6e}
-{\bfseries Returns\-:} The event at index {\ttfamily pos} from the end of the history ({\ttfamily N\-U\-L\-L} if {\ttfamily pos} exeed the size). 
+{\bfseries Returns\+:} the number of events in the history. 
 
-Referenced by Segment\-Fsm\-::conflict\-Solve\-By\-History().
+Referenced by Routing\+Event\+History\+::get\+Nth(), and Routing\+Event\+History\+::get\+R\+Nth().
 
-\hypertarget{classKite_1_1RoutingEventHistory_ac802427673567526d06af911e94f7216}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!push@{push}}
-\index{push@{push}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{push}]{\setlength{\rightskip}{0pt plus 5cm}void push (
-\begin{DoxyParamCaption}
-\item[{{\bf Routing\-Event} $\ast$}]{event}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventHistory_ac802427673567526d06af911e94f7216}
-Push a new \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} in the history. 
+\mbox{\Hypertarget{classKite_1_1RoutingEventHistory_a81fbd6a845cb991db9f03f13edb14a50}\label{classKite_1_1RoutingEventHistory_a81fbd6a845cb991db9f03f13edb14a50}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!get\+Nth@{get\+Nth}}
+\index{get\+Nth@{get\+Nth}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{get\+Nth()}{getNth()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$ get\+Nth (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{pos }\end{DoxyParamCaption}) const}
 
-Referenced by Routing\-Event\-::process().
+{\bfseries Returns\+:} The event at index {\ttfamily pos} from the beginning of the history ({\ttfamily N\+U\+LL} if {\ttfamily pos} exeed the size). \mbox{\Hypertarget{classKite_1_1RoutingEventHistory_abf422c3119f0b121ce124aff979eafff}\label{classKite_1_1RoutingEventHistory_abf422c3119f0b121ce124aff979eafff}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!get\+R\+Nth@{get\+R\+Nth}}
+\index{get\+R\+Nth@{get\+R\+Nth}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{get\+R\+Nth()}{getRNth()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$ get\+R\+Nth (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{pos }\end{DoxyParamCaption}) const}
 
-\hypertarget{classKite_1_1RoutingEventHistory_ac8bb3912a3ce86b15842e79d0b421204}{\index{Kite\-::\-Routing\-Event\-History@{Kite\-::\-Routing\-Event\-History}!clear@{clear}}
-\index{clear@{clear}!Kite::RoutingEventHistory@{Kite\-::\-Routing\-Event\-History}}
-\paragraph[{clear}]{\setlength{\rightskip}{0pt plus 5cm}void clear (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1RoutingEventHistory_ac8bb3912a3ce86b15842e79d0b421204}
-Clear the history, also remove the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} that are pointed to. 
+{\bfseries Returns\+:} The event at index {\ttfamily pos} from the end of the history ({\ttfamily N\+U\+LL} if {\ttfamily pos} exeed the size). 
 
-Referenced by Routing\-Event\-History\-::$\sim$\-Routing\-Event\-History().
+Referenced by Segment\+Fsm\+::conflict\+Solve\+By\+History().
+
+\mbox{\Hypertarget{classKite_1_1RoutingEventHistory_ac802427673567526d06af911e94f7216}\label{classKite_1_1RoutingEventHistory_ac802427673567526d06af911e94f7216}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!push@{push}}
+\index{push@{push}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{push()}{push()}}
+{\footnotesize\ttfamily void push (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$}]{event }\end{DoxyParamCaption})}
+
+Push a new \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} in the history. 
+
+Referenced by Routing\+Event\+::process().
+
+\mbox{\Hypertarget{classKite_1_1RoutingEventHistory_ac8bb3912a3ce86b15842e79d0b421204}\label{classKite_1_1RoutingEventHistory_ac8bb3912a3ce86b15842e79d0b421204}} 
+\index{Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}!clear@{clear}}
+\index{clear@{clear}!Kite\+::\+Routing\+Event\+History@{Kite\+::\+Routing\+Event\+History}}
+\paragraph{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Clear the history, also remove the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} that are pointed to. 
+
+Referenced by Routing\+Event\+History\+::$\sim$\+Routing\+Event\+History().
 
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Routing\-Event\-History.\-h\item 
-Routing\-Event\-History.\-cpp\item 
-Routing\-Event\-History.\-dox\end{DoxyCompactItemize}
+Routing\+Event\+History.\+h\item 
+Routing\+Event\+History.\+cpp\item 
+Routing\+Event\+History.\+dox\end{DoxyCompactItemize}

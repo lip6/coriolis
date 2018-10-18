@@ -1282,7 +1282,7 @@ class Stack ( object ):
       cut2Bb = Box()
       for i in range(contactsNb):
         if isTopConnect: rangeWidth = range(self.topWTracks[wiring.topTrack])
-        else:                         range(self.botWTracks[wiring.botTrack])
+        else:            rangeWidth = range(self.botWTracks[wiring.botTrack])
 
         for j in rangeWidth:
           contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut0/2 )

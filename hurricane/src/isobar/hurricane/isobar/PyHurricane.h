@@ -39,6 +39,9 @@ namespace Isobar {
 
   using namespace std;
   using Hurricane::DbU;
+  using Hurricane::Bug;
+  using Hurricane::Error;
+  using Hurricane::Warning;
 
 
 // -------------------------------------------------------------------

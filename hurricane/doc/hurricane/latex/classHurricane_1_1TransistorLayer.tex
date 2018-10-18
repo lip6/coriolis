@@ -1,14 +1,13 @@
-\hypertarget{classHurricane_1_1TransistorLayer}{\section{Hurricane\-:\-:Transistor\-Layer Class Reference}
-\label{classHurricane_1_1TransistorLayer}\index{Hurricane\-::\-Transistor\-Layer@{Hurricane\-::\-Transistor\-Layer}}
-}
+\hypertarget{classHurricane_1_1TransistorLayer}{}\section{Hurricane\+:\+:Transistor\+Layer Class Reference}
+\label{classHurricane_1_1TransistorLayer}\index{Hurricane\+::\+Transistor\+Layer@{Hurricane\+::\+Transistor\+Layer}}
 
 
-\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\-Layer} description ({\bfseries A\-P\-I})  
+\mbox{\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\+Layer}} description ({\bfseries A\+PI})  
 
 
 
 
-Inheritance diagram for Hurricane\-:\-:Transistor\-Layer\-:\nopagebreak
+Inheritance diagram for Hurricane\+:\+:Transistor\+Layer\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -18,48 +17,42 @@ Inheritance diagram for Hurricane\-:\-:Transistor\-Layer\-:\nopagebreak
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{classHurricane_1_1TransistorLayer}{Transistor\-Layer} $\ast$ \hyperlink{classHurricane_1_1TransistorLayer_ac34a9a0c5056f1f483b670a1e929ed93}{create} (\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$technology, const \hyperlink{classHurricane_1_1Name}{Name} \&name, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$gate\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$active\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$diffusion\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$well\-Layer)
+static \mbox{\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\+Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1TransistorLayer_ac34a9a0c5056f1f483b670a1e929ed93}{create}} (\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$technology, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$gate\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$active\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$diffusion\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$well\+Layer)
 \end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\-Layer} description ({\bfseries A\-P\-I}) 
+\mbox{\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\+Layer}} description ({\bfseries A\+PI}) 
 
-For a more complete description of the Layers objects, please refer to \hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}.
+For a more complete description of the Layers objects, please refer to \mbox{\hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}}.
 
-\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\-Layer} is a symbolic layer that contains three layers (gate, active, diffusion) plus an optional well layer. As you may guess, it is used to represent digital transistors.
+\mbox{\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\+Layer}} is a symbolic layer that contains three layers (gate, active, diffusion) plus an optional well layer. As you may guess, it is used to represent digital transistors.
 
-The accessors functions\-: 
+The accessors functions\+: 
 \begin{DoxyItemize}
-\item \hyperlink{classHurricane_1_1Layer_a00213c29884bfd396576c9cf2fb8ed59}{Transistor\-Layer\-::get\-Top()} 
-\item \hyperlink{classHurricane_1_1Layer_a5398b082b8a441c13d5b54c3cefff685}{Transistor\-Layer\-::get\-Bottom()} 
-\item \hyperlink{classHurricane_1_1Layer_a97d8901ab1e4598d0783aeb89f55421a}{Transistor\-Layer\-::get\-Opposite()} 
+\item \mbox{\hyperlink{classHurricane_1_1Layer_a5f7c43a29f3dd02a9ebccbcbf91d6727}{Transistor\+Layer\+::get\+Top()}} 
+\item \mbox{\hyperlink{classHurricane_1_1Layer_a4dab4552a219d2d900ed0b1245dc6580}{Transistor\+Layer\+::get\+Bottom()}} 
+\item \mbox{\hyperlink{classHurricane_1_1Layer_a69e76c09a56260169c4f5c145a35a47f}{Transistor\+Layer\+::get\+Opposite()}} 
 \end{DoxyItemize}Have no meaning here.
 
 Only extention cap \& extention width are used here. Enclosure is not used. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classHurricane_1_1TransistorLayer_ac34a9a0c5056f1f483b670a1e929ed93}{\index{Hurricane\-::\-Transistor\-Layer@{Hurricane\-::\-Transistor\-Layer}!create@{create}}
-\index{create@{create}!Hurricane::TransistorLayer@{Hurricane\-::\-Transistor\-Layer}}
-\subsubsection[{create}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Transistor\-Layer} $\ast$ Hurricane\-::\-Transistor\-Layer\-::create (
-\begin{DoxyParamCaption}
-\item[{{\bf Technology} $\ast$}]{technology, }
-\item[{const {\bf Name} \&}]{name, }
-\item[{{\bf Basic\-Layer} $\ast$}]{gate\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{active\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{diffusion\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{well\-Layer}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classHurricane_1_1TransistorLayer_ac34a9a0c5056f1f483b670a1e929ed93}
-creates and returns a new transistor layer named {\ttfamily $<$name$>$}, composed of gate, active \& diffusion \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} and an optional W\-E\-L\-L \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer}. A N\-U\-L\-L value indicates that no N\-W\-E\-L\-L is used.
+\mbox{\Hypertarget{classHurricane_1_1TransistorLayer_ac34a9a0c5056f1f483b670a1e929ed93}\label{classHurricane_1_1TransistorLayer_ac34a9a0c5056f1f483b670a1e929ed93}} 
+\index{Hurricane\+::\+Transistor\+Layer@{Hurricane\+::\+Transistor\+Layer}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Transistor\+Layer@{Hurricane\+::\+Transistor\+Layer}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1TransistorLayer}{Transistor\+Layer}} $\ast$ Hurricane\+::\+Transistor\+Layer\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$}]{technology,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{gate\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{active\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{diffusion\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{well\+Layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-\begin{DoxyParagraph}{Caution\-:}
-Throws an exception if the technology is null, if the name is empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 
+creates and returns a new transistor layer named {\ttfamily $<$name$>$}, composed of gate, active \& diffusion \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} and an optional W\+E\+LL \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}}. A N\+U\+LL value indicates that no N\+W\+E\+LL is used.
+
+\begin{DoxyParagraph}{Caution\+: Throws an exception if the technology is null, if the name is }
+empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 
 \end{DoxyParagraph}
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Transistor\-Layer.\-h\item 
-Transistor\-Layer.\-dox\end{DoxyCompactItemize}
+Transistor\+Layer.\+h\item 
+Transistor\+Layer.\+dox\end{DoxyCompactItemize}

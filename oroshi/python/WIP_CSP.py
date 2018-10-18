@@ -16,30 +16,31 @@ import Stack
 import oroshi
 
 
-def checkCoherency ( args ):
-    message = '<b>[ERROR] CommonSourcePair.checkCoherency():</b>\n'
+def checkCoherency ( device, bbMode ):
+    message = '[ERROR] CommonSourcePair.checkCoherency():\n'
     
-    techno = DataBase..getDB().getTechnology()
-    rules  = Analog.getRules( techno, Analog.Flag.StandardRules )
+    techno = DataBase.getDB().getTechnology()
+    rules  = oroshi.getRules()
 
-    M    = args.getM()
-    mMax = args.getW() / rules['transistorMinW']
+    W    = device.getParameter( 'W' ).getValue()
+    M    = device.getParameter( 'M' ).getValue()
+    mMax = W / rules.transistorMinW
     if M > mMax:
       message += \
-        '        W/M ratio must be greater than transistor minimal width (%d)\n' \
+        '        W/M ratio must be greater than transistor minimal width (%s)\n' \
         '        Please increase W or decrease M.' \
-        % rules['transistorMinW']
+        % DbU.getValueString(rules.transistorMinW)
       return False, message
 
-    mint = args.getMInt()
-    if mint != 2:
-      message += '        For interdigitaded layout style, Mint *must* be equal to 2 (not %d)\n' % mint
+    Mint = device.getParameter( 'Mint' ).getValue()
+    if Mint != 2:
+      message += '        For interdigitaded layout style, Mint *must* be equal to 2 (not %d)\n' % Mint
       return False, message
     
     return True, ''
 
 
-def layout ( device, args, bbMode ):
+def layout ( device, bbMode ):
 
     trace( 100, ',+', '\tWIP_CSP.layout() called.\n' )
     nerc = device.getParameter( 'NERC' ).getValue()

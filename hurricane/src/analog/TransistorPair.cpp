@@ -18,7 +18,6 @@
 #include <bitset>
 #include "hurricane/analog/MetaTransistor.h"
 #include "hurricane/analog/TransistorPair.h"
-#include "hurricane/analog/TransistorMultiArguments.h"
 
 namespace Analog {
   
@@ -38,20 +37,6 @@ namespace Analog {
     Super::_postCreate(deviceName);
   
     _mInt = addSpinBoxParameter( "Mint", 1, 12 );
-  }
-  
-  
-  Arguments* TransistorPair::getArguments ()
-  {
-    return new TransistorMultiArguments ( isNMOS()
-                                        , isBulkConnected()
-                                        , isSourceFirst()
-                                        , bitset<4>(getBulkType()).to_string()
-                                        , getW()
-                                        , getL()
-                                        , getM()
-                                        , getMint()
-                                        , getExternalDummy() );
   }
 
 

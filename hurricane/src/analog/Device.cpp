@@ -56,7 +56,11 @@ namespace Analog {
 
   void Device::preCreate ( const Name& deviceName )
   {
-    Technology*       tech = DataBase::getDB()->getTechnology();
+    Technology* tech = DataBase::getDB()->getTechnology();
+    if (not tech) 
+      throw Error( "Device::preCreate(): Technology database not initialied while called for \"%s\"."
+                 , getString(deviceName).c_str() );
+
     DeviceDescriptor* dd   = tech->getDeviceDescriptor( deviceName );
     if (not dd) 
       throw Error( "Device::preCreate(): No DeviceDescriptor for \"%s\"."

@@ -23,9 +23,7 @@
 #include <string>
 #include <list>
 #include "hurricane/Property.h"
-namespace Hurricane {
-  class Cell;
-}
+#include "hurricane/Cell.h"
 
 
 namespace Analog {
@@ -38,9 +36,10 @@ namespace Analog {
 
   class AnalogData {
     public:
-      virtual             ~AnalogData ();
-      virtual Record*      _getRecord () const;
-      virtual std::string  _getString () const = 0;
+      virtual             ~AnalogData   ();
+      virtual std::string  _getTypeName () const = 0;
+      virtual std::string  _getString   () const;
+      virtual Record*      _getRecord   () const;
   };
 
 
@@ -65,6 +64,7 @@ namespace Analog {
     }
     return NULL;
   }
+
 
   template< typename Data >
   void  AnalogCellExtensionDatas::set ( Data* data )

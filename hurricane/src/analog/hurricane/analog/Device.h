@@ -24,7 +24,6 @@
 #include "hurricane/analog/SpinBoxParameter.h"
 #include "hurricane/analog/MCheckBoxParameter.h"
 #include "hurricane/analog/FormFactorParameter.h"
-#include "hurricane/analog/Arguments.h"
 
 
 namespace Analog {
@@ -51,7 +50,6 @@ namespace Analog {
       typedef  std::map<const Hurricane::Name,const std::string>  Layouts;
     public:
       virtual       Hurricane::Name        getDeviceName             () const = 0;
-      virtual       Arguments*             getArguments              () = 0;
                     Parameter*             getParameter              ( const std::string& parameterId );
       inline        Parameters&            getParameters             ();
               const std::string            getLayoutScript           ();
@@ -143,5 +141,8 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_P_SUPPORT(Analog::Device);
 
 #endif  // ANALOG_DEVICE_H

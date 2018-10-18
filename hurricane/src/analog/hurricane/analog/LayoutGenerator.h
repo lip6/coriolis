@@ -31,12 +31,6 @@ namespace Isobar {
   class Script;
 }
 
-class Device;
-class Arguments;
-class TransistorArguments;
-class TransistorMultiArguments;
-class CapacitorArguments;
-
 // To use PyObject without including Python.h which is included in .cpp file
 extern "C" {
   struct  _object;
@@ -45,6 +39,9 @@ extern "C" {
 
 
 namespace Analog {
+
+  class Device;
+
 
   class LayoutGenerator  {
     public:
@@ -104,13 +101,10 @@ namespace Analog {
              void            finalize                   ( unsigned int flags );
              bool            checkScript                ();
              bool            checkFunctions             ();
-             bool            callCheckCoherency         ( PyObject* pArgsCheck, unsigned int flags );
-             bool            callLayout                 ( PyObject* pArgsLayout );
+             bool            callCheckCoherency         ( PyObject* pArgs,  unsigned int flags );
+             bool            callLayout                 ( PyObject* pArgs );
              bool            drawLayout                 ();
-             bool            toPyArguments              ( Arguments*, PyObject*& pArgsCheck, PyObject*& pArgsLayout, unsigned int flags );
-             void            pyTransistorArguments      ( TransistorArguments*     , unsigned m, PyObject*& pArgsCheck, PyObject*& pArgsLayout, unsigned int flags );
-             void            pyTransistorMultiArguments ( TransistorMultiArguments*, unsigned m, PyObject*& pArgsCheck, PyObject*& pArgsLayout, unsigned int flags );
-             void            pyCapacitorArguments       ( CapacitorArguments*                  , PyObject*& pArgsCheck, PyObject*& pArgsLayout, unsigned int flags );
+             bool            toPyArguments              ( PyObject*& pArgsLayout, unsigned int flags );
     private:
       static int      _verboseLevel;
     private:          

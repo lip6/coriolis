@@ -16,24 +16,26 @@ import Stack
 import oroshi
 
 
-def checkCoherency ( args ):
-    message = '<b>[ERROR] Transistor.checkCoherency():</b>\n'
+def checkCoherency ( device, bbMode ):
+    message = '[ERROR] Transistor.checkCoherency():\n'
     
     techno = DataBase.getDB().getTechnology()
     rules  = oroshi.getRules()
 
-    mMax = args.getW() / rules.transistorMinW
-    if args.getM() > mMax:
+    w    = device.getParameter( 'W' ).getValue()
+    M    = device.getParameter( 'M' ).getValue()
+    mMax = w / rules.transistorMinW
+    if M > mMax:
       message += \
-        '        W/M ratio must be greater than transistor minimal width (%d)\n' \
+        '        W/M ratio must be greater than transistor minimal width (%s)\n' \
         '        Please increase W or decrease M.' \
-        % rules['transistorMinW']
+        % DbU.getValueString(rules.transistorMinW)
       return (False, message)
     
     return (True, "")
 
 
-def layout ( device, args, bbMode ):
+def layout ( device, bbMode ):
 
     trace( 100, ',+', '\tWIP_Transistor.layout() called.\n' )
     nerc = device.getParameter( 'NERC' ).getValue()
@@ -41,10 +43,10 @@ def layout ( device, args, bbMode ):
 
     stack = Stack.Stack( device, nerc, nirc )
 
-    bw  = str(device.getParameter( 'B.w'  ).getValue())
-    dw  = str(device.getParameter( 'D.w'  ).getValue())
-    gw  = str(device.getParameter( 'G.w'  ).getValue())
-    sw  = str(device.getParameter( 'S.w'  ).getValue())
+    bw  = str(device.getParameter( 'B.w' ).getValue())
+    dw  = str(device.getParameter( 'D.w' ).getValue())
+    gw  = str(device.getParameter( 'G.w' ).getValue())
+    sw  = str(device.getParameter( 'S.w' ).getValue())
 
     diffMap = { 'D':'D', 'S':'S', 'Dw':dw, 'Sw':sw, 'Gw':gw, 'Bw':bw }
     if device.isSourceFirst():

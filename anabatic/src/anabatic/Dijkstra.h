@@ -194,82 +194,77 @@ namespace Anabatic {
       static         DbU::Unit       unreached;
       static         DbU::Unit       unreachable;
     public:                         
-      static         void            notify         ( Vertex*, unsigned flags );
-      static inline  Vertex*         lookup         ( GCell* );
-    public:                         
-             inline                  Vertex         ( GCell* );
-           //inline                  Vertex         ( size_t id );
-             inline                 ~Vertex         ();
-             inline  bool            isAnalog       () const;
-             inline  bool            hasDoneAllRps  () const;
-             inline  Contact*        hasGContact    ( Net* ) const;
-             inline  unsigned int    getId          () const;
-             inline  GCell*          getGCell       () const;
-             inline  Box             getBoundingBox () const;
-             inline  Edges           getEdges       ( Flags sides=Flags::AllSides ) const;
-             inline  AnabaticEngine* getAnabatic    () const;
-             inline  Contact*        getGContact    ( Net* );
-                     bool            hasValidStamp  () const;
-             inline  Point           getCenter      () const;
-             inline  DbU::Unit       getDistance    () const;
-             inline  int             getStamp       () const;
-             inline  int             getBranchId    () const;
-             inline  int             getConnexId    () const;
-             inline  int             getDegree      () const;
-             inline  int             getRpCount     () const;
-                     Edge*           getFrom        () const;
-             inline  Vertex*         getPredecessor () const;
-             inline  Vertex*         getNeighbor    ( Edge* ) const;
-             inline  void            setDistance    ( DbU::Unit );
-             inline  void            setStamp       ( int );
-             inline  void            setConnexId    ( int );
-             inline  void            setBranchId    ( int );
-             inline  void            setDegree      ( int );
-             inline  void            incDegree      ( int delta=1 );
-             inline  void            setRpCount     ( int );
-             inline  void            incRpCount     ( int delta=1 );
-             inline  void            setFrom        ( Edge* );
-             inline  void            add            ( RoutingPad* );
-             inline  void            clearRps       ();
-             inline  Contact*        breakGoThrough ( Net* );
-
-    //////////////////////////////////////// Analog
-             inline  bool            isNorth        ( const Vertex* ) const;
-             inline  bool            isSouth        ( const Vertex* ) const;
-             inline  bool            isEast         ( const Vertex* ) const;
-             inline  bool            isWest         ( const Vertex* ) const;
-             inline  bool            isNRestricted  () const;
-             inline  bool            isSRestricted  () const;
-             inline  bool            isERestricted  () const;
-             inline  bool            isWRestricted  () const;
-             inline  bool            hasRestrictions() const;
-
-                     void            setRestricted    ();
-                     void            clearRestriction ();
-             inline  void            setNRestricted   ();
-             inline  void            setSRestricted   ();
-             inline  void            setERestricted   ();
-             inline  void            setWRestricted   ();
-                     bool            hasRP            ( Net* ) const;
-                     bool            hasVRP           ( Net* ) const;
-                     bool            hasHRP           ( Net* ) const;
-      static         bool            isRestricted     ( const Vertex* v1, const Vertex* v2, const Edge* e, DbU::Unit hpitch = 0, DbU::Unit vpitch = 0, Net* net = NULL);
-                     bool            areSameSide      ( const Vertex*, const Vertex* ) const;
-
-              inline bool            isFromFrom2  () const;
-              inline bool            isFrom2Mode  () const;
-              inline bool            isAxisTarget () const;
-              inline bool            isiHorizontal() const;
-              inline bool            isiVertical  () const;
-              inline void            setFlags     ( uint32_t );
-              inline void            unsetFlags   ( uint32_t );
-                     bool            isH          () const;
-                     bool            isV          () const;
-              inline void            createAData  ();
-    ////////////////////////////////////
+      static         void            notify            ( Vertex*, unsigned flags );
+      static inline  Vertex*         lookup            ( GCell* );
+    public:                                            
+             inline                  Vertex            ( GCell* );
+           //inline                  Vertex            ( size_t id );
+             inline                 ~Vertex            ();
+             inline  bool            isAnalog          () const;
+             inline  bool            hasDoneAllRps     () const;
+             inline  Contact*        hasGContact       ( Net* ) const;
+             inline  unsigned int    getId             () const;
+             inline  GCell*          getGCell          () const;
+             inline  Box             getBoundingBox    () const;
+             inline  Edges           getEdges          ( Flags sides=Flags::AllSides ) const;
+             inline  AnabaticEngine* getAnabatic       () const;
+             inline  Contact*        getGContact       ( Net* );
+                     bool            hasValidStamp     () const;
+             inline  Point           getCenter         () const;
+             inline  DbU::Unit       getDistance       () const;
+             inline  int             getStamp          () const;
+             inline  int             getBranchId       () const;
+             inline  int             getConnexId       () const;
+             inline  int             getDegree         () const;
+             inline  int             getRpCount        () const;
+                     Edge*           getFrom           () const;
+             inline  Vertex*         getPredecessor    () const;
+             inline  Vertex*         getNeighbor       ( Edge* ) const;
+             inline  void            setDistance       ( DbU::Unit );
+             inline  void            setStamp          ( int );
+             inline  void            setConnexId       ( int );
+             inline  void            setBranchId       ( int );
+             inline  void            setDegree         ( int );
+             inline  void            incDegree         ( int delta=1 );
+             inline  void            setRpCount        ( int );
+             inline  void            incRpCount        ( int delta=1 );
+             inline  void            setFrom           ( Edge* );
+             inline  void            add               ( RoutingPad* );
+             inline  void            clearRps          ();
+             inline  Contact*        breakGoThrough    ( Net* );
+    // Analog related methods.
+             inline  bool            isNorth           ( const Vertex* ) const;
+             inline  bool            isSouth           ( const Vertex* ) const;
+             inline  bool            isEast            ( const Vertex* ) const;
+             inline  bool            isWest            ( const Vertex* ) const;
+             inline  bool            isNRestricted     () const;
+             inline  bool            isSRestricted     () const;
+             inline  bool            isERestricted     () const;
+             inline  bool            isWRestricted     () const;
+             inline  bool            hasRestrictions   () const;
+                     void            setRestricted     ();
+                     void            clearRestriction  ();
+             inline  void            setNRestricted    ();
+             inline  void            setSRestricted    ();
+             inline  void            setERestricted    ();
+             inline  void            setWRestricted    ();
+                     bool            hasRP             ( Net* ) const;
+                     bool            hasVRP            ( Net* ) const;
+                     bool            hasHRP            ( Net* ) const;
+      static         bool            isRestricted      ( const Vertex* v1, const Vertex* v2, const Edge* e, DbU::Unit hpitch = 0, DbU::Unit vpitch = 0, Net* net = NULL);
+                     bool            areSameSide       ( const Vertex*, const Vertex* ) const;
+              inline bool            isFromFrom2       () const;
+              inline bool            isFrom2Mode       () const;
+              inline bool            isAxisTarget      () const;
+              inline bool            isiHorizontal     () const;
+              inline bool            isiVertical       () const;
+              inline void            setFlags          ( uint32_t );
+              inline void            unsetFlags        ( uint32_t );
+                     bool            isH               () const;
+                     bool            isV               () const;
+              inline void            createAData       ();
                      Point           getStartPathPoint ( const Vertex* next ) const;
                      Point           getNextPathPoint  ( Point, const Vertex* ) const;
-    //////////////////////////////////////// GRDATA
                      void            setIntervals      ( Vertex* );
               inline bool            hasAData          () const;
                      bool            isiSet            () const;
@@ -297,10 +292,10 @@ namespace Anabatic {
                      GCell*          getGPrev          ( uint32_t criteria=0 ) const;
  
     // Inspector support. 
-                     string          _getString     () const;
+                     string          _getString        () const;
     private:                        
-                                     Vertex         ( const Vertex& );
-                     Vertex&         operator=      ( const Vertex& );
+                                     Vertex            ( const Vertex& );
+                     Vertex&         operator=         ( const Vertex& );
     private:
       size_t               _id;
       GCell*               _gcell;
