@@ -229,7 +229,7 @@ namespace Bora {
           if ( not (state and state->isSymSlave()) ) {
             slicingtree->setVertexRestriction( net, katana );
             dijkstra->run();
-            slicingtree->updateWireOccupation( dijkstra->getSources() );
+            slicingtree->updateWireOccupation( dijkstra );
           }
         }
         katana->setState( Anabatic::EngineState::EngineGlobalLoaded );

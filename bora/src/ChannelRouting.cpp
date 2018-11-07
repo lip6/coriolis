@@ -27,6 +27,7 @@ namespace Bora {
 
   
   ChannelRouting::ChannelRouting ()
+    : _wireIntervals()
   { }
 
 
@@ -48,16 +49,13 @@ namespace Bora {
 
   void ChannelRouting::reset ()
   {
-    _limits.clear();
-    _counts.clear();
+    _wireIntervals.clear();
   }
 
 
   int  ChannelRouting::getMaxCount () const
   {
-    int maxCount = 0;
-    for ( int count : _counts ) maxCount = std::max( maxCount, count );
-    return maxCount;
+    return _wireIntervals.getThickness();
   }
 
 
@@ -68,92 +66,28 @@ namespace Bora {
                       << DbU::getValueString(xy2) << "] width:"
                       << w << endl;
     
-    for ( unsigned int i=0; i<w; ++i ) insertChannel( xy1, xy2 );
+    for ( unsigned int i=0; i<w; ++i ) insertChannel( xy1, xy2, (Net*)NULL );
   }
 
 
-  void  ChannelRouting::insertChannel ( DbU::Unit xy1, DbU::Unit xy2 )
+  void  ChannelRouting::insertChannel ( DbU::Unit xy1, DbU::Unit xy2, Net* net )
   {
     cdebug_log(535,0) << "ChannelRouting::insertChannel(DbU::Unit,DbU::Unit) ["
                       << DbU::getValueString(xy1) << " : "
-                      << DbU::getValueString(xy2) << "]" << endl;
+                      << DbU::getValueString(xy2) << "] "
+                      << net
+                      << endl;
     
-    DbU::Unit min = xy1;
-    DbU::Unit max = xy2;
-
-    if (_limits.empty()) {
-      _limits.push_back( min );
-      _limits.push_back( max );
-      _counts.push_back( 1 );
-    } else {
-      if        (max < _limits.front()) {
-        _limits.insert( _limits.begin(), max );
-        _limits.insert( _limits.begin(), min );
-        _counts.insert( _counts.begin(), 0   );
-        _counts.insert( _counts.begin(), 1   );
-      } else if (min > _limits.back()) {
-        _limits.push_back( min );
-        _limits.push_back( max );
-        _counts.push_back( 0   );
-        _counts.push_back( 1   );
-      } else {
-        int index = 0;
-        vector<DbU::Unit>::iterator itL = _limits.begin();
-        vector<int>::iterator       itC = _counts.begin();
-
-        if (min < (*itL)) {
-          _limits.insert( itL, min );
-          _counts.insert( itC, 1   );
-        } else {
-          while( ((*itL) < min) and (itL != _limits.end()) ) {
-            itL++;
-            index++;
-            if (itC != _counts.end())  itC++;
-          }
-        
-          if ((*itL) != min) {
-            _limits.insert( itL, min      );
-            _counts.insert( itC, *(itC-1) );
-            itL = _limits.begin() + index;
-            itC = _counts.begin() + index;
-          } 
-          itL = _limits.begin() + index;
-          itC = _counts.begin() + index;
-
-          while( ((*itL) < max) && (itL != _limits.end()) ){
-            itL++;
-            index++;
-            if (itC != _counts.end()) {
-              (*itC) += 1;
-              itC++;
-            } 
-          }
-          if (itL != _limits.end()) {
-            if ((*(itL)) > max){
-              _limits.insert( itL, max        );
-              _counts.insert( itC, *(itC-1)-1 );
-            } 
-          } else {
-            if ((*(itL-1)) != max) {
-              _limits.push_back( max );
-              _counts.push_back( 1   );
-            }
-          }
-        }
-      }
-    }
+    _wireIntervals.insert( WireInterval(net,xy1,xy2) );
   }
 
 
   void  ChannelRouting::print () const
   {
-    cerr << "limits: ";
-    for ( DbU::Unit limit : _limits ) cerr << DbU::getPhysical(limit,DbU::Micro) << " - ";
-    cerr << endl;
-
-    cerr << "count: ";
-    for ( int count : _counts ) cerr << count << " - ";
-    cerr << endl;
+    cerr << "Thickness: " << getMaxCount() << endl;
+    cerr << "Wires:" << endl;
+    for ( const WireInterval& wire : _wireIntervals.getElements() )
+      cerr << "| " << wire << endl;
   }
 
 

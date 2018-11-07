@@ -497,52 +497,52 @@ namespace Anabatic {
     public:
       typedef std::function<DbU::Unit(const Vertex*,const Vertex*,const Edge*)>  distance_t;
     public:
-                        Dijkstra           ( AnabaticEngine* );
-                       ~Dijkstra           ();
-    public:                         
-      inline bool       isBipoint          () const;
-      inline bool       isSourceVertex     ( Vertex* ) const;
-      inline bool       isTargetVertex     ( Vertex* ) const;
-      inline DbU::Unit  getSearchAreaHalo  () const;
-      template<typename DistanceT>
-      inline DistanceT* setDistance        ( DistanceT );
-      inline void       setSearchAreaHalo  ( DbU::Unit );
-             void       load               ( Net* net ); 
-             void       run                ( Mode mode=Mode::Standart );
-      inline const VertexSet& getSources         () const;
-    private:           
-                        Dijkstra           ( const Dijkstra& );
-             Dijkstra&  operator=          ( const Dijkstra& );
-      static DbU::Unit  _distance          ( const Vertex*, const Vertex*, const Edge* );
-             Point      _getPonderedPoint  () const;
-             void       _cleanup           ();
-             bool       _propagate         ( Flags enabledSides );
-             void       _traceback         ( Vertex* );
-             void       _materialize       ();
-             void       _selectFirstSource ();
-             void       _toSources         ( Vertex*, int connexId );
-             void       _getConnecteds     ( Vertex*, VertexSet& );
-             void       _checkEdges        () const;
-             void       _createSelfSymSeg  ( Segment* );
-
-             inline void setAxisTarget       ();
-             inline bool needAxisTarget      () const;
-             inline void setFlags            ( Flags );
-             inline void unsetFlags          ( Flags );
-                    void setAxisTargets      ();
-                    void unsetAxisTargets    ();
-
-             bool        _attachSymContactsHook   ( RoutingPad* ); 
-             void        _limitSymSearchArea      ( RoutingPad* rp );
-             void        _setSourcesGRAData       ( Vertex*, RoutingPad*);
-             bool        _checkFrom2              ( Edge*, Vertex* );
-             bool        _isDistance2Shorter      ( DbU::Unit&, Vertex*, Vertex*, Edge* );
-             void        _pushEqualDistance       ( DbU::Unit, bool, Vertex*, Vertex*, Edge* );
-             void        _updateGRAData           ( Vertex*, bool, Vertex* );
-             void        _initiateUpdateIntervals ( Vertex* );
-             bool        _updateIntervals         ( bool&, Vertex*, bool&, int&, Edge* );
-             void        _updateRealOccupancy     ( Vertex* );
-
+                              Dijkstra                 ( AnabaticEngine* );
+                             ~Dijkstra                 ();
+    public:                                            
+      inline       bool       isBipoint                () const;
+      inline       bool       isSourceVertex           ( Vertex* ) const;
+      inline       Net*       getNet                   () const;
+      inline       bool       isTargetVertex           ( Vertex* ) const;
+      inline       DbU::Unit  getSearchAreaHalo        () const;
+      template<typename DistanceT>                     
+      inline       DistanceT* setDistance              ( DistanceT );
+      inline       void       setSearchAreaHalo        ( DbU::Unit );
+                   void       load                     ( Net* net ); 
+                   void       run                      ( Mode mode=Mode::Standart );
+      inline const VertexSet& getSources               () const;
+    private:                                           
+                        Dijkstra                       ( const Dijkstra& );
+                   Dijkstra&  operator=                ( const Dijkstra& );
+      static       DbU::Unit  _distance                ( const Vertex*, const Vertex*, const Edge* );
+                   Point      _getPonderedPoint        () const;
+                   void       _cleanup                 ();
+                   bool       _propagate               ( Flags enabledSides );
+                   void       _traceback               ( Vertex* );
+                   void       _materialize             ();
+                   void       _selectFirstSource       ();
+                   void       _toSources               ( Vertex*, int connexId );
+                   void       _getConnecteds           ( Vertex*, VertexSet& );
+                   void       _checkEdges              () const;
+                   void       _createSelfSymSeg        ( Segment* );
+                   
+      inline       void       setAxisTarget            ();
+      inline       bool       needAxisTarget           () const;
+      inline       void       setFlags                 ( Flags );
+      inline       void       unsetFlags               ( Flags );
+                   void       setAxisTargets           ();
+                   void       unsetAxisTargets         ();
+                   
+                   bool       _attachSymContactsHook   ( RoutingPad* ); 
+                   void       _limitSymSearchArea      ( RoutingPad* rp );
+                   void       _setSourcesGRAData       ( Vertex*, RoutingPad*);
+                   bool       _checkFrom2              ( Edge*, Vertex* );
+                   bool       _isDistance2Shorter      ( DbU::Unit&, Vertex*, Vertex*, Edge* );
+                   void       _pushEqualDistance       ( DbU::Unit, bool, Vertex*, Vertex*, Edge* );
+                   void       _updateGRAData           ( Vertex*, bool, Vertex* );
+                   void       _initiateUpdateIntervals ( Vertex* );
+                   bool       _updateIntervals         ( bool&, Vertex*, bool&, int&, Edge* );
+                   void       _updateRealOccupancy     ( Vertex* );
     private:
       AnabaticEngine*  _anabatic;
       vector<Vertex*>  _vertexes;
@@ -566,6 +566,7 @@ namespace Anabatic {
   inline bool       Dijkstra::isBipoint         () const { return _net and (_targets.size()+_sources.size() == 2); }
   inline bool       Dijkstra::isSourceVertex    ( Vertex* v ) const { return (_sources.find(v) != _sources.end()); }
   inline bool       Dijkstra::isTargetVertex    ( Vertex* v ) const { return (_targets.find(v) != _targets.end()); }
+  inline Net*       Dijkstra::getNet            () const { return _net; }
   inline DbU::Unit  Dijkstra::getSearchAreaHalo () const { return _searchAreaHalo; }
   inline void       Dijkstra::setSearchAreaHalo ( DbU::Unit halo ) { _searchAreaHalo = halo; }
 

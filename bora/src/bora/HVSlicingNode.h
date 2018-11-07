@@ -145,7 +145,7 @@ namespace Bora {
              void                 updateSymNetAxis             ();
              void                 flattenDigitalNets           ();
                                                                
-             void                 updateWireOccupation         ( Anabatic::VertexSet );
+             void                 updateWireOccupation         ( Anabatic::Dijkstra* );
              void                 resetWireOccupation          ();
     protected:
       VSlicingNodes                    _children;

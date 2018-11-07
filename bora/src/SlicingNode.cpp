@@ -871,7 +871,7 @@ namespace Bora {
   { cerr << Error( "SlicingNode::updateMatrixGContacts(): Base class method must never be called." ) << endl; }
 
 
-  void  SlicingNode::addWireOccupation ( DbU::Unit , DbU::Unit )
+  void  SlicingNode::addWireOccupation ( DbU::Unit , DbU::Unit, Net* )
   { cerr << Error( "SlicingNode::addWireOccupation(): Base class method must never be called." ) << endl; }
 
 
@@ -1158,7 +1158,7 @@ namespace Bora {
   { cerr << Error( "SlicingNode::flattenDigitalNets(): Base class method must never be called." ) << endl; }
 
 
-  void  SlicingNode::updateWireOccupation ( Anabatic::VertexSet )
+  void  SlicingNode::updateWireOccupation ( Anabatic::Dijkstra* )
   { cerr << Error( "SlicingNode::updateWireOccupation(): Base class method must never be called." ) << endl; }
 
 

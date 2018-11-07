@@ -56,7 +56,7 @@ namespace Bora {
                     void                 _place                ( DbU::Unit x=0, DbU::Unit y=0, bool replace=false );
                     void                 setRailInstance       ( Hurricane::Instance* i );
              inline Hurricane::Instance* getRailInstance       () const ;
-                    void                 addWireOccupation     ( DbU::Unit min,  DbU::Unit max );
+                    void                 addWireOccupation     ( DbU::Unit min,  DbU::Unit max, Net* );
                     void                 resetWireOccupation   ();
                     int                  getMaxWireOccupation  ();
     protected:

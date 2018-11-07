@@ -287,9 +287,9 @@ namespace Bora {
       static         bool               isRailSegments               ( Hurricane::Plug* );
                      void               createRailCell               ();
       virtual        void               flattenDigitalNets           ();
-      virtual        void               updateWireOccupation         ( Anabatic::VertexSet );
+      virtual        void               updateWireOccupation         ( Anabatic::Dijkstra* );
       virtual        void               resetWireOccupation          ();
-      virtual        void               addWireOccupation            ( DbU::Unit min, DbU::Unit max );
+      virtual        void               addWireOccupation            ( DbU::Unit min, DbU::Unit max, Net* );
       virtual        int                getMaxWireOccupation         ();
     protected:
       static CRL::RoutingGauge*    _rg;

@@ -1279,12 +1279,12 @@ namespace Bora {
   }
 
 
-  void  HVSlicingNode::updateWireOccupation ( Anabatic::VertexSet sources )
+  void  HVSlicingNode::updateWireOccupation ( Anabatic::Dijkstra* dijkstra )
   {
     cdebug_log(535,1) << "HVSlicingNode::updateWireOccupation() on " << this << endl;
 
     if (not _parent) {
-      for ( Anabatic::Vertex* vertex : sources ) {
+      for ( Anabatic::Vertex* vertex : dijkstra->getSources() ) {
         cdebug_log(535,0) << "> " << vertex << endl;
 
         Anabatic::GCell* gcell = vertex->getGCell();
@@ -1294,7 +1294,7 @@ namespace Bora {
           cdebug_log(535,0) << "| isRouting():" << snode->isRouting() << endl; 
         
           if (snode->isRouting() and vertex->hasAData() )
-            snode->addWireOccupation( vertex->getIMin(), vertex->getIMax() );
+            snode->addWireOccupation( vertex->getIMin(), vertex->getIMax(), dijkstra->getNet() );
         }
       }
     }

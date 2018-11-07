@@ -49,6 +49,8 @@
                                 hurricane/Interval.h              hurricane/Intervals.h
                                 hurricane/IntrusiveMap.h
                                 hurricane/IntrusiveSet.h
+                                hurricane/RbTree.h
+                                hurricane/IntervalTree.h
                                 hurricane/Layer.h                 hurricane/Layers.h
                                 hurricane/Libraries.h             hurricane/Library.h
                                 hurricane/ListCollection.h

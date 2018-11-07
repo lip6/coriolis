@@ -18,12 +18,17 @@
 #define BORA_CHANNEL_ROUTING_H
 
 
-#include "hurricane/DbU.h"
-
+#include "hurricane/IntervalTree.h"
+namespace Hurricane {
+  class Net;
+}
 
 namespace Bora {
 
   using Hurricane::DbU;
+  using Hurricane::IntervalData;
+  using Hurricane::IntervalTree;
+  using Hurricane::Net;
 
 
 // -------------------------------------------------------------------
@@ -33,19 +38,21 @@ namespace Bora {
   class ChannelRouting 
   {
     private:
+      typedef  IntervalData<Net*>  WireInterval;
+      typedef  IntervalTree<Net*>  WireIntervals;
+    private:
                              ChannelRouting ();
                             ~ChannelRouting ();
     public:
       static ChannelRouting* create         ();
              void            destroy        ();
              int             getMaxCount    () const; 
-             void            insertChannel  ( DbU::Unit xy1, DbU::Unit xy2 );
+             void            insertChannel  ( DbU::Unit xy1, DbU::Unit xy2, Net* );
              void            insertChannel  ( DbU::Unit xy1, DbU::Unit xy2, unsigned int w );
              void            reset          ();
              void            print          () const;
     private:
-      std::vector<DbU::Unit> _limits;
-      std::vector<int>       _counts;
+      WireIntervals  _wireIntervals;
   };
 
 

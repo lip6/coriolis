@@ -175,8 +175,8 @@ namespace Bora {
   }
 
 
-  void  RHVSlicingNode::addWireOccupation ( DbU::Unit min, DbU::Unit max )
-  { if ( _wireOccupation and (min != max) ) _wireOccupation->insertChannel(min, max); }
+  void  RHVSlicingNode::addWireOccupation ( DbU::Unit min, DbU::Unit max, Net* net )
+  { if ( _wireOccupation and (min != max) ) _wireOccupation->insertChannel(min, max, net); }
   
   
   void  RHVSlicingNode::resetWireOccupation ()
