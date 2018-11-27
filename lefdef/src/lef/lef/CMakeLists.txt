@@ -29,8 +29,8 @@
                                         lefwWriterCalls.hpp
                              )
       
-                         set ( cpps     crypt.cpp
-                                        lef.tab.cpp
+                         set ( cpps     lef.tab.cpp
+                                        crypt.cpp
                                         lef_keywords.cpp
                                         lefiArray.cpp
                                         lefiCrossTalk.cpp
@@ -55,17 +55,17 @@
                              )
       
                          set ( LefParserGrammar  ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.y )
-          add_custom_command ( MAIN_DEPENDENCY   ${LefParserGrammar}
-                               COMMAND  ${BISON_EXECUTABLE} 
-                               ARGS     -v -p lefyy -d ${LefParserGrammar} -o lef.tab.cpp 
-                               COMMAND  mv
-                               ARGS     lef.tab.hpp ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.tab.h
-                               OUTPUT   lef.tab.cpp
-                             )
- set_source_files_properties ( lef.tab.cpp GENERATED )
 
                  add_library ( lef      ${cpps} )
        set_target_properties ( lef      PROPERTIES VERSION 5.8 SOVERSION 5 )
+          add_custom_command ( OUTPUT   lef.tab.cpp
+                               DEPENDS  ${LefParserGrammar}
+                               COMMAND  ${BISON_EXECUTABLE} -v -p lefyy -d ${LefParserGrammar} -o lef.tab.cpp 
+                               COMMAND  mv lef.tab.hpp ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.tab.h
+                              #COMMAND  mv lef.tab.cpp ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.tab.cpp
+                               COMMENT  "Generating LEF parser (bison)"
+                             )
+ set_source_files_properties ( lef.tab.cpp GENERATED )
       
                      install ( TARGETS  lef DESTINATION lib${LIB_SUFFIX} )
                      install ( FILES    ${includes} DESTINATION include/lefdef ) 
