@@ -1,0 +1,101 @@
+// -*- C++ -*-
+
+/*! \mainpage
+ * 
+ *  \section     secMainDoc  Software Architecture
+ *              
+ *              
+ *  \subsection ssecUniqueInstance  Unique Instance-Cell Relationship
+ *              
+ *              MetaTransistor and Device are derived classes of Cell and are the
+ *              building blocks of all analogic designs.
+ *              - MetaTransistor(s) are used to build the Devices, and \e only them.
+ *              - Device(s) are then assembled into more complex design.
+ *
+ *              The important point to remember is that Device and MetaTransistor
+ *              \b are Cell(s).
+ *              
+ *  \note       An analogy can be made between the Devices and the Standard Cells            
+ *              in the numeric world.
+ *              
+ *              In Analog designs, Devices and MetaTransistors are all parametriseds
+ *              in such a way that each one become effectively unique. So any
+ *              Device or MetaTransistor is only instanciated once with it's specific
+ *              set of parameter's values, thus there is a \b unique relationship between
+ *              a Device and it's instance. We can keep tab of only one of the two.
+ *              As the Cell contains more information, this is the one we choose.
+ *              But we still need the Instance to perform (store) the placement
+ *              informations. So, how to get the Instance from one Device.
+ *              
+ *              <b>Method 1:</b> name matching.
+ *              
+ *              For the sake of clarity, we impose that the Device name must be identical
+ *              to the instance name. This way we can lookup for an Instance in the
+ *              top device with the same name as the current model. We assume that we
+ *              indeed have the containing Cell in handy:
+ *
+\code
+Instance* instance = parentCell->getInstance( cell->getName() );
+\endcode
+ *
+ *              <b>Method 2:</b> Slave instance.
+ *              
+ *              In the Hurricane data structure, every Device (Cell) keep track of the
+ *              Instances pointing to it. Since there should be only one in analogic,
+ *              we can do the following:
+ *
+\code
+Instance* instance = cell->getSlaveInstances().getFirst();
+\endcode
+ *              
+ *              
+ *  \subsection  ssecWhyMetaTrans  Why Meta-Transistor
+ *              
+ *               The Hurricane database does not have true support for transistor
+ *               as Cell(s), only a dedicated layer for Segment. Hence the
+ *               implementation of the MetaTransistor in Hurricane/Analog. It provides
+ *               a Cell derived class with four connectors (\c G , \c S , \c D ,
+ *               \c B ) and a comprenhensive set of electrical parameters.
+ *
+ *               It is meant to represent a complete transistor, not a finger
+ *               of a larger one, it \b is the larger one...
+ * 
+ *              
+ *  \subsection  ssecClassOrg  Class Organization
+ * 
+ *               Almost UML schema of the Device related classes.
+ * 
+ *               \image  html  device_schema_1_uml.png
+ * 
+ *               For the Transistor device:
+ * 
+ *              -# The netlist is fixed and generated (in C++) in the Transistor, by
+ *                 instanciating one MetaTransistor.
+ *              -# The layout is generated <em>on the fly</em> by calling the relevant
+ *                 python sceript.
+ *              -# The parameters, which are commons to all the Transistor based
+ *                 devices are created in TransistorFamily. The parameters are created
+ *                 through the Device parameter factory and stored at the Device level.
+ *                 A pointer to the concrete type of Parameter is also kept at the
+ *                 TransistorFamily level.
+ *              -# The Device::getParameters() method is implemented at this level
+ *                 and returns a TransistorArguments pointer.
+ *              -# Parameters are used to set up the Device characteristics, either
+ *                 programmatically or through the <code>Pharos</code> graphical
+ *                 interface.
+ *              -# <code>Arguments</code>, on the other hand, are mostly used to
+ *                 transmit the setting of a Device (i.e. it's Parameters values)
+ *                 to the Python script in charge of the layout generation.
+ *                 Arguments have Python wrapper PyArguments, and it is copies of
+ *                 the values that are transmitted.
+ *              
+ *              
+ *  \subsection  ssecOpenQuestions  Open questions
+ *              
+ *              -# As Arguments are used to transmit parameters, why not simply
+ *                 encapsulate Parameters in a Python wrapper? Thus completly
+ *                 suppressing Arguments. And by the way, using pointers to
+ *                 to make the relationship bi-directionnal (event if it's not
+ *                 needed now).
+ */
+

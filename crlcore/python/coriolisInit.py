@@ -13,6 +13,7 @@ try:
   from   helpers                 import Configuration
   from   helpers                 import ErrorMessage
   from   helpers                 import WarningMessage
+ #from   helpers                 import Devices
   from   helpers.Configuration   import TypeBool
   from   helpers.Configuration   import TypeInt
   from   helpers.Configuration   import TypeEnumerate
@@ -33,6 +34,8 @@ try:
   from   helpers.Display         import Drawing
   from   helpers                 import Alliance
   from   helpers                 import Technology
+  from   helpers                 import AnalogTechno
+  from   helpers                 import Devices
   import helpers.Display
 except ImportError, e:
   serror = str(e)
@@ -106,11 +109,12 @@ def coriolisConfigure():
               , (helpers.technoDir+'/kite.conf'      , SystemFile|ConfigurationHelper|KiteHelper)
               , (helpers.technoDir+'/stratus1.conf'  , SystemFile|ConfigurationHelper)
               , (helpers.technoDir+'/plugins.conf'   , SystemFile|ConfigurationHelper)
+              , (helpers.technoDir+'/analog.conf'    , SystemFile|ConfigurationHelper)
               ]
   if os.getenv('HOME'):
     confFiles   += [ (os.getenv('HOME')+'/.coriolis2/settings.py', 0) ]
   else:
-    w = WarningMessage(['The <HOME> environment variable is not defined, this is most unusual.'
+    w = WarningMessage(['The "HOME" environment variable is not defined, this is most unusual.'
                        ,'It prevents the loading of ${HOME}/.coriolis2/settings.py'])
     print w
 
@@ -123,11 +127,11 @@ def coriolisConfigure():
       if not os.path.isfile(confFile):
         if confFlags & SystemFile:
           print '[ERROR] Missing mandatory Coriolis2 system file:'
-          print '        <%s>' % confFile
+          print '        "%s"' % helpers.truncPath(confFile)
           print '        Your installation may be broken. Trying to continue anyway...'
         continue
 
-      print '          - Loading \"%s\".' % helpers.truncPath(confFile)
+      print '          - Loading "%s".' % helpers.truncPath(confFile)
       execfile(confFile,moduleGlobals)
     except Exception, e:
       helpers.showPythonTrace( confFile, e )
@@ -139,8 +143,8 @@ def coriolisConfigure():
       else:
         if confFlags & loaderFlags & HelpersMask:
           if confFlags & SystemFile and loaderFlags & SystemMandatory:
-            print '[ERROR] Mandatory symbol <%s> is missing in system configuration file:' % symbol
-            print '        <%s>' % confFile
+            print '[ERROR] Mandatory symbol "%s" is missing in system configuration file:' % symbol
+            print '        "%s"' % helpers.truncPath(confFile)
             print '        Trying to continue anyway...'
 
     if confFile.endswith('settings.py'):
@@ -159,5 +163,57 @@ def coriolisConfigure():
     parameter = Cfg.getParamString('stratus1.mappingName')
     parameter.setString( mappingFile )
     parameter.flags = Cfg.Parameter.Flags.NeedRestart|Cfg.Parameter.Flags.MustExist 
+
+  confFile = None
+  if Cfg.hasParameter('analog.techno'):
+    confFile = Cfg.getParamString('analog.techno').asString()
+    if confFile == 'Analog_technology_has_not_been_set': confFile = None
+    if confFile == 'Analog_technology_is_disabled':      return
+
+  if not confFile:
+    vendorTech = helpers.techno.split('/')[-1]
+    confFile   = os.path.join( helpers.technoDir, 'dtr_%s.py'%vendorTech )
+    Cfg.getParamString('analog.techno').setString( confFile )
+
+  if not os.path.isfile(confFile):
+    print '[WARNING] Analog technology file (aka DTR) has not been found:'
+    print '          "%s"' % helpers.truncPath(confFile)
+    print '          Use of Coriolis analog is disabled.'
+    return
+
+  try:
+    if not helpers.quiet: print '          - Loading \"%s\".' % helpers.truncPath(confFile)
+    execfile(confFile,moduleGlobals)
+  except Exception, e:
+    showPythonTrace( confFile, e )
+  
+  if moduleGlobals.has_key('analogTechnologyTable'):
+    AnalogTechno.loadAnalogTechno( moduleGlobals['analogTechnologyTable'], confFile )
+    del moduleGlobals['analogTechnologyTable']
+  else:
+    print '[ERROR] Mandatory symbol <%s> is missing in technology configuration file:' % 'analogTechnologyTable'
+    print '        "%s"' % helpers.truncPath(confFile)
+    sys.exit( 1 )
+
+  confFile = Cfg.getParamString('analog.devices').asString()
+  if not os.path.isfile(confFile):
+    print '[ERROR] Missing mandatory analog devices description file:'
+    print '        "%s"' % helpers.truncPath(confFile)
+    print '        Please look for the "analog.devices" parameter in configuration files.'
+    sys.exit( 1 )
+ 
+  try:
+    if not helpers.quiet: print '          - Loading \"%s\".' % helpers.truncPath(confFile)
+    execfile(confFile,moduleGlobals)
+  except Exception, e:
+    showPythonTrace( confFile, e )
+  
+  if moduleGlobals.has_key('devicesTable'):
+    Devices.loadDevices( moduleGlobals['devicesTable'], confFile )
+    del moduleGlobals['devicesTable']
+  else:
+    print '[ERROR] Mandatory symbol "%s" is missing in technology configuration file:' % 'devicesTable'
+    print '        "%s"' % helpers.truncPath(confFile)
+    sys.exit( 1 )
 
   return

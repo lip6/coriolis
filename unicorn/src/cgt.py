@@ -15,6 +15,7 @@ try:
   import Etesian
   import Katabatic
   import Kite
+  import Bora
   import Unicorn
 except ImportError, e:
   serror = str(e)
@@ -80,11 +81,12 @@ def runScript ( scriptPath, editor ):
       module.__dict__['ScriptMain']( **kw )
 
   except ImportError, e:
-      module = str(e).split()[-1]
-      print '[ERROR] The <%s> script cannot be loaded.' % os.path.basename(scriptPath)
-      print '        Please check your design hierarchy or the Python syntax.'
-      print '        Error was:'
-      print '          %s\n' % e
+     #module = str(e).split()[-1]
+     #print '[ERROR] The <%s> script cannot be loaded.' % os.path.basename(scriptPath)
+     #print '        Please check your design hierarchy or the Python syntax.'
+     #print '        Error was:'
+     #print '          %s\n' % e
+      showPythonTrace( scriptPath, e )
   except Exception, e:
       showPythonTrace( scriptPath, e )
   return
@@ -184,6 +186,7 @@ if __name__ == '__main__':
           unicorn.registerTool        (Katana.GraphicKatanaEngine.grab())
           unicorn.registerTool        (Etesian.GraphicEtesianEngine.grab())
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
+          unicorn.registerTool        (Bora.GraphicBoraEngine.grab())
          #unicorn.setAnonNetSelectable(False)
           unicorn.setLayerVisible     ("grid"          , False);
           unicorn.setLayerVisible     ("text.instance" , False);

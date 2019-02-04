@@ -471,15 +471,16 @@ namespace Anabatic {
   }
 
 
-  bool Edge::isMaxCapacity ( Net* net ) const 
+  bool  Edge::isMaxCapacity ( Net* net ) const 
   {
+    unsigned int wpitch = 0;
     if (net) {
       cdebug_log(112,0) << "_capacity:" << getCapacity() << endl;
 
       Hurricane::NetRoutingState* state = Hurricane::NetRoutingExtension::get( net );
-      return ((_realOccupancy + state->getWPitch()) > getCapacity()) ? true : false; 
+      wpitch = (state) ? state->getWPitch()-1 : 0;
     }
-    return (_realOccupancy >= getCapacity()) ? true : false; 
+    return (_realOccupancy + wpitch >= getCapacity()); 
   }
 
 

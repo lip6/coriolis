@@ -1,375 +1,367 @@
-\hypertarget{classCRL_1_1Catalog_1_1State}{\section{C\-R\-L\-:\-:Catalog\-:\-:State Class Reference}
-\label{classCRL_1_1Catalog_1_1State}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}
-}
+\hypertarget{classCRL_1_1Catalog_1_1State}{}\section{C\+RL\+:\+:Catalog\+:\+:State Class Reference}
+\label{classCRL_1_1Catalog_1_1State}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
 
 
-An entry to store the Cell \hyperlink{classCRL_1_1Catalog_1_1State}{State} in the \hyperlink{classCRL_1_1Catalog}{Catalog}.  
+An entry to store the Cell \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} in the \mbox{\hyperlink{classCRL_1_1Catalog}{Catalog}}.  
 
 
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}{Flags} \{ \\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c}{Flatten\-Leaf} = 1 $<$$<$ 0, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1}{Feed} = 1 $<$$<$ 1, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2e2b8b775bb6e8d8d12500426a01e38b}{Pad} = 1 $<$$<$ 2, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a98da2efe9c180f68f009836d1179cc4a}{G\-D\-S} = 1 $<$$<$ 3, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae8f1bee3750e1fa0c1d8097a28ee49da}{Delete} = 1 $<$$<$ 4, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a39170df01b13e1845db6eef82cc41b33}{Logical} = 1 $<$$<$ 5, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae166fbe3aa47f42ea93b2624b2ffed7d}{Physical} = 1 $<$$<$ 6, 
-\\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a1f8f15ecd43109bcc463970d8acc03fd}{In\-Memory} = 1 $<$$<$ 7
-, \\*
-\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35}{Views} = Physical$|$\-Logical
+enum \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}{Flags}} \{ \newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c}{Flatten\+Leaf}} = 1 $<$$<$ 0, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1}{Feed}} = 1 $<$$<$ 1, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2e2b8b775bb6e8d8d12500426a01e38b}{Pad}} = 1 $<$$<$ 2, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a98da2efe9c180f68f009836d1179cc4a}{G\+DS}} = 1 $<$$<$ 3, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae8f1bee3750e1fa0c1d8097a28ee49da}{Delete}} = 1 $<$$<$ 4, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a39170df01b13e1845db6eef82cc41b33}{Logical}} = 1 $<$$<$ 5, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae166fbe3aa47f42ea93b2624b2ffed7d}{Physical}} = 1 $<$$<$ 6, 
+\newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a1f8f15ecd43109bcc463970d8acc03fd}{In\+Memory}} = 1 $<$$<$ 7
+, \newline
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35}{Views}} = Physical$\vert$\+Logical
  \}
 \end{DoxyCompactItemize}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classCRL_1_1Catalog_1_1State_a97e69ca85c09942e20d41013b8ff5280}{State} ()
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a97e69ca85c09942e20d41013b8ff5280}{State}} ()
 \item 
-\hyperlink{classCRL_1_1Catalog_1_1State_ae25003eae8262a994fba979f28c35aed}{$\sim$\-State} ()
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State_ae25003eae8262a994fba979f28c35aed}{$\sim$\+State}} ()
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_adb5dc909651479a6556a1f478d585552}{is\-Flatten\-Leaf} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a14f0d3b8c2e62ad51c78cb8cac4ebbf6}{is\+Flatten\+Leaf}} () const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_aab39e2bb6a238a4ae3a82ab8ac4f0593}{is\-Feed} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a53c89121d49a7fc9f8a09093a35d32c4}{is\+Feed}} () const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_ae0f83319e1de5609e1f429c048dab8bb}{is\-Pad} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a457e8dcf1928e6df40ec9f686350c2d0}{is\+Pad}} () const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_ab8f45372b46f9db7855ee98eefdbd5ad}{is\-Gds} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a7af8d732bf9cea0b0ddb4eca3b0528ec}{is\+Gds}} () const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a860d0ec35b5350f7e70ed30dc999b6dc}{is\-Delete} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_ac6df038ecb133b973f9b9f2a5e858ca5}{is\+Delete}} () const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a39c92430456ac8be2ec80310e78170aa}{is\-Physical} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a72b60d86f25221fd8fe7a5902be528a2}{is\+Physical}} () const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a084e955d5b7132b0f739951ca82fbb4a}{is\-Logical} () const 
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a07aad28830a57090cf9203b0ff8714b1}{is\+Logical}} () const
 \item 
-unsigned int \hyperlink{classCRL_1_1Catalog_1_1State_ac6ec60080ed8b5121be6eb74d12361bd}{get\-Flags} (unsigned int mask=(unsigned int)-\/1) const 
+unsigned int \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a80ac3efddd043ec7151680755cc3db42}{get\+Flags}} (unsigned int mask=(unsigned int) -\/1) const
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a73a3866e9da359611638b2d725a79613}{set\-Flags} (unsigned int mask, bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a73a3866e9da359611638b2d725a79613}{set\+Flags}} (unsigned int mask, bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a4fba9a5ea27f5a36e41f0246124a3095}{set\-Flatten\-Leaf} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a4fba9a5ea27f5a36e41f0246124a3095}{set\+Flatten\+Leaf}} (bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_ab5936e80369947177be88c3d770f4725}{set\-Feed} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_ab5936e80369947177be88c3d770f4725}{set\+Feed}} (bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a97e2158809ed0e88237bb92eb8daa290}{set\-Pad} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a97e2158809ed0e88237bb92eb8daa290}{set\+Pad}} (bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_acc0c819f382393dc780bb19c7788b216}{set\-Gds} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_acc0c819f382393dc780bb19c7788b216}{set\+Gds}} (bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a53873a1a42083389dfae02b46b3f2de3}{set\-Delete} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a53873a1a42083389dfae02b46b3f2de3}{set\+Delete}} (bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_a85a091727c8e7de2b16d01088324de0d}{set\-Physical} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a85a091727c8e7de2b16d01088324de0d}{set\+Physical}} (bool value)
 \item 
-bool \hyperlink{classCRL_1_1Catalog_1_1State_af41327abeb4e7646ef5cafabe8eeabd0}{set\-Logical} (bool value)
+bool \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_af41327abeb4e7646ef5cafabe8eeabd0}{set\+Logical}} (bool value)
 \item 
-{\bf Cell} $\ast$ \hyperlink{classCRL_1_1Catalog_1_1State_a09c92d08796c465ce5e3a3af56867b8d}{get\-Cell} () const 
+\textbf{ Cell} $\ast$ \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a0cc5ef54176f8207ef4e723eed62c35e}{get\+Cell}} () const
 \item 
-{\bf Library} $\ast$ \hyperlink{classCRL_1_1Catalog_1_1State_a9181d84d102ce74e640e5f3c558191ce}{get\-Library} () const 
+\textbf{ Library} $\ast$ \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a89dad78f1829b1ee3177f61e2f73d6c6}{get\+Library}} () const
 \item 
-unsigned int \hyperlink{classCRL_1_1Catalog_1_1State_a5b7fbd21f95bdb6ae1cf4b833c9c9729}{get\-Depth} () const 
+unsigned int \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a0232ad6dcfda1e2801f788deaad83e08}{get\+Depth}} () const
 \item 
-void \hyperlink{classCRL_1_1Catalog_1_1State_a41fde67f1b88de06cae113a0d8108f25}{merge} (const \hyperlink{classCRL_1_1Catalog_1_1State}{State} \&other)
+void \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a41fde67f1b88de06cae113a0d8108f25}{merge}} (const \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} \&other)
 \item 
-{\bf Cell} $\ast$ \hyperlink{classCRL_1_1Catalog_1_1State_a156714ad3fe2e5bb8ad8549d101526fe}{set\-Cell} ({\bf Cell} $\ast$cell)
+\textbf{ Cell} $\ast$ \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a156714ad3fe2e5bb8ad8549d101526fe}{set\+Cell}} (\textbf{ Cell} $\ast$cell)
 \item 
-{\bf Library} $\ast$ \hyperlink{classCRL_1_1Catalog_1_1State_a821ac2ae33f0045232cab612ab12f84b}{set\-Library} ({\bf Library} $\ast$library)
+\textbf{ Library} $\ast$ \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a821ac2ae33f0045232cab612ab12f84b}{set\+Library}} (\textbf{ Library} $\ast$library)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-An entry to store the Cell \hyperlink{classCRL_1_1Catalog_1_1State}{State} in the \hyperlink{classCRL_1_1Catalog}{Catalog}. 
+An entry to store the Cell \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} in the \mbox{\hyperlink{classCRL_1_1Catalog}{Catalog}}. 
 
-\hyperlink{classCRL_1_1Catalog_1_1State}{Catalog\-::\-State} can be accessed through the \hyperlink{classCRL_1_1AllianceFramework}{Alliance\-Framework} global \hyperlink{classCRL_1_1Catalog}{Catalog}, or on a Cell basis, usign the \hyperlink{classCRL_1_1CatalogExtension}{Catalog\-Extension} helper. 
+\mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{Catalog\+::\+State}} can be accessed through the \mbox{\hyperlink{classCRL_1_1AllianceFramework}{Alliance\+Framework}} global \mbox{\hyperlink{classCRL_1_1Catalog}{Catalog}}, or on a Cell basis, usign the \mbox{\hyperlink{classCRL_1_1CatalogExtension}{Catalog\+Extension}} helper. 
 
 \subsection{Member Enumeration Documentation}
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Flags@{Flags}}
-\index{Flags@{Flags}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{Flags}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf C\-R\-L\-::\-Catalog\-::\-State\-::\-Flags}}}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}
-Flags to indicates Cell \hyperlink{classCRL_1_1Catalog_1_1State}{State} (Alliance metadatas). \begin{Desc}
-\item[Enumerator]\par
-\begin{description}
-\index{Flatten\-Leaf@{Flatten\-Leaf}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Flatten\-Leaf@{Flatten\-Leaf}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c}{Flatten\-Leaf}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c}
-}]The {\bf Hurricane\-::\-Cell} has no instances (leaf cell of the hierarchy). \index{Feed@{Feed}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Feed@{Feed}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1}{Feed}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1}
-}]The {\bf Hurricane\-::\-Cell} is a feed cell. \index{Pad@{Pad}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Pad@{Pad}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2e2b8b775bb6e8d8d12500426a01e38b}{Pad}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2e2b8b775bb6e8d8d12500426a01e38b}
-}]The {\bf Hurricane\-::\-Cell} is a pad cell. \index{G\-D\-S@{G\-D\-S}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!G\-D\-S@{G\-D\-S}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a98da2efe9c180f68f009836d1179cc4a}{G\-D\-S}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a98da2efe9c180f68f009836d1179cc4a}
-}]The {\bf Hurricane\-::\-Cell} has a real layout (i.\-e. not symbolic). \index{Delete@{Delete}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Delete@{Delete}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae8f1bee3750e1fa0c1d8097a28ee49da}{Delete}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae8f1bee3750e1fa0c1d8097a28ee49da}
-}]The {\bf Hurricane\-::\-Cell} has been deleted from memory. \index{Logical@{Logical}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Logical@{Logical}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a39170df01b13e1845db6eef82cc41b33}{Logical}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a39170df01b13e1845db6eef82cc41b33}
-}]The {\bf Hurricane\-::\-Cell} have a logical (netlist) view. \index{Physical@{Physical}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Physical@{Physical}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae166fbe3aa47f42ea93b2624b2ffed7d}{Physical}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae166fbe3aa47f42ea93b2624b2ffed7d}
-}]The {\bf Hurricane\-::\-Cell} have a physical (layout) view. \index{In\-Memory@{In\-Memory}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!In\-Memory@{In\-Memory}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a1f8f15ecd43109bcc463970d8acc03fd}{In\-Memory}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a1f8f15ecd43109bcc463970d8acc03fd}
-}]The {\bf Hurricane\-::\-Cell} has been loaded, at least partially, in memory. \index{Views@{Views}!C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}}\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!Views@{Views}}\item[{\em 
-\hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35}{Views}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35}
-}]A composite flag to mask all the avalaible kinds of views. Currently, physical \& logical. \end{description}
-\end{Desc}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Flags@{Flags}}
+\index{Flags@{Flags}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{Flags}{Flags}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74}{C\+R\+L\+::\+Catalog\+::\+State\+::\+Flags}}}
+
+Flags to indicates Cell \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} (Alliance metadatas). \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Flatten\+Leaf@{Flatten\+Leaf}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Flatten\+Leaf@{Flatten\+Leaf}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a496651784f48e1dc9690ff484f90477c}} 
+Flatten\+Leaf&The \textbf{ Hurricane\+::\+Cell} has no instances (leaf cell of the hierarchy). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Feed@{Feed}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Feed@{Feed}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2b7599c1303429830c8d3e6b673b3cb1}} 
+Feed&The \textbf{ Hurricane\+::\+Cell} is a feed cell. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Pad@{Pad}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Pad@{Pad}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2e2b8b775bb6e8d8d12500426a01e38b}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a2e2b8b775bb6e8d8d12500426a01e38b}} 
+Pad&The \textbf{ Hurricane\+::\+Cell} is a pad cell. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{G\+DS@{G\+DS}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!G\+DS@{G\+DS}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a98da2efe9c180f68f009836d1179cc4a}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a98da2efe9c180f68f009836d1179cc4a}} 
+G\+DS&The \textbf{ Hurricane\+::\+Cell} has a real layout (i.\+e. not symbolic). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Delete@{Delete}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Delete@{Delete}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae8f1bee3750e1fa0c1d8097a28ee49da}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae8f1bee3750e1fa0c1d8097a28ee49da}} 
+Delete&The \textbf{ Hurricane\+::\+Cell} has been deleted from memory. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Logical@{Logical}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Logical@{Logical}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a39170df01b13e1845db6eef82cc41b33}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a39170df01b13e1845db6eef82cc41b33}} 
+Logical&The \textbf{ Hurricane\+::\+Cell} have a logical (netlist) view. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Physical@{Physical}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Physical@{Physical}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae166fbe3aa47f42ea93b2624b2ffed7d}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74ae166fbe3aa47f42ea93b2624b2ffed7d}} 
+Physical&The \textbf{ Hurricane\+::\+Cell} have a physical (layout) view. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{In\+Memory@{In\+Memory}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!In\+Memory@{In\+Memory}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a1f8f15ecd43109bcc463970d8acc03fd}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a1f8f15ecd43109bcc463970d8acc03fd}} 
+In\+Memory&The \textbf{ Hurricane\+::\+Cell} has been loaded, at least partially, in memory. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Views@{Views}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!Views@{Views}}}\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35}\label{classCRL_1_1Catalog_1_1State_a625003526d38ac7500b4ad7de35e2d74a6b88bbc27f9989a35a1e00772e157b35}} 
+Views&A composite flag to mask all the avalaible kinds of views. Currently, physical \& logical. \\
+\hline
+
+\end{DoxyEnumFields}
 
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classCRL_1_1Catalog_1_1State_a97e69ca85c09942e20d41013b8ff5280}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!State@{State}}
-\index{State@{State}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{State}]{\setlength{\rightskip}{0pt plus 5cm}C\-R\-L\-::\-Catalog\-::\-State\-::\-State (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a97e69ca85c09942e20d41013b8ff5280}
-A new, empty, \hyperlink{classCRL_1_1Catalog_1_1State}{State} entry. \hypertarget{classCRL_1_1Catalog_1_1State_ae25003eae8262a994fba979f28c35aed}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!$\sim$\-State@{$\sim$\-State}}
-\index{$\sim$\-State@{$\sim$\-State}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{$\sim$\-State}]{\setlength{\rightskip}{0pt plus 5cm}C\-R\-L\-::\-Catalog\-::\-State\-::$\sim$\-State (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classCRL_1_1Catalog_1_1State_ae25003eae8262a994fba979f28c35aed}
-Free a \hyperlink{classCRL_1_1Catalog_1_1State}{Catalog\-::\-State} object. 
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a97e69ca85c09942e20d41013b8ff5280}\label{classCRL_1_1Catalog_1_1State_a97e69ca85c09942e20d41013b8ff5280}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!State@{State}}
+\index{State@{State}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{State()}{State()}}
+{\footnotesize\ttfamily C\+R\+L\+::\+Catalog\+::\+State\+::\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+A new, empty, \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} entry. \mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_ae25003eae8262a994fba979f28c35aed}\label{classCRL_1_1Catalog_1_1State_ae25003eae8262a994fba979f28c35aed}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!````~State@{$\sim$\+State}}
+\index{````~State@{$\sim$\+State}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{$\sim$\+State()}{~State()}}
+{\footnotesize\ttfamily C\+R\+L\+::\+Catalog\+::\+State\+::$\sim$\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Free a \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{Catalog\+::\+State}} object. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classCRL_1_1Catalog_1_1State_adb5dc909651479a6556a1f478d585552}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Flatten\-Leaf@{is\-Flatten\-Leaf}}
-\index{is\-Flatten\-Leaf@{is\-Flatten\-Leaf}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Flatten\-Leaf}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Flatten\-Leaf (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_adb5dc909651479a6556a1f478d585552}
-{\bfseries Returns\-:} {\bfseries true} if the Cell has no more instances (leaf cell). 
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a14f0d3b8c2e62ad51c78cb8cac4ebbf6}\label{classCRL_1_1Catalog_1_1State_a14f0d3b8c2e62ad51c78cb8cac4ebbf6}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Flatten\+Leaf@{is\+Flatten\+Leaf}}
+\index{is\+Flatten\+Leaf@{is\+Flatten\+Leaf}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Flatten\+Leaf()}{isFlattenLeaf()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Flatten\+Leaf (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Flatten\-Leaf().
+{\bfseries Returns\+:} {\bfseries true} if the Cell has no more instances (leaf cell). 
 
-\hypertarget{classCRL_1_1Catalog_1_1State_aab39e2bb6a238a4ae3a82ab8ac4f0593}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Feed@{is\-Feed}}
-\index{is\-Feed@{is\-Feed}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Feed}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Feed (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_aab39e2bb6a238a4ae3a82ab8ac4f0593}
-{\bfseries Returns\-:} {\bfseries true} if the Cell is a feed-\/through. 
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Flatten\+Leaf().
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Feed().
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a53c89121d49a7fc9f8a09093a35d32c4}\label{classCRL_1_1Catalog_1_1State_a53c89121d49a7fc9f8a09093a35d32c4}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Feed@{is\+Feed}}
+\index{is\+Feed@{is\+Feed}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Feed()}{isFeed()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Feed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classCRL_1_1Catalog_1_1State_ae0f83319e1de5609e1f429c048dab8bb}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Pad@{is\-Pad}}
-\index{is\-Pad@{is\-Pad}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Pad}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Pad (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_ae0f83319e1de5609e1f429c048dab8bb}
-{\bfseries Returns\-:} {\bfseries true} if the Cell is a pad. 
+{\bfseries Returns\+:} {\bfseries true} if the Cell is a feed-\/through. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Pad().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Feed().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_ab8f45372b46f9db7855ee98eefdbd5ad}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Gds@{is\-Gds}}
-\index{is\-Gds@{is\-Gds}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Gds}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Gds (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_ab8f45372b46f9db7855ee98eefdbd5ad}
-{\bfseries Returns\-:} {\bfseries true} if the Cell is drawn in real layer (i.\-e. not a symbolic layout, but a G\-D\-S). 
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a457e8dcf1928e6df40ec9f686350c2d0}\label{classCRL_1_1Catalog_1_1State_a457e8dcf1928e6df40ec9f686350c2d0}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Pad@{is\+Pad}}
+\index{is\+Pad@{is\+Pad}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Pad()}{isPad()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Pad (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Gds().
+{\bfseries Returns\+:} {\bfseries true} if the Cell is a pad. 
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a860d0ec35b5350f7e70ed30dc999b6dc}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Delete@{is\-Delete}}
-\index{is\-Delete@{is\-Delete}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Delete}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Delete (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a860d0ec35b5350f7e70ed30dc999b6dc}
-{\bfseries Returns\-:} {\bfseries true} if the Cell has been deleted from memory. 
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Pad().
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Delete().
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a7af8d732bf9cea0b0ddb4eca3b0528ec}\label{classCRL_1_1Catalog_1_1State_a7af8d732bf9cea0b0ddb4eca3b0528ec}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Gds@{is\+Gds}}
+\index{is\+Gds@{is\+Gds}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Gds()}{isGds()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Gds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a39c92430456ac8be2ec80310e78170aa}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Physical@{is\-Physical}}
-\index{is\-Physical@{is\-Physical}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Physical}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Physical (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a39c92430456ac8be2ec80310e78170aa}
-{\bfseries Returns\-:} {\bfseries true} if the Cell posseses a physical view (layout). 
+{\bfseries Returns\+:} {\bfseries true} if the Cell is drawn in real layer (i.\+e. not a symbolic layout, but a G\+DS). 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Physical().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Gds().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a084e955d5b7132b0f739951ca82fbb4a}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!is\-Logical@{is\-Logical}}
-\index{is\-Logical@{is\-Logical}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{is\-Logical}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::is\-Logical (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a084e955d5b7132b0f739951ca82fbb4a}
-{\bfseries Returns\-:} {\bfseries true} if the Cell posseses a logical view (netlist). 
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_ac6df038ecb133b973f9b9f2a5e858ca5}\label{classCRL_1_1Catalog_1_1State_ac6df038ecb133b973f9b9f2a5e858ca5}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Delete@{is\+Delete}}
+\index{is\+Delete@{is\+Delete}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Delete()}{isDelete()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Delete (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::is\-Logical().
+{\bfseries Returns\+:} {\bfseries true} if the Cell has been deleted from memory. 
 
-\hypertarget{classCRL_1_1Catalog_1_1State_ac6ec60080ed8b5121be6eb74d12361bd}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!get\-Flags@{get\-Flags}}
-\index{get\-Flags@{get\-Flags}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{get\-Flags}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int C\-R\-L\-::\-Catalog\-::\-State\-::get\-Flags (
-\begin{DoxyParamCaption}
-\item[{unsigned int}]{mask = {\ttfamily (unsigned~int)-\/1}}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_ac6ec60080ed8b5121be6eb74d12361bd}
-{\bfseries Returns\-:} the requested flags states (selected by {\ttfamily mask}, all of them by default). 
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Delete().
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::get\-Flags().
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a72b60d86f25221fd8fe7a5902be528a2}\label{classCRL_1_1Catalog_1_1State_a72b60d86f25221fd8fe7a5902be528a2}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Physical@{is\+Physical}}
+\index{is\+Physical@{is\+Physical}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Physical()}{isPhysical()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Physical (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a73a3866e9da359611638b2d725a79613}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Flags@{set\-Flags}}
-\index{set\-Flags@{set\-Flags}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Flags}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Flags (
-\begin{DoxyParamCaption}
-\item[{unsigned int}]{mask, }
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a73a3866e9da359611638b2d725a79613}
-{\bfseries Returns\-:} {\bfseries true} if at least one flag of the indicated by mask is set. (dubious usefulness).
+{\bfseries Returns\+:} {\bfseries true} if the Cell posseses a physical view (layout). 
+
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Physical().
+
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a07aad28830a57090cf9203b0ff8714b1}\label{classCRL_1_1Catalog_1_1State_a07aad28830a57090cf9203b0ff8714b1}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!is\+Logical@{is\+Logical}}
+\index{is\+Logical@{is\+Logical}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{is\+Logical()}{isLogical()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::is\+Logical (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if the Cell posseses a logical view (netlist). 
+
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::is\+Logical().
+
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a80ac3efddd043ec7151680755cc3db42}\label{classCRL_1_1Catalog_1_1State_a80ac3efddd043ec7151680755cc3db42}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!get\+Flags@{get\+Flags}}
+\index{get\+Flags@{get\+Flags}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{get\+Flags()}{getFlags()}}
+{\footnotesize\ttfamily unsigned int C\+R\+L\+::\+Catalog\+::\+State\+::get\+Flags (\begin{DoxyParamCaption}\item[{unsigned int}]{mask = {\ttfamily (unsigned~int)-\/1} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the requested flags states (selected by {\ttfamily mask}, all of them by default). 
+
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::get\+Flags().
+
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a73a3866e9da359611638b2d725a79613}\label{classCRL_1_1Catalog_1_1State_a73a3866e9da359611638b2d725a79613}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Flags@{set\+Flags}}
+\index{set\+Flags@{set\+Flags}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Flags()}{setFlags()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Flags (\begin{DoxyParamCaption}\item[{unsigned int}]{mask,  }\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} {\bfseries true} if at least one flag of the indicated by mask is set. (dubious usefulness).
 
 {\ttfamily mask} is used to designate the bits of the flags on which we are going to operate. If {\ttfamily value} is {\bfseries true}, then the bits are sets and if {\ttfamily value} is {\bfseries false} they are reset. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Flags().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Flags().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a4fba9a5ea27f5a36e41f0246124a3095}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Flatten\-Leaf@{set\-Flatten\-Leaf}}
-\index{set\-Flatten\-Leaf@{set\-Flatten\-Leaf}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Flatten\-Leaf}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Flatten\-Leaf (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a4fba9a5ea27f5a36e41f0246124a3095}
-Sets the Flatten\-Leaf flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a4fba9a5ea27f5a36e41f0246124a3095}\label{classCRL_1_1Catalog_1_1State_a4fba9a5ea27f5a36e41f0246124a3095}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Flatten\+Leaf@{set\+Flatten\+Leaf}}
+\index{set\+Flatten\+Leaf@{set\+Flatten\+Leaf}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Flatten\+Leaf()}{setFlattenLeaf()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Flatten\+Leaf (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Flatten\-Leaf().
+Sets the Flatten\+Leaf flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-\hypertarget{classCRL_1_1Catalog_1_1State_ab5936e80369947177be88c3d770f4725}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Feed@{set\-Feed}}
-\index{set\-Feed@{set\-Feed}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Feed}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Feed (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_ab5936e80369947177be88c3d770f4725}
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Flatten\+Leaf().
+
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_ab5936e80369947177be88c3d770f4725}\label{classCRL_1_1Catalog_1_1State_ab5936e80369947177be88c3d770f4725}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Feed@{set\+Feed}}
+\index{set\+Feed@{set\+Feed}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Feed()}{setFeed()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Feed (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Feed flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Feed().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Feed().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a97e2158809ed0e88237bb92eb8daa290}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Pad@{set\-Pad}}
-\index{set\-Pad@{set\-Pad}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Pad}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Pad (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a97e2158809ed0e88237bb92eb8daa290}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a97e2158809ed0e88237bb92eb8daa290}\label{classCRL_1_1Catalog_1_1State_a97e2158809ed0e88237bb92eb8daa290}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Pad@{set\+Pad}}
+\index{set\+Pad@{set\+Pad}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Pad()}{setPad()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Pad (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Pad flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Pad().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Pad().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_acc0c819f382393dc780bb19c7788b216}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Gds@{set\-Gds}}
-\index{set\-Gds@{set\-Gds}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Gds}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Gds (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_acc0c819f382393dc780bb19c7788b216}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_acc0c819f382393dc780bb19c7788b216}\label{classCRL_1_1Catalog_1_1State_acc0c819f382393dc780bb19c7788b216}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Gds@{set\+Gds}}
+\index{set\+Gds@{set\+Gds}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Gds()}{setGds()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Gds (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Gds flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Gds().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Gds().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a53873a1a42083389dfae02b46b3f2de3}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Delete@{set\-Delete}}
-\index{set\-Delete@{set\-Delete}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Delete}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Delete (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a53873a1a42083389dfae02b46b3f2de3}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a53873a1a42083389dfae02b46b3f2de3}\label{classCRL_1_1Catalog_1_1State_a53873a1a42083389dfae02b46b3f2de3}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Delete@{set\+Delete}}
+\index{set\+Delete@{set\+Delete}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Delete()}{setDelete()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Delete (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Delete flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Delete().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Delete().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a85a091727c8e7de2b16d01088324de0d}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Physical@{set\-Physical}}
-\index{set\-Physical@{set\-Physical}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Physical}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Physical (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a85a091727c8e7de2b16d01088324de0d}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a85a091727c8e7de2b16d01088324de0d}\label{classCRL_1_1Catalog_1_1State_a85a091727c8e7de2b16d01088324de0d}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Physical@{set\+Physical}}
+\index{set\+Physical@{set\+Physical}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Physical()}{setPhysical()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Physical (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Physical flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Physical().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Physical().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_af41327abeb4e7646ef5cafabe8eeabd0}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Logical@{set\-Logical}}
-\index{set\-Logical@{set\-Logical}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Logical}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-R\-L\-::\-Catalog\-::\-State\-::set\-Logical (
-\begin{DoxyParamCaption}
-\item[{bool}]{value}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_af41327abeb4e7646ef5cafabe8eeabd0}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_af41327abeb4e7646ef5cafabe8eeabd0}\label{classCRL_1_1Catalog_1_1State_af41327abeb4e7646ef5cafabe8eeabd0}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Logical@{set\+Logical}}
+\index{set\+Logical@{set\+Logical}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Logical()}{setLogical()}}
+{\footnotesize\ttfamily bool C\+R\+L\+::\+Catalog\+::\+State\+::set\+Logical (\begin{DoxyParamCaption}\item[{bool}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Logical flag to {\ttfamily value}. Returns {\bfseries true} if it is set. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Logical().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Logical().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a09c92d08796c465ce5e3a3af56867b8d}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!get\-Cell@{get\-Cell}}
-\index{get\-Cell@{get\-Cell}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{get\-Cell}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Hurricane\-::\-Cell} $\ast$ C\-R\-L\-::\-Catalog\-::\-State\-::get\-Cell (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a09c92d08796c465ce5e3a3af56867b8d}
-{\bfseries Returns\-:} the associated {\bf Hurricane\-::\-Cell}. May be N\-U\-L\-L if it has not been loaded yet (loading is done on demand at \hyperlink{classCRL_1_1AllianceFramework}{Alliance\-Framework} level). \hypertarget{classCRL_1_1Catalog_1_1State_a9181d84d102ce74e640e5f3c558191ce}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!get\-Library@{get\-Library}}
-\index{get\-Library@{get\-Library}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{get\-Library}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Hurricane\-::\-Library} $\ast$ C\-R\-L\-::\-Catalog\-::\-State\-::get\-Library (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a9181d84d102ce74e640e5f3c558191ce}
-{\bfseries Returns\-:} the associated {\bf Hurricane\-::\-Library}. 
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a0cc5ef54176f8207ef4e723eed62c35e}\label{classCRL_1_1Catalog_1_1State_a0cc5ef54176f8207ef4e723eed62c35e}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!get\+Cell@{get\+Cell}}
+\index{get\+Cell@{get\+Cell}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{get\+Cell()}{getCell()}}
+{\footnotesize\ttfamily \textbf{ Hurricane\+::\+Cell} $\ast$ C\+R\+L\+::\+Catalog\+::\+State\+::get\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::get\-Library().
+{\bfseries Returns\+:} the associated \textbf{ Hurricane\+::\+Cell}. May be N\+U\+LL if it has not been loaded yet (loading is done on demand at \mbox{\hyperlink{classCRL_1_1AllianceFramework}{Alliance\+Framework}} level). \mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a89dad78f1829b1ee3177f61e2f73d6c6}\label{classCRL_1_1Catalog_1_1State_a89dad78f1829b1ee3177f61e2f73d6c6}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!get\+Library@{get\+Library}}
+\index{get\+Library@{get\+Library}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{get\+Library()}{getLibrary()}}
+{\footnotesize\ttfamily \textbf{ Hurricane\+::\+Library} $\ast$ C\+R\+L\+::\+Catalog\+::\+State\+::get\+Library (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a5b7fbd21f95bdb6ae1cf4b833c9c9729}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!get\-Depth@{get\-Depth}}
-\index{get\-Depth@{get\-Depth}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{get\-Depth}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int C\-R\-L\-::\-Catalog\-::\-State\-::get\-Depth (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a5b7fbd21f95bdb6ae1cf4b833c9c9729}
-{\bfseries Returns\-:} the hierarchical depth of the Cell. 
+{\bfseries Returns\+:} the associated \textbf{ Hurricane\+::\+Library}. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::get\-Depth().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::get\+Library().
 
-\hypertarget{classCRL_1_1Catalog_1_1State_a41fde67f1b88de06cae113a0d8108f25}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!merge@{merge}}
-\index{merge@{merge}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{merge}]{\setlength{\rightskip}{0pt plus 5cm}void C\-R\-L\-::\-Catalog\-::\-State\-::merge (
-\begin{DoxyParamCaption}
-\item[{const {\bf State} \&}]{other}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a41fde67f1b88de06cae113a0d8108f25}
-Fill in the void fields of the current \hyperlink{classCRL_1_1Catalog_1_1State}{State} by those from {\ttfamily other}. The non-\/void are not overriden. Flags are merged unconditionnaly. \hypertarget{classCRL_1_1Catalog_1_1State_a156714ad3fe2e5bb8ad8549d101526fe}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Cell@{set\-Cell}}
-\index{set\-Cell@{set\-Cell}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Cell}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Hurricane\-::\-Cell} $\ast$ C\-R\-L\-::\-Catalog\-::\-State\-::set\-Cell (
-\begin{DoxyParamCaption}
-\item[{{\bf Hurricane\-::\-Cell} $\ast$}]{cell}
-\end{DoxyParamCaption}
-)}}\label{classCRL_1_1Catalog_1_1State_a156714ad3fe2e5bb8ad8549d101526fe}
-Sets the Cell field. Returns the newly affected Cell. \hypertarget{classCRL_1_1Catalog_1_1State_a821ac2ae33f0045232cab612ab12f84b}{\index{C\-R\-L\-::\-Catalog\-::\-State@{C\-R\-L\-::\-Catalog\-::\-State}!set\-Library@{set\-Library}}
-\index{set\-Library@{set\-Library}!CRL::Catalog::State@{C\-R\-L\-::\-Catalog\-::\-State}}
-\subsubsection[{set\-Library}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Hurricane\-::\-Library} $\ast$ C\-R\-L\-::\-Catalog\-::\-State\-::set\-Library (
-\begin{DoxyParamCaption}
-\item[{{\bf Hurricane\-::\-Library} $\ast$}]{library}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCRL_1_1Catalog_1_1State_a821ac2ae33f0045232cab612ab12f84b}
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a0232ad6dcfda1e2801f788deaad83e08}\label{classCRL_1_1Catalog_1_1State_a0232ad6dcfda1e2801f788deaad83e08}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!get\+Depth@{get\+Depth}}
+\index{get\+Depth@{get\+Depth}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{get\+Depth()}{getDepth()}}
+{\footnotesize\ttfamily unsigned int C\+R\+L\+::\+Catalog\+::\+State\+::get\+Depth (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} the hierarchical depth of the Cell. 
+
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::get\+Depth().
+
+\mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a41fde67f1b88de06cae113a0d8108f25}\label{classCRL_1_1Catalog_1_1State_a41fde67f1b88de06cae113a0d8108f25}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!merge@{merge}}
+\index{merge@{merge}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{merge()}{merge()}}
+{\footnotesize\ttfamily void C\+R\+L\+::\+Catalog\+::\+State\+::merge (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Fill in the void fields of the current \mbox{\hyperlink{classCRL_1_1Catalog_1_1State}{State}} by those from {\ttfamily other}. The non-\/void are not overriden. Flags are merged unconditionnaly. \mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a156714ad3fe2e5bb8ad8549d101526fe}\label{classCRL_1_1Catalog_1_1State_a156714ad3fe2e5bb8ad8549d101526fe}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Cell@{set\+Cell}}
+\index{set\+Cell@{set\+Cell}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Cell()}{setCell()}}
+{\footnotesize\ttfamily \textbf{ Hurricane\+::\+Cell} $\ast$ C\+R\+L\+::\+Catalog\+::\+State\+::set\+Cell (\begin{DoxyParamCaption}\item[{\textbf{ Hurricane\+::\+Cell} $\ast$}]{cell }\end{DoxyParamCaption})}
+
+Sets the Cell field. Returns the newly affected Cell. \mbox{\Hypertarget{classCRL_1_1Catalog_1_1State_a821ac2ae33f0045232cab612ab12f84b}\label{classCRL_1_1Catalog_1_1State_a821ac2ae33f0045232cab612ab12f84b}} 
+\index{C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}!set\+Library@{set\+Library}}
+\index{set\+Library@{set\+Library}!C\+R\+L\+::\+Catalog\+::\+State@{C\+R\+L\+::\+Catalog\+::\+State}}
+\subsubsection{\texorpdfstring{set\+Library()}{setLibrary()}}
+{\footnotesize\ttfamily \textbf{ Hurricane\+::\+Library} $\ast$ C\+R\+L\+::\+Catalog\+::\+State\+::set\+Library (\begin{DoxyParamCaption}\item[{\textbf{ Hurricane\+::\+Library} $\ast$}]{library }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Sets the Library field. Returns the newly affected Library. 
 
-Referenced by C\-R\-L\-::\-Catalog\-Extension\-::set\-Library().
+Referenced by C\+R\+L\+::\+Catalog\+Extension\+::set\+Library().
 
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Catalog.\-h\item 
-Catalog.\-dox\end{DoxyCompactItemize}
+Catalog.\+h\item 
+Catalog.\+dox\end{DoxyCompactItemize}

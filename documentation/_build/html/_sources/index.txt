@@ -23,10 +23,11 @@ Contents:
    Unicorn/Unicorn.rst
    PythonCpp/index.rst
    RDS/index.rst
+   Analog/Analog.rst
+   Oroshi/Oroshi.rst
    lefapi/lefapi.rst
    defapi/defapi.rst
    lefdef/lefdef.rst
-
 
 
 Indices and tables

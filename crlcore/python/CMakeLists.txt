@@ -7,3 +7,5 @@
  install( FILES   helpers/Patterns.py               DESTINATION ${PYTHON_SITE_PACKAGES}/crlcore/helpers ) 
  install( FILES   helpers/Technology.py             DESTINATION ${PYTHON_SITE_PACKAGES}/crlcore/helpers ) 
  install( FILES   helpers/Debug.py                  DESTINATION ${PYTHON_SITE_PACKAGES}/crlcore/helpers ) 
+ install( FILES   helpers/Devices.py                DESTINATION ${PYTHON_SITE_PACKAGES}/crlcore/helpers ) 
+ install( FILES   helpers/AnalogTechno.py           DESTINATION ${PYTHON_SITE_PACKAGES}/crlcore/helpers ) 

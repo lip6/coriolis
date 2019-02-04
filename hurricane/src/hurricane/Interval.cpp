@@ -105,17 +105,20 @@ bool Interval::contains(const Interval& interval) const
     return !isEmpty() && !interval.isEmpty() && (_vMin <= interval._vMin) && (interval._vMax <= _vMax);
 }
 
-bool Interval::intersect(const Interval& interval) const
-// *****************************************************
+bool Interval::intersect(const Interval& interval, bool strict) const
+// ******************************************************************
 {
-    return !isEmpty() && !interval.isEmpty() && !((_vMax < interval._vMin) || (interval._vMax < _vMin));
+  if (isEmpty() or interval.isEmpty()) return false;
+  if ( (_vMax < interval._vMin) or (interval._vMax < _vMin) ) return false;
+
+  return not strict or ( (_vMax != interval._vMin) and (interval._vMax != _vMin) );
 }
 
 bool Interval::inferior(const Interval& interval, bool strict) const
 // *****************************************************************
 {
   if (_vMax < interval._vMin) return true;
-  return !strict && (_vMax == interval._vMin);
+  return not strict and (_vMax == interval._vMin);
 }
 
 bool Interval::superior(const Interval& interval, bool strict) const
@@ -234,8 +237,8 @@ string Interval::_getString() const
 // ********************************
 {
   if ( isEmpty() )
-    return "<" + _TName("Interval") + " (empty) " + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + ">";
-  return "<" + _TName("Interval") + " " + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + ">";
+    return "[empty " + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + "]";
+  return "[" + DbU::getValueString(_vMin) + " " + DbU::getValueString(_vMax) + "]";
 }
 
 Record* Interval::_getRecord() const

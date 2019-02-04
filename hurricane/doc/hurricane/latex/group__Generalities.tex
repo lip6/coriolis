@@ -1,6 +1,5 @@
-\hypertarget{group__Generalities}{\section{Generalities}
+\hypertarget{group__Generalities}{}\section{Generalities}
 \label{group__Generalities}\index{Generalities@{Generalities}}
-}
 
 
 The supporting paraphernalia.  
@@ -9,39 +8,41 @@ The supporting paraphernalia.
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-string \hyperlink{group__Generalities_ga93af87d1b7b19294382ba6dae51d0363}{Hurricane\-::demangle} (const char $\ast$symbol)
+string \mbox{\hyperlink{group__Generalities_ga93af87d1b7b19294382ba6dae51d0363}{Hurricane\+::demangle}} (const char $\ast$symbol)
 \item 
-string \hyperlink{group__Generalities_gae4be209e8a3f2227b0c7a22246817c6f}{Hurricane\-::demangle} (const type\-\_\-info \&info)
+string \mbox{\hyperlink{group__Generalities_gae4be209e8a3f2227b0c7a22246817c6f}{Hurricane\+::demangle}} (const type\+\_\+info \&info)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-The supporting paraphernalia. \hypertarget{group__Generalities_secGeneralitiesIntro}{}\subsection{Introduction}\label{group__Generalities_secGeneralitiesIntro}
+The supporting paraphernalia. 
+
+\hypertarget{group__Generalities_secGeneralitiesIntro}{}\subsection{Introduction}\label{group__Generalities_secGeneralitiesIntro}
 When documenting a given class, only member functions introducted by this class are documented, inherited ones are not repeated. This is made easier by the presence of the inheritance sub-\/tree containing the described object type.
 
-In the same way, some opetators or global functions are defined for all object types though they don't derive from a common base class. Those operators and generic functions will be described below.
+In the same way, some opetators or global functions are defined for all object types though they don\textquotesingle{}t derive from a common base class. Those operators and generic functions will be described below.
 
-terminology In the following, we will describe operators and functions applying to objects of different types. Therefore we will name \char`\"{}\-Object\char`\"{} any of those types.\hypertarget{group__Generalities_secGeneralitiesNammingConventions}{}\subsection{Namming conventions}\label{group__Generalities_secGeneralitiesNammingConventions}
-The name of \char`\"{}\-C macros\char`\"{} are written with lower case letters and underscores (examples \-: {\bfseries is\-\_\-a}, {\bfseries for\-\_\-each\-\_\-cell} or {\bfseries end\-\_\-for}) while the name of generic functions and member functions never use the underscore and always start with an Upper case letter (examples \-: {\bfseries Get\-Unit}, {\bfseries Get\-Master\-Cell}, {\bfseries Is\-Called\-By}).
+terminology In the following, we will describe operators and functions applying to objects of different types. Therefore we will name \char`\"{}\+Object\char`\"{} any of those types.\hypertarget{group__Generalities_secGeneralitiesNammingConventions}{}\subsection{Namming conventions}\label{group__Generalities_secGeneralitiesNammingConventions}
+The name of \char`\"{}\+C macros\char`\"{} are written with lower case letters and underscores (examples \+: {\bfseries is\+\_\+a}, {\bfseries for\+\_\+each\+\_\+cell} or {\bfseries end\+\_\+for}) while the name of generic functions and member functions never use the underscore and always start with an Upper case letter (examples \+: {\bfseries Get\+Unit}, {\bfseries Get\+Master\+Cell}, {\bfseries Is\+Called\+By}).
 
-\begin{DoxyParagraph}{Remark\-:}
-When examining {\ttfamily }.h include files for more detailed information you will find member functions which start with an underscore. {\bfseries While being \char`\"{}public\char`\"{} those functions must never be called upon}. In principle, only here'after documented functions should be used by the application programmer.
+\begin{DoxyParagraph}{Remark\+: When examining {\ttfamily }.h include files for more detailed information }
+you will find member functions which start with an underscore. {\bfseries While being \char`\"{}public\char`\"{} those functions must never be called upon}. In principle, only here\textquotesingle{}after documented functions should be used by the application programmer.
 \end{DoxyParagraph}
-\hypertarget{group__Generalities_secGeneralitiesGetString}{}\subsection{Get\-String}\label{group__Generalities_secGeneralitiesGetString}
+\hypertarget{group__Generalities_secGeneralitiesGetString}{}\subsection{Get\+String}\label{group__Generalities_secGeneralitiesGetString}
 
 \begin{DoxyCode}
 \textcolor{keywordtype}{string} GetString(\textcolor{keyword}{const} Object& \textcolor{keywordtype}{object});
 \textcolor{keywordtype}{string} GetString(\textcolor{keyword}{const} Object* \textcolor{keywordtype}{object});
 \end{DoxyCode}
- Thoses generic function allows you to get into a string an explicit description of any kind of \hyperlink{namespaceHurricane}{Hurricane} object pointer or reference. 
+ Thoses generic function allows you to get into a string an explicit description of any kind of \mbox{\hyperlink{namespaceHurricane}{Hurricane}} object pointer or reference. 
 \begin{DoxyCode}
 ostream& operator<< (ostream& stream, \textcolor{keyword}{const} Object& \textcolor{keywordtype}{object});
 ostream& operator<< (ostream& stream, \textcolor{keyword}{const} Object* \textcolor{keywordtype}{object});
 \end{DoxyCode}
- All \hyperlink{namespaceHurricane}{Hurricane} objects have printing operators for a reference or a pointer. Those printing operators use the generic function Hurricane\-::\-Get\-String() previously studied.\hypertarget{group__Generalities_secGeneralitiesPredicates}{}\subsection{Predicates}\label{group__Generalities_secGeneralitiesPredicates}
-The {\ttfamily bool} {\ttfamily is\-\_\-a$<$\-Type$\ast$$>$(object)} function.
+ All \mbox{\hyperlink{namespaceHurricane}{Hurricane}} objects have printing operators for a reference or a pointer. Those printing operators use the generic function Hurricane\+::\+Get\+String() previously studied.\hypertarget{group__Generalities_secGeneralitiesPredicates}{}\subsection{Predicates}\label{group__Generalities_secGeneralitiesPredicates}
+The {\ttfamily bool} {\ttfamily is\+\_\+a$<$\+Type$\ast$$>$(object)} function.
 
-For any kind of \hyperlink{namespaceHurricane}{Hurricane} object pertaining to a class with at least one \char`\"{}virtual\char`\"{} member, it is possible to determine if this object is a type or a sub-\/type of {\ttfamily $<$type$>$} as shown in the following example\-: 
+For any kind of \mbox{\hyperlink{namespaceHurricane}{Hurricane}} object pertaining to a class with at least one \char`\"{}virtual\char`\"{} member, it is possible to determine if this object is a type or a sub-\/type of {\ttfamily $<$type$>$} as shown in the following example\+: 
 \begin{DoxyCode}
 DataBase* dataBase = GetDataBase();
  
@@ -62,7 +63,7 @@ Cell* cell = Cell::Create(library, \textcolor{stringliteral}{"nand"});
 \}
 \end{DoxyCode}
 \hypertarget{group__Generalities_secGeneralitiesInheritance}{}\subsection{Inheritance}\label{group__Generalities_secGeneralitiesInheritance}
-All classes deriving directly from a base class define a new type named {\bfseries Inherit} which represents this base class. {\bfseries This one is unique because \hyperlink{namespaceHurricane}{Hurricane} doesn't use multiple inheritance}. This type is important because it allows to call upon the methods of the base class without knowing its name as shown in the following example\-: 
+All classes deriving directly from a base class define a new type named {\bfseries Inherit} which represents this base class. {\bfseries This one is unique because \mbox{\hyperlink{namespaceHurricane}{Hurricane}} doesn\textquotesingle{}t use multiple inheritance}. This type is important because it allows to call upon the methods of the base class without knowing its name as shown in the following example\+: 
 \begin{DoxyCode}
 \textcolor{keywordtype}{void} MyObject::Draw() const
 \textcolor{comment}{// ************************}
@@ -73,16 +74,16 @@ All classes deriving directly from a base class define a new type named {\bfseri
 \}
 \end{DoxyCode}
 \hypertarget{group__Generalities_secGeneralitiesTraceUtilities}{}\subsection{Trace utilities}\label{group__Generalities_secGeneralitiesTraceUtilities}
-The library provides some usefull utilities for generating trace printings with a natural indentation allowing better understanding of the processing sequences\-:
+The library provides some usefull utilities for generating trace printings with a natural indentation allowing better understanding of the processing sequences\+:
 
 
 \begin{DoxyItemize}
-\item {\bfseries Hurricane\-::in\-\_\-trace} 
-\item {\bfseries Hurricane\-::trace\-\_\-on} 
-\item {\bfseries Hurricane\-::trace\-\_\-off} 
-\item {\bfseries Hurricane\-::trace\-\_\-in} 
-\item {\bfseries Hurricane\-::trace\-\_\-out} 
-\item {\bfseries Hurricane\-::trace} 
+\item {\bfseries Hurricane\+::in\+\_\+trace} 
+\item {\bfseries Hurricane\+::trace\+\_\+on} 
+\item {\bfseries Hurricane\+::trace\+\_\+off} 
+\item {\bfseries Hurricane\+::trace\+\_\+in} 
+\item {\bfseries Hurricane\+::trace\+\_\+out} 
+\item {\bfseries Hurricane\+::trace} 
 \end{DoxyItemize}
 
 
@@ -99,37 +100,35 @@ The library provides some usefull utilities for generating trace printings with 
    trace\_out();
 \}
 \end{DoxyCode}
- \begin{DoxyParagraph}{Remark\-:}
-Debugger enthousiastic users will probably ignore this trace capability which presents the annoying need to be inserted into the code... For myself, I do prefer those facilities...
+ \begin{DoxyParagraph}{Remark\+: Debugger enthousiastic users will probably ignore this trace }
+capability which presents the annoying need to be inserted into the code... For myself, I do prefer those facilities...
 \end{DoxyParagraph}
 \hypertarget{group__Generalities_secGeneralitiesRemarks}{}\subsection{Remarks}\label{group__Generalities_secGeneralitiesRemarks}
-Many other global and generic functions exist. Each one will be studied within the description of the classes which create or specialize them (example\-: {\bfseries Hurricane\-::\-Get\-Unit} will be introduced with the Unit class and {\bfseries Hurricane\-::\-Get\-Collection} with the \hyperlink{classHurricane_1_1Collection}{Collection} class). 
+Many other global and generic functions exist. Each one will be studied within the description of the classes which create or specialize them (example\+: {\bfseries Hurricane\+::\+Get\+Unit} will be introduced with the Unit class and {\bfseries Hurricane\+::\+Get\+Collection} with the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} class). 
 
 \subsection{Function Documentation}
-\hypertarget{group__Generalities_ga93af87d1b7b19294382ba6dae51d0363}{\index{Generalities@{Generalities}!demangle@{demangle}}
+\mbox{\Hypertarget{group__Generalities_ga93af87d1b7b19294382ba6dae51d0363}\label{group__Generalities_ga93af87d1b7b19294382ba6dae51d0363}} 
+\index{Generalities@{Generalities}!demangle@{demangle}}
 \index{demangle@{demangle}!Generalities@{Generalities}}
-\subsubsection[{demangle}]{\setlength{\rightskip}{0pt plus 5cm}string Hurricane\-::demangle (
-\begin{DoxyParamCaption}
-\item[{const char $\ast$}]{symbol}
-\end{DoxyParamCaption}
-)}}\label{group__Generalities_ga93af87d1b7b19294382ba6dae51d0363}
+\subsubsection{\texorpdfstring{demangle()}{demangle()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily string Hurricane\+::demangle (\begin{DoxyParamCaption}\item[{const char $\ast$}]{symbol }\end{DoxyParamCaption})}
+
 Translate (demangle) a symbol from C++ ({\ttfamily gnu-\/v3}) internal format into a human readable {\ttfamily string}. 
 
-Referenced by Hurricane\-::\-Json\-Stack\-::as(), Hurricane\-::demangle(), Hurricane\-::\-Json\-Stack\-::push\-\_\-back(), and Hurricane\-::\-Json\-Stack\-::rhas().
+Referenced by Hurricane\+::\+Json\+Stack\+::as(), Hurricane\+::demangle(), Hurricane\+::\+Json\+Stack\+::push\+\_\+back(), and Hurricane\+::\+Json\+Stack\+::rhas().
 
-\hypertarget{group__Generalities_gae4be209e8a3f2227b0c7a22246817c6f}{\index{Generalities@{Generalities}!demangle@{demangle}}
+\mbox{\Hypertarget{group__Generalities_gae4be209e8a3f2227b0c7a22246817c6f}\label{group__Generalities_gae4be209e8a3f2227b0c7a22246817c6f}} 
+\index{Generalities@{Generalities}!demangle@{demangle}}
 \index{demangle@{demangle}!Generalities@{Generalities}}
-\subsubsection[{demangle}]{\setlength{\rightskip}{0pt plus 5cm}string Hurricane\-::demangle (
-\begin{DoxyParamCaption}
-\item[{const type\-\_\-info \&}]{info}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{group__Generalities_gae4be209e8a3f2227b0c7a22246817c6f}
+\subsubsection{\texorpdfstring{demangle()}{demangle()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily string Hurricane\+::demangle (\begin{DoxyParamCaption}\item[{const type\+\_\+info \&}]{info }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 
 \begin{DoxyParams}{Parameters}
-{\em info} & a type\-\_\-info structure as returned by {\ttfamily typeid()}.\\
+{\em info} & a type\+\_\+info structure as returned by {\ttfamily typeid()}.\\
 \hline
 \end{DoxyParams}
 Translate (demangle) a symbol from C++ ({\ttfamily gnu-\/v3}) internal format into a human readable {\ttfamily string}. 
 
-References Hurricane\-::demangle().
+References Hurricane\+::demangle().
 

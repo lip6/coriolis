@@ -1,255 +1,236 @@
-\hypertarget{classKite_1_1NegociateWindow}{\subsection{Negociate\-Window Class Reference}
-\label{classKite_1_1NegociateWindow}\index{Negociate\-Window@{Negociate\-Window}}
-}
+\hypertarget{classKite_1_1NegociateWindow}{}\subsection{Negociate\+Window Class Reference}
+\label{classKite_1_1NegociateWindow}\index{Negociate\+Window@{Negociate\+Window}}
 
 
-Perform the routing, main \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} manager.  
+Perform the routing, main \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} manager.  
 
 
 \subsubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage} \{ \\*
-\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eba19ccda3133337a5db697480ebfd6097f}{Negociation} = 1, 
-\\*
-\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604ebabdd3263d9492edf336ac52b4a9776b82}{Packing} = 2
+enum \mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage}} \{ \newline
+\mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eba19ccda3133337a5db697480ebfd6097f}{Negociation}} = 1, 
+\newline
+\mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604ebabdd3263d9492edf336ac52b4a9776b82}{Packing}} = 2
  \}
 \end{DoxyCompactItemize}
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_a3a80b6032f86a56bec74609034b3246f}{destroy} ()
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_a3a80b6032f86a56bec74609034b3246f}{destroy}} ()
 \item 
-bool \hyperlink{classKite_1_1NegociateWindow_a54258d41d3a6219a22c7b77b9961a763}{is\-Interrupted} () const 
+bool \mbox{\hyperlink{classKite_1_1NegociateWindow_aa1a08014471e19352a5efdabad3a87cb}{is\+Interrupted}} () const
 \item 
-\hyperlink{classKite_1_1KiteEngine}{Kite\-Engine} $\ast$ \hyperlink{classKite_1_1NegociateWindow_a9ccc00efc7079210bc25122921382da4}{get\-Kite\-Engine} () const 
+\mbox{\hyperlink{classKite_1_1KiteEngine}{Kite\+Engine}} $\ast$ \mbox{\hyperlink{classKite_1_1NegociateWindow_af7373bd3a4ee8fcf28a316230ed37fc0}{get\+Kite\+Engine}} () const
 \item 
-{\bf Hurricane\-::\-Cell} $\ast$ \hyperlink{classKite_1_1NegociateWindow_affb06b0d06faffd33fc3e5c34a11db70}{get\-Cell} () const 
+\textbf{ Hurricane\+::\+Cell} $\ast$ \mbox{\hyperlink{classKite_1_1NegociateWindow_a5ea0f667687d3a832f8c9806ccbe6792}{get\+Cell}} () const
 \item 
-const Katabatic\-::\-G\-Cell\-Vector \& \hyperlink{classKite_1_1NegociateWindow_a6ead45f726102e3650c8a08e89aada94}{get\-G\-Cells} () const 
+const Katabatic\+::\+G\+Cell\+Vector \& \mbox{\hyperlink{classKite_1_1NegociateWindow_ad8902daa6817d4275be5e3a37eb24424}{get\+G\+Cells}} () const
 \item 
-\hyperlink{classKite_1_1RoutingEventQueue}{Routing\-Event\-Queue} \& \hyperlink{classKite_1_1NegociateWindow_a80fc29623500b168c49ba14c49a00a76}{get\-Event\-Queue} ()
+\mbox{\hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}} \& \mbox{\hyperlink{classKite_1_1NegociateWindow_a80fc29623500b168c49ba14c49a00a76}{get\+Event\+Queue}} ()
 \item 
-\hyperlink{classKite_1_1RoutingEventHistory}{Routing\-Event\-History} \& \hyperlink{classKite_1_1NegociateWindow_a990d738cf85fa016589edaa08d736d4f}{get\-Event\-History} ()
+\mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}} \& \mbox{\hyperlink{classKite_1_1NegociateWindow_a990d738cf85fa016589edaa08d736d4f}{get\+Event\+History}} ()
 \item 
-\hyperlink{classKite_1_1RoutingEventLoop}{Routing\-Event\-Loop} \& \hyperlink{classKite_1_1NegociateWindow_a9a41d40e5e378b9bcb99048262ec15a6}{get\-Event\-Loop} ()
+\mbox{\hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}} \& \mbox{\hyperlink{classKite_1_1NegociateWindow_a9a41d40e5e378b9bcb99048262ec15a6}{get\+Event\+Loop}} ()
 \item 
-\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage} \hyperlink{classKite_1_1NegociateWindow_a519f2ce03a3d5e8e76cca1c41422389c}{get\-Stage} () const 
+\mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage}} \mbox{\hyperlink{classKite_1_1NegociateWindow_aeb77fbb60f78895b010f7a12658864a6}{get\+Stage}} () const
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_a329dbc5bc549e3fe354996368dbf7113}{set\-G\-Cells} (const Katabatic\-::\-G\-Cell\-Vector \&)
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_a329dbc5bc549e3fe354996368dbf7113}{set\+G\+Cells}} (const Katabatic\+::\+G\+Cell\+Vector \&)
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_a7c0d10dab2d32985e942b7678dcccafd}{set\-Interrupt} (bool)
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_a7c0d10dab2d32985e942b7678dcccafd}{set\+Interrupt}} (bool)
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_aad6b43971b936f7ea003d3ad0fd07532}{set\-Stage} (\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage})
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_aad6b43971b936f7ea003d3ad0fd07532}{set\+Stage}} (\mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage}})
 \item 
-double \hyperlink{classKite_1_1NegociateWindow_a4936106670361df6b6f3ef0b6088c9dc}{compute\-Wirelength} ()
+double \mbox{\hyperlink{classKite_1_1NegociateWindow_a4936106670361df6b6f3ef0b6088c9dc}{compute\+Wirelength}} ()
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1NegociateWindow_a7bf31fcd4e4007e62454689ef7c553fc}{create\-Track\-Segment} ({\bf Auto\-Segment} $\ast$, unsigned int flags)
+\mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$ \mbox{\hyperlink{classKite_1_1NegociateWindow_a7bf31fcd4e4007e62454689ef7c553fc}{create\+Track\+Segment}} (\textbf{ Auto\+Segment} $\ast$, unsigned int flags)
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_a51ba8e6a122c0cb93174027658cade63}{add\-Routing\-Event} (\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$, unsigned int level)
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_a51ba8e6a122c0cb93174027658cade63}{add\+Routing\+Event}} (\mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$, unsigned int level)
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_acad8f73494d122463d65797d337ce275}{reschedule\-Event} (\hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} $\ast$, unsigned int level)
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_acad8f73494d122463d65797d337ce275}{reschedule\+Event}} (\mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$, unsigned int level)
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_a61e848b73b597f54e2e83e13eb70ff83}{run} (unsigned int flags)
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_a61e848b73b597f54e2e83e13eb70ff83}{run}} (unsigned int flags)
 \item 
-void \hyperlink{classKite_1_1NegociateWindow_aef117fac410e00a57de148dec161d783}{print\-Statistics} () const 
+void \mbox{\hyperlink{classKite_1_1NegociateWindow_a8d3dfaa30cedabd6b64977827ac989d8}{print\+Statistics}} () const
 \end{DoxyCompactItemize}
 \subsubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{classKite_1_1NegociateWindow}{Negociate\-Window} $\ast$ \hyperlink{classKite_1_1NegociateWindow_ad9c37ea1398a6dfa332cb297141dc1c4}{create} (\hyperlink{classKite_1_1KiteEngine}{Kite\-Engine} $\ast$)
+static \mbox{\hyperlink{classKite_1_1NegociateWindow}{Negociate\+Window}} $\ast$ \mbox{\hyperlink{classKite_1_1NegociateWindow_ad9c37ea1398a6dfa332cb297141dc1c4}{create}} (\mbox{\hyperlink{classKite_1_1KiteEngine}{Kite\+Engine}} $\ast$)
 \end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-Perform the routing, main \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} manager. 
+Perform the routing, main \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} manager. 
 
-This object perform the routing. That is creates all the initial \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}, load them into the queue and then process the queue until it is empty, that is, the routing is finished.
+This object perform the routing. That is creates all the initial \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}, load them into the queue and then process the queue until it is empty, that is, the routing is finished.
 
-This object is the owner of the \hyperlink{classKite_1_1RoutingEventQueue}{Routing\-Event\-Queue}, \hyperlink{classKite_1_1RoutingEventHistory}{Routing\-Event\-History} and \hyperlink{classKite_1_1RoutingEventLoop}{Routing\-Event\-Loop} used all troughout \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} and \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}. 
+This object is the owner of the \mbox{\hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}}, \mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}} and \mbox{\hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}} used all troughout \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} and \mbox{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}}. 
 
 \subsubsection{Member Enumeration Documentation}
-\hypertarget{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!Stage@{Stage}}
-\index{Stage@{Stage}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{Stage}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Stage}}}\label{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}
-The state under which the router is operating. \begin{Desc}
-\item[Enumerator]\par
-\begin{description}
-\index{Negociation@{Negociation}!Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}}\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!Negociation@{Negociation}}\item[{\em 
-\hypertarget{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eba19ccda3133337a5db697480ebfd6097f}{Negociation}\label{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eba19ccda3133337a5db697480ebfd6097f}
-}]The normal mode, priority negociation with ripup. \index{Packing@{Packing}!Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}}\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!Packing@{Packing}}\item[{\em 
-\hypertarget{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604ebabdd3263d9492edf336ac52b4a9776b82}{Packing}\label{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604ebabdd3263d9492edf336ac52b4a9776b82}
-}]Try to find a better placement for segment but just by looking for other fully free spaces. No ripup is performed. \end{description}
-\end{Desc}
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}\label{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!Stage@{Stage}}
+\index{Stage@{Stage}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{Stage}{Stage}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage}}}
+
+The state under which the router is operating. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Negociation@{Negociation}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!Negociation@{Negociation}}}\mbox{\Hypertarget{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eba19ccda3133337a5db697480ebfd6097f}\label{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eba19ccda3133337a5db697480ebfd6097f}} 
+Negociation&The normal mode, priority negociation with ripup. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Packing@{Packing}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!Packing@{Packing}}}\mbox{\Hypertarget{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604ebabdd3263d9492edf336ac52b4a9776b82}\label{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604ebabdd3263d9492edf336ac52b4a9776b82}} 
+Packing&Try to find a better placement for segment but just by looking for other fully free spaces. No ripup is performed. \\
+\hline
+
+\end{DoxyEnumFields}
 
 
 \subsubsection{Member Function Documentation}
-\hypertarget{classKite_1_1NegociateWindow_ad9c37ea1398a6dfa332cb297141dc1c4}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!create@{create}}
-\index{create@{create}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{create}]{\setlength{\rightskip}{0pt plus 5cm}create (
-\begin{DoxyParamCaption}
-\item[{{\bf Kite\-Engine} $\ast$}]{kite}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classKite_1_1NegociateWindow_ad9c37ea1398a6dfa332cb297141dc1c4}
-The publicly avalaible contructor. Route the whole are defined by the \hyperlink{namespaceKite}{Kite} associated Cell abutment box. \hypertarget{classKite_1_1NegociateWindow_a3a80b6032f86a56bec74609034b3246f}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!destroy@{destroy}}
-\index{destroy@{destroy}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{destroy}]{\setlength{\rightskip}{0pt plus 5cm}void destroy (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1NegociateWindow_a3a80b6032f86a56bec74609034b3246f}
-The publicly avalaible destructor. \hypertarget{classKite_1_1NegociateWindow_a54258d41d3a6219a22c7b77b9961a763}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!is\-Interrupted@{is\-Interrupted}}
-\index{is\-Interrupted@{is\-Interrupted}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{is\-Interrupted}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Interrupted (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a54258d41d3a6219a22c7b77b9961a763}
-{\bfseries Returns\-:} {\bfseries true} if the \hyperlink{classKite_1_1NegociateWindow}{Negociate\-Window} has received an interrupt request. \hypertarget{classKite_1_1NegociateWindow_a9ccc00efc7079210bc25122921382da4}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-Kite\-Engine@{get\-Kite\-Engine}}
-\index{get\-Kite\-Engine@{get\-Kite\-Engine}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-Kite\-Engine}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Kite\-Engine} $\ast$ get\-Kite\-Engine (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a9ccc00efc7079210bc25122921382da4}
-{\bfseries Returns\-:} The associated \hyperlink{classKite_1_1KiteEngine}{Kite\-Engine}. 
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_ad9c37ea1398a6dfa332cb297141dc1c4}\label{classKite_1_1NegociateWindow_ad9c37ea1398a6dfa332cb297141dc1c4}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!create@{create}}
+\index{create@{create}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1KiteEngine}{Kite\+Engine}} $\ast$}]{kite }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-Referenced by Negociate\-Window\-::print\-Statistics().
+The publicly avalaible contructor. Route the whole are defined by the \mbox{\hyperlink{namespaceKite}{Kite}} associated Cell abutment box. \mbox{\Hypertarget{classKite_1_1NegociateWindow_a3a80b6032f86a56bec74609034b3246f}\label{classKite_1_1NegociateWindow_a3a80b6032f86a56bec74609034b3246f}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!destroy@{destroy}}
+\index{destroy@{destroy}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{destroy()}{destroy()}}
+{\footnotesize\ttfamily void destroy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-\hypertarget{classKite_1_1NegociateWindow_affb06b0d06faffd33fc3e5c34a11db70}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-Cell@{get\-Cell}}
-\index{get\-Cell@{get\-Cell}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-Cell}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Hurricane\-::\-Cell} $\ast$ get\-Cell (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const}}\label{classKite_1_1NegociateWindow_affb06b0d06faffd33fc3e5c34a11db70}
-{\bfseries Returns\-:} The associated Cell. 
+The publicly avalaible destructor. \mbox{\Hypertarget{classKite_1_1NegociateWindow_aa1a08014471e19352a5efdabad3a87cb}\label{classKite_1_1NegociateWindow_aa1a08014471e19352a5efdabad3a87cb}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!is\+Interrupted@{is\+Interrupted}}
+\index{is\+Interrupted@{is\+Interrupted}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{is\+Interrupted()}{isInterrupted()}}
+{\footnotesize\ttfamily bool is\+Interrupted (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Referenced by Negociate\-Window\-::print\-Statistics().
+{\bfseries Returns\+:} {\bfseries true} if the \mbox{\hyperlink{classKite_1_1NegociateWindow}{Negociate\+Window}} has received an interrupt request. \mbox{\Hypertarget{classKite_1_1NegociateWindow_af7373bd3a4ee8fcf28a316230ed37fc0}\label{classKite_1_1NegociateWindow_af7373bd3a4ee8fcf28a316230ed37fc0}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+Kite\+Engine@{get\+Kite\+Engine}}
+\index{get\+Kite\+Engine@{get\+Kite\+Engine}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+Kite\+Engine()}{getKiteEngine()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1KiteEngine}{Kite\+Engine}} $\ast$ get\+Kite\+Engine (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classKite_1_1NegociateWindow_a6ead45f726102e3650c8a08e89aada94}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-G\-Cells@{get\-G\-Cells}}
-\index{get\-G\-Cells@{get\-G\-Cells}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-G\-Cells}]{\setlength{\rightskip}{0pt plus 5cm}const Katabatic\-::\-G\-Cell\-Vector \& get\-G\-Cells (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a6ead45f726102e3650c8a08e89aada94}
-{\bfseries Returns\-:} A Copy of the vector of G\-Cell from Katabatic\-Engine. The vector is copied but not the G\-Cell themselves (shallow copy). \hypertarget{classKite_1_1NegociateWindow_a80fc29623500b168c49ba14c49a00a76}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-Event\-Queue@{get\-Event\-Queue}}
-\index{get\-Event\-Queue@{get\-Event\-Queue}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-Event\-Queue}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event\-Queue} \& get\-Event\-Queue (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a80fc29623500b168c49ba14c49a00a76}
-{\bfseries Returns\-:} The \hyperlink{classKite_1_1RoutingEventQueue}{Routing\-Event\-Queue}. \hypertarget{classKite_1_1NegociateWindow_a990d738cf85fa016589edaa08d736d4f}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-Event\-History@{get\-Event\-History}}
-\index{get\-Event\-History@{get\-Event\-History}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-Event\-History}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event\-History} \& get\-Event\-History (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a990d738cf85fa016589edaa08d736d4f}
-{\bfseries Returns\-:} The \hyperlink{classKite_1_1RoutingEventHistory}{Routing\-Event\-History}. \hypertarget{classKite_1_1NegociateWindow_a9a41d40e5e378b9bcb99048262ec15a6}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-Event\-Loop@{get\-Event\-Loop}}
-\index{get\-Event\-Loop@{get\-Event\-Loop}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-Event\-Loop}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Routing\-Event\-Loop} \& get\-Event\-Loop (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a9a41d40e5e378b9bcb99048262ec15a6}
-{\bfseries Returns\-:} The \hyperlink{classKite_1_1RoutingEventLoop}{Routing\-Event\-Loop}. \hypertarget{classKite_1_1NegociateWindow_a519f2ce03a3d5e8e76cca1c41422389c}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!get\-Stage@{get\-Stage}}
-\index{get\-Stage@{get\-Stage}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{get\-Stage}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Stage} get\-Stage (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a519f2ce03a3d5e8e76cca1c41422389c}
-{\bfseries Returns\-:} The stage (Negicate\-Window\-::\-Stage) into which the \hyperlink{classKite_1_1NegociateWindow}{Negociate\-Window} is running. \hypertarget{classKite_1_1NegociateWindow_a329dbc5bc549e3fe354996368dbf7113}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!set\-G\-Cells@{set\-G\-Cells}}
-\index{set\-G\-Cells@{set\-G\-Cells}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{set\-G\-Cells}]{\setlength{\rightskip}{0pt plus 5cm}void set\-G\-Cells (
-\begin{DoxyParamCaption}
-\item[{const Katabatic\-::\-G\-Cell\-Vector \&}]{v}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1NegociateWindow_a329dbc5bc549e3fe354996368dbf7113}
-Sets the G\-Cell vector from Katabatic\-Engine (perform a shallow copy). \hypertarget{classKite_1_1NegociateWindow_a7c0d10dab2d32985e942b7678dcccafd}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!set\-Interrupt@{set\-Interrupt}}
-\index{set\-Interrupt@{set\-Interrupt}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{set\-Interrupt}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Interrupt (
-\begin{DoxyParamCaption}
-\item[{bool}]{state}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_a7c0d10dab2d32985e942b7678dcccafd}
-Sets or unset the interruption flag. \hypertarget{classKite_1_1NegociateWindow_aad6b43971b936f7ea003d3ad0fd07532}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!set\-Stage@{set\-Stage}}
-\index{set\-Stage@{set\-Stage}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{set\-Stage}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Stage (
-\begin{DoxyParamCaption}
-\item[{{\bf Stage}}]{stage}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_aad6b43971b936f7ea003d3ad0fd07532}
-Set the stage (\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Negociate\-Window\-::\-Stage}) under which we are running. \hypertarget{classKite_1_1NegociateWindow_a4936106670361df6b6f3ef0b6088c9dc}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!compute\-Wirelength@{compute\-Wirelength}}
-\index{compute\-Wirelength@{compute\-Wirelength}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{compute\-Wirelength}]{\setlength{\rightskip}{0pt plus 5cm}double compute\-Wirelength (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1NegociateWindow_a4936106670361df6b6f3ef0b6088c9dc}
+{\bfseries Returns\+:} The associated \mbox{\hyperlink{classKite_1_1KiteEngine}{Kite\+Engine}}. 
+
+Referenced by Negociate\+Window\+::print\+Statistics().
+
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_a5ea0f667687d3a832f8c9806ccbe6792}\label{classKite_1_1NegociateWindow_a5ea0f667687d3a832f8c9806ccbe6792}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+Cell@{get\+Cell}}
+\index{get\+Cell@{get\+Cell}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+Cell()}{getCell()}}
+{\footnotesize\ttfamily \textbf{ Hurricane\+::\+Cell} $\ast$ get\+Cell (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+{\bfseries Returns\+:} The associated Cell. 
+
+Referenced by Negociate\+Window\+::print\+Statistics().
+
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_ad8902daa6817d4275be5e3a37eb24424}\label{classKite_1_1NegociateWindow_ad8902daa6817d4275be5e3a37eb24424}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+G\+Cells@{get\+G\+Cells}}
+\index{get\+G\+Cells@{get\+G\+Cells}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+G\+Cells()}{getGCells()}}
+{\footnotesize\ttfamily const Katabatic\+::\+G\+Cell\+Vector \& get\+G\+Cells (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} A Copy of the vector of G\+Cell from Katabatic\+Engine. The vector is copied but not the G\+Cell themselves (shallow copy). \mbox{\Hypertarget{classKite_1_1NegociateWindow_a80fc29623500b168c49ba14c49a00a76}\label{classKite_1_1NegociateWindow_a80fc29623500b168c49ba14c49a00a76}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+Event\+Queue@{get\+Event\+Queue}}
+\index{get\+Event\+Queue@{get\+Event\+Queue}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+Event\+Queue()}{getEventQueue()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}} \& get\+Event\+Queue (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}}. \mbox{\Hypertarget{classKite_1_1NegociateWindow_a990d738cf85fa016589edaa08d736d4f}\label{classKite_1_1NegociateWindow_a990d738cf85fa016589edaa08d736d4f}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+Event\+History@{get\+Event\+History}}
+\index{get\+Event\+History@{get\+Event\+History}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+Event\+History()}{getEventHistory()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}} \& get\+Event\+History (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classKite_1_1RoutingEventHistory}{Routing\+Event\+History}}. \mbox{\Hypertarget{classKite_1_1NegociateWindow_a9a41d40e5e378b9bcb99048262ec15a6}\label{classKite_1_1NegociateWindow_a9a41d40e5e378b9bcb99048262ec15a6}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+Event\+Loop@{get\+Event\+Loop}}
+\index{get\+Event\+Loop@{get\+Event\+Loop}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+Event\+Loop()}{getEventLoop()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}} \& get\+Event\+Loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The \mbox{\hyperlink{classKite_1_1RoutingEventLoop}{Routing\+Event\+Loop}}. \mbox{\Hypertarget{classKite_1_1NegociateWindow_aeb77fbb60f78895b010f7a12658864a6}\label{classKite_1_1NegociateWindow_aeb77fbb60f78895b010f7a12658864a6}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!get\+Stage@{get\+Stage}}
+\index{get\+Stage@{get\+Stage}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{get\+Stage()}{getStage()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage}} get\+Stage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The stage (Negicate\+Window\+::\+Stage) into which the \mbox{\hyperlink{classKite_1_1NegociateWindow}{Negociate\+Window}} is running. \mbox{\Hypertarget{classKite_1_1NegociateWindow_a329dbc5bc549e3fe354996368dbf7113}\label{classKite_1_1NegociateWindow_a329dbc5bc549e3fe354996368dbf7113}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!set\+G\+Cells@{set\+G\+Cells}}
+\index{set\+G\+Cells@{set\+G\+Cells}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{set\+G\+Cells()}{setGCells()}}
+{\footnotesize\ttfamily void set\+G\+Cells (\begin{DoxyParamCaption}\item[{const Katabatic\+::\+G\+Cell\+Vector \&}]{v }\end{DoxyParamCaption})}
+
+Sets the G\+Cell vector from Katabatic\+Engine (perform a shallow copy). \mbox{\Hypertarget{classKite_1_1NegociateWindow_a7c0d10dab2d32985e942b7678dcccafd}\label{classKite_1_1NegociateWindow_a7c0d10dab2d32985e942b7678dcccafd}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!set\+Interrupt@{set\+Interrupt}}
+\index{set\+Interrupt@{set\+Interrupt}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{set\+Interrupt()}{setInterrupt()}}
+{\footnotesize\ttfamily void set\+Interrupt (\begin{DoxyParamCaption}\item[{bool}]{state }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Sets or unset the interruption flag. \mbox{\Hypertarget{classKite_1_1NegociateWindow_aad6b43971b936f7ea003d3ad0fd07532}\label{classKite_1_1NegociateWindow_aad6b43971b936f7ea003d3ad0fd07532}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!set\+Stage@{set\+Stage}}
+\index{set\+Stage@{set\+Stage}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{set\+Stage()}{setStage()}}
+{\footnotesize\ttfamily void set\+Stage (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Stage}}}]{stage }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Set the stage (\mbox{\hyperlink{classKite_1_1NegociateWindow_aca8133200c1122e29b87b314d82604eb}{Negociate\+Window\+::\+Stage}}) under which we are running. \mbox{\Hypertarget{classKite_1_1NegociateWindow_a4936106670361df6b6f3ef0b6088c9dc}\label{classKite_1_1NegociateWindow_a4936106670361df6b6f3ef0b6088c9dc}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!compute\+Wirelength@{compute\+Wirelength}}
+\index{compute\+Wirelength@{compute\+Wirelength}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{compute\+Wirelength()}{computeWirelength()}}
+{\footnotesize\ttfamily double compute\+Wirelength (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
 Compute the total wirelength of the circuit. It is not completly accurate because overlaps are not took into accounts. 
 
-Referenced by Negociate\-Window\-::run().
+Referenced by Negociate\+Window\+::run().
 
-\hypertarget{classKite_1_1NegociateWindow_a7bf31fcd4e4007e62454689ef7c553fc}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!create\-Track\-Segment@{create\-Track\-Segment}}
-\index{create\-Track\-Segment@{create\-Track\-Segment}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{create\-Track\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Element} $\ast$ create\-Track\-Segment (
-\begin{DoxyParamCaption}
-\item[{{\bf Auto\-Segment} $\ast$}]{auto\-Segment, }
-\item[{unsigned int}]{flags}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1NegociateWindow_a7bf31fcd4e4007e62454689ef7c553fc}
-Build a \hyperlink{classKite_1_1TrackSegment}{Track\-Segment} from the {\bf Katabatic\-::\-Auto\-Segment}. If {\ttfamily flags} contains Kite\-::\-Kt\-Loading\-Stage then assume that we are in the initial loading stage (constructor). \hypertarget{classKite_1_1NegociateWindow_a51ba8e6a122c0cb93174027658cade63}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!add\-Routing\-Event@{add\-Routing\-Event}}
-\index{add\-Routing\-Event@{add\-Routing\-Event}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{add\-Routing\-Event}]{\setlength{\rightskip}{0pt plus 5cm}void add\-Routing\-Event (
-\begin{DoxyParamCaption}
-\item[{{\bf Track\-Element} $\ast$}]{segment, }
-\item[{unsigned int}]{level}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1NegociateWindow_a51ba8e6a122c0cb93174027658cade63}
-Create a new \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} from \hyperlink{classKite_1_1TrackElement}{Track\-Element} (if it doesn't already exists) and insert it into the queue with priority {\ttfamily level}. 
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_a7bf31fcd4e4007e62454689ef7c553fc}\label{classKite_1_1NegociateWindow_a7bf31fcd4e4007e62454689ef7c553fc}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!create\+Track\+Segment@{create\+Track\+Segment}}
+\index{create\+Track\+Segment@{create\+Track\+Segment}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{create\+Track\+Segment()}{createTrackSegment()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$ create\+Track\+Segment (\begin{DoxyParamCaption}\item[{\textbf{ Auto\+Segment} $\ast$}]{auto\+Segment,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
 
-Referenced by Track\-Segment\-::reschedule().
+Build a \mbox{\hyperlink{classKite_1_1TrackSegment}{Track\+Segment}} from the \textbf{ Katabatic\+::\+Auto\+Segment}. If {\ttfamily flags} contains Kite\+::\+Kt\+Loading\+Stage then assume that we are in the initial loading stage (constructor). \mbox{\Hypertarget{classKite_1_1NegociateWindow_a51ba8e6a122c0cb93174027658cade63}\label{classKite_1_1NegociateWindow_a51ba8e6a122c0cb93174027658cade63}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!add\+Routing\+Event@{add\+Routing\+Event}}
+\index{add\+Routing\+Event@{add\+Routing\+Event}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{add\+Routing\+Event()}{addRoutingEvent()}}
+{\footnotesize\ttfamily void add\+Routing\+Event (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$}]{segment,  }\item[{unsigned int}]{level }\end{DoxyParamCaption})}
 
-\hypertarget{classKite_1_1NegociateWindow_acad8f73494d122463d65797d337ce275}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!reschedule\-Event@{reschedule\-Event}}
-\index{reschedule\-Event@{reschedule\-Event}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{reschedule\-Event}]{\setlength{\rightskip}{0pt plus 5cm}void reschedule\-Event (
-\begin{DoxyParamCaption}
-\item[{{\bf Routing\-Event} $\ast$}]{event, }
-\item[{unsigned int}]{level}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1NegociateWindow_acad8f73494d122463d65797d337ce275}
+Create a new \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} from \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} (if it doesn\textquotesingle{}t already exists) and insert it into the queue with priority {\ttfamily level}. 
+
+Referenced by Track\+Segment\+::reschedule().
+
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_acad8f73494d122463d65797d337ce275}\label{classKite_1_1NegociateWindow_acad8f73494d122463d65797d337ce275}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!reschedule\+Event@{reschedule\+Event}}
+\index{reschedule\+Event@{reschedule\+Event}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{reschedule\+Event()}{rescheduleEvent()}}
+{\footnotesize\ttfamily void reschedule\+Event (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} $\ast$}]{event,  }\item[{unsigned int}]{level }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 Reschedule an event into the queue, with priority {\ttfamily level}. 
 
-Referenced by Track\-Segment\-::reschedule().
+Referenced by Track\+Segment\+::reschedule().
 
-\hypertarget{classKite_1_1NegociateWindow_a61e848b73b597f54e2e83e13eb70ff83}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!run@{run}}
-\index{run@{run}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{run}]{\setlength{\rightskip}{0pt plus 5cm}void run (
-\begin{DoxyParamCaption}
-\item[{unsigned int}]{flags}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1NegociateWindow_a61e848b73b597f54e2e83e13eb70ff83}
+\mbox{\Hypertarget{classKite_1_1NegociateWindow_a61e848b73b597f54e2e83e13eb70ff83}\label{classKite_1_1NegociateWindow_a61e848b73b597f54e2e83e13eb70ff83}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!run@{run}}
+\index{run@{run}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void run (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+
 Perform the routing.
 
-{\ttfamily slow\-Motion} is not implemented yet. \hypertarget{classKite_1_1NegociateWindow_aef117fac410e00a57de148dec161d783}{\index{Kite\-::\-Negociate\-Window@{Kite\-::\-Negociate\-Window}!print\-Statistics@{print\-Statistics}}
-\index{print\-Statistics@{print\-Statistics}!Kite::NegociateWindow@{Kite\-::\-Negociate\-Window}}
-\paragraph[{print\-Statistics}]{\setlength{\rightskip}{0pt plus 5cm}void print\-Statistics (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const}}\label{classKite_1_1NegociateWindow_aef117fac410e00a57de148dec161d783}
+{\ttfamily slow\+Motion} is not implemented yet. \mbox{\Hypertarget{classKite_1_1NegociateWindow_a8d3dfaa30cedabd6b64977827ac989d8}\label{classKite_1_1NegociateWindow_a8d3dfaa30cedabd6b64977827ac989d8}} 
+\index{Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}!print\+Statistics@{print\+Statistics}}
+\index{print\+Statistics@{print\+Statistics}!Kite\+::\+Negociate\+Window@{Kite\+::\+Negociate\+Window}}
+\paragraph{\texorpdfstring{print\+Statistics()}{printStatistics()}}
+{\footnotesize\ttfamily void print\+Statistics (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
 Display some statistics about the routing, compute the internal complete statistics. 
 
-Referenced by Negociate\-Window\-::run().
+Referenced by Negociate\+Window\+::run().
 
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Negociate\-Window.\-h\item 
-Negociate\-Window.\-cpp\item 
-Negociate\-Window.\-dox\end{DoxyCompactItemize}
+Negociate\+Window.\+h\item 
+Negociate\+Window.\+cpp\item 
+Negociate\+Window.\+dox\end{DoxyCompactItemize}

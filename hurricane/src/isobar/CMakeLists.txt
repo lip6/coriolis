@@ -77,6 +77,11 @@
                                    PyVertical.cpp
                                    PyQueryMask.cpp
                                    PyQuery.cpp
+                                   PyDeviceDescriptor.cpp
+                                   PyRule.cpp
+                                   PyUnitRule.cpp
+                                   PyPhysicalRule.cpp
+                                   PyTwoLayersPhysicalRule.cpp
                       )	    
                    set( pyIncludes hurricane/isobar/ProxyProperty.h
                                    hurricane/isobar/PyBreakpoint.h
@@ -147,6 +152,11 @@
                                    hurricane/isobar/PyVertical.h
                                    hurricane/isobar/PyQueryMask.h
                                    hurricane/isobar/PyQuery.h
+                                   hurricane/isobar/PyDeviceDescriptor.h
+                                   hurricane/isobar/PyRule.h
+                                   hurricane/isobar/PyUnitRule.h
+                                   hurricane/isobar/PyPhysicalRule.h
+                                   hurricane/isobar/PyTwoLayersPhysicalRule.h
                       )
 
                    set( depLibs    hurricane

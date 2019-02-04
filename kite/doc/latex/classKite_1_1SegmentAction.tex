@@ -1,232 +1,268 @@
-\hypertarget{classKite_1_1SegmentAction}{\subsection{Segment\-Action Class Reference}
-\label{classKite_1_1SegmentAction}\index{Segment\-Action@{Segment\-Action}}
-}
+\hypertarget{classKite_1_1SegmentAction}{}\subsection{Segment\+Action Class Reference}
+\label{classKite_1_1SegmentAction}\index{Segment\+Action@{Segment\+Action}}
 
 
-Store request for an event to be generated on a \hyperlink{classKite_1_1TrackElement}{Track\-Element}.  
+Store request for an event to be generated on a \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}}.  
 
 
 \subsubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Type} \{ \\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aacd3ef9d889b306ca7e7bdcd37ba659a}{Self} = (1$<$$<$ 0), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a75f0c3176be2226dfe8ad164a0a034a2}{Other} = (1$<$$<$ 1), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a02330ea306385a34162a1e620a1c37df}{Perpandicular} = (1$<$$<$ 2), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8c1f14f07c9eedcbbb2cc61988030646}{Insert} = (1$<$$<$ 3), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a08900dc237aef7e4a7f50d2ba1ffd748}{Ripup} = (1$<$$<$ 4), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fab9c042ba690bdb62d3c34eab8472d}{Riped\-By\-Local} = (1$<$$<$ 5), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a9e16316a13899c2e02dd49cf2fb6e91f}{Reset\-Ripup} = (1$<$$<$ 6), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a6c00c46010d69247a3edc18b70d700fa}{To\-Ripup\-Limit} = (1$<$$<$ 7)
-, \\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a46c4ca7a69b5eae786be28f75523b78b}{Axis\-Hint} = (1$<$$<$ 9), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fe6b9a3b3816492b9a99ab6689c4b20}{Packing\-Mode} = (1$<$$<$10), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8b27ea2f99b2e6446eac77626aef0711}{To\-State} = (1$<$$<$11), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7adb9a006587bc8a635ffdd034c53a546f}{Event\-Level1} = (1$<$$<$12), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a5bad02627a87d3e38d5812363e46d7b1}{Event\-Level2} = (1$<$$<$13), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}{Event\-Level3} = (1$<$$<$14), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Event\-Level4} = (1$<$$<$15), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a432d5152211bf70a2d561b8bda34c9e0}{Event\-Level5} = (1$<$$<$16), 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}{Self\-Insert} = Self $|$\-Insert, 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}{Self\-Ripup} = Self $|$\-Ripup, 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}{Self\-Ripup\-Perpand} = Self $|$\-Ripup$|$\-Perpandicular, 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}{Self\-Ripup\-Perpand\-With\-Axis\-Hint} = Self $|$\-Ripup$|$\-Perpandicular$|$\-Event\-Level4$|$\-Axis\-Hint, 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}{Other\-Ripup} = Other$|$\-Ripup, 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}{Other\-Ripup\-Perpand\-And\-Push\-Aside} = Other$|$\-Ripup$|$\-Perpandicular$|$\-Event\-Level3$|$\-Axis\-Hint, 
-\\*
-\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}{Other\-Ripup\-Perpand\-And\-Packing} = Other$|$\-Ripup$|$\-Perpandicular$|$\-Event\-Level4$|$\-Packing\-Mode
+enum \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Type}} \{ \newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aacd3ef9d889b306ca7e7bdcd37ba659a}{Self}} = (1$<$$<$ 0), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a75f0c3176be2226dfe8ad164a0a034a2}{Other}} = (1$<$$<$ 1), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a02330ea306385a34162a1e620a1c37df}{Perpandicular}} = (1$<$$<$ 2), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8c1f14f07c9eedcbbb2cc61988030646}{Insert}} = (1$<$$<$ 3), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a08900dc237aef7e4a7f50d2ba1ffd748}{Ripup}} = (1$<$$<$ 4), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fab9c042ba690bdb62d3c34eab8472d}{Riped\+By\+Local}} = (1$<$$<$ 5), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a9e16316a13899c2e02dd49cf2fb6e91f}{Reset\+Ripup}} = (1$<$$<$ 6), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a6c00c46010d69247a3edc18b70d700fa}{To\+Ripup\+Limit}} = (1$<$$<$ 7)
+, \newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a46c4ca7a69b5eae786be28f75523b78b}{Axis\+Hint}} = (1$<$$<$ 9), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fe6b9a3b3816492b9a99ab6689c4b20}{Packing\+Mode}} = (1$<$$<$10), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8b27ea2f99b2e6446eac77626aef0711}{To\+State}} = (1$<$$<$11), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7adb9a006587bc8a635ffdd034c53a546f}{Event\+Level1}} = (1$<$$<$12), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a5bad02627a87d3e38d5812363e46d7b1}{Event\+Level2}} = (1$<$$<$13), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}{Event\+Level3}} = (1$<$$<$14), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Event\+Level4}} = (1$<$$<$15), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a432d5152211bf70a2d561b8bda34c9e0}{Event\+Level5}} = (1$<$$<$16), 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}{Self\+Insert}} = Self $\vert$\+Insert, 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}{Self\+Ripup}} = Self $\vert$\+Ripup, 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}{Self\+Ripup\+Perpand}} = Self $\vert$\+Ripup$\vert$\+Perpandicular, 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}{Self\+Ripup\+Perpand\+With\+Axis\+Hint}} = Self $\vert$\+Ripup$\vert$\+Perpandicular$\vert$\+Event\+Level4$\vert$\+Axis\+Hint, 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}{Other\+Ripup}} = Other$\vert$\+Ripup, 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}{Other\+Ripup\+Perpand\+And\+Push\+Aside}} = Other$\vert$\+Ripup$\vert$\+Perpandicular$\vert$\+Event\+Level3$\vert$\+Axis\+Hint, 
+\newline
+\mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}{Other\+Ripup\+Perpand\+And\+Packing}} = Other$\vert$\+Ripup$\vert$\+Perpandicular$\vert$\+Event\+Level4$\vert$\+Packing\+Mode
  \}
 \end{DoxyCompactItemize}
 \subsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classKite_1_1SegmentAction_acbeca58f8327b69a540628f299d5bd35}{Segment\-Action} (\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$, unsigned int type, {\bf Db\-U\-::\-Unit} axis\-Hint=0, unsigned int to\-State=0)
+\mbox{\hyperlink{classKite_1_1SegmentAction_acbeca58f8327b69a540628f299d5bd35}{Segment\+Action}} (\mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$, unsigned int type, \textbf{ Db\+U\+::\+Unit} axis\+Hint=0, unsigned int to\+State=0)
 \item 
-\hyperlink{classKite_1_1TrackElement}{Track\-Element} $\ast$ \hyperlink{classKite_1_1SegmentAction_ad2d369e354ca1f9ff118851da69c7efc}{get\-Segment} () const 
+\mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$ \mbox{\hyperlink{classKite_1_1SegmentAction_a506a4d1cef59fc35984c1c88e0c0f6df}{get\+Segment}} () const
 \item 
-unsigned int \hyperlink{classKite_1_1SegmentAction_a8deb0c124963cedd374717099ff5bd22}{get\-Type} () const 
+unsigned int \mbox{\hyperlink{classKite_1_1SegmentAction_a093e88be27fab140cca8ec652beab529}{get\+Type}} () const
 \item 
-void \hyperlink{classKite_1_1SegmentAction_a8dc7cdf5f643a856fa5208bcfd1f8342}{set\-Axis\-Hint} ({\bf Db\-U\-::\-Unit})
+void \mbox{\hyperlink{classKite_1_1SegmentAction_a8dc7cdf5f643a856fa5208bcfd1f8342}{set\+Axis\+Hint}} (\textbf{ Db\+U\+::\+Unit})
 \item 
-unsigned int \hyperlink{classKite_1_1SegmentAction_a4e1f44319a9a0a413fe1413a87ec78bd}{set\-Flag} (unsigned int)
+unsigned int \mbox{\hyperlink{classKite_1_1SegmentAction_a4e1f44319a9a0a413fe1413a87ec78bd}{set\+Flag}} (unsigned int)
 \item 
-bool \hyperlink{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}{do\-Action} (\hyperlink{classKite_1_1RoutingEventQueue}{Routing\-Event\-Queue} \&)
+bool \mbox{\hyperlink{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}{do\+Action}} (\mbox{\hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}} \&)
 \end{DoxyCompactItemize}
 
 
 \subsubsection{Detailed Description}
-Store request for an event to be generated on a \hyperlink{classKite_1_1TrackElement}{Track\-Element}. 
+Store request for an event to be generated on a \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}}. 
 
-When an event on a \hyperlink{classKite_1_1TrackElement}{Kite\-::\-Track\-Element} is being processed (with the \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm} helper), it may generate events on \hyperlink{classKite_1_1TrackElement}{Track\-Element} already placed and belonging either to the same net or other ones. Those events are not generated and queued immediatly but instead \hyperlink{classKite_1_1SegmentAction}{Segment\-Action}, requesting the event generation are created and stored into a simple vector in \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}. The last operation of the \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm} object is to call the \hyperlink{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}{Segment\-Action\-::do\-Action()} method on all the action to actually generate and queue the events. 
+When an event on a \mbox{\hyperlink{classKite_1_1TrackElement}{Kite\+::\+Track\+Element}} is being processed (with the \mbox{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}} helper), it may generate events on \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} already placed and belonging either to the same net or other ones. Those events are not generated and queued immediatly but instead \mbox{\hyperlink{classKite_1_1SegmentAction}{Segment\+Action}}, requesting the event generation are created and stored into a simple vector in \mbox{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}}. The last operation of the \mbox{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}} object is to call the \mbox{\hyperlink{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}{Segment\+Action\+::do\+Action()}} method on all the action to actually generate and queue the events. 
 
 \subsubsection{Member Enumeration Documentation}
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Type@{Type}}
-\index{Type@{Type}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{Type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf Type}}}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}
-Indicates the kind of action to be performed on the segment. In the following {\bfseries flags} and {\bfseries masks} descriptions, we uses the term {\itshape reference segment} for the \hyperlink{classKite_1_1TrackElement}{Track\-Element} which is associated with the currently processed \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} (also referenced in \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm}).
+\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Type@{Type}}
+\index{Type@{Type}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{Type}{Type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Type}}}
 
-Here is the list of the availables actions that can be performed when (re)scheduling a \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}. It is here that we uses the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} level feature to perform a local reordering of the top of the queue. Reordering is used to allows perpandiculars to be routed {\itshape before} the reference segment (instead of after) or {\itshape other} segments in conflict.
+Indicates the kind of action to be performed on the segment. In the following {\bfseries flags} and {\bfseries masks} descriptions, we uses the term {\itshape reference segment} for the \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} which is associated with the currently processed \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} (also referenced in \mbox{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}}).
+
+Here is the list of the availables actions that can be performed when (re)scheduling a \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}. It is here that we uses the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} level feature to perform a local reordering of the top of the queue. Reordering is used to allows perpandiculars to be routed {\itshape before} the reference segment (instead of after) or {\itshape other} segments in conflict.
 
 
 \begin{DoxyItemize}
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}{Segment\-Action\-::\-Self\-Insert}\par
- {\bfseries Action\-:} The reference segment is to be inserted in a \hyperlink{classKite_1_1Track}{Track} (placed).\par
- {\bfseries Event Level\-:} Unchanged.
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}{Segment\-Action\-::\-Self\-Ripup}\par
- {\bfseries Action\-:} The reference segment is to be ripped up.\par
- {\bfseries Event Level\-:} Unchanged.
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}{Segment\-Action\-::\-Self\-Ripup\-Perpand}\par
- {\bfseries Action\-:} Ripup a segment which is a perpandicular to the reference segment. Ordering considerations\-: this perpandicular will be put back into the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} queue with a lower level (priority) than the reference segment, so it will be processed again {\itshape after} the reference segment.\par
- {\bfseries Event Level\-:} Unchanged.
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}{Segment\-Action\-::\-Self\-Ripup\-Perpand\-With\-Axis\-Hint}\par
- {\bfseries Action\-:} Ripup a segment which is a perpandicular to the reference segment, supplies an axis hint and put it back into the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} queue so that it will be processed {\itshape before} the reference segment.\par
- {\bfseries Event Level\-:} Increased to \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Segment\-Action\-::\-Event\-Level4}.
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}{Segment\-Action\-::\-Other\-Ripup}\par
- {\bfseries Action\-:} Ripping up a segment from another net and in the same direction as the reference segment.\par
- {\bfseries Event Level\-:} Unchanged.
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}{Segment\-Action\-::\-Other\-Ripup\-Perpand\-And\-Push\-Aside}\par
- {\bfseries Action\-:} Ripping up a segment from another net and in perpandicular direction. The level is elevated so it's priority is greater than the reference segment this it will be reprocessed first. An axis hint is also supplied in order to make room for the reference segment.\par
- {\bfseries Event Level\-:} Increased to \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}{Segment\-Action\-::\-Event\-Level3}.
-\item \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}{Segment\-Action\-::\-Other\-Ripup\-Perpand\-And\-Packing}\par
- {\bfseries Action\-:} Ripping up a segment from another net and in perpandicular direction. The level is elevated so it's priority is greater than the reference segment this it will be reprocessed first. The generated event is in packing mode only.\par
- {\bfseries Event Level\-:} Increased to \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Segment\-Action\-::\-Event\-Level4}. 
-\end{DoxyItemize}\begin{Desc}
-\item[Enumerator]\par
-\begin{description}
-\index{Self@{Self}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Self@{Self}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aacd3ef9d889b306ca7e7bdcd37ba659a}{Self}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aacd3ef9d889b306ca7e7bdcd37ba659a}
-}]{\bfseries \mbox{[}Flag\mbox{]}} The segment associated to the action is the reference segment {\itshape or segments from the same net}. \index{Other@{Other}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Other@{Other}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a75f0c3176be2226dfe8ad164a0a034a2}{Other}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a75f0c3176be2226dfe8ad164a0a034a2}
-}]{\bfseries \mbox{[}Flag\mbox{]}} The segment associated to the action is {\bfseries not} from the same net as the reference segment. \index{Perpandicular@{Perpandicular}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Perpandicular@{Perpandicular}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a02330ea306385a34162a1e620a1c37df}{Perpandicular}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a02330ea306385a34162a1e620a1c37df}
-}]{\bfseries \mbox{[}Flag\mbox{]}} The action concern a perpandicular to the reference segment. \index{Insert@{Insert}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Insert@{Insert}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8c1f14f07c9eedcbbb2cc61988030646}{Insert}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8c1f14f07c9eedcbbb2cc61988030646}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Request that the segment is to be inserted in the given track. It is the task of \hyperlink{classKite_1_1SegmentFsm}{Segment\-Fsm} to determine that there is sufficent space to do so. \index{Ripup@{Ripup}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Ripup@{Ripup}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a08900dc237aef7e4a7f50d2ba1ffd748}{Ripup}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a08900dc237aef7e4a7f50d2ba1ffd748}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Request that the segment is to be ripped up. \index{Riped\-By\-Local@{Riped\-By\-Local}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Riped\-By\-Local@{Riped\-By\-Local}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fab9c042ba690bdb62d3c34eab8472d}{Riped\-By\-Local}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fab9c042ba690bdb62d3c34eab8472d}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Indicate that the segment has been ripped up by a local one. \index{Reset\-Ripup@{Reset\-Ripup}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Reset\-Ripup@{Reset\-Ripup}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a9e16316a13899c2e02dd49cf2fb6e91f}{Reset\-Ripup}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a9e16316a13899c2e02dd49cf2fb6e91f}
-}]{\bfseries \mbox{[}Flag\mbox{]}} The ripup count is to be reset. \index{To\-Ripup\-Limit@{To\-Ripup\-Limit}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!To\-Ripup\-Limit@{To\-Ripup\-Limit}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a6c00c46010d69247a3edc18b70d700fa}{To\-Ripup\-Limit}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a6c00c46010d69247a3edc18b70d700fa}
-}]{\bfseries \mbox{[}Flag\mbox{]}} The ripup count is directly increased to the ripup limit, triggering a state change the next time the segment will be processed. \index{Axis\-Hint@{Axis\-Hint}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Axis\-Hint@{Axis\-Hint}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a46c4ca7a69b5eae786be28f75523b78b}{Axis\-Hint}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a46c4ca7a69b5eae786be28f75523b78b}
-}]{\bfseries \mbox{[}Flag\mbox{]}} An axis hint has been supplied, and is to be passed to the generated \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}. \index{Packing\-Mode@{Packing\-Mode}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Packing\-Mode@{Packing\-Mode}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fe6b9a3b3816492b9a99ab6689c4b20}{Packing\-Mode}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fe6b9a3b3816492b9a99ab6689c4b20}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Whether the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} should be processed in {\itshape packing} mode or {\itshape negociated} mode (transmitted to the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event}). \index{To\-State@{To\-State}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!To\-State@{To\-State}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8b27ea2f99b2e6446eac77626aef0711}{To\-State}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8b27ea2f99b2e6446eac77626aef0711}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Force the change of state of the \hyperlink{classKite_1_1RoutingEvent}{Routing\-Event} (i.\-e. \hyperlink{classKite_1_1DataNegociate}{Data\-Negociate}). Normally the state change is done through the increase of the ripup count in \hyperlink{classKite_1_1DataNegociate}{Data\-Negociate}. \index{Event\-Level1@{Event\-Level1}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Event\-Level1@{Event\-Level1}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7adb9a006587bc8a635ffdd034c53a546f}{Event\-Level1}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7adb9a006587bc8a635ffdd034c53a546f}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 1}. \index{Event\-Level2@{Event\-Level2}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Event\-Level2@{Event\-Level2}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a5bad02627a87d3e38d5812363e46d7b1}{Event\-Level2}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a5bad02627a87d3e38d5812363e46d7b1}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 2}. \index{Event\-Level3@{Event\-Level3}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Event\-Level3@{Event\-Level3}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}{Event\-Level3}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 3}. \index{Event\-Level4@{Event\-Level4}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Event\-Level4@{Event\-Level4}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Event\-Level4}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 4}. \index{Event\-Level5@{Event\-Level5}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Event\-Level5@{Event\-Level5}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a432d5152211bf70a2d561b8bda34c9e0}{Event\-Level5}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a432d5152211bf70a2d561b8bda34c9e0}
-}]{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 5}. \index{Self\-Insert@{Self\-Insert}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Self\-Insert@{Self\-Insert}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}{Self\-Insert}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \index{Self\-Ripup@{Self\-Ripup}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Self\-Ripup@{Self\-Ripup}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}{Self\-Ripup}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \index{Self\-Ripup\-Perpand@{Self\-Ripup\-Perpand}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Self\-Ripup\-Perpand@{Self\-Ripup\-Perpand}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}{Self\-Ripup\-Perpand}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \index{Self\-Ripup\-Perpand\-With\-Axis\-Hint@{Self\-Ripup\-Perpand\-With\-Axis\-Hint}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Self\-Ripup\-Perpand\-With\-Axis\-Hint@{Self\-Ripup\-Perpand\-With\-Axis\-Hint}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}{Self\-Ripup\-Perpand\-With\-Axis\-Hint}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \index{Other\-Ripup@{Other\-Ripup}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Other\-Ripup@{Other\-Ripup}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}{Other\-Ripup}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \index{Other\-Ripup\-Perpand\-And\-Push\-Aside@{Other\-Ripup\-Perpand\-And\-Push\-Aside}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Other\-Ripup\-Perpand\-And\-Push\-Aside@{Other\-Ripup\-Perpand\-And\-Push\-Aside}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}{Other\-Ripup\-Perpand\-And\-Push\-Aside}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \index{Other\-Ripup\-Perpand\-And\-Packing@{Other\-Ripup\-Perpand\-And\-Packing}!Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}}\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Other\-Ripup\-Perpand\-And\-Packing@{Other\-Ripup\-Perpand\-And\-Packing}}\item[{\em 
-\hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}{Other\-Ripup\-Perpand\-And\-Packing}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}
-}]{\bfseries \mbox{[}Mask\mbox{]}}, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \end{description}
-\end{Desc}
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}{Segment\+Action\+::\+Self\+Insert}}~\newline
+ {\bfseries Action\+:} The reference segment is to be inserted in a \mbox{\hyperlink{classKite_1_1Track}{Track}} (placed).~\newline
+ {\bfseries Event Level\+:} Unchanged.
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}{Segment\+Action\+::\+Self\+Ripup}}~\newline
+ {\bfseries Action\+:} The reference segment is to be ripped up.~\newline
+ {\bfseries Event Level\+:} Unchanged.
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}{Segment\+Action\+::\+Self\+Ripup\+Perpand}}~\newline
+ {\bfseries Action\+:} Ripup a segment which is a perpandicular to the reference segment. Ordering considerations\+: this perpandicular will be put back into the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} queue with a lower level (priority) than the reference segment, so it will be processed again {\itshape after} the reference segment.~\newline
+ {\bfseries Event Level\+:} Unchanged.
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}{Segment\+Action\+::\+Self\+Ripup\+Perpand\+With\+Axis\+Hint}}~\newline
+ {\bfseries Action\+:} Ripup a segment which is a perpandicular to the reference segment, supplies an axis hint and put it back into the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} queue so that it will be processed {\itshape before} the reference segment.~\newline
+ {\bfseries Event Level\+:} Increased to \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Segment\+Action\+::\+Event\+Level4}}.
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}{Segment\+Action\+::\+Other\+Ripup}}~\newline
+ {\bfseries Action\+:} Ripping up a segment from another net and in the same direction as the reference segment.~\newline
+ {\bfseries Event Level\+:} Unchanged.
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}{Segment\+Action\+::\+Other\+Ripup\+Perpand\+And\+Push\+Aside}}~\newline
+ {\bfseries Action\+:} Ripping up a segment from another net and in perpandicular direction. The level is elevated so it\textquotesingle{}s priority is greater than the reference segment this it will be reprocessed first. An axis hint is also supplied in order to make room for the reference segment.~\newline
+ {\bfseries Event Level\+:} Increased to \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}{Segment\+Action\+::\+Event\+Level3}}.
+\item \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}{Segment\+Action\+::\+Other\+Ripup\+Perpand\+And\+Packing}}~\newline
+ {\bfseries Action\+:} Ripping up a segment from another net and in perpandicular direction. The level is elevated so it\textquotesingle{}s priority is greater than the reference segment this it will be reprocessed first. The generated event is in packing mode only.~\newline
+ {\bfseries Event Level\+:} Increased to \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}{Segment\+Action\+::\+Event\+Level4}}. 
+\end{DoxyItemize}\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Self@{Self}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Self@{Self}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aacd3ef9d889b306ca7e7bdcd37ba659a}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aacd3ef9d889b306ca7e7bdcd37ba659a}} 
+Self&{\bfseries \mbox{[}Flag\mbox{]}} The segment associated to the action is the reference segment {\itshape or segments from the same net}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Other@{Other}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Other@{Other}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a75f0c3176be2226dfe8ad164a0a034a2}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a75f0c3176be2226dfe8ad164a0a034a2}} 
+Other&{\bfseries \mbox{[}Flag\mbox{]}} The segment associated to the action is {\bfseries not} from the same net as the reference segment. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Perpandicular@{Perpandicular}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Perpandicular@{Perpandicular}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a02330ea306385a34162a1e620a1c37df}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a02330ea306385a34162a1e620a1c37df}} 
+Perpandicular&{\bfseries \mbox{[}Flag\mbox{]}} The action concern a perpandicular to the reference segment. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Insert@{Insert}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Insert@{Insert}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8c1f14f07c9eedcbbb2cc61988030646}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8c1f14f07c9eedcbbb2cc61988030646}} 
+Insert&{\bfseries \mbox{[}Flag\mbox{]}} Request that the segment is to be inserted in the given track. It is the task of \mbox{\hyperlink{classKite_1_1SegmentFsm}{Segment\+Fsm}} to determine that there is sufficent space to do so. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Ripup@{Ripup}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Ripup@{Ripup}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a08900dc237aef7e4a7f50d2ba1ffd748}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a08900dc237aef7e4a7f50d2ba1ffd748}} 
+Ripup&{\bfseries \mbox{[}Flag\mbox{]}} Request that the segment is to be ripped up. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Riped\+By\+Local@{Riped\+By\+Local}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Riped\+By\+Local@{Riped\+By\+Local}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fab9c042ba690bdb62d3c34eab8472d}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fab9c042ba690bdb62d3c34eab8472d}} 
+Riped\+By\+Local&{\bfseries \mbox{[}Flag\mbox{]}} Indicate that the segment has been ripped up by a local one. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Reset\+Ripup@{Reset\+Ripup}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Reset\+Ripup@{Reset\+Ripup}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a9e16316a13899c2e02dd49cf2fb6e91f}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a9e16316a13899c2e02dd49cf2fb6e91f}} 
+Reset\+Ripup&{\bfseries \mbox{[}Flag\mbox{]}} The ripup count is to be reset. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{To\+Ripup\+Limit@{To\+Ripup\+Limit}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!To\+Ripup\+Limit@{To\+Ripup\+Limit}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a6c00c46010d69247a3edc18b70d700fa}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a6c00c46010d69247a3edc18b70d700fa}} 
+To\+Ripup\+Limit&{\bfseries \mbox{[}Flag\mbox{]}} The ripup count is directly increased to the ripup limit, triggering a state change the next time the segment will be processed. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Axis\+Hint@{Axis\+Hint}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Axis\+Hint@{Axis\+Hint}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a46c4ca7a69b5eae786be28f75523b78b}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a46c4ca7a69b5eae786be28f75523b78b}} 
+Axis\+Hint&{\bfseries \mbox{[}Flag\mbox{]}} An axis hint has been supplied, and is to be passed to the generated \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Packing\+Mode@{Packing\+Mode}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Packing\+Mode@{Packing\+Mode}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fe6b9a3b3816492b9a99ab6689c4b20}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a4fe6b9a3b3816492b9a99ab6689c4b20}} 
+Packing\+Mode&{\bfseries \mbox{[}Flag\mbox{]}} Whether the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} should be processed in {\itshape packing} mode or {\itshape negociated} mode (transmitted to the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}}). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{To\+State@{To\+State}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!To\+State@{To\+State}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8b27ea2f99b2e6446eac77626aef0711}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a8b27ea2f99b2e6446eac77626aef0711}} 
+To\+State&{\bfseries \mbox{[}Flag\mbox{]}} Force the change of state of the \mbox{\hyperlink{classKite_1_1RoutingEvent}{Routing\+Event}} (i.\+e. \mbox{\hyperlink{classKite_1_1DataNegociate}{Data\+Negociate}}). Normally the state change is done through the increase of the ripup count in \mbox{\hyperlink{classKite_1_1DataNegociate}{Data\+Negociate}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Event\+Level1@{Event\+Level1}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Event\+Level1@{Event\+Level1}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7adb9a006587bc8a635ffdd034c53a546f}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7adb9a006587bc8a635ffdd034c53a546f}} 
+Event\+Level1&{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 1}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Event\+Level2@{Event\+Level2}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Event\+Level2@{Event\+Level2}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a5bad02627a87d3e38d5812363e46d7b1}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a5bad02627a87d3e38d5812363e46d7b1}} 
+Event\+Level2&{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 2}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Event\+Level3@{Event\+Level3}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Event\+Level3@{Event\+Level3}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a11ef388ea422168a9c79fd9b4d81ea34}} 
+Event\+Level3&{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 3}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Event\+Level4@{Event\+Level4}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Event\+Level4@{Event\+Level4}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ab8346062d5bbccb98893c4675b8d5098}} 
+Event\+Level4&{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 4}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Event\+Level5@{Event\+Level5}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Event\+Level5@{Event\+Level5}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a432d5152211bf70a2d561b8bda34c9e0}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a432d5152211bf70a2d561b8bda34c9e0}} 
+Event\+Level5&{\bfseries \mbox{[}Flag\mbox{]}} Increase the level to {\itshape at least} {\bfseries 5}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Self\+Insert@{Self\+Insert}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Self\+Insert@{Self\+Insert}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a930d0718b2afc37983ffe708f8261b19}} 
+Self\+Insert&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Self\+Ripup@{Self\+Ripup}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Self\+Ripup@{Self\+Ripup}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a837e07a8b4101cff32018683072f2d78}} 
+Self\+Ripup&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Self\+Ripup\+Perpand@{Self\+Ripup\+Perpand}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Self\+Ripup\+Perpand@{Self\+Ripup\+Perpand}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a85fd77114c99a0827e08de2fc6a53ed7}} 
+Self\+Ripup\+Perpand&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Self\+Ripup\+Perpand\+With\+Axis\+Hint@{Self\+Ripup\+Perpand\+With\+Axis\+Hint}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Self\+Ripup\+Perpand\+With\+Axis\+Hint@{Self\+Ripup\+Perpand\+With\+Axis\+Hint}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ae30745ee276038ba4d7b5f92d80f3715}} 
+Self\+Ripup\+Perpand\+With\+Axis\+Hint&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Other\+Ripup@{Other\+Ripup}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Other\+Ripup@{Other\+Ripup}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7a22374bab829fac7d12af4784d80eeb6e}} 
+Other\+Ripup&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Other\+Ripup\+Perpand\+And\+Push\+Aside@{Other\+Ripup\+Perpand\+And\+Push\+Aside}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Other\+Ripup\+Perpand\+And\+Push\+Aside@{Other\+Ripup\+Perpand\+And\+Push\+Aside}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7ad9caf9375b714a403e4af8a142cf9991}} 
+Other\+Ripup\+Perpand\+And\+Push\+Aside&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Other\+Ripup\+Perpand\+And\+Packing@{Other\+Ripup\+Perpand\+And\+Packing}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Other\+Ripup\+Perpand\+And\+Packing@{Other\+Ripup\+Perpand\+And\+Packing}}}\mbox{\Hypertarget{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}\label{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7aed50f579a9e6b7ac698b2edf1a5da5c8}} 
+Other\+Ripup\+Perpand\+And\+Packing&{\bfseries \mbox{[}Mask\mbox{]}}, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
+\hline
+
+\end{DoxyEnumFields}
 
 
 \subsubsection{Constructor \& Destructor Documentation}
-\hypertarget{classKite_1_1SegmentAction_acbeca58f8327b69a540628f299d5bd35}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!Segment\-Action@{Segment\-Action}}
-\index{Segment\-Action@{Segment\-Action}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{Segment\-Action}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Segment\-Action} (
-\begin{DoxyParamCaption}
-\item[{{\bf Track\-Element} $\ast$}]{segment, }
-\item[{unsigned int}]{type, }
-\item[{{\bf Db\-U\-::\-Unit}}]{axis\-Hint = {\ttfamily 0}, }
-\item[{unsigned int}]{to\-State = {\ttfamily 0}}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1SegmentAction_acbeca58f8327b69a540628f299d5bd35}
+\mbox{\Hypertarget{classKite_1_1SegmentAction_acbeca58f8327b69a540628f299d5bd35}\label{classKite_1_1SegmentAction_acbeca58f8327b69a540628f299d5bd35}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!Segment\+Action@{Segment\+Action}}
+\index{Segment\+Action@{Segment\+Action}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{Segment\+Action()}{SegmentAction()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1SegmentAction}{Segment\+Action}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$}]{segment,  }\item[{unsigned int}]{type,  }\item[{\textbf{ Db\+U\+::\+Unit}}]{axis\+Hint = {\ttfamily 0},  }\item[{unsigned int}]{to\+State = {\ttfamily 0} }\end{DoxyParamCaption})}
+
 
 \begin{DoxyParams}{Parameters}
 {\em segment} & On what the action is to be performed. \\
 \hline
-{\em type} & Defines the type of action, see \hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\-Action\-::\-Type}. \\
+{\em type} & Defines the type of action, see \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}}. \\
 \hline
-{\em axis\-Hint} & Specifies a preferred axis. \\
+{\em axis\+Hint} & Specifies a preferred axis. \\
 \hline
-{\em to\-State} & The \hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}{Data\-Negociate\-::\-Slack\-State} into which the segment is to be set.\\
+{\em to\+State} & The \mbox{\hyperlink{classKite_1_1DataNegociate_ab7ccb6fc1f298728995250a3bbcf18c7}{Data\+Negociate\+::\+Slack\+State}} into which the segment is to be set.\\
 \hline
 \end{DoxyParams}
 Create segment action. 
 
 \subsubsection{Member Function Documentation}
-\hypertarget{classKite_1_1SegmentAction_ad2d369e354ca1f9ff118851da69c7efc}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!get\-Segment@{get\-Segment}}
-\index{get\-Segment@{get\-Segment}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{get\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Track\-Element} $\ast$ get\-Segment (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1SegmentAction_ad2d369e354ca1f9ff118851da69c7efc}
-{\bfseries Returns\-:} The associated {\ttfamily segment}. \hypertarget{classKite_1_1SegmentAction_a8deb0c124963cedd374717099ff5bd22}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!get\-Type@{get\-Type}}
-\index{get\-Type@{get\-Type}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{get\-Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Segment\-Action\-::\-Type} get\-Type (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1SegmentAction_a8deb0c124963cedd374717099ff5bd22}
-{\bfseries Returns\-:} The action to be performed. \hypertarget{classKite_1_1SegmentAction_a8dc7cdf5f643a856fa5208bcfd1f8342}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!set\-Axis\-Hint@{set\-Axis\-Hint}}
-\index{set\-Axis\-Hint@{set\-Axis\-Hint}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{set\-Axis\-Hint}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Axis\-Hint (
-\begin{DoxyParamCaption}
-\item[{{\bf Db\-U\-::\-Unit}}]{axis}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1SegmentAction_a8dc7cdf5f643a856fa5208bcfd1f8342}
-The axis preferred position to be transmitted to the generated event. The transmition will be effective {\itshape only} if the Segment\-Action\-::\-Type\-::\-Axis\-Hint flag is set. \hypertarget{classKite_1_1SegmentAction_a4e1f44319a9a0a413fe1413a87ec78bd}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!set\-Flag@{set\-Flag}}
-\index{set\-Flag@{set\-Flag}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{set\-Flag}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int set\-Flag (
-\begin{DoxyParamCaption}
-\item[{unsigned int}]{flags}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKite_1_1SegmentAction_a4e1f44319a9a0a413fe1413a87ec78bd}
-Allow to change the action type by indivually setting up the flags. \hypertarget{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}{\index{Kite\-::\-Segment\-Action@{Kite\-::\-Segment\-Action}!do\-Action@{do\-Action}}
-\index{do\-Action@{do\-Action}!Kite::SegmentAction@{Kite\-::\-Segment\-Action}}
-\paragraph[{do\-Action}]{\setlength{\rightskip}{0pt plus 5cm}void do\-Action (
-\begin{DoxyParamCaption}
-\item[{{\bf Routing\-Event\-Queue} \&}]{queue}
-\end{DoxyParamCaption}
-)}}\label{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}
+\mbox{\Hypertarget{classKite_1_1SegmentAction_a506a4d1cef59fc35984c1c88e0c0f6df}\label{classKite_1_1SegmentAction_a506a4d1cef59fc35984c1c88e0c0f6df}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!get\+Segment@{get\+Segment}}
+\index{get\+Segment@{get\+Segment}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{get\+Segment()}{getSegment()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1TrackElement}{Track\+Element}} $\ast$ get\+Segment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The associated {\ttfamily segment}. \mbox{\Hypertarget{classKite_1_1SegmentAction_a093e88be27fab140cca8ec652beab529}\label{classKite_1_1SegmentAction_a093e88be27fab140cca8ec652beab529}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!get\+Type@{get\+Type}}
+\index{get\+Type@{get\+Type}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{get\+Type()}{getType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKite_1_1SegmentAction_a1d1cfd8ffb84e947f82999c682b666a7}{Segment\+Action\+::\+Type}} get\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} The action to be performed. \mbox{\Hypertarget{classKite_1_1SegmentAction_a8dc7cdf5f643a856fa5208bcfd1f8342}\label{classKite_1_1SegmentAction_a8dc7cdf5f643a856fa5208bcfd1f8342}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!set\+Axis\+Hint@{set\+Axis\+Hint}}
+\index{set\+Axis\+Hint@{set\+Axis\+Hint}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{set\+Axis\+Hint()}{setAxisHint()}}
+{\footnotesize\ttfamily void set\+Axis\+Hint (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{axis }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+The axis preferred position to be transmitted to the generated event. The transmition will be effective {\itshape only} if the Segment\+Action\+::\+Type\+::\+Axis\+Hint flag is set. \mbox{\Hypertarget{classKite_1_1SegmentAction_a4e1f44319a9a0a413fe1413a87ec78bd}\label{classKite_1_1SegmentAction_a4e1f44319a9a0a413fe1413a87ec78bd}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!set\+Flag@{set\+Flag}}
+\index{set\+Flag@{set\+Flag}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{set\+Flag()}{setFlag()}}
+{\footnotesize\ttfamily unsigned int set\+Flag (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Allow to change the action type by indivually setting up the flags. \mbox{\Hypertarget{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}\label{classKite_1_1SegmentAction_a324f17f0f5a09b76344eb2e003695d74}} 
+\index{Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}!do\+Action@{do\+Action}}
+\index{do\+Action@{do\+Action}!Kite\+::\+Segment\+Action@{Kite\+::\+Segment\+Action}}
+\paragraph{\texorpdfstring{do\+Action()}{doAction()}}
+{\footnotesize\ttfamily void do\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKite_1_1RoutingEventQueue}{Routing\+Event\+Queue}} \&}]{queue }\end{DoxyParamCaption})}
+
 Actually perform the action. That is, build and queue the appropriate event for the segment. 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Segment\-Fsm.\-h\item 
-Segment\-Fsm.\-cpp\item 
-Segment\-Fsm.\-dox\end{DoxyCompactItemize}
+Segment\+Fsm.\+h\item 
+Segment\+Fsm.\+cpp\item 
+Segment\+Fsm.\+dox\end{DoxyCompactItemize}

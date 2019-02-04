@@ -1,101 +1,95 @@
-\hypertarget{classKatabatic_1_1LocatorHelper}{\section{Locator\-Helper Class Reference}
-\label{classKatabatic_1_1LocatorHelper}\index{Locator\-Helper@{Locator\-Helper}}
-}
+\hypertarget{classKatabatic_1_1LocatorHelper}{}\section{Locator\+Helper Class Reference}
+\label{classKatabatic_1_1LocatorHelper}\index{Locator\+Helper@{Locator\+Helper}}
 
 
-Locator Helper Collection's Locators.  
+Locator Helper Collection\textquotesingle{}s Locators.  
 
 
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classKatabatic_1_1LocatorHelper_af44c2fcc73d387e3e3b5c334f25b070b}{Locator\-Helper} (\hyperlink{classKatabatic_1_1AutoContact}{Auto\-Contact} $\ast$, unsigned int flags=0)
+\mbox{\hyperlink{classKatabatic_1_1LocatorHelper_af44c2fcc73d387e3e3b5c334f25b070b}{Locator\+Helper}} (\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} $\ast$, unsigned int flags=0)
 \item 
-bool \hyperlink{classKatabatic_1_1LocatorHelper_aac1b70a2ed67ead038c4d3f5ac4d8a81}{is\-Valid} () const 
+bool \mbox{\hyperlink{classKatabatic_1_1LocatorHelper_a5bc2a781be2586924afce4e4a4ea6697}{is\+Valid}} () const
 \item 
-\hyperlink{classKatabatic_1_1AutoSegment}{Auto\-Segment} $\ast$ \hyperlink{classKatabatic_1_1LocatorHelper_a7da801ed643439613cecc7b0f5d9e0d6}{get\-Segment} () const 
+\mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ \mbox{\hyperlink{classKatabatic_1_1LocatorHelper_ad0f8becc4187c833b6f6c5f902f8aaa5}{get\+Segment}} () const
 \item 
-void \hyperlink{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}{progress} ()
+void \mbox{\hyperlink{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}{progress}} ()
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Locator Helper Collection's Locators. 
+Locator Helper Collection\textquotesingle{}s Locators. 
 
-Provide a small uniform walktough over the Auto\-Segments anchored on Auto\-Contacts. The {\ttfamily flags} argument allows to choose between direction and include perpandiculars (in that case all segments are processeds).\hypertarget{classKatabatic_1_1LocatorHelper_secLocHelperImplementation}{}\subsection{Implementation Details}\label{classKatabatic_1_1LocatorHelper_secLocHelperImplementation}
-As, at most, two horizontals and two verticals may be anchored on any \hyperlink{classKatabatic_1_1AutoContact}{Auto\-Contact} subtype, the locator helper perform a walk through a virtual table of 4 elements. The two first are the horizontals, the two last the verticals. The meaning of this index is consistent whith the {\ttfamily index} argument of \hyperlink{classKatabatic_1_1AutoContact_a50531ded68cc5206fe104b8d8bf3bd87}{Auto\-Contact\-::get\-Segment()}. When a segment is not present in an \hyperlink{classKatabatic_1_1AutoContact}{Auto\-Contact}, the {\ttfamily \hyperlink{classKatabatic_1_1LocatorHelper_a7da801ed643439613cecc7b0f5d9e0d6}{get\-Segment()}} returns {\ttfamily N\-U\-L\-L} and the \hyperlink{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}{Locator\-Helper\-::progress()} function will skip it.
+Provide a small uniform walktough over the Auto\+Segments anchored on Auto\+Contacts. The {\ttfamily flags} argument allows to choose between direction and include perpandiculars (in that case all segments are processeds).\hypertarget{classKatabatic_1_1LocatorHelper_secLocHelperImplementation}{}\subsection{Implementation Details}\label{classKatabatic_1_1LocatorHelper_secLocHelperImplementation}
+As, at most, two horizontals and two verticals may be anchored on any \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} subtype, the locator helper perform a walk through a virtual table of 4 elements. The two first are the horizontals, the two last the verticals. The meaning of this index is consistent whith the {\ttfamily index} argument of \mbox{\hyperlink{classKatabatic_1_1AutoContact_a50531ded68cc5206fe104b8d8bf3bd87}{Auto\+Contact\+::get\+Segment()}}. When a segment is not present in an \mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}}, the {\ttfamily \mbox{\hyperlink{classKatabatic_1_1LocatorHelper_ad0f8becc4187c833b6f6c5f902f8aaa5}{get\+Segment()}}} returns {\ttfamily N\+U\+LL} and the \mbox{\hyperlink{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}{Locator\+Helper\+::progress()}} function will skip it.
 
-The private methods\-:
+The private methods\+:
 \begin{DoxyItemize}
-\item {\ttfamily Locator\-Helper\-::\-\_\-min()} 
-\item {\ttfamily Locator\-Helper\-::\-\_\-max()} 
+\item {\ttfamily Locator\+Helper\+::\+\_\+min()} 
+\item {\ttfamily Locator\+Helper\+::\+\_\+max()} 
 \end{DoxyItemize}
 
-Computes the bounds of {\ttfamily \-\_\-index} according to the value of {\ttfamily \-\_\-flags\-:} 
+Computes the bounds of {\ttfamily \+\_\+index} according to the value of {\ttfamily \+\_\+flags\+:} 
 \begin{DoxyItemize}
-\item {\ttfamily Kb\-Horizontal} \-: {\ttfamily 0} to less than {\ttfamily 2}.
-\item {\ttfamily Kb\-Vertical} \-: {\ttfamily 2} to less than {\ttfamily 4}.
-\item {\ttfamily Kb\-Horizontal$|$\-Kb\-Vertical} \-: {\ttfamily 0} to less than {\ttfamily 4}. 
+\item {\ttfamily Kb\+Horizontal} \+: {\ttfamily 0} to less than {\ttfamily 2}.
+\item {\ttfamily Kb\+Vertical} \+: {\ttfamily 2} to less than {\ttfamily 4}.
+\item {\ttfamily Kb\+Horizontal$\vert$\+Kb\+Vertical} \+: {\ttfamily 0} to less than {\ttfamily 4}. 
 \end{DoxyItemize}
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classKatabatic_1_1LocatorHelper_af44c2fcc73d387e3e3b5c334f25b070b}{\index{Katabatic\-::\-Locator\-Helper@{Katabatic\-::\-Locator\-Helper}!Locator\-Helper@{Locator\-Helper}}
-\index{Locator\-Helper@{Locator\-Helper}!Katabatic::LocatorHelper@{Katabatic\-::\-Locator\-Helper}}
-\subsubsection[{Locator\-Helper}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Locator\-Helper} (
-\begin{DoxyParamCaption}
-\item[{{\bf Auto\-Contact} $\ast$}]{contact, }
-\item[{unsigned int}]{flags = {\ttfamily 0}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1LocatorHelper_af44c2fcc73d387e3e3b5c334f25b070b}
-Create a helper to iterate over the Auto\-Segments anchored on {\ttfamily contact}. The {\ttfamily flags} arguments allow to select\-:
+\mbox{\Hypertarget{classKatabatic_1_1LocatorHelper_af44c2fcc73d387e3e3b5c334f25b070b}\label{classKatabatic_1_1LocatorHelper_af44c2fcc73d387e3e3b5c334f25b070b}} 
+\index{Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}!Locator\+Helper@{Locator\+Helper}}
+\index{Locator\+Helper@{Locator\+Helper}!Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}}
+\subsubsection{\texorpdfstring{Locator\+Helper()}{LocatorHelper()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1LocatorHelper}{Locator\+Helper}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKatabatic_1_1AutoContact}{Auto\+Contact}} $\ast$}]{contact,  }\item[{unsigned int}]{flags = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Create a helper to iterate over the Auto\+Segments anchored on {\ttfamily contact}. The {\ttfamily flags} arguments allow to select\+:
 \begin{DoxyItemize}
-\item The direction\-: \hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217a1a9045673c5d3c30b067100f1440ae1b}{Katabatic\-::\-Kb\-Horizontal} or \hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217a284cad95203a27172838b09e396e3590}{Katabatic\-::\-Kb\-Vertical}.
-\item Perpandicular inclusion\-: \hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217ae2d033c8f78b61468c827de8db5fe839}{Katabatic\-::\-Kb\-With\-Perpands}.
+\item The direction\+: \mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217a1a9045673c5d3c30b067100f1440ae1b}{Katabatic\+::\+Kb\+Horizontal}} or \mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217a284cad95203a27172838b09e396e3590}{Katabatic\+::\+Kb\+Vertical}}.
+\item Perpandicular inclusion\+: \mbox{\hyperlink{namespaceKatabatic_a2af2ad6b6441614038caf59d04b3b217ae2d033c8f78b61468c827de8db5fe839}{Katabatic\+::\+Kb\+With\+Perpands}}.
 \end{DoxyItemize}
 
-When setting Kb\-With\-Perpands, all the segments will be iterated over. It may seems a somewhat contorted way of doing things, the reason is the ability to share (an pass) flags directly between different functions. 
+When setting Kb\+With\+Perpands, all the segments will be iterated over. It may seems a somewhat contorted way of doing things, the reason is the ability to share (an pass) flags directly between different functions. 
 
-References Auto\-Contact\-::get\-Segment(), and Locator\-Helper\-::progress().
+References Auto\+Contact\+::get\+Segment(), and Locator\+Helper\+::progress().
 
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classKatabatic_1_1LocatorHelper_aac1b70a2ed67ead038c4d3f5ac4d8a81}{\index{Katabatic\-::\-Locator\-Helper@{Katabatic\-::\-Locator\-Helper}!is\-Valid@{is\-Valid}}
-\index{is\-Valid@{is\-Valid}!Katabatic::LocatorHelper@{Katabatic\-::\-Locator\-Helper}}
-\subsubsection[{is\-Valid}]{\setlength{\rightskip}{0pt plus 5cm}bool is\-Valid (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1LocatorHelper_aac1b70a2ed67ead038c4d3f5ac4d8a81}
-{\bfseries Returns\-:} {\bfseries true} if there is an \hyperlink{classKatabatic_1_1AutoSegment}{Auto\-Segment} to be processed. \hypertarget{classKatabatic_1_1LocatorHelper_a7da801ed643439613cecc7b0f5d9e0d6}{\index{Katabatic\-::\-Locator\-Helper@{Katabatic\-::\-Locator\-Helper}!get\-Segment@{get\-Segment}}
-\index{get\-Segment@{get\-Segment}!Katabatic::LocatorHelper@{Katabatic\-::\-Locator\-Helper}}
-\subsubsection[{get\-Segment}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Auto\-Segment} $\ast$ get\-Segment (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-) const\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1LocatorHelper_a7da801ed643439613cecc7b0f5d9e0d6}
-{\bfseries Returns\-:} The current \hyperlink{classKatabatic_1_1AutoSegment}{Auto\-Segment}. {\ttfamily N\-U\-L\-L} if the loop is over. 
+\mbox{\Hypertarget{classKatabatic_1_1LocatorHelper_a5bc2a781be2586924afce4e4a4ea6697}\label{classKatabatic_1_1LocatorHelper_a5bc2a781be2586924afce4e4a4ea6697}} 
+\index{Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}!is\+Valid@{is\+Valid}}
+\index{is\+Valid@{is\+Valid}!Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}}
+\subsubsection{\texorpdfstring{is\+Valid()}{isValid()}}
+{\footnotesize\ttfamily bool is\+Valid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-References Auto\-Contact\-::get\-Segment().
+{\bfseries Returns\+:} {\bfseries true} if there is an \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} to be processed. \mbox{\Hypertarget{classKatabatic_1_1LocatorHelper_ad0f8becc4187c833b6f6c5f902f8aaa5}\label{classKatabatic_1_1LocatorHelper_ad0f8becc4187c833b6f6c5f902f8aaa5}} 
+\index{Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}!get\+Segment@{get\+Segment}}
+\index{get\+Segment@{get\+Segment}!Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}}
+\subsubsection{\texorpdfstring{get\+Segment()}{getSegment()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}} $\ast$ get\+Segment (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-\hypertarget{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}{\index{Katabatic\-::\-Locator\-Helper@{Katabatic\-::\-Locator\-Helper}!progress@{progress}}
-\index{progress@{progress}!Katabatic::LocatorHelper@{Katabatic\-::\-Locator\-Helper}}
-\subsubsection[{progress}]{\setlength{\rightskip}{0pt plus 5cm}void progress (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}
-{\bfseries Returns\-:} Go to the next \hyperlink{classKatabatic_1_1AutoSegment}{Auto\-Segment}. 
+{\bfseries Returns\+:} The current \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}}. {\ttfamily N\+U\+LL} if the loop is over. 
 
-References Auto\-Contact\-::get\-Segment().
+References Auto\+Contact\+::get\+Segment().
+
+\mbox{\Hypertarget{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}\label{classKatabatic_1_1LocatorHelper_a1be98ae64bededebc29a04f257024ebe}} 
+\index{Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}!progress@{progress}}
+\index{progress@{progress}!Katabatic\+::\+Locator\+Helper@{Katabatic\+::\+Locator\+Helper}}
+\subsubsection{\texorpdfstring{progress()}{progress()}}
+{\footnotesize\ttfamily void progress (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+{\bfseries Returns\+:} Go to the next \mbox{\hyperlink{classKatabatic_1_1AutoSegment}{Auto\+Segment}}. 
+
+References Auto\+Contact\+::get\+Segment().
 
 
 
-Referenced by Locator\-Helper\-::\-Locator\-Helper().
+Referenced by Locator\+Helper\+::\+Locator\+Helper().
 
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Auto\-Contact.\-h\item 
-Auto\-Contact.\-dox\end{DoxyCompactItemize}
+Auto\+Contact.\+h\item 
+Auto\+Contact.\+dox\end{DoxyCompactItemize}

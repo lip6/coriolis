@@ -78,12 +78,12 @@
                              )
       
                          set ( DefParserGrammar  ${LEFDEF_SOURCE_DIR}/src/def/def/def.y )
-          add_custom_command ( MAIN_DEPENDENCY   ${DefParserGrammar}
-                               COMMAND  ${BISON_EXECUTABLE} 
-                               ARGS     -v -p defyy -d ${DefParserGrammar} -o def.tab.cpp 
-                               COMMAND  mv
-                               ARGS     def.tab.hpp ${LEFDEF_SOURCE_DIR}/src/def/def/def.tab.h
-                               OUTPUT   def.tab.cpp
+          add_custom_command ( OUTPUT   def.tab.cpp
+                               DEPENDS  ${DefParserGrammar}
+                               COMMAND  ${BISON_EXECUTABLE} -v -p defyy -d ${DefParserGrammar} -o def.tab.cpp 
+                               COMMAND  mv def.tab.hpp ${LEFDEF_SOURCE_DIR}/src/def/def/def.tab.h
+                              #COMMAND  mv def.tab.cpp ${LEFDEF_SOURCE_DIR}/src/def/def/def.tab.cpp
+                               COMMENT  "Generating DEF parser (bison)"
                              )
  set_source_files_properties ( def.tab.cpp GENERATED )
 

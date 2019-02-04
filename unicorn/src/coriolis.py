@@ -142,7 +142,7 @@ if location & Location.SetBasePythonPath:
 pythonPath.insert( 0, os.path.join(coriolisTop,pythonSitePackages,'crlcore') )
 pythonPath.insert( 0, os.path.join(coriolisTop,pythonSitePackages,'stratus') )
 pythonPath.insert( 0, os.path.join(coriolisTop,pythonSitePackages,'cumulus') )
-pythonPath.insert( 0, os.path.join(coriolisTop,pythonSitePackages,'pharos' ) )
+pythonPath.insert( 0, os.path.join(coriolisTop,pythonSitePackages,'oroshi' ) )
 pythonPath.export()
 pythonPath.show()
 

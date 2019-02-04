@@ -81,23 +81,17 @@ namespace Hurricane {
 
   template<typename Data>
   class SlotTemplate : public Slot {
-
     public:
-    // Constructor.
                              SlotTemplate  ( const string& name, Data data );
                              SlotTemplate  (       string& name, Data data );
-    // Accessors.
       virtual string         getDataString () const;
       virtual Record*        getDataRecord () const;
       virtual SlotTemplate<Data>*
                              getClone      () const;
-
+              const Data&    getData       () const;
     protected:
-    // Internal: Attributes.
               Data           _data;
-
     private:
-    // Internal: Constructors.
                              SlotTemplate  ( const SlotTemplate& );
               SlotTemplate&  operator=     ( const SlotTemplate& );
   };
@@ -106,7 +100,10 @@ namespace Hurricane {
 // Inline Member Functions.
   template<typename Data>
   SlotTemplate<Data>::SlotTemplate ( const string& name, Data data )
-                                   : Slot(name), _data(data) { }
+                                   : Slot(name), _data(data)
+  {
+  //std::cerr << "SlotTemplate<Data>::SlotTemplate() ( \"" << name << "\" )" << std::endl;
+  }
 
   template<typename Data>
   SlotTemplate<Data>::SlotTemplate ( string& name, Data data )
@@ -122,29 +119,30 @@ namespace Hurricane {
   SlotTemplate<Data>* SlotTemplate<Data>::getClone () const
   { return new SlotTemplate(_name,_data); }
 
+  template<typename Data>
+  const Data& SlotTemplate<Data>::getData () const
+  {
+  //std::cerr << "SlotTemplate<Data>::getData()" << std::endl;
+    return _data;
+  }
+
 
 // -------------------------------------------------------------------
 // Class  :  "SlotTemplate<const Data>".
 
   template<typename Data>
   class SlotTemplate<const Data> : public Slot {
-
     public:
-    // Constructor.
                              SlotTemplate  ( const string& name, const Data data );
                              SlotTemplate  (       string& name, const Data data );
-    // Accessors.
       virtual string         getDataString () const;
       virtual Record*        getDataRecord () const;
       virtual SlotTemplate<const Data>*
                              getClone      () const;
-
+              const Data&    getData       () const;
     protected:
-    // Internal: Attributes.
               const Data     _data;
-
     private:
-    // Internal: Constructors.
                              SlotTemplate  ( const SlotTemplate& );
               SlotTemplate&  operator=     ( const SlotTemplate& );
   };
@@ -153,21 +151,28 @@ namespace Hurricane {
 // Inline Member Functions.
   template<typename Data>
   SlotTemplate<const Data>::SlotTemplate ( const string& name, const Data data )
-                                         : Slot(name), _data(data) { }
+                                         : Slot(name), _data(data)
+  {
+  //std::cerr << "SlotTemplate<Data>::SlotTemplate(const Data) ( \"" << name << "\" )" << std::endl;
+  }
 
   template<typename Data>
   SlotTemplate<const Data>::SlotTemplate ( string& name, const Data data )
                                          : Slot(name), _data(data) { }
 
   template<typename Data>
-  string  SlotTemplate<const Data>::getDataString () const { return getString(_data); }
+  string  SlotTemplate<const Data>::getDataString () const { return ::getString(_data); }
 
   template<typename Data>
-  Record* SlotTemplate<const Data>::getDataRecord () const { return getRecord(_data); }
+  Record* SlotTemplate<const Data>::getDataRecord () const { return ::getRecord(_data); }
 
   template<typename Data>
   SlotTemplate<const Data>* SlotTemplate<const Data>::getClone () const
   { return new SlotTemplate(_name,_data); }
+
+  template<typename Data>
+  const Data& SlotTemplate<const Data>::getData () const
+  { return _data; }
 
 
 // -------------------------------------------------------------------
@@ -176,32 +181,29 @@ namespace Hurricane {
 
   template<typename Data>
   class SlotTemplate<Data*> : public Slot {
-
     public:
-    // Constructor.
-                           SlotTemplate  ( const string& name, Data* data );
-                           SlotTemplate  (       string& name, Data* data );
-    // Accessors.
-      virtual string       getDataString () const;
-      virtual Record*      getDataRecord () const;
+                            SlotTemplate  ( const string& name, Data* data );
+                            SlotTemplate  (       string& name, Data* data );
+      virtual string        getDataString () const;
+      virtual Record*       getDataRecord () const;
       virtual SlotTemplate<Data*>*
-                           getClone      () const;
-
+                            getClone      () const;
+              Data*         getData       () const;
+    private:                
+                            SlotTemplate  ( const SlotTemplate& );
+              SlotTemplate& operator=     ( const SlotTemplate& );
     protected:
-    // Internal: Attributes.
               Data*        _data;
-
-    private:
-    // Internal: Constructors.
-                           SlotTemplate  ( const SlotTemplate& );
-              SlotTemplate& operator=    ( const SlotTemplate& );
   };
 
 
 // Inline Member Functions.
   template<typename Data>
   SlotTemplate<Data*>::SlotTemplate ( const string& name, Data* data )
-                                    : Slot(name), _data(data) {}
+                                    : Slot(name), _data(data)
+  {
+  //std::cerr << "SlotTemplate<Data*>::SlotTemplate(Data*) \"" << name << "\"" << std::endl;
+  }
 
   template<typename Data>
   SlotTemplate<Data*>::SlotTemplate ( string& name, Data* data )
@@ -211,11 +213,22 @@ namespace Hurricane {
   string  SlotTemplate<Data*>::getDataString () const { return ::getString(_data); }
 
   template<typename Data>
-  Record* SlotTemplate<Data*>::getDataRecord () const { return ::getRecord(_data); }
+  Record* SlotTemplate<Data*>::getDataRecord () const
+  {
+  //std::cerr << "SlotTemplate<Data*>::getDataRecord()" << std::endl;
+    return ::getRecord(_data);
+  }
 
   template<typename Data>
   SlotTemplate<Data*>* SlotTemplate<Data*>::getClone () const
   { return new SlotTemplate(_name,_data); }
+
+  template<typename Data>
+  Data* SlotTemplate<Data*>::getData () const
+  {
+  //std::cerr << "SlotTemplate<Data*>::getData()" << _data << std::endl;
+    return _data;
+  }
 
 
 // -------------------------------------------------------------------
@@ -224,32 +237,29 @@ namespace Hurricane {
 
   template<typename Data>
   class SlotTemplate<Data* const> : public Slot {
-
     public:
-    // Constructor.
-                           SlotTemplate  ( const string& name, Data* const data );
-                           SlotTemplate  (       string& name, Data* const data );
-    // Accessors.
-      virtual string       getDataString () const;
-      virtual Record*      getDataRecord () const;
+                            SlotTemplate  ( const string& name, Data* const data );
+                            SlotTemplate  (       string& name, Data* const data );
+      virtual string        getDataString () const;
+      virtual Record*       getDataRecord () const;
       virtual SlotTemplate<Data* const>*
-                           getClone      () const;
-
+                            getClone      () const;
+              Data* const   getData       () const;
+    private:                
+                            SlotTemplate  ( const SlotTemplate& );
+              SlotTemplate& operator=     ( const SlotTemplate& );
     protected:
-    // Internal: Attributes.
               Data* const  _data;
-
-    private:
-    // Internal: Constructors.
-                           SlotTemplate  ( const SlotTemplate& );
-              SlotTemplate& operator=    ( const SlotTemplate& );
   };
 
 
 // Inline Member Functions.
   template<typename Data>
   SlotTemplate<Data* const>::SlotTemplate ( const string& name, Data* const data )
-                                          : Slot(name), _data(data) {}
+                                          : Slot(name), _data(data)
+  {
+  //std::cerr << "SlotTemplate<Data>::SlotTemplate(Data* const) ( \"" << name << "\" )" << std::endl;
+  }
 
   template<typename Data>
   SlotTemplate<Data* const>::SlotTemplate ( string& name, Data* const data )
@@ -265,6 +275,10 @@ namespace Hurricane {
   SlotTemplate<Data* const>* SlotTemplate<Data* const>::getClone () const
   { return new SlotTemplate(_name,_data); }
 
+  template<typename Data>
+  Data* const SlotTemplate<Data* const>::getData () const
+  { return _data; }
+
 
 // -------------------------------------------------------------------
 // Class  :  "SlotTemplate".
@@ -272,31 +286,27 @@ namespace Hurricane {
 
   template<>
   class SlotTemplate<Record*> : public Slot {
-
     public:
-    // Constructor.
-      inline                      SlotTemplate  ( const string& name, Record* data );
-      inline                      SlotTemplate  (       string& name, Record* data );
-    // Accessors.
-      inline virtual string       getDataString () const;
-      inline virtual Record*      getDataRecord () const;
+      inline                       SlotTemplate  ( const string& name, Record* data );
+      inline                       SlotTemplate  (       string& name, Record* data );
+      inline virtual string        getDataString () const;
+      inline virtual Record*       getDataRecord () const;
       inline virtual SlotTemplate<Record*>*
-                                  getClone      () const;
-
-    protected:
-    // Internal: Attributes.
-                     Record*      _data;
-
+                                   getClone      () const;
     private:
-    // Internal: Constructors.
-                           SlotTemplate  ( const SlotTemplate& );
-              SlotTemplate& operator=    ( const SlotTemplate& );
+                                   SlotTemplate  ( const SlotTemplate& );
+                     SlotTemplate& operator=     ( const SlotTemplate& );
+    protected:
+                     Record*       _data;
   };
 
 
 // Inline Member Functions.
   inline SlotTemplate<Record*>::SlotTemplate ( const string& name, Record* data )
-                                             : Slot(name), _data(data) {}
+                                             : Slot(name), _data(data)
+  {
+  //std::cerr << "SlotTemplate<Data>::SlotTemplate(Record*) ( \"" << name << "\" )" << std::endl;
+  }
 
   inline SlotTemplate<Record*>::SlotTemplate ( string& name, Record* data )
                                              : Slot(name), _data(data) {}
@@ -331,6 +341,7 @@ template<typename Data>
 inline Hurricane::Slot* getSlot( const std::string& name, Data d )
 {
 //std::cerr << "getSlot<const string&,Data>( \"" << name << "\" )" << std::endl;
+//std::cerr << "  Data = " << typeid(d).name() << std::endl;
   return new Hurricane::SlotTemplate<Data> ( name, d );
 }
 
@@ -339,6 +350,7 @@ template<typename Data>
 inline Hurricane::Slot* getSlot( const std::string& name, Data* d )
 {
 //std::cerr << "getSlot<const string&,Data*>( \"" << name << "\" )" << std::endl;
+//std::cerr << "  Data = " << typeid(d).name() << std::endl;
   return new Hurricane::SlotTemplate<Data*> ( name, d );
 }
 

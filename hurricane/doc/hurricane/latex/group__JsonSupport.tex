@@ -1,59 +1,60 @@
-\hypertarget{group__JsonSupport}{\section{J\-S\-O\-N Support}
-\label{group__JsonSupport}\index{J\-S\-O\-N Support@{J\-S\-O\-N Support}}
-}
+\hypertarget{group__JsonSupport}{}\section{J\+S\+ON Support}
+\label{group__JsonSupport}\index{J\+S\+O\+N Support@{J\+S\+O\+N Support}}
 
 
-J\-S\-O\-N Import/\-Export of the \hyperlink{classHurricane_1_1DataBase}{Data\-Base}.  
+J\+S\+ON Import/\+Export of the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}.  
 
 
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classHurricane_1_1JsonObject}{Hurricane\-::\-Json\-Object}
-\begin{DoxyCompactList}\small\item\em Support for J\-S\-O\-N export. \end{DoxyCompactList}\item 
-class \hyperlink{classHurricane_1_1JsonStack}{Hurricane\-::\-Json\-Stack}
-\begin{DoxyCompactList}\small\item\em J\-S\-O\-N Parser Stack. \end{DoxyCompactList}\end{DoxyCompactItemize}
+class \mbox{\hyperlink{classHurricane_1_1JsonObject}{Hurricane\+::\+Json\+Object}}
+\begin{DoxyCompactList}\small\item\em Support for J\+S\+ON export. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classHurricane_1_1JsonStack}{Hurricane\+::\+Json\+Stack}}
+\begin{DoxyCompactList}\small\item\em J\+S\+ON Parser Stack. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-J\-S\-O\-N Import/\-Export of the \hyperlink{classHurricane_1_1DataBase}{Data\-Base}. \hypertarget{group__JsonSupport_secJsonSupportIntro}{}\subsection{Introduction}\label{group__JsonSupport_secJsonSupportIntro}
-One key feature of the \hyperlink{namespaceHurricane}{Hurricane} \hyperlink{classHurricane_1_1DataBase}{Data\-Base} is it's hierarchical managment. But unfortunatly the simple approach of saving a design \hyperlink{classHurricane_1_1Cell}{Cell} by \hyperlink{classHurricane_1_1Cell}{Cell}, hierarchical level by hierarchical level makes it very difficult to save the trans-\/hierarchical informations (mainly is the occurrences)
+J\+S\+ON Import/\+Export of the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}. 
 
-One solution is to save the design and all it's levels, down and including the standard cells. With all the levels saved, we then can add the occurrences and all the attached trans-\/hierarchical informations. We call that comprehensive saving of a design, a {\itshape design blob}.
+\hypertarget{group__JsonSupport_secJsonSupportIntro}{}\subsection{Introduction}\label{group__JsonSupport_secJsonSupportIntro}
+One key feature of the \mbox{\hyperlink{namespaceHurricane}{Hurricane}} \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} is it\textquotesingle{}s hierarchical managment. But unfortunatly the simple approach of saving a design \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} by \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}, hierarchical level by hierarchical level makes it very difficult to save the trans-\/hierarchical informations (mainly is the occurrences)
 
-Instead of creating one more ad-\/hoc format, we just dump the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} objects in a mirror like way in J\-S\-O\-N format.
+One solution is to save the design and all it\textquotesingle{}s levels, down and including the standard cells. With all the levels saved, we then can add the occurrences and all the attached trans-\/hierarchical informations. We call that comprehensive saving of a design, a {\itshape design blob}.
 
-As it is a textual format, the generated files are larges. So the files are compressed through {\ttfamily gzip}.\hypertarget{group__JsonSupport_secJsonSemantic}{}\subsection{J\-S\-O\-N Additional Semantic}\label{group__JsonSupport_secJsonSemantic}
-To ease the work of the parser, some semantic has been added to the J\-S\-O\-N objects representing a \hyperlink{namespaceHurricane}{Hurricane} \hyperlink{classHurricane_1_1DataBase}{Data\-Base}.
+Instead of creating one more ad-\/hoc format, we just dump the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} objects in a mirror like way in J\+S\+ON format.
+
+As it is a textual format, the generated files are larges. So the files are compressed through {\ttfamily gzip}.\hypertarget{group__JsonSupport_secJsonSemantic}{}\subsection{J\+S\+O\+N Additional Semantic}\label{group__JsonSupport_secJsonSemantic}
+To ease the work of the parser, some semantic has been added to the J\+S\+ON objects representing a \mbox{\hyperlink{namespaceHurricane}{Hurricane}} \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}.
 \begin{DoxyEnumerate}
-\item The first key/value pair must have the key {\ttfamily \char`\"{}@typename\char`\"{}} and give the kind of \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} associated. The value is the string returned by {\ttfamily \hyperlink{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{Json\-Object\-::get\-Type\-Name()}}.
-\item Attributes keys must start by a {\ttfamily '\-\_\-'} character. (yes, I know, the C++ convention has changed and it should be put at the end).
-\item Collections or containers must be put {\itshape after} all the scalar attributes and their keys must start by a {\ttfamily '+'} character.
+\item The first key/value pair must have the key {\ttfamily \char`\"{}@typename\char`\"{}} and give the kind of \mbox{\hyperlink{classHurricane_1_1JsonObject}{Json\+Object}} associated. The value is the string returned by {\ttfamily \mbox{\hyperlink{classHurricane_1_1JsonObject_a947e1c3f8dbae63bb2d086b5b827a2a5}{Json\+Object\+::get\+Type\+Name()}}}.
+\item Attributes keys must start by a {\ttfamily \textquotesingle{}\+\_\+\textquotesingle{}} character. (yes, I know, the C++ convention has changed and it should be put at the end).
+\item Collections or containers must be put {\itshape after} all the scalar attributes and their keys must start by a {\ttfamily \textquotesingle{}+\textquotesingle{}} character.
 \end{DoxyEnumerate}
 
 
 \begin{DoxyCode}
 \{
-  \textcolor{stringliteral}{"@typename"}: \textcolor{stringliteral}{"Cell"},
-  \textcolor{stringliteral}{"\_id"}: 3,
-  \textcolor{stringliteral}{"\_library"}: \textcolor{stringliteral}{"RootLibrary.AllianceFramework.sxlib"},
-  \textcolor{stringliteral}{"\_name"}: \textcolor{stringliteral}{"o3\_x2"},
-  \textcolor{stringliteral}{"\_abutmentBox"}: \{
-    \textcolor{stringliteral}{"@typename"}: \textcolor{stringliteral}{"Box"},
-    \textcolor{stringliteral}{"\_xMin"}: 0,
-    \textcolor{stringliteral}{"\_yMin"}: 0,
-    \textcolor{stringliteral}{"\_xMax"}: 72000,
-    \textcolor{stringliteral}{"\_yMax"}: 120000
+  "@typename": "Cell",
+  "\_id": 3,
+  "\_library": "RootLibrary.AllianceFramework.sxlib",
+  "\_name": "o3\_x2",
+  "\_abutmentBox": \{
+    "@typename": "Box",
+    "\_xMin": 0,
+    "\_yMin": 0,
+    "\_xMax": 72000,
+    "\_yMax": 120000
   \},
-  \textcolor{stringliteral}{"+instanceMap"}: [],
-  \textcolor{stringliteral}{"+netMap"}: [
+  "+instanceMap": [],
+  "+netMap": [
   ],
 \}
 \end{DoxyCode}
-\hypertarget{group__JsonSupport_secJsonDriver}{}\subsection{J\-S\-O\-N Driver Support}\label{group__JsonSupport_secJsonDriver}
-The driver is implemented through overloads (template and non-\/template) of the {\ttfamily json\-Writer()} function. For the template overload to work, even for non-\/\-Hurricane classes, it is defined outside the \hyperlink{namespaceHurricane}{Hurricane} namespace.
+\hypertarget{group__JsonSupport_secJsonDriver}{}\subsection{J\+S\+O\+N Driver Support}\label{group__JsonSupport_secJsonDriver}
+The driver is implemented through overloads (template and non-\/template) of the {\ttfamily json\+Writer()} function. For the template overload to work, even for non-\/\+Hurricane classes, it is defined outside the \mbox{\hyperlink{namespaceHurricane}{Hurricane}} namespace.
 
-For P\-O\-D types, four overloads of {\ttfamily json\-Writer()} are defined\-:
+For P\+OD types, four overloads of {\ttfamily json\+Writer()} are defined\+:
 
 
 \begin{DoxyCode}
@@ -64,9 +65,9 @@ For P\-O\-D types, four overloads of {\ttfamily json\-Writer()} are defined\-:
 \end{DoxyCode}
 
 
-The first two writes the object (here\-: {\ttfamily int}) \char`\"{}as is\char`\"{} while the two later writes a pair key/object.
+The first two writes the object (here\+: {\ttfamily int}) \char`\"{}as is\char`\"{} while the two later writes a pair key/object.
 
-For other class/object that needs to be writen in the J\-S\-O\-N file, they must provide a {\ttfamily to\-Json()} function. It doesn't even need to be virtual. For \hyperlink{classHurricane_1_1Point}{Point}\-:
+For other class/object that needs to be writen in the J\+S\+ON file, they must provide a {\ttfamily to\+Json()} function. It doesn\textquotesingle{}t even need to be virtual. For \mbox{\hyperlink{classHurricane_1_1Point}{Point}}\+:
 
 
 \begin{DoxyCode}
@@ -81,7 +82,7 @@ For other class/object that needs to be writen in the J\-S\-O\-N file, they must
 \end{DoxyCode}
 
 
-This function allows three templates of {\ttfamily json\-Write()} to be used with an object of class \hyperlink{classHurricane_1_1Point}{Point}\-:
+This function allows three templates of {\ttfamily json\+Write()} to be used with an object of class \mbox{\hyperlink{classHurricane_1_1Point}{Point}}\+:
 
 
 \begin{DoxyCode}
@@ -96,8 +97,8 @@ This function allows three templates of {\ttfamily json\-Write()} to be used wit
 \end{DoxyCode}
 
 
-Note that through those three overloads we only provides support for pointers to object. The driving mechanism is designed in such a way that passing arguments by value is not supported for non-\/\-P\-O\-D types. Trying to do so will result in an unsupported message inside the generated J\-S\-O\-N file.\hypertarget{group__JsonSupport_secJsonDriverDBo}{}\subsubsection{D\-Bos Special Case}\label{group__JsonSupport_secJsonDriverDBo}
-For \hyperlink{classHurricane_1_1DBo}{D\-Bo} objects, a complete parallel hierarchy of Json\-Objects mimicking the one of D\-Bos has been implemented. The {\ttfamily to\-Json()} function is implemented in the \hyperlink{classHurricane_1_1DBo}{D\-Bo} base object, and the derived classes must implement the following virtual functions\-:
+Note that through those three overloads we only provides support for pointers to object. The driving mechanism is designed in such a way that passing arguments by value is not supported for non-\/\+P\+OD types. Trying to do so will result in an unsupported message inside the generated J\+S\+ON file.\hypertarget{group__JsonSupport_secJsonDriverDBo}{}\subsubsection{D\+Bos Special Case}\label{group__JsonSupport_secJsonDriverDBo}
+For \mbox{\hyperlink{classHurricane_1_1DBo}{D\+Bo}} objects, a complete parallel hierarchy of Json\+Objects mimicking the one of D\+Bos has been implemented. The {\ttfamily to\+Json()} function is implemented in the \mbox{\hyperlink{classHurricane_1_1DBo}{D\+Bo}} base object, and the derived classes must implement the following virtual functions\+:
 
 
 \begin{DoxyCode}
@@ -111,14 +112,14 @@ For \hyperlink{classHurricane_1_1DBo}{D\-Bo} objects, a complete parallel hierar
 \end{DoxyCode}
 
 
-The J\-S\-O\-N driver functions is splitted in two parts\-:
+The J\+S\+ON driver functions is splitted in two parts\+:
 \begin{DoxyItemize}
-\item {\ttfamily \-\_\-to\-Json()} must drive the scalar attributes.
-\item {\ttfamily \-\_\-to\-Json\-Collections()} must drive the various collections or containers. This is to ensure that all the scalars attributes are put before the collections, event through inheritance.
+\item {\ttfamily \+\_\+to\+Json()} must drive the scalar attributes.
+\item {\ttfamily \+\_\+to\+Json\+Collections()} must drive the various collections or containers. This is to ensure that all the scalars attributes are put before the collections, event through inheritance.
 \end{DoxyItemize}
 
-The additionnal {\ttfamily to\-Json\-Signature()} method provide the signature for an \hyperlink{classHurricane_1_1Entity}{Entity} which is used by an occurrence. The signature of an occurrence is needed when we create a J\-S\-O\-N for a \hyperlink{classHurricane_1_1Cell}{Cell} only. In that case we cannot directly save the transhierarchical informations, so we need a way to characterize the deep \hyperlink{classHurricane_1_1Entity}{Entity} (which is not part of the saved \hyperlink{classHurricane_1_1Cell}{Cell}). Most of the time, the signature is the scalar attributes of the occurrenced object, it is far from foolproof, but it will do for now.\hypertarget{group__JsonSupport_secJsonParser}{}\subsection{J\-S\-O\-N Parser Support}\label{group__JsonSupport_secJsonParser}
-To enable J\-S\-O\-N parsing support for an object, say \hyperlink{classHurricane_1_1Point}{Point}, an associated {\ttfamily Json\-Point} class must be created. This class must be derived (directly or not) from \hyperlink{classHurricane_1_1JsonObject}{Json\-Object}. It must implement one static functions and four methods, as shown below.
+The additionnal {\ttfamily to\+Json\+Signature()} method provide the signature for an \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} which is used by an occurrence. The signature of an occurrence is needed when we create a J\+S\+ON for a \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} only. In that case we cannot directly save the transhierarchical informations, so we need a way to characterize the deep \mbox{\hyperlink{classHurricane_1_1Entity}{Entity}} (which is not part of the saved \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}). Most of the time, the signature is the scalar attributes of the occurrenced object, it is far from foolproof, but it will do for now.\hypertarget{group__JsonSupport_secJsonParser}{}\subsection{J\+S\+O\+N Parser Support}\label{group__JsonSupport_secJsonParser}
+To enable J\+S\+ON parsing support for an object, say \mbox{\hyperlink{classHurricane_1_1Point}{Point}}, an associated {\ttfamily Json\+Point} class must be created. This class must be derived (directly or not) from \mbox{\hyperlink{classHurricane_1_1JsonObject}{Json\+Object}}. It must implement one static functions and four methods, as shown below.
 
 
 \begin{DoxyCode}
@@ -147,7 +148,7 @@ Initializer<JsonPoint>  jsonPointInit ( 0 );
 \end{DoxyCode}
 
 
-The constructor has to declare requirements, attributes, and collections needed to build the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object. Note the the requirements are not part of the objects but only needed to build it.
+The constructor has to declare requirements, attributes, and collections needed to build the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} object. Note the the requirements are not part of the objects but only needed to build it.
 
 
 \begin{DoxyCode}
@@ -160,7 +161,7 @@ JsonPoint::JsonPoint ( \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}
 \end{DoxyCode}
 
 
-The {\ttfamily get\-Type\-Name()} virtual function must return the typename used for the {\ttfamily \char`\"{}@typename\char`\"{}} key in the J\-S\-O\-N file. Most of the time it's the same name as the object itself, but not always.
+The {\ttfamily get\+Type\+Name()} virtual function must return the typename used for the {\ttfamily \char`\"{}@typename\char`\"{}} key in the J\+S\+ON file. Most of the time it\textquotesingle{}s the same name as the object itself, but not always.
 
 
 \begin{DoxyCode}
@@ -178,74 +179,74 @@ JsonPoint* JsonPoint::clone ( \textcolor{keywordtype}{unsigned} \textcolor{keywo
 \end{DoxyCode}
 
 
-The {\ttfamily to\-Data()} virtual function actually gather the attributes to recreate the \hyperlink{classHurricane_1_1DataBase}{Data\-Base} object. It needs the parser stack to pull the attributes and to push the created object.
+The {\ttfamily to\+Data()} virtual function actually gather the attributes to recreate the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} object. It needs the parser stack to pull the attributes and to push the created object.
 
 
 \begin{DoxyCode}
 \textcolor{keywordtype}{void} JsonPoint::toData ( JsonStack& stack )
 \{
   check( stack, \textcolor{stringliteral}{"JsonPoint::toData"} );
-  Point point ( \hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{DbU::fromDb}(get<int64\_t>(stack,\textcolor{stringliteral}{"\_x"}))
-              , \hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{DbU::fromDb}(get<int64\_t>(stack,\textcolor{stringliteral}{"\_y"})) );
+  Point point ( \mbox{\hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{DbU::fromDb}}(get<int64\_t>(stack,\textcolor{stringliteral}{"\_x"}))
+              , \mbox{\hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{DbU::fromDb}}(get<int64\_t>(stack,\textcolor{stringliteral}{"\_y"})) );
   update( stack, point );
 \}
 \end{DoxyCode}
-\hypertarget{group__JsonSupport_secJsonArray}{}\subsubsection{J\-S\-O\-N Array}\label{group__JsonSupport_secJsonArray}
-J\-S\-O\-N array are not translated into containers of any kind. They are simply ignored (from the stack point of view). Objects in array comes from a great variety of containers including \hyperlink{classHurricane_1_1Collection}{Hurricane\-::\-Collection}, in almost all cases, their very constructors are responsibles for inserting the object in the relevant container/collection. So there is no need to build a mechanism to keep track of all the objects in an array through a temporary container.
+\hypertarget{group__JsonSupport_secJsonArray}{}\subsubsection{J\+S\+O\+N Array}\label{group__JsonSupport_secJsonArray}
+J\+S\+ON array are not translated into containers of any kind. They are simply ignored (from the stack point of view). Objects in array comes from a great variety of containers including \mbox{\hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}}, in almost all cases, their very constructors are responsibles for inserting the object in the relevant container/collection. So there is no need to build a mechanism to keep track of all the objects in an array through a temporary container.
 
-The corollary is that an object in an array must be able to extract the relevant context information from the stack. Say, if we are in an array of components, they must belong to a \hyperlink{classHurricane_1_1Net}{Net}, which must be present in the stack with a key \char`\"{}.\-Net\char`\"{}.\hypertarget{group__JsonSupport_secJsonStack}{}\subsubsection{Parser Stack}\label{group__JsonSupport_secJsonStack}
-While performing the parsing, the parser maintain a stack (\hyperlink{classHurricane_1_1JsonStack}{Json\-Stack}) containing\-:
+The corollary is that an object in an array must be able to extract the relevant context information from the stack. Say, if we are in an array of components, they must belong to a \mbox{\hyperlink{classHurricane_1_1Net}{Net}}, which must be present in the stack with a key \char`\"{}.\+Net\char`\"{}.\hypertarget{group__JsonSupport_secJsonStack}{}\subsubsection{Parser Stack}\label{group__JsonSupport_secJsonStack}
+While performing the parsing, the parser maintain a stack (\mbox{\hyperlink{classHurricane_1_1JsonStack}{Json\+Stack}}) containing\+:
 \begin{DoxyItemize}
-\item The stack of attributes translateds, but not consumeds by the parser and the objects currently openeds (that is, which parsing is not completed). This stack contains P\-O\-D or \hyperlink{namespaceHurricane}{Hurricane} objects (value or pointer). It is a vector of pair {\ttfamily }(key,value) where the {\itshape key} is either the attribute name ({\ttfamily \-\_\-bounding\-Box}, {\ttfamily \-\_\-x\-Min}, {\ttfamily \-\_\-master\-Cell}, ...) or the class name ({\ttfamily }.\hyperlink{classHurricane_1_1Net}{Net}, {\ttfamily }.\hyperlink{classHurricane_1_1Cell}{Cell}, ...).
-\item The stack of J\-S\-O\-N objects currently openeds, thoses objects are all derived classes of \hyperlink{classHurricane_1_1JsonObject}{Json\-Object}.
-\item A stack of currently opened D\-Bo$\ast$. This stack is somewhat redundant with the first, but is needed because {\ttfamily boost\-::any\-\_\-cast$<$$>$} is not able to perform dynamic conversions. You have to know the exact for the conversion to work. Here, everything is D\-Bo$\ast$, so the problem do not arises.
-\end{DoxyItemize}\hypertarget{group__JsonSupport_secJsonCycle}{}\subsubsection{Json\-Object Life Cycle}\label{group__JsonSupport_secJsonCycle}
+\item The stack of attributes translateds, but not consumeds by the parser and the objects currently openeds (that is, which parsing is not completed). This stack contains P\+OD or \mbox{\hyperlink{namespaceHurricane}{Hurricane}} objects (value or pointer). It is a vector of pair {\ttfamily }(key,value) where the {\itshape key} is either the attribute name ({\ttfamily \+\_\+bounding\+Box}, {\ttfamily \+\_\+x\+Min}, {\ttfamily \+\_\+master\+Cell}, ...) or the class name ({\ttfamily }.\mbox{\hyperlink{classHurricane_1_1Net}{Net}}, {\ttfamily }.\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}, ...).
+\item The stack of J\+S\+ON objects currently openeds, thoses objects are all derived classes of \mbox{\hyperlink{classHurricane_1_1JsonObject}{Json\+Object}}.
+\item A stack of currently opened D\+Bo$\ast$. This stack is somewhat redundant with the first, but is needed because {\ttfamily boost\+::any\+\_\+cast$<$$>$} is not able to perform dynamic conversions. You have to know the exact for the conversion to work. Here, everything is D\+Bo$\ast$, so the problem do not arises.
+\end{DoxyItemize}\hypertarget{group__JsonSupport_secJsonCycle}{}\subsubsection{Json\+Object Life Cycle}\label{group__JsonSupport_secJsonCycle}
 
 \begin{DoxyCode}
 \{                          # JsonDummy()  (1).
-  \textcolor{stringliteral}{"\_typename"}: \textcolor{stringliteral}{"Net"},      # JsonNet()  CTOR (2).
-  \textcolor{stringliteral}{"\_id"}: 14622,
-  \textcolor{stringliteral}{"\_name"}: \textcolor{stringliteral}{"saccu(0)"},
-  \textcolor{stringliteral}{"\_isGlobal"}: \textcolor{keyword}{false},
-  \textcolor{stringliteral}{"\_isExternal"}: \textcolor{keyword}{false},
-  \textcolor{stringliteral}{"\_isAutomatic"}: \textcolor{keyword}{false},
-  \textcolor{stringliteral}{"\_type"}: \textcolor{stringliteral}{"LOGICAL"},
-  \textcolor{stringliteral}{"\_direction"}: \textcolor{stringliteral}{"---- (UNDEFINED)"},
-  \textcolor{stringliteral}{"+aliases"}: [],          # JsonNet::toData()  (3).
-  \textcolor{stringliteral}{"+componentSet"}: [
+  "\_typename": "Net",      # JsonNet()  CTOR (2).
+  "\_id": 14622,
+  "\_name": "saccu(0)",
+  "\_isGlobal": false,
+  "\_isExternal": false,
+  "\_isAutomatic": false,
+  "\_type": "LOGICAL",
+  "\_direction": "---- (UNDEFINED)",
+  "+aliases": [],          # JsonNet::toData()  (3).
+  "+componentSet": [
     \{
-      \textcolor{stringliteral}{"@typename"}: \textcolor{stringliteral}{"RoutingPad"},
-      \textcolor{stringliteral}{"\_id"}: 27410,
-      \textcolor{stringliteral}{"\_bodyHook"}: \textcolor{stringliteral}{"Contact::AnchorHook.46566"},
-      \textcolor{stringliteral}{"\_occurrence"}: \{
-        \textcolor{stringliteral}{"@typename"}: \textcolor{stringliteral}{"Occurrence"},
-        \textcolor{stringliteral}{"\_path"}: \textcolor{stringliteral}{"14720.14976"},
-        \textcolor{stringliteral}{"\_entity"}: 3888
+      "@typename": "RoutingPad",
+      "\_id": 27410,
+      "\_bodyHook": "Contact::AnchorHook.46566",
+      "\_occurrence": \{
+        "@typename": "Occurrence",
+        "\_path": "14720.14976",
+        "\_entity": 3888
       \},
-      \textcolor{stringliteral}{"+propertySet"}: []
+      "+propertySet": []
     \},
     \{
-      \textcolor{stringliteral}{"@typename"}: \textcolor{stringliteral}{"RoutingPad"},
-      \textcolor{stringliteral}{"\_id"}: 27409,
-      \textcolor{stringliteral}{"\_bodyHook"}: \textcolor{stringliteral}{"Contact::AnchorHook.46574"},
-      \textcolor{stringliteral}{"\_occurrence"}: \{
-        \textcolor{stringliteral}{"@typename"}: \textcolor{stringliteral}{"Occurrence"},
-        \textcolor{stringliteral}{"\_path"}: \textcolor{stringliteral}{"14654.18564"},
-        \textcolor{stringliteral}{"\_entity"}: 4529
+      "@typename": "RoutingPad",
+      "\_id": 27409,
+      "\_bodyHook": "Contact::AnchorHook.46574",
+      "\_occurrence": \{
+        "@typename": "Occurrence",
+        "\_path": "14654.18564",
+        "\_entity": 4529
       \},
-      \textcolor{stringliteral}{"+propertySet"}: []
+      "+propertySet": []
     \}
   \}
 \}                          # ~JsonNet()  DTOR (4). 
 \end{DoxyCode}
 
 
-At {\ttfamily }(1) , before {\ttfamily \-\_\-typename} is encountered, we know that a new object is about to be created, but do not know what is type will be. So we push on top of the stack a {\ttfamily Json\-Dummy}.
+At {\ttfamily }(1) , before {\ttfamily \+\_\+typename} is encountered, we know that a new object is about to be created, but do not know what is type will be. So we push on top of the stack a {\ttfamily Json\+Dummy}.
 
-At {\ttfamily }(2) , the {\ttfamily \-\_\-typename} allows us to create the right kind of \hyperlink{classHurricane_1_1JsonObject}{Json\-Object}, which will {\itshape replace} the {\ttfamily Json\-Dummy} on top of the stack.
+At {\ttfamily }(2) , the {\ttfamily \+\_\+typename} allows us to create the right kind of \mbox{\hyperlink{classHurricane_1_1JsonObject}{Json\+Object}}, which will {\itshape replace} the {\ttfamily Json\+Dummy} on top of the stack.
 
-At {\ttfamily }(3) , a first non-\/\-P\-O\-D attribute of Json\-Net is encountered. This triggers the call to {\ttfamily \hyperlink{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{Json\-Object\-::to\-Data()}}, which creates the \hyperlink{namespaceHurricane}{Hurricane} object \hyperlink{classHurricane_1_1Net}{Net}, and put it back on the attribute stack with the key {\ttfamily \char`\"{}.\-Net\char`\"{}} (because it is {\itshape not} an attribute).
+At {\ttfamily }(3) , a first non-\/\+P\+OD attribute of Json\+Net is encountered. This triggers the call to {\ttfamily \mbox{\hyperlink{classHurricane_1_1JsonObject_a57a845ca64ac8912b35c4dbf75723af6}{Json\+Object\+::to\+Data()}}}, which creates the \mbox{\hyperlink{namespaceHurricane}{Hurricane}} object \mbox{\hyperlink{classHurricane_1_1Net}{Net}}, and put it back on the attribute stack with the key {\ttfamily \char`\"{}.\+Net\char`\"{}} (because it is {\itshape not} an attribute).
 
-At {\ttfamily }(4) , the Json parser knows that the current \hyperlink{classHurricane_1_1JsonObject}{Json\-Object} is finished, so it removes Json\-Net from the stack and destroy it.
+At {\ttfamily }(4) , the Json parser knows that the current \mbox{\hyperlink{classHurricane_1_1JsonObject}{Json\+Object}} is finished, so it removes Json\+Net from the stack and destroy it.
 
-So, if you need to perform specific post-\/processing that can only take place {\ttfamily after} the object and all it's sub-\/objects has been fully parsed, you may do it in the destructor of the \hyperlink{classHurricane_1_1JsonObject}{Json\-Object}. For example, this technique is used to rebuild the rings of a \hyperlink{classHurricane_1_1Net}{Net}. 
+So, if you need to perform specific post-\/processing that can only take place {\ttfamily after} the object and all it\textquotesingle{}s sub-\/objects has been fully parsed, you may do it in the destructor of the \mbox{\hyperlink{classHurricane_1_1JsonObject}{Json\+Object}}. For example, this technique is used to rebuild the rings of a \mbox{\hyperlink{classHurricane_1_1Net}{Net}}. 

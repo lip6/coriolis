@@ -1,14 +1,13 @@
-\hypertarget{classHurricane_1_1ContactLayer}{\section{Hurricane\-:\-:Contact\-Layer Class Reference}
-\label{classHurricane_1_1ContactLayer}\index{Hurricane\-::\-Contact\-Layer@{Hurricane\-::\-Contact\-Layer}}
-}
+\hypertarget{classHurricane_1_1ContactLayer}{}\section{Hurricane\+:\+:Contact\+Layer Class Reference}
+\label{classHurricane_1_1ContactLayer}\index{Hurricane\+::\+Contact\+Layer@{Hurricane\+::\+Contact\+Layer}}
 
 
-\hyperlink{classHurricane_1_1ContactLayer}{Contact\-Layer} description ({\bfseries A\-P\-I})  
+\mbox{\hyperlink{classHurricane_1_1ContactLayer}{Contact\+Layer}} description ({\bfseries A\+PI})  
 
 
 
 
-Inheritance diagram for Hurricane\-:\-:Contact\-Layer\-:\nopagebreak
+Inheritance diagram for Hurricane\+:\+:Contact\+Layer\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -18,49 +17,42 @@ Inheritance diagram for Hurricane\-:\-:Contact\-Layer\-:\nopagebreak
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{classHurricane_1_1ContactLayer}{Contact\-Layer} $\ast$ \hyperlink{classHurricane_1_1ContactLayer_ab5f2e78865e0311fcabf25e1aa94bf09}{create} (\hyperlink{classHurricane_1_1Technology}{Technology} $\ast$technology, const \hyperlink{classHurricane_1_1Name}{Name} \&name, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$metal\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$cut\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$active\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$diffusion\-Layer, \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} $\ast$well\-Layer)
+static \mbox{\hyperlink{classHurricane_1_1ContactLayer}{Contact\+Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1ContactLayer_ab5f2e78865e0311fcabf25e1aa94bf09}{create}} (\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$technology, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$metal\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$cut\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$active\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$diffusion\+Layer, \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$well\+Layer)
 \end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1ContactLayer}{Contact\-Layer} description ({\bfseries A\-P\-I}) 
+\mbox{\hyperlink{classHurricane_1_1ContactLayer}{Contact\+Layer}} description ({\bfseries A\+PI}) 
 
-For a more complete description of the Layers objects, please refer to \hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}.
+For a more complete description of the Layers objects, please refer to \mbox{\hyperlink{classHurricane_1_1Layer_secLayerIntro}{Layer Introduction}}.
 
-\hyperlink{classHurricane_1_1ContactLayer}{Contact\-Layer} is a symbolic layer that contains four layers (metal, cut, active, diffusion) plus an optional well layer. Use it to represent a contact from the first metal level toward an active layer.
+\mbox{\hyperlink{classHurricane_1_1ContactLayer}{Contact\+Layer}} is a symbolic layer that contains four layers (metal, cut, active, diffusion) plus an optional well layer. Use it to represent a contact from the first metal level toward an active layer.
 
-The accessors functions\-: 
+The accessors functions\+: 
 \begin{DoxyItemize}
-\item \hyperlink{classHurricane_1_1Layer_a00213c29884bfd396576c9cf2fb8ed59}{Contact\-Layer\-::get\-Top()} 
-\item \hyperlink{classHurricane_1_1Layer_a5398b082b8a441c13d5b54c3cefff685}{Contact\-Layer\-::get\-Bottom()} 
-\item \hyperlink{classHurricane_1_1Layer_a97d8901ab1e4598d0783aeb89f55421a}{Contact\-Layer\-::get\-Opposite()} 
+\item \mbox{\hyperlink{classHurricane_1_1Layer_a5f7c43a29f3dd02a9ebccbcbf91d6727}{Contact\+Layer\+::get\+Top()}} 
+\item \mbox{\hyperlink{classHurricane_1_1Layer_a4dab4552a219d2d900ed0b1245dc6580}{Contact\+Layer\+::get\+Bottom()}} 
+\item \mbox{\hyperlink{classHurricane_1_1Layer_a69e76c09a56260169c4f5c145a35a47f}{Contact\+Layer\+::get\+Opposite()}} 
 \end{DoxyItemize}Have no meaning here.
 
 Only enclosure is used. Extention cap \& extention width are not used. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classHurricane_1_1ContactLayer_ab5f2e78865e0311fcabf25e1aa94bf09}{\index{Hurricane\-::\-Contact\-Layer@{Hurricane\-::\-Contact\-Layer}!create@{create}}
-\index{create@{create}!Hurricane::ContactLayer@{Hurricane\-::\-Contact\-Layer}}
-\subsubsection[{create}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Contact\-Layer} $\ast$ Hurricane\-::\-Contact\-Layer\-::create (
-\begin{DoxyParamCaption}
-\item[{{\bf Technology} $\ast$}]{technology, }
-\item[{const {\bf Name} \&}]{name, }
-\item[{{\bf Basic\-Layer} $\ast$}]{metal\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{cut\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{active\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{diffusion\-Layer, }
-\item[{{\bf Basic\-Layer} $\ast$}]{well\-Layer}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [static]}}}\label{classHurricane_1_1ContactLayer_ab5f2e78865e0311fcabf25e1aa94bf09}
-creates and returns a new contact layer named {\ttfamily $<$name$>$}, composed of metal, cut, active \& diffusion \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer} and an optional W\-E\-L\-L \hyperlink{classHurricane_1_1BasicLayer}{Basic\-Layer}. A N\-U\-L\-L value indicates that no N\-W\-E\-L\-L is used.
+\mbox{\Hypertarget{classHurricane_1_1ContactLayer_ab5f2e78865e0311fcabf25e1aa94bf09}\label{classHurricane_1_1ContactLayer_ab5f2e78865e0311fcabf25e1aa94bf09}} 
+\index{Hurricane\+::\+Contact\+Layer@{Hurricane\+::\+Contact\+Layer}!create@{create}}
+\index{create@{create}!Hurricane\+::\+Contact\+Layer@{Hurricane\+::\+Contact\+Layer}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1ContactLayer}{Contact\+Layer}} $\ast$ Hurricane\+::\+Contact\+Layer\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$}]{technology,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{metal\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{cut\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{active\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{diffusion\+Layer,  }\item[{\mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{well\+Layer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
-\begin{DoxyParagraph}{Caution\-:}
-Throws an exception if the technology is null, if the name is empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 
+creates and returns a new contact layer named {\ttfamily $<$name$>$}, composed of metal, cut, active \& diffusion \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} and an optional W\+E\+LL \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}}. A N\+U\+LL value indicates that no N\+W\+E\+LL is used.
+
+\begin{DoxyParagraph}{Caution\+: Throws an exception if the technology is null, if the name is }
+empty, if a layer of same name already exists or if we overflow the capacity of the bit field associated to the layer mask. 
 \end{DoxyParagraph}
 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Contact\-Layer.\-h\item 
-Contact\-Layer.\-dox\end{DoxyCompactItemize}
+Contact\+Layer.\+h\item 
+Contact\+Layer.\+dox\end{DoxyCompactItemize}

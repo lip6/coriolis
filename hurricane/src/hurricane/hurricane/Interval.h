@@ -1,109 +1,112 @@
-// ****************************************************************************************************
-// File: ./hurricane/Interval.h
-// Authors: R. Escassut
+// -*- C++ -*-
+//
 // Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
-// Hurricane is free software: you can redistribute it  and/or  modify it under the  terms  of the  GNU
-// Lesser General Public License as published by the Free Software Foundation, either version 3 of  the
+// Hurricane is free software: you can redistribute it  and/or  modify
+// it under the terms of the GNU  Lesser  General  Public  License  as
+// published by the Free Software Foundation, either version 3 of  the
 // License, or (at your option) any later version.
 //
-// Hurricane is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without  even
-// the implied warranty of MERCHANTABILITY or FITNESS FOR A  PARTICULAR  PURPOSE. See  the  Lesser  GNU
+// Hurricane is distributed in the hope that it will  be  useful,  but
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-
+// TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See  the  Lesser  GNU
 // General Public License for more details.
 //
-// You should have received a copy of the Lesser GNU General Public License along  with  Hurricane.  If
-// not, see <http://www.gnu.org/licenses/>.
-// ****************************************************************************************************
+// You should have received a copy of the Lesser  GNU  General  Public
+// License along with Hurricane. If not, see
+//                                     <http://www.gnu.org/licenses/>.
+//
+// +-----------------------------------------------------------------+
+// |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
+// |                                                                 |
+// |  Author      :                       Rémy Escassut              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Header  :  "./hurricane/Interval.h"                        |
+// +-----------------------------------------------------------------+
 
-#ifndef HURRICANE_INTERVAL
-#define HURRICANE_INTERVAL
+
+#ifndef HURRICANE_INTERVAL_H
+#define HURRICANE_INTERVAL_H
 
 #include "hurricane/DbU.h"
 
 namespace Hurricane {
 
 
+// -------------------------------------------------------------------
+// Class  :  "Hurricane::Interval".
 
-// ****************************************************************************************************
-// Interval declaration
-// ****************************************************************************************************
 
-class Interval {
-// ***********
+  class Interval {
+    public:
+      class CompareByMin {
+        public:
+          inline bool  operator() ( const Interval& rhs, const Interval& lhs ) const;
+          inline bool  operator() ( const Interval* rhs, const Interval* lhs ) const;
+      };
+    public:
+                              Interval        ( bool makeEmpty=true );
+                              Interval        ( const DbU::Unit& );
+                              Interval        ( const DbU::Unit& v1, const DbU::Unit& v2 );
+                              Interval        ( const Interval& );
+    public:
+                   Interval&  operator=       ( const Interval& );
+                   bool       operator==      ( const Interval& ) const;
+                   bool       operator!=      ( const Interval& ) const;
+    public:
+      inline const DbU::Unit& getVMin         () const;
+      inline const DbU::Unit& getVMax         () const;
+      inline       DbU::Unit& getVMin         ();
+      inline       DbU::Unit& getVMax         ();
+      inline       DbU::Unit  getCenter       () const;
+      inline       DbU::Unit  getSize         () const;
+      inline       DbU::Unit  getHalfSize     () const;
+                   Interval   getUnion        ( const Interval& ) const;
+                   Interval   getIntersection ( const Interval& ) const;
+      inline       bool       isEmpty         () const;
+      inline       bool       isFull          () const;
+      inline       bool       isPonctual      () const;
+                   bool       contains        ( const DbU::Unit& ) const;
+                   bool       contains        ( const Interval& ) const;
+                   bool       intersect       ( const Interval& , bool strict=false ) const;
+                   bool       inferior        ( const Interval& , bool strict=true ) const;
+                   bool       superior        ( const Interval& , bool strict=true ) const;
+                   bool       isConstrainedBy ( const Interval& ) const;
+    public:
+                   Interval&  makeEmpty       ();
+                   Interval&  shrinkVMin      ( const DbU::Unit& vMin );
+                   Interval&  shrinkVMax      ( const DbU::Unit& vMax );
+                   Interval&  inflate         ( const DbU::Unit& dv );
+                   Interval&  inflate         ( const DbU::Unit& dvMin, const DbU::Unit& dvMax );
+                   Interval&  merge           ( const DbU::Unit& );
+                   Interval&  merge           ( const Interval& );
+                   Interval&  intersection    ( const DbU::Unit& vMin, const DbU::Unit& vMax );
+                   Interval&  intersection    ( const Interval& );
+                   Interval&  translate       ( const DbU::Unit& );
+    public:
+      inline       string     _getTypeName    () const;
+                   string     _getString      () const;
+                   Record*    _getRecord      () const;
+    private:
+      DbU::Unit _vMin;
+      DbU::Unit _vMax;
+  };
 
-// Attributes
-// **********
 
-    private: DbU::Unit _vMin;
-    private: DbU::Unit _vMax;
-
-// Constructors
-// ************
-
-    public: Interval(bool makeEmpty=true);
-    public: Interval(const DbU::Unit& v);
-    public: Interval(const DbU::Unit& v1, const DbU::Unit& v2);
-    public: Interval(const Interval& interval);
-
-// Operators
-// *********
-
-    public: Interval& operator=(const Interval& interval);
-
-    public: bool operator==(const Interval& interval) const;
-    public: bool operator!=(const Interval& interval) const;
-
-// Accessors
-// *********
-
-    public: const DbU::Unit& getVMin() const {return _vMin;};
-    public: const DbU::Unit& getVMax() const {return _vMax;};
-    public: DbU::Unit& getVMin() {return _vMin;};
-    public: DbU::Unit& getVMax() {return _vMax;};
-    public: DbU::Unit getCenter() const {return ((_vMin + _vMax) / 2);};
-    public: DbU::Unit getSize() const;
-    public: DbU::Unit getHalfSize() const {return (getSize() / 2);};
-    public: Interval getUnion(const Interval& interval) const;
-    public: Interval getIntersection(const Interval& interval) const;
-
-// Predicates
-// **********
-
-    public: bool isEmpty() const { return (_vMax < _vMin);};
-  public: bool isFull() const { return (_vMin == DbU::Min) and (_vMax == DbU::Max); };
-    public: bool isPonctual() const { return (_vMax == _vMin);};
-    public: bool contains(const DbU::Unit& v) const;
-    public: bool contains(const Interval& interval) const;
-    public: bool intersect(const Interval& interval) const;
-    public: bool inferior(const Interval& interval, bool strict=true) const;
-    public: bool superior(const Interval& interval, bool strict=true) const;
-    public: bool isConstrainedBy(const Interval& interval) const;
-
-// Updators
-// ********
-
-    public: Interval& makeEmpty();
-    public: Interval& shrinkVMin(const DbU::Unit& vMin);
-    public: Interval& shrinkVMax(const DbU::Unit& vMax);
-    public: Interval& inflate(const DbU::Unit& dv);
-    public: Interval& inflate(const DbU::Unit& dvMin, const DbU::Unit& dvMax);
-    public: Interval& merge(const DbU::Unit& v);
-    public: Interval& merge(const Interval& interval);
-    public: Interval& intersection(const DbU::Unit& vMin, const DbU::Unit& vMax);
-    public: Interval& intersection(const Interval& interval);
-    public: Interval& translate(const DbU::Unit& dv);
-
-// Others
-// ******
-
-    public: string _getTypeName() const { return _TName("Interval"); };
-    public: string _getString() const;
-    public: Record* _getRecord() const;
-
-};
-
+  inline const DbU::Unit& Interval::getVMin      () const {return _vMin;};
+  inline const DbU::Unit& Interval::getVMax      () const {return _vMax;};
+  inline       DbU::Unit& Interval::getVMin      () {return _vMin;};
+  inline       DbU::Unit& Interval::getVMax      () {return _vMax;};
+  inline       DbU::Unit  Interval::getCenter    () const {return ((_vMin + _vMax) / 2);};
+  inline       DbU::Unit  Interval::getHalfSize  () const {return (getSize() / 2);};
+  inline       bool       Interval::isEmpty      () const { return (_vMax < _vMin);};
+  inline       bool       Interval::isFull       () const { return (_vMin == DbU::Min) and (_vMax == DbU::Max); };
+  inline       bool       Interval::isPonctual   () const { return (_vMax == _vMin);};
+  inline       string     Interval::_getTypeName () const { return _TName("Interval"); };
 
   inline  DbU::Unit  Interval::getSize () const
   {
@@ -113,8 +116,15 @@ class Interval {
   }
 
 
+  inline bool  Interval::CompareByMin::operator() ( const Interval& lhs, const Interval& rhs ) const
+  { return lhs.getVMin() < rhs.getVMin(); }
 
-} // End of Hurricane namespace.
+  
+  inline bool  Interval::CompareByMin::operator() ( const Interval* lhs, const Interval* rhs ) const
+  { return lhs->getVMin() < rhs->getVMin(); }
+
+
+} // Hurricane namespace.
 
 
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane::Interval* interval )
@@ -129,9 +139,4 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane:
 INSPECTOR_PV_SUPPORT(Hurricane::Interval);
 
 
-#endif // HURRICANE_INTERVAL
-
-
-// ****************************************************************************************************
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
-// ****************************************************************************************************
+#endif  // HURRICANE_INTERVAL_H

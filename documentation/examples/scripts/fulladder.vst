@@ -1,0 +1,120 @@
+
+-- =======================================================================
+-- Coriolis Structural VHDL Driver
+-- Generated on Jul 11, 2018, 11:23
+-- 
+-- To be interoperable with Alliance, it uses it's special VHDL subset.
+-- ("man vhdl" under Alliance for more informations)
+-- =======================================================================
+
+entity fulladder is
+  port ( a    : linkage bit
+       ; b    : linkage bit
+       ; cin  : linkage bit
+       ; cout : linkage bit
+       ; sout : linkage bit
+       ; vdd  : linkage bit
+       ; vss  : linkage bit
+       );
+end fulladder;
+
+architecture structural of fulladder is
+
+  component xr2_x1
+    port ( i0  : in bit
+         ; i1  : in bit
+         ; q   : out bit
+         ; vdd : in bit
+         ; vss : in bit
+         );
+  end component;
+
+  component a2_x2
+    port ( i0  : in bit
+         ; i1  : in bit
+         ; q   : out bit
+         ; vdd : in bit
+         ; vss : in bit
+         );
+  end component;
+
+  component o2_x2
+    port ( i0  : in bit
+         ; i1  : in bit
+         ; q   : out bit
+         ; vdd : in bit
+         ; vss : in bit
+         );
+  end component;
+
+  component tie_x0
+    port ( vdd : in bit
+         ; vss : in bit
+         );
+  end component;
+
+  component rowend_x0
+    port ( vdd : in bit
+         ; vss : in bit
+         );
+  end component;
+
+  signal carry_1 :  bit;
+  signal carry_2 :  bit;
+  signal sout_1  :  bit;
+
+
+begin
+
+  filler_2 : rowend_x0
+  port map ( vdd => vdd
+           , vss => vss
+           );
+
+  filler_1 : tie_x0
+  port map ( vdd => vdd
+           , vss => vss
+           );
+
+  o2_1 : o2_x2
+  port map ( i0  => carry_2
+           , i1  => carry_1
+           , q   => cout
+           , vdd => vdd
+           , vss => vss
+           );
+
+  xr2_2 : xr2_x1
+  port map ( i0  => cin
+           , i1  => sout_1
+           , q   => sout
+           , vdd => vdd
+           , vss => vss
+           );
+
+  xr2_1 : xr2_x1
+  port map ( i0  => a
+           , i1  => b
+           , q   => sout_1
+           , vdd => vdd
+           , vss => vss
+           );
+
+  a2_2 : a2_x2
+  port map ( i0  => cin
+           , i1  => sout_1
+           , q   => carry_2
+           , vdd => vdd
+           , vss => vss
+           );
+
+  a2_1 : a2_x2
+  port map ( i0  => a
+           , i1  => b
+           , q   => carry_1
+           , vdd => vdd
+           , vss => vss
+           );
+
+end structural;
+

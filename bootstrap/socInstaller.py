@@ -220,7 +220,7 @@ class Configuration ( object ):
 
     PrimaryNames = \
         [ 'sender'      , 'receivers'
-        , 'coriolisRepo', 'chamsRepo' , 'benchsRepo', 'supportRepos'
+        , 'coriolisRepo', 'benchsRepo', 'supportRepos'
         , 'homeDir'     , 'masterHost'
         , 'debugArg'    , 'nightlyMode'
         , 'rmSource'    , 'rmBuild', 'doGit', 'doBuild', 'doBenchs', 'doSendReport'
@@ -235,7 +235,6 @@ class Configuration ( object ):
       self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', 'Eric.Lao@lip6.fr' ]
       self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
       self._coriolisRepo = 'https://www-soc.lip6.fr/git/coriolis.git'
-      self._chamsRepo    = 'file:///users/outil/chams/chams.git'
       self._benchsRepo   = 'https://www-soc.lip6.fr/git/alliance-check-toolkit.git'
       self._homeDir      = os.environ['HOME']
       self._debugArg     = ''
@@ -458,7 +457,6 @@ try:
     for supportRepo in conf.supportRepos:
       gitSupports.append( GitRepository( supportRepo, conf.srcDir+'/support' ) )
     gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir, conf.fds['build'] )
-    gitChams    = GitRepository( conf.chamsRepo   , conf.srcDir, conf.fds['build'] )
     gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir, conf.fds['build'] )
 
     if conf.doGit:
@@ -492,7 +490,7 @@ try:
                              , '   <%s>' % ccbBin
                              ] )
 
-    buildCommand  = '%s --root=%s --project=support --project=coriolis --project=chams --make="-j%%d install" %%s' \
+    buildCommand  = '%s --root=%s --project=support --project=coriolis --make="-j%%d install" %%s' \
                      % (ccbBin,conf.rootDir)
     benchsCommand = 'cd %s/benchs && ./bin/go.sh clean && ./bin/go.sh lvx' \
                      % (gitBenchs.localRepoDir)

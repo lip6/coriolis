@@ -54,6 +54,10 @@
 #include "hurricane/isobar/PyBasicLayerCollection.h"
 #include "hurricane/isobar/PyRegularLayerCollection.h"
 #include "hurricane/isobar/PyViaLayerCollection.h"
+#include "hurricane/isobar/PyUnitRule.h"
+#include "hurricane/isobar/PyPhysicalRule.h"
+#include "hurricane/isobar/PyTwoLayersPhysicalRule.h"
+#include "hurricane/isobar/PyDeviceDescriptor.h"
 
 
 namespace Isobar {
@@ -217,6 +221,190 @@ extern "C" {
   }
 
 
+  static PyObject* PyTechnology_getUnitRule ( PyTechnology *self, PyObject* args )
+  {
+    cdebug.log(49) << "PyTechnology_getUnitRule()" << endl;
+    METHOD_HEAD("Technology.getUnitRule()")
+
+    UnitRule* rule = NULL;
+
+    HTRY
+      char *arg0 = NULL;
+      if (not PyArg_ParseTuple(args,"s:Technology.getUnitRule", &arg0)) {
+        PyErr_SetString( ProxyError
+                       , "invalid number of parameters for getUnitRule on Technology." );
+        return NULL;
+      }
+      if (arg0) {
+        rule = new UnitRule( techno->getUnitRule(arg0) );
+      } else {
+        PyErr_SetString( ProxyError, "invalid number of parameters for getUnitRule on Technology." );
+        return NULL;
+      }
+    HCATCH
+
+    return PyRule_LinkDerived(rule);
+  }
+
+
+  static PyObject* PyTechnology_getPhysicalRule ( PyTechnology *self, PyObject* args )
+  {
+    cdebug.log(49) << "PyTechnology_getPhysicalRule()" << endl;
+    METHOD_HEAD("Technology.getPhysicalRule()")
+
+    PhysicalRule* rule = NULL;
+
+    HTRY
+      char *arg0=NULL, *arg1=NULL, *arg2=NULL;
+      if (not PyArg_ParseTuple(args,"s|ss:Technology.getPhysicalRule", &arg0, &arg1, &arg2)) {
+        PyErr_SetString( ProxyError
+                       , "invalid number of parameters for getPhysicalRule on Technology." );
+        return NULL;
+      }
+      if (arg2) {
+        rule = new PhysicalRule( techno->getPhysicalRule(arg0,arg1,arg2) );
+      } else if (arg1) {
+        rule = new PhysicalRule( techno->getPhysicalRule(arg0,arg1) );
+      } else if (arg0) {
+        rule = new PhysicalRule( techno->getPhysicalRule(arg0) );
+      } else {
+        PyErr_SetString( ProxyError, "invalid number of parameters for getPhysicalRule on Technology." );
+        return NULL;
+      }
+    HCATCH
+
+    return PyRule_LinkDerived(rule);
+  }
+
+
+  static PyObject* PyTechnology_addUnitRule ( PyTechnology* self, PyObject *args )
+  {
+    cdebug.log(49) << "PyTechnology_addUnitRule()" << endl;
+    METHOD_HEAD("Technology.addUnitRule()")
+
+    PyObject* arg0 = NULL;
+    PyObject* arg1 = NULL;
+    PyObject* arg2 = NULL;
+
+    HTRY
+      __cs.init ("Technology.addUnitRule");
+      if (not PyArg_ParseTuple(args,"O&O&O&:Technology.addUnitRule"
+                              ,Converter,&arg0
+                              ,Converter,&arg1
+                              ,Converter,&arg2
+                              )) {
+        PyErr_SetString( ConstructorError, "Technology.addUnitRule(): invalid number of parameters." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == ":string:float:string")
+        techno->addUnitRule( PyString_AsString(arg0)
+                           , PyFloat_AsDouble(arg1)
+                           , PyString_AsString(arg2) );
+      else {
+        PyErr_SetString( ConstructorError, "Technology.addUnitRule(): Invalid number or bad type of parameters." );
+        return NULL;
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyTechnology_addPhysicalRule ( PyTechnology* self, PyObject *args )
+  {
+    cdebug.log(49) << "PyTechnology_addPhysicalRule()" << endl;
+    METHOD_HEAD("Technology.addPhysicalRule()")
+
+    PyObject*     arg0 = NULL;
+    PyObject*     arg1 = NULL;
+    PyObject*     arg2 = NULL;
+    PyObject*     arg3 = NULL;
+    PyObject*     arg4 = NULL;
+    PyObject*     arg5 = NULL;
+
+    HTRY
+      __cs.init ("Technology.addPhysicalRule");
+      if (not PyArg_ParseTuple(args,"O&O&O&|O&O&O&:Technology.addPhysicalRule"
+                              ,Converter,&arg0
+                              ,Converter,&arg1
+                              ,Converter,&arg2
+                              ,Converter,&arg3
+                              ,Converter,&arg4
+                              ,Converter,&arg5
+                              )) {
+        PyErr_SetString( ConstructorError, "Technology.addPhysicalRule(): invalid number of parameters." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == ":string:int:string")
+        techno->addPhysicalRule( PyString_AsString(arg0)
+                               , PyAny_AsLong     (arg1)
+                               , PyString_AsString(arg2) );
+      else if (__cs.getObjectIds() == ":string:string:int:string")
+        techno->addPhysicalRule( PyString_AsString(arg0)
+                               , PyString_AsString(arg1)
+                               , PyAny_AsLong     (arg2)
+                               , PyString_AsString(arg3) );
+      else if (__cs.getObjectIds() == ":string:string:string:bool:int:string")
+        techno->addPhysicalRule( PyString_AsString(arg0)
+                               , PyString_AsString(arg1)
+                               , PyString_AsString(arg2)
+                               , PyObject_IsTrue  (arg3)
+                               , PyAny_AsLong     (arg4)
+                               , PyString_AsString(arg5) );
+      else {
+        PyErr_SetString( ConstructorError, "Technology.addPhysicalRule(): Invalid number or bad type of parameters." );
+        return NULL;
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  extern PyObject* PyTechnology_addDeviceDescriptor ( PyTechnology* self, PyObject* args )
+  {
+    cdebug.log(49) << "PyTechnology_addDeviceDescriptor ()" << endl;
+    DeviceDescriptor* devDesc = NULL;
+
+    HTRY
+      METHOD_HEAD("Technology.addDeviceDescriptor()")
+  
+      char* name   = NULL;
+      if (PyArg_ParseTuple(args,"s:Technology.addDeviceDescriptor", &name)) {
+        devDesc = techno->addDeviceDescriptor( name );
+      } else {
+        PyErr_SetString( ConstructorError
+                       , "Technology::addDeviceDescriptor(): Invalid number of parameters." );
+        return NULL;
+      }
+    HCATCH
+
+    return PyDeviceDescriptor_Link( devDesc );
+  }
+
+
+  extern PyObject* PyTechnology_getDeviceDescriptor ( PyTechnology* self, PyObject* args )
+  {
+    cdebug.log(49) << "PyTechnology_getDeviceDescriptor ()" << endl;
+    DeviceDescriptor* devDesc = NULL;
+
+    HTRY
+      METHOD_HEAD("Technology.getDeviceDescriptor()")
+  
+      char* name   = NULL;
+      if (PyArg_ParseTuple(args,"s:Technology.getDeviceDescriptor", &name)) {
+        devDesc = techno->getDeviceDescriptor( name );
+      } else {
+        PyErr_SetString( ConstructorError
+                       , "Technology::getDeviceDescriptor(): Invalid number of parameters." );
+        return NULL;
+      }
+    HCATCH
+
+    return PyDeviceDescriptor_Link( devDesc );
+  }
+
+
   // Standart Accessors (Attributes).
   GetNameMethod                     (Technology,techno)
   SetNameMethod                     (Technology,techno)
@@ -242,48 +430,62 @@ extern "C" {
   // PyTechnology Attribute Method table.
 
   PyMethodDef PyTechnology_Methods[] =
-    { { "create"            , (PyCFunction)PyTechnology_create          , METH_VARARGS|METH_STATIC
-                            , "Create the Technology object." }
-    , { "isMetal"           , (PyCFunction)PyTechnology_isMetal         , METH_VARARGS
-                            , "Tells if the given layer is of metal kind (Material)." }
-    , { "getDataBase"       , (PyCFunction)PyTechnology_getDataBase     , METH_NOARGS
-                            , "Returns the associated DataBase." }
-    , { "getName"           , (PyCFunction)PyTechnology_getName         , METH_NOARGS
-                            , "Returns the name of the technology." }
-    , { "getLayer"          , (PyCFunction)PyTechnology_getLayer        , METH_VARARGS
-                            , "Returns the layer named name." }
-    , { "getBasicLayer"     , (PyCFunction)PyTechnology_getBasicLayer   , METH_VARARGS
-                            , "Returns the BasicLayer named name." }
-    , { "getRegularLayer"   , (PyCFunction)PyTechnology_getRegularLayer , METH_VARARGS
-                            , "Returns the RegularLayer named name." }
-    , { "getViaLayer"       , (PyCFunction)PyTechnology_getViaLayer     , METH_VARARGS
-                            , "Returns the ViaLayer named name." }
-    , { "getLayers"         , (PyCFunction)PyTechnology_getLayers       , METH_NOARGS
-                            , "Returns the collection of all Layers." }
-    , { "getBasicLayers"    , (PyCFunction)PyTechnology_getBasicLayers  , METH_VARARGS
-                            , "Returns the collection of all BasicLayers." }
-    , { "getRegularLayers"  , (PyCFunction)PyTechnology_getRegularLayers, METH_NOARGS
-                            , "Returns the collection of all RegularLayers." }
-    , { "getViaLayers"      , (PyCFunction)PyTechnology_getViaLayers    , METH_NOARGS
-                            , "Returns the collection of all BasicLayers." }
-    , { "getMetalAbove"     , (PyCFunction)PyTechnology_getMetalAbove   , METH_VARARGS
-                            , "Returns the metal layer immediatly above this one." }
-    , { "getMetalBelow"     , (PyCFunction)PyTechnology_getMetalBelow   , METH_VARARGS
-                            , "Returns the metal layer immediatly below this one." }
-    , { "getCutAbove"       , (PyCFunction)PyTechnology_getCutAbove     , METH_VARARGS
-                            , "Returns the cut layer immediatly above this one." }
-    , { "getCutBelow"       , (PyCFunction)PyTechnology_getCutBelow     , METH_VARARGS
-                            , "Returns the cut layer immediatly below." }
-    , { "getViaBetween"     , (PyCFunction)PyTechnology_getViaBetween   , METH_VARARGS
-                            , "Returns the VIA between those two layers (must be adjacent)." }
-    , { "getNthMetal"       , (PyCFunction)PyTechnology_getNthMetal     , METH_VARARGS
-                            , "Returns Nth metal (zero is nearest substrate)." }
-    , { "setName"           , (PyCFunction)PyTechnology_setName         , METH_VARARGS
-                            , "Allows to change the technology name." }
-    , { "setSymbolicLayer"  , (PyCFunction)PyTechnology_setSymbolicLayer, METH_VARARGS
-                            , "Mark a Layer as the symbolic one (by name or by Layer)." }
-    , { "destroy"           , (PyCFunction)PyTechnology_destroy         , METH_NOARGS
-                            , "Destroy associated hurricane object The python object remains." }
+    { { "create"             , (PyCFunction)PyTechnology_create               , METH_VARARGS|METH_STATIC
+                             , "Create the Technology object." }
+    , { "isMetal"            , (PyCFunction)PyTechnology_isMetal              , METH_VARARGS
+                             , "Tells if the given layer is of metal kind (Material)." }
+    , { "getDataBase"        , (PyCFunction)PyTechnology_getDataBase          , METH_NOARGS
+                             , "Returns the associated DataBase." }
+    , { "getName"            , (PyCFunction)PyTechnology_getName              , METH_NOARGS
+                             , "Returns the name of the technology." }
+    , { "getLayer"           , (PyCFunction)PyTechnology_getLayer             , METH_VARARGS
+                             , "Returns the layer named name." }
+    , { "getBasicLayer"      , (PyCFunction)PyTechnology_getBasicLayer        , METH_VARARGS
+                             , "Returns the BasicLayer named name." }
+    , { "getRegularLayer"    , (PyCFunction)PyTechnology_getRegularLayer      , METH_VARARGS
+                             , "Returns the RegularLayer named name." }
+    , { "getViaLayer"        , (PyCFunction)PyTechnology_getViaLayer          , METH_VARARGS
+                             , "Returns the ViaLayer named name." }
+    , { "getLayers"          , (PyCFunction)PyTechnology_getLayers            , METH_NOARGS
+                             , "Returns the collection of all Layers." }
+    , { "getBasicLayers"     , (PyCFunction)PyTechnology_getBasicLayers       , METH_VARARGS
+                             , "Returns the collection of all BasicLayers." }
+    , { "getRegularLayers"   , (PyCFunction)PyTechnology_getRegularLayers     , METH_NOARGS
+                             , "Returns the collection of all RegularLayers." }
+    , { "getViaLayers"       , (PyCFunction)PyTechnology_getViaLayers         , METH_NOARGS
+                             , "Returns the collection of all BasicLayers." }
+    , { "getMetalAbove"      , (PyCFunction)PyTechnology_getMetalAbove        , METH_VARARGS
+                             , "Returns the metal layer immediatly above this one." }
+    , { "getMetalBelow"      , (PyCFunction)PyTechnology_getMetalBelow        , METH_VARARGS
+                             , "Returns the metal layer immediatly below this one." }
+    , { "getCutAbove"        , (PyCFunction)PyTechnology_getCutAbove          , METH_VARARGS
+                             , "Returns the cut layer immediatly above this one." }
+    , { "getCutBelow"        , (PyCFunction)PyTechnology_getCutBelow          , METH_VARARGS
+                             , "Returns the cut layer immediatly below." }
+    , { "getViaBetween"      , (PyCFunction)PyTechnology_getViaBetween        , METH_VARARGS
+                             , "Returns the VIA between those two layers (must be adjacent)." }
+    , { "getNthMetal"        , (PyCFunction)PyTechnology_getNthMetal          , METH_VARARGS
+                             , "Returns Nth metal (zero is nearest substrate)." }
+    , { "setName"            , (PyCFunction)PyTechnology_setName              , METH_VARARGS
+                             , "Allows to change the technology name." }
+    , { "setSymbolicLayer"   , (PyCFunction)PyTechnology_setSymbolicLayer     , METH_VARARGS
+                             , "Mark a Layer as the symbolic one (by name or by Layer)." }
+    , { "getUnitRule"        , (PyCFunction)PyTechnology_getUnitRule          , METH_VARARGS
+                             , "Returns the Unit Rule named name." }
+    , { "getPhysicalRule"    , (PyCFunction)PyTechnology_getPhysicalRule      , METH_VARARGS
+                             , "Returns the Physical Rule named name." }
+    , { "getLayer"           , (PyCFunction)PyTechnology_getLayer             , METH_VARARGS
+                             , "Returns the Layer named name." }
+    , { "addPhysicalRule"    , (PyCFunction)PyTechnology_addPhysicalRule      , METH_VARARGS
+                             , "Adds a new physical rule." }
+    , { "addUnitRule"        , (PyCFunction)PyTechnology_addUnitRule          , METH_VARARGS
+                             , "Adds a new Unit rule." }
+    , { "getDeviceDescriptor", (PyCFunction)PyTechnology_getDeviceDescriptor  , METH_VARARGS
+                             , "Get the DeviceDescriptor <name>." }
+    , { "addDeviceDescriptor", (PyCFunction)PyTechnology_addDeviceDescriptor  , METH_VARARGS
+                             , "Add (create) the DeviceDescriptor <name>." }
+    , { "destroy"            , (PyCFunction)PyTechnology_destroy              , METH_NOARGS
+                             , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL} /* sentinel */
     };
 

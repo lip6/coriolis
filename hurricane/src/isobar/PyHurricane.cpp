@@ -82,6 +82,10 @@
 #include "hurricane/isobar/PyTechnology.h"
 #include "hurricane/isobar/PyQueryMask.h"
 #include "hurricane/isobar/PyQuery.h"
+#include "hurricane/isobar/PyDeviceDescriptor.h"
+#include "hurricane/isobar/PyUnitRule.h"
+#include "hurricane/isobar/PyPhysicalRule.h"
+#include "hurricane/isobar/PyTwoLayersPhysicalRule.h"
 #include "hurricane/NetExternalComponents.h"
 #include <stddef.h>
 
@@ -194,7 +198,6 @@ using namespace Hurricane;
                                 , const char*   idBase ) {
     for ( unsigned i=0 ; i < _types.size() ; i++ ) {
       if ( ! strcmp ( _types[i]->_id, id ) ) {
-        //throw Error ( objectTypeRedefinition ); // 04.09.2009 d2 modification so Pharos can run several scripts during one execution
         cdebug_log(20,0) << objectTypeRedefinition << endl; 
         return;
       }
@@ -581,155 +584,171 @@ extern "C" {
     PyBreakpoint_LinkPyType ();
     PyQuery_LinkPyType ();
     PyQueryMask_LinkPyType ();
+    PyDeviceDescriptor_LinkPyType();
+    PyRule_LinkPyType();
+    PyUnitRule_LinkPyType();
+    PyPhysicalRule_LinkPyType();
+    PyTwoLayersPhysicalRule_LinkPyType();
 
-    PYTYPE_READY ( DebugSession                  )
-    PYTYPE_READY ( UpdateSession                 )
-    PYTYPE_READY ( DbU                           )
-    PYTYPE_READY ( Point                         )
-    PYTYPE_READY ( PointCollection               )
-    PYTYPE_READY ( Interval                      )
-    PYTYPE_READY ( Box                           )
-    PYTYPE_READY ( Transformation                )
-    PYTYPE_READY ( Orientation                   )
-    PYTYPE_READY ( DataBase                      )
-    PYTYPE_READY ( Technology                    )
-    PYTYPE_READY ( Library                       )
-    PYTYPE_READY ( Entity                        )
-    PYTYPE_READY ( Hook                          )
-    PYTYPE_READY ( HookCollection                )
-    PYTYPE_READY ( Material                      )
-    PYTYPE_READY ( Layer                         )
-    PYTYPE_READY ( LayerMask                     )
-    PYTYPE_READY ( BasicLayerCollection          )
-    PYTYPE_READY ( BasicLayerCollectionLocator   )
-    PYTYPE_READY ( LayerCollection               )
-    PYTYPE_READY ( LayerCollectionLocator        )
-    PYTYPE_READY ( RegularLayerCollection        )
-    PYTYPE_READY ( RegularLayerCollectionLocator )
-    PYTYPE_READY ( ViaLayerCollection            )
-    PYTYPE_READY ( ViaLayerCollectionLocator     )
-    PYTYPE_READY ( Path                          )
-    PYTYPE_READY ( Occurrence                    )
-    PYTYPE_READY ( PlacementStatus               )
-    PYTYPE_READY ( InstanceCollection            )
-    PYTYPE_READY ( InstanceCollectionLocator     )
-    PYTYPE_READY ( PlugCollection                )
-    PYTYPE_READY ( PlugCollectionLocator         )
-    PYTYPE_READY ( NetType                       )
-    PYTYPE_READY ( NetDirection                  )
-    PYTYPE_READY ( NetCollection                 )
-    PYTYPE_READY ( NetCollectionLocator          )
-    PYTYPE_READY ( NetRoutingState               )
-    PYTYPE_READY ( NetRoutingExtension           )
-    PYTYPE_READY ( CellCollection                )
-    PYTYPE_READY ( CellCollectionLocator         )
-    PYTYPE_READY ( PinPlacementStatus            )
-    PYTYPE_READY ( PinDirection                  )
-    PYTYPE_READY ( PinCollection                 )
-    PYTYPE_READY ( PinCollectionLocator          )
-    PYTYPE_READY ( SegmentCollection             )
-    PYTYPE_READY ( SegmentCollectionLocator      )
-    PYTYPE_READY ( ComponentCollection           ) 
-    PYTYPE_READY ( ComponentCollectionLocator    )
-    PYTYPE_READY ( OccurrenceCollection          )
-    PYTYPE_READY ( OccurrenceCollectionLocator   )
-    PYTYPE_READY ( ReferenceCollection           )
-    PYTYPE_READY ( ReferenceCollectionLocator    )
-    PYTYPE_READY ( HyperNet                      )
-    PYTYPE_READY ( NetExternalComponents         )
-    PYTYPE_READY ( Breakpoint                    )
-    PYTYPE_READY ( Query                         )
-    PYTYPE_READY ( QueryMask                     )
+    PYTYPE_READY( DebugSession                  )
+    PYTYPE_READY( UpdateSession                 )
+    PYTYPE_READY( DbU                           )
+    PYTYPE_READY( Point                         )
+    PYTYPE_READY( PointCollection               )
+    PYTYPE_READY( Interval                      )
+    PYTYPE_READY( Box                           )
+    PYTYPE_READY( Transformation                )
+    PYTYPE_READY( Orientation                   )
+    PYTYPE_READY( DataBase                      )
+    PYTYPE_READY( Technology                    )
+    PYTYPE_READY( Library                       )
+    PYTYPE_READY( Entity                        )
+    PYTYPE_READY( Hook                          )
+    PYTYPE_READY( HookCollection                )
+    PYTYPE_READY( Material                      )
+    PYTYPE_READY( Layer                         )
+    PYTYPE_READY( LayerMask                     )
+    PYTYPE_READY( BasicLayerCollection          )
+    PYTYPE_READY( BasicLayerCollectionLocator   )
+    PYTYPE_READY( LayerCollection               )
+    PYTYPE_READY( LayerCollectionLocator        )
+    PYTYPE_READY( RegularLayerCollection        )
+    PYTYPE_READY( RegularLayerCollectionLocator )
+    PYTYPE_READY( ViaLayerCollection            )
+    PYTYPE_READY( ViaLayerCollectionLocator     )
+    PYTYPE_READY( Path                          )
+    PYTYPE_READY( Occurrence                    )
+    PYTYPE_READY( PlacementStatus               )
+    PYTYPE_READY( InstanceCollection            )
+    PYTYPE_READY( InstanceCollectionLocator     )
+    PYTYPE_READY( PlugCollection                )
+    PYTYPE_READY( PlugCollectionLocator         )
+    PYTYPE_READY( NetType                       )
+    PYTYPE_READY( NetDirection                  )
+    PYTYPE_READY( NetCollection                 )
+    PYTYPE_READY( NetCollectionLocator          )
+    PYTYPE_READY( NetRoutingState               )
+    PYTYPE_READY( NetRoutingExtension           )
+    PYTYPE_READY( CellCollection                )
+    PYTYPE_READY( CellCollectionLocator         )
+    PYTYPE_READY( PinPlacementStatus            )
+    PYTYPE_READY( PinDirection                  )
+    PYTYPE_READY( PinCollection                 )
+    PYTYPE_READY( PinCollectionLocator          )
+    PYTYPE_READY( SegmentCollection             )
+    PYTYPE_READY( SegmentCollectionLocator      )
+    PYTYPE_READY( ComponentCollection           ) 
+    PYTYPE_READY( ComponentCollectionLocator    )
+    PYTYPE_READY( OccurrenceCollection          )
+    PYTYPE_READY( OccurrenceCollectionLocator   )
+    PYTYPE_READY( ReferenceCollection           )
+    PYTYPE_READY( ReferenceCollectionLocator    )
+    PYTYPE_READY( HyperNet                      )
+    PYTYPE_READY( NetExternalComponents         )
+    PYTYPE_READY( Breakpoint                    )
+    PYTYPE_READY( Query                         )
+    PYTYPE_READY( QueryMask                     )
+    PYTYPE_READY( DeviceDescriptor              )
+    PYTYPE_READY( Rule                          )
 
-    PYTYPE_READY_SUB ( BasicLayer     , Layer    )
-    PYTYPE_READY_SUB ( RegularLayer   , Layer    )
-    PYTYPE_READY_SUB ( ContactLayer   , Layer    )
-    PYTYPE_READY_SUB ( DiffusionLayer , Layer    )
-    PYTYPE_READY_SUB ( TransistorLayer, Layer    )
-    PYTYPE_READY_SUB ( ViaLayer       , Layer    )
-    PYTYPE_READY_SUB ( Cell           , Entity   )
-    PYTYPE_READY_SUB ( Instance       , Entity   )
-    PYTYPE_READY_SUB ( Reference      , Entity   )
-    PYTYPE_READY_SUB ( Net            , Entity   )
-    PYTYPE_READY_SUB ( Component      , Entity   )
-    PYTYPE_READY_SUB ( RoutingPad     , Component)
-    PYTYPE_READY_SUB ( Segment        , Component)
-    PYTYPE_READY_SUB ( Horizontal     , Segment  )
-    PYTYPE_READY_SUB ( Vertical       , Segment  )
+    PYTYPE_READY_SUB( BasicLayer     , Layer    )
+    PYTYPE_READY_SUB( RegularLayer   , Layer    )
+    PYTYPE_READY_SUB( ContactLayer   , Layer    )
+    PYTYPE_READY_SUB( DiffusionLayer , Layer    )
+    PYTYPE_READY_SUB( TransistorLayer, Layer    )
+    PYTYPE_READY_SUB( ViaLayer       , Layer    )
+    PYTYPE_READY_SUB( Cell           , Entity   )
+    PYTYPE_READY_SUB( Instance       , Entity   )
+    PYTYPE_READY_SUB( Reference      , Entity   )
+    PYTYPE_READY_SUB( Net            , Entity   )
+    PYTYPE_READY_SUB( Component      , Entity   )
+    PYTYPE_READY_SUB( RoutingPad     , Component)
+    PYTYPE_READY_SUB( Segment        , Component)
+    PYTYPE_READY_SUB( Horizontal     , Segment  )
+    PYTYPE_READY_SUB( Vertical       , Segment  )
 
-    PYTYPE_READY_SUB ( Contact        , Component)
-    PYTYPE_READY_SUB ( Pin            , Contact  )
-    PYTYPE_READY_SUB ( Plug           , Component)
-    PYTYPE_READY_SUB ( Pad            , Component)
-    PYTYPE_READY_SUB ( Diagonal       , Component)
-    PYTYPE_READY_SUB ( Rectilinear    , Component)
-    PYTYPE_READY_SUB ( Polygon        , Component)
+    PYTYPE_READY_SUB( Contact        , Component)
+    PYTYPE_READY_SUB( Pin            , Contact  )
+    PYTYPE_READY_SUB( Plug           , Component)
+    PYTYPE_READY_SUB( Pad            , Component)
+    PYTYPE_READY_SUB( Diagonal       , Component)
+    PYTYPE_READY_SUB( Rectilinear    , Component)
+    PYTYPE_READY_SUB( Polygon        , Component)
+
+    PYTYPE_READY_SUB( UnitRule             , Rule )
+    PYTYPE_READY_SUB( PhysicalRule         , Rule )
+    PYTYPE_READY_SUB( TwoLayersPhysicalRule, PhysicalRule )
 
     // Identifier string can take up to 10 characters !
-    __cs.addType ( "intv"       , &PyTypeInterval              , "<Interval>"              , false );
-    __cs.addType ( "box"        , &PyTypeBox                   , "<Box>"                   , false );
-    __cs.addType ( "ent"        , &PyTypeEntity                , "<Entity>"                , false );
-    __cs.addType ( "cell"       , &PyTypeCell                  , "<Cell>"                  , false, "ent" );
-    __cs.addType ( "cellCol"    , &PyTypeCellCollection        , "<CellCollection>"        , false );
-    __cs.addType ( "hook"       , &PyTypeHook                  , "<Hook>"                  , false );
-    __cs.addType ( "hookColl"   , &PyTypeHookCollection        , "<HookCollection>"        , false );
-    __cs.addType ( "comp"       , &PyTypeComponent             , "<Component>"             , false, "ent" );
-    __cs.addType ( "compCol"    , &PyTypeComponentCollection   , "<ComponentCollection>"   , false );
-    __cs.addType ( "contact"    , &PyTypeContact               , "<Contact>"               , false, "comp" );
+    __cs.addType( "intv"       , &PyTypeInterval              , "<Interval>"              , false );
+    __cs.addType( "box"        , &PyTypeBox                   , "<Box>"                   , false );
+    __cs.addType( "ent"        , &PyTypeEntity                , "<Entity>"                , false );
+    __cs.addType( "cell"       , &PyTypeCell                  , "<Cell>"                  , false, "ent" );
+    __cs.addType( "cellCol"    , &PyTypeCellCollection        , "<CellCollection>"        , false );
+    __cs.addType( "hook"       , &PyTypeHook                  , "<Hook>"                  , false );
+    __cs.addType( "hookColl"   , &PyTypeHookCollection        , "<HookCollection>"        , false );
+    __cs.addType( "comp"       , &PyTypeComponent             , "<Component>"             , false, "ent" );
+    __cs.addType( "compCol"    , &PyTypeComponentCollection   , "<ComponentCollection>"   , false );
+    __cs.addType( "contact"    , &PyTypeContact               , "<Contact>"               , false, "comp" );
     // Do not change the "none" string. It's hardwired to the None object.             
-    __cs.addType ( "none"       ,  Py_None->ob_type            , "<None>"                  , true  );
-    __cs.addType ( "float"      , &PyFloat_Type                , "<Float>"                 , true  );
-    __cs.addType ( "int"        , &PyLong_Type                 , "<Int>"                   , true  );
-    __cs.addType ( "bool"       , &PyBool_Type                 , "<Bool>"                  , true  );
-    __cs.addType ( "string"     , &PyString_Type               , "<String>"                , true  );
-    __cs.addType ( "list"       , &PyList_Type                 , "<List>"                  , true  );
+    __cs.addType( "none"       ,  Py_None->ob_type            , "<None>"                  , true  );
+    __cs.addType( "float"      , &PyFloat_Type                , "<Float>"                 , true  );
+    __cs.addType( "int"        , &PyLong_Type                 , "<Int>"                   , true  );
+    __cs.addType( "bool"       , &PyBool_Type                 , "<Bool>"                  , true  );
+    __cs.addType( "string"     , &PyString_Type               , "<String>"                , true  );
+    __cs.addType( "list"       , &PyList_Type                 , "<List>"                  , true  );
     // Do not change the "function" string. It's hardwired to callable (function) objects.
-    __cs.addType ( "function"   , NULL                         , "<Function>"              , true  );
-    __cs.addType ( "horiz"      , &PyTypeHorizontal            , "<Horizontal>"            , false, "segment" );
-    __cs.addType ( "inst"       , &PyTypeInstance              , "<Instance>"              , false, "ent" );
-    __cs.addType ( "instCol"    , &PyTypeInstanceCollection    , "<InstanceCollection>"    , false );
-    __cs.addType ( "mat"        , &PyTypeMaterial              , "<Material>"              , false );
-    __cs.addType ( "basicLayer" , &PyTypeBasicLayer            , "<BasicLayer>"            , false, "layer" );
-    __cs.addType ( "regLayer"   , &PyTypeRegularLayer          , "<RegularLayer>"          , false, "layer" );
-    __cs.addType ( "contLayer"  , &PyTypeContactLayer          , "<ContactLayer>"          , false, "layer" );
-    __cs.addType ( "diffLayer"  , &PyTypeDiffusionLayer        , "<DiffusionLayer>"        , false, "layer" );
-    __cs.addType ( "tranLayer"  , &PyTypeTransistorLayer       , "<TransistorLayer>"       , false, "layer" );
-    __cs.addType ( "viaLayer"   , &PyTypeViaLayer              , "<ViaLayer>"              , false, "layer" );
-    __cs.addType ( "layerColl"  , &PyTypeLayerCollection       , "<LayerCollection>"       , false );
-    __cs.addType ( "blayerColl" , &PyTypeBasicLayerCollection  , "<BasicLayerCollection>"  , false );
-    __cs.addType ( "rlayerColl" , &PyTypeRegularLayerCollection, "<RegularLayerCollection>", false );
-    __cs.addType ( "vlayerColl" , &PyTypeViaLayerCollection    , "<ViaLayerCollection>"    , false );
-    __cs.addType ( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
-    __cs.addType ( "lmask"      , &PyTypeLayerMask             , "<Layer::Mask>"           , false );
-    __cs.addType ( "library"    , &PyTypeLibrary               , "<Library>"               , false );
-    __cs.addType ( "ref"        , &PyTypeReference             , "<Reference>"             , false, "ent" );
-    __cs.addType ( "refCol"     , &PyTypeReferenceCollection   , "<ReferenceCollection>"   , false );
-    __cs.addType ( "net"        , &PyTypeNet                   , "<Net>"                   , false, "ent" );
-    __cs.addType ( "netCol"     , &PyTypeNetCollection         , "<NetCollection>"         , false );
-    __cs.addType ( "hyperNet"   , &PyTypeHyperNet              , "<HyperNet>"              , false );
-    __cs.addType ( "pin"        , &PyTypePin                   , "<Pin>"                   , false, "contact" );
-    __cs.addType ( "pinCol"     , &PyTypePinCollection         , "<PinCollection>"         , false );
-    __cs.addType ( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
-    __cs.addType ( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
-    __cs.addType ( "point"      , &PyTypePoint                 , "<Point>"                 , false );
-    __cs.addType ( "points"     , &PyTypePointCollection       , "<Points>"                , false );
-    __cs.addType ( "rp"         , &PyTypeRoutingPad            , "<RoutingPad>"            , false, "comp" );
-    __cs.addType ( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
-    __cs.addType ( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
-    __cs.addType ( "diagonal"   , &PyTypeDiagonal              , "<Diagonal>"              , false, "comp" );
-    __cs.addType ( "rectilin"   , &PyTypeRectilinear           , "<Rectilinear>"           , false, "comp" );
-    __cs.addType ( "polygon"    , &PyTypePolygon               , "<Polygon>"               , false, "comp" );
-    __cs.addType ( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
-    __cs.addType ( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
-    __cs.addType ( "techno"     , &PyTypeTechnology            , "<Technology>"            , false );
-    __cs.addType ( "transfo"    , &PyTypeTransformation        , "<Transformation>"        , false );
-    __cs.addType ( "orient"     , &PyTypeOrientation           , "<Orientation>"           , false );
-    __cs.addType ( "vert"       , &PyTypeVertical              , "<Vertical>"              , false, "segment" );
-    __cs.addType ( "path"       , &PyTypePath                  , "<Path>"                  , false );
-    __cs.addType ( "occur"      , &PyTypeOccurrence            , "<Occurrence>"            , false );
-    __cs.addType ( "occurCol"   , &PyTypeOccurrenceCollection  , "<OccurrenceCollection>"  , false );
-    __cs.addType ( "query"      , &PyTypeQuery                 , "<Query>"                 , false );
-    __cs.addType ( "qmask"      , &PyTypeQueryMask             , "<Query::Mask>"           , false );
+    __cs.addType( "function"   , NULL                         , "<Function>"              , true  );
+    __cs.addType( "horiz"      , &PyTypeHorizontal            , "<Horizontal>"            , false, "segment" );
+    __cs.addType( "inst"       , &PyTypeInstance              , "<Instance>"              , false, "ent" );
+    __cs.addType( "instCol"    , &PyTypeInstanceCollection    , "<InstanceCollection>"    , false );
+    __cs.addType( "mat"        , &PyTypeMaterial              , "<Material>"              , false );
+    __cs.addType( "basicLayer" , &PyTypeBasicLayer            , "<BasicLayer>"            , false, "layer" );
+    __cs.addType( "regLayer"   , &PyTypeRegularLayer          , "<RegularLayer>"          , false, "layer" );
+    __cs.addType( "contLayer"  , &PyTypeContactLayer          , "<ContactLayer>"          , false, "layer" );
+    __cs.addType( "diffLayer"  , &PyTypeDiffusionLayer        , "<DiffusionLayer>"        , false, "layer" );
+    __cs.addType( "tranLayer"  , &PyTypeTransistorLayer       , "<TransistorLayer>"       , false, "layer" );
+    __cs.addType( "viaLayer"   , &PyTypeViaLayer              , "<ViaLayer>"              , false, "layer" );
+    __cs.addType( "layerColl"  , &PyTypeLayerCollection       , "<LayerCollection>"       , false );
+    __cs.addType( "blayerColl" , &PyTypeBasicLayerCollection  , "<BasicLayerCollection>"  , false );
+    __cs.addType( "rlayerColl" , &PyTypeRegularLayerCollection, "<RegularLayerCollection>", false );
+    __cs.addType( "vlayerColl" , &PyTypeViaLayerCollection    , "<ViaLayerCollection>"    , false );
+    __cs.addType( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
+    __cs.addType( "lmask"      , &PyTypeLayerMask             , "<Layer::Mask>"           , false );
+    __cs.addType( "library"    , &PyTypeLibrary               , "<Library>"               , false );
+    __cs.addType( "ref"        , &PyTypeReference             , "<Reference>"             , false, "ent" );
+    __cs.addType( "refCol"     , &PyTypeReferenceCollection   , "<ReferenceCollection>"   , false );
+    __cs.addType( "net"        , &PyTypeNet                   , "<Net>"                   , false, "ent" );
+    __cs.addType( "netCol"     , &PyTypeNetCollection         , "<NetCollection>"         , false );
+    __cs.addType( "hyperNet"   , &PyTypeHyperNet              , "<HyperNet>"              , false );
+    __cs.addType( "pin"        , &PyTypePin                   , "<Pin>"                   , false, "contact" );
+    __cs.addType( "pinCol"     , &PyTypePinCollection         , "<PinCollection>"         , false );
+    __cs.addType( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
+    __cs.addType( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
+    __cs.addType( "point"      , &PyTypePoint                 , "<Point>"                 , false );
+    __cs.addType( "points"     , &PyTypePointCollection       , "<Points>"                , false );
+    __cs.addType( "rp"         , &PyTypeRoutingPad            , "<RoutingPad>"            , false, "comp" );
+    __cs.addType( "segment"    , &PyTypeSegment               , "<Segment>"               , false, "comp" );
+    __cs.addType( "pad    "    , &PyTypePad                   , "<Pad>"                   , false, "comp" );
+    __cs.addType( "diagonal"   , &PyTypeDiagonal              , "<Diagonal>"              , false, "comp" );
+    __cs.addType( "rectilin"   , &PyTypeRectilinear           , "<Rectilinear>"           , false, "comp" );
+    __cs.addType( "polygon"    , &PyTypePolygon               , "<Polygon>"               , false, "comp" );
+    __cs.addType( "segmentCol" , &PyTypeSegmentCollection     , "<SegmentCollection>"     , false );
+    __cs.addType( "db"         , &PyTypeDataBase              , "<DataBase>"              , false );
+    __cs.addType( "techno"     , &PyTypeTechnology            , "<Technology>"            , false );
+    __cs.addType( "transfo"    , &PyTypeTransformation        , "<Transformation>"        , false );
+    __cs.addType( "orient"     , &PyTypeOrientation           , "<Orientation>"           , false );
+    __cs.addType( "vert"       , &PyTypeVertical              , "<Vertical>"              , false, "segment" );
+    __cs.addType( "path"       , &PyTypePath                  , "<Path>"                  , false );
+    __cs.addType( "occur"      , &PyTypeOccurrence            , "<Occurrence>"            , false );
+    __cs.addType( "occurCol"   , &PyTypeOccurrenceCollection  , "<OccurrenceCollection>"  , false );
+    __cs.addType( "query"      , &PyTypeQuery                 , "<Query>"                 , false );
+    __cs.addType( "qmask"      , &PyTypeQueryMask             , "<Query::Mask>"           , false );
+    __cs.addType( "devdesc"    , &PyTypeDeviceDescriptor      , "<DeviceDescriptor>"      , false );
+    __cs.addType( "rule"       , &PyTypeRule                  , "<Rule>"                  , false );
+    __cs.addType( "urule"      , &PyTypeUnitRule              , "<UnitRule>"              , false, "rule" );
+    __cs.addType( "prule"      , &PyTypePhysicalRule          , "<PhysicalRule>"          , false, "rule" );
+    __cs.addType( "2prule"     , &PyTypeTwoLayersPhysicalRule , "<TwoLayersPhysicalRule>" , false, "prule" );
 
 
     PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );
@@ -823,6 +842,9 @@ extern "C" {
     PyModule_AddObject ( module, "Rectilinear"          , (PyObject*)&PyTypeRectilinear );
     Py_INCREF ( &PyTypePolygon );
     PyModule_AddObject ( module, "Polygon"              , (PyObject*)&PyTypePolygon );
+
+    Py_INCREF( &PyTypeDeviceDescriptor );
+    PyModule_AddObject( module, "DeviceDescriptor"      , (PyObject*)&PyTypeDeviceDescriptor );
     
     
     PyObject* dictionnary = PyModule_GetDict ( module );

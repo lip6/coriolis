@@ -1,121 +1,120 @@
-\hypertarget{classHurricane_1_1DbU}{\section{Hurricane\-:\-:Db\-U Class Reference}
-\label{classHurricane_1_1DbU}\index{Hurricane\-::\-Db\-U@{Hurricane\-::\-Db\-U}}
-}
+\hypertarget{classHurricane_1_1DbU}{}\section{Hurricane\+:\+:DbU Class Reference}
+\label{classHurricane_1_1DbU}\index{Hurricane\+::\+DbU@{Hurricane\+::\+DbU}}
 
 
-\hyperlink{classHurricane_1_1DataBase}{Data\-Base} Unit managment ({\bfseries A\-P\-I}).  
+\mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} Unit managment ({\bfseries A\+PI}).  
 
 
 \subsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-enum \hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\-Power} \{ \\*
-\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557}{Pico} = 1, 
-\\*
-\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Nano}, 
-\\*
-\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb}{Micro}, 
-\\*
-\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be}{Milli}, 
-\\*
-\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6}{Unity}, 
-\\*
-\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74}{Kilo}
+enum \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} \{ \newline
+\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a3cf34ad82faf73a9b48dcb3a621d0557}{Pico}} = 1, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Nano}}, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aa0481a3398a6cbb0a68a523146f0a7fb}{Micro}}, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7aac2973886c68f16ee68a192154ea65be}{Milli}}, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7ac5c524bb7247124f3dce7d1dbdc7d2c6}{Unity}}, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a7853e18601786b5c51a1bc9cfaf8bb74}{Kilo}}
  \}
 \item 
-enum \hyperlink{group__DbUGroup_ga6af6a5b8d113a661fea65b2bcb8b25c4}{String\-Mode} \{ \\*
-\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233}{Db} = (1$<$$<$0), 
-\\*
-\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c}{Grid} = (1$<$$<$1), 
-\\*
-\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8}{Symbolic} = (1$<$$<$2)
+enum \mbox{\hyperlink{group__DbUGroup_ga6af6a5b8d113a661fea65b2bcb8b25c4}{String\+Mode}} \{ \newline
+\mbox{\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a1b91af5faf467afcb73dec10bc54f233}{Db}} = (1$<$$<$0), 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4ac6b6574b2ef79ee4e44c6c00fe757c7c}{Grid}} = (1$<$$<$1), 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga6af6a5b8d113a661fea65b2bcb8b25c4a16f8df0900c42b001f0a91475a1b93f8}{Symbolic}} = (1$<$$<$2)
  \}
 \item 
-enum \hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\-Mode} \{ \\*
-\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3}{Inferior} = 1, 
-\\*
-\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Superior} = 2, 
-\\*
-\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest} = 4
+enum \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} \{ \newline
+\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a888eae532f84c3f19b024e1830ef8cb3}{Inferior}} = 1, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Superior}} = 2, 
+\newline
+\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}} = 4
  \}
 \item 
-typedef std\-::int64\-\_\-t \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}
+typedef std\+::int64\+\_\+t \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}}
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{from\-Db} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} value)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gaec69d65ec1651c2feea24c5931f4580b}{from\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} value)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_ga367e1d1b5ac1df076745550cba8a83c1}{from\-Grid} (double value)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga367e1d1b5ac1df076745550cba8a83c1}{from\+Grid}} (double value)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_ga4b570755b19ea9ff0f2f258a221bd935}{from\-Lambda} (double value)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga4b570755b19ea9ff0f2f258a221bd935}{from\+Lambda}} (double value)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{from\-Physical} (double value, \hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\-Power} p)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{from\+Physical}} (double value, \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} p)
 \item 
-static unsigned int \hyperlink{group__DbUGroup_ga6169efbdd9b3d54a0bd8467c8f957fda}{get\-Precision} ()
+static unsigned int \mbox{\hyperlink{group__DbUGroup_ga6169efbdd9b3d54a0bd8467c8f957fda}{get\+Precision}} ()
 \item 
-static unsigned int \hyperlink{group__DbUGroup_ga8756c9f0a32af5f601cd150e73b02c03}{get\-Maximal\-Precision} ()
+static unsigned int \mbox{\hyperlink{group__DbUGroup_ga8756c9f0a32af5f601cd150e73b02c03}{get\+Maximal\+Precision}} ()
 \item 
-static double \hyperlink{group__DbUGroup_ga120a60b09b344d01c583567a1e489d9e}{get\-Resolution} ()
+static double \mbox{\hyperlink{group__DbUGroup_ga120a60b09b344d01c583567a1e489d9e}{get\+Resolution}} ()
 \item 
-static void \hyperlink{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}{set\-Precision} (unsigned int precision, unsigned int flags=No\-Flags)
+static void \mbox{\hyperlink{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}{set\+Precision}} (unsigned int precision, unsigned int flags=No\+Flags)
 \item 
-static void \hyperlink{group__DbUGroup_gac93f9ba2a09105227e34bd05bcb1500c}{set\-Grids\-Per\-Lambda} (double grids\-Per\-Lambda, unsigned int flags=No\-Flags)
+static void \mbox{\hyperlink{group__DbUGroup_gac93f9ba2a09105227e34bd05bcb1500c}{set\+Grids\+Per\+Lambda}} (double grids\+Per\+Lambda, unsigned int flags=No\+Flags)
 \item 
-static double \hyperlink{group__DbUGroup_ga9a0359adbfafc356326f5c6adf57ff04}{get\-Grids\-Per\-Lambda} ()
+static double \mbox{\hyperlink{group__DbUGroup_ga9a0359adbfafc356326f5c6adf57ff04}{get\+Grids\+Per\+Lambda}} ()
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} \hyperlink{group__DbUGroup_ga09e46fcca6aaca94851adfa196e10170}{get\-Real\-Snap\-Grid\-Step} ()
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga09e46fcca6aaca94851adfa196e10170}{get\+Real\+Snap\+Grid\+Step}} ()
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} \hyperlink{group__DbUGroup_ga8746e486f153aa37ee469c1604eba5c0}{get\-On\-Real\-Snap\-Grid} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} u, \hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\-Mode} mode=\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest})
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga8746e486f153aa37ee469c1604eba5c0}{get\+On\+Real\+Snap\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}})
 \item 
-static void \hyperlink{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}{set\-Real\-Snap\-Grid\-Step} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} step)
+static void \mbox{\hyperlink{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}{set\+Real\+Snap\+Grid\+Step}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} step)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} \hyperlink{group__DbUGroup_ga687a9134729b107c42fb7f69596c4c3b}{get\-Symbolic\-Snap\-Grid\-Step} ()
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga687a9134729b107c42fb7f69596c4c3b}{get\+Symbolic\+Snap\+Grid\+Step}} ()
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} \hyperlink{group__DbUGroup_gad1b0c0f3680093cf5a63d901312c925d}{get\-On\-Symbolic\-Snap\-Grid} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} u, \hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\-Mode} mode=\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest})
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_gad1b0c0f3680093cf5a63d901312c925d}{get\+On\+Symbolic\+Snap\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}})
 \item 
-static void \hyperlink{group__DbUGroup_ga9ccd423c8f268ef54770f4663e6c9304}{set\-Symbolic\-Snap\-Grid\-Step} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} step)
+static void \mbox{\hyperlink{group__DbUGroup_ga9ccd423c8f268ef54770f4663e6c9304}{set\+Symbolic\+Snap\+Grid\+Step}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} step)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} \hyperlink{group__DbUGroup_ga87323d9038656dceabffc37d45de408a}{get\-On\-Custom\-Grid} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} u, \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} step, \hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\-Mode} mode=\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest})
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga87323d9038656dceabffc37d45de408a}{get\+On\+Custom\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} step, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a65e6f47eb16779b8974a80d6145a2db5}{Nearest}})
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} \hyperlink{group__DbUGroup_ga9419025221579f4277475c65655be3dc}{get\-On\-Physical\-Grid} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\-U\-::\-Unit} u, \hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\-Mode} mode=\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Superior})
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} \mbox{\hyperlink{group__DbUGroup_ga9419025221579f4277475c65655be3dc}{get\+On\+Physical\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga1082168d6f9956ebba22ab8bbec21637}{Snap\+Mode}} mode=\mbox{\hyperlink{group__DbUGroup_gga1082168d6f9956ebba22ab8bbec21637a8ce92cf7ff7627c46baf85612f9ad847}{Superior}})
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_gaec07c6e7ae2a2a6f54e2a16b32c8bf26}{to\-Db} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gaec07c6e7ae2a2a6f54e2a16b32c8bf26}{to\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
 \item 
-static double \hyperlink{group__DbUGroup_ga318d673386c9424e07c12efd598c730d}{to\-Grid} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u)
+static double \mbox{\hyperlink{group__DbUGroup_ga318d673386c9424e07c12efd598c730d}{to\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
 \item 
-static double \hyperlink{group__DbUGroup_ga4923a9a443871282ad7d331be2a2a5d4}{to\-Lambda} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u)
+static double \mbox{\hyperlink{group__DbUGroup_ga4923a9a443871282ad7d331be2a2a5d4}{to\+Lambda}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
 \item 
-static double \hyperlink{group__DbUGroup_gab901e9d5c12e878728178f113def6c45}{to\-Physical} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u, \hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\-Power} p)
+static double \mbox{\hyperlink{group__DbUGroup_gab901e9d5c12e878728178f113def6c45}{to\+Physical}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u, \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} p)
 \item 
-static string \hyperlink{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}{get\-Value\-String} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u, int mode=Smart\-Truncate)
+static string \mbox{\hyperlink{group__DbUGroup_gadc9c1a06b4296dbddcf711077113f4bd}{get\+Value\+String}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u, int mode=Smart\+Truncate)
 \item 
-static void \hyperlink{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}{set\-String\-Mode} (unsigned int mode, \hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\-Power} p=\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Nano})
+static void \mbox{\hyperlink{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}{set\+String\+Mode}} (unsigned int mode, \mbox{\hyperlink{group__DbUGroup_ga50b5785bf4d75026c4c112caec3040a7}{Unit\+Power}} p=\mbox{\hyperlink{group__DbUGroup_gga50b5785bf4d75026c4c112caec3040a7a03e5923be5810db830626f2ca26319d6}{Nano}})
 \end{DoxyCompactItemize}
-\begin{Indent}{\bf Obsoleteds}\par
+\begin{Indent}\textbf{ Obsoleteds}\par
 {\em Due to their somewhat unclear naming convention, those functions have been renamed by the {\itshape to} / {\itshape from} variants. }\begin{DoxyCompactItemize}
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_gacd77957381fb93fc4203bdca215e0b48}{db} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} value)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gacd77957381fb93fc4203bdca215e0b48}{db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} value)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_ga1d4bac6e3b68c8cd44b345de3b425753}{grid} (double value)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga1d4bac6e3b68c8cd44b345de3b425753}{grid}} (double value)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_gaa1ba98acc939ff1c370c18544a5e0dce}{lambda} (double value)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_gaa1ba98acc939ff1c370c18544a5e0dce}{lambda}} (double value)
 \item 
-static \hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} \hyperlink{group__DbUGroup_ga4233772b1b3e68f3ec723c7509ea87ff}{get\-Db} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u)
+static \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} \mbox{\hyperlink{group__DbUGroup_ga4233772b1b3e68f3ec723c7509ea87ff}{get\+Db}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
 \item 
-static double \hyperlink{group__DbUGroup_gad4485d0d7b5fd7ae87b32f165155c0a2}{get\-Grid} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u)
+static double \mbox{\hyperlink{group__DbUGroup_gad4485d0d7b5fd7ae87b32f165155c0a2}{get\+Grid}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
 \item 
-static double \hyperlink{group__DbUGroup_gadea6b9a6e84243f70f3a5e2725b2c6d8}{get\-Lambda} (\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit} u)
+static double \mbox{\hyperlink{group__DbUGroup_gadea6b9a6e84243f70f3a5e2725b2c6d8}{get\+Lambda}} (\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Unit}} u)
 \end{DoxyCompactItemize}
 \end{Indent}
 
 
 \subsection{Detailed Description}
-\hyperlink{classHurricane_1_1DataBase}{Data\-Base} Unit managment ({\bfseries A\-P\-I}). 
+\mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} Unit managment ({\bfseries A\+PI}). 
 
-{\bfseries Explanations about this class are here \hyperlink{group__DbUGroup}{Db\-U/\-Unit description}.} 
+{\bfseries Explanations about this class are here \mbox{\hyperlink{group__DbUGroup}{Db\+U/\+Unit description}}.} 
 
-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-Db\-U.\-h\item 
-Db\-U.\-dox\end{DoxyCompactItemize}
+Db\+U.\+h\item 
+Db\+U.\+dox\end{DoxyCompactItemize}
