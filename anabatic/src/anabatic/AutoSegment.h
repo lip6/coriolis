@@ -178,6 +178,8 @@ namespace Anabatic {
       inline         DbU::Unit           getTargetY                 () const;
       inline         void                invert                     ();
       inline         void                setLayer                   ( const Layer* );
+      inline         void                setLayer                   ( size_t depth );
+      inline         void                setWidth                   ( DbU::Unit );
     // Predicates.                                           
       inline         bool                isHorizontal               () const;
       inline         bool                isVertical                 () const;
@@ -538,6 +540,7 @@ namespace Anabatic {
   inline  void            AutoSegment::incReduceds            () { if (_reduceds<3) ++_reduceds; }
   inline  void            AutoSegment::decReduceds            () { if (_reduceds>0) --_reduceds; }
   inline  void            AutoSegment::setLayer               ( const Layer* layer ) { base()->setLayer(layer); _depth=Session::getLayerDepth(layer); _flags|=SegInvalidatedLayer; }
+  inline  void            AutoSegment::setWidth               ( DbU::Unit width ) { base()->setWidth(width); }
   inline  void            AutoSegment::setOptimalMin          ( DbU::Unit min ) { _optimalMin = (unsigned int)DbU::getLambda(min-getOrigin()); }
   inline  void            AutoSegment::setOptimalMax          ( DbU::Unit max ) { _optimalMax = (unsigned int)DbU::getLambda(max-getOrigin()); }
   inline  void            AutoSegment::mergeNativeMin         ( DbU::Unit min ) { _nativeConstraints.getVMin() = std::max( min, _nativeConstraints.getVMin() ); }
@@ -545,6 +548,17 @@ namespace Anabatic {
   inline  void            AutoSegment::resetNativeConstraints ( DbU::Unit min, DbU::Unit max ) { _nativeConstraints = Interval( min, max ); }
 //inline  void            AutoSegment::mergeUserConstraints   ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = Interval(false); }
+
+
+  inline  void  AutoSegment::setLayer ( size_t depth )
+  {
+    RoutingLayerGauge* layerGauge = Session::getLayerGauge( depth );
+    base()->setLayer( layerGauge->getLayer    () );
+    base()->setWidth( layerGauge->getWireWidth() );
+
+    _depth = depth;
+    _flags|=SegInvalidatedLayer;
+  }
 
 
   inline  DbU::Unit  AutoSegment::getContactWidth () const

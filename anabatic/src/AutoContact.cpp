@@ -552,6 +552,20 @@ namespace Anabatic {
   }
 
 
+  void  AutoContact::setLayerAndWidth ( size_t delta, size_t depth )
+  {
+    if (delta == 0) {
+      setLayer( Session::getRoutingLayer(depth) );
+      setSizes( Session::getWireWidth   (depth)
+              , Session::getWireWidth   (depth) );
+    } else {
+      setLayer( Session::getContactLayer(depth) );
+      setSizes( Session::getViaWidth    (depth)
+              , Session::getViaWidth    (depth) );
+    }
+  }
+
+
   AutoContact* AutoContact::createFrom ( Contact* hurricaneContact )
   {
     AutoContact* autoContact = NULL;

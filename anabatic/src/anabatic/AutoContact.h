@@ -178,6 +178,7 @@ namespace Anabatic {
                                                           , Flags flags=Flags::WarnOnError );
               void             restoreNativeConstraintBox ();
               void             migrateConstraintBox       ( AutoContact* other );
+              void             setLayerAndWidth           ( size_t delta, size_t depth );
               void             destroy                    ();
     // Inspector Management.
               Record*          _getRecord                 () const;

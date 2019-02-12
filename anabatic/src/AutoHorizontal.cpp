@@ -804,8 +804,9 @@ namespace Anabatic {
       upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
     }
 
+    size_t       doglegDepth  = depth + ((upLayer)?1:-1);
     Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer( depth + ((upLayer)?0:-1) );
-    const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer( depth + ((upLayer)?1:-1) );
+    const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer( doglegDepth );
 
     Session::dogleg( this );
     targetDetach();
@@ -814,7 +815,7 @@ namespace Anabatic {
     AutoContact* dlContact1 = AutoContactTurn::create( doglegGCell, _horizontal->getNet(), contactLayer );
     AutoContact* dlContact2 = AutoContactTurn::create( doglegGCell, _horizontal->getNet(), contactLayer );
     AutoSegment* segment1   = AutoSegment::create( dlContact1 , dlContact2, Flags::Vertical );
-    segment1->setLayer( doglegLayer );
+    segment1->setLayer( doglegDepth );
     segment1->_setAxis( doglegAxis );
     segment1->setFlags( SegDogleg|SegSlackened|SegCanonical|SegNotAligned );
 
@@ -825,7 +826,7 @@ namespace Anabatic {
     targetAttach( dlContact1 );
     AutoSegment* segment2 = AutoSegment::create( dlContact2 , autoTarget, Flags::Horizontal );
     autoTarget->cacheAttach( segment2 );
-    segment2->setLayer( getLayer() );
+    segment2->setLayer( depth );
     segment2->_setAxis( getY() );
     segment2->setFlags( (isSlackened()?SegSlackened:0) );
     Session::dogleg( segment2 );

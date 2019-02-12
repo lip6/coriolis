@@ -1632,7 +1632,7 @@ namespace Anabatic {
 
     const Layer* newLayer = Session::getRoutingGauge()->getRoutingLayer(depth);
     if (getLayer() != newLayer) {
-      setLayer( newLayer );
+      setLayer( depth );
       getAutoSource()->invalidate( Flags::Topology|Flags::NoCheckLayer );
       getAutoTarget()->invalidate( Flags::Topology|Flags::NoCheckLayer );
     }
@@ -2110,18 +2110,18 @@ namespace Anabatic {
       if (getLayer()->above(from->getLayer())) {
         cdebug_log(149,0) << "Go Down from depth " << segmentDepth << endl;
 
-        doglegs[ index + 1 ]->setLayer( rg->getRoutingLayer(segmentDepth-1) );
+        doglegs[ index + 1 ]->setLayer( segmentDepth-1 );
         cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1] << endl;
 
         if (isSource) {
-          doglegs[ index + 0 ]->setLayer( rg->getRoutingLayer(segmentDepth-2) );
+          doglegs[ index + 0 ]->setLayer( segmentDepth-2 );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-2) );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-1) );
           cdebug_log(149,0) << "doglegs[i+0]: " << doglegs[index+0] << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
         } else {
-          doglegs[ index + 2 ]->setLayer( rg->getRoutingLayer(segmentDepth-2) );
+          doglegs[ index + 2 ]->setLayer( segmentDepth-2 );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-2) );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-1) );
           cdebug_log(149,0) << "doglegs[i+2]: " << doglegs[index+2] << endl;
@@ -2131,18 +2131,18 @@ namespace Anabatic {
       } else {
         cdebug_log(149,0) << "Go Up from depth " << segmentDepth << endl;
 
-        doglegs[ index + 1 ]->setLayer( rg->getRoutingLayer(segmentDepth+1) );
+        doglegs[ index + 1 ]->setLayer( segmentDepth+1 );
         cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1] << endl;
 
         if (isSource) {
-          doglegs[ index + 0 ]->setLayer( rg->getRoutingLayer(segmentDepth+2) );
+          doglegs[ index + 0 ]->setLayer( segmentDepth+2 );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth+1) );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth  ) );
           cdebug_log(149,0) << "doglegs[i+0]: " << doglegs[index+0] << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
         } else {
-          doglegs[ index + 2 ]->setLayer( rg->getRoutingLayer(segmentDepth+2) );
+          doglegs[ index + 2 ]->setLayer( segmentDepth+2 );
           doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth+1) );
           doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth  ) );
           cdebug_log(149,0) << "doglegs[i+2]: " << doglegs[index+2] << endl;

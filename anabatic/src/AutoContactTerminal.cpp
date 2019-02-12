@@ -550,8 +550,8 @@ namespace Anabatic {
         cdebug_log(145,0) << "Update seg: " << _segment << endl;
         delta = abssub( anchorDepth, rg->getLayerDepth( _segment->getLayer() ) );
       }
-      else if (delta == 0) setLayer( rg->getRoutingLayer(anchorDepth) );
-      else if (delta == 1) setLayer( rg->getContactLayer(std::min(anchorDepth,segmentDepth)) );
+      else if (delta == 0) setLayerAndWidth( delta, anchorDepth );
+      else if (delta == 1) setLayerAndWidth( delta, std::min(anchorDepth,segmentDepth) );
     }
     _segment->invalidate( this );
 

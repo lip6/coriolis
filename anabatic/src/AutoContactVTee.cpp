@@ -278,11 +278,11 @@ namespace Anabatic {
           cdebug_log(145,0) << "depthV1 == depthV2 (" << depthV1 << ")" << endl;
         // Dogleg on the horizontal.
           switch ( delta ) {
-            case 0: setLayer( rg->getRoutingLayer(minDepth) ); break;
-            case 1: setLayer( rg->getContactLayer(minDepth) ); break;
+            case 0:
+            case 1: setLayerAndWidth( delta, minDepth ); break;
             default:
               cdebug_log(145,0) << "Restore connectivity: dogleg on h1." << endl;
-              setLayer( rg->getContactLayer( depthV1 + ((depthV1==minDepth)?0:-1) ) );
+              setLayerAndWidth( delta, depthV1 + ((depthV1==minDepth)?0:-1) );
               _horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
               break;
           }
@@ -292,11 +292,11 @@ namespace Anabatic {
           int deltaV2 = (int)depthV2 - (int)depthH1;
 
           if (std::abs(deltaV1) > std::abs(deltaV2)) {
-            setLayer( rg->getContactLayer( depthV2 + ((depthV2<depthH1)?0:-1) )  );
+            setLayerAndWidth( 2, depthV2 + ((depthV2<depthH1)?0:-1) );
           //_vertical1 = static_cast<AutoVertical*>( _vertical1->makeDogleg(this) );
             _vertical1->makeDogleg(this);
           } else {
-            setLayer( rg->getContactLayer( depthV1 + ((depthV1<depthH1)?0:-1) )  );
+            setLayerAndWidth( 2, depthV1 + ((depthV1<depthH1)?0:-1) );
           //_vertical2 = static_cast<AutoVertical*>( _vertical2->makeDogleg(this) );
             _vertical2->makeDogleg(this);
           }

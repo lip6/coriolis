@@ -263,7 +263,7 @@ namespace Anabatic {
           delta        = abssub ( depthH1, depthV1 );
         }
 
-        setLayer ( (delta == 0) ? rg->getRoutingLayer(depthContact) : rg->getContactLayer(depthContact) );
+        setLayerAndWidth( delta, depthContact );
       }
 
       _horizontal1->invalidate( this );
