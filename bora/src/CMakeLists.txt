@@ -85,6 +85,7 @@
                                      ${CONFIGURATION_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
+                                     ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
                                      ${QWT_LIBRARY}

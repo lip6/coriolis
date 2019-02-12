@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <memory>
 
+#include "flute.h"
+
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
@@ -33,7 +35,6 @@
 #include "knik/VEdge.h"
 #include "knik/KnikEngine.h"
 
-#include "knik/flute.h"
 
 //#define __USE_SLICINGTREE__
 #define __USE_MATRIXVERTEX__
@@ -1524,14 +1525,14 @@ void Graph::Monotonic()
     //#endif
 }
 
-FTree* Graph::createFluteTree()
+Tree* Graph::createFluteTree()
 // ****************************
 { 
     int  accuracy = 3;                         // accuracy for flute (by default 3)
     int  d        = _vertexes_to_route.size(); // degre du net, ie nombre de routingPads
     int *x = new int [d];                      // x coordinates of the vertexes
     int *y = new int [d];                      // y coordinates of the vertexes
-    FTree* flutetree = new FTree;              // the flute Steiner Tree
+    Tree* flutetree = new Tree;              // the flute Steiner Tree
 
     //cout << "Net : " << _working_net << endl;
     // scans _working_net to find x,y coordinates and fill x, y and d
@@ -1548,7 +1549,7 @@ FTree* Graph::createFluteTree()
 
     assert ( d == cpt );
 
-    *flutetree = flute ( d, x, y, accuracy );
+    *flutetree = Flute::flute ( d, x, y, accuracy );
     //printtree ( flutetree );
     //plottree ( flutetree );
     //cout << endl;
@@ -1561,9 +1562,9 @@ void Graph::UpdateEstimateCongestion ( bool create )
     if ( _vertexes_to_route.size() < 2 )
        return;
     //cerr << "Running FLUTE for net : " << _working_net << endl;
-    unique_ptr<FTree> flutetree ( createFluteTree() );
+    unique_ptr<Tree> flutetree ( createFluteTree() );
 
-    //parcours des branches du FTree pour créer la congestion estimée
+    //parcours des branches du Tree pour créer la congestion estimée
     for ( int i = 0 ; i < 2*flutetree->deg-2 ; i++ ) {
 //        int sourceX = flutetree->branch[i].x;
 //        int sourceY = flutetree->branch[i].y;

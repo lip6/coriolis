@@ -64,6 +64,7 @@
                                       ${UTILITIES_LIBRARY}
                                       ${CONFIGURATION_LIBRARY}
                                       ${COLOQUINTE_LIBRARIES}
+                                      ${FLUTE_LIBRARIES}
                                       ${LEFDEF_LIBRARIES}
                                       ${OA_LIBRARIES}
                                       ${QtX_LIBRARIES}

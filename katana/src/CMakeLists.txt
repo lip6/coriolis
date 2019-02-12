@@ -95,6 +95,7 @@
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
                                      ${UTILITIES_LIBRARY}
+                                     ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
                                      ${QtX_LIBRARIES}
