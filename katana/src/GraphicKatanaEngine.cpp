@@ -92,28 +92,36 @@ namespace Katana {
       painter.setBrush( Graphics::getColorScale( ColorScale::Fire ).getBrush( density, widget->getDarkening() ) );
       painter.drawRect( pixelBb );
     } else {
-      if ( (pixelBb.width() > 150) or (pixelBb.height() > 150) ) {
-        painter.setPen  ( pen );
-        painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
-        painter.drawRect( pixelBb );
+      int fontScale   =  0;
+      int halfHeight  = 20;
+      int halfWidth   = 80;
+      if (widget->isPrinter()) {
+        fontScale   = -5;
+        halfHeight  =  9;
+        halfWidth   = 39;
+        
+      }
+      
+      painter.setPen  ( pen );
+      painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
+      painter.drawRect( pixelBb );
 
-        if ( (pixelBb.width() > 300) and (pixelBb.height() > 100) ) {
-          QString text  = QString("id:%1").arg(gcell->getId());
-          QFont   font  = Graphics::getFixedFont( QFont::Bold );
-          painter.setFont(font);
+      if ( (pixelBb.width() > 2*halfWidth) and (pixelBb.height() > 2*halfHeight) ) {
+        QString text  = QString("%1").arg(gcell->getId());
+        QFont   font  = Graphics::getFixedFont( QFont::Normal, false, false, fontScale );
+        painter.setFont(font);
 
-          pen.setWidth( 1 );
-          painter.setPen( pen );
+        pen.setWidth( 1 );
+        painter.setPen( pen );
 
-          painter.save     ();
-          painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
-          painter.drawRect ( QRect( -80, -25, 160, 50 ) );
-          painter.drawText ( QRect( -80, -25, 160, 50 )
-                           , text
-                           , QTextOption(Qt::AlignCenter)
-                           );
-          painter.restore  ();
-        }
+        painter.save     ();
+        painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
+        painter.drawRect ( QRect( -halfWidth, -halfHeight, 2*halfWidth, 2*halfHeight ) );
+        painter.drawText ( QRect( -halfWidth, -halfHeight, 2*halfWidth, 2*halfHeight )
+                         , text
+                         , QTextOption(Qt::AlignCenter)
+                         );
+        painter.restore  ();
       }
     }
   }
@@ -140,11 +148,16 @@ namespace Katana {
     if (edge) {
       Box      bb        = edge->getBoundingBox();
       uint32_t occupancy = 255;
-      if (edge->getRealOccupancy() < edge->getCapacity())
-        occupancy = (uint32_t)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
+    //if (edge->getRealOccupancy() < edge->getCapacity())
+    //  occupancy = (uint32_t)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
+
+      float edgeOccupancy = edge->getEstimateOccupancy() + (float)edge->getRealOccupancy();
+
+      if ((unsigned int)edgeOccupancy < edge->getCapacity())
+        occupancy = (uint32_t)( 255.0 * (edgeOccupancy / (float)edge->getCapacity()) );
 
       QPainter& painter = widget->getPainter();
-      if (edge->getRealOccupancy() > edge->getCapacity()) {
+      if ((unsigned int)edgeOccupancy > edge->getCapacity()) {
         QColor color ( Qt::cyan );
         painter.setPen( DisplayStyle::darken(color,widget->getDarkening()) );
       }
@@ -160,7 +173,10 @@ namespace Katana {
 
       if (fontHeight > ((edge->isHorizontal()) ? pixelBb.height() : pixelBb.width()) + 4) return; 
 
-      QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
+    //QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
+      QString text  = QString("%1/%2")
+        .arg( edgeOccupancy )
+        .arg( edge->getCapacity() );
       QColor  color ( (occupancy > 170) ? Qt::black : Qt::white );
       painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
       painter.setFont(font);

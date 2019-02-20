@@ -249,18 +249,19 @@ namespace Hurricane {
     string s;
 
     unsigned int  hours = (unsigned int)duration / 3600;
-    if ( hours )
+    if (hours)
       s += getString(hours) + "h ";
       
     unsigned int  minutes = ((unsigned int)duration % 3600) / 60;
-    if ( hours || minutes )
+    if (hours or minutes)
       s += getString(minutes) + "m ";
 
     double seconds = duration;
-    if ( hours || minutes ) {
+    if (hours or minutes) {
       minutes = ((unsigned int)duration) / 60;
       seconds = duration - ((float)minutes * 60.0);
     }
+    seconds = std::round(seconds * 100.0) / 100.0;
     
     s += getString((float)seconds) + "s";
 
