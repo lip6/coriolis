@@ -40,8 +40,8 @@ namespace Hurricane {
     public:
       typedef DBo Inherit;
     public:
-      enum EntityFlags { ForcedIdMode = (1<<0)
-                       , NextIdSet    = (1<<1)
+      enum EntityFlags { ForcedIdMode  = (1<<0)
+                       , NextIdSet     = (1<<1)
                        };
     public:
       static  void          setMemoryLimit      ( unsigned int );
@@ -52,6 +52,7 @@ namespace Hurricane {
       static  bool          inForcedIdMode      ();
       static  void          enableForcedIdMode  ();
       static  void          disableForcedIdMode ();
+      static  void          useIdCounter2       ();
     public:                                
       inline  unsigned int  getId               () const;
       virtual Cell*         getCell             () const = 0;
@@ -63,6 +64,7 @@ namespace Hurricane {
               Quark*        _getQuark           ( SharedPath* sharedPath = NULL ) const;
     protected:                                  
                             Entity              ();
+      virtual void          _postCreate         ();
       virtual void          _preDestroy         ();
     private:
       static  unsigned int   _memoryLimit;

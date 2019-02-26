@@ -34,11 +34,11 @@ namespace Hurricane {
 // ****************************************************************************************************
 
 
-  unsigned int   Entity::_memoryLimit    = 0;
-  unsigned long  Entity::_flags          = 0;
-  unsigned int   Entity::_nextId         = 0;
-  unsigned int   Entity::_idCounterLimit = 0;
-  unsigned int   Entity::_idCounter      = 1;
+  unsigned int   Entity::_memoryLimit    =  0;
+  unsigned long  Entity::_flags          =  0;
+  unsigned int   Entity::_nextId         =  0;
+  unsigned int   Entity::_idCounterLimit =  0;
+  unsigned int   Entity::_idCounter      =  1;
 
 
   void  Entity::setIdCounterLimit ( unsigned int limit )
@@ -99,7 +99,7 @@ namespace Hurricane {
       }
     }
 
-    return _idCounter++;
+    return ++_idCounter;
   }
 
 
@@ -127,6 +127,14 @@ namespace Hurricane {
     // }
     // if (_id == 75060)
     //   cerr << "Entity::Entity() " << this << endl;
+  }
+
+
+  void Entity::_postCreate()
+  {
+    Inherit::_postCreate();
+
+  //cerr << _getString() << endl;
   }
 
 

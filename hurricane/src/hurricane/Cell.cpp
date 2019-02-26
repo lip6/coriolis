@@ -1584,7 +1584,21 @@ Name Cell::NetMap::_getKey(Net* net) const
 unsigned Cell::NetMap::_getHashValue(Name name) const
 // **************************************************
 {
-  return (unsigned int)name._getSharedName()->getId() / 8;
+  unsigned long hash = 0;
+  unsigned long sum4 = 0;
+  const string& s = name._getSharedName()->_getSString();
+  for ( size_t i=0 ; i<s.size() ; ++i ) {
+    sum4 |= ((unsigned long)s[i]) << ((i%4) * 8);
+    if (i%4 == 3) {
+      hash += sum4;
+      sum4  = 0;
+    }
+  }
+  hash += sum4;
+
+  return hash;
+  
+//return (unsigned int)name._getSharedName()->getId() / 8;
 }
 
 Net* Cell::NetMap::_getNextElement(Net* net) const
