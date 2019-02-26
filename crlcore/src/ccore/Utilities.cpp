@@ -281,6 +281,10 @@ namespace CRL {
                  );
     }
 
+    if ( arguments.count("coriolis_top") ) {
+      _pathes.insert ( make_pair("coriolis_top", arguments["coriolis_top"].as<string>()) );
+    }
+
     Utilities::Path sysConfDir ( SYS_CONF_DIR );
     if ( not sysConfDir.absolute() ) {
       if ( arguments.count("coriolis_top") ) {

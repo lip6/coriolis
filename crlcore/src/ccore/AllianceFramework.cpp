@@ -29,6 +29,8 @@
 #include "crlcore/RoutingLayerGauge.h"
 #include "crlcore/AllianceFramework.h"
 
+#include "hurricane/SharedName.h"
+
 
 namespace CRL {
 
