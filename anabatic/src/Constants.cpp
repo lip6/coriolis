@@ -54,6 +54,8 @@ namespace Anabatic {
   const BaseFlags  Flags::DestroyBaseSegment  = (1L <<  9);
 // Flags for NetDatas objects states only.                      
   const BaseFlags  Flags::GlobalRouted        = (1L <<  5);
+  const BaseFlags  Flags::GlobalEstimated     = (1L <<  6);
+  const BaseFlags  Flags::ExcludeRoute        = (1L <<  7);
 // Masks.                                      
   const BaseFlags  Flags::WestSide            = Horizontal|Target;
   const BaseFlags  Flags::EastSide            = Horizontal|Source;
@@ -113,6 +115,7 @@ namespace Anabatic {
   const BaseFlags  Flags::CheckLowDensity     = (1L << 30);
   const BaseFlags  Flags::CheckLowUpDensity   = (1L << 31);
   const BaseFlags  Flags::NoUpdate            = (1L << 32);
+  const BaseFlags  Flags::NorthPath           = (1L << 33);
 
 
   Flags::~Flags ()

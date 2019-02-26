@@ -128,6 +128,8 @@ namespace Anabatic {
       static        uint32_t              getDisplayMode       ();
       static        void                  setDisplayMode       ( uint32_t );
       static        Box                   getBorder            ( const GCell*, const GCell* );
+      static inline DbU::Unit             getMatrixHSide       ();
+      static inline DbU::Unit             getMatrixVSide       ();
     public:                                                    
       static        GCell*                create               ( AnabaticEngine* );
     public:                                                    
@@ -168,6 +170,8 @@ namespace Anabatic {
       inline        DbU::Unit             getConstraintXMax    ( int shrink=0 ) const;
       inline        DbU::Unit             getConstraintYMax    ( int shrink=0 ) const;
       inline        Interval              getSide              ( Flags direction, int shrink=0 ) const;
+      inline        Interval              getHSide             ( int shrink=0 ) const;
+      inline        Interval              getVSide             ( int shrink=0 ) const;
       inline        Point                 getCenter            () const;
       inline        Box                   getConstraintBox     () const;
       inline const  vector<Edge*>&        getWestEdges         () const;
@@ -299,6 +303,8 @@ namespace Anabatic {
     private:
       static  Name                  _extensionName;
       static  uint32_t              _displayMode;
+      static  DbU::Unit             _matrixHSide;
+      static  DbU::Unit             _matrixVSide;
               Observable            _observable;
               AnabaticEngine*       _anabatic;
               Flags                 _flags;
@@ -324,58 +330,62 @@ namespace Anabatic {
   };
 
 
-  inline       bool                  GCell::isHFlat       () const { return getYMin() == getYMax(); }
-  inline       bool                  GCell::isVFlat       () const { return getXMin() == getXMax(); }
-  inline       bool                  GCell::isFlat        () const { return isHFlat() or isVFlat(); }
-  inline       bool                  GCell::isDevice      () const { return _flags & Flags::DeviceGCell; }
-  inline       bool                  GCell::isHChannel    () const { return _flags & Flags::HChannelGCell; }
-  inline       bool                  GCell::isVChannel    () const { return _flags & Flags::VChannelGCell; }
-  inline       bool                  GCell::isStrut       () const { return _flags & Flags::StrutGCell; }
-  inline       bool                  GCell::isAnalog      () const { return _flags & Flags::AnalogGCellMask; }
-  inline       bool                  GCell::isMatrix      () const { return _flags & Flags::MatrixGCell; }
-  inline       bool                  GCell::isRow         () const { return _flags & Flags::RowGCellMask; }
-  inline       bool                  GCell::isIoPad       () const { return _flags & Flags::IoPadGCell; }
-  inline       bool                  GCell::isHRail       () const { return _flags & Flags::HRailGCell; }
-  inline       bool                  GCell::isVRail       () const { return _flags & Flags::VRailGCell; }
-  inline       bool                  GCell::isStdCellRow  () const { return _flags & Flags::StdCellRow; }
-  inline       bool                  GCell::isChannelRow  () const { return _flags & Flags::ChannelRow; }
-  inline       bool                  GCell::isSaturated   () const { return _flags & Flags::Saturated; }
-  inline       bool                  GCell::isInvalidated () const { return _flags & Flags::Invalidated; }
-  inline       Flags                 GCell::getType       () const { return _flags & Flags::GCellTypeMask; }
-  inline       AnabaticEngine*       GCell::getAnabatic   () const { return _anabatic; }
-  inline       DbU::Unit             GCell::getXMin       () const { return _xmin; }
-  inline       DbU::Unit             GCell::getYMin       () const { return _ymin; }
-  inline       Edges                 GCell::getEdges      ( Flags sides ) const { return new GCell_Edges(this,sides); }
-  inline const vector<Edge*>&        GCell::getWestEdges  () const { return _westEdges; }
-  inline const vector<Edge*>&        GCell::getEastEdges  () const { return _eastEdges; }
-  inline const vector<Edge*>&        GCell::getNorthEdges () const { return _northEdges; }
-  inline const vector<Edge*>&        GCell::getSouthEdges () const { return _southEdges; }
-  inline       GCell*                GCell::getWest       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]->getOpposite(this); }
-  inline       GCell*                GCell::getEast       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
-  inline       GCell*                GCell::getSouth      () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
-  inline       GCell*                GCell::getNorth      () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
+  inline       bool                  GCell::isHFlat        () const { return getYMin() == getYMax(); }
+  inline       bool                  GCell::isVFlat        () const { return getXMin() == getXMax(); }
+  inline       bool                  GCell::isFlat         () const { return isHFlat() or isVFlat(); }
+  inline       bool                  GCell::isDevice       () const { return _flags & Flags::DeviceGCell; }
+  inline       bool                  GCell::isHChannel     () const { return _flags & Flags::HChannelGCell; }
+  inline       bool                  GCell::isVChannel     () const { return _flags & Flags::VChannelGCell; }
+  inline       bool                  GCell::isStrut        () const { return _flags & Flags::StrutGCell; }
+  inline       bool                  GCell::isAnalog       () const { return _flags & Flags::AnalogGCellMask; }
+  inline       bool                  GCell::isMatrix       () const { return _flags & Flags::MatrixGCell; }
+  inline       bool                  GCell::isRow          () const { return _flags & Flags::RowGCellMask; }
+  inline       bool                  GCell::isIoPad        () const { return _flags & Flags::IoPadGCell; }
+  inline       bool                  GCell::isHRail        () const { return _flags & Flags::HRailGCell; }
+  inline       bool                  GCell::isVRail        () const { return _flags & Flags::VRailGCell; }
+  inline       bool                  GCell::isStdCellRow   () const { return _flags & Flags::StdCellRow; }
+  inline       bool                  GCell::isChannelRow   () const { return _flags & Flags::ChannelRow; }
+  inline       bool                  GCell::isSaturated    () const { return _flags & Flags::Saturated; }
+  inline       bool                  GCell::isInvalidated  () const { return _flags & Flags::Invalidated; }
+  inline       DbU::Unit             GCell::getMatrixHSide () { return _matrixHSide; }
+  inline       DbU::Unit             GCell::getMatrixVSide () { return _matrixVSide; }
+  inline       Flags                 GCell::getType        () const { return _flags & Flags::GCellTypeMask; }
+  inline       AnabaticEngine*       GCell::getAnabatic    () const { return _anabatic; }
+  inline       DbU::Unit             GCell::getXMin        () const { return _xmin; }
+  inline       DbU::Unit             GCell::getYMin        () const { return _ymin; }
+  inline       Interval              GCell::getHSide       ( int shrink ) const { return getSide(Flags::Horizontal,shrink); }
+  inline       Interval              GCell::getVSide       ( int shrink ) const { return getSide(Flags::Vertical  ,shrink); }
+  inline       Edges                 GCell::getEdges       ( Flags sides ) const { return new GCell_Edges(this,sides); }
+  inline const vector<Edge*>&        GCell::getWestEdges   () const { return _westEdges; }
+  inline const vector<Edge*>&        GCell::getEastEdges   () const { return _eastEdges; }
+  inline const vector<Edge*>&        GCell::getNorthEdges  () const { return _northEdges; }
+  inline const vector<Edge*>&        GCell::getSouthEdges  () const { return _southEdges; }
+  inline       GCell*                GCell::getWest        () const { return  _westEdges.empty() ? NULL :  _westEdges[0]->getOpposite(this); }
+  inline       GCell*                GCell::getEast        () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]->getOpposite(this); }
+  inline       GCell*                GCell::getSouth       () const { return _southEdges.empty() ? NULL : _southEdges[0]->getOpposite(this); }
+  inline       GCell*                GCell::getNorth       () const { return _northEdges.empty() ? NULL : _northEdges[0]->getOpposite(this); }
 
-  inline       Edge*                 GCell::getWestEdge       () const { return  _westEdges.empty() ? NULL :  _westEdges[0]; }
-  inline       Edge*                 GCell::getEastEdge       () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]; }
-  inline       Edge*                 GCell::getSouthEdge      () const { return _southEdges.empty() ? NULL : _southEdges[0]; }
-  inline       Edge*                 GCell::getNorthEdge      () const { return _northEdges.empty() ? NULL : _northEdges[0]; }
+  inline       Edge*                 GCell::getWestEdge    () const { return  _westEdges.empty() ? NULL :  _westEdges[0]; }
+  inline       Edge*                 GCell::getEastEdge    () const { return  _eastEdges.empty() ? NULL :  _eastEdges[0]; }
+  inline       Edge*                 GCell::getSouthEdge   () const { return _southEdges.empty() ? NULL : _southEdges[0]; }
+  inline       Edge*                 GCell::getNorthEdge   () const { return _northEdges.empty() ? NULL : _northEdges[0]; }
 
-  inline       GCell*                GCell::getUnder      ( Point p ) const { return getUnder(p.getX(),p.getY()); }
-  inline const vector<Contact*>&     GCell::getGContacts  () const { return _gcontacts; }
-  inline        size_t               GCell::getDepth      () const { return _depth; }
-         const vector<AutoSegment*>& GCell::getVSegments  () const { return _vsegments; }
-  inline const vector<AutoSegment*>& GCell::getHSegments  () const { return _hsegments; }
-  inline const vector<AutoContact*>& GCell::getContacts   () const { return _contacts; }
-
-  inline       DbU::Unit             GCell::getWidth      () const { return (getXMax()-getXMin()); }
-  inline       DbU::Unit             GCell::getHeight     () const { return (getYMax()-getYMin()); }
-  inline       float                 GCell::getDensity    ( size_t depth ) const { return (depth<_depth) ? _densities[depth] : 0.0; }
-
-  inline const GCell::Key&           GCell::getKey        () const { return _key; }
-  inline       void                  GCell::setType       ( Flags type ) { _flags.reset(Flags::GCellTypeMask); _flags |= (type&Flags::GCellTypeMask); };
-  inline       void                  GCell::updateKey     ( size_t depth ) { _key.update(depth); }
-  inline const Flags&                GCell::flags         () const { return _flags; }
-  inline       Flags&                GCell::flags         () { return _flags; }
+  inline       GCell*                GCell::getUnder       ( Point p ) const { return getUnder(p.getX(),p.getY()); }
+  inline const vector<Contact*>&     GCell::getGContacts   () const { return _gcontacts; }
+  inline        size_t               GCell::getDepth       () const { return _depth; }
+         const vector<AutoSegment*>& GCell::getVSegments   () const { return _vsegments; }
+  inline const vector<AutoSegment*>& GCell::getHSegments   () const { return _hsegments; }
+  inline const vector<AutoContact*>& GCell::getContacts    () const { return _contacts; }
+                                                           
+  inline       DbU::Unit             GCell::getWidth       () const { return (getXMax()-getXMin()); }
+  inline       DbU::Unit             GCell::getHeight      () const { return (getYMax()-getYMin()); }
+  inline       float                 GCell::getDensity     ( size_t depth ) const { return (depth<_depth) ? _densities[depth] : 0.0; }
+                                                           
+  inline const GCell::Key&           GCell::getKey         () const { return _key; }
+  inline       void                  GCell::setType        ( Flags type ) { _flags.reset(Flags::GCellTypeMask); _flags |= (type&Flags::GCellTypeMask); };
+  inline       void                  GCell::updateKey      ( size_t depth ) { _key.update(depth); }
+  inline const Flags&                GCell::flags          () const { return _flags; }
+  inline       Flags&                GCell::flags          () { return _flags; }
 
   inline DbU::Unit  GCell::getXMax ( int shrink ) const
   { return _eastEdges.empty() ? getCell()->getAbutmentBox().getXMax() - shrink

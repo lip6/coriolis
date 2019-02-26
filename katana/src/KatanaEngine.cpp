@@ -18,6 +18,7 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include "flute.h"
 #include "vlsisapd/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
@@ -198,6 +199,9 @@ namespace Katana {
   void  KatanaEngine::_postCreate ()
   {
     Super::_postCreate ();
+
+  // Flute: load POWV9.dat & POST9.dat
+    Flute::readLUT( System::getPath("coriolis_top").toString() );
   }
 
 

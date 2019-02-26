@@ -20,6 +20,7 @@
 
 namespace Anabatic {
 
+  using std::cerr;
   using std::endl;
 
 
@@ -136,6 +137,146 @@ namespace Anabatic {
   {
     string s = "<GCell_Edges "
              + getString(_gcell)
+             + ">";
+    return s;
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "Anabatic::Path_Edges".
+
+  Path_Edges::Locator::Locator ( const GCell* source, const GCell* target, Flags pathFlags )
+    : EdgesHL()
+    , _source    (source)
+    , _target    (target)
+    , _stateFlags(Flags::NoFlags)
+    , _uprobe    (0)
+    , _edge      (NULL)
+  {
+    if (_source == _target) return;
+    
+    Interval hoverlap = _source->getHSide().getIntersection( _target->getHSide() );
+    Interval voverlap = _source->getVSide().getIntersection( _target->getVSide() );
+
+    if (not voverlap.isEmpty()) {
+      if (_source->getXMin() > _target->getXMin()) std::swap( _source, _target );
+      _stateFlags |= Flags::EastSide;
+      _uprobe      = voverlap.getCenter();
+    } else if (not hoverlap.isEmpty()) {
+      if (_source->getYMin() > _target->getYMin()) std::swap( _source, _target );
+      _stateFlags |= Flags::NorthSide;
+      _uprobe      = hoverlap.getCenter();
+    } else {
+      if (_source->getXMin() > _target->getXMin()) {
+        std::swap( _source, _target );
+      }
+
+      if (_source->getYMin() < _target->getYMin()) {
+        if (pathFlags & Flags::NorthPath) {
+          _stateFlags |= Flags::NorthSide;
+          _uprobe      = _source->getXCenter();
+        } else {
+          _stateFlags |= Flags::EastSide;
+          _uprobe      = _source->getYCenter();
+        }
+      } else {
+        if (pathFlags & Flags::NorthPath) {
+          _stateFlags |= Flags::EastSide;
+          _uprobe      = _source->getYCenter();
+        } else {
+          _stateFlags |= Flags::SouthSide;
+          _uprobe      = _source->getXCenter();
+        }
+      }
+    }
+
+    _edge = _source->getEdgeAt( _stateFlags, _uprobe );
+  }
+
+
+  EdgesHL* Path_Edges::Locator::getClone () const
+  { return new Locator (*this); }
+
+
+  Edge* Path_Edges::Locator::getElement () const
+  { return _edge; }
+
+
+  bool  Path_Edges::Locator::isValid () const
+  { return (_edge != NULL); }
+
+
+  void  Path_Edges::Locator::progress ()
+  {
+    if (not _edge) return;
+
+    GCell* neighbor = NULL;
+    if (_stateFlags.contains(Flags::SouthSide) or _stateFlags.contains(Flags::WestSide)) neighbor = _edge->getSource();
+    if (_stateFlags.contains(Flags::NorthSide) or _stateFlags.contains(Flags::EastSide)) neighbor = _edge->getTarget();
+
+    if (neighbor == _target) { _edge = NULL; return; }
+
+    if (_stateFlags.contains(Flags::EastSide)) {
+      Interval overlap = neighbor->getHSide().getIntersection( _target->getHSide() );
+      
+      if (not overlap.isEmpty()) {
+        overlap = neighbor->getVSide().getIntersection( _target->getVSide() );
+        if (not overlap.isEmpty()) { _edge = NULL; return; }
+
+        _stateFlags.reset( Flags::EastSide );
+        _stateFlags |= (_target->getYMin() < _source->getYMin()) ? Flags::SouthSide
+                                                                 : Flags::NorthSide;
+        _uprobe      = overlap.getCenter();
+      }
+    } else if (_stateFlags.contains(Flags::SouthSide)) {
+      Interval overlap = neighbor->getVSide().getIntersection( _target->getVSide() );
+      
+      if (not overlap.isEmpty()) {
+        overlap = neighbor->getHSide().getIntersection( _target->getHSide() );
+        if (not overlap.isEmpty()) {
+          _edge = NULL; return; }
+        
+        _stateFlags.reset( Flags::SouthSide );
+        _stateFlags |= Flags::EastSide;
+        _uprobe      = overlap.getCenter();
+      }
+    } else if (_stateFlags.contains(Flags::NorthSide)) {
+      Interval overlap = neighbor->getVSide().getIntersection( _target->getVSide() );
+      
+      if (not overlap.isEmpty()) {
+        overlap = neighbor->getHSide().getIntersection( _target->getHSide() );
+        if (not overlap.isEmpty()) { _edge = NULL; return; }
+        
+        _stateFlags.reset( Flags::NorthSide );
+        _stateFlags |= Flags::EastSide;
+        _uprobe      = overlap.getCenter();
+      }
+    }
+
+    _edge = neighbor->getEdgeAt( _stateFlags, _uprobe );
+  }
+
+
+  string  Path_Edges::Locator::_getString () const
+  {
+    string s = "<Path_Edges::Locator @" + getString(_edge) + ">";
+    return s;
+  }
+
+
+  EdgesHC* Path_Edges::getClone () const
+  { return new Path_Edges( *this ); }
+
+
+  EdgesHL* Path_Edges::getLocator () const
+  { return new Locator (_source,_target,_pathFlags); }
+
+
+  string  Path_Edges::_getString () const
+  {
+    string s = "<Path_Edges from:"
+             + getString(_source) + "to:"
+             + getString(_target)
              + ">";
     return s;
   }

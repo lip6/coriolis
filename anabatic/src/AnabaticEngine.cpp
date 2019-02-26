@@ -504,6 +504,24 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::exclude ( const Name& netName )
+  {
+    Net* net = _cell->getNet( netName );
+    if (not net) return;
+
+    exclude( net );
+  }
+
+
+  void  AnabaticEngine::exclude ( Net* net )
+  {
+    NetDatas::iterator inet =_netDatas.find( net->getId() );
+    if (inet == _netDatas.end()) return;
+
+    (*inet).second->setExcluded( true );
+  }
+
+
   void AnabaticEngine::updateMatrix()
   {
     _matrix.setCell( getCell(), Session::getSliceHeight() );

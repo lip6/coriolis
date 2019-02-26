@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include "hurricane/DbU.h"
 #include "hurricane/Collection.h"
 #include "anabatic/Constants.h"
 
@@ -27,6 +28,7 @@ namespace Anabatic {
 
   using std::string;
   using std::vector;
+  using Hurricane::DbU;
   using Hurricane::Record;
   using Hurricane::Filter;
   using Hurricane::Locator;
@@ -110,12 +112,82 @@ namespace Anabatic {
   { }
 
 
+// -------------------------------------------------------------------
+// Class  :  "Path_Edges".
+
+  class Path_Edges : public EdgesHC {
+    public:
+    // Sub-Class: Locator.
+      class Locator : public EdgesHL {
+        public:
+                           Locator    ( const GCell* source, const GCell* target, Flags pathFlags );
+          inline           Locator    ( const Locator& );
+          virtual Edge*    getElement () const;
+          virtual EdgesHL* getClone   () const;
+          virtual bool     isValid    () const;
+          virtual void     progress   ();
+          virtual string   _getString () const;
+        protected:
+          const GCell*     _source;
+          const GCell*     _target;
+                Flags      _stateFlags;
+                DbU::Unit  _uprobe;
+                Edge*      _edge;
+      };
+
+    // GCell_Edges.
+    public:
+      inline           Path_Edges  ( const GCell* source, const GCell* target, Flags pathFlags=Flags::NorthPath );
+      inline           Path_Edges  ( const Path_Edges& );
+      virtual EdgesHC* getClone    () const;
+	  virtual EdgesHL* getLocator  () const;
+      virtual string  _getString   () const;
+    protected:
+      const GCell*  _source;
+      const GCell*  _target;
+            Flags   _pathFlags;
+  };
+
+  
+  inline Path_Edges::Locator::Locator ( const Locator &locator )
+    : EdgesHL()
+    , _source    (locator._source)
+    , _target    (locator._target)
+    , _stateFlags(locator._stateFlags)
+    , _uprobe    (locator._uprobe)
+    , _edge      (locator._edge)
+  {
+    // cdebug_log(110,0) << "GCell_Edges::Locator::Locator(const Locator&)" << std::endl;
+  }
+
+
+  inline Path_Edges::Path_Edges ( const GCell* source, const GCell* target, Flags pathFlags )
+    : EdgesHC()
+    , _source   (source)
+    , _target   (target)
+    , _pathFlags(pathFlags)
+  { }
+
+
+  inline Path_Edges::Path_Edges ( const Path_Edges& path )
+    : EdgesHC()
+    , _source   (path._source)
+    , _target   (path._target)
+    , _pathFlags(path._pathFlags)
+  { }
+
+
 }  // Anabatic namespace.
 
 
 GETSTRING_POINTER_SUPPORT(Anabatic::GCell_Edges);
 GETSTRING_POINTER_SUPPORT(Anabatic::GCell_Edges::Locator);
+GETSTRING_POINTER_SUPPORT(Anabatic::Path_Edges);
+GETSTRING_POINTER_SUPPORT(Anabatic::Path_Edges::Locator);
+
 IOSTREAM_POINTER_SUPPORT(Anabatic::GCell_Edges);
 IOSTREAM_POINTER_SUPPORT(Anabatic::GCell_Edges::Locator);
+IOSTREAM_POINTER_SUPPORT(Anabatic::Path_Edges);
+IOSTREAM_POINTER_SUPPORT(Anabatic::Path_Edges::Locator);
 
 #endif  // ANABATIC_EDGES_H

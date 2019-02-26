@@ -54,6 +54,8 @@ namespace Anabatic {
       static const BaseFlags  DestroyBaseSegment  ; // = (1 <<  9);
     // Flags for NetDatas objects states only.                      
       static const BaseFlags  GlobalRouted        ; // = (1 <<  5);
+      static const BaseFlags  GlobalEstimated     ; // = (1 <<  6);
+      static const BaseFlags  ExcludeRoute        ; // = (1 <<  7);
     // Masks.                                      
       static const BaseFlags  WestSide            ; // = Horizontal|Target;
       static const BaseFlags  EastSide            ; // = Horizontal|Source;
@@ -96,6 +98,7 @@ namespace Anabatic {
       static const BaseFlags  CheckLowDensity     ;
       static const BaseFlags  CheckLowUpDensity   ;
       static const BaseFlags  NoUpdate            ;
+      static const BaseFlags  NorthPath           ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

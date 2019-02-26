@@ -273,6 +273,8 @@ namespace Anabatic {
 
   Name      GCell::_extensionName = "Anabatic::GCell";
   uint32_t  GCell::_displayMode   = GCell::Boundary;
+  DbU::Unit GCell::_matrixHSide   = 0;
+  DbU::Unit GCell::_matrixVSide   = 0;
 
 
   uint32_t  GCell::getDisplayMode () { return _displayMode; }
@@ -304,6 +306,14 @@ namespace Anabatic {
     , _globalsCount  (new float [_depth])
     , _key           (this,1)
   {
+    if (not _matrixHSide) {
+      _matrixVSide = Session::getSliceHeight();
+      _matrixHSide = Session::getSliceHeight();
+
+      if (_matrixHSide % Session::getSliceStep())
+        _matrixHSide += Session::getSliceStep() - _matrixHSide % Session::getSliceStep();
+    }
+
     for ( size_t i=0 ; i<_depth ; i++ ) {
       _blockages     [i] = 0;
       _densities     [i] = 0.0;
@@ -774,14 +784,10 @@ namespace Anabatic {
     bool openSession = Session::isOpen();
     if (not openSession) getAnabatic()->openSession();
 
-    DbU::Unit vside = Session::getSliceHeight();
-    DbU::Unit hside = Session::getSliceHeight();
+    DbU::Unit vside = getMatrixVSide();
+    DbU::Unit hside = getMatrixHSide();
     Interval  hspan = getSide( Flags::Horizontal );
     Interval  vspan = getSide( Flags::Vertical );
-
-    if (hside % Session::getSliceStep()) {
-      hside += Session::getSliceStep() - hside % Session::getSliceStep();
-    }
 
     // if (hspan.getSize() < 2*hside) {
     //   cerr << Error( "GCell::doGrid(): GCell is too narrow (dx:%s) to build a grid.\n"

@@ -197,7 +197,7 @@ namespace Anabatic {
     DbU::Unit dy           = targetCenter.getY() - sourceCenter.getY();
 
     if (dx < 0) dx = -dx;
-    if (dx)     dx += DbU::fromLambda( 0.1 );
+  //if (dx)     dx += DbU::fromLambda( 0.1 );
 
     return dx + ((dy > 0) ? dy : -dy);
   }
