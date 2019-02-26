@@ -1,0 +1,28 @@
+
+#ifndef FLUTE_NEIGHBORS_H 
+#define FLUTE_NEIGHBORS_H 
+
+#include "global.h"
+
+namespace Flute {
+
+void  allocate_nn_arrays( long n );
+void  deallocate_nn_arrays();
+
+void  brute_force_nearest_neighbors
+(
+  long       n,
+  Point*     pt,
+  nn_array*  nn
+);
+
+void  dq_nearest_neighbors
+(
+  long       n,
+  Point*     pt,
+  nn_array*  nn
+);
+
+}  // Flute namespace.
+
+#endif /* FLUTE_NEIGHBORS_H */
