@@ -26,7 +26,7 @@ Use it like this (don't forget the ``eval`` **and** the backquotes):
    dummy@lepka:~> eval `<CORIOLIS_INSTALL>/etc/coriolis2/coriolisEnv.py`
 
 .. note:: **Do not call that script in your environement initialisation.**
-   When used under |RHEL6| or clones, it needs to be run in the |devtoolset2|
+   When used under |RHEL6| or clones, it needs to be run in the |devtoolset|
    environement. The script then launch a new shell, which may cause an
    infinite loop if it's called again in, say :cb:`~/.bashrc`.
 

@@ -34,9 +34,10 @@ Building documentation prerequisites:
 * latex2html
 * python-docutils (for reStructuredText)
 
-Optional libraries:
+The following libraries gets directly bundled with |Coriolis|:
 
 * LEF/DEF (from `SI2 <https://www.si2.org/>`_)
+* FLUTE (from `Chris C. N. Chu <http://home.eng.iastate.edu/~cnchu/flute.html>`_)
 
 For other distributions, refer to their own packaging system.
 
@@ -127,10 +128,11 @@ We need to separate to perform a separate installation of the documentation beca
 do not support to be generated with a parallel build. So we compile & install in a first
 stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
 
-Under |RHEL6| or clones, you must build using the |devtoolset2|: ::
+Under |RHEL6| or clones, you must build using the |devtoolset|, the version is to
+be given as argument: ::
 
    dummy@lepka:src> ./bootstrap/ccb.py --project=coriolis \
-                                       --devtoolset-2 --make="-j4 install"
+                                       --devtoolset=8 --make="-j4 install"
 
 If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
 
