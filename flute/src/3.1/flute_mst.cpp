@@ -21,7 +21,7 @@ namespace Flute {
 #define MR_FOR_SMALL_CASES_ONLY 1
 #if MR_FOR_SMALL_CASES_ONLY
 #define MAXPART D2M    // max partition of an MST
-#define MAXT (D2M/D*2) 
+#define MAXT (D2M/DPARAM*2) 
 #else
 #define MAXPART (d/9*2) //(MAXD/THD*2) // max partition of an MST
 #define MAXPART2 ((t1.deg+t2.deg)/9*2)

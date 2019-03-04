@@ -41,7 +41,7 @@ namespace Flute {
 /*************************************/
 #define POWVFILE "POWV9.dat"        // LUT for POWV (Wirelength Vector)
 #define POSTFILE "POST9.dat"        // LUT for POST (Steiner Tree)
-#define D 9                         // LUT is used for d <= D, D <= 9
+#define DPARAM 9                    // LUT is used for d <= D, D <= 9
 #define TAU(A) (8+1.3*(A))
 #define D1(A) (25+120/((A)*(A)))     // flute_mr is used for D1 < d <= D2
 #define D2(A) ((A)<=6 ? 500 : 75+5*(A))
@@ -89,14 +89,14 @@ extern Tree flutes_RDP(int d, DTYPE xs[], DTYPE ys[], int s[], int acc);
 
 #define flutes_wl_ALLD(d, xs, ys, s, acc) flutes_wl_LMD(d, xs, ys, s, acc)
 #define flutes_ALLD(d, xs, ys, s, acc) \
-    (d<=D ? flutes_LD(d, xs, ys, s) \
+    (d<=DPARAM ? flutes_LD(d, xs, ys, s) \
           : (d<=D1(acc) ? flutes_MD(d, xs, ys, s, acc) \
                         : flutes_HD(d, xs, ys, s, acc)))
 
 #define flutes_wl_LMD(d, xs, ys, s, acc) \
-    (d<=D ? flutes_wl_LD(d, xs, ys, s) : flutes_wl_MD(d, xs, ys, s, acc))
+    (d<=DPARAM ? flutes_wl_LD(d, xs, ys, s) : flutes_wl_MD(d, xs, ys, s, acc))
 #define flutes_LMD(d, xs, ys, s, acc) \
-    (d<=D ? flutes_LD(d, xs, ys, s) : flutes_MD(d, xs, ys, s, acc))
+    (d<=DPARAM ? flutes_LD(d, xs, ys, s) : flutes_MD(d, xs, ys, s, acc))
 
 //#define max(x,y) ((x)>(y)?(x):(y))
 //#define min(x,y) ((x)<(y)?(x):(y))

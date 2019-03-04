@@ -10,13 +10,13 @@ using std::max;
 
 namespace Flute {
 
-#if D<=7
+#if DPARAM<=7
 #define MGROUP 5040/4  // Max. # of groups, 7! = 5040
 #define MPOWV 15  // Max. # of POWVs per group
-#elif D==8
+#elif DPARAM==8
 #define MGROUP 40320/4  // Max. # of groups, 8! = 40320
 #define MPOWV 33  // Max. # of POWVs per group
-#elif D==9
+#elif DPARAM==9
 #define MGROUP 362880/4  // Max. # of groups, 9! = 362880
 #define MPOWV 79  // Max. # of POWVs per group
 #endif
@@ -26,11 +26,11 @@ struct csoln
 {
     unsigned char parent;
     unsigned char seg[11];  // Add: 0..i, Sub: j..10; seg[i+1]=seg[j-1]=0
-    unsigned char rowcol[D-2];  // row = rowcol[]/16, col = rowcol[]%16, 
-    unsigned char neighbor[2*D-2];
+    unsigned char rowcol[DPARAM-2];  // row = rowcol[]/16, col = rowcol[]%16, 
+    unsigned char neighbor[2*DPARAM-2];
 };
-struct csoln *LUT[D+1][MGROUP];  // storing 4 .. D
-int numsoln[D+1][MGROUP];
+struct csoln *LUT[DPARAM+1][MGROUP];  // storing 4 .. D
+int numsoln[DPARAM+1][MGROUP];
 
 struct point
 {
@@ -96,7 +96,7 @@ void readLUT( string directory )
     }
 #endif
 
-    for (d=4; d<=D; d++) {
+    for (d=4; d<=DPARAM; d++) {
         fscanf(fpwv, "d=%d\n", &d);
 #if ROUTING==1
         fscanf(fprt, "d=%d\n", &d);
@@ -272,7 +272,7 @@ DTYPE flutes_wl_LD(int d, DTYPE xs[], DTYPE ys[], int s[])
 {
     int k, pi, i, j;
     struct csoln *rlist;
-    DTYPE dd[2*D-2];  // 0..D-2 for v, D-1..2*D-3 for h
+    DTYPE dd[2*DPARAM-2];  // 0..D-2 for v, D-1..2*D-3 for h
     DTYPE minl, sum, l[MPOWV+1];
     
     if (d <= 3)
@@ -726,7 +726,7 @@ Tree flutes_LD(int d, DTYPE xs[], DTYPE ys[], int s[])
 {
     int k, pi, i, j;
     struct csoln *rlist, *bestrlist;
-    DTYPE dd[2*D-2];  // 0..D-2 for v, D-1..2*D-3 for h
+    DTYPE dd[2*DPARAM-2];  // 0..D-2 for v, D-1..2*D-3 for h
     DTYPE minl, sum, l[MPOWV+1];
     int hflip;
     Tree t;
@@ -1340,8 +1340,8 @@ void local_refinement(Tree *tp, int p)
 {
     int d, dd, i, ii, j, prev, curr, next, root;
     int SteinerPin[2*MAXD], index[2*MAXD];
-    DTYPE x[MAXD], xs[D], ys[D];
-    int ss[D];
+    DTYPE x[MAXD], xs[DPARAM], ys[DPARAM];
+    int ss[DPARAM];
     Tree tt;
  
     d = tp->deg;
@@ -1387,7 +1387,7 @@ void local_refinement(Tree *tp, int p)
         }
     }
 
-    if (4 <= dd && dd <= D) {
+    if (4 <= dd && dd <= DPARAM) {
 // Find Steiner nodes that are directly connected to root    
         ii=dd;
         for (i=0; i<dd; i++) {
