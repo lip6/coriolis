@@ -208,7 +208,7 @@ parser.add_option (       "--no-build"       , action="store_true" ,            
 parser.add_option (       "--no-cache"       , action="store_true" ,                dest="noCache"      , help="Remove previous CMake cache before building." )
 parser.add_option (       "--rm-build"       , action="store_true" ,                dest="rmBuild"      , help="Remove previous build directoty before building." )
 parser.add_option (       "--macports"       , action="store_true" ,                dest="macports"     , help="Build against MacPorts." )
-parser.add_option (       "--devtoolset-2"   , action="store_true" ,                dest="devtoolset2"  , help="Build against TUV Dev Toolset 2." )
+parser.add_option (       "--devtoolset"     , action="store"      , type="int"   , dest="devtoolset"   , help="Build against TUV Dev Toolset 8." )
 parser.add_option (       "--qt5"            , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
 parser.add_option (       "--openmp"         , action="store_true" ,                dest="openmp"       , help="Enable the use of OpenMP in Gcc." )
 parser.add_option (       "--ninja"          , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
@@ -286,7 +286,7 @@ else:
     if options.ninja:            builder.ninja             = True
     if options.clang:            builder.clang             = True
     if options.macports:         builder.macports          = True
-    if options.devtoolset2:      builder.devtoolset2       = True
+    if options.devtoolset:       builder.devtoolset        = options.devtoolset
     if options.qt5:              builder.qt5               = True
     if options.openmp:           builder.openmp            = True
     if options.makeArguments:    builder.makeArguments     = options.makeArguments

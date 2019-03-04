@@ -499,11 +499,11 @@ try:
       [ ( conf.targets['SL7_64'], buildCommand % (3,conf.debugArg)                        , conf.fds['build' ] )
       , ( conf.targets['SL7_64'], buildCommand % (1,conf.debugArg+' --doc')               , conf.fds['build' ] )
       , ( conf.targets['SL7_64'], benchsCommand                                           , conf.fds['benchs'] )
-      , ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset-2')      , conf.fds['build' ] )
-      , ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset-2 --doc'), conf.fds['build' ] )
+      , ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
+      , ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
       , ( conf.targets['SL6_64'], benchsCommand                                           , conf.fds['benchs'] )
-      , ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset-2')      , conf.fds['build' ] )
-      , ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset-2 --doc'), conf.fds['build' ] )
+      , ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
+      , ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
       , ( conf.targets['SL6']   , benchsCommand                                           , conf.fds['benchs'] )
       ]
 

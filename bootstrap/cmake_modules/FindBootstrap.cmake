@@ -294,10 +294,10 @@
 #
  macro(setup_sysconfdir INSTALLDIR)
    message("-- Checking installation directory <${INSTALLDIR}>")
-   string(REGEX MATCH "^/opt/rh/devtoolset-2/root/usr$" IS_OPT_RH ${INSTALLDIR})
+   string(REGEX MATCH "^/opt/rh/devtoolset-[0-9]+/root" IS_OPT_RH ${INSTALLDIR})
    if(IS_OPT_RH)
-     message("-- Using devtoolset-2 install tree /opt/rh/devtoolset-2/root/etc.")
-     set(SYS_CONF_DIR "/opt/rh/devtoolset-2/root/etc" CACHE STRING "System configuration directory (/etc)" FORCE)
+     message("-- Using devtoolset-X install tree ${IS_OPT_RH}/etc.")
+     set(SYS_CONF_DIR ${IS_OPT_RH} CACHE STRING "System configuration directory (/etc)" FORCE)
    else()
      string(REGEX MATCH "^/usr$" IS_USR ${INSTALLDIR})
      string(REGEX MATCH "^/opt$" IS_OPT ${INSTALLDIR})

@@ -139,14 +139,14 @@ class CompileWidget ( QWidget ):
 
     if self.conf.rootDir: command += [ '--root=%s'%self.conf.rootDir ]
 
-   #if self.options.svnUpdate:   command += [ '--svn-update' ]
-   #if self.options.svnStatus:   command += [ '--svn-update' ]
-    if self.options.enableDoc:   command += [ '--doc' ]
-    if self.options.devtoolset2: command += [ '--devtoolset-2' ]
-    if self.options.qt5:         command += [ '--qt5' ]
-    if self.options.noCache:     command += [ '--no-cache' ]
-    if self.options.rmBuild:     command += [ '--rm-build' ]
-    if self.options.verbose:     command += [ '--verbose' ]
+   #if self.options.svnUpdate:  command += [ '--svn-update' ]
+   #if self.options.svnStatus:  command += [ '--svn-update' ]
+    if self.options.enableDoc:  command += [ '--doc' ]
+    if self.options.devtoolset: command += [ '--devtoolset-8' ]
+    if self.options.qt5:        command += [ '--qt5' ]
+    if self.options.noCache:    command += [ '--no-cache' ]
+    if self.options.rmBuild:    command += [ '--rm-build' ]
+    if self.options.verbose:    command += [ '--verbose' ]
     if self.options.make:
         makeArguments='install '+self.options.threads
         command += [ '--make=%s'%makeArguments ]
