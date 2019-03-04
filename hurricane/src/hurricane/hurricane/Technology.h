@@ -44,6 +44,9 @@
 #include "hurricane/DeviceDescriptor.h"
 #include "hurricane/ModelDescriptor.h"
 #include "hurricane/Rule.h"
+#include "hurricane/UnitRule.h"
+#include "hurricane/PhysicalRule.h"
+#include "hurricane/TwoLayersPhysicalRule.h"
 
 
 namespace Hurricane {
@@ -55,9 +58,6 @@ namespace Hurricane {
   class BasicLayer;
   class RegularLayer;
   class ViaLayer;
-  class UnitRule;
-  class PhysicalRule;
-  class TwoLayersPhysicalRule;
 
 
 // -------------------------------------------------------------------
@@ -71,9 +71,12 @@ namespace Hurricane {
       typedef set<DeviceDescriptor*, DeviceDescriptor::DeviceDescriptorComp> DeviceDescriptors;
       typedef set<ModelDescriptor* , ModelDescriptor::ModelDescriptorComp>   ModelDescriptors;
     public:
-      struct RuleNameCompare:
-        public std::binary_function<const Rule*, const Rule*, bool> {
-          bool operator() ( const Rule* rule1, const Rule* rule2 ) const
+      struct RuleNameCompare {
+          inline bool operator() ( const PhysicalRule* rule1 , const PhysicalRule* rule2 ) const
+          { return rule1->getName() < rule2->getName(); }
+          inline bool operator() ( const UnitRule* rule1 , const UnitRule* rule2 ) const
+          { return rule1->getName() < rule2->getName(); }
+          inline bool operator() ( const Rule* rule1 , const Rule* rule2 ) const
           { return rule1->getName() < rule2->getName(); }
       };
     public:
