@@ -235,13 +235,13 @@ if __name__ == "__main__":
     coriolisTop  = "/usr"
     sysconfDir   = scriptDir
     shellMessage = "Using system-wide Coriolis 2 (/usr)"
-  else
+  else:
     m = reDevtoolset.match( scriptDir )
     if m:
       coriolisTop  = "/opt/rh/devtoolset-%d/root/usr" % m.group('version')
       sysconfDir   = scriptDir
       shellMessage = "Using system-wide devtoolset-%(v)d Coriolis 2 (/opt/rh/devtoolset-%(v)d/root/usr)" \
-                     { 'v':m.group('version') }
+                     % { 'v':m.group('version') }
     elif scriptDir.startswith(os.getenv("HOME")+"/nightly/coriolis-2.x/"): 
       rootDir      = os.getenv("HOME") + "/nightly/coriolis-2.x"
       coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
