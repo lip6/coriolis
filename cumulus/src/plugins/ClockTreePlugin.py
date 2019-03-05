@@ -55,8 +55,10 @@ except Exception, e:
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    plugins.kwUnicornHook( 'plugins.clockTree'
-                         , 'ClockTree'
+    kw['beforeAction'] = 'placeAndRoute.placeChip'
+
+    plugins.kwUnicornHook( 'placeAndRoute.clockTree'
+                         , 'Clock Tree'
                          , 'Build a buffered H-Tree for the clock'
                          , sys.modules[__name__].__file__
                          , **kw

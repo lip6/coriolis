@@ -186,6 +186,8 @@ namespace Unicorn {
                                , tr("Library Manager")
                                , tr("Browse through Views, Cells & Libraries")
                                , QKeySequence(tr("CTRL+M"))
+                               , QIcon()
+                               , "tools.script"
                                );
     connect( action, SIGNAL(triggered()), _libraryManager, SLOT(toggleShow()) );
     connect( this  , SIGNAL(cellLoadedFromDisk(Cell*)), _libraryManager, SLOT(updateLibrary(Cell*)) );

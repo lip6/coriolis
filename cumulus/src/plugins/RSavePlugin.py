@@ -78,9 +78,9 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    plugins.kwUnicornHook( 'plugins.rsave'
-                         , 'R-Save Cell (layout)'
-                         , 'Recursively Save Top Cell and it\'s Instances'
+    plugins.kwUnicornHook( 'tools.rsave'
+                         , 'Recursive Save (layout)'
+                         , 'Recursively save layout of the top cell and it\'s instances'
                          , sys.modules[__name__].__file__
                          , **kw
                          )

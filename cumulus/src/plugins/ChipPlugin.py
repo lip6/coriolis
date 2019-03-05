@@ -183,8 +183,10 @@ class PlaceCore ( chip.Configuration.ChipConfWrapper ):
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    plugins.kwUnicornHook( 'plugins.chip'
-                         , 'Chip Placement'
+    kw['beforeAction'] = 'placeAndRoute.stepByStep'
+
+    plugins.kwUnicornHook( 'placeAndRoute.placeChip'
+                         , 'PLace Chip'
                          , 'Place a Complete Chip (pads && core)'
                          , sys.modules[__name__].__file__
                          , **kw

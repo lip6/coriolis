@@ -67,7 +67,7 @@ def unicornConfigure ( **kw ):
         print WarningMessage( 'The <plugins> menu has already been created.' )
         return
 
-    editor.addMenu( 'plugins', 'Plu&gins', Viewer.CellViewer.TopMenu )
+   #editor.addMenu( 'plugins', 'Plu&gins', Viewer.CellViewer.TopMenu )
 
     for pluginFile in os.listdir( pluginsDir ):
       if pluginFile == "__init__.py":    continue

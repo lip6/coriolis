@@ -359,54 +359,60 @@ namespace Katana {
 
     _viewer = viewer;
 
-    if (_viewer->hasMenuAction("placeAndRoute.katana.route")) {
+    if (not _viewer->hasMenuAction("beta"))
+      _viewer->addMenu( "beta", "Beta", CellViewer::TopMenu );
+    if (not _viewer->hasMenuAction("beta.placeAndRoute"))
+      _viewer->addMenu( "beta.placeAndRoute", "P&&R" );
+
+    if (_viewer->hasMenuAction("beta.placeAndRoute.route")) {
       cerr << Warning( "GraphicKatanaEngine::addToMenu() - Katana detailed router already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addMenu  ( "placeAndRoute.katana"           , "Katana" );
-    _viewer->addMenu  ( "placeAndRoute.katana.stepByStep", "&Step by step" );
+    _viewer->addMenu  ( "beta.placeAndRoute.stepByStep", "&Step by step" );
 
-    _viewer->addToMenu( "placeAndRoute.katana.route"
-                      , "Katana - &Route"
+    _viewer->addToMenu( "beta.placeAndRoute.route"
+                      , "&Route  .  .  .  .  . [Katana]"
                       , "Route the design (global & detailed)"
                       , std::bind(&GraphicKatanaEngine::_route,this)
+                      , QIcon()
+                      , "beta.placeAndRoute.stepByStep"
                       );
 
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.========" );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.detailedPreRoute"
-                      , "Katana - Detailed Pre-Route"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.========" );
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.detailedPreRoute"
+                      , "Detailed Pre-Route . [Katana]"
                       , "Run the <b>Katana</b> detailed router on pre-routed nets"
                       , std::bind(&GraphicKatanaEngine::_runNegociatePreRouted,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.globalRoute"
-                      , "Katana - &Global Route"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.globalRoute"
+                      , "&Global Route .  .  . [Katana]"
                       , "Run the <b>Katana</b> global router"
                       , std::bind(&GraphicKatanaEngine::_globalRoute,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.detailedRoute"
-                      , "Katana - &Detailed Route"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.detailedRoute"
+                      , "&Detailed Route  .  . [Katana]"
                       , "Run the <b>Katana</b> detailed router"
                       , std::bind(&GraphicKatanaEngine::_detailRoute,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.finalize"
-                      , "Katana - &Finalize Routing"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.finalize"
+                      , "&Finalize Routing   . [Katana]"
                       , "Closing Routing"
                       , std::bind(&GraphicKatanaEngine::_finalize,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.dumpMeasures"
-                      , "Katana - Dump &Measures"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.dumpMeasures"
+                      , "Dump &Measures   .  . [Katana]"
                       , "Dumping Measurements on the disk"
                       , std::bind(&GraphicKatanaEngine::_dumpMeasures,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.save"
-                      , "Katana - &Save Design"
+#if NO_NEED_OF_IT_NOW
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.save"
+                      , "&Save Design"
                       , "Save routed design (temporary hack)"
                       , std::bind(&GraphicKatanaEngine::_save,this)
                       );
-#if NO_NEED_OF_IT_NOW
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.runTest"
-                      , "Katana - Run &Test"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.runTest"
+                      , "Run &Test"
                       , "Run Test Program (symmetric routing of gmChamla)"
                       , std::bind(&GraphicKatanaEngine::_runTest,this)
                       );

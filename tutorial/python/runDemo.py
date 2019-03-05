@@ -141,9 +141,9 @@ def runDemo ( cell, editor ):
 def unicornHook ( **kw ):
     editor = kw['editor']
     editor.addMenu( 'tutorials'        , 'Tutorials', Viewer.CellViewer.TopMenu )
-    editor.addMenu( 'tutorials.plugins', 'Plugins'  , Viewer.CellViewer.NoFlags )
-    plugins.kwUnicornHook( 'tutorials.plugins.runDemo'
-                         , 'Tutorial - Run Demo (Python flavor)'
+   #editor.addMenu( 'tutorials.plugins', 'Plugins'  , Viewer.CellViewer.NoFlags )
+    plugins.kwUnicornHook( 'tutorials.runDemo'
+                         , 'Run Demo (Python flavor)'
                          , 'Launch runDemo() in the Tutorial Python plugin.'
                          , sys.modules[__name__].__file__
                          , **kw

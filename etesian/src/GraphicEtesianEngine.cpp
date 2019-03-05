@@ -126,15 +126,17 @@ namespace Etesian {
 
     _viewer = viewer;
 
-    if (_viewer->hasMenuAction("placeAndRoute.etesianPlace")) {
+    if (_viewer->hasMenuAction("placeAndRoute.etesianPlaceBlock")) {
       cerr << Warning( "GraphicEtesianEngine::addToMenu() - Etesian placer already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addToMenu( "placeAndRoute.etesianPlace"
-                      , "Etesian - Plac&e"
-                      , "Run the <b>Etesian</b> placer"
+    _viewer->addToMenu( "placeAndRoute.etesianPlaceBlock"
+                      , "Plac&e Block"
+                      , "Place a block [<b>Etesian</b>]"
                       , std::bind(&GraphicEtesianEngine::_place,this)
+                      , QIcon()
+                      , "placeAndRoute.placeChip"
                       );
   }
 
