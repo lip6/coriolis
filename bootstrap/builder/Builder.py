@@ -139,7 +139,8 @@ class Builder:
                 if i: commandAsString += ' '
                 if ' ' in command[i]: commandAsString += '"'+command[i]+'"'
                 else:                 commandAsString += command[i]
-            command = [ 'scl', 'enable', 'devtoolset-%d' % self._devtoolset, commandAsString ]
+            command = [ 'scl', 'enable', 'boost157', 'devtoolset-%d' % self._devtoolset
+                      , commandAsString ]
 
        #print command
         sys.stdout.flush ()
