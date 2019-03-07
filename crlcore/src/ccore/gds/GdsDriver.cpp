@@ -608,23 +608,33 @@ namespace {
             }
           }
         } else {
-          Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
-          if (diagonal) {
+          Rectilinear* rectilinear  = dynamic_cast<Rectilinear*>(component);
+          if (rectilinear) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
               (*this) << BOUNDARY;
               (*this) << layer;
-              (*this) << diagonal->getContour();
+              (*this) << rectilinear->getPoints();
               (*this) << ENDEL;
             }
-          } else if (  dynamic_cast<Horizontal*>(component)
-                    or dynamic_cast<Vertical  *>(component)
-                    or dynamic_cast<Contact   *>(component)
-                    or dynamic_cast<Pad       *>(component)) {
-            for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
-              (*this) << BOUNDARY;
-              (*this) << layer;
-              (*this) << component->getBoundingBox(layer);
-              (*this) << ENDEL;
+          } else {
+            Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
+            if (diagonal) {
+              for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                (*this) << BOUNDARY;
+                (*this) << layer;
+                (*this) << diagonal->getContour();
+                (*this) << ENDEL;
+              }
+            } else if (  dynamic_cast<Horizontal*>(component)
+                      or dynamic_cast<Vertical  *>(component)
+                      or dynamic_cast<Contact   *>(component)
+                      or dynamic_cast<Pad       *>(component)) {
+              for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                (*this) << BOUNDARY;
+                (*this) << layer;
+                (*this) << component->getBoundingBox(layer);
+                (*this) << ENDEL;
+              }
             }
           }
         }

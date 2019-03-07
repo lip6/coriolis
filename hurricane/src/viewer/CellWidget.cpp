@@ -677,13 +677,13 @@ namespace Hurricane {
         if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
           QPolygon contour;
           for ( Point point : component->getContour() )
-            contour << _cellWidget->dbuToScreenPoint( point );
+            contour << _cellWidget->dbuToScreenPoint( transformation.getPoint(point) );
           _cellWidget->drawScreenPolygon( contour );
 
           if (   component->isManhattanized()
              and (_cellWidget->dbuToScreenLength(DbU::getPolygonStep()) > 4) ) {
             for ( Point point : component->getMContour() ) 
-              contour << _cellWidget->dbuToScreenPoint( point );
+              contour << _cellWidget->dbuToScreenPoint( transformation.getPoint(point) );
             _cellWidget->drawScreenPolygon( contour );
 
             // const Polygon* polygon = dynamic_cast<const Polygon*>( component );

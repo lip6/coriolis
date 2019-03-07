@@ -89,7 +89,7 @@ extern "C" {
     HTRY
     PyObject* arg0;
 
-    if (not ParseOneArg("Etesian.get", args, CELL_ARG, &arg0)) return NULL;
+    if (not ParseOneArg("Etesian.create", args, CELL_ARG, &arg0)) return NULL;
 
     Cell* cell = PYCELL_O(arg0);
     etesian = EtesianEngine::get(cell);
