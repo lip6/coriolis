@@ -61,7 +61,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::toOptimals ( Net* net )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
     cdebug_log(149,0) << "Anabatic::_toOptimals( " << net << " )" << endl;
     cdebug_tabw(145,1);
 

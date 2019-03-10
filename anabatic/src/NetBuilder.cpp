@@ -385,7 +385,7 @@ namespace Anabatic {
     _sourceContact = sourceContact;
     _fromHook      = fromHook;
 
-    cdebug_log(145,1) << "NetBuilder::NetBuilder()" << endl;
+    cdebug_log(145,1) << "NetBuilder::setStartHook()" << endl;
     cdebug_log(145,0) << "* _fromHook:     " << fromHook << endl;
     cdebug_log(145,0) << "* _sourceContact:" << sourceContact << endl;
 
@@ -614,10 +614,14 @@ namespace Anabatic {
         // End xG cascaded cases.
         // Optimized specific cases.
         case Conn_1G_1PinM2:  _do_1G_1PinM2 (); break;
+        case Conn_2G_1PinM2:
+        case Conn_3G_1PinM2:  _do_xG_1PinM2 (); break;
+        case Conn_1G_1PinM3:  _do_1G_1PinM3 (); break;
+        case Conn_2G_1PinM3:
+        case Conn_3G_1PinM3:  _do_xG_1PinM3 (); break;
         case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
         case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
         case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
-        case Conn_2G_1PinM2:  _do_xG_xM2    (); break;
         default:
           if (not isTwoMetals())
             throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
@@ -951,6 +955,27 @@ namespace Anabatic {
   bool  NetBuilder::_do_1G_1PinM2 ()
   {
     cdebug_log(145,0) << getTypeName() << "::_do_1G_1PinM2() method *not* reimplemented from base class." << endl;
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_xG_1PinM2 ()
+  {
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_1PinM2() method *not* reimplemented from base class." << endl;
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_1G_1PinM3 ()
+  {
+    cdebug_log(145,0) << getTypeName() << "::_do_1G_1PinM3() method *not* reimplemented from base class." << endl;
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_xG_1PinM3 ()
+  {
+    cdebug_log(145,0) << getTypeName() << "::_do_xG_1PinM3() method *not* reimplemented from base class." << endl;
     return false;
   }
 

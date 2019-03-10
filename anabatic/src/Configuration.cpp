@@ -424,7 +424,13 @@ namespace Anabatic {
       cdebug_tabw(112,-1);
       return true;
     }
-    
+
+#define BETTER_FOR_TSMC 0
+#if BETTER_FOR_TSMC
+    rp->setOnBestComponent( RoutingPad::BiggestArea );
+    cdebug_tabw(112,-1);
+    return true;
+#else
     Box                ab             = rp->getCell()->getAbutmentBox();
     const Layer*       metal1         = getLayerGauge( 0 )->getLayer();
     RoutingLayerGauge* gauge          = getLayerGauge( 1 );
@@ -506,6 +512,7 @@ namespace Anabatic {
 
     cdebug_tabw(112,-1);
     return false;
+#endif
   }
   
 

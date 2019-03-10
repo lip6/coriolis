@@ -762,7 +762,7 @@ namespace Anabatic {
 
   Flags  AutoHorizontal::_makeDogleg ( GCell* doglegGCell, Flags flags )
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
     cdebug_log(149,0) << "AutoHorizontal::_makeDogleg(GCell*) in " << doglegGCell << endl;
     cdebug_tabw(149,1);
 

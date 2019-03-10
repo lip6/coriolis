@@ -169,7 +169,7 @@ namespace Anabatic {
 
   void  AutoContactVTee::updateCache ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << "AutoContactVTee::updateCache() " << this << endl;
 
@@ -215,7 +215,7 @@ namespace Anabatic {
 
   void  AutoContactVTee::updateGeometry ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << "AutoContactVTee::updateGeometry() " << this << endl;
 
@@ -243,7 +243,7 @@ namespace Anabatic {
 
   void  AutoContactVTee::updateTopology ()
   {
-    DebugSession::open ( getNet(), 140, 150 );
+    DebugSession::open ( getNet(), 145, 150 );
 
     cdebug_log(145,1) << "AutoContactVTee::updateTopology() " << this << endl;
 

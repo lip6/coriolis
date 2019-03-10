@@ -83,7 +83,10 @@ namespace {
     if (not rp->getOccurrence().getPath().getHeadPath().isEmpty())
       name << getString(rp->getOccurrence().getPath().getHeadPath().getName()) << ":";
 
-    name << "I." << getString(rp->getOccurrence().getPath().getTailInstance()->getName());
+    if (rp->getOccurrence().getPath().getTailInstance())
+      name << "I." << getString(rp->getOccurrence().getPath().getTailInstance()->getName());
+    else
+      name << "C";
 
     return name.str();
   }
@@ -129,6 +132,7 @@ namespace {
   {
     Cell*      masterCell = rp->getOccurrence().getMasterCell();
     Component* component  = rp->_getEntityAsComponent();
+
     // TODO: verify that it doesn't assume that the orientation is North
     Box        masterBox  = masterCell->getAbutmentBox();
 
@@ -373,12 +377,6 @@ namespace Etesian {
     double rows        = std::ceil( sqrt( gcellLength/aspectRatio ) );
     double columns     = std::ceil( gcellLength / rows );
 
-    cmess1 << "  o  Creating abutment box (margin:" << (spaceMargin*100.0)
-           << "% aspect ratio:" << (aspectRatio*100.0)
-           << "% g-length:" << (cellLength/DbU::toLambda(getSliceHeight()))
-           << ")" << endl;
-    cmess1 << "     - GCell grid: [" << (int)columns << "x" << (int)rows << "]" << endl;
-
     UpdateSession::open();
     for ( auto ioccurrence : feedOccurrences ) {
       static_cast<Instance*>(ioccurrence.getEntity())->destroy();
@@ -395,6 +393,13 @@ namespace Etesian {
                                   ) );
     UpdateSession::close();
     if (_viewer) _viewer->getCellWidget()->fitToContents();
+
+    cmess1 << "  o  Creating abutment box (margin:" << (spaceMargin*100.0)
+           << "% aspect ratio:" << (aspectRatio*100.0)
+           << "% g-length:" << (cellLength/DbU::toLambda(getSliceHeight()))
+           << ")" << endl;
+    cmess1 << "     - " <<  getCell()->getAbutmentBox() << endl;
+    cmess1 << "     - GCell grid: [" << (int)columns << "x" << (int)rows << "]" << endl;
   }
 
 
@@ -445,15 +450,17 @@ namespace Etesian {
 
   void  EtesianEngine::toColoquinte ()
   {
-    cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
-
-    resetPlacement();
-
-    Dots               dots   ( cmess2, "       ", 80, 1000 );
     AllianceFramework* af     = AllianceFramework::get();
     DbU::Unit          hpitch = getHorizontalPitch();
     DbU::Unit          vpitch = getVerticalPitch();
 
+    cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
+    cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
+    cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
+
+    resetPlacement();
+
+    Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
 
     size_t  instancesNb = 0;
@@ -543,6 +550,13 @@ namespace Etesian {
       // Lower rounded
       int_t xpos  = instanceAb.getXMin() / vpitch;
       int_t ypos  = instanceAb.getYMin() / hpitch;
+
+      // if ( (ysize != 1) and not instance->isFixed() ) {
+      //   cerr << Error( "EtesianEngine::toColoquinte(): Instance \"%s\" of \"%s\" is a block (height: %d)." 
+      //                , instanceName.c_str()
+      //                , getString(masterCell->getName()).c_str()
+      //                , ysize ) << endl;
+      // }
 
       instances[instanceId].size       = point<int_t>( xsize, ysize );
       instances[instanceId].list_index = instanceId;
@@ -644,7 +658,9 @@ namespace Etesian {
     _progressReport2("     [---]" );
   }
 
-  void  EtesianEngine::roughLegalize( float minDisruption, unsigned options ){
+
+  void  EtesianEngine::roughLegalize ( float minDisruption, unsigned options )
+  {
     using namespace coloquinte::gp;
     // Create a legalizer and bipartition it until we have sufficient precision
     auto legalizer = (options & ForceUniformDensity) != 0 ?
@@ -669,7 +685,9 @@ namespace Etesian {
     get_rough_legalization( _circuit, _placementUB, legalizer );
   }
 
-  void  EtesianEngine::feedRoutingBack(){
+
+  void  EtesianEngine::feedRoutingBack ()
+  {
     using namespace Katabatic;
     using namespace Kite;
     /*
@@ -712,7 +730,14 @@ namespace Etesian {
     // Expand areas: TODO
   }
 
-  void  EtesianEngine::globalPlace ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options ){
+
+  void  EtesianEngine::globalPlace ( float initPenalty
+                                   , float minDisruption
+                                   , float targetImprovement
+                                   , float minInc
+                                   , float maxInc
+                                   , unsigned options )
+  {
     using namespace coloquinte::gp;
 
     float_t penaltyIncrease = minInc;
@@ -781,7 +806,9 @@ namespace Etesian {
     _updatePlacement( _placementUB );
   }
 
-  void  EtesianEngine::detailedPlace    ( int iterations, int effort, unsigned options ){
+
+  void  EtesianEngine::detailedPlace ( int iterations, int effort, unsigned options )
+  {
     using namespace coloquinte::gp;
     using namespace coloquinte::dp;
 
@@ -840,6 +867,7 @@ namespace Etesian {
     _placementLB = _placementUB; // In case we run other passes
     _updatePlacement( _placementUB );
   }
+
 
   void  EtesianEngine::place ()
   {

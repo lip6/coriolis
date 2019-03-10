@@ -148,7 +148,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_layerAssignByTrunk ( Net* net, set<Net*>& globalNets, unsigned long& total, unsigned long& global )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(149,0) << "Anabatic::_layerAssignByTrunk ( " << net << " )" << endl;
     cdebug_tabw(145,1);
@@ -328,7 +328,7 @@ namespace Anabatic {
   void  AnabaticEngine::moveULeft ( AutoSegment* seed, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
     Net* net = seed->getNet();
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(9000,0) << "Deter| Move left: " << seed << endl;
 
@@ -365,7 +365,7 @@ namespace Anabatic {
   void  AnabaticEngine::moveURight ( AutoSegment* seed, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
     Net* net = seed->getNet();
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(9000,0) << "Deter| Move right: " << seed << endl;
 
@@ -405,7 +405,7 @@ namespace Anabatic {
     Net*         net       = seed->getNet();
     unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
 
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
     cdebug_log(9000,0) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
     if (not seed->canMoveUp( 1.0, Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer) ) {

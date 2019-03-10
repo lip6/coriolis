@@ -161,7 +161,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::computeNetConstraints ( Net* net )
   {
-    DebugSession::open( net, 140, 150);
+    DebugSession::open( net, 145, 150);
 
     cdebug_log(149,0) << "Anabatic::computeNetConstraints( " << net << " )" << endl;
     cdebug_tabw(145,1);

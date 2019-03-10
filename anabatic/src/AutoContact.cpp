@@ -110,7 +110,7 @@ namespace Anabatic {
 
   void  AutoContact::_preDestroy ()
   {
-    DebugSession::open( _contact->getNet(), 140, 150 );
+    DebugSession::open( _contact->getNet(), 145, 150 );
 
     cdebug_log(145,0) << "AutoContact::_preDestroy() - <AutoContact id:" << _id << ">" << endl;
 

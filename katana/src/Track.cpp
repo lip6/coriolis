@@ -392,9 +392,9 @@ namespace Katana {
 
   Interval  Track::getFreeInterval ( DbU::Unit position, Net* net ) const
   {
-    uint32_t  state;
-    size_t    begin;
-    size_t    end;
+    uint32_t  state = 0;
+    size_t    begin = 0;
+    size_t    end   = 0;
 
     if (_segments.empty()) return Interval(_min,_max);
 
@@ -429,6 +429,8 @@ namespace Katana {
     }
 
     if (not (state & EndIsTrackMax) ) {
+      if (state & EndIsNextSegmentMin) ++end;
+ 
       if (_segments[end]->getNet() == net) {
         getNext( end, net );
 
@@ -439,6 +441,7 @@ namespace Katana {
           setMaximalFlags( state, EndIsSegmentMin );
         }
       }
+      cdebug_log(155,0) << "end:" << end << " state:" << state << endl;
     }
 
     cdebug_tabw(155,-1);
