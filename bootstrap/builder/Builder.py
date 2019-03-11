@@ -68,7 +68,7 @@ class Builder:
             if value: self._noSystemBoost = True
         elif attribute == "devtoolset":
             self._devtoolset = value
-           #if value: self._noSystemBoost = True
+            if value: self._noSystemBoost = True
         elif attribute == "qt5":              self._qt5              = value
         elif attribute == "openmp":           self._openmp           = value
         elif attribute == "enableDoc":        self._enableDoc        = value
@@ -139,7 +139,7 @@ class Builder:
                 if i: commandAsString += ' '
                 if ' ' in command[i]: commandAsString += '"'+command[i]+'"'
                 else:                 commandAsString += command[i]
-            command = [ 'scl', 'enable', 'boost157', 'devtoolset-%d' % self._devtoolset
+            command = [ 'scl', 'enable', 'devtoolset-%d' % self._devtoolset
                       , commandAsString ]
 
        #print command
@@ -175,7 +175,10 @@ class Builder:
 
         command = [ 'cmake' ]
         if self._ninja:         command += [ "-G", "Ninja" ]
-        if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE" ]
+        if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE"
+                                           , "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost157"
+                                           , "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib/boost157"
+                                           ]
         if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
 
@@ -183,7 +186,7 @@ class Builder:
                   #, "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s" % self.installDir
                    , "-D", "CMAKE_INSTALL_DIR:STRING=%s"    % cmakeInstallDir
-                  #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
+                  #, "-D", "CMAKE_MODULE_PATH:STRING=%s"    % cmakeModules
                    , toolSourceDir ]
             
         if not os.path.isdir(toolBuildDir):
@@ -207,6 +210,8 @@ class Builder:
         if self._checkDeterminism == 'ON': command += [ "-D", "CHECK_DETERMINISM:STRING=ON" ]
         command += [ toolSourceDir ]
 
+        print self._noSystemBoost
+        print command
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
