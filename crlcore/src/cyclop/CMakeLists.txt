@@ -21,9 +21,7 @@
 
       link_directories ( ${CRLCORE_BINARY_DIR}/src/ccore )
 
-if(NOT WITH_QT5)
                   list ( APPEND        cpps ${mocCpps} )
-endif()
 
         add_executable ( cyclop        ${cpps} )
  target_link_libraries ( cyclop        crlcore
