@@ -267,9 +267,7 @@ namespace CRL {
 
 
   DbU::Unit  RoutingLayerGauge::getTrackPosition ( DbU::Unit start, unsigned depth ) const
-  {
-    return depth * _pitch + _offset + start;
-  }
+  { return depth * _pitch + _offset + start; }
 
 
   string  RoutingLayerGauge::_getTypeName () const

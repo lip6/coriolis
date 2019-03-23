@@ -20,6 +20,7 @@ try:
   import math
   import Cfg
   import Hurricane
+  from   Hurricane import Breakpoint
   import Viewer
   import CRL
   from   CRL import RoutingLayerGauge
@@ -58,8 +59,8 @@ def unicornHook ( **kw ):
     kw['beforeAction'] = 'placeAndRoute.placeChip'
 
     plugins.kwUnicornHook( 'placeAndRoute.clockTree'
-                         , 'Clock Tree'
-                         , 'Build a buffered H-Tree for the clock'
+                         , 'Place Block && Clock Tree'
+                         , 'Place a block with a buffered H-Tree for the clock'
                          , sys.modules[__name__].__file__
                          , **kw
                          )

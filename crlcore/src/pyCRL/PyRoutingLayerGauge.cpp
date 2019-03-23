@@ -245,7 +245,7 @@ extern "C" {
     unsigned int  depth   = 0;
     
     if (PyArg_ParseTuple( args, "OI:RoutingLayerGauge.getTrackIndex", &pyStart, &depth)) {
-      trackPosition = rlg->getTrackNumber( PyAny_AsLong(pyStart), depth);
+      trackPosition = rlg->getTrackPosition( PyAny_AsLong(pyStart), depth);
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.getTrackPosition()." );
       return NULL;

@@ -87,7 +87,8 @@ class HTree ( GaugeConfWrapper ):
                              % aspectRatio )
 
     ht = HTree( conf, cell, clockNet, clockBox )
-    print '  o  Creating Clock H-Tree for <%s>.' % cell.getName()
+    print '  o  Creating clock H-Tree for "%s".' % cell.getName()
+    print '     - Clock is "%s"' % ht.masterClock.getName()
     ht.build()
     trace( 550, '\tht.build() OK\n' )
     ht.place()
@@ -482,6 +483,8 @@ class HTreeNode ( object ):
       leafCk = deepPlug.getMasterNet()
     plugOccurrence.getEntity().setNet( leafCk )
 
+    trace( 550, '\tLeaf clock set to <%s>.\n' % plugOccurrence.getEntity() )
+
     return
 
   def getLeafBufferUnder ( self, point ):
@@ -526,12 +529,34 @@ class HTreeNode ( object ):
     trContact          = self.topTree.rpAccessByPlugName( self.trBuffer    , self.topTree.bufferIn , self.ckNet )
     leftContact        = self.topTree.createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
     rightContact       = self.topTree.createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
-    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceContact.getY() , 0 )
-    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceContact.getY(), 0 )
-    self.topTree.createVertical  ( leftContact       , blContact        , leftContact.getX()       , 0 )
-    self.topTree.createVertical  ( tlContact         , leftContact      , leftContact.getX()       , 0 )
-    self.topTree.createVertical  ( rightContact      , brContact        , rightContact.getX()      , 0 )
-    self.topTree.createVertical  ( trContact         , rightContact     , rightContact.getX()      , 0 )
+
+    leftSourceX  = self.topTree.getNearestVerticalTrack  ( self.topTree.area,  leftSourceContact.getX(), 0 )
+    leftSourceY  = self.topTree.getNearestHorizontalTrack( self.topTree.area,  leftSourceContact.getY(), 0 )
+    rightSourceX = self.topTree.getNearestVerticalTrack  ( self.topTree.area, rightSourceContact.getX(), 0 )
+    rightSourceY = self.topTree.getNearestHorizontalTrack( self.topTree.area, rightSourceContact.getY(), 0 )
+    leftX        = self.topTree.getNearestVerticalTrack  ( self.topTree.area,        leftContact.getX(), 0 )
+    rightX       = self.topTree.getNearestVerticalTrack  ( self.topTree.area,       rightContact.getX(), 0 )
+    tlY          = self.topTree.getNearestHorizontalTrack( self.topTree.area,          tlContact.getY(), 0 )
+    blY          = self.topTree.getNearestHorizontalTrack( self.topTree.area,          blContact.getY(), 0 )
+
+    self.topTree.setStackPosition(  leftSourceContact,  leftSourceX,  leftSourceY )
+    self.topTree.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
+    self.topTree.setStackPosition( tlContact,  leftX, tlY )
+    self.topTree.setStackPosition( blContact,  leftX, blY )
+    self.topTree.setStackPosition( trContact, rightX, tlY )
+    self.topTree.setStackPosition( brContact, rightX, blY )
+
+    leftContact .setX(        leftX )
+    leftContact .setY(  leftSourceY )
+    rightContact.setX(       rightX )
+    rightContact.setY( rightSourceY )
+
+    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceY , 0 )
+    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceY, 0 )
+    self.topTree.createVertical  ( leftContact       , blContact        , leftX       , 0 )
+    self.topTree.createVertical  ( tlContact         , leftContact      , leftX       , 0 )
+    self.topTree.createVertical  ( rightContact      , brContact        , rightX      , 0 )
+    self.topTree.createVertical  ( trContact         , rightContact     , rightX      , 0 )
 
     for child in self.childs: child.route()
     return
