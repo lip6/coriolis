@@ -1779,6 +1779,7 @@ namespace Anabatic {
   //_checkEdges();
     _sources.clear();
     _targets.clear();
+    _queue.clear();
     _searchArea.makeEmpty();
     _connectedsId = 0;
   }

@@ -206,6 +206,7 @@ template<class Type> class Collection {
     class iterator {
       public:
                   iterator   ( Locator<Type>* l )        : _locator(l) {} 
+                 ~iterator   ()                          { delete _locator; }
         bool      operator== ( const iterator& o) const  { return not (*this != o); }
         iterator& operator++ ()                          { _locator->progress(); return *this; }
         Type      operator*  ()                          { return _locator->getElement(); }
