@@ -46,6 +46,7 @@
                                     PyBlif.cpp
                                     PyGds.cpp
                                     PyLefImport.cpp
+                                    PyDefImport.cpp
                       )	    
                    set( pyIncludes  crlcore/PyBanner.h
                                     crlcore/PyCatalog.h
@@ -65,6 +66,7 @@
                                     crlcore/PyBlif.h
                                     crlcore/PyGds.h
                                     crlcore/PyLefImport.h
+                                    crlcore/PyDefImport.h
                       )	         
                    set( depLibs     crlcore
                                     ${HURRICANE_PYTHON_LIBRARIES}

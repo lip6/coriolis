@@ -65,6 +65,8 @@ namespace {
   class DefParser {
     public:
       static AllianceFramework* getFramework             ();
+      static Cell*              getLefCell               ( string name );
+      static void               setUnits                 ( double );
       static DbU::Unit          fromDefUnits             ( int );
       static Transformation::Orientation                 
                                 fromDefOrientation       ( int orient );
@@ -98,6 +100,7 @@ namespace {
              void               toHurricaneName          ( string& );
       inline void               mergeToFitOnCellsDieArea ( const Box& );
     private:                                         
+      static int                _unitsCbk                ( defrCallbackType_e, double        , defiUserData );
       static int                _busBitCbk               ( defrCallbackType_e, const char*   , defiUserData );
       static int                _designEndCbk            ( defrCallbackType_e, void*         , defiUserData );
       static int                _dieAreaCbk              ( defrCallbackType_e, defiBox*      , defiUserData );
@@ -111,6 +114,7 @@ namespace {
     private:
       static double             _defUnits;
       static AllianceFramework* _framework;
+      static Library*           _lefRootLibrary;
              string             _file;
              unsigned int       _flags;
              AllianceLibrary*   _library;
@@ -125,8 +129,9 @@ namespace {
   };
 
 
-  double             DefParser::_defUnits  = 0.01;
-  AllianceFramework* DefParser::_framework = NULL;
+  double             DefParser::_defUnits       = 0.01;
+  AllianceFramework* DefParser::_framework      = NULL;
+  Library*           DefParser::_lefRootLibrary = NULL;
 
 
   DefParser::DefParser ( string& file, AllianceLibrary* library, unsigned int flags )
@@ -143,6 +148,7 @@ namespace {
     , _errors           ()
   {
     defrInit               ();
+    defrSetUnitsCbk        ( _unitsCbk );
     defrSetBusBitCbk       ( _busBitCbk );
     defrSetDesignEndCbk    ( _designEndCbk );
     defrSetDieAreaCbk      ( _dieAreaCbk );
@@ -162,7 +168,8 @@ namespace {
 
 
          AllianceFramework* DefParser::getFramework             () { return _framework; }
-  inline DbU::Unit          DefParser::fromDefUnits             ( int u ) { return DbU::lambda(_defUnits*(double)u); }
+  inline void               DefParser::setUnits                 ( double units ) { _defUnits = 1/units; }
+  inline DbU::Unit          DefParser::fromDefUnits             ( int u ) { return DbU::fromPhysical(_defUnits*(double)u,DbU::UnitPower::Micro); }
   inline bool               DefParser::hasErrors                () { return not _errors.empty(); }
   inline unsigned int       DefParser::getFlags                 () const { return _flags; }
   inline string             DefParser::getBusBits               () const { return _busBits; }
@@ -180,6 +187,32 @@ namespace {
   inline void               DefParser::setPrebuildNet           ( Net* net ) { _prebuildNet=net; }
   inline void               DefParser::setBusBits               ( string busbits ) { _busBits = busbits; }
   inline void               DefParser::mergeToFitOnCellsDieArea ( const Box& box ) { _fitOnCellsDieArea.merge(box); }
+
+
+  Cell* DefParser::getLefCell ( string name )
+  {
+    if (not _lefRootLibrary) {
+      DataBase* db          = DataBase::getDB();
+      Library*  rootLibrary = db->getRootLibrary();
+
+      if (rootLibrary) {
+        _lefRootLibrary = rootLibrary->getLibrary( "LEF" );
+      }
+    }
+
+    Cell* masterCell = NULL;
+    if (_lefRootLibrary) {
+      for ( Library* library : _lefRootLibrary->getLibraries() ) {
+        masterCell = library->getCell( name );
+        if (masterCell) break;
+      }
+    }
+
+    if (not masterCell)
+      masterCell = DefParser::getFramework()->getCell ( name, Catalog::State::Views );
+
+    return masterCell;
+  }
 
 
   Transformation::Orientation  DefParser::fromDefOrientation ( int orient )
@@ -273,6 +306,14 @@ namespace {
   }
 
 
+  int  DefParser::_unitsCbk ( defrCallbackType_e c, double defUnits, lefiUserData ud )
+  {
+    DefParser* parser = (DefParser*)ud;
+    parser->setUnits( defUnits );
+    return 0;
+  }
+
+
   int  DefParser::_busBitCbk ( defrCallbackType_e c, const char* busbits, lefiUserData ud )
   {
     DefParser* parser = (DefParser*)ud;
@@ -343,8 +384,8 @@ namespace {
 
     string componentName = component->name();
     string componentId   = component->id();
+    Cell*  masterCell    = getLefCell( componentName );
 
-    Cell* masterCell = DefParser::getFramework()->getCell ( componentName, Catalog::State::Views );
     if ( masterCell == NULL ) {
       ostringstream message;
       message << "Unknown model/Cell (LEF MACRO) " << componentName << " in <%s>.";
@@ -374,6 +415,9 @@ namespace {
     if ( state != Instance::PlacementStatus::UNPLACED ) {
       parser->mergeToFitOnCellsDieArea ( instance->getAbutmentBox() );
     }
+
+  //cerr << "Create " << componentId << " of " << masterCell
+  //      << " ab:" << masterCell->getAbutmentBox() << " @" << placement << endl;
 
     return 0;
   }
@@ -412,13 +456,13 @@ namespace {
       name.erase ( 0, name.size()-75 );
       name.insert( 0, 3, '.' );
     }
-    name.insert( 0, "<" );
-    name.insert( name.size(), ">" );
+    name.insert( 0, "\"" );
+    name.insert( name.size(), "\"" );
     if (name.size() < 80) name.insert( name.size(), 80-name.size(), ' ' );
 
     if (tty::enabled()) {
-      cmess2 << "          "
-             << tty::bold  << setw(7)  << setfill('0') << ++netCount << ":" << setfill(' ')
+      cmess2 << "     <net:"
+             << tty::bold  << setw(7)  << setfill('0') << ++netCount << "> " << setfill(' ')
              << tty::reset << setw(80) << name << tty::cr;
       cmess2.flush ();
     }
@@ -573,7 +617,7 @@ namespace {
   }
 
 
-}  // End of anonymous namespace.
+}  // Anonymous namespace.
 
 #endif  // HAVE_LEFDEF
 
@@ -606,4 +650,10 @@ namespace CRL {
   }
 
 
-}  // End of CRL namespace.
+  void  DefImport::reset ()
+  {
+  // DefParser::reset();
+  }
+
+
+}  // CRL namespace.

@@ -614,6 +614,9 @@ namespace {
       if (ongrids.empty()) {
         cerr << Warning( "LefParser::_pinPostProcess(): Pin \"%s\" has no terminal ongrid."
                        , pinName.c_str() ) << endl;
+        for ( Segment* segment : segments ) {
+          NetExternalComponents::setExternal( segment );
+        }
       } else {
         for ( Segment* segment : ongrids ) {
           NetExternalComponents::setExternal( segment );
