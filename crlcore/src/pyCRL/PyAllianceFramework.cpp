@@ -440,6 +440,39 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_matchCellGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_matchCellGauge()" << endl;
+
+    CellGauge* cg = NULL;
+    HTRY
+      METHOD_HEAD( "AllianceFramework.matchCellGauge()" )
+      
+      PyObject* arg0;
+      PyObject* arg1;
+      __cs.init( "AllianceFramework.matchCellGauge" );
+      if (not PyArg_ParseTuple( args
+                              , "O&O&|O&:AllianceFramework.matchCellGauge"
+                              , Converter, &arg0
+                              , Converter, &arg1
+                              )) {
+        PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.matchCellGauge()." );
+        return NULL;
+      }
+      
+      if (__cs.getObjectIds() == ":int:int") {
+        cg = af->matchCellGauge( PyAny_AsLong(arg0), PyAny_AsLong(arg1) );
+      } else {
+        PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.matchCelGauge()." );
+        return NULL;
+      }
+    HCATCH
+
+    if (cg == NULL) Py_RETURN_NONE;
+    return PyCellGauge_Link(cg);
+  }
+
+
   static PyObject* PyAllianceFramework_loadLibraryCells ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_loadLibraryCells()" << endl;
@@ -505,6 +538,8 @@ extern "C" {
                                , "Add a new cell gauge." }
     , { "getCellGauge"         , (PyCFunction)PyAllianceFramework_getCellGauge         , METH_VARARGS
                                , "Get a cell gauge (whithout a name, return the default)." }          
+    , { "matchCellGauge"       , (PyCFunction)PyAllianceFramework_matchCellGauge       , METH_VARARGS
+                               , "Find the first CellGauge comptible with width and height." }          
     , { "addRoutingGauge"      , (PyCFunction)PyAllianceFramework_addRoutingGauge      , METH_VARARGS
                                , "Add a new routing gauge." }
     , { "getRoutingGauge"      , (PyCFunction)PyAllianceFramework_getRoutingGauge      , METH_VARARGS

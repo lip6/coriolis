@@ -154,6 +154,7 @@ namespace CRL {
     AllianceFramework* af = AllianceFramework::get();
     pitch = af->getCellGauge()->getPitch();
 
+    size_t count = 0;
     UpdateSession::open ();
 
     unique_ptr<Bookshelf::Circuit> circuit ( Bookshelf::Circuit::parse( benchmark
@@ -172,6 +173,11 @@ namespace CRL {
     for ( auto net : circuit->getNets() ) {
       dots.dot();
       Net::create ( cell, net->getName() );
+
+      if (++count % 1000) {
+        UpdateSession::close ();
+        UpdateSession::open ();
+      }
     }
     dots.finish( Dots::Reset|Dots::FirstDot );
 
@@ -195,6 +201,11 @@ namespace CRL {
         Name netName   = ipin.second->getNet()->getName();
         Net* masterNet = master->getNet( netName );
         instance->getPlug( masterNet )->setNet( cell->getNet(netName) );
+      }
+
+      if (++count % 1000) {
+        UpdateSession::close ();
+        UpdateSession::open ();
       }
     }
     dots.finish( Dots::Reset|Dots::FirstDot );

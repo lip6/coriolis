@@ -396,8 +396,8 @@ namespace Hurricane {
           unsigned int    _count;
       };
     public:
-      typedef vector<DBo*>          DBoSet;
-      typedef map<string,Orphaned>  OrphanedMap;
+      typedef set<DBo*,DBo::CompareById>  DBoSet;
+      typedef map<string,Orphaned>        OrphanedMap;
     public:
       static  const OrphanedMap& getOrphaneds   ();
       static  SharedProperty*    getOrphaned    ( const string& );

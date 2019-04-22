@@ -1575,14 +1575,14 @@ Cell::NetMap::NetMap()
 {
 }
 
-Name Cell::NetMap::_getKey(Net* net) const
+const Name& Cell::NetMap::_getKey(Net* net) const
 // ***************************************
 {
     return net->getName();
 }
 
-unsigned Cell::NetMap::_getHashValue(Name name) const
-// **************************************************
+unsigned Cell::NetMap::_getHashValue(const Name& name) const
+// *********************************************************
 {
   unsigned long hash = 0;
   unsigned long sum4 = 0;

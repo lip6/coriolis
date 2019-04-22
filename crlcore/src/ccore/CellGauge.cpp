@@ -38,6 +38,7 @@ namespace CRL {
                          , _pitch       (pitch)
                          , _sliceHeight (sliceHeight)
                          , _sliceStep   (sliceStep)
+                         , _flags       (Flags::NoFlags)
   { }
 
 
@@ -47,6 +48,7 @@ namespace CRL {
     , _pitch       (other._pitch)
     , _sliceHeight (other._sliceHeight)
     , _sliceStep   (other._sliceStep)
+    , _flags       (other._flags)
   { }
 
 
@@ -100,11 +102,12 @@ namespace CRL {
   Record* CellGauge::_getRecord () const
   {
     Record* record = new Record ( getString(this) );
-    record->add( getSlot          ( "Name"            , &_name         ) );
-    record->add( getSlot          ( "PinLayerName"    , &_pinLayerName ) );
-    record->add( DbU::getValueSlot( "pitch"           , &_pitch        ) );
-    record->add( DbU::getValueSlot( "sliceHeight"     , &_sliceHeight  ) );
-    record->add( DbU::getValueSlot( "sliceStep"       , &_sliceStep    ) );
+    record->add( getSlot          ( "_name"            , &_name         ) );
+    record->add( getSlot          ( "_pinLayerName"    , &_pinLayerName ) );
+    record->add( DbU::getValueSlot( "_pitch"           , &_pitch        ) );
+    record->add( DbU::getValueSlot( "_sliceHeight"     , &_sliceHeight  ) );
+    record->add( DbU::getValueSlot( "_sliceStep"       , &_sliceStep    ) );
+    record->add( getSlot          ( "_flags"           , &_flags        ) );
     return ( record );
   }
 
@@ -118,6 +121,7 @@ namespace CRL {
     jsonWrite( w, "_pitch"       , _pitch        );
     jsonWrite( w, "_sliceHeight" , _sliceHeight  );
     jsonWrite( w, "_sliceStep"   , _sliceStep    );
+    jsonWrite( w, "_flags"       , _flags        );
     w->endObject();
   }
 
@@ -162,6 +166,7 @@ namespace CRL {
     DbU::Unit          pitch        = get<int64_t>( stack, "_pitch"        );
     DbU::Unit          sliceHeight  = get<int64_t>( stack, "_sliceHeight"  );
     DbU::Unit          sliceStep    = get<int64_t>( stack, "_sliceStep"    );
+    unsigned long      flags        = get<int64_t>( stack, "_flags"        );
 
     if (stack.issetFlags(JsonWriter::TechnoMode)) {
       if (af) {
@@ -172,6 +177,7 @@ namespace CRL {
                                 , sliceHeight
                                 , sliceStep
                                 );
+          cg->setFlags( flags );
           af->addCellGauge( cg );
         }
       } else {

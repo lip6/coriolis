@@ -39,25 +39,9 @@ namespace Hurricane {
   {
     public:
       typedef DBo Inherit;
-    public:
-      enum EntityFlags { ForcedIdMode  = (1<<0)
-                       , NextIdSet     = (1<<1)
-                       };
-    public:
-      static  void          setMemoryLimit      ( unsigned int );
-      static  void          setIdCounterLimit   ( unsigned int );
-      static  unsigned int  getIdCounter        ();
-              unsigned int  getNextId           ();
-      static  void          setNextId           ( unsigned int );
-      static  bool          inForcedIdMode      ();
-      static  void          enableForcedIdMode  ();
-      static  void          disableForcedIdMode ();
-      static  void          useIdCounter2       ();
     public:                                
-      inline  unsigned int  getId               () const;
       virtual Cell*         getCell             () const = 0;
       virtual Box           getBoundingBox      () const = 0;
-              void          setId               ( unsigned int );
       virtual void          _toJson             ( JsonWriter* ) const;
       virtual string        _getString          () const;
       virtual Record*       _getRecord          () const;
@@ -66,24 +50,7 @@ namespace Hurricane {
                             Entity              ();
       virtual void          _postCreate         ();
       virtual void          _preDestroy         ();
-    private:
-      static  unsigned int   _memoryLimit;
-      static  unsigned long  _flags;
-      static  unsigned int   _nextId;
-      static  unsigned int   _idCounter;
-      static  unsigned int   _idCounterLimit;
-              unsigned int   _id;
-
-    public:
-      struct CompareById : public std::binary_function<const Entity*,const Entity*,bool> {
-          inline bool  operator() ( const Entity* lhs, const Entity* rhs ) const;
-      };
   };
-
-
-  inline  unsigned int  Entity::getId () const { return _id; }
-  inline  bool          Entity::CompareById::operator() ( const Entity* lhs, const Entity* rhs ) const
-                                                        { return ((lhs)?lhs->getId():0) < ((rhs)?rhs->getId():0); }
 
 
 // -------------------------------------------------------------------

@@ -313,6 +313,7 @@ extern "C" {
   predicateFromLayer          (                          contains         ,PyLayer,Layer)
   predicateFromLayer          (                          intersect        ,PyLayer,Layer)
   predicateFromVoid           (                          isSymbolic       ,PyLayer,Layer)
+  predicateFromVoid           (                          isBlockage       ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getExtentionCap  ,PyLayer,Layer)
   accessorDbuFromOptBasicLayer(                          getExtentionWidth,PyLayer,Layer)
   accessorCollectionFromVoid  (                          getBasicLayers   ,PyLayer,Layer,BasicLayer)
@@ -335,6 +336,7 @@ extern "C" {
   updatorFromBasicLayerDbu(setExtentionCap  ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionWidth,PyLayer,Layer)
   DirectSetBoolAttribute  (PyLayer_setSymbolic,setSymbolic,PyLayer,Layer)
+  DirectSetBoolAttribute  (PyLayer_setBlockage,setBlockage,PyLayer,Layer)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyLayer_destroy, PyLayer)
@@ -387,10 +389,14 @@ extern "C" {
                               , "Tells if the layer share some BasicLayer with the one passed as argument." }
     , { "isSymbolic"          , (PyCFunction)PyLayer_isSymbolic          , METH_NOARGS
                               , "Tells if the layer is the symbolic one for this BasicLayer." }
+    , { "isBlockage"          , (PyCFunction)PyLayer_isBlockage          , METH_NOARGS
+                              , "Tells if the layer represent blockage." }
     , { "setName"             , (PyCFunction)PyLayer_setName             , METH_VARARGS
                               , "Allows to change the layer name." }
     , { "setSymbolic"         , (PyCFunction)PyLayer_setSymbolic         , METH_VARARGS
                               , "Sets the layer as the symbolic one." }
+    , { "setBlockage"         , (PyCFunction)PyLayer_setBlockage         , METH_VARARGS
+                              , "Sets the layer as blockage." }
     , { "setMinimalSize"      , (PyCFunction)PyLayer_setMinimalSize      , METH_VARARGS
                               , "Sets the layer minimal size (width)." }
     , { "setMinimalSpacing"   , (PyCFunction)PyLayer_setMinimalSpacing   , METH_VARARGS

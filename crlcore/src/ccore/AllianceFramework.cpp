@@ -755,7 +755,38 @@ namespace CRL {
     }
 
     _cellGauges [ gauge->getName() ] = gauge;
-    _defaultCellGauge                = gauge;
+    if (not _defaultCellGauge) _defaultCellGauge = gauge;
+  }
+
+
+  CellGauge* AllianceFramework::matchCellGauge ( DbU::Unit width, DbU::Unit height ) const
+  {
+    for ( const auto item : _cellGauges ) {
+      CellGauge* cg       = item.second;
+      DbU::Unit  hcount   = width  / cg->getSliceStep  ();
+      DbU::Unit  hremains = width  % cg->getSliceStep  ();
+      DbU::Unit  vcount   = height / cg->getSliceHeight();
+      DbU::Unit  vremains = height % cg->getSliceHeight();
+
+      if ( (hcount) and (not hremains) and (vcount == 1) and (not vremains) )
+        return cg;
+    }
+
+    return NULL;
+  }
+
+
+  CellGauge* AllianceFramework::matchCellGaugeByHeight ( DbU::Unit height ) const
+  {
+    for ( const auto item : _cellGauges ) {
+      CellGauge* cg       = item.second;
+      DbU::Unit  vcount   = height / cg->getSliceHeight();
+      DbU::Unit  vremains = height % cg->getSliceHeight();
+
+      if ( (vcount == 1) and (not vremains) ) return cg;
+    }
+
+    return NULL;
   }
 
 

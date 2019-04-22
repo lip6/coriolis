@@ -32,6 +32,7 @@ namespace CRL {
   using Hurricane::BaseObserver;
   using Hurricane::JsonObject;
   using Hurricane::JsonStack;
+  using Hurricane::DbU;
   using Hurricane::Cell;
   using Hurricane::Net;
   class RoutingGauge;
@@ -98,6 +99,8 @@ namespace CRL {
              void                     saveLibrary              ( AllianceLibrary* );
              RoutingGauge*            getRoutingGauge          ( const Name& name="" );
              CellGauge*               getCellGauge             ( const Name& name="" );
+             CellGauge*               matchCellGauge           ( DbU::Unit width, DbU::Unit height ) const;
+             CellGauge*               matchCellGaugeByHeight   ( DbU::Unit height ) const;
       inline const Name               getDefaultCGPinLayerName () const;
     // Modifiers.                     
              RoutingGauge*            setRoutingGauge          ( const Name& name="" );

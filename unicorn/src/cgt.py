@@ -16,6 +16,7 @@ try:
   import Katabatic
   import Kite
   import Bora
+  import Tutorial
   import Unicorn
 except ImportError, e:
   serror = str(e)
@@ -190,6 +191,7 @@ if __name__ == '__main__':
           unicorn.registerTool        (Kite.GraphicKiteEngine.grab())
           unicorn.registerTool        (Katana.GraphicKatanaEngine.grab())
           unicorn.registerTool        (Bora.GraphicBoraEngine.grab())
+          unicorn.registerTool        (Tutorial.GraphicTutorialEngine.grab())
          #unicorn.setAnonNetSelectable(False)
           unicorn.setLayerVisible     ("grid"          , False);
           unicorn.setLayerVisible     ("text.instance" , False);

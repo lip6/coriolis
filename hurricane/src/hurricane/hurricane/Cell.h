@@ -265,15 +265,15 @@ class Cell : public Entity {
 
     };
 
-    public: class NetMap : public IntrusiveMap<Name, Net> {
-    // **************************************************
+    public: class NetMap : public IntrusiveMapConst<Name, Net> {
+    // *********************************************************
 
-        public: typedef IntrusiveMap<Name, Net> Inherit;
+        public: typedef IntrusiveMapConst<Name, Net> Inherit;
     
         public: NetMap();
 
-        public: virtual Name _getKey(Net* net) const;
-        public: virtual unsigned _getHashValue(Name name) const;
+        public: virtual const Name& _getKey(Net* net) const;
+        public: virtual unsigned _getHashValue(const Name& name) const;
         public: virtual Net* _getNextElement(Net* net) const;
         public: virtual void _setNextElement(Net* net, Net* nextNet) const;
 

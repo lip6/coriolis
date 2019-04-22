@@ -45,43 +45,70 @@ namespace Hurricane {
 
   class DBo {
     public:
-      virtual void               destroy            ();
-      inline  set<Property*>&    _getPropertySet    ();
-              void               _onDestroyed       ( Property* property );
-              Property*          getProperty        ( const Name& ) const;
-              Properties         getProperties      () const;
-      inline  bool               hasProperty        () const;
-              void               put                ( Property* );
-              void               remove             ( Property* );
-              void               removeProperty     ( const Name& );
-              void               clearProperties    ();
-      virtual string             _getTypeName       () const;
-      virtual string             _getString         () const;
-      virtual Record*            _getRecord         () const;
-      virtual void               _toJson            ( JsonWriter* ) const;
-      virtual void               _toJsonCollections ( JsonWriter* ) const;
-      virtual void               _toJsonSignature   ( JsonWriter* ) const;
-              void               toJson             ( JsonWriter* ) const;
-              void               toJsonSignature    ( JsonWriter* ) const;
-                                 
-    private:                     
-      mutable set<Property*>     _propertySet;
-                                 
+      enum DBoFlags { ForcedIdMode  = (1<<0)
+                    , NextIdSet     = (1<<1)
+                    };
+    public:
+      static  void               setMemoryLimit      ( unsigned int );
+      static  void               setIdCounterLimit   ( unsigned int );
+      static  unsigned int       getIdCounter        ();
+              unsigned int       getNextId           ();
+      static  void               setNextId           ( unsigned int );
+      static  bool               inForcedIdMode      ();
+      static  void               enableForcedIdMode  ();
+      static  void               disableForcedIdMode ();
+      static  void               useIdCounter2       ();
+    public:
+      virtual void               destroy             ();
+      inline  set<Property*>&    _getPropertySet     ();
+              void               _onDestroyed        ( Property* property );
+      inline  unsigned int       getId               () const;
+              Property*          getProperty         ( const Name& ) const;
+              Properties         getProperties       () const;
+      inline  bool               hasProperty         () const;
+              void               setId               ( unsigned int );
+              void               put                 ( Property* );
+              void               remove              ( Property* );
+              void               removeProperty      ( const Name& );
+              void               clearProperties     ();
+      virtual string             _getTypeName        () const;
+      virtual string             _getString          () const;
+      virtual Record*            _getRecord          () const;
+      virtual void               _toJson             ( JsonWriter* ) const;
+      virtual void               _toJsonCollections  ( JsonWriter* ) const;
+      virtual void               _toJsonSignature    ( JsonWriter* ) const;
+              void               toJson              ( JsonWriter* ) const;
+              void               toJsonSignature     ( JsonWriter* ) const;
     protected:                   
-                                 DBo               ();
-      virtual                   ~DBo               ();
-      virtual void               _postCreate       ();
-      virtual void               _preDestroy       ();
-                           
-    private:               
-                                 DBo               ( const DBo& );
-              DBo&               operator=         ( const DBo& );
+                                 DBo                 ();
+      virtual                   ~DBo                 ();
+      virtual void               _postCreate         ();
+      virtual void               _preDestroy         ();
+    private:                                         
+                                 DBo                 ( const DBo& );
+              DBo&               operator=           ( const DBo& );
+    private:                     
+      static  unsigned int       _memoryLimit;
+      static  unsigned long      _flags;
+      static  unsigned int       _nextId;
+      static  unsigned int       _idCounter;
+      static  unsigned int       _idCounterLimit;
+              unsigned int       _id;
+      mutable set<Property*>     _propertySet;
+    public:
+      struct CompareById : public std::binary_function<const DBo*,const DBo*,bool> {
+          inline bool  operator() ( const DBo* lhs, const DBo* rhs ) const;
+      };
   };
 
 
 // Inline Functions.
   inline set<Property*>& DBo::_getPropertySet () { return _propertySet; }
   inline bool            DBo::hasProperty     () const { return !_propertySet.empty(); }
+  inline unsigned int    DBo::getId           () const { return _id; }
+
+  inline bool  DBo::CompareById::operator() ( const DBo* lhs, const DBo* rhs ) const
+  { return ((lhs)?lhs->getId():0) < ((rhs)?rhs->getId():0); }
 
 
 // -------------------------------------------------------------------

@@ -56,9 +56,11 @@ extern "C" {
 // +=================================================================+
 
 
+  DirectGetBoolAttribute(PyCellGauge_isPad         ,isPad         ,PyCellGauge,CellGauge)
   DirectGetLongAttribute(PyCellGauge_getSliceHeight,getSliceHeight,PyCellGauge,CellGauge)
   DirectGetLongAttribute(PyCellGauge_getSliceStep  ,getSliceStep  ,PyCellGauge,CellGauge)
   DirectGetLongAttribute(PyCellGauge_getPitch      ,getPitch      ,PyCellGauge,CellGauge)
+  DirectGetNameAttribute(PyCellGauge_getName       ,getName       ,PyCellGauge,CellGauge)
 
 
   static PyObject* PyCellGauge_create ( PyObject*, PyObject* args )
@@ -113,9 +115,11 @@ extern "C" {
   PyMethodDef PyCellGauge_Methods[] =
     { { "create"                , (PyCFunction)PyCellGauge_create        , METH_VARARGS|METH_STATIC
                                 , "Create a new CellGauge." }
+    , { "isPad"                 , (PyCFunction)PyCellGauge_isPad         , METH_NOARGS , "Is the gauge for the IO pads." }
     , { "getSliceHeight"        , (PyCFunction)PyCellGauge_getSliceHeight, METH_NOARGS , "Return the slice height." }
     , { "getSliceStep"          , (PyCFunction)PyCellGauge_getSliceStep  , METH_NOARGS , "Return the slice step." }
     , { "getPitch"              , (PyCFunction)PyCellGauge_getPitch      , METH_NOARGS , "Return the smallest common pitch." }
+    , { "getName"               , (PyCFunction)PyCellGauge_getName       , METH_NOARGS , "Return the gauge name." }
   //, { "destroy"               , (PyCFunction)PyCellGauge_destroy       , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

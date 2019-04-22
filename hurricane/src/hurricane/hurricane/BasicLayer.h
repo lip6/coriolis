@@ -140,7 +140,7 @@ namespace Hurricane {
   inline unsigned        BasicLayer::getGds2Layer                   () const { return _gds2Layer; }
   inline unsigned        BasicLayer::getGds2Datatype                () const { return _gds2Datatype; }
   inline const Name&     BasicLayer::getRealName                    () const { return _realName; }
-  inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; }
+  inline void            BasicLayer::setBlockageLayer               ( BasicLayer* layer) { _blockageLayer = layer; layer->setBlockage(true); }
   inline void            BasicLayer::setGds2Layer                   ( unsigned int number ) { _gds2Layer=number; }
   inline void            BasicLayer::setGds2Datatype                ( unsigned int number ) { _gds2Datatype=number; }
   inline void            BasicLayer::setRealName                    ( const char* realName) { _realName = realName; }
