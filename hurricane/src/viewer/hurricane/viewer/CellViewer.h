@@ -94,25 +94,30 @@ namespace Hurricane {
               QMenu*                createDebugMenu           ();
               bool                  hasMenu                   ( const QString& path ) const;
               bool                  hasMenuAction             ( const QString& path ) const;
-              QMenu*                addMenu                   ( const QString& path
+              QAction*              getMenuAction             ( const QString& path ) const;
+              QAction*              addMenu                   ( const QString& path
                                                               , std::string text
                                                               , unsigned int flags=NoFlags
                                                               );
-              bool                  addToMenu                 ( const QString& path );
+              bool                  addToMenu                 ( const QString& path
+                                                              ,       QString  beforePath="" );
               QAction*              addToMenu                 ( const QString& path
-                                                              , std::string  text
-                                                              , std::string  textTip
+                                                              , std::string    text
+                                                              , std::string    textTip
                                                               , std::function< void() >
-                                                              , QIcon        icon=QIcon() );
+                                                              , QIcon          icon=QIcon()
+                                                              ,      QString   beforePath="" );
               QAction*              addToMenu                 ( const QString& path
-                                                              , std::string  text
-                                                              , std::string  textTip
-                                                              , std::string  scriptPath );
+                                                              , std::string    text
+                                                              , std::string    textTip
+                                                              , std::string    scriptPath
+                                                              ,       QString  beforePath="" );
               QAction*              addToMenu                 ( QString             path
                                                               , QString             text
                                                               , QString             textTip
                                                               , const QKeySequence& shortCut 
-                                                              , QIcon               icon    =QIcon());
+                                                              , QIcon               icon    =QIcon()
+                                                              , QString             beforePath="" );
       inline  void                  setEnableRedrawInterrupt  ( bool );
       inline  void                  setApplicationName        ( const QString& );
       inline  Observer<CellViewer>* getCellObserver           ();
@@ -166,7 +171,7 @@ namespace Hurricane {
               void                  rebuildHistory            ();
     private:                        
               QString               _getAbsWidgetPath         ( const QString& relPath ) const;
-              QMenu*                _getParentMenu            ( const QString& ) const;
+              QAction*              _getParentMenu            ( const QString& ) const;
               void                  _runScript                ( QString scriptPath );
 
     protected:                     

@@ -101,6 +101,17 @@ extern "C" {
     LoadObjectConstant(PyTypePlacementStatus.tp_dict,Instance::PlacementStatus::PLACED  ,"PLACED");
     LoadObjectConstant(PyTypePlacementStatus.tp_dict,Instance::PlacementStatus::FIXED   ,"FIXED");
   }
+  
+
+  extern Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
+    switch ( PyAny_AsLong(object) ) {
+      case Instance::PlacementStatus::UNPLACED : return Instance::PlacementStatus::UNPLACED;
+      case Instance::PlacementStatus::PLACED   : return Instance::PlacementStatus::PLACED;
+      case Instance::PlacementStatus::FIXED    : return Instance::PlacementStatus::FIXED;
+    }
+
+    return Instance::PlacementStatus::UNPLACED;
+  }
 
 
 #endif  // Shared Library Code Part.

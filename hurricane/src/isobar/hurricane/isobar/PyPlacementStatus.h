@@ -37,12 +37,13 @@ namespace  Isobar {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.ccp".
 
-    extern  PyTypeObject  PyTypePlacementStatus;
-    extern  PyMethodDef   PyPlacementStatus_Methods[];
+    extern PyTypeObject  PyTypePlacementStatus;
+    extern PyMethodDef   PyPlacementStatus_Methods[];
 
-    extern  PyObject* PyPlacementStatus_Link           ( Hurricane::Instance::PlacementStatus* );
-    extern  void      PyPlacementStatus_LinkPyType     ();
-    extern  void      PyPlacementStatus_postModuleInit ();
+    extern PyObject*                             PyPlacementStatus_Link           ( Hurricane::Instance::PlacementStatus* );
+    extern void                                  PyPlacementStatus_LinkPyType     ();
+    extern void                                  PyPlacementStatus_postModuleInit ();
+    extern Hurricane::Instance::PlacementStatus  PyInt_AsPlacementStatus          ( PyObject* );
 
 
 #define IsPyPlacementStatus(v)  ( (v)->ob_type == &PyTypePlacementStatus )

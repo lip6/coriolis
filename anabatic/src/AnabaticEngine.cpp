@@ -504,6 +504,24 @@ namespace Anabatic {
   }
 
 
+  void  AnabaticEngine::exclude ( const Name& netName )
+  {
+    Net* net = _cell->getNet( netName );
+    if (not net) return;
+
+    exclude( net );
+  }
+
+
+  void  AnabaticEngine::exclude ( Net* net )
+  {
+    NetDatas::iterator inet =_netDatas.find( net->getId() );
+    if (inet == _netDatas.end()) return;
+
+    (*inet).second->setExcluded( true );
+  }
+
+
   void AnabaticEngine::updateMatrix()
   {
     _matrix.setCell( getCell(), Session::getSliceHeight() );
@@ -1028,7 +1046,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::updateNetTopology ( Net* net )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(149,0) << "Anabatic::updateNetTopology( " << net << " )" << endl;
     cdebug_tabw(145,1);
@@ -1069,7 +1087,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_alignate ( Net* net )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(149,0) << "Anabatic::_alignate( " << net << " )" << endl;
     cdebug_tabw(145,1);
@@ -1127,7 +1145,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_computeNetTerminals ( Net* net )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(149,0) << "Anabatic::_computeNetTerminals( " << net << " )" << endl;
     cdebug_tabw(145,1);
@@ -1146,7 +1164,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_saveNet ( Net* net )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(145,0) << "Anabatic::_saveNet() " << net << endl;
     cdebug_tabw(145,1);

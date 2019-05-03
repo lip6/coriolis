@@ -19,7 +19,6 @@
 
 #include <limits>
 #include "hurricane/Error.h"
-#include "hurricane/Timer.h"
 #include "hurricane/Entity.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Cell.h"
@@ -34,99 +33,16 @@ namespace Hurricane {
 // ****************************************************************************************************
 
 
-  unsigned int   Entity::_memoryLimit    = 0;
-  unsigned long  Entity::_flags          = 0;
-  unsigned int   Entity::_nextId         = 0;
-  unsigned int   Entity::_idCounterLimit = 0;
-  unsigned int   Entity::_idCounter      = 1;
-
-
-  void  Entity::setIdCounterLimit ( unsigned int limit )
-  { _idCounterLimit = limit; }
-
-
-  void  Entity::setMemoryLimit ( unsigned int limit )
-  { _memoryLimit = limit; }
-
-
-  unsigned int  Entity::getIdCounter ()
-  { return _idCounter; }
-
-
-  bool  Entity::inForcedIdMode ()
-  { return _flags & ForcedIdMode; }
-
-
-  void  Entity::enableForcedIdMode ()
-  {
-    if (_flags & ForcedIdMode) return;
-    if (_idCounter != 1) {
-      throw Error( "Entity::enableForcedIdMode(): DataBase must be reset before forcind ids." );
-    }
-    _flags |= ForcedIdMode;
-  }
-
-
-  void  Entity::disableForcedIdMode ()
-  {
-    if (not (_flags & ForcedIdMode)) return;
-    _flags &= ~ForcedIdMode;
-  }
-
-
-  void  Entity::setNextId ( unsigned int nid )
-  {
-    if (not (_flags & ForcedIdMode)) {
-      cerr << Error("Entity::setNextId(): Not in forced id mode, ignored.") << endl;
-      return;
-    }
-    _nextId = nid;
-    if (nid > _idCounter) _idCounter = nid;
-    _flags |= NextIdSet;
-  }
-
-
-  unsigned int  Entity::getNextId ()
-  {
-    if (_flags & ForcedIdMode) {
-      if (_flags & NextIdSet) {
-        _flags &= ~NextIdSet;
-        cdebug_log(18,0) << demangle(typeid(*this).name())
-                   << "::getNextId(): Consuming the preset id:" << _nextId << endl;
-        return _nextId;
-      } else {
-        throw Error("Entity::getNextId(): Next id is not set, while in forced id mode.");
-      }
-    }
-
-    return _idCounter++;
-  }
-
-
   Entity::Entity()
     : Inherit()
-    , _id    (getNextId())
+  { }
+
+
+  void Entity::_postCreate()
   {
-    if (_idCounterLimit and (_id > _idCounterLimit)) {
-      throw Error( "Entity::Entity(): Identifier counter has reached user's limit (%d)."
-                 , _idCounterLimit );
-    }
-    if (_idCounter == std::numeric_limits<unsigned int>::max()) {
-      throw Error( "Entity::Entity(): Identifier counter has reached type limit (%d bits)."
-                 , std::numeric_limits<unsigned int>::digits );
-    }
+    Inherit::_postCreate();
 
-    size_t memorySize = Timer::getMemorySize();
-    if (_memoryLimit and ((memorySize >> 20) > _memoryLimit)) {
-      throw Error( "Entity::Entity(): Program has reached maximum allowed limit of %dMb."
-                 , _memoryLimit );
-    }
-
-    // if (_id % 10000 == 0) {
-    //   cerr << "Reached id:" << _id << " " << Timer::getStringMemory(memorySize) << endl;
-    // }
-    // if (_id == 75060)
-    //   cerr << "Entity::Entity() " << this << endl;
+  //cerr << _getString() << endl;
   }
 
 
@@ -174,17 +90,6 @@ namespace Hurricane {
   }
 
 
-  void  Entity::setId ( unsigned int id )
-  {
-    if (_flags & ForcedIdMode) {
-      _id = id;
-      if (_id > _idCounter) _idCounter = _id;
-    } else {
-      throw Error("Entity::setId(): Attempt to set id while not in forced id mode.");
-    }
-  }
-
-
   void  Entity::_toJson ( JsonWriter* writer ) const
   {
     Inherit::_toJson( writer );
@@ -196,7 +101,6 @@ namespace Hurricane {
   string Entity::_getString() const
   {
     string s = Inherit::_getString();
-    s.insert( 1, "id:"+getString(_id)+" " );
     return s;
   }
 
@@ -205,7 +109,6 @@ namespace Hurricane {
   {
     Record* record = Inherit::_getRecord();
     if (record) {
-      record->add( getSlot("_id", _id) );
       Occurrence occurrence = Occurrence(this);
       if (occurrence.hasProperty())
         record->add( getSlot("Occurrence", occurrence) );

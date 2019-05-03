@@ -602,7 +602,8 @@ namespace Katana {
           cdebug_log(159,0) << "| " << perpandicular << endl;
           fsm.addAction( perpandicular, SegmentAction::SelfInsert );
           DataNegociate* data = perpandicular->getDataNegociate();
-          if (data) data->setState( DataNegociate::Repair );
+          if (data and (data->getState() < DataNegociate::Repair))
+            data->setState( DataNegociate::Repair );
         }
       }
       fsm.doActions();

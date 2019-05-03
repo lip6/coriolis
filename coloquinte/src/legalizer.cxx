@@ -2,6 +2,7 @@
 #include "coloquinte/legalizer.hxx"
 #include "coloquinte/optimization_subproblems.hxx"
 
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <queue>
@@ -272,7 +273,8 @@ std::vector<cell_leg_properties> good_legalize(
             }
             else{
                 // If it is a fixed cell, we use fixed locations
-                throw std::runtime_error("I don't handle fucking macros\n");
+                std::cerr << "cell.nbr_rows:" << cell.nbr_rows << std::endl;
+                throw std::runtime_error("I don't handle fucking macros (good_legalize)\n");
             }
         };
 
@@ -330,7 +332,7 @@ std::vector<cell_leg_properties> good_legalize(
                 }
             }
             else{
-                throw std::runtime_error("I don't handle fucking macros\n");
+                throw std::runtime_error("I don't handle fucking macros (here)\n");
             }
         }
     }

@@ -84,6 +84,8 @@ namespace {
       inline       Library*           getLibrary               ( bool create=false );
       inline       Cell*              getCell                  () const;
       inline       void               setCell                  ( Cell* );
+      inline       CellGauge*         getCellGauge             () const;
+      inline       void               setCellGauge             ( CellGauge* );
       inline       Net*               getNet                   () const;
       inline       void               setNet                   ( Net* );
       static       void               setCoreSite              ( DbU::Unit x, DbU::Unit y );
@@ -103,17 +105,18 @@ namespace {
       inline       int                getNthCut                () const;
       inline       void               incNthCut                ();
       inline       RoutingGauge*      getRoutingGauge          () const;
-      inline       CellGauge*         getCellGauge             () const;
       inline       void               addPinSegment            ( string name, Segment* );
       inline       void               clearPinSegments         ();
     private:                                               
-      static       int                _unitsCbk                ( lefrCallbackType_e, lefiUnits*      , lefiUserData );
-      static       int                _layerCbk                ( lefrCallbackType_e, lefiLayer*      , lefiUserData );
-      static       int                _siteCbk                 ( lefrCallbackType_e, lefiSite*       , lefiUserData );
-      static       int                _obstructionCbk          ( lefrCallbackType_e, lefiObstruction*, lefiUserData );
-      static       int                _macroCbk                ( lefrCallbackType_e, lefiMacro*      , lefiUserData );
-      static       int                _pinCbk                  ( lefrCallbackType_e, lefiPin*        , lefiUserData );
-                   void               _pinPostProcess          ();
+      static       int                _unitsCbk                ( lefrCallbackType_e,       lefiUnits*      , lefiUserData );
+      static       int                _layerCbk                ( lefrCallbackType_e,       lefiLayer*      , lefiUserData );
+      static       int                _siteCbk                 ( lefrCallbackType_e,       lefiSite*       , lefiUserData );
+      static       int                _obstructionCbk          ( lefrCallbackType_e,       lefiObstruction*, lefiUserData );
+      static       int                _macroCbk                ( lefrCallbackType_e,       lefiMacro*      , lefiUserData );
+      static       int                _macroSiteCbk            ( lefrCallbackType_e, const lefiMacroSite*  , lefiUserData );
+      static       int                _pinCbk                  ( lefrCallbackType_e,       lefiPin*        , lefiUserData );
+                   void               _pinStdPostProcess       ();
+                   void               _pinPadPostProcess       ();
     private:                                               
                    string              _file;
                    string              _libraryName;
@@ -141,6 +144,7 @@ namespace {
   inline       Library*          LefParser::getLibrary               ( bool create ) { if (not _library and create) createLibrary(); return _library; }
   inline       Cell*             LefParser::getCell                  () const { return _cell; }
   inline       void              LefParser::setCell                  ( Cell* cell ) { _cell=cell; }
+  inline       void              LefParser::setCellGauge             ( CellGauge* gauge ) { _cellGauge=gauge; }
   inline       Net*              LefParser::getNet                   () const { return _net; }
   inline       void              LefParser::setNet                   ( Net* net ) { _net=net; }
   inline       DbU::Unit         LefParser::fromUnitsMicrons         ( double d ) const { return DbU::fromPhysical(d,DbU::Micro); }
@@ -219,6 +223,7 @@ namespace {
     lefrSetSiteCbk       ( _siteCbk        );
     lefrSetObstructionCbk( _obstructionCbk );
     lefrSetMacroCbk      ( _macroCbk       );
+    lefrSetMacroSiteCbk  ( _macroSiteCbk   );
     lefrSetPinCbk        ( _pinCbk         );
   }
 
@@ -341,26 +346,47 @@ namespace {
   
   int  LefParser::_siteCbk ( lefrCallbackType_e c, lefiSite* site, lefiUserData ud )
   {
-    LefParser* parser = (LefParser*)ud;
+    LefParser*         parser = (LefParser*)ud;
+    AllianceFramework* af     = AllianceFramework::get();
 
     if (site->hasClass()) {
       string siteClass = site->siteClass();
       boost::to_upper( siteClass );
 
-      if (siteClass == "CORE") {
-        CellGauge* gauge = parser->getCellGauge();
+      DbU::Unit lefSiteWidth  = DbU::fromPhysical( site->sizeX(), DbU::Micro );
+      DbU::Unit lefSiteHeight = DbU::fromPhysical( site->sizeY(), DbU::Micro );
 
-        DbU::Unit lefSliceStep   = DbU::fromPhysical( site->sizeX(), DbU::Micro );
-        DbU::Unit lefSliceHeight = DbU::fromPhysical( site->sizeY(), DbU::Micro );
-        DbU::Unit crlSliceStep   = gauge->getSliceStep  ();
-        DbU::Unit crlSliceHeight = gauge->getSliceHeight();
+      if (siteClass == "CORE") {
+        CellGauge* gauge          = parser->getCellGauge();
+        DbU::Unit  crlSliceStep   = gauge->getSliceStep  ();
+        DbU::Unit  crlSliceHeight = gauge->getSliceHeight();
 
         if (not parser->getCoreSiteX()
            or ((parser->getCoreSiteX() != crlSliceStep) and (parser->getCoreSiteY() != crlSliceHeight)) ) {
-          parser->setCoreSite( lefSliceStep, lefSliceHeight );
+          parser->setCoreSite( lefSiteWidth, lefSiteHeight );
 
-          if ( (crlSliceStep == lefSliceStep) and (crlSliceHeight == lefSliceHeight) )
+          if ( (crlSliceStep == lefSiteWidth) and (crlSliceHeight == lefSiteHeight) )
             cerr << "     - Site \"" << site->name() << "\" of class CORE match the Coriolis Cell gauge." << endl;
+        }
+      } else if (siteClass == "PAD") {
+        string     name = string("LEF.") + site->name();
+        CellGauge* cg   = af->getCellGauge( name );
+
+        if (cg) {
+          if ( (cg->getSliceStep() != lefSiteWidth) or (cg->getSliceHeight() != lefSiteHeight)) {
+            cerr << "     - Site \"" << site->name() << "\" of class PAD has mismatched redefinition OVERWRITING." << endl;
+            cerr << "       width: "  << DbU::getValueString(cg->getSliceStep  ()) << " vs. " <<  DbU::getValueString(lefSiteWidth)
+                 <<       " height: " << DbU::getValueString(cg->getSliceHeight()) << " vs. " <<  DbU::getValueString(lefSiteHeight)
+                 << endl;
+          //cg->setPitch      ( lefSiteWidth  );
+            cg->setSliceStep  ( lefSiteWidth  );
+            cg->setSliceHeight( lefSiteHeight );
+          }
+          cg->setFlags( CellGauge::Flags::Pad );
+        } else {
+          cg = CellGauge::create( name.c_str(), "unknown", lefSiteWidth, lefSiteHeight, lefSiteWidth );
+          cg->setFlags( CellGauge::Flags::Pad );
+          af->addCellGauge( cg );
         }
       }
     }
@@ -421,7 +447,10 @@ namespace {
   
   int  LefParser::_macroCbk ( lefrCallbackType_e c, lefiMacro* macro, lefiUserData ud )
   {
-    LefParser* parser = (LefParser*)ud;
+    AllianceFramework* af     = AllianceFramework::get();
+    LefParser*         parser = (LefParser*)ud;
+
+    parser->setCellGauge( NULL );
 
     string     cellName = macro->name();
     DbU::Unit  width    = 0;
@@ -441,15 +470,45 @@ namespace {
       cell->setAbutmentBox( Box( 0, 0, width, height ) );
     }
 
-    parser->_pinPostProcess();
+    bool   isPad     = false;
+    string gaugeName = "Unknown SITE";
+    if (macro->hasSiteName()) {
+      gaugeName = string("LEF.") + macro->siteName();
+      CellGauge* cg = af->getCellGauge( gaugeName );
+      if (cg) {
+        isPad = cg->isPad();
+        if (cg->getSliceHeight() != height) {
+          cerr << Warning( "LefParser::_macroCbk(): Cell height %s do not match CellGauge/SITE \"%s\" of %s."
+                         , DbU::getValueString(height).c_str()
+                         , getString(cg->getName()).c_str()
+                         , DbU::getValueString(cg->getSliceHeight()).c_str()
+                         ) << endl;
+        }
+        parser->setCellGauge( cg );
+      } else {
+        cerr << Warning( "LefParser::_macroCbk(): No CellGauge associated to SITE \"%s\"."
+                       , macro->siteName() ) << endl;
+      }
+    }
+
+    if (not isPad) parser->_pinStdPostProcess();
+    else           parser->_pinPadPostProcess();
     parser->clearPinSegments();
 
     cerr << "     - " << cellName
-         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height) << endl; 
+         << " " << DbU::getValueString(width) << " " << DbU::getValueString(height)
+         << " " << gaugeName; 
+    if (isPad) cerr << " (PAD)";
+    cerr << endl; 
+
     parser->setCell( NULL );
 
     return 0;
   }
+
+  
+  int  LefParser::_macroSiteCbk ( lefrCallbackType_e c, const lefiMacroSite* site, lefiUserData ud )
+  { return 0; }
 
   
   int  LefParser::_pinCbk ( lefrCallbackType_e c, lefiPin* pin, lefiUserData ud )
@@ -519,6 +578,10 @@ namespace {
         //cerr << "       | " << segment << endl;
           continue;
         }
+        if (geoms->itemType(igeom) == lefiGeomClassE) {
+        // Ignore CLASS <site>. Deduced from segments positions.
+          continue;
+        }
 
         string geomTypeName;
         switch ( geoms->itemType(igeom) ) {
@@ -550,13 +613,13 @@ namespace {
   }
 
 
-  void  LefParser::_pinPostProcess ()
+  void  LefParser::_pinStdPostProcess ()
   {
     const Layer*              metal1      = _routingGauge->getLayerGauge( (size_t)0 )->getLayer();
     const RoutingLayerGauge*  gaugeMetal2 = _routingGauge->getLayerGauge( 1 );
           Box                 ab          = _cell->getAbutmentBox();
 
-  //cerr << "       @ _pinPostProcess" << endl;
+  //cerr << "       @ _pinStdPostProcess" << endl;
 
     for ( auto element : _pinSegments ) {
       string            pinName  = element.first;
@@ -612,11 +675,120 @@ namespace {
       }
 
       if (ongrids.empty()) {
-        cerr << Warning( "LefParser::_pinPostProcess(): Pin \"%s\" has no terminal ongrid."
+        cerr << Warning( "LefParser::_pinStdPostProcess(): Pin \"%s\" has no terminal ongrid."
                        , pinName.c_str() ) << endl;
+        for ( Segment* segment : segments ) {
+          NetExternalComponents::setExternal( segment );
+        }
       } else {
         for ( Segment* segment : ongrids ) {
           NetExternalComponents::setExternal( segment );
+        }
+      }
+    }
+  }
+
+
+  void  LefParser::_pinPadPostProcess ()
+  {
+    Box  ab          = getCell()->getAbutmentBox();
+    bool isCornerPad = (_cellGauge) and (_cellGauge->getSliceHeight() == _cellGauge->getSliceStep());
+
+    for ( auto element : _pinSegments ) {
+      string            pinName  = element.first;
+      vector<Segment*>& segments = element.second;
+      vector<Segment*>  ongrids;
+
+      if (segments.empty()) continue;
+      
+      Net* net = segments[0]->getNet();
+
+      for ( size_t i=0 ; i<segments.size() ; ++i ) {
+        Box      bb         = segments[i]->getBoundingBox();
+        Interval hspan      = Interval( bb.getXMin(), bb.getXMax() );
+        Interval vspan      = Interval( bb.getYMin(), bb.getYMax() );
+        Segment* capSegment = NULL;
+
+        if (segments[i]->getLayer()->isBlockage()) continue;
+
+        if (net->isSupply()) {
+          if (hspan.contains(ab.getXMin())) {
+            capSegment = Horizontal::create( net
+                                           , segments[i]->getLayer()
+                                           , vspan.getCenter()
+                                           , vspan.getSize()
+                                           , ab.getXMin()
+                                           , hspan.getVMax()
+                                           );
+          } else if (hspan.contains(ab.getXMax())) {
+            capSegment = Horizontal::create( net
+                                           , segments[i]->getLayer()
+                                           , vspan.getCenter()
+                                           , vspan.getSize()
+                                           , hspan.getVMin()
+                                           , ab.getXMax()
+                                           );
+          }
+        }
+
+        if (not capSegment) {
+          vector<DbU::Unit> distanceToSide;
+          distanceToSide.push_back( std::abs(bb.getXMin() - ab.getXMin()) );  // West.
+          distanceToSide.push_back( std::abs(ab.getXMax() - bb.getXMax()) );  // East.
+          distanceToSide.push_back( std::abs(bb.getYMin() - ab.getYMin()) );  // South.
+          distanceToSide.push_back( std::abs(ab.getYMax() - bb.getYMax()) );  // North.
+
+          size_t closestSide = ((isCornerPad) ? 0 : 2);
+          for ( size_t i=closestSide ; i < distanceToSide.size() ; ++i ) {
+            if (distanceToSide[i] < distanceToSide[closestSide])
+              closestSide = i;
+          }
+
+          switch ( closestSide ) {
+            default:
+            case 0:  // West.
+              capSegment = Horizontal::create( net
+                                             , segments[i]->getLayer()
+                                             , vspan.getCenter()
+                                             , vspan.getSize()
+                                             , ab.getXMin()
+                                             , hspan.getVMax()
+                                             );
+              break;
+            case 1:  // East.
+              capSegment = Horizontal::create( net
+                                             , segments[i]->getLayer()
+                                             , vspan.getCenter()
+                                             , vspan.getSize()
+                                             , hspan.getVMin()
+                                             , ab.getXMax()
+                                             );
+              break;
+            case 2:  // South.
+              capSegment = Vertical::create( net
+                                           , segments[i]->getLayer()
+                                           , hspan.getCenter()
+                                           , hspan.getSize()
+                                           , ab.getYMin()
+                                           , vspan.getVMax()
+                                           );
+              break;
+            case 3:  // North.
+              capSegment = Vertical::create( net
+                                           , segments[i]->getLayer()
+                                           , hspan.getCenter()
+                                           , hspan.getSize()
+                                           , vspan.getVMin()
+                                           , ab.getYMax()
+                                           );
+              break;
+          }
+        }
+
+        if (capSegment) {
+          NetExternalComponents::setExternal( capSegment );
+          segments[i]->destroy();
+          segments[i] = NULL;
         }
       }
     }

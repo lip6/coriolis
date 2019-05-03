@@ -52,7 +52,10 @@ def kwUnicornHook ( menuPath, menuName, menuTip, moduleFile, **kw ):
     if moduleFile.endswith('.pyc') or moduleFile.endswith('.pyo'):
       moduleFile = moduleFile[:-1]
 
-    editor.addToMenu( menuPath, menuName, menuTip, moduleFile )
+    if kw.has_key('beforeAction'):
+      editor.addToMenu( menuPath, menuName, menuTip, moduleFile, kw['beforeAction'] )
+    else:  
+      editor.addToMenu( menuPath, menuName, menuTip, moduleFile )
     return
 
 

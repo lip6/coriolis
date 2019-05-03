@@ -14,18 +14,21 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <unistd.h>
-#include  <algorithm>
-#include  <sstream>
-#include  <boost/bind.hpp>
-#include  <QApplication>
-#include  <QPrinter>
-#include  "vlsisapd/configuration/Configuration.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/CellPrinter.h"
-#include  "hurricane/viewer/PaletteWidget.h"
+#include <unistd.h>
+#include <algorithm>
+#include <sstream>
+#include <boost/bind.hpp>
+#include <QApplication>
+#include <QPrinter>
+#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/BasicLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/ExtensionSlice.h"
+#include "hurricane/Cell.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/CellPrinter.h"
+#include "hurricane/viewer/PaletteWidget.h"
 
 
 namespace Hurricane {
@@ -79,6 +82,7 @@ namespace Hurricane {
     setCentralWidget( _cellWidget );
     _palette->readGraphics ();
 
+    _cellWidget->setPrinter( true );
     _cellWidget->bindToPalette( _palette );
     _cellWidget->refresh();
   }
@@ -88,12 +92,38 @@ namespace Hurricane {
   {
     _screenCellWidget = cellWidget;
 
+    array<string,14> labels = { "fallback"
+                              , "rubber"
+                              , "phantom"
+                              , "boundaries"
+                              , "marker"
+                              , "grid"
+                              , "spot"
+                              , "ghost"
+                              , "text.ruler"
+                              , "text.cell"
+                              , "text.instance"
+                              , "text.components"
+                              , "text.references"
+                              , "undef"
+                              };
+
+    for ( string label : labels )
+      _cellWidget->setLayerVisible( label
+                                  , _screenCellWidget->isLayerVisible(label) );
+
+    for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() )
+      _cellWidget->setLayerVisible( layer->getName()
+                                  , _screenCellWidget->isLayerVisible( layer->getName() ));
+
     shared_ptr<CellWidget::State> clone ( _screenCellWidget->getStateClone() );
-    _cellWidget->setState       ( clone );
-    _cellWidget->setLayerVisible("grid"          , _screenCellWidget->isLayerVisible("grid"          ));
-    _cellWidget->setLayerVisible("text.instance" , _screenCellWidget->isLayerVisible("text.instance" ));
-    _cellWidget->setLayerVisible("text.component", _screenCellWidget->isLayerVisible("text.component"));
-    _cellWidget->setLayerVisible("rubber"        , _screenCellWidget->isLayerVisible("rubber"        ));
+    _cellWidget->setState( clone );
+
+    _cellWidget->copyDrawExtensionGos( _screenCellWidget );
+
+    for ( ExtensionSlice* extension : cellWidget->getCell()->getExtensionSlices() )
+      _cellWidget->setLayerVisible( extension->getName()
+                                  , _screenCellWidget->isLayerVisible( extension->getName() ));
   }
 
 

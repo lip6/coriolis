@@ -8,6 +8,7 @@ endif ( CHECK_DETERMINISM )
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
+                        ${FLUTE_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
                         ${QtX_INCLUDE_DIR}
                         ${PYTHON_INCLUDE_PATH}
@@ -76,6 +77,7 @@ endif ( CHECK_DETERMINISM )
                                      ${CONFIGURATION_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
+                                     ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
                                      ${QtX_LIBRARIES}

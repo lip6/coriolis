@@ -205,12 +205,17 @@ namespace Hurricane {
   { return findChild<QAction*>(_getAbsWidgetPath(relativePath)) != NULL; }
 
 
-  QMenu* CellViewer::_getParentMenu( const QString& absolutePath ) const
+  QAction* CellViewer::getMenuAction( const QString& relativePath ) const
+  { return findChild<QAction*>(_getAbsWidgetPath(relativePath)); }
+
+
+  QAction* CellViewer::_getParentMenu( const QString& absolutePath ) const
   {
-    QString parentPath = absolutePath.section('.',0,-2);
-    QMenu*  parentMenu = findChild<QMenu*>(parentPath);
+    QString  parentPath = absolutePath.section('.',0,-2);
+    QAction* parentMenu = findChild<QAction*>(parentPath);
     if (parentMenu == NULL) {
       if (parentPath != "viewer") {
+        cerr << "parentPath:\"" << parentPath.toStdString() << "\"" << endl;
         cerr << Warning( "CellViewer::_getParentMenu() - Missing parent menu for %s."
                        , absolutePath.toStdString().c_str() ) << endl;
       }
@@ -220,35 +225,45 @@ namespace Hurricane {
   }
 
 
-  QMenu* CellViewer::addMenu ( const QString& path, string text, unsigned int flags )
+  QAction* CellViewer::addMenu ( const QString& path, string text, unsigned int flags )
   {
     QString  absolutePath = _getAbsWidgetPath( path );
-    QMenu*   menu         = findChild<QMenu*>(absolutePath);
+    QAction* actionMenu   = findChild<QAction*>(absolutePath);
 
-    if (menu != NULL) return menu;
+    if (actionMenu != NULL) return actionMenu;
 
+    QMenu* menu = new QMenu ( tr(text.c_str()), this );
+    
     if (flags & TopMenu) {
-      menu = menuBar()->addMenu( tr(text.c_str()) );
-      menu->setObjectName( absolutePath );
+      actionMenu = menuBar()->addMenu( menu );
+      actionMenu->setObjectName( absolutePath );
     } else {
-      QMenu* parentMenu = _getParentMenu( absolutePath );
+      menu->setStyleSheet( "font-family: Bitstream Vera Sans Mono" );
+
+      QAction* parentMenu = _getParentMenu( absolutePath );
       if (parentMenu == NULL) return NULL;
 
-      menu = parentMenu->addMenu( tr(text.c_str()) );
-      menu->setObjectName( absolutePath );
+      actionMenu = parentMenu->menu()->addMenu( menu );
+      actionMenu->setObjectName( absolutePath );
     }
-    return menu;
+    return actionMenu;
   }
 
 
-  bool  CellViewer::addToMenu ( const QString& path )
+  bool  CellViewer::addToMenu ( const QString& path, QString beforePath )
   {
     if (not path.endsWith("====")) return false;
 
-    QMenu* menu = _getParentMenu( _getAbsWidgetPath(path) );
-    if (menu == NULL) return false;
+    QString  absolutePath = _getAbsWidgetPath( path );
+    QAction* menuAction   = _getParentMenu( absolutePath );
+    if (menuAction == NULL) return false;
 
-    menu->addSeparator();
+    QAction* before = getMenuAction( beforePath );
+    QAction* action = new QAction( this );
+    action->setSeparator ( true );
+    action->setObjectName( absolutePath );
+    menuAction->menu()->insertAction( before, action );
+
     return true;
   }
 
@@ -257,12 +272,13 @@ namespace Hurricane {
                                  , string                  text
                                  , string                  textTip
                                  , std::function< void() > callback
-                                 , QIcon                   icon )
+                                 , QIcon                   icon 
+                                 , QString                 beforePath )
   {
     QString  absolutePath = _getAbsWidgetPath( path );
     QAction* action       = findChild<QAction*>(absolutePath);
     if (action == NULL) {
-      QMenu* parentMenu = _getParentMenu( absolutePath );
+      QAction* parentMenu = _getParentMenu( absolutePath );
       if (parentMenu == NULL) return NULL;
 
       action = new QAction( tr(text.c_str()), this );
@@ -270,7 +286,9 @@ namespace Hurricane {
       action->setStatusTip ( tr(textTip.c_str()) );
       action->setVisible   ( true );
       if (not icon.isNull()) action->setIcon( icon );
-      parentMenu->addAction( action );
+
+      QAction* before = getMenuAction( beforePath );
+      parentMenu->menu()->insertAction( before, action );
 
       _actionCallbacks.insert( make_pair(absolutePath,boost::any(callback)) );
       connect( action, SIGNAL(triggered()), this, SLOT(doAction()) );
@@ -282,7 +300,8 @@ namespace Hurricane {
   QAction* CellViewer::addToMenu ( const QString& path
                                  , string         text
                                  , string         textTip
-                                 , string         scriptPath )
+                                 , string         scriptPath
+                                 , QString        beforePath )
   {
     QString  absolutePath = _getAbsWidgetPath( path );
     QAction* action       = findChild<QAction*>(absolutePath);
@@ -292,9 +311,10 @@ namespace Hurricane {
       action->setStatusTip ( tr(textTip.c_str()) );
       action->setVisible   ( true );
 
-      QMenu* parentMenu = _getParentMenu( absolutePath );
+      QAction* parentMenu = _getParentMenu( absolutePath );
       if (parentMenu != NULL) {
-        parentMenu->addAction( action );
+        QAction* before = getMenuAction( beforePath );
+        parentMenu->menu()->insertAction( before, action );
       } else if (absolutePath == "viewer") {
         addAction( action );
       }
@@ -313,6 +333,7 @@ namespace Hurricane {
                                  , QIcon               icon
                                //, QWidget*            receiver
                                //, SlotMethod          slotMethod
+                                 , QString             beforePath
                                  )
   {
     QString  absolutePath = _getAbsWidgetPath( path );
@@ -325,9 +346,10 @@ namespace Hurricane {
       action->setVisible   ( true );
       if (not icon.isNull()) action->setIcon( icon );
 
-      QMenu* parentMenu = _getParentMenu( absolutePath );
+      QAction* parentMenu = _getParentMenu( absolutePath );
       if (parentMenu != NULL) {
-        parentMenu->addAction( action );
+        QAction* before = getMenuAction( beforePath );
+        parentMenu->menu()->insertAction( before, action );
       } else if (absolutePath == "viewer") {
         addAction( action );
       }
@@ -538,13 +560,13 @@ namespace Hurricane {
                       );
     connect( action, SIGNAL(triggered()), this, SLOT(runScriptWidget()) );
 
-    action = addToMenu( "tools.stressScript"
-                      , tr("Python Stress Script")
-                      , tr("Run Python Stress Script (50 times...).")
-                      , QKeySequence()
-                      , QIcon(":/images/python-logo-v3.png")
-                      );
-    connect( action, SIGNAL(triggered()), this, SLOT(runStressScript()) );
+    // action = addToMenu( "tools.stressScript"
+    //                   , tr("Python Stress Script")
+    //                   , tr("Run Python Stress Script (50 times...).")
+    //                   , QKeySequence()
+    //                   , QIcon(":/images/python-logo-v3.png")
+    //                   );
+    // connect( action, SIGNAL(triggered()), this, SLOT(runStressScript()) );
   }
 
 

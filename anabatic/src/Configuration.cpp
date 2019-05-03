@@ -92,11 +92,14 @@ namespace Anabatic {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
     if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
+    if (cg == NULL) 
+      throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge." );
+
     if (rg == NULL) {
       string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
       rg = AllianceFramework::get()->getRoutingGauge( gaugeName );
       if (rg == NULL) 
-        throw Error( "Anabatic::Configuration(): No routing gauge named \"%s\"", gaugeName.c_str() );
+        throw Error( "AnabaticEngine::Configuration(): No routing gauge named \"%s\"", gaugeName.c_str() );
     }
     _cg = cg->getClone();
     _rg = rg->getClone();
@@ -424,7 +427,13 @@ namespace Anabatic {
       cdebug_tabw(112,-1);
       return true;
     }
-    
+
+#define BETTER_FOR_TSMC 0
+#if BETTER_FOR_TSMC
+    rp->setOnBestComponent( RoutingPad::BiggestArea );
+    cdebug_tabw(112,-1);
+    return true;
+#else
     Box                ab             = rp->getCell()->getAbutmentBox();
     const Layer*       metal1         = getLayerGauge( 0 )->getLayer();
     RoutingLayerGauge* gauge          = getLayerGauge( 1 );
@@ -506,6 +515,7 @@ namespace Anabatic {
 
     cdebug_tabw(112,-1);
     return false;
+#endif
   }
   
 

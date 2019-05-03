@@ -107,22 +107,27 @@ extern "C" {
     cdebug_log(20,0) << "PyCellViewer_addToMenu()" << endl;
 
     HTRY
-    METHOD_HEAD("CellViewer.addToMenu()")
-
-    char* path       = NULL;
-    char* text       = NULL;
-    char* textTip    = NULL;
-    char* scriptPath = NULL;
-    if (not PyArg_ParseTuple(args,"s|sss:CellViewer.addToMenu()", &path, &text, &textTip, &scriptPath)) {
-      PyErr_SetString ( ConstructorError, "CellViewer.addToMenu(): Takes one or four arguments exactly." );
-      return NULL;
-    }
-
-    if (text != NULL) {
-      if (cw->addToMenu( path, text, textTip, scriptPath )) Py_RETURN_TRUE;
-    } else {
-      if (cw->addToMenu( path )) Py_RETURN_TRUE;
-    }
+      METHOD_HEAD("CellViewer.addToMenu()")
+  
+      char* nullBefore = "";
+      char* path       = NULL;
+      char* text       = NULL;
+      char* textTip    = NULL;
+      char* scriptPath = NULL;
+      char* before     = NULL;
+      if (not PyArg_ParseTuple( args, "s|ssss:CellViewer.addToMenu()"
+                                    , &path, &text, &textTip, &scriptPath, &before)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.addToMenu(): Takes either one or five arguments." );
+        return NULL;
+      }
+  
+      if (before == NULL) before = nullBefore;
+      
+      if (text != NULL) {
+        if (cw->addToMenu( path, text, textTip, scriptPath, before )) Py_RETURN_TRUE;
+      } else {
+        if (cw->addToMenu( path, before )) Py_RETURN_TRUE;
+      }
     HCATCH
 
     Py_RETURN_FALSE;

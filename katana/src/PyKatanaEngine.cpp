@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/isobar/PyNet.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/viewer/ExceptionWidget.h"
@@ -41,6 +42,8 @@ namespace  Katana {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::ExceptionWidget;
+  using Isobar::__cs;
+  using Isobar::Converter;
   using Isobar::ProxyProperty;
   using Isobar::ProxyError;
   using Isobar::ConstructorError;
@@ -48,6 +51,7 @@ namespace  Katana {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::PyNet;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
   using Isobar::PyCellViewer;
@@ -135,8 +139,8 @@ extern "C" {
       METHOD_HEAD( "KatanaEngine.setViewer()" )
   
       PyObject* pyViewer = NULL;
-      if (not PyArg_ParseTuple(args,"O:EtesianEngine.setViewer()",&pyViewer)) {
-        PyErr_SetString( ConstructorError, "Bad parameters given to EtesianEngine.setViewer()." );
+      if (not PyArg_ParseTuple(args,"O:KatanaEngine.setViewer()",&pyViewer)) {
+        PyErr_SetString( ConstructorError, "Bad parameters given to KatanaEngine.setViewer()." );
         return NULL;
       }
       if (IsPyCellViewer(pyViewer)) {
@@ -162,6 +166,29 @@ extern "C" {
       } else {
         katana->digitalInit();
       }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyKatanaEngine_exclude ( PyKatanaEngine* self, PyObject* args )
+  {
+    cdebug_log(40,0) << "PyKatanaEngine_exclude ()" << endl;
+
+    HTRY
+      METHOD_HEAD( "KatanaEngine.exclude()" )
+
+      PyObject* arg0;
+      __cs.init ("KatanaEngine.exclude");
+
+      if (not PyArg_ParseTuple(args, "O&:KatanaEngine.exclude", Converter, &arg0)) {
+        PyErr_SetString( ConstructorError, "Bad parameters given to KatanaEngine.exclude()." );
+        return NULL;
+      }
+
+      if      (__cs.getObjectIds() == STRING_ARG) { katana->exclude( PyString_AsString(arg0) ); }
+      else if (__cs.getObjectIds() == NET_ARG   ) { katana->exclude( PYNET_O(arg0) ); }
     HCATCH
 
     Py_RETURN_NONE;
@@ -230,7 +257,7 @@ extern "C" {
           failure = ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::layerAssign,katana,flags) );
 
         if (failure) {
-          PyErr_SetString( HurricaneError, "EtesianEngine::place() has thrown an exception (C++)." );
+          PyErr_SetString( HurricaneError, "KatanaEngine::layerAssign() has thrown an exception (C++)." );
           return NULL;
         }
       } else {
@@ -275,7 +302,7 @@ extern "C" {
       if (PyArg_ParseTuple(args,"I:KatanaEngine.runNegociate", &flags)) {
         if (katana->getViewer()) {
           if (ExceptionWidget::catchAllWrapper( std::bind(&KatanaEngine::runNegociate,katana,flags) )) {
-            PyErr_SetString( HurricaneError, "EtesianEngine::runNegociate() has thrown an exception (C++)." );
+            PyErr_SetString( HurricaneError, "KatanaEngine::runNegociate() has thrown an exception (C++)." );
             return NULL;
           }
         } else {
@@ -309,6 +336,8 @@ extern "C" {
                                , "Associate a Viewer to this KatanaEngine." }
     , { "digitalInit"          , (PyCFunction)PyKatanaEngine_digitalInit          , METH_NOARGS
                                , "Setup Katana for digital routing." }
+    , { "exclude"              , (PyCFunction)PyKatanaEngine_exclude              , METH_VARARGS
+                               , "Exclude a net from routing." }
     , { "printConfiguration"   , (PyCFunction)PyKatanaEngine_printConfiguration   , METH_NOARGS
                                , "Display on the console the configuration of Katana." }
     , { "getToolSuccess"       , (PyCFunction)PyKatanaEngine_getToolSuccess       , METH_NOARGS

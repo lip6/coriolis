@@ -56,6 +56,7 @@ namespace Hurricane {
                  , _minimalSpacing(minimalSpacing)
                  , _nextOfTechnologyLayerMap(NULL)
                  , _symbolic(false)
+                 , _blockage(false)
   {
     if ( !_technology )
       throw Error ( "Can't create " + _TName("Layer") + " : null technology" );

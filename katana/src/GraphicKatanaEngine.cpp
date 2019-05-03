@@ -92,28 +92,36 @@ namespace Katana {
       painter.setBrush( Graphics::getColorScale( ColorScale::Fire ).getBrush( density, widget->getDarkening() ) );
       painter.drawRect( pixelBb );
     } else {
-      if ( (pixelBb.width() > 150) or (pixelBb.height() > 150) ) {
-        painter.setPen  ( pen );
-        painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
-        painter.drawRect( pixelBb );
+      int fontScale   =  0;
+      int halfHeight  = 20;
+      int halfWidth   = 80;
+      if (widget->isPrinter()) {
+        fontScale   = -5;
+        halfHeight  =  9;
+        halfWidth   = 39;
+        
+      }
+      
+      painter.setPen  ( pen );
+      painter.setBrush( Graphics::getBrush("Anabatic::GCell",widget->getDarkening()) );
+      painter.drawRect( pixelBb );
 
-        if ( (pixelBb.width() > 300) and (pixelBb.height() > 100) ) {
-          QString text  = QString("id:%1").arg(gcell->getId());
-          QFont   font  = Graphics::getFixedFont( QFont::Bold );
-          painter.setFont(font);
+      if ( (pixelBb.width() > 2*halfWidth) and (pixelBb.height() > 2*halfHeight) ) {
+        QString text  = QString("%1").arg(gcell->getId());
+        QFont   font  = Graphics::getFixedFont( QFont::Normal, false, false, fontScale );
+        painter.setFont(font);
 
-          pen.setWidth( 1 );
-          painter.setPen( pen );
+        pen.setWidth( 1 );
+        painter.setPen( pen );
 
-          painter.save     ();
-          painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
-          painter.drawRect ( QRect( -80, -25, 160, 50 ) );
-          painter.drawText ( QRect( -80, -25, 160, 50 )
-                           , text
-                           , QTextOption(Qt::AlignCenter)
-                           );
-          painter.restore  ();
-        }
+        painter.save     ();
+        painter.translate( widget->dbuToScreenPoint(bb.getCenter().getX(), bb.getCenter().getY()) );
+        painter.drawRect ( QRect( -halfWidth, -halfHeight, 2*halfWidth, 2*halfHeight ) );
+        painter.drawText ( QRect( -halfWidth, -halfHeight, 2*halfWidth, 2*halfHeight )
+                         , text
+                         , QTextOption(Qt::AlignCenter)
+                         );
+        painter.restore  ();
       }
     }
   }
@@ -140,11 +148,16 @@ namespace Katana {
     if (edge) {
       Box      bb        = edge->getBoundingBox();
       uint32_t occupancy = 255;
-      if (edge->getRealOccupancy() < edge->getCapacity())
-        occupancy = (uint32_t)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
+    //if (edge->getRealOccupancy() < edge->getCapacity())
+    //  occupancy = (uint32_t)( 255.0 * ( (float)edge->getRealOccupancy() / (float)edge->getCapacity() ) );
+
+      float edgeOccupancy = edge->getEstimateOccupancy() + (float)edge->getRealOccupancy();
+
+      if ((unsigned int)edgeOccupancy < edge->getCapacity())
+        occupancy = (uint32_t)( 255.0 * (edgeOccupancy / (float)edge->getCapacity()) );
 
       QPainter& painter = widget->getPainter();
-      if (edge->getRealOccupancy() > edge->getCapacity()) {
+      if ((unsigned int)edgeOccupancy > edge->getCapacity()) {
         QColor color ( Qt::cyan );
         painter.setPen( DisplayStyle::darken(color,widget->getDarkening()) );
       }
@@ -160,7 +173,11 @@ namespace Katana {
 
       if (fontHeight > ((edge->isHorizontal()) ? pixelBb.height() : pixelBb.width()) + 4) return; 
 
-      QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
+    //QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
+      QString text  = QString("%1/%2 %3")
+        .arg( edgeOccupancy )
+        .arg( edge->getCapacity() )
+        .arg( edge->getHistoricCost() );
       QColor  color ( (occupancy > 170) ? Qt::black : Qt::white );
       painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));
       painter.setFont(font);
@@ -342,54 +359,60 @@ namespace Katana {
 
     _viewer = viewer;
 
-    if (_viewer->hasMenuAction("placeAndRoute.katana.route")) {
+    if (not _viewer->hasMenuAction("beta"))
+      _viewer->addMenu( "beta", "Beta", CellViewer::TopMenu );
+    if (not _viewer->hasMenuAction("beta.placeAndRoute"))
+      _viewer->addMenu( "beta.placeAndRoute", "P&&R" );
+
+    if (_viewer->hasMenuAction("beta.placeAndRoute.route")) {
       cerr << Warning( "GraphicKatanaEngine::addToMenu() - Katana detailed router already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addMenu  ( "placeAndRoute.katana"           , "Katana" );
-    _viewer->addMenu  ( "placeAndRoute.katana.stepByStep", "&Step by step" );
+    _viewer->addMenu  ( "beta.placeAndRoute.stepByStep", "&Step by step" );
 
-    _viewer->addToMenu( "placeAndRoute.katana.route"
-                      , "Katana - &Route"
+    _viewer->addToMenu( "beta.placeAndRoute.route"
+                      , "&Route  .  .  .  .  . [Katana]"
                       , "Route the design (global & detailed)"
                       , std::bind(&GraphicKatanaEngine::_route,this)
+                      , QIcon()
+                      , "beta.placeAndRoute.stepByStep"
                       );
 
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.========" );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.detailedPreRoute"
-                      , "Katana - Detailed Pre-Route"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.========" );
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.detailedPreRoute"
+                      , "Detailed Pre-Route . [Katana]"
                       , "Run the <b>Katana</b> detailed router on pre-routed nets"
                       , std::bind(&GraphicKatanaEngine::_runNegociatePreRouted,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.globalRoute"
-                      , "Katana - &Global Route"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.globalRoute"
+                      , "&Global Route .  .  . [Katana]"
                       , "Run the <b>Katana</b> global router"
                       , std::bind(&GraphicKatanaEngine::_globalRoute,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.detailedRoute"
-                      , "Katana - &Detailed Route"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.detailedRoute"
+                      , "&Detailed Route  .  . [Katana]"
                       , "Run the <b>Katana</b> detailed router"
                       , std::bind(&GraphicKatanaEngine::_detailRoute,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.finalize"
-                      , "Katana - &Finalize Routing"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.finalize"
+                      , "&Finalize Routing   . [Katana]"
                       , "Closing Routing"
                       , std::bind(&GraphicKatanaEngine::_finalize,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.dumpMeasures"
-                      , "Katana - Dump &Measures"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.dumpMeasures"
+                      , "Dump &Measures   .  . [Katana]"
                       , "Dumping Measurements on the disk"
                       , std::bind(&GraphicKatanaEngine::_dumpMeasures,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.save"
-                      , "Katana - &Save Design"
+#if NO_NEED_OF_IT_NOW
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.save"
+                      , "&Save Design"
                       , "Save routed design (temporary hack)"
                       , std::bind(&GraphicKatanaEngine::_save,this)
                       );
-#if NO_NEED_OF_IT_NOW
-    _viewer->addToMenu( "placeAndRoute.katana.stepByStep.runTest"
-                      , "Katana - Run &Test"
+    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.runTest"
+                      , "Run &Test"
                       , "Run Test Program (symmetric routing of gmChamla)"
                       , std::bind(&GraphicKatanaEngine::_runTest,this)
                       );

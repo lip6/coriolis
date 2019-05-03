@@ -37,7 +37,7 @@ class Builder:
         self._clang            = False
         self._noSystemBoost    = False
         self._macports         = False
-        self._devtoolset2      = False
+        self._devtoolset       = 0
         self._qt5              = False
         self._openmp           = False
         self._enableShared     = "ON"
@@ -66,8 +66,8 @@ class Builder:
         elif attribute == "macports":
             self._macports = value
             if value: self._noSystemBoost = True
-        elif attribute == "devtoolset2":
-            self._devtoolset2 = value
+        elif attribute == "devtoolset":
+            self._devtoolset = value
             if value: self._noSystemBoost = True
         elif attribute == "qt5":              self._qt5              = value
         elif attribute == "openmp":           self._openmp           = value
@@ -132,14 +132,15 @@ class Builder:
 
 
     def _execute ( self, command, error ):
-        if self._devtoolset2 == True:
-            print 'Using devtoolset-2 (scl enable devtoolset-2 ...)'
+        if self._devtoolset:
+            print 'Using devtoolset-%(v)d (scl enable devtoolset-%(v)d ...)' % {'v':self._devtoolset}
             commandAsString = ''
             for i in range(len(command)):
                 if i: commandAsString += ' '
                 if ' ' in command[i]: commandAsString += '"'+command[i]+'"'
                 else:                 commandAsString += command[i]
-            command = [ 'scl', 'enable', 'devtoolset-2', commandAsString ]
+            command = [ 'scl', 'enable', 'devtoolset-%d' % self._devtoolset
+                      , commandAsString ]
 
        #print command
         sys.stdout.flush ()
@@ -174,7 +175,10 @@ class Builder:
 
         command = [ 'cmake' ]
         if self._ninja:         command += [ "-G", "Ninja" ]
-        if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE" ]
+        if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE"
+                                           , "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost157"
+                                           , "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib/boost157"
+                                           ]
         if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
 
@@ -182,7 +186,7 @@ class Builder:
                   #, "-D", "BUILD_SHARED_LIBS:STRING=%s"    % self.enableShared
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s" % self.installDir
                    , "-D", "CMAKE_INSTALL_DIR:STRING=%s"    % cmakeInstallDir
-                  #, "-D", "CMAKE_MODULE_PATH:STRING=%s" % cmakeModules
+                  #, "-D", "CMAKE_MODULE_PATH:STRING=%s"    % cmakeModules
                    , toolSourceDir ]
             
         if not os.path.isdir(toolBuildDir):
@@ -206,6 +210,8 @@ class Builder:
         if self._checkDeterminism == 'ON': command += [ "-D", "CHECK_DETERMINISM:STRING=ON" ]
         command += [ toolSourceDir ]
 
+        print self._noSystemBoost
+        print command
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
@@ -295,9 +301,9 @@ class Builder:
         if self._clang:
             self._environment[ 'CC'  ] = '/usr/bin/clang'
             self._environment[ 'CXX' ] = '/usr/bin/clang++'
-        if self._devtoolset2:
-            self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/rh/devtoolset-2/root/usr/include'
-            self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/rh/devtoolset-2/root/usr/lib'
+        if self._devtoolset:
+            self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/rh/devtoolset-%d/root/usr/include' % self._devtoolset
+            self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/rh/devtoolset-%d/root/usr/lib'     % self._devtoolset
         if self._macports:
             self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/local/include'
             self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/local/lib'
@@ -430,8 +436,8 @@ class Builder:
                   , "--define", "_tmppath                %s" % self.tmppathDir
                  #, "--define", "_enable_debug_packages  0"
                   , "--with", "binarytar" ]
-        if self._devtoolset2 == True:
-            command += [ "--define", "scl devtoolset-2" ]
+        if self._devtoolset:
+            command += [ "--define", "scl devtoolset-%d"%self._devtoolset ]
         command += [ "-ba", "--clean", rpmSpecFile ]
 
         self._execute ( command, "Rebuild rpm packages" )

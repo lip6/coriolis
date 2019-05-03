@@ -32,6 +32,10 @@ namespace Anabatic {
       virtual void          doRp_AutoContacts  ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags );
       virtual AutoContact*  doRp_Access        ( GCell*, Component*, uint64_t  flags );
     private:                                     
+      virtual bool          _do_1G_1PinM2      ();
+      virtual bool          _do_xG_1PinM2      ();
+      virtual bool          _do_1G_1PinM3      ();
+      virtual bool          _do_xG_1PinM3      ();
       virtual bool          _do_1G_1M1         ();
       virtual bool          _do_1G_xM1         ();
       virtual bool          _do_2G_1M1         ();

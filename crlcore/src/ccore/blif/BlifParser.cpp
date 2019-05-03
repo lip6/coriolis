@@ -667,7 +667,7 @@ namespace CRL {
   { if (library) _libraries.push_back( library ); }
 
 
-  Cell* Blif::load ( string cellPath )
+  Cell* Blif::load ( string cellPath, bool enforceVhdl )
   {
     using namespace std;
 
@@ -824,7 +824,7 @@ namespace CRL {
 
     Model::orderModels();
     Model::connectModels();
-    Model::toVhdlModels();
+    if (enforceVhdl) Model::toVhdlModels();
     Model::clearStatic();
     UpdateSession::close();
 

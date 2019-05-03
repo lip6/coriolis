@@ -638,7 +638,9 @@ namespace {
   //                          - plane->getLayerGauge()->getHalfWireWidth()
   //                          - DbU::fromLambda(0.1);
     DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
-    DbU::Unit     extension = layer->getExtentionCap();
+    DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
+  //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getHalfPitch() + getHalfWireWidth();
+  //DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
   //unsigned int  type      = plane->getLayerGauge()->getType();
     const Box&    coronaBb  = plane->getKatanaEngine()->getChipTools().getCoronaBb();

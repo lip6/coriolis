@@ -38,12 +38,13 @@ build: FORCE
 	esac;                                                    \
 	case "$${X_SCLS}" in                                     \
 	  *"devtoolset"*)                                        \
-	     cmakeArgs="$${cmakeArgs} -D Boost_NO_SYSTEM_PATHS:STRING=TRUE"; \
-	     BOOST_INCLUDEDIR="/opt/rh/devtoolset-2/root/usr/include";       \
-	     BOOST_LIBRARYDIR="/opt/rh/devtoolset-2/root/usr/lib";           \
-	     export BOOST_INCLUDEDIR BOOST_LIBRARYDIR;                       \
-	     echo "** Using $${X_SCLS}.";                                    \
-	     ;;                                                              \
+         version="`echo $${X_SCLS} | sed 's,devtoolset-,,'`";                \
+	     cmakeArgs="$${cmakeArgs} -D Boost_NO_SYSTEM_PATHS:STRING=TRUE";     \
+	     BOOST_INCLUDEDIR="/opt/rh/devtoolset-$${version}/root/usr/include"; \
+	     BOOST_LIBRARYDIR="/opt/rh/devtoolset-$${version}/root/usr/lib";     \
+	     export BOOST_INCLUDEDIR BOOST_LIBRARYDIR;                           \
+	     echo "** Using $${X_SCLS}.";                                        \
+	     ;;                                                                  \
 	esac;                                                    \
 	for tool in $(tools); do                                 \
 	  echo "** Building tool $${tool}";                      \

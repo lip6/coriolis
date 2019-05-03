@@ -137,7 +137,7 @@ namespace {
     if (not _data) return false;
     if (not _data->isValid()) return _data->isValid();
 
-    DebugSession::open( _data->getNet(), 144, 146 );
+    DebugSession::open( _data->getNet(), 145, 146 );
 
   // Temporary.
   //_data->setSymAxis( _katana->getCell()->getAbutmentBox().getCenter().getX() );

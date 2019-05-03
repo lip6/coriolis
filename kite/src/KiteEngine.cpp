@@ -593,6 +593,16 @@ namespace Kite {
         if (istate.second->isMixedPreRoute())
           preRouteds.insert( make_pair(istate.first, istate.second->getNet()) );
       }
+    //for ( Net* net : getCell()->getNets() ) {
+    //  if (net->getName() == "ialu.aux28") continue;
+    //  if (net->getName() == "iram.not_aux109") continue;
+    //  if (net->getName() == "s(0)") continue;
+    //  if (net->getName() == "s(3)") continue;
+    //  if (net->getName() == "r(1)") continue;
+    //  if (net->getName() == "r(2)") continue;
+        
+    //  preRouteds.insert( make_pair(net->getName(), net) );
+    //}
       _knik->run( preRouteds );
     }
 

@@ -5,6 +5,7 @@
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
+                        ${FLUTE_INCLUDE_DIR}
                         ${WtX_INCLUDE_DIR}
                         ${Boost_INCLUDE_DIRS}
                         ${PYTHON_INCLUDE_PATH}
@@ -95,6 +96,7 @@
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
                                      ${UTILITIES_LIBRARY}
+                                     ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
                                      ${QtX_LIBRARIES}

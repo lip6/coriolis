@@ -15,6 +15,7 @@
 
 
 #include <climits>
+#include "flute.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Property.h"
 #include "hurricane/NetRoutingProperty.h"
@@ -40,7 +41,6 @@
 #include "knik/RoutingGrid.h"
 #include "knik/NetExtension.h"
 #include "knik/KnikEngine.h"
-#include "knik/flute.h"
 
 
 #define MAX_RUNTIME 86400
@@ -134,7 +134,7 @@ void KnikEngine::_postCreate()
     Inherit::_postCreate();
 
     // For Flute : readLUT to be able to use POWV9.dat & POST9.dat
-    readLUT();
+    Flute::readLUT( AllianceFramework::get()->getEnvironment()->getCORIOLIS_TOP() );
 
     return;
 }

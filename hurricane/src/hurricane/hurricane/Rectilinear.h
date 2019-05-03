@@ -48,33 +48,38 @@ namespace Hurricane {
       typedef Component Super;
   
     public:
-      static  Rectilinear* create            ( Net*, const Layer*, const vector<Point>& );
-    // Accessors.
-      virtual bool         isNonRectangle    () const;
-      virtual DbU::Unit    getX              () const;
-      virtual DbU::Unit    getY              () const;
-      virtual Box          getBoundingBox    () const;
-      virtual Box          getBoundingBox    ( const BasicLayer* ) const;
-      virtual size_t       getPointsSize     () const;
-      virtual Point        getPoint          ( size_t i ) const;
-      virtual const Layer* getLayer          () const;
-      inline  Points       getContour        () const;
+      static        Rectilinear*   create            ( Net*, const Layer*, const vector<Point>& );
+    // Accessors.                  
+      virtual       bool           isNonRectangle    () const;
+      virtual       DbU::Unit      getX              () const;
+      virtual       DbU::Unit      getY              () const;
+      virtual       Box            getBoundingBox    () const;
+      virtual       Box            getBoundingBox    ( const BasicLayer* ) const;
+      virtual       size_t         getPointsSize     () const;
+      virtual       Point          getPoint          ( size_t i ) const;
+      virtual const Layer*         getLayer          () const;
+      inline        Points         getContour        () const;
+      inline  const vector<Point>& getPoints         () const;
     // Mutators.
-              void         setLayer          ( const Layer* );
-      virtual void         translate         ( const DbU::Unit& dx, const DbU::Unit& dy );
-              void         setPoints         ( const vector<Point>& );
-    // Hurricane management.
-      virtual void         _toJson           ( JsonWriter* ) const;
-      static  JsonObject*  getJsonObject     ( unsigned long flags );
-      virtual string       _getTypeName      () const;
-      virtual string       _getString        () const;
-      virtual Record*      _getRecord        () const;
+                    void           setLayer          ( const Layer* );
+      virtual       void           translate         ( const DbU::Unit& dx, const DbU::Unit& dy );
+                    void           setPoints         ( const vector<Point>& );
+    // Hurricane management.       
+      virtual       void           _toJson           ( JsonWriter* ) const;
+      static        JsonObject*    getJsonObject     ( unsigned long flags );
+      virtual       string         _getTypeName      () const;
+      virtual       string         _getString        () const;
+      virtual       Record*        _getRecord        () const;
     protected:                               
-                           Rectilinear       ( Net*, const Layer*, const vector<Point>& );
+                                   Rectilinear       ( Net*, const Layer*, const vector<Point>& );
     private:
       const Layer*         _layer;
             vector<Point>  _points;
   };
+
+  
+  inline        Points         Rectilinear::getContour () const { return new VectorCollection<Point>(_points); }
+  inline  const vector<Point>& Rectilinear::getPoints  () const { return _points; }
 
 
 // -------------------------------------------------------------------

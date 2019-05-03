@@ -162,6 +162,7 @@ namespace Hurricane {
     // Painter control & Hurricane objects drawing primitives.   
       inline  void                      setEnableRedrawInterrupt   ( bool );
       inline  void                      addDrawExtensionGo         ( const Name&, InitExtensionGo_t*, DrawExtensionGo_t* );
+      inline  void                      copyDrawExtensionGos       ( const CellWidget* );
       inline  QPainter&                 getPainter                 ( size_t plane=PlaneId::Working );
       inline  const DisplayStyle::HSVr& getDarkening               () const;
       inline  void                      copyToPrinter              ( int xpaper, int ypaper, QPrinter*, PainterCb_t& );
@@ -176,6 +177,8 @@ namespace Hurricane {
               bool                      isDrawableExtension        ( const Name& );
               bool                      isSelectable               ( const Name& ) const;
               bool                      isSelectable               ( const Layer* ) const;
+              bool                      isPrinter                  () const;
+              void                      setPrinter                 ( bool );
       inline  void                      setDarkening               ( const DisplayStyle::HSVr& );
       inline  void                      setPen                     ( const QPen& , size_t plane=PlaneId::Working );
               void                      drawBox                    ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
@@ -452,6 +455,7 @@ namespace Hurricane {
                                                        , InitExtensionGo_t*
                                                        , DrawExtensionGo_t*
                                                        );
+          inline  void          copyDrawExtensionGos   ( const DrawingQuery& );
                   void          setDrawExtensionGo     ( const Name& );
           virtual bool          hasMasterCellCallback  () const;
           virtual bool          hasGoCallback          () const;
@@ -647,6 +651,7 @@ namespace Hurricane {
               QPoint                     _mousePosition;
               Spot                       _spot;
               shared_ptr<State>          _state;
+              bool                       _isPrinter;
               bool                       _cellChanged;
               bool                       _selectionHasChanged;
               int                        _delaySelectionChanged;
@@ -704,6 +709,10 @@ namespace Hurricane {
                                                             , DrawExtensionGo_t* drawExtensionGo
                                                             )
   { _drawExtensionGos[name] = make_pair(initExtensionGo,drawExtensionGo); }
+
+
+  inline void  CellWidget::DrawingQuery::copyDrawExtensionGos ( const CellWidget::DrawingQuery& other )
+  { _drawExtensionGos = other._drawExtensionGos; }
 
 
   inline void  CellWidget::DrawingQuery::resetGoCount ()
@@ -1145,7 +1154,11 @@ namespace Hurricane {
                                               , InitExtensionGo_t* initExtensionGo
                                               , DrawExtensionGo_t* drawExtensionGo
                                               )
-  { _drawingQuery.addDrawExtensionGo ( name, initExtensionGo, drawExtensionGo ); }
+  { _drawingQuery.addDrawExtensionGo( name, initExtensionGo, drawExtensionGo ); }
+  
+
+  inline void  CellWidget::copyDrawExtensionGos ( const CellWidget* other )
+  { _drawingQuery.copyDrawExtensionGos( other->_drawingQuery ); }
 
 
   inline void  CellWidget::setStartLevel ( int level )
@@ -1402,6 +1415,14 @@ namespace Hurricane {
 
   inline void  CellWidget::setDarkening ( const DisplayStyle::HSVr& darkening )
   { _darkening = darkening; }
+
+
+  inline bool  CellWidget::isPrinter () const
+  { return _isPrinter; }
+
+
+  inline void  CellWidget::setPrinter ( bool state )
+  { _isPrinter = state; }
 
 
   inline  bool  CellWidget::timeout ( const char* fname, const Timer& timer, double timeout, bool& timedout ) const

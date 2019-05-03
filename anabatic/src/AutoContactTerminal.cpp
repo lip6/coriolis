@@ -347,7 +347,7 @@ namespace Anabatic {
 
   void  AutoContactTerminal::cacheAttach ( AutoSegment* segment )
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::cacheAttach() " << this << endl;
 
@@ -379,7 +379,7 @@ namespace Anabatic {
 
   void  AutoContactTerminal::updateCache ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
 
@@ -438,7 +438,7 @@ namespace Anabatic {
 
   void  AutoContactTerminal::updateGeometry ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
 
@@ -522,7 +522,7 @@ namespace Anabatic {
 
   void  AutoContactTerminal::updateTopology ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
 
@@ -550,8 +550,8 @@ namespace Anabatic {
         cdebug_log(145,0) << "Update seg: " << _segment << endl;
         delta = abssub( anchorDepth, rg->getLayerDepth( _segment->getLayer() ) );
       }
-      else if (delta == 0) setLayer( rg->getRoutingLayer(anchorDepth) );
-      else if (delta == 1) setLayer( rg->getContactLayer(std::min(anchorDepth,segmentDepth)) );
+      else if (delta == 0) setLayerAndWidth( delta, anchorDepth );
+      else if (delta == 1) setLayerAndWidth( delta, std::min(anchorDepth,segmentDepth) );
     }
     _segment->invalidate( this );
 

@@ -93,9 +93,11 @@ namespace Hurricane {
               bool              contains                     ( const Layer* layer ) const;
               bool              intersect                    ( const Layer* layer ) const;
       inline  bool              isSymbolic                   () const;
+      inline  bool              isBlockage                   () const;
     // Updators
               void              setName                      ( const Name& name );
       inline  void              setSymbolic                  ( bool );
+      inline  void              setBlockage                  ( bool );
               void              setMinimalSize               ( const DbU::Unit& minimalSize );
               void              setMinimalSpacing            ( const DbU::Unit& minimalSpacing );
       virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit, uint32_t flags );
@@ -122,6 +124,7 @@ namespace Hurricane {
               DbU::Unit         _minimalSpacing;
               Layer*            _nextOfTechnologyLayerMap;
               bool              _symbolic;
+              bool              _blockage;
 
     protected:
     // Internal: Constructors & Destructors.
@@ -143,6 +146,7 @@ namespace Hurricane {
 
 // Inline Functions.
   inline  bool                Layer::isSymbolic                   () const { return _symbolic; }
+  inline  bool                Layer::isBlockage                   () const { return _blockage; }
   inline  bool                Layer::above                        ( const Layer* layer ) const { return _mask > layer->getMask(); }
   inline  bool                Layer::below                        ( const Layer* layer ) const { return _mask < layer->getMask(); }
   inline  Technology*         Layer::getTechnology                () const { return _technology; }
@@ -152,6 +156,7 @@ namespace Hurricane {
   inline  const DbU::Unit&    Layer::getMinimalSize               () const { return _minimalSize; }
   inline  const DbU::Unit&    Layer::getMinimalSpacing            () const { return _minimalSpacing; }
   inline  void                Layer::setSymbolic                  ( bool state ) { _symbolic = state; }
+  inline  void                Layer::setBlockage                  ( bool state ) { _blockage = state; }
   inline  Layer*              Layer::_getNextOfTechnologyLayerMap () const { return _nextOfTechnologyLayerMap; }
   inline  void                Layer::_setMask                     ( const Mask& mask ) { _mask = mask; }
   inline  void                Layer::_setExtractMask              ( const Mask& extractMask ) { _extractMask = extractMask; }

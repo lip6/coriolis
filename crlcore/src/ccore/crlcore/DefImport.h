@@ -8,7 +8,7 @@
 // |        C a d e n c e   D E F   I m p o r t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./crlcore/DefImport.h"                    |
 // +-----------------------------------------------------------------+
@@ -31,7 +31,8 @@ namespace CRL {
     public:
       enum Flags { FitAbOnCells=0x1 };
     public:
-      static Hurricane::Cell* load ( std::string design, unsigned int flags );
+      static void             reset ();
+      static Hurricane::Cell* load  ( std::string design, unsigned int flags );
   };
 
 

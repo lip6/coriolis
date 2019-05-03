@@ -203,6 +203,9 @@ namespace Anabatic {
       virtual bool                          _do_2G                 ();
       virtual bool                          _do_xG_1Pad            ();
       virtual bool                          _do_1G_1PinM2          ();
+      virtual bool                          _do_xG_1PinM2          ();
+      virtual bool                          _do_1G_1PinM3          ();
+      virtual bool                          _do_xG_1PinM3          ();
       virtual bool                          _do_1G_1M1             ();
       virtual bool                          _do_2G_1M1             ();
       virtual bool                          _do_1G_xM1             ();
@@ -234,7 +237,7 @@ namespace Anabatic {
          + ((pads) << (GlobalBSize+Metal1BSize+Metal2BSize+Metal3BSize)) \
          + ((pins) << (GlobalBSize+Metal1BSize+Metal2BSize+Metal3BSize+PadsBSize))
 
-    //                     Connexity Name                    | G|M1|M2|M2|Pad|Pin|
+    //                     Connexity Name                    | G|M1|M2|M3|Pad|Pin|
       enum ConnexityFlag { Conn_0G          = CONNEXITY_VALUE( 0, 0, 0, 0, 0 , 0 )
                          , Conn_2G          = CONNEXITY_VALUE( 2, 0, 0, 0, 0 , 0 )
                          , Conn_3G          = CONNEXITY_VALUE( 3, 0, 0, 0, 0 , 0 )
@@ -257,7 +260,7 @@ namespace Anabatic {
                          , Conn_1G_4M3      = CONNEXITY_VALUE( 1, 0, 0, 4, 0 , 0 )
                          , Conn_1G_1M1_1M2  = CONNEXITY_VALUE( 1, 1, 1, 0, 0 , 0 )
                          , Conn_1G_1M1_1M3  = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 0 )
-                         // Connexity Name                   | G|M1|M2|M2|Pad|Pin|
+                         // Connexity Name                   | G|M1|M2|M3|Pad|Pin|
                          , Conn_2G_1M1      = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 0 )
                          , Conn_2G_2M1      = CONNEXITY_VALUE( 2, 2, 0, 0, 0 , 0 )
                          , Conn_2G_3M1      = CONNEXITY_VALUE( 2, 3, 0, 0, 0 , 0 )
@@ -272,7 +275,7 @@ namespace Anabatic {
                          , Conn_2G_3M3      = CONNEXITY_VALUE( 2, 0, 0, 3, 0 , 0 )
                          , Conn_2G_4M3      = CONNEXITY_VALUE( 2, 0, 0, 4, 0 , 0 )
                          , Conn_2G_1M1_1M2  = CONNEXITY_VALUE( 2, 1, 1, 0, 0 , 0 )
-                         // Connexity Name                   | G|M1|M2|M2|Pad|Pin|
+                         // Connexity Name                   | G|M1|M2|M3|Pad|Pin|
                          , Conn_3G_1M1      = CONNEXITY_VALUE( 3, 1, 0, 0, 0 , 0 )
                          , Conn_3G_2M1      = CONNEXITY_VALUE( 3, 2, 0, 0, 0 , 0 )
                          , Conn_3G_3M1      = CONNEXITY_VALUE( 3, 3, 0, 0, 0 , 0 )
@@ -283,7 +286,7 @@ namespace Anabatic {
                          , Conn_3G_2M3      = CONNEXITY_VALUE( 3, 0, 0, 2, 0 , 0 )
                          , Conn_3G_3M3      = CONNEXITY_VALUE( 3, 0, 0, 3, 0 , 0 )
                          , Conn_3G_4M3      = CONNEXITY_VALUE( 3, 0, 0, 4, 0 , 0 )
-                         // Connexity Name                   | G|M1|M2|M2|Pad|Pin|
+                         // Connexity Name                   | G|M1|M2|M3|Pad|Pin|
                          , Conn_4G_1M1      = CONNEXITY_VALUE( 4, 1, 0, 0, 0 , 0 )
                          , Conn_4G_2M1      = CONNEXITY_VALUE( 4, 2, 0, 0, 0 , 0 )
                          , Conn_4G_3M1      = CONNEXITY_VALUE( 4, 3, 0, 0, 0 , 0 )
@@ -295,6 +298,10 @@ namespace Anabatic {
                          , Conn_3G_1Pad     = CONNEXITY_VALUE( 3, 0, 0, 0, 1 , 0 )
                          , Conn_1G_1PinM2   = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
                          , Conn_2G_1PinM2   = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
+                         , Conn_3G_1PinM2   = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 1 )
+                         , Conn_1G_1PinM3   = CONNEXITY_VALUE( 1, 0, 0, 1, 0 , 1 )
+                         , Conn_2G_1PinM3   = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 1 )
+                         , Conn_3G_1PinM3   = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 1 )
                          };
 
 #undef CONNEXITY_VALUE

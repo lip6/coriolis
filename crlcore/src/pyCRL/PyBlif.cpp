@@ -87,10 +87,13 @@ extern "C" {
     Cell* cell = NULL;
     
     HTRY
-      char* benchName = NULL;
+      char*     benchName     = NULL;
+      PyObject* pyEnforceVhdl = NULL;
       
-      if (PyArg_ParseTuple( args, "s:Blif.load", &benchName )) {
-        cell = Blif::load( benchName );
+      if (PyArg_ParseTuple( args, "s|O:Blif.load", &benchName, &pyEnforceVhdl )) {
+        bool enforceVhdl = true;
+        if (pyEnforceVhdl and (PyObject_IsTrue(pyEnforceVhdl) == 0)) enforceVhdl = false;
+        cell = Blif::load( benchName, enforceVhdl );
       } else {
         PyErr_SetString ( ConstructorError, "Blif.load(): Bad type or bad number of parameters." );
         return NULL;

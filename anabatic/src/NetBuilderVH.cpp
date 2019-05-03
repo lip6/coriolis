@@ -32,6 +32,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/RoutingPads.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -55,6 +56,7 @@ namespace Anabatic {
   using Hurricane::Transformation;
   using Hurricane::Warning;
   using Hurricane::Error;
+  using Hurricane::Pin;
 
   
   NetBuilderVH::NetBuilderVH ()
@@ -253,13 +255,151 @@ namespace Anabatic {
   }
 
 
+  bool  NetBuilderVH::_do_1G_1PinM2 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_1G_1PinM2() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    Pin* pin = dynamic_cast<Pin*>( getRoutingPads()[0]->getOccurrence().getEntity() );
+    if (   (pin->getAccessDirection() != Pin::AccessDirection::SOUTH)
+       and (pin->getAccessDirection() != Pin::AccessDirection::NORTH) ) {
+      cerr << Error( "%s::do_1G_1PinM2(): %s *must* be north or south."
+                   , getTypeName().c_str()
+                   , getString(pin).c_str() ) << endl;
+    }
+
+    uint64_t  flags = NoFlags;
+    if      (east()) { flags |= HAccess|VSmall; }
+    else if (west()) { flags |= HAccess|VSmall; }
+    
+    setBothCornerContacts( doRp_Access(getGCell(),getRoutingPads()[0],flags) );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderVH::_do_xG_1PinM2 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_xG_1PinM2() [Managed Configuration] " << getTopology() << endl;
+
+    Pin* pin = dynamic_cast<Pin*>( getRoutingPads()[0]->getOccurrence().getEntity() );
+    if (   (pin->getAccessDirection() != Pin::AccessDirection::SOUTH)
+       and (pin->getAccessDirection() != Pin::AccessDirection::NORTH) ) {
+      cerr << Error( "%s::do_xG_1PinM2(): %s *must* be north or south."
+                   , getTypeName().c_str()
+                   , getString(pin).c_str() ) << endl;
+    }
+
+    RoutingPad*  rp         = getRoutingPads()[0];
+    AutoContact* pinContact = NULL;
+    doRp_AutoContacts( getGCell(), rp, pinContact, pinContact, HSmall|VSmall );
+
+    if (not north() and not south()) {
+      AutoContact* subContact1 = AutoContactHTee::create( getGCell(), rp->getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( pinContact, subContact1, Flags::Vertical );
+      setBothCornerContacts( subContact1 );
+    } else {
+      AutoContact* subContact1 = AutoContactVTee::create( getGCell(), rp->getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( pinContact, subContact1, Flags::Vertical );
+      
+      if (east() and west()) {
+        AutoContact* subContact2 = AutoContactVTee::create( getGCell(), rp->getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( subContact1, subContact2, Flags::Vertical );
+      
+        setSouthWestContact( (south()) ? subContact1 : subContact2 );
+        setNorthEastContact( (south()) ? subContact2 : subContact1 );
+      } else
+        setBothCornerContacts( subContact1 );
+    }
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderVH::_do_1G_1PinM3 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_1G_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    Pin* pin = dynamic_cast<Pin*>( getRoutingPads()[0]->getOccurrence().getEntity() );
+    if (   (pin->getAccessDirection() != Pin::AccessDirection::EAST)
+       and (pin->getAccessDirection() != Pin::AccessDirection::WEST) ) {
+      cerr << Error( "%s::do_1G_1PinM2(): %s *must* be east or west."
+                   , getTypeName().c_str()
+                   , getString(pin).c_str() ) << endl;
+    }
+
+    AutoContact* pinContact = NULL;
+    doRp_AutoContacts( getGCell(), getRoutingPads()[0], pinContact, pinContact, HSmall|VSmall );
+
+    if (east() or west()) {
+      AutoContact* subContact1 = AutoContactTurn::create( getGCell(), getRoutingPads()[0]->getNet(), Session::getContactLayer(1) );
+      AutoContact* subContact2 = AutoContactTurn::create( getGCell(), getRoutingPads()[0]->getNet(), Session::getContactLayer(1) );
+
+      AutoSegment::create( pinContact , subContact1, Flags::Horizontal  );
+      AutoSegment::create( subContact1, subContact2, Flags::Vertical );
+      pinContact = subContact2;
+    } else {
+      AutoContact* subContact1 = NULL;
+      subContact1 = AutoContactTurn::create( getGCell(), getRoutingPads()[0]->getNet(), Session::getContactLayer(1) );
+
+      AutoSegment::create( pinContact, subContact1, Flags::Horizontal );
+      pinContact = subContact1;
+    }
+
+    setBothCornerContacts( pinContact );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderVH::_do_xG_1PinM3 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_xG_1PinM3() [Managed Configuration] " << getTopology() << endl;
+
+    RoutingPad* rp  = getRoutingPads()[0];
+    Pin*        pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
+    if (   (pin->getAccessDirection() != Pin::AccessDirection::EAST)
+       and (pin->getAccessDirection() != Pin::AccessDirection::WEST) ) {
+      cerr << Error( "%s::do_xG_1PinM3(): %s *must* be east or west."
+                   , getTypeName().c_str()
+                   , getString(pin).c_str() ) << endl;
+    }
+
+    AutoContact* pinContact = NULL;
+    doRp_AutoContacts( getGCell(), rp, pinContact, pinContact, HSmall|VSmall );
+
+    if (not east() and not west()) {
+      AutoContact* subContact1 = AutoContactVTee::create( getGCell(), rp->getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( pinContact, subContact1, Flags::Horizontal );
+      setBothCornerContacts( subContact1 );
+    } else {
+      AutoContact* subContact1 = AutoContactHTee::create( getGCell(), rp->getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( pinContact, subContact1, Flags::Horizontal );
+      
+      if (north() and south()) {
+        AutoContact* subContact2 = AutoContactHTee::create( getGCell(), rp->getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( subContact1, subContact2, Flags::Horizontal );
+      
+        setSouthWestContact( (west()) ? subContact1 : subContact2 );
+        setNorthEastContact( (west()) ? subContact2 : subContact1 );
+      } else
+        setBothCornerContacts( subContact1 );
+    }
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
   bool  NetBuilderVH::_do_1G_1M1 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_1M1() [Managed Configuration - Optimized] " << getTopology() << endl;
 
     uint64_t  flags = NoFlags;
-    if      (east() ) { flags |= HAccess|VSmall; }
-    else if (west() ) { flags |= HAccess|VSmall; }
+    if      (east()) { flags |= HAccess|VSmall; }
+    else if (west()) { flags |= HAccess|VSmall; }
 
     setBothCornerContacts( doRp_Access(getGCell(),getRoutingPads()[0],flags) );
 

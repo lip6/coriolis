@@ -41,7 +41,7 @@ def scrubPath ( pathName ):
 
 
 def guessOs ():
-    useDevtoolset2    = False
+    useDevtoolset     = False
     osSlsoc7x_64      = re.compile (".*Linux.*el7.*x86_64.*")
     osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
     osSlsoc6x         = re.compile (".*Linux.*(el|slsoc)6.*")
@@ -74,10 +74,10 @@ def guessOs ():
     elif osSlsoc6x_64.match(lines[0]):
       osType         = "Linux.slsoc6x_64"
       libDir         = "lib64"
-      useDevtoolset2 = True
+      useDevtoolset  = True
     elif osSlsoc6x.match(lines[0]):
       osType         = "Linux.slsoc6x"
-      useDevtoolset2 = True
+      useDevtoolset  = True
     elif osSLSoC5x_64.match(lines[0]):
       osType         = "Linux.SLSoC5x_64"
       libDir         = "lib64"
@@ -132,12 +132,12 @@ def guessOs ():
       print "          (using: \"%s\")" % osType
 
     ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
-    if ldLibraryPath and 'devtoolset' in ldLibraryPath: useDevtoolset2 = False
+    if ldLibraryPath and 'devtoolset' in ldLibraryPath: useDevtoolset = False
 
     if libDir == 'lib64' and not os.path.exists('/usr/lib64'):
       libDir = 'lib'
     
-    return (osType,libDir,useDevtoolset2)
+    return (osType,libDir,useDevtoolset)
 
 
 def guessShell ():
@@ -170,7 +170,7 @@ def guessShell ():
 
 if __name__ == "__main__":
 
-  osType,libDir,useDevtoolset2 = guessOs()
+  osType,libDir,useDevtoolset = guessOs()
   buildType                    = "Release"
   linkType                     = "Shared"
   rootDir                      = None
@@ -226,6 +226,8 @@ if __name__ == "__main__":
 
 #   'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";' \
 
+  reDevtoolset = re.compile( r'/opt/rh/devtoolset-(?P<version>\d+)/root/etc/coriolis2.*' )
+
   buildDir  = buildType + "." + linkType
   scriptDir = os.path.dirname ( os.path.abspath(__file__) )
  #print "echo \"Script Location: %s\";" % scriptDir,
@@ -233,26 +235,29 @@ if __name__ == "__main__":
     coriolisTop  = "/usr"
     sysconfDir   = scriptDir
     shellMessage = "Using system-wide Coriolis 2 (/usr)"
-  elif scriptDir.startswith("/opt/rh/devtoolset-2/root/etc/coriolis2"): 
-    coriolisTop  = "/opt/rh/devtoolset-2/root/usr"
-    sysconfDir   = scriptDir
-    shellMessage = "Using system-wide devtoolset-2 Coriolis 2 (/opt/rh/devtoolset-2/root/usr)"
-  elif scriptDir.startswith(os.getenv("HOME")+"/nightly/coriolis-2.x/"): 
-    rootDir      = os.getenv("HOME") + "/nightly/coriolis-2.x"
-    coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
-    sysconfDir   = scriptDir
-    shellMessage = "Using Nightly build Coriolis 2 (%s)" % coriolisTop
-  elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
-        or scriptDir.startswith("/soc/coriolis2/"):
-    coriolisTop  = "/soc/coriolis2"
-    sysconfDir   = coriolisTop + "/etc/coriolis2"
-    shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
   else:
-    if not rootDir:
-      rootDir = os.getenv("HOME") + "/coriolis-2.x"
-    coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
-    sysconfDir   = coriolisTop + "/etc/coriolis2"
-    shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
+    m = reDevtoolset.match( scriptDir )
+    if m:
+      coriolisTop  = "/opt/rh/devtoolset-%d/root/usr" % m.group('version')
+      sysconfDir   = scriptDir
+      shellMessage = "Using system-wide devtoolset-%(v)d Coriolis 2 (/opt/rh/devtoolset-%(v)d/root/usr)" \
+                     % { 'v':m.group('version') }
+    elif scriptDir.startswith(os.getenv("HOME")+"/nightly/coriolis-2.x/"): 
+      rootDir      = os.getenv("HOME") + "/nightly/coriolis-2.x"
+      coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
+      sysconfDir   = scriptDir
+      shellMessage = "Using Nightly build Coriolis 2 (%s)" % coriolisTop
+    elif     scriptDir.startswith("/users/outil/coriolis/coriolis-2.x/") \
+          or scriptDir.startswith("/soc/coriolis2/"):
+      coriolisTop  = "/soc/coriolis2"
+      sysconfDir   = coriolisTop + "/etc/coriolis2"
+      shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
+    else:
+      if not rootDir:
+        rootDir = os.getenv("HOME") + "/coriolis-2.x"
+      coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
+      sysconfDir   = coriolisTop + "/etc/coriolis2"
+      shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
 
   if osType.startswith("Cygwin"):
     strippedPath = "%s/%s:%s" % ( coriolisTop, libDir, strippedPath )
@@ -304,10 +309,10 @@ if __name__ == "__main__":
   if isBourneShell: shellScript = shellScriptSh
   else:             shellScript = shellScriptCsh
 
-  if useDevtoolset2:
+  if useDevtoolset:
     shellScript += \
-      ' echo "Launching a devtoolset-2 subshell though scl (CTRL+D to exit).";' \
-      ' scl enable devtoolset-2 %(SHELL)s'
+      ' echo "Launching a devtoolset-8 subshell though scl (CTRL+D to exit).";' \
+      ' scl enable devtoolset-8 %(SHELL)s'
 
   evalScript = shellScript % { "PATH"            : strippedPath
                              , "LD_LIBRARY_PATH" : strippedLibraryPath

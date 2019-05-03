@@ -69,33 +69,45 @@ Instance* instance = cell->getSlaveInstances().getFirst();
  * 
  *               For the Transistor device:
  * 
- *              -# The netlist is fixed and generated (in C++) in the Transistor, by
- *                 instanciating one MetaTransistor.
- *              -# The layout is generated <em>on the fly</em> by calling the relevant
- *                 python sceript.
- *              -# The parameters, which are commons to all the Transistor based
- *                 devices are created in TransistorFamily. The parameters are created
- *                 through the Device parameter factory and stored at the Device level.
- *                 A pointer to the concrete type of Parameter is also kept at the
- *                 TransistorFamily level.
- *              -# The Device::getParameters() method is implemented at this level
- *                 and returns a TransistorArguments pointer.
- *              -# Parameters are used to set up the Device characteristics, either
- *                 programmatically or through the <code>Pharos</code> graphical
- *                 interface.
- *              -# <code>Arguments</code>, on the other hand, are mostly used to
- *                 transmit the setting of a Device (i.e. it's Parameters values)
- *                 to the Python script in charge of the layout generation.
- *                 Arguments have Python wrapper PyArguments, and it is copies of
- *                 the values that are transmitted.
+ *               -# The netlist is fixed and generated (in C++) in the Transistor, by
+ *                  instanciating one MetaTransistor.
+ *               
+ *               -# The layout is generated <em>on the fly</em> by calling the relevant
+ *                  python script.
+ *               
+ *               -# The parameters, which are commons to all the Transistor based
+ *                  devices are created in TransistorFamily. The parameters are created
+ *                  through the Device parameter factory and stored at the Device level.
+ *                  A pointer to the concrete type of Parameter is also kept at the
+ *                  TransistorFamily level.
+ *               
+ *               -# The Device::getParameters() method is implemented at this level
+ *                  and returns a reference to the set of parameters.
+ *               
+ *               -# Parameters are used to set up the Device characteristics, either
+ *                  programmatically or through the graphical interface.
+ *               
+ *                  The layout Python generation scripts also uses the Parameter
+ *                  to know the settings of a device.
+ *               
+ *               Deprecateds:
+ *               
+ *               -# <code>Arguments</code> where fully redundant with Parameters, so
+ *                  we did remove them.
+ *               
+ *                  <b>The Arguments must be removed from the UML schema.</b>
  *              
  *              
  *  \subsection  ssecOpenQuestions  Open questions
  *              
- *              -# As Arguments are used to transmit parameters, why not simply
- *                 encapsulate Parameters in a Python wrapper? Thus completly
- *                 suppressing Arguments. And by the way, using pointers to
- *                 to make the relationship bi-directionnal (event if it's not
- *                 needed now).
+ *               -# In Bora::channelRouting, what is implemented is in fact an
+ *                  interval tree (or segment tree). We should try to use their
+ *                  \c Boost implementation.
+ *
+ *               -# In Bora::SlicingTree, whe should merge the list of user nodes
+ *                  (devices and hierarchical) with the routing nodes (channels and
+ *                  struts) to unify the underlying management. This sould enable
+ *                  us to move lots method implementation \e upward in the class
+ *                  hierarchy.
  */
 

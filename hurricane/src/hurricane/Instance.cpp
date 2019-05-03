@@ -182,19 +182,19 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
     _nextOfCellSlaveInstanceSet(NULL)
 {
     if (!_cell)
-        throw Error("Can't create " + _TName("Instance") + " : null cell");
+        throw Error("Instance::Instance(): Can't create " + _TName("Instance") + ", NULL cell");
 
     if (name.isEmpty())
-        throw Error("Can't create " + _TName("Instance") + " : empty name");
+        throw Error("Instance::Instance(): Can't create " + _TName("Instance") + ", empty name");
 
     if (_cell->getInstance(_name))
-        throw Error("Can't create " + _TName("Instance") + " " + getString(_name) + " : already exists");
+        throw Error("Instance::Instance(): Can't create " + _TName("Instance") + " " + getString(_name) + ", already exists");
 
     if (!_masterCell)
-        throw Error("Can't create " + _TName("Instance") + " : null master cell");
+        throw Error("Instance::Instance(): Can't create " + _TName("Instance") + ", NULL master cell");
 
     if (secureFlag && _cell->isCalledBy(_masterCell))
-        throw Error("Can't create " + _TName("Instance") + " : cyclic construction");
+        throw Error("Instance::Instance(): Can't create " + _TName("Instance") + ", cyclic construction");
 }
 
 Instance* Instance::create(Cell* cell, const Name& name, Cell* masterCell, bool secureFlag)

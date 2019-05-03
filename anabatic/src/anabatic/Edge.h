@@ -63,7 +63,7 @@ namespace Anabatic {
       inline        unsigned int      getReservedCapacity  () const;
       inline        unsigned int      getCapacity          ( size_t depth ) const;
       inline        unsigned int      getRealOccupancy     () const;
-      inline        unsigned int      getEstimateOccupancy () const;
+      inline        float             getEstimateOccupancy () const;
       inline        float             getHistoricCost      () const;
                     DbU::Unit         getDistance          () const;
       inline        GCell*            getSource            () const;
@@ -82,6 +82,7 @@ namespace Anabatic {
       inline        void              setRealOccupancy     ( int );
                     void              incRealOccupancy     ( int );
                     void              incRealOccupancy2    ( int );
+      inline        void              incEstimateOccupancy ( float );
       inline        void              setHistoricCost      ( float );
                     bool              isEnding             ( Segment* ) const;
                     void              add                  ( Segment* );
@@ -139,7 +140,7 @@ namespace Anabatic {
   inline       unsigned int      Edge::getCapacity          ( size_t depth ) const { return (_capacities) ? _capacities->getCapacity(depth) : 0; }
   inline       unsigned int      Edge::getReservedCapacity  () const { return _reservedCapacity; }
   inline       unsigned int      Edge::getRealOccupancy     () const { return _realOccupancy; }
-  inline       unsigned int      Edge::getEstimateOccupancy () const { return _estimateOccupancy; }
+  inline       float             Edge::getEstimateOccupancy () const { return _estimateOccupancy; }
   inline       float             Edge::getHistoricCost      () const { return _historicCost; }
   inline       GCell*            Edge::getSource            () const { return _source; }
   inline       GCell*            Edge::getTarget            () const { return _target; }
@@ -150,6 +151,7 @@ namespace Anabatic {
 //inline       void              Edge::setCapacity          ( int c     ) { _capacity  = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setRealOccupancy     ( int c     ) { _realOccupancy = ((int) c > 0) ? c : 0; }
   inline       void              Edge::setHistoricCost      ( float hcost ) { _historicCost = hcost; }
+  inline       void              Edge::incEstimateOccupancy ( float delta ) { _estimateOccupancy += delta; }
   inline const Flags&            Edge::flags                () const { return _flags; }
   inline       Flags&            Edge::flags                () { return _flags; }
   inline       Flags&            Edge::setFlags             ( Flags mask ) { _flags |= mask; return _flags; }

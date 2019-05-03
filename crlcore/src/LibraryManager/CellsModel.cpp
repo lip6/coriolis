@@ -103,7 +103,7 @@ namespace CRL {
                                         , "BLIF (Yosys/ABC)"
                                         , CellLoader::Importer|CellLoader::MultiCell
                                         , Catalog::State::Logical
-                                        , std::bind( &Blif::load, placeholders::_1 ) ) );
+                                        , std::bind( &Blif::load, placeholders::_1, true ) ) );
     }
   }
 

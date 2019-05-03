@@ -176,6 +176,20 @@ class GaugeConf ( object ):
                            , self._routingGauge.getLayerGauge(depth).getViaWidth()
                            )
 
+    def _getNearestHorizontalTrack ( self, bb, y, flags ):
+      if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
+      else:                           depth = self._horizontalDepth
+
+      index = self._routingGauge.getLayerGauge(depth).getTrackIndex( bb.getYMin(), bb.getYMax(), y, RoutingLayerGauge.Nearest )
+      return self._routingGauge.getLayerGauge(depth).getTrackPosition( bb.getYMin(), index )
+
+    def _getNearestVerticalTrack ( self, bb, x, flags ):
+      if flags & GaugeConf.DeepDepth: depth = self._verticalDeepDepth
+      else:                           depth = self._verticalDepth
+
+      index = self._routingGauge.getLayerGauge(depth).getTrackIndex( bb.getXMin(), bb.getXMax(), x, RoutingLayerGauge.Nearest )
+      return self._routingGauge.getLayerGauge(depth).getTrackPosition( bb.getXMin(), index )
+
     def _createHorizontal ( self, source, target, y, flags ):
       if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
       else:                           depth = self._horizontalDepth
@@ -309,6 +323,25 @@ class GaugeConf ( object ):
     def _rpAccessByPlugName ( self, instance, plugName, net, flags=0 ):
       return self._rpAccess( self._rpByPlugName(instance,plugName,net), flags )
 
+    def _setStackPosition ( self, topContact, x, y ):
+      topContact.setX( x )
+      topContact.setY( y )
+
+      count = 0
+      for component in topContact.getSlaveComponents():
+        segment = component
+        count  += 1
+      if count != 1:
+        print ErrorMessage( 1, 'GaugeConf::_setStackPosition(): There must be exactly one segment connected, not %d.' % count)
+
+      if isinstance(segment,Horizontal):
+        segment.setY( y )
+        segment.getOppositeAnchor( topContact ).setY( y )
+      elif isinstance(segment,Vertical):
+        segment.setX( x )
+        segment.getOppositeAnchor( topContact ).setX( x )
+      return
+
 
 # -------------------------------------------------------------------
 # Class  :  "Configuration.GaugeConfWrapper".
@@ -363,6 +396,15 @@ class GaugeConfWrapper ( object ):
 
     def createVertical ( self, source, target, x, flags=0 ):
       return self._gaugeConf._createVertical( source, target, x, flags )
+
+    def getNearestHorizontalTrack ( self, bb, y, flags ):
+      return self._gaugeConf._getNearestHorizontalTrack ( bb, y, flags )
+
+    def getNearestVerticalTrack ( self, bb, x, flags ):
+      return self._gaugeConf._getNearestVerticalTrack( bb, x, flags )
+
+    def setStackPosition ( self, topContact, x, y ):
+      self._gaugeConf._setStackPosition( topContact, x, y )
 
 
 # -------------------------------------------------------------------

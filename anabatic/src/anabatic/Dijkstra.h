@@ -414,40 +414,50 @@ namespace Anabatic {
 
   class PriorityQueue {
     public:
-      inline          PriorityQueue ();
-      inline         ~PriorityQueue ();
-      inline  bool    empty         () const;
-      inline  size_t  size          () const;
-      inline  void    push          ( Vertex* );
-      inline  void    erase         ( Vertex* );
-      inline  Vertex* top           ();
-      inline  void    pop           ();
-      inline  void    clear         ();
-      inline  void    dump          () const;
+      inline                PriorityQueue ();
+      inline               ~PriorityQueue ();
+      inline        bool    empty         () const;
+      inline        size_t  size          () const;
+      inline        void    push          ( Vertex* );
+      inline        void    erase         ( Vertex* );
+      inline        Vertex* top           ();
+      inline        void    pop           ();
+      inline        void    clear         ();
+      inline        void    dump          () const;
+      inline        void    setAttractor  ( const Point& );
+      inline  const Point&  getAttractor  () const;
+      inline        bool    hasAttractor  () const;
     private:
       class CompareByDistance {
         public:
-          inline bool operator() ( const Vertex* lhs, const Vertex* rhs );
+                 inline      CompareByDistance ();
+                        bool operator()        ( const Vertex* lhs, const Vertex* rhs );
+          static inline void setQueue          ( PriorityQueue* );
+        private:
+          static PriorityQueue* _pqueue;
       };
     private:
+      bool                                 _hasAttractor;
+      Point                                _attractor;
       multiset<Vertex*,CompareByDistance>  _queue;
   };
 
 
-  inline bool PriorityQueue::CompareByDistance::operator() ( const Vertex* lhs, const Vertex* rhs )
-  {
-    if (lhs->getDistance() == rhs->getDistance()) return lhs->getBranchId() > rhs->getBranchId();
-    return lhs->getDistance() < rhs->getDistance();
-  }
+  inline      PriorityQueue::CompareByDistance::CompareByDistance () { }
+
+  inline void PriorityQueue::CompareByDistance::setQueue ( PriorityQueue* pqueue ) { _pqueue = pqueue; }
 
 
-  inline         PriorityQueue::PriorityQueue  () : _queue() { }
-  inline         PriorityQueue::~PriorityQueue () { }
-  inline bool    PriorityQueue::empty          () const { return _queue.empty(); }
-  inline size_t  PriorityQueue::size           () const { return _queue.size(); }
-  inline void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); }
-  inline Vertex* PriorityQueue::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
-  inline void    PriorityQueue::clear          () { _queue.clear(); }
+  inline               PriorityQueue::PriorityQueue  () : _hasAttractor(false), _attractor(), _queue() { PriorityQueue::CompareByDistance::setQueue(this); }
+  inline               PriorityQueue::~PriorityQueue () { }
+  inline       bool    PriorityQueue::empty          () const { return _queue.empty(); }
+  inline       size_t  PriorityQueue::size           () const { return _queue.size(); }
+  inline       void    PriorityQueue::push           ( Vertex* v ) { _queue.insert(v); }
+  inline       Vertex* PriorityQueue::top            () { return _queue.empty() ? NULL : *_queue.begin(); }
+  inline       void    PriorityQueue::clear          () { _queue.clear(); _hasAttractor=false; }
+  inline       void    PriorityQueue::setAttractor   ( const Point& p ) { _attractor=p;  _hasAttractor=true; }
+  inline       bool    PriorityQueue::hasAttractor   () const { return _hasAttractor; }
+  inline const Point&  PriorityQueue::getAttractor   () const { return _attractor; }
 
   inline void  PriorityQueue::pop ()
   {
@@ -512,7 +522,7 @@ namespace Anabatic {
                    void       run                      ( Mode mode=Mode::Standart );
       inline const VertexSet& getSources               () const;
     private:                                           
-                        Dijkstra                       ( const Dijkstra& );
+                               Dijkstra                ( const Dijkstra& );
                    Dijkstra&  operator=                ( const Dijkstra& );
       static       DbU::Unit  _distance                ( const Vertex*, const Vertex*, const Edge* );
                    Point      _getPonderedPoint        () const;

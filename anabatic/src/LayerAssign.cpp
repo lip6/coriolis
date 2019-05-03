@@ -117,8 +117,14 @@ namespace Anabatic {
         }
 
         global++;
-        if ((*isegment)->getLayer() == Session::getRoutingLayer(1)) (*isegment)->setLayer( Session::getRoutingLayer(3) );
-        if ((*isegment)->getLayer() == Session::getRoutingLayer(2)) (*isegment)->setLayer( Session::getRoutingLayer(4) );
+        if ((*isegment)->getLayer() == Session::getRoutingLayer(1)) {
+          (*isegment)->setLayer( Session::getRoutingLayer(3) );
+          (*isegment)->setWidth( Session::getWireWidth   (3) );
+        }
+        if ((*isegment)->getLayer() == Session::getRoutingLayer(2)) {
+          (*isegment)->setLayer( Session::getRoutingLayer(4) );
+          (*isegment)->setWidth( Session::getWireWidth   (4) );
+        }
       }
     }
 
@@ -142,7 +148,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_layerAssignByTrunk ( Net* net, set<Net*>& globalNets, unsigned long& total, unsigned long& global )
   {
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(149,0) << "Anabatic::_layerAssignByTrunk ( " << net << " )" << endl;
     cdebug_tabw(145,1);
@@ -172,8 +178,14 @@ namespace Anabatic {
           netGlobal++;
 
           cdebug_log(145,0) << "Migrate to M4/M5: " << autoSegment << endl;
-          if (autoSegment->isHorizontal()) autoSegment->setLayer( Session::getRoutingLayer(3) );
-          if (autoSegment->isVertical  ()) autoSegment->setLayer( Session::getRoutingLayer(4) );
+          if (autoSegment->isHorizontal()) {
+            autoSegment->setLayer( Session::getRoutingLayer(3) );
+            autoSegment->setWidth( Session::getWireWidth   (3) );
+          }
+          if (autoSegment->isVertical()) {
+            autoSegment->setLayer( Session::getRoutingLayer(4) );
+            autoSegment->setWidth( Session::getWireWidth   (4) );
+          }
         }
       }
     }
@@ -316,7 +328,7 @@ namespace Anabatic {
   void  AnabaticEngine::moveULeft ( AutoSegment* seed, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
     Net* net = seed->getNet();
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(9000,0) << "Deter| Move left: " << seed << endl;
 
@@ -353,7 +365,7 @@ namespace Anabatic {
   void  AnabaticEngine::moveURight ( AutoSegment* seed, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
     Net* net = seed->getNet();
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
 
     cdebug_log(9000,0) << "Deter| Move right: " << seed << endl;
 
@@ -393,7 +405,7 @@ namespace Anabatic {
     Net*         net       = seed->getNet();
     unsigned int seedDepth = Session::getRoutingGauge()->getLayerDepth(seed->getLayer());
 
-    DebugSession::open( net, 140, 150 );
+    DebugSession::open( net, 145, 150 );
     cdebug_log(9000,0) << "Deter| moveUpNetTrunk() depth:" << seedDepth << " " << seed << endl;
 
     if (not seed->canMoveUp( 1.0, Flags::Propagate|Flags::AllowTerminal|Flags::NoCheckLayer) ) {

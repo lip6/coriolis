@@ -178,7 +178,7 @@ namespace Katana {
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
 
-      DebugSession::open( net, 140, 150 );
+      DebugSession::open( net, 145, 150 );
 
       NetData* data = getNetData( net );
       if (data and data->isFixed()) continue;

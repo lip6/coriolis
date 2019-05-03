@@ -200,7 +200,7 @@ namespace Anabatic {
 
   void  AutoContactHTee::updateCache ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::updateCache() " << this << endl;
 
@@ -249,7 +249,7 @@ namespace Anabatic {
 
   void  AutoContactHTee::updateGeometry ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::updateGeometry() " << this << endl;
 
@@ -277,7 +277,7 @@ namespace Anabatic {
 
   void  AutoContactHTee::updateTopology ()
   {
-    DebugSession::open( getNet(), 140, 150 );
+    DebugSession::open( getNet(), 145, 150 );
 
     cdebug_log(145,1) << _getTypeName() << "::updateTopology() " << this << endl;
 
@@ -309,10 +309,10 @@ namespace Anabatic {
         if (depthH1 == depthH2) {
         // Dogleg on the vertical.
           switch ( delta ) {
-            case 0: setLayer( rg->getRoutingLayer(minDepth) ); break;
-            case 1: setLayer( rg->getContactLayer(minDepth) ); break;
+            case 0:
+            case 1: setLayerAndWidth( delta, minDepth ); break;
             default:
-              setLayer( rg->getContactLayer( depthH1 + ((depthH1==minDepth)?0:-1) ) );
+              setLayerAndWidth( delta, depthH1 + ((depthH1==minDepth)?0:-1) );
               _vertical1 = static_cast<AutoVertical*>( _vertical1->makeDogleg(this) );
               break;
           }
@@ -322,12 +322,12 @@ namespace Anabatic {
           int deltaH2 = (int)depthH2 - (int)depthV1;
 
           if (std::abs(deltaH1) > std::abs(deltaH2)) {
-            setLayer( rg->getContactLayer( depthH2 + ((depthH2<depthV1)?0:-1) )  );
+            setLayerAndWidth( 2, depthH2 + ((depthH2<depthV1)?0:-1) );
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
             cdebug_log(145,0) << "New h1:" << _horizontal1 << endl;
           } else {
-            setLayer( rg->getContactLayer( depthH1 + ((depthH1<depthV1)?0:-1) )  );
+            setLayerAndWidth( 2, depthH1 + ((depthH1<depthV1)?0:-1) );
           //_horizontal2 = static_cast<AutoHorizontal*>( _horizontal2->makeDogleg(this) );
             _horizontal2->makeDogleg(this);
             cdebug_log(145,0) << "New h2:" << _horizontal2 << endl;

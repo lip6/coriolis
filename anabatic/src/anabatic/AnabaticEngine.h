@@ -103,9 +103,11 @@ namespace Anabatic {
   class NetData {
     public:
                                     NetData            ( Net* );
+      inline       bool             isGlobalEstimated  () const;
       inline       bool             isGlobalRouted     () const;
       inline       bool             isMixedPreRoute    () const;
       inline       bool             isFixed            () const;
+      inline       bool             isExcluded         () const;
       inline       Net*             getNet             () const;
       inline       NetRoutingState* getNetRoutingState () const;
       inline const Box&             getSearchArea      () const;
@@ -114,7 +116,9 @@ namespace Anabatic {
       inline       DbU::Unit        getSparsity        () const;
       inline       void             setNetRoutingState ( NetRoutingState* );
       inline       void             setSearchArea      ( Box );
+      inline       void             setGlobalEstimated ( bool );
       inline       void             setGlobalRouted    ( bool );
+      inline       void             setExcluded        ( bool );
       inline       void             setRpCount         ( size_t );
     private:                                     
                               NetData            ( const NetData& );
@@ -130,9 +134,11 @@ namespace Anabatic {
   };
 
 
+  inline bool             NetData::isGlobalEstimated  () const { return _flags & Flags::GlobalEstimated; }
   inline bool             NetData::isGlobalRouted     () const { return _flags & Flags::GlobalRouted; }
   inline bool             NetData::isMixedPreRoute    () const { return (_state) ? _state->isMixedPreRoute() : false; }
   inline bool             NetData::isFixed            () const { return (_state) ? _state->isFixed        () : false; }
+  inline bool             NetData::isExcluded         () const { return _flags & Flags::ExcludeRoute; }
   inline Net*             NetData::getNet             () const { return _net; }
   inline NetRoutingState* NetData::getNetRoutingState () const { return _state; }
   inline const Box&       NetData::getSearchArea      () const { return _searchArea; }
@@ -140,7 +146,9 @@ namespace Anabatic {
   inline size_t           NetData::getRpCount         () const { return _rpCount; }
   inline void             NetData::setNetRoutingState ( NetRoutingState* state ) { _state=state; }
   inline DbU::Unit        NetData::getSparsity        () const { return _sparsity; }
-  inline void             NetData::setGlobalRouted    ( bool state ) { _flags.set(Flags::GlobalRouted,state); }
+  inline void             NetData::setGlobalEstimated ( bool state ) { _flags.set(Flags::GlobalEstimated,state); }
+  inline void             NetData::setGlobalRouted    ( bool state ) { _flags.set(Flags::GlobalRouted   ,state); }
+  inline void             NetData::setExcluded        ( bool state ) { _flags.set(Flags::ExcludeRoute   ,state); }
   inline void             NetData::setRpCount         ( size_t count ) { _rpCount=count; _update(); }
 
 
@@ -195,6 +203,7 @@ namespace Anabatic {
       inline        GCell*            getGCellUnder           ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*            getGCellUnder           ( Point ) const;
       inline        GCellsUnder       getGCellsUnder          ( Segment* ) const;
+      inline        Edges             getEdgesUnderPath       ( GCell* source, GCell* target, Flags pathFlags=Flags::NorthPath ) const;
                     Interval          getUSide                ( Flags direction ) const;
                     int               getCapacity             ( Interval, Flags ) const;
                     size_t            getNetsFromEdge         ( const Edge*, NetSet& );
@@ -206,6 +215,8 @@ namespace Anabatic {
       inline const  NetDatas&         getNetDatas             () const;
                     NetData*          getNetData              ( Net*, Flags flags=Flags::NoFlags );
                     void              setupNetDatas           ();
+                    void              exclude                 ( const Name& netName );
+                    void              exclude                 ( Net* );
                     void              updateMatrix            ();
     // Dijkstra related functions.                            
       inline        int               getStamp                () const;
@@ -330,6 +341,7 @@ namespace Anabatic {
   inline       GCell*            AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
   inline       GCell*            AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
   inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
+  inline       Edges             AnabaticEngine::getEdgesUnderPath     ( GCell* source, GCell* target, Flags pathFlags ) const { return new Path_Edges(source,target,pathFlags); }
   inline       uint64_t          AnabaticEngine::getDensityMode        () const { return _densityMode; }
   inline       void              AnabaticEngine::setDensityMode        ( uint64_t mode ) { _densityMode=mode; }
   inline       void              AnabaticEngine::setBlockageNet        ( Net* net ) { _blockageNet = net; }

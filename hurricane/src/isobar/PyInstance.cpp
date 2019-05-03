@@ -51,7 +51,7 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
       
 
-  static Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object )
+  extern Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object )
   {
     switch ( PyAny_AsLong(object) ) {
       case Instance::PlacementStatus::UNPLACED : return ( Instance::PlacementStatus(Instance::PlacementStatus::UNPLACED) );
@@ -80,35 +80,37 @@ extern "C" {
     PyObject* arg1     = NULL;
     PyObject* arg2     = NULL;
     PyObject* arg3     = NULL;
+    PyObject* arg4     = NULL;
 
     HTRY
-    __cs.init( "Instance.create" );
-    if (not PyArg_ParseTuple(args,"O&O&O&|O&:Instance.create"
-                            ,Converter,&arg0
-                            ,Converter,&arg1
-                            ,Converter,&arg2
-                            ,Converter,&arg3
-                            )) {
-        PyErr_SetString( ConstructorError, "Instance.create(): Invalid number of parameters." );
+      __cs.init( "Instance.create" );
+      if (not PyArg_ParseTuple(args,"O&O&O&|O&O&:Instance.create"
+                              ,Converter,&arg0
+                              ,Converter,&arg1
+                              ,Converter,&arg2
+                              ,Converter,&arg3
+                              ,Converter,&arg4
+                              )) {
+          PyErr_SetString( ConstructorError, "Instance.create(): Invalid number of parameters." );
+          return NULL;
+      }
+  
+      if (__cs.getObjectIds() == ":ent:string:ent") {
+        instance = Instance::create( PYCELL_O(arg0)
+                                   , Name(PyString_AsString(arg1))
+                                   , PYCELL_O(arg2)
+                                   );
+      } else if (__cs.getObjectIds() == ":ent:string:ent:transfo:int") {
+        instance = Instance::create( PYCELL_O(arg0)
+                                   , Name(PyString_AsString(arg1))
+                                   , PYCELL_O(arg2)
+                                   , *PYTRANSFORMATION_O(arg3)
+                                   , PyInt_AsPlacementStatus(arg4)
+                                   );
+      } else {
+        PyErr_SetString( ConstructorError, "Instance.create(): Bad type of parameter(s)." );
         return NULL;
-    }
-
-    if (__cs.getObjectIds() == ":ent:string:ent") {
-      instance = Instance::create( PYCELL_O(arg0)
-                                 , Name(PyString_AsString(arg1))
-                                 , PYCELL_O(arg2)
-                                 );
-    } else if (__cs.getObjectIds() == ":ent:string:ent:transfo") {
-      instance = Instance::create( PYCELL_O(arg0)
-                                 , Name(PyString_AsString(arg1))
-                                 , PYCELL_O(arg2)
-                                 , *PYTRANSFORMATION_O(arg3)
-                                 , Instance::PlacementStatus::PLACED
-                                 );
-    } else {
-      PyErr_SetString( ConstructorError, "Instance.create(): Bad type of parameter(s)." );
-      return NULL;
-    }
+      }
     HCATCH
 
     return PyInstance_Link( instance );

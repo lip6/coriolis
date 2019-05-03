@@ -14,8 +14,10 @@
 // +-----------------------------------------------------------------+
 
 
+#include "flute.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/Cell.h"
 #include "anabatic/Dijkstra.h"
 #include "katana/Block.h"
@@ -33,10 +35,13 @@ namespace {
   using std::left;
   using std::right;
   using Hurricane::DbU;
-  using Hurricane::DbU;
+  using Hurricane::Interval;
   using Hurricane::Net;
+  using Anabatic::Flags;
   using Anabatic::Edge;
+  using Anabatic::GCell;
   using Anabatic::Vertex;
+  using Anabatic::AnabaticEngine;
 
 
   class DigitalDistance {
@@ -76,7 +81,8 @@ namespace {
     }
 
     float congestionCost = 1.0;
-    float congestion     = (float)edge->getRealOccupancy() / (float)edge->getCapacity();
+    float congestion     = ((float)edge->getRealOccupancy() + edge->getEstimateOccupancy())
+                         /  (float)edge->getCapacity();
 
     if (not source->getGCell()->isChannelRow() or not target->getGCell()->isChannelRow())
       congestionCost += _h / (1.0 + std::exp(_k * (congestion - 1.0)));
@@ -84,9 +90,18 @@ namespace {
     float viaCost = 0.0;
     if (    source->getFrom()
        and (source->getFrom()->isHorizontal() xor edge->isHorizontal())
-       and not source->hasGContact(_net) ) {
+       /*and not source->hasGContact(_net)*/ ) {
       viaCost += 2.5;
     }
+
+    
+    float realCongestion = (float)edge->getRealOccupancy() /  (float)edge->getCapacity();
+    float historicCost   = edge->getHistoricCost();
+    if (realCongestion <= 1.0)
+      historicCost += edge->getEstimateOccupancy() * realCongestion;
+    else
+      historicCost += edge->getEstimateOccupancy() * exp( log(8) * (realCongestion - 1.0) );
+  //const_cast<Edge*>(edge)->setHistoricCost( historicCost );
 
     float edgeDistance = (float)edge->getDistance();
     if (  (source->getGCell()->isChannelRow() and target->getGCell()->isStdCellRow())
@@ -96,8 +111,16 @@ namespace {
     float hvScaling = (edge->isHorizontal()) ? _hScaling : 1.0 ;
     float distance
       = (float)source->getDistance()
-      + (congestionCost + viaCost + edge->getHistoricCost()) * edgeDistance * hvScaling;
+      + (congestionCost + viaCost + historicCost) * edgeDistance * hvScaling;
 
+    cdebug_log(112,0) << "distance:"
+                      << DbU::getValueString(source->getDistance()) << " + ("
+                      << congestionCost << " + "
+                      << viaCost << " + "
+                      << edge->getHistoricCost() << ") * "
+                      << DbU::getValueString(edgeDistance) << " * "
+                      << hvScaling
+                      << endl;
     // Edge* sourceFrom = source->getFrom();
     // if (sourceFrom) {
     //   distance += ((sourceFrom->isHorizontal() xor edge->isHorizontal()) ? 3.0 : 0.0) * (float)Edge::unity;
@@ -122,6 +145,25 @@ namespace {
   }
 
 
+  void  updateEstimateDensityOfPath ( AnabaticEngine* anabatic, GCell* source, GCell* target, double weight )
+  {
+    Interval hoverlap     = source->getHSide().getIntersection( target->getHSide() );
+    Interval voverlap     = source->getVSide().getIntersection( target->getVSide() );
+    bool     straightLine = not (hoverlap.isEmpty() and voverlap.isEmpty());
+    double   cost         = ((straightLine) ? 1.0 : 0.5) * weight;
+
+    for ( Edge* edge : anabatic->getEdgesUnderPath(source,target,Flags::NorthPath) ) {
+      edge->incEstimateOccupancy( cost );
+    }
+
+    if (not straightLine) {
+      for ( Edge* edge : anabatic->getEdgesUnderPath(source,target,Flags::NoFlags) ) {
+        edge->incEstimateOccupancy( cost );
+      }
+    }
+  }
+  
+
 }  // Anonymous namespace.
 
 
@@ -133,6 +175,11 @@ namespace Katana {
   using Hurricane::Timer;
   using Hurricane::Occurrence;
   using Hurricane::Transformation;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
+  using Hurricane::Contact;
+  using Hurricane::RoutingPad;
+  using Hurricane::RoutingPad;
   using Hurricane::Instance;
   using Anabatic::EngineState;
   using Anabatic::Dijkstra;
@@ -187,6 +234,76 @@ namespace Katana {
   }
 
 
+  void  KatanaEngine::updateEstimateDensity ( NetData* netData, double weight )
+  {
+    // if (   (netData->getNet()->getName() != "ialu.inv_x2_sig")
+    //    and (netData->getNet()->getName() != "ra(0)")
+    //    and (netData->getNet()->getName() != "iram.oa2a22_x2_11_sig")) return;
+
+    vector<GCell*> targets;
+    for ( Component* component : netData->getNet()->getComponents() ) {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
+      if (rp) {
+        if (not getConfiguration()->selectRpComponent(rp))
+          cerr << Warning( "KatanaEngine::updateEstimateDensity(): %s has no components on grid.", getString(rp).c_str() ) << endl;
+
+        Point  center = rp->getBoundingBox().getCenter();
+        GCell* gcell  = getGCellUnder( center );
+
+        targets.push_back( gcell );
+      }
+    }
+
+    switch ( targets.size() ) {
+      case 0:
+      case 1:
+        return;
+      case 2:
+        updateEstimateDensityOfPath( this, targets[0], targets[1], weight );
+        return;
+      default:
+        { int  accuracy = 3;
+          int* xs       = new int [targets.size()];
+          int* ys       = new int [targets.size()];
+
+          for ( size_t itarget=0 ; itarget<targets.size() ; ++itarget ) {
+            Point center =  targets[itarget]->getCenter();
+            xs[ itarget ] = center.getX();
+            ys[ itarget ] = center.getY();
+          }
+
+          Flute::Tree tree = Flute::flute( targets.size(), xs, ys, accuracy );
+
+          for ( size_t i=0 ; (int)i < 2*tree.deg - 2 ; ++i ) {
+            size_t j = tree.branch[i].n;
+            GCell* source = getGCellUnder( tree.branch[i].x, tree.branch[i].y );
+            GCell* target = getGCellUnder( tree.branch[j].x, tree.branch[j].y );
+
+            if (not source) {
+              cerr << Error( "KatanaEngine::updateEstimateDensity(): No GCell under (%s,%s) for %s."
+                           , DbU::getValueString((DbU::Unit)tree.branch[i].x).c_str()
+                           , DbU::getValueString((DbU::Unit)tree.branch[i].y).c_str()
+                           , getString(netData->getNet()).c_str()
+                           ) << endl;
+              continue;
+            }
+            if (not target) {
+              cerr << Error( "KatanaEngine::updateEstimateDensity(): No GCell under (%s,%s) for %s."
+                           , DbU::getValueString((DbU::Unit)tree.branch[j].x).c_str()
+                           , DbU::getValueString((DbU::Unit)tree.branch[j].y).c_str()
+                           , getString(netData->getNet()).c_str()
+                           ) << endl;
+              continue;
+            }
+
+            updateEstimateDensityOfPath( this, source, target, weight );
+          }
+        }
+        return;
+    }
+  }
+
+
   void  KatanaEngine::runGlobalRouter ()
   {
     if (getState() >= EngineState::EngineGlobalLoaded)
@@ -195,6 +312,16 @@ namespace Katana {
     openSession();
 
     annotateGlobalGraph();
+    for ( NetData* netData : getNetOrdering() ) {
+      if (netData->isGlobalRouted() or netData->isExcluded()) continue;
+
+      updateEstimateDensity( netData, 1.0 );
+      netData->setGlobalEstimated( true );
+    }
+
+    // Session::close();
+    // Breakpoint::stop( 1, "After global routing estimation." );
+    // openSession();
 
     startMeasures();
     cmess1 << "  o  Running global routing." << endl;
@@ -218,9 +345,16 @@ namespace Katana {
     do {
       cmess2 << "     [" << setfill(' ') << setw(3) << iteration << "] nets:";
 
+      long   wireLength = 0;
+      long   viaCount   = 0;
+
       netCount = 0;
       for ( NetData* netData : getNetOrdering() ) {
-        if (netData->isGlobalRouted()) continue;
+        if (netData->isGlobalRouted() or netData->isExcluded()) continue;
+        if (netData->isGlobalEstimated()) {
+          updateEstimateDensity( netData, -1.0 );
+          netData->setGlobalEstimated( false );
+        }
 
         distance->setNet( netData->getNet() );
         dijkstra->load( netData->getNet() );
@@ -228,13 +362,20 @@ namespace Katana {
         ++netCount;
       }
       cmess2 << left << setw(6) << netCount;
-      cmess2 << " ovEdges:" << setw(4) << ovEdges.size();
 
-      for ( Edge* edge : ovEdges ) computeNextHCost( edge, edgeHInc );
+      computeGlobalWireLength( wireLength, viaCount );
+      cmess2 <<  " nWL:" << setw(7) << (wireLength /*+ viaCount*3*/);
+      cmess2 << " VIAs:" << setw(7) << viaCount;
 
-      // Session::close();
-      // Breakpoint::stop( 1, "Before riping up overflowed edges." );
-      // openSession();
+      size_t overflow = ovEdges.size();
+      for ( Edge* edge : ovEdges ) {
+        edge->setHistoricCost( edge->getHistoricCost() + edgeHInc );
+      //computeNextHCost( edge, edgeHInc );
+      }
+
+    //Session::close();
+    //Breakpoint::stop( 1, "Before riping up overflowed edges." );
+    //openSession();
 
       netCount = 0;
       if (iteration < globalIterations - 1) {
@@ -256,10 +397,12 @@ namespace Katana {
         dijkstra->setSearchAreaHalo( Session::getSliceHeight()*3 );
       }
 
+      cmess2 << " ovE:" << setw(4) << overflow;
+
       cmess2 << " ripup:" << setw(4) << netCount << right;
       suspendMeasures();
-      cmess2 << " " << setw(10) << Timer::getStringTime  (getTimer().getCombTime())
-             << " " << setw( 6) << Timer::getStringMemory(getTimer().getIncrease()) << endl;
+      cmess2 << " " << setw(5) << Timer::getStringTime  (getTimer().getCombTime())
+             << " " << setw(6) << Timer::getStringMemory(getTimer().getIncrease()) << endl;
       resumeMeasures();
 
       ++iteration;
@@ -301,6 +444,46 @@ namespace Katana {
     setState( EngineState::EngineGlobalLoaded );
   }
 
+
+  void  KatanaEngine::computeGlobalWireLength ( long& wireLength, long& viaCount )
+  {
+    const Layer* hLayer = getConfiguration()->getGHorizontalLayer();
+    const Layer* vLayer = getConfiguration()->getGVerticalLayer();
+    const Layer* cLayer = getConfiguration()->getGContactLayer();
+
+    DbU::Unit hWireLength = 0;
+    DbU::Unit vWireLength = 0;
+
+    for ( NetData* netData : getNetOrdering() ) {
+      if (not netData->isGlobalRouted()) continue;
+
+      for ( Component* component : netData->getNet()->getComponents() ) {
+        if (component->getLayer() == hLayer) {
+          hWireLength += static_cast<Horizontal*>( component )->getLength();
+        } else {
+          if (component->getLayer() == vLayer) {
+            vWireLength += static_cast<Vertical*>( component )->getLength();
+          } else {
+            if (component->getLayer() == cLayer) {
+              Contact* contact = static_cast<Contact*>( component );
+              size_t   gslaves = 0;
+
+              for ( Component* slave : contact->getSlaveComponents().getSubSet<Segment*>() ) {
+                if (slave->getLayer() == vLayer) { ++viaCount; break; }
+                // if (slave->getLayer() == hLayer) {
+                //   ++gslaves;
+                //   if (gslaves >= 2) { ++viaCount; break; }
+                // }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    wireLength  = hWireLength / GCell::getMatrixHSide();
+    wireLength += vWireLength / GCell::getMatrixVSide();
+  }
 
 
 }  // Katana namespace.

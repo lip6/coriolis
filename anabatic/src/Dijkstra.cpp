@@ -1335,6 +1335,31 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::PrioriryQueue::CompareByDistance".
+
+  
+  PriorityQueue* PriorityQueue::CompareByDistance::_pqueue = NULL;
+
+
+  bool PriorityQueue::CompareByDistance::operator() ( const Vertex* lhs, const Vertex* rhs )
+  {
+    if (lhs->getDistance() == rhs->getDistance()) {
+      if (_pqueue and _pqueue->hasAttractor()) {
+        DbU::Unit lhsDistance = _pqueue->getAttractor().manhattanDistance( lhs->getCenter() );
+        DbU::Unit rhsDistance = _pqueue->getAttractor().manhattanDistance( rhs->getCenter() );
+
+        cdebug_log(112,0) << "CompareByDistance: lhs:" << DbU::getValueString(lhsDistance)
+                          << " rhs:" << DbU::getValueString(rhsDistance) << endl;
+
+        if (lhsDistance != rhsDistance) return lhsDistance < rhsDistance;
+      }
+      return lhs->getBranchId() > rhs->getBranchId();
+    }
+    return lhs->getDistance() < rhs->getDistance();
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::Dijkstra".
 
 
@@ -1754,6 +1779,7 @@ namespace Anabatic {
   //_checkEdges();
     _sources.clear();
     _targets.clear();
+    _queue.clear();
     _searchArea.makeEmpty();
     _connectedsId = 0;
   }
@@ -2184,6 +2210,7 @@ namespace Anabatic {
     }
 
     _queue.clear();
+    _queue.setAttractor( _searchArea.getCenter() );
     _connectedsId = (*_sources.begin())->getConnexId();
     for ( Vertex* source : _sources ) {
       _queue.push( source );

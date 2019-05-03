@@ -298,7 +298,6 @@ namespace {
 namespace Etesian {
 
 
-  using Hurricane::ForEachIterator;
   using Hurricane::DataBase;
   using Hurricane::UpdateSession;
   using Hurricane::Occurrence;
@@ -312,14 +311,14 @@ namespace Etesian {
     Box topCellAb = getCell()->getAbutmentBox();
 
     if (not topCellAb.isEmpty()) {
-      forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+      for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
       {
-        Instance*      instance       = static_cast<Instance*>((*ioccurrence).getEntity());
+        Instance*      instance       = static_cast<Instance*>(occurrence.getEntity());
         Cell*          masterCell     = instance->getMasterCell();
         Box            instanceAb     = masterCell->getAbutmentBox();
         Transformation instanceTransf = instance->getTransformation();
   
-        (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
+        occurrence.getPath().getTransformation().applyOn( instanceTransf );
         instanceTransf.applyOn( instanceAb );
   
         if (not topCellAb.contains(instanceAb)) continue;
@@ -371,9 +370,9 @@ namespace Etesian {
 
     sliceHoles.setSpinSlice0( _yspinSlice0 );
 
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
     {
-      Instance* instance     = static_cast<Instance*>((*ioccurrence).getEntity());
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
       if (CatalogExtension::isFeed(masterCell)) {
@@ -384,7 +383,7 @@ namespace Etesian {
       Box instanceAb = masterCell->getAbutmentBox();
 
       Transformation instanceTransf = instance->getTransformation();
-      (*ioccurrence).getPath().getTransformation().applyOn( instanceTransf );
+      occurrence.getPath().getTransformation().applyOn( instanceTransf );
       instanceTransf.applyOn( instanceAb );
 
       if (not topCellAb.contains(instanceAb)) {

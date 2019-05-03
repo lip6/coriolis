@@ -1,15 +1,16 @@
 
- UNAME_S          = $(shell uname -s)
- UNAME_R          = $(shell uname -r)
+ UNAME_S            = $(shell uname -s)
+ UNAME_R            = $(shell uname -r)
+ DEVTOOLSET_VERSION = 7
 
-# We must use devtoolset-2 only under RHEL6 & clones.
+# We must use devtoolset only under RHEL6 & clones.
  DEVTOOLSET_OPTION =
  ifeq ($(UNAME_S),Linux)
-   ifneq ($(findstring .el6.,$(UNAME_R)),)
-     DEVTOOLSET_OPTION = --devtoolset-2
+   ifneq ($(findstring .el7.,$(UNAME_R)),)
+     DEVTOOLSET_OPTION = --devtoolset=$(DEVTOOLSET_VERSION)
    endif
    ifneq ($(findstring .slsoc6.,$(UNAME_R)),)
-     DEVTOOLSET_OPTION = --devtoolset-2
+     DEVTOOLSET_OPTION = --devtoolset=$(DEVTOOLSET_VERSION)
    endif
  endif
 

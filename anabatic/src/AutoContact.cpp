@@ -110,7 +110,7 @@ namespace Anabatic {
 
   void  AutoContact::_preDestroy ()
   {
-    DebugSession::open( _contact->getNet(), 140, 150 );
+    DebugSession::open( _contact->getNet(), 145, 150 );
 
     cdebug_log(145,0) << "AutoContact::_preDestroy() - <AutoContact id:" << _id << ">" << endl;
 
@@ -549,6 +549,20 @@ namespace Anabatic {
   {
     cerr << Warning("Calling AutoContact::translate() is likely a bug.") << endl;
     _contact->translate ( tx, ty );
+  }
+
+
+  void  AutoContact::setLayerAndWidth ( size_t delta, size_t depth )
+  {
+    if (delta == 0) {
+      setLayer( Session::getRoutingLayer(depth) );
+      setSizes( Session::getWireWidth   (depth)
+              , Session::getWireWidth   (depth) );
+    } else {
+      setLayer( Session::getContactLayer(depth) );
+      setSizes( Session::getViaWidth    (depth)
+              , Session::getViaWidth    (depth) );
+    }
   }
 
 

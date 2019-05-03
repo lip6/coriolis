@@ -44,6 +44,7 @@ namespace Katana {
   using Hurricane::CellViewer;
   using CRL::RoutingGauge;
   using Anabatic::AnabaticEngine;
+  using Anabatic::NetData;
 
   class Block;
   class Track;
@@ -123,8 +124,10 @@ namespace Katana {
               void                     digitalInit                ();
               void                     analogInit                 ();
               void                     pairSymmetrics             ();
+              void                     updateEstimateDensity      ( NetData*, double weight );
               void                     runNegociate               ( Flags flags=Flags::NoFlags );
               void                     runGlobalRouter            ();
+              void                     computeGlobalWireLength    ( long& wireLength, long& viaCount );
               void                     runTest                    ();
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();

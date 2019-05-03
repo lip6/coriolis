@@ -73,7 +73,7 @@ extern "C" {
     if (pyReturnHook == NULL) return NULL;
 
     PyObject* pyHook = NULL;
-    if (not PyArg_ParseTuple(args,"O:Hook.merge", &pyHook)) return NULL;
+    if (not PyArg_ParseTuple(args,"O:Segment.getOppositetHook", &pyHook)) return NULL;
 
     Hook* hook = PYHOOK_O(pyHook);
 
@@ -82,6 +82,29 @@ extern "C" {
     HCATCH
       
     return (PyObject*)pyReturnHook;
+  }
+
+
+  static PyObject* PySegment_getOppositeAnchor ( PySegment *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PySegment_getOppositeAnchor()" << endl;
+    METHOD_HEAD ( "Segment.getOppositeAnchor()" )
+
+    Component*   opposite    = NULL;
+    PyObject*    pyOpposite  = NULL;
+    PyComponent* pyComponent = NULL;
+    if (not PyArg_ParseTuple(args,"O:Segment.getOppositeAnchor", &pyComponent)) return NULL;
+
+    Component* anchor = PYCOMPONENT_O(pyComponent);
+
+    HTRY
+      opposite = segment->getOppositeAnchor( anchor );
+      if (opposite) pyOpposite = PyEntity_NEW( opposite );
+      else
+        Py_RETURN_NONE;
+    HCATCH
+      
+    return pyOpposite;
   }
 
 
@@ -164,6 +187,7 @@ extern "C" {
     { { "getSourceHook"        , (PyCFunction)PySegment_getSourceHook    , METH_NOARGS , "Return the nested source Hook." }
     , { "getTargetHook"        , (PyCFunction)PySegment_getTargetHook    , METH_NOARGS , "Return the nested target Hook." }
     , { "getOppositeHook"      , (PyCFunction)PySegment_getOppositeHook  , METH_VARARGS, "Return the nested Hook opposite of the argument hook." }
+    , { "getOppositeAnchor"    , (PyCFunction)PySegment_getOppositeAnchor, METH_VARARGS, "Return the opposite component anchor." }
     , { "getSource"            , (PyCFunction)PySegment_getSource        , METH_NOARGS , "Return the Segment source component (or None)." }
     , { "getTarget"            , (PyCFunction)PySegment_getTarget        , METH_NOARGS , "Return the Segment target component (or None)." }
     , { "getSourceX"           , (PyCFunction)PySegment_getSourceX       , METH_NOARGS , "Return the Segment source X value." }
@@ -210,8 +234,6 @@ extern "C" {
 
 
 }  // End of extern "C".
-
-
 
 
 }  // End of Isobar namespace.
