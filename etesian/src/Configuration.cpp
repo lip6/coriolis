@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <vector>
 #include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Technology.h"
 #include "hurricane/DataBase.h"
@@ -38,6 +39,7 @@ namespace Etesian {
   using  std::ostringstream;
   using  std::vector;
   using  Hurricane::tab;
+  using  Hurricane::Error;
   using  Hurricane::Warning;
   using  Hurricane::Technology;
   using  Hurricane::DataBase;
@@ -59,8 +61,18 @@ namespace Etesian {
     , _aspectRatio  (                             Cfg::getParamPercentage("etesian.aspectRatio"   ,100.0)->asDouble() )
     , _feedNames    (                             Cfg::getParamString    ("etesian.feedNames"     ,"tie_x0,rowend_x0")->asString() )
   {
-    if (rg == NULL) rg = AllianceFramework::get()->getRoutingGauge();
-    if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
+    string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
+    if (cg == NULL) {
+      cg = AllianceFramework::get()->getCellGauge( gaugeName );
+      if (cg == NULL) 
+        throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge." );
+    }
+
+    if (rg == NULL) {
+      rg = AllianceFramework::get()->getRoutingGauge( gaugeName );
+      if (rg == NULL) 
+        throw Error( "AnabaticEngine::Configuration(): No routing gauge named \"%s\"", gaugeName.c_str() );
+    }
 
     _rg = rg->getClone();
     _cg = cg->getClone();

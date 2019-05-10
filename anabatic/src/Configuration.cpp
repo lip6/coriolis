@@ -91,12 +91,14 @@ namespace Anabatic {
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
-    if (cg == NULL) cg = AllianceFramework::get()->getCellGauge();
-    if (cg == NULL) 
-      throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge." );
+    string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
+    if (cg == NULL) {
+      cg = AllianceFramework::get()->getCellGauge( gaugeName );
+      if (cg == NULL) 
+        throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge." );
+    }
 
     if (rg == NULL) {
-      string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
       rg = AllianceFramework::get()->getRoutingGauge( gaugeName );
       if (rg == NULL) 
         throw Error( "AnabaticEngine::Configuration(): No routing gauge named \"%s\"", gaugeName.c_str() );
