@@ -386,9 +386,13 @@ namespace Hurricane {
 
   void  CellViewer::createMenus ()
   {
-    addMenu ( "file" , "File" , TopMenu );
-    addMenu ( "view" , "View" , TopMenu );
-    addMenu ( "tools", "Tools", TopMenu );
+    addMenu( "file"         , "File"      , TopMenu );
+    addMenu( "view"         , "View"      , TopMenu );
+    addMenu( "tools"        , "Tools"     , TopMenu );
+    addMenu( "placeAndRoute", "P&&R"      , TopMenu );
+    addMenu( "misc"         , "Misc"      , TopMenu );
+    addMenu( "misc.beta"    , "&beta"     );
+    addMenu( "misc.obsolete", "&Obsolete" );
 
   // Building the "File" menu.
     QAction* action = addToMenu( "viewer.interrupt"

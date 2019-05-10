@@ -279,61 +279,67 @@ namespace Kite {
 
     _viewer = viewer;
 
-    if (_viewer->hasMenuAction("placeAndRoute.route")) {
+    if (_viewer->hasMenuAction("misc.obsolete.placeAndRoute.route")) {
       cerr << Warning( "GraphicKiteEngine::addToMenu() - Kite detailed router already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addToMenu( "placeAndRoute.route"
+    if (not _viewer->hasMenuAction("misc.obsolete.placeAndRoute"))
+      _viewer->addMenu( "misc.obsolete.placeAndRoute", "P&&R" );
+
+    if (not _viewer->hasMenuAction("misc.obsolete.placeAndRoute.stepByStep"))
+      _viewer->addMenu( "misc.obsolete.placeAndRoute.stepByStep", "&Step by step" );
+
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.route"
                       , "&Route"
                       , "Complete routing of the design (global, detailed and finalize) [<b>Kite</b>]"
                       , std::bind(&GraphicKiteEngine::_route,this)
                       , QIcon()
-                      , "placeAndRoute.stepByStep"
+                      , "misc.obsolete.placeAndRoute.stepByStep"
                       );
 
-    _viewer->addToMenu( "placeAndRoute.stepByStep.========" );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.wipeoutRouting"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.========" );
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.wipeoutRouting"
                       , "Erase Previous Routing"
                       , "Erase any previously routed wires"
                       , std::bind(&GraphicKiteEngine::_wipeoutRouting,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.detailedPreRoute"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.detailedPreRoute"
                       , "Detailed Pre-Route"
                       , "Run the detailed router on global pre-routed nets [<b>Kite</b>]"
                       , std::bind(&GraphicKiteEngine::_runNegociatePreRouted,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.globalRoute"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.globalRoute"
                       , "&Global Route"
                       , "Run the global router [<b>nik</b>]"
                       , std::bind(&GraphicKiteEngine::_globalRoute,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.loadGlobalRouting"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.loadGlobalRouting"
                       , "&Load Global Routing"
                       , "Load a solution for the global routing (.kgr) [<b>Knik</b>]"
                       , std::bind(&GraphicKiteEngine::_loadGlobalSolution,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.saveGlobalRouting"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.saveGlobalRouting"
                       , "&Save Global Routing"
                       , "Save a global router solution (.kgr) [<b>Knik</b>]"
                       , std::bind(&GraphicKiteEngine::_saveGlobalSolution,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.detailedRoute"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.detailedRoute"
                       , "&Detailed Route"
                       , "Run the detailed router [<b>Kite</b>]"
                       , std::bind(&GraphicKiteEngine::_detailRoute,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.finalize"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.finalize"
                       , "&Finalize Routing"
                       , "Cleanup all routing related data structures [<b>Kite</b>]"
                       , std::bind(&GraphicKiteEngine::_finalize,this)
                       );
-    _viewer->addToMenu( "placeAndRoute.stepByStep.dumpMeasures"
+    _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.dumpMeasures"
                       , "Dump &Measures"
                       , "Dumping Measurements on the disk [<b>Kite</b>]"
                       , std::bind(&GraphicKiteEngine::_dumpMeasures,this)
                       );
-    // _viewer->addToMenu( "placeAndRoute.stepByStep.save"
+    // _viewer->addToMenu( "misc.obsolete.placeAndRoute.stepByStep.save"
     //                   , "&Save Design"
     //                   , "Save routed design (temporary hack)"
     //                   , std::bind(&GraphicKiteEngine::_save,this)

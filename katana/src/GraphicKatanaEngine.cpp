@@ -359,59 +359,54 @@ namespace Katana {
 
     _viewer = viewer;
 
-    if (not _viewer->hasMenuAction("beta"))
-      _viewer->addMenu( "beta", "Beta", CellViewer::TopMenu );
-    if (not _viewer->hasMenuAction("beta.placeAndRoute"))
-      _viewer->addMenu( "beta.placeAndRoute", "P&&R" );
-
-    if (_viewer->hasMenuAction("beta.placeAndRoute.route")) {
+    if (_viewer->hasMenuAction("placeAndRoute.route")) {
       cerr << Warning( "GraphicKatanaEngine::addToMenu() - Katana detailed router already hooked in." ) << endl;
       return;
     }
 
-    _viewer->addMenu  ( "beta.placeAndRoute.stepByStep", "&Step by step" );
+    _viewer->addMenu  ( "placeAndRoute.stepByStep", "&Step by step" );
 
-    _viewer->addToMenu( "beta.placeAndRoute.route"
+    _viewer->addToMenu( "placeAndRoute.route"
                       , "&Route  .  .  .  .  . [Katana]"
                       , "Route the design (global & detailed)"
                       , std::bind(&GraphicKatanaEngine::_route,this)
                       , QIcon()
-                      , "beta.placeAndRoute.stepByStep"
+                      , "placeAndRoute.stepByStep"
                       );
 
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.========" );
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.detailedPreRoute"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.========" );
+    _viewer->addToMenu( "placeAndRoute.stepByStep.detailedPreRoute"
                       , "Detailed Pre-Route . [Katana]"
                       , "Run the <b>Katana</b> detailed router on pre-routed nets"
                       , std::bind(&GraphicKatanaEngine::_runNegociatePreRouted,this)
                       );
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.globalRoute"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.globalRoute"
                       , "&Global Route .  .  . [Katana]"
                       , "Run the <b>Katana</b> global router"
                       , std::bind(&GraphicKatanaEngine::_globalRoute,this)
                       );
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.detailedRoute"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.detailedRoute"
                       , "&Detailed Route  .  . [Katana]"
                       , "Run the <b>Katana</b> detailed router"
                       , std::bind(&GraphicKatanaEngine::_detailRoute,this)
                       );
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.finalize"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.finalize"
                       , "&Finalize Routing   . [Katana]"
                       , "Closing Routing"
                       , std::bind(&GraphicKatanaEngine::_finalize,this)
                       );
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.dumpMeasures"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.dumpMeasures"
                       , "Dump &Measures   .  . [Katana]"
                       , "Dumping Measurements on the disk"
                       , std::bind(&GraphicKatanaEngine::_dumpMeasures,this)
                       );
 #if NO_NEED_OF_IT_NOW
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.save"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.save"
                       , "&Save Design"
                       , "Save routed design (temporary hack)"
                       , std::bind(&GraphicKatanaEngine::_save,this)
                       );
-    _viewer->addToMenu( "beta.placeAndRoute.stepByStep.runTest"
+    _viewer->addToMenu( "placeAndRoute.stepByStep.runTest"
                       , "Run &Test"
                       , "Run Test Program (symmetric routing of gmChamla)"
                       , std::bind(&GraphicKatanaEngine::_runTest,this)
