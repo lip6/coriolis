@@ -256,13 +256,14 @@ extern "C" {
       if (PyArg_ParseTuple( args, "O&|O&:Layer.getEnclosure()"
                           , Converter, &arg0
                           , Converter, &arg1 )) {
-        if (__cs.getObjectIds() == ":basiclayer:int")
+        if ( (__cs.getObjectIds() == ":layer:int") and (PYBASICLAYER_O(arg0)) )
           rvalue = layer->getEnclosure( PYBASICLAYER_O(arg0), PyAny_AsLong(arg1) );
         else if  ( __cs.getObjectIds() == ":int" )
           rvalue = layer->getEnclosure( PyAny_AsLong(arg1) );
         else {
-          PyErr_SetString ( ConstructorError
-                          , "invalid parameter type for Layer.getEnclosure()." );
+          string message = "invalid parameter type for Layer.getEnclosure() (\"" 
+                         + __cs.getObjectIds() + "\")";
+          PyErr_SetString ( ConstructorError, message.c_str()  );
           return NULL;
         }
       } else {

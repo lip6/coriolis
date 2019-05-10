@@ -108,9 +108,9 @@ namespace CRL {
       inline  DbU::Unit                 getObstacleDw    () const;
               void                      divide           ( DbU::Unit dividend, long& quotient, long& modulo ) const;
               unsigned int              getTrackNumber   ( DbU::Unit start, DbU::Unit stop ) const;
-              unsigned int              getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
+              long                      getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
       inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
-              DbU::Unit                 getTrackPosition ( DbU::Unit start, unsigned depth ) const;
+              DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
     // Hurricane Managment.             
               void                      toJson           ( JsonWriter* ) const;
       virtual string                    _getTypeName     () const;

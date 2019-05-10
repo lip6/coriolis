@@ -826,6 +826,8 @@ extern "C" {
     PyModule_AddObject ( module, "Plug"                 , (PyObject*)&PyTypePlug );
     Py_INCREF ( &PyTypeRoutingPad );
     PyModule_AddObject ( module, "RoutingPad"           , (PyObject*)&PyTypeRoutingPad );
+    Py_INCREF ( &PyTypeSegment );
+    PyModule_AddObject ( module, "Segment"              , (PyObject*)&PyTypeSegment );
     Py_INCREF ( &PyTypeVertical );
     PyModule_AddObject ( module, "Vertical"             , (PyObject*)&PyTypeVertical );
     Py_INCREF ( &PyTypeHorizontal );

@@ -145,7 +145,7 @@ namespace CRL {
   RoutingLayerGauge* RoutingGauge::getLayerGauge ( const Layer* layer ) const
   {
     for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
-      if ( _layerGauges[i]->getLayer() == layer )
+      if (_layerGauges[i]->getLayer()->getMask() == layer->getMask())
         return _layerGauges[i];
     }
     return NULL;
@@ -155,7 +155,7 @@ namespace CRL {
   unsigned int  RoutingGauge::getLayerType ( const Layer* layer ) const
   {
     RoutingLayerGauge* layerGauge = getLayerGauge(layer);
-    if ( !layerGauge ) return 0;
+    if (not layerGauge) return 0;
 
     return layerGauge->getType();
   }
@@ -164,7 +164,7 @@ namespace CRL {
   unsigned int  RoutingGauge::getLayerDirection ( const Layer* layer ) const
   {
     RoutingLayerGauge* layerGauge = getLayerGauge(layer);
-    if ( !layerGauge ) return 0;
+    if (not layerGauge) return 0;
 
     return layerGauge->getDirection();
   }
@@ -178,7 +178,7 @@ namespace CRL {
     if (viaLayer) bottomLayer = viaLayer->getBottom();
 
     for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
-      if ( _layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask() )
+      if (_layerGauges[i]->getLayer()->getMask() == bottomLayer->getMask())
         return i;
     }
     return nlayerdepth;
@@ -188,7 +188,7 @@ namespace CRL {
   size_t  RoutingGauge::getLayerDepth ( const Layer* layer ) const
   {
     for ( size_t i=0 ; i < _layerGauges.size() ; i++ ) {
-      if ( _layerGauges[i]->getLayer()->getMask() == layer->getMask() )
+      if (_layerGauges[i]->getLayer()->getMask() == layer->getMask())
         return i;
     }
     return nlayerdepth;

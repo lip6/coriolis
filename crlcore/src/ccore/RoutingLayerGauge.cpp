@@ -217,7 +217,7 @@ namespace CRL {
   }
 
 
-  unsigned  RoutingLayerGauge::getTrackIndex ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
+  long  RoutingLayerGauge::getTrackIndex ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
   {
     cdebug_log(100,1) << "RoutingLayerGauge::getTrackIndex ( " << position << " )" << endl;
 
@@ -228,15 +228,15 @@ namespace CRL {
     cdebug_log(100,0) << "index := " << index << endl;
 
     if ( index < 0 ) {
-      cdebug_tabw(100,-1);
-      return 0;
+    //cdebug_tabw(100,-1);
+    //return 0;
 
-      // throw Error ( negativeIndex
-      //             , getString(this).c_str()
-      //             , DbU::getValueString(position).c_str()
-      //             , DbU::getValueString(start).c_str()
-      //             , DbU::getValueString(stop).c_str()
-      //             );
+    //throw Error ( negativeIndex
+    //            , getString(this).c_str()
+    //            , DbU::getValueString(position).c_str()
+    //            , DbU::getValueString(start).c_str()
+    //            , DbU::getValueString(stop).c_str()
+    //            );
     }
 
     if ( ( mode & Constant::Exact ) and ( modulo != 0 ) )
@@ -248,17 +248,17 @@ namespace CRL {
       if ( modulo > _pitch / 2 ) index++;
     }
 
-    unsigned int tracksNumber = getTrackNumber(start,stop);
-    if ( (unsigned)index > tracksNumber ) {
-      cdebug_tabw(100,-1);
-      return (tracksNumber > 0) ? tracksNumber-1 : 0;
-      // throw Error ( overflowIndex
-      //             , getString(this).c_str()
-      //             , DbU::getValueString(position).c_str()
-      //             , DbU::getValueString(start).c_str()
-      //             , DbU::getValueString(stop).c_str()
-      //             );
-    }
+    // unsigned int tracksNumber = getTrackNumber(start,stop);
+    // if ( (unsigned)index > tracksNumber ) {
+    //   cdebug_tabw(100,-1);
+    //   return (tracksNumber > 0) ? tracksNumber-1 : 0;
+    //   // throw Error ( overflowIndex
+    //   //             , getString(this).c_str()
+    //   //             , DbU::getValueString(position).c_str()
+    //   //             , DbU::getValueString(start).c_str()
+    //   //             , DbU::getValueString(stop).c_str()
+    //   //             );
+    // }
 
     cdebug_tabw(100,-1);
 
@@ -266,8 +266,8 @@ namespace CRL {
   }
 
 
-  DbU::Unit  RoutingLayerGauge::getTrackPosition ( DbU::Unit start, unsigned depth ) const
-  { return depth * _pitch + _offset + start; }
+  DbU::Unit  RoutingLayerGauge::getTrackPosition ( DbU::Unit start, long index ) const
+  { return index * _pitch + _offset + start; }
 
 
   string  RoutingLayerGauge::_getTypeName () const

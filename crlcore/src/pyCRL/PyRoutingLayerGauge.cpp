@@ -198,7 +198,7 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyRoutingLayerGauge_getTrackIndex()" << endl;
 
-    unsigned int  trackIndex = 0;
+    long  trackIndex = 0;
 
     HTRY
     METHOD_HEAD("RoutingLayerGauge.getTrackIndex()")
@@ -228,7 +228,7 @@ extern "C" {
     }
     HCATCH
 
-    return Py_BuildValue("I",trackIndex);
+    return Py_BuildValue("l",trackIndex);
   }
 
 
@@ -241,11 +241,11 @@ extern "C" {
     HTRY
     METHOD_HEAD("RoutingLayerGauge.getTrackPosition()")
 
-    PyObject*     pyStart = NULL;
-    unsigned int  depth   = 0;
+    PyObject* pyStart = NULL;
+    long      index   = 0;
     
-    if (PyArg_ParseTuple( args, "OI:RoutingLayerGauge.getTrackIndex", &pyStart, &depth)) {
-      trackPosition = rlg->getTrackPosition( PyAny_AsLong(pyStart), depth);
+    if (PyArg_ParseTuple( args, "Ol:RoutingLayerGauge.getTrackIndex", &pyStart, &index)) {
+      trackPosition = rlg->getTrackPosition( PyAny_AsLong(pyStart), index);
     } else {
       PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingLayerGauge.getTrackPosition()." );
       return NULL;

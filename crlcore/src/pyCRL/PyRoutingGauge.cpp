@@ -290,7 +290,10 @@ extern "C" {
     if (PyArg_ParseTuple( args, "I:RoutingGauge.getRoutingLayer", &depth)) {
       layer = const_cast<Layer*>(rg->getRoutingLayer( (size_t)depth ));
       if ( layer == NULL ) {
-        PyErr_SetString ( ConstructorError, "No layer at the requested depth RoutingGauge.getRoutingLayer()." );
+        string message
+          = "RoutingGauge.getRoutingLayer(): No layer at the requested depth " + getString(depth)
+          + " (must be < " + getString(rg->getDepth()) + ").";
+        PyErr_SetString ( ConstructorError, message.c_str() );
         return NULL;
       }
     } else {
@@ -317,7 +320,10 @@ extern "C" {
     if (PyArg_ParseTuple( args, "I:RoutingGauge.getContactLayer", &depth)) {
       layer = rg->getContactLayer( (size_t)depth );
       if ( layer == NULL ) {
-        PyErr_SetString ( ConstructorError, "No layer at the requested depth RoutingGauge.getContactLayer()." );
+        string message
+          = "RoutingGauge.getContactLayer(): No layer at the requested depth " + getString(depth)
+          + " (must be < " + getString(rg->getDepth()-1) + ").";
+        PyErr_SetString ( ConstructorError, message.c_str() );
         return NULL;
       }
     } else {
