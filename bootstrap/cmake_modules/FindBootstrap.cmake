@@ -260,14 +260,15 @@
                                PATHS         /usr/include/qt5
                                              /usr/include
                                PATH_SUFFIXES qwt )
-     find_library(QWT_LIBRARY NAMES qwt-qt5
+     find_library(QWT_LIBRARY NAMES qwt-qt5 qwt
                               PATHS /usr/lib${LIB_SUFFIX} )
    else()
      find_path(QWT_INCLUDE_DIR NAMES         qwt.h
-                               PATHS         /usr/include
+                               PATHS         /usr/include/qwt-qt4
                                              /usr/include/qt4
+                                             /usr/include
                                PATH_SUFFIXES qwt )
-     find_library(QWT_LIBRARY NAMES qwt
+     find_library(QWT_LIBRARY NAMES qwt-qt4 qwt
                               PATHS /usr/lib${LIB_SUFFIX} )
    endif()
 
