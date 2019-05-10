@@ -10,28 +10,19 @@
 # |  Author      :                    Jean-Paul CHAPUT              |
 # |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 # | =============================================================== |
-# |  Python      :       "./plugins/ClockTreePlugin.py"             |
+# |  Python      :       "./plugins/ChipRoute.py"                   |
 # +-----------------------------------------------------------------+
+
 
 try:
   import sys
   import traceback
-  import os.path
-  import math
-  import Cfg
-  import Hurricane
-  from   Hurricane import Breakpoint
   import Viewer
-  import CRL
-  from   CRL import RoutingLayerGauge
   import helpers
-  from   helpers   import trace
   from   helpers   import ErrorMessage
-  import Etesian
-  import Unicorn
+  from   helpers   import WarningMessage
   import plugins
-  import clocktree.ClockTree
-  import chip.Configuration
+  import chip.Chip
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):
@@ -55,12 +46,12 @@ except Exception, e:
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    kw['beforeAction'] = 'beta.placeAndRoute.placeChip'
+    kw['beforeAction'] = 'placeAndRoute.stepByStep'
 
     plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
-    plugins.kwUnicornHook( 'placeAndRoute.clockTree'
-                         , 'Place Block && Clock Tree'
-                         , 'Place a block with a buffered H-Tree for the clock'
+    plugins.kwUnicornHook( 'placeAndRoute.placeRouteChip'
+                         , 'PLace && Route Chip'
+                         , 'Place & route a Complete Chip (pads && core)'
                          , sys.modules[__name__].__file__
                          , **kw
                          )
@@ -68,55 +59,31 @@ def unicornHook ( **kw ):
 
 
 def ScriptMain ( **kw ):
+  rvalue = True
   try:
     helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )
 
-    errorCode = 0
+    cell, editor = plugins.kwParseMain( **kw )
+    conf = chip.Configuration.loadConfiguration( cell, editor )
+    if not conf.validated: return False
 
-    print '  o  Cleaning up any previous run.'
-    for fileName in os.listdir('.'):
-      if fileName.endswith('.ap'):
-        print '      - <%s>' % fileName
-        os.unlink(fileName)
-
-    cell = None
-    if kw.has_key('cell') and kw['cell']:
-      cell = kw['cell']
-
-    editor = None
-    if kw.has_key('editor') and kw['editor']:
-      editor = kw['editor']
-      print '  o  Editor detected, running in graphic mode.'
-      if cell == None: cell = editor.getCell()
-
-    if cell == None:
-      raise ErrorMessage( 3, 'ClockTree: No cell loaded yet.' )
-
-    conf = chip.Configuration.ChipConf( {}, cell, editor )
-
-    if cell.getAbutmentBox().isEmpty():
-      spaceMargin = Cfg.getParamPercentage('etesian.spaceMargin').asPercentage() / 100.0 + 0.02
-      aspectRatio = Cfg.getParamPercentage('etesian.aspectRatio').asPercentage() / 100.0
-      clocktree.ClockTree.computeAbutmentBox( cell, spaceMargin, aspectRatio, conf.cellGauge )
-      if editor: editor.fit()
-
-    ht = clocktree.ClockTree.HTree.create( conf, cell, None, cell.getAbutmentBox() )
-    if editor: editor.refresh()
-
-    etesian = Etesian.EtesianEngine.create( cell )
-    etesian.place()
-    etesian.destroy()
-
-    ht.connectLeaf()
-   #ht.prune()
-    ht.route()
-    ht.save( cell )
+    prChip = chip.Chip.PlaceRoute( conf )
+    prChip.doChipPlacement()
+    prChip.doChipRouting()
+    return prChip.validated
 
   except ErrorMessage, e:
-      print e; errorCode = e.code
+    print e; errorCode = e.code
+    if     locals().has_key('editor') and editor \
+       and locals().has_key('cell'  ) and cell: editor.fit()
+    rvalue = False
   except Exception, e:
-      print '\n\n', e; errorCode = 1
-      traceback.print_tb(sys.exc_info()[2])
+    print '\n\n', e; errorCode = 1
+    traceback.print_tb(sys.exc_info()[2])
+    rvalue = False
+
+  sys.stdout.flush()
+  sys.stderr.flush()
       
-  return 0
+  return rvalue

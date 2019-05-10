@@ -17,13 +17,20 @@
 # Common constants used through all <chip> modules.
 
 # For Corona's sides.
-North     = 0000
-South     = 0001
-East      = 0002
-West      = 0003
+North     = 0x0001
+South     = 0x0002
+East      = 0x0004
+West      = 0x0008
 
 # For Corona's corners.
-SouthWest = 0000
-SouthEast = 0001
-NorthWest = 0002
-NorthEast = 0003
+SouthWest = South|West
+SouthEast = South|East
+NorthWest = North|West
+NorthEast = North|East
+
+# For rounding functions.
+Superior          = 0x0010
+Inferior          = 0x0020
+Inwards           = 0x0040
+OnHorizontalPitch = 0x0080
+OnVerticalPitch   = 0x0100

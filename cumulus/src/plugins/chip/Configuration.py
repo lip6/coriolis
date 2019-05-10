@@ -26,9 +26,10 @@ from   Hurricane import Path
 from   Hurricane import Occurrence
 from   Hurricane import Net
 from   Hurricane import RoutingPad
-from   Hurricane import Contact
 from   Hurricane import Horizontal
 from   Hurricane import Vertical
+from   Hurricane import Contact
+from   Hurricane import Pin
 from   Hurricane import Plug
 from   Hurricane import Instance
 import CRL
@@ -37,6 +38,7 @@ from   helpers   import trace
 from   helpers   import ErrorMessage
 from   helpers   import WarningMessage
 from   plugins   import getParameter
+import chip
 
 
 def breakpoint ( editor, level, message ):
@@ -120,84 +122,115 @@ class GaugeConf ( object ):
     ExpandWidth     = 0x0040
 
     def __init__ ( self ):
-      self._cellGauge     = None
-      self._routingGauge  = None
-      self._topLayerDepth = 0
+      self.cellGauge      = None
+      self.ioPadGauge     = None
+      self.routingGauge   = None
+      self.topLayerDepth  = 0
       self._plugToRp      = { }
       self._rpToAccess    = { }
 
       self._loadRoutingGauge()
       return
 
-    def getSliceHeight ( self ): return self._cellGauge.getSliceHeight()
-    def getSliceStep   ( self ): return self._cellGauge.getSliceStep()
+    def getSliceHeight   ( self ): return self.cellGauge.getSliceHeight()
+    def getSliceStep     ( self ): return self.cellGauge.getSliceStep()
+    def getIoPadHeight   ( self ): return self.ioPadGauge.getSliceHeight()
+    def getIoPadStep     ( self ): return self.ioPadGauge.getSliceStep()
+    def getIoPadPitch    ( self ): return self.ioPadGauge.getPitch()
+    def getIoPadGauge    ( self ): return self.ioPadGauge
+    def getHRoutingGauge ( self ): return self.routingGauge.getLayerGauge( self.horizontalDepth )
+    def getVRoutingGauge ( self ): return self.routingGauge.getLayerGauge( self.verticalDepth )
 
     def _loadRoutingGauge ( self ):
-      self._cellGauge    = CRL.AllianceFramework.get().getCellGauge()
-      self._routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+      gaugeName = Cfg.getParamString('anabatic.routingGauge').asString()
+      self.cellGauge    = CRL.AllianceFramework.get().getCellGauge( gaugeName )
+      self.routingGauge = CRL.AllianceFramework.get().getRoutingGauge( gaugeName )
 
       topLayer = Cfg.getParamString('katabatic.topRoutingLayer').asString()
 
-      self._topLayerDepth = 0
-      for layerGauge in self._routingGauge.getLayerGauges():
+      self.topLayerDepth = 0
+      for layerGauge in self.routingGauge.getLayerGauges():
         if layerGauge.getLayer().getName() == topLayer:
-          self._topLayerDepth = layerGauge.getDepth()
+          self.topLayerDepth = layerGauge.getDepth()
           break
-      if not self._topLayerDepth:
+      if not self.topLayerDepth:
         print WarningMessage( 'Gauge top layer not defined, using top of gauge (%d).' \
-                              % self._routingGauge.getDepth() )
-        self._topLayerDepth = self._routingGauge.getDepth()
+                              % self.routingGauge.getDepth() )
+        self.topLayerDepth = self.routingGauge.getDepth()
 
-      self._horizontalDepth     = -1
-      self._verticalDepth       = -1
-      self._horizontalDeepDepth = -1
-      self._verticalDeepDepth   = -1
-      for depth in range(0,self._topLayerDepth+1):
-        if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
+      self.horizontalDepth     = -1
+      self.verticalDepth       = -1
+      self.horizontalDeepDepth = -1
+      self.verticalDeepDepth   = -1
+      for depth in range(0,self.topLayerDepth+1):
+        if self.routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
           continue
-        if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
-          if self._horizontalDeepDepth < 0:
-            self._horizontalDeepDepth = depth
-          self._horizontalDepth = depth
-        if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Vertical:
-          if self._verticalDeepDepth < 0:
-            self._verticalDeepDepth = depth
-          self._verticalDepth = depth
+        if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
+          if self.horizontalDeepDepth < 0:
+            self.horizontalDeepDepth = depth
+          self.horizontalDepth = depth
+        if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Vertical:
+          if self.verticalDeepDepth < 0:
+            self.verticalDeepDepth = depth
+          self.verticalDepth = depth
       return
 
-    def _createContact ( self, net, x, y, flags ):
-      if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
-      else:                           depth = self._horizontalDepth
+    def _loadIoPadGauge ( self, ioPadGaugeName ):
+      self.ioPadGauge = CRL.AllianceFramework.get().getCellGauge( ioPadGaugeName )
+      if not self.ioPadGauge:
+        print WarningMessage( 'IO pad gauge "%s" not found.' % ioPadGaugeName )
+      return
 
+    def isHorizontal ( self, layer ):
+      mask = layer.getMask()
+      for lg in self.routingGauge.getLayerGauges():
+        if lg.getLayer().getMask() == mask:
+          if lg.getDirection() == RoutingLayerGauge.Horizontal: return True
+          return False
+
+      print ErrorMessage( 1, 'GaugeConf.isHorizontal(): Layer "%s" is not part of gauge "%s", cannot know preferred direction.' \
+                              % (layer.getName(), self.routingGauge.getName()) )
+      return False
+
+    def isVertical ( self, layer ): return not self.isHorizontal( layer )
+
+    def _createContact ( self, net, x, y, flags ):
+      if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
+      else:                           depth = self.horizontalDepth
+
+      if self.horizontalDepth > self.verticalDepth: depth -= 1
+
+      trace( 550, '\t%s, horizontalDepth:%d, gaugeDepth:%d\n'
+             % (self.routingGauge,self.horizontalDepth,self.routingGauge.getDepth()))
       return Contact.create( net
-                           , self._routingGauge.getContactLayer(depth)
+                           , self.routingGauge.getContactLayer(depth)
                            , x, y
-                           , self._routingGauge.getLayerGauge(depth).getViaWidth()
-                           , self._routingGauge.getLayerGauge(depth).getViaWidth()
+                           , self.routingGauge.getLayerGauge(depth).getViaWidth()
+                           , self.routingGauge.getLayerGauge(depth).getViaWidth()
                            )
 
     def _getNearestHorizontalTrack ( self, bb, y, flags ):
-      if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
-      else:                           depth = self._horizontalDepth
+      if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
+      else:                           depth = self.horizontalDepth
 
-      index = self._routingGauge.getLayerGauge(depth).getTrackIndex( bb.getYMin(), bb.getYMax(), y, RoutingLayerGauge.Nearest )
-      return self._routingGauge.getLayerGauge(depth).getTrackPosition( bb.getYMin(), index )
+      index = self.routingGauge.getLayerGauge(depth).getTrackIndex( bb.getYMin(), bb.getYMax(), y, RoutingLayerGauge.Nearest )
+      return self.routingGauge.getLayerGauge(depth).getTrackPosition( bb.getYMin(), index )
 
     def _getNearestVerticalTrack ( self, bb, x, flags ):
-      if flags & GaugeConf.DeepDepth: depth = self._verticalDeepDepth
-      else:                           depth = self._verticalDepth
+      if flags & GaugeConf.DeepDepth: depth = self.verticalDeepDepth
+      else:                           depth = self.verticalDepth
 
-      index = self._routingGauge.getLayerGauge(depth).getTrackIndex( bb.getXMin(), bb.getXMax(), x, RoutingLayerGauge.Nearest )
-      return self._routingGauge.getLayerGauge(depth).getTrackPosition( bb.getXMin(), index )
+      index = self.routingGauge.getLayerGauge(depth).getTrackIndex( bb.getXMin(), bb.getXMax(), x, RoutingLayerGauge.Nearest )
+      return self.routingGauge.getLayerGauge(depth).getTrackPosition( bb.getXMin(), index )
 
     def _createHorizontal ( self, source, target, y, flags ):
-      if flags & GaugeConf.DeepDepth: depth = self._horizontalDeepDepth
-      else:                           depth = self._horizontalDepth
+      if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
+      else:                           depth = self.horizontalDepth
 
-      layer = self._routingGauge.getRoutingLayer(depth)
+      layer = self.routingGauge.getRoutingLayer(depth)
 
       if flags & GaugeConf.UseContactWidth: width  = source.getBoundingBox(layer.getBasicLayer()).getHeight()
-      else:                                 width  = self._routingGauge.getLayerGauge(depth).getWireWidth()
+      else:                                 width  = self.routingGauge.getLayerGauge(depth).getWireWidth()
       if flags & GaugeConf.ExpandWidth:     width += DbU.fromLambda( 1.0 )
 
       segment = Horizontal.create( source, target, layer, y, width )
@@ -205,13 +238,13 @@ class GaugeConf ( object ):
       return segment
   
     def _createVertical ( self, source, target, x, flags ):
-      if flags & GaugeConf.DeepDepth: depth = self._verticalDeepDepth
-      else:                           depth = self._verticalDepth
+      if flags & GaugeConf.DeepDepth: depth = self.verticalDeepDepth
+      else:                           depth = self.verticalDepth
 
-      layer = self._routingGauge.getRoutingLayer(depth)
+      layer = self.routingGauge.getRoutingLayer(depth)
 
       if flags & GaugeConf.UseContactWidth: width  = source.getBoundingBox(layer.getBasicLayer()).getWidth()
-      else:                                 width  = self._routingGauge.getLayerGauge(depth).getWireWidth()
+      else:                                 width  = self.routingGauge.getLayerGauge(depth).getWireWidth()
       if flags & GaugeConf.ExpandWidth:     width += DbU.fromLambda( 1.0 )
 
       segment = Vertical.create( source, target, layer, x, width )
@@ -226,17 +259,17 @@ class GaugeConf ( object ):
         return self._rpToAccess[rp]
 
       if flags & GaugeConf.DeepDepth:
-        hdepth = self._horizontalDeepDepth
-        vdepth = self._verticalDeepDepth
+        hdepth = self.horizontalDeepDepth
+        vdepth = self.verticalDeepDepth
       else:
-        hdepth = self._horizontalDepth
-        vdepth = self._verticalDepth
+        hdepth = self.horizontalDepth
+        vdepth = self.verticalDepth
 
-      hpitch    = self._routingGauge.getLayerGauge(hdepth).getPitch()
-      hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
-      contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
-      midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
-                                                     + self._cellGauge.getSliceHeight() / 2
+      hpitch    = self.routingGauge.getLayerGauge(hdepth).getPitch()
+      hoffset   = self.routingGauge.getLayerGauge(hdepth).getOffset()
+      contact1  = Contact.create( rp, self.routingGauge.getContactLayer(0), 0, 0 )
+      midSliceY = contact1.getY() - (contact1.getY() % self.cellGauge.getSliceHeight()) \
+                                                     + self.cellGauge.getSliceHeight() / 2
       midTrackY = midSliceY - ((midSliceY - hoffset) % hpitch)
       dy        = midSliceY - contact1.getY()
   
@@ -252,29 +285,29 @@ class GaugeConf ( object ):
       for depth in range(1,stopDepth):
         xoffset = 0
         if flags & GaugeConf.OffsetRight1 and depth == 1:
-          xoffset = self._routingGauge.getLayerGauge(depth+1).getPitch()
+          xoffset = self.routingGauge.getLayerGauge(depth+1).getPitch()
         contact2 = Contact.create( rp.getNet()
-                                 , self._routingGauge.getContactLayer(depth)
+                                 , self.routingGauge.getContactLayer(depth)
                                  , contact1.getX() + xoffset
                                  , contact1.getY()
-                                 , self._routingGauge.getLayerGauge(depth).getViaWidth()
-                                 , self._routingGauge.getLayerGauge(depth).getViaWidth()
+                                 , self.routingGauge.getLayerGauge(depth).getViaWidth()
+                                 , self.routingGauge.getLayerGauge(depth).getViaWidth()
                                  )
         trace( 550, contact2 )
-        if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
+        if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
           segment = Horizontal.create( contact1
                                      , contact2
-                                     , self._routingGauge.getRoutingLayer(depth)
+                                     , self.routingGauge.getRoutingLayer(depth)
                                      , contact1.getY()
-                                     , self._routingGauge.getLayerGauge(depth).getWireWidth()
+                                     , self.routingGauge.getLayerGauge(depth).getWireWidth()
                                      )
           trace( 550, segment )
         else:
           segment = Vertical.create( contact1
                                    , contact2
-                                   , self._routingGauge.getRoutingLayer(depth)
+                                   , self.routingGauge.getRoutingLayer(depth)
                                    , contact1.getX()
-                                   , self._routingGauge.getLayerGauge(depth).getWireWidth()
+                                   , self.routingGauge.getLayerGauge(depth).getWireWidth()
                                    )
           trace( 550, segment )
         contact1 = contact2
@@ -344,73 +377,35 @@ class GaugeConf ( object ):
 
 
 # -------------------------------------------------------------------
-# Class  :  "Configuration.GaugeConfWrapper".
-
-class GaugeConfWrapper ( object ):
-
-    def __init__ ( self, conf ):
-     #print id(conf), type(conf)
-     #if not isinstance(conf,GaugeConf):
-     #  raise ErrorMessage( 1, 'Attempt to create a GaugeConfWrapper() from non-GaugeConf object.' )
-      self._gaugeConf = conf
-      return
-
-    @property
-    def gaugeConf ( self ): return self._gaugeConf
-
-    @property
-    def routingGauge        ( self ): return self._gaugeConf._routingGauge
-    @property               
-    def topLayerDepth       ( self ): return self._gaugeConf._topLayerDepth
-    @property               
-    def horizontalDepth     ( self ): return self._gaugeConf._horizontalDepth
-    @property               
-    def verticalDepth       ( self ): return self._gaugeConf._verticalDepth
-    @property
-    def horizontalDeepDepth ( self ): return self._gaugeConf._horizontalDeepDepth
-    @property
-    def verticalDeepDepth   ( self ): return self._gaugeConf._verticalDeepDepth
-
-    def loadRoutingGauge ( self ): self._gaugeConf._loadRoutingGauge()
-
-    def rpByOccurrence ( self, occurrence, net ):
-      return self._gaugeConf._rpByOccurrence ( occurrence, net )
-
-    def rpByPlugName ( self, instance, plugName, net ):
-      return self._gaugeConf._rpByPlugName ( instance, plugName, net )
-
-    def rpAccess ( self, rp, flags=0 ):
-      return self._gaugeConf._rpAccess( rp, flags )
-
-    def rpAccessByOccurrence ( self, occurrence, net, flags=0 ):
-      return self.gaugeConf._rpAccessByOccurrence ( occurrence, net, flags )
-
-    def rpAccessByPlugName ( self, instance, plugName, net, flags=0 ):
-      return self._gaugeConf._rpAccessByPlugName( instance, plugName, net, flags )
-
-    def createContact ( self, net, x, y, flags=0 ):
-      return self._gaugeConf._createContact( net, x, y, flags )
-
-    def createHorizontal ( self, source, target, y, flags=0 ):
-      return self._gaugeConf._createHorizontal( source, target, y, flags )
-
-    def createVertical ( self, source, target, x, flags=0 ):
-      return self._gaugeConf._createVertical( source, target, x, flags )
-
-    def getNearestHorizontalTrack ( self, bb, y, flags ):
-      return self._gaugeConf._getNearestHorizontalTrack ( bb, y, flags )
-
-    def getNearestVerticalTrack ( self, bb, x, flags ):
-      return self._gaugeConf._getNearestVerticalTrack( bb, x, flags )
-
-    def setStackPosition ( self, topContact, x, y ):
-      self._gaugeConf._setStackPosition( topContact, x, y )
-
-
-# -------------------------------------------------------------------
 # Class  :  "Configuration.ChipConf".
 
 class ChipConf ( object ):
+
+    @staticmethod
+    def _toSymbolic ( u, rounding ): 
+      oneLambda = DbU.fromLambda( 1.0 )
+      remainder = u % oneLambda
+      if remainder:
+        if rounding == chip.Superior: u = u + (oneLambda - remainder)
+        else:                          u = u -              remainder
+      return u
+
+
+    @staticmethod
+    def toSymbolic ( v, rounding ): 
+      if isinstance(v,long): return ChipConf._toSymbolic( v, rounding )
+      if isinstance(v,Box):
+        if rounding & chip.Inwards:
+          roundings = [ chip.Superior, chip.Superior, chip.Inferior, chip.Inferior ]
+        else:
+          roundings = [ chip.Inferior, chip.Inferior, chip.Superior, chip.Superior ]
+        xMin = ChipConf._toSymbolic( v.getXMin(), roundings[0] )
+        yMin = ChipConf._toSymbolic( v.getYMin(), roundings[1] )
+        xMax = ChipConf._toSymbolic( v.getXMax(), roundings[2] )
+        yMax = ChipConf._toSymbolic( v.getYMax(), roundings[3] )
+        return Box( xMin, yMin, xMax, yMax )
+      return v
+
 
     @staticmethod
     def _readChipSize( chipConfigDict ):
@@ -422,7 +417,7 @@ class ChipConf ( object ):
       if len(chipSize) != 2:
         print ErrorMessage( 1, 'The Chip size parameter is *not* a tuple of exactly two items.' )
         return Box()
-      return Box( 0, 0, DbU.fromLambda(chipSize[0]), DbU.fromLambda(chipSize[1]) )
+      return Box( 0, 0, chipSize[0], chipSize[1] )
 
 
     @staticmethod
@@ -437,7 +432,7 @@ class ChipConf ( object ):
       if len(coreSize) != 2:
         print ErrorMessage( 1, 'The Core size parameter is *not* a tuple of exactly two items.' )
         return Box()
-      return Box( 0, 0, DbU.fromLambda(coreSize[0]), DbU.fromLambda(coreSize[1]) )
+      return Box( 0, 0, coreSize[0], coreSize[1] )
 
 
     @staticmethod
@@ -449,357 +444,656 @@ class ChipConf ( object ):
       return useClockTree
 
 
+    def _loadIoPadGauge ( self, chipConfigDict ):
+      if not chipConfigDict.has_key('pads.ioPadGauge'):
+        print ErrorMessage( 1, 'The IO pad gauge configuration paramater "pads.ioPadGauge" is missing.' )
+        return
+      self.gaugeConf._loadIoPadGauge( chipConfigDict['pads.ioPadGauge'] )
+      return
+
+
     def _readPads ( self, chipConfigDict, keyword ):
       if not chipConfigDict.has_key(keyword): return []
-      padNameList = chipConfigDict[keyword]
-      if not isinstance(padNameList,list):
+      padConfList = chipConfigDict[keyword]
+      if not isinstance(padConfList,list):
           print ErrorMessage( 1, 'The "%s" entry is not a list.' )
           return []
 
       af      = CRL.AllianceFramework.get()
       padList = []
-      for i in range(len(padNameList)):
-        if not isinstance(padNameList[i],str):
-          print ErrorMessage( 1, 'The element [%d] of list %s is *not* a string (skipped).'
+      for i in range(len(padConfList)):
+        position     = None
+        instanceName = None
+        if isinstance(padConfList[i],str):
+          instanceName = padConfList[i]
+        elif isinstance(padConfList[i],list):
+          self.padsHavePosition = True
+          if isinstance(padConfList[i][0],long) and isinstance(padConfList[i][1],str):
+            position     = padConfList[i][0]
+            instanceName = padConfList[i][1]
+
+        if not instanceName:
+          print ErrorMessage( 1, 'The element [%d] of list %s is neither a string nor a list "[pos,name]" (skipped).'
                                   % (i,keyword) )
           continue
 
-        instance = self._cell.getInstance( padNameList[i] )
+        instance = self.cell.getInstance( instanceName )
         if not instance:
           print ErrorMessage( 1, 'The pad [%d] (%s) of list %s do not exists in netlist (skipped).'
-                                  % (i,padNameList[i],keyword) )
+                                  % (i,instanceName,keyword) )
           continue
 
-        if (not af.isPad(instance.getMasterCell().getName())):
+        if (instance.getMasterCell().getAbutmentBox().getHeight() != self.gaugeConf.getIoPadHeight()):
           print ErrorMessage( 1, 'The pad [%d] (%s) of list %s is not an instance of a pad cell (skipped).'
-                                  % (i,padNameList[i],keyword) )
+                                  % (i,instanceName,keyword) )
           continue
 
-        padList.append( instance )
-
-        if not self._clockPad and instance.getMasterCell().getName() == self._pckName:
-          self._clockPad = instance
-
-        if not self._powerPad and instance.getMasterCell().getName() == self._pvddickName:
-          self._powerPad = instance
+        padList.append( [ position, instance ] )
       
       return padList
 
 
-    def _guessGlobalNet ( self, name, net ):
-      if name == self._vddeName:     self._vdde = net
-      if name == self._vddiName:     self._vddi = net
-      if name == self._vsseName:     self._vsse = net
-      if name == self._vssiName:     self._vssi = net
-      if name == self._ckiName:      self._cki  = net
-      if name == self._ckoName:      self._cko  = net
-      if name == self._ckName:       self._ck   = net
-      if name == self._blockageName: self._blockageNet = net
-      return
-
-
     def __init__ ( self, chipConfigDict, cell, viewer=None ):
+      trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
+
       if not isinstance(chipConfigDict,dict):
-          raise ErrorMessage( 1, 'The "chip" variable is not a dictionnary.' )
+        raise ErrorMessage( 1, 'The "chip" variable is not a dictionnary.' )
+      
+      self.chipMode = True
+      if len(chipConfigDict.keys()) == 0: self.chipMode = False
 
-      self._validated     = True
-      self._cell          = cell
-      self._viewer        = viewer
+      self.validated        = True
+      self.gaugeConf        = GaugeConf()
+      self.cell             = cell
+      self.viewer           = viewer
      # Block Corona parameters.
-      self._railsNb       = getParameter('chip','chip.block.rails.count').asInt()
-      self._hRailWidth    = DbU.fromLambda( getParameter('chip','chip.block.rails.hWidth'  ).asInt() )
-      self._vRailWidth    = DbU.fromLambda( getParameter('chip','chip.block.rails.vWidth'  ).asInt() )
-      self._hRailSpace    = DbU.fromLambda( getParameter('chip','chip.block.rails.hSpacing').asInt() )
-      self._vRailSpace    = DbU.fromLambda( getParameter('chip','chip.block.rails.vSpacing').asInt() )
-     # Global Pad names.
-      self._pckName       = getParameter('chip', 'chip.pad.pck'    ).asString()
-      self._pvddickName   = getParameter('chip', 'chip.pad.pvddick').asString()
-      self._pvssickName   = getParameter('chip', 'chip.pad.pvssick').asString()
-      self._pvddeckName   = getParameter('chip', 'chip.pad.pvddeck').asString()
-      self._pvsseckName   = getParameter('chip', 'chip.pad.pvsseck').asString()
-     # Global Net names.
-      self._vddeName      = "vdde"
-      self._vddiName      = "vddi"
-      self._vsseName      = "vsse"
-      self._vssiName      = "vssi"
-      self._ckiName       = "ck"
-      self._ckoName       = "cko"
-      self._ckName        = "pad"
-      self._blockageName  = "blockagenet"
-     # Global Nets.  
-      self._vdde          = None
-      self._vddi          = None
-      self._vsse          = None
-      self._vssi          = None
-      self._cki           = None
-      self._cko           = None
-      self._ck            = None
-      self._blockageNet   = None
+      self.railsNb          = getParameter('chip','chip.block.rails.count'   ).asInt()
+      self.hRailWidth       = getParameter('chip','chip.block.rails.hWidth'  ).asInt()
+      self.vRailWidth       = getParameter('chip','chip.block.rails.vWidth'  ).asInt()
+      self.hRailSpace       = getParameter('chip','chip.block.rails.hSpacing').asInt()
+      self.vRailSpace       = getParameter('chip','chip.block.rails.vSpacing').asInt()
+     # Global Net names.    
+      self.blockageName     = "blockagenet"
+     # Global Nets.         
+      self.coronaVdd        = None
+      self.coronaVss        = None
+      self.coronaCk         = None
+      self.blockageNet      = None
                           
-      self._clockPad      = None
-      self._powerPad      = None
-      self._cores         = []
-      self._southPads     = self._readPads( chipConfigDict, 'pads.south' )
-      self._northPads     = self._readPads( chipConfigDict, 'pads.north' )
-      self._eastPads      = self._readPads( chipConfigDict, 'pads.east'  )
-      self._westPads      = self._readPads( chipConfigDict, 'pads.west'  )
-      self._coreSize      = ChipConf._readCoreSize( chipConfigDict )
-      self._chipSize      = ChipConf._readChipSize( chipConfigDict )
-      self._padWidth      = 0
-      self._padHeight     = 0
-      self._useClockTree  = ChipConf._readClockTree( chipConfigDict )
+      if self.chipMode:
+        self._loadIoPadGauge( chipConfigDict )
 
-      minHCorona          = self._railsNb*(self._hRailWidth + self._hRailSpace) + self._hRailSpace
-      minVCorona          = self._railsNb*(self._vRailWidth + self._vRailSpace) + self._vRailSpace
-      if minHCorona > minVCorona: self._minCorona = minHCorona*2
-      else:                       self._minCorona = minVCorona*2
+      self.coronas          = []
+      self.cores            = []
+      if self.chipMode:
+        self.padsHavePosition = False
+        self.southPads        = self._readPads( chipConfigDict, 'pads.south' )
+        self.northPads        = self._readPads( chipConfigDict, 'pads.north' )
+        self.eastPads         = self._readPads( chipConfigDict, 'pads.east'  )
+        self.westPads         = self._readPads( chipConfigDict, 'pads.west'  )
+        self.coreSize         = ChipConf._readCoreSize( chipConfigDict )
+        self.chipSize         = ChipConf._readChipSize( chipConfigDict )
+        self.useClockTree     = ChipConf._readClockTree( chipConfigDict )
 
-      self.checkPads()
-      self.computeChipSize()
-      self.checkChipSize()
-      self.findPowerAndClockNets()
+        minHCorona = self.railsNb*(self.hRailWidth + self.hRailSpace) + self.hRailSpace
+        minVCorona = self.railsNb*(self.vRailWidth + self.vRailSpace) + self.vRailSpace
+        if minHCorona > minVCorona: self.minCorona = minHCorona*2
+        else:                       self.minCorona = minVCorona*2
+        
+        self.checkPads()
+        self.checkCorona()
+        self.computeChipSize()
+       #self.checkChipSize()
+        self.findPowerAndClockNets()
       return
+
+
+    @property
+    def icorona ( self ): return self.coronas[0]
+
+    @property
+    def corona  ( self ): return self.coronas[0].getMasterCell()
+
+    @property
+    def icore ( self ): return self.cores[0]
+
+    @property
+    def core  ( self ): return self.cores[0].getMasterCell()
+
+
+    def getInstanceAb ( self, instance ):
+      ab = instance.getMasterCell().getAbutmentBox()
+      instance.getTransformation().applyOn( ab )
+
+      if instance.getCell() == self.cell: return ab
+
+      if instance.getCell() != self.corona:
+        print ErrorMessage( 1, 'ChipConf.getInstanceAb(): Instance "%s" neither belong to chip or corona.' % instance.getName() )
+        return ab
+
+      self.icorona.getTransformation().applyOn( ab )
+      return ab
+
+
+    def getCoronaNet ( self, chipNet ):
+      for plug in chipNet.getPlugs():
+        if plug.getInstance() == self.icorona:
+          return plug.getMasterNet()
+      return None
+
+
+    def toRoutingGauge ( self, uMin, uMax, layer ):
+      trace( 550, ',+', '\ttoRoutingGauge() [%s %s] %s\n' \
+             % (DbU.getValueString(uMin), DbU.getValueString(uMax), layer) )
+
+      ab   = self.corona.getAbutmentBox()
+      lg   = None
+      mask = layer.getMask()
+      for layerGauge in self.gaugeConf.routingGauge.getLayerGauges():
+        if layerGauge.getLayer().getMask() == mask:
+          lg = layerGauge
+          trace( 550, '\tUsing layer gauge %s\n' % str(lg) )
+          break
+
+      if uMax < uMin: uMin, uMax = uMax, uMin
+      if lg:
+        if lg.getDirection() == RoutingLayerGauge.Horizontal:
+          abMin = ab.getYMin()
+          abMax = ab.getYMax()
+        else:
+          abMin = ab.getXMin()
+          abMax = ab.getXMax()
+
+        iTrackMin = lg.getTrackIndex( abMin, abMax, uMin, RoutingLayerGauge.Superior )
+        iTrackMax = lg.getTrackIndex( abMin, abMax, uMax, RoutingLayerGauge.Inferior )
+        if iTrackMax < iTrackMin: iTrackMax = iTrackMin
+        
+        uTrackMin = lg.getTrackPosition( abMin, iTrackMin )
+        uTrackMax = lg.getTrackPosition( abMin, iTrackMax )
+
+        axis  = (uTrackMax + uTrackMin) / 2
+        width = (iTrackMax - iTrackMin) * lg.getPitch() + lg.getWireWidth()
+
+        if self.gaugeConf.routingGauge.isSymbolic():
+          oneLambda = DbU.fromLambda( 1.0 )
+          if axis % oneLambda:
+            axis  -= oneLambda / 2
+            width -= oneLambda
+
+        trace( 550, '\t[%i %i]\n' % (iTrackMin, iTrackMax) )
+        trace( 550, '\taxis:  %sl %s\n' %  (DbU.toLambda(axis ), DbU.getValueString(axis )) )
+        trace( 550, '\twidth: %sl %s\n' %  (DbU.toLambda(width), DbU.getValueString(width)) )
+      else:
+        axis  = (uMax + uMin) / 2
+        width = (uMax - uMin)
+
+      trace( 550, '-' )
+      return axis, width
+
+
+    def coronaHorizontal ( self, chipNet, layer, chipY, width, chipXMin, chipXMax ):
+      trace( 550, ',+', '\tChipConf.coronaHorizontal\n' )
+
+      coronaAb  = self.getInstanceAb( self.icorona )
+      coronaNet = self.getCoronaNet ( chipNet )
+      if not coronaNet: return None
+
+      coronaY = chipY - coronaAb.getYMin()
+      dxMin   = ChipConf.toSymbolic( chipXMin - coronaAb.getXMin(), chip.Superior )
+      dxMax   = ChipConf.toSymbolic( chipXMax - coronaAb.getXMin(), chip.Inferior )
+
+      trace( 550, '\t| chipNet: %s %s\n' % (chipNet, layer) )
+      trace( 550, '\t| Real\n' )
+      trace( 550, '\t|   axis: %10s\n' % DbU.getValueString(coronaY) )
+      trace( 550, '\t|   width:%10s\n' % DbU.getValueString(width) )
+      trace( 550, '\t|   dxMin:%10s (%sl)\n' \
+             % (DbU.getValueString(chipXMin - coronaAb.getXMin()), DbU.toLambda(chipXMin - coronaAb.getXMin()) ) )
+      trace( 550, '\t|   dxMax:%10s\n' % DbU.getValueString(chipXMax - coronaAb.getXMin()) )
+
+      coronaY, width = self.toRoutingGauge( coronaY - width/2, coronaY + width/2, layer )
+
+      trace( 550, '\t| On Grid\n' )
+      trace( 550, '\t|   axis: %10sl or %10s\n' % (DbU.toLambda(coronaY), DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   width:%10sl or %10s\n' % (DbU.toLambda(width)  , DbU.getValueString(width)) )
+      trace( 550, '\t|   dxMin:%10sl\n' % DbU.toLambda(dxMin) )
+      trace( 550, '\t|   dxMax:%10sl\n' % DbU.toLambda(dxMax) )
+
+      h = Horizontal.create( coronaNet, layer, coronaY, width, dxMin, dxMax )
+
+      trace( 550, '\t| %s\n' % str(h) )
+      trace( 550, '-' )
+      return h
+
+
+    def coronaVertical ( self, chipNet, layer, chipX, width, chipYMin, chipYMax ):
+      trace( 550, ',+', '\tChipConf.coronaVertical\n' )
+
+      coronaAb  = self.getInstanceAb( self.icorona )
+      coronaNet = self.getCoronaNet( chipNet )
+      if not coronaNet: return None
+
+      coronaX = chipX - coronaAb.getXMin()
+      dyMin   = ChipConf.toSymbolic( chipYMin - coronaAb.getYMin(), chip.Superior )
+      dyMax   = ChipConf.toSymbolic( chipYMax - coronaAb.getYMin(), chip.Inferior )
+
+      trace( 550, '\t| chipNet: %s %s\n' % (chipNet, layer) )
+      trace( 550, '\t| Real\n' )
+      trace( 550, '\t|   axis: %s\n' % DbU.getValueString(coronaX) )
+      trace( 550, '\t|   width:%s\n' % DbU.getValueString(width) )
+
+      coronaX, width = self.toRoutingGauge( coronaX - width/2, coronaX + width/2, layer )
+
+      trace( 550, '\t| On Grid\n' )
+      trace( 550, '\t|   axis: %s or %s\n' % (DbU.toLambda(coronaX), DbU.getValueString(coronaX)) )
+      trace( 550, '\t|   width:%s or %s\n' % (DbU.toLambda(width)  , DbU.getValueString(width)) )
+
+      v = Vertical.create( coronaNet, layer, coronaX, width, dyMin, dyMax )
+
+      trace( 550, '\t| %s\n' % str(v) )
+      trace( 550, '-' )
+      return v
+
+
+    def coronaContact ( self, chipNet, layer, chipX, chipY, width, height, flags=0 ):
+      trace( 550, ',+', '\tChipConf.coronaContact\n' )
+
+      coronaAb  = self.getInstanceAb( self.icorona )
+      coronaNet = self.getCoronaNet( chipNet )
+      if not coronaNet: return None
+
+      coronaX = chipX - coronaAb.getXMin()
+      coronaY = chipY - coronaAb.getYMin()
+
+      trace( 550, '\t| chipNet: %s %s\n' % (chipNet, layer) )
+      trace( 550, '\t| Real\n' )
+      trace( 550, '\t|   center: %12s %12s\n' % (DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   WxH:    %12s %12s\n' % (DbU.getValueString(width  ), DbU.getValueString(height )) )
+
+      topLayer = layer.getTop()
+      if self.gaugeConf.isHorizontal(topLayer):
+        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, layer.getBottom() )
+        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
+      else:
+        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
+        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, layer.getBottom() )
+
+      if not (flags & chip.OnHorizontalPitch):
+        trace( 550, '\tNot on horizontal routing pitch, Y on lambda only.\n' )
+        coronaY = self.toSymbolic( chipY - coronaAb.getYMin(), chip.Superior )
+      if not (flags & chip.OnVerticalPitch  ):
+        trace( 550, '\tNot on vertical routing pitch, X on lambda only.\n' )
+        coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), chip.Superior )
+
+      trace( 550, '\t| On Grid\n' )
+      trace( 550, '\t|   X axis: %12s or %12s\n' % (DbU.toLambda(coronaX)      , DbU.getValueString(coronaX)) )
+      trace( 550, '\t|   Y axis: %12s or %12s\n' % (DbU.toLambda(coronaY)      , DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   center: %12s %12s\n'    % (DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   WxH:    %12s %12s\n'    % (DbU.getValueString(width  ), DbU.getValueString(height )) )
+
+      c = Contact.create( coronaNet
+                        , layer
+                        , coronaX
+                        , coronaY
+                        , width
+                        , height
+                        )
+
+      trace( 550, '\t| %s\n' % str(c) )
+      trace( 550, '-' )
+      return c
+
+
+    def coronaContactArray ( self, chipNet, layer, chipX, chipY, array, flags ):
+      trace( 550, ',+', '\tChipConf.coronaContactArray\n' )
+
+      # Should be read from the symbolic technology rules.
+      viaPitch = DbU.fromLambda( 4.0 )
+
+      coronaAb  = self.getInstanceAb( self.icorona )
+      coronaNet = self.getCoronaNet( chipNet )
+      if not coronaNet: return None
+
+      trace( 550, '\t| chipNet: %s %s\n' % (chipNet, layer) )
+
+      coronaX = chipX - coronaAb.getXMin()
+      coronaY = chipY - coronaAb.getYMin()
+
+      topLayer = layer.getTop()
+      if self.gaugeConf.isHorizontal(topLayer):
+        coronaX, width  = self.toRoutingGauge( coronaX, coronaX, layer.getBottom() )
+        coronaY, height = self.toRoutingGauge( coronaY, coronaY, topLayer )
+      else:
+        coronaX, width  = self.toRoutingGauge( coronaX, coronaX, topLayer )
+        coronaY, height = self.toRoutingGauge( coronaY, coronaY, layer.getBottom() )
+
+      if not (flags & chip.OnHorizontalPitch):
+        trace( 550, '\tNot on horizontal routing pitch, Y on lambda only.\n' )
+        coronaY = self.toSymbolic( chipY - coronaAb.getYMin(), chip.Superior )
+      if not (flags & chip.OnVerticalPitch  ):
+        trace( 550, '\tNot on vertical routing pitch, X on lambda only.\n' )
+        coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), chip.Superior )
+
+      contacts    = []
+      xContact    = coronaX - viaPitch * (array[0]-1)/2
+      yContact    = coronaY - viaPitch * (array[1]-1)/2
+      contactSize = layer.getMinimalSize()
+
+      trace( 550, '\txContact:%sl yContact:%sl\n' % (DbU.toLambda(xContact),DbU.toLambda(yContact)) )
+
+      for i in range(array[0]):
+        for j in range(array[1]):
+          c = Contact.create( coronaNet
+                            , layer
+                            , xContact + i*viaPitch
+                            , yContact + j*viaPitch
+                            , contactSize
+                            , contactSize
+                            )
+          trace( 550, '\t+ %s\n' % str(c) )
+          contacts.append( c )
+    
+      trace( 550, '-' )
+      return contacts
+
+
+    def coronaPin ( self, chipNet, count, direction, layer, chipX, chipY, width, height ):
+      trace( 550, ',+', '\tChipConf.coronaPin\n' )
+
+      coronaAb  = self.getInstanceAb( self.icorona )
+      coronaNet = self.getCoronaNet( chipNet )
+      if not coronaNet: return None
+
+      coronaX = chipX - coronaAb.getXMin()
+      coronaY = chipY - coronaAb.getYMin()
+
+      trace( 550, '\t| chipNet: %s (%d) %s\n' % (chipNet, count, layer) )
+      trace( 550, '\t| Real\n' )
+      trace( 550, '\t|   center: %s %s\n' % (DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   WxH:    %s %s\n' % (DbU.getValueString(width  ), DbU.getValueString(height )) )
+
+      topLayer = layer.getTop()
+      if self.gaugeConf.isHorizontal(topLayer):
+        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, layer.getBottom() )
+        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
+      else:
+        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
+        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, layer.getBottom() )
+
+      if direction == Pin.Direction.NORTH or direction == Pin.Direction.SOUTH: 
+        trace( 550, '\tEast/West not on horizontal routing pitch, Y on lambda only.\n' )
+        coronaY = self.toSymbolic( chipY - coronaAb.getYMin(), chip.Superior )
+      if direction == Pin.Direction.EAST or direction == Pin.Direction.WEST: 
+        trace( 550, '\tNorth/South not on vertical routing pitch, X on lambda only.\n' )
+        coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), chip.Superior )
+
+      trace( 550, '\t| On Grid\n' )
+      trace( 550, '\t|   X axis: %s or %s\n' % (DbU.toLambda(coronaY)      , DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   Y axis: %s or %s\n' % (DbU.toLambda(coronaX)      , DbU.getValueString(coronaX)) )
+      trace( 550, '\t|   center: %s %s\n'    % (DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
+      trace( 550, '\t|   WxH:    %s %s\n'    % (DbU.getValueString(width  ), DbU.getValueString(height )) )
+
+      c = Pin.create( coronaNet
+                    , '%s.%d' % (coronaNet.getName(),count)
+                    , direction
+                    , Pin.PlacementStatus.FIXED
+                    , layer
+                    , coronaX
+                    , coronaY
+                    , width
+                    , height
+                    )
+
+      trace( 550, '\t| %s\n' % str(c) )
+      trace( 550, '-' )
+      return c
 
 
     def checkPads ( self ):
+
+      def contains ( padList, pad ):
+        for padPair in padList:
+          if padPair[1] == pad: return True
+        return False
+        
       af       = CRL.AllianceFramework.get()
       cellPads = []
-      for instance in self._cell.getInstances():
-        if (af.isPad(instance.getMasterCell().getName())):
-          cellPads.append( instance )
+      for instance in self.cell.getInstances():
+        if contains(self.southPads,instance): continue
+        if contains(self.northPads,instance): continue
+        if contains(self.eastPads ,instance): continue
+        if contains(self.westPads ,instance): continue
+        if (instance.getMasterCell().getAbutmentBox().getHeight() == self.gaugeConf.getIoPadHeight()):
+          print ErrorMessage( 1, 'Pad "%s" is not on any side (N/S/E/W).' % instance.getName() )
+          self.validated = False
         else:
-          self._cores.append( instance )
-            
-      for pad in cellPads:
-        if pad in self._southPads: continue
-        if pad in self._northPads: continue
-        if pad in self._eastPads:  continue
-        if pad in self._westPads:  continue
-        print ErrorMessage( 1, 'Pad "%s" is not on any side (N/S/E/W).' % pad.getName() )
-        self._validated = False
+          self.coronas.append( instance )
 
-      if len(self._cores) < 1:
-        print ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a core.' % self._cell.getName() )
-        self._validated = False
-
-      if len(self._cores) > 1:
-        message = [ 'Chip "%s" have more than one core:' % self._cell.getName() ]
-        for i in range(len(self._cores)):
-          message.append( '%4d: %s' % (i,self._cores[i].getName()) )
+      if len(self.coronas) > 1:
+        message = [ 'Chip "%s" have more than one corona:' % self.cell.getName() ]
+        for i in range(len(self.coronas)):
+          message.append( '%4d: %s' % (i,self.coronas[i].getName()) )
         print ErrorMessage( 1, message )
-        self._validated = False
+        self.validated = False
+
+      if len(self.coronas) < 1:
+        print ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a corona.' % self.cell.getName() )
+        self.validated = False
+      else:
+        for instance in self.corona.getInstances(): self.cores.append( instance )
+
+        if len(self.cores) > 1:
+          message = [ 'Chip "%s" have more than one core:' % self.cell.getName() ]
+          for i in range(len(self.cores)):
+            message.append( '%4d: %s' % (i,self.cores[i].getName()) )
+          print ErrorMessage( 1, message )
+          self.validated = False
+
+          if len(self.cores) < 1:
+            print ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a core.' % self.cell.getName() )
+            self.validated = False
 
       return
 
 
     def findPowerAndClockNets ( self ):
-      if self._powerPad:
-        for plug in self._powerPad.getPlugs():
+      if self.icore:
+        for plug in self.icore.getPlugs():
           masterNet = plug.getMasterNet()
           netType   = masterNet.getType()
-          if     netType != Net.Type.POWER \
+          if     netType != Net.Type.POWER  \
              and netType != Net.Type.GROUND \
              and netType != Net.Type.CLOCK:
             continue
 
           net = plug.getNet()
           if not net:
-            net = self._cell.getNet( masterNet.getName() )
+            net = self.corona.getNet( masterNet.getName() )
             if not net:
-              print ErrorMessage( 1, 'Missing global net <%s> at chip level.' % masterNet.getName() )
-              self._validated = False
-              continue
-          self._guessGlobalNet( masterNet.getName(), net )
-
-      if self._clockPad:
-        for plug in self._clockPad.getPlugs():
-          masterNet = plug.getMasterNet()
-          netType   = masterNet.getType()
-          net       = plug.getNet()
-
-          if not net:
-            net = self._cell.getNet( masterNet.getName() )
-            if not net:
-              print ErrorMessage( 1, 'Missing global net <%s> at chip level.' % masterNet.getName() )
+              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Missing global net "%s" at corona level.'
+                                  % masterNet.getName() )
               self._validated = False
               continue
 
-          if masterNet.getName() == self._ckName:
-            self._guessGlobalNet( masterNet.getName(), net )
+          if netType == Net.Type.GROUND:
+            if self.coronaVss and self.coronaVss != net:
+              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple ground nets "%s" and "%s" at corona level.'
+                                  % (self.coronaVss.getName(), net.getName()) )
+              self._validated = False
+              continue
+            else:
+              self.coronaVss = net
 
-      for netData in ( (self._vddeName,self._vdde,'pad ring external power')
-                     , (self._vddiName,self._vddi,'pad ring internal power')
-                     , (self._vsseName,self._vsse,'pad ring external ground')
-                     , (self._vssiName,self._vssi,'pad ring external ground')
-                     , (self._ckiName ,self._cki ,'pad ring inner clock')
-                     , (self._ckoName ,self._cko ,'core clock')
-                     , (self._ckName  ,self._ck  ,'external chip clock')
-                     ):
-        if not netData[1]:
-          print ErrorMessage( 1, 'Missing global net <%s> (%s) at chip level.' % (netData[0],netData[2]) )
-          self._validated = False
+          if netType == Net.Type.POWER:
+            if self.coronaVdd and self.coronaVdd != net:
+              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple power nets "%s" and "%s" at corona level.'
+                                  % (self.coronaVdd.getName(), net.getName()) )
+              self._validated = False
+              continue
+            else:
+              self.coronaVdd = net
 
-      self._blockageNet = self._cell.getNet(self._blockageName)
-      if not self._blockageNet:
-        self._blockageNet = Net.create( self._cell, self._blockageName )
-        self._blockageNet.setType( Net.Type.BLOCKAGE )
+          if netType == Net.Type.CLOCK:
+            if self.coronaCk and self.coronaCk != net:
+              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple clock nets "%s" and "%s" at corona level.'
+                                  % (self.coronaCk.getName(), net.getName()) )
+              self._validated = False
+              continue
+            else:
+              self.coronaCk = net
+
+      for net in self.corona.getNets():
+        if net.getType() == Net.Type.BLOCKAGE:
+          self.blockageNet  = net
+          self.blockageName = net.getName()
+
+      if not self.blockageNet:
+        self.blockageNet = Net.create( self.corona, self.blockageName )
+        self.blockageNet.setType( Net.Type.BLOCKAGE )
+
+      return
+
+    def checkCorona ( self ):
+      trace( 550, ',+', 'Configuration.checkCorona()\n' )
+      netPads = {}
+      for plug in self.icorona.getPlugs():
+        padNet    = plug.getNet()
+        coronaNet = plug.getMasterNet()
+        if not padNet and coronaNet.isGlobal():
+          padNet = self.cell.getNet( coronaNet.getName() )
+
+        if padNet:
+          if not netPads.has_key(padNet):
+            trace( 550, '\t%20s <-> %-20s\n' % (padNet.getName(),coronaNet.getName()) )
+            netPads[ padNet ] = coronaNet
+          else:
+            print ErrorMessage( 1, 'ChipConf.checkCorona(): Corona nets "%s" and "%s" connected to the same pad net "%s".' \
+                                % (coronaNet.getName(),netPads[padNet].getName(),padNet.getName()) )
+            self._validated = False
+          
+      trace( 550, '-' )
       return
 
 
     def computeChipSize ( self ):
-      if not self._clockPad:
-        print ErrorMessage( 1, 'There must be at least one pad of model "%s" to be used as reference.' \
-                               % self._pckName )
-        self._validated = False
+
+      def getSideLength ( pads ):
+        sideLength = self.gaugeConf.getIoPadHeight() * 2 
+        for pad in pads: sideLength += pad.getMasterCell().getAbutmentBox().getWidth()
+        return sideLength
+
+        
+      if not self.chipSize.isEmpty(): return
+      
+      southPadsLength = getSideLength( self.southPads )
+      northPadsLength = getSideLength( self.northPads )
+      eastPadsLength  = getSideLength( self.eastPads  )
+      westPadsLength  = getSideLength( self.westPads  )
+      
+      horizontalPads = max( len(self.southPads), len(self.northPads) )
+      verticalPads   = max( len(self.eastPads ), len(self.westPads ) )
+      self.chipSize = Box( 0
+                         , 0
+                         , max( southPadsLength, northPadsLength )
+                         , max(  westPadsLength,  eastPadsLength )
+                         )
+      return
+
+
+    def setupCorona ( self, gapX1, gapY1, gapX2, gapY2 ):
+      ab = self.cell.getAbutmentBox()
+      ab.inflate  ( -gapX1, -gapY1, -gapX2, -gapY2 )
+      ab.inflate  ( - self.getIoPadHeight() )
+      ab.translate( - self.getIoPadHeight(), - self.getIoPadHeight())
+      ab = self.toSymbolic( ab, chip.Inwards )
+
+      self. corona.setAbutmentBox( Box( 0, 0, ab.getWidth(), ab.getHeight() ) )
+      self.icorona.setTransformation(
+        Transformation( self.toSymbolic( self.getIoPadHeight() + ab.getXMin(), chip.Superior )
+                      , self.toSymbolic( self.getIoPadHeight() + ab.getYMin(), chip.Superior )
+                      , Transformation.Orientation.ID ) )
+      self.icorona.setPlacementStatus( Instance.PlacementStatus.FIXED )
+      return
+
+
+    def setupCore ( self, gapX1, gapY1, gapX2, gapY2 ):
+      ab = self.getInstanceAb( self.icorona )
+      if ab.isEmpty():
+        print ErrorMessage( 1, 'ChipConf.setupCore(): Attempt to setup core *before* corona.' )
         return
 
-      self._padHeight = self._clockPad.getMasterCell().getAbutmentBox().getHeight()
-      self._padWidth  = self._clockPad.getMasterCell().getAbutmentBox().getWidth()
+      ab.inflate( -gapX1, -gapY1, -gapX2, -gapY2 )
+      ab = self.toSymbolic( ab, chip.Inwards )
 
-      if not self._chipSize.isEmpty(): return
+      trace( 550, '\tChipConf.setupCore(): Abutment box:%s\n' % str(ab) )
       
-      horizontalPads = max( len(self._southPads), len(self._northPads) )
-      verticalPads   = max( len(self._eastPads ), len(self._westPads ) )
-      self._chipSize = Box( 0
-                          , 0
-                          , self._padWidth * horizontalPads + 2*self._padHeight
-                          , self._padWidth * verticalPads   + 2*self._padHeight
-                          )
+      self.core.setAbutmentBox( Box( 0, 0, ab.getWidth(), ab.getHeight() ) )
+      self.icore.setTransformation(
+        Transformation( ChipConf.toSymbolic(ab.getXMin(),chip.Inferior) - self.icorona.getTransformation().getTx()
+                      , ChipConf.toSymbolic(ab.getYMin(),chip.Inferior) - self.icorona.getTransformation().getTy()
+                      , Transformation.Orientation.ID ) )
+      self.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
       return
 
 
-    def checkChipSize ( self ):
-     #if self._coreSize.isEmpty(): return
-     #
-     #minWidth  = self._coreSize.getWidth () + self._minCorona + 2*self._padHeight
-     #minHeight = self._coreSize.getHeight() + self._minCorona + 2*self._padHeight
-     #
-     #if self._chipSize.getWidth() < minWidth:
-     #  print ErrorMessage( 1, 'Core is too wide to fit into the chip. Needs: %d, but has %d' \
-     #                         % ( DbU.toLambda(minWidth), DbU.toLambda(self._chipSize.getWidth()) ) )
-     #  self._validated = False
-     #
-     #if self._chipSize.getHeight() < minHeight:
-     #  print ErrorMessage( 1, 'Core is too wide to fit into the chip. Needs: %d, but has %d' \
-     #                         % ( DbU.toLambda(minHeight), DbU.toLambda(self._chipSize.getHeight()) ) )
-     #  self._validated = False
-      return
-
-    def getSpecialNetRoot ( self, net ):
-      if net.getName() == self._vddeName:  return self._vdde
-      if net.getName() == self._vsseName:  return self._vsse
-      if net.getType() == Net.Type.POWER:  return self._vddi
-      if net.getType() == Net.Type.GROUND: return self._vssi
-      return None
-
-
-# -------------------------------------------------------------------
-# Class  :  "Configuration.ChipConfWrapper".
-
-class ChipConfWrapper ( GaugeConfWrapper ):
-
-    def __init__ ( self, gaugeConf, chipConf ):
-      GaugeConfWrapper.__init__( self, gaugeConf )
-
-     #if not isinstance(chipConf,ChipConf):
-     #  raise ErrorMessage( 1, 'Attempt to create a ChipConfWrapper() from non-ChipConf object.' )
-      self._chipConf = chipConf
-      return
-
-    def isValid ( self ): return self._chipConf._validated
+    @property
+    def cellGauge        ( self ): return self.gaugeConf.cellGauge
 
     @property
-    def chipConf ( self ): return self._chipConf
-
-    def getSliceHeight ( self ): return self._gaugeConf.getSliceHeight()
-    def getSliceStep   ( self ): return self._gaugeConf.getSliceStep()
+    def routingGauge     ( self ): return self.gaugeConf.routingGauge
 
     @property
-    def cell   ( self ): return self._chipConf._cell
-    @property
-    def viewer ( self ): return self._chipConf._viewer
+    def verticalDepth    ( self ): return self.gaugeConf.verticalDepth
 
-    # Global Pad names.
     @property
-    def pvddeckName ( self ): return self._chipConf._pvddeckName
-    @property
-    def pvsseckName ( self ): return self._chipConf._pvsseckName
-    @property
-    def pvddickName ( self ): return self._chipConf._pvddickName
-    @property
-    def pvssickName ( self ): return self._chipConf._pvssickName
-    @property
-    def pckName     ( self ): return self._chipConf._pckName
+    def horizontalDepth  ( self ): return self.gaugeConf.horizontalDepth
 
-    # Global Net names.
-    @property
-    def vddeName ( self ): return self._chipConf._vddeName
-    @property
-    def vsseName ( self ): return self._chipConf._vsseName
-    @property
-    def vddiName ( self ): return self._chipConf._vddiName
-    @property
-    def vssiName ( self ): return self._chipConf._vssiName
-    @property
-    def ckiName  ( self ): return self._chipConf._ckiName
-    @property
-    def ckoName  ( self ): return self._chipConf._ckoName
-    @property
-    def ckName   ( self ): return self._chipConf._ckName
+    def getSliceHeight   ( self ): return self.gaugeConf.getSliceHeight()
+    def getSliceStep     ( self ): return self.gaugeConf.getSliceStep()
+    def getIoPadHeight   ( self ): return self.gaugeConf.getIoPadHeight()
+    def getIoPadStep     ( self ): return self.gaugeConf.getIoPadStep()
+    def getIoPadPitch    ( self ): return self.gaugeConf.getIoPadPitch()
+    def getIoPadGauge    ( self ): return self.gaugeConf.getIoPadGauge()
+    def getHRoutingGauge ( self ): return self.gaugeConf.getHRoutingGauge()
+    def getVRoutingGauge ( self ): return self.gaugeConf.getVRoutingGauge()
 
-    # Global Nets.
-    @property
-    def vdde        ( self ): return self._chipConf._vdde
-    @property       
-    def vsse        ( self ): return self._chipConf._vsse
-    @property       
-    def vddi        ( self ): return self._chipConf._vddi
-    @property       
-    def vssi        ( self ): return self._chipConf._vssi
-    @property       
-    def cki         ( self ): return self._chipConf._cki
-    @property       
-    def cko         ( self ): return self._chipConf._cko
-    @property       
-    def ck          ( self ): return self._chipConf._ck
-    @property
-    def blockageNet ( self ): return self._chipConf._blockageNet
+    def rpByOccurrence ( self, occurrence, net ):
+      return self.gaugeConf._rpByOccurrence ( occurrence, net )
 
-    # Various.
-    @property
-    def clockPad     ( self ): return self._chipConf._clockPad
-    @property        
-    def powerPad     ( self ): return self._chipConf._powerPad
-    @property        
-    def cores        ( self ): return self._chipConf._cores
-    @property        
-    def southPads    ( self ): return self._chipConf._southPads
-    @property        
-    def northPads    ( self ): return self._chipConf._northPads
-    @property        
-    def eastPads     ( self ): return self._chipConf._eastPads
-    @property        
-    def westPads     ( self ): return self._chipConf._westPads
-    @property        
-    def coreSize     ( self ): return self._chipConf._coreSize
-    @coreSize.setter
-    def coreSize     ( self, ab ): self._chipConf._coreSize = ab
-    @property        
-    def chipSize     ( self ): return self._chipConf._chipSize
-    @property        
-    def minCorona    ( self ): return self._chipConf._minCorona
-    @property        
-    def padWidth     ( self ): return self._chipConf._padWidth
-    @property        
-    def padHeight    ( self ): return self._chipConf._padHeight
-    @property
-    def useClockTree ( self ): return self._chipConf._useClockTree
+    def rpByPlugName ( self, instance, plugName, net ):
+      return self.gaugeConf._rpByPlugName ( instance, plugName, net )
+
+    def rpAccess ( self, rp, flags=0 ):
+      return self.gaugeConf._rpAccess( rp, flags )
+
+    def rpAccessByOccurrence ( self, occurrence, net, flags=0 ):
+      return self.gaugeConf._rpAccessByOccurrence ( occurrence, net, flags )
+
+    def rpAccessByPlugName ( self, instance, plugName, net, flags=0 ):
+      return self.gaugeConf._rpAccessByPlugName( instance, plugName, net, flags )
+
+    def createContact ( self, net, x, y, flags=0 ):
+      return self.gaugeConf._createContact( net, x, y, flags )
+
+    def createHorizontal ( self, source, target, y, flags=0 ):
+      return self.gaugeConf._createHorizontal( source, target, y, flags )
+
+    def createVertical ( self, source, target, x, flags=0 ):
+      return self.gaugeConf._createVertical( source, target, x, flags )
+
+    def getNearestHorizontalTrack ( self, bb, y, flags ):
+      return self.gaugeConf._getNearestHorizontalTrack ( bb, y, flags )
+
+    def getNearestVerticalTrack ( self, bb, x, flags ):
+      return self.gaugeConf._getNearestVerticalTrack( bb, x, flags )
+
+    def setStackPosition ( self, topContact, x, y ):
+      self.gaugeConf._setStackPosition( topContact, x, y )
 
 
 def loadConfiguration ( cell, viewer=None ):
     sys.path.append( os.getcwd() )
 
-    confFile = cell.getName()+'_chip'
+    confFile = cell.getName()+'_ioring'
     if not os.path.isfile(confFile+'.py'):
       raise ErrorMessage( 1, 'ChipPlugin configuration file <%s.py> is missing.' % confFile )
     
@@ -809,5 +1103,4 @@ def loadConfiguration ( cell, viewer=None ):
       raise WarningMessage( 'Module <%s> do not provides the chip variable, skipped.' \
                             % confFile )
 
-    return ChipConfWrapper( GaugeConf()
-                          , ChipConf ( confModule.__dict__['chip'], cell, viewer ) )
+    return ChipConf( confModule.__dict__['chip'], cell, viewer )

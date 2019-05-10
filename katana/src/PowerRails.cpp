@@ -107,263 +107,135 @@ namespace {
              bool  isCoreClockNetRouted ( const Net* ) const;
       inline Cell* getTopCell           () const;
              Net*  getRootNet           ( const Net*, Path ) const;
-      inline Net*  getVdde              () const;
-      inline Net*  getVddi              () const;
-      inline Net*  getVsse              () const;
-      inline Net*  getVssi              () const;
+      inline Net*  getVdd               () const;
+      inline Net*  getVss               () const;
       inline Net*  getCk                () const;
-      inline Net*  getCki               () const;
-      inline Net*  getCko               () const;
       inline Net*  getBlockage          () const;
       inline void  setBlockage          ( Net* );
     private:                            
              bool  guessGlobalNet       ( const Name&, Net* );
     private:
       uint32_t  _flags;
-      Name      _vddePadNetName;
-      Name      _vddiPadNetName;
-      Name      _vssePadNetName;
-      Name      _vssiPadNetName;
-      Name      _ckPadNetName;
-      Name      _ckiPadNetName;
-      Name      _ckoPadNetName;
-      Net*      _vdde;
-      Net*      _vddi;
-      Net*      _vsse;
-      Net*      _vssi;
-      Net*      _ck;    // Clock net on the (external) pad.
-      Net*      _cki;   // Clock net in the pad ring.
-      Net*      _cko;   // Clock net of the core (design).
+      Name      _vddCoreName;
+      Name      _vssCoreName;
+      Name      _ckCoreName;
+      Net*      _vdd;
+      Net*      _vss;
+      Net*      _ck;
       Net*      _blockage;
       Cell*     _topCell;
   };
 
 
   inline Cell* GlobalNetTable::getTopCell  () const { return _topCell; }
-  inline Net*  GlobalNetTable::getVdde     () const { return _vdde; }
-  inline Net*  GlobalNetTable::getVddi     () const { return _vddi; }
-  inline Net*  GlobalNetTable::getVsse     () const { return _vsse; }
-  inline Net*  GlobalNetTable::getVssi     () const { return _vssi; }
+  inline Net*  GlobalNetTable::getVdd      () const { return _vdd; }
+  inline Net*  GlobalNetTable::getVss      () const { return _vss; }
   inline Net*  GlobalNetTable::getCk       () const { return _ck; }
-  inline Net*  GlobalNetTable::getCki      () const { return _cki; }
-  inline Net*  GlobalNetTable::getCko      () const { return _cko; }
   inline Net*  GlobalNetTable::getBlockage () const { return _blockage; }
   inline void  GlobalNetTable::setBlockage ( Net* net ) { _blockage=net; }
 
   GlobalNetTable::GlobalNetTable ( KatanaEngine* katana )
-    : _flags         (0)
-    , _vddePadNetName("vdde")
-    , _vddiPadNetName("vddi")
-    , _vssePadNetName("vsse")
-    , _vssiPadNetName("vssi")
-    , _ckPadNetName  ("pad" )
-    , _ckiPadNetName ("ck"  )
-    , _ckoPadNetName ("cko" )
-    , _vdde    (NULL)
-    , _vddi    (NULL)
-    , _vsse    (NULL)
-    , _vssi    (NULL)
-    , _ck      (NULL)
-    , _cki     (NULL)
-    , _cko     (NULL)
-    , _blockage(NULL)
-    , _topCell (katana->getCell())
+    : _flags      (0)
+    , _vddCoreName()
+    , _vssCoreName()
+    , _ckCoreName ()
+    , _vdd        (NULL)
+    , _vss        (NULL)
+    , _ck         (NULL)
+    , _blockage   (NULL)
+    , _topCell    (katana->getCell())
   {
     if (_topCell == NULL) return;
 
     cmess1 << "  o  Looking for powers/grounds & clocks." << endl;
 
-    AllianceFramework* af = AllianceFramework::get();
+    for( Net* net : _topCell->getNets() ) {
+      Net::Type netType = net->getType();
 
-    bool hasPad = false;
-    for( Instance* instance : _topCell->getInstances() ) {
-      if (af->isPad(instance->getMasterCell())) {
-        if (not hasPad) {
-          cmess1 << "  o  Design has pads, assuming complete chip top structure." << endl;
-          hasPad = true;
-        }
+      if (netType == Net::Type::CLOCK) {
+        if (not net->isExternal()) continue;
 
-        string padName = getString( instance->getMasterCell()->getName() );
-        if (padName.substr(0,8) == "pvddeck_") {
-          cmess1 << "     o  Reference power pad: " << instance->getName()
-                 << "(model:" << instance->getMasterCell()->getName() << ")." << endl;
-
-        // Guessing the power, ground and clock nets from *this* pad connexions.
-          for( Plug* plug : instance->getPlugs() ) {
-            Net*      masterNet = plug->getMasterNet();
-            Net::Type netType   = masterNet->getType();
-            if (   (netType != Net::Type::POWER )
-               and (netType != Net::Type::GROUND)
-               and (netType != Net::Type::CLOCK ) ) continue;
-
-            Net* net = plug->getNet();
-            if (not net) {
-              net = _topCell->getNet( masterNet->getName() );
-              if (not net) {
-                cerr << Error("Missing global net <%s> at chip level.",getString(masterNet->getName()).c_str()) << endl;
-                continue;
-              }
-            }
-
-            guessGlobalNet( masterNet->getName(), net );
+        if (_ckCoreName.isEmpty()) {
+          cmess1 << "     - Using <" << net->getName() << "> as internal (core) clock net." << endl;
+          _ckCoreName = net->getName();
+          _ck         = net;
+          if (NetRoutingExtension::isMixedPreRoute(net)) {
+            cmess1 << "       (core clock net is already routed)" << endl;
+            _flags |= ClockIsRouted;
+          } else {
+            cmess1 << "       (core clock net will be routed as an ordinary signal)" << endl;
           }
+        } else {
+          cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
+                        "        (will consider only <%s>)"
+                       , getString(net->getName()).c_str()
+                       , getString(_ck->getName()).c_str()
+                       ) << endl;
         }
+      }
 
-        padName = getString( instance->getMasterCell()->getName() );
-        if (padName.substr(0,4) == "pck_") {
-          cmess1 << "     o  Reference clock pad: " << instance->getName()
-                 << "(model:" << instance->getMasterCell()->getName() << ")." << endl;
+      if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
 
-        // Guessing external clock net *only* from *this* pad connexions.
-          for( Plug* plug : instance->getPlugs() ) {
-            Net* masterNet = plug->getMasterNet();
-            Net* net       = plug->getNet();
-            if (not net) {
-              net = _topCell->getNet( masterNet->getName() );
-              if (not net) {
-                cerr << Error("Missing global net <%s> at chip level.",getString(masterNet->getName()).c_str()) << endl;
-                continue;
-              }
-            }
+      if (netType == Net::Type::POWER) {
+        if (_vddCoreName.isEmpty()) {
+          _vddCoreName = net->getName();
+          _vdd         = net;
+        } else {
+          cerr << Error("Second power supply net <%s> net at top block level will be ignored.\n"
+                        "        (will consider only <%s>)"
+                       , getString(net ->getName()).c_str()
+                       , getString(_vdd->getName()).c_str()
+                       ) << endl;
+        }
+      }
 
-            if (masterNet->getName() == _ckPadNetName) {
-              cmess1 << "        - Using <" << net->getName() << "> as external chip clock net." << endl;
-              _ck = net;
-            }
-          }
+      if (netType == Net::Type::GROUND) {
+        if (_vssCoreName.isEmpty()) {
+          _vssCoreName = net->getName();
+          _vss         = net;
+        } else {
+          cerr << Error("Second power ground net <%s> net at top block level will be ignored.\n"
+                        "        (will consider only <%s>)"
+                       , getString(net ->getName()).c_str()
+                       , getString(_vss->getName()).c_str()
+                       ) << endl;
         }
       }
     }
+    
+    if (_vdd == NULL) cerr << Error("Missing POWER net at top block level." ) << endl;
+    else destroyRing( _vdd );
+    if (_vss == NULL) cerr << Error("Missing GROUND net at top block level." ) << endl;
+    else destroyRing( _vss );
 
-    if (hasPad) {
-      if (_vdde == NULL) cerr << Error("Missing <vdde> net (for pads) at chip level." ) << endl;
-      else destroyRing( _vdde );
-      if (_vsse == NULL) cerr << Error("Missing <vsse> net (for pads) at chip level." ) << endl;
-      else destroyRing( _vsse );
-      if (_vddi == NULL) cerr << Error("Missing <vddi>/<vdd> net (for pads) at top level." ) << endl;
-      else destroyRing( _vddi );
-      if (_vssi == NULL) cerr << Error("Missing <vssi>/<vss> net (for pads) at top level." ) << endl;
-      else destroyRing( _vssi );
-      if (_ck   == NULL) cerr << Warning("No <ck> net at (for pads) chip level." ) << endl;
-      if (_cki  == NULL) cerr << Warning("No <cki> net at (for pads) chip level." ) << endl;
-      else destroyRing( _cki );
-    } else {
-      _vddiPadNetName = "";
-      _vssiPadNetName = "";
-      _ckoPadNetName  = "";
-
-      for( Net* net : _topCell->getNets() ) {
-        Net::Type netType = net->getType();
-
-        if (netType == Net::Type::CLOCK) {
-          if (not net->isExternal()) continue;
-
-          if (_ckoPadNetName.isEmpty()) {
-            cmess1 << "     - Using <" << net->getName() << "> as internal (core) clock net." << endl;
-            _ckoPadNetName = net->getName();
-            _cko           = net;
-            if (NetRoutingExtension::isMixedPreRoute(net)) {
-              cmess1 << "       (core clock net is already routed)" << endl;
-              _flags |= ClockIsRouted;
-            } else {
-              cmess1 << "       (core clock net will be routed as an ordinary signal)" << endl;
-            }
-          } else {
-            cerr << Error("Second clock net <%s> net at top block level will be ignored.\n"
-                          "        (will consider only <%s>)"
-                         , getString(net ->getName()).c_str()
-                         , getString(_cko->getName()).c_str()
-                         ) << endl;
-          }
-        }
-
-        if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
-
-        if (netType == Net::Type::POWER) {
-          if (_vddiPadNetName.isEmpty()) {
-            _vddiPadNetName = net->getName();
-            _vddi           = net;
-          } else {
-            cerr << Error("Second power supply net <%s> net at top block level will be ignored.\n"
-                          "        (will consider only <%s>)"
-                         , getString(net  ->getName()).c_str()
-                         , getString(_vddi->getName()).c_str()
-                         ) << endl;
-          }
-        }
-
-        if (netType == Net::Type::GROUND) {
-          if (_vssiPadNetName.isEmpty()) {
-            _vssiPadNetName = net->getName();
-            _vssi           = net;
-          } else {
-            cerr << Error("Second power ground net <%s> net at top block level will be ignored.\n"
-                          "        (will consider only <%s>)"
-                         , getString(net  ->getName()).c_str()
-                         , getString(_vssi->getName()).c_str()
-                         ) << endl;
-          }
-        }
-      }
-      
-      if (_vddi == NULL) cerr << Error("Missing <vdd> net at top block level." ) << endl;
-      else destroyRing( _vddi );
-      if (_vssi == NULL) cerr << Error("Missing <vss> net at top block level." ) << endl;
-      else destroyRing( _vssi );
-    }
-
-    if (_cko  == NULL) cparanoid << Warning("No clock net at top level." ) << endl;
+    if (_ck == NULL) cparanoid << Warning("No CLOCK net at top level." ) << endl;
   }
 
 
   bool  GlobalNetTable::guessGlobalNet ( const Name& name, Net* net )
   {
-    if (name == _vddePadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as corona (external:vdde) power net." << endl;
-      _vdde = net;
+    if (name == _vddCoreName) {
+      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vdd) power net." << endl;
+      _vdd = net;
       return true;
     }
 
-    if (name == _vddiPadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vddi) power net." << endl;
-      _vddi = net;
+    if (name == _vssCoreName) {
+      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vss) ground net." << endl;
+      _vss = net;
       return true;
     }
 
-    if (name == _vssePadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as corona (external:vsse) ground net." << endl;
-      _vsse = net;
-      return true;
-    }
+    if (name == _ckCoreName) {
+      cmess1 << "        - Using <" << net->getName() << "> as core (internal:ck) clock net." << endl;
+      _ck = net;
 
-    if (name == _vssiPadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vssi) ground net." << endl;
-      _vssi = net;
-      return true;
-    }
-
-    if (name == _ckiPadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as corona (external:cki) clock net." << endl;
-      _cki = net;
-      return true;
-    }
-
-    if (name == _ckoPadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:cko) clock net." << endl;
-      _cko = net;
-
-      if (NetRoutingExtension::isMixedPreRoute(_cko)) {
+      if (NetRoutingExtension::isMixedPreRoute(_ck)) {
         cmess1 << "          (core clock net is already routed)" << endl;
         _flags |= ClockIsRouted;
       } else {
         cmess1 << "          (core clock net will be routed as an ordinary signal)" << endl;
       }
-      return true;
-    }
-
-    if (name == _ckPadNetName) {
-      cmess1 << "        - Using <" << net->getName() << "> as external chip clock net." << endl;
-      _ck = net;
       return true;
     }
 
@@ -377,11 +249,8 @@ namespace {
 
     if (net == _blockage) return _blockage;
 
-    if (_vdde and (net->getName() == _vdde->getName())) return _vdde;
-    if (_vsse and (net->getName() == _vsse->getName())) return _vsse;
-
-    if (net->getType() == Net::Type::POWER ) return _vddi;
-    if (net->getType() == Net::Type::GROUND) return _vssi;
+    if (net->getType() == Net::Type::POWER ) return _vdd;
+    if (net->getType() == Net::Type::GROUND) return _vss;
     if (net->getType() != Net::Type::CLOCK ) {
       return NULL;
     }
@@ -420,17 +289,12 @@ namespace {
       }
     }
 
-    cdebug_log(159,0) << "      Check againts top clocks ck:" << ((_ck) ? _ck->getName() : "NULL")
-                << " cki:" << ((_cki) ? _cki->getName() : "NULL")
-                << " cko:" << ((_cko) ? _cko->getName() : "NULL")
-                << endl;
+    cdebug_log(159,0) << "      Check againts top clocks ck:"
+                      << ((_ck) ? _ck->getName() : "NULL") << endl;
 
-    if (_ck  and (upNet->getName() == _ck->getName() )) return _ck;
-    if (_cki and (upNet->getName() == _cki->getName())) return _cki;
-
-    if (_cko) {
-      if (upNet->getName() == _cko->getName()) {
-        if (isCoreClockNetRouted(upNet)) return _cko;
+    if (_ck) {
+      if (upNet->getName() == _ck->getName()) {
+        if (isCoreClockNetRouted(upNet)) return _ck;
       }
     }
 
@@ -439,7 +303,7 @@ namespace {
 
 
   bool  GlobalNetTable::isCoreClockNetRouted ( const Net* net ) const
-  { return (net == _cko) and (_flags & ClockIsRouted); }
+  { return (net == _ck) and (_flags & ClockIsRouted); }
 
 
 // -------------------------------------------------------------------
@@ -1076,7 +940,7 @@ namespace {
   QueryPowerRails::QueryPowerRails ( KatanaEngine* katana )
     : Query            ()
     , _framework       (AllianceFramework::get())
-    , _katana            (katana)
+    , _katana          (katana)
     , _routingGauge    (katana->getConfiguration()->getRoutingGauge())
     , _chipTools       (katana->getChipTools())
     , _powerRailsPlanes(katana)
@@ -1086,7 +950,7 @@ namespace {
     , _goMatchCount    (0)
   {
     setCell       ( katana->getCell() );
-    setArea       ( katana->getCell()->getBoundingBox() );
+    setArea       ( katana->getCell()->getAbutmentBox() );
     setBasicLayer ( NULL );
     setFilter     ( Query::DoTerminalCells|Query::DoComponents );
 

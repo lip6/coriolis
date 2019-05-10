@@ -125,11 +125,11 @@ class Plane ( object ):
 
   def addTerminal ( self, net, direction, bb ):
     if not self.sides.has_key(net):
-      self.sides[ net ] = [ Side(self.block,chip.North,net,self.metal)
-                          , Side(self.block,chip.South,net,self.metal)
-                          , Side(self.block,chip.East ,net,self.metal)
-                          , Side(self.block,chip.West ,net,self.metal)
-                          ]
+      self.sides[ net ] = { chip.North : Side(self.block,chip.North,net,self.metal)
+                          , chip.South : Side(self.block,chip.South,net,self.metal)
+                          , chip.East  : Side(self.block,chip.East ,net,self.metal)
+                          , chip.West  : Side(self.block,chip.West ,net,self.metal)
+                          }
     sides = self.sides[ net ]
 
     if direction == Plane.Horizontal:
@@ -147,7 +147,7 @@ class Plane ( object ):
 
   def doLayout ( self ):
     for sidesOfNet in self.sides.values():
-      for side in sidesOfNet:
+      for side in sidesOfNet.values():
         side.doLayout()
     return
     
@@ -166,8 +166,8 @@ class GoCb ( object ):
     if not direction: return
 
     rootNet = None
-    if go.getNet().getType() == Net.Type.POWER:  rootNet = self.block.vddi
-    if go.getNet().getType() == Net.Type.GROUND: rootNet = self.block.vssi
+    if go.getNet().getType() == Net.Type.POWER:  rootNet = self.block.conf.coronaVdd
+    if go.getNet().getType() == Net.Type.GROUND: rootNet = self.block.conf.coronaVss
     if not rootNet: return
 
     if self.block.activePlane:
@@ -179,37 +179,35 @@ class GoCb ( object ):
     return
 
 
-class Block ( chip.Configuration.ChipConfWrapper ):
+class Block ( object ):
 
   def __init__ ( self, conf ):
-    chip.Configuration.ChipConfWrapper.__init__( self, conf.gaugeConf, conf.chipConf )
-    self.path        = Path( self.cores[0] )
+    self.conf        = conf
+    self.path        = Path( self.conf.icore )
     self.block       = self.path.getTailInstance().getMasterCell()
     self.bb          = self.block.getAbutmentBox()
     self.planes      = { }
     self.activePlane = None
 
-    routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
-    for layerGauge in routingGauge.getLayerGauges():
+    for layerGauge in self.conf.gaugeConf.routingGauge.getLayerGauges():
       self.planes[ layerGauge.getLayer().getName() ] = Plane( self, layerGauge.getLayer() )
     
     return
 
 
   def connectPower ( self ):
-    if not self.vddi or not self.vssi:
-      print ErrorMessage( 1, 'Cannot build block power terminals as vddi and/or vss are not known.' )
+    if not self.conf.coronaVdd or not self.conf.coronaVss:
+      print ErrorMessage( 1, 'Cannot build block power terminals as core vdd and/or vss are not known.' )
       return
 
     goCb = GoCb( self )
     query = Query()
     query.setGoCallback( goCb )
     query.setCell( self.block )
-    query.setArea( self.bb )
+    query.setArea( self.block.getAbutmentBox() )
     query.setFilter( Query.DoComponents|Query.DoTerminalCells )
 
-    routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
-    for layerGauge in routingGauge.getLayerGauges():
+    for layerGauge in self.conf.gaugeConf.routingGauge.getLayerGauges():
       self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
       query.setBasicLayer( layerGauge.getLayer().getBasicLayer() )
       query.doQuery()
@@ -218,24 +216,24 @@ class Block ( chip.Configuration.ChipConfWrapper ):
 
 
   def connectClock ( self ):
-    if not self.useClockTree:
+    if not self.conf.useClockTree:
       print WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." )
       return
-
-    if not self.cko:
+ 
+    if not self.conf.coronaCk:
       print ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
       return
-
+ 
     blockCk = None
     for plug in self.path.getTailInstance().getPlugs():
-      if plug.getNet() == self.cko:
+      if plug.getNet() == self.conf.coronaCk:
         blockCk = plug.getMasterNet()
-
+ 
     if not blockCk:
       print ErrorMessage( 1, 'Block <%s> has no net connected to the clock <%s>.'
                              % (self.path.getTailInstance().getName(),self.ck.getName()) )
       return
-
+ 
     htPlugs = []
     ffPlugs = []
     for plug in blockCk.getPlugs():
@@ -244,13 +242,13 @@ class Block ( chip.Configuration.ChipConfWrapper ):
       else:
         if plug.getInstance().getMasterCell().isTerminal():
           ffPlugs.append( plug )
-
+ 
     if len(ffPlugs) > 0:
       message = 'Clock <%s> of block <%s> is not organized as a H-Tree.' \
                 % (blockCk.getName(),self.path.getTailInstance().getName())
       print ErrorMessage( 1, message )
       return
-
+ 
     if len(htPlugs) > 1:
       message = 'Block <%s> has not exactly one H-Tree connecteds to the clock <%s>:' \
                 % (self.path.getTailInstance().getName(),blockCk.getName())
@@ -258,29 +256,29 @@ class Block ( chip.Configuration.ChipConfWrapper ):
         message += '\n        - %s' % plug
       print ErrorMessage( 1, message )
       return
-
+ 
     UpdateSession.open()
-    bufferRp = self.rpAccessByOccurrence( Occurrence(htPlugs[0], self.path), self.cko )
+    bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], self.path), self.conf.coronaCk )
     blockAb  = self.block.getAbutmentBox()
     self.path.getTransformation().applyOn( blockAb )
-    layerGauge = self.routingGauge.getLayerGauge(self.verticalDepth)
+    layerGauge = self.conf.routingGauge.getLayerGauge(self.conf.verticalDepth)
     
-    contact  = Contact.create( self.cko
-                             , self.routingGauge.getRoutingLayer(self.verticalDepth)
+    contact  = Contact.create( self.conf.coronaCk
+                             , self.conf.routingGauge.getRoutingLayer(self.conf.verticalDepth)
                              , bufferRp.getX()
                              , blockAb.getYMax() 
                              , layerGauge.getViaWidth()
                              , layerGauge.getViaWidth()
                              )
-    segment = self.createVertical( bufferRp, contact, bufferRp.getX() )
-
+    segment = self.conf.createVertical( bufferRp, contact, bufferRp.getX() )
+ 
     self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
     bb = segment.getBoundingBox( self.activePlane.metal.getBasicLayer() )
     self.path.getTransformation().getInvert().applyOn( bb )
-    self.activePlane.addTerminal( self.cko, Plane.Vertical, bb )
+    self.activePlane.addTerminal( self.conf.coronaCk, Plane.Vertical, bb )
     
     UpdateSession.close()
-
+ 
     return
 
   def doLayout ( self ):

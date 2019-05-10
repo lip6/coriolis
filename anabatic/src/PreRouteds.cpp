@@ -73,6 +73,8 @@ namespace Anabatic {
     openSession();
 
     size_t toBeRouteds = 0;
+    Box    ab          = getCell()->getAbutmentBox();
+    ab.inflate( -1 );
 
     for ( Net* net : getCell()->getNets() ) {
       if (net == _blockageNet) continue;
@@ -96,6 +98,9 @@ namespace Anabatic {
 
         Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
         if (horizontal) {
+          if (    not ab.contains(horizontal->getSourcePosition())
+             and  not ab.contains(horizontal->getTargetPosition()) ) continue;
+
           segments.push_back( horizontal );
           isPreRouted = true;
           if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
@@ -103,6 +108,9 @@ namespace Anabatic {
         } else {
           Vertical* vertical = dynamic_cast<Vertical*>(component);
           if (vertical) {
+            if (    not ab.contains(vertical->getSourcePosition())
+               and  not ab.contains(vertical->getTargetPosition()) ) continue;
+
             isPreRouted = true;
             segments.push_back( vertical );
             if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
@@ -110,6 +118,8 @@ namespace Anabatic {
           } else {
             Contact* contact = dynamic_cast<Contact*>(component);
             if (contact) {
+              if (not ab.contains(contact->getCenter())) continue;
+
               isPreRouted = true;
               contacts.push_back( contact );
               if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
@@ -165,10 +175,10 @@ namespace Anabatic {
               AutoContact::createFrom( icontact );
             }
           
-            for ( auto isegment : segments ) {
-              AutoContact* source = Session::lookup( dynamic_cast<Contact*>( isegment->getSource() ));
-              AutoContact* target = Session::lookup( dynamic_cast<Contact*>( isegment->getTarget() ));
-              AutoSegment* autoSegment = AutoSegment::create( source, target, isegment );
+            for ( auto segment : segments ) {
+              AutoContact* source = Session::lookup( dynamic_cast<Contact*>( segment->getSource() ));
+              AutoContact* target = Session::lookup( dynamic_cast<Contact*>( segment->getTarget() ));
+              AutoSegment* autoSegment = AutoSegment::create( source, target, segment );
               autoSegment->setFlags( AutoSegment::SegUserDefined|AutoSegment::SegAxisSet );
             }
           }

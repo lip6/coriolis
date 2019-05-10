@@ -24,12 +24,6 @@
 #include "katana/KatanaEngine.h"
 
 
-namespace {
-
-
-} // Anonymous namespace.
-
-
 namespace Katana {
 
   using namespace std;

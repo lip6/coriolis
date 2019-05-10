@@ -336,12 +336,21 @@ void DumpPins(ofstream &ccell, Cell* cell)
             }
             indexesSet.insert(index);
             if (pin->getWidth() != pin->getHeight())
-                throw Warning(getString(pin->getName()) + " of "
-                        + getString(net->getName())
-                        + " will be incompletely saved ... : AP format is only able to save square pins ...");
+              throw Warning( "CRL::ApParser(): Pin \"" + getString(pin->getName()) + "\" of \""
+                           + getString(net->getName())
+                           + "\", AP format support only square shapes.");
+
+            DbU::Unit width = 0;
+            switch ( pin->getAccessDirection() ) {
+              case Pin::AccessDirection::NORTH:
+              case Pin::AccessDirection::SOUTH: width = pin->getWidth(); break;
+              case Pin::AccessDirection::EAST:
+              case Pin::AccessDirection::WEST: width = pin->getHeight(); break;
+            }
+
             ccell << "C " << toMBKlambda(pin->getX())
                   << ","  << toMBKlambda(pin->getY())
-                  << ","  << toMBKlambda(pin->getWidth())
+                  << ","  << toMBKlambda(width)
                   << ","  << toMBKName(pinName)
                   << ","  << index
                   << ",";

@@ -522,6 +522,8 @@ namespace {
     Net* net = Net::create( parser->getCell(), pin->name() );
     net->setExternal( true );
 
+    if (pin->name()[ strlen(pin->name())-1 ] == '!') net->setGlobal( true );
+
     if (pin->hasDirection()) {
       string lefDir = pin->direction();
       boost::to_upper( lefDir );

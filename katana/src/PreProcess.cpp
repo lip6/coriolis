@@ -270,9 +270,13 @@ namespace {
       TrackElement* segment = track->getSegment(i);
       if (not segment or segment->isRouted()) continue;
       if (segment and segment->isFixed() and segment->isTerminal()) {
-        Interval   freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
-        DbU::Unit  ppitch       = segment->getPPitch();
-      //DbU::Unit  pitch        = segment->getPitch();
+        DbU::Unit  ppitch = segment->getPPitch();
+      //DbU::Unit  pitch  = segment->getPitch();
+
+        if (  ((segment->getSourceU() - track->getMin()) < 2*ppitch)
+           or ((track->getMax() - segment->getTargetU()) < 2*ppitch) ) continue;
+
+        Interval freeInterval = track->getFreeInterval( segment->getSourceU(), segment->getNet() );
 
       //if (freeInterval.getSize() < ppitch*6) {
         if (  (segment->getSourceU() - freeInterval.getVMin() < ppitch*3)

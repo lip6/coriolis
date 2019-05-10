@@ -21,6 +21,7 @@ from   Hurricane import Contact
 from   Hurricane import Path
 from   Hurricane import Occurrence
 from   Hurricane import Instance
+import Viewer
 import CRL
 from   CRL       import RoutingLayerGauge
 
@@ -45,6 +46,15 @@ def  kwParseMain ( **kw ):
    #  raise ErrorMessage( 3, 'Chip: No cell loaded yet.' )
 
     return cell, editor
+
+
+def kwAddMenu ( menuPath, menuName, **kw ):
+    editor = kw['editor']
+    if menuPath.find('.') >= 0: flags = Viewer.CellViewer.NoFlags
+    else:                       flags = Viewer.CellViewer.TopMenu
+    if not editor.hasMenu(menuPath):
+        editor.addMenu( menuPath, menuName, flags )
+    return
 
 
 def kwUnicornHook ( menuPath, menuName, menuTip, moduleFile, **kw ):

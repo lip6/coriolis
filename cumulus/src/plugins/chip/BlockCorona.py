@@ -131,7 +131,11 @@ class HorizontalRail ( Rail ):
                                                   , self.side.hRailWidth - DbU.fromLambda(1.0)
                                                   )
                                       , contact ]
-       #print '    ADD contact @ [%d %d]' % (DbU.toLambda(contact.getX()), DbU.toLambda(self.axis))
+        trace( 550, '\tADD "%s" contact "%s" @ [%d %d]\n'
+               % ( contact.getNet().getName()
+                 , contact.getLayer().getName()
+                 , DbU.toLambda(contact.getX())
+                 , DbU.toLambda(self.axis)) )
         self.vias[ contact.getX() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
         return True
 
@@ -144,6 +148,7 @@ class HorizontalRail ( Rail ):
         for via in self.vias.values():
           if via[1].getNet() != via[2].getNet(): continue
 
+          via[1].mergeDepth( self.side.getLayerDepth(self.side.getVLayer()) )
           via[1].doLayout()
          #print '  Connect:', via[2], via[1].getVia( via[2].getLayer() )
           Vertical.create( via[1].getVia( via[2].getLayer() )
@@ -152,9 +157,12 @@ class HorizontalRail ( Rail ):
                          , via[2].getX()
                          , via[2].getWidth()
                          )
+         #print  via[1]._vias, '[%d %d]' % (via[1]._bottomDepth,via[1]._topDepth)
+         #print  via[1], self.side.getVLayer(), via[1].getVia( self.side.getVLayer() )
           railVias.append( via[1].getVia( self.side.getVLayer()) )
 
-        railVias.sort( key=methodcaller('getY') )
+       #print railVias
+        railVias.sort( key=methodcaller('getX') )
 
         for i in range(1,len(railVias)):
           Horizontal.create( railVias[i-1]
@@ -273,84 +281,85 @@ class VerticalRail ( Rail ):
 class Side ( object ):
 
     def __init__ ( self, corona ):
-        self._corona = corona
+        self.corona = corona
         return
 
     @property
-    def railsNb         ( self ): return self._corona._railsNb
+    def railsNb         ( self ): return self.corona.railsNb
     @property           
-    def innerBb         ( self ): return self._corona._innerBb
+    def innerBb         ( self ): return self.corona.innerBb
     @property           
-    def hRailWidth      ( self ): return self._corona._hRailWidth
+    def hRailWidth      ( self ): return self.corona.hRailWidth
     @property           
-    def hRailSpace      ( self ): return self._corona._hRailSpace
+    def hRailSpace      ( self ): return self.corona.hRailSpace
     @property           
-    def vRailWidth      ( self ): return self._corona._vRailWidth
+    def vRailWidth      ( self ): return self.corona.vRailWidth
     @property           
-    def vRailSpace      ( self ): return self._corona._vRailSpace
+    def vRailSpace      ( self ): return self.corona.vRailSpace
     @property           
-    def corners         ( self ): return self._corona._corners
+    def corners         ( self ): return self.corona.corners
     @property
-    def horizontalDepth ( self ): return self._corona.horizontalDepth
+    def horizontalDepth ( self ): return self.corona.horizontalDepth
     @property
-    def verticalDepth   ( self ): return self._corona.verticalDepth
+    def verticalDepth   ( self ): return self.corona.verticalDepth
     @property
-    def blockageNet     ( self ): return self._corona.blockageNet
+    def blockageNet     ( self ): return self.corona.blockageNet
 
-    def getLayerDepth   ( self, metal ): return self._corona.getLayerDepth(metal)
-    def getRail         ( self, i ):     return self._rails[i]
-    def getRailNet      ( self, i ):     return self._corona.getRailNet(i)
-    def getHLayer       ( self ):        return self._corona.getHLayer()
-    def getVLayer       ( self ):        return self._corona.getVLayer()
+    def getLayerDepth   ( self, metal ): return self.corona.getLayerDepth(metal)
+    def getRail         ( self, i ):     return self.rails[i]
+    def getRailNet      ( self, i ):     return self.corona.getRailNet(i)
+    def getHLayer       ( self ):        return self.corona.getHLayer()
+    def getVLayer       ( self ):        return self.corona.getVLayer()
 
     def getRailAxis ( self, i ):
         raise ErrorMessage( 1, 'Side.getRailAxis(): Must never be called on base class.' )
 
     def getInnerRail ( self, i ):
-        if i >= len(self._rails):
-            raise ErrorMessage( 1, 'Side.getInnerRail(): no rail %d (only: %d).' % (i,len(self._rails)) )
-        return self._rails[i]
+        if i >= len(self.rails):
+            raise ErrorMessage( 1, 'Side.getInnerRail(): no rail %d (only: %d).' % (i,len(self.rails)) )
+        return self.rails[i]
 
     def getOuterRail ( self, i ):
-        if i >= len(self._rails):
-            raise ErrorMessage( 1, 'Side.getOuterRail(): no rail %d (only: %d).' % (i,len(self._rails)) )
-        return self._rails[-(i+1)]
+        if i >= len(self.rails):
+            raise ErrorMessage( 1, 'Side.getOuterRail(): no rail %d (only: %d).' % (i,len(self.rails)) )
+        return self.rails[-(i+1)]
 
     def connect ( self, blockSide ):
         for terminal in blockSide.terminals:
-          for rail in self._rails:
+          for rail in self.rails:
             rail.connect( terminal[1] )
         return
 
     def connectPads ( self, padSide ):
-        for terminal in padSide._powerContacts:
+        for contact in padSide.pins:
+          if not contact.getNet().isSupply() and not contact.getNet().isClock(): continue
          #print '  Connect to [-%i] @%d' % (0, DbU.toLambda(self.getOuterRail(0).axis))
-          self.getOuterRail( 0 ).connect( terminal )
+          self.getOuterRail( 0 ).connect( contact )
 
-        halfRails = (len(self._rails)-1)/2
+        halfRails = (len(self.rails)-1)/2
         trace( 550, 'halfRails:%i' % halfRails )
-        for terminal in padSide._powerContacts:
-          trace( 550, ',+', '\tConnect pad terminal %s\n' % terminal )
+        for contact in padSide.pins:
+          if not contact.getNet().isSupply() and not contact.getNet().isClock(): continue
+          trace( 550, ',+', '\tConnect pad contact %s\n' % contact )
           for i in range(halfRails):
             trace( 550, '\tConnect to [-%i] @%d\n' % (i+1, DbU.toLambda(self.getOuterRail(i+1).axis)) )
-            self.getOuterRail(i+1).connect( terminal )
+            self.getOuterRail(i+1).connect( contact )
           trace( 550, '-' )
         return
 
     def doLayout ( self ):
-        for rail in self._rails: rail.doLayout()
+        for rail in self.rails: rail.doLayout()
         return
 
 
 class HorizontalSide ( Side ):
 
     def __init__ ( self, corona ):
-       #print 'HorizontalSide.__init__()'
         Side.__init__( self, corona )
 
-        self._rails = []
+        self.rails = []
         for i in range(self.railsNb):
-            self._rails.append( HorizontalRail(self,i,self.getRailAxis(i)) )
+            self.rails.append( HorizontalRail(self,i,self.getRailAxis(i)) )
            #print '  Rail [%i] @%d' % (i,DbU.toLambda(self._rails[-1].axis))
         return
 
@@ -379,7 +388,7 @@ class NorthSide ( HorizontalSide ):
         return self.innerBb.getYMax() +    self.hRailWidth/2 + self.hRailSpace \
                                       + i*(self.hRailWidth   + self.hRailSpace)
 
-    def corner0 ( self, i ): return self.corners[chip.NorthWest ][i]
+    def corner0 ( self, i ): return self.corners[chip.NorthWest][i]
     def corner1 ( self, i ): return self.corners[chip.NorthEast][i]
 
 
@@ -388,20 +397,20 @@ class VerticalSide ( Side ):
     def __init__ ( self, corona ):
         Side.__init__( self, corona )
 
-        self._rails = []
+        self.rails = []
         for i in range(self.railsNb):
-            self._rails.append( VerticalRail(self,i,self.getRailAxis(i)) )
+            self.rails.append( VerticalRail(self,i,self.getRailAxis(i)) )
         return
 
     def addBlockages ( self, sideXMin, sideXMax ):
         spans = IntervalSet()
-        for rail in self._rails:
+        for rail in self.rails:
             for via in rail.vias.values():
                 if via[1].getNet() != via[2].getNet(): continue
 
                 spans.merge( via[1]._y - via[1]._height/2, via[1]._y + via[1]._height/2 )
 
-        routingGauge = CRL.AllianceFramework.get().getRoutingGauge()
+        routingGauge = self.corona.routingGauge
         for depth in range(self.getInnerRail(0).vias.values()[0][1].bottomDepth
                           ,self.getInnerRail(0).vias.values()[0][1].topDepth ):
           blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
@@ -410,8 +419,8 @@ class VerticalSide ( Side ):
           for chunk in spans.chunks:
               Horizontal.create( self.blockageNet
                                , blockageLayer
-                               , (chunk.getVMax()+chunk.getVMin())/2
-                               , chunk.getVMax() - chunk.getVMin() + pitch*2
+                               , (chunk.getVMax() + chunk.getVMin())/2
+                               ,  chunk.getVMax() - chunk.getVMin() + pitch*2
                                , sideXMin
                                , sideXMax
                                )
@@ -461,49 +470,44 @@ class EastSide ( VerticalSide ):
 class Corona ( object ):
 
     def __init__ ( self, block ):
-       #if not isinstance(block,plugins.chip.BlockPower.Block):
-       #    raise ErrorMessage( 1, 'Attempt to create a Corona on a non-Block object.' )
+        self.block      = block
+        self.railsNb    = Cfg.getParamInt('chip.block.rails.count'   ).asInt()
+        self.hRailWidth = Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt()
+        self.vRailWidth = Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt()
+        self.hRailSpace = Cfg.getParamInt('chip.block.rails.hSpacing').asInt()
+        self.vRailSpace = Cfg.getParamInt('chip.block.rails.vSpacing').asInt()
 
-        self._railsNb    = Cfg.getParamInt('chip.block.rails.count').asInt()
-        self._hRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt() )
-        self._vRailWidth = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt() )
-        self._hRailSpace = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.hSpacing').asInt() )
-        self._vRailSpace = DbU.fromLambda( Cfg.getParamInt('chip.block.rails.vSpacing').asInt() )
-
-        self._block      = block
-        self._innerBb    = self._block.bb
-        self._block.path.getTransformation().applyOn( self._innerBb )
-        self._innerBb.inflate( self._hRailSpace/2, self._vRailSpace/2 )
+        self.innerBb    = self.block.bb
+        self.block.path.getTransformation().applyOn( self.innerBb )
+        self.innerBb.inflate( self.hRailSpace/2, self.vRailSpace/2 )
         
-        if not self.useClockTree: self._railsNb -= 1
+        if not self.block.conf.useClockTree: self.railsNb -= 1
 
-        self._southSide  = SouthSide( self )
-        self._northSide  = NorthSide( self )
-        self._westSide   = WestSide ( self )
-        self._eastSide   = EastSide ( self )
+        self.southSide  = SouthSide( self )
+        self.northSide  = NorthSide( self )
+        self.westSide   = WestSide ( self )
+        self.eastSide   = EastSide ( self )
 
         return
 
     @property
-    def useClockTree    ( self ): return self._block.useClockTree
+    def routingGauge    ( self ): return self.block.conf.gaugeConf.routingGauge
     @property
-    def routingGauge    ( self ): return self._block.routingGauge
+    def topLayerDepth   ( self ): return self.block.conf.gaugeConf.topLayerDepth
     @property
-    def topLayerDepth   ( self ): return self._block.topLayerDepth
+    def horizontalDepth ( self ): return self.block.conf.gaugeConf.horizontalDepth
     @property
-    def horizontalDepth ( self ): return self._block.horizontalDepth
+    def verticalDepth   ( self ): return self.block.conf.gaugeConf.verticalDepth
     @property
-    def verticalDepth   ( self ): return self._block.verticalDepth
-    @property
-    def blockageNet     ( self ): return self._block.blockageNet
+    def blockageNet     ( self ): return self.block.conf.blockageNet
 
     def getLayerDepth ( self, metal ):
-        return self.routingGauge.getLayerDepth( metal )
+        return self.block.conf.gaugeConf.routingGauge.getLayerDepth( metal )
 
     def getRailNet ( self, i ):
-        if self.useClockTree and i == self._railsNb-1: return self._block.cko
-        if i % 2: return self._block.vssi
-        return self._block.vddi
+        if self.block.conf.useClockTree and i == self.railsNb-1: return self.block.conf.coronaCk
+        if i % 2: return self.block.conf.coronaVss
+        return self.block.conf.coronaVdd
 
     def getHLayer ( self ):
         return self.routingGauge.getLayerGauge( self.horizontalDepth ).getLayer()
@@ -512,76 +516,76 @@ class Corona ( object ):
         return self.routingGauge.getLayerGauge( self.verticalDepth ).getLayer()
 
     def connectBlock ( self ):
-        for plane in self._block.planes.values():
+        for plane in self.block.planes.values():
           for side in plane.sides.values():
-            self._southSide.connect( side[chip.South] )
-            self._northSide.connect( side[chip.North] )
-            self._westSide .connect( side[chip.West ] )
-            self._eastSide .connect( side[chip.East ] )
+            self.southSide.connect( side[chip.South] )
+            self.northSide.connect( side[chip.North] )
+            self.westSide .connect( side[chip.West ] )
+            self.eastSide .connect( side[chip.East ] )
         return
 
     def connectPads ( self, padsCorona ):
-        self._southSide.connectPads( padsCorona.southSide )
-        self._northSide.connectPads( padsCorona.northSide )
-        self._eastSide.connectPads( padsCorona.eastSide )
-        self._westSide.connectPads( padsCorona.westSide )
+        self.southSide.connectPads( padsCorona.southSide )
+        self.northSide.connectPads( padsCorona.northSide )
+        self.eastSide .connectPads( padsCorona.eastSide  )
+        self.westSide .connectPads( padsCorona.westSide  )
         return
 
     def doLayout ( self ):
-        self._corners = { chip.SouthWest : []
-                        , chip.SouthEast : []
-                        , chip.NorthWest : []
-                        , chip.NorthEast : []
-                        }
+        self.corners = { chip.SouthWest : []
+                       , chip.SouthEast : []
+                       , chip.NorthWest : []
+                       , chip.NorthEast : []
+                       }
 
         contactDepth = self.horizontalDepth
         if self.horizontalDepth > self.verticalDepth:
             contactDepth = self.verticalDepth
 
         UpdateSession.open()
-        for i in range(self._railsNb):
-            xBL = self._westSide .getRail(i).axis
-            yBL = self._southSide.getRail(i).axis
-            xTR = self._eastSide .getRail(i).axis
-            yTR = self._northSide.getRail(i).axis
+        for i in range(self.railsNb):
+            xBL = self.westSide .getRail(i).axis
+            yBL = self.southSide.getRail(i).axis
+            xTR = self.eastSide .getRail(i).axis
+            yTR = self.northSide.getRail(i).axis
             net = self.getRailNet( i )
 
             self.routingGauge.getContactLayer(contactDepth)
-            self._corners[chip.SouthWest].append( 
+            self.corners[chip.SouthWest].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xBL, yBL
-                              , self._hRailWidth
-                              , self._vRailWidth
+                              , self.hRailWidth
+                              , self.vRailWidth
                               ) )
-            self._corners[chip.NorthWest].append( 
+            self.corners[chip.NorthWest].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xBL, yTR
-                              , self._hRailWidth
-                              , self._vRailWidth
+                              , self.hRailWidth
+                              , self.vRailWidth
                               ) )
-            self._corners[chip.SouthEast].append( 
+            self.corners[chip.SouthEast].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xTR, yBL
-                              , self._hRailWidth
-                              , self._vRailWidth
+                              , self.hRailWidth
+                              , self.vRailWidth
                               ) )
-            self._corners[chip.NorthEast].append( 
+            self.corners[chip.NorthEast].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xTR, yTR
-                              , self._hRailWidth
-                              , self._vRailWidth
+                              , self.hRailWidth
+                              , self.vRailWidth
                               ) )
 
-        self._southSide.doLayout()
-        self._northSide.doLayout()
-        self._westSide .doLayout()
-        self._eastSide .doLayout()
+        self.southSide.doLayout()
+        self.northSide.doLayout()
+        self.westSide .doLayout()
+        self.eastSide .doLayout()
 
-        self._westSide.addBlockages()
-        self._eastSide.addBlockages()
+        self.westSide.addBlockages()
+        self.eastSide.addBlockages()
         UpdateSession.close()
         return

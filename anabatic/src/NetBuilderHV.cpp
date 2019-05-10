@@ -416,9 +416,37 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_1PinM2() [Managed Configuration - Optimized] " << getTopology() << endl;
 
-    AutoContact* rpContact = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
-    AutoContact* turn1     = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
-    AutoSegment::create( rpContact, turn1, Flags::Vertical );
+    AutoContact* rpContactSource = NULL;
+    AutoContact* rpContactTarget = NULL;
+
+    doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContactSource, rpContactTarget, NoFlags );
+
+    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( rpContactSource, turn1, Flags::Horizontal );
+
+    if (east() or west()) {
+      AutoContact* turn2 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( turn1, turn2, Flags::Vertical );
+      turn1 = turn2;
+    }
+    setBothCornerContacts( turn1 );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderHV::_do_1G_1PinM3 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_1G_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    AutoContact* rpContactSource = NULL;
+    AutoContact* rpContactTarget = NULL;
+
+    doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpContactSource, rpContactTarget, NoFlags );
+
+    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( rpContactSource, turn1, Flags::Vertical );
 
     if (north() or south()) {
       AutoContact* turn2 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );

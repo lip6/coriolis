@@ -325,6 +325,7 @@ namespace Katana {
       autoSegment->getConstraints( constraints );
       uside.intersection( constraints );
 
+      cdebug_log(159,0) << "* Constraints " << constraints << endl;
       cdebug_log(159,0) << "* Nearest " << track << endl;
 
       if (not track)

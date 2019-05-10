@@ -42,20 +42,14 @@ try:
   import helpers
   from   helpers import trace
   from   helpers import ErrorMessage
- #import Nimbus
- #import Metis
- #import Mauka
-  import Katabatic
-  import Kite
   import Unicorn
   import plugins
   from   clocktree.RSMT import RSMT
+  from   chip.Configuration import GaugeConf
   from   chip.Configuration import getPlugByNet
   from   chip.Configuration import getPlugByName
   from   chip.Configuration import getRpBb
   from   chip.Configuration import destroyNetComponents
-  from   chip.Configuration import GaugeConf
-  from   chip.Configuration import GaugeConfWrapper
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):
@@ -75,7 +69,7 @@ except Exception, e:
   sys.exit(2)
 
 
-class HTree ( GaugeConfWrapper ):
+class HTree ( object ):
 
   @staticmethod
   def create ( conf, cell, clockNet, clockBox ):
@@ -99,7 +93,7 @@ class HTree ( GaugeConfWrapper ):
     return ht
 
   def __init__ ( self, conf, cell, clockNet, area ):
-    GaugeConfWrapper.__init__( self, conf.gaugeConf )
+    self.conf = conf
     
     self.minSide = DbU.fromLambda( Cfg.getParamInt('clockTree.minimumSide').asInt() )
     if self.minSide < DbU.fromLambda(100.0):
@@ -113,7 +107,6 @@ class HTree ( GaugeConfWrapper ):
     self.childs       = []
     self._getBufferIo()
     self.tieCell      = self.framework.getCell( 'rowend_x0', CRL.Catalog.State.Views )
-    self.cellGauge    = self.framework.getCellGauge()
     self.topBuffer    = Instance.create( self.cell, 'ck_htree', self.bufferCell )
     self.cloneds      = [ self.cell ]
     self.usedVTracks  = []
@@ -160,8 +153,8 @@ class HTree ( GaugeConfWrapper ):
     self._feedCount += 1
     return self._feedCount
 
-  def toXCellGrid ( self, x ): return x - (x % self.cellGauge.getSliceStep ())
-  def toYCellGrid ( self, y ): return y - (y % self.cellGauge.getSliceHeight())
+  def toXCellGrid ( self, x ): return x - (x % self.conf.cellGauge.getSliceStep ())
+  def toYCellGrid ( self, y ): return y - (y % self.conf.cellGauge.getSliceHeight())
 
   def rpDistance  ( self, rp1, rp2 ):
     dx = abs( rp1.getX() - rp2.getX() )
@@ -173,9 +166,9 @@ class HTree ( GaugeConfWrapper ):
     yslice = self.toYCellGrid(y)
 
     transformation = Transformation.Orientation.ID
-    if ((yslice-self.area.getYMin()) / self.cellGauge.getSliceHeight()) % 2 != 0:
+    if ((yslice-self.area.getYMin()) / self.conf.cellGauge.getSliceHeight()) % 2 != 0:
       transformation = Transformation.Orientation.MY
-      yslice        += self.cellGauge.getSliceHeight()
+      yslice        += self.conf.cellGauge.getSliceHeight()
 
     instance.setTransformation ( Transformation(xslice, yslice, transformation) )
     instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
@@ -193,7 +186,7 @@ class HTree ( GaugeConfWrapper ):
                             , 'htree_feed_%i' % self.feedCounter()
                             , self.tieCell
                             , Transformation(x,transformation.getTy(),transformation.getOrientation())
-                           #, Instance.PlacementStatus.PLACED
+                            , Instance.PlacementStatus.PLACED
                             )
       x += tieWidth
     return
@@ -267,16 +260,16 @@ class HTree ( GaugeConfWrapper ):
       if not node.component:
         x = node.realX
         if node.realX in self.usedVTracks:
-          x += self.routingGauge.getLayerGauge(self.verticalDeepDepth).getPitch()
+          x += self.conf.routingGauge.getLayerGauge(self.conf.verticalDeepDepth).getPitch()
        # This is a Steiner point.
-        node.component = self.createContact( net
-                                           , x
-                                           , node.y + self.cellGauge.getSliceHeight()/2 - self.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch()
-                                           , GaugeConf.DeepDepth )
+        node.component = self.conf.createContact( net
+                                                , x
+                                                , node.y + self.conf.cellGauge.getSliceHeight()/2 - self.conf.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch()
+                                                , GaugeConf.DeepDepth )
         trace( 550, '\tCreate (Steiner) node.component: @Y%d (y:%d - %d) %s\n' \
                  % (DbU.toLambda(node.realY)
                    ,DbU.toLambda(node.y)
-                   ,DbU.toLambda(self.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch())
+                   ,DbU.toLambda(self.conf.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch())
                    ,node.component) )
       else:
        # This a terminal (graph) point
@@ -289,7 +282,7 @@ class HTree ( GaugeConfWrapper ):
         flags |= GaugeConf.OffsetTop1
         if node.realX in self.usedVTracks:
           flags |= GaugeConf.OffsetRight1
-        node.component = self.rpAccess( node.component, flags )
+        node.component = self.conf.rpAccess( node.component, flags )
 
     for edge in mst.edges:
       sourceContact = edge.source.component
@@ -300,12 +293,12 @@ class HTree ( GaugeConfWrapper ):
       elif edge.isVertical():
         self.createVertical  ( sourceContact, targetContact, sourceContact.getX(), GaugeConf.DeepDepth )
       else:
-        turn = self.createContact( edge.source.component.getNet()
-                                 , sourceContact.getX()
-                                 , targetContact.getY()
-                                 , GaugeConf.DeepDepth )
-        self.createVertical  ( sourceContact, turn, sourceContact.getX(), GaugeConf.DeepDepth )
-        self.createHorizontal( turn, targetContact, targetContact.getY(), GaugeConf.DeepDepth )
+        turn = self.conf.createContact( edge.source.component.getNet()
+                                      , sourceContact.getX()
+                                      , targetContact.getY()
+                                      , GaugeConf.DeepDepth )
+        self.conf.createVertical  ( sourceContact, turn, sourceContact.getX(), GaugeConf.DeepDepth )
+        self.conf.createHorizontal( turn, targetContact, targetContact.getY(), GaugeConf.DeepDepth )
     return
 
   def _connectLeafs ( self, leafBuffer, leafs ):
@@ -512,8 +505,8 @@ class HTreeNode ( object ):
     self.topTree.placeInstance( self.trBuffer, x+halfWidth, y+halfHeight )
 
     self.topTree.usedVTracks += \
-        [ self.topTree.rpAccessByPlugName( self.blBuffer, self.topTree.bufferIn, self.ckNet ).getX()
-        , self.topTree.rpAccessByPlugName( self.brBuffer, self.topTree.bufferIn, self.ckNet ).getX() ]
+        [ self.topTree.conf.rpAccessByPlugName( self.blBuffer, self.topTree.bufferIn, self.ckNet ).getX()
+        , self.topTree.conf.rpAccessByPlugName( self.brBuffer, self.topTree.bufferIn, self.ckNet ).getX() ]
 
     for child in self.childs: child.place()
     return
@@ -521,42 +514,42 @@ class HTreeNode ( object ):
   def route ( self ):
     trace( 550, '\tHTreeNode.route() %s\n' % self.sourceBuffer.getName() )
 
-    leftSourceContact  = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
-    rightSourceContact = self.topTree.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
-    blContact          = self.topTree.rpAccessByPlugName( self.blBuffer    , self.topTree.bufferIn , self.ckNet )
-    brContact          = self.topTree.rpAccessByPlugName( self.brBuffer    , self.topTree.bufferIn , self.ckNet )
-    tlContact          = self.topTree.rpAccessByPlugName( self.tlBuffer    , self.topTree.bufferIn , self.ckNet )
-    trContact          = self.topTree.rpAccessByPlugName( self.trBuffer    , self.topTree.bufferIn , self.ckNet )
-    leftContact        = self.topTree.createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
-    rightContact       = self.topTree.createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
+    leftSourceContact  = self.topTree.conf.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+    rightSourceContact = self.topTree.conf.rpAccessByPlugName( self.sourceBuffer, self.topTree.bufferOut, self.ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+    blContact          = self.topTree.conf.rpAccessByPlugName( self.blBuffer    , self.topTree.bufferIn , self.ckNet )
+    brContact          = self.topTree.conf.rpAccessByPlugName( self.brBuffer    , self.topTree.bufferIn , self.ckNet )
+    tlContact          = self.topTree.conf.rpAccessByPlugName( self.tlBuffer    , self.topTree.bufferIn , self.ckNet )
+    trContact          = self.topTree.conf.rpAccessByPlugName( self.trBuffer    , self.topTree.bufferIn , self.ckNet )
+    leftContact        = self.topTree.conf.createContact( self.ckNet, blContact.getX(),  leftSourceContact.getY() )
+    rightContact       = self.topTree.conf.createContact( self.ckNet, brContact.getX(), rightSourceContact.getY() )
 
-    leftSourceX  = self.topTree.getNearestVerticalTrack  ( self.topTree.area,  leftSourceContact.getX(), 0 )
-    leftSourceY  = self.topTree.getNearestHorizontalTrack( self.topTree.area,  leftSourceContact.getY(), 0 )
-    rightSourceX = self.topTree.getNearestVerticalTrack  ( self.topTree.area, rightSourceContact.getX(), 0 )
-    rightSourceY = self.topTree.getNearestHorizontalTrack( self.topTree.area, rightSourceContact.getY(), 0 )
-    leftX        = self.topTree.getNearestVerticalTrack  ( self.topTree.area,        leftContact.getX(), 0 )
-    rightX       = self.topTree.getNearestVerticalTrack  ( self.topTree.area,       rightContact.getX(), 0 )
-    tlY          = self.topTree.getNearestHorizontalTrack( self.topTree.area,          tlContact.getY(), 0 )
-    blY          = self.topTree.getNearestHorizontalTrack( self.topTree.area,          blContact.getY(), 0 )
+    leftSourceX  = self.topTree.conf.getNearestVerticalTrack  ( self.topTree.area,  leftSourceContact.getX(), 0 )
+    leftSourceY  = self.topTree.conf.getNearestHorizontalTrack( self.topTree.area,  leftSourceContact.getY(), 0 )
+    rightSourceX = self.topTree.conf.getNearestVerticalTrack  ( self.topTree.area, rightSourceContact.getX(), 0 )
+    rightSourceY = self.topTree.conf.getNearestHorizontalTrack( self.topTree.area, rightSourceContact.getY(), 0 )
+    leftX        = self.topTree.conf.getNearestVerticalTrack  ( self.topTree.area,        leftContact.getX(), 0 )
+    rightX       = self.topTree.conf.getNearestVerticalTrack  ( self.topTree.area,       rightContact.getX(), 0 )
+    tlY          = self.topTree.conf.getNearestHorizontalTrack( self.topTree.area,          tlContact.getY(), 0 )
+    blY          = self.topTree.conf.getNearestHorizontalTrack( self.topTree.area,          blContact.getY(), 0 )
 
-    self.topTree.setStackPosition(  leftSourceContact,  leftSourceX,  leftSourceY )
-    self.topTree.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
-    self.topTree.setStackPosition( tlContact,  leftX, tlY )
-    self.topTree.setStackPosition( blContact,  leftX, blY )
-    self.topTree.setStackPosition( trContact, rightX, tlY )
-    self.topTree.setStackPosition( brContact, rightX, blY )
+    self.topTree.conf.setStackPosition(  leftSourceContact,  leftSourceX,  leftSourceY )
+    self.topTree.conf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
+    self.topTree.conf.setStackPosition( tlContact,  leftX, tlY )
+    self.topTree.conf.setStackPosition( blContact,  leftX, blY )
+    self.topTree.conf.setStackPosition( trContact, rightX, tlY )
+    self.topTree.conf.setStackPosition( brContact, rightX, blY )
 
     leftContact .setX(        leftX )
     leftContact .setY(  leftSourceY )
     rightContact.setX(       rightX )
     rightContact.setY( rightSourceY )
 
-    self.topTree.createHorizontal( leftContact       , leftSourceContact, leftSourceY , 0 )
-    self.topTree.createHorizontal( rightSourceContact, rightContact     , rightSourceY, 0 )
-    self.topTree.createVertical  ( leftContact       , blContact        , leftX       , 0 )
-    self.topTree.createVertical  ( tlContact         , leftContact      , leftX       , 0 )
-    self.topTree.createVertical  ( rightContact      , brContact        , rightX      , 0 )
-    self.topTree.createVertical  ( trContact         , rightContact     , rightX      , 0 )
+    self.topTree.conf.createHorizontal( leftContact       , leftSourceContact, leftSourceY , 0 )
+    self.topTree.conf.createHorizontal( rightSourceContact, rightContact     , rightSourceY, 0 )
+    self.topTree.conf.createVertical  ( leftContact       , blContact        , leftX       , 0 )
+    self.topTree.conf.createVertical  ( tlContact         , leftContact      , leftX       , 0 )
+    self.topTree.conf.createVertical  ( rightContact      , brContact        , rightX      , 0 )
+    self.topTree.conf.createVertical  ( trContact         , rightContact     , rightX      , 0 )
 
     for child in self.childs: child.route()
     return
