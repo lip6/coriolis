@@ -19,6 +19,7 @@
 
 //#define  TEST_INTRUSIVESET
 
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/DataBase.h"
@@ -603,16 +604,14 @@ bool Cell::isLeaf() const
     return _instanceMap.isEmpty();
 }
 
-bool Cell::isCalledBy(Cell* cell) const
-// ************************************
+bool Cell::isCalledBy ( Cell* cell ) const
 {
-    for_each_instance(instance, cell->getInstances()) {
-        Cell* masterCell = instance->getMasterCell();
-        if (masterCell == this) return true;
-        if (isCalledBy(masterCell)) return true;
-        end_for;
-    }
-    return false;
+  for ( Instance* instance : cell->getInstances() ) {
+    Cell* masterCell = instance->getMasterCell();
+    if (masterCell == this) return true;
+    if (isCalledBy(masterCell)) return true;
+  }
+  return false;
 }
 
 bool Cell::isNetAlias ( const Name& name ) const
@@ -880,7 +879,14 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
   for ( size_t i=0 ; i<topHyperNets.size() ; ++i ) {
     Net* net = static_cast<Net*>(topHyperNets[i].getNetOccurrence().getEntity());
 
-    for ( Occurrence plugOccurrence : topHyperNets[i].getLeafPlugOccurrences() ) {
+    DebugSession::open( net, 18, 19 ); 
+    cdebug_log(18,1) << "Flattening top: " << net << endl;
+
+    vector<Occurrence>  plugOccurrences;
+    for ( Occurrence plugOccurrence : topHyperNets[i].getLeafPlugOccurrences() )
+      plugOccurrences.push_back( plugOccurrence );
+
+    for ( Occurrence plugOccurrence : plugOccurrences ) {
       RoutingPad* rp = RoutingPad::create( net, plugOccurrence, rpFlags );
       rp->materialize();
 
@@ -888,12 +894,16 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
         rp->isPlacedOccurrence( RoutingPad::ShowWarning );
     }
 
+    cdebug_log(18,0) << "Processing Pins" << endl;
+    vector<Pin*> pins;
     for ( Component* component : net->getComponents() ) {
       Pin* pin = dynamic_cast<Pin*>( component );
-      if (pin) {
-        RoutingPad::create( pin );
-      }
+      if (pin) pins.push_back( pin );
     }
+    for ( Pin* pin : pins ) RoutingPad::create( pin );
+
+    cdebug_tabw(18,-1);
+    DebugSession::close();
   }
 
   UpdateSession::close();

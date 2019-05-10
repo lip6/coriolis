@@ -95,6 +95,7 @@ namespace Hurricane {
     if (not plug)
       routingPad->isPlacedOccurrence( flags );
 
+    cdebug_log(18,0) << "RoutingPad::create() " << routingPad << endl;
     return routingPad;
   }
 

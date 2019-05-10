@@ -193,6 +193,12 @@ Instance::Instance(Cell* cell, const Name& name, Cell* masterCell, const Transfo
     if (!_masterCell)
         throw Error("Instance::Instance(): Can't create " + _TName("Instance") + ", NULL master cell");
 
+    if (_masterCell == _cell)
+        throw Error( "Instance::Instance(): Can't create " + _TName("Instance") + ", immediate cyclic construction\n"
+                   + "        (Instance \"" + getString(name).c_str()
+                   + "\" in Cell \"" + getString(_cell->getName()).c_str() + "\" uses it's owner as model)"
+                   );
+
     if (secureFlag && _cell->isCalledBy(_masterCell))
         throw Error("Instance::Instance(): Can't create " + _TName("Instance") + ", cyclic construction");
 }
