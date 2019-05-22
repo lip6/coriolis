@@ -179,7 +179,7 @@ namespace CRL {
 
 
   AllianceFramework* AllianceFramework::_singleton         = NULL;
-  const Name         AllianceFramework::_parentLibraryName = "AllianceFramework";
+  const Name         AllianceFramework::_parentLibraryName = "Alliance";
 
 
 
@@ -234,7 +234,7 @@ namespace CRL {
 
   //cmess2 << "  o  Creating Alliance Framework root library." << endl;
     if ( !rootLibrary )
-      rootLibrary = Library::create ( db, "RootLibrary" );
+      rootLibrary = Library::create ( db, "Root" );
 
     _parentLibrary = rootLibrary->getLibrary ( _parentLibraryName );
     if ( !_parentLibrary )

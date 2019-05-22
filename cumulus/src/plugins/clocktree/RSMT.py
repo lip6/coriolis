@@ -18,24 +18,24 @@ try:
   import sys
   import Cfg
   import Hurricane
-  from   Hurricane import DbU
-  from   Hurricane import Box
-  from   Hurricane import Path
-  from   Hurricane import Occurrence
-  from   Hurricane import UpdateSession
-  from   Hurricane import Breakpoint
-  from   Hurricane import Net
-  from   Hurricane import RoutingPad
-  from   Hurricane import Contact
-  from   Hurricane import Horizontal
-  from   Hurricane import Vertical
-  from   Hurricane import Instance
+  from   Hurricane  import DbU
+  from   Hurricane  import Box
+  from   Hurricane  import Path
+  from   Hurricane  import Occurrence
+  from   Hurricane  import UpdateSession
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import Net
+  from   Hurricane  import RoutingPad
+  from   Hurricane  import Contact
+  from   Hurricane  import Horizontal
+  from   Hurricane  import Vertical
+  from   Hurricane  import Instance
   import Viewer
   import CRL
-  from   CRL import RoutingLayerGauge
+  from   CRL        import RoutingLayerGauge
   import helpers
-  from   helpers   import trace
-  from   helpers   import ErrorMessage
+  from   helpers    import trace
+  from   helpers.io import ErrorMessage
   import plugins
 except ImportError, e:
   serror = str(e)

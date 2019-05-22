@@ -5,18 +5,18 @@ import os.path
 import string
 import traceback
 import Hurricane
-from   Hurricane import DbU
-from   Hurricane import DataBase
-from   Hurricane import Technology
-from   Hurricane import Layer
-from   Hurricane import BasicLayer
-from   Hurricane import DiffusionLayer
-from   Hurricane import TransistorLayer
-from   Hurricane import RegularLayer
-from   Hurricane import ContactLayer
-from   Hurricane import ViaLayer
-from   CRL       import AllianceFramework
-from   helpers   import ErrorMessage
+from   Hurricane  import DbU
+from   Hurricane  import DataBase
+from   Hurricane  import Technology
+from   Hurricane  import Layer
+from   Hurricane  import BasicLayer
+from   Hurricane  import DiffusionLayer
+from   Hurricane  import TransistorLayer
+from   Hurricane  import RegularLayer
+from   Hurricane  import ContactLayer
+from   Hurricane  import ViaLayer
+from   CRL        import AllianceFramework
+from   helpers.io import ErrorMessage
 
 
 technologyFile = '<No technology file specified>'
@@ -132,7 +132,9 @@ def loadRealLayers ( realLayersTable, confFile ):
                 routingLayer.setBlockageLayer(basicLayer)
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<realLayersTable> at entry %d.' % (technologyFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<realLayersTable> at entry %d.' % (technologyFile,entryNo) )
+            print e
     return
 
 
@@ -197,7 +199,9 @@ def loadCompositeLayers ( compositeLayersData, confFile ):
             layersLUT.add( compositeLayer )
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<compositeLayersTable> at entry %d.' % (technologyFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<compositeLayersTable> at entry %d.' % (technologyFile,entryNo) )
+            print e
     return
 
 
@@ -270,7 +274,9 @@ def loadLayersExtensions ( layersExtensionsTable, confFile ):
                                      ])
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<layersExtensionsTable> at entry %d.' % (technologyFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<layersExtensionsTable> at entry %d.' % (technologyFile,entryNo) )
+            print e
     return
 
 
@@ -287,7 +293,9 @@ def tagSymbolicLayers ( symbolicLayersTable, confFile ):
             layersLUT.lookup(layerName,LayersLUT.Real|LayersLUT.Composite|LayersLUT.MissingError)
             technology.setSymbolicLayer(layerName)
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<symbolicLayersTable> at entry %d.' % (technologyFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<symbolicLayersTable> at entry %d.' % (technologyFile,entryNo) )
+            print e
     return
 
 
@@ -331,7 +339,9 @@ def loadGdsLayers ( realLayersTable, confFile ):
             basicLayer.setGds2Datatype( gdsiiDatatype )
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<gdsLayersTable> at entry %d.' % (technologyFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<gdsLayersTable> at entry %d.' % (technologyFile,entryNo) )
+            print e
     return
 
 
@@ -414,6 +424,7 @@ def initTechno ( technoConfig ):
             DbU.setSymbolicSnapGridStep( DbU.fromLambda(gridStep) )
     
       except Exception, e:
-        ErrorMessage.wrapPrint(e)
+        e = ErrorMessage( e )
+        print e
 
     return

@@ -6,8 +6,8 @@ import os.path
 import sys
 import Cfg
 import helpers
-from   helpers   import ErrorMessage
-from   helpers   import Debug
+from   helpers.io import ErrorMessage
+from   helpers    import Debug
 
 
 confFile = '<confFile has not been set>'
@@ -123,7 +123,9 @@ def loadParameters ( parametersData, fromFile ):
                         param.flags = options[key]
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<parametersTable> at index %d.' % (confFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<parametersTable> at index %d.' % (confFile,entryNo) )
+            print e
     return
 
 
@@ -198,5 +200,7 @@ def loadLayout ( layoutData, fromFile ):
                     layout.addParameter ( tabName, pathName, text, column, span, flags )
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<layoutTable> at index %d.' % (confFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<layoutTable> at index %d.' % (confFile,entryNo) )
+            print e
     return

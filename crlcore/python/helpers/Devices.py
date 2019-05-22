@@ -17,9 +17,9 @@
 import os
 import os.path
 import sys
-from   Hurricane import DataBase
-from   helpers   import ErrorMessage
-from   helpers   import Debug
+from   Hurricane  import DataBase
+from   helpers.io import ErrorMessage
+from   helpers    import Debug
 
 
 devicesFile = '<devicesFile has not been set>'
@@ -89,7 +89,9 @@ def _loadDevices ( techno, ruleTable ):
         for layout in entry['layouts']:
           devDesc.addLayout( layout[0], layout[1] )
       except Exception, e:
-        ErrorMessage.wrapPrint(e,'In %s:<devicesTable> at index %d.' % (devicesFile,entryNo))
+        e = ErrorMessage( e )
+        e.addMessage( 'In %s:<devicesTable> at index %d.' % (devicesFile,entryNo) )
+        print e
     return
 
 

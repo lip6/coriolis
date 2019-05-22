@@ -3,8 +3,8 @@ import os
 import re
 
 import Cfg
-from   Hurricane import *
-from   helpers   import ErrorMessage
+from   Hurricane  import *
+from   helpers.io import ErrorMessage
 import CRL
 #import Mauka
 

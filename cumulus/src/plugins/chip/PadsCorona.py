@@ -15,30 +15,30 @@
 
 
 import sys
-from   operator  import itemgetter  
-import Cfg
-from   Hurricane import DbU
-from   Hurricane import Point
-from   Hurricane import Transformation
-from   Hurricane import Interval
-from   Hurricane import Box
-from   Hurricane import Path
-from   Hurricane import Occurrence
-from   Hurricane import UpdateSession
-from   Hurricane import Layer
-from   Hurricane import BasicLayer
-from   Hurricane import Net
-from   Hurricane import Pin
-from   Hurricane import Contact
-from   Hurricane import Segment
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Instance
-import CRL
-from   CRL       import RoutingLayerGauge
-from   helpers   import trace
-from   helpers   import ErrorMessage
-from   helpers   import WarningMessage
+from   operator   import itemgetter  
+import Cfg        
+from   Hurricane  import DbU
+from   Hurricane  import Point
+from   Hurricane  import Transformation
+from   Hurricane  import Interval
+from   Hurricane  import Box
+from   Hurricane  import Path
+from   Hurricane  import Occurrence
+from   Hurricane  import UpdateSession
+from   Hurricane  import Layer
+from   Hurricane  import BasicLayer
+from   Hurricane  import Net
+from   Hurricane  import Pin
+from   Hurricane  import Contact
+from   Hurricane  import Segment
+from   Hurricane  import Horizontal
+from   Hurricane  import Vertical
+from   Hurricane  import Instance
+import CRL        
+from   CRL        import RoutingLayerGauge
+from   helpers    import trace
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
 import chip.Configuration
 
 
@@ -51,27 +51,31 @@ class Corner ( object ):
       return
 
 
+    @property
+    def conf ( self ): return self.corona.conf
+
+
     def _getPoints ( self, axis ):
       if self.type == chip.SouthWest:
-        xCorner = self.corona.conf.chipSize.getXMin() + axis
-        yCorner = self.corona.conf.chipSize.getYMin() + axis
-        xBb     = self.corona.conf.chipSize.getXMin() + self.corona.conf.getIoPadHeight()
-        yBb     = self.corona.conf.chipSize.getYMin() + self.corona.conf.getIoPadHeight()
+        xCorner = self.conf.chipSize.getXMin() + axis
+        yCorner = self.conf.chipSize.getYMin() + axis
+        xBb     = self.conf.chipSize.getXMin() + self.conf.getIoPadHeight()
+        yBb     = self.conf.chipSize.getYMin() + self.conf.getIoPadHeight()
       elif self.type == chip.SouthEast:
-        xCorner = self.corona.conf.chipSize.getXMax() - axis
-        yCorner = self.corona.conf.chipSize.getYMin() + axis
-        xBb     = self.corona.conf.chipSize.getXMax() - self.corona.conf.getIoPadHeight()
-        yBb     = self.corona.conf.chipSize.getYMin() + self.corona.conf.getIoPadHeight()
+        xCorner = self.conf.chipSize.getXMax() - axis
+        yCorner = self.conf.chipSize.getYMin() + axis
+        xBb     = self.conf.chipSize.getXMax() - self.conf.getIoPadHeight()
+        yBb     = self.conf.chipSize.getYMin() + self.conf.getIoPadHeight()
       elif self.type == chip.NorthEast:
-        xCorner = self.corona.conf.chipSize.getXMax() - axis
-        yCorner = self.corona.conf.chipSize.getYMax() - axis
-        xBb     = self.corona.conf.chipSize.getXMax() - self.corona.conf.getIoPadHeight()
-        yBb     = self.corona.conf.chipSize.getYMax() - self.corona.conf.getIoPadHeight()
+        xCorner = self.conf.chipSize.getXMax() - axis
+        yCorner = self.conf.chipSize.getYMax() - axis
+        xBb     = self.conf.chipSize.getXMax() - self.conf.getIoPadHeight()
+        yBb     = self.conf.chipSize.getYMax() - self.conf.getIoPadHeight()
       elif self.type == chip.NorthWest:
-        xCorner = self.corona.conf.chipSize.getXMin() + axis
-        yCorner = self.corona.conf.chipSize.getYMax() - axis
-        xBb     = self.corona.conf.chipSize.getXMin() + self.corona.conf.getIoPadHeight()
-        yBb     = self.corona.conf.chipSize.getYMax() - self.corona.conf.getIoPadHeight()
+        xCorner = self.conf.chipSize.getXMin() + axis
+        yCorner = self.conf.chipSize.getYMax() - axis
+        xBb     = self.conf.chipSize.getXMin() + self.conf.getIoPadHeight()
+        yBb     = self.conf.chipSize.getYMax() - self.conf.getIoPadHeight()
       
       return xCorner, yCorner, xBb, yBb
 
@@ -94,8 +98,8 @@ class Corner ( object ):
     def _getTransformation ( self ):
       if self.type == chip.SouthWest:
         name = 'padcorner_sw'
-        x    = self.corona.conf.chipSize.getXMin()
-        y    = self.corona.conf.chipSize.getYMin()
+        x    = self.conf.chipSize.getXMin()
+        y    = self.conf.chipSize.getYMin()
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation =  Transformation.Orientation.ID
         else:
@@ -104,8 +108,8 @@ class Corner ( object ):
 
       elif self.type == chip.SouthEast:
         name = 'padcorner_se'
-        x    = self.corona.conf.chipSize.getXMax()
-        y    = self.corona.conf.chipSize.getYMin()
+        x    = self.conf.chipSize.getXMax()
+        y    = self.conf.chipSize.getYMin()
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation  = Transformation.Orientation.R1
         else:
@@ -115,8 +119,8 @@ class Corner ( object ):
 
       elif self.type == chip.NorthEast:
         name = 'padcorner_ne'
-        x    = self.corona.conf.chipSize.getXMax()
-        y    = self.corona.conf.chipSize.getYMax()
+        x    = self.conf.chipSize.getXMax()
+        y    = self.conf.chipSize.getYMax()
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation  = Transformation.Orientation.R2
         else:
@@ -126,8 +130,8 @@ class Corner ( object ):
 
       elif self.type == chip.NorthWest:
         name = 'padcorner_nw'
-        x    = self.corona.conf.chipSize.getXMin()
-        y    = self.corona.conf.chipSize.getYMax()
+        x    = self.conf.chipSize.getXMin()
+        y    = self.conf.chipSize.getYMax()
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation  = Transformation.Orientation.R3
         else:
@@ -140,7 +144,7 @@ class Corner ( object ):
     def _instanciateCorner ( self ):
       name, transformation = self._getTransformation()
 
-      corner = Instance.create( self.corona.conf.cell
+      corner = Instance.create( self.conf.cell
                               , name, self.corona.padCorner
                               , transformation
                               , Instance.PlacementStatus.FIXED
@@ -160,29 +164,29 @@ class Side ( object ):
       self.type          = sideType
       self.corona        = corona
       self.pins          = []
-      self.u             = self.corona.conf.getIoPadHeight()
+      self.u             = self.conf.getIoPadHeight()
       self.spacerCount   = 0
       self.gap           = 0
 
       if   self.type == chip.North:
-        self.pads       = self.corona.conf.northPads
+        self.pads       = self.conf.northPads
         self.sideName   = 'north'
-        self.sideLength = self.corona.conf.chipSize.getWidth()
+        self.sideLength = self.conf.chipSize.getWidth()
 
       elif self.type == chip.South:
-        self.pads       = self.corona.conf.southPads
+        self.pads       = self.conf.southPads
         self.sideName   = 'south'
-        self.sideLength = self.corona.conf.chipSize.getWidth()
+        self.sideLength = self.conf.chipSize.getWidth()
 
       elif self.type == chip.East:
-        self.pads       = self.corona.conf.eastPads
+        self.pads       = self.conf.eastPads
         self.sideName   = 'east'
-        self.sideLength = self.corona.conf.chipSize.getHeight()
+        self.sideLength = self.conf.chipSize.getHeight()
 
       elif self.type == chip.West:
-        self.pads       = self.corona.conf.westPads
+        self.pads       = self.conf.westPads
         self.sideName   = 'west'
-        self.sideLength = self.corona.conf.chipSize.getHeight()
+        self.sideLength = self.conf.chipSize.getHeight()
 
       else:
         raise ErrorMessage( 1, 'PadsCorona.Side.__init__(): Invalid value for sideType (%d)' % sideType )
@@ -191,14 +195,18 @@ class Side ( object ):
       return
 
 
+    @property
+    def conf ( self ): return self.corona.conf
+
+
     def toGrid ( self, u ): return self.corona.toGrid( u )
 
 
     def getAxis ( self, i ):
-      if   self.type == chip.North: return self.corona.conf.chipSize.getYMax() - self.corona.conf.getIoPadHeight() + self.corona.powerRails[i][2]
-      elif self.type == chip.South: return self.corona.conf.chipSize.getYMin() + self.corona.conf.getIoPadHeight() - self.corona.powerRails[i][2]
-      elif self.type == chip.East:  return self.corona.conf.chipSize.getXMax() - self.corona.conf.getIoPadHeight() + self.corona.powerRails[i][2]
-      elif self.type == chip.West:  return self.corona.conf.chipSize.getXMin() + self.corona.conf.getIoPadHeight() - self.corona.powerRails[i][2]
+      if   self.type == chip.North: return self.conf.chipSize.getYMax() - self.conf.getIoPadHeight() + self.corona.powerRails[i][2]
+      elif self.type == chip.South: return self.conf.chipSize.getYMin() + self.conf.getIoPadHeight() - self.corona.powerRails[i][2]
+      elif self.type == chip.East:  return self.conf.chipSize.getXMax() - self.conf.getIoPadHeight() + self.corona.powerRails[i][2]
+      elif self.type == chip.West:  return self.conf.chipSize.getXMin() + self.conf.getIoPadHeight() - self.corona.powerRails[i][2]
       else:
         raise ErrorMessage( 1, 'PadsCorona.Side.__init__(): Invalid value for sideType (%d)' % sideType )
       return 0
@@ -215,18 +223,18 @@ class Side ( object ):
       sideName = 'unknown'
       chipSize = 0
       if self.type == chip.North or self.type == chip.South:
-        chipSize = self.corona.conf.chipSize.getWidth()
+        chipSize = self.conf.chipSize.getWidth()
         sideName = 'wide'
       elif self.type == chip.East or self.type == chip.West:
-        chipSize = self.corona.conf.chipSize.getHeight()
+        chipSize = self.conf.chipSize.getHeight()
         sideName = 'tall'
   
       if checkSize > chipSize:
-        sliceHeight = self.corona.conf.getSliceHeight()
+        sliceHeight = self.conf.getSliceHeight()
         if checkSize % sliceHeight != 0:
           checkSize += sliceHeight - (checkSize % sliceHeight)
 
-        print ErrorMessage( 1, [ 'Chip is not %s enought to accomodate the %s,' % (sideName,checkName)
+        raise ErrorMessage( 1, [ 'Chip is not %s enought to accomodate the %s,' % (sideName,checkName)
                                , 'needs %s, but only has %s.'
                                  % ( DbU.getValueString(checkSize), DbU.getValueString(chipSize) )
                                ] )
@@ -237,26 +245,26 @@ class Side ( object ):
     def check ( self ):
       self.validated = True
       if self.type == chip.North:
-       #print DbU.getValueString(self.corona.conf.coreSize.getWidth())
-       #print DbU.getValueString(self.corona.conf.minCorona)
-       #print DbU.getValueString(self.corona.conf.getIoPadHeight())
-        self.validated = self._check(     self.corona.conf.coreSize.getWidth()
-                                      + 2*self.corona.conf.minCorona
-                                      + 2*self.corona.conf.getIoPadHeight()
+       #print DbU.getValueString(self.conf.coreSize.getWidth())
+       #print DbU.getValueString(self.conf.minCorona)
+       #print DbU.getValueString(self.conf.getIoPadHeight())
+        self.validated = self._check(     self.conf.coreSize.getWidth()
+                                      + 2*self.conf.minCorona
+                                      + 2*self.conf.getIoPadHeight()
                                     , 'core' )
         checkName = 'north pads'
       elif self.type == chip.East:
-        self.validated = self._check(     self.corona.conf.coreSize.getHeight()
-                                      + 2*self.corona.conf.minCorona
-                                      + 2*self.corona.conf.getIoPadHeight()
+        self.validated = self._check(     self.conf.coreSize.getHeight()
+                                      + 2*self.conf.minCorona
+                                      + 2*self.conf.getIoPadHeight()
                                     , 'core' )
         checkName = 'east pads'
       elif self.type == chip.South: checkName = 'south pads'
       elif self.type == chip.West:  checkName = 'west pads'
 
-     #self.validated = self._check( len(self.pads) *   self.corona.conf.padWidth
-     #                                             + 2*self.corona.conf.padHeight
-     #                            , checkName ) and self.validated
+      self.validated = self._check( len(self.pads) *   self.conf.gaugeConf.getIoPadStep  ()
+                                                   + 2*self.conf.gaugeConf.getIoPadHeight()
+                                  , checkName ) and self.validated
       return self.validated
 
 
@@ -354,7 +362,7 @@ class Side ( object ):
 
       while iPadSpacer < len(self.corona.padSpacers) and gapWidth > 0:
         gapWidth -= _getWidth( self.corona.padSpacers[iPadSpacer] )
-        spacer    = Instance.create( self.corona.conf.cell
+        spacer    = Instance.create( self.conf.cell
                                    , self.spacerNames % self.spacerCount
                                    , self.corona.padSpacers[iPadSpacer])
         self.spacerCount += 1
@@ -364,7 +372,7 @@ class Side ( object ):
           iPadSpacer = _nextSpacer( iPadSpacer )
 
       if gapWidth != 0:
-        print ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads on %s side, %s remains.' \
+        raise ErrorMessage( 1, 'PadsCorona.Side._placePads(): Pad fillers cannot close the gap between pads on %s side, %s remains.' \
                                % (self.sideName,DbU.getValueString(gapWidth)) )
          
       self.u += gapWidth
@@ -373,28 +381,28 @@ class Side ( object ):
 
     def _placePad ( self, padInstance ):
       if self.type == chip.North:
-        x = self.corona.conf.chipSize.getXMin() + self.u
-        y = self.corona.conf.chipSize.getYMax()
+        x = self.conf.chipSize.getXMin() + self.u
+        y = self.conf.chipSize.getYMax()
 
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation = Transformation.Orientation.MY
         else:
           orientation = Transformation.Orientation.ID
-          y          -= self.corona.conf.getIoPadHeight()
+          y          -= self.conf.getIoPadHeight()
 
       elif self.type == chip.South:
-        x = self.corona.conf.chipSize.getXMin() + self.u
-        y = self.corona.conf.chipSize.getYMin()
+        x = self.conf.chipSize.getXMin() + self.u
+        y = self.conf.chipSize.getYMin()
 
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation = Transformation.Orientation.ID
         else:
           orientation = Transformation.Orientation.MY
-          y          += self.corona.conf.getIoPadHeight()
+          y          += self.conf.getIoPadHeight()
 
       elif self.type == chip.West:
-        x = self.corona.conf.chipSize.getXMin()
-        y = self.corona.conf.chipSize.getYMin() + self.u
+        x = self.conf.chipSize.getXMin()
+        y = self.conf.chipSize.getYMin() + self.u
 
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation = Transformation.Orientation.R3
@@ -404,8 +412,8 @@ class Side ( object ):
           x          += padInstance.getMasterCell().getAbutmentBox().getHeight()
 
       elif self.type == chip.East:
-        x = self.corona.conf.chipSize.getXMax()
-        y = self.corona.conf.chipSize.getYMin() + self.u
+        x = self.conf.chipSize.getXMax()
+        y = self.conf.chipSize.getYMin() + self.u
 
         if self.corona.padOrient == Transformation.Orientation.ID:
           orientation = Transformation.Orientation.R1
@@ -424,9 +432,9 @@ class Side ( object ):
     def _placePads ( self ):
       padLength = 0
       for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
-      padSpacing = (self.sideLength - 2*self.corona.conf.getIoPadHeight() - padLength) / (len(self.pads) + 1)
+      padSpacing = (self.sideLength - 2*self.conf.getIoPadHeight() - padLength) / (len(self.pads) + 1)
 
-      if self.corona.conf.padsHavePosition:
+      if self.conf.padsHavePosition:
         for i in range(len(self.pads)):
           self.pads[i][0] = self.toGrid( self.pads[i][0] )
       else:
@@ -440,7 +448,7 @@ class Side ( object ):
         self._fillPadSpacing( pad[0] - self.u )
         self._placePad( pad[1] )
 
-      self._fillPadSpacing( self.sideLength - self.corona.conf.getIoPadHeight() - self.u )
+      self._fillPadSpacing( self.sideLength - self.conf.getIoPadHeight() - self.u )
 
       return
 
@@ -459,7 +467,7 @@ class Side ( object ):
 
     def _createSegment ( self, rail, uMin, uMax ):
       net, layer, axis, width = rail
-      if self.corona.conf.getIoPadGauge().getName() == 'pxlib':
+      if self.conf.getIoPadGauge().getName() == 'pxlib':
         if net.isClock():
           uMin -= DbU.fromLambda(5.0)
           uMax += DbU.fromLambda(5.0)
@@ -469,46 +477,46 @@ class Side ( object ):
       
       if self.type == chip.North or self.type == chip.South:
         if self.type == chip.North:
-          axis = self.corona.conf.chipSize.getYMax() - axis
+          axis = self.conf.chipSize.getYMax() - axis
         Horizontal.create( net, layer, axis, width, uMin, uMax )
       else:
         if self.type == chip.East:
-          axis = self.corona.conf.chipSize.getXMax() - axis
+          axis = self.conf.chipSize.getXMax() - axis
         Vertical.create( net, layer, axis, width, uMin, uMax )
       return
 
 
     def _routePads ( self ):
       if self.type == chip.South or self.type == chip.North:
-        startCorner = self.corona.conf.chipSize.getXMin()
-        stopCorner  = self.corona.conf.chipSize.getXMax()
+        startCorner = self.conf.chipSize.getXMin()
+        stopCorner  = self.conf.chipSize.getXMax()
       elif self.type == chip.West or self.type == chip.East:
-        startCorner = self.corona.conf.chipSize.getYMin()
-        stopCorner  = self.corona.conf.chipSize.getYMax()
+        startCorner = self.conf.chipSize.getYMin()
+        stopCorner  = self.conf.chipSize.getYMax()
       else:
         return
 
-      startCorner += self.corona.conf.getIoPadHeight()
-      stopCorner  -= self.corona.conf.getIoPadHeight()
+      startCorner += self.conf.getIoPadHeight()
+      stopCorner  -= self.conf.getIoPadHeight()
 
       if len(self.pads) == 0:
         return
 
-      padAb = self.corona.conf.getInstanceAb( self.pads[0][1] )
+      padAb = self.conf.getInstanceAb( self.pads[0][1] )
       for irail in range(len(self.corona.padRails)):
         self._createSegment( self.corona.padRails[ irail ]
                            , startCorner
                            , self._getUMin(padAb) )
 
-      padAb = self.corona.conf.getInstanceAb( self.pads[-1][1] )
+      padAb = self.conf.getInstanceAb( self.pads[-1][1] )
       for irail in range(len(self.corona.padRails)):
         self._createSegment( self.corona.padRails[ irail ]
                            , self._getUMax(padAb)
                            , stopCorner )
 
       for i in range(len(self.pads)-1):
-        padAb1 = self.corona.conf.getInstanceAb( self.pads[i  ][1] )
-        padAb2 = self.corona.conf.getInstanceAb( self.pads[i+1][1] )
+        padAb1 = self.conf.getInstanceAb( self.pads[i  ][1] )
+        padAb2 = self.conf.getInstanceAb( self.pads[i+1][1] )
 
         for rail in self.corona.padRails:
           self._createSegment( rail, self._getUMax(padAb1), self._getUMin(padAb2) )
@@ -541,12 +549,18 @@ class CoreWire ( object ):
     return
 
 
+  @property
+  def conf ( self ): return self.corona.conf
+
+
   def _computeCoreLayers ( self ):
-    rg   = self.corona.conf.gaugeConf.routingGauge
+    rg   = self.conf.gaugeConf.routingGauge
     mask = self.padSegment.getLayer().getMask()
 
     self.symSegmentLayer = None
     for layerGauge in rg.getLayerGauges():
+      if layerGauge.getDepth() > self.conf.gaugeConf.topLayerDepth: break
+
       if layerGauge.getLayer().getMask() == mask:
         self.symSegmentLayer = layerGauge.getLayer()
 
@@ -558,7 +572,7 @@ class CoreWire ( object ):
             self.symContactSize = ( self.bbSegment.getWidth(), layerGauge.getWireWidth() )
         else:
           depth = layerGauge.getDepth()
-          if layerGauge.getDepth() + 1 >= rg.getDepth():
+          if layerGauge.getDepth() + 1 > self.conf.gaugeConf.topLayerDepth:
             self.symSegmentLayer = rg.getLayerGauge( depth-1 ).getLayer()
             depth -= 1
           else:
@@ -584,8 +598,8 @@ class CoreWire ( object ):
             trace( 550, '\tarraySize = (%d,%d)\n' % (self.arraySize[0], self.arraySize[1]) )
         return
 
-    print ErrorMessage( 1, 'CoreWire._computeCoreLayers(): Layer of IO pad segment "%s" is not in routing gauge.' \
-                        %  self.chipNet.getName() )
+    raise ErrorMessage( 1, 'CoreWire._computeCoreLayers(): Layer of IO pad segment "%s" is not in routing gauge.' \
+                           %  self.chipNet.getName() )
       
     return
 
@@ -593,7 +607,7 @@ class CoreWire ( object ):
   def drawWire ( self ):
     trace( 550, ',+', '\tCoreWire.drawWire(): chip:"%s"\n' %(self.chipNet.getName()) )
 
-    coreAb = self.corona.conf.getInstanceAb( self.corona.conf.icorona )
+    coreAb = self.conf.getInstanceAb( self.conf.icorona )
 
     self._computeCoreLayers()
 
@@ -630,7 +644,7 @@ class CoreWire ( object ):
                                )
       trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
       if self.arraySize:
-        contacts = self.corona.conf.coronaContactArray( self.chipNet
+        contacts = self.conf.coronaContactArray( self.chipNet
                                                       , self.symContactLayer
                                                       , xContact
                                                       , self.bbSegment.getCenter().getY()
@@ -641,7 +655,7 @@ class CoreWire ( object ):
         for contact in contacts:
           vStrapBb.merge( contact.getBoundingBox() )
       else:
-        contact = self.corona.conf.coronaContact( self.chipNet
+        contact = self.conf.coronaContact( self.chipNet
                                                 , self.symContactLayer
                                                 , xContact
                                                 , self.bbSegment.getCenter().getY()
@@ -652,7 +666,7 @@ class CoreWire ( object ):
         vStrapBb  = contact.getBoundingBox( padLayer )
 
       hRealBb = hReal.getBoundingBox( padLayer )
-      self.corona.conf.icorona.getTransformation().applyOn( vStrapBb )
+      self.conf.icorona.getTransformation().applyOn( vStrapBb )
       vStrapBb.merge( vStrapBb.getXMin(), hRealBb.getYMin() )
       vStrapBb.merge( vStrapBb.getXMin(), hRealBb.getYMax() )
       if self.padSegment.getLayer().isSymbolic():
@@ -671,7 +685,7 @@ class CoreWire ( object ):
         if self.side == chip.West: xContact = min( xContact, vStrapBb.getXMin() )
         else:                       xContact = max( xContact, vStrapBb.getXMax() )
 
-      self.corona.conf.coronaHorizontal( self.chipNet
+      self.conf.coronaHorizontal( self.chipNet
                                        , self.symSegmentLayer
                                        , self.bbSegment.getCenter().getY()
                                        , self.bbSegment.getHeight()
@@ -679,7 +693,7 @@ class CoreWire ( object ):
                                        , xCore
                                        )
       trace( 550, '\tCORONA PIN: %s %d\n' % (self.chipNet, self.count) )
-      pin = self.corona.conf.coronaPin( self.chipNet
+      pin = self.conf.coronaPin( self.chipNet
                                       , self.count
                                       , accessDirection
                                       , self.symSegmentLayer
@@ -717,29 +731,29 @@ class CoreWire ( object ):
                              )
       trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
       if self.arraySize:
-        contacts = self.corona.conf.coronaContactArray( self.chipNet
-                                                      , self.symContactLayer
-                                                      , self.bbSegment.getCenter().getX()
-                                                      , yContact
-                                                      , self.arraySize
-                                                      , flags
-                                                      )
+        contacts = self.conf.coronaContactArray( self.chipNet
+                                               , self.symContactLayer
+                                               , self.bbSegment.getCenter().getX()
+                                               , yContact
+                                               , self.arraySize
+                                               , flags
+                                               )
         hStrapBb = Box()
         for contact in contacts:
           hStrapBb.merge( contact.getBoundingBox() )
       else:
-        contact   = self.corona.conf.coronaContact( self.chipNet
-                                                  , self.symContactLayer
-                                                  , self.bbSegment.getCenter().getX()
-                                                  , yContact
-                                                  , self.symContactSize[0]
-                                                  , self.symContactSize[1]
-                                                  , flags
-                                                  )
+        contact   = self.conf.coronaContact( self.chipNet
+                                           , self.symContactLayer
+                                           , self.bbSegment.getCenter().getX()
+                                           , yContact
+                                           , self.symContactSize[0]
+                                           , self.symContactSize[1]
+                                           , flags
+                                           )
         hStrapBb  = contact.getBoundingBox( padLayer )
 
       vRealBb = vReal.getBoundingBox()
-      self.corona.conf.icorona.getTransformation().applyOn( hStrapBb )
+      self.conf.icorona.getTransformation().applyOn( hStrapBb )
       hStrapBb.merge( vRealBb.getXMin(), hStrapBb.getYMin() )
       hStrapBb.merge( vRealBb.getXMax(), hStrapBb.getYMin() )
       if self.padSegment.getLayer().isSymbolic():
@@ -758,22 +772,22 @@ class CoreWire ( object ):
         if self.side == chip.South: yContact = min( yContact, hStrapBb.getYMin() )
         else:                        yContact = max( yContact, hStrapBb.getYMax() )
       
-      self.corona.conf.coronaVertical( self.chipNet
-                                     , self.symSegmentLayer
-                                     , self.bbSegment.getCenter().getX()
-                                     , self.bbSegment.getWidth()
-                                     , yContact
-                                     , yCore
-                                     )
-      pin = self.corona.conf.coronaPin( self.chipNet
-                                      , self.count
-                                      , accessDirection
-                                      , self.symSegmentLayer
-                                      , self.bbSegment.getCenter().getX()
-                                      , yCore
-                                      , self.bbSegment.getWidth()
-                                      , DbU.fromLambda( 1.0 )
-                                      )
+      self.conf.coronaVertical( self.chipNet
+                              , self.symSegmentLayer
+                              , self.bbSegment.getCenter().getX()
+                              , self.bbSegment.getWidth()
+                              , yContact
+                              , yCore
+                              )
+      pin = self.conf.coronaPin( self.chipNet
+                               , self.count
+                               , accessDirection
+                               , self.symSegmentLayer
+                               , self.bbSegment.getCenter().getX()
+                               , yCore
+                               , self.bbSegment.getWidth()
+                               , DbU.fromLambda( 1.0 )
+                               )
 
     if self.side & chip.North: self.corona.northSide.pins.append( pin )
     if self.side & chip.South: self.corona.southSide.pins.append( pin )
@@ -795,8 +809,8 @@ class Corona ( object ):
       if width1 >  width2: return  -1
       return 1
 
-    self.conf        = conf  
-    self.validated   = False
+    self.conf       = conf  
+    self.validated  = False
     self.northSide  = Side( self, chip.North )
     self.southSide  = Side( self, chip.South )
     self.eastSide   = Side( self, chip.East  )
@@ -822,7 +836,7 @@ class Corona ( object ):
         spacerCell = self.padLib.getCell( spacerName )
         if spacerCell: self.padSpacers.append( spacerCell )
         else:
-          print ErrorMessage( 1, 'Corona.__init__(): Missing spacer cell "%s"' % spacerName )
+          raise ErrorMessage( 1, 'Corona.__init__(): Missing spacer cell "%s"' % spacerName )
         self.padSpacers.sort( _cmpPad )
 
     if Cfg.hasParameter('chip.padCorner'):
@@ -919,10 +933,10 @@ class Corona ( object ):
                 if plug.getMasterNet().isGlobal():
                   net = self.conf.cell.getNet( plug.getMasterNet().getName() )
                   if not net:
-                    print ErrorMessage( 1, 'PadsCorona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
+                    raise ErrorMessage( 1, 'PadsCorona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
                                            %  plug.getMasterNet().getName(), padCell.getName() )
                 else:
-                  print ErrorMessage( 1, 'PadsCorona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
+                  raise ErrorMessage( 1, 'PadsCorona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
                                          %  plug.getMasterNet().getName(), padCell.getName() )
                 
               if net:
@@ -952,12 +966,23 @@ class Corona ( object ):
         if bb.intersect(innerBb):
           lg    = rg.getLayerGauge( component.getLayer() )
           depth = lg.getDepth()
+          print 'depth:', depth, 'topLayerDepth:', self.conf.gaugeConf.topLayerDepth
+          if depth > self.conf.gaugeConf.topLayerDepth: continue
+
           if lg.getDirection() == RoutingLayerGauge.Vertical:
             if not vsegments.has_key(depth): vsegments[ depth ] = []
             vsegments[ depth ].append( (component,bb) )
           else:
             if not hsegments.has_key(depth): hsegments[ depth ] = []
             hsegments[ depth ].append( (component,bb) )
+
+   #if len(vsegments) + len(hsegments) == 0:
+   #  raise ErrorMessage( 1, [ 'Corona._createCorewire(): No connector of "%s" in I/O pad "%s" is in routing gauge range (top layer "%s")' \
+   #                           % ( padNet.getName()
+   #                             , padInstance.getMasterCell().getName()
+   #                             , rg.getLayerGauge(self.conf.gaugeConf.topLayerDepth).getLayer().getName() )
+   #                         , 'while connecting corona net "%s"' % chipIntNet.getName()
+   #                         ] )
 
     gapWidth       = 0
     segments       = None
@@ -993,7 +1018,7 @@ class Corona ( object ):
 
 
   def _placeInnerCorona ( self ):
-    rg      = self.conf.gaugeConf.routingGauge
+    rg = self.conf.gaugeConf.routingGauge
 
     coronaSouthGap = 0
     for layerGauge in rg.getLayerGauges():
@@ -1007,13 +1032,14 @@ class Corona ( object ):
     for coronaPlug in self.conf.icorona.getPlugs():
       chipIntNet = coronaPlug.getNet()
       if not chipIntNet:
-        print ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Corona net "%s" is not connected to a pad.' \
+        raise ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Corona net "%s" is not connected to a pad.' \
                                %  coronaPlug.getMasterNet().getName() )
         continue
 
       padConnected  = 0
       doneInstances = []
       for chipPlug in chipIntNet.getPlugs():
+        print 'plug:', chipPlug
         doneInstances.append( chipPlug.getInstance() )
         padNet   = chipPlug.getMasterNet()
         padWires = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
@@ -1021,6 +1047,7 @@ class Corona ( object ):
           coreWires    += padWires
           padConnected += len(padWires)
 
+      print 'chipInNet:', chipIntNet
       if chipIntNet.isGlobal():
         for instance in self.conf.cell.getInstances():
           if instance in doneInstances: continue
@@ -1035,7 +1062,7 @@ class Corona ( object ):
             padConnected += len(padWires)
 
       if padConnected == 0:
-        print ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Chip net "%s" is not connected to a pad.' \
+        raise ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Chip net "%s" is not connected to a pad.' \
                                %  chipIntNet.getName() )
 
     self.conf.setupCorona( self.westSide.gap, self.southSide.gap, self.eastSide.gap, self.northSide.gap )

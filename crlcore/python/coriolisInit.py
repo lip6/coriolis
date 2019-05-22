@@ -11,8 +11,8 @@ try:
   from   CRL                     import Environment
   from   CRL                     import RoutingLayerGauge
   from   helpers                 import Configuration
-  from   helpers                 import ErrorMessage
-  from   helpers                 import WarningMessage
+  from   helpers.io              import ErrorMessage
+  from   helpers.io              import WarningMessage
  #from   helpers                 import Devices
   from   helpers.Configuration   import TypeBool
   from   helpers.Configuration   import TypeInt

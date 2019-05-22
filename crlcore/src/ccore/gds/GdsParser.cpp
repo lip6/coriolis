@@ -16,6 +16,7 @@
 
 #include <ctime>
 #include <string>
+#include <bitset>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
@@ -39,6 +40,7 @@ using namespace std;
 #include "hurricane/Library.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Instance.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/UpdateSession.h"
 using namespace Hurricane;
 
@@ -184,6 +186,7 @@ namespace {
       inline       bool              isLIBDIRSIZE   () const;   
       inline       bool              isSRFNAME      () const;   
       inline       bool              isLIBSECUR     () const;   
+      inline       bool              hasXReflection () const;
       inline       uint16_t          getType        () const;
       inline       uint16_t          getLength      () const;
       inline const vector<uint16_t>& getMasks       () const;
@@ -194,6 +197,8 @@ namespace {
                    void              clear          ();
                    void              read           ( istream* );
                    void              readDummy      ( bool showError );
+                   void              readStrans     ();
+                   void              readString     ();
                    void              readUnits      ();
                    void              readLayer      ();
                    void              readStrname    ();
@@ -209,6 +214,7 @@ namespace {
       uint16_t          _length;
       uint16_t          _count;
       uint16_t          _type;
+      bool              _xReflection;
       string            _name;
       vector<uint16_t>  _masks;
       vector<int16_t>   _int16s;
@@ -275,6 +281,7 @@ namespace {
   inline       bool              GdsRecord::isLIBDIRSIZE   () const { return (_type == LIBDIRSIZE  ); }   
   inline       bool              GdsRecord::isSRFNAME      () const { return (_type == SRFNAME     ); }   
   inline       bool              GdsRecord::isLIBSECUR     () const { return (_type == LIBSECUR    ); }   
+  inline       bool              GdsRecord::hasXReflection () const { return _xReflection; }   
   inline       uint16_t          GdsRecord::getType        () const { return _type; }
   inline       uint16_t          GdsRecord::getLength      () const { return _length; }
   inline const vector<uint16_t>& GdsRecord::getMasks       () const { return _masks; }
@@ -285,29 +292,31 @@ namespace {
 
 
   GdsRecord::GdsRecord ()
-    : _stream  (NULL)
-    , _length  (0)
-    , _count   (0)
-    , _type    (0)
-    , _name    ()
-    , _masks   ()
-    , _int16s  ()
-    , _int32s  ()
-    , _doubles ()
+    : _stream     (NULL)
+    , _length     (0)
+    , _count      (0)
+    , _type       (0)
+    , _xReflection(false)
+    , _name       ()
+    , _masks      ()
+    , _int16s     ()
+    , _int32s     ()
+    , _doubles    ()
   { }
 
 
   void  GdsRecord::clear ()
   {
-    _stream  = NULL;
-    _length  = 0;
-    _count   = 0;
-    _type    = 0;
-    _name    .clear();
-    _masks   .clear();
-    _int16s  .clear();
-    _int32s  .clear();
-    _doubles .clear();
+    _stream      = NULL;
+    _length      = 0;
+    _count       = 0;
+    _type        = 0;
+    _xReflection = false;
+    _name   .clear();
+    _masks  .clear();
+    _int16s .clear();
+    _int32s .clear();
+    _doubles.clear();
   }
 
 
@@ -338,17 +347,17 @@ namespace {
       case WIDTH:        readDummy( false ); break;
       case XY:           readXy();           break;
       case ENDEL:        readDummy( false ); break;
-      case SNAME:        readDummy( false ); break;
+      case SNAME:        readStrname();      break;
       case COLROW:       readDummy( false ); break;
       case TEXTNODE:     readDummy( false ); break;
       case NODE:         readDummy( false ); break;
       case TEXTTYPE:     readDummy( false ); break;
       case PRESENTATION: readDummy( false ); break;
       case SPACING:      readDummy( false ); break;
-      case STRING:       readDummy( false ); break;
-      case STRANS:       readDummy( false ); break;
+      case STRING:       readString();       break;
+      case STRANS:       readStrans();       break;
       case MAG:          readDummy( false ); break;
-      case ANGLE:        readDummy( false ); break;
+      case ANGLE:        _doubles.push_back( _readDouble() ); break;
       case REFLIBS:      readDummy( false ); break;
       case FONTS:        readDummy( false ); break;
       case PATHTYPE:     readDummy( false ); break;
@@ -380,7 +389,7 @@ namespace {
       case LIBSECUR:     readDummy( false ); break;
     }
 
-  //cerr << "  GdsRecord::read() " << toStrType(_type) << endl;
+    cerr << "  GdsRecord::read() " << toStrType(_type) << endl;
   }
 
 
@@ -453,6 +462,7 @@ namespace {
       _stream->get( c );
       if (c != (char)0) s.push_back(c);
     }
+    cerr << "GdsRecord::_readString(): \"" << s << "\"" << endl;
     return s;
   }
 
@@ -468,11 +478,29 @@ namespace {
   }
 
 
+  void  GdsRecord::readStrans ()
+  {
+    
+    const uint16_t XRMask = 0x8000;
+          uint16_t flags  = _readInt<uint16_t>();
+    _xReflection = (flags & XRMask);
+
+    // cerr << "GdsRecord::readStrans(): length=" << _length
+    //      << " flags:" << bitset<16>(flags)
+    //      << " mask:" << bitset<16>(XRMask)
+    //      << " _xR:" << _xReflection << endl;
+  }
+
+
   void  GdsRecord::readUnits ()
   { for ( size_t i=0 ; i<2 ; ++i ) _doubles.push_back( _readDouble() ); }
 
 
   void  GdsRecord::readStrname ()
+  { _name = _readString(); }
+
+
+  void  GdsRecord::readString ()
   { _name = _readString(); }
 
 
@@ -568,6 +596,7 @@ namespace {
                           GdsStream        ( string gdsPath );
       inline       bool   isValidSyntax    () const;
                    bool   misplacedRecord  ();
+      inline       void   resetStrans      ();
                    bool   read             ( Library* );
                    bool   readFormatType   ();
                    bool   readStructure    ();
@@ -582,18 +611,41 @@ namespace {
                    bool   readStrans       ();
                    bool   readProperty     ();
                    void   xyToComponent    ( const Layer* );
-                   Net*   anonymousNet     ();
+                   void   makeInstances    ();
+                   Net*   fusedNet         ();
     private:
-      static vector<const Layer*>  _gdsLayerTable;
-             string                _gdsPath;
-             ifstream              _stream;
-             GdsRecord             _record;
-             Library*              _library;
-             Cell*                 _cell;
-             DbU::Unit             _scale;
-             int64_t               _netCount;
-             bool                  _validSyntax;
+      struct DelayedInstance {
+          inline DelayedInstance ( Cell* owner, string masterName, const Transformation& );
+
+          Cell*           _owner;
+          string          _masterName;
+          Transformation  _transformation;
+      };
+    private:
+      static vector<const Layer*>     _gdsLayerTable;
+             vector<DelayedInstance>  _delayedInstances;
+             string                   _gdsPath;
+             ifstream                 _stream;
+             GdsRecord                _record;
+             double                   _angle;
+             bool                     _xReflection;
+             Library*                 _library;
+             Cell*                    _cell;
+             Component*               _component;
+             string                   _text;
+             DbU::Unit                _scale;
+             int64_t                  _netCount;
+             int64_t                  _SREFCount;
+             bool                     _validSyntax;
+             bool                     _skipENDEL;
   };
+
+
+  inline GdsStream::DelayedInstance::DelayedInstance (       Cell*           owner
+                                                     ,       string          masterName
+                                                     , const Transformation& transf )
+    : _owner(owner), _masterName(masterName), _transformation(transf)
+  { }
 
 
   vector<const Layer*>  GdsStream::_gdsLayerTable;
@@ -609,6 +661,9 @@ namespace {
   }
 
 
+  inline  void  GdsStream::resetStrans () { _angle = 0.0; _xReflection = false; }
+
+
   const Layer* GdsStream::gdsToLayer ( uint16_t gdsLayer )
   { return (gdsLayer < _gdsLayerTable.size()) ? _gdsLayerTable[gdsLayer] : NULL; }
 
@@ -617,14 +672,21 @@ namespace {
 
 
   GdsStream::GdsStream ( string gdsPath )
-    : _gdsPath    (gdsPath)
-    , _stream     ()
-    , _record     ()
-    , _library    (NULL)
-    , _cell       (NULL)
-    , _scale      (1)
-    , _netCount   (0)
-    , _validSyntax(true)
+    : _delayedInstances()
+    , _gdsPath         (gdsPath)
+    , _stream          ()
+    , _record          ()
+    , _angle           (0.0)
+    , _xReflection     (false)
+    , _library         (NULL)
+    , _cell            (NULL)
+    , _component       (NULL)
+    , _text            ()
+    , _scale           (1)
+    , _netCount        (0)
+    , _SREFCount       (0)
+    , _validSyntax     (true)
+    , _skipENDEL       (false)
   {
     if (_gdsLayerTable.empty()) _staticInit();
     
@@ -697,6 +759,8 @@ namespace {
 
     if (_validSyntax and not _record.isENDLIB()) { misplacedRecord(); }
 
+    if (_validSyntax) makeInstances();
+
     _library = NULL;
   //cerr << "GdsStream::read(Library*) - return:" << _validSyntax << endl;
     return _validSyntax;
@@ -730,10 +794,11 @@ namespace {
       if (_library) {
         _cell = _library->getCell( _record.getName() );
         if (not _cell) {
-          cerr << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (skipped)."
+          cerr << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
                          , _record.getName().c_str()
                          , getString(_library).c_str()
                          ) << endl;
+          _cell = Cell::create( _library, _record.getName() );
         }
       }
       _stream >> _record;
@@ -742,7 +807,8 @@ namespace {
     if (_record.isSTRCLASS()) { _stream >> _record; }
 
     while ( not _record.isENDSTR() ) {
-      switch ( _record.getType() ) {
+      uint16_t rtype = _record.getType();
+      switch ( rtype ) {
         case GdsRecord::BOUNDARY:  _stream >> _record; readBoundary(); break;
         case GdsRecord::PATH:      _stream >> _record; readPath    (); break;
         case GdsRecord::SREF:      _stream >> _record; readSref    (); break;
@@ -752,16 +818,24 @@ namespace {
         case GdsRecord::BOX:       _stream >> _record; readBox     (); break;
         case GdsRecord::PROPATTR:  _stream >> _record; readProperty(); break;
       }
-      if (_record.isENDEL()) { _stream >> _record; }
-      else {
-        _validSyntax = false; break;
-      }
+      if (not _skipENDEL) {
+        if (_record.isENDEL()) { _stream >> _record; }
+        else {
+          _validSyntax = false; break;
+        }
+      } else
+        _skipENDEL = false;
+      if (rtype != GdsRecord::BOUNDARY) _component = NULL;
     }
 
     if (_validSyntax) _stream >> _record;
 
+    UpdateSession::close();
+    _cell->setAbutmentBox( _cell->getBoundingBox() );
+    UpdateSession::open();
     _cell = NULL;
-  //cerr << "GdsStream::readStructure() - return:" << _validSyntax << endl;
+    cerr << "GdsStream::readStructure() - return:" << _validSyntax << endl;
+
     return _validSyntax;
   }
 
@@ -769,10 +843,8 @@ namespace {
   bool  GdsStream::readText ()
   {
   //cerr << "GdsStream::readText()" << endl;
-
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
-
     if (_record.isLAYER  ()) { _stream >> _record; }
     else { _validSyntax = false; return _validSyntax; }
 
@@ -803,7 +875,11 @@ namespace {
     if (_record.isXY()) { _stream >> _record; }
     else { _validSyntax = false; return _validSyntax; }
 
-    if (_record.isSTRING()) { _stream >> _record; }
+    if (_record.isSTRING()) {
+      _text = _record.getName();
+      _stream >> _record;
+      cerr << "_text:\"" << _text << "\"" << endl;
+    }
     else { _validSyntax = false; return _validSyntax; }
 
   //cerr << "GdsStream::readTextbody() - return:" << _validSyntax << endl;
@@ -815,8 +891,11 @@ namespace {
   {
   //cerr << "GdsStream::readStrans()" << endl;
     
+    _angle       = 0.0;
+    _xReflection = _record.hasXReflection();
+    _stream >> _record;
     if (_record.isMAG  ()) { _stream >> _record; }
-    if (_record.isANGLE()) { _stream >> _record; }
+    if (_record.isANGLE()) { _angle = _record.getDoubles()[0]; _stream >> _record; }
 
   //cerr << "GdsStream::readStrans() - return:" << _validSyntax << endl;
     return _validSyntax;
@@ -849,7 +928,7 @@ namespace {
 
     if (_record.isXY()) {
       if (_cell and layer) xyToComponent( layer );
-      _stream >> _record;
+      else                 _stream >> _record;
     } else {
       _validSyntax = false; return _validSyntax;
     }
@@ -903,29 +982,72 @@ namespace {
   bool  GdsStream::readSref ()
   {
   //cerr << "GdsStream::readSref()" << endl;
+    resetStrans();
     
-    const Layer* layer = NULL;
+    string    masterName;
+    DbU::Unit xpos       = 0;
+    DbU::Unit ypos       = 0;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isSNAME()) {
+      masterName = _record.getName();
+
       _stream >> _record;
     } else {
       _validSyntax = false; return _validSyntax;
     }
 
     if (_record.isSTRANS()) {
-      _stream >> _record;
       readStrans();
+    //_stream >> _record;
       if (not _validSyntax) return _validSyntax;
     }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToComponent( layer );
+      vector<int32_t> coordinates = _record.getInt32s();
+      if (coordinates.size() != 2) {
+        _validSyntax = false; return _validSyntax;
+      }
+      
+      xpos = coordinates[ 0 ]*_scale;
+      ypos = coordinates[ 1 ]*_scale;
+
       _stream >> _record;
     } else {
       _validSyntax = false; return _validSyntax;
+    }
+
+    if (not masterName.empty()) {
+      Transformation::Orientation orient = Transformation::Orientation::ID;
+      if      (_angle ==  90.0) orient = Transformation::Orientation::R1;
+      else if (_angle == 180.0) orient = Transformation::Orientation::R2;
+      else if (_angle == 270.0) orient = Transformation::Orientation::R3;
+      else if (_angle !=   0.0) {
+        cerr << Warning( "GdsStream::readSref(): Unsupported angle %d.2 for SREF (Instance) of \"%s\""
+                       , _angle, masterName.c_str() ) << endl;
+      }
+
+      if (_xReflection) {
+        switch ( orient ) {
+          case Transformation::Orientation::ID: orient = Transformation::Orientation::MY; break;
+          case Transformation::Orientation::R1: orient = Transformation::Orientation::YR; break;
+          case Transformation::Orientation::R2: orient = Transformation::Orientation::MX; break;
+          case Transformation::Orientation::R3: orient = Transformation::Orientation::XR; break;
+          default:
+            cerr << Warning( "GdsStream::readSref(): Unsupported MX+Orientation (%s) combination for SREF (Instance) of \"%s\""
+                           , getString(orient).c_str(), masterName.c_str() ) << endl;
+        }
+      }
+
+      // cerr << "Delayed Instance: "  << masterName
+      //      << " XR:" << _xReflection << " angle:" << _angle
+      //      << " " << Transformation(xpos,ypos,orient)
+      //      << " in " << _cell << endl;
+      _delayedInstances.push_back( DelayedInstance( _cell
+                                                  , masterName
+                                                  , Transformation(xpos,ypos,orient)) );
     }
 
   //cerr << "GdsStream::readSref() - return:" << _validSyntax << endl;
@@ -1052,6 +1174,34 @@ namespace {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
 
+    _stream >> _record;
+
+    if (_record.getType() == GdsRecord::ENDEL) {
+      _stream >> _record;
+    } else {
+      _validSyntax = false;
+      return;
+    }
+    
+    Net* net = NULL;
+    if (_record.getType() == GdsRecord::TEXT) {
+      _stream >> _record;
+      cerr << "        BOUNDARY --> TEXT record" << endl;
+      readText();
+      cerr << "        AFTER readText()" << endl;
+
+      if (not _text.empty()) {
+        net = _cell->getNet( _text );
+        if (not net) {
+          net = Net::create( _cell, _text );
+          net->setExternal( true );
+        }
+      }
+    } else
+      _skipENDEL = true;
+
+    if (not net) net = fusedNet();
+
     if (points.size() > 2) {
       bool isRectilinear = true;
       for ( size_t i=1 ; i<points.size() ; ++i ) {
@@ -1065,20 +1215,50 @@ namespace {
       if (isRectilinear and (points.size() == 5)) {
         Box boundingBox; 
         for ( Point p : points ) boundingBox.merge( p );
-        Pad::create( anonymousNet(), layer, boundingBox );
+        _component = Pad::create( net, layer, boundingBox );
+        cerr << _component << endl;
       } else {
-        Rectilinear::create( anonymousNet(), layer, points );
+        _component = Rectilinear::create( net, layer, points );
+      }
+
+      if (not net->isAutomatic()) NetExternalComponents::setExternal( _component );
+    }
+  }
+
+
+  void  GdsStream::makeInstances ()
+  {
+  //cerr << "GdsStream::makeInstances(): " << endl;
+
+    for ( const DelayedInstance& di : _delayedInstances ) {
+      Cell* masterCell = _library->getCell( di._masterName );
+
+      if (masterCell) {
+        string    insName  = "sref_" + getString(_SREFCount++);
+      //Instance* instance =
+          Instance::create( di._owner
+                          , insName
+                          , masterCell
+                          , di._transformation
+                          , Instance::PlacementStatus::FIXED
+                          );
+      //cerr << "| " << instance << " @" << di._transformation << " in " << di._owner << endl;
       }
     }
   }
 
 
-  Net* GdsStream::anonymousNet ()
+  Net* GdsStream::fusedNet ()
   {
     if (not _cell) return NULL;
 
-    string netName = "anonymous_" + getString(_netCount++);
-    Net* net = Net::create( _cell, netName );
+    string netName = "all_nets_merged_in_gds";
+    Net*   net     = _cell->getNet( netName );
+    if (not net) {
+      net = Net::create( _cell, netName );
+      net->setAutomatic( true );
+      net->setType     ( Net::Type::FUSED );
+    }
     return net;
   }
 
@@ -1098,7 +1278,11 @@ namespace CRL {
 
     GdsStream gstream ( gdsPath );
 
-    gstream.read( library );
+    if (not gstream.read( library ))
+      cerr << Error( "Gds::load(): An error occurred while reading GDSII stream\n"
+                     "        \"%s\"."
+                   , gdsPath.c_str()
+                   ) << endl;
 
     UpdateSession::close();
 

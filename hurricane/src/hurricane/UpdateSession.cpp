@@ -220,6 +220,9 @@ void UpdateSession::reset()
 }
 
 
+size_t  UpdateSession::getStackSize ()
+{ return (UPDATOR_STACK) ? UPDATOR_STACK->size() : 0; }
+
 
 } // End of Hurricane namespace.
 

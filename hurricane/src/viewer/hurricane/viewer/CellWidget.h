@@ -609,6 +609,7 @@ namespace Hurricane {
         private:
           Cell*               _cell;
           Path                _topPath;
+          Name                _hierarchicalName;
           CellWidget*         _cellWidget;
           SelectorCriterions  _selection;
           RulerSet            _rulers;
@@ -632,7 +633,7 @@ namespace Hurricane {
           inline      FindStateName ( const Name& );
           inline bool operator()    ( const shared_ptr<State>& );
         private:
-          const Name  _cellName;
+          const Name  _cellHierName;
       };
 
     protected:
@@ -917,6 +918,7 @@ namespace Hurricane {
   inline CellWidget::State::State ( Cell* cell, Path topPath )
     : _cell               (cell)
     , _topPath            (topPath)
+    , _hierarchicalName   ()
     , _cellWidget         (NULL)
     , _selection          ()
     , _rulers             ()
@@ -935,6 +937,7 @@ namespace Hurricane {
     , _historyEnable      (false)
   {
     _scaleHistory.push_back ( ScaleEntry(1.0,Point(0,0)) );
+    if (_cell) _hierarchicalName = Name( _cell->getHierarchicalName() );
   }
 
 
@@ -955,7 +958,10 @@ namespace Hurricane {
 
 
   inline void  CellWidget::State::setCell ( Cell* cell )
-  { _cell = cell; }
+  {
+    _cell = cell;
+    if (_cell) _hierarchicalName = Name( _cell->getHierarchicalName() );
+  }
 
 
   inline void  CellWidget::State::setTopPath ( Path topPath )
@@ -1106,14 +1112,14 @@ namespace Hurricane {
   { return _scaleHistory[_ihistory]._scale; }
 
 
-  inline CellWidget::FindStateName::FindStateName ( const Name& cellName )
+  inline CellWidget::FindStateName::FindStateName ( const Name& cellHierName )
     : unary_function< const shared_ptr<State>&, bool >()
-    , _cellName(cellName)
+    , _cellHierName(cellHierName)
   { }
 
 
   inline bool  CellWidget::FindStateName::operator () ( const shared_ptr<State>& state )
-  { return state->getName() == _cellName; }
+  { return state->getName() == _cellHierName; }
 
 
   inline void  CellWidget::setActiveCommand ( Command* command )

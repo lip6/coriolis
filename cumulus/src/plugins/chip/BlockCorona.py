@@ -15,27 +15,27 @@
 
 
 import bisect
-from   operator  import methodcaller  
-import Cfg
-from   Hurricane import DbU
-from   Hurricane import Point
-from   Hurricane import Interval
-from   Hurricane import Box
-from   Hurricane import Transformation
-from   Hurricane import Path
-from   Hurricane import Occurrence
-from   Hurricane import UpdateSession
-from   Hurricane import Net
-from   Hurricane import Contact
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
+from   operator   import methodcaller  
+import Cfg        
+from   Hurricane  import DbU
+from   Hurricane  import Point
+from   Hurricane  import Interval
+from   Hurricane  import Box
+from   Hurricane  import Transformation
+from   Hurricane  import Path
+from   Hurricane  import Occurrence
+from   Hurricane  import UpdateSession
+from   Hurricane  import Net
+from   Hurricane  import Contact
+from   Hurricane  import Horizontal
+from   Hurricane  import Vertical
 import CRL
-from   CRL import RoutingLayerGauge
-from   helpers   import trace
-from   helpers   import ErrorMessage
-from   helpers   import WarningMessage
+from   CRL        import RoutingLayerGauge
+from   helpers    import trace
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
 import plugins
-from   plugins   import StackedVia
+from   plugins    import StackedVia
 import chip.BlockPower
 
 
@@ -100,8 +100,8 @@ class HorizontalRail ( Rail ):
         if    contactBb.getXMin() < self.side.innerBb.getXMin() \
            or contactBb.getXMax() > self.side.innerBb.getXMax():
             raise ErrorMessage( 1, [ '%s is outside rail/corona X range,' % str(contact)
-                                   , 'power pad is likely to be to far off west or east.'
-                                   , '(corona:%s)'                        % str(self.side.innerBb) ] ) 
+                                  , 'power pad is likely to be to far off west or east.'
+                                  , '(corona:%s)'                        % str(self.side.innerBb) ] ) 
 
        #print '  HorizontalRail.connect() net:%s contact:%s' % (self.net.getName(),str(contact))
        #if self.net != contact.getNet(): return False
@@ -131,11 +131,11 @@ class HorizontalRail ( Rail ):
                                                   , self.side.hRailWidth - DbU.fromLambda(1.0)
                                                   )
                                       , contact ]
-        trace( 550, '\tADD "%s" contact "%s" @ [%d %d]\n'
+        trace( 550, '\tADD "%s" contact "%s" @ [%s %s]\n'
                % ( contact.getNet().getName()
                  , contact.getLayer().getName()
-                 , DbU.toLambda(contact.getX())
-                 , DbU.toLambda(self.axis)) )
+                 , DbU.getValueString(contact.getX())
+                 , DbU.getValueString(self.axis)) )
         self.vias[ contact.getX() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
         return True
 
@@ -160,9 +160,6 @@ class HorizontalRail ( Rail ):
          #print  via[1]._vias, '[%d %d]' % (via[1]._bottomDepth,via[1]._topDepth)
          #print  via[1], self.side.getVLayer(), via[1].getVia( self.side.getVLayer() )
           railVias.append( via[1].getVia( self.side.getVLayer()) )
-
-       #print railVias
-        railVias.sort( key=methodcaller('getX') )
 
         for i in range(1,len(railVias)):
           Horizontal.create( railVias[i-1]
@@ -316,12 +313,12 @@ class Side ( object ):
 
     def getInnerRail ( self, i ):
         if i >= len(self.rails):
-            raise ErrorMessage( 1, 'Side.getInnerRail(): no rail %d (only: %d).' % (i,len(self.rails)) )
+          raise ErrorMessage( 1, 'Side.getInnerRail(): no rail %d (only: %d).' % (i,len(self.rails)) )
         return self.rails[i]
 
     def getOuterRail ( self, i ):
         if i >= len(self.rails):
-            raise ErrorMessage( 1, 'Side.getOuterRail(): no rail %d (only: %d).' % (i,len(self.rails)) )
+          raise ErrorMessage( 1, 'Side.getOuterRail(): no rail %d (only: %d).' % (i,len(self.rails)) )
         return self.rails[-(i+1)]
 
     def connect ( self, blockSide ):
@@ -481,7 +478,7 @@ class Corona ( object ):
         self.block.path.getTransformation().applyOn( self.innerBb )
         self.innerBb.inflate( self.hRailSpace/2, self.vRailSpace/2 )
         
-        if not self.block.conf.useClockTree: self.railsNb -= 1
+        if not self.conf.useClockTree: self.railsNb -= 1
 
         self.southSide  = SouthSide( self )
         self.northSide  = NorthSide( self )
@@ -491,23 +488,25 @@ class Corona ( object ):
         return
 
     @property
-    def routingGauge    ( self ): return self.block.conf.gaugeConf.routingGauge
+    def conf            ( self ): return self.block.conf
     @property
-    def topLayerDepth   ( self ): return self.block.conf.gaugeConf.topLayerDepth
+    def routingGauge    ( self ): return self.conf.gaugeConf.routingGauge
     @property
-    def horizontalDepth ( self ): return self.block.conf.gaugeConf.horizontalDepth
+    def topLayerDepth   ( self ): return self.conf.gaugeConf.topLayerDepth
     @property
-    def verticalDepth   ( self ): return self.block.conf.gaugeConf.verticalDepth
+    def horizontalDepth ( self ): return self.conf.gaugeConf.horizontalDepth
     @property
-    def blockageNet     ( self ): return self.block.conf.blockageNet
+    def verticalDepth   ( self ): return self.conf.gaugeConf.verticalDepth
+    @property
+    def blockageNet     ( self ): return self.conf.blockageNet
 
     def getLayerDepth ( self, metal ):
-        return self.block.conf.gaugeConf.routingGauge.getLayerDepth( metal )
+        return self.conf.gaugeConf.routingGauge.getLayerDepth( metal )
 
     def getRailNet ( self, i ):
-        if self.block.conf.useClockTree and i == self.railsNb-1: return self.block.conf.coronaCk
-        if i % 2: return self.block.conf.coronaVss
-        return self.block.conf.coronaVdd
+        if self.conf.useClockTree and i == self.railsNb-1: return self.conf.coronaCk
+        if i % 2: return self.conf.coronaVss
+        return self.conf.coronaVdd
 
     def getHLayer ( self ):
         return self.routingGauge.getLayerGauge( self.horizontalDepth ).getLayer()

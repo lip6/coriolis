@@ -845,6 +845,7 @@ Net::Type::Type(string s)
   else if (s == "POWER"    ) _code = POWER;
   else if (s == "GROUND"   ) _code = GROUND;
   else if (s == "BLOCKAGE" ) _code = BLOCKAGE;
+  else if (s == "FUSED"    ) _code = FUSED;
 }
 
 Net::Type& Net::Type::operator=(const Type& type)

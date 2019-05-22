@@ -4,8 +4,7 @@
 // This file is part of the Coriolis Software.
 // Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
 //
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |    I s o b a r  -  Hurricane / Python Interface                 |
 // |                                                                 |
@@ -13,10 +12,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyUpdateSession.cpp"                    |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/isobar/PyUpdateSession.h"
@@ -67,14 +63,29 @@ extern "C" {
 
     Py_RETURN_NONE;
   }
+  
+
+  static PyObject* PyUpdateSession_getStackSize ( PyObject* )
+  {
+    cdebug_log(20,0) << "PyUpdateSession_getStackSize()" << endl;
+
+    size_t stackSize = 0;
+    HTRY
+      stackSize = UpdateSession::getStackSize();
+    HCATCH
+
+    return Py_BuildValue ("I",stackSize);
+  }
 
 
   PyMethodDef PyUpdateSession_Methods[] =
-    { { "open"  , (PyCFunction)PyUpdateSession_open, METH_NOARGS|METH_CLASS
-                , "Opens a new Update Session." }
-    , { "close" , (PyCFunction)PyUpdateSession_close, METH_NOARGS|METH_CLASS
-                , "Closes an Update Session." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "open"        , (PyCFunction)PyUpdateSession_open, METH_NOARGS|METH_CLASS
+                      , "Opens a new Update Session." }
+    , { "close"       , (PyCFunction)PyUpdateSession_close, METH_NOARGS|METH_CLASS
+                      , "Closes an Update Session." }
+    , { "getStackSize", (PyCFunction)PyUpdateSession_getStackSize, METH_NOARGS|METH_CLASS
+                      , "Return the number of currently opened Update Sessions." }
+    , {NULL, NULL, 0, NULL}  /* sentinel */
     };
 
 

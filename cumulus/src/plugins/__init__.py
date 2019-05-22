@@ -15,15 +15,15 @@
 
 
 import Cfg
-from   helpers   import ErrorMessage
-from   helpers   import WarningMessage
-from   Hurricane import Contact
-from   Hurricane import Path
-from   Hurricane import Occurrence
-from   Hurricane import Instance
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
+from   Hurricane  import Contact
+from   Hurricane  import Path
+from   Hurricane  import Occurrence
+from   Hurricane  import Instance
 import Viewer
 import CRL
-from   CRL       import RoutingLayerGauge
+from   CRL        import RoutingLayerGauge
 
 
 NoFlags           = 0000

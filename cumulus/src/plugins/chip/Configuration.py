@@ -34,10 +34,10 @@ from   Hurricane import Plug
 from   Hurricane import Instance
 import CRL
 from   CRL import RoutingLayerGauge
-from   helpers   import trace
-from   helpers   import ErrorMessage
-from   helpers   import WarningMessage
-from   plugins   import getParameter
+from   helpers    import trace
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
+from   plugins    import getParameter
 import chip
 
 
@@ -146,7 +146,7 @@ class GaugeConf ( object ):
       self.cellGauge    = CRL.AllianceFramework.get().getCellGauge( gaugeName )
       self.routingGauge = CRL.AllianceFramework.get().getRoutingGauge( gaugeName )
 
-      topLayer = Cfg.getParamString('katabatic.topRoutingLayer').asString()
+      topLayer = Cfg.getParamString('anabatic.topRoutingLayer').asString()
 
       self.topLayerDepth = 0
       for layerGauge in self.routingGauge.getLayerGauges():
@@ -156,13 +156,16 @@ class GaugeConf ( object ):
       if not self.topLayerDepth:
         print WarningMessage( 'Gauge top layer not defined, using top of gauge (%d).' \
                               % self.routingGauge.getDepth() )
-        self.topLayerDepth = self.routingGauge.getDepth()
+        self.topLayerDepth = self.routingGauge.getDepth() - 1
 
       self.horizontalDepth     = -1
       self.verticalDepth       = -1
       self.horizontalDeepDepth = -1
       self.verticalDeepDepth   = -1
       for depth in range(0,self.topLayerDepth+1):
+        trace( 550, '\tdepth:%d\n' % depth )
+        trace( 550, '\t%s\n'       % self.routingGauge.getLayerGauge(depth) )
+
         if self.routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
           continue
         if self.routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
@@ -281,7 +284,8 @@ class GaugeConf ( object ):
   
       if flags & GaugeConf.HAccess: stopDepth = hdepth
       else:                         stopDepth = vdepth
-  
+      trace( 550, '\tstopDepth:%d\n' % stopDepth )
+
       for depth in range(1,stopDepth):
         xoffset = 0
         if flags & GaugeConf.OffsetRight1 and depth == 1:
@@ -365,7 +369,7 @@ class GaugeConf ( object ):
         segment = component
         count  += 1
       if count != 1:
-        print ErrorMessage( 1, 'GaugeConf::_setStackPosition(): There must be exactly one segment connected, not %d.' % count)
+        raise ErrorMessage( 1, 'GaugeConf::_setStackPosition(): There must be exactly one segment connected to %s, not %d.' % (topContact,count) )
 
       if isinstance(segment,Horizontal):
         segment.setY( y )
@@ -446,7 +450,7 @@ class ChipConf ( object ):
 
     def _loadIoPadGauge ( self, chipConfigDict ):
       if not chipConfigDict.has_key('pads.ioPadGauge'):
-        print ErrorMessage( 1, 'The IO pad gauge configuration paramater "pads.ioPadGauge" is missing.' )
+        raise ErrorMessage( 1, 'The IO pad gauge configuration paramater "pads.ioPadGauge" is missing.' )
         return
       self.gaugeConf._loadIoPadGauge( chipConfigDict['pads.ioPadGauge'] )
       return
@@ -456,7 +460,7 @@ class ChipConf ( object ):
       if not chipConfigDict.has_key(keyword): return []
       padConfList = chipConfigDict[keyword]
       if not isinstance(padConfList,list):
-          print ErrorMessage( 1, 'The "%s" entry is not a list.' )
+          raise ErrorMessage( 1, 'The "%s" entry is not a list.' )
           return []
 
       af      = CRL.AllianceFramework.get()
@@ -473,19 +477,19 @@ class ChipConf ( object ):
             instanceName = padConfList[i][1]
 
         if not instanceName:
-          print ErrorMessage( 1, 'The element [%d] of list %s is neither a string nor a list "[pos,name]" (skipped).'
-                                  % (i,keyword) )
+          raise ErrorMessage( 1, 'The element [%d] of list %s is neither a string nor a list "[pos,name]" (skipped).'
+                                 % (i,keyword) )
           continue
 
         instance = self.cell.getInstance( instanceName )
         if not instance:
-          print ErrorMessage( 1, 'The pad [%d] (%s) of list %s do not exists in netlist (skipped).'
-                                  % (i,instanceName,keyword) )
+          raise ErrorMessage( 1, 'The pad [%d] (%s) of list %s do not exists in netlist (skipped).'
+                                 % (i,instanceName,keyword) )
           continue
 
         if (instance.getMasterCell().getAbutmentBox().getHeight() != self.gaugeConf.getIoPadHeight()):
-          print ErrorMessage( 1, 'The pad [%d] (%s) of list %s is not an instance of a pad cell (skipped).'
-                                  % (i,instanceName,keyword) )
+          raise ErrorMessage( 1, 'The pad [%d] (%s) of list %s is not an instance of a pad cell (skipped).'
+                                 % (i,instanceName,keyword) )
           continue
 
         padList.append( [ position, instance ] )
@@ -568,7 +572,7 @@ class ChipConf ( object ):
       if instance.getCell() == self.cell: return ab
 
       if instance.getCell() != self.corona:
-        print ErrorMessage( 1, 'ChipConf.getInstanceAb(): Instance "%s" neither belong to chip or corona.' % instance.getName() )
+        raise ErrorMessage( 1, 'ChipConf.getInstanceAb(): Instance "%s" neither belong to chip or corona.' % instance.getName() )
         return ab
 
       self.icorona.getTransformation().applyOn( ab )
@@ -863,7 +867,7 @@ class ChipConf ( object ):
         if contains(self.eastPads ,instance): continue
         if contains(self.westPads ,instance): continue
         if (instance.getMasterCell().getAbutmentBox().getHeight() == self.gaugeConf.getIoPadHeight()):
-          print ErrorMessage( 1, 'Pad "%s" is not on any side (N/S/E/W).' % instance.getName() )
+          raise ErrorMessage( 1, 'Pad "%s" is not on any side (N/S/E/W).' % instance.getName() )
           self.validated = False
         else:
           self.coronas.append( instance )
@@ -872,11 +876,11 @@ class ChipConf ( object ):
         message = [ 'Chip "%s" have more than one corona:' % self.cell.getName() ]
         for i in range(len(self.coronas)):
           message.append( '%4d: %s' % (i,self.coronas[i].getName()) )
-        print ErrorMessage( 1, message )
+        raise ErrorMessage( 1, message )
         self.validated = False
 
       if len(self.coronas) < 1:
-        print ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a corona.' % self.cell.getName() )
+        raise ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a corona.' % self.cell.getName() )
         self.validated = False
       else:
         for instance in self.corona.getInstances(): self.cores.append( instance )
@@ -885,11 +889,11 @@ class ChipConf ( object ):
           message = [ 'Chip "%s" have more than one core:' % self.cell.getName() ]
           for i in range(len(self.cores)):
             message.append( '%4d: %s' % (i,self.cores[i].getName()) )
-          print ErrorMessage( 1, message )
+          raise ErrorMessage( 1, message )
           self.validated = False
 
           if len(self.cores) < 1:
-            print ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a core.' % self.cell.getName() )
+            raise ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a core.' % self.cell.getName() )
             self.validated = False
 
       return
@@ -909,15 +913,15 @@ class ChipConf ( object ):
           if not net:
             net = self.corona.getNet( masterNet.getName() )
             if not net:
-              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Missing global net "%s" at corona level.'
-                                  % masterNet.getName() )
+              raise ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Missing global net "%s" at corona level.'
+                                     % masterNet.getName() )
               self._validated = False
               continue
 
           if netType == Net.Type.GROUND:
             if self.coronaVss and self.coronaVss != net:
-              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple ground nets "%s" and "%s" at corona level.'
-                                  % (self.coronaVss.getName(), net.getName()) )
+              raise ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple ground nets "%s" and "%s" at corona level.'
+                                     % (self.coronaVss.getName(), net.getName()) )
               self._validated = False
               continue
             else:
@@ -925,8 +929,8 @@ class ChipConf ( object ):
 
           if netType == Net.Type.POWER:
             if self.coronaVdd and self.coronaVdd != net:
-              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple power nets "%s" and "%s" at corona level.'
-                                  % (self.coronaVdd.getName(), net.getName()) )
+              raise ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple power nets "%s" and "%s" at corona level.'
+                                     % (self.coronaVdd.getName(), net.getName()) )
               self._validated = False
               continue
             else:
@@ -934,8 +938,8 @@ class ChipConf ( object ):
 
           if netType == Net.Type.CLOCK:
             if self.coronaCk and self.coronaCk != net:
-              print ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple clock nets "%s" and "%s" at corona level.'
-                                  % (self.coronaCk.getName(), net.getName()) )
+              raise ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple clock nets "%s" and "%s" at corona level.'
+                                     % (self.coronaCk.getName(), net.getName()) )
               self._validated = False
               continue
             else:
@@ -952,6 +956,23 @@ class ChipConf ( object ):
 
       return
 
+    def checkChipSize ( self ):
+     #if self._coreSize.isEmpty(): return
+     #
+     #minWidth  = self._coreSize.getWidth () + self._minCorona + 2*self._padHeight
+     #minHeight = self._coreSize.getHeight() + self._minCorona + 2*self._padHeight
+     #
+     #if self._chipSize.getWidth() < minWidth:
+     #  raise ErrorMessage( 1, 'Core is too wide to fit into the chip. Needs: %d, but has %d' \
+     #                         % ( DbU.toLambda(minWidth), DbU.toLambda(self._chipSize.getWidth()) ) )
+     #  self._validated = False
+     #
+     #if self._chipSize.getHeight() < minHeight:
+     #  raise ErrorMessage( 1, 'Core is too wide to fit into the chip. Needs: %d, but has %d' \
+     #                         % ( DbU.toLambda(minHeight), DbU.toLambda(self._chipSize.getHeight()) ) )
+     #  self._validated = False
+      return
+
     def checkCorona ( self ):
       trace( 550, ',+', 'Configuration.checkCorona()\n' )
       netPads = {}
@@ -966,8 +987,8 @@ class ChipConf ( object ):
             trace( 550, '\t%20s <-> %-20s\n' % (padNet.getName(),coronaNet.getName()) )
             netPads[ padNet ] = coronaNet
           else:
-            print ErrorMessage( 1, 'ChipConf.checkCorona(): Corona nets "%s" and "%s" connected to the same pad net "%s".' \
-                                % (coronaNet.getName(),netPads[padNet].getName(),padNet.getName()) )
+            raise ErrorMessage( 1, 'ChipConf.checkCorona(): Corona nets "%s" and "%s" connected to the same pad net "%s".' \
+                                    % (coronaNet.getName(),netPads[padNet].getName(),padNet.getName()) )
             self._validated = False
           
       trace( 550, '-' )
@@ -1018,7 +1039,7 @@ class ChipConf ( object ):
     def setupCore ( self, gapX1, gapY1, gapX2, gapY2 ):
       ab = self.getInstanceAb( self.icorona )
       if ab.isEmpty():
-        print ErrorMessage( 1, 'ChipConf.setupCore(): Attempt to setup core *before* corona.' )
+        raise ErrorMessage( 1, 'ChipConf.setupCore(): Attempt to setup core *before* corona.' )
         return
 
       ab.inflate( -gapX1, -gapY1, -gapX2, -gapY2 )
@@ -1100,7 +1121,7 @@ def loadConfiguration ( cell, viewer=None ):
     confModule = __import__( confFile, globals(), locals(), confFile )
 
     if not confModule.__dict__.has_key('chip'):
-      raise WarningMessage( 'Module <%s> do not provides the chip variable, skipped.' \
-                            % confFile )
+      ErrorMessage( 1, 'Module <%s> do not provides the chip variable, skipped.' \
+                       % confFile )
 
     return ChipConf( confModule.__dict__['chip'], cell, viewer )

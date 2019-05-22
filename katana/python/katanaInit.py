@@ -3,8 +3,8 @@
 try:
   import sys
   import os.path
-  from   helpers   import ErrorMessage
-  from   helpers   import WarningMessage
+  from   helpers.io import ErrorMessage
+  from   helpers.io import WarningMessage
   import Viewer
 except ImportError, e:
   serror = str(e)

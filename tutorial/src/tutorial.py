@@ -8,7 +8,7 @@ try:
   import Cfg
   import Hurricane
   import Viewer
-  from   helpers       import showPythonTrace
+  import helpers.io
   import CRL
   import Unicorn
   import Tutorial
@@ -117,6 +117,6 @@ if __name__ == '__main__':
       ha.qtExec()
 
     except Exception, e:
-      showPythonTrace( sys.argv[0], e )
+      helpers.io.catch( e )
 
     sys.exit(0)

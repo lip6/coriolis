@@ -335,10 +335,11 @@ void DumpPins(ofstream &ccell, Cell* cell)
                             + getString(net->getName()));
             }
             indexesSet.insert(index);
-            if (pin->getWidth() != pin->getHeight())
-              throw Warning( "CRL::ApParser(): Pin \"" + getString(pin->getName()) + "\" of \""
-                           + getString(net->getName())
-                           + "\", AP format support only square shapes.");
+            // if (pin->getWidth() != pin->getHeight())
+            //   cerr << Warning( "CRL::ApDriver(): Pin \"" + getString(pin->getName()) + "\" of \""
+            //                  + getString(net->getName())
+            //                  + "\", AP format support only square shapes.")
+            //        << endl;;
 
             DbU::Unit width = 0;
             switch ( pin->getAccessDirection() ) {

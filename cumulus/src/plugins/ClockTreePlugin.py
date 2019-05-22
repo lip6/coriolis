@@ -20,13 +20,14 @@ try:
   import math
   import Cfg
   import Hurricane
-  from   Hurricane import Breakpoint
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import UpdateSession
   import Viewer
   import CRL
-  from   CRL import RoutingLayerGauge
+  from   CRL        import RoutingLayerGauge
   import helpers
-  from   helpers   import trace
-  from   helpers   import ErrorMessage
+  from   helpers    import trace
+  from   helpers.io import ErrorMessage
   import Etesian
   import Unicorn
   import plugins
@@ -55,7 +56,7 @@ except Exception, e:
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    kw['beforeAction'] = 'beta.placeAndRoute.placeChip'
+    kw['beforeAction'] = 'placeAndRoute.placeChip'
 
     plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
     plugins.kwUnicornHook( 'placeAndRoute.clockTree'
@@ -113,10 +114,7 @@ def ScriptMain ( **kw ):
     ht.route()
     ht.save( cell )
 
-  except ErrorMessage, e:
-      print e; errorCode = e.code
   except Exception, e:
-      print '\n\n', e; errorCode = 1
-      traceback.print_tb(sys.exc_info()[2])
+    helpers.io.catch( e )
       
   return 0

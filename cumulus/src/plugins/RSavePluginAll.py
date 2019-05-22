@@ -21,8 +21,8 @@ try:
   import Cfg
   import CRL
   import helpers
-  from   helpers   import ErrorMessage
-  from   helpers   import WarningMessage
+  from   helpers.io import ErrorMessage
+  from   helpers.io import WarningMessage
   import plugins
 except ImportError, e:
   serror = str(e)
@@ -96,11 +96,8 @@ def ScriptMain ( **kw ):
     rsave( cell )
     CRL.destroyAllVHDL()
 
-  except ErrorMessage, e:
-    print e; errorCode = e.code
   except Exception, e:
-    print '\n\n', e; errorCode = 1
-    traceback.print_tb(sys.exc_info()[2])
+    helpers.io.catch( e )
 
   sys.stdout.flush()
   sys.stderr.flush()

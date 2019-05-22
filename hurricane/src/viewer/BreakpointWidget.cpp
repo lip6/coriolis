@@ -47,9 +47,9 @@ namespace Hurricane {
     stopLabel->setText ( "Adjust Stop Level:" );
 
     QPushButton* ok = new QPushButton ();
-    ok->setIcon      ( QIcon(":/images/gnome-gmush.png") );
+    ok->setIcon      ( QIcon(":/images/angry-birds-chuck.png") );
     ok->setFlat      ( true );
-    ok->setIconSize  ( QSize(48,48) );
+    ok->setIconSize  ( QSize(200,200) );
 
     QFrame* vLine = new QFrame ();
     vLine->setFrameShape  ( QFrame::VLine );

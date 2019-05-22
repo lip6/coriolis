@@ -159,7 +159,6 @@ namespace {
              Cell*              _cell;
              Catalog::State*    _state;
              double             _scaleRatio;
-             unsigned int       _anonymousId;
              int                _parserState;
              size_t             _lineNumber;
              char               _rawLine[LINE_SIZE];
@@ -171,7 +170,7 @@ namespace {
       inline DbU::Unit          _getUnit             ( const char* value );
              vector<char*>      _splitString         ( char* s, char separator );
              Net*               _getNet              ( const char* apName );
-             Net*               _getAnonymousNet     ();
+             Net*               _getFusedNet         ();
              Net*               _safeGetNet          ( const char* apName );
              SegmentDirection   _getApSegDirection   ( const char* segDir );
              void               _parseVersion        ();
@@ -197,7 +196,6 @@ namespace {
     , _cell       (NULL)
     , _state      (NULL)
     , _scaleRatio (100.0)
-    , _anonymousId(0)
     , _parserState(StateVersion)
     , _lineNumber (0)
   {
@@ -364,13 +362,15 @@ namespace {
   }
 
 
-  Net* ApParser::_getAnonymousNet ()
+  Net* ApParser::_getFusedNet ()
   {
-    ostringstream  anonymousName ( "anonymous_" );
-    anonymousName << _anonymousId++;
-
-    Net* net = Net::create ( _cell, anonymousName.str() );
-    net->setAutomatic ( true );
+    Name fusedName = "fused_net";
+    Net* net       = _cell->getNet( fusedName );
+    if (not net) {
+      net = Net::create ( _cell, fusedName );
+      net->setAutomatic ( true );
+      net->setType      ( Net::Type::FUSED );
+    }
     return net;
   }
 
@@ -378,7 +378,7 @@ namespace {
   Net* ApParser::_safeGetNet ( const char* apName )
   {
     if ( ( apName[0] == '\0' ) || !strcmp(apName,"*") )
-      return _getAnonymousNet ();
+      return _getFusedNet ();
 
     return _getNet ( apName );
   }
@@ -459,7 +459,7 @@ namespace {
 
   void  ApParser::_parseConnector ()
   {
-    static DbU::Unit             XCON, YCON, WIDTH;
+    static DbU::Unit             XCON, YCON, WIDTH, HEIGHT;
     static int                   index;
            string                pinName;
     static Net*                  net;
@@ -479,6 +479,7 @@ namespace {
       XCON        = _getUnit( fields[0] );
       YCON        = _getUnit( fields[1] );
       WIDTH       = _getUnit( fields[2] );
+      HEIGHT      = WIDTH;
       orientation = fields[5];
 
       index       = -1;
@@ -503,11 +504,21 @@ namespace {
       net       = _getNet             ( fields[3] );
       layerInfo = _getLayerInformation( fields[6] );
 
-      if      (orientation == NORTH) accessDirection = Pin::AccessDirection::NORTH;
-      else if (orientation == SOUTH) accessDirection = Pin::AccessDirection::SOUTH;
-      else if (orientation == WEST ) accessDirection = Pin::AccessDirection::WEST;
-      else if (orientation == EAST ) accessDirection = Pin::AccessDirection::EAST;
-      else accessDirection = Pin::AccessDirection::UNDEFINED;
+      if(orientation == NORTH) {
+        accessDirection = Pin::AccessDirection::NORTH;
+        HEIGHT          = layerInfo->getLayer()->getMinimalSize();
+      } else if (orientation == SOUTH) {
+        accessDirection = Pin::AccessDirection::SOUTH;
+        HEIGHT          = layerInfo->getLayer()->getMinimalSize();
+      } else if (orientation == WEST ) {
+        accessDirection = Pin::AccessDirection::WEST;
+        WIDTH           = layerInfo->getLayer()->getMinimalSize();
+      } else if (orientation == EAST ) {
+        accessDirection = Pin::AccessDirection::EAST;
+        WIDTH           = layerInfo->getLayer()->getMinimalSize();
+      } else {
+       accessDirection = Pin::AccessDirection::UNDEFINED;
+      }
 
       if (layerInfo and net) {
         net->setExternal( true );
@@ -519,7 +530,7 @@ namespace {
                              , XCON
                              , YCON
                              , WIDTH
-                             , WIDTH
+                             , HEIGHT
                              );
       }
       if (not net )       _printError( false, "Unknown net name <%s>."  , fields[5] );

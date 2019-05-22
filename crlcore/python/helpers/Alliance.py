@@ -18,18 +18,18 @@ import os
 import os.path
 import sys
 import Hurricane
-from   Hurricane import DbU
-from   Hurricane import DataBase
-from   Hurricane import Layer
-import CRL
-from   CRL       import Environment
-from   CRL       import AllianceFramework
-from   CRL       import RoutingGauge
-from   CRL       import RoutingLayerGauge
-from   CRL       import CellGauge
+from   Hurricane  import DbU
+from   Hurricane  import DataBase
+from   Hurricane  import Layer
+import CRL        
+from   CRL        import Environment
+from   CRL        import AllianceFramework
+from   CRL        import RoutingGauge
+from   CRL        import RoutingLayerGauge
+from   CRL        import CellGauge
 import helpers
-from   helpers   import ErrorMessage
-from   helpers   import Debug
+from   helpers.io import ErrorMessage
+from   helpers    import Debug
 
 
 allianceFile = '<allianceFile has not been set>'
@@ -103,12 +103,16 @@ def _loadAllianceConfig ( af, allianceConfig ):
                     env.addSYSTEM_LIBRARY(library=libPath,mode=AddMode.toEnvironment(mode))
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<Alliance> at index %d.' % (allianceFile,entryNo))
+          e = ErrorMessage( e )
+          e.addMessage( 'In %s:<Alliance> at index %d.' % (allianceFile,entryNo) )
+          print e
     try:
-        env.validate()
+      env.validate()
     except Exception, e:
-        ErrorMessage.wrapPrint(e,'In %s:<Alliance>.' % (allianceFile))
-        sys.exit(1)
+      e = ErrorMessage( e )
+      e.addMessage( 'In %s:<Alliance>.' % (allianceFile) )
+      print e
+      sys.exit(1)
     return
 
 
@@ -159,7 +163,9 @@ def loadRoutingGaugesTable ( routingGaugesTable, fromFile ):
                                                              ) )
 
             except Exception, e:
-                ErrorMessage.wrapPrint(e,'In %s:<routingGaugesTable> at index %d.' % (allianceFile,entryNo))
+              e = ErrorMessage( e )
+              e.addMessage( 'In %s:<routingGaugesTable> at index %d.' % (allianceFile,entryNo) )
+              print e
 
         af.addRoutingGauge(gauge)
     return
@@ -189,8 +195,10 @@ def loadCellGaugesTable ( cellGaugesTable, fromFile ):
                                     , gaugeDatas[3] # sliceStep.
                                     )
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<cellGaugesTable> at index %d.' % (allianceFile,gaugeDatasNo))
-
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<cellGaugesTable> at index %d.' % (allianceFile,gaugeDatasNo) )
+            print e
+  
         if gauge: af.addCellGauge(gauge)
     return
 

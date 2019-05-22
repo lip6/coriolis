@@ -94,6 +94,8 @@ extern "C" {
   DirectGetBoolAttribute(PyNet_isGlobal    ,isGlobal    ,PyNet,Net)
   DirectGetBoolAttribute(PyNet_isExternal  ,isExternal  ,PyNet,Net)
   DirectGetBoolAttribute(PyNet_isLogical   ,isLogical   ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isBlockage  ,isBlockage  ,PyNet,Net)
+  DirectGetBoolAttribute(PyNet_isFused     ,isFused     ,PyNet,Net)
   DirectGetBoolAttribute(PyNet_isClock     ,isClock     ,PyNet,Net)
   DirectGetBoolAttribute(PyNet_isGround    ,isGround    ,PyNet,Net)
   DirectGetBoolAttribute(PyNet_isPower     ,isPower     ,PyNet,Net)
@@ -453,6 +455,8 @@ extern "C" {
     , { "isGlobal"             , (PyCFunction)PyNet_isGlobal                 , METH_NOARGS , "return true if the net is global" }
     , { "isExternal"           , (PyCFunction)PyNet_isExternal               , METH_NOARGS , "return true if the the net is external." }
     , { "isLogical"            , (PyCFunction)PyNet_isLogical                , METH_NOARGS , "return true if the net is logical ." }
+    , { "isBlockage"           , (PyCFunction)PyNet_isBlockage               , METH_NOARGS , "return true if the net is used for blockage ." }
+    , { "isFused"              , (PyCFunction)PyNet_isFused                  , METH_NOARGS , "return true if the net a fused net." }
     , { "isClock"              , (PyCFunction)PyNet_isClock                  , METH_NOARGS , "return true if the net is a clock" }
     , { "isPower"              , (PyCFunction)PyNet_isPower                  , METH_NOARGS , "return true if the net is a power" }
     , { "isGround"             , (PyCFunction)PyNet_isGround                 , METH_NOARGS , "return true if the net is a ground" }

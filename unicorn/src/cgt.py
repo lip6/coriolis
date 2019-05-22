@@ -203,7 +203,7 @@ if __name__ == '__main__':
           setCgtBanner(unicorn.getBanner())
          #print unicorn.getBanner()
          #print credits()
-    
+
           if cell: unicorn.setCell(cell)
           unicorn.show()
           ha.qtExec()

@@ -107,8 +107,8 @@ namespace Anabatic {
     _rg = rg->getClone();
 
     _allowedDepth = rg->getDepth()-1;
-    if (Cfg::hasParameter("katabatic.topRoutingLayer"))
-      _setTopRoutingLayer( Cfg::getParamString("katabatic.topRoutingLayer")->asString() );
+    if (Cfg::hasParameter("anabatic.topRoutingLayer"))
+      _setTopRoutingLayer( Cfg::getParamString("anabatic.topRoutingLayer")->asString() );
 
     _gmetalh  = DataBase::getDB()->getTechnology()->getLayer("gmetalh");
     _gmetalv  = DataBase::getDB()->getTechnology()->getLayer("gmetalv");

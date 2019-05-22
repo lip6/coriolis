@@ -15,24 +15,24 @@
 
 
 import sys
-from   Hurricane import DbU
-from   Hurricane import Point
-from   Hurricane import Transformation
-from   Hurricane import Box
-from   Hurricane import Interval
-from   Hurricane import Path
-from   Hurricane import Occurrence
-from   Hurricane import UpdateSession
-from   Hurricane import Net
-from   Hurricane import Contact
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Query
+from   Hurricane  import DbU
+from   Hurricane  import Point
+from   Hurricane  import Transformation
+from   Hurricane  import Box
+from   Hurricane  import Interval
+from   Hurricane  import Path
+from   Hurricane  import Occurrence
+from   Hurricane  import UpdateSession
+from   Hurricane  import Net
+from   Hurricane  import Contact
+from   Hurricane  import Horizontal
+from   Hurricane  import Vertical
+from   Hurricane  import Query
 import CRL
 import helpers
-from   helpers   import trace
-from   helpers   import ErrorMessage
-from   helpers   import WarningMessage
+from   helpers    import trace
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
 import chip.Configuration
 
 
@@ -197,7 +197,7 @@ class Block ( object ):
 
   def connectPower ( self ):
     if not self.conf.coronaVdd or not self.conf.coronaVss:
-      print ErrorMessage( 1, 'Cannot build block power terminals as core vdd and/or vss are not known.' )
+      raise ErrorMessage( 1, 'Cannot build block power terminals as core vdd and/or vss are not known.' )
       return
 
     goCb = GoCb( self )
@@ -221,7 +221,7 @@ class Block ( object ):
       return
  
     if not self.conf.coronaCk:
-      print ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
+      raise ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
       return
  
     blockCk = None
@@ -230,7 +230,7 @@ class Block ( object ):
         blockCk = plug.getMasterNet()
  
     if not blockCk:
-      print ErrorMessage( 1, 'Block <%s> has no net connected to the clock <%s>.'
+      raise ErrorMessage( 1, 'Block "%s" has no net connected to the clock "%s".'
                              % (self.path.getTailInstance().getName(),self.ck.getName()) )
       return
  
@@ -246,7 +246,7 @@ class Block ( object ):
     if len(ffPlugs) > 0:
       message = 'Clock <%s> of block <%s> is not organized as a H-Tree.' \
                 % (blockCk.getName(),self.path.getTailInstance().getName())
-      print ErrorMessage( 1, message )
+      raise ErrorMessage( 1, message )
       return
  
     if len(htPlugs) > 1:
@@ -254,7 +254,7 @@ class Block ( object ):
                 % (self.path.getTailInstance().getName(),blockCk.getName())
       for plug in htPlugs:
         message += '\n        - %s' % plug
-      print ErrorMessage( 1, message )
+      raise ErrorMessage( 1, message )
       return
  
     UpdateSession.open()

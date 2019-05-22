@@ -21,30 +21,30 @@ try:
   import math
   import Cfg
   import Hurricane
-  from   Hurricane import DbU
-  from   Hurricane import Transformation
-  from   Hurricane import Box
-  from   Hurricane import Path
-  from   Hurricane import Occurrence
-  from   Hurricane import UpdateSession
-  from   Hurricane import Breakpoint
-  from   Hurricane import Net
-  from   Hurricane import RoutingPad
-  from   Hurricane import Contact
-  from   Hurricane import Horizontal
-  from   Hurricane import Vertical
-  from   Hurricane import Plug
-  from   Hurricane import Instance
-  from   Hurricane import HyperNet
+  from   Hurricane  import DbU
+  from   Hurricane  import Transformation
+  from   Hurricane  import Box
+  from   Hurricane  import Path
+  from   Hurricane  import Occurrence
+  from   Hurricane  import UpdateSession
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import Net
+  from   Hurricane  import RoutingPad
+  from   Hurricane  import Contact
+  from   Hurricane  import Horizontal
+  from   Hurricane  import Vertical
+  from   Hurricane  import Plug
+  from   Hurricane  import Instance
+  from   Hurricane  import HyperNet
   import Viewer
   import CRL
   from   CRL import RoutingLayerGauge
   import helpers
-  from   helpers import trace
-  from   helpers import ErrorMessage
+  from   helpers    import trace
+  from   helpers.io import ErrorMessage
   import Unicorn
   import plugins
-  from   clocktree.RSMT import RSMT
+  from   clocktree.RSMT     import RSMT
   from   chip.Configuration import GaugeConf
   from   chip.Configuration import getPlugByNet
   from   chip.Configuration import getPlugByName
@@ -95,7 +95,7 @@ class HTree ( object ):
   def __init__ ( self, conf, cell, clockNet, area ):
     self.conf = conf
     
-    self.minSide = DbU.fromLambda( Cfg.getParamInt('clockTree.minimumSide').asInt() )
+    self.minSide = Cfg.getParamInt('clockTree.minimumSide').asInt()
     if self.minSide < DbU.fromLambda(100.0):
       raise ErrorMessage( 3, 'ClockTree: clockTree.minimumSide (%g) is less than 100 lambda.' \
                              % DbU.toLambda(self.minSide) )
@@ -341,7 +341,7 @@ class HTree ( object ):
 
   def _rsave ( self, cell ):
     flags = CRL.Catalog.State.Physical
-    if cell.getName().endswith('_clocked'):
+    if cell.getName().endswith('_cts'):
       flags = flags | CRL.Catalog.State.Logical
     self.framework.saveCell( cell, flags )
 
@@ -352,7 +352,7 @@ class HTree ( object ):
 
   def save ( self, topCell ):
     for cell in self.cloneds:
-      cell.setName( cell.getName()+'_clocked' )
+      cell.setName( cell.getName()+'_cts' )
 
     self._rsave( topCell )
     return

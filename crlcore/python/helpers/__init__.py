@@ -24,6 +24,7 @@ import os.path
 import re
 import traceback
 import Hurricane
+import helpers.io
 
 quiet          = False
 sysConfDir     = None
@@ -58,126 +59,66 @@ def truncPath ( path, maxlength=80 ):
     return '...' + os.sep + trunc
 
 
-def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
-    if scriptPath:
-      print '[ERROR] An exception occured while loading the Python script module:'
-      print '        \"%s\"\n' % (scriptPath)
-      print '        You should check for simple python errors in this module.\n'
+def textStackTrace ( trace, showIndent=True, scriptPath=None ):
+    indent = ''
+    if showIndent: indent = '        '
 
-    print '        Python stack trace:'
-    trace    = traceback.extract_tb( sys.exc_info()[2] )
+    s = ''
+    if scriptPath:
+      if len(scriptPath) > 70:
+        filename = scriptPath[-70:]
+        filename = '.../' + filename[ filename.find('/')+1 : ]
+
+      if showIndent: s += '[ERROR] '
+      s += 'An exception occured while loading the Python script module:\n'
+      s += indent + '\"%s\"\n' % (filename)
+      s += indent + 'You should check for simple python errors in this module.\n\n'
+
+    s += indent + 'Python stack trace:\n'
     maxdepth = len( trace )
     for depth in range( maxdepth ):
       filename, line, function, code = trace[ maxdepth-depth-1 ]
       if len(filename) > 38:
         filename = filename[-38:]
         filename = '.../' + filename[ filename.find('/')+1 : ]
-     #print '        [%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
-      print '        #%d in %25s() at %s:%d' % ( depth, function, filename, line )
+     #s += indent + '[%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
+      s += indent + '#%d in %25s() at %s:%d\n' % ( depth, function, filename, line )
+    return s
 
-    if e:
-      print '        Error was:'
-      print '          %s\n' % e
 
-    if tryContinue:
-      print '        Trying to continue anyway...'
+def showStackTrace ( trace ):
+    print textStackTrace( trace, True )
     return
 
 
-class ErrorMessage ( Exception ):
+def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    s = ''
+    if scriptPath:
+      if len(scriptPath) > 70:
+        filename = scriptPath[-70:]
+        filename = '.../' + filename[ filename.find('/')+1 : ]
+      else:
+        filename = scriptPath
+      s += '[ERROR] An exception occured while loading the Python script module:\n'
+      s += '        \"%s\"\n' % (filename)
+      s += '        You should check for simple python errors in this module.\n'
 
-    def __init__ ( self, code, *arguments ):
-        self._code   = code
-        self._errors = [ 'Malformed call to ErrorMessage()'
-                       , '%s' % str(arguments) ]
+    if isinstance(e,helpers.io.ErrorMessage): trace = e.trace()
+    else:                                     trace = sys.exc_info()[2]
+    s += textStackTrace( traceback.extract_tb( trace ) )
 
-        text = None
-        if len(arguments) == 1:
-            if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
-            else:
-                self._errors = arguments[0]
-        elif len(arguments) > 1:
-            text = list(arguments)
+    if e:
+      s += '        Error was:'
+      s += '          %s\n' % e
 
-        if text:
-            self._errors = []
-            while len(text[0]) == 0: del text[0]
-
-            lstrip = 0
-            if text[0].startswith('[ERROR]'): lstrip = 8 
-
-            for line in text:
-                if line[0:lstrip  ] == ' '*lstrip or \
-                   line[0:lstrip-1] == '[ERROR]':
-                    self._errors += [ line[lstrip:] ]
-                else:
-                    self._errors += [ line.lstrip() ]
-        return
-
-    def __str__ ( self ):
-        if not isinstance(self._errors,list):
-            return "[ERROR] %s" % self._errors
-
-        formatted = "\n"
-        for i in range(len(self._errors)):
-            if i == 0: formatted += "[ERROR] %s" % self._errors[i]
-            else:      formatted += "        %s" % self._errors[i]
-            if i+1 < len(self._errors): formatted += "\n"
-        return formatted
-
-    def addMessage ( self, message ):
-        if not isinstance(self._errors,list):
-            self._errors = [ self._errors ]
-        if isinstance(message,list):
-            for line in message:
-                self._errors += [ line ]
-        else:
-            self._errors += [ message ]
-        return
-
-    def terminate ( self ):
-        print self
-        sys.exit(self._code)
-
-    def _getCode ( self ): return self._code
-
-    code = property(_getCode)
-
-    @staticmethod
-    def wrapPrint ( e, footer=None ):
-        showTrace = False
-        if not isinstance(e,ErrorMessage):
-            if isinstance(e,Hurricane.ConstructorError) or \
-               isinstance(e,Hurricane.HurricaneError):
-                ewrap = ErrorMessage(1,e)
-            else:
-                ewrap = ErrorMessage(3,'An unmanaged Python exception occurred:')
-                ewrap.addMessage(str(e))
-                showTrace = True
-        else:
-            ewrap = e
-        if footer: ewrap.addMessage(footer)
-        print ewrap
-        if showTrace: showPythonTrace()
-        return
+    if tryContinue:
+      s += '        Trying to continue anyway...'
+    return s
 
 
-class WarningMessage ( Exception ):
-
-    def __init__ ( self, message ):
-        self._warnings = message
-        return
-
-    def __str__ ( self ):
-        if not isinstance(self._warnings,list):
-            return "[WARNING] %s" % self._warnings
-
-        formatted = "\n"
-        for i in range(len(self._warnings)):
-            if i == 0: formatted += "[WARNING] %s" % self._warnings[i]
-            else:      formatted += "          %s" % self._warnings[i]
-            if i+1 < len(self._warnings): formatted += "\n"
-        return formatted
+def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
+    print textPythonTrace( scriptPath, e, tryContinue ) 
+    return
 
 
 class Dots ( object ):

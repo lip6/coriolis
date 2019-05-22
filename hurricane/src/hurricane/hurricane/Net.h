@@ -58,7 +58,7 @@ class Net : public Entity {
     public: class Type {
     // ***************
 
-        public: enum Code {UNDEFINED=0, LOGICAL=1, CLOCK=2, POWER=3, GROUND=4, BLOCKAGE=5};
+        public: enum Code {UNDEFINED=0, LOGICAL=1, CLOCK=2, POWER=3, GROUND=4, BLOCKAGE=5, FUSED=6};
 
         private: Code _code;
 
@@ -215,6 +215,7 @@ class Net : public Entity {
     public:         bool isExternal () const {return _isExternal;};
     public:         bool isAutomatic() const {return _isAutomatic;};
     public:         bool isBlockage () const {return (_type == Type::BLOCKAGE);};
+    public:         bool isFused    () const {return (_type == Type::FUSED);};
     public:         bool isLogical  () const {return (_type == Type::LOGICAL);};
     public:         bool isClock    () const {return (_type == Type::CLOCK);};
     public:         bool isPower    () const {return (_type == Type::POWER);};
@@ -375,6 +376,7 @@ inline std::string  getString<const Hurricane::Net::Type::Code*>
                                  case Hurricane::Net::Type::POWER:     return "POWER";
                                  case Hurricane::Net::Type::GROUND:    return "GROUND";
                                  case Hurricane::Net::Type::BLOCKAGE:  return "BLOCKAGE";
+                                 case Hurricane::Net::Type::FUSED:     return "FUSED";
                                }
                                return "ABNORMAL";
                              }

@@ -55,7 +55,7 @@ namespace Hurricane {
     : Exception ()
     , _reason   (reason)
     , _code     (code)
-    , _backtrace(true)
+    , _backtrace(false)
   { }
 
 
@@ -63,7 +63,7 @@ namespace Hurricane {
     : Exception ()
     , _reason   ()
     , _code     (0)
-    , _backtrace(true)
+    , _backtrace(false)
   {
     static char     formatted [ 8192 ];
            va_list  args;
@@ -80,7 +80,7 @@ namespace Hurricane {
     : Exception ()
     , _reason   ()
     , _code     (code)
-    , _backtrace(true)
+    , _backtrace(false)
   {
     static char     formatted [ 8192 ];
            va_list  args;

@@ -68,6 +68,36 @@ extern "C" {
   }
 
 
+  PyObject* PyGraphics_isEnabled ( PyGraphics* )
+  {
+    cdebug_log(20,0) << "PyGraphics_isEnabled()" << endl;
+
+    bool isEnabled = false;
+    HTRY
+      Graphics* graphics = Graphics::getGraphics ();
+      isEnabled = graphics->isEnabled();
+    HCATCH
+
+    if (isEnabled) Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+  }
+
+
+  PyObject* PyGraphics_isHighDpi ( PyGraphics* )
+  {
+    cdebug_log(20,0) << "PyGraphics_isHighDpi()" << endl;
+
+    bool isHighDpi = false;
+    HTRY
+      Graphics* graphics = Graphics::getGraphics ();
+      isHighDpi = graphics->isHighDpi();
+    HCATCH
+
+    if (isHighDpi) Py_RETURN_TRUE;
+    Py_RETURN_FALSE;
+  }
+
+
   static PyObject* PyGraphics_setStyle ( PyObject*, PyObject* args )
   {
     cdebug_log(20,0) << "PyGraphics_setStyle()" << endl;
@@ -261,10 +291,6 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
-  
-  // Standart Accessors (Attributes).
-  DirectGetBoolAttribute(PyGraphics_isEnabled,isEnabled,PyGraphics,Graphics)
-
 
   static PyObject* PyGraphics_getStyles ( PyObject* )
   {
@@ -289,6 +315,8 @@ extern "C" {
   PyMethodDef PyGraphics_Methods[] =
     { { "isEnabled"           , (PyCFunction)PyGraphics_isEnabled       , METH_NOARGS |METH_STATIC
                               , "Tells if the Qt part of Graphics has been activated." }
+    , { "isHighDpi"           , (PyCFunction)PyGraphics_isHighDpi       , METH_NOARGS |METH_STATIC
+                              , "Tells if we are running with a Hi-DPI screen." }
     , { "get"                 , (PyCFunction)PyGraphics_get             , METH_NOARGS |METH_STATIC
                               , "Gets the Viewer Graphic Configuration." }
     , { "getStyle"            , (PyCFunction)PyGraphics_getStyle        , METH_VARARGS|METH_STATIC

@@ -8,32 +8,32 @@ try:
   import math
   import Cfg
   import Hurricane
-  from   Hurricane import DataBase
-  from   Hurricane import DbU
-  from   Hurricane import Transformation
-  from   Hurricane import Box
-  from   Hurricane import UpdateSession
-  from   Hurricane import Breakpoint
-  from   Hurricane import Net
-  from   Hurricane import NetExternalComponents
-  from   Hurricane import BasicLayer
-  from   Hurricane import ContactLayer
-  from   Hurricane import ViaLayer
-  from   Hurricane import RegularLayer
-  from   Hurricane import TransistorLayer
-  from   Hurricane import DiffusionLayer
-  from   Hurricane import Cell
-  from   Hurricane import Instance
-  from   Hurricane import Net
-  from   Hurricane import Contact
-  from   Hurricane import Horizontal
-  from   Hurricane import Vertical
+  from   Hurricane  import DataBase
+  from   Hurricane  import DbU
+  from   Hurricane  import Transformation
+  from   Hurricane  import Box
+  from   Hurricane  import UpdateSession
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import Net
+  from   Hurricane  import NetExternalComponents
+  from   Hurricane  import BasicLayer
+  from   Hurricane  import ContactLayer
+  from   Hurricane  import ViaLayer
+  from   Hurricane  import RegularLayer
+  from   Hurricane  import TransistorLayer
+  from   Hurricane  import DiffusionLayer
+  from   Hurricane  import Cell
+  from   Hurricane  import Instance
+  from   Hurricane  import Net
+  from   Hurricane  import Contact
+  from   Hurricane  import Horizontal
+  from   Hurricane  import Vertical
   import Viewer
   import CRL
-  from   CRL import RoutingLayerGauge
+  from   CRL        import RoutingLayerGauge
   import helpers
-  from   helpers import trace
-  from   helpers import ErrorMessage
+  from   helpers    import trace
+  from   helpers.io import ErrorMessage
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):

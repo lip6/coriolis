@@ -136,7 +136,7 @@ namespace Etesian {
                       , "Place a block [<b>Etesian</b>]"
                       , std::bind(&GraphicEtesianEngine::_place,this)
                       , QIcon()
-                      , "placeAndRoute.placeChip"
+                      , "placeAndRoute.clockTree"
                       );
   }
 

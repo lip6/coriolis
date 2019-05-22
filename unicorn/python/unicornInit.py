@@ -18,8 +18,9 @@ try:
   import traceback
   import sys
   import os.path
-  from   helpers   import ErrorMessage
-  from   helpers   import WarningMessage
+  import helpers
+  from   helpers.io import ErrorMessage
+  from   helpers.io import WarningMessage
   import Viewer
 except ImportError, e:
   serror = str(e)
@@ -69,11 +70,15 @@ def unicornConfigure ( **kw ):
 
    #editor.addMenu( 'plugins', 'Plu&gins', Viewer.CellViewer.TopMenu )
 
+    moduleNames = []
     for pluginFile in os.listdir( pluginsDir ):
       if pluginFile == "__init__.py":    continue
       if not pluginFile.endswith('.py'): continue
-      moduleName = os.path.basename(pluginFile)[:-3]
+      moduleNames.append( os.path.basename(pluginFile)[:-3] )
 
+    moduleNames.sort()
+    
+    for moduleName in moduleNames:
       try:
         module = __import__( moduleName, globals(), locals(), moduleName )
 
@@ -83,11 +88,11 @@ def unicornConfigure ( **kw ):
           continue
 
         module.__dict__['unicornHook']( **kw )
+
       except ErrorMessage, e:
         print e
+        helpers.showStackTrace( e.trace )
       except Exception, e:
-        print ErrorMessage( 3, 'Plugin <%s> cannot be loaded, see message below:' % moduleName )
-        print e
-        traceback.print_tb(sys.exc_info()[2])
+        helpers.showPythonTrace( __file__, e )
 
     return

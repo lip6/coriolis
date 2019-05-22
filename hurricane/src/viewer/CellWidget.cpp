@@ -1070,7 +1070,7 @@ namespace Hurricane {
     static const Name noCell = "None";
 
     if ( !_cell ) return noCell;
-    return _cell->getName();
+    return _hierarchicalName;
   }
 
 

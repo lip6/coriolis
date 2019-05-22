@@ -18,8 +18,8 @@ try:
   import sys
   import traceback
   import helpers
-  from   helpers   import ErrorMessage
-  from   helpers   import WarningMessage
+  from   helpers.io import ErrorMessage
+  from   helpers.io import WarningMessage
   import plugins
   import chip.Chip
 except ImportError, e:
@@ -46,6 +46,7 @@ except Exception, e:
 
 def unicornHook ( **kw ):
     kw['beforeAction'] = 'placeAndRoute.stepByStep'
+   #kw['beforeAction'] = 'placeAndRoute.clockTree'
 
     plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
     plugins.kwUnicornHook( 'placeAndRoute.placeChip'
@@ -72,14 +73,8 @@ def ScriptMain ( **kw ):
     placeChip.doChipPlacement()
     return placeChip.validated
 
-  except ErrorMessage, e:
-    print e; errorCode = e.code
-    if     locals().has_key('editor') and editor \
-       and locals().has_key('cell'  ) and cell: editor.fit()
-    rvalue = False
   except Exception, e:
-    print '\n\n', e; errorCode = 1
-    traceback.print_tb(sys.exc_info()[2])
+    helpers.io.catch( e )
     rvalue = False
 
   sys.stdout.flush()

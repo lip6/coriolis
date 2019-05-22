@@ -10,20 +10,24 @@
 # |  Author      :                    Jean-Paul CHAPUT              |
 # |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 # | =============================================================== |
-# |  Python      :       "./plugins/RSavePlugin.py"                 |
+# |  Python      :       "./plugins/S2R.py"                         |
 # +-----------------------------------------------------------------+
 
 
 try:
+  import os
   import sys
   import traceback
-  import os.path
-  import Cfg
-  import CRL
+  import subprocess
+  import Viewer
   import helpers
   from   helpers.io import ErrorMessage
   from   helpers.io import WarningMessage
+  from   Hurricane  import DataBase
+  from   Hurricane  import Library
+  from   CRL        import Gds
   import plugins
+  import chip.Chip
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):
@@ -43,44 +47,57 @@ except Exception, e:
   sys.exit(2)
 
 
-# Write back layout to disk if everything has gone fine.
-# Must write all the sub-blocks of the core but *not* the
-# standard cell (mainly the feed-through).
-#
-# If the model has been uniquified, in the case of a merging
-# of abutment box for placement, the netlist view must also
-# be saved.
+  
+# --------------------------------------------------------------------
+# S2R class
 
-def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
-  if cell.isTerminal(): return
 
-  framework = CRL.AllianceFramework.get()
-  if depth == 0: print '  o  Recursive Save-Cell.'
+class S2R ( object ):
 
-  sviews = ''
-  if views & CRL.Catalog.State.Logical:  sviews += 'netlist'
-  if views & CRL.Catalog.State.Physical:
-    if sviews: sviews += ','
-    sviews += 'layout'
+    def __init__ ( self ):
+        self.s2r  = None
 
-  print '     %s+ %s (%s).' % ( ' '*(depth*2), cell.getName(), sviews )
-  if cell.isUniquified(): views |= CRL.Catalog.State.Logical
-  framework.saveCell( cell, views )
+        pathes = os.environ[ "PATH" ]
+        for path in pathes.split(':'):
+          binary = os.path.join( path, 's2r' )
+          if os.path.exists(binary):
+            self.s2r = binary
+            break
+        if not self.s2r:
+          print ErrorMessage( 1, 'S2R.__init__(): No s2r binary found in PATH, please setup Alliance environement.' )
+        return
 
-  for instance in cell.getInstances():
-    masterCell = instance.getMasterCell()
-    if not masterCell.isTerminal():
-      rsave( masterCell, views, depth+1 )
-  return
+
+    def convert ( self, cell ):
+        if not self.s2r: return
+
+        os.environ[ 'RDS_IN'  ] = 'gds'
+        os.environ[ 'RDS_OUT' ] = 'gds'
+        process = subprocess.Popen( [ self.s2r, cell.getName() ]
+                                  , stderr=subprocess.STDOUT
+                                  , stdout=subprocess.PIPE
+                                  , shell =False
+                                  )
+        for line in process.stdout.readlines():
+          print 's2r | %s' % line[:-1]
+
+        gdsFile = os.path.join( os.environ['MBK_WORK_LIB'], cell.getName()+'.gds' )
+
+        rootLibrary = DataBase.getDB().getRootLibrary()
+        gdsLibrary  = rootLibrary.getLibrary( 'gds' )
+        if not gdsLibrary:
+          gdsLibrary = Library.create( rootLibrary, 'GDS' )
+        Gds.load( gdsLibrary, gdsFile )
+        return gdsLibrary.getCell( cell.getName() )
 
 
 # --------------------------------------------------------------------
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    plugins.kwUnicornHook( 'tools.rsave'
-                         , 'Recursive Save (layout)'
-                         , 'Recursively save layout of the top cell and it\'s instances'
+    plugins.kwUnicornHook( 'tools.s2r'
+                         , 'Symbolic to real (Alliance s2r)'
+                         , 'Convert symbolic layout into GDSII using Alliance s2r'
                          , sys.modules[__name__].__file__
                          , **kw
                          )
@@ -88,26 +105,24 @@ def unicornHook ( **kw ):
 
 
 def ScriptMain ( **kw ):
+  rvalue = True
   try:
     helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )
 
     cell, editor = plugins.kwParseMain( **kw )
-
-    views = CRL.Catalog.State.Physical
-    if kw.has_key('views'): views = kw['views']
-
-    if not cell:
-      print WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' )
-      return 0
-
-    rsave( cell, views )
-    CRL.destroyAllVHDL()
+    s2r = S2R()
+    gdsCell = s2r.convert( cell )
+    print gdsCell
+    if editor: editor.setCell( gdsCell )
 
   except Exception, e:
     helpers.io.catch( e )
+    if     locals().has_key('editor') and editor \
+       and locals().has_key('cell'  ) and cell: editor.fit()
+    rvalue = False
 
   sys.stdout.flush()
   sys.stderr.flush()
       
-  return 0
+  return rvalue

@@ -3,8 +3,8 @@
 
 import sys
 import math
-from   helpers import ErrorMessage
-from   helpers import WarningMessage
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
 
 
 confFile    = '<confFile has not been set>'
@@ -175,7 +175,9 @@ def loadPatterns ( patternsData, fromFile ):
 
 
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<patternsTable> at index %d.' % (confFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<patternsTable> at index %d.' % (confFile,entryNo) )
+            print e
     return
 
 

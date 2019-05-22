@@ -23,9 +23,9 @@ import copy
 import subprocess
 import inspect
 import helpers
-from   helpers   import ErrorMessage
-from   helpers   import WarningMessage
-from   helpers   import Dots
+from   helpers.io import ErrorMessage
+from   helpers.io import WarningMessage
+from   helpers    import Dots
 
 
 # Global display flags
@@ -210,7 +210,9 @@ class Environment ( object ):
               self.mbkEnv['MBK_CATA_LIB'].add( libPath, mode )
     
         except Exception, e:
-            ErrorMessage.wrapPrint(e,'In %s:<Alliance> at index %d.' % (allianceFile,entryNo))
+            e = ErrorMessage( e )
+            e.addMessage( 'In %s:<Alliance> at index %d.' % (allianceFile,entryNo) )
+            print e
 
       self.mbkEnv[ 'LD_LIBRARY_PATH' ] = self.mbkEnv[ 'ALLIANCE_TOP' ] + '/lib'
       return

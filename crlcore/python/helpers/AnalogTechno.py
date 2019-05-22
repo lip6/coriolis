@@ -21,7 +21,7 @@ import Hurricane
 from   Hurricane    import DbU
 from   Hurricane    import DataBase
 from   Hurricane    import Layer
-from   helpers      import ErrorMessage
+from   helpers.io   import ErrorMessage
 from   helpers      import Debug
 
 
@@ -105,7 +105,9 @@ def _loadAnalogTechno ( techno, ruleTable ):
                                 , entry[5]
                                 )
       except Exception, e:
-        ErrorMessage.wrapPrint(e,'In %s:<analogTechnologyTable> at index %d.' % (technoFile,entryNo))
+        e = ErrorMessage( e )
+        e.addMessage( 'In %s:<analogTechnologyTable> at index %d.' % (technoFile,entryNo) )
+        print e
     return
 
 

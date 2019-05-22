@@ -101,15 +101,18 @@ string Library::getHierarchicalName () const
 // *****************************************
 {
   string   rpath;
-  Library* library = getLibrary();
-  do {
+  Library* library     = getLibrary();
+  Library* rootLibrary = DataBase::getDB()->getRootLibrary();
+
+  while ( library and (library != rootLibrary) ) {
     rpath.insert( 0, getString(library->getName())+"." );
 
     library = library->getLibrary();
-  } while ( library );
+  }
 
   return rpath + getString(getName());
 }
+
 void Library::_postCreate()
 // ************************
 {

@@ -21,20 +21,20 @@ try:
   import Viewer
   import CRL
   import helpers
-  from   helpers   import ErrorMessage
-  from   helpers   import WarningMessage
-  from   helpers   import showPythonTrace
+  from   helpers.io import ErrorMessage
+  from   helpers.io import WarningMessage
+  from   helpers    import showPythonTrace
   import plugins
-  from   Hurricane import DataBase
-  from   Hurricane import Breakpoint
-  from   Hurricane import UpdateSession
-  from   Hurricane import DbU
-  from   Hurricane import Box
-  from   Hurricane import Contact
-  from   Hurricane import Vertical
-  from   Hurricane import Horizontal
-  from   Hurricane import Net
-  from   Hurricane import Cell
+  from   Hurricane  import DataBase
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import UpdateSession
+  from   Hurricane  import DbU
+  from   Hurricane  import Box
+  from   Hurricane  import Contact
+  from   Hurricane  import Vertical
+  from   Hurricane  import Horizontal
+  from   Hurricane  import Net
+  from   Hurricane  import Cell
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):
@@ -160,9 +160,7 @@ def ScriptMain ( **kw ):
 
     runDemo( cell, editor )
 
-  except ErrorMessage, e:
-    print e; errorCode = e.code
   except Exception, e:
-    showPythonTrace( 'runDemo.py', e )
+    helpers.io.catch( e )
       
   return 0

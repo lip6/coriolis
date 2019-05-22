@@ -7,8 +7,8 @@ import sys
 import string
 import Cfg
 import Viewer
-from   helpers          import ErrorMessage
-from   helpers          import WarningMessage
+from   helpers.io       import ErrorMessage
+from   helpers.io       import WarningMessage
 from   helpers          import Debug
 from   helpers.Patterns import patternsLUT
 
@@ -238,7 +238,9 @@ def loadStyleTuple ( styleTuple ):
                 footer = 'In %s:<styleTable>:"%s" at index %d.' % (displayFile,style.getName(),entryNo)
             else:
                 footer = 'In %s:<styleTable> at index %d.' % (displayFile,entryNo)
-            ErrorMessage.wrapPrint(e,footer)
+            e = ErrorMessage( e )
+            e.addMessage( footer )
+            print e
             if not style: break
 
     if style != None:
@@ -271,7 +273,9 @@ def loadStyles ( stylesTable, fromFile ):
                             ,'(putting a level of parenthesis do not create a tuple for one item)'
                             ,'In %s:<styleTable>.' % displayFile
                             ]
-        ErrorMessage.wrapPrint(e, styleTableExample)
+        e = ErrorMessage( e )
+        e.addMessage( styleTableExample )
+        print e
     return
 
 

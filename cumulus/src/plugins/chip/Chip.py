@@ -24,29 +24,29 @@ try:
   import pstats
   import Cfg
   import Hurricane
-  from   Hurricane import DataBase
-  from   Hurricane import DbU
-  from   Hurricane import Point
-  from   Hurricane import Transformation
-  from   Hurricane import Box
-  from   Hurricane import Path
-  from   Hurricane import Occurrence
-  from   Hurricane import UpdateSession
-  from   Hurricane import Breakpoint
-  from   Hurricane import Net
-  from   Hurricane import RoutingPad
-  from   Hurricane import Contact
-  from   Hurricane import Horizontal
-  from   Hurricane import Vertical
-  from   Hurricane import Instance
-  from   Hurricane import HyperNet
-  from   Hurricane import Query
+  from   Hurricane  import DataBase
+  from   Hurricane  import DbU
+  from   Hurricane  import Point
+  from   Hurricane  import Transformation
+  from   Hurricane  import Box
+  from   Hurricane  import Path
+  from   Hurricane  import Occurrence
+  from   Hurricane  import UpdateSession
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import Net
+  from   Hurricane  import RoutingPad
+  from   Hurricane  import Contact
+  from   Hurricane  import Horizontal
+  from   Hurricane  import Vertical
+  from   Hurricane  import Instance
+  from   Hurricane  import HyperNet
+  from   Hurricane  import Query
   import Viewer
   import CRL
-  from   CRL import RoutingLayerGauge
+  from   CRL        import RoutingLayerGauge
   import helpers
-  from   helpers   import ErrorMessage
-  from   helpers   import WarningMessage
+  from   helpers.io import ErrorMessage
+  from   helpers.io import WarningMessage
   import Etesian
   import Anabatic
   import Katana
@@ -84,7 +84,7 @@ class PlaceRoute ( object ):
 
   def __init__ ( self, conf ):
     self.conf      = conf
-    self.validated = False
+    self.validated = True
     return
 
 
@@ -103,17 +103,19 @@ class PlaceRoute ( object ):
          and coreAb.getHeight() <= self.conf.coreSize.getHeight():
         self.conf.coreSize = coreAb
       else:
-        print ErrorMessage( 1, [ 'Core %s already have an abutment box, bigger than the requested one:'
+        raise ErrorMessage( 1, [ 'Core %s already have an abutment box, bigger than the requested one:'
                                  % self.conf.cores[0].getName()
-                               , "       Cell abutment box: %s" % str(coreAb)
-                               , "    Maximum abutment box: %s" % str(self.conf.coreSize) ] )
+                              , "       Cell abutment box: %s" % str(coreAb)
+                              , "    Maximum abutment box: %s" % str(self.conf.coreSize) ] )
         self.validated = False
 
     return self.validated
 
 
   def doCoronaFloorplan ( self ):
-    if not self.validated: return
+    if not self.validated:
+      raise ErrorMessage( 1, 'chip.doCoronaFloorplan(): Chip is not valid, aborting.' )
+      return
 
     UpdateSession.open()
     self.conf.core.setAbutmentBox( self.conf.coreSize )
@@ -129,7 +131,9 @@ class PlaceRoute ( object ):
 
 
   def doCorePlacement ( self ):
-    if not self.validated: return
+    if not self.validated:
+      raise ErrorMessage( 1, 'chip.doCorePlacement(): Chip is not valid, aborting.' )
+      return
 
     coreCell = self.conf.core
 
@@ -146,6 +150,7 @@ class PlaceRoute ( object ):
     if self.conf.useClockTree and coreCk:
       ht = clocktree.ClockTree.HTree.create( self.conf, coreCell, coreCk, coreCell.getAbutmentBox() )
       ht.addCloned( self.conf.cell )
+      ht.addCloned( self.conf.corona )
       etesian = Etesian.EtesianEngine.create( coreCell )
       etesian.setViewer( self.conf.viewer )
       etesian.place()
@@ -162,6 +167,10 @@ class PlaceRoute ( object ):
 
 
   def doChipPlacement ( self ):
+    if not self.validated:
+      raise ErrorMessage( 1, 'chip.doChipPlacement(): Chip is not valid, aborting.' )
+      return
+
     padsCorona = chip.PadsCorona.Corona( self.conf )
     self.validated = padsCorona.validate()
     if not self.validated: return False
@@ -190,8 +199,13 @@ class PlaceRoute ( object ):
 
 
   def doChipRouting ( self ):
+    if not self.validated:
+      raise ErrorMessage( 1, 'chip.doChipRouting(): Chip is not valid, aborting.' )
+      return
+
+    self.conf.corona.setName( self.conf.corona.getName()+"_r" )
     katana = Katana.KatanaEngine.create( self.conf.corona )
-    katana.printConfiguration   ()
+   #katana.printConfiguration   ()
     katana.digitalInit          ()
    #katana.runNegociatePreRouted()
     katana.runGlobalRouter      ()
@@ -202,4 +216,15 @@ class PlaceRoute ( object ):
     katana.finalizeLayout()
     katana.destroy()
 
+    return
+
+
+  def save ( self ):
+    if not self.validated:
+      raise ErrorMessage( 1, 'chip.save(): Chip is not valid, aborting.' )
+      return
+
+    af = CRL.AllianceFramework.get()
+    af.saveCell( self.conf.cell  , CRL.Catalog.State.Views )
+    af.saveCell( self.conf.corona, CRL.Catalog.State.Views )
     return
