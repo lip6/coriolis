@@ -66,7 +66,8 @@ def credits ():
 
 def runScript ( scriptPath, editor ):
   try:
-      kw = { 'editor':editor }
+      kw = { }
+      if editor: kw[ 'editor' ] = editor
       sys.path.append(os.path.dirname(scriptPath))
     
       module = __import__( os.path.basename(scriptPath), globals(), locals() )
@@ -209,7 +210,9 @@ if __name__ == '__main__':
           ha.qtExec()
       else:
          # Run in command line mode.
-          kiteSuccess = False
+          if options.script: runScript(options.script,None)
+
+          kiteSuccess = True
           
           if runEtesianTool:
               etesian = Etesian.EtesianEngine.create(cell)

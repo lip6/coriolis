@@ -15,7 +15,6 @@
 # +-----------------------------------------------------------------+
 
 import sys
-import re
 import helpers
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage

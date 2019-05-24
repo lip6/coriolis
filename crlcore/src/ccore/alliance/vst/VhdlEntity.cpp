@@ -182,6 +182,8 @@ namespace Vhdl {
         error = "multiple right parenthesis";
       else if (leftpar >= rightpar)
         error = "left parenthesis *after* the right one";
+      else if (rightpar + 1 != name.size())
+        error = "malformed net name, right parenthesis is *not* the last character";
       else {
         size_t endindex = 0;
         int    value    = stoi( name.substr(leftpar+1), &endindex );

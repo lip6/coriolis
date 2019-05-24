@@ -14,26 +14,18 @@
 # |  Python      :       "./plugins/core2chip/cmos.py"              |
 # +-----------------------------------------------------------------+
 
-import sys
 import re
-import traceback
-import os
-import os.path
-import optparse
-import Cfg
-import Hurricane
-from   Hurricane  import DbU
-from   Hurricane  import DataBase
-from   Hurricane  import UpdateSession
-from   Hurricane  import Breakpoint
-from   Hurricane  import Transformation
-from   Hurricane  import Instance
-from   Hurricane  import Net
-import Viewer     
-import CRL        
-from   CRL        import Catalog
-from   CRL        import AllianceFramework
-from   helpers.io import ErrorMessage
+from   Hurricane            import DbU
+from   Hurricane            import DataBase
+from   Hurricane            import UpdateSession
+from   Hurricane            import Breakpoint
+from   Hurricane            import Transformation
+from   Hurricane            import Instance
+from   Hurricane            import Net
+import Viewer               
+from   CRL                  import Catalog
+from   CRL                  import AllianceFramework
+from   helpers.io           import ErrorMessage
 from   core2chip.CoreToChip import CoreToChip
 
 
@@ -60,6 +52,7 @@ class cmos ( CoreToChip ):
     def getNetType ( self, netName ):
         if netName.startswith('vss'): return Net.Type.GROUND
         if netName.startswith('vdd'): return Net.Type.POWER
+        if netName in ('cki', 'ck'):  return Net.Type.CLOCK
         return Net.Type.LOGICAL
 
     def isGlobal ( self, netName ):
@@ -76,8 +69,18 @@ class cmos ( CoreToChip ):
 
     def _buildGroundPads ( self, ioNet ):
         vssi = self.chip.getNet( 'vssi' )
+        vssi.setExternal( True )
+        vssi.setGlobal  ( True )
+        vssi.setType    ( Net.Type.GROUND )
         vssi.merge( ioNet.chipIntNet )
         ioNet.chipIntNet = vssi
+
+        vsse = self.chip.getNet( 'vsse' )
+        vsse.setExternal( True )
+        vsse.setGlobal  ( True )
+        vsse.setType    ( Net.Type.GROUND )
+        vsse.merge( ioNet.chipExtNet )
+        ioNet.chipExtNet = vsse
 
         ioNet.pads.append( Instance.create( self.chip
                                           , ioNet.padInstanceName + '_i_%d' % self.groundPadCount
@@ -96,8 +99,18 @@ class cmos ( CoreToChip ):
 
     def _buildPowerPads ( self, ioNet ):
         vddi = self.chip.getNet( 'vddi' )
+        vddi.setExternal( True )
+        vddi.setGlobal  ( True )
+        vddi.setType    ( Net.Type.POWER )
         vddi.merge( ioNet.chipIntNet )
         ioNet.chipIntNet = vddi
+
+        vdde = self.chip.getNet( 'vdde' )
+        vdde.setExternal( True )
+        vdde.setGlobal  ( True )
+        vdde.setType    ( Net.Type.POWER )
+        vdde.merge( ioNet.chipExtNet )
+        ioNet.chipExtNet = vdde
 
         ioNet.pads.append( Instance.create( self.chip
                                           , ioNet.padInstanceName + '_i_%d' % self.powerPadCount

@@ -11,33 +11,16 @@
 # |  Author      :                    Jean-Paul CHAPUT              |
 # |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 # | =============================================================== |
-# |  Python      :       "./plugins/coreToChip/Core2Chip.py"        |
+# |  Python      :       "./plugins/core2chip/Core2Chip.py"         |
 # +-----------------------------------------------------------------+
 
-import sys
 import re
-import traceback
-import os
-import os.path
-import optparse
-import Cfg
-import Hurricane
-from   Hurricane  import DbU
-from   Hurricane  import DataBase
 from   Hurricane  import UpdateSession
-from   Hurricane  import Breakpoint
-from   Hurricane  import Transformation
-from   Hurricane  import Instance
 from   Hurricane  import Net
-import Viewer     
-import CRL        
+from   Hurricane  import Instance
 from   CRL        import Catalog
 from   CRL        import AllianceFramework
 from   helpers.io import ErrorMessage
-import Etesian
-import Anabatic
-import Katana
-import Unicorn
 
 
 # -------------------------------------------------------------------
@@ -46,7 +29,7 @@ import Unicorn
 
 class IoNet ( object ):
 
-  reVHDLVector = re.compile( r'(?P<name>[^(]*)\((?P<index>[\d+])\)$' )
+  reVHDLVector = re.compile( r'(?P<name>[^(]*)\((?P<index>[\d]+)\)$' )
 
   def __init__ ( self, coreToChip, coreNet ):
       self.coreToChip  = coreToChip

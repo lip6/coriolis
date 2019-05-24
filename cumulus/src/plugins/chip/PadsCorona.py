@@ -15,6 +15,7 @@
 
 
 import sys
+import re
 from   operator   import itemgetter  
 import Cfg        
 from   Hurricane  import DbU
@@ -33,6 +34,7 @@ from   Hurricane  import Contact
 from   Hurricane  import Segment
 from   Hurricane  import Horizontal
 from   Hurricane  import Vertical
+from   Hurricane  import RoutingPad
 from   Hurricane  import Instance
 import CRL        
 from   CRL        import RoutingLayerGauge
@@ -426,6 +428,24 @@ class Side ( object ):
       padInstance.setPlacementStatus( Instance.PlacementStatus.FIXED )
 
       self.u += padInstance.getMasterCell().getAbutmentBox().getWidth()
+
+      if self.conf.getIoPadGauge().getName() == 'pxlib':
+        p = re.compile( r'p(?P<power>v[sd]{2}[ei])ck_px' )
+        m = p.match( padInstance.getMasterCell().getName() )
+
+        padName = 'pad'
+        if m: padName = m.group( 'power' )
+          
+        padNet = padInstance.getMasterCell().getNet( padName )
+        if padNet:
+          plug    = padInstance.getPlug( padNet )
+          chipNet = plug.getNet()
+
+          if not chipNet and padNet.isGlobal():
+            chipNet = padInstance.getCell().getNet( padNet.getName() )
+
+          if chipNet:
+            rp = RoutingPad.create( chipNet, Occurrence(plug), RoutingPad.BiggestArea )
       return
 
 
@@ -800,7 +820,6 @@ class CoreWire ( object ):
 
 class Corona ( object ):
 
-
   def __init__ ( self, conf ):
     def _cmpPad ( pad1, pad2):
       width1 = pad1.getAbutmentBox().getWidth()
@@ -966,7 +985,6 @@ class Corona ( object ):
         if bb.intersect(innerBb):
           lg    = rg.getLayerGauge( component.getLayer() )
           depth = lg.getDepth()
-          print 'depth:', depth, 'topLayerDepth:', self.conf.gaugeConf.topLayerDepth
           if depth > self.conf.gaugeConf.topLayerDepth: continue
 
           if lg.getDirection() == RoutingLayerGauge.Vertical:
@@ -1022,7 +1040,7 @@ class Corona ( object ):
 
     coronaSouthGap = 0
     for layerGauge in rg.getLayerGauges():
-      self.southSide.gap = max( self.southSide.gap, layerGauge.getPitch() * 2 )
+      self.southSide.gap = max( self.southSide.gap, layerGauge.getPitch() * 6 )
     self.northSide.gap = self.southSide.gap
     self.eastSide.gap  = self.southSide.gap
     self.westSide.gap  = self.southSide.gap
@@ -1039,7 +1057,6 @@ class Corona ( object ):
       padConnected  = 0
       doneInstances = []
       for chipPlug in chipIntNet.getPlugs():
-        print 'plug:', chipPlug
         doneInstances.append( chipPlug.getInstance() )
         padNet   = chipPlug.getMasterNet()
         padWires = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
@@ -1047,7 +1064,6 @@ class Corona ( object ):
           coreWires    += padWires
           padConnected += len(padWires)
 
-      print 'chipInNet:', chipIntNet
       if chipIntNet.isGlobal():
         for instance in self.conf.cell.getInstances():
           if instance in doneInstances: continue
@@ -1165,6 +1181,7 @@ class Corona ( object ):
     self.eastSide.doLayout()
     self.westSide.doLayout()
     self._placeInnerCorona()
+    self.conf.chip.setRouted( True )
 
     UpdateSession.close()
     return

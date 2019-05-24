@@ -141,11 +141,12 @@ class PlaceRoute ( object ):
     if not checkUnplaced.check(): return
 
     coreCk = None
-    for plug in self.conf.coronaCk.getPlugs():
-      if plug.getInstance() == self.conf.icore:
-        coreCk = plug.getMasterNet()
-    if not coreCk:
-      print WarningMessage( 'Core <%s> is not connected to chip clock.' % self.conf.icore.getName() )
+    if self.conf.coronaCk:
+      for plug in self.conf.coronaCk.getPlugs():
+        if plug.getInstance() == self.conf.icore:
+          coreCk = plug.getMasterNet()
+      if not coreCk:
+        print WarningMessage( 'Core <%s> is not connected to chip clock.' % self.conf.icore.getName() )
 
     if self.conf.useClockTree and coreCk:
       ht = clocktree.ClockTree.HTree.create( self.conf, coreCell, coreCk, coreCell.getAbutmentBox() )

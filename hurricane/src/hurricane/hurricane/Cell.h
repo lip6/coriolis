@@ -507,6 +507,7 @@ class Cell : public Entity {
     public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
     public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
+    public: void setRouted(bool isRouted) {_flags.set(Flags::Routed,isRouted);};
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
     public: void createRoutingPadRings(uint64_t flags=Flags::BuildRings);

@@ -308,10 +308,10 @@ def ResizeAb ( dx1, dy1, dx2, dy2 ) :
   global CELLS
   from st_model import CELLS
 
-  print "ResizeAb()", DbU.getValueString(dx1) \
-                    , DbU.getValueString(dy1) \
-                    , DbU.getValueString(dx2) \
-                    , DbU.getValueString(dy2)
+ #print "ResizeAb()", DbU.getValueString(dx1) \
+ #                  , DbU.getValueString(dy1) \
+ #                  , DbU.getValueString(dx2) \
+ #                  , DbU.getValueString(dy2)
 
   global MYSLICE, MYPITCH
   

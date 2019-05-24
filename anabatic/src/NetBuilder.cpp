@@ -389,7 +389,10 @@ namespace Anabatic {
     cdebug_log(145,0) << "* _fromHook:     " << fromHook << endl;
     cdebug_log(145,0) << "* _sourceContact:" << sourceContact << endl;
 
-    if (not _fromHook) return *this;
+    if (not _fromHook) {
+      cdebug_tabw(145,-1);
+      return *this;
+    }
 
     Segment* fromSegment = static_cast<Segment*>( _fromHook->getComponent() );
     _net = fromSegment->getNet();
@@ -933,70 +936,70 @@ namespace Anabatic {
 
   bool  NetBuilder::_do_xG ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG() method *not* reimplemented from base class." << endl;
+    throw Error( "%::_do_xG() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_2G ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_2G() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_2G() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_1Pad ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_1Pad() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_xG_1Pad() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1PinM2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_1G_1PinM2() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_1G_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_1PinM2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_1PinM2() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_xG_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1PinM3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_1G_1PinM3() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_1G_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_1PinM3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_1PinM3() method *not* reimplemented from base class." << endl;
+    throw Error( "%s::_do_xG_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1M1 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_1G_1M1() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_1G_1M1() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_2G_1M1 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_2G_1M1() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_2G_1M1() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_xM1 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_1G_xM1() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_1G_xM1() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
@@ -1010,49 +1013,49 @@ namespace Anabatic {
   
   bool  NetBuilder::_do_xG_xM1_xM3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_xM1_xM3() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_xG_xM1_xM3() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_1M1_1M2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_1M1_1M2() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_xG_1M1_1M2() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_4G_1M2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_4G_1M2() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_4G_1M2() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_xM2 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_xM2() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_xG_xM2() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_1G_1M3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_1G_1M3() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_1G_1M3() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_xG_xM3 ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_xG_xM3() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_xG_xM3() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 
   
   bool  NetBuilder::_do_globalSegment ()
   {
-    cdebug_log(145,0) << getTypeName() << "::_do_globalSegment() method *not* reimplemented from base class." << endl;
+    throw Error ( "%s::_do_globalSegment() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 

@@ -37,3 +37,6 @@ documentation/RDS/RDS.pdf
 documentation/RDS/RDS.tex
 documentation/RDS/RDS.toc
 
+cumulus/src/plugins/CoreToChip_c35b4.py
+cumulus/src/plugins/core2chip/c35b4.py
+

@@ -695,6 +695,8 @@ extern "C" {
   DirectGetBoolAttribute(PyCell_isUnique        ,         isUnique ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isUniquified    ,     isUniquified ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isUniquifyMaster, isUniquifyMaster ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isRouted        , isRouted         ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setRouted       , setRouted        ,PyCell,Cell)
 
   GetBoundStateAttribute(PyCell_isPyBound              ,PyCell,Cell)
 
@@ -733,10 +735,12 @@ extern "C" {
     , { "isUnique"            , (PyCFunction)PyCell_isUnique            , METH_NOARGS , "Returns true if the cell has one or less instance." }
     , { "isUniquified"        , (PyCFunction)PyCell_isUniquified        , METH_NOARGS , "Returns true if the cell is the result of an uniquification." }
     , { "isUniquifyMaster"    , (PyCFunction)PyCell_isUniquifyMaster    , METH_NOARGS , "Returns true if the cell is the reference for an uniquification." }
+    , { "isRouted"            , (PyCFunction)PyCell_isRouted            , METH_NOARGS , "Returns true if the cell is flagged as routed." }
     , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS , "Returns true if the cell is bounded to the hurricane cell" }    
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
     , { "setTerminal"         , (PyCFunction)PyCell_setTerminal         , METH_VARARGS, "Sets the cell terminal status." }
+    , { "setRouted"           , (PyCFunction)PyCell_setRouted           , METH_VARARGS, "Sets the cell routed status." }
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
     , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS

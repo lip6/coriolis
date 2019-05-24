@@ -108,7 +108,7 @@ def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
     s += textStackTrace( traceback.extract_tb( trace ) )
 
     if e:
-      s += '        Error was:'
+      s += '        Error was:\n'
       s += '          %s\n' % e
 
     if tryContinue:

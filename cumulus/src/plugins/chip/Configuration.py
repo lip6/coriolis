@@ -564,6 +564,9 @@ class ChipConf ( object ):
     @property
     def core  ( self ): return self.cores[0].getMasterCell()
 
+    @property
+    def chip  ( self ): return self.cell
+
 
     def getInstanceAb ( self, instance ):
       ab = instance.getMasterCell().getAbutmentBox()
