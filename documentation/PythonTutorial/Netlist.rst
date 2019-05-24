@@ -40,10 +40,10 @@ parameters:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 An Instance_ as one Plug_ for each external net of the *master cell*.
-The plug allows to create a **logical** connexion bewteen a Net_ of
+The plug allows to create a **logical** connection bewteen a Net_ of
 ``fulladder`` and a net from an Instance_ *master cell*.
 
-A plug is somewhat equivalent to an *instance terminal* in others
+A plug is somewhat equivalent to an *instance terminal* in other
 well known databases.
 
 Therefore, a plug is related to two nets:
@@ -54,13 +54,13 @@ Therefore, a plug is related to two nets:
 
 #. The net of ``fulladder`` the plug is connected to. This can
    be set, it is how we build the netlist. To set the net, use
-   the function ``plug.setNet( net )``. It the argument is ``None``,
+   the function ``plug.setNet( net )``. If the argument is ``None``,
    the plug is *disconnected*.
 
 To find the plug of an instance associated to a given net in
 the *master cell*, use ``instance.getPlug( masterNet )``.
 The ``masterNet`` argument being an object of class net (not
-it's name).
+its name).
 
 Building the :cb:`a` net of ``fulladder``:
 
@@ -81,7 +81,7 @@ Building the :cb:`a` net of ``fulladder``:
 	  terminals). There is a strict bijection between external
 	  nets and plugs.
 
-	  While it may be restrictive, it enforce cleaner designs
+	  While it may be restrictive, it enforces cleaner designs
           and make it possible for the HyperNet_ concept/class.
 
 
@@ -112,7 +112,7 @@ until it is placed.
 --------------------
 
 To place an Instance, we apply a Transformation_ to the coordinate system
-of the *master cell*. A transformation is composed of two operations :
+of the *master cell*. A transformation is composed of two operations:
 
 #. An Orientation_, which can be a symmetry or a rotation (or a combination
    of those two). The Orientation **is applied first** to the coordinate
@@ -124,7 +124,7 @@ of the *master cell*. A transformation is composed of two operations :
 
 The transformation is a change of coordinate system, be aware that if the
 abutment box lower left corner of the *master* cell is **not** at ``(0,0)``
-the result of the Transformation may not be what you expect. To simplificate
+the result of the Transformation may not be what you expect. To simplify
 the computation of the transformation of an instance, always place the
 lower left corner of the abutment box at ``(0,0)``
 
@@ -138,7 +138,7 @@ that the abutment box lower left corner is at ``(0,0)`` (same for the
 instance to left of the second row.
 
 Setting the translation on an Instance_ is not enough to make it be displayed,
-we also must set it's *placement status* to ``Instance.PlacementStatus.PLACED``. 
+we also must set its *placement status* to ``Instance.PlacementStatus.PLACED``. 
 
 .. code-block:: Python
 
@@ -151,15 +151,15 @@ we also must set it's *placement status* to ``Instance.PlacementStatus.PLACED``.
 6.4.3 Nets -- From Plugs to RoutingPads
 ---------------------------------------
 
-As was stated before, Plugs_ represent a logical connexion between two
-levels of hierarchy. To make the physical connexion to the *master net*
+As was stated before, Plugs_ represent a logical connection between two
+levels of hierarchy. To make the physical connection to the *master net*
 in the instance, we now must create, in the ``fulladder``, a special
 component which is a kind of *reference* to a component of the
 *master net* (in the master cell).
 
 The so called *special component* is a RoutingPad_.
 
-The ``RoutingPad`` can be considered as an equivalent to ``pin`` in others
+The ``RoutingPad`` can be considered as an equivalent to ``pin`` in other
 well known databases.
 
 .. code-block:: Python
@@ -169,9 +169,9 @@ well known databases.
 			 , RoutingPad.BiggestArea )
 
 For the second parameter, we must pass an Occurrence_. Occurrence objects will
-be explained in detail later, for now, suffice to say that we must construct the
+be explained in detail later, for now, let say that we must construct the
 Occurrence object with one parameter : the Plug_ for which we want to create a
-physical connexion.
+physical connection.
 
 The RoutingPad_ ``rp`` will be a component of the ``a`` net.
 
@@ -179,7 +179,7 @@ The third argument ask the constructor of the RoutingPad_ to select in the
 master net, the component which has the biggest area.
 
 .. note:: **Component selection.** Not all the components of a net can be
-	  selected for connexion through a RoutingPad_. The candidates must
+	  selected for connection through a RoutingPad_. The candidates must
 	  have been flagged with the NetExternalComponents_ class.
 
 	  See `3.6.3 Creating a Component`_.

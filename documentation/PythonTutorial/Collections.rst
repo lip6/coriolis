@@ -9,7 +9,7 @@
 4. Manipulating Cells, Nets and Components
 ==========================================
 
-In this part, we well show how to navigate through the Nets_ and Components_ of a Cell_.
+In this part, we will show how to navigate through the Nets_ and Components_ of a Cell_.
 
 
 4.1 Hurricane Collections
@@ -48,8 +48,8 @@ In C++ we would have written:
 **Never delete or create an element while you are iterating over a Collection.**
 
 Results can be unpredictable, you may just end up with a core dump, but more
-subtly, some element of the Collection_ may be skippeds or processed twice.
-If you want to create or delete en element, do it outside of the collection
+subtly, some element of the Collection_ may be skipped or processed twice.
+If you want to create or delete an element, do it outside the collection
 loop. For example:
 
 .. code-block:: Python
@@ -78,12 +78,12 @@ the ``getCell()`` call wil be:
              disk since it was first loaded.  Conversely, if the Cell_ has been
              modified in memory, you will get those modifications.
 
-#. Search, in the ordered list of libraries, the first Cell_ that match the
+#. Search, in the ordered list of libraries, the first Cell_ that matches the
    requested name.
 
-   .. note:: It means that if cells with the same name exists in different
+   .. note:: It means that if cells with the same name exist in different
 	     libraries, only the one in the first library will be ever used.
-	     Be also weary of cell files that may remains in the ``WORK_LIB``,
+	     Be also weary of cell files that may remain in the ``WORK_LIB``,
 	     they may unexpectedly shadow cells from the libraries.
 	     
 
