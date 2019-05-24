@@ -12,7 +12,7 @@ Installation
    As the sources are being released, the binary packaging is dropped.
    You still may find older version here: http://asim.lip6.fr/pub/coriolis/2.0 .
 
-In a nutshell, building source consist in pulling the |git| repository then
+In a nutshell, building source consistis in pulling the |git| repository then
 running the |ccb| installer. 
 
 Main building prerequisites:
@@ -47,7 +47,7 @@ For other distributions, refer to their own packaging system.
 Fixed Directory Tree
 ~~~~~~~~~~~~~~~~~~~~
 
-In order to simplificate the work of the |ccb| installer, the source, build
+In order to simplify the work of the |ccb| installer, the source, build
 and installation tree is fixed. To successfully compile |Coriolis| you must
 follow it exactly. The tree is relative to the home directory of the user
 building it (noted :fboxtt:`~/` or :fboxtt:`$HOME/`). Only the source
@@ -124,8 +124,8 @@ Third and final step, build & install: ::
                                        --project=coriolis \
                                        --doc --make="-j1 install"
 
-We need to separate to perform a separate installation of the documentation because it
-do not support to be generated with a parallel build. So we compile & install in a first
+We need to perform a separate installation of the documentation because it
+does not support to be generated with a parallel build. So we compile & install in a first
 stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset|, the version is to
@@ -156,7 +156,7 @@ In the |Coriolis| |git| repository, two branches are present:
       dummy@lepka:src> ./bootstrap/ccb.py --project=coriolis \
                                           --make="-j4 install" --debug
 
-  Be aware that it may requires newer versions of the dependencies and may introduce
+  Be aware that it may require newer versions of the dependencies and may introduce
   incompatibilites with the stable version.
 
   In the (unlikely) event of a crash of |cgt|, as it is a |Python| script, the right
@@ -187,11 +187,11 @@ Then proceed with the generic install instructions.
 Packaging Coriolis
 ~~~~~~~~~~~~~~~~~~
 
-Packager should not uses |ccb|, instead ``bootstrap/Makefile.package`` is provided
+Packager should not use |ccb|, instead ``bootstrap/Makefile.package`` is provided
 to emulate a top-level ``autotool`` makefile. Just copy it in the root of the
 |Coriolis| git repository (``~/corriolis-2.x/src/coriolis/``) and build.
 
-Sligthly outaded packaging configuration files can also be found under ``bootstrap/``:
+Sligthly outdated packaging configuration files can also be found under ``bootstrap/``:
 
 * ``bootstrap/coriolis2.spec.in`` for |rpm| based distributions.
 * ``bootstrap/debian`` for |Debian| based distributions.
