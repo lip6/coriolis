@@ -29,6 +29,8 @@
 .. |LGPL|                           replace:: :sc:`lgpl`
 .. |GPL|                            replace:: :sc:`gpl`
 .. |UPMC|                           replace:: :sc:`upmc`
+.. |SorbonneUniversite|             replace:: :sc:`Sorbonne Université`
+.. |SU|                             replace:: :sc:`su`
 .. |Bull|                           replace:: :sc:`Bull`
 .. |Cadence|                        replace:: :sc:`Cadence`
 .. |Si2|                            replace:: :sc:`Si2`
@@ -38,6 +40,7 @@
 .. |Flute|                          replace:: :sc:`Flute`
 .. |MacOS|                          replace:: :sc:`MacOS`
 .. |Darwin|                         replace:: :sc:`Darwin`
+.. |RHEL|                           replace:: :sc:`rhel`
 .. |RHEL6|                          replace:: :sc:`rhel6`
 .. |RHEL7|                          replace:: :sc:`rhel7`
 .. |SL6|                            replace:: :sc:`Scientific Linux 6`
@@ -46,6 +49,7 @@
 .. |RedHat|                         replace:: :sc:`RedHat`
 .. |Fedora|                         replace:: :sc:`Fedora`
 .. |FC13|                           replace:: :sc:`fc13`
+.. |EPEL|                           replace:: :sc:`epel`
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MOSIS|                          replace:: :sc:`mosis`
@@ -78,6 +82,7 @@
 .. |Coriolis|                       replace:: :sc:`Coriolis`
 .. |Coriolis1|                      replace:: :sc:`Coriolis 1`
 .. |Coriolis2|                      replace:: :sc:`Coriolis 2`
+.. |alliance-check-toolkit|         replace:: ``alliance-check-toolkit``
 .. |VLSISAPD|                       replace:: :sc:`vlsisapd`
 .. |CRLcore|                        replace:: :sc:`CRLcore`
 .. |Cyclop|                         replace:: :sc:`Cyclop`
@@ -113,6 +118,7 @@
 .. |git|                            replace:: :cb:`git`
 .. |rpm|                            replace:: :cb:`rpm`
 .. |gdb|                            replace:: :cb:`gdb`
+.. |valgrind|                       replace:: :cb:`valgrind`
 .. |cmake|                          replace:: :cb:`cmake`
 .. |struct|                         replace:: :cb:`struct`
 

@@ -2,23 +2,28 @@
 
 .. include:: ../etc/definitions.rst
 
-|newpage|
-
 
 Installation
 ============
 
 .. note::
    As the sources are being released, the binary packaging is dropped.
-   You still may find older version here: http://asim.lip6.fr/pub/coriolis/2.0 .
+   You may still find (very) old versions here: http://asim.lip6.fr/pub/coriolis/2.0 .
 
 In a nutshell, building source consist in pulling the |git| repository then
 running the |ccb| installer. 
+
+.. note::
+   The documentation is already generated and commited in the |git| tree.
+   You may not install the additional prerequisites for the documentation.
+   By default the documentation is not generated, just installed by |ccb|.
+   If you really want to re-generate it, add the ``--doc`` flag to |ccb|.
 
 Main building prerequisites:
 
 * cmake
 * C++11-capable compiler
+* BFD library (provided through ``binutils``).
 * RapidJSON_
 * python2.7
 * boost
@@ -26,12 +31,12 @@ Main building prerequisites:
 * bzip2
 * yacc & lex
 * Qt 4 or Qt 5
+* Qwt
 
 Building documentation prerequisites:
 
 * doxygen
 * latex
-* latex2html
 * python-docutils (for reStructuredText)
 
 The following libraries gets directly bundled with |Coriolis|:
@@ -40,8 +45,6 @@ The following libraries gets directly bundled with |Coriolis|:
 * FLUTE (from `Chris C. N. Chu <http://home.eng.iastate.edu/~cnchu/flute.html>`_)
 
 For other distributions, refer to their own packaging system.
-
-|newpage|
 
 
 Fixed Directory Tree
@@ -94,77 +97,170 @@ automatically created either by |ccb| or the build system.
    ``Static`` do not work because I don't know yet to mix statically linked binaries
    and Python modules (which must be dynamic).
 
-|newpage|
-
 
 Building Coriolis
 ~~~~~~~~~~~~~~~~~
 
-First step is to install the prerequisites. Currently, only RapidJSON_.
-As RapidJSON is evolving fast, if you encounter compatibility problems,
-the exact version we compiled against is given below. ::
+The actively developed branch
+-----------------------------
 
-   dummy@lepka:~> mkdir -p ~/coriolis-2.x/src/support
-   dummy@lepka:~> cd ~/coriolis-2.x/src/support
-   dummy@lepka:~> git clone http://github.com/miloyip/rapidjson
-   dummy@lepka:~> git checkout ec322005072076ef53984462fb4a1075c27c7dfd
+For an intermediary period, the branch under active development you must use is
+**devel_anabatic** ::
 
-The second step is to create the source directory and pull the |git| repository: ::
+   dummy@lepka:coriolis> git checkout devel_anabatic
 
-   dummy@lepka:~> mkdir -p ~/coriolis-2.x/src
-   dummy@lepka:~> cd ~/coriolis-2.x/src
-   dummy@lepka:~> git clone https://www-soc.lip6.fr/git/coriolis.git
 
-Third and final step, build & install: ::
+Installing on |RedHat| or compatible distributions
+--------------------------------------------------
 
-   dummy@lepka:src> ./bootstrap/ccb.py --project=support  \
-                                       --project=coriolis \
-                                       --make="-j4 install"
-   dummy@lepka:src> ./bootstrap/ccb.py --project=support  \
-                                       --project=coriolis \
-                                       --doc --make="-j1 install"
+1. Install or check that the required prerequisites are installeds : ::
+ 
+       dummy@lepka:~> yum install -y git cmake bison flex gcc-c++ libstdc++-devel  \
+                                     binutils-devel                                \
+                                     boost-devel boost-python boost-filesystem     \
+				     boost-regex  boost-wave                       \
+                                     python-devel libxml2-devel bzip2-devel        \
+                                     qt5-qtbase-devel qt5-qtsvg-devel              # Qt 5.
+   
+   The package ``qwt-qt5-devel`` and it's dependency ``qwt-qt5`` are not provided
+   by any standard repository (like |EPEL|). You may download them from the
+   `LIP6 Addons Repository <https://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview/letter_q.group.html>`_
+   Then run: ::
+   
+        dummy@lepka:~> yum localinstall -y qwt-qt5-6.1.2-4.fc23.x86_64.rpm  \
+                                           qwt-qt5-6.1.2-4.fc23.x86_64.rpm  # Qwt for Qt 5.
+  
 
-We need to separate to perform a separate installation of the documentation because it
-do not support to be generated with a parallel build. So we compile & install in a first
-stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
+2. Install the unpackaged prerequisites. Currently, only RapidJSON_. ::
+
+       dummy@lepka:~> mkdir -p ~/coriolis-2.x/src/support
+       dummy@lepka:support> cd ~/coriolis-2.x/src/support
+       dummy@lepka:support> git clone http://github.com/miloyip/rapidjson
+
+
+3. Create the source directory and pull the |git| repository: ::
+
+       dummy@lepka:~> mkdir -p ~/coriolis-2.x/src
+       dummy@lepka:src> cd ~/coriolis-2.x/src
+       dummy@lepka:src> git clone https://www-soc.lip6.fr/git/coriolis.git
+
+4. Build & install: ::
+
+       dummy@lepka:src> cd coriolis
+       dummy@lepka:coriolis> git checkout devel_anabatic
+       dummy@lepka:coriolis> ./bootstrap/ccb.py --project=support  \
+                                                --project=coriolis \
+                                                --qt5              \
+                                                --make="-j4 install"
+
+.. note::
+   Pre-generated documentation will get installed by the previous command.
+   Only if you did made modifications to it you need to regenerate it with:  ::
+  
+       dummy@lepka:coriolis> ./bootstrap/ccb.py --project=support  \
+                                                --project=coriolis \
+                                                --doc --make="-j1 install"
+    
+   We need to perform a separate installation of the documentation because it
+   do not support to be generated with a parallel build. So we compile & install in a first
+   stage in ``-j4`` (or whatever) then we generate the documentation in ``-j1``
 
 Under |RHEL6| or clones, you must build using the |devtoolset|, the version is to
 be given as argument: ::
 
-   dummy@lepka:src> ./bootstrap/ccb.py --project=coriolis \
-                                       --devtoolset=8 --make="-j4 install"
+   dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
+                                            --devtoolset=8 --make="-j4 install"
 
-If you want to uses Qt 5 instead of Qt 4, you may add the ``--qt5`` argument.
+If you want to uses Qt 4 instead of Qt 5 modify the previous steps as follow:
+
+* At **step 1**, do not install the |QT| 5 related development packages (``qt5-qtbase-devel``
+  and ``qt5-qtsvg-devel``), but instead: ::
+
+       dummy@lepka:~> yum install -y git qt-devel qwt-devel  # Qt 4
+
+  Note, that the ``Qwt`` packages are directly availables from the standart distribution
+  when using |Qt| 4.
+
+* At **step 4**, remove the ``--qt5`` arguments to the ``ccb.py`` command line.
+
+Be aware that, under |RHEL| 7 or clones, there is a bug in |Qt| 4 that makes diagonal
+lines appears whenever a filled rectangle is not fully included in the displayed area.
+This may be misleading when visualising a layout...
 
 The complete list of |ccb| functionalities can be accessed with the ``--help`` argument.
 It also may be run in graphical mode (``--gui``).
 
 
-Building the Devel Branch
--------------------------
+Building a Debug Enabled Version
+--------------------------------
 
-In the |Coriolis| |git| repository, two branches are present:
+The ``Release.Shared`` default version of the |Coriolis| is build stripped of symbols
+and optimized so that it makes analysing a core dump after a crash difficult. In the
+(unlikely) case of a crash, you may want to build, alongside the optimized version,
+a debug one which allow forensic examination by |gdb| (or |valgrind| or whatever).
 
-* The :cb:`master` branch, which contains the latest stable version. This is the 
-  one used by default if you follow the above instructions.
+Run again ``ccb.py``, adding the ``--debug`` argument: ::
 
-* The :cb:`devel` branch, which obviously contains the latest commits from the
-  development team. To use it instead of the :cb:`master` one, do the following
-  command just after the first step: ::
+    dummy@lepka:coriolis> ./bootstrap/ccb.py --project=support  \
+                                             --project=coriolis \
+                                             --qt5              \
+                                             --make="-j4 install" --debug
 
-      dummy@lepka:~> git checkout devel
-      dummy@lepka:src> ./bootstrap/ccb.py --project=coriolis \
-                                          --make="-j4 install" --debug
 
-  Be aware that it may requires newer versions of the dependencies and may introduce
-  incompatibilites with the stable version.
+As |cgt| is a |Python| script, the right command to run |gdb| is: ::
 
-  In the (unlikely) event of a crash of |cgt|, as it is a |Python| script, the right
-  command to run |gdb| on it is: ::
+    dummy@lepka:work> gdb python core.XXXX 
 
-      dummy@lepka:work> gdb python core.XXXX 
+
+.. Building the Devel Branch
+.. -------------------------
+.. 
+.. In the |Coriolis| |git| repository, two branches are present:
+.. 
+.. * The :cb:`master` branch, which contains the latest stable version. This is the 
+..   one used by default if you follow the above instructions.
+.. 
+.. * The :cb:`devel` branch, which obviously contains the latest commits from the
+..   development team. To use it instead of the :cb:`master` one, do the following
+..   command just after the first step: ::
+.. 
+..       dummy@lepka:coriolis> git checkout devel
+..       dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
+..                                                --make="-j4 install" --debug
+.. 
+..   Be aware that it may requires newer versions of the dependencies and may introduce
+..   incompatibilites with the stable version.
 
 |newpage|
+
+
+Installing on |Debian| 9, |Ubuntu| 18 or compatible distributions
+-----------------------------------------------------------------
+
+First, install or check that the required prerequisites are installeds : ::
+
+   dummy@lepka:~> sudo apt install -y build-essential binutils-dev                     \
+                                      git cmake bison flex gcc python-dev              \
+                                      libboost-all-dev libboost-python-dev             \
+                                      libbz2-dev libxml2-dev rapidjson-dev libbz2-dev  \
+				      qt4-dev-tools libqwt5-qt4-dev                    \ # Qt 4
+				      qtbase5-dev libqt5svg5-dev libqwt-qt5-dev        \ # Qt 5
+                                      doxygen dvipng graphviz python-sphinx            \
+                                      texlive-fonts-extra texlive-lang-french
+
+Second step is to create the source directory and pull the |git| repository: ::
+
+   dummy@lepka:~> mkdir -p ~/coriolis-2.x/src
+   dummy@lepka:src> cd ~/coriolis-2.x/src
+   dummy@lepka:src> git clone https://www-soc.lip6.fr/git/coriolis.git
+
+Third and final step, build & install: ::
+
+   dummy@lepka:src> cd coriolis
+   dummy@lepka:coriolis> git checkout devel_anabatic
+   dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
+                                            --qt5              \
+                                            --make="-j4 install"
 
 
 Additionnal Requirement under |MacOS|
@@ -223,7 +319,7 @@ Use it like this: ::
     dummy@lepka:~> eval `~/coriolis-2.x/src/coriolis/bootstrap/coriolisEnv.py`
 
 .. note:: **Do not call that script in your environement initialisation.**
-   When used under |RHEL6| or clones, it needs to be run in the |devtoolset2|
+   When used under |RHEL6| or clones, it needs to be run in the |devtoolset|
    environement. The script then launch a new shell, which may cause an
    infinite loop if it's called again in, say :cb:`~/.bashrc`.
 

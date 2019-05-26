@@ -42,14 +42,14 @@ Credits & License
 
 |medskip|
 
-The |Hurricane| data-base is copyright© |Bull| 2000-2018 and is
+The |Hurricane| data-base is copyright© |Bull| 2000-2019 and is
 released under the terms of the |LGPL| license. All other tools are
-copyright© |UPMC| 2008-2018 and released under the |GPL|
-license.
+copyright© |UPMC| 2008-2018, |SorbonneUniversite| 2018-2019
+and released under the |GPL| license.
 
 Others important contributors to |Coriolis| are Christophe |Alexandre|,
 Hugo |Clement|, Marek |Sroka| and Wu |Yifei|.
 
-The |Knik| router makes use of the |Flute| software, which is
+The |Katana| router makes use of the |Flute| software, which is
 copyright© Chris C. N. |Chu| from the Iowa State University
 (http://home.eng.iastate.edu/~cnchu/).

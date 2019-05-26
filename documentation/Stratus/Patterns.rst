@@ -3,9 +3,6 @@ Patterns module User's Guide
 ============================
 Roselyne Chotin-Avot
 
-.. toctree::
-   :maxdepth: 2
-
 
 Description
 ===========

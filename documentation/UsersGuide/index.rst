@@ -15,6 +15,7 @@ Printable version of this document `UsersGuide.pdf <../../../pdf/main/UsersGuide
 
    LicenseCredits.rst
    Releases.rst
+   DesignFlow.rst
    Installation.rst
    Configuration.rst
    ViewerTools.rst

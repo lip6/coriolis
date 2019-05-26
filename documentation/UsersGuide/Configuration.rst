@@ -12,8 +12,6 @@
                                     :align: middle
                                     :width: 60%
 
-|newpage|
-
 
 Coriolis Configuration & Initialisation
 =======================================
@@ -51,8 +49,6 @@ Configuration is done in two stages:
 #. Selecting the technology.
 #. Loading the complete configuration for the given technology
    and the user's settings.
-
-|newpage|
 
 
 First Stage: Technology Selection
@@ -135,8 +131,6 @@ simple assembly of tuples. The helpers are installed under the directory: ::
 
 Where :cb:`<install>/` is the root of the installation.
 
-|newpage|
-
 
 .. _Alliance Helper:
 
@@ -187,6 +181,8 @@ variable, and if not found, default to ``/soc/alliance``.
         , ( 'BLOCKAGE'           , '^blockage[Nn]et*')
         , ( 'PAD'                , '.*_px$')
         )
+
+|newpage|
 
 
 |noindent| The example above shows the system configuration file, with all the
@@ -265,6 +261,9 @@ configuration files are defined:
 * :cb:`kite.conf`: for the |Kite| tool.
 * :cb:`stratus1.conf`: for the |stratus1| tool.
 
+|newpage|
+
+
 Here is the contents of :cb:`etesian.conf`: ::
 
     # Etesian parameters.
@@ -300,8 +299,6 @@ Here is the contents of :cb:`etesian.conf`: ::
         , (TypeOption, "etesian.graphics"      , "Placement view"       , 1 )
         , (TypeRule  ,)
         )
-
-|newpage|
 
 
 Taxonomy of the file:

@@ -4,9 +4,6 @@ Stratus User's Guide
 Sophie Belloeil
 
 
-.. toctree::
-   :maxdepth: 2
-
 Introduction
 ============
 
