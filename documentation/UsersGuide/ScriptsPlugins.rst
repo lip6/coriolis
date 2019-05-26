@@ -27,7 +27,7 @@ either languages.
 A script could be run directly in text mode from the command line or through
 the graphical interface (see :ref:`Python Scripts in Cgt`).
 
-Asides for this requirement, the python script can contain anything valid
+Aside for this requirement, the python script can contain anything valid
 in |Python|, so don't hesitate to use any package or extention.
 
 Small example of Python/Stratus script: ::
@@ -104,7 +104,7 @@ The top-level hierarchy must contains the instances of all the I/O pads and
 
 |bcenter| |ChipStructure-1| |ecenter|
 
-The designer must provide a configuration file that define the rules for the
+The designer must provide a configuration file that defines the rules for the
 placement of the top-level hierarchy (that is, the pads and the core).
 This file must be named after the chip's name, by appending ``_chip.py``
 (obviously, it is a |Python| file). For instance if the chip netlist file
@@ -230,11 +230,11 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 Clock Tree
 ----------
 
-Insert a clock tree into a block. The clock tree uses the H strategy.
+Inserts a clock tree into a block. The clock tree uses the H strategy.
 The clock net is splitted into sub-nets, one for each branch of the
 tree.
 
-* On **chips** design, the sub-nets are createds in the model of the
+* On **chip** design, the sub-nets are created in the model of the
   core block (then trans-hierarchically flattened to be shown at
   chip level).
 * On **blocks**, the sub nets are created directly in the top block.
@@ -251,21 +251,21 @@ tree.
 
 The clock tree plugin works in four steps:
 
-#. Build the clock tree: creates the top-block abutment box, compute the
-   levels of H tree neededs and place the clock buffers.
+#. Builds the clock tree: creates the top-block abutment box, compute the
+   required levels of H tree and places the clock buffers.
 #. Once the clock buffers are placed, calls the placer (|etesian|) to place
-   the ordinary standart cells, whithout disturbing clock H-tree buffers.
+   the ordinary standard cells, whithout disturbing clock H-tree buffers.
 #. At this point we know the exact positions of all the DFFs, so we can
    connect them to the nearest H-tree leaf clock signal.
-#. Leaf clock signals that are not connecteds to any DFFs are removed.
+#. Leaf clock signals that are not connected to any DFFs are removed.
 
 Netlist reorganisation:
 
-* Obviously the top block or chip core model netlist is modificated to
-  contains all the clock sub-nets. The interface is *not* changed.
+* Obviously the top block or chip core model netlist is modified to
+  contain all the clock sub-nets. The interface is *not* changed.
 * If the top block contains instances of other models *and* those models
-  contains DFFs that get re-connecteds to the clock sub-nets (from the
-  top level). Change both the model netlist and interface to propagate
+  contain DFFs that get re-connected to the clock sub-nets (from the
+  top level). Changes both the model netlist and interface to propagate
   the relevant clock sub-nets to the instanciated model. The new model
   with the added clock signal is renamed with a ``_clocked`` suffix.
   For example, the sub-block model ``ram.vst`` will become ``ram_clocked.vst``.
@@ -273,7 +273,7 @@ Netlist reorganisation:
 .. note::
   If you are to re-run the clock tree plugin on a netlist, be careful
   to erase any previously generated ``_clocked`` file (both netlist and
-  layout: ``rm *.clocked.{ap,vst}``). And restart |cgt| to clear it's
+  layout: ``rm *.clocked.{ap,vst}``). And restart |cgt| to clear its
   memory cache.
 
 Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plugins.conf``.
@@ -303,8 +303,8 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 Recursive-Save (RSave)
 ----------------------
 
-Perform a recursive top down save of all the models from the top cell
-loaded in |cgt|. Force a write of any non-terminal model. This plugin is used
+Performs a recursive top down save of all the models from the top cell
+loaded in |cgt|. Forces a write of any non-terminal model. This plugin is used
 by the clock tree plugin after the netlist clock sub-nets creation.
 
 

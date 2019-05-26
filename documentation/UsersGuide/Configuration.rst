@@ -20,7 +20,7 @@ Coriolis Configuration & Initialisation
 General Software Architecture
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-|Coriolis| has been build with respect of the classical paradigm that the
+|Coriolis| has been built with respect of the classical paradigm that the
 computational instensive parts have been written in C++, and almost
 everything else in |Python|. To build the |Python| interface we used
 two methods:
@@ -67,7 +67,7 @@ The initialization process is done by executing, in order, the following file(s)
 | **3** | The user's local setting         | :cb:`<CWD>/.coriolis2/techno.py`             |
 +-------+----------------------------------+----------------------------------------------+
 
-Thoses files must provides only one variable, the name of the technology. Each technology
+Those files must provide only one variable, the name of the technology. Each technology
 will provide configuration for both the symbolic part and the real part. |Coriolis| can
 work with purely symbolic technology (``symbolic/cmos``) in that case, the real technology
 part is a dummy one.
@@ -85,9 +85,9 @@ Second Stage: Technology Configuration Loading
 |noindent|
 The :cb:`technology` variable is set by the first stage and it's the name of the
 technology. A directory of that name, with all the configuration files,
-must exists in the configuration directory (:cb:`/etc/coriolis2`).
+must exist in the configuration directory (:cb:`/etc/coriolis2`).
 In addition to the technology-specific directories, a :cb:`common/` directory is
-there to provides a trunk for all the identical datas across the various technologies.
+there to provide a trunk for all the identical data across the various technologies.
 The initialization process is done by executing, in order, the following file(s):
 
 +-------+----------------------------------+-----------------------------------------------+
@@ -186,9 +186,9 @@ variable, and if not found, default to ``/soc/alliance``.
 
 
 |noindent| The example above shows the system configuration file, with all the
-available settings. Some important remarks about thoses settings:
+available settings. Some important remarks about those settings:
 
-* In it's configuration file, the user do not need to redefine all the settings,
+* In its configuration file, the user does not need to redefine all the settings,
   just the one he wants to change. In most of the cases, the ``SYSTEM_LIBRARY``,
   the ``WORKING_LIBRARY`` and the special net names (at this point there is not
   much alternatives for the others settings).
@@ -205,25 +205,25 @@ available settings. Some important remarks about thoses settings:
     it, whithout changing the search path order. If no library of that name
     already exists, it is appended.
 
-  A library is identified by it's name, this name is the last component of the
+  A library is identified by its name, this name is the last component of the
   path name. For instance: ``/soc/alliance/sxlib`` will be named ``sxlib``.
   Implementing the |Alliance| specification, when looking for a |Cell| ``name``,
-  the system will browse sequentially trought the library list and returns
+  the system will browse sequentially through the library list and returns
   the first |Cell| whose name match.
 
 * For ``POWER``, ``GROUND``, ``CLOCK`` and ``BLOCKAGE`` net names, a regular
   expression (|GNU| regexp) is expected.
 
 .. * The ``helpers.sysConfDir`` variable is supplied by the helpers, it is the
-..   directory in which the system-wide configuration files are locateds.
+..   directory in which the system-wide configuration files are located.
 ..   For a standard installation it would be: ``/soc/coriolis2``.
 .. 
 .. .. * Trick and naming convention about ``SYMBOLIC_TECHNOLOGY``, ``REAL_TECHNOLOGY``
-..   and ``DISPLAY``. In the previous releases, thoses files where to read by
+..   and ``DISPLAY``. In the previous releases, those files were to be read by
 ..   XML parsers, and still do if you triggers the XML compatibility mode.
 ..   But now, they have Python conterparts. In the configuration files, you
 ..   still have to name them as XML files, the Python file name will be
-..   deduced from this one with thoses two translation rules: 
+..   deduced from this one with those two translation rules: 
 .. 
 ..   #. In the filename, all dots, except for the last (the file extention), 
 ..      are replaced by underscores.
@@ -252,11 +252,11 @@ A typical user's configuration file would be: ::
 Tools Configuration Helpers
 ---------------------------
 
-All the tools uses the same helper to load their configuration (a.k.a. 
+All the tools use the same helper to load their configuration (a.k.a. 
 *Configuration Helper*). Currently the following configuration system-wide
 configuration files are defined:
 
-* :cb:`misc.conf`: commons settings or not belonging specifically to a tool.
+* :cb:`misc.conf`: common settings or not belonging specifically to a tool.
 * :cb:`etesian.conf`: for the |Etesian| tool.
 * :cb:`kite.conf`: for the |Kite| tool.
 * :cb:`stratus1.conf`: for the |stratus1| tool.
@@ -303,18 +303,18 @@ Here is the contents of :cb:`etesian.conf`: ::
 
 Taxonomy of the file:
 
-* It must contains, at least, the two tables:
+* It must contain, at least, the two tables:
 
-  * ``parametersTable``, defines & initialise the configuration variables.
+  * ``parametersTable``, defines & initialises the configuration variables.
 
   * ``layoutTables``, defines how the various parameters will be displayed
     in the configuration window (:ref:`The Settings Tab`).
 
 * The ``parametersTable``, is a tuple (list) of tuples. Each entry in the list
-  describe a configuration parameter. In it's simplest form, it's a quadruplet
+  describes a configuration parameter. In its simplest form, it's a quadruplet
   :cb:`(TypeOption, 'paramId', ParameterType, DefaultValue)` with:
 
-  #. ``TypeOption``, tells that this tuple describe a parameter.
+  #. ``TypeOption``, tells that this tuple describes a parameter.
 
   #. ``paramId``, the identifier of the parameter. Identifiers are defined
      by the tools. The list of parameters is detailed in each tool section.
@@ -334,7 +334,7 @@ Taxonomy of the file:
 Hacking the Configuration Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Asides from the symbols that gets used by the configuration helpers like
+Aside from the symbols that get used by the configuration helpers like
 :cb:`allianceConfig` or :cb:`parametersTable`, you can put pretty much anything
 in :cb:`<CWD>/.coriolis2/settings.py` (that is, written in |Python|).
 

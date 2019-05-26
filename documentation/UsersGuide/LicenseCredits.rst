@@ -48,7 +48,7 @@ copyright© |UPMC| 2008-2018, |SorbonneUniversite| 2018-2019
 and released under the |GPL| license.
 
 Others important contributors to |Coriolis| are Christophe |Alexandre|,
-Hugo |Clement|, Marek |Sroka| and Wu |Yifei|.
+Roselyne |Chotin|, Hugo |Clement|, Marek |Sroka| and Wu |Yifei|.
 
 The |Katana| router makes use of the |Flute| software, which is
 copyright© Chris C. N. |Chu| from the Iowa State University

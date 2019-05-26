@@ -58,6 +58,7 @@
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
 .. |Chaput|                         replace:: :sc:`Chaput`
+.. |Chotin|                         replace:: :sc:`Chotin`
 .. |Chu|                            replace:: :sc:`Chu`
 .. |Clement|                        replace:: :sc:`Clement`
 .. |Dupuis|                         replace:: :sc:`Dupuis`

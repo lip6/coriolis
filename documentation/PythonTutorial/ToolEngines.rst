@@ -6,7 +6,7 @@
 8. Tool Engines (CRL Core)
 ==========================
 
-The ToolEngine_ class is the base class for all tools developpeds in
+The ToolEngine_ class is the base class for all tools developped in
 |Coriolis|. In the rest of the tutorial we will use the names ``tool``
 or ``engine`` as synonyms.
 
@@ -55,7 +55,7 @@ You can configure the placer in two ways:
 Like for |Etesian|, you have to create the engine on the cell then call
 the sequence of functions detailed below.
 
-.. note:: **Kite vs. Katana.** There are currently two router in |Coriolis|,
+.. note:: **Kite vs. Katana.** There are currently two routers in |Coriolis|,
 	  |Kite| is the old one and digital only. |Katana| is a re-implementation
 	  with support for mixed routing (digital **and** analog).
 	  Until |Katana| is fully implemented we keep both of them.
@@ -81,7 +81,7 @@ the sequence of functions detailed below.
 The example file ``toolengines.py`` can be found in the ``share/doc/coriolis2/examples/scripts/``
 directory (under the the root of the |Coriolis| installation).
 
-This script automatically place and route the ``fulladder`` netlist as seen
+This script automatically places and routes the ``fulladder`` netlist as seen
 previously. The call to the ToolEngines_ is made inside the new function
 ``placeAndRoute()``.
 
