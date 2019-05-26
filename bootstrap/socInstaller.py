@@ -7,7 +7,7 @@
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |  C o r i o l i s  /  C h a m s   I n s t a l l e r              |
+# |         C o r i o l i s   I n s t a l l e r                     |
 # |                                                                 |
 # |  Authors     :                    Jean-Paul Chaput              |
 # |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
@@ -17,7 +17,7 @@
 #
 # WARNING:
 #   This script has been designed only for internal use in the
-#   LIP6/SoC department. If you want to use it you will need to
+#   LIP6/CIAN department. If you want to use it you will need to
 #   change the hardwired configuration.
 
 
@@ -232,7 +232,7 @@ class Configuration ( object ):
 
     def __init__ ( self ):
       self._sender       = 'Jean-Paul.Chaput@soc.lip6.fr'
-      self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', 'Eric.Lao@lip6.fr' ]
+      self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', ]
       self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
       self._coriolisRepo = 'https://www-soc.lip6.fr/git/coriolis.git'
       self._benchsRepo   = 'https://www-soc.lip6.fr/git/alliance-check-toolkit.git'
@@ -271,9 +271,9 @@ class Configuration ( object ):
                                , 'SL7_64':'lepka'
                                }
         else:
-          self._targets      = { 'SL6'   :'rock'
-                               , 'SL6_64':'bip'
-                               , 'SL7_64':None
+          self._targets      = { 'SL6'   :None
+                               , 'SL6_64':None
+                               , 'SL7_64':'bop'
                                }
 
       if attribute[0] == '_':
@@ -298,7 +298,7 @@ class Configuration ( object ):
         self._rootDir = self._homeDir + '/nightly/coriolis-2.x'
       else:
         if self._masterHost != 'lepka':
-          self._targets['SL6'] = 'rock'
+          self._targets['SL6'] = None
         self._rootDir = self._homeDir + '/coriolis-2.x'
       self._srcDir    = self._rootDir + '/src'
       self._logDir    = self._srcDir  + '/logs'
@@ -366,7 +366,7 @@ class Report ( object ):
       if self.conf.nightlyMode: modeText  = 'Nightly build'
 
       self.message = MIMEMultipart()
-      self.message['Subject'] = '[%s] Coriolis & Chams %s %s' % (stateText,modeText,date)
+      self.message['Subject'] = '[%s] Coriolis %s %s' % (stateText,modeText,date)
       self.message['From'   ] = self.conf.sender
       self.message['To'     ] = commaspace.join( self.conf.receivers )
       self.attachements = []
@@ -375,9 +375,9 @@ class Report ( object ):
       self.mainText += 'Salut le Crevard,\n'
       self.mainText += '\n'
       if self.conf.nightlyMode:
-        self.mainText += 'This is the nightly build report of Coriolis & Chams.\n'
+        self.mainText += 'This is the nightly build report of Coriolis.\n'
       else:
-        self.mainText += 'SoC installer report of Coriolis & Chams.\n'
+        self.mainText += 'SoC installer report of Coriolis.\n'
       self.mainText += '%s\n' % date
       self.mainText += '\n'
       if self.conf.success:
@@ -469,10 +469,6 @@ try:
       if conf.rmSource: gitCoriolis.removeLocalRepo()
       gitCoriolis.clone   ()
       gitCoriolis.checkout( 'devel_anabatic' )
-      
-      if conf.rmSource: gitChams.removeLocalRepo()
-      gitChams.clone   ()
-      gitChams.checkout( 'devel' )
 
       if conf.rmSource: gitBenchs.removeLocalRepo()
       gitBenchs.clone()
@@ -492,19 +488,18 @@ try:
 
     buildCommand  = '%s --root=%s --project=support --project=coriolis --make="-j%%d install" %%s' \
                      % (ccbBin,conf.rootDir)
-    benchsCommand = 'cd %s/benchs && ./bin/go.sh clean && ./bin/go.sh lvx' \
-                     % (gitBenchs.localRepoDir)
+    benchsCommand = 'cd %s/benchs && ../bin/go.sh' % (gitBenchs.localRepoDir)
 
     commands = \
       [ ( conf.targets['SL7_64'], buildCommand % (3,conf.debugArg)                        , conf.fds['build' ] )
       , ( conf.targets['SL7_64'], buildCommand % (1,conf.debugArg+' --doc')               , conf.fds['build' ] )
       , ( conf.targets['SL7_64'], benchsCommand                                           , conf.fds['benchs'] )
-      , ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
-      , ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
-      , ( conf.targets['SL6_64'], benchsCommand                                           , conf.fds['benchs'] )
-      , ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
-      , ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
-      , ( conf.targets['SL6']   , benchsCommand                                           , conf.fds['benchs'] )
+     #, ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
+     #, ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
+     #, ( conf.targets['SL6_64'], benchsCommand                                           , conf.fds['benchs'] )
+     #, ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
+     #, ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
+     #, ( conf.targets['SL6']   , benchsCommand                                           , conf.fds['benchs'] )
       ]
 
     for host,command,fd in commands:
@@ -523,8 +518,8 @@ except ErrorMessage, e:
   conf.success = False
 
   if showTrace:
-      print '\nPython stack trace:'
-      traceback.print_tb( sys.exc_info()[2] )
+    print '\nPython stack trace:'
+    traceback.print_tb( sys.exc_info()[2] )
   conf.rcode = e.code
 
 if conf.doSendReport:
