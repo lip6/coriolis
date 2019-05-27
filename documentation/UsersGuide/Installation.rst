@@ -31,6 +31,7 @@ Main building prerequisites:
 * bzip2
 * yacc & lex
 * Qt 4 or Qt 5
+* PyQt 4 or PyQt 5
 * Qwt
 
 Building documentation prerequisites:
@@ -104,10 +105,25 @@ Building Coriolis
 The actively developed branch
 -----------------------------
 
-For an intermediary period, the branch under active development you must use is
-**devel_anabatic** ::
+The **devel_anabatic** branch is now closed and we go back to a more classical
+scheme where **master** is the stable version and **devel** the development one.
 
-   dummy@lepka:coriolis> git checkout devel_anabatic
+The |Coriolis| |git| repository is https://www-soc.lip6.fr/git/coriolis.git
+
+.. note::
+   Again, the **devel_anabatic** branch is now closed. Please revert to **devel**
+   or **master**.
+
+.. note::
+   As it is now possible to mix |PyQt| widget with |Coriolis| ones, it is simpler
+   for us to revert to |Qt| 4 only. Our reference |OS| being |RHEL| 7, there is no
+   compatible |PyQt5| build compatible with their |Qt| 5 version (we fall short of
+   one minor, they provides |Qt| 5.9 were we need at least |Qt| 5.10).
+
+.. note::
+   Under |RHEL| 7 or clones, they upgraded their version of |Qt| 4 (from 4.6 to 4.8)
+   so the *diagonal line* bug no longer occur. So we can safely use the default
+   system |Qt| again.
 
 
 Installing on |RedHat| or compatible distributions
@@ -120,16 +136,10 @@ Installing on |RedHat| or compatible distributions
                                      boost-devel boost-python boost-filesystem     \
 				     boost-regex  boost-wave                       \
                                      python-devel libxml2-devel bzip2-devel        \
-                                     qt5-qtbase-devel qt5-qtsvg-devel              # Qt 5.
-   
-   The package ``qwt-qt5-devel`` and it's dependency ``qwt-qt5`` are not provided
-   by any standard repository (like |EPEL|). You may download them from the
-   `LIP6 Addons Repository <https://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview/letter_q.group.html>`_
-   Then run: ::
-   
-        dummy@lepka:~> yum localinstall -y qwt-qt5-6.1.2-4.fc23.x86_64.rpm  \
-                                           qwt-qt5-6.1.2-4.fc23.x86_64.rpm  # Qwt for Qt 5.
-  
+				     qt-devel qwt-devel                            # Qt 4
+
+   Note, that the ``Qwt`` packages are directly availables from the standart distribution
+   when using |Qt| 4.
 
 2. Install the unpackaged prerequisites. Currently, only RapidJSON_. ::
 
@@ -150,7 +160,6 @@ Installing on |RedHat| or compatible distributions
        dummy@lepka:coriolis> git checkout devel_anabatic
        dummy@lepka:coriolis> ./bootstrap/ccb.py --project=support  \
                                                 --project=coriolis \
-                                                --qt5              \
                                                 --make="-j4 install"
 
 .. note::
@@ -171,21 +180,26 @@ be given as argument: ::
    dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
                                             --devtoolset=8 --make="-j4 install"
 
-If you want to uses Qt 4 instead of Qt 5 modify the previous steps as follow:
+If you want to uses Qt 5 instead of Qt 4 modify the previous steps as follow:
 
-* At **step 1**, do not install the |QT| 5 related development packages (``qt5-qtbase-devel``
-  and ``qt5-qtsvg-devel``), but instead: ::
+* At **step 1**, do not install the |QT| 4 related development package (``qt4-devel``),
+  but instead: ::
 
-       dummy@lepka:~> yum install -y git qt-devel qwt-devel  # Qt 4
+       dummy@lepka:~> yum install -y qt5-qtbase-devel qt5-qtsvg-devel              # Qt 5.
+   
+  The package ``qwt-qt5-devel`` and it's dependency ``qwt-qt5`` are not provided
+  by any standard repository (like |EPEL|). You may download them from the
+  `LIP6 Addons Repository <https://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview/letter_q.group.html>`_
+  Then run: ::
+   
+       dummy@lepka:~> yum localinstall -y qwt-qt5-6.1.2-4.fc23.x86_64.rpm  \
+                                          qwt-qt5-6.1.2-4.fc23.x86_64.rpm  # Qwt for Qt 5.
 
-  Note, that the ``Qwt`` packages are directly availables from the standart distribution
-  when using |Qt| 4.
+* At **step 4**, add a ``--qt5`` argument to the ``ccb.py`` command line.
 
-* At **step 4**, remove the ``--qt5`` arguments to the ``ccb.py`` command line.
-
-Be aware that, under |RHEL| 7 or clones, there is a bug in |Qt| 4 that makes diagonal
-lines appears whenever a filled rectangle is not fully included in the displayed area.
-This may be misleading when visualising a layout...
+* The |Python| scripts that makes uses of |PyQt| in ``crlcore`` and ``cumulus`` must be
+  edited to import ``PyQt5`` instead of ``PtQt4`` (should find a way to automatically
+  switch between the two of them).
 
 The complete list of |ccb| functionalities can be accessed with the ``--help`` argument.
 It also may be run in graphical mode (``--gui``).
@@ -203,7 +217,6 @@ Run again ``ccb.py``, adding the ``--debug`` argument: ::
 
     dummy@lepka:coriolis> ./bootstrap/ccb.py --project=support  \
                                              --project=coriolis \
-                                             --qt5              \
                                              --make="-j4 install" --debug
 
 
@@ -259,7 +272,6 @@ Third and final step, build & install: ::
    dummy@lepka:src> cd coriolis
    dummy@lepka:coriolis> git checkout devel_anabatic
    dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
-                                            --qt5              \
                                             --make="-j4 install"
 
 

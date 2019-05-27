@@ -15,7 +15,7 @@ The database consists in several objects\+:
 \item \mbox{\hyperlink{class_s_p_i_c_e_1_1_voltage}{S\+P\+I\+C\+E\+::\+Voltage}}
 \item \mbox{\hyperlink{class_s_p_i_c_e_1_1_current}{S\+P\+I\+C\+E\+::\+Current}}
 \end{DoxyItemize}\hypertarget{spice_spiceParser}{}\subsection{Using the parser}\label{spice_spiceParser}
-Simply load an Spice netlist file using the static function S\+P\+I\+C\+E\+::\+Circuit\+::read\+From\+File().\hypertarget{spice_spiceDriver}{}\subsection{Using the driver}\label{spice_spiceDriver}
+Simply load an Spice netlist file using the static function \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_aa8294fe7d9ceddb5653d08ecae3eaf36}{S\+P\+I\+C\+E\+::\+Circuit\+::read\+From\+File()}}.\hypertarget{spice_spiceDriver}{}\subsection{Using the driver}\label{spice_spiceDriver}
 Using the driver is very simple, user has to create a \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{S\+P\+I\+C\+E\+::\+Circuit}} object and simply add others Spice objects like \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{S\+P\+I\+C\+E\+::\+Subckt}} or \mbox{\hyperlink{class_s_p_i_c_e_1_1_instance}{S\+P\+I\+C\+E\+::\+Instance}} to it. Includes, libraries and parameters can also be added to \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{S\+P\+I\+C\+E\+::\+Circuit}}. Finally use the S\+P\+I\+C\+E\+::\+Circuit\+::write\+To\+File() method to dump the database to file.\hypertarget{spice_spiceExamples}{}\section{Examples}\label{spice_spiceExamples}
 As said is the global presentation, V\+L\+SI S\+A\+PD project provides C++ libraries and Python modules for each supported format. In this section we present simple code examples to parse and drive a S\+P\+I\+CE file using C++ or Python. The S\+P\+I\+CE file considered describes a simple Miller O\+TA\+: {\ttfamily O\+T\+A\+\_\+miller.\+spi} 
 \begin{DoxyCodeInclude}
@@ -77,7 +77,7 @@ The following code ({\ttfamily parse\+Spice.\+cpp}) is an example of how to pars
 
     \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{SPICE::Circuit}}* circuit = NULL;
     \textcolor{keywordflow}{try} \{
-        circuit = SPICE::Circuit::readFromFile(file);
+        circuit = \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_aa8294fe7d9ceddb5653d08ecae3eaf36}{SPICE::Circuit::readFromFile}}(file);
     \} \textcolor{keywordflow}{catch} (\mbox{\hyperlink{class_s_p_i_c_e_1_1_spice_exception}{SPICE::SpiceException}}& e) \{
         cerr << e.what() << endl;
         exit(48);
@@ -509,7 +509,7 @@ This python script ({\ttfamily drive\+Spice.\+py}) generates an my\+O\+T\+A.\+sp
 \begin{DoxyCodeInclude}
 \textcolor{keyword}{from} SPICE \textcolor{keyword}{import} *
 
-circuit = Circuit()
+circuit = \mbox{\hyperlink{class_circuit}{Circuit}}()
 
 circuit.title = \textcolor{stringliteral}{'* Single-ended two-stage amplifier'}
 
@@ -577,7 +577,7 @@ dpN2.addParameter(\textcolor{stringliteral}{"tempsimu"}, \textcolor{stringlitera
 DP.addInstance(dpN2);
 
 \textcolor{comment}{# INSTANCES}
-iCM = Instance(\textcolor{stringliteral}{"CM"}, \textcolor{stringliteral}{"currentMirrorPMOS"});
+iCM = \mbox{\hyperlink{class_instance}{Instance}}(\textcolor{stringliteral}{"CM"}, \textcolor{stringliteral}{"currentMirrorPMOS"});
 iCM.addConnector(\textcolor{stringliteral}{"1"});
 iCM.addConnector(\textcolor{stringliteral}{"2"});
 iCM.addConnector(\textcolor{stringliteral}{"vdd"});
@@ -587,7 +587,7 @@ iCM.addParameter(\textcolor{stringliteral}{"w\_val"} , \textcolor{stringliteral}
 iCM.addParameter(\textcolor{stringliteral}{"nf\_val"}, \textcolor{stringliteral}{"2"}           );
 circuit.addInstance(iCM);
 
-iDP = Instance(\textcolor{stringliteral}{"DP"}, \textcolor{stringliteral}{"diffPairNMOS"});
+iDP = \mbox{\hyperlink{class_instance}{Instance}}(\textcolor{stringliteral}{"DP"}, \textcolor{stringliteral}{"diffPairNMOS"});
 iDP.addConnector(\textcolor{stringliteral}{"1"});
 iDP.addConnector(\textcolor{stringliteral}{"2"});
 iDP.addConnector(\textcolor{stringliteral}{"vim"});

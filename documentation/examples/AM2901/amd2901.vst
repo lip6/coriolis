@@ -80,7 +80,7 @@ ARCHITECTURE VST OF amd2901 IS
   );
   END COMPONENT;
 
-  COMPONENT coeur
+  COMPONENT corona
   PORT(
   a_from_pads	: IN BIT_VECTOR(3 DOWNTO 0);
   b_from_pads	: IN BIT_VECTOR(3 DOWNTO 0);
@@ -310,7 +310,7 @@ BEGIN
     pad => i(3),
     ck => cki
   );
-  core : coeur
+  corona : corona
   PORT MAP (
     a_from_pads => a_from_pads,
     b_from_pads => b_from_pads,

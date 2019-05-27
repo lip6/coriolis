@@ -42,7 +42,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="classHurricane_1_1Entity-members.html">List of all members</a> &#124;
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Hurricane::Entity Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
@@ -76,16 +75,8 @@ Inheritance diagram for Hurricane::Entity:</div>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHurricane_1_1Entity_1_1CompareById.html">CompareById</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API). ">Entity</a> comparison criterion for STL container.  <a href="structHurricane_1_1Entity_1_1CompareById.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aaff727ad7411392d4a991a56e2579a60"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Entity.html#aaff727ad7411392d4a991a56e2579a60">getId</a> () const</td></tr>
-<tr class="separator:aaff727ad7411392d4a991a56e2579a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42bdf015f583be477cc54b48652b1007"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classHurricane_1_1Cell.html">Cell</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Entity.html#a42bdf015f583be477cc54b48652b1007">getCell</a> () const =0</td></tr>
 <tr class="separator:a42bdf015f583be477cc54b48652b1007"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad834f8ce33a08a13e2a88446696e63e7"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classHurricane_1_1Box.html">Box</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Entity.html#ad834f8ce33a08a13e2a88446696e63e7">getBoundingBox</a> () const =0</td></tr>
@@ -115,36 +106,10 @@ Introduction</h1>
 <p>Entities are abstract objects representing the category of occurrenceable objects.</p>
 <h1><a class="anchor" id="secEntityId"></a>
 Unique Identifier</h1>
-<p>Each <a class="el" href="classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API). ">Entity</a> is associated with a unique identifier (see <a class="el" href="classHurricane_1_1Entity.html#aaff727ad7411392d4a991a56e2579a60">Entity::getId()</a>). This identifier is used as a sorting key in the various IntrusiveMap throughout <a class="el" href="namespaceHurricane.html" title="The namespace dedicated to Hurricane. ">Hurricane</a> to ensure determinism. It came as a replacement of the object's own address which is not suitable for this purpose.</p>
-<p>For STL container, the <a class="el" href="structHurricane_1_1Entity_1_1CompareById.html" title="Entity comparison criterion for STL container. ">Entity::CompareById</a> functor is provided.</p>
+<p>Each <a class="el" href="classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API). ">Entity</a> is associated with a unique identifier (see Entity::getId()). This identifier is used as a sorting key in the various IntrusiveMap throughout <a class="el" href="namespaceHurricane.html" title="The namespace dedicated to Hurricane. ">Hurricane</a> to ensure determinism. It came as a replacement of the object's own address which is not suitable for this purpose.</p>
+<p>For STL container, the <a class="el" href="classEntity_1_1CompareById.html" title="Entity comparison criterion for STL container. ">Entity::CompareById</a> functor is provided.</p>
 <p>The identifier is generated from an ever incrementing counter on 32 bits or 64 bits, depending on the target system architecture. If the 32/64 bit capacity is reached an exception is thrown. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aaff727ad7411392d4a991a56e2579a60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaff727ad7411392d4a991a56e2579a60">&#9670;&nbsp;</a></span>getId()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int Hurricane::Entity::getId </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p><b>Returns:</b> Returns the unique identifier of this <a class="el" href="classHurricane_1_1Entity.html" title="Occurrenceable objects root class (API). ">Entity</a>. </p>
-
-</div>
-</div>
 <a id="a42bdf015f583be477cc54b48652b1007"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a42bdf015f583be477cc54b48652b1007">&#9670;&nbsp;</a></span>getCell()</h2>
 
@@ -209,7 +174,7 @@ Unique Identifier</h1>
     <hr>
     <table class="footer1">
       <tr>
-        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Fri Oct 19 2018</small></td>
+        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Sun May 26 2019</small></td>
         <td class="RFooter"><a href='#pagetop'><small>Return to top of page</small></a></td>
       </tr>
     </table>

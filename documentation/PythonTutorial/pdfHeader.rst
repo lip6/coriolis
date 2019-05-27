@@ -13,43 +13,30 @@
 
   \begin{center}
 
-  \begin{figure}[t]
-  \begin{center}
-    \includegraphics[scale=0.4]{../etc/images/logoLIP6_SU_CNRS.pdf}
-  \end{center}
-  \end{figure}
+    \hfill \includegraphics[height=2.0cm]{../etc/images/Logo-LIP6-bleugris}
+    \hfill \includegraphics[height=1.8cm]{../etc/images/Logo-SU}
+    \hfill \includegraphics[height=2.0cm]{../etc/images/Logo-CNRS}
+    \hfill
+    \\*[2cm]
 
-  \vspace{2cm}
-
-  \huge \textsc{Sorbonne Université}
+    \huge \textsc{Sorbonne Université} \\*[1cm]
   
-  \vspace{1cm}
-  
-  \huge {\textsc{lip6} Laboratory}
-  \vspace{3cm}
+    \huge {\textsc{lip6} Laboratory} \\*[3cm]
 
-  \Huge \textsc{Hurricane+Python}
-  \vspace{1cm}
+    \Huge \textbf{\textsc{Hurricane+Python Tutorial}} \\*[1cm]
 
-  \Huge \textbf{Tutorial}
-  \vspace{1cm}
+    \huge {Jean-Paul \textsc{Chaput}} \\
+    \Large\href{mailto:Jean-Paul.Chaput@lip6.fr}{Jean-Paul.Chaput@lip6.fr}\\*[4cm]
 
-  \huge {Jean-Paul \textsc{Chaput}}
-  \vspace{4cm}
-
-  \begin{figure}[!h]
-  \begin{center}
     \includegraphics[scale=1.0]{../etc/images/logoCC.pdf}
-  \end{center}
-  \end{figure}
 
-  \normalsize 
-
-  This work is licensed under a\\
-  Creative Commons Attribution-NonCommercial-ShareALike 4.0 International License.\\
-  Creative Commons License \href{https://creativecommons.org/licenses/by-nc-sa/4.0/} {creativecommons.org/licenses/by-nc-sa/4.0/}
+    \normalsize
+    This work is licensed under a \\
+    Creative Commons Attribution-NonCommercial-ShareALike 4.0 International License. \\
+    Creative Commons License \href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{creativecommons.org/licenses/by-nc-sa/4.0/}
 
   \end{center}
+
 
   \newpage
   \pagestyle{fancy} 

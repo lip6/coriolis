@@ -32,9 +32,8 @@ const strpair\+\_\+vector \& \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a3e6a7
 \mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}\label{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}} 
 const strings\+\_\+map \& \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a4ee11ef79ef893c5621e0e7d26a7f9a7}{get\+Options}} ()
 \begin{DoxyCompactList}\small\item\em returns the options of the circuit. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}\label{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}} 
 const strings\+\_\+map \& \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}{get\+Parameters}} ()
-\begin{DoxyCompactList}\small\item\em returns the parameters of the circuit. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em returns all circuit\textquotesingle{}s parameters. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}\label{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}} 
 const std\+::vector$<$ \mbox{\hyperlink{class_s_p_i_c_e_1_1_source}{Source}} $\ast$ $>$ \& \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_ac18caa525ed386c44874ee643c88e27b}{get\+Sources}} ()
 \begin{DoxyCompactList}\small\item\em returns the sources of the circuit. \end{DoxyCompactList}\item 
@@ -46,6 +45,11 @@ std\+::string \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_ad19721dd878c04c854a7
 \begin{DoxyCompactList}\small\item\em returns the title of the circuit. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}{set\+Title}} (std\+::string)
 \begin{DoxyCompactList}\small\item\em sets the title of the circuit. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{Circuit}} $\ast$ \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit_aa8294fe7d9ceddb5653d08ecae3eaf36}{read\+From\+File}} (const std\+::string \&)
+\begin{DoxyCompactList}\small\item\em creates and returns a \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{Circuit}} object based on a database source file. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
@@ -123,14 +127,24 @@ The value is represented as a std\+::string to keep the optionnal unity.
 \index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!add\+Parameter@{add\+Parameter}}
 \index{add\+Parameter@{add\+Parameter}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
 \subsubsection{\texorpdfstring{add\+Parameter()}{addParameter()}}
-{\footnotesize\ttfamily void add\+Parameter (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{value }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void add\+Parameter (\begin{DoxyParamCaption}\item[{std\+::string}]{name,  }\item[{std\+::string}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
 adds a parameter to the circuit. 
 
+adds an equation parameter to the circuit.
+
 
 \begin{DoxyParams}{Parameters}
+{\em name} & the name of the parameter. \\
+\hline
+{\em value} & the value of the parameter.\\
+\hline
+{\em name} & the name of the parameter. \\
+\hline
+{\em equation} & the equation string of the parameter.\\
+\hline
 {\em name} & the name of the parameter. \\
 \hline
 {\em value} & the value of the parameter.\\
@@ -171,6 +185,34 @@ adds a subcircuit to the circuit.
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 the newly created \mbox{\hyperlink{class_s_p_i_c_e_1_1_subckt}{Subckt}}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}\label{class_s_p_i_c_e_1_1_circuit_a4c46676f9ead2db537a0dd963b4f08f1}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!get\+Parameters@{get\+Parameters}}
+\index{get\+Parameters@{get\+Parameters}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{get\+Parameters()}{getParameters()}}
+{\footnotesize\ttfamily const Circuit\+::strings\+\_\+map \& get\+Parameters (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns all circuit\textquotesingle{}s parameters. 
+
+returns the parameters of the circuit. \mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_aa8294fe7d9ceddb5653d08ecae3eaf36}\label{class_s_p_i_c_e_1_1_circuit_aa8294fe7d9ceddb5653d08ecae3eaf36}} 
+\index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!read\+From\+File@{read\+From\+File}}
+\index{read\+From\+File@{read\+From\+File}!S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}}
+\subsubsection{\texorpdfstring{read\+From\+File()}{readFromFile()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{Circuit}} $\ast$ read\+From\+File (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filename }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+creates and returns a \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{Circuit}} object based on a database source file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\+Path} & the source file name.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the newly created \mbox{\hyperlink{class_s_p_i_c_e_1_1_circuit}{Circuit}}. 
 \end{DoxyReturn}
 \mbox{\Hypertarget{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}\label{class_s_p_i_c_e_1_1_circuit_a798df9ebd558e22c85eeceb5202e3123}} 
 \index{S\+P\+I\+C\+E\+::\+Circuit@{S\+P\+I\+C\+E\+::\+Circuit}!set\+Title@{set\+Title}}

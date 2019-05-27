@@ -13,6 +13,9 @@
 
 .. _Python Interface to Coriolis:
 
+|newpage|
+
+
 Python Interface for |Hurricane| / |Coriolis|
 =============================================
 
@@ -27,7 +30,7 @@ either languages.
 A script could be run directly in text mode from the command line or through
 the graphical interface (see :ref:`Python Scripts in Cgt`).
 
-Asides for this requirement, the python script can contain anything valid
+Aside for this requirement, the python script can contain anything valid
 in |Python|, so don't hesitate to use any package or extention.
 
 Small example of Python/Stratus script: ::
@@ -100,35 +103,52 @@ Chip Placement
 Automatically perform the placement of a complete chip. This plugin, as well
 as the other P&R tools expect a specific top-level hierarchy for the design.
 The top-level hierarchy must contains the instances of all the I/O pads and
-**exactly one** instance of the chip's core model.
+**exactly one** instance named ``corona`` of an eponym cell ``corona``.
+The ``corona`` cell in turn containing the instance of the chip's core model.
+
+The intermediate ``corona`` hierarchical level has been introduced to handle
+the possible discoupling between real I/O pads supplied by a foundry and a
+symbolic core. So the *chip* level contains only real layout and the corona
+and below only symbolic layer.
+
+.. note:: This do not prevent having a design either fully symbolic (pads and core)
+	  or fully real.
+
+.. note:: The ``corona`` also avoid the router to actually have to manage directly
+	  the pads which simplificate it's configuration and accessorily avoid
+	  to have the pads stuffed with blockages.
 
 |bcenter| |ChipStructure-1| |ecenter|
 
-The designer must provide a configuration file that define the rules for the
+The designer must provide a configuration file that defines the rules for the
 placement of the top-level hierarchy (that is, the pads and the core).
-This file must be named after the chip's name, by appending ``_chip.py``
+This file must be named after the chip's name, by appending ``_ioring.py``
 (obviously, it is a |Python| file). For instance if the chip netlist file
-is called ``amd2901_crl.vst``, then the configuration file must be named
-``amd2901_crl_chip.vst``.
+is called ``amd2901.vst``, then the configuration file must be named
+``amd2901_ioring.vst``.
 
 Example of chip placement configuration file (for ``AM2901``): ::
 
+    
+    from helpers import l, u, n
+
     chip = \
-      { 'pads.south'     : [ 'p_a3'     , 'p_a2'     , 'p_a1'     , 'p_r0'
-                           , 'p_vddick0', 'p_vssick0', 'p_a0'     , 'p_i6'
-                           , 'p_i8'     , 'p_i7'     , 'p_r3'     ]
-      , 'pads.east'      : [ 'p_zero'   , 'p_i0'     , 'p_i1'     , 'p_i2'
-                           , 'p_vddeck0', 'p_vsseck0', 'p_q3'     , 'p_b0'
-                           , 'p_b1'     , 'p_b2'     , 'p_b3'     ]
-      , 'pads.north'     : [ 'p_noe'    , 'p_y3'     , 'p_y2'     , 'p_y1'
-                           , 'p_y0'     , 'p_vddeck1', 'p_vsseck1', 'p_np'
-                           , 'p_ovr'    , 'p_cout'   , 'p_ng'     ]
-      , 'pads.west'      : [ 'p_cin'    , 'p_i4'     , 'p_i5'     , 'p_i3'
-                           , 'p_ck'     , 'p_d0'     , 'p_d1'     , 'p_d2'
-                           , 'p_d3'     , 'p_q0'     , 'p_f3'     ]
-      , 'core.size'      : ( 1500, 1500 )
-      , 'chip.size'      : ( 3000, 3000 )
-      , 'chip.clockTree' : True
+      { 'pads.ioPadGauge' : 'pxlib'
+      , 'pads.south'      : [ 'p_a3'     , 'p_a2'     , 'p_a1'     , 'p_r0'
+                            , 'p_vddick0', 'p_vssick0', 'p_a0'     , 'p_i6'
+                            , 'p_i8'     , 'p_i7'     , 'p_r3'     ]
+      , 'pads.east'       : [ 'p_zero'   , 'p_i0'     , 'p_i1'     , 'p_i2'
+                            , 'p_vddeck0', 'p_vsseck0', 'p_q3'     , 'p_b0'
+                            , 'p_b1'     , 'p_b2'     , 'p_b3'     ]
+      , 'pads.north'      : [ 'p_noe'    , 'p_y3'     , 'p_y2'     , 'p_y1'
+                            , 'p_y0'     , 'p_vddeck1', 'p_vsseck1', 'p_np'
+                            , 'p_ovr'    , 'p_cout'   , 'p_ng'     ]
+      , 'pads.west'       : [ 'p_cin'    , 'p_i4'     , 'p_i5'     , 'p_i3'
+                            , 'p_ck'     , 'p_d0'     , 'p_d1'     , 'p_d2'
+                            , 'p_d3'     , 'p_q0'     , 'p_f3'     ]
+      , 'core.size'       : ( l(1500), l(1500) )
+      , 'chip.size'       : ( l(3000), l(3000) )
+      , 'chip.clockTree'  : True
       }
 
 The file must contain *one dictionnary* named ``chip``.
@@ -138,6 +158,10 @@ The file must contain *one dictionnary* named ``chip``.
 +----------------------+-------------------------------------------------------+
 | Parameter Key/Name   | Value/Contents type                                   |
 +======================+=======================================================+
+| ``'pad.ioPadGauge'`` | The routing gauge to use for the pad. Must be given   |
+|                      | as it differs from the one used to route standard     |
+|                      | inside the core                                       |
++----------------------+-------------------------------------------------------+
 | ``'pad.south'``      | Ordered list (left to right) of pad instances names   |
 |                      | to put on the south side of the chip                  |
 +----------------------+-------------------------------------------------------+
@@ -173,52 +197,23 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 |                                   | One rail for the clock and at least two pairs |
 |                                   | of power/grounds                              |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.hWidth``        | TypeInt          | :cb:`12`                   |
+|``chip.block.rails.hWidth``        | TypeInt          | :cb:`12` |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The horizontal with of the rails              |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.vWidth``        | TypeInt          | :cb:`12`                   |
+|``chip.block.rails.vWidth``        | TypeInt          | :cb:`12` |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The vertical with of the rails                |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.hSpacing``      | TypeInt          | :cb:`6`                    |
+|``chip.block.rails.hSpacing``      | TypeInt          | :cb:`6`  |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The spacing, *edge to edge* of two adjacent   |
 |                                   | horizontal rails                              |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.vSpacing``      | TypeInt          | :cb:`6`                    |
+|``chip.block.rails.vSpacing``      | TypeInt          | :cb:`6`  |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The spacing, *edge to edge* of two adjacent   |
 |                                   | vertical rails                                |
-+-----------------------------------+------------------+----------------------------+
-|``chip.pad.pck``                   | TypeString       | :cb:`pck_px`               |
-|                                   +------------------+----------------------------+
-|                                   | The model name of the pad connected to the    |
-|                                   | chip external clock                           |
-+-----------------------------------+------------------+----------------------------+
-|``chip.pad.pvddeck``               | TypeString       | :cb:`pvddeck_px`           |
-|                                   +------------------+----------------------------+
-|                                   | The model name of the pad connected to the    |
-|                                   | ``vdde`` (external power) and suppling it to  |
-|                                   | the core                                      |
-+-----------------------------------+------------------+----------------------------+
-|``chip.pad.pvsseck``               | TypeString       | :cb:`pvsseck_px`           |
-|                                   +------------------+----------------------------+
-|                                   | The model name of the pad connected to the    |
-|                                   | ``vsse`` (external ground) and suppling it to |
-|                                   | the core                                      |
-+-----------------------------------+------------------+----------------------------+
-|``chip.pad.pvddick``               | TypeString       | :cb:`pvddick_px`           |
-|                                   +------------------+----------------------------+
-|                                   | The model name of the pad connected to the    |
-|                                   | ``vddi`` (internal power) and suppling it to  |
-|                                   | the core                                      |
-+-----------------------------------+------------------+----------------------------+
-|``chip.pad.pvssick``               | TypeString       | :cb:`pvssick_px`           |
-|                                   +------------------+----------------------------+
-|                                   | The model name of the pad connected to the    |
-|                                   | ``vssi`` (internal ground) and suppling it to |
-|                                   | the core                                      |
 +-----------------------------------+------------------+----------------------------+
 
 .. note::
@@ -230,11 +225,11 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 Clock Tree
 ----------
 
-Insert a clock tree into a block. The clock tree uses the H strategy.
+Inserts a clock tree into a block. The clock tree uses the H strategy.
 The clock net is splitted into sub-nets, one for each branch of the
 tree.
 
-* On **chips** design, the sub-nets are createds in the model of the
+* On **chip** design, the sub-nets are created in the model of the
   core block (then trans-hierarchically flattened to be shown at
   chip level).
 * On **blocks**, the sub nets are created directly in the top block.
@@ -251,29 +246,29 @@ tree.
 
 The clock tree plugin works in four steps:
 
-#. Build the clock tree: creates the top-block abutment box, compute the
-   levels of H tree neededs and place the clock buffers.
+#. Builds the clock tree: creates the top-block abutment box, compute the
+   required levels of H tree and places the clock buffers.
 #. Once the clock buffers are placed, calls the placer (|etesian|) to place
-   the ordinary standart cells, whithout disturbing clock H-tree buffers.
+   the ordinary standard cells, whithout disturbing clock H-tree buffers.
 #. At this point we know the exact positions of all the DFFs, so we can
    connect them to the nearest H-tree leaf clock signal.
-#. Leaf clock signals that are not connecteds to any DFFs are removed.
+#. Leaf clock signals that are not connected to any DFFs are removed.
 
 Netlist reorganisation:
 
-* Obviously the top block or chip core model netlist is modificated to
-  contains all the clock sub-nets. The interface is *not* changed.
+* Obviously the top block or chip core model netlist is modified to
+  contain all the clock sub-nets. The interface is *not* changed.
 * If the top block contains instances of other models *and* those models
-  contains DFFs that get re-connecteds to the clock sub-nets (from the
-  top level). Change both the model netlist and interface to propagate
+  contain DFFs that get re-connected to the clock sub-nets (from the
+  top level). Changes both the model netlist and interface to propagate
   the relevant clock sub-nets to the instanciated model. The new model
-  with the added clock signal is renamed with a ``_clocked`` suffix.
-  For example, the sub-block model ``ram.vst`` will become ``ram_clocked.vst``.
+  with the added clock signal is renamed with a ``_cts`` suffix.
+  For example, the sub-block model ``ram.vst`` will become ``ram_cts.vst``.
 
 .. note::
   If you are to re-run the clock tree plugin on a netlist, be careful
-  to erase any previously generated ``_clocked`` file (both netlist and
-  layout: ``rm *.clocked.{ap,vst}``). And restart |cgt| to clear it's
+  to erase any previously generated ``_cts`` file (both netlist and
+  layout: ``rm *_cts.{ap,vst}``). And restart |cgt| to clear its
   memory cache.
 
 Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plugins.conf``.
@@ -283,7 +278,7 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 +===================================+==================+============================+
 | **ClockTree Plugin Parameters**                                                   |
 +-----------------------------------+------------------+----------------------------+
-|``clockTree.minimumSide``          | TypeInt          | :cb:`300`                  |
+|``clockTree.minimumSide``          | TypeInt          | :cb:`300` |lambda|         |
 |                                   +------------------+----------------------------+
 |                                   | The minimum size below which the clock tree   |
 |                                   | will stop to perform quadri-partitions        |
@@ -292,19 +287,13 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 |                                   +------------------+----------------------------+
 |                                   | The buffer model to use to drive sub-nets     |
 +-----------------------------------+------------------+----------------------------+
-|``clockTree.placerEngine``         | TypeString       | :cb:`Etesian`              |
-|                                   +------------------+----------------------------+
-|                                   | The placer to use. Other value is ``Mauka``   |
-|                                   | the simulated annealing placer which will go  |
-|                                   | into retirement very soon                     |
-+-----------------------------------+------------------+----------------------------+
 
 
 Recursive-Save (RSave)
 ----------------------
 
-Perform a recursive top down save of all the models from the top cell
-loaded in |cgt|. Force a write of any non-terminal model. This plugin is used
+Performs a recursive top down save of all the models from the top cell
+loaded in |cgt|. Forces a write of any non-terminal model. This plugin is used
 by the clock tree plugin after the netlist clock sub-nets creation.
 
 
@@ -329,4 +318,4 @@ You can generate the chip using one of the following method:
 .. note::
    Between two consecutive run, be sure to erase the netlist/layout generateds: ::
 
-       dummy@lepka:AM2901> rm *clocked*.vst *.ap
+       dummy@lepka:AM2901> rm *_cts*.vst *.ap

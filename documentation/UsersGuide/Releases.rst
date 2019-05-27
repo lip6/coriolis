@@ -94,9 +94,31 @@ Release v2.1
 ..    as possible.
 
 
-**Release v2.2**
-~~~~~~~~~~~~~~~~
+Release v2.2
+~~~~~~~~~~~~
 
 #. Added JSON import/export of the whole Hurricane DataBase. Two save mode
    are supported: *Cell* mode (standalone) or *Blob* mode, which dump the
    whole design down and including the standard cells.
+
+
+Release v2.3
+~~~~~~~~~~~~
+
+#. Revert to a more standard organisation of the branchs. **devel_anabatic** is
+   closed and we go on with **master** (stable version) and **devel**.
+
+#. Make |Katana| the default global & detailed router. Put |Knik| & |Kite| in the
+   obsolete menues.
+
+#. Finally make uses of |PyQt4| widgets. Seems to integrate without problems
+   with the |Coriolis| own |Qt| widget. The drawback is that to build against |Qt| 5
+   needs to adjustement from the user.
+
+#. Improved support for whole chip management. The outer part of the chip containing
+   the pad is decoupled from the core. This allow to cleanly separate real pads from
+   the foundry from a symbolic core. But this does not preclude other combinations
+   as fully symbolic or fully real.
+
+   To perform the separation an intermediate hierarchical level ``corona`` between chip
+   and core has been introduced.

@@ -46,10 +46,14 @@
                  set ( usersGuideRst      UsersGuide/pdfHeader.rst
                                           UsersGuide/LicenseCredits.rst
                                           UsersGuide/Releases.rst
+                                          UsersGuide/DesignFlow.rst
                                           UsersGuide/Installation.rst
                                           UsersGuide/Configuration.rst
                                           UsersGuide/ViewerTools.rst
                                           UsersGuide/ScriptsPlugins.rst )
+
+                 set ( confTechnoRst      ConfigurationTechnology/pdfHeader.rst
+                                          ConfigurationTechnology/Architecture.rst )
   				          
                  set ( rdsRst             RDS/pdfHeader.rst
                                           RDS/RDSpage.rst )
@@ -108,6 +112,13 @@
                        DEPENDS         etc/definitions.rst
                                        etc/SoC-ReST.tex
                                        ${pythonCppRst} )
+  
+#  add_custom_target ( pdf_ConfTechno  ALL
+#                         cd ${DOCUMENTATION_SOURCE_DIR}/ConfigurationTechnology
+#                      && ../etc/doPdf.sh ${confTechnoRst} ConfigurationTechnology.rst
+#                      DEPENDS         etc/definitions.rst
+#                                      etc/SoC-ReST.tex
+#                                      ${confTechnoRst} )
   
    add_custom_target ( pdf_RDS  ALL
                           cd ${DOCUMENTATION_SOURCE_DIR}/RDS

@@ -22,9 +22,11 @@
 .. |bcenter|                        replace:: :raw-latex:`\begin{center}`
 .. |ecenter|                        replace:: :raw-latex:`\end{center}`
 .. |pagestylefancy|                 replace:: :raw-latex:`\thispagestyle{fancy}`
+.. |lambda|                         replace:: :raw-latex:`$\lambda$` :raw-html:`&#955`
 
 
 .. Acronyms & names.
+.. |OS|                             replace:: :sc:`os`
 .. |GNU|                            replace:: :sc:`gnu`
 .. |LGPL|                           replace:: :sc:`lgpl`
 .. |GPL|                            replace:: :sc:`gpl`
@@ -92,6 +94,7 @@
 .. |Mauka|                          replace:: :sc:`Mauka`
 .. |Etesian|                        replace:: :sc:`Etesian`
 .. |Knik|                           replace:: :sc:`Knik`
+.. |Anabatic|                       replace:: :sc:`Anabatic`
 .. |Katabatic|                      replace:: :sc:`Katabatic`
 .. |Kite|                           replace:: :sc:`Kite`
 .. |Katana|                         replace:: :sc:`Katana`
@@ -114,6 +117,9 @@
 .. |devtoolset|                     replace:: :cb:`devtoolset`
 .. |boost|                          replace:: :cb:`boost`
 .. |Qt|                             replace:: :sc:`qt`
+.. |PyQt|                           replace:: :sc:`PyQt`
+.. |PyQt4|                          replace:: :sc:`PyQt4`
+.. |PyQt5|                          replace:: :sc:`PyQt5`
 .. |tty|                            replace:: :cb:`tty`
 .. |svn|                            replace:: :cb:`svn`
 .. |git|                            replace:: :cb:`git`

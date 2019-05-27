@@ -19,7 +19,7 @@ The trans-hierarchical workhorse.
 9.2 RoutingPads
 ~~~~~~~~~~~~~~~
 
-Unlike the Plugs_ that only make connexions between two **adjacent**
+Unlike the Plugs_ that only make connections between two **adjacent**
 hierarchical levels, RoutingPads_ can refer to a deeply buried terminal.
 
 

@@ -40,9 +40,7 @@ void \mbox{\hyperlink{classCRL_1_1RoutingLayerGauge_ab8d5ae22c453605226b2695c256
 \item 
 unsigned int \mbox{\hyperlink{classCRL_1_1RoutingLayerGauge_ab9bbb7959ca58438d59709398044daae}{get\+Track\+Number}} (\textbf{ Db\+U\+::\+Unit} start, \textbf{ Db\+U\+::\+Unit} stop) const
 \item 
-unsigned int \mbox{\hyperlink{classCRL_1_1RoutingLayerGauge_ad61cdf130c8b739bb44a01cfd5968022}{get\+Track\+Index}} (\textbf{ Db\+U\+::\+Unit} start, \textbf{ Db\+U\+::\+Unit} stop, \textbf{ Db\+U\+::\+Unit} position, unsigned mode) const
-\item 
-\textbf{ Db\+U\+::\+Unit} \mbox{\hyperlink{classCRL_1_1RoutingLayerGauge_a470828019c5cde566e7aa6d27ef68439}{get\+Track\+Position}} (\textbf{ Db\+U\+::\+Unit} start, unsigned depth) const
+long \mbox{\hyperlink{classCRL_1_1RoutingLayerGauge_ad61cdf130c8b739bb44a01cfd5968022}{get\+Track\+Index}} (\textbf{ Db\+U\+::\+Unit} start, \textbf{ Db\+U\+::\+Unit} stop, \textbf{ Db\+U\+::\+Unit} position, unsigned mode) const
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -197,13 +195,7 @@ Referenced by C\+R\+L\+::\+Routing\+Gauge\+::get\+Layer\+Direction().
 \subsubsection{\texorpdfstring{get\+Track\+Index()}{getTrackIndex()}}
 {\footnotesize\ttfamily unsigned int C\+R\+L\+::\+Routing\+Layer\+Gauge\+::get\+Track\+Index (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{start,  }\item[{\textbf{ Db\+U\+::\+Unit}}]{stop,  }\item[{\textbf{ Db\+U\+::\+Unit}}]{position,  }\item[{unsigned}]{mode }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the index of the track nearest position {\ttfamily position} in interval {\ttfamily \mbox{[}start\+:stop\mbox{]}}, according the rounding {\ttfamily mode}. \mbox{\Hypertarget{classCRL_1_1RoutingLayerGauge_a470828019c5cde566e7aa6d27ef68439}\label{classCRL_1_1RoutingLayerGauge_a470828019c5cde566e7aa6d27ef68439}} 
-\index{C\+R\+L\+::\+Routing\+Layer\+Gauge@{C\+R\+L\+::\+Routing\+Layer\+Gauge}!get\+Track\+Position@{get\+Track\+Position}}
-\index{get\+Track\+Position@{get\+Track\+Position}!C\+R\+L\+::\+Routing\+Layer\+Gauge@{C\+R\+L\+::\+Routing\+Layer\+Gauge}}
-\subsubsection{\texorpdfstring{get\+Track\+Position()}{getTrackPosition()}}
-{\footnotesize\ttfamily \textbf{ Db\+U\+::\+Unit} C\+R\+L\+::\+Routing\+Layer\+Gauge\+::get\+Track\+Position (\begin{DoxyParamCaption}\item[{\textbf{ Db\+U\+::\+Unit}}]{start,  }\item[{unsigned}]{depth }\end{DoxyParamCaption}) const}
-
-{\bfseries Returns\+:} the position of the track number {\ttfamily depth} (with first track at {\ttfamily start}). 
+{\bfseries Returns\+:} the index of the track nearest position {\ttfamily position} in interval {\ttfamily \mbox{[}start\+:stop\mbox{]}}, according the rounding {\ttfamily mode}. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

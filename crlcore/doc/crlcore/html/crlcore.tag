@@ -1228,18 +1228,11 @@
       <arglist>(DbU::Unit start, DbU::Unit stop) const</arglist>
     </member>
     <member kind="function">
-      <type>unsigned int</type>
+      <type>long</type>
       <name>getTrackIndex</name>
       <anchorfile>classCRL_1_1RoutingLayerGauge.html</anchorfile>
       <anchor>ad61cdf130c8b739bb44a01cfd5968022</anchor>
       <arglist>(DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode) const</arglist>
-    </member>
-    <member kind="function">
-      <type>DbU::Unit</type>
-      <name>getTrackPosition</name>
-      <anchorfile>classCRL_1_1RoutingLayerGauge.html</anchorfile>
-      <anchor>a470828019c5cde566e7aa6d27ef68439</anchor>
-      <arglist>(DbU::Unit start, unsigned depth) const</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static RoutingLayerGauge *</type>

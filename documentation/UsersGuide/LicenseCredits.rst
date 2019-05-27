@@ -18,10 +18,10 @@ Credits & License
    <p class="credit"><span class="left"><span class="sc">Stratus</span></span>
    <span class="right">Sophie <span class="sc">Belloeil</span></span></p>
    <br>
-   <p class="credit"><span class="left"><span class="sc">Knik</span></span>
+   <p class="credit"><span class="left"><span class="sc">Katana</span> (global)</span>
    <span class="right">Damien <span class="sc">Dupuis</span></span></p>
    <br>
-   <p class="credit"><span class="left"><span class="sc">Kite</span>,
+   <p class="credit"><span class="left"><span class="sc">Katana</span> (detailed),
                                         <span class="sc">Unicorn</span></span></span>
    <span class="right">Jean-Paul <span class="sc">Chaput</span></span></p>
    <br>
@@ -30,13 +30,13 @@ Credits & License
 .. raw:: latex
 
    \begin{center}\begin{minipage}[t]{.8\textwidth}
-     \noindent\DUrole{sc}{Hurricane} \dotfill Rémy       \DUrole{sc}{Escassut}  \&
-                                              Christian  \DUrole{sc}{Masson}    \\
-     \noindent\DUrole{sc}{Etesian}   \dotfill Gabriel    \DUrole{sc}{Gouvine}   \\
-     \noindent\DUrole{sc}{Stratus}   \dotfill Sophie     \DUrole{sc}{Belloeil}  \\
-     \noindent\DUrole{sc}{Knik}      \dotfill Damien     \DUrole{sc}{Dupuis}    \\
-     \noindent\DUrole{sc}{Kite},
-              \DUrole{sc}{Unicorn}   \dotfill Jean-Paul \DUrole{sc}{Chaput}     \\
+     \noindent\DUrole{sc}{Hurricane}          \dotfill Rémy       \DUrole{sc}{Escassut}  \&
+                                                       Christian  \DUrole{sc}{Masson}    \\
+     \noindent\DUrole{sc}{Etesian}            \dotfill Gabriel    \DUrole{sc}{Gouvine}   \\
+     \noindent\DUrole{sc}{Stratus}            \dotfill Sophie     \DUrole{sc}{Belloeil}  \\
+     \noindent\DUrole{sc}{Katana} (global)    \dotfill Damien     \DUrole{sc}{Dupuis}    \\
+     \noindent\DUrole{sc}{Katana} (detailed),
+              \DUrole{sc}{Unicorn}            \dotfill Jean-Paul \DUrole{sc}{Chaput}     \\
    \end{minipage}\end{center}
 
 

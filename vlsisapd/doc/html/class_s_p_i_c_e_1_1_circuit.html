@@ -30,7 +30,8 @@
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">Circuit Class Reference</div>  </div>
 </div><!--header-->
@@ -79,9 +80,8 @@ const strpair_vector &amp;&#160;</td><td class="memItemRight" valign="bottom"><a
 const strings_map &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html#a4ee11ef79ef893c5621e0e7d26a7f9a7">getOptions</a> ()</td></tr>
 <tr class="memdesc:a4ee11ef79ef893c5621e0e7d26a7f9a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the options of the circuit. <br /></td></tr>
 <tr class="separator:a4ee11ef79ef893c5621e0e7d26a7f9a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c46676f9ead2db537a0dd963b4f08f1"><td class="memItemLeft" align="right" valign="top"><a id="a4c46676f9ead2db537a0dd963b4f08f1"></a>
-const strings_map &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html#a4c46676f9ead2db537a0dd963b4f08f1">getParameters</a> ()</td></tr>
-<tr class="memdesc:a4c46676f9ead2db537a0dd963b4f08f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the parameters of the circuit. <br /></td></tr>
+<tr class="memitem:a4c46676f9ead2db537a0dd963b4f08f1"><td class="memItemLeft" align="right" valign="top">const strings_map &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html#a4c46676f9ead2db537a0dd963b4f08f1">getParameters</a> ()</td></tr>
+<tr class="memdesc:a4c46676f9ead2db537a0dd963b4f08f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns all circuit's parameters.  <a href="#a4c46676f9ead2db537a0dd963b4f08f1">More...</a><br /></td></tr>
 <tr class="separator:a4c46676f9ead2db537a0dd963b4f08f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac18caa525ed386c44874ee643c88e27b"><td class="memItemLeft" align="right" valign="top"><a id="ac18caa525ed386c44874ee643c88e27b"></a>
 const std::vector&lt; <a class="el" href="class_s_p_i_c_e_1_1_source.html">Source</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html#ac18caa525ed386c44874ee643c88e27b">getSources</a> ()</td></tr>
@@ -98,6 +98,12 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="memitem:a798df9ebd558e22c85eeceb5202e3123"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html#a798df9ebd558e22c85eeceb5202e3123">setTitle</a> (std::string)</td></tr>
 <tr class="memdesc:a798df9ebd558e22c85eeceb5202e3123"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the title of the circuit.  <a href="#a798df9ebd558e22c85eeceb5202e3123">More...</a><br /></td></tr>
 <tr class="separator:a798df9ebd558e22c85eeceb5202e3123"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aa8294fe7d9ceddb5653d08ecae3eaf36"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_s_p_i_c_e_1_1_circuit.html">Circuit</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html#aa8294fe7d9ceddb5653d08ecae3eaf36">readFromFile</a> (const std::string &amp;)</td></tr>
+<tr class="memdesc:aa8294fe7d9ceddb5653d08ecae3eaf36"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates and returns a <a class="el" href="class_s_p_i_c_e_1_1_circuit.html">Circuit</a> object based on a database source file.  <a href="#aa8294fe7d9ceddb5653d08ecae3eaf36">More...</a><br /></td></tr>
+<tr class="separator:aa8294fe7d9ceddb5653d08ecae3eaf36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class is the root class which means that having this object in hand allows to get/set any information contained in the Spice file parsed/drived. </p>
@@ -258,6 +264,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void addParameter </td>
@@ -277,11 +286,21 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>adds a parameter to the circuit. </p>
+<p>adds an equation parameter to the circuit.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">name</td><td>the name of the parameter. </td></tr>
+    <tr><td class="paramname">value</td><td>the value of the parameter.</td></tr>
+    <tr><td class="paramname">name</td><td>the name of the parameter. </td></tr>
+    <tr><td class="paramname">equation</td><td>the equation string of the parameter.</td></tr>
     <tr><td class="paramname">name</td><td>the name of the parameter. </td></tr>
     <tr><td class="paramname">value</td><td>the value of the parameter.</td></tr>
   </table>
@@ -352,6 +371,69 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
+<a id="a4c46676f9ead2db537a0dd963b4f08f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c46676f9ead2db537a0dd963b4f08f1">&#9670;&nbsp;</a></span>getParameters()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const Circuit::strings_map &amp; getParameters </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>returns all circuit's parameters. </p>
+<p>returns the parameters of the circuit. </p>
+
+</div>
+</div>
+<a id="aa8294fe7d9ceddb5653d08ecae3eaf36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8294fe7d9ceddb5653d08ecae3eaf36">&#9670;&nbsp;</a></span>readFromFile()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_s_p_i_c_e_1_1_circuit.html">Circuit</a> * readFromFile </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>creates and returns a <a class="el" href="class_s_p_i_c_e_1_1_circuit.html">Circuit</a> object based on a database source file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filePath</td><td>the source file name.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the newly created <a class="el" href="class_s_p_i_c_e_1_1_circuit.html">Circuit</a>. </dd></dl>
+
+</div>
+</div>
 <a id="a798df9ebd558e22c85eeceb5202e3123"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a798df9ebd558e22c85eeceb5202e3123">&#9670;&nbsp;</a></span>setTitle()</h2>
 
@@ -391,7 +473,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
     <hr>
     <table class="footer1">
       <tr>
-        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Thu Oct 18 2018</small></td>
+        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Sun May 26 2019</small></td>
         <td class="RFooter"><a href='#pagetop'><small>Return to top of page</small></a></td>
       </tr>
     </table>

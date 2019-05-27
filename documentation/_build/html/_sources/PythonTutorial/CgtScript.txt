@@ -7,13 +7,13 @@
 5. Make a script runnable through |cgt|
 =======================================
 
-To use your you may run it directly like any other |Python| script.
+To use your script you may run it directly like any other |Python| script.
 But, for debugging purpose it may be helpful to run it through the
 interactive layout viewer |cgt|.
 
 For |cgt| to be able to run your script, you must add to your script
 file a function named :cb:`ScriptMain()`, which takes a dictionnary
-as sole argument (:cb:`**kw`). The ``kw`` dictionnary contains, in
+as sole argument (:cb:`**kw`). The ``kw`` dictionary contains, in
 particular, the CellViewer_ object we are running under with the
 keyword ``editor``. You can then load your cell into the viewer
 using the menu:
@@ -67,7 +67,7 @@ using the menu:
 ~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to add breakpoints inside a script by calling the ``Breakpoint.stop()``
-function. To be able to see exactly what has just been moficated, we must close the
+function. To be able to see exactly what has just been mofied, we must close the
 UpdateSession_ just before calling the breakpoint and reopen it just after.
 The ``Breakpoint.stop()`` function takes two arguments:
 

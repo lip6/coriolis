@@ -185,10 +185,9 @@ The |Etesian| placer is a state of the art (as of 2015) analytical placer. It is
 within ``5%`` of other placers' solutions, but is normally a bit worse than ePlace.
 This |Coriolis| tool is actually an encapsulation of |Coloquinte| which *is* the placer.
 
-.. note:: *Instance Uniquification Unsupported:* a same logical instance cannot have
-   two different placements. So, either you manually make a clone of it or you
-   supply a placement for it. We need to implement uniquification in the
-   |Hurricane| database.
+.. note:: *Instance Uniquification:* a same logical instance cannot have
+   two different placements. So, if you don't supply a placement for it, it will be
+   uniquified (cloned) and you will see the copy files appears on disk upon saving.
 
 
 |noindent|
@@ -280,40 +279,24 @@ Etesian Configuration Parameters
 |newpage|
 
 
-Knik -- Global Router
----------------------
-
-The quality of |Knik| global routing solutions are equivalent to those of FGR_ 1.0.
-For an in-depth description of |Knik| algorithms, you may download the thesis of
-D. |Dupuis| avalaible from here~: `Knik Thesis`_.
-
-The global router is (not yet) deterministic. To circumvent this limitation,
-a global routing *solution* can be saved to disk and reloaded for later uses.
-
-A global routing is saved into a file with the same name as the design and a
-|kgr| extention. It is in `Box Router`_ output format.
-
-|noindent| Menus:
-
-* :math:`\textbf{P\&R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Save Global Routing}`
-* :math:`\textbf{P\&R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Load Global Routing}`
-
-
-Kite -- Detailed Router
+Katana -- Global Router
 -----------------------
 
-|Kite| no longer suffers from the limitations of |Nero|. It can route big designs
+The quality of |Katana| global routing solutions are equivalent to those of FGR_ 1.0.
+For an in-depth description of |Katana| algorithms, you may download the thesis of
+D. |Dupuis| avalaible from here~: `Knik Thesis`_ (|Knik| has been rewritten as part
+of |Katana|, the algorithms remains essentially the same).
+
+The global router is now deterministic.
+
+
+Katana -- Detailed Router
+-------------------------
+
+|Katana| no longer suffers from the limitations of |Nero|. It can route big designs
 as its runtime and memory footprint is almost linear (with respect to the number
 of gates). It has successfully routed design of more than `150K` gates.
 |medskip|
-
-|noindent| However, this first release comes with the temporary the following
-restrictions:
-
-* Works only with |SxLib| standard cell gauge.
-* Works always with 4 routing metal layers (`M2` through `M5`).
-* Do not allow (take into account) pre-routed wires on signals
-  other than |POWER| or |GROUND|.
 
 .. note::
    **Slow Layer Assignment.** Most of the time, the layer assignment stage is
@@ -321,15 +304,22 @@ restrictions:
    than a dozen *minutes*. This is a known bug and will be corrected in later
    releases.
 
-After each run, |Kite| displays a set of *completion ratios* which must all
-be equal to `100%` if the detailed routing has been successfull.
-In the event of a failure, on a saturated design, you may decrease the
-`edge saturation ratio` (argument `--edge`) to balance more evenly the design
-saturation. That is, the maximum saturation decrease at the price of a wider
-saturated area and increased wirelength. This is the saturation of the
-*global* router |Knik|, and you may increase/decrease by steps of ``5%``,
-which represent one track. The maximum capacity of the |SxLib| gauge is
-10 tracks in two layers, that makes 20 tracks by |Knik| edge.
+After each run, |Katana| displays a set of *completion ratios* which must all
+be equal to `100%` or (``NNNN+0``) if the detailed routing has been successfull.
+In the event of a failure, on a saturated design, you may tweak the three
+following configuration parameters:
+
+#. ``katana.hTrackReservedLocal``, the number of track reserved for local routing,
+   that quantity is substracted from the edge capacities (global routing) to
+   give a sense of the cluttering inside the GCells.
+#. ``katana.vTrackReservedLocal``, same as above.
+#. ``etesian.spaceMargin``, increase the free area of the overall design so the
+   routing density decrease.
+
+The idea is to increase the horizontal and vertical local track reservation until
+the detailed router succeed. But in doing so we make the task of the global router
+more and more difficult as the capacity of the edges decrease, and at some point
+it will fail too. So this is a balance.
 
 Routing a design is done in four ordered steps:
 
@@ -340,29 +330,26 @@ Routing a design is done in four ordered steps:
 
 It is possible to supply to the router a complete wiring for some nets that the user's
 wants to be routed according to a specific topology. The supplied topology must respect
-the building rules of the |Katabatic| database (contacts must be, terminals, turns, h-tee
-& v-tee only). During the first step :fboxtt:`Detailed Pre-Route` the router will solve
+the building rules of the |Anabatic| database (contacts must be, *terminals*, *turns*, *h-tee*
+& *v-tee* only). During the first step :fboxtt:`Detailed Pre-Route` the router will solve
 overlaps between the segments, without making any dogleg. If no pre-routed topologies
 are present, this step may be ommited. Any net routed at this step is then fixed and
 become unmovable for the later stages.
 
-After the detailed routing step the |Kite| data-structure is still active
+After the detailed routing step the |Katana| data-structure is still active
 (the Hurricane wiring is decorated). The finalize step performs the removal of
-the |Kite| data-structure, and it is not advisable to save the design before
+the |Katana| data-structure, and it is not advisable to save the design before
 that step.
 
-You may visualize the density (saturation) of either |Knik| (on edges) or
-|Kite| (on GCells) until the routing is finalized. Special layers appears
+You may visualize the density (saturation) of either the edges (global routing)
+or the GCells (detailed routing) until the routing is finalized. Special layers appears
 to that effect in the `The Layers&Go Tab`_.
 
 
-Kite Configuration Parameters
-.............................
+Katana Configuration Parameters
+...............................
 
-As |Knik| is only called through |Kite|, it's parameters also have
-the :cb:`kite.` prefix.
-
-The |Katabatic| parameters control the layer assignment step.
+The |Anabatic| parameters control the layer assignment step.
 
 All the defaults value given below are from the default |Alliance| technology
 (:cb:`cmos` and :cb:`SxLib` cell gauge/routing gauge).
@@ -370,35 +357,35 @@ All the defaults value given below are from the default |Alliance| technology
 +-----------------------------------+------------------+----------------------------+
 | Parameter Identifier              |   Type           |  Default                   |
 +===================================+==================+============================+
-| **Katabatic Parameters**                                                          |
+| **Anabatic Parameters**                                                           |
 +-----------------------------------+------------------+----------------------------+
-|``katabatic.topRoutingLayer``      | TypeString       | :cb:`METAL5`               |
+|``anabatic.topRoutingLayer``       | TypeString       | :cb:`METAL5`               |
 |                                   +------------------+----------------------------+
 |                                   | Define the highest metal layer that will be   |
 |                                   | used for routing (inclusive).                 |
 +-----------------------------------+------------------+----------------------------+
-|``katabatic.globalLengthThreshold``| TypeInt          | :cb:`1450`                 |
+|``anabatic.globalLengthThreshold`` | TypeInt          | :cb:`1450`                 |
 |                                   +------------------+----------------------------+
 |                                   | This parameter is used by a layer assignment  |
 |                                   | method which is no longer used (did not give  |
 |                                   | good results)                                 |
 +-----------------------------------+------------------+----------------------------+
-| ``katabatic.saturateRatio``       | TypePercentage   | :cb:`80`                   |
+| ``anabatic.saturateRatio``        | TypePercentage   | :cb:`80`                   |
 |                                   +------------------+----------------------------+
 |                                   | If ``M(x)`` density is above this ratio,      |
 |                                   | move up feedthru  global segments up from     |
 |                                   | depth ``x`` to ``x+2``                        |
 +-----------------------------------+------------------+----------------------------+
-| ``katabatic.saturateRp``          | TypeInt          | :cb:`8`                    |
+| ``anabatic.saturateRp``           | TypeInt          | :cb:`8`                    |
 |                                   +------------------+----------------------------+
 |                                   | If a GCell contains more terminals            |
 |                                   | (:cb:`RoutingPad`) than that number, force a  |
 |                                   | move up of the connecting segments to those   |
 |                                   | in excess                                     |
 +-----------------------------------+------------------+----------------------------+
-| **Knik Parameters**                                                               |
+| **Katana Parameters**                                                             |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.hTracksReservedLocal``     | TypeInt          | :cb:`3`                    |
+| ``katana.hTracksReservedLocal``   | TypeInt          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | To take account the tracks needed *inside* a  |
 |                                   | GCell to build the *local* routing, decrease  |
@@ -407,40 +394,38 @@ All the defaults value given below are from the default |Alliance| technology
 |                                   | reserved capacity can be distinguished for    |
 |                                   | more accuracy.                                |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.vTracksReservedLocal``     | TypeInt          | :cb:`3`                    |
+| ``katana.vTracksReservedLocal``   | TypeInt          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | cf. ``kite.hTracksReservedLocal``             |
 +-----------------------------------+------------------+----------------------------+
-| **Kite Parameters**                                                               |
-+-----------------------------------+------------------+----------------------------+
-| ``kite.eventsLimit``              | TypeInt          | :cb:`4000002`              |
+| ``katana.eventsLimit``            | TypeInt          | :cb:`4000002`              |
 |                                   +------------------+----------------------------+
 |                                   | The maximum number of segment displacements,  |
 |                                   | this is a last ditch safety against infinite  |
 |                                   | loop. It's perhaps a  little too low for big  |
 |                                   | designs                                       |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.ripupCost``                | TypeInt          | :cb:`3`                    |
+| ``katana.ripupCost``              | TypeInt          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | Differential introduced between two ripup     |
 |                                   | cost to avoid a loop between two ripped up    |
 |                                   | segments                                      |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.strapRipupLimit``          | TypeInt          | :cb:`16`                   |
+| ``katana.strapRipupLimit``        | TypeInt          | :cb:`16`                   |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *strap* segments  |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.localRipupLimit``          | TypeInt          | :cb:`9`                    |
+| ``katana.localRipupLimit``        | TypeInt          | :cb:`9`                    |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *local* segments  |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.globalRipupLimit``         | TypeInt          | :cb:`5`                    |
+| ``katana.globalRipupLimit``       | TypeInt          | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *global* segments,|
 |                                   | when this limit is reached, triggers topologic|
 |                                   | modification                                  |
 +-----------------------------------+------------------+----------------------------+
-| ``kite.longGlobalRipupLimit``     | TypeInt          | :cb:`5`                    |
+| ``katana.longGlobalRipupLimit``   | TypeInt          | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *long global*     |
 |                                   | segments, when this limit is reached, triggers|
@@ -606,24 +591,8 @@ Appart from the obvious ``--text`` options, all can be used for text and graphic
 | `-c <cell>|--cell=<cell>`   | The name of the design to load, without        |
 |                             | leading path or extention.                     |
 +-----------------------------+------------------------------------------------+
-| `-g|--load-global`          | Reload a global routing solution from disk.    |
-|                             | The file containing the solution must be named |
-|                             | `<cell>.kgr`.                                  |
-+-----------------------------+------------------------------------------------+
-| `--save-global`             | Save the global routing solution, into a file  |
-|                             | named `<design>.kgr`.                          |
-+-----------------------------+------------------------------------------------+
-| `-e <ratio>|--edge=<ratio>` | Change the edge capacity for the global        |
-|                             | router, between 0 and 1 (|Knik|).              |
-+-----------------------------+------------------------------------------------+
-| `-G|--global-route`         | Run the global router (|Knik|).                |
-+-----------------------------+------------------------------------------------+
-| `-R|--detailed-route`       | Run the detailed router (|Kite|).              |
-+-----------------------------+------------------------------------------------+
-| `-s|--save-design=<routed>` | The design into which the routed layout will   |
-|                             | be saved. It is strongly recommanded to choose |
-|                             | a different name from the source (unrouted)    |
-|                             | design.                                        |
+| `-m <val>|--margin=<val>`   | Percentage *val* of white space for the placer |
+|                             | (|Etesian|).                                   |
 +-----------------------------+------------------------------------------------+
 | `--events-limit=<count>`    | The maximal number of events after which the   |
 |                             | router will stops. This is mainly a failsafe   |
@@ -631,6 +600,15 @@ Appart from the obvious ``--text`` options, all can be used for text and graphic
 |                             | millions of iteration which should suffice to  |
 |                             | any design of `100K`. gates. For bigger        |
 |                             | designs you may wants to increase this limit.  |
++-----------------------------+------------------------------------------------+
+| `-G|--global-route`         | Run the global router (|Katana|).              |
++-----------------------------+------------------------------------------------+
+| `-R|--detailed-route`       | Run the detailed router (|Katana|).            |
++-----------------------------+------------------------------------------------+
+| `-s|--save-design=<routed>` | The design into which the routed layout will   |
+|                             | be saved. It is strongly recommanded to choose |
+|                             | a different name from the source (unrouted)    |
+|                             | design.                                        |
 +-----------------------------+------------------------------------------------+
 | `--stratus-script=<module>` | Run the Python/Stratus script ``module``.      |
 |                             | See `Python Scripts in Cgt`_.                  |
@@ -643,16 +621,7 @@ Some Examples :
 
 * Run both global and detailed router, then save the routed design : ::
 
-      > cgt -v -t -G -R --cell=design --save-design=design_kite
-
-* Load a previous global solution, run the detailed router, then save the
-  routed design : :: 
-
-      > cgt -v -t --load-global -R --cell=design --save-design=design_kite
-
-* Run the global router, then save the global routing solution : ::
-
-      > cgt -v -t -G --save-global --cell=design
+      > cgt -v -t -G -R --cell=design --save-design=design_r
 
 
 Miscellaneous Settings

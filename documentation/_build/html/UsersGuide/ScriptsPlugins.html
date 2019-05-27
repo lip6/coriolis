@@ -84,13 +84,18 @@
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-0-1">Release v2.0.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-1">Release v2.1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2">Release v2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-3">Release v2.3</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Installation.html">Installation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Installation.html#building-coriolis">Building Coriolis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#the-actively-developed-branch">The actively developed branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#installing-on-redhat-or-compatible-distributions">Installing on <span class="sc">RedHat</span> or compatible distributions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#building-a-debug-enabled-version">Building a Debug Enabled Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#installing-on-debian-9-ubuntu-18-or-compatible-distributions">Installing on <span class="sc">Debian</span> 9, <span class="sc">Ubuntu</span> 18 or compatible distributions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
 </ul>
 </li>
@@ -117,8 +122,8 @@
 <li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#etesian-placer">Etesian &#8211; Placer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#knik-global-router">Knik &#8211; Global Router</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#katana-global-router">Katana &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#katana-detailed-router">Katana &#8211; Detailed Router</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#printing-snapshots">Printing &amp; Snapshots</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ViewerTools.html#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
@@ -158,7 +163,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/Environment.html">2. Setting up the Environment</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#setting-up-the-pathes">2.1 Setting up the Pathes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#setting-up-the-paths">2.1 Setting up the Paths</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#user-s-configurations-file">2.2 User&#8217;s Configurations File</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Environment.html#the-techno-py-file">2.2.1 The <span class="cb">techno.py</span> File</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Environment.html#the-settings-py-file">2.2.2 The <span class="cb">settings.py</span> File</a></li>
@@ -387,6 +392,11 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -499,8 +509,9 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="python-interface-for-hurricane-coriolis">
-<span id="python-interface-to-coriolis"></span><h1>Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span><a class="headerlink" href="#python-interface-for-hurricane-coriolis" title="Permalink to this headline">¶</a></h1>
+  <p id="python-interface-to-coriolis"></p>
+<div class="section" id="python-interface-for-hurricane-coriolis">
+<h1>Python Interface for <span class="sc">Hurricane</span> / <span class="sc">Coriolis</span><a class="headerlink" href="#python-interface-for-hurricane-coriolis" title="Permalink to this headline">¶</a></h1>
 <p>The (almost) complete interface of <span class="sc">Hurricane</span> is exported as a <span class="sc">Python</span> module
 and some part of the other components of <span class="sc">Coriolis</span> (each one in a separate
 module). The interface has been made to mirror as closely as possible the
@@ -509,7 +520,7 @@ either languages.</p>
 <p><a class="reference external" href="file:../../../index.html">Summary of the C++ Documentation</a></p>
 <p>A script could be run directly in text mode from the command line or through
 the graphical interface (see <a class="reference internal" href="ViewerTools.html#python-scripts-in-cgt"><span class="std std-ref">Executing Python Scripts in Cgt</span></a>).</p>
-<p>Asides for this requirement, the python script can contain anything valid
+<p>Aside for this requirement, the python script can contain anything valid
 in <span class="sc">Python</span>, so don&#8217;t hesitate to use any package or extention.</p>
 <p>Small example of Python/Stratus script:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="k">import</span> <span class="o">*</span>
@@ -588,31 +599,50 @@ through this method.</p>
 <p>Automatically perform the placement of a complete chip. This plugin, as well
 as the other P&amp;R tools expect a specific top-level hierarchy for the design.
 The top-level hierarchy must contains the instances of all the I/O pads and
-<strong>exactly one</strong> instance of the chip&#8217;s core model.</p>
+<strong>exactly one</strong> instance named <code class="docutils literal"><span class="pre">corona</span></code> of an eponym cell <code class="docutils literal"><span class="pre">corona</span></code>.
+The <code class="docutils literal"><span class="pre">corona</span></code> cell in turn containing the instance of the chip&#8217;s core model.</p>
+<p>The intermediate <code class="docutils literal"><span class="pre">corona</span></code> hierarchical level has been introduced to handle
+the possible discoupling between real I/O pads supplied by a foundry and a
+symbolic core. So the <em>chip</em> level contains only real layout and the corona
+and below only symbolic layer.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This do not prevent having a design either fully symbolic (pads and core)
+or fully real.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal"><span class="pre">corona</span></code> also avoid the router to actually have to manage directly
+the pads which simplificate it&#8217;s configuration and accessorily avoid
+to have the pads stuffed with blockages.</p>
+</div>
 <p> <a class="reference internal" href="../_images/chip-structure-1.png"><img alt="Chip Top Structure" class="align-middle" src="../_images/chip-structure-1.png" style="width: 90%;" /></a> </p>
-<p>The designer must provide a configuration file that define the rules for the
+<p>The designer must provide a configuration file that defines the rules for the
 placement of the top-level hierarchy (that is, the pads and the core).
-This file must be named after the chip&#8217;s name, by appending <code class="docutils literal"><span class="pre">_chip.py</span></code>
+This file must be named after the chip&#8217;s name, by appending <code class="docutils literal"><span class="pre">_ioring.py</span></code>
 (obviously, it is a <span class="sc">Python</span> file). For instance if the chip netlist file
-is called <code class="docutils literal"><span class="pre">amd2901_crl.vst</span></code>, then the configuration file must be named
-<code class="docutils literal"><span class="pre">amd2901_crl_chip.vst</span></code>.</p>
+is called <code class="docutils literal"><span class="pre">amd2901.vst</span></code>, then the configuration file must be named
+<code class="docutils literal"><span class="pre">amd2901_ioring.vst</span></code>.</p>
 <p>Example of chip placement configuration file (for <code class="docutils literal"><span class="pre">AM2901</span></code>):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">chip</span> <span class="o">=</span> \
-  <span class="p">{</span> <span class="s1">&#39;pads.south&#39;</span>     <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_a3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_a2&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_a1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_r0&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_vddick0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_vssick0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_a0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i6&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_i8&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i7&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_r3&#39;</span>     <span class="p">]</span>
-  <span class="p">,</span> <span class="s1">&#39;pads.east&#39;</span>      <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_zero&#39;</span>   <span class="p">,</span> <span class="s1">&#39;p_i0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i2&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_vddeck0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_vsseck0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_q3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_b0&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_b1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_b2&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_b3&#39;</span>     <span class="p">]</span>
-  <span class="p">,</span> <span class="s1">&#39;pads.north&#39;</span>     <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_noe&#39;</span>    <span class="p">,</span> <span class="s1">&#39;p_y3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_y2&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_y1&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_y0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_vddeck1&#39;</span><span class="p">,</span> <span class="s1">&#39;p_vsseck1&#39;</span><span class="p">,</span> <span class="s1">&#39;p_np&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_ovr&#39;</span>    <span class="p">,</span> <span class="s1">&#39;p_cout&#39;</span>   <span class="p">,</span> <span class="s1">&#39;p_ng&#39;</span>     <span class="p">]</span>
-  <span class="p">,</span> <span class="s1">&#39;pads.west&#39;</span>      <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_cin&#39;</span>    <span class="p">,</span> <span class="s1">&#39;p_i4&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i5&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i3&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_ck&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_d0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_d1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_d2&#39;</span>
-                       <span class="p">,</span> <span class="s1">&#39;p_d3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_q0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_f3&#39;</span>     <span class="p">]</span>
-  <span class="p">,</span> <span class="s1">&#39;core.size&#39;</span>      <span class="p">:</span> <span class="p">(</span> <span class="mi">1500</span><span class="p">,</span> <span class="mi">1500</span> <span class="p">)</span>
-  <span class="p">,</span> <span class="s1">&#39;chip.size&#39;</span>      <span class="p">:</span> <span class="p">(</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">3000</span> <span class="p">)</span>
-  <span class="p">,</span> <span class="s1">&#39;chip.clockTree&#39;</span> <span class="p">:</span> <span class="kc">True</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">helpers</span> <span class="k">import</span> <span class="n">l</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span>
+
+<span class="n">chip</span> <span class="o">=</span> \
+  <span class="p">{</span> <span class="s1">&#39;pads.ioPadGauge&#39;</span> <span class="p">:</span> <span class="s1">&#39;pxlib&#39;</span>
+  <span class="p">,</span> <span class="s1">&#39;pads.south&#39;</span>      <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_a3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_a2&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_a1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_r0&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_vddick0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_vssick0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_a0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i6&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_i8&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i7&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_r3&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s1">&#39;pads.east&#39;</span>       <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_zero&#39;</span>   <span class="p">,</span> <span class="s1">&#39;p_i0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i2&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_vddeck0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_vsseck0&#39;</span><span class="p">,</span> <span class="s1">&#39;p_q3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_b0&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_b1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_b2&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_b3&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s1">&#39;pads.north&#39;</span>      <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_noe&#39;</span>    <span class="p">,</span> <span class="s1">&#39;p_y3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_y2&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_y1&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_y0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_vddeck1&#39;</span><span class="p">,</span> <span class="s1">&#39;p_vsseck1&#39;</span><span class="p">,</span> <span class="s1">&#39;p_np&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_ovr&#39;</span>    <span class="p">,</span> <span class="s1">&#39;p_cout&#39;</span>   <span class="p">,</span> <span class="s1">&#39;p_ng&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s1">&#39;pads.west&#39;</span>       <span class="p">:</span> <span class="p">[</span> <span class="s1">&#39;p_cin&#39;</span>    <span class="p">,</span> <span class="s1">&#39;p_i4&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i5&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_i3&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_ck&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_d0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_d1&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_d2&#39;</span>
+                        <span class="p">,</span> <span class="s1">&#39;p_d3&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_q0&#39;</span>     <span class="p">,</span> <span class="s1">&#39;p_f3&#39;</span>     <span class="p">]</span>
+  <span class="p">,</span> <span class="s1">&#39;core.size&#39;</span>       <span class="p">:</span> <span class="p">(</span> <span class="n">l</span><span class="p">(</span><span class="mi">1500</span><span class="p">),</span> <span class="n">l</span><span class="p">(</span><span class="mi">1500</span><span class="p">)</span> <span class="p">)</span>
+  <span class="p">,</span> <span class="s1">&#39;chip.size&#39;</span>       <span class="p">:</span> <span class="p">(</span> <span class="n">l</span><span class="p">(</span><span class="mi">3000</span><span class="p">),</span> <span class="n">l</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span> <span class="p">)</span>
+  <span class="p">,</span> <span class="s1">&#39;chip.clockTree&#39;</span>  <span class="p">:</span> <span class="kc">True</span>
   <span class="p">}</span>
 </pre></div>
 </div>
@@ -630,30 +660,35 @@ is called <code class="docutils literal"><span class="pre">amd2901_crl.vst</span
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'pad.south'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'pad.ioPadGauge'</span></code></td>
+<td>The routing gauge to use for the pad. Must be given
+as it differs from the one used to route standard
+inside the core</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'pad.south'</span></code></td>
 <td>Ordered list (left to right) of pad instances names
 to put on the south side of the chip</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">'pad.east'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'pad.east'</span></code></td>
 <td>Ordered list (down to up) of pad instances names
 to put on the east side of the chip</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'pad.north'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'pad.north'</span></code></td>
 <td>Ordered list (left to right) of pad instances names
 to put on the north side of the chip</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">'pad.west'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'pad.west'</span></code></td>
 <td>Ordered list (down to up) of pad instances names
 to put on the west side of the chip</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'core.size'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'core.size'</span></code></td>
 <td>The size of the core (to be used by the placer)</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">'chip.size'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'chip.size'</span></code></td>
 <td>The size of the whole chip. The sides must be great
 enough to accomodate all the pads</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'chip.clockTree'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'chip.clockTree'</span></code></td>
 <td>Whether to generate a clock tree or not. This calls
 the ClockTree plugin</td>
 </tr>
@@ -686,68 +721,29 @@ of power/grounds</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.block.rails.hWidth</span></code></td>
 <td>TypeInt</td>
-<td><span class="cb">12</span></td>
+<td><span class="cb">12</span>  <span class="raw-html">&#955</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The horizontal with of the rails</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.block.rails.vWidth</span></code></td>
 <td>TypeInt</td>
-<td><span class="cb">12</span></td>
+<td><span class="cb">12</span>  <span class="raw-html">&#955</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The vertical with of the rails</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.block.rails.hSpacing</span></code></td>
 <td>TypeInt</td>
-<td><span class="cb">6</span></td>
+<td><span class="cb">6</span>   <span class="raw-html">&#955</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The spacing, <em>edge to edge</em> of two adjacent
 horizontal rails</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.block.rails.vSpacing</span></code></td>
 <td>TypeInt</td>
-<td><span class="cb">6</span></td>
+<td><span class="cb">6</span>   <span class="raw-html">&#955</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The spacing, <em>edge to edge</em> of two adjacent
 vertical rails</td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.pad.pck</span></code></td>
-<td>TypeString</td>
-<td><span class="cb">pck_px</span></td>
-</tr>
-<tr class="row-even"><td colspan="2">The model name of the pad connected to the
-chip external clock</td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.pad.pvddeck</span></code></td>
-<td>TypeString</td>
-<td><span class="cb">pvddeck_px</span></td>
-</tr>
-<tr class="row-even"><td colspan="2">The model name of the pad connected to the
-<code class="docutils literal"><span class="pre">vdde</span></code> (external power) and suppling it to
-the core</td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.pad.pvsseck</span></code></td>
-<td>TypeString</td>
-<td><span class="cb">pvsseck_px</span></td>
-</tr>
-<tr class="row-even"><td colspan="2">The model name of the pad connected to the
-<code class="docutils literal"><span class="pre">vsse</span></code> (external ground) and suppling it to
-the core</td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.pad.pvddick</span></code></td>
-<td>TypeString</td>
-<td><span class="cb">pvddick_px</span></td>
-</tr>
-<tr class="row-even"><td colspan="2">The model name of the pad connected to the
-<code class="docutils literal"><span class="pre">vddi</span></code> (internal power) and suppling it to
-the core</td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">chip.pad.pvssick</span></code></td>
-<td>TypeString</td>
-<td><span class="cb">pvssick_px</span></td>
-</tr>
-<tr class="row-even"><td colspan="2">The model name of the pad connected to the
-<code class="docutils literal"><span class="pre">vssi</span></code> (internal ground) and suppling it to
-the core</td>
 </tr>
 </tbody>
 </table>
@@ -760,11 +756,11 @@ only four rails (2* <code class="docutils literal"><span class="pre">power</span
 </div>
 <div class="section" id="clock-tree">
 <h3>Clock Tree<a class="headerlink" href="#clock-tree" title="Permalink to this headline">¶</a></h3>
-<p>Insert a clock tree into a block. The clock tree uses the H strategy.
+<p>Inserts a clock tree into a block. The clock tree uses the H strategy.
 The clock net is splitted into sub-nets, one for each branch of the
 tree.</p>
 <ul>
-<li><p class="first">On <strong>chips</strong> design, the sub-nets are createds in the model of the
+<li><p class="first">On <strong>chip</strong> design, the sub-nets are created in the model of the
 core block (then trans-hierarchically flattened to be shown at
 chip level).</p>
 </li>
@@ -784,30 +780,30 @@ on which quarter of plane the sub-clock is located:</p>
 </ul>
 <p>The clock tree plugin works in four steps:</p>
 <ol class="arabic simple">
-<li>Build the clock tree: creates the top-block abutment box, compute the
-levels of H tree neededs and place the clock buffers.</li>
+<li>Builds the clock tree: creates the top-block abutment box, compute the
+required levels of H tree and places the clock buffers.</li>
 <li>Once the clock buffers are placed, calls the placer (<span class="sc">Etesian</span>) to place
-the ordinary standart cells, whithout disturbing clock H-tree buffers.</li>
+the ordinary standard cells, whithout disturbing clock H-tree buffers.</li>
 <li>At this point we know the exact positions of all the DFFs, so we can
 connect them to the nearest H-tree leaf clock signal.</li>
-<li>Leaf clock signals that are not connecteds to any DFFs are removed.</li>
+<li>Leaf clock signals that are not connected to any DFFs are removed.</li>
 </ol>
 <p>Netlist reorganisation:</p>
 <ul class="simple">
-<li>Obviously the top block or chip core model netlist is modificated to
-contains all the clock sub-nets. The interface is <em>not</em> changed.</li>
+<li>Obviously the top block or chip core model netlist is modified to
+contain all the clock sub-nets. The interface is <em>not</em> changed.</li>
 <li>If the top block contains instances of other models <em>and</em> those models
-contains DFFs that get re-connecteds to the clock sub-nets (from the
-top level). Change both the model netlist and interface to propagate
+contain DFFs that get re-connected to the clock sub-nets (from the
+top level). Changes both the model netlist and interface to propagate
 the relevant clock sub-nets to the instanciated model. The new model
-with the added clock signal is renamed with a <code class="docutils literal"><span class="pre">_clocked</span></code> suffix.
-For example, the sub-block model <code class="docutils literal"><span class="pre">ram.vst</span></code> will become <code class="docutils literal"><span class="pre">ram_clocked.vst</span></code>.</li>
+with the added clock signal is renamed with a <code class="docutils literal"><span class="pre">_cts</span></code> suffix.
+For example, the sub-block model <code class="docutils literal"><span class="pre">ram.vst</span></code> will become <code class="docutils literal"><span class="pre">ram_cts.vst</span></code>.</li>
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">If you are to re-run the clock tree plugin on a netlist, be careful
-to erase any previously generated <code class="docutils literal"><span class="pre">_clocked</span></code> file (both netlist and
-layout: <code class="docutils literal"><span class="pre">rm</span> <span class="pre">*.clocked.{ap,vst}</span></code>). And restart <span class="cb">cgt</span> to clear it&#8217;s
+to erase any previously generated <code class="docutils literal"><span class="pre">_cts</span></code> file (both netlist and
+layout: <code class="docutils literal"><span class="pre">rm</span> <span class="pre">*_cts.{ap,vst}</span></code>). And restart <span class="cb">cgt</span> to clear its
 memory cache.</p>
 </div>
 <p>Configuration parameters, defaults are defined in <code class="docutils literal"><span class="pre">etc/coriolis2/&lt;STECHNO&gt;/plugins.conf</span></code>.</p>
@@ -828,7 +824,7 @@ memory cache.</p>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">clockTree.minimumSide</span></code></td>
 <td>TypeInt</td>
-<td><span class="cb">300</span></td>
+<td><span class="cb">300</span>  <span class="raw-html">&#955</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The minimum size below which the clock tree
 will stop to perform quadri-partitions</td>
@@ -839,21 +835,13 @@ will stop to perform quadri-partitions</td>
 </tr>
 <tr class="row-even"><td colspan="2">The buffer model to use to drive sub-nets</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">clockTree.placerEngine</span></code></td>
-<td>TypeString</td>
-<td><span class="cb">Etesian</span></td>
-</tr>
-<tr class="row-even"><td colspan="2">The placer to use. Other value is <code class="docutils literal"><span class="pre">Mauka</span></code>
-the simulated annealing placer which will go
-into retirement very soon</td>
-</tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="recursive-save-rsave">
 <h3>Recursive-Save (RSave)<a class="headerlink" href="#recursive-save-rsave" title="Permalink to this headline">¶</a></h3>
-<p>Perform a recursive top down save of all the models from the top cell
-loaded in <span class="cb">cgt</span>. Force a write of any non-terminal model. This plugin is used
+<p>Performs a recursive top down save of all the models from the top cell
+loaded in <span class="cb">cgt</span>. Forces a write of any non-terminal model. This plugin is used
 by the clock tree plugin after the netlist clock sub-nets creation.</p>
 </div>
 </div>
@@ -877,7 +865,7 @@ then run the <span class="sc">Python</span> script <span class="cb">doChip.py</s
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Between two consecutive run, be sure to erase the netlist/layout generateds:</p>
-<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">AM2901</span><span class="o">&gt;</span> <span class="n">rm</span> <span class="o">*</span><span class="n">clocked</span><span class="o">*.</span><span class="n">vst</span> <span class="o">*.</span><span class="n">ap</span>
+<div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">AM2901</span><span class="o">&gt;</span> <span class="n">rm</span> <span class="o">*</span><span class="n">_cts</span><span class="o">*.</span><span class="n">vst</span> <span class="o">*.</span><span class="n">ap</span>
 </pre></div>
 </div>
 </div>
@@ -905,7 +893,7 @@ then run the <span class="sc">Python</span> script <span class="cb">doChip.py</s
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Mar 04, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>

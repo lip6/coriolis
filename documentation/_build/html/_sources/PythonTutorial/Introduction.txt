@@ -10,11 +10,11 @@ This tutorial is aimed at two goals :
 
 * Presenting how to use Python scripts to control |Coriolis|.
 
-* Make a basic introduction about the |Hurricane| database and it's
+* Make a basic introduction about the |Hurricane| database and its
   concepts.
 
 While this tutorial is aimed at presenting the |Hurricane| database,
-do not feel limited to it. You can use |Hurricane| objects as attributes
+do not feel limited by it. You can use |Hurricane| objects as attributes
 of |Python| objects or use |Python| containers to store them.
 The only limitation is that you may not use |Hurricane| classes as base
 classes in |Python|.
@@ -36,7 +36,7 @@ don't. Thus we summarize below the more important ones:
 ===============  =====================================================
 **Class**        **Meaning**
 ===============  =====================================================
-Cell_            The model. A Cell do not have terminals, only nets
+Cell_            The model. A Cell does not have terminals, only nets
                  flagged as *external*
 Instance_        An instance of a model
 Net_             A grouping of electrically connecteds components
@@ -58,7 +58,7 @@ Mostly:
 * C++ namespaces are exported as |Python| modules.
 * The *scope resolution operator* :fboxtt:`::` converts into :fboxtt:`.`.
 * C++ blocks (between braces :fboxtt:`{}`) are replaced by indentations.
-* In C++, names are manageds through a dedicated ``Name`` class.
+* In C++, names are managed through a dedicated ``Name`` class.
   It has not been exported to the |Python| interface, you only have
   to use ``string``.
 * Coordinates are expressed in ``DbU`` which are ``long`` with a special

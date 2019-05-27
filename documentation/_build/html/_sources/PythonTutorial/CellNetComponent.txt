@@ -7,19 +7,19 @@
 3. Making a Standard Cell -- Layout
 ===================================
 
-In this part, we well show how to create and save a terminal Cell_,
+In this part, we will show how to create and save a terminal Cell_,
 that is, a cell without instances (the end point of a hierarchical
 design). To illustrate the case we will draw the layout of a
 standard cell.
 
 We will introduce the following classes : Cell_, Net_, Component_
-and it's derived classes.
+and its derived classes.
 
 
 3.1 The AllianceFramework (CRL Core)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The |Hurricane| database only manage objects in memory. To load or save
+The |Hurricane| database only manages objects in memory. To load or save
 something from the outside, we need to use a *framework*. As of today, only
 one is available : the Alliance framework. It allows |Coriolis| to handle
 |Alliance| libraries and cells in the exact same way.
@@ -34,7 +34,7 @@ one is available : the Alliance framework. It allows |Coriolis| to handle
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the |Hurricane| database, all modifications must take place inside
-an UpdateSession_. At the closing of a session, created or modificateds
+an UpdateSession_. At the closing of a session, created or modificated
 objects are fully inserted in the database. This is especially true for
 the visualisation, a created component will be visible *only* only after
 the session close.
@@ -64,7 +64,7 @@ environment is provided by the |CRL| module.
    UpdateSession.close()
 
 
-This is the simplest call to ``createCell()``, and it that case, the newly
+This is the simplest call to ``createCell()``, and in that case, the newly
 created Cell_ will be saved in the *working library* (usually, the current
 directory). You may supply a second argument telling into which library
 you want the Cell_ to be created.
@@ -83,7 +83,7 @@ hundredth of foundry grid (to allow transient non-integer
 computation).
 
 To work with symbolic layout, that is, using lambda based lengths,
-two conversion functions are provideds:
+two conversion functions are provided:
 
 * ``unit = DbU.fromLambda( lbd )`` convert a lambda :cb:`lbd` into a ``DbU``.
 * ``lbd = DbU.toLambda( unit )`` convert a ``DbU`` into a lambda :cb:`lbd`.
@@ -95,7 +95,7 @@ is *integer*.
 3.5 Setting up the Abutment Box
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To setup the abutment box, we use a Box_ which define a box from
+To setup the abutment box, we use a Box_ which defines a box from
 the coordinates of the lower left corner ``(x1,y1)`` and upper left
 corner ``(x2,y2)``.
 
@@ -157,7 +157,7 @@ Layer_:
 --------------------
 
 As said above, prior to creating any Component_, we must create the Net_ it
-will belongs to. In that example we also make it an *external* net, that is,
+will belong to. In that example we also make it an *external* net, that is,
 a part of the interface. Do not mistake the name of the net given as a string
 argument :cb:`'i'` and the name of the *variable* :cb:`i` holding the Net_ object.
 For the sake of clarity we try to give the variable a close name, but this is
@@ -194,7 +194,7 @@ absolute position. There is a second overload for creating a relatively placed
 segment, see *articulated layout*.
 
 If the net is external, that is, part of the interface of the cell, you may have
-to declare some of it's components as physical connectors usable by the router.
+to declare some of its components as physical connectors usable by the router.
 This is done by calling the NetExternalComponents_ class:
 
 .. code-block:: Python
@@ -205,7 +205,7 @@ This is done by calling the NetExternalComponents_ class:
 3.7 Saving to Disk (CRL Core)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once you are finished building your cell, you have to save it on disk.
+Once you have finished to build your cell, you have to save it on disk.
 Using the AllianceFramework_ you can save it as a pair of file:
 
 =========================  ===================================  =======================
@@ -229,7 +229,7 @@ will be written in the |Alliance| ``WORK_DIR``.
 The example files can be found in the ``share/doc/coriolis2/examples/scripts/``
 directory (under the the root of the |Coriolis| installation).
 
-The code needed to run it through the |cgt| viewer as been added. For the
+The code needed to run it through the |cgt| viewer has been added. For the
 explanation of that part of the code, refer to `5. Make a script runnable through cgt`_.
 
 

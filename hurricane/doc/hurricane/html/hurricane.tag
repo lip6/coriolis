@@ -827,8 +827,8 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>Hurricane::Entity::CompareById</name>
-    <filename>structHurricane_1_1Entity_1_1CompareById.html</filename>
+    <name>Entity::CompareById</name>
+    <filename>classEntity_1_1CompareById.html</filename>
   </compound>
   <compound kind="class">
     <name>Hurricane::Component</name>
@@ -1880,14 +1880,6 @@
     <name>Hurricane::Entity</name>
     <filename>classHurricane_1_1Entity.html</filename>
     <base>Hurricane::DBo</base>
-    <class kind="class">Hurricane::Entity::CompareById</class>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>getId</name>
-      <anchorfile>classHurricane_1_1Entity.html</anchorfile>
-      <anchor>aaff727ad7411392d4a991a56e2579a60</anchor>
-      <arglist>() const</arglist>
-    </member>
     <member kind="function" virtualness="pure">
       <type>virtual Cell *</type>
       <name>getCell</name>
@@ -2644,8 +2636,8 @@
       <type></type>
       <name>Interval</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>ac0f6c351e64e9be3e9a51e07dff10778</anchor>
-      <arglist>(const DbU::Unit &amp;v)</arglist>
+      <anchor>ace4173705b4dbcf6c00cd83bb61c4d43</anchor>
+      <arglist>(const DbU::Unit &amp;)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -2658,29 +2650,29 @@
       <type></type>
       <name>Interval</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>af1d588fcfe919e45be4334fdbd8a07a6</anchor>
-      <arglist>(const Interval &amp;interval)</arglist>
+      <anchor>a2db3923eb057dd19f5320d93a09750d9</anchor>
+      <arglist>(const Interval &amp;)</arglist>
     </member>
     <member kind="function">
       <type>Interval &amp;</type>
       <name>operator=</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>a6d9eb898fa89218cec031f28d69a7d95</anchor>
-      <arglist>(const Interval &amp;interval)</arglist>
+      <anchor>a337b424cea8024f574726c3a2e4935b8</anchor>
+      <arglist>(const Interval &amp;)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator==</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>ad10b5fbbeb4531915a6031353e148edc</anchor>
-      <arglist>(const Interval &amp;interval) const</arglist>
+      <anchor>a1b022ac0ad975f168ac2b2689e6368c3</anchor>
+      <arglist>(const Interval &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator!=</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>a2703ebb1e70d93d96ae8e29748c53d14</anchor>
-      <arglist>(const Interval &amp;interval) const</arglist>
+      <anchor>a2e5a64c485269fb08fb762e1eb3bc374</anchor>
+      <arglist>(const Interval &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>const DbU::Unit &amp;</type>
@@ -2721,15 +2713,15 @@
       <type>Interval</type>
       <name>getUnion</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>adaddabee8381860b0d6913ce39bc1911</anchor>
-      <arglist>(const Interval &amp;interval) const</arglist>
+      <anchor>ac50b0e28faf03b54f81af109d942b569</anchor>
+      <arglist>(const Interval &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>Interval</type>
       <name>getIntersection</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>ad9baf434d669fddf9cd30aa74e0c4486</anchor>
-      <arglist>(const Interval &amp;interval) const</arglist>
+      <anchor>a73130b484cf43ff3b48488780a926ead</anchor>
+      <arglist>(const Interval &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -2749,22 +2741,22 @@
       <type>bool</type>
       <name>contains</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>a1f58204f81cd59ae8345e0efd2482bbb</anchor>
-      <arglist>(const DbU::Unit &amp;v) const</arglist>
+      <anchor>a84beba7ba34552e12e6cb9e462a94765</anchor>
+      <arglist>(const DbU::Unit &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>contains</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>ae86edb6867cf55459325cc35d971afbd</anchor>
-      <arglist>(const Interval &amp;interval) const</arglist>
+      <anchor>af613eb138f2035f50cba47057a074b2e</anchor>
+      <arglist>(const Interval &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>intersect</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>acbaccbdd6649a32dd457455d277370f8</anchor>
-      <arglist>(const Interval &amp;interval) const</arglist>
+      <anchor>af4862b82fe5b37cdb3986a3b05245469</anchor>
+      <arglist>(const Interval &amp;, bool strict=false) const</arglist>
     </member>
     <member kind="function">
       <type>Interval &amp;</type>
@@ -2791,15 +2783,15 @@
       <type>Interval &amp;</type>
       <name>merge</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>a927e2fbaa8f38a069c6308f7cacc8ab5</anchor>
-      <arglist>(const DbU::Unit &amp;v)</arglist>
+      <anchor>ab37a2b3ad247a0a5a4e4946d2b777bec</anchor>
+      <arglist>(const DbU::Unit &amp;)</arglist>
     </member>
     <member kind="function">
       <type>Interval &amp;</type>
       <name>merge</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>ab6c2a46d4cb528ecb0d0eec2c4cec020</anchor>
-      <arglist>(const Interval &amp;interval)</arglist>
+      <anchor>a99c17b60766c1146ad380ac9981008f7</anchor>
+      <arglist>(const Interval &amp;)</arglist>
     </member>
     <member kind="function">
       <type>Interval &amp;</type>
@@ -2812,15 +2804,15 @@
       <type>Interval &amp;</type>
       <name>intersection</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>a568a1e327e5e13d4b50ea16dab20b835</anchor>
-      <arglist>(const Interval &amp;interval)</arglist>
+      <anchor>aea3de219c9e8316e19d71d44428b8dc4</anchor>
+      <arglist>(const Interval &amp;)</arglist>
     </member>
     <member kind="function">
       <type>Interval &amp;</type>
       <name>translate</name>
       <anchorfile>classHurricane_1_1Interval.html</anchorfile>
-      <anchor>aa2924c14832fd643bec8e8682faf7854</anchor>
-      <arglist>(const DbU::Unit &amp;dv)</arglist>
+      <anchor>acf0aab51a74fe1216bfe112999066466</anchor>
+      <arglist>(const DbU::Unit &amp;)</arglist>
     </member>
     <docanchor file="classHurricane_1_1Interval" title="Introduction">secIntervalIntro</docanchor>
     <docanchor file="classHurricane_1_1Interval" title="Remark">secIntervalRemark</docanchor>

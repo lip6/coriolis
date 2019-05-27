@@ -8,7 +8,7 @@
 2. Setting up the Environment
 =============================
 
-2.1 Setting up the Pathes
+2.1 Setting up the Paths
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To simplify the tedious task of configuring your environment, a helper is provided.
@@ -25,9 +25,9 @@ Use it like this (don't forget the ``eval`` **and** the backquotes):
 
    dummy@lepka:~> eval `<CORIOLIS_INSTALL>/etc/coriolis2/coriolisEnv.py`
 
-.. note:: **Do not call that script in your environement initialisation.**
+.. note:: **Do not call that script in your environment initialisation.**
    When used under |RHEL6| or clones, it needs to be run in the |devtoolset|
-   environement. The script then launch a new shell, which may cause an
+   environment. The script then launches a new shell, which may cause an
    infinite loop if it's called again in, say :cb:`~/.bashrc`.
 
    Instead you may want to create an alias: ::
@@ -39,12 +39,12 @@ Use it like this (don't forget the ``eval`` **and** the backquotes):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You may create, in the directory you are lanching |Coriolis| tools, a special
-sub-directory ``.coriolis2/`` that can contains two configuration files:
+sub-directory ``.coriolis2/`` that can contain two configuration files:
 
 * ``techno.py`` tells which technology to use.
-* ``settings.py`` can overrides almost any default configuration setting.
+* ``settings.py`` can override almost any default configuration setting.
 
-Those two files are *optional*, if they do not exists the default settings
+Those two files are *optional*, if they do not exist the default settings
 will be used and the technology is ``symbolic/cmos`` (i.e. purely symbolic).
 
 .. note:: Those two files will by processed by the |Python| interpreter,
@@ -54,7 +54,7 @@ will be used and the technology is ``symbolic/cmos`` (i.e. purely symbolic).
 2.2.1 The :cb:`techno.py` File
 ------------------------------
 
-Must provide one variable named :cb:`technology` which value the path towards
+Must provide one variable named :cb:`technology` which values the path towards
 the technology file. The available technologies are installed under
 ``<CORIOLIS_INSTALL>/etc/coriolis2``. For example, to use the 45nm FreeDPK
 which is in: ::

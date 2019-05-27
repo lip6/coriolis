@@ -84,13 +84,18 @@
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-1-0-2049">Release 1.0.2049</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-0-1">Release v2.0.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-1">Release v2.1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2"><strong>Release v2.2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2">Release v2.2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-3">Release v2.3</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Installation.html">Installation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Installation.html#fixed-directory-tree">Fixed Directory Tree</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Installation.html#building-coriolis">Building Coriolis</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Installation.html#building-the-devel-branch">Building the Devel Branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#the-actively-developed-branch">The actively developed branch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#installing-on-redhat-or-compatible-distributions">Installing on <span class="sc">RedHat</span> or compatible distributions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#building-a-debug-enabled-version">Building a Debug Enabled Version</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Installation.html#installing-on-debian-9-ubuntu-18-or-compatible-distributions">Installing on <span class="sc">Debian</span> 9, <span class="sc">Ubuntu</span> 18 or compatible distributions</a></li>
 <li class="toctree-l4"><a class="reference internal" href="Installation.html#additionnal-requirement-under-macos">Additionnal Requirement under <span class="sc">MacOS</span></a></li>
 </ul>
 </li>
@@ -117,8 +122,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#the-hurricane-data-base">The <span class="sc">Hurricane</span> Data-Base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#synthetizing-and-loading-a-design">Synthetizing and loading a design</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#etesian-placer">Etesian &#8211; Placer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#knik-global-router">Knik &#8211; Global Router</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#kite-detailed-router">Kite &#8211; Detailed Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#katana-global-router">Katana &#8211; Global Router</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#katana-detailed-router">Katana &#8211; Detailed Router</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#executing-python-scripts-in-cgt">Executing Python Scripts in Cgt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#printing-snapshots">Printing &amp; Snapshots</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#memento-of-shortcuts-in-graphic-mode">Memento of Shortcuts in Graphic Mode</a></li>
@@ -158,7 +163,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../PythonTutorial/Environment.html">2. Setting up the Environment</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#setting-up-the-pathes">2.1 Setting up the Pathes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#setting-up-the-paths">2.1 Setting up the Paths</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../PythonTutorial/Environment.html#user-s-configurations-file">2.2 User&#8217;s Configurations File</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Environment.html#the-techno-py-file">2.2.1 The <span class="cb">techno.py</span> File</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../PythonTutorial/Environment.html#the-settings-py-file">2.2.2 The <span class="cb">settings.py</span> File</a></li>
@@ -387,6 +392,11 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -594,10 +604,9 @@ within <code class="docutils literal"><span class="pre">5%</span></code> of othe
 This <span class="sc">Coriolis</span> tool is actually an encapsulation of <span class="sc">Coloquinte</span> which <em>is</em> the placer.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><em>Instance Uniquification Unsupported:</em> a same logical instance cannot have
-two different placements. So, either you manually make a clone of it or you
-supply a placement for it. We need to implement uniquification in the
-<span class="sc">Hurricane</span> database.</p>
+<p class="last"><em>Instance Uniquification:</em> a same logical instance cannot have
+two different placements. So, if you don&#8217;t supply a placement for it, it will be
+uniquified (cloned) and you will see the copy files appears on disk upon saving.</p>
 </div>
 <p>  <span class="raw-html"><p class="noindent"></p></span>
 <strong>Hierarchical Placement</strong></p>
@@ -698,35 +707,20 @@ More refreshing slows the placer.</p>
 <p></p>
 </div>
 </div>
-<div class="section" id="knik-global-router">
-<h3>Knik &#8211; Global Router<a class="headerlink" href="#knik-global-router" title="Permalink to this headline">¶</a></h3>
-<p>The quality of <span class="sc">Knik</span> global routing solutions are equivalent to those of <a class="reference external" href="http://vlsicad.eecs.umich.edu/BK/FGR/">FGR</a> 1.0.
-For an in-depth description of <span class="sc">Knik</span> algorithms, you may download the thesis of
-D. <span class="sc">Dupuis</span> avalaible from here~: <a class="reference external" href="http://www-soc.lip6.fr/en/users/damiendupuis/PhD/">Knik Thesis</a>.</p>
-<p>The global router is (not yet) deterministic. To circumvent this limitation,
-a global routing <em>solution</em> can be saved to disk and reloaded for later uses.</p>
-<p>A global routing is saved into a file with the same name as the design and a
-<span class="cb">kgr</span> extention. It is in <a class="reference external" href="http://www.cerc.utexas.edu/~thyeros/boxrouter/boxrouter.htm">Box Router</a> output format.</p>
-<p>  <span class="raw-html"><p class="noindent"></p></span> Menus:</p>
-<ul class="simple">
-<li><img class="math" src="../_images/math/ab9c214f89790a2afdc94a731f08c35d0fafa77d.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Save Global Routing}"/></li>
-<li><img class="math" src="../_images/math/0b37db03668389c8e33d766f186469af280334bb.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Load Global Routing}"/></li>
-</ul>
+<div class="section" id="katana-global-router">
+<h3>Katana &#8211; Global Router<a class="headerlink" href="#katana-global-router" title="Permalink to this headline">¶</a></h3>
+<p>The quality of <span class="sc">Katana</span> global routing solutions are equivalent to those of <a class="reference external" href="http://vlsicad.eecs.umich.edu/BK/FGR/">FGR</a> 1.0.
+For an in-depth description of <span class="sc">Katana</span> algorithms, you may download the thesis of
+D. <span class="sc">Dupuis</span> avalaible from here~: <a class="reference external" href="http://www-soc.lip6.fr/en/users/damiendupuis/PhD/">Knik Thesis</a> (<span class="sc">Knik</span> has been rewritten as part
+of <span class="sc">Katana</span>, the algorithms remains essentially the same).</p>
+<p>The global router is now deterministic.</p>
 </div>
-<div class="section" id="kite-detailed-router">
-<h3>Kite &#8211; Detailed Router<a class="headerlink" href="#kite-detailed-router" title="Permalink to this headline">¶</a></h3>
-<p><span class="sc">Kite</span> no longer suffers from the limitations of <span class="sc">Nero</span>. It can route big designs
+<div class="section" id="katana-detailed-router">
+<h3>Katana &#8211; Detailed Router<a class="headerlink" href="#katana-detailed-router" title="Permalink to this headline">¶</a></h3>
+<p><span class="sc">Katana</span> no longer suffers from the limitations of <span class="sc">Nero</span>. It can route big designs
 as its runtime and memory footprint is almost linear (with respect to the number
 of gates). It has successfully routed design of more than <cite>150K</cite> gates.
    <span class="raw-html"><br class="medskip"/></span></p>
-<p>  <span class="raw-html"><p class="noindent"></p></span> However, this first release comes with the temporary the following
-restrictions:</p>
-<ul class="simple">
-<li>Works only with <span class="sc">SxLib</span> standard cell gauge.</li>
-<li>Works always with 4 routing metal layers (<cite>M2</cite> through <cite>M5</cite>).</li>
-<li>Do not allow (take into account) pre-routed wires on signals
-other than <span class="sc">power</span> or <span class="sc">ground</span>.</li>
-</ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>Slow Layer Assignment.</strong> Most of the time, the layer assignment stage is
@@ -734,15 +728,22 @@ fast (less than a dozen seconds), but in some instances it can take more
 than a dozen <em>minutes</em>. This is a known bug and will be corrected in later
 releases.</p>
 </div>
-<p>After each run, <span class="sc">Kite</span> displays a set of <em>completion ratios</em> which must all
-be equal to <cite>100%</cite> if the detailed routing has been successfull.
-In the event of a failure, on a saturated design, you may decrease the
-<cite>edge saturation ratio</cite> (argument <cite>&#8211;edge</cite>) to balance more evenly the design
-saturation. That is, the maximum saturation decrease at the price of a wider
-saturated area and increased wirelength. This is the saturation of the
-<em>global</em> router <span class="sc">Knik</span>, and you may increase/decrease by steps of <code class="docutils literal"><span class="pre">5%</span></code>,
-which represent one track. The maximum capacity of the <span class="sc">SxLib</span> gauge is
-10 tracks in two layers, that makes 20 tracks by <span class="sc">Knik</span> edge.</p>
+<p>After each run, <span class="sc">Katana</span> displays a set of <em>completion ratios</em> which must all
+be equal to <cite>100%</cite> or (<code class="docutils literal"><span class="pre">NNNN+0</span></code>) if the detailed routing has been successfull.
+In the event of a failure, on a saturated design, you may tweak the three
+following configuration parameters:</p>
+<ol class="arabic simple">
+<li><code class="docutils literal"><span class="pre">katana.hTrackReservedLocal</span></code>, the number of track reserved for local routing,
+that quantity is substracted from the edge capacities (global routing) to
+give a sense of the cluttering inside the GCells.</li>
+<li><code class="docutils literal"><span class="pre">katana.vTrackReservedLocal</span></code>, same as above.</li>
+<li><code class="docutils literal"><span class="pre">etesian.spaceMargin</span></code>, increase the free area of the overall design so the
+routing density decrease.</li>
+</ol>
+<p>The idea is to increase the horizontal and vertical local track reservation until
+the detailed router succeed. But in doing so we make the task of the global router
+more and more difficult as the capacity of the edges decrease, and at some point
+it will fail too. So this is a balance.</p>
 <p>Routing a design is done in four ordered steps:</p>
 <ol class="arabic simple">
 <li>Detailed pre-route <img class="math" src="../_images/math/9354e2441491d324ef5fd162920f581bdf022af5.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed PreRoute}"/></li>
@@ -752,23 +753,21 @@ which represent one track. The maximum capacity of the <span class="sc">SxLib</s
 </ol>
 <p>It is possible to supply to the router a complete wiring for some nets that the user&#8217;s
 wants to be routed according to a specific topology. The supplied topology must respect
-the building rules of the <span class="sc">Katabatic</span> database (contacts must be, terminals, turns, h-tee
-&amp; v-tee only). During the first step <span class="fboxtt">Detailed Pre-Route</span> the router will solve
+the building rules of the <span class="sc">Anabatic</span> database (contacts must be, <em>terminals</em>, <em>turns</em>, <em>h-tee</em>
+&amp; <em>v-tee</em> only). During the first step <span class="fboxtt">Detailed Pre-Route</span> the router will solve
 overlaps between the segments, without making any dogleg. If no pre-routed topologies
 are present, this step may be ommited. Any net routed at this step is then fixed and
 become unmovable for the later stages.</p>
-<p>After the detailed routing step the <span class="sc">Kite</span> data-structure is still active
+<p>After the detailed routing step the <span class="sc">Katana</span> data-structure is still active
 (the Hurricane wiring is decorated). The finalize step performs the removal of
-the <span class="sc">Kite</span> data-structure, and it is not advisable to save the design before
+the <span class="sc">Katana</span> data-structure, and it is not advisable to save the design before
 that step.</p>
-<p>You may visualize the density (saturation) of either <span class="sc">Knik</span> (on edges) or
-<span class="sc">Kite</span> (on GCells) until the routing is finalized. Special layers appears
+<p>You may visualize the density (saturation) of either the edges (global routing)
+or the GCells (detailed routing) until the routing is finalized. Special layers appears
 to that effect in the <a class="reference internal" href="#the-layers-go-tab">The Layers&amp;Go Tab</a>.</p>
-<div class="section" id="kite-configuration-parameters">
-<h4>Kite Configuration Parameters<a class="headerlink" href="#kite-configuration-parameters" title="Permalink to this headline">¶</a></h4>
-<p>As <span class="sc">Knik</span> is only called through <span class="sc">Kite</span>, it&#8217;s parameters also have
-the <span class="cb">kite.</span> prefix.</p>
-<p>The <span class="sc">Katabatic</span> parameters control the layer assignment step.</p>
+<div class="section" id="katana-configuration-parameters">
+<h4>Katana Configuration Parameters<a class="headerlink" href="#katana-configuration-parameters" title="Permalink to this headline">¶</a></h4>
+<p>The <span class="sc">Anabatic</span> parameters control the layer assignment step.</p>
 <p>All the defaults value given below are from the default <span class="sc">Alliance</span> technology
 (<span class="cb">cmos</span> and <span class="cb">SxLib</span> cell gauge/routing gauge).</p>
 <table border="1" class="docutils">
@@ -784,16 +783,16 @@ the <span class="cb">kite.</span> prefix.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td colspan="3"><strong>Katabatic Parameters</strong></td>
+<tr class="row-even"><td colspan="3"><strong>Anabatic Parameters</strong></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.topRoutingLayer</span></code></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.topRoutingLayer</span></code></td>
 <td>TypeString</td>
 <td><span class="cb">METAL5</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Define the highest metal layer that will be
 used for routing (inclusive).</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.globalLengthThreshold</span></code></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.globalLengthThreshold</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">1450</span></td>
 </tr>
@@ -801,7 +800,7 @@ used for routing (inclusive).</td>
 method which is no longer used (did not give
 good results)</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.saturateRatio</span></code></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.saturateRatio</span></code></td>
 <td>TypePercentage</td>
 <td><span class="cb">80</span></td>
 </tr>
@@ -809,7 +808,7 @@ good results)</td>
 move up feedthru  global segments up from
 depth <code class="docutils literal"><span class="pre">x</span></code> to <code class="docutils literal"><span class="pre">x+2</span></code></td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">katabatic.saturateRp</span></code></td>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.saturateRp</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">8</span></td>
 </tr>
@@ -818,9 +817,9 @@ depth <code class="docutils literal"><span class="pre">x</span></code> to <code 
 move up of the connecting segments to those
 in excess</td>
 </tr>
-<tr class="row-odd"><td colspan="3"><strong>Knik Parameters</strong></td>
+<tr class="row-odd"><td colspan="3"><strong>Katana Parameters</strong></td>
 </tr>
-<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.hTracksReservedLocal</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">3</span></td>
 </tr>
@@ -831,56 +830,54 @@ router. Horizontal and vertical locally
 reserved capacity can be distinguished for
 more accuracy.</td>
 </tr>
-<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.vTracksReservedLocal</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.vTracksReservedLocal</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">3</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">cf. <code class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></code></td>
 </tr>
-<tr class="row-even"><td colspan="3"><strong>Kite Parameters</strong></td>
-</tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.eventsLimit</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.eventsLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">4000002</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">The maximum number of segment displacements,
+<tr class="row-odd"><td colspan="2">The maximum number of segment displacements,
 this is a last ditch safety against infinite
 loop. It&#8217;s perhaps a  little too low for big
 designs</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.ripupCost</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.ripupCost</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">3</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Differential introduced between two ripup
+<tr class="row-odd"><td colspan="2">Differential introduced between two ripup
 cost to avoid a loop between two ripped up
 segments</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.strapRipupLimit</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.strapRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">16</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Maximum number of ripup for <em>strap</em> segments</td>
+<tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>strap</em> segments</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.localRipupLimit</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.localRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">9</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Maximum number of ripup for <em>local</em> segments</td>
+<tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>local</em> segments</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.globalRipupLimit</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.globalRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">5</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Maximum number of ripup for <em>global</em> segments,
+<tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>global</em> segments,
 when this limit is reached, triggers topologic
 modification</td>
 </tr>
-<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">kite.longGlobalRipupLimit</span></code></td>
+<tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.longGlobalRipupLimit</span></code></td>
 <td>TypeInt</td>
 <td><span class="cb">5</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Maximum number of ripup for <em>long global</em>
+<tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>long global</em>
 segments, when this limit is reached, triggers
 topological modification</td>
 </tr>
@@ -906,7 +903,7 @@ the editor (type: <span class="cb">CellViewer</span>) is limited to basic capabi
 only.</p>
 <p>Any script given on the command line will be run immediatly <em>after</em> the
 initializations and <em>before</em> any other argument is processed.</p>
-<p>For more explanation on Python scripts see <a class="reference internal" href="ScriptsPlugins.html#python-interface-to-coriolis"><span class="std std-ref">Python Interface for Hurricane / Coriolis</span></a>.</p>
+<p>For more explanation on Python scripts see <span class="xref std std-ref">Python Interface to Coriolis</span>.</p>
 </div>
 <div class="section" id="printing-snapshots">
 <h3>Printing &amp; Snapshots<a class="headerlink" href="#printing-snapshots" title="Permalink to this headline">¶</a></h3>
@@ -1114,38 +1111,29 @@ redirected to a file.</td>
 <td>The name of the design to load, without
 leading path or extention.</td>
 </tr>
-<tr class="row-odd"><td><cite>-g|&#8211;load-global</cite></td>
-<td>Reload a global routing solution from disk.
-The file containing the solution must be named
-<cite>&lt;cell&gt;.kgr</cite>.</td>
+<tr class="row-odd"><td><cite>-m &lt;val&gt;|&#8211;margin=&lt;val&gt;</cite></td>
+<td>Percentage <em>val</em> of white space for the placer
+(<span class="sc">Etesian</span>).</td>
 </tr>
-<tr class="row-even"><td><cite>&#8211;save-global</cite></td>
-<td>Save the global routing solution, into a file
-named <cite>&lt;design&gt;.kgr</cite>.</td>
-</tr>
-<tr class="row-odd"><td><cite>-e &lt;ratio&gt;|&#8211;edge=&lt;ratio&gt;</cite></td>
-<td>Change the edge capacity for the global
-router, between 0 and 1 (<span class="sc">Knik</span>).</td>
-</tr>
-<tr class="row-even"><td><cite>-G|&#8211;global-route</cite></td>
-<td>Run the global router (<span class="sc">Knik</span>).</td>
-</tr>
-<tr class="row-odd"><td><cite>-R|&#8211;detailed-route</cite></td>
-<td>Run the detailed router (<span class="sc">Kite</span>).</td>
-</tr>
-<tr class="row-even"><td><cite>-s|&#8211;save-design=&lt;routed&gt;</cite></td>
-<td>The design into which the routed layout will
-be saved. It is strongly recommanded to choose
-a different name from the source (unrouted)
-design.</td>
-</tr>
-<tr class="row-odd"><td><cite>&#8211;events-limit=&lt;count&gt;</cite></td>
+<tr class="row-even"><td><cite>&#8211;events-limit=&lt;count&gt;</cite></td>
 <td>The maximal number of events after which the
 router will stops. This is mainly a failsafe
 against looping. The limit is sets to 4
 millions of iteration which should suffice to
 any design of <cite>100K</cite>. gates. For bigger
 designs you may wants to increase this limit.</td>
+</tr>
+<tr class="row-odd"><td><cite>-G|&#8211;global-route</cite></td>
+<td>Run the global router (<span class="sc">Katana</span>).</td>
+</tr>
+<tr class="row-even"><td><cite>-R|&#8211;detailed-route</cite></td>
+<td>Run the detailed router (<span class="sc">Katana</span>).</td>
+</tr>
+<tr class="row-odd"><td><cite>-s|&#8211;save-design=&lt;routed&gt;</cite></td>
+<td>The design into which the routed layout will
+be saved. It is strongly recommanded to choose
+a different name from the source (unrouted)
+design.</td>
 </tr>
 <tr class="row-even"><td><cite>&#8211;stratus-script=&lt;module&gt;</cite></td>
 <td>Run the Python/Stratus script <code class="docutils literal"><span class="pre">module</span></code>.
@@ -1157,18 +1145,7 @@ See <a class="reference internal" href="#python-scripts-in-cgt">Python Scripts i
 <p>Some Examples :</p>
 <ul>
 <li><p class="first">Run both global and detailed router, then save the routed design :</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">G</span> <span class="o">-</span><span class="n">R</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">design</span><span class="o">=</span><span class="n">design_kite</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">Load a previous global solution, run the detailed router, then save the
-routed design :</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">--</span><span class="n">load</span><span class="o">-</span><span class="k">global</span> <span class="o">-</span><span class="n">R</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">design</span><span class="o">=</span><span class="n">design_kite</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">Run the global router, then save the global routing solution :</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">G</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="k">global</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cgt</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="o">-</span><span class="n">G</span> <span class="o">-</span><span class="n">R</span> <span class="o">--</span><span class="n">cell</span><span class="o">=</span><span class="n">design</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">design</span><span class="o">=</span><span class="n">design_r</span>
 </pre></div>
 </div>
 </li>
@@ -1397,7 +1374,7 @@ is deleted, you will crash the application...</p>
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Mar 04, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>

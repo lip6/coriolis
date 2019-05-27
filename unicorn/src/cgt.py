@@ -151,10 +151,10 @@ if __name__ == '__main__':
       if options.logMode:         Cfg.getParamBool      ('misc.logMode'      ).setBool(True)
       if options.showConf:        Cfg.getParamBool      ('misc.showConf'     ).setBool(True)
       if options.margin:          Cfg.getParamPercentage('etesian.spaceMargin').setPercentage(options.margin)
-      if options.hTracksLocal:    Cfg.getParamInt       ('kite.hTracksReservedLocal').setInt(options.hTracksLocal)
-      if options.vTracksLocal:    Cfg.getParamInt       ('kite.vTracksReservedLocal').setInt(options.vTracksLocal)
-      if options.eventsLimit:     Cfg.getParamInt       ('kite.eventsLimit'         ).setInt(options.eventsLimit)
-      if options.topRoutingLayer: Cfg.getParamString    ('katabatic.topRoutingLayer').setString(options.topRoutingLayer)
+      if options.hTracksLocal:    Cfg.getParamInt       ('katana.hTracksReservedLocal').setInt(options.hTracksLocal)
+      if options.vTracksLocal:    Cfg.getParamInt       ('katana.vTracksReservedLocal').setInt(options.vTracksLocal)
+      if options.eventsLimit:     Cfg.getParamInt       ('katana.eventsLimit'         ).setInt(options.eventsLimit)
+      if options.topRoutingLayer: Cfg.getParamString    ('anabatic.topRoutingLayer'   ).setString(options.topRoutingLayer)
       if options.useKatana:       useKatana = True
 
       loadGlobal     = options.loadGlobal

@@ -7,24 +7,21 @@ try:
   import optparse
   import Cfg
   import Hurricane
-  from   Hurricane import DbU
-  from   Hurricane import UpdateSession
-  from   Hurricane import Breakpoint
-  from   Hurricane import Transformation
-  from   Hurricane import Instance
+  from   Hurricane  import DbU
+  from   Hurricane  import UpdateSession
+  from   Hurricane  import Breakpoint
+  from   Hurricane  import Transformation
+  from   Hurricane  import Instance
   import Viewer
   import CRL
-  from   helpers   import ErrorMessage
- #import Nimbus
- #import Metis
- #import Mauka
+  import helpers
   import Etesian
-  import Katabatic
-  import Kite
+  import Anabatic
+  import Katana
   import Unicorn
   import clocktree.ClockTree
   import plugins.ClockTreePlugin
-  import plugins.ChipPlugin
+  import plugins.ChipPlace
   import plugins.RSavePlugin
 except ImportError, e:
   serror = str(e)
@@ -66,7 +63,7 @@ def ScriptMain ( **kw ):
   
     if doStages & DoPlacement:
       if doStages & DoChip:
-        success = plugins.ChipPlugin.ScriptMain( **kw )
+        success = plugins.ChipPlace.ScriptMain( **kw )
         if not success: return False
       else:
         if cell.getAbutmentBox().isEmpty():
@@ -80,34 +77,28 @@ def ScriptMain ( **kw ):
           success = plugins.ClockTreePlugin.ScriptMain( **kw )
          #if not success: return False
         else:
-          if Cfg.getParamString('clockTree.placerEngine').asString() != 'Etesian':
-            mauka = Mauka.MaukaEngine.create( cell )
-            mauka.run()
-            mauka.destroy()
-          else:
-            etesian = Etesian.EtesianEngine.create( cell )
-            etesian.place()
-            etesian.destroy()
+          etesian = Etesian.EtesianEngine.create( cell )
+          etesian.place()
+          etesian.destroy()
       if editor: editor.refresh()
 
     if doStages & DoRouting:
-      routingNets = []
-      kite = Kite.KiteEngine.create( cell )
-      
-      kite.runGlobalRouter  ( Kite.KtBuildGlobalRouting )
-      kite.loadGlobalRouting( Katabatic.EngineLoadGrByNet, routingNets )
-      kite.layerAssign      ( Katabatic.EngineNoNetLayerAssign )
-      kite.runNegociate     ()
-      success = kite.getToolSuccess()
-      kite.finalizeLayout()
-      kite.destroy()
-      cell.setName( cell.getName()+'_kite' )
+      katana = Katana.KatanaEngine.create( cell.getInstance('corona').getMasterCell() )
+      katana.digitalInit      () 
+      katana.runGlobalRouter  ()
+      katana.loadGlobalRouting( Anabatic.EngineLoadGrByNet )
+      katana.layerAssign      ( Anabatic.EngineNoNetLayerAssign )
+      katana.runNegociate     ( Katana.Flags.NoFlags )
+      success = katana.getToolSuccess()
+      katana.finalizeLayout()
+      katana.destroy()
+      cell.setName( cell.getName()+'_r' )
       framework.saveCell( cell, CRL.Catalog.State.Logical )
   
     plugins.RSavePlugin.ScriptMain( **kw )
 
   except Exception, e:
-    print e
+    print helpers.io.catch( e )
 
   return success
 

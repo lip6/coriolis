@@ -15,6 +15,7 @@ Contents:
    UsersGuide/index.rst
    PythonTutorial/index.rst
    Stratus/index.rst
+   ConfigurationTechnology/index.rst
    Hurricane/Hurricane.rst
    Viewer/Viewer.rst
    CrlCore/CrlCore.rst

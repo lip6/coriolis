@@ -22,13 +22,17 @@
 .. |bcenter|                        replace:: :raw-latex:`\begin{center}`
 .. |ecenter|                        replace:: :raw-latex:`\end{center}`
 .. |pagestylefancy|                 replace:: :raw-latex:`\thispagestyle{fancy}`
+.. |lambda|                         replace:: :raw-latex:`$\lambda$` :raw-html:`&#955`
 
 
 .. Acronyms & names.
+.. |OS|                             replace:: :sc:`os`
 .. |GNU|                            replace:: :sc:`gnu`
 .. |LGPL|                           replace:: :sc:`lgpl`
 .. |GPL|                            replace:: :sc:`gpl`
 .. |UPMC|                           replace:: :sc:`upmc`
+.. |SorbonneUniversite|             replace:: :sc:`Sorbonne Université`
+.. |SU|                             replace:: :sc:`su`
 .. |Bull|                           replace:: :sc:`Bull`
 .. |Cadence|                        replace:: :sc:`Cadence`
 .. |Si2|                            replace:: :sc:`Si2`
@@ -38,6 +42,7 @@
 .. |Flute|                          replace:: :sc:`Flute`
 .. |MacOS|                          replace:: :sc:`MacOS`
 .. |Darwin|                         replace:: :sc:`Darwin`
+.. |RHEL|                           replace:: :sc:`rhel`
 .. |RHEL6|                          replace:: :sc:`rhel6`
 .. |RHEL7|                          replace:: :sc:`rhel7`
 .. |SL6|                            replace:: :sc:`Scientific Linux 6`
@@ -46,6 +51,7 @@
 .. |RedHat|                         replace:: :sc:`RedHat`
 .. |Fedora|                         replace:: :sc:`Fedora`
 .. |FC13|                           replace:: :sc:`fc13`
+.. |EPEL|                           replace:: :sc:`epel`
 .. |Debian|                         replace:: :sc:`Debian`
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MOSIS|                          replace:: :sc:`mosis`
@@ -54,6 +60,7 @@
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
 .. |Chaput|                         replace:: :sc:`Chaput`
+.. |Chotin|                         replace:: :sc:`Chotin`
 .. |Chu|                            replace:: :sc:`Chu`
 .. |Clement|                        replace:: :sc:`Clement`
 .. |Dupuis|                         replace:: :sc:`Dupuis`
@@ -78,6 +85,7 @@
 .. |Coriolis|                       replace:: :sc:`Coriolis`
 .. |Coriolis1|                      replace:: :sc:`Coriolis 1`
 .. |Coriolis2|                      replace:: :sc:`Coriolis 2`
+.. |alliance-check-toolkit|         replace:: ``alliance-check-toolkit``
 .. |VLSISAPD|                       replace:: :sc:`vlsisapd`
 .. |CRLcore|                        replace:: :sc:`CRLcore`
 .. |Cyclop|                         replace:: :sc:`Cyclop`
@@ -86,6 +94,7 @@
 .. |Mauka|                          replace:: :sc:`Mauka`
 .. |Etesian|                        replace:: :sc:`Etesian`
 .. |Knik|                           replace:: :sc:`Knik`
+.. |Anabatic|                       replace:: :sc:`Anabatic`
 .. |Katabatic|                      replace:: :sc:`Katabatic`
 .. |Kite|                           replace:: :sc:`Kite`
 .. |Katana|                         replace:: :sc:`Katana`
@@ -108,11 +117,15 @@
 .. |devtoolset|                     replace:: :cb:`devtoolset`
 .. |boost|                          replace:: :cb:`boost`
 .. |Qt|                             replace:: :sc:`qt`
+.. |PyQt|                           replace:: :sc:`PyQt`
+.. |PyQt4|                          replace:: :sc:`PyQt4`
+.. |PyQt5|                          replace:: :sc:`PyQt5`
 .. |tty|                            replace:: :cb:`tty`
 .. |svn|                            replace:: :cb:`svn`
 .. |git|                            replace:: :cb:`git`
 .. |rpm|                            replace:: :cb:`rpm`
 .. |gdb|                            replace:: :cb:`gdb`
+.. |valgrind|                       replace:: :cb:`valgrind`
 .. |cmake|                          replace:: :cb:`cmake`
 .. |struct|                         replace:: :cb:`struct`
 
