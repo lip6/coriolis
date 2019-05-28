@@ -468,7 +468,7 @@ try:
 
       if conf.rmSource: gitCoriolis.removeLocalRepo()
       gitCoriolis.clone   ()
-      gitCoriolis.checkout( 'devel_anabatic' )
+      gitCoriolis.checkout( 'devel' )
 
       if conf.rmSource: gitBenchs.removeLocalRepo()
       gitBenchs.clone()
@@ -491,14 +491,14 @@ try:
     benchsCommand = 'cd %s/benchs && ../bin/go.sh' % (gitBenchs.localRepoDir)
 
     commands = \
-      [ ( conf.targets['SL7_64'], buildCommand % (3,conf.debugArg)                        , conf.fds['build' ] )
+      [ ( conf.targets['SL7_64'], buildCommand % (6,conf.debugArg)                        , conf.fds['build' ] )
       , ( conf.targets['SL7_64'], buildCommand % (1,conf.debugArg+' --doc')               , conf.fds['build' ] )
       , ( conf.targets['SL7_64'], benchsCommand                                           , conf.fds['benchs'] )
-     #, ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
-     #, ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
+     #, ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset=8')      , conf.fds['build' ] )
+     #, ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset=8 --doc'), conf.fds['build' ] )
      #, ( conf.targets['SL6_64'], benchsCommand                                           , conf.fds['benchs'] )
-     #, ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
-     #, ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
+     #, ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset=8')      , conf.fds['build' ] )
+     #, ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset=8 --doc'), conf.fds['build' ] )
      #, ( conf.targets['SL6']   , benchsCommand                                           , conf.fds['benchs'] )
       ]
 
