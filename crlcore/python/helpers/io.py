@@ -221,7 +221,7 @@ def catch ( errorObject ):
     else:
       em            = ErrorMessage( 2, errorObject )
       em.trace      = traceback.extract_tb( sys.exc_info()[2] )
-      em.scriptPath = __file__
+     #em.scriptPath = __file__
 
     if Viewer.Graphics.get().isEnabled():
       tryCont = ErrorWidget( em ).exec_()
