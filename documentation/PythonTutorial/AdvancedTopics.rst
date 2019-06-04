@@ -26,7 +26,7 @@ hierarchical levels, RoutingPads_ can refer to a deeply buried terminal.
 9.3 HyperNets
 ~~~~~~~~~~~~~
 
-This class is part of the *virtual flattening* mechanisms, it allows to
+This class is part of the *virtual flattening* mechanism, it allows to
 go through all the components of a trans-hierarchical net.
 
 

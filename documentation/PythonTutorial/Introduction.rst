@@ -39,7 +39,7 @@ don't. Thus we summarize below the more important ones:
 Cell_            The model. A Cell does not have terminals, only nets
                  flagged as *external*
 Instance_        An instance of a model
-Net_             A grouping of electrically connecteds components
+Net_             A grouping of electrically connected components
 Plug_            A terminal of an instance
 RoutingPad_      A physical connexion (*pin*) to an instance
 ===============  =====================================================
