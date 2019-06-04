@@ -63,7 +63,7 @@ Release `2049` is Alpha.
 #. More extensive Python support for all the components of
    |Coriolis|.
 #. Configuration is now completly migrated under Python.
-   |XML| loaders can still be useds for compatibilty.
+   |XML| loaders can still be used for compatibilty.
 #. The |cgt| main has been rewritten in Python. 
 
 
@@ -105,20 +105,20 @@ Release v2.2
 Release v2.3
 ~~~~~~~~~~~~
 
-#. Revert to a more standard organisation of the branchs. **devel_anabatic** is
+#. Reverts to a more standard organisation of the branches. **devel_anabatic** is
    closed and we go on with **master** (stable version) and **devel**.
 
-#. Make |Katana| the default global & detailed router. Put |Knik| & |Kite| in the
-   obsolete menues.
+#. Makes |Katana| the default global & detailed router. Put |Knik| & |Kite| in the
+   obsolete menus.
 
-#. Finally make uses of |PyQt4| widgets. Seems to integrate without problems
+#. Finally makes use of |PyQt4| widgets. Seems to integrate without problems
    with the |Coriolis| own |Qt| widget. The drawback is that to build against |Qt| 5
-   needs to adjustement from the user.
+   needs adjustement from the user.
 
 #. Improved support for whole chip management. The outer part of the chip containing
-   the pad is decoupled from the core. This allow to cleanly separate real pads from
+   the pad is decoupled from the core. This allows to cleanly separate real pads from
    the foundry from a symbolic core. But this does not preclude other combinations
    as fully symbolic or fully real.
 
-   To perform the separation an intermediate hierarchical level ``corona`` between chip
+   To perform the separation, an intermediate hierarchical level ``corona`` between chip
    and core has been introduced.

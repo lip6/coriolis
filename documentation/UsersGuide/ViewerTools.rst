@@ -83,24 +83,24 @@ The |Coriolis| graphical interface is split up into two windows.
 * The **Viewer**, with the following features:
 
   * Basic load/save capabilities.
-  * Display the current working cell. Could be empty if the design
+  * Displays the current working cell. Could be empty if the design
     is not yet placed.
-  * Execute Stratus Scripts.
+  * Executes Stratus Scripts.
   * Menu to run the tools (placement, routage).
 
 Features are detailed in `Viewer & Tools`_.
 
 |ViewerSnapShot_1|
 
-* The **Controller**, which allows:
+* The **Controller**, which allows to:
 
-  * Tweak what is displayer by the *Viewer*. Through the *Look*,
+  * Tweak what is displayed by the *Viewer*. Through the *Look*,
     *Filter* and *Layers&Gos* tabs.
   * Browse the |netlist| with eponym tab.
   * Show the list of selected objects (if any) with *selection*
   * Walk through the Database, the Cell or the Selection with *Inspector*.
     This is an advanced feature, reserved for experimented users.
-  * The tab *Settings* which give access to all the settings.
+  * The tab *Settings* which gives access to all the settings.
     They are closely related to Configuration & Initialisation.
 
 |bcenter| |ControllerSnapShot_1| |ecenter|
@@ -196,9 +196,9 @@ This |Coriolis| tool is actually an encapsulation of |Coloquinte| which *is* the
 The placement area is defined by the top cell abutment box.
 
 When placing a complete hierarchy, the abutment boxes of the cells (models) other than
-the top cell are sets identical to the one of the top cell and their instances are
+the top cell are set identical to the one of the top cell and their instances are
 all placed at position ``(0,0,ID)``. That is, all the abutments boxes, whatever the
-hierarchical level, defines the same area (they are exactly superposed).
+hierarchical level, define the same area (they are exactly superposed).
 
 We choose this scheme because the placer will see all the instances as virtually
 flattened, so they can be placed anywhere inside the top-cell abutment box.
@@ -313,12 +313,12 @@ following configuration parameters:
    that quantity is substracted from the edge capacities (global routing) to
    give a sense of the cluttering inside the GCells.
 #. ``katana.vTrackReservedLocal``, same as above.
-#. ``etesian.spaceMargin``, increase the free area of the overall design so the
+#. ``etesian.spaceMargin``, increases the free area of the overall design so the
    routing density decrease.
 
 The idea is to increase the horizontal and vertical local track reservation until
-the detailed router succeed. But in doing so we make the task of the global router
-more and more difficult as the capacity of the edges decrease, and at some point
+the detailed router succeeds. But in doing so we make the task of the global router
+more and more difficult as the capacity of the edges decreases, and at some point
 it will fail too. So this is a balance.
 
 Routing a design is done in four ordered steps:
@@ -328,7 +328,7 @@ Routing a design is done in four ordered steps:
 #. Detailed routing   :math:`\textbf{P\&R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed Route}`
 #. Finalize routing   :math:`\textbf{P\&R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Finalize Route}`
 
-It is possible to supply to the router a complete wiring for some nets that the user's
+It is possible to supply to the router a complete wiring for some nets that the user
 wants to be routed according to a specific topology. The supplied topology must respect
 the building rules of the |Anabatic| database (contacts must be, *terminals*, *turns*, *h-tee*
 & *v-tee* only). During the first step :fboxtt:`Detailed Pre-Route` the router will solve
@@ -342,7 +342,7 @@ the |Katana| data-structure, and it is not advisable to save the design before
 that step.
 
 You may visualize the density (saturation) of either the edges (global routing)
-or the GCells (detailed routing) until the routing is finalized. Special layers appears
+or the GCells (detailed routing) until the routing is finalized. Special layers appear
 to that effect in the `The Layers&Go Tab`_.
 
 
@@ -408,7 +408,7 @@ All the defaults value given below are from the default |Alliance| technology
 | ``katana.ripupCost``              | TypeInt          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | Differential introduced between two ripup     |
-|                                   | cost to avoid a loop between two ripped up    |
+|                                   | costs to avoid a loop between two ripped up   |
 |                                   | segments                                      |
 +-----------------------------------+------------------+----------------------------+
 | ``katana.strapRipupLimit``        | TypeInt          | :cb:`16`                   |
@@ -443,11 +443,11 @@ Python/Stratus scripts can be executed either in text or graphical mode.
 
 .. note:: **How Cgt Locates Python Scripts:**
    |cgt| uses the Python ``import`` mechanism to load Python scripts.
-   So you must give the name of your script whitout ``.py`` extention and
-   it must be reachable through the ``PYTHONPATH``. You may uses the
+   So you must give the name of your script whithout ``.py`` extension and
+   it must be reachable through the ``PYTHONPATH``. You may use the
    dotted module notation.
 
-A Python/Stratus script must contains a function called ``ScriptMain()``
+A Python/Stratus script must contain a function called ``ScriptMain()``
 with one optional argument, the graphical editor into which it may be
 running (will be set to ``None`` in text mode). The Python interface to
 the editor (type: :cb:`CellViewer`) is limited to basic capabilities
@@ -462,15 +462,15 @@ For more explanation on Python scripts see :ref:`Python Interface to Coriolis`.
 Printing & Snapshots
 --------------------
 
-Printing or saving into a |pdf| is fairly simple, just uses the **File -> Print**
+Printing or saving into a |pdf| is fairly simple, just use the **File -> Print**
 menu or the |CTRL_P| shortcut to open the dialog box.
 
 The print functionality uses exactly the same rendering mechanism as for the
 screen, beeing almost *WYSIWYG*. Thus, to obtain the best results it is advisable
 to select the ``Coriolis.Printer`` look (in the *Controller*), which uses a
-white background and much suited for high resolutions ``32x32`` pixels patterns  
+white background and well suited for high resolutions ``32x32`` pixels patterns  
 
-There is also two mode of printing selectable through the *Controller*
+There is also two modes of printing selectable through the *Controller*
 **Settings -> Misc -> Printer/Snapshot Mode**:
 
 ===============  =================  =====================================================
@@ -500,12 +500,12 @@ The main application binary is |cgt|.
 +---------------+-------------------+-----------------------------------------------------------+
 | Category      | Keys              | Action                                                    |
 +===============+===================+===========================================================+
-| **Moves**     | | |KeyUp|,        | Shift the view in the according direction                 |
+| **Moves**     | | |KeyUp|,        | Shifts the view in the according direction                |
 |               |   |KeyDown|       |                                                           |
 |               | | |KeyLeft|,      |                                                           |
 |               |   |KeyRight|      |                                                           |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Fit**       |   |KeyF|          | Fit to the Cell abutment box                              |
+| **Fit**       |   |KeyF|          | Fits to the Cell abutment box                             |
 +---------------+-------------------+-----------------------------------------------------------+
 | **Refresh**   |   |CTRL_L|        | Triggers a complete display redraw                        |
 +---------------+-------------------+-----------------------------------------------------------+
@@ -557,19 +557,19 @@ The main application binary is |cgt|.
 | **Open/Close**| |CTRL_O|          | Opens a new design. The design name must be               |
 |               |                   | given without path or extention.                          |
 |               +-------------------+-----------------------------------------------------------+
-|               | |CTRL_W|          | Close the current viewer window, but do not quit          |
+|               | |CTRL_W|          | Closes the current viewer window, but does not quit       |
 |               |                   | the application.                                          |
 |               +-------------------+-----------------------------------------------------------+
-|               | |CTRL_Q|          | `CTRL+Q` quit the application                             |
+|               | |CTRL_Q|          | `CTRL+Q` quits the application                            |
 |               |                   | (closing all windows).                                    |
 +---------------+-------------------+-----------------------------------------------------------+
-| **Hierarchy** | |CTRL_Down|       | Go one hierarchy level down. That is, if there            |
-|               |                   | is an *instance* under the cursor position, load          |
-|               |                   | it's *model* Cell in place of the current one.            |
+| **Hierarchy** | |CTRL_Down|       | Goes one hierarchy level down. That is, if there          |
+|               |                   | is an *instance* under the cursor position, loads         |
+|               |                   | its *model* Cell in place of the current one.             |
 |               +-------------------+-----------------------------------------------------------+
-|               | |CTRL_Up|         | Go one hierarchy level up. if we have entered             |
+|               | |CTRL_Up|         | Goes one hierarchy level up. If we have entered           |
 |               |                   | the current model through |CTRL_Down|                     |
-|               |                   | reload the previous model (the one                        |
+|               |                   | reloads the previous model (the one                       |
 |               |                   | in which this model is instanciated).                     |
 +---------------+-------------------+-----------------------------------------------------------+
 
@@ -582,9 +582,9 @@ Appart from the obvious ``--text`` options, all can be used for text and graphic
 +-----------------------------+------------------------------------------------+
 | Arguments                   | Meaning                                        |
 +=============================+================================================+
-| `-t|--text`                 | Instruct |cgt| to run in text mode.            |
+| `-t|--text`                 | Instructs |cgt| to run in text mode.           |
 +-----------------------------+------------------------------------------------+
-| `-L|--log-mode`             | Disable the uses of |ANSI| escape sequence on  |
+| `-L|--log-mode`             | Disables the use of |ANSI| escape sequence on  |
 |                             | the |tty|. Useful when the output is           |
 |                             | redirected to a file.                          |
 +-----------------------------+------------------------------------------------+
@@ -595,15 +595,15 @@ Appart from the obvious ``--text`` options, all can be used for text and graphic
 |                             | (|Etesian|).                                   |
 +-----------------------------+------------------------------------------------+
 | `--events-limit=<count>`    | The maximal number of events after which the   |
-|                             | router will stops. This is mainly a failsafe   |
-|                             | against looping. The limit is sets to 4        |
+|                             | router will stop. This is mainly a failsafe    |
+|                             | against looping. The limit is set to 4         |
 |                             | millions of iteration which should suffice to  |
 |                             | any design of `100K`. gates. For bigger        |
-|                             | designs you may wants to increase this limit.  |
+|                             | designs you may want to increase this limit.   |
 +-----------------------------+------------------------------------------------+
-| `-G|--global-route`         | Run the global router (|Katana|).              |
+| `-G|--global-route`         | Runs the global router (|Katana|).             |
 +-----------------------------+------------------------------------------------+
-| `-R|--detailed-route`       | Run the detailed router (|Katana|).            |
+| `-R|--detailed-route`       | Runs the detailed router (|Katana|).           |
 +-----------------------------+------------------------------------------------+
 | `-s|--save-design=<routed>` | The design into which the routed layout will   |
 |                             | be saved. It is strongly recommanded to choose |
@@ -634,24 +634,24 @@ Miscellaneous Settings
 +---------------------------------------+------------------+----------------------------+
 | ``misc.info``                         | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+
-|                                       | Enable display of *info* level message        |
+|                                       | Enables display of *info* level message       |
 |                                       | (:cb:`cinfo` stream)                          |
 +---------------------------------------+------------------+----------------------------+
 | ``misc.bug``                          | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+
-|                                       | Enable display of *bug* level message         |
+|                                       | Enables display of *bug* level message        |
 |                                       | (:cb:`cbug` stream), messages can be a little |
 |                                       | scarry                                        |
 +---------------------------------------+------------------+----------------------------+
 | ``misc.logMode``                      | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+
-|                                       | If enabled, assume that the output device     |
-|                                       | is not a ``tty`` and suppress any escaped     |
+|                                       | If enabled, assumes that the output device    |
+|                                       | is not a ``tty`` and suppresses any escape    |
 |                                       | sequences                                     |
 +---------------------------------------+------------------+----------------------------+
 | ``misc.verboseLevel1``                | TypeBool         | :cb:`True`                 |
 |                                       +------------------+----------------------------+
-|                                       | First level of verbosity, disable level 2     | 
+|                                       | First level of verbosity, disables level 2    | 
 +---------------------------------------+------------------+----------------------------+
 | ``misc.verboseLevel2``                | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+
@@ -663,12 +663,12 @@ Miscellaneous Settings
 +---------------------------------------+------------------+----------------------------+
 | ``misc.maxTraceLevel``                | TypeInt          | :cb:`0`                    |
 |                                       +------------------+----------------------------+
-|                                       | Display trace information *between* those two |
+|                                       | Displays trace information *between* those two|
 |                                       | levels (:cb:`cdebug` stream)                  | 
 +---------------------------------------+------------------+----------------------------+
 | ``misc.catchCore``                    | TypeBool         | :cb:`False`                |
 |                                       +------------------+----------------------------+
-|                                       | By default, |cgt| do not dump core.           |
+|                                       | By default, |cgt| does not dump core.         |
 |                                       | To generate one set this flag to :cb:`True`   |
 +---------------------------------------+------------------+----------------------------+
 
@@ -688,10 +688,10 @@ The *Controller* window is composed of seven tabs:
 #. `The Layers&Go Tab`_ to selectively hide/display layers.
 #. `The Netlist Tab`_ to browse through the |netlist|. Works in association
    with the *Selection* tab.
-#. `The Selection Tab`_ allow to view all the currently selected elements.
-#. `The Inspector Tab`_ browse through either the DataBase, the Cell or
+#. `The Selection Tab`_ allows to view all the currently selected elements.
+#. `The Inspector Tab`_ browses through either the DataBase, the Cell or
    the current selection.
-#. `The Settings Tab`_ access all the tool's configuration settings.
+#. `The Settings Tab`_ accesses all the tool's configuration settings.
 
 
 .. _The Look Tab:
@@ -714,12 +714,12 @@ The Filter Tab
 --------------
 
 The filter tab let you select what hierarchical levels of your design will be
-displayed. Hierarchy level are numbered top-down: the level 0 correspond to
+displayed. Hierarchy level are numbered top-down: the level 0 corresponds to
 the top-level cell, the level one to the instances of the top-level Cell and
 so on.
 
 There are also check boxes to enable/disable the processing of Terminal Cell,
-Master Cells and Compnents. The processing of Terminal Cell (hierarchy leaf
+Master Cells and Components. The processing of Terminal Cell (hierarchy leaf
 cells) is disabled by default when you load a hierarchical design and enabled
 when you load a single Cell.
 
@@ -731,8 +731,8 @@ unit used to display coordinates.
    connect two or more parts of net, a *rubber* will be drawn between them
    to signal the gap.
 
-   For example, after the detailed routing no *rubbers* should remains.
-   They have been made *very* visibles as big violet lines...
+   For example, after the detailed routing no *rubber* should remain.
+   They have been made *very* visible as big violet lines...
 
 |bcenter| |ControllerFilter_1| |ecenter|
 
@@ -746,7 +746,7 @@ The Layers&Go Tab
 
 Control the individual display of all *layers* and *Gos*.
 
-* *Layers* correspond to a true physical layer. From a |Hurricane| point of
+* *Layers* correspond to true physical layers. From a |Hurricane| point of
   view they are all the *BasicLayers* (could be matched to GDSII).
 * *Gos* stands from *Graphical Objects*, they are drawings that have no
   physical existence but are added by the various tools to display extra
@@ -771,10 +771,10 @@ The *Netlist* tab shows the list of nets... By default the tab is not
 **Sync Netlist** checkbox. You can narrow the set of displayed nets by
 using the filter pattern (supports regular expressions).
 
-An very useful feature is to enable the **Sync Selection**, which will
+A very useful feature is to enable the **Sync Selection**, which will
 automatically select all the components of the selected net(s). You can
 select multiple nets. In the figure the net ``auxsc35`` is selected and
-is highlited in the *Viewer*.
+is highlighted in the *Viewer*.
 
 |bcenter| |ControllerNetlist_1| |ecenter|
 |bcenter| |ViewerNetlist_1|     |ecenter|
@@ -785,7 +785,7 @@ is highlited in the *Viewer*.
 The Selection Tab
 -----------------
 
-The *Selection* tab list all the components currently selecteds. They
+The *Selection* tab lists all the components currently selected. They
 can be filtered thanks to the filter pattern.
 
 Used in conjunction with the *Netlist* **Sync Selection** you will all see
@@ -806,14 +806,14 @@ The Inspector Tab
 -----------------
 
 This tab is very useful, but mostly for |Coriolis| developpers. It allows
-to browse through the live DataBase. The *Inspector* provide three entry points:
+to browse through the live DataBase. The *Inspector* provides three entry points:
 
 * **DataBase**: Starts from the whole |Hurricane| DataBase.
-* **Cell**: Inspect the currently loaded Cell.
-* **Selection**: Inspect the object currently highlited in the *Selection* tab.
+* **Cell**: Inspects the currently loaded Cell.
+* **Selection**: Inspects the object currently highlighted in the *Selection* tab.
 
 Once an entry point has been activated, you may recursively expore all
-it's fields using the right/left arrows.
+its fields using the right/left arrows.
 
 .. note:: *Do not put your fingers in the socket:* when inspecting 
    anything, do not modify the DataBase. If any object under inspection

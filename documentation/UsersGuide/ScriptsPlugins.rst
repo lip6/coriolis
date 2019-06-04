@@ -20,7 +20,7 @@ Python Interface for |Hurricane| / |Coriolis|
 =============================================
 
 The (almost) complete interface of |Hurricane| is exported as a |Python| module
-and some part of the other components of |Coriolis| (each one in a separate
+and some parts of the other components of |Coriolis| (each one in a separate
 module). The interface has been made to mirror as closely as possible the
 C++ one, so the C++ doxygen documentation could be used to write code with
 either languages.
@@ -31,7 +31,7 @@ A script could be run directly in text mode from the command line or through
 the graphical interface (see :ref:`Python Scripts in Cgt`).
 
 Aside for this requirement, the python script can contain anything valid
-in |Python|, so don't hesitate to use any package or extention.
+in |Python|, so don't hesitate to use any package or extension.
 
 Small example of Python/Stratus script: ::
 
@@ -67,7 +67,7 @@ This typical script can be executed in two ways:
      if __name__ == "__main__" :
 
    part (this is standart |Python|). It is a simple adapter that will
-   calls  :cb:`ScriptMain()`.
+   call  :cb:`ScriptMain()`.
 #. Through |cgt|, either in text or graphical mode. In that case, the
    :cb:`ScriptMain()` is directly called trough a sub-interpreter.
    The arguments of the script are passed through the ``**kw`` dictionnary.
@@ -79,7 +79,7 @@ This typical script can be executed in two ways:
    +======================+===============================================+
    | ``'cell'``           | A Hurricane cell on which to work. Depending  |
    |                      | on the context, it may be ``None``.           |
-   |                      | For example, when run from |cgt|, it the cell |
+   |                      | For example, when run from |cgt|, the cell    |
    |                      | currently loaded in the viewer, if any.       |
    +----------------------+-----------------------------------------------+
    | ``'editor'``         | The viewer from which the script is run, when |
@@ -100,22 +100,22 @@ through this method.
 Chip Placement
 --------------
 
-Automatically perform the placement of a complete chip. This plugin, as well
+Automatically performs the placement of a complete chip. This plugin, as well
 as the other P&R tools expect a specific top-level hierarchy for the design.
-The top-level hierarchy must contains the instances of all the I/O pads and
+The top-level hierarchy must contain the instances of all the I/O pads and
 **exactly one** instance named ``corona`` of an eponym cell ``corona``.
-The ``corona`` cell in turn containing the instance of the chip's core model.
+The ``corona`` cell in turn contains the instance of the chip's core model.
 
 The intermediate ``corona`` hierarchical level has been introduced to handle
-the possible discoupling between real I/O pads supplied by a foundry and a
+the possible decoupling between real I/O pads supplied by a foundry and a
 symbolic core. So the *chip* level contains only real layout and the corona
 and below only symbolic layer.
 
-.. note:: This do not prevent having a design either fully symbolic (pads and core)
+.. note:: This does not prevent having a design either fully symbolic (pads and core)
 	  or fully real.
 
-.. note:: The ``corona`` also avoid the router to actually have to manage directly
-	  the pads which simplificate it's configuration and accessorily avoid
+.. note:: The ``corona`` also avoids the router to actually have to manage directly
+	  the pads which simplify its configuration and besides avoid
 	  to have the pads stuffed with blockages.
 
 |bcenter| |ChipStructure-1| |ecenter|
@@ -159,24 +159,24 @@ The file must contain *one dictionnary* named ``chip``.
 | Parameter Key/Name   | Value/Contents type                                   |
 +======================+=======================================================+
 | ``'pad.ioPadGauge'`` | The routing gauge to use for the pad. Must be given   |
-|                      | as it differs from the one used to route standard     |
+|                      | as it differs from the one used to route              |
 |                      | inside the core                                       |
 +----------------------+-------------------------------------------------------+
-| ``'pad.south'``      | Ordered list (left to right) of pad instances names   |
+| ``'pad.south'``      | Ordered list (left to right) of pad instance  names   |
 |                      | to put on the south side of the chip                  |
 +----------------------+-------------------------------------------------------+
-| ``'pad.east'``       | Ordered list (down to up) of pad instances names      |
+| ``'pad.east'``       | Ordered list (down to up) of pad instance  names      |
 |                      | to put on the east side of the chip                   |
 +----------------------+-------------------------------------------------------+
-| ``'pad.north'``      | Ordered list (left to right) of pad instances names   |
+| ``'pad.north'``      | Ordered list (left to right) of pad instance  names   |
 |                      | to put on the north side of the chip                  |
 +----------------------+-------------------------------------------------------+
-| ``'pad.west'``       | Ordered list (down to up) of pad instances names      |
+| ``'pad.west'``       | Ordered list (down to up) of pad instance  names      |
 |                      | to put on the west side of the chip                   |
 +----------------------+-------------------------------------------------------+
 | ``'core.size'``      | The size of the core (to be used by the placer)       |
 +----------------------+-------------------------------------------------------+
-| ``'chip.size'``      | The size of the whole chip. The sides must be great   |
+| ``'chip.size'``      | The size of the whole chip. The sides must be large   |
 |                      | enough to accomodate all the pads                     |
 +----------------------+-------------------------------------------------------+
 | ``'chip.clockTree'`` | Whether to generate a clock tree or not. This calls   |
@@ -193,17 +193,17 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 |``chip.block.rails.count``         | TypeInt          | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | The minimum number of rails around the core   |
-|                                   | block. Must be odd and suppérior to 5.        |
+|                                   | block. Must be odd and above 5.               |
 |                                   | One rail for the clock and at least two pairs |
 |                                   | of power/grounds                              |
 +-----------------------------------+------------------+----------------------------+
 |``chip.block.rails.hWidth``        | TypeInt          | :cb:`12` |lambda|          |
 |                                   +------------------+----------------------------+
-|                                   | The horizontal with of the rails              |
+|                                   | The horizontal width of the rails             |
 +-----------------------------------+------------------+----------------------------+
 |``chip.block.rails.vWidth``        | TypeInt          | :cb:`12` |lambda|          |
 |                                   +------------------+----------------------------+
-|                                   | The vertical with of the rails                |
+|                                   | The vertical width of the rails               |
 +-----------------------------------+------------------+----------------------------+
 |``chip.block.rails.hSpacing``      | TypeInt          | :cb:`6`  |lambda|          |
 |                                   +------------------+----------------------------+
@@ -219,7 +219,7 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 .. note::
    If no clock tree is generated, then the clock rail is *not* created.
    So even if the requested number of rails ``chip.block.rails.count`` is, say 5,
-   only four rails (2* ``power``, 2* ``ground``) will be generateds.
+   only four rails (2* ``power``, 2* ``ground``) will be generated.
 
 
 Clock Tree
@@ -246,7 +246,7 @@ tree.
 
 The clock tree plugin works in four steps:
 
-#. Builds the clock tree: creates the top-block abutment box, compute the
+#. Builds the clock tree: creates the top-block abutment box, computes the
    required levels of H tree and places the clock buffers.
 #. Once the clock buffers are placed, calls the placer (|etesian|) to place
    the ordinary standard cells, whithout disturbing clock H-tree buffers.
@@ -260,7 +260,7 @@ Netlist reorganisation:
   contain all the clock sub-nets. The interface is *not* changed.
 * If the top block contains instances of other models *and* those models
   contain DFFs that get re-connected to the clock sub-nets (from the
-  top level). Changes both the model netlist and interface to propagate
+  top level): Changes both the model netlist and interface to propagate
   the relevant clock sub-nets to the instanciated model. The new model
   with the added clock signal is renamed with a ``_cts`` suffix.
   For example, the sub-block model ``ram.vst`` will become ``ram_cts.vst``.
@@ -306,7 +306,7 @@ example, derived from the |Alliance| :cb:`AM2901` is supplied.
 This example contains only the synthetized netlists and the :cb:`doChip.py` script
 which perform the whole P&R of the design.
 
-You can generate the chip using one of the following method:
+You can generate the chip using one of the following methods:
 
 #. **Command line mode:** directly run the script: ::
 
@@ -316,6 +316,6 @@ You can generate the chip using one of the following method:
    then run the |Python| script :cb:`doChip.py`.
 
 .. note::
-   Between two consecutive run, be sure to erase the netlist/layout generateds: ::
+   Between two consecutive run, be sure to erase the netlist/layout generated: ::
 
        dummy@lepka:AM2901> rm *_cts*.vst *.ap
