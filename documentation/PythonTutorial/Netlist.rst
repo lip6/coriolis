@@ -39,7 +39,7 @@ parameters:
 6.2 Creating Nets and connecting to Instances
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An Instance_ as one Plug_ for each external net of the *master cell*.
+An Instance_ has one Plug_ for each external net of the *master cell*.
 The plug allows to create a **logical** connection bewteen a Net_ of
 ``fulladder`` and a net from an Instance_ *master cell*.
 
@@ -89,7 +89,7 @@ Building the :cb:`a` net of ``fulladder``:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For supplies, it may  be tedious to connect the Plugs_ of each  cell one by one
-(and  create a  lot of  uneeded objects).  To avoid  that, we  may use  **Named
+(and  create a  lot of  unneeded objects).  To avoid  that, we  may use  **Named
 connections**.  If a  signal in ``fulladder`` is set to  *global*, then it will
 be considered as connected  to any signal with the *same  name* and *global* in
 the master cell of the instances.

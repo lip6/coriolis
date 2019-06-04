@@ -21,7 +21,7 @@ General Software Architecture
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 |Coriolis| has been built with respect of the classical paradigm that the
-computational instensive parts have been written in C++, and almost
+computational intensive parts have been written in C++, and almost
 everything else in |Python|. To build the |Python| interface we used
 two methods:
 
@@ -367,4 +367,4 @@ For example: ::
         os.unlink(fileName)
 
 
-See :ref:`Python Interface to Coriolis` for more details those capabilities.
+See :ref:`Python Interface to Coriolis` for more details on those capabilities.

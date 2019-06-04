@@ -12,7 +12,7 @@ But, for debugging purpose it may be helpful to run it through the
 interactive layout viewer |cgt|.
 
 For |cgt| to be able to run your script, you must add to your script
-file a function named :cb:`ScriptMain()`, which takes a dictionnary
+file a function named :cb:`ScriptMain()`, which takes a dictionary
 as sole argument (:cb:`**kw`). The ``kw`` dictionary contains, in
 particular, the CellViewer_ object we are running under with the
 keyword ``editor``. You can then load your cell into the viewer
@@ -71,7 +71,7 @@ function. To be able to see exactly what has just been mofied, we must close the
 UpdateSession_ just before calling the breakpoint and reopen it just after.
 The ``Breakpoint.stop()`` function takes two arguments:
 
-#. The ``level`` above witch it will be active.
+#. The ``level`` above which it will be active.
 #. An informative message about the purpose of the breakpoint.
 
 We can create a little function to ease the work:
