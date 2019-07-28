@@ -98,6 +98,8 @@ namespace Anabatic {
                          , WestBound       = (1 << 14)
                          , EastBound       = (1 << 15)
                          , Middle          = (1 << 16)
+                         , UseNonPref      = (1 << 17)
+                         , HBothAccess     = HAccess|HAccessEW
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
                          };

@@ -63,9 +63,14 @@ namespace {
   inline void  DigitalDistance::setNet          ( Net* net ) { _net = net; }
 
 
-  DbU::Unit  DigitalDistance::operator() ( const Vertex* source ,const Vertex* target,const Edge* edge ) const
+  DbU::Unit  DigitalDistance::operator() ( const Vertex* source, const Vertex* target, const Edge* edge ) const
   {
     if (source->getGCell()->isStdCellRow() and target->getGCell()->isStdCellRow())
+      return Vertex::unreachable;
+
+    if (    source->getGCell()->isGoStraight()
+       and  source->getFrom()
+       and (source->getFrom()->isHorizontal() xor edge->isHorizontal())) 
       return Vertex::unreachable;
 
     if (edge->getCapacity() <= 0) {
@@ -117,7 +122,8 @@ namespace {
                       << DbU::getValueString(source->getDistance()) << " + ("
                       << congestionCost << " + "
                       << viaCost << " + "
-                      << edge->getHistoricCost() << ") * "
+                    //<< edge->getHistoricCost() << ") * "
+                      << historicCost << ") * "
                       << DbU::getValueString(edgeDistance) << " * "
                       << hvScaling
                       << endl;
@@ -312,12 +318,12 @@ namespace Katana {
     openSession();
 
     annotateGlobalGraph();
-    for ( NetData* netData : getNetOrdering() ) {
-      if (netData->isGlobalRouted() or netData->isExcluded()) continue;
+    // for ( NetData* netData : getNetOrdering() ) {
+    //   if (netData->isGlobalRouted() or netData->isExcluded()) continue;
 
-      updateEstimateDensity( netData, 1.0 );
-      netData->setGlobalEstimated( true );
-    }
+    //   updateEstimateDensity( netData, 1.0 );
+    //   netData->setGlobalEstimated( true );
+    // }
 
     // Session::close();
     // Breakpoint::stop( 1, "After global routing estimation." );
@@ -339,9 +345,12 @@ namespace Katana {
 
     if (isChannelMode())
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*10 );
+    else
+      dijkstra->setSearchAreaHalo( Session::getSliceHeight()*1 );
 
-    size_t iteration = 0;
-    size_t netCount  = 0;
+    bool   globalEstimated = false;
+    size_t iteration       = 0;
+    size_t netCount        = 0;
     do {
       cmess2 << "     [" << setfill(' ') << setw(3) << iteration << "] nets:";
 
@@ -359,7 +368,24 @@ namespace Katana {
         distance->setNet( netData->getNet() );
         dijkstra->load( netData->getNet() );
         dijkstra->run();
+        netData->setGlobalRouted( true );
         ++netCount;
+
+        // if (netData->getNet()->getName() == Name("mips_r3000_1m_dp_shift32_rshift_se_msb")) {
+        //   Session::close();
+        //   Breakpoint::stop( 1, "After global routing of \"mips_r3000_1m_dp_shift32_rshift_se_msb\"." );
+        //   openSession();
+        // }
+
+        if ( (netData->getRpCount() < 11) and not globalEstimated ) {
+          for ( NetData* netData2 : getNetOrdering() ) {
+            if (netData2->isGlobalRouted() or netData2->isExcluded()) continue;
+
+            updateEstimateDensity( netData2, 1.0 );
+            netData2->setGlobalEstimated( true );
+          }
+          globalEstimated = true;
+        }
       }
       cmess2 << left << setw(6) << netCount;
 
@@ -416,9 +442,11 @@ namespace Katana {
 
       cerr << "  o  Global routing did not complete, overflowed edges:" << endl;
       for ( size_t iEdge = 0 ; iEdge<ovEdges.size() ; ++iEdge ) {
-        cerr << "    " << dec << setw(4) << (iEdge+1) << "| " << ovEdges[iEdge] << endl;
-        for ( Segment* segment : ovEdges[iEdge]->getSegments() )
+        cerr << "    " << dec << setw(4) << (iEdge+1) << "+ " << ovEdges[iEdge] << endl;
+        for ( Segment* segment : ovEdges[iEdge]->getSegments() ) {
+          cerr << "        | " << segment << " " << DbU::getValueString(segment->getLength()) << endl;
           nets.insert( segment->getNet() );
+        }
       }
 
       cerr << "  o  Conflicting nets:" << endl;
@@ -466,7 +494,7 @@ namespace Katana {
           } else {
             if (component->getLayer() == cLayer) {
               Contact* contact = static_cast<Contact*>( component );
-              size_t   gslaves = 0;
+            //size_t   gslaves = 0;
 
               for ( Component* slave : contact->getSlaveComponents().getSubSet<Segment*>() ) {
                 if (slave->getLayer() == vLayer) { ++viaCount; break; }

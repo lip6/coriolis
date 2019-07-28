@@ -61,55 +61,55 @@ namespace {
 
   void  propagateConstraintFromRp ( RoutingPad* rp )
   {
-    cdebug_log(145,1) << "propagateConstraintFromRp() - " << rp << endl;
+    cdebug_log(146,1) << "propagateConstraintFromRp() - " << rp << endl;
 
     for ( Component* component : rp->getSlaveComponents() ) {
-      cdebug_log(145,0) << "slave component: " << component << endl;
+      cdebug_log(146,0) << "slave component: " << component << endl;
       AutoContact* sourceContact = Session::lookup( dynamic_cast<Contact*>(component) );
       if (sourceContact) {
         Box  constraintBox = sourceContact->getConstraintBox();
 
-        cdebug_log(145,0) << "Start slave: " << sourceContact << endl;
-        cdebug_log(145,0) << "Constraint: " << constraintBox << endl;
+        cdebug_log(146,0) << "Start slave: " << sourceContact << endl;
+        cdebug_log(146,0) << "Constraint: " << constraintBox << endl;
 
         set<AutoSegment*>  verticalSegments;
         set<AutoSegment*>  horizontalSegments;
 
         for ( AutoSegment* segment : sourceContact->getAutoSegments() ) {
-          cdebug_log(145,0) << "Examining: " << segment << endl;
+          cdebug_log(146,0) << "Examining: " << segment << endl;
           AutoContact* targetContact = segment->getOppositeAnchor(sourceContact);
 
           if (targetContact) {
             if (segment->isHorizontal()) {
-              cdebug_log(145,0) << "On horizontal stack " << segment << endl;
+              cdebug_log(146,0) << "On horizontal stack " << segment << endl;
               horizontalSegments.insert( segment );
             } else {
-              cdebug_log(145,0) << "On vertical stack " << segment << endl;
+              cdebug_log(146,0) << "On vertical stack " << segment << endl;
               verticalSegments.insert( segment );
             }
           }
         }
 
         // Propagate constraint through horizontally aligned segments.
-        cdebug_log(145,0) << "Propagate constraint on horizontal segments" << endl;
+        cdebug_log(146,0) << "Propagate constraint on horizontal segments" << endl;
 
         for ( AutoSegment* horizontal : horizontalSegments ) {
           AutoContact* contact = NULL;
           for ( AutoSegment* aligned : horizontal->getAligneds(Flags::WithSelf) ) {
-            cdebug_log(145,0) << "aligned horizontal: " << aligned << endl;
+            cdebug_log(146,0) << "aligned horizontal: " << aligned << endl;
 
             contact = aligned->getAutoTarget();
-            cdebug_log(145,0) << "contact: " << contact << endl;
+            cdebug_log(146,0) << "contact: " << contact << endl;
             if (contact) {
-              cdebug_log(145,0) << "Apply to (target): " << contact << endl;
+              cdebug_log(146,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
                                             , Flags::Horizontal|Flags::WarnOnError );
             }
             contact = aligned->getAutoSource();
-            cdebug_log(145,0) << "contact: " << contact << endl;
+            cdebug_log(146,0) << "contact: " << contact << endl;
             if (contact) {
-              cdebug_log(145,0) << "Apply to (source): " << contact << endl;
+              cdebug_log(146,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getYMin()
                                             , constraintBox.getYMax()
                                             , Flags::Horizontal|Flags::WarnOnError );
@@ -118,23 +118,23 @@ namespace {
         } 
 
         // Propagate constraint through vertically aligned segments.
-        cdebug_log(145,0) << "Propagate constraint on vertical segments" << endl;
+        cdebug_log(146,0) << "Propagate constraint on vertical segments" << endl;
 
         for ( AutoSegment* vertical : verticalSegments ) {
           AutoContact* contact = NULL;
           for ( AutoSegment* aligned : vertical->getAligneds(Flags::WithSelf) ) {
-            cdebug_log(145,0) << "aligned vertical: " << aligned << endl;
+            cdebug_log(146,0) << "aligned vertical: " << aligned << endl;
 
             contact = aligned->getAutoTarget();
             if (contact) {
-              cdebug_log(145,0) << "Apply to (target): " << contact << endl;
+              cdebug_log(146,0) << "Apply to (target): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
             }
             contact = aligned->getAutoSource();
             if (contact) {
-              cdebug_log(145,0) << "Apply to (source): " << contact << endl;
+              cdebug_log(146,0) << "Apply to (source): " << contact << endl;
               contact->restrictConstraintBox( constraintBox.getXMin()
                                             , constraintBox.getXMax()
                                             , Flags::Vertical|Flags::WarnOnError );
@@ -144,8 +144,8 @@ namespace {
       }
     }
 
-    cdebug_log(145,0) << "propagateConstraintFromRp() - Exit" << endl;
-    cdebug_tabw(145,-1);
+    cdebug_log(146,0) << "propagateConstraintFromRp() - Exit" << endl;
+    cdebug_tabw(146,-1);
   }
 
 
@@ -159,12 +159,78 @@ namespace Anabatic {
   using Hurricane::Cell;
 
 
+  void  propagateDistanceFromRp ( RoutingPad* rp )
+  {
+    cdebug_log(146,1) << "propagateDistanceFromRp() - " << rp << endl;
+
+    unsigned int                              distance = 0;
+    vector< pair<AutoContact*,AutoSegment*> > currents;
+    vector< pair<AutoContact*,AutoSegment*> > successors;
+
+    for ( Component* component : rp->getSlaveComponents() ) {
+      cdebug_log(146,0) << "slave component: " << component << endl;
+
+      AutoContact* sourceContact = Session::lookup( dynamic_cast<Contact*>(component) );
+      if (sourceContact) {
+        cdebug_log(146,0) << "Start slave: " << sourceContact << endl;
+
+        for ( AutoSegment* segment : sourceContact->getAutoSegments() ) {
+          cdebug_log(146,0) << "Pushing: " << segment << endl;
+          currents.push_back( make_pair(sourceContact,segment) );
+        }
+      }
+    }
+
+    while ( not currents.empty() ) {
+      for ( size_t i = 0 ; i<currents.size() ; ++i ) {
+        AutoContact* source  = currents[i].first;
+        AutoSegment* segment = currents[i].second;
+
+        if ( (distance == 1) and (segment->getRpDistance() == 1) ) {
+          vector<GCell*> gcells;
+          segment->getGCells( gcells );
+
+          if (gcells.size() < 3)
+            segment->setFlags( AutoSegment::SegUnbreakable );
+        }
+
+        if (distance >= segment->getRpDistance()) continue;
+        segment->setRpDistance( distance );
+        cdebug_log(146,0) << "Popped: " << segment << endl;
+        
+        AutoContact* target = segment->getOppositeAnchor( source );
+        if (target) {
+          for ( AutoSegment* successor : target->getAutoSegments() ) {
+            if (successor == segment) continue;
+            
+            // if (successor->isNonPref()) {
+            //   cdebug_log(146,0) << "Pushing (non-pref): " << successor << endl;
+            //   currents.push_back( make_pair(target,successor) );
+            // } else {
+              cdebug_log(146,0) << "Pushing: " << successor << endl;
+              successors.push_back( make_pair(target,successor) );
+            // }
+          }
+        }
+      }
+
+      if (++distance > 15) break;
+
+      currents.clear();
+      currents.swap( successors );
+    }
+
+    cdebug_log(146,0) << "propagateDistanceFromRp() - Exit" << endl;
+    cdebug_tabw(146,-1);
+  }
+
+
   void  AnabaticEngine::computeNetConstraints ( Net* net )
   {
-    DebugSession::open( net, 145, 150);
+    DebugSession::open( net, 146, 150);
 
     cdebug_log(149,0) << "Anabatic::computeNetConstraints( " << net << " )" << endl;
-    cdebug_tabw(145,1);
+    cdebug_tabw(146,1);
 
     vector<RoutingPad*> routingPads;
     forEach ( Component*, icomponent, net->getComponents() ) {
@@ -179,15 +245,35 @@ namespace Anabatic {
       }
     }
 
-    for ( size_t i=0 ; i<routingPads.size() ; i++ )
+    for ( size_t i=0 ; i<routingPads.size() ; i++ ) {
       propagateConstraintFromRp( routingPads[i] );
+      propagateDistanceFromRp  ( routingPads[i] );
+    }
+
+    for ( Segment* segment : net->getSegments() ) {
+      AutoSegment* autoSegment = Session::lookup( segment );
+      if (not autoSegment) continue;
+      if (autoSegment->isUnbreakable()) continue;
+      if (autoSegment->getRpDistance() >= 2) continue;
+      if (autoSegment->getRpDistance() == 1) continue;
+
+      vector<GCell*> gcells;
+      autoSegment->getGCells( gcells );
+
+      if     (gcells.size() >  2) continue;
+    //if (   (gcells.size() == 2)
+    //   and (  not autoSegment->getAutoSource()->isTerminal()
+    //       or not autoSegment->getAutoTarget()->isTerminal()) ) continue;
+
+      autoSegment->setFlags( AutoSegment::SegUnbreakable );
+    }
 
     // forEach ( Segment*, isegment, net->getSegments() ) {
     //   AutoSegment* autoSegment = Session::lookup( *isegment );
     //   if (autoSegment) autoSegment->toConstraintAxis();
     // }
 
-    cdebug_tabw(145,-1);
+    cdebug_tabw(146,-1);
     DebugSession::close();
   }
 

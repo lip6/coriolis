@@ -66,7 +66,8 @@ namespace Katana {
                 Key    ( const RoutingEvent* );
           void  update ( const RoutingEvent* );
         private:
-          unsigned int  _tracksNb:16;
+          unsigned int  _tracksNb  :16;
+          unsigned int  _rpDistance: 4;
           float         _priority;
           uint32_t      _eventLevel;
           uint32_t      _segFlags;
@@ -135,6 +136,7 @@ namespace Katana {
       inline  uint32_t                     getInsertState        () const;
       inline  uint32_t                     getEventLevel         () const;
               void                         revalidate            ();
+              void                         _revalidateNonPref    ();
       inline  void                         updateKey             ();
               void                         process               ( RoutingEventQueue&
                                                                  , RoutingEventHistory&

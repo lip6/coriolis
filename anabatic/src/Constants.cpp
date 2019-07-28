@@ -43,6 +43,7 @@ namespace Anabatic {
   const BaseFlags  Flags::ChannelRow          = (1L << 13);
   const BaseFlags  Flags::HRailGCell          = (1L << 14);
   const BaseFlags  Flags::VRailGCell          = (1L << 15);
+  const BaseFlags  Flags::GoStraight          = (1L << 16);
 // Flags for Edge objects states only.                      
   const BaseFlags  Flags::NullCapacity        = (1L <<  5);
   const BaseFlags  Flags::InfiniteCapacity    = (1L <<  6);
@@ -116,6 +117,7 @@ namespace Anabatic {
   const BaseFlags  Flags::CheckLowUpDensity   = (1L << 31);
   const BaseFlags  Flags::NoUpdate            = (1L << 32);
   const BaseFlags  Flags::NorthPath           = (1L << 33);
+  const BaseFlags  Flags::UseNonPref          = (1L << 34);
 
 
   Flags::~Flags ()
@@ -168,6 +170,7 @@ namespace Anabatic {
     s << " (" << value() << ")";
     return s.str();
   }
+
 
   string  Flags::_getTypeName () const
   { return "Anabatic::Flags"; }

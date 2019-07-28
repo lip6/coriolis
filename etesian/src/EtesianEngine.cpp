@@ -48,7 +48,6 @@
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
 #include "etesian/EtesianEngine.h"
-#include "etesian/FeedCells.h"
 
 
 namespace {
@@ -265,6 +264,7 @@ namespace Etesian {
     , _idsToInsts   ()
     , _viewer       (NULL)
     , _feedCells    (this)
+    , _bloatCells   (this)
   {
   }
 
@@ -278,6 +278,8 @@ namespace Etesian {
       cmess2 << "  o  ISPD benchmark <" << getCell()->getName()
              << ">, no feed cells will be added." << endl;
     } else {
+      _bloatCells.select( getConfiguration()->getBloat() );
+      
       string feedNames = getConfiguration()->getFeedNames();
       char   separator = ',';
 
@@ -349,6 +351,7 @@ namespace Etesian {
 
   void  EtesianEngine::setDefaultAb ()
   {
+    _bloatCells.resetDxSpace();
     double spaceMargin = getSpaceMargin();
     double aspectRatio = getAspectRatio();
     size_t instanceNb  = 0;
@@ -369,10 +372,13 @@ namespace Etesian {
         continue;
       }
 
-      cellLength += DbU::toLambda( masterCell->getAbutmentBox().getWidth() );
+      cellLength += DbU::toLambda( _bloatCells.getAb( masterCell ).getWidth() );
       instanceNb += 1;
     }
 
+    double bloatLength = DbU::toLambda( _bloatCells.getDxSpace() );
+    double bloatMargin = ( cellLength / (cellLength - bloatLength) ) - 1.0;
+    
     double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
     double rows        = std::ceil( sqrt( gcellLength/aspectRatio ) );
     double columns     = std::ceil( gcellLength / rows );
@@ -398,6 +404,8 @@ namespace Etesian {
            << "% aspect ratio:" << (aspectRatio*100.0)
            << "% g-length:" << (cellLength/DbU::toLambda(getSliceHeight()))
            << ")" << endl;
+    cmess1 << "     - Bloat space margin: "
+           << setprecision(4) << (bloatMargin*100.0) << "%." << endl;
     cmess1 << "     - " <<  getCell()->getAbutmentBox() << endl;
     cmess1 << "     - GCell grid: [" << (int)columns << "x" << (int)rows << "]" << endl;
   }
@@ -538,7 +546,7 @@ namespace Etesian {
         continue;
       }
 
-      Box instanceAb = masterCell->getAbutmentBox();
+      Box instanceAb = _bloatCells.getAb( masterCell );
 
       Transformation instanceTransf = instance->getTransformation();
       occurrence.getPath().getTransformation().applyOn( instanceTransf );
@@ -551,12 +559,17 @@ namespace Etesian {
       int_t xpos  = instanceAb.getXMin() / vpitch;
       int_t ypos  = instanceAb.getYMin() / hpitch;
 
+      //if (xsize <  6) xsize += 2;
+
       // if ( (ysize != 1) and not instance->isFixed() ) {
       //   cerr << Error( "EtesianEngine::toColoquinte(): Instance \"%s\" of \"%s\" is a block (height: %d)." 
       //                , instanceName.c_str()
       //                , getString(masterCell->getName()).c_str()
       //                , ysize ) << endl;
       // }
+
+      // cerr << instance << " size:(" << xsize << " " << ysize
+      //     << ") pos:(" << xpos << " " << ypos << ")" << endl;
 
       instances[instanceId].size       = point<int_t>( xsize, ysize );
       instances[instanceId].list_index = instanceId;
@@ -603,6 +616,8 @@ namespace Etesian {
 
       nets[netId] = temporary_net( netId, 1 );
 
+    //cerr << "+ " << net << endl;
+      
       for ( RoutingPad* rp : net->getRoutingPads() ) {
         string insName = extractInstanceName( rp );
         Point  offset  = extractRpOffset    ( rp );
@@ -616,6 +631,8 @@ namespace Etesian {
         } else {
           pins.push_back( temporary_pin( point<int_t>(xpin,ypin), (*iid).second, netId ) );
         }
+
+      //cerr << "| " << rp << " pos:(" << xpin << " " << ypin << ")" << endl;
       }
 
       netId++;

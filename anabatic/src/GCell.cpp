@@ -1215,7 +1215,7 @@ namespace Anabatic {
   int  GCell::getCapacity ( size_t depth ) const
   {
     const vector<Edge*>* edges = NULL;
-    if (isHorizontalPlane(depth)) edges = (_eastEdges .empty()) ? &_westEdges  : &_westEdges;
+    if (isHorizontalPlane(depth)) edges = (_eastEdges .empty()) ? &_westEdges  : &_eastEdges;
     else                          edges = (_northEdges.empty()) ? &_southEdges : &_northEdges;
 
     int capacity = 0;

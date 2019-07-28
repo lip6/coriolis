@@ -71,6 +71,8 @@ namespace Anabatic {
                        , CntOnVertical            = (1 << 14)
                        , CntOnHorizontal          = (1 << 15)
                        , CntDrag                  = (1 << 16)
+                       , CntHDogleg               = (1 << 17)
+                       , CntVDogleg               = (1 << 18)
                        };
 
   class AutoContact {
@@ -119,6 +121,8 @@ namespace Anabatic {
       inline  bool             isVTee                     () const;
       inline  bool             isFixed                    () const;
       inline  bool             isUserNativeConstraints    () const;
+      inline  bool             isHDogleg                  () const;
+      inline  bool             isVDogleg                  () const;
       inline  bool             hasBadTopology             () const;
               bool             canDestroy                 ( Flags flags=Flags::NoFlags ) const;
               bool             canMoveUp                  ( const AutoSegment* moved ) const;
@@ -259,6 +263,8 @@ namespace Anabatic {
   inline bool          AutoContact::isTerminal              () const { return _flags&CntTerminal; }
   inline bool          AutoContact::isHTee                  () const { return _flags&CntHTee; }
   inline bool          AutoContact::isVTee                  () const { return _flags&CntVTee; }
+  inline bool          AutoContact::isHDogleg               () const { return _flags&CntHDogleg; }
+  inline bool          AutoContact::isVDogleg               () const { return _flags&CntVDogleg; }
   inline bool          AutoContact::hasBadTopology          () const { return _flags&CntBadTopology; }
   inline bool          AutoContact::canDrag                 () const { return _flags&CntDrag; }
   inline size_t        AutoContact::getId                   () const { return _id; }

@@ -67,7 +67,7 @@ namespace Katana {
 
     protected:
     // Attributes.
-      KatanaEngine*        _katana;
+      KatanaEngine*      _katana;
       RoutingLayerGauge* _layerGauge;
       size_t             _depth;
       Flags              _flags;

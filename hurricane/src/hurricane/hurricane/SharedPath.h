@@ -60,8 +60,6 @@ class SharedPath {
 // Attributes
 // **********
 
-    private: static unsigned int _idCounter;
-    private: unsigned int _id;
     private: Instance* _headInstance;
     private: SharedPath* _tailSharedPath;
     private: QuarkMap _quarkMap;
@@ -91,7 +89,7 @@ class SharedPath {
 
     public: static char getNameSeparator();
 
-    public: unsigned int  getId() const { return _id; }
+    public: unsigned long  getHash() const;
     public: Instance* getHeadInstance() const {return _headInstance;};
     public: SharedPath* getTailSharedPath() const {return _tailSharedPath;};
     public: SharedPath* getHeadSharedPath() const;

@@ -239,7 +239,7 @@ namespace Anabatic {
       RoutingGauge* rg           = Session::getRoutingGauge();
       size_t        depthH1      = rg->getLayerDepth( getHorizontal1()->getLayer() );
       size_t        depthV1      = rg->getLayerDepth( getVertical1  ()->getLayer() );
-      size_t        depthContact = (depthH1 < depthV1) ? depthH1 : depthH1-1;
+      size_t        depthContact = (depthH1 <= depthV1) ? depthH1 : depthH1-1;
       size_t        delta        = abssub ( depthH1, depthV1 );
 
       unsetFlags( CntWeakTerminal );
@@ -247,7 +247,7 @@ namespace Anabatic {
         showTopologyError( "Sheared Turn, layer delta exceed 3." );
         setFlags( CntBadTopology );
       } else {
-        if (delta == 3) {
+        if (delta > 1) {
           if (_horizontal1->isInvalidatedLayer()) {
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
@@ -259,7 +259,7 @@ namespace Anabatic {
           }
           depthH1      = rg->getLayerDepth( _horizontal1->getLayer() );
           depthV1      = rg->getLayerDepth( _vertical1->getLayer() );
-          depthContact = (depthH1 < depthV1) ? depthH1 : depthH1-1;
+          depthContact = (depthH1 <= depthV1) ? depthH1 : depthH1-1;
           delta        = abssub ( depthH1, depthV1 );
         }
 

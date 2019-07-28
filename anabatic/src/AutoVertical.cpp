@@ -741,26 +741,61 @@ namespace Anabatic {
     segment2->setFlags( (isSlackened()?SegSlackened:0) );
     Session::dogleg( segment2 );
 
-    if (isSourceTerminal()) {
-      segment1->setFlags( SegWeakTerminal1 );
-      segment2->setFlags( SegWeakTerminal1 );
+    if (autoSource->isTerminal() and autoTarget->isTerminal()) {
+      segment1->setRpDistance( 1 );
+      segment2->setRpDistance( 0 );
+      dlContact1->setFlags  ( CntWeakTerminal );
+      dlContact2->setFlags  ( CntWeakTerminal );
+
+      if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
+      if (autoSource->getGCell() == doglegGCell) dlContact2->migrateConstraintBox( autoSource );
+    } else if (autoSource->isTerminal()) {
+      segment1->setRpDistance( 1 );
+      segment2->setRpDistance( 2 );
+
       autoTarget->unsetFlags( CntWeakTerminal );
       dlContact1->setFlags  ( CntWeakTerminal );
-      if (autoTarget->getGCell() == doglegGCell)
-        dlContact1->migrateConstraintBox( autoTarget );
-    } else if (isTargetTerminal()) {
+      if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
+    } else if (autoTarget->isTerminal()) {
+      segment2->setRpDistance( 0 );
+      segment1->setRpDistance( 1 );
+      setRpDistance( 2 );
+
       unsetFlags( SegTargetTerminal );
       setFlags( SegWeakTerminal1 );
-      segment1->setFlags( SegWeakTerminal1 );
-      segment2->setFlags( SegTargetTerminal );
       autoSource->unsetFlags( CntWeakTerminal );
       dlContact2->setFlags  ( CntWeakTerminal );
-      if (autoSource->getGCell() == doglegGCell)
-        dlContact2->migrateConstraintBox( autoSource );
-    } else if (isWeakTerminal()) {
+      if (autoSource->getGCell() == doglegGCell) dlContact2->migrateConstraintBox( autoSource );
+    } else  if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
+      segment1->setRpDistance( getRpDistance() );
+      segment2->setRpDistance( getRpDistance() );
+    } else {
+      segment1->setRpDistance( getRpDistance() );
+      segment2->setRpDistance( getRpDistance() );
     }
+
+    // if (isSourceTerminal()) {
+    //   segment1->setFlags( SegWeakTerminal1 );
+    //   segment2->setFlags( SegWeakTerminal1 );
+    //   autoTarget->unsetFlags( CntWeakTerminal );
+    //   dlContact1->setFlags  ( CntWeakTerminal );
+    //   if (autoTarget->getGCell() == doglegGCell)
+    //     dlContact1->migrateConstraintBox( autoTarget );
+    // } else if (isTargetTerminal()) {
+    //   unsetFlags( SegTargetTerminal );
+    //   setFlags( SegWeakTerminal1 );
+    //   segment1->setFlags( SegWeakTerminal1 );
+    //   segment2->setFlags( SegTargetTerminal );
+    //   autoSource->unsetFlags( CntWeakTerminal );
+    //   dlContact2->setFlags  ( CntWeakTerminal );
+    //   if (autoSource->getGCell() == doglegGCell)
+    //     dlContact2->migrateConstraintBox( autoSource );
+    // } else if (isWeakTerminal()) {
+    //   segment1->setFlags( SegWeakTerminal1 );
+    //   segment2->setFlags( SegWeakTerminal1 );
+    // }
 
     if (isAnalog()) {
       segment1->setFlags( SegAnalog );
@@ -781,8 +816,11 @@ namespace Anabatic {
     updateNativeConstraints();
     segment2->updateNativeConstraints();
 
+    if (          isLocal()) autoSource->setFlags( AutoContactFlag::CntHDogleg );
+    if (segment2->isLocal()) autoTarget->setFlags( AutoContactFlag::CntHDogleg );
+
     if (autoTarget->canDrag() and not autoSource->canDrag()) {
-      if (not autoTarget->getGCell()->isDevice()) {
+      if (not autoTarget->getGCell()->isDevice() and (segment1->getGCell() == autoTarget->getGCell())) {
         Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Vertical);
         segment1->mergeUserConstraints( dragConstraints );
 

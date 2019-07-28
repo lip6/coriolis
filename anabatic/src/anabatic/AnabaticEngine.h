@@ -161,7 +161,12 @@ namespace Anabatic {
       inline bool operator() ( const NetData* lhs, const NetData* rhs ) const
       {
         if (lhs->isMixedPreRoute() != rhs->isMixedPreRoute()) return lhs->isMixedPreRoute();
-        if (lhs->getSparsity()     != rhs->getSparsity()    ) return lhs->getSparsity() < rhs->getSparsity();
+        if ((lhs->getRpCount() > 10) or (rhs->getRpCount() > 10)) {
+          if (lhs->getRpCount() != rhs->getRpCount())
+            return lhs->getRpCount() > rhs->getRpCount();
+        }
+        
+        if (lhs->getSparsity() != rhs->getSparsity()) return lhs->getSparsity() < rhs->getSparsity();
         return lhs->getNet()->getId() < rhs->getNet()->getId();
       }
   };

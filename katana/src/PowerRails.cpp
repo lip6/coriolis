@@ -23,6 +23,7 @@
 #include "hurricane/Technology.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
+#include "hurricane/Pad.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/RoutingPad.h"
@@ -52,6 +53,7 @@ namespace {
   using Hurricane::Net;
   using Hurricane::DeepNet;
   using Hurricane::Horizontal;
+  using Hurricane::Pad;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
@@ -502,7 +504,8 @@ namespace {
   //                          - plane->getLayerGauge()->getHalfWireWidth()
   //                          - DbU::fromLambda(0.1);
     DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
-    DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
+    DbU::Unit     extension = layer->getExtentionCap();
+  //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
   //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getHalfPitch() + getHalfWireWidth();
   //DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = Session::getExtentionCap();
@@ -512,9 +515,9 @@ namespace {
     DbU::Unit     axisMax   = 0;
 
     cdebug_log(159,0) << "  delta:" << DbU::getValueString(delta)
-                << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
-                << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
-                << ")" << endl;
+                      << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())
+                      << " , ww/2:" << DbU::getValueString(plane->getLayerGauge()->getHalfWireWidth())
+                      << ")" << endl;
 
     // if ( type == Constant::PinOnly ) {
     //   cdebug_log(159,0) << "  Layer is PinOnly." << endl;
@@ -540,7 +543,7 @@ namespace {
         }
         
         cdebug_log(159,0) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
-                    << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
+                          << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Horizontal::create ( net
                                      , layer
@@ -1076,6 +1079,19 @@ namespace {
                       << " " << basicLayer << endl;
           
           _powerRailsPlanes.merge ( bb, rootNet );
+        } else {
+          const Pad* pad = dynamic_cast<const Pad*>(component);
+          if (pad != NULL) {
+            _goMatchCount++;
+
+            Box bb = pad->getBoundingBox( basicLayer );
+            transformation.applyOn( bb );
+          
+            cdebug_log(159,0) << "  Merging PowerRail element: " << pad << " bb:" << bb
+                              << " " << basicLayer << endl;
+            
+            _powerRailsPlanes.merge( bb, rootNet );
+          }
         }
       }
     }

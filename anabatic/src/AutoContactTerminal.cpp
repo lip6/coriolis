@@ -337,7 +337,7 @@ namespace Anabatic {
   void  AutoContactTerminal::cacheDetach ( AutoSegment* segment )
   {
     if (_segment == segment) {
-      _segment->unsetFlags( AutoSegment::SegAxisSet );
+    //_segment->unsetFlags( AutoSegment::SegAxisSet );
       _segment = NULL;
       setFlags( CntInvalidatedCache );
       unsetFlags( CntDrag );

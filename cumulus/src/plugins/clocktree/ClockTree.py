@@ -42,6 +42,7 @@ try:
   import helpers
   from   helpers    import trace
   from   helpers.io import ErrorMessage
+  import Etesian
   import Unicorn
   import plugins
   from   clocktree.RSMT     import RSMT
@@ -585,36 +586,40 @@ class HTreeNode ( object ):
 
 
 def computeAbutmentBox ( cell, spaceMargin, aspectRatio, cellGauge ):
-  sliceHeight = DbU.toLambda( cellGauge.getSliceHeight() ) 
-
-  instancesNb = 0
-  cellLength  = 0
-  for occurrence in cell.getLeafInstanceOccurrences():
-    instance     = occurrence.getEntity()
-    instancesNb += 1
-    cellLength  += int( DbU.toLambda(instance.getMasterCell().getAbutmentBox().getWidth()) )
-
- # ar = x/y    S = x*y = spaceMargin*SH    x=S/y    ar = S/y^2
- # y = sqrt(S/AR)
-  gcellLength = float(cellLength)*(1+spaceMargin) / sliceHeight
-  rows = math.sqrt( gcellLength/aspectRatio )
-  if math.trunc(rows) != rows: rows = math.trunc(rows) + 1
-  else:                        rows = math.trunc(rows)
-  columns = gcellLength / rows
-  if math.trunc(columns) != columns: columns = math.trunc(columns) + 1
-  else:                              columns = math.trunc(columns)
-
-  print '  o  Creating abutment box (margin:%.1f%%, aspect ratio:%.1f%%, g-length:%.1fl)' \
-      % (spaceMargin*100.0,aspectRatio*100.0,(cellLength/sliceHeight))
-  print '     - GCell grid: [%dx%d]' % (columns,rows)
+  #  sliceHeight = DbU.toLambda( cellGauge.getSliceHeight() ) 
+  #
+  #  instancesNb = 0
+  #  cellLength  = 0
+  #  for occurrence in cell.getLeafInstanceOccurrences():
+  #    instance     = occurrence.getEntity()
+  #    instancesNb += 1
+  #    cellLength  += int( DbU.toLambda(instance.getMasterCell().getAbutmentBox().getWidth()) )
+  #
+  # # ar = x/y    S = x*y = spaceMargin*SH    x=S/y    ar = S/y^2
+  # # y = sqrt(S/AR)
+  #  gcellLength = float(cellLength)*(1+spaceMargin) / sliceHeight
+  #  rows = math.sqrt( gcellLength/aspectRatio )
+  #  if math.trunc(rows) != rows: rows = math.trunc(rows) + 1
+  #  else:                        rows = math.trunc(rows)
+  #  columns = gcellLength / rows
+  #  if math.trunc(columns) != columns: columns = math.trunc(columns) + 1
+  #  else:                              columns = math.trunc(columns)
+  #
+  #  print '  o  Creating abutment box (margin:%.1f%%, aspect ratio:%.1f%%, g-length:%.1fl)' \
+  #      % (spaceMargin*100.0,aspectRatio*100.0,(cellLength/sliceHeight))
+  #  print '     - GCell grid: [%dx%d]' % (columns,rows)
 
   UpdateSession.open()
-  abutmentBox =  Box( DbU.fromLambda(0)
-                    , DbU.fromLambda(0)
-                    , DbU.fromLambda(columns*sliceHeight)
-                    , DbU.fromLambda(rows   *sliceHeight)
-                    )
-  cell.setAbutmentBox( abutmentBox )
+  etesian = Etesian.EtesianEngine.create( cell )
+  etesian.setDefaultAb()
+  etesian.destroy()
+  
+  #abutmentBox =  Box( DbU.fromLambda(0)
+  #                  , DbU.fromLambda(0)
+  #                  , DbU.fromLambda(columns*sliceHeight)
+  #                  , DbU.fromLambda(rows   *sliceHeight)
+  #                  )
+  #cell.setAbutmentBox( abutmentBox )
   UpdateSession.close()
 
-  return abutmentBox
+  return cell.getAbutmentBox()

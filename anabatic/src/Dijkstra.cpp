@@ -1535,6 +1535,7 @@ namespace Anabatic {
 
         ++_connectedsId;
         for ( Vertex* vertex : connecteds ) {
+          vertex->getGCell()->flags().reset( Flags::GoStraight );
           vertex->setDistance     ( Vertex::unreached );
           vertex->setStamp        ( _stamp );
           vertex->setConnexId     ( _connectedsId );

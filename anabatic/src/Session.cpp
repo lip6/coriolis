@@ -215,7 +215,7 @@ namespace Anabatic {
       _anabatic->updateNetTopology    ( net );
       _anabatic->computeNetConstraints( net );
       _anabatic->_computeNetOptimals  ( net );
-      _anabatic->_computeNetTerminals ( net );
+    //_anabatic->_computeNetTerminals ( net );
     }
     _canonize ();
 

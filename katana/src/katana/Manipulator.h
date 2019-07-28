@@ -63,7 +63,7 @@ namespace Katana {
              bool                 isCaged                 ( DbU::Unit ) const;
              bool                 ripup                   ( uint32_t type, DbU::Unit axisHint=0 );
              bool                 ripupPerpandiculars     ( uint32_t flags=0 );
-             void                 repackPerpandiculars    ();
+             void                 repackPerpandiculars    ( uint32_t flags );
              void                 reprocessPerpandiculars ();
              bool                 ripple                  ();
              bool                 minimize                ();

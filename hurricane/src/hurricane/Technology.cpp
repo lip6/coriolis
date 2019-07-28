@@ -738,7 +738,7 @@ namespace Hurricane {
 
 
   unsigned Technology::LayerMap::_getHashValue ( Name name ) const
-  { return name._getSharedName()->getId() / 8; }
+  { return name._getSharedName()->getHash() / 8; }
 
 
   Layer* Technology::LayerMap::_getNextElement ( Layer* layer ) const

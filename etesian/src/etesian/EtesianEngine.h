@@ -35,6 +35,7 @@ namespace Hurricane {
 #include "crlcore/ToolEngine.h"
 #include "etesian/Configuration.h"
 #include "etesian/FeedCells.h"
+#include "etesian/BloatCells.h"
 
 
 namespace Etesian {
@@ -92,6 +93,7 @@ namespace Etesian {
       inline  void                   useFeed            ( Cell* );
               size_t                 findYSpin          ();
               void                   addFeeds           ();
+      inline  void                   selectBloat        ( std::string );
       virtual Record*                _getRecord         () const;
       virtual std::string            _getString         () const;
       virtual std::string            _getTypeName       () const;
@@ -112,6 +114,7 @@ namespace Etesian {
              std::vector<Instance*>                   _idsToInsts;
              Hurricane::CellViewer*                   _viewer;
              FeedCells                                _feedCells;
+             BloatCells                               _bloatCells;
              size_t                                   _yspinSlice0;
 
     protected:
@@ -146,6 +149,7 @@ namespace Etesian {
   inline  double                 EtesianEngine::getAspectRatio     () const { return getConfiguration()->getAspectRatio(); }
   inline  void                   EtesianEngine::useFeed            ( Cell* cell ) { _feedCells.useFeed(cell); }
   inline  const FeedCells&       EtesianEngine::getFeedCells       () const { return _feedCells; }
+  inline  void                   EtesianEngine::selectBloat        ( std::string profile ) { _bloatCells.select(profile); }
 
 
 // Variables.

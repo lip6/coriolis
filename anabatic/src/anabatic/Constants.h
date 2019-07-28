@@ -43,6 +43,7 @@ namespace Anabatic {
       static const BaseFlags  ChannelRow          ; // = (1 << 13);
       static const BaseFlags  HRailGCell          ; // = (1 << 14);
       static const BaseFlags  VRailGCell          ; // = (1 << 15);
+      static const BaseFlags  GoStraight          ; // = (1 << 16);
     // Flags for Edge objects states only.                      
       static const BaseFlags  NullCapacity        ; // = (1 <<  5);
       static const BaseFlags  InfiniteCapacity    ; // = (1 <<  6);
@@ -99,6 +100,7 @@ namespace Anabatic {
       static const BaseFlags  CheckLowUpDensity   ;
       static const BaseFlags  NoUpdate            ;
       static const BaseFlags  NorthPath           ;
+      static const BaseFlags  UseNonPref          ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

@@ -143,7 +143,40 @@ namespace Katana {
       cdebug_log(159,0) << "Canonical // interval: " << interval << endl;
 
       _perpandiculars.push_back( perpandicular );
-      if (perpandicular->getTrack()) {
+
+      if (perpandicular->isNonPref()) {
+        AutoContact* source    = perpandicular->base()->getAutoSource();
+        AutoContact* target    = perpandicular->base()->getAutoTarget();
+        DbU::Unit    pitch     = Session::getPitch    ( perpandicular->getLayer() );
+        Flags        direction = Session::getDirection( perpandicular->getLayer() );
+        Interval     trackFree ( false );
+
+        if (source->canDrag()) {
+          if (direction & Flags::Horizontal)
+            trackFree.intersection( source->getCBYMin(), source->getCBYMax() );
+          else
+            trackFree.intersection( source->getCBXMin(), source->getCBXMax() );
+          cdebug_log(159,0) << "trackFree (source drag): " << trackFree << endl;
+        }
+        if (target->canDrag()) {
+          if (direction & Flags::Horizontal)
+            trackFree.intersection( target->getCBYMin(), target->getCBYMax() );
+          else
+            trackFree.intersection( target->getCBXMin(), target->getCBXMax() );
+          cdebug_log(159,0) << "trackFree (target drag): " << trackFree << endl;
+        }
+
+        if (not source->canDrag() and not target->canDrag())
+          perpandicular->base()->getCanonical( trackFree );
+
+        trackFree.inflate( 1*pitch, 1*pitch );
+        cdebug_log(159,0) << "Non-Pref Track Perpandicular Free: " << trackFree << endl;
+
+        //_perpandicularFree.intersection
+        //  ( trackFree.inflate ( pitch - perpandicular->getExtensionCap(Flags::Source)
+        //                      , pitch - perpandicular->getExtensionCap(Flags::Target)) );
+        _perpandicularFree.intersection( trackFree );
+      } else if (perpandicular->getTrack()) {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 

@@ -274,11 +274,11 @@ namespace Anabatic {
 
   void  AutoContact::invalidate ( Flags flags )
   {
+    if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
     if (not isInvalidated()) {
       cdebug_log(145,1) << "AutoContact::invalidate() - " << this << endl;
       cdebug_log(145,0) << "flags:" << flags.asString(FlagsFunction) << endl;
       setFlags( CntInvalidated );
-      if (flags & Flags::Topology ) setFlags( CntInvalidatedCache );
       Session::invalidate( this );
 
       _invalidate( flags );
@@ -554,6 +554,9 @@ namespace Anabatic {
 
   void  AutoContact::setLayerAndWidth ( size_t delta, size_t depth )
   {
+    cdebug_log(145,1) << "AutoContact::setLayerAndWidth() " << this << endl;
+    cdebug_log(145,0) << "delta:" << delta << " depth:" << depth << endl;
+
     if (delta == 0) {
       setLayer( Session::getRoutingLayer(depth) );
       setSizes( Session::getWireWidth   (depth)
@@ -563,6 +566,8 @@ namespace Anabatic {
       setSizes( Session::getViaWidth    (depth)
               , Session::getViaWidth    (depth) );
     }
+
+    cdebug_tabw(145,-1);
   }
 
 

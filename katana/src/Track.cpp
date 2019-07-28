@@ -93,11 +93,14 @@ namespace Katana {
   {
     cdebug_log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
+    set<Track*> dummy;
     for ( size_t i=0 ; i<_segments.size() ; i++ )
       if (_segments[i]) {
-        _segments[i]->detach();
-        if (not _segments[i]->getTrackCount())
+        _segments[i]->detach( dummy );
+        if (not _segments[i]->getTrackCount()) {
+        //cerr << "destroy " << _segments[i] << endl;
           _segments[i]->destroy();
+        }
       }
 
     for ( size_t i=0 ; i<_markers.size() ; i++ )
@@ -412,7 +415,8 @@ namespace Katana {
 
   Interval  Track::expandFreeInterval ( size_t& begin, size_t& end, uint32_t state, Net* net ) const
   {
-    cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end << " " << net << endl;
+    cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end
+                      << " state:" << state << " " << net << endl;
     cdebug_log(155,0) << _segments[begin] << endl;
 
     DbU::Unit minFree = _min;
@@ -433,6 +437,11 @@ namespace Katana {
  
       if (_segments[end]->getNet() == net) {
         getNext( end, net );
+        if (end != npos) {
+          cdebug_log(155,0) << "| same net, end:" << end << " " << _segments[end] << endl;
+        } else {
+          cdebug_log(155,0) << "| same net, end:" << end << " (after last)" << endl;
+        }
 
         if (end == npos) {
           end  = _segments.size() - 1;
@@ -440,7 +449,11 @@ namespace Katana {
         } else {
           setMaximalFlags( state, EndIsSegmentMin );
         }
+      } else {
+        state = EndIsTrackMax;
+        cdebug_log(155,0) << "| already after last" << endl;
       }
+
       cdebug_log(155,0) << "end:" << end << " state:" << state << endl;
     }
 
@@ -474,14 +487,15 @@ namespace Katana {
                  ,getString(segment).c_str()) << endl;
     }
 
+    cdebug_log(159,0) << "Insert in [" << 0 << "] " << this << segment << endl;
     _segments.push_back( segment );
     _segmentsValid = false;
 
-    if (segment->isWide()) {
-      cdebug_log(155,0) << "Segment is wide." << endl;
+    if (segment->isWide() or segment->isNonPref()) {
+      cdebug_log(155,0) << "Segment is wide or non-pref, trackSpan:" << segment->getTrackSpan() << endl;
       Track* wtrack = getNextTrack();
       for ( size_t i=1 ; wtrack and (i<segment->getTrackSpan()) ; ++i ) {
-        cdebug_log(155,0) << "Insert in [" << i << "] " << wtrack << endl;
+        cdebug_log(159,0) << "Insert in [" << i << "] " << wtrack << segment << endl;
         wtrack->_segments.push_back ( segment );
         wtrack->_segmentsValid = false;
         wtrack = wtrack->getNextTrack();
@@ -508,13 +522,21 @@ namespace Katana {
     if (message) cerr << "     o  Checking Track - " << message << endl;
     cdebug_log(155,0) << (void*)this << ":" << this << endl;
 
-
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
-      Interval trackRange   ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
-                            , _segments[i]->getAxis() + (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2 );
-      bool     inTrackRange = trackRange.contains( _axis );
-
       if (_segments[i]) {
+        bool inTrackRange = false;
+
+        if (_segments[i]->isNonPref()) {
+          DbU::Unit min = 0;
+          DbU::Unit max = 0;
+          _segments[i]->base()->getCanonical( min, max );
+          inTrackRange = Interval(min,max).contains( _axis );
+        } else {
+          Interval trackRange ( _segments[i]->getAxis() - (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2
+                              , _segments[i]->getAxis() + (_segments[i]->getTrackSpan()*_segments[i]->getPitch())/2 );
+          inTrackRange = trackRange.contains( _axis );
+        }
+        
         if (i) {
           if (_segments[i-1] == _segments[i]) {
             cerr << "[CHECK] incoherency at " << i << " "
@@ -598,7 +620,7 @@ namespace Katana {
       case EndIsTrackMax:       return _max;
       case EndIsSegmentMin:     return _segments[index  ]->getSourceU ();
       case EndIsNextSegmentMin: if (index+1 >= getSize()) return _max;
-                                     return _segments[index+1]->getSourceU ();
+                                return _segments[index+1]->getSourceU ();
       case EndIsSegmentMax:     return _segments[index  ]->getTargetU ();
     }
 
@@ -655,7 +677,7 @@ namespace Katana {
     Interval  mergedInterval;
     _segments[seed]->getCanonical( mergedInterval );
 
-    cdebug_log(155,0) << "| seed:" << _segments[seed] << endl;
+    cdebug_log(155,0) << "| seed:" << mergedInterval << " " << _segments[seed] << endl;
 
     size_t i = seed;
     while ( --i != npos ) {
@@ -663,7 +685,7 @@ namespace Katana {
 
       _segments[i]->getCanonical ( segmentInterval );
       if (segmentInterval.getVMax() >= mergedInterval.getVMin()) {
-        cdebug_log(155,0) << "| merge (prev):" << _segments[i] << endl;
+        cdebug_log(155,0) << "| merge (prev):" << segmentInterval << " " << _segments[i] << endl;
 
         mergedInterval.merge( segmentInterval );
         begin = i;
@@ -748,10 +770,12 @@ namespace Katana {
 
       if (   (j<_segments.size())
           && (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
-        cerr << Error("Overlap in %s between:\n  %s\n  %s"
+        cerr << Error("Overlap in %s between:\n  %s\n  %s\n  TargetU:%s SourceU:%s"
                      ,getString(this).c_str()
                      ,getString(_segments[i]).c_str()
-                     ,getString(_segments[j]).c_str()) << endl;
+                     ,getString(_segments[j]).c_str()
+                     ,DbU::getValueString(_segments[i]->getTargetU()).c_str()
+                     ,DbU::getValueString(_segments[j]->getSourceU()).c_str() ) << endl;
         overlaps++;
       }
     }
@@ -763,7 +787,8 @@ namespace Katana {
   string  Track::_getString () const
   {
     return "<" + _getTypeName() + " "
-               + getString(getLayer()) + " @"
+               + "[" + getString(_index) + "] "
+               + getString(getLayer()->getName()) + " @"
                + DbU::getValueString(_axis) + " ["
                + DbU::getValueString(_min) + ":"
                + DbU::getValueString(_max) + "] ["

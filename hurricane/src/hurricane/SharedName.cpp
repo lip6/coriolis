@@ -30,21 +30,23 @@ namespace Hurricane {
 // ****************************************************************************************************
 
   SharedName::SharedNameMap* SharedName::_SHARED_NAME_MAP = NULL;
-  unsigned int               SharedName::_idCounter       = 0;
 
 
   SharedName::SharedName ( const string& name )
-    : _id    (_idCounter++)
+    : _hash  (0)
     , _count (0)
     , _string(name)
 {
     if (!_SHARED_NAME_MAP) _SHARED_NAME_MAP = new SharedNameMap();
     (*_SHARED_NAME_MAP)[&_string] = this;
 
-    if (_idCounter == std::numeric_limits<unsigned int>::max()) {
-      throw Error( "SharedName::SharedName(): Identifier counter has reached it's limit (%d bits)."
-                 , std::numeric_limits<unsigned int>::digits );
-    }
+    for ( char c : _string ) _hash = 131 * _hash + int(c);
+
+    // if (_idCounter == std::numeric_limits<unsigned long>::max()) {
+    //   throw Error( "SharedName::SharedName(): Identifier counter has reached it's limit (%d bits)."
+    //              , std::numeric_limits<unsigned long>::digits );
+    // }
+    cdebug_log(0,0) << "SharedName::SharedName() hash:" << _hash << " \"" << _string << "\"" << endl;
 }
 
 
@@ -69,7 +71,7 @@ void SharedName::release()
 string SharedName::_getString() const
 // **********************************
 {
-  return "<" + _TName("SharedName") + " " + getString(_count) + " id:" + getString(_id) + " " + _string + ">";
+  return "<" + _TName("SharedName") + " " + getString(_count) + " hash:" + getString(_hash) + " " + _string + ">";
 }
 
 Record* SharedName::_getRecord() const

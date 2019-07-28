@@ -150,6 +150,14 @@ namespace Katana {
     if (_data == NULL)       { cdebug_tabw(159,-1); return true;  }
 
     _fsm.addAction( _segment, type, axisHint );
+    if (_segment->isDrag()) {
+      set<TrackElement*>  canonicals;
+      for ( TrackElement* perpand
+              : _segment->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
+        if (not _fsm.hasAction(perpand))
+          Manipulator(perpand,_fsm).ripup( SegmentAction::OtherRipup|SegmentAction::EventLevel1 );
+      }
+    }
     cdebug_tabw(159,-1);
     return true;
   }
@@ -602,7 +610,7 @@ namespace Katana {
         TrackElement* segment = Session::lookup(doglegs[i]);
         if (not segment->getTrack() and track) {
           cdebug_log(159,0) << "Direct Track insert of: " << segment << endl;
-          Session::addInsertEvent( segment, track );
+          Session::addInsertEvent( segment, track, track->getAxis() );
         }
       }
     }
@@ -650,7 +658,7 @@ namespace Katana {
 
   bool  Manipulator::insertInTrack ( size_t icost )
   {
-    cdebug_log(159,1) << "Manipulator::insertInTrack(size_t)" << endl;
+    cdebug_log(159,1) << "Manipulator::insertInTrack(icost)" << endl;
     cdebug_log(159,0) << _segment << endl;
 
     bool success = true;
@@ -665,7 +673,7 @@ namespace Katana {
       _fsm.setState ( SegmentFsm::OtherRipup );
       _fsm.addAction( _segment
                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis|SegmentAction::EventLevel4 
-                    , _fsm.getTrack1(icost)->getAxis() );
+                    , _fsm.getCandidateAxis1(icost) );
 
 #if THIS_IS_DISABLED
       uint32_t flags = 0;
@@ -697,7 +705,7 @@ namespace Katana {
   //bool                rightIntrication = false;
     bool                success          = true;
 
-    cdebug_log(159,1) << "Manipulator::_insertInTrack(size_t) - " << toFree << endl;
+    cdebug_log(159,1) << "Manipulator::_insertInTrack(icost,itrack) - " << toFree << endl;
     cdebug_log(159,0) << _segment << endl;
 
     for ( size_t i = begin ; success and (i < end) ; i++ ) {
@@ -774,7 +782,8 @@ namespace Katana {
       }
 
       cdebug_log(159,0) << "- Hard overlap/enclosure/shrink " << segment2 << endl;
-      if ( _segment->isStrap() and segment2->isGlobal() ) continue;
+    //if ( (_segment->isUnbreakable() or _segment->isStrap()) and segment2->isGlobal() ) continue;
+      if ( (_segment->isStrap()) and segment2->isGlobal() ) continue;
       if ( not (success = Manipulator(segment2,_fsm).ripup(SegmentAction::OtherRipup)) )
         continue;
 
@@ -782,27 +791,27 @@ namespace Katana {
       for( TrackElement* segment3
               : segment2->getPerpandiculars().getSubSet(TrackElements_UniqCanonical(canonicals)) ) {
         DataNegociate* data3 = segment3->getDataNegociate();
-        if ( not data3 ) continue;
+        if (not data3) continue;
 
         RoutingEvent* event3 = data3->getRoutingEvent();
-        if ( not event3 ) continue;
+        if (not event3) continue;
 
-        if ( not toFree.intersect(event3->getConstraints()) ) {
+        if (not toFree.intersect(event3->getConstraints())) {
           cdebug_log(159,0) << "  . " << segment3 << endl;
           continue;
         }
 
         cdebug_log(159,0) << "  | " << segment3 << endl;
 
-        if ( shrinkRight xor shrinkLeft ) {
-          if ( shrinkRight ) {
+        if (shrinkRight xor shrinkLeft) {
+          if (shrinkRight) {
             if ( not (success=Manipulator(segment3,_fsm)
                      .ripup( SegmentAction::OtherRipupPerpandAndPushAside
                            , toFree.getVMin() - getPPitch()/2
                            )) )
               break;
 
-            if ( event3->getTracksFree() == 1 ) {
+            if (event3->getTracksFree() == 1) {
               cdebug_log(159,0) << "Potential left intrication with other perpandicular." << endl;
               if ( segment3->getAxis() == segment2->getTargetAxis() ) {
               //leftIntrication = true;
@@ -810,7 +819,7 @@ namespace Katana {
               }
             }
           }
-          if ( shrinkLeft  ) {
+          if (shrinkLeft) {
             cdebug_log(159,0) << "Move PP to right: "
                               << DbU::getValueString(toFree.getVMax()) << " + "
                               << DbU::getValueString(getPPitch()/2)
@@ -820,7 +829,7 @@ namespace Katana {
                            , toFree.getVMax() + getPPitch()/2
                            )) )
               break;
-            if ( event3->getTracksFree() == 1 ) {
+            if (event3->getTracksFree() == 1) {
               cdebug_log(159,0) << "Potential right intrication with other perpandicular." << endl;
               if ( segment3->getAxis() == segment2->getSourceAxis() ) {
               //rightIntrication = true;
@@ -830,6 +839,7 @@ namespace Katana {
           }
         } else {
           if ( not (success=Manipulator(segment3,_fsm).ripup( SegmentAction::OtherRipup
+                                                            | SegmentAction::DecreaseRipup
                                                             | SegmentAction::EventLevel3 )) )
             break;
         }
@@ -856,7 +866,7 @@ namespace Katana {
       _fsm.setState ( SegmentFsm::OtherRipup );
       _fsm.addAction( _segment
                     , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                    , _fsm.getTrack(icost)->getAxis() );
+                    , _fsm.getCandidateAxis1(icost) );
     } else
       _fsm.clearActions();
 
@@ -1057,7 +1067,7 @@ namespace Katana {
         _fsm.setState ( SegmentFsm::OtherRipup );
         _fsm.addAction( _segment
                       , SegmentAction::SelfInsert|SegmentAction::MoveToAxis
-                      , _fsm.getTrack(itrack)->getAxis()
+                      , _fsm.getCandidateAxis1(itrack)
                       );
         break;
       }
@@ -1091,7 +1101,7 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(_segment->getLayer());
 
     cdebug_tabw(159,1);
-    for( Track* track : Tracks_Range::get(plane,uside)) {
+    for ( Track* track : Tracks_Range::get(plane,uside)) {
       size_t begin;
       size_t end;
 
@@ -1175,7 +1185,7 @@ namespace Katana {
       } else {
         if (_segment->getLength() < 20*getPitch()) {
           if (not (flags & AllowShortPivotUp)) return false;
-          if (not _segment->canPivotUp(1.0,kflags)) return false;
+          if (not _segment->canPivotUp(1.0,(kflags & ~Flags::IgnoreContacts))) return false;
         }
         if (not _segment->canMoveUp(0.5,kflags)) return false;
       }
@@ -1299,6 +1309,7 @@ namespace Katana {
 
     if (_segment->isFixed()) return false;
     if (not _event->canMinimize()) return false;
+    if (_segment->isNonPref()) return true;
 
     DbU::Unit  minSpan = DbU::Max;
     DbU::Unit  maxSpan = DbU::Min;
@@ -1307,7 +1318,7 @@ namespace Katana {
     if (_segment->base()->getAutoSource()->getAnchor()) {
       cdebug_log(159,0) << "  | " << _segment->base()->getAutoSource() << endl;
       Interval constraints ( _segment->base()->getAutoSource()->getUConstraints
-                             (perpandicularTo(_segment->getDirection())) );
+                                                                  (_segment->getDirection()) );
       cdebug_log(159,0) << "  | Constraints: " << constraints << endl;
 
       minSpan = min( minSpan, constraints.getVMax() );
@@ -1318,7 +1329,7 @@ namespace Katana {
     if (_segment->base()->getAutoTarget()->getAnchor()) {
       cdebug_log(159,0) << "  | " << _segment->base()->getAutoTarget() << endl;
       Interval constraints ( _segment->base()->getAutoTarget()->getUConstraints
-                             (perpandicularTo(_segment->getDirection())) );
+                                                                  (_segment->getDirection()) );
       cdebug_log(159,0) << "  | Constraints: " << constraints << endl;
 
       minSpan = min( minSpan, constraints.getVMax() );
@@ -1587,9 +1598,17 @@ namespace Katana {
   }
 
 
-  void  Manipulator::repackPerpandiculars ()
+  void  Manipulator::repackPerpandiculars ( uint32_t flags )
   {
-    cdebug_log(159,0) << "Manipulator::repackPerpandiculars()" << endl;
+    cdebug_log(159,1) << "Manipulator::repackPerpandiculars()" << endl;
+
+    uint32_t  parallelActionFlags      = SegmentAction::SelfRipup|SegmentAction::EventLevel4;
+    uint32_t  perpandicularActionFlags = SegmentAction::SelfRipupPerpand;
+    
+    if (flags & Manipulator::PerpandicularsFirst) {
+      parallelActionFlags      &= ~SegmentAction::EventLevel4;
+      perpandicularActionFlags |=  SegmentAction::EventLevel4;
+    }
 
     const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
     for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
@@ -1597,17 +1616,24 @@ namespace Katana {
       DataNegociate* data          = perpandicular->getDataNegociate();
 
       if (perpandicular->isFixed ()) continue;
-      if (perpandicular->isGlobal()) continue;
+    //if (perpandicular->isGlobal()) continue;
       if (not data) continue;
       if (data->getState() >= DataNegociate::RepairFailed) continue;
 
       if (RoutingEvent::getStage() == RoutingEvent::Repair) {
+        if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
+          _segment->getDataNegociate()->resetRipupCount();
+
         data->setState( DataNegociate::Repair );
         if (data->getStateCount() > 1) data->resetStateCount();
       }
-      _fsm.addAction( perpandicular, SegmentAction::SelfRipupPerpand );
+
+      cdebug_log(159,0) << "Perpandicular ripup: " << perpandicular << endl;
+      _fsm.addAction( perpandicular, perpandicularActionFlags );
     }
-    _fsm.addAction( _segment, SegmentAction::SelfRipup|SegmentAction::EventLevel4 );
+    _fsm.addAction( _segment, parallelActionFlags );
+
+    cdebug_tabw(159,-1);
   }
 
 

@@ -243,6 +243,8 @@ namespace Katana {
   {
     KatanaEngine* katana = getForFramework( CreateEngine );
     katana->runGlobalRouter();
+
+  //Breakpoint::stop( 0, "GraphicKatanaEngine::_globalRoute() done." );
   }
 
 
@@ -252,6 +254,8 @@ namespace Katana {
 
     _viewer->clearToolInterrupt();
     katana->loadGlobalRouting( Anabatic::EngineLoadGrByNet );
+
+  //Breakpoint::stop( 0, "GraphicKatanaEngine::_loadGlobalRouting() done." );
   }
 
 
@@ -260,6 +264,8 @@ namespace Katana {
     KatanaEngine* katana = getForFramework( NoFlags );
   //katana->balanceGlobalDensity();
     katana->layerAssign( Anabatic::EngineNoNetLayerAssign );
+
+  //Breakpoint::stop( 0, "GraphicKatanaEngine::_balanceGlobalDensity() done." );
   }
 
 

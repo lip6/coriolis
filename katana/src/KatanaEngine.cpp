@@ -354,9 +354,10 @@ namespace Katana {
   {
     if (segment->isBlockage()) return 0;
 
-    if (segment->isStrap   ()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
-    if (segment->isShortNet()) return _configuration->getRipupLimit( Configuration::ShortNetRipupLimit );
-    if (segment->isGlobal()) {
+    if (segment->isStrap      ()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isUnbreakable()) return _configuration->getRipupLimit( Configuration::StrapRipupLimit );
+    if (segment->isShortNet   ()) return _configuration->getRipupLimit( Configuration::ShortNetRipupLimit );
+    if (segment->isGlobal     ()) {
       vector<GCell*> gcells;
       segment->getGCells( gcells );
       if (gcells.size() > 2)
@@ -519,7 +520,6 @@ namespace Katana {
 
     _negociateWindow = NegociateWindow::create( this );
     _negociateWindow->setGCells( getGCells() );
-    _computeCagedConstraints();
     _negociateWindow->run( flags );
     _negociateWindow->destroy();
     _negociateWindow = NULL;

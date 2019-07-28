@@ -478,8 +478,8 @@ namespace Anabatic {
         maxPos = bb.getXMax();
 
         cdebug_log(112,0) << "Vertical gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(ab.getXMin()) << endl;
-        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(ab.getXMax()) << endl;
+        cdebug_log(112,0) << "ab.getXMin():   " << DbU::getValueString(bb.getXMin()) << endl;
+        cdebug_log(112,0) << "ab.getXMax():   " << DbU::getValueString(bb.getXMax()) << endl;
         cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getX()) << endl;
       } else {
         trackPos = gauge->getTrackPosition( ab.getYMin()
@@ -490,8 +490,8 @@ namespace Anabatic {
         maxPos = bb.getYMax();
 
         cdebug_log(112,0) << "Horizontal gauge: " << gauge << endl;
-        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(ab.getYMin()) << endl;
-        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(ab.getYMax()) << endl;
+        cdebug_log(112,0) << "ab.getYMin():   " << DbU::getValueString(bb.getYMin()) << endl;
+        cdebug_log(112,0) << "ab.getYMax():   " << DbU::getValueString(bb.getYMax()) << endl;
         cdebug_log(112,0) << "bb.getCenter(): " << DbU::getValueString(bb.getCenter().getY()) << endl;
       }
 
@@ -501,7 +501,7 @@ namespace Anabatic {
       cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
         
       if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {
-        if (not bestComponent or (bestSpan > maxPos-minPos)) {
+        if (not bestComponent or (bestSpan < maxPos-minPos)) {
           bestComponent = component;
           bestSpan      = maxPos - minPos;
         }

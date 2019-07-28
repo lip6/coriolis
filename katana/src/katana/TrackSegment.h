@@ -73,6 +73,7 @@ namespace Katana {
       virtual bool                  isDrag                 () const;
       virtual bool                  isStrongTerminal       ( Flags flags=Flags::NoFlags ) const;
       virtual bool                  isStrap                () const;
+      virtual bool                  isUnbreakable          () const;
       virtual bool                  isSlackened            () const;
       virtual bool                  isDogleg               () const;
       virtual bool                  isShortDogleg          () const;
@@ -115,7 +116,6 @@ namespace Katana {
       virtual Interval              getSourceConstraints   () const;
       virtual Interval              getTargetConstraints   () const;
       virtual DataNegociate*        getDataNegociate       ( Flags flags=Flags::DataSelf ) const;
-      virtual TrackElement*         getCanonical           ( Interval& );
       virtual size_t                getGCells              ( vector<GCell*>& ) const;
       virtual TrackElement*         getSourceDogleg        ();
       virtual TrackElement*         getTargetDogleg        ();
@@ -133,7 +133,7 @@ namespace Katana {
       virtual void                  setDoglegLevel         ( uint32_t );
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
-      virtual void                  detach                 ();
+    //virtual void                  detach                 ();
       virtual void                  detach                 ( std::set<Track*>& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();

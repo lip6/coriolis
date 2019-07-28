@@ -18,6 +18,7 @@
                                      katana/TrackElement.h       katana/TrackElements.h
                                      katana/TrackSegment.h
                                      katana/TrackSegmentRegular.h
+                                     katana/TrackSegmentNonPref.h
                                      katana/TrackSegmentWide.h
                                      katana/TrackFixedSegment.h
                                      katana/TrackMarker.h
@@ -53,6 +54,7 @@
                                      TrackElements.cpp
                                      TrackSegment.cpp
                                      TrackSegmentRegular.cpp
+                                     TrackSegmentNonPref.cpp
                                      TrackSegmentWide.cpp
                                      TrackFixedSegment.cpp
                                      TrackMarker.cpp

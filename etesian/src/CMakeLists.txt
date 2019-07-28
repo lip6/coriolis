@@ -12,6 +12,7 @@
                       )
                    set( includes      etesian/Configuration.h
                                       etesian/FeedCells.h
+                                      etesian/BloatCells.h
                                       etesian/EtesianEngine.h
                                       etesian/GraphicEtesianEngine.h
                       )               
@@ -22,6 +23,7 @@
                    set( cpps          Configuration.cpp
                                       AddFeeds.cpp
                                       FeedCells.cpp
+                                      BloatCells.cpp
                                       EtesianEngine.cpp
                                       GraphicEtesianEngine.cpp
                       )

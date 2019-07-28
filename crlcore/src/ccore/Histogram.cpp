@@ -1,15 +1,14 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) Sorbonne Universite 2008-2019, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./Histogram.cpp"                          |
 // +-----------------------------------------------------------------+
@@ -31,6 +30,7 @@ namespace CRL {
   using std::ofstream;
   using std::ostringstream;
   using std::setprecision;
+  using std::setw;
   using std::vector;
   using Hurricane::Record;
 
@@ -41,13 +41,16 @@ namespace CRL {
     , _mainTitle    ()
     , _titles       (nbSets)
     , _colors       (nbSets)
+    , _indents      (nbSets)
     , _sets         (nbSets)
     , _totalSamples (nbSets)
     , _fileExtension()
   {
-    size_t binSize = (size_t)rint ( _range / _step );
-    for ( size_t iset=0 ; iset<nbSets ; ++iset ) {
-      _sets[iset] = vector<float>(binSize);
+    if (_range != 0.0) {
+      size_t binSize = (size_t)rint( _range / _step );
+      for ( size_t iset=0 ; iset<nbSets ; ++iset ) {
+        _sets[iset] = vector<float>( binSize );
+      }
     }
   }
 
@@ -58,10 +61,16 @@ namespace CRL {
 
   void  Histogram::addSample ( double sample, size_t iset )
   {
-    if ( iset >= _sets.size() ) return;
+    if (iset >= _sets.size()) return;
 
-    size_t binIndex = (size_t)rint ( sample / _step );
-    if ( binIndex >= _sets.front().size() ) binIndex = _sets.front().size() - 1;
+    size_t binIndex = (size_t)rint( sample / _step );
+    if (_range != 0.0) {
+      if (binIndex >= _sets.front().size()) binIndex = _sets.front().size() - 1;
+    } else {
+      while ( _sets.front().size() < binIndex + 1) {
+        for ( vector<float>& rset : _sets ) rset.push_back( 0.0 );
+      }
+    }
 
     _sets        [iset][binIndex] += 1.0;
     _totalSamples[iset]++;
@@ -101,7 +110,38 @@ namespace CRL {
   }
 
 
-  void  Histogram::toFile ( const string& path )
+  string  Histogram::toString ( size_t iset )
+  {
+    if (iset >= _sets.size()) return "";
+
+    ostringstream s;
+    
+    size_t titleWidth = _titles[iset].size();
+
+    string hline = _indents[iset] + "+-" + string(titleWidth,'-') + "-+-------------+----+\n";
+    string tline = _indents[iset] + "| " + _titles[iset]          + " |    Count    |  % |\n";
+
+    s << hline << tline << hline;
+
+    for ( size_t i=0 ; i<_sets[iset].size() ; ++i ) {
+      float  value = _sets[iset][i];
+      if ((value == 0.0) and (_range == 0.0)) continue;
+      
+      size_t percent = value*100.0 / _totalSamples[iset];
+      s << _indents[iset]
+        <<  "| " << setw(titleWidth) << (size_t)(_step*i)
+        << " | " << setw(11)         << (size_t)(value)
+        << " | " << setw( 2)         << percent
+        << " | " << string( percent, '*' )
+        << "\n";
+    }
+
+    s << hline;
+    return s.str();
+  }
+
+
+  void  Histogram::toFile ( string path )
   {
     ofstream fd ( path.c_str() );
     toStream ( fd );
@@ -109,7 +149,7 @@ namespace CRL {
   }
 
 
-  void  Histogram::toGnuplot ( const string& basename )
+  void  Histogram::toGnuplot ( string basename )
   {
     Utilities::Path datFile ( basename+_fileExtension+".dat" );
     toFile ( datFile.toString() );

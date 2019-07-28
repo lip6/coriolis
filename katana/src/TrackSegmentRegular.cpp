@@ -90,13 +90,13 @@ namespace Katana {
 
     cost.setFlags( (isLocal() and (depth >= 3)) ? TrackCost::LocalAndTopDepth : 0 );
     cost.setFlags( (isAnalog()) ? TrackCost::Analog : 0 );
+    if (isGlobal()) cost.setForGlobal();
 
     track->addOverlapCost( cost );
 
     cost.setDistanceToFixed();
     cost.incAxisWeight     ( getDataNegociate()->getRoutingEvent()->getAxisWeight(track->getAxis()) );
     cost.incDeltaPerpand   ( getDataNegociate()->getWiringDelta(track->getAxis()) );
-    if (isGlobal()) cost.setForGlobal();
 
     if ( inLocalDepth and (cost.getDataState() == DataNegociate::MaximumSlack) )
       cost.setInfinite();

@@ -602,65 +602,66 @@ static bool IsConnex(const Occurrence& componentOccurrence1, const Occurrence& c
 }
 
 void HyperNet_NetOccurrences::Locator::progress()
-// *********************************************
+// **********************************************
 {
-    if (!_netOccurrenceStack.empty()) {
-        Occurrence netOccurrence = _netOccurrenceStack.top();
-        _netOccurrenceStack.pop();
-        Net* net = (Net*)netOccurrence.getEntity();
-        Path path = netOccurrence.getPath();
+    if (not _netOccurrenceStack.empty()) {
+      Occurrence netOccurrence = _netOccurrenceStack.top();
+      _netOccurrenceStack.pop();
+      Net* net = (Net*)netOccurrence.getEntity();
+      Path path = netOccurrence.getPath();
 
-        if (_doExtraction) {
-            Cell* cell = netOccurrence.getOwnerCell();
-            for_each_component(component, net->getComponents()) {
-                if (!dynamic_cast<Plug*>(component)) {
-                    //if (_allowInterruption && !((i++) % 200)) gtk_check_for_interruption();
-                    Occurrence occurrence = Occurrence(component, path);
-                    Box area = occurrence.getBoundingBox();
-                    for_each_occurrence(occurrence2, cell->getOccurrencesUnder(area)) {
-                        if (dynamic_cast<Component*>(occurrence2.getEntity())) {
-                            Component* component2 = (Component*)occurrence2.getEntity();
-                            if (IsConnex(occurrence, occurrence2)) {
-                                Occurrence net2Occurrence =
-                                    Occurrence(component2->getNet(), occurrence2.getPath());
-                                if (_netOccurrenceSet.find(net2Occurrence) == _netOccurrenceSet.end()) {
-                                    _netOccurrenceSet.insert(net2Occurrence);
-                                    _netOccurrenceStack.push(net2Occurrence);
-                                }
-                            }
-                        }
-                        end_for;
-                    }
+      if (_doExtraction) {
+        Cell* cell = netOccurrence.getOwnerCell();
+        for ( Component* component : net->getComponents()) {
+          if (not dynamic_cast<Plug*>(component)) {
+          //if (_allowInterruption && !((i++) % 200)) gtk_check_for_interruption();
+            Occurrence occurrence = Occurrence( component, path );
+            Box        area       = occurrence.getBoundingBox();
+
+            for ( Occurrence occurrence2 : cell->getOccurrencesUnder(area)) {
+              if (dynamic_cast<Component*>(occurrence2.getEntity())) {
+                Component* component2 = static_cast<Component*>( occurrence2.getEntity() );
+
+                if (IsConnex(occurrence,occurrence2)) {
+                  Occurrence net2Occurrence =
+                    Occurrence( component2->getNet(), occurrence2.getPath() );
+                  
+                  if (_netOccurrenceSet.find(net2Occurrence) == _netOccurrenceSet.end()) {
+                    _netOccurrenceSet.insert(net2Occurrence);
+                    _netOccurrenceStack.push(net2Occurrence);
+                  }
                 }
-                end_for;
-            }
-        }
+              }
+            }  // for occurence2.
+          }
+        } // for component*.
+      }
 
-        for_each_plug(plug, net->getPlugs()) {
-            Occurrence occurrence = Occurrence(plug->getMasterNet(), Path(path, plug->getInstance()));
-            if (_netOccurrenceSet.find(occurrence) == _netOccurrenceSet.end()) {
+      for ( Plug* plug : net->getPlugs() ) {
+        Occurrence occurrence = Occurrence( plug->getMasterNet(), Path(path, plug->getInstance()) );
+
+        if (_netOccurrenceSet.find(occurrence) == _netOccurrenceSet.end()) {
+          _netOccurrenceSet.insert(occurrence);
+          _netOccurrenceStack.push(occurrence);
+        }
+      }
+
+      if (net->isExternal()) {
+        Instance* instance = path.getTailInstance();
+        if (instance) {
+          Plug* plug = instance->getPlug(net);
+          if (plug) {
+            Net* net = plug->getNet();
+            if (net) {
+              Occurrence occurrence = Occurrence(net, path.getHeadPath());
+              if (_netOccurrenceSet.find(occurrence) == _netOccurrenceSet.end()) {
                 _netOccurrenceSet.insert(occurrence);
                 _netOccurrenceStack.push(occurrence);
+              }
             }
-            end_for;
+          }
         }
-
-        if (net->isExternal()) {
-            Instance* instance = path.getTailInstance();
-            if (instance) {
-                Plug* plug = instance->getPlug(net);
-                if (plug) {
-                    Net* net = plug->getNet();
-                    if (net) {
-                        Occurrence occurrence = Occurrence(net, path.getHeadPath());
-                        if (_netOccurrenceSet.find(occurrence) == _netOccurrenceSet.end()) {
-                            _netOccurrenceSet.insert(occurrence);
-                            _netOccurrenceStack.push(occurrence);
-                        }
-                    }
-                }
-            }
-        }
+      } // if net->isExternal().
     }
 }
 
@@ -1053,6 +1054,7 @@ void HyperNet_LeafPlugOccurrences::Locator::progress()
     while(_netOccurrenceLocator.isValid() && !_plugOccurrence.isValid())
     {
         Occurrence netOccurrence = _netOccurrenceLocator.getElement();
+
         _netOccurrenceLocator.progress();
         Net* net = (Net*)netOccurrence.getEntity();
         Path path = netOccurrence.getPath();

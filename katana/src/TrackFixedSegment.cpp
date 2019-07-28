@@ -74,16 +74,24 @@ namespace Katana {
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
       RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
       if ( layer2 ) {
-        Interval uside  = track->getKatanaEngine()->getUSide( track->getDirection() );
-        Interval segside;
+      //cerr << track->getLayer() << " minSpace:" << DbU::getValueString(track->getLayer()->getMinimalSpacing()) << endl;
+
+        Interval   segside;
+        Interval   uside   = track->getKatanaEngine()->getUSide( track->getDirection() );
+        DbU::Unit  cap     = track->getLayer()->getMinimalSpacing()/2 /*+ track->getLayer()->getExtentionCap()*/;
         if (track->getDirection() == Flags::Horizontal) {
           segside  = Interval( boundingBox.getXMin(), boundingBox.getXMax() );
-          _sourceU = max( boundingBox.getXMin(), uside.getVMin());
-          _targetU = min( boundingBox.getXMax(), uside.getVMax());
+          _sourceU = max( boundingBox.getXMin() - cap, uside.getVMin());
+          _targetU = min( boundingBox.getXMax() + cap, uside.getVMax());
         } else {
           segside  = Interval( boundingBox.getYMin(), boundingBox.getYMax() );
-          _sourceU = max( boundingBox.getYMin(), uside.getVMin());
-          _targetU = min( boundingBox.getYMax(), uside.getVMax());
+          _sourceU = max( boundingBox.getYMin() - cap, uside.getVMin());
+          _targetU = min( boundingBox.getYMax() + cap, uside.getVMax());
+        }
+
+        Flags gcellFlags = Flags::NoFlags;
+        if (segment->getNet()->isSupply() and (depth > 0)) {
+          gcellFlags |= Flags::GoStraight;
         }
 
         GCellsUnder gcells = track->getKatanaEngine()->getGCellsUnder( segment );
@@ -91,6 +99,7 @@ namespace Katana {
           GCell* gcell = gcells->gcellAt(i);
           gcell->addBlockage
             ( depth, gcell->getSide( track->getDirection() ).getIntersection( segside ).getSize() );
+          gcell->flags() |= gcellFlags;
         }
       }
     }
@@ -124,7 +133,7 @@ namespace Katana {
       cdebug_log(159,0) << "Adding: " << segment << " on " << track << endl;
       cdebug_log(159,0) << "TrackFixedSegment::create(): " << trackFixedSegment << endl;
 
-      Session::addInsertEvent( trackFixedSegment, track );
+      Session::addInsertEvent( trackFixedSegment, track, track->getAxis() );
     }
     return trackFixedSegment;
   }
@@ -132,7 +141,7 @@ namespace Katana {
 
   AutoSegment*   TrackFixedSegment::base             () const { return NULL; }
   Segment*       TrackFixedSegment::getSegment       () const { return _segment; }
-  DbU::Unit      TrackFixedSegment::getAxis          () const { return getTrack()->getAxis(); }
+  DbU::Unit      TrackFixedSegment::getAxis          () const { return getTrack() ? getTrack()->getAxis() : 0; }
   bool           TrackFixedSegment::isHorizontal     () const { return getTrack()->isHorizontal(); }
   bool           TrackFixedSegment::isVertical       () const { return getTrack()->isVertical(); }
   bool           TrackFixedSegment::isFixed          () const { return true; }

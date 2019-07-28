@@ -37,27 +37,45 @@ namespace Katana {
                        , TrackElement* symSegment
                        , Track*        refTrack
                        , Track*        symTrack
+                       , DbU::Unit     refCandidateAxis
+                       , DbU::Unit     symCandidateAxis
                        )
-    : _flags          ((symSegment) ? Symmetric : NoFlags)
-    , _span           (refSegment->getTrackSpan())
-    , _tracks         ( _span * ((symSegment) ? 2 : 1)
-                      , std::tuple<Track*,size_t,size_t>(NULL,Track::npos,Track::npos) )
-    , _segment1       (refSegment)
-    , _segment2       (symSegment)
-    , _interval1      (refSegment->getCanonicalInterval())
-    , _interval2      ((symSegment) ? symSegment->getCanonicalInterval() : Interval())
-    , _terminals      (0)
-    , _delta          (-_interval1.getSize() -_interval2.getSize())
-    , _deltaShared    (0)
-    , _deltaPerpand   (0)
-    , _axisWeight     (0)
-    , _distanceToFixed(2*Session::getSliceHeight())
-    , _longuestOverlap(0)
-    , _dataState      (0)
-    , _ripupCount     (0)
-    , _selectFlags    (NoFlags)
-    , _selectIndex    (0)
+    : _flags           ((symSegment) ? Symmetric : NoFlags)
+    , _span            (refSegment->getTrackSpan())
+    , _refCandidateAxis(refCandidateAxis)
+    , _symCandidateAxis(refCandidateAxis)
+    , _tracks          ( _span * ((symSegment) ? 2 : 1)
+                       , std::tuple<Track*,size_t,size_t>(NULL,Track::npos,Track::npos) )
+    , _segment1        (refSegment)
+    , _segment2        (symSegment)
+    , _interval1       (refSegment->getCanonicalInterval())
+    , _interval2       ((symSegment) ? symSegment->getCanonicalInterval() : Interval())
+    , _terminals       (0)
+    , _delta           (-_interval1.getSize() -_interval2.getSize())
+    , _deltaShared     (0)
+    , _deltaPerpand    (0)
+    , _axisWeight      (0)
+    , _distanceToFixed (2*Session::getSliceHeight())
+    , _longuestOverlap (0)
+    , _dataState       (0)
+    , _ripupCount      (0)
+    , _selectFlags     (NoFlags)
+    , _selectIndex     (0)
   {
+    if (refSegment->isNonPref()) {
+      DbU::Unit axisShift = getRefCandidateAxis() - refSegment->getAxis();
+      _interval1.translate( axisShift );
+
+      if (symSegment) {
+        throw Error( "TrackCost::TrackCost(): Symmetric management is not implemented for Non-preferred routing segments.\n"
+                     "        %s", getString(refSegment).c_str() );
+      }
+    }
+    if (not _span) {
+        throw Error( "TrackCost::TrackCost(): Zero track span is not allowed.\n"
+                     "        %s", getString(refSegment).c_str() );
+    }
+    
     cdebug_log(159,1) << "TrackCost::TrackCost() - " << refSegment << endl;
     cdebug_log(159,0) << "  interval1: " << _interval1 << endl;
     
@@ -87,7 +105,8 @@ namespace Katana {
 
   bool  TrackCost::Compare::operator() ( const TrackCost* lhs, const TrackCost* rhs )
   {
-    if ( lhs->isInfinite() xor rhs->isInfinite() ) return rhs->isInfinite();
+    if ( lhs->isInfinite    () xor rhs->isInfinite    () ) return rhs->isInfinite();
+    if ( lhs->isAtRipupLimit() xor rhs->isAtRipupLimit() ) return rhs->isAtRipupLimit();
 
     if (   (_flags & TrackCost::DiscardGlobals)
        and (lhs->isOverlapGlobal() xor rhs->isOverlapGlobal()) )
@@ -160,8 +179,8 @@ namespace Katana {
   }
 
 
-  Net* TrackCost::getNet1 () const { return (_segment1) ? _segment1->getNet() : NULL; }
-  Net* TrackCost::getNet2 () const { return (_segment2) ? _segment2->getNet() : NULL; }
+  Net*       TrackCost::getNet1          () const { return (_segment1) ? _segment1->getNet() : NULL; }
+  Net*       TrackCost::getNet2          () const { return (_segment2) ? _segment2->getNet() : NULL; }
 
 
   size_t  TrackCost::getBegin ( size_t i, uint32_t flags ) const
@@ -232,7 +251,8 @@ namespace Katana {
   {
     string s = "<" + _getTypeName();
 
-    s += " "    + getString(getTrack(0));
+    s += " @"   + DbU::getValueString(getRefCandidateAxis());
+    s += " "    + getString(getTrack(0)->getLayer()->getName());
     s += " "    + getString(_dataState);
     s += "+"    + getString(_ripupCount);
     s += ":"    + getString((_dataState<<2)+_ripupCount);
@@ -243,6 +263,7 @@ namespace Katana {
     s +=          string ( (isOverlap()       )?"o":"-" );
     s +=          string ( (isOverlapGlobal() )?"g":"-" );
     s +=          string ( (isGlobalEnclosed())?"e":"-" );
+    s +=          string ( (isAtRipupLimit  ())?"R":"-" );
     s +=          string ( (isAnalog        ())?"a":"-" );
     s +=          string ( (isShortNet      ())?"N":"-" );
     s += " "    + getString(_terminals);

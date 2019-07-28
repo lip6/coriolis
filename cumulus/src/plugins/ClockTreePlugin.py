@@ -97,7 +97,7 @@ def ScriptMain ( **kw ):
     conf = chip.Configuration.ChipConf( {}, cell, editor )
 
     if cell.getAbutmentBox().isEmpty():
-      spaceMargin = Cfg.getParamPercentage('etesian.spaceMargin').asPercentage() / 100.0 + 0.02
+      spaceMargin = Cfg.getParamPercentage('etesian.spaceMargin').asPercentage() / 100.0 + 0.01
       aspectRatio = Cfg.getParamPercentage('etesian.aspectRatio').asPercentage() / 100.0
       clocktree.ClockTree.computeAbutmentBox( cell, spaceMargin, aspectRatio, conf.cellGauge )
       if editor: editor.fit()

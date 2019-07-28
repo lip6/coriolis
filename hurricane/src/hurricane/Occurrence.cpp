@@ -99,7 +99,7 @@ bool Occurrence::operator<(const Occurrence& occurrence) const
   if (not _sharedPath) return true;
   if (not occurrence._sharedPath) return false;
 
-  return _sharedPath->getId() < occurrence._sharedPath->getId();
+  return _sharedPath->getHash() < occurrence._sharedPath->getHash();
   
 //return ((_entity  < occurrence._entity) or 
 //       ((_entity == occurrence._entity) and (_sharedPath < occurrence._sharedPath)));

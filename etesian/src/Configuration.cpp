@@ -60,6 +60,7 @@ namespace Etesian {
     , _spaceMargin  (                             Cfg::getParamPercentage("etesian.spaceMargin"   ,  5.0)->asDouble() )
     , _aspectRatio  (                             Cfg::getParamPercentage("etesian.aspectRatio"   ,100.0)->asDouble() )
     , _feedNames    (                             Cfg::getParamString    ("etesian.feedNames"     ,"tie_x0,rowend_x0")->asString() )
+    , _bloat        (                             Cfg::getParamString    ("etesian.bloat"         ,"disabled"        )->asString() )
   {
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
     if (cg == NULL) {
@@ -88,6 +89,7 @@ namespace Etesian {
     , _spaceMargin  ( other._spaceMargin   )
     , _aspectRatio  ( other._aspectRatio   )
     , _feedNames    ( other._feedNames     )
+    , _bloat        ( other._bloat         )
   {
     if (other._rg) _rg = other._rg->getClone();
     if (other._cg) _cg = other._cg->getClone();
@@ -114,6 +116,7 @@ namespace Etesian {
     cmess1 << Dots::asBool      ("     - Routing driven",_routingDriven) << endl;
     cmess1 << Dots::asPercentage("     - Space Margin"  ,_spaceMargin  ) << endl;
     cmess1 << Dots::asPercentage("     - Aspect Ratio"  ,_aspectRatio  ) << endl;
+    cmess1 << Dots::asString    ("     - Bloat model"   ,_bloat        ) << endl;
   }
 
 
@@ -141,6 +144,8 @@ namespace Etesian {
     record->add ( getSlot( "_spreadingConf"   ,  (int)_spreadingConf ) );
     record->add ( getSlot( "_spaceMargin"     ,       _spaceMargin   ) );
     record->add ( getSlot( "_aspectRatio"     ,       _aspectRatio   ) );
+    record->add ( getSlot( "_feedNames"       ,       _feedNames     ) );
+    record->add ( getSlot( "_bloat"           ,       _bloat         ) );
     return record;
   }
 

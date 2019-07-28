@@ -1528,7 +1528,7 @@ Name Cell::InstanceMap::_getKey(Instance* instance) const
 unsigned int  Cell::InstanceMap::_getHashValue(Name name) const
 // *******************************************************
 {
-  return name._getSharedName()->getId() / 8;
+  return name._getSharedName()->getHash() / 8;
 }
 
 Instance* Cell::InstanceMap::_getNextElement(Instance* instance) const
@@ -1643,7 +1643,7 @@ Name Cell::PinMap::_getKey(Pin* pin) const
 unsigned Cell::PinMap::_getHashValue(Name name) const
 // **************************************************
 {
-  return (unsigned int)name._getSharedName()->getId() / 8;
+  return (unsigned int)name._getSharedName()->getHash() / 8;
 }
 
 Pin* Cell::PinMap::_getNextElement(Pin* pin) const

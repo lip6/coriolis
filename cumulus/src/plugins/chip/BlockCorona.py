@@ -29,6 +29,7 @@ from   Hurricane  import Net
 from   Hurricane  import Contact
 from   Hurricane  import Horizontal
 from   Hurricane  import Vertical
+from   Hurricane  import Pad
 import CRL
 from   CRL        import RoutingLayerGauge
 from   helpers    import trace
@@ -421,6 +422,20 @@ class VerticalSide ( Side ):
                                , sideXMin
                                , sideXMax
                                )
+
+          depth -= 2
+          if depth > 0:
+            blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
+            pitch         = routingGauge.getLayerPitch(depth)
+
+            for chunk in spans.chunks:
+                Horizontal.create( self.blockageNet
+                                 , blockageLayer
+                                 , (chunk.getVMax() + chunk.getVMin())/2
+                                 ,  chunk.getVMax() - chunk.getVMin() + pitch*2
+                                 , sideXMin
+                                 , sideXMax
+                                 )
         return
 
 
@@ -542,12 +557,22 @@ class Corona ( object ):
             contactDepth = self.verticalDepth
 
         UpdateSession.open()
+        blBox = Box()
+        brBox = Box()
+        tlBox = Box()
+        trBox = Box()
+        
         for i in range(self.railsNb):
             xBL = self.westSide .getRail(i).axis
             yBL = self.southSide.getRail(i).axis
             xTR = self.eastSide .getRail(i).axis
             yTR = self.northSide.getRail(i).axis
             net = self.getRailNet( i )
+
+            blBox.merge( xBL, yBL )
+            brBox.merge( xTR, yBL )
+            tlBox.merge( xBL, yTR )
+            trBox.merge( xTR, yTR )
 
             self.routingGauge.getContactLayer(contactDepth)
             self.corners[chip.SouthWest].append( 
@@ -586,5 +611,19 @@ class Corona ( object ):
 
         self.westSide.addBlockages()
         self.eastSide.addBlockages()
+
+        blBox.inflate( self.hRailWidth, self.vRailWidth )
+        brBox.inflate( self.hRailWidth, self.vRailWidth )
+        tlBox.inflate( self.hRailWidth, self.vRailWidth )
+        trBox.inflate( self.hRailWidth, self.vRailWidth )
+
+        for depth in range( 1, self.conf.gaugeConf.topLayerDepth + 1 ):
+          blockageLayer = self.routingGauge.getRoutingLayer(depth).getBlockageLayer()
+
+          Pad.create( self.blockageNet, blockageLayer, blBox )
+          Pad.create( self.blockageNet, blockageLayer, brBox )
+          Pad.create( self.blockageNet, blockageLayer, tlBox )
+          Pad.create( self.blockageNet, blockageLayer, trBox )
+
         UpdateSession.close()
         return

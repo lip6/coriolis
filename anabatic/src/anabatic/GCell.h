@@ -147,6 +147,7 @@ namespace Anabatic {
       inline        bool                  isMatrix             () const;
       inline        bool                  isRow                () const;
       inline        bool                  isIoPad              () const;
+      inline        bool                  isGoStraight         () const;
       inline        bool                  isHRail              () const;
       inline        bool                  isVRail              () const;
       inline        bool                  isStdCellRow         () const;
@@ -341,6 +342,7 @@ namespace Anabatic {
   inline       bool                  GCell::isMatrix       () const { return _flags & Flags::MatrixGCell; }
   inline       bool                  GCell::isRow          () const { return _flags & Flags::RowGCellMask; }
   inline       bool                  GCell::isIoPad        () const { return _flags & Flags::IoPadGCell; }
+  inline       bool                  GCell::isGoStraight   () const { return _flags & Flags::GoStraight; }
   inline       bool                  GCell::isHRail        () const { return _flags & Flags::HRailGCell; }
   inline       bool                  GCell::isVRail        () const { return _flags & Flags::VRailGCell; }
   inline       bool                  GCell::isStdCellRow   () const { return _flags & Flags::StdCellRow; }

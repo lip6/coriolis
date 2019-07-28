@@ -66,8 +66,8 @@ namespace Katana {
 // Class  :  "TrackElement".
 
   enum TrackElementFlags { TElemCreated      = (1 <<  0)
-                         , TElemBlockage     = (1 <<  1)
-                         , TElemFixed        = (1 <<  2)
+                         , TElemBlockage     = (1 <<  2)
+                         , TElemFixed        = (1 <<  3)
                          , TElemLocked       = (1 <<  4)
                          , TElemRouted       = (1 <<  5)
                          , TElemShortDogleg  = (1 <<  6)
@@ -106,6 +106,8 @@ namespace Katana {
       virtual bool                    isHorizontal           () const = 0;
       virtual bool                    isVertical             () const = 0;
       virtual bool                    isWide                 () const;
+      virtual bool                    isNonPref              () const;
+      virtual bool                    isUnbreakable          () const;
       virtual bool                    isLocal                () const;
       virtual bool                    isGlobal               () const;
       virtual bool                    isBipoint              () const;
@@ -171,7 +173,7 @@ namespace Katana {
       virtual Interval                getSourceConstraints   () const;
       virtual Interval                getTargetConstraints   () const;
       virtual DataNegociate*          getDataNegociate       ( Flags flags=Flags::DataSelf ) const;
-      virtual TrackElement*           getCanonical           ( Interval& );
+      inline  TrackElement*           getCanonical           ( Interval& );
       virtual size_t                  getGCells              ( vector<GCell*>& ) const;
       virtual TrackElement*           getParent              () const;
       virtual uint32_t                getDoglegLevel         () const;
@@ -194,11 +196,12 @@ namespace Katana {
       virtual void                    setDoglegLevel         ( uint32_t );
       virtual void                    swapTrack              ( TrackElement* );
       virtual void                    reschedule             ( uint32_t level );
-      virtual void                    detach                 ();
+    //virtual void                    detach                 ();
       virtual void                    detach                 ( std::set<Track*>& );
       virtual void                    invalidate             ();
       virtual void                    revalidate             ();
       virtual void                    updatePPitch           ();
+      virtual void                    updateTrackSpan        ();
       virtual void                    addTrackCount          ( int32_t );
       virtual void                    incOverlapCost         ( TrackCost& ) const;
       virtual void                    setAxis                ( DbU::Unit, uint32_t flags=Anabatic::AutoSegment::SegAxisSet );
@@ -258,6 +261,7 @@ namespace Katana {
   inline DbU::Unit               TrackElement::getLength            () const { return getTargetU() - getSourceU(); }
   inline DbU::Unit               TrackElement::getSourceU           () const { return _sourceU; }
   inline DbU::Unit               TrackElement::getTargetU           () const { return _targetU; }
+  inline TrackElement*           TrackElement::getCanonical         ( Interval& i ) { i=Interval(getSourceU(),getTargetU()); return this; }
   inline Interval                TrackElement::getCanonicalInterval () const { return Interval(getSourceU(),getTargetU()); }
   inline DbU::Unit               TrackElement::getSymmetricAxis     ( DbU::Unit axis ) const { return axis - (getTrackSpan()-1)*getPitch(); }
 

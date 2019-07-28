@@ -29,6 +29,7 @@
 #include "hurricane/UpdateSession.h"
 #include "crlcore/RoutingGauge.h"
 #include "crlcore/Measures.h"
+#include "crlcore/Histogram.h"
 #include "anabatic/GCell.h"
 #include "anabatic/AutoContactTerminal.h"
 #include "anabatic/NetBuilderM2.h"
@@ -145,6 +146,7 @@ namespace Anabatic {
   using CRL::RoutingLayerGauge;
   using CRL::addMeasure;
   using CRL::getMeasure;
+  using CRL::Histogram;
 
 
 // -------------------------------------------------------------------
@@ -489,10 +491,18 @@ namespace Anabatic {
 
   void  AnabaticEngine::setupNetDatas ()
   {
+    Histogram  netHistogram ( 0.0, 1.0, 1 );
+    netHistogram.setTitle ( "RoutingPads", 0 );
+    netHistogram.setColor ( "green"      , 0 );
+    netHistogram.setIndent( "       "    , 0 );
+    
     size_t  oindex = _netOrdering.size();
     for ( Net* net : _cell->getNets() ) {
       if (_netDatas.find(net->getId()) != _netDatas.end()) continue;
-      _netOrdering.push_back( new NetData(net) );
+      NetData* data = new NetData( net );
+      _netOrdering.push_back( data );
+
+      netHistogram.addSample( (float)data->getRpCount(), 0 );
     }
 
     for ( ; oindex < _netOrdering.size() ; ++oindex ) {
@@ -501,6 +511,9 @@ namespace Anabatic {
     }
 
     sort( _netOrdering.begin(), _netOrdering.end(), SparsityOrder() );
+
+    cmess2 << "  o  Nets Histogram." << endl;
+    cmess2 << netHistogram.toString(0) << endl;
   }
 
 

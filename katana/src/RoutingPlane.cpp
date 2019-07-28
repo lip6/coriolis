@@ -95,9 +95,7 @@ namespace Katana {
     if (not plane->_layerGauge)
       throw Error( badLayerGauge, depth, getString(katana->getConfiguration()->getRoutingGauge()).c_str() );
 
-    DbU::Unit  hExtension = 0;
-    DbU::Unit  vExtension = 0;
-    uint32_t   gaugeDepth = 0;
+    uint32_t  gaugeDepth = 0;
     if (Session::getLayerGauge(gaugeDepth)->getType() == Constant::PinOnly) ++gaugeDepth;
 
     DbU::Unit extensionCap = ( std::max( Session::getWireWidth(depth), Session::getViaWidth(depth) )

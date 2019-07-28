@@ -17,6 +17,7 @@
 #include <sstream>
 #include <limits>
 #include "hurricane/Bug.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Net.h"
@@ -28,6 +29,7 @@
 #include "katana/DataNegociate.h"
 #include "katana/RoutingPlane.h"
 #include "katana/TrackSegmentRegular.h"
+#include "katana/TrackSegmentNonPref.h"
 #include "katana/TrackSegmentWide.h"
 #include "katana/Track.h"
 #include "katana/Session.h"
@@ -42,6 +44,7 @@ namespace Katana {
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
   using Hurricane::Bug;
+  using Hurricane::DebugSession;
   using Hurricane::Error;
   using Hurricane::BasicLayer;
   using Hurricane::Net;
@@ -129,21 +132,35 @@ namespace Katana {
 
   TrackElement* TrackSegment::create ( AutoSegment* segment, Track* track, bool& created )
   {
+    DebugSession::open( segment->getNet(), 159, 160 );
+
     created = false;
+
+    bool useNonPref = (segment->getDirection() xor Session::getDirection(segment->getLayer()));
 
     DbU::Unit     defaultWireWidth = Session::getWireWidth( segment->base()->getLayer() );
     TrackElement* trackElement     = Session::lookup( segment->base() );
     if (not trackElement) { 
-      if (segment->base()->getWidth() <= defaultWireWidth)
-        trackElement = new TrackSegmentRegular( segment, track );
-      else
-        trackElement = new TrackSegmentWide   ( segment, track );
+      if (useNonPref) {
+        trackElement = new TrackSegmentNonPref( segment );
+        if (track)
+          cerr << Error( "TrackSegment::create(): Must not set track when creating a non-preferred element.\n"
+                         "        (on %s)", getString(segment).c_str() ) << endl;
+      } else {
+        if (segment->base()->getWidth() <= defaultWireWidth)
+          trackElement = new TrackSegmentRegular( segment, track );
+        else
+          trackElement = new TrackSegmentWide   ( segment, track );
+      }
 
       trackElement->_postCreate();
       trackElement->invalidate();
       created = true;
-      cdebug_log(159,0) << "TrackSegment::create(): " << trackElement << endl;
+      cdebug_log(159,0) << "TrackSegment::create(): " << "nonPref:" <<useNonPref
+                        << " " << trackElement << endl;
     }
+
+    DebugSession::close();
 
     return trackElement;
   }
@@ -159,6 +176,7 @@ namespace Katana {
   bool           TrackSegment::isVertical           () const { return _base->isVertical(); }
   bool           TrackSegment::isLocal              () const { return not _base->isWeakGlobal() and not _base->isGlobal(); }
   bool           TrackSegment::isGlobal             () const { return _base->isWeakGlobal() or _base->isGlobal(); }
+  bool           TrackSegment::isUnbreakable        () const { return _base->isUnbreakable(); }
   bool           TrackSegment::isBipoint            () const { return _base->isBipoint(); }
   bool           TrackSegment::isTerminal           () const { return _base->isTerminal(); }
   bool           TrackSegment::isDrag               () const { return _base->isDrag(); }
@@ -192,7 +210,6 @@ namespace Katana {
   uint32_t       TrackSegment::getDoglegLevel       () const { return _dogLegLevel; }
   Interval       TrackSegment::getSourceConstraints () const { return _base->getSourceConstraints(); }
   Interval       TrackSegment::getTargetConstraints () const { return _base->getTargetConstraints(); }
-  TrackElement*  TrackSegment::getCanonical         ( Interval& i ) { return Session::lookup( _base->getCanonical(i)->base() ); }
   TrackElement*  TrackSegment::getSymmetric         () { return _symmetric; }
   TrackElements  TrackSegment::getPerpandiculars    () { return new TrackElements_Perpandiculars(this); }
 // Mutators.
@@ -389,13 +406,20 @@ namespace Katana {
   {
     if (track) {
       DbU::Unit axis = track->getAxis();
-      if (getTrackSpan() > 1) {
+      if (isWide()) {
         DbU::Unit pitch = track->getRoutingPlane()->getLayerGauge()->getPitch();
         axis += (pitch * (getTrackSpan() - 1)) / 2;
-
+        
         cdebug_log(155,0) << "TrackSegment::setTrack(): pitch:" << DbU::getValueString(pitch)
                           << " trackSpan:" << getTrackSpan() << endl;
       }
+      if (isNonPref()) {
+        axis = getAxis();
+        
+        cdebug_log(155,0) << "TrackSegment::setTrack(): Non-preferred, keep @" << DbU::getValueString(axis)
+                          << " trackSpan:" << getTrackSpan() << endl;
+      }
+      
       addTrackCount( getTrackSpan() );
       setAxis( axis, AutoSegment::SegAxisSet );
     }
@@ -407,28 +431,36 @@ namespace Katana {
   { _symmetric = dynamic_cast<TrackSegment*>( segment ); }
 
 
-  void  TrackSegment::detach ()
-  {
-    cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
+  // void  TrackSegment::detach ()
+  // {
+  //   cdebug_log(159,0) << "TrackSegment::detach() - <id:" << getId() << ">" << endl;
 
-    setTrack( NULL );
-    setFlags( TElemLocked );
-    addTrackCount( -1 );
-  }
+  //   setTrack( NULL );
+  //   setFlags( TElemLocked );
+  //   addTrackCount( -1 );
+  // }
 
 
   void  TrackSegment::detach ( set<Track*>& removeds )
   {
-    cdebug_log(159,0) << "TrackSegment::detach(set<Track*>&) - <id:" << getId() << ">" << endl;
+    cdebug_log(159,1) << "TrackSegment::detach(set<Track*>&) - <id:" << getId() << "> trackSpan:"
+                      << getTrackSpan() << endl;
 
     Track* wtrack = getTrack();
     for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
-      
       removeds.insert( wtrack );
+      cdebug_log(159,0) << "| " << wtrack << endl;
+      
       wtrack = wtrack->getNextTrack();
     }
+  //addTrackCount( -getTrackSpan() );
+    addTrackCount( -1  );
 
-    detach();
+  //detach();
+    setTrack( NULL );
+    setFlags( TElemLocked );
+
+    cdebug_tabw(159,-1);
   }
 
 
@@ -437,9 +469,25 @@ namespace Katana {
     unsetFlags( TElemCreated ); 
     cdebug_log(159,0) << "revalidate() - " << this << endl;
 
-    _base->getCanonical( _sourceU, _targetU );
+    if (isNonPref()) {
+      Interval perpandicularSpan ( getAxis() );
+      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
 
-    if (_track) Session::addSortEvent( _track, true );
+      _sourceU = perpandicularSpan.getVMin();
+      _targetU = perpandicularSpan.getVMax();
+    }
+    else
+      _base->getCanonical( _sourceU, _targetU );
+
+    if (isNonPref()) updateTrackSpan();
+
+    if (_track) {
+      Track* wtrack = getTrack();
+      for ( size_t i=0 ; wtrack and (i<getTrackSpan()) ; ++i ) {
+        Session::addSortEvent( wtrack, true );
+        wtrack = wtrack->getNextTrack();
+      }
+    }
     unsetFlags( TElemInvalidated );
   }
 
@@ -782,6 +830,23 @@ namespace Katana {
     cdebug_log(159,0) << "Source: " << *gcells.begin () << endl;
     cdebug_log(159,0) << "Target: " << *gcells.rbegin() << endl;
 
+    AutoContact* acSource = base()->getAutoSource();
+    AutoContact* acTarget = base()->getAutoTarget();
+    if (gcells[0] == doglegGCell) {
+      if (acSource->isHDogleg() or acSource->isVDogleg()) {
+        cdebug_log(159,0) << "false: Source perpandicular already has a dogleg." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    }
+    if (gcells[gcells.size()-1] == doglegGCell) {
+      if (acTarget->isHDogleg() or acTarget->isVDogleg()) {
+        cdebug_log(159,0) << "false: Target perpandicular already has a dogleg." << endl;
+        cdebug_tabw(159,-1);
+        return false;
+      }
+    }
+
     bool isGCellInside = false;
     for ( size_t igcell=0 ; igcell<gcells.size() ; ++igcell ) {
       if (doglegGCell != gcells[igcell]) continue;
@@ -996,7 +1061,17 @@ namespace Katana {
     DbU::Unit min;
     DbU::Unit max;
     base()->checkPositions();
-    base()->getCanonical( min, max );
+
+    if (isNonPref()) {
+      Interval perpandicularSpan ( getAxis() );
+      perpandicularSpan.inflate( base()->getExtensionCap( Anabatic::Flags::Source ) );
+
+      min = perpandicularSpan.getVMin();
+      max = perpandicularSpan.getVMax();
+    }
+    else
+      _base->getCanonical( min, max );
+
     if (getSourceU() != min) {
       cerr << "[CHECK] " << this << " has bad source position "
            << "cache:" << DbU::getValueString(getSourceU()) << " vs. "

@@ -709,7 +709,7 @@ const SharedPath* Instance::SharedPathMap::_getKey(SharedPath* sharedPath) const
 unsigned Instance::SharedPathMap::_getHashValue(const SharedPath* tailSharedPath) const
 // ************************************************************************************
 {
-  return (tailSharedPath) ? (tailSharedPath->getId()/8) : 0;
+  return (tailSharedPath) ? (tailSharedPath->getHash()/8) : 0;
 }
 
 SharedPath* Instance::SharedPathMap::_getNextElement(SharedPath* sharedPath) const

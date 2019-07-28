@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
@@ -73,7 +74,10 @@ namespace {
     if (not intersect.contains(cost.getInterval()))
       intersect.intersection( cost.getInterval() );
     else {
-      cost.setLonguestOverlap( intersect.getSize() );
+      DbU::Unit beginOverlap = cost.getInterval().getVMin() - intersect.getVMin();
+      DbU::Unit   endOverlap = intersect.getVMax() - cost.getInterval().getVMax();
+
+      cost.setLonguestOverlap( std::min( beginOverlap, endOverlap ) );
       cost.setGlobalEnclosed();
     }
 
@@ -85,6 +89,7 @@ namespace {
       cost.mergeDataState( data->getState() );
       if (data->getState() >=  DataNegociate::LocalVsGlobal) {
         cdebug_log(159,0) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
+        cost.setAtRipupLimit();
       }
     }
 
@@ -110,6 +115,27 @@ namespace {
 
     cdebug_log(159,0) << "| Increment Delta: " << DbU::getValueString(intersect.getSize()) << endl;
     cost.incDelta( intersect.getSize() );
+
+    // if (segment->base()->getId() == 70433) {
+    //   cdebug_log(159,0) << "| G:" << cost.isForGlobal()
+    //                     << " L:" << segment->isLocal()
+    //                     << " rpD:" << segment->base()->getRpDistance()
+    //                     << " state:" << data->getState()
+    //                     << " (Dogleg:" << DataNegociate::Dogleg
+    //                     << ") ripup:" << data->getRipupCount()
+    //                     << endl;
+    // }
+
+    if (   cost.isForGlobal()
+       and segment->isLocal()
+       and (segment->base()->getRpDistance() <  2)
+       and (data->getState()      >= DataNegociate::Dogleg)
+     //and (data->getRipupCount() >  Session::getConfiguration()->getRipupLimit(Configuration::LocalRipupLimit) - 2)
+       ) {
+      cost.setInfinite();
+      cdebug_log(159,0) << "Infinite cost from (RP access)" << segment << endl;
+    }
+      
   }
 
 
@@ -183,6 +209,7 @@ namespace Katana {
   using std::left;
   using std::right;
   using std::setprecision;
+  using Hurricane::Breakpoint;
   using Hurricane::Warning;
   using Hurricane::Bug;
   using Hurricane::tab;
@@ -317,6 +344,13 @@ namespace Katana {
     if (created) {
       cdebug_log(159,0) << "* " << trackSegment << endl;
 
+      if (trackSegment->isNonPref()) {
+        _segments.push_back( trackSegment );
+        cdebug_log(159,0) << "Non-preferred diection, do not attempt to set on track." << endl;
+        cdebug_tabw(159,-1);
+        return trackSegment;
+      }
+
       RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
       Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
       Interval      uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
@@ -347,7 +381,7 @@ namespace Katana {
       trackSegment->invalidate();
 
       if (trackSegment->isFixed()) {
-        Session::addInsertEvent( trackSegment, track );
+        Session::addInsertEvent( trackSegment, track, track->getAxis() );
       } else {
         _segments.push_back( trackSegment );
       }
@@ -512,7 +546,7 @@ namespace Katana {
           ofprofile << setw(10) << right << count << " ";
           for ( size_t i=0 ; i<6 ; ++i ) {
             if (i == depth)
-              ofprofile << setw(10) << right << setprecision(2) << event->getPriority  () << " ";
+              ofprofile << setw(10) << right << setprecision(2) << event->getPriority() << " ";
             else
               ofprofile << setw(10) << right << setprecision(2) << 0.0 << " ";
           }
@@ -531,11 +565,15 @@ namespace Katana {
       } else {
         cmess2 << "        <event:" << right << setw(8) << setfill('0')
                << RoutingEvent::getProcesseds() << setfill(' ') << " "
-               << event->getEventLevel() << ":" << event->getPriority() << "> "
+               << event->getEventLevel() << ":" << event->getPriority()
+               << ":" << DbU::getValueString(event->getSegment()->getLength()) << "> "
                << event->getSegment()
                << endl;
         cmess2.flush();
       }
+
+    //if (RoutingEvent::getProcesseds() == 14473)
+    //  Breakpoint::stop( 0, "Before processing RoutingEvent 14473." );
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
@@ -630,6 +668,7 @@ namespace Katana {
     
     if (not (flags & Flags::PreRoutedStage)) {
       _katana->preProcess();
+      _katana->_computeCagedConstraints();
       Session::revalidate();
     }
 

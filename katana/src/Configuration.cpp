@@ -151,7 +151,7 @@ namespace Katana {
     cout << Dots::asUInt ("     - Global router H reserved local"     ,_hTracksReservedLocal) << endl;
     cout << Dots::asUInt ("     - Global router V reserved local"     ,_vTracksReservedLocal) << endl;
     cout << Dots::asULong("     - Events limit (iterations)"          ,_eventsLimit) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, straps"                ,_ripupLimits[StrapRipupLimit]) << endl;
+    cout << Dots::asUInt ("     - Ripup limit, straps & unbreakables" ,_ripupLimits[StrapRipupLimit]) << endl;
     cout << Dots::asUInt ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
     cout << Dots::asUInt ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
     cout << Dots::asUInt ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
@@ -183,10 +183,10 @@ namespace Katana {
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
       record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 
-      record->add ( getSlot("_ripupLimits[StrapRipupLimit]"     ,_ripupLimits[StrapRipupLimit]     ) );
-      record->add ( getSlot("_ripupLimits[LocalRipupLimit]"     ,_ripupLimits[LocalRipupLimit]     ) );
-      record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"    ,_ripupLimits[GlobalRipupLimit]    ) );
-      record->add ( getSlot("_ripupLimits[LongGlobalRipupLimit]",_ripupLimits[LongGlobalRipupLimit]) );
+      record->add ( getSlot("_ripupLimits[StrapRipupLimit]"      ,_ripupLimits[StrapRipupLimit]     ) );
+      record->add ( getSlot("_ripupLimits[LocalRipupLimit]"      ,_ripupLimits[LocalRipupLimit]     ) );
+      record->add ( getSlot("_ripupLimits[GlobalRipupLimit]"     ,_ripupLimits[GlobalRipupLimit]    ) );
+      record->add ( getSlot("_ripupLimits[LongGlobalRipupLimit]" ,_ripupLimits[LongGlobalRipupLimit]) );
 
       // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
       //   ostringstream paramName;

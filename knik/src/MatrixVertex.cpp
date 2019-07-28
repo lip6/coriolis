@@ -1,11 +1,10 @@
 #include <algorithm>
 
+#include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Box.h"
-
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/CellGauge.h"
-
 #include "knik/Graph.h"
 #include "knik/MatrixVertex.h"
 #include "knik/KnikEngine.h"
@@ -142,10 +141,13 @@ Vertex* MatrixVertex::createRegularMatrix ()
     if ( _xInit || _yInit )
         throw Error ("MatrixVertex::createRegularMatrix(): cannot initialize matrix twice.");
 
+    string gaugeName = Cfg::getParamString("katabatic.routingGauge","sxlib")->asString();
+
     Cell* cell = _routingGraph->getCell();
-    DbU::Unit sliceHeight = AllianceFramework::get()->getCellGauge()->getSliceHeight();
-    DbU::Unit cellWidth  = cell->getAbutmentBox().getWidth();
-    DbU::Unit cellHeight = cell->getAbutmentBox().getHeight();
+    DbU::Unit sliceHeight = AllianceFramework::get()->getCellGauge(gaugeName)->getSliceHeight();
+    DbU::Unit cellWidth   = cell->getAbutmentBox().getWidth();
+    DbU::Unit cellHeight  = cell->getAbutmentBox().getHeight();
+    
     _boundingBox = cell->getAbutmentBox();
     _nbXTiles   = (unsigned int)ceil(float(cellWidth)  / float(sliceHeight));
     _nbYTiles   = (unsigned int)ceil(float(cellHeight) / float(sliceHeight));
