@@ -537,13 +537,13 @@ extern "C" {
     , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
                                , "Add a new cell gauge." }
     , { "getCellGauge"         , (PyCFunction)PyAllianceFramework_getCellGauge         , METH_VARARGS
-                               , "Get a cell gauge (whithout a name, return the default)." }          
+                               , "Get a cell gauge (without a name, return the default)." }          
     , { "matchCellGauge"       , (PyCFunction)PyAllianceFramework_matchCellGauge       , METH_VARARGS
                                , "Find the first CellGauge comptible with width and height." }          
     , { "addRoutingGauge"      , (PyCFunction)PyAllianceFramework_addRoutingGauge      , METH_VARARGS
                                , "Add a new routing gauge." }
     , { "getRoutingGauge"      , (PyCFunction)PyAllianceFramework_getRoutingGauge      , METH_VARARGS
-                               , "Get a routing gauge (whithout a name, return the default)." }          
+                               , "Get a routing gauge (without a name, return the default)." }          
     , { "setRoutingGauge"      , (PyCFunction)PyAllianceFramework_setRoutingGauge      , METH_VARARGS
                                , "Select the default routing gauge." }          
   //, { "destroy"              , (PyCFunction)PyAllianceFramework_destroy              , METH_NOARGS

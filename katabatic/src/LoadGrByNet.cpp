@@ -243,7 +243,7 @@ namespace {
 //!               function:
 //!               <ul>
 //!                 <li>One global: nonsensical because there also must be a terminal.
-//!                 <li>Two aligned globals: in that case we do a straight wire whithout
+//!                 <li>Two aligned globals: in that case we do a straight wire without
 //!                     any AutoContact (handled by the source/target of the wire).
 //!               </ul>
 //!

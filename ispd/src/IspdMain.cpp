@@ -828,7 +828,7 @@ int main ( int argc, char *argv[] )
                         , "Set the level of trace, trace messages with a level superior to "
                           "<arg> will be printed on <stderr>." )
       ( "cell,c"        , poptions::value<string>()
-                        , "The name of the cell to load, whithout extension." )
+                        , "The name of the cell to load, without extension." )
       ( "knik,k"        , poptions::bool_switch(&knikSimple)->default_value(false)
                         , "Perform a simple routing pass.")
       ( "KNIK,K"        , poptions::bool_switch(&knikOverflow)->default_value(false)

@@ -335,7 +335,7 @@ def ScriptMain ( **kw ):
 
 if __name__ == '__main__':
   parser = optparse.OptionParser()
-  parser.add_option( '-c', '--cell', type='string',                      dest='cell'       , help='The name of the chip to build, whithout extension.')
+  parser.add_option( '-c', '--cell', type='string',                      dest='cell'       , help='The name of the chip to build, without extension.')
   parser.add_option( '-v', '--verbose'            , action='store_true', dest='verbose'    , help='First level of verbosity.')
   parser.add_option( '-V', '--very-verbose'       , action='store_true', dest='veryVerbose', help='Second level of verbosity.')
   (options, args) = parser.parse_args()

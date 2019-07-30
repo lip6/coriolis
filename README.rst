@@ -5,20 +5,19 @@
 Coriolis README
 ===============
 
-
-Coriolis is a free database, placement tool and routing tool for VLSI designs.
+Coriolis is a free database, placement tool and routing tool for VLSI design.
 
 
 Purpose
 =======
 
 Coriolis provides several tools to perform the layout of VLSI circuits.  Its
-main components are the Hurricane database, the Etesian placer and the Kite
+main components are the Hurricane database, the Etesian placer and the Katana
 router, but other tools can use the Hurricane database and the parsers
 provided.
 
 The user interface <cgt> is the prefered way to use Coriolis, but all
-Coriolis tools are Python modules and thus scriptables.
+Coriolis tools are Python modules and thus scriptable.
 
 
 Documentation
@@ -33,7 +32,7 @@ The documentation of the latest *stable* version is also
 available online. It may be quite outdated from the *devel*
 version.
 
-    https://soc-extras.lip6.fr/en/coriolis/coriolis2-users-guide/
+    https://www-soc.lip6.fr/sesi-docs/coriolis2-docs/coriolis2/en/latex/users-guide/UsersGuide.pdf
 
 
 Building Coriolis
@@ -85,8 +84,8 @@ The Coriolis main interface can be launched with the command: ::
 
     ego@home:~: ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/bin/coriolis
 
-The ``coriolis`` script is tasked to guess it's location and setup appropriatly
-the UNIX environment, then lauch ``cgt`` (or *any* command, with the
+The ``coriolis`` script detects its location and setups the UNIX
+environment appropriately, then lauches ``cgt`` (or *any* command, with the
 ``--run=<COMMAND>`` option).
 
 Conversely, you can setup the current shell environement for Coriolis by 

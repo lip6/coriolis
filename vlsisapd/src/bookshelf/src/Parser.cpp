@@ -659,10 +659,10 @@ namespace Bookshelf {
       }
 
       if ( ordereds[0].empty() )
-        throw Exception("Bookshelf::Parser(): .aux file do not contains <.nodes>.");
+        throw Exception("Bookshelf::Parser(): .aux file does not contains <.nodes>.");
 
       if ( ordereds[1].empty() )
-        throw Exception("Bookshelf::Parser(): .aux file do not contains <.nets>.");
+        throw Exception("Bookshelf::Parser(): .aux file does not contains <.nets>.");
 
       for ( size_t iext=0 ; iext<5 ; ++iext ) {
         if ( ordereds[iext].empty() ) continue;

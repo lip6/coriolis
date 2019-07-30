@@ -380,7 +380,7 @@ Occurrence CHyperNetDriverPortOccurrences::Locator::getElement() const
 {
     if (_pinLocator.isValid())
         return _pinLocator.getElement();
-	return _plugOccurrenceLocator.getElement();
+    return _plugOccurrenceLocator.getElement();
 }
 
 Locator<Occurrence>* CHyperNetDriverPortOccurrences::Locator::getClone() const

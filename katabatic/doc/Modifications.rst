@@ -48,5 +48,5 @@ AutoHorizontal/AutoVertical
 
 * The local ``slacken()`` methods are, in fact AutoSegment::makeTopologyDogLeg().
 
-* We now must be able to create AutoHorizontal/AutoContact whithout suppling
+* We now must be able to create AutoHorizontal/AutoContact without suppling
   the anchor AutoContacts. Allows more supple building constructions.

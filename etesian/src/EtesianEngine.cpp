@@ -274,6 +274,7 @@ namespace Etesian {
     Super::_postCreate();
 
   // Ugly: Name based detection of ISPD benchmarks.
+  // Maybe base it on whether the imported library is in Bookshelf format or not?
     if (getString(getCell()->getName()).substr(0,7) == "bigblue") {
       cmess2 << "  o  ISPD benchmark <" << getCell()->getName()
              << ">, no feed cells will be added." << endl;
@@ -649,8 +650,6 @@ namespace Etesian {
     _placementLB.positions_    = positions;
     _placementLB.orientations_ = orientations;
     _placementUB = _placementLB;
-  //cerr << "Coloquinte cell height: " << _circuit.get_cell(0).size.y << endl;
-
   }
 
 
@@ -831,6 +830,7 @@ namespace Etesian {
 
     int_t sliceHeight = getSliceHeight() / getHorizontalPitch();
     roughLegalize(sliceHeight, options);
+    // TODO: for uniform density distribution, add some margin to the cell sizes so we don't disrupt it during detailed placement
 
     for ( int i=0; i<iterations; ++i ){
         ostringstream label;
@@ -838,7 +838,7 @@ namespace Etesian {
         label  << "     [" << setw(3) << setfill('0') << i << "]";
 
         optimize_x_orientations( _circuit, _placementUB ); // Don't disrupt VDD/VSS connections in a row
-        _progressReport1(label.str()+" Oriented ......." );
+        _progressReport1(label.str() + " Oriented ......." );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 

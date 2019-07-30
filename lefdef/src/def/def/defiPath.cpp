@@ -106,9 +106,10 @@ void defiPath::clear() {
 
 void defiPath::Destroy() {
 
-  if (keys_)
-     free((char*)(keys_));
-     keys_ = NULL;
+  if (keys_) {
+    free((char*)(keys_));
+    keys_ = NULL;
+  }
   if (data_) {
      clear();
      free((char*)(data_));

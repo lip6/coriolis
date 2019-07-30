@@ -97,7 +97,7 @@ struct SegRecord {
 struct NetSurfacesComp : public binary_function<const NetRecord, const NetRecord, bool> { 
     public: bool operator() ( const NetRecord &record1, const NetRecord &record2 ) const {
                 if  (record1._exArea <  record2._exArea) return true;
-                if  (record1._exArea == record1._exArea) {
+                if  (record1._exArea == record2._exArea) {
                     if (getString(record1._net->getName()) <  getString(record2._net->getName())) return true;
                     if (record1._net == record2._net) assert ( false );
                 }

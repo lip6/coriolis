@@ -68,7 +68,7 @@ namespace Katana {
       if ( _locator.isValid() ) {
         _element = Session::lookup( _locator.getElement()->getCanonical(bounds)->base() );
         if ( !_element ) {
-          cerr << Bug("Canonical segment whithout TrackElement.") << endl;
+          cerr << Bug("Canonical segment without TrackElement.") << endl;
           continue;
         }
 
