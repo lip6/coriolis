@@ -506,10 +506,17 @@ namespace {
     Net* net2 = _cell->getNet( name2 );
 
     if (net1 and (net1 == net2)) return net1;
-    if (net1 and net2) { net1->merge( net2 ); return net1; }
+    if (net1 and net2) {
+      if (  (not net1->isExternal() and net2->isExternal()) 
+         or (    net1->isExternal() and net2->isExternal() and (net1->getId() > net2->getId()) ) ) {
+        std::swap( net1 , net2  );
+        std::swap( name1, name2 );
+      }
+      net1->merge( net2 ); return net1;
+    }
     if (net2) {
-      swap( net1 , net2  );
-      swap( name1, name2 );
+      std::swap( net1 , net2  );
+      std::swap( name1, name2 );
     }
 
     if (not net1) {
