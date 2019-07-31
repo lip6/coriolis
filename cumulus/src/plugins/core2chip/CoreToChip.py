@@ -20,6 +20,7 @@ from   Hurricane  import Net
 from   Hurricane  import Instance
 from   CRL        import Catalog
 from   CRL        import AllianceFramework
+from   helpers    import netDirectionToStr
 from   helpers.io import ErrorMessage
 
 
@@ -180,7 +181,8 @@ class CoreToChip ( object ):
     def _buildStandardPad ( self, ioNet ):
       if not self.ioPads.has_key(ioNet.coreNet.getDirection()):
         raise ErrorMessage( 1, 'CoreToChip._buildStandardPad(): Unsupported direction %d for core net "%s".' \
-                               % ioNet.coreNet.getName() )
+                               % (netDirectionToStr(ioNet.coreNet.getDirection())
+                                 ,ioNet.coreNet.getName()) )
 
       padInfo = self.ioPads[ ioNet.coreNet.getDirection() ]
 

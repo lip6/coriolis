@@ -93,11 +93,18 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::UNDEFINED,"UNDEFINED");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::IN       ,"IN");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::OUT      ,"OUT");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::INOUT    ,"INOUT");
-    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::TRISTATE ,"TRISTATE");
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::DirIn       ,"DirIn"       );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::DirOut      ,"DirOut"      );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::ConnTristate,"ConnTristate");
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::ConnWiredOr ,"ConnWiredOr" );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::UNDEFINED   ,"UNDEFINED"   );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::IN          ,"IN"          );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::OUT         ,"OUT"         );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::INOUT       ,"INOUT"       );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::TRISTATE    ,"TRISTATE"    );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::TRANSCV     ,"TRANSCV"     );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::WOR_OUT     ,"WOR_OUT"     );
+    LoadObjectConstant(PyTypeNetDirection.tp_dict,Net::Direction::WOR_INOUT   ,"WOR_INOUT"   );
   }
 
 

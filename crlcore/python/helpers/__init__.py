@@ -316,3 +316,23 @@ def staticInitialization ( quiet=False ):
   if not quiet: print '     - <%s>' % sysConfDir
   initTechno( quiet )
   return
+
+
+def netDirectionToStr ( netDir ):
+   flags = [ '-', '-', '-', '-', '-' ]
+   if netDir & Hurricane.Net.Direction.DirIn:        flags[0] = 'i'
+   if netDir & Hurricane.Net.Direction.DirOut:       flags[1] = 'o'
+   if netDir & Hurricane.Net.Direction.ConnTristate: flags[2] = 't'
+   if netDir & Hurricane.Net.Direction.ConnWiredOr:  flags[3] = 'w'
+
+   s = flags[0]+flags[1]+flags[2]+flags[3]+' '
+   if   netDir == Hurricane.Net.Direction.UNDEFINED: s += '(UNDEFINED)'
+   elif netDir == Hurricane.Net.Direction.IN:        s += '(IN)'
+   elif netDir == Hurricane.Net.Direction.OUT:       s += '(OUT)'
+   elif netDir == Hurricane.Net.Direction.INOUT:     s += '(INOUT)'
+   elif netDir == Hurricane.Net.Direction.TRISTATE:  s += '(TRISTATE)'
+   elif netDir == Hurricane.Net.Direction.TRANSCV:   s += '(TRANSCV)'
+   elif netDir == Hurricane.Net.Direction.WOR_OUT:   s += '(WOR_OUT)'
+   elif netDir == Hurricane.Net.Direction.WOR_INOUT: s += '(WOR_INOUT)'
+   else: s += '(UNKNOWN)'
+   return s
