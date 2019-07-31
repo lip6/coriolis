@@ -153,8 +153,8 @@ namespace Vhdl {
 
   void  VectorPortMap::toVhdlPortMap ( ostream& out, size_t width ) const
   {
+    vector<string>  mappedNames;
     if (getSignal()->isContiguous()) {
-      vector<string>  mappedNames;
       int             begin  = -1;
       int             end    = -1;
       int             delta  =  0;
@@ -220,7 +220,9 @@ namespace Vhdl {
           mappedNames.push_back( bitp->getName() );
         }
       }
+    }
   
+    if (mappedNames.size() == 1) {
       out << setw(width) << left << _signal->getName() << " => ";
   
       size_t lhsWidth  = 90 - tab.getWidth() - width - 4;
