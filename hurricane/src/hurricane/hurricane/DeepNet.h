@@ -82,4 +82,6 @@ namespace Hurricane {
 
 } // Hurricane namespace.
 
+INSPECTOR_P_SUPPORT(Hurricane::DeepNet);
+
 #endif

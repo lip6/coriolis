@@ -31,6 +31,7 @@
 #include "hurricane/Layer.h"
 #include "hurricane/Net.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Occurrence.h"
@@ -208,6 +209,7 @@ namespace Etesian {
   using Hurricane::Layer;
   using Hurricane::Cell;
   using Hurricane::Instance;
+  using Hurricane::Pin;
   using Hurricane::RoutingPad;
   using Hurricane::Net;
   using Hurricane::Occurrence;
@@ -254,7 +256,9 @@ namespace Etesian {
   EtesianEngine::EtesianEngine ( Cell* cell )
     : Super         (cell)
     , _configuration(new Configuration())
+    , _block        (NULL)
     , _placed       (false)
+    , _ySpinSet     (false)
     , _flatDesign   (false)
     , _surface      ()
     , _circuit      ()
@@ -426,7 +430,7 @@ namespace Etesian {
 
     UpdateSession::open();
     vector<Occurrence>  feedOccurrences;
-    for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
     {
       dots.dot();
 
@@ -444,7 +448,7 @@ namespace Etesian {
 
     for ( auto ioccurrence : feedOccurrences ) {
       cerr << "  Destroy: " << ioccurrence.getCompactString() << endl;
-      Instance* instance     = static_cast<Instance*>(ioccurrence.getEntity());
+      Instance* instance = static_cast<Instance*>(ioccurrence.getEntity());
       instance->destroy();
     }
     UpdateSession::close();
@@ -473,7 +477,7 @@ namespace Etesian {
     if (not cmess2.enabled()) dots.disable();
 
     size_t  instancesNb = 0;
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() ) {
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) ) {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
@@ -497,11 +501,14 @@ namespace Etesian {
 
     cmess1 << "     - Converting " << instancesNb << " instances" << endl;
     cout.flush();
-
-    Box topAb = getCell()->getAbutmentBox();
+    
+    Box topAb = getBlockCell()->getAbutmentBox();
+    Transformation topTransformation;
+    if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
+    topTransformation.applyOn( topAb );
 
     UpdateSession::open();
-    for ( Occurrence occurrence : getCell()->getNonLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getBlockCell()->getNonLeafInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
@@ -530,10 +537,10 @@ namespace Etesian {
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
-    getCell()->flattenNets( Cell::Flags::NoClockFlatten );
+    getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
 
     index_t instanceId = 0;
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
@@ -618,8 +625,23 @@ namespace Etesian {
       nets[netId] = temporary_net( netId, 1 );
 
     //cerr << "+ " << net << endl;
+
+      for ( Pin* pin : net->getPins() ) {
+      //cerr << "Outside Pin: " << pin << endl;
+      // For Gabriel Gouvine : the position of this pin should be added as a fixed
+      // attractor in Coloquinte. May be outside the placement area.
+      }
       
       for ( RoutingPad* rp : net->getRoutingPads() ) {
+        if (getBlockInstance() and (rp->getOccurrence().getPath().getHeadInstance() != getBlockInstance())) {
+        //cerr << "Outside RP: " << rp << endl;
+        // For Gabriel Gouvine : if there are multiple blocks (i.e. we have a true
+        // floorplan, there may be RoutingPad that are elsewhere. We should check
+        // that the RP is placed or is inside a define area (the abutment box of
+        // it's own block). No example yet of that case, though.
+          continue;
+        }
+
         string insName = extractInstanceName( rp );
         Point  offset  = extractRpOffset    ( rp );
 
@@ -640,10 +662,10 @@ namespace Etesian {
     }
     dots.finish( Dots::Reset );
 
-    _surface = box<int_t>( (int_t)(getCell()->getAbutmentBox().getXMin() / vpitch)
-                         , (int_t)(getCell()->getAbutmentBox().getXMax() / vpitch)
-                         , (int_t)(getCell()->getAbutmentBox().getYMin() / hpitch)
-                         , (int_t)(getCell()->getAbutmentBox().getYMax() / hpitch)
+    _surface = box<int_t>( (int_t)(topAb.getXMin() / vpitch)
+                         , (int_t)(topAb.getXMax() / vpitch)
+                         , (int_t)(topAb.getYMin() / hpitch)
+                         , (int_t)(topAb.getYMax() / hpitch)
                          );
     _circuit = netlist( instances, nets, pins );
     _circuit.selfcheck();
@@ -888,14 +910,16 @@ namespace Etesian {
 
   void  EtesianEngine::place ()
   {
-    if(getCell()->isPlaced()){
-        cmess2 << Warning("The cell is already placed; returning") << std::endl;
-        return;
+    if (getBlockCell()->isPlaced()) {
+      cerr << Warning( "EtesianEngine::place(): The cell \"%s\" is already placed (aborting)"
+                     , getString(getBlockCell()->getName()).c_str()
+                     ) << std::endl;
+      return;
     }
-    getCell()->uniquify();
+    getBlockCell()->uniquify();
 
     getConfiguration()->print( getCell() );
-    if (getCell()->getAbutmentBox().isEmpty()) setDefaultAb();
+    if (getBlockCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 
     findYSpin();
     toColoquinte();
@@ -919,44 +943,41 @@ namespace Etesian {
     int detailedIterations, detailedEffort;
     unsigned globalOptions=0, detailedOptions=0;
 
-    if(placementUpdate == UpdateAll){
-      globalOptions |= (UpdateUB | UpdateLB);
-      detailedOptions |= UpdateDetailed;
+    if (placementUpdate == UpdateAll) {
+      globalOptions   |= (UpdateUB | UpdateLB);
+      detailedOptions |=  UpdateDetailed;
     }
-    else if(placementUpdate == LowerBound){
+    else if (placementUpdate == LowerBound) {
       globalOptions |= UpdateLB;
     }
 
-    if(densityConf == ForceUniform)
+    if (densityConf == ForceUniform)
       globalOptions |= ForceUniformDensity;
 
-    if(placementEffort == Fast){
-        minPenaltyIncrease = 0.005f;
-        maxPenaltyIncrease = 0.08f;
-        targetImprovement  = 0.05f; // 5/100 per iteration
-        detailedIterations = 1;
-        detailedEffort     = 0;
-    }
-    else if(placementEffort == Standard){
-        minPenaltyIncrease = 0.001f;
-        maxPenaltyIncrease = 0.04f;
-        targetImprovement  = 0.02f; // 2/100 per iteration
-        detailedIterations = 2;
-        detailedEffort     = 1;
-    }
-    else if(placementEffort == High){
-        minPenaltyIncrease = 0.0005f;
-        maxPenaltyIncrease = 0.02f;
-        targetImprovement  = 0.01f; // 1/100 per iteration
-        detailedIterations = 4;
-        detailedEffort     = 2;
-    }
-    else{
-        minPenaltyIncrease = 0.0002f;
-        maxPenaltyIncrease = 0.01f;
-        targetImprovement  = 0.005f; // 5/1000 per iteration
-        detailedIterations = 7;
-        detailedEffort     = 3;
+    if (placementEffort == Fast) {
+      minPenaltyIncrease = 0.005f;
+      maxPenaltyIncrease = 0.08f;
+      targetImprovement  = 0.05f; // 5/100 per iteration
+      detailedIterations = 1;
+      detailedEffort     = 0;
+    } else if (placementEffort == Standard) {
+      minPenaltyIncrease = 0.001f;
+      maxPenaltyIncrease = 0.04f;
+      targetImprovement  = 0.02f; // 2/100 per iteration
+      detailedIterations = 2;
+      detailedEffort     = 1;
+    } else if (placementEffort == High) {
+      minPenaltyIncrease = 0.0005f;
+      maxPenaltyIncrease = 0.02f;
+      targetImprovement  = 0.01f; // 1/100 per iteration
+      detailedIterations = 4;
+      detailedEffort     = 2;
+    } else {
+      minPenaltyIncrease = 0.0002f;
+      maxPenaltyIncrease = 0.01f;
+      targetImprovement  = 0.005f; // 5/1000 per iteration
+      detailedIterations = 7;
+      detailedEffort     = 3;
     }
 
     cmess1 << "  o  Global placement." << endl;
@@ -1014,6 +1035,37 @@ namespace Etesian {
   }
 
 
+#if DISABLED
+  void  EtesianEngine::place ( Instance* instance )
+  {
+    setBlock( instance );
+    
+    if (getCell()->getAbutmentBox().isEmpty()) {
+      cmess2 << Error( "EtesianEngine::place(): Cell \"%s\" must have an abutment box."
+                     , getString(getCell()->getName()).c_str()
+                     ) << std::endl;
+      return;
+    }
+    if (getBlockCell()->getAbutmentBox().isEmpty()) {
+      cmess2 << Error( "EtesianEngine::place(): Instance \"%s\" must have an abutment box."
+                     , getString(instance->getName()).c_str()
+                     ) << std::endl;
+      return;
+    }
+    if(getBlockCell()->isPlaced()){
+        cmess2 << Error( "EtesianEngine::place(): The instance \"%s\" is already placed."
+                       , getString(instance->getName()).c_str()
+                       ) << std::endl;
+        return;
+    }
+    getBlockCell()->uniquify();
+
+    getConfiguration()->print( getCell() );
+    findYSpin();
+  }
+#endif
+
+
   void  EtesianEngine::_progressReport1 ( string label ) const
   {
     size_t w      = label.size();
@@ -1054,7 +1106,12 @@ namespace Etesian {
   {
     UpdateSession::open();
 
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    Box            topAb             = getBlockCell()->getAbutmentBox();
+    Transformation topTransformation;
+    if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
+    topTransformation.invert();
+
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
     {
       DbU::Unit hpitch          = getHorizontalPitch();
       DbU::Unit vpitch          = getVerticalPitch();
@@ -1083,6 +1140,7 @@ namespace Etesian {
 
       // This is temporary as it's not trans-hierarchic: we ignore the positions
       // of all the intermediary instances.
+        topTransformation.applyOn( trans );
         instance->setTransformation( trans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
       }

@@ -38,6 +38,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/viewer/Script.h"
 #include "crlcore/Measures.h"
+#include "crlcore/AllianceFramework.h"
 #include "anabatic/AutoContact.h"
 #include "katana/Block.h"
 #include "katana/DataNegociate.h"
@@ -148,7 +149,9 @@ namespace Katana {
   using Hurricane::NetRoutingState;
   using Hurricane::NetRoutingExtension;
   using Hurricane::Cell;
+  using Hurricane::Instance;
   using CRL::System;
+  using CRL::AllianceFramework;
   using CRL::addMeasure;
   using CRL::Measures;
   using CRL::MeasuresSet;
@@ -311,6 +314,18 @@ namespace Katana {
 
   KatanaEngine* KatanaEngine::create ( Cell* cell )
   {
+    AllianceFramework* af = AllianceFramework::get();
+    for ( Instance* instance : cell->getInstances() ) {
+      if (af->isPad(instance->getMasterCell())) {
+        throw Error( "KatanaEngine::create(): Must not be run at chip level, but a corona level.\n"
+                     "      Guessing \"%s\" is a chip because instance \"%s\" is a pad (\"%s\")."
+                   , getString(cell->getName()).c_str()
+                   , getString(instance->getName()).c_str()
+                   , getString(instance->getMasterCell()->getName()).c_str()
+                   );
+      }
+    }
+    
     KatanaEngine* katana = new KatanaEngine ( cell );
 
     katana->_postCreate();

@@ -210,7 +210,7 @@ namespace {
         if (feed == NULL) break;
       }
 
-      Instance::create ( getEtesian()->getCell()
+      Instance::create ( getEtesian()->getBlockCell()
                        , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
                        , feed
                        , getTransformation( feed->getAbutmentBox()
@@ -245,7 +245,7 @@ namespace {
 
   SliceHoles::SliceHoles ( EtesianEngine* etesian )
     : _etesian    (etesian)
-    , _cellAb     (etesian->getCell()->getAbutmentBox())
+    , _cellAb     (etesian->getBlockCell()->getAbutmentBox())
     , _sliceHeight(_etesian->getSliceHeight())
     , _slices     ()
   {
@@ -308,10 +308,10 @@ namespace Etesian {
     _ySpinSet     = false;
     _yspinSlice0  = 0;
 
-    Box topCellAb = getCell()->getAbutmentBox();
+    Box topCellAb = getBlockCell()->getAbutmentBox();
 
     if (not topCellAb.isEmpty()) {
-      for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+      for ( Occurrence occurrence : getBlockCell()->getLeafInstanceOccurrences() )
       {
         Instance*      instance       = static_cast<Instance*>(occurrence.getEntity());
         Cell*          masterCell     = instance->getMasterCell();
@@ -325,7 +325,7 @@ namespace Etesian {
   
         _ySpinSet = true;
   
-        int islice = (instanceAb.getYMin() - getCell()->getAbutmentBox().getYMin()) / getSliceHeight();
+        int islice = (instanceAb.getYMin() - getBlockCell()->getAbutmentBox().getYMin()) / getSliceHeight();
   
         switch ( instanceTransf.getOrientation() ) {
           case Transformation::Orientation::ID:
@@ -366,11 +366,11 @@ namespace Etesian {
     UpdateSession::open();
 
     SliceHoles sliceHoles ( this );
-    Box        topCellAb  = getCell()->getAbutmentBox();
+    Box        topCellAb  = getBlockCell()->getAbutmentBox();
 
     sliceHoles.setSpinSlice0( _yspinSlice0 );
 
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getBlockCell()->getLeafInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();

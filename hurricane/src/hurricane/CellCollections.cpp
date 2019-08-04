@@ -994,72 +994,46 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
 
 };
 
-// ****************************************************************************************************
-// Cell_LeafInstanceOccurrences declaration
-// ****************************************************************************************************
+
+// -------------------------------------------------------------------
+// class  :  "Cell_LeafInstanceOccurrences".
 
 class Cell_LeafInstanceOccurrences : public Collection<Occurrence> {
-// *****************************************************************
+  public:
+    typedef Collection<Occurrence> Inherit;
 
-// Types
-// *****
-
-    public: typedef Collection<Occurrence> Inherit;
-
-    public: class Locator : public Hurricane::Locator<Occurrence> {
-    // *********************************************************
-
-        public: typedef Hurricane::Locator<Occurrence> Inherit;
-
-        private: const Cell* _cell;
-        private: int _state;
-        private: InstanceLocator _leafInstanceLocator;
-        private: InstanceLocator _nonLeafInstanceLocator;
-        private: OccurrenceLocator _occurrenceLocator;
-
-        public: Locator(const Cell* cell = NULL);
-        public: Locator(const Locator& locator);
-
-        public: Locator& operator=(const Locator& locator);
-
-        public: virtual Occurrence getElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
-
-        public: virtual bool isValid() const;
-
-        public: virtual void progress();
-
-        public: virtual string _getString() const;
-
+  public:
+    class Locator : public Hurricane::Locator<Occurrence> {
+      public:
+        typedef Hurricane::Locator<Occurrence> Inherit;
+      public:
+                                                Locator    ( const Cell* cell=NULL, const Instance* topInstance=NULL );
+                                                Locator    ( const Locator& );
+                Locator&                        operator=  ( const Locator& );
+        virtual Occurrence                      getElement () const;
+        virtual Hurricane::Locator<Occurrence>* getClone   () const;
+        virtual bool                            isValid    () const;
+        virtual void                            progress   ();
+        virtual string                          _getString () const;
+      private:
+        const Cell*             _cell;
+        const Instance*         _topInstance;
+              int               _state;
+              InstanceLocator   _leafInstanceLocator;
+              InstanceLocator   _nonLeafInstanceLocator;
+              OccurrenceLocator _occurrenceLocator;
     };
 
-// Attributes
-// **********
-
-    private: const Cell* _cell;
-
-// Constructors
-// ************
-
-    public: Cell_LeafInstanceOccurrences(const Cell* cell = NULL);
-    public: Cell_LeafInstanceOccurrences(const Cell_LeafInstanceOccurrences& occurrences);
-
-// Operators
-// *********
-
-    public: Cell_LeafInstanceOccurrences& operator=(const Cell_LeafInstanceOccurrences& occurrences);
-
-// Accessors
-// *********
-
-    public: virtual Collection<Occurrence>* getClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
-
-// Others
-// ******
-
-    public: virtual string _getString() const;
-
+  public:
+                                            Cell_LeafInstanceOccurrences ( const Cell* cell=NULL, const Instance* topInstance=NULL );
+                                            Cell_LeafInstanceOccurrences ( const Cell_LeafInstanceOccurrences& );
+            Cell_LeafInstanceOccurrences&   operator=                    ( const Cell_LeafInstanceOccurrences& );
+    virtual Collection<Occurrence>*         getClone                     () const;
+    virtual Hurricane::Locator<Occurrence>* getLocator                   () const;
+    virtual string                          _getString                   () const;
+  private:
+    const Cell*     _cell;
+    const Instance* _topInstance;
 };
 
 
@@ -1136,71 +1110,46 @@ class Cell_LeafInstanceOccurrencesUnder : public Collection<Occurrence> {
 
 };
 
-// ****************************************************************************************************
-// Cell_NonLeafInstanceOccurrences declaration
-// ****************************************************************************************************
+
+// -------------------------------------------------------------------
+// class  :  "Cell_NonLeafInstanceOccurrences".
 
 class Cell_NonLeafInstanceOccurrences : public Collection<Occurrence> {
-// ********************************************************************
+  public:
+    typedef Collection<Occurrence> Inherit;
 
-// Types
-// *****
-
-    public: typedef Collection<Occurrence> Inherit;
-
-    public: class Locator : public Hurricane::Locator<Occurrence> {
-    // ************************************************************
-
-        public: typedef Hurricane::Locator<Occurrence> Inherit;
-
-        private: const Cell* _cell;
-        private: int _state;
-        private: InstanceLocator _nonLeafInstanceLocator;
-        private: OccurrenceLocator _occurrenceLocator;
-
-        public: Locator(const Cell* cell = NULL);
-        public: Locator(const Locator& locator);
-
-        public: Locator& operator=(const Locator& locator);
-
-        public: virtual Occurrence getElement() const;
-        public: virtual Hurricane::Locator<Occurrence>* getClone() const;
-
-        public: virtual bool isValid() const;
-
-        public: virtual void progress();
-
-        public: virtual string _getString() const;
-
+  public:
+    class Locator : public Hurricane::Locator<Occurrence> {
+      public:
+        typedef Hurricane::Locator<Occurrence> Inherit;
+      public:
+                                                Locator          ( const Cell* cell=NULL, const Instance* topInstance=NULL );
+                                                Locator          ( const Locator& );
+                Locator&                        operator=        ( const Locator& );
+        virtual Occurrence                      getElement       () const;
+        virtual Hurricane::Locator<Occurrence>* getClone         () const;
+        virtual bool                            isValid          () const;
+        virtual void                            progress         ();
+                void                            _nonLeafProgress ( bool inCTOR );
+        virtual string                          _getString       () const;
+      private:
+        const Cell*             _cell;
+        const Instance*         _topInstance;
+              int               _state;
+              InstanceLocator   _nonLeafInstanceLocator;
+              OccurrenceLocator _occurrenceLocator;
     };
 
-// Attributes
-// **********
-
-    private: const Cell* _cell;
-
-// Constructors
-// ************
-
-    public: Cell_NonLeafInstanceOccurrences(const Cell* cell = NULL);
-    public: Cell_NonLeafInstanceOccurrences(const Cell_NonLeafInstanceOccurrences& occurrences);
-
-// Operators
-// *********
-
-    public: Cell_NonLeafInstanceOccurrences& operator=(const Cell_NonLeafInstanceOccurrences& occurrences);
-
-// Accessors
-// *********
-
-    public: virtual Collection<Occurrence>* getClone() const;
-    public: virtual Hurricane::Locator<Occurrence>* getLocator() const;
-
-// Others
-// ******
-
-    public: virtual string _getString() const;
-
+  public:
+                                             Cell_NonLeafInstanceOccurrences ( const Cell* cell=NULL, const Instance* topInstance=NULL );
+                                             Cell_NonLeafInstanceOccurrences ( const Cell_NonLeafInstanceOccurrences& );
+            Cell_NonLeafInstanceOccurrences& operator=                       ( const Cell_NonLeafInstanceOccurrences& );
+    virtual Collection<Occurrence>*          getClone                        () const;
+    virtual Hurricane::Locator<Occurrence>*  getLocator                      () const;
+    virtual string                           _getString                      () const;
+  private:
+    const Cell*     _cell;
+    const Instance* _topInstance;
 };
 
 
@@ -2022,10 +1971,10 @@ Occurrences Cell::getTerminalInstanceOccurrencesUnder(const Box& area) const
     return Cell_TerminalInstanceOccurrencesUnder(this, area);
 }
 
-Occurrences Cell::getLeafInstanceOccurrences() const
-// ***********************************************
+Occurrences Cell::getLeafInstanceOccurrences( const Instance* topInstance ) const
+// ******************************************************************************
 {
-    return Cell_LeafInstanceOccurrences(this);
+  return Cell_LeafInstanceOccurrences( this, topInstance );
 }
 
 Occurrences Cell::getLeafInstanceOccurrencesUnder(const Box& area) const
@@ -2034,10 +1983,10 @@ Occurrences Cell::getLeafInstanceOccurrencesUnder(const Box& area) const
     return Cell_LeafInstanceOccurrencesUnder(this, area);
 }
 
-Occurrences Cell::getNonLeafInstanceOccurrences() const
-// ***********************************************
+Occurrences Cell::getNonLeafInstanceOccurrences( const Instance* topInstance ) const
+// *********************************************************************************
 {
-    return Cell_NonLeafInstanceOccurrences(this);
+  return Cell_NonLeafInstanceOccurrences(this,topInstance);
 }
 
 Occurrences Cell::getComponentOccurrences(const Layer::Mask& mask) const
@@ -3203,187 +3152,192 @@ string Cell_OccurrencesUnder::Locator::_getString() const
     return s;
 }
 
-// ****************************************************************************************************
-// Cell_LeafInstanceOccurrences implementation
-// ****************************************************************************************************
 
-Cell_LeafInstanceOccurrences::Cell_LeafInstanceOccurrences(const Cell* cell)
-// *******************************************************************************
-:     Inherit(),
-    _cell(cell)
-{
-}
+// -------------------------------------------------------------------
+// Class  :  "Cell_LeafInstanceOccurrences".
 
-Cell_LeafInstanceOccurrences::Cell_LeafInstanceOccurrences(const Cell_LeafInstanceOccurrences& occurrences)
-// ****************************************************************************************************
-:     Inherit(),
-    _cell(occurrences._cell)
-{
-}
+Cell_LeafInstanceOccurrences::Cell_LeafInstanceOccurrences ( const Cell* cell, const Instance* topInstance )
+  : Inherit()
+  , _cell       (cell)
+  , _topInstance(topInstance)
+{ }
 
-Cell_LeafInstanceOccurrences& Cell_LeafInstanceOccurrences::operator=(const Cell_LeafInstanceOccurrences& occurrences)
-// ****************************************************************************************************
-{
-    _cell = occurrences._cell;
-    return *this;
-}
 
-Collection<Occurrence>* Cell_LeafInstanceOccurrences::getClone() const
-// *********************************************************************
-{
-    return new Cell_LeafInstanceOccurrences(*this);
-}
+Cell_LeafInstanceOccurrences::Cell_LeafInstanceOccurrences ( const Cell_LeafInstanceOccurrences& occurrences )
+  : Inherit()
+  , _cell       (occurrences._cell)
+  , _topInstance(occurrences._topInstance)
+{ }
 
-Locator<Occurrence>* Cell_LeafInstanceOccurrences::getLocator() const
-// ********************************************************************
-{
-    return new Locator(_cell);
-}
 
-string Cell_LeafInstanceOccurrences::_getString() const
-// *******************************************************
+Cell_LeafInstanceOccurrences& Cell_LeafInstanceOccurrences::operator= ( const Cell_LeafInstanceOccurrences& occurrences )
 {
-    string s = "<" + _TName("Cell::LeafInstanceOccurrences");
-    if (_cell) s += " " + getString(_cell);
-    s += ">";
-    return s;
+  _cell        = occurrences._cell;
+  _topInstance = occurrences._topInstance;
+  return *this;
 }
 
 
+Collection<Occurrence>* Cell_LeafInstanceOccurrences::getClone () const
+{ return new Cell_LeafInstanceOccurrences( *this ); }
 
-// ****************************************************************************************************
-// Cell_LeafInstanceOccurrences::Locator implementation
-// ****************************************************************************************************
 
-Cell_LeafInstanceOccurrences::Locator::Locator(const Cell* cell)
-// ****************************************************************
-:    Inherit(),
-    _cell(cell),
-    _state(0),
-    _leafInstanceLocator(),
-    _nonLeafInstanceLocator(),
-    _occurrenceLocator()
+Locator<Occurrence>* Cell_LeafInstanceOccurrences::getLocator () const
+{ return new Locator ( _cell, _topInstance ); }
+
+
+string Cell_LeafInstanceOccurrences::_getString () const
 {
-    if (_cell) {
-        _leafInstanceLocator = _cell->getLeafInstances().getLocator();
-        if (_leafInstanceLocator.isValid())
-            _state = 1;
-        else {
-            _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
-            while (!_state && _nonLeafInstanceLocator.isValid()) {
+  string s = "<" + _TName("Cell::LeafInstanceOccurrences");
+  if (_cell)        s += " " + getString(_cell);
+  if (_topInstance) s += " " + getString(_topInstance);
+  s += ">";
+  return s;
+}
+
+
+// -------------------------------------------------------------------
+// Class  :  "Cell_LeafInstanceOccurrences::Locator".
+
+Cell_LeafInstanceOccurrences::Locator::Locator ( const Cell* cell, const Instance* topInstance )
+  : Inherit()
+  , _cell                  (cell)
+  , _topInstance           (topInstance)
+  , _state                 (0)
+  , _leafInstanceLocator   ()
+  , _nonLeafInstanceLocator()
+  , _occurrenceLocator     ()
+{
+  if (not _cell) return;
+
+  if (not _topInstance) _leafInstanceLocator = _cell->getLeafInstances().getLocator();
+
+  if (_leafInstanceLocator.isValid())
+    _state = 1;
+  else {
+    _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
+
+    while (not _state and _nonLeafInstanceLocator.isValid()) {
+      Instance* nonLeaf = _nonLeafInstanceLocator.getElement();
+
+      if (not _topInstance or (nonLeaf == _topInstance)) {
+        Cell* masterCell = nonLeaf->getMasterCell();
+        _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
+        if (_occurrenceLocator.isValid()) {
+          _state = 2;
+          break;
+        }
+      }
+      _nonLeafInstanceLocator.progress();
+    }
+  }
+}
+
+
+Cell_LeafInstanceOccurrences::Locator::Locator ( const Locator& locator )
+  : Inherit()
+  , _cell                  (locator._cell)
+  , _topInstance           (locator._topInstance)
+  , _state                 (locator._state)
+  , _leafInstanceLocator   (locator._leafInstanceLocator)
+  , _nonLeafInstanceLocator(locator._nonLeafInstanceLocator)
+  , _occurrenceLocator     (locator._occurrenceLocator)
+{ }
+
+
+Cell_LeafInstanceOccurrences::Locator& Cell_LeafInstanceOccurrences::Locator::operator= ( const Locator& locator )
+{
+  _cell                   = locator._cell;
+  _topInstance            = locator._topInstance;
+  _state                  = locator._state;
+  _leafInstanceLocator    = locator._leafInstanceLocator;
+  _nonLeafInstanceLocator = locator._nonLeafInstanceLocator;
+  _occurrenceLocator      = locator._occurrenceLocator;
+  return *this;
+}
+
+
+Occurrence  Cell_LeafInstanceOccurrences::Locator::getElement () const
+{
+  if (_state) {
+    switch (_state) {
+      case 1 : return Occurrence( _leafInstanceLocator.getElement() );
+      case 2 : {
+        Occurrence occurrence = _occurrenceLocator.getElement();
+        Entity*    entity     = occurrence.getEntity();
+        Path       path       = Path( _nonLeafInstanceLocator.getElement(), occurrence.getPath() );
+        return Occurrence( entity, path );
+      }
+    }
+  }
+  return Occurrence();
+}
+
+
+Locator<Occurrence>* Cell_LeafInstanceOccurrences::Locator::getClone () const
+{ return new Locator( *this ); }
+
+
+bool  Cell_LeafInstanceOccurrences::Locator::isValid () const
+{ return (_state != 0); }
+
+
+void  Cell_LeafInstanceOccurrences::Locator::progress ()
+{
+  if (_state) {
+    switch (_state) {
+      case 1 :
+        _leafInstanceLocator.progress();
+        if (!_leafInstanceLocator.isValid()) {
+          _state = 0;
+          _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
+          while (!_state && _nonLeafInstanceLocator.isValid()) {
+            Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
+            _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
+            if (_occurrenceLocator.isValid())
+              _state = 2;
+            else
+              _nonLeafInstanceLocator.progress();
+          }
+        }
+        break;
+      case 2 :
+        _occurrenceLocator.progress();
+        if (not _occurrenceLocator.isValid()) {
+          _state = 0;
+          if (_nonLeafInstanceLocator.isValid()) {
+            _nonLeafInstanceLocator.progress();
+
+            while (not _state and _nonLeafInstanceLocator.isValid()) {
+              Instance* nonLeaf = _nonLeafInstanceLocator.getElement();
+
+              if (not _topInstance or (nonLeaf == _topInstance)) {
                 Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
+
                 _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
-                if (_occurrenceLocator.isValid())
-                    _state = 2;
-                else
-                    _nonLeafInstanceLocator.progress();
-            }
-        }
-    }
-}
-
-Cell_LeafInstanceOccurrences::Locator::Locator(const Locator& locator)
-// **********************************************************************
-:    Inherit(),
-    _cell(locator._cell),
-    _state(locator._state),
-    _leafInstanceLocator(locator._leafInstanceLocator),
-    _nonLeafInstanceLocator(locator._nonLeafInstanceLocator),
-    _occurrenceLocator(locator._occurrenceLocator)
-{
-}
-
-Cell_LeafInstanceOccurrences::Locator& Cell_LeafInstanceOccurrences::Locator::operator=(const Locator& locator)
-// ****************************************************************************************************
-{
-    _cell = locator._cell;
-    _state = locator._state;
-    _leafInstanceLocator = locator._leafInstanceLocator;
-    _nonLeafInstanceLocator = locator._nonLeafInstanceLocator;
-    _occurrenceLocator = locator._occurrenceLocator;
-    return *this;
-}
-
-Occurrence Cell_LeafInstanceOccurrences::Locator::getElement() const
-// *******************************************************************
-{
-    if (_state) {
-        switch (_state) {
-            case 1 : return Occurrence(_leafInstanceLocator.getElement());
-            case 2 : {
-                Occurrence occurrence = _occurrenceLocator.getElement();
-                Entity* entity = occurrence.getEntity();
-                Path path = Path(_nonLeafInstanceLocator.getElement(), occurrence.getPath());
-                return Occurrence(entity, path);
-            }
-        }
-    }
-    return Occurrence();
-}
-
-Locator<Occurrence>* Cell_LeafInstanceOccurrences::Locator::getClone() const
-// ***************************************************************************
-{
-    return new Locator(*this);
-}
-
-bool Cell_LeafInstanceOccurrences::Locator::isValid() const
-// ***********************************************************
-{
-    return (_state != 0);
-}
-
-void Cell_LeafInstanceOccurrences::Locator::progress()
-// ******************************************************
-{
-    if (_state) {
-        switch (_state) {
-            case 1 :
-                _leafInstanceLocator.progress();
-                if (!_leafInstanceLocator.isValid()) {
-                    _state = 0;
-                    _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
-                    while (!_state && _nonLeafInstanceLocator.isValid()) {
-                        Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
-                        _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
-                        if (_occurrenceLocator.isValid())
-                            _state = 2;
-                        else
-                            _nonLeafInstanceLocator.progress();
-                    }
+                if (_occurrenceLocator.isValid()) {
+                  _state = 2;
+                  break;
                 }
-                break;
-            case 2 :
-                _occurrenceLocator.progress();
-                if (!_occurrenceLocator.isValid()) {
-                    _state = 0;
-                    if (_nonLeafInstanceLocator.isValid()) {
-                        _nonLeafInstanceLocator.progress();
-                        while (!_state && _nonLeafInstanceLocator.isValid()) {
-                            Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
-                            _occurrenceLocator =
-                                masterCell->getLeafInstanceOccurrences().getLocator();
-                            if (_occurrenceLocator.isValid())
-                                _state = 2;
-                            else
-                                _nonLeafInstanceLocator.progress();
-                        }
-                    }
-                }
-                break;
+              }
+
+              _nonLeafInstanceLocator.progress();
+            }
+          }
         }
+        break;
     }
+  }
 }
 
-string Cell_LeafInstanceOccurrences::Locator::_getString() const
-// ****************************************************************
+string  Cell_LeafInstanceOccurrences::Locator::_getString () const
 {
     string s = "<" + _TName("Cell::LeafInstanceOccurrences::Locator");
-    if (_cell) s += " " + getString(_cell);
+    if (_cell)        s += " " + getString(_cell);
+    if (_topInstance) s += " " + getString(_topInstance);
     s += ">";
     return s;
 }
-
 
 
 // ****************************************************************************************************
@@ -3611,138 +3565,142 @@ string Cell_LeafInstanceOccurrencesUnder::Locator::_getString() const
 }
 
 
+// -------------------------------------------------------------------
+// class  :  "Cell_NonLeafInstanceOccurrences".
 
 
-// ****************************************************************************************************
-// Cell_NonLeafInstanceOccurrences implementation
-// ****************************************************************************************************
+Cell_NonLeafInstanceOccurrences::Cell_NonLeafInstanceOccurrences ( const Cell* cell, const Instance* topInstance )
+  : Inherit()
+  , _cell       (cell)
+  , _topInstance(topInstance)
+{ }
 
-Cell_NonLeafInstanceOccurrences::Cell_NonLeafInstanceOccurrences(const Cell* cell)
-// *******************************************************************************
-:     Inherit(),
-    _cell(cell)
+
+Cell_NonLeafInstanceOccurrences::Cell_NonLeafInstanceOccurrences ( const Cell_NonLeafInstanceOccurrences& occurrences )
+  : Inherit()
+  , _cell       (occurrences._cell)
+  , _topInstance(occurrences._topInstance)
+{ }
+
+
+Cell_NonLeafInstanceOccurrences& Cell_NonLeafInstanceOccurrences::operator= ( const Cell_NonLeafInstanceOccurrences& occurrences )
 {
-}
-
-Cell_NonLeafInstanceOccurrences::Cell_NonLeafInstanceOccurrences(const Cell_NonLeafInstanceOccurrences& occurrences)
-// ****************************************************************************************************
-:     Inherit(),
-    _cell(occurrences._cell)
-{
-}
-
-Cell_NonLeafInstanceOccurrences& Cell_NonLeafInstanceOccurrences::operator=(const Cell_NonLeafInstanceOccurrences& occurrences)
-// ****************************************************************************************************
-{
-    _cell = occurrences._cell;
-    return *this;
-}
-
-Collection<Occurrence>* Cell_NonLeafInstanceOccurrences::getClone() const
-// *********************************************************************
-{
-    return new Cell_NonLeafInstanceOccurrences(*this);
-}
-
-Locator<Occurrence>* Cell_NonLeafInstanceOccurrences::getLocator() const
-// ********************************************************************
-{
-    return new Locator(_cell);
-}
-
-string Cell_NonLeafInstanceOccurrences::_getString() const
-// *******************************************************
-{
-    string s = "<" + _TName("Cell::NonLeafInstanceOccurrences");
-    if (_cell) s += " " + getString(_cell);
-    s += ">";
-    return s;
+  _cell        = occurrences._cell;
+  _topInstance = occurrences._topInstance;
+  return *this;
 }
 
 
+Collection<Occurrence>* Cell_NonLeafInstanceOccurrences::getClone () const
+{ return new Cell_NonLeafInstanceOccurrences(*this); }
 
-// ****************************************************************************************************
-// Cell_NonLeafInstanceOccurrences::Locator implementation
-// ****************************************************************************************************
 
-Cell_NonLeafInstanceOccurrences::Locator::Locator(const Cell* cell)
-// ****************************************************************
+Locator<Occurrence>* Cell_NonLeafInstanceOccurrences::getLocator () const
+{ return new Locator ( _cell, _topInstance ); }
+
+
+string  Cell_NonLeafInstanceOccurrences::_getString () const
+{
+  string s = "<" + _TName("Cell::NonLeafInstanceOccurrences");
+  if (_cell)        s += " " + getString(_cell);
+  if (_topInstance) s += " " + getString(_topInstance);
+  s += ">";
+  return s;
+}
+
+
+// -------------------------------------------------------------------
+// class  :  "Cell_NonLeafInstanceOccurrences::Locator".
+
+Cell_NonLeafInstanceOccurrences::Locator::Locator ( const Cell* cell, const Instance* topInstance )
   : Inherit                ()
   , _cell                  (cell)
+  , _topInstance           (topInstance)
   , _state                 (0)
   , _nonLeafInstanceLocator()
   , _occurrenceLocator     ()
 {
-  if ( _cell ) {
+  if (_cell) {
     _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
-    if ( _nonLeafInstanceLocator.isValid() ) {
-      _state = 1;
-    }
+    _nonLeafProgress( true );
+    if (_nonLeafInstanceLocator.isValid()) _state = 1;
   }
 }
 
-Cell_NonLeafInstanceOccurrences::Locator::Locator(const Locator& locator)
-// **********************************************************************
+
+Cell_NonLeafInstanceOccurrences::Locator::Locator ( const Locator& locator )
   : Inherit                ()
   , _cell                  (locator._cell)
+  , _topInstance           (locator._topInstance)
   , _state                 (locator._state)
   , _nonLeafInstanceLocator(locator._nonLeafInstanceLocator)
   , _occurrenceLocator     (locator._occurrenceLocator)
 { }
 
-Cell_NonLeafInstanceOccurrences::Locator& Cell_NonLeafInstanceOccurrences::Locator::operator=(const Locator& locator)
-// ********************************************************************************************************************
+
+Cell_NonLeafInstanceOccurrences::Locator& Cell_NonLeafInstanceOccurrences::Locator::operator= ( const Locator& locator )
 {
   _cell                   = locator._cell;
+  _topInstance            = locator._topInstance;
   _state                  = locator._state;
   _nonLeafInstanceLocator = locator._nonLeafInstanceLocator;
   _occurrenceLocator      = locator._occurrenceLocator;
   return *this;
 }
 
-Occurrence Cell_NonLeafInstanceOccurrences::Locator::getElement() const
-// *********************************************************************
+inline void  Cell_NonLeafInstanceOccurrences::Locator::_nonLeafProgress ( bool inCTOR )
 {
-  if ( _state ) {
+  if (not _nonLeafInstanceLocator.isValid()) return;
+
+  if (not inCTOR) _nonLeafInstanceLocator.progress();
+  if (not _topInstance) return;
+
+  while ( _nonLeafInstanceLocator.isValid() ) {
+    Instance* nonLeaf = _nonLeafInstanceLocator.getElement();
+    if (nonLeaf == _topInstance) break; 
+
+    _nonLeafInstanceLocator.progress();
+  }
+}
+
+
+Occurrence  Cell_NonLeafInstanceOccurrences::Locator::getElement () const
+{
+  if (_state) {
     switch ( _state ) {
       case 1 : return Occurrence(_nonLeafInstanceLocator.getElement());
-      case 2 :
-        {
+      case 2 : {
         Occurrence occurrence = _occurrenceLocator.getElement();
         Entity*    entity     = occurrence.getEntity();
         Path       path       = Path(_nonLeafInstanceLocator.getElement(), occurrence.getPath());
         return Occurrence(entity, path);
-        }
+      }
     }
   }
   return Occurrence();
 }
 
-Locator<Occurrence>* Cell_NonLeafInstanceOccurrences::Locator::getClone() const
-// *****************************************************************************
-{
-  return new Locator(*this);
-}
 
-bool Cell_NonLeafInstanceOccurrences::Locator::isValid() const
-// ************************************************************
-{
-  return ( _state != 0 );
-}
+Locator<Occurrence>* Cell_NonLeafInstanceOccurrences::Locator::getClone () const
+{ return new Locator( *this ); }
 
-void Cell_NonLeafInstanceOccurrences::Locator::progress()
-// *******************************************************
+
+bool  Cell_NonLeafInstanceOccurrences::Locator::isValid () const
+{ return (_state != 0); }
+
+
+void  Cell_NonLeafInstanceOccurrences::Locator::progress ()
 {
   if ( _state ) {
     switch ( _state ) {
-      case 1:
-        {
-        _nonLeafInstanceLocator.progress();
-        if ( _nonLeafInstanceLocator.isValid() ) break;
+      case 1: {
+        _nonLeafProgress( false );
+        if (_nonLeafInstanceLocator.isValid()) break;
 
         _state = 2;
         _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
-        if ( not _nonLeafInstanceLocator.isValid() ) {
+        _nonLeafProgress( true );
+        if (not _nonLeafInstanceLocator.isValid()) {
           _state = 0;
           break;
         }
@@ -3750,14 +3708,14 @@ void Cell_NonLeafInstanceOccurrences::Locator::progress()
         Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
         _occurrenceLocator = masterCell->getNonLeafInstanceOccurrences().getLocator();
 
-        if ( _occurrenceLocator.isValid() ) break;
-        }
+        if (_occurrenceLocator.isValid()) break;
+      }
       case 2:
-        _occurrenceLocator.progress ();
+        _occurrenceLocator.progress();
 
-        while ( (_state != 0) and not _occurrenceLocator.isValid() ) {
-          _nonLeafInstanceLocator.progress();
-          if ( not _nonLeafInstanceLocator.isValid() ) {
+        while ( _state and not _occurrenceLocator.isValid() ) {
+          _nonLeafProgress( false );
+          if (not _nonLeafInstanceLocator.isValid()) {
             _state = 0;
             break;
           }
@@ -3769,15 +3727,15 @@ void Cell_NonLeafInstanceOccurrences::Locator::progress()
   }
 }
 
-string Cell_NonLeafInstanceOccurrences::Locator::_getString() const
-// ****************************************************************
-{
-    string s = "<" + _TName("Cell::NonLeafInstanceOccurrences::Locator");
-    if (_cell) s += " " + getString(_cell);
-    s += ">";
-    return s;
-}
 
+string  Cell_NonLeafInstanceOccurrences::Locator::_getString () const
+{
+  string s = "<" + _TName("Cell::NonLeafInstanceOccurrences::Locator");
+  if (_cell)        s += " " + getString(_cell);
+  if (_topInstance) s += " " + getString(_topInstance);
+  s += ">";
+  return s;
+}
 
 
 // ****************************************************************************************************

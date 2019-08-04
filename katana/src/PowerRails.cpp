@@ -824,7 +824,7 @@ namespace {
 
       _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
 
-      if (lg->getType() == Constant::PinOnly) continue;
+    //if (lg->getType() == Constant::PinOnly) continue;
       const BasicLayer* blockageLayer = regular->getBasicLayer()->getBlockageLayer();
       if (not blockageLayer) continue;
 
@@ -1182,7 +1182,7 @@ namespace Katana {
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
-    for( BasicLayer* layer : technology->getBasicLayers() ) {
+    for ( BasicLayer* layer : technology->getBasicLayers() ) {
       if (   (layer->getMaterial() != BasicLayer::Material::metal)
          and (layer->getMaterial() != BasicLayer::Material::blockage) )
         continue;

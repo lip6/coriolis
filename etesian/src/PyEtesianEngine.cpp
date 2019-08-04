@@ -15,6 +15,7 @@
 
 
 #include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyInstance.h"
 #include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/Cell.h"
 #include "hurricane/viewer/ExceptionWidget.h"
@@ -48,6 +49,8 @@ namespace  Etesian {
   using Isobar::ParseTwoArg;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
+  using Isobar::PyInstance;
+  using Isobar::PyInstance_Link;
   using Isobar::PyCellViewer;
   using Isobar::PyTypeCellViewer;
   using CRL::PyToolEngine;
@@ -149,6 +152,22 @@ extern "C" {
   }
 
 
+  static PyObject* PyEtesianEngine_setBlock ( PyEtesianEngine *self, PyObject* args )
+  {
+    cdebug_log(34,0) << "PyEtesianEngine_setBlock()" << endl;
+    HTRY
+      METHOD_HEAD ( "EtesianEngine.setBlock()" )
+
+      PyInstance* pyInstance = NULL;
+      if (not ParseOneArg("EtesianEngine.setBlock",args,INST_ARG,(PyObject**)&pyInstance) )
+        return NULL;
+
+      etesian->setBlock( PYINSTANCE_O(pyInstance) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyEtesianEngine_place ( PyEtesianEngine* self )
   {
     cdebug_log(34,0) << "PyEtesianEngine_place()" << endl;
@@ -183,6 +202,8 @@ extern "C" {
                             , "Associate a Viewer to this EtesianEngine." }
     , { "selectBloat"       , (PyCFunction)PyEtesianEngine_selectBloat       , METH_VARARGS
                             , "Select the Cell bloating profile." }
+    , { "setBlock"          , (PyCFunction)PyEtesianEngine_setBlock          , METH_VARARGS
+                            , "Set the sub-block (Instance) to place." }
     , { "setDefaultAb"      , (PyCFunction)PyEtesianEngine_setDefaultAb      , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS

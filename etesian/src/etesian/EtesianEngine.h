@@ -77,19 +77,18 @@ namespace Etesian {
       inline  const FeedCells&       getFeedCells       () const;
       inline  Hurricane::CellViewer* getViewer          () const;
       inline  void                   setViewer          ( Hurricane::CellViewer* );
-                                     
+      inline  Cell*                  getBlockCell       () const;
+      inline  Instance*              getBlockInstance   () const;
+      inline  void                   setBlock           ( Instance* );
               void                   setDefaultAb       ();
               void                   resetPlacement     ();
               void                   toColoquinte       ();
-                                                        
               void                   preplace           ();
               void                   roughLegalize      ( float minDisruption, unsigned options );
               void                   globalPlace        ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
               void                   detailedPlace      ( int iterations, int effort, unsigned options=0 );
               void                   feedRoutingBack    ();
-                                                        
               void                   place              ();
-                                                        
       inline  void                   useFeed            ( Cell* );
               size_t                 findYSpin          ();
               void                   addFeeds           ();
@@ -102,6 +101,7 @@ namespace Etesian {
       static Name                                     _toolName;
     protected:
              Configuration*                           _configuration;
+             Instance*                                _block;
              bool                                     _placed;
              bool                                     _ySpinSet;
              bool                                     _flatDesign;
@@ -151,6 +151,9 @@ namespace Etesian {
   inline  const FeedCells&       EtesianEngine::getFeedCells       () const { return _feedCells; }
   inline  void                   EtesianEngine::selectBloat        ( std::string profile ) { _bloatCells.select(profile); }
 
+  inline  Cell*                  EtesianEngine::getBlockCell       () const { return (_block) ? _block->getMasterCell() : getCell(); }
+  inline  Instance*              EtesianEngine::getBlockInstance   () const { return  _block; }
+  inline  void                   EtesianEngine::setBlock           ( Instance* block ) { _block = block; }
 
 // Variables.
   extern const char* missingEtesian;

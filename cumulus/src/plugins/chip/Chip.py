@@ -152,7 +152,8 @@ class PlaceRoute ( object ):
       ht = clocktree.ClockTree.HTree.create( self.conf, coreCell, coreCk, coreCell.getAbutmentBox() )
       ht.addCloned( self.conf.cell )
       ht.addCloned( self.conf.corona )
-      etesian = Etesian.EtesianEngine.create( coreCell )
+      etesian = Etesian.EtesianEngine.create( self.conf.corona )
+      etesian.setBlock(  self.conf.icore )
       etesian.setViewer( self.conf.viewer )
       etesian.place()
       etesian.destroy()
@@ -161,7 +162,8 @@ class PlaceRoute ( object ):
       ht.route()
       ht.save( self.conf.cell )
     else:
-      etesian = Etesian.EtesianEngine.create( coreCell )
+      etesian = Etesian.EtesianEngine.create( self.conf.corona )
+      etesian.setBlock( self.conf.icore )
       etesian.place()
       etesian.destroy()
     return
