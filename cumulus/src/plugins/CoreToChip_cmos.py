@@ -51,7 +51,7 @@ def ScriptMain ( **kw ):
       raise ErrorMessage( 1, 'CoreToChip_cmos.ScriptMain(): No cell (core) loaded in the editor yet.' )
 
     chip_cmos = core2chip.cmos.cmos( cell )
-    chip_cmos.buildChip( 'chip' )
+    chip_cmos.buildChip()
     
     if editor: editor.setCell( chip_cmos.chip )
 

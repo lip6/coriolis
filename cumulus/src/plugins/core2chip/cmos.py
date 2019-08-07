@@ -26,6 +26,7 @@ import Viewer
 from   CRL                  import Catalog
 from   CRL                  import AllianceFramework
 from   helpers.io           import ErrorMessage
+from   core2chip.CoreToChip import IoPad
 from   core2chip.CoreToChip import CoreToChip
 
 
@@ -34,8 +35,10 @@ class cmos ( CoreToChip ):
     def __init__ ( self, core ):
         CoreToChip.__init__ ( self, core )
         self.ringNetNames = [ 'vsse', 'vssi', 'vdde', 'vddi', ('cki', 'ck') ]
-        self.ioPads       = { Net.Direction.IN  : CoreToChip.IoPadInfo( 'pi_px', 'pad', ['t',] )
-                            , Net.Direction.OUT : CoreToChip.IoPadInfo( 'po_px', 'pad', ['i',] )
+        self.ioPadInfos   = { IoPad.IN      : CoreToChip.IoPadInfo( 'pi_px'  , 'pad', ['t',] )
+                            , IoPad.OUT     : CoreToChip.IoPadInfo( 'po_px'  , 'pad', ['i',] )
+                            , IoPad.TRI_OUT : CoreToChip.IoPadInfo( 'pot_px' , 'pad', ['i', 'b' ] )
+                            , IoPad.BIDIR   : CoreToChip.IoPadInfo( 'piot_px', 'pad', ['i', 't', 'b' ] )
                             }
         self._getPadLib()
         return
@@ -68,6 +71,7 @@ class cmos ( CoreToChip ):
         return cell
 
     def _buildGroundPads ( self, ioNet ):
+        ioNet.buildNets()
         vssi = self.chip.getNet( 'vssi' )
         vssi.setExternal( True )
         vssi.setGlobal  ( True )
@@ -82,22 +86,24 @@ class cmos ( CoreToChip ):
         vsse.merge( ioNet.chipExtNet )
         ioNet.chipExtNet = vsse
 
-        ioNet.pads.append( Instance.create( self.chip
-                                          , ioNet.padInstanceName + '_i_%d' % self.groundPadCount
-                                          , self.getCell('pvssick_px') ) )
-        ioNet.pads.append( Instance.create( self.chip
-                                          , ioNet.padInstanceName + '_o_%d' % self.groundPadCount
-                                          , self.getCell('pvsseck_px') ) )
+        pads = []
+        pads.append( Instance.create( self.chip
+                                    , 'p_' + ioNet.padInstanceName + 'ick_%d' % self.groundPadCount
+                                    , self.getCell('pvssick_px') ) )
+        pads.append( Instance.create( self.chip
+                                    , 'p_' + ioNet.padInstanceName + 'eck_%d' % self.groundPadCount
+                                    , self.getCell('pvsseck_px') ) )
 
-        CoreToChip._connect( ioNet.pads[0], ioNet.chipIntNet, 'vssi' )
-        CoreToChip._connect( ioNet.pads[1], ioNet.chipExtNet, 'vsse' )
+        CoreToChip._connect( pads[0], ioNet.chipIntNet, 'vssi' )
+        CoreToChip._connect( pads[1], ioNet.chipExtNet, 'vsse' )
 
-        for pad in ioNet.pads: self._connectRing( pad )
+        for pad in pads: self._connectRing( pad )
         self.groundPadCount += 1
-        self.chipPads       += ioNet.pads
+        self.chipPads       += pads
         return
 
     def _buildPowerPads ( self, ioNet ):
+        ioNet.buildNets()
         vddi = self.chip.getNet( 'vddi' )
         vddi.setExternal( True )
         vddi.setGlobal  ( True )
@@ -112,31 +118,34 @@ class cmos ( CoreToChip ):
         vdde.merge( ioNet.chipExtNet )
         ioNet.chipExtNet = vdde
 
-        ioNet.pads.append( Instance.create( self.chip
-                                          , ioNet.padInstanceName + '_i_%d' % self.powerPadCount
-                                          , self.getCell('pvddick_px') ) )
-        ioNet.pads.append( Instance.create( self.chip
-                                          , ioNet.padInstanceName + '_o_%d' % self.powerPadCount
-                                          , self.getCell('pvddeck_px') ) )
+        pads = [ ]
+        pads.append( Instance.create( self.chip
+                                    , 'p_' + ioNet.padInstanceName + 'ick_%d' % self.powerPadCount
+                                    , self.getCell('pvddick_px') ) )
+        pads.append( Instance.create( self.chip
+                                    , 'p_' + ioNet.padInstanceName + 'eck_%d' % self.powerPadCount
+                                    , self.getCell('pvddeck_px') ) )
 
-        CoreToChip._connect( ioNet.pads[0], ioNet.chipIntNet, 'vddi' )
-        CoreToChip._connect( ioNet.pads[1], ioNet.chipExtNet, 'vdde' )
+        CoreToChip._connect( pads[0], ioNet.chipIntNet, 'vddi' )
+        CoreToChip._connect( pads[1], ioNet.chipExtNet, 'vdde' )
 
-        for pad in ioNet.pads: self._connectRing( pad )
+        for pad in pads: self._connectRing( pad )
         self.powerPadCount += 1
-        self.chipPads      += ioNet.pads
+        self.chipPads      += pads
         return
 
     def _buildClockPads ( self, ioNet ):
-        ioNet.pads.append( Instance.create( self.chip
-                                          , ioNet.padInstanceName + '_%d' % self.clockPadCount
-                                          , self.getCell('pck_px') ) )
+        ioNet.buildNets()
+        pads = [ ]
+        pads.append( Instance.create( self.chip
+                                    , 'p_' + ioNet.padInstanceName + '_%d' % self.clockPadCount
+                                    , self.getCell('pck_px') ) )
 
-        CoreToChip._connect( ioNet.pads[0], ioNet.chipExtNet, 'pad' )
+        CoreToChip._connect( pads[0], ioNet.chipExtNet, 'pad' )
 
-        for pad in ioNet.pads: self._connectRing( pad )
+        for pad in pads: self._connectRing( pad )
         self.clockPadCount += 1
-        self.chipPads      += ioNet.pads
+        self.chipPads      += pads
 
         p = re.compile( r'pv[ds]{2}[ei]ck_px' )
         for pad in self.chipPads: 

@@ -67,6 +67,7 @@ def ScriptMain ( **kw ):
     cell, editor = plugins.kwParseMain( **kw )
 
     conf = chip.Configuration.loadConfiguration( cell, editor )
+    conf.chipValidate()
     if not conf.validated: return False
 
     placeChip = chip.Chip.PlaceRoute( conf )

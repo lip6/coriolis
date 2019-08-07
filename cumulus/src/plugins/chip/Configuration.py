@@ -109,6 +109,82 @@ def destroyNetComponents ( net ):
 
 
 # -------------------------------------------------------------------
+# Class  :  "IoPadConf".
+
+class IoPadConf ( object ):
+  # self._datas is a table of 6 elements, the five first coming from
+  # the configuration itself. Direction are taken from the core point
+  # of view.
+  #
+  # Meaning of the table element's:
+  #
+  #  +---------+-----------------------------------------------------------+
+  #  |  Index  |  Type                                                     |
+  #  +=========+===========================================================+
+  #  |    0    |  Pad instance name                                        |
+  #  +---------+-----------------------------------------------------------+
+  #  |    1    |  Pad connected signal name.                               |
+  #  |         |  The name of the external signal at chip level            |
+  #  +---------+-----------------------------------------------------------+
+  #  |    2    |  The name of the signal going *from* the pad to the core. |
+  #  |         |  OUT direction in the core                                |
+  #  +---------+-----------------------------------------------------------+
+  #  |    3    |  The name of the signal going *to* the pad from the core. |
+  #  |         |  IN direction in core                                     |
+  #  +---------+-----------------------------------------------------------+
+  #  |    4    |  The enable signal, coming from the core                  |
+  #  +---------+-----------------------------------------------------------+
+  #  |    5    |  The IoPad associated object. It is set to None initially |
+  #  +---------+-----------------------------------------------------------+
+
+  def __init__ ( self, datas ):
+      if not isinstance(datas,list):
+        raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" parameter is not a list.'
+                               , str(datas) ] )
+      if len(datas) < 3 and len(datas) > 5:
+        raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" list must have between 3 to 5 elements.'
+                               , str(datas) ] )
+
+      self._datas = datas
+      self._datas.append( None )
+      return
+
+  @property
+  def padInstanceName ( self ): return self._datas[0]
+
+  @property
+  def padNetName ( self ): return self._datas[1]
+
+  @property
+  def fromCoreNet ( self ): return self._datas[2]
+
+  @property
+  def toCoreNet ( self ): return self._datas[3]
+
+  @property
+  def enableNet ( self ): return self._datas[-2]
+
+  @property
+  def nets ( self ): return self._datas[2:-1]
+
+  @property
+  def udata ( self ): return self._datas[-1]
+
+  @udata.setter
+  def udata ( self, data ): self._datas[-1] = data
+
+  def isTristate ( self ): return len(self._datas) == 5
+  def isBidir    ( self ): return len(self._datas) == 6
+
+  def __repr__ ( self ):
+      s = '<IoPadConf %s pad:%s from:%s' % (self.padInstanceName,self.padNetName,self.fromCoreNet)
+      if self.isBidir():
+        s += ' to:%s en:%s' % (self.toCoreNet,self.enableNet)
+      s += '>'
+      return s
+
+
+# -------------------------------------------------------------------
 # Class  :  "Configuration.GaugeConf".
 
 class GaugeConf ( object ):
@@ -448,9 +524,15 @@ class ChipConf ( object ):
       return useClockTree
 
 
+    @staticmethod
+    def _readChipName( chipConfigDict ):
+      if chipConfigDict.has_key('chip.name'): return chipConfigDict['chip.name']
+      return 'chip'
+
+
     def _loadIoPadGauge ( self, chipConfigDict ):
       if not chipConfigDict.has_key('pads.ioPadGauge'):
-        raise ErrorMessage( 1, 'The IO pad gauge configuration paramater "pads.ioPadGauge" is missing.' )
+       #raise ErrorMessage( 1, 'The IO pad gauge configuration parameter "pads.ioPadGauge" is missing.' )
         return
       self.gaugeConf._loadIoPadGauge( chipConfigDict['pads.ioPadGauge'] )
       return
@@ -481,20 +563,23 @@ class ChipConf ( object ):
                                  % (i,keyword) )
           continue
 
-        instance = self.cell.getInstance( instanceName )
-        if not instance:
-          raise ErrorMessage( 1, 'The pad [%d] (%s) of list %s do not exists in netlist (skipped).'
-                                 % (i,instanceName,keyword) )
-          continue
-
-        if (instance.getMasterCell().getAbutmentBox().getHeight() != self.gaugeConf.getIoPadHeight()):
-          raise ErrorMessage( 1, 'The pad [%d] (%s) of list %s is not an instance of a pad cell (skipped).'
-                                 % (i,instanceName,keyword) )
-          continue
-
-        padList.append( [ position, instance ] )
+        padList.append( [ position, instanceName ] )
       
       return padList
+
+
+    def _readPadInstances ( self, chipConfigDict ):
+      if not chipConfigDict.has_key('pads.instances'): return [ ]
+
+      padInstancesConf = chipConfigDict['pads.instances']
+      if not isinstance(padInstancesConf,list):
+          raise ErrorMessage( 1, 'The "%s" entry is not a list.' )
+          return [ ]
+
+      padInstances = [ ]
+      for entry in padInstancesConf:
+        padInstances.append( IoPadConf( entry ) )
+      return padInstances
 
 
     def __init__ ( self, chipConfigDict, cell, viewer=None ):
@@ -502,9 +587,6 @@ class ChipConf ( object ):
 
       if not isinstance(chipConfigDict,dict):
         raise ErrorMessage( 1, 'The "chip" variable is not a dictionnary.' )
-      
-      self.chipMode = True
-      if len(chipConfigDict.keys()) == 0: self.chipMode = False
 
       self.validated        = True
       self.gaugeConf        = GaugeConf()
@@ -523,32 +605,36 @@ class ChipConf ( object ):
       self.coronaVss        = None
       self.coronaCk         = None
       self.blockageNet      = None
-                          
-      if self.chipMode:
-        self._loadIoPadGauge( chipConfigDict )
-
       self.coronas          = []
       self.cores            = []
-      if self.chipMode:
-        self.padsHavePosition = False
-        self.southPads        = self._readPads( chipConfigDict, 'pads.south' )
-        self.northPads        = self._readPads( chipConfigDict, 'pads.north' )
-        self.eastPads         = self._readPads( chipConfigDict, 'pads.east'  )
-        self.westPads         = self._readPads( chipConfigDict, 'pads.west'  )
-        self.coreSize         = ChipConf._readCoreSize( chipConfigDict )
-        self.chipSize         = ChipConf._readChipSize( chipConfigDict )
-        self.useClockTree     = ChipConf._readClockTree( chipConfigDict )
+                          
+      self._loadIoPadGauge( chipConfigDict )
 
-        minHCorona = self.railsNb*(self.hRailWidth + self.hRailSpace) + self.hRailSpace
-        minVCorona = self.railsNb*(self.vRailWidth + self.vRailSpace) + self.vRailSpace
-        if minHCorona > minVCorona: self.minCorona = minHCorona*2
-        else:                       self.minCorona = minVCorona*2
-        
-        self.checkPads()
-        self.checkCorona()
-        self.computeChipSize()
-       #self.checkChipSize()
-        self.findPowerAndClockNets()
+      self.padsHavePosition = False
+      self.padInstances     = self._readPadInstances( chipConfigDict )
+      self.southPads        = self._readPads( chipConfigDict, 'pads.south' )
+      self.northPads        = self._readPads( chipConfigDict, 'pads.north' )
+      self.eastPads         = self._readPads( chipConfigDict, 'pads.east'  )
+      self.westPads         = self._readPads( chipConfigDict, 'pads.west'  )
+      self.coreSize         = ChipConf._readCoreSize ( chipConfigDict )
+      self.chipSize         = ChipConf._readChipSize ( chipConfigDict )
+      self.useClockTree     = ChipConf._readClockTree( chipConfigDict )
+      self.chipName         = ChipConf._readChipName ( chipConfigDict )
+
+      minHCorona = self.railsNb*(self.hRailWidth + self.hRailSpace) + self.hRailSpace
+      minVCorona = self.railsNb*(self.vRailWidth + self.vRailSpace) + self.vRailSpace
+      if minHCorona > minVCorona: self.minCorona = minHCorona*2
+      else:                       self.minCorona = minVCorona*2
+
+      return
+
+
+    def chipValidate ( self ):
+      self.checkPads()
+      self.checkCorona()
+      self.computeChipSize()
+     #self.checkChipSize()
+      self.findPowerAndClockNets()
       return
 
 
@@ -857,23 +943,41 @@ class ChipConf ( object ):
 
     def checkPads ( self ):
 
-      def contains ( padList, pad ):
-        for padPair in padList:
-          if padPair[1] == pad: return True
+      def contains ( padList, side, padInstance ):
+        for i in range(len(padList)):
+          if padList[i][1] == padInstance.getName():
+            if (padInstance.getMasterCell().getAbutmentBox().getHeight() != self.gaugeConf.getIoPadHeight()):
+              raise ErrorMessage( 1, 'The pad [%d] %s (%s) on %s side is not an instance of a pad cell.'
+                                     % (i,padInstance.getName(),padInstance.getModel().getName(),side) )
+            padList[i][1] = padInstance
+            return True
         return False
+
+      def checkNotFounds ( padList, side ):
+        for i in range(len(padList)):
+          if not isinstance(padList[i][1],Instance):
+            print ErrorMessage( 1, 'The pad [%d] (%s) of list %s do not exists in netlist (skipped).'
+                                   % (i,padList[i][1],side) )
+        return
+    
         
       af       = CRL.AllianceFramework.get()
       cellPads = []
       for instance in self.cell.getInstances():
-        if contains(self.southPads,instance): continue
-        if contains(self.northPads,instance): continue
-        if contains(self.eastPads ,instance): continue
-        if contains(self.westPads ,instance): continue
+        if contains(self.southPads,'south',instance): continue
+        if contains(self.northPads,'north',instance): continue
+        if contains(self.eastPads ,'east' ,instance): continue
+        if contains(self.westPads ,'west' ,instance): continue
         if (instance.getMasterCell().getAbutmentBox().getHeight() == self.gaugeConf.getIoPadHeight()):
           raise ErrorMessage( 1, 'Pad "%s" is not on any side (N/S/E/W).' % instance.getName() )
           self.validated = False
         else:
           self.coronas.append( instance )
+
+      checkNotFounds( self.southPads, 'south' )    
+      checkNotFounds( self.northPads, 'north' )    
+      checkNotFounds( self.eastPads , 'east'  )    
+      checkNotFounds( self.westPads , 'west'  )    
 
       if len(self.coronas) > 1:
         message = [ 'Chip "%s" have more than one corona:' % self.cell.getName() ]
@@ -1117,7 +1221,8 @@ class ChipConf ( object ):
 def loadConfiguration ( cell, viewer=None ):
     sys.path.append( os.getcwd() )
 
-    confFile = cell.getName()+'_ioring'
+   #confFile = cell.getName()+'_ioring'
+    confFile = 'ioring'
     if not os.path.isfile(confFile+'.py'):
       raise ErrorMessage( 1, 'ChipPlugin configuration file <%s.py> is missing.' % confFile )
     

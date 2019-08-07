@@ -22,6 +22,7 @@ from   CRL        import Catalog
 from   CRL        import AllianceFramework
 from   helpers    import netDirectionToStr
 from   helpers.io import ErrorMessage
+import chip.Chip
 
 
 # -------------------------------------------------------------------
@@ -30,30 +31,45 @@ from   helpers.io import ErrorMessage
 
 class IoNet ( object ):
 
+  IsElem       = 0x0001
+  IsEnable     = 0x0002
+  IsBidir      = 0x0004
   reVHDLVector = re.compile( r'(?P<name>[^(]*)\((?P<index>[\d]+)\)$' )
 
   def __init__ ( self, coreToChip, coreNet ):
-      self.coreToChip  = coreToChip
-      self.coreNet    = coreNet
-      self.coronaNet  = None  # Corona net going from core to corona.
-      self.chipIntNet = None  # Chip net going from corona to I/O pad.
-      self.chipExtNet = None  # Chip net going from I/O pad to the outside world.
-      self.pads       = [ ]
+      self.coreToChip      = coreToChip
+      self._flags          = 0
+      self._chipExtNetName = None    # In the case of bidir pad, force external net name.
+      self.coreNet         = coreNet
+      self.coronaNet       = None    # Corona net going from core to corona.
+      self.chipIntNet      = None    # Chip net going from corona to I/O pad.
+      self.chipExtNet      = None    # Chip net going from I/O pad to the outside world.
     
       m = IoNet.reVHDLVector.match( self.coreNet.getName() )
       if m:
-        self._isElem = True
+        self._flags |= IoNet.IsElem
         self._name   = m.group('name')
         self._index  = m.group('index')
       else:
-        self._isElem = False
         self._name   = self.coreNet.getName()
         self._index  = 0
 
       self._type = self.coreToChip.getNetType( self._name )
       return
 
-  def isElem ( self ): return self._isElem
+  def __repr__ ( self ):
+      s = '<IoNet "%s" ext:' % self.coreNet.getName()
+      if self.chipExtNet: s += self.chipExtNet.getName()
+      else:               s += 'None'
+      s += ' int:'
+      if self.chipIntNet: s += self.chipIntNet.getName()
+      else:               s += 'None'
+      s += '>'
+      return s
+
+  def isElem   ( self ): return self._flags & IoNet.IsElem
+  def isEnable ( self ): return self._flags & IoNet.IsEnable
+  def isBidir  ( self ): return self._flags & IoNet.IsBidir
 
   def isGlobal ( self ): return self.isGlobal( self._name )
 
@@ -69,25 +85,46 @@ class IoNet ( object ):
   @property
   def coronaNetName ( self ):
     s = self._name + '_core'
-    if self._isElem: s  += '(' + self._index + ')'
+    if self._flags & IoNet.IsElem: s  += '(' + self._index + ')'
     return s
 
   @property
   def padNetName ( self ):
+    if self._chipExtNetName is not None: return self._chipExtNetName
+
     s = self._name
-    if self._isElem: s  += '(' + self._index + ')'
+    if self._flags & IoNet.IsElem: s  += '(' + self._index + ')'
     return s
+
+  @padNetName.setter
+  def padNetName ( self, name ): self._chipExtNetName = name
 
   @property
   def padInstanceName ( self ):
     s = self._name
-    if self._isElem: s  += '_' + self._index
+    if self._flags & IoNet.IsElem: s  += '_' + self._index
     return s
 
+  def setChipExtNetName ( self, name ): self.chipExtNetName = name
+
+  def setEnable ( self, state ):
+    if state == True: self._flags |=  IoNet.IsEnable
+    else:             self._flags &= ~IoNet.IsEnable
+    return
+
+  def setBidir ( self, state ):
+    if state == True: self._flags |=  IoNet.IsBidir
+    else:             self._flags &= ~IoNet.IsBidir
+    return
+
   def buildNets ( self ):
-    self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
-    self.chipExtNet.setExternal ( True )
-    self.chipExtNet.setDirection( self.coreNet.getDirection() )
+    if self.chipIntNet != None: return
+
+    if     not self.isBidir () \
+       or (not self.isEnable() and self.coreNet.getDirection() == Net.Direction.OUT):
+      self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
+      self.chipExtNet.setExternal ( True )
+      self.chipExtNet.setDirection( self.coreNet.getDirection() )
 
     self.chipIntNet = Net.create( self.coreToChip.chip, self.coronaNetName )
 
@@ -108,6 +145,110 @@ class IoNet ( object ):
       self.coronaNet.setType  ( netType )
       self.coronaNet.setGlobal( True )
     return
+
+
+# -------------------------------------------------------------------
+# Class : "IoPad".
+
+
+class IoPad ( object ):
+
+  IN          = 0x0001
+  OUT         = 0x0002
+  BIDIR       = 0x0004
+  TRI_OUT     = 0x0008
+  UNSUPPORTED = 0x0010
+
+
+  @staticmethod
+  def directionToStr ( direction ):
+      if direction == IoPad.IN:          return "IN"
+      if direction == IoPad.OUT:         return "OUT"
+      if direction == IoPad.BIDIR:       return "BIDIR"
+      if direction == IoPad.TRI_OUT:     return "TRI_OUT"
+      if direction == IoPad.UNSUPPORTED: return "UNSUPPORTED"
+      return "Invalid value"
+
+
+  def __init__ ( self, coreToChip, padInstanceName ):
+      self.coreToChip      = coreToChip
+      self.padInstanceName = padInstanceName
+      self.direction       = 0
+      self.nets            = [ ]
+      self.pads            = [ ]
+      return
+
+
+  def __str__ ( self ):
+      s = '<IoPad "%s" ' % self.padInstanceName
+      for ioNet in self.nets:
+        s += ' %s' % ioNet.coreNetName
+      s += '>'
+      return s
+
+
+  def addNet ( self, ioNet ):
+      self.nets.append( ioNet )
+      if len(self.nets) == 1:
+        if   self.nets[0].coreNet.getDirection() == Net.Direction.IN:  self.direction = IoPad.IN
+        elif self.nets[0].coreNet.getDirection() == Net.Direction.OUT: self.direction = IoPad.OUT
+        else:
+          raise ErrorMessage( 1, 'IoPad.addNet(): Unsupported direction %d (%s) for core net "%s" in I/O pad \"%s\".' \
+                                 % ( self.nets[0].coreNet.getDirection()
+                                   , netDirectionToStr(self.nets[0].coreNet.getDirection())
+                                   , self.nets[0].coreNet.getName()
+                                   , self.padInstanceName ) )
+      elif len(self.nets) == 2:
+        self.direction = IoPad.TRI_OUT
+      elif len(self.nets) == 3:
+        self.direction = IoPad.BIDIR
+      else:
+        message = [ 'IoPad.addNet(): More than three core nets on I/O pad "%s".'  % self.padInstanceName ]
+        for ioNet in self.nets:
+          message += [ "%s" % ioNet.coreNet ]
+        raise ErrorMessage( 1, message )
+                               
+      return
+
+
+  def createPad ( self ):
+      fromCoreNet = None
+      toCoreNet   = None
+      enableNet   = None
+
+      for ioNet in self.nets:
+        ioNet.buildNets()
+        if self.direction == IoPad.TRI_OUT:
+          if ioNet.isEnable(): enableNet   = ioNet
+          else:                fromCoreNet = ioNet
+        elif self.direction == IoPad.BIDIR:
+          if ioNet.coreNet.getDirection() == Net.Direction.IN: toCoreNet = ioNet
+          if ioNet.coreNet.getDirection() == Net.Direction.OUT:
+            if ioNet.isEnable(): enableNet   = ioNet
+            else:                fromCoreNet = ioNet
+        else:
+          fromCoreNet = ioNet
+
+      if not self.coreToChip.ioPadInfos.has_key(self.direction):
+        raise ErrorMessage( 1, 'IoPad.createPad(): Unsupported direction %d (%s) for pad "%s".' \
+                               % (self.direction
+                                 ,IoPad.directionToStr(self.direction)
+                                  ,self.padInstanceName) )
+      padInfo = self.coreToChip.ioPadInfos[ self.direction ]
+    
+      self.pads.append( Instance.create( self.coreToChip.chip
+                                       , self.padInstanceName
+                                       , self.coreToChip.getCell(padInfo.name) ) )
+
+      CoreToChip._connect( self.pads[0], fromCoreNet.chipExtNet, padInfo.padNet )
+      CoreToChip._connect( self.pads[0], fromCoreNet.chipIntNet, padInfo.coreNets[0] )
+
+      if toCoreNet: CoreToChip._connect( self.pads[0], toCoreNet.chipIntNet, padInfo.coreNets[-2] )
+      if enableNet: CoreToChip._connect( self.pads[0], enableNet.chipIntNet, padInfo.coreNets[-1] )
+
+      self.coreToChip._connectRing( self.pads[0] )
+      self.coreToChip.chipPads += self.pads
+      return
 
 
 # -------------------------------------------------------------------
@@ -147,8 +288,9 @@ class CoreToChip ( object ):
       return
 
     def __init__ ( self, core ):
+        self.conf           = chip.Configuration.loadConfiguration( core )
         self.ringNetNames   = [ ]
-        self.ioPads         = { }
+        self.ioPadInfos     = { }
         self.chipPads       = [ ]
         self.padLib         = None
         self.core           = core
@@ -156,10 +298,28 @@ class CoreToChip ( object ):
         self.corona         = None
         self.icorona        = None
         self.icore          = None
+        self._ioNets        = { }
         self.powerPadCount  = 0
         self.groundPadCount = 0
         self.clockPadCount  = 0
         return
+
+
+    def hasIoNet ( self, netName ):
+        if self._ioNets.has_key(netName): return True
+        return False
+
+
+    def getIoNet ( self, coreNet ):
+        if isinstance(coreNet,str):
+          if self._ioNets.has_key(coreNet): return self._ioNet[ coreNet ]
+          raise ErrorMessage( 1, 'CoreToChip.getIoNet(): Cannot lookup net "%s" by name.' % coreNet )
+
+        if not self._ioNets.has_key(coreNet.getName()):
+          self._ioNets[ coreNet.getName() ] = IoNet( self, coreNet )
+
+        return self._ioNets[ coreNet.getName() ]
+
 
     def _connectRing ( self, padInstance ):
         for ringNetName in self.ringNetNames:
@@ -179,12 +339,13 @@ class CoreToChip ( object ):
         return
 
     def _buildStandardPad ( self, ioNet ):
-      if not self.ioPads.has_key(ioNet.coreNet.getDirection()):
-        raise ErrorMessage( 1, 'CoreToChip._buildStandardPad(): Unsupported direction %d for core net "%s".' \
-                               % (netDirectionToStr(ioNet.coreNet.getDirection())
+      if not self.ioPadInfos.has_key(ioNet.coreNet.getDirection()):
+        raise ErrorMessage( 1, 'CoreToChip._buildStandardPad(): Unsupported direction %d (%s) for core net "%s".' \
+                               % (ioNet.coreNet.getDirection()
+                                 ,netDirectionToStr(ioNet.coreNet.getDirection())
                                  ,ioNet.coreNet.getName()) )
 
-      padInfo = self.ioPads[ ioNet.coreNet.getDirection() ]
+      padInfo = self.ioPadInfos[ ioNet.coreNet.getDirection() ]
 
       ioNet.pads.append( Instance.create( self.chip
                                         , ioNet.padInstanceName
@@ -204,29 +365,69 @@ class CoreToChip ( object ):
     def _buildClockPads ( self, ioNet ):
         raise ErrorMessage( 1, 'coreToChip._buildClockPads(): This method must be overloaded.' )
 
-    def buildChip ( self, chipName ):
+    def buildChip ( self ):
         af = AllianceFramework.get()
 
         UpdateSession.open()
   
-        self.chip    = af.createCell( chipName )
+        self.chip    = af.createCell( self.conf.chipName )
         self.corona  = af.createCell( 'corona' )
         self.icore   = Instance.create( self.corona, 'core'  , self.core   )
         self.icorona = Instance.create( self.chip  , 'corona', self.corona )
 
         self._buildRingNets()
 
+        ioPads      = [ ]
         clockIoNets = [ ]
+
+        for padConf in self.conf.padInstances:
+          padConf.udata = IoPad( self, padConf.padInstanceName )
+
+          for netName in padConf.nets:
+            coreNet = self.core.getNet(netName)
+            if not coreNet:
+              raise ErrorMessage( 1, 'CoreToChip.buildChip(): "%s" doesn\'t have a "%s" net.'
+                                     % (self.core.getName(),netName) )
+            ioNet            = self.getIoNet( coreNet )
+            ioNet.padNetName = padConf.padNetName
+
+            if padConf.isBidir() or padConf.isTristate():
+              ioNet.setBidir( True )
+              if coreNet.getName() == padConf.enableNet:
+                ioNet.setEnable( True )
+
+            padConf.udata.addNet( ioNet )
+          ioPads.append( padConf )
+        
         for coreNet in self.core.getNets():
           if not coreNet.isExternal(): continue
 
-          ioNet = IoNet( self, coreNet )
-          ioNet.buildNets()
+         # Case of special nets (power, ground & clocks).
+          if coreNet.isPower():
+            self._buildPowerPads( IoNet( self, coreNet ) )
+            continue
+          elif coreNet.isGround():
+            self._buildGroundPads( IoNet( self, coreNet ) )
+            continue
+          elif coreNet.isClock():
+            clockIoNets.append( IoNet( self, coreNet ) )
+            continue
 
-          if   coreNet.isPower():  self._buildPowerPads  ( ioNet )
-          elif coreNet.isGround(): self._buildGroundPads ( ioNet )
-          elif coreNet.isClock():  clockIoNets.append( ioNet )
-          else:                    self._buildStandardPad( ioNet )
+          if self.hasIoNet(coreNet.getName()):
+            continue
+
+         # Remaining non configured Standard I/O pads.
+          ioNet     = IoNet( self, coreNet )
+          directPad = chip.Configuration.IoPadConf( [ ioNet.padInstanceName
+                                                    , ioNet.padNetName
+                                                    , ioNet.coreNetName
+                                                    ] )
+          directPad.udata = IoPad( self, directPad.padInstanceName )
+          directPad.udata.addNet( ioNet )
+          ioPads.append( directPad )
+
+        for ioPad in ioPads:
+          ioPad.udata.createPad()
 
         for clockIoNet in clockIoNets:
           self._buildClockPads( clockIoNet )
