@@ -49,6 +49,8 @@ namespace CRL {
     vhdlEntity->toEntity( ccelltest );
     ccelltest << endl;
     ccelltest.close();
+
+    Vhdl::EntityExtension::destroy( cell );
   }
 
 
