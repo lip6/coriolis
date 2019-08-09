@@ -33,7 +33,7 @@ class IoNet ( object ):
 
   IsElem       = 0x0001
   IsEnable     = 0x0002
-  IsBidir      = 0x0004
+  DoExtNet     = 0x0008
   reVHDLVector = re.compile( r'(?P<name>[^(]*)\((?P<index>[\d]+)\)$' )
 
   def __init__ ( self, coreToChip, coreNet ):
@@ -69,7 +69,6 @@ class IoNet ( object ):
 
   def isElem   ( self ): return self._flags & IoNet.IsElem
   def isEnable ( self ): return self._flags & IoNet.IsEnable
-  def isBidir  ( self ): return self._flags & IoNet.IsBidir
 
   def isGlobal ( self ): return self.isGlobal( self._name )
 
@@ -112,38 +111,40 @@ class IoNet ( object ):
     else:             self._flags &= ~IoNet.IsEnable
     return
 
-  def setBidir ( self, state ):
-    if state == True: self._flags |=  IoNet.IsBidir
-    else:             self._flags &= ~IoNet.IsBidir
-    return
-
-  def buildNets ( self ):
-    if self.chipIntNet != None: return
-
-    if     not self.isBidir () \
-       or (not self.isEnable() and self.coreNet.getDirection() == Net.Direction.OUT):
-      self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
-      self.chipExtNet.setExternal ( True )
-      self.chipExtNet.setDirection( self.coreNet.getDirection() )
-
-    self.chipIntNet = Net.create( self.coreToChip.chip, self.coronaNetName )
-
-    self.coronaNet  = Net.create( self.coreToChip.corona, self.coreNetName )
-    self.coronaNet.setExternal ( True )
-    self.coronaNet.setDirection( self.coreNet.getDirection() )
-
-    self.coreToChip.icorona.getPlug( self.coronaNet ).setNet( self.chipIntNet )
-    self.coreToChip.icore  .getPlug( self.coreNet   ).setNet( self.coronaNet  )
+  def buildNets ( self, context=DoExtNet ):
+    print 'context:', context
 
     netType = Net.Type.LOGICAL
     if self.coreNet.isPower (): netType = Net.Type.POWER
     if self.coreNet.isGround(): netType = Net.Type.GROUND
     if self.coreNet.isClock (): netType = Net.Type.CLOCK
 
-    if netType != Net.Type.LOGICAL:
-      self.chipIntNet.setType ( netType )
-      self.coronaNet.setType  ( netType )
-      self.coronaNet.setGlobal( True )
+   # Corona net, connect to Core instance net.
+    if not self.coronaNet:
+      self.coronaNet  = Net.create( self.coreToChip.corona, self.coreNetName )
+      self.coronaNet.setExternal ( True )
+      self.coronaNet.setDirection( self.coreNet.getDirection() )
+      if netType != Net.Type.LOGICAL:
+        self.coronaNet.setType  ( netType )
+        self.coronaNet.setGlobal( True )
+
+      self.coreToChip.icore.getPlug( self.coreNet ).setNet( self.coronaNet  )
+
+   # Chip "internal" net, connect Corona instance net to I/O inside the chip.
+    if not self.chipIntNet:
+      self.chipIntNet = Net.create( self.coreToChip.chip, self.coronaNetName )
+      if netType != Net.Type.LOGICAL:
+        self.chipIntNet.setType( netType )
+
+      self.coreToChip.icorona.getPlug( self.coronaNet ).setNet( self.chipIntNet )
+
+   # Chip "external" net, connected to the pad I/O to the outside world.
+    if not self.chipExtNet and (context & IoNet.DoExtNet):
+      self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
+      self.chipExtNet.setExternal ( True )
+      self.chipExtNet.setDirection( self.coreNet.getDirection() )
+      print 'PAD ', self.chipExtNet
+
     return
 
 
@@ -217,17 +218,27 @@ class IoPad ( object ):
       enableNet   = None
 
       for ioNet in self.nets:
-        ioNet.buildNets()
+        print 'BEFORE ', ioNet, ioNet.coreNet
+        context = 0
+
         if self.direction == IoPad.TRI_OUT:
           if ioNet.isEnable(): enableNet   = ioNet
-          else:                fromCoreNet = ioNet
+          else:
+            fromCoreNet = ioNet
+            context    |= IoNet.DoExtNet
         elif self.direction == IoPad.BIDIR:
           if ioNet.coreNet.getDirection() == Net.Direction.IN: toCoreNet = ioNet
           if ioNet.coreNet.getDirection() == Net.Direction.OUT:
             if ioNet.isEnable(): enableNet   = ioNet
-            else:                fromCoreNet = ioNet
+            else:
+              fromCoreNet = ioNet
+              context    |= IoNet.DoExtNet
         else:
+          context    |= IoNet.DoExtNet
           fromCoreNet = ioNet
+
+        ioNet.buildNets( context )
+        print ioNet, context
 
       if not self.coreToChip.ioPadInfos.has_key(self.direction):
         raise ErrorMessage( 1, 'IoPad.createPad(): Unsupported direction %d (%s) for pad "%s".' \
@@ -392,7 +403,6 @@ class CoreToChip ( object ):
             ioNet.padNetName = padConf.padNetName
 
             if padConf.isBidir() or padConf.isTristate():
-              ioNet.setBidir( True )
               if coreNet.getName() == padConf.enableNet:
                 ioNet.setEnable( True )
 
