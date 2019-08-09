@@ -7,7 +7,7 @@
               set ( pyPlugins     ${CMAKE_CURRENT_SOURCE_DIR}/plugins/__init__.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ClockTreePlugin.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CoreToChip_cmos.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/CoreToChip_c35b4.py
+                                 #${CMAKE_CURRENT_SOURCE_DIR}/plugins/CoreToChip_c35b4.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ChipPlace.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/ChipRoute.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/RSavePlugin.py
@@ -22,7 +22,7 @@
               set ( pyPluginC2C   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/__init__.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/CoreToChip.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/cmos.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/c35b4.py
+                                 #${CMAKE_CURRENT_SOURCE_DIR}/plugins/core2chip/c35b4.py
                   )		  
               set ( pyPluginChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/__init__.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/Configuration.py

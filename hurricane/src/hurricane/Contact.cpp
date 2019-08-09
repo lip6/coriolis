@@ -358,7 +358,7 @@ string Contact::_getString() const
     s.insert(s.length() - 1, " [" + DbU::getValueString(getX()));
     s.insert(s.length() - 1, " " + DbU::getValueString(getY()));
     s.insert(s.length() - 1, "] " + DbU::getValueString(_width));
-    s.insert(s.length() - 1, "x" + DbU::getValueString(_height));
+    s.insert(s.length() - 1, " x " + DbU::getValueString(_height));
     return s;
 }
 

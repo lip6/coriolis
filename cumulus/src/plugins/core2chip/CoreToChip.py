@@ -112,8 +112,6 @@ class IoNet ( object ):
     return
 
   def buildNets ( self, context=DoExtNet ):
-    print 'context:', context
-
     netType = Net.Type.LOGICAL
     if self.coreNet.isPower (): netType = Net.Type.POWER
     if self.coreNet.isGround(): netType = Net.Type.GROUND
@@ -143,7 +141,6 @@ class IoNet ( object ):
       self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
       self.chipExtNet.setExternal ( True )
       self.chipExtNet.setDirection( self.coreNet.getDirection() )
-      print 'PAD ', self.chipExtNet
 
     return
 
@@ -218,7 +215,6 @@ class IoPad ( object ):
       enableNet   = None
 
       for ioNet in self.nets:
-        print 'BEFORE ', ioNet, ioNet.coreNet
         context = 0
 
         if self.direction == IoPad.TRI_OUT:
@@ -238,7 +234,6 @@ class IoPad ( object ):
           fromCoreNet = ioNet
 
         ioNet.buildNets( context )
-        print ioNet, context
 
       if not self.coreToChip.ioPadInfos.has_key(self.direction):
         raise ErrorMessage( 1, 'IoPad.createPad(): Unsupported direction %d (%s) for pad "%s".' \
@@ -399,12 +394,14 @@ class CoreToChip ( object ):
             if not coreNet:
               raise ErrorMessage( 1, 'CoreToChip.buildChip(): "%s" doesn\'t have a "%s" net.'
                                      % (self.core.getName(),netName) )
-            ioNet            = self.getIoNet( coreNet )
-            ioNet.padNetName = padConf.padNetName
+            ioNet = self.getIoNet( coreNet )
 
             if padConf.isBidir() or padConf.isTristate():
               if coreNet.getName() == padConf.enableNet:
                 ioNet.setEnable( True )
+
+            if not ioNet.isEnable():
+              ioNet.padNetName = padConf.padNetName
 
             padConf.udata.addNet( ioNet )
           ioPads.append( padConf )

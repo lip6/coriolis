@@ -100,6 +100,7 @@ class HTree ( object ):
     if self.minSide < DbU.fromLambda(100.0):
       raise ErrorMessage( 3, 'ClockTree: clockTree.minimumSide (%g) is less than 100 lambda.' \
                              % DbU.toLambda(self.minSide) )
+    print '     - Minimum side for clock area: %sl' % DbU.toLambda(self.minSide)
 
     UpdateSession.open()
     self.framework    = CRL.AllianceFramework.get()
