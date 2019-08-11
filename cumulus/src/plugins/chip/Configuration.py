@@ -697,6 +697,15 @@ class ChipConf ( object ):
           abMin = ab.getXMin()
           abMax = ab.getXMax()
 
+        if uMin <= abMin:
+          shiftRight = abMin - uMin + lg.getPitch()
+          uMin      += shiftRight
+          uMax      += shiftRight
+        if uMax >= abMax:
+          shiftLeft = uMax - abMax + lg.getPitch()
+          uMin     -= shiftLeft
+          uMax     -= shiftLeft
+
         iTrackMin = lg.getTrackIndex( abMin, abMax, uMin, RoutingLayerGauge.Superior )
         iTrackMax = lg.getTrackIndex( abMin, abMax, uMax, RoutingLayerGauge.Inferior )
         if iTrackMax < iTrackMin: iTrackMax = iTrackMin

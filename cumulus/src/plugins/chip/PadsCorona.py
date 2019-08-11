@@ -703,25 +703,25 @@ class CoreWire ( object ):
 
       if self.arraySize:
         if self.side == chip.West: xContact = min( xContact, vStrapBb.getXMin() )
-        else:                       xContact = max( xContact, vStrapBb.getXMax() )
+        else:                      xContact = max( xContact, vStrapBb.getXMax() )
 
       self.conf.coronaHorizontal( self.chipNet
-                                       , self.symSegmentLayer
-                                       , self.bbSegment.getCenter().getY()
-                                       , self.bbSegment.getHeight()
-                                       , xContact
-                                       , xCore
-                                       )
+                                , self.symSegmentLayer
+                                , self.bbSegment.getCenter().getY()
+                                , self.bbSegment.getHeight()
+                                , xContact
+                                , xCore
+                                )
       trace( 550, '\tCORONA PIN: %s %d\n' % (self.chipNet, self.count) )
       pin = self.conf.coronaPin( self.chipNet
-                                      , self.count
-                                      , accessDirection
-                                      , self.symSegmentLayer
-                                      , xCore
-                                      , self.bbSegment.getCenter().getY()
-                                      , DbU.fromLambda( 1.0 )
-                                      , self.bbSegment.getHeight()
-                                      )
+                               , self.count
+                               , accessDirection
+                               , self.symSegmentLayer
+                               , xCore
+                               , self.bbSegment.getCenter().getY()
+                               , DbU.fromLambda( 1.0 )
+                               , self.bbSegment.getHeight()
+                               )
     else:
       flags = chip.OnVerticalPitch
 
@@ -790,7 +790,7 @@ class CoreWire ( object ):
       
       if self.arraySize:
         if self.side == chip.South: yContact = min( yContact, hStrapBb.getYMin() )
-        else:                        yContact = max( yContact, hStrapBb.getYMax() )
+        else:                       yContact = max( yContact, hStrapBb.getYMax() )
       
       self.conf.coronaVertical( self.chipNet
                               , self.symSegmentLayer

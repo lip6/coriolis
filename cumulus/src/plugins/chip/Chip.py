@@ -117,9 +117,31 @@ class PlaceRoute ( object ):
       raise ErrorMessage( 1, 'chip.doCoronaFloorplan(): Chip is not valid, aborting.' )
       return
 
+    railsNb    = Cfg.getParamInt('chip.block.rails.count'   ).asInt()
+    hRailWidth = Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt()
+    vRailWidth = Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt()
+    hRailSpace = Cfg.getParamInt('chip.block.rails.hSpacing').asInt()
+    vRailSpace = Cfg.getParamInt('chip.block.rails.vSpacing').asInt()
+
+    if not self.conf.useClockTree: self.railsNb -= 1
+
+    innerBb = Box( self.conf.coreSize )
+    innerBb.inflate( (railsNb * vRailWidth + (railsNb+1) * vRailSpace + self.conf.getSliceHeight()) * 2
+                   , (railsNb * hRailWidth + (railsNb+1) * hRailSpace + self.conf.getSliceHeight()) * 2 )
+        
+    coronaAb = self.conf.corona.getAbutmentBox()
+    if innerBb.getWidth() > coronaAb.getWidth():
+      raise ErrorMessage( 1, 'Core is too wide to fit into the corona, needs %s but only has %s.'
+                          % ( DbU.getValueString(innerBb .getWidth())
+                            , DbU.getValueString(coronaAb.getWidth()) ) )
+
+    if innerBb.getHeight() > coronaAb.getHeight():
+      raise ErrorMessage( 1, 'Core is too tall to fit into the corona, needs %s but only has %s.'
+                          % ( DbU.getValueString(innerBb .getHeight())
+                            , DbU.getValueString(coronaAb.getHeight()) ) )
+
     UpdateSession.open()
     self.conf.core.setAbutmentBox( self.conf.coreSize )
-    coronaAb = self.conf.corona.getAbutmentBox()
     x = (coronaAb.getWidth () - self.conf.coreSize.getWidth ()) / 2
     y = (coronaAb.getHeight() - self.conf.coreSize.getHeight()) / 2
     x = x - (x % self.conf.getSliceHeight())
