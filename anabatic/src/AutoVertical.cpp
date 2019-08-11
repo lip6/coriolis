@@ -243,13 +243,15 @@ namespace Anabatic {
     Interval targetSide        = getAutoTarget()->getGCell()->getSide( Flags::Horizontal );
     Interval sourceConstraints = Interval(getAutoSource()->getCBXMin(),getAutoSource()->getCBXMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBXMin(),getAutoTarget()->getCBXMax());
+    bool     sourceGoStraight  = getAutoSource()->getGCell()->isGoStraight();
+    bool     targetGoStraight  = getAutoTarget()->getGCell()->isGoStraight();
 
   // Expand by a tiny amount for the "contains" to work for sure.
     sourceConstraints.inflate( 1 );
     targetConstraints.inflate( 1 );
 
-    if (not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
-    if (not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
+    if (not sourceGoStraight and not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
+    if (not targetGoStraight and not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
 
     cdebug_tabw(149,-1);
     return false;

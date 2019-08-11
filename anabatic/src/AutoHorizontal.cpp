@@ -249,6 +249,8 @@ namespace Anabatic {
     Interval targetSide        = getAutoTarget()->getGCell()->getSide( Flags::Vertical );
     Interval sourceConstraints = Interval(getAutoSource()->getCBYMin(),getAutoSource()->getCBYMax());
     Interval targetConstraints = Interval(getAutoTarget()->getCBYMin(),getAutoTarget()->getCBYMax());
+    bool     sourceGoStraight  = getAutoSource()->getGCell()->isGoStraight();
+    bool     targetGoStraight  = getAutoTarget()->getGCell()->isGoStraight();
 
   // Expand by a tiny amount for the "contains" to work for sure.
     sourceConstraints.inflate( 1 );
@@ -261,8 +263,8 @@ namespace Anabatic {
     cdebug_log(149,0) << "target constraints: " << targetConstraints
                 << " " << DbU::getValueString(targetConstraints.getSize()) << endl;
 
-    if (not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
-    if (not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
+    if (not sourceGoStraight and not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
+    if (not targetGoStraight and not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
 
     cdebug_tabw(149,-1);
     return false;
