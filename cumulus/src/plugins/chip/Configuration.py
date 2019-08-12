@@ -444,15 +444,16 @@ class GaugeConf ( object ):
       for component in topContact.getSlaveComponents():
         segment = component
         count  += 1
-      if count != 1:
+      if count > 1:
         raise ErrorMessage( 1, 'GaugeConf::_setStackPosition(): There must be exactly one segment connected to %s, not %d.' % (topContact,count) )
 
-      if isinstance(segment,Horizontal):
-        segment.setY( y )
-        segment.getOppositeAnchor( topContact ).setY( y )
-      elif isinstance(segment,Vertical):
-        segment.setX( x )
-        segment.getOppositeAnchor( topContact ).setX( x )
+      if count == 1:
+        if isinstance(segment,Horizontal):
+          segment.setY( y )
+          segment.getOppositeAnchor( topContact ).setY( y )
+        elif isinstance(segment,Vertical):
+          segment.setX( x )
+          segment.getOppositeAnchor( topContact ).setX( x )
       return
 
 
