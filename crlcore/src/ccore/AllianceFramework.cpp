@@ -535,7 +535,7 @@ namespace CRL {
     string           name       = getString(cell->getName());
     DriverSlot*      driver;
     unsigned int     saveMode   = 0;
-    unsigned int     savedViews = 0;
+    unsigned int     savedViews = mode & (~Catalog::State::Views);
     AllianceLibrary* library    = getAllianceLibrary ( cell->getLibrary() );
 
     for ( int i=0 ; i<2 ; i++ ) {
@@ -548,7 +548,7 @@ namespace CRL {
       if ( ( savedViews & saveMode ) != 0 ) continue;
 
     // Transmit all flags except thoses related to views.
-      saveMode |= (mode & (!Catalog::State::Views));
+      saveMode |= (mode & (~Catalog::State::Views));
 
       driver = & ( _drivers.getDriverSlot ( name, saveMode, _environment ) );
 

@@ -64,6 +64,7 @@ namespace Vhdl {
                 , ComponentMode = 0x0004
                 , AsPortSignal  = 0x0008
                 , AsInnerSignal = 0x0010
+                , VstUseConcat  = 0x0020
                 };
     public:
       static std::vector<Entity*>&

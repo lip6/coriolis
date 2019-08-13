@@ -76,16 +76,17 @@ namespace CRL {
       class State {
         public:
         // Flags Constants.
-          enum Flags { FlattenLeaf = 1 << 0
-                     , Feed        = 1 << 1
-                     , Pad         = 1 << 2
-                     , GDS         = 1 << 3
-                     , Delete      = 1 << 4
-                     , Logical     = 1 << 5
-                     , Physical    = 1 << 6
-                     , InMemory    = 1 << 7
-                     , Foreign     = 1 << 8
-                     , Views       = Physical|Logical
+          enum Flags { FlattenLeaf  = 1 << 0
+                     , Feed         = 1 << 1
+                     , Pad          = 1 << 2
+                     , GDS          = 1 << 3
+                     , Delete       = 1 << 4
+                     , Logical      = 1 << 5
+                     , Physical     = 1 << 6
+                     , InMemory     = 1 << 7
+                     , Foreign      = 1 << 8
+                     , VstUseConcat = 1 << 9
+                     , Views        = Physical|Logical
                      };
         // Constructors.
           inline               State          ();

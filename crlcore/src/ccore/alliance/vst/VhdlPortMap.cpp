@@ -34,7 +34,8 @@ namespace Vhdl {
 // Class  :  "Vhdl::PortMap".
 
 
-  PortMap::PortMap ()
+  PortMap::PortMap ( unsigned int flags )
+    : _flags(flags)
   { }
 
 
@@ -73,25 +74,25 @@ namespace Vhdl {
   }
 
 
-  PortMap* PortMap::create ( const Signal* signal )
+  PortMap* PortMap::create ( const Signal* signal, unsigned int flags )
   {
     const ScalarSignal* scalarSignal = dynamic_cast<const ScalarSignal*>( signal );
     if (not scalarSignal) {
       const VectorSignal* vectorSignal = dynamic_cast<const VectorSignal*>( signal );
       if (vectorSignal)
-        return new VectorPortMap ( vectorSignal );
+        return new VectorPortMap ( vectorSignal, flags );
       else
         throw Error( "PortMap::create() Unable to cast toward <ScalarSignal> or <VectorSignal>." );
     }
-    return new ScalarPortMap ( scalarSignal );
+    return new ScalarPortMap ( scalarSignal, flags );
   }
 
 
 // -------------------------------------------------------------------
 // Class  :  "Vhdl::ScalarPortMap".
   
-  ScalarPortMap::ScalarPortMap ( const ScalarSignal* signal )
-    : PortMap ()
+  ScalarPortMap::ScalarPortMap ( const ScalarSignal* signal, unsigned int flags )
+    : PortMap (flags)
     , _signal (signal)
     , _mapping(NULL)
   { }
@@ -120,8 +121,8 @@ namespace Vhdl {
 // -------------------------------------------------------------------
 // Class  :  "Vhdl::VectorPortMap".
   
-  VectorPortMap::VectorPortMap ( const VectorSignal* signal )
-    : PortMap ()
+  VectorPortMap::VectorPortMap ( const VectorSignal* signal, unsigned int flags )
+    : PortMap (flags)
     , _signal (signal)
     , _mapping()
   {
@@ -222,7 +223,7 @@ namespace Vhdl {
       }
     }
   
-    if (mappedNames.size() == 1) {
+    if ( (mappedNames.size() == 1) or (_flags & Entity::VstUseConcat) ) {
       out << setw(width) << left << _signal->getName() << " => ";
   
       size_t lhsWidth  = 90 - tab.getWidth() - width - 4;

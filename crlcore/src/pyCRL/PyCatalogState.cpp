@@ -136,14 +136,16 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::FlattenLeaf,"FlattenLeaf");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Feed       ,"Feed");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::GDS        ,"GDS");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Delete     ,"Delete");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Logical    ,"Logical");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Physical   ,"Physical");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::InMemory   ,"InMemory");
-    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Views      ,"Views");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::FlattenLeaf ,"FlattenLeaf");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Feed        ,"Feed");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::GDS         ,"GDS");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Delete      ,"Delete");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Logical     ,"Logical");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Physical    ,"Physical");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::InMemory    ,"InMemory");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Foreign     ,"Foreign");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::VstUseConcat,"VstUseConcat");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Views       ,"Views");
   }
 
 

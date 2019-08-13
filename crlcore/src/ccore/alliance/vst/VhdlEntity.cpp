@@ -402,7 +402,7 @@ namespace Vhdl {
     for ( auto isignal=masterSignals->begin() ; isignal!=masterSignals->end() ; ++isignal ) {
       if ((*isignal)->isExternal()) {
         width = max( width, (*isignal)->getName().size() );
-        portMaps.push_back( PortMap::create(*isignal) );
+        portMaps.push_back( PortMap::create(*isignal,_flags) );
         portMaps.back()->doMapping( instance );
       }
     }

@@ -347,6 +347,12 @@ void DumpPins(ofstream &ccell, Cell* cell)
               case Pin::AccessDirection::SOUTH: width = pin->getWidth(); break;
               case Pin::AccessDirection::EAST:
               case Pin::AccessDirection::WEST: width = pin->getHeight(); break;
+              default:
+                cerr << Warning( "CRL::ApDriver(): Pin \"" + getString(pin->getName()) + "\" of \""
+                               + getString(net->getName())
+                               + "\", has undefined access direction.")
+                     << endl;;
+                break;
             }
 
             ccell << "C " << toMBKlambda(pin->getX())
