@@ -377,7 +377,7 @@ namespace {
 
   Net* ApParser::_safeGetNet ( const char* apName )
   {
-    if ( ( apName[0] == '\0' ) || !strcmp(apName,"*") )
+    if ( ( apName[0] == '\0' ) or not strcmp(apName,"*") or not strcmp(apName,"fused_net") )
       return _getFusedNet ();
 
     return _getNet ( apName );

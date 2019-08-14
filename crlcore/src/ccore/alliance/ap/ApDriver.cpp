@@ -190,10 +190,12 @@ void DumpContacts(ofstream& ccell, Cell *cell)
 {
   const char* mbkLayer;
 
-  forEach ( Net*, inet, cell->getNets() )
-  {
-    forEach ( Component*, icomponent, inet->getComponents()) {
-      if (Contact* contact = dynamic_cast<Contact*>(*icomponent)) {
+  for ( Net* net : cell->getNets() ) {
+    string netName = toMBKName( net->getName() );
+    if (net->isFused()) netName = "*";
+    
+    for ( Component* component : net->getComponents()) {
+      if (Contact* contact = dynamic_cast<Contact*>(component)) {
         if (dynamic_cast<Pin*>(contact))
           continue;
         else {
@@ -204,7 +206,7 @@ void DumpContacts(ofstream& ccell, Cell *cell)
                     << toMBKlambda(contact->getX()) << ","
                     << toMBKlambda(contact->getY()) << ","
                     << mbkLayer << ","
-                    << toMBKName(contact->getNet()->getName())
+                    << netName
                     << endl;
           } else {
             DbU::Unit expand = 0;
@@ -218,13 +220,13 @@ void DumpContacts(ofstream& ccell, Cell *cell)
                     << toMBKlambda(contact->getWidth () + expand) << ","
                     << toMBKlambda(contact->getHeight() + expand) << ","
                     << mbkLayer << ","
-                    << toMBKName(contact->getNet()->getName())
+                    << netName
                     << endl;
           }
         }
       }
-    } // forEach( Component* )
-  } // forEach( Net* )
+    } // for(Component*)
+  } // for(Net*)
 }
 
 
@@ -236,9 +238,12 @@ void DumpContacts(ofstream& ccell, Cell *cell)
     RoutingPad* rp;
     bool        external;
 
-    forEach ( Net*, net, cell->getNets() ) {
-      forEach ( Component*, component, net->getComponents() ) {
-        if ( (rp = dynamic_cast<RoutingPad*>(*component)) ) {
+    for ( Net* net : cell->getNets() ) {
+      string netName = toMBKName( net->getName() );
+      if (net->isFused()) netName = "*";
+    
+      for ( Component* component : net->getComponents() ) {
+        if ( (rp = dynamic_cast<RoutingPad*>(component)) ) {
           if ( not net->isExternal() ) continue;
           if ( not cell->isRouted() ) continue;
 
@@ -251,8 +256,8 @@ void DumpContacts(ofstream& ccell, Cell *cell)
           y1    = rp->getSourceY();
           y2    = rp->getTargetY();
           width = segment->getWidth();
-        } else if ( (segment = dynamic_cast<Segment*>(*component)) ) {
-          external = NetExternalComponents::isExternal(*component);
+        } else if ( (segment = dynamic_cast<Segment*>(component)) ) {
+          external = NetExternalComponents::isExternal(component);
           x1       = segment->getSourceX();
           x2       = segment->getTargetX();
           y1       = segment->getSourceY();
@@ -274,7 +279,7 @@ void DumpContacts(ofstream& ccell, Cell *cell)
                 << toMBKlambda(x2) << ","
                 << toMBKlambda(y2) << ","
                 << toMBKlambda(width) << ","
-                << toMBKName(component->getNet()->getName()) << ","
+                << netName << ","
                 << direction << "," 
                 << mbkLayer
                 << endl;
