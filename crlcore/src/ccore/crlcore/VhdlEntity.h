@@ -66,6 +66,7 @@ namespace Vhdl {
                 , AsInnerSignal = 0x0010
                 , VstUseConcat  = 0x0020
                 };
+      const unsigned int  ModeMask = VstUseConcat;
     public:
       static std::vector<Entity*>&
                               getAllEntities  ();

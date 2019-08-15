@@ -39,7 +39,7 @@ namespace CRL {
   void  vstDriver ( const string cellPath, Cell *cell, unsigned int& saveState )
   {
     unsigned int entityFlags = Vhdl::Entity::EntityMode /* | Vhdl::Entity::IeeeMode */;
-    if (saveState & Catalog::State::VstUseConcat) entityFlags |= Vhdl::Entity::VstUseConcat;
+    /*if (saveState & Catalog::State::VstUseConcat)*/ entityFlags |= Vhdl::Entity::VstUseConcat;
     
   //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
     Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell, entityFlags );

@@ -129,6 +129,7 @@ if __name__ == '__main__':
       parser.add_option( '-M', '--dump-measures'    , action='store_true', dest='dumpMeasures'   , help='Dump some statistical measurements on the disk.')
       parser.add_option( '-s', '--save-design'      , type='string'      , dest='saveDesign'     , help='Save the routed design.')
       parser.add_option(       '--top-routing-layer', type='string'      , dest='topRoutingLayer', help='Sets the top (upper) routing layer.')
+      parser.add_option(       '--vst-use-concat'   , action='store_true', dest='vstUseConcat'   , help='The VST driver will use "&" (concat) in PORT MAP.')
       (options, args) = parser.parse_args()
       args.insert(0, 'cgt')
 
@@ -260,6 +261,7 @@ if __name__ == '__main__':
     
           if options.saveDesign:
               views = CRL.Catalog.State.Physical
+              if options.vstUseConcat: views |= CRL.Catalog.State.VstUseConcat
               if options.saveDesign != cell.getName():
                   cell.setName(options.saveDesign)
                   views |= CRL.Catalog.State.Logical

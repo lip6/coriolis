@@ -195,6 +195,34 @@ namespace CRL {
   }
 
 
+  DbU::Unit  RoutingGauge::getPitch ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getPitch() : 0;
+  }
+
+
+  DbU::Unit  RoutingGauge::getOffset ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getOffset() : 0;
+  }
+
+
+  DbU::Unit  RoutingGauge::getWireWidth ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getWireWidth() : 0;
+  }
+
+
+  DbU::Unit  RoutingGauge::getViaWidth ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getViaWidth() : 0;
+  }
+
+
   RoutingLayerGauge* RoutingGauge::getLayerGauge ( size_t depth ) const
   {
     if ( depth >= _layerGauges.size() ) return NULL;

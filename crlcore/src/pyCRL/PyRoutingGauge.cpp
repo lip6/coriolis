@@ -179,6 +179,102 @@ extern "C" {
   }
 
 
+  static PyObject* PyRoutingGauge_getPitch ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getPitch()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getPitch()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getPitch", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getLayerPitch()." );
+          return NULL;
+        }
+        pitch = rg->getPitch( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getPitch()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",pitch);
+  }
+
+
+  static PyObject* PyRoutingGauge_getOffset ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getOffset()" << endl;
+
+    DbU::Unit offset = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getOffset()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getOffset", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getOffset()." );
+          return NULL;
+        }
+        offset = rg->getOffset( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getOffset()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",offset);
+  }
+
+
+  static PyObject* PyRoutingGauge_getWireWidth ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getWireWidth()" << endl;
+
+    DbU::Unit wireWidth = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getWireWidth()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getWireWidth", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getWireWidth()." );
+          return NULL;
+        }
+        wireWidth = rg->getWireWidth( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getWireWidth()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",wireWidth);
+  }
+
+
+  static PyObject* PyRoutingGauge_getViaWidth ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getViaWidth()" << endl;
+
+    DbU::Unit pitch = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getViaWidth()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getViaWidth", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getViaWidth()." );
+          return NULL;
+        }
+        pitch = rg->getViaWidth( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getViaWidth()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",pitch);
+  }
+
+
   static PyObject* PyRoutingGauge_getLayerGauge ( PyRoutingGauge* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyRoutingGauge_getLayerGauge()" << endl;
@@ -394,6 +490,14 @@ extern "C" {
                                 , "Return the vertical pitch of the metal closest to the substrate." }
     , { "getLayerDepth"         , (PyCFunction)PyRoutingGauge_getLayerDepth     , METH_VARARGS
                                 , "Return the depth of the given layer." }
+    , { "getPitch"              , (PyCFunction)PyRoutingGauge_getPitch          , METH_VARARGS
+                                , "Return the routing pitch of the given layer." }
+    , { "getOffset"             , (PyCFunction)PyRoutingGauge_getOffset          , METH_VARARGS
+                                , "Return the offset of the first track of the given layer." }
+    , { "getWireWidth"          , (PyCFunction)PyRoutingGauge_getWireWidth          , METH_VARARGS
+                                , "Return the default wire width of the given layer." }
+    , { "getViaWidth"           , (PyCFunction)PyRoutingGauge_getViaWidth          , METH_VARARGS
+                                , "Return the default via width of the given layer." }
     , { "getLayerGauge"         , (PyCFunction)PyRoutingGauge_getLayerGauge     , METH_VARARGS
                                 , "Return the RoutingLayerGauge of the given layer/depth." }
     , { "getLayerDirection"     , (PyCFunction)PyRoutingGauge_getLayerDirection , METH_VARARGS

@@ -216,6 +216,7 @@ class GaugeConf ( object ):
     def getIoPadGauge    ( self ): return self.ioPadGauge
     def getHRoutingGauge ( self ): return self.routingGauge.getLayerGauge( self.horizontalDepth )
     def getVRoutingGauge ( self ): return self.routingGauge.getLayerGauge( self.verticalDepth )
+    def getPitch         ( self, layer ): return self.routingGauge.getPitch( layer )
 
     def _loadRoutingGauge ( self ):
       gaugeName = Cfg.getParamString('anabatic.routingGauge').asString()
@@ -734,6 +735,45 @@ class ChipConf ( object ):
       return axis, width
 
 
+    def toCoronaPitchInChip ( self, uCore, layer ):
+      trace( 550, ',+', '\tChipConf.toCoronaPitchInChip(): uCore:  %sl %s\n' % (DbU.toLambda(uCore), DbU.getValueString(uCore)) )
+
+      coronaAb = self.getInstanceAb( self.icorona )
+      lg       = None
+      mask     = layer.getMask()
+      for layerGauge in self.gaugeConf.routingGauge.getLayerGauges():
+        if layerGauge.getLayer().getMask() == mask:
+          lg = layerGauge
+          break
+
+      if not lg:
+        trace( 550, '-' )
+        return 0
+
+      trace( 550, '\t%s\n' % str(lg) )
+      if lg:
+        if lg.getDirection() == RoutingLayerGauge.Horizontal:
+          uCorona = uCore - coronaAb.getYMin()
+        else:
+          uCorona = uCore - coronaAb.getXMin()
+
+      uCorona, width = self.toRoutingGauge( uCorona, uCorona, layer )
+
+      trace( 550, '\ttoCoronaPitchInChip(): uCorona:  %sl %s\n' % (DbU.toLambda(uCorona), DbU.getValueString(uCorona)) )
+
+      if lg:
+        if lg.getDirection() == RoutingLayerGauge.Horizontal:
+          uCore = uCorona + coronaAb.getYMin()
+        else:
+          uCore = uCorona + coronaAb.getXMin()
+
+      trace( 550, '\ttoCoronaPitchInChip(): uCorona:  %sl %s\n' % (DbU.toLambda(uCorona), DbU.getValueString(uCorona)) )
+      trace( 550, '\ttoCoronaPitchInChip(): uCore:  %sl %s\n'   % (DbU.toLambda(uCore  ), DbU.getValueString(uCore  )) )
+      trace( 550, '-' )
+      return uCore
+      
+
+
     def coronaHorizontal ( self, chipNet, layer, chipY, width, chipXMin, chipXMax ):
       trace( 550, ',+', '\tChipConf.coronaHorizontal\n' )
 
@@ -958,7 +998,7 @@ class ChipConf ( object ):
           if padList[i][1] == padInstance.getName():
             if (padInstance.getMasterCell().getAbutmentBox().getHeight() != self.gaugeConf.getIoPadHeight()):
               raise ErrorMessage( 1, 'The pad [%d] %s (%s) on %s side is not an instance of a pad cell.'
-                                     % (i,padInstance.getName(),padInstance.getModel().getName(),side) )
+                                     % (i,padInstance.getName(),padInstance.getMasterCell().getName(),side) )
             padList[i][1] = padInstance
             return True
         return False

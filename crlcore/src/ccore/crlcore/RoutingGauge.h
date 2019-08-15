@@ -72,6 +72,10 @@ namespace CRL {
               size_t              getLayerDepth      ( const Layer* ) const;
               unsigned int        getLayerType       ( const Layer* ) const;
               unsigned int        getLayerDirection  ( const Layer* ) const;
+              DbU::Unit           getPitch           ( const Layer* ) const;
+              DbU::Unit           getOffset          ( const Layer* ) const;
+              DbU::Unit           getWireWidth       ( const Layer* ) const;
+              DbU::Unit           getViaWidth        ( const Layer* ) const;
               RoutingLayerGauge*  getLayerGauge      ( size_t depth ) const;
       inline  unsigned int        getLayerDirection  ( size_t depth ) const;
       inline  unsigned int        getLayerType       ( size_t depth ) const;

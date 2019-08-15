@@ -169,6 +169,7 @@ class Side ( object ):
       self.u             = self.conf.getIoPadHeight()
       self.spacerCount   = 0
       self.gap           = 0
+      self.coreWires     = []
 
       if   self.type == chip.North:
         self.pads       = self.conf.northPads
@@ -219,6 +220,16 @@ class Side ( object ):
         if pad[1] == padInstance:
           return True
       return False
+
+
+    def addCoreWire ( self, coreWire ):
+      self.coreWires.append( coreWire )
+      return
+
+
+    def updateGap ( self, gapWidth ):
+      self.gap = max( self.gap, gapWidth )
+      return
 
 
     def _check ( self, checkSize, checkName ):
@@ -552,25 +563,101 @@ class Side ( object ):
       return
 
 
+    def drawCoreWires ( self ):
+      trace( 550, ',+', '\tSide.drawCoreWire()\n' )
+
+      if self.type == chip.West or self.type == chip.East:
+        trace( 550, 'Sort East/West' )
+        self.coreWires.sort( key=lambda wire: wire.bbSegment.getCenter().getY() )
+      if self.type == chip.North or self.type == chip.South:
+        trace( 550, 'Sort North/South' )
+        self.coreWires.sort( key=lambda wire: wire.bbSegment.getCenter().getX() )
+          
+      for wire in self.coreWires:
+        wire.updateInCorona()
+
+      size   = len(self.coreWires)
+      offset = 0
+      for i in range(size):
+        if self.coreWires[i].inCoronaRange: break
+        offset += 1
+      for i in range(offset):
+        self.coreWires[i].setOffset( i+1, CoreWire.AtBegin )
+
+      offset = 0
+      for i in range(1,size+1):
+        if self.coreWires[-i].inCoronaRange: break
+        offset += 1
+      for i in range(offset):
+        self.coreWires[ -(offset+1) ].setOffset( i+1, CoreWire.AtEnd )
+
+      for wire in self.coreWires:
+        if self.type == chip.West or self.type == chip.East:
+          trace( 550, '\t| %s %s %d %s inRange:%s\n' % ( wire.chipNet.getName()
+                                                       , DbU.getValueString(wire.bbSegment.getCenter().getY())
+                                                       , wire.count
+                                                       , wire.padSegment.getLayer()
+                                                       , wire.inCoronaRange ) )
+        
+        if self.type == chip.North or self.type == chip.South:
+          trace( 550, '\t| %s %s %d %s inRange:%s\n' % ( wire.chipNet.getName()
+                                                       , DbU.getValueString(wire.bbSegment.getCenter().getX())
+                                                       , wire.count
+                                                       , wire.padSegment.getLayer()
+                                                       , wire.inCoronaRange ) )
+        wire.drawWire()
+      trace( 550, '-' )
+      return
+
+
 class CoreWire ( object ):
 
   # Should be read from the symbolic technology rules.
   viaPitch = DbU.fromLambda( 4.0 )
 
+  NoOffset = 0x0000
+  AtBegin  = 0x0001
+  AtEnd    = 0x0002
+
   def __init__ ( self, corona, chipNet, padSegment, bbSegment, side, preferredDir, count ):
-    self.corona       = corona
-    self.chipNet      = chipNet
-    self.padSegment   = padSegment
-    self.bbSegment    = bbSegment
-    self.side         = side
-    self.preferredDir = preferredDir
-    self.arraySize    = None
-    self.count        = count
+    self.corona        = corona
+    self.chipNet       = chipNet
+    self.padSegment    = padSegment
+    self.bbSegment     = bbSegment
+    self.offset        = 0
+    self.offsetType    = CoreWire.NoOffset
+    self.side          = side
+    self.preferredDir  = preferredDir
+    self.inCoronaRange = True
+    self.arraySize     = None
+    self.count         = count
+
     return
 
 
   @property
   def conf ( self ): return self.corona.conf
+
+
+  def updateInCorona ( self ):
+    coronaAb = self.conf.getInstanceAb( self.conf.icorona )
+
+    if self.side == chip.South or self.side == chip.North:
+      xCoronaPin = self.bbSegment.getCenter().getX()
+      if   xCoronaPin <= coronaAb.getXMin(): self.inCoronaRange = False
+      elif xCoronaPin >= coronaAb.getXMax(): self.inCoronaRange = False
+
+    if self.side == chip.East or self.side == chip.West:
+      yCoronaPin = self.bbSegment.getCenter().getY()
+      if   yCoronaPin <= coronaAb.getYMin(): self.inCoronaRange = False
+      elif yCoronaPin >= coronaAb.getYMax(): self.inCoronaRange = False
+
+    return
+
+
+  def setOffset ( self, offset, offsetType ):
+    self.offset     = offset
+    self.offsetType = offsetType
 
 
   def _computeCoreLayers ( self ):
@@ -627,7 +714,7 @@ class CoreWire ( object ):
   def drawWire ( self ):
     trace( 550, ',+', '\tCoreWire.drawWire(): chip:"%s"\n' %(self.chipNet.getName()) )
 
-    coreAb = self.conf.getInstanceAb( self.conf.icorona )
+    coronaAb = self.conf.getInstanceAb( self.conf.icorona )
 
     self._computeCoreLayers()
 
@@ -637,21 +724,30 @@ class CoreWire ( object ):
     
     if self.side == chip.West or self.side == chip.East:
       flags = chip.OnHorizontalPitch
+      hPitch = self.conf.gaugeConf.getPitch( self.symSegmentLayer )
+      vPitch = self.conf.gaugeConf.getPitch( self.padSegment.getLayer() )
+
+      yCore = self.conf.toCoronaPitchInChip( self.bbSegment.getCenter().getY(), self.symSegmentLayer )
+      if self.offset:
+        if self.offsetType == CoreWire.AtBegin:
+          yCore += 2*hPitch*self.offset
+        else:
+          yCore -= 2*hPitch*self.offset
 
       if self.side == chip.West:
         accessDirection = Pin.Direction.WEST
         xPadMin         = self.bbSegment.getXMin()
-        xContact        = self.corona.coreSymBb.getXMin()
+        xContact        = self.corona.coreSymBb.getXMin() - self.offset * 2*vPitch
         xPadMax         = xContact
-        xCore           = coreAb.getXMin()
+        xCore           = coronaAb.getXMin()
         if not self.preferredDir:
           xPadMax += self.bbSegment.getHeight()/2
       else:
         accessDirection = Pin.Direction.EAST
         xPadMax         = self.bbSegment.getXMax()
-        xContact        = self.corona.coreSymBb.getXMax()
+        xContact        = self.corona.coreSymBb.getXMax() + self.offset * 2*vPitch
         xPadMin         = xContact
-        xCore           = coreAb.getXMax()
+        xCore           = coronaAb.getXMax()
         if not self.preferredDir:
           xPadMin -= self.bbSegment.getHeight()/2
 
@@ -665,24 +761,24 @@ class CoreWire ( object ):
       trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
       if self.arraySize:
         contacts = self.conf.coronaContactArray( self.chipNet
-                                                      , self.symContactLayer
-                                                      , xContact
-                                                      , self.bbSegment.getCenter().getY()
-                                                      , self.arraySize
-                                                      , flags
-                                                      )
+                                               , self.symContactLayer
+                                               , xContact
+                                               , yCore
+                                               , self.arraySize
+                                               , flags
+                                               )
         vStrapBb = Box()
         for contact in contacts:
           vStrapBb.merge( contact.getBoundingBox() )
       else:
         contact = self.conf.coronaContact( self.chipNet
-                                                , self.symContactLayer
-                                                , xContact
-                                                , self.bbSegment.getCenter().getY()
-                                                , self.symContactSize[0]
-                                                , self.symContactSize[1]
-                                                , flags
-                                                )
+                                         , self.symContactLayer
+                                         , xContact
+                                         , yCore
+                                         , self.symContactSize[0]
+                                         , self.symContactSize[1]
+                                         , flags
+                                         )
         vStrapBb  = contact.getBoundingBox( padLayer )
 
       hRealBb = hReal.getBoundingBox( padLayer )
@@ -707,7 +803,7 @@ class CoreWire ( object ):
 
       self.conf.coronaHorizontal( self.chipNet
                                 , self.symSegmentLayer
-                                , self.bbSegment.getCenter().getY()
+                                , yCore
                                 , self.bbSegment.getHeight()
                                 , xContact
                                 , xCore
@@ -718,27 +814,38 @@ class CoreWire ( object ):
                                , accessDirection
                                , self.symSegmentLayer
                                , xCore
-                               , self.bbSegment.getCenter().getY()
+                               , yCore
                                , DbU.fromLambda( 1.0 )
                                , self.bbSegment.getHeight()
                                )
     else:
-      flags = chip.OnVerticalPitch
+      flags  = chip.OnVerticalPitch
+      hPitch = self.conf.gaugeConf.getPitch( self.padSegment.getLayer() )
+      vPitch = self.conf.gaugeConf.getPitch( self.symSegmentLayer )
+
+      trace( 550, '\t%s translated of %s\n' % (self.symSegmentLayer, DbU.getValueString( 2*vPitch*self.offset )) )
+
+      xCore = self.conf.toCoronaPitchInChip( self.bbSegment.getCenter().getX(), self.symSegmentLayer )
+      if self.offset:
+        if self.offsetType == CoreWire.AtBegin:
+          xCore += 2*vPitch*self.offset
+        else:
+          xCore -= 2*vPitch*self.offset
 
       if self.side == chip.South:
         accessDirection = Pin.Direction.SOUTH
         yPadMin         = self.bbSegment.getYMin()
-        yPadMax         = self.corona.coreSymBb.getYMin()
+        yPadMax         = self.corona.coreSymBb.getYMin() - self.offset * 2*hPitch
         yContact        = yPadMax
-        yCore           = coreAb.getYMin()
+        yCore           = coronaAb.getYMin()
         if not self.preferredDir:
           yPadMax += self.bbSegment.getWidth()/2
       else:
         accessDirection = Pin.Direction.NORTH
         yPadMax         = self.bbSegment.getYMax()
-        yPadMin         = self.corona.coreSymBb.getYMax()
+        yPadMin         = self.corona.coreSymBb.getYMax() + self.offset * 2*hPitch
         yContact        = yPadMin
-        yCore           = coreAb.getYMax()
+        yCore           = coronaAb.getYMax()
         if not self.preferredDir:
           yPadMin -= self.bbSegment.getWidth()/2
 
@@ -753,7 +860,7 @@ class CoreWire ( object ):
       if self.arraySize:
         contacts = self.conf.coronaContactArray( self.chipNet
                                                , self.symContactLayer
-                                               , self.bbSegment.getCenter().getX()
+                                               , xCore
                                                , yContact
                                                , self.arraySize
                                                , flags
@@ -792,9 +899,10 @@ class CoreWire ( object ):
         if self.side == chip.South: yContact = min( yContact, hStrapBb.getYMin() )
         else:                       yContact = max( yContact, hStrapBb.getYMax() )
       
+      trace( 550, '\txCore:  %sl %s\n' % (DbU.toLambda(xCore), DbU.getValueString(xCore)) )
       self.conf.coronaVertical( self.chipNet
                               , self.symSegmentLayer
-                              , self.bbSegment.getCenter().getX()
+                              , xCore
                               , self.bbSegment.getWidth()
                               , yContact
                               , yCore
@@ -803,7 +911,7 @@ class CoreWire ( object ):
                                , self.count
                                , accessDirection
                                , self.symSegmentLayer
-                               , self.bbSegment.getCenter().getX()
+                               , xCore
                                , yCore
                                , self.bbSegment.getWidth()
                                , DbU.fromLambda( 1.0 )
@@ -967,12 +1075,12 @@ class Corona ( object ):
 
 
   def _createCoreWire ( self, chipIntNet, padNet, padInstance, count ):
-    padSide = None
-    if   self.hasSouthPad(padInstance): padSide = chip.South
-    elif self.hasNorthPad(padInstance): padSide = chip.North
-    elif self.hasEastPad (padInstance): padSide = chip.East
-    elif self.hasWestPad (padInstance): padSide = chip.West
-    if not padSide: return None
+    side = None
+    if   self.hasSouthPad(padInstance): side = self.southSide
+    elif self.hasNorthPad(padInstance): side = self.northSide
+    elif self.hasEastPad (padInstance): side = self.eastSide
+    elif self.hasWestPad (padInstance): side = self.westSide
+    if not side: return count
 
     innerBb   = self.conf.cell.getAbutmentBox().inflate( -self.conf.getIoPadHeight() )
     rg        = self.conf.gaugeConf.routingGauge
@@ -1005,7 +1113,7 @@ class Corona ( object ):
     gapWidth       = 0
     segments       = None
     inPreferredDir = False
-    if padSide == chip.North or padSide == chip.South:
+    if side.type == chip.North or side.type == chip.South:
       if len(vsegments):
         inPreferredDir = True
         segments       = vsegments[ min(vsegments.keys()) ]
@@ -1025,14 +1133,10 @@ class Corona ( object ):
     coreWires = []
     if segments:
       for segment, bb in segments:
-        if   padSide == chip.South: self.southSide.gap = max( self.southSide.gap, gapWidth )
-        elif padSide == chip.North: self.northSide.gap = max( self.northSide.gap, gapWidth )
-        elif padSide == chip.East : self.eastSide.gap  = max( self.eastSide.gap , gapWidth )
-        elif padSide == chip.West : self.westSide.gap  = max( self.westSide.gap , gapWidth )
-
-        coreWires.append( CoreWire( self, chipIntNet, segment, bb, padSide, inPreferredDir, count ) )
+        side.updateGap  ( gapWidth )
+        side.addCoreWire( CoreWire( self, chipIntNet, segment, bb, side.type, inPreferredDir, count ) )
         count += 1
-    return coreWires
+    return count
 
 
   def _placeInnerCorona ( self ):
@@ -1045,8 +1149,6 @@ class Corona ( object ):
     self.eastSide.gap  = self.southSide.gap
     self.westSide.gap  = self.southSide.gap
 
-    coreWires = []
-
     for coronaPlug in self.conf.icorona.getPlugs():
       chipIntNet = coronaPlug.getNet()
       if not chipIntNet:
@@ -1058,11 +1160,8 @@ class Corona ( object ):
       doneInstances = []
       for chipPlug in chipIntNet.getPlugs():
         doneInstances.append( chipPlug.getInstance() )
-        padNet   = chipPlug.getMasterNet()
-        padWires = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
-        if padWires:
-          coreWires    += padWires
-          padConnected += len(padWires)
+        padNet       = chipPlug.getMasterNet()
+        padConnected = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
 
       if chipIntNet.isGlobal():
         for instance in self.conf.cell.getInstances():
@@ -1072,10 +1171,7 @@ class Corona ( object ):
           padNet = instance.getMasterCell().getNet( chipIntNet.getName() )
           if not padNet: continue
 
-          padWires = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
-          if padWires:
-            coreWires    += padWires
-            padConnected += len(padWires)
+          padConnected = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
 
       if padConnected == 0:
         raise ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Chip net "%s" is not connected to a pad.' \
@@ -1089,10 +1185,46 @@ class Corona ( object ):
                           , self.conf.toSymbolic( self.eastSide.gap /2, chip.Inferior )
                           , self.conf.toSymbolic( self.northSide.gap/2, chip.Inferior ) )
 
-    for wire in coreWires:
-      trace( 550, '\t| %s %d %s\n' % (wire.chipNet.getName(),wire.count,wire.padSegment.getLayer()))
+    self.southSide.drawCoreWires()
+    self.northSide.drawCoreWires()
+    self.eastSide .drawCoreWires()
+    self.westSide .drawCoreWires()
 
-    for wire in coreWires: wire.drawWire()
+    if     len(self.southSide.coreWires) \
+       and len(self.westSide .coreWires) \
+       and not self.southSide.coreWires[0].inCoronaRange \
+       and not self.westSide .coreWires[0].inCoronaRange:
+        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on south-east corner are outside corona range.'
+                               , 'This will generate a short-circuit between S:"%s" and W:"%s".' % \
+                                 ( self.southSide.coreWires[0].chipNet.getName()
+                                 , self.westSide .coreWires[0].chipNet.getName()) ] )
+
+    if     len(self.southSide.coreWires) \
+       and len(self.eastSide .coreWires) \
+       and not self.southSide.coreWires[-1].inCoronaRange \
+       and not self.eastSide .coreWires[ 0].inCoronaRange:
+        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on south-west corner are outside corona range.'
+                               , 'This will generate a short-circuit between S:"%s" and E:"%s.' % \
+                                 ( self.southSide.coreWires[-1].chipNet.getName()
+                                 , self.eastSide .coreWires[ 0].chipNet.getName()) ] )
+
+    if     len(self.northSide.coreWires) \
+       and len(self.westSide .coreWires) \
+       and not self.northSide.coreWires[ 0].inCoronaRange \
+       and not self.westSide .coreWires[-1].inCoronaRange:
+        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on north-east corner are outside corona range.'
+                               , 'This will generate a short-circuit between N:"%s" and W:"%s".' % \
+                                 ( self.northSide.coreWires[ 0].chipNet.getName()
+                                 , self.westSide .coreWires[-1].chipNet.getName()) ] )
+
+    if     len(self.northSide.coreWires) \
+       and len(self.eastSide .coreWires) \
+       and not self.northSide.coreWires[-1].inCoronaRange \
+       and not self.eastSide .coreWires[-1].inCoronaRange:
+        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on north-west corner are outside corona range.'
+                               , 'This will generate a short-circuit between N:"%s" and E:"%s.' % \
+                                 ( self.northSide.coreWires[-1].chipNet.getName()
+                                 , self.eastSide .coreWires[-1].chipNet.getName()) ] )
 
     return
 

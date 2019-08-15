@@ -110,7 +110,7 @@ namespace Vhdl {
       _offset = (ptrdiff_t)this - (ptrdiff_t)property;
     }
 
-    if (_flags == NoFlags) _flags = EntityMode;
+    if ((_flags & ~ModeMask) == NoFlags) _flags |= EntityMode;
 
     for ( Net* net : cell->getNets() ) {
       if (net->isDeepNet()) continue;
@@ -353,7 +353,8 @@ namespace Vhdl {
     }
 
     for ( auto icell : masterCells ) {
-      Vhdl::Entity* component = Vhdl::EntityExtension::create( icell, Vhdl::Entity::ComponentMode );
+      Vhdl::Entity* component = Vhdl::EntityExtension::create
+        ( icell, Vhdl::Entity::ComponentMode | (_flags & ModeMask));
       component->toComponent( out );
       out << "\n";
     }
@@ -393,7 +394,8 @@ namespace Vhdl {
 
     Entity* masterEntity = EntityExtension::get( instance->getMasterCell() );
     if (not masterEntity) {
-      masterEntity = EntityExtension::create( instance->getMasterCell(), ComponentMode );
+      masterEntity = EntityExtension::create
+        ( instance->getMasterCell(), ComponentMode | (_flags & ModeMask));
     }
 
     size_t            width = 0;
