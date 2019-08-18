@@ -2030,7 +2030,7 @@ namespace Anabatic {
 
     if (   (minSourceDepth == maxSourceDepth)
        and (minTargetDepth == maxTargetDepth)
-       and (minTargetDepth == minTargetDepth) ) {
+       and (minSourceDepth == minTargetDepth) ) {
       const Layer* layer = Session::getRoutingLayer(minSourceDepth);
       DbU::Unit    side  = Session::getWireWidth   (minSourceDepth);
 
