@@ -60,8 +60,8 @@ namespace Katana {
     , _trackSpan (0)
     , _trackCount(0)
   {
-    cdebug_log(159,1) << "CTOR TrackSegmentNonPref " << (void*)this    << ":" << this    << endl;
-    cdebug_log(159,0) <<   "                  over " << (void*)segment << ":" << segment << endl;
+    cdebug_log(159,1) << "CTOR TrackSegmentNonPref " << /*(void*)this    << ":" <<*/ this    << endl;
+    cdebug_log(159,0) <<   "                  over " << /*(void*)segment << ":" <<*/ segment << endl;
 
     updateTrackSpan();
 
@@ -94,7 +94,7 @@ namespace Katana {
   void  TrackSegmentNonPref::updateTrackSpan ()
   {
     DebugSession::open( getNet(), 150, 160 );
-    cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackspan() " << (void*)this    << ":" << this    << endl;
+    cdebug_log(159,1) << "TrackSegmentNonPref::updateTrackspan() " << /*(void*)this    << ":" <<*/ this << endl;
 
     RoutingPlane* plane       = Session::getKatanaEngine()->getRoutingPlaneByLayer(_base->getLayer());
     Interval      newAxisSpan ( _base->getSourcePosition(), _base->getTargetPosition() );

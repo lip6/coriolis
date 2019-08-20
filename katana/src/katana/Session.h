@@ -128,11 +128,11 @@ namespace Katana {
       };
     protected:
     // Attributes.
-      vector<TrackElement*> _indirectInvalids;
-      vector<Event>         _insertEvents;
-      vector<Event>         _removeEvents;
-      vector<Event>         _lockEvents;
-      set<Track*>           _sortEvents;
+      vector<TrackElement*>  _indirectInvalids;
+      vector<Event>          _insertEvents;
+      vector<Event>          _removeEvents;
+      vector<Event>          _lockEvents;
+      vector<Track*>         _sortEvents;
     protected:
     // Constructors & Destructors.
                        Session     ( KatanaEngine* );

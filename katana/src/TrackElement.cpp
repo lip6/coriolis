@@ -189,7 +189,7 @@ namespace Katana {
   void           TrackElement::swapTrack            ( TrackElement* ) { }
   void           TrackElement::reschedule           ( uint32_t ) { }
 //void           TrackElement::detach               () { }
-  void           TrackElement::detach               ( set<Track*>& ) { }
+//void           TrackElement::detach               ( TrackSet& ) { }
   void           TrackElement::revalidate           () { }
   void           TrackElement::updatePPitch         () { }
   void           TrackElement::updateTrackSpan      () { }

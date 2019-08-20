@@ -875,6 +875,8 @@ namespace Anabatic {
 
   void  AnabaticEngine::layerAssign ( uint32_t method )
   {
+  //DebugSession::open( 145, 150 );
+
     cdebug_log(9000,0) << "Deter| Layer Assignment" << endl;
 
     set<Net*> globalNets;
@@ -980,6 +982,8 @@ namespace Anabatic {
     // cmess2 << "     - Global segments : " << global << endl;
     // cmess2 << "     - Ratio : "
     //        << ((float)global/(float)total)*100.0 << "%." << endl;
+
+  //DebugSession::close();
   }
 
 

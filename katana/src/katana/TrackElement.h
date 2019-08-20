@@ -55,6 +55,7 @@ namespace Katana {
   class Track;
   class TrackCost;
   class TrackSegment;
+  class TrackSet;
 
 
   typedef  map<TrackElement*,TrackElement*>                 TrackElementPairing;
@@ -174,7 +175,7 @@ namespace Katana {
       virtual Interval                getTargetConstraints   () const;
       virtual DataNegociate*          getDataNegociate       ( Flags flags=Flags::DataSelf ) const;
       inline  TrackElement*           getCanonical           ( Interval& );
-      virtual size_t                  getGCells              ( vector<GCell*>& ) const;
+      virtual size_t                  getGCells              ( std::vector<GCell*>& ) const;
       virtual TrackElement*           getParent              () const;
       virtual uint32_t                getDoglegLevel         () const;
       virtual TrackElement*           getSourceDogleg        ();
@@ -197,7 +198,7 @@ namespace Katana {
       virtual void                    swapTrack              ( TrackElement* );
       virtual void                    reschedule             ( uint32_t level );
     //virtual void                    detach                 ();
-      virtual void                    detach                 ( std::set<Track*>& );
+      virtual void                    detach                 ( TrackSet& ) = 0;
       virtual void                    invalidate             ();
       virtual void                    revalidate             ();
       virtual void                    updatePPitch           ();

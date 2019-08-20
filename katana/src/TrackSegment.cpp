@@ -441,9 +441,9 @@ namespace Katana {
   // }
 
 
-  void  TrackSegment::detach ( set<Track*>& removeds )
+  void  TrackSegment::detach ( TrackSet& removeds )
   {
-    cdebug_log(159,1) << "TrackSegment::detach(set<Track*>&) - <id:" << getId() << "> trackSpan:"
+    cdebug_log(159,1) << "TrackSegment::detach(TrackSet&) - <id:" << getId() << "> trackSpan:"
                       << getTrackSpan() << endl;
 
     Track* wtrack = getTrack();

@@ -93,7 +93,7 @@ namespace Katana {
   {
     cdebug_log(155,1) << "Track::_preDestroy() - " << (void*)this << " " << this << endl;
 
-    set<Track*> dummy;
+    TrackSet dummy;
     for ( size_t i=0 ; i<_segments.size() ; i++ )
       if (_segments[i]) {
         _segments[i]->detach( dummy );
@@ -520,7 +520,7 @@ namespace Katana {
     bool holes     = false;
 
     if (message) cerr << "     o  Checking Track - " << message << endl;
-    cdebug_log(155,0) << (void*)this << ":" << this << endl;
+    cdebug_log(155,0) << /*(void*)this << ":" <<*/ this << endl;
 
     for ( size_t i=0 ; i<_segments.size() ; i++ ) {
       if (_segments[i]) {

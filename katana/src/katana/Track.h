@@ -87,7 +87,7 @@ namespace Katana {
               TrackElement*  getPrevious         ( size_t& index, Net* ) const;
               TrackElement*  getNextFixed        ( size_t& index ) const;
               size_t         find                ( const TrackElement* ) const;
-              DbU::Unit      getSourcePosition   ( vector<TrackElement*>::iterator ) const;
+              DbU::Unit      getSourcePosition   ( std::vector<TrackElement*>::iterator ) const;
               DbU::Unit      getMinimalPosition  ( size_t index, uint32_t state ) const;
               DbU::Unit      getMaximalPosition  ( size_t index, uint32_t state ) const;
               Interval       getFreeInterval     ( DbU::Unit position, Net* net=NULL ) const;
@@ -115,16 +115,16 @@ namespace Katana {
 
     protected:
     // Attributes.
-      RoutingPlane*          _routingPlane;
-      size_t                 _index;
-      DbU::Unit              _axis;
-      DbU::Unit              _min;
-      DbU::Unit              _max;
-      vector<TrackElement*>  _segments;
-      vector<TrackMarker*>   _markers;
-      bool                   _localAssigned;
-      bool                   _segmentsValid;
-      bool                   _markersValid;
+      RoutingPlane*               _routingPlane;
+      size_t                      _index;
+      DbU::Unit                   _axis;
+      DbU::Unit                   _min;
+      DbU::Unit                   _max;
+      std::vector<TrackElement*>  _segments;
+      std::vector<TrackMarker*>   _markers;
+      bool                        _localAssigned;
+      bool                        _segmentsValid;
+      bool                        _markersValid;
 
     protected:
     // Constructors & Destructors.
@@ -152,6 +152,11 @@ namespace Katana {
       };
       struct SegmentCompare {
           inline bool operator() ( const TrackElement* lhs, const TrackElement* rhs );
+      };
+
+    public:
+      struct Compare {
+          inline bool operator() ( const Track* lhs, const Track* rhs ) const;
       };
   };
 
@@ -208,6 +213,18 @@ namespace Katana {
     state |= (flags & EndMask);
     return state;
   }
+
+
+  inline bool Track::Compare::operator() ( const Track* lhs, const Track* rhs ) const
+  {
+    if (lhs->isHorizontal() xor rhs->isHorizontal()) return lhs->isHorizontal();
+    if (lhs->getDepth    () !=  rhs->getDepth    ()) return lhs->getDepth() < rhs->getDepth();
+
+    return (lhs->getAxis() < rhs->getAxis());
+  }
+
+
+  class TrackSet : public std::set<Track*,Track::Compare> { };
 
 
 }  // Katana namespace.

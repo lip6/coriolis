@@ -1035,37 +1035,6 @@ namespace Etesian {
   }
 
 
-#if DISABLED
-  void  EtesianEngine::place ( Instance* instance )
-  {
-    setBlock( instance );
-    
-    if (getCell()->getAbutmentBox().isEmpty()) {
-      cmess2 << Error( "EtesianEngine::place(): Cell \"%s\" must have an abutment box."
-                     , getString(getCell()->getName()).c_str()
-                     ) << std::endl;
-      return;
-    }
-    if (getBlockCell()->getAbutmentBox().isEmpty()) {
-      cmess2 << Error( "EtesianEngine::place(): Instance \"%s\" must have an abutment box."
-                     , getString(instance->getName()).c_str()
-                     ) << std::endl;
-      return;
-    }
-    if(getBlockCell()->isPlaced()){
-        cmess2 << Error( "EtesianEngine::place(): The instance \"%s\" is already placed."
-                       , getString(instance->getName()).c_str()
-                       ) << std::endl;
-        return;
-    }
-    getBlockCell()->uniquify();
-
-    getConfiguration()->print( getCell() );
-    findYSpin();
-  }
-#endif
-
-
   void  EtesianEngine::_progressReport1 ( string label ) const
   {
     size_t w      = label.size();

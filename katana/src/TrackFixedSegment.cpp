@@ -237,6 +237,12 @@ namespace Katana {
   { }
 
 
+  void  TrackFixedSegment::detach ( TrackSet& removeds )
+  {
+    // cerr << Error( "TrackFixedSegment::detach(): Must never be called on %s."
+    //              , getString(this).c_str()) << endl;
+  }
+
   string  TrackFixedSegment::_getTypeName () const
   { return "TrackFixedSegment"; }
 

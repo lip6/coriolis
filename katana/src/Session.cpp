@@ -211,10 +211,10 @@ namespace Katana {
   {
     cdebug_log(159,1) << "Katana::Session::_doRemovalEvents()" << endl;
 
-    set<Track*> packTracks;
+    TrackSet  packTracks;
 
     for ( size_t i=0 ; i<_removeEvents.size() ; ++i ) {
-      cdebug_log(159,0) << "Event:" << _removeEvents[i]._segment << endl;
+      cdebug_log(159,0) << "Remove event for:" << _removeEvents[i]._segment << endl;
 
       if (not _removeEvents[i]._segment->getTrack()) continue;
       _removeEvents[i]._segment->detach( packTracks );
@@ -222,7 +222,7 @@ namespace Katana {
     }
     _removeEvents.clear();
 
-    for ( set<Track*>::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
+    for ( TrackSet::iterator it=packTracks.begin() ; it != packTracks.end() ; ++it )
       (*it)->doRemoval();
 
     cdebug_tabw(159,-1);
@@ -453,7 +453,8 @@ namespace Katana {
       return;
     }
     if (forced) track->invalidate();
-    _sortEvents.insert( track );
+    for ( Track* elem : _sortEvents ) if (elem == track) return;
+    _sortEvents.push_back( track );
   }
 
 

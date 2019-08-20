@@ -65,6 +65,7 @@ namespace Katana {
       virtual void           forcePriority          ( float );
       virtual void           computePriority        ();
       virtual void           computeAlignedPriority ();
+      virtual void           detach                 ( TrackSet& );
       virtual Record*        _getRecord             () const;
       virtual string         _getString             () const;
       virtual string         _getTypeName           () const;

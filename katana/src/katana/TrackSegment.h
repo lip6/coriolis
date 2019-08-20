@@ -134,7 +134,7 @@ namespace Katana {
       virtual void                  swapTrack              ( TrackElement* );
       virtual void                  reschedule             ( uint32_t level );
     //virtual void                  detach                 ();
-      virtual void                  detach                 ( std::set<Track*>& );
+      virtual void                  detach                 ( TrackSet& );
       virtual void                  invalidate             ();
       virtual void                  revalidate             ();
       virtual void                  updatePPitch           ();

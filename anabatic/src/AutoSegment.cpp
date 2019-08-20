@@ -718,7 +718,7 @@ namespace Anabatic {
       if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-      cdebug_log(159,0) << "getExtensionCap(): flags:" << getFlags()
+      cdebug_log(145,0) << "getExtensionCap(): flags:" << getFlags()
                         << " VIA cap:" << DbU::getValueString(cap)
                         << " " << (getFlags() & SegSourceBottom)
                         << endl;
