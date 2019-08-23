@@ -616,6 +616,7 @@ namespace Katana {
   bool  TrackSegment::canSlacken () const
   {
     cdebug_log(159,0) << "TrackSegment::canSlacken() doglegLevel:" << getDoglegLevel() << endl;
+    if (isNonPref()) return false;
     return (not isSlackened() and (getDoglegLevel() <= 3)) ? _base->canSlacken(Flags::Propagate) : false;
   }
 

@@ -1910,6 +1910,10 @@ namespace Anabatic {
       if (not getAutoTarget()->canMoveUp(this)) return false;
       return true;
     }
+
+    // if (getAutoSource()->isTurn() and (getAutoSource()->getPerpandicular(this)->getLayer() == getLayer())) return false;
+    // if (getAutoTarget()->isTurn() and (getAutoTarget()->getPerpandicular(this)->getLayer() == getLayer())) return false;
+       
     cdebug_log(159,0) << "Both source & target Contacts can move up." << endl;
 
   //bool hasGlobalSegment = false;

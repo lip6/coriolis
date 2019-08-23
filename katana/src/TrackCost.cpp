@@ -266,8 +266,8 @@ namespace Katana {
     s +=          string ( (isAtRipupLimit  ())?"R":"-" );
     s +=          string ( (isAnalog        ())?"a":"-" );
     s +=          string ( (isShortNet      ())?"N":"-" );
-    s += " "    + getString(_terminals);
-    s += "/"    + /*DbU::getValueString(_delta)*/       getString(_delta);
+    s += " t:"  + getString(_terminals);
+    s += "/d:"  + /*DbU::getValueString(_delta)*/       getString(_delta);
     s += "-"    + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
     s += "/aw:" + DbU::getValueString(_axisWeight);
     s += "/dp:" + DbU::getValueString(_deltaPerpand);

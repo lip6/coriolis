@@ -84,8 +84,22 @@ namespace {
     DataNegociate* data = segment->getDataNegociate();
     if (not data) return;
 
+    TrackElement*  refSegment = cost.getRefElement();
+    DataNegociate* refData    = refSegment->getDataNegociate();
+    AutoSegment*   refBase    = refSegment->base();
+    AutoSegment*      base    =    segment->base();
+
+    if (    base and refBase and refData
+       and (   base->getRpDistance() == 0)
+       and (refBase->getRpDistance() >  0)
+       and (refData->getState()      >  DataNegociate::RipupPerpandiculars)
+       and (   data->getState()      == DataNegociate::RipupPerpandiculars)
+       and (   data->getRipupCount() >  4)) {
+      cost.setAtRipupLimit();
+    }
+
     cost.mergeRipupCount( data->getRipupCount() );
-    if ( segment->isLocal() ) {
+    if (segment->isLocal()) {
       cost.mergeDataState( data->getState() );
       if (data->getState() >=  DataNegociate::LocalVsGlobal) {
         cdebug_log(159,0) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
@@ -235,7 +249,7 @@ namespace Katana {
     , _segments    ()
     , _eventQueue  ()
     , _eventHistory()
-    , _eventLoop   (10,50)
+    , _eventLoop   (10,70)
   { }
 
 

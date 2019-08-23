@@ -239,14 +239,14 @@ namespace Katana {
   inline       void          TrackCost::setOverlapGlobal    () { _flags |= OverlapGlobal; }
   inline       void          TrackCost::setGlobalEnclosed   () { _flags |= GlobalEnclosed; }
   inline       void          TrackCost::setAtRipupLimit     () { _flags |= AtRipupLimit; }
-  inline       void          TrackCost::incTerminals        ( uint32_t terminals ) { _terminals    += terminals; }
-  inline       void          TrackCost::incDelta            ( DbU::Unit delta )    { _delta        += delta; }
-  inline       void          TrackCost::incDeltaPerpand     ( DbU::Unit delta )    { _deltaPerpand += delta; }
-  inline       void          TrackCost::incDeltaShared      ( DbU::Unit delta )    { _deltaShared  += delta; }
-  inline       void          TrackCost::incAxisWeight       ( DbU::Unit weight )   { _axisWeight   += weight; }
-  inline       void          TrackCost::setLonguestOverlap  ( DbU::Unit overlap )  { _longuestOverlap = std::max( overlap, _longuestOverlap ); }
-  inline       void          TrackCost::mergeRipupCount     ( int count )          { _ripupCount      = std::max( count  , _ripupCount      ); }
-  inline       void          TrackCost::mergeDataState      ( uint32_t state )     { _dataState       = std::max( state  , _dataState       ); }
+  inline       void          TrackCost::incTerminals        ( uint32_t terminals    ) { _terminals    += terminals; }
+  inline       void          TrackCost::incDelta            ( DbU::Unit delta )       { _delta        += delta; }
+  inline       void          TrackCost::incDeltaPerpand     ( DbU::Unit delta )       { _deltaPerpand += delta; }
+  inline       void          TrackCost::incDeltaShared      ( DbU::Unit delta )       { _deltaShared  += delta; }
+  inline       void          TrackCost::incAxisWeight       ( DbU::Unit weight )      { _axisWeight   += weight; }
+  inline       void          TrackCost::setLonguestOverlap  ( DbU::Unit overlap )     { _longuestOverlap = std::max( overlap, _longuestOverlap ); }
+  inline       void          TrackCost::mergeRipupCount     ( int count )             { _ripupCount      = std::max( count  , _ripupCount      ); }
+  inline       void          TrackCost::mergeDataState      ( uint32_t state )        { _dataState       = std::max( state  , _dataState       ); }
   inline       string        TrackCost::_getTypeName        () const { return "TrackCost"; }
 
 

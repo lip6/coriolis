@@ -1192,7 +1192,10 @@ namespace Katana {
     } else {
       if (not _segment->canMoveUp(0.5,kflags)) return false;
     }
-    return _segment->moveUp( kflags|Flags::Propagate );
+
+    bool success = _segment->moveUp( kflags|Flags::Propagate );
+    _fsm.addAction ( _segment, SegmentAction::OtherRipup );
+    return success;
   }
 
 

@@ -21,6 +21,8 @@
 #include <algorithm>
 #include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/Bug.h"
+#include "hurricane/Breakpoint.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/Net.h"
@@ -50,10 +52,12 @@ namespace Katana {
   using std::min;
   using std::ostringstream;
   using Hurricane::tab;
+  using Hurricane::Breakpoint;
   using Hurricane::DebugSession;
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::BaseFlags;
+  using Hurricane::UpdateSession;
   using Hurricane::ForEachIterator;
   using Hurricane::Net;
   using Hurricane::Layer;
@@ -446,7 +450,7 @@ namespace Katana {
                       << " ripup:" << _segment->getDataNegociate()->getRipupCount()
                       << endl;
     cdebug_log(159,0) << "Level: " << getEventLevel()
-                      << ", area: " << _segment->getFreedomDegree() << endl;
+                      << ", p-slack: " << _segment->getFreedomDegree() << endl;
 
   //_preCheck( _segment );
     _eventLevel = 0;
@@ -474,6 +478,13 @@ namespace Katana {
     cdebug_tabw(159,-1);
 
     queue.repushInvalidateds();
+
+    // if (getProcesseds() == 286892 + 1) {
+    //   UpdateSession::close();
+    //   Breakpoint::stop( 1, "Stopping before revalidating event 286892." );
+    //   UpdateSession::open();
+    // }
+    
     Session::revalidate();
     queue.commit();
 

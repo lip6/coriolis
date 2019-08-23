@@ -335,7 +335,8 @@ namespace Katana {
         cost.incDeltaShared ( overlap.getSize() );
       }
       _segments[begin]->incOverlapCost( cost );
-      cdebug_log(155,0) << "| overlap: " << _segments[begin] << " cost:" << &cost << endl;
+      cdebug_log(155,0) << "| overlap: " << _segments[begin] << endl;
+      cdebug_log(155,0) << "| current cost:" << &cost << endl;
 
       if (cost.isInfinite()) break;
     }

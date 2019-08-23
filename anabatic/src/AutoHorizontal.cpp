@@ -245,26 +245,34 @@ namespace Anabatic {
   {
     cdebug_tabw(149,1);
 
-    Interval sourceSide        = getAutoSource()->getGCell()->getSide( Flags::Vertical );
-    Interval targetSide        = getAutoTarget()->getGCell()->getSide( Flags::Vertical );
-    Interval sourceConstraints = Interval(getAutoSource()->getCBYMin(),getAutoSource()->getCBYMax());
-    Interval targetConstraints = Interval(getAutoTarget()->getCBYMin(),getAutoTarget()->getCBYMax());
-    bool     sourceGoStraight  = getAutoSource()->getGCell()->isGoStraight();
-    bool     targetGoStraight  = getAutoTarget()->getGCell()->isGoStraight();
+    AutoContact* source            = getAutoSource();
+    AutoContact* target            = getAutoTarget();
+
+    Interval     sourceSide        = source->getGCell()->getSide( Flags::Vertical );
+    Interval     targetSide        = target->getGCell()->getSide( Flags::Vertical );
+    Interval     sourceConstraints = Interval(source->getCBYMin(),source->getCBYMax());
+    Interval     targetConstraints = Interval(target->getCBYMin(),target->getCBYMax());
+    bool         sourceGoStraight  = source->getGCell()->isGoStraight();
+    bool         targetGoStraight  = target->getGCell()->isGoStraight();
 
   // Expand by a tiny amount for the "contains" to work for sure.
     sourceConstraints.inflate( 1 );
     targetConstraints.inflate( 1 );
 
-    cdebug_log(149,0) << "source " << getAutoSource() << endl;
+    cdebug_log(149,0) << "source " << source << endl;
     cdebug_log(149,0) << "source constraints: " << sourceConstraints
                 << " " << DbU::getValueString(sourceConstraints.getSize()) << endl;
-    cdebug_log(149,0) << "target " << getAutoTarget() << endl;
+    cdebug_log(149,0) << "target " << target << endl;
     cdebug_log(149,0) << "target constraints: " << targetConstraints
                 << " " << DbU::getValueString(targetConstraints.getSize()) << endl;
 
     if (not sourceGoStraight and not sourceConstraints.contains(sourceSide)) { cdebug_tabw(149,-1); return true; }
     if (not targetGoStraight and not targetConstraints.contains(targetSide)) { cdebug_tabw(149,-1); return true; }
+
+    if (not isUnbreakable()) {
+      if (source->isTurn() and (source->getPerpandicular(this)->getLayer() == getLayer())) { cdebug_tabw(149,-1); return true; }
+      if (target->isTurn() and (target->getPerpandicular(this)->getLayer() == getLayer())) { cdebug_tabw(149,-1); return true; }
+    }
 
     cdebug_tabw(149,-1);
     return false;
@@ -280,30 +288,49 @@ namespace Anabatic {
     const Configuration* configuration = Session::getConfiguration();
     const Layer*         metal2        = configuration->getRoutingLayer( 1 );
 
-    bool         success        = false;
-    bool         isMetal2Source = false;
-    bool         isMetal2Target = false;
-    DbU::Unit    height         = 0;
-    AutoContact* source         = getAutoSource();
-    AutoContact* target         = getAutoTarget();
+    bool         success         = false;
+    bool         isMetal2Source  = false;
+    bool         isMetal2Target  = false;
+    bool         isNonPrefSource = false;
+    bool         isNonPrefTarget = false;
+    DbU::Unit    height          = 0;
+    AutoContact* source          = getAutoSource();
+    AutoContact* target          = getAutoTarget();
+    bool         slackenSource   = false;
+    bool         slackenTarget   = false;
+
+    
     if (source->isTerminal()) {
       height = (static_cast<RoutingPad*>(source->getAnchor()))->getBoundingBox().getHeight();
       isMetal2Source = (source->getLayer() == metal2);
+      slackenSource  = true;
     }
     if (target->isTerminal()) {
       height = std::min( height, (static_cast<RoutingPad*>(target->getAnchor()))->getBoundingBox().getHeight() );
       isMetal2Target = (target->getLayer() == metal2);
+      slackenTarget  = true;
     }
-
-    if (height >= 4*getPitch()) {
-      if (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < 5*getPitch()))
-        return false;
+    if (source->isTurn() and (source->getPerpandicular(this)->getLayer() == getLayer())) {
+      isNonPrefSource = true;
+      slackenSource   = true;
+    }
+    if (target->isTurn() and (target->getPerpandicular(this)->getLayer() == getLayer())) {
+      isNonPrefTarget = true;
+      slackenTarget   = true;
     }
 
     cdebug_tabw(149,1);
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
     cdebug_log(149,0) << "test:" << (getLength() < 5*getPitch()) << endl;
     cdebug_log(149,0) << "length:" << DbU::getValueString(getLength()) << endl;
+
+    if (height >= 4*getPitch()) {
+      if (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < 5*getPitch())) {
+        cdebug_log(149,0) << "Too short terminal segment to slacken." << endl;
+        cdebug_tabw(149,-1);
+        return false;
+      }
+    }
 
     int          lowSlack        = (flags & Flags::HalfSlacken) ? 3 : 10;
     bool         sourceSlackened = false;
@@ -312,7 +339,7 @@ namespace Anabatic {
     DbU::Unit    targetPosition  = getTargetPosition();
     AutoSegment* parallel        = this;
 
-    if (source->isTerminal()) {
+    if (slackenSource) {
       Interval  perpandConstraints = getAutoTarget()->getUConstraints(Flags::Horizontal);
       Interval  constraints        = source->getUConstraints      (Flags::Vertical|Flags::NoGCellShrink);
       Interval  nativeConstraints  = source->getNativeUConstraints(Flags::Vertical|Flags::NoGCellShrink);
@@ -324,7 +351,7 @@ namespace Anabatic {
                   << " native slack:" << nativeSlack << endl;
       cdebug_log(149,0) << "Perpand constraints on target: " << perpandConstraints << endl; 
     // Ugly: GCell's track number is hardwired.
-      if ((nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
+      if (isNonPrefSource or (nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
         cdebug_log(149,0) << "Slackening from Source: " << source << endl;
         _makeDogleg( source->getGCell(), Flags::NoFlags );
         sourceSlackened = true;
@@ -352,7 +379,7 @@ namespace Anabatic {
 
     if (parallel) target = parallel->getAutoTarget();
 
-    if (target->isTerminal()) {
+    if (slackenTarget) {
       Interval  constraints       = target->getUConstraints      (Flags::Vertical|Flags::NoGCellShrink);
       Interval  nativeConstraints = target->getNativeUConstraints(Flags::Vertical|Flags::NoGCellShrink);
       int       slack             = constraints.getSize()       / getPitch();
@@ -362,7 +389,7 @@ namespace Anabatic {
       cdebug_log(149,0) << "Target constraint: " << constraints
                   << " slack:"        << slack
                   << " native slack:" << nativeSlack << endl;
-      if ((nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
+      if (isNonPrefTarget or (nativeSlack < lowSlack) or (nativeSlack - slack < 3)) {
         cdebug_log(149,0) << "Slackening from Target: " << target << endl;
         parallel->_makeDogleg( target->getGCell(), Flags::NoFlags );
         targetSlackened = true;

@@ -1215,7 +1215,13 @@ namespace Katana {
       case DataNegociate::Dogleg:
       case DataNegociate::Slacken:
         if ((success = manipulator.slacken(Flags::HalfSlacken))) {
+          nextState = DataNegociate::LocalVsGlobal;
+          break;
+        }
+      case DataNegociate::LocalVsGlobal:
+        if (segment->isUnbreakable()) {
           nextState = DataNegociate::MaximumSlack;
+          success   = true;
           break;
         }
       case DataNegociate::ConflictSolveByHistory:
