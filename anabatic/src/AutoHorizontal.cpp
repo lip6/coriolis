@@ -861,25 +861,16 @@ namespace Anabatic {
     Session::dogleg( segment2 );
 
     if (autoSource->isTerminal() and autoTarget->isTerminal()) {
-      segment1->setRpDistance( 1 );
-      segment2->setRpDistance( 0 );
       dlContact1->setFlags  ( CntWeakTerminal );
       dlContact2->setFlags  ( CntWeakTerminal );
 
       if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
       if (autoSource->getGCell() == doglegGCell) dlContact2->migrateConstraintBox( autoSource );
     } else if (autoSource->isTerminal()) {
-      segment1->setRpDistance( 1 );
-      segment2->setRpDistance( 2 );
-
       autoTarget->unsetFlags( CntWeakTerminal );
       dlContact1->setFlags  ( CntWeakTerminal );
       if (autoTarget->getGCell() == doglegGCell) dlContact1->migrateConstraintBox( autoTarget );
     } else if (autoTarget->isTerminal()) {
-      segment2->setRpDistance( 0 );
-      segment1->setRpDistance( 1 );
-      setRpDistance( 2 );
-
       unsetFlags( SegTargetTerminal );
       setFlags( SegWeakTerminal1 );
       autoSource->unsetFlags( CntWeakTerminal );
@@ -888,11 +879,6 @@ namespace Anabatic {
     } else  if (isWeakTerminal()) {
       segment1->setFlags( SegWeakTerminal1 );
       segment2->setFlags( SegWeakTerminal1 );
-      segment1->setRpDistance( getRpDistance() );
-      segment2->setRpDistance( getRpDistance() );
-    } else {
-      segment1->setRpDistance( getRpDistance() );
-      segment2->setRpDistance( getRpDistance() );
     }
 
     // if (autoSource->isTerminal()) {
@@ -943,7 +929,7 @@ namespace Anabatic {
         Interval dragConstraints = autoTarget->getNativeUConstraints(Flags::Horizontal);
         segment1->mergeUserConstraints( dragConstraints );
 
-        cdebug_log(149,0) << "Perpandical has drag constraints: " << dragConstraints << endl;
+        cdebug_log(149,0) << "Perpandicular has drag constraints: " << dragConstraints << endl;
       }
     }
 

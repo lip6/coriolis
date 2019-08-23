@@ -233,15 +233,22 @@ namespace Anabatic {
     cdebug_tabw(146,1);
 
     vector<RoutingPad*> routingPads;
-    forEach ( Component*, icomponent, net->getComponents() ) {
-      Contact* contact = dynamic_cast<Contact*>( *icomponent );
+    for ( Component* component : net->getComponents() ) {
+      Contact* contact = dynamic_cast<Contact*>( component );
       if (contact) {
         AutoContact* autoContact = Session::lookup( contact );
         if (autoContact) 
           autoContact->restoreNativeConstraintBox();
       } else {
-        RoutingPad* routingPad = dynamic_cast<RoutingPad*>( *icomponent );
-        if (routingPad) routingPads.push_back( routingPad );
+        Segment* segment = dynamic_cast<Segment*>( component );
+        if (segment) {
+          AutoSegment* autoSegment = Session::lookup( segment );
+          if (autoSegment) 
+            autoSegment->setRpDistance( 15 );
+        } else {
+          RoutingPad* routingPad = dynamic_cast<RoutingPad*>( component );
+          if (routingPad) routingPads.push_back( routingPad );
+        }
       }
     }
 
