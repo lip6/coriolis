@@ -81,6 +81,7 @@ namespace Etesian {
       inline  Instance*              getBlockInstance   () const;
       inline  void                   setBlock           ( Instance* );
               void                   setDefaultAb       ();
+              void                   adjustSliceHeight  ();
               void                   resetPlacement     ();
               void                   toColoquinte       ();
               void                   preplace           ();
@@ -116,6 +117,7 @@ namespace Etesian {
              FeedCells                                _feedCells;
              BloatCells                               _bloatCells;
              size_t                                   _yspinSlice0;
+             DbU::Unit                                _sliceHeight;
 
     protected:
     // Constructors & Destructors.
@@ -140,7 +142,7 @@ namespace Etesian {
   inline  CellGauge*             EtesianEngine::getCellGauge       () const { return getConfiguration()->getCellGauge(); }
   inline  DbU::Unit              EtesianEngine::getHorizontalPitch () const { return getGauge()->getHorizontalPitch(); }
   inline  DbU::Unit              EtesianEngine::getVerticalPitch   () const { return getGauge()->getVerticalPitch(); }
-  inline  DbU::Unit              EtesianEngine::getSliceHeight     () const { return getCellGauge()->getSliceHeight(); }
+  inline  DbU::Unit              EtesianEngine::getSliceHeight     () const { return _sliceHeight; }
   inline  Effort                 EtesianEngine::getPlaceEffort     () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate          EtesianEngine::getUpdateConf      () const { return getConfiguration()->getUpdateConf(); }
   inline  Density                EtesianEngine::getSpreadingConf   () const { return getConfiguration()->getSpreadingConf(); }

@@ -188,8 +188,11 @@ namespace CRL {
 
       Instance* instance = Instance::create( cell, node->getName(), master );
       instance->setTransformation( toTransformation(node) );
-      if (node->isFixed())
+      if (node->isFixed() || node->isTerminal())
         instance->setPlacementStatus( Instance::PlacementStatus::FIXED );
+      // TODO: the alliance framework is not persisted, hence we cannot modify the pitch and slice height here; this is worked around in Etesian
+      else
+        af->getCellGauge()->setPitch(master->getAbutmentBox().getHeight());
 
       for ( auto ipin : node->getPins() ) {
         Name netName   = ipin.second->getNet()->getName();

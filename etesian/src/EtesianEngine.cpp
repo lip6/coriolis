@@ -311,6 +311,7 @@ namespace Etesian {
                          ) << endl;
       }
     }
+    _sliceHeight = getCellGauge()->getSliceHeight();
   }
 
 
@@ -478,18 +479,6 @@ namespace Etesian {
 
     size_t  instancesNb = 0;
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) ) {
-      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
-      Cell*     masterCell   = instance->getMasterCell();
-
-      if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-         and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED )
-         and (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) ) {
-        throw Error( "EtesianEngine::toColoquinte(): Cannot manage unplaced block, instance \"%s\" of \"%s\"."
-                   , getString(instance  ->getName()).c_str()
-                   , getString(masterCell->getName()).c_str()
-                   );
-      }
-
       ++instancesNb;
     }
 
@@ -674,6 +663,42 @@ namespace Etesian {
     _placementUB = _placementLB;
   }
 
+  void  EtesianEngine::adjustSliceHeight ()
+  {
+    /*
+     * Modify the slice height if it doesn't match the one given by the Alliance Framework.
+     * Useful for Bookshelf benchmarks
+     */
+
+    bool isSliceHeightSet = false;
+    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
+    {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell* masterCell = instance->getMasterCell();
+
+      if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+         and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ))
+      {
+        DbU::Unit cellHeight = masterCell->getAbutmentBox().getHeight();
+        bool sliceHeightChange = cellHeight != getSliceHeight();
+        if (isSliceHeightSet)
+        {
+          if (sliceHeightChange) throw Error( "EtesianEngine::toColoquinte(): Cannot manage unplaced block, instance \"%s\" of \"%s\": slice height was set to %d but cell height is %d."
+                 , getString(instance  ->getName()).c_str()
+                 , getString(masterCell->getName()).c_str()
+                 , getSliceHeight()
+                 , cellHeight
+                 );
+        }
+        else
+        {
+          if (sliceHeightChange) cerr << Warning("Adjusting slice height from %d to %d fit a placeable cell.", getSliceHeight(), cellHeight) << endl;
+          _sliceHeight = cellHeight;
+        }
+        isSliceHeightSet = true;
+      }
+    }
+  }
 
   void  EtesianEngine::preplace ()
   {
@@ -919,6 +944,7 @@ namespace Etesian {
     getBlockCell()->uniquify();
 
     getConfiguration()->print( getCell() );
+    adjustSliceHeight();
     if (getBlockCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 
     findYSpin();

@@ -100,7 +100,9 @@ namespace Unicorn {
     _importCell.addImporter<Cell*>   ( "JSON (experimental)"         , std::bind( &Cell::fromJson     , placeholders::_1 ) );
     _importCell.addImporter<Cell*>   ( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1, true ) );
     _importCell.addImporter<Cell*>   ( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
+    /* Disabled because this is never the one you want
     _importCell.addImporter<Cell*>   ( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
+    */
     _importCell.addImporter<Cell*>   ( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
     _importCell.addImporter<Cell*>   ( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
     _importCell.addImporter<Cell*>   ( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
