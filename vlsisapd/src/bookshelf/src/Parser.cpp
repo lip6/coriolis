@@ -193,7 +193,7 @@ namespace Bookshelf {
   {
   //std::cerr << "_buffer: " << _buffer << endl;
 
-    bool         terminal       = false;
+    bool         flags = false;
     unsigned int symmetry       = 0;
     bool         symmetryTokens = false;
     double       width          = 0.0;
@@ -212,7 +212,8 @@ namespace Bookshelf {
         if ( _keywordCompare("R90",_tokens[itoken]) == 0 ) { symmetry |= Symmetry::R90; continue; }
         symmetryTokens = false;
       }
-      if ( _keywordCompare("terminal",_tokens[itoken]) == 0 ) { terminal = true; continue; }
+      if ( _keywordCompare("terminal",_tokens[itoken]) == 0 ) { flags = Node::Terminal; continue; }
+      if ( _keywordCompare("terminal_NI",_tokens[itoken]) == 0 ) { flags = Node::Terminal | Node::NoImage; continue; }
       if ( _keywordCompare(":"       ,_tokens[itoken]) == 0 ) { symmetryTokens = true; continue; }
 
     //std::cerr << " <X Y>" << std::endl;
@@ -224,7 +225,7 @@ namespace Bookshelf {
       height = toDouble ( _tokens[itoken] );
     }
 
-    _circuit->addNode ( new Node(_tokens[0],width,height,symmetry,terminal) );
+    _circuit->addNode ( new Node(_tokens[0],width,height,symmetry,flags) );
 
     // std::cerr << "name:" << _tokens[0]
     //           << " " << width
@@ -547,6 +548,7 @@ namespace Bookshelf {
       if ( orientationToken ) {
         if (itoken+1 < _tokens.size()) {
           if ( _keywordCompare("/FIXED",_tokens[itoken+1]) == 0 ) flags |= Node::Fixed;
+          if ( _keywordCompare("/FIXED_NI",_tokens[itoken+1]) == 0 ) flags |= Node::Fixed | Node::NoImage;
         }
 
         if ( _keywordCompare("N" ,_tokens[itoken]) == 0 ) { orientation |= Orientation::N; continue; }

@@ -42,7 +42,7 @@ namespace Bookshelf {
 
   class Node {
     public:
-      enum Flag { NoFlags=0x0000, Terminal=0x0001, Fixed=0x0002 };
+      enum Flag { NoFlags=0x0000, Terminal=0x0001, Fixed=0x0002, NoImage=0x0004 };
     public:
       inline                        Node           ( const std::string& name
                                                    , double             width   =0.0
@@ -51,6 +51,7 @@ namespace Bookshelf {
                                                    , unsigned int       flags   =NoFlags );
       inline bool                   isTerminal     () const;
       inline bool                   isFixed        () const;
+      inline bool                   isNoImage () const;
       inline const std::string&     getName        () const;
       inline double                 getWidth       () const;
       inline double                 getHeight      () const;
@@ -109,6 +110,7 @@ namespace Bookshelf {
 
   inline bool                   Node::isTerminal     () const { return _flags&Terminal; }
   inline bool                   Node::isFixed        () const { return _flags&Fixed; }
+  inline bool                   Node::isNoImage () const { return _flags&NoImage; }
   inline const std::string&     Node::getName        () const { return _name; }
   inline double                 Node::getWidth       () const { return _width; }
   inline double                 Node::getHeight      () const { return _height; }

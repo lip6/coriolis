@@ -83,7 +83,8 @@ namespace Bookshelf {
         if ( _orientation == Orientation::FS ) o << " FS";
         if ( _orientation == Orientation::FW ) o << " FW";
       }
-      if ( flags & Fixed ) o << " /FIXED";
+      if ( (flags & Fixed) && (flags & NoImage) ) o << " /FIXED_NI";
+      else if ( flags & Fixed ) o << " /FIXED";
       o << std::endl;
     }
   }
@@ -101,8 +102,12 @@ namespace Bookshelf {
       if ( node->_symmetry & Symmetry::Y   ) o << " Y";
       if ( node->_symmetry & Symmetry::R90 ) o << " R90";
     }
-    if ( node->_flags & Node::Terminal ) o << " terminal";
-    if ( node->_flags & Node::Fixed    ) o << " /FIXED";
+
+    if ( (node->_flags & Node::Terminal) && (node->_flags & Node::NoImage) ) o << " terminal_NI";
+    else if ( node->_flags & Node::Terminal ) o << " terminal";
+
+    if ( (node->_flags & Node::Fixed) && (node->_flags & Node::NoImage) ) o << " /FIXED_NI";
+    else if ( node->_flags & Node::Fixed    ) o << " /FIXED";
       
     return o;
   }
