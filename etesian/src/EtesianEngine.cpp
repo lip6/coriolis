@@ -477,7 +477,7 @@ namespace Etesian {
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
 
-    size_t  instancesNb = 0;
+    size_t  instancesNb = 1; // One dummy fixed instance at the end
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
     }
@@ -587,6 +587,14 @@ namespace Etesian {
       ++instanceId;
       dots.dot();
     }
+
+    // Dummy fixed instance at the end
+    instances[instanceId].size       = point<int_t>( 0, 0 );
+    instances[instanceId].list_index = instanceId;
+    instances[instanceId].area       = 0;
+    positions[instanceId]            = point<int_t>( 0, 0 );
+    instances[instanceId].attributes = 0;
+
     dots.finish( Dots::Reset|Dots::FirstDot );
 
     size_t netsNb = getCell()->getNets().getSize();
@@ -616,18 +624,25 @@ namespace Etesian {
     //cerr << "+ " << net << endl;
 
       for ( Pin* pin : net->getPins() ) {
-      //cerr << "Outside Pin: " << pin << endl;
       // For Gabriel Gouvine : the position of this pin should be added as a fixed
       // attractor in Coloquinte. May be outside the placement area.
+        Point pt = pin->getPosition();
+        topTransformation.applyOn(pt);
+        int_t xpin = pt.getX() / vpitch;
+        int_t ypin = pt.getY() / hpitch;
+      // Dummy last instance
+        pins.push_back( temporary_pin( point<int_t>(xpin,ypin), instanceId, netId ) );
+      //cerr << "Outside Pin: " << pin << endl;
       }
       
       for ( RoutingPad* rp : net->getRoutingPads() ) {
         if (getBlockInstance() and (rp->getOccurrence().getPath().getHeadInstance() != getBlockInstance())) {
-        //cerr << "Outside RP: " << rp << endl;
         // For Gabriel Gouvine : if there are multiple blocks (i.e. we have a true
         // floorplan, there may be RoutingPad that are elsewhere. We should check
         // that the RP is placed or is inside a define area (the abutment box of
         // it's own block). No example yet of that case, though.
+          cerr << Warning("Net %s has a routing pad that is not rooted at the placed instance.", getString(net).c_str()) << endl;
+        //cerr << "Outside RP: " << rp << endl;
           continue;
         }
 
