@@ -32,6 +32,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/RoutingPads.h"
 #include "hurricane/Pad.h"
+#include "hurricane/Pin.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
@@ -54,6 +55,8 @@ namespace Anabatic {
   using std::swap;
   using Hurricane::Transformation;
   using Hurricane::Warning;
+  using Hurricane::Error;
+  using Hurricane::Pin;
 
   
   NetBuilderHV::NetBuilderHV ()
@@ -105,7 +108,7 @@ namespace Anabatic {
     }
 
   // Non-M1 terminal or punctual M1 protections.
-    if ((rpDepth != 0) or (sourcePosition == targetPosition)) {
+    if ( ((rpDepth != 0) or (sourcePosition == targetPosition)) and not (flags & NoProtect) ) {
       map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
       if (irp == getRpLookup().end()) {
         AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
@@ -499,14 +502,184 @@ namespace Anabatic {
   }
 
 
+  bool  NetBuilderHV::_do_1G_1PinM1 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_1G_1PinM1() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    AutoContact* rpSourceContact = NULL;
+    AutoContact* rpContactTarget = NULL;
+    AutoContact* turn            = NULL;
+
+    doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoProtect );
+
+    Pin* pin = dynamic_cast<Pin*>( getRoutingPads()[0]->getOccurrence().getEntity() );
+    Pin::AccessDirection pinDir = pin->getAccessDirection();
+    if (  (pinDir == Pin::AccessDirection::NORTH)
+       or (pinDir == Pin::AccessDirection::SOUTH) ) {
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getRoutingLayer(1) );
+      AutoSegment::create( rpSourceContact, turn, Flags::Vertical|Flags::UseNonPref );
+      rpSourceContact = turn;
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* horizontal = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      rpSourceContact = turn;
+
+      DbU::Unit axis = getGCell()->getYMax() - Session::getDHorizontalPitch();
+      if (pinDir == Pin::AccessDirection::SOUTH)
+        axis = getGCell()->getYMin() + Session::getDHorizontalPitch();
+      cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
+      
+      horizontal->setAxis( axis, Flags::Force );
+      horizontal->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+      cdebug_log(145,0) << horizontal << endl;
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getRoutingLayer(1) );
+      AutoSegment* vertical = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
+      rpSourceContact = turn;
+      vertical->setAxis( pin->getX(), Flags::Force );
+      vertical->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+      cdebug_log(145,0) << vertical << endl;
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      horizontal = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      horizontal->setAxis( axis, Flags::Force );
+      rpSourceContact = turn;
+    } else {
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      rpSourceContact = turn;
+    }
+
+    if (east() or west()) {
+      rpSourceContact = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* vertical = AutoSegment::create( turn, rpSourceContact, Flags::Vertical );
+
+      DbU::Unit axis = getGCell()->getXMax() - Session::getDVerticalPitch();
+      if (pinDir == Pin::AccessDirection::WEST)
+        axis = getGCell()->getXMin() + Session::getDVerticalPitch();
+      cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
+      
+      vertical->setAxis( axis, Flags::Force );
+      vertical->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+
+      turn = rpSourceContact;
+    }
+    setBothCornerContacts( turn );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderHV::_do_2G_1PinM1 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_2G_1PinM1() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    AutoContact* rpSourceContact = NULL;
+    AutoContact* rpContactTarget = NULL;
+    AutoContact* tee             = NULL;
+    AutoContact* turn            = NULL;
+
+    doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoProtect );
+
+    Pin* pin = dynamic_cast<Pin*>( getRoutingPads()[0]->getOccurrence().getEntity() );
+    Pin::AccessDirection pinDir = pin->getAccessDirection();
+    if (  (pinDir == Pin::AccessDirection::NORTH)
+       or (pinDir == Pin::AccessDirection::SOUTH) ) {
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getRoutingLayer(1) );
+      AutoSegment::create( rpSourceContact, turn, Flags::Vertical|Flags::UseNonPref );
+      rpSourceContact = turn;
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* horizontal = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      rpSourceContact = turn;
+
+      DbU::Unit axis = getGCell()->getYMax() - Session::getDHorizontalPitch();
+      if (pinDir == Pin::AccessDirection::SOUTH)
+        axis = getGCell()->getYMin() + Session::getDHorizontalPitch();
+      horizontal->setAxis( axis, Flags::Force );
+      horizontal->setFlags( AutoSegment::SegFixed );
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getRoutingLayer(1) );
+      AutoSegment* vertical = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
+      rpSourceContact = turn;
+      vertical->setFlags( AutoSegment::SegFixed );
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      horizontal = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      horizontal->setAxis( axis, Flags::Force );
+      rpSourceContact = turn;
+      turn            = NULL;
+    }
+
+    if (east() and west()) {
+    // Pin must be North or South.
+      tee = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( rpSourceContact, tee, Flags::Vertical );
+    } else if (north() and south()) {
+    // Pin must be East or West.
+      tee = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( rpSourceContact, tee, Flags::Horizontal );
+    } else {
+      if (  (pinDir == Pin::AccessDirection::EAST)
+         or (pinDir == Pin::AccessDirection::WEST) ) {
+        turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+        rpSourceContact = turn;
+      }
+
+      tee = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* vertical = AutoSegment::create( rpSourceContact, tee, Flags::Vertical );
+
+      if (  (pinDir == Pin::AccessDirection::EAST)
+         or (pinDir == Pin::AccessDirection::WEST) ) {
+        DbU::Unit axis = getGCell()->getXMax() - Session::getDVerticalPitch();
+        if (pinDir == Pin::AccessDirection::WEST)
+          axis = getGCell()->getXMin() + Session::getDVerticalPitch();
+        cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
+      
+        vertical->setAxis( axis, Flags::Force );
+        vertical->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+      }
+    }
+
+    setBothCornerContacts( tee );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
   bool  NetBuilderHV::_do_xG_1PinM2 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG_1PinM2() [Managed Configuration - Optimized] " << getTopology() << endl;
 
     AutoContact* rpSourceContact = NULL;
     AutoContact* rpContactTarget = NULL;
+    AutoContact* turn            = NULL;
 
     doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoFlags );
+
+    Pin* pin = dynamic_cast<Pin*>( getRoutingPads()[0]->getOccurrence().getEntity() );
+    Pin::AccessDirection pinDir = pin->getAccessDirection();
+    if (  (pinDir == Pin::AccessDirection::EAST)
+       or (pinDir == Pin::AccessDirection::WEST) ) {
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+      rpSourceContact = turn;
+
+      turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment* vertical = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
+      rpSourceContact = turn;
+
+      DbU::Unit axis = getGCell()->getXMax() - Session::getDVerticalPitch();
+      if (pinDir == Pin::AccessDirection::WEST)
+        axis = getGCell()->getXMin() + Session::getDVerticalPitch();
+      cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
+      
+      vertical->setAxis( axis, Flags::Force );
+      vertical->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+    }
 
     if (getConnexity().fields.globals == 2) {
       if (west() and south()) {

@@ -228,7 +228,13 @@ namespace Katana {
     printMeasures( "Anabatic Grid" );
 
     setupNetDatas();
+    computeEdgeCapacities( getHTracksReservedLocal()
+                         , getVTracksReservedLocal()
+                         , getTermSatThreshold()
+                         , getTermSatReservedLocal() 
+                         );
 
+#if UNIFORM_EDGE_CAPACITY
     for ( GCell* gcell : getGCells() ) {
       if (not gcell->isMatrix()) continue;
 
@@ -237,6 +243,7 @@ namespace Katana {
         else                      edge->reserveCapacity( getVTracksReservedLocal() );
       }
     }
+#endif
   }
 
 

@@ -616,6 +616,8 @@ namespace Anabatic {
         case Conn_4G:     _do_xG(); break;
         // End xG cascaded cases.
         // Optimized specific cases.
+        case Conn_1G_1PinM1:  _do_1G_1PinM1 (); break;
+        case Conn_2G_1PinM1:  _do_2G_1PinM1 (); break;
         case Conn_1G_1PinM2:  _do_1G_1PinM2 (); break;
         case Conn_2G_1PinM2:
         case Conn_3G_1PinM2:  _do_xG_1PinM2 (); break;
@@ -628,7 +630,7 @@ namespace Anabatic {
         default:
           if (not isTwoMetals())
             throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
-                       "      The global routing seems to be defective."
+                     "      The global routing seems to be defective."
                      , _connexity.connexity
                      , _connexity.fields.globals
                      , _connexity.fields.M1     
@@ -958,6 +960,20 @@ namespace Anabatic {
   bool  NetBuilder::_do_1G_1PinM2 ()
   {
     throw Error ( "%s::_do_1G_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_1G_1PinM1 ()
+  {
+    throw Error ( "%s::_do_1G_1PinM1() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+  
+  bool  NetBuilder::_do_2G_1PinM1 ()
+  {
+    throw Error ( "%s::_do_2G_1PinM1() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
 

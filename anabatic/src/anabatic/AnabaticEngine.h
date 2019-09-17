@@ -68,6 +68,8 @@ namespace Anabatic {
       };
     public:
                                     RawGCellsUnder ( const AnabaticEngine*, Segment* );
+                                    RawGCellsUnder ( const AnabaticEngine*, Point source, Point target );
+                   void             commonCtor     ( const AnabaticEngine*, Point source, Point target );
       inline       bool             empty          () const;
       inline       size_t           size           () const;
       inline       GCell*           gcellAt        ( size_t ) const;
@@ -208,6 +210,7 @@ namespace Anabatic {
       inline        GCell*            getGCellUnder           ( DbU::Unit x, DbU::Unit y ) const;
       inline        GCell*            getGCellUnder           ( Point ) const;
       inline        GCellsUnder       getGCellsUnder          ( Segment* ) const;
+      inline        GCellsUnder       getGCellsUnder          ( Point source, Point target ) const;
       inline        Edges             getEdgesUnderPath       ( GCell* source, GCell* target, Flags pathFlags=Flags::NorthPath ) const;
                     Interval          getUSide                ( Flags direction ) const;
                     int               getCapacity             ( Interval, Flags ) const;
@@ -255,6 +258,7 @@ namespace Anabatic {
       inline        void              setSaturateRp           ( size_t );
       inline        void              setBlockageNet          ( Net* );
                     void              chipPrep                ();
+                    void              computeEdgeCapacities   ( int maxHCap, int maxVCap, int termSatThreshold, int maxTermSat );
                     void              setupSpecialNets        ();
                     size_t            setupPreRouteds         ();
                     void              loadGlobalRouting       ( uint32_t method );
@@ -346,6 +350,7 @@ namespace Anabatic {
   inline       GCell*            AnabaticEngine::getGCellUnder         ( DbU::Unit x, DbU::Unit y ) const { return _matrix.getUnder(x,y); }
   inline       GCell*            AnabaticEngine::getGCellUnder         ( Point p ) const { return _matrix.getUnder(p); }
   inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Segment* s ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,s) ); }
+  inline       GCellsUnder       AnabaticEngine::getGCellsUnder        ( Point source, Point target ) const { return std::shared_ptr<RawGCellsUnder>( new RawGCellsUnder(this,source,target) ); }
   inline       Edges             AnabaticEngine::getEdgesUnderPath     ( GCell* source, GCell* target, Flags pathFlags ) const { return new Path_Edges(source,target,pathFlags); }
   inline       uint64_t          AnabaticEngine::getDensityMode        () const { return _densityMode; }
   inline       void              AnabaticEngine::setDensityMode        ( uint64_t mode ) { _densityMode=mode; }

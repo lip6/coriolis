@@ -88,6 +88,39 @@ namespace Etesian {
   }  
 
 
+  Bloat3Metals::Bloat3Metals ()
+    : BloatCell("3metals")
+  { }
+
+
+  Bloat3Metals::~Bloat3Metals ()
+  { }
+
+
+  DbU::Unit  Bloat3Metals::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
+  {
+    int terminals = 0;
+    for ( Net* net : cell->getNets() ) {
+      if (net->isExternal() and not net->isPower()) ++terminals;
+    }
+
+    Box ab ( cell->getAbutmentBox() );
+    DbU::Unit vpitch = etesian->getVerticalPitch();;
+    int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
+
+    // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
+    // if (termRatio > 0.5) {
+    //   return vpitch*6;
+    // }
+
+    if (xsize < 4) return vpitch*4;
+    if (xsize < 6) return vpitch*2;
+    if (xsize < 8) return vpitch*1;
+    
+    return 0;
+  }  
+
+
   bool  BloatCells::select ( std::string profile )
   {
     BloatKey key ( profile );

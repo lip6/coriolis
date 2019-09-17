@@ -65,6 +65,8 @@ namespace Katana {
              bool                 ripupPerpandiculars     ( uint32_t flags=0 );
              void                 repackPerpandiculars    ( uint32_t flags );
              void                 reprocessPerpandiculars ();
+             void                 reprocessParallels      ();
+             bool                 avoidBlockage           ();
              bool                 ripple                  ();
              bool                 minimize                ();
              bool                 dragMinimize            ();

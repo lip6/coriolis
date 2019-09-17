@@ -42,6 +42,8 @@ namespace Katana {
     , _postEventCb         ()
     , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
     , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
+    , _termSatReservedLocal(Cfg::getParamInt ("katana.termSatReservedLocal",      9)->asInt())
+    , _termSatThreshold    (Cfg::getParamInt ("katana.termSatThreshold"    ,      8)->asInt())
     , _ripupLimits         ()
     , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
     , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
@@ -80,6 +82,8 @@ namespace Katana {
     , _postEventCb         (other._postEventCb)
     , _hTracksReservedLocal(other._hTracksReservedLocal)
     , _vTracksReservedLocal(other._vTracksReservedLocal)
+    , _termSatReservedLocal(other._termSatReservedLocal)
+    , _termSatThreshold    (other._termSatThreshold)
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
@@ -148,13 +152,16 @@ namespace Katana {
     if (not cmess1.enabled()) return;
 
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
-    cout << Dots::asUInt ("     - Global router H reserved local"     ,_hTracksReservedLocal) << endl;
-    cout << Dots::asUInt ("     - Global router V reserved local"     ,_vTracksReservedLocal) << endl;
-    cout << Dots::asULong("     - Events limit (iterations)"          ,_eventsLimit) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, straps & unbreakables" ,_ripupLimits[StrapRipupLimit]) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
-    cout << Dots::asUInt ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
+    cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
+    cout << Dots::asUInt  ("     - Edge max H reserved local"          ,_hTracksReservedLocal) << endl;
+    cout << Dots::asUInt  ("     - Edge max V reserved local"          ,_vTracksReservedLocal) << endl;
+    cout << Dots::asUInt  ("     - Terminal saturated edge capacity"   ,_termSatReservedLocal) << endl;
+    cout << Dots::asUInt  ("     - Terminal saturated GCell threshold" ,_termSatThreshold) << endl;
+    cout << Dots::asULong ("     - Events limit (iterations)"          ,_eventsLimit) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, straps & unbreakables" ,_ripupLimits[StrapRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
 
     Super::print ( cell );
   }

@@ -71,6 +71,8 @@ namespace Katana {
                     uint32_t                   getRipupLimit           ( uint32_t type ) const;
       inline        uint32_t                   getHTracksReservedLocal () const;
       inline        uint32_t                   getVTracksReservedLocal () const;
+      inline        uint32_t                   getTermSatReservedLocal () const;
+      inline        uint32_t                   getTermSatThreshold     () const;
       inline        void                       setEventsLimit          ( uint64_t );
       inline        void                       setRipupCost            ( uint32_t );
                     void                       setRipupLimit           ( uint32_t limit, uint32_t type );
@@ -89,6 +91,8 @@ namespace Katana {
              PostEventCb_t  _postEventCb;
              uint32_t       _hTracksReservedLocal;
              uint32_t       _vTracksReservedLocal;
+             uint32_t       _termSatReservedLocal;
+             uint32_t       _termSatThreshold;
              uint32_t       _ripupLimits         [RipupLimitsTableSize];
              uint32_t       _ripupCost;
              uint64_t       _eventsLimit;
@@ -108,6 +112,8 @@ namespace Katana {
   inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
   inline       uint32_t                      Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
   inline       uint32_t                      Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
+  inline       uint32_t                      Configuration::getTermSatReservedLocal () const { return _termSatReservedLocal; }
+  inline       uint32_t                      Configuration::getTermSatThreshold     () const { return _termSatThreshold; }
   inline       void                          Configuration::setRipupCost            ( uint32_t cost ) { _ripupCost = cost; }
   inline       void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline       void                          Configuration::setEventsLimit          ( uint64_t limit ) { _eventsLimit = limit; }

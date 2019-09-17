@@ -562,11 +562,22 @@ namespace {
           axisMax += delta;
         }
 
+        // if (segment->getId() == 51904) {
+        //   DebugSession::open( 0, 1000 );
+        // }
         Track* track = plane->getTrackByPosition ( axisMin, Constant::Superior );
         for ( ; track and (track->getAxis() <= axisMax) ; track = track->getNextTrack() ) {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
+
+          if (segment->getId() == 51904) {
+            cerr << "  Insert in " << track << endl;
+            cerr << "    +" << element << endl;
+          }
         }
+        // if (segment->getId() == 51904) {
+        //   DebugSession::close();
+        // }
       }
     } else {
       list<Interval>::iterator ichunk = _chunks.begin();

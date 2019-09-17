@@ -82,6 +82,14 @@ namespace Etesian {
       virtual           ~BloatNsxlib ();
       virtual DbU::Unit  getDx       ( const Cell*, const EtesianEngine* ) const;
   };
+
+
+  class Bloat3Metals : public BloatCell {
+    public:
+                         Bloat3Metals ();
+      virtual           ~Bloat3Metals ();
+      virtual DbU::Unit  getDx        ( const Cell*, const EtesianEngine* ) const;
+  };
   
 
   class BloatCells {
@@ -108,6 +116,7 @@ namespace Etesian {
   {
     _bloatCells.insert( new BloatDisabled() );
     _bloatCells.insert( new BloatNsxlib  () );
+    _bloatCells.insert( new Bloat3Metals () );
     select( "disabled" );
   }
 

@@ -253,7 +253,7 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
-              + "F"
+              + " F"
               + ((isBlockage()) ? "B" : "-");
     s1.insert ( s1.size()-1, s2 );
 

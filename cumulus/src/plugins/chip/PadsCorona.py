@@ -258,9 +258,6 @@ class Side ( object ):
     def check ( self ):
       self.validated = True
       if self.type == chip.North:
-       #print DbU.getValueString(self.conf.coreSize.getWidth())
-       #print DbU.getValueString(self.conf.minCorona)
-       #print DbU.getValueString(self.conf.getIoPadHeight())
         self.validated = self._check(     self.conf.coreSize.getWidth()
                                       + 2*self.conf.minCorona
                                       + 2*self.conf.getIoPadHeight()
@@ -1086,8 +1083,10 @@ class Corona ( object ):
     rg        = self.conf.gaugeConf.routingGauge
     hsegments = { }
     vsegments = { }
+
     for component in padNet.getExternalComponents():
-      if isinstance(component,Segment):
+      if isinstance(component,Segment) or isinstance(component,Contact):
+
         bb = component.getBoundingBox()
         padInstance.getTransformation().applyOn( bb )
         if bb.intersect(innerBb):
@@ -1136,6 +1135,16 @@ class Corona ( object ):
         side.updateGap  ( gapWidth )
         side.addCoreWire( CoreWire( self, chipIntNet, segment, bb, side.type, inPreferredDir, count ) )
         count += 1
+    else:
+      if not chipIntNet.isGlobal():
+        raise ErrorMessage( 1, [ 'PadsCorona._createCoreWire(): In I/O pad "%s" (%s),'
+                                 % ( padInstance.getMasterCell().getName()
+                                   , padInstance.getName() )
+                               , 'connector "%s" has no suitable segment for net "%s".' 
+                                 % ( padNet.getName()
+                                   , chipIntNet.getName() )
+                               ] )
+          
     return count
 
 

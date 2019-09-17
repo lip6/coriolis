@@ -161,6 +161,8 @@ namespace Katana {
     size_t    begin;
 
     getBeginIndex( position, begin, state );
+    cdebug_log(159,0) << "    getSegment(position): begin:" << begin << endl;
+
     if (state & (BeginIsTrackMin|EndIsTrackMax)) return NULL;
     return getSegment(begin);
   }
@@ -237,21 +239,26 @@ namespace Katana {
   // I guess this has been written for the case of overlapping segments from the same
   // net, we find the first one of the overlapped sets. But what if they are not overlapping
   // but still from the same net?
+    cdebug_log(159,0) << "    begin:" << begin << endl;
     size_t sameNetDelta = 0;
     if (begin < _segments.size()) {
       for ( ; (begin > 0) and (_segments[begin-1]->getNet() == _segments[begin]->getNet())
             ; --begin, ++sameNetDelta );
     }
+    cdebug_log(159,0) << "    begin:" << begin << endl;
 
     state = 0;
     if ( (begin == 0) and (position < _segments[0]->getSourceU()) ) {
       state = BeforeFirstElement;
     } else {
       if (begin and not sameNetDelta) begin -= 1;
+      cdebug_log(159,0) << "    begin:" << begin << endl;
 
       size_t   usedBegin    = begin;
       Interval usedInterval = getOccupiedInterval( usedBegin );
 
+      cdebug_log(159,0) << "    position:" << DbU::getValueString(position)
+                        << " " << usedInterval << endl;
       if (position < usedInterval.getVMax())
         state = InsideElement;
       else

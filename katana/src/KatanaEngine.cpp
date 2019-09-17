@@ -480,19 +480,28 @@ namespace Katana {
 
           Segment*   segment = element->getSegment();
           Flags      side    = Flags::EastSide;
-          DbU::Unit  axis    = segment->getY();
+          DbU::Unit  axis    = track->getAxis();
+          Point      source  = segment->getSourcePosition();
+          Point      target  = segment->getTargetPosition();
+          
           if (track->getDirection() == Flags::Vertical) {
             side = Flags::NorthSide;
-            axis = segment->getX();
+            source.setX( axis );
+            target.setX( axis );
+          } else {
+            source.setY( axis );
+            target.setY( axis );
           }
 
           int elementCapacity = 1;
           cdebug_log(159,0) << "Capacity from: " << element << ":" << elementCapacity << endl;
 
-          GCellsUnder gcells  = getGCellsUnder( segment );
+          GCellsUnder gcells = getGCellsUnder( source, target );
           if (not gcells->empty()) {
-            for ( size_t i=0 ; i<gcells->size()-1 ; ++i )
-              gcells->gcellAt(i)->getEdgeAt( side, axis )->reserveCapacity( elementCapacity );
+            for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
+              Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
+              edge->reserveCapacity( elementCapacity );
+            }
           }
         }
       }
@@ -520,6 +529,15 @@ namespace Katana {
           capacity = edge->getCapacity();
           if (terminalsX.size() < capacity) capacity = terminalsX.size();
           edge->reserveCapacity( capacity );
+        }
+      }
+    } else {
+      for ( GCell* gcell : getGCells() ) {
+        if (not gcell->isMatrix()) continue;
+
+        for ( Edge* edge : gcell->getEdges( Flags::EastSide|Flags::NorthSide) ) {
+          if (edge->getReservedCapacity() == 0)
+            edge->reserveCapacity( 1 );
         }
       }
     }

@@ -99,6 +99,7 @@ namespace Anabatic {
                          , EastBound       = (1 << 15)
                          , Middle          = (1 << 16)
                          , UseNonPref      = (1 << 17)
+                         , NoProtect       = (1 << 18)
                          , HBothAccess     = HAccess|HAccessEW
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
@@ -204,6 +205,8 @@ namespace Anabatic {
       virtual bool                          _do_xG                 ();
       virtual bool                          _do_2G                 ();
       virtual bool                          _do_xG_1Pad            ();
+      virtual bool                          _do_1G_1PinM1          ();
+      virtual bool                          _do_2G_1PinM1          ();
       virtual bool                          _do_1G_1PinM2          ();
       virtual bool                          _do_xG_1PinM2          ();
       virtual bool                          _do_1G_1PinM3          ();
@@ -298,6 +301,8 @@ namespace Anabatic {
                          , Conn_1G_1Pad     = CONNEXITY_VALUE( 1, 0, 0, 0, 1 , 0 )
                          , Conn_2G_1Pad     = CONNEXITY_VALUE( 2, 0, 0, 0, 1 , 0 )
                          , Conn_3G_1Pad     = CONNEXITY_VALUE( 3, 0, 0, 0, 1 , 0 )
+                         , Conn_1G_1PinM1   = CONNEXITY_VALUE( 1, 1, 0, 0, 0 , 1 )
+                         , Conn_2G_1PinM1   = CONNEXITY_VALUE( 2, 1, 0, 0, 0 , 1 )
                          , Conn_1G_1PinM2   = CONNEXITY_VALUE( 1, 0, 1, 0, 0 , 1 )
                          , Conn_2G_1PinM2   = CONNEXITY_VALUE( 2, 0, 1, 0, 0 , 1 )
                          , Conn_3G_1PinM2   = CONNEXITY_VALUE( 3, 0, 1, 0, 0 , 1 )

@@ -522,16 +522,17 @@ namespace {
 
       if (layerInfo and net) {
         net->setExternal( true );
-        /*pin =*/ Pin::create( net
-                             , pinName
-                             , accessDirection
-                             , Pin::PlacementStatus::PLACED
-                             , layerInfo->getLayer()
-                             , XCON
-                             , YCON
-                             , WIDTH
-                             , HEIGHT
-                             );
+        Pin* pin = Pin::create( net
+                              , pinName
+                              , accessDirection
+                              , Pin::PlacementStatus::PLACED
+                              , layerInfo->getLayer()
+                              , XCON
+                              , YCON
+                              , WIDTH
+                              , HEIGHT
+                              );
+        NetExternalComponents::setExternal( pin );
       }
       if (not net )       _printError( false, "Unknown net name <%s>."  , fields[5] );
       if (not layerInfo ) _printError( false, "Unknown layer name <%s>.", fields[6] );
@@ -687,18 +688,18 @@ namespace {
         _printError ( false, "Unknown orientation (%s).", getString(orientName).c_str() );
 
       Instance* instance = _cell->getInstance ( instanceName );
-      if ( instance ) {
+      if (instance) {
         instance->setTransformation
-          ( getTransformation ( instance->getMasterCell()->getAbutmentBox()
-                              , XINS
-                              , YINS
-                              , orient
-                              )
+          ( getTransformation( instance->getMasterCell()->getAbutmentBox()
+                             , XINS
+                             , YINS
+                             , orient
+                             )
           );
-        instance->setPlacementStatus ( Instance::PlacementStatus::FIXED );
+        instance->setPlacementStatus( Instance::PlacementStatus::FIXED );
       } else {
-        bool            ignoreInstance = (getString(masterCellName).substr(0,7) == padreal);
-        Catalog::State* instanceState  = _framework->getCatalog()->getState ( masterCellName );
+        bool            ignoreInstance = _framework->isPad( _cell );
+        Catalog::State* instanceState  = _framework->getCatalog()->getState( masterCellName );
         if ( not ignoreInstance and ( not instanceState or (not instanceState->isFeed()) ) ) {
           _printError ( false
                       , "No logical instance associated to physical instance %s."
@@ -710,30 +711,30 @@ namespace {
       // Load a cell that is not in the logical view. Only feedthrough Cell
       // could be in that case.
         tab++;
-        Cell* masterCell = _framework->getCell ( getString(masterCellName)
-                                               , Catalog::State::Views
-                                               );
+        Cell* masterCell = _framework->getCell( getString(masterCellName)
+                                              , Catalog::State::Views
+                                              );
         tab--;
 
-        if ( !masterCell ) {
-          _printError ( "Unable to load model %s.", getString(masterCellName).c_str() );
+        if (not masterCell) {
+          _printError( "Unable to load model %s.", getString(masterCellName).c_str() );
           return;
         }
 
         ignoreInstance = ignoreInstance and _cell->isTerminal();
 
-        instance = Instance::create ( _cell
-                                    , instanceName
-                                    , masterCell
-                                    , getTransformation ( masterCell->getAbutmentBox()
-                                                        , XINS
-                                                        , YINS
-                                                        , orient
-                                                        )
-                                    , Instance::PlacementStatus::FIXED
-                                    , true  // Checking of recursive calls
-                                    );
-        _cell->setTerminal ( ignoreInstance );
+        instance = Instance::create( _cell
+                                   , instanceName
+                                   , masterCell
+                                   , getTransformation ( masterCell->getAbutmentBox()
+                                                       , XINS
+                                                       , YINS
+                                                       , orient
+                                                       )
+                                   , Instance::PlacementStatus::FIXED
+                                   , true  // Checking of recursive calls
+                                   );
+        _cell->setTerminal( ignoreInstance );
       }
     }
   }

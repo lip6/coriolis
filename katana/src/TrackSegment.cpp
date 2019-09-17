@@ -156,7 +156,7 @@ namespace Katana {
       trackElement->_postCreate();
       trackElement->invalidate();
       created = true;
-      cdebug_log(159,0) << "TrackSegment::create(): " << "nonPref:" <<useNonPref
+      cdebug_log(159,0) << "TrackSegment::create(): " << "nonPref:" << useNonPref
                         << " " << trackElement << endl;
     }
 

@@ -1076,7 +1076,7 @@ namespace Anabatic {
 
   void  AutoSegment::setAxis ( DbU::Unit axis, Flags flags )
   {
-    if (not isCanonical()) return;
+    if (not isCanonical() and not (flags & Flags::Force)) return;
 
     if ( (axis == getAxis()) and not (flags & Flags::Realignate) ) return;
 

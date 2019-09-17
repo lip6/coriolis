@@ -298,6 +298,7 @@ namespace Anabatic {
     , _contacts      ()
     , _depth         (Session::getRoutingGauge()->getDepth())
     , _pinDepth      (0)
+    , _rpCount       (0)
     , _blockages     (new DbU::Unit [_depth])
     , _cDensity      (0.0)
     , _densities     (new float [_depth])
@@ -1790,6 +1791,7 @@ namespace Anabatic {
     string s = Super::_getString();
     s.insert( s.size()-1, " "+getString(getBoundingBox()) );
     s.insert( s.size()-1, " "+getString(_flags) );
+    s.insert( s.size()-1, " "+getString(_rpCount) );
   /* string s = "<GCell at(" + DbU::getValueString(getXMin())
        +  "-" + DbU::getValueString(getYMin()) 
        +  "-" + DbU::getValueString(getXMax()) 

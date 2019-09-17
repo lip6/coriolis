@@ -170,28 +170,67 @@ namespace Anabatic {
 
   RawGCellsUnder::RawGCellsUnder ( const AnabaticEngine* engine, Segment* segment )
   {
-    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(): " << segment << endl;
+    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(Segment*): " << segment << endl;
 
-    Box   gcellsArea     = engine->getCell()->getAbutmentBox();
-    Point sourcePosition = segment->getSourcePosition();
-    Point targetPosition = segment->getTargetPosition();
+    commonCtor( engine, segment->getSourcePosition(), segment->getTargetPosition() );
 
-    if (  (sourcePosition.getX() >  gcellsArea.getXMax())
-       or (sourcePosition.getY() >  gcellsArea.getYMax())
-       or (targetPosition.getX() <= gcellsArea.getXMin())
-       or (targetPosition.getY() <= gcellsArea.getYMin()) ) {
-      cerr << Error( "RawGCellsUnder::RawGCellsUnder(): %s is completly outside the GCells area (ignored)."
-                   , getString(segment).c_str()
+    cdebug_tabw(112,-1);
+  }
+
+
+  RawGCellsUnder::RawGCellsUnder ( const AnabaticEngine* engine, Point source, Point target )
+  {
+    cdebug_log(112,1) << "RawGCellsUnder::RawGCellsUnder(Point,Point): s:"
+                      << source << " t:" << target << endl;
+
+    commonCtor( engine, source, target );
+
+    cdebug_tabw(112,-1);
+  }
+
+
+  void  RawGCellsUnder::commonCtor ( const AnabaticEngine* engine, Point source, Point target )
+  {
+    cdebug_log(112,1) << "RawGCellsUnder::commontCtor(): s:" << source << " t:" << target << endl;
+
+    Box        gcellsArea = engine->getCell()->getAbutmentBox();
+    DbU::Unit  axis       = 0;
+    Flags      side       = Flags::NoFlags;
+
+    if (source.getY() == target.getY()) {
+      side = Flags::EastSide;
+      axis = source.getY();
+      if (source.getX() > target.getX()) std::swap( source, target );
+    }
+    if (source.getX() == target.getX()) {
+      side = Flags::NorthSide;
+      axis = source.getX();
+      if (source.getY() > target.getY()) std::swap( source, target );
+    }
+
+    if (side == Flags::NoFlags) {
+      cerr << Error( "RawGCellsUnder::commonCtor(): Points are neither horizontally nor vertically aligneds (ignored)."
                    ) << endl;
       cdebug_tabw(112,-1);
       DebugSession::close();
       return;
     }
 
-    DbU::Unit xsource = std::max( sourcePosition.getX(), gcellsArea.getXMin() );
-    DbU::Unit ysource = std::max( sourcePosition.getY(), gcellsArea.getYMin() );
-    DbU::Unit xtarget = std::min( targetPosition.getX(), gcellsArea.getXMax() );
-    DbU::Unit ytarget = std::min( targetPosition.getY(), gcellsArea.getYMax() );
+    if (  (source.getX() >  gcellsArea.getXMax())
+       or (source.getY() >  gcellsArea.getYMax())
+       or (target.getX() <= gcellsArea.getXMin())
+       or (target.getY() <= gcellsArea.getYMin()) ) {
+      cerr << Error( "RawGCellsUnder::commonCtor(): Area is completly outside the GCells area (ignored)."
+                   ) << endl;
+      cdebug_tabw(112,-1);
+      DebugSession::close();
+      return;
+    }
+
+    DbU::Unit xsource = std::max( source.getX(), gcellsArea.getXMin() );
+    DbU::Unit ysource = std::max( source.getY(), gcellsArea.getYMin() );
+    DbU::Unit xtarget = std::min( target.getX(), gcellsArea.getXMax() );
+    DbU::Unit ytarget = std::min( target.getY(), gcellsArea.getYMax() );
 
     if (xtarget == gcellsArea.getXMax()) --xtarget;
     if (ytarget == gcellsArea.getYMax()) --ytarget;
@@ -200,16 +239,14 @@ namespace Anabatic {
     GCell* gtarget = engine->getGCellUnder( xtarget, ytarget );
 
     if (not gsource) {
-      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): %s source not under a GCell (ignored)."
-                 , getString(segment).c_str()
+      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): Source not under a GCell (ignored)."
                  ) << endl;
       cdebug_tabw(112,-1);
       DebugSession::close();
       return;
     }
     if (not gtarget) {
-      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): %s target not under a GCell (ignored)."
-                 , getString(segment).c_str()
+      cerr << Bug( "RawGCellsUnder::RawGCellsUnder(): Target not under a GCell (ignored)."
                  ) << endl;
       cdebug_tabw(112,-1);
       DebugSession::close();
@@ -221,24 +258,6 @@ namespace Anabatic {
       cdebug_tabw(112,-1);
       DebugSession::close();
       return;
-    }
-
-    Flags       side       = Flags::NoFlags;
-    DbU::Unit   axis       = 0;
-    Horizontal* horizontal = dynamic_cast<Horizontal*>( segment );
-    if (horizontal) {
-      side = Flags::EastSide;
-      axis = horizontal->getY();
-
-      if (horizontal->getSourceX() > horizontal->getTargetX())
-        std::swap( gsource, gtarget );
-    } else {
-      Vertical* vertical = dynamic_cast<Vertical*>( segment );
-      side = Flags::NorthSide;
-      axis = vertical->getX();
-
-      if (vertical->getSourceY() > vertical->getTargetY())
-        std::swap( gsource, gtarget );
     }
 
     cdebug_log(112,0) << "flags:" << side << " axis:" << DbU::getValueString(axis) << endl;
@@ -1403,6 +1422,83 @@ namespace Anabatic {
   {
     if (capacity->getref() < 2) _edgeCapacitiesLut.erase( capacity );
     return capacity->decref();
+  }
+  
+
+  void  AnabaticEngine::computeEdgeCapacities ( int maxHCap, int maxVCap, int termSatThreshold, int maxTermSat )
+  {
+          vector<RoutingPad*> rps;
+          vector<GCell*>      saturateds;
+    const vector<NetData*>&   netDatas = getNetOrdering();
+
+    for ( NetData* netData : netDatas ) {
+      for ( Component* component : netData->getNet()->getComponents() ) {
+        RoutingPad* rp = dynamic_cast<RoutingPad*>( component );
+        if (rp) rps.push_back( rp ); 
+      }
+    }
+
+    UpdateSession::open();
+    
+    for ( auto rp : rps ) {
+      if (not getConfiguration()->selectRpComponent(rp))
+        cerr << Warning( "AnabaticEngine::computeEdgeCapacities(): %s has no components on grid.", getString(rp).c_str() ) << endl;
+
+      Point  center = rp->getBoundingBox().getCenter();
+      GCell* gcell  = getGCellUnder( center );
+      
+      if (not gcell) {
+        cerr << Error( "AnabaticEngine::computeEdgeCapacities(): %s\n"
+                       "        @%s of %s is not under any GCell.\n"
+                       "        It will be ignored so the edge capacity estimate may be wrong."
+                     , getString(rp).c_str()
+                     , getString(center).c_str()
+                     , getString(rp->getNet()).c_str()
+                     ) << endl;
+        continue;
+      }
+
+      gcell->incRpCount( 1 );
+      if (gcell->getRpCount() == termSatThreshold) saturateds.push_back( gcell );
+    }
+
+    for ( GCell* gcell : getGCells() ) {
+      if (not gcell->isMatrix()) continue;
+
+      for ( Edge* edge : gcell->getEdges(Flags::EastSide|Flags::NorthSide) ) {
+        GCell* opposite    = edge->getOpposite( gcell );
+        int    maxReserved = maxHCap;
+        int    reserved    = std::max( gcell->getRpCount(), opposite->getRpCount() );
+
+        if (edge->isVertical()) maxReserved = maxVCap;
+        edge->reserveCapacity( std::min( maxReserved, reserved ) );
+      }
+    }
+
+    for ( GCell* gcell : saturateds ) {
+      GCell* neighbor = gcell;
+      for ( size_t i=0 ; i<2; ++i ) {
+        Edge* edge = neighbor->getWestEdge();
+        if (not edge) break;
+
+        if (edge->getReservedCapacity() < maxTermSat)
+          edge->reserveCapacity( maxTermSat - edge->getReservedCapacity() );
+        neighbor = neighbor->getWest();
+      }
+      neighbor = gcell;
+      for ( size_t i=0 ; i<2; ++i ) {
+        Edge* edge = neighbor->getEastEdge();
+        if (not edge) break;
+
+        if (edge->getReservedCapacity() < maxTermSat)
+          edge->reserveCapacity( maxTermSat - edge->getReservedCapacity() );
+        neighbor = neighbor->getEast();
+      }
+    }
+
+    UpdateSession::close();
+
+  //Breakpoint::stop( 1, "Edge capacities computeds." );
   }
   
 

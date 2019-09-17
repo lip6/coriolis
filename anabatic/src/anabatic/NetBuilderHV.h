@@ -25,6 +25,7 @@ namespace Anabatic {
 // -----------------------------------------------------------------
 // Class  :  "NetBuilderHV".
 
+
   class NetBuilderHV : public NetBuilder {
     public:
                             NetBuilderHV       ();
@@ -38,6 +39,8 @@ namespace Anabatic {
       virtual bool          _do_2G             ();
       virtual bool          _do_2G_1M1         ();
       virtual bool          _do_xG_1Pad        ();
+      virtual bool          _do_1G_1PinM1      ();
+      virtual bool          _do_2G_1PinM1      ();
       virtual bool          _do_1G_1PinM2      ();
       virtual bool          _do_xG_1PinM2      ();
       virtual bool          _do_1G_1PinM3      ();

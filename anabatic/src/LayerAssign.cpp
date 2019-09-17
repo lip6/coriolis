@@ -349,7 +349,7 @@ namespace Anabatic {
       size_t i = 0;
       for ( ; igcell!=queue.getGCells().end() ; ++igcell, ++i ) {
         cdebug_log(149,0) << "_desaturate: [" << depth << "]:"
-                    << (*igcell)->getDensity(depth) << " " << *igcell << endl;
+                          << (*igcell)->getDensity(depth) << " " << *igcell << endl;
 
         if (not (*igcell)->isSaturated(depth)) {
           cdebug_log(149,0) << "STOP desaturated: @" << i << " " << *igcell << endl;

@@ -1152,7 +1152,9 @@ namespace Katana {
     float reserve = (_segment->isLocal()) ? 0.5 : 1.0;
     if (not _segment->canMoveUp(reserve)) return false;
 
-    return _segment->moveUp( Flags::NoFlags );
+  //reprocessParallels();
+    bool success = _segment->moveUp( Flags::NoFlags );
+    return success;
   }
 
 
@@ -1193,7 +1195,9 @@ namespace Katana {
       if (not _segment->canMoveUp(0.5,kflags)) return false;
     }
 
+  //reprocessParallels();
     bool success = _segment->moveUp( kflags|Flags::Propagate );
+
     _fsm.addAction ( _segment, SegmentAction::OtherRipup );
     return success;
   }
@@ -1573,6 +1577,45 @@ namespace Katana {
   }
 
 
+  void  Manipulator::reprocessParallels ()
+  {
+    cdebug_log(159,0) << "Manipulator::reprocessParallels() " << _segment << endl; 
+
+  //if (_event->getPerpandiculars().size() > 2) return;
+
+    unsigned int rpDistance = _segment->base()->getRpDistance();
+
+    const vector<TrackElement*>& perpandiculars = _event->getPerpandiculars();
+    for ( size_t iperpand=0 ; iperpand<perpandiculars.size() ; iperpand++ ) {
+      TrackElement*  perpandicular = perpandiculars[iperpand];
+      DataNegociate* data          = perpandicular->getDataNegociate();
+
+      if (perpandicular->isFixed()) continue;
+      if (not data) continue;
+      if (not perpandicular->getTrack()) continue;
+      if (perpandicular->base()->getRpDistance() > rpDistance) continue; 
+      if (not Manipulator(perpandicular,_fsm).canRipup()
+         or (data->getState() >= DataNegociate::MaximumSlack)) continue;
+
+      _fsm.addAction( perpandicular, SegmentAction::SelfRipupPerpand );
+
+      const vector<TrackElement*>& parallels = data->getRoutingEvent()->getPerpandiculars();
+      for ( size_t iparallel=0 ; iparallel<parallels.size() ; iparallel++ ) {
+        TrackElement*  parallel = parallels[iparallel];
+        DataNegociate* data     = parallel->getDataNegociate();
+
+        if (parallel->isFixed()) continue;
+        if (not data) continue;
+        if (not parallel->getTrack()) continue;
+        if (parallel->base()->getRpDistance() > rpDistance) continue; 
+        if (not Manipulator(parallel,_fsm).canRipup()
+           or (data->getState() >= DataNegociate::MaximumSlack)) continue;
+        
+        _fsm.addAction( parallel, SegmentAction::SelfRipupPerpand );
+      }
+    }
+  }
+
   void  Manipulator::reprocessPerpandiculars ()
   {
     if ( _event->getAxisHistory() == _event->getAxisHint() ) return;
@@ -1637,6 +1680,70 @@ namespace Katana {
     _fsm.addAction( _segment, parallelActionFlags );
 
     cdebug_tabw(159,-1);
+  }
+
+
+  bool  Manipulator::avoidBlockage ()
+  {
+    cdebug_log(159,1) << "Manipulator::avoidBlockage()" << endl;
+
+    if (not _segment->isVertical()) {
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
+    AutoContact* terminal         = _segment->base()->getAutoSource();
+    AutoContact* turn             = _segment->base()->getAutoTarget();
+    bool         isSourceTerminal = true;
+
+    if (not terminal->isTerminal()) {
+      std::swap( terminal, turn );
+      isSourceTerminal = false;
+    }
+
+
+    TrackElement*  perpandicular = _event->getPerpandiculars()[0];
+    DataNegociate* data          = perpandicular->getDataNegociate();
+
+    if (not data or (data->getState() >= DataNegociate::RepairFailed)) {
+      cdebug_tabw(159,-1);
+      return false;
+    }
+
+    Box termConstraints ( terminal->getConstraintBox() );
+    Box turnConstraints ( turn    ->getConstraintBox() );
+
+    if (isSourceTerminal) {
+      terminal->setConstraintBox( Box( termConstraints.getXMin()
+                                     , termConstraints.getYMin()
+                                     , termConstraints.getXMax()
+                                     , perpandicular->getAxis() - perpandicular->getPitch()
+                                     ) );
+      turn->setConstraintBox( Box( turnConstraints.getXMin()
+                                 , turnConstraints.getYMin()
+                                 , turnConstraints.getXMax()
+                                 , perpandicular->getAxis() - perpandicular->getPitch()
+                                 ) );
+    } else {
+      terminal->setConstraintBox( Box( termConstraints.getXMin()
+                                     , perpandicular->getAxis() + perpandicular->getPitch()
+                                     , termConstraints.getXMax()
+                                     , termConstraints.getYMax()
+                                     ) );
+      turn->setConstraintBox( Box( turnConstraints.getXMin()
+                                 , perpandicular->getAxis() + perpandicular->getPitch()
+                                 , turnConstraints.getXMax()
+                                 , turnConstraints.getYMax()
+                                 ) );
+    }
+
+    cdebug_log(159,0) << "Restrict: " << terminal << " to " << terminal->getConstraintBox() << endl;
+    cdebug_log(159,0) << "Restrict: " << turn     << " to " << turn    ->getConstraintBox() << endl;
+
+    _fsm.addAction ( perpandicular, SegmentAction::SelfRipupPerpand|SegmentAction::EventLevel4 );
+
+    cdebug_tabw(159,-1);
+    return true;
   }
 
 

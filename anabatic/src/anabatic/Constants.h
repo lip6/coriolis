@@ -101,6 +101,7 @@ namespace Anabatic {
       static const BaseFlags  NoUpdate            ;
       static const BaseFlags  NorthPath           ;
       static const BaseFlags  UseNonPref          ;
+      static const BaseFlags  Force               ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

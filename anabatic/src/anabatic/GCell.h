@@ -217,6 +217,7 @@ namespace Anabatic {
                     bool                  hasFreeTrack         ( size_t depth, float reserve ) const;
       inline        size_t                getDepth             () const;
                     size_t                getNetCount          () const;
+      inline        int                   getRpCount           () const;
                     int                   getHCapacity         () const;
                     int                   getVCapacity         () const;
                     int                   getCapacity          ( size_t depth ) const;
@@ -264,7 +265,7 @@ namespace Anabatic {
                     bool                  stepNetDesaturate    ( size_t     depth
                                                                , set<Net*>& globalNets
                                                                , Set&       invalidateds );
-
+      inline        void                  incRpCount           ( int );
                     void                  forceEdgesCapacities ( unsigned int hcapacities, unsigned int vcapacities );
     // Misc. functions.
       inline const  Flags&                flags                () const;
@@ -321,6 +322,7 @@ namespace Anabatic {
               vector<AutoContact*>  _contacts;
               size_t                _depth;
               size_t                _pinDepth;
+              int                   _rpCount;
               DbU::Unit*            _blockages;
               float                 _cDensity;
               float*                _densities;
@@ -374,7 +376,8 @@ namespace Anabatic {
 
   inline       GCell*                GCell::getUnder       ( Point p ) const { return getUnder(p.getX(),p.getY()); }
   inline const vector<Contact*>&     GCell::getGContacts   () const { return _gcontacts; }
-  inline        size_t               GCell::getDepth       () const { return _depth; }
+  inline       size_t                GCell::getDepth       () const { return _depth; }
+  inline       int                   GCell::getRpCount     () const { return _rpCount; }
          const vector<AutoSegment*>& GCell::getVSegments   () const { return _vsegments; }
   inline const vector<AutoSegment*>& GCell::getHSegments   () const { return _hsegments; }
   inline const vector<AutoContact*>& GCell::getContacts    () const { return _contacts; }
@@ -418,6 +421,10 @@ namespace Anabatic {
     return Interval( getXMin(), getConstraintXMax(shrink) );
   }
 
+  inline void   GCell::incRpCount ( int delta )
+  { _rpCount = (_rpCount + delta > 0) ? (_rpCount + delta) : 0; }
+
+  
   inline void  GCell::setObserver ( size_t slot, BaseObserver* observer )
   { _observable.setObserver( slot, observer ); }
 

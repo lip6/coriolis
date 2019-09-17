@@ -194,7 +194,7 @@ namespace Anabatic {
         // SxLib bug: METAL1 terminal segments are 0.5 lambdas too shorts on
         // their extremities. Should modificate all the standard cells layout...
         // HARDCODED.
-          if (Session::getRoutingGauge()->getName() == "msxlib")
+          if (getString(Session::getRoutingGauge()->getName()).substr(0,6) == "msxlib")
             yborder -= DbU::fromLambda( 1.0 );
           else
             yborder -= DbU::fromLambda( 0.5 );

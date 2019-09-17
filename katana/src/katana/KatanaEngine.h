@@ -84,6 +84,8 @@ namespace Katana {
       inline  uint32_t                 getRipupCost               () const;
       inline  uint32_t                 getHTracksReservedLocal    () const;
       inline  uint32_t                 getVTracksReservedLocal    () const;
+      inline  uint32_t                 getTermSatReservedLocal    () const;
+      inline  uint32_t                 getTermSatThreshold        () const;
       inline  bool                     profileEventCosts          () const;
       virtual const Name&              getName                    () const;
       inline  Configuration::PostEventCb_t&
@@ -183,6 +185,8 @@ namespace Katana {
   inline  uint32_t                      KatanaEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
   inline  uint32_t                      KatanaEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
   inline  uint32_t                      KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
+  inline  uint32_t                      KatanaEngine::getTermSatReservedLocal () const { return _configuration->getTermSatReservedLocal(); }
+  inline  uint32_t                      KatanaEngine::getTermSatThreshold     () const { return _configuration->getTermSatThreshold(); }
   inline  uint32_t                      KatanaEngine::getRipupLimit           ( uint32_t type ) const { return _configuration->getRipupLimit(type); }
   inline  bool                          KatanaEngine::profileEventCosts       () const { return _configuration->profileEventCosts(); }
   inline  const DataSymmetricMap&       KatanaEngine::getSymmetrics           () const { return _symmetrics; }

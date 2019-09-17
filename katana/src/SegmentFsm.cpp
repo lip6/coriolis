@@ -999,7 +999,7 @@ namespace Katana {
                   << " " << candidates[icandidate].getTrack() << endl;
 
       Interval overlap0 = candidates[icandidate].getLongestConflict();
-      cdebug_log(159,0) << "overlap0: " << overlap0 << endl;
+      cdebug_log(159,0) << "| overlap0: " << overlap0 << endl;
 
       if (overlap0.isEmpty()) {
         cdebug_log(159,0) << "overlap0 is empty, no conflict, ignoring Track candidate." << endl;
@@ -1009,9 +1009,15 @@ namespace Katana {
       Track*        track = candidates[icandidate].getTrack();
       TrackElement* other = track->getSegment( overlap.getCenter() );
       if (not other) {
-        cbug << Error("conflictSolveByPlaceds(): No segment under overlap center.") << endl;
-        continue;
+        cdebug_log(159,0) << "conflictSolveByPlaceds(): No segment under overlap center." << endl;
+        other = track->getSegment( overlap0.getCenter() );
+
+        if (not other) {
+          cdebug_log(159,0) << "conflictSolveByPlaceds(): No segment under overlap0 center." << endl;
+          continue;
+        }
       }
+      cdebug_log(159,0) << "| other: " << other << endl;
 
       if (Session::getConfiguration()->isVH() and (segment->getDepth() == 1)) {
         if (Manipulator(segment,*this).makeDogleg(overlap0,Flags::ShortDogleg)) {
@@ -1020,6 +1026,7 @@ namespace Katana {
           break;
         }
       } else {
+        cdebug_log(159,0) << "conflictSolveByPlaceds() other->isGlobal():" << other->isGlobal() << endl;
         if (other->isGlobal()) {
           cdebug_log(159,0) << "conflictSolveByPlaceds() - Conflict with global, other move up" << endl;
           if ((success = Manipulator(other,*this).moveUp(Manipulator::IgnoreContacts))) break;
@@ -1204,6 +1211,11 @@ namespace Katana {
     switch ( data->getState() ) {
       case DataNegociate::RipupPerpandiculars:
         nextState = DataNegociate::Minimize;
+        if (segment->isNonPref() and getCost(0)->isBlockage()) {
+          cdebug_log(159,0) << "Non-preferred conflicts with a blockage." << endl;
+          success = manipulator.avoidBlockage();
+          if (success) break;
+        }
         success = manipulator.ripupPerpandiculars();
         if (success) break;
       case DataNegociate::Minimize:

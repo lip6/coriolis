@@ -138,7 +138,9 @@ class IoNet ( object ):
 
    # Chip "external" net, connected to the pad I/O to the outside world.
     if not self.chipExtNet and (context & IoNet.DoExtNet):
-      self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
+      self.chipExtNet = self.coreToChip.chip.getNet( self.padNetName )
+      if not self.chipExtNet:
+        self.chipExtNet = Net.create( self.coreToChip.chip, self.padNetName )
       self.chipExtNet.setExternal ( True )
       self.chipExtNet.setDirection( self.coreNet.getDirection() )
 
@@ -190,6 +192,7 @@ class IoPad ( object ):
       if len(self.nets) == 1:
         if   self.nets[0].coreNet.getDirection() == Net.Direction.IN:  self.direction = IoPad.IN
         elif self.nets[0].coreNet.getDirection() == Net.Direction.OUT: self.direction = IoPad.OUT
+        elif self.nets[0].coreNet.getName()      == 'scout':           self.direction = IoPad.OUT
         else:
           raise ErrorMessage( 1, 'IoPad.addNet(): Unsupported direction %d (%s) for core net "%s" in I/O pad \"%s\".' \
                                  % ( self.nets[0].coreNet.getDirection()
@@ -339,7 +342,9 @@ class CoreToChip ( object ):
         for ringNetSpec in self.ringNetNames:
           if isinstance(ringNetSpec,tuple): ringNetName = ringNetSpec[0]
           else:                             ringNetName = ringNetSpec
-          ringNet  = Net.create( self.chip, ringNetName )
+          ringNet  = self.chip.getNet( ringNetName )
+          if not ringNet:
+            ringNet  = Net.create( self.chip, ringNetName )
           ringNet.setType  ( self.getNetType(ringNetName) )
           ringNet.setGlobal( self.isGlobal  (ringNetName) )
         return
