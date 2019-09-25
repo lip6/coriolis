@@ -1208,41 +1208,43 @@ namespace Katana {
     uint32_t    nextState   = data->getState();
     Manipulator manipulator ( segment, *this );
 
-    switch ( data->getState() ) {
-      case DataNegociate::RipupPerpandiculars:
-        nextState = DataNegociate::Minimize;
-        if (segment->isNonPref() and getCost(0)->isBlockage()) {
-          cdebug_log(159,0) << "Non-preferred conflicts with a blockage." << endl;
-          success = manipulator.avoidBlockage();
+    if (segment->isNonPref() and (getCost(0)->isBlockage() or getCost(0)->isAtRipupLimit())) {
+      cdebug_log(159,0) << "Non-preferred conflicts with a blockage or other's at ripup limit." << endl;
+      success = manipulator.avoidBlockage();
+    }
+
+    if (not success) {
+      switch ( data->getState() ) {
+        case DataNegociate::RipupPerpandiculars:
+          nextState = DataNegociate::Minimize;
+          success = manipulator.ripupPerpandiculars();
           if (success) break;
-        }
-        success = manipulator.ripupPerpandiculars();
-        if (success) break;
-      case DataNegociate::Minimize:
-        if (data->getStateCount() >= 2) {
-          nextState = DataNegociate::Slacken;
-        }
-        success = manipulator.minimize();
-        if (success) break;
-      case DataNegociate::Dogleg:
-      case DataNegociate::Slacken:
-        if ((success = manipulator.slacken(Flags::HalfSlacken))) {
-          nextState = DataNegociate::LocalVsGlobal;
+        case DataNegociate::Minimize:
+          if (data->getStateCount() >= 2) {
+            nextState = DataNegociate::Slacken;
+          }
+          success = manipulator.minimize();
+          if (success) break;
+        case DataNegociate::Dogleg:
+        case DataNegociate::Slacken:
+          if ((success = manipulator.slacken(Flags::HalfSlacken))) {
+            nextState = DataNegociate::LocalVsGlobal;
+            break;
+          }
+        case DataNegociate::LocalVsGlobal:
+          if (segment->isUnbreakable()) {
+            nextState = DataNegociate::MaximumSlack;
+            success   = true;
+            break;
+          }
+        case DataNegociate::ConflictSolveByHistory:
+        case DataNegociate::ConflictSolveByPlaceds:
+        case DataNegociate::MoveUp:
+        case DataNegociate::MaximumSlack:
+        case DataNegociate::Unimplemented:
+          nextState = DataNegociate::Unimplemented;
           break;
-        }
-      case DataNegociate::LocalVsGlobal:
-        if (segment->isUnbreakable()) {
-          nextState = DataNegociate::MaximumSlack;
-          success   = true;
-          break;
-        }
-      case DataNegociate::ConflictSolveByHistory:
-      case DataNegociate::ConflictSolveByPlaceds:
-      case DataNegociate::MoveUp:
-      case DataNegociate::MaximumSlack:
-      case DataNegociate::Unimplemented:
-        nextState = DataNegociate::Unimplemented;
-        break;
+      }
     }
     
     if (not success and (nextState != DataNegociate::Unimplemented))

@@ -1180,6 +1180,10 @@ namespace Katana {
     kflags |= (flags & AllowTerminalMoveUp) ? Flags::AllowTerminal  : Flags::NoFlags;
     kflags |= (flags & IgnoreContacts     ) ? Flags::IgnoreContacts : Flags::NoFlags;
 
+  //float reserve = 1.0;
+    float reserve = 0.5;
+    if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
+
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {
       if (_segment->isLocal()) {
@@ -1189,7 +1193,7 @@ namespace Katana {
           if (not (flags & AllowShortPivotUp)) return false;
           if (not _segment->canPivotUp(1.0,(kflags & ~Flags::IgnoreContacts))) return false;
         }
-        if (not _segment->canMoveUp(0.5,kflags)) return false;
+        if (not _segment->canMoveUp(reserve,kflags)) return false;
       }
     } else {
       if (not _segment->canMoveUp(0.5,kflags)) return false;
@@ -1700,7 +1704,6 @@ namespace Katana {
       std::swap( terminal, turn );
       isSourceTerminal = false;
     }
-
 
     TrackElement*  perpandicular = _event->getPerpandiculars()[0];
     DataNegociate* data          = perpandicular->getDataNegociate();

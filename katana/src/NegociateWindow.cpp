@@ -20,6 +20,7 @@
 #include <iomanip>
 #include "hurricane/Breakpoint.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/RoutingPad.h"
@@ -89,13 +90,21 @@ namespace {
     AutoSegment*   refBase    = refSegment->base();
     AutoSegment*      base    =    segment->base();
 
-    if (    base and refBase and refData
-       and (   base->getRpDistance() == 0)
-       and (refBase->getRpDistance() >  0)
-       and (refData->getState()      >  DataNegociate::RipupPerpandiculars)
-       and (   data->getState()      == DataNegociate::RipupPerpandiculars)
-       and (   data->getRipupCount() >  4)) {
-      cost.setAtRipupLimit();
+    if (base and refBase and refData) {
+      if (   (   base->getRpDistance() == 0)
+         and (refBase->getRpDistance() >  0)
+         and (refData->getState()      >  DataNegociate::RipupPerpandiculars)
+         and (   data->getState()      == DataNegociate::RipupPerpandiculars)
+         and (   data->getRipupCount() >  4)) {
+        cost.setAtRipupLimit();
+      }
+
+      if (   refSegment->isNonPref()
+         and segment->isUnbreakable()
+         and (data->getState()      >= DataNegociate::Minimize)
+         and (data->getStateCount() >= 2) ) {
+        cost.setAtRipupLimit();
+      }
     }
 
     cost.mergeRipupCount( data->getRipupCount() );
@@ -105,6 +114,10 @@ namespace {
         cdebug_log(159,0) << "MaximumSlack/LocalVsGlobal for " << segment << endl;
         cost.setAtRipupLimit();
       }
+    }
+
+    if (data->getState() == DataNegociate::MaximumSlack) {
+      cost.setAtRipupLimit();
     }
 
     if (segment->isGlobal()) {
@@ -229,6 +242,7 @@ namespace Katana {
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
   using Hurricane::DebugSession;
+  using Hurricane::UpdateSession;
   using CRL::Histogram;
   using CRL::addMeasure;
   using Anabatic::AutoContact;
@@ -591,6 +605,14 @@ namespace Katana {
 
       event->process( _eventQueue, _eventHistory, _eventLoop );
       count++;
+
+      // if (event->getSegment()->getNet()->getId() == 239546) {
+      //   UpdateSession::close();
+      //   ostringstream message;
+      //   message << "After processing an event from Net id:239546\n" << event;
+      //   Breakpoint::stop( 0, message.str() );
+      //   UpdateSession::open();
+      // }
 
     //if (count and not (count % 500)) {
     //  _pack( count, false );

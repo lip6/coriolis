@@ -1499,7 +1499,8 @@ namespace Anabatic {
       size_t       depth = Session::getRoutingGauge()->getLayerDepth(layer);
       size_t       count = 0;
       for ( ; isegment != processeds.end(); ++isegment ) {
-        _feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
+      //_feedthroughs[depth] += ((*isegment)->isGlobal()) ? 0.50 : 0.33;
+        _feedthroughs[depth] += 0.50;
         localCounts  [depth] += 1.0;
         if ( (*isegment)->isGlobal() ) _globalsCount[depth] += 1.0;
 

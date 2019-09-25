@@ -38,6 +38,7 @@ from   Hurricane  import RoutingPad
 from   Hurricane  import Instance
 import CRL        
 from   CRL        import RoutingLayerGauge
+import helpers
 from   helpers    import trace
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
@@ -661,6 +662,9 @@ class CoreWire ( object ):
     rg   = self.conf.gaugeConf.routingGauge
     mask = self.padSegment.getLayer().getMask()
 
+    trace( 550, ',+', '\tCoreWire._computeCoreLayers()\n' )
+    trace( 550, '\tbbSegment: %s\n' % (self.bbSegment) )
+
     self.symSegmentLayer = None
     for layerGauge in rg.getLayerGauges():
       if layerGauge.getDepth() > self.conf.gaugeConf.topLayerDepth: break
@@ -683,28 +687,35 @@ class CoreWire ( object ):
             self.symSegmentLayer = rg.getLayerGauge( depth+1 ).getLayer()
 
           self.symContactLayer = rg.getContactLayer( depth )
-          self.symContactSize  = ( self.bbSegment.getWidth(), self.bbSegment.getWidth() )
+          if self.side & (chip.West|chip.East):
+            self.symContactSize  = ( self.bbSegment.getHeight(), self.bbSegment.getHeight() )
+          else:
+            self.symContactSize  = ( self.bbSegment.getWidth(), self.bbSegment.getWidth() )
 
           contactMinSize = 2*self.symContactLayer.getEnclosure( self.symSegmentLayer.getBasicLayer()
                                                               , Layer.EnclosureH|Layer.EnclosureV ) \
                          +   self.symContactLayer.getMinimalSize()
 
-          arrayWidth = (self.bbSegment.getWidth() - contactMinSize) / CoreWire.viaPitch
-          trace( 550, '\tcontactMinSize: %sl, width: %sl, arrayWidth: %d\n'
-                      % (DbU.toLambda(contactMinSize),DbU.toLambda(self.bbSegment.getWidth()),arrayWidth) )
-          if arrayWidth < 0: arrayWidth = 0
-          if arrayWidth < 3:
+          arrayWidth = self.symContactSize[0]
+          arrayCount = (arrayWidth - contactMinSize) / CoreWire.viaPitch
+          trace( 550, '\tCoreWire.viaPitch: %sl\n' % (DbU.toLambda(CoreWire.viaPitch)) )
+          trace( 550, '\tcontactMinSize: %sl, arrayWidth: %sl, arrayCount: %d\n'
+                      % (DbU.toLambda(contactMinSize),DbU.toLambda(arrayWidth),arrayCount) )
+          if arrayCount < 0: arrayCount = 0
+          if arrayCount < 3:
             if self.side & (chip.North|chip.South):
-              self.arraySize = ( arrayWidth+1, 2 )
+              self.arraySize = ( arrayCount+1, 2 )
             else:
-              self.arraySize = ( 2, arrayWidth+1 )
+              self.arraySize = ( 2, arrayCount+1 )
 
             trace( 550, '\tarraySize = (%d,%d)\n' % (self.arraySize[0], self.arraySize[1]) )
+        trace( 550, ',-' )
         return
 
     raise ErrorMessage( 1, 'CoreWire._computeCoreLayers(): Layer of IO pad segment "%s" is not in routing gauge.' \
                            %  self.chipNet.getName() )
       
+    trace( 550, ',-' )
     return
 
 
@@ -1086,10 +1097,11 @@ class Corona ( object ):
 
     for component in padNet.getExternalComponents():
       if isinstance(component,Segment) or isinstance(component,Contact):
-
         bb = component.getBoundingBox()
         padInstance.getTransformation().applyOn( bb )
         if bb.intersect(innerBb):
+          trace( 550, '\tTerm comp:%s bb:%s\n' % (component,bb) )
+
           lg    = rg.getLayerGauge( component.getLayer() )
           depth = lg.getDepth()
           if depth > self.conf.gaugeConf.topLayerDepth: continue
@@ -1118,21 +1130,26 @@ class Corona ( object ):
         segments       = vsegments[ min(vsegments.keys()) ]
       elif len(hsegments):
         segments       = hsegments[ min(hsegments.keys()) ]
-        gapWidth       = bb.getWidth()
-        trace( 550, '\tNorth/South but RDir H, gapWidth: %s\n' % DbU.getValueString(gapWidth) )
     else:
       if len(hsegments):
         inPreferredDir = True
         segments       = hsegments[ min(hsegments.keys()) ]
       elif len(vsegments):
         segments       = vsegments[ min(vsegments.keys()) ]
-        gapWidth       = bb.getWidth()
-        trace( 550, '\tEast/West but RDir V, gapWidth: %s\n' % DbU.getValueString(gapWidth) )
 
     coreWires = []
     if segments:
       for segment, bb in segments:
-        side.updateGap  ( gapWidth )
+        if not inPreferredDir:
+          if side.type == chip.North or side.type == chip.South:
+            trace( 550, '\tNorth/South "%s" but RDir H, gapWidth: %s\n'
+                   % (chipIntNet.getName(),DbU.getValueString(bb.getWidth()) ) )
+            side.updateGap( bb.getWidth() )
+          else:
+            trace( 550, '\tEast/West "%s" but RDir V, gapWidth: %s\n'
+                   % (chipIntNet.getName(),DbU.getValueString(bb.getHeight())) )
+            side.updateGap( bb.getHeight() )
+
         side.addCoreWire( CoreWire( self, chipIntNet, segment, bb, side.type, inPreferredDir, count ) )
         count += 1
     else:

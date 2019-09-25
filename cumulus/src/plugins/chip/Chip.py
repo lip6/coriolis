@@ -126,8 +126,8 @@ class PlaceRoute ( object ):
     if not self.conf.useClockTree: self.railsNb -= 1
 
     innerBb = Box( self.conf.coreSize )
-    innerBb.inflate( (railsNb * vRailWidth + (railsNb+1) * vRailSpace + self.conf.getSliceHeight()) * 2
-                   , (railsNb * hRailWidth + (railsNb+1) * hRailSpace + self.conf.getSliceHeight()) * 2 )
+    innerBb.inflate( railsNb * vRailWidth + (railsNb+1) * vRailSpace
+                   , railsNb * hRailWidth + (railsNb+1) * hRailSpace )
         
     coronaAb = self.conf.corona.getAbutmentBox()
     if innerBb.getWidth() > coronaAb.getWidth():
