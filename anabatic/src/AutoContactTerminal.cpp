@@ -497,8 +497,11 @@ namespace Anabatic {
             DbU::Unit y = perpandicular->getAxis();
             y = std::min( y, getCBYMax() );
             y = std::max( y, getCBYMin() );
-            setY( y );
-            cdebug_log(145,0) << "Draging to Y @" << DbU::getValueString(y) << endl;
+            Point onGrid = Session::getNearestGridPoint( Point(getX(),y), getConstraintBox() );
+            setY( onGrid.getY() );
+            cdebug_log(145,0) << "Draging to Y @" << DbU::getValueString(y)
+                              << " pitched:" << DbU::getValueString(onGrid.getY())
+                              << " " << getConstraintBox() << endl;
           }
         }
 
