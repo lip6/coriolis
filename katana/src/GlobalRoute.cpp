@@ -19,6 +19,7 @@
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Cell.h"
+#include "crlcore/Utilities.h"
 #include "anabatic/Dijkstra.h"
 #include "katana/Block.h"
 #include "katana/RoutingPlane.h"
@@ -27,6 +28,7 @@
 
 namespace {
 
+  using std::cout;
   using std::cerr;
   using std::endl;
   using std::dec;
@@ -447,19 +449,23 @@ namespace Katana {
     if (not ovEdges.empty()) {
       set< const Net*, Net::CompareByName > nets;
 
-      cerr << "  o  Global routing did not complete, overflowed edges:" << endl;
+    //cerr << "  o  Global routing did not complete, overflowed edges:" << endl;
+      cerr << "  o  Global routing did not complete." << endl;
       for ( size_t iEdge = 0 ; iEdge<ovEdges.size() ; ++iEdge ) {
-        cerr << "    " << dec << setw(4) << (iEdge+1) << "+ " << ovEdges[iEdge] << endl;
+      //cerr << "    " << dec << setw(4) << (iEdge+1) << "+ " << ovEdges[iEdge] << endl;
         for ( Segment* segment : ovEdges[iEdge]->getSegments() ) {
-          cerr << "        | " << segment << " " << DbU::getValueString(segment->getLength()) << endl;
+        //cerr << "        | " << segment << " " << DbU::getValueString(segment->getLength()) << endl;
           nets.insert( segment->getNet() );
         }
       }
 
-      cerr << "  o  Conflicting nets:" << endl;
-      size_t count = 0;
-      for ( const Net* net : nets )
-        cerr << "    " << dec << setw(4) << (++count) << "| " << net->getName() << endl;
+    //cerr << "  o  Conflicting nets:" << endl;
+    //size_t count = 0;
+    //for ( const Net* net : nets )
+    //  cerr << "    " << dec << setw(4) << (++count) << "| " << net->getName() << endl;
+
+      cout << Dots::asUInt  ("     - Overflowed edges"          ,ovEdges.size()) << endl;
+      cout << Dots::asUInt  ("     - Unsatisfied nets"          ,nets   .size()) << endl;
     }
 
     if (getBlock(0)) {

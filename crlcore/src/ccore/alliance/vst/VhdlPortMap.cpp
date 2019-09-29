@@ -243,8 +243,8 @@ namespace Vhdl {
         first = false;
       }
     } else {
-      cerr << "VhdlPortMap is in bit mode for \"" << _signal->getName() << "\""
-           << " _flags:" << _flags << " mappedNames:" << _mapping.size() << endl;
+      // cerr << "VhdlPortMap is in bit mode for \"" << _signal->getName() << "\""
+      //      << " _flags:" << _flags << " mappedNames:" << _mapping.size() << endl;
 
       auto imapping  = _mapping.rbegin();
       bool first = true;
