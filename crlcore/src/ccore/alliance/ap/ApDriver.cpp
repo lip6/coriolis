@@ -186,6 +186,7 @@ void DumpReference(ofstream& ccell, Cell *cell)
   }
 }
 
+
 void DumpContacts(ofstream& ccell, Cell *cell)
 {
   const char* mbkLayer;
@@ -232,11 +233,11 @@ void DumpContacts(ofstream& ccell, Cell *cell)
 
   void DumpSegments ( ofstream& ccell, Cell* cell )
   {
-    const char* mbkLayer;
+    const char* mbkLayer = NULL;
     DbU::Unit   x1, x2, y1, y2, width;
-    Segment*    segment;
-    RoutingPad* rp;
-    bool        external;
+    Segment*    segment  = NULL;
+    RoutingPad* rp       = NULL;
+    bool        external = false;
 
     for ( Net* net : cell->getNets() ) {
       string netName = toMBKName( net->getName() );
@@ -244,18 +245,38 @@ void DumpContacts(ofstream& ccell, Cell *cell)
     
       for ( Component* component : net->getComponents() ) {
         if ( (rp = dynamic_cast<RoutingPad*>(component)) ) {
-          if ( not net->isExternal() ) continue;
-          if ( not cell->isRouted() ) continue;
+          if (not net->isExternal()) continue;
+          if (not cell->isRouted())  continue;
 
           external = true;
           segment  = dynamic_cast<Segment*>(rp->getOccurrence().getEntity());
-          if ( !segment ) continue;
-
-          x1    = rp->getSourceX();
-          x2    = rp->getTargetX();
-          y1    = rp->getSourceY();
-          y2    = rp->getTargetY();
-          width = segment->getWidth();
+          if (segment) {
+            x1    = rp->getSourceX();
+            x2    = rp->getTargetX();
+            y1    = rp->getSourceY();
+            y2    = rp->getTargetY();
+            width = segment->getWidth();
+          } else {
+            Pin* pin = dynamic_cast<Pin*>(rp->getOccurrence().getEntity());
+            if (pin) {
+              Box bb ( pin->getBoundingBox() );
+              rp->getOccurrence().getPath().getTransformation().applyOn( bb );
+              if (bb.getWidth() > bb.getHeight()) {
+                x1    = bb.getCenter().getX();
+                x2    = x1;
+                y1    = bb.getYMin();
+                y2    = bb.getYMax();
+                width = bb.getWidth();
+              } else {
+                x1    = bb.getXMin();
+                x2    = bb.getXMax();
+                y1    = bb.getCenter().getY();
+                y2    = y1;
+                width = bb.getHeight();
+              }
+            } else
+              continue;
+          }
         } else if ( (segment = dynamic_cast<Segment*>(component)) ) {
           external = NetExternalComponents::isExternal(component);
           x1       = segment->getSourceX();
@@ -303,92 +324,67 @@ unsigned getPinIndex(Name& pinname)
     }
 }
 
+
 void DumpPins(ofstream &ccell, Cell* cell)
 {
-  const char* mbkLayer;
+  const char* mbkLayer = NULL;
 
-    for_each_net(net, cell->getExternalNets())
-    {
-        typedef vector<Pin*> PinVector;
-        PinVector pinVector;
-        for_each_pin(pin, net->getPins())
-        {
-            pinVector.push_back(pin);
-            end_for;
-        }
-        sort (pinVector.begin(), pinVector.end(), PinSort()); 
-        set<unsigned> indexesSet;
-        for (PinVector::const_iterator pvit = pinVector.begin();
-                pvit != pinVector.end();
-                pvit++)
-        {
-          if ( !toMBKLayer(mbkLayer,(*pvit)->getLayer()->getName(),false) ) continue;
-
-            Pin* pin = *pvit;
-            Name pinName(pin->getName());
-            unsigned index = getPinIndex(pinName);
-            if (pinName != net->getName())
-            {
-                throw Error("Pin name (" + getString(pinName)
-                        + ") must look like "
-                        + getString(net->getName())
-                        + "[.index] to be driven in AP format");
-            }
-            if (indexesSet.find(index) != indexesSet.end())
-            {
-                throw Error("Two pins on same net with same index for net : "
-                            + getString(net->getName()));
-            }
-            indexesSet.insert(index);
-            // if (pin->getWidth() != pin->getHeight())
-            //   cerr << Warning( "CRL::ApDriver(): Pin \"" + getString(pin->getName()) + "\" of \""
-            //                  + getString(net->getName())
-            //                  + "\", AP format support only square shapes.")
-            //        << endl;;
-
-            DbU::Unit width = 0;
-            switch ( pin->getAccessDirection() ) {
-              case Pin::AccessDirection::NORTH:
-              case Pin::AccessDirection::SOUTH: width = pin->getWidth(); break;
-              case Pin::AccessDirection::EAST:
-              case Pin::AccessDirection::WEST: width = pin->getHeight(); break;
-              default:
-                cerr << Warning( "CRL::ApDriver(): Pin \"" + getString(pin->getName()) + "\" of \""
-                               + getString(net->getName())
-                               + "\", has undefined access direction.")
-                     << endl;;
-                break;
-            }
-
-            ccell << "C " << toMBKlambda(pin->getX())
-                  << ","  << toMBKlambda(pin->getY())
-                  << ","  << toMBKlambda(width)
-                  << ","  << toMBKName(pinName)
-                  << ","  << index
-                  << ",";
-            switch (pin->getAccessDirection())
-            {
-                case Pin::AccessDirection::NORTH:
-                    ccell << "NORTH";
-                    break;
-                case Pin::AccessDirection::SOUTH:
-                    ccell << "SOUTH";
-                    break;
-                case Pin::AccessDirection::EAST:
-                    ccell << "EAST";
-                    break;
-                case Pin::AccessDirection::WEST:
-                    ccell << "WEST";
-                    break;
-                case Pin::AccessDirection::UNDEFINED:
-                default:
-                    throw Error("Pins must a have direction to generate a .ap");
-            }
-            ccell << "," << mbkLayer << endl;
-        }
-        end_for;
+  for ( Net* net : cell->getExternalNets() ) {
+    vector<Pin*> pins;
+    for ( Pin* pin : net->getPins() ) {
+      pins.push_back(pin);
     }
+
+    sort( pins.begin(), pins.end(), PinSort() ); 
+    set<unsigned> indexesSet;
+    for ( Pin* pin : pins  ) {
+      if (not toMBKLayer(mbkLayer,pin->getLayer()->getName(),false)) continue;
+
+      Name     pinName (pin->getName());
+      unsigned index = getPinIndex(pinName);
+      if (pinName != net->getName()) {
+        throw Error( "CRL::ApDriver(): Pin \"%s\" and Net \"%s[.index]\" must have the same name to driven in AP format."
+                   , getString(pinName).c_str()
+                   , getString(net->getName()).c_str() );
+      }
+
+      if (indexesSet.find(index) != indexesSet.end()) 
+        throw Error( "CRL::ApDriver(): Net \"%s\" has more than one Pin indexed %u."
+                   , getString(net->getName()).c_str(), index );
+
+      indexesSet.insert(index);
+
+      DbU::Unit width = 0;
+      switch ( pin->getAccessDirection() ) {
+        case Pin::AccessDirection::NORTH:
+        case Pin::AccessDirection::SOUTH: width = pin->getWidth(); break;
+        case Pin::AccessDirection::EAST:
+        case Pin::AccessDirection::WEST: width = pin->getHeight(); break;
+        default:
+          break;
+      }
+
+      ccell << "C " << toMBKlambda(pin->getX())
+            << ","  << toMBKlambda(pin->getY())
+            << ","  << toMBKlambda(width)
+            << ","  << toMBKName(pinName)
+            << ","  << index
+            << ",";
+      switch ( pin->getAccessDirection() ) {
+        case Pin::AccessDirection::NORTH: ccell << "NORTH"; break;
+        case Pin::AccessDirection::SOUTH: ccell << "SOUTH"; break;
+        case Pin::AccessDirection::EAST:  ccell << "EAST" ; break;
+        case Pin::AccessDirection::WEST:  ccell << "WEST" ; break;
+        case Pin::AccessDirection::UNDEFINED:
+        default:
+          throw Error( "CRL::ApDriver(): Pin \" has undefined access direction."
+                     , getString(pin->getName()).c_str() );
+      }
+      ccell << "," << mbkLayer << endl;
+    }
+  }
 }
+
 
 void DumpDate(ofstream &ccell)
 {
@@ -399,6 +395,7 @@ void DumpDate(ofstream &ccell)
         << "/" << rest->tm_mon+1
         << "/" << rest->tm_year+1900;
 }
+
 
 void DumpInstances(ofstream &ccell, Cell* cell)
 {
@@ -443,6 +440,7 @@ void DumpInstances(ofstream &ccell, Cell* cell)
         end_for;
     }
 }
+
 
 }
 

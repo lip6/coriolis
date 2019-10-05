@@ -438,14 +438,21 @@ class Side ( object ):
 
       self.u += padInstance.getMasterCell().getAbutmentBox().getWidth()
 
+      p = None
       if self.conf.getIoPadGauge().getName() == 'pxlib':
         p = re.compile( r'p(?P<power>v[sd]{2}[ei])ck_px' )
+
+      if self.conf.getIoPadGauge().getName().startswith('phlib'):
+        p = re.compile( r'p(?P<power>v[sd]{2})ck2_sp' )
+
+      if p:
         m = p.match( padInstance.getMasterCell().getName() )
 
         padName = 'pad'
         if m: padName = m.group( 'power' )
           
         padNet = padInstance.getMasterCell().getNet( padName )
+        print 'padName:', padName, 'padNet:', padNet
         if padNet:
           plug    = padInstance.getPlug( padNet )
           chipNet = plug.getNet()
