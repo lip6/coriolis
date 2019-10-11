@@ -16,19 +16,19 @@
 
 
 import re
-from   Hurricane            import DbU
-from   Hurricane            import DataBase
-from   Hurricane            import UpdateSession
-from   Hurricane            import Breakpoint
-from   Hurricane            import Transformation
-from   Hurricane            import Instance
-from   Hurricane            import Net
-import Viewer               
-from   CRL                  import Catalog
-from   CRL                  import AllianceFramework
-from   helpers.io           import ErrorMessage
-from   core2chip.CoreToChip import IoPad
-from   core2chip.CoreToChip import CoreToChip
+from   Hurricane                    import DbU
+from   Hurricane                    import DataBase
+from   Hurricane                    import UpdateSession
+from   Hurricane                    import Breakpoint
+from   Hurricane                    import Transformation
+from   Hurricane                    import Instance
+from   Hurricane                    import Net
+import Viewer                       
+from   CRL                          import Catalog
+from   CRL                          import AllianceFramework
+from   helpers.io                   import ErrorMessage
+from   plugins.core2chip.CoreToChip import IoPad
+from   plugins.core2chip.CoreToChip import CoreToChip
 
 
 class phlib80 ( CoreToChip ):

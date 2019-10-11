@@ -14,6 +14,9 @@
 # +-----------------------------------------------------------------+
 
 
+from helpers.io import WarningMessage
+
+
 # Common constants used through all <chip> modules.
 
 # For Corona's sides.
@@ -34,3 +37,16 @@ Inferior          = 0x0020
 Inwards           = 0x0040
 OnHorizontalPitch = 0x0080
 OnVerticalPitch   = 0x0100
+
+
+def importConstants ( symbols ):
+    if not isinstance(symbols,dict):
+      print WarningMessage( 'plugins.chip.__init__.importConstants(), argument is not a symbol table.' )
+      return
+
+    for symbol in globals().items():
+      if isinstance(symbol[1],int) or  isinstance(symbol[1],long):
+        if not symbols.has_key(symbol[0]):
+          symbols[ symbol[0] ] = symbol[1]
+  
+    return

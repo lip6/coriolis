@@ -95,8 +95,8 @@ def coriolisConfigure():
 
                  # ('technoConfig'         , Technology.loadTechnoConfig    , SystemMandatory|TechnologyHelper)
 
-  print '       o  Running configuration hook: coriolisConfigure().'
- #print '          - sysConfDir: <%s>' % helpers.sysConfDir
+  print '  o  Running configuration hook: coriolisConfigure().'
+ #print '     - sysConfDir: <%s>' % helpers.sysConfDir
 
   Cfg.Configuration.pushDefaultPriority ( Cfg.Parameter.Priority.ConfigurationFile )
 
@@ -131,7 +131,7 @@ def coriolisConfigure():
           print '        Your installation may be broken. Trying to continue anyway...'
         continue
 
-      print '          - Loading "%s".' % helpers.truncPath(confFile)
+      print '     - Loading "%s".' % helpers.truncPath(confFile)
       execfile(confFile,moduleGlobals)
     except Exception, e:
       helpers.showPythonTrace( confFile, e )
@@ -182,7 +182,7 @@ def coriolisConfigure():
     return
 
   try:
-    if not helpers.quiet: print '          - Loading \"%s\".' % helpers.truncPath(confFile)
+    if not helpers.quiet: print '     - Loading \"%s\".' % helpers.truncPath(confFile)
     execfile(confFile,moduleGlobals)
   except Exception, e:
     showPythonTrace( confFile, e )
@@ -203,7 +203,7 @@ def coriolisConfigure():
     sys.exit( 1 )
  
   try:
-    if not helpers.quiet: print '          - Loading \"%s\".' % helpers.truncPath(confFile)
+    if not helpers.quiet: print '     - Loading \"%s\".' % helpers.truncPath(confFile)
     execfile(confFile,moduleGlobals)
   except Exception, e:
     showPythonTrace( confFile, e )

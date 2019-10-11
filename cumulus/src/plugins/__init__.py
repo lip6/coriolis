@@ -14,7 +14,10 @@
 # +-----------------------------------------------------------------+
 
 
+import os
+import sys
 import Cfg
+import helpers
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
 from   Hurricane  import Contact
@@ -29,6 +32,7 @@ from   CRL        import RoutingLayerGauge
 NoFlags           = 0000
 ShowWarnings      = 0001
 WarningsAreErrors = 0002
+loaded            = False
 
 
 
@@ -185,3 +189,78 @@ class StackedVia ( object ):
                                              ) )
          #print '    Sub-via: ', self._vias[-1]
       return
+
+
+def loadPlugins ( pluginsDir ):
+    sys.path.append( pluginsDir )
+    sys.modules['plugins'].__path__.append( pluginsDir )
+
+    if not os.path.isdir(pluginsDir):
+      print ErrorMessage( 3, 'cumulus.__init__.py: Cannot find <cumulus/plugins> directory:' \
+                           , '<%s>' % pluginsDir )
+      return
+
+    moduleNames = []
+    for entry in os.listdir( pluginsDir ):
+      if entry == "__init__.py": continue
+      if not entry.endswith('.py'):
+        path = os.path.join(pluginsDir,entry)
+        if os.path.isdir(path):
+          packageName = "plugins." + entry
+          if not sys.modules.has_key(packageName):
+            module = __import__( packageName, globals(), locals() )
+          else:
+            module = sys.modules[packageName]
+         #print '        - P "%s" %s %s' % (packageName,module.__name__,path)
+
+          module.__path__.append( path )
+         #for element in module.__path__:
+         #  print element
+        continue
+      moduleNames.append( entry[:-3] )
+
+   #names = []
+   #for moduleName in sys.modules: names.append( moduleName )
+   #names.sort()
+   #for name in names: print '| "%s"' % name
+
+    moduleNames.sort()
+
+    for moduleName in moduleNames:
+      try:
+        print '     - "%s"' % moduleName
+        module = __import__( moduleName, globals(), locals() )
+      except ErrorMessage, e:
+        print e
+        helpers.showStackTrace( e.trace )
+      except Exception, e:
+        helpers.showPythonTrace( __file__, e )
+
+    return
+
+
+def staticInitialization ():
+    global loaded
+    if loaded: return
+
+    helpers.staticInitialization( quiet=False )
+
+    try:
+      print '  o  Preload standard plugins.'
+      pluginsDir = os.path.dirname(__file__)
+      loadPlugins( pluginsDir )
+      
+      if helpers.ndaDir:
+        print '  o  Preload NDA protected plugins.'
+        pluginsDir = os.path.join( helpers.ndaDir, 'python2.7/site-packages/cumulus/plugins' )
+        loadPlugins( pluginsDir )
+      else:
+        print '  o  No NDA protected plugins.'
+    except Exception, e:
+      helpers.showPythonTrace( __file__, e )
+
+    loaded = True
+    return
+
+
+staticInitialization()

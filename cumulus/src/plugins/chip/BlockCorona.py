@@ -37,7 +37,10 @@ from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
 import plugins
 from   plugins    import StackedVia
-import chip.BlockPower
+import chip
+
+
+chip.importConstants( globals() )
 
 
 class IntervalSet ( object ):
@@ -372,8 +375,8 @@ class SouthSide ( HorizontalSide ):
         return self.innerBb.getYMin() -    self.hRailWidth/2 - self.hRailSpace \
                                       - i*(self.hRailWidth   + self.hRailSpace)
 
-    def corner0 ( self, i ): return self.corners[chip.SouthWest][i]
-    def corner1 ( self, i ): return self.corners[chip.SouthEast][i]
+    def corner0 ( self, i ): return self.corners[SouthWest][i]
+    def corner1 ( self, i ): return self.corners[SouthEast][i]
 
 
 class NorthSide ( HorizontalSide ):
@@ -386,8 +389,8 @@ class NorthSide ( HorizontalSide ):
         return self.innerBb.getYMax() +    self.hRailWidth/2 + self.hRailSpace \
                                       + i*(self.hRailWidth   + self.hRailSpace)
 
-    def corner0 ( self, i ): return self.corners[chip.NorthWest][i]
-    def corner1 ( self, i ): return self.corners[chip.NorthEast][i]
+    def corner0 ( self, i ): return self.corners[NorthWest][i]
+    def corner1 ( self, i ): return self.corners[NorthEast][i]
 
 
 class VerticalSide ( Side ):
@@ -449,8 +452,8 @@ class WestSide ( VerticalSide ):
         return self.innerBb.getXMin() -    self.vRailWidth/2 - self.vRailSpace \
                                       - i*(self.vRailWidth   + self.vRailSpace)
 
-    def corner0 ( self, i ): return self.corners[chip.SouthWest][i]
-    def corner1 ( self, i ): return self.corners[chip.NorthWest   ][i]
+    def corner0 ( self, i ): return self.corners[SouthWest][i]
+    def corner1 ( self, i ): return self.corners[NorthWest   ][i]
 
     def addBlockages ( self ):
         sideXMin = self.getOuterRail(0).axis - self.vRailWidth
@@ -469,8 +472,8 @@ class EastSide ( VerticalSide ):
         return self.innerBb.getXMax() +    self.vRailWidth/2 + self.vRailSpace \
                                       + i*(self.vRailWidth   + self.vRailSpace)
 
-    def corner0 ( self, i ): return self.corners[chip.SouthEast][i]
-    def corner1 ( self, i ): return self.corners[chip.NorthEast   ][i]
+    def corner0 ( self, i ): return self.corners[SouthEast][i]
+    def corner1 ( self, i ): return self.corners[NorthEast   ][i]
 
     def addBlockages ( self ):
         sideXMin = self.getInnerRail(0).axis - self.vRailWidth
@@ -532,10 +535,10 @@ class Corona ( object ):
     def connectBlock ( self ):
         for plane in self.block.planes.values():
           for side in plane.sides.values():
-            self.southSide.connect( side[chip.South] )
-            self.northSide.connect( side[chip.North] )
-            self.westSide .connect( side[chip.West ] )
-            self.eastSide .connect( side[chip.East ] )
+            self.southSide.connect( side[South] )
+            self.northSide.connect( side[North] )
+            self.westSide .connect( side[West ] )
+            self.eastSide .connect( side[East ] )
         return
 
     def connectPads ( self, padsCorona ):
@@ -546,10 +549,10 @@ class Corona ( object ):
         return
 
     def doLayout ( self ):
-        self.corners = { chip.SouthWest : []
-                       , chip.SouthEast : []
-                       , chip.NorthWest : []
-                       , chip.NorthEast : []
+        self.corners = { SouthWest : []
+                       , SouthEast : []
+                       , NorthWest : []
+                       , NorthEast : []
                        }
 
         contactDepth = self.horizontalDepth
@@ -575,28 +578,28 @@ class Corona ( object ):
             trBox.merge( xTR, yTR )
 
             self.routingGauge.getContactLayer(contactDepth)
-            self.corners[chip.SouthWest].append( 
+            self.corners[SouthWest].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xBL, yBL
                               , self.hRailWidth
                               , self.vRailWidth
                               ) )
-            self.corners[chip.NorthWest].append( 
+            self.corners[NorthWest].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xBL, yTR
                               , self.hRailWidth
                               , self.vRailWidth
                               ) )
-            self.corners[chip.SouthEast].append( 
+            self.corners[SouthEast].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xTR, yBL
                               , self.hRailWidth
                               , self.vRailWidth
                               ) )
-            self.corners[chip.NorthEast].append( 
+            self.corners[NorthEast].append( 
                 Contact.create( net
                               , self.routingGauge.getContactLayer(contactDepth)
                               , xTR, yTR

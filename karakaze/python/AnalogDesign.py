@@ -326,8 +326,11 @@ class AnalogDesign ( object ):
             
             self.generator.setDevice ( device )
             self.generator.drawLayout()
-            instance = Instance.create( self.cell, dspec[1], device, Transformation() )
-            instance.setPlacementStatus( Instance.PlacementStatus.UNPLACED )
+            instance = Instance.create( self.cell
+                                      , dspec[1]
+                                      , device
+                                      , Transformation()
+                                      , Instance.PlacementStatus.UNPLACED )
 
             self.__dict__[ dspec[1] ] = instance
         return

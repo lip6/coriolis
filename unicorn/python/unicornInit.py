@@ -21,6 +21,7 @@ try:
   import helpers
   from   helpers.io import ErrorMessage
   from   helpers.io import WarningMessage
+  import plugins
   import Viewer
 except ImportError, e:
   serror = str(e)
@@ -41,58 +42,44 @@ except Exception, e:
   sys.exit(2)
 
 
+#helpers.staticInitialization( quiet=True )
+
+
 def unicornConfigure ( **kw ):
     editor = None
     if kw.has_key('editor'):
-        editor = kw['editor']
+      editor = kw['editor']
     else:
-        print ErrorMessage( 3, 'unicornConfigure.py: Must be run from a CellView derived class.' )
-        return
+      print ErrorMessage( 3, 'unicornConfigure.py: Must be run from a CellView derived class.' )
+      return
 
-    cumulusDir = None
-    for path in sys.path:
-      if path.endswith('/cumulus'):
-        cumulusDir = path
-    if not cumulusDir:
-        print ErrorMessage( 3, 'unicornConfigure.py: Cannot find <cumulus> in PYTHONPATH.' )
-        return
-
-    pluginsDir = os.path.join( cumulusDir, 'plugins' )
-    if not os.path.isdir(pluginsDir):
-        print ErrorMessage( 3, 'unicornConfigure.py: Cannot find <cumulus/plugins> directory:' \
-                             , '<%s>' % pluginsDir )
-        return
-    sys.path.append( pluginsDir )
-      
     if editor.hasMenu( 'plugins' ):
-        print WarningMessage( 'The <plugins> menu has already been created.' )
-        return
+      print WarningMessage( 'The <plugins> menu has already been created.' )
+      return
 
    #editor.addMenu( 'plugins', 'Plu&gins', Viewer.CellViewer.TopMenu )
 
-    moduleNames = []
-    for pluginFile in os.listdir( pluginsDir ):
-      if pluginFile == "__init__.py":    continue
-      if not pluginFile.endswith('.py'): continue
-      moduleNames.append( os.path.basename(pluginFile)[:-3] )
-
-    moduleNames.sort()
-    
-    for moduleName in moduleNames:
-      try:
-        module = __import__( moduleName, globals(), locals(), moduleName )
-
-        if not module.__dict__.has_key('unicornHook'):
-          print WarningMessage( 'Plugin <%s> do not provides the unicornHook() method, skipped.' \
-                                 % moduleName )
-          continue
-
-        module.__dict__['unicornHook']( **kw )
-
-      except ErrorMessage, e:
-        print e
-        helpers.showStackTrace( e.trace )
-      except Exception, e:
-        helpers.showPythonTrace( __file__, e )
+    for moduleName in sys.modules:
+      if moduleName.startswith('plugins.'):
+        try:
+          module = sys.modules[ moduleName ]
+          if not module:
+           #print WarningMessage( 'Plugin "%s" not found in Python sys/modules[].' \
+           #                       % moduleName )
+            continue
+          
+          if not module.__dict__.has_key('unicornHook'):
+            elements = module.__file__.split( os.sep )
+            if elements[-2] == 'plugins':
+              print WarningMessage( 'Plugin "%s" do not provides the unicornHook() method, skipped.' \
+                                     % moduleName )
+            continue
+          
+          module.__dict__['unicornHook']( **kw )
+        except ErrorMessage, e:
+          print e
+          helpers.showStackTrace( e.trace )
+        except Exception, e:
+          helpers.showPythonTrace( __file__, e )
 
     return

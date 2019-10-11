@@ -227,7 +227,8 @@ namespace Isobar {
     if (Py_IsInitialized()) {
     // Python is already running. Launch a sub-interpreter.
       _globalState    = PyThreadState_Get();
-      _subInterpreter = Py_NewInterpreter();
+    //_subInterpreter = Py_NewInterpreter();
+      _subInterpreter = _globalState;
     } else 
       Py_Initialize();
 
@@ -257,14 +258,18 @@ namespace Isobar {
     if (not (_flags & Initialized)) return;
     _flags &= ~Initialized;
 
-    if (_subInterpreter != NULL) {
+  //if (_subInterpreter == _globalState) return;
+    
+    if ( (_subInterpreter != NULL) and (_subInterpreter != _globalState) ) {
       Py_EndInterpreter(_subInterpreter);
       PyThreadState_Swap(_globalState);
       _subInterpreter = NULL;
     } else {
-      if ( _userModule      != NULL ) { Py_DECREF ( _userModule ); }
-      if ( _hurricaneModule != NULL ) { Py_DECREF ( _hurricaneModule ); }
-      if ( _sysModule       != NULL ) { Py_DECREF ( _sysModule ); }
+      if (_subInterpreter != _globalState) {
+        if ( _userModule      != NULL ) { Py_DECREF ( _userModule ); }
+        if ( _hurricaneModule != NULL ) { Py_DECREF ( _hurricaneModule ); }
+        if ( _sysModule       != NULL ) { Py_DECREF ( _sysModule ); }
+      }
       if ( _pyResult        != NULL ) { Py_DECREF ( _pyResult ); }
       if ( _pyArgs          != NULL ) { Py_DECREF ( _pyArgs ); }
       if ( _pyFunction      != NULL ) { Py_DECREF ( _pyFunction ); }

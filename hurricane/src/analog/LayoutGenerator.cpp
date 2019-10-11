@@ -171,9 +171,9 @@ namespace Analog {
     // Eric passed by here
     //cerr << "Python driven Layout successfully drawn." << endl;
   
-      finalize( ShowTimeTag|StatusOk );
-  
       _device->setAbutmentBox( getDeviceBox() );
+  
+      finalize( ShowTimeTag|StatusOk );
   
     //string message = _device->checkLayoutOnPhysicalGrid(); 
     //if (not message.empty())

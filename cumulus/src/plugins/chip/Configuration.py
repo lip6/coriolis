@@ -469,7 +469,7 @@ class ChipConf ( object ):
       remainder = u % oneLambda
       if remainder:
         if rounding == chip.Superior: u = u + (oneLambda - remainder)
-        else:                          u = u -              remainder
+        else:                         u = u -              remainder
       return u
 
 
@@ -478,9 +478,15 @@ class ChipConf ( object ):
       if isinstance(v,long): return ChipConf._toSymbolic( v, rounding )
       if isinstance(v,Box):
         if rounding & chip.Inwards:
-          roundings = [ chip.Superior, chip.Superior, chip.Inferior, chip.Inferior ]
+          roundings = [ chip.Superior
+                      , chip.Superior
+                      , chip.Inferior
+                      , chip.Inferior ]
         else:
-          roundings = [ chip.Inferior, chip.Inferior, chip.Superior, chip.Superior ]
+          roundings = [ chip.Inferior
+                      , chip.Inferior
+                      , chip.Superior
+                      , chip.Superior ]
         xMin = ChipConf._toSymbolic( v.getXMin(), roundings[0] )
         yMin = ChipConf._toSymbolic( v.getYMin(), roundings[1] )
         xMax = ChipConf._toSymbolic( v.getXMax(), roundings[2] )

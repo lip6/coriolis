@@ -42,7 +42,9 @@ import helpers
 from   helpers    import trace
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
-import chip.Configuration
+import chip
+
+chip.importConstants( globals() )
 
 
 class Corner ( object ):
@@ -59,22 +61,22 @@ class Corner ( object ):
 
 
     def _getPoints ( self, axis ):
-      if self.type == chip.SouthWest:
+      if self.type == SouthWest:
         xCorner = self.conf.chipSize.getXMin() + axis
         yCorner = self.conf.chipSize.getYMin() + axis
         xBb     = self.conf.chipSize.getXMin() + self.conf.getIoPadHeight()
         yBb     = self.conf.chipSize.getYMin() + self.conf.getIoPadHeight()
-      elif self.type == chip.SouthEast:
+      elif self.type == SouthEast:
         xCorner = self.conf.chipSize.getXMax() - axis
         yCorner = self.conf.chipSize.getYMin() + axis
         xBb     = self.conf.chipSize.getXMax() - self.conf.getIoPadHeight()
         yBb     = self.conf.chipSize.getYMin() + self.conf.getIoPadHeight()
-      elif self.type == chip.NorthEast:
+      elif self.type == NorthEast:
         xCorner = self.conf.chipSize.getXMax() - axis
         yCorner = self.conf.chipSize.getYMax() - axis
         xBb     = self.conf.chipSize.getXMax() - self.conf.getIoPadHeight()
         yBb     = self.conf.chipSize.getYMax() - self.conf.getIoPadHeight()
-      elif self.type == chip.NorthWest:
+      elif self.type == NorthWest:
         xCorner = self.conf.chipSize.getXMin() + axis
         yCorner = self.conf.chipSize.getYMax() - axis
         xBb     = self.conf.chipSize.getXMin() + self.conf.getIoPadHeight()
@@ -99,7 +101,7 @@ class Corner ( object ):
 
 
     def _getTransformation ( self ):
-      if self.type == chip.SouthWest:
+      if self.type == SouthWest:
         name = 'padcorner_sw'
         x    = self.conf.chipSize.getXMin()
         y    = self.conf.chipSize.getYMin()
@@ -109,7 +111,7 @@ class Corner ( object ):
           orientation  = Transformation.Orientation.R1
           x           += self.padCorner.getAbutmentBox().getWidth()
 
-      elif self.type == chip.SouthEast:
+      elif self.type == SouthEast:
         name = 'padcorner_se'
         x    = self.conf.chipSize.getXMax()
         y    = self.conf.chipSize.getYMin()
@@ -120,7 +122,7 @@ class Corner ( object ):
           x           += self.padCorner.getAbutmentBox().getWidth()
           y           += self.padCorner.getAbutmentBox().getHeight()
 
-      elif self.type == chip.NorthEast:
+      elif self.type == NorthEast:
         name = 'padcorner_ne'
         x    = self.conf.chipSize.getXMax()
         y    = self.conf.chipSize.getYMax()
@@ -131,7 +133,7 @@ class Corner ( object ):
           x           -= self.padCorner.getAbutmentBox().getwidth()
           y           -= self.padCorner.getAbutmentBox().getHeight()
 
-      elif self.type == chip.NorthWest:
+      elif self.type == NorthWest:
         name = 'padcorner_nw'
         x    = self.conf.chipSize.getXMin()
         y    = self.conf.chipSize.getYMax()
@@ -172,22 +174,22 @@ class Side ( object ):
       self.gap           = 0
       self.coreWires     = []
 
-      if   self.type == chip.North:
+      if   self.type == North:
         self.pads       = self.conf.northPads
         self.sideName   = 'north'
         self.sideLength = self.conf.chipSize.getWidth()
 
-      elif self.type == chip.South:
+      elif self.type == South:
         self.pads       = self.conf.southPads
         self.sideName   = 'south'
         self.sideLength = self.conf.chipSize.getWidth()
 
-      elif self.type == chip.East:
+      elif self.type == East:
         self.pads       = self.conf.eastPads
         self.sideName   = 'east'
         self.sideLength = self.conf.chipSize.getHeight()
 
-      elif self.type == chip.West:
+      elif self.type == West:
         self.pads       = self.conf.westPads
         self.sideName   = 'west'
         self.sideLength = self.conf.chipSize.getHeight()
@@ -207,10 +209,10 @@ class Side ( object ):
 
 
     def getAxis ( self, i ):
-      if   self.type == chip.North: return self.conf.chipSize.getYMax() - self.conf.getIoPadHeight() + self.corona.powerRails[i][2]
-      elif self.type == chip.South: return self.conf.chipSize.getYMin() + self.conf.getIoPadHeight() - self.corona.powerRails[i][2]
-      elif self.type == chip.East:  return self.conf.chipSize.getXMax() - self.conf.getIoPadHeight() + self.corona.powerRails[i][2]
-      elif self.type == chip.West:  return self.conf.chipSize.getXMin() + self.conf.getIoPadHeight() - self.corona.powerRails[i][2]
+      if   self.type == North: return self.conf.chipSize.getYMax() - self.conf.getIoPadHeight() + self.corona.powerRails[i][2]
+      elif self.type == South: return self.conf.chipSize.getYMin() + self.conf.getIoPadHeight() - self.corona.powerRails[i][2]
+      elif self.type == East:  return self.conf.chipSize.getXMax() - self.conf.getIoPadHeight() + self.corona.powerRails[i][2]
+      elif self.type == West:  return self.conf.chipSize.getXMin() + self.conf.getIoPadHeight() - self.corona.powerRails[i][2]
       else:
         raise ErrorMessage( 1, 'PadsCorona.Side.__init__(): Invalid value for sideType (%d)' % sideType )
       return 0
@@ -236,10 +238,10 @@ class Side ( object ):
     def _check ( self, checkSize, checkName ):
       sideName = 'unknown'
       chipSize = 0
-      if self.type == chip.North or self.type == chip.South:
+      if self.type == North or self.type == South:
         chipSize = self.conf.chipSize.getWidth()
         sideName = 'wide'
-      elif self.type == chip.East or self.type == chip.West:
+      elif self.type == East or self.type == West:
         chipSize = self.conf.chipSize.getHeight()
         sideName = 'tall'
   
@@ -258,20 +260,20 @@ class Side ( object ):
 
     def check ( self ):
       self.validated = True
-      if self.type == chip.North:
+      if self.type == North:
         self.validated = self._check(     self.conf.coreSize.getWidth()
                                       + 2*self.conf.minCorona
                                       + 2*self.conf.getIoPadHeight()
                                     , 'core' )
         checkName = 'north pads'
-      elif self.type == chip.East:
+      elif self.type == East:
         self.validated = self._check(     self.conf.coreSize.getHeight()
                                       + 2*self.conf.minCorona
                                       + 2*self.conf.getIoPadHeight()
                                     , 'core' )
         checkName = 'east pads'
-      elif self.type == chip.South: checkName = 'south pads'
-      elif self.type == chip.West:  checkName = 'west pads'
+      elif self.type == South: checkName = 'south pads'
+      elif self.type == West:  checkName = 'west pads'
 
       self.validated = self._check( len(self.pads) *   self.conf.gaugeConf.getIoPadStep  ()
                                                    + 2*self.conf.gaugeConf.getIoPadHeight()
@@ -391,7 +393,7 @@ class Side ( object ):
 
 
     def _placePad ( self, padInstance ):
-      if self.type == chip.North:
+      if self.type == North:
         x = self.conf.chipSize.getXMin() + self.u
         y = self.conf.chipSize.getYMax()
 
@@ -401,7 +403,7 @@ class Side ( object ):
           orientation = Transformation.Orientation.ID
           y          -= self.conf.getIoPadHeight()
 
-      elif self.type == chip.South:
+      elif self.type == South:
         x = self.conf.chipSize.getXMin() + self.u
         y = self.conf.chipSize.getYMin()
 
@@ -411,7 +413,7 @@ class Side ( object ):
           orientation = Transformation.Orientation.MY
           y          += self.conf.getIoPadHeight()
 
-      elif self.type == chip.West:
+      elif self.type == West:
         x = self.conf.chipSize.getXMin()
         y = self.conf.chipSize.getYMin() + self.u
 
@@ -422,7 +424,7 @@ class Side ( object ):
           orientation = Transformation.Orientation.R1
           x          += padInstance.getMasterCell().getAbutmentBox().getHeight()
 
-      elif self.type == chip.East:
+      elif self.type == East:
         x = self.conf.chipSize.getXMax()
         y = self.conf.chipSize.getYMin() + self.u
 
@@ -490,13 +492,13 @@ class Side ( object ):
 
 
     def _getUMin ( self, box ):
-       if self.type == chip.North or self.type == chip.South:
+       if self.type == North or self.type == South:
          return box.getXMin()
        return box.getYMin()
 
 
     def _getUMax ( self, box ):
-       if self.type == chip.North or self.type == chip.South:
+       if self.type == North or self.type == South:
          return box.getXMax()
        return box.getYMax()
 
@@ -511,22 +513,22 @@ class Side ( object ):
           uMin -= width/2
           uMax += width/2
       
-      if self.type == chip.North or self.type == chip.South:
-        if self.type == chip.North:
+      if self.type == North or self.type == South:
+        if self.type == North:
           axis = self.conf.chipSize.getYMax() - axis
         Horizontal.create( net, layer, axis, width, uMin, uMax )
       else:
-        if self.type == chip.East:
+        if self.type == East:
           axis = self.conf.chipSize.getXMax() - axis
         Vertical.create( net, layer, axis, width, uMin, uMax )
       return
 
 
     def _routePads ( self ):
-      if self.type == chip.South or self.type == chip.North:
+      if self.type == South or self.type == North:
         startCorner = self.conf.chipSize.getXMin()
         stopCorner  = self.conf.chipSize.getXMax()
-      elif self.type == chip.West or self.type == chip.East:
+      elif self.type == West or self.type == East:
         startCorner = self.conf.chipSize.getYMin()
         stopCorner  = self.conf.chipSize.getYMax()
       else:
@@ -571,10 +573,10 @@ class Side ( object ):
     def drawCoreWires ( self ):
       trace( 550, ',+', '\tSide.drawCoreWire()\n' )
 
-      if self.type == chip.West or self.type == chip.East:
+      if self.type == West or self.type == East:
         trace( 550, 'Sort East/West' )
         self.coreWires.sort( key=lambda wire: wire.bbSegment.getCenter().getY() )
-      if self.type == chip.North or self.type == chip.South:
+      if self.type == North or self.type == South:
         trace( 550, 'Sort North/South' )
         self.coreWires.sort( key=lambda wire: wire.bbSegment.getCenter().getX() )
           
@@ -597,14 +599,14 @@ class Side ( object ):
         self.coreWires[ -(offset+1) ].setOffset( i+1, CoreWire.AtEnd )
 
       for wire in self.coreWires:
-        if self.type == chip.West or self.type == chip.East:
+        if self.type == West or self.type == East:
           trace( 550, '\t| %s %s %d %s inRange:%s\n' % ( wire.chipNet.getName()
                                                        , DbU.getValueString(wire.bbSegment.getCenter().getY())
                                                        , wire.count
                                                        , wire.padSegment.getLayer()
                                                        , wire.inCoronaRange ) )
         
-        if self.type == chip.North or self.type == chip.South:
+        if self.type == North or self.type == South:
           trace( 550, '\t| %s %s %d %s inRange:%s\n' % ( wire.chipNet.getName()
                                                        , DbU.getValueString(wire.bbSegment.getCenter().getX())
                                                        , wire.count
@@ -647,12 +649,12 @@ class CoreWire ( object ):
   def updateInCorona ( self ):
     coronaAb = self.conf.getInstanceAb( self.conf.icorona )
 
-    if self.side == chip.South or self.side == chip.North:
+    if self.side == South or self.side == North:
       xCoronaPin = self.bbSegment.getCenter().getX()
       if   xCoronaPin <= coronaAb.getXMin(): self.inCoronaRange = False
       elif xCoronaPin >= coronaAb.getXMax(): self.inCoronaRange = False
 
-    if self.side == chip.East or self.side == chip.West:
+    if self.side == East or self.side == West:
       yCoronaPin = self.bbSegment.getCenter().getY()
       if   yCoronaPin <= coronaAb.getYMin(): self.inCoronaRange = False
       elif yCoronaPin >= coronaAb.getYMax(): self.inCoronaRange = False
@@ -681,7 +683,7 @@ class CoreWire ( object ):
 
         if self.preferredDir:
           self.symContactLayer = self.symSegmentLayer
-          if self.side & (chip.West|chip.East):
+          if self.side & (West|East):
             self.symContactSize = ( layerGauge.getWireWidth(), self.bbSegment.getHeight() )
           else:
             self.symContactSize = ( self.bbSegment.getWidth(), layerGauge.getWireWidth() )
@@ -694,7 +696,7 @@ class CoreWire ( object ):
             self.symSegmentLayer = rg.getLayerGauge( depth+1 ).getLayer()
 
           self.symContactLayer = rg.getContactLayer( depth )
-          if self.side & (chip.West|chip.East):
+          if self.side & (West|East):
             self.symContactSize  = ( self.bbSegment.getHeight(), self.bbSegment.getHeight() )
           else:
             self.symContactSize  = ( self.bbSegment.getWidth(), self.bbSegment.getWidth() )
@@ -710,7 +712,7 @@ class CoreWire ( object ):
                       % (DbU.toLambda(contactMinSize),DbU.toLambda(arrayWidth),arrayCount) )
           if arrayCount < 0: arrayCount = 0
           if arrayCount < 3:
-            if self.side & (chip.North|chip.South):
+            if self.side & (North|South):
               self.arraySize = ( arrayCount+1, 2 )
             else:
               self.arraySize = ( 2, arrayCount+1 )
@@ -737,8 +739,8 @@ class CoreWire ( object ):
     if not isinstance(padLayer,BasicLayer):
       padLayer = padLayer.getBasicLayer()
     
-    if self.side == chip.West or self.side == chip.East:
-      flags = chip.OnHorizontalPitch
+    if self.side == West or self.side == East:
+      flags = OnHorizontalPitch
       hPitch = self.conf.gaugeConf.getPitch( self.symSegmentLayer )
       vPitch = self.conf.gaugeConf.getPitch( self.padSegment.getLayer() )
 
@@ -749,7 +751,7 @@ class CoreWire ( object ):
         else:
           yCore -= 2*hPitch*self.offset
 
-      if self.side == chip.West:
+      if self.side == West:
         accessDirection = Pin.Direction.WEST
         xPadMin         = self.bbSegment.getXMin()
         xContact        = self.corona.coreSymBb.getXMin() - self.offset * 2*vPitch
@@ -813,8 +815,8 @@ class CoreWire ( object ):
                      )
 
       if self.arraySize:
-        if self.side == chip.West: xContact = min( xContact, vStrapBb.getXMin() )
-        else:                      xContact = max( xContact, vStrapBb.getXMax() )
+        if self.side == West: xContact = min( xContact, vStrapBb.getXMin() )
+        else:                 xContact = max( xContact, vStrapBb.getXMax() )
 
       self.conf.coronaHorizontal( self.chipNet
                                 , self.symSegmentLayer
@@ -834,7 +836,7 @@ class CoreWire ( object ):
                                , self.bbSegment.getHeight()
                                )
     else:
-      flags  = chip.OnVerticalPitch
+      flags  = OnVerticalPitch
       hPitch = self.conf.gaugeConf.getPitch( self.padSegment.getLayer() )
       vPitch = self.conf.gaugeConf.getPitch( self.symSegmentLayer )
 
@@ -847,7 +849,7 @@ class CoreWire ( object ):
         else:
           xCore -= 2*vPitch*self.offset
 
-      if self.side == chip.South:
+      if self.side == South:
         accessDirection = Pin.Direction.SOUTH
         yPadMin         = self.bbSegment.getYMin()
         yPadMax         = self.corona.coreSymBb.getYMin() - self.offset * 2*hPitch
@@ -911,8 +913,8 @@ class CoreWire ( object ):
                        )
       
       if self.arraySize:
-        if self.side == chip.South: yContact = min( yContact, hStrapBb.getYMin() )
-        else:                       yContact = max( yContact, hStrapBb.getYMax() )
+        if self.side == South: yContact = min( yContact, hStrapBb.getYMin() )
+        else:                  yContact = max( yContact, hStrapBb.getYMax() )
       
       trace( 550, '\txCore:  %sl %s\n' % (DbU.toLambda(xCore), DbU.getValueString(xCore)) )
       self.conf.coronaVertical( self.chipNet
@@ -932,10 +934,10 @@ class CoreWire ( object ):
                                , DbU.fromLambda( 1.0 )
                                )
 
-    if self.side & chip.North: self.corona.northSide.pins.append( pin )
-    if self.side & chip.South: self.corona.southSide.pins.append( pin )
-    if self.side & chip.East : self.corona.eastSide .pins.append( pin )
-    if self.side & chip.West : self.corona.westSide .pins.append( pin )
+    if self.side & North: self.corona.northSide.pins.append( pin )
+    if self.side & South: self.corona.southSide.pins.append( pin )
+    if self.side & East : self.corona.eastSide .pins.append( pin )
+    if self.side & West : self.corona.westSide .pins.append( pin )
 
     trace( 550, '-' )
     return
@@ -953,14 +955,14 @@ class Corona ( object ):
 
     self.conf       = conf  
     self.validated  = False
-    self.northSide  = Side( self, chip.North )
-    self.southSide  = Side( self, chip.South )
-    self.eastSide   = Side( self, chip.East  )
-    self.westSide   = Side( self, chip.West  )
-    self.corners    = { chip.SouthWest : Corner( self, chip.SouthWest )
-                      , chip.SouthEast : Corner( self, chip.SouthEast )
-                      , chip.NorthWest : Corner( self, chip.NorthWest )
-                      , chip.NorthEast : Corner( self, chip.NorthEast )
+    self.northSide  = Side( self, North )
+    self.southSide  = Side( self, South )
+    self.eastSide   = Side( self, East  )
+    self.westSide   = Side( self, West  )
+    self.corners    = { SouthWest : Corner( self, SouthWest )
+                      , SouthEast : Corner( self, SouthEast )
+                      , NorthWest : Corner( self, NorthWest )
+                      , NorthEast : Corner( self, NorthEast )
                       }
     self.padLib     = None
     self.padOrient  = Transformation.Orientation.ID
@@ -1131,7 +1133,7 @@ class Corona ( object ):
     gapWidth       = 0
     segments       = None
     inPreferredDir = False
-    if side.type == chip.North or side.type == chip.South:
+    if side.type == North or side.type == South:
       if len(vsegments):
         inPreferredDir = True
         segments       = vsegments[ min(vsegments.keys()) ]
@@ -1148,7 +1150,7 @@ class Corona ( object ):
     if segments:
       for segment, bb in segments:
         if not inPreferredDir:
-          if side.type == chip.North or side.type == chip.South:
+          if side.type == North or side.type == South:
             trace( 550, '\tNorth/South "%s" but RDir H, gapWidth: %s\n'
                    % (chipIntNet.getName(),DbU.getValueString(bb.getWidth()) ) )
             side.updateGap( bb.getWidth() )
@@ -1213,10 +1215,10 @@ class Corona ( object ):
     self.conf.setupCorona( self.westSide.gap, self.southSide.gap, self.eastSide.gap, self.northSide.gap )
 
     self.coreSymBb = self.conf.getInstanceAb( self.conf.icorona )
-    self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap /2, chip.Superior )
-                          , self.conf.toSymbolic( self.southSide.gap/2, chip.Superior )
-                          , self.conf.toSymbolic( self.eastSide.gap /2, chip.Inferior )
-                          , self.conf.toSymbolic( self.northSide.gap/2, chip.Inferior ) )
+    self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap /2, Superior )
+                          , self.conf.toSymbolic( self.southSide.gap/2, Superior )
+                          , self.conf.toSymbolic( self.eastSide.gap /2, Inferior )
+                          , self.conf.toSymbolic( self.northSide.gap/2, Inferior ) )
 
     self.southSide.drawCoreWires()
     self.northSide.drawCoreWires()

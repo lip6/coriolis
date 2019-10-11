@@ -29,6 +29,7 @@ import helpers.io
 quiet          = False
 sysConfDir     = None
 ndaConfDir     = None
+ndaDir         = None
 techno         = 'symbolic/cmos'
 technoDir      = None
 unitsLambda    = True
@@ -65,8 +66,8 @@ def textStackTrace ( trace, showIndent=True, scriptPath=None ):
 
     s = ''
     if scriptPath:
-      if len(scriptPath) > 70:
-        filename = scriptPath[-70:]
+      if len(scriptPath) > 100:
+        filename = scriptPath[-100:]
         filename = '.../' + filename[ filename.find('/')+1 : ]
 
       if showIndent: s += '[ERROR] '
@@ -78,8 +79,8 @@ def textStackTrace ( trace, showIndent=True, scriptPath=None ):
     maxdepth = len( trace )
     for depth in range( maxdepth ):
       filename, line, function, code = trace[ maxdepth-depth-1 ]
-      if len(filename) > 38:
-        filename = filename[-38:]
+      if len(filename) > 58:
+        filename = filename[-58:]
         filename = '.../' + filename[ filename.find('/')+1 : ]
      #s += indent + '[%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
       s += indent + '#%d in %25s() at %s:%d\n' % ( depth, function, filename, line )
@@ -94,8 +95,8 @@ def showStackTrace ( trace ):
 def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
     s = ''
     if scriptPath:
-      if len(scriptPath) > 70:
-        filename = scriptPath[-70:]
+      if len(scriptPath) > 100:
+        filename = scriptPath[-100:]
         filename = '.../' + filename[ filename.find('/')+1 : ]
       else:
         filename = scriptPath
@@ -250,6 +251,7 @@ def n ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPow
 
 def initTechno ( argQuiet ):
   global quiet
+  global ndaDir
   global ndaConfDir
   global technoDir
   global techno
@@ -264,7 +266,7 @@ def initTechno ( argQuiet ):
   technoFiles.reverse()
   for technoFile in technoFiles:
     if os.path.isfile(technoFile):
-      if not quiet: print '          - Loading \"%s\".' % truncPath(technoFile)
+      if not quiet: print '     - Loading \"%s\".' % truncPath(technoFile)
       execfile(technoFile,moduleGlobals)
       break
   if moduleGlobals.has_key('technology'):
@@ -273,12 +275,13 @@ def initTechno ( argQuiet ):
     print '[WARNING] The technology is not set. Using <%s>.' % techno
 
   if moduleGlobals.has_key('NdaDirectory'):
+    ndaDir     = NdaDirectory
     ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
   else:
     ndaConfDir = sysConfDir
 
   technoDir = os.path.join( ndaConfDir, techno )
-  if not quiet: print '          - Technology: %s.' % techno
+  if not quiet: print '     - Technology: %s.' % techno
 
 
 def staticInitialization ( quiet=False ):
@@ -288,7 +291,9 @@ def staticInitialization ( quiet=False ):
   global _trace
   global unitsLambda
 
-  if sysConfDir != None: return
+  if sysConfDir != None:
+   #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
+    return
 
   unitsLamba = True
   tab        = Tab()
@@ -300,7 +305,7 @@ def staticInitialization ( quiet=False ):
   for path in sys.path:
     if reSysConfDir.match(path):
       sysConfDir = path
-     #if not quiet: print '     - <%s>' % sysConfDir
+      if not quiet: print '     - "%s"' % sysConfDir
       break
   
   if not sysConfDir:
@@ -313,7 +318,7 @@ def staticInitialization ( quiet=False ):
       raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
                              , 'The path is something ending by <.../etc/coriolis2>.'] )
   
-  if not quiet: print '     - <%s>' % sysConfDir
+  if not quiet: print '     - "%s"' % sysConfDir
   initTechno( quiet )
   return
 

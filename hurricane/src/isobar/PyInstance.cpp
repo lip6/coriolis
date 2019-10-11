@@ -108,7 +108,8 @@ extern "C" {
                                    , PyInt_AsPlacementStatus(arg4)
                                    );
       } else {
-        PyErr_SetString( ConstructorError, "Instance.create(): Bad type of parameter(s)." );
+        string message = "Instance.create(): Bad type of parameter(s), \"" + __cs.getObjectIds() + "\".";
+        PyErr_SetString( ConstructorError, message.c_str() );
         return NULL;
       }
     HCATCH

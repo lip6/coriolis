@@ -53,10 +53,10 @@ try:
   import Unicorn
   import plugins
   import clocktree.ClockTree
-  import chip.Configuration
+  import chip
+  import chip.PadsCorona
   import chip.BlockPower
   import chip.BlockCorona
-  import chip.PadsCorona
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):

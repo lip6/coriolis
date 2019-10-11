@@ -33,7 +33,10 @@ import helpers
 from   helpers    import trace
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
-import chip.Configuration
+import plugins
+import chip
+
+chip.importConstants( globals() )
 
 
 class Side ( object ):
@@ -81,26 +84,26 @@ class Side ( object ):
     return
 
   def doLayout ( self ):
-    if self.side == chip.West:
+    if self.side == West:
       width = 0
       x     = self.block.bb.getXMin()
-    elif self.side == chip.East:
+    elif self.side == East:
       width = 0
       x     = self.block.bb.getXMax()
-    elif self.side == chip.South:
+    elif self.side == South:
       height = 0
       y      = self.block.bb.getYMin()
-    elif self.side == chip.North:
+    elif self.side == North:
       height = 0
       y      = self.block.bb.getYMax()
 
     minWidth = DbU.fromLambda( 6.0 )
     for terminal in self.terminals:
-      if self.side == chip.West or self.side == chip.East:
+      if self.side == West or self.side == East:
         center = Point( x, terminal[0].getCenter() )
         height = terminal[0].getSize() - self.deltaWidth
         if height < minWidth: height = minWidth
-      elif self.side == chip.North or self.side == chip.South:
+      elif self.side == North or self.side == South:
         center = Point( terminal[0].getCenter(), y )
         width = terminal[0].getSize() - self.deltaWidth
         if width < minWidth: width = minWidth
@@ -125,24 +128,24 @@ class Plane ( object ):
 
   def addTerminal ( self, net, direction, bb ):
     if not self.sides.has_key(net):
-      self.sides[ net ] = { chip.North : Side(self.block,chip.North,net,self.metal)
-                          , chip.South : Side(self.block,chip.South,net,self.metal)
-                          , chip.East  : Side(self.block,chip.East ,net,self.metal)
-                          , chip.West  : Side(self.block,chip.West ,net,self.metal)
+      self.sides[ net ] = { North : Side(self.block,North,net,self.metal)
+                          , South : Side(self.block,South,net,self.metal)
+                          , East  : Side(self.block,East ,net,self.metal)
+                          , West  : Side(self.block,West ,net,self.metal)
                           }
     sides = self.sides[ net ]
 
     if direction == Plane.Horizontal:
       if bb.getXMin() <= self.block.bb.getXMin():
-        sides[chip.West].addTerminal( bb.getCenter().getY(), bb.getHeight() )
+        sides[West].addTerminal( bb.getCenter().getY(), bb.getHeight() )
       if bb.getXMax() >= self.block.bb.getXMax():
-        sides[chip.East].addTerminal( bb.getCenter().getY(), bb.getHeight() )
+        sides[East].addTerminal( bb.getCenter().getY(), bb.getHeight() )
 
     if direction == Plane.Vertical:
       if bb.getYMin() <= self.block.bb.getYMin():
-        sides[chip.South].addTerminal( bb.getCenter().getX(), bb.getWidth() )
+        sides[South].addTerminal( bb.getCenter().getX(), bb.getWidth() )
       if bb.getYMax() >= self.block.bb.getYMax():
-        sides[chip.North].addTerminal( bb.getCenter().getX(), bb.getWidth() )
+        sides[North].addTerminal( bb.getCenter().getX(), bb.getWidth() )
     return
 
   def doLayout ( self ):
@@ -166,8 +169,8 @@ class GoCb ( object ):
     if not direction: return
 
     rootNet = None
-    if go.getNet().getType() == Net.Type.POWER:  rootNet = self.block.conf.coronaVdd
-    if go.getNet().getType() == Net.Type.GROUND: rootNet = self.block.conf.coronaVss
+    if go.getNet().getType() == long(Net.Type.POWER):  rootNet = self.block.conf.coronaVdd
+    if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.block.conf.coronaVss
     if not rootNet: return
 
     if self.block.activePlane:

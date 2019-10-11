@@ -22,7 +22,7 @@ from   CRL        import Catalog
 from   CRL        import AllianceFramework
 from   helpers    import netDirectionToStr
 from   helpers.io import ErrorMessage
-import chip.Chip
+import chip
 
 
 # -------------------------------------------------------------------
