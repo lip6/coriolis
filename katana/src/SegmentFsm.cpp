@@ -541,7 +541,10 @@ namespace Katana {
         _constraint.intersection( perpandicular );
     } else {
       cdebug_log(159,0) << "No Track in perpandicular free." << endl;
-      _state = EmptyTrackList;
+      if (not segment1->isNonPref()) _state = EmptyTrackList;
+      else {
+        cdebug_log(159,0) << "But in non-preferred direction, so that may happen." << endl;
+      }
     }
 
     if (_state == EmptyTrackList) return;
@@ -557,8 +560,7 @@ namespace Katana {
     RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(segment1->getLayer());
 
     if (segment1->isNonPref()) {
-      Track* baseTrack = plane->getTrackByPosition( segment1->base()->getSourcePosition(), Constant::Superior );
-
+      Track*        baseTrack = plane->getTrackByPosition( segment1->base()->getSourcePosition(), Constant::Superior );
       RoutingPlane* perpPlane = plane->getTop();
       if (not perpPlane) perpPlane = plane->getBottom();
 
@@ -574,7 +576,11 @@ namespace Katana {
 
         cdebug_log(155,0) << "| " << _costs.back() << ((_fullBlocked)?" FB ": " -- ") << ptrack << endl;
       }
-
+      if (_costs.empty()) {
+        _costs.push_back( new TrackCost(segment1,NULL,baseTrack,NULL,segment1->getAxis(),0) );
+        if ( _fullBlocked and (not _costs.back()->isBlockage() and not _costs.back()->isFixed()) ) 
+          _fullBlocked = false;
+      }
     } else {
       for ( Track* track1 : Tracks_Range::get(plane,_constraint) ) {
         Track*     track2  = NULL;
@@ -1208,7 +1214,9 @@ namespace Katana {
     uint32_t    nextState   = data->getState();
     Manipulator manipulator ( segment, *this );
 
-    if (segment->isNonPref() and (getCost(0)->isBlockage() or getCost(0)->isAtRipupLimit())) {
+    if (segment->isNonPref()
+       and not getCosts().empty()
+       and (getCost(0)->isBlockage() or getCost(0)->isAtRipupLimit())) {
       cdebug_log(159,0) << "Non-preferred conflicts with a blockage or other's at ripup limit." << endl;
       success = manipulator.avoidBlockage();
     }

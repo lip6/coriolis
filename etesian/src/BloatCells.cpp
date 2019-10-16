@@ -150,7 +150,7 @@ namespace Etesian {
     if (xsize < 6) return vpitch*8;
     if (xsize < 8) return vpitch*6;
     
-    return vpitch*4;
+    return vpitch*3;
   }  
 
 

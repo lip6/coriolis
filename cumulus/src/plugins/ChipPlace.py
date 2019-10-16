@@ -21,7 +21,7 @@ try:
   from   helpers.io import ErrorMessage
   from   helpers.io import WarningMessage
   import plugins
-  import chip
+  import chip.Chip
 except ImportError, e:
   serror = str(e)
   if serror.startswith('No module named'):
