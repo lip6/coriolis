@@ -59,8 +59,8 @@ import types
 ###########
 class XY :
   def __init__ ( self, x, y ) :
-    self._x = x
-    self._y = y
+    self._x = DbU.fromLambda(x)
+    self._y = DbU.fromLambda(y)
 
 ##################################
 def GetRefXY ( pathname, refname ) :

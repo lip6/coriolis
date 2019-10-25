@@ -989,7 +989,8 @@ class Model() :
       raise Exception ( err )
       
     ##### Creation of the instance #####
-#    dict['flags'] = F_MSB_FIRST # When vst driver permits to do F_LSB_FIRST or F_LSB_FIRST TODO
+#   dict['flags'] = F_MSB_FIRST # When vst driver permits to do F_LSB_FIRST or F_LSB_FIRST TODO
+#   dict['flags'] = 0
     
     ## Virtual library ## 
     if modele in BVg :

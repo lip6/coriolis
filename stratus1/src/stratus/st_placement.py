@@ -62,7 +62,9 @@ def Place ( ins, sym, ref, plac = FIXED, cell = None ) :
 
   # Error if x and y found not permitted :
   if ref._x % MYPITCH :
-    err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate x is not a mutiple of PITCH.\n"
+    err = "\n[Stratus ERROR] Place : " + ins._name + " : coordinate x " \
+          + DbU.getValueString(ref._x) + " is not a mutiple of PITCH " \
+          + DbU.getValueString(MYPITCH) + ".\n"
     raise Exception ( err )
 
   if ref._y % MYSLICE :
