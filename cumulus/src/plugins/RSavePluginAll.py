@@ -84,7 +84,6 @@ def unicornHook ( **kw ):
 
 def ScriptMain ( **kw ):
   try:
-    helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )
 
     cell, editor = plugins.kwParseMain( **kw )

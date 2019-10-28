@@ -289,6 +289,7 @@ if __name__ == "__main__":
     strippedPythonPath = "%s/cumulus:"         % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/cumulus/plugins:" % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/stratus:"         % (sitePackagesDir) + strippedPythonPath
+    strippedPythonPath = "%s:"                 % (sysconfDir)      + strippedPythonPath
 
     shellScriptSh  += 'PYTHONPATH="%(PYTHONPATH)s";' \
                       'export PYTHONPATH;'

@@ -285,7 +285,8 @@ namespace CRL {
     if ( _direction == Constant::Horizontal ) os << "Horizontal ";
     else                                      os << "Vertical ";
 
-    os << DbU::getValueString(_offset)    << ",+"
+    os << _depth << " "
+       << DbU::getValueString(_offset)    << ",+"
        << DbU::getValueString(_pitch)     << " "
        << _density                        << "% ("
        << DbU::getValueString(_wireWidth) << ","

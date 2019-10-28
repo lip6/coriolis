@@ -195,16 +195,17 @@ namespace CRL {
     , _cellGauges         ()
     , _defaultCellGauge   (NULL)
   {
-    DataBase* db = DataBase::getDB ();
-    if ( not db )
-      db = DataBase::create ();
+    DataBase* db = DataBase::getDB();
+    if (not db) db = DataBase::create();
 
-    db->put ( AllianceFrameworkProperty::create(this) );
+    Library* rootLibrary = db->getRootLibrary();
+    if (not rootLibrary ) rootLibrary = Library::create( db, "Root" );
+
+    _parentLibrary = rootLibrary->getLibrary( _parentLibraryName );
+    if (not _parentLibrary ) _parentLibrary = Library::create( rootLibrary, _parentLibraryName );
+
+    db->put( AllianceFrameworkProperty::create(this) );
     db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
-
-  //cmess1 << "  o  Reading Alliance Environment." << endl;
-
-  //_environment.loadFromShell ();
   }
 
 
@@ -225,31 +226,20 @@ namespace CRL {
   }
 
 
-  void  AllianceFramework::_bindLibraries ()
+  void  AllianceFramework::bindLibraries ()
   {
-    DataBase*     db          = DataBase::getDB ();
-    unsigned int  flags       = AppendLibrary;
-    SearchPath&   LIBRARIES   = _environment.getLIBRARIES ();
-    Library*      rootLibrary = db->getRootLibrary ();
+    unsigned int  flags     = AppendLibrary;
+    SearchPath&   LIBRARIES = _environment.getLIBRARIES();
 
-  //cmess2 << "  o  Creating Alliance Framework root library." << endl;
-    if ( !rootLibrary )
-      rootLibrary = Library::create ( db, "Root" );
-
-    _parentLibrary = rootLibrary->getLibrary ( _parentLibraryName );
-    if ( !_parentLibrary )
-      _parentLibrary = Library::create ( rootLibrary, _parentLibraryName );
-
-  //cmess2 << "  o  Loading libraries (working first)." << endl;
+    cmess2 << "  o  Loading libraries (working first, " << LIBRARIES.getSize() << ") " << endl;
     for ( unsigned i=0 ; i<LIBRARIES.getSize() ; i++ ) {
-      createLibrary ( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
+      createLibrary( LIBRARIES[i].getPath(), flags, LIBRARIES[i].getName() );
 
-    //cmess2 << "     - " << LIBRARIES[i].getName()
-    //       << " \"" << LIBRARIES[i].getPath() << "\"" << endl;
-    //cmess2.flush();
+      cmess2 << "     - " << LIBRARIES[i].getName()
+             << " \"" << LIBRARIES[i].getPath() << "\"";
 
-    //if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
-    //else                    cmess2 << " [no CATAL]"    << endl;
+      if ( flags&HasCatalog ) cmess2 << " [have CATAL]." << endl;
+      else                    cmess2 << " [no CATAL]"    << endl;
     }
   }
 
@@ -258,11 +248,11 @@ namespace CRL {
   {
     if (not _singleton) {
     // Triggers System singleton creation.
-      System::get ();
+      System::get();
       _singleton = new AllianceFramework ();
-      if (not (flags & NoPythonInit))
-        System::runPythonInit();
-      _singleton->_bindLibraries();
+    //if (not (flags & NoPythonInit))
+    //  System::runPythonInit();
+    //_singleton->bindLibraries();
     }
 
     return _singleton;
@@ -270,9 +260,7 @@ namespace CRL {
 
 
   AllianceFramework* AllianceFramework::get ()
-  {
-    return create();
-  }
+  { return create(); }
 
 
   void AllianceFramework::destroy ()
@@ -420,7 +408,7 @@ namespace CRL {
 
     string dupLibName = libName;
     for ( size_t duplicate=1 ; true ; ++duplicate ) {
-      AllianceLibrary* library = getAllianceLibrary ( dupLibName, flags & ~CreateLibrary );
+      AllianceLibrary* library = getAllianceLibrary( dupLibName, flags & ~CreateLibrary );
       if (library == NULL) break;
 
       ostringstream oss;
@@ -428,22 +416,18 @@ namespace CRL {
       dupLibName = oss.str();
     }
 
-    // AllianceLibrary* library = getAllianceLibrary ( libName, flags );
-    // if ( library != NULL ) {
-    //   cerr << Warning("AllianceFramework::createLibrary(): Attempt to re-create <%s>, using already existing."
-    //                  ,libName.c_str()) << endl;
-    //   return library;
-    // }
-
-    SearchPath& LIBRARIES = _environment.getLIBRARIES ();
-    if ( not (flags & AppendLibrary) ) LIBRARIES.prepend ( path, dupLibName );
-    else                               LIBRARIES.select  ( path );
+    SearchPath& LIBRARIES = _environment.getLIBRARIES();
+    LIBRARIES.select( path );
+    if (not LIBRARIES.hasSelected()) {
+      if (not (flags & AppendLibrary)) LIBRARIES.prepend( path, dupLibName );
+      else                             LIBRARIES.append ( path, dupLibName );
+    }
 
     Library* hlibrary = getParentLibrary()->getLibrary( dupLibName );
     if (not hlibrary)
       hlibrary = Library::create( getParentLibrary(), dupLibName );
     
-    AllianceLibrary* alibrary = new AllianceLibrary ( path, hlibrary );
+    AllianceLibrary* alibrary = new AllianceLibrary( path, hlibrary );
 
     AllianceLibraries::iterator ilib = _libraries.begin();
     if (LIBRARIES.getIndex() != SearchPath::npos)
@@ -451,26 +435,26 @@ namespace CRL {
     else
       ilib = _libraries.end();
 
-    _libraries.insert ( ilib, alibrary );
+    _libraries.insert( ilib, alibrary );
 
     string catalog = path + "/" + _environment.getCATALOG();
 
-    if ( _catalog.loadFromFile(catalog,alibrary->getLibrary()) ) flags |= HasCatalog;
+    if (_catalog.loadFromFile(catalog,alibrary->getLibrary())) flags |= HasCatalog;
 
-    ParserFormatSlot& parser = _parsers.getParserSlot ( path, Catalog::State::Physical, _environment );
+    ParserFormatSlot& parser = _parsers.getParserSlot( path, Catalog::State::Physical, _environment );
 
-    if ( not parser.loadByLib() ) {
-      notify ( AddedLibrary );
+    if (not parser.loadByLib()) {
+      notify( AddedLibrary );
       return alibrary;
     }
 
   // Load the whole library.
-    if ( ! _readLocate(dupLibName,Catalog::State::State::Logical,true) ) return alibrary;
+    if (not _readLocate(dupLibName,Catalog::State::State::Logical,true)) return alibrary;
 
   // Call the parser function.
     (parser.getParsLib())( _environment.getLIBRARIES().getSelected() , alibrary->getLibrary() , _catalog );
 
-    notify ( AddedLibrary );
+    notify( AddedLibrary );
     return alibrary;
   }
   

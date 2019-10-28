@@ -19,7 +19,7 @@ In |Hurricane| all kind of set of objects, whether organized in a real container
 like a ``map<>`` (dictionary / ``dict``) or a ``vector<>`` (table / ``list``) or
 an algorithmic walkthrough of the database can be accessed through a Collection_.
 
-C++ Collections object are exposed in |Python| through the *iterable* protocol,
+C++ Collections objects are exposed in |Python| through the *iterable* protocol,
 allowing to simply write:
 
 .. code-block:: Python
@@ -83,8 +83,8 @@ the ``getCell()`` call wil be:
 
    .. note:: It means that if cells with the same name exist in different
 	     libraries, only the one in the first library will be ever used.
-	     Be also weary of cell files that may remain in the ``WORK_LIB``,
-	     they may unexpectedly shadow cells from the libraries.
+	     Be also aware that cell files that may remain in the ``WORK_LIB``,
+	     may unexpectedly shadow cells from the libraries.
 	     
 
 .. code-block:: Python

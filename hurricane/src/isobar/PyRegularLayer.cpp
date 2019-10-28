@@ -83,21 +83,29 @@ extern "C" {
     
     HTRY
     PyObject*     pyTechnology   = NULL;
+    PyObject*     pyBasicLayer   = NULL;
     char*         name           = NULL;
     
     if (PyArg_ParseTuple( args
-                        , "Os:RegularLayer.create"
+                        , "OsO:RegularLayer.create"
                         , &pyTechnology
                         , &name
+                        , &pyBasicLayer
                         )) {
       if (not IsPyTechnology(pyTechnology)) {
         PyErr_SetString ( ConstructorError, "RegularLayer.create(): First argument is not of type Technology." );
         return NULL;
       }
+      if (not IsPyBasicLayer(pyBasicLayer)) {
+        PyErr_SetString ( ConstructorError, "RegularLayer.create(): Third argument is not of type BasicLayer." );
+        return NULL;
+      }
 
-      regularLayer = RegularLayer::create( PYTECHNOLOGY_O(pyTechnology), Name(name) );
+      regularLayer = RegularLayer::create( PYTECHNOLOGY_O(pyTechnology)
+                                         , Name(name)
+                                         , PYBASICLAYER_O(pyBasicLayer) );
     } else {
-      PyErr_SetString ( ConstructorError, "Bad parameters given to RegularLayer.create()." );
+      PyErr_SetString ( ConstructorError, "Bad number of parameters given to RegularLayer.create()." );
       return NULL;
     }
     HCATCH

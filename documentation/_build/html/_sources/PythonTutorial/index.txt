@@ -9,7 +9,7 @@ Hurricane+Python Tutorial
 
 Printable version of this document `PythonTutorial.pdf <../../../pdf/main/PythonTutorial.pdf>`_.
 
-First, a small disclaimer.  This tutorial  assume that you are already familiar
+First, a small disclaimer.  This tutorial  assumes that you are already familiar
 with the concepts  of |VLSI| designs, such as  *netlist*, *layout*, *instances*
 and hierarchical design.
 

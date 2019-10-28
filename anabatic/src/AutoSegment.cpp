@@ -2212,15 +2212,11 @@ namespace Anabatic {
 
         if (isSource) {
           doglegs[ index + 0 ]->setLayer( std::max((size_t)1,segmentDepth-2) );
-          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-2) );
-          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-1) );
           cdebug_log(149,0) << "doglegs[i+0]: " << doglegs[index+0] << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
         } else {
           doglegs[ index + 2 ]->setLayer( std::max((size_t)1,segmentDepth-2) );
-          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth-2) );
-          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth-1) );
           cdebug_log(149,0) << "doglegs[i+2]: " << doglegs[index+2] << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
@@ -2233,20 +2229,18 @@ namespace Anabatic {
 
         if (isSource) {
           doglegs[ index + 0 ]->setLayer( segmentDepth+2 );
-          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth+1) );
-          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth  ) );
           cdebug_log(149,0) << "doglegs[i+0]: " << doglegs[index+0] << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
         } else {
           doglegs[ index + 2 ]->setLayer( segmentDepth+2 );
-          doglegs[ index + 1 ]->getAutoTarget()->setLayer( rg->getContactLayer(segmentDepth+1) );
-          doglegs[ index + 1 ]->getAutoSource()->setLayer( rg->getContactLayer(segmentDepth  ) );
           cdebug_log(149,0) << "doglegs[i+2]: " << doglegs[index+2] << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoTarget() << endl;
           cdebug_log(149,0) << "doglegs[i+1]: " << doglegs[index+1]->getAutoSource() << endl;
         }
       }
+      doglegs[ index + 1 ]->getAutoSource()->updateLayer();
+      doglegs[ index + 1 ]->getAutoTarget()->updateLayer();
     }
 
     cdebug_tabw(149,-1);

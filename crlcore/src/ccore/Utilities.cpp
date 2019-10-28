@@ -324,7 +324,9 @@ namespace CRL {
     Utilities::Path cumulusDir  = pythonSitePackages / "cumulus";
     Utilities::Path oroshiDir   = pythonSitePackages / "oroshi";
     Utilities::Path karakazeDir = pythonSitePackages / "karakaze";
+    Utilities::Path etcDir      = _pathes["etc"];
 
+    Isobar::Script::addPath ( etcDir.toString() );
     Isobar::Script::addPath ( sysConfDir.toString() );
     Isobar::Script::addPath ( pythonSitePackages.toString() );
     Isobar::Script::addPath ( crlcoreDir.toString() );
@@ -445,9 +447,8 @@ namespace CRL {
 
   void  System::_runPythonInit ()
   {
-    Cfg::Configuration* conf               = Cfg::Configuration::get ();
-    Utilities::Path     sysConfDir         = getPath("etc");
-    Utilities::Path     pythonSitePackages = getPath("pythonSitePackages");
+    Utilities::Path sysConfDir         = getPath("etc");
+    Utilities::Path pythonSitePackages = getPath("pythonSitePackages");
 
   //bool            systemConfFound = false;
     Utilities::Path systemConfFile  = pythonSitePackages / "crlcore" / "coriolisInit.py";

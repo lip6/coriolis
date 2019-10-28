@@ -453,7 +453,7 @@ class Model() :
       hurCell = self._hur_cell
   
       if str ( hurCell.getName() ) != "__Scratch__" :
-        FRAMEWORK.saveCell ( hurCell, views|CRL.Catalog.State.Logical )
+        FRAMEWORK.saveCell ( hurCell, views|CRL.Catalog.State.Logical|CRL.Catalog.State.VstUseConcat )
   
       if len ( CELLS ) == 0 :
         err = "\n[Stratus ERROR] Save : CELLS stack is empty.\n"

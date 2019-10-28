@@ -72,6 +72,7 @@ namespace Hurricane {
       inline  const DbU::Unit&  getMinimalSpacing            () const;
       virtual BasicLayers       getBasicLayers               () const = 0;
       virtual const Layer*      getBlockageLayer             () const;
+      virtual const Layer*      getCut                       () const;
       virtual const Layer*      getTop                       () const;
       virtual const Layer*      getBottom                    () const;
       virtual const Layer*      getOpposite                  ( const Layer* ) const;

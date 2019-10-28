@@ -86,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-1">Release v2.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2">Release v2.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-3">Release v2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-4">Release v2.4</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
@@ -106,14 +107,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Configuration.html#general-software-architecture">General Software Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#configuration-user-s-settings">Configuration &amp; User&#8217;s Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#a-comprehensive-example-of-coriolis2-setting-py">A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">CGT - The Graphical Interface</a><ul>
@@ -392,11 +387,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -515,9 +505,9 @@
 <ul class="simple">
 <li>The <strong>Viewer</strong>, with the following features:<ul>
 <li>Basic load/save capabilities.</li>
-<li>Display the current working cell. Could be empty if the design
+<li>Displays the current working cell. Could be empty if the design
 is not yet placed.</li>
-<li>Execute Stratus Scripts.</li>
+<li>Executes Stratus Scripts.</li>
 <li>Menu to run the tools (placement, routage).</li>
 </ul>
 </li>
@@ -525,14 +515,14 @@ is not yet placed.</li>
 <p>Features are detailed in <a class="reference internal" href="#viewer-tools">Viewer &amp; Tools</a>.</p>
 <p><a class="reference internal" href="../_images/Viewer-1.png"><img alt="Viewer Basic Snapshot" class="align-middle" src="../_images/Viewer-1.png" style="width: 80%;" /></a></p>
 <ul class="simple">
-<li>The <strong>Controller</strong>, which allows:<ul>
-<li>Tweak what is displayer by the <em>Viewer</em>. Through the <em>Look</em>,
+<li>The <strong>Controller</strong>, which allows to:<ul>
+<li>Tweak what is displayed by the <em>Viewer</em>. Through the <em>Look</em>,
 <em>Filter</em> and <em>Layers&amp;Gos</em> tabs.</li>
 <li>Browse the <em>netlist</em> with eponym tab.</li>
 <li>Show the list of selected objects (if any) with <em>selection</em></li>
 <li>Walk through the Database, the Cell or the Selection with <em>Inspector</em>.
 This is an advanced feature, reserved for experimented users.</li>
-<li>The tab <em>Settings</em> which give access to all the settings.
+<li>The tab <em>Settings</em> which gives access to all the settings.
 They are closely related to Configuration &amp; Initialisation.</li>
 </ul>
 </li>
@@ -612,9 +602,9 @@ uniquified (cloned) and you will see the copy files appears on disk upon saving.
 <strong>Hierarchical Placement</strong></p>
 <p>The placement area is defined by the top cell abutment box.</p>
 <p>When placing a complete hierarchy, the abutment boxes of the cells (models) other than
-the top cell are sets identical to the one of the top cell and their instances are
+the top cell are set identical to the one of the top cell and their instances are
 all placed at position <code class="docutils literal"><span class="pre">(0,0,ID)</span></code>. That is, all the abutments boxes, whatever the
-hierarchical level, defines the same area (they are exactly superposed).</p>
+hierarchical level, define the same area (they are exactly superposed).</p>
 <p>We choose this scheme because the placer will see all the instances as virtually
 flattened, so they can be placed anywhere inside the top-cell abutment box.</p>
 <p> <a class="reference internal" href="../_images/etesian-1.png"><img alt="Etesian Abutment Box" class="align-middle" src="../_images/etesian-1.png" style="width: 80%;" /></a> </p>
@@ -653,21 +643,21 @@ may be unroutable.</p>
 <tr class="row-even"><td colspan="3"><strong>Etesian Parameters</strong></td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.aspectRatio</span></code></td>
-<td>TypePercentage</td>
+<td><code class="docutils literal"><span class="pre">Percentage</span></code></td>
 <td><span class="cb">100</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Define the height on width <code class="docutils literal"><span class="pre">H/W</span></code> aspect
 ratio, can be comprised between 10 and 1000</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.spaceMargin</span></code></td>
-<td>TypePercentage</td>
+<td><code class="docutils literal"><span class="pre">Percentage</span></code></td>
 <td><span class="cb">5</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">The extra white space added to the total area
 of the standard cells</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.uniformDensity</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Whether the cells will be spread envenly
@@ -675,14 +665,14 @@ across the area or allowed to form denser
 clusters</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.effort</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">2</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Sets the balance between the speed of the
 placer and the solution quality</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.routingDriven</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Whether the tool will try routing iterations
@@ -690,7 +680,7 @@ and whitespace allocation to improve
 routability; to be implemented</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">etesian.graphics</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">2</span></td>
 </tr>
 <tr class="row-even"><td colspan="2"><p class="first">How often the display will be refreshed
@@ -737,12 +727,12 @@ following configuration parameters:</p>
 that quantity is substracted from the edge capacities (global routing) to
 give a sense of the cluttering inside the GCells.</li>
 <li><code class="docutils literal"><span class="pre">katana.vTrackReservedLocal</span></code>, same as above.</li>
-<li><code class="docutils literal"><span class="pre">etesian.spaceMargin</span></code>, increase the free area of the overall design so the
+<li><code class="docutils literal"><span class="pre">etesian.spaceMargin</span></code>, increases the free area of the overall design so the
 routing density decrease.</li>
 </ol>
 <p>The idea is to increase the horizontal and vertical local track reservation until
-the detailed router succeed. But in doing so we make the task of the global router
-more and more difficult as the capacity of the edges decrease, and at some point
+the detailed router succeeds. But in doing so we make the task of the global router
+more and more difficult as the capacity of the edges decreases, and at some point
 it will fail too. So this is a balance.</p>
 <p>Routing a design is done in four ordered steps:</p>
 <ol class="arabic simple">
@@ -751,7 +741,7 @@ it will fail too. So this is a balance.</p>
 <li>Detailed routing   <img class="math" src="../_images/math/44344a23b2a3007fed067629259108385790ee6a.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Detailed Route}"/></li>
 <li>Finalize routing   <img class="math" src="../_images/math/0d59c123dd2cd130ca29a2ba930fabbc4f547771.png" alt="\textbf{P\&amp;R} \rightarrow \textbf{Step by Step} \rightarrow \textbf{Finalize Route}"/></li>
 </ol>
-<p>It is possible to supply to the router a complete wiring for some nets that the user&#8217;s
+<p>It is possible to supply to the router a complete wiring for some nets that the user
 wants to be routed according to a specific topology. The supplied topology must respect
 the building rules of the <span class="sc">Anabatic</span> database (contacts must be, <em>terminals</em>, <em>turns</em>, <em>h-tee</em>
 &amp; <em>v-tee</em> only). During the first step <span class="fboxtt">Detailed Pre-Route</span> the router will solve
@@ -763,7 +753,7 @@ become unmovable for the later stages.</p>
 the <span class="sc">Katana</span> data-structure, and it is not advisable to save the design before
 that step.</p>
 <p>You may visualize the density (saturation) of either the edges (global routing)
-or the GCells (detailed routing) until the routing is finalized. Special layers appears
+or the GCells (detailed routing) until the routing is finalized. Special layers appear
 to that effect in the <a class="reference internal" href="#the-layers-go-tab">The Layers&amp;Go Tab</a>.</p>
 <div class="section" id="katana-configuration-parameters">
 <h4>Katana Configuration Parameters<a class="headerlink" href="#katana-configuration-parameters" title="Permalink to this headline">¶</a></h4>
@@ -786,14 +776,14 @@ to that effect in the <a class="reference internal" href="#the-layers-go-tab">Th
 <tr class="row-even"><td colspan="3"><strong>Anabatic Parameters</strong></td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.topRoutingLayer</span></code></td>
-<td>TypeString</td>
+<td><code class="docutils literal"><span class="pre">String</span></code></td>
 <td><span class="cb">METAL5</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Define the highest metal layer that will be
 used for routing (inclusive).</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.globalLengthThreshold</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">1450</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">This parameter is used by a layer assignment
@@ -801,7 +791,7 @@ method which is no longer used (did not give
 good results)</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.saturateRatio</span></code></td>
-<td>TypePercentage</td>
+<td><code class="docutils literal"><span class="pre">Percentage</span></code></td>
 <td><span class="cb">80</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">If <code class="docutils literal"><span class="pre">M(x)</span></code> density is above this ratio,
@@ -809,7 +799,7 @@ move up feedthru  global segments up from
 depth <code class="docutils literal"><span class="pre">x</span></code> to <code class="docutils literal"><span class="pre">x+2</span></code></td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.saturateRp</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">8</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">If a GCell contains more terminals
@@ -817,27 +807,35 @@ depth <code class="docutils literal"><span class="pre">x</span></code> to <code 
 move up of the connecting segments to those
 in excess</td>
 </tr>
+<tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">anabatic.globalIterations</span></code></td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
+<td><span class="cb">10</span></td>
+</tr>
+<tr class="row-even"><td colspan="2">The maximum number of iterations the global
+router will try to solve edges overload</td>
+</tr>
 <tr class="row-odd"><td colspan="3"><strong>Katana Parameters</strong></td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.hTracksReservedLocal</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">3</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">To take account the tracks needed <em>inside</em> a
-GCell to build the <em>local</em> routing, decrease
-the capacity of the edges of the global
-router. Horizontal and vertical locally
-reserved capacity can be distinguished for
-more accuracy.</td>
+GCell to build the <em>local</em> routing the
+capacities of the edges needs to be decreased.
+The decrease is computed by the GCell and
+cannot exceed this number (this is maximum).
+For better accuracy vertical and horizontal
+edges are distinguisheds</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.vTracksReservedLocal</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">3</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">cf. <code class="docutils literal"><span class="pre">kite.hTracksReservedLocal</span></code></td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.eventsLimit</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">4000002</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">The maximum number of segment displacements,
@@ -846,27 +844,27 @@ loop. It&#8217;s perhaps a  little too low for big
 designs</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.ripupCost</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">3</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">Differential introduced between two ripup
-cost to avoid a loop between two ripped up
+costs to avoid a loop between two ripped up
 segments</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.strapRipupLimit</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">16</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>strap</em> segments</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.localRipupLimit</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">9</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>local</em> segments</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.globalRipupLimit</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">5</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>global</em> segments,
@@ -874,7 +872,7 @@ when this limit is reached, triggers topologic
 modification</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><code class="docutils literal"><span class="pre">katana.longGlobalRipupLimit</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">5</span></td>
 </tr>
 <tr class="row-odd"><td colspan="2">Maximum number of ripup for <em>long global</em>
@@ -892,11 +890,11 @@ topological modification</td>
 <p class="first admonition-title">Note</p>
 <p class="last"><strong>How Cgt Locates Python Scripts:</strong>
 <span class="cb">cgt</span> uses the Python <code class="docutils literal"><span class="pre">import</span></code> mechanism to load Python scripts.
-So you must give the name of your script whitout <code class="docutils literal"><span class="pre">.py</span></code> extention and
-it must be reachable through the <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>. You may uses the
+So you must give the name of your script whithout <code class="docutils literal"><span class="pre">.py</span></code> extension and
+it must be reachable through the <code class="docutils literal"><span class="pre">PYTHONPATH</span></code>. You may use the
 dotted module notation.</p>
 </div>
-<p>A Python/Stratus script must contains a function called <code class="docutils literal"><span class="pre">ScriptMain()</span></code>
+<p>A Python/Stratus script must contain a function called <code class="docutils literal"><span class="pre">ScriptMain()</span></code>
 with one optional argument, the graphical editor into which it may be
 running (will be set to <code class="docutils literal"><span class="pre">None</span></code> in text mode). The Python interface to
 the editor (type: <span class="cb">CellViewer</span>) is limited to basic capabilities
@@ -907,13 +905,13 @@ initializations and <em>before</em> any other argument is processed.</p>
 </div>
 <div class="section" id="printing-snapshots">
 <h3>Printing &amp; Snapshots<a class="headerlink" href="#printing-snapshots" title="Permalink to this headline">¶</a></h3>
-<p>Printing or saving into a <span class="sc">pdf</span> is fairly simple, just uses the <strong>File -&gt; Print</strong>
+<p>Printing or saving into a <span class="sc">pdf</span> is fairly simple, just use the <strong>File -&gt; Print</strong>
 menu or the <span class="fboxtt">CTRL+P</span> shortcut to open the dialog box.</p>
 <p>The print functionality uses exactly the same rendering mechanism as for the
 screen, beeing almost <em>WYSIWYG</em>. Thus, to obtain the best results it is advisable
 to select the <code class="docutils literal"><span class="pre">Coriolis.Printer</span></code> look (in the <em>Controller</em>), which uses a
-white background and much suited for high resolutions <code class="docutils literal"><span class="pre">32x32</span></code> pixels patterns</p>
-<p>There is also two mode of printing selectable through the <em>Controller</em>
+white background and well suited for high resolutions <code class="docutils literal"><span class="pre">32x32</span></code> pixels patterns</p>
+<p>There is also two modes of printing selectable through the <em>Controller</em>
 <strong>Settings -&gt; Misc -&gt; Printer/Snapshot Mode</strong>:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -972,11 +970,11 @@ Saving into an image is subject to the same remarks as for <span class="sc">pdf<
 <span class="fboxtt">Right</span></div>
 </div>
 </td>
-<td>Shift the view in the according direction</td>
+<td>Shifts the view in the according direction</td>
 </tr>
 <tr class="row-odd"><td><strong>Fit</strong></td>
 <td><span class="fboxtt">f</span></td>
-<td>Fit to the Cell abutment box</td>
+<td>Fits to the Cell abutment box</td>
 </tr>
 <tr class="row-even"><td><strong>Refresh</strong></td>
 <td><span class="fboxtt">CTRL+L</span></td>
@@ -1063,23 +1061,23 @@ anti-aliasing mechanism.</td>
 given without path or extention.</td>
 </tr>
 <tr class="row-even"><td><span class="fboxtt">CTRL+W</span></td>
-<td>Close the current viewer window, but do not quit
+<td>Closes the current viewer window, but does not quit
 the application.</td>
 </tr>
 <tr class="row-odd"><td><span class="fboxtt">CTRL+Q</span></td>
-<td><cite>CTRL+Q</cite> quit the application
+<td><cite>CTRL+Q</cite> quits the application
 (closing all windows).</td>
 </tr>
 <tr class="row-even"><td rowspan="2"><strong>Hierarchy</strong></td>
 <td><span class="fboxtt">CTRL+Down</span></td>
-<td>Go one hierarchy level down. That is, if there
-is an <em>instance</em> under the cursor position, load
-it&#8217;s <em>model</em> Cell in place of the current one.</td>
+<td>Goes one hierarchy level down. That is, if there
+is an <em>instance</em> under the cursor position, loads
+its <em>model</em> Cell in place of the current one.</td>
 </tr>
 <tr class="row-odd"><td><span class="fboxtt">CTRL+Up</span></td>
-<td>Go one hierarchy level up. if we have entered
+<td>Goes one hierarchy level up. If we have entered
 the current model through <span class="fboxtt">CTRL+Down</span>
-reload the previous model (the one
+reloads the previous model (the one
 in which this model is instanciated).</td>
 </tr>
 </tbody>
@@ -1100,10 +1098,10 @@ in which this model is instanciated).</td>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><cite>-t|&#8211;text</cite></td>
-<td>Instruct <span class="cb">cgt</span> to run in text mode.</td>
+<td>Instructs <span class="cb">cgt</span> to run in text mode.</td>
 </tr>
 <tr class="row-odd"><td><cite>-L|&#8211;log-mode</cite></td>
-<td>Disable the uses of <span class="sc">ansi</span> escape sequence on
+<td>Disables the use of <span class="sc">ansi</span> escape sequence on
 the <span class="cb">tty</span>. Useful when the output is
 redirected to a file.</td>
 </tr>
@@ -1117,17 +1115,17 @@ leading path or extention.</td>
 </tr>
 <tr class="row-even"><td><cite>&#8211;events-limit=&lt;count&gt;</cite></td>
 <td>The maximal number of events after which the
-router will stops. This is mainly a failsafe
-against looping. The limit is sets to 4
+router will stop. This is mainly a failsafe
+against looping. The limit is set to 4
 millions of iteration which should suffice to
 any design of <cite>100K</cite>. gates. For bigger
-designs you may wants to increase this limit.</td>
+designs you may want to increase this limit.</td>
 </tr>
 <tr class="row-odd"><td><cite>-G|&#8211;global-route</cite></td>
-<td>Run the global router (<span class="sc">Katana</span>).</td>
+<td>Runs the global router (<span class="sc">Katana</span>).</td>
 </tr>
 <tr class="row-even"><td><cite>-R|&#8211;detailed-route</cite></td>
-<td>Run the detailed router (<span class="sc">Katana</span>).</td>
+<td>Runs the detailed router (<span class="sc">Katana</span>).</td>
 </tr>
 <tr class="row-odd"><td><cite>-s|&#8211;save-design=&lt;routed&gt;</cite></td>
 <td>The design into which the routed layout will
@@ -1169,36 +1167,36 @@ See <a class="reference internal" href="#python-scripts-in-cgt">Python Scripts i
 <tr class="row-even"><td colspan="3"><strong>Verbosity/Log Parameters</strong></td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.info</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Enable display of <em>info</em> level message
+<tr class="row-even"><td colspan="2">Enables display of <em>info</em> level message
 (<span class="cb">cinfo</span> stream)</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.bug</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Enable display of <em>bug</em> level message
+<tr class="row-even"><td colspan="2">Enables display of <em>bug</em> level message
 (<span class="cb">cbug</span> stream), messages can be a little
 scarry</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.logMode</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">If enabled, assume that the output device
-is not a <code class="docutils literal"><span class="pre">tty</span></code> and suppress any escaped
+<tr class="row-even"><td colspan="2">If enabled, assumes that the output device
+is not a <code class="docutils literal"><span class="pre">tty</span></code> and suppresses any escape
 sequences</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.verboseLevel1</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">True</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">First level of verbosity, disable level 2</td>
+<tr class="row-even"><td colspan="2">First level of verbosity, disables level 2</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.verboseLevel2</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
 <tr class="row-even"><td colspan="2">Second level of verbosity</td>
@@ -1206,21 +1204,21 @@ sequences</td>
 <tr class="row-odd"><td colspan="3"><strong>Development/Debug Parameters</strong></td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">misc.minTraceLevel</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">0</span></td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.maxTraceLevel</span></code></td>
-<td>TypeInt</td>
+<td><code class="docutils literal"><span class="pre">Int</span></code></td>
 <td><span class="cb">0</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">Display trace information <em>between</em> those two
+<tr class="row-even"><td colspan="2">Displays trace information <em>between</em> those two
 levels (<span class="cb">cdebug</span> stream)</td>
 </tr>
 <tr class="row-odd"><td rowspan="2"><code class="docutils literal"><span class="pre">misc.catchCore</span></code></td>
-<td>TypeBool</td>
+<td><code class="docutils literal"><span class="pre">Bool</span></code></td>
 <td><span class="cb">False</span></td>
 </tr>
-<tr class="row-even"><td colspan="2">By default, <span class="cb">cgt</span> do not dump core.
+<tr class="row-even"><td colspan="2">By default, <span class="cb">cgt</span> does not dump core.
 To generate one set this flag to <span class="cb">True</span></td>
 </tr>
 </tbody>
@@ -1238,10 +1236,10 @@ rubbers and the dimension units.</li>
 <li><a class="reference internal" href="#the-layers-go-tab">The Layers&amp;Go Tab</a> to selectively hide/display layers.</li>
 <li><a class="reference internal" href="#the-netlist-tab">The Netlist Tab</a> to browse through the <em>netlist</em>. Works in association
 with the <em>Selection</em> tab.</li>
-<li><a class="reference internal" href="#the-selection-tab">The Selection Tab</a> allow to view all the currently selected elements.</li>
-<li><a class="reference internal" href="#the-inspector-tab">The Inspector Tab</a> browse through either the DataBase, the Cell or
+<li><a class="reference internal" href="#the-selection-tab">The Selection Tab</a> allows to view all the currently selected elements.</li>
+<li><a class="reference internal" href="#the-inspector-tab">The Inspector Tab</a> browses through either the DataBase, the Cell or
 the current selection.</li>
-<li><a class="reference internal" href="#the-settings-tab">The Settings Tab</a> access all the tool&#8217;s configuration settings.</li>
+<li><a class="reference internal" href="#the-settings-tab">The Settings Tab</a> accesses all the tool&#8217;s configuration settings.</li>
 </ol>
 <div class="section" id="the-look-tab">
 <span id="id3"></span><h3>The Look Tab<a class="headerlink" href="#the-look-tab" title="Permalink to this headline">¶</a></h3>
@@ -1254,11 +1252,11 @@ You should select it prior to calling the print or snapshot dialog boxes.</p>
 <div class="section" id="the-filter-tab">
 <span id="id4"></span><h3>The Filter Tab<a class="headerlink" href="#the-filter-tab" title="Permalink to this headline">¶</a></h3>
 <p>The filter tab let you select what hierarchical levels of your design will be
-displayed. Hierarchy level are numbered top-down: the level 0 correspond to
+displayed. Hierarchy level are numbered top-down: the level 0 corresponds to
 the top-level cell, the level one to the instances of the top-level Cell and
 so on.</p>
 <p>There are also check boxes to enable/disable the processing of Terminal Cell,
-Master Cells and Compnents. The processing of Terminal Cell (hierarchy leaf
+Master Cells and Components. The processing of Terminal Cell (hierarchy leaf
 cells) is disabled by default when you load a hierarchical design and enabled
 when you load a single Cell.</p>
 <p>You can choose what kind of form to give to the rubbers and the type of
@@ -1269,8 +1267,8 @@ unit used to display coordinates.</p>
 physical gaps in net topology. That is, if some wires are missing to
 connect two or more parts of net, a <em>rubber</em> will be drawn between them
 to signal the gap.</p>
-<p class="last">For example, after the detailed routing no <em>rubbers</em> should remains.
-They have been made <em>very</em> visibles as big violet lines...</p>
+<p class="last">For example, after the detailed routing no <em>rubber</em> should remain.
+They have been made <em>very</em> visible as big violet lines...</p>
 </div>
 <p> <a class="reference internal" href="../_images/Controller-Filter-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Filter-1.png" style="width: 80%;" /></a> </p>
 <p></p>
@@ -1279,7 +1277,7 @@ They have been made <em>very</em> visibles as big violet lines...</p>
 <span id="id5"></span><h3>The Layers&amp;Go Tab<a class="headerlink" href="#the-layers-go-tab" title="Permalink to this headline">¶</a></h3>
 <p>Control the individual display of all <em>layers</em> and <em>Gos</em>.</p>
 <ul class="simple">
-<li><em>Layers</em> correspond to a true physical layer. From a <span class="sc">Hurricane</span> point of
+<li><em>Layers</em> correspond to true physical layers. From a <span class="sc">Hurricane</span> point of
 view they are all the <em>BasicLayers</em> (could be matched to GDSII).</li>
 <li><em>Gos</em> stands from <em>Graphical Objects</em>, they are drawings that have no
 physical existence but are added by the various tools to display extra
@@ -1299,16 +1297,16 @@ to easily locate congested areas.</li>
 <em>synched</em> with the displayed Cell. To see the nets you must check the
 <strong>Sync Netlist</strong> checkbox. You can narrow the set of displayed nets by
 using the filter pattern (supports regular expressions).</p>
-<p>An very useful feature is to enable the <strong>Sync Selection</strong>, which will
+<p>A very useful feature is to enable the <strong>Sync Selection</strong>, which will
 automatically select all the components of the selected net(s). You can
 select multiple nets. In the figure the net <code class="docutils literal"><span class="pre">auxsc35</span></code> is selected and
-is highlited in the <em>Viewer</em>.</p>
+is highlighted in the <em>Viewer</em>.</p>
 <p> <a class="reference internal" href="../_images/Controller-Netlist-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Controller-Netlist-1.png" style="width: 80%;" /></a> 
  <a class="reference internal" href="../_images/Viewer-Netlist-1.png"><img alt="Controller Basic Snapshot" class="align-middle" src="../_images/Viewer-Netlist-1.png" style="width: 80%;" /></a>     </p>
 </div>
 <div class="section" id="the-selection-tab">
 <span id="id7"></span><h3>The Selection Tab<a class="headerlink" href="#the-selection-tab" title="Permalink to this headline">¶</a></h3>
-<p>The <em>Selection</em> tab list all the components currently selecteds. They
+<p>The <em>Selection</em> tab lists all the components currently selected. They
 can be filtered thanks to the filter pattern.</p>
 <p>Used in conjunction with the <em>Netlist</em> <strong>Sync Selection</strong> you will all see
 all the components part of <em>net</em>.</p>
@@ -1322,14 +1320,14 @@ the <code class="docutils literal"><span class="pre">t</span></code> key...</p>
 <div class="section" id="the-inspector-tab">
 <span id="id8"></span><h3>The Inspector Tab<a class="headerlink" href="#the-inspector-tab" title="Permalink to this headline">¶</a></h3>
 <p>This tab is very useful, but mostly for <span class="sc">Coriolis</span> developpers. It allows
-to browse through the live DataBase. The <em>Inspector</em> provide three entry points:</p>
+to browse through the live DataBase. The <em>Inspector</em> provides three entry points:</p>
 <ul class="simple">
 <li><strong>DataBase</strong>: Starts from the whole <span class="sc">Hurricane</span> DataBase.</li>
-<li><strong>Cell</strong>: Inspect the currently loaded Cell.</li>
-<li><strong>Selection</strong>: Inspect the object currently highlited in the <em>Selection</em> tab.</li>
+<li><strong>Cell</strong>: Inspects the currently loaded Cell.</li>
+<li><strong>Selection</strong>: Inspects the object currently highlighted in the <em>Selection</em> tab.</li>
 </ul>
 <p>Once an entry point has been activated, you may recursively expore all
-it&#8217;s fields using the right/left arrows.</p>
+its fields using the right/left arrows.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><em>Do not put your fingers in the socket:</em> when inspecting
@@ -1374,7 +1372,7 @@ is deleted, you will crash the application...</p>
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
@@ -1383,7 +1381,7 @@ is deleted, you will crash the application...</p>
       <tr>
         <td class="LFooter">Coriolis 2 Documentation</td>
         <td class="RFooter"><small>
-              &copy; Copyright 2000-2018, UPMC.
+              &copy; Copyright 2000-2019, Sorbonne Université.
         </small></td>
       </tr>
     </table>

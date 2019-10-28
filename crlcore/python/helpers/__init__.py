@@ -32,9 +32,6 @@ ndaConfDir     = None
 ndaDir         = None
 techno         = 'symbolic/cmos'
 technoDir      = None
-unitsLambda    = True
-tab            = None
-_trace         = None
 moduleGlobals  = globals()
 
 
@@ -283,6 +280,25 @@ def initTechno ( argQuiet ):
   technoDir = os.path.join( ndaConfDir, techno )
   if not quiet: print '     - Technology: %s.' % techno
 
+  
+unitsLambda = True
+tab         = Tab()
+_trace      = Trace()
+ndaTopDir   = None
+
+
+def setNdaTopDir ( ndaTopDirArg ):
+    global ndaTopDir
+
+    if not os.path.isdir(ndaTopDirArg):
+      print helpers.io.WarningMessage( 'helpers.setNdaTopDir(): Directory "%s" does not exists.' % ndaTopDirArg )
+    else:
+      ndaTopDir = ndaTopDirArg
+      sys.path.append( os.path.join(ndaTopDir,'etc/coriolis2') )
+      sys.path.append( ndaTopDir )
+
+    return
+
 
 def staticInitialization ( quiet=False ):
   global sysConfDir
@@ -295,9 +311,9 @@ def staticInitialization ( quiet=False ):
    #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
     return
 
-  unitsLamba = True
-  tab        = Tab()
-  _trace     = Trace()
+# unitsLamba = True
+# tab        = Tab()
+# _trace     = Trace()
   
   reSysConfDir = re.compile(r'.*etc\/coriolis2')
   if not quiet: print '  o  Locating configuration directory:'
@@ -323,6 +339,37 @@ def staticInitialization ( quiet=False ):
   return
 
 
+def setSysConfDir ( quiet=False ):
+  global sysConfDir
+
+  if sysConfDir != None:
+   #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
+    return
+
+  reSysConfDir = re.compile(r'.*etc\/coriolis2')
+  if not quiet: print '  o  Locating configuration directory:'
+  
+  for path in sys.path:
+    if reSysConfDir.match(path):
+      sysConfDir = path
+      if not quiet: print '     - "%s"' % sysConfDir
+      break
+  
+  if not sysConfDir:
+    coriolisTop = os.getenv('CORIOLIS_TOP')
+    if coriolisTop == '/usr':
+      sysConfDir = '/etc/coriolis2'
+    elif coriolisTop:
+      sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
+    else:
+      raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+                             , 'The path is something ending by <.../etc/coriolis2>.'] )
+  
+  if not quiet: print '     - "%s"' % sysConfDir
+  sys.path.append( sysConfDir )
+  return
+
+
 def netDirectionToStr ( netDir ):
    flags = [ '-', '-', '-', '-', '-' ]
    if netDir & Hurricane.Net.Direction.DirIn:        flags[0] = 'i'
@@ -341,3 +388,20 @@ def netDirectionToStr ( netDir ):
    elif netDir == Hurricane.Net.Direction.WOR_INOUT: s += '(WOR_INOUT)'
    else: s += '(UNKNOWN)'
    return s
+
+
+setSysConfDir( False )
+
+
+def loadUserSettings ():
+    if os.path.isfile('./coriolis2/settings.py'):
+      if os.path.isfile('./coriolis2/__init__.py'):
+        import coriolis2.settings
+        return True
+      else:
+        print helpers.io.WarningMessage( [ 'User\'s settings directory "%s" exists, but do not contains "__init__.py".' % './coriolis2/'
+                                         , '(path:"%s")' % os.path.abspath(os.getcwd())
+                                         ] )
+
+    import symbolic.cmos
+    return False

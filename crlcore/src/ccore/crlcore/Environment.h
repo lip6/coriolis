@@ -79,7 +79,7 @@ namespace CRL {
              void               setBLOCKAGE            ( const char* value );
              void               setPad                 ( const char* value );
       inline void               setCATALOG             ( const char* value );
-      inline void               setWORKING_LIBRARY     ( const char* value );
+             void               setWORKING_LIBRARY     ( const char* value );
              void               addSYSTEM_LIBRARY      ( const char* value, const char* libName, unsigned int mode=Append );
     // Methods.
              std::string        getPrint               () const;
@@ -138,7 +138,6 @@ namespace CRL {
   inline void                   Environment::setOUT_LO              ( const char* value ) { _OUT_LO = value; }
   inline void                   Environment::setOUT_PH              ( const char* value ) { _OUT_PH = value; }
   inline void                   Environment::setCATALOG             ( const char* value ) { _CATALOG = value; }
-  inline void                   Environment::setWORKING_LIBRARY     ( const char* value ) { _LIBRARIES.replace(value,"working",0); }
   inline std::string            Environment::_getTypeName           () const { return "Environment"; }
 
 

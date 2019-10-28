@@ -86,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#release-v2-1">Release v2.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#release-v2-2">Release v2.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#release-v2-3">Release v2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#release-v2-4">Release v2.4</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
@@ -106,14 +107,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Configuration.html#general-software-architecture">General Software Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#configuration-user-s-settings">Configuration &amp; User&#8217;s Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Configuration.html#a-comprehensive-example-of-coriolis2-setting-py">A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ViewerTools.html">CGT - The Graphical Interface</a><ul>
@@ -392,11 +387,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -560,7 +550,7 @@ for the Cell viewer and <span class="sc">CRLcore</span> has been added.</li>
 <li>More extensive Python support for all the components of
 <span class="sc">Coriolis</span>.</li>
 <li>Configuration is now completly migrated under Python.
-<span class="sc">xml</span> loaders can still be useds for compatibilty.</li>
+<span class="sc">xml</span> loaders can still be used for compatibilty.</li>
 <li>The <span class="cb">cgt</span> main has been rewritten in Python.</li>
 </ol>
 </div>
@@ -597,23 +587,38 @@ whole design down and including the standard cells.</li>
 <div class="section" id="release-v2-3">
 <h2>Release v2.3<a class="headerlink" href="#release-v2-3" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic">
-<li><p class="first">Revert to a more standard organisation of the branchs. <strong>devel_anabatic</strong> is
+<li><p class="first">Reverts to a more standard organisation of the branches. <strong>devel_anabatic</strong> is
 closed and we go on with <strong>master</strong> (stable version) and <strong>devel</strong>.</p>
 </li>
-<li><p class="first">Make <span class="sc">Katana</span> the default global &amp; detailed router. Put <span class="sc">Knik</span> &amp; <span class="sc">Kite</span> in the
-obsolete menues.</p>
+<li><p class="first">Makes <span class="sc">Katana</span> the default global &amp; detailed router. Put <span class="sc">Knik</span> &amp; <span class="sc">Kite</span> in the
+obsolete menus.</p>
 </li>
-<li><p class="first">Finally make uses of <span class="sc">PyQt4</span> widgets. Seems to integrate without problems
+<li><p class="first">Finally makes use of <span class="sc">PyQt4</span> widgets. Seems to integrate without problems
 with the <span class="sc">Coriolis</span> own <span class="sc">qt</span> widget. The drawback is that to build against <span class="sc">qt</span> 5
-needs to adjustement from the user.</p>
+needs adjustement from the user.</p>
 </li>
 <li><p class="first">Improved support for whole chip management. The outer part of the chip containing
-the pad is decoupled from the core. This allow to cleanly separate real pads from
+the pad is decoupled from the core. This allows to cleanly separate real pads from
 the foundry from a symbolic core. But this does not preclude other combinations
 as fully symbolic or fully real.</p>
-<p>To perform the separation an intermediate hierarchical level <code class="docutils literal"><span class="pre">corona</span></code> between chip
+<p>To perform the separation, an intermediate hierarchical level <code class="docutils literal"><span class="pre">corona</span></code> between chip
 and core has been introduced.</p>
 </li>
+</ol>
+</div>
+<div class="section" id="release-v2-4">
+<h2>Release v2.4<a class="headerlink" href="#release-v2-4" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Complete rewrite of the initialisation system. No longer use &#8220;configuration like&#8221;
+files with various list of items. Now the configuration is supplied under the
+from of <span class="sc">Python</span> modules to be imported as the user see fit.</li>
+<li>Clean separation between <span class="sc">nda</span> protected parts and free ones. Now all the <span class="sc">nda</span>
+related components are put under one separated tree, whether they are configuration
+files or <span class="sc">Python</span> plugins, so that they be can easily by exported.</li>
+<li>In <span class="sc">Anabatic</span> &amp; <span class="sc">Katana</span> better accuracy at how obstacles decrease the edges
+capacities of the GCells. Reduce the edge capacity of a GCell according to it&#8217;s
+inner cluttering (that is, it&#8217;s number of terminals). Change of semantics
+for <code class="docutils literal"><span class="pre">katana.hReservedLocal</span></code> and <code class="docutils literal"><span class="pre">katana.vReservedLocal</span></code> parameters.</li>
 </ol>
 </div>
 </div>
@@ -639,7 +644,7 @@ and core has been introduced.</p>
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
@@ -648,7 +653,7 @@ and core has been introduced.</p>
       <tr>
         <td class="LFooter">Coriolis 2 Documentation</td>
         <td class="RFooter"><small>
-              &copy; Copyright 2000-2018, UPMC.
+              &copy; Copyright 2000-2019, Sorbonne Université.
         </small></td>
       </tr>
     </table>

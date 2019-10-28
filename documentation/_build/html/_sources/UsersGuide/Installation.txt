@@ -10,7 +10,7 @@ Installation
    As the sources are being released, the binary packaging is dropped.
    You may still find (very) old versions here: http://asim.lip6.fr/pub/coriolis/2.0 .
 
-In a nutshell, building source consistis in pulling the |git| repository then
+In a nutshell, building source consists in pulling the |git| repository then
 running the |ccb| installer. 
 
 .. note::
@@ -40,7 +40,7 @@ Building documentation prerequisites:
 * latex
 * python-docutils (for reStructuredText)
 
-The following libraries gets directly bundled with |Coriolis|:
+The following libraries get directly bundled with |Coriolis|:
 
 * LEF/DEF (from `SI2 <https://www.si2.org/>`_)
 * FLUTE (from `Chris C. N. Chu <http://home.eng.iastate.edu/~cnchu/flute.html>`_)
@@ -54,7 +54,7 @@ Fixed Directory Tree
 In order to simplify the work of the |ccb| installer, the source, build
 and installation tree is fixed. To successfully compile |Coriolis| you must
 follow it exactly. The tree is relative to the home directory of the user
-building it (noted :fboxtt:`~/` or :fboxtt:`$HOME/`). Only the source
+building it (note :fboxtt:`~/` or :fboxtt:`$HOME/`). Only the source
 directory needs to be manually created by the user, all others will be
 automatically created either by |ccb| or the build system.
 
@@ -95,7 +95,7 @@ automatically created either by |ccb| or the build system.
    with shared libraries. But there are also available ``Static`` instead of ``Shared``
    and ``Debug`` instead of ``Release`` and any combination of them.
 
-   ``Static`` do not work because I don't know yet to mix statically linked binaries
+   ``Static`` does not work because I don't know yet to mix statically linked binaries
    and Python modules (which must be dynamic).
 
 
@@ -122,14 +122,14 @@ The |Coriolis| |git| repository is https://www-soc.lip6.fr/git/coriolis.git
 
 .. note::
    Under |RHEL| 7 or clones, they upgraded their version of |Qt| 4 (from 4.6 to 4.8)
-   so the *diagonal line* bug no longer occur. So we can safely use the default
+   so the *diagonal line* bug no longer occurs. So we can safely use the default
    system |Qt| again.
 
 
 Installing on |RedHat| or compatible distributions
 --------------------------------------------------
 
-1. Install or check that the required prerequisites are installeds : ::
+1. Install or check that the required prerequisites are installed : ::
  
        dummy@lepka:~> yum install -y git cmake bison flex gcc-c++ libstdc++-devel  \
                                      binutils-devel                                \
@@ -138,7 +138,7 @@ Installing on |RedHat| or compatible distributions
                                      python-devel libxml2-devel bzip2-devel        \
 				     qt-devel qwt-devel                            # Qt 4
 
-   Note, that the ``Qwt`` packages are directly availables from the standart distribution
+   Note, that the ``Qwt`` packages are directly available from the standart distribution
    when using |Qt| 4.
 
 2. Install the unpackaged prerequisites. Currently, only RapidJSON_. ::
@@ -157,7 +157,7 @@ Installing on |RedHat| or compatible distributions
 4. Build & install: ::
 
        dummy@lepka:src> cd coriolis
-       dummy@lepka:coriolis> git checkout devel_anabatic
+       dummy@lepka:coriolis> git checkout devel
        dummy@lepka:coriolis> ./bootstrap/ccb.py --project=support  \
                                                 --project=coriolis \
                                                 --make="-j4 install"
@@ -180,7 +180,7 @@ be given as argument: ::
    dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
                                             --devtoolset=8 --make="-j4 install"
 
-If you want to uses Qt 5 instead of Qt 4 modify the previous steps as follow:
+If you want to use Qt 5 instead of Qt 4, modify the previous steps as follows:
 
 * At **step 1**, do not install the |QT| 4 related development package (``qt4-devel``),
   but instead: ::
@@ -197,7 +197,7 @@ If you want to uses Qt 5 instead of Qt 4 modify the previous steps as follow:
 
 * At **step 4**, add a ``--qt5`` argument to the ``ccb.py`` command line.
 
-* The |Python| scripts that makes uses of |PyQt| in ``crlcore`` and ``cumulus`` must be
+* The |Python| scripts that make use of |PyQt| in ``crlcore`` and ``cumulus`` must be
   edited to import ``PyQt5`` instead of ``PtQt4`` (should find a way to automatically
   switch between the two of them).
 
@@ -208,10 +208,10 @@ It also may be run in graphical mode (``--gui``).
 Building a Debug Enabled Version
 --------------------------------
 
-The ``Release.Shared`` default version of the |Coriolis| is build stripped of symbols
+The ``Release.Shared`` default version of the |Coriolis| is built stripped of symbols
 and optimized so that it makes analysing a core dump after a crash difficult. In the
 (unlikely) case of a crash, you may want to build, alongside the optimized version,
-a debug one which allow forensic examination by |gdb| (or |valgrind| or whatever).
+a debug one which allows forensic examination by |gdb| (or |valgrind| or whatever).
 
 Run again ``ccb.py``, adding the ``--debug`` argument: ::
 
@@ -250,7 +250,7 @@ As |cgt| is a |Python| script, the right command to run |gdb| is: ::
 Installing on |Debian| 9, |Ubuntu| 18 or compatible distributions
 -----------------------------------------------------------------
 
-First, install or check that the required prerequisites are installeds : ::
+First, install or check that the required prerequisites are installed : ::
 
    dummy@lepka:~> sudo apt install -y build-essential binutils-dev                     \
                                       git cmake bison flex gcc python-dev              \
@@ -270,7 +270,7 @@ Second step is to create the source directory and pull the |git| repository: ::
 Third and final step, build & install: ::
 
    dummy@lepka:src> cd coriolis
-   dummy@lepka:coriolis> git checkout devel_anabatic
+   dummy@lepka:coriolis> git checkout devel
    dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
                                             --make="-j4 install"
 
@@ -278,7 +278,7 @@ Third and final step, build & install: ::
 Additionnal Requirement under |MacOS|
 -------------------------------------
 
-|Coriolis| make uses of the :cb:`boost::python` module, but the |macports| |boost|
+|Coriolis| makes use of the :cb:`boost::python` module, but the |macports| |boost|
 seems unable to work with the |Python| bundled with |MacOS|. So you have to install
 both of them from |macports|: ::
 
@@ -314,7 +314,7 @@ packaging, you must configure it so that it can found those libraries.
 The easiest way is to setup the |Alliance| environment (i.e. sourcing
 ``.../etc/profile.d/alc_env.{sh,csh}``) **before** setting up |Coriolis| environment
 (see the next section). To understand how |Coriolis| find/setup |Alliance| you may
-have look to the :ref:`Alliance Helper`.
+have look to the *Configuration and User's Settings* section.
 
 
 Setting up the Environment (coriolisEnv.py)

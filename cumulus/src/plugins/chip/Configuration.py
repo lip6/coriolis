@@ -23,6 +23,7 @@ from   Hurricane import Box
 from   Hurricane import Transformation
 from   Hurricane import Box
 from   Hurricane import Path
+from   Hurricane import Layer
 from   Hurricane import Occurrence
 from   Hurricane import Net
 from   Hurricane import RoutingPad
@@ -37,6 +38,7 @@ from   CRL import RoutingLayerGauge
 from   helpers    import trace
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
+from   helpers.io import catch
 from   plugins    import getParameter
 import chip
 
@@ -223,6 +225,10 @@ class GaugeConf ( object ):
       self.cellGauge    = CRL.AllianceFramework.get().getCellGauge( gaugeName )
       self.routingGauge = CRL.AllianceFramework.get().getRoutingGauge( gaugeName )
 
+      if not self.routingGauge:
+        raise ErrorMessage( 1, [ 'RoutingGauge._loadRoutingGauge(): No routing gauge named "%s".' % gaugeName
+                               , 'Please check the "anabatic.routingGauge" configuration parameter." ' ])
+
       topLayer = Cfg.getParamString('anabatic.topRoutingLayer').asString()
 
       self.topLayerDepth = 0
@@ -253,6 +259,10 @@ class GaugeConf ( object ):
           if self.verticalDeepDepth < 0:
             self.verticalDeepDepth = depth
           self.verticalDepth = depth
+      trace( 550, '\thorizontalDepth    :%d\n' % self.horizontalDepth )
+      trace( 550, '\tverticalDepth      :%d\n' % self.verticalDepth )
+      trace( 550, '\thorizontalDeepDepth:%d\n' % self.horizontalDeepDepth )
+      trace( 550, '\tverticalDeepDepth  :%d\n' % self.verticalDeepDepth )
       return
 
     def _loadIoPadGauge ( self, ioPadGaugeName ):
@@ -895,9 +905,7 @@ class ChipConf ( object ):
     def coronaContactArray ( self, chipNet, layer, chipX, chipY, array, flags ):
       trace( 550, ',+', '\tChipConf.coronaContactArray\n' )
 
-      # Should be read from the symbolic technology rules.
-      viaPitch = DbU.fromLambda( 4.0 )
-
+      viaPitch  = layer.getMinimalSize() + layer.getMinimalSpacing()
       coronaAb  = self.getInstanceAb( self.icorona )
       coronaNet = self.getCoronaNet( chipNet )
       if not coronaNet: return None
@@ -1277,15 +1285,16 @@ class ChipConf ( object ):
 def loadConfiguration ( cell, viewer=None ):
     sys.path.append( os.getcwd() )
 
-   #confFile = cell.getName()+'_ioring'
-    confFile = 'ioring'
-    if not os.path.isfile(confFile+'.py'):
-      raise ErrorMessage( 1, 'ChipPlugin configuration file <%s.py> is missing.' % confFile )
-    
-    confModule = __import__( confFile, globals(), locals(), confFile )
+    try:
+      confFile = 'coriolis2/ioring.py'
+      if not os.path.isfile(confFile):
+        raise ErrorMessage( 1, 'ChipPlugin, configuration file "%s" is missing.' % confFile )
+      else:
+        if not os.path.isfile('coriolis2/__init__.py'):
+          raise ErrorMessage( 1, 'ChipPlugin, configuration directory "./coriolis2/" is missing "__init__.py".' )
+      
+      from coriolis2.ioring import chip
+    except Exception, e:
+      catch( e )
 
-    if not confModule.__dict__.has_key('chip'):
-      ErrorMessage( 1, 'Module <%s> do not provides the chip variable, skipped.' \
-                       % confFile )
-
-    return ChipConf( confModule.__dict__['chip'], cell, viewer )
+    return ChipConf( chip, cell, viewer )

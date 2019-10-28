@@ -163,6 +163,7 @@ namespace Anabatic {
       virtual void             cacheDetach                ( AutoSegment* ) = 0;
       virtual void             cacheAttach                ( AutoSegment* ) = 0;
       virtual void             updateCache                () = 0;
+              void             updateLayer                ();
               void             updateSize                 ();
       virtual void             updateGeometry             () = 0;
       virtual void             updateTopology             () = 0;

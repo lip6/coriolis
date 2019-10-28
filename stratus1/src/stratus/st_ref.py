@@ -48,19 +48,16 @@
 
 
 
-from Hurricane   import *
-
-from util_Place  import *
-
-from ref         import *
-
+from   Hurricane   import *
+from   util_Place  import *
+from   ref         import *
 import types
 
 ###########
 class XY :
   def __init__ ( self, x, y ) :
-    self._x = DbU.fromLambda(x)
-    self._y = DbU.fromLambda(y)
+    self._x = x
+    self._y = y
 
 ##################################
 def GetRefXY ( pathname, refname ) :

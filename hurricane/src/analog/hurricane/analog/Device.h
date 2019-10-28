@@ -24,6 +24,8 @@
 #include "hurricane/analog/SpinBoxParameter.h"
 #include "hurricane/analog/MCheckBoxParameter.h"
 #include "hurricane/analog/FormFactorParameter.h"
+#include "hurricane/analog/MatrixParameter.h"
+#include "hurricane/analog/CapacitiesParameter.h"
 
 
 namespace Analog {
@@ -67,12 +69,14 @@ namespace Analog {
       virtual       void                   _preDestroy               ();
       inline        Hurricane::Library*    getSubDevicesLibrary      ();
       inline        void                   addParameter              ( Parameter* parameter );
-      inline        StepParameter*         addStepParameter          ( const std::string& name, long min, long max, long step );
-      inline        CapacitorParameter*    addCapacitorParameter     ( const std::string& name, long value );
-      inline        SpinBoxParameter*      addSpinBoxParameter       ( const std::string& name, long min, long max );
-      inline        FormFactorParameter*   addFormFactorParameter    ( const std::string& name, long min, long max );
-      inline        ChoiceParameter*       addChoiceParameter        ( const std::string& name, const Choices& choices );
+      inline        StepParameter*         addStepParameter          ( const std::string name, long min, long max, long step );
+      inline        CapacitorParameter*    addCapacitorParameter     ( const std::string name, long value );
+      inline        SpinBoxParameter*      addSpinBoxParameter       ( const std::string name, long min, long max );
+      inline        FormFactorParameter*   addFormFactorParameter    ( const std::string name, long min, long max );
+      inline        ChoiceParameter*       addChoiceParameter        ( const std::string name, const Choices& choices );
       inline        MCheckBoxParameter*    addMCheckBoxParameter     ( const std::string name, const Choices& choices );
+      inline        MatrixParameter*       addMatrixParameter        ( const std::string name );
+      inline        CapacitiesParameter*   addCapacitiesParameter    ( const std::string name, size_t count );
     public:
       virtual       Hurricane::Record*     _getRecord                () const;
     private:
@@ -97,46 +101,60 @@ namespace Analog {
     _parameterSet.insert( parameter );
   }
   
-  inline StepParameter* Device::addStepParameter ( const std::string& name, long min, long max, long step )
+  inline StepParameter* Device::addStepParameter ( const std::string name, long min, long max, long step )
   {
     StepParameter* stepParameter = new StepParameter( name,min,max,step );
     addParameter( stepParameter );
     return stepParameter;
   }
   
-  inline CapacitorParameter* Device::addCapacitorParameter ( const std::string& name, long value )
+  inline CapacitorParameter* Device::addCapacitorParameter ( const std::string name, long value )
   {
     CapacitorParameter* capacitorParameter = new CapacitorParameter( name,value );
     addParameter( capacitorParameter );
     return capacitorParameter;
   }
   
-  inline SpinBoxParameter* Device::addSpinBoxParameter ( const std::string& name, long min, long max )
+  inline SpinBoxParameter* Device::addSpinBoxParameter ( const std::string name, long min, long max )
   {
     SpinBoxParameter* spinBoxParameter = new SpinBoxParameter( name, min, max );
     addParameter( spinBoxParameter );
     return spinBoxParameter;
   }
   
-  inline FormFactorParameter* Device::addFormFactorParameter ( const std::string& name, long min, long max )
+  inline FormFactorParameter* Device::addFormFactorParameter ( const std::string name, long min, long max )
   {
     FormFactorParameter* formFactorParameter = new FormFactorParameter( name, min, max );
     addParameter( formFactorParameter );
     return formFactorParameter;
   }
   
-  inline ChoiceParameter* Device::addChoiceParameter ( const std::string& name, const Choices& choices )
+  inline ChoiceParameter* Device::addChoiceParameter ( const std::string name, const Choices& choices )
   {
     ChoiceParameter* choiceParameter = new ChoiceParameter( name, choices );
     addParameter( choiceParameter );
     return choiceParameter;
   }
   
-  inline MCheckBoxParameter*    Device::addMCheckBoxParameter ( const std::string name, const Choices& choices )
+  inline MCheckBoxParameter* Device::addMCheckBoxParameter ( const std::string name, const Choices& choices )
   {
     MCheckBoxParameter* mCheckBoxParameter = new MCheckBoxParameter( name, choices );
     addParameter( mCheckBoxParameter );
     return mCheckBoxParameter;
+  }
+  
+  inline MatrixParameter* Device::addMatrixParameter ( const std::string name )
+  {
+    MatrixParameter* matrixParameter = new MatrixParameter( name );
+    addParameter( matrixParameter );
+    return matrixParameter;
+  }
+  
+  inline CapacitiesParameter* Device::addCapacitiesParameter ( const std::string name, size_t count )
+  {
+    CapacitiesParameter* capacitiesParameter = new CapacitiesParameter( name, count );
+    addParameter( capacitiesParameter );
+    return capacitiesParameter;
   }
 
 

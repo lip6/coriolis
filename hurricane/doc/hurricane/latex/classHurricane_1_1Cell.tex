@@ -59,6 +59,10 @@ const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& \mbox{\hyperlink{classH
 \item 
 \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}{get\+Occurrences\+Under}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max()) const
 \item 
+\mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_a7d5a16e085ef5375862560e3c3eb4ea8}{get\+Leaf\+Instance\+Occurrences}} (const \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$top\+Instance=N\+U\+LL) const
+\item 
+\mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_ac32e4f232a8fc030aa809fe6565d8d95}{get\+Non\+Leaf\+Instance\+Occurrences}} (const \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$top\+Instance=N\+U\+LL) const
+\item 
 const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \& \mbox{\hyperlink{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}{get\+Abutment\+Box}} () const
 \item 
 bool \mbox{\hyperlink{classHurricane_1_1Cell_a239354e1b4ad9b751abf5a064e43b0e6}{is\+Called\+By}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell) const
@@ -256,7 +260,19 @@ level is crossed. The search ends when depth becomes null (the value {\ttfamily 
 \begin{DoxyParagraph}{Caution\+: Only occurences corresponding to currently materialized}
 entities are taken into account in this \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}}. 
 \end{DoxyParagraph}
-\mbox{\Hypertarget{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}\label{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}} 
+\mbox{\Hypertarget{classHurricane_1_1Cell_a7d5a16e085ef5375862560e3c3eb4ea8}\label{classHurricane_1_1Cell_a7d5a16e085ef5375862560e3c3eb4ea8}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Leaf\+Instance\+Occurrences@{get\+Leaf\+Instance\+Occurrences}}
+\index{get\+Leaf\+Instance\+Occurrences@{get\+Leaf\+Instance\+Occurrences}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Leaf\+Instance\+Occurrences()}{getLeafInstanceOccurrences()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Cell\+::get\+Leaf\+Instance\+Occurrences (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$}]{top\+Instance = {\ttfamily NULL} }\end{DoxyParamCaption}) const}
+
+Returns the trans-\/hierarchical \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all instance Occurrences that are leaf cells. With the {\ttfamily top\+Instance} argument we can restrict the collection to leafs of that instance (of the current \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}) only. \mbox{\Hypertarget{classHurricane_1_1Cell_ac32e4f232a8fc030aa809fe6565d8d95}\label{classHurricane_1_1Cell_ac32e4f232a8fc030aa809fe6565d8d95}} 
+\index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Non\+Leaf\+Instance\+Occurrences@{get\+Non\+Leaf\+Instance\+Occurrences}}
+\index{get\+Non\+Leaf\+Instance\+Occurrences@{get\+Non\+Leaf\+Instance\+Occurrences}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
+\subsubsection{\texorpdfstring{get\+Non\+Leaf\+Instance\+Occurrences()}{getNonLeafInstanceOccurrences()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Cell\+::get\+Non\+Leaf\+Instance\+Occurrences (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Instance}{Instance}} $\ast$}]{top\+Instance = {\ttfamily NULL} }\end{DoxyParamCaption}) const}
+
+Returns the trans-\/hierarchical \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all instance Occurrences that are {\bfseries not} leaf cells. With the {\ttfamily top\+Instance} argument we can restrict the collection to non-\/leafs of that instance (of the current \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}) only. \mbox{\Hypertarget{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}\label{classHurricane_1_1Cell_a142360ca7b3c1c637894f5b9a2cac069}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Abutment\+Box@{get\+Abutment\+Box}}
 \index{get\+Abutment\+Box@{get\+Abutment\+Box}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
 \subsubsection{\texorpdfstring{get\+Abutment\+Box()}{getAbutmentBox()}}

@@ -86,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2">Release v2.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-3">Release v2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-4">Release v2.4</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
@@ -106,14 +107,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-user-s-settings">Configuration &amp; User&#8217;s Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#a-comprehensive-example-of-coriolis2-setting-py">A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
@@ -392,11 +387,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -515,7 +505,7 @@
 But, for debugging purpose it may be helpful to run it through the
 interactive layout viewer <span class="cb">cgt</span>.</p>
 <p>For <span class="cb">cgt</span> to be able to run your script, you must add to your script
-file a function named <span class="cb">ScriptMain()</span>, which takes a dictionnary
+file a function named <span class="cb">ScriptMain()</span>, which takes a dictionary
 as sole argument (<span class="cb">**kw</span>). The <code class="docutils literal"><span class="pre">kw</span></code> dictionary contains, in
 particular, the <a class="reference external" href="../../viewer/classHurricane_1_1CellViewer.html">CellViewer</a> object we are running under with the
 keyword <code class="docutils literal"><span class="pre">editor</span></code>. You can then load your cell into the viewer
@@ -570,7 +560,7 @@ function. To be able to see exactly what has just been mofied, we must close the
 <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> just before calling the breakpoint and reopen it just after.
 The <code class="docutils literal"><span class="pre">Breakpoint.stop()</span></code> function takes two arguments:</p>
 <ol class="arabic simple">
-<li>The <code class="docutils literal"><span class="pre">level</span></code> above witch it will be active.</li>
+<li>The <code class="docutils literal"><span class="pre">level</span></code> above which it will be active.</li>
 <li>An informative message about the purpose of the breakpoint.</li>
 </ol>
 <p>We can create a little function to ease the work:</p>
@@ -604,7 +594,7 @@ The <code class="docutils literal"><span class="pre">Breakpoint.stop()</span></c
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
@@ -613,7 +603,7 @@ The <code class="docutils literal"><span class="pre">Breakpoint.stop()</span></c
       <tr>
         <td class="LFooter">Coriolis 2 Documentation</td>
         <td class="RFooter"><small>
-              &copy; Copyright 2000-2018, UPMC.
+              &copy; Copyright 2000-2019, Sorbonne Université.
         </small></td>
       </tr>
     </table>

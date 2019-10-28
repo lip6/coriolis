@@ -141,6 +141,18 @@
   *                entities are taken into account in this Collection.
   */
 
+ /*! \function     Occurrences  Cell::getLeafInstanceOccurrences ( const Instance* topInstance=NULL ) const;
+  *                Returns the trans-hierarchical Collection of all instance Occurrences that are
+  *                leaf cells. With the \c topInstance argument we can restrict the collection
+  *                to leafs of that instance (of the current Cell) only.
+  */
+
+ /*! \function     Occurrences  Cell::getNonLeafInstanceOccurrences ( const Instance* topInstance=NULL ) const;
+  *                Returns the trans-hierarchical Collection of all instance Occurrences that are
+  *                \b not leaf cells. With the \c topInstance argument we can restrict the collection
+  *                to non-leafs of that instance (of the current Cell) only.
+  */
+
  /*! \function     Box  Cell::getAbutmentBox () const;
   *                Returns Returns the abutment box of the cell (which is defined by the
   *                designer unlike the bounding box which is managed dynamically).

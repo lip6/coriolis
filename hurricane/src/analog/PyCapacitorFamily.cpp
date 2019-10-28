@@ -54,7 +54,7 @@ extern "C" {
   DirectGetBoolAttribute  (PyCapacitorFamily_isPIP ,isPIP ,PyCapacitorFamily,CapacitorFamily)
   DirectGetBoolAttribute  (PyCapacitorFamily_isMIM ,isMIM ,PyCapacitorFamily,CapacitorFamily)
   DirectGetBoolAttribute  (PyCapacitorFamily_isMOM ,isMOM ,PyCapacitorFamily,CapacitorFamily)
-  DirectGetIntAttribute   (PyCapacitorFamily_getRow,getRow,PyCapacitorFamily,CapacitorFamily)
+//DirectGetIntAttribute   (PyCapacitorFamily_getRow,getRow,PyCapacitorFamily,CapacitorFamily)
 
   DirectGetDoubleAttribute(PyCapacitorFamily_getCE ,getCE ,PyCapacitorFamily,CapacitorFamily)
   DirectSetDoubleAttribute(PyCapacitorFamily_setCE ,setCE ,PyCapacitorFamily,CapacitorFamily)

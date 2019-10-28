@@ -15,11 +15,11 @@ class \mbox{\hyperlink{classCRL_1_1SearchPath_1_1Element}{Element}}
 \item 
 void \mbox{\hyperlink{classCRL_1_1SearchPath_a7081332b63c642917b4ca15f665662f4}{reset}} ()
 \item 
-void \mbox{\hyperlink{classCRL_1_1SearchPath_af358bdb1e940f08137f887f70eb641e3}{append}} (const std\+::string \&path, const std\+::string \&name=\char`\"{}\char`\"{})
+size\+\_\+t \mbox{\hyperlink{classCRL_1_1SearchPath_af358bdb1e940f08137f887f70eb641e3}{append}} (const std\+::string \&path, const std\+::string \&name=\char`\"{}\char`\"{})
 \item 
-void \mbox{\hyperlink{classCRL_1_1SearchPath_af39d78a63d880e90ae6f947abf1fe322}{prepend}} (const std\+::string \&path, const std\+::string \&name=\char`\"{}\char`\"{})
+size\+\_\+t \mbox{\hyperlink{classCRL_1_1SearchPath_af39d78a63d880e90ae6f947abf1fe322}{prepend}} (const std\+::string \&path, const std\+::string \&name=\char`\"{}\char`\"{})
 \item 
-void \mbox{\hyperlink{classCRL_1_1SearchPath_a6cd1524e1048f246682cd5ef40145d67}{replace}} (const std\+::string \&path, const std\+::string \&, size\+\_\+t index)
+size\+\_\+t \mbox{\hyperlink{classCRL_1_1SearchPath_a6cd1524e1048f246682cd5ef40145d67}{replace}} (const std\+::string \&path, const std\+::string \&, size\+\_\+t index)
 \item 
 size\+\_\+t \mbox{\hyperlink{classCRL_1_1SearchPath_af8e579af7e78dddb7a014d4bbbf9a36f}{locate}} (const std\+::string \&file, std\+::ios\+::openmode mode=std\+::ios\+::in, int first=0, int last=64)
 \item 
@@ -89,11 +89,7 @@ Prepend a search path. The {\ttfamily name} gives the library name. \mbox{\Hyper
 \subsubsection{\texorpdfstring{replace()}{replace()}}
 {\footnotesize\ttfamily void C\+R\+L\+::\+Search\+Path\+::replace (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{path,  }\item[{const std\+::string \&}]{name,  }\item[{size\+\_\+t}]{index }\end{DoxyParamCaption})}
 
-Replace the search path element at index {\ttfamily index}. 
-
-Referenced by C\+R\+L\+::\+Environment\+::set\+W\+O\+R\+K\+I\+N\+G\+\_\+\+L\+I\+B\+R\+A\+R\+Y().
-
-\mbox{\Hypertarget{classCRL_1_1SearchPath_af8e579af7e78dddb7a014d4bbbf9a36f}\label{classCRL_1_1SearchPath_af8e579af7e78dddb7a014d4bbbf9a36f}} 
+Replace the search path element at index {\ttfamily index}. \mbox{\Hypertarget{classCRL_1_1SearchPath_af8e579af7e78dddb7a014d4bbbf9a36f}\label{classCRL_1_1SearchPath_af8e579af7e78dddb7a014d4bbbf9a36f}} 
 \index{C\+R\+L\+::\+Search\+Path@{C\+R\+L\+::\+Search\+Path}!locate@{locate}}
 \index{locate@{locate}!C\+R\+L\+::\+Search\+Path@{C\+R\+L\+::\+Search\+Path}}
 \subsubsection{\texorpdfstring{locate()}{locate()}}

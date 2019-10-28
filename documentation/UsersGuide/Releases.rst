@@ -122,3 +122,20 @@ Release v2.3
 
    To perform the separation, an intermediate hierarchical level ``corona`` between chip
    and core has been introduced.
+
+
+Release v2.4
+~~~~~~~~~~~~
+
+#. Complete rewrite of the initialisation system. No longer use "configuration like"
+   files with various list of items. Now the configuration is supplied under the
+   from of |Python| modules to be imported as the user see fit.
+
+#. Clean separation between |NDA| protected parts and free ones. Now all the |NDA|
+   related components are put under one separated tree, whether they are configuration
+   files or |Python| plugins, so that they be can easily by exported.
+
+#. In |Anabatic| & |Katana| better accuracy at how obstacles decrease the edges
+   capacities of the GCells. Reduce the edge capacity of a GCell according to it's
+   inner cluttering (that is, it's number of terminals). Change of semantics
+   for ``katana.hReservedLocal`` and ``katana.vReservedLocal`` parameters.

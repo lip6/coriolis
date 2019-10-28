@@ -1505,8 +1505,8 @@ namespace Anabatic {
       
       cdebug_log(112,0) << bb.getXMin() << " " << bb.getXMax() << endl;
       cdebug_log(112,0) << "center X:" << center.getX() << " gcell Xmax:" << gcell->getXMax() << endl;
-                             
-      _limitSymSearchArea(rp); // ANALOG
+
+      if (state and state->isSymmetric()) _limitSymSearchArea( rp );
         
       if (not gcell) {
         cerr << Error( "Dijkstra::load(): %s\n"

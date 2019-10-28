@@ -5,10 +5,11 @@ try:
   import sys
   import os.path
   import optparse
+  import helpers
+  helpers.loadUserSettings()
   import Cfg
   import Hurricane
   import Viewer
-  from   helpers       import showPythonTrace
   import CRL
   import Anabatic
   import Katana
@@ -29,11 +30,10 @@ except ImportError, e:
     print '[ERROR] The <%s> shared library cannot be loaded.' % library
     print '        Under RHEL 6, you must be under devtoolset-2.'
     print '        (scl enable devtoolset-2 bash)'
+  helpers.showPythonTrace( sys.argv[0], e )
   sys.exit(1)
 except Exception, e:
-  print '[ERROR] A strange exception occurred while loading the basic Coriolis/Python'
-  print '        modules. Something may be wrong at Python/C API level.\n'
-  print '        %s' % e
+  helpers.showPythonTrace( sys.argv[0], e )
   sys.exit(2)
 
 
@@ -88,9 +88,9 @@ def runScript ( scriptPath, editor ):
      #print '        Please check your design hierarchy or the Python syntax.'
      #print '        Error was:'
      #print '          %s\n' % e
-      showPythonTrace( scriptPath, e )
+      helpers.showPythonTrace( scriptPath, e )
   except Exception, e:
-      showPythonTrace( scriptPath, e )
+      helpers.showPythonTrace( scriptPath, e )
   return
 
 
@@ -270,6 +270,6 @@ if __name__ == '__main__':
           sys.exit(not kiteSuccess)
 
     except Exception, e:
-      showPythonTrace( sys.argv[0], e )
+      helpers.showPythonTrace( sys.argv[0], e )
 
     sys.exit(0)

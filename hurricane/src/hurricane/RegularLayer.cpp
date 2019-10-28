@@ -197,16 +197,19 @@ namespace Hurricane {
                                ,_enclosure(0)
                                ,_extentionCap(0)
                                ,_extentionWidth(0)
-  { }
+  {
+  }
 
 
-  RegularLayer* RegularLayer::create ( Technology*     technology
-                                     , const Name&     name
+  RegularLayer* RegularLayer::create ( Technology* technology
+                                     , const Name& name
+                                     , BasicLayer* layer
                                      )
   {
-    RegularLayer* regularLayer = new RegularLayer(technology, name);
+    RegularLayer* regularLayer = new RegularLayer( technology, name );
 
     regularLayer->_postCreate();
+    regularLayer->setBasicLayer( layer );
 
     return regularLayer;
   }
@@ -396,8 +399,7 @@ namespace Hurricane {
 
       if (stack.issetFlags(JsonWriter::TechnoMode)) {
       // Actual creation.
-        layer = RegularLayer::create( techno, name );
-        layer->setBasicLayer    ( basicLayer );
+        layer = RegularLayer::create( techno, name, basicLayer );
         layer->setSymbolic      ( isSymbolic );
         layer->setMinimalSize   ( minimalSize );
         layer->setMinimalSpacing( minimalSpacing );

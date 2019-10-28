@@ -117,6 +117,7 @@ namespace CRL {
                                                                , unsigned int  depth=(unsigned int)-1 );
              Cell*                    createCell               ( const string& name, AllianceLibrary* library=NULL );
              void                     saveCell                 ( Cell* , unsigned int mode );
+             void                     bindLibraries            ();
              unsigned int             loadLibraryCells         ( Library* );
              unsigned int             loadLibraryCells         ( const Name& );
       static size_t                   getInstancesCount        ( Cell*, unsigned int flags );
@@ -152,7 +153,6 @@ namespace CRL {
               bool               _readLocate             ( const string& file, unsigned int mode, bool isLib=false );
               bool               _writeLocate            ( const string& file, unsigned int mode, bool isLib=false );
               AllianceLibrary*   _createLibrary          ( const string& path, bool& hasCatalog );
-              void               _bindLibraries          ();
   };
 
   inline bool         AllianceFramework::isPOWER               ( const char*   name ) { return _environment.isPOWER(name); }

@@ -59,7 +59,8 @@ extern "C" {
     HTRY
     db = DataBase::getDB();
     if (db == NULL)
-      PyErr_SetString( HurricaneError, "DataBase.getDB(): DataBase has not been created yet" );
+    //PyErr_SetString( HurricaneError, "DataBase.getDB(): DataBase has not been created yet" );
+      Py_RETURN_NONE;
     HCATCH
 
     return PyDataBase_Link( db );

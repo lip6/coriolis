@@ -248,26 +248,40 @@ namespace CRL {
     return value;
   }
 
+  void  Environment::setWORKING_LIBRARY ( const char* value )
+  {
+    _LIBRARIES.replace( value, "working", 0 );
+    AllianceFramework::get()->createLibrary( _LIBRARIES[0].getPath(), AllianceFramework::CreateLibrary );
+  }
+
 
   void  Environment::addSYSTEM_LIBRARY ( const char* value, const char* libName, unsigned int mode )
   {
+    AllianceFramework* af     = AllianceFramework::get();
+    unsigned int       afMode = AllianceFramework::CreateLibrary;
+    size_t             ilib   = 0;
+    
+    if (mode == Append) afMode |= AllianceFramework::AppendLibrary;
+    
     if ((mode == Prepend) or (mode == Append)) {
       size_t duplicate = _LIBRARIES.hasLib(libName);
       if (duplicate != SearchPath::npos) _LIBRARIES.remove( duplicate );
 
-      if (mode == Prepend) _LIBRARIES.prepend(value,libName);
-      if (mode == Append ) _LIBRARIES.append (value,libName);
-      return;
+      if (mode == Prepend) ilib = _LIBRARIES.prepend(value,libName);
+      if (mode == Append ) ilib = _LIBRARIES.append (value,libName);
+    } else {
+      string newLibName = libName;
+      for ( ; ilib < _LIBRARIES.getSize() ; ++ilib ) {
+        if (newLibName == _LIBRARIES[ilib].getName()) {
+          _LIBRARIES.replace ( value, newLibName, ilib );
+          break;
+        }
+      }
+      if (ilib == _LIBRARIES.getSize())
+        _LIBRARIES.append (value,libName);
     }
 
-    string newLibName = libName;
-    for ( size_t i=0 ; i < _LIBRARIES.getSize() ; ++i ) {
-      if ( newLibName == _LIBRARIES[i].getName() ) {
-        _LIBRARIES.replace ( value, newLibName, i );
-        return;
-      }
-    }
-    _LIBRARIES.append (value,libName);
+    af->createLibrary( _LIBRARIES[ilib].getPath(), afMode );
   }
 
 

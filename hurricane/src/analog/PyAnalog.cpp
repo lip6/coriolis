@@ -29,7 +29,7 @@
 #include "hurricane/analog/PyCascode.h"
 
 #include "hurricane/analog/PyCapacitorFamily.h"
-#include "hurricane/analog/PyMIMCapacitor.h"
+#include "hurricane/analog/PyMultiCapacitor.h"
 
 #include "hurricane/analog/PyParameter.h"
 #include "hurricane/analog/PyCapacitorParameter.h"
@@ -79,7 +79,7 @@ extern "C" {
     PyLevelShifter_LinkPyType();
     PySimpleCurrentMirror_LinkPyType();
     PyCascode_LinkPyType();
-    PyMIMCapacitor_LinkPyType();
+  //PyMultiCapacitor_LinkPyType();
 
     PyParameter_LinkPyType();
     PyCapacitorParameter_LinkPyType();
@@ -108,7 +108,7 @@ extern "C" {
     PYTYPE_READY_SUB( Cascode              , TransistorPair )
                                            
     PYTYPE_READY_SUB( CapacitorFamily      , Device )
-    PYTYPE_READY_SUB( MIMCapacitor         , CapacitorFamily )
+  //PYTYPE_READY_SUB( MutliCapacitor       , CapacitorFamily )
 
     PYTYPE_READY_SUB( CapacitorParameter   , Parameter )
     PYTYPE_READY_SUB( ChoiceParameter      , Parameter )
@@ -132,7 +132,7 @@ extern "C" {
     __cs.addType( "cascode"  , &PyTypeCascode                 , "<Cascode>"                 , false, "transpair" );
 
     __cs.addType( "cfamily"  , &PyTypeCapacitorFamily         , "<CapacitorFamily>"         , false, "device" );
-    __cs.addType( "mimcapa"  , &PyTypeMIMCapacitor            , "<MIMCapacitor>"            , false, "cfamily" );
+  //__cs.addType( "mulcapa"  , &PyTypeMultiCapacitor          , "<MultiCapacitor>"          , false, "cfamily" );
 
     __cs.addType( "parameter", &PyTypeParameter               , "<Parameter>"               , false );
     __cs.addType( "capapar"  , &PyTypeCapacitorParameter      , "<CapacitorParameter>"      , false, "parameter" );
@@ -178,8 +178,8 @@ extern "C" {
 
     Py_INCREF( &PyTypeCapacitorFamily );
     PyModule_AddObject( module, "CapacitorFamily"   , (PyObject*)&PyTypeCapacitorFamily );
-    Py_INCREF( &PyTypeMIMCapacitor );
-    PyModule_AddObject( module, "MIMCapacitor"      , (PyObject*)&PyTypeMIMCapacitor );
+  //Py_INCREF( &PyTypeMutliCapacitor );
+  //PyModule_AddObject( module, "MultiCapacitor"    , (PyObject*)&PyTypeMultiCapacitor );
 
     Py_INCREF( &PyTypeParameter );
     PyModule_AddObject( module, "Parameter"          , (PyObject*)&PyTypeParameter );

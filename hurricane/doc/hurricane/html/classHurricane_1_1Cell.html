@@ -105,6 +105,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab5bbab0a59106855d61deb94805e6115"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7fb09c8e350923c47ce4c4407bdb00ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceHurricane.html#a1912927c128eee859af62dbe4cbe0a6b">Occurrences</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Cell.html#a7fb09c8e350923c47ce4c4407bdb00ce">getOccurrencesUnder</a> (const <a class="el" href="classHurricane_1_1Box.html">Box</a> &amp;area, unsigned searchDepth=std::numeric_limits&lt; unsigned int &gt;::max()) const</td></tr>
 <tr class="separator:a7fb09c8e350923c47ce4c4407bdb00ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d5a16e085ef5375862560e3c3eb4ea8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceHurricane.html#a1912927c128eee859af62dbe4cbe0a6b">Occurrences</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Cell.html#a7d5a16e085ef5375862560e3c3eb4ea8">getLeafInstanceOccurrences</a> (const <a class="el" href="classHurricane_1_1Instance.html">Instance</a> *topInstance=NULL) const</td></tr>
+<tr class="separator:a7d5a16e085ef5375862560e3c3eb4ea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac32e4f232a8fc030aa809fe6565d8d95"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceHurricane.html#a1912927c128eee859af62dbe4cbe0a6b">Occurrences</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Cell.html#ac32e4f232a8fc030aa809fe6565d8d95">getNonLeafInstanceOccurrences</a> (const <a class="el" href="classHurricane_1_1Instance.html">Instance</a> *topInstance=NULL) const</td></tr>
+<tr class="separator:ac32e4f232a8fc030aa809fe6565d8d95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a142360ca7b3c1c637894f5b9a2cac069"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classHurricane_1_1Box.html">Box</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Cell.html#a142360ca7b3c1c637894f5b9a2cac069">getAbutmentBox</a> () const</td></tr>
 <tr class="separator:a142360ca7b3c1c637894f5b9a2cac069"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a239354e1b4ad9b751abf5a064e43b0e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHurricane_1_1Cell.html#a239354e1b4ad9b751abf5a064e43b0e6">isCalledBy</a> (<a class="el" href="classHurricane_1_1Cell.html">Cell</a> *cell) const</td></tr>
@@ -656,6 +660,44 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a7d5a16e085ef5375862560e3c3eb4ea8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d5a16e085ef5375862560e3c3eb4ea8">&#9670;&nbsp;</a></span>getLeafInstanceOccurrences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceHurricane.html#a1912927c128eee859af62dbe4cbe0a6b">Occurrences</a> Hurricane::Cell::getLeafInstanceOccurrences </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classHurricane_1_1Instance.html">Instance</a> *&#160;</td>
+          <td class="paramname"><em>topInstance</em> = <code>NULL</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the trans-hierarchical <a class="el" href="classHurricane_1_1Collection.html" title="Collection description (API) ">Collection</a> of all instance Occurrences that are leaf cells. With the <code>topInstance</code> argument we can restrict the collection to leafs of that instance (of the current <a class="el" href="classHurricane_1_1Cell.html" title="The model (API). ">Cell</a>) only. </p>
+
+</div>
+</div>
+<a id="ac32e4f232a8fc030aa809fe6565d8d95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac32e4f232a8fc030aa809fe6565d8d95">&#9670;&nbsp;</a></span>getNonLeafInstanceOccurrences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceHurricane.html#a1912927c128eee859af62dbe4cbe0a6b">Occurrences</a> Hurricane::Cell::getNonLeafInstanceOccurrences </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classHurricane_1_1Instance.html">Instance</a> *&#160;</td>
+          <td class="paramname"><em>topInstance</em> = <code>NULL</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the trans-hierarchical <a class="el" href="classHurricane_1_1Collection.html" title="Collection description (API) ">Collection</a> of all instance Occurrences that are <b>not</b> leaf cells. With the <code>topInstance</code> argument we can restrict the collection to non-leafs of that instance (of the current <a class="el" href="classHurricane_1_1Cell.html" title="The model (API). ">Cell</a>) only. </p>
+
+</div>
+</div>
 <a id="a142360ca7b3c1c637894f5b9a2cac069"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a142360ca7b3c1c637894f5b9a2cac069">&#9670;&nbsp;</a></span>getAbutmentBox()</h2>
 
@@ -943,7 +985,7 @@ Static Public Member Functions</h2></td></tr>
     <hr>
     <table class="footer1">
       <tr>
-        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Sun May 26 2019</small></td>
+        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Mon Oct 28 2019</small></td>
         <td class="RFooter"><a href='#pagetop'><small>Return to top of page</small></a></td>
       </tr>
     </table>

@@ -50,6 +50,7 @@ namespace Hurricane {
     // Constructor.
       static  RegularLayer*   create            ( Technology* technology
                                                 , const Name& name
+                                                , BasicLayer* layer
                                                 );
     // Accessors.
       virtual BasicLayers     getBasicLayers    () const;
@@ -85,8 +86,8 @@ namespace Hurricane {
 
     protected:
     // Internal: Constructors & Destructors.
-                              RegularLayer      ( Technology*     technology
-                                                , const Name&     name
+                              RegularLayer      ( Technology* technology
+                                                , const Name& name
                                                 );
   };
 

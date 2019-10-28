@@ -149,7 +149,6 @@ def unicornHook ( **kw ):
 def ScriptMain ( **kw ):
   rvalue = True
   try:
-    helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )
 
     aboutWidget = AboutWidget()

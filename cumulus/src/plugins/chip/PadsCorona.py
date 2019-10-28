@@ -454,7 +454,7 @@ class Side ( object ):
         if m: padName = m.group( 'power' )
           
         padNet = padInstance.getMasterCell().getNet( padName )
-        print 'padName:', padName, 'padNet:', padNet
+       #print 'padName:', padName, 'padNet:', padNet
         if padNet:
           plug    = padInstance.getPlug( padNet )
           chipNet = plug.getNet()
@@ -1163,11 +1163,11 @@ class Corona ( object ):
         count += 1
     else:
       if not chipIntNet.isGlobal():
-        raise ErrorMessage( 1, [ 'PadsCorona._createCoreWire(): In I/O pad "%s" (%s),'
+        raise ErrorMessage( 1, [ 'PadsCorona._createCoreWire(): In I/O pad "%s" (%s,%s),'
                                  % ( padInstance.getMasterCell().getName()
-                                   , padInstance.getName() )
+                                   , padInstance.getName(), str(padInstance.getTransformation()) )
                                , 'connector "%s" has no suitable segment for net "%s".' 
-                                 % ( padNet.getName()
+                                 % ( str(padNet)
                                    , chipIntNet.getName() )
                                ] )
           

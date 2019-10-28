@@ -70,22 +70,24 @@ namespace CRL {
   }
 
 
-  void  SearchPath::prepend ( const std::string& path, const std::string& name )
+  size_t  SearchPath::prepend ( const std::string& path, const std::string& name )
   {
     vector<Element>::iterator ipath = _paths.begin();
 
     _index = 0;
-    if ( ipath != _paths.end() ) { ++ipath; ++_index; }
+    if (ipath != _paths.end()) { ++ipath; ++_index; }
 
-    _paths.insert ( ipath, Element(path,name) );
+    _paths.insert( ipath, Element(path,name) );
+    return _index;
   }
 
 
-  void  SearchPath::replace ( const string& path, const std::string& name, size_t index )
+  size_t  SearchPath::replace ( const string& path, const std::string& name, size_t index )
   {
     _index = index;
     if ( index < _paths.size() )
       _paths[index] = Element(path,name);
+    return _index;
   }
 
 
@@ -151,7 +153,7 @@ namespace CRL {
   {
     ostringstream s;
 
-    s << "<SearchPath " << _paths.size()+1 << " directories>";
+    s << "<SearchPath " << _paths.size() << " directories>";
     return s.str();
   }
 

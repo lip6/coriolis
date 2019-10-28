@@ -86,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-1">Release v2.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-2">Release v2.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-3">Release v2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Releases.html#release-v2-4">Release v2.4</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
@@ -106,14 +107,8 @@
 </li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#general-software-architecture">General Software Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#first-stage-technology-selection">First Stage: Technology Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#configuration-helpers">Configuration Helpers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tools-configuration-helpers">Tools Configuration Helpers</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-user-s-settings">Configuration &amp; User&#8217;s Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-comprehensive-example-of-coriolis2-setting-py">A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ViewerTools.html">CGT - The Graphical Interface</a><ul>
@@ -392,11 +387,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -514,7 +504,7 @@
 <div class="section" id="general-software-architecture">
 <h2>General Software Architecture<a class="headerlink" href="#general-software-architecture" title="Permalink to this headline">¶</a></h2>
 <p><span class="sc">Coriolis</span> has been built with respect of the classical paradigm that the
-computational instensive parts have been written in C++, and almost
+computational intensive parts have been written in C++, and almost
 everything else in <span class="sc">Python</span>. To build the <span class="sc">Python</span> interface we used
 two methods:</p>
 <ul class="simple">
@@ -532,185 +522,138 @@ mimic <em>as closely as possible</em> the C++ interface, so the documentation
 applies to both languages with only minor syntactic changes.</p>
 </div>
 <p> <a class="reference internal" href="../_images/Coriolis-Soft-Schema.png"><img alt="Coriolis Software Schematic" class="align-middle" src="../_images/Coriolis-Soft-Schema.png" style="width: 60%;" /></a> </p>
-<p>All configuration &amp; initialization files are Python scripts, despite their
-<span class="cb">.conf</span> extention. From a syntactic point of view, there is no difference
-between the system-wide configuration files and the user&#8217;s configuration,
-they use the same Python helpers.
-   <span class="raw-html"><br class="medskip"/></span></p>
-<p>Configuration is done in two stages:</p>
-<ol class="arabic simple">
-<li>Selecting the technology.</li>
-<li>Loading the complete configuration for the given technology
-and the user&#8217;s settings.</li>
-</ol>
 </div>
-<div class="section" id="first-stage-technology-selection">
-<h2>First Stage: Technology Selection<a class="headerlink" href="#first-stage-technology-selection" title="Permalink to this headline">¶</a></h2>
-<p>  <span class="raw-html"><p class="noindent"></p></span>
-The initialization process is done by executing, in order, the following file(s):</p>
+<div class="section" id="configuration-user-s-settings">
+<h2>Configuration &amp; User&#8217;s Settings<a class="headerlink" href="#configuration-user-s-settings" title="Permalink to this headline">¶</a></h2>
+<p>All configurations files are shipped under the form of <span class="sc">Python</span> modules.
+They are to be loaded through <code class="docutils literal"><span class="pre">import</span></code> statements. The user&#8217;s configuration
+files must be put in a <code class="docutils literal"><span class="pre">./coriolis2/</span></code> directory under the working directory.
+It must be made a <span class="sc">Python</span> module so it must contains a <code class="docutils literal"><span class="pre">__init__.py</span></code> file
+(kept empty most of the time). And as they are true <span class="sc">Python</span> files, you may use
+in them any valid code you see fit.</p>
+<p>If no user configuration files are present, <span class="sc">Coriolis</span> will use the default
+<code class="docutils literal"><span class="pre">symbolic.cmos</span></code> technology which matches the <span class="sc">Alliance</span> symbolic default one.</p>
+<p>Contents of the user&#8217;s configuration directory <code class="docutils literal"><span class="pre">./coriolis2/</span></code>:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="8%" />
-<col width="39%" />
-<col width="53%" />
+<col width="43%" />
+<col width="58%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head">Order</th>
-<th class="head">Meaning</th>
-<th class="head">File</th>
+<tr class="row-odd"><th class="head">File</th>
+<th class="head">Contents/Meaning</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><strong>1</strong></td>
-<td>The system setting</td>
-<td><span class="cb">/etc/coriolis2/techno.conf</span></td>
+<tr class="row-even"><td><span class="cb">./coriolis2/__init__.py</span></td>
+<td><strong>Mandatory.</strong> Tells <span class="sc">Python</span> this directory
+<em>is</em> a module. Can be left empty</td>
 </tr>
-<tr class="row-odd"><td><strong>2</strong></td>
-<td>The user&#8217;s global setting</td>
-<td><span class="cb">${HOME}/.coriolis2/techno.py</span></td>
+<tr class="row-odd"><td><span class="cb">./coriolis2/settings.py</span></td>
+<td><strong>Mandatory.</strong> The user&#8217;s settings, it must
+setup the technology intended for use and
+perform any configuration variable settings</td>
 </tr>
-<tr class="row-even"><td><strong>3</strong></td>
-<td>The user&#8217;s local setting</td>
-<td><span class="cb">&lt;CWD&gt;/.coriolis2/techno.py</span></td>
+<tr class="row-even"><td><span class="cb">./coriolis2/ioring.py</span></td>
+<td><strong>Optional.</strong> Define how the I/O pads are to
+be placed on the periphery of the chip along
+the chip and core sizes</td>
+</tr>
+<tr class="row-odd"><td><span class="cb">./coriolis2/katana.py</span></td>
+<td><strong>Optional.</strong> Hook file for <span class="sc">Katana</span>, run
+just after the tool has been created for a
+<code class="docutils literal"><span class="pre">Cell</span></code>. Mostly to setup <code class="docutils literal"><span class="pre">Nets</span></code> to be
+traced</td>
 </tr>
 </tbody>
 </table>
-<p>Those files must provide only one variable, the name of the technology. Each technology
-will provide configuration for both the symbolic part and the real part. <span class="sc">Coriolis</span> can
-work with purely symbolic technology (<code class="docutils literal"><span class="pre">symbolic/cmos</span></code>) in that case, the real technology
-part is a dummy one.</p>
-<p>For example, to use <span class="sc">mosis</span> 180nm:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- Mode:Python -*-</span>
+<p>For example, to use <span class="sc">mosis</span> 180nm, you can put in your <span class="cb">./coriolis2/setting.py</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- Mode:Python -*-</span>
 
-<span class="n">technology</span> <span class="o">=</span> <span class="s1">&#39;180/scn6m_deep_09&#39;</span>
+<span class="kn">import</span> <span class="nn">node180.scn6m_deep_09</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="second-stage-technology-configuration-loading">
-<h2>Second Stage: Technology Configuration Loading<a class="headerlink" href="#second-stage-technology-configuration-loading" title="Permalink to this headline">¶</a></h2>
-<p>  <span class="raw-html"><p class="noindent"></p></span>
-The <span class="cb">technology</span> variable is set by the first stage and it&#8217;s the name of the
-technology. A directory of that name, with all the configuration files,
-must exist in the configuration directory (<span class="cb">/etc/coriolis2</span>).
-In addition to the technology-specific directories, a <span class="cb">common/</span> directory is
-there to provide a trunk for all the identical data across the various technologies.
-The initialization process is done by executing, in order, the following file(s):</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="8%" />
-<col width="39%" />
-<col width="53%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Order</th>
-<th class="head">Meaning</th>
-<th class="head">File</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><strong>1</strong></td>
-<td>The system initialization</td>
-<td><span class="cb">/etc/coriolis2/&lt;technology&gt;/&lt;TOOL&gt;.conf</span></td>
-</tr>
-<tr class="row-odd"><td><strong>2</strong></td>
-<td>The user&#8217;s global initialization</td>
-<td><span class="cb">${HOME}/.coriolis2/settings.py</span></td>
-</tr>
-<tr class="row-even"><td><strong>3</strong></td>
-<td>The user&#8217;s local initialization</td>
-<td><span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span></td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p><em>The loading policy is not hard-coded.</em> It is implemented
-at Python level in <span class="cb">/etc/coriolis2/coriolisInit.py</span>, and thus may be easily
-amended to whatever site policy.</p>
-<p>The truly mandatory requirement is the existence of <span class="cb">coriolisInit.py</span>
-which <em>must</em> contain a <span class="cb">coriolisConfigure()</span> function with no argument.</p>
-<p>The <span class="cb">coriolisInit.py</span> script execution is triggered by the <em>import</em> of
-the <code class="docutils literal"><span class="pre">CRL</span></code> module:</p>
-<div class="code python last highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">os.path</span>
+<div class="section" id="a-comprehensive-example-of-coriolis2-setting-py">
+<h2>A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span><a class="headerlink" href="#a-comprehensive-example-of-coriolis2-setting-py" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">Cfg</span>
-<span class="kn">import</span> <span class="nn">Hurricane</span>
-<span class="kn">import</span> <span class="nn">CRL</span>        <span class="c1"># Triggers execution of &quot;coriolisInit.py&quot;.</span>
 <span class="kn">import</span> <span class="nn">Viewer</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="configuration-helpers">
-<h2>Configuration Helpers<a class="headerlink" href="#configuration-helpers" title="Permalink to this headline">¶</a></h2>
-<p>To ease the writing of configuration files, a set of small helpers
-is available. They allow to setup the configuration parameters through
-simple assembly of tuples. The helpers are installed under the directory:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">install</span><span class="o">&gt;/</span><span class="n">etc</span><span class="o">/</span><span class="n">coriolis2</span><span class="o">/</span>
-</pre></div>
-</div>
-<p>Where <span class="cb">&lt;install&gt;/</span> is the root of the installation.</p>
-<div class="section" id="alliance-helper">
-<span id="id1"></span><h3><span class="sc">Alliance</span> Helper<a class="headerlink" href="#alliance-helper" title="Permalink to this headline">¶</a></h3>
-<p>The configuration file must provide an <span class="cb">allianceConfig</span> tuple as shown below.
-Like all the <span class="sc">Coriolis</span> configuration file, it is to be executed through <span class="sc">Python</span>,
-so we can use it to perform a not so dumb search of the <span class="sc">Alliance</span> installation
-directory. Our default policy is to try to read the <code class="docutils literal"><span class="pre">ALLIANCE_TOP</span></code> environment
-variable, and if not found, default to <code class="docutils literal"><span class="pre">/soc/alliance</span></code>.</p>
-<div class="code python highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">helpers.Alliance</span> <span class="k">import</span> <span class="n">AddMode</span>
-<span class="kn">from</span> <span class="nn">helpers.Alliance</span> <span class="k">import</span> <span class="n">Gauge</span>
+<span class="kn">import</span> <span class="nn">CRL</span>
+<span class="kn">import</span> <span class="nn">node180.scn6m_deep_09</span>
+<span class="kn">from</span>   <span class="nn">helpers</span>       <span class="kn">import</span> <span class="n">l</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span>
 
-<span class="n">allianceTop</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">allianceTop</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;ALLIANCE_TOP&#39;</span><span class="p">):</span>
   <span class="n">allianceTop</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;ALLIANCE_TOP&#39;</span><span class="p">]</span>
   <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">allianceTop</span><span class="p">):</span>
-    <span class="n">allianceTop</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">allianceTop</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">allianceTop</span><span class="p">:</span> <span class="n">allianceTop</span> <span class="o">=</span> <span class="s1">&#39;/soc/alliance&#39;</span>
 
-<span class="n">cellsTop</span> <span class="o">=</span> <span class="n">allianceTop</span><span class="o">+</span><span class="s1">&#39;/cells/&#39;</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">Configuration</span><span class="o">.</span><span class="n">pushDefaultPriority</span><span class="p">(</span> <span class="n">Cfg</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">Priority</span><span class="o">.</span><span class="n">UserFile</span> <span class="p">)</span>
 
+<span class="n">Viewer</span><span class="o">.</span><span class="n">Graphics</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span> <span class="s1">&#39;Alliance.Classic [black]&#39;</span> <span class="p">)</span>
 
-<span class="n">allianceConfig</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span> <span class="s1">&#39;CATALOG&#39;</span>            <span class="p">,</span> <span class="s1">&#39;CATAL&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;sxlib&#39;</span>   <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;dp_sxlib&#39;</span><span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;ramlib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;romlib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rflib&#39;</span>   <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;rf2lib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;pxlib&#39;</span>   <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span>
-                               <span class="p">,</span> <span class="p">(</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;padlib&#39;</span>  <span class="p">,</span> <span class="n">AddMode</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;IN_LO&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vst&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;IN_PH&#39;</span>              <span class="p">,</span> <span class="s1">&#39;ap&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;OUT_LO&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vst&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;OUT_PH&#39;</span>             <span class="p">,</span> <span class="s1">&#39;ap&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vdd&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vss&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;CLOCK&#39;</span>              <span class="p">,</span> <span class="s1">&#39;.*ck.*|.*nck.*&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;BLOCKAGE&#39;</span>           <span class="p">,</span> <span class="s1">&#39;^blockage[Nn]et*&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span> <span class="s1">&#39;PAD&#39;</span>                <span class="p">,</span> <span class="s1">&#39;.*_px$&#39;</span><span class="p">)</span>
-    <span class="p">)</span>
+<span class="n">cellsTop</span> <span class="o">=</span> <span class="n">allianceTop</span><span class="o">+</span><span class="s1">&#39;/cells&#39;</span>
+
+<span class="c1"># Alliance related settings.</span>
+<span class="n">af</span>  <span class="o">=</span> <span class="n">CRL</span><span class="o">.</span><span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getEnvironment</span><span class="p">()</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">setSCALE_X</span>        <span class="p">(</span> <span class="mi">100</span> <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setCATALOG</span>        <span class="p">(</span> <span class="s1">&#39;CATAL&#39;</span> <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setIN_LO</span>          <span class="p">(</span> <span class="s1">&#39;vst&#39;</span>   <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setIN_PH</span>          <span class="p">(</span> <span class="s1">&#39;ap&#39;</span>    <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setOUT_LO</span>         <span class="p">(</span> <span class="s1">&#39;vst&#39;</span>   <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setOUT_PH</span>         <span class="p">(</span> <span class="s1">&#39;ap&#39;</span>    <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setPOWER</span>          <span class="p">(</span> <span class="s1">&#39;vdd&#39;</span>   <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setGROUND</span>         <span class="p">(</span> <span class="s1">&#39;vss&#39;</span>   <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setCLOCK</span>          <span class="p">(</span> <span class="s1">&#39;.*ck.*|.*nck.*&#39;</span>   <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setBLOCKAGE</span>       <span class="p">(</span> <span class="s1">&#39;blockage[Nn]et.*&#39;</span> <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">setPad</span>            <span class="p">(</span> <span class="s1">&#39;.*_mpx$&#39;</span>          <span class="p">)</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">setWORKING_LIBRARY</span><span class="p">(</span> <span class="s1">&#39;.&#39;</span> <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">addSYSTEM_LIBRARY</span> <span class="p">(</span> <span class="n">library</span><span class="o">=</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;/nsxlib&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">CRL</span><span class="o">.</span><span class="n">Environment</span><span class="o">.</span><span class="n">Append</span> <span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">addSYSTEM_LIBRARY</span> <span class="p">(</span> <span class="n">library</span><span class="o">=</span><span class="n">cellsTop</span><span class="o">+</span><span class="s1">&#39;/mpxlib&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">CRL</span><span class="o">.</span><span class="n">Environment</span><span class="o">.</span><span class="n">Append</span> <span class="p">)</span>
+
+<span class="c1"># Misc. setting parameters.</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamBool</span>      <span class="p">(</span> <span class="s1">&#39;misc.logMode&#39;</span>                <span class="p">)</span><span class="o">.</span><span class="n">setBool</span>      <span class="p">(</span> <span class="bp">False</span>     <span class="p">)</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamBool</span>      <span class="p">(</span> <span class="s1">&#39;misc.verboseLevel1&#39;</span>          <span class="p">)</span><span class="o">.</span><span class="n">setBool</span>      <span class="p">(</span> <span class="bp">True</span>      <span class="p">)</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamBool</span>      <span class="p">(</span> <span class="s1">&#39;misc.verboseLevel2&#39;</span>          <span class="p">)</span><span class="o">.</span><span class="n">setBool</span>      <span class="p">(</span> <span class="bp">True</span>      <span class="p">)</span>
+
+<span class="c1"># P&amp;R related parameters.</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamString</span>    <span class="p">(</span> <span class="s1">&#39;anabatic.routingGauge&#39;</span>       <span class="p">)</span><span class="o">.</span><span class="n">setString</span>    <span class="p">(</span> <span class="s1">&#39;msxlib4&#39;</span> <span class="p">)</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamString</span>    <span class="p">(</span> <span class="s1">&#39;anabatic.topRoutingLayer&#39;</span>    <span class="p">)</span><span class="o">.</span><span class="n">setString</span>    <span class="p">(</span> <span class="s1">&#39;METAL4&#39;</span>  <span class="p">)</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamInt</span>       <span class="p">(</span> <span class="s1">&#39;katana.hTracksReservedLocal&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">setInt</span>       <span class="p">(</span> <span class="mi">6</span>         <span class="p">)</span>
+<span class="n">Cfg</span><span class="o">.</span><span class="n">getParamInt</span>       <span class="p">(</span> <span class="s1">&#39;katana.vTracksReservedLocal&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">setInt</span>       <span class="p">(</span> <span class="mi">3</span>         <span class="p">)</span>
+
+<span class="n">Cfg</span><span class="o">.</span><span class="n">Configuration</span><span class="o">.</span><span class="n">popDefaultPriority</span><span class="p">()</span>
 </pre></div>
 </div>
-<p></p>
-<p>  <span class="raw-html"><p class="noindent"></p></span> The example above shows the system configuration file, with all the
-available settings. Some important remarks about those settings:</p>
+<p>  <span class="raw-html"><p class="noindent"></p></span> The example above shows the user&#8217;s configuration file, with all the
+available settings for <span class="sc">Alliance</span> and a small subset for other tools. Some remarks
+about this file:</p>
 <ul>
-<li><p class="first">In its configuration file, the user does not need to redefine all the settings,
-just the one he wants to change. In most of the cases, the <code class="docutils literal"><span class="pre">SYSTEM_LIBRARY</span></code>,
-the <code class="docutils literal"><span class="pre">WORKING_LIBRARY</span></code> and the special net names (at this point there is not
+<li><p class="first">The <code class="docutils literal"><span class="pre">Cfg.Configuration.pushDefaultPriority()</span></code> and <code class="docutils literal"><span class="pre">Cfg.Configuration.popDefaultPriority()</span></code>
+statements are there so the value sets by the user will not be overriden by system
+ones event if they are setup afterwards. This priority system is introduced so the
+various configuration files could be loaded in out of order.</p>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">Viewer.Graphics.setStyle()</span></code> allows you to choose the look of your liking from
+the start.</p>
+</li>
+<li><p class="first">For <span class="sc">Alliance</span>, the user does not need to redefine all the settings,
+just the one he wants to change. In most of the cases, the <code class="docutils literal"><span class="pre">addSYSTEM_LIBRARY()</span></code>,
+the <code class="docutils literal"><span class="pre">setWORKING_LIBRARY()</span></code> and the special net names (at this point there is not
 much alternatives for the others settings).</p>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">SYSTEM_LIBRARY</span></code> setting: Setting up the library search path.
-Each library entry in the tuple will be added to the search path according
-to the second parameter:</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">addSYSTEM_LIBRARY()</span></code> adds a directory to the library search path.
+Each library entry will be added to the search path according to the second parameter:</p>
 <ul class="simple">
-<li><span class="cb">AddMode::Append</span>:  append to the search path.</li>
-<li><span class="cb">AddMode::Prepend</span>: insert in head of the search path.</li>
-<li><span class="cb">AddMode::Replace</span>: look for a library of the same name and replace
+<li><span class="cb">CRL.Environment::Append</span>:  append to the search path.</li>
+<li><span class="cb">CRL.Environment::Prepend</span>: insert in head of the search path.</li>
+<li><span class="cb">CRL.Environment::Replace</span>: look for a library of the same name and replace
 it, whithout changing the search path order. If no library of that name
 already exists, it is appended.</li>
 </ul>
@@ -720,135 +663,45 @@ Implementing the <span class="sc">Alliance</span> specification, when looking fo
 the system will browse sequentially through the library list and returns
 the first <em>Cell</em> whose name match.</p>
 </li>
-<li><p class="first">For <code class="docutils literal"><span class="pre">POWER</span></code>, <code class="docutils literal"><span class="pre">GROUND</span></code>, <code class="docutils literal"><span class="pre">CLOCK</span></code> and <code class="docutils literal"><span class="pre">BLOCKAGE</span></code> net names, a regular
-expression (<span class="sc">gnu</span> regexp) is expected.</p>
+<li><p class="first">For <code class="docutils literal"><span class="pre">setPOWER()</span></code>, <code class="docutils literal"><span class="pre">setGROUND()</span></code>, <code class="docutils literal"><span class="pre">setCLOCK()</span></code> and <code class="docutils literal"><span class="pre">setBLOCKAGE()</span></code> net names,
+a regular expression (<span class="sc">gnu</span> regexp) is expected.</p>
+</li>
+<li><p class="first">For other tools parameters, just use getter and setter according to their types:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Getter/Setter</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">Bool</span></code></td>
+<td><code class="docutils literal"><span class="pre">Cgt.getParamBool('name').setBool(</span> <span class="pre">True</span> <span class="pre">)</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">Int</span></code></td>
+<td><code class="docutils literal"><span class="pre">Cgt.getParamInt('name').setBool(</span> <span class="pre">12</span> <span class="pre">)</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">Enumerate</span></code></td>
+<td><code class="docutils literal"><span class="pre">Cgt.getParamEnumerate('name').setBool(</span> <span class="pre">12</span> <span class="pre">)</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">Double</span></code></td>
+<td><code class="docutils literal"><span class="pre">Cgt.getParamDouble('name').setDouble(</span> <span class="pre">254.5</span> <span class="pre">)</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">Percentage</span></code></td>
+<td><code class="docutils literal"><span class="pre">Cgt.getParamPercentage('name').setPercentage(</span> <span class="pre">75.0</span> <span class="pre">)</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">String</span></code></td>
+<td><code class="docutils literal"><span class="pre">Cgt.getParamString('name').setString(</span> <span class="pre">'machin'</span> <span class="pre">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>Lists of the configurable parameters of most interest to the user are given in
+<a class="reference internal" href="ViewerTools.html#viewer-tools"><span class="std std-ref">Viewer &amp; Tools</span></a>.</p>
 </li>
 </ul>
-<p>A typical user&#8217;s configuration file would be:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-
-<span class="n">homeDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;HOME&#39;</span><span class="p">)</span>
-
-<span class="n">allianceConfig</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;WORKING_LIBRARY&#39;</span>    <span class="p">,</span> <span class="n">homeDir</span><span class="o">+</span><span class="s1">&#39;/worklib&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;SYSTEM_LIBRARY&#39;</span>     <span class="p">,</span> <span class="p">(</span> <span class="p">(</span><span class="n">homeDir</span><span class="o">+</span><span class="s1">&#39;/mylib&#39;</span><span class="p">,</span> <span class="n">Environment</span><span class="o">.</span><span class="n">Append</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;POWER&#39;</span>              <span class="p">,</span> <span class="s1">&#39;vdd.*&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;GROUND&#39;</span>             <span class="p">,</span> <span class="s1">&#39;vss.*&#39;</span><span class="p">)</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="tools-configuration-helpers">
-<h3>Tools Configuration Helpers<a class="headerlink" href="#tools-configuration-helpers" title="Permalink to this headline">¶</a></h3>
-<p>All the tools use the same helper to load their configuration (a.k.a.
-<em>Configuration Helper</em>). Currently the following configuration system-wide
-configuration files are defined:</p>
-<ul class="simple">
-<li><span class="cb">misc.conf</span>: common settings or not belonging specifically to a tool.</li>
-<li><span class="cb">etesian.conf</span>: for the <span class="sc">Etesian</span> tool.</li>
-<li><span class="cb">kite.conf</span>: for the <span class="sc">Kite</span> tool.</li>
-<li><span class="cb">stratus1.conf</span>: for the <span class="sc">Stratus1</span> tool.</li>
-</ul>
-<p></p>
-<p>Here is the contents of <span class="cb">etesian.conf</span>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Etesian parameters.</span>
-<span class="n">parametersTable</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;etesian.aspectRatio&#39;</span>    <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mi">100</span>    <span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span><span class="mi">1000</span> <span class="p">}</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.spaceMargin&#39;</span>    <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mi">5</span>      <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.uniformDensity&#39;</span> <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.routingDriven&#39;</span>  <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;etesian.effort&quot;</span>         <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>
-      <span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;values&#39;</span><span class="p">:(</span> <span class="p">(</span><span class="s2">&quot;Fast&quot;</span>    <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Standard&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;High&quot;</span>    <span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Extreme&quot;</span> <span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
-      <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;etesian.graphics&quot;</span>       <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>
-      <span class="p">,</span> <span class="p">{</span> <span class="s1">&#39;values&#39;</span><span class="p">:(</span> <span class="p">(</span><span class="s2">&quot;Show every step&quot;</span>  <span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Show lower bound&quot;</span> <span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-                   <span class="p">,</span> <span class="p">(</span><span class="s2">&quot;Show result only&quot;</span> <span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">)</span> <span class="p">}</span>
-      <span class="p">)</span>
-    <span class="p">)</span>
-
-<span class="n">layoutTable</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="n">TypeTab</span>   <span class="p">,</span> <span class="s1">&#39;Etesian&#39;</span><span class="p">,</span> <span class="s1">&#39;etesian&#39;</span><span class="p">)</span>
-
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeTitle</span> <span class="p">,</span> <span class="s1">&#39;Placement area&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.aspectRatio&quot;</span>   <span class="p">,</span> <span class="s2">&quot;Aspect Ratio, X/Y (%)&quot;</span><span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.spaceMargin&quot;</span>   <span class="p">,</span> <span class="s2">&quot;Space Margin&quot;</span>         <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeRule</span>  <span class="p">,)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeTitle</span> <span class="p">,</span> <span class="s1">&#39;Etesian - Placer&#39;</span><span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.uniformDensity&quot;</span><span class="p">,</span> <span class="s2">&quot;Uniform density&quot;</span>      <span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.routingDriven&quot;</span> <span class="p">,</span> <span class="s2">&quot;Routing driven&quot;</span>       <span class="p">,</span> <span class="mi">0</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.effort&quot;</span>        <span class="p">,</span> <span class="s2">&quot;Placement effort&quot;</span>     <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeOption</span><span class="p">,</span> <span class="s2">&quot;etesian.graphics&quot;</span>      <span class="p">,</span> <span class="s2">&quot;Placement view&quot;</span>       <span class="p">,</span> <span class="mi">1</span> <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="n">TypeRule</span>  <span class="p">,)</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>Taxonomy of the file:</p>
-<ul class="simple">
-<li>It must contain, at least, the two tables:<ul>
-<li><code class="docutils literal"><span class="pre">parametersTable</span></code>, defines &amp; initialises the configuration variables.</li>
-<li><code class="docutils literal"><span class="pre">layoutTables</span></code>, defines how the various parameters will be displayed
-in the configuration window (<a class="reference internal" href="ViewerTools.html#the-settings-tab"><span class="std std-ref">The Settings Tab</span></a>).</li>
-</ul>
-</li>
-<li>The <code class="docutils literal"><span class="pre">parametersTable</span></code>, is a tuple (list) of tuples. Each entry in the list
-describes a configuration parameter. In its simplest form, it&#8217;s a quadruplet
-<span class="cb">(TypeOption, &#8216;paramId&#8217;, ParameterType, DefaultValue)</span> with:<ol class="arabic">
-<li><code class="docutils literal"><span class="pre">TypeOption</span></code>, tells that this tuple describes a parameter.</li>
-<li><code class="docutils literal"><span class="pre">paramId</span></code>, the identifier of the parameter. Identifiers are defined
-by the tools. The list of parameters is detailed in each tool section.</li>
-<li><code class="docutils literal"><span class="pre">ParameterType</span></code>, the kind of parameter. Could be:<ul>
-<li><code class="docutils literal"><span class="pre">TypeBool</span></code>, boolean.</li>
-<li><code class="docutils literal"><span class="pre">TypeInt</span></code>, signed integer.</li>
-<li><code class="docutils literal"><span class="pre">TypeEnumerate</span></code>, enumerated type, needs extra entry.</li>
-<li><code class="docutils literal"><span class="pre">TypePercentage</span></code>, percentage, expressed between 0 and 100.</li>
-<li><code class="docutils literal"><span class="pre">TypeDouble</span></code>, float.</li>
-<li><code class="docutils literal"><span class="pre">TypeString</span></code>, character string.</li>
-</ul>
-</li>
-<li><code class="docutils literal"><span class="pre">DefaultValue</span></code>, the default value for that parameter.</li>
-</ol>
-</li>
-</ul>
-</div>
-</div>
-<div class="section" id="hacking-the-configuration-files">
-<h2>Hacking the Configuration Files<a class="headerlink" href="#hacking-the-configuration-files" title="Permalink to this headline">¶</a></h2>
-<p>Aside from the symbols that get used by the configuration helpers like
-<span class="cb">allianceConfig</span> or <span class="cb">parametersTable</span>, you can put pretty much anything
-in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written in <span class="sc">Python</span>).</p>
-<p>For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># -*- Mode:Python -*-</span>
-
-<span class="n">defaultStyle</span> <span class="o">=</span> <span class="s1">&#39;Alliance.Classic [black]&#39;</span>
-
-<span class="c1"># Regular Coriolis configuration.</span>
-<span class="n">parametersTable</span> <span class="o">=</span> \
-    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;misc.catchCore&#39;</span>           <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.info&#39;</span>                <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.paranoid&#39;</span>            <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.bug&#39;</span>                 <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.logMode&#39;</span>             <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">True</span>   <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.verboseLevel1&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">False</span>  <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.verboseLevel2&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="kc">True</span>   <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.minTraceLevel&#39;</span>       <span class="p">,</span> <span class="n">TypeInt</span>       <span class="p">,</span> <span class="mi">0</span>      <span class="p">)</span>
-    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.maxTraceLevel&#39;</span>       <span class="p">,</span> <span class="n">TypeInt</span>       <span class="p">,</span> <span class="mi">0</span>      <span class="p">)</span>
-    <span class="p">)</span>
-
-<span class="c1"># Some ordinary Python script...</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
-<span class="nb">print</span> <span class="s1">&#39;       o  Cleaning up ClockTree previous run.&#39;</span>
-<span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
-  <span class="k">if</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.ap&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">fileName</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;_clocked.&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="nb">print</span> <span class="s1">&#39;          - &lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">fileName</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>See <span class="xref std std-ref">Python Interface to Coriolis</span> for more details those capabilities.</p>
 </div>
 </div>
 
@@ -873,7 +726,7 @@ in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written 
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
@@ -882,7 +735,7 @@ in <span class="cb">&lt;CWD&gt;/.coriolis2/settings.py</span> (that is, written 
       <tr>
         <td class="LFooter">Coriolis 2 Documentation</td>
         <td class="RFooter"><small>
-              &copy; Copyright 2000-2018, UPMC.
+              &copy; Copyright 2000-2019, Sorbonne Université.
         </small></td>
       </tr>
     </table>

@@ -117,17 +117,17 @@ class PlaceRoute ( object ):
       raise ErrorMessage( 1, 'chip.doCoronaFloorplan(): Chip is not valid, aborting.' )
       return
 
-    railsNb    = Cfg.getParamInt('chip.block.rails.count'   ).asInt()
-    hRailWidth = Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt()
-    vRailWidth = Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt()
-    hRailSpace = Cfg.getParamInt('chip.block.rails.hSpacing').asInt()
-    vRailSpace = Cfg.getParamInt('chip.block.rails.vSpacing').asInt()
+    self.railsNb    = Cfg.getParamInt('chip.block.rails.count'   ).asInt()
+    self.hRailWidth = Cfg.getParamInt('chip.block.rails.hWidth'  ).asInt()
+    self.vRailWidth = Cfg.getParamInt('chip.block.rails.vWidth'  ).asInt()
+    self.hRailSpace = Cfg.getParamInt('chip.block.rails.hSpacing').asInt()
+    self.vRailSpace = Cfg.getParamInt('chip.block.rails.vSpacing').asInt()
 
     if not self.conf.useClockTree: self.railsNb -= 1
 
     innerBb = Box( self.conf.coreSize )
-    innerBb.inflate( railsNb * vRailWidth + (railsNb+1) * vRailSpace
-                   , railsNb * hRailWidth + (railsNb+1) * hRailSpace )
+    innerBb.inflate( self.railsNb * self.vRailWidth + (self.railsNb+1) * self.vRailSpace
+                   , self.railsNb * self.hRailWidth + (self.railsNb+1) * self.hRailSpace )
         
     coronaAb = self.conf.corona.getAbutmentBox()
     if innerBb.getWidth() > coronaAb.getWidth():

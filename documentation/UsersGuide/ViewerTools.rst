@@ -239,34 +239,34 @@ Etesian Configuration Parameters
 +===================================+==================+============================+
 | **Etesian Parameters**                                                            |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.aspectRatio``            | TypePercentage   | :cb:`100`                  |
+|``etesian.aspectRatio``            | ``Percentage``   | :cb:`100`                  |
 |                                   +------------------+----------------------------+
 |                                   | Define the height on width ``H/W`` aspect     |
 |                                   | ratio, can be comprised between 10 and 1000   |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.spaceMargin``            | TypePercentage   | :cb:`5`                    |
+|``etesian.spaceMargin``            | ``Percentage``   | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | The extra white space added to the total area |
 |                                   | of the standard cells                         |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.uniformDensity``         | TypeBool         | :cb:`False`                |
+|``etesian.uniformDensity``         | ``Bool``         | :cb:`False`                |
 |                                   +------------------+----------------------------+
 |                                   | Whether the cells will be spread envenly      |
 |                                   | across the area or allowed to form denser     |
 |                                   | clusters                                      |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.effort``                 | TypeInt          | :cb:`2`                    |
+|``etesian.effort``                 | ``Int``          | :cb:`2`                    |
 |                                   +------------------+----------------------------+
 |                                   | Sets the balance between the speed of the     |
 |                                   | placer and the solution quality               |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.routingDriven``          | TypeBool         | :cb:`False`                |
+|``etesian.routingDriven``          | ``Bool``         | :cb:`False`                |
 |                                   +------------------+----------------------------+
 |                                   | Whether the tool will try routing iterations  |
 |                                   | and whitespace allocation to improve          |
 |                                   | routability; to be implemented                |
 +-----------------------------------+------------------+----------------------------+
-|``etesian.graphics``               | TypeInt          | :cb:`2`                    |
+|``etesian.graphics``               | ``Int``          | :cb:`2`                    |
 |                                   +------------------+----------------------------+
 |                                   | How often the display will be refreshed       |
 |                                   | More refreshing slows the placer.             |
@@ -359,73 +359,79 @@ All the defaults value given below are from the default |Alliance| technology
 +===================================+==================+============================+
 | **Anabatic Parameters**                                                           |
 +-----------------------------------+------------------+----------------------------+
-|``anabatic.topRoutingLayer``       | TypeString       | :cb:`METAL5`               |
+|``anabatic.topRoutingLayer``       | ``String``       | :cb:`METAL5`               |
 |                                   +------------------+----------------------------+
 |                                   | Define the highest metal layer that will be   |
 |                                   | used for routing (inclusive).                 |
 +-----------------------------------+------------------+----------------------------+
-|``anabatic.globalLengthThreshold`` | TypeInt          | :cb:`1450`                 |
+|``anabatic.globalLengthThreshold`` | ``Int``          | :cb:`1450`                 |
 |                                   +------------------+----------------------------+
 |                                   | This parameter is used by a layer assignment  |
 |                                   | method which is no longer used (did not give  |
 |                                   | good results)                                 |
 +-----------------------------------+------------------+----------------------------+
-| ``anabatic.saturateRatio``        | TypePercentage   | :cb:`80`                   |
+| ``anabatic.saturateRatio``        | ``Percentage``   | :cb:`80`                   |
 |                                   +------------------+----------------------------+
 |                                   | If ``M(x)`` density is above this ratio,      |
 |                                   | move up feedthru  global segments up from     |
 |                                   | depth ``x`` to ``x+2``                        |
 +-----------------------------------+------------------+----------------------------+
-| ``anabatic.saturateRp``           | TypeInt          | :cb:`8`                    |
+| ``anabatic.saturateRp``           | ``Int``          | :cb:`8`                    |
 |                                   +------------------+----------------------------+
 |                                   | If a GCell contains more terminals            |
 |                                   | (:cb:`RoutingPad`) than that number, force a  |
 |                                   | move up of the connecting segments to those   |
 |                                   | in excess                                     |
 +-----------------------------------+------------------+----------------------------+
+| ``anabatic.globalIterations``     | ``Int``          | :cb:`10`                   |
+|                                   +------------------+----------------------------+
+|                                   | The maximum number of iterations the global   |
+|                                   | router will try to solve edges overload       |
++-----------------------------------+------------------+----------------------------+
 | **Katana Parameters**                                                             |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.hTracksReservedLocal``   | TypeInt          | :cb:`3`                    |
+| ``katana.hTracksReservedLocal``   | ``Int``          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | To take account the tracks needed *inside* a  |
-|                                   | GCell to build the *local* routing, decrease  |
-|                                   | the capacity of the edges of the global       |
-|                                   | router. Horizontal and vertical locally       |
-|                                   | reserved capacity can be distinguished for    |
-|                                   | more accuracy.                                |
+|                                   | GCell to build the *local* routing the        |
+|                                   | capacities of the edges needs to be decreased.| 
+|                                   | The decrease is computed by the GCell and     |
+|                                   | cannot exceed this number (this is maximum).  |
+|                                   | For better accuracy vertical and horizontal   |
+|                                   | edges are distinguisheds                      |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.vTracksReservedLocal``   | TypeInt          | :cb:`3`                    |
+| ``katana.vTracksReservedLocal``   | ``Int``          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | cf. ``kite.hTracksReservedLocal``             |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.eventsLimit``            | TypeInt          | :cb:`4000002`              |
+| ``katana.eventsLimit``            | ``Int``          | :cb:`4000002`              |
 |                                   +------------------+----------------------------+
 |                                   | The maximum number of segment displacements,  |
 |                                   | this is a last ditch safety against infinite  |
 |                                   | loop. It's perhaps a  little too low for big  |
 |                                   | designs                                       |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.ripupCost``              | TypeInt          | :cb:`3`                    |
+| ``katana.ripupCost``              | ``Int``          | :cb:`3`                    |
 |                                   +------------------+----------------------------+
 |                                   | Differential introduced between two ripup     |
 |                                   | costs to avoid a loop between two ripped up   |
 |                                   | segments                                      |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.strapRipupLimit``        | TypeInt          | :cb:`16`                   |
+| ``katana.strapRipupLimit``        | ``Int``          | :cb:`16`                   |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *strap* segments  |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.localRipupLimit``        | TypeInt          | :cb:`9`                    |
+| ``katana.localRipupLimit``        | ``Int``          | :cb:`9`                    |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *local* segments  |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.globalRipupLimit``       | TypeInt          | :cb:`5`                    |
+| ``katana.globalRipupLimit``       | ``Int``          | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *global* segments,|
 |                                   | when this limit is reached, triggers topologic|
 |                                   | modification                                  |
 +-----------------------------------+------------------+----------------------------+
-| ``katana.longGlobalRipupLimit``   | TypeInt          | :cb:`5`                    |
+| ``katana.longGlobalRipupLimit``   | ``Int``          | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | Maximum number of ripup for *long global*     |
 |                                   | segments, when this limit is reached, triggers|
@@ -632,41 +638,41 @@ Miscellaneous Settings
 +=======================================+==================+============================+
 | **Verbosity/Log Parameters**                                                          |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.info``                         | TypeBool         | :cb:`False`                |
+| ``misc.info``                         | ``Bool``         | :cb:`False`                |
 |                                       +------------------+----------------------------+
 |                                       | Enables display of *info* level message       |
 |                                       | (:cb:`cinfo` stream)                          |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.bug``                          | TypeBool         | :cb:`False`                |
+| ``misc.bug``                          | ``Bool``         | :cb:`False`                |
 |                                       +------------------+----------------------------+
 |                                       | Enables display of *bug* level message        |
 |                                       | (:cb:`cbug` stream), messages can be a little |
 |                                       | scarry                                        |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.logMode``                      | TypeBool         | :cb:`False`                |
+| ``misc.logMode``                      | ``Bool``         | :cb:`False`                |
 |                                       +------------------+----------------------------+
 |                                       | If enabled, assumes that the output device    |
 |                                       | is not a ``tty`` and suppresses any escape    |
 |                                       | sequences                                     |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.verboseLevel1``                | TypeBool         | :cb:`True`                 |
+| ``misc.verboseLevel1``                | ``Bool``         | :cb:`True`                 |
 |                                       +------------------+----------------------------+
 |                                       | First level of verbosity, disables level 2    | 
 +---------------------------------------+------------------+----------------------------+
-| ``misc.verboseLevel2``                | TypeBool         | :cb:`False`                |
+| ``misc.verboseLevel2``                | ``Bool``         | :cb:`False`                |
 |                                       +------------------+----------------------------+
 |                                       | Second level of verbosity                     | 
 +---------------------------------------+------------------+----------------------------+
 | **Development/Debug Parameters**                                                      |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.minTraceLevel``                | TypeInt          | :cb:`0`                    |
+| ``misc.minTraceLevel``                | ``Int``          | :cb:`0`                    |
 +---------------------------------------+------------------+----------------------------+
-| ``misc.maxTraceLevel``                | TypeInt          | :cb:`0`                    |
+| ``misc.maxTraceLevel``                | ``Int``          | :cb:`0`                    |
 |                                       +------------------+----------------------------+
 |                                       | Displays trace information *between* those two|
 |                                       | levels (:cb:`cdebug` stream)                  | 
 +---------------------------------------+------------------+----------------------------+
-| ``misc.catchCore``                    | TypeBool         | :cb:`False`                |
+| ``misc.catchCore``                    | ``Bool``         | :cb:`False`                |
 |                                       +------------------+----------------------------+
 |                                       | By default, |cgt| does not dump core.         |
 |                                       | To generate one set this flag to :cb:`True`   |

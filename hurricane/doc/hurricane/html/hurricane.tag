@@ -482,6 +482,20 @@
       <arglist>(const Box &amp;area, unsigned searchDepth=std::numeric_limits&lt; unsigned int &gt;::max()) const</arglist>
     </member>
     <member kind="function">
+      <type>Occurrences</type>
+      <name>getLeafInstanceOccurrences</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a7d5a16e085ef5375862560e3c3eb4ea8</anchor>
+      <arglist>(const Instance *topInstance=NULL) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Occurrences</type>
+      <name>getNonLeafInstanceOccurrences</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>ac32e4f232a8fc030aa809fe6565d8d95</anchor>
+      <arglist>(const Instance *topInstance=NULL) const</arglist>
+    </member>
+    <member kind="function">
       <type>const Box &amp;</type>
       <name>getAbutmentBox</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
@@ -5191,8 +5205,8 @@
       <type>static RegularLayer *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1RegularLayer.html</anchorfile>
-      <anchor>a88c2d5516f42b033ae2fdc0797e3dae1</anchor>
-      <arglist>(Technology *technology, const Name &amp;name)</arglist>
+      <anchor>a6b40a35fec1c4fc168d608b8b96c8477</anchor>
+      <arglist>(Technology *technology, const Name &amp;name, BasicLayer *layer)</arglist>
     </member>
   </compound>
   <compound kind="class">

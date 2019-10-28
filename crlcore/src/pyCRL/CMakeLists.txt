@@ -28,6 +28,7 @@
 
                    set( pyConstCpps PyConstant.cpp )
                    set( pyCpps      PyCRL.cpp
+                                    PySystem.cpp
                                     PyBanner.cpp
                                     PyCatalog.cpp
                                     PyCatalogState.cpp
@@ -48,7 +49,8 @@
                                     PyLefImport.cpp
                                     PyDefImport.cpp
                       )	    
-                   set( pyIncludes  crlcore/PyBanner.h
+                   set( pyIncludes  crlcore/PySystem.h
+                                    crlcore/PyBanner.h
                                     crlcore/PyCatalog.h
                                     crlcore/PyCatalogState.h
                                     crlcore/PyEnvironment.h

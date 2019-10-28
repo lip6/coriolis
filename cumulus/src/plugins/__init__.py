@@ -243,16 +243,14 @@ def staticInitialization ():
     global loaded
     if loaded: return
 
-    helpers.staticInitialization( quiet=False )
-
     try:
       print '  o  Preload standard plugins.'
       pluginsDir = os.path.dirname(__file__)
       loadPlugins( pluginsDir )
       
-      if helpers.ndaDir:
+      if helpers.ndaTopDir:
         print '  o  Preload NDA protected plugins.'
-        pluginsDir = os.path.join( helpers.ndaDir, 'python2.7/site-packages/cumulus/plugins' )
+        pluginsDir = os.path.join( helpers.ndaTopDir, 'python2.7/site-packages/cumulus/plugins' )
         loadPlugins( pluginsDir )
       else:
         print '  o  No NDA protected plugins.'

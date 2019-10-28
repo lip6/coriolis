@@ -288,16 +288,21 @@ extern "C" {
     
     __cs.init ("RoutingGauge.getLayerGauge");
     if (PyArg_ParseTuple( args, "O&:RoutingGauge.getLayerGauge", Converter, &arg0)) {
-      if ( __cs.getObjectIds() == ":layer" )
+      string layerName;
+      if (__cs.getObjectIds() == ":layer") {
         rlg = rg->getLayerGauge( PYLAYER_O(arg0) );
-      else if  ( __cs.getObjectIds() == ":int" )
+        layerName = "\"" + getString(PYLAYER_O(arg0)) + "\"";
+      } else if (__cs.getObjectIds() == ":int") {
         rlg = rg->getLayerGauge( (size_t)PyAny_AsLong(arg0) );
-      else {
+        layerName = "depth=" + getString(PyAny_AsLong(arg0));
+      } else {
         PyErr_SetString ( ConstructorError, "invalid parameter type for RoutingGauge.getLayerGauge()." );
         return NULL;
       }
       if ( rlg == NULL ) {
-        PyErr_SetString ( ConstructorError, "RoutingGauge.getLayerDepth(), requested Layer has no RoutingLayerGauge." );
+        string message = "RoutingGauge.getLayerDepth(), requested Layer "
+                       + layerName + " has no RoutingLayerGauge.";
+        PyErr_SetString ( ConstructorError, message.c_str() );
         return NULL;
       }
     } else {

@@ -314,7 +314,7 @@ packaging, you must configure it so that it can found those libraries.
 The easiest way is to setup the |Alliance| environment (i.e. sourcing
 ``.../etc/profile.d/alc_env.{sh,csh}``) **before** setting up |Coriolis| environment
 (see the next section). To understand how |Coriolis| find/setup |Alliance| you may
-have look to the :ref:`Alliance Helper`.
+have look to the *Configuration and User's Settings* section.
 
 
 Setting up the Environment (coriolisEnv.py)

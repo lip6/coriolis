@@ -111,6 +111,19 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_bindLibraries ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_bindLibraries()" << endl;
+
+    HTRY
+      METHOD_HEAD("AllianceFramework.bindLibraries()")
+      af->bindLibraries();
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyAllianceFramework_getEnvironment ( PyAllianceFramework* self )
   {
     cdebug_log(30,0) << "PyAllianceFramework_getEnvironment ()" << endl;
@@ -516,6 +529,8 @@ extern "C" {
                                , "Gets the Alliance Framework." }                      
     , { "getEnvironment"       , (PyCFunction)PyAllianceFramework_getEnvironment       , METH_NOARGS
                                , "Gets the Alliance Environment." }
+    , { "bindLibraries"        , (PyCFunction)PyAllianceFramework_bindLibraries        , METH_NOARGS
+                               , "Bind Alliance libraries to Hurricane one. This is a one-time only methods." }
     , { "getLibrary"           , (PyCFunction)PyAllianceFramework_getLibrary           , METH_VARARGS
                                , "Gets a Library, by index." }                         
     , { "getAllianceLibrary"   , (PyCFunction)PyAllianceFramework_getAllianceLibrary   , METH_VARARGS

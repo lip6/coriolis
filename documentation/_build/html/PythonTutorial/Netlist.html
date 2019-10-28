@@ -86,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2">Release v2.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-3">Release v2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-4">Release v2.4</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
@@ -106,14 +107,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-user-s-settings">Configuration &amp; User&#8217;s Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#a-comprehensive-example-of-coriolis2-setting-py">A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
@@ -392,11 +387,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -540,7 +530,7 @@ and the cells it refers to (the <em>master cell</em> <code class="docutils liter
 </div>
 <div class="section" id="id1">
 <h2>6.2 Creating Nets and connecting to Instances<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>An <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> as one <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> for each external net of the <em>master cell</em>.
+<p>An <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> has one <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> for each external net of the <em>master cell</em>.
 The plug allows to create a <strong>logical</strong> connection bewteen a <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> of
 <code class="docutils literal"><span class="pre">fulladder</span></code> and a net from an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> <em>master cell</em>.</p>
 <p>A plug is somewhat equivalent to an <em>instance terminal</em> in other
@@ -583,7 +573,7 @@ and make it possible for the <a class="reference external" href="../../hurricane
 <div class="section" id="power-supplies-special-case">
 <h2>6.3 Power supplies special case<a class="headerlink" href="#power-supplies-special-case" title="Permalink to this headline">¶</a></h2>
 <p>For supplies, it may  be tedious to connect the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> of each  cell one by one
-(and  create a  lot of  uneeded objects).  To avoid  that, we  may use  <strong>Named
+(and  create a  lot of  unneeded objects).  To avoid  that, we  may use  <strong>Named
 connections</strong>.  If a  signal in <code class="docutils literal"><span class="pre">fulladder</span></code> is set to  <em>global</em>, then it will
 be considered as connected  to any signal with the <em>same  name</em> and <em>global</em> in
 the master cell of the instances.</p>
@@ -893,7 +883,7 @@ directory (under the the root of the <span class="sc">Coriolis</span> installati
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
@@ -902,7 +892,7 @@ directory (under the the root of the <span class="sc">Coriolis</span> installati
       <tr>
         <td class="LFooter">Coriolis 2 Documentation</td>
         <td class="RFooter"><small>
-              &copy; Copyright 2000-2018, UPMC.
+              &copy; Copyright 2000-2019, Sorbonne Université.
         </small></td>
       </tr>
     </table>

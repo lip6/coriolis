@@ -86,6 +86,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-1">Release v2.1</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-2">Release v2.2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-3">Release v2.3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Releases.html#release-v2-4">Release v2.4</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
@@ -106,14 +107,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/Configuration.html">Coriolis Configuration &amp; Initialisation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#general-software-architecture">General Software Architecture</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#first-stage-technology-selection">First Stage: Technology Selection</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#second-stage-technology-configuration-loading">Second Stage: Technology Configuration Loading</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-helpers">Configuration Helpers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#alliance-helper"><span class="sc">Alliance</span> Helper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../UsersGuide/Configuration.html#tools-configuration-helpers">Tools Configuration Helpers</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#hacking-the-configuration-files">Hacking the Configuration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#configuration-user-s-settings">Configuration &amp; User&#8217;s Settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../UsersGuide/Configuration.html#a-comprehensive-example-of-coriolis2-setting-py">A Comprehensive Example of <span class="cb">./coriolis2/setting.py</span></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a><ul>
@@ -392,11 +387,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../ConfigurationTechnology/index.html">Configuration &amp; Technonology</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html">1. Configuration File Workings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ConfigurationTechnology/Architecture.html#directory-tree-structure">2. Directory Tree Structure</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="../Hurricane/Hurricane.html">Hurricane Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../Viewer/Viewer.html">Viewer Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../CrlCore/CrlCore.html">CRL Core Reference</a></li>
@@ -517,7 +507,7 @@
 <p>In <span class="sc">Hurricane</span> all kind of set of objects, whether organized in a real container
 like a <code class="docutils literal"><span class="pre">map&lt;&gt;</span></code> (dictionary / <code class="docutils literal"><span class="pre">dict</span></code>) or a <code class="docutils literal"><span class="pre">vector&lt;&gt;</span></code> (table / <code class="docutils literal"><span class="pre">list</span></code>) or
 an algorithmic walkthrough of the database can be accessed through a <a class="reference external" href="../../hurricane/classHurricane_1_1Collection.html">Collection</a>.</p>
-<p>C++ Collections object are exposed in <span class="sc">Python</span> through the <em>iterable</em> protocol,
+<p>C++ Collections objects are exposed in <span class="sc">Python</span> through the <em>iterable</em> protocol,
 allowing to simply write:</p>
 <div class="highlight-Python"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">getNets</span><span class="p">():</span>
   <span class="k">print</span> <span class="s1">&#39;Components of&#39;</span><span class="p">,</span> <span class="n">net</span>
@@ -573,8 +563,8 @@ requested name.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">It means that if cells with the same name exist in different
 libraries, only the one in the first library will be ever used.
-Be also weary of cell files that may remain in the <code class="docutils literal"><span class="pre">WORK_LIB</span></code>,
-they may unexpectedly shadow cells from the libraries.</p>
+Be also aware that cell files that may remain in the <code class="docutils literal"><span class="pre">WORK_LIB</span></code>,
+may unexpectedly shadow cells from the libraries.</p>
 </div>
 </li>
 </ol>
@@ -605,7 +595,7 @@ they may unexpectedly shadow cells from the libraries.</p>
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on May 27, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
@@ -614,7 +604,7 @@ they may unexpectedly shadow cells from the libraries.</p>
       <tr>
         <td class="LFooter">Coriolis 2 Documentation</td>
         <td class="RFooter"><small>
-              &copy; Copyright 2000-2018, UPMC.
+              &copy; Copyright 2000-2019, Sorbonne Université.
         </small></td>
       </tr>
     </table>

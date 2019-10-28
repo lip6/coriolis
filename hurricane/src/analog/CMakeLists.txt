@@ -31,12 +31,13 @@
                                     LevelShifter.cpp
                                     MetaCapacitor.cpp
                                     MetaTransistor.cpp
-                                    MIMCapacitor.cpp
+                                    MultiCapacitor.cpp
                                     SimpleCurrentMirror.cpp
                                     Transistor.cpp
                                     TransistorFamily.cpp
                                     TransistorFamilyNames.cpp
                                     TransistorPair.cpp
+                                    MultiCapacitor.cpp
                       )
                    set( pyCpps      PyAnalog.cpp
                                     PyCapacitorFamily.cpp
@@ -53,7 +54,7 @@
                                     PyLayoutGenerator.cpp
                                     PyLevelShifter.cpp
                                     PyMCheckBoxParameter.cpp
-                                    PyMIMCapacitor.cpp
+                                    PyMultiCapacitor.cpp
                                     PyParameter.cpp
                                     PySimpleCurrentMirror.cpp
                                     PySpinBoxParameter.cpp
@@ -61,6 +62,9 @@
                                     PyTransistor.cpp
                                     PyTransistorFamily.cpp
                                     PyTransistorPair.cpp
+                                    PyMatrixParameter.cpp
+                                    PyCapacitiesParameter.cpp
+                                    PyMultiCapacitor.cpp
                       )
                    set( includes    hurricane/analog/AnalogCellExtension.h
                                     hurricane/analog/BJTFamily.h
@@ -84,7 +88,7 @@
                                     hurricane/analog/MCheckBoxParameter.h
                                     hurricane/analog/MetaCapacitor.h
                                     hurricane/analog/MetaTransistor.h
-                                    hurricane/analog/MIMCapacitor.h
+                                    hurricane/analog/MultiCapacitor.h
                                     hurricane/analog/Parameter.h
                                     hurricane/analog/SimpleCurrentMirror.h
                                     hurricane/analog/SpinBoxParameter.h
@@ -93,6 +97,10 @@
                                     hurricane/analog/TransistorFamilyNames.h
                                     hurricane/analog/Transistor.h
                                     hurricane/analog/TransistorPair.h
+                                    hurricane/analog/MatrixParameter.h
+                                    hurricane/analog/CapacitiesParameter.h
+                                    hurricane/analog/MultiCapacitor.h
+                                    hurricane/analog/Matrix.h
                       )
                    set( pyIncludes  hurricane/analog/PyCapacitorFamily.h
                                     hurricane/analog/PyCapacitorParameter.h
@@ -108,7 +116,7 @@
                                     hurricane/analog/PyLayoutGenerator.h
                                     hurricane/analog/PyLevelShifter.h
                                     hurricane/analog/PyMCheckBoxParameter.h
-                                    hurricane/analog/PyMIMCapacitor.h
+                                    hurricane/analog/PyMultiCapacitor.h
                                     hurricane/analog/PyParameter.h
                                     hurricane/analog/PySimpleCurrentMirror.h
                                     hurricane/analog/PySpinBoxParameter.h
@@ -116,6 +124,8 @@
                                     hurricane/analog/PyTransistorFamily.h
                                     hurricane/analog/PyTransistor.h
                                     hurricane/analog/PyTransistorPair.h
+                                    hurricane/analog/PyMatrixParameter.h
+                                    hurricane/analog/PyCapacitiesParameter.h
                       )
 
                    set( depLibs     viewer

@@ -17,6 +17,7 @@
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/isobar/PyCell.h"
+#include "crlcore/PySystem.h"
 #include "crlcore/PyBanner.h"
 #include "crlcore/PyCatalog.h"
 #include "crlcore/PyCatalogState.h"
@@ -108,6 +109,7 @@ extern "C" {
   DL_EXPORT(void) initCRL () {
     cdebug_log(30,0) << "initCRL()" << endl;
 
+    PySystem_LinkPyType ();
     PyBanner_LinkPyType ();
     PyCatalogState_LinkPyType ();
     PyCatalog_LinkPyType ();
@@ -127,6 +129,7 @@ extern "C" {
     PyLefImport_LinkPyType ();
     PyDefImport_LinkPyType ();
 
+    PYTYPE_READY ( System );
     PYTYPE_READY ( Banner );
     PYTYPE_READY ( CatalogState );
     PYTYPE_READY ( Catalog );
@@ -165,6 +168,8 @@ extern "C" {
       return;
     }
 
+    Py_INCREF ( &PyTypeSystem );
+    PyModule_AddObject ( module, "System", (PyObject*)&PyTypeSystem );
     Py_INCREF ( &PyTypeBanner );
     PyModule_AddObject ( module, "Banner", (PyObject*)&PyTypeBanner );
     Py_INCREF ( &PyTypeCatalog );

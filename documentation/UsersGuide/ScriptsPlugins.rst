@@ -35,8 +35,9 @@ in |Python|, so don't hesitate to use any package or extension.
 
 Small example of Python/Stratus script: ::
 
-    from Hurricane import *
-    from Stratus   import *
+    import symbolic.cmos
+    from   Hurricane import *
+    from   Stratus   import *
 
     def doSomething ():
         # ...
@@ -68,9 +69,16 @@ This typical script can be executed in two ways:
 
    part (this is standart |Python|). It is a simple adapter that will
    call  :cb:`ScriptMain()`.
+
+   In this case, the ``import symbolic.cmos`` statement at the begining
+   is mandatory.
+
 #. Through |cgt|, either in text or graphical mode. In that case, the
    :cb:`ScriptMain()` is directly called trough a sub-interpreter.
    The arguments of the script are passed through the ``**kw`` dictionnary.
+
+   In this case, the ``import symbolic.cmos`` statement at the begining
+   may be omitted.
    
    +----------------------+-----------------------------------------------+
    | \*\*kw Dictionnary                                                   |
@@ -122,10 +130,8 @@ and below only symbolic layer.
 
 The designer must provide a configuration file that defines the rules for the
 placement of the top-level hierarchy (that is, the pads and the core).
-This file must be named after the chip's name, by appending ``_ioring.py``
-(obviously, it is a |Python| file). For instance if the chip netlist file
-is called ``amd2901.vst``, then the configuration file must be named
-``amd2901_ioring.vst``.
+This file must be names ``ioring.py`` and put into the user's configuration
+directory ``./coriolis2/``
 
 Example of chip placement configuration file (for ``AM2901``): ::
 
@@ -190,27 +196,27 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 +===================================+==================+============================+
 | **Chip Plugin Parameters**                                                        |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.count``         | TypeInt          | :cb:`5`                    |
+|``chip.block.rails.count``         | ``Int``          | :cb:`5`                    |
 |                                   +------------------+----------------------------+
 |                                   | The minimum number of rails around the core   |
 |                                   | block. Must be odd and above 5.               |
 |                                   | One rail for the clock and at least two pairs |
 |                                   | of power/grounds                              |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.hWidth``        | TypeInt          | :cb:`12` |lambda|          |
+|``chip.block.rails.hWidth``        | ``Int``          | :cb:`12` |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The horizontal width of the rails             |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.vWidth``        | TypeInt          | :cb:`12` |lambda|          |
+|``chip.block.rails.vWidth``        | ``Int``          | :cb:`12` |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The vertical width of the rails               |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.hSpacing``      | TypeInt          | :cb:`6`  |lambda|          |
+|``chip.block.rails.hSpacing``      | ``Int``          | :cb:`6`  |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The spacing, *edge to edge* of two adjacent   |
 |                                   | horizontal rails                              |
 +-----------------------------------+------------------+----------------------------+
-|``chip.block.rails.vSpacing``      | TypeInt          | :cb:`6`  |lambda|          |
+|``chip.block.rails.vSpacing``      | ``Int``          | :cb:`6`  |lambda|          |
 |                                   +------------------+----------------------------+
 |                                   | The spacing, *edge to edge* of two adjacent   |
 |                                   | vertical rails                                |
@@ -278,12 +284,12 @@ Configuration parameters, defaults are defined in ``etc/coriolis2/<STECHNO>/plug
 +===================================+==================+============================+
 | **ClockTree Plugin Parameters**                                                   |
 +-----------------------------------+------------------+----------------------------+
-|``clockTree.minimumSide``          | TypeInt          | :cb:`300` |lambda|         |
+|``clockTree.minimumSide``          | ``Int``          | :cb:`300` |lambda|         |
 |                                   +------------------+----------------------------+
 |                                   | The minimum size below which the clock tree   |
 |                                   | will stop to perform quadri-partitions        |
 +-----------------------------------+------------------+----------------------------+
-|``clockTree.buffer``               | TypeString       | :cb:`buf_x2`               |
+|``clockTree.buffer``               | ``String``       | :cb:`buf_x2`               |
 |                                   +------------------+----------------------------+
 |                                   | The buffer model to use to drive sub-nets     |
 +-----------------------------------+------------------+----------------------------+

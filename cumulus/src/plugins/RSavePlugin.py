@@ -58,7 +58,11 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
   if depth == 0: print '  o  Recursive Save-Cell.'
 
   sviews = ''
-  if views & CRL.Catalog.State.Logical:  sviews += 'netlist'
+  if views & CRL.Catalog.State.Logical:
+    sviews += 'netlist'
+    if views & CRL.Catalog.State.VstUseConcat:
+      if sviews: sviews += ','
+      sviews += 'VST uses &'
   if views & CRL.Catalog.State.Physical:
     if sviews: sviews += ','
     sviews += 'layout'
@@ -89,7 +93,6 @@ def unicornHook ( **kw ):
 
 def ScriptMain ( **kw ):
   try:
-    helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )
 
     cell, editor = plugins.kwParseMain( **kw )

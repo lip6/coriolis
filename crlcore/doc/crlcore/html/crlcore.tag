@@ -1254,21 +1254,21 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>size_t</type>
       <name>append</name>
       <anchorfile>classCRL_1_1SearchPath.html</anchorfile>
       <anchor>af358bdb1e940f08137f887f70eb641e3</anchor>
       <arglist>(const std::string &amp;path, const std::string &amp;name=&quot;&quot;)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>size_t</type>
       <name>prepend</name>
       <anchorfile>classCRL_1_1SearchPath.html</anchorfile>
       <anchor>af39d78a63d880e90ae6f947abf1fe322</anchor>
       <arglist>(const std::string &amp;path, const std::string &amp;name=&quot;&quot;)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>size_t</type>
       <name>replace</name>
       <anchorfile>classCRL_1_1SearchPath.html</anchorfile>
       <anchor>a6cd1524e1048f246682cd5ef40145d67</anchor>

@@ -259,7 +259,7 @@ extern "C" {
         if ( (__cs.getObjectIds() == ":layer:int") and (PYBASICLAYER_O(arg0)) )
           rvalue = layer->getEnclosure( PYBASICLAYER_O(arg0), PyAny_AsLong(arg1) );
         else if  ( __cs.getObjectIds() == ":int" )
-          rvalue = layer->getEnclosure( PyAny_AsLong(arg1) );
+          rvalue = layer->getEnclosure( PyAny_AsLong(arg0) );
         else {
           string message = "invalid parameter type for Layer.getEnclosure() (\"" 
                          + __cs.getObjectIds() + "\")";
@@ -321,6 +321,7 @@ extern "C" {
   accessorMaskFromVoid        (                          getMask          ,PyLayer,Layer)
   accessorMaskFromVoid        (                          getExtractMask   ,PyLayer,Layer)
   accessorLayerFromVoid       (                          getBlockageLayer ,PyLayer,Layer)
+  accessorLayerFromVoid       (                          getCut           ,PyLayer,Layer)
   accessorLayerFromVoid       (                          getTop           ,PyLayer,Layer)
   accessorLayerFromVoid       (                          getBottom        ,PyLayer,Layer)
   accessorLayerFromLayer      (                          getOpposite      ,PyLayer,Layer)
@@ -360,6 +361,8 @@ extern "C" {
                               , "Returns the collection of BasicLayer the Layer is built upon." }
     , { "getBlockageLayer"    , (PyCFunction)PyLayer_getBlockageLayer    , METH_NOARGS
                               , "Returns the associated connector layer." }
+    , { "getCut"              , (PyCFunction)PyLayer_getCut              , METH_NOARGS
+                              , "Returns the cut layer (in case of a muti-layer Contact)." }
     , { "getTop"              , (PyCFunction)PyLayer_getTop              , METH_NOARGS
                               , "Returns the top layer (in case of a muti-layer)." }
     , { "getBottom"           , (PyCFunction)PyLayer_getBottom           , METH_NOARGS

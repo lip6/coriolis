@@ -195,7 +195,7 @@ class Inst :
       self._hur_masterCell = FRAMEWORK.getCell ( model, CRL.Catalog.State.Views )
 
     if not self._hur_masterCell :
-      err = "\n[Stratus ERROR] HurricanePlug : Problem of master cell " + model + ".\nCheck model name and/or .environment.alliance.xml configuration file.\n"
+      err = '[ERROR] stratus.create_hur_inst(): Framework unable to load master cell "%s".' % model
       raise Exception ( err )
 
     if not self._st_masterCell :
@@ -311,14 +311,14 @@ class Inst :
         else :
           hurNet = realNet._hur_net[i]
 
-        if mapNet._arity == 1:
-          tempNet = self._hur_masterCell.getNet ( pin.lower() )
-        else:
-          tempNet = self._hur_masterCell.getNet ( pin.lower() + "(" + str(j+lsb) + ")" )
+        if mapNet._arity == 1: hurNetName = pin.lower()
+        else:                  hurNetName = pin.lower() + "(" + str(j+lsb) + ")"
         j += 1
+
+        tempNet = self._hur_masterCell.getNet ( hurNetName )
       
         if not ( tempNet ) :
-          err = "\n[Stratus ERROR] Inst : Problem in map. Check that the arities of your nets are correct.\n"
+          err = '[ERROR] stratus.Inst(): Problem in map. Check that the arities of your nets are correct ("%s").' % hurNetName
           raise Exception ( err )
         
         plug = self._hur_instance.getPlug ( tempNet )

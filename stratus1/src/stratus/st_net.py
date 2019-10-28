@@ -951,9 +951,9 @@ class net :
       elif self._direct ==  "UNKNOWN" : net.setDirection ( Net.Direction.UNDEFINED )
       
     if '_h_type' in self.__dict__ :
-      if   self._h_type ==  "POWER" : net.setType ( Net.Type.POWER  )
-      elif self._h_type == "GROUND" : net.setType ( Net.Type.GROUND )
-      elif self._h_type ==  "CLOCK" : net.setType ( Net.Type.CLOCK  )
+      if   self._h_type ==  "POWER" : net.setType ( Net.Type.POWER  ); net.setGlobal( True )
+      elif self._h_type == "GROUND" : net.setType ( Net.Type.GROUND ); net.setGlobal( True )
+      elif self._h_type ==  "CLOCK" : net.setType ( Net.Type.CLOCK  ); net.setGlobal( True )
     
     self._hur_net += [net]
 

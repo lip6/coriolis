@@ -26,6 +26,7 @@
 
 
 .. Acronyms & names.
+.. |NDA|                            replace:: :sc:`nda`
 .. |OS|                             replace:: :sc:`os`
 .. |GNU|                            replace:: :sc:`gnu`
 .. |LGPL|                           replace:: :sc:`lgpl`

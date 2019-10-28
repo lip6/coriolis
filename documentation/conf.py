@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Coriolis'
-copyright = u'2000-2018, UPMC'
+copyright = u'2000-2019, Sorbonne Université'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

@@ -73,6 +73,10 @@ namespace Hurricane {
   { return NULL; }
 
 
+  const Layer* Layer::getCut () const
+  { return NULL; } 
+
+
   const Layer* Layer::getTop () const
   { return NULL; } 
 

@@ -198,6 +198,19 @@ namespace Anabatic {
   }
 
 
+  void  AutoContact::updateLayer ()
+  {
+    size_t minDepth = (size_t)-1;
+    size_t maxDepth = 0;
+
+    getDepthSpan( minDepth, maxDepth );
+    if (minDepth == maxDepth)
+      setLayer( Session::getRoutingGauge()->getRoutingLayer(minDepth) );
+    else
+      setLayer( Session::getRoutingGauge()->getContactLayer(minDepth) );
+  }
+
+
   void  AutoContact::getLengths ( DbU::Unit* lengths, AutoSegment::DepthLengthSet& processeds )
   {
     DbU::Unit hSideLength = getGCell()->getSide( Flags::Horizontal ).getSize();
