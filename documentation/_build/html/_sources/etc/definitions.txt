@@ -118,6 +118,7 @@
 .. |devtoolset|                     replace:: :cb:`devtoolset`
 .. |boost|                          replace:: :cb:`boost`
 .. |Qt|                             replace:: :sc:`qt`
+.. |Qwt|                            replace:: :sc:`qwt`
 .. |PyQt|                           replace:: :sc:`PyQt`
 .. |PyQt4|                          replace:: :sc:`PyQt4`
 .. |PyQt5|                          replace:: :sc:`PyQt5`

@@ -18,19 +18,38 @@
 try:
   import sys
   import traceback
-  from   PyQt4.QtCore import Qt
-  from   PyQt4.QtCore import QEventLoop
-  from   PyQt4.QtGui  import QDialog
-  from   PyQt4.QtGui  import QPalette
-  from   PyQt4.QtGui  import QColor
-  from   PyQt4.QtGui  import QFont
-  from   PyQt4.QtGui  import QWidget
-  from   PyQt4.QtGui  import QFrame
-  from   PyQt4.QtGui  import QLabel
-  from   PyQt4.QtGui  import QVBoxLayout
-  from   PyQt4.QtGui  import QAction
-  from   PyQt4.QtGui  import QKeySequence
-  from   PyQt4.QtGui  import QApplication
+  try:
+    from PyQt4.QtCore import Qt
+    from PyQt4.QtCore import QEventLoop
+    from PyQt4.QtGui  import QDialog
+    from PyQt4.QtGui  import QPalette
+    from PyQt4.QtGui  import QColor
+    from PyQt4.QtGui  import QFont
+    from PyQt4.QtGui  import QWidget
+    from PyQt4.QtGui  import QFrame
+    from PyQt4.QtGui  import QLabel
+    from PyQt4.QtGui  import QVBoxLayout
+    from PyQt4.QtGui  import QAction
+    from PyQt4.QtGui  import QKeySequence
+    from PyQt4.QtGui  import QApplication
+  except:
+    try:
+      from PyQt5.QtCore    import Qt
+      from PyQt5.QtCore    import QEventLoop
+      from PyQt5.QtWidgets import QDialog
+      from PyQt5.QtGui     import QPalette
+      from PyQt5.QtGui     import QColor
+      from PyQt5.QtGui     import QFont
+      from PyQt5.QtWidgets import QWidget
+      from PyQt5.QtWidgets import QFrame
+      from PyQt5.QtWidgets import QLabel
+      from PyQt5.QtWidgets import QVBoxLayout
+      from PyQt5.QtWidgets import QAction
+      from PyQt5.QtGui     import QKeySequence
+      from PyQt5.QtWidgets import QApplication
+    except:
+      print '[ERROR] AboutWindow: Neither PyQt4 nor PyQt5 is available.'
+      sys.exit( 1 )
   import Viewer
   import helpers
   from   helpers.io   import ErrorMessage

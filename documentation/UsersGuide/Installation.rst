@@ -32,7 +32,7 @@ Main building prerequisites:
 * yacc & lex
 * Qt 4 or Qt 5
 * PyQt 4 or PyQt 5
-* Qwt
+* Qwt 6
 
 Building documentation prerequisites:
 
@@ -48,6 +48,29 @@ The following libraries get directly bundled with |Coriolis|:
 For other distributions, refer to their own packaging system.
 
 
+Cross Dependencies Issues
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is a difficult tangle of dependencies between |Python|, |Qt|, |Qwt| and |PyQt|,
+the requirements are:
+
+* A |Python| 2.7.
+* |Qt|, either 4 or 5.
+* |Qwt| version 6, compiled against the relevant |Qt| version.
+* |PyQt|, version 4 or 5, according to the choosen |Qt|.
+
+Problems arise because:
+
+* Under |RHEL| 7 or clones, there is no compatible |PyQt5| build compatible with their
+  |Qt| 5 version (we fall short of one minor, they provides |Qt| 5.9 were we need at
+  least |Qt| 5.10). So we have to stick to |Qt| 4 on those platforms.
+
+  Fortunately we can build a |Qwt| 6 with |Qt| 4.
+
+* Under |Debian| or |Ubuntu| there is no |Qwt| 6 build against |Qt| 4, so we have to
+  use |Qt| 5 and |PyQt| 5.
+
+
 Fixed Directory Tree
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -57,6 +80,8 @@ follow it exactly. The tree is relative to the home directory of the user
 building it (note :fboxtt:`~/` or :fboxtt:`$HOME/`). Only the source
 directory needs to be manually created by the user, all others will be
 automatically created either by |ccb| or the build system.
+
+|newpage|
 
 +--------------------------------------------------------------------------------------------------------------+
 | **Sources**                                                                                                  |
@@ -113,12 +138,6 @@ The |Coriolis| |git| repository is https://www-soc.lip6.fr/git/coriolis.git
 .. note::
    Again, the **devel_anabatic** branch is now closed. Please revert to **devel**
    or **master**.
-
-.. note::
-   As it is now possible to mix |PyQt| widget with |Coriolis| ones, it is simpler
-   for us to revert to |Qt| 4 only. Our reference |OS| being |RHEL| 7, there is no
-   compatible |PyQt5| build compatible with their |Qt| 5 version (we fall short of
-   one minor, they provides |Qt| 5.9 were we need at least |Qt| 5.10).
 
 .. note::
    Under |RHEL| 7 or clones, they upgraded their version of |Qt| 4 (from 4.6 to 4.8)
@@ -244,8 +263,6 @@ As |cgt| is a |Python| script, the right command to run |gdb| is: ::
 ..   Be aware that it may require newer versions of the dependencies and may introduce
 ..   incompatibilities with the stable version.
 
-|newpage|
-
 
 Installing on |Debian| 9, |Ubuntu| 18 or compatible distributions
 -----------------------------------------------------------------
@@ -256,8 +273,8 @@ First, install or check that the required prerequisites are installed : ::
                                       git cmake bison flex gcc python-dev              \
                                       libboost-all-dev libboost-python-dev             \
                                       libbz2-dev libxml2-dev rapidjson-dev libbz2-dev  \
-				      qt4-dev-tools libqwt5-qt4-dev                    \ # Qt 4
 				      qtbase5-dev libqt5svg5-dev libqwt-qt5-dev        \ # Qt 5
+                                      python-pyqt5                                     \
                                       doxygen dvipng graphviz python-sphinx            \
                                       texlive-fonts-extra texlive-lang-french
 
@@ -271,7 +288,7 @@ Third and final step, build & install: ::
 
    dummy@lepka:src> cd coriolis
    dummy@lepka:coriolis> git checkout devel
-   dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis \
+   dummy@lepka:coriolis> ./bootstrap/ccb.py --project=coriolis --qt5 \
                                             --make="-j4 install"
 
 

@@ -91,6 +91,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="DesignFlow.html">Complete Design Flow &amp; Examples</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cross-dependencies-issues">Cross Dependencies Issues</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fixed-directory-tree">Fixed Directory Tree</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#building-coriolis">Building Coriolis</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#the-actively-developed-branch">The actively developed branch</a></li>
@@ -528,7 +529,7 @@ If you really want to re-generate it, add the <code class="docutils literal"><sp
 <li>yacc &amp; lex</li>
 <li>Qt 4 or Qt 5</li>
 <li>PyQt 4 or PyQt 5</li>
-<li>Qwt</li>
+<li>Qwt 6</li>
 </ul>
 <p>Building documentation prerequisites:</p>
 <ul class="simple">
@@ -542,6 +543,28 @@ If you really want to re-generate it, add the <code class="docutils literal"><sp
 <li>FLUTE (from <a class="reference external" href="http://home.eng.iastate.edu/~cnchu/flute.html">Chris C. N. Chu</a>)</li>
 </ul>
 <p>For other distributions, refer to their own packaging system.</p>
+<div class="section" id="cross-dependencies-issues">
+<h2>Cross Dependencies Issues<a class="headerlink" href="#cross-dependencies-issues" title="Permalink to this headline">¶</a></h2>
+<p>There is a difficult tangle of dependencies between <span class="sc">Python</span>, <span class="sc">qt</span>, <span class="sc">qwt</span> and <span class="sc">PyQt</span>,
+the requirements are:</p>
+<ul class="simple">
+<li>A <span class="sc">Python</span> 2.7.</li>
+<li><span class="sc">qt</span>, either 4 or 5.</li>
+<li><span class="sc">qwt</span> version 6, compiled against the relevant <span class="sc">qt</span> version.</li>
+<li><span class="sc">PyQt</span>, version 4 or 5, according to the choosen <span class="sc">qt</span>.</li>
+</ul>
+<p>Problems arise because:</p>
+<ul>
+<li><p class="first">Under <span class="sc">rhel</span> 7 or clones, there is no compatible <span class="sc">PyQt5</span> build compatible with their
+<span class="sc">qt</span> 5 version (we fall short of one minor, they provides <span class="sc">qt</span> 5.9 were we need at
+least <span class="sc">qt</span> 5.10). So we have to stick to <span class="sc">qt</span> 4 on those platforms.</p>
+<p>Fortunately we can build a <span class="sc">qwt</span> 6 with <span class="sc">qt</span> 4.</p>
+</li>
+<li><p class="first">Under <span class="sc">Debian</span> or <span class="sc">Ubuntu</span> there is no <span class="sc">qwt</span> 6 build against <span class="sc">qt</span> 4, so we have to
+use <span class="sc">qt</span> 5 and <span class="sc">PyQt</span> 5.</p>
+</li>
+</ul>
+</div>
 <div class="section" id="fixed-directory-tree">
 <h2>Fixed Directory Tree<a class="headerlink" href="#fixed-directory-tree" title="Permalink to this headline">¶</a></h2>
 <p>In order to simplify the work of the <span class="cb">ccb</span> installer, the source, build
@@ -550,6 +573,7 @@ follow it exactly. The tree is relative to the home directory of the user
 building it (note <span class="fboxtt">~/</span> or <span class="fboxtt">$HOME/</span>). Only the source
 directory needs to be manually created by the user, all others will be
 automatically created either by <span class="cb">ccb</span> or the build system.</p>
+<p></p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="28%" />
@@ -646,13 +670,6 @@ scheme where <strong>master</strong> is the stable version and <strong>devel</st
 <p class="first admonition-title">Note</p>
 <p class="last">Again, the <strong>devel_anabatic</strong> branch is now closed. Please revert to <strong>devel</strong>
 or <strong>master</strong>.</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">As it is now possible to mix <span class="sc">PyQt</span> widget with <span class="sc">Coriolis</span> ones, it is simpler
-for us to revert to <span class="sc">qt</span> 4 only. Our reference <span class="sc">os</span> being <span class="sc">rhel</span> 7, there is no
-compatible <span class="sc">PyQt5</span> build compatible with their <span class="sc">qt</span> 5 version (we fall short of
-one minor, they provides <span class="sc">qt</span> 5.9 were we need at least <span class="sc">qt</span> 5.10).</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -761,7 +778,6 @@ a debug one which allows forensic examination by <span class="cb">gdb</span> (or
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">work</span><span class="o">&gt;</span> <span class="n">gdb</span> <span class="n">python</span> <span class="n">core</span><span class="o">.</span><span class="n">XXXX</span>
 </pre></div>
 </div>
-<p></p>
 </div>
 <div class="section" id="installing-on-debian-9-ubuntu-18-or-compatible-distributions">
 <h3>Installing on <span class="sc">Debian</span> 9, <span class="sc">Ubuntu</span> 18 or compatible distributions<a class="headerlink" href="#installing-on-debian-9-ubuntu-18-or-compatible-distributions" title="Permalink to this headline">¶</a></h3>
@@ -770,8 +786,8 @@ a debug one which allows forensic examination by <span class="cb">gdb</span> (or
                                    <span class="n">git</span> <span class="n">cmake</span> <span class="n">bison</span> <span class="n">flex</span> <span class="n">gcc</span> <span class="n">python</span><span class="o">-</span><span class="n">dev</span>              \
                                    <span class="n">libboost</span><span class="o">-</span><span class="nb">all</span><span class="o">-</span><span class="n">dev</span> <span class="n">libboost</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">dev</span>             \
                                    <span class="n">libbz2</span><span class="o">-</span><span class="n">dev</span> <span class="n">libxml2</span><span class="o">-</span><span class="n">dev</span> <span class="n">rapidjson</span><span class="o">-</span><span class="n">dev</span> <span class="n">libbz2</span><span class="o">-</span><span class="n">dev</span>  \
-                                   <span class="n">qt4</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">tools</span> <span class="n">libqwt5</span><span class="o">-</span><span class="n">qt4</span><span class="o">-</span><span class="n">dev</span>                    \ <span class="c1"># Qt 4</span>
                                    <span class="n">qtbase5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqt5svg5</span><span class="o">-</span><span class="n">dev</span> <span class="n">libqwt</span><span class="o">-</span><span class="n">qt5</span><span class="o">-</span><span class="n">dev</span>        \ <span class="c1"># Qt 5</span>
+                                   <span class="n">python</span><span class="o">-</span><span class="n">pyqt5</span>                                     \
                                    <span class="n">doxygen</span> <span class="n">dvipng</span> <span class="n">graphviz</span> <span class="n">python</span><span class="o">-</span><span class="n">sphinx</span>            \
                                    <span class="n">texlive</span><span class="o">-</span><span class="n">fonts</span><span class="o">-</span><span class="n">extra</span> <span class="n">texlive</span><span class="o">-</span><span class="n">lang</span><span class="o">-</span><span class="n">french</span>
 </pre></div>
@@ -785,7 +801,7 @@ a debug one which allows forensic examination by <span class="cb">gdb</span> (or
 <p>Third and final step, build &amp; install:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">src</span><span class="o">&gt;</span> <span class="n">cd</span> <span class="n">coriolis</span>
 <span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">coriolis</span><span class="o">&gt;</span> <span class="n">git</span> <span class="n">checkout</span> <span class="n">devel</span>
-<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">coriolis</span><span class="o">&gt;</span> <span class="o">./</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">ccb</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">coriolis</span> \
+<span class="n">dummy</span><span class="nd">@lepka</span><span class="p">:</span><span class="n">coriolis</span><span class="o">&gt;</span> <span class="o">./</span><span class="n">bootstrap</span><span class="o">/</span><span class="n">ccb</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">project</span><span class="o">=</span><span class="n">coriolis</span> <span class="o">--</span><span class="n">qt5</span> \
                                          <span class="o">--</span><span class="n">make</span><span class="o">=</span><span class="s2">&quot;-j4 install&quot;</span>
 </pre></div>
 </div>
@@ -872,7 +888,7 @@ infinite loop if it&#8217;s called again in, say <span class="cb">~/.bashrc</spa
       <tr>
         <td class="LFooter"><small>
           Generated by <a href="http://sphinx-doc.org/">Sphinx</a>
-          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 28, 2019.
+          using a <a href="https://readthedocs.org">RTD</a> theme on Oct 30, 2019.
         </small></td>
         <td class="RFooter"></td>
       </tr>
