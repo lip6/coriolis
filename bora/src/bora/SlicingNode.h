@@ -253,9 +253,6 @@ namespace Bora {
       virtual        double             getOccupationArea            () const;
       virtual        void               setNFing                     ( int );
       virtual        int                getNFing                     () const;
-      virtual        double             getStartParameter            () const;
-      virtual        double             getStepParameter             () const;
-      virtual        double             getCountParameter            () const;
       virtual        Instance*          getInstance                  () const;
       virtual        void               setInstance                  ( Instance* );
       virtual        bool               checkCellInstances           ( Cell* );

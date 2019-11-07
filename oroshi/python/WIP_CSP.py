@@ -84,11 +84,11 @@ def layout ( device, bbMode ):
     stack.doLayout  ( bbMode )
 
     paramsMatrix = ParamsMatrix.ParamsMatrix()
-    paramsMatrix.setGlobalParams( oroshi.toUnity(stack.w)
-                                , oroshi.toUnity(stack.L)
-                                , device.getM()
-                                , stack.boundingBox
-                                )
+    paramsMatrix.setGlobalTransistorParams( oroshi.toUnity(stack.w)
+                                          , oroshi.toUnity(stack.L)
+                                          , device.getM()
+                                          , stack.boundingBox
+                                          )
     paramsMatrix.setStacks( [ stack ] )
     trace( 100, '++' )
     paramsMatrix.trace()

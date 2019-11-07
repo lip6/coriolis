@@ -20,7 +20,6 @@ from   helpers    import trace
 from   Analog     import Device
 import oroshi
 
-helpers.staticInitialization( quiet=True )
 #helpers.setTraceLevel( 100 )
 
 def traceMT ( mt ):

@@ -33,10 +33,17 @@
 #include <vector>
 #include "hurricane/DbU.h"
 #include "bora/Constants.h"
+namespace Hurricane {
+  class Cell;
+}
+namespace CRL {
+  class RoutingGauge;
+}
 
 namespace Bora {
 
   using Hurricane::DbU;
+  using Hurricane::Cell;
 
 
 // -------------------------------------------------------------------
@@ -62,6 +69,7 @@ namespace Bora {
       virtual        double                getOccupationArea () const;
       virtual const  std::vector<BoxSet*>& getSet            () const;
       virtual        int                   getNFing          () const;
+      virtual        size_t                getIndex          () const;
       virtual        void                  print             () const;
       virtual        double                getDevicesArea    () const = 0;
       virtual        void                  setHeight         ( DbU::Unit );
@@ -179,29 +187,31 @@ namespace Bora {
   class DBoxSet: public BoxSet
   {
     protected:
-                                   DBoxSet        ( DbU::Unit height, DbU::Unit width, int nfing );
+                                   DBoxSet        ( DbU::Unit height, DbU::Unit width, size_t index );
                                    DBoxSet        ( DBoxSet* boxSet );
                                   ~DBoxSet        ();
     public:   
-      static         DBoxSet*      create         ( DbU::Unit height, DbU::Unit width, int nfing=1 );
+      static         DBoxSet*      create         ( Cell* , int index, CRL::RoutingGauge* rg=NULL );
                      DBoxSet*      clone          ();
               inline unsigned int  getType        () const;
               inline double        getDevicesArea () const;
+              inline size_t        getIndex       () const;
               inline int           getNFing       () const;
       static  inline int           getCount       ();
       static  inline void          printCount     ();
       static  inline void          printCountAll  ();
                      void          destroy        ();
     private:
-             int  _nfing;    
-      static int  _count;
-      static int  _countAll;
+             size_t  _index;    
+      static int     _count;
+      static int     _countAll;
   };
 
 
   inline unsigned int DBoxSet::getType        () const { return DeviceSNode; }
   inline double       DBoxSet::getDevicesArea () const { return _height*_width; }
-  inline int          DBoxSet::getNFing       () const { return _nfing; }
+  inline int          DBoxSet::getNFing       () const { return _index; }
+  inline size_t       DBoxSet::getIndex       () const { return _index; }
   inline int          DBoxSet::getCount       ()       { return _count; }
   inline void         DBoxSet::printCount     ()       { std::cerr << "DBoxSet::Count           = " << _count    << std::endl; }
   inline void         DBoxSet::printCountAll  ()       { std::cerr << "DBoxSet::CountAll        = " << _countAll << std::endl; }

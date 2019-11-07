@@ -80,7 +80,7 @@ namespace Bora {
     : Super()
     , _parent  (NULL)
     , _flags   (0)
-    , _nodeSets(NodeSets::create( NULL, 0.0, 0.0, 0.0 ))
+    , _nodeSets(NodeSets::create( NULL, NULL))
     , _x       (0)
     , _y       (0)
     , _boxSet  (NULL)
@@ -820,27 +820,6 @@ namespace Bora {
   {
     cerr << Error( "SlicingNode::getNFing(): Base class method must never be called." ) << endl;
     return 0;
-  }
-
-  
-  double  SlicingNode::getStartParameter () const
-  {
-    cerr << Error( "SlicingNode::getStartParameter(): Base class method must never be called." ) << endl;
-    return 0.0;
-  }
-
-  
-  double  SlicingNode::getStepParameter () const
-  {
-    cerr << Error( "SlicingNode::getStepParameter(): Base class method must never be called." ) << endl;
-    return 0.0;
-  }
-
-  
-  double  SlicingNode::getCountParameter () const
-  {
-    cerr << Error( "SlicingNode::getCountParameter(): Base class method must never be called." ) << endl;
-    return 0.0;
   }
 
   

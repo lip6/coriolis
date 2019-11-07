@@ -69,11 +69,11 @@ def layout ( device, bbMode ):
       stack.setWirings( wirings.format( **diffMap ) )
       stack.doLayout  ( bbMode )
       
-      paramsMatrix.setGlobalParams( oroshi.toUnity(stack.w)
-                                  , oroshi.toUnity(stack.L)
-                                  , device.getM()
-                                  , stack.boundingBox
-                                  )
+      paramsMatrix.setGlobalTransistorParams( oroshi.toUnity(stack.w)
+                                            , oroshi.toUnity(stack.L)
+                                            , device.getM()
+                                            , stack.boundingBox
+                                            )
       paramsMatrix.setStacks( [ stack ] )
       trace( 100, '++' )
       paramsMatrix.trace()

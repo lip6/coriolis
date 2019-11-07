@@ -63,9 +63,6 @@ namespace Bora {
                     void          destroy                   ();
                     void          preRecursiveDestroy       ();
                     void          recursiveDestroy          ();
-                    double        getStartParameter         () const;
-                    double        getStepParameter          () const;
-                    double        getCountParameter         () const;
                     bool          checkInitialPlacement     ( int& cpt ) const;// see notes in .cpp
                     void          setGCell                  ( Anabatic::GCell* );
                     bool          isSame                    ( SlicingNode* ) const;    

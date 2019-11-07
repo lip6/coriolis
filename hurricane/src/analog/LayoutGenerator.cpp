@@ -36,44 +36,13 @@ namespace Analog {
 
 
 // -------------------------------------------------------------------
-// Class  :  "::LayoutGenerator::Logger".
-
-  LayoutGenerator::Logger::Logger ( LayoutGenerator* generator )
-    : _generator(generator)
-  { }
-  
-  
-  LayoutGenerator::Logger::~Logger ()
-  { }
-  
-  
-  void  LayoutGenerator::Logger::popStatus ( const string& text )
-  {
-    if (_generator->getVerboseLevel() >= LayoutGenerator::Verbose)
-      cerr << text << endl;
-  }
-
-
-  void  LayoutGenerator::Logger::popError ( const string& text )
-  { cerr << text << endl; }
-
-
-  void  LayoutGenerator::Logger::popScriptError ()
-  {
-    string scriptError = "! An error occured while creating layout. Please check the python console for more information.";
-    cerr << scriptError << endl;
-  }
-
-
-// -------------------------------------------------------------------
 // Class  :  "::LayoutGenerator".
 
   int  LayoutGenerator::_verboseLevel  = LayoutGenerator::Debug;
   
   
   LayoutGenerator::LayoutGenerator ()
-    : _logger   (NULL)
-    , _device   (NULL)
+    : _device   (NULL)
     , _box      (NULL)
     , _activeBox(NULL)
     , _matrix   ()
@@ -81,33 +50,34 @@ namespace Analog {
   {
     _activeBox = new Hurricane::Box();
     _script    = Script::create();
-    setLogger ( new Logger(this) );
   }
   
   
   LayoutGenerator::~LayoutGenerator ()
   {
     if (_script) _script->destroy();
-    if (_logger) delete _logger;
   }
   
   
   bool  LayoutGenerator::checkScript()
   {
     if (not _device) {
-      popError( "Try to check for script but device does not exist." );
+      cerr << Error( "LayoutGenerator::checkScript(): No device loaded in the generator yet." ) << endl;
       return false;
     }
   
     FILE* fs = fopen( _device->getLayoutScript().c_str(), "r" );
     if (not fs) {
       perror( NULL );
-      popError( "Cannot load script : file does not exist or bad access rights." );
+      cerr << Error( "LayoutGenerator::checkScript(): Unable to find/open layout script of device \"%s\".\n"
+                     "(\"%s\")"
+                   , getString(_device->getName()).c_str()
+                   , _device->getLayoutScript().c_str()
+                   );
       return false;
     }
   
     fclose( fs );
-    popStatus( _device->getLayoutScript()+" found." );
     return true;
   }
   
@@ -115,14 +85,14 @@ namespace Analog {
   bool  LayoutGenerator::checkFunctions()
   {
     if (not _script->getFunction("checkCoherency")) {
-      cerr << Error( "LayoutGenerator::drawLayout(): Module <%s> miss checkCoherency()."
+      cerr << Error( "LayoutGenerator::drawLayout(): Module \"%s\" miss checkCoherency() function."
                    , _script->getUserModuleName().c_str() ) << endl;
       finalize( ShowTimeTag );
       return false;
     }
   
     if (not _script->getFunction("layout")) {
-      cerr << Error( "LayoutGenerator::drawLayout(): Module <%s> miss layout()."
+      cerr << Error( "LayoutGenerator::drawLayout(): Module \"%s\" miss layout() function."
                    , _script->getUserModuleName().c_str() ) << endl;
       finalize( ShowTimeTag );
       return false;
@@ -134,55 +104,37 @@ namespace Analog {
   
   bool  LayoutGenerator::drawLayout ()
   {
-      if (_device == NULL) return false;
+    if (_device == NULL) return false;
   
-    //checkScript();
+    cdebug_log(500,0) << "LayoutGenerator::drawLayout() " << _device->getDeviceName() << endl;
   
-      cdebug_log(500,0) << "LayoutGenerator::drawLayout() " << _device->getDeviceName() << endl;
+    _device->destroyLayout();
   
-      _device->destroyLayout();
+    initialize();
   
-      initialize();
+    if (not _script->getUserModule()) {
+      finalize( ShowTimeTag );
+      cerr << Error( "LayoutGenerator::drawLayout(): Couldn't load module \"%s\"."
+                   , _script->getUserModuleName().c_str() ) << endl;
+      return false;
+    }
   
-      if (not _script->getUserModule()) {
-        finalize( ShowTimeTag );
-        cerr << Error( "LayoutGenerator::drawLayout(): Couldn't load module <%s>"
-                     , _script->getUserModuleName().c_str() ) << endl;
-        return false;
-      }
+    checkFunctions();
   
-      checkFunctions();
-  
-      PyObject* pyArgs = NULL;
-      if (not toPyArguments(pyArgs,NoFlags)) {
-        finalize( ShowTimeTag );
-        return false;
-      }
+    PyObject* pyArgs = NULL;
+    if (not toPyArguments(pyArgs,NoFlags)) {
+      finalize( ShowTimeTag );
+      return false;
+    }
       
-      if (not callCheckCoherency(pyArgs,ShowError)) {
-        return false;
-      }
+    if (not callCheckCoherency(pyArgs,ShowError)) return false;
+    if (not callLayout        (pyArgs)          ) return false;
   
-      if (not callLayout(pyArgs)) {
-        cerr << "Layout failed" << endl; cerr.flush();
-        return false;
-      }
+    _device->setAbutmentBox( getDeviceBox() );
   
-    // Eric passed by here
-    //cerr << "Python driven Layout successfully drawn." << endl;
+    finalize( ShowTimeTag|StatusOk );
   
-      _device->setAbutmentBox( getDeviceBox() );
-  
-      finalize( ShowTimeTag|StatusOk );
-  
-    //string message = _device->checkLayoutOnPhysicalGrid(); 
-    //if (not message.empty())
-    //  popError( message.c_str() );
-      
-    // Eric passed by here
-    //popStatus( "Layout done." );
-  
-      return true;
+    return true;
   }
   
   
@@ -199,10 +151,6 @@ namespace Analog {
     dot = (dot!=string::npos) ? dot : moduleName.size();
     moduleName = moduleName.substr( 0, dot );
   
-  // Eric passed by here
-  //cerr << "Path: " << modulePath << endl;
-  //cerr << "Name: " << moduleName << endl;
-  
     _script->setUserModuleName( moduleName );
     return _script->initialize( Script::NoThrow );
   }
@@ -210,14 +158,6 @@ namespace Analog {
   
   void  LayoutGenerator::finalize ( unsigned int flags )
   {
-    if (flags & ShowTimeTag) {
-      string code = "";
-    // Eric passed by here
-    //if (flags & StatusOk) code = "import time; print ' -- Script SUCCESS2 --', time.strftime('%H:%M:%S',time.localtime())\n";
-      if (flags & StatusOk) code = "";
-      else                  code = "import time; print ' -- Script FAILED --' , time.strftime('%H:%M:%S',time.localtime())\n";
-      PyRun_SimpleString( code.c_str() );
-    }
     _script->finalize();
   }
   
@@ -237,20 +177,29 @@ namespace Analog {
     PyObject* pTupleCheck = _script->callFunction( "checkCoherency", pArgsCheck );
     
     if (not pTupleCheck) {
-      string code = "print ' -- Script FAILED --', time.strftime('%H:%M:%S',time.localtime())\n";
-      PyRun_SimpleString( code.c_str() );
+      cerr << Error( "LayoutGenerator::callCheckCoherency(): An exception may have occured in checkCoherency().\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
       finalize( NoFlags );
-      popScriptError();
       return false;
     }
+
     if ( not PyTuple_Check(pTupleCheck) or (PyTuple_Size(pTupleCheck) != 2) ) {
-      popError( "checkCoherency function must return a tuple: (bool,errorMessage)" );
+      cerr << Error( "LayoutGenerator::callCheckCoherency(): checkCoherency() did not return a tuple (bool,str).\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
       return false;
     }
+
     PyObject* pCheckOk = PyTuple_GetItem( pTupleCheck, 0 );
     if (pCheckOk == Py_False) {
       if (flags & ShowError)
-        popError( string(PyString_AsString(PyTuple_GetItem(pTupleCheck,1))) );
+        cerr << Error( "%s\n        (\"%s\")"
+                     , PyString_AsString(PyTuple_GetItem(pTupleCheck,1))
+                     , _script->getFileName()
+                     ) << endl;
       return false;
     }
     return true;
@@ -261,11 +210,11 @@ namespace Analog {
   {
     _matrix = _script->callFunction( "layout", pArgs );
     if (not _matrix) {
-      string code = "print ' -- Script FAILED --', time.strftime('%H:%M:%S',time.localtime())";
-      PyRun_SimpleString( code.c_str() );
+      cerr << Error( "LayoutGenerator::callLayout(): An exception may have occured in layout().\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
       finalize( NoFlags );
-      popScriptError();
-      cerr << "There was a problem running layout function" << endl;
       return false;
     }
     return true;
@@ -291,54 +240,69 @@ namespace Analog {
   
   Box  LayoutGenerator::getDeviceBox ()
   {
-    PyObject* pBox = getParamValue(getDic(getRow(0), 0), "box");
-    if (pBox == NULL) {
-  	finalize( NoFlags );
-      popError("Layout function did not returned a valid device box 2!");
-  	return Box();
+    PyObject* pyBox = getParamValue(getDic(getRow(0), 0), "box");
+    if (not pyBox) {
+      finalize( NoFlags );
+      cerr << Error( "LayoutGenerator::getDeviceBox(): No \"box\" key in returned dictionary.\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
+      return Box();
     }
   
-    if (pBox->ob_type != &PyTypeBox) {
+    if (not IsPyBox(pyBox)) {
+      cerr << Error( "LayoutGenerator::getDeviceBox(): Value associated with \"box\" key is *not* of Box type.\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
       finalize( NoFlags );
-      popError("Layout function did not returned a valid device box!");
+      return Box();
     }
-    return *((PyBox*)pBox)->_object; //get the hurricane box
+
+    return *PYBOX_O(pyBox);
   }
   
   
   Box  LayoutGenerator::getActiveBox ()
   {
-    PyObject* pBox = getParamValue(getDic(getRow(0), 0), "globalActiveBox");
-    if (!pBox) {
-  	finalize( NoFlags );
-      popError("Layout function did not returned a valid active box 2!");
-  	return Box();
+    PyObject* pyBox = getParamValue( getDic(getRow(0),0), "globalActiveBox" );
+    if (not pyBox) {
+      cerr << Error( "LayoutGenerator::getDeviceBox(): No \"globalActiveBox\" key in returned dictionary.\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
+      finalize( NoFlags );
+      return Box();
     }
   
-    if (pBox->ob_type != &PyTypeBox) {
+    if (not IsPyBox(pyBox)) {
+      cerr << Error( "LayoutGenerator::getDeviceBox(): Value associated with \"globalActiveBox\" key is *not* of Box type.\n"
+                     "        (\"%s\")"
+                   , _script->getFileName()
+                   ) << endl;
       finalize( NoFlags );
-      popError("Layout function did not returned a valid active box!");
     }
-    return *((PyBox*)pBox)->_object; //get the hurricane box
+
+    return *PYBOX_O(pyBox);
   }
   
   
-  double  LayoutGenerator::getParameterValue ( unsigned i, unsigned j, string paramName, bool& ok )
+  double  LayoutGenerator::getParameterValue ( unsigned i, unsigned j, string paramName, bool& found )
   {
-    PyObject* pValue = getParamValue(getDic(getRow(i),j), paramName);
-    if (pValue == NULL){
-      ok = false;
+    PyObject* pyValue = getParamValue( getDic(getRow(i),j), paramName );
+    if (not pyValue){
+      found = false;
       return 0.0;     
     }
-    ok = true; 
-    return (PyFloat_AsDouble(pValue));
+    found = true; 
+    return PyFloat_AsDouble( pyValue );
   }
   
   
   PyObject* LayoutGenerator::getRow ( unsigned i )
   {
-    if (_matrix and PyList_Check(_matrix) == 1 and ((int)i < PyList_Size(_matrix))){
-      return PyList_GetItem(_matrix, i);
+    if (_matrix and (PyList_Check(_matrix) == 1) and ((int)i < PyList_Size(_matrix))) {
+      return PyList_GetItem( _matrix, i );
     } 
     return NULL; 
   }
@@ -346,17 +310,19 @@ namespace Analog {
   
   PyObject* LayoutGenerator::getDic ( PyObject* row, unsigned j )
   {
-    if (row and PyList_Check(row) == 1 and ((int)j < PyList_Size(row))){
-      return PyList_GetItem(row, j);
+    if (row and (PyList_Check(row) == 1) and ((int)j < PyList_Size(row))) {
+      return PyList_GetItem( row, j );
     }
     return NULL;
   }
   
   
-  PyObject* LayoutGenerator::getParamValue ( PyObject* dic, string paramName )
+  PyObject* LayoutGenerator::getParamValue ( PyObject* dict, string paramName )
   {
-    if (dic and (PyDict_Check(dic) == 1) and (PyDict_Contains(dic,PyString_FromString(paramName.c_str()))))
-      return PyDict_GetItemString(dic,paramName.c_str());
+    if (dict
+       and (PyDict_Check(dict) == 1)
+       and (PyDict_Contains(dict,PyString_FromString(paramName.c_str()))) )
+      return PyDict_GetItemString( dict, paramName.c_str() );
     return NULL;
   }
 

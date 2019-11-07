@@ -28,8 +28,10 @@ namespace Analog {
       inline          MatrixParameter ( std::string id, size_t rows=1, size_t columns=1 );
       inline size_t   getRows         () const;
       inline size_t   getColumns      () const;
-      inline size_t   getValue        ( size_t row, size_t column ) const;
-      inline void     setValue        ( size_t row, size_t column, size_t value );
+      inline size_t   getValue        ( size_t row , size_t column  ) const;
+      inline void     setValue        ( size_t row , size_t column  , size_t value );
+      inline void     setMatrix       ( const Matrix* );
+      inline void     resize          ( size_t rows, size_t columns );
     private:
       Matrix  _matrix;
   };
@@ -42,8 +44,10 @@ namespace Analog {
   
   inline size_t  MatrixParameter::getRows    () const { return _matrix.rows   (); }
   inline size_t  MatrixParameter::getColumns () const { return _matrix.columns(); }
-  inline size_t  MatrixParameter::getValue   ( size_t row, size_t column ) const { return _matrix.at(row,column); }
-  inline void    MatrixParameter::setValue   ( size_t row, size_t column, size_t value  ) { _matrix.at(row,column) = value; }
+  inline size_t  MatrixParameter::getValue   ( size_t row , size_t column  ) const { return _matrix.at(row,column); }
+  inline void    MatrixParameter::setValue   ( size_t row , size_t column  , size_t value ) { _matrix.at(row,column) = value; }
+  inline void    MatrixParameter::resize     ( size_t rows, size_t columns ) { _matrix.resize(rows,columns); }
+  inline void    MatrixParameter::setMatrix  ( const Matrix* from ) { _matrix = *from; }
 
 
 }  // Analog namespace.

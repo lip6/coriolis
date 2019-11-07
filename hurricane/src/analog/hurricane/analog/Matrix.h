@@ -22,15 +22,18 @@ namespace Analog {
 
   class Matrix {
     public:
-      inline           Matrix    ( size_t rows, size_t columns );
+      inline           Matrix    ( size_t rows=0, size_t columns=0 );
       inline           Matrix    ( const Matrix& );
       inline          ~Matrix    ();
+      inline  bool     empty     () const;
       inline  Matrix&  operator= ( const Matrix& );
       inline  size_t   rows      () const;
       inline  size_t   columns   () const;
-      inline  size_t   at        ( size_t row, size_t column ) const;
-      inline  size_t&  at        ( size_t row, size_t column );
-      inline  size_t   index     ( size_t row, size_t column ) const;
+      inline  size_t   at        ( size_t row , size_t column  ) const;
+      inline  size_t&  at        ( size_t row , size_t column  );
+      inline  size_t   index     ( size_t row , size_t column  ) const;
+      inline  void     resize    ( size_t rows, size_t columns );
+      inline  Matrix&  makeEmpty ();
     private:
       size_t  _rows;
       size_t  _columns;
@@ -41,7 +44,11 @@ namespace Analog {
   inline Matrix::Matrix ( size_t rows, size_t columns )
     : _rows(rows), _columns(columns), _table(NULL)
   {
-    _table = new size_t [ _rows * _columns ];
+    if (empty()) {
+      _rows    = 0;
+      _columns = 0;
+    } else
+      _table = new size_t [ _rows * _columns ];
   }
 
   
@@ -71,7 +78,31 @@ namespace Analog {
     return *this;
   }
 
+
+  inline void  Matrix::resize ( size_t rows, size_t columns )
+  {
+    if (rows * columns > _rows * _columns) {
+      delete [] _table;
+      _table = new size_t [ rows * columns ];
+    } 
+
+    _rows    = rows;
+    _columns = columns;
+  }
+
+
+  inline Matrix& Matrix::makeEmpty ()
+  {
+    delete [] _table;
+
+    _rows    = 0;
+    _columns = 0;
+
+    return *this;
+  }
+
   
+  inline  bool    Matrix::empty     () const { return not _rows or not _columns; }
   inline  size_t  Matrix::rows      () const { return _rows; }
   inline  size_t  Matrix::columns   () const { return _columns; }
   inline  size_t  Matrix::at        ( size_t row, size_t column ) const { return _table[ index(row,column) ]; }

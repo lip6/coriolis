@@ -43,7 +43,7 @@ extern "C" {
   {
     cdebug.log(49) << "PyMultiCapacitor_create()" << endl;
 
-    MultiCapacitor*   transistor     = NULL;
+    MultiCapacitor* mcapacitor = NULL;
     
     HTRY
     PyObject*     pyLibrary = NULL;
@@ -71,7 +71,7 @@ extern "C" {
           return NULL;
       }
 
-      transistor = MultiCapacitor::create( PYLIBRARY_O(pyLibrary)
+      mcapacitor = MultiCapacitor::create( PYLIBRARY_O(pyLibrary)
                                          , Name(name)
                                          , (MultiCapacitor::Type)pyType
                                          , (size_t)count
@@ -82,7 +82,7 @@ extern "C" {
     }
     HCATCH
 
-    return PyMultiCapacitor_Link(transistor);
+    return PyMultiCapacitor_Link(mcapacitor);
   }
 
 

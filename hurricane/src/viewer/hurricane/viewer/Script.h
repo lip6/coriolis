@@ -48,6 +48,7 @@ namespace Isobar {
       static Script*      create             ( const std::string& name="" );
              void         destroy            ();
       inline std::string  getUserModuleName  () const;
+      inline const char*  getFileName        () const;
       inline PyObject*    getSysModule       ();
       inline PyObject*    getHurricaneModule ();
       inline PyObject*    getUserModule      ();
@@ -91,6 +92,9 @@ namespace Isobar {
   inline PyObject*    Script::getSysModule       () { return _sysModule; }
   inline PyObject*    Script::getHurricaneModule () { return _hurricaneModule; }
   inline PyObject*    Script::getUserModule      () { return _userModule; }
+
+  inline const char*  Script::getFileName () const
+  { return (_userModule) ? PyModule_GetFilename(_userModule) : getUserModuleName().c_str(); }
 
   inline PyObject* Script::_importHurricane ( unsigned int flags )
   { return _hurricaneModule = _importModule("Hurricane",flags); }

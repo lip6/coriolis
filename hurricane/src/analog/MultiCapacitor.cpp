@@ -10,7 +10,7 @@
 // |  Authors     :                       Damien Dupuis              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :  "./MultiCapacitor.cpp"                            |
+// |  C++ Module  :  "./MultiCapacitor.cpp"                          |
 // +-----------------------------------------------------------------+
 
 
@@ -32,12 +32,7 @@ namespace Analog {
                                  ,       size_t                 count )
     : Super(library, name, type)
     , _metaCapacitor(NULL)
-    , _matrix       (NULL)
     , _count        (count)
-    , _cDraw        (0.0)
-    , _cBorder      (0.0)
-    , _cParasite    (0.0)
-    , _capacities   (NULL)
   { }
 
   
@@ -48,54 +43,57 @@ namespace Analog {
   {
     preCreate( _capacitorName );
     UpdateSession::open();
-    MultiCapacitor* cp = new MultiCapacitor( library, name, type, count );
-    cp->_postCreate( _capacitorName );
-    cp->createConnections();
-    cp->setTerminal( true );
+    MultiCapacitor* mc = new MultiCapacitor( library, name, type, count );
+    mc->_postCreate( _capacitorName );
+    mc->createConnections     ();
+    mc->addMatrixParameter    ( "matrix" );
+    mc->addCapacitiesParameter( "capacities", count );
+    mc->setTerminal           ( true );
     UpdateSession::close();
-    return cp;
+
+    cerr << "capacities:" << mc->getParameter( "capacities" ) << endl;
+    return mc;
   }
   
 
   void MultiCapacitor::_postCreate ( const Name& deviceName ) 
   {
     Super::_postCreate( deviceName );
-  
-  // get minimum and maximum value from technology
-  //AnalogEnv* aenv = AnalogEnv::get();
-  //AnalogTechnology* atechno = aenv->getAnalogTechnology();
-  //DbU::Unit capacitorMinL = atechno->getPhysicalRule("capacitorMinL").getValue();
-  //DbU::Unit capacitorMaxL = atechno->getPhysicalRule("capacitorMaxL").getValue();
-  //DbU::Unit capacitorMinW = atechno->getPhysicalRule("capacitorMinW").getValue();
-  //DbU::Unit capacitorMaxW = atechno->getPhysicalRule("capacitorMaxW").getValue();
-  // For now define arbitrary values:
-  //DbU::Unit capacitorMinC = DbU::physicalToDbu(0.25, DbU::Micro);
-  //DbU::Unit capacitorMaxC = DbU::physicalToDbu(25  , DbU::Micro);
-  //_c = addCapacitorParameter( "C", 0.0 );
   }
   
 
   void MultiCapacitor::createConnections () 
   {
-    Net* p1 = Net::create( this, Name("P1") );
-    p1->setExternal( true );
-  
-    Net* p2 = Net::create( this, Name("P2") );
-    p2->setExternal( true );
-  
-    _metaCapacitor = MetaCapacitor::create( getSubDevicesLibrary(), Name("C1") );
-    Instance* metaCapacitorIns = Instance::create( this, Name("C1Instance"), _metaCapacitor );
-    setReferenceCapacitor( _metaCapacitor );
-  
-    Plug* mcC1Plug = metaCapacitorIns->getPlug( _metaCapacitor->getPlate1() );
-    mcC1Plug->setNet( p1 );
-    Plug* mcC2Plug = metaCapacitorIns->getPlug( _metaCapacitor->getPlate2() );
-    mcC2Plug->setNet( p2 );
+    for ( size_t i=0 ; i<_count ; ++i ) {
+      string topPlateName = "t" + getString(i);
+      string botPlateName = "b" + getString(i);
+      string mcName       = "c" + getString(i);
+
+      Net*           topPlate = Net::create( this, topPlateName );
+      Net*           botPlate = Net::create( this, botPlateName );
+      MetaCapacitor* mc       = MetaCapacitor::create( getSubDevicesLibrary(), mcName );
+      Instance*      mcInst   = Instance::create( this, mcName, mc );
+
+      topPlate->setExternal( true );
+      botPlate->setExternal( true );
+
+      mcInst->getPlug( mc->getTopPlate() )->setNet( topPlate );
+      mcInst->getPlug( mc->getBotPlate() )->setNet( botPlate );
+
+      if (not _metaCapacitor) {
+        _metaCapacitor = mc;
+        setReferenceCapacitor( mc );
+      }
+    }
   }
 
 
   Name MultiCapacitor::getDeviceName () const
   { return _capacitorName; }
+
+
+  string  MultiCapacitor::_getTypeName () const 
+  { return "MultiCapacitor"; }
 
 
 }  // Analog namespace.

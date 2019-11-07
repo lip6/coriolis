@@ -5,7 +5,8 @@ from helpers import trace
 
 class Rules ( object ):
 
-  ruleSet = [ 'minEnclosure_nImplant_active'
+  ruleSet = [ 'minSpacing_nWell'
+            , 'minEnclosure_nImplant_active'
             , 'minEnclosure_pImplant_active'
             , 'minSpacing_nImplant_pImplant'
             , 'minSpacing_cut0'
@@ -14,6 +15,7 @@ class Rules ( object ):
             , 'minEnclosure_active_cut0'
             , 'transistorMinL'
             , 'transistorMinW'
+            , 'minSpacing_poly'
             , 'minGateSpacing_poly'
             , 'minSpacing_poly_active'
             , 'minExtension_active_poly'
@@ -38,8 +40,37 @@ class Rules ( object ):
             , 'minSpacing_cut1'
             , 'minWidth_metal3'
             , 'minSpacing_metal3'
+            , 'minSpacingWide1_metal3'
             , 'minEnclosure_metal3_cut2'
-            ]
+            , 'minSpacingOnMetBot_cut2'
+            , 'minSpacingOnMetCap_cut2'
+            , 'maxWidth_metcap'
+            , 'minSpacing_metbot'
+            , 'minSpacing_cut1_metcap'
+            , 'minSpacing_cut2_metcap'
+            , 'minEnclosure_metbot_metcap'
+            , 'minEnclosure_metbot_cut1'
+            , 'minEnclosure_metbot_cut2'
+            , 'minEnclosure_metcap_cut2'
+	    , 'minWidth_metcap'
+            , 'minWidth_metcapdum'
+            , 'minWidth_cpoly'
+            , 'minWidth_poly2'
+            , 'minWidth_rpolyh'
+            , 'minSpacing_cpoly'
+            , 'minSpacing_poly2'
+            , 'minSpacing_rpolyh'
+            , 'minSpacing_cut0_cpoly'
+            , 'minSpacing_diff_poly2'
+            , 'minSpacing_poly_poly2'
+            , 'minEnclosure_poly_cpoly' 
+            , 'minEnclosure_cpoly_cut0'
+            , 'minEnclosure_poly2_cut0'
+            , 'MIMCap'
+            , 'PIPCap'
+            , 'MIMPerimeterCap'
+            , 'PIPPerimeterCap'
+]
 
   def __init__ ( self, dtr ):
     trace( 100, '\tRules.__init__()\n' )
@@ -54,8 +85,12 @@ class Rules ( object ):
    #print 'Rules.addAttr(): %s' % attribute
     value = None
     words = attribute.split( '_' )
-    if len(words) == 1 and words[0].endswith('Cap'): value = self.dtr.getUnitRule( words[0] ).getValue()
-    if len(words) < 4:                               value = self.dtr.getPhysicalRule( *tuple(words) ).getValue()
+    try:
+      if   len(words) == 1 and words[0].endswith('Cap'): value = self.dtr.getUnitRule( words[0] ).getValue()
+      elif len(words) < 4:                               value = self.dtr.getPhysicalRule( *tuple(words) ).getValue()
+    except Exception, e:
+      print e
+
     if not value is None:
       self.__dict__[attribute] = value
 

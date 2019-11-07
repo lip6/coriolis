@@ -10,6 +10,7 @@
                         ${PYTHON_INCLUDE_PATH}
                       )
                    set( includes     bora/Constants.h
+                                     bora/ParameterRange.h
                                      bora/BoxSet.h
                                      bora/NodeSets.h
                                      bora/HVSetState.h
@@ -27,7 +28,10 @@
                                      bora/BoraEngine.h
 
                       )
-                   set( pyIncludes   bora/PySlicingNode.h
+                   set( pyIncludes   bora/PyParameterRange.h
+                                     bora/PyStepParameterRange.h
+                                     bora/PyMatrixParameterRange.h
+                                     bora/PySlicingNode.h
                                      bora/PyDSlicingNode.h
                                      bora/PyHSlicingNode.h
                                      bora/PyVSlicingNode.h
@@ -44,6 +48,7 @@
 		      )
                    set( cpps         BoxSet.cpp
                                      NodeSets.cpp
+                                     ParameterRange.cpp
                                      HVSetState.cpp
                                      SlicingNode.cpp
                                      HVSlicingNode.cpp
@@ -62,7 +67,10 @@
                                      SlicingWidget.cpp
                                      GraphicBoraEngine.cpp
                       )
-                   set( pyCpps       PySlicingNode.cpp
+                   set( pyCpps       PyParameterRange.cpp
+                                     PyStepParameterRange.cpp
+                                     PyMatrixParameterRange.cpp
+                                     PySlicingNode.cpp
                                      PyDSlicingNode.cpp
                                      PyHSlicingNode.cpp
                                      PyRHSlicingNode.cpp

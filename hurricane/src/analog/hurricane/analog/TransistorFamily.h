@@ -124,7 +124,7 @@ namespace Analog {
   inline       void                    TransistorFamily::setSourceFirst         ( const bool sourceFirst ) { _sourceFirst->setValue ( (sourceFirst)?1:0 ); }
   inline       void                    TransistorFamily::setWmin                ( float wmin  ) { _secureGetReferenceTransistor()->setWmin (wmin ); }
   inline       void                    TransistorFamily::setWmax                ( float wmax  ) { _secureGetReferenceTransistor()->setWmax (wmax ); }
-  inline       void                    TransistorFamily::setNfing               ( int   nfing ) { _secureGetReferenceTransistor()->setNfing(nfing); }
+  inline       void                    TransistorFamily::setNfing               ( int   nfing ) { _secureGetReferenceTransistor()->setNfing(nfing); _m->setValue(nfing); }
   inline       void                    TransistorFamily::setExternalDummy       ( long  ndumm ) { _externalDummy->setValue(ndumm); }
   inline       void                    TransistorFamily::setBulkType            ( long  btype ) { _bulkType->setValue(btype); }
   inline       void                    TransistorFamily::setWE                  ( float we    ) { _secureGetReferenceTransistor()->setWE   (we   ); }

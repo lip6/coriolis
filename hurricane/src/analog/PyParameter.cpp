@@ -15,7 +15,8 @@
 
 
 #include "hurricane/analog/PyParameter.h"
-#include "hurricane/analog/PyCapacitorParameter.h"
+#include "hurricane/analog/PyMatrixParameter.h"
+#include "hurricane/analog/PyCapacitiesParameter.h"
 #include "hurricane/analog/PyChoiceParameter.h"
 #include "hurricane/analog/PyFormFactorParameter.h"
 #include "hurricane/analog/PyMCheckBoxParameter.h"
@@ -98,8 +99,11 @@ extern "C" {
   {
     if (object == NULL) Py_RETURN_NONE;
 
-    CapacitorParameter* capacitorParameter = dynamic_cast<CapacitorParameter*>(object);
-    if (capacitorParameter) return PyCapacitorParameter_Link(capacitorParameter);
+    CapacitiesParameter* capacitiesParameter = dynamic_cast<CapacitiesParameter*>(object);
+    if (capacitiesParameter) return PyCapacitiesParameter_Link(capacitiesParameter);
+
+    MatrixParameter* matrixParameter = dynamic_cast<MatrixParameter*>(object);
+    if (matrixParameter) return PyMatrixParameter_Link(matrixParameter);
 
     ChoiceParameter* choiceParameter = dynamic_cast<ChoiceParameter*>(object);
     if (choiceParameter) return PyChoiceParameter_Link(choiceParameter);

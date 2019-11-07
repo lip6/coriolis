@@ -22,6 +22,7 @@ from   helpers    import isderived
 from   helpers    import trace
 from   helpers.io import ErrorMessage as Error
 from   Analog     import Device
+from   Analog     import TransistorFamily
 from   Analog     import Transistor
 from   Analog     import CommonDrain
 from   Analog     import CommonGatePair
@@ -30,7 +31,13 @@ from   Analog     import CrossCoupledPair
 from   Analog     import DifferentialPair
 from   Analog     import LevelShifter
 from   Analog     import SimpleCurrentMirror
+from   Analog     import CapacitorFamily
+from   Analog     import MultiCapacitor
 from   Analog     import LayoutGenerator
+from   Analog     import Matrix
+from   Bora       import ParameterRange
+from   Bora       import StepParameterRange
+from   Bora       import MatrixParameterRange
 from   Bora       import SlicingNode
 from   Bora       import HSlicingNode
 from   Bora       import VSlicingNode
@@ -45,6 +52,9 @@ import Bora
 
 NMOS    = Transistor.NMOS
 PMOS    = Transistor.PMOS
+PIP     = CapacitorFamily.PIP
+MIM     = CapacitorFamily.MIM
+MOM     = CapacitorFamily.MOM
 Center  = SlicingNode.AlignCenter
 Left    = SlicingNode.AlignLeft
 Right   = SlicingNode.AlignRight
@@ -58,6 +68,31 @@ DNode   = 3
 
 def toDbU    ( value ): return DbU.fromPhysical( value, DbU.UnitPowerMicro )
 def toLength ( value ): return float(value) * 1e+6
+
+
+def readMatrix ( rows ):
+    if not isinstance(rows,list):
+      print '[ERROR] readMatrix(): First level is not a list.'
+      sys.exit( 1 )
+    rowCount = len(rows)
+
+    for row in range(len(rows)):
+      column = rows[row]
+      if not isinstance(column,list):
+        print '[ERROR] readMatrix(): Column %d is not a list.' % row
+        sys.exit( 1 )
+      if row == 0:
+        columnCount = len(column)
+        matrix      = Matrix( rowCount, columnCount )
+      else:
+        if columnCount != len(column):
+          print '[ERROR] readMatrix(): Column %d size discrepency (sould be %d).' % (len(column),columnCount)
+          sys.exit( 1 )
+
+      for column in range(len(column)):
+        matrix.setValue( row, column, rows[row][column] )
+          
+    return matrix      
 
 
 
@@ -214,12 +249,21 @@ class AnalogDesign ( object ):
         if not isinstance(dspec,list):
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], is *not* a list.' % count
                           , '%s' % str(dspec) ])
-        if len(dspec) < 12:
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], has %d items instead of 12 .' \
-                            % (count,len(dspec))
-                          , '%s' % str(dspec) ])
         if not isderived(dspec[0],Device):
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [0] is *not* a Device class.' % count
+                          , '%s' % str(dspec) ])
+
+        specSize = 0
+        if   isderived(dspec[0],TransistorFamily): specSize = 12
+        elif isderived(dspec[0], CapacitorFamily): specSize = 6
+        else:
+          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], has unsupported device type.' \
+                            % (count)
+                          , '%s' % str(dspec) ])
+
+        if len(dspec) < specSize:
+          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], has %d items instead of 12 .' \
+                            % (count,len(dspec))
                           , '%s' % str(dspec) ])
         if not isinstance(dspec[1],str):
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [1] (model name) is *not* a string.' % count
@@ -227,36 +271,52 @@ class AnalogDesign ( object ):
         if not isinstance(dspec[2],str):
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [2] (layout style) is *not* a string.' % count
                           , '%s' % str(dspec) ])
-        if dspec[3] not in [NMOS, PMOS]:
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either NMOS or PMOS.' % count
-                          , '%s' % str(dspec) ])
-        if not isinstance(dspec[4],float):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (WE) is *not* a float.' % count
-                          , '%s' % str(dspec) ])
-        if not isinstance(dspec[5],float):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [5] (LE) is *not* a float.' % count
-                          , '%s' % str(dspec) ])
-        if not isinstance(dspec[6],int):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [6] (M) is *not* an int.' % count
-                          , '%s' % str(dspec) ])
-        if (not dspec[7] is None) and (not isinstance(dspec[7],int)):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [7] (Mint) is neither an int nor None.' % count
-                          , '%s' % str(dspec) ])
-        if not isinstance(dspec[8],int):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [8] (external dummies) is *not* an int.' % count
-                          , '%s' % str(dspec) ])
-        if not isinstance(dspec[9],bool):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [9] (source first) is *not* a boolean.' % count
-                          , '%s' % str(dspec) ])
-        if not isinstance(dspec[10],int):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [10] (bulk) is *not* an int.' % count
-                          , '%s' % str(dspec) ])
-        else:
-          if dspec[10] > 0xf:
-            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [10] (bulk) is greater than 0xf.' % count
+
+        if specSize == 12:
+          if dspec[3] not in [NMOS, PMOS]:
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either NMOS or PMOS.' % count
                             , '%s' % str(dspec) ])
-        if not isinstance(dspec[11],bool):
-          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [11] (bulk connected) is *not* a boolean.' % count
+          if not isinstance(dspec[4],float):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (WE) is *not* a float.' % count
+                            , '%s' % str(dspec) ])
+          if not isinstance(dspec[5],float):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [5] (LE) is *not* a float.' % count
+                            , '%s' % str(dspec) ])
+          if not isinstance(dspec[6],int):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [6] (M) is *not* an int.' % count
+                            , '%s' % str(dspec) ])
+          if (not dspec[7] is None) and (not isinstance(dspec[7],int)):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [7] (Mint) is neither an int nor None.' % count
+                            , '%s' % str(dspec) ])
+          if not isinstance(dspec[8],int):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [8] (external dummies) is *not* an int.' % count
+                            , '%s' % str(dspec) ])
+          if not isinstance(dspec[9],bool):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [9] (source first) is *not* a boolean.' % count
+                            , '%s' % str(dspec) ])
+          if not isinstance(dspec[10],int):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [10] (bulk) is *not* an int.' % count
+                            , '%s' % str(dspec) ])
+          else:
+            if dspec[10] > 0xf:
+              raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [10] (bulk) is greater than 0xf.' % count
+                              , '%s' % str(dspec) ])
+          if not isinstance(dspec[11],bool):
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [11] (bulk connected) is *not* a boolean.' % count
+                            , '%s' % str(dspec) ])
+
+        elif specSize == 6:
+          if dspec[3] not in [PIP, MIM, MOM]:
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either PIP, MIM or MOM.' % count
+                            , '%s' % str(dspec) ])
+          if   isinstance(dspec[4],float): pass
+          elif isinstance(dspec[4],tuple): pass
+          else:
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (Cs) should either be *one* float or a *list* of floats.' % count
+                            , '%s' % str(dspec) ])
+
+        else:
+          raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], spec list do not match any known pattern.' % count
                           , '%s' % str(dspec) ])
         return
 
@@ -310,19 +370,35 @@ class AnalogDesign ( object ):
             self.checkDSpec( count, dspec )
 
             trace( 110, '\tBuilding \"%s\"\n' % dspec[1] )
-            device = dspec[0].create( self.library, dspec[1], dspec[3], dspec[11] )
-            device.getParameter( 'Layout Styles' ).setValue( dspec[2] )
-            device.getParameter( 'W' ).setValue( toDbU(dspec[4]) )
-            device.getParameter( 'L' ).setValue( toDbU(dspec[5]) )
-            device.getParameter( 'M' ).setValue( dspec[6] )
-            device.setSourceFirst( dspec[9] )
-            device.setBulkType   ( dspec[10] )
+            if isderived(dspec[0],TransistorFamily):
+              device = dspec[0].create( self.library, dspec[1], dspec[3], dspec[11] )
+              device.getParameter( 'Layout Styles' ).setValue( dspec[2] )
+              device.getParameter( 'W' ).setValue( toDbU(dspec[4]) )
+              device.getParameter( 'L' ).setValue( toDbU(dspec[5]) )
+              device.getParameter( 'M' ).setValue( dspec[6] )
+              device.setSourceFirst( dspec[9] )
+              device.setBulkType   ( dspec[10] )
             
-            if (len(dspec) > 12): device.getParameter( 'NERC' ).setValue(int (dspec[12]))
-            if (len(dspec) > 13): device.getParameter( 'NIRC' ).setValue(int (dspec[13]))
+              if (len(dspec) > 12): device.getParameter( 'NERC' ).setValue(int (dspec[12]))
+              if (len(dspec) > 13): device.getParameter( 'NIRC' ).setValue(int (dspec[13]))
             
-            if not (dspec[7] is None): device.setMint         ( dspec[7] ) 
-            if dspec[8]:               device.setExternalDummy( dspec[8] )
+              if not (dspec[7] is None): device.setMint         ( dspec[7] ) 
+              if dspec[8]:               device.setExternalDummy( dspec[8] )
+
+            elif isderived(dspec[0],CapacitorFamily):
+              if   isinstance(dspec[4],float): capaCount = 1
+              elif isinstance(dspec[4],tuple): capaCount = len(dspec[4])
+              else:
+                  print type(dspec[4]), dspec[4]
+                
+              device = dspec[0].create( self.library, dspec[1], dspec[3], capaCount )
+              device.getParameter( 'Layout Styles' ).setValue ( dspec[2] )
+              device.getParameter( 'matrix'        ).setMatrix( dspec[5] )
+              if isinstance(dspec[4],float):
+                device.getParameter( 'capacities' ).setValue( 0, dspec[4] )
+              else:
+                for index in range(len(dspec[4])):
+                  device.getParameter( 'capacities' ).setValue( index, dspec[4][index] )
             
             self.generator.setDevice ( device )
             self.generator.drawLayout()
@@ -504,7 +580,7 @@ class AnalogDesign ( object ):
         return
 
     def addDevice ( self, name, align, span=(0, 0, 0), NF=0 ):
-        node = DSlicingNode.create( name, self.cell, span[0], span[1], span[2], self.rg )
+        node = DSlicingNode.create( name, self.cell, StepParameterRange(span[0], span[1], span[2]), self.rg )
         node.setAlignment( align )
         if NF != 0: node.setNFing( NF )
         self.topNode().push_back( node )

@@ -121,10 +121,10 @@ addDevice( name       = 'SimpleCurrentMirrorBulkUnconnected'
                         , ('Interdigitated' , 'SCM_interdigitated.py'  )
                         )
          )
-addDevice( name       = 'MIMCapacitor'
-         , spice      = spiceDir+'MIMCapacitor.spi'
-         , connectors = ( 'P1', 'P2' )
-         , layouts    = ( ('SimpleMatrix'  , 'MIM_simpleMatrix.py' ),
+addDevice( name       = 'MultiCapacitor'
+        #, spice      = spiceDir+'MIM_OneCapacitor.spi'
+        #, connectors = ( 'T1', 'B1' )
+         , layouts    = ( ('Matrix'  , 'CapacitorMatrix.py' ),
                         )
          )
 

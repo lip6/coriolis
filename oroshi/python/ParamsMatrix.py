@@ -46,12 +46,19 @@ class ParamsMatrix ( object ):
   def getMatrix ( self ): return self.matrix
 
 
-  def setGlobalParams ( self, w, L, M, boundingBox ):
+  def setGlobalTransistorParams ( self, w, L, M, boundingBox ):
     self.matrix[0][0]['L'               ] = L
     self.matrix[0][0]['W'               ] = w
     self.matrix[0][0]['M'               ] = M
     self.matrix[0][0]['box'             ] = boundingBox
     self.matrix[0][0]['globalActiveBox' ] = Box()
+    self.matrix[0][0]['family'          ] = 'Transistor'
+    return
+
+
+  def setGlobalCapacitorParams ( self, boundingBox ):
+    self.matrix[0][0]['box'             ] = boundingBox
+    self.matrix[0][0]['family'          ] = 'Capacitor'
     return
 
 

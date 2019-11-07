@@ -36,9 +36,6 @@ namespace Analog {
                                                  , const CapacitorFamily::Type&
                                                  ,       size_t  count           );
       inline  double           getCapacity       ( size_t ) const;
-      inline  double           getCDraw          () const;
-      inline  double           getCBorder        () const;
-      inline  double           getCParasite      () const;
       virtual Hurricane::Name  getDeviceName     () const;
     protected:
                                MultiCapacitor    (       Hurricane::Library*
@@ -47,24 +44,21 @@ namespace Analog {
                                                  ,       size_t );
       virtual void             _postCreate       ( const Hurricane::Name& deviceName );
       virtual void             createConnections ();
+    public:
+      virtual std::string      _getTypeName      () const;
     private:
       static const Hurricane::Name      _capacitorName;
                    MetaCapacitor*       _metaCapacitor;
-                   MatrixParameter*     _matrix;
                    size_t               _count;
-                   double               _cDraw;
-                   double               _cBorder;
-                   double               _cParasite;
-                   CapacitiesParameter* _capacities;
   };
   
 
-  double  MultiCapacitor::getCapacity   ( size_t i ) const { return _capacities->getValue(i); }
-  double  MultiCapacitor::getCDraw      () const { return _cDraw; }
-  double  MultiCapacitor::getCBorder    () const { return _cBorder; }
-  double  MultiCapacitor::getCParasite  () const { return _cParasite; }
+  double  MultiCapacitor::getCapacity ( size_t i ) const { return static_cast<const CapacitiesParameter*>(getParameter("capacities"))->getValue(i); }
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_P_SUPPORT(Analog::MultiCapacitor);
 
 #endif // ANALOH_MULTI_CAPACITOR_H

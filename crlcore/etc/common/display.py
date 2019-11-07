@@ -398,7 +398,7 @@ def createStyles ( scale=1.0 ):
     style.addDrawingStyle( group='Viewer', name='mauka.container', color=toRGB('Magenta4' ), border=4, pattern='0000000000000000', goMatched=False )
     
     # Group: Active Layers.
-    style.addDrawingStyle( group='Active Layers', name='nWell'   , color=toRGB('Tan'        ), pattern=toHexa('antipoids2.32'), border=1, threshold=0.02*scale )
+    style.addDrawingStyle( group='Active Layers', name='nWell'   , color=toRGB('Tan'        ), pattern=toHexa('urgo.32'      ), border=1, threshold=0.02*scale )
     style.addDrawingStyle( group='Active Layers', name='pWell'   , color=toRGB('LightYellow'), pattern=toHexa('antipoids2.32'), border=1, threshold=0.02*scale )
     style.addDrawingStyle( group='Active Layers', name='nImplant', color=toRGB('LawnGreen'  ), pattern=toHexa('diffusion.32' ), border=0, threshold=0.02*scale )
     style.addDrawingStyle( group='Active Layers', name='pImplant', color=toRGB('Yellow'     ), pattern=toHexa('diffusion.32' ), border=0, threshold=0.02*scale )
@@ -407,7 +407,7 @@ def createStyles ( scale=1.0 ):
     style.addDrawingStyle( group='Active Layers', name='poly2'   , color=toRGB('Orange'     ), pattern=toHexa('antipoids2.32'), border=1, threshold=0.02*scale )
     
     # Group: Routing Layers.
-    style.addDrawingStyle( group='Routing Layers', name='metal1' , color=toRGB('Blue'         ), pattern=toHexa('slash.32'     ), border=1, threshold=0.02*scale )
+    style.addDrawingStyle( group='Routing Layers', name='metal1' , color=toRGB('Blue'         ), pattern=toHexa('slash.32'     ), border=4, threshold=0.02*scale )
     style.addDrawingStyle( group='Routing Layers', name='metal2' , color=toRGB('Aqua'         ), pattern=toHexa('antislash2.32'), border=1, threshold=0.02*scale )
     style.addDrawingStyle( group='Routing Layers', name='metcap' , color=toRGB('DarkTurquoise'), pattern=toHexa('poids2.32'    ), border=2, threshold=0.02*scale )
     style.addDrawingStyle( group='Routing Layers', name='metal3' , color=toRGB('LightPink'    ), pattern=toHexa('antislash3.32'), border=1, threshold=0.02*scale )

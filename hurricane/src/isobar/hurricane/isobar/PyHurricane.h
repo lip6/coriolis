@@ -1442,7 +1442,7 @@ extern "C" {
   PyTypeObject  PyType##SELF_TYPE =                                     \
     { PyObject_HEAD_INIT(DEFERRED_ADDRESS(&PyType##INHERITED_TYPE))     \
        0                              /* ob_size.          */           \
-    ,  "Hurricane.Py" #SELF_TYPE      /* tp_name.          */           \
+    ,  "Hurricane." #SELF_TYPE        /* tp_name.          */           \
     ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1562,32 +1562,33 @@ extern "C" {
 # define   HCATCH  \
     }                                                               \
     catch ( const Warning& w ) {                                    \
-      std::string message = "\n" + getString(w);                    \
+      std::string message = getString(w);                           \
       PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
     }                                                               \
     catch ( const Error& e ) {                                      \
-      std::string message = "\n" + getString(e) + "\n" + e.where(); \
+      std::string message = getString(e);                           \
+      if (not e.where().empty()) message += "\n" + e.where();       \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
       return NULL;                                                  \
     }                                                               \
     catch ( const Bug& e ) {                                        \
-      std::string message = "\n" + getString(e);                    \
+      std::string message = getString(e);                           \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
       return NULL;                                                  \
     }                                                               \
     catch ( const Exception& e ) {                                  \
-      std::string message = "\nUnknown Hurricane::Exception";       \
+      std::string message = "Unknown Hurricane::Exception";         \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
       return NULL;                                                  \
     }                                                               \
     catch ( const std::exception& e )  {                            \
-      std::string message = "\n" + std::string(e.what());           \
+      std::string message = std::string(e.what());                  \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
       return NULL;                                                  \
     }                                                               \
     catch ( ... ) {                                                 \
       std::string message =                                         \
-        "\nUnmanaged exception, neither a Hurricane::Error nor"     \
+        "Unmanaged exception, neither a Hurricane::Error nor"       \
         " a std::exception.";                                       \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
       return NULL;                                                  \

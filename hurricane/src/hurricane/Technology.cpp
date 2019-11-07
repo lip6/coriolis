@@ -519,6 +519,10 @@ namespace Hurricane {
   {
     Name         layerName ( layerStr );
     const Layer* layer     = getLayer( layerName );
+
+    if (not layer)
+      throw Error( "Technology::getPhysicalRule(): Layer \"%s\" is not defined (yet?)."
+                 , layerStr.c_str() );
   
     OneLayerRules::const_iterator ilayer = _oneLayerRules.find( layer );
     if (ilayer == _oneLayerRules.end())

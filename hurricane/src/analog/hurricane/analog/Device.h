@@ -52,7 +52,7 @@ namespace Analog {
       typedef  std::map<const Hurricane::Name,const std::string>  Layouts;
     public:
       virtual       Hurricane::Name        getDeviceName             () const = 0;
-                    Parameter*             getParameter              ( const std::string& parameterId );
+                    Parameter*             getParameter              ( const std::string& parameterId ) const;
       inline        Parameters&            getParameters             ();
               const std::string            getLayoutScript           ();
       inline        float                  getTemperature            () const;

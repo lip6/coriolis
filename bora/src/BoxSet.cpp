@@ -16,6 +16,8 @@
 
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
+#include "hurricane/Cell.h"
+#include "crlcore/RoutingGauge.h"
 #include "bora/BoxSet.h"
 
 
@@ -80,6 +82,13 @@ namespace Bora {
   int  BoxSet::getNFing () const
   {
     cerr << Warning( "BoxSet::getNFing(): Only DBoxSet has fingers." ) << endl;
+    return 0;
+  }
+
+
+  size_t  BoxSet::getIndex () const
+  {
+    cerr << Warning( "BoxSet::getIndex(): Only DBoxSet has parameter range indexes." ) << endl;
     return 0;
   }
 
@@ -265,9 +274,9 @@ namespace Bora {
   int  DBoxSet::_countAll = 0;
 
 
-  DBoxSet::DBoxSet ( DbU::Unit height, DbU::Unit width, int nfing )
+  DBoxSet::DBoxSet ( DbU::Unit height, DbU::Unit width, size_t index )
     : BoxSet( height, width )
-    , _nfing(nfing)
+    , _index(index)
   { 
     ++_count;
     ++_countAll;
@@ -276,7 +285,7 @@ namespace Bora {
 
   DBoxSet::DBoxSet ( DBoxSet* boxSet )
     : BoxSet( boxSet )
-    , _nfing( boxSet->getNFing() )
+    , _index( boxSet->getIndex() )
   { }
 
 
@@ -286,15 +295,40 @@ namespace Bora {
   }
 
 
-  DBoxSet* DBoxSet::create ( DbU::Unit height, DbU::Unit width, int nfing )
+  DBoxSet* DBoxSet::create ( Cell* cell, int index, CRL::RoutingGauge* rg )
   {
-    return new DBoxSet( height, width, nfing ); 
+    DbU::Unit abHeight = cell->getAbutmentBox().getHeight();
+    DbU::Unit abWidth  = cell->getAbutmentBox().getWidth();
+
+    if (rg) {
+      DbU::Unit h2pitch  = rg->getHorizontalPitch()*2;
+      DbU::Unit v2pitch  = rg->getVerticalPitch  ()*2;
+
+      if (abHeight % h2pitch) {
+        cerr << Warning( "DBoxSet::create(): The height of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
+                       , getString(cell->getName()).c_str()
+                       , DbU::getValueString(abHeight).c_str()
+                       , DbU::getValueString(h2pitch ).c_str()
+                       ) << endl;
+        abHeight += h2pitch - (abHeight % h2pitch);
+      }
+      if (abWidth % v2pitch) {
+        cerr << Warning( "DBoxSet::create(): The width of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
+                       , getString(cell->getName()).c_str()
+                       , DbU::getValueString(abWidth).c_str()
+                       , DbU::getValueString(v2pitch).c_str()
+                       ) << endl;
+        abWidth += v2pitch - (abWidth % v2pitch);
+      }
+    }
+    
+    return new DBoxSet( abHeight, abWidth, index );
   }
 
 
   DBoxSet* DBoxSet::clone ()
   {
-    return DBoxSet::create( getHeight(), getWidth(), getNFing() ); 
+    return new DBoxSet( getHeight(), getWidth(), getNFing() ); 
   }
 
 

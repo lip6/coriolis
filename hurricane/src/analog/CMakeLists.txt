@@ -55,6 +55,7 @@
                                     PyLevelShifter.cpp
                                     PyMCheckBoxParameter.cpp
                                     PyMultiCapacitor.cpp
+                                    PyMatrix.cpp
                                     PyParameter.cpp
                                     PySimpleCurrentMirror.cpp
                                     PySpinBoxParameter.cpp
@@ -117,6 +118,7 @@
                                     hurricane/analog/PyLevelShifter.h
                                     hurricane/analog/PyMCheckBoxParameter.h
                                     hurricane/analog/PyMultiCapacitor.h
+                                    hurricane/analog/PyMatrix.h
                                     hurricane/analog/PyParameter.h
                                     hurricane/analog/PySimpleCurrentMirror.h
                                     hurricane/analog/PySpinBoxParameter.h

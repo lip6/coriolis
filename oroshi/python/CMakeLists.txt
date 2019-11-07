@@ -7,6 +7,11 @@
                   WIP_Transistor.py
                   WIP_DP.py
                   WIP_CSP.py
+                  CapacitorUnit.py
+                  CapacitorMatrix.py
+                  CapacitorVRTracks.py
+                  CapacitorRouted.py
+                  MultiCapacitor.py
                 )
 
  install( FILES ${pythonFiles}    DESTINATION ${PYTHON_SITE_PACKAGES}/oroshi ) 

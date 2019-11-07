@@ -30,25 +30,25 @@ namespace Analog {
       typedef Cell Super;
     public:
       static MetaCapacitor* create        ( Library* library, const Name& );
-      inline Net*           getPlate1     ();
-      inline Net*           getPlate2     ();
+      inline Net*           getTopPlate   ();
+      inline Net*           getBotPlate   ();
       inline double         getCE         () const;
-      inline void           setCE         (double ce);
+      inline void           setCE         ( double );
     protected:
              void           _postCreate   ();
     private:
                             MetaCapacitor ( Library* , const Name& );
     private:
-      Net*    _plate1;
-      Net*    _plate2;
+      Net*    _topPlate;
+      Net*    _botPlate;
       double  _ce;
   };
   
 
-  inline Net*    MetaCapacitor::getPlate1 ()            { return _plate1; }
-  inline Net*    MetaCapacitor::getPlate2 ()            { return _plate2; }
-  inline double  MetaCapacitor::getCE     () const      { return _ce; }
-  inline void    MetaCapacitor::setCE     ( double ce ) { _ce = ce; }
+  inline Net*    MetaCapacitor::getTopPlate ()            { return _topPlate; }
+  inline Net*    MetaCapacitor::getBotPlate ()            { return _botPlate; }
+  inline double  MetaCapacitor::getCE       () const      { return _ce; }
+  inline void    MetaCapacitor::setCE       ( double ce ) { _ce = ce; }
 
 
 }  // Analog namespace.

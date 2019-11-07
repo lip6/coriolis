@@ -31,13 +31,15 @@
 #include "hurricane/analog/PyCapacitorFamily.h"
 #include "hurricane/analog/PyMultiCapacitor.h"
 
+#include "hurricane/analog/PyMatrix.h"
 #include "hurricane/analog/PyParameter.h"
-#include "hurricane/analog/PyCapacitorParameter.h"
 #include "hurricane/analog/PyChoiceParameter.h"
 #include "hurricane/analog/PyFormFactorParameter.h"
 #include "hurricane/analog/PyMCheckBoxParameter.h"
 #include "hurricane/analog/PySpinBoxParameter.h"
 #include "hurricane/analog/PyStepParameter.h"
+#include "hurricane/analog/PyCapacitiesParameter.h"
+#include "hurricane/analog/PyMatrixParameter.h"
 #include "hurricane/analog/PyLayoutGenerator.h"
 
 
@@ -79,18 +81,21 @@ extern "C" {
     PyLevelShifter_LinkPyType();
     PySimpleCurrentMirror_LinkPyType();
     PyCascode_LinkPyType();
-  //PyMultiCapacitor_LinkPyType();
 
+    PyMatrix_LinkPyType();
     PyParameter_LinkPyType();
-    PyCapacitorParameter_LinkPyType();
     PyChoiceParameter_LinkPyType();
     PyFormFactorParameter_LinkPyType();
     PyMCheckBoxParameter_LinkPyType();
     PySpinBoxParameter_LinkPyType();
     PyStepParameter_LinkPyType();
+    PyCapacitiesParameter_LinkPyType();
+    PyMatrixParameter_LinkPyType();
     PyCapacitorFamily_LinkPyType();
     PyLayoutGenerator_LinkPyType();
+    PyMultiCapacitor_LinkPyType();
 
+    PYTYPE_READY( Matrix )
     PYTYPE_READY( Parameter )
     PYTYPE_READY( LayoutGenerator )
 
@@ -108,14 +113,15 @@ extern "C" {
     PYTYPE_READY_SUB( Cascode              , TransistorPair )
                                            
     PYTYPE_READY_SUB( CapacitorFamily      , Device )
-  //PYTYPE_READY_SUB( MutliCapacitor       , CapacitorFamily )
+    PYTYPE_READY_SUB( MultiCapacitor       , CapacitorFamily )
 
-    PYTYPE_READY_SUB( CapacitorParameter   , Parameter )
     PYTYPE_READY_SUB( ChoiceParameter      , Parameter )
     PYTYPE_READY_SUB( FormFactorParameter  , Parameter )
     PYTYPE_READY_SUB( MCheckBoxParameter   , Parameter )
     PYTYPE_READY_SUB( SpinBoxParameter     , Parameter )
     PYTYPE_READY_SUB( StepParameter        , Parameter )
+    PYTYPE_READY_SUB( CapacitiesParameter  , Parameter )
+    PYTYPE_READY_SUB( MatrixParameter      , Parameter )
 
     // Identifier string can take up to 10 characters !
     __cs.addType( "device"   , &PyTypeDevice                  , "<Device>"                  , false, "cell" );
@@ -132,15 +138,17 @@ extern "C" {
     __cs.addType( "cascode"  , &PyTypeCascode                 , "<Cascode>"                 , false, "transpair" );
 
     __cs.addType( "cfamily"  , &PyTypeCapacitorFamily         , "<CapacitorFamily>"         , false, "device" );
-  //__cs.addType( "mulcapa"  , &PyTypeMultiCapacitor          , "<MultiCapacitor>"          , false, "cfamily" );
+    __cs.addType( "mulcapa"  , &PyTypeMultiCapacitor          , "<MultiCapacitor>"          , false, "cfamily" );
 
+    __cs.addType( "matrix"   , &PyTypeMatrix                  , "<Matrix>"                  , false );
     __cs.addType( "parameter", &PyTypeParameter               , "<Parameter>"               , false );
-    __cs.addType( "capapar"  , &PyTypeCapacitorParameter      , "<CapacitorParameter>"      , false, "parameter" );
     __cs.addType( "choicepar", &PyTypeChoiceParameter         , "<CapacitorParameter>"      , false, "parameter" );
     __cs.addType( "ffpar"    , &PyTypeFormFactorParameter     , "<FormFactorParameter>"     , false, "parameter" );
     __cs.addType( "mcboxpar" , &PyTypeMCheckBoxParameter      , "<MCheckBoxParameter>"      , false, "parameter" );
     __cs.addType( "sboxpar"  , &PyTypeSpinBoxParameter        , "<SpinBoxParameter>"        , false, "parameter" );
     __cs.addType( "steppar"  , &PyTypeStepParameter           , "<StepParameter>"           , false, "parameter" );
+    __cs.addType( "capspar"  , &PyTypeCapacitiesParameter     , "<CapacitiesParameter>"     , false, "parameter" );
+    __cs.addType( "matrpar"  , &PyTypeMatrixParameter         , "<MatrixParameter>"         , false, "parameter" );
     __cs.addType( "laygen"   , &PyTypeLayoutGenerator         , "<LayoutGenerator>"         , false );
 
 
@@ -178,14 +186,14 @@ extern "C" {
 
     Py_INCREF( &PyTypeCapacitorFamily );
     PyModule_AddObject( module, "CapacitorFamily"   , (PyObject*)&PyTypeCapacitorFamily );
-  //Py_INCREF( &PyTypeMutliCapacitor );
-  //PyModule_AddObject( module, "MultiCapacitor"    , (PyObject*)&PyTypeMultiCapacitor );
+    Py_INCREF( &PyTypeMultiCapacitor );
+    PyModule_AddObject( module, "MultiCapacitor"    , (PyObject*)&PyTypeMultiCapacitor );
 
+    Py_INCREF( &PyTypeMatrix );
+    PyModule_AddObject( module, "Matrix"             , (PyObject*)&PyTypeMatrix );
     Py_INCREF( &PyTypeParameter );
     PyModule_AddObject( module, "Parameter"          , (PyObject*)&PyTypeParameter );
-    Py_INCREF( &PyTypeCapacitorParameter );
-    PyModule_AddObject( module, "CapacitorParameter" , (PyObject*)&PyTypeCapacitorParameter );
-    Py_INCREF( &PyTypeChoiceParameter );
+    Py_INCREF( &PyTypeParameter );
     PyModule_AddObject( module, "ChoiceParameter"    , (PyObject*)&PyTypeChoiceParameter );
     Py_INCREF( &PyTypeFormFactorParameter );
     PyModule_AddObject( module, "FormFactorParameter", (PyObject*)&PyTypeFormFactorParameter );
@@ -194,6 +202,10 @@ extern "C" {
     Py_INCREF( &PyTypeSpinBoxParameter );
     PyModule_AddObject( module, "SpinBoxParameter"   , (PyObject*)&PyTypeSpinBoxParameter );
     Py_INCREF( &PyTypeStepParameter );
+    PyModule_AddObject( module, "CapacitiesParameter", (PyObject*)&PyTypeCapacitiesParameter );
+    Py_INCREF( &PyTypeCapacitiesParameter );
+    PyModule_AddObject( module, "MatrixParameter"    , (PyObject*)&PyTypeMatrixParameter );
+    Py_INCREF( &PyTypeMatrixParameter );
     PyModule_AddObject( module, "StepParameter"      , (PyObject*)&PyTypeStepParameter );
     Py_INCREF( &PyTypeLayoutGenerator );
     PyModule_AddObject( module, "LayoutGenerator"    , (PyObject*)&PyTypeLayoutGenerator );

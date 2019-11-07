@@ -96,7 +96,7 @@ namespace Analog {
   }
 
 
-  Parameter* Device::getParameter ( const string& parameterId )
+  Parameter* Device::getParameter ( const string& parameterId ) const
   {
     for ( Parameter* parameter : _parameterSet) {
       if (parameter->getName() == parameterId)

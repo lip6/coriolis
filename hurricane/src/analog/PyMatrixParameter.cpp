@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/analog/PyMatrix.h"
 #include "hurricane/analog/PyMatrixParameter.h"
 
 
@@ -40,6 +41,26 @@ extern "C" {
 
   DirectGetUIntAttribute(PyMatrixParameter_getRows   , getRows   , PyMatrixParameter, MatrixParameter)
   DirectGetUIntAttribute(PyMatrixParameter_getColumns, getColumns, PyMatrixParameter, MatrixParameter)
+
+
+  static PyObject* PyMatrixParameter_resize ( PyMatrixParameter *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyMatrixParameter.resize()" << endl;
+   
+    HTRY
+    METHOD_HEAD ( "MatrixParameter.resize()" )
+      unsigned int  rows    = 0;
+      unsigned int  columns = 0;
+      if (PyArg_ParseTuple(args,"II:MatrixParameter.resize",&rows,&columns)) {
+        matrixParameter->resize( (size_t)rows, (size_t)columns );
+      } else {
+        PyErr_SetString( ConstructorError, "MatrixParameter.resize(): Invalid number/bad type of parameters." );
+        return NULL;
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
 
 
   static PyObject* PyMatrixParameter_getValue ( PyMatrixParameter *self, PyObject* args )
@@ -85,6 +106,36 @@ extern "C" {
   }
 
 
+  static PyObject* PyMatrixParameter_setMatrix ( PyMatrixParameter *self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyMatrixParameter.setMatrix()" << endl;
+   
+    HTRY
+    METHOD_HEAD ( "MatrixParameter.setMatrix()" )
+      PyObject* pyMatrix = NULL;
+      if (not PyArg_ParseTuple(args,"O:MatrixParameter.setMatrix",&pyMatrix)) {
+        PyErr_SetString( ConstructorError, "MatrixParameter.setValue(): Invalid number/bad type of parameters." );
+        return NULL;
+      }
+      if (not IsPyMatrix(pyMatrix)) {
+        if (not PyList_Check(pyMatrix)) {
+          PyErr_SetString( ConstructorError, "MatrixParameter.setMatrix(): Argument is neither of type Matrix not list of list." );
+          return NULL;
+        }
+
+        Matrix m = Matrix_FromListOfList( pyMatrix );
+        if (m.empty()) return NULL; 
+
+        matrixParameter->setMatrix( &m );
+      } else {
+        matrixParameter->setMatrix( PYMATRIX_O(pyMatrix) );
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // PyMatrixParameter Attribute Method table.
 
@@ -93,9 +144,13 @@ extern "C" {
                             , "Self explanatory." }
     , { "getColumns"        , (PyCFunction)PyMatrixParameter_getColumns, METH_NOARGS
                             , "Self explanatory." }
+    , { "resize"            , (PyCFunction)PyMatrixParameter_resize    , METH_VARARGS
+                            , "Self explanatory." }
     , { "getValue"          , (PyCFunction)PyMatrixParameter_getValue  , METH_VARARGS
                             , "Self explanatory." }
     , { "setValue"          , (PyCFunction)PyMatrixParameter_setValue  , METH_VARARGS
+                            , "Self explanatory." }
+    , { "setMatrix"         , (PyCFunction)PyMatrixParameter_setMatrix , METH_VARARGS
                             , "Self explanatory." }
     , { NULL, NULL, 0, NULL }  /* sentinel */
     };
@@ -113,7 +168,7 @@ extern "C" {
 #else  // End of Python Module Code Part.
 
 // +=================================================================+
-// |          "PyMatrixParameter" Shared Library Code Part          |
+// |          "PyMatrixParameter" Shared Library Code Part           |
 // +=================================================================+
   
 

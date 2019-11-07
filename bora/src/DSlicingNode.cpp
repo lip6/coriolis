@@ -23,6 +23,7 @@
 #include "hurricane/analog/CommonSourcePair.h"
 #include "hurricane/analog/DifferentialPair.h"
 #include "hurricane/analog/LayoutGenerator.h"
+#include "hurricane/analog/MultiCapacitor.h"
 #include "anabatic/Session.h"
 #include "bora/DSlicingNode.h"
 
@@ -35,10 +36,12 @@ namespace Bora {
   using Hurricane::Transformation;
   using Analog::Device;
   using Analog::FormFactorParameter;
+  using Analog::MatrixParameter;
   using Analog::TransistorFamily;
   using Analog::Transistor;
   using Analog::CommonSourcePair;
   using Analog::DifferentialPair;
+  using Analog::MultiCapacitor;
   using Analog::LayoutGenerator;
   using Anabatic::Session;
 
@@ -117,23 +120,11 @@ namespace Bora {
   { return (_boxSet) ? _boxSet->getNFing() : 1 ; }
 
 
-  double  DSlicingNode::getStartParameter () const
-  { return _nodeSets->getStartParameter(); }
-
-
-  double  DSlicingNode::getStepParameter () const
-  { return _nodeSets->getStepParameter(); }
-
-
-  double  DSlicingNode::getCountParameter () const
-  { return _nodeSets->getCountParameter(); }
-
-
   void DSlicingNode::_place( DbU::Unit x, DbU::Unit y, bool replace )
   {
     cdebug_log(536,1) << "DSlicingNode::_place(DbU::Unit,DbU::Unit,bool replace)" << endl;
 
-    if (replace){
+    if (replace) {
       SlicingNode::place( x, y );
       if (_instance) {
         Cell* model = _instance->getMasterCell();  
@@ -150,16 +141,43 @@ namespace Bora {
           Device* device = dynamic_cast<Device*>( model );
 
           if (device) {     
+            unique_ptr<LayoutGenerator> layoutGenerator ( new LayoutGenerator() );
+
             TransistorFamily* tf = dynamic_cast<TransistorFamily*>( device );
             if (tf) {
-              tf->setNfing( getNFing() ); 
-              FormFactorParameter* pff = NULL;
-              if ((pff = dynamic_cast<FormFactorParameter*>(tf->getParameter("M"))) != NULL)
-                pff->setValue( tf->getNfing() );
-              
-              shared_ptr<LayoutGenerator> layoutGenerator ( new LayoutGenerator() );
-              layoutGenerator->setDevice (device);
+              StepParameterRange* stepRange = dynamic_cast<StepParameterRange*>( getNodeSets()->getRange() );
+              if (not stepRange) {
+                throw Error( "DSlicingNode::_place(): Device \"%s\" must be associated with a StepParameterRange argument instead of %s."
+                           , getString(device->getName()).c_str()
+                           , getString(stepRange).c_str()
+                           );
+              }
+              stepRange->setIndex( getBoxSet()->getIndex() );
+              int nfingers = stepRange->getValue();
+
+              tf->setNfing( nfingers ); 
+              layoutGenerator->setDevice ( device );
               layoutGenerator->drawLayout(); 
+            } else {
+              MultiCapacitor*       mcapacitor  = dynamic_cast<MultiCapacitor      *>( device );
+              MatrixParameterRange* matrixRange = dynamic_cast<MatrixParameterRange*>( getNodeSets()->getRange() );
+
+              if (mcapacitor) {
+                if (not matrixRange) {
+                  throw Error( "DSlicingNode::create(): Device \"%s\" must be associated with a MatrixParameterRange argument instead of %s."
+                             , getString(mcapacitor->getName()).c_str()
+                             , getString(matrixRange).c_str()
+                             );
+                }
+
+                matrixRange->setIndex( getBoxSet()->getIndex() );
+                MatrixParameter* mp = NULL;
+                if ( (mp = dynamic_cast<MatrixParameter*>(mcapacitor->getParameter("Matrix"))) != NULL ) 
+                  mp->setMatrix( &matrixRange->getValue() );
+      
+                layoutGenerator->setDevice( mcapacitor );
+                layoutGenerator->drawLayout(); 
+              }
             }
           }
           _instance->setTransformation ( Transformation( _x - model->getAbutmentBox().getXMin()

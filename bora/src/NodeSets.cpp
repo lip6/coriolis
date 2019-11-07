@@ -18,6 +18,7 @@
 #include "hurricane/Warning.h"
 #include "hurricane/analog/Device.h"
 #include "hurricane/analog/TransistorFamily.h"
+#include "hurricane/analog/MultiCapacitor.h"
 #include "hurricane/analog/LayoutGenerator.h"
 #include "crlcore/RoutingGauge.h"
 
@@ -28,115 +29,92 @@ namespace Bora {
   using namespace Analog;
 
 
-  NodeSets::NodeSets ( double start, double step, double count )
+  NodeSets::NodeSets ( ParameterRange* range )
     : _boxSets()
-    , _start   ( start )
-    , _step    ( step  )
-    , _count   ( count )
-  { }
+    , _range  (NULL)
+  {
+    if (range) {
+      _range = range->clone();
+      _range->setNested();
+    }
+  }
   
 
-  NodeSets::NodeSets ( const NodeSets* other )
-    : _boxSets( other->getBoxSets() )
-    , _start   ( other->getStartParameter() )
-    , _step    ( other->getStepParameter()  )
-    , _count   ( other->getCountParameter() )
-  { }
+  NodeSets::NodeSets ( const NodeSets* from )
+    : _boxSets( from->getBoxSets() )
+    , _range  (NULL)
+  {
+    if (from->_range) {
+      _range = from->_range->clone();
+      _range->setNested();
+    }
+  }
 
 
   NodeSets::~NodeSets ()
-  { }
+  {
+    if (_range) delete _range;
+  }
 
   
-  NodeSets* NodeSets::create ( Cell*  cell
-                             , double start
-                             , double step
-                             , double count
+  NodeSets* NodeSets::create ( Cell*              cell
+                             , ParameterRange*    range
                              , CRL::RoutingGauge* rg )
   {
-    NodeSets* nodeset = new NodeSets( start, step, count );
-
+    NodeSets* nodeset = new NodeSets( range );
     if (not cell) return nodeset;
 
-    Device* dev = dynamic_cast<Device*>( cell );
-    if (dev) {
+    unique_ptr<LayoutGenerator> layoutGenerator ( new LayoutGenerator() );
+
+    TransistorFamily*   device    = dynamic_cast<TransistorFamily  *>( cell  );
+    StepParameterRange* stepRange = dynamic_cast<StepParameterRange*>( nodeset->getRange() );
+    if (device) {
     //cdebug_log(536,0) << "createNodeSets for an Analog Device" << endl;
-      TransistorFamily* tf  = dynamic_cast<TransistorFamily*>(dev);
-    
-      for ( int i = 0; i < count; ++i ) {
-        tf->setNfing( start + i*step ); 
+      if (not stepRange) {
+        throw Error( "NodeSets::create(): Device \"%s\" must be associated with a StepParameterRange argument instead of %s."
+                   , getString(device->getName()).c_str()
+                   , getString(stepRange).c_str()
+                   );
+      }
+
+      stepRange->reset();
+      do {
+        device->setNfing( stepRange->getValue() ); 
       
-        FormFactorParameter* pff = NULL;
-        if ( (pff = dynamic_cast<FormFactorParameter*>(tf->getParameter("M"))) != NULL ) 
-          pff->setValue( tf->getNfing() );
-      
-        auto_ptr<LayoutGenerator> layoutGenerator ( new LayoutGenerator() );
-        layoutGenerator->setDevice( dev );
+        layoutGenerator->setDevice( device );
         layoutGenerator->drawLayout(); 
       
-        if (rg) {
-          float h2pitch = rg->getHorizontalPitch()*2;
-          float v2pitch = rg->getVerticalPitch  ()*2;
-                                       
-          float h = dev->getAbutmentBox().getHeight();
-          float w = dev->getAbutmentBox().getWidth();
+        nodeset->push_back( DBoxSet::create( device, stepRange->getIndex(), rg ) );
 
-          if (fmod(h,h2pitch) > 1e-06) {
-            cerr << Warning( "NodeSets::create(): The height of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
-                           , getString(dev->getName()).c_str()
-                           , DbU::getValueString(dev->getAbutmentBox().getWidth()).c_str()
-                           , DbU::getValueString(rg->getHorizontalPitch()*2).c_str()
-                           ) << endl;
-          }
-          if (fmod(w,v2pitch) > 1e-06) {
-            cerr << Warning( "NodeSets::create(): The width of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
-                           , getString(dev->getName()).c_str()
-                           , DbU::getValueString(dev->getAbutmentBox().getWidth()).c_str()
-                           , DbU::getValueString(rg->getVerticalPitch()*2).c_str()
-                           ) << endl;
-          }
-
-          nodeset->push_back( DBoxSet::create( ceil(h/h2pitch)*h2pitch
-                                             , ceil(w/v2pitch)*v2pitch
-                                             , start + i*step
-                                             ) );
-        } else {
-          nodeset->push_back( DBoxSet::create( dev->getAbutmentBox().getHeight()
-                                             , dev->getAbutmentBox().getWidth()
-                                             , start + i*step
-                                             ) );
-        }
-      }
+        stepRange->progress();
+      } while ( stepRange->isValid() );
     } else {
-    //cdebug_log(536,0) << "createNodeSets for a Digital Device: " << cell << endl;
-      if (rg) {
-        DbU::Unit h2pitch = rg->getHorizontalPitch()*2;
-        DbU::Unit v2pitch = rg->getVerticalPitch  ()*2;
-        DbU::Unit h       = cell->getAbutmentBox().getHeight();
-        DbU::Unit w       = cell->getAbutmentBox().getWidth(); 
+      MultiCapacitor*       mcapacitor  = dynamic_cast<MultiCapacitor      *>( cell  );
+      MatrixParameterRange* matrixRange = dynamic_cast<MatrixParameterRange*>( nodeset->getRange() );
 
-        if (h % h2pitch) {
-          cerr << Warning( "NodeSets::create(): The height of device \"%s\" (%s) is not pitched on %s*2 (adjusted)."
-                         , getString(cell->getName()).c_str()
-                         , DbU::getValueString(cell->getAbutmentBox().getHeight()).c_str()
-                         , DbU::getValueString(rg->getHorizontalPitch()).c_str()
-                         ) << endl;
-        }
-        if (w % v2pitch) {
-          cerr << Warning( "NodeSets::create(): The width of device \"%s\" (%s) is not pitched on %s*2 (adjusted)."
-                         , getString(cell->getName()).c_str()
-                         , DbU::getValueString(cell->getAbutmentBox().getWidth()).c_str()
-                         , DbU::getValueString(rg->getVerticalPitch()).c_str()
-                         ) << endl;
-        }
+      if (mcapacitor) {
+        if (not matrixRange) {
+          throw Error( "NodeSets::create(): Device \"%s\" must be associated with a MatrixParameterRange argument instead of %s."
+                     , getString(mcapacitor->getName()).c_str()
+                     , getString(stepRange).c_str()
+                     );
 
-        nodeset->push_back( DBoxSet::create( ceil(h/h2pitch)*h2pitch
-                                           , ceil(w/v2pitch)*v2pitch
-                                           ) );
+          matrixRange->reset();
+          do {
+            MatrixParameter* mp = NULL;
+            if ( (mp = dynamic_cast<MatrixParameter*>(mcapacitor->getParameter("Matrix"))) != NULL ) 
+              mp->setMatrix( &matrixRange->getValue() );
+      
+            layoutGenerator->setDevice( mcapacitor );
+            layoutGenerator->drawLayout(); 
+
+            nodeset->push_back( DBoxSet::create( mcapacitor, matrixRange->getIndex(), rg ) );
+
+            matrixRange->progress();
+          } while ( matrixRange->isValid() );
+        }
       } else {
-        nodeset->push_back( DBoxSet::create( cell->getAbutmentBox().getHeight()
-                                           , cell->getAbutmentBox().getWidth()
-                                           ) );
+        nodeset->push_back( DBoxSet::create( cell, 0, rg ) );
       }
     }
 
@@ -355,7 +333,7 @@ namespace Bora {
 
   NodeSets* NodeSets::clone() 
   {
-    NodeSets* nodesets = new NodeSets( _start, _step, _count );
+    NodeSets* nodesets = new NodeSets( _range );
     for ( BoxSet* bs : _boxSets ) _boxSets.push_back( bs->clone() );
     return nodesets;
   }

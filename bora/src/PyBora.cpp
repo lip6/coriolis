@@ -16,6 +16,9 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
+#include "bora/PyParameterRange.h"
+#include "bora/PyStepParameterRange.h"
+#include "bora/PyMatrixParameterRange.h"
 #include "bora/PySlicingNode.h"
 #include "bora/PyHSlicingNode.h"
 #include "bora/PyVSlicingNode.h"
@@ -66,6 +69,9 @@ extern "C" {
   {
     cdebug.log(61) << "initBora()" << endl;
 
+    PyParameterRange_LinkPyType();
+    PyStepParameterRange_LinkPyType();
+    PyMatrixParameterRange_LinkPyType();
     PySlicingNode_LinkPyType();
     PyHSlicingNode_LinkPyType();
     PyVSlicingNode_LinkPyType();
@@ -75,15 +81,18 @@ extern "C" {
     PyBoraEngine_LinkPyType();
     PyGraphicBoraEngine_LinkPyType();
 
+    PYTYPE_READY( ParameterRange )
     PYTYPE_READY( SlicingNode )
 
-    PYTYPE_READY_SUB( HSlicingNode     , SlicingNode )
-    PYTYPE_READY_SUB( VSlicingNode     , SlicingNode )
-    PYTYPE_READY_SUB( DSlicingNode     , SlicingNode )
-    PYTYPE_READY_SUB( RHSlicingNode    , SlicingNode )
-    PYTYPE_READY_SUB( RVSlicingNode    , SlicingNode )
-    PYTYPE_READY_SUB( BoraEngine       , ToolEngine  );
-    PYTYPE_READY_SUB( GraphicBoraEngine, GraphicTool );
+    PYTYPE_READY_SUB( StepParameterRange  , ParameterRange );
+    PYTYPE_READY_SUB( MatrixParameterRange, ParameterRange );
+    PYTYPE_READY_SUB( HSlicingNode        , SlicingNode    );
+    PYTYPE_READY_SUB( VSlicingNode        , SlicingNode    );
+    PYTYPE_READY_SUB( DSlicingNode        , SlicingNode    );
+    PYTYPE_READY_SUB( RHSlicingNode       , SlicingNode    );
+    PYTYPE_READY_SUB( RVSlicingNode       , SlicingNode    );
+    PYTYPE_READY_SUB( BoraEngine          , ToolEngine     );
+    PYTYPE_READY_SUB( GraphicBoraEngine   , GraphicTool    );
 
 
     PyObject* module = Py_InitModule( "Bora", PyBora_Methods );
@@ -93,22 +102,28 @@ extern "C" {
       return;
     }
 
+    Py_INCREF( &PyTypeParameterRange );
+    PyModule_AddObject( module, "ParameterRange"      , (PyObject*)&PyTypeParameterRange );
+    Py_INCREF( &PyTypeStepParameterRange );
+    PyModule_AddObject( module, "StepParameterRange"  , (PyObject*)&PyTypeStepParameterRange );
+    Py_INCREF( &PyTypeMatrixParameterRange );
+    PyModule_AddObject( module, "MatrixParameterRange", (PyObject*)&PyTypeMatrixParameterRange );
     Py_INCREF( &PyTypeSlicingNode );
-    PyModule_AddObject( module, "SlicingNode"      , (PyObject*)&PyTypeSlicingNode );
-    Py_INCREF( &PyTypeHSlicingNode );
-    PyModule_AddObject( module, "HSlicingNode"     , (PyObject*)&PyTypeHSlicingNode );
-    Py_INCREF( &PyTypeVSlicingNode );
-    PyModule_AddObject( module, "VSlicingNode"     , (PyObject*)&PyTypeVSlicingNode );
-    Py_INCREF( &PyTypeDSlicingNode );
-    PyModule_AddObject( module, "DSlicingNode"     , (PyObject*)&PyTypeDSlicingNode );
-    Py_INCREF( &PyTypeRHSlicingNode );
-    PyModule_AddObject( module, "RHSlicingNode"    , (PyObject*)&PyTypeRHSlicingNode );
-    Py_INCREF( &PyTypeRVSlicingNode );
-    PyModule_AddObject( module, "RVSlicingNode"    , (PyObject*)&PyTypeRVSlicingNode );
-    Py_INCREF( &PyTypeBoraEngine );
-    PyModule_AddObject( module, "BoraEngine"       , (PyObject*)&PyTypeBoraEngine );
-    Py_INCREF( &PyTypeGraphicBoraEngine );
-    PyModule_AddObject( module, "GraphicBoraEngine", (PyObject*)&PyTypeGraphicBoraEngine );
+    PyModule_AddObject( module, "SlicingNode"         , (PyObject*)&PyTypeSlicingNode );
+    Py_INCREF( &PyTypeHSlicingNode );                 
+    PyModule_AddObject( module, "HSlicingNode"        , (PyObject*)&PyTypeHSlicingNode );
+    Py_INCREF( &PyTypeVSlicingNode );                 
+    PyModule_AddObject( module, "VSlicingNode"        , (PyObject*)&PyTypeVSlicingNode );
+    Py_INCREF( &PyTypeDSlicingNode );                 
+    PyModule_AddObject( module, "DSlicingNode"        , (PyObject*)&PyTypeDSlicingNode );
+    Py_INCREF( &PyTypeRHSlicingNode );                
+    PyModule_AddObject( module, "RHSlicingNode"       , (PyObject*)&PyTypeRHSlicingNode );
+    Py_INCREF( &PyTypeRVSlicingNode );                
+    PyModule_AddObject( module, "RVSlicingNode"       , (PyObject*)&PyTypeRVSlicingNode );
+    Py_INCREF( &PyTypeBoraEngine );                   
+    PyModule_AddObject( module, "BoraEngine"          , (PyObject*)&PyTypeBoraEngine );
+    Py_INCREF( &PyTypeGraphicBoraEngine );            
+    PyModule_AddObject( module, "GraphicBoraEngine"   , (PyObject*)&PyTypeGraphicBoraEngine );
 
     PySlicingNode_postModuleInit();
     PyBoraEngine_postModuleInit();
