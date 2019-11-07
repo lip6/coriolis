@@ -495,8 +495,12 @@ namespace CRL {
   // The cell is not in the CATAL : add an entry.
     if ( state == NULL ) state = _catalog.getState ( name, true );
 
-    if ( library == NULL )
+    if ( library == NULL ) {
+      if (_libraries.empty())
+        throw Error( "AllianceFramework::createCell(): Libraries are not set up, maybe an initialization problem." );
+
       library = _libraries[0];
+    }
 
     if ( !state->getCell() ) {
       state->setPhysical ( true );
