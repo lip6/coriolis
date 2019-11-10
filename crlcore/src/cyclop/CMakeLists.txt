@@ -1,6 +1,5 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<crlcore/src/ccore/cyclop>" -*-
 
-#              include ( ${QT_USE_FILE} )
    include_directories ( ${CRLCORE_SOURCE_DIR}/src/ccore
                          ${HURRICANE_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
@@ -11,21 +10,17 @@
                    set ( mocincludes   Cyclop.h
                                        OpenCellDialog.h
                        )
-		   set ( cpps          OpenCellDialog.cpp
+                   set ( cpps          OpenCellDialog.cpp
                                        DemoGo.cpp
                                        Cyclop.cpp
                                        CyclopMain.cpp
                        )
  
-          qtX_wrap_cpp ( mocCpps       ${mocincludes} )
+          qtX_wrap_cpp ( moccpps       ${mocincludes} )
 
       link_directories ( ${CRLCORE_BINARY_DIR}/src/ccore )
 
-#if(NOT WITH_QT5)
-                  list ( APPEND        cpps ${mocCpps} )
-#endif()
-
-        add_executable ( cyclop        ${cpps} )
+        add_executable ( cyclop        ${cpps} ${moccpps} )
  target_link_libraries ( cyclop        crlcore
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
