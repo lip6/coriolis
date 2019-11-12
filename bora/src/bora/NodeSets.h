@@ -71,7 +71,7 @@ namespace Bora {
                    size_t                          findIndex         ( DbU::Unit height, DbU::Unit width ) const;
                    BoxSet*                         find              ( DbU::Unit height, DbU::Unit width );
                    BoxSet*                         find              ( BoxSet* boxSet );
-                   BoxSet*                         find              ( int     nfing  );
+                   BoxSet*                         find              ( size_t  index );
                    void                            print             () const;
                    bool                            compare           ( NodeSets nodeSets2, unsigned int flags=NoFlags ) const;
                    void                            push_back         ( BoxSet* boxSet );

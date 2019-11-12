@@ -33,6 +33,10 @@ from   Analog     import LevelShifter
 from   Analog     import SimpleCurrentMirror
 from   Analog     import CapacitorFamily
 from   Analog     import MultiCapacitor
+from   Analog     import CapacitorFamily
+from   Analog     import MultiCapacitor
+from   Analog     import ResistorFamily
+from   Analog     import Resistor
 from   Analog     import LayoutGenerator
 from   Analog     import Matrix
 from   Bora       import ParameterRange
@@ -55,6 +59,8 @@ PMOS    = Transistor.PMOS
 PIP     = CapacitorFamily.PIP
 MIM     = CapacitorFamily.MIM
 MOM     = CapacitorFamily.MOM
+LOWRES  = ResistorFamily.LOWRES
+HIRES   = ResistorFamily.HIRES
 Center  = SlicingNode.AlignCenter
 Left    = SlicingNode.AlignLeft
 Right   = SlicingNode.AlignRight
@@ -256,6 +262,7 @@ class AnalogDesign ( object ):
         specSize = 0
         if   isderived(dspec[0],TransistorFamily): specSize = 12
         elif isderived(dspec[0], CapacitorFamily): specSize = 6
+        elif isderived(dspec[0],  ResistorFamily): specSize = 5
         else:
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], has unsupported device type.' \
                             % (count)
@@ -313,6 +320,15 @@ class AnalogDesign ( object ):
           elif isinstance(dspec[4],tuple): pass
           else:
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (Cs) should either be *one* float or a *list* of floats.' % count
+                            , '%s' % str(dspec) ])
+
+        elif specSize == 5:
+          if dspec[3] not in [LOWRES, HIRES]:
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either LOWRES or HIRES.' % count
+                            , '%s' % str(dspec) ])
+          if   isinstance(dspec[4],float): pass
+          else:
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (resistance) must be a float.' % count
                             , '%s' % str(dspec) ])
 
         else:
@@ -386,19 +402,23 @@ class AnalogDesign ( object ):
               if dspec[8]:               device.setExternalDummy( dspec[8] )
 
             elif isderived(dspec[0],CapacitorFamily):
-              if   isinstance(dspec[4],float): capaCount = 1
-              elif isinstance(dspec[4],tuple): capaCount = len(dspec[4])
+              if   isinstance(dspec[4],float): capaValues = (dspec[4],) 
+              elif isinstance(dspec[4],tuple): capaValues =  dspec[4]
               else:
-                  print type(dspec[4]), dspec[4]
-                
-              device = dspec[0].create( self.library, dspec[1], dspec[3], capaCount )
+                  raise ErrorMessage( 1, 'AnalogDesign.doDevice(): Invalid type for capacities values "%s".' \
+                                         % str(dspec[4]) )
+
+              device = dspec[0].create( self.library, dspec[1], dspec[3], len(capaValues) )
+              device.getParameter( 'Layout Styles' ).setValue( dspec[2] )
+              for i in range(len(capaValues)):
+                device.getParameter( 'capacities' ).setValue( i, capaValues[i]  )
+
+            elif isderived(dspec[0],ResistorFamily):
+              device = dspec[0].create( self.library, dspec[1], dspec[3] )
               device.getParameter( 'Layout Styles' ).setValue ( dspec[2] )
-              device.getParameter( 'matrix'        ).setMatrix( dspec[5] )
-              if isinstance(dspec[4],float):
-                device.getParameter( 'capacities' ).setValue( 0, dspec[4] )
-              else:
-                for index in range(len(dspec[4])):
-                  device.getParameter( 'capacities' ).setValue( index, dspec[4][index] )
+              device.getParameter( 'Resistance'    ).setMatrix( dspec[4] )
+            else:
+              raise ErrorMessage( 1, 'AnalogDesign.doDevice(): Unknown/unsupported device "%s".' % str(dspec[0]) )
             
             self.generator.setDevice ( device )
             self.generator.drawLayout()
@@ -579,10 +599,10 @@ class AnalogDesign ( object ):
         del self.stack[-1]
         return
 
-    def addDevice ( self, name, align, span=(0, 0, 0), NF=0 ):
-        node = DSlicingNode.create( name, self.cell, StepParameterRange(span[0], span[1], span[2]), self.rg )
+    def addDevice ( self, name, align, parameter, index=0 ):
+        node = DSlicingNode.create( name, self.cell, parameter, self.rg )
         node.setAlignment( align )
-        if NF != 0: node.setNFing( NF )
+        if index != 0: node.setBoxSetIndex( index )
         self.topNode().push_back( node )
         trace( 110, '\tSlicingTree.addDevice() %s (parent id:%d)\n' % (str(node),self.topNode().getId()) )
        #node.cprint()

@@ -91,7 +91,7 @@ namespace Bora {
     else if (isAlignTop   ()) cerr << "Alignment  : Top"     << endl;
     else if (isAlignBottom()) cerr << "Alignment  : Bottom"  << endl;
     else                      cerr << "Alignment  : Unknown" << endl;
-    cerr <<   "NFingers   : " << getNFing() << endl;
+    cerr <<   "BoxSetIndex   : " << getBoxSetIndex() << endl;
     if (_instance) cerr << "Instance   : " << _instance << endl;
     else           cerr << "Instance   : None" <<  endl;
     SlicingNode::print();
@@ -112,12 +112,12 @@ namespace Bora {
   }
 
 
-  void  DSlicingNode::setNFing ( int nfing )
-  { _boxSet = _nodeSets->find( nfing ); }
+  void  DSlicingNode::setBoxSetIndex ( size_t index )
+  { _boxSet = _nodeSets->find( index ); }
 
 
-  int  DSlicingNode::getNFing () const
-  { return (_boxSet) ? _boxSet->getNFing() : 1 ; }
+  size_t  DSlicingNode::getBoxSetIndex () const
+  { return (_boxSet) ? _boxSet->getIndex() : 0 ; }
 
 
   void DSlicingNode::_place( DbU::Unit x, DbU::Unit y, bool replace )

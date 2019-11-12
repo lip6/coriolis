@@ -22,6 +22,7 @@
 #include "hurricane/analog/PyMCheckBoxParameter.h"
 #include "hurricane/analog/PySpinBoxParameter.h"
 #include "hurricane/analog/PyStepParameter.h"
+#include "hurricane/analog/PyFloatParameter.h"
 
 
 namespace  Isobar {
@@ -119,6 +120,9 @@ extern "C" {
 
     StepParameter* stepParameter = dynamic_cast<StepParameter*>(object);
     if (stepParameter) return PyStepParameter_Link(stepParameter);
+
+    FloatParameter* floatParameter = dynamic_cast<FloatParameter*>(object);
+    if (floatParameter) return PyFloatParameter_Link(floatParameter);
 
     Py_RETURN_NONE;
   }

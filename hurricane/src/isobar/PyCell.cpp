@@ -64,20 +64,25 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_create ()"
 
-  PyObject* PyCell_create ( PyObject*, PyObject *args ) {
+  PyObject* PyCell_create ( PyObject*, PyObject* args )
+  {
     cdebug_log(20,0) << "PyCell_create()" << endl;
 
-    char* name = NULL;
+    char*      name      = NULL;
     PyLibrary* pyLibrary = NULL;
-    Cell* cell = NULL;
+    Cell*      cell      = NULL;
 
     HTRY
-    if (PyArg_ParseTuple(args,"O!s:Cell.create", &PyTypeLibrary, &pyLibrary, &name)) {
-        cell = Cell::create(PYLIBRARY_O(pyLibrary), Name(name));
-    } else {
-        PyErr_SetString ( ConstructorError, "invalid number of parameters for Cell constructor.");
+      if (PyArg_ParseTuple(args,"O!s:Cell.create", &PyTypeLibrary, &pyLibrary, &name)) {
+        cell = Cell::create( PYLIBRARY_O(pyLibrary), Name(name) );
+      } else {
+        string message = "Cell::create(): Invalid number of parameters for Cell constructor, name=";
+        if (name) message += "\"" + getString(name) + "\".";
+        else      message += "(NULL).";
+
+        PyErr_SetString( ConstructorError, message.c_str() );
         return NULL;
-    }
+      }
     HCATCH
 
     return PyCell_Link(cell);

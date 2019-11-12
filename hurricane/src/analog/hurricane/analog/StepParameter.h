@@ -23,13 +23,18 @@ namespace Analog {
 
   class StepParameter : public Parameter {
     public:
-      inline       StepParameter ( std::string id, long min, long max, long step );
-      inline  long getMin        () const;
-      inline  long getMax        () const;
-      inline  long getStep       () const;
-      inline  long getValue      () const;
-      inline  operator long      () const;
-      inline  void setValue      ( long );
+      typedef Parameter  Super;
+    public:
+      inline               StepParameter ( std::string id, long min, long max, long step );
+      inline  long         getMin        () const;
+      inline  long         getMax        () const;
+      inline  long         getStep       () const;
+      inline  long         getValue      () const;
+      inline  operator long              () const;
+      inline  void         setValue      ( long );
+      virtual std::string  _getTypeName  () const;
+      virtual std::string  _getString    () const;
+      virtual Record*      _getRecord    () const;
     private:
       long  _min;
       long  _max;
@@ -48,5 +53,8 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_PR_SUPPORT(Analog::StepParameter);
 
 #endif // ANALOG_STEP_PARAMETER_H

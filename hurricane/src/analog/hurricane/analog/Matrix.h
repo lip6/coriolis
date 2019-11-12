@@ -17,7 +17,12 @@
 #ifndef ANALOG_MATRIX_H
 #define ANALOG_MATRIX_H
 
+#include <cstddef>
+
+
 namespace Analog {
+
+  using std::size_t;
 
 
   class Matrix {

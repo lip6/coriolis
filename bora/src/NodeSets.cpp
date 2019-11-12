@@ -19,6 +19,7 @@
 #include "hurricane/analog/Device.h"
 #include "hurricane/analog/TransistorFamily.h"
 #include "hurricane/analog/MultiCapacitor.h"
+#include "hurricane/analog/Resistor.h"
 #include "hurricane/analog/LayoutGenerator.h"
 #include "crlcore/RoutingGauge.h"
 
@@ -102,7 +103,7 @@ namespace Bora {
           matrixRange->reset();
           do {
             MatrixParameter* mp = NULL;
-            if ( (mp = dynamic_cast<MatrixParameter*>(mcapacitor->getParameter("Matrix"))) != NULL ) 
+            if ( (mp = dynamic_cast<MatrixParameter*>(mcapacitor->getParameter("matrix"))) != NULL ) 
               mp->setMatrix( &matrixRange->getValue() );
       
             layoutGenerator->setDevice( mcapacitor );
@@ -114,7 +115,30 @@ namespace Bora {
           } while ( matrixRange->isValid() );
         }
       } else {
-        nodeset->push_back( DBoxSet::create( cell, 0, rg ) );
+        ResistorFamily*     device    = dynamic_cast<ResistorFamily    *>( cell  );
+        StepParameterRange* stepRange = dynamic_cast<StepParameterRange*>( nodeset->getRange() );
+        if (device) {
+          if (not stepRange) {
+            throw Error( "NodeSets::create(): Device \"%s\" must be associated with a StepParameterRange argument instead of %s."
+                       , getString(device->getName()).c_str()
+                       , getString(stepRange).c_str()
+                       );
+          }
+
+          stepRange->reset();
+          do {
+            device->setBends( stepRange->getValue() ); 
+      
+            layoutGenerator->setDevice( device );
+            layoutGenerator->drawLayout(); 
+      
+            nodeset->push_back( DBoxSet::create( device, stepRange->getIndex(), rg ) );
+
+            stepRange->progress();
+          } while ( stepRange->isValid() );
+        } else {
+          nodeset->push_back( DBoxSet::create( cell, 0, rg ) );
+        }
       }
     }
 
@@ -251,11 +275,11 @@ namespace Bora {
   }
 
 
-  BoxSet* NodeSets::find ( int nfing )
+  BoxSet* NodeSets::find ( size_t index )
   {
     size_t i = 0;
     for ( ; i<_boxSets.size() ; ++i ) {
-      if (_boxSets[i]->getNFing() == nfing)
+      if (_boxSets[i]->getIndex() == index)
         return _boxSets[i];
     }
 

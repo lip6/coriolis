@@ -24,13 +24,18 @@ namespace Analog {
 
   class FormFactorParameter : public Parameter {
     public:
-      inline          FormFactorParameter ( std::string id, long min, long max);
-      inline long     getMin              () const;
-      inline long     getMax              () const;
-      inline long     getValue            () const;
-      inline operator long                () const ;
-      inline void     setValue            ( long );
-      inline void     setMax              ( long );
+      typedef Parameter  Super;
+    public:
+      inline               FormFactorParameter ( std::string id, long min, long max);
+      inline  long         getMin              () const;
+      inline  long         getMax              () const;
+      inline  long         getValue            () const;
+      inline               operator long       () const ;
+      inline  void         setValue            ( long );
+      inline  void         setMax              ( long );
+      virtual std::string  _getTypeName        () const;
+      virtual std::string  _getString          () const;
+      virtual Record*      _getRecord          () const;
     private:
       long _min;
       long _max;
@@ -54,5 +59,8 @@ namespace Analog {
   
 
 }  // Analog namespace.
+
+
+INSPECTOR_P_SUPPORT(Analog::FormFactorParameter);
 
 #endif // ANALOG_FORMFACTOR_PARAMETER_H

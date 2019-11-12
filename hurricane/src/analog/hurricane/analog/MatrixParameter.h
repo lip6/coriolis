@@ -25,13 +25,18 @@ namespace Analog {
 
   class MatrixParameter : public Parameter {
     public:
-      inline          MatrixParameter ( std::string id, size_t rows=1, size_t columns=1 );
-      inline size_t   getRows         () const;
-      inline size_t   getColumns      () const;
-      inline size_t   getValue        ( size_t row , size_t column  ) const;
-      inline void     setValue        ( size_t row , size_t column  , size_t value );
-      inline void     setMatrix       ( const Matrix* );
-      inline void     resize          ( size_t rows, size_t columns );
+      typedef Parameter  Super;
+    public:
+      inline               MatrixParameter ( std::string id, size_t rows=1, size_t columns=1 );
+      inline  size_t       getRows         () const;
+      inline  size_t       getColumns      () const;
+      inline  size_t       getValue        ( size_t row , size_t column  ) const;
+      inline  void         setValue        ( size_t row , size_t column  , size_t value );
+      inline  void         setMatrix       ( const Matrix* );
+      inline  void         resize          ( size_t rows, size_t columns );
+      virtual std::string  _getTypeName    () const;
+      virtual std::string  _getString      () const;
+      virtual Record*      _getRecord      () const;
     private:
       Matrix  _matrix;
   };
@@ -51,5 +56,8 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_PR_SUPPORT(Analog::MatrixParameter);
 
 #endif // ANALOG_MATRIX_PARAMETER_H

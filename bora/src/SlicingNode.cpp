@@ -812,13 +812,13 @@ namespace Bora {
   }
 
   
-  void  SlicingNode::setNFing ( int )
-  { cerr << Error( "SlicingNode::setNFing(): Base class method must never be called." ) << endl; }
+  void  SlicingNode::setBoxSetIndex ( size_t )
+  { cerr << Error( "SlicingNode::setBoxSetIndex(): Base class method must never be called." ) << endl; }
 
   
-  int  SlicingNode::getNFing () const
+  size_t  SlicingNode::getBoxSetIndex () const
   {
-    cerr << Error( "SlicingNode::getNFing(): Base class method must never be called." ) << endl;
+    cerr << Error( "SlicingNode::getBoxSetIndex(): Base class method must never be called." ) << endl;
     return 0;
   }
 

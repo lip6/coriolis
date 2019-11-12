@@ -32,7 +32,7 @@ namespace Analog {
                                                 , bool bulkConnected );
       virtual Hurricane::Name getDeviceName     () const;
               unsigned int    getRestriction    ( Hurricane::Net* net ) const;
-              bool            isSame            (Transistor* ts);
+              bool            isSame            ( Transistor* );
   
     protected:
                               Transistor        ( Hurricane::Library* , const Hurricane::Name& , const Type& );

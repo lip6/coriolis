@@ -13,6 +13,14 @@
                        )
 
                    set( cpps        AnalogCellExtension.cpp
+                                    Parameter.cpp
+                                    CapacitiesParameter.cpp
+                                    FormFactorParameter.cpp
+                                    ChoiceParameter.cpp
+                                    FloatParameter.cpp
+                                    MatrixParameter.cpp
+                                    MCheckBoxParameter.cpp
+                                    StepParameter.cpp
                                     BJT.cpp
                                     BJTFamily.cpp
                                     BJTFamilyNames.cpp
@@ -38,6 +46,9 @@
                                     TransistorFamilyNames.cpp
                                     TransistorPair.cpp
                                     MultiCapacitor.cpp
+				    MetaResistor.cpp
+				    ResistorFamily.cpp
+				    Resistor.cpp
                       )
                    set( pyCpps      PyAnalog.cpp
                                     PyCapacitorFamily.cpp
@@ -60,12 +71,15 @@
                                     PySimpleCurrentMirror.cpp
                                     PySpinBoxParameter.cpp
                                     PyStepParameter.cpp
+                                    PyFloatParameter.cpp
                                     PyTransistor.cpp
                                     PyTransistorFamily.cpp
                                     PyTransistorPair.cpp
                                     PyMatrixParameter.cpp
                                     PyCapacitiesParameter.cpp
                                     PyMultiCapacitor.cpp
+                                    PyResistorFamily.cpp
+                                    PyResistor.cpp
                       )
                    set( includes    hurricane/analog/AnalogCellExtension.h
                                     hurricane/analog/BJTFamily.h
@@ -94,6 +108,7 @@
                                     hurricane/analog/SimpleCurrentMirror.h
                                     hurricane/analog/SpinBoxParameter.h
                                     hurricane/analog/StepParameter.h
+                                    hurricane/analog/FloatParameter.h
                                     hurricane/analog/TransistorFamily.h
                                     hurricane/analog/TransistorFamilyNames.h
                                     hurricane/analog/Transistor.h
@@ -102,6 +117,9 @@
                                     hurricane/analog/CapacitiesParameter.h
                                     hurricane/analog/MultiCapacitor.h
                                     hurricane/analog/Matrix.h
+				    hurricane/analog/MetaResistor.h
+				    hurricane/analog/ResistorFamily.h
+				    hurricane/analog/Resistor.h
                       )
                    set( pyIncludes  hurricane/analog/PyCapacitorFamily.h
                                     hurricane/analog/PyCapacitorParameter.h
@@ -123,11 +141,14 @@
                                     hurricane/analog/PySimpleCurrentMirror.h
                                     hurricane/analog/PySpinBoxParameter.h
                                     hurricane/analog/PyStepParameter.h
+                                    hurricane/analog/PyFloatParameter.h
                                     hurricane/analog/PyTransistorFamily.h
                                     hurricane/analog/PyTransistor.h
                                     hurricane/analog/PyTransistorPair.h
                                     hurricane/analog/PyMatrixParameter.h
                                     hurricane/analog/PyCapacitiesParameter.h
+                                    hurricane/analog/PyResistorFamily.h
+                                    hurricane/analog/PyResistor.h
                       )
 
                    set( depLibs     viewer

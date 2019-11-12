@@ -12,6 +12,7 @@
                   CapacitorVRTracks.py
                   CapacitorRouted.py
                   MultiCapacitor.py
+                  ResistorSnake.py
                 )
 
  install( FILES ${pythonFiles}    DESTINATION ${PYTHON_SITE_PACKAGES}/oroshi ) 

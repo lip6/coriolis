@@ -51,7 +51,6 @@ namespace Analog {
     mc->setTerminal           ( true );
     UpdateSession::close();
 
-    cerr << "capacities:" << mc->getParameter( "capacities" ) << endl;
     return mc;
   }
   

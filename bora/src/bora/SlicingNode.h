@@ -251,8 +251,8 @@ namespace Bora {
       virtual        SlicingNode*       clone                        ( unsigned int tr=None );
       virtual        double             getDevicesArea               () const;
       virtual        double             getOccupationArea            () const;
-      virtual        void               setNFing                     ( int );
-      virtual        int                getNFing                     () const;
+      virtual        void               setBoxSetIndex               ( size_t );
+      virtual        size_t             getBoxSetIndex               () const;
       virtual        Instance*          getInstance                  () const;
       virtual        void               setInstance                  ( Instance* );
       virtual        bool               checkCellInstances           ( Cell* );

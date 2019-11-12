@@ -24,11 +24,16 @@ namespace Analog {
 
   class CapacitiesParameter : public Parameter {
     public:
-      inline          CapacitiesParameter ( std::string id, size_t count );
-      inline          CapacitiesParameter ( std::string id, const std::vector<double>& );
-      inline size_t   getCount            () const;
-      inline double   getValue            ( size_t index ) const;
-      inline void     setValue            ( size_t index, double value );
+      typedef Parameter  Super;
+    public:
+      inline               CapacitiesParameter ( std::string id, size_t count );
+      inline               CapacitiesParameter ( std::string id, const std::vector<double>& );
+      inline  size_t       getCount            () const;
+      inline  double       getValue            ( size_t index ) const;
+      inline  void         setValue            ( size_t index, double value );
+      virtual std::string  _getTypeName        () const;
+      virtual std::string  _getString          () const;
+      virtual Record*      _getRecord          () const;
     private:
       std::vector<double>  _values;
   };
@@ -50,5 +55,8 @@ namespace Analog {
 
 
 }  // Analog namespace.
+
+
+INSPECTOR_PR_SUPPORT(Analog::CapacitiesParameter);
 
 #endif // ANALOG_CAPACITIES_PARAMETER_H

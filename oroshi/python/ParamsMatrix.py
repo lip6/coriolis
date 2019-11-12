@@ -62,6 +62,12 @@ class ParamsMatrix ( object ):
     return
 
 
+  def setGlobalResistorParams ( self, boundingBox ):
+    self.matrix[0][0]['box'             ] = boundingBox
+    self.matrix[0][0]['family'          ] = 'Resistor'
+    return
+
+
   def setStacks ( self, stacks ):
     if not isinstance(stacks,list):
       print Error( 3, 'ParamsMatrix::setGlobalParams(): <stack> argument must be of <list> type.' )

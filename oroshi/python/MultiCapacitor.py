@@ -81,7 +81,6 @@ def layout ( device, bbMode ):
 
     try:
       capacities = device.getParameter( 'capacities' )
-      print str(device)
       print 'Capacities = ', capacities
 
       capValuesArg  = []

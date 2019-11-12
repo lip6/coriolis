@@ -124,7 +124,13 @@ addDevice( name       = 'SimpleCurrentMirrorBulkUnconnected'
 addDevice( name       = 'MultiCapacitor'
         #, spice      = spiceDir+'MIM_OneCapacitor.spi'
         #, connectors = ( 'T1', 'B1' )
-         , layouts    = ( ('Matrix'  , 'CapacitorMatrix.py' ),
+         , layouts    = ( ('Matrix', 'CapacitorMatrix.py' ),
+                        )
+         )
+addDevice( name       = 'Resistor'
+        #, spice      = spiceDir+'MIM_OneCapacitor.spi'
+         , connectors = ( 'PIN1', 'PIN2' )
+         , layouts    = ( ('Snake', 'ResistorSnake.py' ),
                         )
          )
 

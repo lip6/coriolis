@@ -96,8 +96,8 @@ extern "C" {
   }
 
 
-  DirectGetIntAttribute(PyDSlicingNode_getNFing,getNFing,PyDSlicingNode,DSlicingNode)
-  DirectSetIntAttribute(PyDSlicingNode_setNFing,setNFing,PyDSlicingNode,DSlicingNode)
+  DirectGetIntAttribute(PyDSlicingNode_getBoxSetIndex,getBoxSetIndex,PyDSlicingNode,DSlicingNode)
+  DirectSetIntAttribute(PyDSlicingNode_setBoxSetIndex,setBoxSetIndex,PyDSlicingNode,DSlicingNode)
   // Standart Destroy (Attribute).
 
 
@@ -105,10 +105,10 @@ extern "C" {
   // PyDSlicingNode Attribute Method table.
 
   PyMethodDef PyDSlicingNode_Methods[] =
-    { { "create"            , (PyCFunction)PyDSlicingNode_create   , METH_VARARGS|METH_STATIC
+    { { "create"            , (PyCFunction)PyDSlicingNode_create        , METH_VARARGS|METH_STATIC
                             , "Create a new DSlicingNode." }
-    , { "getNFing"          , (PyCFunction)PyDSlicingNode_getNFing , METH_NOARGS , "To be documented." }
-    , { "setNFing"          , (PyCFunction)PyDSlicingNode_setNFing , METH_VARARGS, "To be documented." }
+    , { "getBoxSetIndex"    , (PyCFunction)PyDSlicingNode_getBoxSetIndex, METH_NOARGS , "To be documented." }
+    , { "setBoxSetIndex"    , (PyCFunction)PyDSlicingNode_setBoxSetIndex, METH_VARARGS, "To be documented." }
     , { NULL, NULL, 0, NULL }  /* sentinel */
     };
 

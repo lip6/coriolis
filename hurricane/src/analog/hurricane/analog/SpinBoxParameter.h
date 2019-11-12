@@ -24,12 +24,13 @@ namespace Analog {
 
   class SpinBoxParameter : public Parameter {
     public:
-      inline          SpinBoxParameter ( std::string id, long min, long max );
-      inline long     getMin           () const;
-      inline long     getMax           () const;
-      inline long     getValue         () const;
-      inline operator long             () const;
-      inline void     setValue         ( long value );
+      inline               SpinBoxParameter ( std::string id, long min, long max );
+      inline  long         getMin           () const;
+      inline  long         getMax           () const;
+      inline  long         getValue         () const;
+      inline  operator     long             () const;
+      inline  void         setValue         ( long value );
+      virtual std::string  _getTypeName     () const { return "SpinBoxParameter"; }
     private:
       long _min;
       long _max;
