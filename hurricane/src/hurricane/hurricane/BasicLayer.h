@@ -59,6 +59,7 @@ namespace Hurricane {
                     , cut
                     , metal
                     , blockage
+                    , info
                     , other
                     };
         // Constructors.
@@ -181,9 +182,10 @@ inline std::string  getString<const Hurricane::BasicLayer::Material::Code*>
     case Hurricane::BasicLayer::Material::cut:      return "cut";
     case Hurricane::BasicLayer::Material::metal:    return "metal";
     case Hurricane::BasicLayer::Material::blockage: return "blockage";
+    case Hurricane::BasicLayer::Material::info:     return "info";
     case Hurricane::BasicLayer::Material::other:    return "other";
   }
-  return "abnormal";
+  return "undefined";
 }
 
 

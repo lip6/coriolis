@@ -195,6 +195,7 @@ extern "C" {
     LoadObjectConstant(PyTypeMaterial.tp_dict,BasicLayer::Material::cut     ,"cut"     );
     LoadObjectConstant(PyTypeMaterial.tp_dict,BasicLayer::Material::metal   ,"metal"   );
     LoadObjectConstant(PyTypeMaterial.tp_dict,BasicLayer::Material::blockage,"blockage");
+    LoadObjectConstant(PyTypeMaterial.tp_dict,BasicLayer::Material::info    ,"info"    );
     LoadObjectConstant(PyTypeMaterial.tp_dict,BasicLayer::Material::other   ,"other"   );
   }
 

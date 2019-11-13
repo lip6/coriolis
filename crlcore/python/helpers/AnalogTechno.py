@@ -21,7 +21,7 @@ import Hurricane
 from   Hurricane    import DbU
 from   Hurricane    import DataBase
 from   Hurricane    import Layer
-from   helpers.io   import ErrorMessage
+from   helpers.io   import ErrorMessage, catch
 from   helpers      import Debug
 
 
@@ -32,9 +32,12 @@ Length     = 0x0001
 Area       = 0x0002
 Asymmetric = 0x0004
 Unit       = 0x0008
+Count      = 0x0010
 
 
 def valueToDbU ( value, unit, lengthType ):
+    if lengthType & Count: return value
+    
     length = DbU.fromPhysical( value, unit )
     if lengthType & Length: return length
 
@@ -105,9 +108,10 @@ def _loadAnalogTechno ( techno, ruleTable ):
                                 , entry[5]
                                 )
       except Exception, e:
-        e = ErrorMessage( e )
-        e.addMessage( 'In %s:<analogTechnologyTable> at index %d.' % (technoFile,entryNo) )
-        print e
+        catch( e )  
+        print ErrorMessage( 1, [ 'In %s:' % technoFile
+                               , '"analogTechnologyTable" at index %d.' % entryNo ] )
+            
     return
 
 

@@ -627,7 +627,8 @@ namespace Hurricane {
       PhysicalRules& rules  = ilayer->second;
       PhysicalRule   search ( ruleName, 0, "" );
       if (rules.find(&search) != rules.end()) {
-        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\"." , ruleNameStr.c_str() );
+        throw Error( "Technology::addPhysicalRule(): Attempt to redefine rule \"%s\" for layer \"%s\"."
+                   , ruleNameStr.c_str(), layerStr.c_str() );
       }
   
       rules.insert( new PhysicalRule(ruleName,value,reference) );
