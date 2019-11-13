@@ -307,16 +307,16 @@ namespace Bora {
       if (abHeight % h2pitch) {
         cerr << Warning( "DBoxSet::create(): The height of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
                        , getString(cell->getName()).c_str()
-                       , DbU::getValueString(abHeight).c_str()
-                       , DbU::getValueString(h2pitch ).c_str()
+                       , DbU::getValueString(abHeight ).c_str()
+                       , DbU::getValueString(h2pitch/2).c_str()
                        ) << endl;
         abHeight += h2pitch - (abHeight % h2pitch);
       }
       if (abWidth % v2pitch) {
         cerr << Warning( "DBoxSet::create(): The width of device \"%s\" (%s) is not pitched on 2*%s (adjusted)."
                        , getString(cell->getName()).c_str()
-                       , DbU::getValueString(abWidth).c_str()
-                       , DbU::getValueString(v2pitch).c_str()
+                       , DbU::getValueString(abWidth  ).c_str()
+                       , DbU::getValueString(v2pitch/2).c_str()
                        ) << endl;
         abWidth += v2pitch - (abWidth % v2pitch);
       }

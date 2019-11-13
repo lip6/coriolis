@@ -779,7 +779,7 @@ namespace Katana {
       _event2->setEventLevel( 0 );
       _event2->setProcessed( true );
 
-      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack1(i) << endl;
+      cdebug_log(9000,0) << "Deter| addInsertEvent() @" << getTrack2(i) << endl;
       Session::addInsertEvent( getSegment2(), getTrack2(i), getCandidateAxis2(i) );
     }
 

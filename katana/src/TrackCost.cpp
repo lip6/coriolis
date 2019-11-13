@@ -43,7 +43,7 @@ namespace Katana {
     : _flags           ((symSegment) ? Symmetric : NoFlags)
     , _span            (refSegment->getTrackSpan())
     , _refCandidateAxis(refCandidateAxis)
-    , _symCandidateAxis(refCandidateAxis)
+    , _symCandidateAxis(symCandidateAxis)
     , _tracks          ( _span * ((symSegment) ? 2 : 1)
                        , std::tuple<Track*,size_t,size_t>(NULL,Track::npos,Track::npos) )
     , _segment1        (refSegment)
@@ -83,6 +83,8 @@ namespace Katana {
     _segment1->addOverlapCost( *this );
 
     if (symTrack) {
+      cdebug_log(159,0) << "  _tracks.size(): " << _tracks.size() << " _span:" << _span << endl;
+
       std::get<0>( _tracks[_span] ) = symTrack;
       select( 0, Symmetric );
       _segment2->addOverlapCost( *this );

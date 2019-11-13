@@ -122,23 +122,31 @@ namespace CRL {
 
   RoutingLayerGauge* RoutingGauge::getHorizontalGauge () const
   {
+    RoutingLayerGauge* pinOnly = NULL;
     for ( RoutingLayerGauge* gauge : _layerGauges ) {
-    //if ( (gauge->getType() != Constant::LayerGaugeType::PinOnly) and gauge->isHorizontal() )
-      if (gauge->isHorizontal())
-        return gauge;
+      if (gauge->isHorizontal()) {
+        if (gauge->getType() != Constant::LayerGaugeType::PinOnly)
+          return gauge;
+        else if (not pinOnly)
+          pinOnly = gauge;
+      }
     }
-    return NULL;
+    return pinOnly;
   }
 
 
   RoutingLayerGauge* RoutingGauge::getVerticalGauge () const
   {
+    RoutingLayerGauge* pinOnly = NULL;
     for ( RoutingLayerGauge* gauge : _layerGauges ) {
-    //if ( (gauge->getType() != Constant::LayerGaugeType::PinOnly) and gauge->isVertical() )
-      if (gauge->isVertical())
-        return gauge;
+      if (gauge->isVertical()) {
+        if (gauge->getType() != Constant::LayerGaugeType::PinOnly)
+          return gauge;
+        else if (not pinOnly)
+          pinOnly = gauge;
+      }
     }
-    return NULL;
+    return pinOnly;
   }
 
 

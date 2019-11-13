@@ -67,6 +67,7 @@ namespace Bora {
       virtual                       ~BoraEngine              ();
       virtual void                   _postCreate             ();
       virtual void                   _preDestroy             ();
+      virtual void                   _runBoraInit            ();
 
     private:
       static  Hurricane::Name        _toolName;
