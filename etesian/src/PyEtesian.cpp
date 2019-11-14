@@ -27,6 +27,7 @@ namespace Etesian {
   using std::endl;
   using Hurricane::tab;
   using Isobar::__cs;
+  using Isobar::getPyHash;
   using CRL::PyTypeToolEngine;
   using CRL::PyTypeGraphicTool;
 

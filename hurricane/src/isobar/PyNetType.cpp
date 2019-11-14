@@ -61,10 +61,10 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(NetType)
-  DirectReprMethod(PyNetType_Repr, PyNetType,   Net::Type)
-  DirectStrMethod (PyNetType_Str,  PyNetType,   Net::Type)
-  DirectCmpMethod (PyNetType_Cmp,  IsPyNetType, PyNetType)
-  DirectHashMethod(PyNetType_Hash, PyNetType)
+  DirectReprMethod      (PyNetType_Repr, PyNetType,   Net::Type)
+  DirectStrMethod       (PyNetType_Str,  PyNetType,   Net::Type)
+  DirectCmpByValueMethod(PyNetType_Cmp,  IsPyNetType, PyNetType)
+  DirectHashMethod      (PyNetType_Hash, NetType)
 
   extern void  PyNetType_LinkPyType() {
     cdebug_log(20,0) << "PyNetType_LinkType()" << endl;

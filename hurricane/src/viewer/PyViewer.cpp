@@ -29,6 +29,7 @@ namespace Hurricane {
   using std::cerr;
   using std::endl;
   using Isobar::__cs;
+  using Isobar::getPyHash;
 
 
 #if !defined(__PYTHON_MODULE__)

@@ -33,6 +33,7 @@ namespace Constant {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::__cs;
 
 

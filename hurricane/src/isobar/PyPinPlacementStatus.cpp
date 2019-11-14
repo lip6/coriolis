@@ -62,10 +62,10 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(PinPlacementStatus)
-  DirectReprMethod(PyPinPlacementStatus_Repr, PyPinPlacementStatus,   Pin::PlacementStatus)
-  DirectStrMethod (PyPinPlacementStatus_Str,  PyPinPlacementStatus,   Pin::PlacementStatus)
-  DirectCmpMethod (PyPinPlacementStatus_Cmp,  IsPyPinPlacementStatus, PyPinPlacementStatus)
-  DirectHashMethod(PyPinPlacementStatus_Hash, PyPinPlacementStatus)
+  DirectReprMethod      (PyPinPlacementStatus_Repr, PyPinPlacementStatus,   Pin::PlacementStatus)
+  DirectStrMethod       (PyPinPlacementStatus_Str,  PyPinPlacementStatus,   Pin::PlacementStatus)
+  DirectCmpByValueMethod(PyPinPlacementStatus_Cmp,  IsPyPinPlacementStatus, PyPinPlacementStatus)
+  DirectHashMethod      (PyPinPlacementStatus_Hash, PinPlacementStatus)
 
   extern void  PyPinPlacementStatus_LinkPyType() {
     cdebug_log(20,0) << "PyPinPlacementStatus_LinkType()" << endl;

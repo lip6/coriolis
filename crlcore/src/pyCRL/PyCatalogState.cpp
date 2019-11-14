@@ -36,6 +36,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::PyLibrary;
@@ -108,10 +109,10 @@ extern "C" {
 
   PythonOnlyDeleteMethod(CatalogState)
 
-  DirectReprMethod(PyCatalogState_Repr, PyCatalogState,   Catalog::State)
-  DirectStrMethod (PyCatalogState_Str,  PyCatalogState,   Catalog::State)
-  DirectCmpMethod (PyCatalogState_Cmp,  IsPyCatalogState, PyCatalogState)
-  DirectHashMethod(PyCatalogState_Hash, PyCatalogState)
+  DirectReprMethod    (PyCatalogState_Repr, PyCatalogState,   Catalog::State)
+  DirectStrMethod     (PyCatalogState_Str,  PyCatalogState,   Catalog::State)
+  DirectCmpByPtrMethod(PyCatalogState_Cmp,  IsPyCatalogState, PyCatalogState)
+  DirectHashMethod    (PyCatalogState_Hash, CatalogState)
 
   extern void  PyCatalogState_LinkPyType() {
     cdebug_log(30,0) << "PyCatalogState_LinkType()" << endl;

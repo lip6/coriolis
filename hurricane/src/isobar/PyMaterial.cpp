@@ -140,7 +140,7 @@ extern "C" {
     return 1;
   }
 
-  DirectHashMethod  (PyMaterial_Hash   , PyMaterial)
+  DirectHashMethod  (PyMaterial_Hash   , Material)
   DirectReprMethod  (PyMaterial_Repr   , PyMaterial, BasicLayer::Material)
   DirectStrMethod   (PyMaterial_Str    , PyMaterial, BasicLayer::Material)
   DirectDeleteMethod(PyMaterial_DeAlloc, PyMaterial)

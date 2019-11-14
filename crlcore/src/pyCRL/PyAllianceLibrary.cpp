@@ -38,6 +38,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -111,7 +112,7 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(AllianceLibrary)
-  DirectHashMethod(PyAllianceLibrary_Hash, PyAllianceLibrary)
+  DirectHashMethod(PyAllianceLibrary_Hash, AllianceLibrary)
 
   extern void  PyAllianceLibrary_LinkPyType() {
     cdebug_log(30,0) << "PyAllianceLibrary_LinkType()" << endl;

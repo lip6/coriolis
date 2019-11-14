@@ -26,13 +26,6 @@ namespace  Isobar {
   using std::endl;
   using std::hex;
   using std::ostringstream;
-  using Isobar::ProxyProperty;
-  using Isobar::ProxyError;
-  using Isobar::ConstructorError;
-  using Isobar::HurricaneError;
-  using Isobar::HurricaneWarning;
-  using Isobar::ParseOneArg;
-  using Isobar::ParseTwoArg;
   using namespace Analog;
 
 
@@ -315,7 +308,7 @@ extern "C" {
 
 
   DirectDeleteMethod(PyLayoutGenerator_DeAlloc,PyLayoutGenerator)
-  DirectHashMethod(PyLayoutGenerator_Hash, PyLayoutGenerator)
+  DirectHashMethod(PyLayoutGenerator_Hash,LayoutGenerator)
 
   extern void  PyLayoutGenerator_LinkPyType() {
     cdebug.log(49) << "PyLayoutGenerator_LinkType()" << endl;

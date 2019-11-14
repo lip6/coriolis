@@ -31,6 +31,7 @@ namespace  Katana {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
 
@@ -61,10 +62,10 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(KatanaFlags)
-  DirectReprMethod(PyKatanaFlags_Repr, PyKatanaFlags,   Katana::Flags)
-  DirectStrMethod (PyKatanaFlags_Str,  PyKatanaFlags,   Katana::Flags)
-  DirectCmpMethod (PyKatanaFlags_Cmp,  IsPyKatanaFlags, PyKatanaFlags)
-  DirectHashMethod(PyKatanaFlags_Hash, PyKatanaFlags)
+  DirectReprMethod      (PyKatanaFlags_Repr, PyKatanaFlags,   Katana::Flags)
+  DirectStrMethod       (PyKatanaFlags_Str,  PyKatanaFlags,   Katana::Flags)
+  DirectCmpByValueMethod(PyKatanaFlags_Cmp,  IsPyKatanaFlags, PyKatanaFlags)
+  DirectHashMethod      (PyKatanaFlags_Hash, KatanaFlags)
 
   extern void  PyKatanaFlags_LinkPyType() {
     cdebug_log(20,0) << "PyKatanaFlags_LinkType()" << endl;

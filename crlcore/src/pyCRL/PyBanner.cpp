@@ -37,6 +37,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -177,7 +178,7 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(Banner)
-  DirectHashMethod(PyBanner_Hash, PyBanner)
+  DirectHashMethod(PyBanner_Hash, Banner)
 
   extern void  PyBanner_LinkPyType() {
     cdebug_log(30,0) << "PyBanner_LinkType()" << endl;

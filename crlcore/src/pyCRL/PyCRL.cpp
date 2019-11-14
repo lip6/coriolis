@@ -54,6 +54,7 @@ namespace CRL {
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
   using Isobar::__cs;
+  using Isobar::getPyHash;
   using Vhdl::EntityExtension;
 
 

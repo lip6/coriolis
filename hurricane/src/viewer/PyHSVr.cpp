@@ -34,18 +34,20 @@ namespace  Hurricane {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::getPyHash;
+  typedef DisplayStyle::HSVr HSVr;
 
 
 extern "C" {
 
 
-#define METHOD_HEAD(function) GENERIC_METHOD_HEAD(DisplayStyle::HSVr,hsvr,function)
+#define METHOD_HEAD(function) GENERIC_METHOD_HEAD(HSVr,hsvr,function)
 
 
 #if defined(__PYTHON_MODULE__)
 
 // +=================================================================+
-// |           "PyHSVr" Python Module Code Part              |
+// |               "PyHSVr" Python Module Code Part                  |
 // +=================================================================+
 
 
@@ -53,8 +55,8 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyHSVr_new()" << endl;
 
-    DisplayStyle::HSVr* hsvr   = NULL;
-    PyHSVr*             pyHSVr = (PyHSVr*)type->tp_alloc(type,0);
+    HSVr*   hsvr   = NULL;
+    PyHSVr* pyHSVr = (PyHSVr*)type->tp_alloc(type,0);
 
     HTRY
     if ( pyHSVr ) {
@@ -62,7 +64,7 @@ extern "C" {
       float saturation = 1.0;
       float value      = 1.0;
       if (PyArg_ParseTuple(args,"fff:HSVr.new", &hue, &saturation, &value)) {
-        hsvr = new DisplayStyle::HSVr(hue,saturation,value);
+        hsvr = new HSVr(hue,saturation,value);
       } else {
         PyErr_SetString ( ConstructorError, "invalid number of parameters for HSVr()." );
         return NULL;
@@ -77,7 +79,7 @@ extern "C" {
 
   static PyObject* PyHSVr_Repr ( PyHSVr* self )
   {
-    DisplayStyle::HSVr* hsvr = self->_object;
+    HSVr* hsvr = self->_object;
 
     if ( hsvr == NULL )
       return PyString_FromString("<PyObject unbound>");
@@ -92,15 +94,15 @@ extern "C" {
 
   
   // Standart Accessors (Attributes).
-  DirectGetDoubleAttribute(PyHSVr_GetHue       ,getHue       ,PyHSVr,DisplayStyle::HSVr)
-  DirectGetDoubleAttribute(PyHSVr_GetSaturation,getSaturation,PyHSVr,DisplayStyle::HSVr)
-  DirectGetDoubleAttribute(PyHSVr_GetValue     ,getValue     ,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetHue       ,setHue       ,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetSaturation,setSaturation,PyHSVr,DisplayStyle::HSVr)
-  DirectSetDoubleAttribute(PyHSVr_SetValue     ,setValue     ,PyHSVr,DisplayStyle::HSVr)
+  DirectGetDoubleAttribute(PyHSVr_GetHue       ,getHue       ,PyHSVr,HSVr)
+  DirectGetDoubleAttribute(PyHSVr_GetSaturation,getSaturation,PyHSVr,HSVr)
+  DirectGetDoubleAttribute(PyHSVr_GetValue     ,getValue     ,PyHSVr,HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetHue       ,setHue       ,PyHSVr,HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetSaturation,setSaturation,PyHSVr,HSVr)
+  DirectSetDoubleAttribute(PyHSVr_SetValue     ,setValue     ,PyHSVr,HSVr)
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyHSVr_IsId,isId,PyHSVr,DisplayStyle::HSVr)
+  DirectGetBoolAttribute(PyHSVr_IsId,isId,PyHSVr,HSVr)
 
 
   PyMethodDef PyHSVr_Methods[] =
@@ -116,7 +118,7 @@ extern "C" {
 
 
   DirectDeleteMethod(PyHSVr_DeAlloc,PyHSVr)
-  DirectHashMethod(PyHSVr_Hash, PyHSVr)
+  DirectHashMethod(PyHSVr_Hash,HSVr)
 
   extern void  PyHSVr_LinkPyType() {
     cdebug_log(20,0) << "PyHSVr_LinkType()" << endl;
@@ -137,7 +139,7 @@ extern "C" {
 // +=================================================================+
 
   // Link/Creation Method.
-  PyObject* PyHSVr_Link ( DisplayStyle::HSVr* object )
+  PyObject* PyHSVr_Link ( HSVr* object )
   {
     if ( object == NULL ) Py_RETURN_NONE;
 

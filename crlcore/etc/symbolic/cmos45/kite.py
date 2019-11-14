@@ -181,7 +181,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL3')       # meta
                                           , 2                             # depth.
                                           , 0.0                           # density (deprecated).
                                           , l(0)                          # track offset from AB.
-                                          , l(8)                          # track pitch.
+                                          , l(10)                         # track pitch.
                                           , l(3)                          # wire width.
                                           , l(2)                          # VIA side (that is VIA12).
                                           , l(8)                          # obstacle dW.

@@ -66,10 +66,10 @@ extern "C" {
 
   PythonOnlyDeleteMethod(PlacementStatus)
 
-  DirectReprMethod(PyPlacementStatus_Repr, PyPlacementStatus,   Instance::PlacementStatus)
-  DirectStrMethod (PyPlacementStatus_Str,  PyPlacementStatus,   Instance::PlacementStatus)
-  DirectCmpMethod (PyPlacementStatus_Cmp,  IsPyPlacementStatus, PyPlacementStatus)
-  DirectHashMethod(PyPlacementStatus_Hash, PyPlacementStatus)
+  DirectReprMethod      (PyPlacementStatus_Repr, PyPlacementStatus,   Instance::PlacementStatus)
+  DirectStrMethod       (PyPlacementStatus_Str,  PyPlacementStatus,   Instance::PlacementStatus)
+  DirectCmpByValueMethod(PyPlacementStatus_Cmp,  IsPyPlacementStatus, PyPlacementStatus)
+  DirectHashMethod      (PyPlacementStatus_Hash, PlacementStatus)
 
   extern void  PyPlacementStatus_LinkPyType() {
     cdebug_log(20,0) << "PyPlacementStatus_LinkType()" << endl;

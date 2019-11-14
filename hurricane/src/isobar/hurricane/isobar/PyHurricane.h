@@ -22,6 +22,7 @@
 // #define  DEBUG  1
 
 #include "Python.h"
+#include <type_traits>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -42,6 +43,7 @@ namespace Isobar {
   using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
+  using Hurricane::DBo;
 
 
 // -------------------------------------------------------------------
@@ -163,6 +165,14 @@ namespace Isobar {
 
   template< typename T = DbU::Unit, typename enable_if< is_same<T,long long>::value, T >::type = 0 >
   inline PyObject* PyDbU_FromLong ( T unit ) { return PyLong_FromLongLong( unit ); }
+
+
+  template< typename T , typename enable_if<is_base_of<DBo,T>::value,int>::type = 0 >
+  static int  getPyHash ( T* cppObject ) { return cppObject->getId(); }
+
+
+  template< typename T , typename enable_if<!is_base_of<DBo,T>::value,int>::type = 0 >
+  static int  getPyHash ( T* cppObject ) { return (long)cppObject; }
 
 
 extern "C" {
@@ -1116,29 +1126,45 @@ extern "C" {
 
 
 // -------------------------------------------------------------------
-// Attribute Method For Cmp.
+// Attribute Method For Cmp, compare pointer value (unicity)
 
-# define  DirectCmpMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)             \
+# define  DirectCmpByPtrMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)        \
   static int  PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* other )            \
   {                                                                           \
-    if ( ! IS_PY_OBJECT(other) ) { return ( -1 ); }                           \
+    if (not IS_PY_OBJECT(other)) return -1;                                   \
                                                                               \
-    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE *)other;                      \
-    if ( self->ACCESS_OBJECT == otherPyObject->ACCESS_OBJECT ) return (  0 ); \
-    if ( self->ACCESS_OBJECT <  otherPyObject->ACCESS_OBJECT ) return ( -1 ); \
+    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE*)other;                       \
+    if (self->ACCESS_OBJECT == otherPyObject->ACCESS_OBJECT) return  0;       \
+    if (self->ACCESS_OBJECT <  otherPyObject->ACCESS_OBJECT) return -1;       \
                                                                               \
-    return ( 1 );                                                             \
+    return 1;                                                                 \
+  }
+
+
+
+
+// -------------------------------------------------------------------
+// Attribute Method For Cmp, compare object contents
+
+# define  DirectCmpByValueMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)      \
+  static int  PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* other )            \
+  {                                                                           \
+    if (not IS_PY_OBJECT(other)) return -1;                                   \
+                                                                              \
+    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE*)other;                       \
+    if (*(self->ACCESS_OBJECT) == *(otherPyObject->ACCESS_OBJECT)) return  0; \
+    if (  self->ACCESS_OBJECT  <    otherPyObject->ACCESS_OBJECT ) return -1; \
+                                                                              \
+    return 1;                                                                 \
   }
 
 
 // -------------------------------------------------------------------
 // Attribute Method For Hash.
 
-# define  DirectHashMethod(PY_FUNC_NAME,PY_SELF_TYPE)                         \
-  static int  PY_FUNC_NAME ( PY_SELF_TYPE *self)                              \
-  {                                                                           \
-    return (long)self->ACCESS_OBJECT;                                         \
-  }
+# define  DirectHashMethod(PY_FUNC_NAME,SELF_TYPE)  \
+  static int PY_FUNC_NAME ( Py##SELF_TYPE* self )   \
+  { return getPyHash( self->ACCESS_OBJECT ); }
 
 
 // -------------------------------------------------------------------
@@ -1297,39 +1323,39 @@ extern "C" {
 // -------------------------------------------------------------------
 // Initialisation Function for PyTypeObject Runtime Link.
 
-#define PyTypeObjectLinkPyTypeWithClass(PY_SELF_TYPE,SELF_TYPE)                   \
-  DirectReprMethod(Py##PY_SELF_TYPE##_Repr, Py##PY_SELF_TYPE,   SELF_TYPE)        \
-  DirectStrMethod (Py##PY_SELF_TYPE##_Str,  Py##PY_SELF_TYPE,   SELF_TYPE)        \
-  DirectCmpMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
-  DirectHashMethod(Py##PY_SELF_TYPE##_Hash, Py##SELF_TYPE)                        \
-  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                 \
-                                                                                  \
-    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
-    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;        \
-    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;       \
-    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;        \
-    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;       \
-    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                 \
+#define PyTypeObjectLinkPyTypeWithClass(PY_SELF_TYPE,SELF_TYPE)                       \
+  DirectReprMethod    (Py##PY_SELF_TYPE##_Repr, Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectStrMethod     (Py##PY_SELF_TYPE##_Str,  Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectCmpByPtrMethod(Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
+  DirectHashMethod    (Py##PY_SELF_TYPE##_Hash, SELF_TYPE)                            \
+  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                      \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                     \
+                                                                                      \
+    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;        \
+    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;            \
+    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;           \
+    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;            \
+    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;           \
+    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                     \
   }
 
 
-#define PyTypeObjectLinkPyTypeWithClassNewInit(PY_SELF_TYPE,SELF_TYPE)            \
-  DirectReprMethod(Py##PY_SELF_TYPE##_Repr, Py##PY_SELF_TYPE,   SELF_TYPE)        \
-  DirectStrMethod (Py##PY_SELF_TYPE##_Str,  Py##PY_SELF_TYPE,   SELF_TYPE)        \
-  DirectCmpMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
-  DirectHashMethod(Py##PY_SELF_TYPE##_Hash, Py##SELF_TYPE)                        \
-  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                  \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                 \
-                                                                                  \
-    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
-    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;        \
-    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;       \
-    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;        \
-    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;       \
-    PyType##PY_SELF_TYPE.tp_new     = (newfunc)    Py##PY_SELF_TYPE##_NEW;        \
-    PyType##PY_SELF_TYPE.tp_init    = (initproc)   Py##PY_SELF_TYPE##_Init;       \
-    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                 \
+#define PyTypeObjectLinkPyTypeWithClassNewInit(PY_SELF_TYPE,SELF_TYPE)                 \
+  DirectReprMethod     (Py##PY_SELF_TYPE##_Repr, Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectStrMethod      (Py##PY_SELF_TYPE##_Str,  Py##PY_SELF_TYPE,   SELF_TYPE)        \
+  DirectCmpByPtrMethod (Py##PY_SELF_TYPE##_Cmp,  IsPy##PY_SELF_TYPE, Py##PY_SELF_TYPE) \
+  DirectHashMethod     (Py##PY_SELF_TYPE##_Hash, SELF_TYPE)                            \
+  extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                       \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                      \
+                                                                                       \
+    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;         \
+    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;             \
+    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;            \
+    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;             \
+    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;            \
+    PyType##PY_SELF_TYPE.tp_new     = (newfunc)    Py##PY_SELF_TYPE##_NEW;             \
+    PyType##PY_SELF_TYPE.tp_init    = (initproc)   Py##PY_SELF_TYPE##_Init;            \
+    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                      \
   }
 
 
@@ -1340,20 +1366,39 @@ extern "C" {
   PyTypeObjectLinkPyTypeWithClassNewInit(SELF_TYPE,SELF_TYPE)
 
 
+#define PyTypeObjectLinkPyTypeAsValue(SELF_TYPE)                               \
+  DirectReprMethod      (Py##SELF_TYPE##_Repr, Py##SELF_TYPE,   SELF_TYPE)     \
+  DirectStrMethod       (Py##SELF_TYPE##_Str,  Py##SELF_TYPE,   SELF_TYPE)     \
+  DirectCmpByValueMethod(Py##SELF_TYPE##_Cmp,  IsPy##SELF_TYPE, Py##SELF_TYPE) \
+  DirectHashMethod      (Py##SELF_TYPE##_Hash, SELF_TYPE)                      \
+  extern void  Py##SELF_TYPE##_LinkPyType() {                                  \
+    cdebug_log(20,0) << "Py" #SELF_TYPE "_LinkType()" << endl;                 \
+                                                                               \
+    PyType##SELF_TYPE.tp_dealloc = (destructor) Py##SELF_TYPE##_DeAlloc;       \
+    PyType##SELF_TYPE.tp_compare = (cmpfunc)    Py##SELF_TYPE##_Cmp;           \
+    PyType##SELF_TYPE.tp_repr    = (reprfunc)   Py##SELF_TYPE##_Repr;          \
+    PyType##SELF_TYPE.tp_str     = (reprfunc)   Py##SELF_TYPE##_Str;           \
+    PyType##SELF_TYPE.tp_hash    = (hashfunc)   Py##SELF_TYPE##_Hash;          \
+    PyType##SELF_TYPE.tp_new     = (newfunc)    Py##SELF_TYPE##_NEW;           \
+    PyType##SELF_TYPE.tp_init    = (initproc)   Py##SELF_TYPE##_Init;          \
+    PyType##SELF_TYPE.tp_methods = Py##SELF_TYPE##_Methods;                    \
+  }
+
+
 // Special Initialisation Function for Locator PyTypeObject Runtime Link.
-#define LocatorPyTypeObjectLinkPyType(PY_SELF_TYPE, SELF_TYPE)                                             \
-  DirectReprMethod(Py##PY_SELF_TYPE##Locator_Repr, Py##PY_SELF_TYPE##Locator,   Locator<SELF_TYPE>)        \
-  DirectStrMethod (Py##PY_SELF_TYPE##Locator_Str,  Py##PY_SELF_TYPE##Locator,   Locator<SELF_TYPE>)        \
-  DirectCmpMethod (Py##PY_SELF_TYPE##Locator_Cmp,  IsPy##PY_SELF_TYPE##Locator, Py##PY_SELF_TYPE##Locator) \
-  extern void  Py##PY_SELF_TYPE##Locator_LinkPyType ()                                                     \
-  {                                                                                                        \
-    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "Locator_LinkType()" << endl;                                   \
-                                                                                                           \
-    PyType##PY_SELF_TYPE##Locator.tp_dealloc = (destructor)Py##PY_SELF_TYPE##Locator_DeAlloc;              \
-    PyType##PY_SELF_TYPE##Locator.tp_compare = (cmpfunc)   Py##PY_SELF_TYPE##Locator_Cmp;                  \
-    PyType##PY_SELF_TYPE##Locator.tp_repr    = (reprfunc)  Py##PY_SELF_TYPE##Locator_Repr;                 \
-    PyType##PY_SELF_TYPE##Locator.tp_str     = (reprfunc)  Py##PY_SELF_TYPE##Locator_Str;                  \
-    PyType##PY_SELF_TYPE##Locator.tp_methods = Py##PY_SELF_TYPE##Locator_Methods;                          \
+#define LocatorPyTypeObjectLinkPyType(PY_SELF_TYPE, SELF_TYPE)                                                 \
+  DirectReprMethod    (Py##PY_SELF_TYPE##Locator_Repr, Py##PY_SELF_TYPE##Locator,   Locator<SELF_TYPE>)        \
+  DirectStrMethod     (Py##PY_SELF_TYPE##Locator_Str,  Py##PY_SELF_TYPE##Locator,   Locator<SELF_TYPE>)        \
+  DirectCmpByPtrMethod(Py##PY_SELF_TYPE##Locator_Cmp,  IsPy##PY_SELF_TYPE##Locator, Py##PY_SELF_TYPE##Locator) \
+  extern void  Py##PY_SELF_TYPE##Locator_LinkPyType ()                                                         \
+  {                                                                                                            \
+    cdebug_log(20,0) << "Py" #PY_SELF_TYPE "Locator_LinkType()" << endl;                                       \
+                                                                                                               \
+    PyType##PY_SELF_TYPE##Locator.tp_dealloc = (destructor)Py##PY_SELF_TYPE##Locator_DeAlloc;                  \
+    PyType##PY_SELF_TYPE##Locator.tp_compare = (cmpfunc)   Py##PY_SELF_TYPE##Locator_Cmp;                      \
+    PyType##PY_SELF_TYPE##Locator.tp_repr    = (reprfunc)  Py##PY_SELF_TYPE##Locator_Repr;                     \
+    PyType##PY_SELF_TYPE##Locator.tp_str     = (reprfunc)  Py##PY_SELF_TYPE##Locator_Str;                      \
+    PyType##PY_SELF_TYPE##Locator.tp_methods = Py##PY_SELF_TYPE##Locator_Methods;                              \
   }
 
 #define PyTypeObjectDefinitions(SELF_TYPE)                              \

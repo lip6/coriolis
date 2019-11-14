@@ -62,10 +62,10 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(NetDirection)
-  DirectReprMethod(PyNetDirection_Repr, PyNetDirection,   Net::Direction)
-  DirectStrMethod (PyNetDirection_Str,  PyNetDirection,   Net::Direction)
-  DirectCmpMethod (PyNetDirection_Cmp,  IsPyNetDirection, PyNetDirection)
-  DirectHashMethod(PyNetDirection_Hash, PyNetDirection)
+  DirectReprMethod      (PyNetDirection_Repr, PyNetDirection,   Net::Direction)
+  DirectStrMethod       (PyNetDirection_Str,  PyNetDirection,   Net::Direction)
+  DirectCmpByValueMethod(PyNetDirection_Cmp,  IsPyNetDirection, PyNetDirection)
+  DirectHashMethod      (PyNetDirection_Hash, NetDirection)
 
   extern void  PyNetDirection_LinkPyType() {
     cdebug_log(20,0) << "PyNetDirection_LinkType()" << endl;

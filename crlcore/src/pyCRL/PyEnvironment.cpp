@@ -36,6 +36,7 @@ namespace  CRL {
   using Isobar::ConstructorError;
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
+  using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::__cs;
@@ -262,7 +263,7 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(Environment)
-  DirectHashMethod(PyEnvironment_Hash, PyEnvironment)
+  DirectHashMethod(PyEnvironment_Hash, Environment)
 
   extern void  PyEnvironment_LinkPyType() {
     cdebug_log(30,0) << "PyEnvironment_LinkType()" << endl;

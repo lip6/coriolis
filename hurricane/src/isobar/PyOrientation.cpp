@@ -66,10 +66,10 @@ extern "C" {
 
   PythonOnlyDeleteMethod(Orientation)
 
-  DirectReprMethod(PyOrientation_Repr, PyOrientation,   Transformation::Orientation)
-  DirectStrMethod (PyOrientation_Str,  PyOrientation,   Transformation::Orientation)
-  DirectCmpMethod (PyOrientation_Cmp,  IsPyOrientation, PyOrientation)
-  DirectHashMethod(PyOrientation_Hash, PyOrientation)
+  DirectReprMethod      (PyOrientation_Repr, PyOrientation,   Transformation::Orientation)
+  DirectStrMethod       (PyOrientation_Str,  PyOrientation,   Transformation::Orientation)
+  DirectCmpByValueMethod(PyOrientation_Cmp,  IsPyOrientation, PyOrientation)
+  DirectHashMethod      (PyOrientation_Hash, Orientation)
 
   extern void  PyOrientation_LinkPyType() {
     cdebug_log(20,0) << "PyOrientation_LinkType()" << endl;

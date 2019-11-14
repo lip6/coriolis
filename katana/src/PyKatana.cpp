@@ -27,6 +27,7 @@ namespace Katana {
   using std::cerr;
   using std::endl;
   using Hurricane::tab;
+  using Isobar::getPyHash;
   using Isobar::__cs;
   using CRL::PyTypeToolEngine;
   using CRL::PyTypeGraphicTool;

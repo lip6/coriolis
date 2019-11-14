@@ -62,10 +62,10 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(PinDirection)
-  DirectReprMethod(PyPinDirection_Repr, PyPinDirection,   Pin::AccessDirection)
-  DirectStrMethod (PyPinDirection_Str,  PyPinDirection,   Pin::AccessDirection)
-  DirectCmpMethod (PyPinDirection_Cmp,  IsPyPinDirection, PyPinDirection)
-  DirectHashMethod(PyPinDirection_Hash, PyPinDirection)
+  DirectReprMethod      (PyPinDirection_Repr, PyPinDirection,   Pin::AccessDirection)
+  DirectStrMethod       (PyPinDirection_Str,  PyPinDirection,   Pin::AccessDirection)
+  DirectCmpByValueMethod(PyPinDirection_Cmp,  IsPyPinDirection, PyPinDirection)
+  DirectHashMethod      (PyPinDirection_Hash, PinDirection)
 
   extern void  PyPinDirection_LinkPyType() {
     cdebug_log(20,0) << "PyPinDirection_LinkType()" << endl;

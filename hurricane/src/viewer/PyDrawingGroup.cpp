@@ -38,6 +38,7 @@ namespace  Hurricane {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::getPyHash;
 
 
 extern "C" {
@@ -184,7 +185,7 @@ extern "C" {
 
 
   PythonOnlyDeleteMethod(DrawingGroup)
-  DirectHashMethod(PyDrawingGroup_Hash, PyDrawingGroup)
+  DirectHashMethod(PyDrawingGroup_Hash, DrawingGroup)
 
   extern void  PyDrawingGroup_LinkPyType() {
     cdebug_log(20,0) << "PyDrawingGroup_LinkType()" << endl;

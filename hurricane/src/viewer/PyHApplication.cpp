@@ -36,6 +36,7 @@ namespace  Hurricane {
   using Isobar::HurricaneWarning;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::getPyHash;
 
 
 extern "C" {
