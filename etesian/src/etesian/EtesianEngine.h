@@ -68,6 +68,7 @@ namespace Etesian {
       inline  DbU::Unit              getHorizontalPitch () const;
       inline  DbU::Unit              getVerticalPitch   () const;
       inline  DbU::Unit              getSliceHeight     () const;
+      inline  DbU::Unit              getSliceStep       () const;
       inline  Effort                 getPlaceEffort     () const;
       inline  GraphicUpdate          getUpdateConf      () const;
       inline  Density                getSpreadingConf   () const;
@@ -143,6 +144,7 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getHorizontalPitch () const { return getGauge()->getHorizontalPitch(); }
   inline  DbU::Unit              EtesianEngine::getVerticalPitch   () const { return getGauge()->getVerticalPitch(); }
   inline  DbU::Unit              EtesianEngine::getSliceHeight     () const { return _sliceHeight; }
+  inline  DbU::Unit              EtesianEngine::getSliceStep       () const { return getCellGauge()->getSliceStep(); }
   inline  Effort                 EtesianEngine::getPlaceEffort     () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate          EtesianEngine::getUpdateConf      () const { return getConfiguration()->getUpdateConf(); }
   inline  Density                EtesianEngine::getSpreadingConf   () const { return getConfiguration()->getSpreadingConf(); }

@@ -36,10 +36,10 @@ namespace Etesian {
   {
     if ( cell == NULL ) return;
 
-    DbU::Unit pitch = _etesian->getVerticalPitch();
+    DbU::Unit pitch = _etesian->getSliceStep();
 
     if (cell->getAbutmentBox().getWidth() % pitch != 0)
-      cerr << Warning( "FeedCells::addFeed(): &lt;%s&gt; has not a width (%s) multiple of pitch (%s)."
+      cerr << Warning( "FeedCells::addFeed(): \"%s\" has not a width (%s) multiple of pitch (%s)."
                      , getString(cell->getName()).c_str()
                      , DbU::getValueString(cell->getAbutmentBox().getWidth()).c_str()
                      , DbU::getValueString(pitch).c_str()
@@ -48,7 +48,7 @@ namespace Etesian {
     int pitchNb = (int)( cell->getAbutmentBox().getWidth() / pitch );
     
     if (getFeed(pitchNb) != NULL) {
-      cerr << Warning( "FeedCells::addFeed(): &lt;%s&gt; duplicate feed for width %d."
+      cerr << Warning( "FeedCells::addFeed(): \"%s\" duplicate feed for width %d."
                      , getString(cell->getName()).c_str()
                      , pitchNb
                      ) << endl;

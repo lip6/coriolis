@@ -395,8 +395,8 @@ namespace Etesian {
     }
 
     DbU::Unit abWidth = columns*getSliceHeight();
-    DbU::Unit adjust  = abWidth % getVerticalPitch();
-    if (adjust) abWidth += getVerticalPitch() - adjust;
+    DbU::Unit adjust  = abWidth % getSliceStep();
+    if (adjust) abWidth += getSliceStep() - adjust;
 
     getCell()->setAbutmentBox( Box( DbU::fromLambda(0)
                                   , DbU::fromLambda(0)
@@ -466,7 +466,7 @@ namespace Etesian {
   {
     AllianceFramework* af     = AllianceFramework::get();
     DbU::Unit          hpitch = getHorizontalPitch();
-    DbU::Unit          vpitch = getVerticalPitch();
+    DbU::Unit          vpitch = getSliceStep();
 
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
@@ -774,7 +774,7 @@ namespace Etesian {
      *       * add placement dentity constraints
      */
     DbU::Unit   hpitch           = getHorizontalPitch();
-    DbU::Unit   vpitch           = getVerticalPitch();
+    DbU::Unit   vpitch           = getSliceStep();
     const float densityThreshold = 0.9;
 
     KiteEngine* routingEngine = KiteEngine::get( getCell() );
@@ -969,13 +969,12 @@ namespace Etesian {
     GraphicUpdate placementUpdate = getUpdateConf();
     Density       densityConf     = getSpreadingConf();
     bool          routingDriven   = getRoutingDriven();
-
-    startMeasures();
-    double         sliceHeight = getSliceHeight() / getHorizontalPitch();
+    double        sliceHeight     = getSliceHeight() / getHorizontalPitch();
 
     cmess1 << "  o  Running Coloquinte." << endl;
     cmess2 << "     - Computing initial placement..." << endl;
     cmess2 << right;
+    startMeasures();
 
     preplace();
 
@@ -1058,9 +1057,9 @@ namespace Etesian {
     stopMeasures();
     printMeasures();
     cmess1 << ::Dots::asString
-      ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getVerticalPitch() ) ) << endl;
+      ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getSliceStep() ) ) << endl;
     cmess1 << ::Dots::asString
-      ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(_circuit,_placementUB )*getVerticalPitch() ) ) << endl;
+      ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(_circuit,_placementUB )*getSliceStep() ) ) << endl;
 
     _placed = true;
 
@@ -1124,7 +1123,7 @@ namespace Etesian {
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
     {
       DbU::Unit hpitch          = getHorizontalPitch();
-      DbU::Unit vpitch          = getVerticalPitch();
+      DbU::Unit vpitch          = getSliceStep();
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
       string    instanceName    = occurrence.getCompactString();

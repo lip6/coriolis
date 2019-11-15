@@ -79,7 +79,7 @@ namespace Etesian {
   DbU::Unit  BloatNsxlib::getDx ( const Cell* cell, const EtesianEngine* etesian ) const
   {
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getVerticalPitch();;
+    DbU::Unit vpitch = etesian->getSliceStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     if (xsize < 6) return vpitch*2;
@@ -105,7 +105,7 @@ namespace Etesian {
     }
 
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getVerticalPitch();;
+    DbU::Unit vpitch = etesian->getSliceStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
@@ -138,7 +138,7 @@ namespace Etesian {
     }
 
     Box ab ( cell->getAbutmentBox() );
-    DbU::Unit vpitch = etesian->getVerticalPitch();;
+    DbU::Unit vpitch = etesian->getSliceStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
     // float termRatio = (float)terminals / (float)(ab.getWidth() / vpitch);
