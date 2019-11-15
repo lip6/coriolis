@@ -58,6 +58,7 @@ except Exception, e:
   except e:
     print '[ERROR] helpers.io, neither PyQt4 nor PyQt5 is available.'
     sys.exit( 1 )
+import Cfg
 import helpers
 from   Hurricane    import UpdateSession
 import Viewer
@@ -65,7 +66,6 @@ import Viewer
 
 # -------------------------------------------------------------------
 # Class  :  "ErrorWidget".
-
 
 class ErrorWidget ( QDialog ):
 
@@ -238,6 +238,12 @@ class ErrorMessage ( Exception ):
         return
 
 
+# -------------------------------------------------------------------
+# Function  :  "catch()".
+#
+# Try to smartly display any exception on the TTY and the graphic
+# display, if available.
+
 def catch ( errorObject ):
     if isinstance(errorObject,ErrorMessage):
       em = errorObject
@@ -246,20 +252,18 @@ def catch ( errorObject ):
       em.trace      = traceback.extract_tb( sys.exc_info()[2] )
      #em.scriptPath = __file__
 
-    if Viewer.Graphics.get().isEnabled():
-      tryCont = ErrorWidget( em ).exec_()
     print em
     print helpers.textStackTrace( em.trace, True, em.scriptPath )
+
+    if Viewer.Graphics.get().isEnabled():
+      tryCont = ErrorWidget( em ).exec_()
 
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
     return
 
-    
-
 
 # -------------------------------------------------------------------
 # Class  :  "WarningMessage".
-
 
 class WarningMessage ( Exception ):
 
@@ -277,3 +281,20 @@ class WarningMessage ( Exception ):
             else:      formatted += "          %s" % self._warnings[i]
             if i+1 < len(self._warnings): formatted += "\n"
         return formatted
+
+
+# -------------------------------------------------------------------
+# Function  :  "vprint()".
+#
+# Small wrap around print to make use of the verbosity levels.
+
+def isVL ( level ):
+    confLevel = 0
+    if Cfg.getParamBool('misc.verboseLevel1').asBool(): confLevel = 1
+    if Cfg.getParamBool('misc.verboseLevel2').asBool(): confLevel = 2
+    return confLevel >= level
+
+
+def vprint ( level, message ):
+    if isVL(level): print message
+    return

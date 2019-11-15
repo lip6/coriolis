@@ -15,6 +15,8 @@
 
 import Cfg
 from   helpers import l, u, n
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
 
 
 Cfg.getParamInt   ( "chip.block.rails.count"    ).setInt   (     5  )

@@ -13,6 +13,9 @@
 # +-----------------------------------------------------------------+
 
 
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 import os
 import os.path
 from   CRL        import Environment

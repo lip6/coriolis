@@ -15,6 +15,9 @@
 
 import os
 import os.path
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 from   CRL        import Environment
 from   CRL        import AllianceFramework
 

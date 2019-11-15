@@ -14,13 +14,16 @@
 
 
 import Cfg
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 from   Hurricane   import DataBase
 from   CRL         import AllianceFramework
 from   CRL         import RoutingGauge
 from   CRL         import RoutingLayerGauge
 from   CRL         import CellGauge
-import helpers
 from   helpers     import l, n, u
+
 import common.kite
 
 

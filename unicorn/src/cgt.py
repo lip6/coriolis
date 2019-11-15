@@ -139,7 +139,7 @@ if __name__ == '__main__':
         flags |= CRL.AllianceFramework.NoPythonInit
 
       af = CRL.AllianceFramework.create( flags )
-      print af.getEnvironment().getPrint()
+      if helpers.io.isVL(2): print af.getEnvironment().getPrint()
 
       Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.CommandLine)
 

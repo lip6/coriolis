@@ -13,7 +13,9 @@
 # +-----------------------------------------------------------------+
 
 
-import helpers
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 import common.devices
 from   common.devices import addDevice
 

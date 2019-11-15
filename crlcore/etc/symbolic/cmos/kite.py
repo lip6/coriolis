@@ -21,6 +21,9 @@ from   CRL         import RoutingLayerGauge
 from   CRL         import CellGauge
 import helpers
 from   helpers     import l, n, u
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 import common.kite
 
 

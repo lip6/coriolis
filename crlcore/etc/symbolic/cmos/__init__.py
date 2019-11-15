@@ -14,8 +14,12 @@
 
 
 import Cfg
-from   Hurricane import DataBase
-from   CRL       import System
+import helpers.io
+helpers.io.vprint( 1, '  o  Loading "symbolic.cmos" technology.' )
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
+from   Hurricane  import DataBase
+from   CRL        import System
 
 Cfg.Configuration.pushDefaultPriority( Cfg.Parameter.Priority.ConfigurationFile )
 

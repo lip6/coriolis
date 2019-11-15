@@ -13,10 +13,13 @@
 # +-----------------------------------------------------------------+
 
 
-from   helpers              import l, u, n
-from   Hurricane            import DbU
-from   Hurricane            import DataBase
-from   Hurricane            import Technology
+from   helpers    import l, u, n
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
+from   Hurricane  import DbU
+from   Hurricane  import DataBase
+from   Hurricane  import Technology
 
 
 tech = DataBase.getDB().getTechnology()

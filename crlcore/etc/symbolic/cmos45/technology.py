@@ -13,6 +13,9 @@
 # +-----------------------------------------------------------------+
 
 
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 from   helpers              import l, u, n
 from   Hurricane            import DbU
 from   Hurricane            import DataBase

@@ -13,4 +13,7 @@
 # +-----------------------------------------------------------------+
 
 
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 import common.misc

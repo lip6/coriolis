@@ -16,6 +16,9 @@
 import os.path
 import Cfg
 import helpers
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 import common.stratus1
 
 

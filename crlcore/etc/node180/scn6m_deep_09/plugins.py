@@ -14,8 +14,10 @@
  
 
 import Cfg
-from   helpers import l, u, n
+import helpers.io
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
 
+from   helpers import l, u, n
 
 Cfg.getParamInt   ( "chip.block.rails.count"    ).setInt   (      5  )
 Cfg.getParamInt   ( "chip.block.rails.hWidth"   ).setInt   ( l(  24) )

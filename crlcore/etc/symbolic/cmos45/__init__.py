@@ -14,6 +14,10 @@
 
 
 import Cfg
+import helpers.io
+helpers.io.vprint( 1, '  o  Loading "symbolic.cmos45" technology.' )
+helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+
 from   Hurricane import DataBase
 from   CRL       import System
 
