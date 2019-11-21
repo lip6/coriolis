@@ -230,4 +230,47 @@ namespace CRL {
   }
 
 
+  Measure<Histogram>::Measure ( const Name& name, Histogram* data )
+    : BaseMeasure(name,0)
+    , _data(data)
+  { }
+
+
+  Measure<Histogram>::~Measure ()
+  { delete _data; }
+
+
+  bool  Measure<Histogram>::isSimpleData () const
+  { return false; }
+
+
+  Histogram* Measure<Histogram>::getData () const
+  { return _data; }
+
+
+  void  Measure<Histogram>::setData ( Histogram* data )
+  { _data=data; }
+
+
+  std::string  Measure<Histogram>::toString () const
+  { return "Unsupported"; }
+
+
+  void  Measure<Histogram>::toGnuplot ( std::string basename ) const
+  { _data->toGnuplot ( basename ); }
+
+
+  std::string  Measure<Histogram>::_getString () const
+  { return "<Measure Histogram>"; }
+
+
+  Record* Measure<Histogram>::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if ( record ) {
+      record->add ( getSlot("_data",_data) );
+    }
+    return record;
+  }
+
 }  // End of CRL namespace.

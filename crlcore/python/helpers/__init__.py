@@ -101,9 +101,9 @@ def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
       s += '        \"%s\"\n' % (filename)
       s += '        You should check for simple python errors in this module.\n'
 
-    if isinstance(e,helpers.io.ErrorMessage): trace = e.trace()
-    else:                                     trace = sys.exc_info()[2]
-    s += textStackTrace( traceback.extract_tb( trace ) )
+    if isinstance(e,helpers.io.ErrorMessage): trace = e.trace
+    else:                                     trace = traceback.extract_tb( sys.exc_info()[2] )
+    s += textStackTrace( trace )
 
     if e:
       s += '        Error was:\n'

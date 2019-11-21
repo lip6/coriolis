@@ -327,24 +327,40 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_getLeafInstanceOccurrences()"
 
-  static PyObject* PyCell_getLeafInstanceOccurrences(PyCell *self) {
+  static PyObject* PyCell_getLeafInstanceOccurrences ( PyCell* self)
+  {
     cdebug_log(20,0) << "PyCell_getLeafInstanceOccurrences()" << endl;
 
     METHOD_HEAD ( "Cell.getLeafInstanceOccurrences()" )
 
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
-
     HTRY
-    Occurrences* occurrences = new Occurrences(cell->getLeafInstanceOccurrences());
-
-    pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
-    if (pyOccurrenceCollection == NULL) { 
-        return NULL;
-    }
-
-    pyOccurrenceCollection->_object = occurrences;
+      Occurrences* occurrences = new Occurrences(cell->getLeafInstanceOccurrences());
+  
+      pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
+      if (pyOccurrenceCollection == NULL) return NULL;
+  
+      pyOccurrenceCollection->_object = occurrences;
     HCATCH
-    
+    return (PyObject*)pyOccurrenceCollection;
+  }
+
+
+  static PyObject* PyCell_getNonLeafInstanceOccurrences ( PyCell* self)
+  {
+    cdebug_log(20,0) << "PyCell_getNonLeafInstanceOccurrences()" << endl;
+
+    METHOD_HEAD ( "Cell.getLeafNonInstanceOccurrences()" )
+
+    PyOccurrenceCollection* pyOccurrenceCollection = NULL;
+    HTRY
+      Occurrences* occurrences = new Occurrences(cell->getNonLeafInstanceOccurrences());
+  
+      pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
+      if (pyOccurrenceCollection == NULL) return NULL;
+  
+      pyOccurrenceCollection->_object = occurrences;
+    HCATCH
     return (PyObject*)pyOccurrenceCollection;
   }
 
@@ -722,7 +738,9 @@ extern "C" {
     , { "getOccurrences"      , (PyCFunction)PyCell_getOccurrences       , METH_NOARGS , "Returns the collection of all occurrences belonging to the cell." }
     , { "getOccurrencesUnder" , (PyCFunction)PyCell_getOccurrencesUnder  , METH_VARARGS, "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
     , { "getLeafInstanceOccurrences"     , (PyCFunction)PyCell_getLeafInstanceOccurrences     , METH_NOARGS
-      , "Returns the collection of all occurrences belonging to the cell." }
+      , "Returns the collection all terminal instances occurrences." }
+    , { "getNonLeafInstanceOccurrences"  , (PyCFunction)PyCell_getNonLeafInstanceOccurrences  , METH_NOARGS
+      , "Returns the collection of all non-terminal instances occurrences." }
     , { "getLeafInstanceOccurrencesUnder", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnder, METH_VARARGS
       , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
     , { "getReferences"       , (PyCFunction)PyCell_getReferences       , METH_VARARGS, "Returns the collection of all references belonging to the cell." }

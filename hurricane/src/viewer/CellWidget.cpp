@@ -1176,6 +1176,13 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::detach ( Selector* selector )
+  {
+    getSelectorSet().erase( selector );
+    emit unlinkSelector( selector );
+  }
+  
+
   void  CellWidget::bindCommand ( Command* command )
   {
     for ( size_t i=0 ; i<_commands.size() ; i++ )
@@ -1492,28 +1499,29 @@ namespace Hurricane {
     _drawingPlanes.painter().setBackground ( Graphics::getBrush("background") );
     _drawingPlanes.painter().setClipRect   ( redrawArea );
 
-    if ( getCell() ) {
-      Box                    redrawBox = screenToDbuBox ( redrawArea );
+    if (getCell()) {
+      Box                    redrawBox = screenToDbuBox( redrawArea );
       SelectorSet::iterator  iselector;
 
-      forEach ( BasicLayer*, basicLayer, _technology->getBasicLayers() ) {
+      for ( BasicLayer* basicLayer : _technology->getBasicLayers() ) {
       //if ( !isDrawableLayer(basicLayer->getName()) ) continue;
 
         _drawingPlanes.setPen   ( Graphics::getPen  (basicLayer->getName()) );
         _drawingPlanes.setBrush ( Graphics::getBrush(basicLayer->getName()) );
 
-        iselector = _selectors.begin();
-        for ( ; iselector != _selectors.end() ; iselector++ ) {
-          Occurrence occurrence = (*iselector)->getOccurrence();
-          Component* component  = dynamic_cast<Component*>(occurrence.getEntity());
+        for ( Selector* selector : _selectors ) {
+          if (not selector->isSelected(this)) continue;
+          
+          Occurrence occurrence = selector->getOccurrence();
+          Component* component  = dynamic_cast<Component*>( occurrence.getEntity() );
 
-          if ( component == NULL ) continue;
-          if ( not component->getLayer() ) continue;
-          if ( not component->getLayer()->contains(*basicLayer) ) continue;
+          if (not component) continue;
+          if (not component->getLayer()) continue;
+          if (not component->getLayer()->contains(basicLayer)) continue;
 
           Transformation  transformation = occurrence.getPath().getTransformation();
           _drawingQuery.drawGo ( dynamic_cast<Go*>(occurrence.getEntity())
-                               , *basicLayer
+                               , basicLayer
                                , redrawBox
                                , transformation
                                );
@@ -1523,52 +1531,55 @@ namespace Hurricane {
       _drawingPlanes.setPen   ( Graphics::getPen  ("boundaries") );
       _drawingPlanes.setBrush ( Graphics::getBrush("boundaries") );
 
-      iselector = _selectors.begin();
-      for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence  occurrence = (*iselector)->getOccurrence();
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence  occurrence = selector->getOccurrence();
         Instance*   instance   = dynamic_cast<Instance*>(occurrence.getEntity());
-        if ( instance ) {
+        if (instance) {
           Transformation  transformation
             = occurrence.getPath().getTransformation().getTransformation(instance->getTransformation());
-          _drawingQuery.drawMasterCell ( instance->getMasterCell(), transformation );
+          _drawingQuery.drawMasterCell( instance->getMasterCell(), transformation );
         }
       }
 
-      _drawingPlanes.setPen   ( Graphics::getPen  ("rubber") );
-      _drawingPlanes.setBrush ( Graphics::getBrush("rubber") );
+      _drawingPlanes.setPen  ( Graphics::getPen  ("rubber") );
+      _drawingPlanes.setBrush( Graphics::getBrush("rubber") );
 
-      iselector = _selectors.begin();
-      for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence occurrence = (*iselector)->getOccurrence();
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence occurrence = selector->getOccurrence();
         Rubber*    rubber     = dynamic_cast<Rubber*>(occurrence.getEntity());
 
-        if ( rubber == NULL ) continue;
+        if (not rubber) continue;
 
         Transformation  transformation = occurrence.getPath().getTransformation();
-        _drawingQuery.drawRubber ( rubber, redrawBox, transformation );
+        _drawingQuery.drawRubber( rubber, redrawBox, transformation );
       }
 
       Name extensionName = "";
 
-      iselector = _selectors.begin();
-      for ( ; iselector != _selectors.end() ; iselector++ ) {
-        Occurrence   occurrence = (*iselector)->getOccurrence();
+      for ( Selector* selector : _selectors ) {
+        if (not selector->isSelected(this)) continue;
+          
+        Occurrence   occurrence = selector->getOccurrence();
         ExtensionGo* eGo        = dynamic_cast<ExtensionGo*>(occurrence.getEntity());
 
-        if ( eGo == NULL ) continue;
+        if (not eGo) continue;
 
         Transformation transformation = occurrence.getPath().getTransformation();
-        if ( eGo->getName() != extensionName ) {
+        if (eGo->getName() != extensionName) {
           extensionName = eGo->getName();
-          _drawingQuery.setDrawExtensionGo ( extensionName );
+          _drawingQuery.setDrawExtensionGo( extensionName );
         }
 
-        if ( isDrawable(extensionName) )
-          _drawingQuery.drawExtensionGo ( this, eGo, NULL, redrawBox, transformation );
+        if (isDrawable(extensionName))
+          _drawingQuery.drawExtensionGo( this, eGo, NULL, redrawBox, transformation );
       }
     }
 
-    _drawingPlanes.end ();
+    _drawingPlanes.end();
     _selectionHasChanged = false;
   }
 
@@ -2589,9 +2600,9 @@ namespace Hurricane {
   void  CellWidget::selectOccurrencesUnder ( Box selectArea )
   {
     if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
-      openRefreshSession ();
-      unselectAll ();
-      closeRefreshSession ();
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
     }
 
     bool               selected  = true;
@@ -2603,12 +2614,12 @@ namespace Hurricane {
     //  cerr << "Selecting: " << occurrence << endl;
     //}
 
-      forEach ( Occurrence, ioccurrence, getOccurrencesUnder(selectArea) )
-        select ( *ioccurrence );
+      for ( Occurrence occurrence : getOccurrencesUnder(selectArea) )
+        select( occurrence );
     } else
       selected = false;
 
-    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged(_selectors);
+    if ( (--_delaySelectionChanged == 0) and selected ) emit selectionChanged( _selectors );
   }
 
 
@@ -2620,29 +2631,29 @@ namespace Hurricane {
       closeRefreshSession ();
     }
 
-	if ( not occurrence.isValid() )
+	if (not occurrence.isValid())
       throw Error ( "Can't select occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(getCell()) );
-      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
+	if (occurrence.getOwnerCell() != getCell()) {
+      string s1 = Graphics::toHtml( getString(getCell()) );
+      string s2 = Graphics::toHtml( getString(occurrence.getOwnerCell()) );
       throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s" 
                   , s1.c_str(), s2.c_str() );
     }
 
     bool       selected = true;
-    const Net* net      = dynamic_cast<const Net*>(occurrence.getEntity());
+    const Net* net      = dynamic_cast<const Net*>( occurrence.getEntity() );
     if ( net ) {
-      SelectorCriterion* criterion = _state->getSelection().add ( net );
+      SelectorCriterion* criterion = _state->getSelection().add( net );
       if ( criterion and (not criterion->isEnabled()) ) {
-        criterion->enable ();
-        forEach ( Component*, component, net->getComponents() ) {
-          Occurrence occurrence ( *component );
-          select ( occurrence );
+        criterion->enable();
+        for ( Component* component : net->getComponents() ) {
+          Occurrence occurrence ( component );
+          select( occurrence );
         }
-        forEach ( Rubber*, irubber, net->getRubbers() ) {
-          Occurrence occurrence ( *irubber );
-          select ( occurrence );
+        for ( Rubber* rubber : net->getRubbers() ) {
+          Occurrence occurrence ( rubber );
+          select( occurrence );
         }
       } else
         selected = false;
@@ -2654,13 +2665,13 @@ namespace Hurricane {
       selector = Selector::create ( occurrence );
 	else {
       selector = dynamic_cast<Selector*>(property);
-      if ( not selector )
+      if (not selector)
         throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
     }
 
-	selector->attachTo(this);
+	selector->attachTo( this );
 
-    setShowSelection ( true );
+  //setShowSelection( true );
     _selectionHasChanged = true;
 
     if ( (--_delaySelectionChanged == 0) and selected ) {
@@ -2720,50 +2731,54 @@ namespace Hurricane {
 
   void  CellWidget::toggleSelection ( Occurrence occurrence )
   {
-	if ( not occurrence.isValid() )
-      throw Error ( "Can't select occurrence : invalid occurrence" );
+	if (not occurrence.isValid())
+      throw Error( "CellWidget::toggleSelection(): Unable to select invalid occurrence." );
 
 	if ( occurrence.getOwnerCell() != getCell() )
-      throw Error ( "Can't select occurrence : incompatible occurrence" );
+      throw Error( "CellWidget::toggleSelection(): Occurrence do not belong to the loaded cell." );
 
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
+	Property* property = occurrence.getProperty( Selector::getPropertyName() );
     Selector* selector = NULL;
-	if ( not property ) {
+	if (not property) {
     // Net special case.
-      Net* net = dynamic_cast<Net*>(occurrence.getEntity());
-      if ( net ) {
-        if ( occurrence.getPath().isEmpty() ) {
-          select ( net );
+      Net* net = dynamic_cast<Net*>( occurrence.getEntity() );
+      if (net) {
+        if (occurrence.getPath().isEmpty()) {
+          select( net );
         } else {
-          cerr << "[UNIMPLEMENTED] Selection of " << occurrence << endl;
+          cerr << "CellWidget::toggleSelection(): Selection of " << occurrence
+               << " is not implemented." << endl;
         }
       } else {
-        selector = Selector::create ( occurrence );
-        selector->attachTo ( this );
-        setShowSelection ( true );
+        selector = Selector::create( occurrence );
+        selector->attachTo( this );
+        setShowSelection( true );
       }
 	} else {
-      selector = dynamic_cast<Selector*>(property);
-      if ( !selector )
-        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+      selector = dynamic_cast<Selector*>( property );
+      if (not selector)
+        throw Error( "CellWidget::toggleSelection(): Abnormal property named "
+                   + getString(Selector::getPropertyName()) + " in place of Selector." );
 
     // Net special case.
-      Net* net = dynamic_cast<Net*>(occurrence.getEntity());
-      if ( net ) {
-        if ( occurrence.getPath().isEmpty() ) {
-          unselect ( net );
+      Net* net = dynamic_cast<Net*>( occurrence.getEntity() );
+      if (net) {
+        if (occurrence.getPath().isEmpty()) {
+          unselect( net );
         } else {
-          cerr << "[UNIMPLEMENTED] Selection of " << occurrence << endl;
+          cerr << "CellWidget::toggleSelection(): Selection of " << occurrence
+               << " is not implemented." << endl;
         }
       } else {
-        selector->detachFrom ( this );
+        if (not selector->isToggleByController(this))
+          selector->detachFrom( this );
       }
     }
 
     _selectionHasChanged = true;
-    if ( _state->showSelection() ) _redrawManager.refresh ();
+    if (_state->showSelection()) _redrawManager.refresh ();
 
-    emit selectionToggled ( occurrence );
+    emit selectionToggled( selector );
   }
 
 
@@ -2807,11 +2822,11 @@ namespace Hurricane {
   void  CellWidget::_unselectAll ()
   {
     SelectorSet::iterator iselector;
-    while ( !_selectors.empty() )
-      (*_selectors.begin())->detachFrom ( this );
+    while ( not _selectors.empty() )
+      (*_selectors.begin())->detachFrom( this );
 
-    if ( !_selectionHasChanged ) _selectionHasChanged = true;
-    if ( _state->showSelection() ) _redrawManager.refresh ();
+    if (not _selectionHasChanged) _selectionHasChanged = true;
+    if (_state->showSelection()) _redrawManager.refresh ();
   }
 
 

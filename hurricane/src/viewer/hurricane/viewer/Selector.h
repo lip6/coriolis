@@ -34,27 +34,41 @@ namespace Hurricane {
 
 
   class Selector : public PrivateProperty {
-
+    public:
+      enum Flags { InModel             = (1<<0)
+                 , Selected            = (1<<1)
+                 , ToggledByController = (1<<2)
+                 };
     public:
     // Constructor.
-      static  Selector*         create           ( Occurrence& occurrence );
-    // Methods.
-      static  const Name&       getPropertyName  ();
-      virtual Name              getName          () const;
-              Occurrence        getOccurrence    () const;
-      inline  set<CellWidget*>& getCellWidgetSet ();
-              bool              isAttachedTo     ( CellWidget* ) const;
-              void              attachTo         ( CellWidget* );
-              void              detachFrom       ( CellWidget* , bool inDeletion=false );
-    // Inspector Managment.
-      virtual string            _getTypeName     () const;
-      virtual string            _getString       () const;
-      virtual Record*           _getRecord       () const;
+      static  Selector*                  create               ( Occurrence& occurrence );
+    // Methods.                                               
+      static  const Name&                getPropertyName      ();
+      virtual Name                       getName              () const;
+              const Quark*               getQuark             () const;
+              Occurrence                 getOccurrence        () const;
+              Path                       getPath              () const;
+              Entity*                    getEntity            () const;
+      inline  map<CellWidget*,uint32_t>& getCellWidgetSet     ();
+      inline  bool                       isSelected           ( CellWidget* ) const;
+      inline  bool                       isInModel            ( CellWidget* ) const;
+      inline  bool                       isToggleByController ( CellWidget* ) const;
+              bool                       isAttachedTo         ( CellWidget* ) const;
+              void                       attachTo             ( CellWidget* );
+              void                       detachFrom           ( CellWidget* , bool inDeletion=false );
+              uint32_t                   getFlags             ( CellWidget* ) const;
+              void                       setFlags             ( CellWidget* , uint32_t );
+              void                       resetFlags           ( CellWidget* , uint32_t );
+              void                       toggle               ( CellWidget* );
+    // Inspector Managment.                                   
+      virtual string                     _getTypeName         () const;
+      virtual string                     _getString           () const;
+      virtual Record*                    _getRecord           () const;
 
     protected:
     // Internal: Attributes.
-      static  const Name        _propertyName;
-              set<CellWidget*>  _cellWidgets;
+      static  const Name                 _propertyName;
+              map<CellWidget*,uint32_t>  _cellWidgets;
 
     protected:
     // Internal: Constructor.
@@ -64,8 +78,10 @@ namespace Hurricane {
 
 
 // Inline Functions.
-  inline set<CellWidget*>& Selector::getCellWidgetSet () { return _cellWidgets; }
-
+  inline map<CellWidget*,uint32_t>& Selector::getCellWidgetSet     () { return _cellWidgets; }
+  inline bool                       Selector::isInModel            ( CellWidget* w ) const { return getFlags(w) & InModel ; }
+  inline bool                       Selector::isSelected           ( CellWidget* w ) const { return getFlags(w) & Selected; }
+  inline bool                       Selector::isToggleByController ( CellWidget* w ) const { return getFlags(w) & ToggledByController; }
 
   typedef set<Selector*,SelectorLess>  SelectorSet;
 

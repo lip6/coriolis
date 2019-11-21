@@ -276,6 +276,9 @@ extern "C" {
   }
 
 
+  DirectSetBoolAttribute(PyCellViewer_setShowSelection,setShowSelection,PyCellViewer,CellViewer)
+
+
   // ---------------------------------------------------------------
   // PyCellViewer Attribute Method table.
 
@@ -298,6 +301,8 @@ extern "C" {
                               , "Allow/disallow anonymous nets to be selectables." }
     , { "setLayerVisible"     , (PyCFunction)PyCellViewer_setLayerVisible     , METH_VARARGS
                               , "Sets the visibility state of the layer <name>." }
+    , { "setShowSelection"    , (PyCFunction)PyCellViewer_setShowSelection    , METH_VARARGS
+                              , "Display/hide the selection." }
     , { "fit"                 , (PyCFunction)PyCellViewer_fit                 , METH_NOARGS
                               , "Triggers a full redraw of the visible area." }
     , { "refresh"             , (PyCFunction)PyCellViewer_refresh             , METH_NOARGS

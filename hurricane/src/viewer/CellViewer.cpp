@@ -761,6 +761,13 @@ namespace Hurricane {
   }
 
 
+  void  CellViewer::setCumulativeSelection ( bool state )
+  {
+    _updateState = InternalEmit;
+    _cellWidget->setCumulativeSelection ( state );
+  }
+
+
   void  CellViewer::raiseToolInterrupt ()
   { _toolInterrupt = true; }
 

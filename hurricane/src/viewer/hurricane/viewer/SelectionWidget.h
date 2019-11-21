@@ -1,41 +1,29 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2019, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
 // | =============================================================== |
-// |  C++ Header  :       "./SelectionWidget.h"                      |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/SelectionWidget.h"     |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_SELECTION_WIDGET__
-#define  __HURRICANE_SELECTION_WIDGET__
-
+#ifndef  HURRICANE_SELECTION_WIDGET_H
+#define  HURRICANE_SELECTION_WIDGET_H
 
 #include  <QWidget>
 #include  <QTableView>
 #include  <QSortFilterProxyModel>
-
 #include  "hurricane/Commons.h"
 #include  "hurricane/Occurrence.h"
 #include  "hurricane/viewer/SelectionModel.h"
 #include  "hurricane/viewer/CellWidget.h"
-
 
 class QCloseEvent;
 class QSortFilterProxyModel;
@@ -49,7 +37,6 @@ class QCheckBox;
 
 namespace Hurricane {
 
-
   class Selector;
 
 
@@ -62,7 +49,7 @@ namespace Hurricane {
               bool                   cumulativeSelection    () const;
     signals:                                                
               void                   selectionModeChanged   ();
-              void                   selectionToggled       ( Occurrence );
+              void                   selectionToggled       ( Selector* );
               void                   inspect                ( Record* );
               void                   inspect                ( Occurrence& );
     public slots:                                           
@@ -73,9 +60,9 @@ namespace Hurricane {
               void                   setCumulativeSelection ( bool );
               void                   selectCurrent          ( const QModelIndex& current, const QModelIndex& );
               void                   setSelection           ( const SelectorSet& selection );
-              void                   setSelection           ( Occurrence );
+              void                   setSelection           ( Selector* );
               void                   toggleSelection        ();
-              void                   toggleSelection        ( Occurrence );
+              void                   toggleSelection        ( Selector* );
               void                   toggleSelection        ( const QModelIndex& );
               void                   inspect                ();
     private slots:                                          
@@ -83,7 +70,6 @@ namespace Hurricane {
             //void                   dataChanged            ( const QModelIndex&, const QModelIndex& );
     protected:                                              
               void                   blockAllSignals        ( bool );
-
     private:
               CellWidget*            _cellWidget;
               SelectionModel*        _baseModel;
@@ -97,7 +83,6 @@ namespace Hurricane {
   };
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif // __HURRICANE_SELECTION_WIDGET__
+#endif  // HURRICANE_SELECTION_WIDGET_H

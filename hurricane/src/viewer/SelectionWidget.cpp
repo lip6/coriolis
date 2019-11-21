@@ -146,20 +146,21 @@ namespace Hurricane {
 
   void  SelectionWidget::setCellWidget ( CellWidget* cw )
   {
-    if ( _cellWidget ) {
-      disconnect ( _cellWidget, 0, this       , 0 );
-      disconnect ( this       , 0, _cellWidget, 0 );
+    if (_cellWidget) {
+      disconnect( _cellWidget, 0, this       , 0 );
+      disconnect( this       , 0, _cellWidget, 0 );
     }
 
     _cellWidget = cw;
-    if ( !_cellWidget ) return;
+    _baseModel->setCellWidget( cw );
+    if (not _cellWidget) return;
 
-    connect ( _cellWidget, SIGNAL(selectionModeChanged()), this, SLOT(changeSelectionMode()) );
+    connect( _cellWidget, SIGNAL(selectionModeChanged()), this, SLOT(changeSelectionMode()) );
 
-    connect ( _cellWidget, SIGNAL(selectionChanged(const SelectorSet&))
-            , this       , SLOT  (setSelection    (const SelectorSet&)) );
+    connect( _cellWidget, SIGNAL(selectionChanged(const SelectorSet&))
+           , this       , SLOT  (setSelection    (const SelectorSet&)) );
 
-    connect ( _cellWidget, SIGNAL(selectionToggled(Occurrence)), this, SLOT(toggleSelection(Occurrence)) );
+    connect( _cellWidget, SIGNAL(selectionToggled(Selector*)), this      , SLOT(toggleSelection(Selector*)) );
 
     _updateState = ExternalEmit;
     changeSelectionMode ();
@@ -234,20 +235,20 @@ namespace Hurricane {
 
   void  SelectionWidget::toggleSelection ( const QModelIndex& index )
   {
-    if ( index.isValid() ) {
-      Occurrence occurrence = _baseModel->toggleSelection ( _sortModel->mapToSource(index) );
-      if ( occurrence.isValid() ) {
+    if (index.isValid()) {
+      Selector* selector = _baseModel->toggleSelection( _sortModel->mapToSource(index) );
+      if (selector) {
         _updateState = InternalEmit;
-        _cellWidget->toggleSelection ( occurrence );
+        _cellWidget->toggleSelection ( selector->getOccurrence() );
       }
     }
   }
 
 
-  void  SelectionWidget::toggleSelection ( Occurrence occurrence )
+  void  SelectionWidget::toggleSelection ( Selector* selector )
   {
-    if ( _updateState != InternalEmit ) {
-      _baseModel->toggleSelection ( occurrence );
+    if (_updateState != InternalEmit) {
+      _baseModel->toggleSelection( selector );
     }
     _updateState = ExternalEmit;
   }
@@ -268,15 +269,15 @@ namespace Hurricane {
   }
 
 
-  void  SelectionWidget::setSelection ( Occurrence occurrence )
-  { _baseModel->setSelection ( occurrence ); }
+  void  SelectionWidget::setSelection ( Selector* selector )
+  { _baseModel->setSelection( selector ); }
 
 
   void  SelectionWidget::clear ()
-  {
-    _baseModel->clear ();
-    _view->selectionModel()->clearSelection ();
-    if ( _cellWidget )
+  { 
+    _baseModel->clear();
+    _view->selectionModel()->clearSelection();
+    if (_cellWidget)
       _cellWidget->unselectAll();
   }
 
@@ -295,8 +296,8 @@ namespace Hurricane {
 
   void  SelectionWidget::inspect ( const QModelIndex& index  )
   {
-    if ( index.isValid() ) {
-      Occurrence occurrence = _baseModel->getOccurrence ( _sortModel->mapToSource(index).row() );
+    if (index.isValid()) {
+      Occurrence occurrence = _baseModel->getSelector( _sortModel->mapToSource(index).row() )->getOccurrence();
       emit inspect ( occurrence );
     } else
       emit inspect ( NULL );

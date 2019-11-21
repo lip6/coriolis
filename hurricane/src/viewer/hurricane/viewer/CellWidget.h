@@ -135,6 +135,7 @@ namespace Hurricane {
       inline  Query::Mask               getQueryFilter             () const ;
               void                      bindToPalette              ( PaletteWidget* );
               void                      detachFromPalette          ();
+              void                      detach                     ( Selector*);
               void                      bindCommand                ( Command* );
               void                      unbindCommand              ( Command* );
               void                      resetCommands              ();
@@ -249,7 +250,8 @@ namespace Hurricane {
               void                      mousePositionChanged       ( const Point& position );
               void                      selectionModeChanged       ();
               void                      selectionChanged           ( const SelectorSet& );
-              void                      selectionToggled           ( Occurrence );
+              void                      selectionToggled           ( Selector* );
+              void                      unlinkSelector             ( Selector* );
               void                      showBoundariesToggled      ( bool );
     protected:
       virtual void                      paintEvent                 ( QPaintEvent* );

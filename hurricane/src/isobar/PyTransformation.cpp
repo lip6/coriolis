@@ -520,8 +520,7 @@ extern "C" {
   // x-------------------------------------------------------------x
 
   DirectDeleteMethod(PyTransformation_DeAlloc,PyTransformation)
-  PyTypeObjectLinkPyTypeNewInit(Transformation)
-//PyTypeObjectLinkPyType(Transformation)
+  PyTypeObjectLinkPyTypeAsValue(Transformation)
 
 
 #else  // End of Python Module Code Part.

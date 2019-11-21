@@ -141,6 +141,7 @@ namespace Hurricane {
               void                  doGoto                    ();
               void                  changeSelectionMode       ();
               void                  setShowSelection          ( bool );
+              void                  setCumulativeSelection    ( bool );
               void                  setState                  ( shared_ptr<CellWidget::State>& );
               void                  removeHistory             ( Cell* );
               void                  openHistoryCell           ();

@@ -59,21 +59,21 @@ namespace CRL {
 
 
 // Inline Functions.
-  inline void  Histogram::setMainTitle     ( std::string title )              { _mainTitle=title; }
+  inline void  Histogram::setMainTitle     ( std::string title )               { _mainTitle=title; }
   inline void  Histogram::setTitle         ( std::string title , size_t iset ) { if (iset<_titles .size()) _titles[iset ] = title;  }
   inline void  Histogram::setColor         ( std::string color , size_t iset ) { if (iset<_colors .size()) _colors[iset ] = color;  }
   inline void  Histogram::setIndent        ( std::string indent, size_t iset ) { if (iset<_indents.size()) _indents[iset] = indent; }
-  inline void  Histogram::setFileExtension ( std::string extension )              { _fileExtension=extension; }
+  inline void  Histogram::setFileExtension ( std::string extension )           { _fileExtension=extension; }
 
 
   template<>
   class Measure<Histogram> : public BaseMeasure {
     public:
-      inline               Measure      ( const Name&, Histogram* );
+                           Measure      ( const Name&, Histogram* );
       virtual             ~Measure      ();
       virtual bool         isSimpleData () const;
-      inline  Histogram*   getData      () const;
-      inline  void         setData      ( Histogram* );
+              Histogram*   getData      () const;
+              void         setData      ( Histogram* );
       virtual std::string  toString     () const;
       virtual void         toGnuplot    ( std::string basename ) const;
       virtual std::string  _getString   () const;
@@ -81,36 +81,6 @@ namespace CRL {
     private:
       Histogram* _data;
   };
-
-
-  inline Measure<Histogram>::Measure ( const Name& name, Histogram* data )
-    : BaseMeasure(name,0), _data(data) { }
-
-  Measure<Histogram>::~Measure () { delete _data; }
-
-  bool  Measure<Histogram>::isSimpleData () const { return false; }
-
-  inline Histogram* Measure<Histogram>::getData () const { return _data; }
-
-  inline void  Measure<Histogram>::setData ( Histogram* data ) { _data=data; }
-
-  std::string  Measure<Histogram>::toString () const
-  { return "Unsupported"; }
-
-  void  Measure<Histogram>::toGnuplot ( std::string basename ) const
-  { _data->toGnuplot ( basename ); }
-
-  std::string  Measure<Histogram>::_getString () const
-  { return "<Measure Histogram>"; }
-
-  Record* Measure<Histogram>::_getRecord () const
-  {
-    Record* record = new Record ( _getString() );
-    if ( record ) {
-      record->add ( getSlot("_data",_data) );
-    }
-    return record;
-  }
 
 
 }  // CRL namespace.
