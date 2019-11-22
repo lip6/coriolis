@@ -334,6 +334,7 @@ namespace Bora {
     if (find(boxSet) == NULL) _boxSets.push_back( boxSet );
     else { 
       find( boxSet )->incrementCpt(); 
+      cerr << "NodeSets::push_back(): do not add current BoxSet, already exists." << endl;
       boxSet->destroy();
     }
   }

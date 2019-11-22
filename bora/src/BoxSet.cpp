@@ -94,7 +94,10 @@ namespace Bora {
 
 
   void BoxSet::destroy()
-  { delete this; }
+  {
+    if (_cpt < 2) delete this;
+    else --_cpt;
+  }
 
 
   void  BoxSet::setWidth ( DbU::Unit )
@@ -105,6 +108,21 @@ namespace Bora {
   { cerr << Warning( "BoxSet::setWidth(): Must never be called." ) << endl; }
 
 
+  string  BoxSet::_getTypeName () const
+  { return "BoxSet"; }
+
+
+  string  BoxSet::_getString () const
+  {
+    string s = "<"      + _getTypeName()
+             + " refs:" + getString(_cpt)
+             + " w:"    + DbU::getValueString(getWidth ())
+             + " h:"    + DbU::getValueString(getHeight())
+             + ">";
+    return s;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::HVBoxSet".
                                        
@@ -112,13 +130,17 @@ namespace Bora {
   HVBoxSet::HVBoxSet ( const vector<BoxSet*>& dimensionSet, DbU::Unit height, DbU::Unit width )
     : BoxSet(height,width)
     ,_dimensionSet(dimensionSet)
-  { }
+  {
+    for ( BoxSet* bs : _dimensionSet ) bs->incrementCpt();
+  }
                                        
 
   HVBoxSet::HVBoxSet ( HVBoxSet* boxSet )
     : BoxSet( boxSet )
     , _dimensionSet( boxSet->getSet() )
-  { }
+  {
+    for ( BoxSet* bs : _dimensionSet ) bs->incrementCpt();
+  }
 
 
   HVBoxSet::~HVBoxSet ()
@@ -131,6 +153,10 @@ namespace Bora {
     for ( BoxSet* bs : _dimensionSet ) area += bs->getDevicesArea();
     return area;
   }
+
+
+  string  HVBoxSet::_getTypeName () const
+  { return "HVBoxSet"; }
 
 
 // -------------------------------------------------------------------
@@ -199,6 +225,10 @@ namespace Bora {
   }
 
 
+  string  HBoxSet::_getTypeName () const
+  { return "HBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::VBoxSet".
 
@@ -264,6 +294,10 @@ namespace Bora {
   {
     BoxSet::destroy();
   }
+
+
+  string  VBoxSet::_getTypeName () const
+  { return "VBoxSet"; }
 
 
 // -------------------------------------------------------------------
@@ -338,6 +372,10 @@ namespace Bora {
   }
 
 
+  string  DBoxSet::_getTypeName () const
+  { return "DBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::RHVBoxSet".
 
@@ -379,6 +417,10 @@ namespace Bora {
   }
 
 
+  string  RHVBoxSet::_getTypeName () const
+  { return "RHVBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::RHBoxSet".
   
@@ -412,6 +454,10 @@ namespace Bora {
   }
 
 
+  string  RHBoxSet::_getTypeName () const
+  { return "RHBoxSet"; }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Bora::RVBoxSet".
   
@@ -443,6 +489,10 @@ namespace Bora {
   {
     return RVBoxSet::create( getWidth() ); 
   }
+
+
+  string  RVBoxSet::_getTypeName () const
+  { return "RVBoxSet"; }
 
 
 }  // Bora namespace.

@@ -699,7 +699,7 @@ namespace Bora {
       } else {
         vector<BoxSet*>::const_iterator ibs = boxSet->getSet().begin();
         for ( VSlicingNodes::iterator ichild = _children.begin()
-            ; ichild != _children.end(); ichild++){
+            ; ichild != _children.end(); ichild++) {
           (*ichild)->_setGlobalSize( *ibs );
           ibs++;
         }

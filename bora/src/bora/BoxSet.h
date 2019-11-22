@@ -74,6 +74,8 @@ namespace Bora {
       virtual        double                getDevicesArea    () const = 0;
       virtual        void                  setHeight         ( DbU::Unit );
       virtual        void                  setWidth          ( DbU::Unit );
+      virtual        std::string           _getTypeName      () const;
+      virtual        std::string           _getString        () const;
     protected:
       DbU::Unit     _height;
       DbU::Unit     _width;
@@ -106,7 +108,7 @@ namespace Bora {
                      double                getDevicesArea    () const;
       virtual inline void                  calculateHeight   () = 0;
       virtual inline void                  calculateWidth    () = 0;
-
+      virtual        std::string           _getTypeName      () const;
     protected:
       std::vector<BoxSet*>  _dimensionSet;
   };
@@ -136,6 +138,7 @@ namespace Bora {
       static inline void         printCount      ();
       static inline void         printCountAll   ();
                     void         destroy         ();
+      virtual       std::string  _getTypeName    () const;
     private:
       static int _count;
       static int _countAll;
@@ -168,6 +171,7 @@ namespace Bora {
       static inline void          printCount      ();
       static inline void          printCountAll   ();
                     void          destroy         ();
+      virtual       std::string   _getTypeName    () const;
     private:
       static int  _count;
       static int  _countAll;
@@ -201,6 +205,7 @@ namespace Bora {
       static  inline void          printCount     ();
       static  inline void          printCountAll  ();
                      void          destroy        ();
+      virtual        std::string   _getTypeName   () const;
     private:
              size_t  _index;    
       static int     _count;
@@ -238,6 +243,7 @@ namespace Bora {
       virtual       void          setHeight      ( DbU::Unit height ) { _height = 0; };
       virtual       void          setWidth       ( DbU::Unit width  ) { _width  = 0; };
                     void          print          () const;
+      virtual       std::string   _getTypeName   () const;
     protected:
       static int  _count;
       static int  _countAll;
@@ -260,13 +266,14 @@ namespace Bora {
   class RHBoxSet: public RHVBoxSet
   {
     protected:
-                       RHBoxSet  ( DbU::Unit height=0 );
-                       RHBoxSet  ( RHBoxSet* );
-                      ~RHBoxSet  ();
-    public:
-      static RHBoxSet* create    ( DbU::Unit height );
-             RHBoxSet* clone     ();
-      inline void      setHeight ( DbU::Unit height );
+                           RHBoxSet     ( DbU::Unit height=0 );
+                           RHBoxSet     ( RHBoxSet* );
+                          ~RHBoxSet     ();
+    public:                             
+      static  RHBoxSet*    create       ( DbU::Unit height );
+              RHBoxSet*    clone        ();
+      inline  void         setHeight    ( DbU::Unit height );
+      virtual std::string  _getTypeName () const;
   };
 
 
@@ -280,13 +287,14 @@ namespace Bora {
   class RVBoxSet: public RHVBoxSet
   {
     protected:
-                      RVBoxSet  ( DbU::Unit width=0 );
-                      RVBoxSet  ( RVBoxSet* boxSet );
-                      ~RVBoxSet ();
-    public:
-      static RVBoxSet* create   ( DbU::Unit width );
-             RVBoxSet* clone    ();
-      inline void      setWidth ( DbU::Unit width );
+                           RVBoxSet     ( DbU::Unit width=0 );
+                           RVBoxSet     ( RVBoxSet* boxSet );
+                          ~RVBoxSet     ();
+    public:                             
+      static  RVBoxSet*    create       ( DbU::Unit width );
+              RVBoxSet*    clone        ();
+      inline  void         setWidth     ( DbU::Unit width );
+      virtual std::string  _getTypeName () const;
   };
 
 
@@ -312,5 +320,39 @@ namespace Bora {
 
 
 }  // Bora namespace.
+
+GETSTRING_POINTER_SUPPORT(Bora::BoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::HVBoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::HBoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::VBoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::DBoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::RHVBoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::RHBoxSet)
+GETSTRING_POINTER_SUPPORT(Bora::RVBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::BoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::HVBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::HBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::VBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::DBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::RHVBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::RHBoxSet)
+GETSTRING_REFERENCE_SUPPORT(Bora::RVBoxSet)
+
+IOSTREAM_POINTER_SUPPORT(Bora::BoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::HVBoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::HBoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::VBoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::DBoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::RHVBoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::RHBoxSet)
+IOSTREAM_POINTER_SUPPORT(Bora::RVBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::BoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::HVBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::HBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::VBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::DBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::RHVBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::RHBoxSet)
+IOSTREAM_REFERENCE_SUPPORT(Bora::RVBoxSet)
 
 #endif  // BORA_BOX_SET_H
