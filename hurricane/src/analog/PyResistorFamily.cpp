@@ -51,21 +51,23 @@ extern "C" {
   }
 
 
-  DirectGetBoolAttribute  (PyResistorFamily_isLOWRES,isLOWRES,PyResistorFamily,ResistorFamily)
-  DirectGetBoolAttribute  (PyResistorFamily_isHIRES ,isHIRES ,PyResistorFamily,ResistorFamily)
-  DirectGetIntAttribute   (PyResistorFamily_getBends,getBends,PyResistorFamily,ResistorFamily)
-  DirectGetLongAttribute  (PyResistorFamily_getW    ,getW    ,PyResistorFamily,ResistorFamily)
-  DirectGetLongAttribute  (PyResistorFamily_getL    ,getL    ,PyResistorFamily,ResistorFamily)
-
-  DirectSetIntAttribute   (PyResistorFamily_setBends,setBends,PyResistorFamily,ResistorFamily)
-
-  DirectGetDoubleAttribute(PyResistorFamily_getR    ,getR    ,PyResistorFamily,ResistorFamily)
-  DirectGetDoubleAttribute(PyResistorFamily_getWE   ,getWE   ,PyResistorFamily,ResistorFamily)
-  DirectGetDoubleAttribute(PyResistorFamily_getLE   ,getLE   ,PyResistorFamily,ResistorFamily)
-
-  DirectSetDoubleAttribute(PyResistorFamily_setR    ,setR    ,PyResistorFamily,ResistorFamily)
-  DirectSetDoubleAttribute(PyResistorFamily_setWE   ,setWE   ,PyResistorFamily,ResistorFamily)
-  DirectSetDoubleAttribute(PyResistorFamily_setLE   ,setLE   ,PyResistorFamily,ResistorFamily)
+  DirectGetBoolAttribute  (PyResistorFamily_isLOWRES  ,isLOWRES  ,PyResistorFamily,ResistorFamily)
+  DirectGetBoolAttribute  (PyResistorFamily_isHIRES   ,isHIRES   ,PyResistorFamily,ResistorFamily)
+  DirectGetBoolAttribute  (PyResistorFamily_isRPOLYH  ,isRPOLYH  ,PyResistorFamily,ResistorFamily)
+  DirectGetBoolAttribute  (PyResistorFamily_isRPOLY2PH,isRPOLY2PH,PyResistorFamily,ResistorFamily)
+  DirectGetIntAttribute   (PyResistorFamily_getBends  ,getBends  ,PyResistorFamily,ResistorFamily)
+  DirectGetLongAttribute  (PyResistorFamily_getW      ,getW      ,PyResistorFamily,ResistorFamily)
+  DirectGetLongAttribute  (PyResistorFamily_getL      ,getL      ,PyResistorFamily,ResistorFamily)
+                                                                 
+  DirectSetIntAttribute   (PyResistorFamily_setBends  ,setBends  ,PyResistorFamily,ResistorFamily)
+                                                                 
+  DirectGetDoubleAttribute(PyResistorFamily_getR      ,getR      ,PyResistorFamily,ResistorFamily)
+  DirectGetDoubleAttribute(PyResistorFamily_getWE     ,getWE     ,PyResistorFamily,ResistorFamily)
+  DirectGetDoubleAttribute(PyResistorFamily_getLE     ,getLE     ,PyResistorFamily,ResistorFamily)
+                                                                 
+  DirectSetDoubleAttribute(PyResistorFamily_setR      ,setR      ,PyResistorFamily,ResistorFamily)
+  DirectSetDoubleAttribute(PyResistorFamily_setWE     ,setWE     ,PyResistorFamily,ResistorFamily)
+  DirectSetDoubleAttribute(PyResistorFamily_setLE     ,setLE     ,PyResistorFamily,ResistorFamily)
 
 
   // ---------------------------------------------------------------
@@ -74,10 +76,14 @@ extern "C" {
   PyMethodDef PyResistorFamily_Methods[] =
     { { "getType"           , (PyCFunction)PyResistorFamily_getType         , METH_NOARGS
                             , "Returns the type of the resistor (as a numric constant)." }
-    , { "isLOWRES"          , (PyCFunction)PyResistorFamily_isLOWRES          , METH_NOARGS
+    , { "isLOWRES"          , (PyCFunction)PyResistorFamily_isLOWRES        , METH_NOARGS
                             , "Returns True if it is a LOWRES resistor." }
-    , { "isHIRES"           , (PyCFunction)PyResistorFamily_isHIRES          , METH_NOARGS
+    , { "isHIRES"           , (PyCFunction)PyResistorFamily_isHIRES         , METH_NOARGS
                             , "Returns True if it is a HIRES resistor." }
+    , { "isRPOLYH"          , (PyCFunction)PyResistorFamily_isRPOLYH        , METH_NOARGS
+                            , "Returns True if it is a RPOLYH resistor." }
+    , { "isRPOLY2PH"        , (PyCFunction)PyResistorFamily_isRPOLY2PH      , METH_NOARGS
+                            , "Returns True if it is a RPOLY2PH resistor." }
     , { "getBends"          , (PyCFunction)PyResistorFamily_getBends        , METH_NOARGS
                             , "Self explanatory." }
     , { "getW"              , (PyCFunction)PyResistorFamily_getW            , METH_NOARGS
@@ -126,8 +132,10 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeResistorFamily.tp_dict,ResistorFamily::LOWRES,"LOWRES");
-    LoadObjectConstant(PyTypeResistorFamily.tp_dict,ResistorFamily::HIRES ,"HIRES" );
+    LoadObjectConstant(PyTypeResistorFamily.tp_dict,ResistorFamily::LOWRES  ,"LOWRES"  );
+    LoadObjectConstant(PyTypeResistorFamily.tp_dict,ResistorFamily::HIRES   ,"HIRES"   );
+    LoadObjectConstant(PyTypeResistorFamily.tp_dict,ResistorFamily::RPOLYH  ,"RPOLYH"  );
+    LoadObjectConstant(PyTypeResistorFamily.tp_dict,ResistorFamily::RPOLY2PH,"RPOLY2PH");
   }
 
 

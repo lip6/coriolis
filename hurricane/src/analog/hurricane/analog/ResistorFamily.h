@@ -34,7 +34,7 @@ namespace Analog {
     public:
       typedef Device Super;
   
-      enum Type { LOWRES=1, HIRES };
+      enum Type { LOWRES=1, HIRES, RPOLYH, RPOLY2PH };
     public:
       inline        MetaResistor*   getReferenceResistor       ();
       inline  const MetaResistor*   getReferenceResistor       () const;
@@ -42,6 +42,8 @@ namespace Analog {
     // Geometrical (layout) parameters commons to all resistors.
       inline        bool            isLOWRES                   () const;
       inline        bool            isHIRES                    () const;
+      inline        bool            isRPOLYH                   () const;
+      inline        bool            isRPOLY2PH                 () const;
       inline        int             getBends                   () const;
       inline        DbU::Unit       getW                       () const;
       inline        DbU::Unit       getL                       () const;
@@ -79,6 +81,8 @@ namespace Analog {
   inline       void                    ResistorFamily::setReferenceResistor   ( MetaResistor* mr ) { _referenceResistor = mr; }
   inline       bool                    ResistorFamily::isLOWRES               () const { return getType() == LOWRES; }
   inline       bool                    ResistorFamily::isHIRES                () const { return getType() == HIRES; }
+  inline       bool                    ResistorFamily::isRPOLYH               () const { return getType() == RPOLYH; }
+  inline       bool                    ResistorFamily::isRPOLY2PH             () const { return getType() == RPOLY2PH; }
   // Mutators.
   inline       void                    ResistorFamily::setR                   ( float r     ) { _secureGetReferenceResistor()->setR    (r    ); _r    ->setValue(r    ); }
   inline       void                    ResistorFamily::setBends               ( int   bends ) { _secureGetReferenceResistor()->setBends(bends); _bends->setValue(bends); }
