@@ -97,7 +97,8 @@ namespace Hurricane {
       mutable set<Property*>     _propertySet;
     public:
       struct CompareById : public std::binary_function<const DBo*,const DBo*,bool> {
-          inline bool  operator() ( const DBo* lhs, const DBo* rhs ) const;
+          template<typename Key>
+          inline bool  operator() ( const Key* lhs, const Key* rhs ) const;
       };
   };
 
@@ -107,7 +108,8 @@ namespace Hurricane {
   inline bool            DBo::hasProperty     () const { return !_propertySet.empty(); }
   inline unsigned int    DBo::getId           () const { return _id; }
 
-  inline bool  DBo::CompareById::operator() ( const DBo* lhs, const DBo* rhs ) const
+  template<typename Key>
+  inline bool  DBo::CompareById::operator() ( const Key* lhs, const Key* rhs ) const
   { return ((lhs)?lhs->getId():0) < ((rhs)?rhs->getId():0); }
 
 
