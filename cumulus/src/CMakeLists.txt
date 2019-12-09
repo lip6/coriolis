@@ -38,8 +38,8 @@
                   )
          
           install ( FILES ${pySources}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
-         #install ( FILES ${pyPlugins}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
-          install ( FILES ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/block )
+          install ( FILES ${pyPlugins}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
+         #install ( FILES ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/block )
           install ( FILES ${pyPluginCT}    DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/clocktree )
           install ( FILES ${pyPluginC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/core2chip )
           install ( FILES ${pyPluginChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )
