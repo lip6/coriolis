@@ -5,7 +5,7 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
- set(ignoreVariables "${BUILD_DOC}")
+ set(ignoreVariables "${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
 
  add_subdirectory(cmake_modules)
 

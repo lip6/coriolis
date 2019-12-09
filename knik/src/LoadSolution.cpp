@@ -447,8 +447,8 @@ namespace Knik {
     SolutionParser parser ( this, loadFileName );
     parser.load ();
 
-    addMeasure<double> ( getCell(), "knikT",  0.0, 8 );
-    addMeasure<size_t> ( getCell(), "knikS",  0  , 8 );
+    addMeasure<double> ( "knikT",  0.0, 8 );
+    addMeasure<size_t> ( "knikS",  0  , 8 );
 
     computeSymbolicWireLength ();
   }

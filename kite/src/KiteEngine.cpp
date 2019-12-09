@@ -738,10 +738,10 @@ namespace Kite {
       cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
     }
 
-    addMeasure<size_t>            ( getCell(), "Segs"   , routeds+unrouteds.size() );
-    addMeasure<unsigned long long>( getCell(), "DWL(l)" , totalWireLength                  , 12 );
-    addMeasure<unsigned long long>( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12 );
-    addMeasure<double>            ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
+    addMeasure<size_t>            ( "Segs"   , routeds+unrouteds.size() );
+    addMeasure<unsigned long long>( "DWL(l)" , totalWireLength                  , 12 );
+    addMeasure<unsigned long long>( "fWL(l)" , totalWireLength-routedWireLength , 12 );
+    addMeasure<double>            ( "WLER(%)", (expandRatio-1.0)*100.0 );
 }
 
 
@@ -775,9 +775,10 @@ namespace Kite {
     out << "#" << endl;
     out << "# " << getCell()->getName() << endl;
     out << measures->toStringHeaders(measuresLabels) << endl;
-    out << measures->toStringDatas  (measuresLabels) << endl;
+    for ( size_t i=0 ; i<getPassNumber() ; ++i )
+      out << measures->toStringDatas(measuresLabels,i) << endl;
 
-    measures->toGnuplot( "GCells Density Histogram", getString(getCell()->getName()) );
+  //measures->toGnuplot( "GCells Density Histogram", getString(getCell()->getName()) );
   }
 
 

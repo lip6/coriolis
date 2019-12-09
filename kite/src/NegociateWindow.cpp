@@ -608,11 +608,11 @@ namespace Kite {
     cmess1 << Dots::asSizet("     - # of GCells",_statistics.getGCellsCount()) << endl;
     _kite->printCompletion();
 
-    addMeasure<size_t>( getCell(), "Events" , RoutingEvent::getProcesseds(), 12 );
-    addMeasure<size_t>( getCell(), "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
+    _kite->addMeasure<size_t>( "Events" , RoutingEvent::getProcesseds(), 12 );
+    _kite->addMeasure<size_t>( "UEvents", RoutingEvent::getProcesseds()-RoutingEvent::getCloneds(), 12 );
 
     Histogram* densityHistogram = new Histogram ( 1.0, 0.1, 2 );
-    addMeasure<Histogram>( getCell(), "GCells Density Histogram", densityHistogram );
+    _kite->addMeasure<Histogram>( "GCells Density Histogram", densityHistogram );
 
     densityHistogram->setFileExtension( ".density.histogram" );
     densityHistogram->setMainTitle    ( "GCell Densities" );

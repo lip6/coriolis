@@ -20,6 +20,7 @@
 #ifndef HURRICANE_HOOK
 #define HURRICANE_HOOK
 
+#include "hurricane/Error.h"
 #include "hurricane/Hooks.h"
 
 namespace Hurricane {
@@ -53,7 +54,7 @@ class Hook {
 // Destructor
 // **********
 
-    protected: virtual ~Hook();
+  protected: virtual ~Hook() throw(Error);
 
 // Operators
 // *********

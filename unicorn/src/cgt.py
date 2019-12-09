@@ -11,9 +11,9 @@ try:
   import Hurricane
   import Viewer
   import CRL
+  import Etesian
   import Anabatic
   import Katana
-  import Etesian
   import Katabatic
   import Kite
   import Bora
@@ -234,7 +234,7 @@ if __name__ == '__main__':
             katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
             katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
             katana.runNegociate         ( Katana.Flags.NoFlags )
-            kiteSuccess = katana.getToolSuccess()
+            kiteSuccess = katana.isDetailedRoutingSuccess()
            #katana.finalizeLayout()
             katana.destroy()
 

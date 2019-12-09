@@ -64,6 +64,8 @@ namespace {
   inline string  quote ( Name   field ) { return "'"+getString(field)+"'"; }
 
 
+#if THIS_IS_DISABLED
+
   void printRule ( const PhysicalRule* rule )
   {
     cout << "  - name  = " << rule->getName() 
@@ -78,6 +80,8 @@ namespace {
 
   void printRules ( const Technology::TwoLayersRulesSet& rules )
   { for ( TwoLayersPhysicalRule* rule : rules ) printRule( rule ); }
+
+#endif
 
 
 }  // Anonymous namespace.

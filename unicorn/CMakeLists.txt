@@ -5,6 +5,8 @@
  
  cmake_minimum_required(VERSION 2.8.9)
 
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}")
+
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  setup_project_paths(CORIOLIS)

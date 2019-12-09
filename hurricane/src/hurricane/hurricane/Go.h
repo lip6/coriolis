@@ -56,6 +56,7 @@ class Go : public Entity {
 // ************
 
     protected: Go();
+    protected: virtual ~Go() throw(Error);
 
 // Predicates
 // **********

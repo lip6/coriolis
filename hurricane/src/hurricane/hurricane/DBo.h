@@ -32,6 +32,7 @@
 #ifndef  HURRICANE_DBO_H
 #define  HURRICANE_DBO_H
 
+#include  "hurricane/Error.h"
 #include  "hurricane/DBos.h"
 #include  "hurricane/Name.h"
 #include  "hurricane/Properties.h"
@@ -81,12 +82,12 @@ namespace Hurricane {
               void               toJsonSignature     ( JsonWriter* ) const;
     protected:                   
                                  DBo                 ();
-      virtual                   ~DBo                 ();
+      virtual                   ~DBo                 () throw(Error);
       virtual void               _postCreate         ();
       virtual void               _preDestroy         ();
     private:                                         
-                                 DBo                 ( const DBo& );
-              DBo&               operator=           ( const DBo& );
+                                 DBo                 ( const DBo& ) = delete;
+              DBo&               operator=           ( const DBo& ) = delete;
     private:                     
       static  unsigned int       _memoryLimit;
       static  unsigned long      _flags;

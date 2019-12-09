@@ -109,19 +109,19 @@ extern "C" {
     HTRY
       METHOD_HEAD("CellViewer.addToMenu()")
   
-      char* nullBefore = "";
-      char* path       = NULL;
-      char* text       = NULL;
-      char* textTip    = NULL;
-      char* scriptPath = NULL;
-      char* before     = NULL;
+      QString  before       ("");
+      char*    path       = NULL;
+      char*    text       = NULL;
+      char*    textTip    = NULL;
+      char*    scriptPath = NULL;
+      char*    beforeArg  = NULL;
       if (not PyArg_ParseTuple( args, "s|ssss:CellViewer.addToMenu()"
-                                    , &path, &text, &textTip, &scriptPath, &before)) {
+                                    , &path, &text, &textTip, &scriptPath, &beforeArg)) {
         PyErr_SetString ( ConstructorError, "CellViewer.addToMenu(): Takes either one or five arguments." );
         return NULL;
       }
   
-      if (before == NULL) before = nullBefore;
+      if (beforeArg != NULL) before = beforeArg;
       
       if (text != NULL) {
         if (cw->addToMenu( path, text, textTip, scriptPath, before )) Py_RETURN_TRUE;

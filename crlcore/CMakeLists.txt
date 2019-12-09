@@ -3,6 +3,8 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(CRLCORE)
 
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}")
+
  cmake_minimum_required(VERSION 2.8.9)
 
  OPTION(BUILD_DOC "Build the documentation (latex+doxygen)" OFF)

@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2019, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -125,8 +125,10 @@ extern "C" {
 
 
   GetNameMethod(ToolEngine, tool)
-  DirectGetBoolAttribute(PyToolEngine_getPlacementFlag,placementModificationFlagHasChanged,PyToolEngine,ToolEngine)
-  DirectGetBoolAttribute(PyToolEngine_getRoutingFlag  ,routingModificationFlagHasChanged  ,PyToolEngine,ToolEngine)
+  DirectGetBoolAttribute  (PyToolEngine_getPlacementFlag,placementModificationFlagHasChanged,PyToolEngine,ToolEngine)
+  DirectGetBoolAttribute  (PyToolEngine_getRoutingFlag  ,routingModificationFlagHasChanged  ,PyToolEngine,ToolEngine)
+  DirectGetUIntAttribute  (PyToolEngine_getPassNumber   ,getPassNumber                      ,PyToolEngine,ToolEngine)
+  DirectSetUInt32Attribute(PyToolEngine_setPassNumber   ,setPassNumber                      ,PyToolEngine,ToolEngine)
 
   // Standart destroy (Attribute).
 
@@ -140,6 +142,10 @@ extern "C" {
                               , "Returns the name of the ToolEngine (class attribute)." }
     , { "getCell"             , (PyCFunction)PyToolEngine_getCell             , METH_NOARGS
                               , "Returns the Cell on which this ToolEngine is attached." }
+    , { "getPassNumber"       , (PyCFunction)PyToolEngine_getPassNumber       , METH_NOARGS
+                              , "Returns the pass number to tool is into (iteration)." }
+    , { "setPassNumber"       , (PyCFunction)PyToolEngine_setPassNumber       , METH_VARARGS
+                              , "Sets the pass number to tool is to be." }
     , { "placementModificationFlagHasChanged"
                               , (PyCFunction)PyToolEngine_getPlacementFlag    , METH_NOARGS
                               , "Returns the state of the placement modification flag." }

@@ -26,6 +26,7 @@ namespace Etesian {
 
   using Hurricane::Box;
   using Hurricane::Cell;
+  using Hurricane::Occurrence;
   class EtesianEngine;
 
 
@@ -105,7 +106,7 @@ namespace Etesian {
       inline               BloatCells            ( EtesianEngine* );
       inline              ~BloatCells            ();
              bool          select                ( std::string );
-             Box           getAb                 ( const Cell* );
+             Box           getAb                 ( Occurrence );
       inline DbU::Unit     getDxSpace            () const;
       inline void          resetDxSpace          ();
     private:

@@ -31,7 +31,10 @@ namespace CRL {
   using std::ostringstream;
   using std::setprecision;
   using std::setw;
+  using std::setfill;
   using std::vector;
+  using std::cerr;
+  using std::endl;
   using Hurricane::Record;
 
 
@@ -118,8 +121,8 @@ namespace CRL {
     
     size_t titleWidth = _titles[iset].size();
 
-    string hline = _indents[iset] + "+-" + string(titleWidth,'-') + "-+-------------+----+\n";
-    string tline = _indents[iset] + "| " + _titles[iset]          + " |    Count    |  % |\n";
+    string hline = _indents[iset] + "+-" + string(titleWidth,'-') + "-+-------------+-----+\n";
+    string tline = _indents[iset] + "| " + _titles[iset]          + " |    Count    |  %  |\n";
 
     s << hline << tline << hline;
 
@@ -131,8 +134,8 @@ namespace CRL {
       s << _indents[iset]
         <<  "| " << setw(titleWidth) << (size_t)(_step*i)
         << " | " << setw(11)         << (size_t)(value)
-        << " | " << setw( 2)         << percent
-        << " | " << string( percent, '*' )
+        << " | " << setw( 3)         << percent
+        << " | " << string( percent/2, '*' )
         << "\n";
     }
 
@@ -230,34 +233,44 @@ namespace CRL {
   }
 
 
-  Measure<Histogram>::Measure ( const Name& name, Histogram* data )
+  Measure<Histogram>::Measure ( const Name& name )
     : BaseMeasure(name,0)
-    , _data(data)
+    , _datas         ()
   { }
 
 
   Measure<Histogram>::~Measure ()
-  { delete _data; }
+  { for ( auto item : _datas ) delete item.second; }
 
 
   bool  Measure<Histogram>::isSimpleData () const
   { return false; }
 
 
-  Histogram* Measure<Histogram>::getData () const
-  { return _data; }
+  Histogram* Measure<Histogram>::getData ( size_t index ) const
+  { return (index < _datas.size()) ? _datas[index].second : NULL; }
 
 
-  void  Measure<Histogram>::setData ( Histogram* data )
-  { _data=data; }
+  void  Measure<Histogram>::setData ( size_t index, Histogram* data )
+  {
+    while ( _datas.size() <= index ) _datas.push_back( std::make_pair(0,(Histogram*)NULL) );
+    delete _datas[index].second;
+    _datas[index].second  = data;
+    _datas[index].first  |= BaseMeasure::Set;
+  }
 
 
-  std::string  Measure<Histogram>::toString () const
+  std::string  Measure<Histogram>::toString ( size_t ) const
   { return "Unsupported"; }
 
 
-  void  Measure<Histogram>::toGnuplot ( std::string basename ) const
-  { _data->toGnuplot ( basename ); }
+  void  Measure<Histogram>::toGnuplot ( size_t index, const std::string& basename ) const
+  {
+    Histogram*    h = getData( index );
+    ostringstream passName;
+    passName << basename << "." << setw(2) << setfill('0') << index;
+    if (h) h->toGnuplot( passName.str() );
+  }
 
 
   std::string  Measure<Histogram>::_getString () const
@@ -268,7 +281,7 @@ namespace CRL {
   {
     Record* record = new Record ( _getString() );
     if ( record ) {
-      record->add ( getSlot("_data",_data) );
+      record->add ( getSlot("_datas",_datas) );
     }
     return record;
   }

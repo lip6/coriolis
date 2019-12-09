@@ -89,7 +89,7 @@ namespace Hurricane {
     HyperNet      hyperNet      ( _netOccurrence );
     RoutingPad*   currentRp     = NULL;
     bool          createRp      = true;
-    unsigned int  rpFlags       = (flags & Cell::Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
+  //unsigned int  rpFlags       = (flags & Cell::Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
 
     for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
       RoutingPad* rp = dynamic_cast<RoutingPad*>(occurrence.getEntity());

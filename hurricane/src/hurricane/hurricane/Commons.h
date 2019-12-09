@@ -163,10 +163,8 @@ namespace Hurricane {
 
 // Forward declaration of "getSlot<>()" template.
 
-template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data  );
-template<typename Data> inline Hurricane::Slot* getSlot (       std::string& name, Data* );
-template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data  );
-template<typename Data> inline Hurricane::Slot* getSlot ( const std::string& name, Data* );
+template<typename Data> inline Hurricane::Slot* getSlot ( std::string name, Data  );
+template<typename Data> inline Hurricane::Slot* getSlot ( std::string name, Data* );
 
 
 // -------------------------------------------------------------------
@@ -344,8 +342,8 @@ inline Hurricane::Record* getRecord ( const std::pair<T,U>& p )
 {
   Hurricane::Record* record = NULL;
   record = new Hurricane::Record ( "const std::pair<T,U>" );
-  record->add( getSlot<T>("first" , &p.first ) );
-  record->add( getSlot<U>("second", &p.second) );
+  record->add( getSlot<const T>(std::string("first" ), &p.first ) );
+  record->add( getSlot<const U>(std::string("second"), &p.second) );
   return record;
 }
 
@@ -362,8 +360,8 @@ inline Hurricane::Record* getRecord ( std::pair<T,U>& p )
 {
   Hurricane::Record* record = NULL;
   record = new Hurricane::Record ( "std::pair<T,U>" );
-  record->add( getSlot<T>("first" , &p.first ) );
-  record->add( getSlot<U>("second", &p.second) );
+  record->add( getSlot<T>(std::string("first" ), &p.first ) );
+  record->add( getSlot<U>(std::string("second"), &p.second) );
   return record;
 }
 

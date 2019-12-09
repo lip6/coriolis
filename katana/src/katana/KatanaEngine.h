@@ -57,10 +57,12 @@ namespace Katana {
 
   class KatanaEngine : public AnabaticEngine {
     public:
-      static const uint32_t  DigitalMode = (1 <<  0);
-      static const uint32_t  AnalogMode  = (1 <<  1);
-      static const uint32_t  MixedMode   = (1 <<  2);
-      static const uint32_t  ChannelMode = (1 <<  3);
+      static const uint32_t  DigitalMode            = (1 <<  0);
+      static const uint32_t  AnalogMode             = (1 <<  1);
+      static const uint32_t  MixedMode              = (1 <<  2);
+      static const uint32_t  ChannelMode            = (1 <<  3);
+      static const uint32_t  GlobalRoutingSuccess   = (1 <<  0);
+      static const uint32_t  DetailedRoutingSuccess = (1 <<  1);
     public:
       typedef  AnabaticEngine  Super;
     public:
@@ -72,16 +74,20 @@ namespace Katana {
       inline  bool                     isAnalogMode               () const;
       inline  bool                     isMixedMode                () const;
       inline  bool                     isChannelMode              () const;
+      inline  bool                     isGlobalRoutingSuccess     () const;
+      inline  bool                     isDetailedRoutingSuccess   () const;
       inline  bool                     useClockTree               () const;
+      inline  bool                     useGlobalEstimate          () const;
       inline  CellViewer*              getViewer                  () const;
       inline  AnabaticEngine*          base                       ();
       inline  Configuration*           getKatanaConfiguration     ();
       virtual Configuration*           getConfiguration           ();
-      inline  bool                     getToolSuccess             () const;
+      inline  uint32_t                 getSuccessState            () const;
       inline  uint64_t                 getEventsLimit             () const;
       inline  uint32_t                 getRipupLimit              ( uint32_t type ) const;
               uint32_t                 getRipupLimit              ( const TrackElement* ) const;
       inline  uint32_t                 getRipupCost               () const;
+      inline  uint32_t                 getSearchHalo              () const;
       inline  uint32_t                 getHTracksReservedLocal    () const;
       inline  uint32_t                 getVTracksReservedLocal    () const;
       inline  uint32_t                 getTermSatReservedLocal    () const;
@@ -102,6 +108,8 @@ namespace Katana {
               void                     printCompletion            () const;
               void                     dumpMeasures               ( std::ostream& ) const;
               void                     dumpMeasures               () const;
+      inline  void                     setGlobalRoutingSuccess    ( bool ) const;
+      inline  void                     setDetailedRoutingSuccess  ( bool ) const;
       virtual void                     openSession                ();
       inline  void                     setViewer                  ( CellViewer* );
       inline  void                     setPostEventCb             ( Configuration::PostEventCb_t );
@@ -128,12 +136,14 @@ namespace Katana {
               void                     pairSymmetrics             ();
               void                     updateEstimateDensity      ( NetData*, double weight );
               void                     runNegociate               ( Flags flags=Flags::NoFlags );
-              void                     runGlobalRouter            ();
+              void                     runGlobalRouter            ( Flags flags=Flags::NoFlags );
               void                     computeGlobalWireLength    ( long& wireLength, long& viaCount );
               void                     runTest                    ();
+              void                     resetRouting               ();
       virtual void                     finalizeLayout             ();
               void                     _runKatanaInit             ();
               void                     _gutKatana                 ();
+              void                     _buildBloatProfile         ();
               void                     _computeCagedConstraints   ();
               TrackElement*            _lookup                    ( Segment* ) const;
       inline  TrackElement*            _lookup                    ( AutoSegment* ) const;
@@ -157,7 +167,7 @@ namespace Katana {
               TrackElementPairing      _shortDoglegs;
               DataSymmetricMap         _symmetrics;
               uint32_t                 _mode;
-      mutable bool                     _toolSuccess;
+      mutable uint32_t                 _successState;
     protected:
     // Constructors & Destructors.
                             KatanaEngine  ( Cell* );
@@ -175,14 +185,18 @@ namespace Katana {
   inline  bool                          KatanaEngine::isAnalogMode            () const { return (_mode & AnalogMode); };
   inline  bool                          KatanaEngine::isMixedMode             () const { return (_mode & MixedMode); };
   inline  bool                          KatanaEngine::isChannelMode           () const { return (_mode & ChannelMode); };
+  inline  bool                          KatanaEngine::isGlobalRoutingSuccess  () const { return (_successState & GlobalRoutingSuccess); }
+  inline  bool                          KatanaEngine::isDetailedRoutingSuccess() const { return (_successState & DetailedRoutingSuccess); }
   inline  bool                          KatanaEngine::useClockTree            () const { return _configuration->useClockTree(); }
+  inline  bool                          KatanaEngine::useGlobalEstimate       () const { return _configuration->useGlobalEstimate(); }
   inline  CellViewer*                   KatanaEngine::getViewer               () const { return _viewer; }
   inline  AnabaticEngine*               KatanaEngine::base                    () { return static_cast<AnabaticEngine*>(this); }
   inline  Configuration*                KatanaEngine::getKatanaConfiguration  () { return _configuration; }
   inline  Configuration::PostEventCb_t& KatanaEngine::getPostEventCb          () { return _configuration->getPostEventCb(); }
-  inline  bool                          KatanaEngine::getToolSuccess          () const { return _toolSuccess; }
+  inline  uint32_t                      KatanaEngine::getSuccessState         () const { return _successState; }
   inline  uint64_t                      KatanaEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
   inline  uint32_t                      KatanaEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
+  inline  uint32_t                      KatanaEngine::getSearchHalo           () const { return _configuration->getSearchHalo(); }
   inline  uint32_t                      KatanaEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
   inline  uint32_t                      KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
   inline  uint32_t                      KatanaEngine::getTermSatReservedLocal () const { return _configuration->getTermSatReservedLocal(); }
@@ -218,6 +232,17 @@ namespace Katana {
     return NULL;
   }
 
+  inline  void  KatanaEngine::setGlobalRoutingSuccess  ( bool state ) const
+  {
+    if (state) _successState |=  GlobalRoutingSuccess;
+    else       _successState &= ~GlobalRoutingSuccess;
+  }
+
+  inline  void  KatanaEngine::setDetailedRoutingSuccess( bool state ) const
+  {
+    if (state) _successState |=  DetailedRoutingSuccess;
+    else       _successState &= ~DetailedRoutingSuccess;
+  }
 
 // Variables.
   extern const char* missingRW;

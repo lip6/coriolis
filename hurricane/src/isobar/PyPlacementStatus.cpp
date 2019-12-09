@@ -101,7 +101,15 @@ extern "C" {
     LoadObjectConstant(PyTypePlacementStatus.tp_dict,Instance::PlacementStatus::PLACED  ,"PLACED");
     LoadObjectConstant(PyTypePlacementStatus.tp_dict,Instance::PlacementStatus::FIXED   ,"FIXED");
   }
+
+
+#endif  // Shared Library Code Part.
+
+}  // extern "C".
   
+
+#if !defined(__PYTHON_MODULE__)
+
 
   extern Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
     switch ( PyAny_AsLong(object) ) {
@@ -114,9 +122,7 @@ extern "C" {
   }
 
 
-#endif  // Shared Library Code Part.
-
-}  // extern "C".
+#endif
 
 }  // Isobar namespace.
  

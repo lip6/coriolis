@@ -40,6 +40,7 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
+    , _searchHalo          (Cfg::getParamInt ("katana.searchHalo"          ,      1)->asInt())
     , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
     , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
     , _termSatReservedLocal(Cfg::getParamInt ("katana.termSatReservedLocal",      9)->asInt())
@@ -55,6 +56,8 @@ namespace Katana {
     _ripupLimits[GlobalRipupLimit]     = Cfg::getParamInt("katana.globalRipupLimit"     , 5)->asInt();
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("katana.longGlobalRipupLimit" , 5)->asInt();
     _ripupLimits[ShortNetRipupLimit]   = Cfg::getParamInt("katana.shortNetRipupLimit"   ,16)->asInt();
+
+    if (Cfg::getParamBool("katana.useGlobalEstimate",false)->asBool()) _flags |= UseGlobalEstimate;
 
     // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
     //   ostringstream paramName;
@@ -80,6 +83,7 @@ namespace Katana {
   Configuration::Configuration ( const Configuration& other )
     : Anabatic::Configuration(*other.base())
     , _postEventCb         (other._postEventCb)
+    , _searchHalo          (other._searchHalo)
     , _hTracksReservedLocal(other._hTracksReservedLocal)
     , _vTracksReservedLocal(other._vTracksReservedLocal)
     , _termSatReservedLocal(other._termSatReservedLocal)
@@ -152,6 +156,8 @@ namespace Katana {
     if (not cmess1.enabled()) return;
 
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
+    cout << Dots::asUInt  ("     - Dijkstra GR search halo"            ,getSearchHalo()) << endl;
+    cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
     cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
     cout << Dots::asUInt  ("     - Edge max H reserved local"          ,_hTracksReservedLocal) << endl;
     cout << Dots::asUInt  ("     - Edge max V reserved local"          ,_vTracksReservedLocal) << endl;
@@ -163,7 +169,7 @@ namespace Katana {
     cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
 
-    Super::print ( cell );
+    Super::print( cell );
   }
 
 
@@ -185,6 +191,7 @@ namespace Katana {
   {
     Record* record = Super::_getRecord();
     if ( record ) {
+      record->add ( getSlot("_searchHalo"           ,_searchHalo           ) );
       record->add ( getSlot("_hTracksReservedLocal" ,_hTracksReservedLocal ) );
       record->add ( getSlot("_vTracksReservedLocal" ,_vTracksReservedLocal ) );
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );

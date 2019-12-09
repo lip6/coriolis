@@ -2037,7 +2037,7 @@ namespace Katabatic {
   void  KatabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Loading Nets global routing from Knik." << endl;
-    cmess1 << Dots::asDouble("     - Saturation",getMeasure<double>(getCell(),"Sat.")->getData()) << endl;
+    cmess1 << Dots::asDouble("     - Saturation",getMeasure<double>("Sat.")) << endl;
 
     startMeasures();
     Session::open( this );
@@ -2061,8 +2061,8 @@ namespace Katabatic {
     stopMeasures();
     printMeasures( "load" );
 
-    addMeasure<size_t>( getCell(), "Globals", AutoSegment::getGlobalsCount() );
-    addMeasure<size_t>( getCell(), "Edges"  , AutoSegment::getAllocateds() );
+    addMeasure<size_t>( "Globals", AutoSegment::getGlobalsCount() );
+    addMeasure<size_t>( "Edges"  , AutoSegment::getAllocateds() );
   }
 
 

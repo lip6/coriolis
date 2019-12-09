@@ -131,7 +131,7 @@ namespace {
       static const uint16_t  BitArray        = 0x0001;
       static const uint16_t  TwoByteInteger  = 0x0002;  // Signed, 16 bits.
       static const uint16_t  FourByteInteger = 0x0003;  // Signed, 32 bits.
-      static const uint16_t  FourByteReal    = 0x0004;  // Unused.
+    //static const uint16_t  FourByteReal    = 0x0004;  // Unused.
       static const uint16_t  EightByteReal   = 0x0005;
       static const uint16_t  String          = 0x0006;
     // Record Types.
@@ -144,55 +144,55 @@ namespace {
       static const uint16_t  STRNAME         = 0x0600 | String;
       static const uint16_t  ENDSTR          = 0x0700 | NoData;
       static const uint16_t  BOUNDARY        = 0x0800 | NoData;
-      static const uint16_t  PATH            = 0x0900 | NoData;
+    //static const uint16_t  PATH            = 0x0900 | NoData;
       static const uint16_t  SREF            = 0x0a00 | NoData;
-      static const uint16_t  AREF            = 0x0b00 | NoData;
-      static const uint16_t  TEXT            = 0x0c00 | NoData;
+    //static const uint16_t  AREF            = 0x0b00 | NoData;
+    //static const uint16_t  TEXT            = 0x0c00 | NoData;
       static const uint16_t  LAYER           = 0x0d00 | TwoByteInteger;
       static const uint16_t  DATATYPE        = 0x0e00 | TwoByteInteger;
-      static const uint16_t  WIDTH           = 0x0f00 | FourByteInteger;
+    //static const uint16_t  WIDTH           = 0x0f00 | FourByteInteger;
       static const uint16_t  XY              = 0x1000 | FourByteInteger;
       static const uint16_t  ENDEL           = 0x1100 | NoData;
       static const uint16_t  SNAME           = 0x1200 | String;
-      static const uint16_t  COLROW          = 0x1300 | TwoByteInteger;
-      static const uint16_t  TEXTNODE        = 0x1400 | NoData;  // Unused.
-      static const uint16_t  NODE            = 0x1500 | NoData;
-      static const uint16_t  TEXTTYPE        = 0x1600 | TwoByteInteger;
-      static const uint16_t  PRESENTATION    = 0x1700 | BitArray;
-      static const uint16_t  SPACING         = 0x1800 | NoData;  // Discontinued.
-      static const uint16_t  STRING          = 0x1900 | String;
+    //static const uint16_t  COLROW          = 0x1300 | TwoByteInteger;
+    //static const uint16_t  TEXTNODE        = 0x1400 | NoData;  // Unused.
+    //static const uint16_t  NODE            = 0x1500 | NoData;
+    //static const uint16_t  TEXTTYPE        = 0x1600 | TwoByteInteger;
+    //static const uint16_t  PRESENTATION    = 0x1700 | BitArray;
+    //static const uint16_t  SPACING         = 0x1800 | NoData;  // Discontinued.
+    //static const uint16_t  STRING          = 0x1900 | String;
       static const uint16_t  STRANS          = 0x1a00 | BitArray;
-      static const uint16_t  MAG             = 0x1b00 | EightByteReal;
+    //static const uint16_t  MAG             = 0x1b00 | EightByteReal;
       static const uint16_t  ANGLE           = 0x1c00 | EightByteReal;
-      static const uint16_t  REFLIBS         = 0x1f00 | String;
-      static const uint16_t  FONTS           = 0x2000 | String;
-      static const uint16_t  PATHTYPE        = 0x2100 | TwoByteInteger;
-      static const uint16_t  GENERATIONS     = 0x2200 | TwoByteInteger;
-      static const uint16_t  ATTRTABLE       = 0x2300 | String;
-      static const uint16_t  STYPTABLE       = 0x2400 | String;          // Unreleased.
-      static const uint16_t  STRTYPE         = 0x2500 | TwoByteInteger;  // Unreleased.
-      static const uint16_t  ELFLAGS         = 0x2600 | BitArray;
-      static const uint16_t  ELKEY           = 0x2700 | FourByteInteger; // Unreleased.
-      static const uint16_t  LINKTYPE        = 0x2800 | TwoByteInteger;  // Unreleased.
-      static const uint16_t  LINKKEYS        = 0x2900 | FourByteInteger; // Unreleased.
-      static const uint16_t  NODETYPE        = 0x2a00 | TwoByteInteger;
+    //static const uint16_t  REFLIBS         = 0x1f00 | String;
+    //static const uint16_t  FONTS           = 0x2000 | String;
+    //static const uint16_t  PATHTYPE        = 0x2100 | TwoByteInteger;
+    //static const uint16_t  GENERATIONS     = 0x2200 | TwoByteInteger;
+    //static const uint16_t  ATTRTABLE       = 0x2300 | String;
+    //static const uint16_t  STYPTABLE       = 0x2400 | String;          // Unreleased.
+    //static const uint16_t  STRTYPE         = 0x2500 | TwoByteInteger;  // Unreleased.
+    //static const uint16_t  ELFLAGS         = 0x2600 | BitArray;
+    //static const uint16_t  ELKEY           = 0x2700 | FourByteInteger; // Unreleased.
+    //static const uint16_t  LINKTYPE        = 0x2800 | TwoByteInteger;  // Unreleased.
+    //static const uint16_t  LINKKEYS        = 0x2900 | FourByteInteger; // Unreleased.
+    //static const uint16_t  NODETYPE        = 0x2a00 | TwoByteInteger;
       static const uint16_t  PROPATTR        = 0x2b00 | TwoByteInteger;
       static const uint16_t  PROPVALUE       = 0x2c00 | String;
-      static const uint16_t  BOX             = 0x2d00 | NoData;
-      static const uint16_t  BOXTYPE         = 0x2e00 | TwoByteInteger;
-      static const uint16_t  PLEX            = 0x2f00 | FourByteInteger;
-      static const uint16_t  BGNEXTN         = 0x3000 | FourByteInteger; // CustomPlus.
-      static const uint16_t  ENDEXTN         = 0x3100 | FourByteInteger; // CustomPlus.
-      static const uint16_t  TAPENUM         = 0x3200 | TwoByteInteger;
-      static const uint16_t  TAPECODE        = 0x3300 | TwoByteInteger;
-      static const uint16_t  STRCLASS        = 0x3400 | BitArray;        // CustomPlus.
-      static const uint16_t  RESERVED        = 0x3500 | FourByteInteger; // Future use.
-      static const uint16_t  FORMAT          = 0x3600 | TwoByteInteger;
-      static const uint16_t  MASK            = 0x3700 | String;          // Filtered format.
-      static const uint16_t  ENDMASKS        = 0x3800 | NoData;          // Filtered format.
-      static const uint16_t  LIBDIRSIZE      = 0x3900 | TwoByteInteger;
-      static const uint16_t  SRFNAME         = 0x3a00 | String;
-      static const uint16_t  LIBSECUR        = 0x3b00 | TwoByteInteger;
+    //static const uint16_t  BOX             = 0x2d00 | NoData;
+    //static const uint16_t  BOXTYPE         = 0x2e00 | TwoByteInteger;
+    //static const uint16_t  PLEX            = 0x2f00 | FourByteInteger;
+    //static const uint16_t  BGNEXTN         = 0x3000 | FourByteInteger; // CustomPlus.
+    //static const uint16_t  ENDEXTN         = 0x3100 | FourByteInteger; // CustomPlus.
+    //static const uint16_t  TAPENUM         = 0x3200 | TwoByteInteger;
+    //static const uint16_t  TAPECODE        = 0x3300 | TwoByteInteger;
+    //static const uint16_t  STRCLASS        = 0x3400 | BitArray;        // CustomPlus.
+    //static const uint16_t  RESERVED        = 0x3500 | FourByteInteger; // Future use.
+    //static const uint16_t  FORMAT          = 0x3600 | TwoByteInteger;
+    //static const uint16_t  MASK            = 0x3700 | String;          // Filtered format.
+    //static const uint16_t  ENDMASKS        = 0x3800 | NoData;          // Filtered format.
+    //static const uint16_t  LIBDIRSIZE      = 0x3900 | TwoByteInteger;
+    //static const uint16_t  SRFNAME         = 0x3a00 | String;
+    //static const uint16_t  LIBSECUR        = 0x3b00 | TwoByteInteger;
     public:
                        GdsRecord  ( uint16_t type );
                        GdsRecord  ( uint16_t type, int16_t );
@@ -324,7 +324,7 @@ namespace {
 
 
   ostream& operator<< ( ostream& o, const GdsRecord& r ) { r .toStream( o ); return o; }
-  ostream& operator<< ( ostream& o, const GdsRecord* r ) { r->toStream( o ); return o; }
+//ostream& operator<< ( ostream& o, const GdsRecord* r ) { r->toStream( o ); return o; }
 
 
 // -------------------------------------------------------------------
@@ -413,7 +413,7 @@ namespace {
 
   // Generate a GDSII which coordinates are relatives to the um.
   // Bug correction courtesy of M. Koefferlein (KLayout).
-    double gridPerUu = DbU::getPhysicalsPerGrid() / 1e-6;
+  //double gridPerUu = DbU::getPhysicalsPerGrid() / 1e-6;
 
     record = GdsRecord( GdsRecord::UNITS );
     record.push( _dbuPerUu );

@@ -910,7 +910,7 @@ namespace Anabatic {
   {
     openSession();
 
-    DbU::Unit           pitch3 = Session::getPitch( 2 );
+  //DbU::Unit           pitch3 = Session::getPitch( 2 );
     AutoSegment::IdSet  constraineds;
     AutoSegment::IdSet  processeds;
     
@@ -1071,8 +1071,8 @@ namespace Anabatic {
     
     printMeasures( "load" );
 
-    addMeasure<size_t>( getCell(), "Globals", AutoSegment::getGlobalsCount() );
-    addMeasure<size_t>( getCell(), "Edges"  , AutoSegment::getAllocateds() );
+    addMeasure<size_t>( "Globals", AutoSegment::getGlobalsCount() );
+    addMeasure<size_t>( "Edges"  , AutoSegment::getAllocateds() );
   }
 
 

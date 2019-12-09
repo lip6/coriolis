@@ -58,8 +58,6 @@ namespace Analog {
       private:
           const Type           _type;
                 MetaCapacitor* _referenceCapacitor;
-                int            _operatorIndex;
-                int            _row;
   };
   
   inline       MetaCapacitor*         CapacitorFamily::getReferenceCapacitor ()       { return _referenceCapacitor; }

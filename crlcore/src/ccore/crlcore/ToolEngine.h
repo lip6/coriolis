@@ -19,7 +19,6 @@
 #define CRL_TOOL_ENGINE_H
 
 #include <string>
-#include <vector>
 #include "hurricane/Commons.h"
 #include "hurricane/Timer.h"
 #include "hurricane/DBo.h"
@@ -30,13 +29,12 @@ namespace Hurricane {
   class Cell;
 }
 
+#include  "crlcore/Measures.h"
 #include  "crlcore/ToolEngines.h"
 
 
 namespace CRL {
 
-  using std::string;
-  using std::vector;
   using Hurricane::Timer;
   using Hurricane::Record;
   using Hurricane::Name;
@@ -58,17 +56,28 @@ namespace CRL {
     public:
       virtual const Name&        getName                             () const = 0;
       inline        Cell*        getCell                             () const;
+      inline        uint32_t     getPassNumber                       () const;
                     bool         placementModificationFlagHasChanged ();
                     bool         routingModificationFlagHasChanged   ();
       inline        void         setInRelationDestroy                ( bool );
       inline  const Timer&       getTimer                            () const;
+      inline        void         setPassNumber                       ( uint32_t );
+      inline        std::string  getMeasureLabel                     ( std::string ) const;
                     void         startMeasures                       ();
                     void         stopMeasures                        ();
                     void         suspendMeasures                     ();
                     void         resumeMeasures                      ();
                     void         printMeasures                       () const;
-      virtual       string       _getTypeName                        () const;
-      virtual       string       _getString                          () const;
+      template<typename Data>
+      inline        void         addMeasure                          ( std::string, const Data&, unsigned int width ) const;
+      template<typename Data>
+      inline        void         addMeasure                          ( std::string, const Data& ) const;
+      template<typename Data>
+      inline        void         addMeasure                          ( std::string, Data* ) const;
+      template<typename Data>
+      inline        const Data&  getMeasure                          ( std::string ) const;
+      virtual       std::string  _getTypeName                        () const;
+      virtual       std::string  _getString                          () const;
       virtual       Record*      _getRecord                          () const;
     private:
       static        bool         _inDestroyAll;
@@ -79,6 +88,7 @@ namespace CRL {
                     unsigned int _routingModificationFlag;
                     bool         _inRelationDestroy;
                     Timer        _timer;
+                    uint32_t     _passNumber;
     protected:
                                  ToolEngine                          ( Cell* cell );
       virtual       void         _postCreate                         ();
@@ -95,9 +105,30 @@ namespace CRL {
 // Inline Functions.
 
 
-  inline       Cell*  ToolEngine::getCell              () const { return _cell; }
-  inline       void   ToolEngine::setInRelationDestroy ( bool state ) { _inRelationDestroy = state; }
-  inline const Timer& ToolEngine::getTimer             () const { return _timer; }
+  inline       Cell*     ToolEngine::getCell              () const { return _cell; }
+  inline       void      ToolEngine::setInRelationDestroy ( bool state ) { _inRelationDestroy = state; }
+  inline const Timer&    ToolEngine::getTimer             () const { return _timer; }
+  inline       uint32_t  ToolEngine::getPassNumber        () const { return _passNumber; }
+  inline       void      ToolEngine::setPassNumber        ( uint32_t n ) { _passNumber = n; }
+
+  inline std::string  ToolEngine::getMeasureLabel ( std::string label ) const
+  { return _getTypeName() + "." + label; }
+      
+  template<typename Data>
+  inline void  ToolEngine::addMeasure ( std::string name, const Data& data, unsigned int width ) const
+  { ::CRL::addMeasure( getCell(), getMeasureLabel(name), getPassNumber(), data, width ); }
+
+  template<typename Data>
+  inline void  ToolEngine::addMeasure ( std::string name, const Data& data ) const
+  { ::CRL::addMeasure( getCell(), getMeasureLabel(name), getPassNumber(), data ); }
+
+  template<typename Data>
+  inline void  ToolEngine::addMeasure ( std::string name, Data* data ) const
+  { ::CRL::addMeasure( getCell(), getMeasureLabel(name), getPassNumber(), data ); }
+
+  template<typename Data>
+  inline const Data& ToolEngine::getMeasure ( std::string name ) const
+  { return ::CRL::getMeasure<Data>( getCell(), getMeasureLabel(name) )->getData( getPassNumber() ); }
 
 
 } // CRL namespace.

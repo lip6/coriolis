@@ -104,8 +104,6 @@ extern "C" {
 
   static PyObject* PyBoraEngine_updatePlacement ( PyBoraEngine* self, PyObject* args )
   {
-    unsigned int bsIndex = 0;
-
     METHOD_HEAD( "BoraEngine.updatePlacement()" )
     HTRY
       PyObject* arg0;

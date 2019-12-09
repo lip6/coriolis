@@ -208,7 +208,8 @@ parser.add_option (       "--no-build"       , action="store_true" ,            
 parser.add_option (       "--no-cache"       , action="store_true" ,                dest="noCache"      , help="Remove previous CMake cache before building." )
 parser.add_option (       "--rm-build"       , action="store_true" ,                dest="rmBuild"      , help="Remove previous build directoty before building." )
 parser.add_option (       "--macports"       , action="store_true" ,                dest="macports"     , help="Build against MacPorts." )
-parser.add_option (       "--devtoolset"     , action="store"      , type="int"   , dest="devtoolset"   , help="Build against TUV Dev Toolset 8." )
+parser.add_option (       "--devtoolset"     , action="store"      , type="int"   , dest="devtoolset"   , help="Build against TUV Dev Toolset N." )
+parser.add_option (       "--llvm-toolset"   , action="store"      , type="int"   , dest="llvmtoolset"  , help="Build against TUV Dev LLVM Toolset N." )
 parser.add_option (       "--qt5"            , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
 parser.add_option (       "--openmp"         , action="store_true" ,                dest="openmp"       , help="Enable the use of OpenMP in Gcc." )
 parser.add_option (       "--ninja"          , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
@@ -271,27 +272,28 @@ else:
         builder.showConfiguration ()
         sys.exit(0)
     
-    if options.quiet:            builder.quiet             = True
-    if options.release:          builder.buildMode         = "Release"
-    if options.debug:            builder.buildMode         = "Debug"
-    if options.static:           builder.enableShared      = "OFF"
-    if options.doc:              builder.enableDoc         = "ON"
-    if options.checkDb:          builder.checkDatabase     = "ON"
-    if options.checkDeterminism: builder.checkDeterminism  = "ON"
-    if options.verboseMakefile:  builder.verboseMakefile   = "ON"
-    if options.rootDir:          builder.rootDir           = options.rootDir
-    if options.noBuild:          builder.doBuild           = False
-    if options.noCache:          builder.noCache           = True
-    if options.rmBuild:          builder.rmBuild           = True
-    if options.ninja:            builder.ninja             = True
-    if options.clang:            builder.clang             = True
-    if options.macports:         builder.macports          = True
-    if options.devtoolset:       builder.devtoolset        = options.devtoolset
-    if options.qt5:              builder.qt5               = True
-    if options.openmp:           builder.openmp            = True
-    if options.makeArguments:    builder.makeArguments     = options.makeArguments
-   #if options.svnMethod:        builder.svnMethod         = options.svnMethod
-   #if options.svnTag:           builder.svnTag            = options.svnTag
+    if options.quiet:                        builder.quiet             = True
+    if options.release:                      builder.buildMode         = "Release"
+    if options.debug:                        builder.buildMode         = "Debug"
+    if options.static:                       builder.enableShared      = "OFF"
+    if options.doc:                          builder.enableDoc         = "ON"
+    if options.checkDb:                      builder.checkDatabase     = "ON"
+    if options.checkDeterminism:             builder.checkDeterminism  = "ON"
+    if options.verboseMakefile:              builder.verboseMakefile   = "ON"
+    if options.rootDir:                      builder.rootDir           = options.rootDir
+    if options.noBuild:                      builder.doBuild           = False
+    if options.noCache:                      builder.noCache           = True
+    if options.rmBuild:                      builder.rmBuild           = True
+    if options.ninja:                        builder.ninja             = True
+    if options.clang or options.llvmtoolset: builder.clang             = True
+    if options.macports:                     builder.macports          = True
+    if options.devtoolset:                   builder.devtoolset        = options.devtoolset
+    if options.llvmtoolset:                  builder.llvmtoolset       = options.llvmtoolset
+    if options.qt5:                          builder.qt5               = True
+    if options.openmp:                       builder.openmp            = True
+    if options.makeArguments:                builder.makeArguments     = options.makeArguments
+   #if options.svnMethod:                    builder.svnMethod         = options.svnMethod
+   #if options.svnTag:                       builder.svnTag            = options.svnTag
     
    #if   options.svnStatus:   builder.svnStatus   ( tools=options.tools, projects=options.projects )
    #elif options.svnUpdate:   builder.svnUpdate   ( tools=options.tools, projects=options.projects )

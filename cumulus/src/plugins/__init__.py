@@ -18,6 +18,7 @@ import os
 import sys
 import Cfg
 import helpers
+from   helpers.io import vprint
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
 from   Hurricane  import Contact
@@ -228,7 +229,7 @@ def loadPlugins ( pluginsDir ):
 
     for moduleName in moduleNames:
       try:
-        print '     - "%s"' % moduleName
+        vprint( 2, '     - "%s"' % moduleName )
         module = __import__( moduleName, globals(), locals() )
       except ErrorMessage, e:
         print e
@@ -244,16 +245,16 @@ def staticInitialization ():
     if loaded: return
 
     try:
-      print '  o  Preload standard plugins.'
+      vprint( 1, '  o  Preload standard plugins.' )
       pluginsDir = os.path.dirname(__file__)
       loadPlugins( pluginsDir )
       
       if helpers.ndaTopDir:
-        print '  o  Preload NDA protected plugins.'
+        vprint( 1, '  o  Preload NDA protected plugins.' )
         pluginsDir = os.path.join( helpers.ndaTopDir, 'python2.7/site-packages/cumulus/plugins' )
         loadPlugins( pluginsDir )
       else:
-        print '  o  No NDA protected plugins.'
+        vprint( 1, '  o  No NDA protected plugins.' )
     except Exception, e:
       helpers.showPythonTrace( __file__, e )
 

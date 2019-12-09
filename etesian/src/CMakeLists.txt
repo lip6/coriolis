@@ -13,6 +13,7 @@
                    set( includes      etesian/Configuration.h
                                       etesian/FeedCells.h
                                       etesian/BloatCells.h
+                                      etesian/BloatProperty.h
                                       etesian/EtesianEngine.h
                                       etesian/GraphicEtesianEngine.h
                       )               
@@ -24,6 +25,7 @@
                                       AddFeeds.cpp
                                       FeedCells.cpp
                                       BloatCells.cpp
+                                      BloatProperty.cpp
                                       EtesianEngine.cpp
                                       GraphicEtesianEngine.cpp
                       )

@@ -75,6 +75,7 @@
                                      PreRouteds.cpp
                                      ProtectRoutingPads.cpp
                                      PreProcess.cpp
+                                     BloatProfile.cpp
                                      GlobalRoute.cpp
                                      SymmetricRoute.cpp
                                      KatanaEngine.cpp
@@ -87,7 +88,8 @@
                       )
           qtX_wrap_cpp( mocCpps      ${mocIncludes} )
 
-                   set( depLibs      ${ANABATIC_LIBRARIES}
+                   set( depLibs      ${ETESIAN_LIBRARIES}
+                                     ${ANABATIC_LIBRARIES}
                                      ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
                                      ${HURRICANE_PYTHON_LIBRARIES}

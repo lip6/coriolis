@@ -186,7 +186,7 @@ namespace Anabatic {
       if (flags & HAccess) {
         cdebug_log(145,0) << "case: HAccess" << endl;
   
-        if ( ((flags & VSmall) and not ((flags & UseNonPref)) or (flags & Punctual)) ) {
+        if ( ((flags & VSmall) and not ((flags & UseNonPref))) or (flags & Punctual) ) {
           cdebug_log(145,0) << "case: VSmall and *not* UseNonPref" << endl;
   
           AutoContact* subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
@@ -1319,6 +1319,8 @@ namespace Anabatic {
       AutoContact* targetContact
         = ( getSegmentHookType(getFromHook()) & (NorthBound|EastBound) )
         ? getNorthEastContact() : getSouthWestContact() ;
+      if (not getFromHook()) cerr << "getFromHook() is NULL !" << endl;
+
       AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
                                                       , targetContact
                                                       , static_cast<Segment*>( getFromHook()->getComponent() )

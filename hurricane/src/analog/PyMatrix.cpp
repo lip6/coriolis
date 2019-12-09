@@ -42,7 +42,6 @@ extern "C" {
   {
     unsigned int  rows     = 0;
     unsigned int  columns  = 0;
-    Matrix*       matrix   = NULL;
     PyMatrix*     pyMatrix = NULL;
 
     HTRY
@@ -168,6 +167,14 @@ extern "C" {
   PyTypeObjectDefinitions(Matrix)
 
 
+#endif  // End of Shared Library Code Part.
+
+}  // extern "C".
+
+
+#if !defined(__PYTHON_MODULE__)
+
+
   extern Matrix  Matrix_FromListOfList ( PyObject* pyLoList )
   {
     Matrix matrix;
@@ -218,9 +225,6 @@ extern "C" {
     return matrix;
   }
 
-
-#endif  // End of Shared Library Code Part.
-
-}  // extern "C".
+#endif
 
 }  // Isobar namespace.

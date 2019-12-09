@@ -207,7 +207,7 @@ namespace Katana {
               _valid = false;
             }
           } else {
-            if ( std::abs( paired[0]->getAxis() != paired[1]->getAxis() ) > 5*vPitch ) {
+            if ( std::abs( paired[0]->getAxis() - paired[1]->getAxis() ) > 5*vPitch ) {
               errors.newline() << "Axis mismatch index " << index << " "
                                << DbU::getValueString(paired[1]->getAxis()) << " (should be:"
                                << DbU::getValueString(paired[0]->getAxis()) << ")";

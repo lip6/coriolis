@@ -53,7 +53,9 @@ namespace Katana {
                        , RipupLimitsTableSize = 5
                        };                     
       enum Constants   { MaxMetalDepth        = 20 };
-      enum Flag        { UseClockTree         = (1 << 0) };
+      enum Flag        { UseClockTree         = (1 << 0)
+                       , UseGlobalEstimate    = (1 << 1)
+                       };
     public:
     // Constructor & Destructor.
       virtual       Configuration*             clone                   () const;
@@ -61,6 +63,7 @@ namespace Katana {
                                               ~Configuration           ();
     // Decorateds.                                               
       inline        bool                       useClockTree            () const;
+      inline        bool                       useGlobalEstimate       () const;
       inline        bool                       profileEventCosts       () const;
     // Methods.                                                  
       inline        Anabatic::Configuration*   base                    ();
@@ -69,6 +72,7 @@ namespace Katana {
       inline        uint64_t                   getEventsLimit          () const;
       inline        uint32_t                   getRipupCost            () const;
                     uint32_t                   getRipupLimit           ( uint32_t type ) const;
+      inline        uint32_t                   getSearchHalo           () const;
       inline        uint32_t                   getHTracksReservedLocal () const;
       inline        uint32_t                   getVTracksReservedLocal () const;
       inline        uint32_t                   getTermSatReservedLocal () const;
@@ -89,6 +93,7 @@ namespace Katana {
     private:
     // Attributes.
              PostEventCb_t  _postEventCb;
+             uint32_t       _searchHalo;
              uint32_t       _hTracksReservedLocal;
              uint32_t       _vTracksReservedLocal;
              uint32_t       _termSatReservedLocal;
@@ -109,6 +114,7 @@ namespace Katana {
   inline       Anabatic::Configuration*      Configuration::base                    () { return dynamic_cast<Anabatic::Configuration*>(this); }
   inline       Configuration::PostEventCb_t& Configuration::getPostEventCb          () { return _postEventCb; }
   inline       uint64_t                      Configuration::getEventsLimit          () const { return _eventsLimit; }
+  inline       uint32_t                      Configuration::getSearchHalo           () const { return _searchHalo; }
   inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
   inline       uint32_t                      Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
   inline       uint32_t                      Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
@@ -118,6 +124,7 @@ namespace Katana {
   inline       void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline       void                          Configuration::setEventsLimit          ( uint64_t limit ) { _eventsLimit = limit; }
   inline       bool                          Configuration::useClockTree            () const { return _flags & UseClockTree; }
+  inline       bool                          Configuration::useGlobalEstimate       () const { return _flags & UseGlobalEstimate; }
   inline       bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
   inline       void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline       void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }

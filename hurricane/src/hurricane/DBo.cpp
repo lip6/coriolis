@@ -142,7 +142,7 @@ namespace Hurricane {
   }
 
 
-  DBo::~DBo ()
+  DBo::~DBo () throw(Error)
   { }
 
 

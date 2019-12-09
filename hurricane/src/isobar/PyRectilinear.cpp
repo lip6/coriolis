@@ -127,8 +127,6 @@ extern "C" {
       METHOD_HEAD( "Rectilinear.setPoints()" )
       
       PyObject* arg0 = NULL;
-      PyObject* arg1 = NULL;
-      PyObject* arg2 = NULL;
       if (not PyArg_ParseTuple( args, "O:Rectilinear.setPoints", &arg0 )) {
         PyErr_SetString( ConstructorError, "Invalid number of parameters for Rectilinear.setPoints()." );
         return NULL;

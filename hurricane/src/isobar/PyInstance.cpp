@@ -49,19 +49,6 @@ extern "C" {
 // +=================================================================+
 
 #if defined(__PYTHON_MODULE__)
-      
-
-  extern Instance::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object )
-  {
-    switch ( PyAny_AsLong(object) ) {
-      case Instance::PlacementStatus::UNPLACED : return ( Instance::PlacementStatus(Instance::PlacementStatus::UNPLACED) );
-      case Instance::PlacementStatus::PLACED   : return ( Instance::PlacementStatus(Instance::PlacementStatus::PLACED) );
-      case Instance::PlacementStatus::FIXED    : return ( Instance::PlacementStatus(Instance::PlacementStatus::FIXED) );
-    }
-      
-    return ( Instance::PlacementStatus(Instance::PlacementStatus::UNPLACED) );
-  }
-
 
   // Standart Accessors (Attributes).
 

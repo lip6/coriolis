@@ -3,7 +3,7 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(ANABATIC)
 
- set(ignoreVariables "${BUILD_DOC}")
+ set(ignoreVariables "${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
 
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  option(CHECK_DATABASE "Run database in full check mode (very slow)" OFF)

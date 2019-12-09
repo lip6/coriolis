@@ -1346,11 +1346,17 @@ namespace Anabatic {
     size_t begin = 0;
 
     for ( ; begin < end ; begin++ ) {
+      if (not _hsegments[begin])
+        cerr << Bug( "GCell::removeHSegment(): In %s, NULL segment at [%u/%u]."
+                   , _getString().c_str(), begin, _hsegments.size() ) << endl;
+      
       if (_hsegments[begin] == segment) std::swap( _hsegments[begin], _hsegments[--end] );
+      cdebug_log(9000,0) << "GCell::removeHSegment() " << this << endl;
+      cdebug_log(9000,0) << "  " << segment << endl;
     }
 
     if (_hsegments.size() == end) {
-      cerr << Bug( "%s do not go through %s."
+      cerr << Bug( "GCell::removeHSegment(): %s do not go through %s."
                  , getString(segment).c_str(), _getString().c_str() ) << endl;
       return;
     }
@@ -1397,11 +1403,6 @@ namespace Anabatic {
     if (not isInvalidated()) return (isSaturated()) ? 1 : 0;
 
     _flags.reset( Flags::Saturated );
-
-    for ( size_t i=0 ; i<_vsegments.size() ; i++ ) {
-      if ( _vsegments[i] == NULL )
-        cerr << "NULL Autosegment at index " << i << endl;
-    }
 
     sort( _hsegments.begin(), _hsegments.end(), AutoSegment::CompareByDepthLength() );
     sort( _vsegments.begin(), _vsegments.end(), AutoSegment::CompareByDepthLength() );
