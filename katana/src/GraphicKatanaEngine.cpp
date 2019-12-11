@@ -155,20 +155,19 @@ namespace Katana {
 
 #define EDGE_OVERLOAD_DISPLAY 1
 #if NORMAL_DENSITY_DISPLAY
-      if ((unsigned int)edgeOccupancy < edge->getCapacity())
+      if ((unsigned int)edgeOccupancy <= edge->getCapacity())
         occupancy = (uint32_t)( 255.0 * (edgeOccupancy / (float)edge->getCapacity()) );
 #endif
 #if HISTORIC_COST_DISPLAY
       occupancy = (uint32_t)( 10.0 * edge->getHistoricCost() );
-      if (occupancy > 255) occupancy = 255;
 #endif
 #if EDGE_OVERLOAD_DISPLAY
-      if ((unsigned int)edgeOccupancy < edge->getCapacity())
+      if ((unsigned int)edgeOccupancy <= edge->getCapacity())
         occupancy = 0;
       else
         occupancy = (uint32_t)( 20.0 * ((unsigned int)edgeOccupancy - edge->getCapacity()) );
-      if (occupancy > 255) occupancy = 255;
 #endif
+      if (occupancy > 254) occupancy = 254;
 
       QPainter& painter = widget->getPainter();
       if ((unsigned int)edgeOccupancy > edge->getCapacity()) {

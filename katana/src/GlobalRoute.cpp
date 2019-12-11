@@ -182,6 +182,29 @@ namespace {
   }
   
 
+  void  selectNets ( KatanaEngine* katana, set<const Net*,Net::CompareByName>& nets )
+  {
+    if (katana->getViewer()) {
+      cmess2 << "  o  Selecting failed nets (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      katana->getViewer()->setShowSelection( false );
+      katana->getViewer()->setCumulativeSelection( true );
+
+      for ( const Net* net : nets ) {
+        Occurrence netOcc ( net );
+        katana->getViewer()->select( netOcc );
+        dots.dot();
+      }
+
+      dots.finish( Dots::Reset );
+      katana->getViewer()->setShowSelection( true );
+    }
+  }
+
+
   void  selectSegments ( KatanaEngine* katana, set<Segment*,DBo::CompareById>& segments )
   {
     if (katana->getViewer()) {
@@ -251,6 +274,35 @@ namespace {
           Occurrence gcellOcc ( gcell );
           viewer->select( gcellOcc );
           dots.dot();
+        }
+      }
+
+      dots.finish( Dots::Reset );
+      viewer->setShowSelection( true );
+    }
+  }
+  
+
+  void  selectOverloadedEdges ( KatanaEngine* katana )
+  {
+    CellViewer* viewer = katana->getViewer();
+    
+    if (viewer) {
+      cmess2 << "  o  Selecting overloaded Edges (slow)." << endl;
+
+      Dots  dots ( cmess2, "     ", 80, 100 );
+      if (not cmess2.enabled()) dots.disable();
+
+      viewer->setShowSelection( false );
+      viewer->setCumulativeSelection( true );
+
+      for ( GCell* gcell : katana->getGCells() ) {
+        for ( Edge* edge : gcell->getEdges( Flags::NorthSide|Flags::EastSide ) ) {
+          if (edge->getRealOccupancy() > edge->getCapacity()) {
+            Occurrence edgeOcc ( edge );
+            viewer->select( edgeOcc );
+            dots.dot();
+          }
         }
       }
 
@@ -464,9 +516,10 @@ namespace Katana {
     else
       dijkstra->setSearchAreaHalo( Session::getSliceHeight()*getSearchHalo() );
 
-    bool   globalEstimated = false;
-    size_t iteration       = 0;
-    size_t netCount        = 0;
+    bool     globalEstimated = false;
+    size_t   iteration       = 0;
+    size_t   netCount        = 0;
+    uint64_t edgeOverflowWL  = 0;
     do {
       cmess2 << "     [" << setfill(' ') << setw(3) << iteration << "] nets:";
 
@@ -524,12 +577,15 @@ namespace Katana {
     //Breakpoint::stop( 1, "Before riping up overflowed edges." );
     //openSession();
 
-      netCount = 0;
+      edgeOverflowWL = 0;
+      netCount       = 0;
       if (iteration < globalIterations - 1) {
         size_t iEdge = 0;
         while ( iEdge < ovEdges.size() ) {
           Edge* edge = ovEdges[iEdge];
-          netCount += edge->ripup();
+
+          edgeOverflowWL += edge->getRealOccupancy() - edge->getCapacity();
+          netCount       += edge->ripup();
 
           if (iEdge >= ovEdges.size()) break;
           if (ovEdges[iEdge] == edge) {
@@ -545,12 +601,12 @@ namespace Katana {
         dijkstra->setSearchAreaHalo( 3 * Session::getSliceHeight() );
       }
 
-      cmess2 << " ovE:" << setw(4) << overflow;
+      cmess2 << " ovE:" << setw(4) << overflow << " " << setw(5) << edgeOverflowWL;
 
       cmess2 << " ripup:" << setw(4) << netCount << right;
       suspendMeasures();
-      cmess2 << " " << setw(5) << Timer::getStringTime  (getTimer().getCombTime())
-             << " " << setw(6) << Timer::getStringMemory(getTimer().getIncrease()) << endl;
+      cmess2 << " " << setw(6) << Timer::getStringMemory(getTimer().getIncrease())
+             << " " << setw(5) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
       resumeMeasures();
 
       ++iteration;
@@ -577,9 +633,21 @@ namespace Katana {
         if (ovEdges[iEdge]->isHorizontal()) hoverflow += edgeOverflow;
         else                                voverflow += edgeOverflow;
 
-        for ( Segment* segment : ovEdges[iEdge]->getSegments() ) {
-          nets.insert( segment->getNet() );
-          if (edgeOverflow > 2) segments.insert( segment );
+        if (edgeOverflow > 0) {
+          const vector<Segment*> ovSegs = ovEdges[iEdge]->getSegments();
+          for ( size_t iSeg=ovEdges[iEdge]->getCapacity() ; iSeg<ovSegs.size() ; ++iSeg ) {
+            Net* net     = ovSegs[iSeg]->getNet();
+            auto netData = getNetDatas().find( net->getId() );
+
+            if (netData == getNetDatas().end()) continue;
+            if ((*netData).second->getRpCount() > 20) {
+              cmess2 << "     - Not showing " << net << " too much terminals ("
+                     << (*netData).second->getRpCount() << ")." << endl;
+              continue;
+            }
+
+            nets.insert( net );
+          }
         }
       }
 
@@ -611,7 +679,9 @@ namespace Katana {
 
       _buildBloatProfile();
 
+      if (flags & Flags::ShowFailedNets      ) selectNets            ( this, nets );
       if (flags & Flags::ShowFailedGSegments ) selectSegments        ( this, segments );
+      if (flags & Flags::ShowOverloadedEdges ) selectOverloadedEdges ( this );
       if (flags & Flags::ShowOverloadedGCells) selectOverloadedGCells( this );
       if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
     }

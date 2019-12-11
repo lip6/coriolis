@@ -66,9 +66,9 @@ def ScriptMain ( **kw ):
       stopLevel = Cfg.getParamInt('conductor.stopLevel').asInt()
     Breakpoint.setStopLevel( stopLevel )
 
-    maxPlaceIteration = 2
+    maxPlaceIterations = 2
     if Cfg.hasParameter('conductor.maxPlaceIterations'):
-      maxPlaceIteration = Cgf.getParamInt('conductor.maxPlaceIterations')
+      maxPlaceIterations = Cfg.getParamInt('conductor.maxPlaceIterations').asInt()
 
     cell = None
     if kw.has_key('cell') and kw['cell']:
@@ -88,8 +88,8 @@ def ScriptMain ( **kw ):
     katana    = None
     iteration = 0
 
-    while iteration < maxPlaceIteration:
-      print '\n  o  P&R Conductor iteration: %d' % iteration
+    while iteration < maxPlaceIterations:
+      print '\n  o  P&R Conductor iteration: %d (max:%s)' % (iteration,maxPlaceIterations)
 
       if not (katana is None):
         print '  o  Global routing has failed, re-place design.'
@@ -114,7 +114,11 @@ def ScriptMain ( **kw ):
       katana.setPassNumber( iteration )
       if editor: katana.setViewer( editor )
       katana.digitalInit    ()
-      katana.runGlobalRouter( Katana.Flags.ShowBloatedInstances )
+      katana.runGlobalRouter( Katana.Flags.ShowBloatedInstances
+                            | Katana.Flags.ShowOverloadedEdges
+                            | Katana.Flags.ShowOverloadedGCells
+                            )
+                           #| Katana.Flags.ShowFailedNets 
       Breakpoint.stop( 1, 'After routing iteration %d' % iteration )
 
       if katana.isGlobalRoutingSuccess(): break

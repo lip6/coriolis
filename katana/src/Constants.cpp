@@ -34,9 +34,11 @@ namespace Katana {
   const Hurricane::BaseFlags  Flags::SlowMotion           = (1L << 30);
   const Hurricane::BaseFlags  Flags::PreRoutedStage       = (1L << 31);
   const Hurricane::BaseFlags  Flags::PairSymmetrics       = (1L << 32);
-  const Hurricane::BaseFlags  Flags::ShowFailedGSegments  = (1L << 33);
-  const Hurricane::BaseFlags  Flags::ShowOverloadedGCells = (1L << 34);
-  const Hurricane::BaseFlags  Flags::ShowBloatedInstances = (1L << 35);
+  const Hurricane::BaseFlags  Flags::ShowFailedNets       = (1L << 33);
+  const Hurricane::BaseFlags  Flags::ShowFailedGSegments  = (1L << 34);
+  const Hurricane::BaseFlags  Flags::ShowOverloadedEdges  = (1L << 35);
+  const Hurricane::BaseFlags  Flags::ShowOverloadedGCells = (1L << 36);
+  const Hurricane::BaseFlags  Flags::ShowBloatedInstances = (1L << 37);
 
 
 }  // Anabatic namespace.

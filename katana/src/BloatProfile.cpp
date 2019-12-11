@@ -73,8 +73,8 @@ namespace {
   DbU::Unit  FlatInstance::getXFromOccurrence ( Occurrence o )
   {
     Instance*      instance = dynamic_cast<Instance*>( o.getEntity() );
-    Transformation transf   = o.getPath().getTransformation();
-    instance->getTransformation().applyOn( transf );
+    Transformation transf   = instance->getTransformation();
+    o.getPath().getTransformation().applyOn( transf );
     Box ab = instance->getMasterCell()->getAbutmentBox();
     transf.applyOn( ab );
     return ab.getXMin();
@@ -145,10 +145,17 @@ namespace {
     Edge*  northEdge = _left->getNorthEdge();
     bool   bloated   = false;
 
+  //cerr << "+ Slice @" << DbU::getValueString(getY()) << endl;
+
     for ( FlatInstance& fi : _instances ) {
+    //cerr << "| @" << DbU::getValueString(fi.getX()) << " " << fi.getOccurrence() << endl;
+
       if (fi.getX() >= gcell->getXMax()) {
-        for ( gcell = gcell->getEast() ; gcell and (fi.getX() < gcell->getXMin())
-            ; gcell = gcell->getEast() );
+        for ( gcell = gcell->getEast() ; gcell and (fi.getX() > gcell->getXMax())
+            ; gcell = gcell->getEast() ) {
+        //cerr << "| Skip " << gcell << endl;
+        }
+      //cerr << "| Advance to " << gcell << endl;
         if (not gcell) break;
         
         bloated   = false;
@@ -181,6 +188,8 @@ namespace {
         BloatState* state = BloatExtension::get( fi.getOccurrence() );
         if (not state) {
           state = BloatExtension::create( fi.getOccurrence(), overload );
+        //cerr << "> Bloat: " << fi.getOccurrence() << endl;
+        //cerr << "> Under:"  << gcell << endl;
           ++newCount;
         } else {
           state->setTracksCount( state->getTracksCount() + overload );
