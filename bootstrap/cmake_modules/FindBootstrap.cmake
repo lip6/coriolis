@@ -40,6 +40,15 @@
  endmacro(check_distribution)
 
 #
+# Specific setup for MacOS X.
+#
+ if(WITH_MACPORTS)
+   set(Boost_PYVER "27")
+ else()
+   set(Boost_PYVER "")
+ endif()
+
+#
 # Get the svn revision version and configure a svn.h.in file based on this version
 # The include directory name is passed as argument
 #
@@ -175,15 +184,6 @@
  endmacro(hurricane_check_libraries)
 
 
-#
-# Find Boost, checking different versions.
-#
- if(WITH_MACPORTS)
-   set(Boost_PYVER "27")
- else()
-   set(Boost_PYVER "")
- endif()
-
  macro(setup_boost)
   #set(Boost_USE_STATIC_LIBS ON)
   #message(STATUS "Always uses Boost static libraries.")
@@ -191,7 +191,7 @@
      find_package(Boost 1.35.0 REQUIRED)
    else(ARGC LESS 1)
      foreach(component ${ARGV})
-       if(${component} EQUAL "python")
+       if(${component} STREQUAL "python")
          set(component ${component}${Boost_PYVER})
        endif()
        set(components ${components} ${component})
@@ -278,11 +278,13 @@
    else()
      find_path(QWT_INCLUDE_DIR NAMES         qwt.h
                                PATHS         /usr/include/qwt-qt4
+                                             /opt/local/libexec/qt4/include
                                              /usr/include/qt4
                                              /usr/include
                                PATH_SUFFIXES qwt )
      find_library(QWT_LIBRARY NAMES qwt-qt4 qwt
-                              PATHS /usr/lib${LIB_SUFFIX} )
+                              PATHS /opt/local/libexec/qt4/lib
+                                    /usr/lib${LIB_SUFFIX} )
    endif()
 
    if( QWT_INCLUDE_DIR AND QWT_LIBRARY)

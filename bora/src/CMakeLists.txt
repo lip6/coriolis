@@ -102,7 +102,7 @@
                                      ${PYTHON_LIBRARIES} -lutil
                       )
 
-           add_library( bora         ${cpps} ${mocCpps} )
+           add_library( bora         ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( bora         PROPERTIES VERSION 1.0 SOVERSION 1 )
  target_link_libraries( bora         ${depLibs} )
 

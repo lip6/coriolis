@@ -187,8 +187,8 @@ class Builder:
         if self._ninja:         command += [ "-G", "Ninja" ]
         if self._macports:      command += [ "-D", "WITH_MACPORTS:STRING=TRUE" ]
         if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE"
-                                           , "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost169"
-                                           , "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib64/boost169"
+                                          #, "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost169"
+                                          #, "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib64/boost169"
                                            ]
         if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
@@ -198,6 +198,7 @@ class Builder:
                    , "-D", "CMAKE_INSTALL_PREFIX:STRING=%s" % self.installDir
                    , "-D", "CMAKE_INSTALL_DIR:STRING=%s"    % cmakeInstallDir
                   #, "-D", "CMAKE_MODULE_PATH:STRING=%s"    % cmakeModules
+                  #, "-D", "Boost_DEBUG:STRING=TRUE"
                    , toolSourceDir ]
             
         if not os.path.isdir(toolBuildDir):
