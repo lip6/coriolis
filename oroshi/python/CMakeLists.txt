@@ -7,10 +7,12 @@
                   WIP_Transistor.py
                   WIP_DP.py
                   WIP_CSP.py
+                  NonUnitCapacitor.py
                   CapacitorUnit.py
                   CapacitorMatrix.py
                   CapacitorVRTracks.py
                   CapacitorRouted.py
+                  CapacitorRoutedSingle.py
                   MultiCapacitor.py
                   ResistorSnake.py
                 )
