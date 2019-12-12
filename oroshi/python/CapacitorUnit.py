@@ -2,16 +2,23 @@
 
 import sys                
 import numpy
-from   Hurricane  import *
-from   CRL        import *
-from   math       import sqrt, ceil
+from   Hurricane    import *
+from   CRL          import *
+from   math         import sqrt, ceil
 import helpers
-from   helpers.io import ErrorMessage as Error
-from   helpers    import trace
+from   helpers.io   import ErrorMessage as Error
+from   helpers      import trace
 import oroshi
 
-def toDbU ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
+def toDbU    ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
+def toPhY    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
 
+def doBreak( level, message ):
+    UpdateSession.close()
+    Breakpoint.stop( level, message )
+    UpdateSession.open()
+
+helpers.staticInitialization( True )
 
 ## Draws a capacitor of type Poly-Poly or Metal-Metal in 350 nm AMS CMOS technology. 
 #  PIP and MIM capacitors are the result of surface superposition between poly1 and poly2 or metal2 and metalcap layers, respectively.
@@ -22,6 +29,9 @@ def toDbU ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
 class CapacitorUnit():
     
     rules = oroshi.getRules()
+
+
+
 
     ## This is the class constructor. Few of the class attributes final values are computed in this level. Most of attributes are only initialized to zero or empty values. Then, it is computed in dedicated class method. Input parameters are :
     # \param   device                         Hurricane AMS device into which layout is drawn. 
@@ -50,13 +60,17 @@ class CapacitorUnit():
     # \param   minheight_topPlatecut          Minimum height of cuts for top plate connection to other metal layer.
     # \param   topCutLineNumber               Maximum possible number cuts to be drawn for top plate's connection.
     # \param   bottomCutLineNumber            Maximum possible number cuts to be drawn for top plate's connection.
+    # 
+    # \remark  Abutment box must be defined as an attribute because the position of dummy capacitor in \c NonUnitCapacitor class must be precisely defined.
 
-
-    def __init__( self, device, capacitance, capacitorType, abutmentBoxPosition ):
+    def __init__( self, device, capacitorType, abutmentBoxPosition, capacitance = 0, capDim = {} ):
        
         self.device                      =   device
         self.capacitorType               =   capacitorType
-        self.capDim                      =   self.__computeCapDim__( capacitance, capacitorType  ) 
+#        self.capDim                      =   self.__computeCapDim__( capacitance, capacitorType ) 
+        self.enclosure_botPlate_abtBox   =  0 
+        
+        self.__initCapDim__( capacitance, capDim )
 
         self.abutmentBoxDict             = { "XMin" : abutmentBoxPosition[0], "YMin" : abutmentBoxPosition[1] }
         self.abutmentBox                 =   Box ()
@@ -72,16 +86,37 @@ class CapacitorUnit():
         self.topCutLineDict              =   {}       
         self.topPlateRLayerDict          =   {}
         self.bottomPlateRLayerDict       =   {}
+        self.topCutLineNumber            =   {} 
 
         self.enclosure_botPlate_topPlate =   0
         self.minheight_topPlatecut       =   0
-        self.topCutLineNumber            =   0
         self.bottomCutLineNumber         =   0
-
-#        self.nets                        = { "bNet" : bNet, "tNet" : tNet }
 
         return
 
+
+
+    def __initCapDim__( self, capacitance, capDim ):
+
+        if capacitance != 0 and capDim.values() != [] :
+            if self.__computeCapacitance__( capDim, self.capacitorType ) == capacitance :
+                self.capDim = capDim
+            else : raise Error(1,'__initCapDim__() : Please check compatibility between capacitance value, %s, and the given capacitor dimensions, %s.' %(capacitance, capDim))
+
+        elif capacitance == 0 and capDim.values() != [] : 
+            self.capDim = capDim 
+            capacitance = self.__computeCapacitance__( capDim, self.capacitorType )
+            print("capacitance", capacitance)
+
+        elif capacitance != 0 and capDim.values() == [] :
+            print("self.capacitorType ",self.capacitorType )
+            self.capDim = self.__computeCapDim__( capacitance, self.capacitorType ) 
+            print("self.capDim",self.capDim)
+
+        else : raise Error(1, '__initCapDim__() : Invalid capacitance and/or capacitance dimensions (%s, %s). Please provide at least one valid parameter.'
+                          %(capacitance, capDim))
+
+        return
 
 
     ## Sets the area and perimeter capacitances as specified in 350 nm AMS technology and according to \c capacitorType (MIM or PIP).
@@ -89,12 +124,16 @@ class CapacitorUnit():
     #  \remarks   An exception is raised if the entered capacitor type is unknown.
   
     def __setCapacitorPerUnit__( self, capacitorType ) :
-
+        print("self.capacitorType",self.capacitorType)
         if   capacitorType == 'MIMCap':
-            [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = [ CapacitorUnit.rules.MIMCap, CapacitorUnit.rules.MIMPerimeterCap ]
+            [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = [ CapacitorUnit.rules.MIMCap
+                                                                  , CapacitorUnit.rules.MIMPerimeterCap
+                                                                  ]
 
         elif capacitorType == 'PIPCap':
-            [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = [ CapacitorUnit.rules.PIPCap, CapacitorUnit.rules.PIPPerimeterCap ]
+            [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = [ CapacitorUnit.rules.PIPCap
+                                                                  , CapacitorUnit.rules.PIPPerimeterCap
+                                                                  ]
 
         else:
             raise Error( 1, 'setCapacitorPerUnit() : Unsupported capacitor type : %s.' % capacitorType ) 
@@ -107,33 +146,51 @@ class CapacitorUnit():
    #  \remark    The capacitor is square. Thus, length and width are equal.
 
     def __computeCapDim__( self, capacitance, capacitorType ) : 
+        print("capacitorType",capacitorType)
+        [a, b, c ] = [   self.__setCapacitorPerUnit__( capacitorType )[0]
+                     , 4*self.__setCapacitorPerUnit__( capacitorType )[1]
+                     , - capacitance
+                     ]
 
-        [a, b, c ] = [ self.__setCapacitorPerUnit__( capacitorType )[0], 4*self.__setCapacitorPerUnit__( capacitorType )[1], -capacitance ]
         delta = (b**2) - 4*a*c
         c1 = ( -b + sqrt(delta) ) / (2*a)
 
         return { "width" : toDbU(c1), "height" : toDbU(c1) }
 
 
+    def __computeCapacitance__( self, capDim, capacitorType ):
+
+        [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = self.__setCapacitorPerUnit__( capacitorType )
+        areaCapacitance      =   toPhY(capDim["width"]) * toPhY(capDim["height"])  *areaCapacitorPerUnit
+        perimeterCapacitance = ( toPhY(capDim["width"]) + toPhY(capDim["height"]) )*perimeterCapacitorPerUnit
+        capacitance          =   areaCapacitance        + perimeterCapacitance 
+
+        return capacitance
+
 
     ## Checks if the computed capacitor dimensions exceed or are less than maximum and minimum limits, respectively, as specified in technology rules.
     ## \return   \c True if all rules are respected.
     #  \remark    Maximum poly2 layer dimensions for PIP capacitor are not specified in technology rules. Thus, only minimum limit condition is checked.
 
-    def __isCapacitorUnitOK__( self, capDim ):
+    def __isCapacitorUnitOK__( self, capDim ): 
 
-        if ( self.capacitorType == 'MIMCap' and CapacitorUnit.getMinimumCapWidth( self ) < capDim["width"] <  self.getMaximumCapWidth()) or self.capacitorType == 'PIPCap' and self.getMinimumCapWidth() < capDim["width"]:
-            return True   
+        state = False
+        if ( self.capacitorType == 'MIMCap' and CapacitorUnit.getMinimumCapWidth( self ) < capDim["width"] <  self.getMaximumCapWidth() and CapacitorUnit.getMinimumCapWidth( self ) < capDim["height"] <  self.getMaximumCapWidth() ) or ( self.capacitorType == 'PIPCap' and self.getMinimumCapWidth() < capDim["width"] and self.getMinimumCapWidth() < capDim["height"] ) :
+            state = True
+        
+        return state
+              
 
 
 
     ## Redefines technological rules as object attributes of the class. For example, class attributes \c CapacitorUnit.rules.minWidth_metcap becomes \c self.minWidth_topPlate and \c CapacitorUnit.rules.minSpacing_cut2_metcap becomes \c self.minSpacing_botPlateCut_topPlat. This obviously helps using shorter names for the attributes.  \c __setattr__() is declared in all \c Capacitor \c Generator classes, also in Hurricane and oroshi databases. 
 
-    def __setattr__( self, attribute, value ):
- 
+    def __setattr__( self, attribute, value ) :
+    
         self.__dict__[attribute] = value
 
-        return
+        return 
+        
 
 
     ## Selects technological rules according to the capacitor type.     
@@ -245,8 +302,8 @@ class CapacitorUnit():
 
     def getLayers( self ):
 
-        technology             =   DataBase.getDB().getTechnology()
-        layerDict = {}
+        technology               =   DataBase.getDB().getTechnology()
+        layerDict                =   {}
 
         if   self.capacitorType  == 'MIMCap':
 
@@ -272,27 +329,29 @@ class CapacitorUnit():
 
     ## When bonding box mode is activated, the function draws all layout physical layers of the capacitor after checking its dimensions. All functions are excecuted in a new Update Session. In the contrary, only an exact estimation of layout dimensions is given. An error is raised when dimensions reach technological limits for MIM and PIP capacitors or when \c bbMode parameters is other than \c True or \c False.
     #  
-    #  \param    ( tNet , bNet )    nets of top and bottom plates, respectively
+    #  \param    ( t , b )    nets of top and bottom plates, respectively
     #  \param      bbMode                            activates bonding box dimensions computing when set to \c True
-    def create( self, tNet, bNet, bbMode = False ):
+    #
+
+    def create( self, t, b, bbMode = False, vEnclosure_botPlate_abtBox = None, hEnclosure_botPlate_abtBox = None  ):
    
         UpdateSession.open()           
 
         abutmentBoxDimensions = None
-        self.setRules                      ()
+        self.setRules     ()
 
         if  self.__isCapacitorUnitOK__( self.capDim ) == True :        
 
-            self.computeDimensions    ( self.capDim )
+            self.computeDimensions    ( self.capDim, vEnclosure_botPlate_abtBox, hEnclosure_botPlate_abtBox )
             self.drawAbutmentBox      ()
-            self.device.setAbutmentBox( self.abutmentBox )
+            #self.device.setAbutmentBox( self.abutmentBox )
 
             if   bbMode == True :
                 abutmentBoxDimensions = self.abutmentBoxDict        
 
             elif bbMode == False :
                 layerDict          = self.getLayers()
-                self.drawCapacitor( layerDict, tNet, bNet )
+                self.drawCapacitor( layerDict, t, b )
 
             else :raise Error(1, 'drawCapacitor(): The bonding box mode parameter, "bbMode" must be either True or False : %s.' %bbMode )
 
@@ -306,16 +365,17 @@ class CapacitorUnit():
 
     ## Draws all layout physicial layers of the capacitor. 
     #
-    #  \param      layerDict                             a dictionary containing a description of the required physical layers according to capacitor type
-    #  \param    ( tNet , bNet )    nets of top and bottom plates, respectively
-    def drawCapacitor( self, layerDict, tNet, bNet ):
+    #  \param      layerDict            a dictionary containing a description of the required physical layers according to capacitor type
+    #  \param    ( t , b )    nets of top and bottom plates, respectively
+    #
 
+    def drawCapacitor( self, layerDict, t, b ):
 
-        self.bottomPlateBox     = self.drawOnePlate( layerDict["bottomPlateLayer"  ] , bNet                        , self.bottomPlateBoxDict        )   
-        self.topPlateBox        = self.drawOnePlate( layerDict["topPlateLayer"     ] , tNet                        , self.topPlateBoxDict           )  
-        self.drawBottomPlateCut                    ( layerDict["topBottomcutsLayer"] , bNet                                                         )
-        self.drawTopPlateCut                       ( layerDict["topBottomcutsLayer"] , tNet                                                         )
-        self.drawRoutingLayers                     ( layerDict["bottomPlateRLayer" ] , layerDict["topPlateRLayer"] , tNet                    , bNet )
+        self.bottomPlateBox     = self.drawOnePlate( layerDict["bottomPlateLayer"  ] , b                        , self.bottomPlateBoxDict        )   
+        self.topPlateBox        = self.drawOnePlate( layerDict["topPlateLayer"     ] , t                        , self.topPlateBoxDict           )  
+        self.drawBottomPlateCut                    ( layerDict["topBottomcutsLayer"] , b                                                         )
+        self.drawTopPlateCut                       ( layerDict["topBottomcutsLayer"] , t                                                         )
+        self.drawRoutingLayers                     ( layerDict["bottomPlateRLayer" ] , layerDict["topPlateRLayer"] , t                    , b )
 
         return 
 
@@ -329,16 +389,22 @@ class CapacitorUnit():
     #  - ordinate of the same two cuts.
     #
     #  Given parameters described above, it is possible to draw the entire lines of cuts on both sides of bottom plate using \c cutLine function. 
+    #
+
     def computeBottomPlateCuts( self ):
 
-        self.bottomCutLineNumber       =   self.cutMaxNumber( self.bottomPlateBoxDict["height"], self.minheight_topPlatecut, self.minSpacingOnBotPlate_cut, self.minEnclo_botPlate_botPlateCut )
+        self.bottomCutLineNumber       =   self.cutMaxNumber( self.bottomPlateBoxDict["height"]
+                                                            , self.minheight_topPlatecut
+                                                            , self.minSpacingOnBotPlate_cut
+                                                            , self.minEnclo_botPlate_botPlateCut
+                                                            )
         enclosure_botPlate_botPlateCut = ( self.bottomPlateBoxDict["height"] - (self.bottomCutLineNumber * self.minheight_topPlatecut + (self.bottomCutLineNumber -1) * self.minSpacingOnBotPlate_cut) )/2
 
-        self.cutLeftLineDict ["XMin"]  = self.topPlateBoxDict["XMin"] - self.minSpacing_botPlateCut_topPlate - self.minWidth_topPlatecut/2   
-        self.cutRightLineDict["XMin"]  = self.topPlateBoxDict["XMin"] + self.topPlateBoxDict["width"] + self.minSpacing_botPlateCut_topPlate + self.minWidth_topPlatecut/2 
+        self.cutLeftLineDict ["XMin"]  =   self.topPlateBoxDict   ["XMin"  ] - self.minSpacing_botPlateCut_topPlate - self.minWidth_topPlatecut/2   
+        self.cutRightLineDict["XMin"]  =   self.topPlateBoxDict   ["XMin"  ] + self.topPlateBoxDict["width"]        + self.minSpacing_botPlateCut_topPlate + self.minWidth_topPlatecut/2 
 
-        self.cutLeftLineDict ["YMin"]  = self.bottomPlateBoxDict["YMin"] + self.minheight_topPlatecut/2 + enclosure_botPlate_botPlateCut
-        self.cutRightLineDict["YMin"]  = self.cutLeftLineDict["YMin"]  
+        self.cutLeftLineDict ["YMin"]  =   self.bottomPlateBoxDict["YMin"  ] + self.minheight_topPlatecut/2         + enclosure_botPlate_botPlateCut
+        self.cutRightLineDict["YMin"]  =   self.cutLeftLineDict   ["YMin"  ]  
 
         return
 
@@ -351,25 +417,37 @@ class CapacitorUnit():
     #  - ordinate of the same two cuts.
     #
     #  Given parameters described above, it is possible to draw the entire lines of cuts on both sides of bottom plate using \c cutLine function. 
+
     def computeTopPlateCuts( self ):
 
-        self.topCutLineNumber              = self.cutMaxNumber( self.topPlateBoxDict["height"], self.minheight_topPlatecut, self.minSpacingOnTopPlate_cut, self.minEnclo_topPlate_topPlateCut )
-        enclosure_topPlate_topPlateCut     = ( self.topPlateBoxDict["height"] - (self.topCutLineNumber *self.minheight_topPlatecut + (self.topCutLineNumber -1)*self.minSpacingOnTopPlate_cut) )/2
-
+        enclosure_topPlate_topPlateCut             = {}
+        self.topCutLineNumber["vertical"]          = self.cutMaxNumber( self.topPlateBoxDict["height"]
+                                                                      , self.minheight_topPlatecut
+                                                                      , self.minSpacingOnTopPlate_cut
+                                                                      , self.minEnclo_topPlate_topPlateCut
+                                                                      )
+        enclosure_topPlate_topPlateCut["vertical"] = ( self.topPlateBoxDict["height"] - (self.topCutLineNumber["vertical"] *self.minheight_topPlatecut + (self.topCutLineNumber["vertical"] -1)*self.minSpacingOnTopPlate_cut) )/2
 
         if  self.capacitorType == 'MIMCap':
 
-            self.cut2MatrixDict[ "Width" ] = (self.topCutLineNumber - 2)*self.minWidth_topPlatecut  + (self.topCutLineNumber - 1) * self.minSpacingOnTopPlate_cut 
-            cut2MatrixAttribute            = ["XMin", "YMin" ]
-            topPlateBoxCordinates          = [self.topPlateBoxDict["XMin"], self.topPlateBoxDict["YMin"]]
+            self.topCutLineNumber["horizontal"]           = self.cutMaxNumber( self.topPlateBoxDict["width"]
+                                                                            , self.minWidth_topPlatecut
+                                                                            , self.minSpacingOnTopPlate_cut
+                                                                            , self.minEnclo_topPlate_topPlateCut
+                                                                            )
+            enclosure_topPlate_topPlateCut["horizontal"]  = ( self.topPlateBoxDict["width"] - (self.topCutLineNumber["horizontal"] *self.minheight_topPlatecut + (self.topCutLineNumber["horizontal"] -1)*self.minSpacingOnTopPlate_cut) )/2
+
+            self.cut2MatrixDict           [ "Width"    ]  = (self.topCutLineNumber["horizontal"]- 2)*self.minWidth_topPlatecut  + (self.topCutLineNumber["horizontal"] - 1) * self.minSpacingOnTopPlate_cut 
+            [ cut2MatrixAttribute , enclosure_attribute ] = [ ["XMin", "YMin" ] , [ "horizontal" , "vertical" ] ] 
+            topPlateBoxCordinates                         = [self.topPlateBoxDict["XMin"], self.topPlateBoxDict["YMin"]]
 
             for i in range(2):
-                topPlateCutTab                                = [ self.minWidth_topPlatecut, self.minheight_topPlatecut ]
-                self.cut2MatrixDict[ cut2MatrixAttribute[i] ] =   topPlateBoxCordinates[i]  + topPlateCutTab[i] /2 + enclosure_topPlate_topPlateCut 
+                topPlateCutTab                                = [ self.minWidth_topPlatecut , self.minheight_topPlatecut ]
+                self.cut2MatrixDict[ cut2MatrixAttribute[i] ] =   topPlateBoxCordinates[i]  + topPlateCutTab[i] /2 + enclosure_topPlate_topPlateCut[enclosure_attribute[i]] 
 
         elif self.capacitorType == 'PIPCap':
             self.topCutLineDict["XMin"] = self.topPlateBoxDict["XMin"] + self.topPlateBoxDict["width"] - self.minEnclo_topPlate_topPlateCut - self.minWidth_topPlatecut/2  
-            self.topCutLineDict["YMin"] = self.topPlateBoxDict["YMin"] + self.minheight_topPlatecut/2       + enclosure_topPlate_topPlateCut
+            self.topCutLineDict["YMin"] = self.topPlateBoxDict["YMin"] + self.minheight_topPlatecut/2  + enclosure_topPlate_topPlateCut["vertical"]
 
         else : 
             raise Error( 1, 'computeTopPlateCuts() : Unsupported capacitor type : %s. Cuts cannot be drawn. ' % self.capacitorType ) 
@@ -378,23 +456,31 @@ class CapacitorUnit():
         return
 
 
+
     def computeRoutingLayersDimensions( self ):
 
         if self.capacitorType == 'MIMCap' : 
 
             self.cut2MatrixDict  ["XMax"]         =   self.cut2MatrixDict["XMin"] + self.cut2MatrixDict["Width"]             + self.minWidth_topPlatecut 
-            [ topmetalXMin,topmetalXMax ]         = [ self.cut2MatrixDict["XMin"] - self.minEnclo_topPlateRMetal_topPlateCut - self.minWidth_topPlatecut/2, self.cut2MatrixDict["XMax"] + self.minEnclo_topPlateRMetal_topPlateCut + self.minWidth_topPlatecut/2]
-            [ width_topMetal, width_bottomMetal ] = [ topmetalXMax - topmetalXMin, max( self.minWidth_botRMetal, (self.minWidth_botPlatecut + 2*self.minEnclo_botPlateRMetal_botPlateCut) ) ]
+            [ topmetalXMin,topmetalXMax ]         = [ self.cut2MatrixDict["XMin"] - self.minEnclo_topPlateRMetal_topPlateCut - self.minWidth_topPlatecut/2
+                                                    , self.cut2MatrixDict["XMax"] + self.minEnclo_topPlateRMetal_topPlateCut + self.minWidth_topPlatecut/2
+                                                    ]
+            [ width_topMetal, width_bottomMetal ] = [ topmetalXMax - topmetalXMin
+                                                    , max( self.minWidth_botRMetal, (self.minWidth_botPlatecut + 2*self.minEnclo_botPlateRMetal_botPlateCut) )
+                                                    ]
             topMetalXCenter                       = self.abutmentBoxDict["XMin"] + self.abutmentBoxDict["width"]/2 
 
         elif self.capacitorType == 'PIPCap' :
 
             topMetalXCenter                       = self.topCutLineDict["XMin"] 
-            width_topMetal                        = max( self.minWidth_botRMetal, (self.minWidth_topPlatecut+ 2*self.minEnclo_topPlateRMetal_topPlateCut), ( self.minWidth_routingTrackcut +2*self.minEnclo_routingTrackMetal_cut) )
+            width_topMetal                        = max( self.minWidth_botRMetal
+                                                       , (self.minWidth_topPlatecut + 2*self.minEnclo_topPlateRMetal_topPlateCut)
+                                                       , ( self.minWidth_routingTrackcut + 2*self.minEnclo_routingTrackMetal_cut) 
+                                                       )
             width_bottomMetal                     = width_topMetal 
       
         else : 
-            raise Error( 1, 'drawRoutingLayers() : Unsupported capacitor type : %s. Routing layers parameters cannot be computed. ' % self.capacitorType ) #com verirfy the two next lines are after else or before
+            raise Error( 1, 'computeRoutingLayersDimensions() : Unsupported capacitor type : %s. Routing layers parameters cannot be computed. ' % self.capacitorType ) 
 
         [ dySourceTop   , dyTargetTop    ]  = [ self.bottomPlateBoxDict["YMin"], self.topPlateBoxDict["YMin"] + self.topPlateBoxDict["height"] ]
         [ dySourceBottom, dyTargetBottom ]  = [ self.bottomPlateBoxDict["YMin"], self.bottomPlateBoxDict["YMin"]+self.bottomPlateBoxDict["height"] ] 
@@ -405,15 +491,31 @@ class CapacitorUnit():
         return
 
 
+    def setBottomPlateAbtBoxEnclosure( self, vEnclosure_botPlate_abtBox, hEnclosure_botPlate_abtBox ):
 
-    def computeAbutmentBoxDimensions( self, capDim ) :
+        if   vEnclosure_botPlate_abtBox == None                            : self.vEnclosure_botPlate_abtBox = self.minSpacing_botPlate
+        elif vEnclosure_botPlate_abtBox >= toPhY(self.minSpacing_botPlate) : self.vEnclosure_botPlate_abtBox = toDbU(vEnclosure_botPlate_abtBox)
+        else                                                                   : 
+            raise Error(1,'setBottomPlateAbtBoxEnclosure() : Bottom plate vertical enclosure in abutment box must be equal or higher than the minimal limit %s um.'
+                       %toPhY(self.minSpacing_botPlate))
+
+        if   hEnclosure_botPlate_abtBox == None                            : self.hEnclosure_botPlate_abtBox = self.minSpacing_botPlate
+        elif hEnclosure_botPlate_abtBox >= toPhY(self.minSpacing_botPlate) : self.hEnclosure_botPlate_abtBox = toDbU(hEnclosure_botPlate_abtBox)
+        else                                                                   : 
+            raise Error(1,'setBottomPlateAbtBoxEnclosure() : Bottom plate horizontal enclosure in abutment box must be equal or higher than the minimal limit %s um.' %toPhY(self.minSpacing_botPlate))
+
+        return
 
 
-        self.enclosure_botPlate_topPlate = self.minEnclo_botPlate_botPlateCut + self.minWidth_topPlatecut + self.minSpacing_botPlateCut_topPlate
-        abutmentBoxDimensions = {}
-        for key in capDim.keys():
-            abutmentBoxDimensions[key] = 2*self.enclosure_botPlate_topPlate + capDim[key] + 2*self.minSpacing_botPlate
-        abutmentBoxDimensions["surface"] = numpy.prod(abutmentBoxDimensions.values())
+        
+    def computeAbutmentBoxDimensions( self, capDim, vEnclosure_botPlate_abtBox = None, hEnclosure_botPlate_abtBox = None  ) :
+
+        self.setBottomPlateAbtBoxEnclosure(vEnclosure_botPlate_abtBox, hEnclosure_botPlate_abtBox)
+        self.enclosure_botPlate_topPlate =   self.minEnclo_botPlate_botPlateCut + self.minWidth_topPlatecut + self.minSpacing_botPlateCut_topPlate
+        abutmentBoxDimensions            =   {}
+        abutmentBoxDimensions["width"  ] = 2*self.enclosure_botPlate_topPlate + capDim["width" ] + 2*self.hEnclosure_botPlate_abtBox
+        abutmentBoxDimensions["height" ] = 2*self.enclosure_botPlate_topPlate + capDim["height"] + 2*self.vEnclosure_botPlate_abtBox
+        #abutmentBoxDimensions["surface"] =   numpy.prod(abutmentBoxDimensions.values())
 
         return abutmentBoxDimensions
 
@@ -422,31 +524,34 @@ class CapacitorUnit():
 
     def drawAbutmentBox( self ):
 
-        self.abutmentBox      = Box(self.abutmentBoxDict["XMin"],self.abutmentBoxDict["YMin"],self.abutmentBoxDict["width"]+self.abutmentBoxDict["XMin"],self.abutmentBoxDict["height"]+self.abutmentBoxDict["YMin"])
-
+        self.abutmentBox      = Box(self.abutmentBoxDict["XMin"  ]
+                                   ,self.abutmentBoxDict["YMin"  ]
+                                   ,self.abutmentBoxDict["width" ] + self.abutmentBoxDict["XMin"]
+                                   ,self.abutmentBoxDict["height"] + self.abutmentBoxDict["YMin"]
+                                   )
         return
 
 
-    def computeOnePlateBoxDimensions( self, inputBoxDimensions, enclosure ):
+    def computeOnePlateBoxDimensions( self, inputBoxDimensions, vEnclosure, hEnclosure ):
 
         outputboxDimensions = {}
-        outputboxDimensions["XMin"  ] = inputBoxDimensions["XMin"  ] +   enclosure 
-        outputboxDimensions["YMin"  ] = inputBoxDimensions["YMin"  ] +   enclosure 
-        outputboxDimensions["width" ] = inputBoxDimensions["width" ] - 2*enclosure 
-        outputboxDimensions["height"] = inputBoxDimensions["height"] - 2*enclosure
+        outputboxDimensions["XMin"  ] = inputBoxDimensions["XMin"  ] +   hEnclosure 
+        outputboxDimensions["YMin"  ] = inputBoxDimensions["YMin"  ] +   vEnclosure 
+        outputboxDimensions["width" ] = inputBoxDimensions["width" ] - 2*hEnclosure 
+        outputboxDimensions["height"] = inputBoxDimensions["height"] - 2*vEnclosure
 
         return outputboxDimensions
 
 
 
-    def computeDimensions( self, capDim ):
+    def computeDimensions( self, capDim, vEnclosure, hEnclosure ):
 
-        abutmentBoxDimensions = self.computeAbutmentBoxDimensions(capDim)
+        abutmentBoxDimensions = self.computeAbutmentBoxDimensions(capDim, vEnclosure, hEnclosure )
         for key in abutmentBoxDimensions.keys():
             self.abutmentBoxDict[key] = abutmentBoxDimensions[key]
 
-        self.bottomPlateBoxDict = self.computeOnePlateBoxDimensions( self.abutmentBoxDict   , self.minSpacing_botPlate         )
-        self.topPlateBoxDict    = self.computeOnePlateBoxDimensions( self.bottomPlateBoxDict, self.enclosure_botPlate_topPlate )
+        self.bottomPlateBoxDict = self.computeOnePlateBoxDimensions( self.abutmentBoxDict   , self.vEnclosure_botPlate_abtBox, self.hEnclosure_botPlate_abtBox   )
+        self.topPlateBoxDict    = self.computeOnePlateBoxDimensions( self.bottomPlateBoxDict, self.enclosure_botPlate_topPlate, self.enclosure_botPlate_topPlate )
         self.computeBottomPlateCuts()
         self.computeTopPlateCuts()
         self.computeRoutingLayersDimensions()
@@ -456,19 +561,13 @@ class CapacitorUnit():
     ##  Draws the top or bottom plate through inflation of the Box under it. These boxes are the abutment box in the case of the bottom plate and the bottom plate's box in the case of the top plate. This function also creates a a net for the drawn plate and sets it as external.  
     #   \return The drawn box.
 
-   #def drawOnePlate( self, layer, net, inputPlateBox, depth ):
-
-   #    outputPlateBox = Box( inputPlateBox.getXMin(), inputPlateBox.getYMin(), inputPlateBox.getXMax(), inputPlateBox.getYMax() ).inflate( -depth ) 
-   #    platePad       = Pad.create( net, layer, outputPlateBox ) 
-   #    NetExternalComponents.setExternal( platePad )
-   #    return outputPlateBox
-
-
     def drawOnePlate( self, layer, net, boxDimensions) : 
 
-        outputPlateBox = Box( boxDimensions["XMin"], boxDimensions["YMin"], boxDimensions["XMin"] + boxDimensions["width"], boxDimensions["YMin"] + boxDimensions["height"] ) 
-        print("outputPlate",outputPlateBox)
-        print("net",net)
+        outputPlateBox = Box( boxDimensions["XMin"]
+                            , boxDimensions["YMin"]
+                            , boxDimensions["XMin"] + boxDimensions["width" ]
+                            , boxDimensions["YMin"] + boxDimensions["height"]
+                            ) 
         platePad       = Pad.create( net, layer, outputPlateBox ) 
         NetExternalComponents.setExternal( platePad )
 
@@ -478,37 +577,76 @@ class CapacitorUnit():
     ## Draws the required cuts to connect the bottom plate. First, the maximal possible number of cuts that can be drawn is computed. Second, using the computed number, the enclosure of this cuts in the bottom plate's layer is adjusted while the minimal enclosure is respected. Third, the relative positions of the cuts on both sides of the plate are computed. Finally, two vertical lines of cuts are drawns.
     #  \remark The relative positions describe the cordinates of the first bottom cut in every line of cuts. Then, knowing the spacing and width specifications of these cuts the rest of the line is easilly constructed.
 
-    def drawBottomPlateCut( self, layer, bNet ):
+    def drawBottomPlateCut( self, layer, b ):
       
-        self.cutLine( bNet, layer, self.cutLeftLineDict ["XMin"], self.cutLeftLineDict ["YMin"], self.minWidth_botPlatecut, self.minheight_topPlatecut, self.minSpacingOnBotPlate_cut, self.bottomCutLineNumber , 'vertical' )
-        self.cutLine( bNet, layer, self.cutRightLineDict["XMin"], self.cutRightLineDict["YMin"], self.minWidth_botPlatecut, self.minheight_topPlatecut, self.minSpacingOnBotPlate_cut, self.bottomCutLineNumber , 'vertical' )
+        self.cutLine( b, layer
+                    , self.cutLeftLineDict ["XMin"]
+                    , self.cutLeftLineDict ["YMin"]
+                    , self.minWidth_botPlatecut
+                    , self.minheight_topPlatecut
+                    , self.minSpacingOnBotPlate_cut
+                    , self.bottomCutLineNumber
+                    , 'vertical' 
+                    )
+        self.cutLine( b, layer
+                    , self.cutRightLineDict["XMin"]
+                    , self.cutRightLineDict["YMin"]
+                    , self.minWidth_botPlatecut
+                    , self.minheight_topPlatecut
+                    , self.minSpacingOnBotPlate_cut
+                    , self.bottomCutLineNumber , 'vertical'
+                    )
         
         return
 
 
     ## Draws the top plate's cuts after computing the maximal number of cuts that can be placed and its exact enclosure in the top plate.  
 
-    def drawTopPlateCut( self, layer, tNet ):
+    def drawTopPlateCut( self, layer, t ):
 
         if  self.capacitorType == 'MIMCap':
-            self.cutMatrix(tNet,layer,self.cut2MatrixDict["XMin"],self.cut2MatrixDict["YMin"],self.minWidth_topPlatecut,self.minheight_topPlatecut,self.minSpacingOnTopPlate_cut,self.topCutLineNumber,self.topCutLineNumber)
+            self.cutMatrix(t,layer
+                          ,self.cut2MatrixDict["XMin"]
+                          ,self.cut2MatrixDict["YMin"]
+                          ,self.minWidth_topPlatecut
+                          ,self.minheight_topPlatecut
+                          ,self.minSpacingOnTopPlate_cut
+                          ,self.topCutLineNumber["horizontal"]
+                          ,self.topCutLineNumber["vertical"  ]
+                          )
  
-        else : self.cutLine  (tNet,layer,self.topCutLineDict["XMin"],self.topCutLineDict["YMin"],self.minWidth_topPlatecut,self.minheight_topPlatecut,self.minSpacingOnTopPlate_cut,self.topCutLineNumber,'vertical')
+        else : self.cutLine(t,layer
+                           ,self.topCutLineDict["XMin"]
+                           ,self.topCutLineDict["YMin"]
+                           ,self.minWidth_topPlatecut
+                           ,self.minheight_topPlatecut
+                           ,self.minSpacingOnTopPlate_cut
+                           ,self.topCutLineNumber["vertical"]
+                           ,'vertical'
+                           )
 
         return
 
 
-    ## Draws the routing layers of both bottom and top plates after computing widths and the exact position of these layers. Also computes positions if rlayers that are crucual for routing. this of putting it in a second function 
+    ## Draws the routing layers of both bottom and top plates after computing widths and the exact position of these layers. Also computes positions if rlayers that are crucial for routing. 
 
-    def drawRoutingLayers( self, bottomPlateLayer, topPlateLayer, tNet, bNet ):
+    def drawRoutingLayers( self, bottomPlateLayer, topPlateLayer, t, b ):
 
-        Vertical.create ( tNet, topPlateLayer, self.topPlateRLayerDict["XCenter"], self.topPlateRLayerDict["width"], self.topPlateRLayerDict["YMin"], self.topPlateRLayerDict["YMax"] ) 
+        Vertical.create ( t, topPlateLayer
+                        , self.topPlateRLayerDict["XCenter"]
+                        , self.topPlateRLayerDict["width"  ]
+                        , self.topPlateRLayerDict["YMin"   ]
+                        , self.topPlateRLayerDict["YMax"   ] 
+                        ) 
 
         cutLinesXMins = [ self.cutLeftLineDict["XMin"], self.cutRightLineDict["XMin"] ]
         for i in range(2):
-            Vertical.create ( bNet, bottomPlateLayer, cutLinesXMins[i] , self.bottomPlateRLayerDict["width"], self.bottomPlateRLayerDict["YMin"], self.bottomPlateRLayerDict["YMax"] )
-
-
+            Vertical.create ( b, bottomPlateLayer
+                            , cutLinesXMins[i]
+                            , self.bottomPlateRLayerDict["width"]
+                            , self.bottomPlateRLayerDict["YMin" ]
+                            , self.bottomPlateRLayerDict["YMax" ]
+                            )
         return 
 
 
@@ -566,7 +704,7 @@ class CapacitorUnit():
 
 
     ## \return the ordinate of the highest cut of the bottom plate's left line of cuts.   
-    def getBottomPlateLeftCutYMax  ( self ) : return self.cutLeftLineDict      ["YMin"   ] +  ( self.topCutLineNumber - 1 )*( self.minSpacingOnBotPlate_cut + self.minWidth_botPlatecut )
+    def getBottomPlateLeftCutYMax  ( self ) : return self.cutLeftLineDict      ["YMin"   ] +  ( self.bottomCutLineNumber - 1 )*( self.minSpacingOnBotPlate_cut + self.minWidth_botPlatecut )
 
 
     ## \return the absissa of the bottom plate's right line of cuts.  
@@ -653,13 +791,15 @@ def ScriptMain( **kw ):
     device = AllianceFramework.get().createCell( 'capacitor' )
     device.setTerminal( True )
 
-    bottomPlate_net = Net.create( device, 'bNet' )
+    bottomPlate_net = Net.create( device, 'b' )
     bottomPlate_net.setExternal( True )  
-    bNet = device.getNet("bNet")
+    b = device.getNet("b")
+    doBreak( 1, 'Done building bottomPlate')
 
-    topPlate_net    = Net.create( device, 'tNet' )
+    topPlate_net    = Net.create( device, 't' )
     topPlate_net.setExternal( True )  
-    tNet = device.getNet("tNet")
+    t = device.getNet("t")
+    doBreak( 1, 'Done building t')
 
     if editor:
         UpdateSession.close(        )
@@ -667,9 +807,9 @@ def ScriptMain( **kw ):
         editor.fit         (        )            
         UpdateSession.open (        )     
                       
-    capacitor = CapacitorUnit   ( device,500, 'MIMCap', [0,0] ) # 129.56
-    surface   = capacitor.create( bNet, tNet )          
-    print(surface)
+    capacitor = CapacitorUnit   ( device, 'MIMCap', [0,0], capacitance = 129.56) # square: capacitance : 129.56 , capDim = {"width" : 39650L , "height" : 39650L }                                                                                       # rectangular  capDim = {"width" : 78919L , "height" : 118378L } 
+    abutmentBoxDim  = capacitor.create( b, t, bbMode = True, vEnclosure_botPlate_abtBox = 1.5, hEnclosure_botPlate_abtBox = 0.9)          
+    print(abutmentBoxDim)
                       
     AllianceFramework.get().saveCell( device, Catalog.State.Views )
 

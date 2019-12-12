@@ -6,6 +6,10 @@ from helpers import trace
 class Rules ( object ):
 
   ruleSet = [ 'minSpacing_nWell'
+            , 'minWidth_pImplant'
+            , 'minSpacing_pImplant'
+            , 'minSpacing_rpolyh_pImplant'
+            , 'minEnclosure_pImplant_poly2con'
             , 'minEnclosure_nImplant_active'
             , 'minEnclosure_pImplant_active'
             , 'minSpacing_nImplant_pImplant'
@@ -57,6 +61,7 @@ class Rules ( object ):
             , 'minWidth_cpoly'
             , 'minWidth_poly2'
             , 'minWidth_rpolyh'
+            , 'minWidthHighPrec_rpolyh'
             , 'minSpacing_cpoly'
             , 'minSpacing_poly2'
             , 'minSpacing_rpolyh'
@@ -70,6 +75,18 @@ class Rules ( object ):
             , 'PIPCap'
             , 'MIMPerimeterCap'
             , 'PIPPerimeterCap'
+            , 'RPOLYHSheetRes'
+            , 'RPOLY2PHSheetRes'
+            , 'MET1RPOLYHContRes'
+            , 'minWidth_hres'
+            , 'minSpacing_hres'
+            , 'minEnclosure_hres_poly2'
+            , 'minSpacing_hres_poly1'
+            , 'minSpacing_hres_poly2'
+            , 'minSpacing_hres_active'
+            , 'corrFactor90'
+            , 'corrFactor135'
+            , 'minRpolyhSquares'
 ]
 
   def __init__ ( self, dtr ):
@@ -86,8 +103,15 @@ class Rules ( object ):
     value = None
     words = attribute.split( '_' )
     try:
-      if   len(words) == 1 and words[0].endswith('Cap'): value = self.dtr.getUnitRule( words[0] ).getValue()
-      elif len(words) < 4:                               value = self.dtr.getPhysicalRule( *tuple(words) ).getValue()
+      if len(words) == 1:
+        if words[0].endswith('Cap'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        if words[0].endswith('ContRes' ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        if words[0].endswith('Res'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        if words[0].endswith('ctor90'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        if words[0].endswith('ctor135' ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        if words[0].endswith('quares'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
+      elif len(words) < 4:
+        value = self.dtr.getPhysicalRule( *tuple(words) ).getValue()
     except Exception, e:
       print e
 

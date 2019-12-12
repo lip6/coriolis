@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+print "SOURCE CapacitorMatrix"
+
 import sys                
 from   Hurricane     import *
 from   CRL           import *
@@ -40,10 +42,11 @@ class CapacitorStack( CapacitorUnit ):
    
         self.device               =     device
         self.capacitorType        =     capacitorType
+        print("self.capacitorType0",self.capacitorType)
         self.matrixDim            =  { "columns" : matrixDim[1], "rows" : matrixDim[0] } 
-        self.unitCapDim                  =     self.__computeCapDim__( unitCap     , capacitorType )
+        self.unitCapDim           =     self.__computeCapDim__( unitCap     , capacitorType )
 
-        self.doMatrix                   =     False
+        self.doMatrix             =     False
         self.abutmentBox          =     Box()
         self.abutmentBoxPosition  =  { "XMin" : abutmentBoxPosition[0], "YMin" : abutmentBoxPosition[1] }
         self.nets                 =     nets
@@ -59,7 +62,7 @@ class CapacitorStack( CapacitorUnit ):
         self.vRoutingTrack_width  =      0
 
         if self.__areInputDataOK__(capacitance) == True :
-            if self.matchingMode == False :                
+            if self.matchingMode   == False :                
                 self.compactCapDim =  self.__computeCapDim__( capacitance[0] , capacitorType ) 
 
                 if unitCap == 0 :
@@ -115,10 +118,9 @@ class CapacitorStack( CapacitorUnit ):
     def __initMatchingMode__( self ) :
 
         self.vRoutingTrack_width =   max( self.minWidth_vRoutingTrack, 2*self.minEnclosure_vRoutingTrackCut + self.minWidth_vRoutingTrackCut,self.minWidth_hRoutingLayer_topPlate_cut + 2*self.minEnclosure_hRoutingLayer_topPlate_cut )
-        [factor1 , factor2 ]     = [ self.capacitorsNumber  , (self.capacitorsNumber +1) ] if ( self.capacitorsNumber  % 2 == 0 ) else [ self.capacitorsNumber +1 , self.capacitorsNumber +2 ]
-
-#        if self.dummyElement == True : [factor1 , factor2 ] = [factor1 + 1 , factor2 + 1 ] 
-        self.abutmentBox_spacing =   factor1*self.vRoutingTrack_width + factor2*self.minSpacing_vRoutingTrack 
+        if ( self.capacitorsNumber  % 2 == 0 ) : [factor1 , factor2 ] = [ self.capacitorsNumber    , (self.capacitorsNumber +1) ]  
+        if ( self.capacitorsNumber  % 2 != 0 ) : [factor1 , factor2 ] = [ self.capacitorsNumber +1 ,  self.capacitorsNumber +2  ] 
+        self.abutmentBox_spacing         =   factor1*self.vRoutingTrack_width + factor2*self.minSpacing_vRoutingTrack 
 
         return
 
@@ -137,7 +139,8 @@ class CapacitorStack( CapacitorUnit ):
 
             [ self.capacitance , self.unitCapDim ] = [ capacitance , self.compactCapDim ]
             
-        elif ( self.matrixDim.values() == [1,1] and not(CapacitorUnit.__isCapacitorUnitOK__( self, self.compactCapDim)) ): raise Error(1, '__init__(): Impossible to draw the capacitor, dimensions are either too large or too small, "%s".' % self.compactCapDim ) #com2 : use to physical 
+        elif ( self.matrixDim.values() == [1,1] and not(CapacitorUnit.__isCapacitorUnitOK__( self, self.compactCapDim)) ):
+            raise Error(1, '__init__(): Impossible to draw the capacitor, dimensions are either too large or too small, "%s".' % self.compactCapDim ) #com2 : use to physical 
             
         elif ( self.matrixDim["columns"]>1 or self.matrixDim["rows"]>1) :
 
@@ -300,14 +303,15 @@ class CapacitorStack( CapacitorUnit ):
 
                 [ matchingSchemeCapIds , capacitanceIds ] = [ list( numpy.unique(self.matchingScheme) ) , range(0,self.capacitorsNumber) ]
                 if (self.matchingScheme != [] and set(matchingSchemeCapIds) == set(capacitanceIds) ) or (self.matchingScheme == [] and len(capacitance) == 1) :
- 
+                    print("len(self.nets)",len(self.nets))
+                    print("self.capacitorsNumber + 1",self.capacitorsNumber + 1)
                     if (len(self.nets) == self.capacitorsNumber + 1 and self.dummyElement == False and self.dummyRing == True ) or (len(self.nets) == self.capacitorsNumber and self.dummyElement == False and self.dummyRing == False) or (len(self.nets) == self.capacitorsNumber and self.dummyElement == True and self.dummyRing == True) or (len(self.nets) == self.capacitorsNumber and self.dummyElement == True and self.dummyRing == False  ):
 
                         if ( self.matchingMode == True and self.__isMatchingSchemeOK__() ) or ( self.matchingMode == False and self.matchingScheme == [] ): 
                             state = True  
                         else: raise Error(1, '__areInputDataOK__(): Please check compatibility of the entered parameters (Matching mode, matching scheme, capacitance). It must be either equal to (False, [], one capacitance value) or ( True, matching scheme, capacitance values as much as there are capacitor ids in matching scheme ). The entered parameters are (%s, %s, %s).' %(self.matchingMode, self.matchingScheme, capacitance) ) #com2 : tester 
 
-                    else : raise Error(1,'__areInputDataOK__() : Nets number is incompatible with number of capacitors to be drawn.')
+                    else : raise Error(1,'__areInputDataOK__() : Nets number, %s, is incompatible with number of capacitors to be drawn, %s.' %(self.netsNumber, self.capacitorsNumber))
 
                 else : raise Error(1, '__areInputDataOK__() : Please check compatibility between matching scheme elements, %s, and capacitance indexes, %s. They must be identical. Otherwise, when matching scheme is "False", capacitance indexes must be [0].' %(matchingSchemeCapIds, capacitanceIds) )
 
@@ -384,11 +388,12 @@ class CapacitorStack( CapacitorUnit ):
 
     def capacitorLine( self, dy, abutmentBox_spacing , matchingSchemeRowIndex = 0  ):
 
-        line = [ CapacitorUnit( self.device, self.unitCapacitance, self.capacitorType, [self.abutmentBoxPosition["XMin"], dy] ) ]
+        print("self.capacitorType",self.capacitorType)
+        line = [ CapacitorUnit( self.device, self.capacitorType, [self.abutmentBoxPosition["XMin"], dy], capacitance = self.unitCapacitance ) ]
         self.createElementInCapacitorLine( line, matchingSchemeRowIndex,0 )                 
         limit  =   self.matrixDim["columns"] + 2 if self.dummyRing == True else self.matrixDim["columns"]
         for j in range(1, limit ) :
-            line.append( CapacitorUnit(  self.device, self.unitCapacitance, self.capacitorType, [line[j-1].abutmentBox.getXMax() + abutmentBox_spacing, dy] ) )
+            line.append( CapacitorUnit( self.device, self.capacitorType, [line[j-1].abutmentBox.getXMax() + abutmentBox_spacing, dy], capacitance = self.unitCapacitance ) )
             self.createElementInCapacitorLine( line, matchingSchemeRowIndex,j )                 
 
         return line
@@ -430,18 +435,18 @@ class CapacitorStack( CapacitorUnit ):
 
     def dummyLine( self, direction, dx, dy ):
 
-        dummyList = [ CapacitorUnit( self.device, self.unitCapacitance, self.capacitorType, [dx, dy] ) ]
+        dummyList = [ CapacitorUnit( self.device, self.capacitorType, [dx, dy], capacitance = self.unitCapacitance ) ]
         dummyList[0].create( self.nets[-1][0], self.nets[-1][1] )
 
         if direction == 'vertical':
             for i in range(1, self.matrixDim["rows"] + 2):
-                dummyList.append( CapacitorUnit( self.device, self.unitCapacitance, self.capacitorType, [dx, dummyList[i-1].abutmentBox.getYMax() + self.abutmentBox_spacing]  ) )
+                dummyList.append( CapacitorUnit( self.device, self.capacitorType, [dx, dummyList[i-1].abutmentBox.getYMax() + self.abutmentBox_spacing], capacitance = self.unitCapacitance ) )
                 dummyList[i].create(self.nets[-1][0], self.nets[-1][1]) 
 
         elif direction == 'horizontal':
             for j in range(1, self.matrixDim["columns"] + 2):
                 print('j',j)
-                dummyList.append( CapacitorUnit( self.device, self.unitCapacitance, self.capacitorType, [dummyList[j-1].abutmentBox.getXMax() + self.abutmentBox_spacing, dy]) )
+                dummyList.append( CapacitorUnit( self.device, self.capacitorType, [dummyList[j-1].abutmentBox.getXMax() + self.abutmentBox_spacing, dy], capacitance = self.unitCapacitance ) )
                 dummyList[j].create(self.nets[-1][0], self.nets[-1][1]) 
 
         else : raise Error(1,'dummyLine() : Direction must be either "horizontal" or "vertical".' %direction)
@@ -588,7 +593,7 @@ def ScriptMain( **kw ):
        editor.setCell( device )
        editor.fit()  
        UpdateSession.open()
-   nets   = [[t0, b0]]# , [t1, b1], [t2, b2] ] # [t3, b3] ]
+   nets   = [[t0, b0] , [t1, b1] , [t2, b2] ] # [t3, b3] ]
    capacitorInstance = CapacitorStack( device, [750,750], 'MIMCap', [0,0], nets,unitCap = 93, matrixDim = [4,4], matchingMode = True, matchingScheme =  [ [1,0,1,0] , [0,1,0,1] , [1,0,1,0] , [0,1,0,1] ], dummyRing = True)
   #capacitorInstance = CapacitorStack( device, [1488], 'MIMCap', [0,0], nets,unitCap = 93, matrixDim = [4,4], dummyRing = True)
   #capacitorInstance = CapacitorStack( device, {"C1" : 558, "C2" : 558, "C3" : 372}, 'MIMCap', [0,0], nets, unitCap = 93, matrixDim = [4,4], matchingMode = True, matchingScheme =  [ ['C2','C1','C2','C1'] , ['C1','C2','C1','C2'] , ['C2','C1','C2','C1'] , ['C3','C3','C3','C3'] ])
