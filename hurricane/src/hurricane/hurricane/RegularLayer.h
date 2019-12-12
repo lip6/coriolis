@@ -59,15 +59,15 @@ namespace Hurricane {
       virtual const Layer*    getTop            () const;
       virtual const Layer*    getBottom         () const;
       virtual const Layer*    getOpposite       ( const Layer* ) const;
-      virtual DbU::Unit       getEnclosure      () const;
+      virtual DbU::Unit       getEnclosure      ( uint32_t flags=0 ) const;
       virtual DbU::Unit       getExtentionCap   () const;
       virtual DbU::Unit       getExtentionWidth () const;
-      virtual DbU::Unit       getEnclosure      ( const BasicLayer* layer ) const;
+      virtual DbU::Unit       getEnclosure      ( const BasicLayer* layer, uint32_t flags=0  ) const;
       virtual DbU::Unit       getExtentionCap   ( const BasicLayer* layer ) const;
       virtual DbU::Unit       getExtentionWidth ( const BasicLayer* layer ) const;
     // Updators
               void            setBasicLayer     ( BasicLayer* layer );
-      virtual void            setEnclosure      ( const BasicLayer* layer, DbU::Unit enclosure );
+      virtual void            setEnclosure      ( const BasicLayer* layer, DbU::Unit enclosure, uint32_t flags=0 );
       virtual void            setExtentionCap   ( const BasicLayer* layer, DbU::Unit cap );
       virtual void            setExtentionWidth ( const BasicLayer* layer, DbU::Unit width );
     // Hurricane Managment.

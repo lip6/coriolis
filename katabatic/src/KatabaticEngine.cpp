@@ -154,7 +154,7 @@ namespace Katabatic {
     , _autoContactLut    ()
     , _netRoutingStates  ()
   {
-    addMeasure<size_t>( cell, "Gates"
+    addMeasure<size_t>( "Gates"
                       , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
                                                                  |AllianceFramework::Recursive) );
   }
@@ -169,7 +169,7 @@ namespace Katabatic {
     _gcellGrid = GCellGrid::create( this );
     Session::revalidate();
 
-    addMeasure<size_t>( getCell(), "GCells", _gcellGrid->getGCellVector()->size() );
+    addMeasure<size_t>( "GCells", _gcellGrid->getGCellVector()->size() );
 
     if (getChipTools().isChip()) {
       unsigned int columns = _gcellGrid->getColumns();
@@ -365,8 +365,8 @@ namespace Katabatic {
     Super::printMeasures();
 
     if (not tag.empty()) {
-      addMeasure<double>( getCell(), tag+"T",  getTimer().getCombTime  () );
-      addMeasure<size_t>( getCell(), tag+"S", (getTimer().getMemorySize() >> 20) );
+      addMeasure<double>( tag+"T",  getTimer().getCombTime  () );
+      addMeasure<size_t>( tag+"S", (getTimer().getMemorySize() >> 20) );
     }
   }
 

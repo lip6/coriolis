@@ -396,6 +396,7 @@ setSysConfDir( False )
 def loadUserSettings ():
     if os.path.isfile('./coriolis2/settings.py'):
       if os.path.isfile('./coriolis2/__init__.py'):
+        sys.path.insert( 0, os.getcwd() )
         import coriolis2.settings
         return True
       else:

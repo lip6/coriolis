@@ -5,7 +5,7 @@
 
  cmake_minimum_required(VERSION 2.4.0)
 
- set(ignoreVariables "${LIB_SUFFIX}")
+ set(ignoreVariables "${LIB_SUFFIX} ${CMAKE_INSTALL_DIR}")
 
  option(BUILD_DOC "Build the documentation (html+pdf)" OFF)
 

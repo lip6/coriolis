@@ -69,18 +69,27 @@ namespace CRL {
   template<>
   class Measure<Histogram> : public BaseMeasure {
     public:
-                           Measure      ( const Name&, Histogram* );
+                           Measure      ( const Name& );
       virtual             ~Measure      ();
       virtual bool         isSimpleData () const;
-              Histogram*   getData      () const;
-              void         setData      ( Histogram* );
-      virtual std::string  toString     () const;
-      virtual void         toGnuplot    ( std::string basename ) const;
+      inline  bool         hasDataAt    ( size_t index ) const;
+      inline  size_t       getSize      () const;
+              Histogram*   getData      ( size_t index ) const;
+              void         setData      ( size_t index, Histogram* );
+      virtual std::string  toString     ( size_t index ) const;
+      virtual void         toGnuplot    ( size_t index, const std::string& basename ) const;
       virtual std::string  _getString   () const;
       virtual Record*      _getRecord   () const;
     private:
-      Histogram* _data;
+      std::vector< std::pair<uint32_t,Histogram*> >  _datas;
   };
+
+
+  inline bool  Measure<Histogram>::hasDataAt ( size_t index ) const
+  { return (index < _datas.size()) ? _datas[index].first & BaseMeasure::Set : 0; }
+
+  inline size_t  Measure<Histogram>::getSize () const
+  { return _datas.size(); }
 
 
 }  // CRL namespace.

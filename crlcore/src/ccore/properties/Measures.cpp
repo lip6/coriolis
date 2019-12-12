@@ -44,7 +44,7 @@ namespace CRL {
 
           BaseMeasure::~BaseMeasure () {}
   bool    BaseMeasure::isSimpleData () const { return true; }
-  void    BaseMeasure::toGnuplot    ( const string& ) const {}
+  void    BaseMeasure::toGnuplot    ( size_t, const string& ) const {}
   string  BaseMeasure::_getString   () const { return "<Undefined Measure>"; }
   Record* BaseMeasure::_getRecord   () const { return NULL; }
 
@@ -67,45 +67,48 @@ namespace CRL {
     out << "#";
 
     for ( size_t i=0 ; i<names.size() ; ++i ) {
-      const_iterator imeasure = find ( names[i] );
-      if ( imeasure == end() ) continue;
+      const_iterator imeasure = find( names[i] );
+      if (imeasure == end()) continue;
 
       const BaseMeasure* measure = (*imeasure).second;
-      if ( measure->isSimpleData() )
-        out << setw(measure->getFieldWidth()) << right << measure->getName();
+      if (measure->isSimpleData()) {
+        string label = getString( measure->getName() );
+        label.erase( 0, label.find_last_of('.')+1 );
+        out << setw(measure->getFieldWidth()) << right << label;
+      }
     }
 
     return out.str();
   }
 
 
-  string  MeasuresSet::toStringDatas ( const vector<Name>& names ) const
+  string  MeasuresSet::toStringDatas ( const vector<Name>& names, size_t index ) const
   {
     ostringstream out;
     out << " ";
 
     for ( size_t i=0 ; i<names.size() ; ++i ) {
-      const_iterator imeasure = find ( names[i] );
-      if ( imeasure == end() ) continue;
+      const_iterator imeasure = find( names[i] );
+      if (imeasure == end()) continue;
 
       const BaseMeasure* measure = (*imeasure).second;
-      if ( measure->isSimpleData() )
-        out << setw(measure->getFieldWidth()) << right << measure->toString();
+      if (measure->isSimpleData())
+        out << setw(measure->getFieldWidth()) << right << measure->toString(index);
     }
 
     return out.str();
   }
 
 
-  void  MeasuresSet::toGnuplot ( Name name, const string& basename ) const
+  void  MeasuresSet::toGnuplot ( Name name, size_t index, const string& basename ) const
   {
-    const_iterator imeasure = find ( name );
-    if ( imeasure == end() ) return;
+    const_iterator imeasure = find( name );
+    if (imeasure == end()) return;
 
     const BaseMeasure* measure = (*imeasure).second;
-    if ( measure->isSimpleData() ) return;
+    if (measure->isSimpleData()) return;
 
-    measure->toGnuplot ( basename );
+    measure->toGnuplot( index, basename );
   }
 
 

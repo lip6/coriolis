@@ -58,6 +58,7 @@ extern "C" {
     , { "getSize"              , (PyCFunction)PyParameterRange_getSize             , METH_NOARGS , "To be documented." }
     , { "progress"             , (PyCFunction)PyParameterRange_progress            , METH_NOARGS , "To be documented." }
     , { "setIndex"             , (PyCFunction)PyParameterRange_setIndex            , METH_VARARGS, "To be documented." }
+    , { "reset"                , (PyCFunction)PyParameterRange_reset               , METH_NOARGS , "To be documented." }
   //, { "destroy"              , (PyCFunction)PyParameterRange_destroy             , METH_NOARGS
   //                           , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */

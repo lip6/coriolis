@@ -38,6 +38,10 @@ namespace Hurricane {
   { }
 
 
+  Entity::~Entity() throw(Error)
+  { }
+  
+
   void Entity::_postCreate()
   {
     Inherit::_postCreate();

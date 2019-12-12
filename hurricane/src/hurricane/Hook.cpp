@@ -196,8 +196,8 @@ Hook::Hook()
 {
 }
 
-Hook::~Hook()
-// **********
+Hook::~Hook() throw(Error)
+// ***********************
 {
     if (_nextHook != this)
         throw Error("Abnormal deletion of hook : always attached");

@@ -69,10 +69,10 @@ namespace Etesian {
       inline  DbU::Unit              getVerticalPitch   () const;
       inline  DbU::Unit              getSliceHeight     () const;
       inline  DbU::Unit              getSliceStep       () const;
+      inline  DbU::Unit              getFixedAbHeight   () const;
       inline  Effort                 getPlaceEffort     () const;
       inline  GraphicUpdate          getUpdateConf      () const;
       inline  Density                getSpreadingConf   () const;
-      inline  bool                   getRoutingDriven   () const;
       inline  double                 getSpaceMargin     () const;
       inline  double                 getAspectRatio     () const;
       inline  const FeedCells&       getFeedCells       () const;
@@ -81,6 +81,7 @@ namespace Etesian {
       inline  Cell*                  getBlockCell       () const;
       inline  Instance*              getBlockInstance   () const;
       inline  void                   setBlock           ( Instance* );
+      inline  void                   setFixedAbHeight   ( DbU::Unit );
               void                   setDefaultAb       ();
               void                   adjustSliceHeight  ();
               void                   resetPlacement     ();
@@ -89,7 +90,6 @@ namespace Etesian {
               void                   roughLegalize      ( float minDisruption, unsigned options );
               void                   globalPlace        ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );
               void                   detailedPlace      ( int iterations, int effort, unsigned options=0 );
-              void                   feedRoutingBack    ();
               void                   place              ();
       inline  void                   useFeed            ( Cell* );
               size_t                 findYSpin          ();
@@ -119,6 +119,7 @@ namespace Etesian {
              BloatCells                               _bloatCells;
              size_t                                   _yspinSlice0;
              DbU::Unit                                _sliceHeight;
+             DbU::Unit                                _fixedAbHeight;
 
     protected:
     // Constructors & Destructors.
@@ -145,10 +146,10 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getVerticalPitch   () const { return getGauge()->getVerticalPitch(); }
   inline  DbU::Unit              EtesianEngine::getSliceHeight     () const { return _sliceHeight; }
   inline  DbU::Unit              EtesianEngine::getSliceStep       () const { return getCellGauge()->getSliceStep(); }
+  inline  DbU::Unit              EtesianEngine::getFixedAbHeight   () const { return _fixedAbHeight; }
   inline  Effort                 EtesianEngine::getPlaceEffort     () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate          EtesianEngine::getUpdateConf      () const { return getConfiguration()->getUpdateConf(); }
   inline  Density                EtesianEngine::getSpreadingConf   () const { return getConfiguration()->getSpreadingConf(); }
-  inline  bool                   EtesianEngine::getRoutingDriven   () const { return getConfiguration()->getRoutingDriven(); }
   inline  double                 EtesianEngine::getSpaceMargin     () const { return getConfiguration()->getSpaceMargin(); }
   inline  double                 EtesianEngine::getAspectRatio     () const { return getConfiguration()->getAspectRatio(); }
   inline  void                   EtesianEngine::useFeed            ( Cell* cell ) { _feedCells.useFeed(cell); }
@@ -157,7 +158,8 @@ namespace Etesian {
 
   inline  Cell*                  EtesianEngine::getBlockCell       () const { return (_block) ? _block->getMasterCell() : getCell(); }
   inline  Instance*              EtesianEngine::getBlockInstance   () const { return  _block; }
-  inline  void                   EtesianEngine::setBlock           ( Instance* block ) { _block = block; }
+  inline  void                   EtesianEngine::setBlock           ( Instance* block ) { _block = block; _placed = _block->getMasterCell()->isPlaced(); }
+  inline  void                   EtesianEngine::setFixedAbHeight   ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
 
 // Variables.
   extern const char* missingEtesian;

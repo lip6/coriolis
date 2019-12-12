@@ -24,6 +24,14 @@
 #include "hurricane/analog/AnalogCellExtension.h"
 
 
+namespace Hurricane {
+
+  template<>
+  Name  StandardPrivateProperty<Analog::AnalogCellExtensionDatas>::_name = "Analog::CellExtension";
+
+}  // Hurricane namespace.
+
+
 namespace Analog {
 
   using namespace std;
@@ -43,10 +51,6 @@ namespace Analog {
 
   string  AnalogData::_getString () const
   { return "<AnalogData>"; }
-  
-
-  template<>
-  Name  StandardPrivateProperty<AnalogCellExtensionDatas>::_name = "Analog::CellExtension";
 
 
   AnalogCellExtensionDatas::AnalogCellExtensionDatas ()

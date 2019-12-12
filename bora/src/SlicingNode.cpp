@@ -488,6 +488,12 @@ namespace Bora {
     cdebug_log(535,-1);
   }
 
+  
+  void  SlicingNode::_setGlobalSize ( DbU::Unit, DbU::Unit )
+  {
+    cerr << Error( "SlicingNode::_setGlobalSize(): Must not be called on \"%s\"." , _getTypeName().c_str() ) << endl;
+  }
+
 
   void  SlicingNode::preDestroy ()
   {

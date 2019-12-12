@@ -68,6 +68,7 @@ extern "C" {
 
 
   DirectVoidMethod(EtesianEngine,etesian,setDefaultAb)
+  DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
 
 
   static PyObject* PyEtesianEngine_get ( PyObject*, PyObject* args )
@@ -206,6 +207,8 @@ extern "C" {
     , { "setBlock"          , (PyCFunction)PyEtesianEngine_setBlock          , METH_VARARGS
                             , "Set the sub-block (Instance) to place." }
     , { "setDefaultAb"      , (PyCFunction)PyEtesianEngine_setDefaultAb      , METH_NOARGS
+                            , "Compute and set the abutment box using the aspect ratio and the space margin." }
+    , { "resetPlacement"    , (PyCFunction)PyEtesianEngine_resetPlacement    , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS
                             , "Run the placer (Etesian)." }

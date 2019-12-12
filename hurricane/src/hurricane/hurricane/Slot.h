@@ -322,7 +322,7 @@ namespace Hurricane {
 
 
 template<typename Data>
-inline Hurricane::Slot* getSlot( std::string& name, Data d )
+inline Hurricane::Slot* getSlot( std::string name, Data d )
 {
 //std::cerr << "getSlot<string&,Data>( \"" << name << "\" )" << std::endl;
   return new Hurricane::SlotTemplate<Data> ( name, d );
@@ -330,28 +330,28 @@ inline Hurricane::Slot* getSlot( std::string& name, Data d )
 
 
 template<typename Data>
-inline Hurricane::Slot* getSlot( std::string& name, Data* d )
+inline Hurricane::Slot* getSlot( std::string name, Data* d )
 {
 //std::cerr << "getSlot<string&,Data*>( \"" << name << "\" )" << std::endl;
   return new Hurricane::SlotTemplate<Data*> ( name, d );
 }
 
 
-template<typename Data>
-inline Hurricane::Slot* getSlot( const std::string& name, Data d )
-{
-//std::cerr << "getSlot<const string&,Data>( \"" << name << "\" )" << std::endl;
-//std::cerr << "  Data = " << typeid(d).name() << std::endl;
-  return new Hurricane::SlotTemplate<Data> ( name, d );
-}
+// template<typename Data>
+// inline Hurricane::Slot* getSlot( const std::string& name, Data d )
+// {
+// //std::cerr << "getSlot<const string&,Data>( \"" << name << "\" )" << std::endl;
+// //std::cerr << "  Data = " << typeid(d).name() << std::endl;
+//   return new Hurricane::SlotTemplate<Data> ( name, d );
+// }
 
 
-template<typename Data>
-inline Hurricane::Slot* getSlot( const std::string& name, Data* d )
-{
-//std::cerr << "getSlot<const string&,Data*>( \"" << name << "\" )" << std::endl;
-//std::cerr << "  Data = " << typeid(d).name() << std::endl;
-  return new Hurricane::SlotTemplate<Data*> ( name, d );
-}
+// template<typename Data>
+// inline Hurricane::Slot* getSlot( const std::string& name, Data* d )
+// {
+// //std::cerr << "getSlot<const string&,Data*>( \"" << name << "\" )" << std::endl;
+// //std::cerr << "  Data = " << typeid(d).name() << std::endl;
+//   return new Hurricane::SlotTemplate<Data*> ( name, d );
+// }
 
 #endif // HURRICANE_SLOT_H

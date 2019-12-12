@@ -64,8 +64,6 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyGds_save()" << endl;
 
-    Cell* cell = NULL;
-    
     HTRY
       PyObject* pyCell = NULL;
       if (PyArg_ParseTuple( args, "O:Gds.save", &pyCell )) {
@@ -89,8 +87,7 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyGds_load()" << endl;
 
-    Library* library = NULL;
-    char*    path    = NULL;
+    char* path = NULL;
     
     HTRY
       PyObject* pyLibrary = NULL;

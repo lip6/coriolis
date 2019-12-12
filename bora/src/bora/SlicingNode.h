@@ -174,6 +174,7 @@ namespace Bora {
       virtual        void               setGlobalSize                ( DbU::Unit height, DbU::Unit width );
       virtual        void               setGlobalSize                ( size_t index );
       virtual        void               _setGlobalSize               ( BoxSet* );
+      virtual        void               _setGlobalSize               ( DbU::Unit height, DbU::Unit width );
       virtual inline bool               recursiveCheckPreset         () const;
       virtual inline bool               recursiveCheckSet            () const;
       virtual inline bool               recursiveCheckPlaced         () const;

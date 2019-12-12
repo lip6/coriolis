@@ -1161,7 +1161,7 @@ namespace {
   { }
 
 
-} // End of anonymous namespace.
+} // anonymous namespace.
 
 
 namespace Katana {

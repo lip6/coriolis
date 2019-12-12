@@ -23,8 +23,7 @@
 //
 // $Id$
 //
-// x-----------------------------------------------------------------x
-// |                                                                 |
+// +-----------------------------------------------------------------+
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -32,10 +31,7 @@
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./Breakpoint.cpp"                              |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 # include  "hurricane/Breakpoint.h"
@@ -133,7 +129,7 @@ namespace Hurricane {
 
   bool  Breakpoint::_stop ( unsigned int level, const string& message )
   {
-    if ( _stopCb && ( level >= _stopLevel ) )
+    if ( _stopCb && ( level <= _stopLevel ) )
       return _stopCb ( message );
 
     return false;

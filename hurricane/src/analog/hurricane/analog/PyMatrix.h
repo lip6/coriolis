@@ -41,7 +41,6 @@ extern "C" {
   extern PyMethodDef   PyMatrix_Methods[];
 
   extern void            PyMatrix_LinkPyType   ();
-  extern Analog::Matrix  Matrix_FromListOfList ( PyObject* );
 
 
 #define IsPyMatrix(v)    ( (v)->ob_type == &PyTypeMatrix )
@@ -50,6 +49,8 @@ extern "C" {
 
 
 }  // extern "C".
+
+  extern Analog::Matrix  Matrix_FromListOfList ( PyObject* );
 
 }  // Isobar namespace.
 

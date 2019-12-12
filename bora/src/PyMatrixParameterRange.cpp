@@ -91,7 +91,6 @@ extern "C" {
 
   static PyObject* PyMatrixParameterRange_getValue ( PyMatrixParameterRange* self, PyObject* args )
   {
-    Matrix*   matrix   = NULL;
     PyMatrix* pyMatrix = NULL;
 
     METHOD_HEAD( "MatrixParameterRange.getValue()" );

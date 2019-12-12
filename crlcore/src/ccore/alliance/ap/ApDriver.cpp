@@ -233,11 +233,11 @@ void DumpContacts(ofstream& ccell, Cell *cell)
 
   void DumpSegments ( ofstream& ccell, Cell* cell )
   {
-    const char* mbkLayer = NULL;
+    const char* mbkLayer     = NULL;
     DbU::Unit   x1, x2, y1, y2, width;
-    Segment*    segment  = NULL;
-    RoutingPad* rp       = NULL;
-    bool        external = false;
+    Segment*    segment      = NULL;
+    RoutingPad* rp           = NULL;
+    bool        external     = false;
 
     for ( Net* net : cell->getNets() ) {
       string netName = toMBKName( net->getName() );
@@ -249,16 +249,16 @@ void DumpContacts(ofstream& ccell, Cell *cell)
           if (not cell->isRouted())  continue;
 
           external = true;
-          segment  = dynamic_cast<Segment*>(rp->getOccurrence().getEntity());
+          segment  = dynamic_cast<Segment*>( rp->getOccurrence().getEntity() );
           if (segment) {
-            x1    = rp->getSourceX();
-            x2    = rp->getTargetX();
-            y1    = rp->getSourceY();
-            y2    = rp->getTargetY();
-            width = segment->getWidth();
+            x1           = rp->getSourceX();
+            x2           = rp->getTargetX();
+            y1           = rp->getSourceY();
+            y2           = rp->getTargetY();
+            width        = segment->getWidth();
           } else {
-            Pin* pin = dynamic_cast<Pin*>(rp->getOccurrence().getEntity());
-            if (pin) {
+            Pin* pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
+            if (pin and (rp->getOccurrence().getPath().getHeadInstance() != NULL)) {
               Box bb ( pin->getBoundingBox() );
               rp->getOccurrence().getPath().getTransformation().applyOn( bb );
               if (bb.getWidth() > bb.getHeight()) {
@@ -278,7 +278,7 @@ void DumpContacts(ofstream& ccell, Cell *cell)
               continue;
           }
         } else if ( (segment = dynamic_cast<Segment*>(component)) ) {
-          external = NetExternalComponents::isExternal(component);
+          external = NetExternalComponents::isExternal( component );
           x1       = segment->getSourceX();
           x2       = segment->getTargetX();
           y1       = segment->getSourceY();
@@ -290,10 +290,10 @@ void DumpContacts(ofstream& ccell, Cell *cell)
         const char* direction = "RIGHT";
         if ( (x1 == x2) and (y1 != y2) ) direction = "UP";
 
-        if ( x1 > x2 ) swap ( x1, x2 );
-        if ( y1 > y2 ) swap ( y1, y2 );
+        if (x1 > x2) std::swap( x1, x2 );
+        if (y1 > y2) std::swap( y1, y2 );
 
-        if ( toMBKLayer(mbkLayer,component->getLayer()->getName(),false,external) )
+        if (toMBKLayer(mbkLayer,component->getLayer()->getName(),false,external))
           ccell << "S "
                 << toMBKlambda(x1) << ","
                 << toMBKlambda(y1) << ","

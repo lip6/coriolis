@@ -360,6 +360,7 @@ namespace {
   }
 
 
+#if THIS_IS_DISABLED
   void  metal2protect ( AutoContactTerminal* contact )
   {
     const Layer*  metal2         = Session::getRoutingLayer(1);
@@ -394,6 +395,7 @@ namespace {
     cdebug_log(145,0) << "X:" << DbU::getValueString(position.getX())
                       << " Metal3 Track Y:" << DbU::getValueString(metal3axis) << endl;
   }
+#endif
 
 
 } // End of local namespace.

@@ -527,8 +527,8 @@ namespace Anabatic {
         vector<AutoSegment*> southBounds;
         DbU::Unit            leftBound;
         DbU::Unit            rightBound;
-        bool                 hasNorth = false;
-        bool                 hasSouth = false;
+      //bool                 hasNorth = false;
+      //bool                 hasSouth = false;
 
         AutoSegment::getTopologicalInfos( horizontal
                                         , collapseds

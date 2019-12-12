@@ -349,21 +349,23 @@ namespace Anabatic {
 
     deltaUnit = lhs->getLength() - rhs->getLength();
     if ( deltaUnit > 0 ) return true;  // Longest first.
-    if ( deltaUnit < 0 ) return true;
+    if ( deltaUnit < 0 ) return false;
 
     deltaUnit = lhs->getAxis() - rhs->getAxis();
     if ( deltaUnit < 0 ) return true;  // Smallest axis first.
     if ( deltaUnit > 0 ) return false;
 
-    // if ( lhs->isCanonical   () xor rhs->isCanonical   () ) return lhs->isCanonical();
-    // if ( lhs->isCollapsed   () xor rhs->isCollapsed   () ) return rhs->isCollapsed();
-    // if ( lhs->isSlackenStrap() xor rhs->isSlackenStrap() ) return lhs->isSlackenStrap();
+#if THIS_IS_DISABLED
+    if ( lhs->isCanonical   () xor rhs->isCanonical   () ) return lhs->isCanonical();
+    if ( lhs->isCollapsed   () xor rhs->isCollapsed   () ) return rhs->isCollapsed();
+    if ( lhs->isSlackenStrap() xor rhs->isSlackenStrap() ) return lhs->isSlackenStrap();
 
-    // if ( lhs->isGlobal    () xor rhs->isGlobal    () ) return lhs->isGlobal();
-    // if ( lhs->isTerminal  () xor rhs->isTerminal  () ) return rhs->isTerminal();
-    // if ( lhs->isHorizontal() xor rhs->isHorizontal() ) return lhs->isHorizontal();
+    if ( lhs->isGlobal    () xor rhs->isGlobal    () ) return lhs->isGlobal();
+    if ( lhs->isTerminal  () xor rhs->isTerminal  () ) return rhs->isTerminal();
+    if ( lhs->isHorizontal() xor rhs->isHorizontal() ) return lhs->isHorizontal();
 
-    // if ( lhs->isFixed() xor rhs->isFixed() ) return lhs->isFixed();
+    if ( lhs->isFixed() xor rhs->isFixed() ) return lhs->isFixed();
+#endif
 
     return lhs->getId() < rhs->getId();
   }
@@ -459,7 +461,7 @@ namespace Anabatic {
     //cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
     //cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
  
-      _extensionCaps.push_back( std::array<DbU::Unit*,3>( { viaToTopCap, viaToBottomCap, viaToSameCap } ) );
+      _extensionCaps.push_back( std::array<DbU::Unit*,3>( {{ viaToTopCap, viaToBottomCap, viaToSameCap }} ) );
     }
   }
 

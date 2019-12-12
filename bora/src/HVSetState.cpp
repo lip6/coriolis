@@ -153,8 +153,7 @@ namespace Bora {
   // Notes: Set the next combination. See notes above.
     cdebug_log(535,0) << "HVSetState::next(): counter_:" << _counter << endl;
 
-    Symmetry                 symmetry;
-    vector<size_t>::iterator itpair   = _nextSet.begin();
+    Symmetry  symmetry;
 
     const VSlicingNodes& children = _HVSnode->getChildren();
     for ( size_t ichild=0 ; ichild<children.size() ; ++ichild ) {

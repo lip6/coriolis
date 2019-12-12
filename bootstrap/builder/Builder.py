@@ -38,6 +38,7 @@ class Builder:
         self._noSystemBoost    = False
         self._macports         = False
         self._devtoolset       = 0
+        self._llvmtoolset      = 0
         self._qt5              = False
         self._openmp           = False
         self._enableShared     = "ON"
@@ -69,6 +70,8 @@ class Builder:
         elif attribute == "devtoolset":
             self._devtoolset = value
             if value: self._noSystemBoost = True
+        elif attribute == "llvmtoolset":
+            self._llvmtoolset = value
         elif attribute == "qt5":              self._qt5              = value
         elif attribute == "openmp":           self._openmp           = value
         elif attribute == "enableDoc":        self._enableDoc        = value
@@ -132,17 +135,24 @@ class Builder:
 
 
     def _execute ( self, command, error ):
+        collections = []
         if self._devtoolset:
-            print 'Using devtoolset-%(v)d (scl enable devtoolset-%(v)d ...)' % {'v':self._devtoolset}
-            commandAsString = ''
-            for i in range(len(command)):
-                if i: commandAsString += ' '
-                if ' ' in command[i]: commandAsString += '"'+command[i]+'"'
-                else:                 commandAsString += command[i]
-            command = [ 'scl', 'enable', 'devtoolset-%d' % self._devtoolset
-                      , commandAsString ]
+          collections.append( 'devtoolset-%d' % self._devtoolset )
+          print 'Using devtoolset-%(v)d (scl enable devtoolset-%(v)d ...)' % {'v':self._devtoolset}
+        if self._llvmtoolset:
+          collections.append( 'llvm-toolset-%d' % self._llvmtoolset )
+          print 'Using llvm-toolset-%(v)d (scl enable llvm-toolset-%(v)d ...)' % {'v':self._llvmtoolset}
 
-       #print command
+        if collections:
+          commandAsString = ''
+          for i in range(len(command)):
+              if i: commandAsString += ' '
+              if ' ' in command[i]: commandAsString += '"'+command[i]+'"'
+              else:                 commandAsString += command[i]
+          command = [ 'scl', 'enable' ]
+          command += collections
+          command.append( commandAsString )
+
         sys.stdout.flush ()
         sys.stderr.flush ()
         child = subprocess.Popen ( command, env=self._environment, stdout=None )
@@ -175,9 +185,10 @@ class Builder:
 
         command = [ 'cmake' ]
         if self._ninja:         command += [ "-G", "Ninja" ]
+        if self._macports:      command += [ "-D", "WITH_MACPORTS:STRING=TRUE" ]
         if self._noSystemBoost: command += [ "-D", "Boost_NO_SYSTEM_PATHS:STRING=TRUE"
-                                           , "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost157"
-                                           , "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib/boost157"
+                                           , "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost169"
+                                           , "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib64/boost169"
                                            ]
         if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
@@ -210,8 +221,6 @@ class Builder:
         if self._checkDeterminism == 'ON': command += [ "-D", "CHECK_DETERMINISM:STRING=ON" ]
         command += [ toolSourceDir ]
 
-        print self._noSystemBoost
-        print command
         self._execute ( command, "Second CMake failed" )
 
         if self._doBuild:
@@ -299,8 +308,8 @@ class Builder:
 
     def _commandTemplate ( self, tools, projects, command ):
         if self._clang:
-            self._environment[ 'CC'  ] = '/usr/bin/clang'
-            self._environment[ 'CXX' ] = '/usr/bin/clang++'
+            self._environment[ 'CC'  ] = 'clang'
+            self._environment[ 'CXX' ] = 'clang++'
         if self._devtoolset:
             self._environment[ 'BOOST_INCLUDEDIR' ] = '/opt/rh/devtoolset-%d/root/usr/include' % self._devtoolset
             self._environment[ 'BOOST_LIBRARYDIR' ] = '/opt/rh/devtoolset-%d/root/usr/lib'     % self._devtoolset

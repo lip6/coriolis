@@ -833,9 +833,8 @@ namespace Anabatic {
       upLayer = (depth+1 <= Session::getConfiguration()->getAllowedDepth());
     }
 
-    size_t       doglegDepth  = depth + ((upLayer)?1:-1);
-    Layer*       contactLayer = Session::getRoutingGauge()->getContactLayer( depth + ((upLayer)?0:-1) );
-    const Layer* doglegLayer  = Session::getRoutingGauge()->getRoutingLayer( doglegDepth );
+    size_t  doglegDepth  = depth + ((upLayer)?1:-1);
+    Layer*  contactLayer = Session::getRoutingGauge()->getContactLayer( depth + ((upLayer)?0:-1) );
 
     Session::dogleg( this );
     targetDetach();

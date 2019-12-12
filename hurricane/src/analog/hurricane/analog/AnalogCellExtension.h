@@ -117,4 +117,13 @@ namespace Analog {
 
 }  // Analog namespace.
 
+
+namespace Hurricane {
+
+  template<>
+  Name  StandardPrivateProperty<Analog::AnalogCellExtensionDatas>::_name;
+
+}  // Hurricane namespace.
+
+
 #endif  // ANALOG_CELL_EXTENSION_H

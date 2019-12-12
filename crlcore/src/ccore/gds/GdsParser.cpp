@@ -64,7 +64,7 @@ namespace {
       static const uint16_t  BitArray        = 0x0001;
       static const uint16_t  TwoByteInteger  = 0x0002;  // Signed, 16 bits.
       static const uint16_t  FourByteInteger = 0x0003;  // Signed, 32 bits.
-      static const uint16_t  FourByteReal    = 0x0004;  // Unused.
+    //static const uint16_t  FourByteReal    = 0x0004;  // Unused.
       static const uint16_t  EightByteReal   = 0x0005;
       static const uint16_t  String          = 0x0006;
     // Record Types.
@@ -634,7 +634,6 @@ namespace {
              Component*               _component;
              string                   _text;
              DbU::Unit                _scale;
-             int64_t                  _netCount;
              int64_t                  _SREFCount;
              bool                     _validSyntax;
              bool                     _skipENDEL;
@@ -683,7 +682,6 @@ namespace {
     , _component       (NULL)
     , _text            ()
     , _scale           (1)
-    , _netCount        (0)
     , _SREFCount       (0)
     , _validSyntax     (true)
     , _skipENDEL       (false)

@@ -63,7 +63,7 @@ namespace Hurricane {
       class Node {
         public:
           inline               Node           ( const Data& value, Node* parent );
-          inline              ~Node           ();
+          virtual             ~Node           ();
           inline  bool         isRed          () const;
           inline  bool         isBlack        () const;
           inline  bool         isRoot         () const;
@@ -205,7 +205,7 @@ namespace Hurricane {
   { }
   
   template< typename Data, typename Compare >
-  inline RbTree<Data,Compare>::Node::~Node ()
+  RbTree<Data,Compare>::Node::~Node ()
   { }
   
   template< typename Data, typename Compare >inline bool        RbTree<Data,Compare>::Node::isRed          () const { return not isBlack(); }
@@ -1027,7 +1027,7 @@ namespace Hurricane {
   
   template< typename Data, typename Compare >
   inline void  RbTree<Data,Compare>::write ( std::string path ) const
-  { RbTreeToDot<Data,Compare,RbTree>(this).write( path ); }
+  { RbTreeToDot< Data, Compare, RbTree >(this).write( path ); }
 
 
 }  // Hurricane namespace.

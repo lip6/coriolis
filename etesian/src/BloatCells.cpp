@@ -17,6 +17,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
+#include "etesian/BloatProperty.h"
 #include "etesian/EtesianEngine.h"
 
 
@@ -172,9 +173,22 @@ namespace Etesian {
   }
 
   
-  Box  BloatCells::getAb ( const Cell* cell )
+  Box  BloatCells::getAb ( Occurrence instanceOcc )
   {
-    DbU::Unit dx = _selected->getDx( cell, _etesian );
+    Instance* instance = dynamic_cast<Instance*>( instanceOcc.getEntity() );
+    if (not instance) {
+      cerr << Error( "BloatCells::getAb(): Occurrence argument do not refer an Instance (skipped).\n"
+                     "(%s)"
+                   , getString(instanceOcc).c_str() ) << endl;
+      return Box();
+    }
+
+    DbU::Unit   dx    = 0;
+    Cell*       cell  = instance->getMasterCell();
+    BloatState* state = BloatExtension::get( instanceOcc );
+
+    if (state) dx = state->getTracksCount() * _etesian->getSliceStep();
+    else       dx = _selected->getDx( cell, _etesian );
 
     _dxSpace += dx;
     Box ab = cell->getAbutmentBox();

@@ -198,6 +198,7 @@ namespace CRL {
     , _routingModificationFlag  (0)
     , _inRelationDestroy        (false)
     , _timer                    ()
+    , _passNumber               (0)
   { }
 
 

@@ -1082,8 +1082,8 @@ void KnikEngine::run( const map<Name,Net*>& excludedNets )
            <<  Timer::getStringMemory(Timer::getMemorySize());
     cmess2 << Dots::asString( "     - Raw measurements", result.str() ) << endl;
 
-    addMeasure<double> ( getCell(), "knikT",  _timer.getCombTime  () );
-    addMeasure<size_t> ( getCell(), "knikS", (_timer.getMemorySize() >> 20) );
+    addMeasure<double> ( "knikT",  _timer.getCombTime  () );
+    addMeasure<size_t> ( "knikS", (_timer.getMemorySize() >> 20) );
 
     computeSymbolicWireLength ();
 }
@@ -1307,13 +1307,13 @@ void  KnikEngine::computeSymbolicWireLength ()
     }
   }
 
-  addMeasure<unsigned long long> ( getCell(), "GWL(l)", symbolicWireLength, 14 );
+  addMeasure<unsigned long long> ( "GWL(l)", symbolicWireLength, 14 );
 
   Box    ab   ( getCell()->getAbutmentBox() );
   double area = (DbU::getLambda(ab.getWidth()) * DbU::getLambda(ab.getHeight()) );
 
-  addMeasure<double> ( getCell(), "Area(l2)", area, 14 );
-  addMeasure<double> ( getCell(), "Sat."    , (symbolicWireLength/area)/normalize );
+  addMeasure<double> ( "Area(l2)", area, 14 );
+  addMeasure<double> ( "Sat."    , (symbolicWireLength/area)/normalize );
 }
 
 

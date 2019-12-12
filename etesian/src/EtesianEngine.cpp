@@ -42,9 +42,6 @@
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/CellViewer.h"
-#include "katabatic/GCellGrid.h"
-#include "katabatic/KatabaticEngine.h"
-#include "kite/KiteEngine.h"
 #include "crlcore/Utilities.h"
 #include "crlcore/Measures.h"
 #include "crlcore/AllianceFramework.h"
@@ -257,7 +254,6 @@ namespace Etesian {
     : Super         (cell)
     , _configuration(new Configuration())
     , _block        (NULL)
-    , _placed       (false)
     , _ySpinSet     (false)
     , _flatDesign   (false)
     , _surface      ()
@@ -269,6 +265,9 @@ namespace Etesian {
     , _viewer       (NULL)
     , _feedCells    (this)
     , _bloatCells   (this)
+    , _yspinSlice0  (0)
+    , _sliceHeight  (0)
+    , _fixedAbHeight(0)
   {
   }
 
@@ -317,6 +316,8 @@ namespace Etesian {
 
   EtesianEngine* EtesianEngine::create ( Cell* cell )
   {
+    if (not cell) throw Error( "EtesianEngine::create(): NULL cell argument." );
+
     EtesianEngine* etesian = new EtesianEngine ( cell );
 
     etesian->_postCreate();
@@ -378,15 +379,25 @@ namespace Etesian {
         continue;
       }
 
-      cellLength += DbU::toLambda( _bloatCells.getAb( masterCell ).getWidth() );
+      cellLength += DbU::toLambda( _bloatCells.getAb( occurrence ).getWidth() );
       instanceNb += 1;
     }
+
+    if (cellLength < 0)
+      throw Error( "EtesianEngine::setDefaultAb(): Negative surface area computed for \"%s\" (bad bloat profile?)."
+                 , getString(getCell()->getName()).c_str()
+                 );
 
     double bloatLength = DbU::toLambda( _bloatCells.getDxSpace() );
     double bloatMargin = ( cellLength / (cellLength - bloatLength) ) - 1.0;
     
     double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
-    double rows        = std::ceil( sqrt( gcellLength/aspectRatio ) );
+
+    double rows = 0.0;
+    setFixedAbHeight( 0 );
+    if (getFixedAbHeight()) rows = getFixedAbHeight() / getSliceHeight();
+    else                    rows = std::ceil( sqrt( gcellLength/aspectRatio ) );
+
     double columns     = std::ceil( gcellLength / rows );
 
     UpdateSession::open();
@@ -421,7 +432,7 @@ namespace Etesian {
   {
   //cerr << "EtesianEngine::resetPlacement()" << endl;
 
-    if (not _placed) return;
+    if (not getBlockCell()->isPlaced()) return;
     _flatDesign = true;
 
     Dots  dots ( cmess2, "     ", 80, 1000 );
@@ -442,23 +453,23 @@ namespace Etesian {
       Cell*     masterCell   = instance->getMasterCell();
       string    instanceName = occurrence.getCompactString();
 
-      if (CatalogExtension::isFeed(masterCell)) {
+      if (CatalogExtension::isFeed(masterCell))
         feedOccurrences.push_back( occurrence );
-      }
     }
 
     for ( auto ioccurrence : feedOccurrences ) {
-      cerr << "  Destroy: " << ioccurrence.getCompactString() << endl;
       Instance* instance = static_cast<Instance*>(ioccurrence.getEntity());
       instance->destroy();
     }
+    if (not getBlockCell()->getAbutmentBox().isEmpty() )
+      setFixedAbHeight( getBlockCell()->getAbutmentBox().getHeight() );
+    getBlockCell()->setAbutmentBox( Box() );
+    getBlockCell()->resetFlags( Cell::Flags::Placed );
     UpdateSession::close();
 
     dots.finish( Dots::Reset );
 
     if (_viewer) _viewer->getCellWidget()->refresh();
-
-    _placed = false;
   }
 
 
@@ -477,10 +488,7 @@ namespace Etesian {
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
 
-    size_t  instancesNb = 1; // One dummy fixed instance at the end
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) ) {
-      ++instancesNb;
-    }
+    size_t  instancesNb = getCell()->getLeafInstanceOccurrences(getBlockInstance()).getSize() + 1; // One dummy fixed instance at the end
 
   // Coloquinte circuit description data-structures.
     vector<Transformation>  idsToTransf ( instancesNb );
@@ -543,7 +551,7 @@ namespace Etesian {
         continue;
       }
 
-      Box instanceAb = _bloatCells.getAb( masterCell );
+      Box instanceAb = _bloatCells.getAb( occurrence );
 
       Transformation instanceTransf = instance->getTransformation();
       occurrence.getPath().getTransformation().applyOn( instanceTransf );
@@ -678,6 +686,7 @@ namespace Etesian {
     _placementUB = _placementLB;
   }
 
+
   void  EtesianEngine::adjustSliceHeight ()
   {
     /*
@@ -714,6 +723,7 @@ namespace Etesian {
       }
     }
   }
+
 
   void  EtesianEngine::preplace ()
   {
@@ -761,51 +771,6 @@ namespace Etesian {
     _placementUB = _placementLB;
     // Update UB
     get_rough_legalization( _circuit, _placementUB, legalizer );
-  }
-
-
-  void  EtesianEngine::feedRoutingBack ()
-  {
-    using namespace Katabatic;
-    using namespace Kite;
-    /*
-     * If routing information is present, use it to
-     *       * artificially expand the areas given to coloquinte 
-     *       * add placement dentity constraints
-     */
-    DbU::Unit   hpitch           = getHorizontalPitch();
-    DbU::Unit   vpitch           = getSliceStep();
-    const float densityThreshold = 0.9;
-
-    KiteEngine* routingEngine = KiteEngine::get( getCell() );
-    if(routingEngine == NULL)
-      throw Error("No routing information was found when performing routing-driven placement\n");
-
-    GCellGrid * grid = routingEngine->getGCellGrid();
-    // Get information about the GCells
-    // Create different densities
-
-    _densityLimits.clear();
-    for(GCell* gc : grid->getGCells()){
-        float density = gc->getMaxHVDensity();
-        if(density >= densityThreshold){
-        
-            coloquinte::density_limit cur;
-            cur.box_ = coloquinte::box<int_t>(
-                gc->getX()    / vpitch,
-                gc->getXMax() / vpitch,
-                gc->getY()    / hpitch,
-                gc->getYMax() / hpitch
-            );
-            cur.density_ = densityThreshold/density;
-            _densityLimits.push_back(cur);
-        }
-    }
-
-    // TODO: Careful to keep the densities high enough
-    // Will just fail later if the densities are too high
-
-    // Expand areas: TODO
   }
 
 
@@ -968,7 +933,6 @@ namespace Etesian {
     Effort        placementEffort = getPlaceEffort();
     GraphicUpdate placementUpdate = getUpdateConf();
     Density       densityConf     = getSpreadingConf();
-    bool          routingDriven   = getRoutingDriven();
     double        sliceHeight     = getSliceHeight() / getHorizontalPitch();
 
     cmess1 << "  o  Running Coloquinte." << endl;
@@ -1026,30 +990,6 @@ namespace Etesian {
     cmess1 << "  o  Detailed Placement." << endl;
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
-    if(routingDriven){
-        bool success = false;
-        int routingDrivenIteration = 0;
-        using namespace Kite;
-        while(true){
-            cmess2 << "Routing-driven placement iteration " << routingDrivenIteration << endl;
-            KiteEngine* kiteE = KiteEngine::create(_cell);
-            kiteE->runGlobalRouter(0);
-            kiteE->loadGlobalRouting(Katabatic::EngineLoadGrByNet);
-            kiteE->balanceGlobalDensity();
-            kiteE->layerAssign(Katabatic::EngineNoNetLayerAssign);
-            kiteE->runNegociate();
-            success = kiteE->getToolSuccess();
-            feedRoutingBack();
-            kiteE->destroy();
-            KiteEngine::wipeoutRouting(_cell);
-            if(success){
-                cmess2 << "The design is routable; exiting" << endl;
-                break;
-            }
-            detailedPlace(detailedIterations, detailedEffort, detailedOptions);
-        }
-    }
-
     cmess2 << "  o  Adding feed cells." << endl;
     addFeeds();
 
@@ -1060,8 +1000,6 @@ namespace Etesian {
       ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getSliceStep() ) ) << endl;
     cmess1 << ::Dots::asString
       ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(_circuit,_placementUB )*getSliceStep() ) ) << endl;
-
-    _placed = true;
 
     UpdateSession::open();
     for ( Net* net : getCell()->getNets() ) {

@@ -533,6 +533,7 @@ namespace Anabatic {
     cout << "  o  Configuration of ToolEngine<Anabatic> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asIdentifier("     - Routing Gauge"               ,getString(_rg->getName())) << endl;
     cout << Dots::asString    ("     - Top routing layer"           ,topLayerName) << endl;
+    cout << Dots::asUInt      ("     - Maximum GR iterations"       ,_globalIterations) << endl;
   }
 
 

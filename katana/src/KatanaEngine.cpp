@@ -59,6 +59,7 @@ namespace {
   using Hurricane::Net;
   using Hurricane::Cell;
   using Hurricane::Segment;
+  using Hurricane::Plug;
   using Katana::Session;
   using Katana::TrackSegment;
 
@@ -122,6 +123,7 @@ namespace Katana {
   using std::endl;
   using std::dec;
   using std::setw;
+  using std::setfill;
   using std::left;
   using std::ostream;
   using std::ofstream;
@@ -193,7 +195,7 @@ namespace Katana {
     , _shortDoglegs   ()
     , _symmetrics     ()
     , _mode           (DigitalMode)
-    , _toolSuccess    (false)
+    , _successState   (0)
   {
   //Entity::setMemoryLimit( 1024 ); // 1Gb.
   }
@@ -577,7 +579,7 @@ namespace Katana {
     _check( overlaps );
     Session::close();
 
-    _toolSuccess = _toolSuccess and (overlaps == 0);
+    setDetailedRoutingSuccess( isDetailedRoutingSuccess() and (overlaps == 0) );
   }
 
 
@@ -605,8 +607,10 @@ namespace Katana {
   void  KatanaEngine::printCompletion () const
   {
     size_t                 routeds          = 0;
-    unsigned long long     totalWireLength  = 0;
-    unsigned long long     routedWireLength = 0;
+    uint64_t               totalWireLength  = 0;
+    uint64_t               routedWireLength = 0;
+    uint32_t               hunrouteds       = 0;
+    uint32_t               vunrouteds       = 0;
     vector<TrackElement*>  unrouteds;
     vector<TrackElement*>  reduceds;
     ostringstream          result;
@@ -616,7 +620,7 @@ namespace Katana {
       TrackElement* segment = _lookup( ilut->second );
       if (segment == NULL) continue;
 
-      unsigned long long wl = (unsigned long long)DbU::toLambda( segment->getLength() );
+      uint64_t wl = (unsigned long long)DbU::toLambda( segment->getLength() );
       if (wl > 100000) {
         cerr << Error("KatanaEngine::printCompletion(): Suspiciously long wire: %llu for %p:%s"
                      ,wl,ilut->first,getString(segment).c_str()) << endl;
@@ -634,12 +638,14 @@ namespace Katana {
       }
 
       unrouteds.push_back( segment );
+      if (segment->isHorizontal()) ++hunrouteds;
+      if (segment->isVertical  ()) ++vunrouteds;
     }
 
     float segmentRatio    = (float)(routeds)          / (float)(routeds+unrouteds.size()) * 100.0;
     float wireLengthRatio = (float)(routedWireLength) / (float)(totalWireLength)   * 100.0;
 
-    _toolSuccess = (unrouteds.empty());
+    setDetailedRoutingSuccess( unrouteds.empty() );
 
     if (not unrouteds.empty()) {
       cerr << "  o  Routing did not complete, unrouted segments:" << endl;
@@ -674,53 +680,76 @@ namespace Katana {
       cmess1 << Dots::asString( "     - Wire Length Expand Ratio", result.str() ) << endl;
     }
 
-    addMeasure<size_t>            ( getCell(), "Segs"   , routeds+unrouteds.size() );
-    addMeasure<unsigned long long>( getCell(), "DWL(l)" , totalWireLength                  , 12 );
-    addMeasure<unsigned long long>( getCell(), "fWL(l)" , totalWireLength-routedWireLength , 12 );
-    addMeasure<double>            ( getCell(), "WLER(%)", (expandRatio-1.0)*100.0 );
+    float ratio = ((float)hunrouteds / (float)unrouteds.size()) * 100.0;
+    result.str("");
+    result << setprecision(4) << ratio << "% [" << hunrouteds << "]";
+    cmess1 << Dots::asString( "     - Unrouted horizontals", result.str() ) << endl;
+
+    ratio = ((float)vunrouteds / (float)unrouteds.size()) * 100.0;
+    result.str("");
+    result << setprecision(4) << ratio << "% [" << vunrouteds << "]";
+    cmess1 << Dots::asString( "     - Unrouted verticals", result.str() ) << endl;
+
+    addMeasure<size_t>  ( "Segs"   , routeds+unrouteds.size() );
+    addMeasure<uint64_t>( "DWL(l)" , totalWireLength                  , 12 );
+    addMeasure<uint64_t>( "fWL(l)" , totalWireLength-routedWireLength , 12 );
+    addMeasure<double>  ( "WLER(%)", expandRatio );
   }
 
 
   void  KatanaEngine::dumpMeasures ( ostream& out ) const
   {
     vector<Name> measuresLabels;
-    measuresLabels.push_back( "Gates"   );
-    measuresLabels.push_back( "GCells"  );
-    measuresLabels.push_back( "knikT"   );
-    measuresLabels.push_back( "knikS"   );
-    measuresLabels.push_back( "GWL(l)"  );
-    measuresLabels.push_back( "Area(l2)");
-    measuresLabels.push_back( "Sat."    );
-    measuresLabels.push_back( "loadT"   );
-    measuresLabels.push_back( "loadS"   );
-    measuresLabels.push_back( "Globals" );
-    measuresLabels.push_back( "Edges"   );
-    measuresLabels.push_back( "assignT" );
-    measuresLabels.push_back( "algoT"   );
-    measuresLabels.push_back( "algoS"   );
-    measuresLabels.push_back( "finT"    );
-    measuresLabels.push_back( "Segs"    );
-    measuresLabels.push_back( "DWL(l)"  );
-    measuresLabels.push_back( "fWL(l)"  );
-    measuresLabels.push_back( "WLER(%)" );
-    measuresLabels.push_back( "Events"  );
-    measuresLabels.push_back( "UEvents" );
+    measuresLabels.push_back( getMeasureLabel("Gates"   ) );
+    measuresLabels.push_back( getMeasureLabel("GCells"  ) );
+  //measuresLabels.push_back( getMeasureLabel("knikT"   ) );
+  //measuresLabels.push_back( getMeasureLabel("knikS"   ) );
+  //measuresLabels.push_back( getMeasureLabel("GWL(l)"  ) );
+    measuresLabels.push_back( getMeasureLabel("Area(l2)") );
+    measuresLabels.push_back( getMeasureLabel("Sat."    ) );
+    measuresLabels.push_back( getMeasureLabel("loadT"   ) );
+    measuresLabels.push_back( getMeasureLabel("loadS"   ) );
+    measuresLabels.push_back( getMeasureLabel("H-ovE"   ) );
+    measuresLabels.push_back( getMeasureLabel("V-ovE"   ) );
+    measuresLabels.push_back( getMeasureLabel("Globals" ) );
+    measuresLabels.push_back( getMeasureLabel("Edges"   ) );
+    measuresLabels.push_back( getMeasureLabel("assignT" ) );
+    measuresLabels.push_back( getMeasureLabel("algoT"   ) );
+    measuresLabels.push_back( getMeasureLabel("algoS"   ) );
+    measuresLabels.push_back( getMeasureLabel("finT"    ) );
+    measuresLabels.push_back( getMeasureLabel("Segs"    ) );
+    measuresLabels.push_back( getMeasureLabel("DWL(l)"  ) );
+    measuresLabels.push_back( getMeasureLabel("fWL(l)"  ) );
+    measuresLabels.push_back( getMeasureLabel("WLER(%)" ) );
+    measuresLabels.push_back( getMeasureLabel("Events"  ) );
+    measuresLabels.push_back( getMeasureLabel("UEvents" ) );
 
     const MeasuresSet* measures = Measures::get( getCell() );
 
-    out << "#" << endl;
-    out << "# " << getCell()->getName() << endl;
-    out << measures->toStringHeaders(measuresLabels) << endl;
-    out << measures->toStringDatas  (measuresLabels) << endl;
-
-    measures->toGnuplot( "GCells Density Histogram", getString(getCell()->getName()) );
+    if (measures) {
+      out << "#" << endl;
+      out << "# " << getCell()->getName() << endl;
+      out << measures->toStringHeaders(measuresLabels) << endl;
+      for ( size_t i=0 ; i<=getPassNumber() ; ++i ) {
+        out << measures->toStringDatas(measuresLabels,i) << endl;
+      
+        measures->toGnuplot( getMeasureLabel("GCells Density Histogram")
+                           , i, getString(getCell()->getName()) );
+      }
+    } else {
+      cerr << Warning( "KatanaEngine::dumpMeasures(): \"%s\" has no measures yet."
+                     , getString(getCell()->getName()).c_str()
+                     ) << endl;
+    }
   }
 
 
   void  KatanaEngine::dumpMeasures () const
   {
+    cmess1 << "  o  Dumping measurements." << endl;
+
     ostringstream path;
-    path << getCell()->getName() << ".knik-katana.dat";
+    path << getCell()->getName() << ".katana.dat";
 
     ofstream sfile ( path.str().c_str() );
     dumpMeasures( sfile );
@@ -808,6 +837,40 @@ namespace Katana {
     cdebug_tabw(155,-1);
   }
 
+
+  void  KatanaEngine::resetRouting ()
+  {
+    _gutKatana();
+
+    UpdateSession::open();
+    for ( Net* net : getCell()->getNets() ) {
+      vector<Component*> removeds;
+
+      for ( Component* component : net->getComponents() ) {
+        if (dynamic_cast<Plug   *>(component)) continue;
+        if (dynamic_cast<Contact*>(component)) removeds.push_back( component );
+      }
+      for ( Component* component : removeds ) component->destroy();
+    }
+
+    for ( Net* net : getCell()->getNets() ) {
+      vector<Component*> removeds;
+
+      for ( Component* component : net->getComponents() ) {
+        if (dynamic_cast<Plug*>(component)) continue;
+        removeds.push_back( component );
+      }
+      for ( Component* component : removeds ) component->destroy();
+    }
+
+    setState( Anabatic::EngineCreation );
+    setGlobalRoutingSuccess  ( false );
+    setDetailedRoutingSuccess( false );
+    UpdateSession::close();
+    
+    getCell()->resetFlags( Cell::Flags::Routed );
+  }
+  
 
   TrackElement* KatanaEngine::_lookup ( Segment* segment ) const
   {

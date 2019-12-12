@@ -48,6 +48,7 @@ namespace Hurricane {
               Quark*        _getQuark           ( SharedPath* sharedPath = NULL ) const;
     protected:                                  
                             Entity              ();
+      virtual              ~Entity              () throw(Error);
       virtual void          _postCreate         ();
       virtual void          _preDestroy         ();
   };

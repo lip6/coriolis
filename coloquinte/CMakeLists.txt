@@ -3,6 +3,8 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(COLOQUINTE)
 
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}")
+
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  
  cmake_minimum_required(VERSION 2.8.9)

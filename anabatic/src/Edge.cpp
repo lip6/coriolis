@@ -355,9 +355,8 @@ namespace Anabatic {
 
   size_t  Edge::ripup ()
   {
-    AnabaticEngine* anabatic        = getAnabatic();
-    DbU::Unit       globalThreshold = Session::getSliceHeight()*3;
-    size_t          netCount        = 0;
+    AnabaticEngine* anabatic = getAnabatic();
+    size_t          netCount = 0;
 
     sort( _segments.begin(), _segments.end(), SortSegmentByLength() );
 
@@ -379,6 +378,7 @@ namespace Anabatic {
         anabatic->ripup( _segments[truncate], Flags::Propagate );
       }
       
+    // DbU::Unit  globalThreshold = Session::getSliceHeight()*3;
     // for ( size_t i=0 ; i<_segments.size() ; ) {
     //   if (_segments[i]->getLength() >= globalThreshold) {
     //     NetData* netData = anabatic->getNetData( _segments[i]->getNet() );

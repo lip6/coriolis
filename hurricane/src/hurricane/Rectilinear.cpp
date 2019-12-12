@@ -62,9 +62,12 @@ namespace Hurricane {
     for ( size_t i=0 ; i<points.size() ; ++i ) {
       size_t j = (i+1) % points.size();
 
-      if (   (points[i].getX() != points[j].getX())
-         and (points[i].getY() != points[j].getY()) )
-         throw Error( "Rectilinear::create(): Can't create, non H/V edge." );
+      DbU::Unit dx = std::abs( points[i].getX() - points[j].getX() );
+      DbU::Unit dy = std::abs( points[i].getY() - points[j].getY() );
+
+      if ( (dx != 0) and (dy != 0) and (dx != dy) )
+         throw Error( "Rectilinear::create(): Can't create, non H/V edge (points %d:%s - %d:%s)."
+                    , i, getString(points[i]).c_str(), j, getString(points[j]).c_str() );
     }
 
     Rectilinear* rectilinear = new Rectilinear ( net, layer, points );

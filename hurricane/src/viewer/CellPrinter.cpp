@@ -92,21 +92,21 @@ namespace Hurricane {
   {
     _screenCellWidget = cellWidget;
 
-    array<string,14> labels = { "fallback"
-                              , "rubber"
-                              , "phantom"
-                              , "boundaries"
-                              , "marker"
-                              , "grid"
-                              , "spot"
-                              , "ghost"
-                              , "text.ruler"
-                              , "text.cell"
-                              , "text.instance"
-                              , "text.components"
-                              , "text.references"
-                              , "undef"
-                              };
+    array<string,14> labels = {{ string("fallback"        )
+                               , string("rubber"          )
+                               , string("phantom"         )
+                               , string("boundaries"      )
+                               , string("marker"          )
+                               , string("grid"            )
+                               , string("spot"            )
+                               , string("ghost"           )
+                               , string("text.ruler"      )
+                               , string("text.cell"       )
+                               , string("text.instance"   )
+                               , string("text.components" )
+                               , string("text.references" )
+                               , string("undef"           )
+                              }};
 
     for ( string label : labels )
       _cellWidget->setLayerVisible( label

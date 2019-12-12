@@ -43,7 +43,6 @@ namespace  Isobar {
     extern PyObject*                             PyPlacementStatus_Link           ( Hurricane::Instance::PlacementStatus* );
     extern void                                  PyPlacementStatus_LinkPyType     ();
     extern void                                  PyPlacementStatus_postModuleInit ();
-    extern Hurricane::Instance::PlacementStatus  PyInt_AsPlacementStatus          ( PyObject* );
 
 
 #define IsPyPlacementStatus(v)  ( (v)->ob_type == &PyTypePlacementStatus )
@@ -52,6 +51,10 @@ namespace  Isobar {
 
 
   }  // End of extern "C".
+
+
+  extern Hurricane::Instance::PlacementStatus  PyInt_AsPlacementStatus          ( PyObject* );
+
 
 }  // End of Isobar namespace.
 
