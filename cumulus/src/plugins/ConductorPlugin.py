@@ -20,6 +20,7 @@ try:
   import math
   import Cfg
   import Hurricane
+  from   Hurricane  import DbU
   from   Hurricane  import Breakpoint
   from   Hurricane  import UpdateSession
   import Viewer
@@ -66,9 +67,24 @@ def ScriptMain ( **kw ):
       stopLevel = Cfg.getParamInt('conductor.stopLevel').asInt()
     Breakpoint.setStopLevel( stopLevel )
 
+    Cfg.Configuration.pushDefaultPriority( Cfg.Parameter.Priority.Interactive )
+
+    grIterations = 10
+    if Cfg.hasParameter('anabatic.globalIterations'):
+      grIterations = Cfg.getParamInt('anabatic.globalIterations').asInt()
+
+    grIterationsEstimate = 7
+    if Cfg.hasParameter('anabatic.globalIterationsEstimate'):
+      grIterationsEstimate = Cfg.getParamInt('anabatic.globalIterationsEstimate').asInt()
+    Cfg.getParamInt('anabatic.globalIterations').setInt( grIterationsEstimate )
+
     maxPlaceIterations = 2
     if Cfg.hasParameter('conductor.maxPlaceIterations'):
       maxPlaceIterations = Cfg.getParamInt('conductor.maxPlaceIterations').asInt()
+
+    useFixedAbHeight = False
+    if Cfg.hasParameter('conductor.useFixedAbHeight'):
+      useFixedAbHeight = Cfg.getParamBool('conductor.useFixedAbHeight').asBool()
 
     cell = None
     if kw.has_key('cell') and kw['cell']:
@@ -78,6 +94,7 @@ def ScriptMain ( **kw ):
     if kw.has_key('editor') and kw['editor']:
       editor = kw['editor']
       print '  o  Editor found, running in graphic mode.'
+      editor.setLayerVisible( 'rubber', False )
       if cell == None: cell = editor.getCell()
 
     if cell == None:
@@ -102,13 +119,20 @@ def ScriptMain ( **kw ):
       etesian = Etesian.EtesianEngine.create( cell )
       etesian.setPassNumber( iteration )
       if editor:    etesian.setViewer( editor )
-      if iteration: etesian.resetPlacement()
+      if iteration:
+        if useFixedAbHeight and iteration == 1:
+          etesian.setFixedAbHeight( cell.getAbutmentBox().getHeight() )
+          print 'etesian.setFixedAbHeight():', DbU.getValueString(cell.getAbutmentBox().getHeight())
+        etesian.resetPlacement()
       etesian.place()
       etesian.destroy()
       etesian = None
       if editor:
         editor.refresh()
         editor.fit()
+
+      if iteration+1 == maxPlaceIterations:
+        Cfg.getParamInt('anabatic.globalIterations').setInt( grIterations )
 
       katana = Katana.KatanaEngine.create( cell )
       katana.setPassNumber( iteration )
@@ -120,6 +144,8 @@ def ScriptMain ( **kw ):
                             )
                            #| Katana.Flags.ShowFailedNets 
       Breakpoint.stop( 1, 'After routing iteration %d' % iteration )
+      if editor:
+        editor.setShowSelection( False )
 
       if katana.isGlobalRoutingSuccess(): break
       iteration += 1
@@ -137,6 +163,8 @@ def ScriptMain ( **kw ):
       katana = None
       
    #plugins.RSavePlugin.ScriptMain( **kw )
+
+    Cfg.Configuration.popDefaultPriority()
 
   except Exception, e:
     catch( e )

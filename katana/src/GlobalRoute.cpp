@@ -493,6 +493,9 @@ namespace Katana {
     if (getState() >= EngineState::EngineGlobalLoaded)
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 
+    if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
+    Breakpoint::stop( 1, "Bloated cells from previous placement iteration." );
+
     startMeasures();
     cmess1 << "  o  Running global routing." << endl;
 
@@ -580,12 +583,14 @@ namespace Katana {
       edgeOverflowWL = 0;
       netCount       = 0;
       if (iteration < globalIterations - 1) {
+        for ( Edge* edge : ovEdges ) {
+          edgeOverflowWL += edge->getRealOccupancy() - edge->getCapacity();
+        }
+        
         size_t iEdge = 0;
         while ( iEdge < ovEdges.size() ) {
-          Edge* edge = ovEdges[iEdge];
-
-          edgeOverflowWL += edge->getRealOccupancy() - edge->getCapacity();
-          netCount       += edge->ripup();
+          Edge* edge  = ovEdges[iEdge];
+          netCount   += edge->ripup();
 
           if (iEdge >= ovEdges.size()) break;
           if (ovEdges[iEdge] == edge) {
@@ -597,16 +602,15 @@ namespace Katana {
           }
         }
 
-      //dijkstra->setSearchAreaHalo( (getSearchHalo() + 3*(iteration/3)) * Session::getSliceHeight() );
-        dijkstra->setSearchAreaHalo( 3 * Session::getSliceHeight() );
+        dijkstra->setSearchAreaHalo( (getSearchHalo() + 3*(iteration/3)) * Session::getSliceHeight() );
       }
 
-      cmess2 << " ovE:" << setw(4) << overflow << " " << setw(5) << edgeOverflowWL;
+      cmess2 << " ovE:" << setw(4) << overflow << " ovWL:" << setw(5) << edgeOverflowWL;
 
       cmess2 << " ripup:" << setw(4) << netCount << right;
       suspendMeasures();
-      cmess2 << " " << setw(6) << Timer::getStringMemory(getTimer().getIncrease())
-             << " " << setw(5) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
+      cmess2 << " " << setw(7) << Timer::getStringMemory(getTimer().getIncrease())
+             << " " << setw(6) << Timer::getStringTime  (getTimer().getCombTime()) << endl;
       resumeMeasures();
 
       ++iteration;

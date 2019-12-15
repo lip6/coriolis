@@ -68,7 +68,7 @@ def runScript ( scriptPath, editor ):
   try:
       kw = { }
       if editor: kw[ 'editor' ] = editor
-      sys.path.append(os.path.dirname(scriptPath))
+      sys.path.insert( 0, os.path.dirname(scriptPath) )
     
       module = __import__( os.path.basename(scriptPath), globals(), locals() )
       if not module.__dict__.has_key('ScriptMain'):

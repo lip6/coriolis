@@ -394,7 +394,7 @@ namespace Etesian {
     double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
 
     double rows = 0.0;
-    setFixedAbHeight( 0 );
+  //setFixedAbHeight( 0 );
     if (getFixedAbHeight()) rows = getFixedAbHeight() / getSliceHeight();
     else                    rows = std::ceil( sqrt( gcellLength/aspectRatio ) );
 
