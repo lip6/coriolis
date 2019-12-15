@@ -10,7 +10,6 @@ import oroshi
 from   CapacitorUnit     import  CapacitorUnit
 from   CapacitorMatrix   import  CapacitorStack
 from   CapacitorVRTracks import  VerticalRoutingTracks
-#from   collections       import  OrderedDict
 
 
 ## Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix. Connections are put in place with reference to a given matching scheme. Elementary capacitor units are connected to horizontal and vertical routeing tracks that represent top plates and bottom plates nets of C1 and C2 . Supported types of capacitors are Poly-Poly and Metal-Metal. Technologycal rules are provided by 350 nm AMS CMOS technology with three-four metal layers. Metal layers that are used for routeing are placed similarly to horziontal-vertical (HV) symbolic Alliance CAD tool routeer, where horizontal metal channels are drawn in metal 2 and the vertical ones are in metal 3. Given a matrix of dimensions \f$ R*C \f$, the total number of vertical tracks is \f$ 2C+2 \f$ equivalent to \f$ C+1 \f$ couples, ensuring that every elementary capacitor is positioned between four vertical tracks, two from each side. In fact, every adjacent couple of these tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.
@@ -58,15 +57,16 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         VerticalRoutingTracks.__init__( self, vRTInstance.capacitorInstance, vRTInstance.capacitor )
 
         if self.dummyRing == True :
-
             self.capacitor = [vRTInstance.capacitor[1][1:len(vRTInstance.capacitor[1])-1]]
+
             for i in range(2,self.matrixDim["rows"]+1):
                 self.capacitor.append(vRTInstance.capacitor[i][1:len(vRTInstance.capacitor[1])-1])
-            self.dummyRingCapacitor = [ vRTInstance.capacitor[0], vRTInstance.capacitor[-1] ]        
+
+            self.dummyRingCapacitor      = [ vRTInstance.capacitor[0], vRTInstance.capacitor[-1] ]        
             self.dummyRingVRLayersDict   = {}
         
         self.hRoutingLayer_width         =   0 
-        self.hRoutingTrack_width         =   vRTInstance.hRoutingTrack_width #gethRoutingTrack_width()
+        self.hRoutingTrack_width         =   vRTInstance.hRoutingTrack_width 
         self.minSpacing_hRoutingTrack    =   0 
         self.minimumPosition             =   0
         self.maximumPosition             =   0
@@ -276,7 +276,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         abutmentBoxXMin                 = self.capacitorInstance.computeAbutmentBoxDimensions( self.abutmentBox_spacing )["XMin"]
         abutmentBoxXMax                 = abutmentBoxXMin + self.capacitorInstance.computeAbutmentBoxDimensions( self.abutmentBox_spacing )["width" ]
 
-        bondingBoxDimensions["XMin"   ] = self.vRoutingTrackXCenter[0 ]["t1"] - self.vRoutingTrack_width/2
+        bondingBoxDimensions["XMin"   ] = self.vRoutingTrackXCenter[0]["t1"] - self.vRoutingTrack_width/2
 
         if self.capacitorsNumber % 2 == 0 :
             factor                      = self.capacitorsNumber 
@@ -758,7 +758,7 @@ def ScriptMain( **kw ):
     capWithVRT.create()
 
     routedCap         = RoutMatchedCapacitor( capWithVRT )
-    surface           = routedCap.route(  )   
+    surface           = routedCap.route(True)   
     print('routeMatchedCap bbMode', surface)
 
     AllianceFramework.get().saveCell( Device, Catalog.State.Views )
