@@ -136,13 +136,14 @@ namespace Isobar {
     _pyArgs   = NULL;
     _pyKw     = NULL;
 
-    if (_pyResult == NULL) {
-      cerr << "Something has gone slightly wrong" << endl;
-    }
-
     if (PyErr_Occurred()) {
       PyErr_Print();
+      PyErr_Clear();
       returnCode = false;
+    }
+
+    if (_pyResult == NULL) {
+      cerr << "Something has gone slightly wrong" << endl;
     }
 
     finalize();
@@ -167,12 +168,15 @@ namespace Isobar {
 
     _pyResult = PyObject_Call( _pyFunction, pyArgs, NULL );
 
+    if (PyErr_Occurred()) {
+      PyErr_Print();
+      PyErr_Clear();
+    }
+
     if (_pyResult == NULL) {
       cerr << "Something has gone slightly wrong" << endl;
       return NULL;
     }
-
-    if (PyErr_Occurred()) PyErr_Print();
 
     return _pyResult;
   }

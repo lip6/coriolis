@@ -87,7 +87,7 @@ class Rules ( object ):
             , 'corrFactor90'
             , 'corrFactor135'
             , 'minRpolyhSquares'
-]
+            ]
 
   def __init__ ( self, dtr ):
     trace( 100, '\tRules.__init__()\n' )
@@ -104,13 +104,13 @@ class Rules ( object ):
     words = attribute.split( '_' )
     try:
       if len(words) == 1:
-        if words[0].endswith('Cap'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        if words[0].endswith('ContRes' ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        if words[0].endswith('Res'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        if words[0].endswith('ctor90'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        if words[0].endswith('ctor135' ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        if words[0].endswith('quares'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
-      elif len(words) < 4:
+        if   words[0].endswith('Cap'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        elif words[0].endswith('ContRes' ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        elif words[0].endswith('Res'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        elif words[0].endswith('ctor90'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        elif words[0].endswith('ctor135' ): value = self.dtr.getUnitRule( words[0] ).getValue()
+        elif words[0].endswith('quares'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
+      if (value is None) and len(words) < 4:
         value = self.dtr.getPhysicalRule( *tuple(words) ).getValue()
     except Exception, e:
       print e
