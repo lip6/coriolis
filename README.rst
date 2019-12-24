@@ -5,7 +5,7 @@
 Coriolis README
 ===============
 
-**Tag: Test 2 of LIP6 gitlab**
+**Tag: Test 3 of LIP6 gitlab**
 
 Coriolis is a free database, placement tool and routing tool for VLSI design.
 
