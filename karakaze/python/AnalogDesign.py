@@ -54,6 +54,9 @@ import Katana
 import Bora
 
 
+helpers.setTraceLevel( 110 )
+
+
 NMOS    = Transistor.NMOS
 PMOS    = Transistor.PMOS
 PIP     = CapacitorFamily.PIP
@@ -350,8 +353,18 @@ class AnalogDesign ( object ):
 
         if not path: return
         self.parameters.read( path );
+
         for dspec in self.devicesSpecs:
-          if len(dspec) > 2:
+          if dspec[0] == MultiCapacitor:
+            Cname       = dspec[1]
+            Cparameters = self.parameters.getCapacitor( Cname )
+            if not Cparameters:
+              raise Error( 3, [ 'AnalogDesign.readParameters(): Missing parameters for capacity \"%s\".' % Cname ] )
+              continue
+            print dspec[5]
+            dspec[4] = Cparameters.C * 1e+12
+            trace( 110, '\t- \"%s\" : C:%fpF\n' % (Cname ,dspec[4]) )
+          else:
             Tname       = dspec[1].split('_')[0]
             Tparameters = self.parameters.getTransistor( Tname )
             if not Tparameters:
@@ -410,6 +423,8 @@ class AnalogDesign ( object ):
 
               device = dspec[0].create( self.library, dspec[1], dspec[3], len(capaValues) )
               device.getParameter( 'Layout Styles' ).setValue( dspec[2] )
+              print device.getParameter( 'matrix'        )
+              device.getParameter( 'matrix' ).setMatrix( dspec[5] )
               for i in range(len(capaValues)):
                 device.getParameter( 'capacities' ).setValue( i, capaValues[i]  )
 

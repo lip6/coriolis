@@ -7,15 +7,31 @@ class Parameters ( object ):
     class Transistor ( object ):
 
         def __init__ ( self, aName ):
-            name = aName
-            L    = 0.0
-            W    = 0.0
-            M    = 0
+            self.name = aName
+            self.L    = 0.0
+            self.W    = 0.0
+            self.M    = 0
+            return
+
+    class Capacitor ( object ):
+
+        def __init__ ( self, aName ):
+            self.name = aName
+            self.C    = 0.0
+            return
+
+    class Resistor ( object ):
+
+        def __init__ ( self, aName ):
+            self.name = aName
+            self.R    = 0.0
             return
 
 
     def __init__ ( self ):
         self.transistors = { }
+        self.capacitors  = { }
+        self.resistors   = { }
         self.indexToName = { }
         return
 
@@ -54,13 +70,59 @@ class Parameters ( object ):
    #def getTransistorM ( self, ref ): return self.getTransistor(ref)[2]
 
 
+    def addCapacitor ( self, name, value ):
+        lname = name.lower()
+        if self.capacitors.has_key(lname):
+          print 'Duplicated capacitor "%s" (ignored).' % lname
+        else:
+          print 'Add capacitor "%s"' % lname
+          self.capacitors[ lname ]   = Parameters.Capacitor( lname )
+          self.capacitors[ lname ].C = value
+          
+        return self.capacitors[ lname ]
+
+
+    def getCapacitor ( self, ref ):
+        capacitor = None
+        lname     = ref.lower()
+        if self.capacitors.has_key(lname):
+          capacitor = self.capacitors[lname]
+        else:
+          print 'No capacitor named "%s".' % ref
+        return capacitor
+
+
+    def addResistor ( self, name, value ):
+        lname = name.lower()
+        if self.resistors.has_key(lname):
+          print 'Duplicated resistor "%s" (ignored).' % lname
+        else:
+          self.resistors[ lname ]   = Parameters.Resistor( lname )
+          self.resistors[ lname ].R = value
+          
+        return self.resistors[ lname ]
+
+
+    def getResistor ( self, ref ):
+        resistor = None
+        lname     = ref.lower()
+        if self.capactors.has_key(lname):
+          resistor = self.capactors[lname]
+        else:
+          print 'No resistor named "%s".' % ref
+        return resistor
+
+
     def read ( self, file ):
-        reSpecTran = re.compile( r'^\* SPECIFICATIONS DE M(?P<index>\d+)\s+:\s+(?P<name>\w+) \*$' )
-        reSpecL    = re.compile( r'L_(?P<index>\d+)\s+(?P<float>[0-9.e-]+)' )
-        reSpecW    = re.compile( r'W_(?P<index>\d+)\s+(?P<float>[0-9.e-]+)' )
-        reSpecM    = re.compile( r'M_(?P<index>\d+)\s+(?P<int>\d+)' )
+        reSpecCapa  = re.compile( r'^(?P<name>C\w+)\s+(?P<value>.*)$' )
+        reSpecResis = re.compile( r'^(?P<name>R\w+)\s+(?P<value>.*)$' )
+        reSpecTran  = re.compile( r'^\* SPECIFICATIONS DE M(?P<index>\d+)\s+:\s+(?P<name>\w+) \*$' )
+        reSpecL     = re.compile( r'L_(?P<index>\d+)\s+(?P<float>[0-9.e-]+)' )
+        reSpecW     = re.compile( r'W_(?P<index>\d+)\s+(?P<float>[0-9.e-]+)' )
+        reSpecM     = re.compile( r'M_(?P<index>\d+)\s+(?P<int>\d+)' )
         fd = open( file, 'r' )
         for line in fd.readlines():
+          if line.startswith('REGIME_'): continue
           
           m = reSpecTran.match( line[:-1] )
           if m:
@@ -92,5 +154,13 @@ class Parameters ( object ):
            #print '  %d:M: %d' % (int(m.group('index')), M)
             self.getTransistor(i).M = M
             self.getTransistor(i).W = M * self.getTransistor(i).W
+
+          m = reSpecCapa.match( line[:-1] )
+          if m:
+            self.addCapacitor( m.group('name'), float(m.group('value')) )
+
+          m = reSpecResis.match( line[:-1] )
+          if m:
+            self.addResistor( m.group('name'), float(m.group('value')) )
 
         fd.close()

@@ -39,6 +39,8 @@ class CapacitorStack( CapacitorUnit ):
     #  \param   columnNumber       Number of columns in the matrix of capacitors.
 
     def __init__( self, device, capacitance,  capacitorType, abutmentBoxPosition, nets, unitCap = 0, matrixDim = [1,1], matchingMode = False,  matchingScheme = [], dummyRing = False, dummyElement = False ):
+        print 'CapacitorStack.__init__()'
+        print 'matrixDim:', matrixDim
    
         self.device               =     device
         self.capacitorType        =     capacitorType
@@ -62,6 +64,7 @@ class CapacitorStack( CapacitorUnit ):
         self.vRoutingTrack_width  =      0
 
         if self.__areInputDataOK__(capacitance) == True :
+            print 'Input data are OK'
             if self.matchingMode   == False :                
                 self.compactCapDim =  self.__computeCapDim__( capacitance[0] , capacitorType ) 
 
@@ -134,24 +137,29 @@ class CapacitorStack( CapacitorUnit ):
 
 
     def __initGivenZeroUnitCap__( self, capacitance ):
+        print '__initGivenZeroUnitCap__'
+        print self.matrixDim.values()
 
         if ( self.matrixDim.values() == [1,1] and CapacitorUnit.__isCapacitorUnitOK__(self, self.compactCapDim) ):
-
+            print 'Case 1'
             [ self.capacitance , self.unitCapDim ] = [ capacitance , self.compactCapDim ]
             
         elif ( self.matrixDim.values() == [1,1] and not(CapacitorUnit.__isCapacitorUnitOK__( self, self.compactCapDim)) ):
             raise Error(1, '__init__(): Impossible to draw the capacitor, dimensions are either too large or too small, "%s".' % self.compactCapDim ) #com2 : use to physical 
             
         elif ( self.matrixDim["columns"]>1 or self.matrixDim["rows"]>1) :
-
             unitCapacitance     = capacitance / (self.matrixDim["columns"]*self.matrixDim["rows"])
             unitCapDim          = self.__computeCapDim__( unitCapacitance, self.capacitorType )
 
             if CapacitorUnit.__isCapacitorUnitOK__(self, unitCapDim) == True :
+                print 'This is a mutlicapacitor'
                 self.unitCapDim = unitCapDim
                 [ self.unitCapacitance , self.capacitance, self.doMatrix ] = [ unitCapacitance , capacitance, True ] 
+            else:
+                print 'This is a capacitor unit'
 
-        else : raise Error( 1, '__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small, "%s".' % self.unitCapDim ) #com2 : use to physical  
+        else:
+            raise Error( 1, '__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small, "%s".' % self.unitCapDim ) #com2 : use to physical  
                         
         return
 
@@ -181,6 +189,7 @@ class CapacitorStack( CapacitorUnit ):
 
 
     def __initGivenZeroUnitCapInMatchingMode__( self, capacitance ):
+        print '__initGivenZeroUnitCapInMatchingMode__'
 
         if self.matrixDim.values() == [1,1] or (self.matrixDim["columns"] == len(self.matchingScheme[0]) and self.matrixDim["rows"] == len(self.matchingScheme)) :
 
@@ -237,6 +246,10 @@ class CapacitorStack( CapacitorUnit ):
         for k in range(0, self.capacitorsNumber):
             unitCapList.append( capacitance[k]/self.capacitorIdOccurence(k) )
 
+        print self.capacitorsNumber
+        print 'capacitance', capacitance
+        print 'unitCapList', unitCapList
+        print '============='
         return unitCapList
 
 
@@ -344,7 +357,8 @@ class CapacitorStack( CapacitorUnit ):
         elif  bbMode == False : 
             drawnCapacitor = self.drawCapacitorStack( )
             output = drawnCapacitor
-        else :raise Error(1, 'create(): The bonding box mode parameter, "bbMode" must be either True or False : %s.' %bbMode )
+        else:
+            raise Error(1, 'create(): The bonding box mode parameter, "bbMode" must be either True or False : %s.' %bbMode )
 
         UpdateSession.close  ()
    
@@ -372,7 +386,7 @@ class CapacitorStack( CapacitorUnit ):
                 self.drawTopPlatesRLayers   ( topPlateRLayer   , drawnActiveCapacitor )                
 
         else:
-            drawnCapacitor = CapacitorUnit( self.device, self.capacitance, self.capacitorType, [self.abutmentBoxPosition["XMin"], self.abutmentBoxPosition["YMin"]] ) 
+            drawnCapacitor = CapacitorUnit( self.device, self.capacitorType, [self.abutmentBoxPosition["XMin"], self.abutmentBoxPosition["YMin"]], self.capacitance ) 
             drawnCapacitor.create( self.nets[0][0], self.nets[0][1] )
 
         return drawnCapacitor

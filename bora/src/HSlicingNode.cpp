@@ -189,7 +189,10 @@ namespace Bora {
   {
     cdebug_log(535,1) << "HSlicingNode::updateGlobalsize() - " << this << endl;
 
-    for ( SlicingNode* child : _children ) child->updateGlobalSize(); 
+    for ( SlicingNode* child : _children ) {
+      cdebug_log(535,0) << "child: " << child << endl;
+      child->updateGlobalSize(); 
+    }
 
     if (not getMaster()) {
       if (getNbChild() == 1) {
