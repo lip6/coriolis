@@ -48,6 +48,7 @@ namespace Katana {
     , _ripupLimits         ()
     , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
     , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
+    , _bloatOverloadAdd    (Cfg::getParamInt ("katana.bloatOverloadAdd"    ,      4)->asInt())
     , _flags               (0)
     , _profileEventCosts   (Cfg::getParamBool("katana.profileEventCosts"   ,false  )->asBool())
   {
@@ -57,7 +58,8 @@ namespace Katana {
     _ripupLimits[LongGlobalRipupLimit] = Cfg::getParamInt("katana.longGlobalRipupLimit" , 5)->asInt();
     _ripupLimits[ShortNetRipupLimit]   = Cfg::getParamInt("katana.shortNetRipupLimit"   ,16)->asInt();
 
-    if (Cfg::getParamBool("katana.useGlobalEstimate",false)->asBool()) _flags |= UseGlobalEstimate;
+    if (Cfg::getParamBool("katana.useGlobalEstimate"    ,false)->asBool()) _flags |= UseGlobalEstimate;
+    if (Cfg::getParamBool("katana.useStaticBloatProfile",true )->asBool()) _flags |= UseStaticBloatProfile;
 
     // for ( size_t i=0 ; i<MaxMetalDepth ; ++i ) {
     //   ostringstream paramName;
@@ -91,6 +93,8 @@ namespace Katana {
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
+    , _bloatOverloadAdd    (other._bloatOverloadAdd)
+    , _flags               (other._flags)
     , _profileEventCosts   (other._profileEventCosts)
   {
     _ripupLimits[StrapRipupLimit]      = other._ripupLimits[StrapRipupLimit];
@@ -158,6 +162,7 @@ namespace Katana {
     cout << "  o  Configuration of ToolEngine<Katana> for Cell <" << cell->getName() << ">" << endl;
     cout << Dots::asUInt  ("     - Dijkstra GR search halo"            ,getSearchHalo()) << endl;
     cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
+    cout << Dots::asBool  ("     - Use static bloat profile"           ,useStaticBloatProfile()) << endl;
     cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
     cout << Dots::asUInt  ("     - Edge max H reserved local"          ,_hTracksReservedLocal) << endl;
     cout << Dots::asUInt  ("     - Edge max V reserved local"          ,_vTracksReservedLocal) << endl;
@@ -168,6 +173,7 @@ namespace Katana {
     cout << Dots::asUInt  ("     - Ripup limit, locals"                ,_ripupLimits[LocalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
+    cout << Dots::asUInt  ("     - Bloat overload additional penalty"  ,_bloatOverloadAdd) << endl;
 
     Super::print( cell );
   }

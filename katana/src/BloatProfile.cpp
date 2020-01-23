@@ -118,11 +118,13 @@ namespace {
 
   class Slice {
     public:
-      inline            Slice          ( Slices*, GCell* );
-      inline DbU::Unit  getY           () const;
-      inline void       add            ( Occurrence );
-      inline void       sort           ();
-             void       tagOverloadeds ( size_t& count, size_t& newCount );
+      inline            Slice                 ( Slices*, GCell* );
+      inline bool       useStaticBloatProfile () const;
+      inline uint32_t   getBloatOverloadAdd   () const;
+      inline DbU::Unit  getY                  () const;
+      inline void       add                   ( Occurrence );
+      inline void       sort                  ();
+             void       tagOverloadeds        ( size_t& count, size_t& newCount );
     private:
       Slices*               _owner;
       GCell*                _left;
@@ -240,6 +242,14 @@ namespace {
   }
 
 
+  inline bool  Slice::useStaticBloatProfile () const
+  { return _owner->getKatana()->useStaticBloatProfile(); }
+
+
+  inline uint32_t  Slice::getBloatOverloadAdd () const
+  { return _owner->getKatana()->getBloatOverloadAdd(); }
+
+
   void  Slice::tagOverloadeds ( size_t& count, size_t& newCount )
   {
     GCell*  gcell  = _left;
@@ -269,12 +279,13 @@ namespace {
       if (iLeft >= _instances.size()) break;
 
       if (overload) {
-        overload += 4;
+        overload += getBloatOverloadAdd();
 
         for ( size_t i=iLeft ; i<iRight ; ++i ) {
           BloatState* state = BloatExtension::get( _instances[i].getOccurrence() );
           if (not state) {
-            if (_owner->getKatana()->getPassNumber() > 0) continue;
+            if ( (_owner->getKatana()->getPassNumber() > 0) and useStaticBloatProfile() )
+              continue;
 
             state = BloatExtension::create( _instances[i].getOccurrence(), overload );
             ++newCount;

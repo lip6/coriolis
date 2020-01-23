@@ -1053,7 +1053,6 @@ namespace Etesian {
   {
     UpdateSession::open();
 
-    Box            topAb             = getBlockCell()->getAbutmentBox();
     Transformation topTransformation;
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.invert();
