@@ -1,7 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
-
 
 
 5. Make a script runnable through |cgt|

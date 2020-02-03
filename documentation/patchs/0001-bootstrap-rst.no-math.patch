@@ -1,0 +1,15 @@
+diff --git a/bootstrap-rst/bootstrap.py b/bootstrap-rst/bootstrap.py
+index c1bf8f1..f5df758 100755
+--- a/bootstrap-rst/bootstrap.py
++++ b/bootstrap-rst/bootstrap.py
+@@ -265,8 +265,8 @@ class HTMLTranslator(PelicanHTMLTranslator):
+         self.html_prolog.append(self.doctype)
+         self.meta.insert(0, self.content_type % self.settings.output_encoding)
+         self.head.insert(0, self.content_type % self.settings.output_encoding)
+-        if self.math_header:
+-            self.head.append(self.math_header)
++       #if self.math_header:
++       #    self.head.append(self.math_header)
+         # skip content-type meta tag with interpolated charset value:
+         self.html_head.extend(self.head[1:])
+         # self.body_prefix.append(self.starttag(node, 'div', CLASS='document'))

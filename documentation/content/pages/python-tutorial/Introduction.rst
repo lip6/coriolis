@@ -1,6 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
 
 
 1. Introduction
@@ -20,7 +18,7 @@ The only limitation is that you may not use |Hurricane| classes as base
 classes in |Python|.
 
 All |Hurricane| objects implements the |Python| ``__str__()`` function,
-they print the result of C++ ``::getString()``.
+they print the result of the C++ method ``::getString()``.
 
 
 1.1 Terminology

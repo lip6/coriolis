@@ -1,7 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
-
 
 5. Case 3 - Non-DBo Standalone Classe
 =======================================
@@ -17,7 +15,7 @@ that the C++ object is *copy constructible* (which should be the case).
 5.1 Class Header
 ~~~~~~~~~~~~~~~~~~
 
-Changes from :ref:`3.1 Class Associated Header File`:
+Changes from `3.1 Class Associated Header File`:
 
 * There is no ``PyPoint_Link()`` function, as it's related to the
   bi-directional communication mechanism.
@@ -64,7 +62,7 @@ Changes from :ref:`3.1 Class Associated Header File`:
 5.2 Class File
 ~~~~~~~~~~~~~~~~
 
-Changes from :ref:`3.2 Class Associated File`:
+Changes from `3.2 Class Associated File`:
 
 * As there is no ``PyPoint_Link()`` function, there is no call to any
   flavor of the ``DBoLinkcreatemethod()`` macro (obvious as it's *not*

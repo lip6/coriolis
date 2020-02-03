@@ -1,7 +1,3 @@
-==========================
-Stratus Developper's Guide
-==========================
-Sophie Belloeil
 
 
 Class Model

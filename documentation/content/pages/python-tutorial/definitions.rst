@@ -49,8 +49,3 @@
 .. _6.2 Creating Nets and connecting to Instances:  ./Netlist.html#id1
 
 .. |rightarrow|             replace:: :math:`\rightarrow`
-
-.. |fulladder_1|            image:: ./images/fulladder-1.png
-                            :alt:   The fulladder netlist
-                            :align: middle
-                            :width: 80%

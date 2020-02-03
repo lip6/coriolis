@@ -1,6 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
 
 |newpage|
 

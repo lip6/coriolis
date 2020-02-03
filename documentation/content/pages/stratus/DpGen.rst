@@ -1,7 +1,3 @@
-=======================
-DpGen generators manual
-=======================
-Sophie Belloeil
 
 
 DpgenInv

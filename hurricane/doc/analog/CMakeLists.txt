@@ -1,6 +1,6 @@
 # -*- mode: CMAKE; explicit-buffer-name: "CMakeLists.txt<hurricane/doc/analog>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/analog )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/analog )
                set ( latexInstallDir share/doc/coriolis2/en/latex/analog )
                set ( doxExtras       closed.png
                                      open.png

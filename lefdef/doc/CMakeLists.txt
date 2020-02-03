@@ -1,6 +1,6 @@
 # -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<lefdef/doc>" -*-
 
-     set ( htmlInstallDir  share/doc/coriolis2/en/html )
+     set ( htmlInstallDir  share/doc/coriolis2/en/html/doc )
      set ( latexInstallDir share/doc/coriolis2/en/pdf )
      set ( pdfInstallDir   share/doc/coriolis2/en/pdf )
 

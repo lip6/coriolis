@@ -1,7 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
-
 
 6. Encapsulating DbU
 ======================

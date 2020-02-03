@@ -1,6 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
 
 
 7. Working in real mode

@@ -1,6 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
 
 
 9. Advanced Topics

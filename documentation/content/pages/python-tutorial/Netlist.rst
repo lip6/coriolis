@@ -1,6 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
 
 
 6. Making a hierarchical Cell -- Netlist

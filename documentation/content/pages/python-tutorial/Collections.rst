@@ -1,6 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
 
 
 .. _2.1 The Alliance Framework:  ./CellNetComponent.html#the-allianceframework-crl-core

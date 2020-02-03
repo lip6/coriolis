@@ -1,7 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
-
 
 3. Case 1 - DBo Derived, Standalone 
 ======================================

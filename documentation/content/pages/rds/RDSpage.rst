@@ -1,13 +1,10 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
-
 
 .. Tools 
 .. |ocp|                            replace:: ``ocp``
 .. |nero|                           replace:: ``nero``
 .. |ring|                           replace:: ``ring``
-.. |s2r|                            replace:: ``s2r``
 .. |druc|                           replace:: ``druc``
 .. |graal|                          replace:: ``graal``
 .. |cougar|                         replace:: ``cougar``
@@ -55,32 +52,6 @@
 .. |RDS_GATE|                       replace:: ``RDS_GATE``
 .. |RDS_POLY|                       replace:: ``RDS_POLY``
 .. |RDS_ALU1|                       replace:: ``RDS_ALU1``
-
-.. Stand-alone images.
-.. |RDS_VW|                         image:: ./images/RDS_VW.png
-                                    :alt: RDS Variable Width Rule
-                                    :align: middle
-                                    :width: 60%
-
-.. |RDS_LCW|                        image:: ./images/RDS_LCW.png
-                                    :alt: RDS Left Constant Width Rule
-                                    :align: middle
-                                    :width: 40%
-
-.. |SegmentOrientation|             image:: ./images/SegmentOrientation.png
-                                    :alt: Symbolic Segment Orientations
-                                    :align: middle
-                                    :width: 50%
-
-.. |BIGVIA_1|                       image:: ./images/bigvia-1.png
-                                    :alt: BIGVIA holes
-                                    :align: middle
-                                    :width: 40%
-
-.. |BIGVIA_2|                       image:: ./images/bigvia-2.png
-                                    :alt: BIGVIA holes overlap
-                                    :align: middle
-                                    :width: 40%
 
 
 

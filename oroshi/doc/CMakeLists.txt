@@ -1,6 +1,6 @@
 # -*- mode: CMAKE; explicit-buffer-name: # "CMakeLists.txt<oroshi/doc>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/oroshi )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/oroshi )
                set ( latexInstallDir share/doc/coriolis2/en/latex/oroshi )
                set ( doxExtras       closed.png
                                      open.png

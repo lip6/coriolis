@@ -28,12 +28,15 @@
 .. Acronyms & names.
 .. |NDA|                            replace:: :sc:`nda`
 .. |OS|                             replace:: :sc:`os`
+.. |FOSS|                           replace:: :sc:`foss`
 .. |GNU|                            replace:: :sc:`gnu`
 .. |LGPL|                           replace:: :sc:`lgpl`
 .. |GPL|                            replace:: :sc:`gpl`
 .. |UPMC|                           replace:: :sc:`upmc`
 .. |SorbonneUniversite|             replace:: :sc:`Sorbonne Université`
 .. |SU|                             replace:: :sc:`su`
+.. |CIAN|                           replace:: :sc:`cian`
+.. |LIP6|                           replace:: :sc:`lip6`
 .. |Bull|                           replace:: :sc:`Bull`
 .. |Cadence|                        replace:: :sc:`Cadence`
 .. |Si2|                            replace:: :sc:`Si2`
@@ -57,6 +60,8 @@
 .. |Ubuntu|                         replace:: :sc:`Ubuntu`
 .. |MOSIS|                          replace:: :sc:`mosis`
 .. |Blif|                           replace:: :sc:`blif`
+.. |TSMC|                           replace:: :sc:`tsmc`
+.. |AMS|                            replace:: :sc:`ams`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -70,14 +75,23 @@
 .. |Masson|                         replace:: :sc:`Masson`
 .. |Sroka|                          replace:: :sc:`Sroka`
 .. |Yifei|                          replace:: :sc:`Yifei`
+.. |Mead|                           replace:: :sc:`Mead`
+.. |Conway|                         replace:: :sc:`Conway`
 
-.. |VLSI|                           replace:: :sc:`vlsi`
+.. |ASIC|                           replace:: :sc:`asic`
+.. |EDA|                            replace:: :sc:`eda`
+.. |RTL|                            replace:: :sc:`rtl`
+.. |HSL|                            replace:: :sc:`hsl`
+.. |IEEE|                           replace:: :sc:`ieee`
 .. |ANSI|                           replace:: :sc:`ansi`
 .. |MIPS|                           replace:: :sc:`mips`
 .. |Am2901|                         replace:: :sc:`Am2901`
+.. |CAIRO|                          replace:: :sc:`cairo`
+.. |CAIRO+|                         replace:: :sc:`cairo+`
 .. |Hurricane|                      replace:: :sc:`Hurricane`
 .. |CRL|                            replace:: :sc:`crl`
 .. |Alliance|                       replace:: :sc:`Alliance`
+.. |StaCS|                          replace:: :sc:`StaCS`
 .. |Yosys|                          replace:: :sc:`Yosys`
 .. |GenLib|                         replace:: :sc:`GenLib`
 .. |Nero|                           replace:: :sc:`Nero`
@@ -174,24 +188,38 @@
 .. _Apache License, Version 2.0:    http://www.apache.org/licences/LICENSE-2.0
 .. _FreePDK45:                      https://www.eda.ncsu.edu/wiki/FreePDK45:Contents
 .. _Yosys:                          http://www.clifford.at/yosys/
+.. _GHDL:                           https://github.com/ghdl/ghdl
+.. _Si2:                            http://www.si2.org/
+
+.. _GPL:                            http://www.gnu.org/copyleft/gpl.txt
+.. _LGPL:                           https://www.gnu.org/licenses/lgpl-3.0.html
+.. _Apache License, Version 2.0:    http://www.apache.org/licences/LICENSE-2.0
+.. _Tokai University:               http://www.u-tokai.ac.jp/international/
+.. _Shimizu Lab:                    http://labo.nshimizu.com/
+.. _Smartlabs:                      http://www.smartlabsinc.com/
+.. _Don Bosco University:           http://www.udb.edu.sv/
+.. _MyCMP:                          https://www.mycmp.fr/
 
 .. Standard CAO/VLSI Concepts.
 .. |netlist|                        replace:: *netlist*
 .. |netlists|                       replace:: *netlists*
 .. |layout|                         replace:: *layout*
 .. |layouts|                        replace:: *layouts*
+.. |VLSI|                           replace:: :sc:`vlsi`
+.. |GDS|                            replace:: :sc:`gds`
 .. |CMOS|                           replace:: :sc:`cmos`
 .. |VHDL|                           replace:: :sc:`vhdl`
 .. |NWELL|                          replace:: :sc:`nwell`
 .. |POWER|                          replace:: :sc:`power`
 .. |GROUND|                         replace:: :sc:`ground`
 
-.. MBK Concepts
+.. Alliance & MBK Concepts
 .. |MBK|                            replace:: :sc:`mbk`
 .. |LOFIG|                          replace:: :cb:`Lofig`
 .. |PHFIG|                          replace:: :cb:`Phfig`
 .. |SxLib|                          replace:: :sc:`SxLib`
 .. |RDS|                            replace:: :sc:`rds`
+.. |s2r|                            replace:: :cb:`s2r`
 
 .. Hurricane Concepts.
 .. |hypernet|                       replace:: *hypernet*

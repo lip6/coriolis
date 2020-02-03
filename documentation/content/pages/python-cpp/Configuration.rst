@@ -1,7 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
-
 
 2. Basic File Structure and CMake configuration
 =================================================
@@ -24,19 +22,19 @@ class. To export a class into Python, we must create three files:
 
 To build a Python module in |cmake|, use the following macro:
 
-   .. code-block:: cmake
+.. code-block:: cmake
 
-                    set( pyCpps      PyLibrary.cpp
-                                     PyHurricane.cpp )
-                    set( pyIncludes  hurricane/isobar/PyLibrary.h
+                 set( pyCpps      PyLibrary.cpp
+                                  PyHurricane.cpp )
+                 set( pyIncludes  hurricane/isobar/PyLibrary.h
 
-      add_python_module( "${pyCpps}"
-                         "${pyIncludes}"
-                         "isobar;1.0;1"     # Name & version of the supporting
-                                            # shared library.
-                         Hurricane          # Name of the Python module will give:
-                                            #   Hurricane.so
-                         "${depLibs}"       # List of dependency libraries.
-                         include/coriolis2/hurricane/isobar
-                                            # Where to install the include files.
-                       )
+   add_python_module( "${pyCpps}"
+                      "${pyIncludes}"
+                      "isobar;1.0;1"     # Name & version of the supporting
+                                         # shared library.
+                      Hurricane          # Name of the Python module will give:
+                                         #   Hurricane.so
+                      "${depLibs}"       # List of dependency libraries.
+                      include/coriolis2/hurricane/isobar
+                                         # Where to install the include files.
+                    )

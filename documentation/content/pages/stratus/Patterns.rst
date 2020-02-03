@@ -1,7 +1,3 @@
-============================
-Patterns module User's Guide
-============================
-Roselyne Chotin-Avot
 
 
 Description

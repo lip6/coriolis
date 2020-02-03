@@ -1,6 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
 
 
 Credits & License
@@ -8,23 +7,30 @@ Credits & License
 
 .. raw:: html
 
-   <p class="credit"><span class="left"><span class="sc">Hurricane</span></span>
-   <span class="right">Rémy <span class="sc">Escassut</span> &amp;
-                       Christian <span class="sc">Masson</span></span></p>
-   <br>
-   <p class="credit"><span class="left"><span class="sc">Etesian</span></span>
-   <span class="right">Gabriel <span class="sc">Gouvine</span></span></p>
-   <br>
-   <p class="credit"><span class="left"><span class="sc">Stratus</span></span>
-   <span class="right">Sophie <span class="sc">Belloeil</span></span></p>
-   <br>
-   <p class="credit"><span class="left"><span class="sc">Katana</span> (global)</span>
-   <span class="right">Damien <span class="sc">Dupuis</span></span></p>
-   <br>
-   <p class="credit"><span class="left"><span class="sc">Katana</span> (detailed),
-                                        <span class="sc">Unicorn</span></span></span>
-   <span class="right">Jean-Paul <span class="sc">Chaput</span></span></p>
-   <br>
+   <table style="border: none; width: 80%; align: center; margin-left: auto; margin-right: auto; font-size: 110%">
+     <tr>
+       <td style="text-align: left" ><span><span class="sc">Hurricane</span></span></td>
+       <td style="text-align: right"><span>Rémy <span class="sc">Escassut</span> &amp;
+                                           Christian <span class="sc">Masson</span></span</td>
+     </tr>
+     <tr>
+       <td style="text-align: left" ><span class="left"><span class="sc">Etesian</span></span></td>
+       <td style="text-align: right"><span class="right">Gabriel <span class="sc">Gouvine</span></span></td>
+     </tr>
+     <tr>
+       <td style="text-align: left" ><span class="left"><span class="sc">Stratus</span></span></td>
+       <td style="text-align: right"><span class="right">Sophie <span class="sc">Belloeil</span></span></td>
+     </tr>
+     <tr>
+       <td style="text-align: left" ><span class="left"><span class="sc">Katana</span> (global)</span></td>
+       <td style="text-align: right"><span class="right">Damien <span class="sc">Dupuis</span></span></td>
+     </tr>
+     <tr>
+       <td style="text-align: left" ><span class="left"><span class="sc">Katana</span> (detailed),
+                                          <span class="sc">Unicorn</span></span></span></td>
+       <td style="text-align: right"><span class="right">Jean-Paul <span class="sc">Chaput</span></span></td>
+     </tr>
+   </table>
 
 
 .. raw:: latex

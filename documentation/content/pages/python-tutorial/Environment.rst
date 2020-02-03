@@ -1,8 +1,4 @@
 .. -*- Mode: rst -*-
-.. include:: ../etc/definitions.rst
-.. include:: ./definitions.rst
-
-
 
 
 2. Setting up the Environment
@@ -30,9 +26,11 @@ Use it like this (don't forget the ``eval`` **and** the backquotes):
    environment. The script then launches a new shell, which may cause an
    infinite loop if it's called again in, say :cb:`~/.bashrc`.
 
-   Instead you may want to create an alias: ::
+   Instead you may want to create an alias:
 
-       alias c2r='eval "`<CORIOLIS_INSTALL>/etc/coriolis2/coriolisEnv.py`"'
+   .. code-block:: sh
+
+      alias c2r='eval "`<CORIOLIS_INSTALL>/etc/coriolis2/coriolisEnv.py`"'
 
 
 2.2 User's Configurations File

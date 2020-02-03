@@ -1,7 +1,5 @@
 .. -*- Mode: rst -*-
 
-.. include:: ../etc/definitions.rst
-
 
 |newpage|
 
@@ -26,7 +24,7 @@ One important fact to remember is that ``PyEntity`` and ``PyComponent``
 being related to C++ abstract classes, no objects of those types will be
 created, only ``PyContact``, ``PyHorizontal`` or ``PyVertical`` will.
 
-The consequence is that there is no ``PyEntity_Link()`` like in :ref:`3.1`
+The consequence is that there is no ``PyEntity_Link()`` like in `3.1`
 but instead two functions:
 
 #. ``PyEntity_NEW()`` which create the relevant ``PyEntity`` *derived*
@@ -79,7 +77,7 @@ but instead two functions:
 4.2 Base Class File
 ~~~~~~~~~~~~~~~~~~~~~
 
-Changes from :ref:`3.2 Class Associated File` are:
+Changes from `3.2 Class Associated File` are:
 
 #. No call to ``DBoLinkCreateMethod()`` because there must be no ``PyEntity_Link()``,
    but the definitions of ``PyEntity_NEW()`` and ``EntityCast``.
@@ -175,7 +173,7 @@ Changes from :ref:`3.2 Class Associated File` are:
 4.3 Intermediate Class Header
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Changes from :ref:`3.1 Class Associated Header File` are:
+Changes from `3.1 Class Associated Header File` are:
 
 #. As for ``PyEntity``, and because this is still an abstract class,
    there is no ``PyComponent_Link()`` function.
@@ -218,7 +216,7 @@ Changes from :ref:`3.1 Class Associated Header File` are:
 4.4 Intermediate Class File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Changes from :ref:`3.2 Class Associated File` are:
+Changes from `3.2 Class Associated File` are:
 
 1. Redefinition of the default macros ``ACCESS_OBJECT`` and ``ACCESS_CLASS``. 
 

@@ -1,7 +1,3 @@
-====================
-Stratus User's Guide
-====================
-Sophie Belloeil
 
 
 Introduction
@@ -2766,8 +2762,7 @@ Useful links
 DpGen generators
 ----------------
 
-You can find the documentation of the DPGEN library at :
-file:./DpGen.html
+You can find the documentation of the DPGEN library at : ./DpGen.html
 
 Arithmetic package of stratus
 -----------------------------
@@ -2784,13 +2779,4 @@ file:////users/outil/arith/latest/doc/index.html
 Patterns module
 ---------------
 
-You can find the documentation of the patterns module :
-file:../patterns/index.html
-
-.. |add1|     image:: ./images/add1.png
-.. |add2|     image:: ./images/add2.png
-.. |addaccu|  image:: ./images/addaccu.png
-.. |test|     image:: ./images/test.png
-.. |editor|   image:: ./images/editor.png
-.. |resize|   image:: ./images/resizeAb.png
-.. |xml|      image:: images/xml.png
+You can find the documentation of the patterns module : {filename}Patterns_HTML.rst

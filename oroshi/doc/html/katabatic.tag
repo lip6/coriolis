@@ -103,8 +103,8 @@
       <type>def</type>
       <name>__init__</name>
       <anchorfile>classpython_1_1CapacitorUnit_1_1CapacitorUnit.html</anchorfile>
-      <anchor>af1c90ae5171f34b90f6781f64ddb918f</anchor>
-      <arglist>(self, device, capacitance, capacitorType, abutmentBoxPosition)</arglist>
+      <anchor>ae3f080385324a5f7e92d5fa9d99dc8d4</anchor>
+      <arglist>(self, device, capacitorType, abutmentBoxPosition, capacitance=0, capDim={})</arglist>
     </member>
     <member kind="function">
       <type>def</type>
@@ -173,15 +173,15 @@
       <type>def</type>
       <name>create</name>
       <anchorfile>classpython_1_1CapacitorUnit_1_1CapacitorUnit.html</anchorfile>
-      <anchor>a86cb813fa2987710348b5be1eab4c601</anchor>
-      <arglist>(self, tNet, bNet, bbMode=False)</arglist>
+      <anchor>acd7ed0a77e223a638c85d07aed261b9f</anchor>
+      <arglist>(self, t, b, bbMode=False, vEnclosure_botPlate_abtBox=None, hEnclosure_botPlate_abtBox=None)</arglist>
     </member>
     <member kind="function">
       <type>def</type>
       <name>drawCapacitor</name>
       <anchorfile>classpython_1_1CapacitorUnit_1_1CapacitorUnit.html</anchorfile>
-      <anchor>a6d39e1b3f2c0e14d1a86cf494c51eac2</anchor>
-      <arglist>(self, layerDict, tNet, bNet)</arglist>
+      <anchor>aeef7d302c356dc7036c732e114bb1616</anchor>
+      <arglist>(self, layerDict, t, b)</arglist>
     </member>
     <member kind="function">
       <type>def</type>
@@ -215,22 +215,22 @@
       <type>def</type>
       <name>drawBottomPlateCut</name>
       <anchorfile>classpython_1_1CapacitorUnit_1_1CapacitorUnit.html</anchorfile>
-      <anchor>a63619983981132bad715723586e4a91a</anchor>
-      <arglist>(self, layer, bNet)</arglist>
+      <anchor>a727010b51f0670072cfe620aa0fb9973</anchor>
+      <arglist>(self, layer, b)</arglist>
     </member>
     <member kind="function">
       <type>def</type>
       <name>drawTopPlateCut</name>
       <anchorfile>classpython_1_1CapacitorUnit_1_1CapacitorUnit.html</anchorfile>
-      <anchor>a84b46c621e108285fd6d5830a1ffedac</anchor>
-      <arglist>(self, layer, tNet)</arglist>
+      <anchor>aa4e6c1a2c4d502778db3d7f571cd8306</anchor>
+      <arglist>(self, layer, t)</arglist>
     </member>
     <member kind="function">
       <type>def</type>
       <name>drawRoutingLayers</name>
       <anchorfile>classpython_1_1CapacitorUnit_1_1CapacitorUnit.html</anchorfile>
-      <anchor>a237404c5452688f49fe788244cd3b60f</anchor>
-      <arglist>(self, bottomPlateLayer, topPlateLayer, tNet, bNet)</arglist>
+      <anchor>a786938220c3b8fbe346cc53012385c4e</anchor>
+      <arglist>(self, bottomPlateLayer, topPlateLayer, t, b)</arglist>
     </member>
     <member kind="function">
       <type>def</type>
