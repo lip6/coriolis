@@ -130,7 +130,6 @@ def guessOs ():
 
       print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
       print "          (using: \"%s\")" % osType
-
     ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
     if ldLibraryPath and 'devtoolset' in ldLibraryPath: useDevtoolset = False
 
@@ -273,16 +272,25 @@ if __name__ == "__main__":
   if not options.nopython:
     pyVersion = sys.version_info
     version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-    if    osType.startswith("Linux.SL") \
-       or osType.startswith("Linux.sl") \
-       or osType.startswith("Linux.el") \
-       or osType.startswith("Linux.fc") \
-       or osType.startswith("Cygwin"):
-      sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
-    elif  osType.startswith("Darwin"):
-      sitePackagesDir = "%s/%s/site-packages" % (absLibDir,version)
-    else:
-      sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
+   #if    osType.startswith("Linux.SL") \
+   #   or osType.startswith("Linux.sl") \
+   #   or osType.startswith("Linux.el") \
+   #   or osType.startswith("Linux.fc") \
+   #   or osType.startswith("Cygwin"):
+   #  sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
+   #elif  osType.startswith("Darwin"):
+   #  sitePackagesDir = "%s/%s/site-packages" % (absLibDir,version)
+   #else:
+   #  sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
+
+    sitePackagesDir = "sitePackageDir_has_been_not_found"
+    for pyPackageDir in [ "%s/python%s/site-packages" % (absLibDir,version)
+                        , "%s/python%s/dist-packages" % (absLibDir,version)
+                        , "%s/%s/site-packages"       % (absLibDir,version)
+                        ]:
+      if os.path.isdir(pyPackageDir):
+        sitePackagesDir = pyPackageDir
+        break
 
     strippedPythonPath = "%s:"                 % (sitePackagesDir) + strippedPythonPath
     strippedPythonPath = "%s/crlcore:"         % (sitePackagesDir) + strippedPythonPath
