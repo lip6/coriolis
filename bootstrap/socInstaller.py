@@ -46,31 +46,31 @@ except ImportError, e:
 class ErrorMessage ( Exception ):
 
     def __init__ ( self, code, *arguments ):
-      self._code   = code
-      self._errors = [ 'Malformed call to ErrorMessage()', '%s' % str(arguments) ]
-
-      text = None
-      if len(arguments) == 1:
-        if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
-        else:
-          self._errors = arguments[0]
-      elif len(arguments) > 1:
-        text = list(arguments)
-
-      if text:
-        self._errors = []
-        while len(text[0]) == 0: del text[0]
-
-        lstrip = 0
-        if text[0].startswith('[ERROR]'): lstrip = 8
-
-        for line in text:
-          if line[0:lstrip  ] == ' '*lstrip or \
-             line[0:lstrip-1] == '[ERROR]':
-            self._errors += [ line[lstrip:] ]
+        self._code   = code
+        self._errors = [ 'Malformed call to ErrorMessage()', '%s' % str(arguments) ]
+        
+        text = None
+        if len(arguments) == 1:
+          if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
           else:
-            self._errors += [ line.lstrip() ]
-      return
+            self._errors = arguments[0]
+        elif len(arguments) > 1:
+          text = list(arguments)
+        
+        if text:
+          self._errors = []
+          while len(text[0]) == 0: del text[0]
+        
+          lstrip = 0
+          if text[0].startswith('[ERROR]'): lstrip = 8
+        
+          for line in text:
+            if line[0:lstrip  ] == ' '*lstrip or \
+               line[0:lstrip-1] == '[ERROR]':
+              self._errors += [ line[lstrip:] ]
+            else:
+              self._errors += [ line.lstrip() ]
+        return
 
     def __str__ ( self ):
         if not isinstance(self._errors,list):
@@ -104,321 +104,410 @@ class ErrorMessage ( Exception ):
 class BadBinary ( ErrorMessage ):
 
     def __init__ ( self, binary ):
-      ErrorMessage.__init__( self, 1, "Binary not found: <%s>." % binary )
-      return
+        ErrorMessage.__init__( self, 1, "Binary not found: <%s>." % binary )
+        return
 
 
 class BadReturnCode ( ErrorMessage ):
 
     def __init__ ( self, status ):
-      ErrorMessage.__init__( self, 1, "Command returned status:%d." % status )
-      return
+        ErrorMessage.__init__( self, 1, "Command returned status:%d." % status )
+        return
 
 
 class Command ( object ):
 
     def __init__ ( self, arguments, fdLog=None ):
-      self.arguments = arguments
-      self.fdLog     = fdLog
-
-      if self.fdLog != None and not isinstance(self.fdLog,file):
-        print '[WARNING] Command.__init__(): <fdLog> is neither None or a file.'
-      return
+        self.arguments = arguments
+        self.fdLog     = fdLog
+        
+        if self.fdLog != None and not isinstance(self.fdLog,file):
+          print '[WARNING] Command.__init__(): <fdLog> is neither None or a file.'
+        return
 
     def _argumentsToStr ( self, arguments ):
-      s = ''
-      for argument in arguments:
-        if argument.find(' ') >= 0: s += ' "' + argument + '"'
-        else:                       s += ' '  + argument
-      return s
+        s = ''
+        for argument in arguments:
+          if argument.find(' ') >= 0: s += ' "' + argument + '"'
+          else:                       s += ' '  + argument
+        return s
 
     def log ( self, text ):
-      print text[:-1]
-      sys.stdout.flush()
-      sys.stderr.flush()
-      if isinstance(self.fdLog,file):
-        self.fdLog.write( text )
-        self.fdLog.flush()
-      return
+        print text[:-1]
+        sys.stdout.flush()
+        sys.stderr.flush()
+        if isinstance(self.fdLog,file):
+          self.fdLog.write( text )
+          self.fdLog.flush()
+        return
 
     def execute ( self ):
-      global conf
-      sys.stdout.flush()
-      sys.stderr.flush()
+        global conf
+        sys.stdout.flush()
+        sys.stderr.flush()
+        
+        homeDir = os.environ['HOME']
+        workDir = os.getcwd()
+        if homeDir.startswith(homeDir):
+           workDir = '~' + workDir[ len(homeDir) : ]
+        user = 'root'
+        if os.environ.has_key('USER'): user = os.environ['USER']
+        prompt = '%s@%s:%s$' % (user,conf.masterHost,workDir)
+        
+        try:
+          self.log( '%s%s\n' % (prompt,self._argumentsToStr(self.arguments)) )
+          print self.arguments
+          child = subprocess.Popen( self.arguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+        
+          while True:
+            line = child.stdout.readline()
+            if not line: break
+        
+            self.log( line )
+        except OSError, e:
+          raise BadBinary( self.arguments[0] )
+        
+        (pid,status) = os.waitpid( child.pid, 0 )
+        status >>= 8
+        if status != 0:
+          raise BadReturnCode( status )
+        
+        return
 
-      homeDir = os.environ['HOME']
-      workDir = os.getcwd()
-      if homeDir.startswith(homeDir):
-         workDir = '~' + workDir[ len(homeDir) : ]
-      prompt = '%s@%s:%s$' % (os.environ['USER'],conf.masterHost,workDir)
 
-      try:
-        self.log( '%s%s\n' % (prompt,self._argumentsToStr(self.arguments)) )
-        child = subprocess.Popen( self.arguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+class CommandArg ( object ):
 
-        while True:
-          line = child.stdout.readline()
-          if not line: break
+    def __init__ ( self, command, wd=None, host=None, fdLog=None ):
+        self.command = command
+        self.host    = host
+        self.wd      = wd
+        self.fdLog   = fdLog
+        return
 
-          self.log( line )
-      except OSError, e:
-        raise BadBinary( self.arguments[0] )
+    def __str__ ( self ):
+        s = ''
+        if self.wd: s = 'cd %s && ' % self.wd
 
-      (pid,status) = os.waitpid( child.pid, 0 )
-      status >>= 8
-      if status != 0:
-        raise BadReturnCode( status )
+        for i in range(len(self.command)):
+          if i: s += ' '
+          s += self.command[i]
+        return s
 
-      return
+    def getArgs ( self ):
+        if not self.host: return self.command
+        return [ 'ssh', self.host, str(self) ]
+
+    def execute ( self ):
+        if not self.host and self.wd: os.chdir( self.wd )
+        Command( self.getArgs(), self.fdLog ).execute()
+        return
+
+
+class AllianceCommand ( CommandArg ):
+
+    def __init__ ( self, fdLog=None ):
+        CommandArg.__init__ ( self, [ '/root/allianceInstaller.sh' ]
+                                  , fdLog=fdLog )
+        return
+
+
+class CoriolisCommand ( CommandArg ):
+
+    def __init__ ( self, ccbBin, rootDir, threads=1, otherArgs=[], fdLog=None ):
+        CommandArg.__init__ ( self, [ ccbBin
+                                    , '--root='+rootDir
+                                    , '--project=coriolis'
+                                    , '--make=-j%d install' % threads
+                                    ] + otherArgs
+                                  , fdLog=fdLog )
+        return
+
+
+class BenchsCommand ( CommandArg ):
+
+    def __init__ ( self, benchsDir, fdLog=None ):
+        CommandArg.__init__ ( self, [ '../bin/go.sh' ], wd=benchsDir, fdLog=fdLog )
+        return
+        
 
 
 class GitRepository ( object ):
 
     @staticmethod
     def getLocalRepository ( url ):
-      localRepo = url.split( '/' )[-1]
-      if localRepo.endswith('.git'):
-        localRepo = localRepo[:-4]
-      return localRepo
+        localRepo = url.split( '/' )[-1]
+        if localRepo.endswith('.git'):
+          localRepo = localRepo[:-4]
+        return localRepo
 
     def __init__ ( self, url, cloneDir, fdLog=None ):
-      self.url       = url
-      self.cloneDir  = cloneDir
-      self.localRepo = GitRepository.getLocalRepository( url )
-      self.fdLog     = fdLog
-      return
+        self.url       = url
+        self.cloneDir  = cloneDir
+        self.localRepo = GitRepository.getLocalRepository( url )
+        self.fdLog     = fdLog
+        return
 
     @property
     def localRepoDir ( self ): return self.cloneDir+'/'+self.localRepo
 
     def removeLocalRepo ( self ):
-      if os.path.isdir(self.localRepoDir):
-        print 'Removing Git local repository: <%s>' % self.localRepoDir
-        shutil.rmtree( self.localRepoDir )
-      return
+        if os.path.isdir(self.localRepoDir):
+          print 'Removing Git local repository: <%s>' % self.localRepoDir
+          shutil.rmtree( self.localRepoDir )
+        return
 
     def clone ( self ):
-      print 'Clone/pull from:', self.url
-      if not os.path.isdir(self.cloneDir):
-        os.makedirs( self.cloneDir )
-
-      if not os.path.isdir(self.localRepoDir):
-        os.chdir( self.cloneDir )
-        Command( [ 'git', 'clone', self.url ], self.fdLog ).execute()
-      else:
-        os.chdir( self.localRepoDir )
-        Command( [ 'git', 'pull' ], self.fdLog ).execute()
-      return
+        print 'Clone/pull from:', self.url
+        if not os.path.isdir(self.cloneDir):
+          os.makedirs( self.cloneDir )
+        
+        if not os.path.isdir(self.localRepoDir):
+          os.chdir( self.cloneDir )
+          Command( [ 'git', 'clone', self.url ], self.fdLog ).execute()
+        else:
+          os.chdir( self.localRepoDir )
+          Command( [ 'git', 'pull' ], self.fdLog ).execute()
+        return
 
     def checkout ( self, branch ):
-      os.chdir( self.localRepoDir )
-      Command( [ 'git', 'checkout', branch ], self.fdLog ).execute()
-      return
+        os.chdir( self.localRepoDir )
+        Command( [ 'git', 'checkout', branch ], self.fdLog ).execute()
+        return
 
 
 class Configuration ( object ):
 
     PrimaryNames = \
         [ 'sender'      , 'receivers'
-        , 'coriolisRepo', 'benchsRepo', 'supportRepos'
+        , 'coriolisRepo', 'benchsRepo' , 'supportRepos'
         , 'homeDir'     , 'masterHost'
-        , 'debugArg'    , 'nightlyMode'
-        , 'rmSource'    , 'rmBuild', 'doGit', 'doBuild', 'doBenchs', 'doSendReport'
+        , 'debugArg'    , 'nightlyMode', 'dockerMode'
+        , 'rmSource'    , 'rmBuild'
+        , 'doGit'       , 'doAlliance' , 'doCoriolis', 'doBenchs', 'doSendReport'
         , 'success'     , 'rcode'
         ]
     SecondaryNames = \
-        [ 'rootDir', 'srcDir', 'logDir', 'logs', 'fds'
+        [ 'rootDir', 'srcDir', 'logDir', 'logs', 'fds', 'ccbBin', 'benchsDir'
         ]
 
     def __init__ ( self ):
-      self._sender       = 'Jean-Paul.Chaput@soc.lip6.fr'
-      self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', ]
-      self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
-      self._coriolisRepo = 'https://www-soc.lip6.fr/git/coriolis.git'
-      self._benchsRepo   = 'https://www-soc.lip6.fr/git/alliance-check-toolkit.git'
-      self._homeDir      = os.environ['HOME']
-      self._debugArg     = ''
-      self._rmSource     = False
-      self._rmBuild      = False
-      self._doGit        = True
-      self._doBuild      = True
-      self._doBenchs     = False
-      self._doSendReport = True
-      self._nightlyMode  = False
-      self._logs         = { 'build':None, 'benchs':None }
-      self._fds          = { 'build':None, 'benchs':None }
-      self._masterHost   = self._detectMasterHost()
-      self._success      = False
-      self._rcode        = 0
-
-      self._updateSecondaries()
-      return
+        self._sender       = 'Jean-Paul.Chaput@soc.lip6.fr'
+        self._receivers    = [ 'Jean-Paul.Chaput@lip6.fr', ]
+        self._supportRepos = [ 'http://github.com/miloyip/rapidjson' ]
+        self._allianceRepo = 'https://gitlab.lip6.fr/jpc/alliance.git'
+        self._coriolisRepo = 'https://gitlab.lip6.fr/jpc/coriolis.git'
+        self._benchsRepo   = 'https://gitlab.lip6.fr/jpc/alliance-check-toolkit.git'
+        self._homeDir      = os.environ['HOME']
+        self._debugArg     = ''
+        self._rmSource     = False
+        self._rmBuild      = False
+        self._doGit        = True
+        self._doCoriolis   = False
+        self._doAlliance   = False
+        self._doBenchs     = False
+        self._doSendReport = False
+        self._nightlyMode  = False
+        self._dockerMode   = False
+        self._logs         = { 'alliance':None, 'coriolis':None, 'benchs':None }
+        self._fds          = { 'alliance':None, 'coriolis':None, 'benchs':None }
+        self._ccbBin       = None
+        self._benchsDir    = None
+        self._masterHost   = self._detectMasterHost()
+        self._success      = False
+        self._rcode        = 0
+        
+        self._updateSecondaries()
+        return
 
     def __setattr__ ( self, attribute, value ):
-      if attribute in Configuration.SecondaryNames:
-        print ErrorMessage( 1, 'Attempt to write in read-only attribute <%s> in Configuration.'%attribute )
+        if attribute in Configuration.SecondaryNames:
+          print ErrorMessage( 1, 'Attempt to write in read-only attribute <%s> in Configuration.'%attribute )
+          return
+        
+        if attribute == 'masterHost' or attribute == '_masterHost':
+          if value == 'lepka':
+            print 'Never touch the Git tree when running on <lepka>.'
+            self._rmSource     = False
+            self._rmBuild      = False
+            self._doGit        = False
+            self._doSendReport = False
+        
+        if attribute[0] == '_':
+          self.__dict__[attribute] = value
+          return
+        
+        if   attribute == 'homeDir': value = os.path.expanduser(value)
+        
+        self.__dict__['_'+attribute] = value
+        self._updateSecondaries()
         return
-
-      if attribute == 'masterHost' or attribute == '_masterHost':
-        if value == 'lepka':
-          print 'Never touch the Git tree when running on <lepka>.'
-          self._rmSource     = False
-          self._rmBuild      = False
-          self._doGit        = False
-          self._doSendReport = False
-          self._targets      = { 'SL6'   :None
-                               , 'SL6_64':None
-                               , 'SL7_64':'lepka'
-                               }
-        else:
-          self._targets      = { 'SL6'   :None
-                               , 'SL6_64':None
-                               , 'SL7_64':'bop'
-                               }
-
-      if attribute[0] == '_':
-        self.__dict__[attribute] = value
-        return
-
-      if   attribute == 'homeDir': value = os.path.expanduser(value)
-
-      self.__dict__['_'+attribute] = value
-      self._updateSecondaries()
-      return
 
     def __getattr__ ( self, attribute ):
-      if attribute[0] != '_': attribute = '_'+attribute
-      if not self.__dict__.has_key(attribute):
-        raise ErrorMessage( 1, 'Configuration has no attribute <%s>.'%attribute )
-      return self.__dict__[attribute]
+        if attribute[0] != '_': attribute = '_'+attribute
+        if not self.__dict__.has_key(attribute):
+          raise ErrorMessage( 1, 'Configuration has no attribute <%s>.'%attribute )
+        return self.__dict__[attribute]
 
     def _updateSecondaries ( self ):
-      if self._nightlyMode:
-        self._targets['SL6'] = None
-        self._rootDir = self._homeDir + '/nightly/coriolis-2.x'
-      else:
-        if self._masterHost != 'lepka':
-          self._targets['SL6'] = None
-        self._rootDir = self._homeDir + '/coriolis-2.x'
-      self._srcDir    = self._rootDir + '/src'
-      self._logDir    = self._srcDir  + '/logs'
-      return
+        if self._nightlyMode:
+          self._rootDir = self._homeDir + '/nightly/coriolis-2.x'
+        else:
+          self._rootDir = self._homeDir + '/coriolis-2.x'
+        self._srcDir    = self._rootDir + '/src'
+        self._logDir    = self._srcDir  + '/logs'
+        self._ccbBin    = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/ccb.py'
+        self._benchsDir = self._srcDir  + '/' + GitRepository.getLocalRepository(self._benchsRepo  ) + '/benchs'
+        return
 
     def _detectMasterHost ( self ):
-      masterHost = 'unknown'
-      hostname   = socket.gethostname()
-      hostAddr   = socket.gethostbyname(hostname)
-    
-      if hostname == 'lepka' and hostAddr == '127.0.0.1':
-        masterHost = 'lepka'
-      else:
-        masterHost = hostname.split('.')[0]
-      return masterHost
+        masterHost = 'unknown'
+        hostname   = socket.gethostname()
+        hostAddr   = socket.gethostbyname(hostname)
+        
+        if hostname == 'lepka' and hostAddr == '127.0.0.1':
+          masterHost = 'lepka'
+        else:
+          masterHost = hostname.split('.')[0]
+        return masterHost
 
     def openLog ( self, stem ):
-      if not os.path.isdir(self._logDir):
-        os.makedirs( self._logDir )
-  
-      index   = 0
-      timeTag = time.strftime( "%Y.%m.%d" )
-      while True:
-          logFile = os.path.join(self._logDir,"%s-%s-%02d.log" % (stem,timeTag,index))
-          if not os.path.isfile(logFile):
-              print "Report log: <%s>" % logFile
-              break
-          index += 1
-      fd = open( logFile, "w" )
-      self._logs[stem] = logFile
-      self._fds [stem] = fd
-      return
+        if not os.path.isdir(self._logDir):
+          os.makedirs( self._logDir )
+        
+        index   = 0
+        timeTag = time.strftime( "%Y.%m.%d" )
+        while True:
+            logFile = os.path.join(self._logDir,"%s-%s-%02d.log" % (stem,timeTag,index))
+            if not os.path.isfile(logFile):
+                print "Report log: <%s>" % logFile
+                break
+            index += 1
+        fd = open( logFile, "w" )
+        self._logs[stem] = logFile
+        self._fds [stem] = fd
+        return
 
     def closeLogs ( self ):
-      for fd in self._fds.values():
-        if fd: fd.close()
-      return
+        for fd in self._fds.values():
+          if fd: fd.close()
+        return
 
     def compressLogs ( self ):
-      for log in self._logs.values():
-        if not log: continue
+        for log in self._logs.values():
+          if not log: continue
+        
+          fd   = open( log, 'r' )
+          bzfd = bz2.BZ2File( log+'.bz2', 'w' )
+        
+          for line in fd.readlines(): bzfd.write( line )
+        
+          bzfd.close()
+          fd.close()
+        
+          os.unlink( log )
+        return
 
-        fd   = open( log, 'r' )
-        bzfd = bz2.BZ2File( log+'.bz2', 'w' )
+    def getCommands ( self, target ):
+        commands  = []
 
-        for line in fd.readlines(): bzfd.write( line )
+        if self.doAlliance:
+          commands.append( AllianceCommand( fdLog=self.fds['alliance'] ) )
 
-        bzfd.close()
-        fd.close()
+        if self.doCoriolis:
+          if not os.path.isfile( self.ccbBin ):
+            raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
+                                   , '   <%s>' % self.ccbBin
+                                   ] )
 
-        os.unlink( log )
-      return
+          otherArgs = []
+          if self.debugArg: otherArgs.append( self.debugArg )
+
+          if target == 'SL7_64':
+            otherArgs.append( '--project=support' )
+            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
+            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
+            if self.doBenchs:
+              commands.append( BenchsCommand   ( self.benchsDir, fdLog=self.fds['benchs'] ) )
+          elif target == 'SL6_64' or target == 'SL6':
+            otherArgs.append( '--project=support' )
+            otherArgs.append( '--devtoolset=8' )
+            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
+            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
+            if self.doBenchs:
+              commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
+          elif target == 'Ubuntu18' or target == 'Debian9':
+            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
+            if self.doBenchs:
+              commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
+        return commands
 
 
 class Report ( object ):
 
     def __init__ ( self, conf ):
-      self.conf = conf
-
-      commaspace = ', '
-      date       = time.strftime( "%A %d %B %Y" )
-      stateText  = 'FAILED'
-      modeText   = 'SoC installation'
-      if self.conf.success:     stateText = 'SUCCESS'
-      if self.conf.nightlyMode: modeText  = 'Nightly build'
-
-      self.message = MIMEMultipart()
-      self.message['Subject'] = '[%s] Coriolis %s %s' % (stateText,modeText,date)
-      self.message['From'   ] = self.conf.sender
-      self.message['To'     ] = commaspace.join( self.conf.receivers )
-      self.attachements = []
-
-      self.mainText  = '\n'
-      self.mainText += 'Salut le Crevard,\n'
-      self.mainText += '\n'
-      if self.conf.nightlyMode:
-        self.mainText += 'This is the nightly build report of Coriolis.\n'
-      else:
-        self.mainText += 'SoC installer report of Coriolis.\n'
-      self.mainText += '%s\n' % date
-      self.mainText += '\n'
-      if self.conf.success:
-        self.mainText += 'Build was SUCCESSFUL\n'
-      else:
-        self.mainText += 'Build has FAILED, please have a look to the attached log file(s).\n'
-      self.mainText += '\n'
-      self.mainText += 'Complete log file(s) can be found here:\n'
-      return
+        self.conf = conf
+        
+        commaspace = ', '
+        date       = time.strftime( "%A %d %B %Y" )
+        stateText  = 'FAILED'
+        modeText   = 'SoC installation'
+        if self.conf.success:     stateText = 'SUCCESS'
+        if self.conf.nightlyMode: modeText  = 'Nightly build'
+        
+        self.message = MIMEMultipart()
+        self.message['Subject'] = '[%s] Coriolis %s %s' % (stateText,modeText,date)
+        self.message['From'   ] = self.conf.sender
+        self.message['To'     ] = commaspace.join( self.conf.receivers )
+        self.attachements = []
+        
+        self.mainText  = '\n'
+        self.mainText += 'Salut le Crevard,\n'
+        self.mainText += '\n'
+        if self.conf.nightlyMode:
+          self.mainText += 'This is the nightly build report of Coriolis.\n'
+        else:
+          self.mainText += 'SoC installer report of Coriolis.\n'
+        self.mainText += '%s\n' % date
+        self.mainText += '\n'
+        if self.conf.success:
+          self.mainText += 'Build was SUCCESSFUL\n'
+        else:
+          self.mainText += 'Build has FAILED, please have a look to the attached log file(s).\n'
+        self.mainText += '\n'
+        self.mainText += 'Complete log file(s) can be found here:\n'
+        return
 
     def attachLog ( self, logFile ):
-      if not logFile: return
-
-      fd = open( logFile, 'rb' )
-      try:
-        fd.seek( -1024*100, os.SEEK_END )
-      except IOError, e:
-        pass
-      tailLines = ''
-      for line in fd.readlines()[1:]:
-        tailLines += line
-      fd.close()
-      self.mainText += '    <%s>\n' % logFile
-
-      attachement = MIMEApplication(tailLines)
-      attachement.add_header( 'Content-Disposition', 'attachment', filename=os.path.basename(logFile) )
-
-      self.attachements.append( attachement )
-      return
+        if not logFile: return
+        
+        fd = open( logFile, 'rb' )
+        try:
+          fd.seek( -1024*100, os.SEEK_END )
+        except IOError, e:
+          pass
+        tailLines = ''
+        for line in fd.readlines()[1:]:
+          tailLines += line
+        fd.close()
+        self.mainText += '    <%s>\n' % logFile
+        
+        attachement = MIMEApplication(tailLines)
+        attachement.add_header( 'Content-Disposition', 'attachment', filename=os.path.basename(logFile) )
+        
+        self.attachements.append( attachement )
+        return
 
     def send ( self ):
-      self.message.attach( MIMEText(self.mainText) )
-      for attachement in self.attachements:
-        self.message.attach( attachement )
-
-      print "Sending mail report to:"
-      for receiver in self.conf.receivers: print '  <%s>' % receiver
-      session = smtplib.SMTP( 'localhost' )
-      session.sendmail( self.conf.sender, self.conf.receivers, self.message.as_string() )
-      session.quit()
-      return
+        self.message.attach( MIMEText(self.mainText) )
+        for attachement in self.attachements:
+          self.message.attach( attachement )
+        
+        print "Sending mail report to:"
+        for receiver in self.conf.receivers: print '  <%s>' % receiver
+        session = smtplib.SMTP( 'localhost' )
+        session.sendmail( self.conf.sender, self.conf.receivers, self.message.as_string() )
+        session.quit()
+        return
 
 
 # ------------------------------------------------------------------- 
@@ -428,14 +517,17 @@ class Report ( object ):
 parser = optparse.OptionParser ()  
 parser.add_option ( "--debug"       , action="store_true" ,                dest="debug"        , help="Build a <Debug> aka (-g) version." )
 parser.add_option ( "--no-git"      , action="store_true" ,                dest="noGit"        , help="Do not pull/update Git repositories before building." )
-parser.add_option ( "--no-build"    , action="store_true" ,                dest="noBuild"      , help="Do not rebuild the tools, must have already be done." )
-parser.add_option ( "--no-report"   , action="store_true" ,                dest="noReport"     , help="Do not send a final report." )
+parser.add_option ( "--do-alliance" , action="store_true" ,                dest="doAlliance"   , help="Rebuild the Alliance tools." )
+parser.add_option ( "--do-coriolis" , action="store_true" ,                dest="doCoriolis"   , help="Rebuild the Coriolis tools." )
+parser.add_option ( "--do-report"   , action="store_true" ,                dest="doReport"     , help="Send a final report." )
 parser.add_option ( "--nightly"     , action="store_true" ,                dest="nightly"      , help="Perform a nighly build." )
+parser.add_option ( "--docker"      , action="store_true" ,                dest="docker"       , help="Perform a build inside a docker container." )
 parser.add_option ( "--benchs"      , action="store_true" ,                dest="benchs"       , help="Run the <alliance-checker-toolkit> sanity benchs." )
 parser.add_option ( "--rm-build"    , action="store_true" ,                dest="rmBuild"      , help="Remove the build/install directories." )
 parser.add_option ( "--rm-source"   , action="store_true" ,                dest="rmSource"     , help="Remove the Git source repositories." )
 parser.add_option ( "--rm-all"      , action="store_true" ,                dest="rmAll"        , help="Remove everything (source+build+install)." )
 parser.add_option ( "--root"        , action="store"      , type="string", dest="rootDir"      , help="The root directory (default: <~/coriolis-2.x/>)." )
+parser.add_option ( "--profile"     , action="store"      , type="string", dest="profile"      , help="The targeted OS for the build." )
 (options, args) = parser.parse_args ()
 
 conf = Configuration()
@@ -443,21 +535,29 @@ conf = Configuration()
 try:
     if options.debug:                     conf.debugArg     = '--debug' 
     if options.nightly:                   conf.nightlyMode  = True
+    if options.docker:                    conf.dockerMode   = True
     if options.noGit:                     conf.doGit        = False
-    if options.noBuild:                   conf.doBuild      = False
+    if options.doCoriolis:                conf.doCoriolis   = True
+    if options.doAlliance:                conf.doAlliance   = True
     if options.benchs:                    conf.doBenchs     = True
-    if options.noReport:                  conf.doSendReport = False
+    if options.doReport:                  conf.doSendReport = True
     if options.rmSource or options.rmAll: conf.rmSource     = True
     if options.rmBuild  or options.rmAll: conf.rmBuild      = True
 
-    if conf.doBuild:  conf.openLog( 'build' )
-    if conf.doBenchs: conf.openLog( 'benchs' )
+    if conf.doAlliance: conf.openLog( 'alliance' )
+    if conf.doCoriolis: conf.openLog( 'coriolis' )
+    if conf.doBenchs:   conf.openLog( 'benchs'   )
+
+    if conf.dockerMode: os.environ['USER'] = 'root'
 
     gitSupports = []
     for supportRepo in conf.supportRepos:
       gitSupports.append( GitRepository( supportRepo, conf.srcDir+'/support' ) )
-    gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir, conf.fds['build'] )
-    gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir, conf.fds['build'] )
+    gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir, conf.fds['coriolis'] )
+    gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir, conf.fds['coriolis'] )
+
+    if conf.doAlliance:
+      gitAlliance = GitRepository( conf.allianceRepo, conf.srcDir, conf.fds['alliance'] )
 
     if conf.doGit:
       for gitSupport in gitSupports:
@@ -466,9 +566,15 @@ try:
        #if gitSupport.url.endswith('rapidjson'):
        #  gitSupport.checkout( 'a1c4f32' )
 
-      if conf.rmSource: gitCoriolis.removeLocalRepo()
-      gitCoriolis.clone   ()
-      gitCoriolis.checkout( 'devel_anabatic' )
+      if conf.doCoriolis:
+        if conf.rmSource: gitCoriolis.removeLocalRepo()
+        gitCoriolis.clone   ()
+        gitCoriolis.checkout( 'devel' )
+
+      if conf.doAlliance:
+        if conf.rmSource: gitAlliance.removeLocalRepo()
+        gitAlliance.clone   ()
+       #gitAlliance.checkout( 'devel' )
 
       if conf.rmSource: gitBenchs.removeLocalRepo()
       gitBenchs.clone()
@@ -480,33 +586,14 @@ try:
           print 'Removing OS build directory: <%s>' % buildDir
           shutil.rmtree( buildDir )
 
-    ccbBin = gitCoriolis.localRepoDir+'/bootstrap/ccb.py'
-    if not os.path.isfile( ccbBin ):
-      raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
-                             , '   <%s>' % ccbBin
-                             ] )
-
-    buildCommand  = '%s --root=%s --project=support --project=coriolis --make="-j%%d install" %%s' \
-                     % (ccbBin,conf.rootDir)
-    benchsCommand = 'cd %s/benchs && ../bin/go.sh' % (gitBenchs.localRepoDir)
-
-    commands = \
-      [ ( conf.targets['SL7_64'], buildCommand % (3,conf.debugArg)                        , conf.fds['build' ] )
-      , ( conf.targets['SL7_64'], buildCommand % (1,conf.debugArg+' --doc')               , conf.fds['build' ] )
-      , ( conf.targets['SL7_64'], benchsCommand                                           , conf.fds['benchs'] )
-     #, ( conf.targets['SL6_64'], buildCommand % (6,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
-     #, ( conf.targets['SL6_64'], buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
-     #, ( conf.targets['SL6_64'], benchsCommand                                           , conf.fds['benchs'] )
-     #, ( conf.targets['SL6']   , buildCommand % (2,conf.debugArg+' --devtoolset-8')      , conf.fds['build' ] )
-     #, ( conf.targets['SL6']   , buildCommand % (1,conf.debugArg+' --devtoolset-8 --doc'), conf.fds['build' ] )
-     #, ( conf.targets['SL6']   , benchsCommand                                           , conf.fds['benchs'] )
-      ]
-
-    for host,command,fd in commands:
-      if host and fd:
-        print 'Executing command on <%s>:' % host
-        print ' %s' % command
-        Command( [ 'ssh', host, command ], fd ).execute()
+    commands = conf.getCommands( options.profile )
+    for command in commands:
+      if command.host:
+        print 'Executing command on remote host <%s>:' % host
+      else:
+        print 'Executing command on *local* host:'
+      print '  %s' % str(command)
+      command.execute()
 
     conf.closeLogs()
 
@@ -524,8 +611,8 @@ except ErrorMessage, e:
 
 if conf.doSendReport:
   report = Report( conf )
-  report.attachLog( conf.logs['build' ] )
-  report.attachLog( conf.logs['benchs'] )
+  report.attachLog( conf.logs['coriolis' ] )
+  report.attachLog( conf.logs['benchs'   ] )
   report.send()
 
 conf.compressLogs()
