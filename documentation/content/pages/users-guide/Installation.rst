@@ -30,13 +30,14 @@ Main building prerequisites:
 * yacc & lex
 * Qt 4 or Qt 5
 * PyQt 4 or PyQt 5
-* Qwt
+* Qwt 6
 
 Building documentation prerequisites:
 
 * doxygen
 * latex
 * python-docutils (for reStructuredText)
+* pelican
 
 The following libraries get directly bundled with |Coriolis|:
 
@@ -136,10 +137,24 @@ Installing on |RedHat| or compatible distributions
                                     boost-devel boost-python boost-filesystem     \
                                     boost-regex  boost-wave                       \
                                     python-devel libxml2-devel bzip2-devel        \
-                                    qt-devel qwt-devel                            # Qt 4
+                                    qt-devel 
+   
+  The packages ``qwt`` and ``qwt-devel`` are not provided by any standard repository
+  (like |EPEL|). You may download them from the
+  `LIP6 Addons Repository <https://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/repoview/letter_q.group.html>`_
+  Then run:
 
-   Note, that the ``Qwt`` packages are directly available from the standart distribution
-   when using |Qt| 4.
+  .. code-block:: sh
+   
+     dummy@lepka:~> yum localinstall -y qwt-6.1.2-4.fc23.x86_64.rpm        \
+                                        qwt-devel-6.1.2-4.fc23.x86_64.rpm  # Qwt for Qt 4.
+
+  You may also install them directly (whithout an intermediate download):
+
+  .. code-block:: sh
+   
+     dummy@lepka:~> yum install -y http://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/RPMS/qwt-6.1.2-4.fc23.x86_64.rpm \
+                                   http://ftp.lip6.fr/pub/linux/distributions/slsoc/soc/7/addons/x86_64/RPMS/qwt-devel-6.1.2-4.fc23.x86_64.rpm 
 
 2. Install the unpackaged prerequisites. Currently, only RapidJSON_.
 
@@ -206,8 +221,8 @@ If you want to use Qt 5 instead of Qt 4, modify the previous steps as follows:
 
   .. code-block:: sh
    
-     dummy@lepka:~> yum localinstall -y qwt-qt5-6.1.2-4.fc23.x86_64.rpm  \
-                                        qwt-qt5-6.1.2-4.fc23.x86_64.rpm  # Qwt for Qt 5.
+     dummy@lepka:~> yum localinstall -y qwt-qt5-6.1.2-4.fc23.x86_64.rpm        \
+                                        qwt-qt5-devel-6.1.2-4.fc23.x86_64.rpm  # Qwt for Qt 5.
 
 * At **step 4**, add a ``--qt5`` argument to the ``ccb.py`` command line.
 
@@ -272,14 +287,27 @@ First, install or check that the required prerequisites are installed:
 
 .. code-block:: sh
 
-   dummy@lepka:~> sudo apt install -y build-essential binutils-dev                     \
-                                      git cmake bison flex gcc python-dev              \
-                                      libboost-all-dev libboost-python-dev             \
-                                      libbz2-dev libxml2-dev rapidjson-dev libbz2-dev  \
-				      qt4-dev-tools libqwt5-qt4-dev                    \ # Qt 4
-				      qtbase5-dev libqt5svg5-dev libqwt-qt5-dev        \ # Qt 5
-                                      doxygen dvipng graphviz python-sphinx            \
-                                      texlive-fonts-extra texlive-lang-french
+   dummy@lepka:~> sudo apt-get install -y build-essential binutils-dev                     \
+                                          git cmake bison flex gcc python-dev              \
+                                          libboost-all-dev libboost-python-dev             \
+                                          zlib1g-dev libxml2-dev rapidjson-dev libbz2-dev
+
+To use with Qt 4:
+
+.. code-block:: sh
+
+   dummy@lepka:~> sudo apt-get install -y qt4-dev-tools libqwt-dev python-qt4
+
+To use with Qt 5:
+
+.. code-block:: sh
+
+   dummy@lepka:~> sudo apt-get install -y qtbase5-dev libqt5svg5-dev libqwt-qt5-dev \
+                                          python-pyqt5
+
+.. note:: **Do not install both versions of Qwt** (for Qt 4 and Qt 5),
+          this will confuse the installer and end up with a non functional software
+          (it uses the headers from one Qt and libraries from the other version).
 
 Second step is to create the source directory and pull the |git| repository:
 
@@ -316,6 +344,26 @@ The last two lines tell |MacOS| to use the |Python| from |macports| and *not* fr
 the system.
 
 Then proceed with the generic install instructions.
+
+
+|Coriolis| & Docker
+~~~~~~~~~~~~~~~~~~~
+
+Under ``bootstrap/docker/`` scripts and configuration files are provided that
+allow to rebuild |Alliance| and |Coriolis| and perform the regression tests
+of ``alliance-check-toolkit``. You may have a look at the ``Dockerfile.system``
+configuration file to see exactly how to setup a vanilla system to build
+|Coriolis|.
+
+To run the docker tests, call the ``dockerManage.sh`` scripts with the relevant
+arguments:
+
+.. code-block:: sh
+
+   ego@home:debian-9> ../../dockerManage.sh -bS  # build both system & coriolis images.
+   ego@home:debian-9> ../../dockerManage.sh -r   # compile & check coriolis.
+   ego@home:debian-9> ../../dockerManage.sh -C   # clear the images.
+
 
 
 Packaging Coriolis

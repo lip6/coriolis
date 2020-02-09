@@ -62,6 +62,9 @@
 .. |Blif|                           replace:: :sc:`blif`
 .. |TSMC|                           replace:: :sc:`tsmc`
 .. |AMS|                            replace:: :sc:`ams`
+.. |XFAB|                             replace:: :sc:`xfab`
+.. |XH035|                            replace:: :cb:`XH035`
+.. |ROHM|                             replace:: :sc:`rohm`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -77,14 +80,19 @@
 .. |Yifei|                          replace:: :sc:`Yifei`
 .. |Mead|                           replace:: :sc:`Mead`
 .. |Conway|                         replace:: :sc:`Conway`
+.. |Petley|                         replace:: :sc:`Petley`
+.. |FloresGomez|                    replace:: :sc:`Flores Gomez`
+.. |SNX|                            replace:: :sc:`snx`
 
 .. |ASIC|                           replace:: :sc:`asic`
 .. |EDA|                            replace:: :sc:`eda`
 .. |RTL|                            replace:: :sc:`rtl`
 .. |HSL|                            replace:: :sc:`hsl`
+.. |FHS|                            replace:: :sc:`fhs`
 .. |IEEE|                           replace:: :sc:`ieee`
 .. |ANSI|                           replace:: :sc:`ansi`
 .. |MIPS|                           replace:: :sc:`mips`
+.. |Pharosc|                        replace:: :sc:`Pharosc`
 .. |Am2901|                         replace:: :sc:`Am2901`
 .. |CAIRO|                          replace:: :sc:`cairo`
 .. |CAIRO+|                         replace:: :sc:`cairo+`
@@ -143,6 +151,8 @@
 .. |gdb|                            replace:: :cb:`gdb`
 .. |valgrind|                       replace:: :cb:`valgrind`
 .. |cmake|                          replace:: :cb:`cmake`
+.. |bison|                          replace:: :cb:`bison`
+.. |flex|                           replace:: :cb:`flex`
 .. |struct|                         replace:: :cb:`struct`
 
 .. |KeyUp|                          replace:: :fboxtt:`Up`

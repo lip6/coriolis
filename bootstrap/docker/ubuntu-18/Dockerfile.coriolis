@@ -1,0 +1,7 @@
+
+FROM ubuntu18.system
+
+COPY root/socInstaller.py       /root/socInstaller.py
+COPY root/allianceInstaller.sh  /root/allianceInstaller.sh
+CMD  /root/socInstaller.py --docker --profile=Ubuntu18 --do-alliance --do-coriolis --benchs
+

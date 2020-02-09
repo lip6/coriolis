@@ -436,8 +436,7 @@ class Configuration ( object ):
             if self.doBenchs:
               commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
           elif target == 'Ubuntu18' or target == 'Debian9':
-            if target == 'Ubuntu18': otherArgs.append( '--qt5' )
-            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
+            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
             if self.doBenchs:
               commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
         return commands

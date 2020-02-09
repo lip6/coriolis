@@ -17,6 +17,19 @@ Documentation
 .. include:: ../../etc/definitions.rst
 
 
+Alliance Documentation
+======================
+
+.. row::
+
+   .. column:: 
+      :width:  5
+      :offset: 1
+
+      `Alliance Installation <{filename}/pages/alliance/Alliance_HTML.rst>`_ |br|
+      How to get, build & install Alliance alongside Coriolis
+
+
 Coriolis Documentation
 ======================
 

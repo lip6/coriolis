@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
+
 from   __future__ import unicode_literals
 import os
 import os.path
@@ -35,7 +36,7 @@ STATIC_PATHS = [ 'pages/users-guide'
 
 
 AUTHOR   = u'Jean-Paul Chaput'
-SITENAME = u'Coriolis VLSI CAD Tools'
+SITENAME = u'Coriolis VLSI CAD Tools [offline]'
 SITEURL  = siteUrl
 
 THEME = 'nest-coriolis'
@@ -67,8 +68,9 @@ DISPLAY_PAGES_ON_MENU = True
 SOCIAL = None
 
 # Social widget
-LINKS  = (('CIAN Team Website'      , 'https://www-soc.lip6.fr/'),
-          ('Free Silicon Foundation', 'https://f-si.org'        ),)
+LINKS  = (('Alliance/Coriolis'      , 'https://coriolis.lip6.fr/'),
+          ('CIAN Team Website'      , 'https://www-soc.lip6.fr/' ),
+          ('Free Silicon Foundation', 'https://f-si.org'         ),)
 
 DEFAULT_PAGINATION = 10
 
@@ -114,6 +116,8 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
 
                , 'RDS.rst'            # For RDS.
                , 'RDSpage.rst'
+
+               , 'Installation.rst'   # For Alliance.
                ]
 
 # Uncomment following line if you want document-relative URLs when developing
