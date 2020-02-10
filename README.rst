@@ -25,7 +25,7 @@ Documentation
 
 The complete documentation is available here, both in pdf & html:
 
-   ./documentation/_build/html/index.html
+   ./documentation/output/html
    ./documentation/UsersGuide/UsersGuide.pdf
 
 The documentation of the latest *stable* version is also
