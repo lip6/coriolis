@@ -15,8 +15,12 @@ RUN apt-get update                                                      \
                        libxt-dev libxpm-dev libmotif-dev                \
                                                                         \
                        yosys                                            \
+                       python3-setuptools python3-pip python3-six       \
+                       python3-wheel                                    \
                                                                         \
                        vim                                              \
- && apt-get clean
+ && apt-get clean \
+ && pip3 install git+https://github.com/m-labs/nmigen.git
 
+#                      For building with Qt 4 instead of Qt 5.
 #                      qt4-dev-tools libqwt-dev python-qt4              \

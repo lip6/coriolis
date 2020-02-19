@@ -2,6 +2,9 @@
 FROM ubuntu18.system
 
 COPY root/socInstaller.py       /root/socInstaller.py
-COPY root/allianceInstaller.sh  /root/allianceInstaller.sh
-CMD  /root/socInstaller.py --docker --profile=Ubuntu18 --do-alliance --do-coriolis --benchs
+RUN  mkdir -p coriolis-2.x/src                       \
+ &&  git clone https://github.com/m-labs/nmigen.git  \
+ &&  cd nmigen                                       \
+ &&  python3 setup.py develop                        \
+ &&  /root/socInstaller.py --docker --profile=Ubuntu18 --do-alliance --do-coriolis --benchs
 

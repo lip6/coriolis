@@ -9,6 +9,7 @@ RUN apt-get update                                                      \
                        libboost-all-dev libboost-python-dev             \
                        zlib1g-dev libxml2-dev rapidjson-dev libbz2-dev  \
                        qt4-dev-tools libqwt-dev python-qt4              \
+                       python3-setuptools                               \
                                                                         \
                        autotools-dev automake                           \
                        libxt-dev libxpm-dev libmotif-dev                \
