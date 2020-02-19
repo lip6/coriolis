@@ -586,6 +586,7 @@ namespace Anabatic {
         case Conn_3G_2M1:
         case Conn_3G_3M1:
         case Conn_3G_4M1:
+        case Conn_3G_5M1:
         case Conn_3G_2M3:
         case Conn_3G_3M3:
         case Conn_3G_4M3:
