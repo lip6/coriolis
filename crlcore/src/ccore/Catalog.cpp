@@ -14,7 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-# include <iomanip>
+#include <fstream>
+#include <iomanip>
 using namespace std;
 
 #include "hurricane/Initializer.h"
@@ -295,11 +296,27 @@ namespace CRL {
   }
 
 
+  void  Catalog::saveToFile ( const string& path, Library* library )
+  {
+    ofstream of ( path, ios::out|ios::trunc );
+    for ( auto entry : _states ) {
+      State* state = entry.second;
+      if (state->getLibrary() != library) continue;
+
+      if (state->isFlattenLeaf()) of << setw(20) << left << entry.first << "C\n";
+      if (state->isFeed()       ) of << setw(20) << left << entry.first << "F\n";
+      if (state->isGds()        ) of << setw(20) << left << entry.first << "G\n";
+    }
+    of.close();
+  }
+
+
   string  Catalog::_getPrint () const
   {
     map<Name,State*>::const_iterator  it;
     ostringstream  s;
 
+    s << "Catalog contents:" << endl;
     for ( it=_states.begin() ; it!=_states.end() ; it++ ) {
       s << left << setw(30) << getString(it->first) << getString(it->second) << endl;
     }

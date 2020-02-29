@@ -237,7 +237,7 @@ class PlaceRoute ( object ):
     katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
     katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
     katana.runNegociate         ( Katana.Flags.NoFlags )
-    success = katana.getToolSuccess()
+    success = katana.getSuccessState()
     katana.finalizeLayout()
     katana.destroy()
 

@@ -1369,8 +1369,8 @@ void  vstParser ( const string cellPath, Cell *cell )
   static bool firstCall = true;
   if ( firstCall ) {
     firstCall      = false;
-    Vst::framework = AllianceFramework::get ();
   }
+  Vst::framework = AllianceFramework::get ();
 
   Vst::states.push_back ( new Vst::YaccState(cellPath) );
 

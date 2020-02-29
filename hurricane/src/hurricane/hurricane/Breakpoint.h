@@ -44,6 +44,8 @@ namespace Hurricane {
       typedef bool ( StopCb_t )( const string& );
 
     public:
+      static  bool          simpleStopCb  ( const string& message );
+    public:
       static  Breakpoint*   get           ();
       static  void          setStopCb     ( StopCb_t* );
       static  bool          stop          ( unsigned int, const string );

@@ -83,6 +83,14 @@ Record* SharedName::_getRecord() const
     return record;
 }
 
+void  SharedName::dump ()
+// **********************
+{
+  cerr << "_SHARED_NAME_MAP contents:" << endl;
+  for ( auto item : *_SHARED_NAME_MAP ) {
+    cerr << "- [" << item.first << "] = " << item.second << endl;
+  }
+}
 
 
 // ****************************************************************************************************

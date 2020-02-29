@@ -1,15 +1,9 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2020, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
@@ -17,10 +11,7 @@
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./ColorScale.cpp"                         |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// +-----------------------------------------------------------------+
 
 
 #include "hurricane/viewer/ColorScale.h"
@@ -63,6 +54,20 @@ namespace Hurricane {
       for ( size_t i=0 ; i<256 ; i++ ) {
         _color[i] = new QColor ( _red[i], _green[i], _blue[i] );
         _brush[i] = new QBrush ( *_color[i] );
+      }
+    }
+  }
+
+
+  void  ColorScale::qtFree ()
+  {
+    if ( !_brush[0] ) {
+      for ( size_t i=0 ; i<256 ; i++ ) {
+        delete _brush[i];
+        delete _color[i];
+
+        _color[i] = NULL;
+        _brush[i] = NULL;
       }
     }
   }

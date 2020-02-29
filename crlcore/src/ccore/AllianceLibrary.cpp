@@ -70,6 +70,25 @@ namespace CRL {
   }
 
 
+  void  AllianceLibrary::saveCells () const
+  {
+    cerr << "AllianceLibrary::saveCells() " << _path << " " << _library << endl;
+    AllianceFramework* af = AllianceFramework::get();
+    for ( Cell* cell : _library->getCells() ) {
+      cerr << "Saving " << cell << endl;
+      af->saveCell( cell, Catalog::State::Physical );
+    }
+  }
+
+
+  void  AllianceLibrary::saveCATAL () const
+  {
+    Catalog* catalog   = AllianceFramework::get()->getCatalog();
+    string   catalFile = getString(_path)+"/CATAL";
+    catalog->saveToFile( catalFile, _library );
+  }
+  
+
   string  AllianceLibrary::_getString () const
   {
     return ( "<" + _TName("AllianceLibrary") + " " + getString(_library->getName()) + ">" );

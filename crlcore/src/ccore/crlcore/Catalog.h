@@ -65,6 +65,7 @@ namespace CRL {
              bool              deleteState  ( const Name& name );
              void              clear        ();
              bool              loadFromFile ( const string& path, Library* library );
+             void              saveToFile   ( const string& path, Library* library );
       inline map<Name,State*>* getStates    ();
              string            _getPrint    () const;
       inline string            _getTypeName () const;
@@ -232,7 +233,7 @@ namespace CRL {
   inline unsigned int      Catalog::State::getDepth         () const { return _depth; }
   inline string            Catalog::State::_getTypeName     () const { return _TName("Catalog::State"); }
 
-  inline                   Catalog::Catalog                 () : _states() {}
+  inline                   Catalog::Catalog                 () : _states() { }
   inline map<Name,Catalog::State*>*
                            Catalog::getStates               () { return &_states; }
   inline string            Catalog::_getTypeName            () const { return _TName("Catalog"); }

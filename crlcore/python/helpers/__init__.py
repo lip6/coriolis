@@ -24,6 +24,8 @@ import os.path
 import re
 import traceback
 import Hurricane
+import Viewer
+import CRL
 import helpers.io
 
 quiet          = False
@@ -33,6 +35,7 @@ ndaDir         = None
 techno         = 'symbolic/cmos'
 technoDir      = None
 moduleGlobals  = globals()
+confModules    = [ ]
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
@@ -393,16 +396,60 @@ def netDirectionToStr ( netDir ):
 setSysConfDir( False )
 
 
+def unloadUserSettings ():
+    print '  o  Unloading Python user\'s modules.'
+
+    global confModules
+    for moduleName in confModules:
+      refcount = sys.getrefcount( sys.modules[moduleName] )
+      warning  = ''
+      if refcount > 3:
+        warning = '(NOTE: More than 3 refcount %d)' % refcount
+       #print helpers.io.WarningMessage( [ 'Configuration module "%s" has more than 3 references (%d)".' \
+       #                                   % (moduleName,refcount)
+       #                                 , 'May be unable to unload it from the Python process.'
+       #                                 ] )
+      print '     - %-34s %-35s' % ('"%s".'%moduleName, warning)
+      del sys.modules[ moduleName ]
+    confModules = []
+    return
+
+
 def loadUserSettings ():
+    global confModules
+
+    rvalue        = False
+    beforeModules = set()
+    for moduleName in sys.modules.keys(): beforeModules.add( moduleName )
+
     if os.path.isfile('./coriolis2/settings.py'):
       if os.path.isfile('./coriolis2/__init__.py'):
         sys.path.insert( 0, os.getcwd() )
         import coriolis2.settings
-        return True
+        rvalue = True
       else:
         print helpers.io.WarningMessage( [ 'User\'s settings directory "%s" exists, but do not contains "__init__.py".' % './coriolis2/'
                                          , '(path:"%s")' % os.path.abspath(os.getcwd())
                                          ] )
+    else:
+      import symbolic.cmos
 
-    import symbolic.cmos
-    return False
+    confModules = set()
+    for moduleName in sys.modules.keys():
+      if not (moduleName in beforeModules):
+        confModules.add( moduleName )
+
+   #print 'Configuration modules:'
+   #for moduleName in confModules:
+   #  print '-', moduleName
+
+    return rvalue
+
+
+def resetCoriolis ():
+    print '  o  Full reset of Coriolis/Hurricane databases.'
+    CRL.AllianceFramework.get().destroy()
+    Viewer.Graphics.get().clear()
+    Hurricane.DataBase.getDB().destroy()
+    unloadUserSettings()
+    return

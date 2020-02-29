@@ -31,7 +31,8 @@ namespace Hurricane {
 
   class SharedName {
       friend class Name;
-
+    public:
+      static void           dump         ();
     public:
       inline unsigned long  getHash      () const;
              const string&  _getSString  () const { return _string; };

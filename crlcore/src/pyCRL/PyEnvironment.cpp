@@ -138,8 +138,9 @@ extern "C" {
     if ( self->ACCESS_OBJECT == NULL )
       return PyString_FromString("<PyObject unbound>");
 
-    string s = "<Environment Alliance>";
-    return PyString_FromString(s.c_str());
+    ostringstream s;
+    s << "<Alliance Environment " << (void*)self->ACCESS_OBJECT << ">";
+    return PyString_FromString(s.str().c_str());
   }
 
   

@@ -25,6 +25,7 @@
                                 hurricane/Box.h                   hurricane/Boxes.h
                                 hurricane/Torus.h
                                 hurricane/Cell.h                  hurricane/Cells.h
+                                hurricane/CellsSort.h
                                 hurricane/Collection.h
                                 hurricane/Commons.h
                                 hurricane/Component.h             hurricane/Components.h
@@ -154,6 +155,7 @@
                                 Entity.cpp
                                 Cell.cpp
                                 CellCollections.cpp
+                                CellsSort.cpp
                                 NetAlias.cpp
                                 Net.cpp
                                 DeepNet.cpp

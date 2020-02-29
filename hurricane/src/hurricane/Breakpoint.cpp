@@ -34,39 +34,7 @@
 // +-----------------------------------------------------------------+
 
 
-# include  "hurricane/Breakpoint.h"
-
-
-namespace {
-
-
-  using namespace std;
-  using namespace Hurricane;
-
-
-  bool  simpleStopCb ( const string& message )
-  {
-    cerr << "[STOP] " << message << endl;
-
-    char answer = '?';
-    while ( answer == '?' ) {
-      cerr << "       Type <y> to continue, <n> to abort: (y) ";
-      cerr.flush ();
-
-      cin >> answer;
-      switch ( answer ) {
-        case 'Y':
-        case 'y': answer = 'y'; break;
-        case 'N':
-        case 'n': answer = 'n'; break;
-        default:  answer = '?';
-      }
-    }
-    return (answer == 'y');
-  }
-
-
-} // End of anonymous namespace.
+#include  "hurricane/Breakpoint.h"
 
 
 namespace Hurricane {
@@ -135,6 +103,27 @@ namespace Hurricane {
     return false;
   }
 
+
+  bool  Breakpoint::simpleStopCb ( const string& message )
+  {
+    cerr << "[STOP] " << message << endl;
+
+    char answer = '?';
+    while ( answer == '?' ) {
+      cerr << "       Type <y> to continue, <n> to abort: (y) ";
+      cerr.flush ();
+
+      cin >> answer;
+      switch ( answer ) {
+        case 'Y':
+        case 'y': answer = 'y'; break;
+        case 'N':
+        case 'n': answer = 'n'; break;
+        default:  answer = '?';
+      }
+    }
+    return (answer == 'y');
+  }
 
 
 

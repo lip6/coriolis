@@ -76,11 +76,7 @@ namespace Hurricane {
 
   RawDrawingStyle::~RawDrawingStyle ()
   {
-    if ( _color ) {
-      delete _color;
-      delete _pen;
-      delete _brush;
-    }
+    qtFree();
   }
 
 
@@ -111,18 +107,32 @@ namespace Hurricane {
 
   void  RawDrawingStyle::qtAllocate ()
   {
-    if ( !_color ) {
+    if (not _color) {
       _color = new QColor ( _red, _green, _blue );
 
       _pen = new QPen ();
-      if ( _borderWidth ) {
-        _pen->setStyle ( Qt::SolidLine );
-        _pen->setWidth ( _borderWidth );
+      if (_borderWidth) {
+        _pen->setStyle( Qt::SolidLine );
+        _pen->setWidth( _borderWidth );
       } else
-        _pen->setStyle ( Qt::NoPen );
-      _pen->setColor ( *_color );
+        _pen->setStyle( Qt::NoPen );
+      _pen->setColor( *_color );
 
-      _brush = Hurricane::getBrush ( _pattern, _red, _green, _blue );
+      _brush = Hurricane::getBrush( _pattern, _red, _green, _blue );
+    }
+  }
+
+
+  void  RawDrawingStyle::qtFree ()
+  {
+    if (_color) {
+      delete _brush;
+      delete _pen;
+      delete _color;
+
+      _brush = NULL;
+      _pen   = NULL;
+      _color = NULL;
     }
   }
 
@@ -277,6 +287,13 @@ namespace Hurricane {
   {
     for ( size_t i=0 ; i < _drawingStyles.size() ; i++ )
       _drawingStyles[i]->qtAllocate ();
+  }
+
+
+  void  DrawingGroup::qtFree ()
+  {
+    for ( size_t i=0 ; i < _drawingStyles.size() ; i++ )
+      _drawingStyles[i]->qtFree ();
   }
 
 
@@ -491,6 +508,13 @@ namespace Hurricane {
   {
     for ( size_t gi=0 ; gi < _groups.size() ; gi++ )
       _groups[gi]->qtAllocate ();
+  }
+
+
+  void  DisplayStyle::qtFree ()
+  {
+    for ( size_t gi=0 ; gi < _groups.size() ; gi++ )
+      _groups[gi]->qtFree ();
   }
 
 

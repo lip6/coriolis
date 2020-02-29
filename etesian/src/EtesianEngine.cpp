@@ -643,6 +643,8 @@ namespace Etesian {
       //cerr << "Outside Pin: " << pin << endl;
       }
       
+      string topCellInstancePin = getString(getCell()->getName()) + ":C";
+
       for ( RoutingPad* rp : net->getRoutingPads() ) {
         if (getBlockInstance() and (rp->getOccurrence().getPath().getHeadInstance() != getBlockInstance())) {
         // For Gabriel Gouvine : if there are multiple blocks (i.e. we have a true
@@ -661,8 +663,9 @@ namespace Etesian {
         int_t ypin    = offset.getY() / hpitch;
 
         auto  iid = _cellsToIds.find( insName );
-        if (iid == _cellsToIds.end() ) {
-          cerr << Error( "Unable to lookup instance <%s>.", insName.c_str() ) << endl;
+        if (iid == _cellsToIds.end()) {
+          if (insName != topCellInstancePin)
+            cerr << Error( "Unable to lookup instance \"%s\".", insName.c_str() ) << endl;
         } else {
           pins.push_back( temporary_pin( point<int_t>(xpin,ypin), (*iid).second, netId ) );
         }
@@ -798,7 +801,7 @@ namespace Etesian {
 
       ostringstream label;
       label.str("");
-      label  << "     [" << setw(3) << setfill('0') << i << "] Bipart.";
+      label  << "     [" << setw(3) << setfill('0') << i << setfill(' ') << "] Bipart.";
       _progressReport1(label.str() );
 
       upperWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementUB));
@@ -862,7 +865,7 @@ namespace Etesian {
     for ( int i=0; i<iterations; ++i ){
         ostringstream label;
         label.str("");
-        label  << "     [" << setw(3) << setfill('0') << i << "]";
+        label  << "     [" << setw(3) << setfill('0') << i << setfill(' ') << "]";
 
         optimize_x_orientations( _circuit, _placementUB ); // Don't disrupt VDD/VSS connections in a row
         _progressReport1(label.str() + " Oriented ......." );

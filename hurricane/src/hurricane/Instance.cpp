@@ -596,7 +596,8 @@ void Instance::_postCreate()
 void Instance::_preDestroy()
 // ************************
 {
-  for ( SharedPath* sharedPath : _getSharedPathes() ) delete sharedPath;
+  SharedPathes pathes = _getSharedPathes();
+  while ( pathes.getFirst() ) delete pathes.getFirst();
 
   Inherit::_preDestroy();
 

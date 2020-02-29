@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2010-2010, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2010-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
 // | =============================================================== |
 // |  C++ Module  :  "./PyGraphics.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -284,11 +284,29 @@ extern "C" {
   static PyObject* PyGraphics_enable ( PyObject*, PyObject* args )
   {
     cdebug_log(20,0) << "PyGraphics_enable()" << endl;
-
     HTRY
-    Graphics::getGraphics()->enable();
+      Graphics::getGraphics()->enable();
     HCATCH
+    Py_RETURN_NONE;
+  }
 
+
+  static PyObject* PyGraphics_disable ( PyObject*, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyGraphics_disable()" << endl;
+    HTRY
+      Graphics::getGraphics()->disable();
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyGraphics_clear ( PyObject*, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyGraphics_clear()" << endl;
+    HTRY
+      Graphics::getGraphics()->clear();
+    HCATCH
     Py_RETURN_NONE;
   }
 
@@ -342,6 +360,10 @@ extern "C" {
                               , "Return the list of all availables styles (only iterable)." }
     , { "enable"              , (PyCFunction)PyGraphics_enable          , METH_NOARGS|METH_STATIC
                               , "Bind to Qt, effectively calling Qt and allocating all objects." }
+    , { "disable"             , (PyCFunction)PyGraphics_disable          , METH_NOARGS|METH_STATIC
+                              , "Unbind from Qt, removing all allocated objects." }
+    , { "clear"              , (PyCFunction)PyGraphics_clear             , METH_NOARGS|METH_STATIC
+                              , "Remove all loaded styles, but keep the singleton." }
   //, { "destroy"             , (PyCFunction)PyGraphics_destroy         , METH_NOARGS
   //                          , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

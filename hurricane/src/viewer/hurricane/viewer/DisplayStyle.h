@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) UPMC 2008-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./hurricane/viewer/DisplayStyle.h"             |
 // +-----------------------------------------------------------------+
@@ -44,6 +44,7 @@ namespace Hurricane {
                                  ~DrawingGroup     ();
               DrawingGroup*       getClone         ();
               void                qtAllocate       ();
+              void                qtFree           ();
     // Methods.                  
       inline const Name&          getName          () const;
       inline const DrawingStyles& getDrawingStyles () const;
@@ -150,6 +151,7 @@ namespace Hurricane {
                                             
     // Modifiers.                           
              void                              qtAllocate       ();
+             void                              qtFree           ();
       inline void                              setDescription   ( const std::string& description );
       inline void                              setDescription   ( const char* description );
              void                              inheritFrom      ( const DisplayStyle* base );
@@ -230,6 +232,7 @@ namespace Hurricane {
     public:
     // Accessors.
              void               qtAllocate   ();
+             void               qtFree       ();
       inline bool               isGoMatched  () const;
       inline const Name&        getName      () const;
       inline const std::string& getPattern   () const;

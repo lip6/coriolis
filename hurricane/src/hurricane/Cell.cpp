@@ -1198,7 +1198,6 @@ void Cell::_preDestroy()
 
   Markers   markers   = getMarkers       (); while ( markers  .getFirst() ) markers  .getFirst()->destroy();
   Instances instances = getSlaveInstances(); while ( instances.getFirst() ) instances.getFirst()->destroy();
-            instances = getInstances     (); while ( instances.getFirst() ) instances.getFirst()->destroy();
 
   Nets nets = getNets();
   while ( nets.getFirst() ) {
@@ -1207,6 +1206,12 @@ void Cell::_preDestroy()
     net->destroy();
   }
   for ( auto islave : _netAliasSet ) delete islave;
+
+  instances = getInstances();
+  vector<Instance*> inss;
+  for ( Instance* instance : getInstances() ) inss.push_back( instance );
+  for ( Instance* instance : inss ) instance->destroy();
+//while ( instances.getFirst() ) instances.getFirst()->destroy();
 
   for ( Slice* slice  : getSlices()  ) slice->_destroy();
   while ( not _extensionSlices.empty() ) _removeSlice( _extensionSlices.begin()->second );

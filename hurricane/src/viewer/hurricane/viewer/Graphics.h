@@ -67,6 +67,7 @@ namespace Hurricane {
       static  string                       toHtml           ( const string& );
       static  int                          toHighDpi        ( int );
       static  bool                         breakpointStopCb ( const string& message );
+      static  void                         clear            ();
     // Modifiers.
       static  void                         addStyle         ( DisplayStyle* displayStyle );
       static  void                         setStyle         ( const Name& key );
@@ -75,6 +76,7 @@ namespace Hurricane {
       static  DisplayStyle*                getStyle         ();
       static  const vector<DisplayStyle*>& getStyles        ();
       static  void                         enable           ();
+      static  void                         disable          ();
               void                         toJson           ( JsonWriter* ) const;
     // Internals - Attributes.
     protected:
@@ -110,8 +112,10 @@ namespace Hurricane {
       inline  float                        _getThreshold      ( const Name& key ) const;
       inline  const DisplayStyle::HSVr&    _getDarkening      () const;
       inline  const ColorScale&            _getColorScale     ( ColorScale::ScaleType ) const;
-      inline  void                         _enable            ();
+              void                         _enable            ();
+              void                         _disable           ();
       inline  const TextTranslator&        _getHtmlTranslator () const;
+              void                         _clear             ();
   };
 
 

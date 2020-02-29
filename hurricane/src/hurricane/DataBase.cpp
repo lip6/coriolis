@@ -21,11 +21,13 @@
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
+#include "hurricane/SharedName.h"
 #include "hurricane/SharedPath.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
 #include "hurricane/Library.h"
+#include "hurricane/CellsSort.h"
 
 
 namespace {
@@ -149,6 +151,8 @@ void DataBase::_postCreate()
 void DataBase::_preDestroy()
 // ************************
 {
+    clear();
+  
     UpdateSession::open();
     Inherit::_preDestroy();
 
@@ -156,6 +160,7 @@ void DataBase::_preDestroy()
     if (_technology) _technology->destroy();
     UpdateSession::close();
 
+    DBo::resetId();
     _db = NULL;
 }
 
@@ -275,6 +280,22 @@ Cell* DataBase::getCell(string name)
   }
 
   return NULL;
+}
+
+void DataBase::clear()
+// *******************
+{
+  UpdateSession::open();
+    
+  CellsSort cs = CellsSort();
+  cs.addLibrary( _rootLibrary );
+  cs.sort();
+  for ( Cell* cell : cs.getSortedCells() ) cell->destroy();
+  if (_rootLibrary) _rootLibrary->destroy();
+    
+  UpdateSession::close();
+
+//SharedName::dump();
 }
 
 void DataBase::_toJson(JsonWriter* w) const

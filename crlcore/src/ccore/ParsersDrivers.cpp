@@ -91,7 +91,7 @@ namespace CRL {
   }
 
 
-  void  ParserFormatSlot::registerCell ( const string& tag, CellParser_t* p, const string& ext )
+  void  ParserFormatSlot::registerCell ( string tag, CellParser_t* p, string ext )
   {
     ParserSlot      slot ( tag, ext, (void*)p );
     ParserSlotIter  it   = _cells.begin();
@@ -106,7 +106,7 @@ namespace CRL {
   }
 
 
-  void  ParserFormatSlot::registerLib ( const string& tag, LibraryParser_t* p, const string& ext )
+  void  ParserFormatSlot::registerLib ( string tag, LibraryParser_t* p, string ext )
   {
     ParserSlot      slot ( tag, ext, (void*)p );
     ParserSlotIter  it   = _libs.begin();
@@ -123,7 +123,7 @@ namespace CRL {
   }
 
 
-  bool ParserFormatSlot::unRegisterCell ( const Name& ext )
+  bool ParserFormatSlot::unRegisterCell ( string ext )
   {
     ParserSlotIter  it = _cells.begin();
 
@@ -140,7 +140,7 @@ namespace CRL {
   }
 
 
-  bool ParserFormatSlot::unRegisterLib ( const Name& ext )
+  bool ParserFormatSlot::unRegisterLib ( string ext )
   {
     ParserSlotIter  it = _libs.begin();
 
@@ -163,7 +163,7 @@ namespace CRL {
 // Class  : "ParsersMap"
 
 
-  ParsersMap::ParsersMap (): map<Name,ParserFormatSlot>()
+  ParsersMap::ParsersMap (): map<std::string,ParserFormatSlot>()
   {
     // Register the Alliance default parsers.
     registerSlot ( "ap"   , (CellParser_t*)apParser       , "ap"   );
@@ -177,12 +177,12 @@ namespace CRL {
   }
 
 
-  ParserFormatSlot& ParsersMap::getParserSlot ( const string& tag )
+  ParserFormatSlot& ParsersMap::getParserSlot ( string tag )
   {
     ParserFormatSlot* slot;
     iterator          it;
 
-    if ( ( it = find(Name(tag)) ) != end() ) {
+    if ( ( it = find(tag) ) != end() ) {
       slot = & ( it->second );
     } else {
       (*this)[tag] = ParserFormatSlot ();
@@ -196,17 +196,17 @@ namespace CRL {
   }
 
 
-  ParserFormatSlot &ParsersMap::getParserSlot ( const string&      name
+  ParserFormatSlot &ParsersMap::getParserSlot ( string             name
                                               , unsigned int       mode
                                               , const Environment& environment )
   {
   // Look for the parser tag (i.e. file extention).
-    Name format;
+    string format;
     switch ( mode & (Catalog::State::Views) ) {
       case Catalog::State::Physical: format = environment.getIN_PH(); break;
       case Catalog::State::Logical:  format = environment.getIN_LO(); break;
       default:
-        throw Error ( BadInputMode, "ParserMap::getParserSlot()", getString(name).c_str() );
+        throw Error ( BadInputMode, "ParserMap::getParserSlot()", name.c_str() );
     }
 
     iterator  it = find ( format );
@@ -220,12 +220,12 @@ namespace CRL {
   }
 
 
-  DriverSlot &DriversMap::getDriverSlot ( const string&      name
+  DriverSlot &DriversMap::getDriverSlot ( string             name
                                         , unsigned int       mode
                                         , const Environment& environment )
   {
   // Look for the parser tag (i.e. file extention).
-    Name format;
+    string format;
     switch ( mode & (Catalog::State::Views) ) {
       case Catalog::State::Physical: format = environment.getOUT_PH(); break;
       case Catalog::State::Logical:  format = environment.getOUT_LO(); break;
@@ -244,7 +244,7 @@ namespace CRL {
   }
 
 
-  void  ParsersMap::registerSlot ( const string& tag, CellParser_t* p, const string& ext )
+  void  ParsersMap::registerSlot ( string tag, CellParser_t* p, string ext )
   {
     ParserFormatSlot& slot = getParserSlot ( tag );
   
@@ -252,7 +252,7 @@ namespace CRL {
   }
 
 
-  void  ParsersMap::registerSlot ( const string& tag, LibraryParser_t* p, const string& ext )
+  void  ParsersMap::registerSlot ( string tag, LibraryParser_t* p, string ext )
   {
     ParserFormatSlot& slot = getParserSlot ( tag );
   
@@ -260,7 +260,7 @@ namespace CRL {
   }
 
 
-  void  ParsersMap::unRegisterSlot ( const Name& tag, const Name& ext, bool lib )
+  void  ParsersMap::unRegisterSlot ( string tag, string ext, bool lib )
   {
     iterator  it = find(tag);
 
@@ -277,7 +277,7 @@ namespace CRL {
 // Class :  "DriversMap"
 
 
-  DriversMap::DriversMap () : map<Name,DriverSlot>()
+  DriversMap::DriversMap () : map<string,DriverSlot>()
   {
   // Register the Alliance default drivers.
     registerSlot ( "ap" , (CellDriver_t*)apDriver       , "ap"       );
@@ -288,13 +288,13 @@ namespace CRL {
   }
 
 
-  DriverSlot& DriversMap::getDriverSlot ( const string& tag )
+  DriverSlot& DriversMap::getDriverSlot ( string tag )
   {
     return (*this)[ tag ];
   }
 
 
-  void  DriversMap::registerSlot ( const string& tag, LibraryDriver_t* d, const string& ext )
+  void  DriversMap::registerSlot ( string tag, LibraryDriver_t* d, string ext )
   {
     iterator    it = find ( tag );
     DriverSlot* p;
@@ -310,7 +310,7 @@ namespace CRL {
   }
 
 
-  void  DriversMap::registerSlot ( const string& tag, CellDriver_t* d, const string& ext )
+  void  DriversMap::registerSlot ( string tag, CellDriver_t* d, string ext )
   {
     iterator    it = find ( tag );
     DriverSlot* p;
@@ -326,7 +326,7 @@ namespace CRL {
   }
 
 
-  void  DriversMap::unRegisterSlot ( const Name& tag )
+  void  DriversMap::unRegisterSlot ( string tag )
   {
     iterator  it = find ( tag );
 

@@ -1,31 +1,21 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
+// Copyright (c) UPMC/LIP6 2008-2020, All Rights Reserved
 //
-// ===================================================================
-//
-// $Id$
-//
-// x-----------------------------------------------------------------x 
-// |                                                                 |
+// +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ColorScale.h"                           |
-// | *************************************************************** |
-// |  U p d a t e s                                                  |
-// |                                                                 |
-// x-----------------------------------------------------------------x
+// |  C++ Header  :       "./hurricane/viewer/ColorScale.h"          |
+// +-----------------------------------------------------------------+
 
 
-#ifndef  __HURRICANE_COLOR_SCALE__
-#define  __HURRICANE_COLOR_SCALE__
-
+#ifndef  HURRICANE_COLOR_SCALE_H
+#define  HURRICANE_COLOR_SCALE_H
 
 #include  <QColor>
 #include  <QBrush>
@@ -53,6 +43,7 @@ namespace Hurricane {
     public:
     // Accessors.
              void          qtAllocate   ();
+             void          qtFree       ();
       inline const Name&   getName      () const;
              QBrush        getBrush     ( size_t, const DisplayStyle::HSVr& darkening ) const;
 
@@ -110,7 +101,6 @@ namespace Hurricane {
   inline const Name& ColorScale::getName () const { return _name; }
 
 
-} // End of Hurricane namespace.
+} // Hurricane namespace.
 
-
-#endif  // __HURRICANE_COLOR_SCALE__
+#endif  // HURRICANE_COLOR_SCALE_H

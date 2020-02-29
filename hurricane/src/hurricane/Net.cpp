@@ -717,11 +717,13 @@ void Net::_preDestroy()
 
   Inherit::_preDestroy();
 
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " slave Plugs..." << endl;
   Plugs plugs = getSlavePlugs();
   while ( plugs.getFirst() ) plugs.getFirst()->_destroy();
 
   unmaterialize();
 
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " slave Rubbers..." << endl;
   Rubbers rubbers = getRubbers();
   while ( rubbers.getFirst() ) rubbers.getFirst()->_destroy();
 
@@ -735,7 +737,13 @@ void Net::_preDestroy()
     // over a collection as it is modificated/destroyed!
     }
   }
+
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " RoutingPads..." << endl;
+  vector<RoutingPad*> rps;
+  for ( RoutingPad* rp : getRoutingPads() ) rps.push_back( rp );
+  for ( RoutingPad* rp : rps ) rp->destroy();
     
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " Components..." << endl;
   Components components = getComponents();
   while ( components.getFirst() ) {
     Component* component = components.getFirst();
@@ -743,6 +751,7 @@ void Net::_preDestroy()
     else (static_cast<Plug*>(component))->setNet(NULL);
   }
 
+  cdebug_log(18,0) << "Net::_preDestroy: " << this << " Names/Aliases..." << endl;
   _mainName.clear();
   _cell->_getNetMap()._remove(this);
 
