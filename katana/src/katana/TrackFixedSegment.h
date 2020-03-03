@@ -71,8 +71,7 @@ namespace Katana {
       virtual string         _getTypeName           () const;
     protected:
     // Attributes.
-      static Net*     _blockageNet;
-             Segment* _segment;
+              Segment* _segment;
     protected:
     // Constructors & Destructors.
                                  TrackFixedSegment ( Track*, Segment* ) ;

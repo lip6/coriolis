@@ -570,10 +570,10 @@ namespace {
           TrackElement* element = TrackFixedSegment::create ( track, segment );
           cdebug_log(159,0) << "  Insert in " << track << "+" << element << endl;
 
-          if (segment->getId() == 51904) {
-            cerr << "  Insert in " << track << endl;
-            cerr << "    +" << element << endl;
-          }
+          // if (segment->getId() == 51904) {
+          //   cerr << "  Insert in " << track << endl;
+          //   cerr << "    +" << element << endl;
+          // }
         }
         // if (segment->getId() == 51904) {
         //   DebugSession::close();

@@ -524,6 +524,10 @@ namespace Hurricane {
 // Cell implementation
 // ****************************************************************************************************
 
+
+bool  Cell::_useFlattenLeaf = false;
+
+
 Cell::Cell(Library* library, const Name& name)
 // *******************************************
 :    Inherit(),
@@ -601,7 +605,7 @@ Box Cell::getBoundingBox() const
 bool Cell::isLeaf() const
 // **********************
 {
-    return _instanceMap.isEmpty();
+  return _instanceMap.isEmpty() or (_useFlattenLeaf and isFlattenLeaf());
 }
 
 bool Cell::isCalledBy ( Cell* cell ) const

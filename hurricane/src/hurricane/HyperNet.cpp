@@ -365,7 +365,7 @@ Occurrences HyperNet::getLeafPlugOccurrences(bool doExtraction, bool allowInterr
 Occurrences HyperNet::getComponentOccurrences(bool doExtraction, bool allowInterruption) const
 // *******************************************************************************************
 {
-    return HyperNet_ComponentOccurrences(this, doExtraction, allowInterruption);
+  return HyperNet_ComponentOccurrences(this, false, doExtraction, allowInterruption);
 }
 
 string HyperNet::_getString() const
@@ -637,12 +637,14 @@ void HyperNet_NetOccurrences::Locator::progress()
         } // for component*.
       }
 
-      for ( Plug* plug : net->getPlugs() ) {
-        Occurrence occurrence = Occurrence( plug->getMasterNet(), Path(path, plug->getInstance()) );
+      if (not net->getCell()->isLeaf()) {
+        for ( Plug* plug : net->getPlugs() ) {
+          Occurrence occurrence = Occurrence( plug->getMasterNet(), Path(path, plug->getInstance()) );
 
-        if (_netOccurrenceSet.find(occurrence) == _netOccurrenceSet.end()) {
-          _netOccurrenceSet.insert(occurrence);
-          _netOccurrenceStack.push(occurrence);
+          if (_netOccurrenceSet.find(occurrence) == _netOccurrenceSet.end()) {
+            _netOccurrenceSet.insert(occurrence);
+            _netOccurrenceStack.push(occurrence);
+          }
         }
       }
 
@@ -991,91 +993,81 @@ string HyperNet_LeafPlugOccurrences::_getString() const
 // HyperNet_LeafPlugOccurrences::Locator implementation
 // ****************************************************************************************************
 
-HyperNet_LeafPlugOccurrences::Locator::Locator()
-// ***************************************
-:    Inherit(),
-    _netOccurrenceLocator(),
-    _plugOccurrence()
-    
+HyperNet_LeafPlugOccurrences::Locator::Locator ()
+  : Inherit()
+  , _netOccurrenceLocator()
+  , _plugOccurrence()
+{ }
+
+
+HyperNet_LeafPlugOccurrences::Locator::Locator ( const HyperNet* hyperNet
+                                               ,       bool      doExtraction
+                                               ,       bool      allowInterruption )
+  : Inherit()
+  , _netOccurrenceLocator()
+  , _plugOccurrence()
 {
+  if (hyperNet) {
+    _netOccurrenceLocator = hyperNet->getNetOccurrences( doExtraction
+                                                       , allowInterruption ).getLocator();
+    progress();
+  }
 }
 
-HyperNet_LeafPlugOccurrences::Locator::Locator(const HyperNet* hyperNet, bool doExtraction, bool allowInterruption)
-// ****************************************************************************************************
-:    Inherit(),
-    _netOccurrenceLocator(),
-    _plugOccurrence()
+
+HyperNet_LeafPlugOccurrences::Locator::Locator ( const Locator& locator )
+  : Inherit()
+  , _netOccurrenceLocator()
+  , _plugOccurrence()
+{ }
+
+
+HyperNet_LeafPlugOccurrences::Locator& HyperNet_LeafPlugOccurrences::Locator::operator= ( const Locator& locator )
 {
-    if (hyperNet) {
-        _netOccurrenceLocator = hyperNet->getNetOccurrences(doExtraction,allowInterruption).getLocator();
-        progress();
+  _netOccurrenceLocator = locator._netOccurrenceLocator;
+  _plugOccurrence       = locator._plugOccurrence;
+  return *this;
+}
+
+
+Occurrence  HyperNet_LeafPlugOccurrences::Locator::getElement () const
+{ return _plugOccurrence; }
+
+
+Locator<Occurrence>* HyperNet_LeafPlugOccurrences::Locator::getClone () const
+{ return new Locator( *this ); }
+
+
+bool  HyperNet_LeafPlugOccurrences::Locator::isValid () const
+{ return _plugOccurrence.isValid(); }
+
+
+void HyperNet_LeafPlugOccurrences::Locator::progress ()
+{
+  _plugOccurrence = Occurrence();
+  while(_netOccurrenceLocator.isValid() and not _plugOccurrence.isValid()) {
+    Occurrence netOccurrence = _netOccurrenceLocator.getElement();
+
+    _netOccurrenceLocator.progress();
+    Net* net  = static_cast<Net*>( netOccurrence.getEntity() );
+    Path path = netOccurrence.getPath();
+
+    if (not path.isEmpty() and net->getCell()->isLeaf()) {
+      Instance* instance = path.getTailInstance();
+      Plug*     plug     = instance->getPlug(net);
+      if (plug)
+        _plugOccurrence = Occurrence( plug,path.getHeadPath() );
     }
-}
-
-HyperNet_LeafPlugOccurrences::Locator::Locator(const Locator& locator)
-// *************************************************************
-:    Inherit(),
-    _netOccurrenceLocator(),
-    _plugOccurrence()
-{
-}
-
-HyperNet_LeafPlugOccurrences::Locator& HyperNet_LeafPlugOccurrences::Locator::operator=(const Locator& locator)
-// ************************************************************************************************
-{
-    _netOccurrenceLocator = locator._netOccurrenceLocator;
-    _plugOccurrence = locator._plugOccurrence;
-    return *this;
-}
-
-Occurrence HyperNet_LeafPlugOccurrences::Locator::getElement() const
-// **********************************************************
-{
-    return _plugOccurrence;
-}
-
-Locator<Occurrence>* HyperNet_LeafPlugOccurrences::Locator::getClone() const
-// ******************************************************************
-{
-    return new Locator(*this);
-}
-
-bool HyperNet_LeafPlugOccurrences::Locator::isValid() const
-// **************************************************
-{
-    return _plugOccurrence.isValid();
+  }
 }
 
 
-void HyperNet_LeafPlugOccurrences::Locator::progress()
-// *********************************************
+string  HyperNet_LeafPlugOccurrences::Locator::_getString () const
 {
-    _plugOccurrence = Occurrence();
-    while(_netOccurrenceLocator.isValid() && !_plugOccurrence.isValid())
-    {
-        Occurrence netOccurrence = _netOccurrenceLocator.getElement();
-
-        _netOccurrenceLocator.progress();
-        Net* net = (Net*)netOccurrence.getEntity();
-        Path path = netOccurrence.getPath();
-
-        if (!path.isEmpty() && net->getCell()->isTerminal())
-        {
-            Instance *instance = path.getTailInstance();
-            Plug *plug=instance->getPlug(net);
-            if (plug)
-                _plugOccurrence=Occurrence(plug,path.getHeadPath());
-        }
-    }
-}
-
-string HyperNet_LeafPlugOccurrences::Locator::_getString() const
-// *******************************************************
-{
-    string s = "<" + _TName("HyperNet::LeafPlugOccurrences::Locator");
-    s += " " + getString(_netOccurrenceLocator);
-    s += ">";
-    return s;
+  string s = "<" + _TName("HyperNet::LeafPlugOccurrences::Locator");
+  s += " " + getString(_netOccurrenceLocator);
+  s += ">";
+  return s;
 }
 
 
@@ -1239,7 +1231,8 @@ void HyperNet_ComponentOccurrences::Locator::progress()
         _netOccurrenceLocator.progress();
 
         Net* net = static_cast<Net*>( netOccurrence.getEntity() );
-        if (_withLeafCells or not net->getCell()->isTerminal()) {
+      //if (_withLeafCells or not net->getCell()->isTerminal()) {
+        if (not net->getCell()->isLeaf()) {
           _componentLocator = net->getComponents().getLocator();
         }
       } else

@@ -25,6 +25,7 @@
 #include "hurricane/BasicLayer.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/Pin.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
@@ -55,6 +56,7 @@ namespace Anabatic {
   using  Hurricane::BasicLayer;
   using  Hurricane::RegularLayer;
   using  Hurricane::Segment;
+  using  Hurricane::Pin;
   using  Hurricane::Plug;
   using  Hurricane::Path;
   using  Hurricane::Occurrence;
@@ -458,13 +460,18 @@ namespace Anabatic {
     cdebug_log(112,0) << "Looking into: " << masterNet->getCell() << endl;
     for ( Component* component : masterNet->getComponents() ) {
       cdebug_log(112,0) << "@ " << component << endl;
-      if (not NetExternalComponents::isExternal(component)) continue;
+      if (not NetExternalComponents::isExternal(component)) {
+        cdebug_log(112,0) << "  Not an external component, skip." << endl;
+        continue;
+      }
 
-      Segment* segment = dynamic_cast<Segment*>(component);
-      if (not segment) continue;
-      if (segment->getLayer()->getMask() != metal1->getMask()) continue;
+      Component* candidate = dynamic_cast<Segment*>(component);
+      if (not candidate
+         or  (candidate->getLayer()->getMask() != metal1->getMask()) )
+        candidate = dynamic_cast<Pin*>(component);
+      if (not candidate) continue;
 
-      Box        bb       = transformation.getBox( component->getBoundingBox() );
+      Box        bb       = transformation.getBox( candidate->getBoundingBox() );
       DbU::Unit  trackPos = 0;
       DbU::Unit  minPos   = DbU::Max;
       DbU::Unit  maxPos   = DbU::Min;
@@ -497,7 +504,7 @@ namespace Anabatic {
 
       cdebug_log(112,0) << "| " << occurrence.getPath() << endl;
       cdebug_log(112,0) << "| " << transformation << endl;
-      cdebug_log(112,0) << "| " << bb << " of:" << segment << endl;
+      cdebug_log(112,0) << "| " << bb << " of:" << candidate << endl;
       cdebug_log(112,0) << "| Nearest Pos: " << DbU::getValueString(trackPos) << endl;
         
       if ( (trackPos >= minPos) and (trackPos <= maxPos) ) {

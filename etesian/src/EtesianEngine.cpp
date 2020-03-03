@@ -432,7 +432,6 @@ namespace Etesian {
   {
   //cerr << "EtesianEngine::resetPlacement()" << endl;
 
-    if (not getBlockCell()->isPlaced()) return;
     _flatDesign = true;
 
     Dots  dots ( cmess2, "     ", 80, 1000 );
@@ -461,10 +460,11 @@ namespace Etesian {
       Instance* instance = static_cast<Instance*>(ioccurrence.getEntity());
       instance->destroy();
     }
-    if (not getBlockCell()->getAbutmentBox().isEmpty() )
-      setFixedAbHeight( getBlockCell()->getAbutmentBox().getHeight() );
-    getBlockCell()->setAbutmentBox( Box() );
-    getBlockCell()->resetFlags( Cell::Flags::Placed );
+
+    // if (not getBlockCell()->getAbutmentBox().isEmpty() )
+    //   setFixedAbHeight( getBlockCell()->getAbutmentBox().getHeight() );
+    // getBlockCell()->setAbutmentBox( Box() );
+    // getBlockCell()->resetFlags( Cell::Flags::Placed );
     UpdateSession::close();
 
     dots.finish( Dots::Reset );
@@ -483,26 +483,15 @@ namespace Etesian {
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
 
-    resetPlacement();
-
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
-
-    size_t  instancesNb = getCell()->getLeafInstanceOccurrences(getBlockInstance()).getSize() + 1; // One dummy fixed instance at the end
-
-  // Coloquinte circuit description data-structures.
-    vector<Transformation>  idsToTransf ( instancesNb );
-    vector<temporary_cell>  instances   ( instancesNb );
-    vector< point<int_t> >  positions   ( instancesNb );
-    vector< point<bool> >   orientations( instancesNb, point<bool>(true, true) );
-
-    cmess1 << "     - Converting " << instancesNb << " instances" << endl;
-    cout.flush();
     
     Box topAb = getBlockCell()->getAbutmentBox();
     Transformation topTransformation;
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.applyOn( topAb );
+
+    Cell::setFlattenLeafMode( true );
 
     UpdateSession::open();
     for ( Occurrence occurrence : getBlockCell()->getNonLeafInstanceOccurrences() )
@@ -510,13 +499,26 @@ namespace Etesian {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
 
-      if (not masterCell->getAbutmentBox().isEmpty()
-         and (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-         and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
-        throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
-                   , getString(instance  ->getName()).c_str()
-                   , getString(masterCell->getName()).c_str()
-                   );
+      if (not masterCell->getAbutmentBox().isEmpty()) {
+        if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+           and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
+          throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
+                     , getString(instance  ->getName()).c_str()
+                     , getString(masterCell->getName()).c_str()
+                     );
+        } else {
+          bool isFullyPlaced = true;
+          for ( Instance* subInstance : masterCell->getInstances() ) {
+            if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+               and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
+              isFullyPlaced = false;
+              break;
+            }
+          }
+          if (isFullyPlaced) {
+            masterCell->setFlattenLeaf( true );
+          }
+        }
       }
 
       if ( masterCell->getAbutmentBox().isEmpty()
@@ -532,13 +534,35 @@ namespace Etesian {
     }
     UpdateSession::close();
 
+    size_t  instancesNb = getCell()->getLeafInstanceOccurrences(getBlockInstance()).getSize();
+    if (not instancesNb) {
+      cerr << Error( "EtesianEngine::toColoquinte(): No instance to place. We're gonna crash..." ) << endl;
+    }
+
+  // Coloquinte circuit description data-structures.
+  // One dummy fixed instance at the end
+    vector<Transformation>  idsToTransf ( instancesNb+1 );
+    vector<temporary_cell>  instances   ( instancesNb+1 );
+    vector< point<int_t> >  positions   ( instancesNb+1 );
+    vector< point<bool> >   orientations( instancesNb+1, point<bool>(true, true) );
+
+    cmess1 << "     - Converting " << instancesNb << " instances" << endl;
+    cout.flush();
+
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
     getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
 
-    index_t instanceId = 0;
+    bool    tooManyInstances = false;
+    index_t instanceId       = 0;
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
     {
+      if (tooManyInstances or (instanceId == instancesNb)) {
+        tooManyInstances = true;
+        ++instanceId;
+        continue;
+      }
+
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
       string    instanceName = occurrence.getCompactString();
@@ -547,8 +571,8 @@ namespace Etesian {
       instanceName.erase( instanceName.size()-1 );
 
       if (CatalogExtension::isFeed(masterCell)) {
-        cerr << Warning("Feed instance found and skipped.") << endl;
-        continue;
+        throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
+                   , instanceName.c_str() );
       }
 
       Box instanceAb = _bloatCells.getAb( occurrence );
@@ -596,6 +620,19 @@ namespace Etesian {
       dots.dot();
     }
 
+    if (tooManyInstances) {
+      throw Error( "EtesianEngine::toColoquinte(): Too many leaf instances, %d (expected: %d)\n"
+                   "        maybe a virtual flattening problem."
+                 , instanceId, instancesNb 
+                 );
+    }
+    if (instanceId < instancesNb) {
+      throw Error( "EtesianEngine::toColoquinte(): Too little leaf instances, %d (expected: %d)\n"
+                   "        maybe a virtual flattening problem."
+                 , instanceId, instancesNb
+                 );
+    }
+
     // Dummy fixed instance at the end
     instances[instanceId].size       = point<int_t>( 0, 0 );
     instances[instanceId].list_index = instanceId;
@@ -605,7 +642,23 @@ namespace Etesian {
 
     dots.finish( Dots::Reset|Dots::FirstDot );
 
-    size_t netsNb = getCell()->getNets().getSize();
+    size_t netsNb = 0;
+    for ( Net* net : getCell()->getNets() )
+    {
+      const char* excludedType = NULL;
+      if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
+      if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
+      if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
+      if (excludedType) {
+        cparanoid << Warning( "%s is not a routable net (%s,excluded)."
+                            , getString(net).c_str(), excludedType ) << endl;
+        continue;
+      }
+      if (af->isBLOCKAGE(net->getName())) continue;
+
+      ++netsNb;
+    }
+
     cmess1 << "     - Converting " << netsNb << " nets" << endl;
 
     vector<temporary_net>  nets ( netsNb );
@@ -618,11 +671,7 @@ namespace Etesian {
       if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
       if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
       if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
-      if (excludedType) {
-        cparanoid << Warning( "%s is not a routable net (%s,excluded)."
-                            , getString(net).c_str(), excludedType ) << endl;
-        continue;
-      }
+      if (excludedType) continue;
       if (af->isBLOCKAGE(net->getName())) continue;
 
       dots.dot();
@@ -664,8 +713,9 @@ namespace Etesian {
 
         auto  iid = _cellsToIds.find( insName );
         if (iid == _cellsToIds.end()) {
-          if (insName != topCellInstancePin)
+          if (insName != topCellInstancePin) {
             cerr << Error( "Unable to lookup instance \"%s\".", insName.c_str() ) << endl;
+          }
         } else {
           pins.push_back( temporary_pin( point<int_t>(xpin,ypin), (*iid).second, netId ) );
         }
@@ -687,6 +737,8 @@ namespace Etesian {
     _placementLB.positions_    = positions;
     _placementLB.orientations_ = orientations;
     _placementUB = _placementLB;
+
+    Cell::setFlattenLeafMode( false );
   }
 
 
@@ -928,6 +980,7 @@ namespace Etesian {
 
     getConfiguration()->print( getCell() );
     adjustSliceHeight();
+    resetPlacement();
     if (getBlockCell()->getAbutmentBox().isEmpty()) setDefaultAb();
 
     findYSpin();
@@ -1060,6 +1113,7 @@ namespace Etesian {
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.invert();
 
+    Cell::setFlattenLeafMode( true );
     for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
     {
       DbU::Unit hpitch          = getHorizontalPitch();
@@ -1094,6 +1148,7 @@ namespace Etesian {
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
       }
     }
+    Cell::setFlattenLeafMode( false );
 
     UpdateSession::close();
 

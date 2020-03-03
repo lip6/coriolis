@@ -96,20 +96,21 @@ class Instance_IsTerminalFilter : public Filter<Instance*> {
 
 };
 
-class Instance_IsLeafFilter : public Filter<Instance*> {
-// *******************************************************
-
-    public: Instance_IsLeafFilter() {};
-
-    public: Instance_IsLeafFilter(const Instance_IsLeafFilter& filter) {};
-
-    public: Instance_IsLeafFilter& operator=(const Instance_IsLeafFilter& filter) {return *this;};
-
-    public: virtual Filter<Instance*>* getClone() const {return new Instance_IsLeafFilter(*this);};
-
-    public: virtual bool accept(Instance* instance) const {return instance->isLeaf();};
-
-    public: virtual string _getString() const {return "<" + _TName("Instance::IsLeafFilter") + ">";};
+class Instance_IsLeafFilter : public Filter<Instance*>
+{
+    public:
+                                     Instance_IsLeafFilter () {};
+                                     Instance_IsLeafFilter ( const Instance_IsLeafFilter& filter ) {};
+              Instance_IsLeafFilter& operator=             ( const Instance_IsLeafFilter& filter )
+                                       { return *this; };
+      virtual Filter<Instance*>*     getClone              () const
+                                       { return new Instance_IsLeafFilter( *this ); };
+      virtual bool                   accept                ( Instance* instance ) const
+                                       { return instance->isLeaf(); };
+      virtual string                 _getString            () const
+                                       { return "<" + _TName("Instance::IsLeafFilter") + ">"; };
+  private:
+    uint32_t _flags;
 
 };
 
@@ -315,7 +316,7 @@ InstanceFilter Instance::getIsTerminalFilter()
 }
 
 InstanceFilter Instance::getIsLeafFilter()
-// *******************************************
+// ***************************************
 {
     return Instance_IsLeafFilter();
 }

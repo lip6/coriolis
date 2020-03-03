@@ -342,6 +342,7 @@ class Cell : public Entity {
     private: AliasNameSet _netAliasSet;
     private: Observable _observers;
     private: Flags _flags;
+    private: static bool _useFlattenLeaf;
 
 // Constructors
 // ************
@@ -521,6 +522,7 @@ class Cell : public Entity {
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
     public: void notify(unsigned flags);
+    public: static void setFlattenLeafMode(bool state) { _useFlattenLeaf=state; };
 
 };
 
