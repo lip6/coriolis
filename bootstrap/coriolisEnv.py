@@ -186,6 +186,7 @@ if __name__ == "__main__":
   parser.add_option ( "--shared"         , action="store_true" ,                dest="shared"        )
   parser.add_option ( "--no-python"      , action="store_true" ,                dest="nopython"      )
   parser.add_option ( "--root"           , action="store"      , type="string", dest="rootDir"       )
+  parser.add_option ( "--remove"         , action="store_true" ,                dest="remove"        )
   ( options, args ) = parser.parse_args ()
 
   if options.release:    buildType = "Release"
@@ -205,6 +206,32 @@ if __name__ == "__main__":
   strippedPath        = scrubPath( "PATH" )
   strippedLibraryPath = scrubPath( "LD_LIBRARY_PATH" )
   strippedPythonPath  = scrubPath( "PYTHONPATH" )
+
+  if options.remove:
+    shellScript = 'echo "Removing Coriolis environment";'
+    if osType == "Darwin":
+      ldVar = 'DYLD_LIBRARY_PATH'
+    else:
+      ldVar = 'LD_LIBRARY_PATH'
+
+    if isBourneShell:
+      shellScript += 'export PATH={};hash -r;'.format(strippedPath)
+      shellScript += 'BOOTSTRAP_TOP="";CORIOLIS_TOP="";export -n BOOTSTRAP_TOP CORIOLIS_TOP;'
+      if strippedLibraryPath:
+        shellScript += 'export {}={};'.format(ldVar, strippedLibraryPath)
+      else:
+        shellScript += '{0}=""; export -n {0};'.format(ldVar)
+    else:
+      shellScript += 'setenv PATH {};rehash;'.format(strippedPath)
+      shellScript += 'unsetenv BOOTSTRAP_TOP CORIOLIS_TOP;'
+      if strippedLibraryPath:
+        shellScript += 'setenv {} {};'.format(ldVar, strippedLibraryPath)
+      else:
+        shellScript += 'unsetenv {};'.format(ldVar)
+
+    print(shellScript)
+    sys.exit(0)
+
 
   shellScriptSh = \
     'echo "%(MESSAGE)s";'                                          \
