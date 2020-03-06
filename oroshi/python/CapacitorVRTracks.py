@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import sys                
 from   Hurricane       import *
 from   CRL             import *
@@ -32,10 +31,9 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
         self.abutmentBox              = capacitorInstance.abutmentBox
         self.matrixDim                = self.capacitorInstance.matrixDim   
         self.nets                     = capacitorInstance.nets
-        self.capacitorsNumber              = capacitorInstance.capacitorsNumber
-        self.dummyRing                  = capacitorInstance.dummyRing
-        self.dummyElement                  = capacitorInstance.dummyElement
-        print('capacitorInstance.capacitance',capacitorInstance.capacitance)        
+        self.capacitorsNumber         = capacitorInstance.capacitorsNumber
+        self.dummyRing                = capacitorInstance.dummyRing
+        self.dummyElement             = capacitorInstance.dummyElement
         self.capacitorIds             = range(0,self.capacitorsNumber) 
         self.abutmentBox_spacing      = capacitorInstance.abutmentBox_spacing   
         self.vRoutingTrack_width      = self.capacitorInstance.vRoutingTrack_width    
@@ -93,7 +91,6 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
 
         netsDistribution = self.__setNetsDistribution__()
         k = 0
-        print('netsDistribution',netsDistribution)
         for j in range( 0, self.matrixDim["columns"] + 1 ):
              for key in self.vRoutingTrackXCenter[j]:
                 if self.vRoutingTrackXCenter[j][key] != None:
@@ -115,7 +112,6 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
         self.maximumPosition           =  abutmentBoxYMax + self.__setStretching__()
 
         vRTsNumber = self.__computeVRTsNumber__()
-        print("vRTsNumber",vRTsNumber)
         self.vRoutingTrackDict["YMin"] =  self.minimumPosition - vRTsNumber*(self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
         self.vRoutingTrackDict["YMax"] =  self.maximumPosition + vRTsNumber*(self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
 
@@ -158,7 +154,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
         for k in range( 1, leftVRTNumber ):
             self.vRoutingTrackXCenter[0][self.platesDistribution[0][k]] = unitCapXMin - (factor1-k)*vRoutingTrack_spacing -(factor2-k)*self.vRoutingTrack_width - self.vRoutingTrack_width/2 if self.vRTsToEliminate[0][k] == 1 else None 
 
-        print('self.vRoutingTrackXCenter',self.vRoutingTrackXCenter)        
+        #print('self.vRoutingTrackXCenter',self.vRoutingTrackXCenter)        
         for j in range( 1, self.matrixDim["columns"] + 1 ):
             factor3     = j - 1 if self.dummyRing == False else j  
             unitCapXMin = self.abutmentBox.getXMin() + factor3*( abutmentBoxUnitCap_width + self.capacitorInstance.abutmentBox_spacing )  
@@ -182,7 +178,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
                 
                     self.vRoutingTrackXCenter[j][ self.platesDistribution[j][k] ] = unitCapXMax + (k+1)*vRoutingTrack_spacing + (k)*self.vRoutingTrack_width + self.vRoutingTrack_width/2   if self.vRTsToEliminate[j][k] == 1         else None
 
-        print('self.vRoutingTrackXCenter',self.vRoutingTrackXCenter)        
+        #print('self.vRoutingTrackXCenter',self.vRoutingTrackXCenter)        
 
         return
 
@@ -219,9 +215,9 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
 
         capIdsToEliminate = []
         capIdsj       = capIdsToEliminatePerColumn[0]
-        print('capIdsj',capIdsj)
+        #print('capIdsj',capIdsj)
         sharedVRTIds  = self.capacitorIds[0:self.capacitorsNumber/2] if self.capacitorsNumber % 2 == 0 else self.capacitorIds[0: int(self.capacitorsNumber/2+1)]        
-        print('sharedVRTIds',sharedVRTIds)
+        #print('sharedVRTIds',sharedVRTIds)
         intersection2 = list( set(capIdsj).intersection(set(sharedVRTIds)) ) 
         capIdsToEliminate.append( [None] )  if intersection2 == []  else capIdsToEliminate.append( intersection2 )
 
@@ -233,7 +229,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
             else:
                 sharedVRTIds  = self.capacitorIds[0:self.capacitorsNumber/2] if (self.capacitorsNumber % 2 == 0) else self.capacitorIds[0: int(self.capacitorsNumber/2+1)]
 
-            print('sharedVRTIds',sharedVRTIds)
+            #print('sharedVRTIds',sharedVRTIds)
 
             if j == len(capIdsToEliminatePerColumn)-1:
                 intersection1 = list( set(capIdsj) )
@@ -250,7 +246,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
 
     def __findVRTsToEliminate__( self, capIdsToEliminate ):
 
-        print('capIdsToEliminate',capIdsToEliminate)        
+        #print('capIdsToEliminate',capIdsToEliminate)        
         for j in range( 0,len(self.vRTsDistribution) ) :
             for k in range( 0,len(self.vRTsDistribution[j]) ) :
                 if k == 0 :
@@ -260,7 +256,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
                     else : 
                         self.vRTsToEliminate.append( [1] ) 
                         self.vRTsToEliminate[j].append( 1 ) 
-                    print('vRTsToEliminate',self.vRTsToEliminate)
+                    #print('vRTsToEliminate',self.vRTsToEliminate)
                 else : 
                     if self.vRTsDistribution[j][k] in capIdsToEliminate[j]:
                         [self.vRTsToEliminate[j].append( 0 ) for u in range(0,2)]
@@ -289,11 +285,11 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
             capIdsToEliminate          = self.__findCapIdsToEliminate__         (capIdsToEliminatePerColumn)
             self.__findVRTsToEliminate__           (capIdsToEliminate         )
 
-            print("self.matchingScheme"       ,self.matchingScheme)
-            print("usedCapIdsPerColumn"       ,usedCapIdsPerColumn)
-            print("capIdsToEliminatePerColumn",capIdsToEliminatePerColumn)
-            print("capIdsToEliminate"         ,capIdsToEliminate)
-            print('self.vRTsToEliminate'      ,self.vRTsToEliminate)        
+            #print("self.matchingScheme"       ,self.matchingScheme)
+            #print("usedCapIdsPerColumn"       ,usedCapIdsPerColumn)
+            #print("capIdsToEliminatePerColumn",capIdsToEliminatePerColumn)
+            #print("capIdsToEliminate"         ,capIdsToEliminate)
+            #print('self.vRTsToEliminate'      ,self.vRTsToEliminate)        
 
         else : raise Error(1,'minimizeVRTs() : ')
 
@@ -309,7 +305,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
             self.vRTsDistribution.append( element[u] ) 
             u = u+1 if u < 1 else 0
 
-        print('self.vRTsDistribution',self.vRTsDistribution)        
+        #print('self.vRTsDistribution',self.vRTsDistribution)        
 
         return
 
@@ -329,7 +325,7 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
                 netsDistribution[j].append( element[u][k][1] ) 
             u = u+1 if u < 1 else 0
 
-        print('netsDistribution',netsDistribution)        
+        #print('netsDistribution',netsDistribution)        
 
         return netsDistribution
 
@@ -341,26 +337,22 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
         u = 0
         for j in range(0,self.matrixDim["columns"]+1) :
                 
-            print("j",j)
             self.platesDistribution.append( ['t' + str(element[u][0])] ) 
                 
-            print('self.platesDistribution',self.platesDistribution)        
+            #print('self.platesDistribution',self.platesDistribution)        
 
             if self.dummyElement == False or self.dummyElement == True and j % 2 == 0 and len(element[u]) > 1 : 
-                print("jif",j)
                 self.platesDistribution[j].append( 'b' + str(element[u][0]) ) 
 
             for k in element[u][1:len(element[u])]:
-                print('k',k)
                 self.platesDistribution[j].append( 't' + str(k) ) 
-                print("jj",j)
                 
                 if self.dummyElement == False or self.dummyElement == True and j % 2 == 0 or  self.dummyElement == True and j % 2 != 0 and k != element[u][len(element[u])-1]  : 
                     self.platesDistribution[j].append( 'b' + str(k) ) 
 
             u = u+1 if u < 1 else 0
 
-        print('self.platesDistribution',self.platesDistribution)        
+        #print('self.platesDistribution',self.platesDistribution)        
 
         return
 

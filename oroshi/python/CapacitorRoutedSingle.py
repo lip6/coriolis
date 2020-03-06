@@ -1,20 +1,25 @@
 #!/usr/bin/python
 
-import sys		
-from   Hurricane          import *
-from   CRL                import *
-from   math               import sqrt, ceil
+print "SOURCE RouteCapacitorSingle"
+
+import sys                
+import numpy
+from   Hurricane        import  *
+from   CRL              import  *
+from   math             import  sqrt, ceil
 import helpers
-from   helpers            import ErrorMessage as Error
-from   helpers            import trace
+from   helpers.io       import  ErrorMessage as Error
+from   helpers          import  trace
 import oroshi
-from   CapacitorFinal6    import CapacitorUnit
-from   CapacitorMatrix20  import CapacitorStack
+from   CapacitorUnit    import  CapacitorUnit
+from   CapacitorMatrix  import  CapacitorStack
 
 ## Routs a compact or a matrix of capacitors by connecting it to routing tracks. For a fixed instance, only one type of capacitor is supported at a time, either the Poly-Poly type or Metal-Metal in 350 nm AMS CMOS technology. 
 #  The dummy mode is also supported.
+#  The dummyRing mode is not yet supported.
 
 def toDbU    ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
+def toPhY    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
 
 def doBreak( level, message ):
     UpdateSession.close()
@@ -23,7 +28,7 @@ def doBreak( level, message ):
 
 helpers.staticInitialization( True )
 
-class RoutCapacitor( CapacitorUnit ):
+class RouteCapacitorSingle( CapacitorUnit ):
 
     rules = oroshi.getRules()
 
@@ -96,7 +101,7 @@ class RoutCapacitor( CapacitorUnit ):
     #  - the capacitor type (ie., cuts2 if MIMCAP, cut1 if PIPCAP )
     #  - routing tracks layers according to the designer specifications.
 
-    def rout( self, bbMode = False ):
+    def route( self, bbMode = False ):
 
         UpdateSession.open           ()
 
@@ -117,7 +122,7 @@ class RoutCapacitor( CapacitorUnit ):
 	    elif self.capacitorType == 'PIPCap' :
 	         topbottomCutLayer   = DataBase.getDB().getTechnology().getLayer("cut1")
 
-            else : raise Error( 1,'rout() : Unsupported capacitor type : %s.' %self.capacitorType )
+            else : raise Error( 1,'route() : Unsupported capacitor type : %s.' %self.capacitorType )
 
 
 	    self.drawRoutingTracks  ( routingTracksLayer )
@@ -145,19 +150,19 @@ class RoutCapacitor( CapacitorUnit ):
     def setRules ( self ):
 
 	CapacitorUnit.setRules       ( self )    
-        CapacitorUnit.__setattr__    ( self, "minSpacing_routingTrackMetal"       , RoutCapacitor.rules.minSpacing_metal2        )   
+        CapacitorUnit.__setattr__    ( self, "minSpacing_routingTrackMetal"       , RouteCapacitorSingle.rules.minSpacing_metal2        )   
 
         if  self.capacitorType == 'MIMCap' : 
 
-   	    CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RoutCapacitor.rules.minWidth_cut2            )
-   	    CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RoutCapacitor.rules.minSpacing_cut2          )
-            CapacitorUnit.__setattr__( self, "minWidth_routingTrackcut"           , RoutCapacitor.rules.minWidth_cut2            )   
+   	    CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RouteCapacitorSingle.rules.minWidth_cut2            )
+   	    CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RouteCapacitorSingle.rules.minSpacing_cut2          )
+            CapacitorUnit.__setattr__( self, "minWidth_routingTrackcut"           , RouteCapacitorSingle.rules.minWidth_cut2            )   
 
         elif self.capacitorType == 'PIPCap' :
 
-   	    CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RoutCapacitor.rules.minWidth_cut1            )
-   	    CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RoutCapacitor.rules.minSpacing_cut1          )
-            CapacitorUnit.__setattr__( self, "minWidth_routingTrackcut"           , RoutCapacitor.rules.minWidth_cut1            )   
+   	    CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RouteCapacitorSingle.rules.minWidth_cut1            )
+   	    CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RouteCapacitorSingle.rules.minSpacing_cut1          )
+            CapacitorUnit.__setattr__( self, "minWidth_routingTrackcut"           , RouteCapacitorSingle.rules.minWidth_cut1            )   
 
     	else : raise Error(1, 'setRules() : Unsupported capacitor type "%s".' % self.capacitorType ) 
 
@@ -610,18 +615,31 @@ def ScriptMain( **kw ):
         UpdateSession.open()
 
     nets = [[t0,b0]] 
-    capacitance = [400]
 
-    capacitorInstance = CapacitorStack( Device, capacitance, 'MIMCap', [0,0], nets,unitCap = 400)
-#    capacitorInstance = CapacitorStack( Device, 400, 'MIMCap', [0,0], unitCap = 100 )
+## A matrix of unit capacitors (all are active or all are dummy capacitors) 
+
+#    capacitance = [1600]
+#    capacitorInstance = CapacitorStack( Device, capacitance, 'MIMCap', [0,0], nets,unitCap = 400)
+#    capacitor  = capacitorInstance.create()
+#
+#    routedCap  = RouteCapacitorSingle( capacitorInstance, capacitor, dummyMode = True, tracksNumbers = [1,0] )  
+#    routedCap  = RouteCapacitorSingle( capacitorInstance, capacitor, tracksNumbers = [2,0], topPlateWSpec = [0,1] , bottomPlateWSpec = [1,0] ) 
+#    routedCap  = RouteCapacitorSingle( capacitorInstance, capacitor, dummyMode = False , tracksNumbers = [1,1], topPlateWSpec = [0,1] , bottomPlateWSpec = [1,0]) 
+
+## Unit capacitor ( an active capacitor )
+    capacitance = [600]
+    capacitorInstance = CapacitorStack( Device, capacitance, 'MIMCap', [0,0], nets,unitCap = 600)
     capacitor  = capacitorInstance.create()
-    print(capacitor)
-#    routedCap  = RoutCapacitor( capacitorInstance, capacitor , tracksNumbers = [2,0], topPlateWSpec = [0,1] , bottomPlateWSpec = [1,0] ) 
-   # routedCap  = RoutCapacitor( capacitorInstance, capacitor, dummyMode = False , tracksNumbers = [1,1], topPlateWSpec = [0,1] , bottomPlateWSpec = [1,0] ) 
-    routedCap  = RoutCapacitor( capacitorInstance, capacitor, dummyMode = True, tracksNumbers = [1,0] ) #, topPlateWSpec = [0,1] , bottomPlateWSpec = [1,0] ) 
-#    routedCap  = RoutCapacitor( capacitorInstance, capacitor, dummyMode = True , tracksNumbers = [1,0]) #, topPlateWSpec = [1,0] , bottomPlateWSpec = [1,0] ) 
-    bondingBox = routedCap.rout()    
-    print(bondingBox)
+    routedCap  = RouteCapacitorSingle( capacitorInstance, capacitor, topPlateWSpec = [0,1] , bottomPlateWSpec = [1,0] ) 
+
+## Unit capacitor ( a dummy  capacitor )
+#    capacitance = [600]
+#    capacitorInstance = CapacitorStack( Device, capacitance, 'MIMCap', [0,0], nets,unitCap = 600)
+#    capacitor  = capacitorInstance.create()
+#    routedCap  = RouteCapacitorSingle( capacitorInstance, capacitor, dummyMode = True, tracksNumbers = [1,0] ) 
+
+
+    bondingBox = routedCap.route()    
 
     AllianceFramework.get().saveCell( Device, Catalog.State.Views )
 
