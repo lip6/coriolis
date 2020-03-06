@@ -229,7 +229,7 @@ def createStyles ( scale=1.0 ):
     style.addDrawingStyle( group='Active Layers', name='poly2'   , color=toRGB('Orange'     ), pattern=toHexa('poids2.8'   ), border=1, threshold=0.00*scale )
     
     # Routing Layers.
-    style.addDrawingStyle( group='Routing Layers', name='metal1' , color=toRGB('Blue'         ), pattern=toHexa('slash.8'  ), border=1, threshold=0.00*scale )
+    style.addDrawingStyle( group='Routing Layers', name='metal1' , color=toRGB('Blue'         ), pattern=toHexa('slash.8'  ), border=1, threshold=0.80*scale )
     style.addDrawingStyle( group='Routing Layers', name='metal2' , color=toRGB('Aqua'         ), pattern=toHexa('poids4.8' ), border=1, threshold=0.00*scale )
     style.addDrawingStyle( group='Routing Layers', name='metcap' , color=toRGB('DarkTurquoise'), pattern=toHexa('poids2.8' ), border=2, threshold=0.00*scale )
     style.addDrawingStyle( group='Routing Layers', name='metal3' , color=toRGB('LightPink'    ), pattern=toHexa('poids4.8' ), border=1, threshold=0.00*scale )

@@ -44,23 +44,20 @@ namespace CRL {
   class AllianceLibrary {
 
     public:
-    // Constructors.
                               AllianceLibrary ();
                               AllianceLibrary ( const Name& path, Library* library=NULL );
-    // Operators
              AllianceLibrary& operator=       ( const AllianceLibrary& directory );
              AllianceLibrary& operator=       ( const std::string& path );
-    // Accessors
       inline const Name&      getPath         () const;
       inline Library*         getLibrary      () const;
-    // Hurricane management.
+             void             saveCells       () const;
+             void             saveCATAL       () const;
              void             toJson          ( JsonWriter* ) const;
       inline std::string      _getTypeName    () const;
              std::string      _getString      () const;
              Record*          _getRecord      () const;
 
     protected:
-    // Internal - Attributes.
              Name             _path;
              Library*         _library;
 

@@ -189,6 +189,7 @@ namespace CRL {
     , _parsers            ()
     , _drivers            ()
     , _catalog            ()
+    , _libraries          ()
     , _parentLibrary      (NULL)
     , _routingGauges      ()
     , _defaultRoutingGauge(NULL)
@@ -203,9 +204,6 @@ namespace CRL {
 
     _parentLibrary = rootLibrary->getLibrary( _parentLibraryName );
     if (not _parentLibrary ) _parentLibrary = Library::create( rootLibrary, _parentLibraryName );
-
-    db->put( AllianceFrameworkProperty::create(this) );
-    db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
   }
 
 
@@ -249,7 +247,8 @@ namespace CRL {
     if (not _singleton) {
     // Triggers System singleton creation.
       System::get();
-      _singleton = new AllianceFramework ();
+      AllianceFramework* af = new AllianceFramework ();
+      af->_postCreate();
     //if (not (flags & NoPythonInit))
     //  System::runPythonInit();
     //_singleton->bindLibraries();
@@ -263,9 +262,21 @@ namespace CRL {
   { return create(); }
 
 
-  void AllianceFramework::destroy ()
+  void  AllianceFramework::_postCreate ()
   {
-    delete this;
+    Super::_postCreate();
+    _singleton = this;
+
+    DataBase* db = DataBase::getDB();
+    db->put( AllianceFrameworkProperty::create(this) );
+    db->_setCellLoader( bind(&AllianceFramework::cellLoader,this,_1) );
+  }
+
+
+  void  AllianceFramework::_preDestroy ()
+  {
+    Super::_preDestroy();
+    _singleton = NULL;
   }
 
 
@@ -336,61 +347,67 @@ namespace CRL {
   Cell* AllianceFramework::getCell ( const string& name, unsigned int mode, unsigned int depth )
   {
     bool              createCell = false;
-    Catalog::State*   state      = _catalog.getState ( name );
+    Catalog::State*   state      = _catalog.getState( name );
     ParserFormatSlot* parser;
 
-  // The cell is not even in the Catalog : add an entry.
-    if ( state == NULL ) state = _catalog.getState ( name, true );
+    if (not _libraries.empty()) {
+    // The cell is not even in the Catalog : add an entry.
+      if (state == NULL) state = _catalog.getState( name, true );
 
-    if ( state->isFlattenLeaf() ) depth = 0;
-    state->setDepth ( depth );
+      if (state->isFlattenLeaf()) depth = 0;
+      state->setDepth( depth );
 
-  // Do not try to load.
-    if ( mode & Catalog::State::InMemory ) return state->getCell();
+    // Do not try to load.
+      if (mode & Catalog::State::InMemory) return state->getCell();
 
-    unsigned int loadMode;
-    for ( int i=0 ; i<2 ; i++ ) {
-    // Check is the view is requested for loading or already loaded.
-      switch ( i ) {
-        case 0: loadMode = mode & Catalog::State::Logical;  break;
-        case 1: loadMode = mode & Catalog::State::Physical; break;
+      unsigned int loadMode;
+      for ( int i=0 ; i<2 ; i++ ) {
+      // Check is the view is requested for loading or already loaded.
+        switch ( i ) {
+          case 0: loadMode = mode & Catalog::State::Logical;  break;
+          case 1: loadMode = mode & Catalog::State::Physical; break;
+        }
+        if (loadMode == 0) continue;
+        if (state->getFlags(loadMode) != 0) continue;
+
+      // Transmit all flags except thoses related to views.
+        loadMode |= (mode & (!Catalog::State::Views));
+        parser    = & (_parsers.getParserSlot( name, loadMode, _environment ));
+
+      // Try to open cell file (file extention is supplied by the parser).
+        if (not _readLocate(name,loadMode)) continue;
+
+        if (state->getCell() == NULL) {
+          state->setCell ( Cell::create( _libraries[ _environment.getLIBRARIES().getIndex() ]->getLibrary() , name ) );
+          state->getCell ()->put( CatalogProperty::create(state) );
+          state->getCell ()->setFlattenLeaf( false );
+          createCell = true;
+        }
+
+        try {
+        // Call the parser function.
+          (parser->getParsCell())( _environment.getLIBRARIES().getSelected() , state->getCell() );
+        } catch ( ... ) {
+          if (createCell) 
+          //state->getCell()->destroy();
+            throw;
+        }
       }
-      if ( loadMode == 0 ) continue;
-      if ( state->getFlags(loadMode) != 0 ) continue;
 
-    // Transmit all flags except thoses related to views.
-      loadMode |= (mode & (!Catalog::State::Views));
-      parser    = & ( _parsers.getParserSlot ( name, loadMode, _environment ) );
-
-    // Try to open cell file (file extention is supplied by the parser).
-      if ( !_readLocate(name,loadMode) ) continue;
-
-      if ( state->getCell() == NULL ) {
-        state->setCell ( Cell::create ( _libraries[ _environment.getLIBRARIES().getIndex() ]->getLibrary() , name ) );
-        state->getCell ()->put ( CatalogProperty::create(state) );
-        state->getCell ()->setFlattenLeaf ( false );
-        createCell = true;
+    // At least one view must have been loaded.
+      if (state->getFlags(Catalog::State::Views) != 0) {
+        state->setFlags( Catalog::State::InMemory, true );
+        return state->getCell();
       }
 
-      try {
-      // Call the parser function.
-        (parser->getParsCell())( _environment.getLIBRARIES().getSelected() , state->getCell() );
-      } catch ( ... ) {
-        if ( createCell ) 
-        //state->getCell()->destroy();
-        throw;
-      }
+    // Delete the empty cell.
+      if (state->getCell()) state->getCell()->destroy();
+      _catalog.deleteState( name );
+    } else {
+      cerr << Warning( "AllianceFramework::getCell(): The library list is empty, while loading Cell \"%s\"."
+                     , name.c_str()
+                     ) << endl;
     }
-
-  // At least one view must have been loaded.
-    if ( state->getFlags(Catalog::State::Views) != 0 ) {
-      state->setFlags( Catalog::State::InMemory, true );
-      return state->getCell();
-    }
-
-  // Delete the empty cell.
-    if ( state->getCell() ) state->getCell()->destroy ();
-    _catalog.deleteState ( name );
 
   // Last resort, search through all Hurricane libraries.
     if (mode & Catalog::State::Foreign)
@@ -801,20 +818,20 @@ namespace CRL {
   }
 
 
-  string  AllianceFramework::_getString () const
-  { return "<AllianceFramework>"; }
+  string  AllianceFramework::_getTypeName () const
+  { return "AllianceFramework"; }
 
 
   Record *AllianceFramework::_getRecord () const
   {
-    Record* record = new Record ( "<AllianceFramework>" );
-    record->add ( getSlot ( "_environment"        , &_environment         ) );
-    record->add ( getSlot ( "_libraries"          , &_libraries           ) );
-    record->add ( getSlot ( "_catalog"            , &_catalog             ) );
-    record->add ( getSlot ( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
-    record->add ( getSlot ( "_routingGauges"      , &_routingGauges       ) );
-    record->add ( getSlot ( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
-    record->add ( getSlot ( "_cellGauges"         , &_cellGauges          ) );
+    Record* record = Super::_getRecord();
+    record->add( getSlot( "_environment"        , &_environment         ) );
+    record->add( getSlot( "_libraries"          , &_libraries           ) );
+    record->add( getSlot( "_catalog"            , &_catalog             ) );
+    record->add( getSlot( "_defaultRoutingGauge",  _defaultRoutingGauge ) );
+    record->add( getSlot( "_routingGauges"      , &_routingGauges       ) );
+    record->add( getSlot( "_defaultCellGauge"   ,  _defaultCellGauge    ) );
+    record->add( getSlot( "_cellGauges"         , &_cellGauges          ) );
     return record;
   }
 

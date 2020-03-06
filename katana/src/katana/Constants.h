@@ -39,7 +39,9 @@ namespace Katana {
       static const Hurricane::BaseFlags  SlowMotion;
       static const Hurricane::BaseFlags  PreRoutedStage;
       static const Hurricane::BaseFlags  PairSymmetrics;
+      static const Hurricane::BaseFlags  ShowFailedNets;
       static const Hurricane::BaseFlags  ShowFailedGSegments;
+      static const Hurricane::BaseFlags  ShowOverloadedEdges;
       static const Hurricane::BaseFlags  ShowOverloadedGCells;
       static const Hurricane::BaseFlags  ShowBloatedInstances;
     public:

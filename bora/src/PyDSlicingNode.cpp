@@ -18,6 +18,7 @@
 #include "crlcore/PyRoutingGauge.h"
 #include "bora/PyDSlicingNode.h"
 #include "bora/PyStepParameterRange.h"
+#include "bora/PyMatrixParameterRange.h"
 
 
 namespace  Bora {
@@ -73,8 +74,9 @@ extern "C" {
         PyErr_SetString( ConstructorError, "DSlicingNode.create(): Second argument *must* be of type Cell." );
         return NULL;
       }
-      if (not IsPyStepParameterRange(pyParameterRange)) {
-        PyErr_SetString( ConstructorError, "DSlicingNode.create(): Third argument *must* be of type StepParameterRange." );
+      if (   not IsPyStepParameterRange(pyParameterRange)
+         and not IsPyMatrixParameterRange(pyParameterRange)) {
+        PyErr_SetString( ConstructorError, "DSlicingNode.create(): Third argument *must* be of type StepParameterRange or MatrixParameterRange." );
         return NULL;
       }
       if (pyRoutingGauge and not IsPyRoutingGauge(pyRoutingGauge)) {
@@ -82,10 +84,18 @@ extern "C" {
         return NULL;
       }
 
-      Cell*           cell     = PYCELL_O( pyCell );
-      Instance*       instance = cell->getInstance( PyString_AsString(pyInstance) );
-      ParameterRange* range    = ParameterRangeCast( pyParameterRange );
-      RoutingGauge*   rg       = (pyRoutingGauge) ? PYROUTINGGAUGE_O(pyRoutingGauge) : NULL;
+      Cell*     cell     = PYCELL_O( pyCell );
+      Instance* instance = cell->getInstance( PyString_AsString(pyInstance) );
+      if (not instance) {
+        ostringstream message;
+        message << "DSlicingNode.create(): Cell \"" << cell->getName()
+                << "\" has no instance named \"" << PyString_AsString(pyInstance) << "\".";
+        PyErr_SetString( ConstructorError, message.str().c_str() );
+        return NULL;
+      }
+      
+      ParameterRange* range = ParameterRangeCast( pyParameterRange );
+      RoutingGauge*   rg    = (pyRoutingGauge) ? PYROUTINGGAUGE_O(pyRoutingGauge) : NULL;
 
       node = DSlicingNode::create( NodeSets::create( instance->getMasterCell(), range, rg )
                                  , UnknownAlignment

@@ -8,6 +8,7 @@
                    FindLibbfd.cmake
                    FindQwt.cmake
                    FindSphinx.cmake
+                   FindPelican.cmake
                    GetGitRevisionDescription.cmake
                    GetGitRevisionDescription.cmake.in
          )

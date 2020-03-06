@@ -1,6 +1,6 @@
 # -*- mode: CMAKE; explicit-buffer-name: "CMakeLists.txt<hurricane/doc/viewer>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/viewer )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/viewer )
                set ( latexInstallDir share/doc/coriolis2/en/latex/viewer )
                set ( doxExtras       closed.png
                                      open.png

@@ -887,7 +887,11 @@ namespace CRL {
 
 
   void  LefImport::reset ()
-  { LefParser::reset(); }
+  {
+#if defined(HAVE_LEFDEF)
+    LefParser::reset();
+#endif
+  }
 
 
 }  // End of CRL namespace.

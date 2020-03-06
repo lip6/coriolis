@@ -202,6 +202,12 @@ namespace Analog {
                      ) << endl;
       return false;
     }
+    if (not pCheckOk) {
+        cerr << Error( "%s\n        A Python exception has occurred."
+                     , _script->getFileName()
+                     ) << endl;
+      return false;
+    }
     return true;
   }
   

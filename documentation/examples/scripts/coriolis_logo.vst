@@ -1,0 +1,22 @@
+
+-- =======================================================================
+-- Coriolis Structural VHDL Driver
+-- Generated on Oct 31, 2019, 13:07
+-- 
+-- To be interoperable with Alliance, it uses it's special VHDL subset.
+-- ("man vhdl" under Alliance for more informations)
+-- =======================================================================
+
+entity coriolis_logo is
+  port ( logo : linkage bit
+       );
+end coriolis_logo;
+
+architecture structural of coriolis_logo is
+
+
+
+begin
+
+end structural;
+

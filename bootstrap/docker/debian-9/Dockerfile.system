@@ -1,0 +1,21 @@
+
+FROM debian:stretch-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update                                                      \
+ && apt-get -y install build-essential binutils-dev                     \
+                       git cmake bison flex gcc python-dev              \
+                       libboost-all-dev libboost-python-dev             \
+                       zlib1g-dev libxml2-dev rapidjson-dev libbz2-dev  \
+                       qt4-dev-tools libqwt-dev python-qt4              \
+                       python3-setuptools                               \
+                                                                        \
+                       autotools-dev automake                           \
+                       libxt-dev libxpm-dev libmotif-dev                \
+                                                                        \
+                       yosys                                            \
+                                                                        \
+                       vim                                              \
+ && apt-get clean
+

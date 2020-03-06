@@ -44,54 +44,54 @@ class RouteCapacitorSingle( CapacitorUnit ):
     # \param   xPlateRLayer_width    A dictionary containing the widths of the top and bottom plates routing layers.
     # \param   routingTrack_width    The width of a routing track. Is fixed according to technological parameters.
     # \param   tracksNumbers           A dictionary containing the number of top and bottom tracks. The allowed maximum total number of tracks is two. 
-    # \param   topPlateWSpec	     Routing specifications for the top plates.
+    # \param   topPlateWSpec             Routing specifications for the top plates.
     # \param   bottomPlateWSpec      Routing specifications for the bottom plates.
     # \remarks An exception is raised if the entered routing specifications are invalid. Invalidity can be due to a wrong total number of tracks or bad wiring specifications of top and bottom tracks. More information about the valid specifications is given in \c function. 
 
     def __init__( self, capacitorInstance, capacitor, dummyMode = False, tracksNumbers = [1,1], topPlateWSpec = [1,0] , bottomPlateWSpec = [0,1] ):
 
-	if (capacitorInstance.matchingMode == True) : raise Error(1,'__init__() : This class is only dedicated to route matrices equivalent to one capacitor. In case of a matched matrix of capacitors, please use <RoutMatchedCapacitor>.')
-	self.device                = capacitorInstance.device
-	self.capacitorInstance     = capacitorInstance
-	self.capacitor             = capacitor
-	self.dummyMode             = dummyMode
-	self.capacitorType         = capacitorInstance.capacitorType
-	self.matrixDim             = capacitorInstance.matrixDim
-	self.abutmentBox           = capacitorInstance.abutmentBox
-	self.abutmentBox_spacing   = self.capacitorInstance.getAbutmentBox_spacing ()
-	self.bondingBox            = Box()
-	self.capacitorType         = capacitorInstance.capacitorType
-	self.nets                  = capacitorInstance.nets[0]   
+        if (capacitorInstance.matchingMode == True) : raise Error(1,'__init__() : This class is only dedicated to route matrices equivalent to one capacitor. In case of a matched matrix of capacitors, please use <RoutMatchedCapacitor>.')
+        self.device                = capacitorInstance.device
+        self.capacitorInstance     = capacitorInstance
+        self.capacitor             = capacitor
+        self.dummyMode             = dummyMode
+        self.capacitorType         = capacitorInstance.capacitorType
+        self.matrixDim             = capacitorInstance.matrixDim
+        self.abutmentBox           = capacitorInstance.abutmentBox
+        self.abutmentBox_spacing   = self.capacitorInstance.getAbutmentBox_spacing ()
+        self.bondingBox            = Box()
+        self.capacitorType         = capacitorInstance.capacitorType
+        self.nets                  = capacitorInstance.nets[0]   
 
-	self.routingTracksXMinXMax = {} 
-	self.routingTrackYCenter   = { "top": {}, "bottom": {} }
-	self.xPlateRLayerXCenter   = { "top": [], "bottom": [], "bottomBorders" : [] }
-	self.xPlateRLayer_width    = {}
-	self.routingTrack_width    = 0
+        self.routingTracksXMinXMax = {} 
+        self.routingTrackYCenter   = { "top": {}, "bottom": {} }
+        self.xPlateRLayerXCenter   = { "top": [], "bottom": [], "bottomBorders" : [] }
+        self.xPlateRLayer_width    = {}
+        self.routingTrack_width    = 0
 
-	if ( self.__isRoutingTracksNumberOK__( tracksNumbers ) ):
+        if ( self.__isRoutingTracksNumberOK__( tracksNumbers ) ):
 
- 	    self.tracksNumbers       = { "top" : tracksNumbers[0] ,"bottom" : tracksNumbers[1] }
-	    possibleRoutingSchemes = self.__setPossibleRoutingSchemes__( tracksNumbers )
+            self.tracksNumbers       = { "top" : tracksNumbers[0] ,"bottom" : tracksNumbers[1] }
+            possibleRoutingSchemes = self.__setPossibleRoutingSchemes__( tracksNumbers )
 
-	    if dummyMode == True :
+            if dummyMode == True :
 
-	        if     self.connectToTopTracksOnly() :
-		    self.topPlateWSpec  = [1,0]
+                if     self.connectToTopTracksOnly() :
+                    self.topPlateWSpec  = [1,0]
 
-		elif self.connectToBottomTracksOnly() : 
-		    self.topPlateWSpec  = [0,1]
+                elif self.connectToBottomTracksOnly() : 
+                    self.topPlateWSpec  = [0,1]
 
-		else : 
-		    self.topPlateWSpec  = [1,1] 
+                else : 
+                    self.topPlateWSpec  = [1,1] 
 
-	        self.bottomPlateWSpec   = self.topPlateWSpec
+                self.bottomPlateWSpec   = self.topPlateWSpec
 
-	    elif ( dummyMode == False and  self.__isWiringSpecOK__(topPlateWSpec, bottomPlateWSpec, possibleRoutingSchemes) ) :
-	        self.topPlateWSpec      = topPlateWSpec
-	        self.bottomPlateWSpec   = bottomPlateWSpec
+            elif ( dummyMode == False and  self.__isWiringSpecOK__(topPlateWSpec, bottomPlateWSpec, possibleRoutingSchemes) ) :
+                self.topPlateWSpec      = topPlateWSpec
+                self.bottomPlateWSpec   = bottomPlateWSpec
 
-	    else : raise Error(1,'__init__() : Invalid routing specifications in terms of number, format or routing scheme.') 
+            else : raise Error(1,'__init__() : Invalid routing specifications in terms of number, format or routing scheme.') 
 
         else : raise Error(1,' __init__() : One routing track on one or both sides of the capacitor is allowed in dummy mode. Otherwise, routing tracks can be drawn one on each side or two on one side : (top trak number : %s, bottom track number : %s and dummy mode is %s). ' %( tracksNumbers[0], tracksNumbers[1], dummyMode )) #com verify the difference between a simple print and the dicitionary self.trackingNumber
 
@@ -105,35 +105,35 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
         UpdateSession.open           ()
 
-	bondingBox = {}
-	self.setRules          ()
-	self.computeDimensions ( bbMode )
+        bondingBox = {}
+        self.setRules          ()
+        self.computeDimensions ( bbMode )
 
-	if bbMode :
+        if bbMode :
             bondingBox = self.computeLayoutDimensionsInbbMode()
 
-	if not bbMode:
+        if not bbMode:
             routingTracksLayer   =  DataBase.getDB().getTechnology().getLayer("metal2")
-	    bottomPlateRLayer    =  CapacitorUnit.getLayers( self )["bottomPlateRLayer"]
-	    topPlateRLayer       =  bottomPlateRLayer
+            bottomPlateRLayer    =  CapacitorUnit.getLayers( self )["bottomPlateRLayer"]
+            topPlateRLayer       =  bottomPlateRLayer
 
-	    if   self.capacitorType == 'MIMCap' :
-	         topbottomCutLayer   = DataBase.getDB().getTechnology().getLayer("cut2")
-	    elif self.capacitorType == 'PIPCap' :
-	         topbottomCutLayer   = DataBase.getDB().getTechnology().getLayer("cut1")
+            if   self.capacitorType == 'MIMCap' :
+                 topbottomCutLayer   = DataBase.getDB().getTechnology().getLayer("cut2")
+            elif self.capacitorType == 'PIPCap' :
+                 topbottomCutLayer   = DataBase.getDB().getTechnology().getLayer("cut1")
 
             else : raise Error( 1,'route() : Unsupported capacitor type : %s.' %self.capacitorType )
 
 
-	    self.drawRoutingTracks  ( routingTracksLayer )
-	    self.drawPlatesVRLayers ( 'topPlate'                  , topPlateRLayer       , self.topPlateWSpec   , self.xPlateRLayerXCenter["top"   ], self.xPlateRLayer_width["top"    ] )
-	    self.drawPlatesVRLayers ( 'bottomPlate'               , bottomPlateRLayer    , self.bottomPlateWSpec, self.xPlateRLayerXCenter["bottom"], self.xPlateRLayer_width["bottom" ] )
-	    self.drawCuts           ( self.nets[0], 'topPlate'    , self.topPlateWSpec   , topbottomCutLayer    , self.xPlateRLayer_width ["top"   ], self.xPlateRLayerXCenter["top"   ] )
-	    self.drawCuts           ( self.nets[1], 'bottomPlate' , self.bottomPlateWSpec, topbottomCutLayer    , self.xPlateRLayer_width ["bottom"], self.xPlateRLayerXCenter["bottom"] )
+            self.drawRoutingTracks  ( routingTracksLayer )
+            self.drawPlatesVRLayers ( 'topPlate'                  , topPlateRLayer       , self.topPlateWSpec   , self.xPlateRLayerXCenter["top"   ], self.xPlateRLayer_width["top"    ] )
+            self.drawPlatesVRLayers ( 'bottomPlate'               , bottomPlateRLayer    , self.bottomPlateWSpec, self.xPlateRLayerXCenter["bottom"], self.xPlateRLayer_width["bottom" ] )
+            self.drawCuts           ( self.nets[0], 'topPlate'    , self.topPlateWSpec   , topbottomCutLayer    , self.xPlateRLayer_width ["top"   ], self.xPlateRLayerXCenter["top"   ] )
+            self.drawCuts           ( self.nets[1], 'bottomPlate' , self.bottomPlateWSpec, topbottomCutLayer    , self.xPlateRLayer_width ["bottom"], self.xPlateRLayerXCenter["bottom"] )
 
         UpdateSession.close    ()
 
-	return bondingBox
+        return bondingBox
 
 
 
@@ -149,24 +149,22 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
     def setRules ( self ):
 
-	CapacitorUnit.setRules       ( self )    
+        CapacitorUnit.setRules       ( self )    
         CapacitorUnit.__setattr__    ( self, "minSpacing_routingTrackMetal"       , RouteCapacitorSingle.rules.minSpacing_metal2        )   
 
         if  self.capacitorType == 'MIMCap' : 
-
-   	    CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RouteCapacitorSingle.rules.minWidth_cut2            )
-   	    CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RouteCapacitorSingle.rules.minSpacing_cut2          )
+            CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RouteCapacitorSingle.rules.minWidth_cut2            )
+            CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RouteCapacitorSingle.rules.minSpacing_cut2          )
             CapacitorUnit.__setattr__( self, "minWidth_routingTrackcut"           , RouteCapacitorSingle.rules.minWidth_cut2            )   
 
         elif self.capacitorType == 'PIPCap' :
-
-   	    CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RouteCapacitorSingle.rules.minWidth_cut1            )
-   	    CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RouteCapacitorSingle.rules.minSpacing_cut1          )
+            CapacitorUnit.__setattr__( self, "minHeight_routingTrackcut"          , RouteCapacitorSingle.rules.minWidth_cut1            )
+            CapacitorUnit.__setattr__( self, "minSpacing_routingTrackcut"         , RouteCapacitorSingle.rules.minSpacing_cut1          )
             CapacitorUnit.__setattr__( self, "minWidth_routingTrackcut"           , RouteCapacitorSingle.rules.minWidth_cut1            )   
 
-    	else : raise Error(1, 'setRules() : Unsupported capacitor type "%s".' % self.capacitorType ) 
+        else : raise Error(1, 'setRules() : Unsupported capacitor type "%s".' % self.capacitorType ) 
 
-	return
+        return
 
 
     ## Checks if the wiring specifications are compatible with the possible routing schemes. 
@@ -177,13 +175,13 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
     def __isWiringSpecOK__ ( self, topPlateWiringSpec, bottomPlateWiringSpec, possibleRoutingSchemes ): 
 
-	state = False
-	if len(topPlateWiringSpec ) == len( bottomPlateWiringSpec ) == 2 and [ topPlateWiringSpec, bottomPlateWiringSpec ] in possibleRoutingSchemes :
-	    state = True
+        state = False
+        if len(topPlateWiringSpec ) == len( bottomPlateWiringSpec ) == 2 and [ topPlateWiringSpec, bottomPlateWiringSpec ] in possibleRoutingSchemes :
+            state = True
 
         else : raise Error(1, '__isWiringSpecOK__() : Invalid wiring specifications for top and/or bottom plates, %s and/or %s, respectively. The possible wiring schemes are : %s. ' %(topPlateWiringSpec, bottomPlateWiringSpec, possibleRoutingSchemes) )
 
-	return state
+        return state
 
 
 
@@ -194,10 +192,10 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
     def __setPossibleRoutingSchemes__( self, tracksNumbers ):
 
-	[topTrackNumber , bottomTrackNumber] = [tracksNumbers[0] , tracksNumbers[1]]
+        [topTrackNumber , bottomTrackNumber] = [tracksNumbers[0] , tracksNumbers[1]]
         possibleRoutingSchemes = None
 
-	if self.dummyMode == False: possibleRoutingSchemes = [ [[0,1],[1,0]], [[1,0],[0,1]] ]
+        if self.dummyMode == False: possibleRoutingSchemes = [ [[0,1],[1,0]], [[1,0],[0,1]] ]
 
         return possibleRoutingSchemes
 
@@ -212,17 +210,17 @@ class RouteCapacitorSingle( CapacitorUnit ):
     #  \throw   <object>         Wrong values for routing tracks 
     def __isRoutingTracksNumberOK__ ( self, tracksNumbers ): 
 
-	[topTrackNumber , bottomTrackNumber] = [tracksNumbers[0] , tracksNumbers[1]]
-	state = False
-	if   self.dummyMode == True:
+        [topTrackNumber , bottomTrackNumber] = [tracksNumbers[0] , tracksNumbers[1]]
+        state = False
+        if   self.dummyMode == True:
             if ( bottomTrackNumber == 1 and topTrackNumber == 0 or bottomTrackNumber == 0 and topTrackNumber == 1  or bottomTrackNumber == 1 and topTrackNumber == 1 ) : 
-	        state = True
+                state = True
 
- 	elif self.dummyMode == False:
+        elif self.dummyMode == False:
             if ( bottomTrackNumber == 1 and topTrackNumber == 1 or bottomTrackNumber == 0 and topTrackNumber == 2 or bottomTrackNumber == 2 and topTrackNumber == 0  ) :
-	        state = True
+                state = True
 
-	else : raise Error( 1, '__isRoutingTracksNumberOK__() : Wrong values for routing tracks "%s , %s". ' %(bottomTrackNumber, topTrackNumber) ) #com test this
+        else : raise Error( 1, '__isRoutingTracksNumberOK__() : Wrong values for routing tracks "%s , %s". ' %(bottomTrackNumber, topTrackNumber) ) #com test this
 
         return state
 
@@ -233,8 +231,8 @@ class RouteCapacitorSingle( CapacitorUnit ):
     #  - the routing tracks
     def computeDimensions( self, bbMode ):
 
-	self.computeRLayersDimensions      ( bbMode )
-	self.computeHRoutingTrackDimensions(        )
+        self.computeRLayersDimensions      ( bbMode )
+        self.computeHRoutingTrackDimensions(        )
 
         return
 
@@ -244,25 +242,25 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
         self.routingTrack_width            = 2*self.minEnclo_routingTrackMetal_cut     +  self.minWidth_routingTrackcut
 
-	if not bbMode : 
-	    print(self.capacitor)
-	    self.xPlateRLayer_width["top"] =   self.capacitor.getTopPlateRLayerWidth() if self.capacitorInstance.matrixDim.values() == [1,1] else self.capacitor[0][0].getTopPlateRLayerWidth() 
+        if not bbMode : 
+            print(self.capacitor)
+            self.xPlateRLayer_width["top"] =   self.capacitor.getTopPlateRLayerWidth() if self.capacitorInstance.matrixDim.values() == [1,1] else self.capacitor[0][0].getTopPlateRLayerWidth() 
 
-	    if self.capacitorInstance.__isUnitCap__() :
-	        self.computeRLayersDimensionsCompactCap  ()
+            if self.capacitorInstance.__isUnitCap__() :
+                self.computeRLayersDimensionsCompactCap  ()
 
-	    else : self.computeRLayersDimensionsMatrixCap()
+            else : self.computeRLayersDimensionsMatrixCap()
 
         return
 
 
     def computeRLayersDimensionsCompactCap( self ):
 
-	self.bordersRLayerXMin                    = [ self.capacitor.getBottomPlateLeftCutXMin(), self.capacitor.getBottomPlateRightCutXMin() ]
-	self.xPlateRLayer_width ["bottomBorders"] =   self.capacitor.getBotPlateRLayerWidth            ()
-	self.xPlateRLayer_width ["bottom"       ] = []
-	self.xPlateRLayerXCenter["bottom"       ] = []
-	self.xPlateRLayerXCenter["top"          ].append( self.capacitor.getTopPlateRLayerXCenter      () )
+        self.bordersRLayerXMin                    = [ self.capacitor.getBottomPlateLeftCutXMin(), self.capacitor.getBottomPlateRightCutXMin() ]
+        self.xPlateRLayer_width ["bottomBorders"] =   self.capacitor.getBotPlateRLayerWidth            ()
+        self.xPlateRLayer_width ["bottom"       ] = []
+        self.xPlateRLayerXCenter["bottom"       ] = []
+        self.xPlateRLayerXCenter["top"          ].append( self.capacitor.getTopPlateRLayerXCenter      () )
         self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor.getBotPlateLeftRLayerXCenter  () ) 
         self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor.getBotPlateRightRLayerXCenter () ) 
 
@@ -273,14 +271,14 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
         if   self.capacitorInstance.matrixDim["columns"] > 1 : 
             self.xPlateRLayer_width["bottom"]  = ( self.capacitor[0][1].getBotPlateLeftRLayerXMax() - self.capacitor[0][0].getBotPlateRightRLayerXMin() )
-  	    self.bordersRLayerXMin = [ self.capacitor[0][0].getBottomPlateLeftCutXMin(), self.capacitor[0][-1].getBottomPlateRightCutXMin() ]
+            self.bordersRLayerXMin = [ self.capacitor[0][0].getBottomPlateLeftCutXMin(), self.capacitor[0][-1].getBottomPlateRightCutXMin() ]
 
-	elif self.capacitorInstance.matrixDim["columns"] == 1 : 
+        elif self.capacitorInstance.matrixDim["columns"] == 1 : 
             self.bordersRLayerXMin = [ self.capacitor[0][0].getBottomPlateLeftCutXMin(), self.capacitor[0][0].getBottomPlateRightCutXMin() ]
 
-    	else : raise Error( 1, 'computeRLayersDimensionsMatrixCap() : Negative number of columns in the matrix "%s".' % self.capacitorInstance.matrixDim["columns"] )
+        else : raise Error( 1, 'computeRLayersDimensionsMatrixCap() : Negative number of columns in the matrix "%s".' % self.capacitorInstance.matrixDim["columns"] )
 
-	self.xPlateRLayer_width["bottomBorders"] = self.capacitor[0][0].getBotPlateRLayerWidth()
+        self.xPlateRLayer_width["bottomBorders"] = self.capacitor[0][0].getBotPlateRLayerWidth()
 
         for i in range( 0, self.matrixDim["columns"] ):
             self.xPlateRLayerXCenter["top"].append( self.capacitor[0][i].getTopPlateRLayerXCenter() )
@@ -288,9 +286,9 @@ class RouteCapacitorSingle( CapacitorUnit ):
             self.xPlateRLayerXCenter["bottom"].append( self.capacitor[0][i].getBotPlateRightRLayerXMin() + self.xPlateRLayer_width["bottom"]/2 )
 
         if self.capacitorInstance.matrixDim["columns"] > 1 :
-	    self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor[0][ 0].getBotPlateLeftRLayerXCenter () ) 
+            self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor[0][ 0].getBotPlateLeftRLayerXCenter () ) 
             self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor[0][-1].getBotPlateRightRLayerXCenter() ) 
-	else :
+        else :
             self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor[0][0].getBotPlateLeftRLayerXCenter  () ) 
             self.xPlateRLayerXCenter["bottomBorders"].append( self.capacitor[0][0].getBotPlateRightRLayerXCenter () ) 
 
@@ -302,95 +300,95 @@ class RouteCapacitorSingle( CapacitorUnit ):
     def computeHRoutingTrackDimensions( self ):
 
         self.routingTracksXMinXMax = { "XMin" : self.abutmentBox.getXMin() , "XMax" : self.abutmentBox.getXMax() }
-	
-	if   self.dummyMode == True:
+        
+        if   self.dummyMode == True:
 
-	    if   self.connectToTopTracksOnly     () :
+            if   self.connectToTopTracksOnly     () :
                 self.routingTrackYCenter["top"   ]["lower"] = self.abutmentBox.getYMax() + self.minSpacing_botPlate + self.routingTrack_width/2
                 self.topLowerTrackDict                      = {"YMin" : self.routingTrackYCenter["top"   ]["lower"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["top"   ]["lower"] + self.routingTrack_width/2}
 
-	    elif self.connectToBottomTracksOnly  () :
+            elif self.connectToBottomTracksOnly  () :
                 self.routingTrackYCenter["bottom"]["upper"] = self.abutmentBox.getYMin() - self.minSpacing_botPlate - self.routingTrack_width/2
-     	        self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
+                self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
 
-	    else :
+            else :
 
                 self.routingTrackYCenter["top"   ]["lower"] = self.abutmentBox.getYMax() + self.minSpacing_botPlate + self.routingTrack_width/2
                 self.routingTrackYCenter["bottom"]["upper"] = self.abutmentBox.getYMin() - self.minSpacing_botPlate - self.routingTrack_width/2
                 self.topLowerTrackDict                      = {"YMin" : self.routingTrackYCenter["top"   ]["lower"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["top"   ]["lower"] + self.routingTrack_width/2}
-     	        self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
+                self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
 
-	elif self.dummyMode == False:
+        elif self.dummyMode == False:
 
-	    if   self.connectToTopTracksOnly     () : 
+            if   self.connectToTopTracksOnly     () : 
 
                 self.routingTrackYCenter["top"   ]["lower"] = self.abutmentBox.getYMax()               + self.minSpacing_botPlate          + self.routingTrack_width/2
- 	        self.routingTrackYCenter["top"   ]["upper"] = self.routingTrackYCenter["top"]["lower"] + self.minSpacing_routingTrackMetal + self.routingTrack_width
+                self.routingTrackYCenter["top"   ]["upper"] = self.routingTrackYCenter["top"]["lower"] + self.minSpacing_routingTrackMetal + self.routingTrack_width
                 self.topLowerTrackDict                      = {"YMin" : self.routingTrackYCenter["top"   ]["lower"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["top"   ]["lower"] + self.routingTrack_width/2}
                 self.topUpperTrackDict                      = {"YMin" : self.routingTrackYCenter["top"   ]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["top"   ]["upper"] + self.routingTrack_width/2}
 
-	    elif self.connectToBottomTracksOnly  () : 
+            elif self.connectToBottomTracksOnly  () : 
 
                 self.routingTrackYCenter["bottom"]["upper"] = self.abutmentBox.getYMin()                  - self.minSpacing_botPlate          - self.routingTrack_width/2
                 self.routingTrackYCenter["bottom"]["lower"] = self.routingTrackYCenter["bottom"]["upper"] - self.minSpacing_routingTrackMetal - self.routingTrack_width
-     	        self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
-	        self.bottomLowerTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["lower"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["lower"] + self.routingTrack_width/2}
+                self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
+                self.bottomLowerTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["lower"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["lower"] + self.routingTrack_width/2}
 
-	    elif self.connectToTopAndBottomTracks() : 
+            elif self.connectToTopAndBottomTracks() : 
 
                 self.routingTrackYCenter["top"   ]["lower"] = self.abutmentBox.getYMax() + self.minSpacing_botPlate + self.routingTrack_width/2
                 self.routingTrackYCenter["bottom"]["upper"] = self.abutmentBox.getYMin() - self.minSpacing_botPlate - self.routingTrack_width/2
                 self.topLowerTrackDict                      = {"YMin" : self.routingTrackYCenter["top"   ]["lower"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["top"   ]["lower"] + self.routingTrack_width/2}
-     	        self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
+                self.bottomUpperTrackDict                   = {"YMin" : self.routingTrackYCenter["bottom"]["upper"] - self.routingTrack_width/2, "YMax" : self.routingTrackYCenter["bottom"]["upper"] + self.routingTrack_width/2}
 
-	    else : raise Error( 1, ' computeHRoutingTrackDimensions() : Wrong number or values for routing tracks, top : "%s", bottom : "%s". ' %(self.tracksNumbers["top"], self.tracksNumbers["bottom"]) )
+            else : raise Error( 1, ' computeHRoutingTrackDimensions() : Wrong number or values for routing tracks, top : "%s", bottom : "%s". ' %(self.tracksNumbers["top"], self.tracksNumbers["bottom"]) )
 
-	else : raise Error( 1, 'computeHRoutingTrackDimensions() : The dummy mode must be either "True" or "False", "%s". ' % self.dummyMode )	
+        else : raise Error( 1, 'computeHRoutingTrackDimensions() : The dummy mode must be either "True" or "False", "%s". ' % self.dummyMode )        
 
         return
 
 
     def computeLayoutDimensionsInbbMode( self ):
 
-	bondingBoxDict                = {}
-	bondingBoxDict    ["width"  ] =  self.routingTracksXMinXMax["XMax"] - self.routingTracksXMinXMax["XMin"] 
-	bondingBoxDict["XMin"   ]     =  self.routingTracksXMinXMax["XMin"]
+        bondingBoxDict                = {}
+        bondingBoxDict    ["width"  ] =  self.routingTracksXMinXMax["XMax"] - self.routingTracksXMinXMax["XMin"] 
+        bondingBoxDict["XMin"   ]     =  self.routingTracksXMinXMax["XMin"]
 
-	if   self.dummyMode == True :
+        if   self.dummyMode == True :
 
-	    if   self.connectToTopTracksOnly    () : 
-	        bondingBoxDict["height" ] = self.topLowerTrackDict["YMax"] - self.abutmentBox.getYMin()
-		bondingBoxDict["YMin"   ] = self.abutmentBox.getYMin()
+            if   self.connectToTopTracksOnly    () : 
+                bondingBoxDict["height" ] = self.topLowerTrackDict["YMax"] - self.abutmentBox.getYMin()
+                bondingBoxDict["YMin"   ] = self.abutmentBox.getYMin()
 
-	    elif self.connectoToBottomTracksOnly() : 
-	        bondingBoxDict["height" ] = self.abutmentBox.getYMax()     - self.bottomUpperTrackDict["YMin"]
-		bondingBoxDict["YMin"   ] = self.bottomUpperTrackDict["YMin"]
+            elif self.connectoToBottomTracksOnly() : 
+                bondingBoxDict["height" ] = self.abutmentBox.getYMax()     - self.bottomUpperTrackDict["YMin"]
+                bondingBoxDict["YMin"   ] = self.bottomUpperTrackDict["YMin"]
 
-	    else : 
-	        bondingBoxDict["height" ] = self.topLowerTrackDict["YMax"] - self.abutmentBox.getYMin()
-		bondingBoxDict["YMin"   ] = self.bottomUpperTrackDict["YMin"]
+            else : 
+                bondingBoxDict["height" ] = self.topLowerTrackDict["YMax"] - self.abutmentBox.getYMin()
+                bondingBoxDict["YMin"   ] = self.bottomUpperTrackDict["YMin"]
 
-	elif self.dummyMode == False:
+        elif self.dummyMode == False:
 
-	    if   self.connectToTopTracksOnly    () : 
-	        bondingBoxDict["height" ] = self.topUpperTrackDict["YMax"] -  self.abutmentBox.getYMin()
-		bondingBoxDict["YMin"   ] = self.abutmentBox.getYMin()
+            if   self.connectToTopTracksOnly    () : 
+                bondingBoxDict["height" ] = self.topUpperTrackDict["YMax"] -  self.abutmentBox.getYMin()
+                bondingBoxDict["YMin"   ] = self.abutmentBox.getYMin()
 
-	    elif self.connectoToBottomTracksOnly() :  
-	        bondingBoxDict["height" ] = self.abutmentBox.getYMax()     - self.bottomLowerTrackDict["YMin"]
-		bondingBoxDict["YMin"   ] = self.bottomLowerTrackDict["YMin"]
+            elif self.connectoToBottomTracksOnly() :  
+                bondingBoxDict["height" ] = self.abutmentBox.getYMax()     - self.bottomLowerTrackDict["YMin"]
+                bondingBoxDict["YMin"   ] = self.bottomLowerTrackDict["YMin"]
 
-	    else: 
-	        bondingBoxDict["height" ] = self.topLowerTrackDict["YMax"] - self.bottomUpperTrackDict["YMin"]
-		bondingBoxDict["YMin"   ] = self.bottomUpperTrackDict["YMin"]
+            else: 
+                bondingBoxDict["height" ] = self.topLowerTrackDict["YMax"] - self.bottomUpperTrackDict["YMin"]
+                bondingBoxDict["YMin"   ] = self.bottomUpperTrackDict["YMin"]
 
-	else : raise Error( 1, 'computeLayoutDimensionsInbbMode() : The dummy mode must be either "True" or "False", "%s". ' % self.dummyMode )	
+        else : raise Error( 1, 'computeLayoutDimensionsInbbMode() : The dummy mode must be either "True" or "False", "%s". ' % self.dummyMode )        
 
-	bondingBoxDict["surface"] = bondingBoxDict["width"]*bondingBoxDict["height"]
+        bondingBoxDict["surface"] = bondingBoxDict["width"]*bondingBoxDict["height"]
 
-	self.bondingBox = Box( bondingBoxDict["XMin"], bondingBoxDict["YMin"], bondingBoxDict["XMin"] + bondingBoxDict["width"] , bondingBoxDict["YMin"] + bondingBoxDict["height"] )
+        self.bondingBox = Box( bondingBoxDict["XMin"], bondingBoxDict["YMin"], bondingBoxDict["XMin"] + bondingBoxDict["width"] , bondingBoxDict["YMin"] + bondingBoxDict["height"] )
 
-	return bondingBoxDict
+        return bondingBoxDict
 
 
     ## Draws routing tracks, above and/or below the capacitor. A maximum total number of two tracks is drawn. In dummy mode, one track is drawn.  
@@ -399,45 +397,45 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
     def drawRoutingTracks( self , routingTracksLayer  ):
 
-	self.drawTopOrBottomRoutingTracks ( "top"   , routingTracksLayer ) 
-	self.drawTopOrBottomRoutingTracks ( "bottom", routingTracksLayer ) 
+        self.drawTopOrBottomRoutingTracks ( "top"   , routingTracksLayer ) 
+        self.drawTopOrBottomRoutingTracks ( "bottom", routingTracksLayer ) 
 
         return
 
 
     def drawTopOrBottomRoutingTracks ( self, tracksPosition, routingTracksLayer ) :
 
-	if tracksPosition in ["top","bottom"] :
+        if tracksPosition in ["top","bottom"] :
 
- 	    attribut = ["lower","upper"]	    
-	    nets = self.__setNetsDistributionHRTs__()
-	    for i in range( 0, self.tracksNumbers[tracksPosition] ):
+            attribut = ["lower","upper"]            
+            nets = self.__setNetsDistributionHRTs__()
+            for i in range( 0, self.tracksNumbers[tracksPosition] ):
 
-		index               = i if tracksPosition == "top" else i-1
-	        routingtrackYCenter = self.routingTrackYCenter[tracksPosition][attribut[index]] 
-	        Horizontal.create ( nets[i] , routingTracksLayer, routingtrackYCenter , self.routingTrack_width , self.routingTracksXMinXMax["XMin"], self.routingTracksXMinXMax["XMax"] )
-		print("netsi",nets[i])
+                index               = i if tracksPosition == "top" else i-1
+                routingtrackYCenter = self.routingTrackYCenter[tracksPosition][attribut[index]] 
+                Horizontal.create ( nets[i] , routingTracksLayer, routingtrackYCenter , self.routingTrack_width , self.routingTracksXMinXMax["XMin"], self.routingTracksXMinXMax["XMax"] )
+                print("netsi",nets[i])
 
-	else : raise Error(1,'drawOneRoutingTrack() : The track position must be either "top" or "bottom" : %s.' %tracksPosition)
+        else : raise Error(1,'drawOneRoutingTrack() : The track position must be either "top" or "bottom" : %s.' %tracksPosition)
 
-	return
+        return
 
 
 
     def __setNetsDistributionHRTs__( self ):
 
-	if self.dummyMode == False :
-	    netsDistribution = self.nets if [self.topPlateWSpec, self.bottomPlateWSpec]  == [[1,0],[0,1]] else [self.nets[1], self.nets[0]]
+        if self.dummyMode == False :
+            netsDistribution = self.nets if [self.topPlateWSpec, self.bottomPlateWSpec]  == [[1,0],[0,1]] else [self.nets[1], self.nets[0]]
 
-	else : netsDistribution = self.nets
+        else : netsDistribution = self.nets
 
-	return netsDistribution
+        return netsDistribution
 
 
 
     ##  Draws the routing layers connecting top and bottom plates to the associated routing track.
-    #  \param    Plate		       The capacitor's plate to be routed (ie., top, bottom).
-    #  \paramx   PlateRLayer	       Routing layer.
+    #  \param    Plate                       The capacitor's plate to be routed (ie., top, bottom).
+    #  \paramx   PlateRLayer               Routing layer.
     #  \param    PlateWSpec            Connection specifications of the plate.
     #  \param    xPlateRLayerXCenter   Horizontal position of the routing layer. 
     #  \param    xPlateRLayer_width    Width of the routing layer. 
@@ -446,54 +444,54 @@ class RouteCapacitorSingle( CapacitorUnit ):
 
     def drawPlatesVRLayers( self, Plate, xPlateRLayer, PlateWSpec, xPlateRLayerXCenter, xPlateRLayer_width ):
 
-	if  self.capacitorInstance.__isUnitCap__() :
-	    [firstElementInCapacitor , lastElementInCapacitor] = [self.capacitor , self.capacitor]
+        if  self.capacitorInstance.__isUnitCap__() :
+            [firstElementInCapacitor , lastElementInCapacitor] = [self.capacitor , self.capacitor]
         elif not( self.capacitorInstance.__isUnitCap__() ):
-	    [firstElementInCapacitor , lastElementInCapacitor] = [self.capacitor[0][0] , self.capacitor[-1][0]]
+            [firstElementInCapacitor , lastElementInCapacitor] = [self.capacitor[0][0] , self.capacitor[-1][0]]
 
         [ doTop, doBottom ] = [1, 0] if Plate == 'topPlate' else [0, 1]
 
         if   ( Plate == 'topPlate' )  :
-	    YMinDict = {
-			"toTopToUpper"    : firstElementInCapacitor.getTopPlateRLayerYMin(),
+            YMinDict = {
+                        "toTopToUpper"    : firstElementInCapacitor.getTopPlateRLayerYMin(),
                         "toTopToLower"    : firstElementInCapacitor.getTopPlateRLayerYMin(), 
                         "toBottomToUpper" : lastElementInCapacitor.getTopPlateRLayerYMax(), 
-			"toBottomToLower" : lastElementInCapacitor.getTopPlateRLayerYMax()
- 		       }
-	    net = self.nets[0]
-	    xMetalXCenter = self.xPlateRLayerXCenter["top"]
+                        "toBottomToLower" : lastElementInCapacitor.getTopPlateRLayerYMax()
+                        }
+            net = self.nets[0]
+            xMetalXCenter = self.xPlateRLayerXCenter["top"]
 
-	elif ( Plate == 'bottomPlate' ) :
-	    YMinDict = {
-			"toTopToUpper"    : firstElementInCapacitor.getBotPlateRLayerYMin(),
+        elif ( Plate == 'bottomPlate' ) :
+            YMinDict = {
+                        "toTopToUpper"    : firstElementInCapacitor.getBotPlateRLayerYMin(),
                         "toTopToLower"    : firstElementInCapacitor.getBotPlateRLayerYMin(), 
                         "toBottomToUpper" : lastElementInCapacitor.getBotPlateRLayerYMax(), 
-			"toBottomToLower" : lastElementInCapacitor.getBotPlateRLayerYMax()
- 		       }
-	    net = self.nets[1]
-	    xMetalXCenter = self.xPlateRLayerXCenter["bottom"]
+                        "toBottomToLower" : lastElementInCapacitor.getBotPlateRLayerYMax()
+                        }
+            net = self.nets[1]
+            xMetalXCenter = self.xPlateRLayerXCenter["bottom"]
 
-	else : raise Error( 1, 'drawPlatesVRLayers() : Undefined plate, "%s".' % Plate )
+        else : raise Error( 1, 'drawPlatesVRLayers() : Undefined plate, "%s".' % Plate )
 
-	if   ( self.connectToTopTracksOnly   ()   and self.connectToUpper( PlateWSpec ) ) :
+        if   ( self.connectToTopTracksOnly   ()   and self.connectToUpper( PlateWSpec ) ) :
             [ dySource, dyTarget ] = [ YMinDict["toTopToUpper"   ] , self.topUpperTrackDict["YMax"] ]        
 
-	elif ( self.connectToTopTracksOnly   ()   and   self.connectToLower( PlateWSpec ) ) or ( self.connectToTopAndBottomTracks () and self.connectToUpper( PlateWSpec ) ) :
+        elif ( self.connectToTopTracksOnly   ()   and   self.connectToLower( PlateWSpec ) ) or ( self.connectToTopAndBottomTracks () and self.connectToUpper( PlateWSpec ) ) :
             dyTarget               = self.topLowerTrackDict   ["YMax"]        
-	    dySource               = self.bottomUpperTrackDict["YMin"] if self.dummyMode == True and self.connectToTopAndBottomTracks () else YMinDict["toTopToLower"   ]
-	elif ( self.connectToBottomTracksOnly()   and   self.connectToUpper( PlateWSpec ) ) or ( self.connectToTopAndBottomTracks () and self.connectToLower( PlateWSpec ) ) :
+            dySource               = self.bottomUpperTrackDict["YMin"] if self.dummyMode == True and self.connectToTopAndBottomTracks () else YMinDict["toTopToLower"   ]
+        elif ( self.connectToBottomTracksOnly()   and   self.connectToUpper( PlateWSpec ) ) or ( self.connectToTopAndBottomTracks () and self.connectToLower( PlateWSpec ) ) :
             [ dySource, dyTarget ] = [ YMinDict["toBottomToUpper"] , self.bottomUpperTrackDict["YMin"] ]        
 
-	elif ( self.connectToBottomTracksOnly()   and self.connectToLower( PlateWSpec ) ) :
+        elif ( self.connectToBottomTracksOnly()   and self.connectToLower( PlateWSpec ) ) :
             [ dySource, dyTarget ] = [ YMinDict["toBottomToLower"] , self.bottomLowerTrackDict["YMin"] ]
 
-	else : raise Error( 1, 'drawPlatesVRLayers() : Invalid routing specifications "%s".' % PlateWSpec )
+        else : raise Error( 1, 'drawPlatesVRLayers() : Invalid routing specifications "%s".' % PlateWSpec )
 
-	for i in range( 0, self.matrixDim["columns"] - doBottom ):
+        for i in range( 0, self.matrixDim["columns"] - doBottom ):
             Vertical.create ( net, xPlateRLayer, xPlateRLayerXCenter[i], xPlateRLayer_width, dySource, dyTarget ) 
 
-	if doBottom :  
-     	    for i in range( 0,2):
+        if doBottom :  
+            for i in range( 0,2):
                 Vertical.create ( self.nets[1], xPlateRLayer , self.xPlateRLayerXCenter["bottomBorders"][i], self.xPlateRLayer_width["bottomBorders"], dySource, dyTarget ) 
 
         return
@@ -507,7 +505,7 @@ class RouteCapacitorSingle( CapacitorUnit ):
     #  \throw   <Invalid-specifictions >  \c Not \c possible \c to \c compute cuts vertical position due to invalid routing specifications                 
     #  \remak                              The number of cuts is maximized according to the track's width.
     #  \param   net                        Net of the Hurricane Device to which the cuts will be connected.
-    #  \param   Plate		           Capacitor's plate, top or bottom.
+    #  \param   Plate                           Capacitor's plate, top or bottom.
     #  \param   PlateWSpec                 Wiring specifications of the plate. It is useful to identify the track on which the cuts are to draw.
     #  \param   layer                      Cut's layer.
     #  \param   xPlateRLayer_width         Width of the plate's routing layer. It is useful to compute the maximum number of cuts.
@@ -516,35 +514,35 @@ class RouteCapacitorSingle( CapacitorUnit ):
     def drawCuts( self, net, Plate, PlateWSpec, layer, xPlateRLayer_width, xPlateRLayerXCenter ):
 
         [ doTop, doBottom ] = [1, 0] if Plate == 'topPlate' else [0, 1]
-	cutsYCenter = self. __setCutsYCenter__( PlateWSpec ) 
+        cutsYCenter = self. __setCutsYCenter__( PlateWSpec ) 
 
-	if not( self.capacitorInstance.__isUnitCap__() ) or ( self.capacitorInstance.__isUnitCap__() and doTop ) :  	
+        if not( self.capacitorInstance.__isUnitCap__() ) or ( self.capacitorInstance.__isUnitCap__() and doTop ) :          
 
-	    print("xPlateRLayer_width",xPlateRLayer_width)
-	    cutsNumber           =   CapacitorUnit.cutMaxNumber( self, xPlateRLayer_width, self.minWidth_routingTrackcut, self.minSpacing_routingTrackcut, self.minEnclo_routingTrackMetal_cut )
-	    enclosure_RLayer_cut = ( xPlateRLayer_width - cutsNumber*self.minWidth_routingTrackcut - ( cutsNumber - 1 )*self.minSpacing_routingTrackcut ) / 2
+            print("xPlateRLayer_width",xPlateRLayer_width)
+            cutsNumber           =   CapacitorUnit.cutMaxNumber( self, xPlateRLayer_width, self.minWidth_routingTrackcut, self.minSpacing_routingTrackcut, self.minEnclo_routingTrackMetal_cut )
+            enclosure_RLayer_cut = ( xPlateRLayer_width - cutsNumber*self.minWidth_routingTrackcut - ( cutsNumber - 1 )*self.minSpacing_routingTrackcut ) / 2
 
             for i in range( 0, self.matrixDim["columns"] - doBottom ):    
-	        cutXCenter = xPlateRLayerXCenter[i] - xPlateRLayer_width/2 + enclosure_RLayer_cut	+ self.minWidth_routingTrackcut/2
-	        CapacitorUnit.cutLine( self, net, layer, cutXCenter, cutsYCenter, self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, cutsNumber , 'horizontal' )
-	        if self.dummyMode == True and self.connectToTopAndBottomTracks() :
-		    CapacitorUnit.cutLine( self, net, layer, cutXCenter, self.routingTrackYCenter["bottom"]["upper"], self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, cutsNumber , 'horizontal' )
+                cutXCenter = xPlateRLayerXCenter[i] - xPlateRLayer_width/2 + enclosure_RLayer_cut        + self.minWidth_routingTrackcut/2
+                CapacitorUnit.cutLine( self, net, layer, cutXCenter, cutsYCenter, self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, cutsNumber , 'horizontal' )
+                if self.dummyMode == True and self.connectToTopAndBottomTracks() :
+                    CapacitorUnit.cutLine( self, net, layer, cutXCenter, self.routingTrackYCenter["bottom"]["upper"], self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, cutsNumber , 'horizontal' )
 
-	if doBottom :  
- 	    borderscutsNumber    =   CapacitorUnit.cutMaxNumber( self, self.xPlateRLayer_width["bottomBorders"], self.minWidth_routingTrackcut, self.minSpacing_routingTrackcut, self.minEnclo_routingTrackMetal_cut )
-	    enclosure_RLayer_cut = ( self.xPlateRLayer_width["bottomBorders"] - borderscutsNumber*self.minWidth_routingTrackcut - ( borderscutsNumber - 1 )*self.minSpacing_routingTrackcut ) / 2
+        if doBottom :  
+            borderscutsNumber    =   CapacitorUnit.cutMaxNumber( self, self.xPlateRLayer_width["bottomBorders"], self.minWidth_routingTrackcut, self.minSpacing_routingTrackcut, self.minEnclo_routingTrackMetal_cut )
+            enclosure_RLayer_cut = ( self.xPlateRLayer_width["bottomBorders"] - borderscutsNumber*self.minWidth_routingTrackcut - ( borderscutsNumber - 1 )*self.minSpacing_routingTrackcut ) / 2
 
             for i in range( 0,2):
-	        CapacitorUnit.cutLine( self, net, layer, self.xPlateRLayerXCenter["bottomBorders"][i], cutsYCenter, self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, borderscutsNumber , 'horizontal' )
-	        if self.dummyMode == True and self.connectToTopAndBottomTracks() :
-	            CapacitorUnit.cutLine( self, net, layer, self.xPlateRLayerXCenter["bottomBorders"][i], self.routingTrackYCenter["bottom"]["upper"], self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, borderscutsNumber , 'horizontal' )
+                CapacitorUnit.cutLine( self, net, layer, self.xPlateRLayerXCenter["bottomBorders"][i], cutsYCenter, self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, borderscutsNumber , 'horizontal' )
+                if self.dummyMode == True and self.connectToTopAndBottomTracks() :
+                    CapacitorUnit.cutLine( self, net, layer, self.xPlateRLayerXCenter["bottomBorders"][i], self.routingTrackYCenter["bottom"]["upper"], self.minWidth_routingTrackcut, self.minHeight_routingTrackcut, self.minSpacing_routingTrackcut, borderscutsNumber , 'horizontal' )
         return
 
 
 
     def __setCutsYCenter__( self, PlateWSpec ): 
         
-	if   ( self.connectToTopTracksOnly   () and self.connectToLower( PlateWSpec ) )  or ( self.connectToTopAndBottomTracks() and self.connectToUpper( PlateWSpec ) ) :
+        if   ( self.connectToTopTracksOnly   () and self.connectToLower( PlateWSpec ) )  or ( self.connectToTopAndBottomTracks() and self.connectToUpper( PlateWSpec ) ) :
             cutsYCenter = self.routingTrackYCenter["top"]["lower"]
 
         elif ( self.connectToTopTracksOnly   () and self.connectToUpper( PlateWSpec ) ) :
@@ -554,12 +552,12 @@ class RouteCapacitorSingle( CapacitorUnit ):
             cutsYCenter = self.routingTrackYCenter["bottom"]["upper"]
 
         elif ( self.connectToBottomTracksOnly() and self.connectToLower( PlateWSpec ) ) :
-	    cutsYCenter = self.routingTrackYCenter["bottom"]["lower"] 
+            cutsYCenter = self.routingTrackYCenter["bottom"]["lower"] 
 
-    	else : raise Error( 1, '__setCutsYCenter__() : Not possible to compute cuts vertical position due to invalid routing specifications "%s".' % PlateWSpec )
+        else : raise Error( 1, '__setCutsYCenter__() : Not possible to compute cuts vertical position due to invalid routing specifications "%s".' % PlateWSpec )
 
 
-	return cutsYCenter
+        return cutsYCenter
 
 
 

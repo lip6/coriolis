@@ -153,7 +153,7 @@ namespace {
                             , DirectionLeft      =DirectionHorizontal|DirectionDecrease
                             , DirectionRight     =DirectionHorizontal|DirectionIncrease
                             };
-      static LayerInformations  _layerInformations;
+             LayerInformations  _layerInformations;
              AllianceFramework* _framework;
              string             _cellPath;
              Cell*              _cell;
@@ -165,7 +165,7 @@ namespace {
 
     protected:
     // Internal: Methods.
-      static LayerInformation*  _getLayerInformation ( const Name& layerName );
+             LayerInformation*  _getLayerInformation ( const Name& layerName );
       inline DbU::Unit          _getUnit             ( long value );
       inline DbU::Unit          _getUnit             ( const char* value );
              vector<char*>      _splitString         ( char* s, char separator );
@@ -187,9 +187,6 @@ namespace {
   };
 
 
-  LayerInformations  ApParser::_layerInformations;
-
-
   ApParser::ApParser ( AllianceFramework* framework )
     : _framework  (framework)
     , _cellPath   ()
@@ -199,70 +196,68 @@ namespace {
     , _parserState(StateVersion)
     , _lineNumber (0)
   {
-    if ( _layerInformations.empty() ) {
-      _layerInformations.setTechnology ( DataBase::getDB()->getTechnology() );
+    _layerInformations.setTechnology ( DataBase::getDB()->getTechnology() );
 
-      _layerInformations.add ( "NWELL"      , "NWELL"      , false, false );
-      _layerInformations.add ( "PWELL"      , "PWELL"      , false, false );
-      _layerInformations.add ( "NTIE"       , "NTIE"       , false, false );
-      _layerInformations.add ( "PTIE"       , "PTIE"       , false, false );
-      _layerInformations.add ( "NDIF"       , "NDIF"       , false, false );
-      _layerInformations.add ( "PDIF"       , "PDIF"       , false, false );
-      _layerInformations.add ( "NTRANS"     , "NTRANS"     , false, false );
-      _layerInformations.add ( "PTRANS"     , "PTRANS"     , false, false );
-      _layerInformations.add ( "POLY"       , "POLY"       , false, false );
-      _layerInformations.add ( "POLY2"      , "POLY2"      , false, false );
-      
-      _layerInformations.add ( "ALU1"       , "METAL1"     , false, false );
-      _layerInformations.add ( "ALU2"       , "METAL2"     , false, false );
-      _layerInformations.add ( "ALU3"       , "METAL3"     , false, false );
-      _layerInformations.add ( "ALU4"       , "METAL4"     , false, false );
-      _layerInformations.add ( "ALU5"       , "METAL5"     , false, false );
-      _layerInformations.add ( "ALU6"       , "METAL6"     , false, false );
-      _layerInformations.add ( "ALU7"       , "METAL7"     , false, false );
-      _layerInformations.add ( "ALU8"       , "METAL8"     , false, false );
+    _layerInformations.add ( "NWELL"      , "NWELL"      , false, false );
+    _layerInformations.add ( "PWELL"      , "PWELL"      , false, false );
+    _layerInformations.add ( "NTIE"       , "NTIE"       , false, false );
+    _layerInformations.add ( "PTIE"       , "PTIE"       , false, false );
+    _layerInformations.add ( "NDIF"       , "NDIF"       , false, false );
+    _layerInformations.add ( "PDIF"       , "PDIF"       , false, false );
+    _layerInformations.add ( "NTRANS"     , "NTRANS"     , false, false );
+    _layerInformations.add ( "PTRANS"     , "PTRANS"     , false, false );
+    _layerInformations.add ( "POLY"       , "POLY"       , false, false );
+    _layerInformations.add ( "POLY2"      , "POLY2"      , false, false );
+    
+    _layerInformations.add ( "ALU1"       , "METAL1"     , false, false );
+    _layerInformations.add ( "ALU2"       , "METAL2"     , false, false );
+    _layerInformations.add ( "ALU3"       , "METAL3"     , false, false );
+    _layerInformations.add ( "ALU4"       , "METAL4"     , false, false );
+    _layerInformations.add ( "ALU5"       , "METAL5"     , false, false );
+    _layerInformations.add ( "ALU6"       , "METAL6"     , false, false );
+    _layerInformations.add ( "ALU7"       , "METAL7"     , false, false );
+    _layerInformations.add ( "ALU8"       , "METAL8"     , false, false );
 
-      _layerInformations.add ( "CALU1"      , "METAL1"     ,  true, false );
-      _layerInformations.add ( "CALU2"      , "METAL2"     ,  true, false );
-      _layerInformations.add ( "CALU3"      , "METAL3"     ,  true, false );
-      _layerInformations.add ( "CALU4"      , "METAL4"     ,  true, false );
-      _layerInformations.add ( "CALU5"      , "METAL5"     ,  true, false );
-      _layerInformations.add ( "CALU6"      , "METAL6"     ,  true, false );
-      _layerInformations.add ( "CALU7"      , "METAL7"     ,  true, false );
-      _layerInformations.add ( "CALU8"      , "METAL8"     ,  true, false );
+    _layerInformations.add ( "CALU1"      , "METAL1"     ,  true, false );
+    _layerInformations.add ( "CALU2"      , "METAL2"     ,  true, false );
+    _layerInformations.add ( "CALU3"      , "METAL3"     ,  true, false );
+    _layerInformations.add ( "CALU4"      , "METAL4"     ,  true, false );
+    _layerInformations.add ( "CALU5"      , "METAL5"     ,  true, false );
+    _layerInformations.add ( "CALU6"      , "METAL6"     ,  true, false );
+    _layerInformations.add ( "CALU7"      , "METAL7"     ,  true, false );
+    _layerInformations.add ( "CALU8"      , "METAL8"     ,  true, false );
 
-      _layerInformations.add ( "TALU1"      , "BLOCKAGE1"  , false,  true );
-      _layerInformations.add ( "TALU2"      , "BLOCKAGE2"  , false,  true );
-      _layerInformations.add ( "TALU3"      , "BLOCKAGE3"  , false,  true );
-      _layerInformations.add ( "TALU4"      , "BLOCKAGE4"  , false,  true );
-      _layerInformations.add ( "TALU5"      , "BLOCKAGE5"  , false,  true );
-      _layerInformations.add ( "TALU6"      , "BLOCKAGE6"  , false,  true );
-      _layerInformations.add ( "TALU7"      , "BLOCKAGE7"  , false,  true );
-      _layerInformations.add ( "TALU8"      , "BLOCKAGE8"  , false,  true );
+    _layerInformations.add ( "TALU1"      , "BLOCKAGE1"  , false,  true );
+    _layerInformations.add ( "TALU2"      , "BLOCKAGE2"  , false,  true );
+    _layerInformations.add ( "TALU3"      , "BLOCKAGE3"  , false,  true );
+    _layerInformations.add ( "TALU4"      , "BLOCKAGE4"  , false,  true );
+    _layerInformations.add ( "TALU5"      , "BLOCKAGE5"  , false,  true );
+    _layerInformations.add ( "TALU6"      , "BLOCKAGE6"  , false,  true );
+    _layerInformations.add ( "TALU7"      , "BLOCKAGE7"  , false,  true );
+    _layerInformations.add ( "TALU8"      , "BLOCKAGE8"  , false,  true );
 
-      _layerInformations.add ( "CONT_BODY_N", "CONT_BODY_N", false, false );
-      _layerInformations.add ( "CONT_BODY_P", "CONT_BODY_P", false, false );
-      _layerInformations.add ( "CONT_DIF_N" , "CONT_DIF_N" , false, false );
-      _layerInformations.add ( "CONT_DIF_P" , "CONT_DIF_P" , false, false );
-      _layerInformations.add ( "CONT_POLY"  , "CONT_POLY"  , false, false );
-      _layerInformations.add ( "CONT_POLY2" , "CONT_POLY2" , false, false );
-      _layerInformations.add ( "CONT_VIA"   , "VIA12"      , false, false );
-      _layerInformations.add ( "CONT_VIA1"  , "VIA12"      , false, false );
-      _layerInformations.add ( "CONT_VIA2"  , "VIA23"      , false, false );
-      _layerInformations.add ( "CONT_VIA3"  , "VIA34"      , false, false );
-      _layerInformations.add ( "CONT_VIA4"  , "VIA45"      , false, false );
-      _layerInformations.add ( "CONT_VIA5"  , "VIA56"      , false, false );
-      _layerInformations.add ( "CONT_VIA6"  , "VIA67"      , false, false );
-      _layerInformations.add ( "CONT_VIA7"  , "VIA78"      , false, false );
-      _layerInformations.add ( "CONT_TURN1" , "METAL1"     , false, false );
-      _layerInformations.add ( "CONT_TURN2" , "METAL2"     , false, false );
-      _layerInformations.add ( "CONT_TURN3" , "METAL3"     , false, false );
-      _layerInformations.add ( "CONT_TURN4" , "METAL4"     , false, false );
-      _layerInformations.add ( "CONT_TURN5" , "METAL5"     , false, false );
-      _layerInformations.add ( "CONT_TURN6" , "METAL6"     , false, false );
-      _layerInformations.add ( "CONT_TURN7" , "METAL7"     , false, false );
-      _layerInformations.add ( "CONT_TURN8" , "METAL8"     , false, false );
-    }
+    _layerInformations.add ( "CONT_BODY_N", "CONT_BODY_N", false, false );
+    _layerInformations.add ( "CONT_BODY_P", "CONT_BODY_P", false, false );
+    _layerInformations.add ( "CONT_DIF_N" , "CONT_DIF_N" , false, false );
+    _layerInformations.add ( "CONT_DIF_P" , "CONT_DIF_P" , false, false );
+    _layerInformations.add ( "CONT_POLY"  , "CONT_POLY"  , false, false );
+    _layerInformations.add ( "CONT_POLY2" , "CONT_POLY2" , false, false );
+    _layerInformations.add ( "CONT_VIA"   , "VIA12"      , false, false );
+    _layerInformations.add ( "CONT_VIA1"  , "VIA12"      , false, false );
+    _layerInformations.add ( "CONT_VIA2"  , "VIA23"      , false, false );
+    _layerInformations.add ( "CONT_VIA3"  , "VIA34"      , false, false );
+    _layerInformations.add ( "CONT_VIA4"  , "VIA45"      , false, false );
+    _layerInformations.add ( "CONT_VIA5"  , "VIA56"      , false, false );
+    _layerInformations.add ( "CONT_VIA6"  , "VIA67"      , false, false );
+    _layerInformations.add ( "CONT_VIA7"  , "VIA78"      , false, false );
+    _layerInformations.add ( "CONT_TURN1" , "METAL1"     , false, false );
+    _layerInformations.add ( "CONT_TURN2" , "METAL2"     , false, false );
+    _layerInformations.add ( "CONT_TURN3" , "METAL3"     , false, false );
+    _layerInformations.add ( "CONT_TURN4" , "METAL4"     , false, false );
+    _layerInformations.add ( "CONT_TURN5" , "METAL5"     , false, false );
+    _layerInformations.add ( "CONT_TURN6" , "METAL6"     , false, false );
+    _layerInformations.add ( "CONT_TURN7" , "METAL7"     , false, false );
+    _layerInformations.add ( "CONT_TURN8" , "METAL8"     , false, false );
   }
 
 

@@ -13,10 +13,11 @@ helpers.setTraceLevel( 1000 )
 import Analog
 import ParamsMatrix
 import oroshi
-from   CapacitorUnit     import CapacitorUnit
-from   CapacitorMatrix   import CapacitorStack
-from   CapacitorVRTracks import VerticalRoutingTracks
-from   CapacitorRouted   import RoutMatchedCapacitor
+from   CapacitorUnit         import CapacitorUnit
+from   CapacitorMatrix       import CapacitorStack
+from   CapacitorVRTracks     import VerticalRoutingTracks
+from   CapacitorRouted       import RoutMatchedCapacitor
+from   CapacitorRoutedSingle import RouteCapacitorSingle
 
 
 def toMatrixArgs ( matrix ):
@@ -53,6 +54,7 @@ def checkCoherency ( device, bbMode ):
       
     valid = True
     if pmatrix:
+      print 'MultiCapacitor.checkCoherency(): Matrix:'
       rows    = pmatrix.getRows   ()
       columns = pmatrix.getColumns()
 
@@ -96,22 +98,40 @@ def layout ( device, bbMode ):
       if device.isMIM(): typeArg = 'MIMCap'
       if device.isMOM(): typeArg = 'MOMCap'
 
+      print 'matrixSizeArg', matrixSizeArg
+     #capaGenerator = CapacitorStack( device
+     #                              , capValuesArg
+     #                              , typeArg
+     #                              , matrixSizeArg
+     #                              , vTrackNetsArg
+     #                              , matrixDim     =matrixSizeArg
+     #                              , matchingMode  =True
+     #                              , matchingScheme=matchingSchemeArg
+     #                              , dummyRing     =False
+     #                              )
       capaGenerator = CapacitorStack( device
                                     , capValuesArg
                                     , typeArg
-                                    , matrixSizeArg
+                                    , [0,0]             # AB position.
                                     , vTrackNetsArg
-                                    , matrixDim     =matrixSizeArg
-                                    , matchingMode  =True
-                                    , matchingScheme=matchingSchemeArg
+                                   #, matrixDim     =matrixSizeArg
+                                   #, matchingMode  =True
+                                   #, matchingScheme=matchingSchemeArg
                                     , dummyRing     =False
                                     )
       capaMatrix = capaGenerator.create()
-      capaTracks = VerticalRoutingTracks( capaGenerator, capaMatrix, True )
-      capaTracks.create()
+      if hasattr(capaMatrix,'doMatrix') and capaMatrix.doMatrix:
+        capaTracks = VerticalRoutingTracks( capaGenerator, capaMatrix, True )
+        capaTracks.create()
       
-      capaRouted = RoutMatchedCapacitor( capaTracks )
-      capaRouted.route()
+        capaRouted = RoutMatchedCapacitor( capaTracks )
+        capaRouted.route()
+      else:
+        capaSingle = RouteCapacitorSingle( capaGenerator
+                                         , capaMatrix
+                                         ,    topPlateWSpec=[0,1]
+                                         , bottomPlateWSpec=[1,0] )
+        capaSingle.route()
 
       paramsMatrix.setGlobalCapacitorParams( device.getAbutmentBox() )
       trace( 100, '++' )

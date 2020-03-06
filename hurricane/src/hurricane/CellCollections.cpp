@@ -1007,7 +1007,8 @@ class Cell_LeafInstanceOccurrences : public Collection<Occurrence> {
       public:
         typedef Hurricane::Locator<Occurrence> Inherit;
       public:
-                                                Locator    ( const Cell* cell=NULL, const Instance* topInstance=NULL );
+                                                Locator    ( const Cell*     cell       =NULL
+                                                           , const Instance* topInstance=NULL );
                                                 Locator    ( const Locator& );
                 Locator&                        operator=  ( const Locator& );
         virtual Occurrence                      getElement () const;
@@ -1025,7 +1026,8 @@ class Cell_LeafInstanceOccurrences : public Collection<Occurrence> {
     };
 
   public:
-                                            Cell_LeafInstanceOccurrences ( const Cell* cell=NULL, const Instance* topInstance=NULL );
+                                            Cell_LeafInstanceOccurrences ( const Cell*     cell       =NULL
+                                                                         , const Instance* topInstance=NULL );
                                             Cell_LeafInstanceOccurrences ( const Cell_LeafInstanceOccurrences& );
             Cell_LeafInstanceOccurrences&   operator=                    ( const Cell_LeafInstanceOccurrences& );
     virtual Collection<Occurrence>*         getClone                     () const;
@@ -1740,7 +1742,7 @@ Instances Cell::getTerminalInstances() const
 }
 
 Instances Cell::getLeafInstances() const
-// *************************************
+// ***************************************************
 {
     return getInstances().getSubSet(Instance::getIsLeafFilter());
 }
@@ -1820,7 +1822,7 @@ Instances Cell::getLeafInstancesUnder(const Box& area) const
 Instances Cell::getNonLeafInstances() const
 // ****************************************
 {
-    return getInstances().getSubSet(!Instance::getIsLeafFilter());
+    return getInstances().getSubSet(not Instance::getIsLeafFilter());
 }
 
 Instances Cell::getNonLeafInstancesUnder(const Box& area) const
@@ -3222,7 +3224,7 @@ Cell_LeafInstanceOccurrences::Locator::Locator ( const Cell* cell, const Instanc
 
       if (not _topInstance or (nonLeaf == _topInstance)) {
         Cell* masterCell = nonLeaf->getMasterCell();
-        _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
+        _occurrenceLocator = masterCell->getLeafInstanceOccurrences(NULL).getLocator();
         if (_occurrenceLocator.isValid()) {
           _state = 2;
           break;
@@ -3293,7 +3295,7 @@ void  Cell_LeafInstanceOccurrences::Locator::progress ()
           _nonLeafInstanceLocator = _cell->getNonLeafInstances().getLocator();
           while (!_state && _nonLeafInstanceLocator.isValid()) {
             Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
-            _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
+            _occurrenceLocator = masterCell->getLeafInstanceOccurrences(NULL).getLocator();
             if (_occurrenceLocator.isValid())
               _state = 2;
             else
@@ -3314,7 +3316,7 @@ void  Cell_LeafInstanceOccurrences::Locator::progress ()
               if (not _topInstance or (nonLeaf == _topInstance)) {
                 Cell* masterCell = _nonLeafInstanceLocator.getElement()->getMasterCell();
 
-                _occurrenceLocator = masterCell->getLeafInstanceOccurrences().getLocator();
+                _occurrenceLocator = masterCell->getLeafInstanceOccurrences(NULL).getLocator();
                 if (_occurrenceLocator.isValid()) {
                   _state = 2;
                   break;
@@ -4744,9 +4746,9 @@ bool Cell_HyperNetRootNetOccurrences::Locator::isValid() const
 void Cell_HyperNetRootNetOccurrences::Locator::progress()
 // ******************************************************
 {
-    if (_netLocator.isValid())
-    {
+    if (_netLocator.isValid()) {
       _netLocator.progress();
+
       while ( _netLocator.isValid() ) {
         if (   not dynamic_cast<DeepNet*>(_netLocator.getElement())
            and not _netLocator.getElement()->isAutomatic()
@@ -4754,18 +4756,18 @@ void Cell_HyperNetRootNetOccurrences::Locator::progress()
 
         _netLocator.progress();
       }
-    }
-    else if (_hyperNetRootNetOccurrenceLocator.isValid())
-        _hyperNetRootNetOccurrenceLocator.progress();
+    } else if (_hyperNetRootNetOccurrenceLocator.isValid())
+      _hyperNetRootNetOccurrenceLocator.progress();
 
-    if (!_netLocator.isValid())
-        while (!_hyperNetRootNetOccurrenceLocator.isValid() && _instanceLocator.isValid())
-        {
-            Instance* instance = _instanceLocator.getElement();
-            _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
-            _instanceLocator.progress();
+    if (not _netLocator.isValid()) {
+      while (not _hyperNetRootNetOccurrenceLocator.isValid() and _instanceLocator.isValid()) {
+        Instance* instance = _instanceLocator.getElement();
+        if (not instance->isLeaf()) {
+          _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
         }
-
+        _instanceLocator.progress();
+      }
+    }
 }
 
 string Cell_HyperNetRootNetOccurrences::Locator::_getString() const

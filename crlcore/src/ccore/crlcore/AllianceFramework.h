@@ -39,7 +39,8 @@ namespace CRL {
   class CellGauge;
 
 
-  class AllianceFramework {
+  class AllianceFramework : public DBo {
+      typedef DBo Super;
     public:
       enum FunctionsFlags      { NoFlags        = 0
                                , NoPythonInit   = (1<<0)
@@ -56,92 +57,90 @@ namespace CRL {
                                , ConfigChanged  = (1<<2)
                                };
     public:
-    // Constructors.
-      static AllianceFramework*       create                   ( unsigned long flags=NoFlags );
-    // Destructors.                   
-             void                     destroy                  ();
+      static  AllianceFramework*       create                   ( unsigned long flags=NoFlags );
+      virtual void                     _postCreate              ();
+      virtual void                     _preDestroy              ();
     // Accessors.                     
-      static AllianceFramework*       get                      ();
-             string                   getPrint                 () const;
+      static  AllianceFramework*       get                      ();
+              string                   getPrint                 () const;
     // Predicates.                    
-             Catalog::State*          isInCatalog              ( const Name& );
-             Catalog::State*          isInCatalog              ( string );
-      inline bool                     isPOWER                  ( const char*   name );
-      inline bool                     isPOWER                  ( const string& name );
-      inline bool                     isPOWER                  ( const Name&   name );
-      inline bool                     isGROUND                 ( const char*   name );
-      inline bool                     isGROUND                 ( const string& name );
-      inline bool                     isGROUND                 ( const Name&   name );
-      inline bool                     isCLOCK                  ( const char*   name );
-      inline bool                     isCLOCK                  ( const string& name );
-      inline bool                     isCLOCK                  ( const Name&   name );
-      inline bool                     isBLOCKAGE               ( const char*   name );
-      inline bool                     isBLOCKAGE               ( const string& name );
-      inline bool                     isBLOCKAGE               ( const Name&   name );
-      inline bool                     isBLOCKAGE               ( const Net*    net );
-      inline bool                     isPad                    ( const char*   name );
-      inline bool                     isPad                    ( const string& name );
-      inline bool                     isPad                    ( const Name&   name );
-      inline bool                     isPad                    ( const Cell* );
+              Catalog::State*          isInCatalog              ( const Name& );
+              Catalog::State*          isInCatalog              ( string );
+      inline  bool                     isPOWER                  ( const char*   name );
+      inline  bool                     isPOWER                  ( const string& name );
+      inline  bool                     isPOWER                  ( const Name&   name );
+      inline  bool                     isGROUND                 ( const char*   name );
+      inline  bool                     isGROUND                 ( const string& name );
+      inline  bool                     isGROUND                 ( const Name&   name );
+      inline  bool                     isCLOCK                  ( const char*   name );
+      inline  bool                     isCLOCK                  ( const string& name );
+      inline  bool                     isCLOCK                  ( const Name&   name );
+      inline  bool                     isBLOCKAGE               ( const char*   name );
+      inline  bool                     isBLOCKAGE               ( const string& name );
+      inline  bool                     isBLOCKAGE               ( const Name&   name );
+      inline  bool                     isBLOCKAGE               ( const Net*    net );
+      inline  bool                     isPad                    ( const char*   name );
+      inline  bool                     isPad                    ( const string& name );
+      inline  bool                     isPad                    ( const Name&   name );
+      inline  bool                     isPad                    ( const Cell* );
     // Accessors.
-      inline Environment*             getEnvironment           ();
-      inline Catalog*                 getCatalog               ();
-      inline const Name&              getParentLibraryName     () const;
-      inline Library*                 getParentLibrary         ();
-             Library*                 getLibrary               ( unsigned int index );
-             Library*                 getLibrary               ( const Name& libName );
-             AllianceLibrary*         getAllianceLibrary       ( unsigned int index );
-             AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int flags );
-             AllianceLibrary*         getAllianceLibrary       ( Library* );
-             AllianceLibrary*         createLibrary            ( const string& path, unsigned int flags, string libName="" );
-      inline const AllianceLibraries& getAllianceLibraries     () const;
-             void                     saveLibrary              ( Library* );
-             void                     saveLibrary              ( AllianceLibrary* );
-             RoutingGauge*            getRoutingGauge          ( const Name& name="" );
-             CellGauge*               getCellGauge             ( const Name& name="" );
-             CellGauge*               matchCellGauge           ( DbU::Unit width, DbU::Unit height ) const;
-             CellGauge*               matchCellGaugeByHeight   ( DbU::Unit height ) const;
-      inline const Name               getDefaultCGPinLayerName () const;
+      inline  Environment*             getEnvironment           ();
+      inline  Catalog*                 getCatalog               ();
+      inline  const Name&              getParentLibraryName     () const;
+      inline  Library*                 getParentLibrary         ();
+              Library*                 getLibrary               ( unsigned int index );
+              Library*                 getLibrary               ( const Name& libName );
+              AllianceLibrary*         getAllianceLibrary       ( unsigned int index );
+              AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int flags );
+              AllianceLibrary*         getAllianceLibrary       ( Library* );
+              AllianceLibrary*         createLibrary            ( const string& path, unsigned int flags, string libName="" );
+      inline  const AllianceLibraries& getAllianceLibraries     () const;
+              void                     saveLibrary              ( Library* );
+              void                     saveLibrary              ( AllianceLibrary* );
+              RoutingGauge*            getRoutingGauge          ( const Name& name="" );
+              CellGauge*               getCellGauge             ( const Name& name="" );
+              CellGauge*               matchCellGauge           ( DbU::Unit width, DbU::Unit height ) const;
+              CellGauge*               matchCellGaugeByHeight   ( DbU::Unit height ) const;
+      inline  const Name               getDefaultCGPinLayerName () const;
     // Modifiers.                     
-             RoutingGauge*            setRoutingGauge          ( const Name& name="" );
-             CellGauge*               setCellGauge             ( const Name& name="" );
-             void                     addRoutingGauge          ( RoutingGauge* );
-             void                     addCellGauge             ( CellGauge* );
-             void                     addObserver              ( BaseObserver* );
-             void                     removeObserver           ( BaseObserver* );
-             void                     notify                   ( unsigned int flags );
+              RoutingGauge*            setRoutingGauge          ( const Name& name="" );
+              CellGauge*               setCellGauge             ( const Name& name="" );
+              void                     addRoutingGauge          ( RoutingGauge* );
+              void                     addCellGauge             ( CellGauge* );
+              void                     addObserver              ( BaseObserver* );
+              void                     removeObserver           ( BaseObserver* );
+              void                     notify                   ( unsigned int flags );
     // Cell Management.               
-             Cell*                    cellLoader               ( const string& rpath );
-             Cell*                    getCell                  ( const string& name
-                                                               , unsigned int  mode
-                                                               , unsigned int  depth=(unsigned int)-1 );
-             Cell*                    createCell               ( const string& name, AllianceLibrary* library=NULL );
-             void                     saveCell                 ( Cell* , unsigned int mode );
-             void                     bindLibraries            ();
-             unsigned int             loadLibraryCells         ( Library* );
-             unsigned int             loadLibraryCells         ( const Name& );
-      static size_t                   getInstancesCount        ( Cell*, unsigned int flags );
+              Cell*                    cellLoader               ( const string& rpath );
+              Cell*                    getCell                  ( const string& name
+                                                                , unsigned int  mode
+                                                                , unsigned int  depth=(unsigned int)-1 );
+              Cell*                    createCell               ( const string& name, AllianceLibrary* library=NULL );
+              void                     saveCell                 ( Cell* , unsigned int mode );
+              void                     bindLibraries            ();
+              unsigned int             loadLibraryCells         ( Library* );
+              unsigned int             loadLibraryCells         ( const Name& );
+      static  size_t                   getInstancesCount        ( Cell*, unsigned int flags );
     // Hurricane Managment.           
-             void                     toJson                   ( JsonWriter* ) const;
-      inline string                   _getTypeName             () const;
-             string                   _getString               () const;
-             Record*                  _getRecord               () const;
+              void                     toJson                   ( JsonWriter* ) const;
+      virtual string                   _getTypeName             () const;
+      virtual Record*                  _getRecord               () const;
 
     // Internals - Attributes.
     protected:
-      static const Name               _parentLibraryName;
-      static AllianceFramework*       _singleton;
-             Observable               _observers;
-             Environment              _environment;
-             ParsersMap               _parsers;
-             DriversMap               _drivers;
-             Catalog                  _catalog;
-             AllianceLibraries        _libraries;
-             Library*                 _parentLibrary;
-             map<Name,RoutingGauge*>  _routingGauges;
-             RoutingGauge*            _defaultRoutingGauge;
-             map<Name,CellGauge*>     _cellGauges;
-             CellGauge*               _defaultCellGauge;
+      static  const Name               _parentLibraryName;
+      static  AllianceFramework*       _singleton;
+              Observable               _observers;
+              Environment              _environment;
+              ParsersMap               _parsers;
+              DriversMap               _drivers;
+              Catalog                  _catalog;
+              AllianceLibraries        _libraries;
+              Library*                 _parentLibrary;
+              map<Name,RoutingGauge*>  _routingGauges;
+              RoutingGauge*            _defaultRoutingGauge;
+              map<Name,CellGauge*>     _cellGauges;
+              CellGauge*               _defaultCellGauge;
 
     // Internals - Constructors.
                                  AllianceFramework       ();
@@ -182,7 +181,6 @@ namespace CRL {
 // TEMPORARY.
   inline const Name   AllianceFramework::getDefaultCGPinLayerName
                                                                () const { return "CALU1"; }
-  inline string       AllianceFramework::_getTypeName          () const { return "AllianceFramework"; }
 
 
   class JsonAllianceFramework : public JsonObject {

@@ -70,25 +70,18 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyAllianceFramework_create()" << endl;
 
-    AllianceFramework*   af    = NULL;
-    PyAllianceFramework* pyAf  = NULL;
-    unsigned long        flags = AllianceFramework::NoFlags;
+    AllianceFramework* af    = NULL;
+    unsigned long      flags = AllianceFramework::NoFlags;
     
     HTRY
-    PyObject* arg0;
-    if (ParseOneArg("AllianceFramework.create()", args, INT_ARG, &arg0)) {
-      flags = PyInt_AsUnsignedLongMask(arg0);
-    }
-
-    af = AllianceFramework::create( flags );
-
-    pyAf = PyObject_NEW( PyAllianceFramework, &PyTypeAllianceFramework );
-    if (pyAf == NULL) return NULL;
-
-    pyAf->_object = af;
+      PyObject* arg0;
+      if (ParseOneArg("AllianceFramework.create()", args, INT_ARG, &arg0)) {
+        flags = PyInt_AsUnsignedLongMask(arg0);
+      }
+      af = AllianceFramework::create( flags );
     HCATCH
 
-    return (PyObject*)pyAf;
+    return PyAllianceFramework_Link( af );
   }
 
 
@@ -96,19 +89,11 @@ extern "C" {
   {
     cdebug_log(30,0) << "PyAllianceFramework_get()" << endl;
 
-    AllianceFramework*   af    = NULL;
-    PyAllianceFramework* pyAf  = NULL;
-    
+    AllianceFramework* af = NULL;
     HTRY
-    af = AllianceFramework::get();
-
-    pyAf = PyObject_NEW( PyAllianceFramework, &PyTypeAllianceFramework );
-    if (pyAf == NULL) return NULL;
-
-    pyAf->_object = af;
+      af = AllianceFramework::get();
     HCATCH
-
-    return (PyObject*)pyAf;
+    return PyAllianceFramework_Link( af );
   }
 
 
@@ -520,7 +505,7 @@ extern "C" {
 
 
   // Standart Destroy (Attribute).
-  // DBoDestroyAttribute(PyAllianceFramework_destroy,PyAllianceFramework)
+  DBoDestroyAttribute(PyAllianceFramework_destroy,PyAllianceFramework)
 
 
   PyMethodDef PyAllianceFramework_Methods[] =
@@ -562,13 +547,13 @@ extern "C" {
                                , "Get a routing gauge (without a name, return the default)." }          
     , { "setRoutingGauge"      , (PyCFunction)PyAllianceFramework_setRoutingGauge      , METH_VARARGS
                                , "Select the default routing gauge." }          
-  //, { "destroy"              , (PyCFunction)PyAllianceFramework_destroy              , METH_NOARGS
-  //                           , "Destroy the associated hurricane object. The python object remains." }
+    , { "destroy"              , (PyCFunction)PyAllianceFramework_destroy              , METH_NOARGS
+                               , "Destroy the Framework, Hurricane-level objects remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
 
-  PythonOnlyDeleteMethod(AllianceFramework)
+  DBoDeleteMethod(AllianceFramework)
   PyTypeObjectLinkPyType(AllianceFramework)
 
 
@@ -579,8 +564,8 @@ extern "C" {
 // |          "PyAllianceFramework" Shared Library Code Part         |
 // x=================================================================x
 
-
   // Link/Creation Method.
+  DBoLinkCreateMethod(AllianceFramework)
   PyTypeObjectDefinitions(AllianceFramework)
 
 

@@ -1,6 +1,6 @@
 # -*- mode: CMAKE; explicit-buffer-name: # "CMakeLists.txt<crlcore/doc/crlcore>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/crlcore )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/crlcore )
                set ( latexInstallDir share/doc/coriolis2/en/latex/crlcore )
                set ( doxExtras       closed.png
                                      open.png

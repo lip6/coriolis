@@ -36,6 +36,7 @@
 #include "hurricane/Property.h"
 #include "hurricane/Quark.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 
 
 namespace Hurricane {
@@ -49,6 +50,7 @@ namespace Hurricane {
   unsigned long  DBo::_flags          =  0;
   unsigned int   DBo::_nextId         =  0;
   unsigned int   DBo::_idCounterLimit =  0;
+  unsigned int   DBo::_idCount        =  0;
   unsigned int   DBo::_idCounter      =  1;
 
 
@@ -62,6 +64,17 @@ namespace Hurricane {
 
   unsigned int  DBo::getIdCounter ()
   { return _idCounter; }
+
+
+  void  DBo::resetId ()
+  {
+    _idCounter = 1;
+    if (_idCount != 1) {
+      cerr << Error( "DBo::resetId(): Resetting the Id identifiers while there are still %d DBo objects."
+                   , _idCount
+                   ) << endl;
+    }
+  }
 
 
   bool  DBo::inForcedIdMode ()
@@ -139,11 +152,18 @@ namespace Hurricane {
     // }
     // if (_id == 75060)
     //   cerr << "DBo::DBo() " << this << endl;
+
+    ++_idCount;
   }
 
 
   DBo::~DBo () throw(Error)
-  { }
+  {
+    if (_idCount) --_idCount;
+    else {
+      cerr << Warning( "BDo::~DBo(): _idCount is becoming negative. Severe database corruption ahead." ) << endl;
+    }
+  }
 
 
   void  DBo::_postCreate ()
@@ -160,7 +180,7 @@ namespace Hurricane {
 
   void DBo::destroy ()
   {
-    cdebug_log(0,1) << "DBo::destroy() " << this << endl;
+    cdebug_log(0,1) << "DBo::destroy() " << getId() << " " << this << endl;
     _preDestroy();
     cdebug_tabw(0,-1);
     delete this;

@@ -401,14 +401,14 @@ namespace Anabatic {
     for ( Hook* hook : fromHook->getHooks() ) {
       cdebug_log(145,0) << "Hook: " << hook << endl;
       cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
-                 << "["  << (int)_connexity.fields.globals
-                 << "+"  << (int)_connexity.fields.M1     
-                 << "+"  << (int)_connexity.fields.M2     
-                 << "+"  << (int)_connexity.fields.M3
-                 << "+"  << (int)_connexity.fields.Pin
-                 << "+"  << (int)_connexity.fields.Pad
-                 << "] " << _gcell
-                 << endl;
+                        << "["  << (int)_connexity.fields.globals
+                        << "+"  << (int)_connexity.fields.M1     
+                        << "+"  << (int)_connexity.fields.M2     
+                        << "+"  << (int)_connexity.fields.M3
+                        << "+"  << (int)_connexity.fields.Pin
+                        << "+"  << (int)_connexity.fields.Pad
+                        << "] " << _gcell
+                        << endl;
 
       Segment* toSegment = dynamic_cast<Segment*>( hook->getComponent() );
       if (toSegment) {
@@ -507,6 +507,16 @@ namespace Anabatic {
 
     if (_gcell == NULL) throw Error( missingGCell );
 
+    cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
+                      << "["  << (int)_connexity.fields.globals
+                      << "+"  << (int)_connexity.fields.M1     
+                      << "+"  << (int)_connexity.fields.M2     
+                      << "+"  << (int)_connexity.fields.M3
+                      << "+"  << (int)_connexity.fields.Pin
+                      << "+"  << (int)_connexity.fields.Pad
+                      << "] " << _gcell
+                      << endl;
+
     return *this;
   }
     
@@ -543,6 +553,15 @@ namespace Anabatic {
   void  NetBuilder::construct ()
   {
     cdebug_log(145,1) << "NetBuilder::construct() [" << _connexity.connexity << "] in " << _gcell << endl;
+    cdebug_log(145,0) << "Topology [" << _connexity.connexity << "] = "
+                      << "["  << (int)_connexity.fields.globals
+                      << "+"  << (int)_connexity.fields.M1     
+                      << "+"  << (int)_connexity.fields.M2     
+                      << "+"  << (int)_connexity.fields.M3
+                      << "+"  << (int)_connexity.fields.Pin
+                      << "+"  << (int)_connexity.fields.Pad
+                      << "] " << _gcell
+                      << endl;
 
     if (not isTwoMetals()) {
       _southWestContact = NULL;
@@ -586,6 +605,7 @@ namespace Anabatic {
         case Conn_3G_2M1:
         case Conn_3G_3M1:
         case Conn_3G_4M1:
+        case Conn_3G_5M1:
         case Conn_3G_2M3:
         case Conn_3G_3M3:
         case Conn_3G_4M3:
@@ -616,17 +636,22 @@ namespace Anabatic {
         case Conn_4G:     _do_xG(); break;
         // End xG cascaded cases.
         // Optimized specific cases.
-        case Conn_1G_1PinM1:  _do_1G_1PinM1 (); break;
-        case Conn_2G_1PinM1:  _do_2G_1PinM1 (); break;
-        case Conn_1G_1PinM2:  _do_1G_1PinM2 (); break;
-        case Conn_2G_1PinM2:
-        case Conn_3G_1PinM2:  _do_xG_1PinM2 (); break;
-        case Conn_1G_1PinM3:  _do_1G_1PinM3 (); break;
-        case Conn_2G_1PinM3:
-        case Conn_3G_1PinM3:  _do_xG_1PinM3 (); break;
-        case Conn_1G_1M1_1M2: _do_xG_1M1_1M2(); break;
-        case Conn_1G_1M1_1M3: _do_1G_xM1    (); break;
-        case Conn_2G_1M1_1M2: _do_xG_1M1_1M2(); break;
+        case Conn_1G_1PinM1:      _do_1G_1PinM1    (); break;
+        case Conn_2G_1PinM1:      _do_2G_1PinM1    (); break;
+        case Conn_1G_1PinM2:      _do_1G_1PinM2    (); break;
+        case Conn_2G_1PinM2:                       
+        case Conn_3G_1PinM2:      _do_xG_1PinM2    (); break;
+        case Conn_1G_1PinM3:      _do_1G_1PinM3    (); break;
+        case Conn_2G_1PinM3:                       
+        case Conn_3G_1PinM3:      _do_xG_1PinM3    (); break;
+        case Conn_1G_1M1_1PinM3:  _do_1G_1M1_1PinM3(); break;
+        case Conn_1G_1M1_1PinM2:
+        case Conn_1G_2M1_1PinM2:  _do_1G_xM1_1PinM2(); break;
+        case Conn_2G_1M1_1PinM2:
+        case Conn_2G_2M1_1PinM2:  _do_2G_xM1_1PinM2(); break;
+        case Conn_1G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
+        case Conn_1G_1M1_1M3:     _do_1G_xM1       (); break;
+        case Conn_2G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
         default:
           if (not isTwoMetals())
             throw Bug( "Unmanaged Configuration [%d] = [%d+%d+%d+%d,%d+%d] %s in %s\n"
@@ -1068,7 +1093,28 @@ namespace Anabatic {
     return false;
   }
 
+
+  bool  NetBuilder::_do_1G_1M1_1PinM3 ()
+  {
+    throw Error ( "%s::_do_1G_1M1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_1G_xM1_1PinM2 ()
+  {
+    throw Error ( "%s::_do_1G_xM1_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_2G_xM1_1PinM2 ()
+  {
+    throw Error ( "%s::_do_2G_xM1_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
   
+
   bool  NetBuilder::_do_globalSegment ()
   {
     throw Error ( "%s::_do_globalSegment() method *not* reimplemented from base class.", getTypeName().c_str() );

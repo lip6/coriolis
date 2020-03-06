@@ -97,8 +97,10 @@ extern "C" {
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::SlowMotion          ,"SlowMotion"          );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PreRoutedStage      ,"PreRoutedStage"      );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::PairSymmetrics      ,"PairSymmetrics"      );
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowFailedNets      ,"ShowFailedNets"      );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowFailedGSegments ,"ShowFailedGSegments" );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowOverloadedGCells,"ShowOverloadedGCells");
+    LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowOverloadedEdges ,"ShowOverloadedEdges" );
     LoadObjectConstant(PyTypeKatanaFlags.tp_dict,(uint64_t)Katana::Flags::ShowBloatedInstances,"ShowBloatedInstances");
   }
 

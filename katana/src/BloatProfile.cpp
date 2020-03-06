@@ -52,6 +52,8 @@ namespace {
   using Anabatic::Edge;
   using namespace Katana;
 
+  class Slices;
+
 
 // -------------------------------------------------------------------
 // Class  :  "FlatInstance".
@@ -73,8 +75,8 @@ namespace {
   DbU::Unit  FlatInstance::getXFromOccurrence ( Occurrence o )
   {
     Instance*      instance = dynamic_cast<Instance*>( o.getEntity() );
-    Transformation transf   = o.getPath().getTransformation();
-    instance->getTransformation().applyOn( transf );
+    Transformation transf   = instance->getTransformation();
+    o.getPath().getTransformation().applyOn( transf );
     Box ab = instance->getMasterCell()->getAbutmentBox();
     transf.applyOn( ab );
     return ab.getXMin();
@@ -116,19 +118,23 @@ namespace {
 
   class Slice {
     public:
-      inline            Slice          ( GCell* );
-      inline DbU::Unit  getY           () const;
-      inline void       add            ( Occurrence );
-      inline void       sort           ();
-             void       tagOverloadeds ( size_t& count, size_t& newCount );
+      inline            Slice                 ( Slices*, GCell* );
+      inline bool       useStaticBloatProfile () const;
+      inline uint32_t   getBloatOverloadAdd   () const;
+      inline DbU::Unit  getY                  () const;
+      inline void       add                   ( Occurrence );
+      inline void       sort                  ();
+             void       tagOverloadeds        ( size_t& count, size_t& newCount );
     private:
+      Slices*               _owner;
       GCell*                _left;
       vector<FlatInstance>  _instances;
   };
 
 
-  inline Slice::Slice ( GCell* left )
-    : _left     (left)
+  inline Slice::Slice ( Slices* owner, GCell* left )
+    : _owner    (owner)
+    , _left     (left)
     , _instances()
   { }
 
@@ -138,69 +144,17 @@ namespace {
   inline void       Slice::sort ()               { std::sort( _instances.begin(), _instances.end() ); }
 
 
-  void  Slice::tagOverloadeds ( size_t& count, size_t& newCount )
-  {
-    GCell* gcell     = _left;
-    Edge*  eastEdge  = _left->getEastEdge();
-    Edge*  northEdge = _left->getNorthEdge();
-    bool   bloated   = false;
-
-    for ( FlatInstance& fi : _instances ) {
-      if (fi.getX() >= gcell->getXMax()) {
-        for ( gcell = gcell->getEast() ; gcell and (fi.getX() < gcell->getXMin())
-            ; gcell = gcell->getEast() );
-        if (not gcell) break;
-        
-        bloated   = false;
-        eastEdge  = gcell->getEastEdge();
-        northEdge = gcell->getNorthEdge();
-      }
-
-      unsigned int overload = 0;
-
-      if (eastEdge) {
-        if (eastEdge->getRealOccupancy() > eastEdge->getCapacity()) {
-          overload = eastEdge->getRealOccupancy() - eastEdge->getCapacity();
-        }
-        // else if (eastEdge->getHistoricCost() > 3.0) {
-        //   overload = 4;
-        // }
-      }
-
-      if (northEdge) {
-        if (northEdge->getRealOccupancy() > northEdge->getCapacity()) {
-          overload = std::max( overload, northEdge->getRealOccupancy() - northEdge->getCapacity() );
-        }
-        // else if (northEdge->getHistoricCost() > 3.0) {
-        //   overload = 4;
-        // }
-      }
-
-      if (overload and not bloated) {
-        bloated = true;
-        BloatState* state = BloatExtension::get( fi.getOccurrence() );
-        if (not state) {
-          state = BloatExtension::create( fi.getOccurrence(), overload );
-          ++newCount;
-        } else {
-          state->setTracksCount( state->getTracksCount() + overload );
-        }
-        ++count;
-      }
-    }
-  } 
-
-
 // -------------------------------------------------------------------
 // Class  :  "Slices".
 
   class Slices {
     public:
-                   Slices         ( KatanaEngine* );
-                  ~Slices         ();
-      inline void  add            ( Occurrence );
-      inline void  sort           ();
-      inline void  tagOverloadeds ();
+                           Slices         ( KatanaEngine* );
+                          ~Slices         ();
+      inline KatanaEngine* getKatana      () const;
+      inline void          add            ( Occurrence );
+      inline void          sort           ();
+      inline void          tagOverloadeds ();
     private:
       KatanaEngine*   _katana;
       Box             _cellAb;
@@ -241,7 +195,7 @@ namespace {
                    , getString(left).c_str()
                    );
 
-      _slices.push_back( new Slice( left ) );
+      _slices.push_back( new Slice( this, left ) );
       left = left->getNorth();
     }
   }
@@ -249,6 +203,10 @@ namespace {
 
   Slices::~Slices ()
   { for ( Slice* slice : _slices ) delete slice; }
+
+
+  inline KatanaEngine* Slices::getKatana () const
+  { return _katana; }
 
 
   inline void  Slices::sort ()
@@ -283,6 +241,127 @@ namespace {
     cmess2 << Dots::asUInt  ("     - Bloated cells, new"     ,newCount) << endl;
   }
 
+
+  inline bool  Slice::useStaticBloatProfile () const
+  { return _owner->getKatana()->useStaticBloatProfile(); }
+
+
+  inline uint32_t  Slice::getBloatOverloadAdd () const
+  { return _owner->getKatana()->getBloatOverloadAdd(); }
+
+
+  void  Slice::tagOverloadeds ( size_t& count, size_t& newCount )
+  {
+    GCell*  gcell  = _left;
+    size_t  iLeft  = 0;
+    size_t  iRight = 0;
+
+    while ( gcell ) {
+    //cerr << "> Under:"  << gcell << endl;
+
+      uint32_t  overload = 0;
+      for ( Edge* edge : gcell->getEdges( Flags::NorthSide|Flags::EastSide ) ) {
+        if (edge->getRealOccupancy() > edge->getCapacity()) {
+          overload = std::max( overload, edge->getRealOccupancy() - edge->getCapacity() );
+
+          // if (edge->getRealOccupancy() > edge->getRawCapacity()) {
+          //   overload += 4;
+          // }
+        }
+      }
+
+      iLeft = iRight;
+      while ( iRight < _instances.size() ) {
+        if (_instances[iRight].getX() >= gcell->getXMax()) break;
+        ++iRight;
+      }
+
+      if (iLeft >= _instances.size()) break;
+
+      if (overload) {
+        overload += getBloatOverloadAdd();
+
+        for ( size_t i=iLeft ; i<iRight ; ++i ) {
+          BloatState* state = BloatExtension::get( _instances[i].getOccurrence() );
+          if (not state) {
+            if ( (_owner->getKatana()->getPassNumber() > 0) and useStaticBloatProfile() )
+              continue;
+
+            state = BloatExtension::create( _instances[i].getOccurrence(), overload );
+            ++newCount;
+
+          //cerr << "| Bloat: " << overload << " " << _instances[i].getOccurrence() << endl;
+          } else {
+            state->setTracksCount( state->getTracksCount() + overload );
+          }
+          ++count;
+        }
+      }
+
+      gcell = gcell->getEast();
+    }
+
+    
+  //   GCell* gcell     = _left;
+  //   Edge*  eastEdge  = _left->getEastEdge();
+  //   Edge*  northEdge = _left->getNorthEdge();
+  //   bool   bloated   = false;
+
+  // //cerr << "+ Slice @" << DbU::getValueString(getY()) << endl;
+
+  //   for ( FlatInstance& fi : _instances ) {
+  //   //cerr << "| @" << DbU::getValueString(fi.getX()) << " " << fi.getOccurrence() << endl;
+
+  //     if (fi.getX() >= gcell->getXMax()) {
+  //       for ( gcell = gcell->getEast() ; gcell and (fi.getX() > gcell->getXMax())
+  //           ; gcell = gcell->getEast() ) {
+  //       //cerr << "| Skip " << gcell << endl;
+  //       }
+  //     //cerr << "| Advance to " << gcell << endl;
+  //       if (not gcell) break;
+        
+  //       bloated   = false;
+  //       eastEdge  = gcell->getEastEdge();
+  //       northEdge = gcell->getNorthEdge();
+  //     }
+
+  //     unsigned int overload = 0;
+
+  //     if (eastEdge) {
+  //       if (eastEdge->getRealOccupancy() > eastEdge->getCapacity()) {
+  //         overload = eastEdge->getRealOccupancy() - eastEdge->getCapacity();
+  //       }
+  //       // else if (eastEdge->getHistoricCost() > 3.0) {
+  //       //   overload = 4;
+  //       // }
+  //     }
+
+  //     if (northEdge) {
+  //       if (northEdge->getRealOccupancy() > northEdge->getCapacity()) {
+  //         overload = std::max( overload, northEdge->getRealOccupancy() - northEdge->getCapacity() );
+  //       }
+  //       // else if (northEdge->getHistoricCost() > 3.0) {
+  //       //   overload = 4;
+  //       // }
+  //     }
+
+  //     if (overload and not bloated) {
+  //       bloated   = true;
+  //       overload += 8;
+        
+  //       BloatState* state = BloatExtension::get( fi.getOccurrence() );
+  //       if (not state) {
+  //         state = BloatExtension::create( fi.getOccurrence(), overload );
+  //       //cerr << "> Bloat: " << fi.getOccurrence() << endl;
+  //       //cerr << "> Under:"  << gcell << endl;
+  //         ++newCount;
+  //       } else {
+  //         state->setTracksCount( state->getTracksCount() + overload );
+  //       }
+  //       ++count;
+  //     }
+  //   }
+  } 
 
 
 } // Anonymous namespace.

@@ -174,10 +174,19 @@ class CapacitorUnit():
 
     def __isCapacitorUnitOK__( self, capDim ): 
 
+        print 'capDim:', DbU.getValueString(capDim['width']), DbU.getValueString(capDim['height'])
+        print 'min / max:', DbU.getValueString(self.getMinimumCapWidth() ), DbU.getValueString(self.getMaximumCapWidth() )
+
         state = False
-        if ( self.capacitorType == 'MIMCap' and CapacitorUnit.getMinimumCapWidth( self ) < capDim["width"] <  self.getMaximumCapWidth() and CapacitorUnit.getMinimumCapWidth( self ) < capDim["height"] <  self.getMaximumCapWidth() ) or ( self.capacitorType == 'PIPCap' and self.getMinimumCapWidth() < capDim["width"] and self.getMinimumCapWidth() < capDim["height"] ) :
+        if (     self.capacitorType == 'MIMCap' \
+             and CapacitorUnit.getMinimumCapWidth(self) < capDim["width" ] <  self.getMaximumCapWidth()    \
+             and CapacitorUnit.getMinimumCapWidth(self) < capDim["height"] <  self.getMaximumCapWidth() )  \
+           or ( self.capacitorType == 'PIPCap'  \
+              and self.getMinimumCapWidth() < capDim["width" ]    \
+              and self.getMinimumCapWidth() < capDim["height"] ):
             state = True
         
+        print '__isCapacitorUnitOK__:', state 
         return state
               
 

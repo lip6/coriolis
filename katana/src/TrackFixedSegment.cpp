@@ -56,16 +56,13 @@ namespace Katana {
 // Class  :  "TrackFixedSegment".
 
 
-  Net* TrackFixedSegment::_blockageNet = NULL;
-
-
   TrackFixedSegment::TrackFixedSegment ( Track* track, Segment* segment )
     : TrackElement  (NULL)
     , _segment      (segment)
   {
     Box boundingBox = segment->getBoundingBox();
 
-    uint32_t flags = TElemFixed | ((segment->getNet() == _blockageNet) ? TElemBlockage : 0);
+    uint32_t flags = TElemFixed | ((segment->getNet() == Session::getBlockageNet()) ? TElemBlockage : 0);
     setFlags( flags );
 
     if (track) {
@@ -123,8 +120,6 @@ namespace Katana {
 
   TrackElement* TrackFixedSegment::create ( Track* track, Segment* segment )
   {
-    if ( not _blockageNet ) _blockageNet = Session::getBlockageNet();
-
     TrackFixedSegment* trackFixedSegment = NULL;
     if (track) { 
       trackFixedSegment = new TrackFixedSegment ( track, segment );
@@ -189,7 +184,7 @@ namespace Katana {
   {
     Net* realNet = _segment->getNet();
     if (realNet->isSupply() or realNet->isClock())
-      return _blockageNet;
+      return Session::getBlockageNet();
     return realNet;
   }
 

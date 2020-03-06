@@ -59,9 +59,9 @@ namespace Hurricane {
     SlaveEntityMap::iterator  it;
     SlaveEntityMap::iterator  end;
     getCell()->_getSlaveEntities(this,it,end);
-    for(; it != end ; it++)
+    for( ; it != end ; it++)
       slaveEntities.push_back(it->second);
-    for(; slaveEntities.size() ; slaveEntities.pop_back()) {
+    for( ; slaveEntities.size() ; slaveEntities.pop_back()) {
       slaveEntities.back()->destroy();
     }
 
@@ -69,21 +69,19 @@ namespace Hurricane {
     if (quark) quark->destroy();
 
     stack<SharedPath*> sharedPathStack;
-    for_each_instance(instance, getCell()->getSlaveInstances()) {
+    for ( Instance* instance : getCell()->getSlaveInstances() ) {
       SharedPath* sharedPath = instance->_getSharedPath(NULL);
       if (sharedPath) sharedPathStack.push(sharedPath);
-      end_for;
     }
-    while (!sharedPathStack.empty()) {
+    while (not sharedPathStack.empty()) {
       SharedPath* sharedPath = sharedPathStack.top();
       sharedPathStack.pop();
       Quark* quark = _getQuark(sharedPath);
       if (quark) quark->destroy();
       Cell* cell = sharedPath->getOwnerCell();
-      for_each_instance(instance, cell->getSlaveInstances()) {
+      for ( Instance* instance : cell->getSlaveInstances() ) {
         SharedPath* sharedPath2 = instance->_getSharedPath(sharedPath);
         if (sharedPath2) sharedPathStack.push(sharedPath2);
-        end_for;
       }
     }
 

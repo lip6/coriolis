@@ -121,8 +121,10 @@ class ErrorWidget ( QDialog ):
     vLayout.addStretch( 1 )
     vLayout.addLayout ( buttonLayout )
 
+    pixmapWidth = 150
+    if not Viewer.Graphics.isHighDpi(): pixmapWidth = 70
     pixmap = QPixmap( ':/images/angry-birds-red.png' )
-    pixmap = pixmap.scaledToWidth( 150 )
+    pixmap = pixmap.scaledToWidth( pixmapWidth )
     icon = QLabel()
     icon.setPixmap( pixmap )
 

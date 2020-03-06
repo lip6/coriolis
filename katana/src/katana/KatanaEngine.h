@@ -78,6 +78,7 @@ namespace Katana {
       inline  bool                     isDetailedRoutingSuccess   () const;
       inline  bool                     useClockTree               () const;
       inline  bool                     useGlobalEstimate          () const;
+      inline  bool                     useStaticBloatProfile      () const;
       inline  CellViewer*              getViewer                  () const;
       inline  AnabaticEngine*          base                       ();
       inline  Configuration*           getKatanaConfiguration     ();
@@ -88,6 +89,7 @@ namespace Katana {
               uint32_t                 getRipupLimit              ( const TrackElement* ) const;
       inline  uint32_t                 getRipupCost               () const;
       inline  uint32_t                 getSearchHalo              () const;
+      inline  uint32_t                 getBloatOverloadAdd        () const;
       inline  uint32_t                 getHTracksReservedLocal    () const;
       inline  uint32_t                 getVTracksReservedLocal    () const;
       inline  uint32_t                 getTermSatReservedLocal    () const;
@@ -117,6 +119,7 @@ namespace Katana {
       inline  void                     setMinimumWL               ( double );
       inline  void                     setRipupLimit              ( uint32_t type, uint32_t );
       inline  void                     setRipupCost               ( uint32_t );
+      inline  void                     setBloatOverloadAdd        ( uint32_t );
       inline  void                     setHTracksReservedLocal    ( uint32_t );
       inline  void                     setVTracksReservedLocal    ( uint32_t );
       inline  void                     addBlock                   ( Block* );
@@ -189,6 +192,7 @@ namespace Katana {
   inline  bool                          KatanaEngine::isDetailedRoutingSuccess() const { return (_successState & DetailedRoutingSuccess); }
   inline  bool                          KatanaEngine::useClockTree            () const { return _configuration->useClockTree(); }
   inline  bool                          KatanaEngine::useGlobalEstimate       () const { return _configuration->useGlobalEstimate(); }
+  inline  bool                          KatanaEngine::useStaticBloatProfile   () const { return _configuration->useStaticBloatProfile(); }
   inline  CellViewer*                   KatanaEngine::getViewer               () const { return _viewer; }
   inline  AnabaticEngine*               KatanaEngine::base                    () { return static_cast<AnabaticEngine*>(this); }
   inline  Configuration*                KatanaEngine::getKatanaConfiguration  () { return _configuration; }
@@ -197,6 +201,7 @@ namespace Katana {
   inline  uint64_t                      KatanaEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
   inline  uint32_t                      KatanaEngine::getRipupCost            () const { return _configuration->getRipupCost(); }
   inline  uint32_t                      KatanaEngine::getSearchHalo           () const { return _configuration->getSearchHalo(); }
+  inline  uint32_t                      KatanaEngine::getBloatOverloadAdd     () const { return _configuration->getBloatOverloadAdd(); }
   inline  uint32_t                      KatanaEngine::getHTracksReservedLocal () const { return _configuration->getHTracksReservedLocal(); }
   inline  uint32_t                      KatanaEngine::getVTracksReservedLocal () const { return _configuration->getVTracksReservedLocal(); }
   inline  uint32_t                      KatanaEngine::getTermSatReservedLocal () const { return _configuration->getTermSatReservedLocal(); }
@@ -211,6 +216,7 @@ namespace Katana {
   inline  void                          KatanaEngine::setEventLimit           ( uint64_t limit ) { _configuration->setEventsLimit(limit); }
   inline  void                          KatanaEngine::setRipupLimit           ( uint32_t type, uint32_t limit ) { _configuration->setRipupLimit(limit,type); }
   inline  void                          KatanaEngine::setRipupCost            ( uint32_t cost ) { _configuration->setRipupCost(cost); }
+  inline  void                          KatanaEngine::setBloatOverloadAdd     ( uint32_t add ) { _configuration->setBloatOverloadAdd(add); }
   inline  void                          KatanaEngine::setHTracksReservedLocal ( uint32_t reserved ) { _configuration->setHTracksReservedLocal(reserved); }
   inline  void                          KatanaEngine::setVTracksReservedLocal ( uint32_t reserved ) { _configuration->setVTracksReservedLocal(reserved); }
   inline  void                          KatanaEngine::addBlock                ( Block* block ) { _blocks.push_back(block); }

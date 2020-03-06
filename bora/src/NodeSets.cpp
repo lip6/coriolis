@@ -70,7 +70,8 @@ namespace Bora {
     TransistorFamily*   device    = dynamic_cast<TransistorFamily  *>( cell  );
     StepParameterRange* stepRange = dynamic_cast<StepParameterRange*>( nodeset->getRange() );
     if (device) {
-    //cdebug_log(536,0) << "createNodeSets for an Analog Device" << endl;
+      cdebug_log(535,0) << "NodeSets:create(): for a Transistor Analog Device" << endl;
+
       if (not stepRange) {
         throw Error( "NodeSets::create(): Device \"%s\" must be associated with a StepParameterRange argument instead of %s."
                    , getString(device->getName()).c_str()
@@ -94,30 +95,36 @@ namespace Bora {
       MatrixParameterRange* matrixRange = dynamic_cast<MatrixParameterRange*>( nodeset->getRange() );
 
       if (mcapacitor) {
+        cdebug_log(535,0) << "NodeSets::create(): for a Capacitor Analog Device" << endl;
+
         if (not matrixRange) {
           throw Error( "NodeSets::create(): Device \"%s\" must be associated with a MatrixParameterRange argument instead of %s."
                      , getString(mcapacitor->getName()).c_str()
                      , getString(stepRange).c_str()
                      );
-
-          matrixRange->reset();
-          do {
-            MatrixParameter* mp = NULL;
-            if ( (mp = dynamic_cast<MatrixParameter*>(mcapacitor->getParameter("matrix"))) != NULL ) 
-              mp->setMatrix( &matrixRange->getValue() );
-      
-            layoutGenerator->setDevice( mcapacitor );
-            layoutGenerator->drawLayout(); 
-
-            nodeset->push_back( DBoxSet::create( mcapacitor, matrixRange->getIndex(), rg ) );
-
-            matrixRange->progress();
-          } while ( matrixRange->isValid() );
         }
+
+        matrixRange->reset();
+        do {
+          MatrixParameter* mp = NULL;
+          if ( (mp = dynamic_cast<MatrixParameter*>(mcapacitor->getParameter("matrix"))) != NULL ) 
+            mp->setMatrix( &matrixRange->getValue() );
+      
+          layoutGenerator->setDevice( mcapacitor );
+          layoutGenerator->drawLayout(); 
+
+        //cerr << "  Create BoxSet for Capacitor " << matrixRange->getValue() << endl;
+          cerr << "  Create BoxSet for Capacitor " << endl;
+          nodeset->push_back( DBoxSet::create( mcapacitor, matrixRange->getIndex(), rg ) );
+
+          matrixRange->progress();
+        } while ( matrixRange->isValid() );
       } else {
         ResistorFamily*     device    = dynamic_cast<ResistorFamily    *>( cell  );
         StepParameterRange* stepRange = dynamic_cast<StepParameterRange*>( nodeset->getRange() );
         if (device) {
+          cdebug_log(535,0) << "NodeSets::create(): for a Resistor Analog Device" << endl;
+
           if (not stepRange) {
             throw Error( "NodeSets::create(): Device \"%s\" must be associated with a StepParameterRange argument instead of %s."
                        , getString(device->getName()).c_str()

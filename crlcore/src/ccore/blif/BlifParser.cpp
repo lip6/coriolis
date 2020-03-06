@@ -252,8 +252,8 @@ namespace {
       static  bool                          _staticInit;
       static  string                        _groundName;
       static  string                        _powerName;
-      static  Cell*                         _zero;
-      static  Cell*                         _one;
+      static  Cell*                         _zeroCell;
+      static  Cell*                         _oneCell;
       static  Net*                          _masterNetZero;
       static  Net*                          _masterNetOne;
     public:
@@ -270,6 +270,8 @@ namespace {
                             Model          ( Cell* );
       inline               ~Model          ();
       inline Cell*          getCell        () const;
+             Net*           newOne         ();
+             Net*           newZero        ();
       inline size_t         getDepth       () const;
       inline const Subckts& getSubckts     () const;
              Subckt*        addSubckt      ( string modelName );
@@ -278,9 +280,10 @@ namespace {
              Net*           mergeNet       ( string name, bool isExternal, unsigned int );
              Net*           mergeAlias     ( string name1, string name2 );
     private:
-      Cell*    _cell;
-      Subckts  _subckts;
-      size_t   _depth;
+      Cell*     _cell;
+      Subckts   _subckts;
+      size_t    _depth;
+      size_t    _supplyCount;
   };
 
 
@@ -341,8 +344,8 @@ namespace {
   bool            Model::_staticInit     = false;
   string          Model::_groundName     = "vss";
   string          Model::_powerName      = "vdd";
-  Cell*           Model::_zero           = NULL;
-  Cell*           Model::_one            = NULL;
+  Cell*           Model::_zeroCell       = NULL;
+  Cell*           Model::_oneCell        = NULL;
   Net*            Model::_masterNetZero  = NULL;
   Net*            Model::_masterNetOne   = NULL;
 
@@ -365,13 +368,13 @@ namespace {
     static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
     static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
 
-    _zero       = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
-    _one        = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+    _zeroCell   = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
+    _oneCell    = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
     _groundName = Cfg::getParamString("crlcore.groundName","vss")->asString();
     _powerName  = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
 
-    if (_zero) {
-      for ( Net* net : _zero->getNets() )
+    if (_zeroCell) {
+      for ( Net* net : _zeroCell->getNets() )
         if (   not net->isSupply   ()
            and not net->isAutomatic()
            and not net->isBlockage () ) { _masterNetZero = net; break; }
@@ -379,8 +382,8 @@ namespace {
       cerr << Warning( "BlifParser::Model::connectSubckts(): The zero (tie high) cell \"%s\" has not been found."
                      , zeroName.c_str() ) << endl;
 
-    if (_one) {
-      for ( Net* net : _one->getNets() )
+    if (_oneCell) {
+      for ( Net* net : _oneCell->getNets() )
         if (   not net->isSupply   ()
            and not net->isAutomatic()
            and not net->isBlockage () ) { _masterNetOne = net; break; }
@@ -439,9 +442,10 @@ namespace {
 
 
   Model::Model ( Cell* cell )
-    : _cell   (cell)
-    , _subckts()
-    , _depth  (0)
+    : _cell        (cell)
+    , _subckts     ()
+    , _depth       (0)
+    , _supplyCount (0)
   {
     if (not _staticInit) staticInit();
     
@@ -478,6 +482,34 @@ namespace {
   inline const Subckts&    Model::getSubckts () const { return _subckts; }
 
 
+  Net* Model::newOne ()
+  {
+    if (not _masterNetOne) return NULL; 
+
+    ostringstream name; name << "one_" << _supplyCount++;
+    Instance*     oneInstance = Instance::create( _cell, name.str(), _oneCell );
+    
+    Net* one = Net::create( _cell, name.str() );
+    oneInstance->getPlug( _masterNetOne )->setNet( one );
+
+    return one;
+  }
+
+
+  Net* Model::newZero ()
+  {
+    if (not _masterNetZero) return NULL;
+    
+    ostringstream name; name << "zero_" << _supplyCount++;
+    Instance*     zeroInstance = Instance::create( _cell, name.str(), _zeroCell );
+    
+    Net* zero = Net::create( _cell, name.str() );
+    zeroInstance->getPlug( _masterNetZero )->setNet( zero );
+
+    return zero;
+  }
+
+
   Net* Model::mergeNet ( string name, bool isExternal, unsigned int direction )
   {
     bool isClock = AllianceFramework::get()->isCLOCK( name );
@@ -488,6 +520,8 @@ namespace {
       net->setExternal ( isExternal );
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
+
+      if (_cell->getName() == "sm0") cerr << "sm0 netPlug:" << name << endl;
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
@@ -495,6 +529,8 @@ namespace {
       direction |= net->getDirection();
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
+
+      if (_cell->getName() == "sm0") cerr << "sm0 netPlug:" << name << endl;
     }
     return net;
   }
@@ -505,8 +541,45 @@ namespace {
     Net* net1 = _cell->getNet( name1 );
     Net* net2 = _cell->getNet( name2 );
 
+    if (_cell->getName() == "sm0") {
+      cerr << "Merge: " << name1 << " + " << name2  << endl;
+      cerr << "  net1:" << net1 << " net2:" << net2 << endl;
+    }
+
     if (net1 and (net1 == net2)) return net1;
     if (net1 and net2) {
+      if (net1->isSupply() and (net2->isExternal() and not net2->isSupply())) {
+        ostringstream message;
+
+        if (net1->isPower()) {
+          message << "In model " << _cell->getName() << "\n          "
+                  << "Terminal " << net2->getName()
+                  << " is connected to POWER " << net1->getName()
+                  << " through the alias " << name1 << ".";
+                     
+          Net* one = newOne();
+          if (one) net2->merge( one );
+          else
+            message << "\n          (no tie high, connexion has been LEFT OPEN)";
+        }
+
+        if (net1->isGround()) {
+          message << "In model " << _cell->getName() << "\n          "
+                  << "Terminal " << net2->getName()
+                  << " is connected to GROUND " << net1->getName()
+                  << " through the alias " << name1 << ".";
+                     
+          Net* zero = newZero();
+          if (zero) net2->merge( zero );
+          else
+            message << "\n          (no tie low, connexion has been LEFT OPEN)";
+        }
+
+        if (not message.str().empty()) cerr << Warning( message.str() ) << endl;
+        return net2;
+      }
+
+        
       if (  (not net1->isExternal() and net2->isExternal()) 
          or (    net1->isExternal() and net2->isExternal() and (net1->getId() > net2->getId()) ) ) {
         std::swap( net1 , net2  );
@@ -514,6 +587,7 @@ namespace {
       }
       net1->merge( net2 ); return net1;
     }
+
     if (net2) {
       std::swap( net1 , net2  );
       std::swap( name1, name2 );
@@ -562,8 +636,6 @@ namespace {
 
   void  Model::connectSubckts ()
   {
-    unsigned int supplyCount = 0;
-
     for ( Subckt* subckt : _subckts ) {
       if(not subckt->getModel())
         throw Error( "No .model or cell named <%s> has been found.\n"
@@ -581,8 +653,8 @@ namespace {
         //          << "plug: <" << masterNetName << ">, "
         //          << "external: <" << netName << ">."
         //          << endl;
-        Net*   net       = _cell->getNet( netName );
-        Net*   masterNet = instance->getMasterCell()->getNet(masterNetName);
+        Net* net       = _cell->getNet( netName );
+        Net* masterNet = instance->getMasterCell()->getNet(masterNetName);
         if(not masterNet) {
           ostringstream tmes;
           tmes << "The master net <" << masterNetName << "> hasn't been found "
@@ -593,7 +665,7 @@ namespace {
           throw Error(tmes.str());
         }
 
-        Plug*  plug = instance->getPlug( masterNet );
+        Plug* plug = instance->getPlug( masterNet );
         if(not plug) {
           ostringstream tmes;
           tmes << "The plug in net <" << netName << "> "
@@ -620,6 +692,10 @@ namespace {
           else plugNet->merge( net );
         }
 
+        if (subckt->getModel()->getCell()->getName() == "sm0") {
+          cerr << "sm0 plug:" << plug->getMasterNet()->getName() << " => net:" << net->getName() << endl;
+        }
+
         if (plugNet->isSupply() and not plug->getMasterNet()->isSupply()) {
           ostringstream message;
           message << "In " << instance << "\n          "
@@ -629,28 +705,12 @@ namespace {
                   << ".";
 
           if (_masterNetOne) {
-            if (plugNet->isPower()) {
-              ostringstream insName; insName << "one_" << supplyCount++;
-
-              Instance* insOne = Instance::create( _cell, insName.str(), _one );
-              Net*      netOne = Net::create( _cell, insName.str() );
-
-              insOne->getPlug( _masterNetOne )->setNet( netOne );
-              plug->setNet( netOne );
-            }
+            if (plugNet->isPower()) plug->setNet( newOne() );
           } else
             message << "\n          (no tie high, connexion has been LEFT OPEN)";
 
           if (_masterNetZero) {             
-            if (plugNet->isGround()) {
-              ostringstream insName; insName << "zero_" << supplyCount++;
-
-              Instance* insZero = Instance::create( _cell, insName.str(), _zero );
-              Net*      netZero = Net::create( _cell, insName.str() );
-
-              insZero->getPlug( _masterNetZero )->setNet( netZero );
-              plug->setNet( netZero );
-            }
+            if (plugNet->isGround()) plug->setNet( newZero() );
           } else
             message << "\n          (no tie low, connexion has been LEFT OPEN)";
 
@@ -759,13 +819,19 @@ namespace CRL {
       }
 
       if (tokenize.state() == Tokenize::Inputs) {
-        for ( size_t i=1 ; i<blifLine.size() ; ++i )
+        for ( size_t i=1 ; i<blifLine.size() ; ++i ) {
           blifModel->mergeNet( blifLine[i], true, Net::Direction::IN );
+          if (blifModel->getCell()->getName() == "sm0")
+            cerr << "Blif model sm0: plug:" << blifLine[i] << endl;
+        }
       }
 
       if (tokenize.state() == Tokenize::Outputs) {
-        for ( size_t i=1 ; i<blifLine.size() ; ++i )
+        for ( size_t i=1 ; i<blifLine.size() ; ++i ) {
           blifModel->mergeNet( blifLine[i], true, Net::Direction::OUT );
+          if (blifModel->getCell()->getName() == "sm0")
+            cerr << "Blif model sm0: plug:" << blifLine[i] << endl;
+        }
       }
 
       if (tokenize.state() & Tokenize::Names) {
@@ -814,6 +880,11 @@ namespace CRL {
           }
           subckt->addConnection( make_pair(blifLine[i].substr(0,equal)
                                           ,blifLine[i].substr(  equal+1)) );
+
+          if (subckt->getModelName() == "sm0") {
+            cerr << "Blif sm0 plug:" << blifLine[i].substr(0,equal)
+                 << " net:"          << blifLine[i].substr(  equal+1) << endl;
+          }
         }
       }
     }

@@ -137,7 +137,7 @@ namespace Hurricane {
 
     QLabel* leftMargin = new QLabel ();
     leftMargin->setSizePolicy ( QSizePolicy::Preferred, QSizePolicy::MinimumExpanding );
-    leftMargin->setPixmap     ( QPixmap(":/images/angry-birds-bomb.png").scaledToWidth(200) );
+    leftMargin->setPixmap     ( QPixmap(":/images/angry-birds-bomb.png").scaledToWidth( Graphics::isHighDpi() ? 200 : 80 ) );
     leftMargin->setStyleSheet ( "QLabel { background-color: #FF9999;"
                         "         padding:          5px }" );
 

@@ -16,6 +16,7 @@
 
 #include "bora/PyParameterRange.h"
 #include "bora/PyStepParameterRange.h"
+#include "bora/PyMatrixParameterRange.h"
 
 
 namespace Bora {
@@ -112,7 +113,8 @@ extern "C" {
 # if !defined(__PYTHON_MODULE__)
 
 ParameterRange* ParameterRangeCast ( PyObject* derivedObject ) {
-  if (IsPyStepParameterRange(derivedObject))  return PYSTEPPARAMETERRANGE_O(derivedObject);
+  if (IsPyStepParameterRange  (derivedObject))  return PYSTEPPARAMETERRANGE_O  (derivedObject);
+  if (IsPyMatrixParameterRange(derivedObject))  return PYMATRIXPARAMETERRANGE_O(derivedObject);
 
   return NULL;
 }

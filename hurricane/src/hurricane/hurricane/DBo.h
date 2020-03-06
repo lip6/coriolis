@@ -55,6 +55,7 @@ namespace Hurricane {
       static  unsigned int       getIdCounter        ();
               unsigned int       getNextId           ();
       static  void               setNextId           ( unsigned int );
+      static  void               resetId             ();
       static  bool               inForcedIdMode      ();
       static  void               enableForcedIdMode  ();
       static  void               disableForcedIdMode ();
@@ -92,6 +93,7 @@ namespace Hurricane {
       static  unsigned int       _memoryLimit;
       static  unsigned long      _flags;
       static  unsigned int       _nextId;
+      static  unsigned int       _idCount;
       static  unsigned int       _idCounter;
       static  unsigned int       _idCounterLimit;
               unsigned int       _id;

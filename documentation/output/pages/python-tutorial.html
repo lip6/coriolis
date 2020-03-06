@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Printable version of this document PythonTutorial.pdf. First, a small disclaimer. This tutorial assumes that you are already familiar with the concepts of vlsi designs, such as netlist, layout, ...">
+        <meta name="keywords" content="">
+        <link rel="icon" href="../favicon.ico">
+
+        <title>Hurricane+Python Tutorial - Coriolis VLSI CAD Tools [offline]</title>
+
+        <!-- Stylesheets -->
+        <link href="../theme/css/bootstrap.css" rel="stylesheet">
+        <link href="../theme/css/fonts.css"     rel="stylesheet">
+        <link href="../theme/css/nest.css"      rel="stylesheet">
+        <link href="../theme/css/pygment.css"   rel="stylesheet">
+        <link href="../theme/css/coriolis.css"  rel="stylesheet">
+        <!-- /Stylesheets -->
+
+        <script src="../theme/js/jquery.min.js"></script>
+        <script src="../theme/js/bootstrap.min.js"></script>
+
+        <!-- RSS Feeds -->
+        <!-- /RSS Feeds -->
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+
+
+    </head>
+
+    <body>
+      <!-- Header -->
+    <div class="header-container" style="background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/common/layout-motif-faded-4.png'); background-position: center; ">
+
+
+      <!--
+      <div class="container">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools [offline]</a>
+            </div>
+            <ul class="nav navbar-nav">
+                   <li><a href="../pages/gitlab.html">Git</a></li>
+                   <li><a href="../pages/documentation.html">Documentation</a></li>
+              <li class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span class="caret"></span>Topics
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                  <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div> <!-- navbar container -->
+      -->
+
+      <!-- Static navbar -->
+      <div class="container">
+        <div class="header-nav">
+          <div class="header-logo">
+            <a class="pull-left" href="../"><img class="mr20" src="../images/common/Coriolis-logo-white-4-small.png" alt="logo">Coriolis VLSI CAD Tools [offline]</a>
+          </div>
+          <div class="nav pull-right">
+                <a href="../pages/gitlab.html">Git</a>
+                <a href="../pages/documentation.html">Documentation</a>
+          </div>
+          <div class="nav pull-right">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="caret"></span>Topics
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Static navbar -->
+
+        <!-- Header -->
+    <div class="container header-wrapper">
+        <div class="row">
+              <div class="col-lg-12">
+                  <div class="header-content">
+                      <a href="https://www.lip6.fr/"><img class="mr20" height="60px" src="../images/common/LogoLIP6Blanc.png" alt="LIP6"></a>
+                      <a href="https://www.sorbonne-universite.fr/"><img class="mr20" height="60px" src="../images/common/logo-SU-blanc-700px.png" alt="Sorbonne Universite"></a>
+                      <a href="https://www.cnrs.fr/"><img class="mr20" height="60px" src="../images/common/LOGO-cnrs-white-large.png" alt="CNRS"></a>
+                      <h1 class="header-title text-uppercase">Hurricane+Python Tutorial</h1>
+                      <div class="header-underline"></div>
+                  </div>
+              </div>
+        </div>
+    </div>
+        <!-- /Header -->
+
+        </div>
+        <!-- /Header -->
+
+
+        <!-- Content -->
+    <div class="container content">
+        <!-- -*- mode: rst; explicit-buffer-name: "PythonTutorial_HTML.rst<pelican>" -*- -->
+<!-- -*- Mode: rst; explicit-buffer-name: "definition.rst<documentation/etc>" -*- -->
+<!-- HTML/LaTeX backends mixed macros. -->
+<!-- Acronyms & names. -->
+<!-- URLs -->
+<!-- Standard CAO/VLSI Concepts. -->
+<!-- Alliance & MBK Concepts -->
+<!-- Hurricane Concepts. -->
+<p>Printable version of this document <a class="reference external" href="../pdfs/PythonTutorial.pdf">PythonTutorial.pdf</a>.</p>
+<p>First, a small disclaimer.  This tutorial  assumes that you are already familiar
+with the concepts  of <span class="sc">vlsi</span> designs, such as  <em>netlist</em>, <em>layout</em>, <em>instances</em>
+and hierarchical design.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id9">1. Introduction</a></li>
+<li><a class="reference internal" href="#setting-up-the-environment" id="id10">2. Setting up the Environment</a></li>
+<li><a class="reference internal" href="#making-a-standard-cell-layout" id="id11">3. Making a Standard Cell -- Layout</a></li>
+<li><a class="reference internal" href="#manipulating-cells-nets-and-components" id="id12">4. Manipulating Cells, Nets and Components</a></li>
+<li><a class="reference internal" href="#id3" id="id13">5. Make a script runnable through <span class="cb">cgt</span></a></li>
+<li><a class="reference internal" href="#making-a-hierarchical-cell-netlist" id="id14">6. Making a hierarchical Cell -- Netlist</a></li>
+<li><a class="reference internal" href="#working-in-real-mode" id="id15">7. Working in real mode</a></li>
+<li><a class="reference internal" href="#tool-engines-crl-core" id="id16">8. Tool Engines (CRL Core)</a></li>
+<li><a class="reference internal" href="#advanced-topics" id="id17">9. Advanced Topics</a></li>
+</ul>
+</div>
+<!-- -*- Mode: rst -*- -->
+<!-- Hurricane doxygen doc links. -->
+<!-- Hurricane Viewer doxygen doc links. -->
+<!-- CRL Core doxygen doc links. -->
+<!-- Hurricane Python Tutorial internal links. -->
+<!-- -*- Mode: rst -*- -->
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id9">1. Introduction</a></h2>
+<p>This tutorial is aimed at two goals :</p>
+<ul class="simple">
+<li>Presenting how to use Python scripts to control <span class="sc">Coriolis</span>.</li>
+<li>Make a basic introduction about the <span class="sc">Hurricane</span> database and its
+concepts.</li>
+</ul>
+<p>While this tutorial is aimed at presenting the <span class="sc">Hurricane</span> database,
+do not feel limited by it. You can use <span class="sc">Hurricane</span> objects as attributes
+of <span class="sc">Python</span> objects or use <span class="sc">Python</span> containers to store them.
+The only limitation is that you may not use <span class="sc">Hurricane</span> classes as base
+classes in <span class="sc">Python</span>.</p>
+<p>All <span class="sc">Hurricane</span> objects implements the <span class="sc">Python</span> <tt class="docutils literal">__str__()</tt> function,
+they print the result of the C++ method <tt class="docutils literal">::getString()</tt>.</p>
+<div class="section" id="terminology">
+<h3>1.1 Terminology</h3>
+<p>In the <span class="sc">Hurricane</span> database, the <em>logical</em> (netlist) and <em>physical</em> (layout)
+views are fused. As the main goal of the database is to support place &amp; route
+tools, we usually starts with a <em>pure</em> netlist which is progessively enriched
+to become a layout. Cell, in particular, is able to be in any intermediate
+state. Many of our objects have self-explanatory names, but some
+don't. Thus we summarize below the more important ones:</p>
+<table class="table">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><strong>Class</strong></th>
+<th class="head"><strong>Meaning</strong></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a></td>
+<td>The model. A Cell does not have terminals, only nets
+flagged as <em>external</em></td>
+</tr>
+<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a></td>
+<td>An instance of a model</td>
+</tr>
+<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a></td>
+<td>A grouping of electrically connected components</td>
+</tr>
+<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a></td>
+<td>A terminal of an instance</td>
+</tr>
+<tr><td><a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a></td>
+<td>A physical connexion (<em>pin</em>) to an instance</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="generalities">
+<h3>1.2 Generalities</h3>
+<p>The C++ API has been exported in Python as closely as possible. Meaning
+that, save for a slight change in syntax, any code written in <span class="sc">Python</span>
+could be easily transformed into C++ code. There is no specific documentation
+written for the <span class="sc">Python</span> interface, you may directly use the C++ one.</p>
+<p>Mostly:</p>
+<ul class="simple">
+<li>C++ namespaces are exported as <span class="sc">Python</span> modules.</li>
+<li>The <em>scope resolution operator</em> <span class="fboxtt">::</span> converts into <span class="fboxtt">.</span>.</li>
+<li>C++ blocks (between braces <span class="fboxtt">{}</span>) are replaced by indentations.</li>
+<li>In C++, names are managed through a dedicated <tt class="docutils literal">Name</tt> class.
+It has not been exported to the <span class="sc">Python</span> interface, you only have
+to use <tt class="docutils literal">string</tt>.</li>
+<li>Coordinates are expressed in <tt class="docutils literal">DbU</tt> which are <tt class="docutils literal">long</tt> with a special
+semantic (see ??).</li>
+</ul>
+<p>In <tt class="docutils literal">hurricane/Session.h</tt> header we have:</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span> <span class="n">Hurricane</span> <span class="p">{</span>
+
+   <span class="k">class</span> <span class="nc">UpdateSession</span> <span class="p">{</span>
+     <span class="k">public</span><span class="o">:</span>
+       <span class="k">static</span> <span class="kt">void</span>  <span class="n">open</span>  <span class="p">();</span>
+       <span class="k">static</span> <span class="kt">void</span>  <span class="nf">close</span> <span class="p">();</span>
+   <span class="p">};</span>
+
+<span class="p">}</span>
+</pre></div>
+<p>So we can use it the following way in C++:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;hurricane/Session.h&quot;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">Hurricane</span><span class="p">;</span>
+
+<span class="kt">void</span>  <span class="nf">doSomething</span> <span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">UpdateSession</span><span class="o">::</span><span class="n">open</span><span class="p">();</span>
+  <span class="c1">// Something...</span>
+  <span class="n">UpdateSession</span><span class="o">::</span><span class="n">close</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+<p>The equivalent <span class="sc">Python</span> code will be:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">doSomething</span> <span class="p">():</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+   <span class="c1"># Something...</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="various-kinds-of-constructors">
+<h3>1.3 Various Kinds of Constructors</h3>
+<p>Regarding the memory allocation, the <span class="sc">Hurricane</span> database contains two kind of objects.</p>
+<ol class="arabic">
+<li><p class="first">Objects that are linked to others in the database and whose creation or deletion
+implies coherency operations. This is the case for <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> or <a class="reference external" href="../../hurricane/classHurricane_1_1Horizontal.html">Horizontal</a>.
+They must be created using the static <span class="cb">create()</span> method of their class
+and destroyed with their <span class="cb">destroy()</span> method.</p>
+<p>And, of course, they cannot be copied (the copy constructor has been disabled).</p>
+<div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s1">&#39;tmp&#39;</span> <span class="p">)</span>  <span class="c1"># Call the static Net.create() function.</span>
+                                 <span class="c1"># Work with this net.</span>
+                                 <span class="c1"># ...</span>
+<span class="n">net</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>                    <span class="c1"># Call the dynamic destroy() method.</span>
+</pre></div>
+</li>
+<li><p class="first">Objects that are <em>standalone</em>, like <a class="reference external" href="../../hurricane/classHurricane_1_1Point.html">Point</a> or <a class="reference external" href="../../hurricane/classHurricane_1_1Box.html">Box</a>, uses the usual construction
+methods. They also use the <span class="sc">Python</span> garbage collector mechanism and do not need
+to be explicitly deleted.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">myfunc</span><span class="p">():</span>
+  <span class="n">bb</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+          <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+          <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>
+          <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span>
+  <span class="k">return</span>                            <span class="c1"># bb will be freed at that point.</span>
+</pre></div>
+</li>
+</ol>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="setting-up-the-environment">
+<h2><a class="toc-backref" href="#id10">2. Setting up the Environment</a></h2>
+<div class="section" id="setting-up-the-paths">
+<h3>2.1 Setting up the Paths</h3>
+<p>To simplify the tedious task of configuring your environment, a helper is provided.
+It will setup or modify the <span class="cb">PATH</span>, <span class="cb">LD_LIBRARY_PATH</span> (or <span class="cb">DYLD_LIBRARY_PATH</span>
+under <span class="sc">Darwin</span>), <span class="cb">PYTHONPATH</span> and <span class="cb">CORIOLIS_TOP</span> variables.
+It should automatically adapt to your kind of shell (<tt class="docutils literal">Bourne</tt> like
+or <tt class="docutils literal"><span class="pre">C-Shell</span></tt> like).</p>
+<pre class="literal-block">
+&lt;CORIOLIS_INSTALL&gt;/etc/coriolis2/coriolisEnv.py
+</pre>
+<p>Use it like this (don't forget the <tt class="docutils literal">eval</tt> <strong>and</strong> the backquotes):</p>
+<div class="highlight"><pre><span></span><span class="go">dummy@lepka:~&gt; eval `&lt;CORIOLIS_INSTALL&gt;/etc/coriolis2/coriolisEnv.py`</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p><strong>Do not call that script in your environment initialisation.</strong>
+When used under <span class="sc">rhel6</span> or clones, it needs to be run in the <span class="cb">devtoolset</span>
+environment. The script then launches a new shell, which may cause an
+infinite loop if it's called again in, say <span class="cb">~/.bashrc</span>.</p>
+<p>Instead you may want to create an alias:</p>
+<div class="last"><div class="highlight"><pre><span></span><span class="nb">alias</span> <span class="nv">c2r</span><span class="o">=</span><span class="s1">&#39;eval &quot;`&lt;CORIOLIS_INSTALL&gt;/etc/coriolis2/coriolisEnv.py`&quot;&#39;</span>
+</pre></div>
+</div></div>
+</div>
+<div class="section" id="user-s-configurations-file">
+<h3>2.2 User's Configurations File</h3>
+<p>You may create, in the directory you are lanching <span class="sc">Coriolis</span> tools, a special
+sub-directory <tt class="docutils literal">.coriolis2/</tt> that can contain two configuration files:</p>
+<ul class="simple">
+<li><tt class="docutils literal">techno.py</tt> tells which technology to use.</li>
+<li><tt class="docutils literal">settings.py</tt> can override almost any default configuration setting.</li>
+</ul>
+<p>Those two files are <em>optional</em>, if they do not exist the default settings
+will be used and the technology is <tt class="docutils literal">symbolic/cmos</tt> (i.e. purely symbolic).</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Those two files will by processed by the <span class="sc">Python</span> interpreter,
+so they can contain any code in addition to the mandatory
+variables.</p>
+</div>
+<div class="section" id="the-techno-py-file">
+<h4>2.2.1 The <span class="cb">techno.py</span> File</h4>
+<p>Must provide one variable named <span class="cb">technology</span> which values the path towards
+the technology file. The available technologies are installed under
+<tt class="docutils literal"><span class="pre">&lt;CORIOLIS_INSTALL&gt;/etc/coriolis2</span></tt>. For example, to use the 45nm FreeDPK
+which is in:</p>
+<pre class="literal-block">
+&lt;CORIOLIS_INSTALL&gt;/etc/coriolis2/45/freepdk_45/
+</pre>
+<p>The <tt class="docutils literal">techno.py</tt> file must contain:</p>
+<div class="highlight"><pre><span></span><span class="n">technology</span> <span class="o">=</span> <span class="s1">&#39;45/freepdk_45&#39;</span>
+</pre></div>
+</div>
+<div class="section" id="the-settings-py-file">
+<h4>2.2.2 The <span class="cb">settings.py</span> File</h4>
+<p>The entries of the <tt class="docutils literal">parametersTable</tt> and their definitions are detailed
+in <a class="reference external" href="../UsersGuide/ViewerTools.html">CGT - The Graphical Interface</a>.</p>
+<p>Example of file:</p>
+<div class="highlight"><pre><span></span><span class="n">defaultStyle</span> <span class="o">=</span> <span class="s1">&#39;Alliance.Classic [black]&#39;</span>
+
+<span class="n">parametersTable</span> <span class="o">=</span> \
+    <span class="p">(</span> <span class="p">(</span><span class="s1">&#39;misc.catchCore&#39;</span>           <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.info&#39;</span>                <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.paranoid&#39;</span>            <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.bug&#39;</span>                 <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.logMode&#39;</span>             <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.verboseLevel1&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">False</span>   <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;misc.verboseLevel2&#39;</span>       <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">True</span>    <span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+</div>
+<div class="section" id="making-a-standard-cell-layout">
+<h2><a class="toc-backref" href="#id11">3. Making a Standard Cell -- Layout</a></h2>
+<p>In this part, we will show how to create and save a terminal <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>,
+that is, a cell without instances (the end point of a hierarchical
+design). To illustrate the case we will draw the layout of a
+standard cell.</p>
+<p>We will introduce the following classes : <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>
+and its derived classes.</p>
+<div class="section" id="the-allianceframework-crl-core">
+<h3>3.1 The AllianceFramework (CRL Core)</h3>
+<p>The <span class="sc">Hurricane</span> database only manages objects in memory. To load or save
+something from the outside, we need to use a <em>framework</em>. As of today, only
+one is available : the Alliance framework. It allows <span class="sc">Coriolis</span> to handle
+<span class="sc">Alliance</span> libraries and cells in the exact same way.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">To see how the <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> is configured for your
+installation, please have a look to <tt class="docutils literal">alliance.conf</tt> in the
+<tt class="docutils literal">etc/coriolis2</tt> directory. It must contains the same settings
+as the various <tt class="docutils literal">MBK_</tt> variables used for <span class="sc">Alliance</span>.</p>
+</div>
+</div>
+<div class="section" id="session-mechanism-hurricane">
+<h3>3.2 Session Mechanism (Hurricane)</h3>
+<p>In the <span class="sc">Hurricane</span> database, all modifications must take place inside
+an <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>. At the closing of a session, created or modificated
+objects are fully inserted in the database. This is especially true for
+the visualisation, a created component will be visible <em>only</em> only after
+the session close.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">See <tt class="docutils literal">QuadTree</tt> and <tt class="docutils literal">Query</tt>.</p>
+</div>
+</div>
+<div class="section" id="creating-a-new-cell-crl-core">
+<h3>3.3 Creating a new Cell (CRL Core)</h3>
+<p>The creation of a new <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> occurs through the <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>,
+and, as stated above, inside a <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>. The <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>
+environment is provided by the <span class="sc">crl</span> module.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">af</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="n">cell</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;my_inv&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Build then save the Cell.</span>
+
+<span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+<p>This is the simplest call to <tt class="docutils literal">createCell()</tt>, and in that case, the newly
+created <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> will be saved in the <em>working library</em> (usually, the current
+directory). You may supply a second argument telling into which library
+you want the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> to be created.</p>
+<p>In the <span class="sc">Hurricane</span> <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> object, there is no concept of <em>view</em>, it contains
+completly fused logical (netlist) and physical (layout) views.</p>
+</div>
+<div class="section" id="the-dbu-measurement-unit">
+<h3>3.4 The DbU Measurement Unit</h3>
+<p>All coordinates in the <span class="sc">Hurricane</span> database are expressed in <a class="reference external" href="../../hurricane/classHurricane_1_1DbU.html">DbU</a>
+(for <em>Database Unit</em>) which are integer numbers of foundry grid.
+To be more precise, they are fixed points numbers expressed in
+hundredth of foundry grid (to allow transient non-integer
+computation).</p>
+<p>To work with symbolic layout, that is, using lambda based lengths,
+two conversion functions are provided:</p>
+<ul class="simple">
+<li><tt class="docutils literal">unit = DbU.fromLambda( lbd )</tt> convert a lambda <span class="cb">lbd</span> into a <tt class="docutils literal">DbU</tt>.</li>
+<li><tt class="docutils literal">lbd = DbU.toLambda( unit )</tt> convert a <tt class="docutils literal">DbU</tt> into a lambda <span class="cb">lbd</span>.</li>
+</ul>
+<p>In the weakly typed <span class="sc">Python</span> world, <span class="cb">lbd</span> is <em>float</em> while <span class="cb">unit</span>
+is <em>integer</em>.</p>
+</div>
+<div class="section" id="setting-up-the-abutment-box">
+<h3>3.5 Setting up the Abutment Box</h3>
+<p>To setup the abutment box, we use a <a class="reference external" href="../../hurricane/classHurricane_1_1Box.html">Box</a> which defines a box from
+the coordinates of the lower left corner <tt class="docutils literal">(x1,y1)</tt> and upper left
+corner <tt class="docutils literal">(x2,y2)</tt>.</p>
+<div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>    <span class="c1"># x1</span>
+       <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>    <span class="c1"># y1</span>
+       <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>    <span class="c1"># x2</span>
+       <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span>  <span class="c1"># y2</span>
+<span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">b</span> <span class="p">)</span>
+</pre></div>
+<p>Or more simply:</p>
+<div class="highlight"><pre><span></span><span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+                        <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+                        <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span>
+                        <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="adding-nets-and-components">
+<h3>3.6 Adding Nets and Components</h3>
+<p>In the <span class="sc">Hurricane</span> terminology, a <strong>component</strong> is any kind of physical object
+among:</p>
+<ul class="simple">
+<li><a class="reference external" href="../../hurricane/classHurricane_1_1Contact.html">Contact</a></li>
+<li><a class="reference external" href="../../hurricane/classHurricane_1_1Pad.html">Pad</a></li>
+<li><a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a></li>
+<li><a class="reference external" href="../../hurricane/classHurricane_1_1Horizontal.html">Horizontal</a></li>
+<li><a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a></li>
+<li><a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> is the only exception and will be detailed later (see ??).</li>
+</ul>
+<p><a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> cannot be created <em>alone</em>. They must be part of a <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a>.</p>
+<div class="section" id="getting-a-layer">
+<h4>3.6.1 Getting a Layer</h4>
+<p>As physical elements, <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> are created using a <a class="reference external" href="../../hurricane/classHurricane_1_1Layer.html">Layer</a>. So prior to
+their creation, we must get one from the database. <a class="reference external" href="../../hurricane/classHurricane_1_1Layer.html">Layers</a> are stored in the
+<a class="reference external" href="../../hurricane/classHurricane_1_1Technology.html">Technology</a>, which in turn, is stored in the <a class="reference external" href="../../hurricane/classHurricane_1_1DataBase.html">DataBase</a>. So, to get a
+<a class="reference external" href="../../hurricane/classHurricane_1_1Layer.html">Layer</a>:</p>
+<div class="highlight"><pre><span></span><span class="n">layer</span> <span class="o">=</span> <span class="n">DataBase</span><span class="o">.</span><span class="n">getDB</span><span class="p">()</span><span class="o">.</span><span class="n">getTechnology</span><span class="p">()</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s1">&#39;METAL1&#39;</span> <span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p><strong>Convention for layer names.</strong> As the database can manage both real layers
+and symbolic ones we adopt the following convention:</p>
+<ul class="last simple">
+<li><strong>Real layers</strong> are named in lowercase (<tt class="docutils literal">metal1</tt>, <tt class="docutils literal">nwell</tt>).</li>
+<li><strong>Symbolic layers</strong> are named in uppercase (<tt class="docutils literal">METAL1</tt>, <tt class="docutils literal">NWELL</tt>).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="creating-a-net">
+<h4>3.6.2 Creating a Net</h4>
+<p>As said above, prior to creating any <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>, we must create the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> it
+will belong to. In that example we also make it an <em>external</em> net, that is,
+a part of the interface. Do not mistake the name of the net given as a string
+argument <span class="cb">'i'</span> and the name of the <em>variable</em> <span class="cb">i</span> holding the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> object.
+For the sake of clarity we try to give the variable a close name, but this is
+not mandatory.</p>
+<div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span> <span class="p">)</span>
+<span class="n">i</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Unlike some other database models, in <span class="sc">Hurricane</span>,
+<strong>there is no explicit terminal object</strong>, you only need to make the
+net external. For more information about how to connect to an
+external net, see <a class="reference external" href="./Netlist.html#id1">6.2 Creating Nets and connecting to Instances</a>.</p>
+</div>
+</div>
+<div class="section" id="id2">
+<h4>3.6.3 Creating a Component</h4>
+<p>Finally, we get ready to create a <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Component</a>, we will make a <a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a> segment
+of <tt class="docutils literal">METAL1</tt>.</p>
+<div class="highlight"><pre><span></span><span class="n">segment</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">i</span>                         <span class="c1"># The owner Net.</span>
+                         <span class="p">,</span> <span class="n">layer</span>                     <span class="c1"># The layer.</span>
+                         <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span>  <span class="mf">5.0</span> <span class="p">)</span>    <span class="c1"># The X coordinate.</span>
+                         <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span>  <span class="mf">2.0</span> <span class="p">)</span>    <span class="c1"># The width.</span>
+                         <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">10.0</span> <span class="p">)</span>    <span class="c1"># The Y source coordinate.</span>
+                         <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span> <span class="mf">40.0</span> <span class="p">)</span> <span class="p">)</span>  <span class="c1"># The Y target coordinate.</span>
+</pre></div>
+<p>With this overload of the <tt class="docutils literal">Vertical.create()</tt> function the segment is created at an
+absolute position. There is a second overload for creating a relatively placed
+segment, see <em>articulated layout</em>.</p>
+<p>If the net is external, that is, part of the interface of the cell, you may have
+to declare some of its components as physical connectors usable by the router.
+This is done by calling the <a class="reference external" href="../../hurricane/classHurricane_1_1NetExternalComponents.html">NetExternalComponents</a> class:</p>
+<div class="highlight"><pre><span></span><span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">segment</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="saving-to-disk-crl-core">
+<h3>3.7 Saving to Disk (CRL Core)</h3>
+<p>Once you have finished to build your cell, you have to save it on disk.
+Using the <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> you can save it as a pair of file:</p>
+<table class="table">
+<colgroup>
+<col width="30%" />
+<col width="42%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">View</th>
+<th class="head">Flag</th>
+<th class="head">File extension</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Logical / Netlist</td>
+<td><tt class="docutils literal">Catalog.State.Logical</tt></td>
+<td><tt class="docutils literal">.vst</tt></td>
+</tr>
+<tr><td>Physical / Layout</td>
+<td><tt class="docutils literal">Catalog.State.Physical</tt></td>
+<td><tt class="docutils literal">.ap</tt></td>
+</tr>
+</tbody>
+</table>
+<p>To save both views, use the <tt class="docutils literal">Catalog.State.Views</tt> flag. The files
+will be written in the <span class="sc">Alliance</span> <tt class="docutils literal">WORK_DIR</tt>.</p>
+<div class="highlight"><pre><span></span><span class="n">af</span><span class="o">.</span><span class="n">saveCell</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="the-complete-example-file">
+<h3>3.8 The Complete Example File</h3>
+<p>The example files can be found in the <tt class="docutils literal">share/doc/coriolis2/examples/scripts/</tt>
+directory (under the the root of the <span class="sc">Coriolis</span> installation).</p>
+<p>The code needed to run it through the <span class="cb">cgt</span> viewer has been added. For the
+explanation of that part of the code, refer to <a class="reference external" href="./CgtScript.html">5. Make a script runnable through cgt</a>.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span>   <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span>   <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">toDbU</span> <span class="p">(</span> <span class="n">l</span> <span class="p">):</span> <span class="k">return</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">doBreak</span> <span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">)</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">buildInvertor</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;invertor&#39;</span> <span class="p">)</span>
+    <span class="n">cell</span><span class="o">.</span><span class="n">setTerminal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">technology</span> <span class="o">=</span> <span class="n">DataBase</span><span class="o">.</span><span class="n">getDB</span><span class="p">()</span><span class="o">.</span><span class="n">getTechnology</span><span class="p">()</span>
+    <span class="n">metal1</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;METAL1&quot;</span>     <span class="p">)</span>
+    <span class="n">poly</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;POLY&quot;</span>       <span class="p">)</span>
+    <span class="n">ptrans</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;PTRANS&quot;</span>     <span class="p">)</span>
+    <span class="n">ntrans</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NTRANS&quot;</span>     <span class="p">)</span>
+    <span class="n">pdif</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;PDIF&quot;</span>       <span class="p">)</span>
+    <span class="n">ndif</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NDIF&quot;</span>       <span class="p">)</span>
+    <span class="n">contdifn</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_DIF_N&quot;</span> <span class="p">)</span>
+    <span class="n">contdifp</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_DIF_P&quot;</span> <span class="p">)</span>
+    <span class="n">nwell</span>      <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NWELL&quot;</span>      <span class="p">)</span>
+    <span class="n">contpoly</span>   <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;CONT_POLY&quot;</span>  <span class="p">)</span>
+    <span class="n">ntie</span>       <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;NTIE&quot;</span>       <span class="p">)</span>
+
+    <span class="n">net</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;nwell&quot;</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">net</span><span class="p">,</span> <span class="n">nwell</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">7.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">27.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">51.0</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">vdd</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;vdd&quot;</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vdd</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">47.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">h</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">47.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">45.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">pdif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">28.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">46.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vdd</span><span class="p">,</span> <span class="n">ntie</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">43.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">48.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building vdd.&#39;</span> <span class="p">)</span>
+
+    <span class="n">vss</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;vss&quot;</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">vss</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">))</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">h</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">vss</span><span class="p">,</span> <span class="n">ndif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">3.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">vss</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building vss.&#39;</span> <span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span> <span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">ptrans</span>  <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">26.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">39.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">ntrans</span>  <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">6.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">14.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span>  <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">14.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">26.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">poly</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">20.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">4.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">7.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span>   <span class="p">(</span> <span class="n">i</span><span class="p">,</span> <span class="n">contpoly</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">5.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">20.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building i.&#39;</span> <span class="p">)</span>
+
+    <span class="n">nq</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="s2">&quot;nq&quot;</span> <span class="p">)</span>
+    <span class="n">nq</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">metal1</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">NetExternalComponents</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="n">v</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">pdif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">28.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">37.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">ndif</span>    <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">3.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">8.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifp</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">30.5</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Contact</span><span class="o">.</span><span class="n">create</span> <span class="p">(</span> <span class="n">nq</span><span class="p">,</span> <span class="n">contdifn</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Done building q.&#39;</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">saveCell</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">buildInvertor</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="manipulating-cells-nets-and-components">
+<h2><a class="toc-backref" href="#id12">4. Manipulating Cells, Nets and Components</a></h2>
+<p>In this part, we will show how to navigate through the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Nets</a> and <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> of a <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>.</p>
+<div class="section" id="hurricane-collections">
+<h3>4.1 Hurricane Collections</h3>
+<p>In <span class="sc">Hurricane</span> all kind of set of objects, whether organized in a real container
+like a <tt class="docutils literal">map&lt;&gt;</tt> (dictionary / <tt class="docutils literal">dict</tt>) or a <tt class="docutils literal">vector&lt;&gt;</tt> (table / <tt class="docutils literal">list</tt>) or
+an algorithmic walkthrough of the database can be accessed through a <a class="reference external" href="../../hurricane/classHurricane_1_1Collection.html">Collection</a>.</p>
+<p>C++ Collections objects are exposed in <span class="sc">Python</span> through the <em>iterable</em> protocol,
+allowing to simply write:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">getNets</span><span class="p">():</span>
+  <span class="k">print</span> <span class="s1">&#39;Components of&#39;</span><span class="p">,</span> <span class="n">net</span>
+  <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">getComponents</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">component</span>
+</pre></div>
+<p>In C++ we would have written:</p>
+<div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span> <span class="n">Net</span><span class="o">*</span> <span class="nl">net</span> <span class="p">:</span> <span class="n">cell</span><span class="o">-&gt;</span><span class="n">getNets</span><span class="p">()</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Components of &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">net</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span> <span class="n">Component</span><span class="o">*</span> <span class="nl">component</span> <span class="p">:</span> <span class="n">net</span><span class="o">-&gt;</span><span class="n">getComponents</span><span class="p">()</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;| &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">component</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<div class="section" id="restrictions-about-using-collections">
+<h4>4.1.1 Restrictions about using Collections</h4>
+<p><strong>Never delete or create an element while you are iterating over a Collection.</strong></p>
+<p>Results can be unpredictable, you may just end up with a core dump, but more
+subtly, some element of the <a class="reference external" href="../../hurricane/classHurricane_1_1Collection.html">Collection</a> may be skipped or processed twice.
+If you want to create or delete an element, do it outside the collection
+loop. For example:</p>
+<div class="highlight"><pre><span></span><span class="n">cellNets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">getNets</span><span class="p">():</span>
+  <span class="n">cellNets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">net</span> <span class="p">)</span>
+
+<span class="c1"># Remove all the anonymous nets.</span>
+<span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">cellNets</span><span class="p">:</span>
+   <span class="k">if</span> <span class="n">net</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;nymous_&#39;</span><span class="p">):</span>
+     <span class="k">print</span> <span class="s1">&#39;Destroy&#39;</span><span class="p">,</span> <span class="n">net</span>
+     <span class="n">net</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loading-a-cell-with-allianceframework">
+<h3>4.2 Loading a Cell with AllianceFramework</h3>
+<p>As presented in <a class="reference external" href="./CellNetComponent.html#the-allianceframework-crl-core">2.1 The Alliance Framework</a>, the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> that will be returned by
+the <tt class="docutils literal">getCell()</tt> call wil be:</p>
+<ol class="arabic">
+<li><p class="first">If a <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> of that name is already loaded into memory, it will be returned.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">It means that it shadows any modifications that could have been on
+disk since it was first loaded.  Conversely, if the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> has been
+modified in memory, you will get those modifications.</p>
+</div>
+</li>
+<li><p class="first">Search, in the ordered list of libraries, the first <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> that matches the
+requested name.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">It means that if cells with the same name exist in different
+libraries, only the one in the first library will be ever used.
+Be also aware that cell files that may remain in the <tt class="docutils literal">WORK_LIB</tt>,
+may unexpectedly shadow cells from the libraries.</p>
+</div>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="n">cell</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;inv_x1&#39;</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id13">5. Make a script runnable through <span class="cb">cgt</span></a></h2>
+<p>To use your script you may run it directly like any other <span class="sc">Python</span> script.
+But, for debugging purpose it may be helpful to run it through the
+interactive layout viewer <span class="cb">cgt</span>.</p>
+<p>For <span class="cb">cgt</span> to be able to run your script, you must add to your script
+file a function named <span class="cb">ScriptMain()</span>, which takes a dictionary
+as sole argument (<span class="cb">**kw</span>). The <tt class="docutils literal">kw</tt> dictionary contains, in
+particular, the <a class="reference external" href="../../viewer/classHurricane_1_1CellViewer.html">CellViewer</a> object we are running under with the
+keyword <tt class="docutils literal">editor</tt>. You can then load your cell into the viewer
+using the menu:</p>
+<ul class="simple">
+<li><span class="fboxtt">Tools</span> <span class="formula"> → </span>
+ <span class="fboxtt">Python Script</span>. The script
+file name must be given without the <tt class="docutils literal">.py</tt> extension.</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p>If you use breakpoints and want to see the progress of your
+script in the viewer, do not use the <tt class="docutils literal"><span class="pre">--script</span></tt> option of
+<span class="cb">cgt</span>.</p>
+<div class="highlight"><pre><span></span><span class="go">ego@home:~&gt; cgt -V --script=invertor</span>
+</pre></div>
+<p class="last">Because the script is run <strong>before</strong> the viewer is launched,
+you will only see the end result of your script.</p>
+</div>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">buildInvertor</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;invertor&#39;</span> <span class="p">)</span>
+    <span class="n">cell</span><span class="o">.</span><span class="n">setTerminal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cell</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">15.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="c1"># The rest of the script...</span>
+
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">buildInvertor</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+<div class="section" id="using-breakpoints">
+<h3>5.1 Using Breakpoints</h3>
+<p>It is possible to add breakpoints inside a script by calling the <tt class="docutils literal">Breakpoint.stop()</tt>
+function. To be able to see exactly what has just been mofied, we must close the
+<a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a> just before calling the breakpoint and reopen it just after.
+The <tt class="docutils literal">Breakpoint.stop()</tt> function takes two arguments:</p>
+<ol class="arabic simple">
+<li>The <tt class="docutils literal">level</tt> above which it will be active.</li>
+<li>An informative message about the purpose of the breakpoint.</li>
+</ol>
+<p>We can create a little function to ease the work:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">doBreak</span> <span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">)</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="making-a-hierarchical-cell-netlist">
+<h2><a class="toc-backref" href="#id14">6. Making a hierarchical Cell -- Netlist</a></h2>
+<p>To illustrate the topic, we will build the netlist of a fulladder from
+standard cell.</p>
+<p><img alt="The fulladder netlist" class="align-middle" src="../pages/images/fulladder-1.png" style="width: 80%;" /></p>
+<div class="section" id="creating-an-instance">
+<h3>6.1 Creating an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a></h3>
+<p>Creating an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> is straigthforward, the constructor needs only three
+parameters:</p>
+<ol class="arabic simple">
+<li>The <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> <strong>into which</strong> the instance is to be created.</li>
+<li>The name of the instance.</li>
+<li>The <strong>master cell</strong>, the <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a> model it refers to. The master cell
+will be part of the hierarchical level just below the <tt class="docutils literal">fulladder</tt>
+cell.</li>
+</ol>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Do not confuse the cell the instance is create into (<tt class="docutils literal">fulladder</tt>)
+and the cells it refers to (the <em>master cell</em> <tt class="docutils literal">xr2_x2</tt>).</p>
+</div>
+<div class="highlight"><pre><span></span><span class="n">af</span>     <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="n">xr2_x2</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;xr2_x1&#39;</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+
+<span class="n">fulladder</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;fulladder&#39;</span> <span class="p">)</span>
+<span class="n">xr2_1</span>     <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;xr2_1&#39;</span><span class="p">,</span> <span class="n">xr2_x2</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h3>6.2 Creating Nets and connecting to Instances</h3>
+<p>An <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> has one <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> for each external net of the <em>master cell</em>.
+The plug allows to create a <strong>logical</strong> connection bewteen a <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Net</a> of
+<tt class="docutils literal">fulladder</tt> and a net from an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> <em>master cell</em>.</p>
+<p>A plug is somewhat equivalent to an <em>instance terminal</em> in other
+well known databases.</p>
+<p>Therefore, a plug is related to two nets:</p>
+<ol class="arabic simple">
+<li>The net of the <em>master cell</em> it is linked to. Obviously that
+net cannot be changed. You can access the master net with the
+function <tt class="docutils literal">plug.getMasterNet()</tt>.</li>
+<li>The net of <tt class="docutils literal">fulladder</tt> the plug is connected to. This can
+be set, it is how we build the netlist. To set the net, use
+the function <tt class="docutils literal">plug.setNet( net )</tt>. If the argument is <tt class="docutils literal">None</tt>,
+the plug is <em>disconnected</em>.</li>
+</ol>
+<p>To find the plug of an instance associated to a given net in
+the <em>master cell</em>, use <tt class="docutils literal">instance.getPlug( masterNet )</tt>.
+The <tt class="docutils literal">masterNet</tt> argument being an object of class net (not
+its name).</p>
+<p>Building the <span class="cb">a</span> net of <tt class="docutils literal">fulladder</tt>:</p>
+<div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span> <span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+<span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">a</span> <span class="p">)</span>
+<span class="n">a2_1</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">a</span> <span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p><strong>Limitation of Hurricane Netlists.</strong> There is no explicit
+terminal object in the <span class="sc">Hurricane</span> database. Plugs are
+generated <em>on the fly</em> for each <em>external net</em> of the
+instance. One important consequence is that a <em>net</em>
+cannot appear on the interface as two differently named
+terminals (sometimes referred as <em>weekly connected</em>
+terminals). There is a strict bijection between external
+nets and plugs.</p>
+<p class="last">While it may be restrictive, it enforces cleaner designs
+and make it possible for the <a class="reference external" href="../../hurricane/classHurricane_1_1HyperNet.html">HyperNet</a> concept/class.</p>
+</div>
+</div>
+<div class="section" id="power-supplies-special-case">
+<h3>6.3 Power supplies special case</h3>
+<p>For supplies, it may  be tedious to connect the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> of each  cell one by one
+(and  create a  lot of  unneeded objects).  To avoid  that, we  may use  <strong>Named
+connections</strong>.  If a  signal in <tt class="docutils literal">fulladder</tt> is set to  <em>global</em>, then it will
+be considered as connected  to any signal with the <em>same  name</em> and <em>global</em> in
+the master cell of the instances.</p>
+<div class="highlight"><pre><span></span><span class="n">vdd</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;vdd&quot;</span> <span class="p">)</span>
+<span class="n">vdd</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+<span class="n">vdd</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>  <span class="c1"># Will be connected to all the instances.</span>
+</pre></div>
+</div>
+<div class="section" id="creating-the-physical-view-of-a-cell-netlist">
+<h3>6.4 Creating the physical view of a Cell netlist</h3>
+<p>Even if loaded in the viewer, an Instance will not be displayed
+until it is placed.</p>
+<div class="section" id="id5">
+<h4>6.4.1 Transformation</h4>
+<p>To place an Instance, we apply a <a class="reference external" href="../../hurricane/classHurricane_1_1Transformation.html">Transformation</a> to the coordinate system
+of the <em>master cell</em>. A transformation is composed of two operations:</p>
+<ol class="arabic simple">
+<li>An <a class="reference external" href="../../hurricane/classHurricane_1_1Orientation.html">Orientation</a>, which can be a symmetry or a rotation (or a combination
+of those two). The Orientation <strong>is applied first</strong> to the coordinate
+system of the <em>master cell</em>. The complete list of Orientation and their
+codes are given on the Orientation documentation page.</li>
+<li>A <strong>Translation</strong>, applied in second. Translation are represented by
+<a class="reference external" href="../../hurricane/classHurricane_1_1Point.html">Points</a>.</li>
+</ol>
+<p>The transformation is a change of coordinate system, be aware that if the
+abutment box lower left corner of the <em>master</em> cell is <strong>not</strong> at <tt class="docutils literal">(0,0)</tt>
+the result of the Transformation may not be what you expect. To simplify
+the computation of the transformation of an instance, always place the
+lower left corner of the abutment box at <tt class="docutils literal">(0,0)</tt></p>
+</div>
+<div class="section" id="placing-an-instance">
+<h4>6.4.2 Placing an Instance</h4>
+<p>Assuming that we want to place the cells of the <tt class="docutils literal">fulladder</tt> into two rows,
+that the abutment box lower left corner is at <tt class="docutils literal">(0,0)</tt> (same for the
+<tt class="docutils literal">xr2_x2</tt> <em>master cell</em> layout). Here is the code to place the <tt class="docutils literal">xr2_1</tt>
+instance to left of the second row.</p>
+<p>Setting the translation on an <a class="reference external" href="../../hurricane/classHurricane_1_1Instance.html">Instance</a> is not enough to make it be displayed,
+we also must set its <em>placement status</em> to <tt class="docutils literal">Instance.PlacementStatus.PLACED</tt>.</p>
+<div class="highlight"><pre><span></span><span class="n">xr2_1</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span>  <span class="mf">0.0</span><span class="p">)</span>
+                                       <span class="p">,</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+                                       <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">MY</span> <span class="p">)</span> <span class="p">)</span>
+<span class="n">xr2_1</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="nets-from-plugs-to-routingpads">
+<h4>6.4.3 Nets -- From Plugs to RoutingPads</h4>
+<p>As was stated before, <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> represent a logical connection between two
+levels of hierarchy. To make the physical connection to the <em>master net</em>
+in the instance, we now must create, in the <tt class="docutils literal">fulladder</tt>, a special
+component which is a kind of <em>reference</em> to a component of the
+<em>master net</em> (in the master cell).</p>
+<p>The so called <em>special component</em> is a <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a>.</p>
+<p>The <tt class="docutils literal">RoutingPad</tt> can be considered as an equivalent to <tt class="docutils literal">pin</tt> in other
+well known databases.</p>
+<div class="highlight"><pre><span></span><span class="n">rp</span> <span class="o">=</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>
+                      <span class="p">,</span> <span class="n">Occurrence</span><span class="p">(</span> <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">))</span> <span class="p">)</span>
+                      <span class="p">,</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">BiggestArea</span> <span class="p">)</span>
+</pre></div>
+<p>For the second parameter, we must pass an <a class="reference external" href="../../hurricane/classHurricane_1_1Occurrence.html">Occurrence</a>. Occurrence objects will
+be explained in detail later, for now, let say that we must construct the
+Occurrence object with one parameter : the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plug</a> for which we want to create a
+physical connection.</p>
+<p>The <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a> <tt class="docutils literal">rp</tt> will be a component of the <tt class="docutils literal">a</tt> net.</p>
+<p>The third argument ask the constructor of the <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a> to select in the
+master net, the component which has the biggest area.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p><strong>Component selection.</strong> Not all the components of a net can be
+selected for connection through a <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPad</a>. The candidates must
+have been flagged with the <a class="reference external" href="../../hurricane/classHurricane_1_1NetExternalComponents.html">NetExternalComponents</a> class.</p>
+<p class="last">See <a class="reference external" href="./CellNetComponent.html#id1">3.6.3 Creating a Component</a>.</p>
+</div>
+</div>
+<div class="section" id="nets-regular-wiring">
+<h4>6.4.4 Nets -- Regular wiring</h4>
+<p>After the creation of the <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a>, the wiring is to be created with
+ordinary layout components (<a class="reference external" href="../../hurricane/classHurricane_1_1Horizontal.html">Horizontal</a>, <a class="reference external" href="../../hurricane/classHurricane_1_1Vertical.html">Vertical</a> and <a class="reference external" href="../../hurricane/classHurricane_1_1Contact.html">Contact</a> possibly
+articulated). Here is the complete code for net <tt class="docutils literal">a</tt>. We made an articulated
+layout where contacts are created over <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> then segments over
+contacts.</p>
+<div class="highlight"><pre><span></span><span class="c1"># Build wiring for a.</span>
+<span class="c1"># Create RoutingPads first.</span>
+ <span class="n">rp1</span>      <span class="o">=</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>
+                             <span class="p">,</span> <span class="n">Occurrence</span><span class="p">(</span> <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">))</span> <span class="p">)</span>
+                             <span class="p">,</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">BiggestArea</span> <span class="p">)</span>
+ <span class="n">rp2</span>      <span class="o">=</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>
+                             <span class="p">,</span> <span class="n">Occurrence</span><span class="p">(</span>  <span class="n">a2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">))</span> <span class="p">)</span>
+                             <span class="p">,</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">BiggestArea</span> <span class="p">)</span>
+
+<span class="c1"># Then regular wiring.</span>
+ <span class="n">contact1</span> <span class="o">=</span> <span class="n">Contact</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">rp1</span><span class="p">,</span> <span class="n">via12</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">)</span> <span class="p">)</span>
+ <span class="n">contact2</span> <span class="o">=</span> <span class="n">Contact</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">rp2</span><span class="p">,</span> <span class="n">via12</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">10.0</span><span class="p">)</span> <span class="p">)</span>
+ <span class="n">turn</span>     <span class="o">=</span> <span class="n">Contact</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>  <span class="p">,</span> <span class="n">via23</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">35.0</span><span class="p">)</span> <span class="p">)</span>
+ <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">contact2</span><span class="p">,</span> <span class="n">turn</span>     <span class="p">,</span> <span class="n">metal2</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="p">)</span>
+ <span class="n">Vertical</span>  <span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">turn</span>    <span class="p">,</span> <span class="n">contact1</span> <span class="p">,</span> <span class="n">metal3</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">In order to better see the layout of the wiring only, open the
+<tt class="docutils literal">Controller</tt> and in the <span class="fboxtt">Filter</span> tab, uncheck
+<span class="fboxtt">Process Terminal Cells</span>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>6.5 The Complete Example File</h3>
+<p>The example file <tt class="docutils literal">fulladder.py</tt> can be found in the <tt class="docutils literal">share/doc/coriolis2/examples/scripts/</tt>
+directory (under the the root of the <span class="sc">Coriolis</span> installation).</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span>   <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span>   <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
+
+
+<span class="k">def</span> <span class="nf">toDbU</span> <span class="p">(</span> <span class="n">l</span> <span class="p">):</span> <span class="k">return</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">doBreak</span> <span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">):</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span> <span class="p">)</span>
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">buildFulladder</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+
+   <span class="c1"># Get the Framework and all the master cells.</span>
+    <span class="n">af</span>     <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="n">xr2_x2</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;xr2_x1&#39;</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="n">a2_x2</span>  <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;a2_x2&#39;</span> <span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="n">o2_x2</span>  <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;o2_x2&#39;</span> <span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">fulladder</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;fulladder&#39;</span> <span class="p">)</span>
+    <span class="n">fulladder</span><span class="o">.</span><span class="n">setAbutmentBox</span><span class="p">(</span> <span class="n">Box</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">90.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">fulladder</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+      <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+   <span class="c1"># Create Instances.</span>
+    <span class="n">a2_1</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span>  <span class="s1">&#39;a2_1&#39;</span><span class="p">,</span>  <span class="n">a2_x2</span> <span class="p">)</span>
+    <span class="n">a2_2</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span>  <span class="s1">&#39;a2_2&#39;</span><span class="p">,</span>  <span class="n">a2_x2</span> <span class="p">)</span>
+    <span class="n">xr2_1</span> <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;xr2_1&#39;</span><span class="p">,</span> <span class="n">xr2_x2</span> <span class="p">)</span>
+    <span class="n">xr2_2</span> <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;xr2_2&#39;</span><span class="p">,</span> <span class="n">xr2_x2</span> <span class="p">)</span>
+    <span class="n">o2_1</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span>  <span class="s1">&#39;o2_1&#39;</span><span class="p">,</span>  <span class="n">o2_x2</span> <span class="p">)</span>
+
+   <span class="c1"># Create Nets.</span>
+    <span class="n">vss</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;vss&quot;</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">vdd</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;vdd&quot;</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cin</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;cin&quot;</span> <span class="p">)</span>
+    <span class="n">cin</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">cin</span> <span class="p">)</span>
+    <span class="n">a2_2</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">cin</span> <span class="p">)</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span> <span class="p">)</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">a</span> <span class="p">)</span>
+    <span class="n">a2_1</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">a</span> <span class="p">)</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span> <span class="p">)</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">b</span> <span class="p">)</span>
+    <span class="n">a2_1</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">b</span> <span class="p">)</span>
+
+    <span class="n">sout_1</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;sout_1&#39;</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span> <span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout_1</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout_1</span> <span class="p">)</span>
+    <span class="n">a2_2</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout_1</span> <span class="p">)</span>
+
+    <span class="n">carry_1</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;carry_1&#39;</span> <span class="p">)</span>
+    <span class="n">a2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span> <span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_1</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">o2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_1</span> <span class="p">)</span>
+
+    <span class="n">carry_2</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;carry_2&#39;</span> <span class="p">)</span>
+    <span class="n">a2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span> <span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_2</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">o2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_2</span> <span class="p">)</span>
+
+    <span class="n">sout</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;sout&#39;</span> <span class="p">)</span>
+    <span class="n">sout</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout</span> <span class="p">)</span>
+
+    <span class="n">cout</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;cout&#39;</span> <span class="p">)</span>
+    <span class="n">cout</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">o2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">cout</span> <span class="p">)</span>
+
+   <span class="c1"># Instances placement.</span>
+    <span class="n">a2_1</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+                                          <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+                                          <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">ID</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">a2_1</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Placed a2_1&#39;</span> <span class="p">)</span>
+
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span>  <span class="mf">0.0</span><span class="p">)</span>
+                                           <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+                                           <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">MY</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Placed xr2_1&#39;</span> <span class="p">)</span>
+
+    <span class="n">a2_2</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">25.0</span><span class="p">)</span>
+                                          <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+                                          <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">ID</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">a2_2</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Placed a2_2&#39;</span> <span class="p">)</span>
+
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">45.0</span><span class="p">)</span>
+                                           <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">100.0</span><span class="p">)</span>
+                                           <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">MY</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Placed xr2_2&#39;</span> <span class="p">)</span>
+
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">65.0</span><span class="p">)</span>
+                                          <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+                                          <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">ID</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Placed o2_1&#39;</span> <span class="p">)</span>
+
+   <span class="c1"># Add filler cells.</span>
+    <span class="n">tie_x0</span>    <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span>    <span class="s1">&#39;tie_x0&#39;</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="n">rowend_x0</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;rowend_x0&#39;</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="n">filler_1</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;filler_1&#39;</span><span class="p">,</span>    <span class="n">tie_x0</span> <span class="p">)</span>
+    <span class="n">filler_2</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;filler_2&#39;</span><span class="p">,</span> <span class="n">rowend_x0</span> <span class="p">)</span>
+
+    <span class="n">filler_1</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span>
+                                              <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+                                              <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">ID</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">filler_1</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+
+    <span class="n">filler_2</span><span class="o">.</span><span class="n">setTransformation</span><span class="p">(</span> <span class="n">Transformation</span><span class="p">(</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">60.0</span><span class="p">)</span>
+                                              <span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">)</span>
+                                              <span class="p">,</span> <span class="n">Transformation</span><span class="o">.</span><span class="n">Orientation</span><span class="o">.</span><span class="n">ID</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">filler_2</span><span class="o">.</span><span class="n">setPlacementStatus</span><span class="p">(</span> <span class="n">Instance</span><span class="o">.</span><span class="n">PlacementStatus</span><span class="o">.</span><span class="n">PLACED</span> <span class="p">)</span>
+    <span class="n">doBreak</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Filler cell placeds&#39;</span> <span class="p">)</span>
+
+   <span class="c1"># Getting the layers.</span>
+    <span class="n">technology</span> <span class="o">=</span> <span class="n">DataBase</span><span class="o">.</span><span class="n">getDB</span><span class="p">()</span><span class="o">.</span><span class="n">getTechnology</span><span class="p">()</span>
+    <span class="n">metal2</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;METAL2&quot;</span> <span class="p">)</span>
+    <span class="n">metal3</span>     <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;METAL3&quot;</span> <span class="p">)</span>
+    <span class="n">via12</span>      <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;VIA12&quot;</span>  <span class="p">)</span>
+    <span class="n">via23</span>      <span class="o">=</span> <span class="n">technology</span><span class="o">.</span><span class="n">getLayer</span><span class="p">(</span> <span class="s2">&quot;VIA23&quot;</span>  <span class="p">)</span>
+
+   <span class="c1"># Build wiring for a.</span>
+   <span class="c1"># Create RoutingPads first.</span>
+    <span class="n">rp1</span>      <span class="o">=</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>
+                                <span class="p">,</span> <span class="n">Occurrence</span><span class="p">(</span> <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">))</span> <span class="p">)</span>
+                                <span class="p">,</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">BiggestArea</span> <span class="p">)</span>
+    <span class="n">rp2</span>      <span class="o">=</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>
+                                <span class="p">,</span> <span class="n">Occurrence</span><span class="p">(</span>  <span class="n">a2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s2">&quot;i0&quot;</span><span class="p">))</span> <span class="p">)</span>
+                                <span class="p">,</span> <span class="n">RoutingPad</span><span class="o">.</span><span class="n">BiggestArea</span> <span class="p">)</span>
+
+   <span class="c1"># Then regular wiring.</span>
+    <span class="n">contact1</span> <span class="o">=</span> <span class="n">Contact</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">rp1</span><span class="p">,</span> <span class="n">via12</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="o">-</span><span class="mf">15.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">contact2</span> <span class="o">=</span> <span class="n">Contact</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">rp2</span><span class="p">,</span> <span class="n">via12</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">10.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">turn</span>     <span class="o">=</span> <span class="n">Contact</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">a</span>  <span class="p">,</span> <span class="n">via23</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span> <span class="mf">35.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Horizontal</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">contact2</span><span class="p">,</span> <span class="n">turn</span>     <span class="p">,</span> <span class="n">metal2</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">35.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">Vertical</span>  <span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">turn</span>    <span class="p">,</span> <span class="n">contact1</span> <span class="p">,</span> <span class="n">metal3</span><span class="p">,</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">10.0</span><span class="p">),</span> <span class="n">toDbU</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">af</span><span class="o">.</span><span class="n">saveCell</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">buildFulladder</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="working-in-real-mode">
+<h2><a class="toc-backref" href="#id15">7. Working in real mode</a></h2>
+<p>The <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> only manages <em>symbolic</em> layout as <span class="sc">Alliance</span> does.
+But <span class="sc">Coriolis</span> is also able to work directly in <em>real</em> mode, meaning
+that distances will be expressed in microns instead of lambdas.</p>
+<p>The <em>real</em> mode will be illustrated by working with the <a class="reference external" href="https://www.eda.ncsu.edu/wiki/FreePDK45:Contents">FreePDK45</a>.</p>
+<p>We will assume that the <a class="reference external" href="https://www.eda.ncsu.edu/wiki/FreePDK45:Contents">FreePDK45</a> archives is installed under:</p>
+<pre class="literal-block">
+/home/dks/
+</pre>
+<div class="section" id="loading-a-lef-file">
+<h3>7.1 Loading a <span class="sc">lef</span> file</h3>
+<p>Importing a <span class="sc">lef</span> file is simple, you just call the static function
+<tt class="docutils literal">LefImport.load()</tt>. Multiple <span class="sc">lef</span> file can be imported one after
+another.</p>
+<div class="highlight"><pre><span></span><span class="c1"># You must set &quot;DKsdir&quot; to where you did install the NCSU FreePDK 45nm DK.</span>
+<span class="n">DKsdir</span>  <span class="o">=</span> <span class="s1">&#39;/home/dks&#39;</span>
+
+<span class="n">library</span> <span class="o">=</span> <span class="n">LefImport</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="n">DKsdir</span> <span class="o">+</span> <span class="s1">&#39;/FreePDK45/osu_soc/lib/files/gscl45nm.lef&#39;</span> <span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>Technology checking.</strong>  The first imported <span class="sc">lef</span> file must contain the
+technology. The technology described in the <span class="sc">lef</span> file will be checked
+against the one configured in the running instance of <span class="sc">Coriolis</span> to look
+for any discrepencies.</p>
+</div>
+</div>
+<div class="section" id="loading-a-blif-file-yosys">
+<h3>7.2 Loading a <span class="sc">blif</span> file -- <span class="sc">Yosys</span></h3>
+<p>The <span class="sc">blif</span> format is generated by the <a class="reference external" href="http://www.clifford.at/yosys/">Yosys</a> logic synthetizer. Here again, it is
+pretty straightforward: call the static function <tt class="docutils literal">Blif.load()</tt>. If you made
+your synthesis on a cell library not managed by <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a>, for example
+the one of the FreePDK45, you must load it prior to calling the <span class="sc">blif</span> loader.</p>
+<div class="highlight"><pre><span></span><span class="n">cell</span> <span class="o">=</span> <span class="n">Blif</span><span class="o">.</span><span class="n">load</span><span class="p">(</span> <span class="s1">&#39;snx&#39;</span> <span class="p">)</span> <span class="c1"># load &quot;snx.blif&quot; in the working directory.</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="tool-engines-crl-core">
+<h2><a class="toc-backref" href="#id16">8. Tool Engines (CRL Core)</a></h2>
+<p>The <a class="reference external" href="../../crlcore/classCRL_1_1ToolEngine.html">ToolEngine</a> class is the base class for all tools developped in
+<span class="sc">Coriolis</span>. In the rest of the tutorial we will use the names <tt class="docutils literal">tool</tt>
+or <tt class="docutils literal">engine</tt> as synonyms.</p>
+<div class="section" id="placer-etesian">
+<h3>8.1 Placer -- Etesian</h3>
+<p>To run the placer, create the <span class="sc">Etesian</span> engine, then call the <tt class="docutils literal">place()</tt>
+function.</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Etesian</span>
+
+<span class="c1"># [...]</span>
+
+<span class="n">etesian</span> <span class="o">=</span> <span class="n">Etesian</span><span class="o">.</span><span class="n">EtesianEngine</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+<span class="n">etesian</span><span class="o">.</span><span class="n">place</span><span class="p">()</span>
+</pre></div>
+<p>You can configure the placer in two ways:</p>
+<ol class="arabic">
+<li><p class="first">Prior to the creation of the engine, setup an abutment for the cell.
+The placer will fit the cells into that area. If the area is too
+small, it will issue an error.</p>
+</li>
+<li><p class="first">Setup <span class="sc">Etesian</span> parameters through the <tt class="docutils literal">settings.py</tt> configuration
+file. For example:</p>
+<div class="highlight"><pre><span></span><span class="n">parametersTable</span> <span class="o">=</span> \
+    <span class="p">(</span> <span class="p">(</span><span class="s2">&quot;etesian.effort&quot;</span>           <span class="p">,</span> <span class="n">TypeEnumerate</span> <span class="p">,</span> <span class="mi">2</span>       <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.uniformDensity&#39;</span>   <span class="p">,</span> <span class="n">TypeBool</span>      <span class="p">,</span> <span class="bp">True</span>    <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.spaceMargin&#39;</span>      <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mf">3.0</span>     <span class="p">)</span>
+    <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;etesian.aspectRatio&#39;</span>      <span class="p">,</span> <span class="n">TypePercentage</span><span class="p">,</span> <span class="mf">100.0</span>   <span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+<p>With this setup, the cells will be spread uniformally over the
+area (<tt class="docutils literal">etesian.uniformDensity</tt>), with <tt class="docutils literal">3.0%</tt> of free space
+added and an aspect ratio of <tt class="docutils literal">100%</tt> (square shape).</p>
+</li>
+</ol>
+</div>
+<div class="section" id="router-katana">
+<h3>8.1 Router -- Katana</h3>
+<p>Like for <span class="sc">Etesian</span>, you have to create the engine on the cell then call
+the sequence of functions detailed below.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>Kite vs. Katana.</strong> There are currently two routers in <span class="sc">Coriolis</span>,
+<span class="sc">Kite</span> is the old one and digital only. <span class="sc">Katana</span> is a re-implementation
+with support for mixed routing (digital <strong>and</strong> analog).
+Until <span class="sc">Katana</span> is fully implemented we keep both of them.</p>
+</div>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">Anabatic</span>
+<span class="kn">import</span> <span class="nn">Katana</span>
+
+<span class="c1"># [...]</span>
+
+<span class="n">katana</span> <span class="o">=</span> <span class="n">Katana</span><span class="o">.</span><span class="n">KatanaEngine</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+<span class="n">katana</span><span class="o">.</span><span class="n">digitalInit</span>      <span class="p">()</span>
+<span class="n">katana</span><span class="o">.</span><span class="n">runGlobalRouter</span>  <span class="p">()</span>
+<span class="n">katana</span><span class="o">.</span><span class="n">loadGlobalRouting</span><span class="p">(</span> <span class="n">Anabatic</span><span class="o">.</span><span class="n">EngineLoadGrByNet</span> <span class="p">)</span>
+<span class="n">katana</span><span class="o">.</span><span class="n">layerAssign</span>      <span class="p">(</span> <span class="n">Anabatic</span><span class="o">.</span><span class="n">EngineNoNetLayerAssign</span> <span class="p">)</span>
+<span class="n">katana</span><span class="o">.</span><span class="n">runNegociate</span>     <span class="p">(</span> <span class="n">Katana</span><span class="o">.</span><span class="n">Flags</span><span class="o">.</span><span class="n">NoFlags</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="a-complete-example">
+<h3>8.2  A Complete Example</h3>
+<p>The example file <tt class="docutils literal">toolengines.py</tt> can be found in the <tt class="docutils literal">share/doc/coriolis2/examples/scripts/</tt>
+directory (under the the root of the <span class="sc">Coriolis</span> installation).</p>
+<p>This script automatically places and routes the <tt class="docutils literal">fulladder</tt> netlist as seen
+previously. The call to the <a class="reference external" href="../../crlcore/classCRL_1_1ToolEngine.html">ToolEngines</a> is made inside the new function
+<tt class="docutils literal">placeAndRoute()</tt>.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">As the <tt class="docutils literal">ToolEngine</tt> take care of opening and closing <a class="reference external" href="../../hurricane/classHurricane_1_1UpdateSession.html">UpdateSession</a>, we
+do not need the wrapper function <tt class="docutils literal">doBreak()</tt> around the breakpoints.
+We directly call <a class="reference external" href="../../hurricane/classHurricane_1_1Breakpoint.html">Breakpoint</a>.</p>
+</div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">The space margin for this example is very high (<tt class="docutils literal">30%</tt>), it's only
+because it's too small for the placer to run correctly. For normal
+case it is around <tt class="docutils literal">3%</tt>.</p>
+</div>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span>   <span class="nn">Hurricane</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span>   <span class="nn">CRL</span>       <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">Etesian</span>
+<span class="kn">import</span> <span class="nn">Anabatic</span>
+<span class="kn">import</span> <span class="nn">Katana</span>
+
+<span class="c1"># Everybody needs it.</span>
+<span class="n">af</span> <span class="o">=</span> <span class="n">AllianceFramework</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">toDbU</span> <span class="p">(</span> <span class="n">l</span> <span class="p">):</span> <span class="k">return</span> <span class="n">DbU</span><span class="o">.</span><span class="n">fromLambda</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">buildFulladder</span> <span class="p">(</span> <span class="n">editor</span> <span class="p">):</span>
+
+   <span class="c1"># Get the Framework and all the master cells.</span>
+    <span class="n">xr2_x2</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;xr2_x1&#39;</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="n">a2_x2</span>  <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;a2_x2&#39;</span> <span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="n">o2_x2</span>  <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">getCell</span><span class="p">(</span> <span class="s1">&#39;o2_x2&#39;</span> <span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+    <span class="n">fulladder</span> <span class="o">=</span> <span class="n">af</span><span class="o">.</span><span class="n">createCell</span><span class="p">(</span> <span class="s1">&#39;fulladder&#39;</span> <span class="p">)</span>
+
+   <span class="c1"># Create Instances.</span>
+    <span class="n">a2_1</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span>  <span class="s1">&#39;a2_1&#39;</span><span class="p">,</span>  <span class="n">a2_x2</span> <span class="p">)</span>
+    <span class="n">a2_2</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span>  <span class="s1">&#39;a2_2&#39;</span><span class="p">,</span>  <span class="n">a2_x2</span> <span class="p">)</span>
+    <span class="n">xr2_1</span> <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;xr2_1&#39;</span><span class="p">,</span> <span class="n">xr2_x2</span> <span class="p">)</span>
+    <span class="n">xr2_2</span> <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;xr2_2&#39;</span><span class="p">,</span> <span class="n">xr2_x2</span> <span class="p">)</span>
+    <span class="n">o2_1</span>  <span class="o">=</span> <span class="n">Instance</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span>  <span class="s1">&#39;o2_1&#39;</span><span class="p">,</span>  <span class="n">o2_x2</span> <span class="p">)</span>
+
+   <span class="c1"># Create Nets.</span>
+    <span class="n">vss</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;vss&quot;</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vss</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">vdd</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;vdd&quot;</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">vdd</span><span class="o">.</span><span class="n">setGlobal</span>  <span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+
+    <span class="n">cin</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s2">&quot;cin&quot;</span> <span class="p">)</span>
+    <span class="n">cin</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">cin</span> <span class="p">)</span>
+    <span class="n">a2_2</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">cin</span> <span class="p">)</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span> <span class="p">)</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">a</span> <span class="p">)</span>
+    <span class="n">a2_1</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">a</span> <span class="p">)</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span> <span class="p">)</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">b</span> <span class="p">)</span>
+    <span class="n">a2_1</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">b</span> <span class="p">)</span>
+
+    <span class="n">sout_1</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;sout_1&#39;</span> <span class="p">)</span>
+    <span class="n">xr2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span> <span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout_1</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout_1</span> <span class="p">)</span>
+    <span class="n">a2_2</span> <span class="o">.</span><span class="n">getPlug</span><span class="p">(</span>  <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout_1</span> <span class="p">)</span>
+
+    <span class="n">carry_1</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;carry_1&#39;</span> <span class="p">)</span>
+    <span class="n">a2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span> <span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_1</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">o2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i1&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_1</span> <span class="p">)</span>
+
+    <span class="n">carry_2</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;carry_2&#39;</span> <span class="p">)</span>
+    <span class="n">a2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">a2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span> <span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_2</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">o2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;i0&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">carry_2</span> <span class="p">)</span>
+
+    <span class="n">sout</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;sout&#39;</span> <span class="p">)</span>
+    <span class="n">sout</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">xr2_2</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">xr2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">sout</span> <span class="p">)</span>
+
+    <span class="n">cout</span> <span class="o">=</span> <span class="n">Net</span><span class="o">.</span><span class="n">create</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="s1">&#39;cout&#39;</span> <span class="p">)</span>
+    <span class="n">cout</span><span class="o">.</span><span class="n">setExternal</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>
+    <span class="n">o2_1</span><span class="o">.</span><span class="n">getPlug</span><span class="p">(</span> <span class="n">o2_x2</span><span class="o">.</span><span class="n">getNet</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">setNet</span><span class="p">(</span> <span class="n">cout</span> <span class="p">)</span>
+
+    <span class="n">UpdateSession</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">af</span><span class="o">.</span><span class="n">saveCell</span><span class="p">(</span> <span class="n">fulladder</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">fulladder</span>
+
+
+<span class="k">def</span> <span class="nf">placeAndRoute</span> <span class="p">(</span> <span class="n">editor</span><span class="p">,</span> <span class="n">cell</span> <span class="p">):</span>
+   <span class="c1"># Run the placer.</span>
+    <span class="n">etesian</span> <span class="o">=</span> <span class="n">Etesian</span><span class="o">.</span><span class="n">EtesianEngine</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+    <span class="n">etesian</span><span class="o">.</span><span class="n">place</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">editor</span><span class="p">:</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">setCell</span><span class="p">(</span> <span class="n">cell</span> <span class="p">)</span>
+      <span class="n">editor</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="n">Breakpoint</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;After placement&#39;</span> <span class="p">)</span>
+
+   <span class="c1"># Run the router.</span>
+    <span class="n">katana</span> <span class="o">=</span> <span class="n">Katana</span><span class="o">.</span><span class="n">KatanaEngine</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+    <span class="n">katana</span><span class="o">.</span><span class="n">digitalInit</span>      <span class="p">()</span>
+    <span class="n">katana</span><span class="o">.</span><span class="n">runGlobalRouter</span>  <span class="p">()</span>
+    <span class="n">katana</span><span class="o">.</span><span class="n">loadGlobalRouting</span><span class="p">(</span> <span class="n">Anabatic</span><span class="o">.</span><span class="n">EngineLoadGrByNet</span> <span class="p">)</span>
+    <span class="n">katana</span><span class="o">.</span><span class="n">layerAssign</span>      <span class="p">(</span> <span class="n">Anabatic</span><span class="o">.</span><span class="n">EngineNoNetLayerAssign</span> <span class="p">)</span>
+    <span class="n">katana</span><span class="o">.</span><span class="n">runNegociate</span>     <span class="p">(</span> <span class="n">Katana</span><span class="o">.</span><span class="n">Flags</span><span class="o">.</span><span class="n">NoFlags</span> <span class="p">)</span>
+
+    <span class="n">af</span><span class="o">.</span><span class="n">saveCell</span><span class="p">(</span> <span class="n">cell</span><span class="p">,</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">State</span><span class="o">.</span><span class="n">Views</span> <span class="p">)</span>
+    <span class="k">return</span>
+
+
+<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+    <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
+      <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
+
+    <span class="n">fulladder</span> <span class="o">=</span> <span class="n">buildFulladder</span><span class="p">(</span> <span class="n">editor</span> <span class="p">)</span>
+    <span class="n">placeAndRoute</span><span class="p">(</span> <span class="n">editor</span><span class="p">,</span> <span class="n">fulladder</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+<!-- -*- Mode: rst -*- -->
+</div>
+</div>
+<div class="section" id="advanced-topics">
+<h2><a class="toc-backref" href="#id17">9. Advanced Topics</a></h2>
+<p>This is a place holder as well as a reminder to myself to write this part of
+the documentation.</p>
+<div class="section" id="id7">
+<h3>9.1 Occurrence</h3>
+<p>The trans-hierarchical workhorse.</p>
+</div>
+<div class="section" id="id8">
+<h3>9.2 RoutingPads</h3>
+<p>Unlike the <a class="reference external" href="../../hurricane/classHurricane_1_1Plug.html">Plugs</a> that only make connections between two <strong>adjacent</strong>
+hierarchical levels, <a class="reference external" href="../../hurricane/classHurricane_1_1RoutingPad.html">RoutingPads</a> can refer to a deeply buried terminal.</p>
+</div>
+<div class="section" id="hypernets">
+<h3>9.3 HyperNets</h3>
+<p>This class is part of the <em>virtual flattening</em> mechanism, it allows to
+go through all the components of a trans-hierarchical net.</p>
+</div>
+<div class="section" id="miscellaeous-trans-hierarchical-functions">
+<h3>9.4 Miscellaeous trans-hierarchical functions</h3>
+<p>For a starter, how to get all the leaf cells...</p>
+</div>
+</div>
+
+    </div>
+        <!-- /Content --> 
+
+        <!-- Footer -->
+        <div class="footer gradient-2">
+            <div class="container footer-container ">
+                <div class="row">
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Social</div>
+                        <ul class="list-unstyled">
+                        </ul>
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-2">
+                    </div>
+                    <div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+                        <div class="footer-title">Links</div>
+                        <ul class="list-unstyled">
+                            <li><a href="https://coriolis.lip6.fr/" target="_blank">Alliance/Coriolis</a></li>
+                            <li><a href="https://www-soc.lip6.fr/" target="_blank">CIAN Team Website</a></li>
+                            <li><a href="https://f-si.org" target="_blank">Free Silicon Foundation</a></li>
+                        </ul>
+                    </div> 
+                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-4">
+                        <p class="pull-right text-right">
+                            <small><em>Proudly powered by <a href="http://docs.getpelican.com/" target="_blank">pelican</a></em></small><br/>
+			    <small><em><span class="sc">NEST</span> theme by <a href="https://github.com/molivier" target="_blank">molivier</a></em></small><br/>
+                            <small>Copyright © 2020-2020 Sorbonne Universite</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Footer -->
+    </body>
+</html>

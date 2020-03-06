@@ -52,9 +52,10 @@ namespace Katana {
                        , ShortNetRipupLimit   = 4
                        , RipupLimitsTableSize = 5
                        };                     
-      enum Constants   { MaxMetalDepth        = 20 };
-      enum Flag        { UseClockTree         = (1 << 0)
-                       , UseGlobalEstimate    = (1 << 1)
+      enum Constants   { MaxMetalDepth         = 20 };
+      enum Flag        { UseClockTree          = (1 << 0)
+                       , UseGlobalEstimate     = (1 << 1)
+                       , UseStaticBloatProfile = (1 << 2)
                        };
     public:
     // Constructor & Destructor.
@@ -64,6 +65,7 @@ namespace Katana {
     // Decorateds.                                               
       inline        bool                       useClockTree            () const;
       inline        bool                       useGlobalEstimate       () const;
+      inline        bool                       useStaticBloatProfile   () const;
       inline        bool                       profileEventCosts       () const;
     // Methods.                                                  
       inline        Anabatic::Configuration*   base                    ();
@@ -73,6 +75,7 @@ namespace Katana {
       inline        uint32_t                   getRipupCost            () const;
                     uint32_t                   getRipupLimit           ( uint32_t type ) const;
       inline        uint32_t                   getSearchHalo           () const;
+      inline        uint32_t                   getBloatOverloadAdd     () const;
       inline        uint32_t                   getHTracksReservedLocal () const;
       inline        uint32_t                   getVTracksReservedLocal () const;
       inline        uint32_t                   getTermSatReservedLocal () const;
@@ -81,6 +84,7 @@ namespace Katana {
       inline        void                       setRipupCost            ( uint32_t );
                     void                       setRipupLimit           ( uint32_t limit, uint32_t type );
       inline        void                       setPostEventCb          ( PostEventCb_t );
+      inline        void                       setBloatOverloadAdd     ( uint32_t );
                     void                       setHTracksReservedLocal ( uint32_t );
                     void                       setVTracksReservedLocal ( uint32_t );
       inline        void                       setFlags                ( unsigned int );
@@ -101,6 +105,7 @@ namespace Katana {
              uint32_t       _ripupLimits         [RipupLimitsTableSize];
              uint32_t       _ripupCost;
              uint64_t       _eventsLimit;
+             uint32_t       _bloatOverloadAdd;
              unsigned int   _flags;
              bool           _profileEventCosts;
     private:
@@ -116,15 +121,18 @@ namespace Katana {
   inline       uint64_t                      Configuration::getEventsLimit          () const { return _eventsLimit; }
   inline       uint32_t                      Configuration::getSearchHalo           () const { return _searchHalo; }
   inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
+  inline       uint32_t                      Configuration::getBloatOverloadAdd     () const { return _bloatOverloadAdd; }
   inline       uint32_t                      Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
   inline       uint32_t                      Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
   inline       uint32_t                      Configuration::getTermSatReservedLocal () const { return _termSatReservedLocal; }
   inline       uint32_t                      Configuration::getTermSatThreshold     () const { return _termSatThreshold; }
+  inline       void                          Configuration::setBloatOverloadAdd     ( uint32_t add ) { _bloatOverloadAdd = add; }
   inline       void                          Configuration::setRipupCost            ( uint32_t cost ) { _ripupCost = cost; }
   inline       void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
   inline       void                          Configuration::setEventsLimit          ( uint64_t limit ) { _eventsLimit = limit; }
   inline       bool                          Configuration::useClockTree            () const { return _flags & UseClockTree; }
   inline       bool                          Configuration::useGlobalEstimate       () const { return _flags & UseGlobalEstimate; }
+  inline       bool                          Configuration::useStaticBloatProfile   () const { return _flags & UseStaticBloatProfile; }
   inline       bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
   inline       void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline       void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }

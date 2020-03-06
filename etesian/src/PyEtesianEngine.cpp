@@ -69,6 +69,7 @@ extern "C" {
 
   DirectVoidMethod(EtesianEngine,etesian,setDefaultAb)
   DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
+  DirectSetLongAttribute(PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
 
 
   static PyObject* PyEtesianEngine_get ( PyObject*, PyObject* args )
@@ -208,6 +209,8 @@ extern "C" {
                             , "Set the sub-block (Instance) to place." }
     , { "setDefaultAb"      , (PyCFunction)PyEtesianEngine_setDefaultAb      , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
+    , { "setFixedAbHeight"  , (PyCFunction)PyEtesianEngine_setFixedAbHeight  , METH_VARARGS
+                            , "Use this height when computing the size of the default abutment box (disable aspect ratio)." }
     , { "resetPlacement"    , (PyCFunction)PyEtesianEngine_resetPlacement    , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS

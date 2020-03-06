@@ -58,31 +58,49 @@ extern "C" {
 // +=================================================================+
 
 
-  static PyObject* PyAllianceLibrary_getLibrary ( PyAllianceLibrary* self, PyObject* args )
+  static PyObject* PyAllianceLibrary_getLibrary ( PyAllianceLibrary* self, PyObject* )
   {
     cdebug_log(30,0) << "PyAllianceLibrary_getLibrary()" << endl;
 
     Library* lib = NULL;
-
     HTRY
-    METHOD_HEAD("AllianceLibrary.getLibrary()")
-    lib = alib->getLibrary();
+      METHOD_HEAD("AllianceLibrary.getLibrary()")
+      lib = alib->getLibrary();
     HCATCH
-
     return PyLibrary_Link(lib);
   }
 
 
-  static PyObject* PyAllianceLibrary_getPath ( PyAllianceLibrary* self, PyObject* args )
+  static PyObject* PyAllianceLibrary_getPath ( PyAllianceLibrary* self, PyObject* )
   {
     cdebug_log(30,0) << "PyAllianceLibrary_getPath()" << endl;
-
     HTRY
-    METHOD_HEAD("AllianceLibrary.getPath()")
-    return PyString_FromString( getString(alib->getPath()).c_str() );
+      METHOD_HEAD("AllianceLibrary.getPath()")
+      return PyString_FromString( getString(alib->getPath()).c_str() );
     HCATCH
-
     return NULL;
+  }
+
+
+  static PyObject* PyAllianceLibrary_saveCells ( PyAllianceLibrary* self, PyObject* )
+  {
+    cdebug_log(30,0) << "PyAllianceLibrary_saveCells()" << endl;
+    HTRY
+      METHOD_HEAD("AllianceLibrary.saveCells()")
+      alib->saveCells();
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyAllianceLibrary_saveCATAL ( PyAllianceLibrary* self, PyObject* )
+  {
+    cdebug_log(30,0) << "PyAllianceLibrary_saveCATAL()" << endl;
+    HTRY
+      METHOD_HEAD("AllianceLibrary.saveCATAL()")
+      alib->saveCATAL();
+    HCATCH
+    Py_RETURN_NONE;
   }
 
 
@@ -105,6 +123,10 @@ extern "C" {
                           , "Return the complete path of the library." }
     , { "getLibrary"      , (PyCFunction)PyAllianceLibrary_getLibrary    , METH_NOARGS
                           , "Returns the associated Hurricane library." }
+    , { "saveCells"       , (PyCFunction)PyAllianceLibrary_saveCells     , METH_NOARGS
+                          , "Save all the library cells." }
+    , { "saveCATAL"       , (PyCFunction)PyAllianceLibrary_saveCATAL     , METH_NOARGS
+                          , "Rewrite the library CATAL file." }
   //, { "destroy"         , (PyCFunction)PyAllianceLibrary_destroy       , METH_VARARGS
   //                      , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */

@@ -924,7 +924,7 @@ namespace Hurricane {
   void  CellViewer::runStressScript ()
   {
     for ( size_t i=0 ; i<1000 ; ++i ) {
-      cerr << "Calling ./stressScript [" << setw(3) << right << setfill('0') << i << "]" << endl;
+      cerr << "Calling ./stressScript [" << setw(3) << right << setfill('0') << i << "]" << setfill(' ') << endl;
       ExceptionWidget::catchAllWrapper( std::bind( &CellViewer::_runScript, this, "stressScript.py" ) );
     }
   }

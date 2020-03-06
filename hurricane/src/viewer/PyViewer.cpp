@@ -108,9 +108,9 @@ extern "C" {
     Py_INCREF ( &PyTypeHApplication );
     PyModule_AddObject ( module, "HApplication", (PyObject*)&PyTypeHApplication );
     Py_INCREF ( &PyTypeGraphics );
-    PyModule_AddObject ( module, "Graphics", (PyObject*)&PyTypeGraphics );
+    PyModule_AddObject ( module, "Graphics"    , (PyObject*)&PyTypeGraphics );
     Py_INCREF ( &PyTypeCellViewer );
-    PyModule_AddObject ( module, "CellViewer", (PyObject*)&PyTypeCellViewer );
+    PyModule_AddObject ( module, "CellViewer"  , (PyObject*)&PyTypeCellViewer );
     
     PyDisplayStyle_postModuleInit();
     PyCellViewer_postModuleInit();

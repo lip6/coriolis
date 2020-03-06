@@ -638,7 +638,7 @@ namespace Katana {
       }
       _eventQueue.commit();
       cmess2 << "        <repair.queue:" <<  right << setw(8) << setfill('0')
-             << _eventQueue.size() << ">" << endl;
+             << _eventQueue.size() << ">" << setfill(' ') << endl;
 
       count = 0;
     //_eventQueue.prepareRepair();

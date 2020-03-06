@@ -1,6 +1,6 @@
 # -*- mode: CMAKE; explicit-buffer-name: # "CMakeLists.txt<katabatic/doc>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/katabatic )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/katabatic )
                set ( latexInstallDir share/doc/coriolis2/en/latex/katabatic )
                set ( doxExtras       customHierarchy.html
                                      closed.png

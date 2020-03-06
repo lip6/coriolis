@@ -1,6 +1,6 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<kite/doc>" -*-
 
-               set ( htmlInstallDir  share/doc/coriolis2/en/html/kite )
+               set ( htmlInstallDir  share/doc/coriolis2/en/html/doc/kite )
                set ( latexInstallDir share/doc/coriolis2/en/latex/kite )
                set ( doxExtras       customHierarchy.html
                                      closed.png

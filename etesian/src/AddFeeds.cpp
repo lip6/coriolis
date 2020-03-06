@@ -370,6 +370,8 @@ namespace Etesian {
 
     sliceHoles.setSpinSlice0( _yspinSlice0 );
 
+    Cell::setFlattenLeafMode( true );
+
     for ( Occurrence occurrence : getBlockCell()->getLeafInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
@@ -396,6 +398,8 @@ namespace Etesian {
     }
 
     sliceHoles.addFeeds();
+
+    Cell::setFlattenLeafMode( false );
 
     UpdateSession::close();
 

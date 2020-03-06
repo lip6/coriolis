@@ -60,6 +60,7 @@ namespace Anabatic {
       inline        bool              isHorizontal         () const;
       inline        bool              hasNet               ( const Net* ) const;
       inline        unsigned int      getCapacity          () const;
+      inline        unsigned int      getRawCapacity       () const;
       inline        unsigned int      getReservedCapacity  () const;
       inline        unsigned int      getCapacity          ( size_t depth ) const;
       inline        unsigned int      getRealOccupancy     () const;
@@ -137,6 +138,7 @@ namespace Anabatic {
   inline       bool              Edge::isHorizontal         () const { return _flags.isset(Flags::Horizontal); }
   inline       bool              Edge::hasNet               ( const Net* owner ) const { return getSegment(owner); }
   inline       unsigned int      Edge::getCapacity          ( size_t depth ) const { return (_capacities) ? _capacities->getCapacity(depth) : 0; }
+  inline       unsigned int      Edge::getRawCapacity       () const { return (_capacities) ? _capacities->getCapacity() : 0; }
   inline       unsigned int      Edge::getReservedCapacity  () const { return _reservedCapacity; }
   inline       unsigned int      Edge::getRealOccupancy     () const { return _realOccupancy; }
   inline       float             Edge::getEstimateOccupancy () const { return _estimateOccupancy; }
