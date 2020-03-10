@@ -77,7 +77,7 @@ def runDemo ( cell, editor ):
 
     if editor: editor.setCell( cell )
 
-    Breakpoint.stop( 5, 'Abutment box has been drawn.' )
+    Breakpoint.stop( 1, 'Abutment box has been drawn.' )
     UpdateSession.open()
 
     technology = DataBase.getDB().getTechnology()
@@ -107,7 +107,7 @@ def runDemo ( cell, editor ):
     Contact.create   ( vdd, contDiffP, DbU.fromLambda( 4.0), DbU.fromLambda(45.0) )
 
     UpdateSession.close()
-    Breakpoint.stop( 5, 'Power nets have been drawn.' )
+    Breakpoint.stop( 1, 'Power nets have been drawn.' )
     UpdateSession.open()
 
     nq = Net.create( cell, 'nq' )
@@ -119,7 +119,7 @@ def runDemo ( cell, editor ):
     Vertical.create  ( nq, metal1   , DbU.fromLambda(10.0), DbU.fromLambda( 2.0), DbU.fromLambda(10.0), DbU.fromLambda(40.0) )
 
     UpdateSession.close()
-    Breakpoint.stop( 5, 'Output has been drawn.' )
+    Breakpoint.stop( 1, 'Output has been drawn.' )
     UpdateSession.open()
 
     i = Net.create( cell, 'i' )
@@ -131,7 +131,7 @@ def runDemo ( cell, editor ):
     Vertical.create  ( i, metal1    , DbU.fromLambda( 5.0), DbU.fromLambda( 2.0), DbU.fromLambda(10.0), DbU.fromLambda(40.0) )
     
     UpdateSession.close()
-    Breakpoint.stop( 5, 'Input has been drawn.' )
+    Breakpoint.stop( 1, 'Input has been drawn.' )
     return
 
 
@@ -156,6 +156,8 @@ def ScriptMain ( **kw ):
     helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )
 
+    Breakpoint.setStopLevel( 1 )
+    print '  o  Breakpoint level: %d.' % Breakpoint.getStopLevel()
     cell, editor = plugins.kwParseMain( **kw )
 
     runDemo( cell, editor )
