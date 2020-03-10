@@ -311,7 +311,7 @@ namespace Etesian {
     Box topCellAb = getBlockCell()->getAbutmentBox();
 
     if (not topCellAb.isEmpty()) {
-      for ( Occurrence occurrence : getBlockCell()->getLeafInstanceOccurrences() )
+      for ( Occurrence occurrence : getBlockCell()->getTerminalNetlistInstanceOccurrences() )
       {
         Instance*      instance       = static_cast<Instance*>(occurrence.getEntity());
         Cell*          masterCell     = instance->getMasterCell();
@@ -370,9 +370,7 @@ namespace Etesian {
 
     sliceHoles.setSpinSlice0( _yspinSlice0 );
 
-    Cell::setFlattenLeafMode( true );
-
-    for ( Occurrence occurrence : getBlockCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getBlockCell()->getTerminalNetlistInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
@@ -398,8 +396,6 @@ namespace Etesian {
     }
 
     sliceHoles.addFeeds();
-
-    Cell::setFlattenLeafMode( false );
 
     UpdateSession::close();
 

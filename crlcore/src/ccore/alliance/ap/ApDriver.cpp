@@ -397,49 +397,47 @@ void DumpDate(ofstream &ccell)
 }
 
 
-void DumpInstances(ofstream &ccell, Cell* cell)
-{
-    for_each_instance(instance, cell->getNotUnplacedInstances())
-    {
+  void DumpInstances(ofstream &ccell, Cell* cell)
+  {
+    for ( Instance* instance : cell->getNotUnplacedInstances()) {
       ccell << "I " << toMBKlambda(instance->getAbutmentBox().getXMin())
             << ","  << toMBKlambda(instance->getAbutmentBox().getYMin())
             << ","  << instance->getMasterCell()->getName()
             << ","  << instance->getName()
             << ",";
-
-        const Transformation& transformation = instance->getTransformation();
-        switch (transformation.getOrientation()) {
-            case Transformation::Orientation::ID:
-                ccell << "NOSYM";
-                break;
-            case Transformation::Orientation::R1:
-                ccell << "ROT_P";
-                break;
-            case Transformation::Orientation::R2:
-                ccell << "SYMXY";
-                break;
-            case Transformation::Orientation::R3:
-                ccell << "ROT_M";
-                break;
-            case Transformation::Orientation::MX:
-                ccell << "SYM_X"; 
-                break;
-            case Transformation::Orientation::XR:
-                ccell << "SY_RM";
-                break;
-            case Transformation::Orientation::MY:
-                ccell << "SYM_Y"; 
-                break;
-            case Transformation::Orientation::YR:
-                ccell << "SY_RP";
-                break;
-            default:
-                throw Error("Unrecognized orientation in transformation");
-        }
-        ccell << endl;
-        end_for;
+  
+      const Transformation& transformation = instance->getTransformation();
+      switch (transformation.getOrientation()) {
+        case Transformation::Orientation::ID:
+          ccell << "NOSYM";
+          break;
+        case Transformation::Orientation::R1:
+          ccell << "ROT_P";
+          break;
+        case Transformation::Orientation::R2:
+          ccell << "SYMXY";
+          break;
+        case Transformation::Orientation::R3:
+          ccell << "ROT_M";
+          break;
+        case Transformation::Orientation::MX:
+          ccell << "SYM_X"; 
+          break;
+        case Transformation::Orientation::XR:
+          ccell << "SY_RM";
+          break;
+        case Transformation::Orientation::MY:
+          ccell << "SYM_Y"; 
+          break;
+        case Transformation::Orientation::YR:
+          ccell << "SY_RP";
+          break;
+        default:
+          throw Error("Unrecognized orientation in transformation");
+      }
+      ccell << endl;
     }
-}
+  }
 
 
 }

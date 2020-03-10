@@ -42,7 +42,6 @@ namespace Analog {
     SimpleCurrentMirror* scm = new SimpleCurrentMirror(library,name,type);
     scm->_postCreate(deviceName);
     scm->createConnections(bulkConnected);
-    scm->setTerminal( true );
     UpdateSession::close();
   
     return scm;

@@ -137,7 +137,7 @@ class Instance : public Go {
     public: bool isPlaced() const {return _placementStatus == PlacementStatus::PLACED;};
     public: bool isFixed() const {return _placementStatus == PlacementStatus::FIXED;};
     public: bool isTerminal() const;
-    public: bool isLeaf() const;
+    public: bool isTerminalNetlist() const;
     public: bool isUnique() const;
     public: bool isUniquified() const;
     public: bool isUniquifyMaster() const;
@@ -147,7 +147,7 @@ class Instance : public Go {
 
     public: static InstanceFilter getIsUnderFilter(const Box& area);
     public: static InstanceFilter getIsTerminalFilter();
-    public: static InstanceFilter getIsLeafFilter();
+    public: static InstanceFilter getIsTerminalNetlistFilter();
     public: static InstanceFilter getIsUnplacedFilter();
     public: static InstanceFilter getIsPlacedFilter();
     public: static InstanceFilter getIsFixedFilter();

@@ -325,7 +325,7 @@ namespace {
       viewer->setShowSelection( false );
       viewer->setCumulativeSelection( true );
 
-      for( Occurrence occurrence : katana->getCell()->getLeafInstanceOccurrences() ) {
+      for( Occurrence occurrence : katana->getCell()->getTerminalNetlistInstanceOccurrences() ) {
         if (BloatExtension::get(occurrence)) {
           viewer->select( occurrence );
 
@@ -707,7 +707,7 @@ namespace Katana {
     setState( EngineState::EngineGlobalLoaded );
     setGlobalRoutingSuccess( ovEdges.empty() );
 
-    // for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() ) {
+    // for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
     //   if (occurrence.getEntity()->getId() == 25202) {
     //     cerr << "REFERENCE INSTANCE" << endl;
     //     cerr << occurrence << " " << occurrence.getPath().getTransformation() << endl;

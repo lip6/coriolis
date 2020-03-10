@@ -41,7 +41,6 @@ namespace Analog {
     Resistor* tr = new Resistor( library, name, type );
     tr->_postCreate( _resistorName );
     tr->createConnections();
-    tr->setTerminal( true );
     UpdateSession::close();
     return tr;
   }

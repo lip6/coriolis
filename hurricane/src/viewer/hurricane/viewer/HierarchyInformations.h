@@ -38,28 +38,28 @@ namespace Hurricane {
     public:
       enum Flags { NoFlags=0x0000, Collapsed=0x0001 };
     public:
-                                                  HierarchyInfos   ( HierarchyInfos* parent, size_t rowInParent );
-      virtual                                    ~HierarchyInfos   ();
-      virtual bool                                isRoot           () const = 0;
-      virtual bool                                isLeaf           () const = 0;
-      virtual bool                                isCollapsed      () const = 0;
-      static  int                                 getColumnCount   ();
-      static  QVariant                            getColumnName    ( int column );
-              QVariant                            getColumn        ( int column ) const;
-      virtual const HierarchyInfos*               getRow           ( int row ) const = 0;
-      inline  const HierarchyInfos*               getParent        () const;
-      inline  size_t                              getRowInParent   () const;
-      virtual int                                 size             () const = 0;
-      virtual Cell*                               getMasterCell    () const = 0;
-      virtual const Instance*                     getInstance      () const = 0;
-      virtual const std::vector<HierarchyInfos*>& getInstances     () const = 0;
-      inline  const Name                          getName          () const;
-      virtual Path                                getPath          () const;
-      virtual QString                             getFilterPattern () const = 0;
-      virtual void                                setFilterPattern ( const QString& ) = 0;
-      inline  void                                setRowInParent   ( size_t );
-      virtual void                                expand           () = 0;
-      virtual void                                collapse         () = 0;
+                                                  HierarchyInfos    ( HierarchyInfos* parent, size_t rowInParent );
+      virtual                                    ~HierarchyInfos    ();
+      virtual bool                                isRoot            () const = 0;
+      virtual bool                                isTerminalNetlist () const = 0;
+      virtual bool                                isCollapsed       () const = 0;
+      static  int                                 getColumnCount    ();
+      static  QVariant                            getColumnName     ( int column );
+              QVariant                            getColumn         ( int column ) const;
+      virtual const HierarchyInfos*               getRow            ( int row ) const = 0;
+      inline  const HierarchyInfos*               getParent         () const;
+      inline  size_t                              getRowInParent    () const;
+      virtual int                                 size              () const = 0;
+      virtual Cell*                               getMasterCell     () const = 0;
+      virtual const Instance*                     getInstance       () const = 0;
+      virtual const std::vector<HierarchyInfos*>& getInstances      () const = 0;
+      inline  const Name                          getName           () const;
+      virtual Path                                getPath           () const;
+      virtual QString                             getFilterPattern  () const = 0;
+      virtual void                                setFilterPattern  ( const QString& ) = 0;
+      inline  void                                setRowInParent    ( size_t );
+      virtual void                                expand            () = 0;
+      virtual void                                collapse          () = 0;
     protected:
       HierarchyInfos* _parent;
       size_t          _rowInParent;
@@ -73,17 +73,19 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
-// Class  :  "LeafHierarchyInfos"
+// Class  :  "TerminalNetlistHierarchyInfos"
 
 
-  class LeafHierarchyInfos : public HierarchyInfos {
+  class TerminalNetlistHierarchyInfos : public HierarchyInfos {
     public:
-                                                  LeafHierarchyInfos ( const Instance*
+                                                  TerminalNetlistHierarchyInfos
+                                                                     ( const Instance*
                                                                      , HierarchyInfos* parent
                                                                      , size_t          rowInParent );
-      virtual                                    ~LeafHierarchyInfos ();
+      virtual                                    ~TerminalNetlistHierarchyInfos
+                                                                     ();
       virtual bool                                isRoot             () const;
-      virtual bool                                isLeaf             () const;
+      virtual bool                                isTerminalNetlist  () const;
       virtual bool                                isCollapsed        () const;
       virtual const HierarchyInfos*               getRow             ( int row ) const;
       virtual int                                 size               () const;
@@ -111,7 +113,7 @@ namespace Hurricane {
                                                                      , size_t          rowInParent );
       virtual                                    ~InstHierarchyInfos ();
       virtual bool                                isRoot             () const;
-      virtual bool                                isLeaf             () const;
+      virtual bool                                isTerminalNetlist  () const;
       virtual bool                                isCollapsed        () const;
       virtual const HierarchyInfos*               getRow             ( int row ) const;
       virtual int                                 size               () const;
@@ -156,7 +158,7 @@ namespace Hurricane {
                                                   RootHierarchyInfos ( Cell* );
       virtual                                    ~RootHierarchyInfos ();
       virtual bool                                isRoot             () const;
-      virtual bool                                isLeaf             () const;
+      virtual bool                                isTerminalNetlist  () const;
       virtual bool                                isCollapsed        () const;
       virtual const HierarchyInfos*               getRow             ( int row ) const;
       virtual int                                 size               () const;

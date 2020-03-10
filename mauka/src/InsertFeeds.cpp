@@ -315,7 +315,7 @@ namespace Mauka {
 
     SurfaceFeeds surfaceFeeds ( this );
 
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    forEach ( Occurrence, ioccurrence, getCell()->getTerminalNetlistInstanceOccurrences() )
     {
       surfaceFeeds.addInstanceOccurrence ( *ioccurrence );
     }

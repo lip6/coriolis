@@ -338,7 +338,7 @@ void EquinoxEngine::cleanUpLeafCell()
 // *************************************
 {
 
-    ///*DEBUG*/    cmess1 << "                    -  cleanUpLeafCell() " << endl;
+    ///*DEBUG*/    cmess1 << "                    -  cleanUpTerminalNetlistCell() " << endl;
    set<Net*> set_nets;
    Net * externalnet = NULL;
    unsigned long count = 1;

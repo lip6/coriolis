@@ -90,6 +90,8 @@ extern "C" {
   // DirectGetDoubleAttribute(PyCapacitorFamily_getCDraw    ,getCDraw    ,PyMultiCapacitor,MultiCapacitor)
   // DirectGetDoubleAttribute(PyCapacitorFamily_getCBorder  ,getCBorder  ,PyMultiCapacitor,MultiCapacitor)
   // DirectGetDoubleAttribute(PyCapacitorFamily_getCParasite,getCParasite,PyMultiCapacitor,MultiCapacitor)
+  DirectGetBoolAttribute(PyMultiCapacitor_hasDummy,hasDummy,PyMultiCapacitor,MultiCapacitor)
+  DirectSetBoolAttribute(PyMultiCapacitor_setDummy,setDummy,PyMultiCapacitor,MultiCapacitor)
 
   // Standart Destroy (Attribute).
   DBoDestroyAttribute(PyMultiCapacitor_destroy, PyMultiCapacitor)
@@ -101,15 +103,19 @@ extern "C" {
   PyMethodDef PyMultiCapacitor_Methods[] =
     { { "create"            , (PyCFunction)PyMultiCapacitor_create         , METH_VARARGS|METH_STATIC
                             , "Create an anlogic device made of one transistor." }
-  // , { "getC"              , (PyCFunction)PyCapacitorFamily_getC        , METH_NOARGS
-  //                         , "Capacitor value C (requested)." }
-  // , { "getCDraw"          , (PyCFunction)PyCapacitorFamily_getCDraw    , METH_NOARGS
-  //                         , "Capacitor value C (requested)." }
-  // , { "getCBorder"        , (PyCFunction)PyCapacitorFamily_getCBorder  , METH_NOARGS
-  //                         , "Capacitor value C (requested)." }
-  // , { "getCParasite"      , (PyCFunction)PyCapacitorFamily_getCParasite, METH_NOARGS
+  //, { "getC"              , (PyCFunction)PyCapacitorFamily_getC        , METH_NOARGS
   //                        , "Capacitor value C (requested)." }
-    , { "destroy"           , (PyCFunction)PyMultiCapacitor_destroy        , METH_NOARGS
+  //, { "getCDraw"          , (PyCFunction)PyCapacitorFamily_getCDraw    , METH_NOARGS
+  //                        , "Capacitor value C (requested)." }
+  //, { "getCBorder"        , (PyCFunction)PyCapacitorFamily_getCBorder  , METH_NOARGS
+  //                        , "Capacitor value C (requested)." }
+  //, { "getCParasite"      , (PyCFunction)PyCapacitorFamily_getCParasite, METH_NOARGS
+  //                        , "Capacitor value C (requested)." }
+    , { "hasDummy"          , (PyCFunction)PyMultiCapacitor_hasDummy     , METH_NOARGS
+                            , "Self explanatory." }
+    , { "setDummy"          , (PyCFunction)PyMultiCapacitor_setDummy     , METH_VARARGS
+                            , "Self explanatory." }
+    , { "destroy"           , (PyCFunction)PyMultiCapacitor_destroy      , METH_NOARGS
                             , "Destroys associated hurricane object, the python object remains." }
     , { NULL, NULL, 0, NULL }  /* sentinel */
     };

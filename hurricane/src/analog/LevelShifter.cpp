@@ -42,7 +42,6 @@ namespace Analog {
     LevelShifter* ls = new LevelShifter( library, name, type );
     ls->_postCreate( deviceName );
     ls->createConnections( bulkConnected );
-    ls->setTerminal( true );
     UpdateSession::close();
     return ls;
   }

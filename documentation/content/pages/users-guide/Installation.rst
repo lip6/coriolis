@@ -360,9 +360,9 @@ arguments:
 
 .. code-block:: sh
 
-   ego@home:debian-9> ../../dockerManage.sh -bS  # build both system & coriolis images.
-   ego@home:debian-9> ../../dockerManage.sh -r   # compile & check coriolis.
-   ego@home:debian-9> ../../dockerManage.sh -C   # clear the images.
+   ego@home:debian-9> ../../dockerManage.sh -scb      # build system, coriolis & bash images.
+   ego@home:debian-9> ../../dockerManage.sh -r        # run the bash image.
+   ego@home:debian-9> ../../dockerManage.sh --remove  # clear all images.
 
 
 

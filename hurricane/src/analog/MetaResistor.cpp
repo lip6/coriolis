@@ -50,8 +50,6 @@ namespace Analog {
     _pin2->setExternal(true);
     _anonymous = Net::create(this, "Anonymous");
     _anonymous->setAutomatic( true );
-  
-    setTerminal(false);
   }
 
 

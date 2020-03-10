@@ -450,7 +450,7 @@ namespace {
     if (not _staticInit) staticInit();
     
     _blifLut.insert( make_pair(getString(_cell->getName()), this) );
-    if (_cell->isTerminal())
+    if (_cell->isTerminalNetlist())
       _depth = 1;
     else {
       cmess2 << "     " << tab++ << "+ " << cell->getName() << " [.model]" << endl;
@@ -770,7 +770,7 @@ namespace CRL {
         }
 
         Cell* cell = framework->createCell( blifLine[1] );
-        cell->setTerminal( false );
+        cell->setTerminalNetlist( false );
         blifModel = new Model ( cell );
 
         if (not mainModel or (blifLine[1] == mainName))

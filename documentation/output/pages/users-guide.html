@@ -55,6 +55,7 @@
                 </button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                  <li><a class="dropdown-item " href="../pages/install-cases.html">Install Cases</a></li>
                   <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
                 </ul>
               </li>
@@ -81,6 +82,7 @@
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
+                <li><a class="dropdown-item " href="../pages/install-cases.html">Install Cases</a></li>
                 <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
               </ul>
             </div>
@@ -551,9 +553,9 @@ configuration file to see exactly how to setup a vanilla system to build
 <span class="sc">Coriolis</span>.</p>
 <p>To run the docker tests, call the <tt class="docutils literal">dockerManage.sh</tt> scripts with the relevant
 arguments:</p>
-<div class="highlight"><pre><span></span>ego@home:debian-9&gt; ../../dockerManage.sh -bS  <span class="c1"># build both system &amp; coriolis images.</span>
-ego@home:debian-9&gt; ../../dockerManage.sh -r   <span class="c1"># compile &amp; check coriolis.</span>
-ego@home:debian-9&gt; ../../dockerManage.sh -C   <span class="c1"># clear the images.</span>
+<div class="highlight"><pre><span></span>ego@home:debian-9&gt; ../../dockerManage.sh -scb      <span class="c1"># build system, coriolis &amp; bash images.</span>
+ego@home:debian-9&gt; ../../dockerManage.sh -r        <span class="c1"># run the bash image.</span>
+ego@home:debian-9&gt; ../../dockerManage.sh --remove  <span class="c1"># clear all images.</span>
 </pre></div>
 </div>
 <div class="section" id="packaging-coriolis">

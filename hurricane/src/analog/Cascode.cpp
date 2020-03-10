@@ -40,7 +40,6 @@ namespace Analog {
     Cascode* dp = new Cascode(library,name,type);
     dp->_postCreate      (deviceName);
     dp->createConnections(bulkConnected);
-    dp->setTerminal( true );
     UpdateSession::close();
     return dp;
   }

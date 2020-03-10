@@ -86,15 +86,15 @@ void DisplayInstanceOccurrence(Occurrence& instanceOccurrence)
     }
 }
 
-void DisplayNonLeafInstances(Cell* cell, Box area)
+void DisplayNonTerminalNetlistInstances(Cell* cell, Box area)
 {
     ltrace(100) << "display of "  << cell << " in " << area <<  endl;
-    for_each_instance(instance, cell->getNonLeafInstancesUnder(area))
+    for_each_instance(instance, cell->getNonTerminalNetlistInstancesUnder(area))
     {
         ltrace(100) << instance <<  " " << instance->getBoundingBox() << endl;
         Cell* masterCell = instance->getMasterCell();
         ltracein(20);
-        DisplayNonLeafInstances(masterCell, area);
+        DisplayNonTerminalNetlistInstances(masterCell, area);
         ltraceout(20);
         end_for;
     }
@@ -141,11 +141,11 @@ namespace {
 
 void PlacementVerification(Cell* cell, Box& box) {
     set<Occurrence> occurrenceSet;
-    for_each_occurrence(occurrence, cell->getLeafInstanceOccurrencesUnder(box)) {
+    for_each_occurrence(occurrence, cell->getTerminalNetlistInstanceOccurrencesUnder(box)) {
         occurrenceSet.insert(occurrence);
         end_for;
     }
-    // for_each_occurrence(occurrence, cell->getLeafInstanceOccurrences()) {
+    // for_each_occurrence(occurrence, cell->getTerminalNetlistInstanceOccurrences()) {
     //     if (occurrenceSet.find(occurrence) == occurrenceSet.end()) {
     //         cerr << occurrence << ":" << occurrence.getBoundingBox() << endl;
     //         throw Error("occurrence is badly placed");
@@ -248,7 +248,7 @@ typedef list<PlacementProblem*> PlacementProblemList;
         InstanceOccurrencesList toPlaceInstanceOccurrencesList;
       // Search for preplaced leaf instances
         forEach ( Occurrence
-                , ioccurrence, _mauka->getCell()->getLeafInstanceOccurrencesUnder(igcell->getBox()) ) {
+                , ioccurrence, _mauka->getCell()->getTerminalNetlistInstanceOccurrencesUnder(igcell->getBox()) ) {
           Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
 
           if ( instance->isFixed() ) {
@@ -268,7 +268,7 @@ typedef list<PlacementProblem*> PlacementProblemList;
 
       // Special case: no Nimbus run, Instances are *not* in the quadtree yet.
         if ( not partitionned ) {
-          forEach(Occurrence, ioccurrence, _mauka->getCell()->getLeafInstanceOccurrences() ) {
+          forEach(Occurrence, ioccurrence, _mauka->getCell()->getTerminalNetlistInstanceOccurrences() ) {
             Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
             if ( instance->isFixed() ) continue;
 
@@ -463,7 +463,7 @@ typedef list<PlacementProblem*> PlacementProblemList;
         if ( osit == verifyInstanceOccurrencesSet.end() ) {
           cerr << "  o  Problem with " << *iovit << endl;
           DisplayInstanceOccurrence ( *iovit );
-          DisplayNonLeafInstances ( _mauka->getCell(), iovit->getBoundingBox() );
+          DisplayNonTerminalNetlistInstances ( _mauka->getCell(), iovit->getBoundingBox() );
           return;
         }
       }

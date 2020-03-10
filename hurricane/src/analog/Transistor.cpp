@@ -50,7 +50,6 @@ namespace Analog {
     tr->addStepParameter("D.w" , 1, 1, 1);
     tr->addStepParameter("G.w" , 1, 1, 1);
     tr->addStepParameter("S.w" , 1, 1, 1);
-    tr->setTerminal( true );
     UpdateSession::close();
     return tr;
   }

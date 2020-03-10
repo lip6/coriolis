@@ -346,43 +346,43 @@ namespace Hurricane {
 
     Component* bestComponent = NULL;
     Plug*      plug          = static_cast<Plug*>(_occurrence.getEntity());
+    
+    for ( Component* component : NetExternalComponents::get(plug->getMasterNet()) ) {
+      if (not bestComponent) { bestComponent = component; continue; }
 
-    forEach ( Component*, icomponent, NetExternalComponents::get(plug->getMasterNet()) ) {
-      if ( not bestComponent ) { bestComponent = *icomponent; continue; }
-
-      switch ( flags & ComponentSelection ) {
+      switch (flags & ComponentSelection) {
         case LowestLayer:
-          if ( icomponent->getLayer()->below(bestComponent->getLayer()) )
-            bestComponent = *icomponent;
+          if (component->getLayer()->below(bestComponent->getLayer()))
+            bestComponent = component;
           break;
         case HighestLayer:
-          if ( icomponent->getLayer()->above(bestComponent->getLayer()) )
-            bestComponent = *icomponent;
+          if (component->getLayer()->above(bestComponent->getLayer()))
+            bestComponent = component;
           break;
         case BiggestArea:
         default:
           {
-            double compArea = getArea(*icomponent);
+            double compArea = getArea(component);
             double bestArea = getArea(bestComponent);
 
             if (compArea == bestArea) {
-              Box compBox  = icomponent->getBoundingBox();
+              Box compBox  = component->getBoundingBox();
               Box bestBox  = bestComponent->getBoundingBox();
 
               if (compBox.getXMin() == bestBox.getXMin()) {
                 if (compBox.getYMin() == bestBox.getYMin()) {
-                  if (icomponent->getId() < bestComponent->getId())
-                    bestComponent = *icomponent;
+                  if (component->getId() < bestComponent->getId())
+                    bestComponent = component;
                 } else
                   if (compBox.getYMin() < bestBox.getYMin())
-                    bestComponent = *icomponent;
+                    bestComponent = component;
               } else {
                 if (compBox.getXMin() < bestBox.getXMin())
-                  bestComponent = *icomponent;
+                  bestComponent = component;
               }
             } else {
               if (compArea > bestArea)
-                bestComponent = *icomponent;
+                bestComponent = component;
             }
           }
           break;
@@ -390,7 +390,7 @@ namespace Hurricane {
     }
 
     if ( not bestComponent )
-      throw Error ( "RoutingPad::_getBestComponent(): No external components for\n"
+      throw Error ( "RoutingPad::setOnBestComponent(): No external components for\n"
                    "  %s of %s."
                   ,getString(plug->getMasterNet()).c_str()
                   ,getString(plug->getInstance ()).c_str() );

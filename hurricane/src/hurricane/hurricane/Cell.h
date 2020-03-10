@@ -87,16 +87,15 @@ class Cell : public Entity {
                   , CellChanged             = (1 << 11)
                   , CellDestroyed           = (1 << 12)
                   // Cell states
-                  , Terminal                = (1 << 20)
-                  , FlattenLeaf             = (1 << 21)
-                  , Pad                     = (1 << 22)
-                  , Feed                    = (1 << 23)
-                  , FlattenedNets           = (1 << 24)
-                  , Placed                  = (1 << 25)
-                  , Routed                  = (1 << 26)
-                  , MergedQuadTree          = (1 << 27)
-                  , SlavedAb                = (1 << 28)
-                  , Materialized            = (1 << 29) 
+                  , TerminalNetlist         = (1 << 20)
+                  , Pad                     = (1 << 21)
+                  , Feed                    = (1 << 22)
+                  , FlattenedNets           = (1 << 23)
+                  , Placed                  = (1 << 24)
+                  , Routed                  = (1 << 25)
+                  , MergedQuadTree          = (1 << 26)
+                  , SlavedAb                = (1 << 27)
+                  , Materialized            = (1 << 28) 
                   };
 
       public:
@@ -342,7 +341,6 @@ class Cell : public Entity {
     private: AliasNameSet _netAliasSet;
     private: Observable _observers;
     private: Flags _flags;
-    private: static bool _useFlattenLeaf;
 
 // Constructors
 // ************
@@ -431,10 +429,10 @@ class Cell : public Entity {
     public: Instances getTerminalInstancesUnder(const Box& area) const;
     public: Instances getNonTerminalInstances() const;
     public: Instances getNonTerminalInstancesUnder(const Box& area) const;
-    public: Instances getLeafInstances() const;
-    public: Instances getLeafInstancesUnder(const Box& area) const;
-    public: Instances getNonLeafInstances() const;
-    public: Instances getNonLeafInstancesUnder(const Box& area) const;
+    public: Instances getTerminalNetlistInstances() const;
+    public: Instances getTerminalNetlistInstancesUnder(const Box& area) const;
+    public: Instances getNonTerminalNetlistInstances() const;
+    public: Instances getNonTerminalNetlistInstancesUnder(const Box& area) const;
     public: Net* getNet(const Name& name) const;
     public: DeepNet* getDeepNet( Path, const Net* ) const;
     public: Nets getNets() const {return _netMap.getElements();};
@@ -463,9 +461,9 @@ class Cell : public Entity {
     public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
     public: Occurrences getTerminalInstanceOccurrences() const;
     public: Occurrences getTerminalInstanceOccurrencesUnder(const Box& area) const;
-    public: Occurrences getLeafInstanceOccurrences( const Instance* topInstance=NULL ) const;
-    public: Occurrences getLeafInstanceOccurrencesUnder(const Box& area) const;
-    public: Occurrences getNonLeafInstanceOccurrences( const Instance* topInstance=NULL ) const;
+    public: Occurrences getTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
+    public: Occurrences getTerminalNetlistInstanceOccurrencesUnder(const Box& area) const;
+    public: Occurrences getNonTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
     public: Occurrences getComponentOccurrences(const Layer::Mask& mask = ~0) const;
     public: Occurrences getComponentOccurrencesUnder(const Box& area, const Layer::Mask& mask = ~0) const;
     public: Occurrences getHyperNetRootNetOccurrences() const;
@@ -484,9 +482,8 @@ class Cell : public Entity {
 // **********
 
     public: bool isCalledBy(Cell* cell) const;
-    public: bool isTerminal() const {return _flags.isset(Flags::Terminal);};
-    public: bool isFlattenLeaf() const {return _flags.isset(Flags::FlattenLeaf);};
-    public: bool isLeaf() const;
+    public: bool isTerminal() const {return _instanceMap.isEmpty();};
+    public: bool isTerminalNetlist() const {return _flags.isset(Flags::TerminalNetlist);};
     public: bool isUnique() const;
     public: bool isUniquified() const;
     public: bool isUniquifyMaster() const;
@@ -504,8 +501,7 @@ class Cell : public Entity {
     public: void setAbutmentBox(const Box& abutmentBox);
     public: void slaveAbutmentBox(Cell*);
     public: void unslaveAbutmentBox(Cell*);
-    public: void setTerminal(bool isTerminal) {_flags.set(Flags::Terminal,isTerminal);};
-    public: void setFlattenLeaf(bool isFlattenLeaf) {_flags.set(Flags::FlattenLeaf,isFlattenLeaf);};
+    public: void setTerminalNetlist(bool isTerminalNetlist) {_flags.set(Flags::TerminalNetlist,isTerminalNetlist);};
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
     public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
     public: void setRouted(bool isRouted) {_flags.set(Flags::Routed,isRouted);};
@@ -522,7 +518,6 @@ class Cell : public Entity {
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
     public: void notify(unsigned flags);
-    public: static void setFlattenLeafMode(bool state) { _useFlattenLeaf=state; };
 
 };
 

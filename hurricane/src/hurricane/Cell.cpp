@@ -525,9 +525,6 @@ namespace Hurricane {
 // ****************************************************************************************************
 
 
-bool  Cell::_useFlattenLeaf = false;
-
-
 Cell::Cell(Library* library, const Name& name)
 // *******************************************
 :    Inherit(),
@@ -548,7 +545,7 @@ Cell::Cell(Library* library, const Name& name)
     _nextOfSymbolCellSet(NULL),
     _slaveEntityMap(),
     _observers(),
-    _flags(Flags::Terminal)
+    _flags(Flags::NoFlags)
 {
   if (!_library)
     throw Error("Can't create " + _TName("Cell") + " : null library");
@@ -600,12 +597,6 @@ Box Cell::getBoundingBox() const
     }
     
     return _boundingBox;
-}
-
-bool Cell::isLeaf() const
-// **********************
-{
-  return _instanceMap.isEmpty() or (_useFlattenLeaf and isFlattenLeaf());
 }
 
 bool Cell::isCalledBy ( Cell* cell ) const
@@ -887,7 +878,7 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     cdebug_log(18,1) << "Flattening top: " << net << endl;
 
     vector<Occurrence>  plugOccurrences;
-    for ( Occurrence plugOccurrence : topHyperNets[i].getLeafPlugOccurrences() )
+    for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() )
       plugOccurrences.push_back( plugOccurrence );
 
     for ( Occurrence plugOccurrence : plugOccurrences ) {
@@ -998,11 +989,10 @@ Cell* Cell::getClone()
   }
 
   Cell* clone = Cell::create( getLibrary(), uniquify->getUniqueName() );
-  clone->put           ( uniquify );
-  clone->setTerminal   ( isTerminal    () );
-  clone->setFlattenLeaf( isFlattenLeaf () );
-  clone->setPad        ( isPad         () );
-  clone->setAbutmentBox( getAbutmentBox() );
+  clone->put               ( uniquify );
+  clone->setTerminalNetlist( isTerminalNetlist () );
+  clone->setPad            ( isPad         () );
+  clone->setAbutmentBox    ( getAbutmentBox() );
 
   for ( Net* inet : getNets() ) {
     if (dynamic_cast<DeepNet*>(inet)) continue;
@@ -1384,14 +1374,13 @@ void Cell::_toJsonCollections(JsonWriter* writer) const
     if (not _flags) return "<NoFlags>";
 
     string s = "<";
-    if (_flags & Pad          ) { s += "Pad"; }
-    if (_flags & Terminal     ) { if (s.size() > 1) s += "|"; s += "Terminal"; }
-    if (_flags & FlattenLeaf  ) { if (s.size() > 1) s += "|"; s += "FlattenLeaf"; }
-    if (_flags & FlattenedNets) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
-    if (_flags & Placed       ) { if (s.size() > 1) s += "|"; s += "Placed"; }
-    if (_flags & Routed       ) { if (s.size() > 1) s += "|"; s += "Routed"; }
-    if (_flags & SlavedAb     ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
-    if (_flags & Materialized ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
+    if (_flags & Pad            ) { s += "Pad"; }
+    if (_flags & TerminalNetlist) { if (s.size() > 1) s += "|"; s += "TerminalNetlist"; }
+    if (_flags & FlattenedNets  ) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
+    if (_flags & Placed         ) { if (s.size() > 1) s += "|"; s += "Placed"; }
+    if (_flags & Routed         ) { if (s.size() > 1) s += "|"; s += "Routed"; }
+    if (_flags & SlavedAb       ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
+    if (_flags & Materialized   ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
     s += ">";
 
     return s;

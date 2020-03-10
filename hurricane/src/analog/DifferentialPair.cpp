@@ -53,7 +53,6 @@ namespace Analog {
     dp->addStepParameter( "G1.w", 1, 1, 1 );
     dp->addStepParameter( "G2.w", 1, 1, 1 );
     dp->addStepParameter( "S.w" , 1, 1, 1 );
-    dp->setTerminal( true );
     UpdateSession::close();
     return dp;
   }

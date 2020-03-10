@@ -353,10 +353,10 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyInstance_isTerminal ,isTerminal ,PyInstance,Instance)
-  DirectGetBoolAttribute(PyInstance_isLeaf     ,isLeaf     ,PyInstance,Instance)
+  DirectGetBoolAttribute(PyInstance_isTerminal       ,isTerminal       ,PyInstance,Instance)
+  DirectGetBoolAttribute(PyInstance_isTerminalNetlist,isTerminalNetlist,PyInstance,Instance)
 
-  GetBoundStateAttribute(PyInstance_isPyBound              ,PyInstance,Instance)
+  GetBoundStateAttribute(PyInstance_isPyBound,PyInstance,Instance)
 
   
   // ---------------------------------------------------------------
@@ -375,7 +375,7 @@ extern "C" {
     , { "getUnconnectedPlugs"       , (PyCFunction)PyInstance_getUnconnectedPlugs       , METH_NOARGS , "Returns the collection of instance plugs which are not connected." }
     , { "getAbutmentBox"            , (PyCFunction)PyInstance_getAbutmentBox            , METH_NOARGS , "Returns the abutment box of the instance, that is the abutment box of the master cell to which has been applied the instance transformation." }
     , { "isTerminal"                , (PyCFunction)PyInstance_isTerminal                , METH_NOARGS , "Returns true if the instance is a terminal instance." }
-    , { "isLeaf"                    , (PyCFunction)PyInstance_isLeaf                    , METH_NOARGS , "Returns true if the instance is a leaf instance." }
+    , { "isTerminalNetlist"         , (PyCFunction)PyInstance_isTerminalNetlist         , METH_NOARGS , "Returns true if the instance is a netlist terminal instance." }
     , { "isBound"                   , (PyCFunction)PyInstance_isPyBound                 , METH_NOARGS , "Returns true if the instance is bounded to the hurricane instance" }
     , { "setName"                   , (PyCFunction)PyInstance_setName                   , METH_VARARGS, "Allows to change the instance name." }
     , { "setTransformation"         , (PyCFunction)PyInstance_setTransformation         , METH_VARARGS, "Allows to modify the instance transformation." }

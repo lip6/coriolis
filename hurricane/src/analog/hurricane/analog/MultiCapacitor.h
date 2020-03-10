@@ -19,6 +19,7 @@
 
 #include "hurricane/DbU.h"
 #include "hurricane/analog/CapacitiesParameter.h"
+#include "hurricane/analog/MCheckBoxParameter.h"
 #include "hurricane/analog/MatrixParameter.h"
 #include "hurricane/analog/CapacitorFamily.h"
 
@@ -35,7 +36,9 @@ namespace Analog {
                                                  , const Hurricane::Name&
                                                  , const CapacitorFamily::Type&
                                                  ,       size_t  count           );
+      inline  bool             hasDummy          () const;
       inline  double           getCapacity       ( size_t ) const;
+      inline  void             setDummy          ( bool );
       virtual Hurricane::Name  getDeviceName     () const;
     protected:
                                MultiCapacitor    (       Hurricane::Library*
@@ -49,11 +52,14 @@ namespace Analog {
     private:
       static const Hurricane::Name      _capacitorName;
                    MetaCapacitor*       _metaCapacitor;
+                   MCheckBoxParameter*  _dummy;
                    size_t               _count;
   };
   
 
+  bool    MultiCapacitor::hasDummy    () const           { return (_dummy->getValue() == 1); }
   double  MultiCapacitor::getCapacity ( size_t i ) const { return static_cast<const CapacitiesParameter*>(getParameter("capacities"))->getValue(i); }
+  void    MultiCapacitor::setDummy    ( bool state )     { _dummy->setValue( (state)?1:0 ); }
 
 
 }  // Analog namespace.

@@ -42,7 +42,6 @@ namespace Analog {
     CrossCoupledPair* ccp = new CrossCoupledPair(library,name,type);
     ccp->_postCreate(deviceName);
     ccp->createConnections(bulkConnected);
-    ccp->setTerminal( true );
     UpdateSession::close();
     return ccp;
   }

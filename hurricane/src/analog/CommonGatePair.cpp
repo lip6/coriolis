@@ -41,7 +41,6 @@ namespace Analog {
     CommonGatePair* cg = new CommonGatePair(library,name,type);
     cg->_postCreate      (deviceName);
     cg->createConnections(bulkConnected);
-    cg->setTerminal( true );
     UpdateSession::close();
     return cg;
   }

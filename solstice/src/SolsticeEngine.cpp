@@ -130,7 +130,7 @@ namespace Solstice {
       {
 	Cell * subcell = (*instance)->getMasterCell();
 	SolsticeEngine * solstice = get(subcell);
-	if( (!(subcell->isLeaf())) && (!solstice) ) {
+	if( (!(subcell->isTerminalNetlist())) && (!solstice) ) {
 	  _depthCreate(subcell); 
 	}
       }
@@ -176,7 +176,7 @@ namespace Solstice {
   
   void SolsticeEngine::_depthDestroy()
   {
-    if(_cell->isLeaf())
+    if(_cell->isTerminalNetlist())
       return ;
     else {
       forEach(Instance*,instance, _cell->getInstances())
@@ -394,7 +394,7 @@ namespace Solstice {
       {
 	Cell * subcell = (*instance)->getMasterCell();
 	SolsticeEngine * solstice = get(subcell);
-	if( (!(subcell->isLeaf())) && (!(solstice->isCompared())) ) 
+	if( (!(subcell->isTerminalNetlist())) && (!(solstice->isCompared())) ) 
 	  setIsComparedTrue(subcell); 
       }
   }  
@@ -407,7 +407,7 @@ namespace Solstice {
     forEach(Instance*,instance, cell->getInstances())
       {
 	Cell * subcell = (*instance)->getMasterCell();
-	if( (!(subcell->isLeaf())) )
+	if( (!(subcell->isTerminalNetlist())) )
 	  getAllSolstices(subcell, solstices);
       }
   }  
@@ -472,7 +472,7 @@ namespace Solstice {
       {
 	Cell * cell = (*instance)->getMasterCell();
 	SolsticeEngine * solstice = get(cell);
-	if( (!(cell->isLeaf())) && (solstice->isCompared()) ) {
+	if( (!(cell->isTerminalNetlist())) && (solstice->isCompared()) ) {
 	  solstice->flushErrors(); 
 	}
       }	

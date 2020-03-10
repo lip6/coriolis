@@ -45,8 +45,6 @@ namespace Analog {
     _topPlate->setExternal( true );
     _botPlate = Net::create( this, "B" );
     _botPlate->setExternal( true );
-  
-    setTerminal( false );
   }
 
 

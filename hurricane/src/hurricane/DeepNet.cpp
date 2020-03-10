@@ -73,8 +73,8 @@ namespace Hurricane {
 
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hyperNet.getNetOccurrence() );
 
-    if (rootNetOccurrence.getMasterCell()->isFlattenLeaf()) return NULL;
-    if (rootNetOccurrence.getPath().isEmpty())              return NULL;
+    if (rootNetOccurrence.getMasterCell()->isTerminalNetlist()) return NULL;
+    if (rootNetOccurrence.getPath().isEmpty())                  return NULL;
     
     DeepNet* deepNet = new DeepNet( rootNetOccurrence );
     deepNet->_postCreate();
@@ -98,7 +98,7 @@ namespace Hurricane {
     }
     if (not createRp) return 0;
 
-    for ( Occurrence occurrence : hyperNet.getLeafPlugOccurrences() ) {
+    for ( Occurrence occurrence : hyperNet.getTerminalNetlistPlugOccurrences() ) {
       nbRoutingPads++;
 
       currentRp = RoutingPad::create( this, occurrence, RoutingPad::BiggestArea );
@@ -118,8 +118,8 @@ namespace Hurricane {
   {
     Occurrence  rootNetOccurrence = getHyperNetRootNetOccurrence( hypernet.getNetOccurrence() );
   
-  //if (  rootNetOccurrence.getMasterCell()->IsFlattenLeaf() ) return NULL;
-  //if (  rootNetOccurrence.getPath().isEmpty() )              return NULL;
+  //if (  rootNetOccurrence.getMasterCell()->isTerminalNetlist() ) return NULL;
+  //if (  rootNetOccurrence.getPath().isEmpty() )                  return NULL;
   
     return rootNetOccurrence.getOwnerCell()->getNet(rootNetOccurrence.getName());
   }

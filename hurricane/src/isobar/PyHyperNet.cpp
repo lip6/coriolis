@@ -90,16 +90,16 @@ extern "C" {
   }
 
 
-  static PyObject* PyHyperNet_getLeafPlugOccurrences(PyHyperNet *self)
+  static PyObject* PyHyperNet_getTerminalNetlistPlugOccurrences(PyHyperNet *self)
   {
-    cdebug_log(20,0) << "PyHyperNet_getLeafPlugOccurrences()" << endl;
+    cdebug_log(20,0) << "PyHyperNet_getTerminalNetlistPlugOccurrences()" << endl;
 
-    METHOD_HEAD ( "HyperNet.getLeafPlugOccurrences()" )
+    METHOD_HEAD ( "HyperNet.getTerminalNetlistPlugOccurrences()" )
 
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
 
     HTRY
-    Occurrences* occurrences = new Occurrences(hyperNet->getLeafPlugOccurrences());
+    Occurrences* occurrences = new Occurrences(hyperNet->getTerminalNetlistPlugOccurrences());
 
     pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
     if (pyOccurrenceCollection == NULL) { 
@@ -135,8 +135,8 @@ extern "C" {
     , { "isValid"               , (PyCFunction)PyHyperNet_isValid               , METH_NOARGS , "Returns trus if the HyperNet isValid." }
     , { "getNetOccurrences"     , (PyCFunction)PyHyperNet_getNetOccurrences     , METH_NOARGS 
                                 , "Returns the collection of Net occurrences" }
-    , { "getLeafPlugOccurrences", (PyCFunction)PyHyperNet_getLeafPlugOccurrences, METH_NOARGS 
-                                , "Returns the collection of leaf occurrences" }
+    , { "getTerminalNetlistPlugOccurrences", (PyCFunction)PyHyperNet_getTerminalNetlistPlugOccurrences, METH_NOARGS 
+                                           , "Returns the collection of leaf occurrences" }
     , { "destroy"               , (PyCFunction)PyHyperNet_destroy               , METH_NOARGS
                                 , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}     /* sentinel */

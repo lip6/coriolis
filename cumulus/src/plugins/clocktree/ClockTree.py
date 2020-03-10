@@ -328,7 +328,7 @@ class HTree ( object ):
     
     leafsByBuffer    = {}
     hyperMasterClock = HyperNet.create( Occurrence(self.masterClock) )
-    for plugOccurrence in hyperMasterClock.getLeafPlugOccurrences():
+    for plugOccurrence in hyperMasterClock.getTerminalNetlistPlugOccurrences():
       trace( 550, '\tAdding leaf <%s>.\n' % plugOccurrence )
       position   = plugOccurrence.getBoundingBox().getCenter()
       self.addLeaf( position, plugOccurrence )
@@ -591,7 +591,7 @@ def computeAbutmentBox ( cell, spaceMargin, aspectRatio, cellGauge ):
   #
   #  instancesNb = 0
   #  cellLength  = 0
-  #  for occurrence in cell.getLeafInstanceOccurrences():
+  #  for occurrence in cell.getTerminalNetlistInstanceOccurrences():
   #    instance     = occurrence.getEntity()
   #    instancesNb += 1
   #    cellLength  += int( DbU.toLambda(instance.getMasterCell().getAbutmentBox().getWidth()) )

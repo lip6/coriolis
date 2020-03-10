@@ -113,6 +113,7 @@ extern "C" {
 # if !defined(__PYTHON_MODULE__)
 
 ParameterRange* ParameterRangeCast ( PyObject* derivedObject ) {
+  if (not derivedObject or (derivedObject == Py_None)) return NULL;
   if (IsPyStepParameterRange  (derivedObject))  return PYSTEPPARAMETERRANGE_O  (derivedObject);
   if (IsPyMatrixParameterRange(derivedObject))  return PYMATRIXPARAMETERRANGE_O(derivedObject);
 

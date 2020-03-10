@@ -225,7 +225,7 @@ namespace Katana {
     , _cell  (cell)
     , _rows  ()
   { 
-    for ( Occurrence occurrence : _cell->getLeafInstanceOccurrences() ) {
+    for ( Occurrence occurrence : _cell->getTerminalNetlistInstanceOccurrences() ) {
       add( occurrence );
     }
     _katana->addBlock( this );

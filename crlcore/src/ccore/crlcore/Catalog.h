@@ -77,55 +77,55 @@ namespace CRL {
       class State {
         public:
         // Flags Constants.
-          enum Flags { FlattenLeaf  = 1 << 0
-                     , Feed         = 1 << 1
-                     , Pad          = 1 << 2
-                     , GDS          = 1 << 3
-                     , Delete       = 1 << 4
-                     , Logical      = 1 << 5
-                     , Physical     = 1 << 6
-                     , InMemory     = 1 << 7
-                     , Foreign      = 1 << 8
-                     , VstUseConcat = 1 << 9
-                     , Views        = Physical|Logical
+          enum Flags { TerminalNetlist = 1 << 0
+                     , Feed            = 1 << 1
+                     , Pad             = 1 << 2
+                     , GDS             = 1 << 3
+                     , Delete          = 1 << 4
+                     , Logical         = 1 << 5
+                     , Physical        = 1 << 6
+                     , InMemory        = 1 << 7
+                     , Foreign         = 1 << 8
+                     , VstUseConcat    = 1 << 9
+                     , Views           = Physical|Logical
                      };
         // Constructors.
-          inline               State          ();
-                              ~State          ();
+          inline               State              ();
+                              ~State              ();
         // Predicates.
-          inline bool          isFlattenLeaf  () const;
-          inline bool          isFeed         () const;
-          inline bool          isPad          () const;
-          inline bool          isGds          () const;
-          inline bool          isDelete       () const;
-          inline bool          isPhysical     () const;
-          inline bool          isLogical      () const;
-          inline bool          isInMemory     () const;
-        // Flags management.
-          inline unsigned int  getFlags       ( unsigned int mask=(unsigned int)-1 ) const;
-          inline bool          setFlags       ( unsigned int mask, bool value );
-          inline bool          setFlattenLeaf ( bool value );
-          inline bool          setFeed        ( bool value );
-          inline bool          setPad         ( bool value );
-          inline bool          setGds         ( bool value );
-          inline bool          setDelete      ( bool value );
-          inline bool          setPhysical    ( bool value );
-          inline bool          setLogical     ( bool value );
-          inline bool          setInMemory    ( bool value );
-        // Accessors.
-          inline Cell*         getCell        () const;
-          inline Library*      getLibrary     () const;
-          inline unsigned int  getDepth       () const;
-        // Modifiers.
-          inline void          merge          ( const State& other );
-                 Cell*         setCell        ( Cell* cell );
-          inline Library*      setLibrary     ( Library* library );
-          inline void          setDepth       ( unsigned int depth );
-        // Hurricane Management.
-                 void          toJson         ( JsonWriter* w ) const;
-          inline string        _getTypeName   () const;
-                 string        _getString     () const;
-                 Record*       _getRecord     () const;
+          inline bool          isTerminalNetlist  () const;
+          inline bool          isFeed             () const;
+          inline bool          isPad              () const;
+          inline bool          isGds              () const;
+          inline bool          isDelete           () const;
+          inline bool          isPhysical         () const;
+          inline bool          isLogical          () const;
+          inline bool          isInMemory         () const;
+        // Flags management.                      
+          inline unsigned int  getFlags           ( unsigned int mask=(unsigned int)-1 ) const;
+          inline bool          setFlags           ( unsigned int mask, bool value );
+          inline bool          setTerminalNetlist ( bool value );
+          inline bool          setFeed            ( bool value );
+          inline bool          setPad             ( bool value );
+          inline bool          setGds             ( bool value );
+          inline bool          setDelete          ( bool value );
+          inline bool          setPhysical        ( bool value );
+          inline bool          setLogical         ( bool value );
+          inline bool          setInMemory        ( bool value );
+        // Accessors.                             
+          inline Cell*         getCell            () const;
+          inline Library*      getLibrary         () const;
+          inline unsigned int  getDepth           () const;
+        // Modifiers.                             
+          inline void          merge              ( const State& other );
+                 Cell*         setCell            ( Cell* cell );
+          inline Library*      setLibrary         ( Library* library );
+          inline void          setDepth           ( unsigned int depth );
+        // Hurricane Management.                  
+                 void          toJson             ( JsonWriter* w ) const;
+          inline string        _getTypeName       () const;
+                 string        _getString         () const;
+                 Record*       _getRecord         () const;
 
         private:
         // Internal - Attributes.
@@ -203,44 +203,44 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Inline Functions. 
 
-  inline                   Catalog::State::State            () : _flags(0), _depth(1), _cell(NULL), _library(NULL) { }
-  inline bool              Catalog::State::isFlattenLeaf    () const { return (_flags&FlattenLeaf)?1:0; }
-  inline bool              Catalog::State::isFeed           () const { return (_flags&Feed       )?1:0; }
-  inline bool              Catalog::State::isPad            () const { return (_flags&Pad        )?1:0; }
-  inline bool              Catalog::State::isGds            () const { return (_flags&GDS        )?1:0; }
-  inline bool              Catalog::State::isDelete         () const { return (_flags&Delete     )?1:0; }
-  inline bool              Catalog::State::isPhysical       () const { return (_flags&Physical   )?1:0; }
-  inline bool              Catalog::State::isLogical        () const { return (_flags&Logical    )?1:0; }
-  inline bool              Catalog::State::isInMemory       () const { return (_flags&InMemory   )?1:0; }
-  inline unsigned int      Catalog::State::getFlags         ( unsigned int mask ) const { return ( _flags & mask ); }
-  inline bool              Catalog::State::setFlags         ( unsigned int mask, bool value ) {
+  inline                   Catalog::State::State              () : _flags(0), _depth(1), _cell(NULL), _library(NULL) { }
+  inline bool              Catalog::State::isTerminalNetlist  () const { return (_flags&TerminalNetlist)?1:0; }
+  inline bool              Catalog::State::isFeed             () const { return (_flags&Feed           )?1:0; }
+  inline bool              Catalog::State::isPad              () const { return (_flags&Pad            )?1:0; }
+  inline bool              Catalog::State::isGds              () const { return (_flags&GDS            )?1:0; }
+  inline bool              Catalog::State::isDelete           () const { return (_flags&Delete         )?1:0; }
+  inline bool              Catalog::State::isPhysical         () const { return (_flags&Physical       )?1:0; }
+  inline bool              Catalog::State::isLogical          () const { return (_flags&Logical        )?1:0; }
+  inline bool              Catalog::State::isInMemory         () const { return (_flags&InMemory       )?1:0; }
+  inline unsigned int      Catalog::State::getFlags           ( unsigned int mask ) const { return ( _flags & mask ); }
+  inline bool              Catalog::State::setFlags           ( unsigned int mask, bool value ) {
                                                               if (value) { _flags |=  mask; }
                                                               else       { _flags &= ~mask; }
                                                               return ((_flags&mask) ? true : false);
                                                             }
-  inline bool              Catalog::State::setFlattenLeaf   ( bool value ) { return setFlags(FlattenLeaf,value); }
-  inline bool              Catalog::State::setFeed          ( bool value ) { return setFlags(Feed       ,value); }
-  inline bool              Catalog::State::setPad           ( bool value ) { return setFlags(Pad        ,value); }
-  inline bool              Catalog::State::setGds           ( bool value ) { return setFlags(GDS        ,value); }
-  inline bool              Catalog::State::setDelete        ( bool value ) { return setFlags(Delete     ,value); }
-  inline bool              Catalog::State::setPhysical      ( bool value ) { return setFlags(Physical   ,value); }
-  inline bool              Catalog::State::setLogical       ( bool value ) { return setFlags(Logical    ,value); }
-  inline bool              Catalog::State::setInMemory      ( bool value ) { return setFlags(InMemory   ,value); }
-  inline Library*          Catalog::State::setLibrary       ( Library* library ) { return _library = library; }
-  inline void              Catalog::State::setDepth         ( unsigned int depth ) { _depth = depth; }
-  inline Cell*             Catalog::State::getCell          () const { return _cell; }
-  inline Library*          Catalog::State::getLibrary       () const { return _library; }
-  inline unsigned int      Catalog::State::getDepth         () const { return _depth; }
-  inline string            Catalog::State::_getTypeName     () const { return _TName("Catalog::State"); }
-
-  inline                   Catalog::Catalog                 () : _states() { }
-  inline map<Name,Catalog::State*>*
-                           Catalog::getStates               () { return &_states; }
-  inline string            Catalog::_getTypeName            () const { return _TName("Catalog"); }
-
-  inline                   CatalogProperty::CatalogProperty ( Catalog::State* state ) : PrivateProperty(), _state(state) {}
-  inline Catalog::State*   CatalogProperty::getState        () const { return _state; }
-  inline void              CatalogProperty::setState        ( Catalog::State* state ) { _state = state; }
+  inline bool              Catalog::State::setTerminalNetlist ( bool value ) { return setFlags(TerminalNetlist,value); }
+  inline bool              Catalog::State::setFeed            ( bool value ) { return setFlags(Feed       ,value); }
+  inline bool              Catalog::State::setPad             ( bool value ) { return setFlags(Pad        ,value); }
+  inline bool              Catalog::State::setGds             ( bool value ) { return setFlags(GDS        ,value); }
+  inline bool              Catalog::State::setDelete          ( bool value ) { return setFlags(Delete     ,value); }
+  inline bool              Catalog::State::setPhysical        ( bool value ) { return setFlags(Physical   ,value); }
+  inline bool              Catalog::State::setLogical         ( bool value ) { return setFlags(Logical    ,value); }
+  inline bool              Catalog::State::setInMemory        ( bool value ) { return setFlags(InMemory   ,value); }
+  inline Library*          Catalog::State::setLibrary         ( Library* library ) { return _library = library; }
+  inline void              Catalog::State::setDepth           ( unsigned int depth ) { _depth = depth; }
+  inline Cell*             Catalog::State::getCell            () const { return _cell; }
+  inline Library*          Catalog::State::getLibrary         () const { return _library; }
+  inline unsigned int      Catalog::State::getDepth           () const { return _depth; }
+  inline string            Catalog::State::_getTypeName       () const { return _TName("Catalog::State"); }
+                                                              
+  inline                   Catalog::Catalog                   () : _states() { }
+  inline map<Name,Catalog::State*>*                           
+                           Catalog::getStates                 () { return &_states; }
+  inline string            Catalog::_getTypeName              () const { return _TName("Catalog"); }
+                                                              
+  inline                   CatalogProperty::CatalogProperty   ( Catalog::State* state ) : PrivateProperty(), _state(state) {}
+  inline Catalog::State*   CatalogProperty::getState          () const { return _state; }
+  inline void              CatalogProperty::setState          ( Catalog::State* state ) { _state = state; }
 
 
 // -------------------------------------------------------------------
@@ -249,41 +249,41 @@ namespace CRL {
 
   class CatalogExtension {
     public:
-      static        Catalog::State*  get            ( const Cell* );
+      static        Catalog::State*  get                ( const Cell* );
     public:
-      static inline bool             isFlattenLeaf  ( const Cell* );
-      static inline bool             isFeed         ( const Cell* );
-      static inline bool             isPad          ( const Cell* );
-      static inline bool             isGds          ( const Cell* );
-      static inline bool             isDelete       ( const Cell* );
-      static inline bool             isPhysical     ( const Cell* );
-      static inline bool             isLogical      ( const Cell* );
-    // Flags management.             
-      static inline unsigned int     getFlags       ( const Cell*, unsigned int mask=(unsigned int)-1 );
-      static inline bool             setFlags       ( const Cell*, unsigned int mask, bool value );
-      static inline bool             setFlattenLeaf ( const Cell*, bool value );
-      static inline bool             setFeed        ( const Cell*, bool value );
-      static inline bool             setPad         ( const Cell*, bool value );
-      static inline bool             setGds         ( const Cell*, bool value );
-      static inline bool             setDelete      ( const Cell*, bool value );
-      static inline bool             setPhysical    ( const Cell*, bool value );
-      static inline bool             setLogical     ( const Cell*, bool value );
-    // Accessors.
-      static inline Library*         getLibrary     ( const Cell* );
-      static inline unsigned int     getDepth       ( const Cell* );
-    // Modifiers.                    
-      static inline Library*         setLibrary     ( const Cell*, Library* library );
-      static inline void             setDepth       ( const Cell*, unsigned int depth );
+      static inline bool             isTerminalNetlist  ( const Cell* );
+      static inline bool             isFeed             ( const Cell* );
+      static inline bool             isPad              ( const Cell* );
+      static inline bool             isGds              ( const Cell* );
+      static inline bool             isDelete           ( const Cell* );
+      static inline bool             isPhysical         ( const Cell* );
+      static inline bool             isLogical          ( const Cell* );
+    // Flags management.                                
+      static inline unsigned int     getFlags           ( const Cell*, unsigned int mask=(unsigned int)-1 );
+      static inline bool             setFlags           ( const Cell*, unsigned int mask, bool value );
+      static inline bool             setTerminalNetlist ( const Cell*, bool value );
+      static inline bool             setFeed            ( const Cell*, bool value );
+      static inline bool             setPad             ( const Cell*, bool value );
+      static inline bool             setGds             ( const Cell*, bool value );
+      static inline bool             setDelete          ( const Cell*, bool value );
+      static inline bool             setPhysical        ( const Cell*, bool value );
+      static inline bool             setLogical         ( const Cell*, bool value );
+    // Accessors.                                       
+      static inline Library*         getLibrary         ( const Cell* );
+      static inline unsigned int     getDepth           ( const Cell* );
+    // Modifiers.                                       
+      static inline Library*         setLibrary         ( const Cell*, Library* library );
+      static inline void             setDepth           ( const Cell*, unsigned int depth );
     private:
       static const Cell*     _owner;
       static Catalog::State* _cache;
   };
 
 
-  inline bool  CatalogExtension::isFlattenLeaf ( const Cell* cell )
+  inline bool  CatalogExtension::isTerminalNetlist ( const Cell* cell )
   {
     Catalog::State* state = get(cell);
-    return (state == NULL) ? false : state->isFlattenLeaf();
+    return (state == NULL) ? false : state->isTerminalNetlist();
   }
 
 
@@ -343,10 +343,10 @@ namespace CRL {
   }
 
 
-  inline bool  CatalogExtension::setFlattenLeaf ( const Cell* cell, bool value )
+  inline bool  CatalogExtension::setTerminalNetlist ( const Cell* cell, bool value )
   {
     Catalog::State* state = get(cell);
-    return (state == NULL) ? false : state->setFlattenLeaf(value);
+    return (state == NULL) ? false : state->setTerminalNetlist(value);
   }
 
 

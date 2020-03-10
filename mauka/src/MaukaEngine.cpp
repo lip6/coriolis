@@ -189,7 +189,7 @@ void MaukaEngine::Construct()
     
     UpdateSession::open ();
 
-    forEach ( Occurrence, ioccurrence, getCell()->getNonLeafInstanceOccurrences() )
+    forEach ( Occurrence, ioccurrence, getCell()->getNonTerminalNetlistInstanceOccurrences() )
     {
       Box topLevelAbutmentBox = getCell()->getAbutmentBox();
 
@@ -206,7 +206,7 @@ void MaukaEngine::Construct()
 
     UpdateSession::close ();
     
-    forEach ( Occurrence, ioccurrence, getCell()->getLeafInstanceOccurrences() )
+    forEach ( Occurrence, ioccurrence, getCell()->getTerminalNetlistInstanceOccurrences() )
     {
         Instance* instance = static_cast<Instance*>((*ioccurrence).getEntity());
       //cerr << (*ioccurrence).getPath() << ":"
@@ -290,7 +290,7 @@ void MaukaEngine::Construct()
             for_each_occurrence(occurrence, hyperNet.getNetOccurrences())
             {
                 Instance* instance = occurrence.getPath().getTailInstance();
-                if (instance && instance->isLeaf())
+                if (instance && instance->isTerminalNetlist())
                 {
                     Occurrence instanceOccurrence = Occurrence(instance, occurrence.getPath().getHeadPath());
                     if (instance->isFixed())
@@ -523,7 +523,7 @@ bool TestMaukaConstruction(Cell* cell, GCell* gcell)
     InstanceOccurrencesVector toPlaceInstanceOccurrencesVector;
     //search for preplaced leaf instances
     DbU::DbU::Unit instanceToPlaceWidthMax = 0;
-    for_each_occurrence(occurrence, cell->getLeafInstanceOccurrencesUnder(gcell->getBox()))
+    for_each_occurrence(occurrence, cell->getTerminalNetlistInstanceOccurrencesUnder(gcell->getBox()))
     {
         Instance* instance = static_cast<Instance*>(occurrence.getEntity());
         if (instance->isFixed())
@@ -743,7 +743,7 @@ unsigned MaukaEngine::getRandomInstanceId() const {
         if ( parent == NULL )
           throw Error("Not enough margin on the whole Cell");
 
-        parent->setAsPlacementLeaf ();
+        parent->setAsPlacementTerminalNetlist ();
         toProcess.push ( parent );
 
         cmess2 << "     - Sets as placement leaf " << parent << endl;

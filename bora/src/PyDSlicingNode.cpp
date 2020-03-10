@@ -74,7 +74,8 @@ extern "C" {
         PyErr_SetString( ConstructorError, "DSlicingNode.create(): Second argument *must* be of type Cell." );
         return NULL;
       }
-      if (   not IsPyStepParameterRange(pyParameterRange)
+      if (   (pyParameterRange != Py_None)
+         and not IsPyStepParameterRange(pyParameterRange)
          and not IsPyMatrixParameterRange(pyParameterRange)) {
         PyErr_SetString( ConstructorError, "DSlicingNode.create(): Third argument *must* be of type StepParameterRange or MatrixParameterRange." );
         return NULL;

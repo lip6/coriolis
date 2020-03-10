@@ -162,7 +162,7 @@ MetisGraph::MetisGraph ( MetisEngine* metis, GCell* gcell )
   typedef map<Instance*,Occurrence> OccurrencesLUT;
   OccurrencesLUT occurrencesLUT;
 
-  for_each_occurrence(occurrence, _cell->getLeafInstanceOccurrences())
+  for_each_occurrence(occurrence, _cell->getTerminalNetlistInstanceOccurrences())
   {
     Instance* instance = static_cast<Instance*>(occurrence.getEntity());
     if (!instance->isFixed()) {
@@ -186,7 +186,7 @@ MetisGraph::MetisGraph ( MetisEngine* metis, GCell* gcell )
         Net* net = static_cast<Net*>(occurrence.getEntity());
         if (net->isGlobal() || net->isPower() || net->isGround())
             continue;
-        if (net->getCell()->isLeaf())
+        if (net->getCell()->isTerminalNetlist())
             continue;
         _rootNetOccurrencesSet.insert(occurrence);
         end_for;
@@ -206,7 +206,7 @@ MetisGraph::MetisGraph(MetisEngine* metis, MetisGraph* previous, GCell* gcell, O
             osit++)
     {
         HyperNet hyperNet(*osit);
-        for_each_occurrence(leafPlugOccurrence, hyperNet.getLeafPlugOccurrences())
+        for_each_occurrence(leafPlugOccurrence, hyperNet.getTerminalNetlistPlugOccurrences())
         {
             Path path = leafPlugOccurrence.getPath();
             Instance* instance = (static_cast<Plug*>(leafPlugOccurrence.getEntity()))->getInstance();
@@ -271,7 +271,7 @@ int MetisGraph::part ( linefill& output )
     for (unsigned gcellCount = 0; gcellCount != subGCells.size(); gcellCount++)
     {
         GCell* gcell = subGCells[gcellCount];
-        for_each_occurrence(instanceOccurrence, _cell->getLeafInstanceOccurrencesUnder(gcell->getBox()))
+        for_each_occurrence(instanceOccurrence, _cell->getTerminalNetlistInstanceOccurrencesUnder(gcell->getBox()))
         {
             Instance* instance = static_cast<Instance*>(instanceOccurrence.getEntity());
             if (instance->isFixed())
@@ -399,7 +399,7 @@ int MetisGraph::part ( linefill& output )
         }
         
         OccurrenceSet instanceOccurrencesSet; //to detect multi connection of a single instance
-        for_each_occurrence(leafPlugOccurrence, hyperNet.getLeafPlugOccurrences())
+        for_each_occurrence(leafPlugOccurrence, hyperNet.getTerminalNetlistPlugOccurrences())
         {
             Path path = leafPlugOccurrence.getPath();
             Instance* instance = (static_cast<Plug*>(leafPlugOccurrence.getEntity()))->getInstance();
@@ -610,7 +610,7 @@ int MetisGraph::part ( linefill& output )
             prvit != _partResultVector.end();
             prvit++)
     {
-        (*prvit)->first->setAsPlacementLeaf();
+        (*prvit)->first->setAsPlacementTerminalNetlist();
     }
     
     UpdateSession::close();

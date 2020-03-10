@@ -483,16 +483,23 @@
     </member>
     <member kind="function">
       <type>Occurrences</type>
-      <name>getLeafInstanceOccurrences</name>
+      <name>getTerminalInstanceOccurrences</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a7d5a16e085ef5375862560e3c3eb4ea8</anchor>
+      <anchor>a30b71d9a35ff4e0b59b98ef515f26fc0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>Occurrences</type>
+      <name>getTerminalNetlistInstanceOccurrences</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a6f559f7dab6e4afc0b60eba064c5e474</anchor>
       <arglist>(const Instance *topInstance=NULL) const</arglist>
     </member>
     <member kind="function">
       <type>Occurrences</type>
-      <name>getNonLeafInstanceOccurrences</name>
+      <name>getNonTerminalNetlistInstanceOccurrences</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>ac32e4f232a8fc030aa809fe6565d8d95</anchor>
+      <anchor>a9e7a0536ec1efb23be2764068a85b6a7</anchor>
       <arglist>(const Instance *topInstance=NULL) const</arglist>
     </member>
     <member kind="function">
@@ -514,6 +521,13 @@
       <name>isTerminal</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
       <anchor>aac4e9218b7806f3a0f2d5a55f00abd69</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isTerminalNetlist</name>
+      <anchorfile>classHurricane_1_1Cell.html</anchorfile>
+      <anchor>a6fe2b5a80d4b344733416b25ea559497</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -553,10 +567,10 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>setTerminal</name>
+      <name>setTerminalNetlist</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a4591dc37153a835daa42b442221742cb</anchor>
-      <arglist>(bool isTerminal)</arglist>
+      <anchor>a15958b25e911e8f5543557b6deea5618</anchor>
+      <arglist>(bool isTerminalNetlist)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -593,6 +607,7 @@
       <anchor>ad803afb3e52bea3bf3d520e353b162e0</anchor>
       <arglist>(Library *library, const Name &amp;name)</arglist>
     </member>
+    <docanchor file="classHurricane_1_1Cell" title="Layout vs. Netlist Cell Hierarchy">secCellHierarchy</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Collection</name>
@@ -2443,13 +2458,6 @@
       <anchorfile>classHurricane_1_1HyperNet.html</anchorfile>
       <anchor>ab278267a5f1d91bd22bc7fe411b3cfb0</anchor>
       <arglist>(Box area, bool doExtraction=false, bool allowInterruption=false) const</arglist>
-    </member>
-    <member kind="function">
-      <type>Occurrences</type>
-      <name>getLeafPlugOccurrences</name>
-      <anchorfile>classHurricane_1_1HyperNet.html</anchorfile>
-      <anchor>a5e88025fbe1663d8279b4f4cb4bd6ffd</anchor>
-      <arglist>(bool doExtraction=false, bool allowInterruption=false) const</arglist>
     </member>
     <docanchor file="classHurricane_1_1HyperNet" title="Introduction">secHyperNetIntro</docanchor>
   </compound>

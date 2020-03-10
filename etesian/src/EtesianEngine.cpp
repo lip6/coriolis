@@ -365,7 +365,7 @@ namespace Etesian {
     double cellLength  = 0;
 
     vector<Occurrence>  feedOccurrences;
-    for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();
@@ -401,8 +401,8 @@ namespace Etesian {
     double columns     = std::ceil( gcellLength / rows );
 
     UpdateSession::open();
-    for ( auto ioccurrence : feedOccurrences ) {
-      static_cast<Instance*>(ioccurrence.getEntity())->destroy();
+    for ( auto occurrence : feedOccurrences ) {
+      static_cast<Instance*>(occurrence.getEntity())->destroy();
     }
 
     DbU::Unit abWidth = columns*getSliceHeight();
@@ -430,18 +430,60 @@ namespace Etesian {
 
   void  EtesianEngine::resetPlacement ()
   {
-  //cerr << "EtesianEngine::resetPlacement()" << endl;
+    cmess1 << "  o  Erasing previous placement of <" << getCell()->getName() << ">" << endl;
 
     _flatDesign = true;
 
     Dots  dots ( cmess2, "     ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
 
-    cmess1 << "  o  Erasing previous placement of <" << getCell()->getName() << ">" << endl;
+    Box topAb = getBlockCell()->getAbutmentBox();
+    Transformation topTransformation;
+    if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
+    topTransformation.applyOn( topAb );
 
     UpdateSession::open();
+    for ( Occurrence occurrence : getBlockCell()->getNonTerminalNetlistInstanceOccurrences() )
+    {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+
+      if (not masterCell->getAbutmentBox().isEmpty()) {
+        if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+           and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
+          throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
+                     , getString(instance  ->getName()).c_str()
+                     , getString(masterCell->getName()).c_str()
+                     );
+        } else {
+          bool isFullyPlaced = true;
+          for ( Instance* subInstance : masterCell->getInstances() ) {
+            if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+               and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
+              isFullyPlaced = false;
+              break;
+            }
+          }
+          if (isFullyPlaced) {
+            masterCell->setTerminalNetlist( true );
+          }
+        }
+      }
+
+      if ( masterCell->getAbutmentBox().isEmpty()
+         or (   (masterCell->getAbutmentBox().getHeight() == topAb.getHeight())
+            and (masterCell->getAbutmentBox().getWidth () == topAb.getWidth ()) ) ) {
+      // Have to check here if the model is fully placed or not.
+      //masterCell->setAbutmentBox( topAb );
+      //instance->setTransformation( Transformation() ); // (0,0,ID).
+      //instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+        occurrence.makeInvalid();
+        instance->slaveAbutmentBox();
+      }
+    }
+
     vector<Occurrence>  feedOccurrences;
-    for( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
+    for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       dots.dot();
 
@@ -456,8 +498,8 @@ namespace Etesian {
         feedOccurrences.push_back( occurrence );
     }
 
-    for ( auto ioccurrence : feedOccurrences ) {
-      Instance* instance = static_cast<Instance*>(ioccurrence.getEntity());
+    for ( auto occurrence : feedOccurrences ) {
+      Instance* instance = static_cast<Instance*>(occurrence.getEntity());
       instance->destroy();
     }
 
@@ -491,50 +533,7 @@ namespace Etesian {
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.applyOn( topAb );
 
-    Cell::setFlattenLeafMode( true );
-
-    UpdateSession::open();
-    for ( Occurrence occurrence : getBlockCell()->getNonLeafInstanceOccurrences() )
-    {
-      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
-      Cell*     masterCell   = instance->getMasterCell();
-
-      if (not masterCell->getAbutmentBox().isEmpty()) {
-        if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-           and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
-          throw Error( "EtesianEngine::toColoquinte(): Non-leaf instance \"%s\" of \"%s\" has an abutment box but is *not* placed."
-                     , getString(instance  ->getName()).c_str()
-                     , getString(masterCell->getName()).c_str()
-                     );
-        } else {
-          bool isFullyPlaced = true;
-          for ( Instance* subInstance : masterCell->getInstances() ) {
-            if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-               and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
-              isFullyPlaced = false;
-              break;
-            }
-          }
-          if (isFullyPlaced) {
-            masterCell->setFlattenLeaf( true );
-          }
-        }
-      }
-
-      if ( masterCell->getAbutmentBox().isEmpty()
-         or (   (masterCell->getAbutmentBox().getHeight() == topAb.getHeight())
-            and (masterCell->getAbutmentBox().getWidth () == topAb.getWidth ()) ) ) {
-      // Have to check here if the model is fully placed or not.
-      //masterCell->setAbutmentBox( topAb );
-      //instance->setTransformation( Transformation() ); // (0,0,ID).
-      //instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
-        occurrence.makeInvalid();
-        instance->slaveAbutmentBox();
-      }
-    }
-    UpdateSession::close();
-
-    size_t  instancesNb = getCell()->getLeafInstanceOccurrences(getBlockInstance()).getSize();
+    size_t  instancesNb = getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()).getSize();
     if (not instancesNb) {
       cerr << Error( "EtesianEngine::toColoquinte(): No instance to place. We're gonna crash..." ) << endl;
     }
@@ -555,7 +554,7 @@ namespace Etesian {
 
     bool    tooManyInstances = false;
     index_t instanceId       = 0;
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       if (tooManyInstances or (instanceId == instancesNb)) {
         tooManyInstances = true;
@@ -737,8 +736,6 @@ namespace Etesian {
     _placementLB.positions_    = positions;
     _placementLB.orientations_ = orientations;
     _placementUB = _placementLB;
-
-    Cell::setFlattenLeafMode( false );
   }
 
 
@@ -750,7 +747,7 @@ namespace Etesian {
      */
 
     bool isSliceHeightSet = false;
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell* masterCell = instance->getMasterCell();
@@ -1113,8 +1110,7 @@ namespace Etesian {
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.invert();
 
-    Cell::setFlattenLeafMode( true );
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences(getBlockInstance()) )
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       DbU::Unit hpitch          = getHorizontalPitch();
       DbU::Unit vpitch          = getSliceStep();
@@ -1148,7 +1144,6 @@ namespace Etesian {
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
       }
     }
-    Cell::setFlattenLeafMode( false );
 
     UpdateSession::close();
 

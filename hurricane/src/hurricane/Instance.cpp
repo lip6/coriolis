@@ -96,19 +96,19 @@ class Instance_IsTerminalFilter : public Filter<Instance*> {
 
 };
 
-class Instance_IsLeafFilter : public Filter<Instance*>
+class Instance_IsTerminalNetlistFilter : public Filter<Instance*>
 {
     public:
-                                     Instance_IsLeafFilter () {};
-                                     Instance_IsLeafFilter ( const Instance_IsLeafFilter& filter ) {};
-              Instance_IsLeafFilter& operator=             ( const Instance_IsLeafFilter& filter )
-                                       { return *this; };
-      virtual Filter<Instance*>*     getClone              () const
-                                       { return new Instance_IsLeafFilter( *this ); };
-      virtual bool                   accept                ( Instance* instance ) const
-                                       { return instance->isLeaf(); };
-      virtual string                 _getString            () const
-                                       { return "<" + _TName("Instance::IsLeafFilter") + ">"; };
+                                                Instance_IsTerminalNetlistFilter () {};
+                                                Instance_IsTerminalNetlistFilter ( const Instance_IsTerminalNetlistFilter& filter ) {};
+              Instance_IsTerminalNetlistFilter& operator=             ( const Instance_IsTerminalNetlistFilter& filter )
+                                                  { return *this; };
+      virtual Filter<Instance*>*                getClone              () const
+                                                  { return new Instance_IsTerminalNetlistFilter( *this ); };
+      virtual bool                              accept                ( Instance* instance ) const
+                                                  { return instance->isTerminalNetlist(); };
+      virtual string                            _getString            () const
+                                                  { return "<" + _TName("Instance::IsTerminalNetlistFilter") + ">"; };
   private:
     uint32_t _flags;
 
@@ -278,10 +278,10 @@ bool Instance::isTerminal() const
     return getMasterCell()->isTerminal();
 }
 
-bool Instance::isLeaf() const
-// **************************
+bool Instance::isTerminalNetlist() const
+// *************************************
 {
-    return getMasterCell()->isLeaf();
+    return getMasterCell()->isTerminalNetlist();
 }
 
 bool Instance::isUnique() const
@@ -315,10 +315,10 @@ InstanceFilter Instance::getIsTerminalFilter()
     return Instance_IsTerminalFilter();
 }
 
-InstanceFilter Instance::getIsLeafFilter()
-// ***************************************
+InstanceFilter Instance::getIsTerminalNetlistFilter()
+// **************************************************
 {
-    return Instance_IsLeafFilter();
+    return Instance_IsTerminalNetlistFilter();
 }
 
 InstanceFilter Instance::getIsUnplacedFilter()
@@ -575,7 +575,6 @@ Instance* Instance::getClone(Cell* cloneCell) const
 void Instance::_postCreate()
 // *************************
 {
-    _cell->setTerminal(false);
     _cell->_getInstanceMap()._insert(this);
     _masterCell->_getSlaveInstanceSet()._insert(this);
 

@@ -599,7 +599,7 @@ architecture_body
     : ARCHITECTURE
       simple_name
           { if (    ( Vst::states->_behavioral )
-                 || ( Vst::states->_state->isFlattenLeaf() )
+                 || ( Vst::states->_state->isTerminalNetlist() )
                  || ( Vst::states->_state->getDepth() <= 0 )
                ) YYACCEPT;
           }
@@ -785,7 +785,7 @@ component_instantiation_statement
                 throw Error( message.str() );
               }
               Vst::states->_instance = Instance::create( Vst::states->_cell, *$1, Vst::states->_masterCell );
-              Vst::states->_cell->setTerminal( false );
+              Vst::states->_cell->setTerminalNetlist( false );
             } else {
               if (not Vst::framework->getCell(*$2,Catalog::State::Views|Catalog::State::InMemory)) {
                 if (Vst::states->pushCell(*$2)) {

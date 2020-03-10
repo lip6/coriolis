@@ -32,6 +32,7 @@ namespace Analog {
                                  ,       size_t                 count )
     : Super(library, name, type)
     , _metaCapacitor(NULL)
+    , _dummy        (NULL)
     , _count        (count)
   { }
 
@@ -48,7 +49,7 @@ namespace Analog {
     mc->createConnections     ();
     mc->addMatrixParameter    ( "matrix" );
     mc->addCapacitiesParameter( "capacities", count );
-    mc->setTerminal           ( true );
+
     UpdateSession::close();
 
     return mc;
@@ -58,6 +59,10 @@ namespace Analog {
   void MultiCapacitor::_postCreate ( const Name& deviceName ) 
   {
     Super::_postCreate( deviceName );
+
+    Choices dummyChoices;
+    dummyChoices << "";
+    _dummy = addMCheckBoxParameter( "dummy", dummyChoices );
   }
   
 

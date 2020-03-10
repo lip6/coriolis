@@ -76,12 +76,12 @@ namespace CRL {
   {
     string  s;
 
-    s += (isFlattenLeaf()) ? 'C' : '-';
-    s += (isFeed()       ) ? 'F' : '-';
-    s += (isPad()        ) ? 'P' : '-';
-    s += (isGds()        ) ? 'G' : '-';
-    s += (isDelete()     ) ? 'D' : '-';
-    s += (isInMemory()   ) ? 'm' : '-';
+    s += (isTerminalNetlist()) ? 'C' : '-';
+    s += (isFeed()           ) ? 'F' : '-';
+    s += (isPad()            ) ? 'P' : '-';
+    s += (isGds()            ) ? 'G' : '-';
+    s += (isDelete()         ) ? 'D' : '-';
+    s += (isInMemory()       ) ? 'm' : '-';
 
     return s;
   }
@@ -163,12 +163,12 @@ namespace CRL {
     if (state->getLibrary() != library) state->setLibrary( library );
 
     state->setDepth( depth );
-    state->setFlattenLeaf( (sflags[0] == 'C') );
-    state->setFeed(        (sflags[1] == 'F') );
-    state->setPad(         (sflags[2] == 'P') );
-    state->setGds(         (sflags[3] == 'G') );
-    state->setDelete(      (sflags[4] == 'D') );
-    state->setInMemory(    (sflags[5] == 'm') );
+    state->setTerminalNetlist( (sflags[0] == 'C') );
+    state->setFeed(            (sflags[1] == 'F') );
+    state->setPad(             (sflags[2] == 'P') );
+    state->setGds(             (sflags[3] == 'G') );
+    state->setDelete(          (sflags[4] == 'D') );
+    state->setInMemory(        (sflags[5] == 'm') );
 
     update( stack, state );
   }
@@ -253,10 +253,10 @@ namespace CRL {
   
     for ( ; start<s.size() ; start++ ) {
       switch ( s[start] ) {
-        case 'C': state->setFlattenLeaf ( true ); break;
-        case 'F': state->setFeed        ( true ); break;
-        case 'G': state->setGds         ( true ); break;
-        case 'D': state->setDelete      ( true ); break;
+        case 'C': state->setTerminalNetlist ( true ); break;
+        case 'F': state->setFeed            ( true ); break;
+        case 'G': state->setGds             ( true ); break;
+        case 'D': state->setDelete          ( true ); break;
         default: return false;
       }
     }
@@ -303,9 +303,9 @@ namespace CRL {
       State* state = entry.second;
       if (state->getLibrary() != library) continue;
 
-      if (state->isFlattenLeaf()) of << setw(20) << left << entry.first << "C\n";
-      if (state->isFeed()       ) of << setw(20) << left << entry.first << "F\n";
-      if (state->isGds()        ) of << setw(20) << left << entry.first << "G\n";
+      if (state->isTerminalNetlist()) of << setw(20) << left << entry.first << "C\n";
+      if (state->isFeed()           ) of << setw(20) << left << entry.first << "F\n";
+      if (state->isGds()            ) of << setw(20) << left << entry.first << "G\n";
     }
     of.close();
   }

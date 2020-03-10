@@ -348,7 +348,7 @@ namespace CRL {
       throw Error ( "Missing CatalogProperty in cell %s.\n" , getString(cell->getName()).c_str() );
 
     __state._cell  = cell;
-    __state._cell->setTerminal ( false );
+    __state._cell->setTerminalNetlist ( false );
     __state._state = sprop->getState();
     __state._state->setLogical ( true );
 

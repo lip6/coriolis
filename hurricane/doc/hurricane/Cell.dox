@@ -4,9 +4,33 @@
 
  namespace Hurricane {
 
- /*! \class        Cell
-  *  \brief        The model (\b API).
-  */
+ //! \class        Cell
+ //! \brief        The model (\b API).
+ //!
+ //! \section      secCellHierarchy  Layout vs. Netlist Cell Hierarchy
+ //!
+ //!               The Cell / Instance hierarchy can be walkthrough in two different
+ //!               modes:
+ //!               <ul>
+ //!                 <li> <b>The Layout Mode</b>, in this mode the walktrough will be done
+ //!                      over all the instances levels. This mode is used for the following
+ //!                      collections:
+ //!                      <ul>
+ //!                        <li> Cell::getTerminalInstanceOccurrences().
+ //!                      </ul>
+ //!
+ //!                 <li> <b>The Netlist Mode</b>, in this mode the walktrough will stop
+ //!                      at instances flagged as Cell::Flags::TerminalInstance.
+ //!                      The netlist hierarchy will be a subset of the layout one.
+ //!                      Or, conversely, some level of layout hirearchy can have no
+ //!                      netlist equivalent. This mode is used for the following
+ //!                      collections:
+ //!
+ //!                      <ul>
+ //!                        <li> Cell::getTerminalNetlistInstanceOccurrences().
+ //!                        <li> Cell::getNonTerminalNetlistInstanceOccurrences().
+ //!                      </ul>
+ //!               </ul>
 
 
  /*! \function     Cell* Cell::create ( Library* library, const Name& name );
@@ -141,13 +165,17 @@
   *                entities are taken into account in this Collection.
   */
 
- /*! \function     Occurrences  Cell::getLeafInstanceOccurrences ( const Instance* topInstance=NULL ) const;
+ //! \function     Occurrences  Cell::getTerminalInstanceOccurrences () const;
+ //!               Returns the trans-hierarchical Collection of all instance Occurrences that are
+ //!               layout terminal cells (leaves).
+
+ /*! \function     Occurrences  Cell::getTerminalNetlistInstanceOccurrences ( const Instance* topInstance=NULL ) const;
   *                Returns the trans-hierarchical Collection of all instance Occurrences that are
   *                leaf cells. With the \c topInstance argument we can restrict the collection
   *                to leafs of that instance (of the current Cell) only.
   */
 
- /*! \function     Occurrences  Cell::getNonLeafInstanceOccurrences ( const Instance* topInstance=NULL ) const;
+ /*! \function     Occurrences  Cell::getNonTerminalNetlistInstanceOccurrences ( const Instance* topInstance=NULL ) const;
   *                Returns the trans-hierarchical Collection of all instance Occurrences that are
   *                \b not leaf cells. With the \c topInstance argument we can restrict the collection
   *                to non-leafs of that instance (of the current Cell) only.
@@ -170,11 +198,15 @@
   *                automatically called when creating an instance).
   */
 
- /*! \function     bool  Cell::isTerminal () const;
-  *                Returns \true if the Cell is marked as terminal (meaning that it has
-  *                no inside or that we dont want to take it into account), else
-  *                \false.
-  */
+ //! \function     bool  Cell::isTerminal () const;
+ //!               Returns \true if the cell contains no instances. This is a layout
+ //!               leaf cell.
+
+ //! \function     bool  Cell::isTerminalNetlist () const;
+ //!               Returns \true if the Cell is marked as terminal for the \e netlist
+ //!               hierarchy. A terminal \e netlist cell may, however contains
+ //!               further level of physical (layout) instances. This is a state
+ //!               that can be set or unset.
 
  //! \function     bool  Cell::isUnique () const;
  //!               Returns \true if the Cell has one or less instances, regardless of
@@ -206,8 +238,8 @@
   *                Box as argument.
   */
 
- /*! \function     void  Cell::setTerminal ( bool state );
-  *                sets Cell terminal status to \e state.
+ /*! \function     void  Cell::setTerminalNetlist ( bool state );
+  *                sets Cell \e netlist terminal status to \e state.
   */
 
  /*  \function     void  Cell::setSymbol ( Symbol* symbol );

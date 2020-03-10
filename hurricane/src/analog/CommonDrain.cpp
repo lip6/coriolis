@@ -44,7 +44,6 @@ namespace Analog {
     CommonDrain* dp = new CommonDrain(library,name,type);
     dp->_postCreate      (deviceName);
     dp->createConnections(bulkConnected);
-    dp->setTerminal( true );
     UpdateSession::close();
     return dp;
   }

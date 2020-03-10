@@ -325,17 +325,17 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getLeafInstanceOccurrences()"
+  // Attribute Method  :  "PyCell_getTerminalNetlistInstanceOccurrences()"
 
-  static PyObject* PyCell_getLeafInstanceOccurrences ( PyCell* self)
+  static PyObject* PyCell_getTerminalNetlistInstanceOccurrences ( PyCell* self)
   {
-    cdebug_log(20,0) << "PyCell_getLeafInstanceOccurrences()" << endl;
+    cdebug_log(20,0) << "PyCell_getTerminalNetlistInstanceOccurrences()" << endl;
 
-    METHOD_HEAD ( "Cell.getLeafInstanceOccurrences()" )
+    METHOD_HEAD ( "Cell.getTerminalNetlistInstanceOccurrences()" )
 
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
     HTRY
-      Occurrences* occurrences = new Occurrences(cell->getLeafInstanceOccurrences());
+      Occurrences* occurrences = new Occurrences(cell->getTerminalNetlistInstanceOccurrences());
   
       pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
       if (pyOccurrenceCollection == NULL) return NULL;
@@ -346,15 +346,15 @@ extern "C" {
   }
 
 
-  static PyObject* PyCell_getNonLeafInstanceOccurrences ( PyCell* self)
+  static PyObject* PyCell_getNonTerminalNetlistInstanceOccurrences ( PyCell* self)
   {
-    cdebug_log(20,0) << "PyCell_getNonLeafInstanceOccurrences()" << endl;
+    cdebug_log(20,0) << "PyCell_getNonTerminalNetlistInstanceOccurrences()" << endl;
 
-    METHOD_HEAD ( "Cell.getLeafNonInstanceOccurrences()" )
+    METHOD_HEAD ( "Cell.getTerminalNetlistNonInstanceOccurrences()" )
 
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
     HTRY
-      Occurrences* occurrences = new Occurrences(cell->getNonLeafInstanceOccurrences());
+      Occurrences* occurrences = new Occurrences(cell->getNonTerminalNetlistInstanceOccurrences());
   
       pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
       if (pyOccurrenceCollection == NULL) return NULL;
@@ -366,12 +366,12 @@ extern "C" {
 
 
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_getLeafInstanceOccurrencesUnder()"
+  // Attribute Method  :  "PyCell_getTerminalNetlistInstanceOccurrencesUnder()"
 
-  static PyObject* PyCell_getLeafInstanceOccurrencesUnder(PyCell *self, PyObject* args) {
-    cdebug_log(20,0) << "PyCell_getLeafInstanceOccurrencesUnder()" << endl;
+  static PyObject* PyCell_getTerminalNetlistInstanceOccurrencesUnder(PyCell *self, PyObject* args) {
+    cdebug_log(20,0) << "PyCell_getTerminalNetlistInstanceOccurrencesUnder()" << endl;
 
-    METHOD_HEAD ( "Cell.getLeafInstanceOccurrencesUnder()" )
+    METHOD_HEAD ( "Cell.getTerminalNetlistInstanceOccurrencesUnder()" )
 
     PyBox* pyBox;
     if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
@@ -381,7 +381,7 @@ extern "C" {
     PyOccurrenceCollection* pyOccurrenceCollection = NULL;
 
     HTRY
-    Occurrences* occurrences = new Occurrences(cell->getLeafInstanceOccurrencesUnder(*PYBOX_O(pyBox)));
+    Occurrences* occurrences = new Occurrences(cell->getTerminalNetlistInstanceOccurrencesUnder(*PYBOX_O(pyBox)));
 
     pyOccurrenceCollection = PyObject_NEW(PyOccurrenceCollection, &PyTypeOccurrenceCollection);
     if (pyOccurrenceCollection == NULL) { 
@@ -660,16 +660,16 @@ extern "C" {
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_setTerminal ()"
 
-  static PyObject* PyCell_setTerminal ( PyCell *self, PyObject* args ) {
-    cdebug_log(20,0) << "PyCell_setTerminal ()" << endl;
+  static PyObject* PyCell_setTerminalNetlist ( PyCell *self, PyObject* args ) {
+    cdebug_log(20,0) << "PyCell_setTerminalNetlist ()" << endl;
 
     HTRY
-    METHOD_HEAD ( "Cell.setTerminal()" )
+    METHOD_HEAD ( "Cell.setTerminalNetlist()" )
     PyObject* arg0;
-    if (!PyArg_ParseTuple(args,"O:Cell.setTerminal", &arg0) && PyBool_Check(arg0)) {
+    if (!PyArg_ParseTuple(args,"O:Cell.setTerminalNetlist", &arg0) && PyBool_Check(arg0)) {
       return NULL;
     }
-    PyObject_IsTrue(arg0)?cell->setTerminal(true):cell->setTerminal(false);
+    PyObject_IsTrue(arg0)?cell->setTerminalNetlist(true):cell->setTerminalNetlist(false);
     HCATCH
     Py_RETURN_NONE;
   }
@@ -711,15 +711,15 @@ extern "C" {
 
 
   // Standart Predicates (Attributes).
-  DirectGetBoolAttribute(PyCell_isTerminal      ,       isTerminal ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isLeaf          ,           isLeaf ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isUnique        ,         isUnique ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isUniquified    ,     isUniquified ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isUniquifyMaster, isUniquifyMaster ,PyCell,Cell)
-  DirectGetBoolAttribute(PyCell_isRouted        , isRouted         ,PyCell,Cell)
-  DirectSetBoolAttribute(PyCell_setRouted       , setRouted        ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isTerminal       , isTerminal       ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isTerminalNetlist, isTerminalNetlist,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUnique         , isUnique         ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUniquified     , isUniquified     ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isUniquifyMaster , isUniquifyMaster ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isRouted         , isRouted         ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setRouted        , setRouted        ,PyCell,Cell)
 
-  GetBoundStateAttribute(PyCell_isPyBound              ,PyCell,Cell)
+  GetBoundStateAttribute(PyCell_isPyBound        ,PyCell,Cell)
 
   // ---------------------------------------------------------------
   // PyCell Attribute Method table.
@@ -737,12 +737,12 @@ extern "C" {
     , { "getComponentsUnder"  , (PyCFunction)PyCell_getComponentsUnder   , METH_VARARGS, "Returns the collection of all components belonging to this cell and intersecting the given rectangular area." }
     , { "getOccurrences"      , (PyCFunction)PyCell_getOccurrences       , METH_NOARGS , "Returns the collection of all occurrences belonging to the cell." }
     , { "getOccurrencesUnder" , (PyCFunction)PyCell_getOccurrencesUnder  , METH_VARARGS, "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
-    , { "getLeafInstanceOccurrences"     , (PyCFunction)PyCell_getLeafInstanceOccurrences     , METH_NOARGS
-      , "Returns the collection all terminal instances occurrences." }
-    , { "getNonLeafInstanceOccurrences"  , (PyCFunction)PyCell_getNonLeafInstanceOccurrences  , METH_NOARGS
-      , "Returns the collection of all non-terminal instances occurrences." }
-    , { "getLeafInstanceOccurrencesUnder", (PyCFunction)PyCell_getLeafInstanceOccurrencesUnder, METH_VARARGS
-      , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
+    , { "getTerminalNetlistInstanceOccurrences"     , (PyCFunction)PyCell_getTerminalNetlistInstanceOccurrences     , METH_NOARGS
+                                                    , "Returns the collection all terminal instances occurrences." }
+    , { "getNonTerminalNetlistInstanceOccurrences"  , (PyCFunction)PyCell_getNonTerminalNetlistInstanceOccurrences  , METH_NOARGS
+                                                    , "Returns the collection of all non-terminal instances occurrences." }
+    , { "getTerminalNetlistInstanceOccurrencesUnder", (PyCFunction)PyCell_getTerminalNetlistInstanceOccurrencesUnder, METH_VARARGS
+                                                    , "Returns the collection of all occurrences belonging to this cell and intersecting the given rectangular area." }
     , { "getReferences"       , (PyCFunction)PyCell_getReferences       , METH_VARARGS, "Returns the collection of all references belonging to the cell." }
     , { "getHyperNets"        , (PyCFunction)PyCell_getHyperNets        , METH_VARARGS, "Returns the collection of all hyperNets belonging to the cell." }
     , { "getNet"              , (PyCFunction)PyCell_getNet              , METH_VARARGS, "Returns the net of name <name> if it exists, else NULL." }
@@ -754,7 +754,7 @@ extern "C" {
     , { "getGroundNets"       , (PyCFunction)PyCell_getGroundNets       , METH_NOARGS , "Returns the collection of all ground nets of the cell." }
     , { "getAbutmentBox"      , (PyCFunction)PyCell_getAbutmentBox      , METH_NOARGS , "Returns the abutment box of the cell(which is defined by the designer unlike the bounding box which is managed dynamically)" }
     , { "isTerminal"          , (PyCFunction)PyCell_isTerminal          , METH_NOARGS , "Returns true if the cell is marked as terminal, else false." }
-    , { "isLeaf"              , (PyCFunction)PyCell_isLeaf              , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
+    , { "isTerminalNetlist"   , (PyCFunction)PyCell_isTerminalNetlist   , METH_NOARGS , "Returns true if the cell is a leaf of the hierarchy, else false." }
     , { "isUnique"            , (PyCFunction)PyCell_isUnique            , METH_NOARGS , "Returns true if the cell has one or less instance." }
     , { "isUniquified"        , (PyCFunction)PyCell_isUniquified        , METH_NOARGS , "Returns true if the cell is the result of an uniquification." }
     , { "isUniquifyMaster"    , (PyCFunction)PyCell_isUniquifyMaster    , METH_NOARGS , "Returns true if the cell is the reference for an uniquification." }
@@ -762,13 +762,13 @@ extern "C" {
     , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS , "Returns true if the cell is bounded to the hurricane cell" }    
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
-    , { "setTerminal"         , (PyCFunction)PyCell_setTerminal         , METH_VARARGS, "Sets the cell terminal status." }
+    , { "setTerminalNetlist"  , (PyCFunction)PyCell_setTerminalNetlist  , METH_VARARGS, "Sets the cell terminal netlist status." }
     , { "setRouted"           , (PyCFunction)PyCell_setRouted           , METH_VARARGS, "Sets the cell routed status." }
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
     , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS
                               , "Destroy associated hurricane object The python object remains." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , {NULL, NULL, 0, NULL}   /* sentinel */
     };
 
 

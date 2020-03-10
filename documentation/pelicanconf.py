@@ -30,6 +30,7 @@ STATIC_PATHS = [ 'pages/users-guide'
                , 'pages/python-cpp'
                , 'pages/stratus'
                , 'pages/rds'
+               , 'scripts'
                , 'images'
                , 'pdfs'
                ]

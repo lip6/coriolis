@@ -71,7 +71,7 @@ namespace Analog {
   void Device::_postCreate ( const Name& deviceName )
   {
     Super::_postCreate();
-    setTerminal( true );
+    setTerminalNetlist( true );
   
     _subDevicesLibrary = Library::create( getLibrary(), getName() );
     _anonymous = Net::create( this, anonymousNetName );

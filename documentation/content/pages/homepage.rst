@@ -32,7 +32,7 @@ and simulator, logic synthetiser, automatic place & route and portable |CMOS|
 library. It has been in used in research projects such as the 875K transistors
 |StaCS| superscalar microprocessor or the 400K transistors |IEEE| gigabit |HSL|
 router. It has been actively developped during the 1990-2000 years and is maintained
-since. It's practical limit for one standard cell block (flat) is about 10K gates,
+since. Its practical limit for one standard cell block (flat) is about 10K gates,
 above that limit you would need to use hierarchy and manually build a floorplan.
 |Alliance| is entirely written in C.
 

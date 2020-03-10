@@ -401,7 +401,7 @@ void CSpiceParser::Parse(const string cellPath, Cell* cell)
   Catalog::State *state = sprop->getState ();
   state->setLogical ( true );
 
-//  if ( state->isFlattenLeaf() ) cell->setFlattenLeaf ( true );
+//  if ( state->isTerminalNetlist() ) cell->setTerminalNetlist ( true );
 
   if(badModelNameSet.find(getString(cell->getName()))!=badModelNameSet.end()) {
     state->setLogical (false);

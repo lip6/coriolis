@@ -81,13 +81,13 @@ namespace Hurricane {
 
 
 // -------------------------------------------------------------------
-// Class  :  "LeafHierarchyInfos"
+// Class  :  "TerminalNetlistHierarchyInfos"
 
 
-  const vector<HierarchyInfos*>  LeafHierarchyInfos::_instances;
+  const vector<HierarchyInfos*>  TerminalNetlistHierarchyInfos::_instances;
 
 
-  LeafHierarchyInfos::LeafHierarchyInfos ( const Instance* instance
+  TerminalNetlistHierarchyInfos::TerminalNetlistHierarchyInfos ( const Instance* instance
                                          , HierarchyInfos* parent
                                          , size_t          rowInParent )
     : HierarchyInfos(parent,rowInParent)
@@ -95,22 +95,22 @@ namespace Hurricane {
   { }
 
 
-  LeafHierarchyInfos::~LeafHierarchyInfos ()
+  TerminalNetlistHierarchyInfos::~TerminalNetlistHierarchyInfos ()
   { }
 
 
-  bool                                LeafHierarchyInfos::isRoot           () const { return false; }
-  bool                                LeafHierarchyInfos::isLeaf           () const { return true; }
-  bool                                LeafHierarchyInfos::isCollapsed      () const { return true; }
-  const HierarchyInfos*               LeafHierarchyInfos::getRow           ( int row ) const { return NULL; }
-  int                                 LeafHierarchyInfos::size             () const { return 0; }
-  Cell*                               LeafHierarchyInfos::getMasterCell    () const { return _instance->getMasterCell(); }
-  const Instance*                     LeafHierarchyInfos::getInstance      () const { return _instance; }
-  const std::vector<HierarchyInfos*>& LeafHierarchyInfos::getInstances     () const { return _instances; }
-  QString                             LeafHierarchyInfos::getFilterPattern () const { return "<Not avalaible for leaf instances>"; }
-  void                                LeafHierarchyInfos::setFilterPattern ( const QString& ) { }
-  void                                LeafHierarchyInfos::expand           () { }
-  void                                LeafHierarchyInfos::collapse         () { }
+  bool                                TerminalNetlistHierarchyInfos::isRoot           () const { return false; }
+  bool                                TerminalNetlistHierarchyInfos::isTerminalNetlist           () const { return true; }
+  bool                                TerminalNetlistHierarchyInfos::isCollapsed      () const { return true; }
+  const HierarchyInfos*               TerminalNetlistHierarchyInfos::getRow           ( int row ) const { return NULL; }
+  int                                 TerminalNetlistHierarchyInfos::size             () const { return 0; }
+  Cell*                               TerminalNetlistHierarchyInfos::getMasterCell    () const { return _instance->getMasterCell(); }
+  const Instance*                     TerminalNetlistHierarchyInfos::getInstance      () const { return _instance; }
+  const std::vector<HierarchyInfos*>& TerminalNetlistHierarchyInfos::getInstances     () const { return _instances; }
+  QString                             TerminalNetlistHierarchyInfos::getFilterPattern () const { return "<Not avalaible for leaf instances>"; }
+  void                                TerminalNetlistHierarchyInfos::setFilterPattern ( const QString& ) { }
+  void                                TerminalNetlistHierarchyInfos::expand           () { }
+  void                                TerminalNetlistHierarchyInfos::collapse         () { }
 
 
 // -------------------------------------------------------------------
@@ -132,13 +132,13 @@ namespace Hurricane {
   }
 
 
-  bool                                InstHierarchyInfos::isRoot           () const { return false; }
-  bool                                InstHierarchyInfos::isLeaf           () const { return false; }
-  bool                                InstHierarchyInfos::isCollapsed      () const { return _flags & HierarchyInfos::Collapsed; }
-  Cell*                               InstHierarchyInfos::getMasterCell    () const { return _instance->getMasterCell(); }
-  const Instance*                     InstHierarchyInfos::getInstance      () const { return _instance; }
-  const std::vector<HierarchyInfos*>& InstHierarchyInfos::getInstances     () const { return _instances; }
-  QString                             InstHierarchyInfos::getFilterPattern () const { return _filter.pattern(); }
+  bool                                InstHierarchyInfos::isRoot            () const { return false; }
+  bool                                InstHierarchyInfos::isTerminalNetlist () const { return false; }
+  bool                                InstHierarchyInfos::isCollapsed       () const { return _flags & HierarchyInfos::Collapsed; }
+  Cell*                               InstHierarchyInfos::getMasterCell     () const { return _instance->getMasterCell(); }
+  const Instance*                     InstHierarchyInfos::getInstance       () const { return _instance; }
+  const std::vector<HierarchyInfos*>& InstHierarchyInfos::getInstances      () const { return _instances; }
+  QString                             InstHierarchyInfos::getFilterPattern  () const { return _filter.pattern(); }
 
 
   int  InstHierarchyInfos::size () const
@@ -172,8 +172,8 @@ namespace Hurricane {
       // The instance *is not* in the list.
         if (_filter.isEmpty() or (_filter.indexIn(getString(instance->getName()).c_str()) >= 0) ) {
           HierarchyInfos* infos = NULL;
-          if (instance->isLeaf()) infos = new LeafHierarchyInfos( instance, this, 0 );
-          else                    infos = new InstHierarchyInfos( instance, this, 0 );
+          if (instance->isTerminalNetlist()) infos = new TerminalNetlistHierarchyInfos( instance, this, 0 );
+          else                               infos = new InstHierarchyInfos           ( instance, this, 0 );
 
           _instances.insert( _instances.begin()+i, infos );
           ++i;
@@ -199,8 +199,8 @@ namespace Hurricane {
       }
 
       HierarchyInfos* infos = NULL;
-      if (instance->isLeaf()) infos = new LeafHierarchyInfos( instance, this, _instances.size() );
-      else                    infos = new InstHierarchyInfos( instance, this, _instances.size() );
+      if (instance->isTerminalNetlist()) infos = new TerminalNetlistHierarchyInfos( instance, this, _instances.size() );
+      else                               infos = new InstHierarchyInfos           ( instance, this, _instances.size() );
 
       _instances.push_back( infos );
     }
@@ -271,18 +271,18 @@ namespace Hurricane {
   { delete _instances[0]; }
 
 
-  bool                                RootHierarchyInfos::isRoot           () const { return true; }
-  bool                                RootHierarchyInfos::isLeaf           () const { return false; }
-  bool                                RootHierarchyInfos::isCollapsed      () const { return false; }
-  int                                 RootHierarchyInfos::size             () const { return _instances.size(); }
-  const HierarchyInfos*               RootHierarchyInfos::getRow           ( int row ) const { return (row==0) ? _instances[0] : NULL; }
-  Cell*                               RootHierarchyInfos::getMasterCell    () const { return _instances[0]->getMasterCell(); }
-  const Instance*                     RootHierarchyInfos::getInstance      () const { return NULL; }
-  const std::vector<HierarchyInfos*>& RootHierarchyInfos::getInstances     () const { return _instances; }
-  QString                             RootHierarchyInfos::getFilterPattern () const { return "<Not avalaible for Root>"; }
-  void                                RootHierarchyInfos::setFilterPattern ( const QString& ) { }
-  void                                RootHierarchyInfos::expand           () { }
-  void                                RootHierarchyInfos::collapse         () { }
-  void                                RootHierarchyInfos::setCell          ( Cell* topCell ) { dynamic_cast<TopCellHierarchyInfos*>(_instances[0])->setCell(topCell); }
+  bool                                RootHierarchyInfos::isRoot            () const { return true; }
+  bool                                RootHierarchyInfos::isTerminalNetlist () const { return false; }
+  bool                                RootHierarchyInfos::isCollapsed       () const { return false; }
+  int                                 RootHierarchyInfos::size              () const { return _instances.size(); }
+  const HierarchyInfos*               RootHierarchyInfos::getRow            ( int row ) const { return (row==0) ? _instances[0] : NULL; }
+  Cell*                               RootHierarchyInfos::getMasterCell     () const { return _instances[0]->getMasterCell(); }
+  const Instance*                     RootHierarchyInfos::getInstance       () const { return NULL; }
+  const std::vector<HierarchyInfos*>& RootHierarchyInfos::getInstances      () const { return _instances; }
+  QString                             RootHierarchyInfos::getFilterPattern  () const { return "<Not avalaible for Root>"; }
+  void                                RootHierarchyInfos::setFilterPattern  ( const QString& ) { }
+  void                                RootHierarchyInfos::expand            () { }
+  void                                RootHierarchyInfos::collapse          () { }
+  void                                RootHierarchyInfos::setCell           ( Cell* topCell ) { dynamic_cast<TopCellHierarchyInfos*>(_instances[0])->setCell(topCell); }
 
 } // End of Hurricane namespace.

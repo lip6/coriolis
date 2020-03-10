@@ -378,7 +378,7 @@ namespace Katana {
     
     Slices slices ( this );
 
-    for ( Occurrence occurrence : getCell()->getLeafInstanceOccurrences() )
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
       Cell*     masterCell   = instance->getMasterCell();

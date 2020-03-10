@@ -354,7 +354,7 @@ namespace CRL {
     // The cell is not even in the Catalog : add an entry.
       if (state == NULL) state = _catalog.getState( name, true );
 
-      if (state->isFlattenLeaf()) depth = 0;
+      if (state->isTerminalNetlist()) depth = 0;
       state->setDepth( depth );
 
     // Do not try to load.
@@ -380,7 +380,7 @@ namespace CRL {
         if (state->getCell() == NULL) {
           state->setCell ( Cell::create( _libraries[ _environment.getLIBRARIES().getIndex() ]->getLibrary() , name ) );
           state->getCell ()->put( CatalogProperty::create(state) );
-          state->getCell ()->setFlattenLeaf( false );
+          state->getCell ()->setTerminalNetlist( false );
           createCell = true;
         }
 
@@ -526,7 +526,7 @@ namespace CRL {
 
       state->setCell ( Cell::create ( library->getLibrary() , name ) );
       state->getCell ()->put ( CatalogProperty::create(state) );
-      state->getCell ()->setFlattenLeaf ( false );
+      state->getCell ()->setTerminalNetlist ( false );
     }
 
     return state->getCell ();

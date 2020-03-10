@@ -710,7 +710,7 @@ namespace CRL {
     if ( cell != NULL ) {
       libraryName = getString(cell->getName()) + "_export";
 
-      for ( Occurrence occurrence : cell->getLeafInstanceOccurrences() ) {
+      for ( Occurrence occurrence : cell->getTerminalNetlistInstanceOccurrences() ) {
         Instance*   instance = static_cast<Instance*>(occurrence.getEntity());
         cells.insert ( instance->getMasterCell() );
       }

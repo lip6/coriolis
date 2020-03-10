@@ -69,8 +69,6 @@ namespace Analog {
     _bulk->setExternal(true);
     _anonymous = Net::create(this, "Anonymous");
     _anonymous->setAutomatic( true );
-  
-    setTerminal(false);
   }
 
 

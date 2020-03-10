@@ -52,6 +52,7 @@
 .. |SL6|                            replace:: :sc:`Scientific Linux 6`
 .. |SL7|                            replace:: :sc:`Scientific Linux 7`
 .. |Scientific Linux|               replace:: :sc:`Scientific Linux`
+.. |CentOS|                         replace:: :sc:`CentOS`
 .. |RedHat|                         replace:: :sc:`RedHat`
 .. |Fedora|                         replace:: :sc:`Fedora`
 .. |FC13|                           replace:: :sc:`fc13`
@@ -62,9 +63,9 @@
 .. |Blif|                           replace:: :sc:`blif`
 .. |TSMC|                           replace:: :sc:`tsmc`
 .. |AMS|                            replace:: :sc:`ams`
-.. |XFAB|                             replace:: :sc:`xfab`
-.. |XH035|                            replace:: :cb:`XH035`
-.. |ROHM|                             replace:: :sc:`rohm`
+.. |XFAB|                           replace:: :sc:`xfab`
+.. |XH035|                          replace:: :cb:`XH035`
+.. |ROHM|                           replace:: :sc:`rohm`
 
 .. |Alexandre|                      replace:: :sc:`Alexandre`
 .. |Belloeil|                       replace:: :sc:`Belloeil`
@@ -144,6 +145,12 @@
 .. |PyQt|                           replace:: :sc:`PyQt`
 .. |PyQt4|                          replace:: :sc:`PyQt4`
 .. |PyQt5|                          replace:: :sc:`PyQt5`
+.. |UID|                            replace:: :sc:`uid`
+.. |UID|                            replace:: :sc:`uid`
+.. |GID|                            replace:: :sc:`gid`
+.. |root|                           replace:: :cb:`root`
+.. |GID|                            replace:: :sc:`gid`
+.. |root|                           replace:: :cb:`root`
 .. |tty|                            replace:: :cb:`tty`
 .. |svn|                            replace:: :cb:`svn`
 .. |git|                            replace:: :cb:`git`

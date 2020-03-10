@@ -518,10 +518,10 @@ namespace {
     status = defwNewLine ();
     CHECK_STATUS_CBK(status);
 
-    status = defwStartComponents ( cell->getLeafInstanceOccurrences().getSize() );
+    status = defwStartComponents ( cell->getTerminalNetlistInstanceOccurrences().getSize() );
     CHECK_STATUS_CBK(status);
 
-    for ( Occurrence occurrence : cell->getLeafInstanceOccurrences() ) {
+    for ( Occurrence occurrence : cell->getTerminalNetlistInstanceOccurrences() ) {
       Instance*   instance     = static_cast<Instance*>(occurrence.getEntity());
       string      insname      = toDefName(occurrence.getCompactString());
       const char* source       = NULL;

@@ -51,7 +51,6 @@ namespace Analog {
     csp->addStepParameter("D2.w", 1, 1, 1);
     csp->addStepParameter("G.w" , 1, 1, 1);
     csp->addStepParameter("S.w" , 1, 1, 1);
-    csp->setTerminal( true );
     UpdateSession::close();
     return csp;
   }

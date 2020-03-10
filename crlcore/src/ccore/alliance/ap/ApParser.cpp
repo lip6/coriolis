@@ -716,7 +716,7 @@ namespace {
           return;
         }
 
-        ignoreInstance = ignoreInstance and _cell->isTerminal();
+        ignoreInstance = ignoreInstance and _cell->isTerminalNetlist();
 
         instance = Instance::create( _cell
                                    , instanceName
@@ -729,7 +729,7 @@ namespace {
                                    , Instance::PlacementStatus::FIXED
                                    , true  // Checking of recursive calls
                                    );
-        _cell->setTerminal( ignoreInstance );
+        _cell->setTerminalNetlist( ignoreInstance );
       }
     }
   }
@@ -781,7 +781,7 @@ namespace {
 
     _state = catalogProperty->getState ();
     _state->setPhysical ( true );
-    if ( _state->isFlattenLeaf() ) _cell->setFlattenLeaf ( true );
+    if ( _state->isTerminalNetlist() ) _cell->setTerminalNetlist ( true );
     if ( _framework->isPad(_cell) ) _state->setPad ( true );
 
     IoFile fileStream ( cellPath );
