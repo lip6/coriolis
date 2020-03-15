@@ -201,8 +201,7 @@ namespace Hurricane {
 
   void  DbU::setGridsPerLambda ( double gridsPerLambda, unsigned int flags )
   {
-    if (   ( rint(gridsPerLambda) != gridsPerLambda ) 
-        || ( remainder(gridsPerLambda,2.0) != 0.0   ) )
+    if ((rint(gridsPerLambda) != gridsPerLambda) /*or (remainder(gridsPerLambda,2.0) != 0.0)*/)
       throw Error ( "DbU::Unit::setGridPerLambdas(): \"gridsPerLambda\" (%f) must be an even integer."
                   , gridsPerLambda
                   );

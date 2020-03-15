@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-print "SOURCE CapacitorMatrix"
-
 import sys                
 from   Hurricane     import *
 from   CRL           import *
@@ -39,51 +37,60 @@ class CapacitorStack( CapacitorUnit ):
     #  \param   rowNumber          Number of rows in the matrix of capacitors.
     #  \param   columnNumber       Number of columns in the matrix of capacitors.
 
-    def __init__( self, device, capacitance,  capacitorType, abutmentBoxPosition, nets, unitCap = 0, matrixDim = [1,1], matchingMode = False,  matchingScheme = [], dummyRing = False, dummyElement = False ):
-        print 'CapacitorStack.__init__()'
-        print 'matrixDim:', matrixDim
-   
-        self.device               =     device
-        self.capacitorType        =     capacitorType
+    def __init__( self, device
+                      , capacitance
+                      , capacitorType
+                      , abutmentBoxPosition
+                      , nets
+                      , unitCap        = 0
+                      , matrixDim      = [1,1]
+                      , matchingMode   = False
+                      , matchingScheme = []
+                      , dummyRing      = False
+                      , dummyElement   = False ):
+        self.device               =  device
+        self.capacitorType        =  capacitorType
         self.matrixDim            =  { "columns" : matrixDim[1], "rows" : matrixDim[0] } 
-        self.unitCapDim           =     self.__computeCapDim__( unitCap     , capacitorType )
+        self.unitCapDim           =  self.__computeCapDim__( unitCap, capacitorType )
 
-        self.doMatrix             =     False
-        self.abutmentBox          =     Box()
+        self.doMatrix             =  False
+        self.abutmentBox          =  Box()
         self.abutmentBoxPosition  =  { "XMin" : abutmentBoxPosition[0], "YMin" : abutmentBoxPosition[1] }
-        self.nets                 =     nets
-        self.matchingMode         =     matchingMode
-        self.dummyRing            =     dummyRing
-        self.dummyElement         =     dummyElement        
+        self.nets                 =  nets
+        self.matchingMode         =  matchingMode
+        self.dummyRing            =  dummyRing
+        self.dummyElement         =  dummyElement        
 
-        self.capacitorsNumber     =     len(capacitance)
+        self.capacitorsNumber     =  len(capacitance)
 
-        self.matchingScheme       =      matchingScheme
-        self.dummyRingPosition    =      {}
-        self.abutmentBox_spacing  =      0
-        self.vRoutingTrack_width  =      0
+        self.matchingScheme       =  matchingScheme
+        self.dummyRingPosition    =  {}
+        self.abutmentBox_spacing  =  0
+        self.vRoutingTrack_width  =  0
 
-        if self.__areInputDataOK__(capacitance) == True :
-            print 'Input data are OK'
-            if self.matchingMode   == False :                
-                self.compactCapDim =  self.__computeCapDim__( capacitance[0] , capacitorType ) 
+        if self.__areInputDataOK__(capacitance):
+          if not self.matchingMode:                
+            self.compactCapDim = self.__computeCapDim__( capacitance[0] , capacitorType ) 
 
-                if unitCap == 0 :
-                    self.__initGivenZeroUnitCap__( capacitance[0] )
+            if unitCap == 0:
+              self.__initGivenZeroUnitCap__( capacitance[0] )
+            elif unitCap <> 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ):
+              self.__initGivenNonZeroUnitCap__( capacitance[0], unitCap )
+            else:
+              raise Error( 1, [ 'CapacitorStack.__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small.'
+                              , '(width:{0} height:{1})'.format( DbU.getValueString(self.unitCapDim[width ])
+                                                               , DbU.getValueString(self.unitCapDim[height]) ) ] )
 
-                elif  unitCap <> 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ) :
-                    self.__initGivenNonZeroUnitCap__( capacitance[0], unitCap )
+          else:
+            if unitCap == 0:
+              self.__initGivenZeroUnitCapInMatchingMode__( capacitance )
 
-                else : raise Error( 1, '__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small, "%s".' % self.unitCapDim )
-
-            else :
-                if unitCap == 0 :
-                    self.__initGivenZeroUnitCapInMatchingMode__( capacitance )
-
-                elif  unitCap <> 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ) :
-                    self.__initGivenNonZeroUnitCapInMatchingMode__( capacitance, unitCap )
-
-                else : raise Error( 1, '__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small, "%s".' % self.unitCapDim )
+            elif unitCap <> 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ):
+              self.__initGivenNonZeroUnitCapInMatchingMode__( capacitance, unitCap )
+            else:
+              raise Error( 1, [ 'CapacitorStack.__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small.'
+                              , '(width:{0} height:{1})'.format( DbU.getValueString(self.unitCapDim[width ])
+                                                               , DbU.getValueString(self.unitCapDim[height]) ) ] )
 
 
         return
@@ -91,27 +98,20 @@ class CapacitorStack( CapacitorUnit ):
 
     def setRules( self ) :
 
-        CapacitorUnit.setRules ( self )
+        CapacitorUnit.setRules( self )
 
-        CapacitorUnit.__setattr__       ( self, "minWidth_vRoutingTrack"                         , CapacitorStack.rules.minWidth_metal3           )
-        CapacitorUnit.__setattr__       ( self, "minSpacing_vRoutingTrack"                       , CapacitorStack.rules.minSpacingWide1_metal3    )
-
-        CapacitorUnit.__setattr__       ( self, "minWidth_vRoutingTrackCut"                      , CapacitorStack.rules.minWidth_cut2             )
-        CapacitorUnit.__setattr__       ( self, "minSpacing_vRoutingTrackCut"                    , CapacitorStack.rules.minSpacing_cut2           )
-        CapacitorUnit.__setattr__       ( self, "minEnclosure_vRoutingTrackCut"                  , CapacitorStack.rules.minEnclosure_metal3_cut2  )
+        self.minWidth_vRoutingTrack        = CapacitorStack.rules.minWidth_metal3
+        self.minSpacing_vRoutingTrack      = CapacitorStack.rules.minSpacingWide1_metal3
+        self.minWidth_vRoutingTrackCut     = CapacitorStack.rules.minWidth_cut2
+        self.minSpacing_vRoutingTrackCut   = CapacitorStack.rules.minSpacing_cut2
+        self.minEnclosure_vRoutingTrackCut = CapacitorStack.rules.minEnclosure_metal3_cut2
 
         if self.capacitorType == 'MIMCap':
-            
-            CapacitorUnit.__setattr__   ( self,  "minWidth_hRoutingLayer_topPlate_cut"            , CapacitorStack.rules.minWidth_cut2             )
-            CapacitorUnit.__setattr__   ( self,  "minEnclosure_hRoutingLayer_topPlate_cut"        , CapacitorStack.rules.minEnclosure_metal2_cut2  )
-
-        elif self.capacitorType == 'PIPCap' : 
-
-            CapacitorUnit.__setattr__   ( self,  "minWidth_hRoutingLayer_topPlate_cut"            , CapacitorStack.rules.minWidth_cut1             )
-            CapacitorUnit.__setattr__   ( self,  "minEnclosure_hRoutingLayer_topPlate_cut"        , CapacitorStack.rules.minEnclosure_metal2_cut1  )
-
-
-        else: raise Error( 1, 'setRules() : Unsupported capacitor type : %s.' %self.capacitorType )
+          self.minWidth_hRoutingLayer_topPlate_cut     = CapacitorStack.rules.minWidth_cut2
+          self.minEnclosure_hRoutingLayer_topPlate_cut = CapacitorStack.rules.minEnclosure_metal2_cut2
+        elif self.capacitorType == 'PIPCap': 
+          self.minWidth_hRoutingLayer_topPlate_cut     = CapacitorStack.rules.minWidth_cut1
+          self.minEnclosure_hRoutingLayer_topPlate_cut = CapacitorStack.rules.minEnclosure_metal2_cut1
 
         return 
 
@@ -137,29 +137,24 @@ class CapacitorStack( CapacitorUnit ):
 
 
     def __initGivenZeroUnitCap__( self, capacitance ):
-        print '__initGivenZeroUnitCap__'
-        print self.matrixDim.values()
+        if not self.matrixDim['columns']:
+          raise Error( 1, 'CapacitorStack.__initGivenZeroUnitCap__(): Requested matrix of *zero* columns.' )
+        if not self.matrixDim['rows']:
+          raise Error( 1, 'CapacitorStack.__initGivenZeroUnitCap__(): Requested matrix of *zero* rows.' )
 
-        if ( self.matrixDim.values() == [1,1] and CapacitorUnit.__isCapacitorUnitOK__(self, self.compactCapDim) ):
-            print 'Case 1'
-            [ self.capacitance , self.unitCapDim ] = [ capacitance , self.compactCapDim ]
-            
-        elif ( self.matrixDim.values() == [1,1] and not(CapacitorUnit.__isCapacitorUnitOK__( self, self.compactCapDim)) ):
-            raise Error(1, '__init__(): Impossible to draw the capacitor, dimensions are either too large or too small, "%s".' % self.compactCapDim ) #com2 : use to physical 
-            
-        elif ( self.matrixDim["columns"]>1 or self.matrixDim["rows"]>1) :
-            unitCapacitance     = capacitance / (self.matrixDim["columns"]*self.matrixDim["rows"])
-            unitCapDim          = self.__computeCapDim__( unitCapacitance, self.capacitorType )
-
-            if CapacitorUnit.__isCapacitorUnitOK__(self, unitCapDim) == True :
-                print 'This is a mutlicapacitor'
-                self.unitCapDim = unitCapDim
-                [ self.unitCapacitance , self.capacitance, self.doMatrix ] = [ unitCapacitance , capacitance, True ] 
-            else:
-                print 'This is a capacitor unit'
-
+        if self.matrixDim.values() == [1,1]:
+          self.__isCapacitorUnitOK__( self.compactCapDim )
+          self.capacitance = capacitance
+          self.unitCapDim  = self.compactCapDim
         else:
-            raise Error( 1, '__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small, "%s".' % self.unitCapDim ) #com2 : use to physical  
+          unitCapacitance = capacitance / (self.matrixDim['columns'] * self.matrixDim['rows'])
+          unitCapDim      = self.__computeCapDim__( unitCapacitance, self.capacitorType )
+
+          self.__isCapacitorUnitOK__( unitCapDim )
+          self.unitCapDim      = unitCapDim
+          self.unitCapacitance = unitCapacitance
+          self.capacitance     = capacitance
+          self.doMatrix        = True
                         
         return
 
@@ -188,7 +183,7 @@ class CapacitorStack( CapacitorUnit ):
 
 
     def __initGivenZeroUnitCapInMatchingMode__( self, capacitance ):
-        print '__initGivenZeroUnitCapInMatchingMode__'
+       #print '__initGivenZeroUnitCapInMatchingMode__'
 
         if self.matrixDim.values() == [1,1] or (self.matrixDim["columns"] == len(self.matchingScheme[0]) and self.matrixDim["rows"] == len(self.matchingScheme)) :
 
@@ -245,10 +240,10 @@ class CapacitorStack( CapacitorUnit ):
         for k in range(0, self.capacitorsNumber):
             unitCapList.append( capacitance[k]/self.capacitorIdOccurence(k) )
 
-        print self.capacitorsNumber
-        print 'capacitance', capacitance
-        print 'unitCapList', unitCapList
-        print '============='
+       #print self.capacitorsNumber
+       #print 'capacitance', capacitance
+       #print 'unitCapList', unitCapList
+       #print '============='
         return unitCapList
 
 
@@ -289,7 +284,6 @@ class CapacitorStack( CapacitorUnit ):
 
             if ( True in comparaison ) and ( matchingSchemeDim != matrixDim ) : state = False
 
-
         return state 
 
  
@@ -314,7 +308,10 @@ class CapacitorStack( CapacitorUnit ):
 
                 [ matchingSchemeCapIds , capacitanceIds ] = [ list( numpy.unique(self.matchingScheme) ) , range(0,self.capacitorsNumber) ]
                 if (self.matchingScheme != [] and set(matchingSchemeCapIds) == set(capacitanceIds) ) or (self.matchingScheme == [] and len(capacitance) == 1) :
-                    if (len(self.nets) == self.capacitorsNumber + 1 and self.dummyElement == False and self.dummyRing == True ) or (len(self.nets) == self.capacitorsNumber and self.dummyElement == False and self.dummyRing == False) or (len(self.nets) == self.capacitorsNumber and self.dummyElement == True and self.dummyRing == True) or (len(self.nets) == self.capacitorsNumber and self.dummyElement == True and self.dummyRing == False  ):
+                    if    (len(self.nets) == self.capacitorsNumber + 1 and self.dummyElement == False and self.dummyRing == True ) \
+                       or (len(self.nets) == self.capacitorsNumber     and self.dummyElement == False and self.dummyRing == False) \
+                       or (len(self.nets) == self.capacitorsNumber     and self.dummyElement == True  and self.dummyRing == True ) \
+                       or (len(self.nets) == self.capacitorsNumber     and self.dummyElement == True  and self.dummyRing == False):
 
                         if ( self.matchingMode == True and self.__isMatchingSchemeOK__() ) or ( self.matchingMode == False and self.matchingScheme == [] ): 
                             state = True  

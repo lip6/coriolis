@@ -41,26 +41,51 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
     #  Position and dimensions attributes, also refered by layout variables,  in Figure 2, are defined below :  
     # \param   device                     The Hurricane AMS device onto which the layout is drawn. 
     # \param   capacitorInstance          Instance of \c CapacitorStack class.
-    # \param   capacitor                   A nested list containing the matrix elements, which are \c CapacitorUnit objects. 
+    # \param   capacitor                  A nested list containing the matrix elements, which are \c CapacitorUnit objects. 
     # \param   matchingScheme             A nested list, with equal dimensions as \c capacitor attribute, containing assignements of matrix elementary units to C1 and C2, identified by 1 and 2, respectively. Therefore, \c self.matchingScheme content is a succession of 1 and 2 values, defined as \ capacitor identifiers. For example, given a matrix of dimensions 2x2, the matching scheme can be \f$ [ [1,2], [1,2] ] or [ [2,1], [2,1] ] \f$. The first sub-list dictates that the first elementary capacitor, \f$ C_{00} \f$. The second element \f$ C_{01} \f$ is affected to C2 and so on. An immediate and obvious consequence to this, is that an error is raised if \c self.matchingSchem and \c self.capacitor dimensions are not identical or if \c self.matchingScheme content is different from supported capacitor identifiers, '1' and '2'.
     #
     # \param   capacitorType              Supported types of capacitors are MIM and PIP only. An exception is raised otherwise.
-    # \param   abutmentBox                  The matrix's abutment box.
+    # \param   abutmentBox                The matrix's abutment box.
     # \param   matrxiDim                  The matrix dimensions, also equal to \c self.matchingScheme nested list dimensions.   
-    # \param   abutmentBox_spacing        The spacing between elementary units in the matrix. It is computed in \c CapacitorStack and is reloaded in \c RoutMatchedCapacitor. \c self.abutmentBox_spacing includes, vertical routing tracks width and minimum allowed spacing between two adjacent ones.
+    # \param   abutmentBox_spacing        The spacing between elementary units in the matrix.
+    #                                     It is computed in \c CapacitorStack and is reloaded
+    #                                     in \c RoutMatchedCapacitor. \c self.abutmentBox_spacing
+    #                                     includes, vertical routing tracks width and minimum
+    #                                     allowed spacing between two adjacent ones.
     # \param   hRoutingLayer_width        The width of horizontal routing layers in metal 2, which connect capacitors plates to vertical routing tracks. 
     # \param   vRoutingTrack_width        The width of vertical routing tracks in metal 3, which connects identical nets together ( ie : bottom plates of C1, top plates of C2, bottom plates of C2 and top plates of C2 ). 
     # \param   hRoutingTrack_width        The width of horizontal routing tracks in metal 2, which connect identical vertical routing tracks together.  
-    # \param   minSpacing_hRoutingTrack   Minimum spacing between horizontal routing tracks. Wide metal 2 specifications are considered since metal 2 dimensions may exceed 10 \f$ m\f$. 
+    # \param   minSpacing_hRoutingTrack   Minimum spacing between horizontal routing tracks.
+    #                                     Wide metal 2 specifications are considered since metal 2
+    #                                     dimensions may exceed 10 \f$ m\f$. 
     # 
-    #\remark For more information about wide metal specifications, refer to ENG-183_rev8.pdf technology manual. 
+    # \remark For more information about wide metal specifications, refer to ENG-183_rev8.pdf technology manual. 
     #
-    # \param   minimumPosition            The ordinate of the top plate's routing layer's bottom extremity after stretching. 
-    # \param   maximumPosition                   The ordinate of the top plate's routing layer's top extremity, also equivalent to the top plate's top extremity. 
-    # \param   vRoutingTrackXCenter          A nested list of ordered dictionaries, with dimensions equal to \c self.matrixDim, containing abcissas of vertical routing tracks. All sub-lists' lengths are identical and are equal to 2. The first and second elements describe position of top plate track and bottom plate track, respectively.  For example, given a matrix of dimensions 2x2, \c self.vRoutingTrackXCenter can be [[0, 2], [4,6], [8,10]] \f$ \mu m\f$. Elements of this nested list have particular indexing as described in Figure 2. 
+    # \param   minimumPosition            The ordinate of the top plate's routing layer's
+    #                                     bottom extremity after stretching. 
+    # \param   maximumPosition            The ordinate of the top plate's routing layer's
+    #                                     top extremity, also equivalent to the top plate's
+    #                                     top extremity. 
+    # \param   vRoutingTrackXCenter       A nested list of ordered dictionaries, with dimensions
+    #                                     equal to \c self.matrixDim, containing abcissas of vertical
+    #                                     routing tracks. All sub-lists' lengths are identical and
+    #                                     are equal to 2. The first and second elements describe
+    #                                     position of top plate track and bottom plate track,
+    #                                     respectively.  For example, given a matrix of dimensions
+    #                                     2x2, \c self.vRoutingTrackXCenter can be
+    #                                     [[0, 2], [4,6], [8,10]] \f$ \mu m\f$.
+    #                                     Elements of this nested list have particular indexing as
+    #                                     described in Figure 2. 
     #
-    # \param   hRoutingtrackYCenter       A nested dicitonary containing two keys, \c topTracks and \c bottomTracks. Each key contains as value a dictionary describing centers' ordinates of four parallel horizontal tracks. The reason why four tracks are needed on top and bottom positions of the matrix is that four nets are used, two for every capacitor \c Ci, were \c i is in [1,2].        
-    # \param   hRoutingLayerYCenter       A nested dicitonary containing two keys, \c top and \c bottom. Each key contains as value a dictionary describing centers' ordinates of horizontal routing layers. 
+    # \param   hRoutingtrackYCenter       A nested dictonary containing two keys, \c topTracks
+    #                                     and \c bottomTracks. Each key contains as value a dictionary
+    #                                     describing centers' ordinates of four parallel horizontal
+    #                                     tracks. The reason why four tracks are needed on top and
+    #                                     bottom positions of the matrix is that four nets are used,
+    #                                     two for every capacitor \c Ci, were \c i is in [1,2].        
+    # \param   hRoutingLayerYCenter       A nested dicitonary containing two keys, \c top and
+    #                                     \c bottom. Each key contains as value a dictionary
+    #                                     describing centers' ordinates of horizontal routing layers. 
     # \param   vRoutingTrackDict          A dictionary of routing tracks top and bottom extremities ordinates. 
     # \param   topPlateStretching         Since not only the same metal 2 layer is used to draw top/bottom plates connections to vertical tracks but also the two plates are superimposed, the top plate's routing tracks is stretched. \c self.topPlateStretching is therefore the length added to top plate's routing layer in order to avoid short circuits between top and bottom plates routing to vertical tracks since the same metal is used for both.
 
@@ -75,7 +100,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
                 self.capacitor.append(vRTInstance.capacitor[i][1:len(vRTInstance.capacitor[1])-1])
 
             self.dummyRingCapacitor      = [ vRTInstance.capacitor[0], vRTInstance.capacitor[-1] ]        
-            self.dummyRingVRLayersDict   = {}
+           #self.dummyRingVRLayersDict   = {}
         
         self.hRoutingLayer_width         =   0 
         self.hRoutingTrack_width         =   vRTInstance.hRoutingTrack_width 
@@ -92,7 +117,9 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
 
 
-    ## Draws the complete layout given the capacitor matrix. \c route method is succession of calls to user-defined methods inside a newly created \c Updatesession. The following tasks are excecuted :
+    ## Draws the complete layout given the capacitor matrix. \c route method is succession
+    #  of calls to user-defined methods inside a newly created \c Updatesession.
+    #  The following tasks are excecuted :
     #  -# A nex \c UpdateSession is created,
     #  -# all required physical layers are loaded,
     #  -# technology rules are defined according to capacitor type, 
@@ -102,33 +129,70 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
     #  -# all required cuts are drawn,
     #  -# The \c UpdateSession is closed.
     #
-    # Meanwhile, an exception is raised when the entered \c capacitor is not a capacitor matrix or if the capacitor type is unsupported. 
+    # Meanwhile, an exception is raised when the entered \c capacitor is not a
+    # capacitor matrix or if the capacitor type is unsupported. 
 
-    def route( self, bbMode = False ):
+    def route( self, bbMode=False ):
 
-        UpdateSession.open   ()
+        UpdateSession.open()
          
-        self.setRules        ()
+        self.setRules()
 
-        if not( self.capacitorInstance.__isUnitCap__() ):
+        if not self.capacitorInstance.__isUnitCap__():
+          if CapacitorStack.__isMatchingSchemeOK__(self):
+            layersDict = self.setLayers        ()
+            bondingBox = self.computeDimensions( bbMode )
 
-            if CapacitorStack.__isMatchingSchemeOK__(self):
+            ab      = self.device.getAbutmentBox()
+            trackNb = len(self.hRoutingtrackYCenter["topTracks"].keys())
+            dY      = self.hpitch * trackNb
 
-                layersDict = self.setLayers        ()
-                bondingBox = self.computeDimensions( bbMode )
+            trace( 101, '\tHeight before tracks enclosure: {0}\n'.format( DbU.getValueString(self.maximumPosition - self.minimumPosition) ))
+            trace( 101, '\tHeight before tracks enclosure: {0}\n'.format( DbU.getValueString(ab.getHeight()) ))
+            trace( 101, '\tminimum before adjust: {0}\n'.format( DbU.getValueString(self.minimumPosition) ))
+            trace( 101, '\tdY: {0}\n'.format( DbU.getValueString(dY) ))
 
-                if not bbMode :
+            firstVRTId = "t0"
+            lastVRTId  = self.vRoutingTrackXCenter[-1].keys()[-1]
+            if self.dummyRing:
+              xMin = self.abutmentBox.getXMin()
+              xMax = self.abutmentBox.getXMax()
+            else:
+              trackSpacing = (self.vRoutingTrack_width + self.vpitch + self.metal3Width)/2
+              xMin = self.vRoutingTrackXCenter[ 0][firstVRTId] - trackSpacing
+              xMax = self.vRoutingTrackXCenter[-1][ lastVRTId] + trackSpacing
 
-                    self.drawHRLayers        ( layersDict["xPlateHRLayer"                   ]                                                                                             )
-                    self.drawHRoutingTracks  ( layersDict["hRoutingTracks"                  ]                                                                                             )
-                    self.__stretchTopPlates__( self.capacitor                                 , layersDict["xPlateRLayer"                     ]                                           )    
-                    self.drawCuts            ( layersDict["cut_hRoutingLayer_vRoutingTracks"] , layersDict["cut_hRoutingTracks_vRoutingTracks"], layersDict["cut_hRoutingLayer_topPlate"] )
-                    if self.dummyRing == True:
-                        self.routeDummyRing      (layersDict ["xPlateVRLayer_dummyRing"         ] , layersDict["cut_hRoutingTracks_vRoutingTracks"]                                           )
+            width       = xMax - xMin
+            widthAdjust = width % (2*self.vpitch)
+            if widthAdjust:
+              widthAdjust = 2*self.vpitch - widthAdjust
+              xMax += widthAdjust/2
+              xMin -= widthAdjust/2
+        
+            self.device.setAbutmentBox( Box( xMin
+                                           , self.minimumPosition - dY
+                                           , xMax
+                                           , self.maximumPosition + dY ) )
+            trace( 101, '\tHeight after tracks enclosure: {0}\n'.format( DbU.getValueString(self.device.getAbutmentBox().getHeight()) ))
 
-            else : raise Error( 1, 'drawHRLayers() : Invalid matching scheme : "%s".' % self.matchingScheme )
+            if not bbMode :
+              self.drawHRLayers        ( layersDict["xPlateHRLayer" ] )
+              self.drawHRoutingTracks  ( layersDict["hRoutingTracks"] )
+              self.__stretchTopPlates__( self.capacitor
+                                       , layersDict["xPlateRLayer"                     ] )    
+              self.drawCuts            ( layersDict["cut_hRoutingLayer_vRoutingTracks" ]
+                                       , layersDict["cut_hRoutingTracks_vRoutingTracks"]
+                                       , layersDict["cut_hRoutingLayer_topPlate"       ] )
+              if self.dummyRing:
+                self.routeDummyRing( layersDict ["xPlateVRLayer_dummyRing"         ]
+                                   , layersDict["cut_hRoutingTracks_vRoutingTracks"] )
+          else:
+            raise Error( 1, [ 'RouteMatchedCapacitor.route(): Invalid matching scheme.'
+                            , '(${0})'.format( self.matchingScheme ) ] )
 
-        else : raise Error( 1,'An input matrix is required.' % self.matrixDim )
+        else:
+          raise Error( 1, [ 'RouteMatchedCapacitor.route(): Input matrix parameter is incorrect.'
+                          , '({0})'.format( self.matrixDim ) ] )
 
         UpdateSession.close  ()
 
@@ -141,7 +205,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         net                               = self.nets[-1][1]
         bottomPlateRLayer_width           = self.dummyRingCapacitor[0][0].getBotPlateRLayerWidth() 
         topPlateRLayer_width              = self.dummyRingCapacitor[0][0].getTopPlateRLayerWidth() 
-        self.computeDummyRingDimensions   ()
+       #self.computeDummyRingDimensions   ()
         self.routeLeftAndRightSides       (net, routingLayer, bottomPlateRLayer_width, topPlateRLayer_width                         )
         self.routeTopOrBottomSide         (net, "topSide"    , routingLayer          , bottomPlateRLayer_width, topPlateRLayer_width)
         self.routeTopOrBottomSide         (net, "bottomSide" , routingLayer          , bottomPlateRLayer_width, topPlateRLayer_width)
@@ -155,14 +219,29 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
     def routeLeftAndRightSides( self, dummyNet, routingLayer, bottomPlateRLayer_width, topPlateRLayer_width ) :
 
         for i in range(0,2):
-            bottomPlateLeftRLayerXCenter  = self.dummyRingCapacitor[0][0 + i*(-1)].getBotPlateLeftRLayerXCenter() 
-            bottomPlateRightRLayerXCenter = self.dummyRingCapacitor[0][0 + i*(-1)].getBotPlateRightRLayerXCenter() 
-            Vertical.create ( dummyNet, routingLayer , bottomPlateLeftRLayerXCenter  , bottomPlateRLayer_width , self.dummyRingVRLayersDict["YMin"] , self.dummyRingVRLayersDict["YMax"] ) 
-            Vertical.create ( dummyNet, routingLayer , bottomPlateRightRLayerXCenter , bottomPlateRLayer_width , self.dummyRingVRLayersDict["YMin"] , self.dummyRingVRLayersDict["YMax"] ) 
-
+          bottomPlateLeftRLayerXCenter  = self.dummyRingCapacitor[0][0 + i*(-1)].getBotPlateLeftRLayerXCenter() 
+          bottomPlateRightRLayerXCenter = self.dummyRingCapacitor[0][0 + i*(-1)].getBotPlateRightRLayerXCenter() 
+          Vertical.create( dummyNet
+                         , routingLayer
+                         , bottomPlateLeftRLayerXCenter
+                         , bottomPlateRLayer_width
+                         , self.getVTrackYMin()
+                         , self.getVTrackYMax() ) 
+          Vertical.create( dummyNet
+                         , routingLayer
+                         , bottomPlateRightRLayerXCenter
+                         , bottomPlateRLayer_width
+                         , self.getVTrackYMin()
+                         , self.getVTrackYMax() ) 
+            
         for i in range(0,2):
-            topPlateRLayerXCenter         = self.dummyRingCapacitor[0][0 + i*(-1)].topPlateRLayerDict["XCenter"]
-            Vertical.create ( dummyNet, routingLayer , topPlateRLayerXCenter , topPlateRLayer_width , self.dummyRingVRLayersDict["YMin"] , self.dummyRingVRLayersDict["YMax"] ) 
+          topPlateRLayerXCenter = self.dummyRingCapacitor[0][0 + i*(-1)].topPlateRLayerDict["XCenter"]
+          Vertical.create( dummyNet
+                         , routingLayer
+                         , topPlateRLayerXCenter
+                         , topPlateRLayer_width
+                         , self.getVTrackYMin()
+                         , self.getVTrackYMax() ) 
 
         return
 
@@ -173,54 +252,69 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
         if   side == "topSide" : 
             dummyRingElement = self.dummyRingCapacitor[-1]
-            dyTarget         = self.vRoutingTrackDict ["YMax"]
+            dyTarget         = self.getVTrackYMax()
         elif side == "bottomSide" : 
             dummyRingElement = self.dummyRingCapacitor[0]
-            dyTarget         = self.vRoutingTrackDict ["YMin"]
+            dyTarget         = self.getVTrackYMin()
         else : raise Error(1,'routeTopOrBottomSide() : side parameter must be either "topSide" or "bottomSide" : %s' %side)
 
         for j in range(1,len(self.dummyRingCapacitor[0])-1):
-            bottomPlateLeftRLayerXCenter  = dummyRingElement[j].getBotPlateLeftRLayerXCenter() 
-            bottomPlateRightRLayerXCenter = dummyRingElement[j].getBotPlateRightRLayerXCenter() 
-            Vertical.create ( dummyNet, routingLayer , bottomPlateLeftRLayerXCenter  , bottomPlateRLayer_width , dummyRingElement[j].getBotPlateRLayerYMin() , dyTarget ) 
-            Vertical.create ( dummyNet, routingLayer , bottomPlateRightRLayerXCenter , bottomPlateRLayer_width , dummyRingElement[j].getBotPlateRLayerYMin() , dyTarget ) 
+          bottomPlateLeftRLayerXCenter  = dummyRingElement[j].getBotPlateLeftRLayerXCenter() 
+          bottomPlateRightRLayerXCenter = dummyRingElement[j].getBotPlateRightRLayerXCenter() 
+          Vertical.create( dummyNet
+                         , routingLayer
+                         , bottomPlateLeftRLayerXCenter
+                         , bottomPlateRLayer_width
+                         , dummyRingElement[j].getBotPlateRLayerYMin()
+                         , dyTarget ) 
+          Vertical.create( dummyNet
+                         , routingLayer
+                         , bottomPlateRightRLayerXCenter
+                         , bottomPlateRLayer_width
+                         , dummyRingElement[j].getBotPlateRLayerYMin()
+                         , dyTarget ) 
 
-            topPlateRLayerXCenter         = dummyRingElement[j].topPlateRLayerDict["XCenter"]
-            Vertical.create ( dummyNet, routingLayer , topPlateRLayerXCenter , topPlateRLayer_width , dummyRingElement[j].getTopPlateRLayerYMin() , dyTarget ) 
+          topPlateRLayerXCenter = dummyRingElement[j].topPlateRLayerDict["XCenter"]
+          Vertical.create( dummyNet
+                         , routingLayer
+                         , topPlateRLayerXCenter
+                         , topPlateRLayer_width
+                         , dummyRingElement[j].getTopPlateRLayerYMin()
+                         , dyTarget ) 
 
 
         return
 
 
 
-    ## Defines technology rules used to draw the layout. Some of the rules, namely those describing routing layers and tracks are applicable for both MIM and PIP capacitors. However, cuts rules are different. \remark All \c CapacitorStack class rules are also reloaded in this class. An exception is raised if the entered capacitor type is unsupported. 
+    ## Defines technology rules used to draw the layout. Some of the rules,
+    #  namely those describing routing layers and tracks are applicable for
+    #  both MIM and PIP capacitors. However, cuts rules are different.
+    #
+    #  \remark All \c CapacitorStack class rules are also reloaded in this class.
+    #          An exception is raised if the entered capacitor type is unsupported. 
+    #
     #  \return a dictionary  with rules labels as keys and rules content as values.
 
     def setRules ( self ):
 
-        VerticalRoutingTracks.setRules      ( self )
+        VerticalRoutingTracks.setRules( self )
 
-        CapacitorUnit.__setattr__    ( self,  "minSpacing_hRoutingLayer"                       , RoutMatchedCapacitor.rules.minSpacing_metbot         )
-        CapacitorUnit.__setattr__    ( self,  "minSpacing_hRoutingTrackCut"                    , RoutMatchedCapacitor.rules.minSpacing_cut2           )
-        CapacitorUnit.__setattr__    ( self,  "minSpacing_vRoutingTrackCut"                    , RoutMatchedCapacitor.rules.minSpacing_cut2           )
-        CapacitorUnit.__setattr__    ( self,  "minSpacing_hRoutingLayer_vRoutingTrack_cut"     , RoutMatchedCapacitor.rules.minSpacing_cut2           )
+        self.minSpacing_hRoutingLayer                   = RoutMatchedCapacitor.rules.minSpacing_metbot
+        self.minSpacing_hRoutingTrackCut                = RoutMatchedCapacitor.rules.minSpacing_cut2
+        self.minSpacing_vRoutingTrackCut                = RoutMatchedCapacitor.rules.minSpacing_cut2
+        self.minSpacing_hRoutingLayer_vRoutingTrack_cut = RoutMatchedCapacitor.rules.minSpacing_cut2
 
         if self.capacitorType == 'MIMCap':
-            
-            CapacitorUnit.__setattr__( self,  "minWidth_hRoutingLayer_topPlate_cut"            , RoutMatchedCapacitor.rules.minWidth_cut2             )
-            CapacitorUnit.__setattr__( self,  "minSpacing_hRoutingLayer_topPlate_cut"          , RoutMatchedCapacitor.rules.minSpacing_cut2           )
-            CapacitorUnit.__setattr__( self,  "minEnclosure_hRoutingLayer_topPlate_cut"        , RoutMatchedCapacitor.rules.minEnclosure_metal2_cut2  )
-
-        elif self.capacitorType == 'PIPCap' : 
-
-            CapacitorUnit.__setattr__( self,  "minWidth_hRoutingLayer_topPlate_cut"            , RoutMatchedCapacitor.rules.minWidth_cut1             )
-            CapacitorUnit.__setattr__( self,  "minSpacing_hRoutingLayer_topPlate_cut"          , RoutMatchedCapacitor.rules.minSpacing_cut1           )
-            CapacitorUnit.__setattr__( self,  "minEnclosure_hRoutingLayer_topPlate_cut"        , RoutMatchedCapacitor.rules.minEnclosure_metal2_cut1  )
-
-        else: raise Error( 1, 'setRules() : Unsupported capacitor type : %s.' %self.capacitorType )
+          self.minWidth_hRoutingLayer_topPlate_cut     = RoutMatchedCapacitor.rules.minWidth_cut2
+          self.minSpacing_hRoutingLayer_topPlate_cut   = RoutMatchedCapacitor.rules.minSpacing_cut2
+          self.minEnclosure_hRoutingLayer_topPlate_cut = RoutMatchedCapacitor.rules.minEnclosure_metal2_cut2
+        elif self.capacitorType == 'PIPCap': 
+          self.minWidth_hRoutingLayer_topPlate_cut     = RoutMatchedCapacitor.rules.minWidth_cut1
+          self.minSpacing_hRoutingLayer_topPlate_cut   = RoutMatchedCapacitor.rules.minSpacing_cut1
+          self.minEnclosure_hRoutingLayer_topPlate_cut = RoutMatchedCapacitor.rules.minEnclosure_metal2_cut1
 
         return
-
 
 
     ## Defines all physical layers used to draw the layout. Layers are loaded using \c DataBase API. The same routing layers are used for both capacitor types except cuts layers that connect top plates to vertical routing tracks. Basicaly, metal 2, meta 3, cut 1 and cut 2 are the ones defined. 
@@ -265,7 +359,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         translation2                   = translation1 + self.vRoutingTrack_width/2  
 
         self.vRoutingTrackXCenter      = self.vRTInstance.vRoutingTrackXCenter #getvRoutingTrackXCenter()
-        print("vRoutingTrackXCenter",self.vRoutingTrackXCenter)
+       #print("vRoutingTrackXCenter",self.vRoutingTrackXCenter)
         if   bbMode == True :
             bondingBoxDimensions = self.computeBondingBoxDimInbbMode() 
 
@@ -275,7 +369,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
         else :raise Error(1, 'computeDimensions(): The bonding box mode parameter, "bbMode" must be either True or False : %s.' %bbMode )
 
-        print 'BOUNDING BOX:', bondingBoxDimensions
+       #print 'BOUNDING BOX:', bondingBoxDimensions
         return bondingBoxDimensions
 
 
@@ -307,30 +401,38 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         return bondingBoxDimensions
 
 
-     ## Computes centers' ordinates of the eight horizontal routing tracks. The tracks include four on top and four on bottom of the matrix. To do the computations, fist, center of the first bottom or top track, given in Figure 2, is computed. Then, all adjacent three centers are deduced by simples translation of the first one. Translation quantity is equal to the sum of distance between adjacent routing tracks, self.hRoutingTracks_spacing, and half width of the routing track itself, \c self.hRoutingTrack_width.  
+    ## Computes centers' ordinates of the eight horizontal routing tracks.
+    #  The tracks include four on top and four on bottom of the matrix.
+    #  To do the computations, fist, center of the first bottom or top track,
+    #  given in Figure 2, is computed. Then, all adjacent three centers are
+    #  deduced by simples translation of the first one. Translation quantity
+    #  is equal to the sum of distance between adjacent routing tracks,
+    #  self.hRoutingTracks_spacing, and half width of the routing track itself,
+    #  \c self.hRoutingTrack_width.  
 
     def computeHRoutingTrackYCenter( self ):
 
         self.hRoutingtrackYCenter                        = { "topTracks" : {} , "bottomTracks" : {} }
-        self.hRoutingtrackYCenter["topTracks"    ]["t0"] =    self.maximumPosition + self.hRoutingTrack_width/2 + self.minSpacing_hRoutingTrack 
-        self.hRoutingtrackYCenter["bottomTracks" ]["t0"] =    self.minimumPosition - self.hRoutingTrack_width/2 - self.minSpacing_hRoutingTrack
-
+       #self.hRoutingtrackYCenter["topTracks"    ]["t0"] = self.maximumPosition \
+       #                                                 + self.hRoutingTrack_width/2 + self.minSpacing_hRoutingTrack 
+       #self.hRoutingtrackYCenter["bottomTracks" ]["t0"] = self.minimumPosition \
+       #                                                 - self.hRoutingTrack_width/2 - self.minSpacing_hRoutingTrack
+        self.hRoutingtrackYCenter["topTracks"    ]["t0"] = self.maximumPosition
+        self.hRoutingtrackYCenter["bottomTracks" ]["t0"] = self.minimumPosition
         
         keys = self.__setPlatesIds__()
-        print("key",keys)
-        print(" self.capacitorsNumber", self.capacitorsNumber)
-#        limit = 2*self.capacitorsNumber if self.dummyRing == False else 2*self.capacitorsNumber + 1
         for k in range(1, len(keys)):
-            print('keysk',keys[k])
-            self.hRoutingtrackYCenter["topTracks"    ][keys[k]] = self.hRoutingtrackYCenter["topTracks"   ][keys[k-1]] + (self.hRoutingTrack_width + self.minSpacing_hRoutingTrack) 
-            self.hRoutingtrackYCenter["bottomTracks" ][keys[k]] = self.hRoutingtrackYCenter["bottomTracks"][keys[k-1]] - (self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
-        print("keyskk",keys[k-1])
-        print("self.hRoutingtrackYCenter",self.hRoutingtrackYCenter)
-#        if self.dummyRing == True : 
-#            self.hRoutingtrackYCenter["topTracks"    ]["gnd"] = self.hRoutingtrackYCenter["topTracks"   ][keys[k]] + (self.hRoutingTrack_width + self.minSpacing_hRoutingTrack) 
-#            self.hRoutingtrackYCenter["bottomTracks" ]["gnd"] = self.hRoutingtrackYCenter["bottomTracks"][keys[k]] - (self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
-
-        print('self.hRoutingtrackYCenter',self.hRoutingtrackYCenter)
+          trace( 101, '\tkeys[{0}] = {1}\n'.format( k, keys[k] ))
+         #self.hRoutingtrackYCenter["topTracks"][keys[k]]         \
+         #    = self.hRoutingtrackYCenter["topTracks"][keys[k-1]] \
+         #    + (self.hRoutingTrack_width + self.minSpacing_hRoutingTrack) 
+         #self.hRoutingtrackYCenter["bottomTracks" ][keys[k]]        \
+         #    = self.hRoutingtrackYCenter["bottomTracks"][keys[k-1]] \
+         #    - (self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
+          self.hRoutingtrackYCenter["topTracks"][keys[k]]         \
+              = self.hRoutingtrackYCenter["topTracks"][keys[k-1]] + self.hpitch
+          self.hRoutingtrackYCenter["bottomTracks" ][keys[k]]        \
+              = self.hRoutingtrackYCenter["bottomTracks"][keys[k-1]] - self.hpitch
 
         return
 
@@ -341,11 +443,11 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
         shortCircuitLists       = self.__findPossibleShortCircuits__()
         self.topPlateStretching = self.__setStretching__( )
-        print('        shortCircuitLists',        shortCircuitLists)
+       #print('        shortCircuitLists',        shortCircuitLists)
         for i in range( 0,self.matrixDim["rows"] ):
-            print("i",i)
-            print("rows", self.matrixDim["rows"])
-            print("rowsCap", len(self.capacitor))
+           #print("i",i)
+           #print("rows", self.matrixDim["rows"])
+           #print("rowsCap", len(self.capacitor))
 
             if shortCircuitLists[i][0] == 0 : 
                 self.hRoutingLayerYCenter["bottomPlate"].append( [self.capacitor[i][0].getBottomPlateRightCutYMax ()] )      
@@ -367,7 +469,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
                    self.hRoutingLayerYCenter["bottomPlate"][i].append(bottomPlateYCenter)
                    self.hRoutingLayerYCenter["topPlate"   ][i].append(topPlateYCenter2)
 
-        print('self.hRoutingLayerYCenter',self.hRoutingLayerYCenter)
+       #print('self.hRoutingLayerYCenter',self.hRoutingLayerYCenter)
         return
 
     def computeLayoutDimensionsInbbMode( self ):
@@ -383,36 +485,38 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         return bondingBoxDict
 
 
-    def computeDummyRingDimensions( self ):
-
-        for key in self.vRoutingTrackDict.keys():
-                self.dummyRingVRLayersDict[key] = self.vRoutingTrackDict[key]
-        return
-
+   #def computeDummyRingDimensions( self ):
+   #    for key in self.vRoutingTrackDict.keys():
+   #      self.dummyRingVRLayersDict[key] = self.vRoutingTrackDict[key]
+   #    return
 
 
-    ##  Iteratively draws horizontal routing tracks on top and bottom positions of the matrix using physical layer \c routingTracksLayer. 
+    ##  Iteratively draws horizontal routing tracks on top and bottom positions of the matrix
+    #   using physical layer \c routingTracksLayer. 
 
     def drawHRoutingTracks( self , routingTracksLayer ):
 
         lastVRTId   = self.vRoutingTrackXCenter[-1].keys()[-1]
         firstVRTId  = "t0"
-#        doDummyRing = 1 if self.dummyRing == True else 0
-        dxSource    = self.vRoutingTrackXCenter[0][firstVRTId] - self.vRoutingTrack_width/2 if self.dummyRing == False else self.abutmentBox.getXMin()
-        dxTarget    = self.vRoutingTrackXCenter[-1][lastVRTId] + self.vRoutingTrack_width/2 if self.dummyRing == False else self.abutmentBox.getXMax()
+       #doDummyRing = 1 if self.dummyRing == True else 0
+       #dxSource    = self.vRoutingTrackXCenter[0][firstVRTId] - self.vRoutingTrack_width/2 if not self.dummyRing else self.abutmentBox.getXMin()
+       #dxTarget    = self.vRoutingTrackXCenter[-1][lastVRTId] + self.vRoutingTrack_width/2 if not self.dummyRing else self.abutmentBox.getXMax()
+        dxSource    = self.device.getAbutmentBox().getXMin()
+        dxTarget    = self.device.getAbutmentBox().getXMax()
 
         for i in self.hRoutingtrackYCenter.keys():
-            for j in self.hRoutingtrackYCenter[i].keys():
-                if   j[0] == 't' : 
-                    net     = self.nets[ int(j[1]) ][0]
-                elif j[0] == 'b' :
-                    net     = self.nets[ int(j[1]) ][1]
-                else : 
-                    print("hi")
-                    net = self.nets[-1][1]
-#                net = self.nets[ int(j[1]) ][0] if j[0] == 't' else self.nets[ int(j[1]) ][1]
-                print('net',net)
-                Horizontal.create ( net , routingTracksLayer, self.hRoutingtrackYCenter[i][j] , self.hRoutingTrack_width , dxSource , dxTarget )
+          for j in self.hRoutingtrackYCenter[i].keys():
+            if   j[0] == 't' : net = self.nets[ int(j[1]) ][ 0 ]
+            elif j[0] == 'b' : net = self.nets[ int(j[1]) ][ 1 ]
+            else:              net = self.nets[ -1        ][ 1 ]
+
+            horizontal = Horizontal.create( net
+                                          , routingTracksLayer
+                                          , self.hRoutingtrackYCenter[i][j]
+                                          , self.hRoutingTrack_width
+                                          , dxSource
+                                          , dxTarget )
+            NetExternalComponents.setExternal( horizontal )
         return
 
     
@@ -546,8 +650,8 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
         netsDistribution           = self.__setPlatesIds__()
 
-        print("netsDistribution2",netsDistribution)
-        print("self.hRoutingtrackYCenter",self.hRoutingtrackYCenter)
+       #print("netsDistribution2",netsDistribution)
+       #print("self.hRoutingtrackYCenter",self.hRoutingtrackYCenter)
         for j in range(0,len(dummyRingElement)):
             topPlateCutXCenter         = dummyRingElement[j].getTopPlateRLayerXMin     () + topPlateCutEnclosure    + self.minWidth_vRoutingTrackCut/2
             bottomPlateLeftCutXCenter  = dummyRingElement[j].getBottomPlateLeftCutXMin() #dummyRingElement[j].getBotPlateLeftRLayerXMin () + bottomPlateCutEnclosure + self.minWidth_vRoutingTrackCut/2
@@ -561,7 +665,8 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
 
 
-    ## Iteratively performs top plates stretching for the capacitor matrix. Vertical segments are connected to top plate routing layer.  
+    ## Iteratively performs top plates stretching for the capacitor matrix.
+    #  Vertical segments are connected to top plate routing layer.  
     #  \param    capacitor    Capacitor matrix. 
     #  \param    rlayer       Layer of the drawn vertical rectangle.        
     def __stretchTopPlates__( self, capacitor, rlayer ):
@@ -570,7 +675,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
             for j in range( 0, self.matrixDim["columns"] ):
                 
                 t = self.nets[self.matchingScheme[i][j]][0]
-                print('t',t)
+               #print('t',t)
                 self.__stretchTopPlateCompactCap__( t , capacitor[i][j], rlayer, j ) 
 
         return
@@ -584,8 +689,12 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
         topPlateRLayerXCenter   = capacitor.getTopPlateRLayerXCenter()
         [ dySource , dyTarget ] = self.__setStretchingDySourceDyTarget__( capacitor, self.topPlateStretching )
 
-        Vertical.create ( net, routingLayer , topPlateRLayerXCenter , topPlateRLayer_width , dySource , dyTarget ) 
-
+        Vertical.create( net
+                       , routingLayer
+                       , topPlateRLayerXCenter
+                       , topPlateRLayer_width
+                       , dySource
+                       , dyTarget ) 
         return
 
 
@@ -630,12 +739,12 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
             dxDict["bottomPlate" ][ "source" ]  =  self.capacitor[i][j].getBotPlateLeftRLayerXMax ()  if  self.matchingScheme[i][j] in leftVRTIds  else  self.capacitor[i][j].getBotPlateRightRLayerXMin ()            
 #            bottomPlateLabel = 'b' if self.dummyElement == False or not( self.__isCapacitorAdummy__(capacitorIdentifier) ) else 't'
-            print("bottomPlateLabel",bottomPlateLabel)
+           #print("bottomPlateLabel",bottomPlateLabel)
             dxDict["bottomPlate" ][ "target" ]  =  self.__findHRLDyTrarget__( i, j, bottomPlateLabel, leftVRTIds, rightVRTIds )
  
         else : raise Error(1, '__computeConnections__(): Unknown capacitor Id : %s.' %capacitorIdentifier )
 
-        print('dxDict',dxDict)
+       #print('dxDict',dxDict)
         return dxDict
 
 
@@ -703,7 +812,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
                 shortCircuitLists[i].append(0)
         for i in range(0, self.matrixDim["rows"]):
             for j in range(0, self.matrixDim["columns"]-1):
-                print('self.vRTsDistribution',self.vRTsDistribution)
+               #print('self.vRTsDistribution',self.vRTsDistribution)
                 if self.matchingScheme[i][j] in self.vRTsDistribution[j+1] and self.matchingScheme[i][j+1] in self.vRTsDistribution[j+1] and self.matchingScheme[i][j] > self.matchingScheme[i][j+1] : shortCircuitLists[i][j] = 1
 
         return shortCircuitLists
@@ -763,16 +872,16 @@ def ScriptMain( **kw ):
   #  capacitorInstance = CapacitorStack( Device, capacitance, 'MIMCap', [0,0], nets, matrixDim = [5,5] , matchingMode = True, matchingScheme =  [ ['C2','C1','C2','C3','C1'] , ['C1','C2','C4','C3','C2'] , ['C4','C2','C2','C3', 'C1'] , ['C1','C2','C2','C1', 'C1'], ['C2','C2','C3','C2','C4'] ] )
 
     capacitor         = capacitorInstance.create() 
-    print('capa',capacitor)
+   #print('capa',capacitor)
 
     capWithVRT        = VerticalRoutingTracks( capacitorInstance, capacitor, True ) 
     capWithVRT.create()
 
     routedCap         = RoutMatchedCapacitor( capWithVRT )
     surface           = routedCap.route()   
-    print('routeMatchedCap bbMode', surface)
-    print('width', toPhY(surface["width"]))
-    print('height', toPhY(surface["height"]))
+   #print('routeMatchedCap bbMode', surface)
+   #print('width', toPhY(surface["width"]))
+   #print('height', toPhY(surface["height"]))
 
     AllianceFramework.get().saveCell( Device, Catalog.State.Views )
 

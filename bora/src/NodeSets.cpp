@@ -113,8 +113,6 @@ namespace Bora {
           layoutGenerator->setDevice( mcapacitor );
           layoutGenerator->drawLayout(); 
 
-        //cerr << "  Create BoxSet for Capacitor " << matrixRange->getValue() << endl;
-          cerr << "  Create BoxSet for Capacitor " << endl;
           nodeset->push_back( DBoxSet::create( mcapacitor, matrixRange->getIndex(), rg ) );
 
           matrixRange->progress();
@@ -341,7 +339,6 @@ namespace Bora {
     if (find(boxSet) == NULL) _boxSets.push_back( boxSet );
     else { 
       find( boxSet )->incrementCpt(); 
-      cerr << "NodeSets::push_back(): do not add current BoxSet, already exists." << endl;
       boxSet->destroy();
     }
   }

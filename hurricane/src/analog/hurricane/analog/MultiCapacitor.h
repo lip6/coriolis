@@ -47,6 +47,7 @@ namespace Analog {
                                                  ,       size_t );
       virtual void             _postCreate       ( const Hurricane::Name& deviceName );
       virtual void             createConnections ();
+      virtual unsigned int     getRestriction    ( Hurricane::Net* ) const;
     public:
       virtual std::string      _getTypeName      () const;
     private:

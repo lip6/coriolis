@@ -75,7 +75,7 @@ class Parameters ( object ):
         if self.capacitors.has_key(lname):
           print 'Duplicated capacitor "%s" (ignored).' % lname
         else:
-          print 'Add capacitor "%s"' % lname
+         #print 'Add capacitor "%s"' % lname
           self.capacitors[ lname ]   = Parameters.Capacitor( lname )
           self.capacitors[ lname ].C = value
           

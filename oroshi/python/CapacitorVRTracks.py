@@ -12,12 +12,33 @@ from   collections     import OrderedDict
 import numpy
 
 
-## Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix. Connections are put in place with reference to a given matching scheme. Elementary capacitor units are connected to horizontal and vertical routeing tracks that represent top plates and bottom plates nets of C1 and C2 . Supported types of capacitors are Poly-Poly and Metal-Metal. Technologycal rules are provided by 350 nm AMS CMOS technology with three-four metal layers. Metal layers that are used for routeing are placed similarly to horziontal-vertical (HV) symbolic Alliance CAD tool routeer, where horizontal metal channels are drawn in metal 2 and the vertical ones are in metal 3. Given a matrix of dimensions \f$ R*C \f$, the total number of vertical tracks is \f$ 2C+2 \f$ equivalent to \f$ C+1 \f$ couples, ensuring that every elementary capacitor is positioned between four vertical tracks, two from each side. In fact, every adjacent couple of these tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.
+## Route two matched capacitors, C1 and C2, drawn in a capacitor matrix.
+#  Connections are put in place with reference to a given matching scheme.
+#  Elementary capacitor units are connected to horizontal and vertical routing
+#  tracks that represent top plates and bottom plates nets of C1 and C2.
+#  Supported types of capacitors are Poly-Poly and Metal-Metal.
+#  Technologycal rules are provided by 350 nm AMS CMOS technology with
+#  three-four metal layers. Metal layers that are used for routeing are
+#  placed similarly to horziontal-vertical (HV) symbolic Alliance CAD tool router,
+#  where horizontal metal channels are drawn in metal 2 and the vertical ones are
+#  in metal 3. Given a matrix of dimensions \f$ R*C \f$, the total number of
+#  vertical tracks is \f$ 2C+2 \f$ equivalent to \f$ C+1 \f$ couples,
+#  ensuring that every elementary capacitor is positioned between four
+#  vertical tracks, two from each side. In fact, every adjacent couple of these
+#  tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.
+#
 #  \image html Layout.png "Layout" width=.1\linewidth
-#  An elementary capacitor unit can be a part of C1 or C2 according to the matching scheme. However, to respect common-centroid layout specifications, for C1 and C2 to be equal, the matrix number of colums and number of rows must be both even. Addionnally, the number of elementary capacitors dedicated to C1 must be equal to those dedicated to C2. These two conditions are tested in one of the class methods. An exception is raised if at least one of the two is not respected.
+#
+#  An elementary capacitor unit can be a part of C1 or C2 according to the
+#  matching scheme. However, to respect common-centroid layout specifications,
+#  for C1 and C2 to be equal, the matrix number of colums and number of rows
+#  must be both even. Addionnally, the number of elementary capacitors dedicated
+#  to C1 must be equal to those dedicated to C2. These two conditions are tested
+#  in one of the class methods. An exception is raised if at least one of the two
+#  is not respected.
 
 
-class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
+class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
 
     rules = oroshi.getRules()
 
@@ -47,6 +68,11 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
 
         return
 
+
+    def getVTrackYMin ( self ): return self.vRoutingTrackDict["YMin"] - self.hRoutingTrack_width/2
+    def getVTrackYMax ( self ): return self.vRoutingTrackDict["YMax"] + self.hRoutingTrack_width/2
+
+
     ## Sets vertical stretching value considering spacing between elementary capacitors in the matrix.
     #  \return stratching value.
     def __setStretching__( self ): return self.minSpacing_botPlate + self.abutmentBox_spacing/2        
@@ -55,17 +81,15 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
     #  \return a dictionary  with rules labels as keys and rules content as values.
 
     def setRules ( self ):
+        CapacitorStack.setRules( self )
 
-        CapacitorStack.setRules      ( self )
-
-        CapacitorUnit.__setattr__    ( self,  "minWidth_hRoutingTrackCut"                      , VerticalRoutingTracks.rules.minWidth_cut2             )
-        CapacitorUnit.__setattr__    ( self,  "minWidth_hRoutingLayer_vRoutingTrack_cut"       , VerticalRoutingTracks.rules.minWidth_cut2             )
-        CapacitorUnit.__setattr__    ( self,  "minWidth_hRoutingTrack"                         , VerticalRoutingTracks.rules.minWidth_metal2           )
-        CapacitorUnit.__setattr__    ( self,  "minEnclosure_hRoutingLayer_vRoutingTrack_cut"   , VerticalRoutingTracks.rules.minEnclosure_metal2_cut2  )
-        CapacitorUnit.__setattr__    ( self,  "minEnclosure_hRoutingTrackCut"                  , VerticalRoutingTracks.rules.minEnclosure_metal2_cut2  )
-        CapacitorUnit.__setattr__    ( self,  "minWidth_hRoutingLayer"                         , VerticalRoutingTracks.rules.minWidth_metal2           )
-        CapacitorUnit.__setattr__    ( self,  "minSpacing_hRoutingTrack"                       , VerticalRoutingTracks.rules.minSpacing_metbot         )
-
+        self.minWidth_hRoutingTrackCut                    = VerticalRoutingTracks.rules.minWidth_cut2
+        self.minWidth_hRoutingLayer_vRoutingTrack_cut     = VerticalRoutingTracks.rules.minWidth_cut2
+        self.minWidth_hRoutingTrack                       = VerticalRoutingTracks.rules.minWidth_metal2
+        self.minEnclosure_hRoutingLayer_vRoutingTrack_cut = VerticalRoutingTracks.rules.minEnclosure_metal2_cut2
+        self.minEnclosure_hRoutingTrackCut                = VerticalRoutingTracks.rules.minEnclosure_metal2_cut2
+        self.minWidth_hRoutingLayer                       = VerticalRoutingTracks.rules.minWidth_metal2
+        self.minSpacing_hRoutingTrack                     = VerticalRoutingTracks.rules.minSpacing_metbot
         return
 
 
@@ -75,8 +99,8 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
          
         self.setRules                ()
         vRoutingTracksLayer  =  DataBase.getDB().getTechnology().getLayer("metal3" )
-        print 'self.capacitorInstance.doMatrix:', self.capacitorInstance.doMatrix
-        print 'self.capacitorsNumber:', self.capacitorsNumber
+       #print 'self.capacitorInstance.doMatrix:', self.capacitorInstance.doMatrix
+       #print 'self.capacitorsNumber:', self.capacitorsNumber
 
         if self.capacitorInstance.doMatrix == True and self.capacitorsNumber > 1 : 
             self.minimizeVRTs()
@@ -88,35 +112,57 @@ class VerticalRoutingTracks( CapacitorUnit, CapacitorStack ):
         return
 
 
-    ## Iteratively draws vertical routing tracks given the physical layer \c vRoutingTracksLayer. Every elementary capacitor is consequently positioned between four routing tracks, two from each side. Each couple of adjacent routeing tracks represent top plate and bottom plate nets of Ci, where i is in [1,2]. As given in Figure 2, capacitor \f$ C_{ij} \f$ with an even j value   situated in even columns have and inversily for odd columns numbers. 
+    ## Iteratively draws vertical routing tracks given the physical layer
+    #  \c vRoutingTracksLayer. Every elementary capacitor is consequently
+    #  positioned between four routing tracks, two from each side.
+    #  Each couple of adjacent routeing tracks represent top plate and
+    #  bottom plate nets of Ci, where i is in [1,2]. As given in Figure 2,
+    #  capacitor \f$ C_{ij} \f$ with an even j value situated in even columns
+    #  have and inversely for odd columns numbers. 
 
     def drawVRoutingTracks ( self, vRoutingTracksLayer ) :
-
         netsDistribution = self.__setNetsDistribution__()
         k = 0
         for j in range( 0, self.matrixDim["columns"] + 1 ):
-             for key in self.vRoutingTrackXCenter[j]:
-                if self.vRoutingTrackXCenter[j][key] != None:
-                    Vertical.create( netsDistribution[j][k] , vRoutingTracksLayer , self.vRoutingTrackXCenter[j][key] , self.vRoutingTrack_width , self.vRoutingTrackDict["YMin"] , self.vRoutingTrackDict["YMax"] )
-                    k = k + 1 if k < len(key)-1 else 0
+          for key in self.vRoutingTrackXCenter[j]:
+            if self.vRoutingTrackXCenter[j][key] is not None:
+              Vertical.create( netsDistribution[j][k]
+                             , vRoutingTracksLayer
+                             , self.vRoutingTrackXCenter[j][key]
+                             , self.vRoutingTrack_width
+                             , self.getVTrackYMin()
+                             , self.getVTrackYMax() )
+              k = k + 1 if k < len(key)-1 else 0
         return
 
 
 
-    def computeVRTDimensions( self ) :
+    def computeVRTDimensions ( self ) :
 
-
-        self.hRoutingTrack_width       =  max( self.minWidth_hRoutingTrack, self.minWidth_hRoutingTrackCut + 2*self.minEnclosure_hRoutingTrackCut ) 
-        abutmentBoxXMin                = self.capacitorInstance.computeAbutmentBoxDimensions( self.abutmentBox_spacing) ["XMin"]
+        self.hRoutingTrack_width       = max( self.minWidth_hRoutingTrack, self.minWidth_hRoutingTrackCut + 2*self.minEnclosure_hRoutingTrackCut ) 
         abutmentBoxYMin                = self.capacitorInstance.computeAbutmentBoxDimensions( self.abutmentBox_spacing )["YMin"]
         abutmentBoxYMax                = abutmentBoxYMin + self.capacitorInstance.computeAbutmentBoxDimensions( self.abutmentBox_spacing )["height"]
 
-        self.minimumPosition           =  abutmentBoxYMin - self.__setStretching__() 
-        self.maximumPosition           =  abutmentBoxYMax + self.__setStretching__()
+        self.minimumPosition           = abutmentBoxYMin - self.__setStretching__() - self.hpitch + self.metal2Width
+        self.maximumPosition           = abutmentBoxYMax + self.__setStretching__() + self.hpitch - self.metal2Width
+
+        height       = self.maximumPosition - self.minimumPosition
+        heightAdjust = height % (2*self.hpitch)
+        if heightAdjust:
+          heightAdjust = 2*self.hpitch - heightAdjust
+          trace( 101, '\tAdjust height: {0}\n'.format( DbU.getValueString(heightAdjust) ))
+          trace( 101, '\tHeight before adjust: {0}\n'.format( DbU.getValueString(self.maximumPosition - self.minimumPosition) ))
+          trace( 101, '\tminimum before adjust: {0}\n'.format( DbU.getValueString(self.minimumPosition) ))
+          self.maximumPosition += heightAdjust/2
+          self.minimumPosition -= heightAdjust/2
+          trace( 101, '\tHeight after adjust: {0}\n'.format( DbU.getValueString(self.maximumPosition - self.minimumPosition) ))
+          trace( 101, '\tminimum after adjust: {0}\n'.format( DbU.getValueString(self.minimumPosition) ))
 
         vRTsNumber = self.__computeVRTsNumber__()
-        self.vRoutingTrackDict["YMin"] =  self.minimumPosition - vRTsNumber*(self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
-        self.vRoutingTrackDict["YMax"] =  self.maximumPosition + vRTsNumber*(self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
+       #self.vRoutingTrackDict["YMin"] = self.minimumPosition - vRTsNumber*(self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
+       #self.vRoutingTrackDict["YMax"] = self.maximumPosition + vRTsNumber*(self.hRoutingTrack_width + self.minSpacing_hRoutingTrack)
+        self.vRoutingTrackDict["YMin"] = self.minimumPosition - (vRTsNumber-1)*self.hpitch
+        self.vRoutingTrackDict["YMax"] = self.maximumPosition + (vRTsNumber-1)*self.hpitch
 
         self.__setPlatesDistribution__()
         self.computeXCenters()

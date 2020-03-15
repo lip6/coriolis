@@ -4,21 +4,21 @@ import sys
 import numpy
 from   Hurricane    import *
 from   CRL          import *
+import Constant
 from   math         import sqrt, ceil
 import helpers
 from   helpers.io   import ErrorMessage as Error
 from   helpers      import trace
 import oroshi
 
-def toDbU    ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
-def toPhY    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
+def toDbU ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
+def toPhY ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
 
 def doBreak( level, message ):
     UpdateSession.close()
     Breakpoint.stop( level, message )
     UpdateSession.open()
 
-helpers.staticInitialization( True )
 
 ## Draws a capacitor of type Poly-Poly or Metal-Metal in 350 nm AMS CMOS technology. 
 #  PIP and MIM capacitors are the result of surface superposition between poly1 and poly2 or metal2 and metalcap layers, respectively.
@@ -29,8 +29,6 @@ helpers.staticInitialization( True )
 class CapacitorUnit():
     
     rules = oroshi.getRules()
-
-
 
 
     ## This is the class constructor. Few of the class attributes final values are computed in this level. Most of attributes are only initialized to zero or empty values. Then, it is computed in dedicated class method. Input parameters are :
@@ -67,7 +65,7 @@ class CapacitorUnit():
        
         self.device                      =   device
         self.capacitorType               =   capacitorType
-#        self.capDim                      =   self.__computeCapDim__( capacitance, capacitorType ) 
+#       self.capDim                      =   self.__computeCapDim__( capacitance, capacitorType ) 
         self.enclosure_botPlate_abtBox   =  0 
         
         self.__initCapDim__( capacitance, capDim )
@@ -97,25 +95,20 @@ class CapacitorUnit():
 
 
     def __initCapDim__( self, capacitance, capDim ):
-
-        if capacitance != 0 and capDim.values() != [] :
-            if self.__computeCapacitance__( capDim, self.capacitorType ) == capacitance :
-                self.capDim = capDim
-            else : raise Error(1,'__initCapDim__() : Please check compatibility between capacitance value, %s, and the given capacitor dimensions, %s.' %(capacitance, capDim))
-
-        elif capacitance == 0 and capDim.values() != [] : 
-            self.capDim = capDim 
-            capacitance = self.__computeCapacitance__( capDim, self.capacitorType )
-            print("capacitance", capacitance)
-
+        if capacitance != 0 and capDim.values() != []:
+          if self.__computeCapacitance__( capDim, self.capacitorType ) == capacitance :
+            self.capDim = capDim
+          else:
+            raise Error( 1, [ 'CapacitorUnit.__initCapDim__(): Please check compatibility between capacitance value {0},'.format(capacitance)
+                            , 'and the given capacitor dimensions {0}.'.format(capDim) ] )
+        elif capacitance == 0 and capDim.values() != []: 
+          self.capDim = capDim 
+          capacitance = self.__computeCapacitance__( capDim, self.capacitorType )
         elif capacitance != 0 and capDim.values() == [] :
-            print("self.capacitorType ",self.capacitorType )
-            self.capDim = self.__computeCapDim__( capacitance, self.capacitorType ) 
-            print("self.capDim",self.capDim)
-
-        else : raise Error(1, '__initCapDim__() : Invalid capacitance and/or capacitance dimensions (%s, %s). Please provide at least one valid parameter.'
-                          %(capacitance, capDim))
-
+          self.capDim = self.__computeCapDim__( capacitance, self.capacitorType ) 
+        else:
+          raise Error( 1, [ 'CapacitorUnit.__initCapDim__(): Invalid capacitance and/or capacitance dimensions {0}, {1}.'.format(capacitance, capDim)
+                          , 'Please provide at least one valid parameter.' ] )
         return
 
 
@@ -124,7 +117,7 @@ class CapacitorUnit():
     #  \remarks   An exception is raised if the entered capacitor type is unknown.
   
     def __setCapacitorPerUnit__( self, capacitorType ) :
-        print("self.capacitorType",self.capacitorType)
+       #print("self.capacitorType",self.capacitorType)
         if   capacitorType == 'MIMCap':
             [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = [ CapacitorUnit.rules.MIMCap
                                                                   , CapacitorUnit.rules.MIMPerimeterCap
@@ -141,21 +134,30 @@ class CapacitorUnit():
         return [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ]
 
 
-    ## Computes width and length of the capacitor.  Given \c capacitance value as well as the permiter and area capacitances, a quadratic equation is solved where the unknown parameter is the width ( also equivalent to the length ).
-   #  \return    a dictionary containing width and length.
-   #  \remark    The capacitor is square. Thus, length and width are equal.
+    ## Computes width and length of the capacitor. Given \c capacitance value as well as
+    #  the permiter and area capacitances, a quadratic equation is solved where the
+    #  unknown parameter is the width (also equivalent to the length).
+    #  \return    a dictionary containing width and length.
+    #  \remark    The capacitor is square. Thus, length and width are equal.
 
     def __computeCapDim__( self, capacitance, capacitorType ) : 
-        print("capacitorType",capacitorType)
-        [a, b, c ] = [   self.__setCapacitorPerUnit__( capacitorType )[0]
-                     , 4*self.__setCapacitorPerUnit__( capacitorType )[1]
-                     , - capacitance
-                     ]
+        trace( 101, ',+', '\tCapacitorUnit.__computeCapDim__()\n' )
+
+        [a, b, c] = [     self.__setCapacitorPerUnit__( capacitorType )[0]
+                    , 4 * self.__setCapacitorPerUnit__( capacitorType )[1]
+                    ,   - capacitance
+                    ]
 
         delta = (b**2) - 4*a*c
-        c1 = ( -b + sqrt(delta) ) / (2*a)
+        c1    = ( -b + sqrt(delta) ) / (2*a)
 
-        return { "width" : toDbU(c1), "height" : toDbU(c1) }
+        twoGrid = DbU.fromGrid( 2.0 )
+        trace( 101, '\tc1 = {0}, 2*Grid Unit = {1}\n'.format( c1, twoGrid ))
+        c1 = toDbU( c1 )
+        c1 = c1 + (twoGrid - (c1 % twoGrid))
+
+        trace( 101, '-' )
+        return { "width" : c1, "height" : c1 }
 
 
     def __computeCapacitance__( self, capDim, capacitorType ):
@@ -173,33 +175,48 @@ class CapacitorUnit():
     #  \remark    Maximum poly2 layer dimensions for PIP capacitor are not specified in technology rules. Thus, only minimum limit condition is checked.
 
     def __isCapacitorUnitOK__( self, capDim ): 
+        errors   = []
+        capaName = 'PIP'
+        minSide  = self.getMinimumCapWidth()
+        maxSide  = None
+        if self.capacitorType == 'MIMCap':
+          capaName = 'MIM'
+          maxSide  = self.getMaximumCapWidth()
 
-        print 'capDim:', DbU.getValueString(capDim['width']), DbU.getValueString(capDim['height'])
-        print 'min / max:', DbU.getValueString(self.getMinimumCapWidth() ), DbU.getValueString(self.getMaximumCapWidth() )
+        trace( 101, '\tcapDim = [ {0}, {1} ]\n'.format( DbU.getValueString(capDim['width' ])
+                                                      , DbU.getValueString(capDim['height']) ))
+        trace( 101, '\tCapacity type: {0}\n'.format( capaName ))
+        trace( 101, '\t* Minimum side: {0}\n'.format( DbU.getValueString(minSide) ))
+        if maxSide: trace( 101, '\t* Maximum side: {0}\n'.format( DbU.getValueString(maxSide) ))
+        else:       trace( 101, '\t* Maximum side: N/A\n' )
 
-        state = False
-        if (     self.capacitorType == 'MIMCap' \
-             and CapacitorUnit.getMinimumCapWidth(self) < capDim["width" ] <  self.getMaximumCapWidth()    \
-             and CapacitorUnit.getMinimumCapWidth(self) < capDim["height"] <  self.getMaximumCapWidth() )  \
-           or ( self.capacitorType == 'PIPCap'  \
-              and self.getMinimumCapWidth() < capDim["width" ]    \
-              and self.getMinimumCapWidth() < capDim["height"] ):
-            state = True
-        
-        print '__isCapacitorUnitOK__:', state 
-        return state
-              
+        if capDim['width' ] < minSide:
+          errors.append( '* Width {0} too small, minimum size for {2} capacitors is {1}.' \
+                         .format( DbU.getValueString(capDim['width'])
+                                , DbU.getValueString(minSide        )
+                                , capaName  ) )
+        if maxSide and capDim['width' ] > maxSide:
+          errors.append( '* Width {0} too big, maximum size for {2} capacitors is {1}.' \
+                         .format( DbU.getValueString(capDim['width'])
+                                , DbU.getValueString(maxSide        )
+                                , capaName  ) )
 
+        if capDim['height' ] < minSide:
+          errors.append( '* Height {0} too small, minimum size for {2} capacitors is {1}.' \
+                         .format( DbU.getValueString(capDim['height'])
+                                , DbU.getValueString(minSide        )
+                                , capaName  ) )
+        if maxSide and capDim['height' ] > maxSide:
+          errors.append( '* Height {0} too big, maximum size for {2} capacitors is {1}.' \
+                         .format( DbU.getValueString(capDim['height'])
+                                , DbU.getValueString(maxSide        )
+                                , capaName  ) )
 
+        if errors:
+          errors.insert( 0, 'CapacitorUnit.__isCapacitorUnitOK__():' )
+          raise Error( 1, errors )
 
-    ## Redefines technological rules as object attributes of the class. For example, class attributes \c CapacitorUnit.rules.minWidth_metcap becomes \c self.minWidth_topPlate and \c CapacitorUnit.rules.minSpacing_cut2_metcap becomes \c self.minSpacing_botPlateCut_topPlat. This obviously helps using shorter names for the attributes.  \c __setattr__() is declared in all \c Capacitor \c Generator classes, also in Hurricane and oroshi databases. 
-
-    def __setattr__( self, attribute, value ) :
-    
-        self.__dict__[attribute] = value
-
-        return 
-        
+        return True
 
 
     ## Selects technological rules according to the capacitor type.     
@@ -208,58 +225,78 @@ class CapacitorUnit():
     #  - minimum spacing between cuts or metals,
     #  - minimum width of a plate, a cut or a routing metal.
     #  - etc.  
-    #  Every rule takes two possible value according to the capacitor type (MIM or PIP). Therefore, dictionary keys are generic and its values are specific to the capacitor type.
+    #  Every rule takes two possible value according to the capacitor type (MIM or PIP).
+    #  Therefore, dictionary keys are generic and its values are specific to the capacitor
+    #  type.
     #  \remark   An exception is raised if the entered capacitor type is unknown.
 
     def setRules ( self ):
-
         if self.capacitorType == 'MIMCap':
+          self.minWidth_topPlate                   = CapacitorUnit.rules.minWidth_metcap
+          self.minWidth_botRMetal                  = CapacitorUnit.rules.minWidth_metal3
+          self.minWidth_topRMetal                  = CapacitorUnit.rules.minWidth_metal1
+          self.minWidth_topPlatecut                = CapacitorUnit.rules.minWidth_cut2
+          self.minWidth_botPlatecut                = CapacitorUnit.rules.minWidth_cut2
+          self.minWidth_routingTrackcut            = CapacitorUnit.rules.minWidth_cut2
 
-            self.__setattr__( "minWidth_topPlate"                   , CapacitorUnit.rules.minWidth_metcap          )
-            self.__setattr__( "minWidth_botRMetal"                  , CapacitorUnit.rules.minWidth_metal3          )
-            self.__setattr__( "minWidth_topRMetal"                  , CapacitorUnit.rules.minWidth_metal1          )
-            self.__setattr__( "minWidth_topPlatecut"                , CapacitorUnit.rules.minWidth_cut2            )
-            self.__setattr__( "minWidth_botPlatecut"                , CapacitorUnit.rules.minWidth_cut2            )
-            self.__setattr__( "minWidth_routingTrackcut"            , CapacitorUnit.rules.minWidth_cut2            )
+          self.minSpacing_botPlate                 = CapacitorUnit.rules.minSpacing_metbot        
+          self.minSpacing_botPlateCut_topPlate     = CapacitorUnit.rules.minSpacing_cut2_metcap
+          self.minSpacingOnBotPlate_cut            = CapacitorUnit.rules.minSpacingOnMetBot_cut2
+          self.minSpacingOnTopPlate_cut            = CapacitorUnit.rules.minSpacingOnMetCap_cut2
 
-            self.__setattr__( "minSpacing_botPlate"                 , CapacitorUnit.rules.minSpacing_metbot        )        
-            self.__setattr__( "minSpacing_botPlateCut_topPlate"     , CapacitorUnit.rules.minSpacing_cut2_metcap   )
-            self.__setattr__( "minSpacingOnBotPlate_cut"            , CapacitorUnit.rules.minSpacingOnMetBot_cut2  )
-            self.__setattr__( "minSpacingOnTopPlate_cut"            , CapacitorUnit.rules.minSpacingOnMetCap_cut2  )
- 
-            self.__setattr__( "minEnclo_botPlate_botPlateCut"       , CapacitorUnit.rules.minEnclosure_metbot_cut2 )
-            self.__setattr__( "minEnclo_topPlate_topPlateCut"       , CapacitorUnit.rules.minEnclosure_metcap_cut2 )
-            self.__setattr__( "minEnclo_topPlateRMetal_topPlateCut" , CapacitorUnit.rules.minEnclosure_metal3_cut2 )
-            self.__setattr__( "minEnclo_botPlateRMetal_botPlateCut" , CapacitorUnit.rules.minEnclosure_metal3_cut2 )
-            self.__setattr__( "minEnclo_routingTrackMetal_cut"      , CapacitorUnit.rules.minEnclosure_metal3_cut2 )
-        
+          self.minEnclo_botPlate_botPlateCut       = CapacitorUnit.rules.minEnclosure_metbot_cut2
+          self.minEnclo_topPlate_topPlateCut       = CapacitorUnit.rules.minEnclosure_metcap_cut2
+          self.minEnclo_topPlateRMetal_topPlateCut = CapacitorUnit.rules.minEnclosure_metal3_cut2
+          self.minEnclo_botPlateRMetal_botPlateCut = CapacitorUnit.rules.minEnclosure_metal3_cut2
+          self.minEnclo_routingTrackMetal_cut      = CapacitorUnit.rules.minEnclosure_metal3_cut2
         elif self.capacitorType == 'PIPCap':
+          self.minWidth_topPlate                   = CapacitorUnit.rules.minWidth_cpoly
+          self.minWidth_botRMetal                  = CapacitorUnit.rules.minWidth_metal1
+          self.minWidth_topRMetal                  = CapacitorUnit.rules.minWidth_metal1
+          self.minWidth_topPlatecut                = CapacitorUnit.rules.minWidth_cut0
+          self.minWidth_botPlatecut                = CapacitorUnit.rules.minWidth_cut0
+          self.minWidth_routingTrackcut            = CapacitorUnit.rules.minWidth_cut1
 
-            self.__setattr__( "minWidth_topPlate"                   , CapacitorUnit.rules.minWidth_cpoly           )
-            self.__setattr__( "minWidth_botRMetal"                  , CapacitorUnit.rules.minWidth_metal1          )
-            self.__setattr__( "minWidth_topRMetal"                  , CapacitorUnit.rules.minWidth_metal1          )
-            self.__setattr__( "minWidth_topPlatecut"                , CapacitorUnit.rules.minWidth_cut0            )
-            self.__setattr__( "minWidth_botPlatecut"                , CapacitorUnit.rules.minWidth_cut0            )
-            self.__setattr__( "minWidth_routingTrackcut"            , CapacitorUnit.rules.minWidth_cut1            )
+          self.minSpacing_botPlate                 = CapacitorUnit.rules.minSpacing_poly        
+          self.minSpacing_botPlateCut_topPlate     = CapacitorUnit.rules.minSpacing_cut0_cpoly
+          self.minSpacingOnBotPlate_cut            = CapacitorUnit.rules.minSpacing_cut0
+          self.minSpacingOnTopPlate_cut            = CapacitorUnit.rules.minSpacing_cut0
 
-            self.__setattr__( "minSpacing_botPlate"                 , CapacitorUnit.rules.minSpacing_poly          )        
-            self.__setattr__( "minSpacing_botPlateCut_topPlate"     , CapacitorUnit.rules.minSpacing_cut0_cpoly    )
-            self.__setattr__( "minSpacingOnBotPlate_cut"            , CapacitorUnit.rules.minSpacing_cut0          )
-            self.__setattr__( "minSpacingOnTopPlate_cut"            , CapacitorUnit.rules.minSpacing_cut0          )
-
-            self.__setattr__( "minEnclo_botPlate_botPlateCut"       , CapacitorUnit.rules.minEnclosure_poly_cut0   )
-            self.__setattr__( "minEnclo_topPlate_topPlateCut"       , CapacitorUnit.rules.minEnclosure_cpoly_cut0  )
-            self.__setattr__( "minEnclo_topPlateRMetal_topPlateCut" , CapacitorUnit.rules.minEnclosure_metal1_cut1 )
-            self.__setattr__( "minEnclo_botPlateRMetal_botPlateCut" , CapacitorUnit.rules.minEnclosure_metal1_cut0 )
-            self.__setattr__( "minEnclo_routingTrackMetal_cut"      , CapacitorUnit.rules.minEnclosure_metal1_cut1 )
-
-        else :
-            raise Error( 1, 'setRules() : Unsupported capacitor type : %s.' % self.capacitorType ) 
+          self.minEnclo_botPlate_botPlateCut       = CapacitorUnit.rules.minEnclosure_poly_cut0
+          self.minEnclo_topPlate_topPlateCut       = CapacitorUnit.rules.minEnclosure_cpoly_cut0
+          self.minEnclo_topPlateRMetal_topPlateCut = CapacitorUnit.rules.minEnclosure_metal1_cut1
+          self.minEnclo_botPlateRMetal_botPlateCut = CapacitorUnit.rules.minEnclosure_metal1_cut0
+          self.minEnclo_routingTrackMetal_cut      = CapacitorUnit.rules.minEnclosure_metal1_cut1
+        else:
+          raise Error( 1, 'CapacitorUnit.setRules(): Unsupported capacitor type {0}.'.format( self.capacitorType )) 
 
         self.minheight_topPlatecut = self.minWidth_topPlatecut
 
-        return
+       # Get the METAL 2/3 layers.
+        metal2 = DataBase.getDB().getTechnology().getLayer( 'metal2' )
+        metal3 = DataBase.getDB().getTechnology().getLayer( 'metal3' )
+       # Get the symbolic pitch.
+        rg = AllianceFramework.get().getRoutingGauge()
+        self.METAL2Pitch = rg.getHorizontalPitch()
+        self.METAL3Pitch = rg.getVerticalPitch()
+        self.isVH        = rg.isVH()
+        
+        foundHor = False
+        foundVer = False
+        for depth in range(rg.getDepth()):
+          rlg = rg.getLayerGauge(depth)
+          if rlg.getLayer().getMask() == metal2.getMask(): self.metal2Width = rlg.getWireWidth()
+          if rlg.getLayer().getMask() == metal3.getMask(): self.metal3Width = rlg.getWireWidth()
 
+          if rlg.getType() == Constant.PinOnly: continue
+          if rlg.getDirection() == Constant.Horizontal and not foundHor:
+            self.hpitch = rlg.getPitch()
+            foundHor = True
+          if rlg.getDirection() == Constant.Vertical and not foundVer:
+            self.vpitch = rlg.getPitch()
+            foundVer = True
+
+        return
 
 
     ## \return capacitor type \c 'MIMCap' or \c 'PIPCap'. 
@@ -577,8 +614,7 @@ class CapacitorUnit():
                             , boxDimensions["XMin"] + boxDimensions["width" ]
                             , boxDimensions["YMin"] + boxDimensions["height"]
                             ) 
-        platePad       = Pad.create( net, layer, outputPlateBox ) 
-        NetExternalComponents.setExternal( platePad )
+        platePad = Pad.create( net, layer, outputPlateBox ) 
 
         return outputPlateBox
 
@@ -818,7 +854,7 @@ def ScriptMain( **kw ):
                       
     capacitor = CapacitorUnit   ( device, 'MIMCap', [0,0], capacitance = 129.56) # square: capacitance : 129.56 , capDim = {"width" : 39650L , "height" : 39650L }                                                                                       # rectangular  capDim = {"width" : 78919L , "height" : 118378L } 
     abutmentBoxDim  = capacitor.create( b, t, bbMode = True, vEnclosure_botPlate_abtBox = 1.5, hEnclosure_botPlate_abtBox = 0.9)          
-    print(abutmentBoxDim)
+   #print(abutmentBoxDim)
                       
     AllianceFramework.get().saveCell( device, Catalog.State.Views )
 

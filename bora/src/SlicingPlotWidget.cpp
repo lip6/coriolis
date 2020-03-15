@@ -396,11 +396,9 @@ namespace Bora {
     for( Instance* iInstance : instances ) {
       Cell*   model  = iInstance->getMasterCell();   
       Device* device = dynamic_cast<Device*>(model);
-      cerr << "device:" << device << endl;
 
       if (device) {
         TransistorFamily* tf = dynamic_cast<TransistorFamily*>( device );
-        cerr << "tf:" << tf << endl;
         if (tf) {
           _gridLabel[i+5]->setDynamicText ( QString("%1" ).arg( tf->getNfing() ) );
           i++;

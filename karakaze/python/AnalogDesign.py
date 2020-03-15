@@ -54,7 +54,7 @@ import Katana
 import Bora
 
 
-helpers.setTraceLevel( 110 )
+#helpers.setTraceLevel( 110 )
 
 
 NMOS    = Transistor.NMOS
@@ -264,7 +264,7 @@ class AnalogDesign ( object ):
 
         specSize = 0
         if   isderived(dspec[0],TransistorFamily): specSize = 12
-        elif isderived(dspec[0], CapacitorFamily): specSize = 6
+        elif isderived(dspec[0], CapacitorFamily): specSize = 7
         elif isderived(dspec[0],  ResistorFamily): specSize = 5
         else:
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], has unsupported device type.' \
@@ -315,7 +315,7 @@ class AnalogDesign ( object ):
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [11] (bulk connected) is *not* a boolean.' % count
                             , '%s' % str(dspec) ])
 
-        elif specSize == 6:
+        elif specSize == 7:
           if dspec[3] not in [PIP, MIM, MOM]:
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either PIP, MIM or MOM.' % count
                             , '%s' % str(dspec) ])
@@ -361,7 +361,6 @@ class AnalogDesign ( object ):
             if not Cparameters:
               raise Error( 3, [ 'AnalogDesign.readParameters(): Missing parameters for capacity \"%s\".' % Cname ] )
               continue
-            print dspec[5]
             dspec[4] = Cparameters.C * 1e+12
             trace( 110, '\t- \"%s\" : C:%fpF\n' % (Cname ,dspec[4]) )
           else:
@@ -387,17 +386,24 @@ class AnalogDesign ( object ):
             self.checkDSpecDigital( count, dspec )
             if isinstance( dspec[0], str ):
                 masterCell = CRL.AllianceFramework.get().getCell( dspec[0], CRL.Catalog.State.Views )
-                instance   = Instance.create( self.cell, dspec[1], masterCell, Transformation() )
-                instance.setPlacementStatus( Instance.PlacementStatus.UNPLACED )
+                instance   = Instance.create( self.cell
+                                            , dspec[1]
+                                            , masterCell
+                                            , Transformation()
+                                            , Instance.PlacementStatus.UNPLACED )
                 self.__dict__[ dspec[1] ] = instance
             else:
                 masterCell = dspec[0]
-                instance   = Instance.create( self.cell, dspec[1], masterCell, Transformation() )
-                instance.setPlacementStatus( Instance.PlacementStatus.UNPLACED )
+                instance   = Instance.create( self.cell
+                                            , dspec[1]
+                                            , masterCell
+                                            , Transformation()
+                                            , Instance.PlacementStatus.UNPLACED )
                 self.__dict__[ dspec[1] ] = instance
         else:
             self.checkDSpec( count, dspec )
 
+            trace( 110, '\t==============================================================\n' )
             trace( 110, '\tBuilding \"%s\"\n' % dspec[1] )
             if isderived(dspec[0],TransistorFamily):
               device = dspec[0].create( self.library, dspec[1], dspec[3], dspec[11] )
@@ -418,13 +424,13 @@ class AnalogDesign ( object ):
               if   isinstance(dspec[4],float): capaValues = (dspec[4],) 
               elif isinstance(dspec[4],tuple): capaValues =  dspec[4]
               else:
-                  raise ErrorMessage( 1, 'AnalogDesign.doDevice(): Invalid type for capacities values "%s".' \
-                                         % str(dspec[4]) )
+                raise ErrorMessage( 1, 'AnalogDesign.doDevice(): Invalid type for capacities values "%s".' \
+                                       % str(dspec[4]) )
 
               device = dspec[0].create( self.library, dspec[1], dspec[3], len(capaValues) )
               device.getParameter( 'Layout Styles' ).setValue( dspec[2] )
-              print device.getParameter( 'matrix'        )
-              device.getParameter( 'matrix' ).setMatrix( dspec[5] )
+              device.getParameter( 'matrix'  ).setMatrix(     dspec[5]  )
+              device.setDummy( dspec[6] )
               for i in range(len(capaValues)):
                 device.getParameter( 'capacities' ).setValue( i, capaValues[i]  )
 
@@ -614,7 +620,7 @@ class AnalogDesign ( object ):
         del self.stack[-1]
         return
 
-    def addDevice ( self, name, align, parameter, index=0 ):
+    def addDevice ( self, name, align, parameter=None, index=0 ):
         node = DSlicingNode.create( name, self.cell, parameter, self.rg )
         node.setAlignment( align )
         if index != 0: node.setBoxSetIndex( index )
