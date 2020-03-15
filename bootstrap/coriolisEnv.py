@@ -67,63 +67,31 @@ def guessOs ():
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
 
-    libDir="lib"
-    if osSlsoc7x_64.match(lines[0]):
-      osType         = "Linux.el7_64"
-      libDir         = "lib64"
+    if osSlsoc7x_64.match(lines[0]): osType = "Linux.el7_64"
     elif osSlsoc6x_64.match(lines[0]):
       osType         = "Linux.slsoc6x_64"
-      libDir         = "lib64"
       useDevtoolset  = True
     elif osSlsoc6x.match(lines[0]):
       osType         = "Linux.slsoc6x"
       useDevtoolset  = True
-    elif osSLSoC5x_64.match(lines[0]):
-      osType         = "Linux.SLSoC5x_64"
-      libDir         = "lib64"
-    elif osSLSoC5x.match(lines[0]):
-      osType = "Linux.SLSoC5x"
-    elif osFedora_64.match(lines[0]):
-      osType = "Linux.fc_64"
-      libDir = "lib64"
-    elif osFedora.match(lines[0]):
-      osType = "Linux.fc"
-    elif osUbuntu1004.match(lines[0]):
-      osType = "Linux.Ubuntu1004"
-    elif osUbuntu1004_64.match(lines[0]):
-      osType = "Linux.Ubuntu1004_64"
-      libDir = "lib64"
-    elif osLinux_64.match(lines[0]):
-      osType = "Linux.x86_64"
-      if(os.path.exists("/usr/lib64/")):
-        libDir = "lib64"
-    elif osLinux.match(lines[0]):
-      osType = "Linux.i386"
-    elif osFreeBSD8x_64.match(lines[0]):
-      osType = "FreeBSD.8x.x86_64"
-      libDir = "lib64"
-    elif osFreeBSD8x_amd64.match(lines[0]):
-      osType = "FreeBSD.8x.amd64"
-      libDir = "lib64"
-    elif osFreeBSD8x.match(lines[0]):
-      osType = "FreeBSD.8x.i386"
-    elif osDarwin.match(lines[0]):
-      osType = "Darwin"
-    elif osCygwinW7_64.match(lines[0]):
-      osType = "Cygwin.W7_64"
-      libDir = "lib64"
-    elif osCygwinW7.match(lines[0]):
-      osType = "Cygwin.W7"
-    elif osCygwinW8_64.match(lines[0]):
-      osType = "Cygwin.W8_64"
-      libDir = "lib64"
-    elif osCygwinW8.match(lines[0]):
-      osType = "Cygwin.W8"
-    elif osCygwinW10_64.match(lines[0]):
-      osType = "Cygwin.W10_64"
-      libDir = "lib64"
-    elif osCygwinW10.match(lines[0]):
-      osType = "Cygwin.W10"
+    elif osSLSoC5x_64     .match(lines[0]): osType = "Linux.SLSoC5x_64"
+    elif osSLSoC5x        .match(lines[0]): osType = "Linux.SLSoC5x"
+    elif osFedora_64      .match(lines[0]): osType = "Linux.fc_64"
+    elif osFedora         .match(lines[0]): osType = "Linux.fc"
+    elif osUbuntu1004     .match(lines[0]): osType = "Linux.Ubuntu1004"
+    elif osUbuntu1004_64  .match(lines[0]): osType = "Linux.Ubuntu1004_64"
+    elif osLinux_64       .match(lines[0]): osType = "Linux.x86_64"
+    elif osLinux          .match(lines[0]): osType = "Linux.i386"
+    elif osFreeBSD8x_64   .match(lines[0]): osType = "FreeBSD.8x.x86_64"
+    elif osFreeBSD8x_amd64.match(lines[0]): osType = "FreeBSD.8x.amd64"
+    elif osFreeBSD8x      .match(lines[0]): osType = "FreeBSD.8x.i386"
+    elif osDarwin         .match(lines[0]): osType = "Darwin"
+    elif osCygwinW7_64    .match(lines[0]): osType = "Cygwin.W7_64"
+    elif osCygwinW7       .match(lines[0]): osType = "Cygwin.W7"
+    elif osCygwinW8_64    .match(lines[0]): osType = "Cygwin.W8_64"
+    elif osCygwinW8       .match(lines[0]): osType = "Cygwin.W8"
+    elif osCygwinW10_64   .match(lines[0]): osType = "Cygwin.W10_64"
+    elif osCygwinW10      .match(lines[0]): osType = "Cygwin.W10"
     else:
       uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
       osType = uname.stdout.readlines()[0][:-1]
@@ -132,11 +100,8 @@ def guessOs ():
       print "          (using: \"%s\")" % osType
     ldLibraryPath = os.getenv('LD_LIBRARY_PATH')
     if ldLibraryPath and 'devtoolset' in ldLibraryPath: useDevtoolset = False
-
-    if libDir == 'lib64' and not os.path.exists('/usr/lib64'):
-      libDir = 'lib'
     
-    return (osType,libDir,useDevtoolset)
+    return (osType,useDevtoolset)
 
 
 def guessShell ():
@@ -169,11 +134,11 @@ def guessShell ():
 
 if __name__ == "__main__":
 
-  osType,libDir,useDevtoolset = guessOs()
-  buildType                    = "Release"
-  linkType                     = "Shared"
-  rootDir                      = None
-  shellBin, isBourneShell      = guessShell()
+  osType,useDevtoolset    = guessOs()
+  buildType               = "Release"
+  linkType                = "Shared"
+  rootDir                 = None
+  shellBin, isBourneShell = guessShell()
 
   parser = optparse.OptionParser ()  
  # Build relateds.
@@ -286,29 +251,28 @@ if __name__ == "__main__":
       shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
 
   if osType.startswith("Cygwin"):
-    strippedPath = "%s/%s:%s" % ( coriolisTop, libDir, strippedPath )
-
-  absLibDir           = "%s/%s"     % ( coriolisTop, libDir )
-  strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
-  strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
+    strippedPath = "%s/lib:%s" % ( coriolisTop, libDir, strippedPath )
 
   if not os.path.exists(coriolisTop):
     print 'echo "[ERROR] coriolisEnv.py, top directory <%s> do not exists."' % coriolisTop
     sys.exit( 1 )
 
+  for lib in [ 'lib64', 'lib' ]:
+    libDir    = lib
+    absLibDir = '{0}/{1}'.format( coriolisTop, lib )
+    if os.path.isdir(absLibDir): break
+    libDir    = None
+
+  if libDir is None:
+    print 'echo "[ERROR] coriolisEnv.py, library directory not found."'
+    sys.exit( 1 )
+
+  strippedPath        = "%s/bin:%s" % ( coriolisTop, strippedPath )
+  strippedLibraryPath = "%s:%s"     % ( absLibDir  , strippedLibraryPath )
+
   if not options.nopython:
     pyVersion = sys.version_info
     version   = "%d.%d" % (pyVersion[0],pyVersion[1])
-   #if    osType.startswith("Linux.SL") \
-   #   or osType.startswith("Linux.sl") \
-   #   or osType.startswith("Linux.el") \
-   #   or osType.startswith("Linux.fc") \
-   #   or osType.startswith("Cygwin"):
-   #  sitePackagesDir = "%s/python%s/site-packages" % (absLibDir,version)
-   #elif  osType.startswith("Darwin"):
-   #  sitePackagesDir = "%s/%s/site-packages" % (absLibDir,version)
-   #else:
-   #  sitePackagesDir = "%s/python%s/dist-packages" % (absLibDir,version)
 
     sitePackagesDir = "sitePackageDir_has_been_not_found"
     for pyPackageDir in [ "%s/python%s/site-packages" % (absLibDir,version)
