@@ -1,5 +1,5 @@
 
-FROM debian9.coriolis
+FROM debian10.coriolis
 
 COPY root/dot.bashrc  /root/.bashrc
 

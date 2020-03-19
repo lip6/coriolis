@@ -1,5 +1,5 @@
 
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -19,3 +19,8 @@ RUN apt-get update                                                      \
                        vim                                              \
  && apt-get clean
 
+# If you want to build Alliance documentation, install those LaTeX
+# packages:
+#                      transfig texlive texlive-latex-extra
+#                      texlive-plain-generic texlive-pictures
+#                      imagemagick

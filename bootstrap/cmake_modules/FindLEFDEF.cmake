@@ -92,7 +92,7 @@
  
    find_path( LEFDEF_LIBRARY_DIR NAMES "libdef.so"
                                  PATHS ${LEFDEF_SEARCH_PATH}
-                                 PATH_SUFFIXES "lib${LIB_SUFFIX}"
+                                 PATH_SUFFIXES "lib64 lib"
                                  DOC "The ${LEFDEF_LIBRARY_DIR_DESCRIPTION}" )
    message( STATUS "LEFDEF_LIBRARY_DIR: ${LEFDEF_LIBRARY_DIR}" )
  

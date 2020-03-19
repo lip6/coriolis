@@ -276,7 +276,8 @@
                                              /usr/include
                                PATH_SUFFIXES qwt )
      find_library(QWT_LIBRARY NAMES qwt-qt5 qwt
-                              PATHS /usr/lib${LIB_SUFFIX} )
+                              PATHS /usr/lib64
+			            /usr/lib )
    else()
      find_path(QWT_INCLUDE_DIR NAMES         qwt.h
                                PATHS         /usr/include/qwt-qt4
@@ -286,7 +287,8 @@
                                PATH_SUFFIXES qwt )
      find_library(QWT_LIBRARY NAMES qwt-qt4 qwt
                               PATHS /opt/local/libexec/qt4/lib
-                                    /usr/lib${LIB_SUFFIX} )
+                                    /usr/lib64
+				    /usr/lib )
    endif()
 
    if( QWT_INCLUDE_DIR AND QWT_LIBRARY)

@@ -21,7 +21,7 @@ if( UNIX )
 
   find_library( FLUTE_LIBRARY_PATH NAMES         flute
                                    PATHS         ${CORIOLIS_DIR_SEARCH}
-                                   PATH_SUFFIXES lib${LIB_SUFFIX}
+                                   PATH_SUFFIXES lib64 lib
                                    DOC           "${FLUTE_INCLUDE_PATH_DESCRIPTION}"
   )
 

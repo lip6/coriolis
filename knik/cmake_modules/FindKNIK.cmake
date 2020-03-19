@@ -26,7 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(KNIK_LIBRARY_PATH
     NAMES knik
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
   )
@@ -34,7 +34,7 @@ IF(UNIX)
   FIND_LIBRARY(FLUTE_LIBRARY_PATH
     NAMES flute
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${KNIK_INCLUDE_PATH_DESCRIPTION}"
   )

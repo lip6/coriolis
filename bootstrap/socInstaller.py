@@ -440,7 +440,7 @@ class Configuration ( object ):
             otherArgs.append( '--devtoolset=8' )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-          elif target == 'Ubuntu18' or target == 'Debian9':
+          elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
             if target == 'Ubuntu18': otherArgs.append( '--qt5' )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
 

@@ -26,7 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(COLOQUINTE_LIBRARY_PATH
     NAMES coloquinte
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${COLOQUINTE_INCLUDE_PATH_DESCRIPTION}"
   )

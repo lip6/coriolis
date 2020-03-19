@@ -26,7 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(CRLCORE_LIBRARY_PATH
     NAMES crlcore
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${CORIOLIS_INCLUDE_PATH_DESCRIPTION}"
   )
@@ -34,7 +34,7 @@ IF(UNIX)
   FIND_LIBRARY(LIBMANAGER_LIBRARY_PATH
     NAMES libmanager
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${CORIOLIS_INCLUDE_PATH_DESCRIPTION}"
   )
@@ -50,7 +50,7 @@ IF(UNIX)
   FIND_LIBRARY(CORIOLIS_PYTHON_LIBRARY_PATH
     NAMES pycrlcore 
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "${CORIOLIS_LIBRARY_PATH_DESCRIPTION}"
   )

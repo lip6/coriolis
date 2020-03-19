@@ -26,7 +26,7 @@ IF(UNIX)
   FIND_LIBRARY(EQUINOX_LIBRARY_PATH
     NAMES equinox
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${EQUINOX_INCLUDE_PATH_DESCRIPTION}"
   )
@@ -34,7 +34,7 @@ IF(UNIX)
   FIND_LIBRARY(INTERVALTREE_LIBRARY_PATH
     NAMES intervalTree
     PATHS ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES lib${LIB_SUFFIX}
+    PATH_SUFFIXES lib64 lib
     # Help the user find it if we cannot.
     DOC "The ${EQUINOX_INCLUDE_PATH_DESCRIPTION}"
   )

@@ -1405,7 +1405,7 @@ void  vstParser ( const string cellPath, Cell *cell )
                                     , Catalog::State::Views
                                     , Vst::states->_state->getDepth()-1) ) {
         throw Error ( "CParsVst() VHDL Parser:\n"
-                      "  Unable to find cell \"%s\", please check your <.coriolis2/settings.py>.\n"
+                      "  Unable to find cell \"%s\", please check your <./coriolis2/settings.py>.\n"
                     , getString(Vst::states->_cellQueue.front()).c_str()
                     );
       }
