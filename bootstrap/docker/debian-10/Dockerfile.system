@@ -14,7 +14,7 @@ RUN apt-get update                                                      \
                        autotools-dev automake                           \
                        libxt-dev libxpm-dev libmotif-dev                \
                                                                         \
-                       yosys                                            \
+                       tcl tcl-dev libffi6 libffi-dev libreadline7      \
                                                                         \
                        vim                                              \
  && apt-get clean
@@ -24,3 +24,6 @@ RUN apt-get update                                                      \
 #                      transfig texlive texlive-latex-extra
 #                      texlive-plain-generic texlive-pictures
 #                      imagemagick
+#
+# The packaged yosys 0.8 is too old to work with nMigen, must be 0.9.
+#                      yosys
