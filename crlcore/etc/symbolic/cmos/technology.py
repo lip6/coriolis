@@ -14,6 +14,7 @@
 
 
 from   helpers    import l, u, n
+from   helpers.io import WarningMessage
 import helpers.io
 helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
 

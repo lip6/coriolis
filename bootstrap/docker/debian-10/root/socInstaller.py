@@ -307,7 +307,7 @@ class Configuration ( object ):
         self._doSendReport = False
         self._nightlyMode  = False
         self._dockerMode   = False
-        self._chrootMode   = False
+        self._chrootMode   = None
         self._logs         = { 'alliance':None, 'coriolis':None, 'benchs':None }
         self._fds          = { 'alliance':None, 'coriolis':None, 'benchs':None }
         self._ccbBin       = None
@@ -352,15 +352,17 @@ class Configuration ( object ):
         if self._nightlyMode:
           self._rootDir = self._homeDir + '/nightly/coriolis-2.x'
         else:
-          self._rootDir = self._homeDir + '/coriolis-2.x'
-        self._srcDir    = self._rootDir + '/src'
-        self._logDir    = self._srcDir  + '/logs'
-        self._alcBin    = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/allianceInstaller.sh'
-        self._ccbBin    = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/ccb.py'
-        self._benchsDir = self._srcDir  + '/' + GitRepository.getLocalRepository(self._benchsRepo  ) + '/benchs'
+          self._rootDir  = self._homeDir + '/coriolis-2.x'
+        self._srcDir     = self._rootDir + '/src'
+        self._logDir     = self._srcDir  + '/logs'
+        self._alcBin     = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/allianceInstaller.sh'
+        self._ccbBin     = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/ccb.py'
+        self._benchsDir  = self._srcDir  + '/' + GitRepository.getLocalRepository(self._benchsRepo  ) + '/benchs'
+        self._masterHost = self._detectMasterHost()
         return
 
     def _detectMasterHost ( self ):
+        if self._chrootMode is None: return 'unknown'
         if self._chrootMode: return 'chrooted-host'
 
         masterHost = 'unknown'
@@ -438,7 +440,7 @@ class Configuration ( object ):
             otherArgs.append( '--devtoolset=8' )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-          elif target == 'Ubuntu18' or target == 'Debian9':
+          elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
             if target == 'Ubuntu18': otherArgs.append( '--qt5' )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
 
@@ -536,6 +538,7 @@ parser.add_option ( "--root"        , action="store"      , type="string", dest=
 parser.add_option ( "--profile"     , action="store"      , type="string", dest="profile"      , help="The targeted OS for the build." )
 (options, args) = parser.parse_args ()
 
+
 conf = Configuration()
 
 try:
@@ -550,6 +553,7 @@ try:
     if options.doReport:                  conf.doSendReport = True
     if options.rmSource or options.rmAll: conf.rmSource     = True
     if options.rmBuild  or options.rmAll: conf.rmBuild      = True
+
 
     if conf.doAlliance: conf.openLog( 'alliance' )
     if conf.doCoriolis: conf.openLog( 'coriolis' )

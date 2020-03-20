@@ -238,6 +238,7 @@ void DumpContacts(ofstream& ccell, Cell *cell)
     Segment*    segment      = NULL;
     RoutingPad* rp           = NULL;
     bool        external     = false;
+    const char* direction    = NULL;
 
     for ( Net* net : cell->getNets() ) {
       string netName = toMBKName( net->getName() );
@@ -261,18 +262,22 @@ void DumpContacts(ofstream& ccell, Cell *cell)
             if (pin and (rp->getOccurrence().getPath().getHeadInstance() != NULL)) {
               Box bb ( pin->getBoundingBox() );
               rp->getOccurrence().getPath().getTransformation().applyOn( bb );
-              if (bb.getWidth() > bb.getHeight()) {
-                x1    = bb.getCenter().getX();
-                x2    = x1;
-                y1    = bb.getYMin();
-                y2    = bb.getYMax();
-                width = bb.getWidth();
+            //if (bb.getWidth() > bb.getHeight()) {
+              if (  (pin->getAccessDirection() == Pin::AccessDirection::NORTH)
+                 or (pin->getAccessDirection() == Pin::AccessDirection::SOUTH)) {
+                x1        = bb.getCenter().getX();
+                x2        = x1;
+                y1        = bb.getYMin();
+                y2        = bb.getYMax();
+                width     = bb.getWidth();
+                direction = "UP";
               } else {
-                x1    = bb.getXMin();
-                x2    = bb.getXMax();
-                y1    = bb.getCenter().getY();
-                y2    = y1;
-                width = bb.getHeight();
+                x1        = bb.getXMin();
+                x2        = bb.getXMax();
+                y1        = bb.getCenter().getY();
+                y2        = y1;
+                width     = bb.getHeight();
+                direction = "RIGHT";
               }
             } else
               continue;
@@ -287,8 +292,10 @@ void DumpContacts(ofstream& ccell, Cell *cell)
         } else
           continue;
 
-        const char* direction = "RIGHT";
-        if ( (x1 == x2) and (y1 != y2) ) direction = "UP";
+        if (not direction) {
+          direction = "RIGHT";
+          if ( (x1 == x2) and (y1 != y2) ) direction = "UP";
+        }
 
         if (x1 > x2) std::swap( x1, x2 );
         if (y1 > y2) std::swap( y1, y2 );
