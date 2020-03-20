@@ -267,13 +267,13 @@ void DumpContacts(ofstream& ccell, Cell *cell)
                  or (pin->getAccessDirection() == Pin::AccessDirection::SOUTH)) {
                 x1        = bb.getCenter().getX();
                 x2        = x1;
-                y1        = bb.getYMin();
-                y2        = bb.getYMax();
+                y1        = bb.getCenter().getY();
+                y2        = y1;
                 width     = bb.getWidth();
                 direction = "UP";
               } else {
-                x1        = bb.getXMin();
-                x2        = bb.getXMax();
+                x1        = bb.getCenter().getX();
+                x2        = x1;
                 y1        = bb.getCenter().getY();
                 y2        = y1;
                 width     = bb.getHeight();
