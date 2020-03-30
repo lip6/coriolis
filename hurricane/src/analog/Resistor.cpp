@@ -54,21 +54,21 @@ namespace Analog {
   
   void  Resistor::createConnections ()
   {
-    Net* pin1 = Net::create( this, Name("PIN1") );
-    pin1->setExternal(true);
+    Net* t1 = Net::create( this, Name("t1") );
+    t1->setExternal(true);
   
-    Net* pin2 = Net::create( this, Name("PIN2") );
-    pin2->setExternal(true);
+    Net* t2 = Net::create( this, Name("t2") );
+    t2->setExternal(true);
   
     _metaResistor = MetaResistor::create( getSubDevicesLibrary(), Name("R1") );
     Instance* metaResistorIns = Instance::create( this, Name("R1Instance"), _metaResistor );
   
     setReferenceResistor( _metaResistor );
   
-    Plug* mrPin1Plug = metaResistorIns->getPlug( _metaResistor->getPin1() );
-    mrPin1Plug->setNet( pin1 );
-    Plug* mrPin2Plug = metaResistorIns->getPlug( _metaResistor->getPin2() );
-    mrPin2Plug->setNet( pin2 );
+    Plug* mrT1Plug = metaResistorIns->getPlug( _metaResistor->getPin1() );
+    mrT1Plug->setNet( t1 );
+    Plug* mrT2Plug = metaResistorIns->getPlug( _metaResistor->getPin2() );
+    mrT2Plug->setNet( t2 );
   }
   
   
@@ -88,14 +88,14 @@ namespace Analog {
     unsigned int west  = 0;
     unsigned int east  = 2;
     unsigned int south = 4;
-    unsigned int north = 6;
+    unsigned int north = 8;
     unsigned int rule  = 0;
 
     if (net->getName() == namePin1) {
-      rule = (yes << south) | (yes << east) | (yes << west);
+      rule = (yes << east) | (yes << west);
     } else {
       if (net->getName() == namePin2) {
-        rule = (yes << north) | (yes << east) | (yes << west);
+        rule = (yes << east) | (yes << west);
       } else {
         cerr << Error( "Resistor::getRestriction(): Resistor device do not have Net named \"%s\"."
                      , getString(net->getName()).c_str()

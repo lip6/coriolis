@@ -248,17 +248,17 @@ class ErrorMessage ( Exception ):
 
 def catch ( errorObject ):
     if isinstance(errorObject,ErrorMessage):
-      em = errorObject
+        em = errorObject
     else:
-      em            = ErrorMessage( 2, errorObject )
-      em.trace      = traceback.extract_tb( sys.exc_info()[2] )
-     #em.scriptPath = __file__
+        em            = ErrorMessage( 2, errorObject )
+        em.trace      = traceback.extract_tb( sys.exc_info()[2] )
+       #em.scriptPath = __file__
 
     print em
     print helpers.textStackTrace( em.trace, True, em.scriptPath )
 
     if Viewer.Graphics.get().isEnabled():
-      tryCont = ErrorWidget( em ).exec_()
+        tryCont = ErrorWidget( em ).exec_()
 
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
     return

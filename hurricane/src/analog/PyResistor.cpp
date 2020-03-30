@@ -62,9 +62,11 @@ extern "C" {
         }
         switch ( pyType ) {
           case Resistor::LOWRES:
-          case Resistor::HIRES: break;
+          case Resistor::HIRES:
+          case Resistor::RPOLYH:
+          case Resistor::RPOLY2PH: break;
           default:
-            PyErr_SetString ( ConstructorError, "Resistor.create(): Type argument is neither LOWRES nor HIRES." );
+            PyErr_SetString ( ConstructorError, "Resistor.create(): Type argument is neither LOWRES, HIRES, RPOLYH nor RPOLY2PH." );
             return NULL;
         }
       

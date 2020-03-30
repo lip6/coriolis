@@ -54,25 +54,27 @@ import Katana
 import Bora
 
 
-#helpers.setTraceLevel( 110 )
+helpers.setTraceLevel( 100 )
 
 
-NMOS    = Transistor.NMOS
-PMOS    = Transistor.PMOS
-PIP     = CapacitorFamily.PIP
-MIM     = CapacitorFamily.MIM
-MOM     = CapacitorFamily.MOM
-LOWRES  = ResistorFamily.LOWRES
-HIRES   = ResistorFamily.HIRES
-Center  = SlicingNode.AlignCenter
-Left    = SlicingNode.AlignLeft
-Right   = SlicingNode.AlignRight
-Top     = SlicingNode.AlignTop
-Bottom  = SlicingNode.AlignBottom
-Unknown = SlicingNode.AlignBottom
-VNode   = 1
-HNode   = 2
-DNode   = 3
+NMOS     = Transistor.NMOS
+PMOS     = Transistor.PMOS
+PIP      = CapacitorFamily.PIP
+MIM      = CapacitorFamily.MIM
+MOM      = CapacitorFamily.MOM
+LOWRES   = ResistorFamily.LOWRES
+HIRES    = ResistorFamily.HIRES
+RPOLYH   = ResistorFamily.RPOLYH
+RPOLY2PH = ResistorFamily.RPOLY2PH
+Center   = SlicingNode.AlignCenter
+Left     = SlicingNode.AlignLeft
+Right    = SlicingNode.AlignRight
+Top      = SlicingNode.AlignTop
+Bottom   = SlicingNode.AlignBottom
+Unknown  = SlicingNode.AlignBottom
+VNode    = 1
+HNode    = 2
+DNode    = 3
 
 
 def toDbU    ( value ): return DbU.fromPhysical( value, DbU.UnitPowerMicro )
@@ -265,7 +267,7 @@ class AnalogDesign ( object ):
         specSize = 0
         if   isderived(dspec[0],TransistorFamily): specSize = 12
         elif isderived(dspec[0], CapacitorFamily): specSize = 7
-        elif isderived(dspec[0],  ResistorFamily): specSize = 5
+        elif isderived(dspec[0],  ResistorFamily): specSize = 8
         else:
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], has unsupported device type.' \
                             % (count)
@@ -282,7 +284,7 @@ class AnalogDesign ( object ):
           raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [2] (layout style) is *not* a string.' % count
                           , '%s' % str(dspec) ])
 
-        if specSize == 12:
+        if isderived(dspec[0],TransistorFamily):
           if dspec[3] not in [NMOS, PMOS]:
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either NMOS or PMOS.' % count
                             , '%s' % str(dspec) ])
@@ -315,7 +317,7 @@ class AnalogDesign ( object ):
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [11] (bulk connected) is *not* a boolean.' % count
                             , '%s' % str(dspec) ])
 
-        elif specSize == 7:
+        elif isderived(dspec[0], CapacitorFamily):
           if dspec[3] not in [PIP, MIM, MOM]:
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either PIP, MIM or MOM.' % count
                             , '%s' % str(dspec) ])
@@ -325,11 +327,11 @@ class AnalogDesign ( object ):
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (Cs) should either be *one* float or a *list* of floats.' % count
                             , '%s' % str(dspec) ])
 
-        elif specSize == 5:
-          if dspec[3] not in [LOWRES, HIRES]:
-            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either LOWRES or HIRES.' % count
+        elif isderived(dspec[0],ResistorFamily):
+          if dspec[3] not in [RPOLYH, RPOLY2PH]:
+            raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [3] (type) must be either RPOLYH or RPOLY2PH.' % count
                             , '%s' % str(dspec) ])
-          if   isinstance(dspec[4],float): pass
+          if   isinstance(dspec[5],float): pass
           else:
             raise Error( 3, [ 'AnalogDesign.doDevices(): \"self.devicesSpecs\" entry [%d], field [4] (resistance) must be a float.' % count
                             , '%s' % str(dspec) ])
@@ -435,9 +437,15 @@ class AnalogDesign ( object ):
                 device.getParameter( 'capacities' ).setValue( i, capaValues[i]  )
 
             elif isderived(dspec[0],ResistorFamily):
+              print dspec
               device = dspec[0].create( self.library, dspec[1], dspec[3] )
-              device.getParameter( 'Layout Styles' ).setValue ( dspec[2] )
-              device.getParameter( 'Resistance'    ).setMatrix( dspec[4] )
+              device.getParameter( 'R'     ).setValue(       dspec[4]  )
+              device.getParameter( 'W'     ).setValue( toDbU(dspec[5]) )
+              device.getParameter( 'L'     ).setValue( toDbU(dspec[6]) )
+              device.getParameter( 'bends' ).setValue(       dspec[7]  )
+              trace( 100, '\tW:{0}\n'.format(dspec[5]) )
+              trace( 100, '\tpW:{0}\n'.format(device.getParameter('W')) )
+              trace( 100, '\tbends:{0}\n'.format(dspec[7]) )
             else:
               raise ErrorMessage( 1, 'AnalogDesign.doDevice(): Unknown/unsupported device "%s".' % str(dspec[0]) )
             
@@ -450,6 +458,7 @@ class AnalogDesign ( object ):
                                       , Instance.PlacementStatus.UNPLACED )
 
             self.__dict__[ dspec[1] ] = instance
+            trace( 100, '\tAdd Instance:{0}\n'.format(dspec[1]) )
         return
 
 
