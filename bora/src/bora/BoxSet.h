@@ -87,7 +87,7 @@ namespace Bora {
   inline DbU::Unit    BoxSet::getWidth          () const { return _width; }
   inline unsigned int BoxSet::getCpt            () const { return _cpt; }
   inline void         BoxSet::incrementCpt      ()       { _cpt++; }
-  inline double       BoxSet::getRatio          ()       { return _width/_height; }
+  inline double       BoxSet::getRatio          ()       { return (double)_width/(double)_height; }
   inline double       BoxSet::getArea           ()       { return _width*_height; }
   inline unsigned int BoxSet::getType           () const { return UnknownType; }
   inline double       BoxSet::getOccupationArea () const { return 100; }
