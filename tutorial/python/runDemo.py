@@ -151,7 +151,7 @@ def unicornHook ( **kw ):
     return
 
 
-def ScriptMain ( **kw ):
+def scriptMain ( **kw ):
   try:
     helpers.staticInitialization( quiet=True )
    #helpers.setTraceLevel( 550 )

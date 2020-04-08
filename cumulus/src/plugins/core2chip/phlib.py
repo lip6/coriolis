@@ -9,7 +9,7 @@
 # |      C u m u l u s  -  P y t h o n   T o o l s                  |
 # |                                                                 |
 # |  Author      :                    Jean-Paul CHAPUT              |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :       "./plugins/core2chip/cmos.py"              |
 # +-----------------------------------------------------------------+
@@ -26,8 +26,8 @@ import Viewer
 from   CRL                  import Catalog
 from   CRL                  import AllianceFramework
 from   helpers.io           import ErrorMessage
-from   core2chip.CoreToChip import IoPad
-from   core2chip.CoreToChip import CoreToChip
+from   core2chip.core2chip  import IoPad
+from   core2chip.core2chip  import CoreToChip
 
 
 class cmos ( CoreToChip ):

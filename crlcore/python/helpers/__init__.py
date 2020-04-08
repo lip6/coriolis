@@ -61,29 +61,32 @@ def truncPath ( path, maxlength=80 ):
 
 
 def textStackTrace ( trace, showIndent=True, scriptPath=None ):
+   #for entry in traceback.format_list( trace ):
+   #    print entry,
+
     indent = ''
     if showIndent: indent = '        '
 
     s = ''
     if scriptPath:
-      if len(scriptPath) > 100:
-        filename = scriptPath[-100:]
-        filename = '.../' + filename[ filename.find('/')+1 : ]
-
-      if showIndent: s += '[ERROR] '
-      s += 'An exception occured while loading the Python script module:\n'
-      s += indent + '\"%s\"\n' % (filename)
-      s += indent + 'You should check for simple python errors in this module.\n\n'
+        if len(scriptPath) > 100:
+            filename = scriptPath[-100:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+      
+        if showIndent: s += '[ERROR] '
+        s += 'An exception occured while loading the Python script module:\n'
+        s += indent + '\"%s\"\n' % (filename)
+        s += indent + 'You should check for simple python errors in this module.\n\n'
 
     s += indent + 'Python stack trace:\n'
     maxdepth = len( trace )
     for depth in range( maxdepth ):
-      filename, line, function, code = trace[ maxdepth-depth-1 ]
-      if len(filename) > 58:
-        filename = filename[-58:]
-        filename = '.../' + filename[ filename.find('/')+1 : ]
-     #s += indent + '[%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
-      s += indent + '#%d in %25s() at %s:%d\n' % ( depth, function, filename, line )
+        filename, line, function, code = trace[ maxdepth-depth-1 ]
+        if len(filename) > 58:
+            filename = filename[-58:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+       #s += indent + '[%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
+        s += indent + '#%d in %25s() at %s:%d\n' % ( depth, function, filename, line )
     return s
 
 
@@ -95,25 +98,25 @@ def showStackTrace ( trace ):
 def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
     s = ''
     if scriptPath:
-      if len(scriptPath) > 100:
-        filename = scriptPath[-100:]
-        filename = '.../' + filename[ filename.find('/')+1 : ]
-      else:
-        filename = scriptPath
-      s += '[ERROR] An exception occured while loading the Python script module:\n'
-      s += '        \"%s\"\n' % (filename)
-      s += '        You should check for simple python errors in this module.\n'
+        if len(scriptPath) > 100:
+            filename = scriptPath[-100:]
+            filename = '.../' + filename[ filename.find('/')+1 : ]
+        else:
+            filename = scriptPath
+        s += '[ERROR] An exception occured while loading the Python script module:\n'
+        s += '        \"%s\"\n' % (filename)
+        s += '        You should check for simple python errors in this module.\n'
 
     if isinstance(e,helpers.io.ErrorMessage): trace = e.trace
     else:                                     trace = traceback.extract_tb( sys.exc_info()[2] )
     s += textStackTrace( trace )
 
     if e:
-      s += '        Error was:\n'
-      s += '          %s\n' % e
+        s += '        Error was:\n'
+        s += '          %s\n' % e
 
     if tryContinue:
-      s += '        Trying to continue anyway...'
+        s += '        Trying to continue anyway...'
     return s
 
 
@@ -155,93 +158,94 @@ class Dots ( object ):
 
 class Tab ( object ):
 
-   def __init__ ( self, stepSize=2 ):
-     self._stepSize = stepSize
-     self._tsize    = 0
-     return
+    def __init__ ( self, stepSize=2 ):
+        self._stepSize = stepSize
+        self._tsize    = 0
+        return
+    
+    def inc ( self, step=1 ): self._tsize += step*self._stepSize
 
-   def inc ( self, step=1 ): self._tsize += step*self._stepSize
-   def dec ( self, step=1 ):
-     if step*self._stepSize < self._tsize:
-       self._tsize -= step*self._stepSize
-     else:
-       self._tsize  = 0
-     return
-
-   def __str__ ( self ): return ' '*self._tsize
+    def dec ( self, step=1 ):
+        if step*self._stepSize < self._tsize:
+            self._tsize -= step*self._stepSize
+        else:
+            self._tsize  = 0
+        return
+    
+    def __str__ ( self ): return ' '*self._tsize
 
 
 class Trace ( object ):
 
-  def __init__ ( self ):
-    self._tab   = Tab()
-    self._level = 10000
-    return
-
-  @property
-  def level ( self ): return self._level
-  @level.setter
-  def level ( self, level ): self._level = level
-
-  def write ( self, level, arg1='', arg2=None ):
-    if level < self._level: return
-
-    sflags  = [ '', '' ]
-    message = None
-    if isinstance(arg1,str) and len(arg1) and arg1[0] in '+-,':
-      sflags  = arg1.split( ',' , 1 )
-      if len(sflags) < 2: sflags.append('')
-      message = arg2
-    else:
-      message = arg1
-
-    for f in sflags[0]:
-      if f == '+': self._tab.inc()
-      if f == '-': self._tab.dec()
-
-    if message:
-      if not isinstance(message,str):
-        message = '\t'+str(message)+'\n'
+    def __init__ ( self ):
+        self._tab   = Tab()
+        self._level = 10000
+        return
   
-      if len(message) and message[0] == '\t':
-        sys.stderr.write( str(self._tab) )
-        sys.stderr.write( message[1:] )
-      else:
-        sys.stderr.write( message )
-      sys.stderr.flush()
-
-    for f in sflags[1]:
-      if f == '+': self._tab.inc()
-      if f == '-': self._tab.dec()
-    return
+    @property
+    def level ( self ): return self._level
+    @level.setter
+    def level ( self, level ): self._level = level
+  
+    def write ( self, level, arg1='', arg2=None ):
+        if level < self._level: return
+    
+        sflags  = [ '', '' ]
+        message = None
+        if isinstance(arg1,str) and len(arg1) and arg1[0] in '+-,':
+            sflags  = arg1.split( ',' , 1 )
+            if len(sflags) < 2: sflags.append('')
+            message = arg2
+        else:
+            message = arg1
+    
+        for f in sflags[0]:
+            if f == '+': self._tab.inc()
+            if f == '-': self._tab.dec()
+    
+        if message:
+            if not isinstance(message,str):
+                message = '\t'+str(message)+'\n'
+            
+            if len(message) and message[0] == '\t':
+                sys.stderr.write( str(self._tab) )
+                sys.stderr.write( message[1:] )
+            else:
+                sys.stderr.write( message )
+            sys.stderr.flush()
+    
+        for f in sflags[1]:
+            if f == '+': self._tab.inc()
+            if f == '-': self._tab.dec()
+        return
 
 
 def trace ( *args ):
-  global _trace
-  _trace.write( *args )
-  return
+    global _trace
+    _trace.write( *args )
+    return
 
 
 def setTraceLevel ( level ):
-  global _trace
-  _trace.level = level
-  return
+    global _trace
+    _trace.level = level
+    return
 
 
 def overload ( defaultParameters, parameters ):
-  overloads          = {}
-  overloadParameters = []
-  
-  for parameter in parameters:
-    overloads[ parameter[0] ] = parameter
-  
-  for parameter in defaultParameters:
-    if overloads.has_key(parameter[0]):
-      overloadParameters.append( overloads[parameter[0]] )
-    else:
-      overloadParameters.append( parameter )
-        
-  return tuple(overloadParameters)
+    overloads          = {}
+    overloadParameters = []
+    
+    for parameter in parameters:
+        overloads[ parameter[0] ] = parameter
+    
+    for parameter in defaultParameters:
+        if overloads.has_key(parameter[0]):
+            overloadParameters.append( overloads[parameter[0]] )
+        else:
+            overloadParameters.append( parameter )
+          
+    return tuple(overloadParameters)
 
 
 def l ( value ): return Hurricane.DbU.fromLambda( value )
@@ -250,38 +254,38 @@ def n ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPow
 
 
 def initTechno ( argQuiet ):
-  global quiet
-  global ndaDir
-  global ndaConfDir
-  global technoDir
-  global techno
-
-  quiet = argQuiet
-
-  technoFiles  = [ sysConfDir+'/techno.conf' ]
-  if os.getenv('HOME'):
-    technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
-  technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
-
-  technoFiles.reverse()
-  for technoFile in technoFiles:
-    if os.path.isfile(technoFile):
-      if not quiet: print '     - Loading \"%s\".' % truncPath(technoFile)
-      execfile(technoFile,moduleGlobals)
-      break
-  if moduleGlobals.has_key('technology'):
-    techno = technology
-  else:
-    print '[WARNING] The technology is not set. Using <%s>.' % techno
-
-  if moduleGlobals.has_key('NdaDirectory'):
-    ndaDir     = NdaDirectory
-    ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
-  else:
-    ndaConfDir = sysConfDir
-
-  technoDir = os.path.join( ndaConfDir, techno )
-  if not quiet: print '     - Technology: %s.' % techno
+    global quiet
+    global ndaDir
+    global ndaConfDir
+    global technoDir
+    global techno
+    
+    quiet = argQuiet
+    
+    technoFiles  = [ sysConfDir+'/techno.conf' ]
+    if os.getenv('HOME'):
+        technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
+    technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
+    
+    technoFiles.reverse()
+    for technoFile in technoFiles:
+        if os.path.isfile(technoFile):
+            if not quiet: print '     - Loading \"%s\".' % truncPath(technoFile)
+            execfile(technoFile,moduleGlobals)
+            break
+    if moduleGlobals.has_key('technology'):
+        techno = technology
+    else:
+        print '[WARNING] The technology is not set. Using <%s>.' % techno
+    
+    if moduleGlobals.has_key('NdaDirectory'):
+        ndaDir     = NdaDirectory
+        ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
+    else:
+        ndaConfDir = sysConfDir
+    
+    technoDir = os.path.join( ndaConfDir, techno )
+    if not quiet: print '     - Technology: %s.' % techno
 
   
 unitsLambda = True
@@ -294,103 +298,99 @@ def setNdaTopDir ( ndaTopDirArg ):
     global ndaTopDir
 
     if not os.path.isdir(ndaTopDirArg):
-      print helpers.io.WarningMessage( 'helpers.setNdaTopDir(): Directory "%s" does not exists.' % ndaTopDirArg )
+        print helpers.io.WarningMessage( 'helpers.setNdaTopDir(): Directory "%s" does not exists.' % ndaTopDirArg )
     else:
-      ndaTopDir = ndaTopDirArg
-      sys.path.append( os.path.join(ndaTopDir,'etc/coriolis2') )
-      sys.path.append( ndaTopDir )
+        ndaTopDir = ndaTopDirArg
+        sys.path.append( os.path.join(ndaTopDir,'etc/coriolis2') )
+        sys.path.append( ndaTopDir )
 
     return
 
 
 def staticInitialization ( quiet=False ):
-  global sysConfDir
-  global technoDir
-  global tab
-  global _trace
-  global unitsLambda
-
-  if sysConfDir != None:
-   #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
+    global sysConfDir
+    global technoDir
+    global tab
+    global _trace
+    global unitsLambda
+    
+    if sysConfDir != None:
+       #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
+        return
+    
+    reSysConfDir = re.compile(r'.*etc\/coriolis2')
+    if not quiet: print '  o  Locating configuration directory:'
+    
+    for path in sys.path:
+        if reSysConfDir.match(path):
+            sysConfDir = path
+            if not quiet: print '     - "%s"' % sysConfDir
+            break
+    
+    if not sysConfDir:
+        coriolisTop = os.getenv('CORIOLIS_TOP')
+        if coriolisTop == '/usr':
+            sysConfDir = '/etc/coriolis2'
+        elif coriolisTop:
+            sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
+        else:
+            raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+                                   , 'The path is something ending by <.../etc/coriolis2>.'] )
+    
+    if not quiet: print '     - "%s"' % sysConfDir
+    initTechno( quiet )
     return
-
-# unitsLamba = True
-# tab        = Tab()
-# _trace     = Trace()
-  
-  reSysConfDir = re.compile(r'.*etc\/coriolis2')
-  if not quiet: print '  o  Locating configuration directory:'
-  
-  for path in sys.path:
-    if reSysConfDir.match(path):
-      sysConfDir = path
-      if not quiet: print '     - "%s"' % sysConfDir
-      break
-  
-  if not sysConfDir:
-    coriolisTop = os.getenv('CORIOLIS_TOP')
-    if coriolisTop == '/usr':
-      sysConfDir = '/etc/coriolis2'
-    elif coriolisTop:
-      sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
-    else:
-      raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                             , 'The path is something ending by <.../etc/coriolis2>.'] )
-  
-  if not quiet: print '     - "%s"' % sysConfDir
-  initTechno( quiet )
-  return
 
 
 def setSysConfDir ( quiet=False ):
-  global sysConfDir
-
-  if sysConfDir != None:
-   #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
+    global sysConfDir
+  
+    if sysConfDir != None:
+       #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
+        return
+  
+    reSysConfDir = re.compile(r'.*etc\/coriolis2')
+    if not quiet: print '  o  Locating configuration directory:'
+    
+    for path in sys.path:
+        if reSysConfDir.match(path):
+            sysConfDir = path
+            if not quiet: print '     - "%s"' % sysConfDir
+            break
+    
+    if not sysConfDir:
+        coriolisTop = os.getenv('CORIOLIS_TOP')
+        if coriolisTop == '/usr':
+            sysConfDir = '/etc/coriolis2'
+        elif coriolisTop:
+            sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
+        else:
+            raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
+                                   , 'The path is something ending by <.../etc/coriolis2>.'] )
+    
+    if not quiet: print '     - "%s"' % sysConfDir
+    sys.path.append( sysConfDir )
     return
-
-  reSysConfDir = re.compile(r'.*etc\/coriolis2')
-  if not quiet: print '  o  Locating configuration directory:'
-  
-  for path in sys.path:
-    if reSysConfDir.match(path):
-      sysConfDir = path
-      if not quiet: print '     - "%s"' % sysConfDir
-      break
-  
-  if not sysConfDir:
-    coriolisTop = os.getenv('CORIOLIS_TOP')
-    if coriolisTop == '/usr':
-      sysConfDir = '/etc/coriolis2'
-    elif coriolisTop:
-      sysConfDir = os.path.join(coriolisTop,'etc/coriolis2')
-    else:
-      raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
-                             , 'The path is something ending by <.../etc/coriolis2>.'] )
-  
-  if not quiet: print '     - "%s"' % sysConfDir
-  sys.path.append( sysConfDir )
-  return
 
 
 def netDirectionToStr ( netDir ):
-   flags = [ '-', '-', '-', '-', '-' ]
-   if netDir & Hurricane.Net.Direction.DirIn:        flags[0] = 'i'
-   if netDir & Hurricane.Net.Direction.DirOut:       flags[1] = 'o'
-   if netDir & Hurricane.Net.Direction.ConnTristate: flags[2] = 't'
-   if netDir & Hurricane.Net.Direction.ConnWiredOr:  flags[3] = 'w'
-
-   s = flags[0]+flags[1]+flags[2]+flags[3]+' '
-   if   netDir == Hurricane.Net.Direction.UNDEFINED: s += '(UNDEFINED)'
-   elif netDir == Hurricane.Net.Direction.IN:        s += '(IN)'
-   elif netDir == Hurricane.Net.Direction.OUT:       s += '(OUT)'
-   elif netDir == Hurricane.Net.Direction.INOUT:     s += '(INOUT)'
-   elif netDir == Hurricane.Net.Direction.TRISTATE:  s += '(TRISTATE)'
-   elif netDir == Hurricane.Net.Direction.TRANSCV:   s += '(TRANSCV)'
-   elif netDir == Hurricane.Net.Direction.WOR_OUT:   s += '(WOR_OUT)'
-   elif netDir == Hurricane.Net.Direction.WOR_INOUT: s += '(WOR_INOUT)'
-   else: s += '(UNKNOWN)'
-   return s
+    flags = [ '-', '-', '-', '-', '-' ]
+    if netDir & Hurricane.Net.Direction.DirIn:        flags[0] = 'i'
+    if netDir & Hurricane.Net.Direction.DirOut:       flags[1] = 'o'
+    if netDir & Hurricane.Net.Direction.ConnTristate: flags[2] = 't'
+    if netDir & Hurricane.Net.Direction.ConnWiredOr:  flags[3] = 'w'
+    
+    s = flags[0]+flags[1]+flags[2]+flags[3]+' '
+    if   netDir == Hurricane.Net.Direction.UNDEFINED: s += '(UNDEFINED)'
+    elif netDir == Hurricane.Net.Direction.IN:        s += '(IN)'
+    elif netDir == Hurricane.Net.Direction.OUT:       s += '(OUT)'
+    elif netDir == Hurricane.Net.Direction.INOUT:     s += '(INOUT)'
+    elif netDir == Hurricane.Net.Direction.TRISTATE:  s += '(TRISTATE)'
+    elif netDir == Hurricane.Net.Direction.TRANSCV:   s += '(TRANSCV)'
+    elif netDir == Hurricane.Net.Direction.WOR_OUT:   s += '(WOR_OUT)'
+    elif netDir == Hurricane.Net.Direction.WOR_INOUT: s += '(WOR_INOUT)'
+    else: s += '(UNKNOWN)'
+    return s
 
 
 setSysConfDir( False )
@@ -423,21 +423,21 @@ def loadUserSettings ():
     for moduleName in sys.modules.keys(): beforeModules.add( moduleName )
 
     if os.path.isfile('./coriolis2/settings.py'):
-      if os.path.isfile('./coriolis2/__init__.py'):
-        sys.path.insert( 0, os.getcwd() )
-        import coriolis2.settings
-        rvalue = True
-      else:
-        print helpers.io.WarningMessage( [ 'User\'s settings directory "%s" exists, but do not contains "__init__.py".' % './coriolis2/'
-                                         , '(path:"%s")' % os.path.abspath(os.getcwd())
-                                         ] )
+        if os.path.isfile('./coriolis2/__init__.py'):
+            sys.path.insert( 0, os.getcwd() )
+            import coriolis2.settings
+            rvalue = True
+        else:
+            print helpers.io.WarningMessage( [ 'User\'s settings directory "%s" exists, but do not contains "__init__.py".' % './coriolis2/'
+                                             , '(path:"%s")' % os.path.abspath(os.getcwd())
+                                             ] )
     else:
       import symbolic.cmos
 
     confModules = set()
     for moduleName in sys.modules.keys():
-      if not (moduleName in beforeModules):
-        confModules.add( moduleName )
+        if not (moduleName in beforeModules):
+            confModules.add( moduleName )
 
    #print 'Configuration modules:'
    #for moduleName in confModules:

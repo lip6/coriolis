@@ -12,10 +12,10 @@ import helpers.io
 helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
 
 from Hurricane            import DbU
-from helpers.AnalogTechno import Length
-from helpers.AnalogTechno import Area
-from helpers.AnalogTechno import Asymmetric
-from helpers.AnalogTechno import loadAnalogTechno
+from helpers.analogtechno import Length
+from helpers.analogtechno import Area
+from helpers.analogtechno import Asymmetric
+from helpers.analogtechno import loadAnalogTechno
 
 
 analogTechnologyTable = \

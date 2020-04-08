@@ -21,7 +21,19 @@
 
 namespace  Isobar {
 
-using namespace Hurricane;
+  using namespace Hurricane;
+
+
+  template< typename T >
+  T* accessObject ( PyObject* pyObject )
+  {
+    cerr << "accessObject()" << endl;
+    cerr << "  ACCESS_OBJECT: " << ((PyHorizontal*)pyObject)->_baseObject._baseObject._baseObject._object << endl;
+    T* hobject = dynamic_cast<T*>( ((PyEntity*)pyObject)->_object );
+    cerr << "  T*: " << hobject << endl;
+
+    return hobject;
+  }
 
 
 extern "C" {
@@ -144,7 +156,9 @@ extern "C" {
 
     HCATCH
 
-    return PyHorizontal_Link ( horizontal );
+    PyObject* rvalue = PyHorizontal_Link( horizontal );
+  //accessObject<Horizontal>( rvalue );
+    return rvalue;
   }
 
 

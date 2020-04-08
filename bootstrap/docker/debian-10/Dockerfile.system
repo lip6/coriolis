@@ -14,7 +14,7 @@ RUN apt-get update                                                      \
                        autotools-dev automake                           \
                        libxt-dev libxpm-dev libmotif-dev                \
                                                                         \
-                       tcl tcl-dev libffi6 libffi-dev libreadline7      \
+                       tcl tcl-dev libffi6 libffi-dev libreadline-dev   \
                                                                         \
                        vim                                              \
  && apt-get clean

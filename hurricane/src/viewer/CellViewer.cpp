@@ -911,7 +911,7 @@ namespace Hurricane {
     dbo_ptr<Isobar::Script> script = Isobar::Script::create(userScript.basename().toString());
     script->addKwArgument( "cell"      , (PyObject*)PyCell_Link(getCell()) );
     script->addKwArgument( "editor"    , (PyObject*)PyCellViewer_Link(this) );
-    script->runFunction  ( "ScriptMain", getCell() );
+    script->runFunction  ( "scriptMain", getCell() );
 
     Isobar::Script::removePath( userDirectory.toString() );
   }

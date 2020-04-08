@@ -96,6 +96,7 @@
                                    hurricane/isobar/PyEntity.h
                                    hurricane/isobar/PyHorizontal.h
                                    hurricane/isobar/PyHurricane.h
+                                  #hurricane/isobar/PyHurricane2.h
                                    hurricane/isobar/PyHyperNet.h
                                    hurricane/isobar/PyPlacementStatus.h
                                    hurricane/isobar/PyInstance.h

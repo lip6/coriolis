@@ -27,8 +27,8 @@ import Viewer
 from   CRL                          import Catalog
 from   CRL                          import AllianceFramework
 from   helpers.io                   import ErrorMessage
-from   plugins.core2chip.CoreToChip import IoPad
-from   plugins.core2chip.CoreToChip import CoreToChip
+from   plugins.core2chip.core2chip  import IoPad
+from   plugins.core2chip.core2chip  import CoreToChip
 
 
 class phlib80 ( CoreToChip ):

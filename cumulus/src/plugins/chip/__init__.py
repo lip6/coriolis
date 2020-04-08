@@ -8,7 +8,7 @@
 # |      C u m u l u s  -  P y t h o n   T o o l s                  |
 # |                                                                 |
 # |  Author      :                    Jean-Paul CHAPUT              |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :       "./plugins/chip/__init__.py"               |
 # +-----------------------------------------------------------------+

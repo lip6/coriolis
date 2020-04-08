@@ -31,7 +31,7 @@ addDevice( name       = 'DifferentialPairBulkConnected'
                         , ('Symmetrical'    , 'DP_symmetrical.py'     )
                         , ('Common centroid', 'DP_2DCommonCentroid.py')
                         , ('Interdigitated' , 'DP_interdigitated.py'  )
-                        , ('WIP DP'         , 'WIP_DP.py'             )
+                        , ('WIP DP'         , 'wip_dp.py'             )
                         )
          )
 addDevice( name       = 'DifferentialPairBulkUnconnected'
@@ -41,7 +41,7 @@ addDevice( name       = 'DifferentialPairBulkUnconnected'
                         , ('Symmetrical'    , 'DP_symmetrical.py'     )
                         , ('Common centroid', 'DP_2DCommonCentroid.py')
                         , ('Interdigitated' , 'DP_interdigitated.py'  )
-                        , ('WIP DP'         , 'WIP_DP.py'             )
+                        , ('WIP DP'         , 'wip_dp.py'             )
                         )
          )
 addDevice( name       = 'LevelShifterBulkUnconnected'
@@ -58,7 +58,7 @@ addDevice( name       = 'TransistorBulkConnected'
          , connectors = ( 'D', 'G', 'S' )
          , layouts    = ( ('Rotate transistor', 'Transistor_rotate.py')
                         , ('Common transistor', 'Transistor_common.py')
-                        , ('WIP Transistor'   , 'WIP_Transistor.py'   )
+                        , ('WIP Transistor'   , 'wip_transistor.py'   )
                         )
          )
 addDevice( name       = 'TransistorBulkUnconnected'
@@ -66,7 +66,7 @@ addDevice( name       = 'TransistorBulkUnconnected'
          , connectors = ( 'D', 'G', 'S', 'B' )
          , layouts    = ( ('Rotate transistor', 'Transistor_rotate.py')
                         , ('Common transistor', 'Transistor_common.py')
-                        , ('WIP Transistor'   , 'WIP_Transistor.py'   )
+                        , ('WIP Transistor'   , 'wip_transistor.py'   )
                         )
          )
 addDevice( name       = 'CrossCoupledPairBulkConnected'
@@ -93,7 +93,7 @@ addDevice( name       = 'CommonSourcePairBulkConnected'
          , layouts    = ( ('Horizontal M2'  , 'CSP_horizontalM2.py'    )
                         , ('Symmetrical'    , 'CSP_symmetrical.py'     )
                         , ('Interdigitated' , 'CSP_interdigitated.py'  )
-                        , ('WIP CSP'        , 'WIP_CSP.py'             )
+                        , ('WIP CSP'        , 'wip_csp.py'             )
                         )
          )
 addDevice( name       = 'CommonSourcePairBulkUnconnected'
@@ -102,7 +102,7 @@ addDevice( name       = 'CommonSourcePairBulkUnconnected'
          , layouts    = ( ('Horizontal M2'  , 'CSP_horizontalM2.py'    )
                         , ('Symmetrical'    , 'CSP_symmetrical.py'     )
                         , ('Interdigitated' , 'CSP_interdigitated.py'  )
-                        , ('WIP CSP'        , 'WIP_CSP.py'             )
+                        , ('WIP CSP'        , 'wip_csp.py'             )
                         )
          )
 addDevice( name       = 'SimpleCurrentMirrorBulkConnected'
@@ -126,13 +126,13 @@ addDevice( name       = 'SimpleCurrentMirrorBulkUnconnected'
 addDevice( name       = 'MultiCapacitor'
         #, spice      = spiceDir+'MIM_OneCapacitor.spi'
         #, connectors = ( 'T1', 'B1' )
-         , layouts    = ( ('Matrix', 'CapacitorMatrix.py' ),
+         , layouts    = ( ('Matrix', 'capacitormatrix.py' ),
                         )
          )
 addDevice( name       = 'Resistor'
         #, spice      = spiceDir+'MIM_OneCapacitor.spi'
          , connectors = ( 'PIN1', 'PIN2' )
-         , layouts    = ( ('Snake', 'ResistorSnake.py' ),
+         , layouts    = ( ('Snake', 'resistorsnake.py' ),
                         )
          )
 

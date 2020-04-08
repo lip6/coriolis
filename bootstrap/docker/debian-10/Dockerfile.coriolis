@@ -6,5 +6,5 @@ RUN  mkdir -p coriolis-2.x/src                       \
  &&  git clone https://github.com/m-labs/nmigen.git  \
  &&  cd nmigen                                       \
  &&  python3 setup.py develop                        \
- &&  /root/socInstaller.py --docker --profile=Debian10 --do-yosys --do-alliance --do-coriolis --benchs
+ &&  /root/socInstaller.py --docker --profile=Debian10 --do-yosys --do-alliance --do-coriolis
 

@@ -1,7 +1,7 @@
 
 from   Hurricane import DbU
 from   Hurricane import DataBase
-import Rules
+import oroshi.dtr
 
 
 rules = None
@@ -17,7 +17,7 @@ class Flag ( object ):
 def getRules ():
     global rules
     if not rules:
-      rules = Rules.Rules( DataBase.getDB().getTechnology() )
+      rules = oroshi.dtr.Rules( DataBase.getDB().getTechnology() )
     return rules
 
 

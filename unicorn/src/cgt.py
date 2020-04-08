@@ -19,19 +19,6 @@ try:
   import Bora
   import Tutorial
   import Unicorn
-except ImportError, e:
-  serror = str(e)
-  if serror.startswith('No module named'):
-    module = serror.split()[-1]
-    print '[ERROR] The <%s> python module or symbol cannot be loaded.' % module
-    print '        Please check the integrity of the <coriolis> package.'
-  if serror.find('cannot open shared object file'):
-    library = serror.split(':')[0]
-    print '[ERROR] The <%s> shared library cannot be loaded.' % library
-    print '        Under RHEL 6, you must be under devtoolset-2.'
-    print '        (scl enable devtoolset-2 bash)'
-  helpers.showPythonTrace( sys.argv[0], e )
-  sys.exit(1)
 except Exception, e:
   helpers.showPythonTrace( sys.argv[0], e )
   sys.exit(2)
@@ -71,16 +58,16 @@ def runScript ( scriptPath, editor ):
       sys.path.insert( 0, os.path.dirname(scriptPath) )
     
       module = __import__( os.path.basename(scriptPath), globals(), locals() )
-      if not module.__dict__.has_key('ScriptMain'):
-          print '[ERROR] Script module is missing function ScriptMain().'
+      if not module.__dict__.has_key('scriptMain'):
+          print '[ERROR] Script module is missing function scriptMain().'
           print '        <%s>' % scriptPath
           return
-      if not callable( module.__dict__['ScriptMain'] ):
-          print '[ERROR] Script module symbol ScriptMain is not callable (not a function?).'
+      if not callable( module.__dict__['scriptMain'] ):
+          print '[ERROR] Script module symbol scriptMain is not callable (not a function?).'
           print '        <%s>' % scriptPath
           return
     
-      module.__dict__['ScriptMain']( **kw )
+      module.__dict__['scriptMain']( **kw )
 
   except ImportError, e:
      #module = str(e).split()[-1]

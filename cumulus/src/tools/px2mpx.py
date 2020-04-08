@@ -288,7 +288,7 @@ def px2mpx ( editor, pxCell ):
   return mpxCell
 
 
-def ScriptMain ( **kw ):
+def scriptMain ( **kw ):
   global framework
   global padrealCell
 
@@ -346,7 +346,7 @@ if __name__ == '__main__':
   if options.verbose:     Cfg.getParamBool('misc.verboseLevel1').setBool(True)
   if options.veryVerbose: Cfg.getParamBool('misc.verboseLevel2').setBool(True)
 
-  success = ScriptMain( **kw )
+  success = scriptMain( **kw )
   shellSuccess = 0
   if not success: shellSuccess = 1
 

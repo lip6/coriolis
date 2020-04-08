@@ -1,21 +1,21 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<oroshi/python>" -*-
 
  set( pythonFiles __init__.py
-                  Rules.py
-                  Stack.py
-                  ParamsMatrix.py
-                  WIP_Transistor.py
-                  WIP_DP.py
-                  WIP_CSP.py
-                  NonUnitCapacitor.py
-                  CapacitorUnit.py
-                  CapacitorMatrix.py
-                  CapacitorVRTracks.py
-                  CapacitorRouted.py
-                  CapacitorRoutedSingle.py
-                  MultiCapacitor.py
-                  ResistorSnake.py
-                  Resistor.py
+                  dtr.py
+                  stack.py
+                  paramsmatrix.py
+                  wip_transistor.py
+                  wip_dp.py
+                  wip_csp.py
+                  nonunitcapacitor.py
+                  capacitorunit.py
+                  capacitormatrix.py
+                  capacitorvrtracks.py
+                  capacitorrouted.py
+                  capacitorroutedsingle.py
+                  multicapacitor.py
+                  resistorsnake.py
+                  resistor.py
                 )
 
  install( FILES ${pythonFiles}    DESTINATION ${PYTHON_SITE_PACKAGES}/oroshi ) 
