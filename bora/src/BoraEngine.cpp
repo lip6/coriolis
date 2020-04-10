@@ -267,7 +267,7 @@ namespace Bora {
         slicingtree->expandRoutingChannel();
         slicingtree->replace();
         slicingtree->updateSymNetAxis();
-
+        
         katana->updateMatrix();
         katana->analogInit();
         Katana::Session::close(); 

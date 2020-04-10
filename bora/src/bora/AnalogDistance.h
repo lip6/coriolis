@@ -86,6 +86,7 @@ namespace Bora {
     DbU::Unit addedDistance = 0;
 
     if (Vertex::isRestricted(vcurr, vnext, e, _hpitch, _vpitch, _net)) {
+      cdebug_log(112,1) << "Unreachable, restricted "<< e << std::endl;
       distance = Vertex::unreachable;
     } else {
       if ( (vcurr->getGCell()->isMatrix()) and (vnext->getGCell()->isMatrix()) ) {

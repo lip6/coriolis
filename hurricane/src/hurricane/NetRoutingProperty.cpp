@@ -30,9 +30,8 @@ namespace Hurricane {
 
   DbU::Unit NetRoutingState::getSymValue( DbU::Unit v ) const
   {
-    if (v < _axis) {
-      return _axis + (_axis-v);
-    } else return _axis;
+    if (v < _axis) return _axis + (_axis-v);
+    return 2*_axis - v ;
   }
 
 

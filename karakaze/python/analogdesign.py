@@ -54,7 +54,7 @@ import Katana
 import Bora
 
 
-helpers.setTraceLevel( 100 )
+#helpers.setTraceLevel( 100 )
 
 
 NMOS     = Transistor.NMOS

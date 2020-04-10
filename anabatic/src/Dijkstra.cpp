@@ -298,52 +298,68 @@ namespace Anabatic {
     GCell* c2         = v2->getGCell();
     
   // Check from GCell 1 
-    if        ( c1->isNorth(c2) ) {
-      if ( !v1->isNRestricted() ) restricted = false;
-    } else if ( c1->isSouth(c2) ) {
-      if ( !v1->isSRestricted() ) restricted = false;
-    } else if ( c1->isEast (c2) ) {
-      if ( !v1->isERestricted() ) restricted = false;
-    } else if ( c1->isWest (c2) ) {
-      if ( !v1->isWRestricted() ) restricted = false;
-    } else {
-      cerr << Error( "GCells are not side by side." ) << endl;
+    if      ( c1->isNorth(c2) and not v1->isNRestricted() ) restricted = false;
+    else if ( c1->isSouth(c2) and not v1->isSRestricted() ) restricted = false;
+    else if ( c1->isEast (c2) and not v1->isERestricted() ) restricted = false;
+    else if ( c1->isWest (c2) and not v1->isWRestricted() ) restricted = false;
+    // else {
+    //   cerr << Error( "Vertex::isRestricted(): Vertexes/GCells v1 & v2 do not share a side.\n"
+    //                  "        v1:%s\n"
+    //                  "        v2:%s"
+    //                , getString(v1).c_str()
+    //                , getString(v2).c_str()
+    //                ) << endl;
+    //   return true;
+    // }
+
+    if (restricted) {
+      cdebug_log(112,0) << "v1 -> v2 edge is restricted." << endl;
+      return true;
+    }
+    if ( e->isVertical() and (c1->getWidth() < hpitch) ) {
+      cdebug_log(112,0) << "GCell 1 is too narrow for V edges." << endl;
+      return true;
+    }
+    if ( e->isHorizontal() and (c1->getHeight() < vpitch) ) {
+      cdebug_log(112,0) << "GCell 1 is too narrow for H edges." << endl;
       return true;
     }
 
-    if   ( (c1->getWidth()  < hpitch)
-         ||(c1->getHeight() < vpitch)
-         ||(restricted)
-         ) return true;
-    else {
-      restricted = true;
-    // Check from GCell 2 
-      if        ( c2->isNorth(c1) ) {
-        if ( !v2->isNRestricted() ) restricted = false;
-      } else if ( c2->isSouth(c1) ) {
-        if ( !v2->isSRestricted() ) restricted = false;
-      } else if ( c2->isEast (c1) ) {
-        if ( !v2->isERestricted() ) restricted = false;
-      } else if ( c2->isWest (c1) ) {
-        if ( !v2->isWRestricted() ) restricted = false;
-      } else {
-        cerr << Error( "GCells are not side by side." ) << endl;
-        return true;
-      }
-      if   ( (c2->getWidth()  < hpitch)
-           ||(c2->getHeight() < vpitch)
-           ||(restricted)
-           ) return true;
-      else {
-        if ((v2->getGCell()->isStrut())){
-          if (e->isMaxCapacity(net)) {
-            cdebug_log(112,0) << "Overcapacity:" << e << endl;
-            return true;
-          }
-          else return false;
-        } else return false;
-      }
+    restricted = true;
+  // Check from GCell 2 
+    if      ( c2->isNorth(c1) and not v2->isNRestricted() ) restricted = false;
+    else if ( c2->isSouth(c1) and not v2->isSRestricted() ) restricted = false;
+    else if ( c2->isEast (c1) and not v2->isERestricted() ) restricted = false;
+    else if ( c2->isWest (c1) and not v2->isWRestricted() ) restricted = false;
+    // else {
+    //   cerr << Error( "Vertex::isRestricted(): Vertexes/GCells v1 & v2 do not share a side.\n"
+    //                  "        v1:%s\n"
+    //                  "        v2:%s"
+    //                , getString(v1).c_str()
+    //                , getString(v2).c_str()
+    //                ) << endl;
+    //   return true;
+    // }
+
+    if (restricted) {
+      cdebug_log(112,0) << "v2 -> v1 edge is restricted." << endl;
+      return true;
     }
+    if ( e->isVertical() and (c2->getWidth() < hpitch) ) {
+      cdebug_log(112,0) << "GCell 2 is too narrow for V edges." << endl;
+      return true;
+    }
+    if ( e->isHorizontal() and (c2->getHeight() < vpitch) ) {
+      cdebug_log(112,0) << "GCell 2 is too narrow for H edges." << endl;
+      return true;
+    }
+      
+    if ( v2->getGCell()->isStrut() and e->isMaxCapacity(net) ) {
+      cdebug_log(112,0) << "Overcapacity:" << e << endl;
+      return true;
+    }
+
+    return false;
   }
 
 
@@ -1568,6 +1584,34 @@ namespace Anabatic {
       rp->getBodyHook()->attach( vcontact->getBodyHook() );
     }
 
+    if (state and state->isSymmetric() and not state->isSelfSym() and state->isSymMaster()) {
+      if (state->isSymVertical()) {
+        if (   (_searchArea.getXMin() < state->getSymAxis())
+           and (_searchArea.getXMax() > state->getSymAxis()) ) {
+          cerr << Error( "Diskstra::load(): For net \"%s\" (paired with \"%s\"),\n"
+                         "        Vertical symmetry axis @%s is inside the net area %s."
+                       , getString(_net->getName()).c_str()
+                       , getString(state->getSymNet()->getName()).c_str()
+                       , DbU::getValueString(state->getSymAxis()).c_str()
+                       , getString(_searchArea).c_str()
+                       ) << endl;
+        }
+      }
+
+      if (state->isSymHorizontal()) {
+        if (   (_searchArea.getYMin() < state->getSymAxis())
+           and (_searchArea.getYMax() > state->getSymAxis()) ) {
+          cerr << Error( "Diskstra::load(): For net \"%s\" (paired with \"%s\"),\n"
+                         "        Horizontal symmetry axis @%s is inside the net area %s."
+                       , getString(_net->getName()).c_str()
+                       , getString(state->getSymNet()->getName()).c_str()
+                       , DbU::getValueString(state->getSymAxis()).c_str()
+                       , getString(_searchArea).c_str()
+                       ) << endl;
+        }
+      }
+    }
+
     _searchArea.inflate( _searchAreaHalo );
     cdebug_log(112,0) << "Search halo: " << DbU::getValueString(_searchAreaHalo) << endl;
     cdebug_log(112,0) << "Search area: " << _searchArea << endl;
@@ -2150,6 +2194,7 @@ namespace Anabatic {
                                       , constraint.getCenter()
                                       , width
                                       );
+          cdebug_log(112,0) << "| ref: " << segment << endl;
 
           for ( Edge* through : aligneds ) through->add( segment );
           if (state) {
@@ -2168,6 +2213,7 @@ namespace Anabatic {
                                     , constraint.getCenter()
                                     , width
                                     );
+          cdebug_log(112,0) << "| ref: " << segment << endl;
 
           for ( Edge* through : aligneds ) through->add( segment );
           if (state) {
@@ -2330,51 +2376,66 @@ namespace Anabatic {
 
   void  Dijkstra::_createSelfSymSeg ( Segment* segment )
   {
-    cdebug_log(112,0) << "void  Dijkstra::_createSelfSymSeg ( Segment* segment ): " << _net << ", seg: " << segment << endl;
+    cdebug_log(112,1) << "Dijkstra::_createSelfSymSeg(): " << segment << endl;
+
     NetRoutingState* state = NetRoutingExtension::get( _net );
-  //cdebug_log(112,0) << "state: " << state << endl;
-    if ((state != NULL)&&(segment!=NULL)){
+    if (state and segment) {
       Horizontal* h = dynamic_cast<Horizontal*>(segment);
-      Vertical*   v = dynamic_cast<Vertical*>(segment);
-      Point sp, tp;
-      DbU::Unit axis;
-      Component* sourceContact = segment->getSource();
-      Component* targetContact = segment->getTarget();
-      if (h){
-        if (state->isSymHorizontal()){
-          cdebug_log(112,0) << "H case Horizontal" << endl;
-          sp   = Point(sourceContact->getX(), state->getSymValue(sourceContact->getY()) );
-          tp   = Point(targetContact->getX(), state->getSymValue(targetContact->getY()) );
-          axis = state->getSymValue(segment->getY()); 
-        } else if (state->isSymVertical()){
-          cdebug_log(112,0) << "H case Vertical" << endl;
-          sp = Point( state->getSymValue(targetContact->getX()), targetContact->getY() );
-          tp = Point( state->getSymValue(sourceContact->getX()), sourceContact->getY() );
+      Vertical*   v = dynamic_cast<Vertical  *>(segment);
+      Point       sp;
+      Point       tp;
+      DbU::Unit   axis;
+      Component*  sourceContact = segment->getSource();
+      Component*  targetContact = segment->getTarget();
+
+      cdebug_log(112,0) << "source: " << sourceContact << endl;
+      cdebug_log(112,0) << "target: " << targetContact << endl;
+      cdebug_log(112,0) << "sym axis: " << DbU::getValueString(state->getSymAxis()) << endl;
+
+      if (h) {
+        if (state->isSymHorizontal()) {
+          cdebug_log(112,0) << "Horizontal + Horizontal symmetry." << endl;
+
+          sp   = Point( sourceContact->getX(), state->getSymValue(sourceContact->getY()) );
+          tp   = Point( targetContact->getX(), state->getSymValue(targetContact->getY()) );
+          axis = state->getSymValue( segment->getY() ); 
+        } else if (state->isSymVertical()) {
+          cdebug_log(112,0) << "Horizontal + Vertical symmetry." << endl;
+
+          sp   = Point( state->getSymValue(targetContact->getX()), targetContact->getY() );
+          tp   = Point( state->getSymValue(sourceContact->getX()), sourceContact->getY() );
           axis = segment->getY(); 
         } else {
-          cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong here. " << endl;
+          cdebug_log(112,0) << "Dijkstra::_materialize(): Horizontal + Unknown symmetry. " << endl;
+          cdebug_tabw(112,-1);
           return;
         }
-      //cerr << "sp: " << sp << endl;
-      //cerr << "tp: " << tp << endl;
+
+        cdebug_log(112,0) << "sp: " << sp << endl;
+        cdebug_log(112,0) << "tp: " << tp << endl;
+
         GCell*  sgcell  = _anabatic->getGCellUnder( sp );
         GCell*  tgcell  = _anabatic->getGCellUnder( tp );
-      //cerr << "Gcell: " << sgcell << endl;
-      //cerr << "Gcell: " << tgcell << endl;
+
+        cdebug_log(112,0) << "GCell: " << sgcell << endl;
+        cdebug_log(112,0) << "GCell: " << tgcell << endl;
+
         Vertex* svertex = sgcell->getObserver<Vertex>(GCell::Observable::Vertex);
         Vertex* tvertex = tgcell->getObserver<Vertex>(GCell::Observable::Vertex);
+
         Contact* sourceSym = NULL;
         Contact* targetSym = NULL;
-        if (state->isSelfSym()){
-          cdebug_log(112,0) << "isSelfSym" << endl;
+        if (state->isSelfSym()) {
+          cdebug_log(112,0) << "Symmetrical to myself (isSelfSym)." << endl;
           sourceSym = svertex->getGContact( _net );
           targetSym = tvertex->getGContact( _net );
         } else if (state->isSymMaster()){
-          cdebug_log(112,0) << "isSymPair: " << state->getSymNet() << endl;
+          cdebug_log(112,0) << "Symmetrical to (isSymPair): " << state->getSymNet() << endl;
           sourceSym = svertex->getGContact( state->getSymNet() );
           targetSym = tvertex->getGContact( state->getSymNet() );
         } else {
-          cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong with the symmetry. " << endl;
+          cdebug_log(112,0) << "Dijkstra::_materialize(): Unknown Net pairing symmetry. " << endl;
+          cdebug_tabw(112,-1);
           return;
         }
               
@@ -2386,7 +2447,7 @@ namespace Anabatic {
                                               , axis
                                               , state->getWPitch()*Session::getPitch(Hurricane::DataBase::getDB()->getTechnology()->getLayer("METAL2"))
                                               );
-        cdebug_log(112,0) << "|| " << segment2 << endl;
+        cdebug_log(112,0) << "| dup:" << segment2 << endl;
       } else if (v) {
         if (state->isSymVertical()){
         //cerr << "V case Vertical" << endl;
@@ -2400,6 +2461,7 @@ namespace Anabatic {
           axis = segment->getX(); 
         } else {
           cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong here. " << endl;
+          cdebug_tabw(112,-1);
           return;
         }
         GCell*  sgcell  = _anabatic->getGCellUnder( sp );
@@ -2416,6 +2478,7 @@ namespace Anabatic {
           targetSym = tvertex->getGContact( state->getSymNet() );
         } else {
           cdebug_log(112,0) << "Dijkstra::_materialize(): Something is wrong with the symmetry. " << endl;
+          cdebug_tabw(112,-1);
           return;
         }
               
@@ -2430,6 +2493,7 @@ namespace Anabatic {
         cdebug_log(112,0) << "|| " << segment2 << endl;
       }
     }
+    cdebug_tabw(112,-1);
   }
 
 

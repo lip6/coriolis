@@ -8,8 +8,7 @@ import helpers
 import helpers.io
 from   helpers   import trace
 
-helpers.staticInitialization( quiet=True )
-helpers.setTraceLevel( 1000 )
+#helpers.setTraceLevel( 1000 )
 
 try:
     import Analog

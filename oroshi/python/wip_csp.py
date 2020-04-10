@@ -7,8 +7,7 @@ from   Hurricane import Box
 import helpers
 from   helpers   import trace
 
-helpers.staticInitialization( quiet=True )
-helpers.setTraceLevel( 1000 )
+#helpers.setTraceLevel( 1000 )
 
 try:
     import Analog

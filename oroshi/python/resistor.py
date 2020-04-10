@@ -9,7 +9,7 @@ import helpers
 import helpers.io
 from   helpers   import trace
 
-helpers.setTraceLevel( 100 )
+#helpers.setTraceLevel( 100 )
 
 import Analog
 from   Analog import Device

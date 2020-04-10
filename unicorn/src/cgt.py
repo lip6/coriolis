@@ -53,6 +53,9 @@ def credits ():
 
 def runScript ( scriptPath, editor ):
   try:
+      sys.stdout.flush()
+      sys.stderr.flush()
+
       kw = { }
       if editor: kw[ 'editor' ] = editor
       sys.path.insert( 0, os.path.dirname(scriptPath) )
@@ -75,9 +78,9 @@ def runScript ( scriptPath, editor ):
      #print '        Please check your design hierarchy or the Python syntax.'
      #print '        Error was:'
      #print '          %s\n' % e
-      helpers.showPythonTrace( scriptPath, e )
+      helpers.io.catch( e )
   except Exception, e:
-      helpers.showPythonTrace( scriptPath, e )
+      helpers.io.catch( e )
   return
 
 
