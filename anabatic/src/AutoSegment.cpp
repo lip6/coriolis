@@ -534,6 +534,11 @@ namespace Anabatic {
 
     _observers.notify( Destroy );
 
+    AutoContact* contact = getAutoSource();
+    if (contact) contact->cacheDetach( this );
+    contact = getAutoTarget();
+    if (contact) contact->cacheDetach( this );
+
     Session::unlink( this );
     cdebug_tabw(145,-1);
   }
