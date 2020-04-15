@@ -245,6 +245,8 @@ void DumpContacts(ofstream& ccell, Cell *cell)
       if (net->isFused()) netName = "*";
     
       for ( Component* component : net->getComponents() ) {
+        direction = NULL;
+
         if ( (rp = dynamic_cast<RoutingPad*>(component)) ) {
           if (not net->isExternal()) continue;
           if (not cell->isRouted())  continue;
