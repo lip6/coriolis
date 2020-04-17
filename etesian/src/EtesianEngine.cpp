@@ -311,6 +311,8 @@ namespace Etesian {
       }
     }
     _sliceHeight = getCellGauge()->getSliceHeight();
+
+    loadLeafCellLayouts();
   }
 
 
@@ -383,6 +385,12 @@ namespace Etesian {
       instanceNb += 1;
     }
 
+    if (cellLength == 0) {
+      throw Error( "EtesianEngine::setDefaultAb(): Null surface area computed for \"%s\" (are physical views loaded?)."
+                 , getString(getCell()->getName()).c_str()
+                 );
+    } 
+
     if (cellLength < 0)
       throw Error( "EtesianEngine::setDefaultAb(): Negative surface area computed for \"%s\" (bad bloat profile?)."
                  , getString(getCell()->getName()).c_str()
@@ -392,6 +400,12 @@ namespace Etesian {
     double bloatMargin = ( cellLength / (cellLength - bloatLength) ) - 1.0;
     
     double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
+
+    if (gcellLength == 0.0) {
+      throw Error( "EtesianEngine::setDefaultAb(): Null g-length for \"%s\" (are you using the right gauge?)."
+                 , getString(getCell()->getName()).c_str()
+                 );
+    } 
 
     double rows = 0.0;
   //setFixedAbHeight( 0 );
@@ -458,8 +472,8 @@ namespace Etesian {
         } else {
           bool isFullyPlaced = true;
           for ( Instance* subInstance : masterCell->getInstances() ) {
-            if (   (instance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
-               and (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
+            if (   (subInstance->getPlacementStatus() != Instance::PlacementStatus::PLACED)
+               and (subInstance->getPlacementStatus() != Instance::PlacementStatus::FIXED ) ) {
               isFullyPlaced = false;
               break;
             }
@@ -962,6 +976,18 @@ namespace Etesian {
     }
     _placementLB = _placementUB; // In case we run other passes
     _updatePlacement( _placementUB );
+  }
+
+
+  void  EtesianEngine::loadLeafCellLayouts ()
+  {
+    AllianceFramework* af = AllianceFramework::get();
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+
+      af->getCell( getString(masterCell->getName()), Catalog::State::Physical );
+    }
   }
 
 

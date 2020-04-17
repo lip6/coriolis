@@ -646,20 +646,20 @@ namespace {
   void  ApParser::_parseInstance ()
   {
     static DbU::Unit  XINS, YINS;
-    static Name    masterCellName;
-    static Name    instanceName;
-    static Name    orientName;
+    static Name       masterCellName;
+    static Name       instanceName;
+    static Name       orientName;
     static Transformation::Orientation
-                   orient         = Transformation::Orientation::ID;
-    static Name    NOSYM          = "NOSYM";
-    static Name    SYM_X          = "SYM_X";
-    static Name    SYM_Y          = "SYM_Y";
-    static Name    SYMXY          = "SYMXY";
-    static Name    ROT_P          = "ROT_P";
-    static Name    ROT_M          = "ROT_M";
-    static Name    SY_RM          = "SY_RM";
-    static Name    SY_RP          = "SY_RP";
-    static string  padreal        = "padreal";
+                      orient  = Transformation::Orientation::ID;
+    static Name       NOSYM   = "NOSYM";
+    static Name       SYM_X   = "SYM_X";
+    static Name       SYM_Y   = "SYM_Y";
+    static Name       SYMXY   = "SYMXY";
+    static Name       ROT_P   = "ROT_P";
+    static Name       ROT_M   = "ROT_M";
+    static Name       SY_RM   = "SY_RM";
+    static Name       SY_RP   = "SY_RP";
+    static string     padreal = "padreal";
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 5 )
@@ -680,18 +680,27 @@ namespace {
       else if (orientName == "SYM_Y") orient = Transformation::Orientation::MY;
       else if (orientName == "SY_RP") orient = Transformation::Orientation::YR;
       else
-        _printError ( false, "Unknown orientation (%s).", getString(orientName).c_str() );
+        _printError( false, "Unknown orientation (%s).", getString(orientName).c_str() );
 
-      Instance* instance = _cell->getInstance ( instanceName );
+      Instance* instance = _cell->getInstance( instanceName );
       if (instance) {
-        instance->setTransformation
-          ( getTransformation( instance->getMasterCell()->getAbutmentBox()
-                             , XINS
-                             , YINS
-                             , orient
-                             )
-          );
-        instance->setPlacementStatus( Instance::PlacementStatus::FIXED );
+        Cell* masterCell = instance->getMasterCell();
+        bool  hasLayout  = not masterCell->getAbutmentBox().isEmpty(); 
+        if (not hasLayout) {
+          AllianceFramework::get()->getCell( getString(masterCell->getName()), Catalog::State::Physical );
+          hasLayout = not masterCell->getAbutmentBox().isEmpty(); 
+        }
+
+        if (hasLayout) {
+          instance->setTransformation
+            ( getTransformation( masterCell->getAbutmentBox()
+                               , XINS
+                               , YINS
+                               , orient
+                               )
+            );
+          instance->setPlacementStatus( Instance::PlacementStatus::FIXED );
+        }
       } else {
         bool            ignoreInstance = _framework->isPad( _cell );
         Catalog::State* instanceState  = _framework->getCatalog()->getState( masterCellName );
@@ -781,7 +790,6 @@ namespace {
 
     _state = catalogProperty->getState ();
     _state->setPhysical ( true );
-    if ( _state->isTerminalNetlist() ) _cell->setTerminalNetlist ( true );
     if ( _framework->isPad(_cell) ) _state->setPad ( true );
 
     IoFile fileStream ( cellPath );

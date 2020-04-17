@@ -40,6 +40,7 @@ using namespace Hurricane;
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/NetExtension.h"
 #include "Vst.h"
+#include "VstParser.h"
 using namespace CRL;
 
 
@@ -48,6 +49,7 @@ using namespace CRL;
 #define    yytext       VSTtext
 #define    yywrap       VSTwrap
 #define    yyin         VSTin
+#define    YYDEBUG      0
 
 
 extern int   yylex               ();
@@ -65,137 +67,15 @@ namespace {
 
 namespace Vst {
 
-  extern void  incVhdLineNumber ();
-  extern void  ClearIdentifiers ();
-         void  checkForIeee     ( bool ieeeEnabled );
-
-
-  enum TokenConstants { VhdlTo     =  1
-                      , VhdlDownto =  2
-                      , VhdlPlus   =  3
-                      , VhdlMinus  =  4
-                      , VhdlBus    =  5
-                      };
-
-
-  class  Constraint {
-    private:
-      int   _from;
-      int   _to;
-      bool  _set;
-    public:
-      Constraint () : _from(0), _to(0), _set(false) { };
-    public:
-      int   getFrom  () const { return _from; }
-      int   getTo    () const { return _to; }
-      bool  IsSet    () const { return _set; }
-      void  Set      ( int from, unsigned int direction, int to );
-      void  UnSet    () { _set = false; }
-      void  Init ( int& index ) { index = _from; };
-      void  Next ( int& index );
-      bool  End  ( int  index );
-  };
-
-
-  void  Constraint::Set ( int from, unsigned int direction, int to )
-  {
-    _set  = true;
-    _from = from;
-    _to   = to;
-  }
-
-
-  void  Constraint::Next ( int& index )
-  {
-    if ( _from < _to ) index++;
-    else               index--;
-  }
-
-
-  bool  Constraint::End ( int index )
-  {
-    if ( _from < _to ) return index <= _to;
-
-    return index >= _to;
-  }
-
-
-  typedef  vector<Net*>                              PinVector;
-  typedef  map<Name,PinVector>                       VectorMap;
-  typedef  map<Cell*,VectorMap,Entity::CompareById>  CellVectorMap;
-
-
-  class YaccState {
-    public:
-      string           _vhdFileName;
-      int              _vhdLineNumber;
-      int              _errorCount;
-      int              _maxErrors;
-      deque<Name>      _cellQueue;
-      Catalog::State*  _state;
-      Cell*            _cell;
-      Cell*            _masterCell;
-      Instance*        _instance;
-      Constraint       _constraint;
-      vector<string*>  _identifiersList;
-      CellVectorMap    _cellVectorMap;
-      PinVector        _instanceNets;
-      PinVector        _masterNets;
-      bool             _masterPort;
-      bool             _firstPass;
-      bool             _behavioral;
-      bool             _ieeeVhdl;
-      bool             _ieeeWarned;
-    public:
-      YaccState ( const string& vhdFileName )
-        : _vhdFileName    (vhdFileName)
-        , _vhdLineNumber  (1)
-        , _errorCount     (0)
-        , _maxErrors      (10)
-        , _cellQueue      ()
-        , _state          (NULL)
-        , _cell           (NULL)
-        , _masterCell     (NULL)
-        , _instance       (NULL)
-        , _constraint     ()
-        , _identifiersList()
-        , _cellVectorMap  ()
-        , _instanceNets   ()
-        , _masterNets     ()
-        , _masterPort     (true)
-        , _firstPass      (true) 
-        , _behavioral     (false) 
-        , _ieeeVhdl       (false) 
-        , _ieeeWarned     (false) 
-        { }
-      bool  pushCell ( Name );
-  };
-
-
-  bool  YaccState::pushCell ( Name cellName )
-  {
-    for ( size_t i=0 ; i<_cellQueue.size(); ++i ) {
-      if (_cellQueue[i] == cellName) return false;
-    }
-    _cellQueue.push_back( cellName );
-    return true;
-  }
-
-
-  class YaccStateStack : public vector<YaccState*> {
-    public:
-      YaccState* operator->() { return back(); };
-      void       pop_back  () { delete back (); vector<YaccState*>::pop_back (); }
-  };
-
 
   YaccStateStack     states;
   AllianceFramework* framework;
 
 
-  void  Error      ( int code, const string& name );
-  Net*  getNet     ( Cell* cell, const string& name ); 
-  void  SetNetType ( Net* net );
+  void  checkForIeee ( bool ieeeEnabled );
+  void  Error        ( int code, const string& name );
+  Net*  getNet       ( Cell* cell, const string& name ); 
+  void  SetNetType   ( Net* net );
 
 }  // Vst namespace.
 
@@ -681,10 +561,11 @@ component_declaration
     : COMPONENT
       Identifier
           { if (Vst::states->_firstPass) {
-              if (not Vst::framework->getCell(*$2,Catalog::State::Views|Catalog::State::InMemory))
+              if (not Vst::framework->getCell(*$2,Catalog::State::Logical|Catalog::State::InMemory))
                   Vst::states->pushCell( *$2 );
             } else {
-              Vst::states->_masterCell = Vst::framework->getCell ( *$2, Catalog::State::Views );
+              Vst::states->_masterCell = Vst::framework->getCell ( *$2, Catalog::State::Logical );
+	      cerr.flush();
             }
           }
       .generic_clause.
@@ -775,7 +656,7 @@ component_instantiation_statement
     : a_label
       simple_name
           { if (not Vst::states->_firstPass) {
-              Vst::states->_masterCell = Vst::framework->getCell( *$2, Catalog::State::Views|Catalog::State::InMemory );
+              Vst::states->_masterCell = Vst::framework->getCell( *$2, Catalog::State::Logical|Catalog::State::InMemory );
 	      if (not Vst::states->_masterCell) {
                 ostringstream message;
 		message << "CParsVst() VHDL Parser - File:<" << Vst::states->_vhdFileName
@@ -787,7 +668,7 @@ component_instantiation_statement
               Vst::states->_instance = Instance::create( Vst::states->_cell, *$1, Vst::states->_masterCell );
               Vst::states->_cell->setTerminalNetlist( false );
             } else {
-              if (not Vst::framework->getCell(*$2,Catalog::State::Views|Catalog::State::InMemory)) {
+              if (not Vst::framework->getCell(*$2,Catalog::State::Logical|Catalog::State::InMemory)) {
                 if (Vst::states->pushCell(*$2)) {
                   ostringstream message;
 		  message << "CParsVst() VHDL Parser - File:<" << Vst::states->_vhdFileName
@@ -1218,7 +1099,7 @@ namespace {
      ostringstream formatted;
      formatted << "CParsVst() - VHDL Parser, File:<" << Vst::states->_vhdFileName
                << ">, Line:" << Vst::states->_vhdLineNumber << "\n  "
-               << message << " before " << yytext << ".\n";
+               << message << " before keyword or identifier \"" << yytext << "\".\n";
      throw Hurricane::Error( formatted.str() );
      return 0;
   }
@@ -1231,7 +1112,7 @@ namespace Vst {
 
 
   void  incVhdLineNumber ()
-  { ++states->_vhdLineNumber; }
+  { ++(states->_vhdLineNumber); }
 
 
   // ---------------------------------------------------------------
@@ -1397,12 +1278,13 @@ void  vstParser ( const string cellPath, Cell *cell )
   // 1.0 step: Build the ordered list of model (Cell) required by the instances.
     yyin = ccell.getFile ();
     if ( !firstCall ) yyrestart ( VSTin );
+  //yydebug = 0;
     yyparse ();
   
   // 1.5 step: Load, in order, the model Cells (recursive).
     while ( !Vst::states->_cellQueue.empty() ) {
       if ( !Vst::framework->getCell ( getString(Vst::states->_cellQueue.front())
-                                    , Catalog::State::Views
+                                    , Catalog::State::Logical
                                     , Vst::states->_state->getDepth()-1) ) {
         throw Error ( "CParsVst() VHDL Parser:\n"
                       "  Unable to find cell \"%s\", please check your <./coriolis2/settings.py>.\n"
@@ -1426,7 +1308,6 @@ void  vstParser ( const string cellPath, Cell *cell )
   UpdateSession::open ();
   yyparse ();
   UpdateSession::close ();
-  Vst::ClearIdentifiers ();
   Vst::states.pop_back();
 
   ccell.close ();

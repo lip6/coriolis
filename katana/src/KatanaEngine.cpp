@@ -153,6 +153,7 @@ namespace Katana {
   using Hurricane::Cell;
   using Hurricane::Instance;
   using CRL::System;
+  using CRL::Catalog;
   using CRL::AllianceFramework;
   using CRL::addMeasure;
   using CRL::Measures;
@@ -203,10 +204,10 @@ namespace Katana {
 
   void  KatanaEngine::_postCreate ()
   {
-    Super::_postCreate ();
+    Super::_postCreate();
 
   // Flute: load POWV9.dat & POST9.dat
-    Flute::readLUT( System::getPath("coriolis_top").toString() );
+    Flute::readLUT( System::getPath( "coriolis_top" ).toString() );
   }
 
 

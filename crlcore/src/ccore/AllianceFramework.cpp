@@ -380,7 +380,7 @@ namespace CRL {
         if (state->getCell() == NULL) {
           state->setCell ( Cell::create( _libraries[ _environment.getLIBRARIES().getIndex() ]->getLibrary() , name ) );
           state->getCell ()->put( CatalogProperty::create(state) );
-          state->getCell ()->setTerminalNetlist( false );
+          state->getCell ()->setTerminalNetlist( state->isTerminalNetlist() );
           createCell = true;
         }
 
