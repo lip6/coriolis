@@ -559,6 +559,7 @@ namespace Katana {
     _negociateWindow->run( flags );
     _negociateWindow->destroy();
     _negociateWindow = NULL;
+    getCell()->setTerminalNetlist( true );
 
     Session::close();
     stopMeasures();

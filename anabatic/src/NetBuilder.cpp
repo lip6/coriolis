@@ -649,6 +649,8 @@ namespace Anabatic {
         case Conn_1G_2M1_1PinM2:  _do_1G_xM1_1PinM2(); break;
         case Conn_2G_1M1_1PinM2:
         case Conn_2G_2M1_1PinM2:  _do_2G_xM1_1PinM2(); break;
+        case Conn_2G_1M1_1PinM3:  _do_2G_1M1_1PinM3(); break;
+        case Conn_3G_1M1_1PinM3:  _do_3G_1M1_1PinM3(); break;
         case Conn_1G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
         case Conn_1G_1M1_1M3:     _do_1G_xM1       (); break;
         case Conn_2G_1M1_1M2:     _do_xG_1M1_1M2   (); break;
@@ -1111,6 +1113,20 @@ namespace Anabatic {
   bool  NetBuilder::_do_2G_xM1_1PinM2 ()
   {
     throw Error ( "%s::_do_2G_xM1_1PinM2() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_2G_1M1_1PinM3 ()
+  {
+    throw Error ( "%s::_do_2G_1M1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
+    return false;
+  }
+
+
+  bool  NetBuilder::_do_3G_1M1_1PinM3 ()
+  {
+    throw Error ( "%s::_do_3G_1M1_1PinM3() method *not* reimplemented from base class.", getTypeName().c_str() );
     return false;
   }
   

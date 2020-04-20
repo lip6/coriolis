@@ -318,6 +318,8 @@ namespace Katana {
 
   TrackElement* NegociateWindow::createTrackSegment ( AutoSegment* autoSegment, Flags flags )
   {
+    DebugSession::open( autoSegment->getNet(), 159, 160 );
+
     cdebug_log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
 
   // Special case: fixed AutoSegments must not interfere with blockages.
@@ -374,7 +376,7 @@ namespace Katana {
 
       if (trackSegment->isNonPref()) {
         _segments.push_back( trackSegment );
-        cdebug_log(159,0) << "Non-preferred diection, do not attempt to set on track." << endl;
+        cdebug_log(159,0) << "Non-preferred direction, do not attempt to set on track." << endl;
         cdebug_tabw(159,-1);
         return trackSegment;
       }
@@ -385,9 +387,10 @@ namespace Katana {
 
       Interval      constraints;
       autoSegment->getConstraints( constraints );
-      uside.intersection( constraints );
-
       cdebug_log(159,0) << "* Constraints " << constraints << endl;
+
+      uside.intersection( constraints );
+      cdebug_log(159,0) << "* Constraints+U-side " << constraints << endl;
       cdebug_log(159,0) << "* Nearest " << track << endl;
 
       if (not track)
@@ -420,6 +423,7 @@ namespace Katana {
     }
 
     cdebug_tabw(159,-1);
+    DebugSession::close();
 
     return trackSegment;
   }

@@ -224,6 +224,8 @@ namespace Anabatic {
       virtual bool                          _do_1G_xM1_1PinM2      ();
       virtual bool                          _do_2G_xM1_1PinM2      ();
       virtual bool                          _do_1G_1M1_1PinM3      ();
+      virtual bool                          _do_2G_1M1_1PinM3      ();
+      virtual bool                          _do_3G_1M1_1PinM3      ();
       virtual bool                          _do_globalSegment      ();
       virtual void                          singleGCell            ( AnabaticEngine*, Net* );
               AutoContact*                  _doHChannel            ();
@@ -318,6 +320,8 @@ namespace Anabatic {
                          , Conn_2G_1PinM3     = CONNEXITY_VALUE( 2, 0, 0, 1, 0 , 1 )
                          , Conn_3G_1PinM3     = CONNEXITY_VALUE( 3, 0, 0, 1, 0 , 1 )
                          , Conn_1G_1M1_1PinM3 = CONNEXITY_VALUE( 1, 1, 0, 1, 0 , 1 )
+                         , Conn_2G_1M1_1PinM3 = CONNEXITY_VALUE( 2, 1, 0, 1, 0 , 1 )
+                         , Conn_3G_1M1_1PinM3 = CONNEXITY_VALUE( 3, 1, 0, 1, 0 , 1 )
                          };
 
 #undef CONNEXITY_VALUE

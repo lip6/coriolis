@@ -290,6 +290,40 @@ namespace Anabatic {
   }
 
 
+  AutoContact* NetBuilderHV::doRp_AccessEastWestPin ( GCell* gcell, RoutingPad* rp )
+  {
+    cdebug_log(145,1) << getTypeName() << "::doRp_AccessNorthPin() " << rp << endl;
+
+    Net*         net             = rp->getNet();
+    Pin*         pin             = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
+    Pin::AccessDirection pinDir  = pin->getAccessDirection();
+    AutoContact* rpSourceContact = NULL;
+    AutoContact* rpContactTarget = NULL;
+    AutoContact* turn            = NULL;
+    AutoSegment* segment         = NULL;
+
+    doRp_AutoContacts( gcell, rp, rpSourceContact, rpContactTarget, NoProtect );
+
+    turn    = AutoContactTurn::create( gcell, net, Session::getContactLayer(1) );
+    segment = AutoSegment::create( rpSourceContact, turn, Flags::Horizontal );
+    segment->setAxis( pin->getCenter().getY(), Flags::Force );
+
+    rpSourceContact = turn;
+    turn    = AutoContactTurn::create( gcell, net, Session::getContactLayer(1) );
+    segment = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
+
+    DbU::Unit axis = 0;
+    if (pinDir == Pin::AccessDirection::EAST)
+      axis = gcell->getXMax() - Session::getDVerticalPitch();
+    else
+      axis = gcell->getXMin() + Session::getDVerticalPitch();
+    segment->setAxis( axis );
+
+    cdebug_tabw(145,-1);
+    return turn;
+  }
+
+
   bool  NetBuilderHV::_do_1G_1M1 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_1M1() [Managed Configuration - Optimized] " << getTopology() << endl;
@@ -866,6 +900,92 @@ namespace Anabatic {
       setSouthWestContact( vtee1 );
       setNorthEastContact( vtee2 );
     }
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderHV::_do_3G_1M1_1PinM3 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_3G_1M1_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    RoutingPad*  rpM1       = NULL;
+    RoutingPad*  pinM3      = NULL;
+    AutoContact* pinContact = NULL;
+    AutoContact* dummy      = NULL;
+
+    for ( RoutingPad* rp : getRoutingPads() ) {
+      if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM3 = rp;
+      else rpM1 = rp;
+    }
+
+    doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
+
+    AutoContact* m1contact  = doRp_Access( getGCell(), rpM1, HAccess );
+
+    AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( m1contact , vtee1, Flags::Horizontal );
+
+    AutoContact* vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( vtee1, vtee2, Flags::Vertical );
+
+    AutoContact* vtee3 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( vtee2, vtee3, Flags::Vertical );
+      
+    if (not south() or not north()) {
+      AutoSegment::create( pinContact, vtee1, Flags::Vertical );
+    }
+      
+    if (not east() or not west()) {
+      AutoSegment::create( pinContact, vtee2, Flags::Horizontal );
+    }
+
+    if (not south()) {
+      setSouthWestContact( vtee2 );
+      setNorthEastContact( vtee3 );
+    } else if (not north()) {
+      setSouthWestContact( vtee3 );
+      setNorthEastContact( vtee2 );
+    } else if (not east()) {
+      setSouthWestContact( vtee3 );
+      setNorthEastContact( vtee1 );
+    } else if (not west()) {
+      setSouthWestContact( vtee1 );
+      setNorthEastContact( vtee3 );
+    }
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderHV::_do_2G_1M1_1PinM3 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_2G_1M1_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    RoutingPad*  rpM1       = NULL;
+    RoutingPad*  pinM3      = NULL;
+    AutoContact* pinContact = NULL;
+    AutoContact* dummy      = NULL;
+
+    for ( RoutingPad* rp : getRoutingPads() ) {
+      if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM3 = rp;
+      else rpM1 = rp;
+    }
+
+    doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
+
+    AutoContact* m1contact  = doRp_Access( getGCell(), rpM1, HAccess );
+
+    AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( m1contact , vtee1, Flags::Horizontal );
+    AutoSegment::create( pinContact, vtee1, Flags::Vertical );
+
+    AutoContact* vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( vtee1, vtee2, Flags::Vertical );
+
+    setBothCornerContacts( vtee2 );
 
     cdebug_tabw(145,-1);
     return true;
@@ -1632,11 +1752,26 @@ namespace Anabatic {
     }
 
     if (rpPin) {
-      doRp_AutoContacts( gcell1, rpM1s[0], source, turn1, DoSourceContact );
-      target = doRp_AccessNorthPin( gcell1, rpPin );
-      turn1  = AutoContactTurn::create( gcell1, rpPin->getNet(), Session::getContactLayer(1) );
-      AutoSegment::create( source, turn1 , Flags::Horizontal );
-      AutoSegment::create( turn1 , target, Flags::Vertical );
+      Pin*                 pin    = dynamic_cast<Pin*>( rpPin->getOccurrence().getEntity() );
+      Pin::AccessDirection pinDir = pin->getAccessDirection();
+
+      if (  (pinDir == Pin::AccessDirection::NORTH)
+         or (pinDir == Pin::AccessDirection::SOUTH) ) {
+        doRp_AutoContacts( gcell1, rpM1s[0], source, turn1, DoSourceContact );
+        target = doRp_AccessNorthPin( gcell1, rpPin );
+        turn1  = AutoContactTurn::create( gcell1, rpPin->getNet(), Session::getContactLayer(1) );
+        AutoSegment::create( source, turn1 , Flags::Horizontal );
+        AutoSegment::create( turn1 , target, Flags::Vertical );
+      } else {
+        RoutingPad* closest = NULL;
+        
+        if (pinDir == Pin::AccessDirection::EAST) closest = rpM1s.back();
+        else                                      closest = rpM1s.front();
+
+        doRp_AutoContacts( gcell1, closest, source, turn1, DoSourceContact );
+        target = doRp_AccessEastWestPin( gcell1, rpPin );
+        AutoSegment::create( source, target , Flags::Horizontal );
+      }
     }
 
     cdebug_tabw(145,-1);
