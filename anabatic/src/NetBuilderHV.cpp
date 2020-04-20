@@ -906,23 +906,71 @@ namespace Anabatic {
   }
 
 
-  bool  NetBuilderHV::_do_3G_1M1_1PinM3 ()
+  bool  NetBuilderHV::_do_2G_xM1_1PinM3 ()
   {
-    cdebug_log(145,1) << getTypeName() << "::_do_3G_1M1_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
+    cdebug_log(145,1) << getTypeName() << "::_do_2G_xM1_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
 
-    RoutingPad*  rpM1       = NULL;
     RoutingPad*  pinM3      = NULL;
     AutoContact* pinContact = NULL;
     AutoContact* dummy      = NULL;
 
+    sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
+
+    vector<RoutingPad*> rpsM1;
     for ( RoutingPad* rp : getRoutingPads() ) {
       if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM3 = rp;
-      else rpM1 = rp;
+      else rpsM1.push_back( rp );
+    }
+    
+    for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
+      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
     doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
 
-    AutoContact* m1contact  = doRp_Access( getGCell(), rpM1, HAccess );
+    AutoContact* m1contact  = doRp_Access( getGCell(), rpsM1.back(), HAccess );
+
+    AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( m1contact , vtee1, Flags::Horizontal );
+    AutoSegment::create( pinContact, vtee1, Flags::Vertical );
+
+    AutoContact* vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoSegment::create( vtee1, vtee2, Flags::Vertical );
+
+    setBothCornerContacts( vtee2 );
+
+    cdebug_tabw(145,-1);
+    return true;
+  }
+
+
+  bool  NetBuilderHV::_do_3G_xM1_1PinM3 ()
+  {
+    cdebug_log(145,1) << getTypeName() << "::_do_3G_1M1_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
+
+    RoutingPad*  pinM3      = NULL;
+    AutoContact* pinContact = NULL;
+    AutoContact* dummy      = NULL;
+
+    sortRpByX( getRoutingPads(), NoFlags ); // increasing X.
+
+    vector<RoutingPad*> rpsM1;
+    for ( RoutingPad* rp : getRoutingPads() ) {
+      if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM3 = rp;
+      else rpsM1.push_back( rp );
+    }
+    
+    for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
+      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
+    }
+
+    doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
+
+    AutoContact* m1contact  = doRp_Access( getGCell(), rpsM1.back(), HAccess );
 
     AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
     AutoSegment::create( m1contact , vtee1, Flags::Horizontal );
@@ -960,38 +1008,6 @@ namespace Anabatic {
   }
 
 
-  bool  NetBuilderHV::_do_2G_1M1_1PinM3 ()
-  {
-    cdebug_log(145,1) << getTypeName() << "::_do_2G_1M1_1PinM3() [Managed Configuration - Optimized] " << getTopology() << endl;
-
-    RoutingPad*  rpM1       = NULL;
-    RoutingPad*  pinM3      = NULL;
-    AutoContact* pinContact = NULL;
-    AutoContact* dummy      = NULL;
-
-    for ( RoutingPad* rp : getRoutingPads() ) {
-      if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM3 = rp;
-      else rpM1 = rp;
-    }
-
-    doRp_AutoContacts( getGCell(), pinM3, pinContact, dummy, NoFlags );
-
-    AutoContact* m1contact  = doRp_Access( getGCell(), rpM1, HAccess );
-
-    AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
-    AutoSegment::create( m1contact , vtee1, Flags::Horizontal );
-    AutoSegment::create( pinContact, vtee1, Flags::Vertical );
-
-    AutoContact* vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
-    AutoSegment::create( vtee1, vtee2, Flags::Vertical );
-
-    setBothCornerContacts( vtee2 );
-
-    cdebug_tabw(145,-1);
-    return true;
-  }
-
-
   bool  NetBuilderHV::_do_1G_xM1_1PinM2 ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_1G_xM1_1PinM2() [Managed Configuration - Optimized] " << getTopology() << endl;
@@ -1003,6 +1019,12 @@ namespace Anabatic {
     for ( RoutingPad* rp : getRoutingPads() ) {
       if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) pinM2 = rp;
       else rpsM1.push_back( rp );
+    }
+    
+    for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
+      AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
+      AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
+      AutoSegment::create( leftContact, rightContact, Flags::Horizontal );
     }
 
     AutoContact* turn         = NULL;

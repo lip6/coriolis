@@ -57,8 +57,8 @@ namespace Anabatic {
       virtual bool          _do_1G_xM1_1PinM2      ();
       virtual bool          _do_2G_xM1_1PinM2      ();
       virtual bool          _do_1G_1M1_1PinM3      ();
-      virtual bool          _do_2G_1M1_1PinM3      ();
-      virtual bool          _do_3G_1M1_1PinM3      ();
+      virtual bool          _do_2G_xM1_1PinM3      ();
+      virtual bool          _do_3G_xM1_1PinM3      ();
       virtual bool          _do_globalSegment      ();
       virtual void          singleGCell            ( AnabaticEngine*, Net* );
     public:                                        
