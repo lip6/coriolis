@@ -349,6 +349,7 @@ namespace Anabatic {
     UpdateSession::open();
     GCell::create( this );
     UpdateSession::close();
+    checkPlacement();
   }
 
 
@@ -489,6 +490,39 @@ namespace Anabatic {
     }
 
     return capacity;
+  }
+
+
+  bool  AnabaticEngine::checkPlacement () const
+  {
+    bool valid  = true;
+    Box  cellAb = getCell()->getAbutmentBox();
+    
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+      string    instanceName = occurrence.getCompactString();
+
+      instanceName.erase( 0, 1 );
+      instanceName.erase( instanceName.size()-1 );
+
+      Box instanceAb = masterCell->getAbutmentBox();
+
+      Transformation instanceTransf = instance->getTransformation();
+      occurrence.getPath().getTransformation().applyOn( instanceTransf );
+      instanceTransf.applyOn( instanceAb );
+
+      if (not cellAb.contains(instanceAb)) {
+        valid = false;
+        cerr << Error( "AnabaticEngine::checkPlacement(): Instance %s is outside top cell abutment box, routing will be incomplete.\n"
+                       "        (cell:%s vs instance:%s)"
+                     , instanceName.c_str()
+                     , getString(cellAb    ).c_str()
+                     , getString(instanceAb).c_str()
+                     ) << endl;
+      }
+    }
+    return valid;
   }
 
 

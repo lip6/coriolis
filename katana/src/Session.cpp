@@ -331,7 +331,7 @@ namespace Katana {
         if (trackSegment) trackSegment->reschedule( 0 );
       }
     }
-
+    
     // for ( TrackElement* trackSegment : _indirectInvalids ) {
     //   cdebug_log(159,0) << "Indirect reschedule:" << trackSegment << endl;
     //   trackSegment->reschedule( 0 );

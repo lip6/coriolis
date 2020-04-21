@@ -226,6 +226,7 @@ namespace Anabatic {
                     void              exclude                 ( const Name& netName );
                     void              exclude                 ( Net* );
                     void              updateMatrix            ();
+                    bool              checkPlacement          () const;
     // Dijkstra related functions.                            
       inline        int               getStamp                () const;
       inline        int               incStamp                ();

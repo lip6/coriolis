@@ -314,6 +314,9 @@ namespace Anabatic {
       isNonPrefSource = true;
       slackenSource   = true;
     }
+
+    cdebug_log(149,0) << "target:" << target << endl;
+    cdebug_log(149,0) << "target->getPerpandicular(this):" << target->getPerpandicular(this) << endl;
     if (target->isTurn() and (target->getPerpandicular(this)->getLayer() == getLayer())) {
       isNonPrefTarget = true;
       slackenTarget   = true;

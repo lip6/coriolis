@@ -352,7 +352,7 @@ namespace Katana {
 
       // Overlap between fixed & blockage.
         cdebug_log(159,0) << "* Blockage overlap: " << autoSegment << endl;
-        Session::destroyRequest( autoSegment );
+      //Session::destroyRequest( autoSegment );
 
         cerr << Warning( "Overlap between fixed %s and blockage at %s."
                        , getString(autoSegment).c_str()
