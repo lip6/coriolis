@@ -14,25 +14,23 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <cstdio>
-#include  <cstdlib>
-#include  <cstring>
-#include  <cstdarg>
-
-#include  "hurricane/DataBase.h"
-#include  "hurricane/RegularLayer.h"
-#include  "hurricane/Technology.h"
-#include  "hurricane/Pin.h"
-#include  "hurricane/Contact.h"
-#include  "hurricane/Vertical.h"
-#include  "hurricane/Horizontal.h"
-#include  "hurricane/UpdateSession.h"
-#include  "hurricane/NetExternalComponents.h"
-
-#include  "crlcore/Utilities.h"
-#include  "crlcore/AllianceFramework.h"
-#include  "crlcore/ToolBox.h"
-#include  "Ap.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cstdarg>
+#include "hurricane/DataBase.h"
+#include "hurricane/RegularLayer.h"
+#include "hurricane/Technology.h"
+#include "hurricane/Pin.h"
+#include "hurricane/Contact.h"
+#include "hurricane/Vertical.h"
+#include "hurricane/Horizontal.h"
+#include "hurricane/UpdateSession.h"
+#include "hurricane/NetExternalComponents.h"
+#include "crlcore/Utilities.h"
+#include "crlcore/AllianceFramework.h"
+#include "crlcore/ToolBox.h"
+#include "Ap.h"
 
 
 namespace {
@@ -437,7 +435,7 @@ namespace {
 
   void  ApParser::_parseReference ()
   {
-    static DbU::Unit  XREF, YREF;
+    DbU::Unit  XREF, YREF;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 4 )
@@ -454,14 +452,14 @@ namespace {
 
   void  ApParser::_parseConnector ()
   {
-    static DbU::Unit             XCON, YCON, WIDTH, HEIGHT;
-    static int                   index;
+           DbU::Unit             XCON, YCON, WIDTH, HEIGHT;
+           int                   index;
            string                pinName;
-    static Net*                  net;
-  //static Pin*                  pin;
-    static LayerInformation*     layerInfo;
-    static Pin::AccessDirection  accessDirection;
-    static Name                  orientation;
+           Net*                  net;
+  //       Pin*                  pin;
+           LayerInformation*     layerInfo;
+           Pin::AccessDirection  accessDirection;
+           Name                  orientation;
     static Name                  NORTH = "NORTH";
     static Name                  SOUTH = "SOUTH";
     static Name                  EAST  = "EAST";
@@ -537,9 +535,9 @@ namespace {
 
   void  ApParser::_parseVia ()
   {
-    static DbU::Unit         XVIA, YVIA;
-    static Net*              net;
-    static LayerInformation* layerInfo;
+    DbU::Unit         XVIA, YVIA;
+    Net*              net;
+    LayerInformation* layerInfo;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 4 )
@@ -560,9 +558,9 @@ namespace {
 
   void  ApParser::_parseBigVia ()
   {
-    static DbU::Unit              XVIA, YVIA, WIDTH, HEIGHT;
-    static Net*              net;
-    static LayerInformation* layerInfo;
+    DbU::Unit         XVIA, YVIA, WIDTH, HEIGHT;
+    Net*              net;
+    LayerInformation* layerInfo;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 6 )
@@ -590,10 +588,10 @@ namespace {
 
   void  ApParser::_parseSegment ()
   {
-    static DbU::Unit         X1, Y1, X2, Y2, WIDTH;
-    static Net*              net;
-    static LayerInformation* layerInfo;
-    static SegmentDirection  segDir;
+    DbU::Unit         X1, Y1, X2, Y2, WIDTH;
+    Net*              net;
+    LayerInformation* layerInfo;
+    SegmentDirection  segDir;
 
     vector<char*>  fields = _splitString ( _rawLine+2, ',' );
     if ( fields.size() < 8 )
@@ -645,11 +643,11 @@ namespace {
 
   void  ApParser::_parseInstance ()
   {
-    static DbU::Unit  XINS, YINS;
-    static Name       masterCellName;
-    static Name       instanceName;
-    static Name       orientName;
-    static Transformation::Orientation
+           DbU::Unit  XINS, YINS;
+           Name       masterCellName;
+           Name       instanceName;
+           Name       orientName;
+           Transformation::Orientation
                       orient  = Transformation::Orientation::ID;
     static Name       NOSYM   = "NOSYM";
     static Name       SYM_X   = "SYM_X";
@@ -687,8 +685,10 @@ namespace {
         Cell* masterCell = instance->getMasterCell();
         bool  hasLayout  = not masterCell->getAbutmentBox().isEmpty(); 
         if (not hasLayout) {
+          tab++;
           AllianceFramework::get()->getCell( getString(masterCell->getName()), Catalog::State::Physical );
           hasLayout = not masterCell->getAbutmentBox().isEmpty(); 
+          tab--;
         }
 
         if (hasLayout) {
