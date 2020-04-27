@@ -809,7 +809,7 @@ namespace {
 
 
   PowerRailsPlanes::PowerRailsPlanes ( KatanaEngine* katana )
-    : _katana               (katana)
+    : _katana             (katana)
     , _globalNets         (katana)
     , _planes             ()
     , _activePlane        (NULL)
@@ -820,23 +820,20 @@ namespace {
     Technology*   technology = DataBase::getDB()->getTechnology();
     RoutingGauge* rg         = _katana->getConfiguration()->getRoutingGauge();
 
-    for( Layer* layer : technology->getLayers() ) {
-      RegularLayer* regular = dynamic_cast<RegularLayer*>(layer);
-      if ( not regular
-         or (regular->getBasicLayer()->getMaterial() != BasicLayer::Material::metal) ) continue;
-
-      RoutingLayerGauge* lg = rg->getLayerGauge(regular);
-      if ( not lg ) continue;
-
+    for ( RoutingLayerGauge* lg : rg->getLayerGauges() ) {
       cdebug_log(159,0) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;
+
+      const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( lg->getLayer() );
+      if (not basicLayer)
+        basicLayer = dynamic_cast<const RegularLayer*>( lg->getLayer() )->getBasicLayer();
 
       RoutingPlane* rp = _katana->getRoutingPlaneByIndex(lg->getDepth());
       cdebug_log(159,0) << "Plane:"  << rp << endl;
 
-      _planes.insert( make_pair(regular->getBasicLayer(),new Plane(regular,rp)) );
+      _planes.insert( make_pair(basicLayer,new Plane(lg->getLayer(),rp)) );
 
     //if (lg->getType() == Constant::PinOnly) continue;
-      const BasicLayer* blockageLayer = regular->getBasicLayer()->getBlockageLayer();
+      const BasicLayer* blockageLayer = dynamic_cast<const BasicLayer*>( lg->getBlockageLayer() );
       if (not blockageLayer) continue;
 
       _planes.insert( make_pair(blockageLayer,new Plane(blockageLayer,rp)) );

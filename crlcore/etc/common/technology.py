@@ -93,15 +93,15 @@ gcut      = createBL( 'gcut'         , BasicLayer.Material.cut   )  # *Must be a
 gmetalv   = createBL( 'gmetalv'      , BasicLayer.Material.metal )
 
 # VIAs for real technologies.
-ViaLayer.create( tech, 'via12' , metal1, cut1, metal2  )
-ViaLayer.create( tech, 'via23' , metal2, cut2, metal3  )
-ViaLayer.create( tech, 'via34' , metal3, cut3, metal4  )
-ViaLayer.create( tech, 'via45' , metal4, cut4, metal5  )
-ViaLayer.create( tech, 'via56' , metal5, cut5, metal6  )
-ViaLayer.create( tech, 'via67' , metal6, cut6, metal7  )
-ViaLayer.create( tech, 'via78' , metal7, cut7, metal8  )
-ViaLayer.create( tech, 'via89' , metal8, cut8, metal9  )
-ViaLayer.create( tech, 'via910', metal9, cut9, metal10 )
+via12  = ViaLayer.create( tech, 'via12' , metal1, cut1, metal2  )
+via23  = ViaLayer.create( tech, 'via23' , metal2, cut2, metal3  )
+via34  = ViaLayer.create( tech, 'via34' , metal3, cut3, metal4  )
+via45  = ViaLayer.create( tech, 'via45' , metal4, cut4, metal5  )
+via56  = ViaLayer.create( tech, 'via56' , metal5, cut5, metal6  )
+via67  = ViaLayer.create( tech, 'via67' , metal6, cut6, metal7  )
+via78  = ViaLayer.create( tech, 'via78' , metal7, cut7, metal8  )
+via89  = ViaLayer.create( tech, 'via89' , metal8, cut8, metal9  )
+via910 = ViaLayer.create( tech, 'via910', metal9, cut9, metal10 )
 
 # Composite/Symbolic layers.
 NWELL       = RegularLayer   .create( tech, 'NWELL'      , nWell    )

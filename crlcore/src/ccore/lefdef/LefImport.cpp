@@ -216,6 +216,12 @@ namespace {
   {
     _routingGauge = AllianceFramework::get()->getRoutingGauge();
     _cellGauge    = AllianceFramework::get()->getCellGauge();
+
+    if (not _routingGauge)
+      throw Error( "LefParser::LefParser(): No default routing gauge defined in Alliance framework." );
+
+    if (not _cellGauge)
+      throw Error( "LefParser::LefParser(): No default cell gauge defined in Alliance framework." );
     
     lefrInit();
     lefrSetUnitsCbk      ( _unitsCbk       );
@@ -357,7 +363,10 @@ namespace {
       DbU::Unit lefSiteHeight = DbU::fromPhysical( site->sizeY(), DbU::Micro );
 
       if (siteClass == "CORE") {
-        CellGauge* gauge          = parser->getCellGauge();
+        CellGauge* gauge = parser->getCellGauge();
+        if (not gauge)
+          throw Error( "LefParser::_siteCbk(): Default gauge is not defined. Aborting." );
+        
         DbU::Unit  crlSliceStep   = gauge->getSliceStep  ();
         DbU::Unit  crlSliceHeight = gauge->getSliceHeight();
 
@@ -501,6 +510,13 @@ namespace {
     if (isPad) cerr << " (PAD)";
     cerr << endl; 
 
+    Catalog::State* state = af->getCatalog()->getState( cellName );
+    if (not state) state = af->getCatalog()->getState ( cellName, true );
+    state->setFlags( Catalog::State::Logical
+                   | Catalog::State::Physical
+                   | Catalog::State::InMemory
+                   | Catalog::State::TerminalNetlist, true );
+    cell->setTerminalNetlist( true );
     parser->setCell( NULL );
 
     return 0;
@@ -836,7 +852,9 @@ namespace {
 
     fclose( lefStream );
 
-    if (not parser->getCoreSiteX()) {
+    if (not parser->getCellGauge()) {
+      cerr << Warning( "LefParser::parse(): No default Alliance cell gauge, unable to check the Cell gauge." ) << endl;
+    } else if (not parser->getCoreSiteX()) {
       cerr << Warning( "LefParser::parse(): No CORE site found in library, unable to check the Cell gauge." ) << endl;
     } else {
       if (parser->getCoreSiteY() != parser->getCellGauge()->getSliceHeight())

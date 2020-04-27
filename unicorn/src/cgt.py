@@ -220,7 +220,7 @@ if __name__ == '__main__':
            #katana.printConfiguration   ()
             katana.digitalInit          ()
            #katana.runNegociatePreRouted()
-            katana.runGlobalRouter      ()
+            katana.runGlobalRouter      ( Katana.Flags.NoFlags )
             katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
             katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
             katana.runNegociate         ( Katana.Flags.NoFlags )

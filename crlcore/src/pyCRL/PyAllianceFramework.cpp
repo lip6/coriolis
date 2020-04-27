@@ -439,6 +439,29 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_setCellGauge ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_setCellGauge()" << endl;
+
+    HTRY
+      METHOD_HEAD("AllianceFramework.setCellGauge()")
+      PyObject* arg0;
+      __cs.init ("AllianceFramework.setCellGauge");
+      if (not PyArg_ParseTuple( args, "O&:AllianceFramework.setCellGauge", Converter, &arg0 )) {
+        PyErr_SetString( ConstructorError, "Invalid number of parameters for AllianceFramework.setCellGauge()." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() == ":string") af->setCellGauge( Name(PyString_AsString(arg0)) );
+      else {
+        PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.setCellGauge()." );
+        return NULL;
+      }
+    HCATCH
+
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyAllianceFramework_matchCellGauge ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_matchCellGauge()" << endl;
@@ -539,6 +562,8 @@ extern "C" {
                                , "Add a new cell gauge." }
     , { "getCellGauge"         , (PyCFunction)PyAllianceFramework_getCellGauge         , METH_VARARGS
                                , "Get a cell gauge (without a name, return the default)." }          
+    , { "setCellGauge"         , (PyCFunction)PyAllianceFramework_setCellGauge         , METH_VARARGS
+                               , "Select the default cell gauge." }          
     , { "matchCellGauge"       , (PyCFunction)PyAllianceFramework_matchCellGauge       , METH_VARARGS
                                , "Find the first CellGauge comptible with width and height." }          
     , { "addRoutingGauge"      , (PyCFunction)PyAllianceFramework_addRoutingGauge      , METH_VARARGS

@@ -41,6 +41,7 @@ namespace Anabatic {
       virtual bool          _do_2G_1M1         ();
       virtual bool          _do_xG_xM1_xM3     ();
       virtual bool          _do_xG             ();
+      virtual bool          _do_2G             ();
       virtual bool          _do_globalSegment  ();
       virtual void          singleGCell        ( AnabaticEngine*, Net* );
     public:

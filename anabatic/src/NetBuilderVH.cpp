@@ -521,6 +521,12 @@ namespace Anabatic {
   }
 
 
+  bool  NetBuilderVH::_do_2G ()
+  {
+    cdebug_log(145,0) << getTypeName() << "::_do_2G()" << endl;
+    return _do_xG();
+  }
+
   bool  NetBuilderVH::_do_xG ()
   {
     cdebug_log(145,1) << getTypeName() << "::_do_xG()" << endl;

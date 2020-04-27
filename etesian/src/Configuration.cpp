@@ -66,7 +66,8 @@ namespace Etesian {
     if (cg == NULL) {
       cg = AllianceFramework::get()->getCellGauge( gaugeName );
       if (cg == NULL) 
-        throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge." );
+        throw Error( "AnabaticEngine::Configuration(): Unable to find default cell gauge \"%s\"."
+                   , gaugeName.c_str() );
     }
 
     if (rg == NULL) {

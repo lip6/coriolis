@@ -36,10 +36,14 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/padscorona.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chip/chip.py
                   )
+              set ( pyTools       ${CMAKE_CURRENT_SOURCE_DIR}/tools/blif2vst.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/tools/yosys.py
+                  )
          
-          install ( FILES ${pySources}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
-          install ( FILES ${pyPlugins}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
-         #install ( FILES ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/block )
-          install ( FILES ${pyPluginCTS}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/cts )
-          install ( FILES ${pyPluginC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/core2chip )
-          install ( FILES ${pyPluginChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )
+          install ( FILES    ${pySources}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
+          install ( FILES    ${pyPlugins}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
+         #install ( FILES    ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/block )
+          install ( FILES    ${pyPluginCTS}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/cts )
+          install ( FILES    ${pyPluginC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/core2chip )
+          install ( FILES    ${pyPluginChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )
+         #install ( PROGRAMS ${pyTools}       DESTINATION bin ) 
