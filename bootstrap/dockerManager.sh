@@ -121,7 +121,7 @@
      docker build -f Dockerfile.coriolis -t ${coriolisImage} .
    fi
 
-   if [ ${doBuildCoriolis} -ne 0 ]; then
+   if [ ${doBuildBash} -ne 0 ]; then
      echo "Build \"${bashImage}\" docker image."
      docker build -f Dockerfile.bash -t ${bashImage}     .
    fi
