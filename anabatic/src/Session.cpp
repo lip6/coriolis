@@ -82,7 +82,12 @@ namespace Anabatic {
     , _segmentRevalidateds()
     , _netInvalidateds    ()
     , _netRevalidateds    ()
-  { }
+  {
+    _autoContacts       .reserve( 1024 );
+    _doglegs            .reserve( 1024 );
+    _segmentInvalidateds.reserve( 1024 );
+    _segmentRevalidateds.reserve( 1024 );
+  }
 
 
   void  Session::_postCreate ()
@@ -219,7 +224,9 @@ namespace Anabatic {
     }
     _canonize ();
 
-    for ( AutoSegment* segment : _segmentInvalidateds ) {
+    AutoSegment* segment = NULL;
+    for ( size_t i=0 ; i<_segmentInvalidateds.size() ; ++i ) {
+      segment = _segmentInvalidateds[i];
       if (segment->isCanonical()) {
         if (segment->isUnsetAxis()) segment->toOptimalAxis();
         else                        segment->toConstraintAxis();

@@ -1515,7 +1515,7 @@ namespace Anabatic {
         Edge* edge = neighbor->getWestEdge();
         if (not edge) break;
 
-        if (edge->getReservedCapacity() < maxTermSat)
+        if (edge->getReservedCapacity() < (uint32_t)maxTermSat)
           edge->reserveCapacity( maxTermSat - edge->getReservedCapacity() );
         neighbor = neighbor->getWest();
       }
@@ -1524,7 +1524,7 @@ namespace Anabatic {
         Edge* edge = neighbor->getEastEdge();
         if (not edge) break;
 
-        if (edge->getReservedCapacity() < maxTermSat)
+        if (edge->getReservedCapacity() < (uint32_t)maxTermSat)
           edge->reserveCapacity( maxTermSat - edge->getReservedCapacity() );
         neighbor = neighbor->getEast();
       }
