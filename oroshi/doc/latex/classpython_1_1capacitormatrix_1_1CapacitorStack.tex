@@ -1,0 +1,308 @@
+\hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack}{}\section{Capacitor\+Stack Class Reference}
+\label{classpython_1_1capacitormatrix_1_1CapacitorStack}\index{Capacitor\+Stack@{Capacitor\+Stack}}
+
+
+Draws the layout of a compact capacitor or a matrix of adjacent identical capacitors.  
+
+
+
+
+Inheritance diagram for Capacitor\+Stack\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=250pt]{classpython_1_1capacitormatrix_1_1CapacitorStack__inherit__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a7e9bfbe8f722de7d3472f6971e235328}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, device, capacitance, capacitor\+Type, abutment\+Box\+Position, nets, unit\+Cap=0, matrix\+Dim=\mbox{[}1, matching\+Mode=False, matching\+Scheme=\mbox{[}$\,$\mbox{]}, dummy\+Ring=False, dummy\+Element=False)
+\begin{DoxyCompactList}\small\item\em This is the class constructor. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_ababc3906986a38853f947e52f870a50c}{\+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+}} (self)
+\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_ada775cb99286f2386facfe173b74f8c6}{\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+}} (self)
+\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a3a76b3e916ad8bfec0513765c297f4ed}{capacitor\+Id\+Occurence}} (self, capacitor\+Identifier)
+\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a142799d140cb1936225cf8e224af2b8d}{create}} (self, bb\+Mode=False)
+\begin{DoxyCompactList}\small\item\em Draw the compact or matrix of capacitors. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a67f014dfa18e1ef67be992df3e731923}{capacitor\+Line}} (self, dy, abutment\+Box\+\_\+spacing, matching\+Scheme\+Row\+Index=0)
+\begin{DoxyCompactList}\small\item\em Iteratively draws a horizontal or vertical line of capacitors according to the {\ttfamily direction} parameter. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_af325c6856f657efc6819db6c1ed87fa0}{capacitor\+Matrix}} (self, abutment\+Box\+\_\+spacing=0)
+\begin{DoxyCompactList}\small\item\em Draws a matrix of identical capacitors. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a8ff901c4f22ccba4e7fc19f9ce98109e}{draw\+Abutment\+Box}} (self, abutment\+Box\+\_\+spacing=0)
+\begin{DoxyCompactList}\small\item\em Draws the abutment box of the matrix or campact capacitor. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_afd56ae8981043c8ef680d0c7ac0a3acb}{draw\+Bottom\+Plates\+R\+Layers}} (self, bottom\+Plate\+R\+Layer, drawn\+Capacitor)
+\begin{DoxyCompactList}\small\item\em Draws the routing layers connecting the bottom plate in the matrix of capacitors. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_ac4f954eb981ca22afd05d15d24054c78}{draw\+Top\+Plates\+R\+Layers}} (self, top\+Plate\+R\+Layer, drawn\+Capacitor)
+\begin{DoxyCompactList}\small\item\em Draws the routing layers connecting the top plates in the matrix of capacitors. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a306f64ae38c4f512855ec9b276f47232}{get\+Vertical\+Routing\+Track\+\_\+width}} (self)
+\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a7c13ac996df61c10e7249efa4b26a39d}{get\+Matrix\+Dim}} (self)
+\item 
+def \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack_a47fab36d1c5f43b77f6a8bed838f489c}{get\+Matching\+Scheme}} (self)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Draws the layout of a compact capacitor or a matrix of adjacent identical capacitors. 
+
+The matrix can be composed of one type of capacitors, either Poly-\/\+Poly or Metal-\/\+Metal in 350 nm A\+MS C\+M\+OS technology. When matching mode is off, every adjacent plates of any consecutive elementary capacitors are connected to each other using vertical routing layers. Otherwise, when matching mode is on, any of elementary capacitors can belong to, $ C_1 $ or $ C_2 $ according to the entered matching scheme. Thus, routing is not done in this class. In both modes, the complete routing process is done using the {\ttfamily Rout\+Capacitor} class. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a7e9bfbe8f722de7d3472f6971e235328}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a7e9bfbe8f722de7d3472f6971e235328}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def \+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{device,  }\item[{}]{capacitance,  }\item[{}]{capacitor\+Type,  }\item[{}]{abutment\+Box\+Position,  }\item[{}]{nets,  }\item[{}]{unit\+Cap = {\ttfamily 0},  }\item[{}]{matrix\+Dim = {\ttfamily \mbox{[}1},  }\item[{}]{matching\+Mode = {\ttfamily False},  }\item[{}]{matching\+Scheme = {\ttfamily \mbox{[}\mbox{]}},  }\item[{}]{dummy\+Ring = {\ttfamily False},  }\item[{}]{dummy\+Element = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+This is the class constructor. 
+
+Basically, the class there are three categories of attributes. There are the ones related to the capacitor caracteristics, its type, dimensions. Also, there are attributes to parametrize the class into matching mode or not and there are other attributes realted to the layout varibales. The class has defaut input values, thus, in this constructor, there are two \char`\"{}sub-\/constructors\char`\"{} according to the entered input parameters. The class attributes are \+:
+
+
+\begin{DoxyParams}{Parameters}
+{\em device} & The \textbf{ Hurricane} A\+MS device into which the layout is drawn. \\
+\hline
+{\em capacitance} & The value of the capacitor, expressed in femto Farad (fF). \\
+\hline
+{\em capacitor\+Type} & Can be M\+IM or P\+IP type capacitor. \\
+\hline
+{\em abutment\+Position} & Refers to the abscissa (X\+Min) of the bottom left corner of the abutment Box. \\
+\hline
+{\em abutment\+Box\+Y\+Min} & Refers to the ordinate (Y\+Min) of the bottom left corner of the abutment Box.\\
+\hline
+\end{DoxyParams}
+Except the two last arguments, all the parameters are common with the Capacitor\+Unit class because the {\ttfamily \mbox{\hyperlink{classpython_1_1capacitormatrix_1_1CapacitorStack}{Capacitor\+Stack}}} constructor calls the mother class constructor to create either a compact capacitor of {\ttfamily capacitance} value or {\ttfamily row\+Number$\ast$} {\ttfamily column\+Number} unity capacitors.
+
+
+\begin{DoxyParams}{Parameters}
+{\em row\+Number} & Number of rows in the matrix of capacitors. \\
+\hline
+{\em column\+Number} & Number of columns in the matrix of capacitors. \\
+\hline
+\end{DoxyParams}
+
+
+References Capacitor\+Stack.\+\_\+\+\_\+are\+Input\+Data\+O\+K\+\_\+\+\_\+(), Capacitor\+Unit.\+\_\+\+\_\+compute\+Cap\+Dim\+\_\+\+\_\+(), Capacitor\+Stack.\+\_\+\+\_\+init\+Given\+Non\+Zero\+Unit\+Cap\+\_\+\+\_\+(), Capacitor\+Stack.\+\_\+\+\_\+init\+Given\+Non\+Zero\+Unit\+Cap\+In\+Matching\+Mode\+\_\+\+\_\+(), Capacitor\+Stack.\+\_\+\+\_\+init\+Given\+Zero\+Unit\+Cap\+\_\+\+\_\+(), Capacitor\+Stack.\+\_\+\+\_\+init\+Given\+Zero\+Unit\+Cap\+In\+Matching\+Mode\+\_\+\+\_\+(), Capacitor\+Stack.\+\_\+\+\_\+init\+Matrix\+Mode\+\_\+\+\_\+(), Capacitor\+Unit.\+\_\+\+\_\+is\+Capacitor\+Unit\+O\+K\+\_\+\+\_\+(), Capacitor\+Unit.\+abutment\+Box, Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Capacitor\+Stack.\+abutment\+Box\+Position, Capacitor\+Stack.\+capacitance, Capacitor\+Stack.\+capacitor\+Id\+Occurence(), Capacitor\+Stack.\+capacitors\+Number, Capacitor\+Unit.\+capacitor\+Type, Capacitor\+Stack.\+compact\+Cap\+Dim, Capacitor\+Stack.\+compute\+Unit\+Cap(), Capacitor\+Unit.\+device, Stack.\+device, Capacitor\+Stack.\+do\+Matrix, Capacitor\+Stack.\+dummy\+Element, Capacitor\+Stack.\+dummy\+Ring, Capacitor\+Stack.\+dummy\+Ring\+Position, Capacitor\+Stack.\+evaluate\+Unit\+Cap(), Capacitor\+Stack.\+matching\+Mode, Capacitor\+Stack.\+matching\+Scheme, Capacitor\+Stack.\+matrix\+Dim, Capacitor\+Stack.\+min\+Enclosure\+\_\+h\+Routing\+Layer\+\_\+top\+Plate\+\_\+cut, Capacitor\+Stack.\+min\+Enclosure\+\_\+v\+Routing\+Track\+Cut, Capacitor\+Stack.\+min\+Spacing\+\_\+v\+Routing\+Track, Capacitor\+Stack.\+min\+Spacing\+\_\+v\+Routing\+Track\+Cut, Capacitor\+Stack.\+min\+Width\+\_\+h\+Routing\+Layer\+\_\+top\+Plate\+\_\+cut, Capacitor\+Stack.\+min\+Width\+\_\+v\+Routing\+Track, Capacitor\+Stack.\+min\+Width\+\_\+v\+Routing\+Track\+Cut, Capacitor\+Stack.\+nets, Capacitor\+Stack.\+unit\+Capacitance, Capacitor\+Stack.\+unit\+Cap\+Dim, and Capacitor\+Stack.\+v\+Routing\+Track\+\_\+width.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_ababc3906986a38853f947e52f870a50c}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_ababc3906986a38853f947e52f870a50c}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!\+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+@{\+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+@{\+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+()}{\_\_isUnitCap\_\_()}}
+{\footnotesize\ttfamily def \+\_\+\+\_\+is\+Unit\+Cap\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+True if the drawn capacitor is a compact one. This function is useful when an instance is called in another class. {\bfseries Example} \+: when the matrix or the compact capacitors are to be fully routed. 
+\end{DoxyReturn}
+
+
+Referenced by Rout\+Matched\+Capacitor.\+route().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_ada775cb99286f2386facfe173b74f8c6}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_ada775cb99286f2386facfe173b74f8c6}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+@{\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+@{\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+()}{\_\_isMatchingSchemeOK\_\_()}}
+{\footnotesize\ttfamily def \+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+{\ttfamily True} if the matching scheme specifications are correct. Specifications are \+:
+\begin{DoxyItemize}
+\item Similar number of elements as total number of elementary capacitor in the matrix.
+\item Equal number of affected capacitors to C1 as to C2.
+\item Capacitor identifiers equal to \textquotesingle{}1\textquotesingle{} or \textquotesingle{}2\textquotesingle{} only.
+\item Otherwise, the function returns {\ttfamily False}. 
+\end{DoxyItemize}
+\end{DoxyReturn}
+
+
+References Capacitor\+Stack.\+matching\+Scheme, and Capacitor\+Stack.\+matrix\+Dim.
+
+
+
+Referenced by Capacitor\+Stack.\+capacitor\+Id\+Occurence().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a3a76b3e916ad8bfec0513765c297f4ed}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a3a76b3e916ad8bfec0513765c297f4ed}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!capacitor\+Id\+Occurence@{capacitor\+Id\+Occurence}}
+\index{capacitor\+Id\+Occurence@{capacitor\+Id\+Occurence}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{capacitor\+Id\+Occurence()}{capacitorIdOccurence()}}
+{\footnotesize\ttfamily def capacitor\+Id\+Occurence (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{capacitor\+Identifier }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+occurence of capacitor identifier in the entered matching scheme. This is useful to verify that {\ttfamily self.\+matching\+Scheme} is correct. 
+\end{DoxyReturn}
+
+
+References Capacitor\+Stack.\+\_\+\+\_\+are\+Matrix\+Dim\+O\+K\+\_\+\+\_\+(), Capacitor\+Stack.\+\_\+\+\_\+is\+Matching\+Scheme\+O\+K\+\_\+\+\_\+(), Capacitor\+Stack.\+capacitors\+Number, Capacitor\+Stack.\+dummy\+Element, Capacitor\+Stack.\+dummy\+Ring, Capacitor\+Stack.\+matching\+Mode, Capacitor\+Stack.\+matching\+Scheme, Capacitor\+Stack.\+matrix\+Dim, and Capacitor\+Stack.\+nets.
+
+
+
+Referenced by Capacitor\+Stack.\+\_\+\+\_\+init\+\_\+\+\_\+().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a142799d140cb1936225cf8e224af2b8d}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a142799d140cb1936225cf8e224af2b8d}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!create@{create}}
+\index{create@{create}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{create()}{create()}}
+{\footnotesize\ttfamily def create (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{bb\+Mode = {\ttfamily False} }\end{DoxyParamCaption})}
+
+
+
+Draw the compact or matrix of capacitors. 
+
+First, . Second, . Finally, . 
+
+References Capacitor\+Stack.\+\_\+\+\_\+init\+Matching\+Mode\+\_\+\+\_\+(), Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Capacitor\+Stack.\+abutment\+Box\+Position, Capacitor\+Stack.\+capacitance, Capacitor\+Stack.\+capacitor\+Matrix(), Capacitor\+Unit.\+capacitor\+Type, Capacitor\+Stack.\+compute\+Bonding\+Box\+Dimensions(), Capacitor\+Unit.\+device, Stack.\+device, Capacitor\+Stack.\+do\+Matrix, Capacitor\+Unit.\+draw\+Abutment\+Box(), Capacitor\+Stack.\+draw\+Bottom\+Plates\+R\+Layers(), Capacitor\+Stack.\+draw\+Capacitor\+Stack(), Capacitor\+Stack.\+draw\+Top\+Plates\+R\+Layers(), Capacitor\+Stack.\+dummy\+Ring, Capacitor\+Stack.\+matching\+Mode, Capacitor\+Stack.\+matrix\+Dim, Capacitor\+Stack.\+nets, and Capacitor\+Unit.\+set\+Rules().
+
+
+
+Referenced by Capacitor\+Stack.\+capacitor\+Line(), and Capacitor\+Stack.\+capacitor\+Matrix().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a67f014dfa18e1ef67be992df3e731923}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a67f014dfa18e1ef67be992df3e731923}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!capacitor\+Line@{capacitor\+Line}}
+\index{capacitor\+Line@{capacitor\+Line}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{capacitor\+Line()}{capacitorLine()}}
+{\footnotesize\ttfamily def capacitor\+Line (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{dy,  }\item[{}]{abutment\+Box\+\_\+spacing,  }\item[{}]{matching\+Scheme\+Row\+Index = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Iteratively draws a horizontal or vertical line of capacitors according to the {\ttfamily direction} parameter. 
+
+An exception is raised if the specified direction is different from {\ttfamily \{\textquotesingle{}horizontal\textquotesingle{}},\textquotesingle{}vertical\textquotesingle{}\}. At every iteration, an instance of the Capacitor\+Unit class is created and its layout is drawn. \begin{DoxyReturn}{Returns}
+a list containing the drawn capacitors. 
+\end{DoxyReturn}
+
+\begin{DoxyParams}{Parameters}
+{\em dy} & the vertical position of the first cut in cut line. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyRemark}{Remarks}
+An exception is raised if the specified direction is different from {\ttfamily \{\textquotesingle{}horizontal\textquotesingle{}},\textquotesingle{}vertical\textquotesingle{}\} 
+\end{DoxyRemark}
+
+
+References Capacitor\+Stack.\+abutment\+Box\+Position, Capacitor\+Unit.\+capacitor\+Type, Capacitor\+Stack.\+create(), Capacitor\+Stack.\+create\+Element\+In\+Capacitor\+Line(), Capacitor\+Unit.\+device, Stack.\+device, Capacitor\+Stack.\+dummy\+Ring, Capacitor\+Stack.\+matching\+Mode, Capacitor\+Stack.\+matching\+Scheme, Capacitor\+Stack.\+matrix\+Dim, Capacitor\+Stack.\+nets, and Capacitor\+Stack.\+unit\+Capacitance.
+
+
+
+Referenced by Capacitor\+Stack.\+capacitor\+Matrix().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_af325c6856f657efc6819db6c1ed87fa0}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_af325c6856f657efc6819db6c1ed87fa0}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!capacitor\+Matrix@{capacitor\+Matrix}}
+\index{capacitor\+Matrix@{capacitor\+Matrix}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{capacitor\+Matrix()}{capacitorMatrix()}}
+{\footnotesize\ttfamily def capacitor\+Matrix (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{abutment\+Box\+\_\+spacing = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Draws a matrix of identical capacitors. 
+
+The matrix is iterativelly constructed. At every iteration, a new horizontal line of capacitors is drawn. \begin{DoxyReturn}{Returns}
+a nested list of elementary capacitors. 
+\end{DoxyReturn}
+
+
+References Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Capacitor\+Stack.\+abutment\+Box\+Position, Capacitor\+Stack.\+capacitor\+Line(), Capacitor\+Unit.\+capacitor\+Type, Capacitor\+Stack.\+create(), Capacitor\+Unit.\+device, Stack.\+device, Capacitor\+Stack.\+dummy\+Ring, Capacitor\+Stack.\+get\+Cap\+Dim(), Capacitor\+Stack.\+matrix\+Dim, Capacitor\+Stack.\+nets, and Capacitor\+Stack.\+unit\+Capacitance.
+
+
+
+Referenced by Capacitor\+Stack.\+create().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a8ff901c4f22ccba4e7fc19f9ce98109e}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a8ff901c4f22ccba4e7fc19f9ce98109e}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!draw\+Abutment\+Box@{draw\+Abutment\+Box}}
+\index{draw\+Abutment\+Box@{draw\+Abutment\+Box}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{draw\+Abutment\+Box()}{drawAbutmentBox()}}
+{\footnotesize\ttfamily def draw\+Abutment\+Box (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{abutment\+Box\+\_\+spacing = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+Draws the abutment box of the matrix or campact capacitor. 
+
+
+
+References Capacitor\+Unit.\+abutment\+Box, Capacitor\+Stack.\+abutment\+Box\+\_\+spacing, Capacitor\+Stack.\+abutment\+Box\+Position, Capacitor\+Unit.\+compute\+Abutment\+Box\+Dimensions(), Capacitor\+Unit.\+device, and Stack.\+device.
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_afd56ae8981043c8ef680d0c7ac0a3acb}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_afd56ae8981043c8ef680d0c7ac0a3acb}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!draw\+Bottom\+Plates\+R\+Layers@{draw\+Bottom\+Plates\+R\+Layers}}
+\index{draw\+Bottom\+Plates\+R\+Layers@{draw\+Bottom\+Plates\+R\+Layers}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{draw\+Bottom\+Plates\+R\+Layers()}{drawBottomPlatesRLayers()}}
+{\footnotesize\ttfamily def draw\+Bottom\+Plates\+R\+Layers (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{bottom\+Plate\+R\+Layer,  }\item[{}]{drawn\+Capacitor }\end{DoxyParamCaption})}
+
+
+
+Draws the routing layers connecting the bottom plate in the matrix of capacitors. 
+
+First, the relative positions of the routing layer is of the is extracted from the elementary capacitor instance. Then, its width is computed in a way to connect adjacent plates. Then, the routing layers are iterativelly drawn. The two borders are . 
+
+References Capacitor\+Unit.\+get\+Bot\+Plate\+Left\+R\+Layer\+X\+Max(), Capacitor\+Unit.\+get\+Bot\+Plate\+R\+Layer\+Width(), Capacitor\+Unit.\+get\+Bot\+Plate\+R\+Layer\+Y\+Max(), Capacitor\+Unit.\+get\+Bottom\+Plate\+Left\+Cut\+X\+Min(), Capacitor\+Unit.\+get\+Bottom\+Plate\+Right\+Cut\+X\+Min(), Capacitor\+Stack.\+matrix\+Dim, and Capacitor\+Stack.\+nets.
+
+
+
+Referenced by Capacitor\+Stack.\+create().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_ac4f954eb981ca22afd05d15d24054c78}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_ac4f954eb981ca22afd05d15d24054c78}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!draw\+Top\+Plates\+R\+Layers@{draw\+Top\+Plates\+R\+Layers}}
+\index{draw\+Top\+Plates\+R\+Layers@{draw\+Top\+Plates\+R\+Layers}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{draw\+Top\+Plates\+R\+Layers()}{drawTopPlatesRLayers()}}
+{\footnotesize\ttfamily def draw\+Top\+Plates\+R\+Layers (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{top\+Plate\+R\+Layer,  }\item[{}]{drawn\+Capacitor }\end{DoxyParamCaption})}
+
+
+
+Draws the routing layers connecting the top plates in the matrix of capacitors. 
+
+First, the relative positions of the routing layers is of the is extracted from the elementary capacitor instance. Then, its width is computed in a way to connect adjacent plates. Then, the routing layers are iterativelly drawn. The two borders are . \begin{DoxyRemark}{Remarks}
+An exception is raised if the number of rows in the matrix is lower than 2. 
+\end{DoxyRemark}
+
+
+References Capacitor\+Unit.\+get\+Top\+Plate\+R\+Layer\+Width(), Capacitor\+Unit.\+get\+Top\+Plate\+R\+Layer\+X\+Center(), Capacitor\+Unit.\+get\+Top\+Plate\+R\+Layer\+Y\+Max(), Capacitor\+Unit.\+get\+Top\+Plate\+R\+Layer\+Y\+Min(), Capacitor\+Stack.\+matrix\+Dim, and Capacitor\+Stack.\+nets.
+
+
+
+Referenced by Capacitor\+Stack.\+create().
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a306f64ae38c4f512855ec9b276f47232}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a306f64ae38c4f512855ec9b276f47232}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!get\+Vertical\+Routing\+Track\+\_\+width@{get\+Vertical\+Routing\+Track\+\_\+width}}
+\index{get\+Vertical\+Routing\+Track\+\_\+width@{get\+Vertical\+Routing\+Track\+\_\+width}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{get\+Vertical\+Routing\+Track\+\_\+width()}{getVerticalRoutingTrack\_width()}}
+{\footnotesize\ttfamily def get\+Vertical\+Routing\+Track\+\_\+width (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+The width of the vertical routing tracks in matching mode. 
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Remark\+: This function is useful in matching mode, ie., in  Rout\+Capacitor class, when routing the two capacitors. }
+
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a7c13ac996df61c10e7249efa4b26a39d}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a7c13ac996df61c10e7249efa4b26a39d}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!get\+Matrix\+Dim@{get\+Matrix\+Dim}}
+\index{get\+Matrix\+Dim@{get\+Matrix\+Dim}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{get\+Matrix\+Dim()}{getMatrixDim()}}
+{\footnotesize\ttfamily def get\+Matrix\+Dim (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+A dictionary contaning capacitor matrix\textquotesingle{}s dimensions 
+\end{DoxyReturn}
+
+
+References Capacitor\+Stack.\+compact\+Cap\+Dim, and Capacitor\+Stack.\+do\+Matrix.
+
+\mbox{\Hypertarget{classpython_1_1capacitormatrix_1_1CapacitorStack_a47fab36d1c5f43b77f6a8bed838f489c}\label{classpython_1_1capacitormatrix_1_1CapacitorStack_a47fab36d1c5f43b77f6a8bed838f489c}} 
+\index{python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}!get\+Matching\+Scheme@{get\+Matching\+Scheme}}
+\index{get\+Matching\+Scheme@{get\+Matching\+Scheme}!python\+::capacitormatrix\+::\+Capacitor\+Stack@{python\+::capacitormatrix\+::\+Capacitor\+Stack}}
+\subsubsection{\texorpdfstring{get\+Matching\+Scheme()}{getMatchingScheme()}}
+{\footnotesize\ttfamily def get\+Matching\+Scheme (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyReturn}{Returns}
+the matching scheme. The function is useful in {\ttfamily Rout\+Matched\+Capacitor} class to load {\ttfamily self.\+matching\+Scheme} attribute. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+capacitormatrix.\+py\end{DoxyCompactItemize}

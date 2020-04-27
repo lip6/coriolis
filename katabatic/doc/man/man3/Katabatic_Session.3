@@ -1,0 +1,332 @@
+.TH "Session" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Session \- Modification \fBSession\fP for \fBKatabatic\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static bool \fBisInDemoMode\fP ()"
+.br
+.ti -1c
+.RI "static bool \fBdoWarnGCellOverload\fP ()"
+.br
+.ti -1c
+.RI "static \fBSession\fP * \fBget\fP (const char *message=NULL)"
+.br
+.ti -1c
+.RI "static \fBTechnology\fP * \fBgetTechnology\fP ()"
+.br
+.ti -1c
+.RI "static \fBKatabaticEngine\fP * \fBgetKatabatic\fP ()"
+.br
+.ti -1c
+.RI "static const Configuration * \fBgetConfiguration\fP ()"
+.br
+.ti -1c
+.RI "static float \fBgetSaturateRatio\fP ()"
+.br
+.ti -1c
+.RI "static size_t \fBgetSaturateRp\fP ()"
+.br
+.ti -1c
+.RI "static \fBDbU::Unit\fP \fBgetExtensionCap\fP ()"
+.br
+.ti -1c
+.RI "static \fBRoutingGauge\fP * \fBgetRoutingGauge\fP ()"
+.br
+.ti -1c
+.RI "static const \fBLayer\fP * \fBgetRoutingLayer\fP (size_t)"
+.br
+.ti -1c
+.RI "static const \fBLayer\fP * \fBgetContactLayer\fP (size_t)"
+.br
+.ti -1c
+.RI "static size_t \fBgetSegmentStackSize\fP ()"
+.br
+.ti -1c
+.RI "static size_t \fBgetContactStackSize\fP ()"
+.br
+.ti -1c
+.RI "static const vector< \fBAutoSegment\fP * > & \fBgetInvalidateds\fP ()"
+.br
+.ti -1c
+.RI "static const vector< \fBAutoSegment\fP * > & \fBgetRevalidateds\fP ()"
+.br
+.ti -1c
+.RI "static const vector< \fBAutoSegment\fP * > & \fBgetDoglegs\fP ()"
+.br
+.ti -1c
+.RI "static const set< \fBNet\fP * > & \fBgetNetsModificateds\fP ()"
+.br
+.ti -1c
+.RI "static \fBSession\fP * \fBopen\fP (\fBKatabaticEngine\fP *)"
+.br
+.ti -1c
+.RI "static void \fBclose\fP ()"
+.br
+.ti -1c
+.RI "static void \fBsetKatabaticFlags\fP (unsigned int)"
+.br
+.ti -1c
+.RI "static void \fBdogleg\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "static void \fBrevalidateTopology\fP ()"
+.br
+.ti -1c
+.RI "static void \fBsetInvalidateMask\fP (unsigned int)"
+.br
+.ti -1c
+.RI "static void \fBinvalidate\fP (\fBNet\fP *)"
+.br
+.ti -1c
+.RI "static void \fBinvalidate\fP (\fBAutoContact\fP *)"
+.br
+.ti -1c
+.RI "static void \fBinvalidate\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "static size_t \fBrevalidate\fP ()"
+.br
+.ti -1c
+.RI "static void \fBlink\fP (\fBAutoContact\fP *)"
+.br
+.ti -1c
+.RI "static void \fBlink\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "static void \fBunlink\fP (\fBAutoContact\fP *)"
+.br
+.ti -1c
+.RI "static void \fBunlink\fP (\fBAutoSegment\fP *)"
+.br
+.ti -1c
+.RI "static \fBAutoContact\fP * \fBlookup\fP (\fBContact\fP *)"
+.br
+.ti -1c
+.RI "static \fBAutoSegment\fP * \fBlookup\fP (\fBSegment\fP *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Modification \fBSession\fP for \fBKatabatic\fP\&. 
+
+To perform modifications, the \fBKatabatic\fP data structure uses a session mechanism built on top of the \fBHurricane::UpdateSession\fP one\&. Sessions obeys very simples rules:
+.IP "\(bu" 2
+Only one \fBSession\fP can be opened at a time with \fBSession::open()\fP\&.
+.IP "\(bu" 2
+Subsequent calls to \fBSession::open()\fP returns the currently opened session until \fBSession::close()\fP is called\&.
+.IP "\(bu" 2
+Revalidation can take place whithout closing the \fBSession\fP by calling \fBSession::revalidate()\fP\&.
+.PP
+.PP
+The task of a \fBSession\fP is to keep track of the \fBAutoContact\fP and \fBAutoSegment\fP that have been modificateds (i\&.e\&. invalidated) and, to restore connexity and/or topology when closed\&.
+.PP
+Two kinds of revalidation could be performed: 
+.PD 0
+
+.IP "\(bu" 2
+\fBGeometrical\fP : only positions of AutoContacts and AutoSegments extensions are recomputed\&. 
+.IP "\(bu" 2
+\fBTopological\fP : a whole net have been invalidated because of a dogleg creation or a move up/move down of a segment\&. 
+.PD 0
+
+.IP "  \(bu" 4
+\fBDogleg\fP : needs to insert the newly created AutoSegments and AutoContacts\&. 
+.IP "  \(bu" 4
+\fBMove up/Move down\fP : may needs to create additional dogleg to restore connexity (gaps), and then insert them like above\&. 
+.PP
+After a topological mofication has been done, the net needs to be re-canonized then the geometrical step takes place\&. 
+.PP
+.PP
+The kind of revalidation needed is automatically detected by the \fBSession\fP\&.
+.PP
+In addition to it's main purpose, \fBSession\fP also provides cached access to frequently needed variables either from Hurricane or \fBKatabatic\fP Configuration and access to the \fBAutoContact\fP & \fBAutoSegment\fP LUTs of \fBKatabaticEngine\fP\&.
+.PP
+From a software point of view, \fBSession\fP is a singleton object\&.
+.SH "Session Algorithm"
+.PP
+Main attributes of a \fBSession\fP:
+.IP "\(bu" 2
+\fC_netInvalidateds\fP, nets on which topology has changed\&.
+.IP "\(bu" 2
+\fC_autoSegments\fP, that have been moved or createds\&.
+.IP "\(bu" 2
+\fC_autoContacts\fP, that have been created or one of their slave segment has moved\&.
+.IP "\(bu" 2
+\fC_revalidateds\fP, the list of AutoSegments that have just been revalidated (after calling \fC\fBrevalidate()\fP\fP)\&.
+.PP
+.PP
+Schematic description of how a \fBSession\fP works:
+.PP
+.PD 0
+.IP "\(bu" 2
+If at least one net has been invalidated, meaning that it's topology has changed, perform \fC_revalidateTopology()\fP\&. 
+.PD 0
+
+.IP "  \(bu" 4
+Update net topology: correct the topology of each contacts, making dogleg when needed\&. The \fBAutoContact\fP segment caching is updated at this point\&. 
+.IP "  \(bu" 4
+Compute net constraints (on AutoContacts & AutoSegments)\&. 
+.IP "  \(bu" 4
+Compute net optimal positions (on AutoSegments)\&. 
+.IP "  \(bu" 4
+Compute the state of the segments regarding to terminals\&. 
+.IP "  \(bu" 4
+Canonize sets of aligneds segments\&. The canonical segment is the one with the lowest \fCid\fP\&. 
+.IP "  \(bu" 4
+If the segments has just been created, put it on its optimal axis\&. 
+.PP
+This stage can add itself more invalidated AutoSegments and AutoContacts as it create doglegs\&.
+.PP
+
+.IP "\(bu" 2
+Revalidate geometry of AutoContacts\&. That is, expand or shrink the extremities of the invalidated AutoSegments\&. Note that AutoSegments are already at on their final axis position\&.
+.PP
+
+.IP "\(bu" 2
+Revalidate AutoSegments\&. Just before this stage, they are on the correct axis and their extensions are also correct, so we may update the caching of their characteristics (mostly the extension)\&. 
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "bool isInDemoMode ()\fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References KatabaticEngine::isInDemoMode()\&.
+.PP
+Referenced by GCell::checkDensity()\&.
+.SS "bool doWarnGCellOverload ()\fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References KatabaticEngine::doWarnOnGCellOverload()\&.
+.PP
+Referenced by GCell::checkDensity()\&.
+.SS "\fBSession\fP * get (const char * message = \fCNULL\fP)\fC [static]\fP"
+Return the \fBSession\fP singleton, if no session is currently open throw an exception carrying \fCmessage\fP\&. 
+.SS "\fBTechnology\fP * getTechnology ()\fC [inline]\fP, \fC [static]\fP"
+Hurricane shortcut\&. 
+.SS "\fBKatabaticEngine\fP * getKatabatic ()\fC [inline]\fP, \fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+Referenced by AutoSegment::create(), GCellTopology::doRp_AccessPad(), GCellTopology::doRp_AutoContacts(), AutoSegment::makeDogleg(), and Session::open()\&.
+.SS "const Configuration * getConfiguration ()\fC [inline]\fP, \fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoVertical::_makeDogleg(), and AutoSegment::canMoveUp()\&.
+.SS "float getSaturateRatio ()\fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References KatabaticEngine::getSaturateRatio()\&.
+.PP
+Referenced by GCell::isSaturated()\&.
+.SS "size_t getSaturateRp ()\fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References KatabaticEngine::getSaturateRp()\&.
+.PP
+Referenced by GCell::rpDesaturate()\&.
+.SS "\fBDbU::Unit\fP getExtensionCap ()\fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+Referenced by AutoHorizontal::checkPositions(), AutoVertical::checkPositions(), AutoHorizontal::updatePositions(), and AutoVertical::updatePositions()\&.
+.SS "\fBRoutingGauge\fP * getRoutingGauge ()\fC [inline]\fP, \fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoVertical::_makeDogleg(), AutoHorizontal::canMoveULeft(), AutoVertical::canMoveULeft(), AutoSegment::canMoveUp(), AutoHorizontal::canMoveURight(), AutoVertical::canMoveURight(), AutoSegment::canPivotDown(), AutoSegment::canPivotUp(), GCell::checkDensity(), Session::getContactLayer(), Session::getRoutingLayer(), GCell::hasFreeTrack(), AutoSegment::makeDogleg(), anonymous_namespace{LoadGrByNet\&.cpp}::singleGCell(), GCell::stepDesaturate(), GCell::stepNetDesaturate(), GCell::updateDensity(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), AutoContactHTee::updateTopology(), and AutoContactTerminal::updateTopology()\&.
+.SS "const \fBLayer\fP * getRoutingLayer (size_t depth)\fC [inline]\fP, \fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References Session::getRoutingGauge(), and RoutingGauge::getRoutingLayer()\&.
+.PP
+Referenced by GCellTopology::_do_xG_1M1_1M2(), GCellTopology::_do_xG_xM1_xM3(), AutoSegment::create(), GCellTopology::doRp_AccessPad(), AutoSegment::reduceDoglegLayer(), and GCell::rpDesaturate()\&.
+.SS "const \fBLayer\fP * getContactLayer (size_t depth)\fC [inline]\fP, \fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References RoutingGauge::getContactLayer(), and Session::getRoutingGauge()\&.
+.PP
+Referenced by GCellTopology::_do_1G_1M3(), GCellTopology::_do_1G_xM1(), GCellTopology::_do_xG(), GCellTopology::_do_xG_1M1_1M2(), GCellTopology::_do_xG_1Pad(), GCellTopology::_do_xG_xM1_xM3(), GCellTopology::_do_xG_xM2(), GCellTopology::_do_xG_xM3(), GCellTopology::doRp_Access(), GCellTopology::doRp_AccessPad(), GCellTopology::doRp_AutoContacts(), GCellTopology::doRp_StairCaseH(), GCellTopology::doRp_StairCaseV(), and anonymous_namespace{LoadGrByNet\&.cpp}::singleGCell()\&.
+.SS "size_t getSegmentStackSize ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The number of \fBAutoSegment\fP in the invalidated stack\&. 
+.SS "size_t getContactStackSize ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The number of \fBAutoSegment\fP in the invalidated stack\&. 
+.SS "const vector< \fBAutoSegment\fP * > & getInvalidateds ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The stack (vector) of invalidateds AutoSegments\&. 
+.SS "const vector< \fBAutoSegment\fP * > & getRevalidateds ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The stack (vector) of AutoSegments that have been revalidateds\&. 
+.SS "const vector< \fBAutoSegment\fP * > & getDoglegs ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The vector of AutoSegments part of a newly created dogleg\&. The dogleg creation functions in \fBAutoHorizontal\fP and \fBAutoVertical\fP put a triplet (for example in horizontal direction \fC\fP(h1,v1,h2) ) for each dogleg composed of:
+.IP "\(bu" 2
+\fBh1\fP the segment \fIbefore\fP the dogleg (which is also the original one)\&.
+.IP "\(bu" 2
+\fBv1\fP the segment \fBperpandicular\fP (new)\&.
+.IP "\(bu" 2
+\fBh2\fP the segment \fBafter\fP (new)\&. 
+.PP
+
+.PP
+Referenced by AutoSegment::makeDogleg()\&.
+.SS "const set< \fBNet\fP * > & getNetsModificateds ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The set of Nets that needs either a topological update or a new canonization\&. 
+.SS "\fBSession\fP * open (\fBKatabaticEngine\fP * ktbt)\fC [static]\fP"
+Opens a new session or returns the already opened one, if any\&. 
+.PP
+References Session::getKatabatic()\&.
+.PP
+Referenced by GCellGrid::updateContacts()\&.
+.SS "void close ()\fC [static]\fP"
+Close the \fBSession\fP, triggering the revalidation of the AutoSegemnts and AutoContacts\&. If no \fBSession\fP is opened, throws an execption\&. 
+.PP
+Referenced by GCellGrid::updateContacts()\&.
+.SS "void setKatabaticFlags (unsigned int flags)\fC [static]\fP"
+\fBKatabatic\fP shortcut\&. 
+.PP
+References KatabaticEngine::setFlags()\&.
+.SS "void dogleg (\fBAutoSegment\fP * autoSegment)\fC [inline]\fP, \fC [static]\fP"
+Adds an \fBAutoSegment\fP to the dogleg vector\&. 
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), and AutoVertical::_makeDogleg()\&.
+.SS "void revalidateTopology ()\fC [inline]\fP, \fC [static]\fP"
+Revalidate Net that have been invalidateds and re-canonize them\&. 
+.SS "void setInvalidateMask (unsigned int flags)\fC [inline]\fP, \fC [static]\fP"
+Tells what kind of revalidation must be performed\&. 
+.SS "void invalidate (\fBNet\fP * net)\fC [inline]\fP, \fC [static]\fP"
+Schedule \fCnet\fP for a full revalidation, topological correction and canonization\&. 
+.PP
+Referenced by AutoSegment::_invalidate(), and AutoSegment::_postCreate()\&.
+.SS "void invalidate (\fBAutoContact\fP * contact)\fC [inline]\fP, \fC [static]\fP"
+Schedule \fCcontact\fP for revalidation\&. 
+.SS "void invalidate (\fBAutoSegment\fP * segment)\fC [inline]\fP, \fC [static]\fP"
+Schedule \fCsegment\fP for revalidation\&. 
+.SS "size_t revalidate ()\fC [inline]\fP, \fC [static]\fP"
+Perform the revalidation\&. Returns the sum of AutoContacts and AutoSegemnts that have been revalidated\&. 
+.PP
+Referenced by KatabaticEngine::createDetailedGrid()\&.
+.SS "void link (\fBAutoContact\fP * ac)\fC [static]\fP"
+Adds \fCac\fP in the \fBAutoContact\fP lookup table (allow to retrieve an \fBAutoContact\fP by it's base Contact)\&. 
+.PP
+Referenced by AutoSegment::_postCreate()\&.
+.SS "void link (\fBAutoSegment\fP * as)\fC [static]\fP"
+Adds \fCas\fP in the \fBAutoSegment\fP lookup table (allow to retrieve an \fBAutoSegment\fP by it's base Segment)\&. 
+.SS "void unlink (\fBAutoContact\fP * ac)\fC [static]\fP"
+Removes \fCac\fP from the \fBAutoContact\fP lookup table\&. 
+.PP
+Referenced by AutoSegment::_preDestroy()\&.
+.SS "void unlink (\fBAutoSegment\fP * as)\fC [static]\fP"
+Removes \fCas\fP from the \fBAutoSegment\fP lookup table\&. 
+.SS "\fBAutoContact\fP * lookup (\fBContact\fP * contact)\fC [static]\fP"
+Lookup the \fBAutoContact\fP associated with \fCcontact\fP\&. \fCNULL\fP if not found\&. 
+.PP
+Referenced by AutoSegment::AutoSegment(), GCell::checkEdgeSaturation(), AutoSegment::create(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoSegment::getOppositeAnchor(), and AutoSegment::getPerpandicularsBound()\&.
+.SS "\fBAutoSegment\fP * lookup (\fBSegment\fP * segment)\fC [static]\fP"
+Lookup the \fBAutoSegment\fP associated with \fCsegment\fP\&. \fCNULL\fP if not found\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

@@ -1,0 +1,212 @@
+\hypertarget{classpython_1_1stack_1_1Stack}{}\section{Stack Class Reference}
+\label{classpython_1_1stack_1_1Stack}\index{Stack@{Stack}}
+
+
+Draw a \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} of Transistors.  
+
+
+
+
+Inherits object.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \mbox{\hyperlink{classpython_1_1stack_1_1Stack_a818e80b2a75b3e0d06f9826d1c60ecab}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, device, N\+E\+RC, N\+I\+RC)
+\begin{DoxyCompactList}\small\item\em {\bfseries \mbox{[}A\+PI\mbox{]}} Constructor \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1stack_1_1Stack_a4fa5741d1869983366b4ca96c3ae85b5}{set\+Wirings}} (self, wiring\+Spec)
+\begin{DoxyCompactList}\small\item\em {\bfseries \mbox{[}A\+PI\mbox{]}} Set the \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} wiring specification. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1stack_1_1Stack_a74ff17e974efecc28c792db05b5d3eb0}{compute\+Dimensions}} (self)
+\begin{DoxyCompactList}\small\item\em {\bfseries \mbox{[}internal\mbox{]}} Compute \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} dimensions from the technological rules. \end{DoxyCompactList}\item 
+def \mbox{\hyperlink{classpython_1_1stack_1_1Stack_a2b936db85a32775dd3739ccfdfef636d}{do\+Layout}} (self, bb\+Mode)
+\begin{DoxyCompactList}\small\item\em {\bfseries \mbox{[}A\+PI\mbox{]}} Draw the complete layout. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Draw a \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} of Transistors. 
+
+A \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} of Transistors is a set of transistor put into a regular band and connected through their sources/drains. All share the exact same W \& L. The way they are connecteds defines what functionnality the \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} implement.
+
+The abutment box of the stack is adjusted so that both height and width are even multiples of the track pitches, so the device can be easily placed and handled by the mixed router. The extra space needed for padding is added around the active area. Due to the presence of tracks at the top and bottom of the stack, the active area will be horizontally centered but {\bfseries not} vertically.
+
+The drawing of the stack is controlled through a set of variables (attributes) that allows to create it regardless of the technology. The technology is taken into account in the way those variables are computed and, obviously, their values. The following schematics details the main stack drawing variables along with their computations.\hypertarget{classpython_1_1stack_1_1Stack_secStackLayout}{}\subsection{Stack Layout}\label{classpython_1_1stack_1_1Stack_secStackLayout}
+\hypertarget{classpython_1_1stack_1_1Stack_secGatePitch}{}\subsubsection{Gate pitch}\label{classpython_1_1stack_1_1Stack_secGatePitch}
+
+\begin{DoxyItemize}
+\item {\ttfamily self.\+gate\+Pitch} \+: the pitch of transistors gates, inside the stack. It also applies to dummy transistors.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=.9\linewidth]{gate-pitch-1}
+\doxyfigcaption{Gate Pitch}
+\end{DoxyImage}
+\hypertarget{classpython_1_1stack_1_1Stack_secActiveSideWidth}{}\subsubsection{Active Side Width}\label{classpython_1_1stack_1_1Stack_secActiveSideWidth}
+
+\begin{DoxyItemize}
+\item {\ttfamily self.\+active\+Side\+Width} \+: the distance between the axis of the last transistor gate (on the left or right) and the edge of the active area ({\itshape not} the diffusion area).
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=.9\linewidth]{active-side-width-1}
+\doxyfigcaption{Active Side Width}
+\end{DoxyImage}
+\hypertarget{classpython_1_1stack_1_1Stack_secHTrackDistance}{}\subsubsection{H-\/\+Track Distance}\label{classpython_1_1stack_1_1Stack_secHTrackDistance}
+
+\begin{DoxyItemize}
+\item {\ttfamily self.\+h\+Track\+Distance} \+: the minimal distance between either the top or bottom edge of the active area and the {\itshape axis} of the first track.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=.9\linewidth]{htrack-distance-1}
+\doxyfigcaption{H-\/\+Track distance}
+\end{DoxyImage}
+\hypertarget{classpython_1_1stack_1_1Stack_secOverallVariables}{}\subsubsection{Bounding\+Box \& Overall Variables}\label{classpython_1_1stack_1_1Stack_secOverallVariables}
+
+\begin{DoxyItemize}
+\item {\ttfamily self.\+xpitches} \+: the number of vertical track pitches needed to fully enclose the active area.
+\item {\ttfamily self.\+ypitches} \+: the number of horizontal track pitches needed to fully enclose the active area.
+\item {\ttfamily self.\+active\+OffsetX} \& {\ttfamily self.\+active\+OffsetY} \+: the offsets of the active area from the bottom left corner of the abutment box.
+\item {\ttfamily self.\+diffusion\+Width} \& {\ttfamily self.\+diffusion\+Height} are the minimun dimensions required to fit the active area.
+\item {\ttfamily self.\+top\+Tracks\+Nb()} \+: the number of tracks at the top of the stack.
+\item {\ttfamily self.\+bot\+Tracks\+Nb()} \+: the number of tracks at the bottom of the stack.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=.9\linewidth]{stack-layout-3}
+\doxyfigcaption{General Stack Layout}
+\end{DoxyImage}
+\hypertarget{classpython_1_1stack_1_1Stack_secWiringSpecs}{}\subsection{Wiring Specifications}\label{classpython_1_1stack_1_1Stack_secWiringSpecs}
+\mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} routing is done through vertical {\ttfamily metal1} wires coming from the gates and diffusions areas and {\ttfamily metal2} horizontal wires that can be either above or below the active area. {\ttfamily metal2} wires (or track) goes through the whole stack and are assigned to one net only. A net will have at least one track above or below and may have both.
+
+The connections to the diffusions areas and gates of the various fingers are specified through a list. The stack is made of a regular alternation of diffusions and gates. The list tells, for each one starting from the left, to which net and track they are connected. For a stack of $NFs$ transistor fingers, the must wiring specification must contains $ 3 + (NFs-1) \times 2$ elements. The list is given through one {\itshape string} with each elements separated by one or more whitespace. The syntax for {\itshape one} element is detailed \mbox{\hyperlink{classpython_1_1stack_1_1Stack_secAtomicWiring}{Atomic Wiring Specification}}.
+
+{\bfseries Track numbering scheme}
+
+Tracks above (top) the active area and below (bottom) each have their own numbering. In both case, the count start {\itshape from} the active area. This, the top tracks will be numbered by increasing Y and the bottom tracks by {\itshape decreasing} Y.
+
+{\bfseries Track/\+Net assignement}
+
+The track/net assignement is deduced from the atomic wiring specifications. It also allows to compute the total number of tracks needed above and below the active area.
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=.9\linewidth]{wiring-spec-2}
+\doxyfigcaption{Wiring Specification}
+\end{DoxyImage}
+\hypertarget{classpython_1_1stack_1_1Stack_secAtomicWiring}{}\subsubsection{Atomic Wiring Specification}\label{classpython_1_1stack_1_1Stack_secAtomicWiring}
+An atomic wiring specification has the same syntax for either diffusions or gates. It {\itshape must} not comprise any whitespaces. it is made of the following parts\+:
+\begin{DoxyItemize}
+\item The net name to connect to.
+\item Whether the track is above the active area ({\ttfamily \char`\"{}t\char`\"{}}) or below ({\ttfamily \char`\"{}b\char`\"{}}). The special case ({\ttfamily \char`\"{}z\char`\"{}}) means that this element must be left unconnected (is such case possible?).
+\item The number of the track.
+\end{DoxyItemize}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=.4\linewidth]{wiring-spec-1}
+\doxyfigcaption{Atomic Wiring Specification}
+\end{DoxyImage}
+\hypertarget{classpython_1_1stack_1_1Stack_secStackImplDetails}{}\subsection{Stack Implementation Details}\label{classpython_1_1stack_1_1Stack_secStackImplDetails}
+The {\ttfamily \+\_\+\+\_\+setattr\+\_\+\+\_\+()} and {\ttfamily \+\_\+\+\_\+getattr\+\_\+\+\_\+} functions have been redefined so that the technological values (rules) can be accessed has normal attributes of the \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} class, in addition to the regular ones. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classpython_1_1stack_1_1Stack_a818e80b2a75b3e0d06f9826d1c60ecab}\label{classpython_1_1stack_1_1Stack_a818e80b2a75b3e0d06f9826d1c60ecab}} 
+\index{python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def \+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{device,  }\item[{}]{N\+E\+RC,  }\item[{}]{N\+I\+RC }\end{DoxyParamCaption})}
+
+
+
+{\bfseries \mbox{[}A\+PI\mbox{]}} Constructor 
+
+param rules The physical rule set. 
+\begin{DoxyParams}{Parameters}
+{\em device} & The \textbf{ Hurricane} A\+MS device into which the layout will be drawn. \\
+\hline
+{\em N\+E\+RC} & Number of contact rows in external (first \& last) diffusion connectors. \\
+\hline
+{\em N\+I\+RC} & Number of contact rows in middle diffusion connectors. param w The {\bfseries width} of every transistor of the stack (aka {\itshape fingers}). param L The {\bfseries length} of every transistor. param N\+Fs The total number of fingers (dummies includeds). param N\+Ds The number of dummies to put on each side of the stack. \\
+\hline
+\end{DoxyParams}
+
+
+References Stack.\+b\+Implant\+Layer, Stack.\+bot\+Tracks, Stack.\+bot\+W\+Tracks, Stack.\+bulk\+Net, Stack.\+bulks, Stack.\+device, Stack.\+dimensioned, Bulk.\+flags, Stack.\+flags, Stack.\+is\+Nmos(), Stack.\+L, Stack.\+meta\+Tnb(), Stack.\+meta\+Transistors, Stack.\+N\+Ds, Stack.\+N\+E\+RC, Stack.\+N\+Fs, Stack.\+N\+I\+RC, Stack.\+t\+Implant\+Layer, Stack.\+top\+Tracks, Stack.\+top\+W\+Tracks, Stack.\+w, Stack.\+well\+Layer, and Stack.\+wirings.
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classpython_1_1stack_1_1Stack_a4fa5741d1869983366b4ca96c3ae85b5}\label{classpython_1_1stack_1_1Stack_a4fa5741d1869983366b4ca96c3ae85b5}} 
+\index{python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}!set\+Wirings@{set\+Wirings}}
+\index{set\+Wirings@{set\+Wirings}!python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}}
+\subsubsection{\texorpdfstring{set\+Wirings()}{setWirings()}}
+{\footnotesize\ttfamily def set\+Wirings (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{wiring\+Spec }\end{DoxyParamCaption})}
+
+
+
+{\bfseries \mbox{[}A\+PI\mbox{]}} Set the \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} wiring specification. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em wiring\+Spec} & A string defining the connections for the gates and diffusion areas.\\
+\hline
+\end{DoxyParams}
+For a comprehensive explanation of the wiring specification, refers to \mbox{\hyperlink{classpython_1_1stack_1_1Stack_secWiringSpecs}{Wiring Specifications}} . 
+
+References Stack.\+bot\+Tracks, Stack.\+bot\+Tracks\+Nb(), Stack.\+bot\+W\+Tracks, Stack.\+bulk\+Net, Stack.\+compute\+Dimensions(), Stack.\+device, Stack.\+dimensioned, Stack.\+e\+Diff\+Metal1\+Width, Bulk.\+flags, Stack.\+flags, Stack.\+gate\+Pitch, Stack.\+get\+Bot\+Track\+Y(), Stack.\+get\+Horizontal\+Width(), Stack.\+hor\+Pitch, Stack.\+L, Stack.\+metal1\+To\+Gate, Stack.\+meta\+Transistors, Stack.\+side\+Active\+Width, Stack.\+top\+Tracks, Stack.\+top\+Tracks\+Nb(), Stack.\+top\+W\+Tracks, Stack.\+wirings, and Stack.\+ypitches.
+
+\mbox{\Hypertarget{classpython_1_1stack_1_1Stack_a74ff17e974efecc28c792db05b5d3eb0}\label{classpython_1_1stack_1_1Stack_a74ff17e974efecc28c792db05b5d3eb0}} 
+\index{python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}!compute\+Dimensions@{compute\+Dimensions}}
+\index{compute\+Dimensions@{compute\+Dimensions}!python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}}
+\subsubsection{\texorpdfstring{compute\+Dimensions()}{computeDimensions()}}
+{\footnotesize\ttfamily def compute\+Dimensions (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+
+
+{\bfseries \mbox{[}internal\mbox{]}} Compute \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}} dimensions from the technological rules. 
+
+{\bfseries Internal function.} Perform the computation of\+:
+\begin{DoxyItemize}
+\item {\ttfamily self.\+metal1\+Pitch} 
+\item {\ttfamily self.\+min\+Width\+\_\+metal1} 
+\item {\ttfamily self.\+metal2\+Pitch} 
+\item {\ttfamily self.\+min\+Width\+\_\+metal2} 
+\item {\ttfamily self.\+gate\+Pitch} 
+\item {\ttfamily self.\+side\+Active\+Width} 
+\item {\ttfamily self.\+h\+Track\+Distance} 
+\item {\ttfamily self.\+xpitches} 
+\item {\ttfamily self.\+ypitches} 
+\item {\ttfamily self.\+active\+OffsetX} 
+\item {\ttfamily self.\+active\+OffsetY} 
+\item {\ttfamily self.\+bounding\+Box} 
+\end{DoxyItemize}
+
+References Stack.\+active\+Box, Stack.\+active\+OffsetX, Stack.\+active\+OffsetY, Stack.\+bb\+Height, Stack.\+bb\+Width, Stack.\+bot\+W\+Tracks, Stack.\+bounding\+Box, Stack.\+bulks, Stack.\+bulk\+Width, Stack.\+compute\+Layout\+Parasitics(), Stack.\+compute\+Stress\+Effect(), Stack.\+contact\+Diff\+Pitch, Stack.\+contact\+Diff\+Side, Stack.\+D\+GG, Stack.\+D\+GI, Stack.\+dimensioned, Stack.\+D\+M\+CG, Stack.\+D\+M\+C\+GT, Stack.\+D\+M\+CI, Stack.\+e\+Diff\+Metal1\+Width, Bulk.\+flags, Stack.\+flags, Stack.\+gate\+Pitch, Stack.\+gate\+Via1\+Pitch, Stack.\+get\+Bot\+Track\+Y(), Stack.\+get\+Horizontal\+Width(), Stack.\+get\+Last\+Top\+Track\+Y(), Stack.\+hor\+Pitch, Stack.\+h\+Track\+Distance, Stack.\+i\+Diff\+Metal1\+Width, Stack.\+is\+VH, Stack.\+L, Stack.\+metal1\+To\+Gate, Stack.\+metal2\+Pitch, Stack.\+metal2\+Techno\+Pitch, Stack.\+metal3\+Pitch, Stack.\+meta\+Transistors, Stack.\+N\+E\+RC, Stack.\+N\+Fs, Stack.\+N\+I\+RC, Stack.\+side\+Active\+Width, Stack.\+tracks\+Nb\+Pitch(), Stack.\+v\+Bulk\+Distance, Stack.\+ver\+Pitch, Stack.\+w, Stack.\+wire1\+Width, Stack.\+wire2\+Width, Stack.\+wire3\+Width, Stack.\+wirings, Stack.\+xpitches, and Stack.\+ypitches.
+
+
+
+Referenced by Capacitor\+Unit.\+create(), Stack.\+do\+Layout(), Rout\+Matched\+Capacitor.\+route(), and Stack.\+set\+Wirings().
+
+\mbox{\Hypertarget{classpython_1_1stack_1_1Stack_a2b936db85a32775dd3739ccfdfef636d}\label{classpython_1_1stack_1_1Stack_a2b936db85a32775dd3739ccfdfef636d}} 
+\index{python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}!do\+Layout@{do\+Layout}}
+\index{do\+Layout@{do\+Layout}!python\+::stack\+::\+Stack@{python\+::stack\+::\+Stack}}
+\subsubsection{\texorpdfstring{do\+Layout()}{doLayout()}}
+{\footnotesize\ttfamily def do\+Layout (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{bb\+Mode }\end{DoxyParamCaption})}
+
+
+
+{\bfseries \mbox{[}A\+PI\mbox{]}} Draw the complete layout. 
+
+Draw the commplete layout of the \mbox{\hyperlink{classpython_1_1stack_1_1Stack}{Stack}}. 
+
+References Stack.\+active\+OffsetX, Stack.\+active\+OffsetY, Stack.\+bb\+Width, Stack.\+bot\+Tracks, Stack.\+bot\+W\+Tracks, Stack.\+bounding\+Box, Stack.\+bulk\+Net, Stack.\+bulks, Stack.\+bulk\+Width, Stack.\+compute\+Dimensions(), Stack.\+contact\+Diff\+Pitch, Stack.\+device, Stack.\+D\+GG, Stack.\+D\+GI, Stack.\+D\+M\+CG, Stack.\+D\+M\+C\+GT, Stack.\+D\+M\+CI, Stack.\+draw\+Active(), Stack.\+draw\+Gate(), Stack.\+draw\+Source\+Drain(), Stack.\+draw\+Well(), Stack.\+e\+Diff\+Metal1\+Width, Bulk.\+flags, Stack.\+flags, Stack.\+gate\+Pitch, Stack.\+gate\+Via1\+Pitch, Stack.\+get\+Bot\+Track\+Y(), Stack.\+get\+Horizontal\+Axis(), Stack.\+get\+Horizontal\+Width(), Stack.\+get\+Top\+Track\+Y(), Stack.\+get\+Wiring\+Width(), Stack.\+hor\+Pitch, Stack.\+i\+Diff\+Metal1\+Width, Stack.\+is\+Bot\+Track(), Stack.\+is\+VH, Stack.\+L, Stack.\+metal1\+To\+Gate, Stack.\+N\+E\+RC, Stack.\+N\+Fs, Stack.\+N\+I\+RC, Stack.\+side\+Active\+Width, Stack.\+t\+Implant\+Layer, Stack.\+top\+Tracks, Stack.\+top\+W\+Tracks, Stack.\+w, Stack.\+well\+Layer, Stack.\+wire1\+Width, Stack.\+wire2\+Width, Stack.\+wire3\+Width, and Stack.\+wirings.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+stack.\+py\end{DoxyCompactItemize}

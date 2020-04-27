@@ -1,0 +1,272 @@
+.TH "DataNegociate" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+DataNegociate \- Algorimthmic datas associated the \fBTrackSegment\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBSlackState\fP { \fBRipupPerpandiculars\fP = 1, \fBMinimize\fP = 2, \fBDogleg\fP = 3, \fBSlacken\fP = 4, \fBConflictSolveByHistory\fP = 5, \fBConflictSolveByPlaceds\fP = 6, \fBLocalVsGlobal\fP = 7, \fBMoveUp\fP = 8, \fBMaximumSlack\fP = 9, \fBUnimplemented\fP =10, \fBRepair\fP =11 }"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "bool \fBhasRoutingEvent\fP () const"
+.br
+.ti -1c
+.RI "\fBRoutingEvent\fP * \fBgetRoutingEvent\fP () const"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetTrackSegment\fP () const"
+.br
+.ti -1c
+.RI "\fBTrack\fP * \fBgetTrack\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetLeftMinExtend\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetRightMinExtend\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetTerminals\fP () const"
+.br
+.ti -1c
+.RI "\fBNet\fP * \fBgetNet\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetState\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetStateCount\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetRipupCount\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetStateAndRipupCount\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetWiringDelta\fP (\fBDbU::Unit\fP axis) const"
+.br
+.ti -1c
+.RI "const \fBInterval\fP & \fBgetPerpandicularFree\fP () const"
+.br
+.ti -1c
+.RI "void \fBsetState\fP (unsigned int, unsigned int flags=0)"
+.br
+.ti -1c
+.RI "void \fBsetRoutingEvent\fP (\fBRoutingEvent\fP *)"
+.br
+.ti -1c
+.RI "void \fBsetRipupCount\fP (unsigned int)"
+.br
+.ti -1c
+.RI "void \fBincRipupCount\fP ()"
+.br
+.ti -1c
+.RI "void \fBdecRipupCount\fP ()"
+.br
+.ti -1c
+.RI "void \fBresetRipupCount\fP ()"
+.br
+.ti -1c
+.RI "void \fBresetStateCount\fP ()"
+.br
+.ti -1c
+.RI "void \fBupdate\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Algorimthmic datas associated the \fBTrackSegment\fP\&. 
+
+The \fBDataNegociate\fP object contains all the informations the negociation algorithm needs to know about a \fBTrackSegment\fP\&. Those informations mostly describe the slackening and ripup state of that segment\&.
+.PP
+\fBState related datas:\fP
+.IP "\(bu" 2
+The ripup count in the current state\&. The count is reset to zero at each state transition\&.
+.IP "\(bu" 2
+The slackening state (see \fBDataNegociate::SlackState\fP)\&. The state indicate the \fBnext\fP topological modification to be applied on the segment should the ripup count reach it's maximal value\&.
+.IP "\(bu" 2
+The associated \fBRoutingEvent\fP\&. If no \fBRoutingEvent\fP is present, it means the segment has been either successufully placed or the algorithm has given up trying to\&. If present, it is a \fIpending\fP request for placement\&.
+.PP
+.PP
+\fBTopological related datas:\fP
+.IP "\(bu" 2
+\fCleftMinExtend\fP, the potential minimal position of the segment left extension\&. May not be reachable due to other topological constraints\&.
+.IP "\(bu" 2
+\fCrightMinExtend\fP, the potential minimal position of the segment right extension\&.
+.IP "\(bu" 2
+\fCterminals\fP, the number of terminals attached to this segment\&.
+.IP "\(bu" 2
+\fCattractors\fP, a table of coordinates of the end points of the perpandiculars to this segment\&. Used to compute the wiring delta if we move the axis of the segment\&.
+.IP "\(bu" 2
+\fCperpandiculars\fP, a \fCvector\fP of the perpandicular \fBTrackElement\fP\&. This is a fast-access cache\&. It must be updated each time the topology of the net is modificated\&.
+.IP "\(bu" 2
+\fCperpandicularFree\fP, the free interval defined by the perpandiculars, that is for the sgement axis\&.
+.PP
+.SH "Perpandiculars, Free, Attractors & Wiring Delta"
+.PP
+All those informations are computed and updated by the \fBDataNegociate::update()\fP method, which relies on:
+.IP "\(bu" 2
+AutoSegment::getTopologicalInfos()
+.IP "\(bu" 2
+AutoSegment::getTerminalCount()
+.PP
+.PP
+They must be reviewed as they do not take advantage of the new AutoSegment structuration\&.
+.PP
+For every perpandicular set of AutoSegment to the \fBTrackSegment\fP we want to place, get the coordinates of the extremity not connected to the segment and put that coordinate into a table associated with it's \fIspin\fP\&. The \fIspin\fP tells if the extremity is attracting the segment \fIup\fP or \fIdown\fP (for an horizontal segment)\&. The \fIspin\fP is incremented for up and decremented for down\&. After all the extremities have been processeds, we took into account only the coordinates with a non-zero spin, which means they truly attract the segment (whatever the direction)\&.
+.PP
+Fig 1: Attractors Computation The \fIwiring delta\fP is the total wire length needed to connect from the attractors to the segment, should it be placed on \fCaxis\fP\&.
+.PP
+Fig 2: Wiring Delta
+.SH "Modifications History"
+.PP
+Main changes in \fBDataNegociate\fP class design:
+.IP "\(bu" 2
+Merge in the separate class \fCCost\fP\&.
+.IP "\(bu" 2
+Suppress the \fCSlackState::Desalignate\fP, due to the simplificated structure of the AutoSegment/AutoContacts (no more collapseds, or forced alignements)\&. 
+.PP
+
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBSlackState\fP"
+Describe the various stages of a \fBTrackSegment\fP slackening\&. The numerical values are choosen so we can increment them as a counter\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIRipupPerpandiculars \fP\fP
+Force perpandiculars to be riped up as well as the \fBTrackSegment\fP, then schedule the placement of the \fBTrackSegment\fP \fIbefore\fP it's perpandiculars\&. 
+.TP
+\fB\fIMinimize \fP\fP
+If the \fBTrackSegment\fP is made of multiple TrackSegments with a forced alignement, suppress the alignement constraint\&.
+.PP
+This should be deprecated now\&. Try to displace the perpandiculars so the \fBTrackSegment\fP is reduced to it's minimal length\&. 
+.TP
+\fB\fIDogleg \fP\fP
+Break the segment into two smaller ones\&. 
+.TP
+\fB\fISlacken \fP\fP
+Create additional wiring so threre is no more contraints transmitted by the perpandiculars or the terminal contacts\&. 
+.TP
+\fB\fIConflictSolveByHistory \fP\fP
+Try to solve a conflict between a set of global segments by analysing the event/ripup history\&. See \fBSegmentFsm::conflictSolveByHistory()\fP\&. 
+.TP
+\fB\fIConflictSolveByPlaceds \fP\fP
+Try to solve a conflict between a set of global segments by analysing the current track context\&. See \fBSegmentFsm::conflictSolveByPlaceds()\fP\&. 
+.TP
+\fB\fILocalVsGlobal \fP\fP
+To be reviewed\&. 
+.TP
+\fB\fIMoveUp \fP\fP
+The segment is to be moved up (if possible)\&. 
+.TP
+\fB\fIMaximumSlack \fP\fP
+The final state, topological modifications are exhausteds, if it cannot place at this point, it never will\&. 
+.TP
+\fB\fIUnimplemented \fP\fP
+Used only during the development stage, telling that the state is not available yet\&. 
+.TP
+\fB\fIRepair \fP\fP
+The router is in repair mode\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "bool hasRoutingEvent () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if there is a pending \fBRoutingEvent\fP for this \fBTrackSegment\fP\&. 
+.PP
+Referenced by NegociateWindow::addRoutingEvent(), and TrackSegment::reschedule()\&.
+.SS "\fBRoutingEvent\fP * getRoutingEvent () const\fC [inline]\fP"
+\fBReturns:\fP The pending \fBRoutingEvent\fP\&. \fCNULL\fP will be returned if there is no pending event, meaning that the segment has been placed\&. 
+.PP
+Referenced by SegmentAction::doAction(), Manipulator::makeDogleg(), Manipulator::relax(), TrackSegment::reschedule(), RoutingEvent::reschedule(), and TrackSegment::swapTrack()\&.
+.SS "\fBTrackSegment\fP * getTrackSegment () const\fC [inline]\fP"
+\fBReturns:\fP The associated \fBTrackSegment\fP\&. 
+.SS "\fBTrack\fP * getTrack () const\fC [inline]\fP"
+\fBReturns:\fP A proxy accessor for the segment's track\&. 
+.SS "\fBDbU::Unit\fP getLeftMinExtend () const\fC [inline]\fP"
+\fBReturns:\fP The minimum extend possible of the segment's source (left) ending\&. Computed by \fBDataNegociate::update()\fP\&. 
+.PP
+Referenced by Manipulator::insertInTrack()\&.
+.SS "\fBDbU::Unit\fP getRightMinExtend () const\fC [inline]\fP"
+\fBReturns:\fP The minimum extend possible of the segment's target (right) ending\&. Computed by \fBDataNegociate::update()\fP\&. 
+.PP
+Referenced by Manipulator::insertInTrack()\&.
+.SS "unsigned int getTerminals () const\fC [inline]\fP"
+\fBReturns:\fP The number of terminal to which this segment is connected Computed by \fBDataNegociate::update()\fP\&.
+.PP
+Must be refined: direct or indirect?\&. 
+.SS "\fBNet\fP * getNet () const\fC [inline]\fP"
+\fBReturns:\fP A cached accessor to the segment's net (for faster access)\&. 
+.SS "unsigned int getState () const\fC [inline]\fP"
+\fBReturns:\fP The current state (see \fBDataNegociate::SlackState\fP)\&. 
+.PP
+Referenced by RoutingEvent::getState(), Manipulator::insertInTrack(), and Manipulator::ripupPerpandiculars()\&.
+.SS "unsigned int getStateCount () const\fC [inline]\fP"
+\fBReturns:\fP The number of times we have reached the ripup limit while in this stage\&. 
+.PP
+Referenced by SegmentFsm::conflictSolveByPlaceds()\&.
+.SS "unsigned int getRipupCount () const\fC [inline]\fP"
+\fBReturns:\fP The number of times the segment has been riped up in this stage\&. 
+.PP
+Referenced by Manipulator::canRipup(), SegmentAction::doAction(), and RoutingEvent::process()\&.
+.SS "unsigned int getStateAndRipupCount () const\fC [inline]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+A composite number combining the state and the ripup count: \fC(state<<4)+ripup\fP\&. 
+.RE
+.PP
+
+.SS "\fBDbU::Unit\fP getWiringDelta (\fBDbU::Unit\fP axis) const"
+\fBReturns:\fP The wiring length needed to connect to the attractors if the segment is put on \fCaxis\fP\&. The lower, the better\&.\&.\&. 
+.SS "const \fBInterval\fP & getPerpandicularFree () const\fC [inline]\fP"
+\fBReturns:\fP The range of legal positions generated only by the perpandiculars\&. 
+.SS "void setState (unsigned int state, unsigned int flags = \fC0\fP)\fC [inline]\fP"
+Set or reset the slacking state (see SlackState)\&. If the \fCstate\fP is the same as the current one, the state count is incremented\&. If the new state changes or \fCflags\fP contain KtReset, the state count is reset to one\&. 
+.PP
+Referenced by SegmentAction::doAction(), Manipulator::relax(), Manipulator::repackPerpandiculars(), RoutingEvent::reschedule(), Manipulator::ripupPerpandiculars(), and RoutingEvent::setState()\&.
+.SS "void setRoutingEvent (\fBRoutingEvent\fP * event)\fC [inline]\fP"
+Associate \fCevent\fP to this \fBTrackSegment\fP\&. 
+.PP
+Referenced by RoutingEvent::reschedule(), and RoutingEvent::setSegment()\&.
+.SS "void setRipupCount (unsigned int count)\fC [inline]\fP"
+Directly sets the ripup count to \fCcount\fP\&. 
+.PP
+Referenced by SegmentAction::doAction()\&.
+.SS "void incRipupCount ()\fC [inline]\fP"
+Increment the ripup count\&. No check is performed for bound limit\&. 
+.SS "void decRipupCount ()\fC [inline]\fP"
+Decrement the ripup count (will never go below zero)\&. 
+.SS "void resetRipupCount ()\fC [inline]\fP"
+Reset the ripup count to zero\&. 
+.PP
+Referenced by SegmentAction::doAction()\&.
+.SS "void resetStateCount ()\fC [inline]\fP"
+Reset the state count to zero\&. 
+.SS "void update ()"
+Recompute \fCleftMinExtend\fP, \fCrighMinExtend\fP, number of terminals and attractors positions\&.
+.PP
+\fBRemark: The constructor do not calls it\&. It is to the algorithm responsability\fP
+.RS 4
+to call it before using the computed datas\&. 
+.RE
+.PP
+
+.PP
+Referenced by NegociateWindow::setGCells()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

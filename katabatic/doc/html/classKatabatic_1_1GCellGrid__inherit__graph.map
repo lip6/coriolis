@@ -1,4 +1,4 @@
 <map id="GCellGrid" name="GCellGrid">
-<area shape="rect" id="node2" href="$classKatabatic_1_1Grid.html" title="Grid\&lt; GCell \&gt;" alt="" coords="5,80,107,107"/>
-<area shape="rect" id="node3" href="$classKatabatic_1_1BaseGrid.html" title="Abstract Base Class for Irregular Grid. " alt="" coords="18,5,93,32"/>
+<area shape="rect" id="node2" href="$classKatabatic_1_1Grid.html" title="Grid\&lt; GCell \&gt;" alt="" coords="5,80,120,107"/>
+<area shape="rect" id="node3" href="$classKatabatic_1_1BaseGrid.html" title="Abstract Base Class for Irregular Grid. " alt="" coords="22,5,103,32"/>
 </map>

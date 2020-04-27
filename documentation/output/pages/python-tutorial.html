@@ -55,7 +55,6 @@
                 </button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
-                  <li><a class="dropdown-item " href="../pages/install-cases.html">Install Cases</a></li>
                   <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
                 </ul>
               </li>
@@ -82,7 +81,6 @@
               </button>
               <ul class="dropdown-menu">
                 <li><a class="dropdown-item " href="../pages/homepage.html">Coriolis <span class="sc">vlsi</span> Backend Tools</a></li>
-                <li><a class="dropdown-item " href="../pages/install-cases.html">Install Cases</a></li>
                 <li><a class="dropdown-item " href="../pages/symbolic-layout.html">Symbolic Layout</a></li>
               </ul>
             </div>
@@ -648,7 +646,7 @@ explanation of that part of the code, refer to <a class="reference external" hre
     <span class="k">return</span>
 
 
-<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+<span class="k">def</span> <span class="nf">scriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
     <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
       <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
@@ -736,7 +734,7 @@ may unexpectedly shadow cells from the libraries.</p>
 But, for debugging purpose it may be helpful to run it through the
 interactive layout viewer <span class="cb">cgt</span>.</p>
 <p>For <span class="cb">cgt</span> to be able to run your script, you must add to your script
-file a function named <span class="cb">ScriptMain()</span>, which takes a dictionary
+file a function named <span class="cb">scriptMain()</span>, which takes a dictionary
 as sole argument (<span class="cb">**kw</span>). The <tt class="docutils literal">kw</tt> dictionary contains, in
 particular, the <a class="reference external" href="../../viewer/classHurricane_1_1CellViewer.html">CellViewer</a> object we are running under with the
 keyword <tt class="docutils literal">editor</tt>. You can then load your cell into the viewer
@@ -775,7 +773,7 @@ you will only see the end result of your script.</p>
     <span class="k">return</span>
 
 
-<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+<span class="k">def</span> <span class="nf">scriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
     <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
       <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
@@ -1147,7 +1145,7 @@ directory (under the the root of the <span class="sc">Coriolis</span> installati
     <span class="k">return</span>
 
 
-<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+<span class="k">def</span> <span class="nf">scriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
     <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
       <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>
@@ -1385,7 +1383,7 @@ case it is around <tt class="docutils literal">3%</tt>.</p>
     <span class="k">return</span>
 
 
-<span class="k">def</span> <span class="nf">ScriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
+<span class="k">def</span> <span class="nf">scriptMain</span> <span class="p">(</span> <span class="o">**</span><span class="n">kw</span> <span class="p">):</span>
     <span class="n">editor</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s1">&#39;editor&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]:</span>
       <span class="n">editor</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;editor&#39;</span><span class="p">]</span>

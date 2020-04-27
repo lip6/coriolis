@@ -5994,6 +5994,13 @@
       <anchor>a247b75d5cbb85198cea9e5e609304cd0</anchor>
       <arglist>(const Name &amp;)</arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>setSymbolicLayer</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a26c12c5828acaeb33068a2899df1134b</anchor>
+      <arglist>(const Layer *)</arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static Technology *</type>
       <name>create</name>

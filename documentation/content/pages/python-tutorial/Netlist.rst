@@ -388,7 +388,7 @@ directory (under the the root of the |Coriolis| installation).
        return
    
    
-   def ScriptMain ( **kw ):
+   def scriptMain ( **kw ):
        editor = None
        if kw.has_key('editor') and kw['editor']:
          editor = kw['editor']

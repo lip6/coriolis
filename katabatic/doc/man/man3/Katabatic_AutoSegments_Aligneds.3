@@ -1,0 +1,59 @@
+.TH "AutoSegments_Aligneds" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoSegments_Aligneds \- All aligned \fBAutoSegment\fP of a set\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBCollection< Type >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAutoSegments_Aligneds\fP (\fBAutoSegment\fP *, unsigned int flags=KbNoFlags)"
+.br
+.ti -1c
+.RI "\fBAutoSegments_Aligneds\fP (const \fBAutoSegments_Aligneds\fP &)"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHC\fP * \fBgetClone\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHL\fP * \fBgetLocator\fP () const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+All aligned \fBAutoSegment\fP of a set\&. 
+
+A Collection to iterate over all the \fBAutoSegment\fP aligned with \fCmaster\fP\&. The \fCmaster\fP itself will not be included in the walkthrough\&. If the \fBKatabatic::KbWithPerpands\fP flag is passed as argument, the collection will also includes the AutoSegments directly perpandicular to the aligned set\&.
+.PP
+\fBRemark: AutoSegments are forced to be aligneds only when connected through\fP
+.RS 4
+\fBAutoContactHTee\fP or \fBAutoContactVTee\fP\&. 
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAutoSegments_Aligneds\fP (\fBAutoSegment\fP * master, unsigned int flags = \fCKbNoFlags\fP)\fC [inline]\fP"
+Create a collection of all the \fBAutoSegment\fP aligned on \fCmaster\fP (master itself is excluded from the Collection)\&. If the flag \fBKatabatic::KbWithPerpands\fP is given the directly perpandicular \fBAutoSegment\fP will also be includeds\&. 
+.SS "\fBAutoSegments_Aligneds\fP (const \fBAutoSegments_Aligneds\fP & autosegments)\fC [inline]\fP"
+Copy constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAutoSegmentHC\fP * getClone () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection\&. 
+.PP
+Implements \fBCollection< Type >\fP\&.
+.SS "\fBAutoSegmentHC\fP * getLocator () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection Locator\&. 
+.PP
+Implements \fBCollection< Type >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

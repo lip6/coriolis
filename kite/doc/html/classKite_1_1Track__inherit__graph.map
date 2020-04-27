@@ -1,4 +1,4 @@
 <map id="Track" name="Track">
-<area shape="rect" id="node2" href="$classKite_1_1HorizontalTrack.html" title="Horizontal track managment. " alt="" coords="5,80,120,107"/>
-<area shape="rect" id="node3" href="$classKite_1_1VerticalTrack.html" title="Vertical track managment. " alt="" coords="144,80,243,107"/>
+<area shape="rect" id="node2" href="$classKite_1_1HorizontalTrack.html" title="Horizontal track managment. " alt="" coords="5,80,131,107"/>
+<area shape="rect" id="node3" href="$classKite_1_1VerticalTrack.html" title="Vertical track managment. " alt="" coords="155,80,263,107"/>
 </map>

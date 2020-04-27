@@ -52,7 +52,7 @@ ChipStages  = DoChip|DoPlacement|DoRouting
 framework   = CRL.AllianceFramework.get()
 
 
-def ScriptMain ( **kw ):
+def scriptMain ( **kw ):
   success  = False
   if kw.has_key('doStages'):
     doStages = kw['doStages']
@@ -63,7 +63,7 @@ def ScriptMain ( **kw ):
   
     if doStages & DoPlacement:
       if doStages & DoChip:
-        success = plugins.ChipPlace.ScriptMain( **kw )
+        success = plugins.ChipPlace.scriptMain( **kw )
         if not success: return False
       else:
         if cell.getAbutmentBox().isEmpty():
@@ -74,7 +74,7 @@ def ScriptMain ( **kw ):
           if editor: editor.fit()
 
         if doStages & DoClockTree:
-          success = plugins.ClockTreePlugin.ScriptMain( **kw )
+          success = plugins.ClockTreePlugin.scriptMain( **kw )
          #if not success: return False
         else:
           etesian = Etesian.EtesianEngine.create( cell )
@@ -95,7 +95,7 @@ def ScriptMain ( **kw ):
       cell.setName( cell.getName()+'_r' )
       framework.saveCell( cell, CRL.Catalog.State.Logical )
   
-    plugins.RSavePlugin.ScriptMain( **kw )
+    plugins.RSavePlugin.scriptMain( **kw )
 
   except Exception, e:
     print helpers.io.catch( e )
@@ -128,11 +128,11 @@ if __name__ == '__main__':
   if options.script:
     try:
       module = __import__( options.script, globals(), locals() )
-      if not module.__dict__.has_key('ScriptMain'):
+      if not module.__dict__.has_key('scriptMain'):
           print '[ERROR] Script module <%s> do not contains a ScripMain() function.' % options.script
           sys.exit(1)
 
-      cell = module.__dict__['ScriptMain']( **kw )
+      cell = module.__dict__['scriptMain']( **kw )
       kw['cell'] = cell
 
     except ImportError, e:
@@ -150,7 +150,7 @@ if __name__ == '__main__':
   elif options.cell:
     kw['cell'] = framework.getCell( options.cell, CRL.Catalog.State.Views )
 
-  success = ScriptMain( **kw )
+  success = scriptMain( **kw )
   shellSuccess = 0
   if not success: shellSuccess = 1
 

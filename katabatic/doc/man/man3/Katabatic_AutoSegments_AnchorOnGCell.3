@@ -1,0 +1,62 @@
+.TH "AutoSegments_AnchorOnGCell" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoSegments_AnchorOnGCell \- All \fBAutoSegment\fP Beginning and/or Stopping in a \fBGCell\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBCollection< Type >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAutoSegments_AnchorOnGCell\fP (\fBGCell\fP *fcell, unsigned int flags)"
+.br
+.ti -1c
+.RI "\fBAutoSegments_AnchorOnGCell\fP (const \fBAutoSegments_AnchorOnGCell\fP &)"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHC\fP * \fBgetClone\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHL\fP * \fBgetLocator\fP () const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+All \fBAutoSegment\fP Beginning and/or Stopping in a \fBGCell\fP\&. 
+
+A Collection to iterate over all the \fBAutoSegment\fP that begin from and/or end in a \fBGCell\fP\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAutoSegments_AnchorOnGCell\fP (\fBGCell\fP * fcell, unsigned int flags)\fC [inline]\fP"
+Create a collection of all the \fBAutoSegment\fP beginning from and/or ending in \fCfcell\fP\&. The set returned by the Collection is selected through \fCflags\fP :
+.IP "\(bu" 2
+Katabatic::KbBySource : include \fBAutoSegment\fP starting from \fCfcell\fP\&.
+.IP "\(bu" 2
+Katabatic::KbByTarget : include \fBAutoSegment\fP ending in \fCfcell\fP\&.
+.IP "\(bu" 2
+\fBKatabatic::KbHorizontal\fP : include horizontal \fBAutoSegment\fP\&.
+.IP "\(bu" 2
+\fBKatabatic::KbVertical\fP : include vertical \fBAutoSegment\fP\&. 
+.PP
+
+.SS "\fBAutoSegments_AnchorOnGCell\fP (const \fBAutoSegments_AnchorOnGCell\fP & autosegments)\fC [inline]\fP"
+Copy constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAutoSegmentHC\fP * getClone () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection\&. 
+.PP
+Implements \fBCollection< Type >\fP\&.
+.SS "\fBAutoSegmentHC\fP * getLocator () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection Locator\&. 
+.PP
+Implements \fBCollection< Type >\fP\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

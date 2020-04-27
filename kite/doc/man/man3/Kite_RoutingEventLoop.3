@@ -1,0 +1,81 @@
+.TH "RoutingEventLoop" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RoutingEventLoop \- Simple loop dectector for \fBRoutingEvent\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBRoutingEventLoop\fP (size_t depth=10, int limit=20)"
+.br
+.ti -1c
+.RI "bool \fBisLooping\fP () const"
+.br
+.ti -1c
+.RI "int \fBgetMaxCount\fP () const"
+.br
+.ti -1c
+.RI "const std::vector< Element > & \fBgetElements\fP () const"
+.br
+.ti -1c
+.RI "void \fBupdate\fP (size_t id)"
+.br
+.ti -1c
+.RI "void \fBerase\fP (size_t id)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Simple loop dectector for \fBRoutingEvent\fP\&. 
+
+The \fBRoutingEventLoop\fP can be roughly understood as a truncated histogram of the \fCdepth\fP last (in the time meaning) greatest riped up elements\&.
+.PP
+The loop detector keep track of the \fCdepth\fP \fBTrackElement\fP with the greatest processing count\&. \fBTrackElement\fP are just identified through the \fCid\fP of their associated AutoSegment\&. Each entry in the loop table contains:
+.IP "\(bu" 2
+The \fCid\fP of the associated \fBTrackSegment\fP (\fBKatabatic::AutoSegment\fP)\&.
+.IP "\(bu" 2
+The \fCcount\fP of times it has been processed
+.IP "\(bu" 2
+The \fCtimestamp\fP of the latest time it has been updated\&.
+.PP
+.PP
+The table (implemented as \fCvector<>\fP) it kept sorted on the timestamp (decreasing)\&. Whenever there is more than \fCdepth\fP elements in the table, the oldest one are discarted (regardless of their count)\&. Obviously, there are pathological cases into which a loop cannot be detected, but so far it has not happened so a more robust approach seems not necessary at this time\&.
+.PP
+Whenever the count of an element reaches \fCcountLimit\fP, the looping flag is set\&. It will remains set unless the faulty element is manually removed\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBRoutingEventLoop\fP (size_t depth = \fC10\fP, int countLimit = \fC20\fP)"
+Construct a loop detector that handle \fCdepth\fP differents segments and has a looping threshold of \fCcountLimit\fP\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "bool isLooping () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the loop threshold has been reached for at least one element\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "int getMaxCount () const\fC [inline]\fP"
+The maximal count an element as reached so far\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "const std::vector< Element > & getElements () const\fC [inline]\fP"
+The complete table elements\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "void update (size_t id)"
+Update the loop, telling that element \fCid\fP has appreared one more time\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+.SS "void erase (size_t id)"
+Remove the entry related to element \fCid\fP in the table\&. The state of the table is fully recomputed after the removal (looping flag & maximum count)\&.
+.PP
+This method is used when a loop has been encountered, presumably on element \fCid\fP, and we want to continue\&. To avoid the loop detector yelling at each check, the associated \fBTrackElement\fP should be invalidated and it's reference removed from the table\&. 
+.PP
+Referenced by RoutingEvent::process()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

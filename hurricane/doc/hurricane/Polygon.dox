@@ -16,6 +16,8 @@
   *
   *                The minimal step length for the manhattanisation is set up with
   *                DbU::setPolygonStep().
+  *
+  *  \warning      Polygon objects \b cannot be exported in symbolic layout.
   */
 
 

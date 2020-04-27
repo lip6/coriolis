@@ -1,0 +1,242 @@
+.TH "Session" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Session \- \fBKite\fP update \fBSession\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBSession\fP\&.
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBSession\fP * \fBopen\fP (\fBKiteEngine\fP *)"
+.br
+.ti -1c
+.RI "static \fBSession\fP * \fBget\fP (const char *message=NULL)"
+.br
+.ti -1c
+.RI "static \fBKatabatic::Session\fP * \fBbase\fP ()"
+.br
+.ti -1c
+.RI "static bool \fBisEmpty\fP ()"
+.br
+.ti -1c
+.RI "static \fBKiteEngine\fP * \fBgetKiteEngine\fP ()"
+.br
+.ti -1c
+.RI "static Configuration * \fBgetConfiguration\fP ()"
+.br
+.ti -1c
+.RI "static \fBNet\fP * \fBgetBlockageNet\fP ()"
+.br
+.ti -1c
+.RI "static \fBNegociateWindow\fP * \fBgetNegociateWindow\fP ()"
+.br
+.ti -1c
+.RI "static \fBKatabatic::GCell\fP * \fBgetGCellUnder\fP (\fBDbU::Unit\fP, \fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "static void \fBaddInsertEvent\fP (\fBTrackElement\fP *, \fBTrack\fP *)"
+.br
+.ti -1c
+.RI "static void \fBaddRemoveEvent\fP (\fBTrackElement\fP *)"
+.br
+.ti -1c
+.RI "static void \fBaddMoveEvent\fP (\fBTrackElement\fP *, \fBTrack\fP *)"
+.br
+.ti -1c
+.RI "static void \fBaddSortEvent\fP (\fBTrack\fP *, bool forced=false)"
+.br
+.ti -1c
+.RI "static size_t \fBrevalidate\fP ()"
+.br
+.ti -1c
+.RI "static \fBTrackElement\fP * \fBlookup\fP (\fBSegment\fP *)"
+.br
+.ti -1c
+.RI "static \fBTrackElement\fP * \fBlookup\fP (\fBAutoSegment\fP *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBKite\fP update \fBSession\fP\&. 
+
+\fBSession\fP extend the Katabatic update session to the \fBKite\fP router level\&. Mainly by managing \fBTrack\fP update\&.
+.PP
+\fBDifference between \fBKite\fP & Katabatic sessions:\fP
+.IP "\(bu" 2
+In Katabatic, segments are actually moved \fIbefore\fP the revalidation, then \fIduring\fP the revalidation, contacts and topologies are adjusteds
+.IP "\(bu" 2
+In \fBKite\fP, nothing is moved until the revalidation\&. Requests for segment displacement are queued for the session\&.
+.PP
+.PP
+\fBAsymmetry between invalidation & revalidation:\fP
+.IP "\(bu" 2
+When a \fBTrackSegment\fP (or directly an AutoSegment) is invalidated both associated AutoSegment and \fBTrackSegment\fP are invalidated (through the Observer mechanism)\&.
+.IP "\(bu" 2
+When an AutoSegment is revalidated, the \fBTrackSegment\fP is \fBnot\fP immediatly revalidated\&. See the revalidate algorithm for more details\&.
+.PP
+.PP
+\fBIndirect \fBTrackSegment\fP invalidation:\fP
+.IP "\(bu" 2
+\fBTrackSegment\fP invalidation do not result only from direct insertion in \fBTrack\fP\&. For example, any or all of it's perpandicular can be invalidated trough the \fBKatabatic::Session\fP update (the perpandicular \fBKatabatic::AutoSegment\fP is revalidated, generating invalidation on their associated \fBTrackSegment\fP)\&.
+.PP
+.PP
+For details on how Katabatic Sessions works, have a look to \fBKatabatic::Session\fP\&.
+.SH "The Session Mechanism\&."
+.PP
+Delayed modification procedure :
+.IP "\(bu" 2
+Modifications events are recorded (queued) into the \fBSession\fP\&. At this step, no modification are actually done, the data-base retains it's previous state and coherency\&.
+.IP "\(bu" 2
+The \fC\fBrevalidate()\fP\fP procedure is called (or the \fBSession\fP is closed), then all the modification events are applied\&. The data-base is in now in it's new state\&.
+.PP
+.SH "The Revalidate Algorithm\&."
+.PP
+Revalidation steps :
+.IP "\(bu" 2
+Process all remove events\&. detach \fBTrackSegment\fP from their \fBTrack\fP, but do not remove the pointer from the internal \fCvector\fP\&.
+.IP "\(bu" 2
+Pack all \fBTrack\fP in which removal have took place\&.
+.IP "\(bu" 2
+Process all insert events\&. \fBThis is the time \fBTrackSegment\fP are moved into their new \fBTrack\fP (physical displacement)\fP\&. It is at this point that the invalidation of both AutoSegment and \fBTrackSegment\fP is done\&.
+.IP "\(bu" 2
+Call the \fBKatabatic::Session::revalidate()\fP method which will recompute the correct contact extensions and topologies\&. \fIAfter\fP this step the Katabatic data-base is up to date, but \fInot\fP the \fBKite\fP one\&. AutoSegment are revalidated\&.
+.IP "\(bu" 2
+Recompute the canonical position of source and target of all invalidateds \fBTrackSegment\fP (take account of extention modifications)\&. The set of invalidated \fBTrackSegment\fP is computed from the revalidated AutoSegment, that is AutoSegment that are canonical\&.
+.IP "\(bu" 2
+Perform a sort() on all \fBTrack\fP that have been modifieds\&.
+.IP "\(bu" 2
+Now that the size of the segments have been accurately computed, look for revalidateds \fBTrackSegment\fP that:
+.IP "  1." 6
+Can be reduced, generate a track remove event\&.
+.IP "  2." 6
+Must be raised, generate a routing event (put into the queue)\&.
+.PP
+
+.IP "\(bu" 2
+Process the additional track remove events\&.
+.PP
+.PP
+\fBNote:\fP We cannot use the Observer mechanism to automatically update \fBTrackSegment\fP from an AutoSegment, because we must wait for all AutoSegments (canonical or not) involved into the \fBTrackSegment\fP to be up to date before we can update it\&.
+.PP
+\fBNote:\fP Have to talk about the special case when new canonical AutoSegment appears after dogleg creation\&.
+.SH "The Lookup Mechanism"
+.PP
+There are two lookup mechanisms:
+.IP "\(bu" 2
+From a \fBHurricane::Segment\fP, we uses the Katabatic segment lookup table (slow, stored in a \fCmap<>\fP)\&.
+.IP "\(bu" 2
+From a \fBKatabatic::AutoSegment\fP, we uses the Observer, it's owner is the \fBTrackSegment\fP (fast)\&. 
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBSession\fP * open (\fBKiteEngine\fP * kite)\fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIkite\fP A \fBKite\fP ToolEngine on which to work\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+A new \fBKite\fP update \fBSession\fP\&.
+.RE
+.PP
+Open a new \fBKite\fP update \fBSession\fP on the \fCkite\fP \fCToolEngine\fP\&. At this point only one session can be opened at a time\&. Attempt to open a second one will result in an exception\&. 
+.SS "\fBSession\fP * get (const char * message = \fCNULL\fP)\fC [static]\fP"
+\fBReturns:\fP The currently opened session, \fCNULL\fP if no session has been opened\&. 
+.PP
+Referenced by NegociateWindow::run()\&.
+.SS "\fBKatabatic::Session\fP * base ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The \fBSession\fP, casted as it's base object\&. 
+.SS "bool isEmpty ()\fC [inline]\fP, \fC [static]\fP"
+Ensure that the \fBSession\fP is empty and can be closed (deleted) safely\&. 
+.PP
+Referenced by NegociateWindow::run()\&.
+.SS "\fBKiteEngine\fP * getKiteEngine ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The \fBKite\fP ToolEngine associated to the current update session (proxy helper)\&. 
+.PP
+Referenced by Manipulator::canRipup(), SegmentFsm::conflictSolveByHistory(), SegmentFsm::conflictSolveByPlaceds(), NegociateWindow::createTrackSegment(), SegmentAction::doAction(), RoutingEvent::process(), RoutingEvent::revalidate(), Manipulator::ripple(), Manipulator::ripupPerpandiculars(), NegociateWindow::run(), SegmentFsm::SegmentFsm(), and NegociateWindow::setGCells()\&.
+.SS "Configuration * getConfiguration ()\fC [static]\fP"
+\fBReturns:\fP The \fBKite\fP Configuration of the Router (proxy helper)\&. 
+.SS "\fBNet\fP * getBlockageNet ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The net used to create blockage components (proxy helper)\&. 
+.PP
+Referenced by TrackFixedSegment::create()\&.
+.SS "\fBNegociateWindow\fP * getNegociateWindow ()\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The current \fBNegociateWindow\fP (proxy helper)\&. 
+.PP
+Referenced by TrackSegment::_postDoglegs(), and TrackSegment::reschedule()\&.
+.SS "\fBKatabatic::GCell\fP * getGCellUnder (\fBDbU::Unit\fP x, \fBDbU::Unit\fP y)\fC [inline]\fP, \fC [static]\fP"
+\fBReturns:\fP The GCell under \fC\fP(x,y) (proxy helper, see \fBKatabatic::GCellGrid::getGCell()\fP)\&. 
+.PP
+Referenced by SegmentFsm::conflictSolveByHistory()\&.
+.SS "void addInsertEvent (\fBTrackElement\fP * segment, \fBTrack\fP * track)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsegment\fP An AutoSegment to insert in a \fBTrack\fP\&. 
+.br
+\fItrack\fP The \fBTrack\fP into which the \fIsegment\fP will be inserted\&.
+.RE
+.PP
+Schedule the insertion of \fIsegment\fP into \fBTrack\fP \fItrack\fP\&. The \fIsegment\fP must not already be part of a \fBTrack\fP\&. 
+.SS "void addRemoveEvent (\fBTrackElement\fP * segment)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsegment\fP A \fBTrackSegment\fP to remove from a \fBTrack\fP\&.
+.RE
+.PP
+Schedule the removal of \fIsegment\fP from \fBTrack\fP \fItrack\fP\&. 
+.PP
+Referenced by SegmentAction::doAction(), and TrackSegment::reschedule()\&.
+.SS "void addMoveEvent (\fBTrackElement\fP * segment, \fBTrack\fP * track)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsegment\fP An AutoSegment to move into a new \fBTrack\fP\&. 
+.br
+\fItrack\fP The \fBTrack\fP into which the \fIsegment\fP will be moved\&.
+.RE
+.PP
+Schedule the displacement of \fIsegment\fP into \fBTrack\fP \fItrack\fP\&. 
+.SS "void addSortEvent (\fBTrack\fP * track, bool forced = \fCfalse\fP)\fC [inline]\fP, \fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fItrack\fP The \fBTrack\fP to update\&. 
+.br
+\fIforced\fP Force the invalidation of the \fC\fBTrack\fP\fP\&.
+.RE
+.PP
+Schedule the update of \fBTrack\fP \fItrack\fP\&. If the \fC\fBTrack\fP\fP has not been invalidated, no actual sort will takes place\&. To force a sort (manually invalidating the \fC\fBTrack\fP\fP), sets \fBforced\fP to \fBtrue\fP\&.
+.PP
+\fBSee also:\fP  Track::pack() & Track::sort()\&. 
+.PP
+Referenced by TrackSegment::revalidate()\&.
+.SS "void revalidate ()\fC [inline]\fP, \fC [static]\fP"
+Applies all the requested modifications, but keeping the session opened\&. 
+.PP
+Referenced by RoutingEvent::process(), NegociateWindow::run(), and NegociateWindow::setGCells()\&.
+.SS "\fBTrackElement\fP * lookup (\fBSegment\fP * segment)\fC [static]\fP"
+\fBReturns:\fP the \fBTrackElement\fP associated to \fCsegment\fP\&. 
+.PP
+Referenced by NegociateWindow::computeWirelength(), TrackSegment::create(), TrackSegment::getCanonical(), TrackSegment::getParent(), TrackSegment::getSourceDogleg(), TrackSegment::getTargetDogleg(), Manipulator::relax(), RoutingEventQueue::repushInvalidateds(), and NegociateWindow::setGCells()\&.
+.SS "\fBTrackElement\fP * lookup (\fBAutoSegment\fP * segment)\fC [static]\fP"
+\fBReturns:\fP the \fBTrackElement\fP associated to \fCsegment\fP\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

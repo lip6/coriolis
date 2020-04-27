@@ -1,0 +1,199 @@
+.TH "SegmentAction" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+SegmentAction \- Store request for an event to be generated on a \fBTrackElement\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBType\fP { \fBSelf\fP = (1<< 0), \fBOther\fP = (1<< 1), \fBPerpandicular\fP = (1<< 2), \fBInsert\fP = (1<< 3), \fBRipup\fP = (1<< 4), \fBRipedByLocal\fP = (1<< 5), \fBResetRipup\fP = (1<< 6), \fBToRipupLimit\fP = (1<< 7), \fBAxisHint\fP = (1<< 9), \fBPackingMode\fP = (1<<10), \fBToState\fP = (1<<11), \fBEventLevel1\fP = (1<<12), \fBEventLevel2\fP = (1<<13), \fBEventLevel3\fP = (1<<14), \fBEventLevel4\fP = (1<<15), \fBEventLevel5\fP = (1<<16), \fBSelfInsert\fP = Self |Insert, \fBSelfRipup\fP = Self |Ripup, \fBSelfRipupPerpand\fP = Self |Ripup|Perpandicular, \fBSelfRipupPerpandWithAxisHint\fP = Self |Ripup|Perpandicular|EventLevel4|AxisHint, \fBOtherRipup\fP = Other|Ripup, \fBOtherRipupPerpandAndPushAside\fP = Other|Ripup|Perpandicular|EventLevel3|AxisHint, \fBOtherRipupPerpandAndPacking\fP = Other|Ripup|Perpandicular|EventLevel4|PackingMode }"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBSegmentAction\fP (\fBTrackElement\fP *, unsigned int type, \fBDbU::Unit\fP axisHint=0, unsigned int toState=0)"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetSegment\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetType\fP () const"
+.br
+.ti -1c
+.RI "void \fBsetAxisHint\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "unsigned int \fBsetFlag\fP (unsigned int)"
+.br
+.ti -1c
+.RI "bool \fBdoAction\fP (\fBRoutingEventQueue\fP &)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Store request for an event to be generated on a \fBTrackElement\fP\&. 
+
+When an event on a \fBKite::TrackElement\fP is being processed (with the \fBSegmentFsm\fP helper), it may generate events on \fBTrackElement\fP already placed and belonging either to the same net or other ones\&. Those events are not generated and queued immediatly but instead \fBSegmentAction\fP, requesting the event generation are created and stored into a simple vector in \fBSegmentFsm\fP\&. The last operation of the \fBSegmentFsm\fP object is to call the \fBSegmentAction::doAction()\fP method on all the action to actually generate and queue the events\&. 
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBType\fP"
+Indicates the kind of action to be performed on the segment\&. In the following \fBflags\fP and \fBmasks\fP descriptions, we uses the term \fIreference segment\fP for the \fBTrackElement\fP which is associated with the currently processed \fBRoutingEvent\fP (also referenced in \fBSegmentFsm\fP)\&.
+.PP
+Here is the list of the availables actions that can be performed when (re)scheduling a \fBRoutingEvent\fP\&. It is here that we uses the \fBRoutingEvent\fP level feature to perform a local reordering of the top of the queue\&. Reordering is used to allows perpandiculars to be routed \fIbefore\fP the reference segment (instead of after) or \fIother\fP segments in conflict\&.
+.PP
+.IP "\(bu" 2
+\fBSegmentAction::SelfInsert\fP
+.br
+ \fBAction:\fP The reference segment is to be inserted in a \fBTrack\fP (placed)\&.
+.br
+ \fBEvent Level:\fP Unchanged\&.
+.IP "\(bu" 2
+\fBSegmentAction::SelfRipup\fP
+.br
+ \fBAction:\fP The reference segment is to be ripped up\&.
+.br
+ \fBEvent Level:\fP Unchanged\&.
+.IP "\(bu" 2
+\fBSegmentAction::SelfRipupPerpand\fP
+.br
+ \fBAction:\fP Ripup a segment which is a perpandicular to the reference segment\&. Ordering considerations: this perpandicular will be put back into the \fBRoutingEvent\fP queue with a lower level (priority) than the reference segment, so it will be processed again \fIafter\fP the reference segment\&.
+.br
+ \fBEvent Level:\fP Unchanged\&.
+.IP "\(bu" 2
+\fBSegmentAction::SelfRipupPerpandWithAxisHint\fP
+.br
+ \fBAction:\fP Ripup a segment which is a perpandicular to the reference segment, supplies an axis hint and put it back into the \fBRoutingEvent\fP queue so that it will be processed \fIbefore\fP the reference segment\&.
+.br
+ \fBEvent Level:\fP Increased to \fBSegmentAction::EventLevel4\fP\&.
+.IP "\(bu" 2
+\fBSegmentAction::OtherRipup\fP
+.br
+ \fBAction:\fP Ripping up a segment from another net and in the same direction as the reference segment\&.
+.br
+ \fBEvent Level:\fP Unchanged\&.
+.IP "\(bu" 2
+\fBSegmentAction::OtherRipupPerpandAndPushAside\fP
+.br
+ \fBAction:\fP Ripping up a segment from another net and in perpandicular direction\&. The level is elevated so it's priority is greater than the reference segment this it will be reprocessed first\&. An axis hint is also supplied in order to make room for the reference segment\&.
+.br
+ \fBEvent Level:\fP Increased to \fBSegmentAction::EventLevel3\fP\&.
+.IP "\(bu" 2
+\fBSegmentAction::OtherRipupPerpandAndPacking\fP
+.br
+ \fBAction:\fP Ripping up a segment from another net and in perpandicular direction\&. The level is elevated so it's priority is greater than the reference segment this it will be reprocessed first\&. The generated event is in packing mode only\&.
+.br
+ \fBEvent Level:\fP Increased to \fBSegmentAction::EventLevel4\fP\&. 
+.PP
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fISelf \fP\fP
+\fB[Flag]\fP The segment associated to the action is the reference segment \fIor segments from the same net\fP\&. 
+.TP
+\fB\fIOther \fP\fP
+\fB[Flag]\fP The segment associated to the action is \fBnot\fP from the same net as the reference segment\&. 
+.TP
+\fB\fIPerpandicular \fP\fP
+\fB[Flag]\fP The action concern a perpandicular to the reference segment\&. 
+.TP
+\fB\fIInsert \fP\fP
+\fB[Flag]\fP Request that the segment is to be inserted in the given track\&. It is the task of \fBSegmentFsm\fP to determine that there is sufficent space to do so\&. 
+.TP
+\fB\fIRipup \fP\fP
+\fB[Flag]\fP Request that the segment is to be ripped up\&. 
+.TP
+\fB\fIRipedByLocal \fP\fP
+\fB[Flag]\fP Indicate that the segment has been ripped up by a local one\&. 
+.TP
+\fB\fIResetRipup \fP\fP
+\fB[Flag]\fP The ripup count is to be reset\&. 
+.TP
+\fB\fIToRipupLimit \fP\fP
+\fB[Flag]\fP The ripup count is directly increased to the ripup limit, triggering a state change the next time the segment will be processed\&. 
+.TP
+\fB\fIAxisHint \fP\fP
+\fB[Flag]\fP An axis hint has been supplied, and is to be passed to the generated \fBRoutingEvent\fP\&. 
+.TP
+\fB\fIPackingMode \fP\fP
+\fB[Flag]\fP Whether the \fBRoutingEvent\fP should be processed in \fIpacking\fP mode or \fInegociated\fP mode (transmitted to the \fBRoutingEvent\fP)\&. 
+.TP
+\fB\fIToState \fP\fP
+\fB[Flag]\fP Force the change of state of the \fBRoutingEvent\fP (i\&.e\&. \fBDataNegociate\fP)\&. Normally the state change is done through the increase of the ripup count in \fBDataNegociate\fP\&. 
+.TP
+\fB\fIEventLevel1 \fP\fP
+\fB[Flag]\fP Increase the level to \fIat least\fP \fB1\fP\&. 
+.TP
+\fB\fIEventLevel2 \fP\fP
+\fB[Flag]\fP Increase the level to \fIat least\fP \fB2\fP\&. 
+.TP
+\fB\fIEventLevel3 \fP\fP
+\fB[Flag]\fP Increase the level to \fIat least\fP \fB3\fP\&. 
+.TP
+\fB\fIEventLevel4 \fP\fP
+\fB[Flag]\fP Increase the level to \fIat least\fP \fB4\fP\&. 
+.TP
+\fB\fIEventLevel5 \fP\fP
+\fB[Flag]\fP Increase the level to \fIat least\fP \fB5\fP\&. 
+.TP
+\fB\fISelfInsert \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.TP
+\fB\fISelfRipup \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.TP
+\fB\fISelfRipupPerpand \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.TP
+\fB\fISelfRipupPerpandWithAxisHint \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.TP
+\fB\fIOtherRipup \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.TP
+\fB\fIOtherRipupPerpandAndPushAside \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.TP
+\fB\fIOtherRipupPerpandAndPacking \fP\fP
+\fB[Mask]\fP, see \fBSegmentAction::Type\fP\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBSegmentAction\fP (\fBTrackElement\fP * segment, unsigned int type, \fBDbU::Unit\fP axisHint = \fC0\fP, unsigned int toState = \fC0\fP)"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsegment\fP On what the action is to be performed\&. 
+.br
+\fItype\fP Defines the type of action, see \fBSegmentAction::Type\fP\&. 
+.br
+\fIaxisHint\fP Specifies a preferred axis\&. 
+.br
+\fItoState\fP The \fBDataNegociate::SlackState\fP into which the segment is to be set\&.
+.RE
+.PP
+Create segment action\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBTrackElement\fP * getSegment () const\fC [inline]\fP"
+\fBReturns:\fP The associated \fCsegment\fP\&. 
+.SS "\fBSegmentAction::Type\fP getType () const\fC [inline]\fP"
+\fBReturns:\fP The action to be performed\&. 
+.SS "void setAxisHint (\fBDbU::Unit\fP axis)\fC [inline]\fP"
+The axis preferred position to be transmitted to the generated event\&. The transmition will be effective \fIonly\fP if the SegmentAction::Type::AxisHint flag is set\&. 
+.SS "unsigned int setFlag (unsigned int flags)\fC [inline]\fP"
+Allow to change the action type by indivually setting up the flags\&. 
+.SS "void doAction (\fBRoutingEventQueue\fP & queue)"
+Actually perform the action\&. That is, build and queue the appropriate event for the segment\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

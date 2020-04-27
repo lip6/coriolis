@@ -374,7 +374,7 @@ Python/Stratus scripts can be executed either in text or graphical mode.
    it must be reachable through the ``PYTHONPATH``. You may use the
    dotted module notation.
 
-A Python/Stratus script must contain a function called ``ScriptMain()``
+A Python/Stratus script must contain a function called ``scriptMain()``
 with one optional argument, the graphical editor into which it may be
 running (will be set to ``None`` in text mode). The Python interface to
 the editor (type: :cb:`CellViewer`) is limited to basic capabilities

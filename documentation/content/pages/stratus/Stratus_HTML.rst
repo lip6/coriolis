@@ -25,11 +25,15 @@ Stratus : Netlist Capture Language
 .. |xml|      image:: {attach}images/xml.png
 
 
-Printable version of this document `Stratus.pdf <{filename}/pdfs/Stratus.pdf>`_.
+Printable version of this Document
+==================================
 
-Stratus – Procedural design language based upon *Python*
+`Stratus.pdf <{filename}/pdfs/Stratus.pdf>`_
+
 
 .. contents::
    :depth: 1
+
+Stratus – Procedural design language based upon *Python*
 
 .. include:: Language.rst

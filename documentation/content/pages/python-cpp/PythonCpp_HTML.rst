@@ -17,7 +17,10 @@ Hurricane Python/C++ API Tutorial
 .. include:: ../../../etc/definitions.rst
 
 
-Printable version of this document `PythonCpp.pdf <{filename}/pdfs/PythonCpp.pdf>`_.
+Printable version of this Document
+==================================
+
+`PythonCpp.pdf <{filename}/pdfs/PythonCpp.pdf>`_
 
 
 .. contents::

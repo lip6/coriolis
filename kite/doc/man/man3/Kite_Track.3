@@ -1,0 +1,708 @@
+.TH "Track" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Track \- Structure managing one routing track\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBHorizontalTrack\fP, and \fBVerticalTrack\fP\&.
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBIndexState\fP { \fBBeginIsTrackMin\fP = 0x00000001, \fBBeginIsSegmentMin\fP = 0x00000002, \fBBeginIsSegmentMax\fP = 0x00000004, \fBEndIsTrackMax\fP = 0x00000008, \fBEndIsSegmentMin\fP = 0x00000010, \fBEndIsNextSegmentMin\fP = 0x00000020, \fBEndIsSegmentMax\fP = 0x00000040, \fBBeforeFirstElement\fP = BeginIsTrackMin |EndIsSegmentMin, \fBInsideElement\fP = BeginIsSegmentMin|EndIsSegmentMax, \fBOutsideElement\fP = BeginIsSegmentMax|EndIsNextSegmentMin, \fBAfterLastElement\fP = BeginIsSegmentMax|EndIsTrackMax, \fBEmptyTrack\fP = BeginIsTrackMin |EndIsTrackMax, \fBBeginMask\fP = BeginIsTrackMin |BeginIsSegmentMin|BeginIsSegmentMax, \fBEndMask\fP = EndIsTrackMax |EndIsSegmentMin |EndIsNextSegmentMin|EndIsSegmentMax }"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual bool \fBisHorizontal\fP () const =0"
+.br
+.ti -1c
+.RI "virtual bool \fBisVertical\fP () const =0"
+.br
+.ti -1c
+.RI "bool \fBisLocalAssigned\fP () const"
+.br
+.ti -1c
+.RI "\fBRoutingPlane\fP * \fBgetRoutingPlane\fP () const"
+.br
+.ti -1c
+.RI "\fBKiteEngine\fP * \fBgetKiteEngine\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fBgetDirection\fP () const =0"
+.br
+.ti -1c
+.RI "size_t \fBgetIndex\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetDepth\fP () const"
+.br
+.ti -1c
+.RI "const \fBLayer\fP * \fBgetLayer\fP () const"
+.br
+.ti -1c
+.RI "const \fBLayer\fP * \fBgetBlockageLayer\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetAxis\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetMin\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetMax\fP () const"
+.br
+.ti -1c
+.RI "\fBTrack\fP * \fBgetNextTrack\fP () const"
+.br
+.ti -1c
+.RI "\fBTrack\fP * \fBgetPreviousTrack\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBgetSize\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBPoint\fP \fBgetPosition\fP (\fBDbU::Unit\fP coordinate) const =0"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetSegment\fP (size_t index) const"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetSegment\fP (\fBDbU::Unit\fP position) const"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetNext\fP (size_t &index, \fBNet\fP *) const"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetPrevious\fP (size_t &index, \fBNet\fP *) const"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBgetNextFixed\fP (size_t &index) const"
+.br
+.ti -1c
+.RI "size_t \fBfind\fP (const \fBTrackElement\fP *) const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetSourcePosition\fP (vector< \fBTrackElement\fP *>::iterator) const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetMinimalPosition\fP (size_t index, unsigned int state) const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetMaximalPosition\fP (size_t index, unsigned int state) const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBgetFreeInterval\fP (\fBDbU::Unit\fP position, \fBNet\fP *net=NULL) const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBgetOccupiedInterval\fP (size_t &begin) const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBexpandFreeInterval\fP (size_t &begin, size_t &end, unsigned int state, \fBNet\fP *) const"
+.br
+.ti -1c
+.RI "void \fBgetBeginIndex\fP (\fBDbU::Unit\fP position, size_t &begin, unsigned int &state) const"
+.br
+.ti -1c
+.RI "void \fBgetOverlapBounds\fP (\fBInterval\fP, size_t &begin, size_t &end) const"
+.br
+.ti -1c
+.RI "TrackCost \fBgetOverlapCost\fP (\fBInterval\fP, \fBNet\fP *, size_t begin, size_t end, unsigned int flags) const"
+.br
+.ti -1c
+.RI "TrackCost \fBgetOverlapCost\fP (\fBInterval\fP, \fBNet\fP *, unsigned int flags) const"
+.br
+.ti -1c
+.RI "TrackCost \fBgetOverlapCost\fP (\fBTrackElement\fP *, unsigned int flags) const"
+.br
+.ti -1c
+.RI "void \fBgetTerminalWeight\fP (\fBInterval\fP, \fBNet\fP *, size_t &count, unsigned int &weight) const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetSourcePosition\fP (size_t index) const"
+.br
+.ti -1c
+.RI "bool \fBcheck\fP (unsigned int &overlaps, const char *message=NULL) const"
+.br
+.ti -1c
+.RI "void \fBinvalidate\fP ()"
+.br
+.ti -1c
+.RI "void \fBinsert\fP (\fBTrackElement\fP *)"
+.br
+.ti -1c
+.RI "void \fBinsert\fP (\fBTrackMarker\fP *)"
+.br
+.ti -1c
+.RI "void \fBsetSegment\fP (\fBTrackElement\fP *, size_t)"
+.br
+.ti -1c
+.RI "size_t \fBdoRemoval\fP ()"
+.br
+.ti -1c
+.RI "void \fBdoReorder\fP ()"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static const size_t \fBnpos\fP = (size_t)\-1"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Structure managing one routing track\&. 
+
+
+.SH "Track Purpose"
+.PP
+We use an array of \fIregularly spaced\fP \fBTrack\fP as a geometrical fast access structure\&. It allows to know whether an area is used or not\&. The whole area may be seen as a set of adjoining tiles of fixed \fIwidth\fP but variable \fIlength\fP\&.
+.PP
+The figure \fB(1\&.b)\fP show, for an horizontal, track the relation between \fCy,min,max\fP and the occupied area of the plane\&. \fCmin\fP and \fCmax\fP must take into account segment extensions (\fCe\fP) and the minimal distance between two rectangles (\fCMD\fP) of the same layer\&. We assume that the width of the segment, augmented of all it's contraints is no greater than \fCTS\fP (in fact it's how \fCTS\fP must be calculated)\&.
+.PP
+For the whole track array, see \fBRoutingPlane\fP\&.
+.PP
+Fig 1: Track Area
+.SH "Track Implementation"
+.PP
+A \fBTrack\fP is implemented with a sorted vector of \fBTrackElement\fP\&. TrackElements from differents nets must not overlap\&. The sorting order is defined as follow:
+.IP "\(bu" 2
+TrackElements are sorted by increasing source (\fImin\fP) positions\&.
+.IP "\(bu" 2
+In case of overlap (i\&.e\&. belongs to the same net), if they share the same source position, then they are sorted by \fIdecreasing\fP length\&. This way, the longest one will be the first encountered when walking through the \fBTrack\fP in increasing index order\&.
+.PP
+.PP
+Figure \fB2\&.b\fP shows the details of the \fBTrack\fP \fB[1]\fP of figure \fB1\&.a\fP\&. Net \fB<d>\fP show an exemple of overlapping\&.
+.PP
+Fig 2: Track Structure Track Structure
+.PP
+In addition to the TrackSegments, the \fBTrack\fP also manage additionnal informations through a second vector of TrackMarkers\&. \fBTrackMarker\fP are currently used only to hints at how strongly a terminal is dependant on that portion of \fBTrack\fP to be accessed\&.
+.SS "Indexes vs\&. Iterators"
+Numerical indexes have been prefered over iterators because they can be used more easily by objects other the \fBTrack\fP itself for referencing\&. So internal managment follow the same rule, handling indexes or reference to indexes\&.
+.SS "Update Mechanism"
+When a \fBTrackElement\fP is normaly inserted in a \fBTrack\fP, a two way link is established\&. The \fBTrack\fP has an entry in it's vector refering to \fBTrackElement\fP, and conversely, the \fBTrackElement\fP has it's \fCtrack\fP field pointing to it's owning \fBTrack\fP\&.
+.PP
+\fB\fBTrackElement\fP Removal\fP
+.PP
+To remove a \fBTrackElement\fP from a \fBTrack\fP, we break one of those two links: the \fBTrackElement\fP cease to refer to the owning \fBTrack\fP, marking him for removal which will occurs at the next track revalidation (\fBTrack::doRemoval()\fP)\&. In figure \fB3\fP, the \fBTrackElement\fP belonging to net \fB<b>\fP is marked for removal\&.
+.PP
+Fig 3: TrackElement Removal \fB\fBTrackElement\fP Insertion\fP
+.PP
+When a \fBTrackElement\fP is inserted into a \fBTrack\fP, the two way link is immediatly created (but the \fBTrackElement\fP is not yet at it's final place in the \fBTrack\fP's vector)\&. Before inserting a \fBTrackElement\fP we check that it's been already detached (\fCtrack\fP field to \fCNULL\fP)\&.
+.PP
+It is at that step that the \fBTrackElement\fP axis is actually updated through a call to \fBTrackElement::setAxis()\fP\&.
+.PP
+\fBRevalidation Sequence\fP
+.PP
+After a \fBTrack\fP has been modificated either the \fBTrack\fP element vector or the MarkerElement vector (or both) has been invalidateds\&. Revalidation take place in three steps:
+.IP "\(bu" 2
+\fBTrack::doRemoval()\fP, remove all \fBTrackElement\fP marked for removal\&.
+.IP "\(bu" 2
+\fBTrack::insert()\fP, insert the \fBTrackElement\fP into their new \fBTrack\fP\&.
+.IP "\(bu" 2
+\fBTrack::doReorder()\fP, sort the \fBTrackElement\fP of the vector, that is, put the newly inserted elements at their right place\&.
+.PP
+.PP
+Each step must be done \fIfor all Tracks\fP before proceeding to the next\&. This way a \fBTrackElement\fP \fCtrack\fP field doesn't get set \fIbefore\fP it has been actually removed from it's previous \fBTrack\fP\&.
+.SS "Main Operations on Tracks"
+\fBHelper Function:\fP \fBTrack::getBeginIndex()\fP
+.PP
+Return in \fCbegin\fP the index of the \fBTrackElement\fP whose minimum is immediately below the requested \fCposition\fP on the \fBTrack\fP axis\&. The second returned parameter \fCstate\fP is a set of flags to tell how the \fCbegin\fP index has to be interpreted\&.
+.PP
+\fBHelper Function:\fP \fBTrack::getOccupiedInterval()\fP
+.PP
+Returns the complete interval of a set of overlapping \fBTrackElement\fP from the same net\&. 
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBIndexState\fP"
+Indicates how to compute the bounds of the interval enclosing a given \fCposition\fP on track axis\&.
+.PP
+\fBNote:\fP
+.RS 4
+According to \fIposition\fP, the interval can be a free interval or a used interval\&. 
+.RE
+.PP
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIBeginIsTrackMin \fP\fP
+(implies \fCbegin=0\fP) there is no \fBTrackElement\fP \fIbefore\fP \fCposition\fP 
+.TP
+\fB\fIBeginIsSegmentMin \fP\fP
+The \fCbegin\fP segment starts \fIbefore\fP \fCposition\fP and ends \fIafter\fP\&. 
+.TP
+\fB\fIBeginIsSegmentMax \fP\fP
+The \fCbegin\fP segment starts and ends \fIbefore\fP \fCposition\fP\&. 
+.TP
+\fB\fIEndIsTrackMax \fP\fP
+There is no \fBTrackElement\fP \fIafter\fP \fCposition\fP\&. 
+.TP
+\fB\fIEndIsSegmentMin \fP\fP
+The \fCbegin\fP segment starts \fIbefore\fP \fCposition\fP\&. 
+.TP
+\fB\fIEndIsNextSegmentMin \fP\fP
+The \fCbegin\fP segment starts and ends \fIbefore\fP \fCposition\fP\&. So the maximum is given by the \fCminimum\fP of the \fInext\fP \fBTrackElement\fP\&. 
+.TP
+\fB\fIEndIsSegmentMax \fP\fP
+The \fCbegin\fP segment starts \fIbefore\fP \fCposition\fP and ends \fIafter\fP\&. 
+.TP
+\fB\fIBeforeFirstElement \fP\fP
+the \fCposition\fP is before the first \fBTrackElement\fP\&. 
+.TP
+\fB\fIInsideElement \fP\fP
+the \fCposition\fP is inside a \fBTrackElement\fP\&. 
+.TP
+\fB\fIOutsideElement \fP\fP
+the \fCposition\fP is in free zone between two TrackElements\&. 
+.TP
+\fB\fIAfterLastElement \fP\fP
+the position is after the end of the last element\&. 
+.TP
+\fB\fIEmptyTrack \fP\fP
+the track is still empty\&. 
+.TP
+\fB\fIBeginMask \fP\fP
+To extract the \fIbegin\fP part from a combination of flags\&. 
+.TP
+\fB\fIEndMask \fP\fP
+To extract the \fIend\fP part from a combination of flags\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "bool isHorizontal () const\fC [pure virtual]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fBTrack\fP in horizontal direction\&. 
+.PP
+Implemented in \fBHorizontalTrack\fP, and \fBVerticalTrack\fP\&.
+.PP
+Referenced by TrackFixedSegment::isHorizontal()\&.
+.SS "bool isVertical () const\fC [pure virtual]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fBTrack\fP in vertical direction\&. 
+.PP
+Implemented in \fBHorizontalTrack\fP, and \fBVerticalTrack\fP\&.
+.PP
+Referenced by TrackFixedSegment::isVertical()\&.
+.SS "bool isLocalAssigned () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP is the \fBTrack\fP should be preferentially used for local routing\&. 
+.SS "\fBRoutingPlane\fP * getRoutingPlane () const\fC [inline]\fP"
+\fBReturns:\fP The \fBRoutingPlane\fP owning this \fBTrack\fP\&. 
+.PP
+Referenced by Track::getNextTrack(), and Track::getPreviousTrack()\&.
+.SS "\fBKiteEngine\fP * getKiteEngine () const"
+\fBReturns:\fP The \fBKiteEngine\fP owning this \fBTrack\fP\&. 
+.SS "unsigned int getDirection () const\fC [pure virtual]\fP"
+\fBReturns:\fP The direction of the \fBTrack\fP, either Katabatic::KbHorizontal or Katabatic::KbVertical\&. 
+.PP
+Implemented in \fBHorizontalTrack\fP, and \fBVerticalTrack\fP\&.
+.PP
+Referenced by TrackFixedSegment::getDirection()\&.
+.SS "\fBRoutingPlane\fP * getIndex () const\fC [inline]\fP"
+\fBReturns:\fP The index of this \fBTrack\fP in the \fBRoutingPlane\fP \fBTrack\fP vector\&. 
+.PP
+Referenced by Track::check(), Track::getNextTrack(), and Track::getPreviousTrack()\&.
+.SS "unsigned int getDepth () const"
+\fBReturns:\fP The depth (as given by the RoutingGauge) of the \fBTrack\fP's layer\&. 
+.SS "\fBLayer\fP * getLayer () const"
+\fBReturns:\fP The \fCLayer\fP of the \fBTrack\fP\&. 
+.PP
+Referenced by Track::insert()\&.
+.SS "\fBLayer\fP * getBlockageLayer () const"
+\fBReturns:\fP The associated blockage \fCLayer\fP to the \fBTrack\fP's layer\&. 
+.PP
+Referenced by Track::insert()\&.
+.SS "\fBDbU::Unit\fP getAxis () const\fC [inline]\fP"
+\fBReturns:\fP The Axis of the \fBTrack\fP\&. 
+.PP
+Referenced by Track::check(), NegociateWindow::createTrackSegment(), TrackFixedSegment::getAxis(), VerticalTrack::getPosition(), HorizontalTrack::getPosition(), Track::insert(), RoutingEvent::revalidate(), Manipulator::ripupPerpandiculars(), and SegmentFsm::SegmentFsm()\&.
+.SS "\fBDbU::Unit\fP getMin () const\fC [inline]\fP"
+\fBReturns:\fP The minimal allowed coordinate of the \fBTrack\fP\&. 
+.PP
+Referenced by Manipulator::minimize()\&.
+.SS "\fBDbU::Unit\fP getMax () const\fC [inline]\fP"
+\fBReturns:\fP The maximal allowed coordinate of the \fBTrack\fP\&. 
+.SS "\fBTrack\fP * getNextTrack () const"
+\fBReturns:\fP The next \fBTrack\fP in the \fC\fBRoutingPlane\fP\fP vector\&. That is the one with the axis immediatly superior\&. 
+.PP
+Referenced by NegociateWindow::createTrackSegment(), RoutingEvent::revalidate(), and Manipulator::ripupPerpandiculars()\&.
+.SS "\fBTrack\fP * getPreviousTrack () const"
+\fBReturns:\fP The previous \fBTrack\fP in the \fC\fBRoutingPlane\fP\fP vector\&. That is the one with the axis immediatly inferior\&. 
+.PP
+Referenced by NegociateWindow::createTrackSegment()\&.
+.SS "size_t getSize () const\fC [inline]\fP"
+\fBReturns:\fP The total number of \fBTrackSegment\fP in the \fBTrack\fP\&. 
+.PP
+Referenced by Track::getMaximalPosition(), and Track::getSegment()\&.
+.SS "\fBPoint\fP getPosition (\fBDbU::Unit\fP position) const\fC [pure virtual]\fP"
+\fBReturns:\fP the point at \fC\fP(position,\fBgetAxis()\fP) for horizontal \fBTrack\fP at or \fC\fP(\fBgetAxis()\fP,position) for vertical \fBTrack\fP\&. 
+.PP
+Implemented in \fBHorizontalTrack\fP, and \fBVerticalTrack\fP\&.
+.SS "\fBTrackSegment\fP * getSegment (size_t index) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP The index of the \fBTrackSegment\fP\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The \fBTrackSegment\fP at \fIindex\fP\&. The result will be \fCNULL\fP in the follwing cases :
+.IP "\(bu" 2
+\fIindex\fP is outside the sorted zone\&.
+.IP "\(bu" 2
+\fIindex\fP points to a hole in the \fBTrack\fP\&.
+.IP "\(bu" 2
+\fIindex\fP is equal to \fBTrack::npos\fP\&. 
+.PP
+.RE
+.PP
+
+.PP
+Referenced by SegmentFsm::conflictSolveByPlaceds(), NegociateWindow::createTrackSegment(), SegmentFsm::desaturate(), Manipulator::forceOverLocals(), Manipulator::forceToTrack(), Track::getSegment(), Manipulator::insertInTrack(), Manipulator::makeDogleg(), Manipulator::minimize(), and Manipulator::shrinkToTrack()\&.
+.SS "\fBTrackSegment\fP * getSegment (\fBDbU::Unit\fP position) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIposition\fP The position where to search\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The \fBTrackSegment\fP whose starting point is immediatly inferior to \fIposition\fP\&. 
+.RE
+.PP
+
+.SS "\fBTrackSegment\fP * getNext (size_t & index, \fBNet\fP * net) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of the starting \fBTrackSegment\fP\&. 
+.br
+\fInet\fP A \fCNet\fP to ignore\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The next \fBTrackSegment\fP (\fCNULL\fP if not found)\&.
+.RE
+.PP
+Find, starting from \fBTrackSegment\fP at \fIindex\fP the next \fBTrackSegment\fP ignoring \fBTrackSegment\fP from \fInet\fP\&. \fIindex\fP is modified to point on the returned \fBTrackSegment\fP\&. If there's no next \fBTrackSegment\fP (\fCNULL\fP) then index is set to \fBTrack::npos\fP\&. 
+.PP
+Referenced by Track::expandFreeInterval(), TrackFixedSegment::getNext(), TrackSegment::getNext(), TrackElement::getNext(), and Track::getNextFixed()\&.
+.SS "\fBTrackSegment\fP * getPrevious (size_t & index, \fBNet\fP * net) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of the starting \fBTrackSegment\fP\&. 
+.br
+\fInet\fP A \fCNet\fP to ignore\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The previous \fBTrackSegment\fP (\fCNULL\fP if not found)\&.
+.RE
+.PP
+find, starting from \fBTrackSegment\fP at \fIindex\fP the previous \fBTrackSegment\fP ignoring \fBTrackSegment\fP from \fInet\fP\&. \fIindex\fP is modified to point on the returned \fBTrackSegment\fP\&. If there's no previous \fBTrackSegment\fP (\fCNULL\fP) then index is set to \fBTrack::npos\fP\&. 
+.PP
+Referenced by Track::expandFreeInterval(), TrackFixedSegment::getPrevious(), TrackSegment::getPrevious(), and TrackElement::getPrevious()\&.
+.SS "\fBTrackSegment\fP * getNextFixed (size_t & index) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Index of the starting \fBTrackSegment\fP\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The first previous \fIFixed\fP \fBTrackSegment\fP\&.
+.RE
+.PP
+find, starting from \fBTrackSegment\fP at \fIindex\fP the first previous with a \fIFixed\fP attribute set\&. \fIindex\fP is modified to point on the returned \fBTrackSegment\fP\&. If there's no previous \fBTrackSegment\fP (\fCNULL\fP) then index is set to \fBTrack::npos\fP\&. 
+.SS "size_t find (const \fBTrackElement\fP * element) const"
+\fBReturns:\fP the \fIindex\fP of \fIelement\fP inside the \fBTrack\fP\&. If the \fIelement\fP do not belongs to the \fBTrack\fP, return \fBTrack::npos\fP\&. 
+.SS "\fBDbU::Unit\fP getSourcePosition (vector< \fBTrackElement\fP *>::iterator it) const"
+\fBReturns:\fP The source position of \fBTrackSegment\fP pointed by iterator \fIit\fP\&. If \fIit\fP is equal to \fCend()\fP , returns zero\&. 
+.SS "\fBDbU::Unit\fP getMinimalPosition (size_t index, unsigned int state) const"
+\fBReturns:\fP Extract the minimal position from the interval at \fCindex\fP in accordance to \fCstate\fP hinting\&.
+.PP
+\fBSee also:\fP  \fBTrack::IndexState\fP\&. 
+.SS "\fBDbU::Unit\fP getMaximalPosition (size_t index, unsigned int state) const"
+\fBReturns:\fP Extract the maximal position from the interval at \fCindex\fP in accordance to \fCstate\fP hinting\&.
+.PP
+\fBSee also:\fP  \fBTrack::IndexState\fP\&. 
+.PP
+Referenced by Track::expandFreeInterval()\&.
+.SS "\fBInterval\fP getFreeInterval (\fBDbU::Unit\fP position, \fBNet\fP * net = \fCNULL\fP) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIposition\fP where fo find a free interval\&. 
+.br
+\fInet\fP for which net to find the free interval\&. \fBReturns:\fP The longuest free interval enclosing \fIposition\fP (may be empty)\&. 
+.RE
+.PP
+
+.SS "\fBInterval\fP getOccupiedInterval (size_t & begin) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbegin\fP index of one of the \fBTrackElement\fP set\&. May be modificated\&. \fBReturns:\fP the whole interval used by a set of overlaping \fBTrackSegment\fP\&.
+.RE
+.PP
+As \fBTrackElement\fP from a same net can overlap, the interval of one of them do not give the full extend of the \fBTrack\fP occupation at this point\&. This function looks for all overlaping segments and returns the merged interval\&. Additionnaly it sets \fCbegin\fP to the index of the lowest \fBTrackElement\fP of the set\&.
+.PP
+Fig 4: Track::getOccuppiedInterval() 
+.PP
+Referenced by Track::expandFreeInterval(), Track::getBeginIndex(), and Track::getOverlapBounds()\&.
+.SS "\fBInterval\fP expandFreeInterval (size_t & begin, size_t & end, unsigned int state, \fBNet\fP * net) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbegin\fP the lowest used \fBTrackSegment\fP\&. 
+.br
+\fIend\fP the highest used \fBTrackSegment\fP\&. 
+.br
+\fIstate\fP tells how to interpret the \fCbegin\fP & \fCend\fP indexes\&. 
+.br
+\fInet\fP the for wich we seek place\&. \fBReturns:\fP The longuest free interval between \fC\fP]begin,end[ \&.
+.RE
+.PP
+Starting from the initial \fC[begin,end]\fP interval, expand the interval to encompass all free space or segments belonging to \fCnet\fP\&. \fCstate\fP may be used to compute the interval bounds from \fCbegin\fP and \fCend\fP instead of directly using the returned \fCinterval\fP\&.
+.PP
+\fBNote:\fP
+.RS 4
+\fC\fP]begin,end[ must define a free interval between two \fBTrackSegment\fP\&. 
+.RE
+.PP
+
+.PP
+Referenced by Track::getFreeInterval()\&.
+.SS "void getBeginIndex (\fBDbU::Unit\fP position, size_t & begin, unsigned int & state) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIposition\fP The position where to search\&. 
+.br
+\fIbegin\fP Index of the immediatly inferior \fBTrackElement\fP\&. 
+.br
+\fIstate\fP how to interpret the returned \fCbegin\fP\&.
+.RE
+.PP
+Return in \fCbegin\fP the index of the \fBTrackElement\fP whose minimum is immediately below the requested \fCposition\fP on the \fBTrack\fP axis\&. The second returned parameter \fCstate\fP is a set of flags to tell how the \fCbegin\fP index has to be interpreted\&.
+.PP
+Flags for the \fCstate\fP are:
+.IP "\(bu" 2
+\fBTrack::BeginIsTrackMin\fP : (implies \fCbegin=0\fP) there is no \fBTrackElement\fP \fIbefore\fP \fCposition\fP\&.
+.IP "\(bu" 2
+\fBTrack::EndIsSegmentMin\fP : The \fCbegin\fP segment starts \fIbefore\fP \fCposition\fP\&.
+.IP "\(bu" 2
+\fBTrack::BeginIsSegmentMin\fP : The \fCbegin\fP segment starts \fIbefore\fP \fCposition\fP and ends \fIafter\fP\&.
+.IP "\(bu" 2
+\fBTrack::EndIsSegmentMax\fP : The \fCbegin\fP segment starts \fIbefore\fP \fCposition\fP and ends \fIafter\fP\&.
+.IP "\(bu" 2
+\fBTrack::BeginIsSegmentMax\fP : The \fCbegin\fP segment starts and ends \fIbefore\fP \fCposition\fP\&.
+.IP "\(bu" 2
+\fBTrack::EndIsNextSegmentMin\fP : The \fCbegin\fP segment starts and ends \fIbefore\fP \fCposition\fP\&. So the maximum is given by the \fCminimum\fP of the \fInext\fP \fBTrackElement\fP\&.
+.IP "\(bu" 2
+\fBTrack::EndIsTrackMax\fP : There is no \fBTrackElement\fP \fIafter\fP \fCposition\fP\&.
+.PP
+.PP
+Based on the previous flags, we build the \fCstate\fP parameter:
+.IP "\(bu" 2
+\fBTrack::BeforeFirstElement\fP : the \fCposition\fP is before the first \fBTrackElement\fP\&.
+.IP "\(bu" 2
+\fBTrack::InsideElement\fP : the \fCposition\fP is inside a \fBTrackElement\fP\&.
+.IP "\(bu" 2
+\fBTrack::OutsideElement\fP : the \fCposition\fP is in free zone between two TrackElements\&.
+.IP "\(bu" 2
+\fBTrack::AfterLastElement\fP : the position is after the end of the last element\&.
+.IP "\(bu" 2
+\fBTrack::EmptyTrack\fP : the track is still empty\&.
+.PP
+.PP
+To separate flags relevant to \fIbegin\fP and \fIend\fP informations, two masks are provideds:
+.IP "\(bu" 2
+\fBTrack::BeginMask\fP
+.IP "\(bu" 2
+\fBTrack::EndMask\fP
+.PP
+.PP
+Fig 3: Track::getBeginIndex() \fBReminder for myself:\fP The \fBTrack::getBeginIndex()\fP function relies on the \fCSTL\fP \fClower_bound()\fP function\&. \fClower_bound()\fP finds the \fBTrackElement\fP immediately \fIsuperior\fP to \fCposition\fP (shown on Figure \fB3\fP by the \fCLB\fP label in white on black)\&.
+.PP
+The relation between the returned \fCbegin\fP index and the position is given through the \fCstate\fP parameter\&. 
+.PP
+Referenced by Track::getFreeInterval(), Track::getOverlapBounds(), and Track::getSegment()\&.
+.SS "void getOverlapBounds (\fBInterval\fP interval, size_t & begin, size_t & end) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinterval\fP the overlaping interval\&. 
+.br
+\fIbegin\fP where to store the starting bound\&. 
+.br
+\fIend\fP where to store the ending bound\&.
+.RE
+.PP
+find the range of \fBTrackSegment\fP intersecting \fIinterval\fP\&. Note that when the \fIinterval\fP lower bound crosses a set of overlaping intervals from the same \fCNet\fP, the interval at \fIbegin\fP will crosses the lower bound but some following of the same \fCNet\fP may not\&. 
+.PP
+Referenced by NegociateWindow::createTrackSegment(), and Track::getOverlapCost()\&.
+.SS "TrackCost getOverlapCost (\fBInterval\fP interval, \fBNet\fP * net, size_t begin, size_t end, unsigned int flags) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinterval\fP the overlaping interval\&. 
+.br
+\fInet\fP a Net to ignore (null cost)\&. 
+.br
+\fIbegin\fP the starting bound\&. 
+.br
+\fIend\fP the ending bound\&. 
+.br
+\fIflags\fP passed to the overlap cost function\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The cost of the overlap\&.
+.RE
+.PP
+Compute the cost of the overlap of \fIinterval\fP with the range \fC\fP[begin,end] of \fBTrackSegment\fP\&. Any \fBTrackSegment\fP belonging to \fInet\fP will be ignored\&. 
+.PP
+Referenced by Track::getOverlapCost()\&.
+.SS "TrackCost getOverlapCost (\fBInterval\fP interval, \fBNet\fP * net, unsigned int flags) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinterval\fP the overlaping interval\&. 
+.br
+\fInet\fP a Net to ignore (null cost)\&. 
+.br
+\fIflags\fP passed to the overlap cost function\&.
+.RE
+.PP
+Compute the overlap cost of \fIinterval\fP with \fBTrackSegment\fP from the current \fBTrack\fP, ignoring thoses belonging to \fInet\fP\&. 
+.SS "TrackCost getOverlapCost (\fBTrackElement\fP * segment, unsigned int flags) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsegment\fP under which to compute overlap cost\&. 
+.br
+\fIflags\fP passed to the overlap cost function\&.
+.RE
+.PP
+Compute the overlap cost of \fCsegment\fP with \fBTrackSegment\fP from the current \fBTrack\fP (interval and net are deduced from \fCsegment\fP)\&. 
+.SS "void getTerminalWeight (\fBInterval\fP interval, \fBNet\fP * net, size_t & count, unsigned int & weight) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIinterval\fP under which to compute terminal weight\&. 
+.br
+\fInet\fP a net to be ignored\&. 
+.br
+\fIcount\fP incremented of the number of track markers under the \fCinterval\fP\&. 
+.br
+\fIweight\fP incremented of the sum of the weight of the track markers under the \fCinterval\fP\&.
+.RE
+.PP
+Compute and return the sum of the weight of the track markers (see \fBTrackMarker\fP) under \fCinterval\fP ignoring \fCnet\fP (that is, \fIfor\fP \fCnet\fP)\&.
+.PP
+\fBRemark: The referenced variables \fCcount\fP and \fCweight\fP are not reset to\fP
+.RS 4
+zero by this function\&. It is of the caller's responsability\&. 
+.RE
+.PP
+
+.SS "\fBDbU::Unit\fP getSourcePosition (size_t index) const"
+\fBReturns:\fP The source position of \fBTrackSegment\fP at index \fIindex\fP\&. If \fIindex\fP is equal to \fBTrack::npos\fP, returns zero\&. 
+.SS "bool check (unsigned int & overlaps, const char * message = \fCNULL\fP) const"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIoverlaps\fP The number of overlaping segments\&. 
+.br
+\fImessage\fP An iformative message, only printed if an error occurs\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+\fBtrue\fP if the \fBTrack\fP contains no incoherencies\&.
+.RE
+.PP
+Perform a complete \fBTrack\fP check\&. Looks for the following incoherencies :
+.IP "\(bu" 2
+\fBTrackSegment\fP do not refers this \fBTrack\fP\&.
+.IP "\(bu" 2
+\fBTrackSegment\fP is detached (\fBTrackSegment::getTrack()\fP is \fCNULL\fP)\&.
+.IP "\(bu" 2
+\fBTrackSegment\fP is hollow, this one is very unlikely as hollow \fBTrackSegment\fP are only created for the \fClower_bound()\fP\&.
+.IP "\(bu" 2
+\fCNULL\fP pointers (should never occurs, nevertheless\&.\&.\&.)
+.IP "\(bu" 2
+Two consecutive \fBTrackSegment\fP from different \fCNet\fP must not overlap\&.
+.IP "\(bu" 2
+For \fBTrackSegment\fP starting from the same position, the longuest must be first\&. 
+.PP
+
+.SS "void invalidate ()"
+Inconditionnaly invalidate the \fBTrack\fP, regardless if it has been modificated\&. The \fBTrack\fP will be forced to be revalidated on closure of the current session\&. 
+.SS "void insert (\fBTrackElement\fP * segment)"
+Adds \fIsegment\fP to the \fBTrack\fP\&. Must only be used inside a \fBSession\fP\&. They must appears \fIafter\fP \fBTrack::doRemoval()\fP and \fIbefore\fP \fBTrack::doReorder()\fP\&.
+.PP
+\fBSee also:\fP  \fBKite::Session\fP\&. 
+.SS "void insert (\fBTrackMarker\fP * marker)"
+Adds \fImarker\fP to the \fBTrack\fP\&. Must only be used inside a \fBSession\fP\&.
+.PP
+\fBSee also:\fP  \fBKite::Session\fP\&. 
+.SS "void setSegment (\fBTrackElement\fP * element, size_t index)"
+Directly affect the \fBTrack\fP entry at position \fCindex\fP to \fCelement\fP (use with great care)\&.
+.PP
+\fBSee also:\fP  \fBKite::Session\fP\&. 
+.PP
+Referenced by TrackSegment::swapTrack()\&.
+.SS "size_t doRemoval ()"
+\fBReturns:\fP The number of removeds \fBTrackSegment\fP\&.
+.PP
+Suppress all the \fBTrackSegment\fP that have been withdraw from the \fBTrack\fP\&. \fBTrackSegment\fP must be withdraw trough the \fBTrackSegment::detach()\fP method which sets their owning \fBTrack\fP to \fCNULL\fP (the removal criterion)\&. It uses the \fCSTL\fP \fIremove_if\fP algorithm that put all the to be removed elements at the end of the vector\&.
+.PP
+\fBSee also:\fP  \fBKite::Session\fP\&. 
+.SS "void doReorder ()"
+(Re)sort the \fBTrackElement\fP of the vector\&. Must be called \fIafter:\fP 
+.IP "\(bu" 2
+\fBTrack::doRemoval()\fP so no detached \fBTrackSegment\fP are presents\&.
+.IP "\(bu" 2
+All calls to \fBTrack::insert()\fP, as the newly inserted elements are put at the back of the vector\&.
+.PP
+.PP
+\fBSee also:\fP  \fBKite::Session\fP\&. 
+.SH "Member Data Documentation"
+.PP 
+.SS "npos = (size_t)\-1\fC [static]\fP"
+A special index value (greatest integer) meaning that an index is invalid\&. 
+.PP
+Referenced by Track::expandFreeInterval(), Track::find(), Track::getNext(), Track::getOccupiedInterval(), Track::getOverlapBounds(), Track::getOverlapCost(), Track::getPrevious(), Track::getSegment(), and Track::getSourcePosition()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

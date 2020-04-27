@@ -43,7 +43,7 @@ Small example of Python/Stratus script:
        # ...
        return
 
-   def ScriptMain ( **kw ):
+   def scriptMain ( **kw ):
      editor = None
      if kw.has_key('editor') and kw['editor']:
        editor = kw['editor']
@@ -54,12 +54,12 @@ Small example of Python/Stratus script:
    
    if __name__ == "__main__" :
      kw           = {}
-     success      = ScriptMain( **kw )
+     success      = scriptMain( **kw )
      shellSuccess = 0
      if not success: shellSuccess = 1
      
      sys.exit( shellSuccess )
-         ScriptMain ()
+         scriptMain ()
 
 This typical script can be executed in two ways:
 
@@ -70,9 +70,9 @@ This typical script can be executed in two ways:
       if __name__ == "__main__" :
 
    part (this is standart |Python|). It is a simple adapter that will
-   calls  :cb:`ScriptMain()`.
+   calls  :cb:`scriptMain()`.
 #. Through |cgt|, either in text or graphical mode. In that case, the
-   :cb:`ScriptMain()` is directly called trough a sub-interpreter.
+   :cb:`scriptMain()` is directly called trough a sub-interpreter.
    The arguments of the script are passed through the ``**kw`` dictionnary.
    
    +----------------------+-----------------------------------------------+
@@ -94,7 +94,7 @@ Plugins
 ~~~~~~~
 
 Plugins are |Python| scripts specially crafted to integrate with |cgt|.
-Their entry point is a :cb:`ScriptMain()` method as described in 
+Their entry point is a :cb:`scriptMain()` method as described in 
 `Python Interface to Coriolis`_. They can be called by user scripts
 through this method.
 

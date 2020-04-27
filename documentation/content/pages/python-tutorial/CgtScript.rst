@@ -9,7 +9,7 @@ But, for debugging purpose it may be helpful to run it through the
 interactive layout viewer |cgt|.
 
 For |cgt| to be able to run your script, you must add to your script
-file a function named :cb:`ScriptMain()`, which takes a dictionary
+file a function named :cb:`scriptMain()`, which takes a dictionary
 as sole argument (:cb:`**kw`). The ``kw`` dictionary contains, in
 particular, the CellViewer_ object we are running under with the
 keyword ``editor``. You can then load your cell into the viewer
@@ -51,7 +51,7 @@ using the menu:
        return
 
 
-   def ScriptMain ( **kw ):
+   def scriptMain ( **kw ):
        editor = None
        if kw.has_key('editor') and kw['editor']:
          editor = kw['editor']

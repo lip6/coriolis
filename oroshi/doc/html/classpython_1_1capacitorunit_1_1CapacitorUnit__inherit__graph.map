@@ -1,0 +1,5 @@
+<map id="CapacitorUnit" name="CapacitorUnit">
+<area shape="rect" id="node2" href="$classpython_1_1capacitormatrix_1_1CapacitorStack.html" title="Draws the layout of a compact capacitor or a matrix of adjacent identical capacitors. " alt="" coords="5,80,125,107"/>
+<area shape="rect" id="node3" href="$classpython_1_1capacitorrouted_1_1RoutMatchedCapacitor.html" title="Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix. " alt="" coords="43,229,212,256"/>
+<area shape="rect" id="node4" href="$classpython_1_1capacitorvrtracks_1_1VerticalRoutingTracks.html" title="Route two matched capacitors, C1 and C2, drawn in a capacitor matrix. " alt="" coords="45,155,211,181"/>
+</map>

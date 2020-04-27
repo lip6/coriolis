@@ -96,6 +96,13 @@ Coriolis User's Guide
                                     :alt:   Chip Top Structure
                                     :align: middle
 
+
+Printable Version of this Document
+==================================
+
+`Coriolis User's Guide`_.
+
+
 .. contents::
    :depth: 2
 

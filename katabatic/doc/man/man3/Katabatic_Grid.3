@@ -1,0 +1,105 @@
+.TH "Grid< GCellT >" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Grid< GCellT > \- Template Class for Regular \fBGrid\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBBaseGrid\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "GCellT * \fBgetGCell\fP (unsigned int index) const"
+.br
+.ti -1c
+.RI "GCellT * \fBgetGCell\fP (const \fBPoint\fP p) const"
+.br
+.ti -1c
+.RI "GCellT * \fBgetGCell\fP (const \fBPoint\fP p1, const \fBPoint\fP p2) const"
+.br
+.ti -1c
+.RI "GCellT * \fBgetGCellLeft\fP (const GCellT *gcell) const"
+.br
+.ti -1c
+.RI "GCellT * \fBgetGCellRight\fP (const GCellT *gcell) const"
+.br
+.ti -1c
+.RI "GCellT * \fBgetGCellUp\fP (const GCellT *gcell) const"
+.br
+.ti -1c
+.RI "GCellT * \fBgetGCellDown\fP (const GCellT *gcell) const"
+.br
+.ti -1c
+.RI "\fBGenericCollection\fP< GCellT * > \fBgetGCells\fP ()"
+.br
+.ti -1c
+.RI "\fBGenericCollection\fP< GCellT * > \fBgetGCellsColumn\fP (unsigned int column, unsigned int rowStart, unsigned int rowStop)"
+.br
+.ti -1c
+.RI "\fBGenericCollection\fP< GCellT * > \fBgetGCellsRow\fP (unsigned int row, unsigned int columnStart, unsigned int columnStop)"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGrid\fP (const \fBBox\fP &)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+
+.SS "template<typename GCellT>
+.br
+class Katabatic::Grid< GCellT >"
+Template Class for Regular \fBGrid\fP\&. 
+
+Contains all general purpose methods depending on the \fBGCell\fP type and geometrical computations\&. The internal storage is still not implemented in this class\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGrid\fP (const \fBBox\fP & bb)\fC [inline]\fP, \fC [protected]\fP"
+\fBGrid\fP constructor\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "CGellT * getGCell (unsigned int index) const\fC [inline]\fP"
+\fBReturns:\fP The grid object at linear index \fCindex\fP in the vector\&. If \fCindex\fP is out of bounds, return \fCNULL\fP\&. 
+.PP
+Referenced by GCellTopology::doRp_AccessPad(), GCellTopology::doRp_AutoContacts(), and anonymous_namespace{LoadGrByNet\&.cpp}::singleGCell()\&.
+.SS "CGellT * getGCell (const \fBPoint\fP p) const\fC [inline]\fP"
+\fBReturns:\fP The grid object which is under position \fCp\fP\&. 
+.SS "CGellT * getGCell (const \fBPoint\fP p1, const \fBPoint\fP p2) const\fC [inline]\fP"
+\fBReturns:\fP The grid object which is under position \fCp1\fP and \fCp2\fP\&. Not very clear though\&. 
+.SS "CGellT * getGCellLeft (const GCellT * gcell) const\fC [inline]\fP"
+\fBReturns:\fP The left neighbor of \fCgcell\fP, \fCNULL\fP if it is the leftmost one\&. 
+.PP
+Referenced by GCell::getLeft()\&.
+.SS "CGellT * getGCellRight (const GCellT * gcell) const\fC [inline]\fP"
+\fBReturns:\fP The rigth neighbor of \fCgcell\fP, \fCNULL\fP if it is the rightmost one\&. 
+.PP
+Referenced by GCell::getRight()\&.
+.SS "CGellT * getGCellUp (const GCellT * gcell) const\fC [inline]\fP"
+\fBReturns:\fP The upper neighbor of \fCgcell\fP, \fCNULL\fP if it is the uppermost one\&. 
+.PP
+Referenced by GCell::getUp()\&.
+.SS "CGellT * getGCellDown (const GCellT * gcell) const\fC [inline]\fP"
+\fBReturns:\fP The down neighbor of \fCgcell\fP, \fCNULL\fP if it is the downmost one\&. 
+.PP
+Referenced by GCell::getDown()\&.
+.SS "\fBGenericCollection\fP< CGellT * > getGCells ()\fC [inline]\fP"
+\fBReturns:\fP A GCellT Hurricane collection built upon the linear GCellT vector of the grid\&. 
+.SS "\fBGenericCollection\fP< CGellT * > getGCellsColumn (unsigned int column, unsigned int rowStart, unsigned int rowStop)\fC [inline]\fP"
+\fBReturns:\fP A GCellT Hurricane collection that contains the part of \fCcolumn\fP starting from \fCrowStart\fP to \fCrowStop\fP inclusive\&. 
+.PP
+Referenced by KatabaticEngine::createDetailedGrid()\&.
+.SS "\fBGenericCollection\fP< CGellT * > getGCellsRow (unsigned int row, unsigned int columnStart, unsigned int columnStop)\fC [inline]\fP"
+\fBReturns:\fP A GCellT Hurricane collection that contains the part of \fCrow\fP starting from \fCcolumnStart\fP to \fCcolumnStop\fP inclusive\&. 
+.PP
+Referenced by KatabaticEngine::createDetailedGrid()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

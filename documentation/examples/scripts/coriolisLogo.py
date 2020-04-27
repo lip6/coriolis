@@ -64,7 +64,7 @@ def drawLogo ( editor ):
     return
 
 
-def ScriptMain ( **kw ):
+def scriptMain ( **kw ):
     editor = None
     if kw.has_key('editor') and kw['editor']:
       editor = kw['editor']

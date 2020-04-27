@@ -137,4 +137,9 @@
   *                Returns \true on success (the layer exists).
   */
 
+ /*! \function     bool  Technology::setSymbolicLayer ( const Layer* layer );
+  *                Sets this exact \c layer as symbolic (not is mask).
+  *                Returns \true on success (the layer exists).
+  */
+
  }

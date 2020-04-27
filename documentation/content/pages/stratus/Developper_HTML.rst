@@ -17,7 +17,11 @@ Stratus : Developper's Documentation
 .. include:: ../../../etc/definitions.rst
 
 
-Printable version of this document `Stratus.pdf <../../../pdf/main/Stratus.pdf>`_.
+Printable version of this Document
+==================================
+
+`Stratus.pdf <{filename}/pdfs/Stratus.pdf>`_
+
 
 .. contents::
    :depth: 1

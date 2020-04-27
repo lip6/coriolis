@@ -1,0 +1,58 @@
+.TH "RoutingEvent::Key" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RoutingEvent::Key \- \fBRoutingEvent\fP cached key for maps\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBupdate\fP (const \fBRoutingEvent\fP *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBRoutingEvent\fP cached key for maps\&. 
+
+The key is used as a cache in \fBRoutingEvent\fP, that is, the \fBRoutingEvent\fP attributes could be modificated without the key changing\&. It is important for the key to remain stable as it used in the various event queue as the sorting attribute\&. The key should be updated only when the \fBRoutingEvent\fP is temporarily whidrawn from the queue\&.
+.PP
+Cached attributes: (used in that lexicographical order for sorting)
+.IP "\(bu" 2
+\fB1\fP -- \fCeventLevel\fP\&.
+.IP "\(bu" 2
+\fB2\fP -- \fCcanRipple\fP\&.
+.IP "\(bu" 2
+\fB3\fP -- \fCpriority\fP\&.
+.IP "\(bu" 2
+\fB4\fP -- \fClength\fP\&.
+.IP "\(bu" 2
+\fB5\fP -- \fCisHorizontal\fP\&.
+.IP "\(bu" 2
+\fB6\fP -- \fCaxis\fP\&.
+.IP "\(bu" 2
+\fB7\fP -- \fCsourceU\fP\&.
+.IP "\(bu" 2
+\fB8\fP -- \fCnet\fP (name)\&.
+.IP "\(bu" 2
+\fB9\fP -- \fCid\fP\&.
+.IP "\(bu" 2
+\fBX\fP -- \fCslackenStrap\fP \fBunused\fP\&.
+.IP "\(bu" 2
+\fBX\fP -- \fCtracksNb\fP \fBunused\fP\&.
+.PP
+.PP
+It is internally managed by \fBRoutingEvent\fP and the queue\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "update (const \fBRoutingEvent\fP * event)"
+Cache the value of the key from \fCevent\fP\&. 
+.PP
+Referenced by RoutingEvent::updateKey()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

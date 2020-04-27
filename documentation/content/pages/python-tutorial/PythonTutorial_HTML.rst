@@ -22,15 +22,20 @@ Hurricane+Python Tutorial
                             :width: 80%
 
 
-Printable version of this document `PythonTutorial.pdf <{filename}/pdfs/PythonTutorial.pdf>`_.
+Printable version of this Document
+==================================
+
+`PythonTutorial.pdf <{filename}/pdfs/PythonTutorial.pdf>`_
+
+
+.. contents::
+   :depth: 1
+
 
 First, a small disclaimer.  This tutorial  assumes that you are already familiar
 with the concepts  of |VLSI| designs, such as  *netlist*, *layout*, *instances*
 and hierarchical design.
 
-
-.. contents::
-   :depth: 1
 
 .. include:: definitions.rst
 .. include:: Introduction.rst

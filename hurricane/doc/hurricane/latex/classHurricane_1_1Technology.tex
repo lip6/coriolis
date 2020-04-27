@@ -11,7 +11,7 @@ Inheritance diagram for Hurricane\+:\+:Technology\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[width=194pt]{classHurricane_1_1Technology__inherit__graph}
+\includegraphics[width=206pt]{classHurricane_1_1Technology__inherit__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -56,6 +56,8 @@ Via\+Layers \mbox{\hyperlink{classHurricane_1_1Technology_aacde973f6a02a232a01f3
 \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a81a3f3e479aeb686c61a2d0fa2931f3b}{get\+Nth\+Metal}} (int) const
 \item 
 void \mbox{\hyperlink{classHurricane_1_1Technology_a247b75d5cbb85198cea9e5e609304cd0}{set\+Name}} (const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&)
+\item 
+bool \mbox{\hyperlink{classHurricane_1_1Technology_a26c12c5828acaeb33068a2899df1134b}{set\+Symbolic\+Layer}} (const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$)
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -216,7 +218,13 @@ creation order. This order is very important, notably for the graphical display.
 \subsubsection{\texorpdfstring{set\+Name()}{setName()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Technology\+::set\+Name (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption})}
 
-Allows to change the technology name (if empty name, throws an exception). 
+Allows to change the technology name (if empty name, throws an exception). \mbox{\Hypertarget{classHurricane_1_1Technology_a26c12c5828acaeb33068a2899df1134b}\label{classHurricane_1_1Technology_a26c12c5828acaeb33068a2899df1134b}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!set\+Symbolic\+Layer@{set\+Symbolic\+Layer}}
+\index{set\+Symbolic\+Layer@{set\+Symbolic\+Layer}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{set\+Symbolic\+Layer()}{setSymbolicLayer()}}
+{\footnotesize\ttfamily bool Hurricane\+::\+Technology\+::set\+Symbolic\+Layer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$}]{layer }\end{DoxyParamCaption})}
+
+Sets this exact {\ttfamily layer} as symbolic (not is mask). Returns {\bfseries true} on success (the layer exists). 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

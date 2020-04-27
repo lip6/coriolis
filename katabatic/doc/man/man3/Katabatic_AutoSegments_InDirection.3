@@ -1,0 +1,45 @@
+.TH "AutoSegments_InDirection" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoSegments_InDirection \- Filter to select \fBAutoSegment\fP in a given direction\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBFilter< Type >\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBAutoSegments_InDirection\fP (unsigned int direction)"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegmentHF\fP * \fBgetClone\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBaccept\fP (\fBAutoSegment\fP *segment) const"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Filter to select \fBAutoSegment\fP in a given direction\&. 
+
+A Filter to select \fBAutoSegment\fP in a specific direction\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBAutoSegments_InDirection\fP (unsigned int direction)\fC [inline]\fP"
+Create a filter for \fBAutoSegment\fP in \fCdirection\fP (\fBKatabatic::KbHorizontal\fP or \fBKatabatic::KbVertical\fP)\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAutoSegmentHF\fP * getClone () const\fC [virtual]\fP"
+\fBReturns:\fP A deep copy of the Collection\&. 
+.PP
+Implements \fBFilter< Type >\fP\&.
+.SS "bool accept (\fBAutoSegment\fP * segment) const\fC [virtual]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fCsegment\fP is in the correct direction\&. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

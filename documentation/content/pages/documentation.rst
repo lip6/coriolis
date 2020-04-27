@@ -30,6 +30,15 @@ Alliance Documentation
       How to get, build & install Alliance alongside Coriolis
 
 
+   .. column::
+      :width: 5
+
+      .. row::
+
+         `Alliance Check Toolkit`_ |br|
+         Regression tests & examples
+
+
 Coriolis Documentation
 ======================
 
@@ -67,28 +76,28 @@ Coriolis Documentation
       .. row::
 
          `Hurricane Reference <../doc/hurricane/index.html>`_ |br|
-	 |Hurricane| Netlist & Physical structure C++ |API|
+         |Hurricane| Netlist & Physical structure C++ |API|
 
          `Viewer Reference <../doc/viewer/index.html>`_ |br|
-	 Graphical interface C++ |API|
+         Graphical interface C++ |API|
 
          `CRL Core Reference <../doc/crlcore/index.html>`_ |br|
-	 Parsers/Drivers and I/O C++ |API|
+         Parsers/Drivers and I/O C++ |API|
 
          `Unicorn Reference <../doc/unicorn/index.html>`_ |br|
-	 Main GUI C++ |API|
+         Main GUI C++ |API|
 
          `Katabatic Reference <../doc/katabatic/index.html>`_ |br|
-	 Articulated Segments Data-Structure
-	
+         Articulated Segments Data-Structure
+        
          `Kite Reference <../doc/kite/index.html>`_ |br|
-	 Digital router
-	
+         Digital router
+        
          `Hurricane/Analog Reference <../doc/analog/index.html>`_ |br|
-	 About digital design
-	
+         About digital design
+        
          `Oroshi Reference <../doc/oroshi/index.html>`_ |br|
-	 Analog devices generators
+         Analog devices generators
 
 
 Third Party Documentation

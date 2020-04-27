@@ -1,0 +1,157 @@
+.TH "NegociateWindow" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NegociateWindow \- Perform the routing, main \fBRoutingEvent\fP manager\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Types"
+
+.in +1c
+.ti -1c
+.RI "enum \fBStage\fP { \fBNegociation\fP = 1, \fBPacking\fP = 2 }"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBdestroy\fP ()"
+.br
+.ti -1c
+.RI "bool \fBisInterrupted\fP () const"
+.br
+.ti -1c
+.RI "\fBKiteEngine\fP * \fBgetKiteEngine\fP () const"
+.br
+.ti -1c
+.RI "\fBHurricane::Cell\fP * \fBgetCell\fP () const"
+.br
+.ti -1c
+.RI "const Katabatic::GCellVector & \fBgetGCells\fP () const"
+.br
+.ti -1c
+.RI "\fBRoutingEventQueue\fP & \fBgetEventQueue\fP ()"
+.br
+.ti -1c
+.RI "\fBRoutingEventHistory\fP & \fBgetEventHistory\fP ()"
+.br
+.ti -1c
+.RI "\fBRoutingEventLoop\fP & \fBgetEventLoop\fP ()"
+.br
+.ti -1c
+.RI "\fBStage\fP \fBgetStage\fP () const"
+.br
+.ti -1c
+.RI "void \fBsetGCells\fP (const Katabatic::GCellVector &)"
+.br
+.ti -1c
+.RI "void \fBsetInterrupt\fP (bool)"
+.br
+.ti -1c
+.RI "void \fBsetStage\fP (\fBStage\fP)"
+.br
+.ti -1c
+.RI "double \fBcomputeWirelength\fP ()"
+.br
+.ti -1c
+.RI "\fBTrackElement\fP * \fBcreateTrackSegment\fP (\fBAutoSegment\fP *, unsigned int flags)"
+.br
+.ti -1c
+.RI "void \fBaddRoutingEvent\fP (\fBTrackElement\fP *, unsigned int level)"
+.br
+.ti -1c
+.RI "void \fBrescheduleEvent\fP (\fBRoutingEvent\fP *, unsigned int level)"
+.br
+.ti -1c
+.RI "void \fBrun\fP (unsigned int flags)"
+.br
+.ti -1c
+.RI "void \fBprintStatistics\fP () const"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBNegociateWindow\fP * \fBcreate\fP (\fBKiteEngine\fP *)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Perform the routing, main \fBRoutingEvent\fP manager\&. 
+
+This object perform the routing\&. That is creates all the initial \fBRoutingEvent\fP, load them into the queue and then process the queue until it is empty, that is, the routing is finished\&.
+.PP
+This object is the owner of the \fBRoutingEventQueue\fP, \fBRoutingEventHistory\fP and \fBRoutingEventLoop\fP used all troughout \fBRoutingEvent\fP and \fBSegmentFsm\fP\&. 
+.SH "Member Enumeration Documentation"
+.PP 
+.SS "enum \fBStage\fP"
+The state under which the router is operating\&. 
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fINegociation \fP\fP
+The normal mode, priority negociation with ripup\&. 
+.TP
+\fB\fIPacking \fP\fP
+Try to find a better placement for segment but just by looking for other fully free spaces\&. No ripup is performed\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "create (\fBKiteEngine\fP * kite)\fC [static]\fP"
+The publicly avalaible contructor\&. Route the whole are defined by the \fBKite\fP associated Cell abutment box\&. 
+.SS "void destroy ()"
+The publicly avalaible destructor\&. 
+.SS "bool isInterrupted () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fBNegociateWindow\fP has received an interrupt request\&. 
+.SS "\fBKiteEngine\fP * getKiteEngine () const\fC [inline]\fP"
+\fBReturns:\fP The associated \fBKiteEngine\fP\&. 
+.PP
+Referenced by NegociateWindow::printStatistics()\&.
+.SS "\fBHurricane::Cell\fP * getCell () const"
+\fBReturns:\fP The associated Cell\&. 
+.SS "const Katabatic::GCellVector & getGCells () const\fC [inline]\fP"
+\fBReturns:\fP A Copy of the vector of GCell from KatabaticEngine\&. The vector is copied but not the GCell themselves (shallow copy)\&. 
+.SS "\fBRoutingEventQueue\fP & getEventQueue ()\fC [inline]\fP"
+\fBReturns:\fP The \fBRoutingEventQueue\fP\&. 
+.SS "\fBRoutingEventHistory\fP & getEventHistory ()\fC [inline]\fP"
+\fBReturns:\fP The \fBRoutingEventHistory\fP\&. 
+.SS "\fBRoutingEventLoop\fP & getEventLoop ()\fC [inline]\fP"
+\fBReturns:\fP The \fBRoutingEventLoop\fP\&. 
+.SS "\fBStage\fP getStage () const\fC [inline]\fP"
+\fBReturns:\fP The stage (NegicateWindow::Stage) into which the \fBNegociateWindow\fP is running\&. 
+.SS "void setGCells (const Katabatic::GCellVector & v)"
+Sets the GCell vector from KatabaticEngine (perform a shallow copy)\&. 
+.SS "void setInterrupt (bool state)\fC [inline]\fP"
+Sets or unset the interruption flag\&. 
+.SS "void setStage (\fBStage\fP stage)\fC [inline]\fP"
+Set the stage (\fBNegociateWindow::Stage\fP) under which we are running\&. 
+.SS "double computeWirelength ()"
+Compute the total wirelength of the circuit\&. It is not completly accurate because overlaps are not took into accounts\&. 
+.PP
+Referenced by NegociateWindow::run()\&.
+.SS "\fBTrackElement\fP * createTrackSegment (\fBAutoSegment\fP * autoSegment, unsigned int flags)"
+Build a \fBTrackSegment\fP from the \fBKatabatic::AutoSegment\fP\&. If \fCflags\fP contains Kite::KtLoadingStage then assume that we are in the initial loading stage (constructor)\&. 
+.SS "void addRoutingEvent (\fBTrackElement\fP * segment, unsigned int level)"
+Create a new \fBRoutingEvent\fP from \fBTrackElement\fP (if it doesn't already exists) and insert it into the queue with priority \fClevel\fP\&. 
+.PP
+Referenced by TrackSegment::reschedule()\&.
+.SS "void rescheduleEvent (\fBRoutingEvent\fP * event, unsigned int level)\fC [inline]\fP"
+Reschedule an event into the queue, with priority \fClevel\fP\&. 
+.PP
+Referenced by TrackSegment::reschedule()\&.
+.SS "void run (unsigned int flags)"
+Perform the routing\&.
+.PP
+\fCslowMotion\fP is not implemented yet\&. 
+.SS "void printStatistics () const"
+Display some statistics about the routing, compute the internal complete statistics\&. 
+.PP
+Referenced by NegociateWindow::run()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

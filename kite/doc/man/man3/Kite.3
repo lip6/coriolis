@@ -1,0 +1,153 @@
+.TH "Kite" 3 "Mon Apr 27 2020" "Version 1.0" "Kite - Detailed Router" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Kite \- The namespace dedicated to \fBKite\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBDataNegociate\fP"
+.br
+.RI "Algorimthmic datas associated the \fBTrackSegment\fP\&. "
+.ti -1c
+.RI "class \fBHorizontalTrack\fP"
+.br
+.RI "Horizontal track managment\&. "
+.ti -1c
+.RI "class \fBKiteEngine\fP"
+.br
+.RI "The \fBKite\fP Tool\&. "
+.ti -1c
+.RI "class \fBManipulator\fP"
+.br
+.RI "Handle \fBTrackElement\fP ripup & topological modifications\&. "
+.ti -1c
+.RI "class \fBNegociateWindow\fP"
+.br
+.RI "Perform the routing, main \fBRoutingEvent\fP manager\&. "
+.ti -1c
+.RI "class \fBRoutingEvent\fP"
+.br
+.RI "Atomic Placement Request for a \fBTrackSegment\fP\&. "
+.ti -1c
+.RI "class \fBRoutingEventHistory\fP"
+.br
+.RI "History of \fBRoutingEvent\fP\&. "
+.ti -1c
+.RI "class \fBRoutingEventLoop\fP"
+.br
+.RI "Simple loop dectector for \fBRoutingEvent\fP\&. "
+.ti -1c
+.RI "class \fBRoutingEventQueue\fP"
+.br
+.RI "The priority Queue of \fBRoutingEvent\fP\&. "
+.ti -1c
+.RI "class \fBRoutingPlane\fP"
+.br
+.RI "Array of Tracks in one Layer\&. "
+.ti -1c
+.RI "class \fBSegmentAction\fP"
+.br
+.RI "Store request for an event to be generated on a \fBTrackElement\fP\&. "
+.ti -1c
+.RI "class \fBSegmentFsm\fP"
+.br
+.RI "Pseudo-decorator to process a \fBRoutingEvent\fP\&. "
+.ti -1c
+.RI "class \fBSegmentObserver\fP"
+.br
+.RI "Observer on the base AutoSegment\&. "
+.ti -1c
+.RI "class \fBSession\fP"
+.br
+.RI "\fBKite\fP update \fBSession\fP\&. "
+.ti -1c
+.RI "class \fBTrack\fP"
+.br
+.RI "Structure managing one routing track\&. "
+.ti -1c
+.RI "class \fBTrackElement\fP"
+.br
+.RI "Abstract Class for all Elements inserted inside a \fBTrack\fP\&. "
+.ti -1c
+.RI "class \fBTrackFixedSegment\fP"
+.br
+.RI "\fBTrack\fP elements for fixed wires\&. "
+.ti -1c
+.RI "class \fBTrackMarker\fP"
+.br
+.RI "Tag part of \fBTrack\fP with a weight\&. "
+.ti -1c
+.RI "class \fBTrackSegment\fP"
+.br
+.RI "Derived \fBKatabatic::AutoSegment\fP for the router\&. "
+.ti -1c
+.RI "class \fBVerticalTrack\fP"
+.br
+.RI "Vertical track managment\&. "
+.in -1c
+.SS "Typedefs"
+
+.in +1c
+.ti -1c
+.RI "typedef void() \fBSegmentOverlapCostCB\fP(const \fBTrackElement\fP *, TrackCost &)"
+.br
+.in -1c
+.SS "Enumerations"
+
+.in +1c
+.ti -1c
+.RI "enum \fBFunctionFlags\fP { , \fBKtLoadGlobalRouting\fP = 0x00000001, \fBKtBuildGlobalRouting\fP = 0x00000002, \fBKtAllowDoglegReuse\fP = 0x00000004, \fBKtDataSelf\fP = 0x00000008, \fBKtNearest\fP = 0x00000010, \fBKtForce\fP = 0x00000020, \fBKtResetCount\fP = 0x00000040, \fBKtWithPerpands\fP = 0x00000080, \fBKtWithConstraints\fP = 0x00000100 }"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+The namespace dedicated to \fBKite\fP\&. 
+.SH "Typedef Documentation"
+.PP 
+.SS "SegmentOverlapCostCB"
+Prototype of overlap cost callback functions\&.
+.PP
+\fBSee also:\fP  \fBTrackSegment::setOverlapCostCB()\fP, TrackSegment::getOverlapCost()\&. 
+.SH "Enumeration Type Documentation"
+.PP 
+.SS "enum \fBFunctionFlags\fP"
+
+.PP
+\fBEnumerator\fP
+.in +1c
+.TP
+\fB\fIKtLoadGlobalRouting \fP\fP
+Reload the global routing from a preciously saved run (\fC\fP\&.kgr file)\&. 
+.TP
+\fB\fIKtBuildGlobalRouting \fP\fP
+Run the global router Knik\&. 
+.TP
+\fB\fIKtAllowDoglegReuse \fP\fP
+Allow sharing of dogleg\&. 
+.TP
+\fB\fIKtDataSelf \fP\fP
+To be documented\&. 
+.TP
+\fB\fIKtNearest \fP\fP
+Round the position to the nearest track axis\&. 
+.TP
+\fB\fIKtForce \fP\fP
+Force to perform an action ignoring the 'up to date' state\&. 
+.TP
+\fB\fIKtResetCount \fP\fP
+Tells to reset a counter\&. 
+.TP
+\fB\fIKtWithPerpands \fP\fP
+Ripup perpandiculars alongside the current segment\&. 
+.TP
+\fB\fIKtWithConstraints \fP\fP
+Force constraints recomputation\&. 
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Kite - Detailed Router from the source code\&.

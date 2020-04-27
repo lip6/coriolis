@@ -1,0 +1,923 @@
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit}{\section{Capacitor\-Unit Class Reference}
+\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit}\index{Capacitor\-Unit@{Capacitor\-Unit}}
+}
+
+
+Draws a capacitor of type Poly-\/\-Poly or Metal-\/\-Metal in 350 nm A\-M\-S C\-M\-O\-S technology.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac775ee34451fdfa742b318538164070e}{\-\_\-\-\_\-init\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em This is the class constructor. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a217d8871ff92e0ad45001492875261e1}{\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Sets the area and perimeter capacitances as specified in 350 nm A\-M\-S technology and according to {\ttfamily capacitor\-Type} (M\-I\-M or P\-I\-P). \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a914a2dadb095ebca95a60ee5c8ddd7a0}{\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Computes width and length of the capacitor. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac114a243874b413707b6fa7d30529d76}{\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Checks if the computed capacitor dimensions exceed or are less than maximum and minimum limits, respectively, as specified in technology rules. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a3b578035b1559391931dade7c2508105}{set\-Rules}
+\begin{DoxyCompactList}\small\item\em Selects technological rules according to the capacitor type. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a127dcda66d458f9320e541649101607e}{get\-Capacitor\-Type}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7afefaf3a15d637ffe979bc54d57c6c2}{get\-Maximum\-Cap\-Width}
+\begin{DoxyCompactList}\small\item\em maximum size of capacitor's top plate. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aacb6369181aa03823cb1ce42adb0ee25}{get\-Minimum\-Cap\-Width}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7be694eb909dc1e49326e3b5dd1e6887}{get\-Layers}
+\begin{DoxyCompactList}\small\item\em Loads the technology file then extracts the adequate layers according to the capacitor type (M\-I\-M or P\-I\-P). \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a5b7ef0221e471e99fa7f0a87a28ba1ea}{create}
+\begin{DoxyCompactList}\small\item\em When bonding box mode is activated, the function draws all layout physical layers of the capacitor after checking its dimensions. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae2ec4683c7f6c30fbb1687934673410c}{draw\-Capacitor}
+\begin{DoxyCompactList}\small\item\em Draws all layout physicial layers of the capacitor. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a8f71111f71d084f05742fadf134cb87e}{compute\-Bottom\-Plate\-Cuts}
+\begin{DoxyCompactList}\small\item\em Computes needed parameters to draw bottom plate cuts in its exact position, including \-: \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aceb634d48d79f2079c690297c820da0b}{compute\-Top\-Plate\-Cuts}
+\begin{DoxyCompactList}\small\item\em Computes needed parameters to draw top plate cuts in its exact position, including \-: \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac5cd73be473bc321a29a75311f808835}{draw\-Abutment\-Box}
+\begin{DoxyCompactList}\small\item\em Draws the abutment box of the capacitor in position {\ttfamily $<$}(abutment\-Box\-X\-Min, abutment\-Box\-Y\-Min)$>$. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7b4116e4696b869f462d86b1ddf00246}{draw\-One\-Plate}
+\begin{DoxyCompactList}\small\item\em Draws the top or bottom plate through inflation of the Box under it. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a1a998a3072560eaee998c9e5531a5f5b}{draw\-Bottom\-Plate\-Cut}
+\begin{DoxyCompactList}\small\item\em Draws the required cuts to connect the bottom plate. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a8d4cd239412ffde81f0cda52123b9c1d}{draw\-Top\-Plate\-Cut}
+\begin{DoxyCompactList}\small\item\em Draws the top plate's cuts after computing the maximal number of cuts that can be placed and its exact enclosure in the top plate. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a444cc6c0ee175ba22b5092d0706bc0d6}{draw\-Routing\-Layers}
+\begin{DoxyCompactList}\small\item\em Draws the routing layers of both bottom and top plates after computing widths and the exact position of these layers. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a5c03a894501e69f2e6a6d40e93df8ef2}{cut\-Max\-Number}
+\begin{DoxyCompactList}\small\item\em Computes the maximal number of cuts to be placed on a layer of width {\ttfamily width\-\_\-layer} considering specifications such as the spacing between the cuts, its width and its enclosure in the layer. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a95ebae95cc0be711de5adbb1faa85f98}{cut\-Line}
+\begin{DoxyCompactList}\small\item\em Creates a horizontal or vertical line of contacts according to the specified direction. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a4b8fe45cf122a2682cd8120bcbc5e5fd}{cut\-Matrix}
+\begin{DoxyCompactList}\small\item\em Creates a matrix of cuts by vertically stacking horizontal lines of identical cuts. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a876d31edaaabe0716d6fbe6f6c0c7b75}{get\-Bottom\-Plate\-Y\-Max}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae461baa28fdfa09bad07b3f1073a46b7}{get\-Bottom\-Plate\-Left\-Cut\-X\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aae1849792395fccc12e921450a29980b}{get\-Bottom\-Plate\-Left\-Cut\-Y\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2f7b75e47a238defa63e04c75e0be016}{get\-Bottom\-Plate\-Left\-Cut\-Y\-Max}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9e59fed4e9829bac60edbd38195cdd90}{get\-Bottom\-Plate\-Right\-Cut\-X\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a0e362c0f80ab5a70fa3e4139d0009ef1}{get\-Bottom\-Plate\-Right\-Cut\-Y\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae31425a5f9b3d7a0829c1abc454e2834}{get\-Bottom\-Plate\-Right\-Cut\-Y\-Max}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae3887820ee80da10f77b451e5f068635}{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2d9186515736c9fd74725eca251f6e2b}{get\-Bottom\-Plate\-Right\-Cut\-Y\-Center}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a52e8ea7265119216e234eab32bc542ef}{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2f87580a615f6b0450d43a032adf81d5}{get\-Bot\-Plate\-R\-Layer\-Y\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aa6cb9e5f6ba2d4e4ce5f63ca1d785e7e}{get\-Bot\-Plate\-R\-Layer\-Y\-Max}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a3463504463c87fb7aab28ca04597c169}{get\-Bot\-Plate\-R\-Layer\-Width}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aff2f6d078abdcf0d679aa9b697928f34}{get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7440876afb0ff33ba0ee5cea4e9e0aed}{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a836a7c11713aa3a08504a498b90fb5ee}{get\-Top\-Plate\-R\-Layer\-Y\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aea137748a99552369414fc5ffec3a41d}{get\-Top\-Plate\-R\-Layer\-Y\-Max}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9c1452c170eeb58d060bb5fe72fae5a9}{get\-Top\-Plate\-R\-Layer\-Width}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a295a807958d27c156f87102762d353d6}{get\-Top\-Plate\-R\-Layer\-X\-Center}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a28208011c71e1712625c1148a67d943c}{get\-Top\-Plate\-R\-Layer\-X\-Min}
+\item 
+def \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9788696eb8f1cffde53de39c7f2ffcaa}{get\-Top\-Plate\-R\-Layer\-X\-Max}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Draws a capacitor of type Poly-\/\-Poly or Metal-\/\-Metal in 350 nm A\-M\-S C\-M\-O\-S technology. 
+
+P\-I\-P and M\-I\-M capacitors are the result of surface superposition between poly1 and poly2 or metal2 and metalcap layers, respectively. Given the capacitor value, layout dimensions are computed, then, capacitor layers are drawn. Capacitor value, $C$, is given in the expression below, where $ C_{a}, C_{p}, A $ and $ P $ are, area capacitance, perimeter capacitance, area and permiter of the capacitor, respectively \-: \[ C = C_{a}A + C_{p}P \] The drawn layout shape is square. Thus, metcap or poly2 length and width are equal and are computed using the capacitor expression. Furthermore, given $ C_{a} $, $ C_{p} $ and enclosure technological rules, dimensions and positions of the abutment box as well as the bottom plate are computed. Layouts with dimensions that exceed technological limits cannot be drawn. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac775ee34451fdfa742b318538164070e}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!\-\_\-\-\_\-init\-\_\-\-\_\-@{\-\_\-\-\_\-init\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-init\-\_\-\-\_\-@{\-\_\-\-\_\-init\-\_\-\-\_\-}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{\-\_\-\-\_\-init\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-init\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{device, }
+\item[{}]{capacitor\-Type, }
+\item[{}]{abutment\-Box\-Position, }
+\item[{}]{capacitance = {\ttfamily 0}, }
+\item[{}]{cap\-Dim = {\ttfamily \{\}}}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac775ee34451fdfa742b318538164070e}
+
+
+This is the class constructor. 
+
+Few of the class attributes final values are computed in this level. Most of attributes are only initialized to zero or empty values. Then, it is computed in dedicated class method. Input parameters are \-: 
+\begin{DoxyParams}{Parameters}
+{\em device} & {\bf Hurricane} A\-M\-S device into which layout is drawn. \\
+\hline
+{\em capacitance} & Capacitor value, expressed in $ femto Farad (fF) $. \\
+\hline
+{\em abutment\-Box\-Position} & A list containing abscissa and ordinate of the bottom left corner of the abutment box.\\
+\hline
+\end{DoxyParams}
+Class attributes are described in the list below. Most of class attributes refer to layout dimensions. Dictionaries are used to group attributes related to the same layout varibale. Layout dimensions and variables are described in Figure 1.
+
+
+\begin{DoxyParams}{Parameters}
+{\em device} & {\bf Hurricane} A\-M\-S device into which layout is drawn. \\
+\hline
+{\em capacitance} & Capacitor value, expressed in $ femto Farad (fF) $. \\
+\hline
+{\em capacitor\-Type} & Can be 'M\-I\-M\-Cap' or 'P\-I\-P\-Cap' as capacitor type. \\
+\hline
+{\em abutment\-Box\-Dict} & A dictionary containing abscissa and ordinate of the bottom left corner of the abutment box, (X\-Min) and (Y\-Min), respectively. \\
+\hline
+{\em abutment\-Box} & Abutment box drawn square. It is an object of type {\ttfamily Box}. \\
+\hline
+{\em bottom\-Plate\-Box} & Bottom plate drawn square. It is an object of type {\ttfamily Box}. \\
+\hline
+{\em top\-Plate\-Box} & Top plate drawn square. It is an object of type {\ttfamily Box}. \\
+\hline
+{\em cut2\-Matrix\-Dict} & A dictionary containing center position of the left bottom, which is cut the first to be drawn in the matrix of cuts. Initially, the dictionary is empty. It is only updated when {\ttfamily self.\-capacitor\-Type} is equal to {\ttfamily 'M\-I\-M\-Cap'}.\\
+\hline
+{\em cut\-Left\-Line\-Dict} & A dictionary containing abcissa and ordinate of the bottom cut in the left line of cuts to be drawn on bottom plate's layer. \\
+\hline
+{\em cut\-Right\-Line\-Dict} & A dictionary containing abcissa and ordinate of the bottom cut in the right line of cuts to be drawn on bottom plate's layer. \\
+\hline
+{\em top\-Cut\-Line\-Dict} & A dictionary containing abcissa and ordinate of the bottom cut in the right line of cuts to be drawn on top plate's layer. Initially, the dictionary is empty. It is only updated when {\ttfamily self.\-capacitor\-Type} is equal to {\ttfamily 'P\-I\-P\-Cap'}.\\
+\hline
+{\em top\-Plate\-R\-Layer\-Dict} & A dictionary containing position information of the top plate's routing layer. The dictionary includes ordinates of the layer's top and bottom extremities, {\ttfamily 'X\-Min'} and {\ttfamily 'Y\-Min'}, respectively, the abcissa of it's center, {\ttfamily 'X\-Center'} and its width, {\ttfamily 'width'}.\\
+\hline
+{\em bottom\-Plate\-R\-Layer\-Dict} & A dictionary containing \\
+\hline
+{\em enclosure\-\_\-bot\-Plate\-\_\-top\-Plate} & Top plate's layer encolusre in bottom plate's layer. \\
+\hline
+{\em minheight\-\_\-top\-Platecut} & Minimum height of cuts for top plate connection to other metal layer. \\
+\hline
+{\em top\-Cut\-Line\-Number} & Maximum possible number cuts to be drawn for top plate's connection. \\
+\hline
+{\em bottom\-Cut\-Line\-Number} & Maximum possible number cuts to be drawn for top plate's connection.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Remark\-:}
+Abutment box must be defined as an attribute because the position of dummy capacitor in {\ttfamily Non\-Unit\-Capacitor} class must be precisely defined. 
+\end{DoxyParagraph}
+
+
+References Capacitor\-Unit.\-\_\-\-\_\-compute\-Capacitance\-\_\-\-\_\-(), Capacitor\-Unit.\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-(), Capacitor\-Unit.\-\_\-\-\_\-init\-Cap\-Dim\-\_\-\-\_\-(), Capacitor\-Unit.\-abutment\-Box, Capacitor\-Unit.\-abutment\-Box\-Dict, Capacitor\-Unit.\-bottom\-Cut\-Line\-Number, Capacitor\-Unit.\-bottom\-Plate\-Box, Capacitor\-Unit.\-bottom\-Plate\-Box\-Dict, Capacitor\-Unit.\-bottom\-Plate\-R\-Layer\-Dict, Capacitor\-Unit.\-capacitor\-Type, Capacitor\-Unit.\-cap\-Dim, Capacitor\-Unit.\-cut2\-Matrix\-Dict, Capacitor\-Unit.\-cut\-Left\-Line\-Dict, Capacitor\-Unit.\-cut\-Right\-Line\-Dict, Capacitor\-Unit.\-device, Stack.\-device, Capacitor\-Unit.\-enclosure\-\_\-bot\-Plate\-\_\-abt\-Box, Capacitor\-Unit.\-enclosure\-\_\-bot\-Plate\-\_\-top\-Plate, Capacitor\-Unit.\-minheight\-\_\-top\-Platecut, Capacitor\-Unit.\-top\-Cut\-Line\-Dict, Capacitor\-Unit.\-top\-Cut\-Line\-Number, Capacitor\-Unit.\-top\-Plate\-Box, Capacitor\-Unit.\-top\-Plate\-Box\-Dict, and Capacitor\-Unit.\-top\-Plate\-R\-Layer\-Dict.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a217d8871ff92e0ad45001492875261e1}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-@{\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-@{\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{capacitor\-Type}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a217d8871ff92e0ad45001492875261e1}
+
+
+Sets the area and perimeter capacitances as specified in 350 nm A\-M\-S technology and according to {\ttfamily capacitor\-Type} (M\-I\-M or P\-I\-P). 
+
+\begin{DoxyReturn}{Returns}
+a list containing the area and perimeter capacitances. 
+\end{DoxyReturn}
+\begin{DoxyRemark}{Remarks}
+An exception is raised if the entered capacitor type is unknown. 
+\end{DoxyRemark}
+
+
+Referenced by Capacitor\-Unit.\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a914a2dadb095ebca95a60ee5c8ddd7a0}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-@{\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-@{\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{\-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-compute\-Cap\-Dim\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{capacitance, }
+\item[{}]{capacitor\-Type}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a914a2dadb095ebca95a60ee5c8ddd7a0}
+
+
+Computes width and length of the capacitor. 
+
+Given {\ttfamily capacitance} value as well as the permiter and area capacitances, a quadratic equation is solved where the unknown parameter is the width (also equivalent to the length). \begin{DoxyReturn}{Returns}
+a dictionary containing width and length. 
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Remark\-:}
+The capacitor is square. Thus, length and width are equal. 
+\end{DoxyParagraph}
+
+
+References Capacitor\-Unit.\-\_\-\-\_\-set\-Capacitor\-Per\-Unit\-\_\-\-\_\-().
+
+
+
+Referenced by Capacitor\-Stack.\-\_\-\-\_\-init\-\_\-\-\_\-(), and Capacitor\-Unit.\-\_\-\-\_\-init\-\_\-\-\_\-().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac114a243874b413707b6fa7d30529d76}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-@{\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-@{\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{cap\-Dim}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac114a243874b413707b6fa7d30529d76}
+
+
+Checks if the computed capacitor dimensions exceed or are less than maximum and minimum limits, respectively, as specified in technology rules. 
+
+\begin{DoxyReturn}{Returns}
+{\ttfamily True} if all rules are respected. 
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Remark\-:}
+Maximum poly2 layer dimensions for P\-I\-P capacitor are not specified in technology rules. Thus, only minimum limit condition is checked. 
+\end{DoxyParagraph}
+
+
+References Capacitor\-Unit.\-capacitor\-Type, Capacitor\-Unit.\-get\-Maximum\-Cap\-Width(), and Capacitor\-Unit.\-get\-Minimum\-Cap\-Width().
+
+
+
+Referenced by Capacitor\-Stack.\-\_\-\-\_\-init\-\_\-\-\_\-(), and Capacitor\-Unit.\-create().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a3b578035b1559391931dade7c2508105}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!set\-Rules@{set\-Rules}}
+\index{set\-Rules@{set\-Rules}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{set\-Rules}]{\setlength{\rightskip}{0pt plus 5cm}def set\-Rules (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a3b578035b1559391931dade7c2508105}
+
+
+Selects technological rules according to the capacitor type. 
+
+\begin{DoxyReturn}{Returns}
+a dictionary with rules labels as keys and rules as values. Example of technology rules are \-:
+\begin{DoxyItemize}
+\item minimum spacing between cuts or metals,
+\item minimum width of a plate, a cut or a routing metal.
+\item etc. Every rule takes two possible value according to the capacitor type (M\-I\-M or P\-I\-P). Therefore, dictionary keys are generic and its values are specific to the capacitor type. 
+\end{DoxyItemize}
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Remark\-:}
+An exception is raised if the entered capacitor type is unknown. 
+\end{DoxyParagraph}
+
+
+References Capacitor\-Unit.\-capacitor\-Type, Capacitor\-Unit.\-hpitch, Capacitor\-Unit.\-is\-V\-H, Stack.\-is\-V\-H, Capacitor\-Unit.\-M\-E\-T\-A\-L2\-Pitch, Capacitor\-Unit.\-metal2\-Width, Capacitor\-Unit.\-M\-E\-T\-A\-L3\-Pitch, Capacitor\-Unit.\-metal3\-Width, Capacitor\-Unit.\-min\-Enclo\-\_\-bot\-Plate\-\_\-bot\-Plate\-Cut, Capacitor\-Unit.\-min\-Enclo\-\_\-bot\-Plate\-R\-Metal\-\_\-bot\-Plate\-Cut, Capacitor\-Unit.\-min\-Enclo\-\_\-routing\-Track\-Metal\-\_\-cut, Capacitor\-Unit.\-min\-Enclo\-\_\-top\-Plate\-\_\-top\-Plate\-Cut, Capacitor\-Unit.\-min\-Enclo\-\_\-top\-Plate\-R\-Metal\-\_\-top\-Plate\-Cut, Capacitor\-Unit.\-minheight\-\_\-top\-Platecut, Capacitor\-Unit.\-min\-Spacing\-\_\-bot\-Plate, Capacitor\-Unit.\-min\-Spacing\-\_\-bot\-Plate\-Cut\-\_\-top\-Plate, Capacitor\-Unit.\-min\-Spacing\-On\-Bot\-Plate\-\_\-cut, Capacitor\-Unit.\-min\-Spacing\-On\-Top\-Plate\-\_\-cut, Capacitor\-Unit.\-min\-Width\-\_\-bot\-Platecut, Capacitor\-Unit.\-min\-Width\-\_\-bot\-R\-Metal, Capacitor\-Unit.\-min\-Width\-\_\-routing\-Trackcut, Capacitor\-Unit.\-min\-Width\-\_\-top\-Plate, Capacitor\-Unit.\-min\-Width\-\_\-top\-Platecut, Capacitor\-Unit.\-min\-Width\-\_\-top\-R\-Metal, and Capacitor\-Unit.\-vpitch.
+
+
+
+Referenced by Capacitor\-Stack.\-create(), Capacitor\-Unit.\-create(), Rout\-Matched\-Capacitor.\-route(), and Vertical\-Routing\-Tracks.\-set\-Rules().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a127dcda66d458f9320e541649101607e}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Capacitor\-Type@{get\-Capacitor\-Type}}
+\index{get\-Capacitor\-Type@{get\-Capacitor\-Type}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Capacitor\-Type}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Capacitor\-Type (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a127dcda66d458f9320e541649101607e}
+\begin{DoxyReturn}{Returns}
+capacitor type {\ttfamily 'M\-I\-M\-Cap'} or {\ttfamily 'P\-I\-P\-Cap'}. 
+\end{DoxyReturn}
+\begin{DoxyRemark}{Remarks}
+{\ttfamily \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a127dcda66d458f9320e541649101607e}{get\-Capacitor\-Type()}} is especially useful when an instance of {\ttfamily \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit}{Capacitor\-Unit}} class is called in another classes instances to identify the capacitor's type. 
+\end{DoxyRemark}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7afefaf3a15d637ffe979bc54d57c6c2}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Maximum\-Cap\-Width@{get\-Maximum\-Cap\-Width}}
+\index{get\-Maximum\-Cap\-Width@{get\-Maximum\-Cap\-Width}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Maximum\-Cap\-Width}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Maximum\-Cap\-Width (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7afefaf3a15d637ffe979bc54d57c6c2}
+
+
+maximum size of capacitor's top plate. 
+
+{\ttfamily \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7afefaf3a15d637ffe979bc54d57c6c2}{get\-Maximum\-Cap\-Width()}} is called to check if capacitor dimensions are within acceptable technological limits. An exception is raised if the entered capacitor type is unknown. \begin{DoxyRemark}{Remarks}
+1. This function is especially usefull in drawing the layout of a unity capacitor, where it is important to garantee that the capacitor size does not exeed the maximum possible value. It is also useful when drawing a matrix of capacitors to make sure that also the unity capacitor respects the maximal values specified. 
+
+2. The maximum value of the poly2 size in P\-I\-P capacitor is not specified. Thus, it is not considered in {\ttfamily \hyperlink{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7afefaf3a15d637ffe979bc54d57c6c2}{get\-Maximum\-Cap\-Width()}} 
+\end{DoxyRemark}
+
+
+References Capacitor\-Unit.\-capacitor\-Type.
+
+
+
+Referenced by Capacitor\-Unit.\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aacb6369181aa03823cb1ce42adb0ee25}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Minimum\-Cap\-Width@{get\-Minimum\-Cap\-Width}}
+\index{get\-Minimum\-Cap\-Width@{get\-Minimum\-Cap\-Width}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Minimum\-Cap\-Width}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Minimum\-Cap\-Width (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aacb6369181aa03823cb1ce42adb0ee25}
+\begin{DoxyReturn}{Returns}
+The minimum size of the capacitor's top plate. An exception is raised if the entered capacitor type is unknown. 
+\end{DoxyReturn}
+\begin{DoxyRemark}{Remarks}
+This function is especially usefull in drawing the layout of a matrix of capacitors where it is important to ensure that the unity capacitor respects the minimal values specified. 
+
+An exception is raised if the entered capacitor type is unknown. 
+\end{DoxyRemark}
+
+
+References Capacitor\-Unit.\-capacitor\-Type.
+
+
+
+Referenced by Capacitor\-Unit.\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7be694eb909dc1e49326e3b5dd1e6887}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Layers@{get\-Layers}}
+\index{get\-Layers@{get\-Layers}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Layers}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Layers (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7be694eb909dc1e49326e3b5dd1e6887}
+
+
+Loads the technology file then extracts the adequate layers according to the capacitor type (M\-I\-M or P\-I\-P). 
+
+\begin{DoxyReturn}{Returns}
+a dictionary containing the layer labels as attributes and its values. 
+\end{DoxyReturn}
+\begin{DoxyRemark}{Remarks}
+An exception is raised if the entered capacitor type is unknown. 
+\end{DoxyRemark}
+
+
+References Capacitor\-Unit.\-capacitor\-Type.
+
+
+
+Referenced by Capacitor\-Unit.\-create().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a5b7ef0221e471e99fa7f0a87a28ba1ea}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!create@{create}}
+\index{create@{create}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{create}]{\setlength{\rightskip}{0pt plus 5cm}def create (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{t, }
+\item[{}]{b, }
+\item[{}]{bb\-Mode = {\ttfamily False}, }
+\item[{}]{v\-Enclosure\-\_\-bot\-Plate\-\_\-abt\-Box = {\ttfamily None}, }
+\item[{}]{h\-Enclosure\-\_\-bot\-Plate\-\_\-abt\-Box = {\ttfamily None}}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a5b7ef0221e471e99fa7f0a87a28ba1ea}
+
+
+When bonding box mode is activated, the function draws all layout physical layers of the capacitor after checking its dimensions. 
+
+All functions are excecuted in a new Update Session. In the contrary, only an exact estimation of layout dimensions is given. An error is raised when dimensions reach technological limits for M\-I\-M and P\-I\-P capacitors or when {\ttfamily bb\-Mode} parameters is other than {\ttfamily True} or {\ttfamily False}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em (} & t , b ) nets of top and bottom plates, respectively \\
+\hline
+{\em bb\-Mode} & activates bonding box dimensions computing when set to {\ttfamily True} \\
+\hline
+\end{DoxyParams}
+
+
+References Capacitor\-Unit.\-\_\-\-\_\-is\-Capacitor\-Unit\-O\-K\-\_\-\-\_\-(), Capacitor\-Unit.\-abutment\-Box\-Dict, Capacitor\-Unit.\-cap\-Dim, Capacitor\-Unit.\-compute\-Dimensions(), Stack.\-compute\-Dimensions(), Capacitor\-Unit.\-draw\-Abutment\-Box(), Capacitor\-Unit.\-draw\-Capacitor(), Technology.\-get\-Layers(), Capacitor\-Unit.\-get\-Layers(), and Capacitor\-Unit.\-set\-Rules().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae2ec4683c7f6c30fbb1687934673410c}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!draw\-Capacitor@{draw\-Capacitor}}
+\index{draw\-Capacitor@{draw\-Capacitor}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{draw\-Capacitor}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Capacitor (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{layer\-Dict, }
+\item[{}]{t, }
+\item[{}]{b}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae2ec4683c7f6c30fbb1687934673410c}
+
+
+Draws all layout physicial layers of the capacitor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em layer\-Dict} & a dictionary containing a description of the required physical layers according to capacitor type \\
+\hline
+{\em (} & t , b ) nets of top and bottom plates, respectively \\
+\hline
+\end{DoxyParams}
+
+
+References Capacitor\-Unit.\-bottom\-Plate\-Box, Capacitor\-Unit.\-bottom\-Plate\-Box\-Dict, Capacitor\-Unit.\-draw\-Bottom\-Plate\-Cut(), Capacitor\-Unit.\-draw\-One\-Plate(), Capacitor\-Unit.\-draw\-Routing\-Layers(), Capacitor\-Unit.\-draw\-Top\-Plate\-Cut(), Capacitor\-Unit.\-top\-Plate\-Box, and Capacitor\-Unit.\-top\-Plate\-Box\-Dict.
+
+
+
+Referenced by Capacitor\-Unit.\-create().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a8f71111f71d084f05742fadf134cb87e}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!compute\-Bottom\-Plate\-Cuts@{compute\-Bottom\-Plate\-Cuts}}
+\index{compute\-Bottom\-Plate\-Cuts@{compute\-Bottom\-Plate\-Cuts}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{compute\-Bottom\-Plate\-Cuts}]{\setlength{\rightskip}{0pt plus 5cm}def compute\-Bottom\-Plate\-Cuts (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a8f71111f71d084f05742fadf134cb87e}
+
+
+Computes needed parameters to draw bottom plate cuts in its exact position, including \-: 
+
+
+\begin{DoxyItemize}
+\item maximum number of cuts to draw on both sides of bottom plate,
+\item adjusted enclosure of
+\item abcissas of the two bottom cuts on left and right sides of bottom plate,
+\item ordinate of the same two cuts.
+\end{DoxyItemize}
+
+Given parameters described above, it is possible to draw the entire lines of cuts on both sides of bottom plate using {\ttfamily cut\-Line} function. 
+
+References Capacitor\-Unit.\-bottom\-Cut\-Line\-Number, Capacitor\-Unit.\-bottom\-Plate\-Box\-Dict, Capacitor\-Unit.\-cut\-Left\-Line\-Dict, Capacitor\-Unit.\-cut\-Max\-Number(), Capacitor\-Unit.\-cut\-Right\-Line\-Dict, Capacitor\-Unit.\-min\-Enclo\-\_\-bot\-Plate\-\_\-bot\-Plate\-Cut, Capacitor\-Unit.\-minheight\-\_\-top\-Platecut, Capacitor\-Unit.\-min\-Spacing\-\_\-bot\-Plate\-Cut\-\_\-top\-Plate, Capacitor\-Unit.\-min\-Spacing\-On\-Bot\-Plate\-\_\-cut, Capacitor\-Unit.\-min\-Width\-\_\-top\-Platecut, and Capacitor\-Unit.\-top\-Plate\-Box\-Dict.
+
+
+
+Referenced by Capacitor\-Unit.\-draw\-Abutment\-Box().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aceb634d48d79f2079c690297c820da0b}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!compute\-Top\-Plate\-Cuts@{compute\-Top\-Plate\-Cuts}}
+\index{compute\-Top\-Plate\-Cuts@{compute\-Top\-Plate\-Cuts}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{compute\-Top\-Plate\-Cuts}]{\setlength{\rightskip}{0pt plus 5cm}def compute\-Top\-Plate\-Cuts (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aceb634d48d79f2079c690297c820da0b}
+
+
+Computes needed parameters to draw top plate cuts in its exact position, including \-: 
+
+
+\begin{DoxyItemize}
+\item maximum number of cuts to draw on both sides of top plate,
+\item adjusted enclosure of
+\item abcissas of the two top cuts on left and right sides of top plate,
+\item ordinate of the same two cuts.
+\end{DoxyItemize}
+
+Given parameters described above, it is possible to draw the entire lines of cuts on both sides of bottom plate using {\ttfamily cut\-Line} function. 
+
+References Capacitor\-Unit.\-abutment\-Box\-Dict, Capacitor\-Unit.\-bottom\-Plate\-Box\-Dict, Capacitor\-Unit.\-bottom\-Plate\-R\-Layer\-Dict, Capacitor\-Unit.\-capacitor\-Type, Capacitor\-Unit.\-cut2\-Matrix\-Dict, Capacitor\-Unit.\-cut\-Left\-Line\-Dict, Capacitor\-Unit.\-cut\-Max\-Number(), Capacitor\-Unit.\-cut\-Right\-Line\-Dict, Capacitor\-Unit.\-enclosure\-\_\-bot\-Plate\-\_\-top\-Plate, Capacitor\-Unit.\-h\-Enclosure\-\_\-bot\-Plate\-\_\-abt\-Box, Capacitor\-Unit.\-min\-Enclo\-\_\-bot\-Plate\-\_\-bot\-Plate\-Cut, Capacitor\-Unit.\-min\-Enclo\-\_\-bot\-Plate\-R\-Metal\-\_\-bot\-Plate\-Cut, Capacitor\-Unit.\-min\-Enclo\-\_\-routing\-Track\-Metal\-\_\-cut, Capacitor\-Unit.\-min\-Enclo\-\_\-top\-Plate\-\_\-top\-Plate\-Cut, Capacitor\-Unit.\-min\-Enclo\-\_\-top\-Plate\-R\-Metal\-\_\-top\-Plate\-Cut, Capacitor\-Unit.\-minheight\-\_\-top\-Platecut, Capacitor\-Unit.\-min\-Spacing\-\_\-bot\-Plate, Capacitor\-Unit.\-min\-Spacing\-\_\-bot\-Plate\-Cut\-\_\-top\-Plate, Capacitor\-Unit.\-min\-Spacing\-On\-Top\-Plate\-\_\-cut, Capacitor\-Unit.\-min\-Width\-\_\-bot\-Platecut, Capacitor\-Unit.\-min\-Width\-\_\-bot\-R\-Metal, Capacitor\-Unit.\-min\-Width\-\_\-routing\-Trackcut, Capacitor\-Unit.\-min\-Width\-\_\-top\-Platecut, Capacitor\-Unit.\-set\-Bottom\-Plate\-Abt\-Box\-Enclosure(), Capacitor\-Unit.\-top\-Cut\-Line\-Dict, Capacitor\-Unit.\-top\-Cut\-Line\-Number, Capacitor\-Unit.\-top\-Plate\-Box\-Dict, Capacitor\-Unit.\-top\-Plate\-R\-Layer\-Dict, and Capacitor\-Unit.\-v\-Enclosure\-\_\-bot\-Plate\-\_\-abt\-Box.
+
+
+
+Referenced by Capacitor\-Unit.\-draw\-Abutment\-Box().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac5cd73be473bc321a29a75311f808835}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!draw\-Abutment\-Box@{draw\-Abutment\-Box}}
+\index{draw\-Abutment\-Box@{draw\-Abutment\-Box}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{draw\-Abutment\-Box}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Abutment\-Box (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ac5cd73be473bc321a29a75311f808835}
+
+
+Draws the abutment box of the capacitor in position {\ttfamily $<$}(abutment\-Box\-X\-Min, abutment\-Box\-Y\-Min)$>$. 
+
+First, the minimum enclosure of the top plate inside the bottom plate is computed. Second, using this parameters as well as the capacitor dimensions, the width and height of the abutment box are computed. The box is finally drawn. 
+
+References Capacitor\-Unit.\-abutment\-Box, Capacitor\-Unit.\-abutment\-Box\-Dict, Capacitor\-Unit.\-bottom\-Plate\-Box\-Dict, Capacitor\-Unit.\-compute\-Abutment\-Box\-Dimensions(), Capacitor\-Unit.\-compute\-Bottom\-Plate\-Cuts(), Capacitor\-Unit.\-compute\-One\-Plate\-Box\-Dimensions(), Capacitor\-Unit.\-compute\-Routing\-Layers\-Dimensions(), Capacitor\-Unit.\-compute\-Top\-Plate\-Cuts(), Capacitor\-Unit.\-enclosure\-\_\-bot\-Plate\-\_\-top\-Plate, Capacitor\-Unit.\-h\-Enclosure\-\_\-bot\-Plate\-\_\-abt\-Box, Capacitor\-Unit.\-top\-Plate\-Box\-Dict, and Capacitor\-Unit.\-v\-Enclosure\-\_\-bot\-Plate\-\_\-abt\-Box.
+
+
+
+Referenced by Capacitor\-Stack.\-create(), and Capacitor\-Unit.\-create().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7b4116e4696b869f462d86b1ddf00246}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!draw\-One\-Plate@{draw\-One\-Plate}}
+\index{draw\-One\-Plate@{draw\-One\-Plate}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{draw\-One\-Plate}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-One\-Plate (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{layer, }
+\item[{}]{net, }
+\item[{}]{box\-Dimensions}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7b4116e4696b869f462d86b1ddf00246}
+
+
+Draws the top or bottom plate through inflation of the Box under it. 
+
+These boxes are the abutment box in the case of the bottom plate and the bottom plate's box in the case of the top plate. This function also creates a a net for the drawn plate and sets it as external. \begin{DoxyReturn}{Returns}
+The drawn box. 
+\end{DoxyReturn}
+
+
+Referenced by Capacitor\-Unit.\-draw\-Capacitor().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a1a998a3072560eaee998c9e5531a5f5b}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!draw\-Bottom\-Plate\-Cut@{draw\-Bottom\-Plate\-Cut}}
+\index{draw\-Bottom\-Plate\-Cut@{draw\-Bottom\-Plate\-Cut}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{draw\-Bottom\-Plate\-Cut}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Bottom\-Plate\-Cut (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{layer, }
+\item[{}]{b}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a1a998a3072560eaee998c9e5531a5f5b}
+
+
+Draws the required cuts to connect the bottom plate. 
+
+First, the maximal possible number of cuts that can be drawn is computed. Second, using the computed number, the enclosure of this cuts in the bottom plate's layer is adjusted while the minimal enclosure is respected. Third, the relative positions of the cuts on both sides of the plate are computed. Finally, two vertical lines of cuts are drawns. \begin{DoxyParagraph}{Remark\-:}
+The relative positions describe the cordinates of the first bottom cut in every line of cuts. Then, knowing the spacing and width specifications of these cuts the rest of the line is easilly constructed. 
+\end{DoxyParagraph}
+
+
+References Capacitor\-Unit.\-bottom\-Cut\-Line\-Number, Capacitor\-Unit.\-cut\-Left\-Line\-Dict, Capacitor\-Unit.\-cut\-Line(), Capacitor\-Unit.\-cut\-Right\-Line\-Dict, Capacitor\-Unit.\-minheight\-\_\-top\-Platecut, Capacitor\-Unit.\-min\-Spacing\-On\-Bot\-Plate\-\_\-cut, and Capacitor\-Unit.\-min\-Width\-\_\-bot\-Platecut.
+
+
+
+Referenced by Capacitor\-Unit.\-draw\-Capacitor().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a8d4cd239412ffde81f0cda52123b9c1d}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!draw\-Top\-Plate\-Cut@{draw\-Top\-Plate\-Cut}}
+\index{draw\-Top\-Plate\-Cut@{draw\-Top\-Plate\-Cut}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{draw\-Top\-Plate\-Cut}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Top\-Plate\-Cut (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{layer, }
+\item[{}]{t}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a8d4cd239412ffde81f0cda52123b9c1d}
+
+
+Draws the top plate's cuts after computing the maximal number of cuts that can be placed and its exact enclosure in the top plate. 
+
+
+
+References Capacitor\-Unit.\-capacitor\-Type, Capacitor\-Unit.\-cut2\-Matrix\-Dict, Capacitor\-Unit.\-cut\-Line(), Capacitor\-Unit.\-cut\-Matrix(), Capacitor\-Unit.\-minheight\-\_\-top\-Platecut, Capacitor\-Unit.\-min\-Spacing\-On\-Top\-Plate\-\_\-cut, Capacitor\-Unit.\-min\-Width\-\_\-top\-Platecut, Capacitor\-Unit.\-top\-Cut\-Line\-Dict, and Capacitor\-Unit.\-top\-Cut\-Line\-Number.
+
+
+
+Referenced by Capacitor\-Unit.\-draw\-Capacitor().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a444cc6c0ee175ba22b5092d0706bc0d6}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!draw\-Routing\-Layers@{draw\-Routing\-Layers}}
+\index{draw\-Routing\-Layers@{draw\-Routing\-Layers}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{draw\-Routing\-Layers}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Routing\-Layers (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bottom\-Plate\-Layer, }
+\item[{}]{top\-Plate\-Layer, }
+\item[{}]{t, }
+\item[{}]{b}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a444cc6c0ee175ba22b5092d0706bc0d6}
+
+
+Draws the routing layers of both bottom and top plates after computing widths and the exact position of these layers. 
+
+Also computes positions if rlayers that are crucial for routing. 
+
+References Capacitor\-Unit.\-bottom\-Plate\-R\-Layer\-Dict, Capacitor\-Unit.\-cut\-Left\-Line\-Dict, Capacitor\-Unit.\-cut\-Right\-Line\-Dict, and Capacitor\-Unit.\-top\-Plate\-R\-Layer\-Dict.
+
+
+
+Referenced by Capacitor\-Unit.\-draw\-Capacitor().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a5c03a894501e69f2e6a6d40e93df8ef2}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!cut\-Max\-Number@{cut\-Max\-Number}}
+\index{cut\-Max\-Number@{cut\-Max\-Number}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{cut\-Max\-Number}]{\setlength{\rightskip}{0pt plus 5cm}def cut\-Max\-Number (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{width\-\_\-layer, }
+\item[{}]{width\-\_\-cut, }
+\item[{}]{spacing\-\_\-cut, }
+\item[{}]{enclosure\-\_\-cut}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a5c03a894501e69f2e6a6d40e93df8ef2}
+
+
+Computes the maximal number of cuts to be placed on a layer of width {\ttfamily width\-\_\-layer} considering specifications such as the spacing between the cuts, its width and its enclosure in the layer. 
+
+
+
+Referenced by Capacitor\-Unit.\-compute\-Bottom\-Plate\-Cuts(), and Capacitor\-Unit.\-compute\-Top\-Plate\-Cuts().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a95ebae95cc0be711de5adbb1faa85f98}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!cut\-Line@{cut\-Line}}
+\index{cut\-Line@{cut\-Line}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{cut\-Line}]{\setlength{\rightskip}{0pt plus 5cm}def cut\-Line (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{net, }
+\item[{}]{layer, }
+\item[{}]{first\-Cut\-X\-Center, }
+\item[{}]{first\-Cut\-Y\-Center, }
+\item[{}]{width\-\_\-cut, }
+\item[{}]{height\-\_\-cut, }
+\item[{}]{spacing\-\_\-cut, }
+\item[{}]{cut\-Number, }
+\item[{}]{direction}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a95ebae95cc0be711de5adbb1faa85f98}
+
+
+Creates a horizontal or vertical line of contacts according to the specified direction. 
+
+
+
+Referenced by Capacitor\-Unit.\-cut\-Matrix(), Capacitor\-Unit.\-draw\-Bottom\-Plate\-Cut(), and Capacitor\-Unit.\-draw\-Top\-Plate\-Cut().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a4b8fe45cf122a2682cd8120bcbc5e5fd}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!cut\-Matrix@{cut\-Matrix}}
+\index{cut\-Matrix@{cut\-Matrix}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{cut\-Matrix}]{\setlength{\rightskip}{0pt plus 5cm}def cut\-Matrix (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{net, }
+\item[{}]{layer, }
+\item[{}]{first\-Cut\-X\-Center, }
+\item[{}]{first\-Cut\-Y\-Center, }
+\item[{}]{width\-\_\-cut, }
+\item[{}]{height\-\_\-cut, }
+\item[{}]{spacing\-\_\-cut, }
+\item[{}]{cut\-Column\-Number, }
+\item[{}]{cut\-Row\-Number}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a4b8fe45cf122a2682cd8120bcbc5e5fd}
+
+
+Creates a matrix of cuts by vertically stacking horizontal lines of identical cuts. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em net} & net to which the cuts belong \\
+\hline
+{\em layer} & cuts physical layer \\
+\hline
+{\em first\-Cut\-X\-Center} & center's abcissa of the bottom left cut ( that is the first cut to be drawn in the matrix ) \\
+\hline
+{\em first\-Cut\-Y\-Center} & center's abcissa of the bottom left cut \\
+\hline
+{\em (width\-\_\-cut,height\-\_\-cut,spacing\-\_\-cut)} & cuts dimenions \\
+\hline
+{\em (cut\-Column\-Number,cut\-Row\-Number)} & matrix dimensions\\
+\hline
+\end{DoxyParams}
+\begin{DoxyRemark}{Remarks}
+The matrix can have any dimensions zero or negative one. 
+\end{DoxyRemark}
+
+
+References Capacitor\-Unit.\-cut\-Line().
+
+
+
+Referenced by Capacitor\-Unit.\-draw\-Top\-Plate\-Cut().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a876d31edaaabe0716d6fbe6f6c0c7b75}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Y\-Max@{get\-Bottom\-Plate\-Y\-Max}}
+\index{get\-Bottom\-Plate\-Y\-Max@{get\-Bottom\-Plate\-Y\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Y\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Y\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a876d31edaaabe0716d6fbe6f6c0c7b75}
+\begin{DoxyReturn}{Returns}
+the ordinate of the bottom plate's highest end-\/point ( that is equivalent to {\ttfamily dy\-Source} of the bottom plate's box ) . 
+\end{DoxyReturn}
+
+
+References Capacitor\-Unit.\-bottom\-Plate\-Box\-Dict.
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae461baa28fdfa09bad07b3f1073a46b7}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Left\-Cut\-X\-Min@{get\-Bottom\-Plate\-Left\-Cut\-X\-Min}}
+\index{get\-Bottom\-Plate\-Left\-Cut\-X\-Min@{get\-Bottom\-Plate\-Left\-Cut\-X\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Left\-Cut\-X\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Left\-Cut\-X\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae461baa28fdfa09bad07b3f1073a46b7}
+\begin{DoxyReturn}{Returns}
+the abcissa of the bottom plate's left line of cuts. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aae1849792395fccc12e921450a29980b}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Left\-Cut\-Y\-Min@{get\-Bottom\-Plate\-Left\-Cut\-Y\-Min}}
+\index{get\-Bottom\-Plate\-Left\-Cut\-Y\-Min@{get\-Bottom\-Plate\-Left\-Cut\-Y\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Left\-Cut\-Y\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Left\-Cut\-Y\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aae1849792395fccc12e921450a29980b}
+\begin{DoxyReturn}{Returns}
+the ordinate of the first ( or bottom) cut in the left line of cuts on the bottom plate. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2f7b75e47a238defa63e04c75e0be016}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Left\-Cut\-Y\-Max@{get\-Bottom\-Plate\-Left\-Cut\-Y\-Max}}
+\index{get\-Bottom\-Plate\-Left\-Cut\-Y\-Max@{get\-Bottom\-Plate\-Left\-Cut\-Y\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Left\-Cut\-Y\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Left\-Cut\-Y\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2f7b75e47a238defa63e04c75e0be016}
+\begin{DoxyReturn}{Returns}
+the ordinate of the highest cut of the bottom plate's left line of cuts. 
+\end{DoxyReturn}
+
+
+References Capacitor\-Unit.\-bottom\-Cut\-Line\-Number, Capacitor\-Unit.\-min\-Spacing\-On\-Bot\-Plate\-\_\-cut, and Capacitor\-Unit.\-min\-Width\-\_\-bot\-Platecut.
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9e59fed4e9829bac60edbd38195cdd90}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Right\-Cut\-X\-Min@{get\-Bottom\-Plate\-Right\-Cut\-X\-Min}}
+\index{get\-Bottom\-Plate\-Right\-Cut\-X\-Min@{get\-Bottom\-Plate\-Right\-Cut\-X\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Right\-Cut\-X\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Right\-Cut\-X\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9e59fed4e9829bac60edbd38195cdd90}
+\begin{DoxyReturn}{Returns}
+the absissa of the bottom plate's right line of cuts. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a0e362c0f80ab5a70fa3e4139d0009ef1}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Right\-Cut\-Y\-Min@{get\-Bottom\-Plate\-Right\-Cut\-Y\-Min}}
+\index{get\-Bottom\-Plate\-Right\-Cut\-Y\-Min@{get\-Bottom\-Plate\-Right\-Cut\-Y\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Right\-Cut\-Y\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Right\-Cut\-Y\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a0e362c0f80ab5a70fa3e4139d0009ef1}
+\begin{DoxyReturn}{Returns}
+the ordinate of the first ( or bottom) cut in the right line of cuts on the bottom plate. 
+\end{DoxyReturn}
+
+
+Referenced by Capacitor\-Unit.\-get\-Bottom\-Plate\-Right\-Cut\-Y\-Center().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae31425a5f9b3d7a0829c1abc454e2834}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Right\-Cut\-Y\-Max@{get\-Bottom\-Plate\-Right\-Cut\-Y\-Max}}
+\index{get\-Bottom\-Plate\-Right\-Cut\-Y\-Max@{get\-Bottom\-Plate\-Right\-Cut\-Y\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Right\-Cut\-Y\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Right\-Cut\-Y\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae31425a5f9b3d7a0829c1abc454e2834}
+\begin{DoxyReturn}{Returns}
+the ordinate of the highest ( or top) cut in the right line of cuts on the bottom plate. 
+\end{DoxyReturn}
+
+
+References Capacitor\-Unit.\-bottom\-Cut\-Line\-Number, Capacitor\-Unit.\-min\-Spacing\-On\-Bot\-Plate\-\_\-cut, and Capacitor\-Unit.\-min\-Width\-\_\-bot\-Platecut.
+
+
+
+Referenced by Capacitor\-Unit.\-get\-Bottom\-Plate\-Right\-Cut\-Y\-Center().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae3887820ee80da10f77b451e5f068635}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max@{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max}}
+\index{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max@{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-Left\-R\-Layer\-X\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_ae3887820ee80da10f77b451e5f068635}
+\begin{DoxyReturn}{Returns}
+the center's ordinate of the bottom plate's left cut (the cut that is the first one in the line). 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2d9186515736c9fd74725eca251f6e2b}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bottom\-Plate\-Right\-Cut\-Y\-Center@{get\-Bottom\-Plate\-Right\-Cut\-Y\-Center}}
+\index{get\-Bottom\-Plate\-Right\-Cut\-Y\-Center@{get\-Bottom\-Plate\-Right\-Cut\-Y\-Center}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bottom\-Plate\-Right\-Cut\-Y\-Center}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bottom\-Plate\-Right\-Cut\-Y\-Center (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2d9186515736c9fd74725eca251f6e2b}
+\begin{DoxyReturn}{Returns}
+the position of the bottom plate's right cuts on the horitontal axis (also applicable to left cuts). 
+\end{DoxyReturn}
+
+
+References Capacitor\-Unit.\-get\-Bottom\-Plate\-Right\-Cut\-Y\-Max(), and Capacitor\-Unit.\-get\-Bottom\-Plate\-Right\-Cut\-Y\-Min().
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a52e8ea7265119216e234eab32bc542ef}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min@{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min}}
+\index{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min@{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-Left\-R\-Layer\-X\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a52e8ea7265119216e234eab32bc542ef}
+\begin{DoxyReturn}{Returns}
+the position of the bottom plate's left cuts on the horitontal axis. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2f87580a615f6b0450d43a032adf81d5}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-R\-Layer\-Y\-Min@{get\-Bot\-Plate\-R\-Layer\-Y\-Min}}
+\index{get\-Bot\-Plate\-R\-Layer\-Y\-Min@{get\-Bot\-Plate\-R\-Layer\-Y\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-R\-Layer\-Y\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-R\-Layer\-Y\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a2f87580a615f6b0450d43a032adf81d5}
+\begin{DoxyReturn}{Returns}
+the position of bottom plate's left cuts on the horitontal axis. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aa6cb9e5f6ba2d4e4ce5f63ca1d785e7e}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-R\-Layer\-Y\-Max@{get\-Bot\-Plate\-R\-Layer\-Y\-Max}}
+\index{get\-Bot\-Plate\-R\-Layer\-Y\-Max@{get\-Bot\-Plate\-R\-Layer\-Y\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-R\-Layer\-Y\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-R\-Layer\-Y\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aa6cb9e5f6ba2d4e4ce5f63ca1d785e7e}
+\begin{DoxyReturn}{Returns}
+the position of bottom plate's left cuts on the horitontal axis. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a3463504463c87fb7aab28ca04597c169}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-R\-Layer\-Width@{get\-Bot\-Plate\-R\-Layer\-Width}}
+\index{get\-Bot\-Plate\-R\-Layer\-Width@{get\-Bot\-Plate\-R\-Layer\-Width}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-R\-Layer\-Width}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-R\-Layer\-Width (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a3463504463c87fb7aab28ca04597c169}
+\begin{DoxyReturn}{Returns}
+the position of bottom plate's left cuts on the horitontal axis. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aff2f6d078abdcf0d679aa9b697928f34}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center@{get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center}}
+\index{get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center@{get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-Right\-R\-Layer\-X\-Center (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aff2f6d078abdcf0d679aa9b697928f34}
+\begin{DoxyReturn}{Returns}
+the position of bottom plate's left cuts on the horitontal axis. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7440876afb0ff33ba0ee5cea4e9e0aed}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center@{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center}}
+\index{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center@{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Bot\-Plate\-Left\-R\-Layer\-X\-Center (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a7440876afb0ff33ba0ee5cea4e9e0aed}
+\begin{DoxyReturn}{Returns}
+the position of bottom plate's left cuts on the horitontal axis. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a836a7c11713aa3a08504a498b90fb5ee}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Top\-Plate\-R\-Layer\-Y\-Min@{get\-Top\-Plate\-R\-Layer\-Y\-Min}}
+\index{get\-Top\-Plate\-R\-Layer\-Y\-Min@{get\-Top\-Plate\-R\-Layer\-Y\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Top\-Plate\-R\-Layer\-Y\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Top\-Plate\-R\-Layer\-Y\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a836a7c11713aa3a08504a498b90fb5ee}
+\begin{DoxyReturn}{Returns}
+the ordinate of the bottom end points of the top plate routing layer. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aea137748a99552369414fc5ffec3a41d}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Top\-Plate\-R\-Layer\-Y\-Max@{get\-Top\-Plate\-R\-Layer\-Y\-Max}}
+\index{get\-Top\-Plate\-R\-Layer\-Y\-Max@{get\-Top\-Plate\-R\-Layer\-Y\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Top\-Plate\-R\-Layer\-Y\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Top\-Plate\-R\-Layer\-Y\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_aea137748a99552369414fc5ffec3a41d}
+\begin{DoxyReturn}{Returns}
+the ordinate of the higher end points of the top plate routing layer. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9c1452c170eeb58d060bb5fe72fae5a9}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Top\-Plate\-R\-Layer\-Width@{get\-Top\-Plate\-R\-Layer\-Width}}
+\index{get\-Top\-Plate\-R\-Layer\-Width@{get\-Top\-Plate\-R\-Layer\-Width}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Top\-Plate\-R\-Layer\-Width}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Top\-Plate\-R\-Layer\-Width (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9c1452c170eeb58d060bb5fe72fae5a9}
+\begin{DoxyReturn}{Returns}
+the width of top plate's routing layer. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a295a807958d27c156f87102762d353d6}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Top\-Plate\-R\-Layer\-X\-Center@{get\-Top\-Plate\-R\-Layer\-X\-Center}}
+\index{get\-Top\-Plate\-R\-Layer\-X\-Center@{get\-Top\-Plate\-R\-Layer\-X\-Center}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Top\-Plate\-R\-Layer\-X\-Center}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Top\-Plate\-R\-Layer\-X\-Center (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a295a807958d27c156f87102762d353d6}
+\begin{DoxyReturn}{Returns}
+the center's abcissa of the bottom plate routing layer. 
+\end{DoxyReturn}
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a28208011c71e1712625c1148a67d943c}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Top\-Plate\-R\-Layer\-X\-Min@{get\-Top\-Plate\-R\-Layer\-X\-Min}}
+\index{get\-Top\-Plate\-R\-Layer\-X\-Min@{get\-Top\-Plate\-R\-Layer\-X\-Min}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Top\-Plate\-R\-Layer\-X\-Min}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Top\-Plate\-R\-Layer\-X\-Min (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a28208011c71e1712625c1148a67d943c}
+\begin{DoxyReturn}{Returns}
+the origin (bottom-\/left end point) abcissa of the top plate routing layers. 
+\end{DoxyReturn}
+
+
+References Capacitor\-Unit.\-top\-Plate\-R\-Layer\-Dict.
+
+\hypertarget{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9788696eb8f1cffde53de39c7f2ffcaa}{\index{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}!get\-Top\-Plate\-R\-Layer\-X\-Max@{get\-Top\-Plate\-R\-Layer\-X\-Max}}
+\index{get\-Top\-Plate\-R\-Layer\-X\-Max@{get\-Top\-Plate\-R\-Layer\-X\-Max}!python::CapacitorUnit::CapacitorUnit@{python\-::\-Capacitor\-Unit\-::\-Capacitor\-Unit}}
+\subsubsection[{get\-Top\-Plate\-R\-Layer\-X\-Max}]{\setlength{\rightskip}{0pt plus 5cm}def get\-Top\-Plate\-R\-Layer\-X\-Max (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorUnit_1_1CapacitorUnit_a9788696eb8f1cffde53de39c7f2ffcaa}
+\begin{DoxyReturn}{Returns}
+the abscissa of the bottom-\/right end-\/point of the top plate routing layer. 
+\end{DoxyReturn}
+
+
+References Capacitor\-Unit.\-top\-Plate\-R\-Layer\-Dict.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Capacitor\-Unit.\-py\end{DoxyCompactItemize}

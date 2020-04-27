@@ -1,0 +1,382 @@
+.TH "AutoHorizontal" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoHorizontal \- Concrete Horizontal \fBAutoSegment\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBAutoSegment\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual bool \fB_canSlacken\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBcanMoveULeft\fP (float reserve=0\&.0) const"
+.br
+.ti -1c
+.RI "virtual bool \fBcanMoveURight\fP (float reserve=0\&.0) const"
+.br
+.ti -1c
+.RI "virtual \fBSegment\fP * \fBbase\fP ()"
+.br
+.ti -1c
+.RI "virtual \fBSegment\fP * \fBbase\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBHorizontal\fP * \fBgetHorizontal\fP ()"
+.br
+.ti -1c
+.RI "virtual \fBDbU::Unit\fP \fBgetSourceU\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDbU::Unit\fP \fBgetTargetU\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDbU::Unit\fP \fBgetDuSource\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBDbU::Unit\fP \fBgetDuTarget\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetSpanU\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBgetConstraints\fP (\fBDbU::Unit\fP &min, \fBDbU::Unit\fP &max) const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetSourceConstraints\fP (unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "virtual \fBInterval\fP \fBgetTargetConstraints\fP (unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fBgetDirection\fP () const"
+.br
+.ti -1c
+.RI "virtual size_t \fBgetGCells\fP (vector< \fBGCell\fP *> &) const"
+.br
+.ti -1c
+.RI "virtual void \fBsetDuSource\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "virtual void \fBsetDuTarget\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "virtual void \fBupdateOrient\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBupdatePositions\fP ()"
+.br
+.ti -1c
+.RI "virtual bool \fBcheckPositions\fP () const"
+.br
+.ti -1c
+.RI "virtual bool \fBcheckConstraints\fP () const"
+.br
+.ti -1c
+.RI "virtual unsigned int \fB_makeDogleg\fP (\fBGCell\fP *, unsigned int flags)"
+.br
+.ti -1c
+.RI "virtual bool \fBmoveULeft\fP ()"
+.br
+.ti -1c
+.RI "virtual bool \fBmoveURight\fP ()"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual void \fB_postCreate\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fB_preDestroy\fP ()"
+.br
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Concrete Horizontal \fBAutoSegment\fP\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "bool _canSlacken () const\fC [virtual]\fP"
+\fBReturns:\fP \fBtrue\fP if the segment can be slackened\&. That is, source or target constraints are less than three pitches\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Interval::contains(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getGCell(), GCell::getSide(), Interval::getSize(), DbU::getValueString(), Interval::inflate(), and Katabatic::KbVertical\&.
+.SS "bool canMoveULeft (float reserve = \fC0\&.0\fP) const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+\fBtrue\fP if the \fIglobal\fP segment can be moved on the left \fBGCell\fP (for a vertical) or down (for an horizontal)\&. The move is accepted only if it do not change the amount of global wiring\&. Thus the following conditions:
+.IP "\(bu" 2
+The segment mustn't be on the leftmost \fBGCell\fP (obvious\&.\&.\&.)\&.
+.IP "\(bu" 2
+The segment must be global\&.
+.IP "\(bu" 2
+The source and target contacts must be AutoContactTurn(s)\&.
+.IP "\(bu" 2
+At least one of the perpandicular must be global \fBand\fP connected through the \fItarget\fP\&. That is, it's a global which extends toward left\&.
+.IP "\(bu" 2
+The \fBGCell\fP of maximum density on the left must remains below the current \fBGCell\fP of maximum density, with a margin of \fCreserve\fP (expressed in total saturation percentage)\&. 
+.PP
+.RE
+.PP
+
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), GCell::getDown(), AutoContact::getGCell(), AutoSegment::getGCell(), AutoSegment::getLayer(), RoutingGauge::getLayerDepth(), GCell::getRight(), Session::getRoutingGauge(), AutoContact::getSegment(), GCell::getWDensity(), and AutoSegment::isGlobal()\&.
+.SS "bool canMoveURight (float reserve = \fC0\&.0\fP) const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+\fBtrue\fP if the \fIglobal\fP segment can be moved on the right \fBGCell\fP (for a vertical) or up (for an horizontal)\&. The move is accepted only if it do not change the amount of global wiring\&. Thus the following conditions:
+.IP "\(bu" 2
+The segment mustn't be on the leftmost \fBGCell\fP (obvious\&.\&.\&.)\&.
+.IP "\(bu" 2
+The segment must be global\&.
+.IP "\(bu" 2
+The source and target contacts must be AutoContactTurn(s)\&.
+.IP "\(bu" 2
+At least one of the perpandicular must be global \fBand\fP connected through the \fIsource\fP\&. That is, it's a global which extends toward right\&.
+.IP "\(bu" 2
+The \fBGCell\fP of maximum density on the left must remains below the current \fBGCell\fP of maximum density, with a margin of \fCreserve\fP (expressed in total saturation percentage)\&. 
+.PP
+.RE
+.PP
+
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getGCell(), AutoSegment::getGCell(), AutoSegment::getLayer(), RoutingGauge::getLayerDepth(), GCell::getRight(), Session::getRoutingGauge(), AutoContact::getSegment(), GCell::getUp(), GCell::getWDensity(), and AutoSegment::isGlobal()\&.
+.SS "\fBSegment\fP * base ()\fC [virtual]\fP"
+\fBReturns:\fP the decorated \fBHurricane::Segment\fP\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.SS "\fBSegment\fP * base () const\fC [virtual]\fP"
+\fBReturns:\fP the decorated \fBHurricane::Segment\fP (const flavor)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.SS "\fBHorizontal\fP * getHorizontal ()\fC [virtual]\fP"
+\fBReturns:\fP If the decorated segment is a \fBHurricane::Horizontal\fP, return it\&. \fCNULL\fP otherwise\&. 
+.PP
+Reimplemented from \fBAutoSegment\fP\&.
+.SS "\fBDbU::Unit\fP getSourceU () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP \fIuniform\fP source position\&. (X for an horizontal and Y for a Vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Segment::getSourceX()\&.
+.SS "\fBDbU::Unit\fP getTargetU () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP \fIuniform\fP target position\&. (X for an horizontal and Y for a Vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Segment::getTargetX()\&.
+.SS "\fBDbU::Unit\fP getDuSource () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP \fIuniform\fP delta from source\&. (dX for an horizontal and dY for a Vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Horizontal::getDxSource()\&.
+.SS "\fBDbU::Unit\fP getDuTarget () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP \fIuniform\fP delta from source\&. (dX for an horizontal and dY for a Vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Horizontal::getDxTarget()\&.
+.SS "\fBInterval\fP getSpanU () const\fC [virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP \fIuniform\fP occupying interval (on X for horizontal and on Y for vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Segment::getSourceX(), and Segment::getTargetX()\&.
+.SS "bool getConstraints (\fBDbU::Unit\fP & min, \fBDbU::Unit\fP & max) const\fC [virtual]\fP"
+\fBReturns:\fP in \fCmin\fP & \fCmax\fP the allowed range for the segment axis\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getCBYMax(), AutoContact::getCBYMin(), AutoSegment::getUserConstraints(), and DbU::getValueString()\&.
+.SS "\fBInterval\fP getSourceConstraints (unsigned int flags = \fC0\fP) const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The Interval into witch the source \fBAutoContact\fP can vary\&. By default all deduced constraints and user constraints are took into account\&. If \fCflags\fP contains \fCKbNativeConstraints\fP the constraint returned is only the enclosing \fBGCell\fP\&. 
+.RE
+.PP
+
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoSource(), Box::getYMax(), Box::getYMin(), and Katabatic::KbNativeConstraints\&.
+.SS "\fBInterval\fP getTargetConstraints (unsigned int flags = \fC0\fP) const\fC [virtual]\fP"
+
+.PP
+\fBReturns:\fP
+.RS 4
+The Interval into witch the target \fBAutoContact\fP can vary\&. By default all deduced constraints and user constraints are took into account\&. If \fCflags\fP contains \fCKbNativeConstraints\fP the constraint returned is only the enclosing \fBGCell\fP\&. 
+.RE
+.PP
+
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoTarget(), Box::getYMax(), Box::getYMin(), and Katabatic::KbNativeConstraints\&.
+.SS "unsigned int getDirection () const\fC [virtual]\fP"
+\fBReturns:\fP \fBKatabatic::KbHorizontal\fP or \fBKatabatic::KbVertical\fP according to the decorated segment\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Katabatic::KbHorizontal\&.
+.SS "size_t getGCells (vector< \fBGCell\fP *> & gcells) const\fC [virtual]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIgcells\fP A vector that will be filled by all the GCells that the segment overlap\&. In increasing order, from source to target\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The vector's size\&. 
+.RE
+.PP
+
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getGCell(), AutoSegment::getGCell(), and GCell::getRight()\&.
+.SS "void setDuSource (\fBDbU::Unit\fP du)\fC [virtual]\fP"
+Set the \fIuniform\fP \fCdU\fP from source anchor (dX for Horizontal, dY for Vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.SS "void setDuTarget (\fBDbU::Unit\fP du)\fC [virtual]\fP"
+Set the \fIuniform\fP \fCdU\fP from target anchor (dX for Horizontal, dY for Vertical)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.SS "void updateOrient ()\fC [virtual]\fP"
+Ensure that source is lower than target\&. Swap them if needed\&. Swap never occurs on global segment because their source and target anchors are from different \fBGCell\fP, which are already ordered\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Segment::getSourceX(), Segment::getTargetX(), Segment::invert(), Katabatic::SegSourceBottom, Katabatic::SegSourceTop, Katabatic::SegStrongTerminal, Katabatic::SegTargetBottom, Katabatic::SegTargetTop, AutoSegment::setFlags(), and AutoSegment::unsetFlags()\&.
+.SS "void updatePositions ()\fC [virtual]\fP"
+Update the segment begenning and ending positions\&. The positions takes into account the extension caps and reflect the real space used by the segment under it's long axis\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Session::getExtensionCap(), AutoSegment::getLayer(), Segment::getSourceX(), and Segment::getTargetX()\&.
+.SS "bool checkPositions () const\fC [virtual]\fP"
+\fBReturns:\fP \fBtrue\fP if the relative positions of source & target are coherent\&. (source <= target)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References Session::getExtensionCap(), AutoSegment::getLayer(), Segment::getSourceX(), Segment::getTargetX(), and DbU::getValueString()\&.
+.SS "bool checkConstraints () const\fC [virtual]\fP"
+\fBReturns:\fP \fBtrue\fP if the constraint intervel is coherent (non-empty or punctual in the worst case)\&. 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), and Interval::intersect()\&.
+.SS "unsigned int _makeDogleg (\fBGCell\fP * doglegGCell, unsigned int flags)\fC [virtual]\fP"
+\fBThis method is the workhorse for the various dogleg and topology restauration methods\&.\fP It is the atomic method that actually make the dogleg on \fBthis\fP segment\&.
+.PP
+\fBReturns:\fP \fBKatabatic::KbUseAboveLayer\fP if the dogleg is using the \fIabove\fP layer (\fBKatabatic::KbUseBelowLayer\fP for the below layer)\&.
+.PP
+Break the current segment in two (a\&.k\&.a\&. making a dogleg)\&.
+.IP "\(bu" 2
+The segment is broken inside \fCdoglegGCell\fP\&.
+.IP "\(bu" 2
+Two new segments are createds, one perpandicular and one parallel\&.
+.IP "\(bu" 2
+The original segment is always kept attached to the \fIsource\fP\&. (the new parallel fragment is attached to the \fItarget\fP)\&.
+.IP "\(bu" 2
+The perpandicular segment is in the layer \fIabove\fP by default\&. If we are already on the topmost routing layer, the \fIbelow\fP layer is used\&.
+.IP "\(bu" 2
+If the segment pass through the breaking \fBGCell\fP, it's axis is set into the center\&. If the segment is local, the axis is the middle of the segment\&.
+.IP "\(bu" 2
+The Local/Global kind of the original segment is updated\&. The local/global status is computed by the constructor of the \fBAutoSegment\fP for the perpandicular and the new parallel\&.
+.IP "\(bu" 2
+The terminal state is updated\&. If the segment is a strong terminal the part that is no longer directly connected to the terminal is demoted to \fBKatabatic::SegWeakTerminal1\fP\&.
+.IP "\(bu" 2
+The perpandicular is obviously a canonical\&. If the broken segment is canonical, the original \fBis\fP left canonical and only the new parallel is re-canonized\&. Otherwise, we re-canonise both sets of aligned segments (the one on the source and the one on the target)\&.
+.IP "\(bu" 2
+The three segments are added to the session dogleg stack\&.
+.PP
+.PP
+After this method call the net topology is guarantee to be valid\&.
+.PP
+Example Case 1 Example Case 2 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::canonize(), DebugSession::close(), AutoContactTurn::create(), AutoSegment::create(), Session::dogleg(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), Session::getConfiguration(), RoutingGauge::getContactLayer(), AutoContact::getGCell(), Component::getLayer(), AutoSegment::getLayer(), RoutingGauge::getLayerDepth(), Component::getNet(), AutoSegment::getNet(), GCell::getRight(), Session::getRoutingGauge(), RoutingGauge::getRoutingLayer(), AutoSegment::getSourceX(), AutoSegment::getTargetX(), GCell::getX(), GCell::getXMax(), AutoSegment::getY(), AutoContact::invalidate(), AutoSegment::invalidate(), AutoSegment::isCanonical(), AutoSegment::isLocal(), AutoSegment::isSlackened(), AutoSegment::isWeakTerminal(), Katabatic::KbHorizontal, Katabatic::KbUseAboveLayer, Katabatic::KbUseBelowLayer, Katabatic::KbVertical, AutoContact::migrateConstraintBox(), DebugSession::open(), GCell::removeHSegment(), Katabatic::SegCanonical, Katabatic::SegDogleg, Katabatic::SegGlobal, Katabatic::SegNotAligned, Katabatic::SegSlackened, Katabatic::SegWeakTerminal1, AutoSegment::setFlags(), AutoSegment::setLayer(), and AutoSegment::unsetFlags()\&.
+.SS "bool moveULeft ()\fC [virtual]\fP"
+\fBThis function do not manage an aligned set\&. It applies on \fCthis\fP segment only\&.\fP
+.PP
+Displace an Horizontal or Vertical segment to the \fBGCell\fP below (a\&.k\&.a\&. lower or inferior)\&. Rules for displacement:
+.IP "\(bu" 2
+The segment must be connected at both end to a turn contact (we do not want to manage more complex cases for the time beeing)\&.
+.IP "\(bu" 2
+And, of course, the segment must not already by on the bottomost \fBGCell\fP\&.\&.\&.
+.PP
+.PP
+The displacement take care of:
+.IP "\(bu" 2
+Managing the status of the various perpandiculars\&. The stretched one are made global if needed\&. The shrinked one made local, if needed\&.
+.IP "\(bu" 2
+The supporting \fBAutoContact\fP (source & target) are changed of \fBGCell\fP\&.
+.IP "\(bu" 2
+If the segment is global, the go-through GCells are updateds\&.
+.PP
+.PP
+\fBReturns:\fP \fBtrue\fP if the move has succeeded\&.
+.PP
+moveULeft() for an Horizontal 
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References GCell::addVSegment(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), GCell::getDown(), AutoContact::getGCell(), AutoSegment::getGCell(), GCell::getRight(), AutoContact::getSegment(), GCell::getSide(), Interval::getVMax(), AutoSegment::isLocal(), Katabatic::KbVertical, GCell::removeVSegment(), Katabatic::SegGlobal, AutoSegment::setAxis(), AutoSegment::setFlags(), AutoContact::setGCell(), and AutoSegment::unsetFlags()\&.
+.SS "bool moveURight ()\fC [virtual]\fP"
+\fBThis function do not manage an aligned set\&. It applies on \fCthis\fP segment only\&.\fP
+.PP
+Displace an Horizontal or Vertical segment to the \fBGCell\fP above (a\&.k\&.a\&. upper or superior)\&. Rules for displacement:
+.PP
+\fBSee also:\fP
+.RS 4
+\fBAutoSegment::moveULeft()\fP for a complete description\&. 
+.RE
+.PP
+
+.PP
+Implements \fBAutoSegment\fP\&.
+.PP
+References GCell::addVSegment(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getGCell(), AutoSegment::getGCell(), GCell::getRight(), AutoContact::getSegment(), GCell::getSide(), GCell::getUp(), Interval::getVMin(), AutoSegment::isLocal(), Katabatic::KbVertical, GCell::removeVSegment(), Katabatic::SegGlobal, AutoSegment::setAxis(), AutoSegment::setFlags(), AutoContact::setGCell(), and AutoSegment::unsetFlags()\&.
+.SS "void _postCreate ()\fC [protected]\fP, \fC [virtual]\fP"
+In addition to \fBAutoSegment::_postCreate()\fP, detect whether the segment is global or local and register it in the relevant GCells (if needed)\&.
+.PP
+If the segment is anchored directly on a terminal, adjust the axis so it's connected\&. 
+.PP
+Reimplemented from \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::_postCreate(), GCell::addHSegment(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getGCell(), GCell::getRight(), GCell::getX(), Component::getY(), Katabatic::SegGlobal, AutoSegment::setFlags(), and AutoContact::setY()\&.
+.SS "void _preDestroy ()\fC [protected]\fP, \fC [virtual]\fP"
+Perform operations that must be done before the actual destructor is called\&. Merely whidrawn the \fBAutoSegment\fP from the lookup/Session mechanism\&. 
+.PP
+Reimplemented from \fBAutoSegment\fP\&.
+.PP
+References AutoSegment::_preDestroy(), AutoSegment::getAutoSource(), AutoSegment::getAutoTarget(), AutoContact::getGCell(), AutoSegment::getId(), GCell::getRight(), GCell::getX(), and GCell::removeHSegment()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

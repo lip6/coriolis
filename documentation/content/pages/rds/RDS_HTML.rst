@@ -41,14 +41,18 @@ RDS / Symbolic to Real Conversion
                                     :align: middle
                                     :width: 40%
 
+Printable version of this Document
+==================================
 
-**Disclaimer:** This document is still far from complete.
-
-Printable version of this document `RDS.pdf <../../../pdf/main/RDS.pdf>`_.
+`RDS.pdf <{filename}/pdfs/main/RDS.pdf>`_
 
 
 .. contents::
    :depth: 2
+
+
+**Disclaimer:** This document is still far from complete.
+
 
 .. include:: RDSpage.rst
 

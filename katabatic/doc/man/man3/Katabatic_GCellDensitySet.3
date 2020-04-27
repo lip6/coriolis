@@ -1,0 +1,114 @@
+.TH "GCellDensitySet" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+GCellDensitySet \- \fBGCell\fP Set, sorted by density\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBGCellDensitySet\fP (unsigned int depth)"
+.br
+.ti -1c
+.RI "\fBGCellDensitySet\fP (unsigned int depth, const std::vector< \fBGCell\fP *> &)"
+.br
+.ti -1c
+.RI "\fB~GCellDensitySet\fP ()"
+.br
+.ti -1c
+.RI "bool \fBempty\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBsize\fP () const"
+.br
+.ti -1c
+.RI "const std::set< \fBGCell\fP *, GCell::CompareByKey > & \fBgetGCells\fP () const"
+.br
+.ti -1c
+.RI "void \fBinsert\fP (\fBGCell\fP *)"
+.br
+.ti -1c
+.RI "void \fBerase\fP (\fBGCell\fP *)"
+.br
+.ti -1c
+.RI "void \fBunqueue\fP (\fBGCell\fP *)"
+.br
+.ti -1c
+.RI "void \fBrequeue\fP ()"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBGCell\fP Set, sorted by density\&. 
+
+A small container helper to manage a set of \fBGCell\fP sorted by density on a specific layer \fCdepth\fP\&.
+.PP
+The helper is implemented in term of a set\&. Once inserted in a set an element must not have is sorting key changed\&. But \fBGCell\fP density may change due to \fBAutoSegment\fP modifications during the lifetime of the set\&. To circumvent this problem, the \fBGCell\fP provide a key attribute to be used specifically with \fBGCellDensitySet\fP\&. This key act as a cached copy of the \fBGCell\fP density which is updated \fIonly\fP by a call to \fBGCell::updateKey()\fP (and \fInot\fP \fBGCell::updateDensity()\fP)\&. \fBGCell\fP which density have changed and key has to be updated must be signaled to set with the GCellDensityQueue::unqueue() method\&. When we want to update the sorting of the set on the new densities, we call \fBGCellDensitySet::requeue()\fP which, for each invalidated \fBGCell\fP do:
+.IP "\(bu" 2
+Remove the \fBGCell\fP from the set\&.
+.IP "\(bu" 2
+Update the key (call \fBGCell::updateKey()\fP)\&.
+.IP "\(bu" 2
+Reinsert the \fBGCell\fP in the set (thus with the updated key)\&.
+.PP
+.PP
+Typical usage: 
+.PP
+.nf
+GCellDensitySet gcells ( 2, *(getGCellGrid()->getGCellVector()) );
+
+while ( true ) {
+    bool optimized = false;
+
+    std::set<GCell*,GCell::CompareByKey>::const_iterator igcell = gcells\&.getGCells()\&.begin();
+    for ( ; igcell != gcells\&.getGCells()\&.end() ; ++igcell ) {
+        if ( doSomeOptimization(*igcell) ) {
+          optimized = true;
+          gcells\&.unqueue( *igcell );
+        }
+    }
+
+    if (not optimized) break;
+
+    gcells\&.requeue();
+}
+
+.fi
+.PP
+ 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "\fBGCellDensitySet\fP (unsigned int depth)"
+Create a new empty \fBGCellDensitySet\fP, sorting on density of layer \fCdepth\fP\&. 
+.SS "\fBGCellDensitySet\fP (unsigned int depth, const std::vector< \fBGCell\fP *> & gcells)"
+Create a new empty \fBGCellDensitySet\fP, sorting on density of layer \fCdepth\fP\&. Load the queue with the GCells supplied in the \fCgcells\fP vector\&. 
+.PP
+References GCellDensitySet::requeue()\&.
+.SS "~\fBGCellDensitySet\fP ()"
+Delete a \fBGCellDensitySet\fP, if the queue is not empty, issue a warning\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "bool empty () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the queue is empty\&. 
+.SS "size_t size () const\fC [inline]\fP"
+\fBReturns:\fP the numbers of elements in the queue\&. 
+.SS "const std::set< \fBGCell\fP *, GCell::CompareByKey > & getGCells () const\fC [inline]\fP"
+\fBReturns:\fP the list of GCells currently in the queue\&. 
+.SS "size_t insert (\fBGCell\fP * gcell)\fC [inline]\fP"
+Insert \fCgcell\fP into the set\&. 
+.SS "size_t erase (\fBGCell\fP * gcell)\fC [inline]\fP"
+Remove \fCgcell\fP from the set\&. 
+.SS "void unqueue (\fBGCell\fP * gcell)\fC [inline]\fP"
+Invalidate \fCgcell\fP\&. The density of \fCgcell\fP may have changed and needs to be reinserted into the queue\&. It is temporarily set asides until the next call to \fBGCellDensitySet::requeue()\fP\&. 
+.SS "void requeue ()"
+Reinsert in the queue all the GCells that have been previously invalidated by a call to \fBGCellDensitySet::unqueue()\fP\&. This function calls \fBGCell::updateKey()\fP before reinserting the \fBGCell\fP\&. 
+.PP
+Referenced by GCellDensitySet::GCellDensitySet()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

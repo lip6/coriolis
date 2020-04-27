@@ -1,0 +1,724 @@
+.TH "AutoContact" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoContact \- Abstract base class for \fBAutoContact\fP\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherited by \fBAutoContactHTee\fP, \fBAutoContactTerminal\fP, \fBAutoContactTurn\fP, and \fBAutoContactVTee\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBHook\fP * \fBgetBodyHook\fP ()"
+.br
+.ti -1c
+.RI "\fBHook\fP * \fBgetAnchorHook\fP ()"
+.br
+.ti -1c
+.RI "\fBComponent\fP * \fBgetAnchor\fP () const"
+.br
+.ti -1c
+.RI "\fBNet\fP * \fBgetNet\fP () const"
+.br
+.ti -1c
+.RI "const \fBLayer\fP * \fBgetLayer\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetX\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetY\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetDx\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetDy\fP () const"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetCenter\fP () const"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetPosition\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetWidth\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetHalfWidth\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetHeight\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetHalfHeight\fP () const"
+.br
+.ti -1c
+.RI "\fBComponents\fP \fBgetSlaveComponents\fP () const"
+.br
+.ti -1c
+.RI "void \fBsetLayer\fP (const \fBLayer\fP *)"
+.br
+.ti -1c
+.RI "void \fBsetWidth\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBsetHeight\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBsetSizes\fP (\fBDbU::Unit\fP width, \fBDbU::Unit\fP height)"
+.br
+.ti -1c
+.RI "void \fBsetX\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBsetY\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBsetPosition\fP (\fBDbU::Unit\fP width, \fBDbU::Unit\fP height)"
+.br
+.ti -1c
+.RI "void \fBsetPosition\fP (const \fBPoint\fP &)"
+.br
+.ti -1c
+.RI "void \fBsetDx\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBsetDy\fP (\fBDbU::Unit\fP)"
+.br
+.ti -1c
+.RI "void \fBsetOffset\fP (\fBDbU::Unit\fP dx, \fBDbU::Unit\fP dy)"
+.br
+.ti -1c
+.RI "virtual void \fBtranslate\fP (const \fBDbU::Unit\fP &tx, const \fBDbU::Unit\fP &ty)"
+.br
+.ti -1c
+.RI "bool \fBisInCreationStage\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisInvalidated\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisInvalidatedCache\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisTurn\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisTee\fP (unsigned int direction) const"
+.br
+.ti -1c
+.RI "bool \fBisHTee\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisVTee\fP () const"
+.br
+.ti -1c
+.RI "bool \fBisFixed\fP () const"
+.br
+.ti -1c
+.RI "bool \fBhasBadTopology\fP () const"
+.br
+.ti -1c
+.RI "bool \fBcanDestroy\fP (unsigned int flags=0) const"
+.br
+.ti -1c
+.RI "bool \fBcanMoveUp\fP (const \fBAutoSegment\fP *moved) const"
+.br
+.ti -1c
+.RI "\fBContact\fP * \fBbase\fP () const"
+.br
+.ti -1c
+.RI "virtual const \fBName\fP & \fBgetName\fP () const"
+.br
+.ti -1c
+.RI "size_t \fBgetId\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBBox\fP \fBgetBoundingBox\fP () const"
+.br
+.ti -1c
+.RI "\fBGCell\fP * \fBgetGCell\fP () const"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegment\fP * \fBgetOpposite\fP (const \fBAutoSegment\fP *) const =0"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegment\fP * \fBgetPerpandicular\fP (const \fBAutoSegment\fP *) const =0"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegment\fP * \fBgetSegment\fP (unsigned int) const =0"
+.br
+.ti -1c
+.RI "unsigned int \fBgetMinDepth\fP () const"
+.br
+.ti -1c
+.RI "unsigned int \fBgetMaxDepth\fP () const"
+.br
+.ti -1c
+.RI "void \fBgetLengths\fP (\fBDbU::Unit\fP *lengths, AutoSegment::DepthLengthSet &)"
+.br
+.ti -1c
+.RI "virtual \fBBox\fP \fBgetNativeConstraintBox\fP () const"
+.br
+.ti -1c
+.RI "\fBInterval\fP \fBgetUConstraints\fP (unsigned int direction) const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetCBXMin\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetCBXMax\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetCBYMin\fP () const"
+.br
+.ti -1c
+.RI "\fBDbU::Unit\fP \fBgetCBYMax\fP () const"
+.br
+.ti -1c
+.RI "\fBBox\fP \fBgetConstraintBox\fP () const"
+.br
+.ti -1c
+.RI "\fBBox\fP & \fBintersectConstraintBox\fP (\fBBox\fP &box) const"
+.br
+.ti -1c
+.RI "void \fBinvalidate\fP (unsigned int flags=0)"
+.br
+.ti -1c
+.RI "virtual void \fBupdateGeometry\fP ()=0"
+.br
+.ti -1c
+.RI "virtual void \fBupdateTopology\fP ()=0"
+.br
+.ti -1c
+.RI "void \fBshowTopologyError\fP (const std::string &, unsigned int flags=0)"
+.br
+.ti -1c
+.RI "virtual void \fBcheckTopology\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetGCell\fP (\fBGCell\fP *)"
+.br
+.ti -1c
+.RI "void \fBsetCBXMin\fP (\fBDbU::Unit\fP xMin)"
+.br
+.ti -1c
+.RI "void \fBsetCBXMax\fP (\fBDbU::Unit\fP xMax)"
+.br
+.ti -1c
+.RI "void \fBsetCBYMin\fP (\fBDbU::Unit\fP yMin)"
+.br
+.ti -1c
+.RI "void \fBsetCBYMax\fP (\fBDbU::Unit\fP yMax)"
+.br
+.ti -1c
+.RI "void \fBsetConstraintBox\fP (const \fBBox\fP &box)"
+.br
+.ti -1c
+.RI "bool \fBrestrictConstraintBox\fP (\fBDbU::Unit\fP constraintMin, \fBDbU::Unit\fP constraintMax, unsigned int flags=\fBKbWarnOnError\fP)"
+.br
+.ti -1c
+.RI "void \fBmigrateConstraintBox\fP (\fBAutoContact\fP *other)"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static size_t \fBgetAllocateds\fP ()"
+.br
+.ti -1c
+.RI "static const \fBName\fP & \fBgetStaticName\fP ()"
+.br
+.in -1c
+.SS "Static Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fB_getTopology\fP (\fBContact\fP *, \fBComponent\fP *&anchor, \fBHorizontal\fP **&, \fBVertical\fP **&, size_t)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Abstract base class for \fBAutoContact\fP\&. 
+
+
+.SH "Caching Mechanism"
+.PP
+To bypass the Ring/Hook mechanism \fIand\fP the subsequent Session::Lookup() call, the AutoSegments anchored on an \fBAutoContact\fP are cached in the \fBAutoContact\fP itself\&. They can be accessed through \fCgetHorizontalN()\fP and getVerticalN() accessors \fCN\fP depending on the subtype of \fBAutoContact\fP\&.
+.PP
+Cached AutoSegments are updated in the \fBAutoContact::updateTopology()\fP function only\&.
+.SH "Invalidate on AutoContacts"
+.PP
+The invalidation of an \fBAutoContact\fP invalidate all the segments that are anchored on it\&.
+.PP
+\fBSpecial Case of HTee & VTee\fP
+.PP
+When invalidating an HTee or VTee, two out of the three anchored segments are parallels\&. The \fIaligned\fP constraint is passed on those two\&. By default, when we invalidate an \fBAutoSegment\fP, the invalidation is applied to the whole aligned set through the \fBAutoSegment::getAligneds()\fP collection\&. So if one of the parallel is invalidated and the other not, it should only be because we are already in \fCgetAligneds()\fP, then we do not want to invalidate again the whole aligned set\&. In that case, we perform an atomic only invalidation (reset \fBKatabatic::KbPropagate\fP)\&.
+.PP
+For the complete invalidation/revalidation mechanism see \fBSession Algorithm\fP\&.
+.SH "Notes - Differences from Katabatic 2"
+.PP
+From the previous version of \fBKatabatic\fP, \fBAutoContact\fP have been greatly stripped down (again)\&. They are now always punctual objetcs with stricly fixed topologies: 
+.PD 0
+
+.IP "\(bu" 2
+\fBAutoContactTerminal\fP to connect to a terminal (one segment)\&. 
+.IP "\(bu" 2
+\fBAutoContactTurn\fP to make a turn: two perpandiculars segments\&. 
+.IP "\(bu" 2
+\fBAutoContactHTee\fP an horizontal tee: two \fIaligned\fP horizonals and one vertical\&. 
+.IP "\(bu" 2
+\fBAutoContactVTee\fP an horizontal tee: two \fIaligned\fP verticals and one horizontal\&. 
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBHook\fP * getBodyHook ()\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getBodyHook()\&.
+.PP
+Referenced by GCellTopology::_do_xG_1Pad(), and AutoSegment::create()\&.
+.SS "\fBHook\fP * getAnchorHook ()\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getAnchorHook()\&.
+.SS "\fBComponent\fP * getAnchor () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getAnchor()\&.
+.PP
+Referenced by AutoContactTerminal::getNativeConstraintBox(), and AutoContactTerminal::updateTopology()\&.
+.SS "\fBNet\fP * getNet () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getNet()\&.
+.PP
+Referenced by AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), AutoContactHTee::updateGeometry(), AutoContactTerminal::updateGeometry(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), AutoContactHTee::updateTopology(), and AutoContactTerminal::updateTopology()\&.
+.SS "const \fBLayer\fP * getLayer () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getLayer()\&.
+.PP
+Referenced by AutoSegment::makeDogleg(), AutoSegment::revalidate(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), AutoContactHTee::updateTopology(), and AutoContactTerminal::updateTopology()\&.
+.SS "\fBDbU::Unit\fP getX () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getX()\&.
+.PP
+Referenced by GCellTopology::_do_1G_1M3(), GCellTopology::_do_xG_xM3(), AutoSegment::create(), GCellTopology::doRp_StairCaseV(), AutoSegment::makeDogleg(), AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), and AutoContactHTee::updateGeometry()\&.
+.SS "\fBDbU::Unit\fP getY () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getY()\&.
+.PP
+Referenced by AutoSegment::create(), GCellTopology::doRp_StairCaseH(), AutoSegment::makeDogleg(), AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), and AutoContactHTee::updateGeometry()\&.
+.SS "\fBDbU::Unit\fP getDx () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getDx()\&.
+.SS "\fBDbU::Unit\fP getDy () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getDy()\&.
+.SS "\fBPoint\fP getCenter () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.SS "\fBPoint\fP getPosition () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getPosition()\&.
+.SS "\fBDbU::Unit\fP getWidth () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getWidth()\&.
+.SS "\fBDbU::Unit\fP getHalfWidth () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getHalfWidth()\&.
+.SS "\fBDbU::Unit\fP getHeight () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getHeight()\&.
+.SS "\fBDbU::Unit\fP getHalfHeight () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::getHalfHeight()\&.
+.SS "\fBComponents\fP getSlaveComponents () const\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Component::getSlaveComponents()\&.
+.SS "void setLayer (const \fBLayer\fP * layer)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setLayer()\&.
+.PP
+Referenced by AutoSegment::reduceDoglegLayer(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), AutoContactHTee::updateTopology(), and AutoContactTerminal::updateTopology()\&.
+.SS "void setWidth (\fBDbU::Unit\fP w)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setWidth()\&.
+.SS "void setHeight (\fBDbU::Unit\fP h)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setHeight()\&.
+.SS "void setSizes (\fBDbU::Unit\fP w, \fBDbU::Unit\fP h)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setSizes()\&.
+.SS "void setX (\fBDbU::Unit\fP x)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setX()\&.
+.PP
+Referenced by AutoVertical::_postCreate(), AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), AutoContactHTee::updateGeometry(), and AutoContactTerminal::updateGeometry()\&.
+.SS "void setY (\fBDbU::Unit\fP y)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setY()\&.
+.PP
+Referenced by AutoHorizontal::_postCreate(), AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), AutoContactHTee::updateGeometry(), and AutoContactTerminal::updateGeometry()\&.
+.SS "void setPosition (\fBDbU::Unit\fP w, \fBDbU::Unit\fP h)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setPosition()\&.
+.SS "void setPosition (const \fBPoint\fP & p)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setPosition()\&.
+.SS "void setDx (\fBDbU::Unit\fP dx)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setDx()\&.
+.SS "void setDy (\fBDbU::Unit\fP dy)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setDy()\&.
+.SS "void setOffset (\fBDbU::Unit\fP w, \fBDbU::Unit\fP h)\fC [inline]\fP"
+\fIBase class method proxy\&.\fP 
+.PP
+References Contact::setOffset()\&.
+.SS "void translate (const \fBDbU::Unit\fP & dx, const \fBDbU::Unit\fP & dy)\fC [virtual]\fP"
+\fIBase class method proxy\&.\fP 
+.SS "bool isInCreationStage () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fBAutoContact\fP is still in it's initial creation stage\&. 
+.PP
+References Katabatic::CntInCreationStage\&.
+.SS "bool isInvalidated () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the some \fBAutoSegment\fP has changed and the \fBAutoContact\fP needs to be repositionned (through a call to \fBAutoContact::updateGeometry()\fP)\&. 
+.PP
+References Katabatic::CntInvalidated\&.
+.SS "bool isInvalidatedCache () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the some \fBAutoSegment\fP has changed and the \fBAutoContact\fP topology needs to be restored, as a gap may have appeared (through a call to AutoSegment::updateTopology())\&. 
+.PP
+References Katabatic::CntInvalidatedCache\&.
+.PP
+Referenced by AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), AutoContactHTee::updateGeometry(), AutoContactTerminal::updateGeometry(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), AutoContactHTee::updateTopology(), and AutoContactTerminal::updateTopology()\&.
+.SS "bool isTurn () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the dynamic type of the \fBAutoContact\fP is of type Turn\&. 
+.PP
+References Katabatic::CntTurn\&.
+.PP
+Referenced by AutoSegment::canReduce(), and AutoSegment::revalidate()\&.
+.SS "bool isTee (unsigned int direction) const"
+\fBReturns:\fP \fBtrue\fP if the dynamic type of the \fBAutoContact\fP is either of type \fBAutoContactHTee\fP or \fBAutoContactVTee\fP, according to \fCdirection\fP\&. 
+.PP
+References Katabatic::KbHorizontal, and Katabatic::KbVertical\&.
+.SS "bool isHTee () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the dynamic type of the \fBAutoContact\fP is of type \fBAutoContactHTee\fP\&. 
+.PP
+References Katabatic::CntHTee\&.
+.SS "bool isVTee () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the dynamic type of the \fBAutoContact\fP is of type \fBAutoContactHTee\fP\&. 
+.PP
+References Katabatic::CntVTee\&.
+.SS "bool isFixed () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fBAutoContact\fP cannot be moved\&. 
+.PP
+References Katabatic::CntFixed\&.
+.PP
+Referenced by AutoSegment::create(), AutoContact::getCBXMax(), AutoContact::getCBXMin(), AutoContact::getCBYMax(), and AutoContact::getCBYMin()\&.
+.SS "bool hasBadTopology () const\fC [inline]\fP"
+\fBReturns:\fP \fBtrue\fP if the \fBAutoContact\fP topology has been broken and a gap has appeared\&. (sould not happen\&.\&.\&.) 
+.PP
+References Katabatic::CntBadTopology\&.
+.PP
+Referenced by AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), AutoContactHTee::updateGeometry(), AutoContactTerminal::updateGeometry(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), and AutoContactHTee::updateTopology()\&.
+.SS "bool canDestroy (unsigned int flags = \fC0\fP) const"
+\fBReturns:\fP \fBtrue\fP if the \fBAutoContact\fP could be destroyed, that is, no segments remains anchored on it\&. If \fCflags\fP contains \fBKatabatic::KbWarnOnError\fP, issue an error message\&. 
+.PP
+References Katabatic::KbWarnOnError\&.
+.SS "bool canMoveUp (const \fBAutoSegment\fP * moved) const"
+\fBReturns:\fP \fBtrue\fP if \fCsegment\fP can be moved up without triggering a topological modification\&. It meaans that:
+.IP "\(bu" 2
+Without \fCmoved\fP, the \fBAutoContact\fP needs only one layer\&.
+.IP "\(bu" 2
+\fCmoved\fP go from \fIbelow\fP the \fBAutoContact\fP to \fIabove\fP\&. 
+.PP
+
+.PP
+References Component::getLayer(), AutoSegment::getLayer(), and RoutingGauge::getLayerDepth()\&.
+.SS "\fBContact\fP * base () const\fC [inline]\fP"
+\fBReturns:\fP The \fBHurricane::Contact\fP which is decorated\&. 
+.PP
+Referenced by AutoVertical::_makeDogleg(), AutoSegment::create(), AutoSegment::getOppositeAnchor(), GCell::removeContact(), AutoContactVTee::updateGeometry(), AutoContactTurn::updateGeometry(), AutoContactHTee::updateGeometry(), and AutoContactTerminal::updateGeometry()\&.
+.SS "size_t getAllocateds ()\fC [static]\fP"
+\fBReturns:\fP The total number of \fBAutoContact\fP currently allocateds\&. 
+.SS "const \fBName\fP & getStaticName ()\fC [static]\fP"
+\fBReturns:\fP The name of the Hurricane::ExtensionGo slice\&. 
+.SS "const \fBName\fP & getName () const\fC [virtual]\fP"
+\fBReturns:\fP The name of the Hurricane::ExtensionGo slice\&. 
+.SS "const \fBName\fP & getId () const\fC [inline]\fP"
+\fBReturns:\fP The unique \fCidentifer\fP of the \fBAutoSegment\fP\&. 
+.SS "\fBBox\fP getBoundingBox () const\fC [virtual]\fP"
+
+.PP
+\fBSee also:\fP
+.RS 4
+\fBContact::getBoundingBox()\fP\&. 
+.RE
+.PP
+
+.SS "\fBGCell\fP * getGCell () const\fC [inline]\fP"
+\fBReturns:\fP The \fBGCell\fP into which the \fBAutoContact\fP is located\&. 
+.PP
+Referenced by AutoHorizontal::_canSlacken(), AutoVertical::_canSlacken(), AutoHorizontal::_makeDogleg(), AutoVertical::_makeDogleg(), AutoHorizontal::_postCreate(), AutoVertical::_postCreate(), AutoHorizontal::_preDestroy(), AutoVertical::_preDestroy(), AutoSegment::AutoSegment(), AutoHorizontal::canMoveULeft(), AutoVertical::canMoveULeft(), AutoHorizontal::canMoveURight(), AutoVertical::canMoveURight(), AutoHorizontal::getGCells(), AutoVertical::getGCells(), AutoSegment::makeDogleg(), AutoHorizontal::moveULeft(), AutoVertical::moveULeft(), AutoHorizontal::moveURight(), AutoVertical::moveURight(), and AutoSegment::toConstraintAxis()\&.
+.SS "\fBAutoSegment\fP * getOpposite (const \fBAutoSegment\fP * reference) const\fC [pure virtual]\fP"
+\fBReturns:\fP The other \fBAutoSegment\fP the \fIsame\fP direction as \fCreference\fP, this is only meaningful on \fBAutoContactHTee\fP or \fBAutoContactVTee\fP\&. If there is no opposite, \fCNULL\fP is returned\&. 
+.PP
+Implemented in \fBAutoContactTerminal\fP, \fBAutoContactHTee\fP, \fBAutoContactTurn\fP, and \fBAutoContactVTee\fP\&.
+.SS "\fBAutoSegment\fP * getPerpandicular (const \fBAutoSegment\fP * reference) const\fC [pure virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP in the \fIperpandicular\fP direction to \fCreference\fP, this is only meaningful on AutoContacTurn\&. It there is no unique perpandicular, \fCNULL\fP is returned\&. 
+.PP
+Implemented in \fBAutoContactTerminal\fP, \fBAutoContactHTee\fP, \fBAutoContactTurn\fP, and \fBAutoContactVTee\fP\&.
+.PP
+Referenced by AutoSegment::raise(), AutoSegment::reduce(), and AutoSegment::revalidate()\&.
+.SS "\fBAutoSegment\fP * getSegment (unsigned int index) const\fC [pure virtual]\fP"
+\fBReturns:\fP The nth anchored \fBAutoSegment\fP\&. The index is significant:
+.IP "\(bu" 2
+\fB0\fP : first horizontal (\fBh1\fP)\&.
+.IP "\(bu" 2
+\fB1\fP : second horizontal (\fBh2\fP)\&.
+.IP "\(bu" 2
+\fB2\fP : first vertical (\fBb1\fP)\&.
+.IP "\(bu" 2
+\fB3\fP : second vertical (\fBb2\fP)\&.
+.PP
+.PP
+Not all the indexes are filled for every \fBAutoContact\fP\&. For example \fCTurn\fP have \fBh1\fP and \fBb1\fP, and \fCHTee\fP have \fBh1\fP, \fBh2\fP and \fBv1\fP\&. 
+.PP
+Implemented in \fBAutoContactTerminal\fP, \fBAutoContactHTee\fP, \fBAutoContactTurn\fP, and \fBAutoContactVTee\fP\&.
+.PP
+Referenced by AutoHorizontal::canMoveULeft(), AutoVertical::canMoveULeft(), AutoHorizontal::canMoveURight(), AutoVertical::canMoveURight(), LocatorHelper::getSegment(), LocatorHelper::LocatorHelper(), AutoHorizontal::moveULeft(), AutoVertical::moveULeft(), AutoHorizontal::moveURight(), AutoVertical::moveURight(), and LocatorHelper::progress()\&.
+.SS "unsigned int getMinDepth () const"
+\fBReturns:\fP The layer depth of the bottom layer of the \fBAutoContact\fP\&. 
+.PP
+References Component::getLayer()\&.
+.PP
+Referenced by AutoSegment::canPivotUp()\&.
+.SS "unsigned int getMaxDepth () const"
+\fBReturns:\fP The layer depth of the top layer of the \fBAutoContact\fP\&. 
+.PP
+References Component::getLayer()\&.
+.PP
+Referenced by AutoSegment::canPivotDown()\&.
+.SS "void getLengths (\fBDbU::Unit\fP * lengths, AutoSegment::DepthLengthSet & processeds)"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlengths\fP A table of \fBDbU::Unit\fP, the size of all routing layers used\&. 
+.br
+\fIprocesseds\fP An \fBAutoSegment\fP sorted set holding all the already processeds AutoSegments\&.
+.RE
+.PP
+Compute the lengths over the owning \fBGCell\fP of all the AutoSegments anchored on this \fBAutoContact\fP\&. The lengths are added to the total length table \fClengths\fP\&. To avoid double accounting of the local AutoSegments that have both source & target in the same \fBGCell\fP, we keep a set of already processeds AutoSegments in \fCprocesseds\fP\&. 
+.PP
+References Katabatic::KbHorizontal, Katabatic::KbVertical, and toLambda()\&.
+.SS "\fBBox\fP getNativeConstraintBox () const\fC [virtual]\fP"
+\fBReturns:\fP The native constraint box (that is, whithout any user constraints applied)\&. For \fBAutoContactTerminal\fP, this is the Box of the supporting external component, and for all others the bounding box of the owning \fBGCell\fP\&. 
+.PP
+Reimplemented in \fBAutoContactTerminal\fP\&.
+.SS "\fBInterval\fP getUConstraints (unsigned int direction) const"
+\fBReturns:\fP The constraint interval in \fCdirection\fP (that is, the relevant side of the constraint box)\&. 
+.PP
+References Interval::inflate(), and Katabatic::KbHorizontal\&.
+.PP
+Referenced by AutoContactTerminal::updateGeometry()\&.
+.SS "\fBDbU::Unit\fP getCBXMin () const\fC [inline]\fP"
+\fBReturns:\fP The X coordinate of the bottom left corner of the constraint box\&. 
+.PP
+References DbU::fromLambda(), Component::getX(), GCell::getX(), and AutoContact::isFixed()\&.
+.PP
+Referenced by AutoContact::getConstraintBox(), and AutoVertical::getConstraints()\&.
+.SS "\fBDbU::Unit\fP getCBXMax () const\fC [inline]\fP"
+\fBReturns:\fP The X coordinate of the top right corner of the constraint box\&. 
+.PP
+References DbU::fromLambda(), Component::getX(), GCell::getX(), and AutoContact::isFixed()\&.
+.PP
+Referenced by AutoContact::getConstraintBox(), and AutoVertical::getConstraints()\&.
+.SS "\fBDbU::Unit\fP getCBYMin () const\fC [inline]\fP"
+\fBReturns:\fP The Y coordinate of the bottom left corner of the constraint box\&. 
+.PP
+References DbU::fromLambda(), Component::getY(), GCell::getY(), and AutoContact::isFixed()\&.
+.PP
+Referenced by AutoContact::getConstraintBox(), and AutoHorizontal::getConstraints()\&.
+.SS "\fBDbU::Unit\fP getCBYMax () const\fC [inline]\fP"
+\fBReturns:\fP The Y coordinate of the top right corner of the constraint box\&. 
+.PP
+References DbU::fromLambda(), Component::getY(), GCell::getY(), and AutoContact::isFixed()\&.
+.PP
+Referenced by AutoContact::getConstraintBox(), and AutoHorizontal::getConstraints()\&.
+.SS "\fBBox\fP getConstraintBox () const\fC [inline]\fP"
+\fBReturns:\fP The current constraint box: the native constraint box with all the user's contraints applieds\&. 
+.PP
+References AutoContact::getCBXMax(), AutoContact::getCBXMin(), AutoContact::getCBYMax(), and AutoContact::getCBYMin()\&.
+.PP
+Referenced by AutoSegment::computeOptimal(), and AutoContact::migrateConstraintBox()\&.
+.SS "\fBBox\fP & intersectConstraintBox (\fBBox\fP & box) const"
+\fBReturns:\fP The intersection between \fCbox\fP and the constraint box\&. The result is stored into \fCbox\fP and a reference to it is returned\&. 
+.PP
+References Box::getIntersection()\&.
+.SS "void invalidate (unsigned int flags = \fC0\fP)"
+Invalidate the \fBAutoContact\fP, schedule it for revalidation in the \fBSession\fP\&. If flag containt Katabatic::CntInvalidTopology, the topology of the \fBAutoContact\fP will also be checked and possible gap closeds\&.
+.PP
+The revalidations methods associated are:
+.IP "\(bu" 2
+AutoSegment::updateGeometry(), recompute the punctual contact position\&.
+.IP "\(bu" 2
+AutoSegment::updateTopology(), restore the connexity\&. 
+.PP
+
+.PP
+References Katabatic::CntInvalidated, and Katabatic::CntInvalidatedCache\&.
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), AutoVertical::_makeDogleg(), and AutoSegment::AutoSegment()\&.
+.SS "void updateGeometry ()\fC [pure virtual]\fP"
+Compute the new position of the \fBAutoContact\fP based on the \fBAutoSegment\fP positions\&. The \fBSession\fP mechanism ensure that all \fBAutoSegment\fP are set into their final positions before calling this updator\&. 
+.PP
+Implemented in \fBAutoContactTerminal\fP, \fBAutoContactHTee\fP, \fBAutoContactTurn\fP, and \fBAutoContactVTee\fP\&.
+.SS "void updateTopology ()\fC [pure virtual]\fP"
+Modificate the \fBAutoContact\fP topology to close any gap\&. This could be by changing layer or creating a new dogleg on an incident \fBAutoSegment\fP\&. 
+.PP
+Implemented in \fBAutoContactTerminal\fP, \fBAutoContactHTee\fP, \fBAutoContactTurn\fP, and \fBAutoContactVTee\fP\&.
+.SS "void showTopologyError (const std::string & message, unsigned int flags = \fC0\fP)"
+Comprensive display of the topology of the \fBAutoContact\fP to ease the debug work\&. Prepend with the error message \fCmessage\fP\&. Do no throw an error\&. 
+.PP
+References AutoSegment::isGlobal()\&.
+.PP
+Referenced by AutoContactTerminal::updateGeometry(), AutoContactVTee::updateTopology(), AutoContactTurn::updateTopology(), AutoContactHTee::updateTopology(), and AutoContactTerminal::updateTopology()\&.
+.SS "void checkTopology ()\fC [virtual]\fP"
+Check for topology correctness (no gaps), display an error message if needed\&. 
+.SS "void setGCell (\fBGCell\fP * gcell)"
+Set the owning \fBGCell\fP\&. 
+.PP
+References GCell::addContact(), and toLambda()\&.
+.PP
+Referenced by AutoHorizontal::moveULeft(), AutoVertical::moveULeft(), AutoHorizontal::moveURight(), and AutoVertical::moveURight()\&.
+.SS "void setCBXMin (\fBDbU::Unit\fP xMin)\fC [inline]\fP"
+Set the lower left X coordinate of the constraint box\&.
+.PP
+\fBRemark: It cannot go outside the GCell bounding box\&. \fP
+.RS 4
+
+.RE
+.PP
+
+.PP
+References GCell::getX()\&.
+.SS "void setCBXMax (\fBDbU::Unit\fP xMax)\fC [inline]\fP"
+Set the upper right X coordinate of the constraint box\&.
+.PP
+\fBRemark: It cannot go outside the GCell bounding box\&. \fP
+.RS 4
+
+.RE
+.PP
+
+.PP
+References GCell::getX(), and GCell::getXMax()\&.
+.SS "void setCBYMin (\fBDbU::Unit\fP yMin)\fC [inline]\fP"
+Set the lower left Y coordinate of the constraint box\&.
+.PP
+\fBRemark: It cannot go outside the GCell bounding box\&. \fP
+.RS 4
+
+.RE
+.PP
+
+.PP
+References GCell::getY()\&.
+.SS "void setCBYMax (\fBDbU::Unit\fP yMax)\fC [inline]\fP"
+Set the upper right Y coordinate of the constraint box\&.
+.PP
+\fBRemark: It cannot go outside the GCell bounding box\&. \fP
+.RS 4
+
+.RE
+.PP
+
+.PP
+References GCell::getY(), and GCell::getYMax()\&.
+.SS "void setConstraintBox (const \fBBox\fP & box)"
+Set the constraint box\&.
+.PP
+\fBRemark: It cannot go outside the GCell bounding box\&. \fP
+.RS 4
+
+.RE
+.PP
+
+.PP
+References Box::getXMax(), Box::getXMin(), Box::getYMax(), and Box::getYMin()\&.
+.SS "bool restrictConstraintBox (\fBDbU::Unit\fP min, \fBDbU::Unit\fP max, unsigned int flags = \fC\fBKbWarnOnError\fP\fP)"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fImin\fP The minimum of the restriction interval\&. 
+.br
+\fImax\fP The maximum of the restriction interval\&. 
+.br
+\fIflags\fP Gives the direction of the restriction\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+\fBtrue\fP if the restriction was actually applied\&.
+.RE
+.PP
+Restrict the current constraint box but check if the restriction will not lead to an empty interval, in that case, do nothing and return \fBfalse\fP\&. 
+.PP
+References Katabatic::KbHorizontal, Katabatic::KbVertical, Katabatic::KbWarnOnError, and toLambda()\&.
+.SS "void migrateConstraintBox (\fBAutoContact\fP * other)"
+Transfer the user constraint box from \fCother\fP to the current object \fCthis\fP\&. The constraints of \fCother\fP are restored to their native values\&. The two contacts must belong to the same \fBGCell\fP for this method to take effect\&. 
+.PP
+References AutoContact::getConstraintBox()\&.
+.PP
+Referenced by AutoHorizontal::_makeDogleg(), and AutoVertical::_makeDogleg()\&.
+.SS "void _getTopology (\fBContact\fP * support, \fBComponent\fP *& anchor, \fBHorizontal\fP **& horizontals, \fBVertical\fP **& verticals, size_t size)\fC [static]\fP, \fC [protected]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIanchor\fP The anchor, if any\&. 
+.br
+\fIhs\fP The \fBHurricane::Horizontal\fP anchored\&. 
+.br
+\fIvs\fP The \fBHurricane::Vertical\fP anchored\&. 
+.br
+\fIsz\fP The size of boths \fChs\fP & \fCvs\fP table passed as arguments\&.
+.RE
+.PP
+Fill \fCanchor\fP , \fChs\fP and \fCvs\fP with the components anchored on this \fBAutoContact\fP\&. 
+.PP
+References Contact::getAnchor(), and Component::getSlaveComponents()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

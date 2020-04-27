@@ -1,0 +1,121 @@
+.TH "AutoContactTurn" 3 "Mon Apr 27 2020" "Version 1.0" "Katabatic - Routing Toolbox" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+AutoContactTurn \- \fBAutoContact\fP Turn (one H, one V)  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits \fBAutoContact\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual \fBAutoSegment\fP * \fBgetOpposite\fP (const \fBAutoSegment\fP *) const"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegment\fP * \fBgetPerpandicular\fP (const \fBAutoSegment\fP *) const"
+.br
+.ti -1c
+.RI "virtual \fBAutoSegment\fP * \fBgetSegment\fP (unsigned int) const"
+.br
+.ti -1c
+.RI "virtual void \fBupdateGeometry\fP ()"
+.br
+.ti -1c
+.RI "virtual void \fBupdateTopology\fP ()"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBAutoContactTurn\fP * \fBcreate\fP (\fBGCell\fP *, \fBNet\fP *, const \fBLayer\fP *)"
+.br
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+\fBAutoContact\fP Turn (one H, one V) 
+
+\fBAutoContact\fP to make a turn (one H, one V)\&. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBAutoContactTurn\fP * create (\fBGCell\fP * gcell, \fBNet\fP * net, const \fBLayer\fP * layer)\fC [static]\fP"
+
+.PP
+\fBParameters:\fP
+.RS 4
+\fIgcell\fP The \fBGCell\fP into which create the \fBAutoContact\fP\&. 
+.br
+\fInet\fP The Net to which this \fBAutoContact\fP belongs\&. 
+.br
+\fIlayer\fP The Layer of the \fBAutoContact\fP\&. 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+The created \fBAutoContactTurn\fP\&.
+.RE
+.PP
+Create a new \fBAutoContactTurn\fP\&. 
+.PP
+References Katabatic::CntInCreationStage, and Contact::create()\&.
+.PP
+Referenced by GCellTopology::_do_1G_1M3(), GCellTopology::_do_1G_xM1(), GCellTopology::_do_xG(), GCellTopology::_do_xG_1M1_1M2(), GCellTopology::_do_xG_1Pad(), GCellTopology::_do_xG_xM1_xM3(), GCellTopology::_do_xG_xM3(), AutoHorizontal::_makeDogleg(), AutoVertical::_makeDogleg(), GCellTopology::doRp_Access(), GCellTopology::doRp_StairCaseH(), GCellTopology::doRp_StairCaseV(), and anonymous_namespace{LoadGrByNet\&.cpp}::singleGCell()\&.
+.SS "\fBAutoSegment\fP * getOpposite (const \fBAutoSegment\fP * reference) const\fC [virtual]\fP"
+\fBReturns:\fP The other \fBAutoSegment\fP the \fIsame\fP direction as \fCreference\fP, this is only meaningful on \fBAutoContactHTee\fP or \fBAutoContactVTee\fP\&. If there is no opposite, \fCNULL\fP is returned\&. 
+.PP
+Implements \fBAutoContact\fP\&.
+.SS "\fBAutoSegment\fP * getPerpandicular (const \fBAutoSegment\fP * reference) const\fC [virtual]\fP"
+\fBReturns:\fP The \fBAutoSegment\fP in the \fIperpandicular\fP direction to \fCreference\fP, this is only meaningful on AutoContacTurn\&. It there is no unique perpandicular, \fCNULL\fP is returned\&. 
+.PP
+Implements \fBAutoContact\fP\&.
+.SS "\fBAutoSegment\fP * getSegment (unsigned int index) const\fC [virtual]\fP"
+\fBReturns:\fP The nth anchored \fBAutoSegment\fP\&. The index is significant:
+.IP "\(bu" 2
+\fB0\fP : first horizontal (\fBh1\fP)\&.
+.IP "\(bu" 2
+\fB1\fP : second horizontal (\fBh2\fP)\&.
+.IP "\(bu" 2
+\fB2\fP : first vertical (\fBb1\fP)\&.
+.IP "\(bu" 2
+\fB3\fP : second vertical (\fBb2\fP)\&.
+.PP
+.PP
+Not all the indexes are filled for every \fBAutoContact\fP\&. For example \fCTurn\fP have \fBh1\fP and \fBb1\fP, and \fCHTee\fP have \fBh1\fP, \fBh2\fP and \fBv1\fP\&. 
+.PP
+Implements \fBAutoContact\fP\&.
+.SS "void updateGeometry ()\fC [virtual]\fP"
+Compute the new position of the \fBAutoContact\fP based on the \fBAutoSegment\fP positions\&. The \fBSession\fP mechanism ensure that all \fBAutoSegment\fP are set into their final positions before calling this updator\&. 
+.PP
+Implements \fBAutoContact\fP\&.
+.PP
+References AutoContact::base(), DebugSession::close(), Katabatic::CntInvalidated, AutoContact::getNet(), AutoContact::getX(), AutoContact::getY(), AutoContact::hasBadTopology(), Go::invalidate(), AutoContact::isInvalidatedCache(), DebugSession::open(), AutoContact::setX(), and AutoContact::setY()\&.
+.SS "void updateTopology ()\fC [virtual]\fP"
+Restore the topology (i\&.e\&. connexity) of the contact after one or both connected segments has changed layer\&.
+.PP
+Based on the layer depth delta between the two perpandiculars segments\&. Three case can occurs:
+.IP "\(bu" 2
+The delta is \fBzero\fP, then just sets the layer of the contact to the common metal layer (turn in same layer)\&.
+.IP "\(bu" 2
+The delta is \fBone\fP, then sets the contact layer to VIA connecting the two layers\&.
+.IP "\(bu" 2
+The delta \fBcannot be equal to two\fP, due to the alternatives routing directions, it would mean a \fIturn\fP connecting two \fIhorizontals\fP (or verticals) in different layers\&.
+.IP "\(bu" 2
+The delta is \fBthree\fP, then create a dogleg to restore the connexity\&. The dogleg will be created on the connected segment which as been \fIlayer invalidated\fP\&. If both of them have been invalidated, the horizontal one is preferred\&.
+.IP "\(bu" 2
+A delta of more than \fBthree\fP is an error, and must never occurs\&.
+.PP
+.PP
+Update Turn Topology 
+.PP
+Implements \fBAutoContact\fP\&.
+.PP
+References DebugSession::close(), Katabatic::CntBadTopology, RoutingGauge::getContactLayer(), AutoContact::getLayer(), AutoSegment::getLayer(), RoutingGauge::getLayerDepth(), AutoContact::getNet(), Session::getRoutingGauge(), RoutingGauge::getRoutingLayer(), AutoContact::hasBadTopology(), AutoSegment::invalidate(), AutoContact::isInvalidatedCache(), AutoSegment::isInvalidatedLayer(), AutoSegment::makeDogleg(), DebugSession::open(), AutoContact::setLayer(), and AutoContact::showTopologyError()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Katabatic - Routing Toolbox from the source code\&.

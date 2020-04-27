@@ -1,0 +1,493 @@
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor}{\section{Rout\-Matched\-Capacitor Class Reference}
+\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor}\index{Rout\-Matched\-Capacitor@{Rout\-Matched\-Capacitor}}
+}
+
+
+Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix.  
+
+
+
+
+Inherits Capacitor\-Unit, Capacitor\-Stack, and Vertical\-Routing\-Tracks.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ac775ee34451fdfa742b318538164070e}{\-\_\-\-\_\-init\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em A special method used to customize the class instance to an initial state in which \-: \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a15ec3e3156133327b307cd0e4b75f22c}{route}
+\begin{DoxyCompactList}\small\item\em Draws the complete layout given the capacitor matrix. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a3b578035b1559391931dade7c2508105}{set\-Rules}
+\begin{DoxyCompactList}\small\item\em Defines technology rules used to draw the layout. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ae361a87f8ad999bb5f1b9851773f481b}{set\-Layers}
+\begin{DoxyCompactList}\small\item\em Defines all physical layers used to draw the layout. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a20b46b43488cc58c302b123a89299d85}{compute\-Dimensions}
+\begin{DoxyCompactList}\small\item\em Computes, through simple instructions and functions calls, layout variables detailed in Figure 2. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ab00cae047369eb93c10e44e316fa991b}{compute\-H\-Routing\-Track\-Y\-Center}
+\begin{DoxyCompactList}\small\item\em Computes centers' ordinates of the eight horizontal routing tracks. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a0d90b75abe0f4ce0f0b9b1b405462300}{compute\-H\-R\-Layer\-Y\-Center}
+\begin{DoxyCompactList}\small\item\em Sets the stretching value of top plates. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_afbe39494b52b035fe3efdb0ddb896f69}{draw\-H\-Routing\-Tracks}
+\begin{DoxyCompactList}\small\item\em Iteratively draws horizontal routing tracks on top and bottom positions of the matrix using physical layer {\ttfamily routing\-Tracks\-Layer}. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a6bba48a4b1d4834c6617a5af5553be1c}{draw\-H\-R\-Layers}
+\begin{DoxyCompactList}\small\item\em Iteratively draws the horizontal routing layers starting with bottom left elementary capacitor $ C_{00} $. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a2019f4bb1e22a8d622ce4d155c934eb0}{draw\-Cuts}
+\begin{DoxyCompactList}\small\item\em Draws all required cuts using physical layers \-: \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ab3fd42d04811b9c88654c0ca0e6e2de7}{draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer}
+\begin{DoxyCompactList}\small\item\em Draws one cut, in layer {\ttfamily cut\-Layer}, in order to connect a vertical routing track, at position {\ttfamily cut\-X\-Min} in metal 2, and a horizontal routing track, at position {\ttfamily cut\-Y\-Min} in metal 3. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a05e49f5537d31e0ab19b8a86eb6e7b1c}{draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track}
+\begin{DoxyCompactList}\small\item\em Draws cuts to connect vertical routing tracks in metal 2 and horizontal routing tracks in metal 3. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a7d642764cf9e385710751eec3f43f7af}{\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Iteratively performs top plates stretching for the capacitor matrix. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a57eade928345587b01420a05be475a8f}{\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Draws vertical stretched layers for a given elementary capacitor. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a1077752f46c512f70377cc60bd772034}{\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Sets the abcissas of the extremities of the vertical stretching to be applied to capacitor's top plates for a given elementary capacitor in the matrix. \end{DoxyCompactList}\item 
+def \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_aaaf2e610688441a439b8a3624e1393b9}{\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-}
+\begin{DoxyCompactList}\small\item\em Computes horizontal routing layers source and target abcissas for top and bottom plates connections to its associated routing track. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Routs two matched capacitors, C1 and C2, drawn in a capacitor matrix. 
+
+Connections are put in place with reference to a given matching scheme. Elementary capacitor units are connected to horizontal and vertical routing tracks that represent top plates and bottom plates nets of C1 and C2 . Supported types of capacitors are Poly-\/\-Poly and Metal-\/\-Metal. Technologycal rules are provided by 350 nm A\-M\-S C\-M\-O\-S technology with three-\/four metal layers. Metal layers that are used for routing are placed similarly to horziontal-\/vertical (H\-V) symbolic Alliance C\-A\-D tool router, where horizontal metal channels are drawn in metal 2 and the vertical ones are in metal 3. Given a matrix of dimensions $ R*C $, the total number of vertical tracks is $ 2C+2 $ equivalent to $ C+1 $ couples, ensuring that every elementary capacitor is positioned between four vertical tracks, two from each side. In fact, every adjacent couple of these tracks represent top plates and bottom plates of C1 or C2 as shown in Figure 1.  An elementary capacitor unit can be a part of C1 or C2 according to the matching scheme. However, to respect common-\/centroid layout specifications, for C1 and C2 to be equal, the matrix number of colums and number of rows must be both even. Addionnally, the number of elementary capacitors dedicated to C1 must be equal to those dedicated to C2. These two conditions are tested in one of the class methods. An exception is raised if at least one of the two is not respected. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ac775ee34451fdfa742b318538164070e}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!\-\_\-\-\_\-init\-\_\-\-\_\-@{\-\_\-\-\_\-init\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-init\-\_\-\-\_\-@{\-\_\-\-\_\-init\-\_\-\-\_\-}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{\-\_\-\-\_\-init\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-init\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{v\-R\-T\-Instance}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ac775ee34451fdfa742b318538164070e}
+
+
+A special method used to customize the class instance to an initial state in which \-: 
+
+
+\begin{DoxyItemize}
+\item the class attirbutes describing positions and dimensions of the layout are computed in dedicated class methods,
+\item the attributes related to the capacitor matrix are copied from the {\ttfamily Capacitor\-Stack} instance.
+\end{DoxyItemize}
+
+Position and dimensions attributes, also refered by layout variables, in Figure 2, are defined below \-: 
+\begin{DoxyParams}{Parameters}
+{\em device} & The {\bf Hurricane} A\-M\-S device onto which the layout is drawn. \\
+\hline
+{\em capacitor\-Instance} & Instance of {\ttfamily Capacitor\-Stack} class. \\
+\hline
+{\em capacitor} & A nested list containing the matrix elements, which are {\ttfamily Capacitor\-Unit} objects. \\
+\hline
+{\em matching\-Scheme} & A nested list, with equal dimensions as {\ttfamily capacitor} attribute, containing assignements of matrix elementary units to C1 and C2, identified by 1 and 2, respectively. Therefore, {\ttfamily self.\-matching\-Scheme} content is a succession of 1 and 2 values, defined as \textbackslash{} capacitor identifiers. For example, given a matrix of dimensions 2x2, the matching scheme can be $ [ [1,2], [1,2] ] or [ [2,1], [2,1] ] $. The first sub-\/list dictates that the first elementary capacitor, $ C_{00} $. The second element $ C_{01} $ is affected to C2 and so on. An immediate and obvious consequence to this, is that an error is raised if {\ttfamily self.\-matching\-Schem} and {\ttfamily self.\-capacitor} dimensions are not identical or if {\ttfamily self.\-matching\-Scheme} content is different from supported capacitor identifiers, '1' and '2'.\\
+\hline
+{\em capacitor\-Type} & Supported types of capacitors are M\-I\-M and P\-I\-P only. An exception is raised otherwise. \\
+\hline
+{\em abutment\-Box} & The matrix's abutment box. \\
+\hline
+{\em matrxi\-Dim} & The matrix dimensions, also equal to {\ttfamily self.\-matching\-Scheme} nested list dimensions. \\
+\hline
+{\em abutment\-Box\-\_\-spacing} & The spacing between elementary units in the matrix. It is computed in {\ttfamily Capacitor\-Stack} and is reloaded in {\ttfamily \hyperlink{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor}{Rout\-Matched\-Capacitor}}. {\ttfamily self.\-abutment\-Box\-\_\-spacing} includes, vertical routing tracks width and minimum allowed spacing between two adjacent ones. \\
+\hline
+{\em h\-Routing\-Layer\-\_\-width} & The width of horizontal routing layers in metal 2, which connect capacitors plates to vertical routing tracks. \\
+\hline
+{\em v\-Routing\-Track\-\_\-width} & The width of vertical routing tracks in metal 3, which connects identical nets together ( ie \-: bottom plates of C1, top plates of C2, bottom plates of C2 and top plates of C2 ). \\
+\hline
+{\em h\-Routing\-Track\-\_\-width} & The width of horizontal routing tracks in metal 2, which connect identical vertical routing tracks together. \\
+\hline
+{\em min\-Spacing\-\_\-h\-Routing\-Track} & Minimum spacing between horizontal routing tracks. Wide metal 2 specifications are considered since metal 2 dimensions may exceed 10 $ m$.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyParagraph}{Remark\-:}
+For more information about wide metal specifications, refer to E\-N\-G-\/183\-\_\-rev8.\-pdf technology manual.
+\end{DoxyParagraph}
+
+\begin{DoxyParams}{Parameters}
+{\em minimum\-Position} & The ordinate of the top plate's routing layer's bottom extremity after stretching. \\
+\hline
+{\em maximum\-Position} & The ordinate of the top plate's routing layer's top extremity, also equivalent to the top plate's top extremity. \\
+\hline
+{\em v\-Routing\-Track\-X\-Center} & A nested list of ordered dictionaries, with dimensions equal to {\ttfamily self.\-matrix\-Dim}, containing abcissas of vertical routing tracks. All sub-\/lists' lengths are identical and are equal to 2. The first and second elements describe position of top plate track and bottom plate track, respectively. For example, given a matrix of dimensions 2x2, {\ttfamily self.\-v\-Routing\-Track\-X\-Center} can be \mbox{[}\mbox{[}0, 2\mbox{]}, \mbox{[}4,6\mbox{]}, \mbox{[}8,10\mbox{]}\mbox{]} $ \mu m$. Elements of this nested list have particular indexing as described in Figure 2.\\
+\hline
+{\em h\-Routingtrack\-Y\-Center} & A nested dictonary containing two keys, {\ttfamily top\-Tracks} and {\ttfamily bottom\-Tracks}. Each key contains as value a dictionary describing centers' ordinates of four parallel horizontal tracks. The reason why four tracks are needed on top and bottom positions of the matrix is that four nets are used, two for every capacitor {\ttfamily Ci}, were {\ttfamily i} is in \mbox{[}1,2\mbox{]}. \\
+\hline
+{\em h\-Routing\-Layer\-Y\-Center} & A nested dicitonary containing two keys, {\ttfamily top} and {\ttfamily bottom}. Each key contains as value a dictionary describing centers' ordinates of horizontal routing layers. \\
+\hline
+{\em v\-Routing\-Track\-Dict} & A dictionary of routing tracks top and bottom extremities ordinates. \\
+\hline
+{\em top\-Plate\-Stretching} & Since not only the same metal 2 layer is used to draw top/bottom plates connections to vertical tracks but also the two plates are superimposed, the top plate's routing tracks is stretched. {\ttfamily self.\-top\-Plate\-Stretching} is therefore the length added to top plate's routing layer in order to avoid short circuits between top and bottom plates routing to vertical tracks since the same metal is used for both. \\
+\hline
+\end{DoxyParams}
+
+
+References Rout\-Matched\-Capacitor.\-capacitor, Capacitor\-Stack.\-dummy\-Ring, Rout\-Matched\-Capacitor.\-dummy\-Ring, Rout\-Matched\-Capacitor.\-dummy\-Ring\-Capacitor, Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-\_\-width, Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-Y\-Center, Rout\-Matched\-Capacitor.\-h\-Routing\-Track\-\_\-width, Rout\-Matched\-Capacitor.\-h\-Routingtrack\-Y\-Center, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-matrix\-Dim, Rout\-Matched\-Capacitor.\-maximum\-Position, Rout\-Matched\-Capacitor.\-minimum\-Position, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Track, Rout\-Matched\-Capacitor.\-top\-Plate\-Stretching, and Rout\-Matched\-Capacitor.\-v\-R\-T\-Instance.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a15ec3e3156133327b307cd0e4b75f22c}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!route@{route}}
+\index{route@{route}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{route}]{\setlength{\rightskip}{0pt plus 5cm}def route (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bb\-Mode = {\ttfamily False}}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a15ec3e3156133327b307cd0e4b75f22c}
+
+
+Draws the complete layout given the capacitor matrix. 
+
+{\ttfamily route} method is succession of calls to user-\/defined methods inside a newly created {\ttfamily Updatesession}. The following tasks are excecuted \-:
+\begin{DoxyEnumerate}
+\item A nex {\ttfamily Update\-Session} is created,
+\item all required physical layers are loaded,
+\item technology rules are defined according to capacitor type,
+\item layout dimension parameters are computed,
+\item routing tracks and layers are drawn,
+\item top plates are stretched,
+\item all required cuts are drawn,
+\item The {\ttfamily Update\-Session} is closed.
+\end{DoxyEnumerate}
+
+Meanwhile, an exception is raised when the entered {\ttfamily capacitor} is not a capacitor matrix or if the capacitor type is unsupported. 
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-capacitor, Rout\-Matched\-Capacitor.\-compute\-Dimensions(), Capacitor\-Unit.\-compute\-Dimensions(), Stack.\-compute\-Dimensions(), Rout\-Matched\-Capacitor.\-draw\-Cuts(), Rout\-Matched\-Capacitor.\-draw\-Dummy\-Ring\-\_\-h\-R\-Tracks\-\_\-\-Cuts(), Rout\-Matched\-Capacitor.\-draw\-H\-R\-Layers(), Rout\-Matched\-Capacitor.\-draw\-H\-Routing\-Tracks(), Capacitor\-Stack.\-dummy\-Ring, Rout\-Matched\-Capacitor.\-dummy\-Ring, Rout\-Matched\-Capacitor.\-dummy\-Ring\-Capacitor, Vertical\-Routing\-Tracks.\-get\-V\-Track\-Y\-Max(), Vertical\-Routing\-Tracks.\-get\-V\-Track\-Y\-Min(), Capacitor\-Unit.\-hpitch, Rout\-Matched\-Capacitor.\-h\-Routingtrack\-Y\-Center, Vertical\-Routing\-Tracks.\-matching\-Scheme, Capacitor\-Stack.\-matching\-Scheme, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-matrix\-Dim, Rout\-Matched\-Capacitor.\-maximum\-Position, Capacitor\-Unit.\-metal3\-Width, Rout\-Matched\-Capacitor.\-minimum\-Position, Vertical\-Routing\-Tracks.\-nets, Capacitor\-Stack.\-nets, Rout\-Matched\-Capacitor.\-route\-Dummy\-Ring(), Rout\-Matched\-Capacitor.\-route\-Left\-And\-Right\-Sides(), Rout\-Matched\-Capacitor.\-route\-Top\-Or\-Bottom\-Side(), Rout\-Matched\-Capacitor.\-set\-Layers(), Capacitor\-Stack.\-set\-Rules(), Capacitor\-Unit.\-set\-Rules(), Rout\-Matched\-Capacitor.\-set\-Rules(), Capacitor\-Unit.\-vpitch, Vertical\-Routing\-Tracks.\-v\-Routing\-Track\-\_\-width, Capacitor\-Stack.\-v\-Routing\-Track\-\_\-width, and Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center.
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a3b578035b1559391931dade7c2508105}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!set\-Rules@{set\-Rules}}
+\index{set\-Rules@{set\-Rules}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{set\-Rules}]{\setlength{\rightskip}{0pt plus 5cm}def set\-Rules (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a3b578035b1559391931dade7c2508105}
+
+
+Defines technology rules used to draw the layout. 
+
+Some of the rules, namely those describing routing layers and tracks are applicable for both M\-I\-M and P\-I\-P capacitors. However, cuts rules are different.
+
+\begin{DoxyParagraph}{Remark\-:}
+All {\ttfamily Capacitor\-Stack} class rules are also reloaded in this class. An exception is raised if the entered capacitor type is unsupported.
+\end{DoxyParagraph}
+\begin{DoxyReturn}{Returns}
+a dictionary with rules labels as keys and rules content as values. 
+\end{DoxyReturn}
+
+
+References Capacitor\-Stack.\-capacitor\-Type, Capacitor\-Unit.\-capacitor\-Type, Rout\-Matched\-Capacitor.\-capacitor\-Type, Capacitor\-Stack.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Layer, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Layer\-\_\-v\-Routing\-Track\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Spacing\-\_\-v\-Routing\-Track\-Cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-v\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, and Rout\-Matched\-Capacitor.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route(), and Vertical\-Routing\-Tracks.\-set\-Rules().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ae361a87f8ad999bb5f1b9851773f481b}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!set\-Layers@{set\-Layers}}
+\index{set\-Layers@{set\-Layers}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{set\-Layers}]{\setlength{\rightskip}{0pt plus 5cm}def set\-Layers (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ae361a87f8ad999bb5f1b9851773f481b}
+
+
+Defines all physical layers used to draw the layout. 
+
+Layers are loaded using {\ttfamily Data\-Base} A\-P\-I. The same routing layers are used for both capacitor types except cuts layers that connect top plates to vertical routing tracks. Basicaly, metal 2, meta 3, cut 1 and cut 2 are the ones defined. \begin{DoxyReturn}{Returns}
+a dictionary composed of layers labels as keys and layers as values. 
+\end{DoxyReturn}
+
+
+References Capacitor\-Stack.\-capacitor\-Type, Capacitor\-Unit.\-capacitor\-Type, Rout\-Matched\-Capacitor.\-capacitor\-Type, Capacitor\-Stack.\-dummy\-Ring, and Rout\-Matched\-Capacitor.\-dummy\-Ring.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a20b46b43488cc58c302b123a89299d85}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!compute\-Dimensions@{compute\-Dimensions}}
+\index{compute\-Dimensions@{compute\-Dimensions}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{compute\-Dimensions}]{\setlength{\rightskip}{0pt plus 5cm}def compute\-Dimensions (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{bb\-Mode}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a20b46b43488cc58c302b123a89299d85}
+
+
+Computes, through simple instructions and functions calls, layout variables detailed in Figure 2. 
+
+
+
+References Capacitor\-Stack.\-abutment\-Box\-\_\-spacing, Rout\-Matched\-Capacitor.\-abutment\-Box\-\_\-spacing, Vertical\-Routing\-Tracks.\-capacitors\-Number, Capacitor\-Stack.\-capacitors\-Number, Rout\-Matched\-Capacitor.\-compute\-Bonding\-Box\-Dim\-Inbb\-Mode(), Rout\-Matched\-Capacitor.\-compute\-H\-R\-Layer\-Y\-Center(), Rout\-Matched\-Capacitor.\-compute\-H\-Routing\-Track\-Y\-Center(), Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-\_\-width, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-matrix\-Dim, Rout\-Matched\-Capacitor.\-maximum\-Position, Capacitor\-Stack.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Vertical\-Routing\-Tracks.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-v\-Routing\-Track\-\_\-cut, Rout\-Matched\-Capacitor.\-minimum\-Position, Vertical\-Routing\-Tracks.\-min\-Width\-\_\-h\-Routing\-Layer, Capacitor\-Stack.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Vertical\-Routing\-Tracks.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-v\-Routing\-Track\-\_\-cut, Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-\_\-spacing, Vertical\-Routing\-Tracks.\-v\-Routing\-Track\-\_\-width, Capacitor\-Stack.\-v\-Routing\-Track\-\_\-width, Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-Dict, and Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ab00cae047369eb93c10e44e316fa991b}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!compute\-H\-Routing\-Track\-Y\-Center@{compute\-H\-Routing\-Track\-Y\-Center}}
+\index{compute\-H\-Routing\-Track\-Y\-Center@{compute\-H\-Routing\-Track\-Y\-Center}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{compute\-H\-Routing\-Track\-Y\-Center}]{\setlength{\rightskip}{0pt plus 5cm}def compute\-H\-Routing\-Track\-Y\-Center (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ab00cae047369eb93c10e44e316fa991b}
+
+
+Computes centers' ordinates of the eight horizontal routing tracks. 
+
+The tracks include four on top and four on bottom of the matrix. To do the computations, fist, center of the first bottom or top track, given in Figure 2, is computed. Then, all adjacent three centers are deduced by simples translation of the first one. Translation quantity is equal to the sum of distance between adjacent routing tracks, self.\-h\-Routing\-Tracks\-\_\-spacing, and half width of the routing track itself, {\ttfamily self.\-h\-Routing\-Track\-\_\-width}. 
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-set\-Plates\-Ids\-\_\-\-\_\-(), Capacitor\-Unit.\-hpitch, Rout\-Matched\-Capacitor.\-h\-Routingtrack\-Y\-Center, Rout\-Matched\-Capacitor.\-maximum\-Position, and Rout\-Matched\-Capacitor.\-minimum\-Position.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-compute\-Dimensions().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a0d90b75abe0f4ce0f0b9b1b405462300}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!compute\-H\-R\-Layer\-Y\-Center@{compute\-H\-R\-Layer\-Y\-Center}}
+\index{compute\-H\-R\-Layer\-Y\-Center@{compute\-H\-R\-Layer\-Y\-Center}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{compute\-H\-R\-Layer\-Y\-Center}]{\setlength{\rightskip}{0pt plus 5cm}def compute\-H\-R\-Layer\-Y\-Center (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a0d90b75abe0f4ce0f0b9b1b405462300}
+
+
+Sets the stretching value of top plates. 
+
+Then iteratively computes the centers of horizontal routing layer regarding top and bottom plates. 
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-find\-Possible\-Short\-Circuits\-\_\-\-\_\-(), Vertical\-Routing\-Tracks.\-\_\-\-\_\-set\-Stretching\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-bonding\-Box, Rout\-Matched\-Capacitor.\-capacitor, Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-\_\-width, Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-Y\-Center, Rout\-Matched\-Capacitor.\-h\-Routing\-Track\-\_\-width, Rout\-Matched\-Capacitor.\-h\-Routingtrack\-Y\-Center, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-matrix\-Dim, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Layer, Rout\-Matched\-Capacitor.\-top\-Plate\-Stretching, Vertical\-Routing\-Tracks.\-v\-Routing\-Track\-\_\-width, Capacitor\-Stack.\-v\-Routing\-Track\-\_\-width, and Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-compute\-Dimensions().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_afbe39494b52b035fe3efdb0ddb896f69}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!draw\-H\-Routing\-Tracks@{draw\-H\-Routing\-Tracks}}
+\index{draw\-H\-Routing\-Tracks@{draw\-H\-Routing\-Tracks}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{draw\-H\-Routing\-Tracks}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-H\-Routing\-Tracks (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{routing\-Tracks\-Layer}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_afbe39494b52b035fe3efdb0ddb896f69}
+
+
+Iteratively draws horizontal routing tracks on top and bottom positions of the matrix using physical layer {\ttfamily routing\-Tracks\-Layer}. 
+
+
+
+References Rout\-Matched\-Capacitor.\-h\-Routing\-Track\-\_\-width, Rout\-Matched\-Capacitor.\-h\-Routingtrack\-Y\-Center, Vertical\-Routing\-Tracks.\-nets, Capacitor\-Stack.\-nets, and Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a6bba48a4b1d4834c6617a5af5553be1c}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!draw\-H\-R\-Layers@{draw\-H\-R\-Layers}}
+\index{draw\-H\-R\-Layers@{draw\-H\-R\-Layers}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{draw\-H\-R\-Layers}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-H\-R\-Layers (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{x\-Plate\-R\-Layer}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a6bba48a4b1d4834c6617a5af5553be1c}
+
+
+Iteratively draws the horizontal routing layers starting with bottom left elementary capacitor $ C_{00} $. 
+
+
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-\_\-width, Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-Y\-Center, Vertical\-Routing\-Tracks.\-matching\-Scheme, Capacitor\-Stack.\-matching\-Scheme, Vertical\-Routing\-Tracks.\-matrix\-Dim, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-nets, and Capacitor\-Stack.\-nets.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a2019f4bb1e22a8d622ce4d155c934eb0}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!draw\-Cuts@{draw\-Cuts}}
+\index{draw\-Cuts@{draw\-Cuts}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{draw\-Cuts}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Cuts (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{layer\-\_\-h\-R\-Track\-\_\-h\-R\-Layer, }
+\item[{}]{layer\-\_\-tracks\-Cut, }
+\item[{}]{layer\-\_\-top\-Plate\-Cut}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a2019f4bb1e22a8d622ce4d155c934eb0}
+
+
+Draws all required cuts using physical layers \-: 
+
+
+\begin{DoxyItemize}
+\item {\ttfamily layer\-\_\-h\-R\-Track\-\_\-h\-R\-Layer} to connect bottom plates to vertical routing tracks,
+\item {\ttfamily layer\-\_\-tracks\-Cut} to connect vertical routing tracks to horizontal ones,
+\item {\ttfamily layer\-\_\-top\-Plate\-Cut} to connect top plates to vertical routing tracks. A\-Lso in {\ttfamily draw\-Cuts}, n\-Umber of maximum cuts number on every layer is computed and cuts enclosure is adjusted according to layer's width. 
+\end{DoxyItemize}
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-set\-Plates\-Labels\-\_\-\-\_\-(), Vertical\-Routing\-Tracks.\-capacitor\-Ids, Vertical\-Routing\-Tracks.\-capacitors\-Number, Capacitor\-Stack.\-capacitors\-Number, Rout\-Matched\-Capacitor.\-draw\-Cuts\-\_\-stretched\-Top\-Plate(), Rout\-Matched\-Capacitor.\-draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer(), Rout\-Matched\-Capacitor.\-draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track(), Rout\-Matched\-Capacitor.\-draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer(), Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-Y\-Center, Vertical\-Routing\-Tracks.\-matching\-Scheme, Capacitor\-Stack.\-matching\-Scheme, Vertical\-Routing\-Tracks.\-matrix\-Dim, Capacitor\-Stack.\-matrix\-Dim, Capacitor\-Stack.\-min\-Enclosure\-\_\-v\-Routing\-Track\-Cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Spacing\-\_\-v\-Routing\-Track\-Cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-v\-Routing\-Track\-Cut, Vertical\-Routing\-Tracks.\-min\-Width\-\_\-h\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Width\-\_\-v\-Routing\-Track\-Cut, Vertical\-Routing\-Tracks.\-nets, Capacitor\-Stack.\-nets, Vertical\-Routing\-Tracks.\-v\-Routing\-Track\-\_\-width, Capacitor\-Stack.\-v\-Routing\-Track\-\_\-width, and Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ab3fd42d04811b9c88654c0ca0e6e2de7}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer@{draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer}}
+\index{draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer@{draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-One\-Cut\-\_\-v\-Routing\-Track\-\_\-\-H\-R\-Layer (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{net, }
+\item[{}]{cut\-Layer, }
+\item[{}]{cut\-X\-Min, }
+\item[{}]{cut\-Y\-Min, }
+\item[{}]{cut\-Number}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_ab3fd42d04811b9c88654c0ca0e6e2de7}
+
+
+Draws one cut, in layer {\ttfamily cut\-Layer}, in order to connect a vertical routing track, at position {\ttfamily cut\-X\-Min} in metal 2, and a horizontal routing track, at position {\ttfamily cut\-Y\-Min} in metal 3. 
+
+
+
+References Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Layer\-\_\-v\-Routing\-Track\-\_\-cut, and Vertical\-Routing\-Tracks.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-v\-Routing\-Track\-\_\-cut.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-draw\-Cuts().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a05e49f5537d31e0ab19b8a86eb6e7b1c}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track@{draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track}}
+\index{draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track@{draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track}]{\setlength{\rightskip}{0pt plus 5cm}def draw\-Cuts\-\_\-v\-Routing\-Track\-\_\-h\-Routing\-Track (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{cut\-Layer, }
+\item[{}]{cut\-Number, }
+\item[{}]{enclosure\-\_\-cut}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a05e49f5537d31e0ab19b8a86eb6e7b1c}
+
+
+Draws cuts to connect vertical routing tracks in metal 2 and horizontal routing tracks in metal 3. 
+
+
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-set\-Plates\-Ids\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-capacitor, Rout\-Matched\-Capacitor.\-dummy\-Ring\-Capacitor, Rout\-Matched\-Capacitor.\-h\-Routing\-Layer\-Y\-Center, Rout\-Matched\-Capacitor.\-h\-Routingtrack\-Y\-Center, Vertical\-Routing\-Tracks.\-matching\-Scheme, Capacitor\-Stack.\-matching\-Scheme, Vertical\-Routing\-Tracks.\-matrix\-Dim, Capacitor\-Stack.\-matrix\-Dim, Capacitor\-Stack.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Enclosure\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Capacitor\-Stack.\-min\-Enclosure\-\_\-v\-Routing\-Track\-Cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-h\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Spacing\-\_\-v\-Routing\-Track\-Cut, Rout\-Matched\-Capacitor.\-min\-Spacing\-\_\-v\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Rout\-Matched\-Capacitor.\-min\-Width\-\_\-h\-Routing\-Layer\-\_\-top\-Plate\-\_\-cut, Vertical\-Routing\-Tracks.\-min\-Width\-\_\-h\-Routing\-Track\-Cut, Capacitor\-Stack.\-min\-Width\-\_\-v\-Routing\-Track\-Cut, Vertical\-Routing\-Tracks.\-nets, Capacitor\-Stack.\-nets, Vertical\-Routing\-Tracks.\-v\-Routing\-Track\-\_\-width, Capacitor\-Stack.\-v\-Routing\-Track\-\_\-width, and Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-draw\-Cuts().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a7d642764cf9e385710751eec3f43f7af}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-@{\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-@{\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{capacitor, }
+\item[{}]{rlayer}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a7d642764cf9e385710751eec3f43f7af}
+
+
+Iteratively performs top plates stretching for the capacitor matrix. 
+
+Vertical segments are connected to top plate routing layer. 
+\begin{DoxyParams}{Parameters}
+{\em capacitor} & Capacitor matrix. \\
+\hline
+{\em rlayer} & Layer of the drawn vertical rectangle. \\
+\hline
+\end{DoxyParams}
+
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-(), Vertical\-Routing\-Tracks.\-matching\-Scheme, Capacitor\-Stack.\-matching\-Scheme, Vertical\-Routing\-Tracks.\-matrix\-Dim, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-nets, and Capacitor\-Stack.\-nets.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-route().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a57eade928345587b01420a05be475a8f}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-@{\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-@{\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{net, }
+\item[{}]{capacitor, }
+\item[{}]{routing\-Layer, }
+\item[{}]{j = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a57eade928345587b01420a05be475a8f}
+
+
+Draws vertical stretched layers for a given elementary capacitor. 
+
+
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-(), and Rout\-Matched\-Capacitor.\-top\-Plate\-Stretching.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-\_\-\-\_\-stretch\-Top\-Plates\-\_\-\-\_\-().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a1077752f46c512f70377cc60bd772034}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-@{\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-@{\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{\-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-set\-Stretching\-Dy\-Source\-Dy\-Target\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{capacitor, }
+\item[{}]{deltay}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_a1077752f46c512f70377cc60bd772034}
+
+
+Sets the abcissas of the extremities of the vertical stretching to be applied to capacitor's top plates for a given elementary capacitor in the matrix. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em capacitor} & .values() Elementary unit capacitor. \\
+\hline
+{\em deltay} & Stretching value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A list that contains {\ttfamily dy\-Source} and  as top extremity and bottom extermity, respectively. 
+\end{DoxyReturn}
+
+
+Referenced by Rout\-Matched\-Capacitor.\-\_\-\-\_\-stretch\-Top\-Plate\-Compact\-Cap\-\_\-\-\_\-(), and Rout\-Matched\-Capacitor.\-compute\-H\-R\-Layer\-Y\-Center().
+
+\hypertarget{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_aaaf2e610688441a439b8a3624e1393b9}{\index{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}!\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-@{\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-@{\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-}!python::CapacitorRouted::RoutMatchedCapacitor@{python\-::\-Capacitor\-Routed\-::\-Rout\-Matched\-Capacitor}}
+\subsubsection[{\-\_\-\-\_\-compute\-Connections\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}def \-\_\-\-\_\-compute\-Connections\-\_\-\-\_\- (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{i, }
+\item[{}]{j, }
+\item[{}]{capacitor\-Identifier}
+\end{DoxyParamCaption}
+)}}\label{classpython_1_1CapacitorRouted_1_1RoutMatchedCapacitor_aaaf2e610688441a439b8a3624e1393b9}
+
+
+Computes horizontal routing layers source and target abcissas for top and bottom plates connections to its associated routing track. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em (i,j)} & row and column indexes, respectively, in the matrix which describe the elementary capacitor position in the matrix. \\
+\hline
+{\em capacitor\-Identifier} & equal to '1' if C1 and '2' if C2. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A nested dicitionary. The overal dictionary is composed of keys equal to {\ttfamily top\-Plate} and  bottom\-Plate and values equal to sub-\/dictionaries. The sub-\/dictionaries, are in their turn composed of two keys standing for the abcissa of the source and the abcissa of the target. 
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Remark\-:}
+Naturally, an exception is raised if an unsupported capacitor identifier is given. 
+\end{DoxyParagraph}
+
+
+References Rout\-Matched\-Capacitor.\-\_\-\-\_\-find\-H\-R\-L\-Dy\-Trarget\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-\_\-\-\_\-is\-Capacitor\-Adummy\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-\_\-\-\_\-set\-Plates\-Labels\-\_\-\-\_\-(), Rout\-Matched\-Capacitor.\-capacitor, Vertical\-Routing\-Tracks.\-capacitor\-Ids, Vertical\-Routing\-Tracks.\-capacitors\-Number, Capacitor\-Stack.\-capacitors\-Number, Capacitor\-Stack.\-dummy\-Element, Rout\-Matched\-Capacitor.\-dummy\-Element, Capacitor\-Stack.\-dummy\-Ring, Rout\-Matched\-Capacitor.\-dummy\-Ring, Vertical\-Routing\-Tracks.\-matching\-Scheme, Capacitor\-Stack.\-matching\-Scheme, Vertical\-Routing\-Tracks.\-matrix\-Dim, Capacitor\-Stack.\-matrix\-Dim, Vertical\-Routing\-Tracks.\-nets, Capacitor\-Stack.\-nets, Vertical\-Routing\-Tracks.\-v\-Routing\-Track\-\_\-width, Capacitor\-Stack.\-v\-Routing\-Track\-\_\-width, Rout\-Matched\-Capacitor.\-v\-Routing\-Track\-X\-Center, and Rout\-Matched\-Capacitor.\-v\-R\-Ts\-Distribution.
+
+
+
+Referenced by Rout\-Matched\-Capacitor.\-draw\-H\-R\-Layers().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Capacitor\-Routed.\-py\end{DoxyCompactItemize}
