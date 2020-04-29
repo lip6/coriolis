@@ -1508,7 +1508,10 @@ namespace Anabatic {
       }
     }
 
-    if (rps.size() < 2) return;
+    if (rps.size() < 2) {
+      cdebug_tabw(112,-1);
+      return;
+    }
 
     for ( auto rp : rps ) {
       if (not _anabatic->getConfiguration()->selectRpComponent(rp))

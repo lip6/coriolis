@@ -875,7 +875,7 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     Net* net = static_cast<Net*>(topHyperNets[i].getNetOccurrence().getEntity());
 
     DebugSession::open( net, 18, 19 ); 
-    cdebug_log(18,1) << "Flattening top: " << net << endl;
+    cdebug_log(18,1) << "Flattening top net: " << net << endl;
 
     vector<Occurrence>  plugOccurrences;
     for ( Occurrence plugOccurrence : topHyperNets[i].getTerminalNetlistPlugOccurrences() )

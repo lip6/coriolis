@@ -698,6 +698,9 @@ namespace Bora {
       for ( RoutingPad* rp : net->getRoutingPads() ) rps.push_back( rp );
       for ( RoutingPad* rp : rps ) rp->destroy();
     }
+
+    _cell->getFlags().reset( Cell::Flags::FlattenedNets|Cell::Flags::Routed );
+    _cell->setTerminalNetlist( false );
   } 
 
 

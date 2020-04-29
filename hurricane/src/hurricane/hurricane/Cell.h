@@ -411,6 +411,7 @@ class Cell : public Entity {
     public: string getHierarchicalName() const;
     public: const Name& getName() const {return _name;};
     public: const Flags& getFlags() const { return _flags; } 
+    public: Flags& getFlags() { return _flags; } 
     public: Path getShuntedPath() const { return _shuntedPath; }
     public: Entity* getEntity(const Signature&) const;
     public: Instance* getInstance(const Name& name) const {return _instanceMap.getElement(name);};
