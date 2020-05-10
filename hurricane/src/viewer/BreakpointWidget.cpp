@@ -23,6 +23,7 @@
 #include <QFrame>
 #include "hurricane/Breakpoint.h"
 #include "hurricane/viewer/BreakpointWidget.h"
+#include "hurricane/viewer/Graphics.h"
 
 
 namespace Hurricane {
@@ -38,7 +39,7 @@ namespace Hurricane {
     setModal         ( false );
   //setWindowModality( Qt::WindowModal );
     setWindowTitle   ( "Breakpoint" );
-    setToolTip       ( "Crush the Mush to continue..." );
+    setToolTip       ( "Hit Chuck to continue..." );
 
   //_message->setTextFormat ( Qt::RichText );
     _message->setText       ( "<b>No Message Yet</b>" );
@@ -49,7 +50,7 @@ namespace Hurricane {
     QPushButton* ok = new QPushButton ();
     ok->setIcon      ( QIcon(":/images/angry-birds-chuck.png") );
     ok->setFlat      ( true );
-    ok->setIconSize  ( QSize(200,200) );
+    ok->setIconSize  ( (Graphics::isHighDpi() ? QSize(200,200) : QSize(80,80)) );
 
     QFrame* vLine = new QFrame ();
     vLine->setFrameShape  ( QFrame::VLine );
