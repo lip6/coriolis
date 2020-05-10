@@ -224,13 +224,15 @@ namespace Anabatic {
       gcell = gcell->getEast( yprobe );
       if (not gcell) {
         success = false;
-        cerr << Error( "AutoHorizontal::getGCells() : NULL GCell under %s\n"
-                       "        begin:%s\n"
-                       "        end:  %s"
-                     , getString(this).c_str()
-                     , getString(getAutoSource()->getGCell()).c_str()
-                     , getString(getAutoTarget()->getGCell()).c_str()
-                     ) << endl;
+        if (not isCreated()) {
+          cerr << Error( "AutoHorizontal::getGCells() : NULL GCell under %s\n"
+                         "        begin:%s\n"
+                         "        end:  %s"
+                       , getString(this).c_str()
+                       , getString(getAutoSource()->getGCell()).c_str()
+                       , getString(getAutoTarget()->getGCell()).c_str()
+                       ) << endl;
+        }
         break;
       }
 

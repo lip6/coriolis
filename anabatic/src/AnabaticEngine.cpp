@@ -338,7 +338,10 @@ namespace Anabatic {
     _matrix.setCell( cell, _configuration->getSliceHeight() );
     Edge::unity = _configuration->getSliceHeight();
 
-    if (not _blockageNet) _blockageNet = Net::create( cell, "blockagenet" );
+    if (not _blockageNet) {
+      _blockageNet = Net::create( cell, "blockagenet" );
+      _blockageNet->setType( Net::Type::BLOCKAGE );
+    }
   }
 
 

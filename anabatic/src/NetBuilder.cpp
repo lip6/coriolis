@@ -2327,8 +2327,10 @@ namespace Anabatic {
     size_t       degree        = routingPads.getSize();
 
     if (degree == 0) {
-      cmess2 << Warning("Net \"%s\" do not have any RoutingPad (ignored)."
-                       ,getString(net->getName()).c_str()) << endl;
+      if (not net->isBlockage()) {
+        cmess2 << Warning( "Net \"%s\" do not have any RoutingPad (ignored)."
+                         , getString(net->getName()).c_str() ) << endl;
+      }
       cdebug_tabw(145,-1);
       return;
     }
