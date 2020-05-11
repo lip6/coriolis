@@ -10,12 +10,10 @@
 // |  Authors     :                Christophe Alexandre              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/analog/Choices.h"                  |
+// |  C++ Header  :  "./hurricane/analog/StepParameter.h"            |
 // +-----------------------------------------------------------------+
 
-#ifndef ANALOG_STEP_PARAMETER_H
-#define ANALOG_STEP_PARAMETER_H
-
+#pragma once
 #include "hurricane/analog/Parameter.h"
 
 
@@ -56,5 +54,3 @@ namespace Analog {
 
 
 INSPECTOR_PR_SUPPORT(Analog::StepParameter);
-
-#endif // ANALOG_STEP_PARAMETER_H

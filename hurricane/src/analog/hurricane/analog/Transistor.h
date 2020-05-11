@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_TRANSISTOR_H
-#define ANALOG_TRANSISTOR_H
-
+#pragma once
 #include "hurricane/analog/TransistorFamily.h"
 
 namespace Analog {
@@ -46,5 +44,3 @@ namespace Analog {
 
 
 }  // Analog namespace.
-
-#endif // ANALOG_TRANSISTOR_H

@@ -60,18 +60,29 @@ def layout ( device, bbMode ):
       gw  = str(device.getParameter( 'G.w' ).getValue())
       sw  = str(device.getParameter( 'S.w' ).getValue())
       
-      diffMap = { 'D':'D', 'S':'S', 'Dw':dw, 'Sw':sw, 'Gw':gw, 'Bw':bw }
+      bt  = device.getParameter( 'B.t' ).getValue()
+      dt  = device.getParameter( 'D.t' ).getValue()
+      gt  = device.getParameter( 'G.t' ).getValue()
+      st  = device.getParameter( 'S.t' ).getValue()
+      
+      diffMap = { 'D':'D', 'S':'S'
+                , 'Dw':dw, 'Sw':sw, 'Gw':gw, 'Bw':bw
+                , 'Dt':dt, 'St':st, 'Gt':gt, 'Bt':bt
+                }
       if device.isSourceFirst():
         trace( 100, '\tUse sourceFirst.\n' )
-        diffMap = { 'D':'S', 'S':'D', 'Dw':sw, 'Sw':dw, 'Gw':gw, 'Bw':bw }
+        diffMap = { 'D':'S', 'S':'D'
+                  , 'Dw':sw, 'Sw':dw, 'Gw':gw, 'Bw':bw
+                  , 'Dt':dt, 'St':st, 'Gt':gt, 'Bt':bt
+                  }
       
-      wirings = '{D}.b0.{Dw}  G.t0.{Gw}  {S}.b1.{Sw}'
+      wirings = '{D}.{Dt}.{Dw}  G.{Gt}.{Gw}  {S}.{St}.{Sw}'
       for i in range(device.getM() - 1):
-        if i%2: wirings += ' G.t0.{Gw} {S}.b1.{Sw}'
-        else:   wirings += ' G.t0.{Gw} {D}.b0.{Dw}'
+        if i%2: wirings += ' G.{Gt}.{Gw} {S}.{St}.{Sw}'
+        else:   wirings += ' G.{Gt}.{Gw} {D}.{Dt}.{Dw}'
       for i in range(device.getExternalDummy()):
-        wirings  = 'B.bX.{Bw}  B.bX.{Bw}  ' + wirings
-        wirings += '  B.bX.{Bw}  B.bX.{Bw}'
+        wirings  = 'B.{Bt}.{Bw}  B.{Bt}.{Bw}  ' + wirings
+        wirings += '  B.{Bt}.{Bw}  B.{Bt}.{Bw}'
       
       stack.setWirings( wirings.format( **diffMap ) )
       stack.doLayout  ( bbMode )

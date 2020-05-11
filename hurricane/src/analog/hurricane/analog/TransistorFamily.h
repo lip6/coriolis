@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_TRANSISTOR_FAMILY_H
-#define ANALOG_TRANSISTOR_FAMILY_H
-
+#pragma once
 #include "hurricane/DbU.h"
 #include "hurricane/analog/Device.h"
 #include "hurricane/analog/MetaTransistor.h"
@@ -175,5 +173,3 @@ namespace Analog {
 
 
 }  // Analog namespace.
-
-#endif // ANALOG_TRANSISTOR_FAMILY_H

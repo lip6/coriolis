@@ -14,14 +14,13 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ANALOG_DEVICE_H
-#define ANALOG_DEVICE_H
-
+#pragma once
 #include "hurricane/Cell.h"
 #include "hurricane/analog/StepParameter.h"
 #include "hurricane/analog/FloatParameter.h"
 #include "hurricane/analog/CapacitorParameter.h"
 #include "hurricane/analog/ChoiceParameter.h"
+#include "hurricane/analog/StringParameter.h"
 #include "hurricane/analog/SpinBoxParameter.h"
 #include "hurricane/analog/MCheckBoxParameter.h"
 #include "hurricane/analog/FormFactorParameter.h"
@@ -71,6 +70,7 @@ namespace Analog {
       inline        Hurricane::Library*    getSubDevicesLibrary      ();
       inline        void                   addParameter              ( Parameter* parameter );
       inline        StepParameter*         addStepParameter          ( const std::string name, long min, long max, long step );
+      inline        StringParameter*       addStringParameter        ( const std::string name, const std::string value="" );
       inline        FloatParameter*        addFloatParameter         ( const std::string name, float value=0.0 );
       inline        CapacitorParameter*    addCapacitorParameter     ( const std::string name, long value );
       inline        SpinBoxParameter*      addSpinBoxParameter       ( const std::string name, long min, long max );
@@ -110,6 +110,13 @@ namespace Analog {
     return stepParameter;
   }
   
+  inline StringParameter* Device::addStringParameter ( const std::string name, const std::string value )
+  {
+    StringParameter* stringParameter = new StringParameter( name, value );
+    addParameter( stringParameter );
+    return stringParameter;
+  }
+
   inline FloatParameter* Device::addFloatParameter ( const std::string name, float value )
   {
     FloatParameter* floatParameter = new FloatParameter( name, value );
@@ -171,5 +178,3 @@ namespace Analog {
 
 
 INSPECTOR_P_SUPPORT(Analog::Device);
-
-#endif  // ANALOG_DEVICE_H

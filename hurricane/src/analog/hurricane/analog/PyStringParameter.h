@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) UPMC 2020-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -10,13 +10,13 @@
 // |  Author      :                    Jean-Paul Chaput              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/analog/PyStepParameter.h"          |
+// |  C++ Header  :  "./hurricane/analog/PyStringParameter.h"        |
 // +-----------------------------------------------------------------+
 
 
 #pragma once
 #include "hurricane/analog/PyParameter.h"
-#include "hurricane/analog/StepParameter.h"
+#include "hurricane/analog/StringParameter.h"
 
 
 namespace  Isobar {
@@ -24,26 +24,26 @@ namespace  Isobar {
 extern "C" {
 
 // -------------------------------------------------------------------
-// Python Object  :  "PyStepParameter".
+// Python Object  :  "PyStringParameter".
 
   typedef struct {
       PyParameter  _baseObject;
-  } PyStepParameter;
+  } PyStringParameter;
 
 
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyHurricane.cpp".
 
-  extern PyTypeObject  PyTypeStepParameter;
-  extern PyMethodDef   PyStepParameter_Methods[];
+  extern PyTypeObject  PyTypeStringParameter;
+  extern PyMethodDef   PyStringParameter_Methods[];
 
-  extern PyObject* PyStepParameter_Link       ( Analog::StepParameter* object );
-  extern void      PyStepParameter_LinkPyType ();
+  extern PyObject* PyStringParameter_Link       ( Analog::StringParameter* object );
+  extern void      PyStringParameter_LinkPyType ();
 
 
-#define IsPyStepParameter(v)    ( (v)->ob_type == &PyTypeStepParameter )
-#define PYSTEPPARAMETER(v)      ( (PyStepParameter*)(v) )
-#define PYSTEPPARAMETER_O(v)    ( PYSTEPPARAMETER(v)->_baseObject->_baseObject._object )
+#define IsPyStringParameter(v)  ( (v)->ob_type == &PyTypeStringParameter )
+#define PYSTRINGPARAMETER(v)    ( (PyStringParameter*)(v) )
+#define PYSTRINGPARAMETER_O(v)  ( PYSTRINGPARAMETER(v)->_baseObject->_baseObject._object )
 
 
 }  // extern "C".

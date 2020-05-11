@@ -424,6 +424,11 @@ class AnalogDesign ( object ):
             
               if (len(dspec) > 12): device.getParameter( 'NERC' ).setValue(int (dspec[12]))
               if (len(dspec) > 13): device.getParameter( 'NIRC' ).setValue(int (dspec[13]))
+              if (len(dspec) > 14):
+                  for wiringSpec in dspec[14].split(' '):
+                      fields = wiringSpec.split('.')
+                      if len(fields) > 1:
+                          device.getParameter( fields[0]+'.t' ).setValue( fields[1] )
             
               if not (dspec[7] is None): device.setMint         ( dspec[7] ) 
               if dspec[8]:               device.setExternalDummy( dspec[8] )

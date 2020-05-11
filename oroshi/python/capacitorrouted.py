@@ -159,8 +159,15 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
               xMax = self.abutmentBox.getXMax()
             else:
               trackSpacing = (self.vRoutingTrack_width + self.vpitch + self.metal3Width)/2
-              xMin = self.vRoutingTrackXCenter[ 0][firstVRTId] - trackSpacing
-              xMax = self.vRoutingTrackXCenter[-1][ lastVRTId] + trackSpacing
+              if firstVRTId > len(self.vRoutingTrackXCenter[ 0]):
+                  xMin = self.abutmentBox.getXMin() - trackSpacing
+              else:
+                  xMin = self.vRoutingTrackXCenter[ 0][firstVRTId] - trackSpacing
+
+              if lastVRTId > len(self.vRoutingTrackXCenter[-1]):
+                  xMax = self.abutmentBox.getXMax() + trackSpacing
+              else:
+                  xMax = self.vRoutingTrackXCenter[-1][ lastVRTId] + trackSpacing
 
             width       = xMax - xMin
             widthAdjust = width % (2*self.vpitch)

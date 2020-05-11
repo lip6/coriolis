@@ -21,6 +21,7 @@
                                     MatrixParameter.cpp
                                     MCheckBoxParameter.cpp
                                     StepParameter.cpp
+                                    StringParameter.cpp
                                     BJT.cpp
                                     BJTFamily.cpp
                                     BJTFamilyNames.cpp
@@ -71,6 +72,7 @@
                                     PySimpleCurrentMirror.cpp
                                     PySpinBoxParameter.cpp
                                     PyStepParameter.cpp
+                                    PyStringParameter.cpp
                                     PyFloatParameter.cpp
                                     PyTransistor.cpp
                                     PyTransistorFamily.cpp
@@ -108,6 +110,7 @@
                                     hurricane/analog/SimpleCurrentMirror.h
                                     hurricane/analog/SpinBoxParameter.h
                                     hurricane/analog/StepParameter.h
+                                    hurricane/analog/StringParameter.h
                                     hurricane/analog/FloatParameter.h
                                     hurricane/analog/TransistorFamily.h
                                     hurricane/analog/TransistorFamilyNames.h
@@ -141,6 +144,7 @@
                                     hurricane/analog/PySimpleCurrentMirror.h
                                     hurricane/analog/PySpinBoxParameter.h
                                     hurricane/analog/PyStepParameter.h
+                                    hurricane/analog/PyStringParameter.h
                                     hurricane/analog/PyFloatParameter.h
                                     hurricane/analog/PyTransistorFamily.h
                                     hurricane/analog/PyTransistor.h

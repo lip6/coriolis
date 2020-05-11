@@ -40,6 +40,7 @@
 #include "hurricane/analog/PyFormFactorParameter.h"
 #include "hurricane/analog/PyMCheckBoxParameter.h"
 #include "hurricane/analog/PySpinBoxParameter.h"
+#include "hurricane/analog/PyStringParameter.h"
 #include "hurricane/analog/PyStepParameter.h"
 #include "hurricane/analog/PyFloatParameter.h"
 #include "hurricane/analog/PyCapacitiesParameter.h"
@@ -97,6 +98,7 @@ extern "C" {
     PyMCheckBoxParameter_LinkPyType();
     PySpinBoxParameter_LinkPyType();
     PyStepParameter_LinkPyType();
+    PyStringParameter_LinkPyType();
     PyFloatParameter_LinkPyType();
     PyCapacitiesParameter_LinkPyType();
     PyMatrixParameter_LinkPyType();
@@ -129,6 +131,7 @@ extern "C" {
     PYTYPE_READY_SUB( FormFactorParameter  , Parameter )
     PYTYPE_READY_SUB( MCheckBoxParameter   , Parameter )
     PYTYPE_READY_SUB( SpinBoxParameter     , Parameter )
+    PYTYPE_READY_SUB( StringParameter      , Parameter )
     PYTYPE_READY_SUB( StepParameter        , Parameter )
     PYTYPE_READY_SUB( FloatParameter       , Parameter )
     PYTYPE_READY_SUB( CapacitiesParameter  , Parameter )
@@ -160,6 +163,7 @@ extern "C" {
     __cs.addType( "ffpar"    , &PyTypeFormFactorParameter     , "<FormFactorParameter>"     , false, "parameter" );
     __cs.addType( "mcboxpar" , &PyTypeMCheckBoxParameter      , "<MCheckBoxParameter>"      , false, "parameter" );
     __cs.addType( "sboxpar"  , &PyTypeSpinBoxParameter        , "<SpinBoxParameter>"        , false, "parameter" );
+    __cs.addType( "strpar"   , &PyTypeStringParameter         , "<StringParameter>"         , false, "parameter" );
     __cs.addType( "steppar"  , &PyTypeStepParameter           , "<StepParameter>"           , false, "parameter" );
     __cs.addType( "floatpar" , &PyTypeFloatParameter          , "<FloatParameter>"          , false, "parameter" );
     __cs.addType( "capspar"  , &PyTypeCapacitiesParameter     , "<CapacitiesParameter>"     , false, "parameter" );
@@ -221,6 +225,8 @@ extern "C" {
     PyModule_AddObject( module, "MCheckBoxParameter" , (PyObject*)&PyTypeMCheckBoxParameter );
     Py_INCREF( &PyTypeSpinBoxParameter );
     PyModule_AddObject( module, "SpinBoxParameter"   , (PyObject*)&PyTypeSpinBoxParameter );
+    Py_INCREF( &PyTypeStringParameter );
+    PyModule_AddObject( module, "StringParameter"    , (PyObject*)&PyTypeStringParameter );
     Py_INCREF( &PyTypeStepParameter );
     PyModule_AddObject( module, "StepParameter"      , (PyObject*)&PyTypeStepParameter );
     Py_INCREF( &PyTypeFloatParameter );

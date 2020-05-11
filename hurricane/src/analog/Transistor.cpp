@@ -46,10 +46,15 @@ namespace Analog {
     tr->_postCreate(deviceName);
     tr->createConnections(bulkConnected);
   
-    tr->addStepParameter("B.w" , 1, 1, 1);
-    tr->addStepParameter("D.w" , 1, 1, 1);
-    tr->addStepParameter("G.w" , 1, 1, 1);
-    tr->addStepParameter("S.w" , 1, 1, 1);
+    tr->addStepParameter( "B.w" , 1, 1, 1 );
+    tr->addStepParameter( "D.w" , 1, 1, 1 );
+    tr->addStepParameter( "G.w" , 1, 1, 1 );
+    tr->addStepParameter( "S.w" , 1, 1, 1 );
+  
+    tr->addStringParameter( "B.t" , "bX" );
+    tr->addStringParameter( "D.t" , "b0" );
+    tr->addStringParameter( "G.t" , "t0" );
+    tr->addStringParameter( "S.t" , "b1" );
     UpdateSession::close();
     return tr;
   }
