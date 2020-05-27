@@ -357,7 +357,9 @@ class AnalogDesign ( object ):
         self.parameters.read( path );
 
         for dspec in self.devicesSpecs:
-            if issubclass(dspec[0],TransistorFamily):
+            if isinstance(dspec[0],Cell):
+                pass
+            elif issubclass(dspec[0],TransistorFamily):
                 Tname       = dspec[1].split('_')[0]
                 Tparameters = self.parameters.getTransistor( Tname )
                 if not Tparameters:
@@ -380,8 +382,6 @@ class AnalogDesign ( object ):
                 trace( 110, '\t- \"%s\" : C:%fpF\n' % (Cname ,dspec[4]) )
             elif issubclass(dspec[0],ResistorFamily):
                 print WarningMessage( 'Resistor devices are not supported yet by Oceane parser (instance:"{}").'.format(dspec[1]) )
-            elif dspec[0] == Cell:
-                pass
             else:
                 print WarningMessage( 'Unsupported analog device type {0} (instance:"{1}").'.format(dspec[0],dspec[1]) )
         trace( 110, '-,' )
