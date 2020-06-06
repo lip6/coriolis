@@ -12,6 +12,7 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chipplace.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chiproute.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/conductor.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/matrixplacer.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsave.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsaveall.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/s2r.py
