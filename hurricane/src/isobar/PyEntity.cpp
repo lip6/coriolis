@@ -52,8 +52,9 @@ extern "C" {
   // |                "PyEntity" Attribute Methods                 |
   // +-------------------------------------------------------------+
 
-  // Standart destroy (Attribute).
+  DirectGetUIntAttribute(PyEntity_getId, getId, PyEntity, Entity)
   DBoDestroyAttribute(PyEntity_destroy ,PyEntity)
+
 
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyEntity_getCell ()"
@@ -77,6 +78,7 @@ extern "C" {
 
   PyMethodDef PyEntity_Methods[] =
     { { "getCell"              , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
+    , { "getId"                , (PyCFunction)PyEntity_getId         , METH_NOARGS , "Returns unique object (DBo) identifier." }
     , { "destroy"              , (PyCFunction)PyEntity_destroy       , METH_NOARGS
                                , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}           /* sentinel */
