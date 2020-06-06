@@ -284,6 +284,8 @@ namespace {
       Subckts   _subckts;
       size_t    _depth;
       size_t    _supplyCount;
+      Instance* _oneInstance;
+      Instance* _zeroInstance;
   };
 
 
@@ -368,10 +370,10 @@ namespace {
     static string zeroName = Cfg::getParamString("etesian.cell.zero","zero_x0")->asString();
     static string  oneName = Cfg::getParamString("etesian.cell.one" , "one_x0")->asString();
 
-    _zeroCell   = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
-    _oneCell    = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
-    _groundName = Cfg::getParamString("crlcore.groundName","vss")->asString();
-    _powerName  = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
+    _zeroCell     = framework->getCell( zeroName, Catalog::State::Views|Catalog::State::Foreign );
+    _oneCell      = framework->getCell(  oneName, Catalog::State::Views|Catalog::State::Foreign );
+    _groundName   = Cfg::getParamString("crlcore.groundName","vss")->asString();
+    _powerName    = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
 
     if (_zeroCell) {
       for ( Net* net : _zeroCell->getNets() )
@@ -446,6 +448,8 @@ namespace {
     , _subckts     ()
     , _depth       (0)
     , _supplyCount (0)
+    , _oneInstance (NULL)
+    , _zeroInstance(NULL)
   {
     if (not _staticInit) staticInit();
     
@@ -485,12 +489,13 @@ namespace {
   Net* Model::newOne ()
   {
     if (not _masterNetOne) return NULL; 
+    if (_oneInstance) return _oneInstance->getPlug( _masterNetOne )->getNet();
 
     ostringstream name; name << "one_" << _supplyCount++;
-    Instance*     oneInstance = Instance::create( _cell, name.str(), _oneCell );
+    _oneInstance = Instance::create( _cell, name.str(), _oneCell );
     
     Net* one = Net::create( _cell, name.str() );
-    oneInstance->getPlug( _masterNetOne )->setNet( one );
+    _oneInstance->getPlug( _masterNetOne )->setNet( one );
 
     return one;
   }
@@ -499,12 +504,13 @@ namespace {
   Net* Model::newZero ()
   {
     if (not _masterNetZero) return NULL;
+    if (_zeroInstance) return _zeroInstance->getPlug( _masterNetZero )->getNet();
     
     ostringstream name; name << "zero_" << _supplyCount++;
-    Instance*     zeroInstance = Instance::create( _cell, name.str(), _zeroCell );
+    _zeroInstance = Instance::create( _cell, name.str(), _zeroCell );
     
     Net* zero = Net::create( _cell, name.str() );
-    zeroInstance->getPlug( _masterNetZero )->setNet( zero );
+    _zeroInstance->getPlug( _masterNetZero )->setNet( zero );
 
     return zero;
   }
