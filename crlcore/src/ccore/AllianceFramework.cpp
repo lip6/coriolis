@@ -354,7 +354,10 @@ namespace CRL {
     // The cell is not even in the Catalog : add an entry.
       if (state == NULL) state = _catalog.getState( name, true );
 
-      if (state->isTerminalNetlist()) depth = 0;
+      if (state->isTerminalNetlist()) {
+        depth  = 0;
+        mode  |= Catalog::State::Physical;
+      }
       state->setDepth( depth );
 
     // Do not try to load.
