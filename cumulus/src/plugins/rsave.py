@@ -48,7 +48,10 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
     sviews += 'netlist'
     if views & CRL.Catalog.State.VstUseConcat:
       if sviews: sviews += ','
-      sviews += 'VST uses &'
+      sviews += ' uses &'
+    if views & CRL.Catalog.State.VstNoLowerCase:
+      if sviews: sviews += ', no lowercase'
+      sviews += ''
   if views & CRL.Catalog.State.Physical:
     if sviews: sviews += ','
     sviews += 'layout'

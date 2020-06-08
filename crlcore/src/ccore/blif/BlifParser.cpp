@@ -431,7 +431,9 @@ namespace {
   {
     for ( Model* model : _blifOrder )
       CRL::NamingScheme::toVhdl( model->getCell()
-                               , CRL::NamingScheme::Recursive|CRL::NamingScheme::FromVerilog );
+                               , CRL::NamingScheme::Recursive
+                               | CRL::NamingScheme::FromVerilog
+                               | CRL::NamingScheme::NoLowerCase );
   }
 
 

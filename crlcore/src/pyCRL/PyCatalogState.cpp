@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2018, All Rights Reserved
+// Copyright (c) UPMC 2010-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyCatalogState.cpp"                     |
 // +-----------------------------------------------------------------+
@@ -146,6 +146,7 @@ extern "C" {
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::InMemory        ,"InMemory");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Foreign         ,"Foreign");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::VstUseConcat    ,"VstUseConcat");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::VstNoLowerCase  ,"VstNoLowerCase");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Views           ,"Views");
   }
 

@@ -87,6 +87,7 @@ namespace CRL {
                      , InMemory        = 1 << 7
                      , Foreign         = 1 << 8
                      , VstUseConcat    = 1 << 9
+                     , VstNoLowerCase  = 1 << 10
                      , Views           = Physical|Logical
                      };
         // Constructors.

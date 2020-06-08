@@ -58,15 +58,17 @@ namespace Vhdl {
 
   class Entity {
     public:
-      enum Flag { NoFlags       = 0x0000
-                , EntityMode    = 0x0001
-                , IeeeMode      = 0x0002
-                , ComponentMode = 0x0004
-                , AsPortSignal  = 0x0008
-                , AsInnerSignal = 0x0010
-                , VstUseConcat  = 0x0020
+      enum Flag { NoFlags        = 0x0000
+                , EntityMode     = 0x0001
+                , IeeeMode       = 0x0002
+                , ComponentMode  = 0x0004
+                , AsPortSignal   = 0x0008
+                , AsInnerSignal  = 0x0010
+                , VstUseConcat   = 0x0020
+                , VstNoLowerCase = 0x0040
+                , OptionMask     = VstUseConcat|VstNoLowerCase
                 };
-      const unsigned int  ModeMask = VstUseConcat;
+      const unsigned int  ModeMask = VstUseConcat|VstNoLowerCase;
     public:
       static std::vector<Entity*>&
                               getAllEntities  ();

@@ -105,6 +105,7 @@ namespace Vhdl {
     , _globals()
     , _flags  (flags)
   {
+    if (flags & VstNoLowerCase) _ns.setNoLowerCase( true );
     if (not _offset) {
     //_offset = offsetof(EntityProperty,_entity);
       _offset = (ptrdiff_t)this - (ptrdiff_t)property;
@@ -133,7 +134,7 @@ namespace Vhdl {
         signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        ScalarSignal* signal = new ScalarSignal(net);
+        ScalarSignal* signal = new ScalarSignal(stem,net);
         _signals.insert( signal );
         if (net->isGlobal())
           _globals.insert( signal );
@@ -229,7 +230,7 @@ namespace Vhdl {
         signal->addNet( index, net );
         _signals.insert( signal );
       } else {
-        _signals.insert( new ScalarSignal(net) );
+        _signals.insert( new ScalarSignal(stem,net) );
       }
     }
   }
@@ -324,6 +325,12 @@ namespace Vhdl {
     out << "-- Coriolis Structural VHDL Driver\n";
     out << "-- Generated on " << stamp << "\n";
     out << "-- \n";
+    if (_flags & OptionMask) {
+      out << "-- Genarated with options:\n";
+      if (_flags & VstUseConcat)   out << "-- * VstUseConcat:   Use concat (&) in port map.\n";
+      if (_flags & VstNoLowerCase) out << "-- * VstNoLowerCase: Identifiers are *not* put in lowercase.\n";
+      out << "-- \n";
+    }
     if (isIeeeMode()) {
       out << "-- VHDL IEEE compliant.\n";
     } else {

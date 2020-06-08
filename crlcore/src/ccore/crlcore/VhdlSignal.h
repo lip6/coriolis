@@ -74,7 +74,7 @@ namespace Vhdl {
 
   class ScalarSignal : public Signal {
     public:
-                              ScalarSignal  ( Net* );
+                              ScalarSignal  ( std::string vhdlName, Net* );
       virtual                ~ScalarSignal  ();
       virtual bool            isScalar      () const;
       virtual bool            isVector      () const;

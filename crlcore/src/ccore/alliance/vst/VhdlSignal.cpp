@@ -96,8 +96,8 @@ namespace Vhdl {
 // Class  :  "Vhdl::ScalarSignal".
 
 
-  ScalarSignal::ScalarSignal ( Net* net )
-    : Signal(getString(net->getName()))
+  ScalarSignal::ScalarSignal ( string vhdlName, Net* net )
+    : Signal(vhdlName)
     , _bit  (BitExtension::create(net,this))
   { }
 

@@ -229,7 +229,10 @@ base_specifier            (B|b|O|o|X|x)
 \/                        { return Slash;      }
 
 {letter}(_?{letter_or_digit})*  {
-      VHDLKeywords::iterator it = vhdlKeywords.find( lower(yytext) );
+      char keyword[512];
+      strncpy( keyword, yytext, 511 );
+      lower( keyword );
+      VHDLKeywords::iterator it = vhdlKeywords.find( keyword );
       if (it != vhdlKeywords.end()) { return it->second; }
       VSTlval._text = Vst::states->addLexIdentifier( yytext );
       return Identifier;

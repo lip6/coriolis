@@ -98,7 +98,7 @@ namespace Unicorn {
 
     _importCell.setDialog( _importDialog );
     _importCell.addImporter<Cell*>   ( "JSON (experimental)"         , std::bind( &Cell::fromJson     , placeholders::_1 ) );
-    _importCell.addImporter<Cell*>   ( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1, true ) );
+    _importCell.addImporter<Cell*>   ( "BLIF (Yosys/ABC)"            , std::bind( &Blif::load         , placeholders::_1, false ) );
     _importCell.addImporter<Cell*>   ( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
     /* Disabled because this is never the one you want
     _importCell.addImporter<Cell*>   ( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
