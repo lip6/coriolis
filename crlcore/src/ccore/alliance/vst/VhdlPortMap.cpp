@@ -77,14 +77,13 @@ namespace Vhdl {
   PortMap* PortMap::create ( const Signal* signal, unsigned int flags )
   {
     const ScalarSignal* scalarSignal = dynamic_cast<const ScalarSignal*>( signal );
-    if (not scalarSignal) {
-      const VectorSignal* vectorSignal = dynamic_cast<const VectorSignal*>( signal );
-      if (vectorSignal)
-        return new VectorPortMap ( vectorSignal, flags );
-      else
-        throw Error( "PortMap::create() Unable to cast toward <ScalarSignal> or <VectorSignal>." );
-    }
-    return new ScalarPortMap ( scalarSignal, flags );
+    if (scalarSignal) return new ScalarPortMap ( scalarSignal, flags );
+
+    const VectorSignal* vectorSignal = dynamic_cast<const VectorSignal*>( signal );
+    if (not vectorSignal)
+      throw Error( "PortMap::create() Unable to cast toward <ScalarSignal> or <VectorSignal>." );
+
+    return new VectorPortMap ( vectorSignal, flags );
   }
 
 
@@ -243,16 +242,22 @@ namespace Vhdl {
         first = false;
       }
     } else {
+      const Bit* bit  = NULL;
+      string     name = "UNCONNECTED";
+
       // cerr << "VhdlPortMap is in bit mode for \"" << _signal->getName() << "\""
       //      << " _flags:" << _flags << " mappedNames:" << _mapping.size() << endl;
 
       auto imapping  = _mapping.rbegin();
       bool first = true;
       for ( ; imapping!=_mapping.rend() ; ++imapping ) {
+        bit  = imapping ->second;
+        name = (bit) ? bit ->getSignal()->getName() : "UNCONNECTED";
+
         if (not first) out << "\n" << tab << "         , ";
         
         out << setw(width) << left << _signal->getBit(imapping->first)->getName()
-            << " => " << imapping->second->getName();
+            << " => " << name;
         first = false;
       }
     }
