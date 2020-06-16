@@ -199,6 +199,7 @@ namespace Anabatic {
       static  const Name&             staticGetName           ();
       virtual const Name&             getName                 () const;
       virtual       Configuration*    getConfiguration        ();
+      virtual const Configuration*    getConfiguration        () const;
       inline        uint64_t          getDensityMode          () const;
       inline        CellViewer*       getViewer               () const;
       inline        void              setViewer               ( CellViewer* );

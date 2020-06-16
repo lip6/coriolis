@@ -449,6 +449,10 @@ namespace Anabatic {
   { return _configuration; }
 
 
+  const Configuration* AnabaticEngine::getConfiguration () const
+  { return _configuration; }
+
+
   Interval  AnabaticEngine::getUSide ( Flags direction ) const
   {
     Interval side;
@@ -525,6 +529,72 @@ namespace Anabatic {
                      ) << endl;
       }
     }
+
+    size_t        errorCount = 0;
+    ostringstream errors;
+    errors << "AnabaticEngine::checkPlacement():\n";
+
+    for ( Net* net: getCell()->getNets() ) {
+      for ( RoutingPad* rp : net->getRoutingPads() ) {
+        Pin* pin = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() );
+        if (not pin) continue;
+
+        ostringstream pinError;
+
+        Point pinCenter = rp->getCenter();
+        if (  (pin->getAccessDirection() == Pin::AccessDirection::NORTH)
+           or (pin->getAccessDirection() == Pin::AccessDirection::SOUTH) ) {
+          if (pin->getLayer() != getConfiguration()->getDVerticalLayer()) {
+            pinError << "    Should be in vertical routing layer, "
+                     << "pin:"      << pin->getLayer()->getName()
+                     << " vs gauge:" << getConfiguration()->getDVerticalLayer()->getName()
+                     << "\n";
+            valid = false;
+            ++errorCount;
+          }
+          if ((pinCenter.getX() - getCell()->getAbutmentBox().getXMin()
+                                - getConfiguration()->getDVerticalOffset())
+              % getConfiguration()->getDVerticalPitch()) {
+            pinError << "    Misaligned, "
+                     << "pin:" << DbU::getValueString(pinCenter.getX())
+                     << " vs gauge, pitch:" << DbU::getValueString(getConfiguration()->getDVerticalPitch ())
+                     << ", offset:"         << DbU::getValueString(getConfiguration()->getDVerticalOffset())
+                     << "\n";
+            valid = false;
+            ++errorCount;
+          }
+        } 
+
+        if (  (pin->getAccessDirection() == Pin::AccessDirection::EAST)
+           or (pin->getAccessDirection() == Pin::AccessDirection::WEST) ) {
+          if (pin->getLayer() != getConfiguration()->getDHorizontalLayer()) {
+            pinError << "    Should be in horizontal routing layer, "
+                     << "pin:"      << pin->getLayer()->getName()
+                     << " vs gauge:" << getConfiguration()->getDHorizontalLayer()->getName()
+                     << "\n";
+            valid = false;
+            ++errorCount;
+          }
+          if ((pinCenter.getY() - getCell()->getAbutmentBox().getYMin()
+                                - getConfiguration()->getDHorizontalOffset())
+              % getConfiguration()->getDHorizontalPitch()) {
+            pinError << "    Misaligned, "
+                     << "pin:" << DbU::getValueString(pinCenter.getY())
+                     << " vs gauge, pitch:" << DbU::getValueString(getConfiguration()->getDHorizontalPitch ())
+                     << ", offset:"         << DbU::getValueString(getConfiguration()->getDHorizontalOffset())
+                     << "\n";
+            valid = false;
+            ++errorCount;
+          }
+        } 
+
+        if (not pinError.str().empty()) {
+          errors << "On " << pin << "\n" << pinError.str();
+        }
+      }
+    }
+    if (errorCount) throw Error( errors.str() );
+    
     return valid;
   }
 
