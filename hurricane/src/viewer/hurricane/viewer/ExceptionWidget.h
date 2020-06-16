@@ -1,22 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
+// Copyright (c) SU 2008-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :       "./ExceptionWidget.h"                      |
+// |  C++ Header  :  "./hurricane/viewer/ExceptionWidget.h"          |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_EXCEPTION_WIDGET_H
-#define  HURRICANE_EXCEPTION_WIDGET_H
-
+#pragma once
 #include  <exception>
 #include  <functional>
 #include  <QDialog>
@@ -47,12 +45,10 @@ namespace Hurricane {
     private slots:
               void    _showTrace      ( int state );
     private:
-              QLabel*      _header;
-              QLabel*      _message;
-              QTextEdit*   _trace;
+              QLabel*    _header;
+              QTextEdit* _message;
+              QTextEdit* _trace;
   };
 
 
 } // Hurricane namespace.
-
-#endif  // HURRICANE_EXCEPTION_WIDGET_H
