@@ -210,6 +210,7 @@ namespace Cfg {
         .def("asPercentageString", &Parameter::asPercentageString)
         .def("asBool"            , &Parameter::asBool)
         .def("asInt"             , &Parameter::asInt)
+        .def("asDouble"          , &Parameter::asDouble)
         .def("asPercentage"      , &Parameter::asPercentage)
         .def("getSlaves"         , &Parameter::getSlaves, return_value_policy<reference_existing_object>())
         .def("getValues"         , &Parameter::getValues, return_value_policy<reference_existing_object>())

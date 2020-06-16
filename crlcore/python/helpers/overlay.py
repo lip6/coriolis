@@ -62,6 +62,8 @@ class Configuration:
                 Cfg.getParamEnumerate(attr).setInt( val )
             else:
                 Cfg.getParamInt(attr).setInt( val )
+        elif isinstance(val, float):
+            p = Cfg.getParamDouble( attr ).setDouble( val )
         elif '%' in val:
             Cfg.getParamPercentage(attr).setPercentage( float(val[:-1]) )
         else:
