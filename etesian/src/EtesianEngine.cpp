@@ -548,9 +548,8 @@ namespace Etesian {
     topTransformation.applyOn( topAb );
 
     size_t  instancesNb = getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()).getSize();
-    if (not instancesNb) {
-      cerr << Error( "EtesianEngine::toColoquinte(): No instance to place. We're gonna crash..." ) << endl;
-    }
+    if (not instancesNb)
+      throw Error( "EtesianEngine::toColoquinte(): No instance to place." );
 
   // Coloquinte circuit description data-structures.
   // One dummy fixed instance at the end

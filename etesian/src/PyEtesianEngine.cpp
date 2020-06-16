@@ -69,7 +69,9 @@ extern "C" {
 
   DirectVoidMethod(EtesianEngine,etesian,setDefaultAb)
   DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
-  DirectSetLongAttribute(PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
+  DirectSetLongAttribute  (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
+  DirectSetDoubleAttribute(PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
+  DirectSetDoubleAttribute(PyEtesianEngine_setAspectRatio  ,setAspectRatio  ,PyEtesianEngine,EtesianEngine)
 
 
   static PyObject* PyEtesianEngine_get ( PyObject*, PyObject* args )
@@ -211,6 +213,10 @@ extern "C" {
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "setFixedAbHeight"  , (PyCFunction)PyEtesianEngine_setFixedAbHeight  , METH_VARARGS
                             , "Use this height when computing the size of the default abutment box (disable aspect ratio)." }
+    , { "setSpaceMargin"    , (PyCFunction)PyEtesianEngine_setSpaceMargin    , METH_VARARGS
+                            , "Override the configuration space margin parameter value." }
+    , { "setAspectRatio"    , (PyCFunction)PyEtesianEngine_setAspectRatio    , METH_VARARGS
+                            , "Override the configuration aspect ratio parameter value." }
     , { "resetPlacement"    , (PyCFunction)PyEtesianEngine_resetPlacement    , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS

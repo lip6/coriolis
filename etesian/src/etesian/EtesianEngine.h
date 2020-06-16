@@ -1,22 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2014-2018, All Rights Reserved
+// Copyright (c) SU 2014-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |   E t e s i a n  -  A n a l y t i c   P l a c e r               |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./etesian/EtesianEngine.h"                     |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ETESIAN_ETESIAN_ENGINE_H
-#define  ETESIAN_ETESIAN_ENGINE_H
-
+#pragma once
 #include <iostream>
 #include <unordered_map>
 #include "coloquinte/circuit.hxx"
@@ -82,6 +80,8 @@ namespace Etesian {
       inline  Instance*              getBlockInstance    () const;
       inline  void                   setBlock            ( Instance* );
       inline  void                   setFixedAbHeight    ( DbU::Unit );
+      inline  void                   setSpaceMargin      ( double );
+      inline  void                   setAspectRatio      ( double );
               void                   setDefaultAb        ();
               void                   adjustSliceHeight   ();
               void                   resetPlacement      ();
@@ -161,6 +161,8 @@ namespace Etesian {
   inline  Instance*              EtesianEngine::getBlockInstance   () const { return  _block; }
   inline  void                   EtesianEngine::setBlock           ( Instance* block ) { _block = block; _placed = _block->getMasterCell()->isPlaced(); }
   inline  void                   EtesianEngine::setFixedAbHeight   ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
+  inline  void                   EtesianEngine::setSpaceMargin     ( double margin ) { getConfiguration()->setSpaceMargin(margin); }
+  inline  void                   EtesianEngine::setAspectRatio     ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
 
 // Variables.
   extern const char* missingEtesian;
@@ -170,6 +172,3 @@ namespace Etesian {
 
 
 INSPECTOR_P_SUPPORT(Etesian::EtesianEngine);
-
-
-#endif  // ETESIAN_ETESIAN_ENGINE_H

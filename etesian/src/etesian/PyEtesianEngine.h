@@ -2,22 +2,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2014-2018, All Rights Reserved
+// Copyright (c) SU/LIP6 2014-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |   E t e s i a n  -  A n a l y t i c   P l a c e r               |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :  "./etesian/PyEtesianEngine.cpp"                 |
 // +-----------------------------------------------------------------+
 
 
-#ifndef PY_ETESIAN_ENGINE_H
-#define PY_ETESIAN_ENGINE_H
-
+#pragma once
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/PyToolEngine.h"
 #include "etesian/EtesianEngine.h"
@@ -55,5 +53,3 @@ extern "C" {
 }  // extern "C".
 
 }  // Etesian namespace.
-
-#endif  // PY_ETESIAN_ENGINE_H

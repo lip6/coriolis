@@ -74,6 +74,8 @@ namespace Etesian {
       inline double           getAspectRatio   () const;
       inline string           getFeedNames     () const;
       inline string           getBloat         () const;
+      inline void             setSpaceMargin   ( double );
+      inline void             setAspectRatio   ( double );
              void             print            ( Cell* ) const;
              Record*          _getRecord       () const;
              string           _getString       () const;
@@ -106,6 +108,8 @@ namespace Etesian {
   inline double        Configuration::getAspectRatio   () const { return _aspectRatio; }
   inline string        Configuration::getFeedNames     () const { return _feedNames; }
   inline string        Configuration::getBloat         () const { return _bloat; }
+  inline void          Configuration::setSpaceMargin   ( double margin ) { _spaceMargin = margin; }
+  inline void          Configuration::setAspectRatio   ( double ratio  ) { _aspectRatio = ratio; }
 
 
 } // Etesian namespace.
