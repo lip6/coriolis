@@ -42,6 +42,7 @@ namespace CRL {
     unsigned int entityFlags = Vhdl::Entity::EntityMode /* | Vhdl::Entity::IeeeMode */;
     if (saveState & Catalog::State::VstUseConcat  ) entityFlags |= Vhdl::Entity::VstUseConcat;
     if (saveState & Catalog::State::VstNoLowerCase) entityFlags |= Vhdl::Entity::VstNoLowerCase;
+    if (saveState & Catalog::State::VstNoLinkage  ) entityFlags |= Vhdl::Entity::VstNoLinkage;
     
   //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
     Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell, entityFlags );

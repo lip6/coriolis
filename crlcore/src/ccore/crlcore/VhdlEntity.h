@@ -66,9 +66,10 @@ namespace Vhdl {
                 , AsInnerSignal  = 0x0010
                 , VstUseConcat   = 0x0020
                 , VstNoLowerCase = 0x0040
-                , OptionMask     = VstUseConcat|VstNoLowerCase
+                , VstNoLinkage   = 0x0080
+                , OptionMask     = VstUseConcat|VstNoLowerCase|VstNoLinkage
                 };
-      const unsigned int  ModeMask = VstUseConcat|VstNoLowerCase;
+      const unsigned int  ModeMask = VstUseConcat|VstNoLowerCase|VstNoLinkage;
     public:
       static std::vector<Entity*>&
                               getAllEntities  ();

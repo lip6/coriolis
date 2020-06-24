@@ -88,6 +88,7 @@ namespace CRL {
                      , Foreign         = 1 << 8
                      , VstUseConcat    = 1 << 9
                      , VstNoLowerCase  = 1 << 10
+                     , VstNoLinkage    = 1 << 11
                      , Views           = Physical|Logical
                      };
         // Constructors.

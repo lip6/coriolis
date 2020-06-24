@@ -281,7 +281,9 @@ namespace Vhdl {
     
     for ( auto isignal=internalSignals.begin(); isignal!=internalSignals.end() ; ++isignal ) {
       out << tab;
-      (*isignal)->toVhdlPort( out, width, Entity::AsInnerSignal|(_flags & Entity::IeeeMode) );
+      (*isignal)->toVhdlPort( out, width, Entity::AsInnerSignal
+                                         |(_flags & Entity::IeeeMode)
+                                         |(_flags & Entity::VstNoLinkage) );
       out << ";\n";
     }
     out << "\n";
@@ -305,7 +307,9 @@ namespace Vhdl {
     size_t ioCount = 0;
     for ( auto isignal=ioSignals.begin(); isignal!=ioSignals.end() ; ++isignal ) {
       if (ioCount) out << "\n" << tab << "     ; ";
-      (*isignal)->toVhdlPort( out, width, Entity::AsPortSignal|(_flags & Entity::IeeeMode ) );
+      (*isignal)->toVhdlPort( out, width, Entity::AsPortSignal
+                                         |(_flags & Entity::IeeeMode)
+                                         |(_flags & Entity::VstNoLinkage ) );
       ++ioCount;
     }
     out << "\n" << tab << "     );";

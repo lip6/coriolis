@@ -147,6 +147,7 @@ extern "C" {
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Foreign         ,"Foreign");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::VstUseConcat    ,"VstUseConcat");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::VstNoLowerCase  ,"VstNoLowerCase");
+    LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::VstNoLinkage    ,"VstNoLinkage");
     LoadObjectConstant(PyTypeCatalogState.tp_dict,Catalog::State::Views           ,"Views");
   }
 

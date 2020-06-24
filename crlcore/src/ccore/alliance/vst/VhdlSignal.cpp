@@ -33,6 +33,7 @@ namespace Vhdl {
     : _name(name)
   { }
 
+
   Signal::~Signal ()
   { }
 
@@ -54,7 +55,9 @@ namespace Vhdl {
         case Net::Direction::IN:    out << "in";    break;
         case Net::Direction::OUT:   out << "out";   break;
         case Net::Direction::INOUT: out << "inout"; break;
-        default:                    out << "linkage";
+        default:
+          if (flags & Entity::VstNoLinkage) out << "in";
+          else                              out << "linkage";
       }
     }
 
