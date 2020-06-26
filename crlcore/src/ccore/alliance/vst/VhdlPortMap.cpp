@@ -155,14 +155,14 @@ namespace Vhdl {
   {
     vector<string>  mappedNames;
     if (getSignal()->isContiguous()) {
-      int             begin  = -1;
-      int             end    = -1;
-      int             delta  =  0;
-      int             deltap =  0;
-      const Bit*      bit    = NULL;
-      const Bit*      bitp   = NULL;
-      string          name   = "UNCONNECTED";
-      string          namep  = "UNCONNECTED";
+      int        begin  = -1;
+      int        end    = -1;
+      int        delta  =  0;
+      int        deltap =  0;
+      const Bit* bit    = NULL;
+      const Bit* bitp   = NULL;
+      string     name   = "UNCONNECTED";
+      string     namep  = "UNCONNECTED";
   
       auto imapping  = _mapping.rbegin();
       auto imappingp = _mapping.rbegin();
@@ -221,8 +221,14 @@ namespace Vhdl {
         }
       }
     }
+
+    if (mappedNames.size() == 1) {
+      out << setw(width) << left << _signal->getName()
+          << " => " << mappedNames[0];
+      return;
+    }
   
-    if ( (mappedNames.size() == 1) or (_flags & Entity::VstUseConcat) ) {
+    if ( (mappedNames.size() > 1) and (_flags & Entity::VstUseConcat) ) {
       out << setw(width) << left << _signal->getName() << " => ";
   
       size_t lhsWidth  = 90 - tab.getWidth() - width - 4;
@@ -241,25 +247,26 @@ namespace Vhdl {
         out << name;
         first = false;
       }
-    } else {
-      const Bit* bit  = NULL;
-      string     name = "UNCONNECTED";
+      return;
+    }
 
-      // cerr << "VhdlPortMap is in bit mode for \"" << _signal->getName() << "\""
-      //      << " _flags:" << _flags << " mappedNames:" << _mapping.size() << endl;
+    const Bit* bit  = NULL;
+    string     name = "UNCONNECTED";
 
-      auto imapping  = _mapping.rbegin();
-      bool first = true;
-      for ( ; imapping!=_mapping.rend() ; ++imapping ) {
-        bit  = imapping ->second;
-        name = (bit) ? bit ->getSignal()->getName() : "UNCONNECTED";
+    // cerr << "VhdlPortMap is in bit mode for \"" << _signal->getName() << "\""
+    //      << " _flags:" << _flags << " mappedNames:" << _mapping.size() << endl;
 
-        if (not first) out << "\n" << tab << "         , ";
-        
-        out << setw(width) << left << _signal->getBit(imapping->first)->getName()
-            << " => " << name;
-        first = false;
-      }
+    auto imapping  = _mapping.rbegin();
+    bool first = true;
+    for ( ; imapping!=_mapping.rend() ; ++imapping ) {
+      bit  = imapping ->second;
+      name = (bit) ? bit->getName() : "UNCONNECTED";
+
+      if (not first) out << "\n" << tab << "         , ";
+      
+      out << setw(width) << left << _signal->getBit(imapping->first)->getName()
+          << " => " << name;
+      first = false;
     }
   }
 
