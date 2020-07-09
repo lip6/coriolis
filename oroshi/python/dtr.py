@@ -5,7 +5,9 @@ from helpers import trace
 
 class Rules ( object ):
 
-  ruleSet = [ 'minSpacing_nWell'
+  ruleSet = [ 'minWidth_nWell'
+            , 'minSpacing_nWell'
+            , 'minEnclosure_nWell_active'
             , 'minWidth_pImplant'
             , 'minSpacing_pImplant'
             , 'minSpacing_rpolyh_pImplant'
