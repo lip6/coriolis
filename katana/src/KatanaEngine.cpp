@@ -419,6 +419,7 @@ namespace Katana {
     return NULL;
   }
 
+
   void  KatanaEngine::openSession ()
   { Session::_open(this); }
 
