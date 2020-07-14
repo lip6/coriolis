@@ -52,8 +52,10 @@ namespace Vhdl {
       const Signal* signal = entity->getGlobal( getString(masterNet->getName()) );
       if (signal) return signal->getBit();
 
-      cerr << Error( "PortMap::_lookup() VHDL extension missing on parent of global <%s>."
+      cerr << Error( "PortMap::_lookup() VHDL extension missing on parent of global \"%s\"\n"
+                     "        In parent cell \"%s\"."
                    , getString(masterNet).c_str()
+                   , getString(instance->getCell()->getName()).c_str()
                    ) << endl;
     } else {
       Net* net = plug->getNet();
@@ -61,12 +63,17 @@ namespace Vhdl {
         Bit* bit = BitExtension::get( net );
         if (bit) return bit;
 
-        cerr << Error( "PortMap::_lookup() VHDL extension missing on <%s>."
+        cerr << Error( "PortMap::_lookup() VHDL extension missing on \"%s\"."
+                       "        In cell \"%s\"."
                      , getString(net).c_str()
+                     , getString(net->getCell()->getName()).c_str()
                      ) << endl;
       } else {
-        cerr << Error( "PortMap::_lookup() Unconnected <%s>."
+        cerr << Error( "PortMap::_lookup() Unconnected \"%s\",\n"
+                       "        In instance \"%s\" of \"%s\"."
                      , getString(plug).c_str()
+                     , getString(instance->getName()).c_str()
+                     , getString(instance->getMasterCell()->getName()).c_str()
                      ) << endl;
       }
     }
