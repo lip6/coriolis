@@ -14,6 +14,7 @@
 
 
 import Cfg
+import helpers
 import helpers.io
 helpers.io.vprint( 1, '  o  Loading "symbolic.cmos" technology.' )
 helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
@@ -37,3 +38,5 @@ import symbolic.cmos.plugins
 import symbolic.cmos.stratus1
 
 Cfg.Configuration.popDefaultPriority()
+
+helpers.tagConfModules()

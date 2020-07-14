@@ -39,3 +39,5 @@ import node180.scn6m_deep_09.devices
 import node180.scn6m_deep_09.dtr_scn6m_deep_09
 
 Cfg.Configuration.popDefaultPriority()
+
+helpers.tagConfModules()

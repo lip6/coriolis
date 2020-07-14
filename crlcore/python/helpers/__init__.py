@@ -10,23 +10,20 @@
 # |  Author      :                    Jean-Paul Chaput              |
 # |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
-# |  Python      :   "./crlcore/__init__.py"                        |
+# |  Python      :   "./crlcore/helpers/__init__.py"                |
 # +-----------------------------------------------------------------+
 #
 # This is file is mandatory to tell python that 'helpers' is a module
 # rather than an ordinary directory, thus enabling the uses of the
 # 'dot' notation in import.
 
+#print 'helpers.__init__()'
 
 import sys
 import os
 import os.path
 import re
 import traceback
-import Hurricane
-import Viewer
-import CRL
-import helpers.io
 
 quiet          = False
 sysConfDir     = None
@@ -35,7 +32,17 @@ ndaDir         = None
 techno         = 'symbolic/cmos'
 technoDir      = None
 moduleGlobals  = globals()
-confModules    = [ ]
+sysModules     = set()
+confModules    = set()
+
+if not sysModules:
+    for moduleName in sys.modules.keys():
+        sysModules.add( moduleName )
+
+import Hurricane
+import Viewer
+import CRL
+import helpers.io
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
@@ -348,10 +355,10 @@ def setSysConfDir ( quiet=False ):
     if sysConfDir != None:
        #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
         return
-  
+
     reSysConfDir = re.compile(r'.*etc\/coriolis2')
     if not quiet: print '  o  Locating configuration directory:'
-    
+
     for path in sys.path:
         if reSysConfDir.match(path):
             sysConfDir = path
@@ -397,9 +404,10 @@ setSysConfDir( False )
 
 
 def unloadUserSettings ():
+    global confModules
+
     print '  o  Unloading Python user\'s modules.'
 
-    global confModules
     for moduleName in confModules:
       refcount = sys.getrefcount( sys.modules[moduleName] )
       warning  = ''
@@ -411,16 +419,12 @@ def unloadUserSettings ():
        #                                 ] )
       print '     - %-34s %-35s' % ('"%s".'%moduleName, warning)
       del sys.modules[ moduleName ]
-    confModules = []
+    confModules = set()
     return
 
 
 def loadUserSettings ():
-    global confModules
-
     rvalue        = False
-    beforeModules = set()
-    for moduleName in sys.modules.keys(): beforeModules.add( moduleName )
 
     if os.path.isfile('./coriolis2/settings.py'):
         if os.path.isfile('./coriolis2/__init__.py'):
@@ -434,16 +438,23 @@ def loadUserSettings ():
     else:
       import symbolic.cmos
 
+    tagConfModules()
+
+    return rvalue
+
+
+def tagConfModules ():
+    global sysModules
+    global confModules
+
     confModules = set()
     for moduleName in sys.modules.keys():
-        if not (moduleName in beforeModules):
+        if not (moduleName in sysModules):
             confModules.add( moduleName )
 
    #print 'Configuration modules:'
    #for moduleName in confModules:
    #  print '-', moduleName
-
-    return rvalue
 
 
 def resetCoriolis ():

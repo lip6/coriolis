@@ -38,3 +38,5 @@ import node45.freepdk45.stratus1
 import node45.freepdk45.devices
 
 Cfg.Configuration.popDefaultPriority()
+
+helpers.tagConfModules()
