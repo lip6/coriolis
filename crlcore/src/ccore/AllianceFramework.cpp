@@ -149,7 +149,7 @@ namespace CRL {
 
 
   string  AllianceFrameworkProperty::JsonProperty::getTypeName () const
-  { return getString(AllianceFrameworkProperty::getPropertyName()); }
+  { return "CRL::AllianceFrameworkProperty"; }
 
 
   void  AllianceFrameworkProperty::JsonProperty::initialize ()

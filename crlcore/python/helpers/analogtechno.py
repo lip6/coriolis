@@ -14,6 +14,7 @@
 # +-----------------------------------------------------------------+
 
 
+from   __future__ import print_function
 import os
 import os.path
 import sys
@@ -39,22 +40,38 @@ def valueToDbU ( value, unit, lengthType ):
     return area
 
 
+def isStepped ( entry ):
+    if isinstance(entry,tuple):
+        for item in entry:
+            if not isinstance(item,tuple) or len(item) != 2:
+                return False
+        return True
+    return False
+
+
+def isNonIsotropic ( entry ):
+    if not isinstance(entry,tuple) or len(entry) != 2: return False
+    if not isinstance(entry[0],int) and not isinstance(entry[0],float): return False
+    if not isinstance(entry[1],int) and not isinstance(entry[1],float): return False
+    return True
+
+
 def checkEntry ( entry, entryNo ):
     if not isinstance(entry,tuple):
-      raise ErrorMessage( 1, [ 'Entry %d is malformed in <analogTechnologyTable>.' % entryNo
-                             , 'Not a tuple (a, b, c, ...) or (a,).'
-                             , str(entry)
-                             ] )
+        raise ErrorMessage( 1, [ 'Entry %d is malformed in <analogTechnologyTable>.' % entryNo
+                               , 'Not a tuple (a, b, c, ...) or (a,).'
+                               , str(entry)
+                               ] )
     if not len(entry) in (4, 5, 6):
-      raise ErrorMessage( 1, [ 'Entry %d is malformed in <analogTechnologyTable>.' % entryNo
-                             , 'Tuple must have *4*, *5* or *6* items only.'
-                             , str(entry)
-                             ] )
+        raise ErrorMessage( 1, [ 'Entry %d is malformed in <analogTechnologyTable>.' % entryNo
+                               , 'Tuple must have *4*, *5* or *6* items only.'
+                               , str(entry)
+                               ] )
     if not entry[-2] in (Length, Length|Asymmetric, Area, Unit):
-      raise ErrorMessage( 1, [ 'Entry %d is malformed in <analogTechnologyTable>.' % entryNo
-                             , 'Beforelast item is neither Length, Length|Asymmetric nor Area.'
-                             , str(entry)
-                             ] )
+        raise ErrorMessage( 1, [ 'Entry %d is malformed in <analogTechnologyTable>.' % entryNo
+                               , 'Beforelast item is neither Length, Length|Asymmetric nor Area.'
+                               , str(entry)
+                               ] )
     return
 
 
@@ -62,49 +79,57 @@ def _loadAnalogTechno ( techno, ruleTable ):
     unit    = None
     entryNo = 0
     for entry in ruleTable:
-      entryNo += 1
-
-      try:
-        if entryNo > 1:
-          checkEntry( entry, entryNo )
-
-        if entry[0] == 'Header':
-          unit = entry[2]
-          techno.setName( entry[1] )
-          continue
-
-       # Zero-layer rule.
-        if len(entry) == 4:
-          if entry[2] & Unit:
-            techno.addUnitRule( entry[0], entry[1], entry[3] )
-          else:
-            techno.addPhysicalRule( entry[0]
-                                  , valueToDbU( entry[1], unit, entry[2] )
-                                  , entry[3]
-                                  )
-       # One-layer rule.
-        if len(entry) == 5:
-          techno.addPhysicalRule( entry[0]
-                                , entry[1]
-                                , valueToDbU( entry[2], unit, entry[3] )
-                                , entry[4]
-                                )
-       # Two-layer rule.
-        if len(entry) == 6:
-          symmetric = True
-          if entry[4] & Asymmetric: symmetric = False
-
-          techno.addPhysicalRule( entry[0]
-                                , entry[1]
-                                , entry[2]
-                                , symmetric
-                                , valueToDbU( entry[3], unit, entry[4] )
-                                , entry[5]
-                                )
-      except Exception, e:
-        e = ErrorMessage( e )
-        e.addMessage( 'In %s:<analogTechnologyTable> at index %d.' % (technoFile,entryNo) )
-        print e
+        entryNo += 1
+        
+        try:
+            if entryNo > 1: checkEntry( entry, entryNo )
+          
+            if entry[0] == 'Header':
+                unit = entry[2]
+                techno.setName( entry[1] )
+                continue
+          
+           # Zero-layer rule.
+            if len(entry) == 4:
+                if entry[2] & Unit:
+                    rule = techno.addUnitRule( entry[0], entry[3] )
+                    rule.addValue( entry[1] )
+                else:
+                    rule = techno.addPhysicalRule( entry[0], entry[3] )
+                    rule.addValue( valueToDbU(entry[1], unit, entry[2]), 0 )
+           # One-layer rule.
+            if len(entry) == 5:
+                rule = techno.addPhysicalRule( entry[0], entry[1], entry[4] )
+                if entry[3] & Unit:
+                    rule.addValue( entry[2] )
+                else:
+                    if isStepped(entry[2]):
+                        for step in entry[2]:
+                            rule.addValue( valueToDbU(step[0], unit, entry[3])
+                                         , valueToDbU(step[1], unit, entry[3]) )
+                    elif isNonIsotropic(entry[2]):
+                        rule.addValue( valueToDbU(entry[2][0], unit, entry[3])
+                                     , valueToDbU(entry[2][1], unit, entry[3])
+                                     , 0 )
+                    else:
+                        rule.addValue( valueToDbU(entry[2], unit, entry[3]), 0 )
+           # Two-layer rule.
+            if len(entry) == 6:
+                symmetric = True
+                if entry[4] & Asymmetric: symmetric = False
+                rule = techno.addPhysicalRule( entry[0], entry[1], entry[2], entry[5] )
+                rule.setSymmetric( symmetric )
+                
+                if isNonIsotropic(entry[3]):
+                    rule.addValue( valueToDbU(entry[3][0], unit, entry[4])
+                                 , valueToDbU(entry[3][1], unit, entry[4])
+                                 , 0 )
+                else:
+                    rule.addValue( valueToDbU(entry[3], unit, entry[4]), 0 )
+        except Exception, e:
+            e = ErrorMessage( 1, e )
+            e.addMessage( 'In {}:<analogTechnologyTable> at index {}.'.format(technoFile,entryNo) )
+            print( str(e) )
     return
 
 

@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_TWO_LAYERS_PHYSICAL_RULE_H
-#define HURRICANE_TWO_LAYERS_PHYSICAL_RULE_H
-
+#pragma  once
 #include "hurricane/PhysicalRule.h"
 
 
@@ -47,9 +45,11 @@ namespace Hurricane {
                                                , const std::string& reference
                                                ,       bool         symetric
                                                )
-    : PhysicalRule(name,value,reference)
+    : PhysicalRule(name,reference)
     , _symetric(symetric)
-  { }
+  {
+    addValue( value, 0 );
+  }
   
 
   bool TwoLayersPhysicalRule::isSymetric () const { return _symetric; } 
@@ -59,5 +59,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::TwoLayersPhysicalRule);
-
-#endif // HURRICANE_TWO_LAYERS_PHYSICAL_RULE_H

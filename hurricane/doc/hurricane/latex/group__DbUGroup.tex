@@ -123,9 +123,9 @@ Fixed point numbers management.
 \hypertarget{group__DbUGroup_secDbUIntro}{}\subsection{Introduction}\label{group__DbUGroup_secDbUIntro}
 The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class provides the \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} type for modelling geometric length, that is abscissas, ordinates, widths, offsets and a set of functions to convert \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} to and from external coordinates.
 
-\begin{DoxyParagraph}{Remark\+: The DbU class contains only static methods, and is not meant to}
-be instanciated. The working type is \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class contains only static methods, and is not meant to be instanciated. The working type is \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}.
+\end{DoxyRemark}
 The \mbox{\hyperlink{classHurricane_1_1DbU}{DbU}} class manage three king of length \+: 
 \begin{DoxyItemize}
 \item {\bfseries \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}} \+: the working type. It is currently associated to a long integer and a precision/resolution. This way all numbers are bound to the same precision (unlike floating point numbers) preventing rounding errors. 
@@ -395,9 +395,9 @@ Sets in which length the units are to be displayed by \mbox{\hyperlink{group__Db
 \begin{DoxyReturn}{Returns}
 A character string representing the external value of {\ttfamily $<$unit$>$}. The value is converted in the length according to \mbox{\hyperlink{group__DbUGroup_ga89ab8f8326c54113336086663ecf1d25}{set\+String\+Mode()}}\+: database, grid or symbolic.
 \end{DoxyReturn}
-\begin{DoxyParagraph}{Remark\+: This string is shorter than the one we could print from the }
-external value because non needed decimals are not drawn (nor the point if value is integer). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+This string is shorter than the one we could print from the external value because non needed decimals are not drawn (nor the point if value is integer). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}\label{group__DbUGroup_gace9a8644e7e80dcaed2a8a95deeb1622}} 
 \index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+Precision@{set\+Precision}}
 \index{set\+Precision@{set\+Precision}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}
@@ -406,9 +406,9 @@ external value because non needed decimals are not drawn (nor the point if value
 
 Allows to set the precision at a requested value. This must be done at the begining of the program (before the creation of the first unit) and not changed for the following (unless mandatory and for a temporary period because all existing units would be misinterpreted).
 
-\begin{DoxyParagraph}{Remark\+: This function throws an exception if the requested precision }
-is greater than the maximal one. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+This function throws an exception if the requested precision is greater than the maximal one. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}\label{group__DbUGroup_ga202cc3aa3364c2224647a29dde047fae}} 
 \index{Db\+U/\+Unit description@{Db\+U/\+Unit description}!set\+Real\+Snap\+Grid\+Step@{set\+Real\+Snap\+Grid\+Step}}
 \index{set\+Real\+Snap\+Grid\+Step@{set\+Real\+Snap\+Grid\+Step}!Db\+U/\+Unit description@{Db\+U/\+Unit description}}

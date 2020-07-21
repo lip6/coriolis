@@ -156,8 +156,8 @@ class Pin : public Contact {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Pin);
-INSPECTOR_PV_SUPPORT(Hurricane::Pin::AccessDirection);
-INSPECTOR_PV_SUPPORT(Hurricane::Pin::PlacementStatus);
+INSPECTOR_PR_SUPPORT(Hurricane::Pin::AccessDirection);
+INSPECTOR_PR_SUPPORT(Hurricane::Pin::PlacementStatus);
 
 
 #endif // HURRICANE_PIN

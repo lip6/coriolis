@@ -15,12 +15,10 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_PYHURRICANE_H
-#define HURRICANE_PYHURRICANE_H
-
 // Enable Python debugging.
 // #define  DEBUG  1
 
+#pragma  once
 #include "Python.h"
 #include <type_traits>
 #include <exception>
@@ -1642,5 +1640,3 @@ extern "C" {
 }  // End of extern "C".
 
 }  // End of Isobar namespace.
-
-# endif

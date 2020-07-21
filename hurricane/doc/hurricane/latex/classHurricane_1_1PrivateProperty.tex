@@ -49,9 +49,9 @@ If the property owner is destroyed \+: All properties owned by the object are th
 \hypertarget{classHurricane_1_1PrivateProperty_secPrivatePropertyDestruction}{}\subsection{Destruction}\label{classHurricane_1_1PrivateProperty_secPrivatePropertyDestruction}
 The property has an owner, this one is informed of the property deletion and detaches it from its property list. If the object is a quark and if this was the last property owned it automatically deletes itself.
 
-\begin{DoxyParagraph}{Remark\+: Once the property is attached to an object this one becomes }
-responsible of its automatic destruction. When a property changes its owner, the old owner delegates this task to the new one. On the other hand, a property which has never been attached to an owner will never be deleted automatically.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Once the property is attached to an object this one becomes responsible of its automatic destruction. When a property changes its owner, the old owner delegates this task to the new one. On the other hand, a property which has never been attached to an owner will never be deleted automatically.
+\end{DoxyRemark}
 {\bfseries Returns\+:} the current owner of the property (or N\+U\+LL if at not been assigned yet). 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

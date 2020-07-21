@@ -51,9 +51,9 @@ A plug is unique, that is, for a given instance there is one and only one plug r
 \begin{DoxyParagraph}{Caution\+: When created, an instance creates all plugs corresponding to }
 the external nets of its master cell. So, some plugs may exist without being connected. Plugs are the only components which have this characteristic.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: Plugs being completely managed by the system, you can\textquotesingle{}t }
-define sub-\/types of plugs.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Plugs being completely managed by the system, you can\textquotesingle{}t define sub-\/types of plugs.
+\end{DoxyRemark}
 \hypertarget{classHurricane_1_1Plug_secPlugConstructors}{}\subsection{Constructors \& Destructors}\label{classHurricane_1_1Plug_secPlugConstructors}
 Plugs being completely managed by the system, there is no constructor nor destructor provided.\hypertarget{classHurricane_1_1Plug_secPlugPredefinedFilters}{}\subsection{Predefined filters}\label{classHurricane_1_1Plug_secPlugPredefinedFilters}
 {\bfseries \mbox{\hyperlink{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}{Hurricane\+::\+Plug\+::get\+Is\+Connected\+Filter}}} {\bfseries \mbox{\hyperlink{classHurricane_1_1Plug_af27b873ed2420329a63ea67dcc243f07}{Hurricane\+::\+Plug\+::get\+Is\+Unconnected\+Filter}}} 
@@ -82,9 +82,9 @@ Useful for calling upon methods of the base class without knowing it.
 
 {\bfseries Returns\+:} the external net referenced by the plug in the master cell of its instance.
 
-\begin{DoxyParagraph}{Remark\+: Don\textquotesingle{}t mistake with get\+Net() which returns the net owning the }
-plug (or N\+U\+LL if is unconnected). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Don\textquotesingle{}t mistake with \mbox{\hyperlink{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}{get\+Net()}} which returns the net owning the plug (or N\+U\+LL if is unconnected). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}\label{classHurricane_1_1Plug_a51bd5d04a337544709950d7cace05f0d}} 
 \index{Hurricane\+::\+Plug@{Hurricane\+::\+Plug}!get\+Is\+Connected\+Filter@{get\+Is\+Connected\+Filter}}
 \index{get\+Is\+Connected\+Filter@{get\+Is\+Connected\+Filter}!Hurricane\+::\+Plug@{Hurricane\+::\+Plug}}
@@ -105,9 +105,9 @@ plug (or N\+U\+LL if is unconnected).
 
 {\bfseries Returns\+:} {\bfseries true} if the plug is connected, else {\bfseries false}.
 
-\begin{DoxyParagraph}{Remark\+: A plug is connected if the call upon get\+Net() doesn\textquotesingle{}t }
-return N\+U\+LL. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+A plug is connected if the call upon {\bfseries \mbox{\hyperlink{classHurricane_1_1Component_a1556ef77d6b89bfc17698d52ebde9791}{get\+Net()}}} doesn\textquotesingle{}t return N\+U\+LL. 
+\end{DoxyRemark}
 
 
 References Hurricane\+::\+Component\+::get\+Net().
@@ -123,9 +123,9 @@ This method allows to connect or change the net of a plug.
 \begin{DoxyParagraph}{Caution\+: An exception is thrown if the net owner cell differs from the }
 plug owner cell, or if there are components (contact, segments, ...) currently anchored on the plug.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: The properties attached to this plug and its occurences are }
-left unchanged. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The properties attached to this plug and its occurences are left unchanged. 
+\end{DoxyRemark}
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

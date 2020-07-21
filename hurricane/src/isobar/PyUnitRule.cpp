@@ -57,7 +57,7 @@ namespace  Isobar {
   // +-------------------------------------------------------------+
 
 
-  DirectDeleteMethod(PyUnitRule_DeAlloc,PyUnitRule)
+  PythonOnlyDeleteMethod(UnitRule)
   PyTypeObjectLinkPyType(UnitRule)
 
 

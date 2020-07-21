@@ -112,7 +112,7 @@ namespace CRL {
 
 
 INSPECTOR_P_SUPPORT(CRL::SearchPath);
-INSPECTOR_V_SUPPORT(CRL::SearchPath::Element);
+INSPECTOR_PR_SUPPORT(CRL::SearchPath::Element);
 
 
 #endif  // CRL_SEARCH_PATH_H

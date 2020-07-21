@@ -111,9 +111,9 @@ Create and return a pointer to a new instance of name {\ttfamily $<$name$>$} bel
 \begin{DoxyParagraph}{Caution\+: Throws an exception if the cell {\ttfamily $<$cell$>$} is null, if the }
 {\ttfamily $<$master\+Cell$>$} is null, if an instance of same name already exists or if a cyclic assembly is detected.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries false} the verification of }
-the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries false} the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Instance_aa48280b4d7127d283c89983cf7a42c23}\label{classHurricane_1_1Instance_aa48280b4d7127d283c89983cf7a42c23}} 
 \index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!get\+Name@{get\+Name}}
 \index{get\+Name@{get\+Name}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
@@ -194,9 +194,9 @@ consistent with the instance (that is if the owner cell of the tail path is not 
 
 Allows to change the instance name.
 
-\begin{DoxyParagraph}{Remark\+: Throws an exception if the name is empty or if an instance }
-with the same name exists in the owner cell. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Throws an exception if the name is empty or if an instance with the same name exists in the owner cell. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Instance_a8890d2e1b2ba2542997454297e63512f}\label{classHurricane_1_1Instance_a8890d2e1b2ba2542997454297e63512f}} 
 \index{Hurricane\+::\+Instance@{Hurricane\+::\+Instance}!set\+Transformation@{set\+Transformation}}
 \index{set\+Transformation@{set\+Transformation}!Hurricane\+::\+Instance@{Hurricane\+::\+Instance}}
@@ -214,9 +214,9 @@ Allows to change the cell referenced by this instance.
 \begin{DoxyParagraph}{Caution\+: Throws an exception if either the cell is null, a cyclic }
 assembly is detected or the substitution can\textquotesingle{}t succeed.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries false} the verification of }
-the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks).
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+If the {\ttfamily $<$secure\+Flag$>$} is set to {\bfseries false} the verification of the lack of cyclic assembly is skipped (you save some cpu time, but at your own risks).
+\end{DoxyRemark}
 \begin{DoxyParagraph}{Important\+: In order to succeed with the substitution, it is necessary }
 that for each connected plug, refering an external net of the old master cell, a net of same name can be found in the new master cell.
 \end{DoxyParagraph}

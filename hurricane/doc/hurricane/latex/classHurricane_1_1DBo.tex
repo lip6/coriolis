@@ -139,9 +139,9 @@ MyCell* MyCell::Create(Library* library, \textcolor{keyword}{const} Name& name)
 \end{DoxyCode}
 
 
-\begin{DoxyParagraph}{Remark\+: The destructor, strictly speaking, is not defined because}
-necessary operations are done within the method {\bfseries \+\_\+pre\+Destroy}. In the implementation of the class {\bfseries My\+Cell} we have only used the type {\bfseries Inherit} (and never {\bfseries \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}}). This opens the door to hierarchy changes without affecting the code already written.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The destructor, strictly speaking, is not defined because necessary operations are done within the method {\bfseries \+\_\+pre\+Destroy}. In the implementation of the class {\bfseries My\+Cell} we have only used the type {\bfseries Inherit} (and never {\bfseries \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}}). This opens the door to hierarchy changes without affecting the code already written.
+\end{DoxyRemark}
 \hypertarget{classHurricane_1_1DBo_sDBoRemark}{}\subsection{Remark}\label{classHurricane_1_1DBo_sDBoRemark}
 The construction and deletion process of property objects is the same. It is mandatory for any new type of property to adopt the same protocol. 
 
@@ -166,8 +166,8 @@ The legal method to delete any \mbox{\hyperlink{classHurricane_1_1DBo}{D\+Bo}} o
 \begin{DoxyReturn}{Returns}
 The property of \mbox{\hyperlink{classHurricane_1_1Name}{Name}} {\itshape name} attached to the object, if it exists, else {\ttfamily N\+U\+LL}.
 \end{DoxyReturn}
-\begin{DoxyParagraph}{Remark\+: When writting what follows \+:}
-
+\begin{DoxyRemark}{Remarks}
+When writting what follows \+: 
 \begin{DoxyCode}
 forEach(DBo*, idbo, dbos) \{
   Property* \textcolor{keyword}{property} = idbo->getProperty(\textcolor{stringliteral}{"width"});
@@ -177,7 +177,7 @@ forEach(DBo*, idbo, dbos) \{
 \}
 \end{DoxyCode}
 
-\end{DoxyParagraph}
+\end{DoxyRemark}
 There is construction of a name (from a character string) for each visited dbo in order to find the property. It\textquotesingle{}s more efficient to write \+: 
 \begin{DoxyCode}
 Name width = \textcolor{stringliteral}{"width"};
@@ -224,9 +224,9 @@ The property \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} associa
 
 Adds the \mbox{\hyperlink{classHurricane_1_1Property}{Property}} {\itshape property} to the set of object properties. Properties being named, if an other one already exists in the set, with the same name, this last will be in a first step removed from the set.
 
-\begin{DoxyParagraph}{Remark\+: Does nothing if the Property object is already attached to the}
-object.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Does nothing if the \mbox{\hyperlink{classHurricane_1_1Property}{Property}} object is already attached to the object.
+\end{DoxyRemark}
 \begin{DoxyParagraph}{Caution\+: An exception is thrown if the Property pointer is {\ttfamily N\+U\+LL}.}
 
 \end{DoxyParagraph}
@@ -238,9 +238,9 @@ object.
 
 removes the property {\itshape property} from the set of object properties.
 
-\begin{DoxyParagraph}{Remark\+: Does nothing if the Property object is not attached to the object.}
-
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Does nothing if the \mbox{\hyperlink{classHurricane_1_1Property}{Property}} object is not attached to the object.
+\end{DoxyRemark}
 \begin{DoxyParagraph}{Caution\+: An exception is thrown if the Property pointer is {\ttfamily N\+U\+LL}.}
 
 \end{DoxyParagraph}

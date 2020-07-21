@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KITE_TRACK_COST_H
-#define  KITE_TRACK_COST_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Interval.h"
 namespace Hurricane {
@@ -197,7 +195,4 @@ namespace Kite {
 } // Kite namespace.
 
 
-INSPECTOR_V_SUPPORT(Kite::TrackCost);
-
-
-#endif  // KITE_TRACK_COST_H
+INSPECTOR_R_SUPPORT(Kite::TrackCost);

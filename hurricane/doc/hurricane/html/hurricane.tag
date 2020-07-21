@@ -4530,6 +4530,81 @@
     <docanchor file="classHurricane_1_1Path" title="Remarks">secPathRemarks</docanchor>
   </compound>
   <compound kind="class">
+    <name>Hurricane::PhysicalRule</name>
+    <filename>classHurricane_1_1PhysicalRule.html</filename>
+    <member kind="function">
+      <type>bool</type>
+      <name>isDouble</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>ad419b79177064cab06f7c8dbeccc4dce</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isDbU</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>af1e9eeb3499bfd66cedf5756e2d7e2a3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isSymmetric</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a56f3eed5835ad1c268638f0f813fc029</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hasSteps</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a8cc9f7f2dfc580e4f91b7f93ce8a26cc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setSymmetric</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>afc1e61c5b2baa1126a2e253e02f40f40</anchor>
+      <arglist>(bool)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>getDoubleValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a89a0cd27aec78836500a5066c276bbf0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>DbU::Unit</type>
+      <name>getValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>aa3548c58b42cd29cbe07d1a0289416a0</anchor>
+      <arglist>(Hurricane::DbU::Unit length=0, bool hDir=true) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>ada08351fb24f36a63f4e3a3c524000a2</anchor>
+      <arglist>(double)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>ac25990fc4aff5e5739ae9632f43d9bf8</anchor>
+      <arglist>(Hurricane::DbU::Unit value, Hurricane::DbU::Unit maxLength)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addValue</name>
+      <anchorfile>classHurricane_1_1PhysicalRule.html</anchorfile>
+      <anchor>a51356a2e3e6cae11c8063b6a092f304d</anchor>
+      <arglist>(Hurricane::DbU::Unit hValue, Hurricane::DbU::Unit vValue, Hurricane::DbU::Unit maxLength)</arglist>
+    </member>
+    <docanchor file="classHurricane_1_1PhysicalRule" title="Introduction">sPhysicalRuleIntro</docanchor>
+  </compound>
+  <compound kind="class">
     <name>Hurricane::Pin</name>
     <filename>classHurricane_1_1Pin.html</filename>
     <base>Hurricane::Contact</base>
@@ -5988,6 +6063,27 @@
       <arglist>(int) const</arglist>
     </member>
     <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>getUnitRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a6ab76e8a246a10a395d68341bca9ea96</anchor>
+      <arglist>(std::string ruleName) const</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>getPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a21ef6f7507785a587e56aecc52a0c0ee</anchor>
+      <arglist>(std::string ruleName, std::string layerName) const</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>getPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>aec2ce8a8195e90537e6d35cb3ba8b58f</anchor>
+      <arglist>(std::string ruleName, std::string layer1Name, std::string layer2Name) const</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>setName</name>
       <anchorfile>classHurricane_1_1Technology.html</anchorfile>
@@ -6001,14 +6097,43 @@
       <anchor>a26c12c5828acaeb33068a2899df1134b</anchor>
       <arglist>(const Layer *)</arglist>
     </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addUnitRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a96d62a8b3eb12560a9cb778328f8a301</anchor>
+      <arglist>(std::string ruleName, std::string reference)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a267e44b205b97ff46297d16ed278a5bc</anchor>
+      <arglist>(std::string ruleName, std::string reference)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a4210936e097a774035bf52bce7d962bc</anchor>
+      <arglist>(std::string ruleName, std::string layerName, std::string reference)</arglist>
+    </member>
+    <member kind="function">
+      <type>PhysicalRule *</type>
+      <name>addPhysicalRule</name>
+      <anchorfile>classHurricane_1_1Technology.html</anchorfile>
+      <anchor>a3f04a0d9fe9c76fc3c0911c76c120e00</anchor>
+      <arglist>(std::string ruleName, std::string layer1Name, std::string layer2Name, std::string reference)</arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static Technology *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1Technology.html</anchorfile>
-      <anchor>a8fd65387c7fd6ba1396f905fadf20087</anchor>
+      <anchor>a64670f0d48e9460342005df52f25c152</anchor>
       <arglist>(DataBase *, const Name &amp;)</arglist>
     </member>
     <docanchor file="classHurricane_1_1Technology" title="Introduction">sTechnologyIntro</docanchor>
+    <docanchor file="classHurricane_1_1Technology" title="Using PhysicalRules">sTechnologyRules</docanchor>
   </compound>
   <compound kind="class">
     <name>Hurricane::Transformation</name>
@@ -6571,6 +6696,7 @@
     <class kind="class">Hurricane::Occurrence</class>
     <class kind="class">Hurricane::Pad</class>
     <class kind="class">Hurricane::Path</class>
+    <class kind="class">Hurricane::PhysicalRule</class>
     <class kind="class">Hurricane::Pin</class>
     <class kind="class">Hurricane::Plug</class>
     <class kind="class">Hurricane::Point</class>

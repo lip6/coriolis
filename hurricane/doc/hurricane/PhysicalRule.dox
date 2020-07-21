@@ -1,0 +1,84 @@
+
+// -*- C++ -*-
+
+
+namespace Hurricane {
+
+//! \class        PhysicalRule
+//! \brief        Define a rule for the technology (\b API).
+//!
+//! \section      sPhysicalRuleIntro  Introduction
+//!
+//!               The constructor of Physical rule is not directly accessible,
+//!               as thoses objects must be created only through the
+//!               Technology class \c API (to be stored in the relevant
+//!               tables).
+//!
+//!               PhysicalRule is a <em>"one size fit class"</em>. As there will
+//!               be only a small number of objects created (compare to other
+//!               kinds) we choose to implement all variant in one class instead
+//!               of creating a flock of derived classes and all the assorted
+//!               paraphernalia. As a consequence, not all fields will be used
+//!               at the same time, they are mutually exclusive.
+
+//! \function     bool  PhysicalRule::isSymmetric () const;
+//!               Tells if the rule is symmetric.
+
+//! \function     bool  PhysicalRule::isDbU () const;
+//!               Tells if the rule uses physical lengths, with multiple steps
+//!               or not.
+
+//! \function     bool  PhysicalRule::isDouble () const;
+//!               Tells if the rule describe non-length values (Volts, Ohms, Henry,
+//!               Celsius, ...).
+
+//! \function     bool  PhysicalRule::hasSteps () const;
+//!               Tells if the rule has more than one step, that is, is not uniform
+//!               for all length.
+
+//! \function     void  PhysicalRule::setSymmetric ( bool state );
+//!               Set the symmetric state of the rule. This used only for rules
+//!               bound to two layers.
+
+//! \function     void  PhysicalRule::addValue ( double value );
+//!               Set the \c double value of a rule.
+
+//! \function     double  PhysicalRule::getDoubleValue () const;
+//! \return       The \c double value of the rule.
+
+//! \function     double  PhysicalRule::getValue ( DbU::Unit length=0, bool hDir=true ) const;
+//! \param        length  The length for which we want the rule's value. 
+//! \param        hDir    In case of non-isotropic rule, which dimension
+//!                       do we want.
+//! \return       The rule's value for the given length. If no parameter is supplied,
+//!               then, the X value of the first step is returned.  
+
+//! \function     void  PhysicalRule::addValue ( DbU::Unit value, DbU::Unit maxLength );
+//! \param        value      The \e value of the step to add.
+//! \param        maxLength  The length up to which the rule is valid.
+//!                          passing zero as this argument means always valid.
+//!
+//!               Adds a new stepping value to the rule. If the rules never
+//!               change, give a \c maxLength of zero and only call this function
+//!               once on the rule. The rule is isotropic in X and Y.
+//!
+//!               This function can be called multiple time on a rule, each call
+//!               will add a new step. Steps are defined and ordered according to
+//!               \c maxLength.
+
+//! \function     void  PhysicalRule::addValue ( DbU::Unit hvalue, DbU::Unit vvalue, DbU::Unit maxLength );
+//! \param        hvalue     The horizontal \e value of the step to add.
+//! \param        vvalue     The vertical \e value of the step to add.
+//! \param        maxLength  The length up to which the rule is valid.
+//!                          passing zero as this argument means always valid.
+//!
+//!               Adds a new stepping value to the rule. If the rules never
+//!               change, give a \c maxLength of zero and only call this function
+//!               once on the rule. The rule is \b not isotropic, it defines a
+//!               different value for X and Y.
+//!
+//!               This function can be called multiple time on a rule, each call
+//!               will add a new step. Steps are defined and ordered according to
+//!               \c maxLength.
+
+}

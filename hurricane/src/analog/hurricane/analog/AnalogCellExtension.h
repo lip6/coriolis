@@ -49,6 +49,8 @@ namespace Analog {
                                      ~AnalogCellExtensionDatas ();
       template< typename Data > Data* get                      ();
       template< typename Data > void  set                      ( Data* );
+    private:
+                                      AnalogCellExtensionDatas ( const AnalogCellExtensionDatas& ) = delete;
     public:
       std::map<Name,boost::any>  _params;
       std::vector<AnalogData*>   _datas;

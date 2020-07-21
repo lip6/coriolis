@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_CHIP_TOOLS_H
-#define  ANABATIC_CHIP_TOOLS_H
-
+#pragma  once
 #include <string>
 #include "hurricane/DbU.h"
 #include "hurricane/Torus.h"
@@ -113,6 +111,4 @@ namespace Anabatic {
 
 } // Anabatic namespace.
 
-INSPECTOR_PV_SUPPORT(Anabatic::ChipTools);
-
-#endif  // ANABATIC_CHIP_TOOLS_H
+INSPECTOR_PR_SUPPORT(Anabatic::ChipTools);

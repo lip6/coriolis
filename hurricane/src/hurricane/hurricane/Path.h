@@ -112,7 +112,7 @@ class Path {
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Path);
+INSPECTOR_PR_SUPPORT(Hurricane::Path);
 
 
 #endif // HURRICANE_PATH

@@ -364,7 +364,7 @@ namespace Hurricane {
   string  StandardPrivateProperty<Value,JsonState>::_getString () const
   {
     string s = PrivateProperty::_getString();
-    s.insert(s.length() - 1, " " + getString(_value));
+    s.insert(s.length() - 1, " " + getString<Value&>(_value));
     return s;
   }
 

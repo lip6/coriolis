@@ -55,14 +55,28 @@ Via\+Layers \mbox{\hyperlink{classHurricane_1_1Technology_aacde973f6a02a232a01f3
 \item 
 \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a81a3f3e479aeb686c61a2d0fa2931f3b}{get\+Nth\+Metal}} (int) const
 \item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a6ab76e8a246a10a395d68341bca9ea96}{get\+Unit\+Rule}} (std\+::string rule\+Name) const
+\item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a21ef6f7507785a587e56aecc52a0c0ee}{get\+Physical\+Rule}} (std\+::string rule\+Name, std\+::string layer\+Name) const
+\item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_aec2ce8a8195e90537e6d35cb3ba8b58f}{get\+Physical\+Rule}} (std\+::string rule\+Name, std\+::string layer1\+Name, std\+::string layer2\+Name) const
+\item 
 void \mbox{\hyperlink{classHurricane_1_1Technology_a247b75d5cbb85198cea9e5e609304cd0}{set\+Name}} (const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&)
 \item 
 bool \mbox{\hyperlink{classHurricane_1_1Technology_a26c12c5828acaeb33068a2899df1134b}{set\+Symbolic\+Layer}} (const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$)
+\item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a96d62a8b3eb12560a9cb778328f8a301}{add\+Unit\+Rule}} (std\+::string rule\+Name, std\+::string reference)
+\item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a267e44b205b97ff46297d16ed278a5bc}{add\+Physical\+Rule}} (std\+::string rule\+Name, std\+::string reference)
+\item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a4210936e097a774035bf52bce7d962bc}{add\+Physical\+Rule}} (std\+::string rule\+Name, std\+::string layer\+Name, std\+::string reference)
+\item 
+\mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a3f04a0d9fe9c76fc3c0911c76c120e00}{add\+Physical\+Rule}} (std\+::string rule\+Name, std\+::string layer1\+Name, std\+::string layer2\+Name, std\+::string reference)
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a8fd65387c7fd6ba1396f905fadf20087}{create}} (\mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} $\ast$, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&)
+static \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Technology_a64670f0d48e9460342005df52f25c152}{create}} (\mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} $\ast$, const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&)
 \end{DoxyCompactItemize}
 
 
@@ -70,25 +84,74 @@ static \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$ \mbox{
 Technological rules description ({\bfseries A\+PI}). 
 
 \hypertarget{classHurricane_1_1Technology_sTechnologyIntro}{}\subsection{Introduction}\label{classHurricane_1_1Technology_sTechnologyIntro}
-The \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} object provides the description of all the technology rules needed by the tools, currently it is limited to the description of all layers available. This object must be created once within the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}, and, in principle never destroyed (this would destroy layers and all objects laying on them ...).
+The \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} object provides the description of all the technology rules needed by the tools, currently it contains\+:
 
-\begin{DoxyParagraph}{Remark\+: There is only one technology for the current Data\+Base, and only one}
-Database object, so only one technology defined. 
-\end{DoxyParagraph}
 
+\begin{DoxyItemize}
+\item The layers, roughly from bottom (i.\+e. closest to the subtsrate) to top. Layers can be basic, that is, match a real physical layer, or composite, like for V\+I\+As in symbolic for macro-\/generation. It also provides a connexity table between layers.
+\item Three sets of rules describing the technology rules (formerly the {\ttfamily D\+TR} in Alliance).
+\begin{DoxyEnumerate}
+\item {\ttfamily Zero \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}}}\+: rules not associated to any layer.
+\item {\ttfamily One \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}}}\+: rules associated to one layer.
+\item {\ttfamily Two Layers}\+: rules associated to two layer.
+\end{DoxyEnumerate}
+\end{DoxyItemize}
+
+This object must be created once within the \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}, and, in principle never destroyed (this would destroy layers and all objects laying on them ...).
+
+Here
+
+\begin{DoxyRemark}{Remarks}
+There is only one technology for the current \mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}}, and only one Database object, so only one technology defined.
+\end{DoxyRemark}
+\hypertarget{classHurricane_1_1Technology_sTechnologyRules}{}\subsection{Using Physical\+Rules}\label{classHurricane_1_1Technology_sTechnologyRules}
+How to create a simple one layer rule, setup the minimal width of {\ttfamily metal1} layer to 0.\+5{$\mu$}m.
+
+
+\begin{DoxyCode}
+tech = \mbox{\hyperlink{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}{DataBase::getDB}}()->\mbox{\hyperlink{classHurricane_1_1DataBase_a144480c54b0f9fbda57622ad6767ab8a}{getTechnology}}();
+PhysicalRule* rule = tech->\mbox{\hyperlink{classHurricane_1_1Technology_a267e44b205b97ff46297d16ed278a5bc}{addPhysicalRule}}( \textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"} );
+rule->\mbox{\hyperlink{classHurricane_1_1PhysicalRule_ada08351fb24f36a63f4e3a3c524000a2}{addValue}}( \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}( 0.5, DbU::UnitPower::Micro ), 0 );
+\end{DoxyCode}
+
+
+How to create a one layer rule, with multiple steps. The minimal spacing of {\ttfamily metal1} layer which will depend on the wire length. The spacing will be of 2{$\mu$}m for length below 50{$\mu$}m and 4{$\mu$}m above.
+
+
+\begin{DoxyCode}
+tech = \mbox{\hyperlink{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}{DataBase::getDB}}()->\mbox{\hyperlink{classHurricane_1_1DataBase_a144480c54b0f9fbda57622ad6767ab8a}{getTechnology}}();
+PhysicalRule* rule = tech->\mbox{\hyperlink{classHurricane_1_1Technology_a267e44b205b97ff46297d16ed278a5bc}{addPhysicalRule}}( \textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"} );
+rule->\mbox{\hyperlink{classHurricane_1_1PhysicalRule_ada08351fb24f36a63f4e3a3c524000a2}{addValue}}( \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}(    2.0, DbU::UnitPower::Micro )
+              , \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}(   50.0, DbU::UnitPower::Micro ) );
+rule->addValue( \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}(    4.0, DbU::UnitPower::Micro )
+              , \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}( 1000.0, DbU::UnitPower::Micro ) );
+\end{DoxyCode}
+
+
+How to create a two layers rule, with non-\/isomorphic values. The minimum enclosure of {\ttfamily metal1} layer over {\ttfamily cut1} will be 1{$\mu$}m in horizontal direction and 0.\+5{$\mu$}m in vertical. The order of layers is significant in the function call, it must be read as {\itshape \char`\"{}\+The encolusre of metal1 over cut1\char`\"{}}.
+
+
+\begin{DoxyCode}
+tech = \mbox{\hyperlink{classHurricane_1_1DataBase_a53d0b9fcd06b73f3968c8f238f377a88}{DataBase::getDB}}()->\mbox{\hyperlink{classHurricane_1_1DataBase_a144480c54b0f9fbda57622ad6767ab8a}{getTechnology}}();
+PhysicalRule* rule = tech->\mbox{\hyperlink{classHurricane_1_1Technology_a267e44b205b97ff46297d16ed278a5bc}{addPhysicalRule}}( \textcolor{stringliteral}{"minWidth"}, \textcolor{stringliteral}{"metal1"}, \textcolor{stringliteral}{"cut1"} );
+rule->\mbox{\hyperlink{classHurricane_1_1PhysicalRule_ada08351fb24f36a63f4e3a3c524000a2}{addValue}}( \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}( 1.0, DbU::UnitPower::Micro )
+              , \mbox{\hyperlink{group__DbUGroup_ga11d4dbd9134a19bda35cbacde1cb2769}{DbU::fromPhysical}}( 0.5, DbU::UnitPower::Micro )
+              , 0 );
+\end{DoxyCode}
+ 
 
 \subsection{Member Function Documentation}
-\mbox{\Hypertarget{classHurricane_1_1Technology_a8fd65387c7fd6ba1396f905fadf20087}\label{classHurricane_1_1Technology_a8fd65387c7fd6ba1396f905fadf20087}} 
+\mbox{\Hypertarget{classHurricane_1_1Technology_a64670f0d48e9460342005df52f25c152}\label{classHurricane_1_1Technology_a64670f0d48e9460342005df52f25c152}} 
 \index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!create@{create}}
 \index{create@{create}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
 \subsubsection{\texorpdfstring{create()}{create()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$ Hurricane\+::\+Technology\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} $\ast$}]{data\+Base,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+{\footnotesize\ttfamily $\ast$\mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} $\ast$ Hurricane\+::\+Technology\+::create (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1DataBase}{Data\+Base}} $\ast$}]{data\+Base,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
 {\bfseries Returns\+:} a newly created technology named {\ttfamily $<$name$>$} for the data base {\ttfamily $<$data\+Base$>$}.
 
-\begin{DoxyParagraph}{Caution\+: Throws an exception if the {\ttfamily data\+Base} is {\ttfamily N\+U\+LL}, if the name is empty or if}
-the {\ttfamily data\+Base} has already a technology. 
-\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+Throws an exception if the {\ttfamily data\+Base} is {\ttfamily N\+U\+LL}, if the name is empty or if the {\ttfamily data\+Base} has already a technology. 
+\end{DoxyWarning}
 \mbox{\Hypertarget{classHurricane_1_1Technology_ae5590e455d35f76531a6feb0c0f111a2}\label{classHurricane_1_1Technology_ae5590e455d35f76531a6feb0c0f111a2}} 
 \index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!is\+Metal@{is\+Metal}}
 \index{is\+Metal@{is\+Metal}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
@@ -143,9 +206,9 @@ References Hurricane\+::\+Layer\+::get\+Mask().
 
 {\bfseries Returns\+:} the collection of layers of the technology.
 
-\begin{DoxyParagraph}{Remark\+: The layers are traversed according to their}
-creation order. This order is very important, notably for the graphical display. Therefore deeper basic layers must be created first and upper layers later (the order of composite layers has no importance). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The layers are traversed according to their creation order. This order is very important, notably for the graphical display. Therefore deeper basic layers must be created first and upper layers later (the order of composite layers has no importance). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Technology_a7fccff9da6604fafb90408ba56184fc0}\label{classHurricane_1_1Technology_a7fccff9da6604fafb90408ba56184fc0}} 
 \index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!get\+Basic\+Layers@{get\+Basic\+Layers}}
 \index{get\+Basic\+Layers@{get\+Basic\+Layers}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
@@ -212,7 +275,46 @@ creation order. This order is very important, notably for the graphical display.
 \subsubsection{\texorpdfstring{get\+Nth\+Metal()}{getNthMetal()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$ Hurricane\+::\+Technology\+::get\+Nth\+Metal (\begin{DoxyParamCaption}\item[{int}]{depth }\end{DoxyParamCaption}) const}
 
-{\bfseries Returns\+:} the {\ttfamily Nth} metal layer from the substrate. So a {\ttfamily depth} of zero should mean {\ttfamily metal1}. \mbox{\Hypertarget{classHurricane_1_1Technology_a247b75d5cbb85198cea9e5e609304cd0}\label{classHurricane_1_1Technology_a247b75d5cbb85198cea9e5e609304cd0}} 
+{\bfseries Returns\+:} the {\ttfamily Nth} metal layer from the substrate. So a {\ttfamily depth} of zero should mean {\ttfamily metal1}. \mbox{\Hypertarget{classHurricane_1_1Technology_a6ab76e8a246a10a395d68341bca9ea96}\label{classHurricane_1_1Technology_a6ab76e8a246a10a395d68341bca9ea96}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!get\+Unit\+Rule@{get\+Unit\+Rule}}
+\index{get\+Unit\+Rule@{get\+Unit\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{get\+Unit\+Rule()}{getUnitRule()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::get\+Unit\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name }\end{DoxyParamCaption}) const}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The matching rule in the table of {\bfseries unit} rules. \mbox{\Hypertarget{classHurricane_1_1Technology_a21ef6f7507785a587e56aecc52a0c0ee}\label{classHurricane_1_1Technology_a21ef6f7507785a587e56aecc52a0c0ee}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!get\+Physical\+Rule@{get\+Physical\+Rule}}
+\index{get\+Physical\+Rule@{get\+Physical\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{get\+Physical\+Rule()}{getPhysicalRule()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::get\+Physical\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name,  }\item[{std\+::string}]{layer\+Name }\end{DoxyParamCaption}) const}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule \\
+\hline
+{\em layer\+Name} & The name of the layer\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The matching rule in the table of {\bfseries one layer} rules. \mbox{\Hypertarget{classHurricane_1_1Technology_aec2ce8a8195e90537e6d35cb3ba8b58f}\label{classHurricane_1_1Technology_aec2ce8a8195e90537e6d35cb3ba8b58f}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!get\+Physical\+Rule@{get\+Physical\+Rule}}
+\index{get\+Physical\+Rule@{get\+Physical\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{get\+Physical\+Rule()}{getPhysicalRule()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::get\+Physical\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name,  }\item[{std\+::string}]{layer1\+Name,  }\item[{std\+::string}]{layer2\+Name }\end{DoxyParamCaption}) const}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule \\
+\hline
+{\em layer1\+Name} & The name of the first layer \\
+\hline
+{\em layer2\+Name} & The name of the second layer\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The matching rule in the table of {\bfseries two layers} rules. The order of layers arguments is meaningful and should match The one used at rule creation. \mbox{\Hypertarget{classHurricane_1_1Technology_a247b75d5cbb85198cea9e5e609304cd0}\label{classHurricane_1_1Technology_a247b75d5cbb85198cea9e5e609304cd0}} 
 \index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!set\+Name@{set\+Name}}
 \index{set\+Name@{set\+Name}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
 \subsubsection{\texorpdfstring{set\+Name()}{setName()}}
@@ -224,7 +326,73 @@ Allows to change the technology name (if empty name, throws an exception). \mbox
 \subsubsection{\texorpdfstring{set\+Symbolic\+Layer()}{setSymbolicLayer()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Technology\+::set\+Symbolic\+Layer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Layer}{Layer}} $\ast$}]{layer }\end{DoxyParamCaption})}
 
-Sets this exact {\ttfamily layer} as symbolic (not is mask). Returns {\bfseries true} on success (the layer exists). 
+Sets this exact {\ttfamily layer} as symbolic (not is mask). Returns {\bfseries true} on success (the layer exists). \mbox{\Hypertarget{classHurricane_1_1Technology_a96d62a8b3eb12560a9cb778328f8a301}\label{classHurricane_1_1Technology_a96d62a8b3eb12560a9cb778328f8a301}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!add\+Unit\+Rule@{add\+Unit\+Rule}}
+\index{add\+Unit\+Rule@{add\+Unit\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{add\+Unit\+Rule()}{addUnitRule()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::add\+Unit\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name,  }\item[{std\+::string}]{reference }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule \\
+\hline
+{\em reference} & A free comentary string for further reference.\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The newly added rule.
+
+Create and add to \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} a rule whithout associated layer. The rule should contain a value which is anything but a length (Volt, Henry, Ohm, ...) The rule is created empty. For a detailed explanation see \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}}. \mbox{\Hypertarget{classHurricane_1_1Technology_a267e44b205b97ff46297d16ed278a5bc}\label{classHurricane_1_1Technology_a267e44b205b97ff46297d16ed278a5bc}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!add\+Physical\+Rule@{add\+Physical\+Rule}}
+\index{add\+Physical\+Rule@{add\+Physical\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{add\+Physical\+Rule()}{addPhysicalRule()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::add\+Physical\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name,  }\item[{std\+::string}]{reference }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule \\
+\hline
+{\em reference} & A free comentary string for further reference.\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The newly added rule.
+
+Create and add to \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} a rule whithout associated layer. The rule should contain only length value(s) (so \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}). The rule is created empty. For a detailed explanation see \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}}. \mbox{\Hypertarget{classHurricane_1_1Technology_a4210936e097a774035bf52bce7d962bc}\label{classHurricane_1_1Technology_a4210936e097a774035bf52bce7d962bc}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!add\+Physical\+Rule@{add\+Physical\+Rule}}
+\index{add\+Physical\+Rule@{add\+Physical\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{add\+Physical\+Rule()}{addPhysicalRule()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::add\+Physical\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name,  }\item[{std\+::string}]{layer\+Name,  }\item[{std\+::string}]{reference }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule \\
+\hline
+{\em layer\+Name} & The one layer associated to the rule. \\
+\hline
+{\em reference} & A free comentary string for further reference.\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The newly added rule.
+
+Create and add to \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} a rule associated to {\bfseries one} layer. The rule should contain only length value(s) (so \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}). The rule is created empty. For a detailed explanation see \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}}. \mbox{\Hypertarget{classHurricane_1_1Technology_a3f04a0d9fe9c76fc3c0911c76c120e00}\label{classHurricane_1_1Technology_a3f04a0d9fe9c76fc3c0911c76c120e00}} 
+\index{Hurricane\+::\+Technology@{Hurricane\+::\+Technology}!add\+Physical\+Rule@{add\+Physical\+Rule}}
+\index{add\+Physical\+Rule@{add\+Physical\+Rule}!Hurricane\+::\+Technology@{Hurricane\+::\+Technology}}
+\subsubsection{\texorpdfstring{add\+Physical\+Rule()}{addPhysicalRule()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}} $\ast$ Hurricane\+::\+Technology\+::add\+Physical\+Rule (\begin{DoxyParamCaption}\item[{std\+::string}]{rule\+Name,  }\item[{std\+::string}]{layer1\+Name,  }\item[{std\+::string}]{layer2\+Name,  }\item[{std\+::string}]{reference }\end{DoxyParamCaption})}
+
+
+\begin{DoxyParams}{Parameters}
+{\em rule\+Name} & The name of the rule \\
+\hline
+{\em layer1\+Name} & First layer associated to the rule. \\
+\hline
+{\em layer2\+Name} & First layer associated to the rule. \\
+\hline
+{\em reference} & A free comentary string for further reference.\\
+\hline
+\end{DoxyParams}
+{\bfseries Returns\+:} The newly added rule.
+
+Create and add to \mbox{\hyperlink{classHurricane_1_1Technology}{Technology}} a rule associated to {\bfseries two} layers. The order of layers is meaningful in case of an asymmetric rule. The rule should contain only length value(s) (so \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}). The rule is created empty. For a detailed explanation see \mbox{\hyperlink{classHurricane_1_1PhysicalRule}{Physical\+Rule}}. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 

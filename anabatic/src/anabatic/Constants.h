@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_CONSTANTS_H
-#define  ANABATIC_CONSTANTS_H
-
+#pragma  once
 #include "hurricane/Flags.h"
 
 namespace Anabatic {
@@ -148,6 +146,4 @@ namespace Anabatic {
 }  // Anabatic namespace.
 
 
-INSPECTOR_PV_SUPPORT(Anabatic::Flags)
-
-#endif  // ANABATIC_CONSTANTS_H
+INSPECTOR_PR_SUPPORT(Anabatic::Flags);

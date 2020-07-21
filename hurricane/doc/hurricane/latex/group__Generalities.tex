@@ -25,9 +25,9 @@ In the same way, some opetators or global functions are defined for all object t
 terminology In the following, we will describe operators and functions applying to objects of different types. Therefore we will name \char`\"{}\+Object\char`\"{} any of those types.\hypertarget{group__Generalities_secGeneralitiesNammingConventions}{}\subsection{Namming conventions}\label{group__Generalities_secGeneralitiesNammingConventions}
 The name of \char`\"{}\+C macros\char`\"{} are written with lower case letters and underscores (examples \+: {\bfseries is\+\_\+a}, {\bfseries for\+\_\+each\+\_\+cell} or {\bfseries end\+\_\+for}) while the name of generic functions and member functions never use the underscore and always start with an Upper case letter (examples \+: {\bfseries Get\+Unit}, {\bfseries Get\+Master\+Cell}, {\bfseries Is\+Called\+By}).
 
-\begin{DoxyParagraph}{Remark\+: When examining {\ttfamily }.h include files for more detailed information }
-you will find member functions which start with an underscore. {\bfseries While being \char`\"{}public\char`\"{} those functions must never be called upon}. In principle, only here\textquotesingle{}after documented functions should be used by the application programmer.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+When examining {\ttfamily }.h include files for more detailed information you will find member functions which start with an underscore. {\bfseries While being \char`\"{}public\char`\"{} those functions must never be called upon}. In principle, only here\textquotesingle{}after documented functions should be used by the application programmer.
+\end{DoxyRemark}
 \hypertarget{group__Generalities_secGeneralitiesGetString}{}\subsection{Get\+String}\label{group__Generalities_secGeneralitiesGetString}
 
 \begin{DoxyCode}
@@ -100,9 +100,9 @@ The library provides some usefull utilities for generating trace printings with 
    trace\_out();
 \}
 \end{DoxyCode}
- \begin{DoxyParagraph}{Remark\+: Debugger enthousiastic users will probably ignore this trace }
-capability which presents the annoying need to be inserted into the code... For myself, I do prefer those facilities...
-\end{DoxyParagraph}
+ \begin{DoxyRemark}{Remarks}
+Debugger enthousiastic users will probably ignore this trace capability which presents the annoying need to be inserted into the code... For myself, I do prefer those facilities...
+\end{DoxyRemark}
 \hypertarget{group__Generalities_secGeneralitiesRemarks}{}\subsection{Remarks}\label{group__Generalities_secGeneralitiesRemarks}
 Many other global and generic functions exist. Each one will be studied within the description of the classes which create or specialize them (example\+: {\bfseries Hurricane\+::\+Get\+Unit} will be introduced with the Unit class and {\bfseries Hurricane\+::\+Get\+Collection} with the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} class). 
 

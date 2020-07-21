@@ -19,11 +19,11 @@ namespace Hurricane {
 
 }
 
-INSPECTOR_PV_SUPPORT(Hurricane::RbInterval);
-INSPECTOR_PV_SUPPORT(Hurricane::RbInterval::Node);
-INSPECTOR_PV_SUPPORT(Hurricane::IntvString);
-INSPECTOR_PV_SUPPORT(Hurricane::IntervalTreeString);
-INSPECTOR_PV_SUPPORT(Hurricane::IntervalTreeString::Node);
+INSPECTOR_PR_SUPPORT(Hurricane::RbInterval);
+INSPECTOR_PR_SUPPORT(Hurricane::RbInterval::Node);
+INSPECTOR_PR_SUPPORT(Hurricane::IntvString);
+INSPECTOR_PR_SUPPORT(Hurricane::IntervalTreeString);
+INSPECTOR_PR_SUPPORT(Hurricane::IntervalTreeString::Node);
 
 using namespace std;
 using namespace Hurricane;

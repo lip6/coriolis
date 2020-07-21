@@ -117,7 +117,7 @@ The forEach Macro (obsoleted)</h1>
 </center><p>To use the forEach macro outside the <a class="el" href="namespaceHurricane.html" title="The namespace dedicated to Hurricane. ">Hurricane</a> namespace, the following statement is necessary: </p><div class="fragment"><div class="line"><span class="keyword">using</span> Hurricane::ForEachIterator</div></div><!-- fragment --><p> Here is a small example of a loop: </p><div class="fragment"><div class="line"><span class="keyword">using</span> Hurricane::ForEachIterator;</div><div class="line"></div><div class="line">Cell* cell = ...; <span class="comment">// Get a Cell from somewhere.</span></div><div class="line"></div><div class="line">forEach( Net*, inet, cell-&gt;getNets() ) {</div><div class="line">  cout &lt;&lt; <span class="stringliteral">&quot;This is &quot;</span> &lt;&lt; (*inet);</div><div class="line">  <span class="keywordflow">if</span> (inet-&gt;isExternal())</div><div class="line">    cout &lt;&lt; <span class="stringliteral">&quot; [external net].&quot;</span>;</div><div class="line">  cout &lt;&lt; endl;</div><div class="line">}</div></div><!-- fragment --><h1><a class="anchor" id="secGenericgetCollection"></a>
 The Generic getCollection</h1>
 <p>The collections provide the generic <code>getCollection()</code> function which allows to convert its argument into a generic collection. It has no specific interest for <a class="el" href="namespaceHurricane.html" title="The namespace dedicated to Hurricane. ">Hurricane</a> collections, but this function is overloaded for STL containers.</p>
-<p>This allows to handle a STL containers like a normal collection as shown in the following example: </p><div class="fragment"><div class="line">set&lt;Instance*&gt; instanceSet;</div><div class="line"> </div><div class="line"><span class="comment">// here we fill the set with the desired instances... </span></div><div class="line"> </div><div class="line">forEach(Instance*, iinstance, getCollection(instanceSet)) {</div><div class="line">   <span class="comment">// process here each instance of the set</span></div><div class="line">   <span class="comment">// (the elements are visited according to the set ordering)</span></div><div class="line">}</div></div><!-- fragment --><dl class="section user"><dt>Remark: This approach is a little bit less efficient than the use of </dt><dd>STL iterators, not much indeed, but has the advantage to be homogeneous with the remaining code (recall: the created collection doesn't make a copy of the STL container and its creation time is negligible).</dd></dl>
+<p>This allows to handle a STL containers like a normal collection as shown in the following example: </p><div class="fragment"><div class="line">set&lt;Instance*&gt; instanceSet;</div><div class="line"> </div><div class="line"><span class="comment">// here we fill the set with the desired instances... </span></div><div class="line"> </div><div class="line">forEach(Instance*, iinstance, getCollection(instanceSet)) {</div><div class="line">   <span class="comment">// process here each instance of the set</span></div><div class="line">   <span class="comment">// (the elements are visited according to the set ordering)</span></div><div class="line">}</div></div><!-- fragment --><dl class="section remark"><dt>Remarks</dt><dd>This approach is a little bit less efficient than the use of STL iterators, not much indeed, but has the advantage to be homogeneous with the remaining code (recall: the created collection doesn't make a copy of the STL container and its creation time is negligible).</dd></dl>
 <dl class="section user"><dt>Caution: The returned collection is valid whenever the STL container </dt><dd>is valid. Then you should not do the following: <div class="fragment"><div class="line">GenericCollection&lt;Instance*&gt; getInstances(...)</div><div class="line">{</div><div class="line">   set&lt;Instance*&gt; instanceSet;</div><div class="line"> </div><div class="line">   <span class="comment">// we fill the container with the appropriate instances</span></div><div class="line"> </div><div class="line">   <span class="keywordflow">return</span> getCollection(instanceSet); <span class="comment">// instanceSet deleted after return</span></div><div class="line">}</div></div><!-- fragment --></dd></dl>
 <p>The same will occur anyway if you do: </p><div class="fragment"><div class="line">Cell* cell = ...; <span class="comment">// we get the cell</span></div><div class="line"> </div><div class="line"><a class="code" href="namespaceHurricane.html#a3404a8b17130a1824f4a281704b04df7">Nets</a> nets = cell-&gt;getNets();</div><div class="line"> </div><div class="line">cell-&gt;destroy();</div><div class="line"> </div><div class="line">forEach(Net*, inet, nets) {</div><div class="line">   ...</div><div class="line">}</div></div><!-- fragment --><h1><a class="anchor" id="secCollectionLocators"></a>
 Locators</h1>
@@ -180,7 +180,7 @@ template&lt;class Type&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Allocates and returns a clone (copy) of the collection (whatever be its type).</p>
-<dl class="section user"><dt>Remark: In principle there is no need to use this function. However, </dt><dd>if you do so, don't forget to delete the clone after use. It is indeed much easier to use generic collections which do that for you, as we will see later. </dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>In principle there is no need to use this function. However, if you do so, don't forget to delete the clone after use. It is indeed much easier to use generic collections which do that for you, as we will see later. </dd></dl>
 
 </div>
 </div>
@@ -209,7 +209,7 @@ template&lt;class Type&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Allocates and returns a locator adapted to visit the elements of the collection.</p>
-<dl class="section user"><dt>Remark: In principle there is no need to use this function. Use </dt><dd>preferably the macro <b>for_each</b> described below. However, if you do so, don't forget to delete this locator after use, else use generic locators, which do that for you, as we will see later. </dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>In principle there is no need to use this function. Use preferably the macro <b>for_each</b> described below. However, if you do so, don't forget to delete this locator after use, else use generic locators, which do that for you, as we will see later. </dd></dl>
 
 <p class="reference">Referenced by <a class="el" href="classHurricane_1_1Collection.html#a846a042646e02a0f77d2ce0f6190288a">Hurricane::Collection&lt; SubType &gt;::getFirst()</a>, and <a class="el" href="classHurricane_1_1Collection.html#a1292aabe88c9aadfdfe21dabddb62c19">Hurricane::Collection&lt; SubType &gt;::getSize()</a>.</p>
 
@@ -240,7 +240,7 @@ template&lt;class Type&gt; </div>
 </table>
 </div><div class="memdoc">
 <p><b>Returns:</b> the number of objects identified within the collection.</p>
-<dl class="section user"><dt>Remark: Very fast in some cases, but may need to visit the collection </dt><dd>in most ones. </dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>Very fast in some cases, but may need to visit the collection in most ones. </dd></dl>
 
 </div>
 </div>
@@ -269,7 +269,7 @@ template&lt;class Type&gt; </div>
 </table>
 </div><div class="memdoc">
 <p><b>Returns:</b> the first element of the collection.</p>
-<dl class="section user"><dt>Remark: The result is meaningful only when the collection is non </dt><dd>empty. </dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>The result is meaningful only when the collection is non empty. </dd></dl>
 
 </div>
 </div>
@@ -328,7 +328,7 @@ template&lt;class SubType &gt; </div>
 </table>
 </div><div class="memdoc">
 <p><b>Returns:</b> the collection corresponding to the subset of elements of type <code>&lt;SubType&gt;</code>.</p>
-<dl class="section user"><dt>Remark: The returned collection is a collection of objects of type </dt><dd><b>SubType</b> and not of type <b>Type</b>.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>The returned collection is a collection of objects of type <b>SubType</b> and not of type <b>Type</b>.</dd></dl>
 <div class="fragment"><div class="line"><a class="code" href="namespaceHurricane.html#a1e6a8ab09f688509bd727b3fee02d0d2">Contacts</a> <a class="code" href="classHurricane_1_1Net.html#a9c397596fe9ecbf674712c72e0b9010c">Net::getContacts</a>()<span class="keyword"> const</span></div><div class="line"><span class="keyword"></span>{</div><div class="line">   <span class="keywordflow">return</span> getComponents().<a class="code" href="classHurricane_1_1Collection.html#aa32ea7249d57ee05e3c71dcde8106832">getSubSet</a>&lt;Contact*&gt;();</div><div class="line">}</div></div><!-- fragment --> 
 <p class="reference">Referenced by <a class="el" href="classHurricane_1_1Collection.html#a673afd14782da82ad03a68366ae1f09b">Hurricane::Collection&lt; SubType &gt;::getSubSet()</a>.</p>
 
@@ -362,7 +362,7 @@ template&lt;class SubType &gt; </div>
 </table>
 </div><div class="memdoc">
 <p><b>Returns:</b> the collection representing the subset of elements of type <code>&lt;SubType&gt;</code> accepted by the filter.</p>
-<dl class="section user"><dt>Remark: The returned collection is a collection of elements of type </dt><dd><b>SubType</b> and not of type <b>Type</b> and the filter must be a filter of elements of type <b>SubType</b>.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>The returned collection is a collection of elements of type <b>SubType</b> and not of type <b>Type</b> and the filter must be a filter of elements of type <b>SubType</b>.</dd></dl>
 <dl class="section user"><dt>Sample: Filter Hurricane::Segment according to their Layer.</dt><dd><div class="fragment"><div class="line"><span class="keyword">class </span>IsOnLayer : <span class="keyword">public</span> Filter&lt;Segment*&gt; {</div><div class="line">   <span class="keyword">public</span>:</div><div class="line">      Layer* _layer;</div><div class="line">   <span class="keyword">public</span>:</div><div class="line">      IsOnLayer(Layer* layer)</div><div class="line">        : _layer(layer)</div><div class="line">      {</div><div class="line">         <span class="keywordflow">if</span> (!_layer) <span class="keywordflow">throw</span> Error(<span class="stringliteral">&quot;Can&#39;t create IsOnLayer filter : null layer&quot;</span>);</div><div class="line">      };</div><div class="line"> </div><div class="line">      IsOnLayer(<span class="keyword">const</span> IsOnLayer&amp; isOnLayer)</div><div class="line">        : _layer(isOnLayer._layer)</div><div class="line">      { };</div><div class="line"> </div><div class="line">      IsOnLayer&amp; operator=(<span class="keyword">const</span> IsOnLayer&amp; isOnLayer)</div><div class="line">      {</div><div class="line">         _layer = isOnLayer._layer;</div><div class="line">         <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div><div class="line">      };</div><div class="line"> </div><div class="line">      <span class="keyword">virtual</span> Filter&lt;Net*&gt;* <a class="code" href="classHurricane_1_1Collection.html#ac75b91d3952b36e14f21174958523924">getClone</a>()<span class="keyword"> const</span></div><div class="line"><span class="keyword">      </span>{</div><div class="line">         <span class="keywordflow">return</span> <span class="keyword">new</span> IsOnLayer(*<span class="keyword">this</span>);</div><div class="line">      };</div><div class="line"> </div><div class="line">      <span class="keyword">virtual</span> <span class="keywordtype">bool</span> Accept(Segment* segment)<span class="keyword"> const</span></div><div class="line"><span class="keyword">      </span>{</div><div class="line">         <span class="keywordflow">return</span> (segmentgetLayer() == _layer);</div><div class="line">      };</div><div class="line">};</div></div><!-- fragment --></dd></dl>
 <p>And somewher later: </p><div class="fragment"><div class="line">Layer* metal = getDataBase()-&gt;getTechnology()-&gt;getLayer(<span class="stringliteral">&quot;metal&quot;</span>);</div><div class="line"> </div><div class="line"><a class="code" href="namespaceHurricane.html#a30748fa53a81cb597d4a13d651238716">Segments</a> segments = net-&gt;getComponents()-&gt;getSubSet&lt;Segment*&gt;(IsOnLayer(metal));</div><div class="line"> </div><div class="line"><span class="comment">// segments represents here the subset of net components</span></div><div class="line"><span class="comment">// which are of type Segment and located on layer metal</span></div></div><!-- fragment --> 
 </div>
@@ -376,7 +376,7 @@ template&lt;class SubType &gt; </div>
     <hr>
     <table class="footer1">
       <tr>
-        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Mon Apr 27 2020</small></td>
+        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Tue Jul 21 2020</small></td>
         <td class="RFooter"><a href='#pagetop'><small>Return to top of page</small></a></td>
       </tr>
     </table>

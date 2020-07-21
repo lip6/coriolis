@@ -136,7 +136,7 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane:
   w->endArray();
 }
 
-INSPECTOR_PV_SUPPORT(Hurricane::Interval);
+INSPECTOR_PR_SUPPORT(Hurricane::Interval);
 
 
 #endif  // HURRICANE_INTERVAL_H

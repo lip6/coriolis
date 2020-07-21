@@ -65,9 +65,9 @@ Some components (for instance the segments) bear on contacts or other segments, 
 
 For that purpose each components must be able to return a location from which a relative calculations can be done. The methods {\bfseries \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}}} and {\bfseries \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}}} provide this information and must be overloaded for each sub-\/type of component in oder to get the desired effect.
 
-\begin{DoxyParagraph}{Remark\+: The fact that a null value is systematically returned by one }
-of this methods means that the locations are computed relative to a null value, which is equivalent to say they are absolute values (see for instance the \mbox{\hyperlink{classHurricane_1_1Horizontal}{Horizontal}} segment whose \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}} returns always null, while \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}} return the ordinate of its axis).
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The fact that a null value is systematically returned by one of this methods means that the locations are computed relative to a null value, which is equivalent to say they are absolute values (see for instance the \mbox{\hyperlink{classHurricane_1_1Horizontal}{Horizontal}} segment whose \mbox{\hyperlink{classHurricane_1_1Component_a0f8299ed73705fd4fbf56589dcc7e074}{get\+X()}} returns always null, while \mbox{\hyperlink{classHurricane_1_1Component_a727da3f127c3a7a0a09468219f98c3e6}{get\+Y()}} return the ordinate of its axis).
+\end{DoxyRemark}
 \hypertarget{classHurricane_1_1Component_secComponentDestruction}{}\subsection{Destruction}\label{classHurricane_1_1Component_secComponentDestruction}
 When a component is destroyed, all components which are anchored on its body (through the body hook) are also destroyed. This may recursively propagate to other components anchored on the body of those last ones.
 
@@ -205,9 +205,9 @@ Implemented in \mbox{\hyperlink{classHurricane_1_1RoutingPad_a7f1e300e4148556fa2
 
 {\bfseries Returns\+:} the collection of \char`\"{}connex components\char`\"{} to the component {\ttfamily $<$this$>$} (which includes at least this one).
 
-\begin{DoxyParagraph}{Remark\+: A componnent is said connex to an other one if it is }
-attached directly or indirectly through hyper-\/hooks, that is if there exist a sequence of components whose parts (extremities or body) are either sharing the same anchor or anchored one upon the other.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+A componnent is said {\bfseries connex} to an other one if it is attached directly or indirectly through hyper-\/hooks, that is if there exist a sequence of components whose parts (extremities or body) are either sharing the same anchor or anchored one upon the other.
+\end{DoxyRemark}
 If the layout elements are correctly assembled and on the proper layers, this \char`\"{}connex components collection\char`\"{} represents an geometrically and electrically connected subset of layout elements
 
 On the other hand, if layout anchored objects don\textquotesingle{}t overlap on the same conducting layers (either by a wrong contact layer or by an offset which forbids layout intersection) electrical continuity will not be ensured. \mbox{\Hypertarget{classHurricane_1_1Component_af6d6b7c6b3cb18754cfa02bc5fb1e754}\label{classHurricane_1_1Component_af6d6b7c6b3cb18754cfa02bc5fb1e754}} 

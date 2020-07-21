@@ -181,7 +181,7 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Layer);
-INSPECTOR_PV_SUPPORT(Hurricane::Layer::Mask);
+INSPECTOR_PR_SUPPORT(Hurricane::Layer::Mask);
 
 
 #endif  // HURRICANE_LAYER_H
