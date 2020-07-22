@@ -100,7 +100,7 @@ class JsonPoint : public JsonObject {
 
 } // End of Hurricane namespace.
 
-INSPECTOR_PV_SUPPORT(Hurricane::Point);
+INSPECTOR_PR_SUPPORT(Hurricane::Point);
 
 
 #endif // HURRICANE_POINT

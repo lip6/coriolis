@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_CONSTANTS_H
-#define  KATANA_CONSTANTS_H
-
+#pragma  once
 #include "anabatic/Constants.h"
 
 namespace Katana {
@@ -59,6 +57,4 @@ namespace Katana {
 } // Katana namespace.
 
 
-INSPECTOR_PV_SUPPORT(Katana::Flags)
-
-#endif  // KATANA_CONSTANTS_H
+INSPECTOR_PR_SUPPORT(Katana::Flags);

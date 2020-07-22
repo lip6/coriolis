@@ -79,9 +79,9 @@ The different constructors (appart the one which analyses the names of the path)
 
 Default constructor \+: the path is then void.
 
-\begin{DoxyParagraph}{Remark\+: This path has no instance and will be the tail terminal path }
-of any other path. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+This path has no instance and will be the tail terminal path of any other path. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Path_aa1a70f922b9b6a78fd3ac9b7bd94d158}\label{classHurricane_1_1Path_aa1a70f922b9b6a78fd3ac9b7bd94d158}} 
 \index{Hurricane\+::\+Path@{Hurricane\+::\+Path}!Path@{Path}}
 \index{Path@{Path}!Hurricane\+::\+Path@{Hurricane\+::\+Path}}
@@ -104,9 +104,9 @@ Builds the path with head instance {\ttfamily $<$head\+Instance$>$} and tail pat
 \begin{DoxyParagraph}{Caution\+: If the instance is null, or if the tail path is not }
 compatible with this head instance, an exception is thrown.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: The head instance and the tail path are compatible if the }
-tail path is void or if the owner cell of the tail path is the model cell referenced by the head instance. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The head instance and the tail path are compatible if the tail path is void or if the owner cell of the tail path is the model cell referenced by the head instance. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Path_add5812ab3bb9a4cf6dbe49d1e4e932cb}\label{classHurricane_1_1Path_add5812ab3bb9a4cf6dbe49d1e4e932cb}} 
 \index{Hurricane\+::\+Path@{Hurricane\+::\+Path}!Path@{Path}}
 \index{Path@{Path}!Hurricane\+::\+Path@{Hurricane\+::\+Path}}
@@ -118,9 +118,9 @@ Builds the path with head path {\ttfamily $<$head\+Path$>$} and tail instance {\
 \begin{DoxyParagraph}{Caution\+: If the tail instance is null, or if the head path is not }
 compatible with this tail instance, an exception is thrown.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: The tail instance and the head path are compatible if the }
-owner cell of the tail instance is the master cell of the head path (which is recall it, the model cell referenced by the last instance of the head path) or if the head path is empty (then compatible with any non null instance). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The tail instance and the head path are compatible if the owner cell of the tail instance is the master cell of the head path (which is recall it, the model cell referenced by the last instance of the head path) or if the head path is empty (then compatible with any non null instance). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Path_a6e3d331f5c5a0dcb91d10516a4beb6bc}\label{classHurricane_1_1Path_a6e3d331f5c5a0dcb91d10516a4beb6bc}} 
 \index{Hurricane\+::\+Path@{Hurricane\+::\+Path}!Path@{Path}}
 \index{Path@{Path}!Hurricane\+::\+Path@{Hurricane\+::\+Path}}

@@ -586,6 +586,7 @@ INSPECTOR_P_SUPPORT(Hurricane::Cell::NetMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::PinMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::SliceMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::MarkerSet);
+INSPECTOR_PR_SUPPORT(Hurricane::Cell::SlavedsRelation);
 
 
 #endif // HURRICANE_CELL_H

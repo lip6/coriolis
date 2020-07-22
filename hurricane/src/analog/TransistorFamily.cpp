@@ -51,10 +51,10 @@ namespace Analog {
     _bulkType = addMCheckBoxParameter( "Bulk Type", bulkChoices );
   
     Technology* techno         = DataBase::getDB()->getTechnology();
-    DbU::Unit   transistorMinL = techno->getPhysicalRule( "transistorMinL" ).getValue();
-    DbU::Unit   transistorMaxL = techno->getPhysicalRule( "transistorMaxL" ).getValue();
-    DbU::Unit   transistorMinW = techno->getPhysicalRule( "transistorMinW" ).getValue();
-    DbU::Unit   transistorMaxW = techno->getPhysicalRule( "transistorMaxW" ).getValue();
+    DbU::Unit   transistorMinL = techno->getPhysicalRule( "transistorMinL" )->getValue();
+    DbU::Unit   transistorMaxL = techno->getPhysicalRule( "transistorMaxL" )->getValue();
+    DbU::Unit   transistorMinW = techno->getPhysicalRule( "transistorMinW" )->getValue();
+    DbU::Unit   transistorMaxW = techno->getPhysicalRule( "transistorMaxW" )->getValue();
   
     _w             = addStepParameter      ( "W", transistorMinW, transistorMaxW, DbU::grid(1) );
     _l             = addStepParameter      ( "L", transistorMinL, transistorMaxL, DbU::grid(1) );

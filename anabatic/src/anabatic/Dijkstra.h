@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_DIJKSTRA_H
-#define  ANABATIC_DIJKSTRA_H
-
+#pragma  once
 #include <set>
 #include <iomanip>
 #include "hurricane/Observer.h"
@@ -593,6 +591,4 @@ namespace Anabatic {
 
 GETSTRING_POINTER_SUPPORT(Anabatic::Vertex);
 IOSTREAM_POINTER_SUPPORT(Anabatic::Vertex);
-INSPECTOR_PV_SUPPORT(Anabatic::Dijkstra::Mode);
-
-#endif  // ANABATIC_DIJKSTRA_H
+INSPECTOR_PR_SUPPORT(Anabatic::Dijkstra::Mode);

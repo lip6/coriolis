@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATABATIC_CHIP_TOOLS_H
-#define  KATABATIC_CHIP_TOOLS_H
-
+#pragma  once
 #include <string>
 #include "hurricane/DbU.h"
 #include "hurricane/Torus.h"
@@ -113,6 +111,4 @@ namespace Katabatic {
 
 } // Katabatic namespace.
 
-INSPECTOR_PV_SUPPORT(Katabatic::ChipTools);
-
-#endif  // KATABATIC_CHIP_TOOLS_H
+INSPECTOR_PR_SUPPORT(Katabatic::ChipTools);

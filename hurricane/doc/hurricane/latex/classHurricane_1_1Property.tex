@@ -37,9 +37,9 @@ In a first step we define two great categories of properties \+: the private pro
 
 We will detail separately their respective behaviour, but we ensure that the management of each of those two property categories is absolutely secure. That is, on one side you can destroy explicitely a property (and the objects will be notified) and on the other side the properties will be automatically destroyed when no more object reference them.
 
-\begin{DoxyParagraph}{Remark\+: By overloading some messages, as we will see later, it is }
-possible to set up different behaviours (like avoid the automatic delete).
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+By overloading some messages, as we will see later, it is possible to set up different behaviours (like avoid the automatic delete).
+\end{DoxyRemark}
 \hypertarget{classHurricane_1_1Property_secPropertyTheQuarks}{}\subsection{The Quarks}\label{classHurricane_1_1Property_secPropertyTheQuarks}
 As we shall see, the occurences are very simple objects which are used to designate some entity of the virtually unfolded hierarchy. Indeed, those occurences, which are built and deleted very quickly, are very volatile objects to which obvioulsy we can\textquotesingle{}t attach properties directly.
 
@@ -48,9 +48,9 @@ But the interest of occurences is precisely to be able to attach them properties
 \begin{DoxyParagraph}{Important\+: only one quark is attached to all occurences which refer the }
 same entity of the virtually unfolded hierarchy. This means that a property placed on an occurence can be read by any other occurence which refers the same entity of the virtually unfolded hierarchy.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: Those quarks are also volatile objects because their only }
-reason to exist is that at least one property is attached to them.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Those quarks are also volatile objects because their only reason to exist is that at least one property is attached to them.
+\end{DoxyRemark}
 \hypertarget{classHurricane_1_1Property_secPropertyHowThatWorks}{}\subsection{How that works}\label{classHurricane_1_1Property_secPropertyHowThatWorks}
 We will detail the way properties are managed by analysing more precisely what happens at the level of property access functions both for data base objects and for occurences.
 
@@ -114,9 +114,9 @@ Therefore it may happen, within this step, that adding a property to an object l
 
 Which behaviour should we have in such conditions ? Shall we destroy the property which has been detached ? There is no unique behaviour which matches all needs. In order to solve this problem the properties must answer to two specific messages which are \+: {\bfseries \mbox{\hyperlink{classHurricane_1_1Property_ac7b936414d9d85bb6509100b5dd6a667}{on\+Captured\+By(\+D\+Bo$\ast$ dbo)}}} when the property is attached to an object and {\bfseries on\+Released\+By(D\+Bo$\ast$ dbo)} when it is detached from the object. It is within that last message that the decision about the future of the property must be taken.
 
-\begin{DoxyParagraph}{Remark\+: We will detail below those messages for both private and }
-shared properties.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+We will detail below those messages for both private and shared properties.
+\end{DoxyRemark}
 {\bfseries Removing a property} 
 \begin{DoxyCode}
 \textcolor{keywordtype}{void} \mbox{\hyperlink{classHurricane_1_1DBo_a7833a1f0b8c704930bdc00861e63cf5e}{DBo::remove}}(Property* property);
@@ -160,9 +160,9 @@ So \mbox{\hyperlink{namespaceHurricane}{Hurricane}} uses properties prefixed by 
 
 So I suggest that different tools use a similar namming strategy which would keep confident all the community of {\bfseries {\itshape hurricaners}}
 
-\begin{DoxyParagraph}{Remark\+: Using names like \char`\"{}\+Zen\+Tek\+::\+Timing\+Node\char`\"{} for the Timing\+Node type }
-property managed by tools from the Zen\+Tek society decreases name conflicts, unless with other tools from the same society. A property name \char`\"{}\+Society\+Name\+::\+Tool\+Name\+::\+Property\+Name\char`\"{} would be more secure.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Using names like \char`\"{}\+Zen\+Tek\+::\+Timing\+Node\char`\"{} for the Timing\+Node type property managed by tools from the Zen\+Tek society decreases name conflicts, unless with other tools from the same society. A property name \char`\"{}\+Society\+Name\+::\+Tool\+Name\+::\+Property\+Name\char`\"{} would be more secure.
+\end{DoxyRemark}
 Furthermore, if the community adopts this convention it will be possible to simplify some parts of the code by avoiding for example calls to the macro {\bfseries is\+\_\+a} to check that the collected property is of the expected type, as shown in the following example \+: 
 \begin{DoxyCode}
 Property* \textcolor{keyword}{property} = occurence.getProperty(\textcolor{stringliteral}{"Hurricane::Selector"});
@@ -250,9 +250,9 @@ This message is called upon when the property is added to the properties of {\tt
 
 By default this function does nothing particular, but it must be overloaded for all property sub-\/classes. We will detail later the reaction to this message as taken by the private and shared property classes.
 
-\begin{DoxyParagraph}{Remark\+: This message being already overloaded for private and shared }
-property classes there is no need to overload it again when specializing any of those two classes. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+This message being already overloaded for private and shared property classes there is no need to overload it again when specializing any of those two classes. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}\label{classHurricane_1_1Property_a0ea7ee2089f1463c0c16e30313b54083}} 
 \index{Hurricane\+::\+Property@{Hurricane\+::\+Property}!on\+Released\+By@{on\+Released\+By}}
 \index{on\+Released\+By@{on\+Released\+By}!Hurricane\+::\+Property@{Hurricane\+::\+Property}}
@@ -264,9 +264,9 @@ This message is called upon when the property is removed from the {\ttfamily $<$
 \begin{DoxyParagraph}{Important\+: The argument {\ttfamily $<$dbo$>$} is not (or no more) necessarily the }
 owner of the property which receives the message. The processing to be done in reaction to this message often depends on this observation. We will better understand this subtlety when studying private properties.
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: This message being already overloaded for private and shared }
-property classes there is no need to overload it again when specializing any of those two classes. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+This message being already overloaded for private and shared property classes there is no need to overload it again when specializing any of those two classes. 
+\end{DoxyRemark}
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

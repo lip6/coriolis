@@ -96,9 +96,9 @@ inserts the graphic object within the quadtree (if not yet inserted).
 \begin{DoxyParagraph}{Caution\+: If the graphic object pointer is N\+U\+LL an exception is thrown. }
 
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: When the number of objects contained in a quadtree leaf is }
-greater than some threshold, this leaf is split into four balanced sub-\/quadtrees. This recursive division provides a faster access even for very large quadtrees (to the detriment of some memory loss). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+When the number of objects contained in a quadtree leaf is greater than some threshold, this leaf is split into four balanced sub-\/quadtrees. This recursive division provides a faster access even for very large quadtrees (to the detriment of some memory loss). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1QuadTree_af646d2864c70f6456d845c2d6a8d1785}\label{classHurricane_1_1QuadTree_af646d2864c70f6456d845c2d6a8d1785}} 
 \index{Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}!remove@{remove}}
 \index{remove@{remove}!Hurricane\+::\+Quad\+Tree@{Hurricane\+::\+Quad\+Tree}}
@@ -110,9 +110,9 @@ removes the object from the quadtree.
 \begin{DoxyParagraph}{Caution\+: If the graphic object is N\+U\+LL an exception is thrown. }
 
 \end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: When the number of objects included in the quadtree goes }
-below an other threshold, the inverse behaviour happens \+: the sub-\/quadtrees are deleted and the contained objects are taken in charge by this quadtree node (and memory is released to the system). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+When the number of objects included in the quadtree goes below an other threshold, the inverse behaviour happens \+: the sub-\/quadtrees are deleted and the contained objects are taken in charge by this quadtree node (and memory is released to the system). 
+\end{DoxyRemark}
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

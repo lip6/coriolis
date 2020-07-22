@@ -17,9 +17,8 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_NAME
-#define HURRICANE_NAME
 
+#pragma  once
 #include "hurricane/Commons.h"
 #include "hurricane/Names.h"
 
@@ -93,16 +92,41 @@ class Name {
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Name);
+//template<> inline std::string getString<Hurricane::Name&>( Hurricane::Name& data )
+//{ return data._getString(); }
+//
+//template<> inline std::string getString<const Hurricane::Name&>( const Hurricane::Name& data )
+//{ return data._getString(); }
+//
+//
+//template<> inline std::string getString<Hurricane::Name>( Hurricane::Name data )
+//{ return data._getString(); }
+//
+//template<> inline std::string getString<const Hurricane::Name>( const Hurricane::Name data )
+//{ return data._getString(); }
+//
+//
+//inline std::ostream& operator<< ( std::ostream& o, Hurricane::Name& d )
+//{ return o << getString<Hurricane::Name&>(d); }
+//
+//inline std::ostream& operator<< ( std::ostream& o, const Hurricane::Name& d )
+//{ return o << getString<const Hurricane::Name&>(d); }
+//
+//
+//template<> inline Hurricane::Record* getRecord<Hurricane::Name&>( Hurricane::Name& data )
+//{ return data._getRecord(); }
+//
+//template<> inline Hurricane::Record* getRecord<const Hurricane::Name&>( const Hurricane::Name& data )
+//{ return data._getRecord(); }
+
+
+INSPECTOR_PR_SUPPORT(Hurricane::Name);
 
 inline void  jsonWrite ( JsonWriter* w, Hurricane::Name name )
 { w->write( getString(name).c_str() ); }
 
 inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::Name name )
 { w->key( key ); w->write( getString(name).c_str() ); }
-
-
-#endif // HURRICANE_NAME
 
 
 // ****************************************************************************************************

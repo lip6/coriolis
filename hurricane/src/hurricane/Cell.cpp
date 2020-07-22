@@ -174,7 +174,7 @@ namespace Hurricane {
 
 
   string  Cell::UniquifyRelation::JsonProperty::getTypeName () const
-  { return getString(Cell::UniquifyRelation::staticGetName()); }
+  { return "Cell::UniquifyRelation"; }
 
 
   void  Cell::UniquifyRelation::JsonProperty::initialize ()
@@ -235,7 +235,7 @@ namespace Hurricane {
 
 
   string  Cell::UniquifyRelation::JsonPropertyRef::getTypeName () const
-  { return string("&")+getString(Cell::UniquifyRelation::staticGetName()); }
+  { return "&Cell::UniquifyRelation"; }
 
 
   void  Cell::UniquifyRelation::JsonPropertyRef::initialize ()
@@ -375,11 +375,13 @@ namespace Hurricane {
 
 
   string  Cell::SlavedsRelation::JsonProperty::getTypeName () const
-  { return getString(Cell::SlavedsRelation::staticGetName()); }
+  { return "Cell::SlavedsRelation"; }
 
 
   void  Cell::SlavedsRelation::JsonProperty::initialize ()
-  { JsonTypes::registerType( new Cell::SlavedsRelation::JsonProperty (JsonWriter::RegisterMode) ); }
+  {
+    JsonTypes::registerType( new Cell::SlavedsRelation::JsonProperty (JsonWriter::RegisterMode) );
+  }
 
 
   Cell::SlavedsRelation::JsonProperty* Cell::SlavedsRelation::JsonProperty::clone ( unsigned long flags ) const
@@ -434,7 +436,7 @@ namespace Hurricane {
 
 
   string  Cell::SlavedsRelation::JsonPropertyRef::getTypeName () const
-  { return string("&")+getString(Cell::SlavedsRelation::staticGetName()); }
+  { return "&Cell::SlavedsRelation"; }
 
 
   void  Cell::SlavedsRelation::JsonPropertyRef::initialize ()

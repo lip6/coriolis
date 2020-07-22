@@ -115,9 +115,9 @@ forEach(Instance*, iinstance, getCollection(instanceSet)) \{
 \end{DoxyCode}
 
 
-\begin{DoxyParagraph}{Remark\+: This approach is a little bit less efficient than the use of }
-S\+TL iterators, not much indeed, but has the advantage to be homogeneous with the remaining code (recall\+: the created collection doesn\textquotesingle{}t make a copy of the S\+TL container and its creation time is negligible).
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+This approach is a little bit less efficient than the use of S\+TL iterators, not much indeed, but has the advantage to be homogeneous with the remaining code (recall\+: the created collection doesn\textquotesingle{}t make a copy of the S\+TL container and its creation time is negligible).
+\end{DoxyRemark}
 \begin{DoxyParagraph}{Caution\+: The returned collection is valid whenever the S\+TL container }
 is valid. Then you should not do the following\+: 
 \begin{DoxyCode}
@@ -173,9 +173,9 @@ Destroys the collection but doesn\textquotesingle{}t acts on elements refered by
 
 Allocates and returns a clone (copy) of the collection (whatever be its type).
 
-\begin{DoxyParagraph}{Remark\+: In principle there is no need to use this function. However, }
-if you do so, don\textquotesingle{}t forget to delete the clone after use. It is indeed much easier to use generic collections which do that for you, as we will see later. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+In principle there is no need to use this function. However, if you do so, don\textquotesingle{}t forget to delete the clone after use. It is indeed much easier to use generic collections which do that for you, as we will see later. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Collection_a48fd1a0a2b6d2530a87e22ba65aa3152}\label{classHurricane_1_1Collection_a48fd1a0a2b6d2530a87e22ba65aa3152}} 
 \index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Locator@{get\+Locator}}
 \index{get\+Locator@{get\+Locator}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
@@ -185,9 +185,9 @@ if you do so, don\textquotesingle{}t forget to delete the clone after use. It is
 
 Allocates and returns a locator adapted to visit the elements of the collection.
 
-\begin{DoxyParagraph}{Remark\+: In principle there is no need to use this function. Use }
-preferably the macro {\bfseries for\+\_\+each} described below. However, if you do so, don\textquotesingle{}t forget to delete this locator after use, else use generic locators, which do that for you, as we will see later. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+In principle there is no need to use this function. Use preferably the macro {\bfseries for\+\_\+each} described below. However, if you do so, don\textquotesingle{}t forget to delete this locator after use, else use generic locators, which do that for you, as we will see later. 
+\end{DoxyRemark}
 
 
 Referenced by Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::get\+First(), and Hurricane\+::\+Collection$<$ Sub\+Type $>$\+::get\+Size().
@@ -201,9 +201,9 @@ unsigned \mbox{\hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collectio
 
 {\bfseries Returns\+:} the number of objects identified within the collection.
 
-\begin{DoxyParagraph}{Remark\+: Very fast in some cases, but may need to visit the collection }
-in most ones. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Very fast in some cases, but may need to visit the collection in most ones. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Collection_a846a042646e02a0f77d2ce0f6190288a}\label{classHurricane_1_1Collection_a846a042646e02a0f77d2ce0f6190288a}} 
 \index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+First@{get\+First}}
 \index{get\+First@{get\+First}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
@@ -213,9 +213,9 @@ Type \mbox{\hyperlink{classHurricane_1_1Collection}{Hurricane\+::\+Collection}}$
 
 {\bfseries Returns\+:} the first element of the collection.
 
-\begin{DoxyParagraph}{Remark\+: The result is meaningful only when the collection is non }
-empty. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The result is meaningful only when the collection is non empty. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}\label{classHurricane_1_1Collection_aa32ea7249d57ee05e3c71dcde8106832}} 
 \index{Hurricane\+::\+Collection@{Hurricane\+::\+Collection}!get\+Sub\+Set@{get\+Sub\+Set}}
 \index{get\+Sub\+Set@{get\+Sub\+Set}!Hurricane\+::\+Collection@{Hurricane\+::\+Collection}}
@@ -240,9 +240,9 @@ template$<$class Sub\+Type $>$ \\
 
 {\bfseries Returns\+:} the collection corresponding to the subset of elements of type {\ttfamily $<$Sub\+Type$>$}.
 
-\begin{DoxyParagraph}{Remark\+: The returned collection is a collection of objects of type }
-{\bfseries Sub\+Type} and not of type {\bfseries Type}.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The returned collection is a collection of objects of type {\bfseries Sub\+Type} and not of type {\bfseries Type}.
+\end{DoxyRemark}
 
 \begin{DoxyCode}
 \mbox{\hyperlink{namespaceHurricane_a1e6a8ab09f688509bd727b3fee02d0d2}{Contacts}} \mbox{\hyperlink{classHurricane_1_1Net_a9c397596fe9ecbf674712c72e0b9010c}{Net::getContacts}}()\textcolor{keyword}{ const}
@@ -264,9 +264,9 @@ template$<$class Sub\+Type $>$ \\
 
 {\bfseries Returns\+:} the collection representing the subset of elements of type {\ttfamily $<$Sub\+Type$>$} accepted by the filter.
 
-\begin{DoxyParagraph}{Remark\+: The returned collection is a collection of elements of type }
-{\bfseries Sub\+Type} and not of type {\bfseries Type} and the filter must be a filter of elements of type {\bfseries Sub\+Type}.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The returned collection is a collection of elements of type {\bfseries Sub\+Type} and not of type {\bfseries Type} and the filter must be a filter of elements of type {\bfseries Sub\+Type}.
+\end{DoxyRemark}
 \begin{DoxyParagraph}{Sample\+: Filter Hurricane\+:\+:Segment according to their Layer.}
 
 \begin{DoxyCode}

@@ -88,9 +88,9 @@ On the same way, hooks disapear automatically with their owner.
 
 {\bfseries Returns\+:} the component whose hook represents a part.
 
-\begin{DoxyParagraph}{Remark\+: The result is never N\+U\+LL because hooks are byforce nested }
-objects in their component. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The result is never N\+U\+LL because hooks are byforce nested objects in their component. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_a03044fa995d6d784d6c441927ca8af04}\label{classHurricane_1_1Hook_a03044fa995d6d784d6c441927ca8af04}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!get\+Next\+Hook@{get\+Next\+Hook}}
 \index{get\+Next\+Hook@{get\+Next\+Hook}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -99,9 +99,9 @@ objects in their component.
 
 {\bfseries Returns\+:} the next hook within the ring.
 
-\begin{DoxyParagraph}{Remark\+: The result is never N\+U\+LL because every hook has by }
-construction its next one (which may be itself is the ring is empty). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+The result is never N\+U\+LL because every hook has by construction its next one (which may be itself is the ring is empty). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_ad69ebbbf3d64343aca23ca435f24c624}\label{classHurricane_1_1Hook_ad69ebbbf3d64343aca23ca435f24c624}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!get\+Previous\+Hook@{get\+Previous\+Hook}}
 \index{get\+Previous\+Hook@{get\+Previous\+Hook}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -110,9 +110,9 @@ construction its next one (which may be itself is the ring is empty).
 
 {\bfseries Returns\+:} the previous hook within the ring.
 
-\begin{DoxyParagraph}{Remark\+: Less efficient than get\+Next\+Hook because it requires a }
-complete ring loop. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Less efficient than get\+Next\+Hook because it requires a complete ring loop. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_af18e0531df4ed14b64cf058b780aee46}\label{classHurricane_1_1Hook_af18e0531df4ed14b64cf058b780aee46}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!get\+Master\+Hook@{get\+Master\+Hook}}
 \index{get\+Master\+Hook@{get\+Master\+Hook}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -121,9 +121,9 @@ complete ring loop.
 
 {\bfseries Returns\+:} the master of the relation master-\/slaves identified by the hook.
 
-\begin{DoxyParagraph}{Remark\+: May return itself if the hook is a master and return N\+U\+LL if }
-the hook is a slave and has no associated master. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+May return itself if the hook is a master and return N\+U\+LL if the hook is a slave and has no associated master. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_a0923a5a2d0a7ee0458876eed72008e46}\label{classHurricane_1_1Hook_a0923a5a2d0a7ee0458876eed72008e46}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!get\+Next\+Master\+Hook@{get\+Next\+Master\+Hook}}
 \index{get\+Next\+Master\+Hook@{get\+Next\+Master\+Hook}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -132,9 +132,9 @@ the hook is a slave and has no associated master.
 
 {\bfseries Returns\+:} the first master found when starting the search immediately after the given hook.
 
-\begin{DoxyParagraph}{Remark\+: May return N\+U\+LL if there is no master within the ring or }
-return the hook itself if it is a master and the only one in the ring. 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+May return N\+U\+LL if there is no master within the ring or return the hook itself if it is a master and the only one in the ring. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_a80bf5cdd4e81952064f1be94fe10188f}\label{classHurricane_1_1Hook_a80bf5cdd4e81952064f1be94fe10188f}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!get\+Previous\+Master\+Hook@{get\+Previous\+Master\+Hook}}
 \index{get\+Previous\+Master\+Hook@{get\+Previous\+Master\+Hook}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -143,12 +143,11 @@ return the hook itself if it is a master and the only one in the ring.
 
 {\bfseries Returns\+:} the first master found when starting a backwards search immediately before the given hook.
 
-\begin{DoxyParagraph}{Remark\+: May return N\+U\+LL if there is no master within the ring or }
-return the hook itself if it is a master and the only one in the ring.
-\end{DoxyParagraph}
-\begin{DoxyParagraph}{Remark\+: Of course the search is done in the natural forward direction }
-(else it would be trully inefficient). 
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+May return N\+U\+LL if there is no master within the ring or return the hook itself if it is a master and the only one in the ring.
+
+Of course the search is done in the natural forward direction (else it would be trully inefficient). 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_a2def96fbcd444bebc16e589357c2a779}\label{classHurricane_1_1Hook_a2def96fbcd444bebc16e589357c2a779}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!get\+Hooks@{get\+Hooks}}
 \index{get\+Hooks@{get\+Hooks}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -181,9 +180,9 @@ The master is not included in this collection. \mbox{\Hypertarget{classHurricane
 
 {\bfseries Returns\+:} {\bfseries true} if the hook must be considered as a master, else {\bfseries false}.
 
-\begin{DoxyParagraph}{Remark\+: For any new kind of hook this predicate must be overloaded. }
-
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+For any new kind of hook this predicate must be overloaded. 
+\end{DoxyRemark}
 \mbox{\Hypertarget{classHurricane_1_1Hook_acd62c7de2c023a1013d5a728159d068d}\label{classHurricane_1_1Hook_acd62c7de2c023a1013d5a728159d068d}} 
 \index{Hurricane\+::\+Hook@{Hurricane\+::\+Hook}!is\+Attached@{is\+Attached}}
 \index{is\+Attached@{is\+Attached}!Hurricane\+::\+Hook@{Hurricane\+::\+Hook}}
@@ -194,9 +193,9 @@ If the hook is a slave \+:
 
 {\bfseries Returns\+:} {\bfseries true} if the hook has an associated master, else {\bfseries false}.
 
-\begin{DoxyParagraph}{Remark\+: You can\textquotesingle{}t find two slaves in the same ring without at least a }
-master.
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+You can\textquotesingle{}t find two slaves in the same ring without at least a master.
+\end{DoxyRemark}
 If the hook is a master \+:
 
 Let us consider the hyper-\/ring made upon hyper-\/hooks. Then the function returns {\bfseries true} if the ring contains at least an other master else {\bfseries false}.
@@ -214,9 +213,9 @@ If the hook is a slave \+:
 
 detaches the hook from its ring and returns its old predecessor.
 
-\begin{DoxyParagraph}{Remark\+: Will return N\+U\+LL if the hook is the only one in the ring. }
-
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Will return N\+U\+LL if the hook is the only one in the ring.
+\end{DoxyRemark}
 If the hook is a master \+:
 
 Let us consider the hyper-\/ring made upon hyper-\/hooks. Then, the function detaches the hyper-\/hook (the sub-\/ring made up of the master and its slaves, if any) from the hyper-\/ring and returns the old predecessor of the hyper-\/hook.
@@ -257,9 +256,9 @@ attached within a ring including an other master or if {\ttfamily $<$master\+Hoo
 
 merges the rings represented by the two hooks which both must be masters, returns {\ttfamily $<$master\+Hook$>$}.
 
-\begin{DoxyParagraph}{Remark\+: Throws an exception if both hooks are not masters. }
-
-\end{DoxyParagraph}
+\begin{DoxyRemark}{Remarks}
+Throws an exception if both hooks are not masters.
+\end{DoxyRemark}
 This function doesn\textquotesingle{}t change the two relatioships master-\/slaves but modifies the connection request between corresponding hyper-\/hooks. 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

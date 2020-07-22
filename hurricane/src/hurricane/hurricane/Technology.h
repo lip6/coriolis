@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_TECHNOLOGY_H
-#define  HURRICANE_TECHNOLOGY_H
-
+#pragma  once
 #include <set>
 #include <map>
 #include "hurricane/Mask.h"
@@ -44,9 +42,7 @@
 #include "hurricane/DeviceDescriptor.h"
 #include "hurricane/ModelDescriptor.h"
 #include "hurricane/Rule.h"
-#include "hurricane/UnitRule.h"
 #include "hurricane/PhysicalRule.h"
-#include "hurricane/TwoLayersPhysicalRule.h"
 
 
 namespace Hurricane {
@@ -74,18 +70,15 @@ namespace Hurricane {
       struct RuleNameCompare {
           inline bool operator() ( const PhysicalRule* rule1 , const PhysicalRule* rule2 ) const
           { return rule1->getName() < rule2->getName(); }
-          inline bool operator() ( const UnitRule* rule1 , const UnitRule* rule2 ) const
-          { return rule1->getName() < rule2->getName(); }
           inline bool operator() ( const Rule* rule1 , const Rule* rule2 ) const
           { return rule1->getName() < rule2->getName(); }
       };
     public:
       typedef std::pair<const Hurricane::Layer*, const Hurricane::Layer*> LayerPair;
-      typedef std::set<UnitRule*               , RuleNameCompare>         UnitRules;
+      typedef std::set<PhysicalRule*           , RuleNameCompare>         UnitRules;
       typedef std::set<PhysicalRule*           , RuleNameCompare>         PhysicalRules;
-      typedef std::set<TwoLayersPhysicalRule*  , RuleNameCompare>         TwoLayersRulesSet;
       typedef std::map<const Hurricane::Layer* , PhysicalRules>           OneLayerRules;
-      typedef std::map<LayerPair               , TwoLayersRulesSet>       TwoLayersRules;
+      typedef std::map<LayerPair               , PhysicalRules>           TwoLayersRules;
 
     public:
     // Sub-class : LayerMap.
@@ -102,86 +95,83 @@ namespace Hurricane {
 
     public:
     // Constructor.
-      static  Technology*          create                  ( DataBase* , const Name& );
-    // Accessors.                  
-      inline  bool                 isMetal                 ( const Layer* ) const;
-      inline  DataBase*            getDataBase             () const;
-      inline  const Name&          getName                 () const;
-      inline  Layer*               getLayer                ( const Name& ) const;
-              BasicLayer*          getBasicLayer           ( const Name& ) const;
-              RegularLayer*        getRegularLayer         ( const Name& ) const;
-              ViaLayer*            getViaLayer             ( const Name& ) const;
-      inline  Layers               getLayers               () const;
-              BasicLayers          getBasicLayers          () const;
-              BasicLayers          getBasicLayers          ( const Layer::Mask& ) const;
-              RegularLayers        getRegularLayers        () const;
-              ViaLayers            getViaLayers            () const;
-              Layer*               getLayer                ( const Layer::Mask&, bool useSymbolic=true ) const;
-              Layer*               getMetalAbove           ( const Layer*, bool useSymbolic=true ) const;
-              Layer*               getMetalBelow           ( const Layer*, bool useSymbolic=true ) const;
-              Layer*               getCutAbove             ( const Layer*, bool useSymbolic=true ) const;
-              Layer*               getCutBelow             ( const Layer*, bool useSymbolic=true ) const;
-              Layer*               getViaBetween           ( const Layer*, const Layer*, bool useSymbolic=true ) const;
-              Layer*               getNthMetal             ( int ) const;
-              Layer*               getNthCut               ( int ) const;
-              DeviceDescriptor*    getDeviceDescriptor     ( const Name& );
-              ModelDescriptor*     getModelDescriptor      (const Name& );
-      inline  ModelDescriptors&    getModelDescriptors     ();
-              UnitRule             getUnitRule             ( const std::string& ruleName ) const;
-              PhysicalRule         getPhysicalRule         ( const std::string& ruleName ) const;
-              PhysicalRule         getPhysicalRule         ( const std::string& ruleName
-                                                           , const std::string& layerName ) const;
-              PhysicalRule         getPhysicalRule         ( const std::string& ruleName
-                                                           , const std::string& layer1Name
-                                                           , const std::string& layer2Name ) const;
-      inline const UnitRules&      getUnitRules            () const;
-      inline const PhysicalRules&  getNoLayerRules         () const;
-      inline const OneLayerRules&  getOneLayerRules        () const;
-      inline const TwoLayersRules& getTwoLayersRules       () const;
-                   void            toDtr                   ( std::ostream& );
-      inline       void            setName                 ( const std::string& name );
-    // Updators.
-              void                 setName                 ( const Name& );
-              bool                 setSymbolicLayer        ( const Name& );
-              bool                 setSymbolicLayer        ( const Layer* );
-              DeviceDescriptor*    addDeviceDescriptor     ( const Name& );
-              ModelDescriptor*     addModelDescriptor      ( const Name& name
-                                                           , const Name& simul
-                                                           , const Name& model
-                                                           , std::string netlist
-                                                           , const Name& name_n
-                                                           , const Name& name_p
-                                                           , bool        precise );
-              void                 addUnitRule             ( const std::string& ruleName
-                                                           ,       double       value
-                                                           , const std::string& reference );
-              void                 addPhysicalRule         ( const std::string& ruleName
-                                                           ,       DbU::Unit    value
-                                                           , const std::string& reference );
-              void                 addPhysicalRule         ( const std::string& ruleName
-                                                           , const std::string& layerName
-                                                           ,       DbU::Unit    value
-                                                           , const std::string& reference);
-              void                 addPhysicalRule         ( const std::string& ruleName
-                                                           , const std::string& layer1Name
-                                                           , const std::string& layer2Name
-                                                           ,       bool         symetric
-                                                           ,       DbU::Unit    value
-                                                           , const std::string& reference );
-    // Others.                     
-      inline  LayerMap&            _getLayerMap            ();
-      inline  LayerMaskMap&        _getLayerMaskMap        ();
-              void                 _insertInLayerMaskMap   ( Layer* );
-              void                 _removeFromLayerMaskMap ( Layer* );
-      inline  Layer::Mask&         _getCutMask             ();
-      inline  Layer::Mask&         _getMetalMask           ();
-              void                 _onDbuChange            ( float scale );
-    // Hurricane Managment.        
-      virtual void                 _toJson                 ( JsonWriter* ) const;
-      virtual void                 _toJsonCollections      ( JsonWriter* ) const;
-      virtual string               _getTypeName            () const;
-      virtual string               _getString              () const;
-      virtual Record*              _getRecord              () const;
+      static  Technology*            create                  ( DataBase* , const Name& );
+    // Accessors.                    
+      inline  bool                   isMetal                 ( const Layer* ) const;
+      inline  DataBase*              getDataBase             () const;
+      inline  const Name&            getName                 () const;
+      inline  Layer*                 getLayer                ( const Name& ) const;
+              BasicLayer*            getBasicLayer           ( const Name& ) const;
+              RegularLayer*          getRegularLayer         ( const Name& ) const;
+              ViaLayer*              getViaLayer             ( const Name& ) const;
+      inline  Layers                 getLayers               () const;
+              BasicLayers            getBasicLayers          () const;
+              BasicLayers            getBasicLayers          ( const Layer::Mask& ) const;
+              RegularLayers          getRegularLayers        () const;
+              ViaLayers              getViaLayers            () const;
+              Layer*                 getLayer                ( const Layer::Mask&, bool useSymbolic=true ) const;
+              Layer*                 getMetalAbove           ( const Layer*, bool useSymbolic=true ) const;
+              Layer*                 getMetalBelow           ( const Layer*, bool useSymbolic=true ) const;
+              Layer*                 getCutAbove             ( const Layer*, bool useSymbolic=true ) const;
+              Layer*                 getCutBelow             ( const Layer*, bool useSymbolic=true ) const;
+              Layer*                 getViaBetween           ( const Layer*, const Layer*, bool useSymbolic=true ) const;
+              Layer*                 getNthMetal             ( int ) const;
+              Layer*                 getNthCut               ( int ) const;
+              DeviceDescriptor*      getDeviceDescriptor     ( const Name& );
+              ModelDescriptor*       getModelDescriptor      (const Name& );
+      inline  ModelDescriptors&      getModelDescriptors     ();
+              PhysicalRule*          getUnitRule             ( std::string ruleName ) const;
+              PhysicalRule*          getPhysicalRule         ( std::string ruleName ) const;
+              PhysicalRule*          getPhysicalRule         ( std::string ruleName
+                                                             , std::string layerName ) const;
+              PhysicalRule*          getPhysicalRule         ( std::string ruleName
+                                                             , std::string layer1Name
+                                                             , std::string layer2Name ) const;
+      inline const UnitRules&        getUnitRules            () const;
+      inline const PhysicalRules&    getNoLayerRules         () const;
+      inline const OneLayerRules&    getOneLayerRules        () const;
+      inline const TwoLayersRules&   getTwoLayersRules       () const;
+                   void              toDtr                   ( std::ostream& );
+      inline       void              setName                 ( const std::string& name );
+    // Updators.                     
+              void                   setName                 ( const Name& );
+              bool                   setSymbolicLayer        ( const Name& );
+              bool                   setSymbolicLayer        ( const Layer* );
+              DeviceDescriptor*      addDeviceDescriptor     ( const Name& );
+              ModelDescriptor*       addModelDescriptor      ( const Name& name
+                                                             , const Name& simul
+                                                             , const Name& model
+                                                             , std::string netlist
+                                                             , const Name& name_n
+                                                             , const Name& name_p
+                                                             , bool        precise );
+              PhysicalRule*          addUnitRule             ( std::string ruleName
+                                                             , std::string reference );
+              PhysicalRule*          addPhysicalRule         ( std::string ruleName
+                                                             , std::string reference );
+              void                   _addPhysicalRule        ( std::string layerName
+                                                             , PhysicalRule* );
+              PhysicalRule*          addPhysicalRule         ( std::string ruleName
+                                                             , std::string layerName
+                                                             , std::string reference);
+              PhysicalRule*          addPhysicalRule         ( std::string ruleName
+                                                             , std::string layer1Name
+                                                             , std::string layer2Name
+                                                             , std::string reference );
+    // Others.                                               
+      inline  LayerMap&            _getLayerMap              ();
+      inline  LayerMaskMap&        _getLayerMaskMap          ();
+              void                 _insertInLayerMaskMap     ( Layer* );
+              void                 _removeFromLayerMaskMap   ( Layer* );
+      inline  Layer::Mask&         _getCutMask               ();
+      inline  Layer::Mask&         _getMetalMask             ();
+              void                 _onDbuChange              ( float scale );
+    // Hurricane Managment.                                  
+      virtual void                 _toJson                   ( JsonWriter* ) const;
+      virtual void                 _toJsonCollections        ( JsonWriter* ) const;
+      virtual string               _getTypeName              () const;
+      virtual string               _getString                () const;
+      virtual Record*              _getRecord                () const;
       
     private:
     // Internal: Attributes.
@@ -248,6 +238,3 @@ inline std::string getString<Hurricane::Technology::LayerPair>( Hurricane::Techn
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Technology);
-
-
-#endif  // HURRICANE_TECHNOLOGY_H

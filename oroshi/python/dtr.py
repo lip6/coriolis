@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from helpers import trace
+from __future__ import print_function
+from Hurricane  import DbU
+from helpers    import trace
 
 
 class Rules ( object ):
@@ -89,33 +91,39 @@ class Rules ( object ):
             , 'minRpolyhSquares'
             ]
 
-  def __init__ ( self, dtr ):
-    trace( 100, '\tRules.__init__()\n' )
-    self.dtr   = dtr
-
-    for rule in Rules.ruleSet: self.addAttr(rule)
-    return
-
-  def addAttr ( self, attribute ):
-    if self.__dict__.has_key(attribute): return
-
-   #print 'Rules.addAttr(): %s' % attribute
-    value = None
-    words = attribute.split( '_' )
-    try:
-      if len(words) == 1:
-        if   words[0].endswith('Cap'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        elif words[0].endswith('ContRes' ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        elif words[0].endswith('Res'     ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        elif words[0].endswith('ctor90'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        elif words[0].endswith('ctor135' ): value = self.dtr.getUnitRule( words[0] ).getValue()
-        elif words[0].endswith('quares'  ): value = self.dtr.getUnitRule( words[0] ).getValue()
-      if (value is None) and len(words) < 4:
-        value = self.dtr.getPhysicalRule( *tuple(words) ).getValue()
-    except Exception, e:
-      print e
-
-    if not value is None:
-      self.__dict__[attribute] = value
-
-    return
+    def __init__ ( self, dtr ):
+        trace( 100, '\tRules.__init__()\n' )
+        self.dtr   = dtr
+        
+        for rule in Rules.ruleSet: self.addAttr(rule)
+        return
+    
+    def addAttr ( self, attribute ):
+        if self.__dict__.has_key(attribute): return
+        
+       #print( 'Rules.addAttr(): {}'.format(attribute) )
+        value = None
+        words = attribute.split( '_' )
+        try:
+            if len(words) == 1:
+                if   words[0].endswith('Cap'     ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()
+                elif words[0].endswith('ContRes' ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()
+                elif words[0].endswith('Res'     ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()
+                elif words[0].endswith('ctor90'  ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()
+                elif words[0].endswith('ctor135' ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()
+                elif words[0].endswith('quares'  ): value = self.dtr.getUnitRule( words[0] ).getDoubleValue()
+            if (value is None) and len(words) < 4:
+                rule = self.dtr.getPhysicalRule( *tuple(words) )
+                if rule.isDouble():
+                    value = rule.getDoubleValue()
+                   #print( 'Accessed value (Unit):{}'.format(value) )
+                else:
+                    value = rule.getValue()
+                   #print( 'Accessed value (DbU):{}'.format(DbU.getValueString(value)) )
+        except Exception, e:
+            print( e )
+        
+        if not value is None:
+            self.__dict__[attribute] = value
+        
+        return

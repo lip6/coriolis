@@ -63,7 +63,7 @@ Introduction</h1>
 <h1><a class="anchor" id="secGeneralitiesNammingConventions"></a>
 Namming conventions</h1>
 <p>The name of "C macros" are written with lower case letters and underscores (examples : <b>is_a</b>, <b>for_each_cell</b> or <b>end_for</b>) while the name of generic functions and member functions never use the underscore and always start with an Upper case letter (examples : <b>GetUnit</b>, <b>GetMasterCell</b>, <b>IsCalledBy</b>).</p>
-<dl class="section user"><dt>Remark: When examining <code></code>.h include files for more detailed information </dt><dd>you will find member functions which start with an underscore. <b>While being "public" those functions must never be called upon</b>. In principle, only here'after documented functions should be used by the application programmer.</dd></dl>
+<dl class="section remark"><dt>Remarks</dt><dd>When examining <code></code>.h include files for more detailed information you will find member functions which start with an underscore. <b>While being "public" those functions must never be called upon</b>. In principle, only here'after documented functions should be used by the application programmer.</dd></dl>
 <h1><a class="anchor" id="secGeneralitiesGetString"></a>
 GetString</h1>
 <div class="fragment"><div class="line"><span class="keywordtype">string</span> GetString(<span class="keyword">const</span> Object&amp; <span class="keywordtype">object</span>);</div><div class="line"><span class="keywordtype">string</span> GetString(<span class="keyword">const</span> Object* <span class="keywordtype">object</span>);</div></div><!-- fragment --><p> Thoses generic function allows you to get into a string an explicit description of any kind of <a class="el" href="namespaceHurricane.html" title="The namespace dedicated to Hurricane. ">Hurricane</a> object pointer or reference. </p><div class="fragment"><div class="line">ostream&amp; operator&lt;&lt; (ostream&amp; stream, <span class="keyword">const</span> Object&amp; <span class="keywordtype">object</span>);</div><div class="line">ostream&amp; operator&lt;&lt; (ostream&amp; stream, <span class="keyword">const</span> Object* <span class="keywordtype">object</span>);</div></div><!-- fragment --><p> All <a class="el" href="namespaceHurricane.html" title="The namespace dedicated to Hurricane. ">Hurricane</a> objects have printing operators for a reference or a pointer. Those printing operators use the generic function Hurricane::GetString() previously studied.</p>
@@ -89,7 +89,7 @@ Trace utilities</h1>
 <li>
 <b>Hurricane::trace</b> </li>
 </ul>
-<div class="fragment"><div class="line"><span class="keywordtype">void</span> MyFunction(MyData* data)</div><div class="line"><span class="comment">// **************************</span></div><div class="line">{</div><div class="line">   trace &lt;&lt; <span class="stringliteral">&quot;entering in MyFunction with &quot;</span> &lt;&lt; data &lt;&lt; endl;</div><div class="line">   trace_in();</div><div class="line"> </div><div class="line">   ...</div><div class="line"> </div><div class="line">   trace &lt;&lt; <span class="stringliteral">&quot;exiting of MyFunction&quot;</span> &lt;&lt; endl;</div><div class="line">   trace_out();</div><div class="line">}</div></div><!-- fragment --> <dl class="section user"><dt>Remark: Debugger enthousiastic users will probably ignore this trace </dt><dd>capability which presents the annoying need to be inserted into the code... For myself, I do prefer those facilities...</dd></dl>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> MyFunction(MyData* data)</div><div class="line"><span class="comment">// **************************</span></div><div class="line">{</div><div class="line">   trace &lt;&lt; <span class="stringliteral">&quot;entering in MyFunction with &quot;</span> &lt;&lt; data &lt;&lt; endl;</div><div class="line">   trace_in();</div><div class="line"> </div><div class="line">   ...</div><div class="line"> </div><div class="line">   trace &lt;&lt; <span class="stringliteral">&quot;exiting of MyFunction&quot;</span> &lt;&lt; endl;</div><div class="line">   trace_out();</div><div class="line">}</div></div><!-- fragment --> <dl class="section remark"><dt>Remarks</dt><dd>Debugger enthousiastic users will probably ignore this trace capability which presents the annoying need to be inserted into the code... For myself, I do prefer those facilities...</dd></dl>
 <h1><a class="anchor" id="secGeneralitiesRemarks"></a>
 Remarks</h1>
 <p>Many other global and generic functions exist. Each one will be studied within the description of the classes which create or specialize them (example: <b>Hurricane::GetUnit</b> will be introduced with the Unit class and <b>Hurricane::GetCollection</b> with the <a class="el" href="classHurricane_1_1Collection.html" title="Collection description (API) ">Collection</a> class). </p>
@@ -155,7 +155,7 @@ Remarks</h1>
     <hr>
     <table class="footer1">
       <tr>
-        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Mon Apr 27 2020</small></td>
+        <td class="LFooter"><small>Generated by doxygen 1.8.14 on Tue Jul 21 2020</small></td>
         <td class="RFooter"><a href='#pagetop'><small>Return to top of page</small></a></td>
       </tr>
     </table>

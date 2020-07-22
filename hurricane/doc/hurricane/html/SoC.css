@@ -610,6 +610,16 @@
    margin-right:     5%
  }
 
+ div.fragment a.code:link,
+ div.fragment a.code:visited,
+ div.fragment a.codeRef:link,
+ div.fragment a.codeRef:visited {
+   text-decoration:             none;
+   font-weight:                 bold;
+   color:                       black;
+   border:                      none;
+ }
+
  div.line {
    white-space:      pre;
    padding:          0pt;

@@ -123,7 +123,7 @@ class JsonOccurrence : public JsonObject {
 } // End of Hurricane namespace.
 
 
-INSPECTOR_PV_SUPPORT(Hurricane::Occurrence);
+INSPECTOR_PR_SUPPORT(Hurricane::Occurrence);
 
 
 #endif // HURRICANE_OCCURENCE
