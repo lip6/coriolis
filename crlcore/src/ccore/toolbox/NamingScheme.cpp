@@ -73,6 +73,7 @@ namespace CRL {
 
       if (translated == '\\') translated = '_';
       if (translated == '.' ) translated = '_';
+      if (translated == '%' ) translated = '_';
       if (translated == '$' ) translated = '_';
       if (translated == '?' ) translated = '_';
       if (translated == ':' ) translated = '_';

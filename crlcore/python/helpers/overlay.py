@@ -62,6 +62,8 @@ class Configuration:
                 Cfg.getParamEnumerate(attr).setInt( val )
             else:
                 Cfg.getParamInt(attr).setInt( val )
+        elif isinstance(val, long):
+            p = Cfg.getParamInt( attr ) # all params have a type
         elif isinstance(val, float):
             p = Cfg.getParamDouble( attr ).setDouble( val )
         elif '%' in val:

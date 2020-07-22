@@ -37,3 +37,5 @@ import symbolic.cmos45.plugins
 import symbolic.cmos45.stratus1
 
 Cfg.Configuration.popDefaultPriority()
+
+helpers.tagConfModules()

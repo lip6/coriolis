@@ -38,3 +38,5 @@ import node600.phenitec.stratus1
 import node600.phenitec.devices
 
 Cfg.Configuration.popDefaultPriority()
+
+helpers.tagConfModules()

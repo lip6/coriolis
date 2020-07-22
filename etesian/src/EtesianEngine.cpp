@@ -519,8 +519,8 @@ namespace Etesian {
 
     // if (not getBlockCell()->getAbutmentBox().isEmpty() )
     //   setFixedAbHeight( getBlockCell()->getAbutmentBox().getHeight() );
-    // getBlockCell()->setAbutmentBox( Box() );
-    // getBlockCell()->resetFlags( Cell::Flags::Placed );
+    getBlockCell()->setAbutmentBox( Box() );
+    getBlockCell()->resetFlags( Cell::Flags::Placed );
     UpdateSession::close();
 
     dots.finish( Dots::Reset );
@@ -1002,8 +1002,10 @@ namespace Etesian {
 
     getConfiguration()->print( getCell() );
     adjustSliceHeight();
-    resetPlacement();
-    if (getBlockCell()->getAbutmentBox().isEmpty()) setDefaultAb();
+    if ( (getCell() == getBlockCell()) and getCell()->getAbutmentBox().isEmpty() ) {
+      resetPlacement();
+      setDefaultAb();
+    }
 
     findYSpin();
     toColoquinte();
@@ -1019,7 +1021,6 @@ namespace Etesian {
     startMeasures();
 
     preplace();
-
 
     float_t minPenaltyIncrease, maxPenaltyIncrease, targetImprovement;
     int detailedIterations, detailedEffort;
@@ -1085,9 +1086,14 @@ namespace Etesian {
         rp->invalidate();
       }
     }
-    UpdateSession::close();
 
     getCell()->setFlags( Cell::Flags::Placed );
+    for ( Occurrence occurrence : getCell()->getNonTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
+      Instance* instance = static_cast<Instance*>(occurrence.getEntity());
+      if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED)
+        instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+    }
+    UpdateSession::close();
   }
 
 
