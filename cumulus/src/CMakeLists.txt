@@ -13,10 +13,12 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/chiproute.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/conductor.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/matrixplacer.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/block.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsave.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsaveall.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/s2r.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/aboutwindow.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/stats.py
                   )		  
              #set ( pyPluginBlock ${CMAKE_CURRENT_SOURCE_DIR}/plugins/block/__init__.py
              #                    ${CMAKE_CURRENT_SOURCE_DIR}/plugins/block/vchannels.py
@@ -40,6 +42,16 @@
               set ( pyTools       ${CMAKE_CURRENT_SOURCE_DIR}/tools/blif2vst.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/tools/yosys.py
                   )
+              set ( pyPluginAlpha ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/utils.py
+                  )
+              set ( pyPluginBlock ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/__init__.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/configuration.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/spares.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/block.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/clocktree.py
+                  )
          
           install ( FILES    ${pySources}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
           install ( FILES    ${pyPlugins}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
@@ -47,4 +59,6 @@
           install ( FILES    ${pyPluginCTS}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/cts )
           install ( FILES    ${pyPluginC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/core2chip )
           install ( FILES    ${pyPluginChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )
+          install ( FILES    ${pyPluginAlpha} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha )
+          install ( FILES    ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/block )
          #install ( PROGRAMS ${pyTools}       DESTINATION bin ) 
