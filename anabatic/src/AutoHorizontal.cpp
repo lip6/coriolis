@@ -247,8 +247,9 @@ namespace Anabatic {
   {
     cdebug_tabw(149,1);
 
-    AutoContact* source            = getAutoSource();
-    AutoContact* target            = getAutoTarget();
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+    if (source->isOnPin() or target->isOnPin()) { cdebug_tabw(149,-1); return false; }
 
     Interval     sourceSide        = source->getGCell()->getSide( Flags::Vertical );
     Interval     targetSide        = target->getGCell()->getSide( Flags::Vertical );

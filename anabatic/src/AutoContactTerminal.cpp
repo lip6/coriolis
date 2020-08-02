@@ -29,6 +29,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/Pin.h"
 #include "hurricane/DebugSession.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/AutoContactTerminal.h"
@@ -47,6 +48,7 @@ namespace Anabatic {
   using Hurricane::Transformation;
   using Hurricane::Entity;
   using Hurricane::Occurrence;
+  using Hurricane::Pin;
 
 
 // -------------------------------------------------------------------
@@ -126,6 +128,13 @@ namespace Anabatic {
   {
     RoutingPad* rp = dynamic_cast<RoutingPad*>( getAnchor() );
     return (rp->getBodyHook()->getSlaveHooks().getSize() == 1);
+  }
+
+
+  bool  AutoContactTerminal::isOnPin () const
+  {
+    RoutingPad* rp = dynamic_cast<RoutingPad*>( getAnchor() );
+    return (dynamic_cast<Pin*>(rp->getOccurrence().getEntity()) != NULL);
   }
 
 

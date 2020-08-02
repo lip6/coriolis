@@ -123,6 +123,7 @@ namespace Anabatic {
       inline  bool             isUserNativeConstraints    () const;
       inline  bool             isHDogleg                  () const;
       inline  bool             isVDogleg                  () const;
+      virtual bool             isOnPin                    () const;
       inline  bool             hasBadTopology             () const;
               bool             canDestroy                 ( Flags flags=Flags::NoFlags ) const;
               bool             canMoveUp                  ( const AutoSegment* moved ) const;

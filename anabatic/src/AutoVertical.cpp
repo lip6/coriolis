@@ -241,6 +241,8 @@ namespace Anabatic {
   {
     cdebug_tabw(149,-1);
 
+    if (getAutoSource()->isOnPin() or getAutoTarget()->isOnPin()) { cdebug_tabw(149,-1); return false; }
+
     Interval sourceSide        = getAutoSource()->getGCell()->getSide( Flags::Horizontal );
     Interval targetSide        = getAutoTarget()->getGCell()->getSide( Flags::Horizontal );
     Interval sourceConstraints = Interval(getAutoSource()->getCBXMin(),getAutoSource()->getCBXMax());

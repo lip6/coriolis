@@ -1729,8 +1729,8 @@ namespace Anabatic {
 
     if (_canSlacken()) return true;
     if ((flags & Flags::Propagate) and not isNotAligned()) {
-      forEach ( AutoSegment*, isegment, const_cast<AutoSegment*>(this)->getAligneds() ) {
-        if (isegment->_canSlacken()) return true;
+      for ( AutoSegment* segment : const_cast<AutoSegment*>(this)->getAligneds() ) {
+        if (segment->_canSlacken()) return true;
       }
     }
 

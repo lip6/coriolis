@@ -178,6 +178,7 @@ namespace Anabatic {
   AutoHorizontal* AutoContact::getHorizontal2   () const { return NULL; }
   AutoVertical*   AutoContact::getVertical1     () const { return NULL; }
   AutoVertical*   AutoContact::getVertical2     () const { return NULL; }
+  bool            AutoContact::isOnPin          () const { return false; }
 
 
   void  AutoContact::getDepthSpan ( size_t& minDepth, size_t& maxDepth ) const
