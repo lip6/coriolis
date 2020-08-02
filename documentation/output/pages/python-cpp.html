@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Printable version of this document PythonCpp.pdf. Contents 1. Introduction 2. Basic File Structure and CMake configuration 3. Case 1 - DBo Derived, Standalone 4. Case 2 - Hierarchy of DBo Derived ...">
+        <meta name="description" content="Printable version of this Document PythonCpp.pdf Contents Printable version of this Document 1. Introduction 2. Basic File Structure and CMake configuration 3. Case 1 - DBo Derived, Standalone 4. ...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -119,22 +119,26 @@
 <!-- Standard CAO/VLSI Concepts. -->
 <!-- Alliance & MBK Concepts -->
 <!-- Hurricane Concepts. -->
-<p>Printable version of this document <a class="reference external" href="../pdfs/PythonCpp.pdf">PythonCpp.pdf</a>.</p>
+<div class="section" id="printable-version-of-this-document">
+<h2><a class="toc-backref" href="#id7">Printable version of this Document</a></h2>
+<p><a class="reference external" href="../pdfs/PythonCpp.pdf">PythonCpp.pdf</a></p>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id7">1. Introduction</a></li>
-<li><a class="reference internal" href="#basic-file-structure-and-cmake-configuration" id="id8">2. Basic File Structure and CMake configuration</a></li>
-<li><a class="reference internal" href="#case-1-dbo-derived-standalone" id="id9">3. Case 1 - DBo Derived, Standalone</a></li>
-<li><a class="reference internal" href="#case-2-hierarchy-of-dbo-derived-classes" id="id10">4. Case 2 - Hierarchy of DBo Derived Classes</a></li>
-<li><a class="reference internal" href="#case-3-non-dbo-standalone-classe" id="id11">5. Case 3 - Non-DBo Standalone Classe</a></li>
-<li><a class="reference internal" href="#encapsulating-dbu" id="id12">6. Encapsulating DbU</a></li>
-<li><a class="reference internal" href="#no-c-hurricane-name-encapsulation" id="id13">7. No C++ Hurricane::Name encapsulation</a></li>
+<li><a class="reference internal" href="#printable-version-of-this-document" id="id7">Printable version of this Document</a></li>
+<li><a class="reference internal" href="#introduction" id="id8">1. Introduction</a></li>
+<li><a class="reference internal" href="#basic-file-structure-and-cmake-configuration" id="id9">2. Basic File Structure and CMake configuration</a></li>
+<li><a class="reference internal" href="#case-1-dbo-derived-standalone" id="id10">3. Case 1 - DBo Derived, Standalone</a></li>
+<li><a class="reference internal" href="#case-2-hierarchy-of-dbo-derived-classes" id="id11">4. Case 2 - Hierarchy of DBo Derived Classes</a></li>
+<li><a class="reference internal" href="#case-3-non-dbo-standalone-classe" id="id12">5. Case 3 - Non-DBo Standalone Classe</a></li>
+<li><a class="reference internal" href="#encapsulating-dbu" id="id13">6. Encapsulating DbU</a></li>
+<li><a class="reference internal" href="#no-c-hurricane-name-encapsulation" id="id14">7. No C++ Hurricane::Name encapsulation</a></li>
 </ul>
 </div>
 <!-- -*- Mode: rst -*- -->
+</div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id7">1. Introduction</a></h2>
+<h2><a class="toc-backref" href="#id8">1. Introduction</a></h2>
 <ul class="simple">
 <li>This document is written for people already familiar with the
 <a class="reference external" href="https://docs.python.org/2/c-api/index.html">Python/C API Reference Manual</a>.</li>
@@ -298,7 +302,7 @@ like in the code below:</p>
 </div>
 </div>
 <div class="section" id="basic-file-structure-and-cmake-configuration">
-<h2><a class="toc-backref" href="#id8">2. Basic File Structure and CMake configuration</a></h2>
+<h2><a class="toc-backref" href="#id9">2. Basic File Structure and CMake configuration</a></h2>
 <p>As a first example we will consider the <tt class="docutils literal"><span class="pre">Hurrican::Library</span></tt>
 class. To export a class into Python, we must create three files:</p>
 <ol class="arabic simple">
@@ -331,7 +335,7 @@ associated C++ namespace.</li>
 <!-- -*- Mode: rst -*- -->
 </div>
 <div class="section" id="case-1-dbo-derived-standalone">
-<h2><a class="toc-backref" href="#id9">3. Case 1 - DBo Derived, Standalone</a></h2>
+<h2><a class="toc-backref" href="#id10">3. Case 1 - DBo Derived, Standalone</a></h2>
 <p>As example, we take <tt class="docutils literal">Library</tt>. This a <tt class="docutils literal">DBo</tt> derived class, but we
 choose not to export the parent classes. From Python, it will appear
 as a base class.</p>
@@ -660,7 +664,7 @@ the module itself. This allow to mimic closely the C++ syntax:</p>
 </div>
 </div>
 <div class="section" id="case-2-hierarchy-of-dbo-derived-classes">
-<h2><a class="toc-backref" href="#id10">4. Case 2 - Hierarchy of DBo Derived Classes</a></h2>
+<h2><a class="toc-backref" href="#id11">4. Case 2 - Hierarchy of DBo Derived Classes</a></h2>
 <p>Now we want to export the following C++ class hierarchy into Python:</p>
 <pre class="literal-block">
 PyEntity &lt;-- PyComponent &lt;-+- PyContact
@@ -1060,7 +1064,7 @@ terminal or not.</li>
 </div>
 </div>
 <div class="section" id="case-3-non-dbo-standalone-classe">
-<h2><a class="toc-backref" href="#id11">5. Case 3 - Non-DBo Standalone Classe</a></h2>
+<h2><a class="toc-backref" href="#id12">5. Case 3 - Non-DBo Standalone Classe</a></h2>
 <p>Let's have a look at the encapsulation of <tt class="docutils literal"><span class="pre">Hurricane::Point</span></tt>.</p>
 <p>Non-BDo derived classes do not support the bi-directionnal communication.
 So each Python object is associated with one C++ object. The C++ object
@@ -1213,7 +1217,7 @@ a standalone <tt class="docutils literal">DBo</tt> class and a non-<tt class="do
 </div>
 </div>
 <div class="section" id="encapsulating-dbu">
-<h2><a class="toc-backref" href="#id12">6. Encapsulating DbU</a></h2>
+<h2><a class="toc-backref" href="#id13">6. Encapsulating DbU</a></h2>
 <p>While <tt class="docutils literal"><span class="pre">Hurricane::DbU</span></tt> is a class, the <tt class="docutils literal"><span class="pre">Hurricane::DbU::Unit</span></tt> is only
 a <tt class="docutils literal">typedef</tt> over <tt class="docutils literal">uint64_t</tt>. The <tt class="docutils literal">DbU</tt> class only provides a set of
 static methods to manipulate and convert to and from other units.
@@ -1261,7 +1265,7 @@ the <tt class="docutils literal"><span class="pre">DbU::Unit</span>&nbsp; PyAny_
 <!-- -*- Mode: rst -*- -->
 </div>
 <div class="section" id="no-c-hurricane-name-encapsulation">
-<h2><a class="toc-backref" href="#id13">7. No C++ Hurricane::Name encapsulation</a></h2>
+<h2><a class="toc-backref" href="#id14">7. No C++ Hurricane::Name encapsulation</a></h2>
 <p>To be written.</p>
 </div>
 

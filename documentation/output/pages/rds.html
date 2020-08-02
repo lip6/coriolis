@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Disclaimer: This document is still far from complete. Printable version of this document RDS.pdf. Contents Symbolic Layout Symbolic Components Symbolic Segments The RDS File Physical Grid &amp; Lambda ...">
+        <meta name="description" content="Printable version of this Document RDS.pdf Contents Printable version of this Document Symbolic Layout Symbolic Components Symbolic Segments The RDS File Physical Grid &amp; Lambda Value The ...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -119,35 +119,39 @@
 <!-- Standard CAO/VLSI Concepts. -->
 <!-- Alliance & MBK Concepts -->
 <!-- Hurricane Concepts. -->
-<p><strong>Disclaimer:</strong> This document is still far from complete.</p>
-<p>Printable version of this document <a class="reference external" href="../../../pdf/main/RDS.pdf">RDS.pdf</a>.</p>
+<div class="section" id="printable-version-of-this-document">
+<h2><a class="toc-backref" href="#id2">Printable version of this Document</a></h2>
+<p><a class="reference external" href="{filename}/pdfs/main/RDS.pdf">RDS.pdf</a></p>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#symbolic-layout" id="id2">Symbolic Layout</a><ul>
-<li><a class="reference internal" href="#symbolic-components" id="id3">Symbolic Components</a></li>
-<li><a class="reference internal" href="#symbolic-segments" id="id4">Symbolic Segments</a></li>
+<li><a class="reference internal" href="#printable-version-of-this-document" id="id2">Printable version of this Document</a></li>
+<li><a class="reference internal" href="#symbolic-layout" id="id3">Symbolic Layout</a><ul>
+<li><a class="reference internal" href="#symbolic-components" id="id4">Symbolic Components</a></li>
+<li><a class="reference internal" href="#symbolic-segments" id="id5">Symbolic Segments</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#the-rds-file" id="id5">The RDS File</a><ul>
-<li><a class="reference internal" href="#physical-grid-lambda-value" id="id6">Physical Grid &amp; Lambda Value</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-segment-table" id="id7">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-via-table" id="id8">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-hole-table" id="id9">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-metal-table" id="id10">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></li>
-<li><a class="reference internal" href="#the-mbk-wiresetting-table" id="id11">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></li>
+<li><a class="reference internal" href="#the-rds-file" id="id6">The RDS File</a><ul>
+<li><a class="reference internal" href="#physical-grid-lambda-value" id="id7">Physical Grid &amp; Lambda Value</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-segment-table" id="id8">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-via-table" id="id9">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-hole-table" id="id10">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-to-rds-bigvia-metal-table" id="id11">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></li>
+<li><a class="reference internal" href="#the-mbk-wiresetting-table" id="id12">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></li>
 </ul>
 </li>
 </ul>
 </div>
+<p><strong>Disclaimer:</strong> This document is still far from complete.</p>
 <!-- -*- Mode: rst -*- -->
 <!-- Tools -->
 <!-- RDS file syntax. -->
 <p></p>
+</div>
 <div class="section" id="symbolic-layout">
-<h2><a class="toc-backref" href="#id2">Symbolic Layout</a></h2>
+<h2><a class="toc-backref" href="#id3">Symbolic Layout</a></h2>
 <div class="section" id="symbolic-components">
-<h3><a class="toc-backref" href="#id3">Symbolic Components</a></h3>
+<h3><a class="toc-backref" href="#id4">Symbolic Components</a></h3>
 <p>A symbolic layout is, in practice, made of only of three objects:</p>
 <table class="table">
 <colgroup>
@@ -308,7 +312,7 @@ name stuck...</p>
 </div>
 </div>
 <div class="section" id="symbolic-segments">
-<h3><a class="toc-backref" href="#id4">Symbolic Segments</a></h3>
+<h3><a class="toc-backref" href="#id5">Symbolic Segments</a></h3>
 <p>In <span class="sc">Alliance</span>, segments are oriented (up, down, left, right). This disambiguate
 the left or right side when using the <tt class="docutils literal">LCW</tt> and <tt class="docutils literal">RCW</tt> rules in the <span class="sc">rds</span> file.
 It allows to generate, if needed, asymetric object in the real layout file.</p>
@@ -317,7 +321,7 @@ It allows to generate, if needed, asymetric object in the real layout file.</p>
 </div>
 </div>
 <div class="section" id="the-rds-file">
-<h2><a class="toc-backref" href="#id5">The RDS File</a></h2>
+<h2><a class="toc-backref" href="#id6">The RDS File</a></h2>
 <p>The RDS file control how a symbolic layout is transformed into it's real
 conterpart.</p>
 <div class="note">
@@ -357,7 +361,7 @@ conterpart.</p>
 </tbody>
 </table>
 <div class="section" id="physical-grid-lambda-value">
-<h3><a class="toc-backref" href="#id6">Physical Grid &amp; Lambda Value</a></h3>
+<h3><a class="toc-backref" href="#id7">Physical Grid &amp; Lambda Value</a></h3>
 <p>RDS file:</p>
 <pre class="literal-block">
 DEFINE  PHYSICAL_GRID  0.005
@@ -374,7 +378,7 @@ the <tt class="docutils literal">LAMBDA</tt> value can be any multiple of the fo
 </ul>
 </div>
 <div class="section" id="the-mbk-to-rds-segment-table">
-<h3><a class="toc-backref" href="#id7">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></h3>
+<h3><a class="toc-backref" href="#id8">The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table</a></h3>
 <p>The <tt class="docutils literal">MBK_TO_RDS_SEGMENT</tt> table control the way segments are translated into
 real rectangles. Be aware that we are translating <em>segments</em> and not <em>rectangles</em>.
 Segments are defined by their axis (source &amp; target points) and their width.
@@ -469,7 +473,7 @@ rectangles).</p>
 <p></p>
 </div>
 <div class="section" id="the-mbk-to-rds-via-table">
-<h3><a class="toc-backref" href="#id8">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></h3>
+<h3><a class="toc-backref" href="#id9">The <tt class="docutils literal">MBK_TO_RDS_VIA</tt> table</a></h3>
 <p>This table is to translate <em>default</em> VIAs into real via. In the symbolic layout
 the default VIA is simply a point and a set of layers. All layers are converted
 in squares shapes centered on the VIA coordinate. The one dimension given is the
@@ -503,7 +507,7 @@ END
 </div>
 </div>
 <div class="section" id="the-mbk-to-rds-bigvia-hole-table">
-<h3><a class="toc-backref" href="#id9">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></h3>
+<h3><a class="toc-backref" href="#id10">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt> table</a></h3>
 <p>In <span class="cb">s2r</span>, when generating BIGVIAs, the matrix of holes they contains is
 not draw relative to the position of the BIGVIA itself, but on a grid which
 is common througout all the design real layout. This is to allow overlap
@@ -537,7 +541,7 @@ To avoid that case, if the either side of the BIGVIA is less than
 </div>
 </div>
 <div class="section" id="the-mbk-to-rds-bigvia-metal-table">
-<h3><a class="toc-backref" href="#id10">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></h3>
+<h3><a class="toc-backref" href="#id11">The <tt class="docutils literal">MBK_TO_RDS_BIGVIA_METAL</tt> table</a></h3>
 <p>This table describe how the metal part of a BIGVIA is expanded (for the hole
 part, see the previous table <tt class="docutils literal">MBK_TO_RDS_BIGVIA_HOLE</tt>). The rule give for each
 metal:</p>
@@ -568,7 +572,7 @@ END
 </pre>
 </div>
 <div class="section" id="the-mbk-wiresetting-table">
-<h3><a class="toc-backref" href="#id11">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></h3>
+<h3><a class="toc-backref" href="#id12">The <tt class="docutils literal">MBK_WIRESETTING</tt> table</a></h3>
 <p>From a strict standpoint this table shouldn't be here but put in a separate
 configuration file, because it contains informations only used by the symbolic
 layout tools (<tt class="docutils literal">ocp</tt>, <tt class="docutils literal">nero</tt>, <tt class="docutils literal">ring</tt>).</p>

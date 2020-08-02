@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Printable version of this document PythonTutorial.pdf. First, a small disclaimer. This tutorial assumes that you are already familiar with the concepts of vlsi designs, such as netlist, layout, ...">
+        <meta name="description" content="Printable version of this Document PythonTutorial.pdf Contents Printable version of this Document 1. Introduction 2. Setting up the Environment 3. Making a Standard Cell -- Layout 4. Manipulating ...">
         <meta name="keywords" content="">
         <link rel="icon" href="../favicon.ico">
 
@@ -119,32 +119,36 @@
 <!-- Standard CAO/VLSI Concepts. -->
 <!-- Alliance & MBK Concepts -->
 <!-- Hurricane Concepts. -->
-<p>Printable version of this document <a class="reference external" href="../pdfs/PythonTutorial.pdf">PythonTutorial.pdf</a>.</p>
-<p>First, a small disclaimer.  This tutorial  assumes that you are already familiar
-with the concepts  of <span class="sc">vlsi</span> designs, such as  <em>netlist</em>, <em>layout</em>, <em>instances</em>
-and hierarchical design.</p>
+<div class="section" id="printable-version-of-this-document">
+<h2><a class="toc-backref" href="#id9">Printable version of this Document</a></h2>
+<p><a class="reference external" href="../pdfs/PythonTutorial.pdf">PythonTutorial.pdf</a></p>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id9">1. Introduction</a></li>
-<li><a class="reference internal" href="#setting-up-the-environment" id="id10">2. Setting up the Environment</a></li>
-<li><a class="reference internal" href="#making-a-standard-cell-layout" id="id11">3. Making a Standard Cell -- Layout</a></li>
-<li><a class="reference internal" href="#manipulating-cells-nets-and-components" id="id12">4. Manipulating Cells, Nets and Components</a></li>
-<li><a class="reference internal" href="#id3" id="id13">5. Make a script runnable through <span class="cb">cgt</span></a></li>
-<li><a class="reference internal" href="#making-a-hierarchical-cell-netlist" id="id14">6. Making a hierarchical Cell -- Netlist</a></li>
-<li><a class="reference internal" href="#working-in-real-mode" id="id15">7. Working in real mode</a></li>
-<li><a class="reference internal" href="#tool-engines-crl-core" id="id16">8. Tool Engines (CRL Core)</a></li>
-<li><a class="reference internal" href="#advanced-topics" id="id17">9. Advanced Topics</a></li>
+<li><a class="reference internal" href="#printable-version-of-this-document" id="id9">Printable version of this Document</a></li>
+<li><a class="reference internal" href="#introduction" id="id10">1. Introduction</a></li>
+<li><a class="reference internal" href="#setting-up-the-environment" id="id11">2. Setting up the Environment</a></li>
+<li><a class="reference internal" href="#making-a-standard-cell-layout" id="id12">3. Making a Standard Cell -- Layout</a></li>
+<li><a class="reference internal" href="#manipulating-cells-nets-and-components" id="id13">4. Manipulating Cells, Nets and Components</a></li>
+<li><a class="reference internal" href="#id3" id="id14">5. Make a script runnable through <span class="cb">cgt</span></a></li>
+<li><a class="reference internal" href="#making-a-hierarchical-cell-netlist" id="id15">6. Making a hierarchical Cell -- Netlist</a></li>
+<li><a class="reference internal" href="#working-in-real-mode" id="id16">7. Working in real mode</a></li>
+<li><a class="reference internal" href="#tool-engines-crl-core" id="id17">8. Tool Engines (CRL Core)</a></li>
+<li><a class="reference internal" href="#advanced-topics" id="id18">9. Advanced Topics</a></li>
 </ul>
 </div>
+<p>First, a small disclaimer.  This tutorial  assumes that you are already familiar
+with the concepts  of <span class="sc">vlsi</span> designs, such as  <em>netlist</em>, <em>layout</em>, <em>instances</em>
+and hierarchical design.</p>
 <!-- -*- Mode: rst -*- -->
 <!-- Hurricane doxygen doc links. -->
 <!-- Hurricane Viewer doxygen doc links. -->
 <!-- CRL Core doxygen doc links. -->
 <!-- Hurricane Python Tutorial internal links. -->
 <!-- -*- Mode: rst -*- -->
+</div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id9">1. Introduction</a></h2>
+<h2><a class="toc-backref" href="#id10">1. Introduction</a></h2>
 <p>This tutorial is aimed at two goals :</p>
 <ul class="simple">
 <li>Presenting how to use Python scripts to control <span class="sc">Coriolis</span>.</li>
@@ -276,7 +280,7 @@ to be explicitly deleted.</p>
 </div>
 </div>
 <div class="section" id="setting-up-the-environment">
-<h2><a class="toc-backref" href="#id10">2. Setting up the Environment</a></h2>
+<h2><a class="toc-backref" href="#id11">2. Setting up the Environment</a></h2>
 <div class="section" id="setting-up-the-paths">
 <h3>2.1 Setting up the Paths</h3>
 <p>To simplify the tedious task of configuring your environment, a helper is provided.
@@ -352,7 +356,7 @@ in <a class="reference external" href="../UsersGuide/ViewerTools.html">CGT - The
 </div>
 </div>
 <div class="section" id="making-a-standard-cell-layout">
-<h2><a class="toc-backref" href="#id11">3. Making a Standard Cell -- Layout</a></h2>
+<h2><a class="toc-backref" href="#id12">3. Making a Standard Cell -- Layout</a></h2>
 <p>In this part, we will show how to create and save a terminal <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>,
 that is, a cell without instances (the end point of a hierarchical
 design). To illustrate the case we will draw the layout of a
@@ -658,7 +662,7 @@ explanation of that part of the code, refer to <a class="reference external" hre
 </div>
 </div>
 <div class="section" id="manipulating-cells-nets-and-components">
-<h2><a class="toc-backref" href="#id12">4. Manipulating Cells, Nets and Components</a></h2>
+<h2><a class="toc-backref" href="#id13">4. Manipulating Cells, Nets and Components</a></h2>
 <p>In this part, we will show how to navigate through the <a class="reference external" href="../../hurricane/classHurricane_1_1Net.html">Nets</a> and <a class="reference external" href="../../hurricane/classHurricane_1_1Component.html">Components</a> of a <a class="reference external" href="../../hurricane/classHurricane_1_1Cell.html">Cell</a>.</p>
 <div class="section" id="hurricane-collections">
 <h3>4.1 Hurricane Collections</h3>
@@ -729,7 +733,7 @@ may unexpectedly shadow cells from the libraries.</p>
 </div>
 </div>
 <div class="section" id="id3">
-<h2><a class="toc-backref" href="#id13">5. Make a script runnable through <span class="cb">cgt</span></a></h2>
+<h2><a class="toc-backref" href="#id14">5. Make a script runnable through <span class="cb">cgt</span></a></h2>
 <p>To use your script you may run it directly like any other <span class="sc">Python</span> script.
 But, for debugging purpose it may be helpful to run it through the
 interactive layout viewer <span class="cb">cgt</span>.</p>
@@ -801,7 +805,7 @@ The <tt class="docutils literal">Breakpoint.stop()</tt> function takes two argum
 </div>
 </div>
 <div class="section" id="making-a-hierarchical-cell-netlist">
-<h2><a class="toc-backref" href="#id14">6. Making a hierarchical Cell -- Netlist</a></h2>
+<h2><a class="toc-backref" href="#id15">6. Making a hierarchical Cell -- Netlist</a></h2>
 <p>To illustrate the topic, we will build the netlist of a fulladder from
 standard cell.</p>
 <p><img alt="The fulladder netlist" class="align-middle" src="../pages/images/fulladder-1.png" style="width: 80%;" /></p>
@@ -1157,7 +1161,7 @@ directory (under the the root of the <span class="sc">Coriolis</span> installati
 </div>
 </div>
 <div class="section" id="working-in-real-mode">
-<h2><a class="toc-backref" href="#id15">7. Working in real mode</a></h2>
+<h2><a class="toc-backref" href="#id16">7. Working in real mode</a></h2>
 <p>The <a class="reference external" href="../../crlcore/classCRL_1_1AllianceFramework.html">AllianceFramework</a> only manages <em>symbolic</em> layout as <span class="sc">Alliance</span> does.
 But <span class="sc">Coriolis</span> is also able to work directly in <em>real</em> mode, meaning
 that distances will be expressed in microns instead of lambdas.</p>
@@ -1196,7 +1200,7 @@ the one of the FreePDK45, you must load it prior to calling the <span class="sc"
 </div>
 </div>
 <div class="section" id="tool-engines-crl-core">
-<h2><a class="toc-backref" href="#id16">8. Tool Engines (CRL Core)</a></h2>
+<h2><a class="toc-backref" href="#id17">8. Tool Engines (CRL Core)</a></h2>
 <p>The <a class="reference external" href="../../crlcore/classCRL_1_1ToolEngine.html">ToolEngine</a> class is the base class for all tools developped in
 <span class="sc">Coriolis</span>. In the rest of the tutorial we will use the names <tt class="docutils literal">tool</tt>
 or <tt class="docutils literal">engine</tt> as synonyms.</p>
@@ -1396,7 +1400,7 @@ case it is around <tt class="docutils literal">3%</tt>.</p>
 </div>
 </div>
 <div class="section" id="advanced-topics">
-<h2><a class="toc-backref" href="#id17">9. Advanced Topics</a></h2>
+<h2><a class="toc-backref" href="#id18">9. Advanced Topics</a></h2>
 <p>This is a place holder as well as a reminder to myself to write this part of
 the documentation.</p>
 <div class="section" id="id7">
