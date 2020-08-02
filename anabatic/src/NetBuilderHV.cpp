@@ -560,7 +560,7 @@ namespace Anabatic {
 
     doRp_AutoContacts( getGCell(), getRoutingPads()[0], rpSourceContact, rpContactTarget, NoFlags );
 
-    AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+    AutoContact* turn1   = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
     AutoSegment::create( rpSourceContact, turn1, Flags::Horizontal );
 
     if (east() or west()) {
@@ -1081,6 +1081,7 @@ namespace Anabatic {
     rpM1Contact = doRp_Access( getGCell(), rpsM1[0], NoFlags );
 
     if (north() and south()) {
+      cdebug_log(145,0) << "Case north & south." << endl;
       AutoContact* htee = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* vtee = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
 
@@ -1089,6 +1090,7 @@ namespace Anabatic {
       AutoSegment::create( htee        , vtee, Flags::Horizontal );
       setBothCornerContacts( vtee );
     } else if (east() and west()) {
+      cdebug_log(145,0) << "Case east & west." << endl;
       AutoContact* htee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* turn  = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
@@ -1099,18 +1101,17 @@ namespace Anabatic {
       AutoSegment::create( htee2       , turn , Flags::Vertical   );
       setBothCornerContacts( htee2 );
     } else {
+      cdebug_log(145,0) << "Case bend." << endl;
       AutoContact* htee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
-      AutoContact* turn  = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
 
       AutoSegment::create( pinM2Contact, htee1, Flags::Horizontal );
       AutoSegment::create( rpM1Contact , htee1, Flags::Vertical   );
       AutoSegment::create( htee1       , htee2, Flags::Horizontal );
-      AutoSegment::create( htee2       , turn , Flags::Vertical   );
-      setNorthEastContact( htee2 );
-      setSouthWestContact( turn  );
+      setBothCornerContacts( htee2 );
     }
-    
+
+    cdebug_log(145,0) << "Wiring all M1 together." << endl;
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
       AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
       AutoContact* rightContact = doRp_Access( getGCell(), getRoutingPads()[i  ], HAccess );
