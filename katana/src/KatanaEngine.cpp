@@ -545,7 +545,6 @@ namespace Katana {
         for ( Edge* edge : gcell->getEdges( Flags::NorthSide) ) {
           if (edge->getReservedCapacity() < vReservedMin) {
             edge->reserveCapacity( vReservedMin );
-            cerr << edge << endl;
           }
         }
         for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
