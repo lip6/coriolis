@@ -79,6 +79,8 @@ namespace Katana {
       inline        uint32_t                   getHTracksReservedLocal () const;
       inline        uint32_t                   getVTracksReservedLocal () const;
       inline        uint32_t                   getTermSatReservedLocal () const;
+      inline        uint32_t                   getHTracksReservedMin   () const;
+      inline        uint32_t                   getVTracksReservedMin   () const;
       inline        uint32_t                   getTermSatThreshold     () const;
       inline        void                       setEventsLimit          ( uint64_t );
       inline        void                       setRipupCost            ( uint32_t );
@@ -87,6 +89,8 @@ namespace Katana {
       inline        void                       setBloatOverloadAdd     ( uint32_t );
                     void                       setHTracksReservedLocal ( uint32_t );
                     void                       setVTracksReservedLocal ( uint32_t );
+                    void                       setHTracksReservedMin   ( uint32_t );
+                    void                       setVTracksReservedMin   ( uint32_t );
       inline        void                       setFlags                ( unsigned int );
       inline        void                       unsetFlags              ( unsigned int );
       inline        void                       setProfileEventCosts    ( bool );
@@ -101,6 +105,8 @@ namespace Katana {
              uint32_t       _hTracksReservedLocal;
              uint32_t       _vTracksReservedLocal;
              uint32_t       _termSatReservedLocal;
+             uint32_t       _hTracksReservedMin;
+             uint32_t       _vTracksReservedMin;
              uint32_t       _termSatThreshold;
              uint32_t       _ripupLimits         [RipupLimitsTableSize];
              uint32_t       _ripupCost;
@@ -125,6 +131,8 @@ namespace Katana {
   inline       uint32_t                      Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
   inline       uint32_t                      Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
   inline       uint32_t                      Configuration::getTermSatReservedLocal () const { return _termSatReservedLocal; }
+  inline       uint32_t                      Configuration::getHTracksReservedMin   () const { return _hTracksReservedMin; }
+  inline       uint32_t                      Configuration::getVTracksReservedMin   () const { return _vTracksReservedMin; }
   inline       uint32_t                      Configuration::getTermSatThreshold     () const { return _termSatThreshold; }
   inline       void                          Configuration::setBloatOverloadAdd     ( uint32_t add ) { _bloatOverloadAdd = add; }
   inline       void                          Configuration::setRipupCost            ( uint32_t cost ) { _ripupCost = cost; }

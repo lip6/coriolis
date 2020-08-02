@@ -536,12 +536,21 @@ namespace Katana {
         }
       }
     } else {
+      uint32_t hReservedMin = getConfiguration()->getHTracksReservedMin();
+      uint32_t vReservedMin = getConfiguration()->getVTracksReservedMin();
+
       for ( GCell* gcell : getGCells() ) {
         if (not gcell->isMatrix()) continue;
 
-        for ( Edge* edge : gcell->getEdges( Flags::EastSide|Flags::NorthSide) ) {
-          if (edge->getReservedCapacity() == 0)
-            edge->reserveCapacity( 1 );
+        for ( Edge* edge : gcell->getEdges( Flags::NorthSide) ) {
+          if (edge->getReservedCapacity() < vReservedMin) {
+            edge->reserveCapacity( vReservedMin );
+            cerr << edge << endl;
+          }
+        }
+        for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
+          if (edge->getReservedCapacity() < hReservedMin)
+            edge->reserveCapacity( hReservedMin );
         }
       }
     }

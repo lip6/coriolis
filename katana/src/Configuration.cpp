@@ -44,6 +44,8 @@ namespace Katana {
     , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
     , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
     , _termSatReservedLocal(Cfg::getParamInt ("katana.termSatReservedLocal",      9)->asInt())
+    , _hTracksReservedMin  (Cfg::getParamInt ("katana.hTracksReservedMin"  ,      1)->asInt())
+    , _vTracksReservedMin  (Cfg::getParamInt ("katana.vTracksReservedMin"  ,      1)->asInt())
     , _termSatThreshold    (Cfg::getParamInt ("katana.termSatThreshold"    ,      8)->asInt())
     , _ripupLimits         ()
     , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
@@ -89,6 +91,8 @@ namespace Katana {
     , _hTracksReservedLocal(other._hTracksReservedLocal)
     , _vTracksReservedLocal(other._vTracksReservedLocal)
     , _termSatReservedLocal(other._termSatReservedLocal)
+    , _hTracksReservedMin  (other._hTracksReservedMin)
+    , _vTracksReservedMin  (other._vTracksReservedMin)
     , _termSatThreshold    (other._termSatThreshold)
     , _ripupLimits         ()
     , _ripupCost           (other._ripupCost)
@@ -142,6 +146,14 @@ namespace Katana {
 
     _vTracksReservedLocal = reserved;
   }
+
+
+  void  Configuration::setHTracksReservedMin ( uint32_t reserved )
+  { _hTracksReservedMin = reserved; }
+
+
+  void  Configuration::setVTracksReservedMin ( uint32_t reserved )
+  { _vTracksReservedMin = reserved; }
 
 
   uint32_t  Configuration::getRipupLimit ( uint32_t type ) const
