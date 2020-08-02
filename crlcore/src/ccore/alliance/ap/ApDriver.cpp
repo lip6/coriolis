@@ -99,6 +99,15 @@ bool  toMBKLayer ( const char*& mbkLayer
     tableLayer [ "BLOCKAGE7" ] = "TALU7";
     tableLayer [ "BLOCKAGE8" ] = "TALU8";
 
+    tableLayer [ "blockage1" ] = "TALU1";
+    tableLayer [ "blockage2" ] = "TALU2";
+    tableLayer [ "blockage3" ] = "TALU3";
+    tableLayer [ "blockage4" ] = "TALU4";
+    tableLayer [ "blockage5" ] = "TALU5";
+    tableLayer [ "blockage6" ] = "TALU6";
+    tableLayer [ "blockage7" ] = "TALU7";
+    tableLayer [ "blockage8" ] = "TALU8";
+
     tableConnector [ "METAL1" ] = "CALU1";
     tableConnector [ "METAL2" ] = "CALU2";
     tableConnector [ "METAL3" ] = "CALU3";
