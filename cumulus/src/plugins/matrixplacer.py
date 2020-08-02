@@ -1111,10 +1111,10 @@ class MatrixPlacer ( object ):
 # Plugin hook functions, unicornHook:menus, ScritMain:call
 
 def unicornHook ( **kw ):
-    kw['beforeAction'] = 'misc.beta'
+    kw['beforeAction'] = 'misc.alpha'
 
    #plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
-    plugins.kwUnicornHook( 'misc.beta.matrixPlacer'
+    plugins.kwUnicornHook( 'misc.alpha.matrixPlacer'
                          , 'Matrix Placer'
                          , 'Look for a Matrix-Like netlist strucure and place it'
                          , sys.modules[__name__].__file__

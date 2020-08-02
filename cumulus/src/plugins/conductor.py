@@ -13,11 +13,13 @@
 # |  Python      :       "./plugins/conductorplugin.py"             |
 # +-----------------------------------------------------------------+
 
+
+from   __future__ import print_function
+import sys
+import traceback
+import os.path
+import math
 try:
-    import sys
-    import traceback
-    import os.path
-    import math
     import Cfg
     import Hurricane
     from   Hurricane  import DbU
@@ -47,7 +49,7 @@ def unicornHook ( **kw ):
     kw['beforeAction'] = 'placeAndRoute.conductor'
 
     plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
-    plugins.kwUnicornHook( 'misc.beta.conductor'
+    plugins.kwUnicornHook( 'misc.alpha.conductor'
                          , 'P&&R Conductor'
                          , 'Perform a placement driven by global routing, then detailed routing'
                          , sys.modules[__name__].__file__
@@ -92,7 +94,7 @@ def scriptMain ( **kw ):
         editor = None
         if kw.has_key('editor') and kw['editor']:
             editor = kw['editor']
-            print '  o  Editor found, running in graphic mode.'
+            print( '  o  Editor found, running in graphic mode.' )
             editor.setLayerVisible( 'rubber', False )
             if cell == None: cell = editor.getCell()
       
@@ -105,10 +107,10 @@ def scriptMain ( **kw ):
         iteration = 0
       
         while iteration < maxPlaceIterations:
-            print '\n  o  P&R Conductor iteration: %d (max:%s)' % (iteration,maxPlaceIterations)
+            print( '\n  o  P&R Conductor iteration: {} (max:{})'.format(iteration,maxPlaceIterations) )
             
             if not (katana is None):
-                print '  o  Global routing has failed, re-place design.'
+                print( '  o  Global routing has failed, re-place design.' )
                 katana.resetRouting()
                 katana.destroy     ()
                 katana = None
@@ -117,11 +119,12 @@ def scriptMain ( **kw ):
         
             etesian = Etesian.EtesianEngine.create( cell )
             etesian.setPassNumber( iteration )
-            if editor:    etesian.setViewer( editor )
+            if editor: etesian.setViewer( editor )
             if iteration:
                 if useFixedAbHeight and iteration == 1:
                     etesian.setFixedAbHeight( cell.getAbutmentBox().getHeight() )
-                    print 'etesian.setFixedAbHeight():', DbU.getValueString(cell.getAbutmentBox().getHeight())
+                    print( 'etesian.setFixedAbHeight(): {}'.format(
+                        DbU.getValueString(cell.getAbutmentBox().getHeight())) )
                 etesian.resetPlacement()
             etesian.place()
             etesian.destroy()

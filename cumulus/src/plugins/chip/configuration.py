@@ -1057,7 +1057,8 @@ class ChipConf ( object ):
         raise ErrorMessage( 1, 'Chip "%s" doesn\'t seems to have a corona.' % self.cell.getName() )
         self.validated = False
       else:
-        for instance in self.corona.getInstances(): self.cores.append( instance )
+        for instance in self.corona.getInstances():
+          self.cores.append( instance )
 
         if len(self.cores) > 1:
           message = [ 'Chip "%s" have more than one core:' % self.cell.getName() ]
