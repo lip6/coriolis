@@ -391,7 +391,7 @@ namespace Hurricane {
     addMenu( "tools"        , "Tools"     , TopMenu );
     addMenu( "placeAndRoute", "P&&R"      , TopMenu );
     addMenu( "misc"         , "Misc"      , TopMenu );
-    addMenu( "misc.beta"    , "&beta"     );
+    addMenu( "misc.alpha"   , "&alpha"    );
     addMenu( "misc.obsolete", "&Obsolete" );
 
   // Building the "File" menu.
