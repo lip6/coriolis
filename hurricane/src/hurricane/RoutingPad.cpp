@@ -350,6 +350,11 @@ namespace Hurricane {
     for ( Component* component : NetExternalComponents::get(plug->getMasterNet()) ) {
       if (not bestComponent) { bestComponent = component; continue; }
 
+      if (dynamic_cast<Pin*>(component)) {
+        bestComponent = component;
+        break;
+      }
+
       switch (flags & ComponentSelection) {
         case LowestLayer:
           if (component->getLayer()->below(bestComponent->getLayer()))

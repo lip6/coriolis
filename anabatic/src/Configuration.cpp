@@ -465,6 +465,12 @@ namespace Anabatic {
         continue;
       }
 
+      if (dynamic_cast<Pin*>(component)) {
+        cdebug_log(112,0) << "  Pins are always considered best candidates:" << component << endl;
+        bestComponent = component;
+        break;
+      }
+
       Component* candidate = dynamic_cast<Segment*>(component);
       if (not candidate
          or  (candidate->getLayer()->getMask() != metal1->getMask()) )
