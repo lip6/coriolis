@@ -70,8 +70,11 @@ extern "C" {
   DirectVoidMethod(EtesianEngine,etesian,setDefaultAb)
   DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
+  DirectSetLongAttribute  (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute(PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute(PyEtesianEngine_setAspectRatio  ,setAspectRatio  ,PyEtesianEngine,EtesianEngine)
+  DirectGetLongAttribute  (PyEtesianEngine_getFixedAbHeight,getFixedAbHeight,PyEtesianEngine,EtesianEngine)
+  DirectGetLongAttribute  (PyEtesianEngine_getFixedAbWidth ,getFixedAbWidth ,PyEtesianEngine,EtesianEngine)
 
 
   static PyObject* PyEtesianEngine_get ( PyObject*, PyObject* args )
@@ -203,6 +206,10 @@ extern "C" {
                             , "Returns the Etesian engine attached to the Cell, None if there isn't." }
     , { "create"            , (PyCFunction)PyEtesianEngine_create            , METH_VARARGS|METH_STATIC
                             , "Create an Etesian engine on this cell." }
+    , { "getFixedAbHeight"  , (PyCFunction)PyEtesianEngine_getFixedAbHeight  , METH_NOARGS
+                            , "Returns the forced abutment box height." }
+    , { "getFixedAbWidth"   , (PyCFunction)PyEtesianEngine_getFixedAbWidth   , METH_NOARGS
+                            , "Returns the forced abutment box width." }
     , { "setViewer"         , (PyCFunction)PyEtesianEngine_setViewer         , METH_VARARGS
                             , "Associate a Viewer to this EtesianEngine." }
     , { "selectBloat"       , (PyCFunction)PyEtesianEngine_selectBloat       , METH_VARARGS
@@ -213,6 +220,8 @@ extern "C" {
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "setFixedAbHeight"  , (PyCFunction)PyEtesianEngine_setFixedAbHeight  , METH_VARARGS
                             , "Use this height when computing the size of the default abutment box (disable aspect ratio)." }
+    , { "setFixedAbWidth"   , (PyCFunction)PyEtesianEngine_setFixedAbWidth   , METH_VARARGS
+                            , "Use this width when computing the size of the default abutment box (disable aspect ratio)." }
     , { "setSpaceMargin"    , (PyCFunction)PyEtesianEngine_setSpaceMargin    , METH_VARARGS
                             , "Override the configuration space margin parameter value." }
     , { "setAspectRatio"    , (PyCFunction)PyEtesianEngine_setAspectRatio    , METH_VARARGS

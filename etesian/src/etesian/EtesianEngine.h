@@ -68,6 +68,7 @@ namespace Etesian {
       inline  DbU::Unit              getSliceHeight      () const;
       inline  DbU::Unit              getSliceStep        () const;
       inline  DbU::Unit              getFixedAbHeight    () const;
+      inline  DbU::Unit              getFixedAbWidth     () const;
       inline  Effort                 getPlaceEffort      () const;
       inline  GraphicUpdate          getUpdateConf       () const;
       inline  Density                getSpreadingConf    () const;
@@ -80,6 +81,7 @@ namespace Etesian {
       inline  Instance*              getBlockInstance    () const;
       inline  void                   setBlock            ( Instance* );
       inline  void                   setFixedAbHeight    ( DbU::Unit );
+      inline  void                   setFixedAbWidth     ( DbU::Unit );
       inline  void                   setSpaceMargin      ( double );
       inline  void                   setAspectRatio      ( double );
               void                   setDefaultAb        ();
@@ -121,6 +123,7 @@ namespace Etesian {
              size_t                                   _yspinSlice0;
              DbU::Unit                                _sliceHeight;
              DbU::Unit                                _fixedAbHeight;
+             DbU::Unit                                _fixedAbWidth;
 
     protected:
     // Constructors & Destructors.
@@ -148,6 +151,7 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getSliceHeight     () const { return _sliceHeight; }
   inline  DbU::Unit              EtesianEngine::getSliceStep       () const { return getCellGauge()->getSliceStep(); }
   inline  DbU::Unit              EtesianEngine::getFixedAbHeight   () const { return _fixedAbHeight; }
+  inline  DbU::Unit              EtesianEngine::getFixedAbWidth    () const { return _fixedAbWidth; }
   inline  Effort                 EtesianEngine::getPlaceEffort     () const { return getConfiguration()->getPlaceEffort(); }
   inline  GraphicUpdate          EtesianEngine::getUpdateConf      () const { return getConfiguration()->getUpdateConf(); }
   inline  Density                EtesianEngine::getSpreadingConf   () const { return getConfiguration()->getSpreadingConf(); }
@@ -161,6 +165,7 @@ namespace Etesian {
   inline  Instance*              EtesianEngine::getBlockInstance   () const { return  _block; }
   inline  void                   EtesianEngine::setBlock           ( Instance* block ) { _block = block; _placed = _block->getMasterCell()->isPlaced(); }
   inline  void                   EtesianEngine::setFixedAbHeight   ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
+  inline  void                   EtesianEngine::setFixedAbWidth    ( DbU::Unit abWidth  ) { _fixedAbWidth  = abWidth; }
   inline  void                   EtesianEngine::setSpaceMargin     ( double margin ) { getConfiguration()->setSpaceMargin(margin); }
   inline  void                   EtesianEngine::setAspectRatio     ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
 

@@ -268,6 +268,7 @@ namespace Etesian {
     , _yspinSlice0  (0)
     , _sliceHeight  (0)
     , _fixedAbHeight(0)
+    , _fixedAbWidth (0)
   {
   }
 
@@ -407,12 +408,16 @@ namespace Etesian {
                  );
     } 
 
-    double rows = 0.0;
-  //setFixedAbHeight( 0 );
-    if (getFixedAbHeight()) rows = getFixedAbHeight() / getSliceHeight();
-    else                    rows = std::ceil( sqrt( gcellLength/aspectRatio ) );
-
-    double columns     = std::ceil( gcellLength / rows );
+    double rows    = 0.0;
+    double columns = 0.0;
+    if (not getFixedAbWidth()) {
+      if (getFixedAbHeight()) rows = getFixedAbHeight() / getSliceHeight();
+      else                    rows = std::ceil( sqrt( gcellLength/aspectRatio ) );
+      columns = std::ceil( gcellLength / rows );
+    } else {
+      columns = getFixedAbWidth() / getSliceHeight();
+      rows    = std::ceil( gcellLength / columns );
+    }
 
     UpdateSession::open();
     for ( auto occurrence : feedOccurrences ) {
@@ -435,6 +440,10 @@ namespace Etesian {
            << "% aspect ratio:" << (aspectRatio*100.0)
            << "% g-length:" << (cellLength/DbU::toLambda(getSliceHeight()))
            << ")" << endl;
+    if (getFixedAbHeight())
+       cmess1 << "     - Fixed AB height: " << DbU::getValueString(getFixedAbHeight()) << endl;
+    if (getFixedAbWidth())
+       cmess1 << "     - Fixed AB width: " << DbU::getValueString(getFixedAbWidth()) << endl;
     cmess1 << "     - Bloat space margin: "
            << setprecision(4) << (bloatMargin*100.0) << "%." << endl;
     cmess1 << "     - " <<  getCell()->getAbutmentBox() << endl;
