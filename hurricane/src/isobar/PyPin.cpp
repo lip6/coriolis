@@ -47,6 +47,9 @@ extern "C" {
   // x-------------------------------------------------------------x
 
 
+  GetNameMethod(Pin, pin)
+
+
   static Pin::PlacementStatus  PyInt_AsPlacementStatus ( PyObject* object ) {
     switch ( PyAny_AsLong(object) ) {
       case Pin::PlacementStatus::UNPLACED : return ( Pin::PlacementStatus(Pin::PlacementStatus::UNPLACED) );
@@ -151,13 +154,27 @@ extern "C" {
 
   // Standart Accessors (Attributes).
   
-  PyObject* PyPin_getAccessDirection( PyPin* self ) {
-      cdebug_log(20,0) << "PyNet_getAccessDirection ()" << endl;
+  PyObject* PyPin_getAccessDirection( PyPin* self )
+  {
+    cdebug_log(20,0) << "PyPin_getAccessDirection ()" << endl;
+    METHOD_HEAD ( "Pin.getAccessDirection()" )
+    PyObject* pyObject = NULL;
+    HTRY
+      pyObject = (PyObject*)PyLong_FromLong( pin->getAccessDirection().getCode() );
+    HCATCH
+    return pyObject;
+  }
 
-      METHOD_HEAD ( "Net.getAccessDirection()" )
-  
-      return (PyObject *)PyLong_FromLong( pin->getAccessDirection().getCode() );
 
+  static PyObject* PyPin_getPlacementStatus ( PyPin *self )
+  {
+    cdebug_log(20,0) << "PyPin_getPlacementStatus ()" << endl;
+    METHOD_HEAD ( "Pin.getPlacementStatus()" );
+    PyObject* pyObject = NULL;
+    HTRY
+      pyObject = (PyObject*)PyLong_FromLong((long)pin->getPlacementStatus().getCode());
+    HCATCH
+    return pyObject;
   }
     
 
@@ -167,9 +184,13 @@ extern "C" {
   PyMethodDef PyPin_Methods[] =
     { { "create"              , (PyCFunction)PyPin_create              , METH_VARARGS|METH_STATIC
                               , "Create a new Pin." }
+    , { "getName"             , (PyCFunction)PyPin_getName             , METH_NOARGS
+                              , "Returns the pin name (may differ from the net name)." }
     , { "getAccessDirection"  , (PyCFunction)PyPin_getAccessDirection  , METH_NOARGS
                               , "Returns the pin accessdirection (by default set to UNDEFINED) ." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    , { "getPlacementStatus"  , (PyCFunction)PyPin_getPlacementStatus  , METH_NOARGS
+                              , "Returns the placement status of the pin." }
+    , {NULL, NULL, 0, NULL}   /* sentinel */
     };
 
 
