@@ -311,8 +311,13 @@ class Block ( object ):
                               , IoPin.NORTH : Side( self, IoPin.NORTH )
                               }
         if not self.state.cell.getAbutmentBox().isEmpty():
+            print( '  o  Block "{}" is already done, reusing layout.' \
+                   .format(self.state.cell.getName()) )
             self.state.cell.setTerminalNetlist( True )
             self.state.isBuilt = True
+        else:
+            print( '  o  Block "{}" will be generated.' \
+                   .format(self.state.cell.getName()) )
 
     def setUnexpandPins ( self, sides ):
         """
@@ -336,8 +341,9 @@ class Block ( object ):
            various configuration parameters (aspect ratio, space margin, fixed
            height or width, ...).
         """
-        if not self.state.cell.getAbutmentBox().isEmpty(): return
-        if len(self.blockInstances):
+        if not self.state.cell.getAbutmentBox().isEmpty():
+            pass
+        elif len(self.blockInstances):
             with UpdateSession():
                 ab = Box( 0, 0, self.state.fixedWidth, self.state.fixedHeight )
                 self.state.cell.setAbutmentBox( ab )
@@ -481,9 +487,12 @@ class Block ( object ):
         so they will appear as ``NetListTerminal`` and we can place them
         in their parent cell.
         """
+        print( '  o  Builing block "{}".'.format(self.state.cell.getName()) )
         for blockInstance in self.blockInstances:
             blockInstance.block.editor = self.state.editor
             if not blockInstance.block.state.isBuilt:
+                print( '     - Build sub-block "{}".' \
+                       .format(blockInstance.block.state.cell.getName()) )
                 blockInstance.block.build()
         editor = self.state.editor
         if editor: editor.setCell( self.state.cell )
@@ -560,6 +569,6 @@ class BlockInstance ( object ):
 
     def place ( self ):
         self.instance.setTransformation( self.transf )
-        self.instance.setPlacementStatus( Instance.PlacementStatus.PLACED )
+        self.instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
         return
 
