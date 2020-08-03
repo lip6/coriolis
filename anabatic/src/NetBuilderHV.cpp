@@ -1102,12 +1102,14 @@ namespace Anabatic {
       setBothCornerContacts( htee2 );
     } else {
       cdebug_log(145,0) << "Case bend." << endl;
-      AutoContact* htee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoContact* vtee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
 
-      AutoSegment::create( pinM2Contact, htee1, Flags::Horizontal );
-      AutoSegment::create( rpM1Contact , htee1, Flags::Vertical   );
-      AutoSegment::create( htee1       , htee2, Flags::Horizontal );
+      AutoSegment::create( pinM2Contact, vtee1, Flags::Horizontal );
+      AutoSegment::create( rpM1Contact , vtee1, Flags::Vertical   );
+      AutoSegment::create( vtee1       , turn1, Flags::Horizontal );
+      AutoSegment::create( turn1       , htee2, Flags::Horizontal );
       setBothCornerContacts( htee2 );
     }
 
