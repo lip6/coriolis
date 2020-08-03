@@ -79,6 +79,7 @@ class Occurrence {
 // **********
 
     public: bool isValid() const {return (_entity != NULL);};
+    public: bool isBelowTerminalNetlist() const;
     public: bool hasProperty() const;
 
 // Updators

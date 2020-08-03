@@ -105,6 +105,19 @@ bool Occurrence::operator<(const Occurrence& occurrence) const
 //       ((_entity == occurrence._entity) and (_sharedPath < occurrence._sharedPath)));
 }
 
+bool Occurrence::isBelowTerminalNetlist() const
+// ********************************************
+{
+  SharedPath* tail = _sharedPath;
+  while ( tail ) {
+    Instance* instance = tail->getHeadInstance();
+    tail = tail->getTailSharedPath();
+    
+    if (tail and instance->isTerminalNetlist()) return true;
+  }
+  return false;
+}
+  
 Cell* Occurrence::getOwnerCell() const
 // **********************************
 {

@@ -120,15 +120,17 @@ class HyperNet_NetOccurrencesUnder : public Collection<Occurrence> {
         public: typedef Hurricane::Locator<Occurrence> Inherit;
 
         private: const HyperNet* _hyperNet;
-    private: Box  _area;
+        private: Box  _area;
         private: bool _doExtraction;
         private: bool _allowInterruption;
         private: set<Occurrence> _netOccurrenceSet;
         private: stack<Occurrence> _netOccurrenceStack;
 
         public: Locator();
-        public: Locator(const HyperNet* hyperNet, Box area,
-                             bool doExtraction = false, bool allowInterruption = false);
+        public: Locator(const HyperNet* hyperNet
+                       , Box area
+                       , bool doExtraction = false
+                       , bool allowInterruption = false);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -148,7 +150,7 @@ class HyperNet_NetOccurrencesUnder : public Collection<Occurrence> {
 // **********
 
     private: const HyperNet* _hyperNet;
-  private: Box  _area;
+    private: Box  _area;
     private: bool _doExtraction;
     private: bool _allowInterruption;
 

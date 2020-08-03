@@ -4694,7 +4694,8 @@ Cell_HyperNetRootNetOccurrences::Locator::Locator(const Cell* cell, Path path)
         while (not _hyperNetRootNetOccurrenceLocator.isValid() and _instanceLocator.isValid())
         {
             Instance* instance = _instanceLocator.getElement();
-            _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
+            if (not instance->isTerminalNetlist())
+              _hyperNetRootNetOccurrenceLocator=Locator(instance->getMasterCell(),Path(_path,instance));
             _instanceLocator.progress();
         }
 }
