@@ -88,7 +88,7 @@ namespace Etesian {
               void                   adjustSliceHeight   ();
               void                   resetPlacement      ();
               void                   loadLeafCellLayouts ();
-              void                   toColoquinte        ();
+              size_t                 toColoquinte        ();
               void                   preplace            ();
               void                   roughLegalize       ( float minDisruption, unsigned options );
               void                   globalPlace         ( float initPenalty, float minDisruption, float targetImprovement, float minInc, float maxInc, unsigned options=0 );

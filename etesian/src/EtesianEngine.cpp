@@ -367,6 +367,8 @@ namespace Etesian {
     size_t instanceNb  = 0;
     double cellLength  = 0;
 
+    cmess2 << "  o  Looking through the hierarchy." << endl;
+
     vector<Occurrence>  feedOccurrences;
     for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
     {
@@ -382,6 +384,7 @@ namespace Etesian {
         continue;
       }
 
+      cmess2 << "     - Using as block: " << occurrence.getCompactString() << "." << endl;
       cellLength += DbU::toLambda( _bloatCells.getAb( occurrence ).getWidth() );
       instanceNb += 1;
     }
@@ -538,7 +541,7 @@ namespace Etesian {
   }
 
 
-  void  EtesianEngine::toColoquinte ()
+  size_t  EtesianEngine::toColoquinte ()
   {
     AllianceFramework* af     = AllianceFramework::get();
     DbU::Unit          hpitch = getHorizontalPitch();
@@ -548,6 +551,23 @@ namespace Etesian {
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
 
+    cmess2 << "     o  Looking through the hierarchy." << endl;
+
+    for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
+    {
+      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Cell*     masterCell   = instance->getMasterCell();
+      string    instanceName = occurrence.getCompactString();
+
+      if (masterCell->getAbutmentBox().getHeight() != getSliceHeight())
+        cmess2 << "        - Using as block: " << instanceName << "." << endl;
+
+      if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED) {
+        cerr << Error( "EtesianEngine::toColoquinte(): Block instance \"%s\" is *not* FIXED."
+                     , getString(instance->getName()).c_str() ) << endl;
+      }
+    }
+
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
     
@@ -556,9 +576,19 @@ namespace Etesian {
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.applyOn( topAb );
 
-    size_t  instancesNb = getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()).getSize();
-    if (not instancesNb)
-      throw Error( "EtesianEngine::toColoquinte(): No instance to place." );
+    size_t  instancesNb = 0;
+    for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
+      Instance* instance = static_cast<Instance*>(occurrence.getEntity());
+      if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+        continue;
+      ++instancesNb;
+    }
+    if (not instancesNb) {
+      cerr << Error( "EtesianEngine::toColoquinte(): \"%s\" has no instance to place, doing nothing."
+                   , getString(getCell()->getName()).c_str()
+                   ) << endl;
+      return instancesNb;
+    }
 
   // Coloquinte circuit description data-structures.
   // One dummy fixed instance at the end
@@ -595,6 +625,9 @@ namespace Etesian {
         throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
                    , instanceName.c_str() );
       }
+      if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+        continue;
+
 
       Box instanceAb = _bloatCells.getAb( occurrence );
 
@@ -758,6 +791,8 @@ namespace Etesian {
     _placementLB.positions_    = positions;
     _placementLB.orientations_ = orientations;
     _placementUB = _placementLB;
+
+    return instancesNb;
   }
 
 
@@ -1017,7 +1052,7 @@ namespace Etesian {
     }
 
     findYSpin();
-    toColoquinte();
+    if (not toColoquinte()) return;
 
     Effort        placementEffort = getPlaceEffort();
     GraphicUpdate placementUpdate = getUpdateConf();
