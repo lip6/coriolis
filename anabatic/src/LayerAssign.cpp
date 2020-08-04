@@ -336,8 +336,53 @@ namespace Anabatic {
     cmess1 << "  o  Desaturate layer "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
 
+    GCellKeyQueue  queue;
+    GCell::Set     invalidateds;
+
+    for ( GCell* gcell : getGCells() ) queue.push( gcell->cloneKey(depth) );
+
+    bool optimized = true;
+    bool finished  = false;
+    while ( optimized ) {
+      Session::revalidate ();
+      optimized = false;
+
+      while ( not queue.empty() ) {
+        GCell::Key* topKey = queue.top();
+        GCell*      gcell  = const_cast<GCell*>( topKey->getGCell() );
+        queue.pop();
+
+        if (topKey->isActive()) {
+          cdebug_log(149,0) << "_desaturate: [" << depth << "]:"
+                            << gcell->getDensity(depth) << " " << gcell << endl;
+          
+          if (not gcell->isSaturated(depth)) {
+            cdebug_log(149,0) << "STOP desaturated: " << gcell << endl;
+            finished = true;
+          } else {
+            if (finished) {
+              cparanoid << "[ERROR] Still saturated: " << gcell << endl;
+            }
+          }
+          
+          if (not finished) {
+            optimized = gcell->stepNetDesaturate( depth, globalNets, invalidateds );
+            if (optimized) {
+              for ( GCell* gcell : invalidateds ) {
+                queue.push( gcell->cloneKey(depth) );
+              }
+            }
+          }
+        }
+
+        delete topKey;
+      }
+    }
+    
+
+#if OLD_QUEUE_DISABLED
     GCellDensitySet queue   ( depth, getGCells() );
-    GCell::Set      invalidateds;
+    GCell::Set     invalidateds;
 
     bool optimized = true;
     while ( optimized ) {
@@ -371,6 +416,7 @@ namespace Anabatic {
         }
       }
     }
+#endif
   }
 
 

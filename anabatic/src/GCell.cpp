@@ -306,6 +306,7 @@ namespace Anabatic {
     , _fragmentations(new float [_depth])
     , _globalsCount  (new float [_depth])
     , _key           (this,1)
+    , _lastClonedKey (NULL)
   {
     if (not _matrixHSide) {
       _matrixVSide = Session::getSliceHeight();
