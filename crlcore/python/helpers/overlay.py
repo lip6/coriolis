@@ -178,10 +178,18 @@ class CfgCache ( object ):
             if p.type == Cfg.Parameter.Type.Percentage: return p.asDouble()/100.0
             return p.asString()
 
-    def __init__ ( self, path ):
+    def __enter__( self ):
+        return self
+
+    def __exit__( self, *args ):
+        self.apply()
+        self.display()
+
+    def __init__ ( self, path='', priority=None ):
         """Create a new CfgCache with a ``path`` as parent path."""
-        self._path  = path
-        self._rattr = {}
+        self._priority = priority
+        self._path     = path
+        self._rattr    = {}
         return
 
     def __setattr__ ( self, attr, v ):
@@ -233,28 +241,29 @@ class CfgCache ( object ):
         """
         if not self._rattr.has_key(attr):
             path = self._path+'.'+attr if len(self._path) else attr
-            self._rattr[attr] = CfgCache( path )
+            self._rattr[attr] = CfgCache( path, self._priority )
         return self._rattr[attr]
 
-    def apply ( self, priority=Cfg.Parameter.Priority.UserFile ):
+    def apply ( self, priority=None ):
         """Apply the parameters values stored in the cache to the ``Cfg`` database."""
-        if not len(self._path):
+        if priority is None: priority = self._priority
+        if not len(self._path) and priority is not None:
             Cfg.Configuration.pushDefaultPriority( priority )
         for attrName in self._rattr.keys():
             if isinstance(self._rattr[attrName],CfgCache):
                 self._rattr[attrName].apply()
                 continue
             CfgCache.setCfgParameter( self._path+'.'+attrName,self._rattr[attrName] )
-        if not len(self._path):
+        if not len(self._path) and priority is not None:
             Cfg.Configuration.popDefaultPriority()
 
     def display ( self ):
         """Print all the parameters stored in that CfgCache."""
         if not len(self._path):
-            print( 'Configuration (Cfg) cache:' )
+            print( '  o  Applying configuration (CfgCache):' )
         for attrName in self._rattr.keys():
             if isinstance(self._rattr[attrName],CfgCache):
                 self._rattr[attrName].display()
                 continue
-            print( '* {}.{} = {}'.format(self._path,attrName,self._rattr[attrName]) )
+            print( '     - {}.{} = {}'.format(self._path,attrName,self._rattr[attrName]) )
 
