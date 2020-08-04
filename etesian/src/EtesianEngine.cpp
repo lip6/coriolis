@@ -384,7 +384,12 @@ namespace Etesian {
         continue;
       }
 
-      cmess2 << "     - Using as block: " << occurrence.getCompactString() << "." << endl;
+      if (masterCell->getAbutmentBox().getHeight() != getSliceHeight()) {
+        cmess2 << "     - Using as block: " << occurrence.getCompactString() << "." << endl;
+
+        cerr << Error( "EtesianEngine::setDefaultAb(): Block instances are not managed, \"%s\"."
+                     , getString(instance->getName()).c_str() ) << endl;
+      }
       cellLength += DbU::toLambda( _bloatCells.getAb( occurrence ).getWidth() );
       instanceNb += 1;
     }
