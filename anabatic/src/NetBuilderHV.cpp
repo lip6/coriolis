@@ -1032,7 +1032,7 @@ namespace Anabatic {
     AutoContact* pinM2Contact = NULL;
     AutoContact* rpM1Contact  = NULL;
     doRp_AutoContacts( getGCell(), pinM2, pinM2Contact, rpM1Contact, NoProtect );
-    rpM1Contact = doRp_Access( getGCell(), rpsM1[0], HAccess );
+    rpM1Contact = doRp_Access( getGCell(), rpsM1[0], (north() or south()) ? HAccess : NoFlags );
 
     if (north() or south()) {
       turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
@@ -1041,15 +1041,18 @@ namespace Anabatic {
       AutoSegment::create( rpM1Contact , tee , Flags::Horizontal );
       AutoSegment::create( pinM2Contact, turn, Flags::Horizontal );
       AutoSegment::create( tee         , turn, Flags::Vertical );
+
+      setBothCornerContacts( tee );
     } else {
       turn = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
-      tee  = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      tee  = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
 
-      AutoSegment::create( rpM1Contact , turn, Flags::Horizontal );
+      AutoSegment::create( rpM1Contact , tee , Flags::Vertical );
       AutoSegment::create( pinM2Contact, tee , Flags::Horizontal );
       AutoSegment::create( tee         , turn, Flags::Vertical );
+
+      setBothCornerContacts( turn );
     }
-    setBothCornerContacts( tee );
     
     for ( size_t i=1 ; i<rpsM1.size() ; ++i ) {
       AutoContact* leftContact  = doRp_Access( getGCell(), getRoutingPads()[i-1], HAccess );
