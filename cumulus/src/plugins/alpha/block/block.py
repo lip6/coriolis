@@ -487,14 +487,14 @@ class Block ( object ):
         so they will appear as ``NetListTerminal`` and we can place them
         in their parent cell.
         """
+        editor = self.state.editor
         print( '  o  Builing block "{}".'.format(self.state.cell.getName()) )
         for blockInstance in self.blockInstances:
-            blockInstance.block.editor = self.state.editor
+            blockInstance.block.state.editor = editor
             if not blockInstance.block.state.isBuilt:
                 print( '     - Build sub-block "{}".' \
                        .format(blockInstance.block.state.cell.getName()) )
                 blockInstance.block.build()
-        editor = self.state.editor
         if editor: editor.setCell( self.state.cell )
         self.state.cfg.apply()
         self.setupAb()
