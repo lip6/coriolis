@@ -1183,6 +1183,7 @@ namespace Katana {
   //float reserve = 1.0;
     float reserve = 0.5;
     if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
+    if (_segment->getLength() > 60*getPitch()) reserve = 1.0;
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {
