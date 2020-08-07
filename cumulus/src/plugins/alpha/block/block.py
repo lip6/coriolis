@@ -214,8 +214,8 @@ class Side ( object ):
                                               .format(pinName)
                                               , '(y:{}, yAB: [{}:{}])' \
                                               .format( DbU.getValueString(pinPos.getY())
-                                                     , DbU.getValueString(block.state.yMin)
-                                                     , DbU.getValueString(block.state.yMax)) ] ))
+                                                     , DbU.getValueString(self.block.state.yMin)
+                                                     , DbU.getValueString(self.block.state.yMax)) ] ))
                     status += 1
                 trace( 550, '\tIoPin.place() E/W @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
                 pin = Pin.create( net
