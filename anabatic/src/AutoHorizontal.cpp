@@ -405,7 +405,15 @@ namespace Anabatic {
 
       const vector<AutoSegment*>& doglegs = Session::getDoglegs();
       if (targetSlackened and (doglegs.size() >= 2)) {
-        cdebug_log(149,0) << "AutoHorizontal::_slacken(): Target @" << DbU::getValueString(targetPosition) << endl;
+        GCell* targetGCell   = target->getGCell();
+        Box    constraintBox = target->getConstraintBox();
+        cdebug_log(149,0) << "slacken from Target @" << DbU::getValueString(targetPosition) << endl;
+        
+        if (targetPosition >= targetGCell->getXMax()) {
+          cdebug_log(149,0) << "On the rigthmost track, adjust of one P-pitch to the left." << endl;
+          targetPosition -= getPPitch();
+          constraintBox.inflate( getPPitch(), 0, 0, 0 );
+        }
         doglegs[doglegs.size()-2]->setAxis( targetPosition );
         success = true;
 
@@ -413,7 +421,7 @@ namespace Anabatic {
           cdebug_log(149,0) << "Fixing on target terminal contact: "
                       << doglegs[doglegs.size()-2]->getAutoTarget() << endl;
         //doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntFixed );
-          doglegs[doglegs.size()-2]->getAutoTarget()->setConstraintBox( target->getConstraintBox() );
+          doglegs[doglegs.size()-2]->getAutoTarget()->setConstraintBox( constraintBox );
           doglegs[doglegs.size()-2]->getAutoTarget()->setFlags( CntUserNativeConstraints );
         }
       }
