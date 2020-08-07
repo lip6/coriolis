@@ -88,7 +88,7 @@ box<int_t> region_distribution::get_box(index_t x, index_t y, index_t x_cnt, ind
         placement_area_.y_min + ( ((std::int64_t) (placement_area_.y_max - placement_area_.y_min)) * y )     / y_cnt,
         placement_area_.y_min + ( ((std::int64_t) (placement_area_.y_max - placement_area_.y_min)) * (y+1) ) / y_cnt
     );
-    assert(not ret.empty());
+  //assert(not ret.empty());
     return ret;
 }
 
@@ -1008,7 +1008,7 @@ std::vector<region_distribution::movable_cell> region_distribution::export_sprea
             index_t n = R.cell_references_.size();
             float_t total_capacity = static_cast<float_t>(R.capacity());
             box<float_t> surface = static_cast<box<float_t> >(get_box(x, y, x_regions_cnt(), y_regions_cnt()));
-            assert(surface.x_max > surface.x_min and surface.y_max > surface.y_min);
+          //assert(surface.x_max > surface.x_min and surface.y_max > surface.y_min);
     
             std::vector<legalizable_task<float_t> > x_cells, y_cells;
     
