@@ -319,6 +319,23 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_isCLOCK ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_isCLOCK ()" << endl;
+
+    char* name = NULL;
+    HTRY
+      METHOD_HEAD( "AllianceFramework.isCLOCK()" )
+      if (not PyArg_ParseTuple(args,"s",&name)) {
+        PyErr_SetString ( ConstructorError, "AllianceFramework.isCLOCK(): Invalid number or bad type of parameters.");
+        return NULL;
+      }
+      if (af->isCLOCK(name)) Py_RETURN_TRUE;
+    HCATCH
+    Py_RETURN_FALSE;
+  }
+
+
   static PyObject* PyAllianceFramework_isInCatalog ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_isInCatalog ()" << endl;
@@ -556,6 +573,8 @@ extern "C" {
                                , "Load in memory all Cells from an Alliance Library." }                           
     , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                , METH_VARARGS
                                , "Tells if a cell name is a Pad." }
+    , { "isCLOCK"              , (PyCFunction)PyAllianceFramework_isCLOCK              , METH_VARARGS
+                               , "Tells if a net name matches the clock pattern." }
     , { "isInCatalog"          , (PyCFunction)PyAllianceFramework_isInCatalog          , METH_VARARGS
                                , "Tells if a cell name is referenced in the Catalog." }
     , { "addCellGauge"         , (PyCFunction)PyAllianceFramework_addCellGauge         , METH_VARARGS
