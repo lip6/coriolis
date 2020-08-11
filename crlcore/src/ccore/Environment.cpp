@@ -64,92 +64,110 @@ namespace CRL {
     , _OUT_LO             ("vst")
     , _OUT_PH             ("ap")
     , _CATALOG            ("CATAL")
-    , _inConstructor      (true)
+    , _POWER              ("vdd")
+    , _GROUND             ("vss")
+    , _CLOCK              ("^ck$")
+    , _BLOCKAGE           ("^blockage$")
+    , _pad                ("^.*_px$")
+    , _LIBRARIES          ()
+    , _PowerRegex         (new regex_t)
+    , _GroundRegex        (new regex_t)
+    , _ClockRegex         (new regex_t)
+    , _BlockageRegex      (new regex_t)
+    , _padRegex           (new regex_t)
   {
-    setPOWER    ( "vdd" );
-    setGROUND   ( "vss" );
-    setCLOCK    ( "^ck$" );
-    setBLOCKAGE ( "^obs$" );
-    setPad      ( "^.*_px$" );
+    setPOWER   ( "vdd" );
+    setGROUND  ( "vss" );
+    setCLOCK   ( "^ck$" );
+    setBLOCKAGE( "^blockage$" );
+    setPad     ( "^.*_px$" );
 
-    _LIBRARIES.append ( ".", "working" );
-
-    _inConstructor = false;
+    _LIBRARIES.append( ".", "working" );
   }
 
 
   Environment::~Environment ()
   {
-    regfree ( &_PowerRegex    );
-    regfree ( &_GroundRegex   );
-    regfree ( &_ClockRegex    );
-    regfree ( &_BlockageRegex );
-    regfree ( &_padRegex      );
+    regfree( _PowerRegex    );
+    regfree( _GroundRegex   );
+    regfree( _ClockRegex    );
+    regfree( _BlockageRegex );
+    regfree( _padRegex      );
+    delete _PowerRegex;
+    delete _GroundRegex;
+    delete _ClockRegex;
+    delete _BlockageRegex;
+    delete _padRegex;
   }
 
 
   bool  Environment::isPOWER ( const char* name ) const
   {
-    return regexec ( &_PowerRegex, name, 0, NULL, 0 ) == 0;
+    if (not _PowerRegex) return false;
+    return regexec( _PowerRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isGROUND ( const char* name ) const
   {
-    return regexec ( &_GroundRegex, name, 0, NULL, 0 ) == 0;
+    if (not _GroundRegex) return false;
+    return regexec ( _GroundRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isCLOCK ( const char* name ) const
   {
-    return regexec ( &_ClockRegex, name, 0, NULL, 0 ) == 0;
+    if (not _ClockRegex) return false;
+    return regexec( _ClockRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isBLOCKAGE ( const char* name ) const
   {
-    return regexec ( &_BlockageRegex, name, 0, NULL, 0 ) == 0;
+    if (not _BlockageRegex) return false;
+    return regexec ( _BlockageRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   bool  Environment::isPad ( const char* name ) const
   {
-    return regexec ( &_padRegex, name, 0, NULL, 0 ) == 0;
+    if (not _padRegex) return false;
+    return regexec ( _padRegex, name, 0, NULL, 0 ) == 0;
   }
 
 
   void  Environment::setPOWER ( const char* value )
   {
     _POWER = value;
-    _setRegex ( &_PowerRegex , _POWER , "Power" );
+    _setRegex ( _PowerRegex , _POWER , "Power" );
   }
 
 
   void  Environment::setGROUND ( const char* value )
   {
     _GROUND = value;
-    _setRegex ( &_GroundRegex , _GROUND , "Ground" );
+    _setRegex ( _GroundRegex , _GROUND , "Ground" );
   }
 
 
   void  Environment::setCLOCK ( const char* value )
   {
     _CLOCK = value;
-    _setRegex ( &_ClockRegex , _CLOCK , "Clock" );
+    _setRegex ( _ClockRegex , _CLOCK , "Clock" );
   }
 
 
   void  Environment::setBLOCKAGE ( const char* value )
   {
     _BLOCKAGE = value;
-    _setRegex ( &_BlockageRegex , _BLOCKAGE , "Blockage" );
+    _setRegex ( _BlockageRegex , _BLOCKAGE , "Blockage" );
   }
 
 
   void  Environment::setPad ( const char* value )
   {
     _pad = value;
-    _setRegex ( &_padRegex , _pad , "Pad" );
+    _setRegex ( _padRegex , _pad , "Pad" );
   }
 
 
@@ -192,15 +210,13 @@ namespace CRL {
   }
 
 
-  void  Environment::_setRegex ( regex_t* regex, const string& pattern, const char* name )
+  void  Environment::_setRegex ( regex_t*& regex, const string& pattern, const char* name )
   {
     char regexError[1024];
     int  regexCode;
 
-    if ( !_inConstructor ) regfree ( regex );
-
-    if ( ( regexCode = regcomp(regex,getString(pattern).c_str(),REG_EXTENDED|REG_NOSUB) ) ) {
-      regerror ( regexCode, regex, regexError, 1024 );
+    if ( (regexCode = regcomp(regex,getString(pattern).c_str(),REG_EXTENDED|REG_NOSUB)) ) {
+      regerror( regexCode, regex, regexError, 1024 );
       throw Error ( badRegex, name, regexError );
     }
   }

@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_ENVIRONMENT_H
-#define  CRL_ENVIRONMENT_H
-
+#pragma  once
 #include <regex.h>
 #include <string>
 #include "hurricane/Commons.h"
@@ -92,26 +90,24 @@ namespace CRL {
              std::string        _CORIOLIS_TOP;
              std::string        _displayStyle;
              long               _SCALE_X;
-             std::string        _DISPLAY;
              std::string        _IN_LO;
              std::string        _IN_PH;
              std::string        _OUT_LO;
              std::string        _OUT_PH;
+             std::string        _CATALOG;
              std::string        _POWER;
              std::string        _GROUND;
              std::string        _CLOCK;
              std::string        _BLOCKAGE;
              std::string        _pad;
-             std::string        _CATALOG;
              SearchPath         _LIBRARIES;
-             regex_t            _PowerRegex;
-             regex_t            _GroundRegex;
-             regex_t            _ClockRegex;
-             regex_t            _BlockageRegex;
-             regex_t            _padRegex;
-             bool               _inConstructor;
+             regex_t*           _PowerRegex;
+             regex_t*           _GroundRegex;
+             regex_t*           _ClockRegex;
+             regex_t*           _BlockageRegex;
+             regex_t*           _padRegex;
     private:
-             void         _setRegex       ( regex_t* regex, const std::string& pattern, const char* name );
+             void         _setRegex       ( regex_t*& regex, const std::string& pattern, const char* name );
   };
 
 
@@ -158,6 +154,3 @@ namespace CRL {
 
 
 INSPECTOR_P_SUPPORT(CRL::Environment);
-
-
-#endif  // CRL_ENVIRONMENT_H
