@@ -47,6 +47,116 @@ framework = CRL.AllianceFramework.get()
 
 
 # ----------------------------------------------------------------------------
+# Class  :  "spares.BufferPool".
+
+class BufferPool ( object ):
+    """
+    Manage a matrix of buffer and their allocations. One pool is created
+    at the center of each QuadTree level (both terminal and non-terminal).
+    """
+
+    def __init__ ( self, quadTree ):
+        self.quadTree      = quadTree
+        self.columns       = quadTree.spares.state.bColumns
+        self.rows          = quadTree.spares.state.bRows
+        self.buffers       = []
+        self.selectedIndex = None
+        for i in range(self.rows*self.columns):
+            self.buffers.append( [ 0, None ] )
+        self._createBuffers()
+
+    @property
+    def selected ( self ):
+        """
+        Returns the selected buffer instance within the pool. Selection is to
+        be made with either select() or selectFree().
+        """
+        if self.selectedIndex is None:
+            raise ErrorMessage( 3, 'BufferPool.selected: No buffer has been selected yet.' )
+        return self.buffers[ self.selectedIndex ][ 1 ]
+
+    def toIndex ( self, column, row ): return column + row*self.columns
+
+    def fromIndex ( self, index ): return (index%self.columns, index/self.columns)
+
+    def select ( self, column, row, flags=0 ):
+        """
+        Select a specific buffer in the pool matrix. The ``flags`` arguments are
+        used to specify additional checks & actions. Flags operations are done by
+        the low level function _select(). To actually access the selected buffer,
+        use the selected property.
+
+        :param column: The colum of the buffer (aka X).
+        :param row:    The row of the buffer (aka Y).
+        :param flags:  A combination of flags, defined in the Spares object.
+
+        Flags can be used to:
+
+        * CHECK_USED, raise an error if the designated buffer is already used.
+        * MARK_USED, tag the designated buffer as USED.
+        """
+
+        trace( 550, ',+', '\tBufferPool.select() column:{}, row={}, flags={:x}\n' \
+               .format(column,row,flags) )
+        if column >= self.columns:
+            trace( 550, '-' )
+            raise ErrorMessage( 3, 'BufferPool.select(): Column {} is out of range (max:{}).' \
+                                   .format(column,self.columns) )
+        if row >= self.rows:
+            trace( 550, '-' )
+            raise ErrorMessage( 3, 'BufferPool.select(): Row {} is out of range (max:{}).' \
+                                   .format(row,self.rows) )
+        self._select( self.toIndex( column, row ), flags )
+        trace( 550, '-' )
+
+    def _select ( self, index, flags ):
+        self.selectedIndex = index
+        selectedBuffer = self.buffers[ self.selectedIndex ]
+        if flags & Spares.CHECK_USED and selectedBuffer[0] & Spares.USED:
+            raise ErrorMessage( 3, 'BufferPool.select(): Buffer a index {} is already used.' \
+                                   .format(self.selectedIndex) )
+        if flags & Spares.MARK_USED:
+            selectedBuffer[0] |= Spares.USED
+
+    def selectFree ( self ):
+        """Select the first free buffer available."""
+        for i in range(self.rows*self.columns):
+            if not (self.buffers[i][0] & Spares.USED):
+                self._select( i, Spares.MARK_USED )
+
+    def _createBuffers ( self ):
+        """Create the matrix of instances buffer."""
+        trace( 550, ',+', '\tBufferPool.createBuffers()\n' )
+
+        state       = self.quadTree.spares.state
+        sliceHeight = state.gaugeConf.sliceHeight 
+        x           = self.quadTree.onXPitch( self.quadTree.area.getXCenter()
+                                              - (state.bufferConf.width  * self.columns)/2 )
+        y           = self.quadTree.onYSlice( self.quadTree.area.getYCenter()
+                                              - (state.bufferConf.height * self.rows)/2 )
+        slice = y / sliceHeight
+
+        trace( 550, '\tSlice height: {}\n'.format(DbU.getValueString(sliceHeight)) )
+
+        for row in range(self.rows):
+            orientation = Transformation.Orientation.ID
+            y = (slice+row) * sliceHeight
+            if (slice+row)%2:
+                orientation = Transformation.Orientation.MY
+                y          += sliceHeight
+            for column in range(self.columns):
+                index    = self.toIndex(column,row)
+                transf   = Transformation( x + column*state.bufferConf.width, y, orientation )
+                instance = state.createBuffer()
+                instance.setTransformation( transf )
+                instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+                self.buffers[ index ][1] = instance 
+                trace( 550, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
+        trace( 550, '-' )
+        
+
+
+# ----------------------------------------------------------------------------
 # Class  :  "spares.QuadTree".
 
 class QuadTree ( object ):
@@ -61,7 +171,6 @@ class QuadTree ( object ):
     def create ( spares ):
         root = QuadTree( spares, None, spares.state.cell.getAbutmentBox() )
         root.rpartition()
-        root.rcreateBuffers()
         return root
 
     def __init__ ( self, spares, parent, area, rtag='root' ):
@@ -74,15 +183,22 @@ class QuadTree ( object ):
         self.br        = None
         self.tl        = None
         self.tr        = None
-        self.buseds    = 0
         self.bufferTag = 'spare'
         self.bufferNet = None
-        self.buffers   = []
+        self.pool      = BufferPool( self )
         self.plugs     = []
         if self.parent and self.parent.rtag != '':
             self.rtag = self.parent.rtag + '_' + rtag
         else:
             self.rtag = rtag
+
+    def __str__ ( self ):
+        s = '<QuadTree [{},{} {},{}] "{}">'.format( DbU.getValueString(self.area.getXMin())
+                                                  , DbU.getValueString(self.area.getYMin())
+                                                  , DbU.getValueString(self.area.getXMax())
+                                                  , DbU.getValueString(self.area.getYMax())
+                                                  , self.rtag )
+        return s
 
     @property
     def leafs ( self ):
@@ -101,6 +217,9 @@ class QuadTree ( object ):
     def isHBipart ( self ): return self.ycut is None
     def isVBipart ( self ): return self.xcut is None
 
+    def isRoot ( self ):
+        return self.parent is None
+
     def isLeaf ( self ): 
         for leaf in (self.bl, self.br, self.tl, self.tr):
             if leaf is not None: return False
@@ -109,7 +228,7 @@ class QuadTree ( object ):
     @property
     def buffer ( self ):
         """The the currently selected buffer instance in the pool."""
-        return self.buffers[self.buseds]
+        return self.pool.selected
 
     @property
     def bInputPlug ( self ):
@@ -121,7 +240,17 @@ class QuadTree ( object ):
         """The output Plug of the currently selected buffer in the pool."""
         return utils.getPlugByName( self.buffer, self.spares.state.bufferConf.output )
 
-    def useBuffer ( self, doLeaf=False ):
+    def onYSlice ( self, y ):
+        """Returns the coordinate of the slice immediately inferior to Y."""
+        modulo = (y - self.area.getYMin()) % self.spares.state.gaugeConf.sliceHeight 
+        return y - modulo
+        
+    def onXPitch ( self, x ):
+        """Returns the coordinate of the pitch immediately inferior to X."""
+        modulo = (x - self.area.getXMin()) % self.spares.state.gaugeConf.sliceStep 
+        return x - modulo
+
+    def connectBuffer ( self, doLeaf=False ):
         """
         Create output nets for the currently selected buffer, if they do not
         already exists. The nets are created in the top level cell, and their
@@ -129,38 +258,49 @@ class QuadTree ( object ):
         """
         if self.isLeaf() and not doLeaf: return
 
-        trace( 550, '\tQuadTree.useBuffer(): rtag:"{}"\n'.format(self.rtag) )
+        trace( 550, '\tQuadTree.connectBuffer(): rtag:"{}"\n'.format(self.rtag) )
         plug = self.bOutputPlug
         if not plug.getNet():
-            outputNetBuff = Net.create( self.spares.state.cell,'{}_{}_{}' \
-                                        .format(self.root.bufferTag,self.buseds,self.rtag) )
+            outputNetBuff = Net.create( self.spares.state.cell,'{}_{}' \
+                                        .format(self.root.bufferTag,self.rtag) )
             plug.setNet( outputNetBuff )
             trace( 550, '\t| {}\n'.format(plug) )
             trace( 550, '\t| {}\n'.format(outputNetBuff) )
 
-    def ruseBuffer ( self ):
-        """Recursive call of useBuffer()"""
-        self.useBuffer()
+    def rconnectBuffer ( self ):
+        """[R]ecursive call of connectBuffer()"""
+        self.connectBuffer()
         for leaf in self.leafs:
-            leaf.ruseBuffer()
+            leaf.rconnectBuffer()
 
-    def useNextBuffer ( self ):
+    def rselectBuffer ( self, column, row, flags=0 ):
         """
-        Reset the quadtree buffering cache in order to buffer the next net.
-        Flush the plugs list and increase the buffer counter (buseds).
+        Setup the buffer to be used for the next buffering operation.
+        For a more detailed explanation of the parameter, please refer
+        to BufferPool.select().
         """
+        trace( 550, '+' )
         if self.plugs:
-            self.plugs   = []
-            self.buseds += 1
+            self.plugs = []
+        self.pool.select( column, row, flags )
         if not self.isLeaf():
-            for leaf in self.leafs: leaf.useNextBuffer()
+            for leaf in self.leafs: leaf.rselectBuffer( column, row, flags )
+        trace( 550, '-' )
 
     def partition ( self ):
-        trace( 550, ',+', '\tQuadTree.partition(): {}\n'.format(self.area) )
+        """
+        Build one level of the quad-tree, if the side of the area is bigger than
+        twice the "block.spareSide" value.
+
+        Depending on the initial aspect ratio, the first levels *may* not be a
+        quad-tree, but only a vertical or horizontal bi-partition.
+        """
+        trace( 550, ',+', '\tQuadTree.partition(): {} (spareSide:{})\n' \
+                    .format(self.area, DbU.getValueString(self.spares.state.cfg.block.spareSide)) )
 
         spareSide   = self.spares.state.cfg.block.spareSide
         sliceHeight = self.spares.state.gaugeConf.sliceHeight
-        side        = float(spareSide * sliceHeight)
+        side        = float(spareSide)
         aspectRatio = float(self.area.getWidth()) / float(self.area.getHeight())
 
         if self.area.getHeight() < side*2.0 or self.area.getWidth () < side*2.0:
@@ -243,45 +383,12 @@ class QuadTree ( object ):
         return True
                 
     def rpartition ( self ):
+        """"[R]ecursively partition the the area."""
         trace( 550, ',+', '\tQuadTree.rpartition(): {}\n'.format(self.area) )
         if self.partition():
             for leaf in self.leafs:
                 trace( 550, '\tLeaf rtag:"{}"\n'.format(leaf.rtag) )
                 leaf.rpartition()
-        trace( 550, '-' )
-
-    def createBuffers ( self ):
-        trace( 550, ',+', '\tQuadTree.createBuffers()\n' )
-       #if not self.isLeaf(): return
-
-        state = self.spares.state
-        x     = self.area.getXCenter() - state.bufferConf.width
-        y     = self.area.getYCenter() - state.bufferConf.height
-        slice = y / state.gaugeConf.sliceHeight - 1 
-
-        for slice in range(slice,slice+2):
-            orientation = Transformation.Orientation.ID
-            yadjust     = 0
-            if slice%2:
-                orientation = Transformation.Orientation.MY
-                yadjust     = 2 * state.gaugeConf.sliceHeight
-            for i in range(2):
-                instance = state.createBuffer()
-                instance.setTransformation( Transformation( x + i*state.bufferConf.width
-                                                          , y + yadjust
-                                                          , orientation ) )
-                instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
-                self.buffers.append( instance )
-                trace( 550, '\tBuffer: {}\n'.format(self.buffers[-1]) )
-        trace( 550, '-' )
-
-    def rcreateBuffers ( self ):
-        self.createBuffers()
-        trace( 550, ',+' )
-        if self.bl: self.bl.rcreateBuffers()
-        if self.br: self.br.rcreateBuffers()
-        if self.tl: self.tl.rcreateBuffers()
-        if self.tr: self.tr.rcreateBuffers()
         trace( 550, '-' )
 
     def getLeafUnder ( self, position ):
@@ -300,6 +407,7 @@ class QuadTree ( object ):
         return self.tr.getLeafUnder(position)
 
     def attachToLeaf ( self, plugOccurrence ):
+        """Assign the plug occurrence to the QuadTree leaf it is under."""
         position = plugOccurrence.getBoundingBox().getCenter()
         self.getLeafUnder(position).plugs.append( plugOccurrence )
 
@@ -325,7 +433,7 @@ class QuadTree ( object ):
         if not self.plugs: return
 
         trace( 550, ',+', '\tQuadTree.spliNetlist()\n' )
-        self.useBuffer( doLeaf=True )
+        self.connectBuffer( doLeaf=True )
         netBuff = self.bOutputPlug.getNet()
         trace( 550, '\tBuffer: {}\n'.format(self.buffer) )
         trace( 550, '\tBuffer output: {}\n'.format(netBuff) )
@@ -338,6 +446,11 @@ class QuadTree ( object ):
             deepNetBuff = deepPlug.getMasterNet() if deepPlug else netBuff
             trace( 550, '\t| deepNetBuff: {} {}\n'.format(deepNetBuff,netBuff) )
             plug.getEntity().setNet( deepNetBuff )
+
+        maxSinks = self.spares.state.bufferConf.maxSinks
+        if len(self.plugs) > maxSinks:
+            print( WarningMessage( 'QuadTree.splitNetlist(): More than {} sink points ({}) on "{}".' \
+                                   .format(maxSinks,len(self.plugs),netBuff.getName())) )
         trace( 550, '-' )
 
     def rsplitNetlist ( self ):
@@ -358,6 +471,10 @@ class Spares ( object ):
     Excess area is put in the topmost and rightmost pools.
     """
 
+    USED       = 0x00000001
+    CHECK_USED = 0x00010000
+    MARK_USED  = 0x00020000
+
     def __init__ ( self, block ):
         self.state    = block.state
         self.quadTree = None
@@ -370,8 +487,13 @@ class Spares ( object ):
         """
         if not self.state.useSpares: return 0.0
         spareSide    = self.state.cfg.block.spareSide
+        if not spareSide:
+            raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): "block.spareSide" parameter is zero ({}).' \
+                                   .format(spareSide) )
         areaLength   = spareSide * spareSide / self.state.gaugeConf.sliceHeight
-        bufferLength = self.state.bufferConf.width * 4
+        bufferLength = self.state.bufferConf.width * self.state.bColumns * self.state.bRows
+        if not areaLength:
+            raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): Spare leaf area is zero.' )
         return float(bufferLength) / float(areaLength)
 
     def toXGCellGrid ( self, x ):

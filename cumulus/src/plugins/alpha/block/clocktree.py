@@ -44,6 +44,7 @@ from   helpers.overlay import UpdateSession
 from   plugins         import getParameter
 from   plugins         import utils
 from   plugins.alpha.block.configuration import GaugeConf
+from   plugins.alpha.block.spares        import Spares
 
 
 # ----------------------------------------------------------------------------
@@ -54,51 +55,54 @@ class ClockTree ( object ):
     Build a clock tree on a block.
     """
 
-    def __init__ ( self, spares, clockNet ):
-        self.spares   = spares
-        self.clockNet = clockNet
+    def __init__ ( self, spares, clockNet, index ):
+        self.spares     = spares
+        self.clockNet   = clockNet
+        self.clockIndex = index
+        if not self.clockNet.isClock():
+            print( WarningMessage( 'ClockTree.__init__(): Net "{}" is not of CLOCK type.' \
+                                   .format(self.clockNet.getName()) ))
 
-        print( WarningMessage('ClockTree.__init__(): Net "{}" is not of CLOCK type.' \
-                              .format(self.clockNet.getName())) )
-
-    def _rconnectHTree ( self, quadTree ):
-        if quadTree.isLeaf(): return False
-        driverNet = quadTree.bOutputPlug.getNet()
-        for leaf in quadTree.leafs:
+    def _rconnectHTree ( self, qt ):
+        if qt.isLeaf(): return False
+        qt.rconnectBuffer()
+        driverNet = qt.bOutputPlug.getNet()
+        for leaf in qt.leafs:
             leaf.bInputPlug.setNet( driverNet )
             self._rconnectHTree( leaf )
         return True
 
-    def _rrouteHTree ( self, quadT ):
+    def _rrouteHTree ( self, qt ):
         """
         Recursively build one HTree branch for all non-terminal nodes of the QuadTree.
         """
-        trace( 550, ',+', '\tClockTree._rrouteHTree() {}\n'.format(quadT.bOutputPlug.getNet()) )
-        if quadT.isLeaf():
+        trace( 550, ',+', '\tClockTree._rrouteHTree() {}\n'.format(qt.bOutputPlug.getNet()) )
+        trace( 550, '\tOn: {}\n'.format(qt) )
+        if qt.isLeaf():
             trace( 550, '-' )
             return False
 
         gaugeConf  = self.spares.state.gaugeConf
         bufferConf = self.spares.state.bufferConf
-        ckNet      = quadT.bOutputPlug.getNet()
+        ckNet      = qt.bOutputPlug.getNet()
         
-        leftSourceContact  = gaugeConf.rpAccessByPlugName( quadT.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
-        rightSourceContact = gaugeConf.rpAccessByPlugName( quadT.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
-        blContact          = gaugeConf.rpAccessByPlugName( quadT.bl.buffer, bufferConf.input , ckNet )
-        brContact          = gaugeConf.rpAccessByPlugName( quadT.br.buffer, bufferConf.input , ckNet )
-        tlContact          = gaugeConf.rpAccessByPlugName( quadT.tl.buffer, bufferConf.input , ckNet )
-        trContact          = gaugeConf.rpAccessByPlugName( quadT.tr.buffer, bufferConf.input , ckNet )
+        leftSourceContact  = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+        rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+        blContact          = gaugeConf.rpAccessByPlugName( qt.bl.buffer, bufferConf.input , ckNet )
+        brContact          = gaugeConf.rpAccessByPlugName( qt.br.buffer, bufferConf.input , ckNet )
+        tlContact          = gaugeConf.rpAccessByPlugName( qt.tl.buffer, bufferConf.input , ckNet )
+        trContact          = gaugeConf.rpAccessByPlugName( qt.tr.buffer, bufferConf.input , ckNet )
         leftContact        = gaugeConf.createContact( ckNet, blContact.getX(),  leftSourceContact.getY(), 0 )
         rightContact       = gaugeConf.createContact( ckNet, brContact.getX(), rightSourceContact.getY(), 0 )
         
-        leftSourceX  = gaugeConf.getNearestVerticalTrack  ( quadT.root.area,  leftSourceContact.getX(), 0 )
-        leftSourceY  = gaugeConf.getNearestHorizontalTrack( quadT.root.area,  leftSourceContact.getY(), 0 )
-        rightSourceX = gaugeConf.getNearestVerticalTrack  ( quadT.root.area, rightSourceContact.getX(), 0 )
-        rightSourceY = gaugeConf.getNearestHorizontalTrack( quadT.root.area, rightSourceContact.getY(), 0 )
-        leftX        = gaugeConf.getNearestVerticalTrack  ( quadT.root.area,        leftContact.getX(), 0 )
-        rightX       = gaugeConf.getNearestVerticalTrack  ( quadT.root.area,       rightContact.getX(), 0 )
-        tlY          = gaugeConf.getNearestHorizontalTrack( quadT.root.area,          tlContact.getY(), 0 )
-        blY          = gaugeConf.getNearestHorizontalTrack( quadT.root.area,          blContact.getY(), 0 )
+        leftSourceX  = gaugeConf.getNearestVerticalTrack  ( qt.root.area,  leftSourceContact.getX(), 0 )
+        leftSourceY  = gaugeConf.getNearestHorizontalTrack( qt.root.area,  leftSourceContact.getY(), 0 )
+        rightSourceX = gaugeConf.getNearestVerticalTrack  ( qt.root.area, rightSourceContact.getX(), 0 )
+        rightSourceY = gaugeConf.getNearestHorizontalTrack( qt.root.area, rightSourceContact.getY(), 0 )
+        leftX        = gaugeConf.getNearestVerticalTrack  ( qt.root.area,        leftContact.getX(), 0 )
+        rightX       = gaugeConf.getNearestVerticalTrack  ( qt.root.area,       rightContact.getX(), 0 )
+        tlY          = gaugeConf.getNearestHorizontalTrack( qt.root.area,          tlContact.getY(), 0 )
+        blY          = gaugeConf.getNearestHorizontalTrack( qt.root.area,          blContact.getY(), 0 )
         
         gaugeConf.setStackPosition(  leftSourceContact,  leftSourceX,  leftSourceY )
         gaugeConf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
@@ -119,7 +123,33 @@ class ClockTree ( object ):
         gaugeConf.createVertical  ( rightContact      , brContact        , rightX      , 0 )
         gaugeConf.createVertical  ( trContact         , rightContact     , rightX      , 0 )
 
-        for leaf in quadT.leafs:
+        if qt.isRoot():
+            ckNet = self.clockNet
+            trace( 550, '\tRemoving any previous pin...\n' )
+            pins = []
+            for pin in ckNet.getPins(): pins.append( pin )
+            for pin in pins:
+                print( WarningMessage('ClockTree._rrouteHTree(): Removing {}.'.format(pin)) )
+                pin.destroy()
+            
+            layerGauge  = gaugeConf.vRoutingGauge
+            rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
+            x           = gaugeConf.getNearestVerticalTrack  ( qt.area, rootContact.getX(), 0 )
+            y           = gaugeConf.getNearestHorizontalTrack( qt.area, rootContact.getY(), 0 )
+            rootPin     = Pin.create( ckNet
+                                    , ckNet.getName()+'.0'
+                                    , Pin.Direction.NORTH
+                                    , Pin.PlacementStatus.FIXED
+                                    , layerGauge.getLayer()
+                                    , x
+                                    , qt.area.getYMax() 
+                                    , layerGauge.getViaWidth()
+                                    , layerGauge.getViaWidth()
+                                    )
+            gaugeConf.setStackPosition( rootContact, x, y )
+            gaugeConf.createVertical( rootContact, rootPin, x, 0 )
+
+        for leaf in qt.leafs:
             self._rrouteHTree( leaf )
         trace( 550, '-' )
         return True
@@ -131,12 +161,12 @@ class ClockTree ( object ):
         2. Detach the all the clock sink point and reconnect them to the
            buffers of the leafs of the QuadTree.
         """
-        quadTree           = self.spares.quadTree
-        quadTree.bufferTag = self.clockNet.getName()
-        quadTree.ruseBuffer()
+        qt           = self.spares.quadTree
+        qt.bufferTag = self.clockNet.getName()
+        qt.rselectBuffer( self.clockIndex, self.clockIndex, Spares.CHECK_USED|Spares.MARK_USED)
         with UpdateSession():
-            self._rconnectHTree( quadTree )
-            self._rrouteHTree  ( quadTree )
+            self._rconnectHTree( qt )
+            self._rrouteHTree  ( qt )
 
     def splitClock ( self ):
         """

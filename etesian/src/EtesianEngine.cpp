@@ -640,8 +640,8 @@ namespace Etesian {
       instanceTransf.applyOn( instanceAb );
 
       // Upper rounded
-      int_t xsize = (instanceAb.getWidth () + vpitch -1) / vpitch;
-      int_t ysize = (instanceAb.getHeight() + hpitch -1) / hpitch;
+      int_t xsize = (instanceAb.getWidth () + vpitch - 1) / vpitch;
+      int_t ysize = (instanceAb.getHeight() + hpitch - 1) / hpitch;
       // Lower rounded
       int_t xpos  = instanceAb.getXMin() / vpitch;
       int_t ypos  = instanceAb.getYMin() / hpitch;
@@ -670,6 +670,8 @@ namespace Etesian {
                                           |coloquinte::YFlippable;
       } else {
         instances[instanceId].attributes = 0;
+      //cerr << "FIXED: " << instance << " size:(" << xsize << " " << ysize
+      //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
       }
 
       _cellsToIds.insert( make_pair(instanceName,instanceId) );

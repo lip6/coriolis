@@ -28,3 +28,6 @@ Cfg.getParamInt   ( 'clockTree.minimumSide'     ).setInt   ( l(600) )
 Cfg.getParamString( 'clockTree.buffer'          ).setString( 'buf_x2')
 Cfg.getParamString( 'clockTree.placerEngine'    ).setString( 'Etesian')
 Cfg.getParamInt   ( 'block.spareSide'           ).setInt   ( 10 )
+Cfg.getParamString( 'spares.buffer'             ).setString( 'buf_x8')
+Cfg.getParamInt   ( 'spares.maxSinks'           ).setInt   (      31 )
+

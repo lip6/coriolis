@@ -182,6 +182,8 @@ namespace Etesian {
                    , getString(instanceOcc).c_str() ) << endl;
       return Box();
     }
+    if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+      return instance->getMasterCell()->getAbutmentBox();
 
     DbU::Unit   dx    = 0;
     Cell*       cell  = instance->getMasterCell();

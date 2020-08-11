@@ -173,6 +173,9 @@ class Side ( object ):
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
+                if net.isClock() and self.block.state.useClockTree:
+                    print( WarningMessage( 'Side.place(IoPin): Skipping clock IoPin "{}".'.format(pinName) ))
+                    continue
                 pinName += '.{}'.format(self.block.state.getIoPinsCounts(net))
                 pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
                 if pinPos.getX() > self.block.state.xMax or pinPos.getX() < self.block.state.xMin:
@@ -371,19 +374,25 @@ class Block ( object ):
             self.state.cfg.apply()
         for side in self.sides.values(): side.setupAb()
 
-    def addClockTree ( self, clockNet=None ):
-        """Create the trunk of the clock tree (recursive H-Tree)."""
-        if not clockNet:
-            for net in self.state.cell.getNets():
-                if net.isClock():
-                    clockNet = net
-                    break
-            if not clockNet:
-                raise ErrorMessage( 3, 'Block.clockTree(): Cell "{}" has no clock net.'.format(self.state.cell.getName()) )
+    def addClockTrees ( self ):
+        """Create the trunk of all the clock trees (recursive H-Tree)."""
+        print( '  o  Buildding clock tree(s).' )
+        af = CRL.AllianceFramework.get()
+        clockNets = []
+        for net in self.state.cell.getNets():
+            if af.isCLOCK(net.getName()): 'CLOCK: {}'.format(net)
+            if net.isClock():
+                trace( 550, '\tBlock.addClockTrees(): Found clock {}.\n'.format(net) )
+                clockNets.append( net )
+        if not clockNets:
+            raise ErrorMessage( 3, 'Block.clockTree(): Cell "{}" has no clock net(s).'.format(self.state.cell.getName()) )
         with UpdateSession():
-            self.clockTrees.append( ClockTree(self.spares,clockNet) )
-            self.clockTrees[-1].buildHTree()
-        return self.clockTrees[-1]
+            for clockNet in clockNets:
+                print( '     - "{}".'.format(clockNet.getName()) )
+                trace( 550, ',+', '\tBlock.addClockTrees(): Build clock tree for {}.\n'.format(clockNet) )
+                self.clockTrees.append( ClockTree(self.spares,clockNet,len(self.clockTrees)) )
+                self.clockTrees[-1].buildHTree()
+                trace( 550, '-' )
 
     def splitClocks ( self ):
         """
@@ -428,6 +437,10 @@ class Block ( object ):
                                         .format(net.getName() )))
 
     def expandIoPins ( self ):
+        """
+        Stick out the block I/O pins of one pitch on all sides.
+        See setUnexpandPins() to prevent it to happen on a specific side.
+        """
         with UpdateSession():
             for side in self.sides.values():
                 side.expand()
@@ -502,7 +515,8 @@ class Block ( object ):
         self.checkIoPins()
         self.spares.build()
         if editor: editor.fit()
-        if self.state.useClockTree: self.addClockTree()
+        if self.state.useClockTree: self.addClockTrees()
+       #Breakpoint.stop( 0, 'Clock tree(s) done.' )
         self.place()
         if self.state.useClockTree: self.splitClocks()
         status = self.route()

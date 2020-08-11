@@ -27,3 +27,6 @@ Cfg.getParamInt   ( "chip.block.rails.vSpacing" ).setInt   ( l(  12) )
 Cfg.getParamInt   ( 'clockTree.minimumSide'     ).setInt   ( l(1200) )
 Cfg.getParamString( 'clockTree.buffer'          ).setString( 'buf_x2')
 Cfg.getParamString( 'clockTree.placerEngine'    ).setString( 'Etesian')
+Cfg.getParamString( 'spares.buffer'             ).setString( 'buf_x8')
+Cfg.getParamInt   ( 'spares.maxSinks'           ).setInt   (      31 )
+

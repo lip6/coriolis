@@ -356,7 +356,11 @@ class GaugeConf ( object ):
             segment = component
             count  += 1
         if count > 1:
-          raise ErrorMessage( 1, 'GaugeConf::_setStackPosition(): There must be exactly one segment connected to %s, not %d.' % (topContact,count) )
+            message = [ 'GaugeConf::_setStackPosition(): There must be exactly one segment connected to contact, not {}.'.format(count)
+                      , '+ {}'.format(topContact) ]
+            for component in topContact.getSlaveComponents():
+                message.append( '| {}'.format(component) )
+            raise ErrorMessage( 1, message )
         
         if count == 1:
             if isinstance(segment,Horizontal):
@@ -375,14 +379,16 @@ class BufferInterface ( object ):
 
     def __init__ ( self, framework ):
         trace( 550, ',+', '\tBufferInterface.__init__()\n' )
-        self.masterCell = framework.getCell( Cfg.getParamString('clockTree.buffer').asString()
-                                     , CRL.Catalog.State.Views )
+        self.maxSinks   = Cfg.getParamInt('spares.maxSinks').asInt()
+        self.masterCell = framework.getCell( Cfg.getParamString('spares.buffer').asString()
+                                           , CRL.Catalog.State.Views )
         if not self.masterCell:
             trace( 550, '-' )
             raise ErrorMessage( 3, [ 'ClockTree: Buffer cell "{}" not found in library,' \
-                                     .format(Cfg.getParamString('clockTree.buffer').asString())
-                                   , '           please check the "clockTree.buffer" configuration parameter in "plugins.conf".' ] )
-        trace( 550, '\tmasterCell :<{}>\n'.format(self.masterCell) ) 
+                                     .format(Cfg.getParamString('spares.buffer').asString())
+                                   , '           please check the "spares.buffer" configuration parameter in "plugins.conf".' ] )
+        trace( 550, '\t| masterCell   :{}\n'.format(self.masterCell) ) 
+        trace( 550, '\t| maximum sinks:{}\n'.format(self.maxSinks) ) 
         
         self.count  = 0
         self.input  = None
@@ -393,8 +399,8 @@ class BufferInterface ( object ):
             if     net.getDirection() & Net.Direction.IN:  self.input  = net.getName()
             elif   net.getDirection() & Net.Direction.OUT: self.output = net.getName()
         
-        trace( 550, '\tinput :<{}>\n'.format(self.input ) ) 
-        trace( 550, '\toutput:<{}>\n'.format(self.output) ) 
+        trace( 550, '\t| input        :"{}"\n'.format(self.input ) ) 
+        trace( 550, '\t| output       :"{}"\n'.format(self.output) ) 
         trace( 550, '-' )
         return
 
@@ -575,9 +581,11 @@ class BlockState ( object ):
     def __init__ ( self, cell, ioPins=[] ):
         self.editor       = None
         self.framework    = CRL.AllianceFramework.get()
-        self.cfg          = CfgCache('')
+        self.cfg          = CfgCache('',Cfg.Parameter.Priority.Interactive)
         self.gaugeConf    = GaugeConf()
         self.bufferConf   = BufferInterface( self.framework )
+        self.bColumns     = 2
+        self.bRows        = 2
         self.cell         = cell
         self.fixedWidth   = None
         self.fixedHeight  = None

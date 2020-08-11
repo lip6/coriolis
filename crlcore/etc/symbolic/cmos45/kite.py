@@ -66,6 +66,8 @@ p = Cfg.getParamInt   ( "katana.searchHalo"           ); p.setInt   ( 1 )
 p = Cfg.getParamInt   ( "katana.hTracksReservedLocal" ); p.setInt   ( 3       ); p.setMin(0); p.setMax(20)
 p = Cfg.getParamInt   ( "katana.vTracksReservedLocal" ); p.setInt   ( 3       ); p.setMin(0); p.setMax(20)
 p = Cfg.getParamInt   ( "katana.termSatReservedLocal" ); p.setInt   ( 8       ) 
+p = Cfg.getParamInt   ( "katana.hTracksReservedMin"   ); p.setInt   ( 1       ); p.setMin(0); p.setMax(20)
+p = Cfg.getParamInt   ( "katana.vTracksReservedMin"   ); p.setInt   ( 1       ); p.setMin(0); p.setMax(20)
 p = Cfg.getParamInt   ( "katana.termSatThreshold"     ); p.setInt   ( 9       )
 p = Cfg.getParamInt   ( "katana.eventsLimit"          ); p.setInt   ( 4000002 ) 
 p = Cfg.getParamInt   ( "katana.ripupCost"            ); p.setInt   ( 3       ); p.setMin(0)
@@ -74,10 +76,86 @@ p = Cfg.getParamInt   ( "katana.localRipupLimit"      ); p.setInt   ( 9       );
 p = Cfg.getParamInt   ( "katana.globalRipupLimit"     ); p.setInt   ( 5       ); p.setMin(1)
 p = Cfg.getParamInt   ( "katana.longGlobalRipupLimit" ); p.setInt   ( 5       ); p.setMin(1)
 p = Cfg.getParamString( 'chip.padCoreSide'            ); p.setString( 'South' )
+p = Cfg.getParamInt   ( "block.spareSide"             ); p.setInt   ( l(2000) )
 
 
 tech = DataBase.getDB().getTechnology()
 af   = AllianceFramework.get()
+rg   = RoutingGauge.create( 'msxlib_uniform' )
+
+rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL1')       # metal.
+                                          , RoutingLayerGauge.Vertical    # preferred routing direction.
+                                          , RoutingLayerGauge.PinOnly     # layer usage.
+                                          , 0                             # depth.
+                                          , 0.0                           # density (deprecated).
+                                          , l(0)                          # track offset from AB.
+                                          , l(10)                         # track pitch.
+                                          , l(3)                          # wire width.
+                                          , l(2)                          # VIA side (that is VIA12).
+                                          , l(7)                          # obstacle dW.
+                                          ) )
+
+rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL2')       # metal.
+                                          , RoutingLayerGauge.Horizontal  # preferred routing direction.
+                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , 1                             # depth.
+                                          , 0.0                           # density (deprecated).
+                                          , l(0)                          # track offset from AB.
+                                          , l(10)                         # track pitch.
+                                          , l(3)                          # wire width.
+                                          , l(2)                          # VIA side (that is VIA23).
+                                          , l(8)                          # obstacle dW.
+                                          ) )
+
+rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL3')       # metal.
+                                          , RoutingLayerGauge.Vertical    # preferred routing direction.
+                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , 2                             # depth.
+                                          , 0.0                           # density (deprecated).
+                                          , l(0)                          # track offset from AB.
+                                          , l(10)                         # track pitch.
+                                          , l(3)                          # wire width.
+                                          , l(2)                          # VIA side (that is VIA34).
+                                          , l(8)                          # obstacle dW.
+                                          ) )
+
+rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL4')       # metal.
+                                          , RoutingLayerGauge.Horizontal  # preferred routing direction.
+                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , 3                             # depth.
+                                          , 0.0                           # density (deprecated).
+                                          , l(0)                          # track offset from AB.
+                                          , l(10)                         # track pitch.
+                                          , l(3)                          # wire width.
+                                          , l(2)                          # VIA side (that is VIA23).
+                                          , l(8)                          # obstacle dW.
+                                          ) )
+
+rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL5')       # metal.
+                                          , RoutingLayerGauge.Vertical    # preferred routing direction.
+                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , 4                             # depth.
+                                          , 0.0                           # density (deprecated).
+                                          , l(0)                          # track offset from AB.
+                                          , l(10)                         # track pitch.
+                                          , l(3)                          # wire width.
+                                          , l(2)                          # VIA side (that is VIA23).
+                                          , l(8)                          # obstacle dW.
+                                          ) )
+
+rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL6')       # metal.
+                                          , RoutingLayerGauge.Horizontal  # preferred routing direction.
+                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , 5                             # depth.
+                                          , 0.0                           # density (deprecated).
+                                          , l(0)                          # track offset from AB.
+                                          , l(10)                         # track pitch.
+                                          , l(3)                          # wire width.
+                                          , l(2)                          # VIA side (that is VIA23).
+                                          , l(8)                          # obstacle dW.
+                                          ) )
+
+af.addRoutingGauge( rg )
 rg   = RoutingGauge.create( 'msxlib' )
 
 rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL1')       # metal.
@@ -237,6 +315,13 @@ af.addRoutingGauge( rg )
 af.setRoutingGauge( 'msxlib' )
 
 # Gauge for standard cells.
+cg = CellGauge.create( 'msxlib_uniform'
+                     , 'metal2'   # pin layer name.
+                     , l( 10.0)   # pitch.
+                     , l(100.0)   # cell slice height.
+                     , l( 10.0)   # cell slice step.
+                     )
+af.addCellGauge( cg )
 cg = CellGauge.create( 'msxlib'
                      , 'metal2'   # pin layer name.
                      , l( 10.0)   # pitch.
