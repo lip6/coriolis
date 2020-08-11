@@ -256,6 +256,7 @@ class CfgCache ( object ):
             CfgCache.setCfgParameter( self._path+'.'+attrName,self._rattr[attrName] )
         if not len(self._path) and priority is not None:
             Cfg.Configuration.popDefaultPriority()
+       #self.display()
 
     def display ( self ):
         """Print all the parameters stored in that CfgCache."""

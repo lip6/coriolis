@@ -196,7 +196,7 @@ class Trace ( object ):
   
     def write ( self, level, arg1='', arg2=None ):
         if level < self._level: return
-    
+        sys.stdout.flush()
         sflags  = [ '', '' ]
         message = None
         if isinstance(arg1,str) and len(arg1) and arg1[0] in '+-,':
@@ -205,22 +205,18 @@ class Trace ( object ):
             message = arg2
         else:
             message = arg1
-    
         for f in sflags[0]:
             if f == '+': self._tab.inc()
             if f == '-': self._tab.dec()
-    
         if message:
             if not isinstance(message,str):
                 message = '\t'+str(message)+'\n'
-            
             if len(message) and message[0] == '\t':
                 sys.stderr.write( str(self._tab) )
                 sys.stderr.write( message[1:] )
             else:
                 sys.stderr.write( message )
             sys.stderr.flush()
-    
         for f in sflags[1]:
             if f == '+': self._tab.inc()
             if f == '-': self._tab.dec()
