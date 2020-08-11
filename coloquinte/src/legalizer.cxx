@@ -3,6 +3,7 @@
 #include "coloquinte/optimization_subproblems.hxx"
 
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include <cmath>
 #include <queue>
@@ -397,7 +398,6 @@ detailed_placement legalize(netlist const & circuit, placement_t const & pl, box
                 int_t rnd_hgh_y_pos = std::min(surface.y_max, hgh_y_pos);
                 int_t rnd_low_x_pos = std::max(surface.x_min, low_x_pos);
                 int_t rnd_low_y_pos = std::max(surface.y_min, low_y_pos);
-
                 index_t first_row = (rnd_low_y_pos - surface.y_min) / row_height;
                 index_t last_row = (index_t) (rnd_hgh_y_pos - surface.y_min + row_height - 1) / row_height; // Exclusive: if the cell spans the next row, i.e. pos % row_height >= 0, include it too
                 assert(last_row <= nbr_rows);
@@ -415,8 +415,12 @@ detailed_placement legalize(netlist const & circuit, placement_t const & pl, box
         std::sort(L.begin(), L.end()); // Sorts from last to first, so that we may use pop_back()
         // Doesn't collapse them yet, which may make for bigger complexities
         for(index_t i=0; i+1<L.size(); ++i){
-            if(L[i].min_x < L[i+1].max_x)
-                throw std::runtime_error("Sorry, I don't handle overlapping fixed cells yet\n");
+          if(L[i].min_x < L[i+1].max_x) {
+            std::ostringstream message;
+            message << "Coloquinte::dp::legalize(): Sorry, I don't handle overlapping fixed cells yet ";
+            message << " i:" << i << " max_x: " << L[i].max_x << " > min_x:" << L[i+1].min_x << "\n";
+            throw std::runtime_error(message.str());
+          }
         }
     }
 
