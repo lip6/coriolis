@@ -569,6 +569,8 @@ class Spares ( object ):
                                     % (topNet.getName(),headInstance.getName(),masterCell.getName()) )
             headPlug.setNet( topNet )
             self.addClonedCell( masterCell )
+        else:
+            masterNet = headPlug.getMasterNet()
         
         if tailPath.isEmpty(): return headPlug
         return self.raddTransNet( masterNet, tailPath )

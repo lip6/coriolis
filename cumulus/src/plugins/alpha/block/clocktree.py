@@ -176,7 +176,8 @@ class ClockTree ( object ):
         quadTree           = self.spares.quadTree
         quadTree.bufferTag = self.clockNet.getName()
 
-        hyperClock = HyperNet.create( Occurrence(self.clockNet) )
-        for plugOccurrence in hyperClock.getTerminalNetlistPlugOccurrences():
-            quadTree.attachToLeaf( plugOccurrence )
-        quadTree.rsplitNetlist()
+        with UpdateSession():
+            hyperClock = HyperNet.create( Occurrence(self.clockNet) )
+            for plugOccurrence in hyperClock.getTerminalNetlistPlugOccurrences():
+                quadTree.attachToLeaf( plugOccurrence )
+            quadTree.rsplitNetlist()
