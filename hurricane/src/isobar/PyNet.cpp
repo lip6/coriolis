@@ -23,6 +23,7 @@
 #include "hurricane/isobar/PySegmentCollection.h" 
 #include "hurricane/isobar/PyComponentCollection.h" 
 #include "hurricane/isobar/PyPinCollection.h" 
+#include "hurricane/isobar/PyRoutingPadCollection.h" 
 #include "hurricane/Cell.h"
 #include "hurricane/NetExternalComponents.h"
 using namespace Hurricane;
@@ -197,25 +198,39 @@ extern "C" {
   }
 
 
-  static PyObject* PyNet_getPins(PyNet *self) {
+  static PyObject* PyNet_getPins ( PyNet *self )
+  {
     cdebug_log(20,0) << "PyNet_getPins()" << endl;
 
     METHOD_HEAD ("Net.getPins()")
-
     PyPinCollection* pyPinCollection = NULL;
-
     HTRY
-    Pins* pins = new Pins(net->getPins());
-
-    pyPinCollection = PyObject_NEW(PyPinCollection, &PyTypePinCollection);
-    if (pyPinCollection == NULL) { 
-        return NULL;
-    }
-
-    pyPinCollection->_object = pins;
+      Pins* pins = new Pins( net->getPins() );
+      pyPinCollection = PyObject_NEW(PyPinCollection, &PyTypePinCollection);
+      if (pyPinCollection == NULL) { 
+          return NULL;
+      }
+      pyPinCollection->_object = pins;
     HCATCH
-    
     return (PyObject*)pyPinCollection;
+  }
+
+
+  static PyObject* PyNet_getRoutingPads ( PyNet *self )
+  {
+    cdebug_log(20,0) << "PyNet_getRoutingPads()" << endl;
+
+    METHOD_HEAD ("Net.getRoutingPads()")
+    PyRoutingPadCollection* pyRoutingPadCollection = NULL;
+    HTRY
+      RoutingPads* routingPads = new RoutingPads( net->getRoutingPads() );
+      pyRoutingPadCollection = PyObject_NEW(PyRoutingPadCollection, &PyTypeRoutingPadCollection);
+      if (pyRoutingPadCollection == NULL) { 
+          return NULL;
+      }
+      pyRoutingPadCollection->_object = routingPads;
+    HCATCH
+    return (PyObject*)pyRoutingPadCollection;
   }
   
 
@@ -451,6 +466,7 @@ extern "C" {
     , { "getExternalComponents", (PyCFunction)PyNet_getExternalComponents    , METH_NOARGS , "Returns the collection of net's external components. (only for an external net)" }
     , { "getPlugs"             , (PyCFunction)PyNet_getPlugs                 , METH_NOARGS , "Returns the collection of net's plugs." }
     , { "getPins"              , (PyCFunction)PyNet_getPins                  , METH_NOARGS , "Returns the collection of net's pins." }
+    , { "getRoutingPads"       , (PyCFunction)PyNet_getRoutingPads           , METH_NOARGS , "Returns the collection of net's RoutingPads." }
     , { "getSegments"          , (PyCFunction)PyNet_getSegments              , METH_NOARGS , "Returns the collection of net's segments." }
     , { "isGlobal"             , (PyCFunction)PyNet_isGlobal                 , METH_NOARGS , "return true if the net is global" }
     , { "isExternal"           , (PyCFunction)PyNet_isExternal               , METH_NOARGS , "return true if the the net is external." }

@@ -47,6 +47,7 @@
 #include "hurricane/isobar/PyPinPlacementStatus.h"
 #include "hurricane/isobar/PyPinDirection.h"
 #include "hurricane/isobar/PyPinCollection.h"
+#include "hurricane/isobar/PyRoutingPadCollection.h"
 #include "hurricane/isobar/PyPlacementStatus.h"
 #include "hurricane/isobar/PyInstance.h"
 #include "hurricane/isobar/PyInstanceCollection.h"
@@ -555,6 +556,7 @@ extern "C" {
     PyPinPlacementStatus_LinkPyType ();
     PyPinDirection_LinkPyType ();
     PyPinCollection_LinkPyType ();
+    PyRoutingPadCollection_LinkPyType ();
     PySegmentCollection_LinkPyType ();
     PyOccurrenceCollection_LinkPyType ();
     PyComponentCollection_LinkPyType ();
@@ -635,6 +637,8 @@ extern "C" {
     PYTYPE_READY( PinDirection                  )
     PYTYPE_READY( PinCollection                 )
     PYTYPE_READY( PinCollectionLocator          )
+    PYTYPE_READY( RoutingPadCollection          )
+    PYTYPE_READY( RoutingPadCollectionLocator   )
     PYTYPE_READY( SegmentCollection             )
     PYTYPE_READY( SegmentCollectionLocator      )
     PYTYPE_READY( ComponentCollection           ) 
@@ -723,6 +727,7 @@ extern "C" {
     __cs.addType( "hyperNet"   , &PyTypeHyperNet              , "<HyperNet>"              , false );
     __cs.addType( "pin"        , &PyTypePin                   , "<Pin>"                   , false, "contact" );
     __cs.addType( "pinCol"     , &PyTypePinCollection         , "<PinCollection>"         , false );
+    __cs.addType( "rpCol"      , &PyTypeRoutingPadCollection  , "<RoutingPadCollection>"  , false );
     __cs.addType( "plug"       , &PyTypePlug                  , "<Plug>"                  , false, "comp" );
     __cs.addType( "plugCol"    , &PyTypePlugCollection        , "<PlugCollection>"        , false );
     __cs.addType( "point"      , &PyTypePoint                 , "<Point>"                 , false );
@@ -772,7 +777,6 @@ extern "C" {
     PyModule_AddObject ( module, "Path"                 , (PyObject*)&PyTypePath );
     Py_INCREF ( &PyTypeOccurrence );
     PyModule_AddObject ( module, "Occurrence"           , (PyObject*)&PyTypeOccurrence );
-
     Py_INCREF ( &PyTypeDataBase );
     PyModule_AddObject ( module, "DataBase"             , (PyObject*)&PyTypeDataBase );
     Py_INCREF ( &PyTypeLibrary );
@@ -817,7 +821,6 @@ extern "C" {
     PyModule_AddObject ( module, "Query"                , (PyObject*)&PyTypeQuery );
     Py_INCREF ( &PyTypeReference );
     PyModule_AddObject ( module, "Reference"            , (PyObject*)&PyTypeReference );
-
     Py_INCREF ( &PyTypeHook );
     PyModule_AddObject ( module, "Hook"                 , (PyObject*)&PyTypeHook );
     Py_INCREF ( &PyTypeHookCollection );
@@ -844,7 +847,6 @@ extern "C" {
     PyModule_AddObject ( module, "Rectilinear"          , (PyObject*)&PyTypeRectilinear );
     Py_INCREF ( &PyTypePolygon );
     PyModule_AddObject ( module, "Polygon"              , (PyObject*)&PyTypePolygon );
-
     Py_INCREF( &PyTypeDeviceDescriptor );
     PyModule_AddObject( module, "DeviceDescriptor"      , (PyObject*)&PyTypeDeviceDescriptor );
     

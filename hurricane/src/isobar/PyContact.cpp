@@ -96,6 +96,22 @@ extern "C" {
 
     return PyContact_Link(contact);
   }
+ 
+
+  static PyObject* PyContact_getAnchor ( PyContact *self )
+  {
+    cdebug_log(20,0) << "PyContact_getAnchor ()" << endl;
+    METHOD_HEAD ( "Contact.getAnchor()" )
+    Component* anchor   = NULL;
+    PyObject*  pyAnchor = NULL;
+    HTRY
+      anchor = contact->getAnchor();
+      if (anchor) pyAnchor = PyEntity_NEW( anchor );
+      else
+        Py_RETURN_NONE;
+    HCATCH
+    return pyAnchor;
+  }
 
 
   static PyObject* PyContact_translate ( PyContact *self, PyObject* args ) {
@@ -123,25 +139,26 @@ extern "C" {
 
 
   PyMethodDef PyContact_Methods[] =
-    { { "create"         , (PyCFunction)PyContact_create         , METH_VARARGS|METH_STATIC
-                         , "Create a new Contact." }
-    , { "destroy"        , (PyCFunction)PyContact_destroy        , METH_NOARGS
-                         , "Destroy associated hurricane object, the python object remains." }
-    , { "getAnchorHook"  , (PyCFunction)PyContact_getAnchorHook  , METH_NOARGS , "Return the contact anchor hook." }
-    , { "getWidth"       , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
-    , { "getHalfWidth"   , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
-    , { "getHeight"      , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
-    , { "getHalfHeight"  , (PyCFunction)PyContact_getHalfHeight  , METH_NOARGS , "Return the contact half height." }
-    , { "getDx"          , (PyCFunction)PyContact_getDx          , METH_NOARGS , "Return the contact dx value." }
-    , { "getDy"          , (PyCFunction)PyContact_getDy          , METH_NOARGS , "Return the contact dy value." }
-    , { "translate"      , (PyCFunction)PyContact_translate      , METH_VARARGS, "Translates the Contact of dx and dy." }
-    , { "setX"           , (PyCFunction)PyContact_setX           , METH_VARARGS, "Sets the contact X value." }
-    , { "setY"           , (PyCFunction)PyContact_setY           , METH_VARARGS, "Sets the contact Y value." }
-    , { "setDx"          , (PyCFunction)PyContact_setDx          , METH_VARARGS, "Sets the contact dx value." }
-    , { "setDy"          , (PyCFunction)PyContact_setDy          , METH_VARARGS, "Sets the contact dy value." }
-    , { "setWidth"       , (PyCFunction)PyContact_setWidth       , METH_VARARGS, "Sets the contact width." }
-    , { "setHeight"      , (PyCFunction)PyContact_setHeight      , METH_VARARGS, "Sets the contact height." }
-    , {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "create"          , (PyCFunction)PyContact_create         , METH_VARARGS|METH_STATIC
+                          , "Create a new Contact." }
+    , { "destroy"         , (PyCFunction)PyContact_destroy        , METH_NOARGS
+                          , "Destroy associated hurricane object, the python object remains." }
+    , { "getAnchorHook"   , (PyCFunction)PyContact_getAnchorHook  , METH_NOARGS , "Return the contact anchor hook." }
+    , { "getAnchor"       , (PyCFunction)PyContact_getAnchor      , METH_NOARGS , "Return the contact anchor (component)." }
+    , { "getWidth"        , (PyCFunction)PyContact_getWidth       , METH_NOARGS , "Return the contact width." }
+    , { "getHalfWidth"    , (PyCFunction)PyContact_getHalfWidth   , METH_NOARGS , "Return the contact half width." }
+    , { "getHeight"       , (PyCFunction)PyContact_getHeight      , METH_NOARGS , "Return the contact height." }
+    , { "getHalfHeight"   , (PyCFunction)PyContact_getHalfHeight  , METH_NOARGS , "Return the contact half height." }
+    , { "getDx"           , (PyCFunction)PyContact_getDx          , METH_NOARGS , "Return the contact dx value." }
+    , { "getDy"           , (PyCFunction)PyContact_getDy          , METH_NOARGS , "Return the contact dy value." }
+    , { "translate"       , (PyCFunction)PyContact_translate      , METH_VARARGS, "Translates the Contact of dx and dy." }
+    , { "setX"            , (PyCFunction)PyContact_setX           , METH_VARARGS, "Sets the contact X value." }
+    , { "setY"            , (PyCFunction)PyContact_setY           , METH_VARARGS, "Sets the contact Y value." }
+    , { "setDx"           , (PyCFunction)PyContact_setDx          , METH_VARARGS, "Sets the contact dx value." }
+    , { "setDy"           , (PyCFunction)PyContact_setDy          , METH_VARARGS, "Sets the contact dy value." }
+    , { "setWidth"        , (PyCFunction)PyContact_setWidth       , METH_VARARGS, "Sets the contact width." }
+    , { "setHeight"       , (PyCFunction)PyContact_setHeight      , METH_VARARGS, "Sets the contact height." }
+    , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
 

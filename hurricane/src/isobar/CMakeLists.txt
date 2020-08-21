@@ -64,6 +64,7 @@
                                    PyReference.cpp
                                    PyReferenceCollection.cpp
                                    PyRoutingPad.cpp
+                                   PyRoutingPadCollection.cpp
                                    PySegment.cpp
                                    PySegmentCollection.cpp
                                    PyTechnology.cpp
@@ -140,6 +141,7 @@
                                    hurricane/isobar/PyReference.h
                                    hurricane/isobar/PyReferenceCollection.h
                                    hurricane/isobar/PyRoutingPad.h
+                                   hurricane/isobar/PyRoutingPadCollection.h
                                    hurricane/isobar/PySegment.h
                                    hurricane/isobar/PySegmentCollection.h
                                    hurricane/isobar/PyTechnology.h

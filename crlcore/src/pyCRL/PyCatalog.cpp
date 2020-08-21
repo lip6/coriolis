@@ -29,6 +29,8 @@ namespace  CRL {
   using std::hex;
   using std::ostringstream;
   using Hurricane::tab;
+  using Hurricane::Exception;
+  using Hurricane::Bug;
   using Hurricane::Error;
   using Hurricane::Warning;
   using Isobar::ProxyProperty;
@@ -56,17 +58,34 @@ extern "C" {
 // x=================================================================x
 
 #if defined(__PYTHON_MODULE__)
-
   
-  // Standart Accessors (Attributes).
 
-
-  // Standart Destroy (Attribute).
   // DBoDestroyAttribute(PyCatalog_destroy,PyCatalog)
 
 
+  static PyObject* PyCatalog_getState ( PyCatalog* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyCatalog_getState ()" << endl;
+
+    char*           name  = NULL;
+    Catalog::State* state = NULL;
+    HTRY
+      METHOD_HEAD("Catalog.getState()")
+      if ( not PyArg_ParseTuple(args,"s",&name) ) {
+        PyErr_SetString( ConstructorError, "Catalog.getState(): Invalid number or bad type of parameters.");
+        return NULL;
+      }
+      state = catalog->getState( Name(name) );
+    HCATCH
+    if (not state) Py_RETURN_FALSE;
+    return PyCatalogState_Link(state);
+  }
+
+
   PyMethodDef PyCatalog_Methods[] =
-    { {NULL, NULL, 0, NULL}           /* sentinel */
+    { { "getState"          , (PyCFunction)PyCatalog_getState, METH_VARARGS
+                            , "Gets the catalog state of a cell." }
+    , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
 
@@ -83,6 +102,7 @@ extern "C" {
 
   // Link/Creation Method.
   PyTypeObjectDefinitions(Catalog)
+  LinkCreateMethod(Catalog)
 
 
   extern  void  PyCatalog_postModuleInit ()

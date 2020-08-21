@@ -18,6 +18,7 @@
 #include "hurricane/isobar/PyLibrary.h"
 #include "hurricane/DataBase.h"
 #include "crlcore/PyEnvironment.h"
+#include "crlcore/PyCatalog.h"
 #include "crlcore/PyCellGauge.h"
 #include "crlcore/PyRoutingGauge.h"
 #include "crlcore/PyAllianceLibrary.h"
@@ -336,6 +337,19 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_getCatalog ( PyAllianceFramework* self )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_getCatalog ()" << endl;
+
+    Catalog* catalog = NULL;
+    HTRY
+      METHOD_HEAD("AllianceFramework.getCatalog()")
+      catalog = af->getCatalog();
+    HCATCH
+    return PyCatalog_Link(catalog);
+  }
+
+
   static PyObject* PyAllianceFramework_isInCatalog ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_isInCatalog ()" << endl;
@@ -555,6 +569,8 @@ extern "C" {
                                , "Gets the Alliance Framework." }                      
     , { "getEnvironment"       , (PyCFunction)PyAllianceFramework_getEnvironment       , METH_NOARGS
                                , "Gets the Alliance Environment." }
+    , { "getCatalog"           , (PyCFunction)PyAllianceFramework_getCatalog           , METH_NOARGS
+                               , "Gets the libraries composite catalog." }
     , { "bindLibraries"        , (PyCFunction)PyAllianceFramework_bindLibraries        , METH_NOARGS
                                , "Bind Alliance libraries to Hurricane one. This is a one-time only methods." }
     , { "getLibrary"           , (PyCFunction)PyAllianceFramework_getLibrary           , METH_VARARGS

@@ -156,6 +156,22 @@ extern "C" {
   // Link/Creation Method.
   PyTypeObjectDefinitions(CatalogState)
 
+    
+  PyObject* PyCatalogState_Link ( Catalog::State* object )
+  {
+    if (not object) Py_RETURN_NONE;
+    PyCatalogState* pyObject = NULL;
+    HTRY
+      pyObject = PyObject_NEW( PyCatalogState, &PyTypeCatalogState );
+      if (not pyObject) return NULL;
+
+      pyObject->_object = object;
+      cdebug_log(20,0) << "PyCatalogState_Link(" << (void*)pyObject << ") "
+                       << (void*)object << ":" << object << endl;
+    HCATCH
+    return (PyObject*)pyObject;
+  }
+
 
 #endif  // End of Shared Library Code Part.
 
