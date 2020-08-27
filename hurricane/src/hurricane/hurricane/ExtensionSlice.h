@@ -30,9 +30,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_EXTENSION_SLICE_H
-#define  HURRICANE_EXTENSION_SLICE_H
-
+#pragma  once
 #include "hurricane/Mask.h"
 #include "hurricane/Name.h"
 #include "hurricane/ExtensionSlices.h"
@@ -60,7 +58,7 @@ namespace Hurricane {
       inline  Mask                getMask        () const;
       inline  const Box&          getBoundingBox () const;
       inline  Gos                 getGos         () const;
-      inline  Gos                 getGosUnder    ( const Box& area ) const;
+      inline  Gos                 getGosUnder    ( const Box& area, DbU::Unit threshold=0 ) const;
       inline  QuadTree*           _getQuadTree   ();
     // Hurricane Managment.
               string              _getTypeName   () const;
@@ -93,12 +91,10 @@ namespace Hurricane {
   inline ExtensionSlice::Mask  ExtensionSlice::getMask        () const { return _mask; }
   inline const Box&            ExtensionSlice::getBoundingBox () const { return _quadTree.getBoundingBox(); }
   inline Gos                   ExtensionSlice::getGos         () const { return _quadTree.getGos(); }
-  inline Gos                   ExtensionSlice::getGosUnder    ( const Box& area ) const {return _quadTree.getGosUnder(area); }
+  inline Gos                   ExtensionSlice::getGosUnder    ( const Box& area, DbU::Unit threshold ) const {return _quadTree.getGosUnder(area,threshold); }
   inline QuadTree*             ExtensionSlice::_getQuadTree   () { return &_quadTree; }
 
 
 } // End of Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::ExtensionSlice);
-
-# endif // HURRICANE_EXTENSION_SLICE_H

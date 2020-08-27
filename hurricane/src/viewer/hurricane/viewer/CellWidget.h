@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_CELL_WIDGET_H
-#define  HURRICANE_CELL_WIDGET_H
-
+#pragma  once
 #include <math.h>
 #include <vector>
 #include <functional>
@@ -1470,6 +1468,3 @@ namespace Hurricane {
 
 GETSTRING_POINTER_SUPPORT(Hurricane::CellWidget);
 IOSTREAM_POINTER_SUPPORT(Hurricane::CellWidget);
-
-
-#endif  // HURRICANE_CELL_WIDGET

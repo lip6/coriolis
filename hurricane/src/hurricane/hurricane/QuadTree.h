@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_QUAD_TREE
-#define HURRICANE_QUAD_TREE
-
+#pragma  once
 #include "hurricane/Box.h"
 #include "hurricane/Gos.h"
 #include "hurricane/IntrusiveSet.h"
@@ -88,7 +86,7 @@ class QuadTree {
   //public: static size_t getLocatorAllocateds ();
     public: const Box& getBoundingBox() const;
     public: Gos getGos() const;
-    public: Gos getGosUnder(const Box& area) const;
+    public: Gos getGosUnder(const Box& area, DbU::Unit threshold=0) const;
 
 // Predicates
 // **********
@@ -128,9 +126,6 @@ class QuadTree {
 
 INSPECTOR_P_SUPPORT(Hurricane::QuadTree);
 INSPECTOR_P_SUPPORT(Hurricane::QuadTree::GoSet);
-
-
-#endif // HURRICANE_QUAD_TREE
 
 
 // ****************************************************************************************************

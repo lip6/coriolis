@@ -47,6 +47,7 @@ namespace Hurricane {
   //, _tab               ("  ")
     , _topCell           (NULL)
     , _topArea           ()
+    , _threshold         (0)
     , _topTransformation ()
     , _startLevel        (0)
     , _stopLevel         (std::numeric_limits<unsigned int>::max())
@@ -84,6 +85,7 @@ namespace Hurricane {
                         , const BasicLayer*     basicLayer
                         , ExtensionSlice::Mask  mask
                         , Mask                  filter
+                        , DbU::Unit             threshold
                         )
   {
     _basicLayer    = basicLayer;
@@ -93,62 +95,72 @@ namespace Hurricane {
     _stack.setTopCell           ( cell );
     _stack.setTopArea           ( area );
     _stack.setTopTransformation ( transformation );
+    _stack.setThreshold         ( threshold );
   }
 
 
   void  Query::doQuery ()
   {
-    if ( _stack.getTopArea().isEmpty() or not _stack.getTopCell() ) return;
+    if (_stack.getTopArea().isEmpty() or not _stack.getTopCell()) return;
     
-  //cerr << "Query::doQuery() - " << _stack.getTopCell() << " " << _stack.getTopArea() << " " << _basicLayer << endl;
+    // cerr << "Query::doQuery() - " << _stack.getTopCell()
+    //      << " " << _stack.getTopArea()
+    //      << " " << _basicLayer
+    //      << " threshold:" << DbU::getValueString(_stack.getThreshold())
+    //      << endl;
 
-    _stack.init ();
+    _stack.init();
 
-    while ( !_stack.empty() ) {
+    while ( not _stack.empty() ) {
     // Process the Components of the current instance.
-      if ( hasGoCallback() and _basicLayer and (_filter.isSet(DoComponents)) ) {
-      //if ( getInstance() )
-      //  cerr << getTab() << getInstance() << " " << getTransformation() << endl;
-      //else
-      //  cerr << "  TopCell: " << getMasterCell() << " " << getTransformation() << endl;
-
-        if ( not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)) ) {
-          forEach ( Slice*, islice, getMasterCell()->getSlices() ) {
-            if ( not (*islice)->getLayer()->contains(getBasicLayer()) ) continue;
-            if ( not (*islice)->getBoundingBox().intersect(getArea()) ) continue;
-
-            forEach ( Go*, igo, (*islice)->getGosUnder(_stack.getArea()) )
-              goCallback ( *igo );
-          }
-        }
-      }
-
-      if ( (not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)))
-         and _filter.isSet(DoMarkers) ) {
-        forEach ( Marker*, marker, getMasterCell()->getMarkersUnder(_stack.getArea()) )
-          markerCallback ( *marker );
-      }
-
-      if ( not getMasterCell()->isTerminal() and (_filter.isSet(DoRubbers)) ) {
-        forEach ( Rubber*, rubber, getMasterCell()->getRubbersUnder(_stack.getArea()) )
-          rubberCallback ( *rubber );
-      }
-
-      if ( hasExtensionGoCallback() and (_filter.isSet(DoExtensionGos)) ) {
-        if ( (not getMasterCell()->isTerminal()) or (_filter.isSet(DoTerminalCells)) ) {
-          forEach ( ExtensionSlice*, islice, getMasterCell()->getExtensionSlices() ) {
-            if ( not ( (*islice)->getMask() & _extensionMask ) ) continue;
-            if ( not (*islice)->getBoundingBox().intersect(getArea()) ) continue;
-
-            for ( Go* go : (*islice)->getGosUnder(_stack.getArea()) ) {
-              extensionGoCallback ( go );
+      Box ab = getMasterCell()->getAbutmentBox();
+      if (  (_stack.getThreshold() <= 0)
+         or (ab.getWidth () > _stack.getThreshold())
+         or (ab.getHeight() > _stack.getThreshold()) ) {
+        if (hasGoCallback() and _basicLayer and (_filter.isSet(DoComponents))) {
+        //if ( getInstance() )
+        //  cerr << getTab() << getInstance() << " " << getTransformation() << endl;
+        //else
+        //  cerr << "  TopCell: " << getMasterCell() << " " << getTransformation() << endl;
+        
+          if (not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells))) {
+            for ( Slice* slice : getMasterCell()->getSlices() ) {
+              if (not slice->getLayer()->contains(getBasicLayer())) continue;
+              if (not slice->getBoundingBox().intersect(getArea())) continue;
+        
+              for ( Go* go : slice->getGosUnder(_stack.getArea(),_stack.getThreshold()) )
+                goCallback( go );
             }
           }
         }
-      }
+        
+        if ( (not getMasterCell()->isTerminal() or (_filter.isSet(DoTerminalCells)))
+           and _filter.isSet(DoMarkers) ) {
+          for ( Marker* marker : getMasterCell()->getMarkersUnder(_stack.getArea()) )
+            markerCallback( marker );
+        }
+        
+        if ( not getMasterCell()->isTerminal() and (_filter.isSet(DoRubbers)) ) {
+          for ( Rubber* rubber : getMasterCell()->getRubbersUnder(_stack.getArea()) )
+            rubberCallback( rubber );
+        }
+        
+        if ( hasExtensionGoCallback() and (_filter.isSet(DoExtensionGos)) ) {
+          if ( (not getMasterCell()->isTerminal()) or (_filter.isSet(DoTerminalCells)) ) {
+            for ( ExtensionSlice* slice : getMasterCell()->getExtensionSlices() ) {
+              if ( not ( slice->getMask() & _extensionMask ) ) continue;
+              if ( not slice->getBoundingBox().intersect(getArea()) ) continue;
+        
+              for ( Go* go : slice->getGosUnder(_stack.getArea(),_stack.getThreshold()) ) {
+                extensionGoCallback( go );
+              }
+            }
+          }
+        }
 
-      if ( (_filter.isSet(DoMasterCells)) and hasMasterCellCallback() )
-        masterCellCallback ();
+        if ( (_filter.isSet(DoMasterCells)) and hasMasterCellCallback() )
+          masterCellCallback ();
+      }
 
       _stack.progress ();
     } // End of while.

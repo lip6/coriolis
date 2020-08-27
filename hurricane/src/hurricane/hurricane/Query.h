@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_QUERY_H
-#define  HURRICANE_QUERY_H
-
+#pragma  once
 #include <vector>
 #include "hurricane/Commons.h"
 #include "hurricane/Box.h"
@@ -118,6 +116,7 @@ namespace Hurricane {
       inline  Cell*                 getMasterCell        ();
       inline  Instance*             getInstance          ();
       inline  const Box&            getArea              () const;
+      inline  DbU::Unit             getThreshold         () const;
       inline  const Transformation& getTransformation    () const;
       inline  const Path&           getPath              () const;
     //inline  const Tabulation&     getTab               () const;
@@ -125,6 +124,7 @@ namespace Hurricane {
       inline  void                  setTopCell           ( Cell*                 cell );
       inline  void                  setTopArea           ( const Box&            area );
       inline  void                  setTopTransformation ( const Transformation& transformation );
+      inline  void                  setThreshold         ( DbU::Unit             threshold );
       inline  void                  setStartLevel        ( unsigned int          level );
       inline  void                  setStopLevel         ( unsigned int          level );
       inline  void                  init                 ();
@@ -140,6 +140,7 @@ namespace Hurricane {
     //        Tabulation            _tab;
               Cell*                 _topCell;
               Box                   _topArea;
+              DbU::Unit             _threshold;
               Transformation        _topTransformation;
               unsigned int          _startLevel;
               unsigned int          _stopLevel;
@@ -157,6 +158,7 @@ namespace Hurricane {
   inline  Cell*                 QueryStack::getTopCell           () { return _topCell; }
   inline  const Box&            QueryStack::getTopArea           () const { return _topArea; }
   inline  const Transformation& QueryStack::getTopTransformation () const { return _topTransformation; }
+  inline  DbU::Unit             QueryStack::getThreshold         () const { return _threshold; }
   inline  unsigned int          QueryStack::getStartLevel        () const { return _startLevel; }
   inline  unsigned int          QueryStack::getStopLevel         () const { return _stopLevel; }
   inline  const Box&            QueryStack::getArea              () const { return back()->_area; }
@@ -183,6 +185,7 @@ namespace Hurricane {
   inline  void  QueryStack::setTopCell           ( Cell*                 cell )           { _topCell = cell; }
   inline  void  QueryStack::setTopArea           ( const Box&            area )           { _topArea = area; }
   inline  void  QueryStack::setTopTransformation ( const Transformation& transformation ) { _topTransformation = transformation; }
+  inline  void  QueryStack::setThreshold         ( DbU::Unit             threshold )      { _threshold = threshold; }
   inline  void  QueryStack::setStartLevel        ( unsigned int          level )          { _startLevel = level; }
   inline  void  QueryStack::setStopLevel         ( unsigned int          level )          { _stopLevel = level; }
 
@@ -204,6 +207,8 @@ namespace Hurricane {
     QueryState* parent   = *(rbegin()+1);
     Instance*   instance = child->_locator->getElement();
 
+  //cerr << "Processing " << instance << endl;
+
     child->_area           = parent->_area;
     child->_transformation = instance->getTransformation ();
 
@@ -219,7 +224,9 @@ namespace Hurricane {
   {
     if ( size() > _stopLevel ) return false;
 
-    Locator<Instance*>* locator = getMasterCell()->getInstancesUnder(getArea()).getLocator();
+  //cerr << "QueryStack::levelDown(): t:" << DbU::getValueString(getThreshold()) << endl;
+    Locator<Instance*>* locator =
+      getMasterCell()->getInstancesUnder(getArea(),getThreshold()).getLocator();
 
     if ( locator->isValid() ) {
       push_back ( new QueryState ( locator ) );
@@ -231,6 +238,7 @@ namespace Hurricane {
     } else
       delete locator;
 
+  //cerr << "  Aborting level down" << endl;
     return false;
   }
 
@@ -314,6 +322,7 @@ namespace Hurricane {
       inline  size_t                getDepth               () const;
       inline  const Transformation& getTransformation      () const;
       inline  const Box&            getArea                () const;
+      inline  DbU::Unit             getThreshold           () const;
       inline  const BasicLayer*     getBasicLayer          () const;
       inline  Cell*                 getMasterCell          ();
       inline  Instance*             getInstance            ();
@@ -336,9 +345,11 @@ namespace Hurricane {
                                                            , const BasicLayer*     basicLayer
                                                            , ExtensionSlice::Mask  extensionMask
                                                            , Mask                  filter
+                                                           , DbU::Unit             threshold=0
                                                            );
       inline  void                  setCell                ( Cell*                 cell );
       inline  void                  setArea                ( const Box&            area );
+      inline  void                  setThreshold           ( DbU::Unit             threshold );
       inline  void                  setTransformation      ( const Transformation& transformation );
       virtual void                  setBasicLayer          ( const BasicLayer*     basicLayer );
       inline  void                  setExtensionMask       ( ExtensionSlice::Mask  mode );
@@ -360,6 +371,7 @@ namespace Hurricane {
 
   inline  void  Query::setCell           ( Cell*                 cell )           { _stack.setTopCell(cell); }
   inline  void  Query::setArea           ( const Box&            area )           { _stack.setTopArea(area); }
+  inline  void  Query::setThreshold      ( DbU::Unit             threshold )      { _stack.setThreshold(threshold); }
   inline  void  Query::setTransformation ( const Transformation& transformation ) { _stack.setTopTransformation(transformation); }
   inline  void  Query::setFilter         ( Mask                  filter )         { _filter = filter; }
   inline  void  Query::setExtensionMask  ( ExtensionSlice::Mask  mask )           { _extensionMask = mask; }
@@ -379,5 +391,3 @@ namespace Hurricane {
   
 
 } // Hurricane namespace.
-
-#endif // HURRICANE_QUERY_H

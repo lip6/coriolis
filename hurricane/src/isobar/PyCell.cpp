@@ -710,6 +710,20 @@ extern "C" {
   }
 
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_destroyPhysical ()"
+
+  static PyObject* PyCell_destroyPhysical ( PyCell *self )
+  {
+    cdebug_log(20,0) << "PyCell_destroyPhysical ()" << endl;
+    HTRY
+      METHOD_HEAD( "Cell.destroyPhysical()" )
+      cell->destroyPhysical();
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // Standart Predicates (Attributes).
   DirectGetBoolAttribute(PyCell_isTerminal       , isTerminal       ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isTerminalNetlist, isTerminalNetlist,PyCell,Cell)
@@ -766,8 +780,8 @@ extern "C" {
     , { "setRouted"           , (PyCFunction)PyCell_setRouted           , METH_VARARGS, "Sets the cell routed status." }
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
-    , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS
-                              , "Destroy associated hurricane object The python object remains." }
+    , { "destroyPhysical"     , (PyCFunction)PyCell_destroyPhysical     , METH_NOARGS , "Destroy all physical components, including DeepNets (vflatten)." }
+    , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
     };
 

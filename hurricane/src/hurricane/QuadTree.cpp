@@ -122,12 +122,13 @@ class QuadTree_GosUnder : public Collection<Go*> {
 
         private: const QuadTree* _quadTree;
         private: Box _area;
+        private: DbU::Unit _threshold;
         private: QuadTree* _currentQuadTree;
         private: GoLocator _goLocator;
       //private: static size_t _allocateds;
 
         public: Locator();
-        public: Locator(const QuadTree* quadTree, const Box& area);
+        public: Locator(const QuadTree* quadTree, const Box& area, DbU::Unit threshold);
         public: Locator(const Locator& locator);
       //public: ~Locator() { _allocateds--; }
 
@@ -150,12 +151,13 @@ class QuadTree_GosUnder : public Collection<Go*> {
 
     private: const QuadTree* _quadTree;
     private: Box _area;
+    private: DbU::Unit _threshold;
 
 // Constructors
 // ************
 
     public: QuadTree_GosUnder();
-    public: QuadTree_GosUnder(const QuadTree* quadTree, const Box& area);
+    public: QuadTree_GosUnder(const QuadTree* quadTree, const Box& area, DbU::Unit threshold);
     public: QuadTree_GosUnder(const QuadTree_GosUnder& gos);
 
 // Operators
@@ -251,10 +253,10 @@ Gos QuadTree::getGos() const
     return QuadTree_Gos(this);
 }
 
-Gos QuadTree::getGosUnder(const Box& area) const
-// *********************************************
+Gos QuadTree::getGosUnder(const Box& area, DbU::Unit threshold) const
+// ******************************************************************
 {
-    return QuadTree_GosUnder(this, area);
+  return QuadTree_GosUnder(this, area, threshold);
 }
 
 void QuadTree::insert(Go* go)
@@ -687,25 +689,28 @@ string QuadTree_Gos::Locator::_getString() const
 
 QuadTree_GosUnder::QuadTree_GosUnder()
 // ***********************************
-:     Inherit(),
+:   Inherit(),
     _quadTree(NULL),
-    _area()
+    _area(),
+    _threshold(0)
 {
 }
 
-QuadTree_GosUnder::QuadTree_GosUnder(const QuadTree* quadTree, const Box& area)
-// ****************************************************************************
-:     Inherit(),
+QuadTree_GosUnder::QuadTree_GosUnder(const QuadTree* quadTree, const Box& area, DbU::Unit threshold)
+// *************************************************************************************************
+:   Inherit(),
     _quadTree(quadTree),
-    _area(area)
+    _area(area),
+    _threshold(threshold)
 {
 }
 
 QuadTree_GosUnder::QuadTree_GosUnder(const QuadTree_GosUnder& gos)
 // ***************************************************************
-:     Inherit(),
+:   Inherit(),
     _quadTree(gos._quadTree),
-    _area(gos._area)
+    _area(gos._area),
+    _threshold(gos._threshold)
 {
 }
 
@@ -714,6 +719,7 @@ QuadTree_GosUnder& QuadTree_GosUnder::operator=(const QuadTree_GosUnder& gos)
 {
     _quadTree = gos._quadTree;
     _area = gos._area;
+    _threshold = gos._threshold;
     return *this;
 }
 
@@ -726,7 +732,7 @@ Collection<Go*>* QuadTree_GosUnder::getClone() const
 Locator<Go*>* QuadTree_GosUnder::getLocator() const
 // ************************************************
 {
-    return new Locator(_quadTree, _area);
+  return new Locator(_quadTree, _area, _threshold);
 }
 
 string QuadTree_GosUnder::_getString() const
@@ -736,6 +742,7 @@ string QuadTree_GosUnder::_getString() const
     if (_quadTree) {
         s += " " + getString(_quadTree);
         s += " " + getString(_area);
+        s += " t:" + DbU::getValueString(_threshold);
     }
     s += ">";
     return s;
@@ -752,23 +759,38 @@ QuadTree_GosUnder::Locator::Locator()
 :    Inherit(),
     _quadTree(NULL),
     _area(),
+    _threshold(0),
     _currentQuadTree(NULL),
     _goLocator()
 {
   //_allocateds++;
 }
 
-QuadTree_GosUnder::Locator::Locator(const QuadTree* quadTree, const Box& area)
-// ***************************************************************************
+QuadTree_GosUnder::Locator::Locator(const QuadTree* quadTree, const Box& area, DbU::Unit threshold)
+// ************************************************************************************************
 :    Inherit(),
     _quadTree(quadTree),
     _area(area),
+    _threshold(threshold),
     _currentQuadTree(NULL),
     _goLocator()
 {
     //_allocateds++;
-    if (_quadTree && !_area.isEmpty()) {
+    if (_quadTree and not _area.isEmpty()) {
         _currentQuadTree = _quadTree->_getFirstQuadTree(_area);
+        while ( true ) {
+          if (not _currentQuadTree) break;
+          if (   (_threshold <= 0)
+             or (   (_currentQuadTree->getBoundingBox().getWidth () > _threshold)
+                and (_currentQuadTree->getBoundingBox().getHeight() > _threshold)) )
+            break;
+          // cerr << "Pruning QuadTree:" << _currentQuadTree
+          //      << " _threshold:" << DbU::getValueString(_threshold)
+          //      << "(" << _threshold << ")" << endl;
+          _currentQuadTree = _currentQuadTree->_getNextQuadTree(_area);
+        }
+
+      //_currentQuadTree = _quadTree->_getFirstQuadTree(_area);
         if (_currentQuadTree) {
             _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
             if (!getElement()->getBoundingBox().intersect(_area)) progress();
@@ -781,6 +803,7 @@ QuadTree_GosUnder::Locator::Locator(const Locator& locator)
 :    Inherit(),
     _quadTree(locator._quadTree),
     _area(locator._area),
+    _threshold(locator._threshold),
     _currentQuadTree(locator._currentQuadTree),
     _goLocator(locator._goLocator)
 {
@@ -792,6 +815,7 @@ QuadTree_GosUnder::Locator& QuadTree_GosUnder::Locator::operator=(const Locator&
 {
     _quadTree = locator._quadTree;
     _area = locator._area;
+    _threshold = locator._threshold;
     _currentQuadTree = locator._currentQuadTree;
     _goLocator = locator._goLocator;
     return *this;
@@ -818,16 +842,27 @@ bool QuadTree_GosUnder::Locator::isValid() const
 void QuadTree_GosUnder::Locator::progress()
 // ****************************************
 {
-    if (isValid()) {
-        do {
-            _goLocator.progress();
-            if (!_goLocator.isValid()) {
-                _currentQuadTree = _currentQuadTree->_getNextQuadTree(_area);
-                if (_currentQuadTree)
-                    _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
-            }
-        } while (isValid() && !getElement()->getBoundingBox().intersect(_area));
-    }
+  if (isValid()) {
+    do {
+      _goLocator.progress();
+      if (not _goLocator.isValid()) {
+        while ( true ) {
+          _currentQuadTree = _currentQuadTree->_getNextQuadTree(_area);
+          if (not _currentQuadTree) break;
+          if (  (_threshold <= 0)
+             or (   (_currentQuadTree->getBoundingBox().getWidth () > _threshold)
+                and (_currentQuadTree->getBoundingBox().getHeight() > _threshold)) )
+            break;
+          // cerr << "Pruning QuadTree:" << _currentQuadTree
+          //      << " _threshold:" << DbU::getValueString(_threshold)
+          //      << "(" << _threshold << ")" << endl;
+        }
+
+        if (_currentQuadTree)
+          _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
+      }
+    } while (isValid() and not getElement()->getBoundingBox().intersect(_area));
+  }
 }
 
 string QuadTree_GosUnder::Locator::_getString() const

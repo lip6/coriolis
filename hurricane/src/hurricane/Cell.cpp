@@ -955,6 +955,50 @@ void Cell::createRoutingPadRings(uint64_t flags)
 }
 
 
+void Cell::destroyPhysical()
+// *************************
+{
+  cdebug_log(18,0) << "Cell::destroyPhysical()" << endl;
+
+  UpdateSession::open();
+  for ( Net* net : getNets() ) {
+    vector<Component*> removeds;
+    for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<RoutingPad*>(component)) removeds.push_back( component );
+    }
+    for ( Component* component : removeds ) component->destroy();
+  }
+
+  vector<DeepNet*> deepNets;
+  for ( Net* net : getNets() ) {
+    DeepNet* deepNet = dynamic_cast<DeepNet*>( net );
+    if (deepNet) deepNets.push_back( deepNet );
+  }
+  for ( DeepNet* deepNet : deepNets ) {
+    cerr << "Removing DeepNet:" << deepNet << endl;
+    deepNet->destroy();
+  }
+
+  for ( Net* net : getNets() ) {
+    vector<Component*> removeds;
+    for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<Plug   *>(component)) continue;
+      if (dynamic_cast<Contact*>(component)) removeds.push_back( component );
+    }
+    for ( Component* component : removeds ) component->destroy();
+  }
+
+  for ( Net* net : getNets() ) {
+    vector<Component*> removeds;
+    for ( Component* component : net->getComponents() ) {
+      if (dynamic_cast<Plug*>(component)) continue;
+      removeds.push_back( component );
+    }
+    for ( Component* component : removeds ) component->destroy();
+  }
+  UpdateSession::close();
+}
+
 Cell* Cell::getCloneMaster() const
 // *******************************
 {

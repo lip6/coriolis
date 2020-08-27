@@ -420,7 +420,7 @@ class Cell : public Entity {
     public: Instances getFixedInstances() const;
     public: Instances getUnplacedInstances() const;
     public: Instances getNotUnplacedInstances() const;
-    public: Instances getInstancesUnder(const Box& area) const;
+    public: Instances getInstancesUnder(const Box& area, DbU::Unit threshold=0) const;
     public: Instances getPlacedInstancesUnder(const Box& area) const;
     public: Instances getFixedInstancesUnder(const Box& area) const;
     public: Instances getUnplacedInstancesUnder(const Box& area) const;
@@ -518,8 +518,8 @@ class Cell : public Entity {
     public: void uniquify(unsigned int depth=std::numeric_limits<unsigned int>::max());
     public: void addObserver(BaseObserver*);
     public: void removeObserver(BaseObserver*);
-    public: void notify(unsigned flags);
-
+    public: void notify(unsigned flags);  
+    public: void destroyPhysical();
 };
 
 

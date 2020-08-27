@@ -1348,12 +1348,16 @@ namespace Hurricane {
       if (getCell()) {
         Box redrawBox = screenToDbuBox( redrawArea );
 
+      //cerr << "redrawBox:" << redrawBox << endl;
+      //cerr << "Threshold:" << DbU::getValueString(screenToDbuLength(20)) << endl;
+
         _drawingQuery.resetGoCount         ();
         _drawingQuery.resetExtensionGoCount();
         _drawingQuery.resetInstanceCount   ();
         _drawingQuery.setExtensionMask     ( 0 );
         _drawingQuery.setArea              ( redrawBox );
         _drawingQuery.setTransformation    ( Transformation() );
+        _drawingQuery.setThreshold         ( screenToDbuLength(20) );
 
         for ( BasicLayer* layer : _technology->getBasicLayers() ) {
           _drawingPlanes.setPen  ( Graphics::getPen  (layer->getName(),getDarkening()) );

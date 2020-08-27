@@ -1722,11 +1722,13 @@ class Cell_SubCells : public Collection<Cell*> {
 // Cell further definition
 // ****************************************************************************************************
 
-Instances Cell::getInstancesUnder(const Box& area) const
-// *****************************************************
+Instances Cell::getInstancesUnder(const Box& area, DbU::Unit threshold) const
+// **************************************************************************
 {
-    // return _quadTree.getGosUnder(area).getSubSet<Instance*>();
-    return SubTypeCollection<Go*, Instance*>(_quadTree->getGosUnder(area));
+// return _quadTree.getGosUnder(area).getSubSet<Instance*>();
+//cerr << "Cell::getInstancesUnder(): t:" << DbU::getValueString(threshold)
+//     << " " << this << endl;
+  return SubTypeCollection<Go*, Instance*>(_quadTree->getGosUnder(area,threshold));
 }
 
 Instances Cell::getSlaveInstances() const
