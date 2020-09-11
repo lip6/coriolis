@@ -14,7 +14,9 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyCell.h"
+#include "hurricane/isobar/PyOccurrence.h"
 #include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/viewer/CellWidget.h"
 
@@ -233,15 +235,85 @@ extern "C" {
   }
 
 
+  static PyObject* PyCellViewer_select ( PyCellViewer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCellViewer_select()" << endl;
+    HTRY
+      METHOD_HEAD("CellViewer.select()")
+      PyObject* pyOccurrence = NULL;
+      if (not PyArg_ParseTuple(args,"O:CellViewer.select()", &pyOccurrence)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.select(): Takes exactly one argument." );
+        return NULL;
+      }
+      if (not IsPyOccurrence(pyOccurrence)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.select(): Argument is not an Occurrence." );
+        return NULL;
+      }
+      cw->select( *(PYOCCURRENCE_O(pyOccurrence)) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyCellViewer_unselect ( PyCellViewer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCellViewer_unselect()" << endl;
+    HTRY
+      METHOD_HEAD("CellViewer.unselect()")
+      PyObject* pyOccurrence = NULL;
+      if (not PyArg_ParseTuple(args,"O:CellViewer.unselect()", &pyOccurrence)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.unselect(): Takes exactly one argument." );
+        return NULL;
+      }
+      if (not IsPyOccurrence(pyOccurrence)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.unselect(): Argument is not an Occurrence." );
+        return NULL;
+      }
+      cw->unselect( *(PYOCCURRENCE_O(pyOccurrence)) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyCellViewer_unselectAll ( PyCellViewer* self )
+  {
+    cdebug_log(20,0) << "PyCellViewer_unselectAll()" << endl;
+    HTRY
+      METHOD_HEAD("CellViewer.unselectAll()")
+      cw->unselectAll();
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
+  static PyObject* PyCellViewer_reframe ( PyCellViewer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCellViewer_reframe ()" << endl;
+    HTRY
+      METHOD_HEAD("CellViewer.reframe()")
+      PyObject* pyBox         = NULL;
+      PyObject* historyEnable = NULL;
+      if (not PyArg_ParseTuple(args,"OO:CellViewer.reframe()", &pyBox, &historyEnable)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.reframe(): Takes exactly two argument." );
+        return NULL;
+      }
+      if (not IsPyBox(pyBox)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.reframe(): First argument is not a Box." );
+        return NULL;
+      }
+      cw->reframe ( *(PYBOX_O(pyBox)), (PyObject_IsTrue(historyEnable) != 0) );
+      HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyCellViewer_fit ( PyCellViewer* self )
   {
     cdebug_log(20,0) << "PyCellViewer_fit()" << endl;
-
     HTRY
-    METHOD_HEAD("CellViewer.fit()")
-    cw->getCellWidget()->fitToContents();
+      METHOD_HEAD("CellViewer.fit()")
+      cw->getCellWidget()->fitToContents();
     HCATCH
-
     Py_RETURN_NONE;
   }
 
@@ -276,42 +348,53 @@ extern "C" {
   }
 
 
-  DirectSetBoolAttribute(PyCellViewer_setShowSelection,setShowSelection,PyCellViewer,CellViewer)
+  DirectSetBoolAttribute(PyCellViewer_setShowSelection      ,setShowSelection      ,PyCellViewer,CellViewer)
+  DirectSetBoolAttribute(PyCellViewer_setCumulativeSelection,setCumulativeSelection,PyCellViewer,CellViewer)
 
 
   // ---------------------------------------------------------------
   // PyCellViewer Attribute Method table.
 
   PyMethodDef PyCellViewer_Methods[] =
-    { { "hasMenu"             , (PyCFunction)PyCellViewer_hasMenu             , METH_VARARGS
-                              , "Return true if the menu at \"path\" exists." }
-    , { "hasMenuAction"       , (PyCFunction)PyCellViewer_hasMenuAction       , METH_VARARGS
-                              , "Return true if the menu action at \"path\" exists." }
-    , { "addMenu"             , (PyCFunction)PyCellViewer_addMenu             , METH_VARARGS
-                              , "Create a new menu at \"path\" and returns true if success." }
-    , { "addToMenu"           , (PyCFunction)PyCellViewer_addToMenu           , METH_VARARGS
-                              , "Creates a new action at \"path\" and returns true if success." }
-    , { "getCell"             , (PyCFunction)PyCellViewer_getCell             , METH_NOARGS
-                              , "Return the currently edited Cell." }
-    , { "setCell"             , (PyCFunction)PyCellViewer_setCell             , METH_VARARGS
-                              , "Load a Cell into the viewer." }
-    , { "setApplicationName"  , (PyCFunction)PyCellViewer_setApplicationName  , METH_VARARGS
-                              , "Sets the application (binary) name." }
-    , { "setAnonNetSelectable", (PyCFunction)PyCellViewer_setAnonNetSelectable, METH_VARARGS
-                              , "Allow/disallow anonymous nets to be selectables." }
-    , { "setLayerVisible"     , (PyCFunction)PyCellViewer_setLayerVisible     , METH_VARARGS
-                              , "Sets the visibility state of the layer <name>." }
-    , { "setShowSelection"    , (PyCFunction)PyCellViewer_setShowSelection    , METH_VARARGS
-                              , "Display/hide the selection." }
-    , { "fit"                 , (PyCFunction)PyCellViewer_fit                 , METH_NOARGS
-                              , "Triggers a full redraw of the visible area." }
-    , { "refresh"             , (PyCFunction)PyCellViewer_refresh             , METH_NOARGS
-                              , "Fit the contents to the viewer's visible area." }
-    , { "removeHistory"       , (PyCFunction)PyCellViewer_removeHistory       , METH_VARARGS
-                              , "Remove a Cell from the viewer's history." }
-    , { "destroy"             , (PyCFunction)PyCellViewer_destroy             , METH_NOARGS
-                              , "Destroy the associated hurricane object. The python object remains." }
-    , {NULL, NULL, 0, NULL}   /* sentinel */
+    { { "hasMenu"               , (PyCFunction)PyCellViewer_hasMenu               , METH_VARARGS
+                                , "Return true if the menu at \"path\" exists." }
+    , { "hasMenuAction"         , (PyCFunction)PyCellViewer_hasMenuAction         , METH_VARARGS
+                                , "Return true if the menu action at \"path\" exists." }
+    , { "addMenu"               , (PyCFunction)PyCellViewer_addMenu               , METH_VARARGS
+                                , "Create a new menu at \"path\" and returns true if success." }
+    , { "addToMenu"             , (PyCFunction)PyCellViewer_addToMenu             , METH_VARARGS
+                                , "Creates a new action at \"path\" and returns true if success." }
+    , { "getCell"               , (PyCFunction)PyCellViewer_getCell               , METH_NOARGS
+                                , "Return the currently edited Cell." }
+    , { "setCell"               , (PyCFunction)PyCellViewer_setCell               , METH_VARARGS
+                                , "Load a Cell into the viewer." }
+    , { "setApplicationName"    , (PyCFunction)PyCellViewer_setApplicationName    , METH_VARARGS
+                                , "Sets the application (binary) name." }
+    , { "setAnonNetSelectable"  , (PyCFunction)PyCellViewer_setAnonNetSelectable  , METH_VARARGS
+                                , "Allow/disallow anonymous nets to be selectables." }
+    , { "setLayerVisible"       , (PyCFunction)PyCellViewer_setLayerVisible       , METH_VARARGS
+                                , "Sets the visibility state of the layer <name>." }
+    , { "setShowSelection"      , (PyCFunction)PyCellViewer_setShowSelection      , METH_VARARGS
+                                , "Display/hide the selection." }
+    , { "setCumulativeSelection", (PyCFunction)PyCellViewer_setCumulativeSelection, METH_VARARGS
+                                , "Make the selection cumulative." }
+    , { "select"                , (PyCFunction)PyCellViewer_select                , METH_VARARGS
+                                , "Add an occurrence to the selected set." }      
+    , { "unselect"              , (PyCFunction)PyCellViewer_unselect              , METH_VARARGS
+                                , "Add an occurrence to the selected set." }      
+    , { "unselectAll"           , (PyCFunction)PyCellViewer_unselectAll           , METH_NOARGS
+                                , "Clear the selected set." }                     
+    , { "reframe"               , (PyCFunction)PyCellViewer_reframe               , METH_VARARGS
+                                , "Zoom toward the given area." }
+    , { "fit"                   , (PyCFunction)PyCellViewer_fit                   , METH_NOARGS
+                                , "Triggers a full redraw of the visible area." }
+    , { "refresh"               , (PyCFunction)PyCellViewer_refresh               , METH_NOARGS
+                                , "Fit the contents to the viewer's visible area  ." }
+    , { "removeHistory"         , (PyCFunction)PyCellViewer_removeHistory         , METH_VARARGS
+                                , "Remove a Cell from the viewer's history." }
+    , { "destroy"               , (PyCFunction)PyCellViewer_destroy               , METH_NOARGS
+                                , "Destroy the associated hurricane object. The python object remains." }
+    , {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
 

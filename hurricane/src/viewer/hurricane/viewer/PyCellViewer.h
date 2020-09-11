@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  PY_HURRICANE_CELL_VIEWER_H
-#define  PY_HURRICANE_CELL_VIEWER_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/viewer/CellViewer.h"
 
@@ -56,6 +54,3 @@ extern "C" {
 
 
 }  // End of Isobar namespace.
-
-
-#endif  // PY_HURRICANE_CELL_VIEWER_H

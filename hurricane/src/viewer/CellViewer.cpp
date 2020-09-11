@@ -838,6 +838,10 @@ namespace Hurricane {
   { if ( _cellWidget ) _cellWidget->unselectAll(); }
 
 
+  void  CellViewer::reframe ( const Box& area, bool historyEnable )
+  { if ( _cellWidget ) _cellWidget->reframe( area, historyEnable ); }
+
+
   void  CellViewer::printDisplay ()
   {
     if ( !_cellWidget ) return;

@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  PY_OCCURRENCE_H
-#define  PY_OCCURRENCE_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/Occurrence.h"
 
@@ -51,5 +49,3 @@ namespace  Isobar {
   }  // extern "C".
 
 }  // Isobar namespace.
-
-#endif  // PY_OCCURRENCE_H
