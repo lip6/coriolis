@@ -76,9 +76,8 @@ void Pin::_postCreate()
 void Pin::_preDestroy()
 // *********************
 {
-    Inherit::_preDestroy();
-
-    getCell()->_getPinMap()._remove(this);
+  Inherit::_preDestroy();
+  getCell()->_getPinMap()._remove(this);
 }
 
 string Pin::_getString() const

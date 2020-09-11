@@ -319,11 +319,16 @@ namespace Hurricane {
     Net*       net       = component->getNet();
     Path       path      = _occurrence.getPath();
 
-    if (path.isEmpty())
-      throw Error( "RoutingPad::getPlugOccurrence(): Empty Path, *not* in an instance for\n"
-                   "        %s"
-                 , getString(this).c_str()
-                 );
+    if (path.isEmpty()) {
+      Pin* pin = dynamic_cast<Pin*>( component );
+      if (not pin)
+        throw Error( "RoutingPad::getPlugOccurrence(): Empty Path, *not* in an instance for\n"
+                     "        %s"
+                   , getString(this).c_str()
+                   );
+
+      return Occurrence(pin,Path());
+    }
 
     Instance* instance = path.getTailInstance();
     Plug*     plug     = instance->getPlug(net);
