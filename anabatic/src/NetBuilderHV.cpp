@@ -891,8 +891,13 @@ namespace Anabatic {
         setBothCornerContacts( htee1 );
       }
     } else {
+      AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoContact* turn2 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoSegment::create( rpSourceContact, turn1, Flags::Vertical );
+      AutoSegment::create( turn1, turn2, Flags::Horizontal );
+
       AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
-      AutoSegment::create( rpSourceContact, vtee1, Flags::Vertical );
+      AutoSegment::create( turn2, vtee1, Flags::Vertical );
 
       AutoContact* vtee2 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoSegment::create( vtee1, vtee2, Flags::Vertical );
@@ -1105,13 +1110,13 @@ namespace Anabatic {
       setBothCornerContacts( htee2 );
     } else {
       cdebug_log(145,0) << "Case bend." << endl;
-      AutoContact* vtee1 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
+      AutoContact* vtee1 = AutoContactVTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoContact* turn1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
 
       AutoSegment::create( pinM2Contact, vtee1, Flags::Horizontal );
       AutoSegment::create( rpM1Contact , vtee1, Flags::Vertical   );
-      AutoSegment::create( vtee1       , turn1, Flags::Horizontal );
+      AutoSegment::create( vtee1       , turn1, Flags::Vertical   );
       AutoSegment::create( turn1       , htee2, Flags::Horizontal );
       setBothCornerContacts( htee2 );
     }
