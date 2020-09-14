@@ -51,6 +51,7 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/spares.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/block.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/clocktree.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns.py
                   )
          
           install ( FILES    ${pySources}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )

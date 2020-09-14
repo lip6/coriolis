@@ -17,6 +17,7 @@ from __future__ import print_function
 from Hurricane  import Breakpoint
 from Hurricane  import Box
 from Hurricane  import Vertical
+from Hurricane  import RoutingPad
 
 
 def breakpoint ( editor, level, message ):
@@ -81,3 +82,17 @@ def showNet ( cell, netName ):
     for component in net.getComponents():
         print( '| {} bb:{}'.format(component, component.getBoundingBox()) ) 
     return
+
+
+def hpathToName ( path ):
+    """
+    Translate a hierarchical path into a string. This function is to be used
+    when a flattend name is required. Should be VHDL compliant.
+    """
+    s = ''
+    while not path.isEmpty():
+        head = path.getHeadInstance()
+        path = path.getTailPath()
+        if len(s): s += '_'
+        s += head.getName()
+    return s

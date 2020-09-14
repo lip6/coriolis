@@ -59,9 +59,24 @@ class ClockTree ( object ):
         self.spares     = spares
         self.clockNet   = clockNet
         self.clockIndex = index
+        self.subNets    = []
         if not self.clockNet.isClock():
             print( WarningMessage( 'ClockTree.__init__(): Net "{}" is not of CLOCK type.' \
                                    .format(self.clockNet.getName()) ))
+
+    def destroy ( self ):
+        trace( 550, ',+', '\tClockTree.destroy() "{}"\n'.format(self.clockNet.getName()) )
+        with UpdateSession():
+            for subNet in self.subNets + [ self.clockNet ]:
+                components = []
+                for comp in subNet.getComponents():
+                    if isinstance(comp,RoutingPad): components.append( comp )
+                    if isinstance(comp,Pin       ): components.append( comp )
+                for comp in components:
+                    comp.destroy()
+                if subNet != self.clockNet:
+                    subNet.destroy()
+        trace( 550, '-' )
 
     def _rconnectHTree ( self, qt ):
         if qt.isLeaf(): return False
@@ -85,6 +100,7 @@ class ClockTree ( object ):
         gaugeConf  = self.spares.state.gaugeConf
         bufferConf = self.spares.state.bufferConf
         ckNet      = qt.bOutputPlug.getNet()
+        self.subNets.append( ckNet )
         
         leftSourceContact  = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
         rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
@@ -175,7 +191,7 @@ class ClockTree ( object ):
         """
         quadTree           = self.spares.quadTree
         quadTree.bufferTag = self.clockNet.getName()
-
+        quadTree.rselectBuffer( self.clockIndex, self.clockIndex, 0 )
         with UpdateSession():
             hyperClock = HyperNet.create( Occurrence(self.clockNet) )
             for plugOccurrence in hyperClock.getTerminalNetlistPlugOccurrences():

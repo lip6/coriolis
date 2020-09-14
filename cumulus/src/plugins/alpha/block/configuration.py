@@ -415,6 +415,9 @@ class BufferInterface ( object ):
         self.count += 1
         return instance
 
+    def resetBufferCount ( self ):
+        self.count = 0
+
 
 # ----------------------------------------------------------------------------
 # Class  :  "configuration.IoPin".
@@ -636,3 +639,6 @@ class BlockState ( object ):
     def getIoPinsCounts ( self, net ):
         if not self.ioPinsCounts.has_key(net): return 0
         return self.ioPinsCounts[net]
+
+    def resetBufferCount ( self ):
+        self.bufferConf.resetBufferCount()

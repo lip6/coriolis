@@ -50,6 +50,7 @@ import plugins.rsave
 from   plugins                   import getParameter
 from   alpha.block.spares        import Spares
 from   alpha.block.clocktree     import ClockTree
+from   alpha.block.hfns          import BufferTree
 from   alpha.block.configuration import IoPin
 from   alpha.block.configuration import BlockState
 
@@ -77,6 +78,13 @@ class Side ( object ):
         elif self.side & IoPin.EAST:  return Pin.Direction.EAST
         elif self.side & IoPin.SOUTH: return Pin.Direction.SOUTH
         else:                         return Pin.Direction.NORTH
+
+    def destroy ( self ):
+       #with UpdateSession():
+       #    for pinsAtPos in self.pins.values():
+       #        for pin in pinsAtPos:
+       #            pin.destroy()
+        self.pins = {}
 
     def setupAb ( self ):
         """
@@ -307,6 +315,7 @@ class Block ( object ):
         self.state          = state
         self.spares         = Spares( self )
         self.clockTrees     = []
+        self.hfnTrees       = []
         self.blockInstances = []
         self.sides          = { IoPin.WEST  : Side( self, IoPin.WEST  )
                               , IoPin.EAST  : Side( self, IoPin.EAST  )
@@ -376,7 +385,7 @@ class Block ( object ):
 
     def addClockTrees ( self ):
         """Create the trunk of all the clock trees (recursive H-Tree)."""
-        print( '  o  Buildding clock tree(s).' )
+        print( '  o  Building clock tree(s).' )
         af = CRL.AllianceFramework.get()
         clockNets = []
         for net in self.state.cell.getNets():
@@ -401,6 +410,35 @@ class Block ( object ):
         """
         for clockTree in self.clockTrees:
             clockTree.splitClock()
+
+    def findHfnTrees ( self ):
+        """Create the trunk of all the high fanout nets."""
+        print( '  o  Building high fanout nets trees.' )
+        if self.spares:
+            with UpdateSession():
+                for net in self.state.cell.getNets():
+                    sinksCount = 0
+                    for rp in net.getRoutingPads(): sinksCount += 1
+                    if sinksCount > 30:
+                        trace( 550, '\tBlock.addHfnTrees(): Found high fanout net "{}" ({} sinks).\n' \
+                                    .format(net.getName(),sinksCount) )
+                       #if not net.getName().startswith('alu_m_muls_b(1)'): continue
+                       #if not net.getName().startswith('abc_75177_new_n12236'): continue
+                        sys.stderr.flush()
+                        print( '     - "{}", {} sinks.'.format(net.getName(),sinksCount) )
+                        sys.stdout.flush()
+                        self.hfnTrees.append( BufferTree( self.spares, net ) )
+                        self.hfnTrees[-1].buildBTree()
+                        self.hfnTrees[-1].rcreateBuffer()
+                        self.hfnTrees[-1].splitNet()
+                self.spares.rshowPoolUse()
+        else:
+            print( '     (No spares buffers, disabled)' )
+        return len(self.hfnTrees)
+
+    def addHfnBuffers ( self ):
+        for hfnTree in self.hfnTrees:
+            hfnTree.rcreateBuffer()
 
     def placeIoPins ( self ):
         """
@@ -510,14 +548,21 @@ class Block ( object ):
                 blockInstance.block.build()
         if editor: editor.setCell( self.state.cell )
         self.state.cfg.apply()
-        self.setupAb()
-        self.placeIoPins()
-        self.checkIoPins()
-        self.spares.build()
-        if editor: editor.fit()
-        if self.state.useClockTree: self.addClockTrees()
-       #Breakpoint.stop( 0, 'Clock tree(s) done.' )
-        self.place()
+        iteration = -1
+        while True:
+            iteration += 1
+            if iteration > 0: break
+            self.setupAb()
+            self.placeIoPins()
+            self.checkIoPins()
+            self.spares.build()
+            if self.state.useClockTree: self.addClockTrees()
+            self.addHfnBuffers()
+            if editor: editor.fit()
+           #Breakpoint.stop( 0, 'Clock tree(s) done.' )
+            self.place()
+            self.findHfnTrees()
+            break
         if self.state.useClockTree: self.splitClocks()
         status = self.route()
         self.addBlockages()

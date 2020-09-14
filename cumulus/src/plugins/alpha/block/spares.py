@@ -16,6 +16,7 @@
 import sys
 import os.path
 import Cfg
+from   operator  import itemgetter
 from   Hurricane import Breakpoint
 from   Hurricane import DbU
 from   Hurricane import Box
@@ -59,6 +60,7 @@ class BufferPool ( object ):
         self.quadTree      = quadTree
         self.columns       = quadTree.spares.state.bColumns
         self.rows          = quadTree.spares.state.bRows
+        self.area          = Box()
         self.buffers       = []
         self.selectedIndex = None
         for i in range(self.rows*self.columns):
@@ -119,10 +121,24 @@ class BufferPool ( object ):
             selectedBuffer[0] |= Spares.USED
 
     def selectFree ( self ):
-        """Select the first free buffer available."""
+        """
+        Select the first free buffer available. Marks the buffer as used
+        and return it's instance. If all buffer in the pool are taken,
+        return ``None``.
+        """
         for i in range(self.rows*self.columns):
             if not (self.buffers[i][0] & Spares.USED):
                 self._select( i, Spares.MARK_USED )
+                trace( 550, '\tUse buffer from pool {}\n'.format(self.quadTree) )
+                return self.buffers[i][1]
+        return None
+
+    def hasFree ( self ):
+        """Tells if the pool has a free buffer available."""
+        for i in range(self.rows*self.columns):
+            if not (self.buffers[i][0] & Spares.USED):
+                return True
+        return False
 
     def _createBuffers ( self ):
         """Create the matrix of instances buffer."""
@@ -152,8 +168,30 @@ class BufferPool ( object ):
                 instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
                 self.buffers[ index ][1] = instance 
                 trace( 550, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
+        blBufAb   = self.buffers[ 0][1].getAbutmentBox()
+        trBufAb   = self.buffers[-1][1].getAbutmentBox()
+        self.area = Box( blBufAb.getXMin(), blBufAb.getYMin()
+                       , trBufAb.getXMax(), trBufAb.getYMax() )
         trace( 550, '-' )
-        
+
+    def _destroyBuffers ( self ):
+        """Destroy all the buffer instances of the pool."""
+        for flags, buffer in self.buffers:
+            buffer.destroy()
+
+    def showUse ( self, depth ):
+        """Display the pool occupancy."""
+        count = 0
+        for i in range(self.rows*self.columns):
+            if self.buffers[i][0] & Spares.USED:
+                count += 1
+       #header = '| ' if self.quadTree.isLeaf() else '+ '
+       #print( '     {}{}Pool {}, usage:{}/{}.'.format( '  '*depth
+       #                                              , header
+       #                                              , self.quadTree
+       #                                              , count
+       #                                              , self.rows*self.columns) )
+        return count, self.rows*self.columns
 
 
 # ----------------------------------------------------------------------------
@@ -179,6 +217,7 @@ class QuadTree ( object ):
         self.xcut      = None
         self.ycut      = None
         self.parent    = parent
+        self.depth     = parent.depth+1 if parent else 0
         self.bl        = None
         self.br        = None
         self.tl        = None
@@ -192,6 +231,13 @@ class QuadTree ( object ):
         else:
             self.rtag = rtag
 
+    def destroy ( self ):
+        if self.bl: self.bl.destroy()
+        if self.br: self.br.destroy()
+        if self.tl: self.tl.destroy()
+        if self.tr: self.tr.destroy()
+        self.pool._destroyBuffers()
+
     def __str__ ( self ):
         s = '<QuadTree [{},{} {},{}] "{}">'.format( DbU.getValueString(self.area.getXMin())
                                                   , DbU.getValueString(self.area.getYMin())
@@ -199,6 +245,27 @@ class QuadTree ( object ):
                                                   , DbU.getValueString(self.area.getYMax())
                                                   , self.rtag )
         return s
+
+    def __eq__ ( self, other ):
+        return self.rtag == other.rtag
+
+    def rshowPoolUse ( self ):
+        rused  = 0
+        rtotal = 0
+        if not self.depth:
+            print( '  o  Detailed use of spare buffers.' )
+        used, total = self.pool.showUse( self.depth )
+        rused  += used
+        rtotal += total
+        for leaf in self.leafs:
+            used, total = leaf.rshowPoolUse()
+            rused  += used
+            rtotal += total
+        if not self.depth:
+            if rtotal:
+                print( '     - Useds: {}, total: {} ({:.1%}).' \
+                       .format(rused,rtotal,float(rused)/float(rtotal)) )
+        return rused, rtotal
 
     @property
     def leafs ( self ):
@@ -225,6 +292,20 @@ class QuadTree ( object ):
             if leaf is not None: return False
         return True
 
+    def getParentAt ( self, depth ):
+        """
+        Return the parent at the given ``depth``. The depth increase starting
+        from the root which is labeled 0. So requesting the parent at a depth
+        superior to the one of the node is an error...
+        """
+        if self.depth <= depth:
+            raise ErrorMessage( 2, 'QuadTree.getParentAt(): Parent depth must be lower than current depth ({} vs. {})' \
+                                   .format(depth,self.depth) )
+        parent = self.parent
+        while parent.depth > depth:
+            parent = parent.parent
+        return parent
+
     @property
     def buffer ( self ):
         """The the currently selected buffer instance in the pool."""
@@ -249,6 +330,13 @@ class QuadTree ( object ):
         """Returns the coordinate of the pitch immediately inferior to X."""
         modulo = (x - self.area.getXMin()) % self.spares.state.gaugeConf.sliceStep 
         return x - modulo
+
+    def selectFree ( self ):
+        """
+        Returns the first free buffer *instance* in the pool or None if
+        there isn't any left.
+        """
+        return self.pool.selectFree()
 
     def connectBuffer ( self, doLeaf=False ):
         """
@@ -392,7 +480,7 @@ class QuadTree ( object ):
         trace( 550, '-' )
 
     def getLeafUnder ( self, position ):
-        """Find the QuadTree leaf under `position`."""
+        """Find the QuadTree leaf under ``position``."""
         if self.isLeaf(): return self
         if self.isHBipart():
             if position.getX() < self.xcut: return self.bl.getLeafUnder(position)
@@ -405,6 +493,29 @@ class QuadTree ( object ):
             return self.tl.getLeafUnder(position)
         if position.getY() < self.ycut: return self.br.getLeafUnder(position)
         return self.tr.getLeafUnder(position)
+
+    def getFreeLeafUnder ( self, area, attractor=None ):
+        """
+        Find a free buffer under the given ``area`` the candidates are sorted
+        according to their distance to the ``attractor`` point, the closest is
+        returned. If no ``attractor`` is supplied, the center of the ``area``
+        id used. This function is a frontend to ``_getFreeLeafUnder()``.
+        """
+        candidates = []
+        self._getFreeLeafUnder( area, candidates, attractor )
+        if not len(candidates):
+            return None
+        candidates.sort( key=itemgetter(1) )
+        return candidates[0][0]
+
+    def _getFreeLeafUnder ( self, area, candidates, attractor ):
+        """Find a free buffer under the given ``area``. See ``getFreeLeafUnder()``."""
+        if self.pool.hasFree():
+            point = area.getCenter() if attractor is None else attractor
+            candidates.append( [ self, self.area.getCenter().manhattanDistance(point) ] )
+        for leaf in self.leafs:
+            if leaf.area.intersect(area):
+                leaf._getFreeLeafUnder( area, candidates, attractor )
 
     def attachToLeaf ( self, plugOccurrence ):
         """Assign the plug occurrence to the QuadTree leaf it is under."""
@@ -476,9 +587,19 @@ class Spares ( object ):
     MARK_USED  = 0x00020000
 
     def __init__ ( self, block ):
-        self.state    = block.state
-        self.quadTree = None
-        self.cloneds  = []
+        self.state        = block.state
+        self.quadTree     = None
+        self.cloneds      = []
+        self.strayBuffers = []
+
+    def reset ( self ):
+        self.quadTree.destroy()
+        for buffer in self.strayBuffers:
+            buffer.destroy()
+        self.quadTree     = None
+        self.cloneds      = []
+        self.strayBuffers = []
+        self.state.resetBufferCount()
 
     def getSpareSpaceMargin ( self ):
         """
@@ -494,7 +615,7 @@ class Spares ( object ):
         bufferLength = self.state.bufferConf.width * self.state.bColumns * self.state.bRows
         if not areaLength:
             raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): Spare leaf area is zero.' )
-        return float(bufferLength) / float(areaLength)
+        return (float(bufferLength) * 1.3) / float(areaLength)
 
     def toXGCellGrid ( self, x ):
         """Find the nearest X (inferior) on the Cell gauge grid (sliceStep)."""
@@ -512,6 +633,46 @@ class Spares ( object ):
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
         trace( 550, '-' )
+
+    def rshowPoolUse ( self ):
+        if self.quadTree:
+            self.quadTree.rshowPoolUse()
+
+    def addStrayBuffer ( self, position ):
+        """Add a new stray buffer at ``position``."""
+        trace( 550, ',+', '\tSpares.addStrayBuffer()\n' )
+
+        sliceHeight = self.state.gaugeConf.sliceHeight 
+        x           = self.quadTree.onXPitch( position.getX() )
+        y           = self.quadTree.onYSlice( position.getY() )
+        slice       = y / sliceHeight
+        orientation = Transformation.Orientation.ID
+        y = slice * sliceHeight
+        if slice % 2:
+            orientation = Transformation.Orientation.MY
+            y          += sliceHeight
+        transf   = Transformation( x, y, orientation )
+        instance = self.state.createBuffer()
+        instance.setTransformation( transf )
+        instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        unoverlapDx = self.quadTree.getUnoverlapDx( instance.getAbutmentBox() )
+        if unoverlapDx:
+            transf = Transformation( x+unoverlapDx, y, orientation )
+            instance.setTransformation( transf )
+        self.strayBuffers.append( instance )
+        trace( 550, '\tBuffer: {} @{}\n'.format(self.strayBuffers[-1],transf) )
+        trace( 550, '-' )
+        return instance
+
+    def getFreeBufferNear ( self, position ):
+        leaf = self.quadTree.getLeafUnder( position )
+        return leaf.selectFree()
+
+    def getFreeBufferUnder ( self, area, attractor=None ):
+        leaf = self.quadTree.getFreeLeafUnder( area, attractor )
+        if leaf is None:
+            raise ErrorMessage( 2, 'Spares.getFreeBufferUnder(): No more free buffers under {}.'.format(area) )
+        return leaf.selectFree()
 
     def addClonedCell ( self, masterCell ):
         if not masterCell in self.cloneds: self.cloneds.append( masterCell )
