@@ -60,6 +60,7 @@ p = Cfg.getParamEnumerate ( "anabatic.gcell.displayMode"     ); p.setInt       (
 p.addValue( "Boundary", 1 ) 
 p.addValue( "Density" , 2 )
 
+p = Cfg.getParamBool  ( "katana.useGlobalEstimate"    ); p.setBool  ( False   );
 p = Cfg.getParamInt   ( "katana.hTracksReservedLocal" ); p.setInt   ( 3       ); p.setMin(0); p.setMax(20)
 p = Cfg.getParamInt   ( "katana.vTracksReservedLocal" ); p.setInt   ( 3       ); p.setMin(0); p.setMax(20)
 p = Cfg.getParamInt   ( "katana.hTracksReservedMin"   ); p.setInt   ( 1       ); p.setMin(0); p.setMax(20)
