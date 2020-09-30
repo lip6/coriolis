@@ -446,9 +446,9 @@ namespace Katana {
         updateEstimateDensityOfPath( this, targets[0], targets[1], weight );
         return;
       default:
-        { int  accuracy = 3;
-          int* xs       = new int [targets.size()];
-          int* ys       = new int [targets.size()];
+        { int      accuracy = 3;
+          int64_t* xs       = new int64_t [targets.size()];
+          int64_t* ys       = new int64_t [targets.size()];
 
           for ( size_t itarget=0 ; itarget<targets.size() ; ++itarget ) {
             Point center =  targets[itarget]->getCenter();

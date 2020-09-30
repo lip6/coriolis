@@ -1528,11 +1528,11 @@ void Graph::Monotonic()
 Tree* Graph::createFluteTree()
 // ****************************
 { 
-    int  accuracy = 3;                         // accuracy for flute (by default 3)
-    int  d        = _vertexes_to_route.size(); // degre du net, ie nombre de routingPads
-    int *x = new int [d];                      // x coordinates of the vertexes
-    int *y = new int [d];                      // y coordinates of the vertexes
-    Tree* flutetree = new Tree;              // the flute Steiner Tree
+    int      accuracy  = 3;                         // accuracy for flute (by default 3)
+    int      d         = _vertexes_to_route.size(); // degre du net, ie nombre de routingPads
+    int64_t *x         = new int64_t [d];           // x coordinates of the vertexes
+    int64_t *y         = new int64_t [d];           // y coordinates of the vertexes
+    Tree*    flutetree = new Tree;                  // the flute Steiner Tree
 
     //cout << "Net : " << _working_net << endl;
     // scans _working_net to find x,y coordinates and fill x, y and d
