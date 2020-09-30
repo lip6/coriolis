@@ -36,6 +36,7 @@ from   Hurricane import Instance
 import CRL
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace
+from   helpers         import dots
 from   helpers.io      import ErrorMessage
 from   helpers.io      import WarningMessage
 from   helpers.io      import catch
@@ -98,18 +99,18 @@ class BufferPool ( object ):
         * MARK_USED, tag the designated buffer as USED.
         """
 
-        trace( 550, ',+', '\tBufferPool.select() column:{}, row={}, flags={:x}\n' \
+        trace( 540, ',+', '\tBufferPool.select() column:{}, row={}, flags={:x}\n' \
                .format(column,row,flags) )
         if column >= self.columns:
-            trace( 550, '-' )
+            trace( 540, '-' )
             raise ErrorMessage( 3, 'BufferPool.select(): Column {} is out of range (max:{}).' \
                                    .format(column,self.columns) )
         if row >= self.rows:
-            trace( 550, '-' )
+            trace( 540, '-' )
             raise ErrorMessage( 3, 'BufferPool.select(): Row {} is out of range (max:{}).' \
                                    .format(row,self.rows) )
         self._select( self.toIndex( column, row ), flags )
-        trace( 550, '-' )
+        trace( 540, '-' )
 
     def _select ( self, index, flags ):
         self.selectedIndex = index
@@ -129,7 +130,7 @@ class BufferPool ( object ):
         for i in range(self.rows*self.columns):
             if not (self.buffers[i][0] & Spares.USED):
                 self._select( i, Spares.MARK_USED )
-                trace( 550, '\tUse buffer from pool {}\n'.format(self.quadTree) )
+                trace( 540, '\tUse buffer from pool {}\n'.format(self.quadTree) )
                 return self.buffers[i][1]
         return None
 
@@ -142,7 +143,7 @@ class BufferPool ( object ):
 
     def _createBuffers ( self ):
         """Create the matrix of instances buffer."""
-        trace( 550, ',+', '\tBufferPool.createBuffers()\n' )
+        trace( 540, ',+', '\tBufferPool.createBuffers()\n' )
 
         state       = self.quadTree.spares.state
         sliceHeight = state.gaugeConf.sliceHeight 
@@ -152,7 +153,7 @@ class BufferPool ( object ):
                                               - (state.bufferConf.height * self.rows)/2 )
         slice = y / sliceHeight
 
-        trace( 550, '\tSlice height: {}\n'.format(DbU.getValueString(sliceHeight)) )
+        trace( 540, '\tSlice height: {}\n'.format(DbU.getValueString(sliceHeight)) )
 
         for row in range(self.rows):
             orientation = Transformation.Orientation.ID
@@ -167,31 +168,36 @@ class BufferPool ( object ):
                 instance.setTransformation( transf )
                 instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
                 self.buffers[ index ][1] = instance 
-                trace( 550, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
+                trace( 540, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
         blBufAb   = self.buffers[ 0][1].getAbutmentBox()
         trBufAb   = self.buffers[-1][1].getAbutmentBox()
         self.area = Box( blBufAb.getXMin(), blBufAb.getYMin()
                        , trBufAb.getXMax(), trBufAb.getYMax() )
-        trace( 550, '-' )
+        trace( 540, '-' )
 
     def _destroyBuffers ( self ):
         """Destroy all the buffer instances of the pool."""
         for flags, buffer in self.buffers:
             buffer.destroy()
 
-    def showUse ( self, depth ):
-        """Display the pool occupancy."""
+    def getUse ( self ):
+        """Return the pool occupancy, a tuple ``(occupancy,capacity)``."""
         count = 0
         for i in range(self.rows*self.columns):
             if self.buffers[i][0] & Spares.USED:
                 count += 1
+        return count, self.rows*self.columns
+
+    def showUse ( self, depth ):
+        """Display the pool occupancy."""
+        occupancy, capacity = self.getUse()
        #header = '| ' if self.quadTree.isLeaf() else '+ '
        #print( '     {}{}Pool {}, usage:{}/{}.'.format( '  '*depth
        #                                              , header
        #                                              , self.quadTree
-       #                                              , count
-       #                                              , self.rows*self.columns) )
-        return count, self.rows*self.columns
+       #                                              , occupency
+       #                                              , capacity )
+        return occupancy, capacity
 
 
 # ----------------------------------------------------------------------------
@@ -218,10 +224,12 @@ class QuadTree ( object ):
         self.ycut      = None
         self.parent    = parent
         self.depth     = parent.depth+1 if parent else 0
+        self.maxDepth  = 0
         self.bl        = None
         self.br        = None
         self.tl        = None
         self.tr        = None
+        self.position  = [ None, None ]
         self.bufferTag = 'spare'
         self.bufferNet = None
         self.pool      = BufferPool( self )
@@ -239,11 +247,15 @@ class QuadTree ( object ):
         self.pool._destroyBuffers()
 
     def __str__ ( self ):
-        s = '<QuadTree [{},{} {},{}] "{}">'.format( DbU.getValueString(self.area.getXMin())
-                                                  , DbU.getValueString(self.area.getYMin())
-                                                  , DbU.getValueString(self.area.getXMax())
-                                                  , DbU.getValueString(self.area.getYMax())
-                                                  , self.rtag )
+        occupancy, capacity = self.pool.getUse()
+        s = '<QuadTree [{},{} {},{}] {}/{} "{}">' \
+            .format( DbU.getValueString(self.area.getXMin())
+                   , DbU.getValueString(self.area.getYMin())
+                   , DbU.getValueString(self.area.getXMax())
+                   , DbU.getValueString(self.area.getYMax())
+                   , occupancy
+                   , capacity
+                   , self.rtag )
         return s
 
     def __eq__ ( self, other ):
@@ -252,8 +264,6 @@ class QuadTree ( object ):
     def rshowPoolUse ( self ):
         rused  = 0
         rtotal = 0
-        if not self.depth:
-            print( '  o  Detailed use of spare buffers.' )
         used, total = self.pool.showUse( self.depth )
         rused  += used
         rtotal += total
@@ -261,10 +271,33 @@ class QuadTree ( object ):
             used, total = leaf.rshowPoolUse()
             rused  += used
             rtotal += total
+
         if not self.depth:
+            global framework
+            catalog = framework.getCatalog()
+            instancesNb = 0
+            bufNb       = 0
+            for occurrence in self.spares.state.cell.getTerminalNetlistInstanceOccurrences():
+                cellName = occurrence.getEntity().getMasterCell().getName()
+                cstate   = catalog.getState( cellName )
+                if cstate and cstate.isFeed(): continue
+                if cellName.startswith( 'buf_' ):
+                    bufNb += 1
+                    continue
+                instancesNb += 1
+            if bufNb != rtotal:
+                print( WarningMessage('QuadTree.rshowPoolUse(): Buffer instance number discrepency, {} vs {}.' \
+                                      .format(bufNb,rtotal)) )
             if rtotal:
-                print( '     - Useds: {}, total: {} ({:.1%}).' \
-                       .format(rused,rtotal,float(rused)/float(rtotal)) )
+                print( '  o  Detailed use of spare buffers.' )
+                dots( 82
+                    , '     - Useds: '
+                    , ' {}/{} ({:.1%})'.format(rused,rtotal,float(rused)/float(rtotal)) )
+                dots( 82
+                    , '     - Buffer ratio: '
+                    , ' {}/{} ({:.1%})'.format( rtotal
+                                              , instancesNb+bufNb
+                                              , float(rtotal)/float(instancesNb+bufNb)) )
         return rused, rtotal
 
     @property
@@ -346,14 +379,14 @@ class QuadTree ( object ):
         """
         if self.isLeaf() and not doLeaf: return
 
-        trace( 550, '\tQuadTree.connectBuffer(): rtag:"{}"\n'.format(self.rtag) )
+        trace( 540, '\tQuadTree.connectBuffer(): rtag:"{}"\n'.format(self.rtag) )
         plug = self.bOutputPlug
         if not plug.getNet():
             outputNetBuff = Net.create( self.spares.state.cell,'{}_{}' \
                                         .format(self.root.bufferTag,self.rtag) )
             plug.setNet( outputNetBuff )
-            trace( 550, '\t| {}\n'.format(plug) )
-            trace( 550, '\t| {}\n'.format(outputNetBuff) )
+            trace( 540, '\t| {}\n'.format(plug) )
+            trace( 540, '\t| {}\n'.format(outputNetBuff) )
 
     def rconnectBuffer ( self ):
         """[R]ecursive call of connectBuffer()"""
@@ -367,13 +400,13 @@ class QuadTree ( object ):
         For a more detailed explanation of the parameter, please refer
         to BufferPool.select().
         """
-        trace( 550, '+' )
+        trace( 540, '+' )
         if self.plugs:
             self.plugs = []
         self.pool.select( column, row, flags )
         if not self.isLeaf():
             for leaf in self.leafs: leaf.rselectBuffer( column, row, flags )
-        trace( 550, '-' )
+        trace( 540, '-' )
 
     def partition ( self ):
         """
@@ -383,7 +416,7 @@ class QuadTree ( object ):
         Depending on the initial aspect ratio, the first levels *may* not be a
         quad-tree, but only a vertical or horizontal bi-partition.
         """
-        trace( 550, ',+', '\tQuadTree.partition(): {} (spareSide:{})\n' \
+        trace( 540, ',+', '\tQuadTree.partition(): {} (spareSide:{})\n' \
                     .format(self.area, DbU.getValueString(self.spares.state.cfg.block.spareSide)) )
 
         spareSide   = self.spares.state.cfg.block.spareSide
@@ -392,7 +425,7 @@ class QuadTree ( object ):
         aspectRatio = float(self.area.getWidth()) / float(self.area.getHeight())
 
         if self.area.getHeight() < side*2.0 or self.area.getWidth () < side*2.0:
-            trace( 550, '-' )
+            trace( 540, '-' )
             return False
 
         if aspectRatio < 0.5:
@@ -411,8 +444,8 @@ class QuadTree ( object ):
                                      , self.area.getXMax()
                                      , self.area.getYMax() )
                                 , 'tl' )
-            trace( 550, '\tVertical bi-partition @Y:{}\n'.format(DbU.getValueString(self.ycut)) )
-            trace( 550, '-' )
+            trace( 540, '\tVertical bi-partition @Y:{}\n'.format(DbU.getValueString(self.ycut)) )
+            trace( 540, '-' )
             return True
         elif aspectRatio > 2.0:
             self.xcut = self.spares.toXGCellGrid( self.area.getXMin() + self.area.getWidth()/2 )
@@ -430,8 +463,8 @@ class QuadTree ( object ):
                                      , self.area.getXMax()
                                      , self.area.getYMax() )
                                 , 'br' )
-            trace( 550, '\tHorizontal bi-partition @X:{}\n'.format(DbU.getValueString(self.xcut)) )
-            trace( 550, '-' )
+            trace( 540, '\tHorizontal bi-partition @X:{}\n'.format(DbU.getValueString(self.xcut)) )
+            trace( 540, '-' )
             return True
 
         self.ycut = self.spares.toYGCellGrid( self.area.getYMin() + self.area.getHeight()/2 )
@@ -465,19 +498,112 @@ class QuadTree ( object ):
                                  , self.area.getYMax() )
                             , 'tr' )
 
-        trace( 550, '\tQuadri-partition @X:{} + @Y:{}\n'\
+        trace( 540, '\tQuadri-partition @X:{} + @Y:{}\n'\
                .format(DbU.getValueString(self.xcut),DbU.getValueString(self.ycut)) )
-        trace( 550, '-' )
+        trace( 540, '-' )
         return True
                 
     def rpartition ( self ):
         """"[R]ecursively partition the the area."""
-        trace( 550, ',+', '\tQuadTree.rpartition(): {}\n'.format(self.area) )
+        trace( 540, ',+', '\tQuadTree.rpartition(): {}\n'.format(self.area) )
         if self.partition():
             for leaf in self.leafs:
-                trace( 550, '\tLeaf rtag:"{}"\n'.format(leaf.rtag) )
+                trace( 540, '\tLeaf rtag:"{}"\n'.format(leaf.rtag) )
                 leaf.rpartition()
-        trace( 550, '-' )
+        trace( 540, '-' )
+        if self.isRoot():
+            self._rsetMaxDepth()
+            self._rsetPosition( self.maxDepth, [0,0] )
+
+    def _rsetMaxDepth ( self ):
+        maxDepth = 0
+        trace( 540, ',+', '\tEntering: {}\n'.format(self) )
+        if not self.isLeaf():
+            for leaf in self.leafs:
+                leaf._rsetMaxDepth()
+                maxDepth = max( maxDepth, leaf.maxDepth+1 )
+        self.maxDepth = maxDepth
+        trace( 540, ',-', '\tMaxdepth: {} {}\n'.format(maxDepth,self) )
+
+    def _rsetPosition ( self, maxDepth, position ):
+        trace( 540, '+,', '\t+_rsetPosition(): {}\n'.format(self) )
+        self.position = position
+        trace( 540, '\t| position:{}\n'.format(self.position) )
+        if not self.isLeaf():
+            leafBit = 1 << (maxDepth - (self.depth + 1))
+            trace( 540, '\t| leafBit:{}\n'.format(leafBit) )
+            if self.bl: self.bl._rsetPosition( maxDepth, position )
+            if self.br: self.br._rsetPosition( maxDepth, [position[0] | leafBit, position[1]] )
+            if self.tl: self.tl._rsetPosition( maxDepth, [position[0]          , position[1] | leafBit] )
+            if self.tr: self.tr._rsetPosition( maxDepth, [position[0] | leafBit, position[1] | leafBit] )
+        trace( 540, '-' )
+
+    def _getLeafAt ( self, maxDepth, stopDepth, position ):
+        trace( 540, '\t_getLeafAt(): {}\n'.format(self) )
+        trace( 540, '\t| maxDepth:{}, stopDepth:{}, position:{}\n' \
+                    .format(maxDepth,stopDepth,position) )
+        if self.isLeaf(): return self
+        if self.depth >= stopDepth: return leaf
+        bitDepth = maxDepth - (self.depth + 1)
+        bitMask  = 1 << bitDepth
+        trace( 540, '\tbitDepth: {}, bitMask: {:b}\n'.format(bitDepth,bitMask) )
+        leafCode = (position[0] & bitMask) + ((position[1] & bitMask) << 1)
+        trace( 540, '\tleafCode: {}\n'.format(leafCode) )
+        leafCode = leafCode >> bitDepth
+        leaf     = None
+        trace( 540, '\tleafCode: {}\n'.format(leafCode) )
+        if leafCode == 0: leaf = self.bl
+        if leafCode == 1: leaf = self.br
+        if leafCode == 2: leaf = self.tl
+        if leafCode == 3: leaf = self.tr
+        if leaf is None: return None
+        trace( 540, '+' )
+        leaf = leaf._getLeafAt( maxDepth, stopDepth, position )
+        trace( 540, '-' )
+        return leaf
+
+    def getLeafAt ( self, position, depth=None ):
+        return self._getLeafAt( self.root.maxDepth, depth, position )
+
+    def getLeft ( self ):
+        trace( 540, '\tgetLeft(): \n'.format(self) )
+        shiftedPos = self.position[0] >> (self.root.maxDepth - self.depth)
+        deltaPos   = 1 << (self.root.maxDepth - self.depth)
+        trace( 540, '\t| position[0] (x): {}\n'.format(self.position[0]) )
+        trace( 540, '\t| shiftedPos  (x): {}\n'.format(shiftedPos) )
+        trace( 540, '\t| deltaPos    (x): {}\n'.format(deltaPos) )
+        if shiftedPos == 0: return None
+        return self.root.getLeafAt( [self.position[0]-deltaPos, self.position[1]], self.depth )
+
+    def getRight ( self ):
+        trace( 540, '\tgetRight(): \n'.format(self) )
+        shiftedPos = self.position[0] >> (self.root.maxDepth - self.depth)
+        deltaPos   = 1 << (self.root.maxDepth - self.depth)
+        trace( 540, '\t| position[0] (x): {}\n'.format(self.position[0]) )
+        trace( 540, '\t| shiftedPos  (x): {}\n'.format(shiftedPos) )
+        trace( 540, '\t| deltaPos    (x): {}\n'.format(deltaPos) )
+        if shiftedPos+1 >= 1 << self.depth: return None
+        return self.root.getLeafAt( [self.position[0]+deltaPos, self.position[1]], self.depth )
+
+    def getBottom ( self ):
+        trace( 540, '\tgetBottom(): \n'.format(self) )
+        shiftedPos = self.position[1] >> (self.root.maxDepth - self.depth)
+        deltaPos   = 1 << (self.root.maxDepth - self.depth)
+        trace( 540, '\t| position[0] (x): {}\n'.format(self.position[0]) )
+        trace( 540, '\t| shiftedPos  (x): {}\n'.format(shiftedPos) )
+        trace( 540, '\t| deltaPos    (x): {}\n'.format(deltaPos) )
+        if shiftedPos == 0: return None
+        return self.root.getLeafAt( [self.position[0], self.position[1]-deltaPos], self.depth )
+
+    def getTop ( self ):
+        trace( 540, '\tgetTop(): \n'.format(self) )
+        shiftedPos = self.position[1] >> (self.root.maxDepth - self.depth)
+        deltaPos   = 1 << (self.root.maxDepth - self.depth)
+        trace( 540, '\t| position[0] (x): {}\n'.format(self.position[0]) )
+        trace( 540, '\t| shiftedPos  (x): {}\n'.format(shiftedPos) )
+        trace( 540, '\t| deltaPos    (x): {}\n'.format(deltaPos) )
+        if shiftedPos+1 >= 1 << self.depth: return None
+        return self.root.getLeafAt( [self.position[0], self.position[1]+deltaPos], self.depth )
 
     def getLeafUnder ( self, position ):
         """Find the QuadTree leaf under ``position``."""
@@ -543,26 +669,26 @@ class QuadTree ( object ):
         """
         if not self.plugs: return
 
-        trace( 550, ',+', '\tQuadTree.spliNetlist()\n' )
+        trace( 540, ',+', '\tQuadTree.spliNetlist()\n' )
         self.connectBuffer( doLeaf=True )
         netBuff = self.bOutputPlug.getNet()
-        trace( 550, '\tBuffer: {}\n'.format(self.buffer) )
-        trace( 550, '\tBuffer output: {}\n'.format(netBuff) )
+        trace( 540, '\tBuffer: {}\n'.format(self.buffer) )
+        trace( 540, '\tBuffer output: {}\n'.format(netBuff) )
         for plug in self.plugs:
-            trace( 550, '\t| Leaf: {}\n'.format(plug) )
-            trace( 550, '\t| netBuff: {}\n'.format(netBuff) )
+            trace( 540, '\t| Leaf: {}\n'.format(plug) )
+            trace( 540, '\t| netBuff: {}\n'.format(netBuff) )
             deepPlug    = self.spares.raddTransNet( netBuff, plug.getPath() )
-            trace( 550, '\t| netBuff: {}\n'.format(netBuff) )
-            trace( 550, '\t| Deep Plug: {}\n'.format(deepPlug) )
+            trace( 540, '\t| netBuff: {}\n'.format(netBuff) )
+            trace( 540, '\t| Deep Plug: {}\n'.format(deepPlug) )
             deepNetBuff = deepPlug.getMasterNet() if deepPlug else netBuff
-            trace( 550, '\t| deepNetBuff: {} {}\n'.format(deepNetBuff,netBuff) )
+            trace( 540, '\t| deepNetBuff: {} {}\n'.format(deepNetBuff,netBuff) )
             plug.getEntity().setNet( deepNetBuff )
 
         maxSinks = self.spares.state.bufferConf.maxSinks
         if len(self.plugs) > maxSinks:
             print( WarningMessage( 'QuadTree.splitNetlist(): More than {} sink points ({}) on "{}".' \
                                    .format(maxSinks,len(self.plugs),netBuff.getName())) )
-        trace( 550, '-' )
+        trace( 540, '-' )
 
     def rsplitNetlist ( self ):
         """Recursive call over splitNetlist()."""
@@ -603,8 +729,8 @@ class Spares ( object ):
 
     def getSpareSpaceMargin ( self ):
         """
-        Compute the percentage of margin space to compensate for the 4 spare
-        buffers.
+        Compute the percentage of margin space to compensate for the spare
+        buffers (row*columns) with a supplemental margin factor of 1.3 or 1.4.
         """
         if not self.state.useSpares: return 0.0
         spareSide    = self.state.cfg.block.spareSide
@@ -615,7 +741,7 @@ class Spares ( object ):
         bufferLength = self.state.bufferConf.width * self.state.bColumns * self.state.bRows
         if not areaLength:
             raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): Spare leaf area is zero.' )
-        return (float(bufferLength) * 1.3) / float(areaLength)
+        return (float(bufferLength) * 1.4) / float(areaLength)
 
     def toXGCellGrid ( self, x ):
         """Find the nearest X (inferior) on the Cell gauge grid (sliceStep)."""
@@ -629,10 +755,10 @@ class Spares ( object ):
 
     def build ( self ):
         if not self.state.useSpares: return
-        trace( 550, ',+', '\tSpares.build()\n' )
+        trace( 540, ',+', '\tSpares.build()\n' )
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
-        trace( 550, '-' )
+        trace( 540, '-' )
 
     def rshowPoolUse ( self ):
         if self.quadTree:
@@ -640,7 +766,7 @@ class Spares ( object ):
 
     def addStrayBuffer ( self, position ):
         """Add a new stray buffer at ``position``."""
-        trace( 550, ',+', '\tSpares.addStrayBuffer()\n' )
+        trace( 540, ',+', '\tSpares.addStrayBuffer()\n' )
 
         sliceHeight = self.state.gaugeConf.sliceHeight 
         x           = self.quadTree.onXPitch( position.getX() )
@@ -660,8 +786,8 @@ class Spares ( object ):
             transf = Transformation( x+unoverlapDx, y, orientation )
             instance.setTransformation( transf )
         self.strayBuffers.append( instance )
-        trace( 550, '\tBuffer: {} @{}\n'.format(self.strayBuffers[-1],transf) )
-        trace( 550, '-' )
+        trace( 540, '\tBuffer: {} @{}\n'.format(self.strayBuffers[-1],transf) )
+        trace( 540, '-' )
         return instance
 
     def getFreeBufferNear ( self, position ):

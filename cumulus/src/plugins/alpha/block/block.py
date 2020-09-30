@@ -39,6 +39,7 @@ from   Hurricane import Instance
 import CRL
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace
+from   helpers         import dots
 from   helpers.io      import ErrorMessage
 from   helpers.io      import WarningMessage
 from   helpers.io      import catch
@@ -48,11 +49,16 @@ import Anabatic
 import Katana
 import plugins.rsave
 from   plugins                   import getParameter
+from   alpha.block               import timing
 from   alpha.block.spares        import Spares
 from   alpha.block.clocktree     import ClockTree
-from   alpha.block.hfns          import BufferTree
+#from   alpha.block.hfns1         import BufferTree
+#from   alpha.block.hfns2         import BufferTree
+from   alpha.block.hfns3         import BufferTree
 from   alpha.block.configuration import IoPin
 from   alpha.block.configuration import BlockState
+
+timing.staticInit()
 
 
 # ----------------------------------------------------------------------------
@@ -415,23 +421,29 @@ class Block ( object ):
         """Create the trunk of all the high fanout nets."""
         print( '  o  Building high fanout nets trees.' )
         if self.spares:
+            maxSinks = timing.tech.getSinksEstimate( self.state.bufferConf.name )
+            dots( 82
+                , '     -  Max sinks for buffer "{}"'.format(self.state.bufferConf.name)
+                , ' {}'.format(maxSinks) )
+            nets = []
+            for net in self.state.cell.getNets():
+                sinksCount = 0
+                for rp in net.getRoutingPads(): sinksCount += 1
+                if sinksCount > maxSinks:
+                    nets.append( (net,sinksCount) )
             with UpdateSession():
-                for net in self.state.cell.getNets():
-                    sinksCount = 0
-                    for rp in net.getRoutingPads(): sinksCount += 1
-                    if sinksCount > 30:
-                        trace( 550, '\tBlock.addHfnTrees(): Found high fanout net "{}" ({} sinks).\n' \
-                                    .format(net.getName(),sinksCount) )
-                       #if not net.getName().startswith('alu_m_muls_b(1)'): continue
-                       #if not net.getName().startswith('abc_75177_new_n12236'): continue
-                        sys.stderr.flush()
-                        print( '     - "{}", {} sinks.'.format(net.getName(),sinksCount) )
-                        sys.stdout.flush()
-                        self.hfnTrees.append( BufferTree( self.spares, net ) )
-                        self.hfnTrees[-1].buildBTree()
-                        self.hfnTrees[-1].rcreateBuffer()
-                        self.hfnTrees[-1].splitNet()
+                for net,sinksCount in nets:
+                    trace( 550, '\tBlock.addHfnTrees(): Found high fanout net "{}" ({} sinks).\n' \
+                                .format(net.getName(),sinksCount) )
+                   #if not net.getName().startswith('alu_m_muls_b(1)'): continue
+                   #if not net.getName().startswith('abc_75177_new_n12236'): continue
+                    sys.stderr.flush()
+                    print( '     - "{}", {} sinks.'.format(net.getName(),sinksCount) )
+                    sys.stdout.flush()
+                    self.hfnTrees.append( BufferTree( self.spares, net ) )
+                    self.hfnTrees[-1].buildBTree()
                 self.spares.rshowPoolUse()
+           #Breakpoint.stop( 0, 'block.findHfnTrees() done.' )
         else:
             print( '     (No spares buffers, disabled)' )
         return len(self.hfnTrees)
@@ -493,8 +505,10 @@ class Block ( object ):
        #katana.printConfiguration   ()
         katana.digitalInit          ()
        #katana.runNegociatePreRouted()
+       #Breakpoint.stop( 0, 'Block.route() Before global routing.' )
         katana.runGlobalRouter      ( Katana.Flags.NoFlags )
         katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
+       #Breakpoint.stop( 0, 'Block.route() After global routing.' )
         katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
         katana.runNegociate         ( Katana.Flags.NoFlags )
         success = katana.isDetailedRoutingSuccess()

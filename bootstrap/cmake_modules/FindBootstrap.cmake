@@ -417,5 +417,7 @@
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
 
                  install( TARGETS      ${pytarget}    DESTINATION ${PYTHON_SITE_PACKAGES} )
+   if( NOT ("${pyIncludes}" STREQUAL "None") )
                  install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
+   endif()
  endmacro( add_python_module )

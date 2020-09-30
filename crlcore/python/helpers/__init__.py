@@ -235,6 +235,12 @@ def setTraceLevel ( level ):
     return
 
 
+def dots ( ttyWidth, leftText, rightText ):
+    dotWidth = ttyWidth - len(leftText) - len(rightText) - 2
+    if dotWidth < 0: dotWidth = 0
+    print( '{}{}{}'.format(leftText,'.'*dotWidth,rightText) )
+
+
 def overload ( defaultParameters, parameters ):
     overloads          = {}
     overloadParameters = []

@@ -405,6 +405,9 @@ class BufferInterface ( object ):
         return
 
     @property
+    def name ( self ): return self.masterCell.getName()
+
+    @property
     def width ( self ): return self.masterCell.getAbutmentBox().getWidth()
 
     @property
