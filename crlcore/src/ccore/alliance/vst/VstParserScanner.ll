@@ -228,7 +228,7 @@ base_specifier            (B|b|O|o|X|x)
 \.                        { return Dot;        }
 \/                        { return Slash;      }
 
-{letter}(_?{letter_or_digit})*  {
+{letter}(_|{letter_or_digit})*  {
       char keyword[512];
       strncpy( keyword, yytext, 511 );
       lower( keyword );

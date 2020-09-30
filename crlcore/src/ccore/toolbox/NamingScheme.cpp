@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) UPMC 2008-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |           Alliance / Hurricane  Interface                       |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./toolbox/ToVhdlName.h"                   |
 // +-----------------------------------------------------------------+
@@ -72,6 +72,7 @@ namespace CRL {
         vhdlName += 'n';
 
       if (translated == '\\') translated = '_';
+      if (translated == '/' ) translated = '_';
       if (translated == '.' ) translated = '_';
       if (translated == '%' ) translated = '_';
       if (translated == '$' ) translated = '_';
@@ -83,7 +84,7 @@ namespace CRL {
       if (translated == '_') {
         if (vhdlName.empty()      ) continue;
         if (i == refName.size()-1) break;
-        if (vhdlName.back() == '_') continue;
+      //if (vhdlName.back() == '_') continue;
       }
 
       vhdlName += translated;
