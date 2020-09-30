@@ -120,6 +120,10 @@ namespace CRL {
   }
 
 
+  bool  RoutingGauge::hasLayer ( const Layer* layer ) const
+  { return (getLayerGauge(layer) != NULL) or (getViaDepth(layer) != nlayerdepth); }
+
+
   RoutingLayerGauge* RoutingGauge::getHorizontalGauge () const
   {
     RoutingLayerGauge* pinOnly = NULL;

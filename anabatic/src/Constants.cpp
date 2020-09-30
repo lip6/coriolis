@@ -54,9 +54,11 @@ namespace Anabatic {
   const BaseFlags  Flags::DestroyBaseContact  = (1L <<  8);
   const BaseFlags  Flags::DestroyBaseSegment  = (1L <<  9);
 // Flags for NetDatas objects states only.                      
-  const BaseFlags  Flags::GlobalRouted        = (1L <<  5);
+  const BaseFlags  Flags::GlobalFixed         = (1L <<  5);
   const BaseFlags  Flags::GlobalEstimated     = (1L <<  6);
-  const BaseFlags  Flags::ExcludeRoute        = (1L <<  7);
+  const BaseFlags  Flags::GlobalRouted        = (1L <<  7);
+  const BaseFlags  Flags::DetailRouted        = (1L <<  8);
+  const BaseFlags  Flags::ExcludeRoute        = (1L <<  9);
 // Masks.                                      
   const BaseFlags  Flags::WestSide            = Horizontal|Target;
   const BaseFlags  Flags::EastSide            = Horizontal|Source;

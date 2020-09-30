@@ -219,7 +219,7 @@ namespace Kite {
 
     for ( Net* net : cell->getNets() ) {
       if (net->isClock() or net->isSupply()) continue;
-      if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
+      if (NetRoutingExtension::isManualDetailRoute(net)) continue;
 
     // First pass: destroy the contacts
       std::vector<Contact*> contacts;

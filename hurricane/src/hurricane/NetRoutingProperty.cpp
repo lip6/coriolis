@@ -43,6 +43,7 @@ namespace Hurricane {
     s += (isFixed               ()) ? 'f' : '-';
     s += (isUnconnected         ()) ? 'u' : '-';
     s += (isManualGlobalRoute   ()) ? 'm' : '-';
+    s += (isManualDetailRoute   ()) ? 'd' : '-';
     s += (isAutomaticGlobalRoute()) ? 'a' : '-';
     s += (isSymmetric           ()) ? 'S' : '-';
     s += (isSymHorizontal       ()) ? 'h' : '-';
@@ -175,6 +176,7 @@ namespace Hurricane {
     flags |= (sflags[1] == 'f') ? NetRoutingState::Fixed                : 0;
     flags |= (sflags[2] == 'u') ? NetRoutingState::Unconnected          : 0;
     flags |= (sflags[3] == 'm') ? NetRoutingState::ManualGlobalRoute    : 0;
+    flags |= (sflags[3] == 'd') ? NetRoutingState::ManualDetailRoute    : 0;
     flags |= (sflags[4] == 'a') ? NetRoutingState::AutomaticGlobalRoute : 0;
     flags |= (sflags[5] == 'S') ? NetRoutingState::Symmetric            : 0;
     flags |= (sflags[6] == 'h') ? NetRoutingState::Horizontal           : 0;

@@ -1478,6 +1478,48 @@ namespace Anabatic {
   }
 
 
+  void  Dijkstra::loadFixedGlobal ( Net* net )
+  {
+    NetData* netData = _anabatic->getNetData( net );
+    netData->setGlobalRouted( true );
+    netData->setGlobalFixed ( true );
+
+    for ( Component* component : net->getComponents() ) {
+      Horizontal* horizontal = dynamic_cast<Horizontal*>( component );
+      if (horizontal) {
+        if (not Session::isGLayer(horizontal->getLayer())) {
+          cerr << Error( "Dijsktra::loadFixedGlobal(): A component of \"%s\" has not a global layer.\n"
+                         "        (%s)"
+                       , getString(net->getName()).c_str()
+                       , getString(component).c_str()
+                       ) << endl;
+          continue;
+        }
+        GCell* begin = _anabatic->getGCellUnder( horizontal->getSource()->getPosition() );
+        GCell* end   = _anabatic->getGCellUnder( horizontal->getTarget()->getPosition() );
+        for ( Edge* edge : _anabatic->getEdgesUnderPath(begin,end) )
+          edge->add( horizontal );
+      }
+
+      Vertical* vertical = dynamic_cast<Vertical*>( component );
+      if (vertical) {
+        if (not Session::isGLayer(vertical->getLayer())) {
+          cerr << Error( "Dijsktra::loadFixedGlobal(): A component of \"%s\" has not a global layer.\n"
+                         "        (%s)"
+                       , getString(net->getName()).c_str()
+                       , getString(component).c_str()
+                       ) << endl;
+          continue;
+        }
+        GCell* begin = _anabatic->getGCellUnder( vertical->getSource()->getPosition() );
+        GCell* end   = _anabatic->getGCellUnder( vertical->getTarget()->getPosition() );
+        for ( Edge* edge : _anabatic->getEdgesUnderPath(begin,end,Flags::NorthPath) )
+          edge->add( vertical );
+      }
+    }
+  }
+
+
   void  Dijkstra::load ( Net* net )
   {
     _cleanup();

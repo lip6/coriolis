@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  PY_POINT_H
-#define  PY_POINT_H
-
+#pragma  once
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/Point.h"
 
@@ -51,5 +49,3 @@ namespace  Isobar {
   }  // extern "C".
 
 }  // Isobar namespace.
-
-#endif  // PY_POINT_H

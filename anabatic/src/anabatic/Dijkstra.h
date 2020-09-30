@@ -517,6 +517,7 @@ namespace Anabatic {
       inline       DistanceT* setDistance              ( DistanceT );
       inline       void       setSearchAreaHalo        ( DbU::Unit );
                    void       load                     ( Net* net ); 
+                   void       loadFixedGlobal          ( Net* net ); 
                    void       run                      ( Mode mode=Mode::Standart );
       inline const VertexSet& getSources               () const;
     private:                                           

@@ -29,16 +29,31 @@ namespace {
 
   using namespace std;
   using namespace Hurricane;
+  using Anabatic::NetData;
+  using Anabatic::AnabaticEngine;
 
 
   class SortSegmentByLength {
     public:
-      inline bool  operator() ( const Segment*, const Segment* );
+      inline       SortSegmentByLength ( AnabaticEngine* );
+      inline bool  operator()          ( const Segment*, const Segment* );
+    private:
+      AnabaticEngine* _anabatic;
   };
+
+
+  inline  SortSegmentByLength::SortSegmentByLength ( AnabaticEngine* anabatic )
+    : _anabatic(anabatic)
+  { }
 
 
   inline bool  SortSegmentByLength::operator() ( const Segment* lhs, const Segment* rhs )
   {
+    NetData* lhsNData = _anabatic->getNetData( lhs->getNet() );
+    NetData* rhsNData = _anabatic->getNetData( rhs->getNet() );
+    if (lhsNData->isGlobalFixed() and not  rhsNData->isGlobalFixed()) return true;
+    if (rhsNData->isGlobalFixed() and not  lhsNData->isGlobalFixed()) return false;
+
     DbU::Unit delta = rhs->getLength() - lhs->getLength();
     if (delta > 0) return true;
     if (delta < 0) return false;
@@ -358,12 +373,13 @@ namespace Anabatic {
     AnabaticEngine* anabatic = getAnabatic();
     size_t          netCount = 0;
 
-    sort( _segments.begin(), _segments.end(), SortSegmentByLength() );
+    sort( _segments.begin(), _segments.end(), SortSegmentByLength(anabatic) );
 
     if (Session::getRoutingGauge()->isTwoMetals()) {
       for ( size_t i=0 ; i<_segments.size() ; ) {
         if (not isEnding(_segments[i])) {
           NetData* netData = anabatic->getNetData( _segments[i]->getNet() );
+          if (netData->isGlobalFixed ()) break;
           if (netData->isGlobalRouted()) ++netCount;
           anabatic->ripup( _segments[i], Flags::Propagate );
           continue;
@@ -374,6 +390,7 @@ namespace Anabatic {
       size_t truncate = (size_t)( (getCapacity()*2) / 3 );
       while ( _segments.size() > truncate ) {
         NetData* netData = anabatic->getNetData( _segments[truncate]->getNet() );
+        if (netData->isGlobalFixed ()) break;
         if (netData->isGlobalRouted()) ++netCount;
         anabatic->ripup( _segments[truncate], Flags::Propagate );
       }

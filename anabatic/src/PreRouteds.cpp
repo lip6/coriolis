@@ -35,6 +35,7 @@ namespace Anabatic {
   using Hurricane::RegularLayer;
   using Hurricane::Component;
   using Hurricane::Pin;
+  using Hurricane::Plug;
   using Hurricane::DeepNet;
   using Hurricane::Cell;
   using Hurricane::NetRoutingExtension;
@@ -85,16 +86,26 @@ namespace Anabatic {
       vector<Segment*>  segments;
       vector<Contact*>  contacts;
 
-      bool   isPreRouted = false;
-      bool   isFixed     = false;
-      size_t rpCount     = 0;
+      bool   isManualGlobalRouted = false;
+      bool   isManualDetailRouted = false;
+      bool   isFixed              = false;
+      size_t rpCount              = 0;
 
       for( Component* component : net->getComponents() ) {
-        if (dynamic_cast<Pin*>(component)) continue;
+        if (dynamic_cast<Pin *>(component)) continue;
+        if (dynamic_cast<Plug*>(component)) continue;
 
         const RegularLayer* layer = dynamic_cast<const RegularLayer*>(component->getLayer());
         if (layer and (layer->getBasicLayer()->getMaterial() == BasicLayer::Material::blockage))
-          continue;
+            continue;
+
+        if (   not Session::isGaugeLayer(component->getLayer())
+           and not Session::isGLayer    (component->getLayer()))
+          throw Error( "AnabaticEngine::setupPreRouted(): A component of \"%s\" has a routing gauge umanaged layer.\n"
+                       "        (%s)"
+                     , getString(net->getName()).c_str()
+                     , getString(component).c_str()
+                     );
 
         Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
         if (horizontal) {
@@ -102,30 +113,42 @@ namespace Anabatic {
              and  not ab.contains(horizontal->getTargetPosition()) ) continue;
 
           segments.push_back( horizontal );
-          isPreRouted = true;
-          if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
-            isFixed = true;
+          if (Session::isGLayer(component->getLayer())) {
+            isManualGlobalRouted = true;
+          } else {
+            isManualDetailRouted = true;
+            if (horizontal->getWidth() != Session::getWireWidth(horizontal->getLayer()))
+              isFixed = true;
+          }
         } else {
           Vertical* vertical = dynamic_cast<Vertical*>(component);
           if (vertical) {
             if (    not ab.contains(vertical->getSourcePosition())
                and  not ab.contains(vertical->getTargetPosition()) ) continue;
 
-            isPreRouted = true;
-            segments.push_back( vertical );
-            if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
-              isFixed = true;
+            if (Session::isGLayer(component->getLayer())) {
+              isManualGlobalRouted = true;
+            } else {
+              isManualDetailRouted = true;
+              segments.push_back( vertical );
+              if (vertical->getWidth() != Session::getWireWidth(vertical->getLayer()))
+                isFixed = true;
+            }
           } else {
             Contact* contact = dynamic_cast<Contact*>(component);
             if (contact) {
               if (not ab.contains(contact->getCenter())) continue;
 
-              isPreRouted = true;
-              contacts.push_back( contact );
-              if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
-                 or (contact->getHeight() != Session::getViaWidth(contact->getLayer()))
-                 or (contact->getLayer () == Session::getContactLayer(0)) )
-                isFixed = true;
+              if (Session::isGLayer(component->getLayer())) {
+                isManualGlobalRouted = true;
+              } else {
+                isManualGlobalRouted = true;
+                contacts.push_back( contact );
+                if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
+                   or (contact->getHeight() != Session::getViaWidth(contact->getLayer()))
+                   or (contact->getLayer () == Session::getContactLayer(0)) )
+                  isFixed = true;
+              }
             } else {
               RoutingPad* rp = dynamic_cast<RoutingPad*>(component);
               if (rp) {
@@ -142,7 +165,10 @@ namespace Anabatic {
         }
       }
 
-      if ((not isFixed and not isPreRouted) and net->isDeepNet()) {
+      if (   (not isFixed)
+         and (not isManualGlobalRouted)
+         and (not isManualDetailRouted)
+         and net->isDeepNet()) {
         Net* rootNet = dynamic_cast<Net*>(
                          dynamic_cast<DeepNet*>(net)->getRootNetOccurrence().getEntity() );
         for( Component* component : rootNet->getComponents() ) {
@@ -152,29 +178,34 @@ namespace Anabatic {
         }
       }
 
-      if (isFixed or isPreRouted or (rpCount < 2)) {
+      if (isFixed or isManualDetailRouted or isManualGlobalRouted or (rpCount < 2)) {
         NetData*         ndata = getNetData( net, Flags::Create );
         NetRoutingState* state = ndata->getNetRoutingState();
         state->unsetFlags( NetRoutingState::AutomaticGlobalRoute );
-        state->setFlags  ( NetRoutingState::ManualGlobalRoute );
+        if (isManualGlobalRouted) {
+          state->setFlags( NetRoutingState::ManualGlobalRoute );
+          ndata->setGlobalFixed( true );
+        }
+        if (isManualDetailRouted)
+          state->setFlags( NetRoutingState::ManualDetailRoute );
         ndata->setGlobalRouted( true );
         if (rpCount < 2)
-          state->setFlags  ( NetRoutingState::Unconnected );
+          state->setFlags( NetRoutingState::Unconnected );
 
         if (isFixed) {
           if (rpCount > 1)
             cmess2 << "     - <" << net->getName() << "> is fixed." << endl;
-          state->unsetFlags( NetRoutingState::ManualGlobalRoute );
+          state->unsetFlags( NetRoutingState::ManualGlobalRoute|NetRoutingState::ManualDetailRoute );
           state->setFlags  ( NetRoutingState::Fixed );
-        } else {
+        } else if (isManualGlobalRouted) {
+          cmess2 << "     - <" << net->getName() << "> is manually global routed." << endl;
+        } else if (isManualDetailRouted) {
           if (rpCount > 1) {
             ++toBeRouteds;
-            
-            cmess2 << "     - <" << net->getName() << "> is manually global routed." << endl;
-            for ( auto icontact : contacts ) {
-              AutoContact::createFrom( icontact );
+            cmess2 << "     - <" << net->getName() << "> is manually detail routed." << endl;
+            for ( auto contact : contacts ) {
+              AutoContact::createFrom( contact );
             }
-          
             for ( auto segment : segments ) {
               AutoContact* source = Session::lookup( dynamic_cast<Contact*>( segment->getSource() ));
               AutoContact* target = Session::lookup( dynamic_cast<Contact*>( segment->getTarget() ));

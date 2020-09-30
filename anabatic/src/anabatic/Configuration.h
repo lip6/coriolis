@@ -64,6 +64,7 @@ namespace Anabatic {
       virtual                   ~Configuration        ();
       virtual Configuration*     clone                () const;
     // Methods.
+      inline  bool               isGLayer             ( const Layer* ) const;
               bool               isGMetal             ( const Layer* ) const;
               bool               isGContact           ( const Layer* ) const;
               bool               isTwoMetals          () const;
@@ -160,6 +161,7 @@ namespace Anabatic {
   };
 
 
+  inline  bool         Configuration::isGLayer             ( const Layer* layer ) const { return isGMetal(layer) or isGContact(layer); }
   inline  size_t       Configuration::getGHorizontalDepth  () const { return _gdepthh; }
   inline  size_t       Configuration::getGVerticalDepth    () const { return _gdepthv; }
   inline  DbU::Unit    Configuration::getGHorizontalPitch  () const { return getPitch( getGHorizontalDepth(), Flags::NoFlags ); }

@@ -14,20 +14,16 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_ANABATIC_ENGINE_H
-#define  ANABATIC_ANABATIC_ENGINE_H
-
+#pragma  once
 #include <memory>
 #include <string>
 #include <vector>
 #include <set>
-
 #include "hurricane/NetRoutingProperty.h"
 namespace Hurricane {
   class Instance;
   class CellViewer;
 }
-
 #include "crlcore/ToolEngine.h"
 #include "anabatic/Configuration.h"
 #include "anabatic/Matrix.h"
@@ -107,6 +103,7 @@ namespace Anabatic {
                                     NetData            ( Net* );
       inline       bool             isGlobalEstimated  () const;
       inline       bool             isGlobalRouted     () const;
+      inline       bool             isGlobalFixed      () const;
       inline       bool             isMixedPreRoute    () const;
       inline       bool             isFixed            () const;
       inline       bool             isExcluded         () const;
@@ -120,6 +117,7 @@ namespace Anabatic {
       inline       void             setSearchArea      ( Box );
       inline       void             setGlobalEstimated ( bool );
       inline       void             setGlobalRouted    ( bool );
+      inline       void             setGlobalFixed     ( bool );
       inline       void             setExcluded        ( bool );
       inline       void             setRpCount         ( size_t );
     private:                                     
@@ -138,6 +136,7 @@ namespace Anabatic {
 
   inline bool             NetData::isGlobalEstimated  () const { return _flags & Flags::GlobalEstimated; }
   inline bool             NetData::isGlobalRouted     () const { return _flags & Flags::GlobalRouted; }
+  inline bool             NetData::isGlobalFixed      () const { return _flags & Flags::GlobalFixed; }
   inline bool             NetData::isMixedPreRoute    () const { return (_state) ? _state->isMixedPreRoute() : false; }
   inline bool             NetData::isFixed            () const { return (_state) ? _state->isFixed        () : false; }
   inline bool             NetData::isExcluded         () const { return _flags & Flags::ExcludeRoute; }
@@ -150,6 +149,7 @@ namespace Anabatic {
   inline DbU::Unit        NetData::getSparsity        () const { return _sparsity; }
   inline void             NetData::setGlobalEstimated ( bool state ) { _flags.set(Flags::GlobalEstimated,state); }
   inline void             NetData::setGlobalRouted    ( bool state ) { _flags.set(Flags::GlobalRouted   ,state); }
+  inline void             NetData::setGlobalFixed     ( bool state ) { _flags.set(Flags::GlobalFixed    ,state); }
   inline void             NetData::setExcluded        ( bool state ) { _flags.set(Flags::ExcludeRoute   ,state); }
   inline void             NetData::setRpCount         ( size_t count ) { _rpCount=count; _update(); }
 
@@ -419,5 +419,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::AnabaticEngine);
-
-#endif  // ANABATIC_ANABATIC_ENGINE_H

@@ -282,6 +282,7 @@ namespace {
         }
 
         if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
+        if (NetRoutingExtension::isManualDetailRoute(net)) continue;
 
         if (netType == Net::Type::POWER) {
           if (_vddiPadNetName.isEmpty()) {

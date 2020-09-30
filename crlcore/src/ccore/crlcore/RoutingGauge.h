@@ -58,6 +58,7 @@ namespace CRL {
       inline  bool                isTwoMetals        () const;
       inline  bool                isHV               () const;
       inline  bool                isVH               () const;
+              bool                hasLayer           ( const Layer* ) const;
     // Accessors.                                    
               RoutingGauge*       getClone           () const;
       inline  const Name          getName            () const;

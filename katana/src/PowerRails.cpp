@@ -176,6 +176,7 @@ namespace {
         }
       }
 
+      if (NetRoutingExtension::isManualDetailRoute(net)) continue;
       if (NetRoutingExtension::isManualGlobalRoute(net)) continue;
 
       if (netType == Net::Type::POWER) {

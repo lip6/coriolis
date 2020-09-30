@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_EDGE_H
-#define  ANABATIC_EDGE_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Name.h"
 #include "hurricane/Interval.h"
@@ -168,5 +166,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::Edge);
-
-#endif  // ANABATIC_EDGE_H

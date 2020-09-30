@@ -52,9 +52,11 @@ namespace Anabatic {
       static const BaseFlags  DestroyBaseContact  ; // = (1 <<  8);
       static const BaseFlags  DestroyBaseSegment  ; // = (1 <<  9);
     // Flags for NetDatas objects states only.                      
-      static const BaseFlags  GlobalRouted        ; // = (1 <<  5);
+      static const BaseFlags  GlobalFixed         ; // = (1 <<  5);
       static const BaseFlags  GlobalEstimated     ; // = (1 <<  6);
-      static const BaseFlags  ExcludeRoute        ; // = (1 <<  7);
+      static const BaseFlags  GlobalRouted        ; // = (1 <<  7);
+      static const BaseFlags  DetailRouted        ; // = (1 <<  8);
+      static const BaseFlags  ExcludeRoute        ; // = (1 <<  9);
     // Masks.                                      
       static const BaseFlags  WestSide            ; // = Horizontal|Target;
       static const BaseFlags  EastSide            ; // = Horizontal|Source;

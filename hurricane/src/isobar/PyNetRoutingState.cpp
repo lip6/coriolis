@@ -72,6 +72,7 @@ extern "C" {
   DirectGetBoolAttribute(PyNetRoutingState_isFixed               ,isFixed               ,PyNetRoutingState,NetRoutingState)
   DirectGetBoolAttribute(PyNetRoutingState_isUnconnected         ,isUnconnected         ,PyNetRoutingState,NetRoutingState)
   DirectGetBoolAttribute(PyNetRoutingState_isManualGlobalRoute   ,isManualGlobalRoute   ,PyNetRoutingState,NetRoutingState)
+  DirectGetBoolAttribute(PyNetRoutingState_isManualDetailRoute   ,isManualDetailRoute   ,PyNetRoutingState,NetRoutingState)
   DirectGetBoolAttribute(PyNetRoutingState_isAutomaticGlobalRoute,isAutomaticGlobalRoute,PyNetRoutingState,NetRoutingState)
   DirectGetBoolAttribute(PyNetRoutingState_isMixedPreRoute       ,isMixedPreRoute       ,PyNetRoutingState,NetRoutingState)
   DirectGetBoolAttribute(PyNetRoutingState_isSymmetric           ,isSymmetric           ,PyNetRoutingState,NetRoutingState)
@@ -97,6 +98,7 @@ extern "C" {
     , { "isFixed"               , (PyCFunction)PyNetRoutingState_isFixed               , METH_NOARGS  , "To be documented." }
     , { "isUnconnected"         , (PyCFunction)PyNetRoutingState_isUnconnected         , METH_NOARGS  , "To be documented." }
     , { "isManualGlobalRoute"   , (PyCFunction)PyNetRoutingState_isManualGlobalRoute   , METH_NOARGS  , "To be documented." }
+    , { "isManualDetailRoute"   , (PyCFunction)PyNetRoutingState_isManualDetailRoute   , METH_NOARGS  , "To be documented." }
     , { "isAutomaticGlobalRoute", (PyCFunction)PyNetRoutingState_isAutomaticGlobalRoute, METH_NOARGS  , "To be documented." }
     , { "isMixedPreRoute"       , (PyCFunction)PyNetRoutingState_isMixedPreRoute       , METH_NOARGS  , "To be documented." }
     , { "isSymmetric"           , (PyCFunction)PyNetRoutingState_isSymmetric           , METH_NOARGS  , "To be documented." }
@@ -145,6 +147,7 @@ extern "C" {
     LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::Fixed               ,"Fixed"               );
     LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::Unconnected         ,"Unconnected"         );
     LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::ManualGlobalRoute   ,"ManualGlobalRoute"   );
+    LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::ManualDetailRoute   ,"ManualDetailRoute"   );
     LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::AutomaticGlobalRoute,"AutomaticGlobalRoute");
     LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::MixedPreRoute       ,"MixedPreRoute"       );
     LoadObjectConstant(PyTypeNetRoutingState.tp_dict,NetRoutingState::Horizontal          ,"Horizontal"          );

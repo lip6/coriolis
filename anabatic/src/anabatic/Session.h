@@ -109,6 +109,10 @@ namespace Anabatic {
       static  inline DbU::Unit                         getDContactWidth      ();
       static  inline DbU::Unit                         getDContactPitch      ();
       static  inline RoutingGauge*                     getRoutingGauge       ();
+      static  inline bool                              isGLayer              ( const Layer* );
+      static  inline bool                              isGMetal              ( const Layer* );
+      static  inline bool                              isGContact            ( const Layer* );
+      static  inline bool                              isGaugeLayer          ( const Layer* );
       static  inline RoutingLayerGauge*                getLayerGauge         ( size_t depth );
       static  inline size_t                            getDepth              ();
       static  inline size_t                            getViaDepth           ( const Layer* layer );
@@ -246,6 +250,10 @@ namespace Anabatic {
   inline const Layer*                      Session::getDContactLayer     ()                     { return getConfiguration()->getDContactLayer(); }
   inline DbU::Unit                         Session::getDContactWidth     ()                     { return getConfiguration()->getDContactWidth(); }
   inline DbU::Unit                         Session::getDContactPitch     ()                     { return getConfiguration()->getDContactPitch(); }
+  inline bool                              Session::isGLayer             ( const Layer* layer ) { return getConfiguration()->isGLayer(layer); }
+  inline bool                              Session::isGMetal             ( const Layer* layer ) { return getConfiguration()->isGMetal(layer); }
+  inline bool                              Session::isGContact           ( const Layer* layer ) { return getConfiguration()->isGContact(layer); }
+  inline bool                              Session::isGaugeLayer         ( const Layer* layer ) { return getRoutingGauge()->hasLayer(layer); }
   inline RoutingLayerGauge*                Session::getLayerGauge        ( size_t depth )       { return getRoutingGauge()->getLayerGauge(depth); }
   inline size_t                            Session::getDepth             ()                     { return getRoutingGauge()->getDepth(); }
   inline size_t                            Session::getViaDepth          ( const Layer* layer ) { return getRoutingGauge()->getViaDepth(layer); }
