@@ -42,28 +42,32 @@
               set ( pyTools       ${CMAKE_CURRENT_SOURCE_DIR}/tools/blif2vst.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/tools/yosys.py
                   )
-              set ( pyPluginAlpha ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/utils.py
+              set ( pyPluginAlpha      ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/utils.py
                   )
-              set ( pyPluginBlock ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/__init__.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/configuration.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/spares.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/block.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/clocktree.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/timing.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/rsmt.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns1.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns2.py
-                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns3.py
+              set ( pyPluginAlphaBlock ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/__init__.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/configuration.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/spares.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/block.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/clocktree.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/timing.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/rsmt.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns1.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns2.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns3.py
+                  )
+              set ( pyPluginAlphaC2C   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/__init__.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/core2chip.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/cmos.py
                   )
          
-          install ( FILES    ${pySources}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
-          install ( FILES    ${pyPlugins}     DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
-         #install ( FILES    ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/block )
-          install ( FILES    ${pyPluginCTS}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/cts )
-          install ( FILES    ${pyPluginC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/core2chip )
-          install ( FILES    ${pyPluginChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )
-          install ( FILES    ${pyPluginAlpha} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha )
-          install ( FILES    ${pyPluginBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/block )
+          install ( FILES    ${pySources}          DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
+          install ( FILES    ${pyPlugins}          DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
+          install ( FILES    ${pyPluginCTS}        DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/cts )
+          install ( FILES    ${pyPluginC2C}        DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/core2chip )
+          install ( FILES    ${pyPluginChip}       DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/chip )
+          install ( FILES    ${pyPluginAlpha}      DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha )
+          install ( FILES    ${pyPluginAlphaBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/block )
+          install ( FILES    ${pyPluginAlphaC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/core2chip )
          #install ( PROGRAMS ${pyTools}       DESTINATION bin ) 

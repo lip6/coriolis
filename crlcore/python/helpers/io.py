@@ -1,11 +1,11 @@
-# -*- mode:Python; explicit-buffer-name: "io.py<crlcore/helpers>" -*-
+# -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2012-2018, All Rights Reserved
+# Copyright (c) SU 2012-2020, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |          Alliance / Hurricane  Interface                        |
 # |                                                                 |
 # |  Author      :                    Jean-Paul Chaput              |
 # |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |

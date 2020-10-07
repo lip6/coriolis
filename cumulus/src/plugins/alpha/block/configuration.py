@@ -12,8 +12,8 @@
 # |  Python      :       "./plugins/block/configuration.py"         |
 # +-----------------------------------------------------------------+
 
-
 import sys
+import re
 import os.path
 import Cfg
 from   Hurricane import Breakpoint
@@ -372,6 +372,168 @@ class GaugeConf ( object ):
         return
 
 
+# -------------------------------------------------------------------
+# Class  :  "IoPadConf".
+
+class IoPadConf ( object ):
+    """
+    Store all informations related to an I/O pad. It's side, position
+    and connected nets.
+
+    .. code-block:: python
+
+       # | Side       | Pos | Instance | Pad net | To Core net   | Enable Net     | From Core Net |
+         ( IoPin.SOUTH, None, 'a_0'    , 'a(0)'  , 'a(0)'        )
+         ( IoPin.NORTH, None, 'p_r0'   , 'r0'    , 'r0_from_pads', 'shift_r'      , 'r0_to_pads'  )
+         ( IoPin.NORTH, None, 'p_y0'   , 'y(0)'  , 'y_oe'        , 'y_to_pads(0)' )
+
+    self._datas is a table of 8 elements, the seven first coming from
+    the configuration itself. Direction are taken from the core point
+    of view.
+    
+    Meaning of the table element's:
+    
+    +---------+-----------------------------------------------------------+
+    |  Index  |  Type                                                     |
+    +=========+===========================================================+
+    |    0    |  Pad side (north, south, east, west)                      |
+    +---------+-----------------------------------------------------------+
+    |    1    |  Pad absolute position on the side, or None               |
+    +---------+-----------------------------------------------------------+
+    |    2    |  Pad instance name                                        |
+    +---------+-----------------------------------------------------------+
+    |    3    |  Pad connected signal name.                               |
+    |         |  The name of the external signal at chip level            |
+    +---------+-----------------------------------------------------------+
+    |    4    |  The name of the signal going *from* the pad to the core. |
+    |         |  IN direction in the core                                 |
+    +---------+-----------------------------------------------------------+
+    |    5    |  The name of the signal going *to* the pad from the core. |
+    |         |  OUT direction in core (or None)                          |
+    +---------+-----------------------------------------------------------+
+    |    6    |  The enable signal, coming from the core (or None)        |
+    +---------+-----------------------------------------------------------+
+    |    7    |  The list of associated IoPads objects. It is set to []   |
+    |         |  initially. There may be more than one in the case of     |
+    |         |  meta-generated power/ground/clock pads                   |
+    +---------+-----------------------------------------------------------+
+    """
+    POWER    = 0x0001
+    GROUND   = 0x0002
+    CLOCK    = 0x0004
+    TRISTATE = 0x0008
+    BIDIR    = 0x0010
+
+    def __init__ ( self, datas ):
+        if not isinstance(datas,tuple):
+            raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" parameter is not a list.'
+                                   , str(datas) ] )
+        if len(datas) < 5 and len(datas) > 8:
+            raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" list must have between 5 to 7 elements.'
+                                   , str(datas) ] )
+        self.flags  = 0
+        self.index  = None
+        self._datas = list( datas )
+        while len(self._datas) < 7:
+            self._datas.append( None )
+        self._datas.append( [] )
+        reSpecialPads = re.compile( r'^(?P<type>.+)_(?P<index>[\d+])$' )
+        m = reSpecialPads.match( self.instanceName )
+        if m:
+            self.index = m.group('index')
+            if m.group('type') == 'power' : self.flags |= IoPadConf.POWER
+            if m.group('type') == 'ground': self.flags |= IoPadConf.GROUND
+            if m.group('type') == 'clock' : self.flags |= IoPadConf.CLOCK
+        else:
+            if   self._datas[5] is not None: self.flags |= IoPadConf.BIDIR
+            elif self._datas[6] is not None: self.flags |= IoPadConf.TRISTATE
+  
+    @property
+    def side ( self ): return self._datas[0]
+  
+    @property
+    def position ( self ): return self._datas[1]
+  
+    @property
+    def instanceName ( self ): return self._datas[2]
+  
+    @property
+    def padNetName ( self ): return self._datas[3]
+  
+    @property
+    def fromCoreNetName ( self ): return self._datas[4]
+  
+    @property
+    def toCoreNetName ( self ): return self._datas[5]
+  
+    @property
+    def enableNetName ( self ): return self._datas[6]
+  
+    @property
+    def padSupplyNetName ( self ): return self._datas[3]
+  
+    @property
+    def coreSupplyNetName ( self ): return self._datas[4]
+  
+    @property
+    def padClockNetName ( self ): return self._datas[4]
+  
+    @property
+    def coreClockNetName ( self ): return self._datas[5]
+  
+    @property
+    def nets ( self ): return self._datas[4:6]
+  
+    @property
+    def pads ( self ): return self._datas[7]
+  
+    def isPower    ( self ): return self.flags & IoPadConf.POWER
+    def isGround   ( self ): return self.flags & IoPadConf.GROUND
+    def isClock    ( self ): return self.flags & IoPadConf.CLOCK
+    def isTristate ( self ): return self.flags & IoPadConf.TRISTATE
+    def isBidir    ( self ): return self.flags & IoPadConf.BIDIR
+  
+    def __repr__ ( self ):
+        s = '<IoPadConf %s pad:{} from:{}'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
+        if self.isBidir():
+          s += ' to:{} en:{}'.format(self.toCoreNetName,self.enableNetName)
+        s += '>'
+        return s
+
+
+# ----------------------------------------------------------------------------
+# Class  :  "configuration.ChipConf".
+
+class ChipConf ( object ):
+    """
+    Store the configuration for a complete chip, I/O pads and core/chip
+    sizes mostly.
+    """
+
+    def __init__ ( self ):
+        self.name         = 'chip'
+        self.ioPadGauge   = None
+        self.padInstances = []
+        self.southPads    = []
+        self.northPads    = []
+        self.eastPads     = []
+        self.westPads     = []
+
+    def addIoPad ( self, spec, specNb ):
+        """
+        Add an I/O pad specification. The spec argument must be of the form:
+        """
+        ioPadConf = IoPadConf( spec ) 
+        if   spec[0] & IoPin.SOUTH: self.southPads.append( spec[1] )
+        elif spec[0] & IoPin.NORTH: self.northPads.append( spec[1] )
+        elif spec[0] & IoPin.EAST:  self.eastPads .append( spec[1] )
+        elif spec[0] & IoPin.WEST:  self.westPads .append( spec[1] )
+        else:
+            raise ErrorMessage( 1, [ 'ChipConf.addIoPad(): Unspectified side for {}'.format(ioPadConf)
+                                   , '(must be NORTH, SOUTH, EAST or WEST)' ] )
+        self.padInstances.append( ioPadConf )
+
+
 # ----------------------------------------------------------------------------
 # Class  :  "configuration.BufferInterface".
 
@@ -580,16 +742,18 @@ class BlockState ( object ):
     ``framework``      The Framework we are using.
     ``gaugeConf``      The routing Gauge & Cell gauge.
     ``bufferConf``     The interface of the buffer cell.
+    ``chip``           The optional chip configuration.
     ``cell``           The block we are working on.
     =================  ========================================
     """
     
-    def __init__ ( self, cell, ioPins=[] ):
+    def __init__ ( self, cell, ioPins=[], ioPads=[] ):
         self.editor       = None
         self.framework    = CRL.AllianceFramework.get()
         self.cfg          = CfgCache('',Cfg.Parameter.Priority.Interactive)
         self.gaugeConf    = GaugeConf()
         self.bufferConf   = BufferInterface( self.framework )
+        self.chip         = ChipConf()
         self.bColumns     = 2
         self.bRows        = 2
         self.cell         = cell
@@ -603,6 +767,8 @@ class BlockState ( object ):
         self.ioPinsCounts = {}
         for ioPinSpec in ioPins:
             self.ioPins.append( IoPin( *ioPinSpec ) )
+        for line in range(len(ioPads)):
+            self.chip.addIoPad( ioPads[line], line )
 
         self.cfg.etesian.aspectRatio = None
         self.cfg.etesian.spaceMargin = None

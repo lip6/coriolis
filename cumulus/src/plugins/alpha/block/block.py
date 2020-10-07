@@ -70,8 +70,8 @@ class Side ( object ):
     and perform pins creation & placement.
     """
 
-    def __init__ ( self, block, side ):
-        self.block      = block
+    def __init__ ( self, state, side ):
+        self.state      = state
         self.side       = side
         self.pinSpecs   = []
         self.expandPins = True
@@ -99,25 +99,25 @@ class Side ( object ):
         box has been setup.
         """
         if self.side & IoPin.WEST:
-            self.gauge   = self.block.state.gaugeConf.hDeepRG
-            self.ubegin  = self.block.state.yMin
-            self.uend    = self.block.state.yMax
-            self.sidePos = self.block.state.xMin
+            self.gauge   = self.state.gaugeConf.hDeepRG
+            self.ubegin  = self.state.yMin
+            self.uend    = self.state.yMax
+            self.sidePos = self.state.xMin
         elif self.side & IoPin.EAST:
-            self.gauge   = self.block.state.gaugeConf.hDeepRG
-            self.ubegin  = self.block.state.yMin
-            self.uend    = self.block.state.yMax
-            self.sidePos = self.block.state.xMax
+            self.gauge   = self.state.gaugeConf.hDeepRG
+            self.ubegin  = self.state.yMin
+            self.uend    = self.state.yMax
+            self.sidePos = self.state.xMax
         elif self.side & IoPin.SOUTH:
-            self.gauge   = self.block.state.gaugeConf.vDeepRG
-            self.ubegin  = self.block.state.xMin
-            self.uend    = self.block.state.xMax
-            self.sidePos = self.block.state.yMin
+            self.gauge   = self.state.gaugeConf.vDeepRG
+            self.ubegin  = self.state.xMin
+            self.uend    = self.state.xMax
+            self.sidePos = self.state.yMin
         elif self.side & IoPin.NORTH:
-            self.gauge   = self.block.state.gaugeConf.vDeepRG
-            self.ubegin  = self.block.state.xMin
-            self.uend    = self.block.state.xMax
-            self.sidePos = self.block.state.yMax
+            self.gauge   = self.state.gaugeConf.vDeepRG
+            self.ubegin  = self.state.xMin
+            self.uend    = self.state.xMax
+            self.sidePos = self.state.yMax
 
     def getNextPinPosition ( self, flags, upos, ustep ):
         """
@@ -179,26 +179,26 @@ class Side ( object ):
 
         status = 0
         if self.side & (IoPin.NORTH | IoPin.SOUTH):
-            gauge = self.block.state.gaugeConf.vDeepRG
+            gauge = self.state.gaugeConf.vDeepRG
             upos  = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format( index )
-                net      = self.block.state.cell.getNet( pinName )
+                net      = self.state.cell.getNet( pinName )
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
-                if net.isClock() and self.block.state.useClockTree:
+                if net.isClock() and self.state.useClockTree:
                     print( WarningMessage( 'Side.place(IoPin): Skipping clock IoPin "{}".'.format(pinName) ))
                     continue
-                pinName += '.{}'.format(self.block.state.getIoPinsCounts(net))
+                pinName += '.{}'.format(self.state.getIoPinsCounts(net))
                 pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
-                if pinPos.getX() > self.block.state.xMax or pinPos.getX() < self.block.state.xMin:
+                if pinPos.getX() > self.state.xMax or pinPos.getX() < self.state.xMin:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): Pin "{}" is outside north or south abutment box side.' \
                                               .format(pinName)
                                             , '(x:{}, xAB: [{}:{}])' \
                                               .format( DbU.getValueString(pinPos.getX())
-                                                     , DbU.getValueString(self.block.state.xMin)
-                                                     , DbU.getValueString(self.block.state.xMax) ) ] ))
+                                                     , DbU.getValueString(self.state.xMin)
+                                                     , DbU.getValueString(self.state.xMax) ) ] ))
                     status += 1
                 trace( 550, '\tIoPin.place() N/S @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
                 pin = Pin.create( net
@@ -213,26 +213,26 @@ class Side ( object ):
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
-                self.block.state.incIoPinsCounts( net )
+                self.state.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         else:
-            gauge = self.block.state.gaugeConf.hDeepRG
+            gauge = self.state.gaugeConf.hDeepRG
             upos  = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format(index)
-                net      = self.block.state.cell.getNet( pinName )
+                net      = self.state.cell.getNet( pinName )
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
-                pinName += '.{}'.format(self.block.state.getIoPinsCounts(net))
+                pinName += '.{}'.format(self.state.getIoPinsCounts(net))
                 pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
-                if pinPos.getY() > self.block.state.yMax or pinPos.getY() < self.block.state.yMin:
+                if pinPos.getY() > self.state.yMax or pinPos.getY() < self.state.yMin:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): Pin "{}" is outside east or west abutment box side.' \
                                               .format(pinName)
                                               , '(y:{}, yAB: [{}:{}])' \
                                               .format( DbU.getValueString(pinPos.getY())
-                                                     , DbU.getValueString(self.block.state.yMin)
-                                                     , DbU.getValueString(self.block.state.yMax)) ] ))
+                                                     , DbU.getValueString(self.state.yMin)
+                                                     , DbU.getValueString(self.state.yMax)) ] ))
                     status += 1
                 trace( 550, '\tIoPin.place() E/W @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
                 pin = Pin.create( net
@@ -247,7 +247,7 @@ class Side ( object ):
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
-                self.block.state.incIoPinsCounts( net )
+                self.state.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         return status
 
@@ -257,7 +257,7 @@ class Side ( object ):
         of the abutment box. THey will stick out for one pitch.
         """
         if not self.expandPins: return
-        rg  = self.block.state.gaugeConf.routingGauge
+        rg  = self.state.gaugeConf.routingGauge
         for pinsAtPos in self.pins.values():
             for pin in pinsAtPos:
                 for lg in rg.getLayerGauges():
@@ -285,7 +285,7 @@ class Side ( object ):
                 for pin in self.pins[upos][1:]:
                     pinNames += ', ' + pin.getName()
                 print( ErrorMessage( 1, [ 'Side.checkOverlap(): On {} side of block "{}", {} pins ovelaps.' \
-                                          .format(sideName,self.block.state.cell.getName(),count)
+                                          .format(sideName,self.state.cell.getName(),count)
                                         , '(@{}: {})' \
                                           .format(DbU.getValueString(upos),pinNames) ] ) )
 
@@ -309,9 +309,9 @@ class Block ( object ):
         return None
 
     @staticmethod
-    def create ( cell, ioPins=[] ):
+    def create ( cell, ioPins=[], ioPads=[] ):
         """Create a Block and it's configuration object."""
-        block = Block( BlockState( cell, ioPins ) )
+        block = Block( BlockState( cell, ioPins, ioPads ) )
         Block.LUT[ cell ] = block
         return block
 
@@ -323,10 +323,10 @@ class Block ( object ):
         self.clockTrees     = []
         self.hfnTrees       = []
         self.blockInstances = []
-        self.sides          = { IoPin.WEST  : Side( self, IoPin.WEST  )
-                              , IoPin.EAST  : Side( self, IoPin.EAST  )
-                              , IoPin.SOUTH : Side( self, IoPin.SOUTH )
-                              , IoPin.NORTH : Side( self, IoPin.NORTH )
+        self.sides          = { IoPin.WEST  : Side( self.state, IoPin.WEST  )
+                              , IoPin.EAST  : Side( self.state, IoPin.EAST  )
+                              , IoPin.SOUTH : Side( self.state, IoPin.SOUTH )
+                              , IoPin.NORTH : Side( self.state, IoPin.NORTH )
                               }
         if not self.state.cell.getAbutmentBox().isEmpty():
             print( '  o  Block "{}" is already done, reusing layout.' \
