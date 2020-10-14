@@ -48,10 +48,12 @@ namespace  Etesian {
   using Isobar::getPyHash;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
+  using Isobar::EntityCast;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
   using Isobar::PyInstance;
   using Isobar::PyInstance_Link;
+  using Isobar::PyTypeInstance;
   using Isobar::PyCellViewer;
   using Isobar::PyTypeCellViewer;
   using CRL::PyToolEngine;
@@ -165,12 +167,15 @@ extern "C" {
     cdebug_log(34,0) << "PyEtesianEngine_setBlock()" << endl;
     HTRY
       METHOD_HEAD ( "EtesianEngine.setBlock()" )
-
       PyInstance* pyInstance = NULL;
       if (not ParseOneArg("EtesianEngine.setBlock",args,INST_ARG,(PyObject**)&pyInstance) )
         return NULL;
-
-      etesian->setBlock( PYINSTANCE_O(pyInstance) );
+      Instance* instance = dynamic_cast<Instance*>( EntityCast((PyObject*)pyInstance) );
+      if (not instance) {
+        PyErr_SetString( ConstructorError, "EtesianEngine.setBlock(): Parameter is not an Instance." );
+        return NULL;
+      }
+      etesian->setBlock( instance );
     HCATCH
     Py_RETURN_NONE;
   }
