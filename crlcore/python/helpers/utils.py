@@ -79,6 +79,8 @@ def classdecorator ( cls ):
     be the case.
     """
 
+    def isprop ( attr ): return isinstance( attr, property )
+
     def wrappedSetattr ( self, attr, v ):
         if attr != '_baseClass' and self._baseClass.__dict__.has_key(attr):
             self._baseClass.__setattr__( attr, v )
@@ -87,10 +89,16 @@ def classdecorator ( cls ):
     def wrappedGetattr ( self, attr ):
         if attr == '_baseClass': return self.__dict__['_baseClass']
         if self.__dict__.has_key(attr): return self.__dict__[attr]
-        if not hasattr(self._baseClass,attr):
-            raise AttributeError( '\'{}\' object has no attribute \'{}\'' \
+        selfClass = type( self )
+        if selfClass.__dict__.has_key(attr):
+            prop = selfClass.__dict__[attr]
+            if isprop(prop):
+                return prop.__get__(self)
+            return prop
+        if not hasattr(self,'_baseClass'):
+            raise AttributeError( '\'{}\' object has no attribute or method named \'{}\'' \
                                   .format(self.__class__.__name__,attr) )
-        return getattr( self._baseClass, attr )
+        return wrappedGetattr( self._baseClass, attr )
 
     classInit = cls.__init__
 

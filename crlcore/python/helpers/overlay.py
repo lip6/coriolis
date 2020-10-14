@@ -124,6 +124,16 @@ class CfgCache ( object ):
        # Effective setting of the Cfg parameter.
        cache.apply()
 
+    If a cache parameter is assigned to ``None``, it triggers the
+    loading of the value from the disk, it it exists.
+
+    .. code-block:: python
+
+       # Setup of a CfgCache parameter.
+       cache = CfgCache('')
+       cache.katana.eventsLimit = None
+       # The parameter will read it's value from the disk (4000000).
+
 
     This is done by overloading ``__setattr__()`` and ``__getattr__()``
     which recursively create CfgCache objects for intermediate levels
@@ -190,7 +200,6 @@ class CfgCache ( object ):
         self._priority = priority
         self._path     = path
         self._rattr    = {}
-        return
 
     def __setattr__ ( self, attr, v ):
         """
@@ -232,7 +241,6 @@ class CfgCache ( object ):
         if v is None:
             v = CfgCache.getDefaultCfgParameter( self._path+'.'+attr )
         self._rattr[ attr ] = v
-        return
 
     def __getattr__ ( self, attr ):
         """
@@ -243,6 +251,20 @@ class CfgCache ( object ):
             path = self._path+'.'+attr if len(self._path) else attr
             self._rattr[attr] = CfgCache( path, self._priority )
         return self._rattr[attr]
+
+    def _hasCachedParam ( self, elements ):
+        print( elements )
+        if not self._rattr.has_key(elements[0]):
+            return False
+        if len(elements) == 1:
+            return True
+        rattr = self._rattr[ elements[0] ]
+        if not isinstance(rattr,CfgCache):
+            return False
+        return rattr._hasCachedParam( elements[1:] )
+
+    def hasCachedParam ( self, attr ):
+        return self._hasCachedParam( attr.split('.') )
 
     def apply ( self, priority=None ):
         """Apply the parameters values stored in the cache to the ``Cfg`` database."""
