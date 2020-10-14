@@ -449,19 +449,17 @@ extern "C" {
   // Attribute Method  :  "PyCell_getNet ()"
 
   static PyObject* PyCell_getNet(PyCell *self, PyObject* args) {
-      cdebug_log(20,0) << "PyCell_getNet ()" << endl;
+      cdebug_log(20,0) << "PyCell_getNet()" << endl;
       METHOD_HEAD ( "Cell.getNet()" )
-
       Net* net = NULL;
-
       HTRY
-      char* name = NULL;
-      if (!PyArg_ParseTuple(args,"s:Cell.getNet", &name)) {
+        char* name = NULL;
+        if (not PyArg_ParseTuple(args,"s:Cell.getNet()", &name)) {
+          PyErr_SetString( ProxyError, "Cell.getNet(): Net name argument is not a string." );
           return NULL;
-      } 
-      net = cell->getNet(Name(name));
+        } 
+        net = cell->getNet( Name(name) );
       HCATCH
-      
       return PyNet_Link(net);
   }
 
