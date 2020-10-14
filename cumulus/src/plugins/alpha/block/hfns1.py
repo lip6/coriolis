@@ -78,7 +78,7 @@ class SlicedArea ( object ):
         but closest to the parent's center area (so, ideally, on the cluster's
         edge).
         """
-        state = cluster.bufferTree.spares.state
+        state = cluster.bufferTree.spares.conf
         self.cluster    = cluster
         self.rows       = {}
         self.iposition  = None
@@ -96,20 +96,20 @@ class SlicedArea ( object ):
     @property
     def bInputPlug ( self ):
         """The input Plug of the buffer."""
-        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.state.bufferConf.input )
+        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.conf.bufferConf.input )
 
     @property
     def bOutputPlug ( self ):
         """The output Plug of the buffer."""
-        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.state.bufferConf.output )
+        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.conf.bufferConf.output )
 
     def buildSlicesUnder ( self ):
         """
         UNUSED. Kept as reference example.
         Rebuild slices structure under a specific area (must be small).
         """
-        state       = self.cluster.bufferTree.spares.state
-        sliceHeight = state.gaugeConf.sliceHeight 
+        state       = self.cluster.bufferTree.spares.conf
+        sliceHeight = state.sliceHeight 
         cell        = state.cell
         cellAb      = cell.getAbutmentBox()
         insertArea  = Box( self.cluster.getCenter() )
@@ -141,7 +141,7 @@ class SlicedArea ( object ):
         """
         global af
         catalog           = af.getCatalog()
-        bufferLength      = self.cluster.bufferTree.spares.state.bufferConf.width
+        bufferLength      = self.cluster.bufferTree.spares.conf.bufferConf.width
         for key in self.rows.keys():
             row = self.rows[ key ]
             trace( 550, '\t+ Row:\n' )
@@ -189,9 +189,9 @@ class SlicedArea ( object ):
         """
         if self.iposition is None:
             raise ErrorMessage( 2, 'SlicedArea.insertBuffer(): No position defined to wedge the buffer.' )
-        state        = self.cluster.bufferTree.spares.state
+        state        = self.cluster.bufferTree.spares.conf
         catalog      = af.getCatalog()
-        bufferLength = self.cluster.bufferTree.spares.state.bufferConf.width
+        bufferLength = self.cluster.bufferTree.spares.conf.bufferConf.width
         tieLength    = 0
         transf       = None
         if self.iposition[2] & SlicedArea.REPLACE:
@@ -460,7 +460,7 @@ class Cluster ( object ):
 
     def show ( self ):
         """Select the RoutingPad of the cluster in the editor."""
-        editor = self.bufferTree.spares.state.editor
+        editor = self.bufferTree.spares.conf.editor
         if not editor: return False
         editor.unselectAll()
         editor.setCumulativeSelection( True )
@@ -531,7 +531,7 @@ class BufferTree ( object ):
         self.isDeepNet    = True
         self.clusterDepth = 0
         self.clusters     = [ [] ]
-        self.bufName      = self.spares.state.bufferConf.name
+        self.bufName      = self.spares.conf.bufferConf.name
         self.netCount     = 0
         self.netName      = self.net.getName()
         self.netIndex     = None
@@ -570,7 +570,7 @@ class BufferTree ( object ):
             subNetName = '{}_hfns_{}'.format( self.netName, self.netCount )
         else:
             subNetName = '{}_bit{}_hfns_{}'.format( self.netName, self.netIndex, self.netCount )
-        net = Net.create( self.spares.state.cell, subNetName )
+        net = Net.create( self.spares.conf.cell, subNetName )
         self.netCount += 1
         return net
 
@@ -689,7 +689,7 @@ class BufferTree ( object ):
                     self.clusters[-1].append( Cluster(self,cluster,self.clusterDepth+1) )
                    #if cluster.show():
                    #    Breakpoint.stop( 0, 'Showing cluster of {} RoutingPads'.format(cluster.size) )
-            editor = self.spares.state.editor
+            editor = self.spares.conf.editor
             if editor:
                 editor.unselectAll()
                 editor.setCumulativeSelection( False )
@@ -723,7 +723,7 @@ class BufferTree ( object ):
             driverRpOcc = self.rpDriver.getPlugOccurrence()
             topNetName  = self.net.getName()
             self.net.destroy()
-            self.net = Net.create( self.spares.state.cell, topNetName )
+            self.net = Net.create( self.spares.conf.cell, topNetName )
             deepPlug      = self.spares.raddTransNet( self.net, driverRpOcc.getPath() )
             deepDriverNet = deepPlug.getMasterNet()
             driverRpOcc.getEntity().setNet( deepDriverNet )

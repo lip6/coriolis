@@ -88,18 +88,18 @@ class CoreToChip ( BaseCoreToChip ):
             coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
             coronaNet.setExternal( True )
             coronaNet.setGlobal  ( True )
-            coronaNet.setType    ( Net.Type.POWER )
+            coronaNet.setType    ( Net.Type.GROUND )
             self.icore.getPlug( coreNet ).setNet( coronaNet  )
         if not chipNet:
             chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
             chipNet.setExternal( True )
-            chipNet.setType    ( Net.Type.POWER )
+            chipNet.setType    ( Net.Type.GROUND )
             self.icorona.getPlug( coronaNet ).setNet( chipNet  )
             self.ringNetNames['vssi'] = chipNet
         if not padNet:
             padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
             padNet.setExternal( True )
-            padNet.setType    ( Net.Type.POWER )
+            padNet.setType    ( Net.Type.GROUND )
             self.ringNetNames['vsse'] = padNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_vssick_{}'.format(ioPadConf.index)

@@ -56,7 +56,8 @@ from   alpha.block.clocktree     import ClockTree
 #from   alpha.block.hfns2         import BufferTree
 from   alpha.block.hfns3         import BufferTree
 from   alpha.block.configuration import IoPin
-from   alpha.block.configuration import BlockState
+from   alpha.block.configuration import BlockConf
+from   alpha.block.configuration import GaugeConf
 
 timing.staticInit()
 
@@ -70,8 +71,8 @@ class Side ( object ):
     and perform pins creation & placement.
     """
 
-    def __init__ ( self, state, side ):
-        self.state      = state
+    def __init__ ( self, conf, side ):
+        self.conf       = conf
         self.side       = side
         self.pinSpecs   = []
         self.expandPins = True
@@ -99,25 +100,25 @@ class Side ( object ):
         box has been setup.
         """
         if self.side & IoPin.WEST:
-            self.gauge   = self.state.gaugeConf.hDeepRG
-            self.ubegin  = self.state.yMin
-            self.uend    = self.state.yMax
-            self.sidePos = self.state.xMin
+            self.gauge   = self.conf.hDeepRG
+            self.ubegin  = self.conf.yMin
+            self.uend    = self.conf.yMax
+            self.sidePos = self.conf.xMin
         elif self.side & IoPin.EAST:
-            self.gauge   = self.state.gaugeConf.hDeepRG
-            self.ubegin  = self.state.yMin
-            self.uend    = self.state.yMax
-            self.sidePos = self.state.xMax
+            self.gauge   = self.conf.hDeepRG
+            self.ubegin  = self.conf.yMin
+            self.uend    = self.conf.yMax
+            self.sidePos = self.conf.xMax
         elif self.side & IoPin.SOUTH:
-            self.gauge   = self.state.gaugeConf.vDeepRG
-            self.ubegin  = self.state.xMin
-            self.uend    = self.state.xMax
-            self.sidePos = self.state.yMin
+            self.gauge   = self.conf.vDeepRG
+            self.ubegin  = self.conf.xMin
+            self.uend    = self.conf.xMax
+            self.sidePos = self.conf.yMin
         elif self.side & IoPin.NORTH:
-            self.gauge   = self.state.gaugeConf.vDeepRG
-            self.ubegin  = self.state.xMin
-            self.uend    = self.state.xMax
-            self.sidePos = self.state.yMax
+            self.gauge   = self.conf.vDeepRG
+            self.ubegin  = self.conf.xMin
+            self.uend    = self.conf.xMax
+            self.sidePos = self.conf.yMax
 
     def getNextPinPosition ( self, flags, upos, ustep ):
         """
@@ -179,26 +180,26 @@ class Side ( object ):
 
         status = 0
         if self.side & (IoPin.NORTH | IoPin.SOUTH):
-            gauge = self.state.gaugeConf.vDeepRG
+            gauge = self.conf.vDeepRG
             upos  = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format( index )
-                net      = self.state.cell.getNet( pinName )
+                net      = self.conf.cell.getNet( pinName )
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
-                if net.isClock() and self.state.useClockTree:
+                if net.isClock() and self.conf.useClockTree:
                     print( WarningMessage( 'Side.place(IoPin): Skipping clock IoPin "{}".'.format(pinName) ))
                     continue
-                pinName += '.{}'.format(self.state.getIoPinsCounts(net))
+                pinName += '.{}'.format(self.conf.getIoPinsCounts(net))
                 pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
-                if pinPos.getX() > self.state.xMax or pinPos.getX() < self.state.xMin:
+                if pinPos.getX() > self.conf.xMax or pinPos.getX() < self.conf.xMin:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): Pin "{}" is outside north or south abutment box side.' \
                                               .format(pinName)
                                             , '(x:{}, xAB: [{}:{}])' \
                                               .format( DbU.getValueString(pinPos.getX())
-                                                     , DbU.getValueString(self.state.xMin)
-                                                     , DbU.getValueString(self.state.xMax) ) ] ))
+                                                     , DbU.getValueString(self.conf.xMin)
+                                                     , DbU.getValueString(self.conf.xMax) ) ] ))
                     status += 1
                 trace( 550, '\tIoPin.place() N/S @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
                 pin = Pin.create( net
@@ -213,26 +214,26 @@ class Side ( object ):
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
-                self.state.incIoPinsCounts( net )
+                self.conf.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         else:
-            gauge = self.state.gaugeConf.hDeepRG
+            gauge = self.conf.hDeepRG
             upos  = ioPin.upos
             for index in ioPin.indexes:
                 pinName  = ioPin.stem.format(index)
-                net      = self.state.cell.getNet( pinName )
+                net      = self.conf.cell.getNet( pinName )
                 if net is None:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): No net named "{}".'.format(pinName) ] ))
                     continue
-                pinName += '.{}'.format(self.state.getIoPinsCounts(net))
+                pinName += '.{}'.format(self.conf.getIoPinsCounts(net))
                 pinPos   = self.getNextPinPosition( ioPin.flags, upos, ioPin.ustep )
-                if pinPos.getY() > self.state.yMax or pinPos.getY() < self.state.yMin:
+                if pinPos.getY() > self.conf.yMax or pinPos.getY() < self.conf.yMin:
                     print( ErrorMessage( 1, [ 'Side.place(IoPin): Pin "{}" is outside east or west abutment box side.' \
                                               .format(pinName)
                                               , '(y:{}, yAB: [{}:{}])' \
                                               .format( DbU.getValueString(pinPos.getY())
-                                                     , DbU.getValueString(self.state.yMin)
-                                                     , DbU.getValueString(self.state.yMax)) ] ))
+                                                     , DbU.getValueString(self.conf.yMin)
+                                                     , DbU.getValueString(self.conf.yMax)) ] ))
                     status += 1
                 trace( 550, '\tIoPin.place() E/W @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
                 pin = Pin.create( net
@@ -247,7 +248,7 @@ class Side ( object ):
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
-                self.state.incIoPinsCounts( net )
+                self.conf.incIoPinsCounts( net )
                 if upos: upos += ioPin.ustep
         return status
 
@@ -257,7 +258,7 @@ class Side ( object ):
         of the abutment box. THey will stick out for one pitch.
         """
         if not self.expandPins: return
-        rg  = self.state.gaugeConf.routingGauge
+        rg  = self.conf.routingGauge
         for pinsAtPos in self.pins.values():
             for pin in pinsAtPos:
                 for lg in rg.getLayerGauges():
@@ -285,7 +286,7 @@ class Side ( object ):
                 for pin in self.pins[upos][1:]:
                     pinNames += ', ' + pin.getName()
                 print( ErrorMessage( 1, [ 'Side.checkOverlap(): On {} side of block "{}", {} pins ovelaps.' \
-                                          .format(sideName,self.state.cell.getName(),count)
+                                          .format(sideName,self.conf.cell.getName(),count)
                                         , '(@{}: {})' \
                                           .format(DbU.getValueString(upos),pinNames) ] ) )
 
@@ -308,34 +309,31 @@ class Block ( object ):
         if Block.LUT.has_key(cell): return Block.LUT[cell]
         return None
 
-    @staticmethod
-    def create ( cell, ioPins=[], ioPads=[] ):
-        """Create a Block and it's configuration object."""
-        block = Block( BlockState( cell, ioPins, ioPads ) )
-        Block.LUT[ cell ] = block
-        return block
-
-    def __init__ ( self, state ):
-        """Not to be used directly, please see Block.create()."""
+    def __init__ ( self, conf ):
+        """
+        Create a Block object. The only parameter ``conf`` must be a BlockConf
+        object which contains the complete block configuration.
+        """
         self.flags          = 0
-        self.state          = state
+        self.conf           = conf
         self.spares         = Spares( self )
         self.clockTrees     = []
         self.hfnTrees       = []
         self.blockInstances = []
-        self.sides          = { IoPin.WEST  : Side( self.state, IoPin.WEST  )
-                              , IoPin.EAST  : Side( self.state, IoPin.EAST  )
-                              , IoPin.SOUTH : Side( self.state, IoPin.SOUTH )
-                              , IoPin.NORTH : Side( self.state, IoPin.NORTH )
+        self.sides          = { IoPin.WEST  : Side( self.conf, IoPin.WEST  )
+                              , IoPin.EAST  : Side( self.conf, IoPin.EAST  )
+                              , IoPin.SOUTH : Side( self.conf, IoPin.SOUTH )
+                              , IoPin.NORTH : Side( self.conf, IoPin.NORTH )
                               }
-        if not self.state.cell.getAbutmentBox().isEmpty():
+        if not self.conf.cell.getAbutmentBox().isEmpty():
             print( '  o  Block "{}" is already done, reusing layout.' \
-                   .format(self.state.cell.getName()) )
-            self.state.cell.setTerminalNetlist( True )
-            self.state.isBuilt = True
+                   .format(self.conf.cell.getName()) )
+            self.conf.cell.setTerminalNetlist( True )
+            self.conf.isBuilt = True
         else:
             print( '  o  Block "{}" will be generated.' \
-                   .format(self.state.cell.getName()) )
+                   .format(self.conf.cell.getName()) )
+        Block.LUT[ self.conf.cell ] = self
 
     def setUnexpandPins ( self, sides ):
         """
@@ -359,48 +357,57 @@ class Block ( object ):
            various configuration parameters (aspect ratio, space margin, fixed
            height or width, ...).
         """
-        if not self.state.cell.getAbutmentBox().isEmpty():
+        trace( 550, '\tBlockConf.setupAb() {}\n'.format(self.conf.cell) )
+        if not self.conf.cell.getAbutmentBox().isEmpty():
             pass
+        elif not self.conf.coreAb.isEmpty():
+            self.conf.core.setAbutmentBox( self.conf.coreAb )
         elif len(self.blockInstances):
             with UpdateSession():
-                ab = Box( 0, 0, self.state.fixedWidth, self.state.fixedHeight )
-                self.state.cell.setAbutmentBox( ab )
-                for occurrence in self.state.cell.getNonTerminalNetlistInstanceOccurrences():
+                ab = Box( 0, 0, self.conf.fixedWidth, self.conf.fixedHeight )
+                self.conf.cell.setAbutmentBox( ab )
+                for occurrence in self.conf.cell.getNonTerminalNetlistInstanceOccurrences():
                     instance = occurrence.getEntity()
                     subCell  = instance.getMasterCell()
                     subCell.setAbutmentBox( ab )
-                for occurrence in self.state.cell.getNonTerminalNetlistInstanceOccurrences():
+                for occurrence in self.conf.cell.getNonTerminalNetlistInstanceOccurrences():
                     instance = occurrence.getEntity()
                     instance.setTransformation( Transformation() )
                 for blockInstance in self.blockInstances:
                     blockInstance.place()
         else:
-            sysSpaceMargin   = self.state.cfg.etesian.spaceMargin
+            sysSpaceMargin   = self.conf.cfg.etesian.spaceMargin
             blockSpaceMargin = sysSpaceMargin + self.spares.getSpareSpaceMargin()
-            self.state.cfg.etesian.spaceMargin = blockSpaceMargin
-            self.state.cfg.apply()
+            self.conf.cfg.etesian.spaceMargin = blockSpaceMargin
+            self.conf.cfg.apply()
             with UpdateSession():
-                etesian = Etesian.EtesianEngine.create( self.state.cell )
-                if self.state.fixedWidth:  etesian.setFixedAbWidth ( self.state.fixedWidth  )
-                if self.state.fixedHeight: etesian.setFixedAbHeight( self.state.fixedHeight )
+                etesian = Etesian.EtesianEngine.create( self.conf.cell )
+                if self.conf.fixedWidth:  etesian.setFixedAbWidth ( self.conf.fixedWidth  )
+                if self.conf.fixedHeight: etesian.setFixedAbHeight( self.conf.fixedHeight )
                 etesian.setDefaultAb()
                 etesian.destroy()
-            self.state.cfg.etesian.spaceMargin = sysSpaceMargin
-            self.state.cfg.apply()
+            self.conf.cfg.etesian.spaceMargin = sysSpaceMargin
+            self.conf.cfg.apply()
+        ab = self.conf.cell.getAbutmentBox()
+        self.conf.coreSize = (ab.getWidth(), ab.getHeight())
+        trace( 550, '\tSetting core ab from Cell:{}\n'.format(self.conf.coreAb) )
         for side in self.sides.values(): side.setupAb()
+        trace( 550, '\tCORE AB is {}\n'.format(self.conf.cell.getAbutmentBox()) )
+        if self.conf.isCoreBlock:
+            self.conf.setupICore()
 
     def addClockTrees ( self ):
         """Create the trunk of all the clock trees (recursive H-Tree)."""
         print( '  o  Building clock tree(s).' )
         af = CRL.AllianceFramework.get()
         clockNets = []
-        for net in self.state.cell.getNets():
+        for net in self.conf.cell.getNets():
             if af.isCLOCK(net.getName()): 'CLOCK: {}'.format(net)
             if net.isClock():
                 trace( 550, '\tBlock.addClockTrees(): Found clock {}.\n'.format(net) )
                 clockNets.append( net )
         if not clockNets:
-            raise ErrorMessage( 3, 'Block.clockTree(): Cell "{}" has no clock net(s).'.format(self.state.cell.getName()) )
+            raise ErrorMessage( 3, 'Block.clockTree(): Cell "{}" has no clock net(s).'.format(self.conf.cell.getName()) )
         with UpdateSession():
             for clockNet in clockNets:
                 print( '     - "{}".'.format(clockNet.getName()) )
@@ -421,12 +428,12 @@ class Block ( object ):
         """Create the trunk of all the high fanout nets."""
         print( '  o  Building high fanout nets trees.' )
         if self.spares:
-            maxSinks = timing.tech.getSinksEstimate( self.state.bufferConf.name )
+            maxSinks = timing.tech.getSinksEstimate( self.conf.bufferConf.name )
             dots( 82
-                , '     -  Max sinks for buffer "{}"'.format(self.state.bufferConf.name)
+                , '     -  Max sinks for buffer "{}"'.format(self.conf.bufferConf.name)
                 , ' {}'.format(maxSinks) )
             nets = []
-            for net in self.state.cell.getNets():
+            for net in self.conf.cell.getNets():
                 sinksCount = 0
                 for rp in net.getRoutingPads(): sinksCount += 1
                 if sinksCount > maxSinks:
@@ -459,7 +466,7 @@ class Block ( object ):
         """
         faileds = 0
         with UpdateSession():
-            for ioPin in self.state.ioPins:
+            for ioPin in self.conf.ioPins:
                 if   ioPin.flags & IoPin.SOUTH: side = self.sides[IoPin.SOUTH]
                 elif ioPin.flags & IoPin.NORTH: side = self.sides[IoPin.NORTH]
                 elif ioPin.flags & IoPin.EAST:  side = self.sides[IoPin.EAST ]
@@ -467,7 +474,7 @@ class Block ( object ):
                 faileds += side.place( ioPin )
         if faileds:
             raise ErrorMessage( 3, 'Block.placeIoPins(): Cell "{}" has {} badly placed pins.' \
-                                   .format(self.state.cell.getName(),faileds) )
+                                   .format(self.conf.cell.getName(),faileds) )
 
     def checkIoPins ( self ):
         """
@@ -475,7 +482,7 @@ class Block ( object ):
         """
         for side in self.sides.values():
             side.checkOverlaps()
-        for net in self.state.cell.getNets():
+        for net in self.conf.cell.getNets():
             if not net.isExternal(): continue
             if net.isSupply(): continue
             hasPins = False
@@ -496,12 +503,17 @@ class Block ( object ):
                 side.expand()
 
     def place ( self ):
-        etesian = Etesian.EtesianEngine.create( self.state.cell )
+        if self.conf.isCoreBlock:
+            etesian = Etesian.EtesianEngine.create( self.conf.corona )
+            etesian.setBlock( self.conf.icore )
+        else:
+            etesian = Etesian.EtesianEngine.create( self.conf.cell )
         etesian.place()
         etesian.destroy()
 
     def route ( self ):
-        katana = Katana.KatanaEngine.create( self.state.cell )
+        routedCell = self.conf.corona if self.conf.isCoreBlock else self.conf.cell
+        katana = Katana.KatanaEngine.create( routedCell )
        #katana.printConfiguration   ()
         katana.digitalInit          ()
        #katana.runNegociatePreRouted()
@@ -519,9 +531,9 @@ class Block ( object ):
 
     def addBlockages ( self ):
         with UpdateSession():
-            net = self.state.cell.getNet( 'blockagenet' )
-            ab  = self.state.cell.getAbutmentBox()
-            rg  = self.state.gaugeConf.routingGauge
+            net = self.conf.cell.getNet( 'blockagenet' )
+            ab  = self.conf.cell.getAbutmentBox()
+            rg  = self.conf.routingGauge
             for lg in rg.getLayerGauges():
                 if lg.getType() == RoutingLayerGauge.PinOnly: continue
                 blockage = lg.getBlockageLayer()
@@ -545,44 +557,46 @@ class Block ( object ):
                                    , ab.getYMax() - dyBorder
                                    )
 
-    def build ( self ):
+    def doPnR ( self ):
         """
         Perform all the steps required to build the layout of the block.
         The first step is to build all the blockInstance it depends upon,
         so they will appear as ``NetListTerminal`` and we can place them
         in their parent cell.
         """
-        editor = self.state.editor
-        print( '  o  Builing block "{}".'.format(self.state.cell.getName()) )
+        editor = self.conf.editor
+        print( '  o  Builing block "{}".'.format(self.conf.cell.getName()) )
         for blockInstance in self.blockInstances:
-            blockInstance.block.state.editor = editor
-            if not blockInstance.block.state.isBuilt:
+            blockInstance.block.conf.editor = editor
+            if not blockInstance.block.conf.isBuilt:
                 print( '     - Build sub-block "{}".' \
-                       .format(blockInstance.block.state.cell.getName()) )
+                       .format(blockInstance.block.conf.cell.getName()) )
                 blockInstance.block.build()
-        if editor: editor.setCell( self.state.cell )
-        self.state.cfg.apply()
+        if editor: editor.setCell( self.conf.cell )
+        self.conf.cfg.apply()
         iteration = -1
         while True:
             iteration += 1
             if iteration > 0: break
             self.setupAb()
-            self.placeIoPins()
-            self.checkIoPins()
+            if not self.conf.isCoreBlock:
+                self.placeIoPins()
+                self.checkIoPins()
             self.spares.build()
-            if self.state.useClockTree: self.addClockTrees()
+            if self.conf.useClockTree: self.addClockTrees()
             self.addHfnBuffers()
             if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
             self.findHfnTrees()
             break
-        if self.state.useClockTree: self.splitClocks()
+        if self.conf.useClockTree: self.splitClocks()
+        if self.conf.isCoreBlock:  self.doConnectCore()
         status = self.route()
-        self.addBlockages()
-        self.expandIoPins()
-        self.state.isBuilt = True
-        plugins.rsave.rsave( self.state.cell )
+        if not self.conf.isCoreBlock:
+            self.addBlockages()
+            self.expandIoPins()
+        self.conf.isBuilt = True
         return status
 
     def useBlockInstance ( self, instancePathName , transf ):
@@ -602,7 +616,7 @@ class Block ( object ):
         iNames = instancePathName.split('.')
         path   = Path()
         for iName in iNames:
-            if path.isEmpty(): parentCell = self.state.cell
+            if path.isEmpty(): parentCell = self.conf.cell
             else:              parentCell = path.getTailInstance().getMasterCell()
             instance = parentCell.getInstance( iName )
             if not instance:
@@ -620,6 +634,11 @@ class Block ( object ):
                 return
         blockIns = BlockInstance( tailInstance, transf )
         self.blockInstances.append( blockIns )
+  
+    def save ( self ):
+        if not self.conf.validated:
+            raise ErrorMessage( 1, 'block.save(): Chip is not valid, aborting.' )
+        self.spares.save()
 
 
 # ----------------------------------------------------------------------------

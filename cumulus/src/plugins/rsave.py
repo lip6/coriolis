@@ -43,7 +43,6 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
     """
     framework = CRL.AllianceFramework.get()
     if depth == 0: print( '  o  Recursive Save-Cell.' )
-  
     sviews = ''
     if views & CRL.Catalog.State.Logical:
         sviews += 'netlist'
@@ -58,19 +57,16 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
     if views & CRL.Catalog.State.Physical:
         if sviews: sviews += ','
         sviews += 'layout'
-  
     print( '     {}+ {} ({}).'.format(' '*(depth*2), cell.getName(), sviews) )
     if cell.isUniquified(): views |= CRL.Catalog.State.Logical
     framework.saveCell( cell, views )
-  
     for instance in cell.getInstances():
-       #print( '     {}| {}.'.format(' '*(depth*2), instance) )
+        #print( '     {}| {}.'.format(' '*(depth*2), instance) )
         masterCell = instance.getMasterCell()
-        
         if not masterCell.isTerminalNetlist():
             rsave( masterCell, views, depth+1 )
-       #else:
-       #    print( '     {}| Master cell is terminal netlist {}.'.format(' '*(depth*2), instance.getMasterCell()) )
+        #else:
+        #    print( '     {}| Master cell is terminal netlist {}.'.format(' '*(depth*2), instance.getMasterCell()) )
     return
 
 
@@ -100,11 +96,8 @@ def scriptMain ( **kw ):
             return 0
         rsave( cell, views )
         CRL.destroyAllVHDL()
-    
     except Exception, e:
       helpers.io.catch( e )
-    
     sys.stdout.flush()
     sys.stderr.flush()
-        
     return 0

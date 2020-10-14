@@ -12,6 +12,7 @@
 # |  Python      :       "./plugins/block/configuration.py"         |
 # +-----------------------------------------------------------------+
 
+from   __future__ import print_function
 import sys
 import re
 import os.path
@@ -36,6 +37,7 @@ from   Hurricane import Instance
 import CRL
 from   CRL                 import RoutingLayerGauge
 from   helpers             import trace, l, u, n
+from   helpers.utils       import classdecorator
 from   helpers.io          import ErrorMessage
 from   helpers.io          import WarningMessage
 from   helpers.io          import catch
@@ -128,8 +130,8 @@ class GaugeConf ( object ):
                 self.topLayerDepth = layerGauge.getDepth()
                 break
         if not self.topLayerDepth:
-            print WarningMessage( 'Gauge top layer not defined, using top of gauge ({}).' \
-                                  .format(self._routingGauge.getDepth()) )
+            print( WarningMessage( 'Gauge top layer not defined, using top of gauge ({}).' \
+                                   .format(self._routingGauge.getDepth()) ))
             self._topLayerDepth = self._routingGauge.getDepth() - 1
 
         self.horizontalDepth     = -1
@@ -157,10 +159,11 @@ class GaugeConf ( object ):
         return
 
     def _loadIoPadGauge ( self, ioPadGaugeName ):
+        trace( 550, ',+', '\tGaugeConf._loadIoPadGauge(): "{}".\n'.format(ioPadGaugeName) )
         self._ioPadGauge = CRL.AllianceFramework.get().getCellGauge( ioPadGaugeName )
         if not self._ioPadGauge:
-            print WarningMessage( 'IO pad gauge "%s" not found.' % ioPadGaugeName )
-        return
+            print( WarningMessage( 'IO pad gauge "{}" not found.'.format(ioPadGaugeName) ))
+        trace( 550, '-' )
 
     def isHorizontal ( self, layer ):
         mask = layer.getMask()
@@ -169,8 +172,8 @@ class GaugeConf ( object ):
                 if lg.getDirection() == RoutingLayerGauge.Horizontal: return True
                 return False
         
-        print ErrorMessage( 1, 'GaugeConf.isHorizontal(): Layer "%s" is not part of gauge "%s", cannot know preferred direction.' \
-                                % (layer.getName(), self._routingGauge.getName()) )
+        print( ErrorMessage( 1, 'GaugeConf.isHorizontal(): Layer "{}" is not part of gauge "{}", cannot know preferred direction.' \
+                                .format(layer.getName(), self._routingGauge.getName()) ))
         return False
 
     def isVertical ( self, layer ): return not self.isHorizontal( layer )
@@ -310,7 +313,7 @@ class GaugeConf ( object ):
     
         trace( 550, '-' )
         return contact1
-  
+
     def rpByOccurrence ( self, occurrence, net ):
         plug = occurrence.getEntity()
         if self._plugToRp.has_key(plug):
@@ -327,7 +330,7 @@ class GaugeConf ( object ):
         else:
             rp = RoutingPad.create( net, occurrence, RoutingPad.BiggestArea )
             self._plugToRp[plug] = rp
-        return self.rpAccess( self._rpByOccurrence(occurrence,net), flags )
+        return self.rpAccess( self.rpByOccurrence(occurrence,net), flags )
   
     def rpByPlug ( self, plug, net ):
         if self._plugToRp.has_key(plug):
@@ -356,7 +359,7 @@ class GaugeConf ( object ):
             segment = component
             count  += 1
         if count > 1:
-            message = [ 'GaugeConf::_setStackPosition(): There must be exactly one segment connected to contact, not {}.'.format(count)
+            message = [ 'GaugeConf::setStackPosition(): There must be exactly one segment connected to contact, not {}.'.format(count)
                       , '+ {}'.format(topContact) ]
             for component in topContact.getSlaveComponents():
                 message.append( '| {}'.format(component) )
@@ -434,8 +437,8 @@ class IoPadConf ( object ):
         self.flags  = 0
         self.index  = None
         self._datas = list( datas )
-        while len(self._datas) < 7:
-            self._datas.append( None )
+        if   len(self._datas) == 5: self._datas += [ None, None ]
+        elif len(self._datas) == 6: self._datas.insert( 5, None )
         self._datas.append( [] )
         reSpecialPads = re.compile( r'^(?P<type>.+)_(?P<index>[\d+])$' )
         m = reSpecialPads.match( self.instanceName )
@@ -447,6 +450,7 @@ class IoPadConf ( object ):
         else:
             if   self._datas[5] is not None: self.flags |= IoPadConf.BIDIR
             elif self._datas[6] is not None: self.flags |= IoPadConf.TRISTATE
+        trace( 550, '\tIoPadConf._datas: {}\n'.format(self._datas) )
   
     @property
     def side ( self ): return self._datas[0]
@@ -482,7 +486,7 @@ class IoPadConf ( object ):
     def coreClockNetName ( self ): return self._datas[5]
   
     @property
-    def nets ( self ): return self._datas[4:6]
+    def nets ( self ): return self._datas[4:7]
   
     @property
     def pads ( self ): return self._datas[7]
@@ -494,9 +498,11 @@ class IoPadConf ( object ):
     def isBidir    ( self ): return self.flags & IoPadConf.BIDIR
   
     def __repr__ ( self ):
-        s = '<IoPadConf %s pad:{} from:{}'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
+        s = '<IoPadConf {} pad:{} from:{}'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
         if self.isBidir():
           s += ' to:{} en:{}'.format(self.toCoreNetName,self.enableNetName)
+        if self.isTristate():
+          s += ' en:{}'.format(self.enableNetName)
         s += '>'
         return s
 
@@ -510,7 +516,8 @@ class ChipConf ( object ):
     sizes mostly.
     """
 
-    def __init__ ( self ):
+    def __init__ ( self, blockConf ):
+        self.blockConf    = blockConf
         self.name         = 'chip'
         self.ioPadGauge   = None
         self.padInstances = []
@@ -519,15 +526,20 @@ class ChipConf ( object ):
         self.eastPads     = []
         self.westPads     = []
 
+    def __setattr__ ( self, attr, value ):
+        object.__setattr__( self, attr, value )
+        if attr == 'ioPadGauge' and value is not None:
+            self.blockConf._loadIoPadGauge( value )
+
     def addIoPad ( self, spec, specNb ):
         """
         Add an I/O pad specification. The spec argument must be of the form:
         """
         ioPadConf = IoPadConf( spec ) 
-        if   spec[0] & IoPin.SOUTH: self.southPads.append( spec[1] )
-        elif spec[0] & IoPin.NORTH: self.northPads.append( spec[1] )
-        elif spec[0] & IoPin.EAST:  self.eastPads .append( spec[1] )
-        elif spec[0] & IoPin.WEST:  self.westPads .append( spec[1] )
+        if   spec[0] & IoPin.SOUTH: self.southPads.append( ioPadConf )
+        elif spec[0] & IoPin.NORTH: self.northPads.append( ioPadConf )
+        elif spec[0] & IoPin.EAST:  self.eastPads .append( ioPadConf )
+        elif spec[0] & IoPin.WEST:  self.westPads .append( ioPadConf )
         else:
             raise ErrorMessage( 1, [ 'ChipConf.addIoPad(): Unspectified side for {}'.format(ioPadConf)
                                    , '(must be NORTH, SOUTH, EAST or WEST)' ] )
@@ -666,18 +678,18 @@ class IoPin ( object ):
 #       else:
 #           indexes = self.count
 #       if self.flags & (IoPin.NORTH | IoPin.SOUTH):
-#           gauge = block.state.gaugeConf.vDeepRG
+#           gauge = block.conf.gaugeConf.vDeepRG
 #           for index in indexes:
 #               pinName  = self.stem.format(index)
-#               net      = block.state.cell.getNet( pinName )
+#               net      = block.conf.cell.getNet( pinName )
 #               if net is None:
 #                   print( ErrorMessage( 1, [ 'IoPin.place(): No net named "{}".'.format(pinName) ] ))
 #                   continue
-#               pinName += '.{}'.format(block.state.getIoPinsCounts(net))
+#               pinName += '.{}'.format(block.conf.getIoPinsCounts(net))
 #               pinPos   = side.getNextPinPosition( self.flags, self.upos, self.ustep )
-#               if pinPos.getX() > block.state.xMax or pinPos.getX() < block.state.xMin:
+#               if pinPos.getX() > block.conf.xMax or pinPos.getX() < block.conf.xMin:
 #                   print( ErrorMessage( 1, [ 'IoPin.place(): Pin "{}" is outside north or south abutment box side.'.format(pinName)
-#                                           , '(x:"{}", AB xMax:{})'.format(DbU.getValueString(pinPos.getX()),DbU.getValueString(block.state.xMax)) ] ))
+#                                           , '(x:"{}", AB xMax:{})'.format(DbU.getValueString(pinPos.getX()),DbU.getValueString(block.conf.xMax)) ] ))
 #                   status += 1
 #               trace( 550, '\tIoPin.place() N/S @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
 #               pin = Pin.create( net
@@ -692,21 +704,21 @@ class IoPin ( object ):
 #                               )
 #               NetExternalComponents.setExternal( pin )
 #               side.append( self.flags, pin )
-#               block.state.incIoPinsCounts( net )
+#               block.conf.incIoPinsCounts( net )
 #               if self.upos: self.upos + self.ustep
 #       else:
-#           gauge = block.state.gaugeConf.hDeepRG
+#           gauge = block.conf.gaugeConf.hDeepRG
 #           for index in indexes:
 #               pinName  = self.stem.format(index)
-#               net      = block.state.cell.getNet( pinName )
+#               net      = block.conf.cell.getNet( pinName )
 #               if net is None:
 #                   print( ErrorMessage( 1, [ 'IoPin.place(): No net named "{}".'.format(pinName) ] ))
 #                   continue
-#               pinName += '.{}'.format(block.state.getIoPinsCounts(net))
+#               pinName += '.{}'.format(block.conf.getIoPinsCounts(net))
 #               pinPos   = side.getNextPinPosition( self.flags, self.upos, self.ustep )
-#               if pinPos.getY() > block.state.yMax or pinPos.getY() < block.state.yMin:
+#               if pinPos.getY() > block.conf.yMax or pinPos.getY() < block.conf.yMin:
 #                   print( ErrorMessage( 1, [ 'IoPin.place(): Pin "{}" is outside east or west abutment box side.'.format(pinName)
-#                                           , '(y:"{}", AB yMax:{})'.format(DbU.getValueString(pinPos.getY()),DbU.getValueString(block.state.yMax)) ] ))
+#                                           , '(y:"{}", AB yMax:{})'.format(DbU.getValueString(pinPos.getY()),DbU.getValueString(block.conf.yMax)) ] ))
 #                   status += 1
 #               trace( 550, '\tIoPin.place() E/W @{} "{}" of "{}".\n'.format(pinPos,pinName,net) )
 #               pin = Pin.create( net
@@ -721,18 +733,18 @@ class IoPin ( object ):
 #                               )
 #               NetExternalComponents.setExternal( pin )
 #               side.append( self.flags, pin )
-#               block.state.incIoPinsCounts( net )
+#               block.conf.incIoPinsCounts( net )
 #               if self.upos: self.upos + self.ustep
 #       return status
 
 
 # ----------------------------------------------------------------------------
-# Class  :  "configuration.BlockState".
+# Class  :  "configuration.BlockConf".
 
-class BlockState ( object ):
+class BlockConf ( GaugeConf ):
     """
-    BlockState centralize all the configurations informations related to a
-    given block.
+    BlockConf centralize all the configurations informations related to a
+    given block. It must be derived/build upon a GaugeConf class.
 
     It contains:
 
@@ -748,15 +760,19 @@ class BlockState ( object ):
     """
     
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
+        super(BlockConf,self).__init__()
+        self.validated    = True
         self.editor       = None
         self.framework    = CRL.AllianceFramework.get()
         self.cfg          = CfgCache('',Cfg.Parameter.Priority.Interactive)
-        self.gaugeConf    = GaugeConf()
         self.bufferConf   = BufferInterface( self.framework )
-        self.chip         = ChipConf()
+        self.chipConf     = ChipConf( self )
         self.bColumns     = 2
         self.bRows        = 2
         self.cell         = cell
+        self.icore        = None
+        self.icorona      = None
+        self.chip         = None
         self.fixedWidth   = None
         self.fixedHeight  = None
         self.deltaAb      = [ 0, 0, 0, 0 ]
@@ -768,11 +784,13 @@ class BlockState ( object ):
         for ioPinSpec in ioPins:
             self.ioPins.append( IoPin( *ioPinSpec ) )
         for line in range(len(ioPads)):
-            self.chip.addIoPad( ioPads[line], line )
-
+            self.chipConf.addIoPad( ioPads[line], line )
         self.cfg.etesian.aspectRatio = None
         self.cfg.etesian.spaceMargin = None
         self.cfg.block.spareSide     = None
+
+    @property
+    def isCoreBlock ( self ): return self.chip is not None
 
     @property
     def bufferWidth ( self ): return self.bufferConf.width
@@ -792,7 +810,37 @@ class BlockState ( object ):
     @property
     def yMax ( self ): return self.cell.getAbutmentBox().getYMax()
 
+    @property
+    def coreAb ( self ):
+        if not hasattr(self,'coreSize'): return Box()
+        trace( 550, '\tcoreAb:[{} {}]\n'.format( DbU.getValueString(self.coreSize[0])
+                                               , DbU.getValueString(self.coreSize[1]) ))
+        return Box( 0, 0, self.coreSize[0], self.coreSize[1] )
+
+    @property
+    def coronaAb ( self ):
+        if self.corona is None: return Box()
+        return self.corona.getAbutmentBox()
+
+    @property
+    def chipAb ( self ):
+        if not hasattr(self,'chipSize'): return Box()
+        return Box( 0, 0, self.chipSize[0], self.chipSize[1] )
+
+    @property
+    def corona ( self ): return self.icorona.getMasterCell()
+
+    @property
+    def core ( self ): return self.cell
+
     def setEditor ( self, editor ): self.editor = editor
+
+    def refresh ( self, cell=None ):
+        if not self.editor: return
+        if cell is not None:
+            if cell != self.editor.getCell():
+                self.editor.setCell( cell )
+        self.editor.fit()
 
     def createBuffer ( self ):
         return self.bufferConf.createBuffer( self.cell )

@@ -50,12 +50,13 @@ from   Hurricane       import Net
 from   Hurricane       import Instance
 from   CRL             import Catalog
 from   CRL             import AllianceFramework
+from   helpers         import trace
 from   helpers         import netDirectionToStr
 from   helpers.overlay import UpdateSession
 from   helpers.io      import ErrorMessage
 import plugins.chip
 from   plugins.alpha.block.block         import Block
-from   plugins.alpha.block.configuration import BlockState
+from   plugins.alpha.block.configuration import BlockConf
 from   plugins.alpha.block.configuration import IoPadConf
 
 
@@ -99,7 +100,6 @@ class IoNet ( object ):
         self.coronaNet       = None    # Corona net going from core to corona.
         self.chipIntNet      = None    # Chip net going from corona to I/O pad.
         self.chipExtNet      = None    # Chip net going from I/O pad to the outside world.
-      
         m = IoNet.reVHDLVector.match( self.coreNet.getName() )
         if m:
             self._flags |= IoNet.IsElem
@@ -108,9 +108,8 @@ class IoNet ( object ):
         else:
             self._name   = self.coreNet.getName()
             self._index  = 0
-    
         self._type = self.coreToChip.getNetType( self._name )
-        return
+        trace( 550, '\tIoNet.__init__(): {}\n'.format(self) )
     
     def __repr__ ( self ):
         return '<IoNet "{}" ext:"{}" int:"{}">'.format( self.coreNet.getName()
@@ -137,6 +136,10 @@ class IoNet ( object ):
     @property
     def coronaNetName ( self ):
         s = self._name
+        if self.coreNet.getDirection() & Net.Direction.IN:
+          s += '_from_pad'
+        elif self.coreNet.getDirection() & Net.Direction.OUT:
+          s += '_to_pad'
         if self._flags & IoNet.IsElem: s  += '({})'.format(self._index)
         return s
     
@@ -233,13 +236,20 @@ class IoPad ( object ):
         if direction == IoPad.UNSUPPORTED: return "UNSUPPORTED"
         return "Invalid value"
   
-    def __init__ ( self, coreToChip, padInstanceName ):
-        self.coreToChip      = coreToChip
-        self.padInstanceName = padInstanceName
-        self.direction       = 0
-        self.nets            = []
-        self.pads            = []
+    def __init__ ( self, coreToChip, ioPadConf ):
+        self.coreToChip = coreToChip
+        self.ioPadConf  = ioPadConf
+        self.direction  = 0
+        self.nets       = []
         return
+
+    @property
+    def padInstanceName ( self ): return self.ioPadConf.instanceName
+
+    @property
+    def pads ( self ):
+      print( self.ioPadConf )
+      return self.ioPadConf.pads
   
     def __str__ ( self ):
         s = '<IoPad "{}" '.format(self.padInstanceName)
@@ -389,7 +399,7 @@ class CoreToChip ( object ):
     def __init__ ( self, core ):
         if isinstance(core,Block):
             state = core.state
-        elif isinstance(core,BlockState):
+        elif isinstance(core,BlockConf):
             state = core
         else:
             block = Block.lookup( core )
@@ -403,16 +413,24 @@ class CoreToChip ( object ):
         self.ioPadInfos     = {}
         self.chipPads       = []
         self.padLib         = None
-        self.core           = self.state.cell
-        self.chip           = None
         self.corona         = None
-        self.icorona        = None
-        self.icore          = None
         self._ioNets        = {}
         self.powerPadCount  = 0
         self.groundPadCount = 0
         self.clockPadCount  = 0
         return
+
+    @property
+    def core ( self ): return self.state.cell
+
+    @property
+    def icore ( self ): return self.state.icore
+
+    @property
+    def icorona ( self ): return self.state.icorona
+
+    @property
+    def chip ( self ): return self.state.chip
 
     def hasIoNet ( self, netName ):
         """
@@ -439,6 +457,7 @@ class CoreToChip ( object ):
     def _connectPadRing ( self, padInstance ):
         """Connect ring signals to the I/O pad."""
         for masterNetName, netName in self.ringNetNames.items():
+            trace( 550, '\tCoreToChip._connectPadRing(): master:{} net:{}\n'.format(masterNetName,netName) )
             CoreToChip._connect( padInstance, netName, masterNetName )
 
     def _connectRing ( self ):
@@ -487,37 +506,42 @@ class CoreToChip ( object ):
         """
         af = AllianceFramework.get()
         with UpdateSession():
-            self.chip    = af.createCell( self.state.chip.name )
-            self.corona  = af.createCell( 'corona' )
-            self.icore   = Instance.create( self.corona, 'core'  , self.core   )
-            self.icorona = Instance.create( self.chip  , 'corona', self.corona )
+            print( '  o  Build Chip from Core.' )
+            print( '     - Core:   "{}".'.format(self.state.cell.getName()) )
+            print( '     - Corona: "{}".'.format('corona') )
+            print( '     - Chip:   "{}".'.format(self.state.chipConf.name) )
+            self.state.chip = af.createCell( self.state.chipConf.name )
+            self.corona     = af.createCell( 'corona' )
+            self.state.icore   = Instance.create( self.corona    , 'core'  , self.state.cell )
+            self.state.icorona = Instance.create( self.state.chip, 'corona', self.corona     )
             ioPads      = []
             clockIoNets = []
-            for padConf in self.state.chip.padInstances:
-                if padConf.isPower():
-                    self._buildPowerPads( padConf )
+            for ioPadConf in self.state.chipConf.padInstances:
+                if ioPadConf.isPower():
+                    self._buildPowerPads( ioPadConf )
                     continue
-                if padConf.isGround():
-                    self._buildGroundPads( padConf )
+                if ioPadConf.isGround():
+                    self._buildGroundPads( ioPadConf )
                     continue
-                if padConf.isClock():
-                    self._buildClockPads( padConf )
+                if ioPadConf.isClock():
+                    self._buildClockPads( ioPadConf )
                     continue
-                padConf.udata = IoPad( self, padConf.instanceName )
-                for netName in padConf.nets:
+                ioPadConf.udata = IoPad( self, ioPadConf )
+                for netName in ioPadConf.nets:
                     if netName is None: continue
                     coreNet = self.core.getNet( netName )
                     if not coreNet:
-                        raise ErrorMessage( 1, 'CoreToChip.buildChip(): "%s" doesn\'t have a "%s" net.'
-                                               % (self.core.getName(),netName) )
+                        raise ErrorMessage( 1, 'CoreToChip.buildChip(): "{}" doesn\'t have a "{}" net.' \
+                                               .format(self.core.getName(),netName) )
                     ioNet = self.getIoNet( coreNet )
-                    if padConf.isBidir() or padConf.isTristate():
-                        if coreNet.getName() == padConf.enableNetName:
+                    if ioPadConf.isBidir() or ioPadConf.isTristate():
+                        if coreNet.getName() == ioPadConf.enableNetName:
                             ioNet.setEnable( True )
                     if not ioNet.isEnable():
-                        ioNet.chipExtNetName = padConf.padNetName
-                    padConf.udata.addNet( ioNet )
-                ioPads.append( padConf )
+                        ioNet.chipExtNetName = ioPadConf.padNetName
+                    ioPadConf.udata.addNet( ioNet )
+                ioPads.append( ioPadConf )
+            trace( 550, '\tProcessed all IoPadConf, looking for orphaned core nets...\n' )
             for coreNet in self.core.getNets():
                 if   not coreNet.isExternal(): continue
                 elif coreNet.isPower(): continue
@@ -535,6 +559,7 @@ class CoreToChip ( object ):
                 directPad.udata = IoPad( self, directPad.instanceName )
                 directPad.udata.addNet( ioNet )
                 ioPads.append( directPad )
+                trace( 550, '\tNon-configured core net {}, adding {}\n'.format(coreNet,directPad) )
             for ioPad in ioPads:
                 ioPad.udata.createPad()
             self._connectRing()

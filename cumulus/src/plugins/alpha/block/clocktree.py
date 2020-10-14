@@ -42,7 +42,7 @@ from   helpers.io      import WarningMessage
 from   helpers.io      import catch
 from   helpers.overlay import UpdateSession
 from   plugins         import getParameter
-from   plugins         import utils
+from   plugins.alpha   import utils
 from   plugins.alpha.block.configuration import GaugeConf
 from   plugins.alpha.block.spares        import Spares
 
@@ -97,11 +97,10 @@ class ClockTree ( object ):
             trace( 550, '-' )
             return False
 
-        gaugeConf  = self.spares.state.gaugeConf
-        bufferConf = self.spares.state.bufferConf
+        gaugeConf  = self.spares.conf
+        bufferConf = self.spares.conf.bufferConf
         ckNet      = qt.bOutputPlug.getNet()
         self.subNets.append( ckNet )
-        
         leftSourceContact  = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
         rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
         blContact          = gaugeConf.rpAccessByPlugName( qt.bl.buffer, bufferConf.input , ckNet )
@@ -110,7 +109,6 @@ class ClockTree ( object ):
         trContact          = gaugeConf.rpAccessByPlugName( qt.tr.buffer, bufferConf.input , ckNet )
         leftContact        = gaugeConf.createContact( ckNet, blContact.getX(),  leftSourceContact.getY(), 0 )
         rightContact       = gaugeConf.createContact( ckNet, brContact.getX(), rightSourceContact.getY(), 0 )
-        
         leftSourceX  = gaugeConf.getNearestVerticalTrack  ( qt.root.area,  leftSourceContact.getX(), 0 )
         leftSourceY  = gaugeConf.getNearestHorizontalTrack( qt.root.area,  leftSourceContact.getY(), 0 )
         rightSourceX = gaugeConf.getNearestVerticalTrack  ( qt.root.area, rightSourceContact.getX(), 0 )
@@ -119,26 +117,22 @@ class ClockTree ( object ):
         rightX       = gaugeConf.getNearestVerticalTrack  ( qt.root.area,       rightContact.getX(), 0 )
         tlY          = gaugeConf.getNearestHorizontalTrack( qt.root.area,          tlContact.getY(), 0 )
         blY          = gaugeConf.getNearestHorizontalTrack( qt.root.area,          blContact.getY(), 0 )
-        
         gaugeConf.setStackPosition(  leftSourceContact,  leftSourceX,  leftSourceY )
         gaugeConf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
         gaugeConf.setStackPosition( tlContact,  leftX, tlY )
         gaugeConf.setStackPosition( blContact,  leftX, blY )
         gaugeConf.setStackPosition( trContact, rightX, tlY )
         gaugeConf.setStackPosition( brContact, rightX, blY )
-        
         leftContact .setX(        leftX )
         leftContact .setY(  leftSourceY )
         rightContact.setX(       rightX )
         rightContact.setY( rightSourceY )
-        
         gaugeConf.createHorizontal( leftContact       , leftSourceContact, leftSourceY , 0 )
         gaugeConf.createHorizontal( rightSourceContact, rightContact     , rightSourceY, 0 )
         gaugeConf.createVertical  ( leftContact       , blContact        , leftX       , 0 )
         gaugeConf.createVertical  ( tlContact         , leftContact      , leftX       , 0 )
         gaugeConf.createVertical  ( rightContact      , brContact        , rightX      , 0 )
         gaugeConf.createVertical  ( trContact         , rightContact     , rightX      , 0 )
-
         if qt.isRoot():
             ckNet = self.clockNet
             trace( 550, '\tRemoving any previous pin...\n' )
@@ -147,24 +141,23 @@ class ClockTree ( object ):
             for pin in pins:
                 print( WarningMessage('ClockTree._rrouteHTree(): Removing {}.'.format(pin)) )
                 pin.destroy()
-            
-            layerGauge  = gaugeConf.vRoutingGauge
-            rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
-            x           = gaugeConf.getNearestVerticalTrack  ( qt.area, rootContact.getX(), 0 )
-            y           = gaugeConf.getNearestHorizontalTrack( qt.area, rootContact.getY(), 0 )
-            rootPin     = Pin.create( ckNet
-                                    , ckNet.getName()+'.0'
-                                    , Pin.Direction.NORTH
-                                    , Pin.PlacementStatus.FIXED
-                                    , layerGauge.getLayer()
-                                    , x
-                                    , qt.area.getYMax() 
-                                    , layerGauge.getViaWidth()
-                                    , layerGauge.getViaWidth()
-                                    )
-            gaugeConf.setStackPosition( rootContact, x, y )
-            gaugeConf.createVertical( rootContact, rootPin, x, 0 )
-
+            if not self.spares.conf.isCoreBlock:
+                layerGauge  = gaugeConf.vRoutingGauge
+                rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
+                x           = gaugeConf.getNearestVerticalTrack  ( qt.area, rootContact.getX(), 0 )
+                y           = gaugeConf.getNearestHorizontalTrack( qt.area, rootContact.getY(), 0 )
+                rootPin     = Pin.create( ckNet
+                                        , ckNet.getName()+'.0'
+                                        , Pin.Direction.NORTH
+                                        , Pin.PlacementStatus.FIXED
+                                        , layerGauge.getLayer()
+                                        , x
+                                        , qt.area.getYMax() 
+                                        , layerGauge.getViaWidth()
+                                        , layerGauge.getViaWidth()
+                                        )
+                gaugeConf.setStackPosition( rootContact, x, y )
+                gaugeConf.createVertical( rootContact, rootPin, x, 0 )
         for leaf in qt.leafs:
             self._rrouteHTree( leaf )
         trace( 550, '-' )
@@ -189,6 +182,7 @@ class ClockTree ( object ):
         Disconnect the registers from the main clock and reconnect them to
         the leaf buffers of the clock tree.
         """
+        bufferConf         = self.spares.conf.bufferConf
         quadTree           = self.spares.quadTree
         quadTree.bufferTag = self.clockNet.getName()
         quadTree.rselectBuffer( self.clockIndex, self.clockIndex, 0 )
@@ -197,3 +191,10 @@ class ClockTree ( object ):
             for plugOccurrence in hyperClock.getTerminalNetlistPlugOccurrences():
                 quadTree.attachToLeaf( plugOccurrence )
             quadTree.rsplitNetlist()
+            if self.spares.conf.isCoreBlock:
+                plug = utils.getPlugByName( quadTree.buffer, bufferConf.input )
+                plug.setNet( self.clockNet )
+                trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.clockNet.getName()) )
+                trace( 550, '\tPlug of "{}"\n'.format(self.clockNet.getName()) )
+                for plug in self.clockNet.getPlugs():
+                    trace( 550, '\t| {}\n'.format(plug) )

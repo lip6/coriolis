@@ -77,7 +77,7 @@ class SlicedArea ( object ):
         but closest to the parent's center area (so, ideally, on the cluster's
         edge).
         """
-        state = cluster.bufferTree.spares.state
+        state = cluster.bufferTree.spares.conf
         self.cluster    = cluster
         if cluster.parent is None:
             attractor = cluster.getCenter()
@@ -93,12 +93,12 @@ class SlicedArea ( object ):
     @property
     def bInputPlug ( self ):
         """The input Plug of the buffer."""
-        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.state.bufferConf.input )
+        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.conf.bufferConf.input )
 
     @property
     def bOutputPlug ( self ):
         """The output Plug of the buffer."""
-        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.state.bufferConf.output )
+        return utils.getPlugByName( self.buffer, self.cluster.bufferTree.spares.conf.bufferConf.output )
 
 
 # ----------------------------------------------------------------------------
@@ -328,21 +328,21 @@ class Cluster ( object ):
         graph.addNode( self
                      , driverCenter.getX()
                      ,   self.bufferTree.spares.toYGCellGrid(driverCenter.getY())
-                       + self.bufferTree.spares.state.gaugeConf.sliceHeight / 2
+                       + self.bufferTree.spares.conf.sliceHeight / 2
                      , rsmt.Node.Driver )
         for anchor in self.mergedAnchors:
             sinkCenter = anchor.bInputRp.getPosition()
             graph.addNode( anchor
                          , sinkCenter.getX()
                          ,   self.bufferTree.spares.toYGCellGrid(sinkCenter.getY())
-                           + self.bufferTree.spares.state.gaugeConf.sliceHeight / 2 )
+                           + self.bufferTree.spares.conf.sliceHeight / 2 )
        #graph.doIteratedOneSteiner()
         graph.doFlute()
         graph.createGRSegments()
 
     def show ( self ):
         """Select the RoutingPad of the cluster in the editor."""
-        editor = self.bufferTree.spares.state.editor
+        editor = self.bufferTree.spares.conf.editor
         if not editor: return False
         editor.unselectAll()
         editor.setCumulativeSelection( True )
@@ -421,7 +421,7 @@ class BufferTree ( object ):
         self.isDeepNet    = True
         self.clusterDepth = 0
         self.clusters     = [ [] ]
-        self.bufName      = self.spares.state.bufferConf.name
+        self.bufName      = self.spares.conf.bufferConf.name
         self.netCount     = 0
         self.netName      = self.net.getName()
         self.netIndex     = None
@@ -460,7 +460,7 @@ class BufferTree ( object ):
             subNetName = '{}_hfns_{}'.format( self.netName, self.netCount )
         else:
             subNetName = '{}_bit{}_hfns_{}'.format( self.netName, self.netIndex, self.netCount )
-        net = Net.create( self.spares.state.cell, subNetName )
+        net = Net.create( self.spares.conf.cell, subNetName )
         self.netCount += 1
         return net
 
@@ -604,7 +604,7 @@ class BufferTree ( object ):
             driverRpOcc = self.rpDriver.getPlugOccurrence()
             topNetName  = self.net.getName()
             self.net.destroy()
-            self.net = Net.create( self.spares.state.cell, topNetName )
+            self.net = Net.create( self.spares.conf.cell, topNetName )
             deepPlug      = self.spares.raddTransNet( self.net, driverRpOcc.getPath() )
             deepDriverNet = deepPlug.getMasterNet()
             driverRpOcc.getEntity().setNet( deepDriverNet )

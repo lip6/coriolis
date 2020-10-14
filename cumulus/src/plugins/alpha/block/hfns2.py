@@ -89,12 +89,12 @@ class Cluster ( object ):
     @property
     def bInputPlug ( self ):
         """The input Plug of the buffer."""
-        return utils.getPlugByName( self.instBuffer, self.bufferTree.spares.state.bufferConf.input )
+        return utils.getPlugByName( self.instBuffer, self.bufferTree.spares.conf.bufferConf.input )
 
     @property
     def bOutputPlug ( self ):
         """The output Plug of the buffer."""
-        return utils.getPlugByName( self.instBuffer, self.bufferTree.spares.state.bufferConf.output )
+        return utils.getPlugByName( self.instBuffer, self.bufferTree.spares.conf.bufferConf.output )
 
     def createBufInputRp ( self, net ):
         """Create a RoutingPad for the buffer input Plug (terminal)."""
@@ -194,7 +194,7 @@ class BufferTree ( object ):
             subNetName = '{}_hfns_{}'.format( self.netName, self.netCount )
         else:
             subNetName = '{}_bit{}_hfns_{}'.format( self.netName, self.netIndex, self.netCount )
-        net = Net.create( self.spares.state.cell, subNetName )
+        net = Net.create( self.spares.conf.cell, subNetName )
         self.netCount += 1
         return net
 
@@ -254,7 +254,7 @@ class BufferTree ( object ):
             driverRpOcc = self.rpDriver.getPlugOccurrence()
             topNetName  = self.net.getName()
             self.net.destroy()
-            self.net = Net.create( self.spares.state.cell, topNetName )
+            self.net = Net.create( self.spares.conf.cell, topNetName )
             deepPlug      = self.spares.raddTransNet( self.net, driverRpOcc.getPath() )
             deepDriverNet = deepPlug.getMasterNet()
             driverRpOcc.getEntity().setNet( deepDriverNet )

@@ -61,6 +61,13 @@
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/core2chip.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/cmos.py
                   )
+              set ( pyPluginAlphaChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/__init__.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/configuration.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/power.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/corona.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/pads.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/chip.py
+                  )
          
           install ( FILES    ${pySources}          DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
           install ( FILES    ${pyPlugins}          DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
@@ -70,4 +77,5 @@
           install ( FILES    ${pyPluginAlpha}      DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha )
           install ( FILES    ${pyPluginAlphaBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/block )
           install ( FILES    ${pyPluginAlphaC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/core2chip )
+          install ( FILES    ${pyPluginAlphaChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/chip )
          #install ( PROGRAMS ${pyTools}       DESTINATION bin ) 
