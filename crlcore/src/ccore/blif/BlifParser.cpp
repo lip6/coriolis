@@ -676,11 +676,11 @@ namespace {
         Plug* plug = instance->getPlug( masterNet );
         if(not plug) {
           ostringstream tmes;
-          tmes << "The plug in net <" << netName << "> "
-               << "and master net <" << masterNetName << "> hasn't been found "
-               << "for instance <" << subckt->getInstanceName() << "> "
-               << "of model <" << subckt->getModelName() << ">"
-               << "in model <" << getCell()->getName() << ">"
+          tmes << "The plug in net \"" << netName << "\" "
+               << "for master net \"" << masterNetName << "\" hasn't been found.\n        "
+               << "(instance \"" << subckt->getInstanceName() << "\" "
+               << "of model \"" << subckt->getModelName() << "\" "
+               << "in model \"" << getCell()->getName() << "\")"
                << endl;
           throw Error(tmes.str());
         }
