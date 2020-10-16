@@ -119,7 +119,6 @@ class TechTimings ( object ):
 # Module static initialization
 
 tech = None
-
 cellsTimingsDatas = ( ('inv_x1', 1.0)
                     , ('inv_x2', 1.6)
                     , ('inv_x4', 3.6)
@@ -138,7 +137,6 @@ def staticInit ():
     Capacitance unit is fF (femto Farad).
     """
     global tech
-
     if tech is not None: return
 
     af = CRL.AllianceFramework.get()
@@ -148,6 +146,10 @@ def staticInit ():
     tech.capaPerLambda = 0.3
     for cellName, drive in cellsTimingsDatas:
         cell             = af.getCell( cellName, CRL.Catalog.State.Views )
+        if not cell:
+            print( WarningMessage('timing.staticInit(): Library do not provides "{}", skipped.' \
+                                  .format(cellName)) )
+            continue
         cellTiming       = CellTimings( cell )
         cellTiming.drive = drive*tech.capaBaseDrive
         tech.addCell( cellTiming )
