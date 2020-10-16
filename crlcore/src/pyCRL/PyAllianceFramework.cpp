@@ -299,6 +299,35 @@ extern "C" {
   }
 
 
+  static PyObject* PyAllianceFramework_wrapLibrary ( PyAllianceFramework* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyAllianceFramework_wrapLibrary()" << endl;
+
+    AllianceLibrary* alib    = NULL;
+    HTRY
+      METHOD_HEAD("AllianceFramework.wrapLibrary()")
+      PyObject* arg0;
+      PyObject* arg1;
+      __cs.init( "AllianceFramework.wrapLibrary" );
+      if (not PyArg_ParseTuple( args
+                              , "O&O&:AllianceFramework.wrapLibrary"
+                              , Converter, &arg0
+                              , Converter, &arg1
+                              )) {
+        PyErr_SetString( ConstructorError, "AllianceFramework.wrapLibrary(): Takes exactly two arguments." );
+        return NULL;
+      }
+      if (__cs.getObjectIds() != ":library:int") {
+        PyErr_SetString( ConstructorError, "AllianceFramework.wrapLibrary(): Bad parameter()s type, must be (Library,int)." );
+        return NULL;
+      }
+      alib = af->wrapLibrary( PYLIBRARY_O(arg0), PyAny_AsLong(arg1) );
+      if (not alib) Py_RETURN_NONE;
+    HCATCH
+    return PyAllianceLibrary_Link(alib);
+  }
+
+
   static PyObject* PyAllianceFramework_isPad ( PyAllianceFramework* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyAllianceFramework_isPad ()" << endl;
@@ -585,6 +614,8 @@ extern "C" {
                                , "Create a Cell in the Alliance framework." }
     , { "createLibrary"        , (PyCFunction)PyAllianceFramework_createLibrary        , METH_VARARGS
                                , "Create a Library in the Alliance framework." }
+    , { "wrapLibrary"          , (PyCFunction)PyAllianceFramework_wrapLibrary          , METH_VARARGS
+                               , "Wrap an Alliance Library around an existing Hurricane Library." }
     , { "loadLibraryCells"     , (PyCFunction)PyAllianceFramework_loadLibraryCells     , METH_VARARGS
                                , "Load in memory all Cells from an Alliance Library." }                           
     , { "isPad"                , (PyCFunction)PyAllianceFramework_isPad                , METH_VARARGS

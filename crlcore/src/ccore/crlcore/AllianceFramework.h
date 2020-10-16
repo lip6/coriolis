@@ -94,6 +94,7 @@ namespace CRL {
               AllianceLibrary*         getAllianceLibrary       ( const Name& libName, unsigned int flags );
               AllianceLibrary*         getAllianceLibrary       ( Library* );
               AllianceLibrary*         createLibrary            ( const string& path, unsigned int flags, string libName="" );
+              AllianceLibrary*         wrapLibrary              ( Library*, unsigned int flags );
       inline  const AllianceLibraries& getAllianceLibraries     () const;
               void                     saveLibrary              ( Library* );
               void                     saveLibrary              ( AllianceLibrary* );

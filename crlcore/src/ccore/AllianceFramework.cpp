@@ -479,6 +479,62 @@ namespace CRL {
   }
   
 
+  AllianceLibrary* AllianceFramework::wrapLibrary ( Library* hlibrary, unsigned int flags )
+  {
+    if (not hlibrary) {
+      cerr << Error( "AllianceFramework::wrapLibrary(): NULL library argument." ) << endl;
+      return NULL;
+    }
+
+    flags &= ~HasCatalog;
+
+    string dupLibName = getString( hlibrary->getName() );
+    string path       = "./wrapped/" + dupLibName;
+    for ( size_t duplicate=1 ; true ; ++duplicate ) {
+      AllianceLibrary* library = getAllianceLibrary( dupLibName, flags & ~CreateLibrary );
+      if (library == NULL) break;
+
+      ostringstream oss;
+      oss << hlibrary->getName() << "." << duplicate;
+      dupLibName = oss.str();
+    }
+
+    SearchPath& LIBRARIES = _environment.getLIBRARIES();
+    LIBRARIES.select( path );
+    if (not LIBRARIES.hasSelected()) {
+      if (not (flags & AppendLibrary)) LIBRARIES.prepend( path, dupLibName );
+      else                             LIBRARIES.append ( path, dupLibName );
+    }
+
+    AllianceLibrary* alibrary = new AllianceLibrary( path, hlibrary );
+
+    AllianceLibraries::iterator ilib = _libraries.begin();
+    if (   (LIBRARIES.getIndex() != SearchPath::npos)
+       and (LIBRARIES.getIndex() < _libraries.size()) )
+      for ( size_t i=0 ; i<LIBRARIES.getIndex() ; ++i, ++ilib );
+    else
+      ilib = _libraries.end();
+    _libraries.insert( ilib, alibrary );
+
+    for ( Cell* cell : hlibrary->getCells() ) {
+      Catalog::State* state = _catalog.getState ( getString(cell->getName()) );
+      if (state == NULL)
+        state = _catalog.getState( cell->getName(), true );
+      state->setDepth          ( 1 );
+      state->setInMemory       ( true );
+      state->setPhysical       ( true );
+      state->setLogical        ( true );
+      state->setTerminalNetlist( true );
+      state->setCell           ( cell );
+      state->getCell           ()->put( CatalogProperty::create(state) );
+      state->getCell           ()->setTerminalNetlist( true );
+    }
+
+    notify( AddedLibrary );
+    return alibrary;
+  }
+
+
   void  AllianceFramework::saveLibrary ( Library* library )
   {
     if ( library == NULL ) return;

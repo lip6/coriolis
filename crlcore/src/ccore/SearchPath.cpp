@@ -104,7 +104,6 @@ namespace CRL {
         return;
       }
     }
-
     _selected = _selectFailed;
     _index    = npos;
   }
