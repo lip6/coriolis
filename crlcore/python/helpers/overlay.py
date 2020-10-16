@@ -94,6 +94,83 @@ class Configuration:
         if self._priority is not None:
             Cfg.Configuration.popDefaultPriority()
 
+
+class CachedParameter ( object ):
+
+    def __init__ ( self, path, v ):
+        self.path   = path
+        self._v     = None
+        self.v      = v
+        self.vRange = [ None, None ]
+        self.vEnum  = []
+        self.create = True
+        self.cacheRead()
+
+    @property
+    def v ( self ): return self._v
+
+    @v.setter
+    def v ( self, value ):
+        if value is not None: self._v = value
+
+    def __str__ ( self ):
+        if isinstance(self.v,str): s = '"{}"'.format(self.v)
+        else: s = '{}'.format(self.v)
+        if self.vRange[0] is not None or self.vRange[1] is not None:
+            s += ' [{}:{}]'.format(self.vRange[0],self.vRange[1])
+        if self.vEnum:
+            s += ' ('
+            for i in range(len(self.vEnum)):
+                if i: s += ', '
+                s += '{}:"{}"'.format(self.vEnum[i][1],self.vEnum[i][0])
+            s += ')'
+        return s
+
+    def cacheWrite ( self ):
+        """"
+        Commit the value of parameter ``self.path`` to ``self.v`` in Cfg.
+        Percentage are set as Double and Enumerate as Int.
+        """
+        if Cfg.hasParameter(self.path):
+            confDb = Cfg.Configuration.get()
+            p      = confDb.getParameter( self.path )
+        else:
+            if   len(self.vEnum):          p = Cfg.getParamEnumerate( self.path )
+            elif isinstance(self.v,bool ): p = Cfg.getParamBool     ( self.path )
+            elif isinstance(self.v,int  ): p = Cfg.getParamInt      ( self.path )
+            elif isinstance(self.v,long ): p = Cfg.getParamInt      ( self.path )
+            elif isinstance(self.v,float): p = Cfg.getParamDouble   ( self.path )
+            else:                          p = Cfg.getParamString   ( self.path )
+        if   p.type == Cfg.Parameter.Type.Enumerate:  p.setInt      ( self.v )
+        elif p.type == Cfg.Parameter.Type.Int:        p.setInt      ( self.v )
+        elif p.type == Cfg.Parameter.Type.Bool:       p.setBool     ( self.v )
+        elif p.type == Cfg.Parameter.Type.Double:     p.setDouble   ( self.v )
+        elif p.type == Cfg.Parameter.Type.Percentage: p.setDouble   ( self.v*100.0 )
+        else:                                         p.setString   ( str(self.v) )
+        if self.create:
+            if len(self.vEnum):
+                for item in self.vEnum:
+                    p.addValue( item[0], item[1] )
+        if self.vRange[0] is not None: p.setMin( self.vRange[0] )
+        if self.vRange[1] is not None: p.setMax( self.vRange[1] )
+
+    def cacheRead ( self ):
+        """"Get the value of parameter ``self.path`` from Cfg."""
+        if not Cfg.hasParameter(self.path):
+            self.create = True
+            return
+        if self.v is not None: return
+        confDb = Cfg.Configuration.get()
+        p      = confDb.getParameter( self.path )
+        if p:
+            if   p.type == Cfg.Parameter.Type.Enumerate:  v = p.asInt()
+            elif p.type == Cfg.Parameter.Type.Int:        v = p.asInt()
+            elif p.type == Cfg.Parameter.Type.Bool:       v = p.asBool()
+            elif p.type == Cfg.Parameter.Type.String:     v = p.asString()
+            elif p.type == Cfg.Parameter.Type.Double:     v = p.asDouble()
+            elif p.type == Cfg.Parameter.Type.Percentage: v = p.asDouble()/100.0
+            else: v = p.asString()
+
             
 class CfgCache ( object ):
     """
@@ -149,45 +226,6 @@ class CfgCache ( object ):
               *only* when ``apply()`` is called.
     """
 
-    @staticmethod
-    def setCfgParameter ( paramPath, value ):
-        """"
-        Set the value of parameter ``paramPath`` to ``value`` in Cfg.
-        Percentage are set as Double and Enumerate as Int.
-        """
-        if Cfg.hasParameter(paramPath):
-            confDb = Cfg.Configuration.get()
-            p      = confDb.getParameter( paramPath )
-        else:
-            if   isinstance(value,bool ): p = Cfg.getParamBool  ( paramPath )
-            elif isinstance(value,int  ): p = Cfg.getParamInt   ( paramPath )
-            elif isinstance(value,long ): p = Cfg.getParamInt   ( paramPath )
-            elif isinstance(value,float): p = Cfg.getParamDouble( paramPath )
-            else:                         p = Cfg.getParamString( paramPath )
-
-        if   p.type == Cfg.Parameter.Type.Enumerate:  p.setInt   ( value )
-        elif p.type == Cfg.Parameter.Type.Int:        p.setInt   ( value )
-        elif p.type == Cfg.Parameter.Type.Bool:       p.setBool  ( value )
-        elif p.type == Cfg.Parameter.Type.Double:     p.setDouble( value )
-        elif p.type == Cfg.Parameter.Type.Percentage: p.setDouble( value*100.0 )
-        else:                                         p.setString( str(value) )
-
-    @staticmethod
-    def getDefaultCfgParameter ( paramPath ):
-        """"Get the value of parameter ``paramPath`` from Cfg."""
-        if not Cfg.hasParameter(paramPath):
-            raise AttributeError( 'CfgCache.getDefaultCfgParameter(): Undefined "{}"'.format(paramPath) )
-        confDb = Cfg.Configuration.get()
-        p      = confDb.getParameter( paramPath )
-        if p:
-            if p.type == Cfg.Parameter.Type.Enumerate:  return p.asInt()
-            if p.type == Cfg.Parameter.Type.Int:        return p.asInt()
-            if p.type == Cfg.Parameter.Type.Bool:       return p.asBool()
-            if p.type == Cfg.Parameter.Type.String:     return p.asString()
-            if p.type == Cfg.Parameter.Type.Double:     return p.asDouble()
-            if p.type == Cfg.Parameter.Type.Percentage: return p.asDouble()/100.0
-            return p.asString()
-
     def __enter__( self ):
         return self
 
@@ -238,9 +276,14 @@ class CfgCache ( object ):
         if attr[0] == '_':
             object.__setattr__( self, attr, v )
             return
-        if v is None:
-            v = CfgCache.getDefaultCfgParameter( self._path+'.'+attr )
-        self._rattr[ attr ] = v
+        vRange = None
+        vEnum  = None
+        if isinstance(v,list ): vRange = v; v = None
+        if isinstance(v,tuple): vEnum  = v; v = None
+        if not self._rattr.has_key(attr):
+            self._rattr[ attr ] = CachedParameter( self._path+'.'+attr, v )
+        if vRange is not None: self._rattr[ attr ].vRange = vRange
+        if vEnum  is not None: self._rattr[ attr ].vEnum  = vEnum
 
     def __getattr__ ( self, attr ):
         """
@@ -253,7 +296,6 @@ class CfgCache ( object ):
         return self._rattr[attr]
 
     def _hasCachedParam ( self, elements ):
-        print( elements )
         if not self._rattr.has_key(elements[0]):
             return False
         if len(elements) == 1:
@@ -275,7 +317,7 @@ class CfgCache ( object ):
             if isinstance(self._rattr[attrName],CfgCache):
                 self._rattr[attrName].apply()
                 continue
-            CfgCache.setCfgParameter( self._path+'.'+attrName,self._rattr[attrName] )
+            self._rattr[attrName].cacheWrite()
         if not len(self._path) and priority is not None:
             Cfg.Configuration.popDefaultPriority()
        #self.display()
