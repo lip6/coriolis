@@ -163,13 +163,14 @@ class CachedParameter ( object ):
         confDb = Cfg.Configuration.get()
         p      = confDb.getParameter( self.path )
         if p:
-            if   p.type == Cfg.Parameter.Type.Enumerate:  v = p.asInt()
-            elif p.type == Cfg.Parameter.Type.Int:        v = p.asInt()
-            elif p.type == Cfg.Parameter.Type.Bool:       v = p.asBool()
-            elif p.type == Cfg.Parameter.Type.String:     v = p.asString()
-            elif p.type == Cfg.Parameter.Type.Double:     v = p.asDouble()
-            elif p.type == Cfg.Parameter.Type.Percentage: v = p.asDouble()/100.0
-            else: v = p.asString()
+            if   p.type == Cfg.Parameter.Type.Enumerate:  self.v = p.asInt()
+            elif p.type == Cfg.Parameter.Type.Int:
+                self.v = p.asInt()
+            elif p.type == Cfg.Parameter.Type.Bool:       self.v = p.asBool()
+            elif p.type == Cfg.Parameter.Type.String:     self.v = p.asString()
+            elif p.type == Cfg.Parameter.Type.Double:     self.v = p.asDouble()
+            elif p.type == Cfg.Parameter.Type.Percentage: self.v = p.asDouble()/100.0
+            else: self.v = p.asString()
 
             
 class CfgCache ( object ):
@@ -282,8 +283,9 @@ class CfgCache ( object ):
         if isinstance(v,tuple): vEnum  = v; v = None
         if not self._rattr.has_key(attr):
             self._rattr[ attr ] = CachedParameter( self._path+'.'+attr, v )
-        if vRange is not None: self._rattr[ attr ].vRange = vRange
-        if vEnum  is not None: self._rattr[ attr ].vEnum  = vEnum
+        if   vRange is not None: self._rattr[ attr ].vRange = vRange
+        elif vEnum  is not None: self._rattr[ attr ].vEnum  = vEnum
+        else: self._rattr[ attr ].v = v
 
     def __getattr__ ( self, attr ):
         """
@@ -293,6 +295,8 @@ class CfgCache ( object ):
         if not self._rattr.has_key(attr):
             path = self._path+'.'+attr if len(self._path) else attr
             self._rattr[attr] = CfgCache( path, self._priority )
+        if isinstance(self._rattr[attr],CachedParameter):
+            return self._rattr[attr].v
         return self._rattr[attr]
 
     def _hasCachedParam ( self, elements ):
@@ -311,6 +315,7 @@ class CfgCache ( object ):
     def apply ( self, priority=None ):
         """Apply the parameters values stored in the cache to the ``Cfg`` database."""
         if priority is None: priority = self._priority
+        print( self._path )
         if not len(self._path) and priority is not None:
             Cfg.Configuration.pushDefaultPriority( priority )
         for attrName in self._rattr.keys():
