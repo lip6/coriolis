@@ -756,6 +756,10 @@ class Spares ( object ):
     def build ( self ):
         if not self.conf.useSpares: return
         trace( 540, ',+', '\tSpares.build()\n' )
+        if self.conf.cfg.block.spareSide < 7*self.conf.sliceHeight:
+            raise ErrorMessage( 2, 'Spares.build(): Minimal block spare side ({}) must be greater than 7*sliceHeight ({}).' \
+                                .format( DbU.getValueString(  self.conf.cfg.block.spareSide)
+                                       , DbU.getValueString(7*self.conf.sliceHeight ) ))
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
         trace( 540, '-' )
