@@ -16,12 +16,10 @@
 import Cfg
 
 
-param = Cfg.getParamPercentage( 'etesian.aspectRatio' )
-param.setPercentage(  100 )
-param.setMin       (   10 )
-param.setMax       ( 1000 )
+param = Cfg.getParamDouble( 'etesian.aspectRatio' )
+param.setDouble( 1.0 )
 
-Cfg.getParamPercentage( 'etesian.spaceMargin'    ).setPercentage( 5 )
+Cfg.getParamDouble    ( 'etesian.spaceMargin'    ).setPercentage( 0.05 )
 Cfg.getParamBool      ( 'etesian.uniformDensity' ).setBool      ( False )
 Cfg.getParamBool      ( 'etesian.routingDriven'  ).setBool      ( False )
 Cfg.getParamString    ( 'etesian.feedNames'      ).setString    ( 'tie_x0,rowend_x0' )
