@@ -72,7 +72,8 @@ namespace CRL {
     cellStream << endl;
     cellStream.close();
 
-    Vhdl::EntityExtension::destroy( cell );
+  //Vhdl::EntityExtension::destroy( cell );
+    Vhdl::EntityExtension::destroyAll();
   }
 
 

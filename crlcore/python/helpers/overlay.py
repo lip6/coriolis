@@ -315,7 +315,6 @@ class CfgCache ( object ):
     def apply ( self, priority=None ):
         """Apply the parameters values stored in the cache to the ``Cfg`` database."""
         if priority is None: priority = self._priority
-        print( self._path )
         if not len(self._path) and priority is not None:
             Cfg.Configuration.pushDefaultPriority( priority )
         for attrName in self._rattr.keys():
