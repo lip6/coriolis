@@ -144,20 +144,21 @@ class BufferPool ( object ):
     def _createBuffers ( self ):
         """Create the matrix of instances buffer."""
         trace( 540, ',+', '\tBufferPool.createBuffers()\n' )
-
+        yoffset = 0
+        if self.quadTree.spares.conf.isCoreBlock:
+            yoffset = self.quadTree.spares.conf.icore.getTransformation().getTy()
         conf        = self.quadTree.spares.conf
         sliceHeight = conf.sliceHeight 
-        x           = self.quadTree.onXPitch( self.quadTree.area.getXCenter()
-                                              - (conf.bufferConf.width  * self.columns)/2 )
-        y           = self.quadTree.onYSlice( self.quadTree.area.getYCenter()
-                                              - (conf.bufferConf.height * self.rows)/2 )
-        slice = y / sliceHeight
-
+        x           = self.quadTree.spares.toXPitch( self.quadTree.area.getXCenter()
+                                                     - (conf.bufferConf.width  * self.columns)/2 )
+        y           = self.quadTree.spares.toYSlice( self.quadTree.area.getYCenter()
+                                                     - (conf.bufferConf.height * self.rows)/2 )
+        slice = (y - yoffset) / sliceHeight
         trace( 540, '\tSlice height: {}\n'.format(DbU.getValueString(sliceHeight)) )
-
+        trace( 540, '\tSlice #{} (y:{})\n'.format(slice,DbU.getValueString(y)) )
         for row in range(self.rows):
             orientation = Transformation.Orientation.ID
-            y = (slice+row) * sliceHeight
+            y = (slice+row) * sliceHeight + yoffset
             if (slice+row)%2:
                 orientation = Transformation.Orientation.MY
                 y          += sliceHeight
@@ -175,10 +176,22 @@ class BufferPool ( object ):
                        , trBufAb.getXMax(), trBufAb.getYMax() )
         trace( 540, '-' )
 
+    def _removeUnuseds ( self ):
+        conf = self.quadTree.spares.conf
+        for i in range(self.rows*self.columns):
+            if not (self.buffers[i][0] & Spares.USED):
+                trace( 540, '\tRemove Unused Buffer[{}]: {}\n'.format(i,self.buffers[i]) )
+                cell           = self.buffers[i][1].getCell()
+                transformation = self.buffers[i][1].getTransformation()
+                gapWidth       = self.buffers[i][1].getMasterCell().getAbutmentBox().getWidth()
+                self.buffers[i][1].destroy()
+                conf.feedsConf.fillAt( cell, transformation, gapWidth )
+
     def _destroyBuffers ( self ):
         """Destroy all the buffer instances of the pool."""
         for flags, buffer in self.buffers:
-            buffer.destroy()
+            if buffer is not None:
+                buffer.destroy()
 
     def getUse ( self ):
         """Return the pool occupancy, a tuple ``(occupancy,capacity)``."""
@@ -213,7 +226,11 @@ class QuadTree ( object ):
 
     @staticmethod
     def create ( spares ):
-        root = QuadTree( spares, None, spares.conf.cell.getAbutmentBox() )
+        area = spares.conf.cell.getAbutmentBox()
+        if spares.conf.isCoreBlock:
+            area = spares.conf.core.getAbutmentBox()
+            spares.conf.icore.getTransformation().applyOn( area )
+        root = QuadTree( spares, None, area )
         root.rpartition()
         return root
 
@@ -260,6 +277,13 @@ class QuadTree ( object ):
 
     def __eq__ ( self, other ):
         return self.rtag == other.rtag
+
+    def removeUnusedBuffers ( self ):
+        if self.bl: self.bl.removeUnusedBuffers()
+        if self.br: self.br.removeUnusedBuffers()
+        if self.tl: self.tl.removeUnusedBuffers()
+        if self.tr: self.tr.removeUnusedBuffers()
+        self.pool._removeUnuseds()
 
     def rshowPoolUse ( self ):
         rused  = 0
@@ -354,16 +378,6 @@ class QuadTree ( object ):
         """The output Plug of the currently selected buffer in the pool."""
         return utils.getPlugByName( self.buffer, self.spares.conf.bufferConf.output )
 
-    def onYSlice ( self, y ):
-        """Returns the coordinate of the slice immediately inferior to Y."""
-        modulo = (y - self.area.getYMin()) % self.spares.conf.sliceHeight 
-        return y - modulo
-        
-    def onXPitch ( self, x ):
-        """Returns the coordinate of the pitch immediately inferior to X."""
-        modulo = (x - self.area.getXMin()) % self.spares.conf.sliceStep 
-        return x - modulo
-
     def selectFree ( self ):
         """
         Returns the first free buffer *instance* in the pool or None if
@@ -382,7 +396,7 @@ class QuadTree ( object ):
         trace( 540, '\tQuadTree.connectBuffer(): rtag:"{}"\n'.format(self.rtag) )
         plug = self.bOutputPlug
         if not plug.getNet():
-            outputNetBuff = Net.create( self.spares.conf.cell,'{}_{}' \
+            outputNetBuff = Net.create( self.spares.conf.cellPnR,'{}_{}' \
                                         .format(self.root.bufferTag,self.rtag) )
             plug.setNet( outputNetBuff )
             trace( 540, '\t| {}\n'.format(plug) )
@@ -429,7 +443,7 @@ class QuadTree ( object ):
             return False
 
         if aspectRatio < 0.5:
-            self.ycut = self.spares.toYGCellGrid( self.area.getYMin() + self.area.getHeight()/2 )
+            self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()/2 )
             self.bl   = QuadTree( self.spares
                                 , self
                                 , Box( self.area.getXMin()
@@ -448,7 +462,7 @@ class QuadTree ( object ):
             trace( 540, '-' )
             return True
         elif aspectRatio > 2.0:
-            self.xcut = self.spares.toXGCellGrid( self.area.getXMin() + self.area.getWidth()/2 )
+            self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth()/2 )
             self.bl   = QuadTree( self.spares
                                 , self
                                 , Box( self.area.getXMin()
@@ -467,8 +481,8 @@ class QuadTree ( object ):
             trace( 540, '-' )
             return True
 
-        self.ycut = self.spares.toYGCellGrid( self.area.getYMin() + self.area.getHeight()/2 )
-        self.xcut = self.spares.toXGCellGrid( self.area.getXMin() + self.area.getWidth ()/2 )
+        self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()/2 )
+        self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth ()/2 )
         self.bl   = QuadTree( self.spares
                             , self
                             , Box( self.area.getXMin()
@@ -648,6 +662,9 @@ class QuadTree ( object ):
         position = plugOccurrence.getBoundingBox().getCenter()
         self.getLeafUnder(position).plugs.append( plugOccurrence )
 
+    def isUnderArea ( self, plugOccurrence ):
+        return self.area.contains( plugOccurrence.getBoundingBox().getCenter() )
+
     def splitNetlist ( self ):
         """
         Reorganize the netlist by connecting all plugs to the output of the
@@ -665,15 +682,15 @@ class QuadTree ( object ):
 
            2.b. Connect the plug to the buffer output net at the same level.
 
-        No net/buffer will be used if the plug list is empty.
+        If the plug list is empty, the buffer will still be used and it's
+        output net created.
         """
-        if not self.plugs: return
-
         trace( 540, ',+', '\tQuadTree.spliNetlist()\n' )
         self.connectBuffer( doLeaf=True )
         netBuff = self.bOutputPlug.getNet()
         trace( 540, '\tBuffer: {}\n'.format(self.buffer) )
         trace( 540, '\tBuffer output: {}\n'.format(netBuff) )
+        if not self.plugs: return
         for plug in self.plugs:
             trace( 540, '\t| Leaf: {}\n'.format(plug) )
             trace( 540, '\t| netBuff: {}\n'.format(netBuff) )
@@ -742,16 +759,33 @@ class Spares ( object ):
         if not areaLength:
             raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): Spare leaf area is zero.' )
         return (float(bufferLength) * 1.4) / float(areaLength)
+        
+    def toXPitch ( self, x ):
+        """
+        Returns the coordinate of the pitch immediately inferior to X.
+        If we are in a chip, compute coordinate in the *corona* system.
+        """
+        offset = 0
+        area   = self.conf.coreAb
+        if self.conf.isCoreBlock:
+            offset = self.conf.icore.getTransformation().getTx()
+            self.conf.icore.getTransformation().applyOn( area )
+        modulo = (x - offset - area.getXMin()) % self.conf.sliceStep 
+        return x - modulo
 
-    def toXGCellGrid ( self, x ):
-        """Find the nearest X (inferior) on the Cell gauge grid (sliceStep)."""
-        dx = x - self.conf.xMin
-        return self.conf.xMin + (dx - dx % self.conf.sliceStep)
-
-    def toYGCellGrid ( self, y ):
-        """Find the nearest Y (inferior) on the Cell gauge grid (sliceHeight)."""
-        dy = y - self.conf.yMin
-        return self.conf.yMin + (dy - dy % self.conf.sliceHeight)
+    def toYSlice ( self, y ):
+        """
+        Returns the coordinate of the slice immediately inferior to Y.
+        If we are in a chip, compute coordinate in the *corona* system.
+        """
+        offset = 0
+        area   = self.conf.coreAb
+        if self.conf.isCoreBlock:
+            offset = self.conf.icore.getTransformation().getTy()
+            self.conf.icore.getTransformation().applyOn( area )
+        trace( 540, '\toffset:\n'.format(DbU.getValueString(offset)) )
+        modulo = (y - offset - area.getYMin()) % self.conf.sliceHeight 
+        return y - modulo
 
     def build ( self ):
         if not self.conf.useSpares: return
@@ -773,8 +807,8 @@ class Spares ( object ):
         trace( 540, ',+', '\tSpares.addStrayBuffer()\n' )
 
         sliceHeight = self.conf.sliceHeight 
-        x           = self.quadTree.onXPitch( position.getX() )
-        y           = self.quadTree.onYSlice( position.getY() )
+        x           = self.quadTree.toXPitch( position.getX() )
+        y           = self.quadTree.toYSlice( position.getY() )
         slice       = y / sliceHeight
         orientation = Transformation.Orientation.ID
         y = slice * sliceHeight
@@ -845,6 +879,7 @@ class Spares ( object ):
            *plug master net* and the *tail path*.
         """
 
+        trace( 540, '\tSpares.raddTransNet() top:{} path:{}\n'.format(topNet,path) )
         if path.isEmpty():
             self.addClonedCell( topNet.getCell() )
             return None
@@ -853,6 +888,7 @@ class Spares ( object ):
         headPlug     = utils.getPlugByNet(headInstance,topNet)
         if not headPlug:
             masterCell = headInstance.getMasterCell()
+            trace( 540, '\tcreate Plug in {}\n'.format(headInstance) )
             masterNet  = Net.create( masterCell, topNet.getName() )
             masterNet.setExternal ( True )
             masterNet.setType     ( topNet.getType() )
@@ -866,8 +902,13 @@ class Spares ( object ):
             self.addClonedCell( headInstance.getCell() )
         else:
             masterNet = headPlug.getMasterNet()
+        trace( 540, '\ttailPath {}\n'.format(tailPath) )
         if tailPath.isEmpty(): return headPlug
         return self.raddTransNet( masterNet, tailPath )
+
+    def removeUnusedBuffers ( self ):
+        with UpdateSession():
+            self.quadTree.removeUnusedBuffers()
 
     def rsave ( self, cell ):
         """
@@ -896,5 +937,7 @@ class Spares ( object ):
         for cell in self.cloneds:
             trace( 550, '\tRenaming cloned cell: "{}"\n'.format(cell) )
             cell.setName( cell.getName()+'_cts' )
+        if self.conf.chip is None:
+            self.conf.cell.setName( self.conf.cell.getName()+'_r' )
         self.rsave( self.conf.cell )
         return

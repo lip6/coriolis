@@ -82,6 +82,7 @@ class ClockTree ( object ):
         if qt.isLeaf(): return False
         qt.rconnectBuffer()
         driverNet = qt.bOutputPlug.getNet()
+        driverNet.setType( Net.Type.CLOCK )
         for leaf in qt.leafs:
             leaf.bInputPlug.setNet( driverNet )
             self._rconnectHTree( leaf )
@@ -135,13 +136,13 @@ class ClockTree ( object ):
         gaugeConf.createVertical  ( trContact         , rightContact     , rightX      , 0 )
         if qt.isRoot():
             ckNet = self.clockNet
-            trace( 550, '\tRemoving any previous pin...\n' )
-            pins = []
-            for pin in ckNet.getPins(): pins.append( pin )
-            for pin in pins:
-                print( WarningMessage('ClockTree._rrouteHTree(): Removing {}.'.format(pin)) )
-                pin.destroy()
             if not self.spares.conf.isCoreBlock:
+                trace( 550, '\tRemoving any previous pin...\n' )
+                pins = []
+                for pin in ckNet.getPins(): pins.append( pin )
+                for pin in pins:
+                    print( WarningMessage('ClockTree._rrouteHTree(): Removing {}.'.format(pin)) )
+                    pin.destroy()
                 layerGauge  = gaugeConf.vRoutingGauge
                 rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
                 x           = gaugeConf.getNearestVerticalTrack  ( qt.area, rootContact.getX(), 0 )
@@ -187,14 +188,19 @@ class ClockTree ( object ):
         quadTree.bufferTag = self.clockNet.getName()
         quadTree.rselectBuffer( self.clockIndex, self.clockIndex, 0 )
         with UpdateSession():
-            hyperClock = HyperNet.create( Occurrence(self.clockNet) )
+            coronaPlugs = []
+            hyperClock  = HyperNet.create( Occurrence(self.clockNet) )
             for plugOccurrence in hyperClock.getTerminalNetlistPlugOccurrences():
-                quadTree.attachToLeaf( plugOccurrence )
+                if quadTree.isUnderArea(plugOccurrence):
+                    quadTree.attachToLeaf( plugOccurrence )
+                else:
+                    coronaPlugs.append( plugOccurrence )
             quadTree.rsplitNetlist()
             if self.spares.conf.isCoreBlock:
                 plug = utils.getPlugByName( quadTree.buffer, bufferConf.input )
                 plug.setNet( self.clockNet )
                 trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.clockNet.getName()) )
-                trace( 550, '\tPlug of "{}"\n'.format(self.clockNet.getName()) )
+                trace( 550, '\tPlug of "{}" (Cell:{})\n'.format(self.clockNet.getName()
+                                                               ,self.clockNet.getCell()) )
                 for plug in self.clockNet.getPlugs():
                     trace( 550, '\t| {}\n'.format(plug) )

@@ -148,6 +148,8 @@ class Chip ( Block ):
         if not self.conf.validated:
             raise ErrorMessage( 1, 'chip.save(): Chip is not valid, aborting.' )
         super(Chip,self).save()
+        self.conf.corona.setName( self.conf.corona.getName()+'_r' )
+        self.conf.chip  .setName( self.conf.chip  .getName()+'_r' )
         af = CRL.AllianceFramework.get()
         af.saveCell( self.conf.corona, CRL.Catalog.State.Views )
         af.saveCell( self.conf.chip  , CRL.Catalog.State.Views )

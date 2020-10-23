@@ -180,7 +180,7 @@ class Builder ( object ):
     def __init__ ( self, conf ):
         self.conf        = conf
         self.path        = Path( self.conf.icore )
-        self.block       = self.path.getTailInstance().getMasterCell()
+        self.block       = self.conf.icore.getMasterCell()
         self.bb          = self.block.getAbutmentBox()
         self.planes      = {}
         self.activePlane = None
@@ -211,27 +211,30 @@ class Builder ( object ):
             raise ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
             return
         blockCk = None
-        for plug in self.path.getTailInstance().getPlugs():
+        for plug in self.conf.icore.getPlugs():
             if plug.getNet() == self.conf.coronaCk:
                 blockCk = plug.getMasterNet()
         if not blockCk:
             raise ErrorMessage( 1, 'Block "{}" has no net connected to the clock "{}".' \
-                                   .format(self.path.getTailInstance().getName(),self.ck.getName()) )
+                                   .format(self.conf.icore.getName(),self.conf.coronaCk.getName()) )
             return
         htPlugs = []
-        ffPlugs = []
-        for plug in blockCk.getPlugs():
-            if not plug.getInstance().isTerminalNetlist(): continue
-            htPlugs.append( plug )
+        for plug in self.conf.coronaCk.getPlugs():
+            print( plug )
+            if plug.getInstance().isTerminalNetlist():
+                htPlugs.append( plug )
         if len(htPlugs) != 1:
-            message = 'Clock "{}" of block "{}" is not organized as a H-Tree.' \
-                      .format(blockCk.getName(),self.path.getTailInstance().getName())
+            message = [ 'Clock "{}" of block "{}" is not organized as a H-Tree ({} plugs).' \
+                        .format( self.conf.coronaCk.getName()
+                               , self.conf.icore.getName()
+                               , len(htPlugs)) ]
+            print( self.conf.icore )
             for plug in htPlugs:
-                message += '\n        - {}'.format(plug)
+                message += [ '\n        - {} {}'.format(plug,plug.getInstance()) ]
             raise ErrorMessage( 1, message )
             return
         with UpdateSession():
-            bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], self.path)
+            bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path())
                                                      , self.conf.coronaCk
                                                      , 0 )
             blockAb  = self.block.getAbutmentBox()

@@ -158,7 +158,7 @@ class ChipConf ( BlockConf ):
         #self.checkPads()
         #self.checkCorona()
         #self.computeChipSize()
-        #self.checkChipSize()
+        self.checkChipSize()
         self.findPowerAndClockNets()
         return
 
@@ -577,6 +577,22 @@ class ChipConf ( BlockConf ):
         return
 
     def checkChipSize ( self ):
+        print( 'checkChipSize' )
+        if self.chipSize[0] % self.sliceStep:
+            print( WarningMessage( 'ChipConf.checkChipSize(): Width of "{}" ({})is not on sliceStep ({}), ajusted.' \
+                                   .format( self.chipConf.name
+                                          , DbU.getValueString(self.chipSize[0])
+                                          , DbU.getValueString(self.sliceStep))) )
+            adjust = self.sliceStep - self.chipSize[0] % self.sliceStep
+            self.chipSize = (self.chipSize[0] + adjust, self.chipSize[1])
+        if self.chipSize[1] % self.sliceStep:
+            print( WarningMessage( 'ChipConf.checkChipSize(): Height of "{}" ({})is not on sliceStep ({}), ajusted.' \
+                                   .format( self.chipConf.name
+                                          , DbU.getValueString(self.chipSize[1])
+                                          , DbU.getValueString(self.sliceStep))) )
+            adjust = self.sliceStep - self.chipSize[1] % self.sliceStep
+            self.chipSize = (self.chipSize[0], self.chipSize[1] + adjust)
+
         #if self._coreSize.isEmpty(): return
         #
         #minWidth  = self._coreSize.getWidth () + self._minCorona + 2*self._padHeight

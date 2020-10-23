@@ -488,6 +488,8 @@ class Builder ( object ):
     def __init__ ( self, block ):
         self.block      = block
         self.innerBb    = self.block.bb
+        print( 'Builder.__init__(): innerBb: {}'.format(self.innerBb) )
+        print( self.block.path.getTransformation())
         self.block.path.getTransformation().applyOn( self.innerBb )
         self.innerBb.inflate( self.hRailSpace/2, self.vRailSpace/2 )
         self.southSide  = SouthSide( self )

@@ -401,7 +401,7 @@ class Block ( object ):
         print( '  o  Building clock tree(s).' )
         af = CRL.AllianceFramework.get()
         clockNets = []
-        for net in self.conf.cell.getNets():
+        for net in self.conf.cellPnR.getNets():
             if af.isCLOCK(net.getName()): 'CLOCK: {}'.format(net)
             if net.isClock():
                 trace( 550, '\tBlock.addClockTrees(): Found clock {}.\n'.format(net) )
@@ -592,6 +592,7 @@ class Block ( object ):
             break
         if self.conf.useClockTree: self.splitClocks()
         if self.conf.isCoreBlock:  self.doConnectCore()
+        self.spares.removeUnusedBuffers()
         status = self.route()
         if not self.conf.isCoreBlock:
             self.addBlockages()

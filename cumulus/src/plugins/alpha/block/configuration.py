@@ -16,6 +16,7 @@ from   __future__ import print_function
 import sys
 import re
 import os.path
+from   operator  import itemgetter
 import Cfg
 from   Hurricane import Breakpoint
 from   Hurricane import DbU
@@ -597,6 +598,67 @@ class BufferInterface ( object ):
 
 
 # ----------------------------------------------------------------------------
+# Class  :  "configuration.FeedsConf".
+
+class FeedsConf ( object ):
+    """
+    Store informations about feed cells and how to fill a gap.
+    """
+
+    def __init__ ( self, framework ):
+        trace( 550, ',+', '\tFeedsConf.__init__()\n' )
+        feeds = Cfg.getParamString('etesian.feedNames').asString().split(',')
+        self.count = 0
+        self.feeds = []
+        for feedName in feeds:
+            feedCell = framework.getCell( feedName, CRL.Catalog.State.Views )
+            if not feedCell:
+                print( WarningMessage( 'FeedConf.__init__(): Feed cell "{}" not found in library (skipped).' \
+                                       .format(feedName)) )
+                continue
+            feedWidth = feedCell.getAbutmentBox().getWidth()
+            self.feeds.append( (feedWidth,feedCell) )
+        self.feeds.sort( key=itemgetter(0) )
+        self.feeds.reverse()
+        print( self.feeds )
+        for i in range(len(self.feeds)):
+            trace( 550, '\t[{:>2}] {:>10} {}\n' \
+                        .format(i,DbU.getValueString(self.feeds[i][0]),self.feeds[i][1]) ) 
+        trace( 550, '-' )
+        return
+
+    def fillAt ( self, cell, transf, gapWidth ):
+        """
+        In ``cell``, fill a *one* row gap starting at ``transf`` position and
+        of length ``gapWidth``.
+        """
+        x = transf.getTx()
+        while gapWidth > 0:
+            feedAdded = False
+            for i in range(len(self.feeds)):
+                if self.feeds[i][0] <= gapWidth:
+                    instance = Instance.create( cell, 'spare_feed_{}'.format(self.count), self.feeds[i][1] )
+                    instance.setTransformation( Transformation( x
+                                                              , transf.getTy()
+                                                              , transf.getOrientation() ))
+                    instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+                    gapWidth -= self.feeds[i][0]
+                    x        += self.feeds[i][0]
+                    self.count += 1
+                    feedAdded = True
+            if not feedAdded: break
+        if gapWidth > 0:
+            print( WarningMessage( [ 'FeedConf.fillAt(): Unable to fill row gap in "{}".' \
+                                     .format(cell.getName())
+                                   , '           (@{}, lenght:{})' \
+                                     .format(transf,DbU.getValueString(gapWidth)) 
+                                   ] ))
+
+    def resetFeedCount ( self ):
+        self.count = 0
+
+
+# ----------------------------------------------------------------------------
 # Class  :  "configuration.IoPin".
 
 class IoPin ( object ):
@@ -766,6 +828,7 @@ class BlockConf ( GaugeConf ):
         self.framework    = CRL.AllianceFramework.get()
         self.cfg          = CfgCache('',Cfg.Parameter.Priority.Interactive)
         self.bufferConf   = BufferInterface( self.framework )
+        self.feedsConf    = FeedsConf( self.framework )
         self.chipConf     = ChipConf( self )
         self.bColumns     = 2
         self.bRows        = 2
@@ -833,6 +896,11 @@ class BlockConf ( GaugeConf ):
     @property
     def core ( self ): return self.cell
 
+    @property
+    def cellPnR ( self ):
+        if self.icorona: return self.corona
+        return self.cell
+
     def setEditor ( self, editor ): self.editor = editor
 
     def refresh ( self, cell=None ):
@@ -843,7 +911,7 @@ class BlockConf ( GaugeConf ):
         self.editor.fit()
 
     def createBuffer ( self ):
-        return self.bufferConf.createBuffer( self.cell )
+        return self.bufferConf.createBuffer( self.cellPnR )
 
     def setDeltaAb ( self, dx1, dy1, dx2, dy2 ):
         self.deltaAb = [ dx1, dy1, dx2, dy2 ]
