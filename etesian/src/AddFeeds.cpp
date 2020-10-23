@@ -370,6 +370,22 @@ namespace Etesian {
 
     sliceHoles.setSpinSlice0( _yspinSlice0 );
 
+    if (getBlockInstance()) {
+      Transformation toBlockTransf = getBlockInstance()->getTransformation();
+      toBlockTransf.invert();
+      for ( Instance* instance : getCell()->getInstances() ) {
+        if (instance == getBlockInstance()) continue;
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
+          Box overlapAb = instance->getAbutmentBox();
+          toBlockTransf.applyOn( overlapAb );
+          overlapAb = topCellAb.getIntersection( overlapAb );
+          if (not overlapAb.isEmpty()) {
+            sliceHoles.merge( overlapAb );
+          }
+        }
+      }
+    }
+
     for ( Occurrence occurrence : getBlockCell()->getTerminalNetlistInstanceOccurrences() )
     {
       Instance* instance     = static_cast<Instance*>(occurrence.getEntity());

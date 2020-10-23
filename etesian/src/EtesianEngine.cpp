@@ -577,13 +577,24 @@ namespace Etesian {
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
     
-    Box topAb = getBlockCell()->getAbutmentBox();
-    Transformation topTransformation;
-    if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
-    topTransformation.applyOn( topAb );
-
     size_t  instancesNb = 0;
     size_t  fixedNb     = 0;
+    Box     topAb       = getBlockCell()->getAbutmentBox();
+    Transformation topTransformation;
+    if (getBlockInstance()) {
+      topTransformation = getBlockInstance()->getTransformation();
+      topTransformation.applyOn( topAb );
+      for ( Instance* instance : getCell()->getInstances() ) {
+        if (instance == getBlockInstance()) continue;
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
+          if (topAb.intersect(instance->getAbutmentBox())) {
+            ++instancesNb;
+            ++fixedNb;
+          }
+        }
+      }
+    }
+
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
       Instance* instance = static_cast<Instance*>(occurrence.getEntity());
@@ -611,8 +622,37 @@ namespace Etesian {
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
     getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
 
+
     bool    tooManyInstances = false;
     index_t instanceId       = 0;
+    if (getBlockInstance()) {
+      for ( Instance* instance : getCell()->getInstances() ) {
+        if (instance == getBlockInstance()) continue;
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
+          Box overlapAb = topAb.getIntersection( instance->getAbutmentBox() );
+          if (not overlapAb.isEmpty()) {
+          // Upper rounded
+            int_t xsize = (overlapAb.getWidth () + vpitch - 1) / vpitch;
+            int_t ysize = (overlapAb.getHeight() + hpitch - 1) / hpitch;
+          // Lower rounded
+            int_t xpos  = overlapAb.getXMin() / vpitch;
+            int_t ypos  = overlapAb.getYMin() / hpitch;
+
+            instances[instanceId].size       = point<int_t>( xsize, ysize );
+            instances[instanceId].list_index = instanceId;
+            instances[instanceId].area       = static_cast<capacity_t>(xsize) * static_cast<capacity_t>(ysize);
+            positions[instanceId]            = point<int_t>( xpos, ypos );
+            instances[instanceId].attributes = 0;
+
+            _cellsToIds.insert( make_pair(getString(instance->getName()),instanceId) );
+            _idsToInsts.push_back( instance );
+            ++instanceId;
+            dots.dot();
+          }
+        }
+      }
+    }
+
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
       if (tooManyInstances or (instanceId == instancesNb)) {

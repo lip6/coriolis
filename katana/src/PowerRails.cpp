@@ -251,17 +251,15 @@ namespace {
     cdebug_log(159,0) << "    getRootNet:" << path << ":" << net << endl;
 
     if (net == _blockage) return _blockage;
-
     if (net->getType() == Net::Type::POWER ) return _vdd;
     if (net->getType() == Net::Type::GROUND) return _vss;
-    if (net->getType() != Net::Type::CLOCK ) {
-      return NULL;
-    }
+    if (net->getType() != Net::Type::CLOCK ) return NULL;
 
   // Track up, *only* for clocks.
     const Net* upNet = net;
 
     if (not path.isEmpty()) {
+      cdebug_log(159,0) << "    Path is *not* empty:" << path << endl;
       DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
       if (deepClockNet) {
         cdebug_log(159,0) << "    Deep Clock Net:" << deepClockNet
@@ -292,15 +290,17 @@ namespace {
       }
     }
 
-    cdebug_log(159,0) << "      Check againts top clocks ck:"
+    cdebug_log(159,0) << "      Check against top clocks ck:"
                       << ((_ck) ? _ck->getName() : "NULL") << endl;
 
     if (_ck) {
       if (upNet->getName() == _ck->getName()) {
+        cdebug_log(159,0) << "      Clock name matches upNet." << endl;
         if (isCoreClockNetRouted(upNet)) return _ck;
       }
     }
 
+    cdebug_log(159,0) << "      upNet fixed:" << NetRoutingExtension::isFixed(upNet) << endl;
     return NetRoutingExtension::isFixed(upNet) ? _blockage : NULL;
   }
 
@@ -1050,7 +1050,7 @@ namespace {
       }
 
       cdebug_log(159,0) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
-                  << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
+                        << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {
