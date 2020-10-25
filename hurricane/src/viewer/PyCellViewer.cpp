@@ -173,6 +173,22 @@ extern "C" {
   }
 
 
+  static PyObject* PyCellViewer_setDbuMode ( PyCellViewer* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCellViewer_setDbuMode ()" << endl;
+    HTRY
+      METHOD_HEAD( "CellViewer.setDbuMode()" )
+      int dbuMode = DbU::Symbolic;
+      if (not PyArg_ParseTuple(args,"i:CellViewer.setDbuMode()", &dbuMode)) {
+        PyErr_SetString ( ConstructorError, "CellViewer.setDbuMode(): Takes exactly one argument." );
+        return NULL;
+      }
+      cw->setDbuMode ( dbuMode );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   static PyObject* PyCellViewer_setApplicationName ( PyCellViewer* self, PyObject* args )
   {
     cdebug_log(20,0) << "PyCellViewer_setApplicationName ()" << endl;
@@ -370,6 +386,8 @@ extern "C" {
                                 , "Load a Cell into the viewer." }
     , { "setApplicationName"    , (PyCFunction)PyCellViewer_setApplicationName    , METH_VARARGS
                                 , "Sets the application (binary) name." }
+    , { "setDbuMode"            , (PyCFunction)PyCellViewer_setDbuMode            , METH_VARARGS
+                                , "Sets how the length will be displayed (lambda,physical,grid)." }
     , { "setAnonNetSelectable"  , (PyCFunction)PyCellViewer_setAnonNetSelectable  , METH_VARARGS
                                 , "Allow/disallow anonymous nets to be selectables." }
     , { "setLayerVisible"       , (PyCFunction)PyCellViewer_setLayerVisible       , METH_VARARGS

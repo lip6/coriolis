@@ -116,6 +116,7 @@ namespace Hurricane {
                                                               , QString             beforePath="" );
       inline  void                  setEnableRedrawInterrupt  ( bool );
       inline  void                  setApplicationName        ( const QString& );
+      inline  void                  setDbuMode                ( int );
       inline  Observer<CellViewer>* getCellObserver           ();
               Cell*                 getCell                   () const;
       virtual void                  setCell                   ( Cell* );
@@ -217,6 +218,9 @@ namespace Hurricane {
 
   inline void  CellViewer::setEnableRedrawInterrupt  ( bool state )
   { _cellWidget->setEnableRedrawInterrupt(state); }
+
+  inline void  CellViewer::setDbuMode ( int mode )
+  { _cellWidget->setDbuMode(mode); }
 
 
 } // Hurricane namespace.

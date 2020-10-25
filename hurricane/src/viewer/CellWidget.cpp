@@ -377,7 +377,7 @@ namespace Hurricane {
     _normalPen.setWidth( 2 );
     _linePen.setWidth( 2 );
 #else
-    _linePen.setWidth( 1 );
+  //    _linePen.setWidth( 1 );
 #endif
  
     if (_lineMode) painter().setPen( _linePen );
@@ -640,7 +640,8 @@ namespace Hurricane {
                                                 )
   {
     Box bbox = transformation.getBox(cell->getAbutmentBox());
-    _cellWidget->drawBox ( bbox );
+  //_cellWidget->drawBoxBorder( bbox );
+    _cellWidget->drawBox( bbox );
   }
 
 
@@ -1344,6 +1345,7 @@ namespace Hurricane {
       _drawingPlanes.painter().eraseRect    ( redrawArea );
 
       setDarkening( (_state->showSelection()) ? Graphics::getDarkening() : DisplayStyle::HSVr() );
+      if (isDrawable("grid")) drawGrid( redrawArea );
 
       if (getCell()) {
         Box redrawBox = screenToDbuBox( redrawArea );
@@ -1456,7 +1458,6 @@ namespace Hurricane {
       _cellModificated = false;
     }
 
-    if (isDrawable("grid"))       drawGrid  ( redrawArea );
     if (isDrawable("text.ruler")) drawRulers( redrawArea );
 
     setDarkening( 100 );
@@ -1668,6 +1669,15 @@ namespace Hurricane {
   }
 
 
+  void  CellWidget::drawBoxBorder ( const Box& box )
+  {
+    drawLine( box.getXMin(), box.getYMin(), box.getXMin(), box.getYMax(), true );
+    drawLine( box.getXMin(), box.getYMax(), box.getXMax(), box.getYMax(), true );
+    drawLine( box.getXMax(), box.getYMax(), box.getXMax(), box.getYMin(), true );
+    drawLine( box.getXMax(), box.getYMin(), box.getXMin(), box.getYMin(), true );
+  }
+
+
   void  CellWidget::drawText ( const Point& point, const char* text, unsigned int flags, int angle )
   {
     drawDisplayText ( dbuToScreenPoint(point), text, flags, angle );
@@ -1807,55 +1817,82 @@ namespace Hurricane {
 
   bool  CellWidget::_underDetailedGridThreshold () const
   {
-    if ( symbolicMode() )
-      return Graphics::getThreshold("grid")/DbU::lambda(1.0) < getScale()/5;
-    return Graphics::getThreshold("grid")/DbU::grid(10.0) < getScale()/5;
+    // if (symbolicMode()) return 5*Graphics::getThreshold("grid")/DbU::getSymbolicSnapGridStep() < getScale();
+    // if (physicalMode()) return 5*Graphics::getThreshold("grid")/DbU::getRealSnapGridStep() < getScale();
+    // return 5*Graphics::getThreshold("grid")/DbU::grid(10.0) < getScale();
+    DbU::Unit  gridLength = 0;
+    if      (symbolicMode()) gridLength =    DbU::getSymbolicSnapGridStep();
+    else if (physicalMode()) gridLength = 10*DbU::getRealSnapGridStep();
+    else                     gridLength = 10*DbU::fromGrid(1.0);
+    double pixelLength = dbuToScreenLength( gridLength );
+    return pixelLength > 50;
   }
 
 
   void  CellWidget::drawGrid ( QRect redrawArea )
   {
-    _drawingPlanes.select  ( PlaneId::Normal );
-    _drawingPlanes.begin   ();
-    _drawingPlanes.painter ().setClipRect   ( redrawArea );
-    _drawingPlanes.painter ().setPen ( Graphics::getPen("grid") );
+    // _drawingPlanes.select ( PlaneId::Normal );
+    // _drawingPlanes.begin  ();
+    // _drawingPlanes.painter().setClipRect( redrawArea );
+    _drawingPlanes.setPen  ( Graphics::getPen  (("grid"), getDarkening() ));
+    _drawingPlanes.setBrush( Graphics::getBrush(("grid"), getDarkening() ));
 
-    Box redrawBox = screenToDbuBox ( redrawArea ).inflate ( DbU::lambda(1.0) );
-
+    Box  redrawBox    = screenToDbuBox( redrawArea ).inflate( DbU::lambda(1.0) );
     bool detailedGrid = _underDetailedGridThreshold();
 
-    DbU::Unit  gridStep      = _snapGridStep();
-    DbU::Unit  superGridStep = gridStep*5;
+    DbU::Unit  gridStep      = ((symbolicMode()) ? 1 : 10) * _snapGridStep();
+    DbU::Unit  superGridStep = gridStep*10;
     DbU::Unit  xGrid;
     DbU::Unit  yGrid;
     QPoint     center;
 
-    for ( yGrid = _onSnapGrid(redrawBox.getYMin())
+#if 0
+    cerr << "CellWidget::drawGrid() step:" << DbU::getValueString(gridStep)
+         << " superStep:" << DbU::getValueString(superGridStep)
+         << " pixels:" << dbuToScreenLength(gridStep)
+         << " draw:" << detailedGrid << endl;
+
+    for ( yGrid = DbU::getOnCustomGrid(redrawBox.getYMin(),gridStep,DbU::SnapMode::Superior)
         ; yGrid < redrawBox.getYMax()
         ; yGrid += gridStep
         ) {
-      for ( xGrid = _onSnapGrid(redrawBox.getXMin())
+      for ( xGrid = DbU::getOnCustomGrid(redrawBox.getXMin(),gridStep,DbU::SnapMode::Superior)
           ; xGrid < redrawBox.getXMax()
           ; xGrid += gridStep
           ) {
-        center = dbuToScreenPoint(xGrid,yGrid);
-        if ( (xGrid % superGridStep) || (yGrid % superGridStep) ) {
-          if ( detailedGrid ) {
-            _drawingPlanes.painter().drawPoint ( center );
+        center = dbuToScreenPoint( xGrid, yGrid );
+        if ( (xGrid % superGridStep) or (yGrid % superGridStep) ) {
+          if (detailedGrid) {
+            _drawingPlanes.painter().drawPoint( center );
           }
         } else {
-          if ( detailedGrid ) {
-            _drawingPlanes.painter().drawLine ( center.x()-3, center.y()  , center.x()+3, center.y()   );
-            _drawingPlanes.painter().drawLine ( center.x()  , center.y()-3, center.x()  , center.y()+3 );
+          if (detailedGrid) {
+            _drawingPlanes.painter().drawLine( center.x()-3, center.y()  , center.x()+3, center.y()   );
+            _drawingPlanes.painter().drawLine( center.x()  , center.y()-3, center.x()  , center.y()+3 );
           } else {
-            _drawingPlanes.painter().drawPoint ( center );
+            _drawingPlanes.painter().drawPoint( center );
           }
         }
       }
     }
+#endif
 
-    _drawingPlanes.copyToSelect ( redrawArea );
-    _drawingPlanes.end          ();
+    for ( xGrid = DbU::getOnCustomGrid(redrawBox.getXMin(),superGridStep,DbU::SnapMode::Superior)
+        ; xGrid < redrawBox.getXMax()
+        ; xGrid += superGridStep
+        ) {
+      drawLine( Point(xGrid,redrawBox.getYMin()), Point(xGrid,redrawBox.getYMax()) );
+    }
+
+    for ( yGrid = DbU::getOnCustomGrid(redrawBox.getYMin(),superGridStep,DbU::SnapMode::Superior)
+        ; yGrid < redrawBox.getYMax()
+        ; yGrid += superGridStep
+        ) {
+      drawLine( Point(redrawBox.getXMin(),yGrid), Point(redrawBox.getXMax(),yGrid) );
+    }
+
+    // _drawingPlanes.copyToSelect( redrawArea );
+    // _drawingPlanes.end         ();
   }
 
 
@@ -2503,6 +2540,7 @@ namespace Hurricane {
     openRefreshSession();
 
     shared_ptr<State>  state ( new State(cell,topPath) );
+    state->setDbuMode( getDbuMode() );
     setState( state, flags );
     if ( cell and cell->isTerminal() ) setQueryFilter( ~0 );
   //setRealMode ();

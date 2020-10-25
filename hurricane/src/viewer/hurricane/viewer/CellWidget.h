@@ -182,6 +182,7 @@ namespace Hurricane {
       inline  void                      setPen                     ( const QPen& , size_t plane=PlaneId::Working );
               void                      drawBox                    ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit );
               void                      drawBox                    ( const Box& );
+              void                      drawBoxBorder              ( const Box& );
               void                      drawLine                   ( DbU::Unit, DbU::Unit, DbU::Unit, DbU::Unit, bool mode=true );
               void                      drawLine                   ( const Point&, const Point&, bool mode=true );
               void                      drawText                   ( const Point&, const char*, unsigned int flags=0, int angle=0 );
@@ -990,9 +991,9 @@ namespace Hurricane {
   {
     _dbuMode = mode;
     switch ( _dbuMode ) {
-      case DbU::Symbolic: _cursorStep = DbU::lambda(0.5); break;
-      case DbU::Grid:     _cursorStep = DbU::grid  (1.0); break;
-      case DbU::Physical: _cursorStep = DbU::grid  (1.0); break;
+      case DbU::Symbolic: _cursorStep = DbU::fromLambda(0.5); break;
+      case DbU::Grid:     _cursorStep = DbU::fromGrid  (1.0); break;
+      case DbU::Physical: _cursorStep = DbU::fromGrid  (1.0); break;
     }
   }
 
