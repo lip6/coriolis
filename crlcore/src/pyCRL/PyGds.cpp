@@ -70,11 +70,11 @@ extern "C" {
         if (IsPyCell(pyCell)) {
           Gds::save( PYCELL_O(pyCell) );
         } else {
-          PyErr_SetString( ConstructorError, "Gds.load(): Bad parameter type (not a Cell)." );
+          PyErr_SetString( ConstructorError, "Gds.save(): Bad parameter type (not a Cell)." );
           return NULL;
         }
       } else {
-        PyErr_SetString( ConstructorError, "Gds.load(): Bad number of parameters." );
+        PyErr_SetString( ConstructorError, "Gds.save(): Bad number of parameters." );
         return NULL;
       }
     HCATCH
