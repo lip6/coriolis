@@ -14,6 +14,7 @@
 
 
 import string
+from   helpers.io import ErrorMessage
 
 
 stdColors = \
@@ -22,11 +23,15 @@ stdColors = \
     , 'Gray238'       : '238,238,238'
     , 'White'         : '255,255,255'
     , 'Seashell4'     : '139,134,130'
+    , 'Ivory'         : '255,255,240'
+    , 'Linen'         : '250,240,230'
     , 'Red'           : '255,0,0'      # Shade of Reds.
     , 'OrangeRed'     : "255,69,0"
     , 'DarkOrange'    : "255,140,0"
     , 'Orange'        : "255,165,0"
     , 'Wheat'         : "245,222,179"
+    , 'wheat1'        : "255,231,186"
+    , 'Pink'          : '255,192,203'
     , 'LightPink'     : '255,182,193'
     , 'Green'         : '0,255,0'      # Shade of Green.
     , 'LawnGreen'     : '124,252,0'
