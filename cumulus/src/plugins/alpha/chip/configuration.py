@@ -101,7 +101,6 @@ class ChipConf ( BlockConf ):
 
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
         trace( 550, ',+', 'ChipConf.__init__(): "{}"'.format(cell.getName()) )
-        print( super(ChipConf,self).__init__ )
         super(ChipConf,self).__init__( cell, ioPins, ioPads )
 #       trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
         self.validated = True
@@ -577,7 +576,6 @@ class ChipConf ( BlockConf ):
         return
 
     def checkChipSize ( self ):
-        print( 'checkChipSize' )
         if self.chipSize[0] % self.sliceStep:
             print( WarningMessage( 'ChipConf.checkChipSize(): Width of "{}" ({})is not on sliceStep ({}), ajusted.' \
                                    .format( self.chipConf.name

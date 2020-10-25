@@ -220,7 +220,6 @@ class Builder ( object ):
             return
         htPlugs = []
         for plug in self.conf.coronaCk.getPlugs():
-            print( plug )
             if plug.getInstance().isTerminalNetlist():
                 htPlugs.append( plug )
         if len(htPlugs) != 1:
@@ -228,7 +227,6 @@ class Builder ( object ):
                         .format( self.conf.coronaCk.getName()
                                , self.conf.icore.getName()
                                , len(htPlugs)) ]
-            print( self.conf.icore )
             for plug in htPlugs:
                 message += [ '\n        - {} {}'.format(plug,plug.getInstance()) ]
             raise ErrorMessage( 1, message )

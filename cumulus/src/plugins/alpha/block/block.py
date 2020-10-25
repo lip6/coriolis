@@ -584,11 +584,11 @@ class Block ( object ):
                 self.checkIoPins()
             self.spares.build()
             if self.conf.useClockTree: self.addClockTrees()
-            self.addHfnBuffers()
+            if self.conf.useHFNS:      self.addHfnBuffers()
             if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
-            self.findHfnTrees()
+            if self.conf.useHFNS: self.findHfnTrees()
             break
         if self.conf.useClockTree: self.splitClocks()
         if self.conf.isCoreBlock:  self.doConnectCore()

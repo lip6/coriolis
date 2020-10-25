@@ -68,8 +68,6 @@ class Chip ( Block ):
 
     def __init__ ( self, conf ):
         super(Chip,self).__init__( conf )
-        print( 'Core: {}'.format(self.conf.core) )
-        print( '| AB: {}'.format(self.conf.core.getAbutmentBox()) )
   
     def validate ( self ):
         self.conf.validated = True

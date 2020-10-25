@@ -548,23 +548,26 @@ class ChipConf ( object ):
 
 
 # ----------------------------------------------------------------------------
-# Class  :  "configuration.BufferInterface".
+# Class  :  "configuration.BufferConf".
 
-class BufferInterface ( object ):
+class BufferConf ( object ):
+    """
+    Store informations on the buffer(s) to use for Net buffering operations
+    and clock trees.
+    """
 
     def __init__ ( self, framework ):
-        trace( 550, ',+', '\tBufferInterface.__init__()\n' )
+        trace( 550, ',+', '\tBufferConf.__init__()\n' )
         self.maxSinks   = Cfg.getParamInt('spares.maxSinks').asInt()
         self.masterCell = framework.getCell( Cfg.getParamString('spares.buffer').asString()
                                            , CRL.Catalog.State.Views )
         if not self.masterCell:
             trace( 550, '-' )
-            raise ErrorMessage( 3, [ 'ClockTree: Buffer cell "{}" not found in library,' \
+            raise ErrorMessage( 3, [ 'BufferConf.__init__(): Buffer cell "{}" not found in library,' \
                                      .format(Cfg.getParamString('spares.buffer').asString())
                                    , '           please check the "spares.buffer" configuration parameter in "plugins.conf".' ] )
         trace( 550, '\t| masterCell   :{}\n'.format(self.masterCell) ) 
         trace( 550, '\t| maximum sinks:{}\n'.format(self.maxSinks) ) 
-        
         self.count  = 0
         self.input  = None
         self.output = None
@@ -573,7 +576,14 @@ class BufferInterface ( object ):
             if     net.isGlobal(): continue
             if     net.getDirection() & Net.Direction.IN:  self.input  = net.getName()
             elif   net.getDirection() & Net.Direction.OUT: self.output = net.getName()
-        
+        if self.input is None:
+            raise ErrorMessage( 3, [ 'BufferConf.__init__(): Cannot guess the input terminal of "{}",' \
+                                     .format(Cfg.getParamString('spares.buffer').asString())
+                                   , '           please check that the Nets directions are set.' ] )
+        if self.output is None:
+            raise ErrorMessage( 3, [ 'BufferConf.__init__(): Cannot guess the output terminal of "{}",' \
+                                     .format(Cfg.getParamString('spares.buffer').asString())
+                                   , '           please check that the Nets directions are set.' ] )
         trace( 550, '\t| input        :"{}"\n'.format(self.input ) ) 
         trace( 550, '\t| output       :"{}"\n'.format(self.output) ) 
         trace( 550, '-' )
@@ -589,11 +599,16 @@ class BufferInterface ( object ):
     def height ( self ): return self.masterCell.getAbutmentBox().getHeight()
 
     def createBuffer ( self, cell ):
+        """
+        Create a new buffer *instance* in Cell. The instance is named "spare_buffer_<Nb>",
+        where ``<Nb>`` is an ever incrementing counter (self.count).
+        """
         instance = Instance.create( cell, 'spare_buffer_{}'.format(self.count), self.masterCell )
         self.count += 1
         return instance
 
     def resetBufferCount ( self ):
+        """Reset the buffer instance counter (to use only in case of design reset)."""
         self.count = 0
 
 
@@ -620,7 +635,6 @@ class FeedsConf ( object ):
             self.feeds.append( (feedWidth,feedCell) )
         self.feeds.sort( key=itemgetter(0) )
         self.feeds.reverse()
-        print( self.feeds )
         for i in range(len(self.feeds)):
             trace( 550, '\t[{:>2}] {:>10} {}\n' \
                         .format(i,DbU.getValueString(self.feeds[i][0]),self.feeds[i][1]) ) 
@@ -827,7 +841,7 @@ class BlockConf ( GaugeConf ):
         self.editor       = None
         self.framework    = CRL.AllianceFramework.get()
         self.cfg          = CfgCache('',Cfg.Parameter.Priority.Interactive)
-        self.bufferConf   = BufferInterface( self.framework )
+        self.bufferConf   = BufferConf( self.framework )
         self.feedsConf    = FeedsConf( self.framework )
         self.chipConf     = ChipConf( self )
         self.bColumns     = 2
@@ -840,6 +854,7 @@ class BlockConf ( GaugeConf ):
         self.fixedHeight  = None
         self.deltaAb      = [ 0, 0, 0, 0 ]
         self.useClockTree = False
+        self.useHFNS      = False
         self.useSpares    = True
         self.isBuilt      = False
         self.ioPins       = []

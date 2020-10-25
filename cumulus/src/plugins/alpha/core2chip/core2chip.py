@@ -248,7 +248,6 @@ class IoPad ( object ):
 
     @property
     def pads ( self ):
-        print( self.ioPadConf )
         return self.ioPadConf.pads
   
     def __str__ ( self ):
