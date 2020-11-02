@@ -18,7 +18,7 @@ Some helpers to create or load a technology and it's libraries.
 """
 
 from __future__ import print_function
-from Hurricane  import DataBase, Library, BasicLayer
+from Hurricane  import DataBase, Library, BasicLayer, Layer
 
 
 __all__ = [ 'safeGetLibrary', 'createBL', 'setEnclosures' ]

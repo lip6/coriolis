@@ -345,3 +345,12 @@ cg = CellGauge.create( 'phlib80'
                      , l(246.0)   # cell slice step.
                      )
 af.addCellGauge( cg )
+
+# Gauge for Flexlib symbolic I/O pads (abstracts).
+cg = CellGauge.create( 'niolib'
+                     , 'metal2'    # pin layer name.
+                     , l(  10.0)   # pitch.
+                     , l(1190.0)   # cell slice height.
+                     , l( 500.0)   # cell slice step.
+                     )
+af.addCellGauge( cg )

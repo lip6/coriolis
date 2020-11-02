@@ -19,7 +19,7 @@ helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
 
 from   helpers import l, u, n
 
-Cfg.getParamInt   ( "chip.block.rails.count"    ).setInt   (      5  )
+Cfg.getParamInt   ( "chip.block.rails.count"    ).setInt   (      6  )
 Cfg.getParamInt   ( "chip.block.rails.hWidth"   ).setInt   ( l(  24) )
 Cfg.getParamInt   ( "chip.block.rails.vWidth"   ).setInt   ( l(  24) )
 Cfg.getParamInt   ( "chip.block.rails.hSpacing" ).setInt   ( l(  12) )
