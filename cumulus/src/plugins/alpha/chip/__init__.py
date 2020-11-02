@@ -26,14 +26,16 @@ dictionnary of other modules.
 from __future__ import print_function
 from helpers.io import WarningMessage
 
-North     = 0x0001
-South     = 0x0002
-East      = 0x0004
-West      = 0x0008
-SouthWest = South|West
-SouthEast = South|East
-NorthWest = North|West
-NorthEast = North|East
+North      = 0x0001
+South      = 0x0002
+East       = 0x0004
+West       = 0x0008
+SouthWest  = South|West
+SouthEast  = South|East
+NorthWest  = North|West
+NorthEast  = North|East
+HORIZONTAL = North|South
+VERTICAL   = East |West
 
 Superior          = 0x0010
 Inferior          = 0x0020

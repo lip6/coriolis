@@ -278,78 +278,64 @@ class Side ( object ):
         self.u += gapWidth
 
     def _placePad ( self, padInstance ):
-      if self.type == North:
-        x = self.conf.chipAb.getXMin() + self.u
-        y = self.conf.chipAb.getYMax()
-
-        if self.corona.padOrient == Transformation.Orientation.ID:
-          orientation = Transformation.Orientation.MY
-        else:
-          orientation = Transformation.Orientation.ID
-          y          -= self.conf.ioPadHeight
-
-      elif self.type == South:
-        x = self.conf.chipAb.getXMin() + self.u
-        y = self.conf.chipAb.getYMin()
-
-        if self.corona.padOrient == Transformation.Orientation.ID:
-          orientation = Transformation.Orientation.ID
-        else:
-          orientation = Transformation.Orientation.MY
-          y          += self.conf.ioPadHeight
-
-      elif self.type == West:
-        x = self.conf.chipAb.getXMin()
-        y = self.conf.chipAb.getYMin() + self.u
-
-        if self.corona.padOrient == Transformation.Orientation.ID:
-          orientation = Transformation.Orientation.R3
-          y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
-        else:
-          orientation = Transformation.Orientation.R1
-          x          += padInstance.getMasterCell().getAbutmentBox().getHeight()
-
-      elif self.type == East:
-        x = self.conf.chipAb.getXMax()
-        y = self.conf.chipAb.getYMin() + self.u
-
-        if self.corona.padOrient == Transformation.Orientation.ID:
-          orientation = Transformation.Orientation.R1
-        else:
-          orientation = Transformation.Orientation.R3
-          x          -= padInstance.getMasterCell().getAbutmentBox().getHeight()
-          y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
-
-      padInstance.setTransformation ( Transformation( self.toGrid(x), self.toGrid(y), orientation ) )
-      padInstance.setPlacementStatus( Instance.PlacementStatus.FIXED )
-
-      self.u += padInstance.getMasterCell().getAbutmentBox().getWidth()
-
-      p = None
-      if self.conf.ioPadGauge.getName() == 'pxlib':
-        p = re.compile( r'p(?P<power>v[sd]{2}[ei])ck_px' )
-
-      if self.conf.ioPadGauge.getName().startswith('phlib'):
-        p = re.compile( r'p(?P<power>v[sd]{2})ck2_sp' )
-
-      if p:
-        m = p.match( padInstance.getMasterCell().getName() )
-
-        padName = 'pad'
-        if m: padName = m.group( 'power' )
-          
-        padNet = padInstance.getMasterCell().getNet( padName )
-       #print 'padName:', padName, 'padNet:', padNet
-        if padNet:
-          plug    = padInstance.getPlug( padNet )
-          chipNet = plug.getNet()
-
-          if not chipNet and padNet.isGlobal():
-            chipNet = padInstance.getCell().getNet( padNet.getName() )
-
-          if chipNet:
-            rp = RoutingPad.create( chipNet, Occurrence(plug), RoutingPad.BiggestArea )
-      return
+        if self.type == North:
+            x = self.conf.chipAb.getXMin() + self.u
+            y = self.conf.chipAb.getYMax()
+            if self.corona.padOrient == Transformation.Orientation.ID:
+                orientation = Transformation.Orientation.MY
+            else:
+                orientation = Transformation.Orientation.ID
+                y          -= self.conf.ioPadHeight
+        elif self.type == South:
+            x = self.conf.chipAb.getXMin() + self.u
+            y = self.conf.chipAb.getYMin()
+            if self.corona.padOrient == Transformation.Orientation.ID:
+                orientation = Transformation.Orientation.ID
+            else:
+                orientation = Transformation.Orientation.MY
+                y          += self.conf.ioPadHeight
+        elif self.type == West:
+            x = self.conf.chipAb.getXMin()
+            y = self.conf.chipAb.getYMin() + self.u
+            if self.corona.padOrient == Transformation.Orientation.ID:
+                orientation = Transformation.Orientation.R3
+                y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
+            else:
+                orientation = Transformation.Orientation.R1
+                x          += padInstance.getMasterCell().getAbutmentBox().getHeight()
+        elif self.type == East:
+            x = self.conf.chipAb.getXMax()
+            y = self.conf.chipAb.getYMin() + self.u
+            if self.corona.padOrient == Transformation.Orientation.ID:
+                orientation = Transformation.Orientation.R1
+            else:
+                orientation = Transformation.Orientation.R3
+                x          -= padInstance.getMasterCell().getAbutmentBox().getHeight()
+                y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
+        padInstance.setTransformation ( Transformation( self.toGrid(x), self.toGrid(y), orientation ) )
+        padInstance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.u += padInstance.getMasterCell().getAbutmentBox().getWidth()
+        p = None
+        if self.conf.ioPadGauge.getName() == 'pxlib':
+            p = re.compile( r'p(?P<power>v[sd]{2}[ei])ck_px' )
+        if self.conf.ioPadGauge.getName().startswith('phlib'):
+            p = re.compile( r'p(?P<power>v[sd]{2})ck2_sp' )
+        if self.conf.ioPadGauge.getName() == 'niolib':
+            p = re.compile( r'(?P<power>(io)?v[sd]{2})' )
+        if p:
+            m = p.match( padInstance.getMasterCell().getName() )
+            padName = 'pad'
+            if m: padName = m.group( 'power' )
+            padNet = padInstance.getMasterCell().getNet( padName )
+            trace( 550, '\tpadName:{} padNet:{}\n'.format(padName,padNet) )
+            if padNet:
+                plug    = padInstance.getPlug( padNet )
+                chipNet = plug.getNet()
+                if not chipNet and padNet.isGlobal():
+                    chipNet = padInstance.getCell().getNet( padNet.getName() )
+                if chipNet:
+                    rp = RoutingPad.create( chipNet, Occurrence(plug), RoutingPad.BiggestArea )
+        return
 
     def _placePads ( self ):
         padLength = 0
@@ -483,7 +469,6 @@ class Side ( object ):
 class CoreWire ( object ):
 
     # Should be read from the symbolic technology rules.
-    viaPitch = DbU.fromLambda( 4.0 )
   
     NoOffset = 0x0000
     AtBegin  = 0x0001
@@ -501,6 +486,9 @@ class CoreWire ( object ):
         self.inCoronaRange = True
         self.arraySize     = None
         self.count         = count
+        self.viaPitch      = DbU.fromLambda( 4.0 )
+        self.gapWidth      = 0
+        self._computeCoreLayers()
 
     @property
     def conf ( self ): return self.corona.conf
@@ -548,22 +536,22 @@ class CoreWire ( object ):
                         self.symContactSize  = ( self.bbSegment.getHeight(), self.bbSegment.getHeight() )
                     else:
                         self.symContactSize  = ( self.bbSegment.getWidth(), self.bbSegment.getWidth() )
-                    
+                    self.viaPitch = self.conf.getViaPitch( self.symContactLayer )
                     contactMinSize = 2*self.symContactLayer.getEnclosure( self.symSegmentLayer.getBasicLayer()
                                                                         , Layer.EnclosureH|Layer.EnclosureV ) \
                                    +   self.symContactLayer.getMinimalSize()
                     arrayWidth = self.symContactSize[0]
-                    arrayCount = (arrayWidth - contactMinSize) / CoreWire.viaPitch
-                    trace( 550, '\tCoreWire.viaPitch: {}l\n'.format(DbU.toLambda(CoreWire.viaPitch)) )
+                    arrayCount = (arrayWidth - contactMinSize) / self.viaPitch
                     trace( 550, '\tcontactMinSize: {}l, arrayWidth: {}l, arrayCount: {}\n' \
                                 .format(DbU.toLambda(contactMinSize),DbU.toLambda(arrayWidth),arrayCount) )
                     if arrayCount < 0: arrayCount = 0
-                    if arrayCount < 3:
-                        if self.side & (North|South):
-                            self.arraySize = ( arrayCount+1, 2 )
-                        else:
-                            self.arraySize = ( 2, arrayCount+1 )
-                        trace( 550, '\tarraySize = ({},{})\n'.format(self.arraySize[0], self.arraySize[1]) )
+                   #if arrayCount < 3:
+                    if self.side & (North|South):
+                        self.arraySize = ( arrayCount+1, 2 )
+                    else:
+                        self.arraySize = ( 2, arrayCount+1 )
+                    trace( 550, '\tarraySize = ({},{})\n'.format(self.arraySize[0], self.arraySize[1]) )
+                    self.gapWidth = 4*self.viaPitch
                 trace( 550, ',-' )
                 return
         raise ErrorMessage( 1, 'CoreWire._computeCoreLayers(): Layer of IO pad segment "%s" is not in routing gauge.' \
@@ -594,7 +582,8 @@ class CoreWire ( object ):
                 xPadMax         = xContact
                 xCore           = coronaAb.getXMin()
                 if not self.preferredDir:
-                    xPadMax += self.bbSegment.getHeight()/2
+                   #xPadMax += self.bbSegment.getHeight()/2
+                    xPadMin += 3*vPitch
             else:
                 accessDirection = Pin.Direction.EAST
                 xPadMax         = self.bbSegment.getXMax()
@@ -602,7 +591,8 @@ class CoreWire ( object ):
                 xPadMin         = xContact
                 xCore           = coronaAb.getXMax()
                 if not self.preferredDir:
-                    xPadMin -= self.bbSegment.getHeight()/2
+                   #xPadMin -= self.bbSegment.getHeight()/2
+                    xPadMin -= 3*vPitch
             hReal = Horizontal.create( self.chipNet
                                      , self.padSegment.getLayer()
                                      , self.bbSegment.getCenter().getY()
@@ -683,16 +673,18 @@ class CoreWire ( object ):
                 yPadMax         = self.corona.coreSymBb.getYMin() - self.offset * 2*hPitch
                 yContact        = yPadMax
                 yCore           = coronaAb.getYMin()
-                if not self.preferredDir:
-                    yPadMax += self.bbSegment.getWidth()/2
+               #if not self.preferredDir:
+               #    yPadMax += self.bbSegment.getWidth()/2
+               #    yPadMin += 3*hPitch
             else:
                 accessDirection = Pin.Direction.NORTH
                 yPadMax         = self.bbSegment.getYMax()
                 yPadMin         = self.corona.coreSymBb.getYMax() + self.offset * 2*hPitch
                 yContact        = yPadMin
                 yCore           = coronaAb.getYMax()
-                if not self.preferredDir:
-                    yPadMin -= self.bbSegment.getWidth()/2
+               #if not self.preferredDir:
+               #    yPadMin -= self.bbSegment.getWidth()/2
+               #    yPadMin -= 3*hPitch
             vReal = Vertical.create( self.chipNet
                                    , self.padSegment.getLayer()
                                    , self.bbSegment.getCenter().getX()
@@ -805,9 +797,10 @@ class Corona ( object ):
         self.padSpacers      = []
         self.padCorner       = []
         self.padRails        = []  # [ , [net, layer, axis, width] ]
-        if Cfg.hasParameter('chip.padCoreSide'):
-            if Cfg.getParamString('chip.padCoreSide').asString().lower() == 'south':
-                self.padOrient = Transformation.Orientation.MY
+        self.conf.cfg.chip.padCoreSide = None
+        if self.conf.cfg.chip.padCoreSide.lower() == 'south':
+            self.padOrient = Transformation.Orientation.MY
+        trace( 550, '\tchip.padCoreSide: {}\n'.format(self.conf.cfg.chip.padCoreSide) )
         self._allPadsAnalysis()
         if Cfg.hasParameter('chip.padSpacers'):
             for spacerName in Cfg.getParamString('chip.padSpacers').asString().split(','):
@@ -889,10 +882,10 @@ class Corona ( object ):
                                 if plug.getMasterNet().isGlobal():
                                     net = self.conf.cell.getNet( plug.getMasterNet().getName() )
                                     if not net:
-                                        raise ErrorMessage( 1, 'PadsCorona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
+                                        raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
                                                                %  plug.getMasterNet().getName(), padCell.getName() )
                                 else:
-                                    raise ErrorMessage( 1, 'PadsCorona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
+                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
                                                          %  plug.getMasterNet().getName(), padCell.getName() )
                             if net:
                                 self.padRails.append( ( net
@@ -901,12 +894,18 @@ class Corona ( object ):
                                                       , component.getWidth() ) )
   
     def _createCoreWire ( self, chipIntNet, padNet, padInstance, count ):
+        trace( 550, ',+', '\tCorona._createCoreWire()\n' )
+        trace( 550, '\tchipIntNet:{}\n'.format(chipIntNet) )
+        trace( 550, '\tpadNet:{}\n'.format(padNet) )
+        trace( 550, '\tpadInstance:{}\n'.format(padInstance) )
         side = None
         if   self.hasSouthPad(padInstance): side = self.southSide
         elif self.hasNorthPad(padInstance): side = self.northSide
         elif self.hasEastPad (padInstance): side = self.eastSide
         elif self.hasWestPad (padInstance): side = self.westSide
-        if not side: return count
+        if not side:
+            trace( 550, '-' )
+            return count
         innerBb   = self.conf.chip.getAbutmentBox().inflate( -self.conf.ioPadHeight )
         rg        = self.conf.routingGauge
         hsegments = {}
@@ -946,25 +945,28 @@ class Corona ( object ):
         coreWires = []
         if segments:
             for segment, bb in segments:
-                if not inPreferredDir:
-                    if side.type == North or side.type == South:
-                        trace( 550, '\tNorth/South "{}" but RDir H, gapWidth: {}\n' \
-                                    .format(chipIntNet.getName(),DbU.getValueString(bb.getWidth()) ) )
-                        side.updateGap( bb.getWidth() )
-                    else:
-                        trace( 550, '\tEast/West "{}" but RDir V, gapWidth: {}\n' \
-                                    .format(chipIntNet.getName(),DbU.getValueString(bb.getHeight())) )
-                        side.updateGap( bb.getHeight() )
                 side.addCoreWire( CoreWire( self, chipIntNet, segment, bb, side.type, inPreferredDir, count ) )
+                side.updateGap( side.coreWires[-1].gapWidth )
+               #if not inPreferredDir:
+               #    if side.type == North or side.type == South:
+               #        trace( 550, '\tNorth/South "{}" but RDir H, gapWidth: {}\n' \
+               #                    .format(chipIntNet.getName(),DbU.getValueString(bb.getWidth()) ) )
+               #        side.updateGap( bb.getWidth() )
+               #    else:
+               #        trace( 550, '\tEast/West "{}" but RDir V, gapWidth: {}\n' \
+               #                    .format(chipIntNet.getName(),DbU.getValueString(bb.getHeight())) )
+               #        side.updateGap( bb.getHeight() )
                 count += 1
         else:
             if not (chipIntNet.isGlobal() or chipIntNet.isSupply() or chipIntNet.isClock()):
-                raise ErrorMessage( 1, [ 'PadsCorona._createCoreWire(): In I/O pad "{}" ({},{}),' \
+                trace( 550, '-' )
+                raise ErrorMessage( 1, [ 'Corona._createCoreWire(): In I/O pad "{}" ({},{}),' \
                                          .format( padInstance.getMasterCell().getName()
                                                 , padInstance.getName(), padInstance.getTransformation() )
                                        , 'connector "{}" has no suitable segment for net "{}".' \
                                          .format( padNet, chipIntNet.getName() )
                                        ] )
+        trace( 550, '-' )
         return count
   
     def _placeInnerCorona ( self ):

@@ -105,29 +105,37 @@ class HorizontalRail ( Rail ):
         trace( 550, '\t{}\n'.format(self) )
 
     def __str__ ( self ):
-        return '<HorizontalRail "{}" ({}) @{}>'.format( self.side.getRailNet(self.order)
+        return '<HorizontalRail "{}" ({}) @{}>'.format( self.side.getRailNet(self.order).getName()
                                                       , self.order
                                                       , DbU.getValueString(self.axis) )
 
     def connect ( self, contact ):
+        trace( 550, ',+', '\tTry to connect to: {}\n'.format(self) )
         contactBb = contact.getBoundingBox()
         if    contactBb.getXMin() < self.side.innerBb.getXMin() \
            or contactBb.getXMax() > self.side.innerBb.getXMax():
+            trace( 550, '-' )
             raise ErrorMessage( 1, [ '{} is outside rail/corona X range,'.format(contact)
                                   , 'power pad is likely to be to far off west or east.'
                                   , '(core:{})'.format(self.side.innerBb) ] ) 
         if self.vias.has_key(contact.getX()): return False
+        trace( 550, '\tvias:{}\n'.format(self.vias) )
         keys = self.vias.keys()
         keys.sort()
         insertIndex = bisect.bisect_left( keys, contact.getX() )
-
         if len(keys) > 0:
+            trace( 550, '\tinsertIndex:{}\n'.format(insertIndex) )
             if insertIndex < len(keys):
                 insertPosition = keys[ insertIndex ]
+                trace( 550, '\tinsertPosition:{}\n'.format(insertPosition) )
                 if contactBb.getXMax() >= self.vias[insertPosition][2].getBoundingBox().getXMin():
+                    trace( 550, ',-', '\tFailed: overlap with existing contact @{}.\n' \
+                                      .format(self.vias[insertPosition][2]) )
                     return False
             if insertIndex > 0:
                 if self.vias[keys[insertIndex-1]][2].getBoundingBox().getXMax() >= contactBb.getXMin():
+                    trace( 550, ',-', '\tFailed: overlap with existing contact @{}.\n' \
+                                      .format(self.vias[keys[insertIndex-1]][2]) )
                     return False
         self.vias[ contact.getX() ] = [ contact.getX()
                                       , StackedVia( self.net
@@ -144,6 +152,7 @@ class HorizontalRail ( Rail ):
                       , DbU.getValueString(contact.getX())
                       , DbU.getValueString(self.axis)) )
         self.vias[ contact.getX() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
+        trace( 550, '-' )
         return True
 
     def doLayout ( self ):
@@ -183,7 +192,7 @@ class VerticalRail ( Rail ):
         trace( 550, '\t{}\n'.format(self) )
 
     def __str__ ( self ):
-        return '<VerticalRail "{}" ({}) @{}>'.format( self.side.getRailNet(self.order)
+        return '<VerticalRail "{}" ({}) @{}>'.format( self.side.getRailNet(self.order).getName()
                                                     , self.order
                                                     , DbU.getValueString(self.axis) )
 
@@ -217,14 +226,14 @@ class VerticalRail ( Rail ):
                                    , 'power pad is likely to be to far off north or south.'
                                    , '(core:{})'.format(self.side.innerBb) ] ) 
         if self.vias.has_key(contact.getY()): return False
-        trace( 550, ',+', '\tVerticalRail.connect() [{}] @{}\n'.format(self.order,DbU.toLambda(self.axis)) )
+        trace( 550, ',+', '\tVerticalRail.connect() [{}] @{}\n'.format(self.order,DbU.getValueString(self.axis)) )
         trace( 550, '\t{}\n'.format(contact) )
         keys = self.vias.keys()
         keys.sort()
         insertIndex = bisect.bisect_left( keys, contact.getY() )
         trace( 550, ',+', '\tkeys:' )
         for key in keys:
-            trace( 550, ' {}'.format(DbU.toLambda(key)) )
+            trace( 550, ' {}'.format(DbU.getValueString(key)) )
         trace( 550, '\n' )
 
         if len(keys) > 0:
@@ -267,7 +276,16 @@ class Side ( object ):
         self.corona = corona
 
     @property
+    def side ( self ):
+        raise NotImplementedError('Side.side is not implemented in base class.')
+
+    @property
     def railsCount ( self ): return self.corona.railsCount
+
+    @property
+    def coronaCks ( self ):
+        if self.corona.conf.useClockTree: return self.corona.conf.coronaCks
+        return []
 
     @property           
     def innerBb ( self ): return self.corona.innerBb
@@ -296,6 +314,7 @@ class Side ( object ):
     @property
     def blockageNet ( self ): return self.corona.blockageNet
 
+    def isHorizontal    ( self ):        return (self.side & HORIZONTAL) == HORIZONTAL
     def getLayerDepth   ( self, metal ): return self.corona.getLayerDepth(metal)
     def getRail         ( self, i ):     return self.rails[i]
     def getRailNet      ( self, i ):     return self.corona.getRailNet(i)
@@ -318,27 +337,41 @@ class Side ( object ):
         return self.rails[-(i+1)]
 
     def connect ( self, blockSide ):
+        trace( 550, '\tSide.connect()\n' )
         for terminal in blockSide.terminals:
             trace( 550, '\tterminal:{}\n'.format(terminal) )
             for rail in self.rails:
                 rail.connect( terminal[1] )
 
+    def getRailRange ( self, net ):
+        if net.isClock(): return range(len(self.rails))
+        if not net.isSupply(): return []
+        if self.side & HORIZONTAL:
+            trace( 550, '\tHORIZONTAL rail.\n' )
+            return range( len(self.coronaCks), len(self.rails) )
+        else:
+            trace( 550, '\t{} > {}\n'.format(self.horizontalDepth,self.verticalDepth) )
+            if self.horizontalDepth > self.verticalDepth:
+                return range( len(self.coronaCks), len(self.rails) )
+        trace( 550, '\tUsing half rails only.\n' )
+        return range( len(self.coronaCks) + len(self.rails)/2 - 2, len(self.rails) )
+
     def connectPads ( self, padSide ):
-        for contact in padSide.pins:
-            if contact.getNet().isClock():
-                for i in range(len(self.rails)):
-                    trace( 550, '\tConnect to [-{}] @{}\n'.format(i, DbU.toLambda(self.getOuterRail(i).axis)) )
-                    self.getOuterRail(i).connect( contact )
-            elif contact.getNet().isSupply():
-                self.getOuterRail( 0 ).connect( contact )
-        halfRails = (len(self.rails)-1)/2
-        trace( 550, '\thalfRails:{}\n'.format(halfRails) )
+       #for contact in padSide.pins:
+       #    if contact.getNet().isClock():
+       #        for i in range(len(self.rails)):
+       #            trace( 550, '\tConnect to [-{}] @{}\n'.format(i, DbU.getValueString(self.getOuterRail(i).axis)) )
+       #            self.getOuterRail(i).connect( contact )
+       #    elif contact.getNet().isSupply():
+       #        self.getOuterRail( 0 ).connect( contact )
         for contact in padSide.pins:
             if not contact.getNet().isSupply() and not contact.getNet().isClock(): continue
             trace( 550, ',+', '\tConnect pad contact {}\n'.format(contact) )
-            for i in range(halfRails):
-                trace( 550, '\tConnect to [-{}] @{}\n'.format(i, DbU.toLambda(self.getOuterRail(i).axis)) )
-                self.getOuterRail(i).connect( contact )
+            railRange = self.getRailRange( contact.getNet() )
+            trace( 550, '\trailRange:{}\n'.format(railRange) )
+            for i in railRange:
+                trace( 550, '\tConnect to [-{}] @{}\n'.format(i, DbU.getValueString(self.getInnerRail(i).axis)) )
+                self.getInnerRail(i).connect( contact )
             trace( 550, '-' )
 
     def doLayout ( self ):
@@ -367,6 +400,9 @@ class SouthSide ( HorizontalSide ):
         HorizontalSide.__init__( self, corona )
         return
 
+    @property
+    def side ( self ): return South
+
     def getRailAxis ( self, i ):
         return self.innerBb.getYMin() -    self.hRailWidth/2 - self.hRailSpace \
                                       - i*(self.hRailWidth   + self.hRailSpace)
@@ -383,6 +419,9 @@ class NorthSide ( HorizontalSide ):
     def __init__ ( self, corona ):
         HorizontalSide.__init__( self, corona )
         return
+
+    @property
+    def side ( self ): return North
 
     def getRailAxis ( self, i ):
         return self.innerBb.getYMax() +    self.hRailWidth/2 + self.hRailSpace \
@@ -446,12 +485,15 @@ class WestSide ( VerticalSide ):
     def __init__ ( self, corona ):
         VerticalSide.__init__( self, corona )
 
+    @property
+    def side ( self ): return West
+
     def getRailAxis ( self, i ):
         return self.innerBb.getXMin() -    self.vRailWidth/2 - self.vRailSpace \
                                       - i*(self.vRailWidth   + self.vRailSpace)
 
     def corner0 ( self, i ): return self.corners[SouthWest][i]
-    def corner1 ( self, i ): return self.corners[NorthWest   ][i]
+    def corner1 ( self, i ): return self.corners[NorthWest][i]
 
     def addBlockages ( self ):
         sideXMin = self.getOuterRail(0).axis - self.vRailWidth
@@ -467,12 +509,15 @@ class EastSide ( VerticalSide ):
     def __init__ ( self, corona ):
         VerticalSide.__init__( self, corona )
 
+    @property
+    def side ( self ): return East
+
     def getRailAxis ( self, i ):
         return self.innerBb.getXMax() +    self.vRailWidth/2 + self.vRailSpace \
                                       + i*(self.vRailWidth   + self.vRailSpace)
 
     def corner0 ( self, i ): return self.corners[SouthEast][i]
-    def corner1 ( self, i ): return self.corners[NorthEast   ][i]
+    def corner1 ( self, i ): return self.corners[NorthEast][i]
 
     def addBlockages ( self ):
         sideXMin = self.getInnerRail(0).axis - self.vRailWidth
@@ -532,7 +577,8 @@ class Builder ( object ):
         return self.conf.routingGauge.getLayerDepth( metal )
 
     def getRailNet ( self, i ):
-        if self.conf.useClockTree and i == 0: return self.conf.coronaCk
+        if self.conf.useClockTree and i < len(self.conf.coronaCks):
+            return self.conf.coronaCks[i]
         if i % 2: return self.conf.coronaVss
         return self.conf.coronaVdd
 

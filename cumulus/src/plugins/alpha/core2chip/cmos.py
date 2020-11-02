@@ -47,11 +47,11 @@ class CoreToChip ( BaseCoreToChip ):
                             , 'vddi' : None
                             , 'ck'   : None  # Go through the pads from pck_px.
                             }
-        self.ioPadInfos   = { IoPad.IN      : BaseCoreToChip.IoPadInfo( 'pi_px'  , 'pad', ['t',] )
-                            , IoPad.OUT     : BaseCoreToChip.IoPadInfo( 'po_px'  , 'pad', ['i',] )
-                            , IoPad.TRI_OUT : BaseCoreToChip.IoPadInfo( 'pot_px' , 'pad', ['i', 'b' ] )
-                            , IoPad.BIDIR   : BaseCoreToChip.IoPadInfo( 'piot_px', 'pad', ['i', 't', 'b' ] )
-                            }
+        self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.IN     , 'pi_px'  , 'pad', ['t',] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.OUT    , 'po_px'  , 'pad', ['i',] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.TRI_OUT, 'pot_px' , 'pad', ['i', 'b'] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.BIDIR  , 'piot_px', 'pad', ['i', 't', 'b'] )
+                            ]
         self._getPadLib()
         return
 
@@ -79,7 +79,7 @@ class CoreToChip ( BaseCoreToChip ):
                                    % (self.padLib.getName(),masterCellName) )
         return cell
 
-    def _buildGroundPads ( self, ioPadConf ):
+    def _buildAllGroundPads ( self, ioPadConf ):
         coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
         coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
         chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
@@ -112,7 +112,7 @@ class CoreToChip ( BaseCoreToChip ):
         self.groundPadCount += 1
         self.chipPads       += ioPadConf.pads
 
-    def _buildPowerPads ( self, ioPadConf ):
+    def _buildAllPowerPads ( self, ioPadConf ):
         coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
         coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
         chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )

@@ -15,27 +15,18 @@
 
 
 import sys
-from   Hurricane  import DbU
-from   Hurricane  import Point
-from   Hurricane  import Transformation
-from   Hurricane  import Box
-from   Hurricane  import Interval
-from   Hurricane  import Path
-from   Hurricane  import Occurrence
-from   Hurricane  import UpdateSession
-from   Hurricane  import Net
-from   Hurricane  import Contact
-from   Hurricane  import Horizontal
-from   Hurricane  import Vertical
-from   Hurricane  import Query
+from   Hurricane  import DbU, Point, Transformation, Box, Interval, \
+                         Path, Occurrence, UpdateSession, Net,      \
+                         Contact, Horizontal, Vertical, Query
 import CRL
 import helpers
 from   helpers         import trace
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
+from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins
 import plugins.chip
+
+__all__ = [ 'Builder' ]
 
 plugins.chip.importConstants( globals() )
 
@@ -203,28 +194,23 @@ class Builder ( object ):
             query.doQuery()
         self.activePlane = None
   
-    def connectClock ( self ):
-        if not self.conf.useClockTree:
-            print WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." )
-            return
-        if not self.conf.coronaCk:
-            raise ErrorMessage( 1, 'Cannot build clock terminal as ck is not known.' )
-            return
+    def _connectClock ( self, ck ):
+        trace( 550, '\tpower.Builder._connectClock() {}\n'.format(ck) )
         blockCk = None
         for plug in self.conf.icore.getPlugs():
-            if plug.getNet() == self.conf.coronaCk:
+            if plug.getNet() == ck:
                 blockCk = plug.getMasterNet()
         if not blockCk:
             raise ErrorMessage( 1, 'Block "{}" has no net connected to the clock "{}".' \
-                                   .format(self.conf.icore.getName(),self.conf.coronaCk.getName()) )
+                                   .format(self.conf.icore.getName(),ck.getName()) )
             return
         htPlugs = []
-        for plug in self.conf.coronaCk.getPlugs():
+        for plug in ck.getPlugs():
             if plug.getInstance().isTerminalNetlist():
                 htPlugs.append( plug )
         if len(htPlugs) != 1:
             message = [ 'Clock "{}" of block "{}" is not organized as a H-Tree ({} plugs).' \
-                        .format( self.conf.coronaCk.getName()
+                        .format( ck.getName()
                                , self.conf.icore.getName()
                                , len(htPlugs)) ]
             for plug in htPlugs:
@@ -232,13 +218,11 @@ class Builder ( object ):
             raise ErrorMessage( 1, message )
             return
         with UpdateSession():
-            bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path())
-                                                     , self.conf.coronaCk
-                                                     , 0 )
+            bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), ck, 0 )
             blockAb  = self.block.getAbutmentBox()
             self.path.getTransformation().applyOn( blockAb )
             layerGauge = self.conf.routingGauge.getLayerGauge(self.conf.verticalDepth)
-            contact    = Contact.create( self.conf.coronaCk
+            contact    = Contact.create( ck
                                        , self.conf.routingGauge.getRoutingLayer(self.conf.verticalDepth)
                                        , bufferRp.getX()
                                        , blockAb.getYMax() 
@@ -249,7 +233,18 @@ class Builder ( object ):
             self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
             bb = segment.getBoundingBox( self.activePlane.metal.getBasicLayer() )
             self.path.getTransformation().getInvert().applyOn( bb )
-            self.activePlane.addTerminal( self.conf.coronaCk, Plane.Vertical, bb )
+            self.activePlane.addTerminal( ck, Plane.Vertical, bb )
+            trace( 550, '\tAdded terminal of {} to vertical plane @{}\n'.format(ck,bb) )
+  
+    def connectClocks ( self ):
+        if not self.conf.useClockTree:
+            print WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." )
+            return
+        if len(self.conf.coronaCks) == 0:
+            raise ErrorMessage( 1, 'Cannot build clock terminal as no clock is not known.' )
+            return
+        for ck in self.conf.coronaCks:
+            self._connectClock( ck )
   
     def doLayout ( self ):
         with UpdateSession():

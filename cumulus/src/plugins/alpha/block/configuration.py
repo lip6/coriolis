@@ -422,11 +422,15 @@ class IoPadConf ( object ):
     |         |  meta-generated power/ground/clock pads                   |
     +---------+-----------------------------------------------------------+
     """
-    POWER    = 0x0001
-    GROUND   = 0x0002
-    CLOCK    = 0x0004
-    TRISTATE = 0x0008
-    BIDIR    = 0x0010
+    CORE_POWER  = 0x0001
+    CORE_GROUND = 0x0002
+    IO_POWER    = 0x0004
+    IO_GROUND   = 0x0008
+    ALL_POWER   = 0x0010
+    ALL_GROUND  = 0x0020
+    CLOCK       = 0x0040
+    TRISTATE    = 0x0080
+    BIDIR       = 0x0100
 
     def __init__ ( self, datas ):
         if not isinstance(datas,tuple):
@@ -438,6 +442,7 @@ class IoPadConf ( object ):
         self.flags  = 0
         self.index  = None
         self._datas = list( datas )
+        if   len(self._datas) == 4: self._datas += [ None, None, None ]
         if   len(self._datas) == 5: self._datas += [ None, None ]
         elif len(self._datas) == 6: self._datas.insert( 5, None )
         self._datas.append( [] )
@@ -445,9 +450,13 @@ class IoPadConf ( object ):
         m = reSpecialPads.match( self.instanceName )
         if m:
             self.index = m.group('index')
-            if m.group('type') == 'power' : self.flags |= IoPadConf.POWER
-            if m.group('type') == 'ground': self.flags |= IoPadConf.GROUND
-            if m.group('type') == 'clock' : self.flags |= IoPadConf.CLOCK
+            if m.group('type') == 'allpower':  self.flags |= IoPadConf.ALL_POWER
+            if m.group('type') == 'iopower':   self.flags |= IoPadConf.IO_POWER
+            if m.group('type') == 'power':     self.flags |= IoPadConf.CORE_POWER
+            if m.group('type') == 'allground': self.flags |= IoPadConf.ALL_GROUND
+            if m.group('type') == 'ioground':  self.flags |= IoPadConf.IO_GROUND
+            if m.group('type') == 'ground':    self.flags |= IoPadConf.CORE_GROUND
+            if m.group('type') == 'clock' :    self.flags |= IoPadConf.CLOCK
         else:
             if   self._datas[5] is not None: self.flags |= IoPadConf.BIDIR
             elif self._datas[6] is not None: self.flags |= IoPadConf.TRISTATE
@@ -478,7 +487,9 @@ class IoPadConf ( object ):
     def padSupplyNetName ( self ): return self._datas[3]
   
     @property
-    def coreSupplyNetName ( self ): return self._datas[4]
+    def coreSupplyNetName ( self ):
+        if self._datas[4] is not None: return self._datas[4]
+        return self._datas[3]
   
     @property
     def padClockNetName ( self ): return self._datas[4]
@@ -491,12 +502,16 @@ class IoPadConf ( object ):
   
     @property
     def pads ( self ): return self._datas[7]
-  
-    def isPower    ( self ): return self.flags & IoPadConf.POWER
-    def isGround   ( self ): return self.flags & IoPadConf.GROUND
-    def isClock    ( self ): return self.flags & IoPadConf.CLOCK
-    def isTristate ( self ): return self.flags & IoPadConf.TRISTATE
-    def isBidir    ( self ): return self.flags & IoPadConf.BIDIR
+
+    def isCorePower  ( self ): return self.flags & IoPadConf.CORE_POWER
+    def isIoPower    ( self ): return self.flags & IoPadConf.IO_POWER
+    def isAllPower   ( self ): return self.flags & IoPadConf.ALL_POWER
+    def isCoreGround ( self ): return self.flags & IoPadConf.CORE_GROUND
+    def isIoGround   ( self ): return self.flags & IoPadConf.IO_GROUND
+    def isAllGround  ( self ): return self.flags & IoPadConf.ALL_GROUND
+    def isClock      ( self ): return self.flags & IoPadConf.CLOCK
+    def isTristate   ( self ): return self.flags & IoPadConf.TRISTATE
+    def isBidir      ( self ): return self.flags & IoPadConf.BIDIR
   
     def __repr__ ( self ):
         s = '<IoPadConf {} pad:{} from:{}'.format(self.instanceName,self.padNetName,self.fromCoreNetName)

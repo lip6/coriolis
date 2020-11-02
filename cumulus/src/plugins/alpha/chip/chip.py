@@ -113,7 +113,7 @@ class Chip ( Block ):
     def doConnectCore ( self ):
         power = plugins.alpha.chip.power.Builder( self.conf )
         power.connectPower()
-        power.connectClock()
+        power.connectClocks()
         power.doLayout()
         self.conf.refresh()
         corona = plugins.alpha.chip.corona.Builder( power )

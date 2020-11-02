@@ -16,36 +16,25 @@ from   __future__ import print_function
 import sys
 import os.path
 import Cfg
-from   Hurricane import Breakpoint
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Transformation
-from   Hurricane import Box
-from   Hurricane import Path
-from   Hurricane import Layer
-from   Hurricane import Occurrence
-from   Hurricane import Net
-from   Hurricane import RoutingPad
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Contact
-from   Hurricane import Pin
-from   Hurricane import Plug
-from   Hurricane import Instance
+from   Hurricane import Breakpoint, DbU, Box, Transformation, Box, \
+                        Path, Layer, Occurrence, Net, RoutingPad,  \
+                        Horizontal, Vertical, Contact, Pin, Plug,  \
+                        Instance
 import CRL
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace
 from   helpers.utils   import classdecorator
 from   helpers.overlay import UpdateSession
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
-from   helpers.io      import catch
-from   plugins         import getParameter
+from   helpers.io      import ErrorMessage, WarningMessage, \
+                              vprint, catch
 import plugins.chip
 from   plugins.alpha.block.configuration import BlockConf
 
+__all__ = [ 'ChipConf' ]
+
 
 plugins.alpha.chip.importConstants( globals() )
+af = CRL.AllianceFramework.get()
 
 
 # -------------------------------------------------------------------
@@ -116,7 +105,7 @@ class ChipConf ( BlockConf ):
         # Global Nets.         
         self.coronaVdd        = None
         self.coronaVss        = None
-        self.coronaCk         = None
+        self.coronaCks        = []
         self.blockageNet      = None
         self.padsHavePosition = False
         trace( 550, '-' )
@@ -146,9 +135,13 @@ class ChipConf ( BlockConf ):
         return self.cfg.chip.block.rails.vSpacing
 
     def computeCoronaBorder ( self ):
+        global af
         if self.useClockTree:
-            trace( 550, '\tcomputeCoronaBorder() useClockTree: {}\n'.format(self.useClockTree) )
-            self.railsCount = self.cfg.chip.block.rails.count + 1
+            clockNets = []
+            for net in self.cellPnR.getNets():
+                if net.isClock():
+                    clockNets.append( net )
+            self.railsCount = self.cfg.chip.block.rails.count + len(clockNets)
         trace( 550, '\tself.railsCount: {}\n'.format(self.railsCount) )
         self.minHCorona = self.railsCount*(self.hRailWidth + self.hRailSpace) + self.hRailSpace + self.sliceHeight
         self.minVCorona = self.railsCount*(self.vRailWidth + self.vRailSpace) + self.vRailSpace + 10*self.sliceStep
@@ -259,7 +252,7 @@ class ChipConf ( BlockConf ):
         return axis, width
 
     def toCoronaPitchInChip ( self, uCore, layer ):
-        trace( 550, ',+', '\tChipConf.toCoronaPitchInChip(): uCore:  {}l %s\n' \
+        trace( 550, ',+', '\tChipConf.toCoronaPitchInChip(): uCore:  {}l {}\n' \
                     .format(DbU.toLambda(uCore), DbU.getValueString(uCore)) )
         coronaAb = self.getInstanceAb( self.icorona )
         lg       = None
@@ -378,9 +371,24 @@ class ChipConf ( BlockConf ):
         trace( 550, '-' )
         return c
 
+    def getViaPitch ( self, viaLayer ):
+        topLayer = viaLayer.getTop()
+        topPitch = 2*viaLayer.getEnclosure \
+                       ( topLayer.getBasicLayer(), Layer.EnclosureH|Layer.EnclosureV ) \
+                 + viaLayer.getMinimalSize() \
+                 + topLayer.getMinimalSpacing()  
+        botLayer = viaLayer.getBottom()
+        botPitch = 2*viaLayer.getEnclosure \
+                       ( botLayer.getBasicLayer(), Layer.EnclosureH|Layer.EnclosureV ) \
+                 + viaLayer.getMinimalSize() \
+                 + botLayer.getMinimalSpacing()  
+        viaPitch = max( topPitch, botPitch )
+        trace( 550, '\tgetViaPitch of {}: {}l\n'.format(viaLayer.getName(),DbU.getValueString(viaPitch)) )
+        return viaPitch
+
     def coronaContactArray ( self, chipNet, layer, chipX, chipY, array, flags ):
         trace( 550, ',+', '\tChipConf.coronaContactArray\n' )
-        viaPitch  = layer.getMinimalSize() + layer.getMinimalSpacing()
+        viaPitch  = self.getViaPitch( layer )
         coronaAb  = self.getInstanceAb( self.icorona )
         coronaNet = self.getCoronaNet( chipNet )
         if not coronaNet: return None
@@ -481,7 +489,7 @@ class ChipConf ( BlockConf ):
                                             .format(i,padList[i][1],side) ))
             return
       
-        af       = CRL.AllianceFramework.get()
+        global af
         cellPads = []
         for instance in self.chip.getInstances():
             if contains(self.southPads,'south',instance): continue
@@ -559,13 +567,9 @@ class ChipConf ( BlockConf ):
                         self.coronaVdd = net
                 
                 if netType == Net.Type.CLOCK:
-                    if self.coronaCk and self.coronaCk != net:
-                        raise ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Multiple clock nets "{}" and "{}" at corona level.' \
-                                               .format(self.coronaCk.getName(), net.getName()) )
-                        self._validated = False
-                        continue
-                    else:
-                        self.coronaCk = net
+                    if not net in self.coronaCks:
+                        self.coronaCks.append( net )
+                        vprint( 2, '     - Using clock "{}".'.format(net.getName()) )
         for net in self.corona.getNets():
             if net.getType() == Net.Type.BLOCKAGE:
                 self.blockageNet  = net
