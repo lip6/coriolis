@@ -263,20 +263,17 @@ Net::Net(Cell* cell, const Name& name)
     _isAutomatic(false),
     _type(Type::LOGICAL), // default is Type::LOGICAL : no more Type::Undefined - Damien.Dupuis 01/10/2010
     _direction(),
-     _position(0,0),
+    _position(0,0),
     _componentSet(),
     _rubberSet(),
     _nextOfCellNetMap(NULL),
     _mainName(this)
 {
-  if (!_cell)
-    throw Error("Can't create " + _TName("Net") + " : null cell");
-
-  if (name.isEmpty())
-    throw Error("Can't create " + _TName("Net") + " : empty name");
-
+  if (not _cell)      throw Error( "Net::Net(): Can't create Hurricane::Net, NULL cell" );
+  if (name.isEmpty()) throw Error( "Net::Net(): Can't create Hurricane::Net, empty name" );
   if (_cell->getNet(_name))
-    throw Error("Can't create " + _TName("Net ") + getString(_name) + " : already exists");
+    throw Error( "Net::Net(): Can't create Hurricane::Net named \""+getString(_name)+"\""
+               + " in Cell \""+getString(_cell->getName())+"\", already exists");
 }
 
 Net* Net::create(Cell* cell, const Name& name)
