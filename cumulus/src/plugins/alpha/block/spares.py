@@ -732,7 +732,6 @@ class Spares ( object ):
     def __init__ ( self, block ):
         self.conf         = block.conf
         self.quadTree     = None
-        self.cloneds      = []
         self.strayBuffers = []
 
     def reset ( self ):
@@ -838,12 +837,6 @@ class Spares ( object ):
             raise ErrorMessage( 2, 'Spares.getFreeBufferUnder(): No more free buffers under {}.'.format(area) )
         return leaf.selectFree()
 
-    def addClonedCell ( self, masterCell ):
-        if not masterCell in self.cloneds:
-            trace( 550, '\tNew cloned cell: "{}"\n'.format(masterCell) )
-            self.cloneds.append( masterCell )
-        return
-
     def raddTransNet ( self, topNet, path ):
         """
         Add a net through a whole hierarchy of Instance/Cells. The master cells
@@ -881,7 +874,7 @@ class Spares ( object ):
 
         trace( 540, '\tSpares.raddTransNet() top:{} path:{}\n'.format(topNet,path) )
         if path.isEmpty():
-            self.addClonedCell( topNet.getCell() )
+            self.conf.addClonedCell( topNet.getCell() )
             return None
         tailPath     = path.getTailPath()
         headInstance = path.getHeadInstance()
@@ -898,8 +891,8 @@ class Spares ( object ):
                 raise ErrorMessage( 3, 'Plug not created for %s on instance %s of %s' \
                                     % (topNet.getName(),headInstance.getName(),masterCell.getName()) )
             headPlug.setNet( topNet )
-            self.addClonedCell( masterCell )
-            self.addClonedCell( headInstance.getCell() )
+            self.conf.addClonedCell( masterCell )
+            self.conf.addClonedCell( headInstance.getCell() )
         else:
             masterNet = headPlug.getMasterNet()
         trace( 540, '\ttailPath {}\n'.format(tailPath) )
@@ -909,35 +902,3 @@ class Spares ( object ):
     def removeUnusedBuffers ( self ):
         with UpdateSession():
             self.quadTree.removeUnusedBuffers()
-
-    def rsave ( self, cell ):
-        """
-        Save the complete cell hierarchy. Saves only the physical view, except
-        for the ones that has been cloned (their names should end up by "_cts"),
-        for which logical and physical views are to be saved. They are completely
-        new cells.
-        """
-
-        flags = CRL.Catalog.State.Physical
-        if cell.getName().endswith('_cts'):
-            flags = flags | CRL.Catalog.State.Logical
-        framework.saveCell( cell, flags )
-        
-        for instance in  cell.getInstances():
-            masterCell = instance.getMasterCell()
-            if not masterCell.isTerminal():
-                self.rsave( masterCell )
-  
-    def save ( self ):
-        """
-        Frontend to Spares.rsave(). Append the "_cts" suffix to the cloned
-        cells, then call rsave().
-        """
-        trace( 550,'\tSpares.save() on "{}"\n'.format(self.conf.cell.getName()) )
-        for cell in self.cloneds:
-            trace( 550, '\tRenaming cloned cell: "{}"\n'.format(cell) )
-            cell.setName( cell.getName()+'_cts' )
-        if self.conf.chip is None:
-            self.conf.cell.setName( self.conf.cell.getName()+'_r' )
-        self.rsave( self.conf.cell )
-        return

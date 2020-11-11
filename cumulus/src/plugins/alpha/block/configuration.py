@@ -47,6 +47,18 @@ from   plugins             import getParameter
 from   plugins.alpha.utils import getPlugByName
 
 
+def findCellOutput ( cell, callerName, parameterId ):
+    """Find the *external* output net of a cell and return it's name."""
+    for net in cell.getNets():
+        if not net.isExternal(): continue
+        if     net.isGlobal(): continue
+        elif   net.getDirection() & Net.Direction.OUT:
+            return net.getName()
+    raise ErrorMessage( 3, [ '{}: Cannot guess the input terminal of "{}",' \
+                             .format(callerName,Cfg.getParamString(parameterId).asString())
+                           , '           please check that the Nets directions are set.' ] )
+
+
 # ----------------------------------------------------------------------------
 # Class  :  "configuration.GaugeConf".
 
@@ -580,7 +592,7 @@ class BufferConf ( object ):
             trace( 550, '-' )
             raise ErrorMessage( 3, [ 'BufferConf.__init__(): Buffer cell "{}" not found in library,' \
                                      .format(Cfg.getParamString('spares.buffer').asString())
-                                   , '           please check the "spares.buffer" configuration parameter in "plugins.conf".' ] )
+                                   , '           please check the "spares.buffer" configuration parameter in "plugins.py".' ] )
         trace( 550, '\t| masterCell   :{}\n'.format(self.masterCell) ) 
         trace( 550, '\t| maximum sinks:{}\n'.format(self.maxSinks) ) 
         self.count  = 0
@@ -625,6 +637,90 @@ class BufferConf ( object ):
     def resetBufferCount ( self ):
         """Reset the buffer instance counter (to use only in case of design reset)."""
         self.count = 0
+
+
+# ----------------------------------------------------------------------------
+# Class  :  "configuration.ConstantsConf".
+
+class ConstantsConf ( object ):
+    """
+    Store informations on cells used to generate constant signals ("zero"
+    and "one")
+    """
+
+    ZERO = 1
+    ONE  = 2
+
+    def __init__ ( self, framework, cfg ):
+        trace( 550, ',+', '\tConstantsConf.__init__()\n' )
+        cfg.etesian.cell.zero = None
+        cfg.etesian.cell.one  = None
+        self.zeroCell = framework.getCell( cfg.etesian.cell.zero, CRL.Catalog.State.Views )
+        self.oneCell  = framework.getCell( cfg.etesian.cell.one , CRL.Catalog.State.Views )
+        if not self.zeroCell:
+            trace( 550, '-' )
+            raise ErrorMessage( 3, [ 'ConstantsConf.__init__(): Zero cell "{}" not found in library,' \
+                                     .format(cfg.etesian.cell.zero)
+                                   , '           please check the "etesian.cell.zero" configuration parameter in "etesian.py".' ] )
+        if not self.oneCell:
+            trace( 550, '-' )
+            raise ErrorMessage( 3, [ 'ConstantsConf.__init__(): One cell "{}" not found in library,' \
+                                     .format(cfg.etesian.cell.zero)
+                                   , '           please check the "etesian.cell.one" configuration parameter in "etesian.py".' ] )
+        trace( 550, '\t| zeroCell:{}\n'.format(self.zeroCell) ) 
+        trace( 550, '\t| oneCell :{}\n'.format(self.oneCell ) ) 
+        self.zeroCount  = 0
+        self.oneCount   = 0
+        self.zeroOutput = findCellOutput( self.zeroCell, 'ConstantsConf.__init__()', 'etesian.cell.zero' )
+        self.oneOutput  = findCellOutput( self.oneCell , 'ConstantsConf.__init__()', 'etesian.cell.one'  )
+        trace( 550, '\t| zeroOutput:"{}"\n'.format(self.zeroOutput) ) 
+        trace( 550, '\t| oneOutput :"{}"\n'.format(self.oneOutput ) ) 
+        trace( 550, '-' )
+        return
+
+    def name ( self, cellType ):
+        """Returns the master cell *name* of the selected type."""
+        if   cellType == ConstantsConf.ZERO: return self.zeroCell.getName()
+        elif cellType == ConstantsConf.ONE : return self.oneCell .getName()
+        return None
+
+    def output ( self, cellType ):
+        """Returns the master cell *output* of the selected type."""
+        if   cellType == ConstantsConf.ZERO: return self.zeroOutput
+        elif cellType == ConstantsConf.ONE : return self.oneOutput
+        return None
+
+    def width ( self, cellType ):
+        """Returns the master cell abutment box width of the selected type."""
+        if   cellType == ConstantsConf.ZERO: return self.zeroCell.getAbutmentBox().getWidth()
+        elif cellType == ConstantsConf.ONE : return self.oneCell .getAbutmentBox().getWidth()
+        return None
+
+    def height ( self, cellType ):
+        """Returns the master cell abutment box height of the selected type."""
+        if   cellType == ConstantsConf.ZERO: return self.zeroCell.getAbutmentBox().getHeight()
+        elif cellType == ConstantsConf.ONE : return self.oneCell .getAbutmentBox().getHeight()
+        return None
+
+    def createInstance ( self, cell, cellType ):
+        """
+        Create a new zero/one *instance* in Cell. The instance is named "constant_<type>_<Nb>",
+        where ``<type>`` is the kind of constante (zero or one) and ``<Nb>`` is an ever
+        incrementing counter (self.<type>count).
+        """
+        instance = None
+        if cellType == ConstantsConf.ZERO:
+            instance = Instance.create( cell, 'constant_zero_{}'.format(self.zeroCount), self.zeroCell )
+            self.zeroCount += 1
+        elif cellType == ConstantsConf.ONE:
+            instance = Instance.create( cell, 'constant_one_{}'.format(self.oneCount), self.oneCell )
+            self.oneCount += 1
+        return instance
+
+    def resetCounts ( self ):
+        """Reset the zero/one instance counters (to use only in case of design reset)."""
+        self.zeroCount = 0
+        self.oneCount  = 0
 
 
 # ----------------------------------------------------------------------------
@@ -852,28 +948,30 @@ class BlockConf ( GaugeConf ):
     
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
         super(BlockConf,self).__init__()
-        self.validated    = True
-        self.editor       = None
-        self.framework    = CRL.AllianceFramework.get()
-        self.cfg          = CfgCache('',Cfg.Parameter.Priority.Interactive)
-        self.bufferConf   = BufferConf( self.framework )
-        self.feedsConf    = FeedsConf( self.framework )
-        self.chipConf     = ChipConf( self )
-        self.bColumns     = 2
-        self.bRows        = 2
-        self.cell         = cell
-        self.icore        = None
-        self.icorona      = None
-        self.chip         = None
-        self.fixedWidth   = None
-        self.fixedHeight  = None
-        self.deltaAb      = [ 0, 0, 0, 0 ]
-        self.useClockTree = False
-        self.useHFNS      = False
-        self.useSpares    = True
-        self.isBuilt      = False
-        self.ioPins       = []
-        self.ioPinsCounts = {}
+        self.validated     = True
+        self.editor        = None
+        self.framework     = CRL.AllianceFramework.get()
+        self.cfg           = CfgCache('',Cfg.Parameter.Priority.Interactive)
+        self.bufferConf    = BufferConf( self.framework )
+        self.constantsConf = ConstantsConf( self.framework, self.cfg )
+        self.feedsConf     = FeedsConf( self.framework )
+        self.chipConf      = ChipConf( self )
+        self.bColumns      = 2
+        self.bRows         = 2
+        self.cloneds       = []
+        self.cell          = cell
+        self.icore         = None
+        self.icorona       = None
+        self.chip          = None
+        self.fixedWidth    = None
+        self.fixedHeight   = None
+        self.deltaAb       = [ 0, 0, 0, 0 ]
+        self.useClockTree  = False
+        self.useHFNS       = False
+        self.useSpares     = True
+        self.isBuilt       = False
+        self.ioPins        = []
+        self.ioPinsCounts  = {}
         for ioPinSpec in ioPins:
             self.ioPins.append( IoPin( *ioPinSpec ) )
         for line in range(len(ioPads)):
@@ -957,3 +1055,39 @@ class BlockConf ( GaugeConf ):
 
     def resetBufferCount ( self ):
         self.bufferConf.resetBufferCount()
+
+    def addClonedCell ( self, masterCell ):
+        if not masterCell in self.cloneds:
+            trace( 550, '\tNew cloned cell: "{}"\n'.format(masterCell) )
+            self.cloneds.append( masterCell )
+        return
+
+    def rsave ( self, cell ):
+        """
+        Save the complete cell hierarchy. Saves only the physical view, except
+        for the ones that has been cloned (their names should end up by "_cts"),
+        for which logical and physical views are to be saved. They are completely
+        new cells.
+        """
+        flags = CRL.Catalog.State.Physical
+        if cell.getName().endswith('_cts'):
+            flags = flags | CRL.Catalog.State.Logical
+        self.framework.saveCell( cell, flags )
+        for instance in  cell.getInstances():
+            masterCell = instance.getMasterCell()
+            if not masterCell.isTerminal():
+                self.rsave( masterCell )
+  
+    def save ( self ):
+        """
+        Frontend to BlockConf.rsave(). Append the "_cts" suffix to the cloned
+        cells, then call rsave().
+        """
+        trace( 550,'\tBlockConf.save() on "{}"\n'.format(self.cell.getName()) )
+        for cell in self.cloneds:
+            trace( 550, '\tRenaming cloned cell: "{}"\n'.format(cell) )
+            cell.setName( cell.getName()+'_cts' )
+        if self.chip is None:
+            self.cell.setName( self.cell.getName()+'_r' )
+        self.rsave( self.cell )
+        return

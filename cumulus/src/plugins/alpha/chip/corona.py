@@ -451,8 +451,10 @@ class VerticalSide ( Side ):
                 if via[1].getNet() != via[2].getNet(): continue
                 spans.merge( via[1]._y - via[1]._height/2, via[1]._y + via[1]._height/2 )
         routingGauge = self.corona.routingGauge
-        for depth in range(self.getInnerRail(0).vias.values()[0][1].bottomDepth
-                          ,self.getInnerRail(0).vias.values()[0][1].topDepth ):
+        print( self.getOuterRail(0) )
+        print( self.getOuterRail(0).vias.values() )
+        for depth in range(self.getOuterRail(0).vias.values()[0][1].bottomDepth
+                          ,self.getOuterRail(0).vias.values()[0][1].topDepth ):
             blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
             pitch         = routingGauge.getLayerPitch(depth)
             for chunk in spans.chunks:

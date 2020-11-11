@@ -52,8 +52,9 @@ from   helpers         import trace, netDirectionToStr
 from   helpers.overlay import UpdateSession
 from   helpers.io      import ErrorMessage, WarningMessage
 import plugins.chip
+from   plugins.alpha.utils               import getPlugByName
 from   plugins.alpha.block.block         import Block
-from   plugins.alpha.block.configuration import BlockConf, IoPadConf
+from   plugins.alpha.block.configuration import BlockConf, IoPadConf, ConstantsConf
 
 
 # -------------------------------------------------------------------
@@ -307,6 +308,9 @@ class IoPad ( object ):
         if (self.direction == IoPad.BIDIR) and (len(self.nets) < 3):
             self.nets[0].setFlags( IoNet.DoExtNet )
             self.nets[0].buildNets()
+            if len(self.nets) < 2:
+                enableNet = self.coreToChip.newEnableForNet( self.nets[0] )
+                self.nets.append( self.coreToChip.getIoNet( enableNet ) )
             self.nets[1].buildNets()
             connexions.append( ( self.nets[0].chipExtNet, padInfo.padNet ) )
             if self.nets[0].coreNet.getDirection() == Net.Direction.IN:
@@ -329,7 +333,7 @@ class IoPad ( object ):
             elif self.direction == IoPad.TRI_OUT:
                 connexions.append( ( self.nets[0].chipIntNet, padInfo.inputNet  ) )
                 connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet ) )
-            elif self.direction == IoPad.BUDIR:
+            elif self.direction == IoPad.BIDIR:
                 connexions.append( ( self.nets[0].chipIntNet, padInfo.inputNet  ) )
                 connexions.append( ( self.nets[1].chipIntNet, padInfo.outputNet ) )
                 connexions.append( ( self.nets[2].chipIntNet, padInfo.enableNet ) )
@@ -398,13 +402,13 @@ class CoreToChip ( object ):
 
 
     def getNetType ( self, netName ):
-        raise ErrorMessage( 1, 'coreToChip.getNetType(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip.getNetType(): This method must be overloaded.' )
 
     def isGlobal ( self, netName ):
-        raise ErrorMessage( 1, 'coreToChip.isGlobal(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip.isGlobal(): This method must be overloaded.' )
 
     def getCell ( self, masterCellName ):
-        raise ErrorMessage( 1, 'coreToChip.getCell(): This method must be overloaded.' )
+        raise NotImplementedError( 'coreToChip.getCell(): This method must be overloaded.' )
 
     @staticmethod
     def _connect ( instance, netO, masterNetO=None ):
@@ -431,17 +435,17 @@ class CoreToChip ( object ):
 
     def __init__ ( self, core ):
         if isinstance(core,Block):
-            state = core.state
+            conf = core.state
         elif isinstance(core,BlockConf):
-            state = core
+            conf = core
         else:
             block = Block.lookup( core )
             if not block:
                 raise ErrorMessage( 1, [ 'Core2Chip.__init__(): Core cell "{}" has no Block defined.' \
                                          .format( core.getName() )
                                        ] )
-            state = block.state
-        self.state          = state
+            conf = block.state
+        self.conf           = conf
         self.ringNetNames   = []
         self.ioPadInfos     = []
         self.chipPads       = []
@@ -455,16 +459,16 @@ class CoreToChip ( object ):
         return
 
     @property
-    def core ( self ): return self.state.cell
+    def core ( self ): return self.conf.cell
 
     @property
-    def icore ( self ): return self.state.icore
+    def icore ( self ): return self.conf.icore
 
     @property
-    def icorona ( self ): return self.state.icorona
+    def icorona ( self ): return self.conf.icorona
 
     @property
-    def chip ( self ): return self.state.chip
+    def chip ( self ): return self.conf.chip
 
     def getPadInfo ( self, padType ):
         for ioPadInfo in self.ioPadInfos:
@@ -480,9 +484,29 @@ class CoreToChip ( object ):
         return False
 
     def newDummyNet ( self ):
+        """Create a dummy net in *chip* cell (for unconnected terminals)."""
         dummy = Net.create( self.chip, '{}_dummy_{}'.format(self.chip.getName(),self.dummyNetCount) )
         self.dummyNetCount += 1
         return dummy
+
+    def newEnableForNet ( self, ioNet ):
+        """
+        Create a new enable signal, in *core* cell, to control the associated I/O pad.
+        This is to be used in the case of bi-directional I/O pads used as simples inputs
+        or outputs.
+        """
+        if   ioNet.coreNet.getDirection() & Net.Direction.IN:  constantType = ConstantsConf.ZERO
+        elif ioNet.coreNet.getDirection() & Net.Direction.OUT: constantType = ConstantsConf.ONE
+        else:
+            raise ErrorMessage( 2, 'CoreToChip.newEnableForNet(): Net "{}" is neither IN nor OUT.' \
+                                   .format(ioNet.coreNet.getName()) )
+        instance = self.conf.constantsConf.createInstance( self.core, constantType )
+        enable   = Net.create( self.core, '{}_enable'.format(ioNet.padInstanceName) )
+        enable.setExternal ( True )
+        enable.setDirection( Net.Direction.OUT )
+        getPlugByName( instance, self.conf.constantsConf.output(constantType) ).setNet( enable )
+        self.conf.addClonedCell( self.conf.core )
+        return enable
 
     def getIoNet ( self, coreNet ):
         """
@@ -566,19 +590,19 @@ class CoreToChip ( object ):
         from the core cell.
         """
         af = AllianceFramework.get()
-        self.state.cfg.apply()
+        self.conf.cfg.apply()
         with UpdateSession():
             print( '  o  Build Chip from Core.' )
-            print( '     - Core:   "{}".'.format(self.state.cell.getName()) )
+            print( '     - Core:   "{}".'.format(self.conf.cell.getName()) )
             print( '     - Corona: "{}".'.format('corona') )
-            print( '     - Chip:   "{}".'.format(self.state.chipConf.name) )
-            self.state.chip = af.createCell( self.state.chipConf.name )
-            self.corona     = af.createCell( 'corona' )
-            self.state.icore   = Instance.create( self.corona    , 'core'  , self.state.cell )
-            self.state.icorona = Instance.create( self.state.chip, 'corona', self.corona     )
+            print( '     - Chip:   "{}".'.format(self.conf.chipConf.name) )
+            self.conf.chip    = af.createCell( self.conf.chipConf.name )
+            self.corona       = af.createCell( 'corona' )
+            self.conf.icore   = Instance.create( self.corona   , 'core'  , self.conf.cell )
+            self.conf.icorona = Instance.create( self.conf.chip, 'corona', self.corona    )
             ioPads      = []
             clockIoNets = []
-            for ioPadConf in self.state.chipConf.padInstances:
+            for ioPadConf in self.conf.chipConf.padInstances:
                 if ioPadConf.isAllPower():
                     self._buildAllPowerPads( ioPadConf )
                     continue
@@ -638,5 +662,4 @@ class CoreToChip ( object ):
                 ioPad.udata.createPad()
             self._connectRing()
             self._connectClocks()
-        af.saveCell( self.chip  , Catalog.State.Logical )
-        af.saveCell( self.corona, Catalog.State.Logical )
+        self.conf.rsave( self.chip )

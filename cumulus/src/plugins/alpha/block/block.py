@@ -517,14 +517,14 @@ class Block ( object ):
        #katana.printConfiguration   ()
         katana.digitalInit          ()
        #katana.runNegociatePreRouted()
-       #Breakpoint.stop( 0, 'Block.route() Before global routing.' )
+        Breakpoint.stop( 100, 'Block.route() Before global routing.' )
         katana.runGlobalRouter      ( Katana.Flags.NoFlags )
         katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
-       #Breakpoint.stop( 0, 'Block.route() After global routing.' )
+        Breakpoint.stop( 100, 'Block.route() After global routing.' )
         katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
         katana.runNegociate         ( Katana.Flags.NoFlags )
         success = katana.isDetailedRoutingSuccess()
-       #Breakpoint.stop( 0, 'Block.route() done, success:{}.'.format(success) )
+        Breakpoint.stop( 100, 'Block.route() done, success:{}.'.format(success) )
         katana.finalizeLayout()
         katana.destroy()
         return success
@@ -639,7 +639,7 @@ class Block ( object ):
     def save ( self ):
         if not self.conf.validated:
             raise ErrorMessage( 1, 'block.save(): Chip is not valid, aborting.' )
-        self.spares.save()
+        self.conf.save()
 
 
 # ----------------------------------------------------------------------------

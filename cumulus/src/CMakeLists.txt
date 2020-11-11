@@ -61,6 +61,7 @@
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/core2chip.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/cmos.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/niolib.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/libresocio.py
                   )
               set ( pyPluginAlphaChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/configuration.py

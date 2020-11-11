@@ -155,7 +155,10 @@ class GoCb ( object ):
         if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.block.conf.coronaVss
         if not rootNet: return
         if self.block.activePlane:
-            bb = go.getBoundingBox( self.block.activePlane.metal.getBasicLayer() )
+            layer = self.block.activePlane.metal
+            if layer.isSymbolic():
+                layer = layer.getBasicLayer()
+            bb = go.getBoundingBox( layer )
             query.getPath().getTransformation().applyOn( bb )
             self.block.activePlane.addTerminal( rootNet, direction, bb )
         else:
@@ -190,7 +193,10 @@ class Builder ( object ):
         query.setFilter( Query.DoComponents|Query.DoTerminalCells )
         for layerGauge in self.conf.routingGauge.getLayerGauges():
             self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
-            query.setBasicLayer( layerGauge.getLayer().getBasicLayer() )
+            layer = layerGauge.getLayer()
+            if layer.isSymbolic():
+                layer = layer.getBasicLayer()
+            query.setBasicLayer( layer )
             query.doQuery()
         self.activePlane = None
   
@@ -231,7 +237,10 @@ class Builder ( object ):
                                        )
             segment = self.conf.createVertical( bufferRp, contact, bufferRp.getX(), 0 )
             self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
-            bb = segment.getBoundingBox( self.activePlane.metal.getBasicLayer() )
+            layer = self.activePlane.metal
+            if layer.isSymbolic():
+                layer = layer.getBasicLayer()
+            bb = segment.getBoundingBox( layer )
             self.path.getTransformation().getInvert().applyOn( bb )
             self.activePlane.addTerminal( ck, Plane.Vertical, bb )
             trace( 550, '\tAdded terminal of {} to vertical plane @{}\n'.format(ck,bb) )

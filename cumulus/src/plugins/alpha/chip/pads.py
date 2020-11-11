@@ -18,30 +18,16 @@ import sys
 import re
 from   operator     import itemgetter  
 import Cfg          
-from   Hurricane    import DbU
-from   Hurricane    import Point
-from   Hurricane    import Transformation
-from   Hurricane    import Interval
-from   Hurricane    import Box
-from   Hurricane    import Path
-from   Hurricane    import Occurrence
-from   Hurricane    import UpdateSession
-from   Hurricane    import Layer
-from   Hurricane    import BasicLayer
-from   Hurricane    import Net
-from   Hurricane    import Pin
-from   Hurricane    import Contact
-from   Hurricane    import Segment
-from   Hurricane    import Horizontal
-from   Hurricane    import Vertical
-from   Hurricane    import RoutingPad
-from   Hurricane    import Instance
+from   Hurricane    import DbU, Point, Transformation, Interval, Box,  \
+                           Path, Occurrence, UpdateSession, Layer,     \
+                           BasicLayer, Net, Pin, Contact, Segment,     \
+                           Horizontal, Vertical, Diagonal, RoutingPad, \
+                           Instance
 import CRL          
 from   CRL          import RoutingLayerGauge
 import helpers      
 from   helpers         import trace
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
+from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins.alpha.chip
 
@@ -62,38 +48,58 @@ class Corner ( object ):
     def conf ( self ): return self.corona.conf
 
     def _getPoints ( self, axis ):
+        """
+        Compute the various coordinates to draw the corner for a wire
+        positioned at ``axis`` distance from the *border* of the chip.
+        xExtend and yExtend are used only in case of 45 degree corners,
+        the 0.5 ratio is an approximate of ``sqrt(2) - 1``.
+        """
         if self.type == SouthWest:
             xCorner = self.conf.chipAb.getXMin() + axis
             yCorner = self.conf.chipAb.getYMin() + axis
             xBb     = self.conf.chipAb.getXMin() + self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMin() + self.conf.ioPadHeight
+            xExtend = - long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            yExtend = xExtend
         elif self.type == SouthEast:
             xCorner = self.conf.chipAb.getXMax() - axis
             yCorner = self.conf.chipAb.getYMin() + axis
             xBb     = self.conf.chipAb.getXMax() - self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMin() + self.conf.ioPadHeight
+            xExtend = long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            yExtend = - xExtend
         elif self.type == NorthEast:
             xCorner = self.conf.chipAb.getXMax() - axis
             yCorner = self.conf.chipAb.getYMax() - axis
             xBb     = self.conf.chipAb.getXMax() - self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMax() - self.conf.ioPadHeight
+            xExtend = long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            yExtend = xExtend
         elif self.type == NorthWest:
             xCorner = self.conf.chipAb.getXMin() + axis
             yCorner = self.conf.chipAb.getYMax() - axis
             xBb     = self.conf.chipAb.getXMin() + self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMax() - self.conf.ioPadHeight
-        return xCorner, yCorner, xBb, yBb
+            xExtend = - long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            yExtend = - xExtend
+        return xCorner, yCorner, xBb, yBb, xExtend, yExtend
 
     def _createCorner ( self ):
+        self.corona.conf.cfg.chip.use45corners = None
         for rail in self.corona.padRails:
             net   = rail[0]
             layer = rail[1]
             axis  = rail[2]
             width = rail[3]
-            xCorner, yCorner, xBb, yBb = self._getPoints( axis )
-            Contact   .create( net, layer, xCorner, yCorner, width, width )
-            Horizontal.create( net, layer, yCorner, width, xCorner, xBb )
-            Vertical  .create( net, layer, xCorner, width, yCorner, yBb )
+            xCorner, yCorner, xBb, yBb, xExtend, yExtend = self._getPoints( axis )
+            if self.corona.conf.cfg.chip.use45corners:
+                Diagonal.create( net, layer, Point(xBb+xExtend,yCorner), Point(xCorner,yBb+yExtend), width )
+                Horizontal.create( net, layer, yCorner, width, xBb+xExtend, xBb )
+                Vertical  .create( net, layer, xCorner, width, yBb+yExtend, yBb )
+            else:
+                Contact   .create( net, layer, xCorner, yCorner, width, width )
+                Horizontal.create( net, layer, yCorner, width, xCorner, xBb )
+                Vertical  .create( net, layer, xCorner, width, yCorner, yBb )
 
     def _getTransformation ( self ):
         if self.type == SouthWest:
@@ -243,9 +249,10 @@ class Side ( object ):
             checkName = 'east pads'
         elif self.type == South: checkName = 'south pads'
         elif self.type == West:  checkName = 'west pads'
-        self.conf.validated = self._check( len(self.pads) *   self.conf.ioPadStep
-                                                          + 2*self.conf.ioPadHeight
-                                         , checkName ) and self.conf.validated
+        padLength = 2*self.conf.ioPadHeight
+        for pad in self.pads:
+            padLength += pad[1].getMasterCell().getAbutmentBox().getWidth()
+        self.conf.validated = self._check( padLength, checkName ) and self.conf.validated
         return self.conf.validated
 
     def _fillPadSpacing ( self, gapWidth ):
@@ -537,13 +544,16 @@ class CoreWire ( object ):
                     else:
                         self.symContactSize  = ( self.bbSegment.getWidth(), self.bbSegment.getWidth() )
                     self.viaPitch = self.conf.getViaPitch( self.symContactLayer )
-                    contactMinSize = 2*self.symContactLayer.getEnclosure( self.symSegmentLayer.getBasicLayer()
+                    basicLayer = self.symSegmentLayer
+                    if basicLayer.isSymbolic():
+                        basicLayer = basicLayer.getBasicLayer()
+                    contactMinSize = 2*self.symContactLayer.getEnclosure( basicLayer
                                                                         , Layer.EnclosureH|Layer.EnclosureV ) \
                                    +   self.symContactLayer.getMinimalSize()
                     arrayWidth = self.symContactSize[0]
                     arrayCount = (arrayWidth - contactMinSize) / self.viaPitch
-                    trace( 550, '\tcontactMinSize: {}l, arrayWidth: {}l, arrayCount: {}\n' \
-                                .format(DbU.toLambda(contactMinSize),DbU.toLambda(arrayWidth),arrayCount) )
+                    trace( 550, '\tcontactMinSize: {}, arrayWidth: {}, arrayCount: {}\n' \
+                                .format(DbU.getValueString(contactMinSize),DbU.getValueString(arrayWidth),arrayCount) )
                     if arrayCount < 0: arrayCount = 0
                    #if arrayCount < 3:
                     if self.side & (North|South):
@@ -731,7 +741,7 @@ class CoreWire ( object ):
             if self.arraySize:
                 if self.side == South: yContact = min( yContact, hStrapBb.getYMin() )
                 else:                  yContact = max( yContact, hStrapBb.getYMax() )
-            trace( 550, '\txCore:  %sl %s\n' % (DbU.toLambda(xCore), DbU.getValueString(xCore)) )
+            trace( 550, '\txCore:  {:.1f}L {}\n'.format(DbU.toLambda(xCore), DbU.getValueString(xCore)) )
             self.conf.coronaVertical( self.chipNet
                                     , self.symSegmentLayer
                                     , xCore
@@ -855,43 +865,52 @@ class Corona ( object ):
         if not self.padLib: self.padLib = padCell.getLibrary()
         for plug in padInstance.getPlugs():
             for component in plug.getMasterNet().getComponents():
+                if component is None: continue 
+                bb    = component.getBoundingBox()
+                hspan = Interval( bb.getXMin(), bb.getXMax() )
+                axis  = bb.getCenter().getY()
                 if isinstance(component,Horizontal):
-                    hspan = Interval( component.getBoundingBox().getXMin()
-                                    , component.getBoundingBox().getXMax() )
-                    # Specific hack for Alliance pxlib pad library.
-                    if self.conf.ioPadGauge.getName() == 'pxlib':
-                        if plug.getMasterNet().isClock():
-                            hspan.inflate( DbU.fromLambda(5.0) )
-                        else:
-                            hspan.inflate( component.getWidth() / 2 )
-                    if hspan.contains( ab.getXMin() ) or hspan.contains( ab.getXMax() ):
-                        duplicate = False
-                        if self.padOrient == Transformation.Orientation.ID:
-                            axis = component.getY()
-                        else:
-                            axis = self.conf.ioPadHeight - component.getY()
-                        for rail in self.padRails:
-                            if     rail[0] == plug.getNet()        \
-                               and rail[1] == component.getLayer() \
-                               and rail[2] == axis:
-                                duplicate = True
-                                break
-                        if not duplicate:
-                            net = plug.getNet()
-                            if not net:
-                                if plug.getMasterNet().isGlobal():
-                                    net = self.conf.cell.getNet( plug.getMasterNet().getName() )
-                                    if not net:
-                                        raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
-                                                               %  plug.getMasterNet().getName(), padCell.getName() )
-                                else:
-                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
-                                                         %  plug.getMasterNet().getName(), padCell.getName() )
-                            if net:
-                                self.padRails.append( ( net
-                                                      , component.getLayer()
-                                                      , axis
-                                                      , component.getWidth() ) )
+                    width = component.getWidth()
+                elif isinstance(component,Vertical):
+                    width = bb.getHeight()
+                else:
+                    continue
+                # Specific hack for Alliance pxlib pad library.
+                if self.conf.ioPadGauge.getName() == 'pxlib':
+                    if isinstance(component,Vertical):
+                        continue
+                    if plug.getMasterNet().isClock():
+                        hspan.inflate( DbU.fromLambda(5.0) )
+                    else:
+                        hspan.inflate( component.getWidth() / 2 )
+                if hspan.contains( ab.getXMin() ) or hspan.contains( ab.getXMax() ):
+                    duplicate = False
+                    if self.padOrient == Transformation.Orientation.ID:
+                        pass
+                    else:
+                        axis = self.conf.ioPadHeight - axis
+                    for rail in self.padRails:
+                        if     rail[0] == plug.getNet()        \
+                           and rail[1] == component.getLayer() \
+                           and rail[2] == axis:
+                            duplicate = True
+                            break
+                    if not duplicate:
+                        net = plug.getNet()
+                        if not net:
+                            if plug.getMasterNet().isGlobal():
+                                net = self.conf.cell.getNet( plug.getMasterNet().getName() )
+                                if not net:
+                                    raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is not connected and there is no global net (in pad \"%s").' \
+                                                           %  plug.getMasterNet().getName(), padCell.getName() )
+                            else:
+                                raise ErrorMessage( 1, 'Corona._padAnalysis(): Ring net "%s" is neither connected nor global (in pad \"%s").' \
+                                                     %  plug.getMasterNet().getName(), padCell.getName() )
+                        if net:
+                            self.padRails.append( ( net
+                                                  , component.getLayer()
+                                                  , axis
+                                                  , width ) )
   
     def _createCoreWire ( self, chipIntNet, padNet, padInstance, count ):
         trace( 550, ',+', '\tCorona._createCoreWire()\n' )
@@ -904,6 +923,12 @@ class Corona ( object ):
         elif self.hasEastPad (padInstance): side = self.eastSide
         elif self.hasWestPad (padInstance): side = self.westSide
         if not side:
+            trace( 550, '-' )
+            return count
+        if chipIntNet.isPower() and not padInstance.getName().startswith('p_vdd'):
+            trace( 550, '-' )
+            return count
+        if chipIntNet.isGround() and not padInstance.getName().startswith('p_vss'):
             trace( 550, '-' )
             return count
         innerBb   = self.conf.chip.getAbutmentBox().inflate( -self.conf.ioPadHeight )

@@ -238,13 +238,17 @@ class ChipConf ( BlockConf ):
             axis  = (uTrackMax + uTrackMin) / 2
             width = (iTrackMax - iTrackMin) * lg.getPitch() + lg.getWireWidth()
             if self.routingGauge.isSymbolic():
+                trace( 550, '\tRoutingGauge is symbolic, adjust on lambda.\n' )
                 oneLambda = DbU.fromLambda( 1.0 )
                 if axis % oneLambda:
                     axis  -= oneLambda / 2
                     width -= oneLambda
-            trace( 550, '\t[{} {}]\n'.format(iTrackMin, iTrackMax) )
-            trace( 550, '\taxis:  {}l {}\n'.format(DbU.toLambda(axis ), DbU.getValueString(axis )) )
-            trace( 550, '\twidth: {}l {}\n'.format(DbU.toLambda(width), DbU.getValueString(width)) )
+            trace( 550, '\t[{} {}] -> [{} {}]\n'.format( iTrackMin
+                                                       , iTrackMax
+                                                       , DbU.getValueString(uTrackMin)
+                                                       , DbU.getValueString(uTrackMax) ) )
+            trace( 550, '\taxis:  {:.1f}L {}\n'.format(DbU.toLambda(axis ), DbU.getValueString(axis )) )
+            trace( 550, '\twidth: {:.1f}L {}\n'.format(DbU.toLambda(width), DbU.getValueString(width)) )
         else:
             axis  = (uMax + uMin) / 2
             width = (uMax - uMin)
@@ -252,8 +256,8 @@ class ChipConf ( BlockConf ):
         return axis, width
 
     def toCoronaPitchInChip ( self, uCore, layer ):
-        trace( 550, ',+', '\tChipConf.toCoronaPitchInChip(): uCore:  {}l {}\n' \
-                    .format(DbU.toLambda(uCore), DbU.getValueString(uCore)) )
+        trace( 550, ',+', '\tChipConf.toCoronaPitchInChip(): uCore:  {:.1f}L {}\n' \
+                          .format(DbU.toLambda(uCore), DbU.getValueString(uCore)) )
         coronaAb = self.getInstanceAb( self.icorona )
         lg       = None
         mask     = layer.getMask()
@@ -271,15 +275,15 @@ class ChipConf ( BlockConf ):
             else:
                 uCorona = uCore - coronaAb.getXMin()
         uCorona, width = self.toRoutingGauge( uCorona, uCorona, layer )
-        trace( 550, '\ttoCoronaPitchInChip(): uCorona:  {}l {}\n' \
+        trace( 550, '\ttoCoronaPitchInChip(): uCorona:  {:.1f}L {}\n' \
                     .format(DbU.toLambda(uCorona), DbU.getValueString(uCorona)) )
         if lg:
             if lg.getDirection() == RoutingLayerGauge.Horizontal:
                 uCore = uCorona + coronaAb.getYMin()
             else:
                 uCore = uCorona + coronaAb.getXMin()
-        trace( 550, '\ttoCoronaPitchInChip(): uCorona: {}l %s\n'.format(DbU.toLambda(uCorona), DbU.getValueString(uCorona)) )
-        trace( 550, '\ttoCoronaPitchInChip(): uCore:   {}l %s\n'.format(DbU.toLambda(uCore  ), DbU.getValueString(uCore  )) )
+        trace( 550, '\ttoCoronaPitchInChip(): uCorona: {:.1f}L {}\n'.format(DbU.toLambda(uCorona), DbU.getValueString(uCorona)) )
+        trace( 550, '\ttoCoronaPitchInChip(): uCore:   {:.1f}L {}\n'.format(DbU.toLambda(uCore  ), DbU.getValueString(uCore  )) )
         trace( 550, '-' )
         return uCore
 
@@ -295,16 +299,16 @@ class ChipConf ( BlockConf ):
         trace( 550, '\t| Real\n' )
         trace( 550, '\t|   axis: {}\n'.format(DbU.getValueString(coronaY)) )
         trace( 550, '\t|   width:{}\n'.format(DbU.getValueString(width)) )
-        trace( 550, '\t|   dxMin:{} ({}l)\n' \
+        trace( 550, '\t|   dxMin:{} ({:.1f}L)\n' \
                     .format( DbU.getValueString(chipXMin - coronaAb.getXMin())
                            , DbU.toLambda(chipXMin - coronaAb.getXMin()) ) )
         trace( 550, '\t|   dxMax:{}\n'.format(DbU.getValueString(chipXMax - coronaAb.getXMin())) )
         coronaY, width = self.toRoutingGauge( coronaY - width/2, coronaY + width/2, layer )
         trace( 550, '\t| On Grid\n' )
-        trace( 550, '\t|   axis: {}l or {}\n'.format(DbU.toLambda(coronaY), DbU.getValueString(coronaY)) )
-        trace( 550, '\t|   width:{}l or {}\n'.format(DbU.toLambda(width)  , DbU.getValueString(width)) )
-        trace( 550, '\t|   dxMin:{}l\n'.format(DbU.toLambda(dxMin)) )
-        trace( 550, '\t|   dxMax:{}l\n'.format(DbU.toLambda(dxMax)) )
+        trace( 550, '\t|   axis: {:.1f}L or {}\n'.format(DbU.toLambda(coronaY), DbU.getValueString(coronaY)) )
+        trace( 550, '\t|   width:{:.1f}L or {}\n'.format(DbU.toLambda(width)  , DbU.getValueString(width)) )
+        trace( 550, '\t|   dxMin:{:.1f}L\n'.format(DbU.toLambda(dxMin)) )
+        trace( 550, '\t|   dxMax:{:.1f}L\n'.format(DbU.toLambda(dxMax)) )
         h = Horizontal.create( coronaNet, layer, coronaY, width, dxMin, dxMax )
         trace( 550, '\t| {}\n'.format(h) )
         trace( 550, '-' )
@@ -324,8 +328,8 @@ class ChipConf ( BlockConf ):
         trace( 550, '\t|   width:{}\n'.format(DbU.getValueString(width)) )
         coronaX, width = self.toRoutingGauge( coronaX - width/2, coronaX + width/2, layer )
         trace( 550, '\t| On Grid\n' )
-        trace( 550, '\t|   axis: {} or {}\n'.format(DbU.toLambda(coronaX), DbU.getValueString(coronaX)) )
-        trace( 550, '\t|   width:{} or {}\n'.format(DbU.toLambda(width)  , DbU.getValueString(width)) )
+        trace( 550, '\t|   axis: {:.1f}L or {}\n'.format(DbU.toLambda(coronaX), DbU.getValueString(coronaX)) )
+        trace( 550, '\t|   width:{:.1f}L or {}\n'.format(DbU.toLambda(width)  , DbU.getValueString(width)) )
         v = Vertical.create( coronaNet, layer, coronaX, width, dyMin, dyMax )
         trace( 550, '\t| {}\n'.format(v) )
         trace( 550, '-' )
@@ -343,12 +347,13 @@ class ChipConf ( BlockConf ):
         trace( 550, '\t|   center: {:>12} {:>12}\n'.format(DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
         trace( 550, '\t|   WxH:    {:>12} {:>12}\n'.format(DbU.getValueString(width  ), DbU.getValueString(height )) )
         topLayer = layer.getTop()
+        botLayer = layer.getBottom()
         if self.isHorizontal(topLayer):
-            coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, layer.getBottom() )
+            coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, botLayer )
             coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
         else:
             coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
-            coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, layer.getBottom() )
+            coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, botLayer )
         if not (flags & OnHorizontalPitch):
             trace( 550, '\tNot on horizontal routing pitch, Y on lambda only.\n' )
             coronaY = self.toSymbolic( chipY - coronaAb.getYMin(), Superior )
@@ -356,10 +361,10 @@ class ChipConf ( BlockConf ):
             trace( 550, '\tNot on vertical routing pitch, X on lambda only.\n' )
             coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), Superior )
         trace( 550, '\t| On Grid\n' )
-        trace( 550, '\t|   X axis: {:>12} or {:>12}\n'.format(DbU.toLambda(coronaX)      , DbU.getValueString(coronaX)) )
-        trace( 550, '\t|   Y axis: {:>12} or {:>12}\n'.format(DbU.toLambda(coronaY)      , DbU.getValueString(coronaY)) )
-        trace( 550, '\t|   center: {:>12} {:>12}\n'   .format(DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
-        trace( 550, '\t|   WxH:    {:>12} {:>12}\n'   .format(DbU.getValueString(width  ), DbU.getValueString(height )) )
+        trace( 550, '\t|   X axis: {:>12.1f}L or {:>12}\n'.format(DbU.toLambda(coronaX)      , DbU.getValueString(coronaX)) )
+        trace( 550, '\t|   Y axis: {:>12.1f}L or {:>12}\n'.format(DbU.toLambda(coronaY)      , DbU.getValueString(coronaY)) )
+        trace( 550, '\t|   center: {:>12} {:>12}\n'       .format(DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
+        trace( 550, '\t|   WxH:    {:>12} {:>12}\n'       .format(DbU.getValueString(width  ), DbU.getValueString(height )) )
         c = Contact.create( coronaNet
                           , layer
                           , coronaX
@@ -373,17 +378,20 @@ class ChipConf ( BlockConf ):
 
     def getViaPitch ( self, viaLayer ):
         topLayer = viaLayer.getTop()
-        topPitch = 2*viaLayer.getEnclosure \
-                       ( topLayer.getBasicLayer(), Layer.EnclosureH|Layer.EnclosureV ) \
-                 + viaLayer.getMinimalSize() \
-                 + topLayer.getMinimalSpacing()  
+        if topLayer.isSymbolic():
+            topLayer = topLayer.getBasicLayer()
+        topEnclosure = viaLayer.getEnclosure( topLayer, Layer.EnclosureH|Layer.EnclosureV )
+        topPitch = 2*topEnclosure + viaLayer.getMinimalSize() + topLayer.getMinimalSpacing()  
         botLayer = viaLayer.getBottom()
-        botPitch = 2*viaLayer.getEnclosure \
-                       ( botLayer.getBasicLayer(), Layer.EnclosureH|Layer.EnclosureV ) \
-                 + viaLayer.getMinimalSize() \
-                 + botLayer.getMinimalSpacing()  
+        if botLayer.isSymbolic():
+            botLayer = botLayer.getBasicLayer()
+        botEnclosure = viaLayer.getEnclosure( botLayer, Layer.EnclosureH|Layer.EnclosureV )
+        botPitch = 2*botEnclosure + viaLayer.getMinimalSize() + botLayer.getMinimalSpacing()  
         viaPitch = max( topPitch, botPitch )
-        trace( 550, '\tgetViaPitch of {}: {}l\n'.format(viaLayer.getName(),DbU.getValueString(viaPitch)) )
+        trace( 550, '\tgetViaPitch of {}: {}\n'.format(viaLayer.getName(),DbU.getValueString(viaPitch)) )
+        trace( 550, '\t| minimal size of {}: {}\n'.format(viaLayer.getName(),DbU.getValueString(viaLayer.getMinimalSize())) )
+        trace( 550, '\t| enclosure of {}: {}\n'.format(topLayer.getName(),DbU.getValueString(topEnclosure)) )
+        trace( 550, '\t| enclosure of {}: {}\n'.format(botLayer.getName(),DbU.getValueString(botEnclosure)) )
         return viaPitch
 
     def coronaContactArray ( self, chipNet, layer, chipX, chipY, array, flags ):
@@ -412,7 +420,7 @@ class ChipConf ( BlockConf ):
         xContact    = coronaX - viaPitch * (array[0]-1)/2
         yContact    = coronaY - viaPitch * (array[1]-1)/2
         contactSize = layer.getMinimalSize()
-        trace( 550, '\txContact:{}l yContact:{}l\n'.format(DbU.toLambda(xContact),DbU.toLambda(yContact)) )
+        trace( 550, '\txContact:{} yContact:{}\n'.format(DbU.getValueString(xContact),DbU.getValueString(yContact)) )
         for i in range(array[0]):
             for j in range(array[1]):
                 c = Contact.create( coronaNet
@@ -452,10 +460,10 @@ class ChipConf ( BlockConf ):
             trace( 550, '\tNorth/South not on vertical routing pitch, X on lambda only.\n' )
             coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), Superior )
         trace( 550, '\t| On Grid\n' )
-        trace( 550, '\t|   X axis: {} or {}\n'.format(DbU.toLambda(coronaY)      , DbU.getValueString(coronaY)) )
-        trace( 550, '\t|   Y axis: {} or {}\n'.format(DbU.toLambda(coronaX)      , DbU.getValueString(coronaX)) )
-        trace( 550, '\t|   center: {} {}\n'   .format(DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
-        trace( 550, '\t|   WxH:    {} {}\n'   .format(DbU.getValueString(width  ), DbU.getValueString(height )) )
+        trace( 550, '\t|   X axis: {:.1f}L or {}\n'.format(DbU.toLambda(coronaY)      , DbU.getValueString(coronaY)) )
+        trace( 550, '\t|   Y axis: {:.1f}L or {}\n'.format(DbU.toLambda(coronaX)      , DbU.getValueString(coronaX)) )
+        trace( 550, '\t|   center: {} {}\n'       .format(DbU.getValueString(coronaX), DbU.getValueString(coronaY)) )
+        trace( 550, '\t|   WxH:    {} {}\n'       .format(DbU.getValueString(width  ), DbU.getValueString(height )) )
         c = Pin.create( coronaNet
                       , '{}.{}'.format(coronaNet.getName(),count)
                       , direction
