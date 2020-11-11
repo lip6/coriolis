@@ -209,6 +209,14 @@ namespace Hurricane {
   { return BasicLayer_BasicLayers(this); }
 
 
+  const Layer* BasicLayer::getTop () const
+  { return this; }
+
+
+  const Layer* BasicLayer::getBottom () const
+  { return this; }
+
+
   void BasicLayer::_postCreate ()
   {
     Mask basicLayersMask = 0;

@@ -95,6 +95,8 @@ namespace Hurricane {
       inline  unsigned        getGds2Datatype        () const;
       virtual BasicLayers     getBasicLayers         () const;
       virtual BasicLayer*     getBlockageLayer       () const;
+      virtual const Layer*    getTop                 () const;
+      virtual const Layer*    getBottom              () const;
       inline  const Name&     getRealName            () const;
     // Updators                                      
       inline  void            setBlockageLayer       ( BasicLayer* layer);
