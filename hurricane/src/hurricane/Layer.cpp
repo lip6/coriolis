@@ -34,6 +34,7 @@
 #include "hurricane/Layer.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 
 
 namespace Hurricane {
@@ -167,12 +168,18 @@ namespace Hurricane {
 
   void Layer::setMinimalSize ( const DbU::Unit& minimalSize )
   {
+    if (minimalSize == 0)
+      cerr << Warning( "Layer::setMinimalSize(): Suspicious zero size for layer \"%s\"."
+                     , getString(getName()).c_str()) << endl;
     _minimalSize = minimalSize;
   }
 
 
   void Layer::setMinimalSpacing ( const DbU::Unit& minimalSpacing )
   {
+    if (minimalSpacing == 0)
+      cerr << Warning( "Layer::setMinimalSpacing(): Suspicious zero size for layer \"%s\"."
+                     , getString(getName()).c_str()) << endl;
     _minimalSpacing = minimalSpacing;
   }
 
