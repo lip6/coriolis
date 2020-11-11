@@ -60,6 +60,7 @@ namespace Katana {
     : TrackElement  (NULL)
     , _segment      (segment)
   {
+    cdebug_log(159,0) << "TrackFixedSegment::TrackFixedSegment() track:" << track << endl;
     Box boundingBox = segment->getBoundingBox();
 
     uint32_t flags = TElemFixed | ((segment->getNet() == Session::getBlockageNet()) ? TElemBlockage : 0);
@@ -69,13 +70,15 @@ namespace Katana {
       uint32_t      depth      = track->getDepth();
       Technology*   technology = DataBase::getDB()->getTechnology();
       const Layer*  layer1     = track->getLayer()->getBlockageLayer();
-      RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
-      if ( layer2 ) {
+    //RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
+    //if (layer2) {
       //cerr << track->getLayer() << " minSpace:" << DbU::getValueString(track->getLayer()->getMinimalSpacing()) << endl;
 
         Interval   segside;
         Interval   uside   = track->getKatanaEngine()->getUSide( track->getDirection() );
         DbU::Unit  cap     = track->getLayer()->getMinimalSpacing()/2 /*+ track->getLayer()->getExtentionCap()*/;
+        cdebug_log(159,0) << "uside:" << uside << " cap:" << DbU::getValueString(cap) << endl;
+        cdebug_log(159,0) << "bb:" << boundingBox << endl;
         if (track->getDirection() == Flags::Horizontal) {
           segside  = Interval( boundingBox.getXMin(), boundingBox.getXMax() );
           _sourceU = max( boundingBox.getXMin() - cap, uside.getVMin());
@@ -98,8 +101,9 @@ namespace Katana {
             ( depth, gcell->getSide( track->getDirection() ).getIntersection( segside ).getSize() );
           gcell->flags() |= gcellFlags;
         }
-      }
-    }
+    //}
+    } else
+      cdebug_log(159,0) << "No track specified!" << endl;
   }
 
 
@@ -122,6 +126,7 @@ namespace Katana {
   {
     TrackFixedSegment* trackFixedSegment = NULL;
     if (track) { 
+      cdebug_log(159,0) << "TrackFixedSegment::create() track:" << track << endl;
       trackFixedSegment = new TrackFixedSegment ( track, segment );
       trackFixedSegment->_postCreate();
 
