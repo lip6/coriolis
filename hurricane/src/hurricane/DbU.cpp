@@ -29,14 +29,13 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <cstring>
-#include  <cstdlib>
-#include  <limits>
-
-#include  "hurricane/DbU.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/DataBase.h"
-#include  "hurricane/Technology.h"
+#include <cstring>
+#include <cstdlib>
+#include <limits>
+#include "hurricane/DbU.h"
+#include "hurricane/Error.h"
+#include "hurricane/DataBase.h"
+#include "hurricane/Technology.h"
 
 
 namespace Hurricane {
@@ -310,8 +309,8 @@ namespace Hurricane {
       unitSymbol = 'g';
       os << setprecision(1) << toGrid(u);
     } else if (_stringMode == Symbolic) {
-      unitSymbol = 'l';
-      os << setprecision(1) << toLambda(u);
+      unitSymbol = 'L';
+      os << setprecision(2) << toLambda(u);
     } else if (_stringMode == Physical) {
       unitSymbol = 'm';
       switch ( _stringModeUnitPower ) {
@@ -332,13 +331,14 @@ namespace Hurricane {
     } else {
       if (_stringMode != Db)
         cerr << "[ERROR] Unknown Unit representation mode: " << _stringMode << endl;
-
       os << u;
     }
 
     string s = os.str();
-    if (mode & SmartTruncate) {
-
+    if (_stringMode == Symbolic) {
+      size_t dot = s.rfind( '.' );
+      if (dot != string::npos) s.erase( dot + 1 );
+    } else if (mode & SmartTruncate) {
       size_t dot = s.rfind( '.' );
       if (dot != string::npos) {
         size_t end = dot+1;
@@ -346,7 +346,6 @@ namespace Hurricane {
         if (end == s.size()) s.erase( dot );
       }
     }
-
     if (unitPower != ' ') s += unitPower;
     s += unitSymbol;
 
