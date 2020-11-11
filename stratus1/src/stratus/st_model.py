@@ -1088,7 +1088,7 @@ class Model() :
       
     # The cell
     hurCell = FRAMEWORK.createCell ( self._name )
-    hurCell.setTerminal ( 0 )
+    #hurCell.setTerminal ( 0 )
     
     self._hur_cell = hurCell
 
