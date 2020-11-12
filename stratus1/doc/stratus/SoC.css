@@ -9,7 +9,11 @@
  html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
    font-size:                   11pt;
    /* The Open Sans font family is supplied by TexLive. */
-   font-family:                 "Open Sans", Verdana, sans-serif;;
+   font-family:                 "Roboto", "Open Sans", Verdana, sans-serif;;
+ }
+
+ html {
+   background:                  #dddddd;
  }
 
  body {
@@ -20,9 +24,10 @@
    background-attachment:       fixed;
    background-repeat:           no-repeat;
    margin-top:                  2em;
-   width:                       550pt;
+   width:                       600pt;
    margin-right:                auto;
    margin-left:                 auto;
+   padding:                     30pt;
    /*
    margin-right:                12%;
    margin-left:                 12%;
@@ -38,19 +43,21 @@
 
 
  h1, h2, h3, h4, h5, h6 {
-   /*font-family:                 "Liberation Serif", sans-serif;*/
+ /*font-family:                "URW Bookman L", "Liberation Serif", sans-serif;*/
+   font-family:                "URW Bookman L";
  }
 
- h1                 { text-align:  center; }
+ h1.header          { text-align:  center; }
+ h1                 { text-align:  left; }
  h2, h3, h4, h5, h6 { text-align:  left;
                       padding-top: 11pt;
                     }
  h1, h2, h3         { /*font-family: "Liberation Serif", sans-serif; */
                     /*color:       #09550B;*/
                     }
- h1                 { font-weight:normal;       font-size: 170%; letter-spacing:0.2em; word-spacing:0.4em; }
- h2                 { font-weight:normal;       font-size: 140%; letter-spacing:0.2em; word-spacing:0.4em; }
- h3                 { font-weight:  bold;       font-size: 118%; letter-spacing:0.2em; word-spacing:0.4em; }
+ h1                 { font-weight:  bold;       font-size: 170%; /*letter-spacing:0.2em; word-spacing:0.4em;*/ }
+ h2                 { font-weight:  bold;       font-size: 140%; /*letter-spacing:0.2em; word-spacing:0.4em;*/ }
+ h3                 { font-weight:  bold;       font-size: 118%; /*letter-spacing:0.2em; word-spacing:0.4em;*/ }
  h4                 { font-weight:  bold;       font-size: 100%; }
  h5                 { font-style:   italic;     font-size: 100%; }
  h6                 { font-variant: small-caps; font-size: 100%; }
@@ -123,19 +130,19 @@
 
  pre {
    font-size:                   80%;
-   border:                      dashed;
+ /*border:                      dashed;*/
    border-width:                thin;
    border-color:                #003300;
-   /*
-   background-color:            #EEEEEE;
-   */
+ /*background-color:            #EEEEEE;*/
    background-color:            #FCFCE1;
    padding:                     0.5em;
    margin-left:                 2em;
    margin-right:                2em
  }
 
+/*
  tt          { color:           green;   }
+ */
  em          { font-style:      italic;
                font-weight:     normal;  }
  strong      { font-weight:     bold;    }
@@ -156,14 +163,20 @@
  a:link img, a:visited img { border-style: none; }
  a img                     { color: white; }
 
+ a {
+   color:           black;
+   border-bottom:   1px solid black;
+   text-decoration: none;
+ }
+
  a:link, a:active, a:visited {
-   color:                       #09550B;
-   text-decoration:             none;
+ /*color:           #09550B;*/
+ /*text-decoration: none;*/
  }
 
  a:hover, a:focus {
-   color:                       #FF9900;
-   text-decoration:             underline;
+ /*color:           #FF9900;  */
+   border-bottom:   2px solid black;
  }
 
 
@@ -183,6 +196,10 @@
  /*font-family:                 times, verdana, sans-serif;*/
  }
 
+ h2.memtitle {
+   display:                     none;
+ }
+
  center.header {
    background-color:            #CCE6CA;
  }
@@ -195,6 +212,7 @@
 
  div.header {
    text-align:                  center;
+   margin:                      14pt 0pt 0pt 0pt;
  }
 
  div.summary {
@@ -209,6 +227,7 @@
    padding:                     2px 0px;
    text-align:                  center;
    background-color:            black;
+   border-bottom:               none;
  }
 
  table.header td {
@@ -217,6 +236,18 @@
    font-weight:                 bold;
  /*font-family:                 verdana, sans-serif;*/
    font-size:                   110%;
+ }
+
+ table.UserDefined {
+   border:                      1px solid;
+ }
+
+ table.UserDefined th {
+   border:                      1px solid;
+ }
+
+ table.UserDefined td {
+   padding:                     0px 5px;
  }
 
  table.DoxUser td, table.DoxUser th {
@@ -242,16 +273,21 @@
    font-size:                   110%;
  }
 
+ table.classHierarchy a {
+  border-style:                 none;
+  border-bottom:                none;
+ }
+
  table.classHierarchy tr {
    border:                      1px solid blue;
  }
 
  table.classHierarchy td.normal {
-   border:                      1px solid #CCE6CA;
+   border:                      1px solid #dddddd;
    width:                       140pt;
    text-align:                  center;
    font-weight:                 bold;
-   background-color:            #CCE6CA;
+   background-color:            #dddddd;
  }
 
  table.classHierarchy td.virtual {
@@ -262,11 +298,11 @@
  }
 
  table.classHierarchy td.wnormal {
-   border:                      1px solid #CCE6CA;
+   border:                      1px solid #dddddd;
    width:                       240pt;
    text-align:                  center;
    font-weight:                 bold;
-   background-color:            #CCE6CA;
+   background-color:            #dddddd;
  }
 
  table.classHierarchy td.wvirtual {
@@ -276,8 +312,14 @@
    font-weight:                 bold;
  }
 
- div.ah, div.title {
- /*font-family:                 time;*/
+ div.ah, span.ah {
+   font-family:                 Times;
+   font-size:                   300%;
+   font-weight:                 bold;
+   padding:                     20px;
+ }
+
+ div.title {
    text-align:                  center;
    font-size:                   200%;
    font-weight:                 bold;
@@ -285,8 +327,116 @@
    border:                      2px solid black;
  }
 
- div.center {
+ div.center, div.image {
    text-align:                  center;
+ }
+
+
+/* -------------------------------------------------------------------
+ * Top navigation lists.
+ */
+
+ span.mlabels {
+   font-size:     90%;
+   font-style:    italic;
+   padding-left:  10pt;
+   margin:        10pt;
+   border-left:   1px solid black
+ }
+
+ div.contents {
+   padding-top:    20pt;
+ }
+
+ div.tabs {
+   border-top:     1px solid black;
+ }
+
+ div.tabs, div.tabs1, div.tabs2, div.tabs3, div.tabs4 {
+   border-left:    1px solid black;
+ }
+
+ ul.tablist {
+ /*
+   padding:      5pt;
+   background-color: red;
+  */
+   margin:           0pt;
+   padding:          0pt;
+   border-top:       none;
+   border-bottom:    none;
+   border-left:      none;
+   border-right:     none;
+ }
+
+ ul.tablist li {
+ /*
+   margin-left:      auto;
+   margin-right:     auto;
+   overflow:         auto;
+   display:          inline;
+   background-color: yellow;
+  */
+   font-size:        90%;
+   border-top:       none;
+   border-bottom:    1px solid black;
+   border-left:      none;
+   border-right:     1px solid black;
+   display:          table-cell;
+   text-align:       center;
+   padding:          2pt;
+   width:            5%;
+ }
+
+ ul.tablist li:hover {
+   background-color: black;
+   color:            white;
+ }
+
+ ul.tablist li:hover a {
+   background-color: black;
+   color:            white;
+ }
+
+ ul.tablist * a { border-bottom: none; }
+
+ ul.tablist * a:link img, ul.tablist * a:visited img { border-style: none; border-bottom: none; }
+
+ ul.tablist * a:link, ul.tablist * a:visited {
+   color:               black;
+   text-decoration:     none;
+ }
+
+ ul.tablist * a:hover, ul.tablist * a:focus, ul.tablist * a:active {
+   color:               white;
+   text-decoration:     underline;
+ }
+
+ div.navpath {
+   padding:             5pt 0pt 0pt 0pt;
+ }
+
+ .navpath ul {
+   text-align:          center;
+ }
+
+ .navpath ul li {
+   display:             inline;
+   list-style-type:     none;
+   padding-left:        20px;
+   padding-right:       10px;
+   background-image:    url('closed.png');
+   background-repeat:   no-repeat;
+   background-position: left;
+   color:               #364D7C;
+ }
+
+ .navpath ul li a {
+   border:              2px solid black;
+   padding-left:        10px;
+   padding-right:       10px;
+   font-weight:         bold;
+   color:               black;
  }
 
 
@@ -298,8 +448,8 @@
    width:                       100%-4px;
  /*background-color:            #DADAEF;*/
  /*background-color:            #eeeeff;*/
- /*background-color:            #EEEEEE;*/
-   background-color:            #CCE6CA;
+   background-color:            #cccccc;
+ /*background-color:            #CCE6CA;*/
    border:                      0px solid #003300;
    text-align:                  center;
    margin:                      0px;
@@ -315,11 +465,18 @@
  }
 
  a.qindex, a.qindex:visited {
-   color:                       #09550B;
+ /*color:                       #09550B;*/
+   color:                       black;
+   border:                      2px solid #cccccc;
+   padding:                     2px 2px;
+   border-bottom:               none;
  }
 
  a.qindex:hover {
-   background-color:            #ddddff;
+ /*background-color:            #ddddff;*/
+   font-weight:                 bold;
+   padding:                     2px 2px;
+   border:                      2px solid black;
  }
 
  a.qindexHL, a.qindexHL:hover, a.qindexHL:visited {
@@ -432,6 +589,7 @@
  {
    font-family:                 time;
    font-size:                   250%;
+   text-align:                  center;
  }
 
 
@@ -440,15 +598,26 @@
  */
 
  div.fragment {
-   font-family:      "Monospace";
+   font-family:      "Roboto Mono", "Monospace";
    font-size:        80%;
-   border:           dashed;
-   border-width:     thin;
-   border-color:     #003300;
-   background-color: #FCFCE1;
+   border:           none;
+ /*border-width:     thin;   */
+ /*border-color:     #003300;*/
+ /*background-color: #FCFCE1;*/
+   background-color: #fefefe;
    padding:          0.5em;
    margin-left:      5%;
    margin-right:     5%
+ }
+
+ div.fragment a.code:link,
+ div.fragment a.code:visited,
+ div.fragment a.codeRef:link,
+ div.fragment a.codeRef:visited {
+   text-decoration:             none;
+   font-weight:                 bold;
+   color:                       black;
+   border:                      none;
  }
 
  div.line {
@@ -456,6 +625,7 @@
    padding:          0pt;
    margin:           0pt;
  }
+
  span.keyword       { color: #008000 }
  span.keywordtype   { color: #604020 }
  span.keywordflow   { color: #e08000 }
@@ -470,9 +640,17 @@
  * Attributes Listing.
  */
 
-p.formulaDsp {
-  text-align: center;
-}
+ a.el, a.elRef {
+   font-family:   "Roboto Mono", Courier;
+   font-weight:   bold;
+   font-size:     110%;
+   color:         black;
+   border-bottom: none;
+ }
+
+ p.formulaDsp {
+   text-align: center;
+ }
 
  .mdTable {
  /*border:                      1px solid #868686;*/
@@ -515,10 +693,12 @@ p.formulaDsp {
  }
 
  .memproto {
-   background-color:            #CCE6CA;
+ /*background-color:            #CCE6CA;*/
+   background-color:            #cccccc;
    border-left-width:           4px;
    border-left-style:           solid;
-   border-color:                #008500;
+ /*border-color:                #008500;*/
+   border-color:                black;
  }
 
  .memname {
@@ -528,7 +708,7 @@ p.formulaDsp {
  }
 
  table.memname * {
-   font-family:                 "Monospace";
+   font-family:                 "Roboto Mono", "Monospace";
  }
 
 
@@ -537,7 +717,8 @@ p.formulaDsp {
  /*margin-top:                  -8px;*/
    border-left-width:           1px;
    border-left-style:           solid;
-   border-color:                #008500;
+ /*border-color:                #008500;*/
+   border-color:                black;
  }
 
  div.contents * table tr {
@@ -573,7 +754,7 @@ p.formulaDsp {
  /*background-color:            #eeeeff;*/
  /*background-color:            #EEEEEE;*/
  /*background-color:            #CCE6CA;*/
-   font-family:                 "Monospace";
+   font-family:                 "Roboto Mono", "Monospace";
  }
 
  .memTemplItemLeft, .memTemplItemRight {
@@ -582,7 +763,7 @@ p.formulaDsp {
    font-weight:                 bold;
  }
 
- .memItemLeft       { font-size: 11px; width: 35%; }
+ .memItemLeft       { font-size: 11px; width: 100pt; }
  .memItemRight      { font-size: 12px; }
  .memTemplItemLeft  { font-size: 11px; }
  .memTemplItemRight { font-size: 12px; }
@@ -602,6 +783,100 @@ p.formulaDsp {
  }
 
  .groupHeader       {
-   margin-bottom:              -30pt;
+   margin-bottom:               -30pt;
  }
 
+ .inherit {
+   display:                     none;
+ }
+
+
+/* -------------------------------------------------------------------
+ * General Classes Index.
+ */
+
+ span.icona {
+   margin-right:     10pt;
+ }
+
+ div.toc li.level1 {
+   margin-left:      0px;
+ }
+ 
+ div.toc li.level2 {
+   margin-left:      15px;
+   display:          none;
+ }
+ 
+ div.toc li.level3 {
+   margin-left:      30px;
+   display:          none;
+ }
+ 
+ div.toc li.level4 {
+   margin-left:      45px;
+   display:          none;
+ }
+
+ .directory .levels {
+   white-space:      nowrap;
+   width:            100%;
+   text-align:       right;
+   font-size:        9pt;
+ }
+
+ .directory .levels span {
+   cursor:           pointer;
+   padding-left:     2px;
+   padding-right:    2px;
+   color:            #3D578C;
+ }
+
+
+ div.directory {
+   margin:           10px 0px;
+   border-top:       2px solid black;
+   border-bottom:    2px solid black;
+   width:            100%;
+ }
+
+ .directory table {
+   border-collapse:  collapse;
+ }
+
+ .directory td {
+   margin:           0px;
+   padding:          0px;
+   vertical-align:   top;
+ }
+
+ .directory td.entry {
+   white-space:      nowrap;
+   padding-right:    6px;
+   padding-top:      3px;
+ }
+
+ .directory td.entry a {
+   outline:          none;
+ }
+
+ .directory td.entry a img {
+   border:           none;
+ }
+
+ .directory td.desc {
+   width:            100%;
+   padding-left:     6px;
+   padding-right:    6px;
+   padding-top:      3px;
+   border-left:      1px solid rgba(0,0,0,0.05);
+ }
+
+ .directory tr.even {
+   padding-left:     6px;
+   background-color: #F7F8FB;
+ }
+
+ .directory img {
+   vertical-align:  -30%;
+ }

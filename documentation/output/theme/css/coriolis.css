@@ -24,14 +24,6 @@
   background-color: black;
 }
 
-.table > thead > tr > th {
-  border-bottom:    2px solid black;
-}
-
-.table > tbody > tr > td {
-  border-bottom:    1px solid black;
-}
-
 /* ReST customization. */
 .content p, .content ul > li {
   text-align: justify;

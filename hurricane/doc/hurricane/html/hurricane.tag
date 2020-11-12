@@ -366,8 +366,8 @@
       <type>Instances</type>
       <name>getInstancesUnder</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a5eb16d9d0f340ad71b81d794f6f8525f</anchor>
-      <arglist>(const Box &amp;area) const</arglist>
+      <anchor>a3af933175d318b205d94adaf92ba0499</anchor>
+      <arglist>(const Box &amp;area, DbU::Unit threshold=0) const</arglist>
     </member>
     <member kind="function">
       <type>Instances</type>
@@ -4917,8 +4917,8 @@
       <type>Gos</type>
       <name>getGosUnder</name>
       <anchorfile>classHurricane_1_1QuadTree.html</anchorfile>
-      <anchor>ae6a48f63ef2e6b5ec562afe267c85fe3</anchor>
-      <arglist>(const Box &amp;area) const</arglist>
+      <anchor>a6b4aa294b89c3f6b5f49388dbb985ff7</anchor>
+      <arglist>(const Box &amp;area, DbU::Unit threshold=0) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -5204,8 +5204,8 @@
       <type>void</type>
       <name>setQuery</name>
       <anchorfile>classHurricane_1_1Query.html</anchorfile>
-      <anchor>a63c50b61799b729ff4b2e7e291959b4d</anchor>
-      <arglist>(Cell *cell, const Box &amp;area, const Transformation &amp;transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter)</arglist>
+      <anchor>a70fce1e5b7754f1ec11097ad5b9ecfc9</anchor>
+      <arglist>(Cell *cell, const Box &amp;area, const Transformation &amp;transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter, DbU::Unit threshold=0)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5776,8 +5776,8 @@
       <type>Components</type>
       <name>getComponentsUnder</name>
       <anchorfile>classHurricane_1_1Slice.html</anchorfile>
-      <anchor>af672fc823044869db42a8f2df0672164</anchor>
-      <arglist>(const Box &amp;area) const</arglist>
+      <anchor>ada51a63690db8912eb58f1f33aa9f62c</anchor>
+      <arglist>(const Box &amp;area, DbU::Unit threshold=0) const</arglist>
     </member>
     <docanchor file="classHurricane_1_1Slice" title="Introduction">secSliceIntro</docanchor>
     <docanchor file="classHurricane_1_1Slice" title="Construction and destruction">secSliceConstructionAndDestruction</docanchor>

@@ -20,7 +20,7 @@ Stratus : Simulation Patterns
 Printable version of this Document
 ==================================
 
-`Stratus.pdf <{filename}/pdf/Stratus.pdf>`_
+`Stratus.pdf <{filename}/pdfs/Stratus.pdf>`_
 
 
 .. contents::

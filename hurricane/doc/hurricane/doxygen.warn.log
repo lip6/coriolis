@@ -128,3 +128,5 @@ Possible candidates:
 /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:131: warning: Found unknown command `\sreturn'
 /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:135: warning: Found unknown command `\sreturn'
 /dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/doc/hurricane/Query.dox:139: warning: Found unknown command `\sreturn'
+/dsk/l1/jpc/coriolis-2.x/src/coriolis/hurricane/src/hurricane/hurricane/Query.h:342: warning: The following parameters of Hurricane::Query::setQuery(Cell *cell, const Box &area, const Transformation &transformation, const BasicLayer *basicLayer, ExtensionSlice::Mask extensionMask, Mask filter, DbU::Unit threshold=0) are not documented:
+  parameter 'threshold'

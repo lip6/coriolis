@@ -69,7 +69,7 @@ virtual void \mbox{\hyperlink{classHurricane_1_1Query_a75b87e969b64caaf24ec058c0
 \item 
 virtual void \mbox{\hyperlink{classHurricane_1_1Query_abaf97e93c7fa96469adf64f7865938b4}{master\+Cell\+Callback}} ()=0
 \item 
-void \mbox{\hyperlink{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}{set\+Query}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell, const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&transformation, const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$basic\+Layer, Extension\+Slice\+::\+Mask extension\+Mask, Mask filter)
+void \mbox{\hyperlink{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}{set\+Query}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell, const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&transformation, const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$basic\+Layer, Extension\+Slice\+::\+Mask extension\+Mask, Mask filter, \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} threshold=0)
 \item 
 void \mbox{\hyperlink{classHurricane_1_1Query_a36378e1604e484450a3ccee0ececcff7}{set\+Cell}} (\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$cell)
 \item 
@@ -161,7 +161,7 @@ Do\+All&Activate all the callbacks at once. \\
 \subsubsection{\texorpdfstring{Query()}{Query()}}
 {\footnotesize\ttfamily Hurricane\+::\+Query\+::\+Query (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
 
-Default constructor. Initialisation is done through \mbox{\hyperlink{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}{Query\+::set\+Query()}}. \mbox{\Hypertarget{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}\label{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}} 
+Default constructor. Initialisation is done through \mbox{\hyperlink{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}{Query\+::set\+Query()}}. \mbox{\Hypertarget{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}\label{classHurricane_1_1Query_acd18d98c6bf30dd049916508a397391a}} 
 \index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!````~Query@{$\sim$\+Query}}
 \index{````~Query@{$\sim$\+Query}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
 \subsubsection{\texorpdfstring{$\sim$\+Query()}{~Query()}}
@@ -284,11 +284,11 @@ The method called on each encountered Extension\+Go. This is a pure virtual meth
 \subsubsection{\texorpdfstring{master\+Cell\+Callback()}{masterCellCallback()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Query\+::master\+Cell\+Callback (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
 
-The method called on each encountered master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. The \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is not passed as parameter as it is directly accessible through Query\+::get\+Cell(). This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}\label{classHurricane_1_1Query_a63c50b61799b729ff4b2e7e291959b4d}} 
+The method called on each encountered master \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. The \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is not passed as parameter as it is directly accessible through Query\+::get\+Cell(). This is a pure virtual method which must be overloaded in derived classes. \mbox{\Hypertarget{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}\label{classHurricane_1_1Query_a70fce1e5b7754f1ec11097ad5b9ecfc9}} 
 \index{Hurricane\+::\+Query@{Hurricane\+::\+Query}!set\+Query@{set\+Query}}
 \index{set\+Query@{set\+Query}!Hurricane\+::\+Query@{Hurricane\+::\+Query}}
 \subsubsection{\texorpdfstring{set\+Query()}{setQuery()}}
-{\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Query (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation,  }\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{basic\+Layer,  }\item[{Extension\+Slice\+::\+Mask}]{extension\+Mask,  }\item[{Mask}]{filter }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily void Hurricane\+::\+Query\+::set\+Query (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} $\ast$}]{cell,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{const \mbox{\hyperlink{classHurricane_1_1Transformation}{Transformation}} \&}]{transformation,  }\item[{const \mbox{\hyperlink{classHurricane_1_1BasicLayer}{Basic\+Layer}} $\ast$}]{basic\+Layer,  }\item[{Extension\+Slice\+::\+Mask}]{extension\+Mask,  }\item[{Mask}]{filter,  }\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{threshold = {\ttfamily 0} }\end{DoxyParamCaption})}
 
 
 \begin{DoxyParams}{Parameters}

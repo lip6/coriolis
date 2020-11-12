@@ -9,7 +9,7 @@
  html, body, th, td, tr, p, li, h1, h2, h3, h4, h5, h6 {
    font-size:                   11pt;
    /* The Open Sans font family is supplied by TexLive. */
-   font-family:                 "Open Sans", Verdana, sans-serif;;
+   font-family:                 "Roboto", "Open Sans", Verdana, sans-serif;;
  }
 
  html {
@@ -24,7 +24,7 @@
    background-attachment:       fixed;
    background-repeat:           no-repeat;
    margin-top:                  2em;
-   width:                       700pt;
+   width:                       600pt;
    margin-right:                auto;
    margin-left:                 auto;
    padding:                     30pt;
@@ -598,7 +598,7 @@
  */
 
  div.fragment {
-   font-family:      "Monospace";
+   font-family:      "Roboto Mono", "Monospace";
    font-size:        80%;
    border:           none;
  /*border-width:     thin;   */
@@ -608,6 +608,16 @@
    padding:          0.5em;
    margin-left:      5%;
    margin-right:     5%
+ }
+
+ div.fragment a.code:link,
+ div.fragment a.code:visited,
+ div.fragment a.codeRef:link,
+ div.fragment a.codeRef:visited {
+   text-decoration:             none;
+   font-weight:                 bold;
+   color:                       black;
+   border:                      none;
  }
 
  div.line {
@@ -631,7 +641,7 @@
  */
 
  a.el, a.elRef {
-   font-family:   Courier;
+   font-family:   "Roboto Mono", Courier;
    font-weight:   bold;
    font-size:     110%;
    color:         black;
@@ -698,7 +708,7 @@
  }
 
  table.memname * {
-   font-family:                 "Monospace";
+   font-family:                 "Roboto Mono", "Monospace";
  }
 
 
@@ -744,7 +754,7 @@
  /*background-color:            #eeeeff;*/
  /*background-color:            #EEEEEE;*/
  /*background-color:            #CCE6CA;*/
-   font-family:                 "Monospace";
+   font-family:                 "Roboto Mono", "Monospace";
  }
 
  .memTemplItemLeft, .memTemplItemRight {
@@ -753,7 +763,7 @@
    font-weight:                 bold;
  }
 
- .memItemLeft       { font-size: 11px; width: 35%; }
+ .memItemLeft       { font-size: 11px; width: 100pt; }
  .memItemRight      { font-size: 12px; }
  .memTemplItemLeft  { font-size: 11px; }
  .memTemplItemRight { font-size: 12px; }

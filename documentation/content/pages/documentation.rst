@@ -35,7 +35,7 @@ Alliance Documentation
 
       .. row::
 
-         `Alliance Check Toolkit`_ |br|
+         `Alliance Check Toolkit <{filename}/pages/check-toolkit/CheckToolkit_HTML.rst>`_ |br|
          Regression tests & examples
 
 

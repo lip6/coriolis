@@ -29,6 +29,7 @@ STATIC_PATHS = [ 'pages/users-guide'
                , 'pages/python-tutorial'
                , 'pages/python-cpp'
                , 'pages/stratus'
+               , 'pages/check-toolkit'
                , 'pages/rds'
                , 'scripts'
                , 'images'
@@ -114,6 +115,9 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'DpGen.rst'
                , 'Language.rst'
                , 'Patterns.rst'
+
+               , 'CheckToolkit.rst'   # Alliance Check Toolkit.
+               , 'README.rst'
 
                , 'RDS.rst'            # For RDS.
                , 'RDSpage.rst'
