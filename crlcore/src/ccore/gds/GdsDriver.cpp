@@ -15,6 +15,8 @@
 
 
 #include <ctime>
+#include <cmath>
+#include <cfenv>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -377,7 +379,8 @@ namespace {
   inline GdsRecord  GdsStream::LIBNAME   ( string s )      { return GdsRecord(GdsRecord::LIBNAME,s); }
   inline GdsRecord  GdsStream::SNAME     ( string s )      { return GdsRecord(GdsRecord::SNAME,s); }
   inline GdsRecord  GdsStream::SNAME     ( const Name& n ) { return GdsRecord(GdsRecord::SNAME,getString(n)); }
-  inline int32_t    GdsStream::toGdsDbu  ( DbU::Unit v )   const { return DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU; }
+  inline int32_t    GdsStream::toGdsDbu  ( DbU::Unit v )   const
+  { return uint32_t( std::lrint( DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU )); }
 
 
   GdsStream::GdsStream ( string filename )
@@ -385,6 +388,7 @@ namespace {
     , _dbuPerUu (Cfg::getParamDouble("gdsDriver.dbuPerUu" ,0.001)->asDouble())  // 1000
     , _metricDbU(Cfg::getParamDouble("gdsDriver.metricDbu",10e-9)->asDouble())  // 1um.
   {
+    std::fesetround( FE_TONEAREST );
     _ostream.open( filename, ios_base::out );
 
     GdsRecord record ( GdsRecord::HEADER );
