@@ -35,7 +35,9 @@
 #include "hurricane/Net.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Layer.h"
+#include "hurricane/Cell.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 
 
 namespace Hurricane {
@@ -59,6 +61,7 @@ namespace Hurricane {
     if (points.size() > 1000)
       throw Error( "Rectilinear::create(): Rectlinear polygons must not exceed 1000 vertexes." );
 
+    DbU::Unit  oneGrid = DbU::fromGrid( 1.0 );
     for ( size_t i=0 ; i<points.size() ; ++i ) {
       size_t j = (i+1) % points.size();
 
@@ -68,6 +71,23 @@ namespace Hurricane {
       if ( (dx != 0) and (dy != 0) and (dx != dy) )
          throw Error( "Rectilinear::create(): Can't create, non H/V edge (points %d:%s - %d:%s)."
                     , i, getString(points[i]).c_str(), j, getString(points[j]).c_str() );
+
+      if (points[i].getX() % oneGrid)
+        cerr << Warning( "Rectilinear::create(): In Cell \"%s\", Net \"%s\",\n"
+                         "          Point [%d] = %s, X is off foundry grid (%s)"
+                       , getString(net->getCell()->getName()).c_str()
+                       , getString(net->getName()).c_str()
+                       , i
+                       , getString(points[i]).c_str()
+                       , DbU::getValueString(oneGrid).c_str() ) << endl;
+      if (points[i].getY() % oneGrid)
+        cerr << Warning( "Rectilinear::create(): In Cell \"%s\", Net \"%s\",\n"
+                         "          Point [%d] = %s, Y is off foundry grid (%s)"
+                       , getString(net->getCell()->getName()).c_str()
+                       , getString(net->getName()).c_str()
+                       , i
+                       , getString(points[i]).c_str()
+                       , DbU::getValueString(oneGrid).c_str() ) << endl;
     }
 
     Rectilinear* rectilinear = new Rectilinear ( net, layer, points );
