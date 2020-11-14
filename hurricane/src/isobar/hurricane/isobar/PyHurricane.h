@@ -282,35 +282,33 @@ extern "C" {
   }
 
 
-# define  predicateFromLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                          \
-  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
-  {                                                                                     \
+# define  predicateFromLayer(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                            \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )      \
+  {                                                                                       \
     cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                        \
-                                                                                        \
-    HTRY                                                                                \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
-                                                                                        \
-    PyObject* arg0   = NULL;                                                            \
-    bool      rvalue = false;                                                           \
-                                                                                        \
-    __cs.init (#SELF_TYPE"."#FUNC_NAME"()");                                            \
-    if (PyArg_ParseTuple( args, "O&:"#SELF_TYPE"."#FUNC_NAME"()", Converter, &arg0)) {  \
-      if ( __cs.getObjectIds() == ":layer" )                                            \
-        rvalue = cobject->FUNC_NAME( PYLAYER_O(arg0) );                                 \
-      else {                                                                            \
-        PyErr_SetString ( ConstructorError                                              \
-                        , "invalid parameter type for "#SELF_TYPE"."#FUNC_NAME"()." );  \
-        return NULL;                                                                    \
-      }                                                                                 \
-    } else {                                                                            \
-      PyErr_SetString ( ConstructorError                                                \
-                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." ); \
-      return NULL;                                                                      \
-    }                                                                                   \
-    if (rvalue) Py_RETURN_TRUE;                                                         \
-    HCATCH                                                                              \
-                                                                                        \
-    Py_RETURN_FALSE;                                                                    \
+                                                                                          \
+    HTRY                                                                                  \
+      GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
+      PyObject* arg0   = NULL;                                                            \
+      bool      rvalue = false;                                                           \
+      __cs.init (#SELF_TYPE"."#FUNC_NAME"()");                                            \
+      if (PyArg_ParseTuple( args, "O&:"#SELF_TYPE"."#FUNC_NAME"()", Converter, &arg0)) {  \
+        if (__cs.getObjectIds() == ":layer")                                              \
+          rvalue = cobject->FUNC_NAME( PYLAYER_O(arg0) );                                 \
+        else {                                                                            \
+          PyErr_SetString ( ConstructorError                                              \
+                          , #SELF_TYPE"."#FUNC_NAME"(): The sole parameter is not a Layer." );  \
+          return NULL;                                                                    \
+        }                                                                                 \
+      } else {                                                                            \
+        PyErr_SetString ( ConstructorError                                                \
+                        , #SELF_TYPE"."#FUNC_NAME"(): Takes only *one* Layer parameter. " ); \
+        return NULL;                                                                      \
+      }                                                                                   \
+      if (rvalue) Py_RETURN_TRUE;                                                         \
+    HCATCH                                                                                \
+                                                                                          \
+    Py_RETURN_FALSE;                                                                      \
   }
 
 

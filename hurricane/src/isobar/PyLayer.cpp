@@ -133,29 +133,70 @@ extern "C" {
   static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
   {                                                                                     \
     cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                      \
-                                                                                        \
     Layer* rlayer = NULL;                                                               \
                                                                                         \
     HTRY                                                                                \
-    GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                  \
+      GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                \
+      PyObject* arg0        = NULL;                                                     \
+      bool      useSymbolic = true;                                                     \
                                                                                         \
-    PyObject* arg0        = NULL;                                                       \
-    bool      useSymbolic = true;                                                       \
-                                                                                        \
-    if (PyArg_ParseTuple( args, "|O:"#SELF_TYPE"."#FUNC_NAME"()", &arg0)) {             \
-      if (arg0 != NULL) {                                                               \
-        useSymbolic = PyObject_IsTrue(arg0);                                            \
+      if (PyArg_ParseTuple( args, "|O:"#SELF_TYPE"."#FUNC_NAME"()", &arg0)) {           \
+        if (arg0) useSymbolic = PyObject_IsTrue(arg0);                                  \
+      } else {                                                                          \
+        PyErr_SetString( ConstructorError                                               \
+                       , #SELF_TYPE"."#FUNC_NAME"(): Takes exactly one boolean parameter." );  \
+        return NULL;                                                                    \
       }                                                                                 \
-    } else {                                                                            \
-      PyErr_SetString ( ConstructorError                                                \
-                      , "Invalid number of parameters passed to "#SELF_TYPE"."#FUNC_NAME"()." );  \
-      return NULL;                                                                      \
-    }                                                                                   \
-    rlayer = const_cast<SELF_TYPE*>(cobject->FUNC_NAME(useSymbolic));                   \
+      rlayer = const_cast<SELF_TYPE*>( cobject->FUNC_NAME(useSymbolic) );               \
     HCATCH                                                                              \
                                                                                         \
-    if (rlayer == NULL) Py_RETURN_NONE;                                                 \
+    if (not rlayer) Py_RETURN_NONE;                                                     \
     return PyLayer_LinkDerived(rlayer);                                                 \
+  }
+
+
+# define  accessorLayerFromUInt(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                       \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
+  {                                                                                     \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                      \
+    Layer* rlayer = NULL;                                                               \
+                                                                                        \
+    HTRY                                                                                \
+      GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                \
+      unsigned int  flags = 0;                                                          \
+                                                                                        \
+      if (not PyArg_ParseTuple( args, "I:"#SELF_TYPE"."#FUNC_NAME"()", &flags)) {       \
+        PyErr_SetString( ConstructorError                                               \
+                       , #SELF_TYPE"."#FUNC_NAME"(): Takes exactly one integer parameter." );  \
+        return NULL;                                                                    \
+      }                                                                                 \
+      rlayer = const_cast<SELF_TYPE*>( cobject->FUNC_NAME(uint32_t(flags)) );           \
+    HCATCH                                                                              \
+                                                                                        \
+    if (not rlayer) Py_RETURN_NONE;                                                     \
+    return PyLayer_LinkDerived(rlayer);                                                 \
+  }
+
+
+# define  accessorDbuFromUInt(FUNC_NAME,PY_SELF_TYPE,SELF_TYPE)                         \
+  static PyObject* PY_SELF_TYPE##_##FUNC_NAME ( PY_SELF_TYPE* self, PyObject* args )    \
+  {                                                                                     \
+    cdebug_log(20,0) << #PY_SELF_TYPE "_" #FUNC_NAME "()" << endl;                      \
+    DbU::Unit u = 0;                                                                    \
+                                                                                        \
+    HTRY                                                                                \
+      GENERIC_METHOD_HEAD(SELF_TYPE,cobject,#SELF_TYPE"."#FUNC_NAME"()")                \
+      unsigned int  flags = 0;                                                          \
+                                                                                        \
+      if (not PyArg_ParseTuple( args, "I:"#SELF_TYPE"."#FUNC_NAME"()", &flags)) {       \
+        PyErr_SetString( ConstructorError                                               \
+                       , #SELF_TYPE"."#FUNC_NAME"(): Takes exactly one integer parameter." );  \
+        return NULL;                                                                    \
+      }                                                                                 \
+      u = cobject->FUNC_NAME( uint32_t(flags) );                                        \
+    HCATCH                                                                              \
+                                                                                        \
+    return PyDbU_FromLong(u);                                                           \
   }
 
 
@@ -309,28 +350,30 @@ extern "C" {
 
 
   GetNameMethod               (Layer, layer)
-  predicateFromLayer          (                          above            ,PyLayer,Layer)
-  predicateFromLayer          (                          below            ,PyLayer,Layer)
-  predicateFromLayer          (                          contains         ,PyLayer,Layer)
-  predicateFromLayer          (                          intersect        ,PyLayer,Layer)
-  predicateFromVoid           (                          isSymbolic       ,PyLayer,Layer)
-  predicateFromVoid           (                          isBlockage       ,PyLayer,Layer)
-  accessorDbuFromOptBasicLayer(                          getExtentionCap  ,PyLayer,Layer)
-  accessorDbuFromOptBasicLayer(                          getExtentionWidth,PyLayer,Layer)
-  accessorCollectionFromVoid  (                          getBasicLayers   ,PyLayer,Layer,BasicLayer)
-  accessorMaskFromVoid        (                          getMask          ,PyLayer,Layer)
-  accessorMaskFromVoid        (                          getExtractMask   ,PyLayer,Layer)
-  accessorLayerFromVoid       (                          getBlockageLayer ,PyLayer,Layer)
-  accessorLayerFromVoid       (                          getCut           ,PyLayer,Layer)
-  accessorLayerFromVoid       (                          getTop           ,PyLayer,Layer)
-  accessorLayerFromVoid       (                          getBottom        ,PyLayer,Layer)
-  accessorLayerFromLayer      (                          getOpposite      ,PyLayer,Layer)
-  accessorLayerFromOptBool    (                          getMetalAbove    ,PyLayer,Layer)
-  accessorLayerFromOptBool    (                          getMetalBelow    ,PyLayer,Layer)
-  accessorLayerFromOptBool    (                          getCutAbove      ,PyLayer,Layer)
-  accessorLayerFromOptBool    (                          getCutBelow      ,PyLayer,Layer)
-  DirectGetLongAttribute      (PyLayer_getMinimalSize   ,getMinimalSize   ,PyLayer,Layer)
-  DirectGetLongAttribute      (PyLayer_getMinimalSpacing,getMinimalSpacing,PyLayer,Layer)
+  predicateFromLayer          (                          above             ,PyLayer,Layer)
+  predicateFromLayer          (                          below             ,PyLayer,Layer)
+  predicateFromLayer          (                          contains          ,PyLayer,Layer)
+  predicateFromLayer          (                          intersect         ,PyLayer,Layer)
+  predicateFromVoid           (                          isSymbolic        ,PyLayer,Layer)
+  predicateFromVoid           (                          isBlockage        ,PyLayer,Layer)
+  accessorDbuFromOptBasicLayer(                          getExtentionCap   ,PyLayer,Layer)
+  accessorDbuFromOptBasicLayer(                          getExtentionWidth ,PyLayer,Layer)
+  accessorCollectionFromVoid  (                          getBasicLayers    ,PyLayer,Layer,BasicLayer)
+  accessorMaskFromVoid        (                          getMask           ,PyLayer,Layer)
+  accessorMaskFromVoid        (                          getExtractMask    ,PyLayer,Layer)
+  accessorLayerFromVoid       (                          getBlockageLayer  ,PyLayer,Layer)
+  accessorLayerFromVoid       (                          getCut            ,PyLayer,Layer)
+  accessorLayerFromVoid       (                          getTop            ,PyLayer,Layer)
+  accessorLayerFromVoid       (                          getBottom         ,PyLayer,Layer)
+  accessorLayerFromLayer      (                          getOpposite       ,PyLayer,Layer)
+  accessorLayerFromOptBool    (                          getMetalAbove     ,PyLayer,Layer)
+  accessorLayerFromOptBool    (                          getMetalBelow     ,PyLayer,Layer)
+  accessorLayerFromOptBool    (                          getCutAbove       ,PyLayer,Layer)
+  accessorLayerFromOptBool    (                          getCutBelow       ,PyLayer,Layer)
+  accessorDbuFromUInt         (                          getTopEnclosure   ,PyLayer,Layer)
+  accessorDbuFromUInt         (                          getBottomEnclosure,PyLayer,Layer)
+  DirectGetLongAttribute      (PyLayer_getMinimalSize   ,getMinimalSize    ,PyLayer,Layer)
+  DirectGetLongAttribute      (PyLayer_getMinimalSpacing,getMinimalSpacing ,PyLayer,Layer)
 
   SetNameMethod(Layer, layer)
   updatorFromDbu          (setMinimalSize   ,PyLayer,Layer)
@@ -379,6 +422,10 @@ extern "C" {
                               , "Returns the cut layer below this one." }
     , { "getEnclosure"        , (PyCFunction)PyLayer_getEnclosure        , METH_VARARGS
                               , "Returns the enclosure (global or for one BasicLayer)." }
+    , { "getTopEnclosure"     , (PyCFunction)PyLayer_getTopEnclosure     , METH_VARARGS
+                              , "Returns the top layer enclosure." }
+    , { "getBottomEnclosure"  , (PyCFunction)PyLayer_getBottomEnclosure  , METH_VARARGS
+                              , "Returns the bottom layer enclosure." }
     , { "getExtentionCap"     , (PyCFunction)PyLayer_getExtentionCap     , METH_VARARGS
                               , "Returns the extention cap (global or for one BasicLayer)." }
     , { "getExtentionWidth"   , (PyCFunction)PyLayer_getExtentionWidth   , METH_VARARGS

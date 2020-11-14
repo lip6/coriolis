@@ -707,6 +707,7 @@ extern "C" {
     __cs.addType( "inst"       , &PyTypeInstance              , "<Instance>"              , false, "ent" );
     __cs.addType( "instCol"    , &PyTypeInstanceCollection    , "<InstanceCollection>"    , false );
     __cs.addType( "mat"        , &PyTypeMaterial              , "<Material>"              , false );
+    __cs.addType( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
     __cs.addType( "basicLayer" , &PyTypeBasicLayer            , "<BasicLayer>"            , false, "layer" );
     __cs.addType( "regLayer"   , &PyTypeRegularLayer          , "<RegularLayer>"          , false, "layer" );
     __cs.addType( "contLayer"  , &PyTypeContactLayer          , "<ContactLayer>"          , false, "layer" );
@@ -717,7 +718,6 @@ extern "C" {
     __cs.addType( "blayerColl" , &PyTypeBasicLayerCollection  , "<BasicLayerCollection>"  , false );
     __cs.addType( "rlayerColl" , &PyTypeRegularLayerCollection, "<RegularLayerCollection>", false );
     __cs.addType( "vlayerColl" , &PyTypeViaLayerCollection    , "<ViaLayerCollection>"    , false );
-    __cs.addType( "layer"      , &PyTypeLayer                 , "<Layer>"                 , false );
     __cs.addType( "lmask"      , &PyTypeLayerMask             , "<Layer::Mask>"           , false );
     __cs.addType( "library"    , &PyTypeLibrary               , "<Library>"               , false );
     __cs.addType( "ref"        , &PyTypeReference             , "<Reference>"             , false, "ent" );
