@@ -337,7 +337,7 @@ namespace Hurricane {
     string s = os.str();
     if (_stringMode == Symbolic) {
       size_t dot = s.rfind( '.' );
-      if (dot != string::npos) s.erase( dot + 1 );
+      if (dot != string::npos) s.erase( dot + 2 );
     } else if (mode & SmartTruncate) {
       size_t dot = s.rfind( '.' );
       if (dot != string::npos) {
