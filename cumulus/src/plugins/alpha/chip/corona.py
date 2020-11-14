@@ -38,6 +38,7 @@ from   helpers.overlay import UpdateSession
 import plugins      
 from   plugins         import StackedVia
 import plugins.alpha.chip
+from   plugins.alpha.block.bigvia import BigVia
 
 
 plugins.alpha.chip.importConstants( globals() )
@@ -94,6 +95,9 @@ class Rail ( object ):
     @property
     def net ( self ): return self.side.getRailNet(self.order)
 
+    @property
+    def conf ( self ): return self.side.corona.conf
+
 
 # --------------------------------------------------------------------
 # Class  :  "corona.HorizontalRail"
@@ -137,14 +141,19 @@ class HorizontalRail ( Rail ):
                     trace( 550, ',-', '\tFailed: overlap with existing contact @{}.\n' \
                                       .format(self.vias[keys[insertIndex-1]][2]) )
                     return False
+        viaWidth  = contact.getWidth()
+        viaHeight = self.side.hRailWidth
+        if self.conf.routingGauge.isSymbolic():
+            viaWidth  -= DbU.fromLambda( 1.0 )
+            viaHeight -= DbU.fromLambda( 1.0 )
         self.vias[ contact.getX() ] = [ contact.getX()
-                                      , StackedVia( self.net
-                                                  , self.side.getLayerDepth(self.side.getHLayer())
-                                                  , contact.getX()
-                                                  , self.axis
-                                                  , contact.getWidth()   - DbU.fromLambda(1.0)
-                                                  , self.side.hRailWidth - DbU.fromLambda(1.0)
-                                                  )
+                                      , BigVia( self.net
+                                              , self.side.getLayerDepth(self.side.getHLayer())
+                                              , contact.getX()
+                                              , self.axis
+                                              , viaWidth
+                                              , viaHeight
+                                              )
                                       , contact ]
         trace( 550, '\tADD "{}" contact "{}" @ [{} {}]\n' \
                .format( contact.getNet().getName()
@@ -164,13 +173,13 @@ class HorizontalRail ( Rail ):
             if via[1].getNet() != via[2].getNet(): continue
             via[1].mergeDepth( self.side.getLayerDepth(self.side.getVLayer()) )
             via[1].doLayout()
-            Vertical.create( via[1].getVia( via[2].getLayer() )
+            Vertical.create( via[1].getPlate( via[2].getLayer() )
                            , via[2]
                            , via[2].getLayer()
                            , via[2].getX()
                            , via[2].getWidth()
                            )
-            railVias.append( via[1].getVia( self.side.getVLayer()) )
+            railVias.append( via[1].getPlate( self.side.getVLayer()) )
         for i in range(1,len(railVias)):
             h = Horizontal.create( railVias[i-1]
                                  , railVias[i]
@@ -202,13 +211,13 @@ class VerticalRail ( Rail ):
         for via in self.vias.values():
             if via[1].getNet() != via[2].getNet(): continue
             via[1].doLayout()
-            Horizontal.create( via[1].getVia( via[2].getLayer() )
+            Horizontal.create( via[1].getPlate( via[2].getLayer() )
                              , via[2]
                              , via[2].getLayer()
                              , via[2].getY()
                              , via[2].getHeight()
                              )
-            railVias.append( via[1].getVia(self.side.getVLayer()) )
+            railVias.append( via[1].getPlate(self.side.getVLayer()) )
         railVias.sort( key=methodcaller('getY') )
         for i in range(1,len(railVias)):
             Vertical.create( railVias[i-1]
@@ -253,14 +262,19 @@ class VerticalRail ( Rail ):
                 if self.vias[keys[insertIndex-1]][2].getBoundingBox().getYMax() >= contactBb.getYMin():
                     trace( 550, ',--', '\tReject {} intersect PREVIOUS\n'.format(contact) )
                     return False
+        viaWidth  = self.side.vRailWidth
+        viaHeight = contact.getHeight()
+        if self.conf.routingGauge.isSymbolic():
+            viaWidth  -= DbU.fromLambda( 1.0 )
+            viaHeight -= DbU.fromLambda( 1.0 )
         self.vias[ contact.getY() ] = [ contact.getY()
-                                      , StackedVia( self.net
-                                                  , self.side.getLayerDepth(self.side.getVLayer())
-                                                  , self.axis
-                                                  , contact.getY()
-                                                  , self.side.vRailWidth - DbU.fromLambda(1.0)
-                                                  , contact.getHeight()  - DbU.fromLambda(1.0)
-                                                  )
+                                      , BigVia( self.net
+                                              , self.side.getLayerDepth(self.side.getVLayer())
+                                              , self.axis
+                                              , contact.getY()
+                                              , self.side.vRailWidth - DbU.fromLambda(1.0)
+                                              , contact.getHeight()  - DbU.fromLambda(1.0)
+                                              )
                                       , contact ]
         trace(550, ',--' '\tADD {}\n'.format(contact) )
         self.vias[ contact.getY() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
@@ -449,7 +463,7 @@ class VerticalSide ( Side ):
         for rail in self.rails:
             for via in rail.vias.values():
                 if via[1].getNet() != via[2].getNet(): continue
-                spans.merge( via[1]._y - via[1]._height/2, via[1]._y + via[1]._height/2 )
+                spans.merge( via[1].y - via[1].height/2, via[1].y + via[1].height/2 )
         routingGauge = self.corona.routingGauge
         print( self.getOuterRail(0) )
         print( self.getOuterRail(0).vias.values() )

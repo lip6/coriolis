@@ -17,32 +17,15 @@ from   __future__ import print_function
 import sys
 import os.path
 import Cfg
-from   Hurricane import Breakpoint
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Transformation
-from   Hurricane import Point
-from   Hurricane import Box
-from   Hurricane import Path
-from   Hurricane import Layer
-from   Hurricane import Occurrence
-from   Hurricane import Net
-from   Hurricane import NetExternalComponents
-from   Hurricane import RoutingPad
-from   Hurricane import Pad
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Contact
-from   Hurricane import Pin
-from   Hurricane import Plug
-from   Hurricane import Instance
+from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
+                        Box, Path, Layer, Occurrence, Net,           \
+                        NetExternalComponents, RoutingPad, Pad,      \
+                        Horizontal, Vertical, Contact, Pin, Plug,    \
+                        Instance
 import CRL
 from   CRL             import RoutingLayerGauge
-from   helpers         import trace
-from   helpers         import dots
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
-from   helpers.io      import catch
+from   helpers         import trace, dots
+from   helpers.io      import ErrorMessage, WarningMessage, catch
 from   helpers.overlay import UpdateSession
 import Etesian
 import Anabatic
@@ -55,9 +38,7 @@ from   alpha.block.clocktree     import ClockTree
 #from   alpha.block.hfns1         import BufferTree
 #from   alpha.block.hfns2         import BufferTree
 from   alpha.block.hfns3         import BufferTree
-from   alpha.block.configuration import IoPin
-from   alpha.block.configuration import BlockConf
-from   alpha.block.configuration import GaugeConf
+from   alpha.block.configuration import IoPin, BlockConf, GaugeConf
 
 timing.staticInit()
 

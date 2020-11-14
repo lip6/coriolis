@@ -48,6 +48,7 @@
               set ( pyPluginAlphaBlock ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/configuration.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/bigvia.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/spares.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/block.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/clocktree.py
