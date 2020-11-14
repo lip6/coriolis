@@ -55,6 +55,10 @@ namespace {
 
   bool hasLayout ( const Cell* cell )
   {
+    for ( Instance* instance : cell->getInstances() ) {
+      if (instance->getPlacementStatus() != Instance::PlacementStatus::UNPLACED)
+        return true;
+    }
     for ( Net* net : cell->getNets() ) {
       for ( Component* component : net->getComponents() ) {
         if (dynamic_cast<Plug*>(component) == NULL) return true;
@@ -667,7 +671,9 @@ namespace CRL {
     GdsStream gstream ( cellFile );
 
     DepthOrder cellOrder ( cell );
-    for ( auto element : cellOrder.getCellDepths() ) gstream << element.first;
+    for ( auto element : cellOrder.getCellDepths() ) {
+      gstream << element.first;
+    }
 
     return true;
   }
