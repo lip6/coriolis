@@ -88,6 +88,7 @@ namespace Hurricane {
       virtual DbU::Unit         getExtentionWidth            ( const BasicLayer* layer ) const;
       virtual DbU::Unit         getTopEnclosure              ( uint32_t flags ) const;
       virtual DbU::Unit         getBottomEnclosure           ( uint32_t flags ) const;
+      virtual double            getMinimalArea               () const;
     // Predicates
       inline  bool              above                        ( const Layer* layer ) const;
       inline  bool              below                        ( const Layer* layer ) const;
@@ -104,6 +105,7 @@ namespace Hurricane {
       virtual void              setEnclosure                 ( const BasicLayer* layer, DbU::Unit, uint32_t flags );
       virtual void              setExtentionCap              ( const BasicLayer* layer, DbU::Unit );
       virtual void              setExtentionWidth            ( const BasicLayer* layer, DbU::Unit );
+      virtual void              setMinimalArea               ( double );
     // Hurricane Managment.
       virtual void              _toJson                      ( JsonWriter* ) const;
       virtual string            _getString                   () const;
@@ -126,6 +128,7 @@ namespace Hurricane {
               Layer*            _nextOfTechnologyLayerMap;
               bool              _symbolic;
               bool              _blockage;
+              double            _minimalArea;
 
     protected:
     // Internal: Constructors & Destructors.

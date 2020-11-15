@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include <cmath>
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
@@ -2000,7 +2001,7 @@ namespace Anabatic {
 
   bool  AutoSegment::reduceDoglegLayer ()
   {
-    if (not isReduced()) return true;
+    if (not isReduced()) return false;
 
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(159,1) << "AutoSegment::reduceDoglegLayer(): " << this << endl;
@@ -2082,6 +2083,23 @@ namespace Anabatic {
     // target->setSizes( side, side );
 
     // return true;
+  }
+
+
+  bool  AutoSegment::bloatStackedStrap ()
+  {
+    if (getLength() or isReduced()) return false;
+    if (   ((_flags & (SegSourceBottom|SegTargetTop)) != (SegSourceBottom|SegTargetTop))
+       and ((_flags & (SegTargetBottom|SegSourceTop)) != (SegTargetBottom|SegSourceTop)) ) return false;
+
+    double minArea = getLayer()->getMinimalArea();
+    if (minArea == 0.0) return false;
+
+    DbU::Unit side = DbU::fromPhysical( std::sqrt(minArea) , DbU::UnitPower::Micro );
+    setWidth( side );
+    setDuSource( -side/2 );
+    setDuTarget(  side/2 );
+    return true;
   }
 
 

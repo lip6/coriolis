@@ -408,17 +408,20 @@ namespace Anabatic {
 
       size_t fixedSegments    = 0;
       size_t sameLayerDoglegs = 0;
+      size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
+        if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;
-      cmess1 << Dots::asSizet("     - Active AutoSegments",AutoSegment::getAllocateds()-fixedSegments) << endl;
-      cmess1 << Dots::asSizet("     - Active AutoContacts",AutoContact::getAllocateds()-fixedSegments*2) << endl;
-      cmess1 << Dots::asSizet("     - AutoSegments"       ,AutoSegment::getAllocateds()) << endl;
-      cmess1 << Dots::asSizet("     - AutoContacts"       ,AutoContact::getAllocateds()) << endl;
-      cmess1 << Dots::asSizet("     - Same Layer doglegs" ,sameLayerDoglegs) << endl;
+      cmess1 << Dots::asSizet("     - Active AutoSegments"       ,AutoSegment::getAllocateds()-fixedSegments) << endl;
+      cmess1 << Dots::asSizet("     - Active AutoContacts"       ,AutoContact::getAllocateds()-fixedSegments*2) << endl;
+      cmess1 << Dots::asSizet("     - AutoSegments"              ,AutoSegment::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - AutoContacts"              ,AutoContact::getAllocateds()) << endl;
+      cmess1 << Dots::asSizet("     - Same Layer doglegs"        ,sameLayerDoglegs) << endl;
+      cmess1 << Dots::asSizet("     - Bloated straps (< minArea)",bloatedStraps   ) << endl;
 
     //for ( Net* net : _cell->getNets() ) _saveNet( net );
 

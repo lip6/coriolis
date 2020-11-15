@@ -205,6 +205,7 @@ namespace Anabatic {
       inline         bool                isSourceTerminal           () const;
       inline         bool                isTargetTerminal           () const;
       inline         bool                isLayerChange              () const;
+      inline         bool                isStackedStrap             () const;
       inline         bool                isSpinTop                  () const;
       inline         bool                isSpinBottom               () const;
       inline         bool                isSpinTopOrBottom          () const;
@@ -325,6 +326,7 @@ namespace Anabatic {
                      bool                moveUp                     ( Flags flags=Flags::NoFlags );
                      bool                moveDown                   ( Flags flags=Flags::NoFlags );
                      bool                reduceDoglegLayer          ();
+                     bool                bloatStackedStrap          ();
                      bool                reduce                     ();
                      bool                raise                      ();
     // Canonical Modifiers.                                            
@@ -559,7 +561,6 @@ namespace Anabatic {
 //inline  void            AutoSegment::mergeUserConstraints   ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = Interval(false); }
 
-
   inline  void  AutoSegment::setLayer ( size_t depth )
   {
     RoutingLayerGauge* layerGauge = Session::getLayerGauge( depth );
@@ -569,7 +570,6 @@ namespace Anabatic {
     _depth = depth;
     _flags|=SegInvalidatedLayer;
   }
-
 
   inline  DbU::Unit  AutoSegment::getContactWidth () const
   { return getWidth() + Session::getViaWidth(getLayer()) - Session::getWireWidth(getLayer()); }

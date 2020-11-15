@@ -58,6 +58,7 @@ namespace Hurricane {
                  , _nextOfTechnologyLayerMap(NULL)
                  , _symbolic(false)
                  , _blockage(false)
+                 , _minimalArea(0.0)
   {
     if ( !_technology )
       throw Error ( "Can't create " + _TName("Layer") + " : null technology" );
@@ -138,6 +139,10 @@ namespace Hurricane {
   { return 0; }
 
 
+  double  Layer::getMinimalArea () const
+  { return _minimalArea; }
+
+
   bool Layer::contains ( const Layer* layer ) const
   {
     return ( layer && ((_mask & layer->getMask()) == layer->getMask()) );
@@ -182,6 +187,10 @@ namespace Hurricane {
                      , getString(getName()).c_str()) << endl;
     _minimalSpacing = minimalSpacing;
   }
+
+
+  void Layer::setMinimalArea ( double area )
+  { _minimalArea = area; }
 
 
   void  Layer::setEnclosure ( const BasicLayer*, DbU::Unit, uint32_t )

@@ -374,14 +374,16 @@ extern "C" {
   accessorDbuFromUInt         (                          getBottomEnclosure,PyLayer,Layer)
   DirectGetLongAttribute      (PyLayer_getMinimalSize   ,getMinimalSize    ,PyLayer,Layer)
   DirectGetLongAttribute      (PyLayer_getMinimalSpacing,getMinimalSpacing ,PyLayer,Layer)
+  DirectGetDoubleAttribute    (PyLayer_getMinimalArea   ,getMinimalArea    ,PyLayer,Layer)
 
   SetNameMethod(Layer, layer)
   updatorFromDbu          (setMinimalSize   ,PyLayer,Layer)
   updatorFromDbu          (setMinimalSpacing,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionCap  ,PyLayer,Layer)
   updatorFromBasicLayerDbu(setExtentionWidth,PyLayer,Layer)
-  DirectSetBoolAttribute  (PyLayer_setSymbolic,setSymbolic,PyLayer,Layer)
-  DirectSetBoolAttribute  (PyLayer_setBlockage,setBlockage,PyLayer,Layer)
+  DirectSetBoolAttribute  (PyLayer_setSymbolic   ,setSymbolic   ,PyLayer,Layer)
+  DirectSetBoolAttribute  (PyLayer_setBlockage   ,setBlockage   ,PyLayer,Layer)
+  DirectSetDoubleAttribute(PyLayer_setMinimalArea,setMinimalArea,PyLayer,Layer)
 
   // Standart destroy (Attribute).
   DBoDestroyAttribute(PyLayer_destroy, PyLayer)
@@ -398,6 +400,8 @@ extern "C" {
                               , "Returns the extract mask of the layer (for GDSII)." }
     , { "getMinimalSize"      , (PyCFunction)PyLayer_getMinimalSize      , METH_NOARGS
                               , "Returns the minimum width allowed for the layer." }
+    , { "getMinimalArea"      , (PyCFunction)PyLayer_getMinimalArea      , METH_NOARGS
+                              , "Returns the minimum area allowed for the layer." }
     , { "getMinimalSpacing"   , (PyCFunction)PyLayer_getMinimalSpacing   , METH_NOARGS
                               , "Returns the spacing allowed for the layer (edge to edge)." }
     , { "getBasicLayers"      , (PyCFunction)PyLayer_getBasicLayers      , METH_NOARGS
@@ -458,6 +462,8 @@ extern "C" {
                               , "Sets the extention cap for the given BasiLayer sub-component." }
     , { "setExtentionWidth"   , (PyCFunction)PyLayer_setExtentionWidth   , METH_VARARGS
                               , "Sets the extention width for the given BasiLayer sub-component." }
+    , { "setMinimalArea"      , (PyCFunction)PyLayer_setMinimalArea      , METH_VARARGS
+                              , "Sets the minimum area allowed for the layer." }
     , { "destroy"             , (PyCFunction)PyLayer_destroy             , METH_NOARGS
                               , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
