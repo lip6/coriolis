@@ -17,7 +17,6 @@ from   __future__   import print_function
 import sys
 import re
 from   operator     import itemgetter  
-import Cfg          
 from   Hurricane    import DbU, Point, Transformation, Interval, Box,  \
                            Path, Occurrence, UpdateSession, Layer,     \
                            BasicLayer, Net, Pin, Contact, Segment,     \
@@ -140,7 +139,7 @@ class Corner ( object ):
             else:
                 orientation  = Transformation.Orientation.ID
                 y           -= self.padCorner.getAbutmentBox().getHeight()
-        return name, Transformation( self.corona.toGrid(x), self.corona.toGrid(y), orientation ) 
+        return name, Transformation( x, y, orientation ) 
 
     def _instanciateCorner ( self ):
         name, transformation = self._getTransformation()
@@ -293,6 +292,7 @@ class Side ( object ):
             else:
                 orientation = Transformation.Orientation.ID
                 y          -= self.conf.ioPadHeight
+            x = self.toGrid( x )
         elif self.type == South:
             x = self.conf.chipAb.getXMin() + self.u
             y = self.conf.chipAb.getYMin()
@@ -301,6 +301,7 @@ class Side ( object ):
             else:
                 orientation = Transformation.Orientation.MY
                 y          += self.conf.ioPadHeight
+            x = self.toGrid( x )
         elif self.type == West:
             x = self.conf.chipAb.getXMin()
             y = self.conf.chipAb.getYMin() + self.u
@@ -310,6 +311,7 @@ class Side ( object ):
             else:
                 orientation = Transformation.Orientation.R1
                 x          += padInstance.getMasterCell().getAbutmentBox().getHeight()
+            y = self.toGrid( y )
         elif self.type == East:
             x = self.conf.chipAb.getXMax()
             y = self.conf.chipAb.getYMin() + self.u
@@ -319,7 +321,8 @@ class Side ( object ):
                 orientation = Transformation.Orientation.R3
                 x          -= padInstance.getMasterCell().getAbutmentBox().getHeight()
                 y          += padInstance.getMasterCell().getAbutmentBox().getWidth()
-        padInstance.setTransformation ( Transformation( self.toGrid(x), self.toGrid(y), orientation ) )
+            y = self.toGrid( y )
+        padInstance.setTransformation ( Transformation( x, y, orientation ) )
         padInstance.setPlacementStatus( Instance.PlacementStatus.FIXED )
         self.u += padInstance.getMasterCell().getAbutmentBox().getWidth()
         p = None
@@ -408,7 +411,7 @@ class Side ( object ):
         startCorner += self.conf.ioPadHeight
         stopCorner  -= self.conf.ioPadHeight
         if len(self.pads) == 0:
-          return
+            return
         padAb = self.conf.getInstanceAb( self.pads[0][1] )
         for irail in range(len(self.corona.padRails)):
             self._createSegment( self.corona.padRails[ irail ]
@@ -812,15 +815,17 @@ class Corona ( object ):
             self.padOrient = Transformation.Orientation.MY
         trace( 550, '\tchip.padCoreSide: {}\n'.format(self.conf.cfg.chip.padCoreSide) )
         self._allPadsAnalysis()
-        if Cfg.hasParameter('chip.padSpacers'):
-            for spacerName in Cfg.getParamString('chip.padSpacers').asString().split(','):
+        self.conf.cfg.chip.padSpacers = None
+        self.conf.cfg.chip.padCorner  = None
+        if self.conf.cfg.chip.padSpacers is not None:
+            for spacerName in self.conf.cfg.chip.padSpacers.split(','):
                 spacerCell = self.padLib.getCell( spacerName )
                 if spacerCell: self.padSpacers.append( spacerCell )
                 else:
-                  raise ErrorMessage( 1, 'Corona.__init__(): Missing spacer cell "{}"'.format(spacerName) )
+                    raise ErrorMessage( 1, 'Corona.__init__(): Missing spacer cell "{}"'.format(spacerName) )
                 self.padSpacers.sort( _cmpPad )
-        if Cfg.hasParameter('chip.padCorner'):
-            self.padCorner = self.padLib.getCell( Cfg.getParamString('chip.padCorner').asString() )
+        if self.conf.cfg.chip.padCorner is not None:
+            self.padCorner = self.padLib.getCell( self.conf.cfg.chip.padCorner )
   
     def toGrid ( self, u ): return u - (u % self.conf.ioPadPitch)
   
