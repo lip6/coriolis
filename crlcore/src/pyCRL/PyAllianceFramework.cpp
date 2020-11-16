@@ -285,7 +285,7 @@ extern "C" {
     }
 
     if      (__cs.getObjectIds() == ":string:int"       ) { }
-    else if (__cs.getObjectIds() == ":strint:int:string") libName = PyString_AsString(arg2);
+    else if (__cs.getObjectIds() == ":string:int:string") libName = PyString_AsString(arg2);
     else {
       PyErr_SetString( ConstructorError, "Bad parameter type for AllianceFramework.createLibrary()." );
       return NULL;
