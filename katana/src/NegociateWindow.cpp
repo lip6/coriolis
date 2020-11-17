@@ -358,6 +358,7 @@ namespace Katana {
                        , getString(autoSegment).c_str()
                        , getString(blockageSpan).c_str() ) << endl;
         cdebug_tabw(159,-1);
+        DebugSession::close();
         return NULL;
       }
     }
@@ -378,6 +379,7 @@ namespace Katana {
         _segments.push_back( trackSegment );
         cdebug_log(159,0) << "Non-preferred direction, do not attempt to set on track." << endl;
         cdebug_tabw(159,-1);
+        DebugSession::close();
         return trackSegment;
       }
 
