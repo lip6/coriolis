@@ -318,17 +318,17 @@ namespace Katana {
 
   // Looking for reduced/raised segments.
     for ( size_t i=0 ; i<revalidateds.size() ; ++i ) {
-      if (revalidateds[i]->canReduce()) {
-        revalidateds[i]->reduce();
-        TrackElement* trackSegment = lookup( revalidateds[i] );
-        if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
-        cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
-      }
       if (revalidateds[i]->mustRaise()) {
         cdebug_log(159,0) << "Session: raise:" << revalidateds[i] << endl;
         revalidateds[i]->raise();
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment) trackSegment->reschedule( 0 );
+      }
+      if (revalidateds[i]->canReduce()) {
+        revalidateds[i]->reduce();
+        TrackElement* trackSegment = lookup( revalidateds[i] );
+        if (trackSegment and trackSegment->getTrack()) _addRemoveEvent( trackSegment );
+        cdebug_log(159,0) << "Session: reduce:" << revalidateds[i] << endl;
       }
     }
     

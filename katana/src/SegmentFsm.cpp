@@ -375,7 +375,8 @@ namespace Katana {
       cdebug_log(159,1) << "* Riping // " << _segment << endl;
     }
 
-    if (_segment->isFixed()) { DebugSession::close(); return true; }
+    if (_segment->isFixed  ()) { DebugSession::close(); return true; }
+  //if (_segment->isReduced()) { DebugSession::close(); return true; }
 
     DataNegociate* data = _segment->getDataNegociate();
     if (data == NULL) {

@@ -1589,7 +1589,9 @@ namespace Anabatic {
 
   bool  AutoSegment::reduce ()
   {
+    if (isReduced()) return false;
     if (not canReduce()) return false;
+    cdebug_log(159,0) << "AutoSegment::reduce():" << this << endl;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -1603,9 +1605,6 @@ namespace Anabatic {
       if (perpandicular == this) continue;
       perpandicular->incReduceds();
     }
-    
-    // if (not source->isTerminal()) source->getPerpandicular( this )->incReduceds();
-    // if (not target->isTerminal()) target->getPerpandicular( this )->incReduceds();
     
     return true;
   }
@@ -1627,19 +1626,20 @@ namespace Anabatic {
   bool  AutoSegment::raise ()
   {
     if (not (_flags & SegIsReduced)) return false;
+    cdebug_log(159,0) << "AutoSegment::raise():" << this << endl;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
 
     _flags &= ~SegIsReduced;
-  //if (not source->isTerminal()) source->getPerpandicular( this )->decReduceds();
-  //if (not target->isTerminal()) target->getPerpandicular( this )->decReduceds();
     for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
       if (perpandicular == this) continue;
+      cdebug_log(159,0) << "dec PP:" << perpandicular << endl;
       perpandicular->decReduceds();
     }
     for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
       if (perpandicular == this) continue;
+      cdebug_log(159,0) << "dec PP:" << perpandicular << endl;
       perpandicular->decReduceds();
     }
 
