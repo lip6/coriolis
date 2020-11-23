@@ -288,6 +288,10 @@ namespace Anabatic {
   { return getWireWidth( getLayerDepth(layer) ); }
 
 
+  DbU::Unit  Configuration::getPWireWidth ( const Layer* layer ) const
+  { return getPWireWidth( getLayerDepth(layer) ); }
+
+
   Flags  Configuration::getDirection ( const Layer* layer ) const
   { return getDirection( getLayerDepth(layer) ); }
 
@@ -338,6 +342,9 @@ namespace Anabatic {
   DbU::Unit  Configuration::getWireWidth ( size_t depth ) const
   { return _rg->getLayerWireWidth(depth); }
 
+
+  DbU::Unit  Configuration::getPWireWidth ( size_t depth ) const
+  { return _rg->getLayerPWireWidth(depth); } 
 
   DbU::Unit  Configuration::getExtensionCap ( size_t depth ) const
   { return _extensionCaps[depth]; }

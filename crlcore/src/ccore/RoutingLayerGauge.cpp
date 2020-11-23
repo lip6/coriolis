@@ -106,6 +106,7 @@ namespace CRL {
                                        , DbU::Unit                 offset
                                        , DbU::Unit                 pitch
                                        , DbU::Unit                 wireWidth
+                                       , DbU::Unit                 pwireWidth
                                        , DbU::Unit                 viaWidth
                                        , DbU::Unit                 obsDw )
       : _layer        (layer)
@@ -117,6 +118,7 @@ namespace CRL {
       , _offset       (offset)
       , _pitch        (pitch)
       , _wireWidth    (wireWidth)
+      , _pwireWidth   (pwireWidth)
       , _viaWidth     (viaWidth)
       , _obstacleDw   (obsDw)
   { }
@@ -130,6 +132,7 @@ namespace CRL {
                                                , DbU::Unit                 offset
                                                , DbU::Unit                 pitch
                                                , DbU::Unit                 wireWidth
+                                               , DbU::Unit                 pwireWidth
                                                , DbU::Unit                 viaWidth
                                                , DbU::Unit                 obsDw )
   {
@@ -149,6 +152,7 @@ namespace CRL {
                                                      , offset
                                                      , pitch
                                                      , wireWidth
+                                                     , pwireWidth
                                                      , viaWidth
                                                      , obsDw );
 
@@ -327,6 +331,7 @@ namespace CRL {
     jsonWrite( w, "_offset"       , _offset     );
     jsonWrite( w, "_pitch"        , _pitch      );
     jsonWrite( w, "_wireWidth"    , _wireWidth  );
+    jsonWrite( w, "_pwireWidth"   , _pwireWidth );
     jsonWrite( w, "_viaWidth"     , _viaWidth   );
     jsonWrite( w, "_obstacleDw"   , _obstacleDw );
     w->endObject();
@@ -381,8 +386,9 @@ namespace CRL {
     DbU::Unit          offset      = get<int64_t>      ( stack, "_offset"        );
     DbU::Unit          pitch       = get<int64_t>      ( stack, "_pitch"         );
     DbU::Unit          wireWidth   = get<int64_t>      ( stack, "_wireWidth"     );
+    DbU::Unit          pwireWidth  = get<int64_t>      ( stack, "_pwireWidth"    );
     DbU::Unit          viaWidth    = get<int64_t>      ( stack, "_viaWidth"      );
-    DbU::Unit          obstacleDw = get<int64_t>       ( stack, "_obstacleDw"    );
+    DbU::Unit          obstacleDw  = get<int64_t>      ( stack, "_obstacleDw"    );
 
     Constant::Direction       direction;
     Constant::LayerGaugeType  type;
@@ -400,6 +406,7 @@ namespace CRL {
                                          , offset
                                          , pitch
                                          , wireWidth
+                                         , pwireWidth
                                          , viaWidth
                                          , obstacleDw
                                          );

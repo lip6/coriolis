@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_ROUTING_PLANE_H
-#define  KATANA_ROUTING_PLANE_H
-
+#pragma  once
 #include "crlcore/RoutingLayerGauge.h"
 #include "katana/Track.h"
 
@@ -33,31 +31,32 @@ namespace Katana {
   class RoutingPlane {
 
     public:
-      static RoutingPlane*       create             ( KatanaEngine*, size_t depth );
-             void                destroy            ();
-      inline bool                isHorizontal       () const;
-      inline bool                isVertical         () const;
-      inline KatanaEngine*       getKatanaEngine    () const;
-      inline RoutingLayerGauge*  getLayerGauge      () const;
-      inline Flags               getDirection       () const;
-      inline size_t              getDepth           () const;
-      inline DbU::Unit           getAxisMin         () const;
-      inline DbU::Unit           getAxisMax         () const;
-      inline DbU::Unit           getTrackMin        () const;
-      inline DbU::Unit           getTrackMax        () const;
-             RoutingPlane*       getTop             () const;
-             RoutingPlane*       getBottom          () const;
-      inline const Layer*        getLayer           () const;
-      inline const Layer*        getBlockageLayer   () const;
-      inline size_t              getTracksSize      () const;
-      inline size_t              computeTracksSize  () const;
-      inline DbU::Unit           getTrackPosition   ( size_t index ) const;
-             Track*              getTrackByIndex    ( size_t index ) const;
-             Track*              getTrackByPosition ( DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
-             bool                _check             ( uint32_t& overlaps ) const;
-             Record*             _getRecord         () const;
-             string              _getString         () const;
-      inline string              _getTypeName       () const;
+      static RoutingPlane*        create             ( KatanaEngine*, size_t depth );
+             void                 destroy            ();
+      inline bool                 isHorizontal       () const;
+      inline bool                 isVertical         () const;
+      inline KatanaEngine*        getKatanaEngine    () const;
+      inline RoutingLayerGauge*   getLayerGauge      () const;
+      inline Flags                getDirection       () const;
+      inline size_t               getDepth           () const;
+      inline DbU::Unit            getAxisMin         () const;
+      inline DbU::Unit            getAxisMax         () const;
+      inline DbU::Unit            getTrackMin        () const;
+      inline DbU::Unit            getTrackMax        () const;
+             RoutingPlane*        getTop             () const;
+             RoutingPlane*        getBottom          () const;
+      inline const Layer*         getLayer           () const;
+      inline const Layer*         getBlockageLayer   () const;
+      inline const vector<Track*> getTracks          () const;
+      inline size_t               getTracksSize      () const;
+      inline size_t               computeTracksSize  () const;
+      inline DbU::Unit            getTrackPosition   ( size_t index ) const;
+             Track*               getTrackByIndex    ( size_t index ) const;
+             Track*               getTrackByPosition ( DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
+             bool                 _check             ( uint32_t& overlaps ) const;
+             Record*              _getRecord         () const;
+             string               _getString         () const;
+      inline string               _getTypeName       () const;
 
     protected:
     // Sub-Class: TrackCompare.
@@ -91,18 +90,19 @@ namespace Katana {
   inline bool RoutingPlane::TrackCompare::operator() ( Track* lhs, Track* rhs )
   { return lhs->getAxis() > rhs->getAxis(); };
 
-  inline KatanaEngine*      RoutingPlane::getKatanaEngine  () const { return _katana; }
-  inline RoutingLayerGauge* RoutingPlane::getLayerGauge    () const { return _layerGauge; }
-  inline Flags              RoutingPlane::getDirection     () const { return _flags & Flags::DirectionMask; }
-  inline size_t             RoutingPlane::getDepth         () const { return _depth; }
-  inline DbU::Unit          RoutingPlane::getAxisMin       () const { return _axisMin; }
-  inline DbU::Unit          RoutingPlane::getAxisMax       () const { return _axisMax; }
-  inline DbU::Unit          RoutingPlane::getTrackMin      () const { return _trackMin; }
-  inline DbU::Unit          RoutingPlane::getTrackMax      () const { return _trackMax; }
-  inline const Layer*       RoutingPlane::getLayer         () const { return getLayerGauge()->getLayer(); }
-  inline const Layer*       RoutingPlane::getBlockageLayer () const { return getLayerGauge()->getBlockageLayer(); }
-  inline size_t             RoutingPlane::getTracksSize    () const { return _tracks.size(); }
-  inline string             RoutingPlane::_getTypeName     () const { return "RoutingPlane"; }
+  inline KatanaEngine*         RoutingPlane::getKatanaEngine  () const { return _katana; }
+  inline RoutingLayerGauge*    RoutingPlane::getLayerGauge    () const { return _layerGauge; }
+  inline Flags                 RoutingPlane::getDirection     () const { return _flags & Flags::DirectionMask; }
+  inline size_t                RoutingPlane::getDepth         () const { return _depth; }
+  inline DbU::Unit             RoutingPlane::getAxisMin       () const { return _axisMin; }
+  inline DbU::Unit             RoutingPlane::getAxisMax       () const { return _axisMax; }
+  inline DbU::Unit             RoutingPlane::getTrackMin      () const { return _trackMin; }
+  inline DbU::Unit             RoutingPlane::getTrackMax      () const { return _trackMax; }
+  inline const Layer*          RoutingPlane::getLayer         () const { return getLayerGauge()->getLayer(); }
+  inline const Layer*          RoutingPlane::getBlockageLayer () const { return getLayerGauge()->getBlockageLayer(); }
+  inline const vector<Track*>  RoutingPlane::getTracks        () const { return _tracks; }
+  inline size_t                RoutingPlane::getTracksSize    () const { return _tracks.size(); }
+  inline string                RoutingPlane::_getTypeName     () const { return "RoutingPlane"; }
 
   inline size_t  RoutingPlane::computeTracksSize () const
   { return _layerGauge->getTrackNumber(_axisMin,_axisMax); }
@@ -121,6 +121,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::RoutingPlane);
-
-
-#endif  // KATANA_ROUTING_PLANE_H

@@ -70,9 +70,14 @@ class BigVia ( object ):
         global rg
         if rg is None: rg = CRL.AllianceFramework.get().getRoutingGauge()
         for depth in range(self.bottomDepth,self.topDepth+1):
-            print( 'Create plate @{} {} {}'.format(DbU.getValueString(self.x)
-                                                  ,DbU.getValueString(self.y)
-                                                  ,rg.getRoutingLayer(depth)) )
+            minArea   = rg.getRoutingLayer( depth ).getMinimalArea()
+            minLength = DbU.fromPhysical( minArea / DbU.toPhysical( self.width, DbU.UnitPowerMicro )
+                                        , DbU.UnitPowerMicro )
+            #minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior )
+            plateArea = DbU.toPhysical( self.width , DbU.UnitPowerMicro ) \
+                      * DbU.toPhysical( self.height, DbU.UnitPowerMicro )
+            if plateArea < minArea:
+                print( WarningMessage( 'BigVia::doLayout(): Area too small for {}'.format(self.net) ))
             self.plates[ depth ] = Contact.create( self.net
                                                  , rg.getRoutingLayer(depth)
                                                  , self.x    , self.y
@@ -115,9 +120,6 @@ class BigVia ( object ):
             x = cutArea.getXMin()
             self.vias[ depth ].append( [] )
             while x <= cutArea.getXMax():
-                print( 'Create cut @{} {} {}'.format(DbU.getValueString(x)
-                                                    ,DbU.getValueString(y)
-                                                    ,cutLayer) )
                 cut = Contact.create( self.net, cutLayer, x, y, cutSide, cutSide )
                 self.vias[ depth ][ -1 ].append( cut )
                 x += cutSide + cutSpacing

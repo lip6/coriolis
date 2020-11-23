@@ -383,11 +383,11 @@ namespace {
                  void          merge             ( const Box&, Net* );
                  void          doLayout          ();
         private:
-          const Layer*         _layer;
-          RoutingPlane*        _routingPlane;
-          RailsMap             _horizontalRails;
-          RailsMap             _verticalRails;
-          Flags                _powerDirection;
+          const Layer*  _layer;
+          RoutingPlane* _routingPlane;
+          RailsMap      _horizontalRails;
+          RailsMap      _verticalRails;
+          Flags         _powerDirection;
       };
 
     public:
@@ -404,7 +404,7 @@ namespace {
              void   merge                  ( const Box&, Net* );
              void   doLayout               ();
     private:
-      KatanaEngine*     _katana;
+      KatanaEngine*   _katana;
       GlobalNetTable  _globalNets;
       PlanesMap       _planes;
       Plane*          _activePlane;
@@ -504,7 +504,8 @@ namespace {
   //DbU::Unit     delta     =   plane->getLayerGauge()->getPitch()
   //                          - plane->getLayerGauge()->getHalfWireWidth()
   //                          - DbU::fromLambda(0.1);
-    DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
+  //DbU::Unit     delta     =   plane->getLayerGauge()->getObstacleDw() - DbU::fromLambda(0.1);
+    DbU::Unit     delta     =   0;
     DbU::Unit     extension = layer->getExtentionCap();
   //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getLayer()->getMinimalSpacing()/2;
   //DbU::Unit     extension = layer->getExtentionCap() - plane->getLayerGauge()->getHalfPitch() + getHalfWireWidth();
@@ -514,6 +515,12 @@ namespace {
     const Box&    coronaBb  = plane->getKatanaEngine()->getChipTools().getCoronaBb();
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
+
+    if (AllianceFramework::get()->getCellGauge()->getName() == Name("FlexLib")) {
+      if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
+        delta = 2 * plane->getLayerGauge()->getPitch();
+      }
+    }
 
     cdebug_log(159,0) << "  delta:" << DbU::getValueString(delta)
                       << " (pitch:" << DbU::getValueString(plane->getLayerGauge()->getPitch())

@@ -252,6 +252,30 @@ extern "C" {
   }
 
 
+  static PyObject* PyRoutingGauge_getPWireWidth ( PyRoutingGauge* self, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getPWireWidth()" << endl;
+
+    DbU::Unit wireWidth = 0;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getPWireWidth()")
+      PyObject* pyLayer = NULL;
+      
+      if (PyArg_ParseTuple( args, "O:RoutingGauge.getPWireWidth", &pyLayer)) {
+        if ( not PyObject_IsInstance(pyLayer,(PyObject*)&PyTypeLayer) ) {
+          PyErr_SetString ( ConstructorError, "Bad type for layer argument of RoutingGauge.getPWireWidth()." );
+          return NULL;
+        }
+        wireWidth = rg->getPWireWidth( PYLAYER_O(pyLayer) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to RoutingGauge.getPWireWidth()." );
+        return NULL;
+      }
+    HCATCH
+    return Py_BuildValue("I",wireWidth);
+  }
+
+
   static PyObject* PyRoutingGauge_getViaWidth ( PyRoutingGauge* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyRoutingGauge_getViaWidth()" << endl;

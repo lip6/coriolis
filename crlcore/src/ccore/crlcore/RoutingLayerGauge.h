@@ -86,6 +86,7 @@ namespace CRL {
                                                          , DbU::Unit                 offset
                                                          , DbU::Unit                 pitch
                                                          , DbU::Unit                 wireWidth
+                                                         , DbU::Unit                 pwireWidth
                                                          , DbU::Unit                 viaWidth
                                                          , DbU::Unit                 obsDw );
       virtual void                      destroy          ();
@@ -102,6 +103,7 @@ namespace CRL {
       inline  DbU::Unit                 getPitch         () const;
       inline  DbU::Unit                 getHalfPitch     () const;
       inline  DbU::Unit                 getWireWidth     () const;
+      inline  DbU::Unit                 getPWireWidth    () const;
       inline  DbU::Unit                 getHalfWireWidth () const;
       inline  DbU::Unit                 getViaWidth      () const;
       inline  DbU::Unit                 getHalfViaWidth  () const;
@@ -111,6 +113,7 @@ namespace CRL {
               long                      getTrackIndex    ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
       inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
               DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
+      inline  void                      setPWireWidth    ( DbU::Unit );
     // Hurricane Managment.             
               void                      toJson           ( JsonWriter* ) const;
       virtual string                    _getTypeName     () const;
@@ -128,6 +131,7 @@ namespace CRL {
               DbU::Unit                 _offset;
               DbU::Unit                 _pitch;
               DbU::Unit                 _wireWidth;
+              DbU::Unit                 _pwireWidth;
               DbU::Unit                 _viaWidth;
               DbU::Unit                 _obstacleDw;
 
@@ -140,11 +144,13 @@ namespace CRL {
                                                    , DbU::Unit                 offset
                                                    , DbU::Unit                 pitch
                                                    , DbU::Unit                 wireWidth
+                                                   , DbU::Unit                 pwireWidth
                                                    , DbU::Unit                 viaWidth
                                                    , DbU::Unit                 obsDw );
+                                 RoutingLayerGauge ( const RoutingLayerGauge& ) = delete;
       virtual                   ~RoutingLayerGauge ();
       virtual void               _preDestroy();
-              RoutingLayerGauge& operator=         ( const RoutingLayerGauge& );
+              RoutingLayerGauge& operator=         ( const RoutingLayerGauge& ) = delete;
 
     // Friends.
       friend class RoutingGauge;
@@ -178,12 +184,14 @@ namespace CRL {
   inline  DbU::Unit                 RoutingLayerGauge::getPitch         () const { return _pitch; }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfPitch     () const { return _pitch>>1; }
   inline  DbU::Unit                 RoutingLayerGauge::getWireWidth     () const { return _wireWidth; }
+  inline  DbU::Unit                 RoutingLayerGauge::getPWireWidth    () const { return (_pwireWidth) ? _pwireWidth : _wireWidth; }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfWireWidth () const { return _wireWidth>>1; }
   inline  DbU::Unit                 RoutingLayerGauge::getViaWidth      () const { return _viaWidth; }
   inline  DbU::Unit                 RoutingLayerGauge::getHalfViaWidth  () const { return _viaWidth>>1; }
   inline  DbU::Unit                 RoutingLayerGauge::getObstacleDw    () const { return _obstacleDw; }
   inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
                                                                         { return getTrackPosition( start, getTrackIndex(start,stop,position,mode) ); }
+  inline  void                      RoutingLayerGauge::setPWireWidth    ( DbU::Unit pwidth ) { _pwireWidth = pwidth; }
 
 
 // -------------------------------------------------------------------

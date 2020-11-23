@@ -190,8 +190,11 @@ class ChipConf ( BlockConf ):
                 self.core.setAbutmentBox( Box( 0, 0, ab.getWidth(), ab.getHeight() ) )
             trace( 550, '\tCORE ab:{}\n'.format(self.coreAb) )
             coreX = (self.coronaAb.getWidth () - self.coreAb.getWidth ()) / 2
+            trace( 550, '\tCore X, {} '.format(DbU.getValueString(coreX)) )
+            coreX = coreX - (coreX % self.sliceHeight)
+            trace( 550, ' adjusted on {}, {}\n'.format( DbU.getValueString(self.sliceHeight)
+                                                      , DbU.getValueString(coreX)) )
             coreY = (self.coronaAb.getHeight() - self.coreAb.getHeight()) / 2
-            coreX = coreX - (coreX % self.sliceStep)
             coreY = coreY - (coreY % self.sliceHeight)
             self.icore.setTransformation( Transformation( coreX, coreY, Transformation.Orientation.ID ) )
             self.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
@@ -668,6 +671,7 @@ class ChipConf ( BlockConf ):
                           , self.toSymbolic( self.ioPadHeight + ab.getYMin(), Superior )
                           , Transformation.Orientation.ID ) )
         self.icorona.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.setRoutingBb( self.corona.getAbutmentBox() )
 
     def setupCore ( self, gapX1, gapY1, gapX2, gapY2 ):
         trace( 550, ',+', '\tChipConf.setupCore()\n' )

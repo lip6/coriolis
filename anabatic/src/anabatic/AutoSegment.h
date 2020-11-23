@@ -171,6 +171,7 @@ namespace Anabatic {
       inline         DbU::Unit           getWidth                   () const;
       inline         DbU::Unit           getContactWidth            () const;
       inline         DbU::Unit           getLength                  () const;
+      inline         DbU::Unit           getSpanLength              () const;
       inline         DbU::Unit           getSourcePosition          () const;
       inline         DbU::Unit           getTargetPosition          () const;
       inline         DbU::Unit           getSourceX                 () const;
@@ -574,6 +575,10 @@ namespace Anabatic {
   inline  DbU::Unit  AutoSegment::getContactWidth () const
   { return getWidth() + Session::getViaWidth(getLayer()) - Session::getWireWidth(getLayer()); }
 
+  inline  DbU::Unit  AutoSegment::getSpanLength () const
+  { return getLength() + getExtensionCap( Flags::Source|Flags::LayerCapOnly )
+                       + getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+  }
 
   inline  void  AutoSegment::setParent ( AutoSegment* parent )
   {

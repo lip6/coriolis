@@ -100,12 +100,16 @@ namespace Anabatic {
             continue;
 
         if (   not Session::isGaugeLayer(component->getLayer())
-           and not Session::isGLayer    (component->getLayer()))
+           and not Session::isGLayer    (component->getLayer())) {
+          const BasicLayer* basicLayer = dynamic_cast<const BasicLayer*>( component->getLayer() );
+          if (basicLayer and (basicLayer->getMaterial() == BasicLayer::Material::cut))
+            continue;
           throw Error( "AnabaticEngine::setupPreRouted(): A component of \"%s\" has a routing gauge umanaged layer.\n"
                        "        (%s)"
                      , getString(net->getName()).c_str()
                      , getString(component).c_str()
                      );
+        }
 
         Horizontal* horizontal = dynamic_cast<Horizontal*>(component);
         if (horizontal) {

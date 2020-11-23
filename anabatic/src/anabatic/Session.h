@@ -97,11 +97,13 @@ namespace Anabatic {
       static  inline size_t                            getDVerticalDepth     ();
       static  inline const Layer*                      getDVerticalLayer     ();
       static  inline DbU::Unit                         getDVerticalWidth     ();
+      static  inline DbU::Unit                         getDPVerticalWidth    ();
       static  inline DbU::Unit                         getDVerticalPitch     ();
       static  inline DbU::Unit                         getDVerticalOffset    ();
       static  inline size_t                            getDHorizontalDepth   ();
       static  inline const Layer*                      getDHorizontalLayer   ();
       static  inline DbU::Unit                         getDHorizontalWidth   ();
+      static  inline DbU::Unit                         getDPHorizontalWidth  ();
       static  inline DbU::Unit                         getDHorizontalPitch   ();
       static  inline DbU::Unit                         getDHorizontalOffset  ();
       static  inline size_t                            getDContactDepth      ();
@@ -123,6 +125,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getPitch              ( size_t depth, Flags flags );
       static  inline DbU::Unit                         getOffset             ( size_t depth );
       static  inline DbU::Unit                         getWireWidth          ( size_t depth );
+      static  inline DbU::Unit                         getPWireWidth         ( size_t depth );
       static  inline DbU::Unit                         getViaWidth           ( size_t depth );
       static  inline Flags                             getDirection          ( const Layer* );
       static  inline DbU::Unit                         getPitch              ( const Layer*, Flags flags );
@@ -239,11 +242,13 @@ namespace Anabatic {
   inline size_t                            Session::getDVerticalDepth    ()                     { return getConfiguration()->getDVerticalDepth(); }
   inline const Layer*                      Session::getDVerticalLayer    ()                     { return getConfiguration()->getDVerticalLayer(); }
   inline DbU::Unit                         Session::getDVerticalWidth    ()                     { return getConfiguration()->getDVerticalWidth(); }
+  inline DbU::Unit                         Session::getDPVerticalWidth   ()                     { return getConfiguration()->getDPVerticalWidth(); }
   inline DbU::Unit                         Session::getDVerticalPitch    ()                     { return getConfiguration()->getDVerticalPitch(); }
   inline DbU::Unit                         Session::getDVerticalOffset   ()                     { return getConfiguration()->getDVerticalOffset(); }
   inline size_t                            Session::getDHorizontalDepth  ()                     { return getConfiguration()->getDHorizontalDepth(); }
   inline const Layer*                      Session::getDHorizontalLayer  ()                     { return getConfiguration()->getDHorizontalLayer(); }
   inline DbU::Unit                         Session::getDHorizontalWidth  ()                     { return getConfiguration()->getDHorizontalWidth(); }
+  inline DbU::Unit                         Session::getDPHorizontalWidth ()                     { return getConfiguration()->getDPHorizontalWidth(); }
   inline DbU::Unit                         Session::getDHorizontalPitch  ()                     { return getConfiguration()->getDHorizontalPitch(); }
   inline DbU::Unit                         Session::getDHorizontalOffset ()                     { return getConfiguration()->getDHorizontalOffset(); }
   inline size_t                            Session::getDContactDepth     ()                     { return getConfiguration()->getDContactDepth(); }
@@ -263,6 +268,7 @@ namespace Anabatic {
   inline DbU::Unit                         Session::getPitch             ( size_t depth, Flags flags=Flags::NoFlags ) { return get("getPitch(depth,flags)")->_getPitch( depth, flags ); }
   inline DbU::Unit                         Session::getOffset            ( size_t depth )       { return getRoutingGauge()->getLayerOffset(depth); }
   inline DbU::Unit                         Session::getWireWidth         ( size_t depth )       { return getRoutingGauge()->getLayerWireWidth(depth); }
+  inline DbU::Unit                         Session::getPWireWidth        ( size_t depth )       { return getRoutingGauge()->getLayerPWireWidth(depth); }
   inline DbU::Unit                         Session::getViaWidth          ( size_t depth )       { return getRoutingGauge()->getViaWidth(depth); }
   inline DbU::Unit                         Session::getPitch             ( const Layer* layer, Flags flags=Flags::NoFlags ) { return getPitch( getLayerDepth(layer), flags ); }
   inline DbU::Unit                         Session::getOffset            ( const Layer* layer ) { return getOffset   ( getLayerDepth(layer) ); }

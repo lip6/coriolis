@@ -76,6 +76,7 @@ namespace CRL {
               DbU::Unit           getPitch           ( const Layer* ) const;
               DbU::Unit           getOffset          ( const Layer* ) const;
               DbU::Unit           getWireWidth       ( const Layer* ) const;
+              DbU::Unit           getPWireWidth      ( const Layer* ) const;
               DbU::Unit           getViaWidth        ( const Layer* ) const;
               RoutingLayerGauge*  getLayerGauge      ( size_t depth ) const;
       inline  unsigned int        getLayerDirection  ( size_t depth ) const;
@@ -83,6 +84,7 @@ namespace CRL {
       inline  DbU::Unit           getLayerPitch      ( size_t depth ) const;
       inline  DbU::Unit           getLayerOffset     ( size_t depth ) const;
       inline  DbU::Unit           getLayerWireWidth  ( size_t depth ) const;
+      inline  DbU::Unit           getLayerPWireWidth ( size_t depth ) const;
       inline  DbU::Unit           getViaWidth        ( size_t depth ) const;
               const Layer*        getRoutingLayer    ( size_t depth ) const;
               Layer*              getContactLayer    ( size_t depth ) const;
@@ -129,6 +131,7 @@ namespace CRL {
   inline DbU::Unit     RoutingGauge::getLayerPitch      ( size_t depth ) const { return getLayerGauge(depth)->getPitch(); }
   inline DbU::Unit     RoutingGauge::getLayerOffset     ( size_t depth ) const { return getLayerGauge(depth)->getOffset(); }
   inline DbU::Unit     RoutingGauge::getLayerWireWidth  ( size_t depth ) const { return getLayerGauge(depth)->getWireWidth(); }
+  inline DbU::Unit     RoutingGauge::getLayerPWireWidth ( size_t depth ) const { return getLayerGauge(depth)->getPWireWidth(); }
   inline DbU::Unit     RoutingGauge::getViaWidth        ( size_t depth ) const { return getLayerGauge(depth)->getViaWidth(); }
   inline void          RoutingGauge::setSymbolic        ( bool state ) { _isSymbolic=state; }
 

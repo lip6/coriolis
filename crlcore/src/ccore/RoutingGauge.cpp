@@ -72,7 +72,7 @@ namespace CRL {
     , _isSymbolic (gauge._isSymbolic)
   {
   // Make a deep copy of the map.
-    for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ )
+    for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ ) {
       addLayerGauge ( RoutingLayerGauge::create 
                       ( gauge._layerGauges[i]->getLayer()
                       , gauge._layerGauges[i]->getDirection()
@@ -82,9 +82,11 @@ namespace CRL {
                       , gauge._layerGauges[i]->getOffset()
                       , gauge._layerGauges[i]->getPitch()
                       , gauge._layerGauges[i]->getWireWidth()
+                      , gauge._layerGauges[i]->getPWireWidth()
                       , gauge._layerGauges[i]->getViaWidth()
                       , gauge._layerGauges[i]->getObstacleDw() )
                     );
+    }
   }
 
 
@@ -225,6 +227,13 @@ namespace CRL {
   {
     size_t depth = getLayerDepth( layer );
     return (depth != nlayerdepth) ? _layerGauges[depth]->getWireWidth() : 0;
+  }
+
+
+  DbU::Unit  RoutingGauge::getPWireWidth ( const Layer* layer ) const
+  {
+    size_t depth = getLayerDepth( layer );
+    return (depth != nlayerdepth) ? _layerGauges[depth]->getPWireWidth() : 0;
   }
 
 

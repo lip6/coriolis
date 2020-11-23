@@ -225,6 +225,7 @@ class Builder ( object ):
             return
         with UpdateSession():
             bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), ck, 0 )
+            self.conf.expandMinArea( bufferRp )
             blockAb  = self.block.getAbutmentBox()
             self.path.getTransformation().applyOn( blockAb )
             layerGauge = self.conf.routingGauge.getLayerGauge(self.conf.verticalDepth)

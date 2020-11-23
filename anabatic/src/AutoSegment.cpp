@@ -441,7 +441,7 @@ namespace Anabatic {
     //cerr << depth << ":"   << Session::getLayerGauge(depth)->getLayer()->getName()
     //     << " isVertical:" << Session::getLayerGauge(depth)->isVertical() << endl;
 
-      *viaToSameCap = Session::getWireWidth(depth)/2;
+      *viaToSameCap = Session::getPWireWidth(depth)/2;
 
     // Bottom metal of the VIA going *up*.
       const Layer* viaLayer = dynamic_cast<const ViaLayer*>( Session::getContactLayer(depth) );
@@ -726,9 +726,10 @@ namespace Anabatic {
       if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-      cdebug_log(145,0) << "getExtensionCap(): flags:" << getFlags()
+      cdebug_log(150,0) << "getExtensionCap(): flags:" << getFlags()
                         << " VIA cap:" << DbU::getValueString(cap)
-                        << " " << (getFlags() & SegSourceBottom)
+                        << " t:" << (getFlags() & SegSourceBottom)
+                        << " b:" << (getFlags() & SegSourceTop)
                         << endl;
     }
 
@@ -738,8 +739,9 @@ namespace Anabatic {
       else                                   cap = getViaToSameCap  (depth);
     }
 
-    if (cap < getWidth()/2) cap = getWidth()/2;
-    return cap + getLayer()->getMinimalSpacing()/2;;
+    if (getLayer()->isSymbolic() and (cap < getWidth()/2)) cap  = getWidth()/2;
+    if (not (flags & Flags::LayerCapOnly))                 cap += getLayer()->getMinimalSpacing()/2;
+    return cap;
   }
 
 
@@ -2088,17 +2090,49 @@ namespace Anabatic {
 
   bool  AutoSegment::bloatStackedStrap ()
   {
-    if (getLength() or isReduced()) return false;
-    if (   ((_flags & (SegSourceBottom|SegTargetTop)) != (SegSourceBottom|SegTargetTop))
-       and ((_flags & (SegTargetBottom|SegSourceTop)) != (SegTargetBottom|SegSourceTop)) ) return false;
-
+    DebugSession::open( getNet(), 145, 150 );
+    cdebug_log(149,1) << "AutoSegment::bloatStackedStrap() " << this << endl;
     double minArea = getLayer()->getMinimalArea();
-    if (minArea == 0.0) return false;
+    if (minArea == 0.0) {
+      cdebug_log(149,-1) << "False, NO minimal area." << endl;
+      DebugSession::close();
+      return false;
+    }
+    
+    DbU::Unit minLength
+      = DbU::fromPhysical( minArea / DbU::toPhysical( getWidth(), DbU::UnitPower::Micro )
+                         , DbU::UnitPower::Micro );
+    cdebug_log(149,0) << "Min length: " << DbU::getValueString(minLength) << " ." << endl;
+
+    if ((getSpanLength() >= minLength) or isReduced()) {
+      cdebug_log(149,-1) << "False, has length or is reduced." << endl;
+      DebugSession::close();
+      return false;
+    }
+    if (isDrag()) {
+      for ( AutoSegment* perpandicular : getPerpandiculars() ) {
+        if (perpandicular->getSpanLength() > minLength) {
+          cdebug_log(149,-1) << "False (drag), has length or PP has length." << endl;
+          DebugSession::close();
+          return false;
+        }
+      }
+    } else {
+      if (   ((_flags & (SegSourceBottom|SegTargetTop)) != (SegSourceBottom|SegTargetTop))
+         and ((_flags & (SegTargetBottom|SegSourceTop)) != (SegTargetBottom|SegSourceTop)) ) {
+        cdebug_log(149,-1) << "False, not part of a stacked VIA." << endl;
+        DebugSession::close();
+        return false;
+      }
+    }
 
     DbU::Unit side = DbU::fromPhysical( std::sqrt(minArea) , DbU::UnitPower::Micro );
     setWidth( side );
     setDuSource( -side/2 );
     setDuTarget(  side/2 );
+
+    cdebug_log(149,-1) << "True, add area." << endl;
+    DebugSession::close();
     return true;
   }
 
@@ -2587,9 +2621,10 @@ namespace Anabatic {
       segment->_postCreate();
     } else if (vertical) {
       if (vertical->getLayer() != verticalLayer) {
-        if (Session::getAnabatic()->getConfiguration()->isGMetal(vertical->getLayer()) )
-        vertical->setLayer( verticalLayer );
-        vertical->setWidth( verticalWidth );
+        if (Session::getAnabatic()->getConfiguration()->isGMetal(vertical->getLayer()) ) {
+          vertical->setLayer( verticalLayer );
+          vertical->setWidth( verticalWidth );
+        }
       } else {
         if (vertical->getWidth() != verticalWidth) {
             cerr << Warning("Segment %s has non-default width %s."
@@ -2630,14 +2665,16 @@ namespace Anabatic {
 
     if (dir & Flags::UseNonPref) {
       if (dir & Flags::Vertical) {
-        cdebug_log(149,0) << "Make vertical in non-preferred direction." << endl;
         vLayer = hLayer;
-        vWidth = hWidth;
+        vWidth = Session::getDPHorizontalWidth();
+        cdebug_log(149,0) << "Make vertical in non-preferred direction (ppW:"
+                          << DbU::getValueString(vWidth).c_str() << ")." << endl;
       }
       if (dir & Flags::Horizontal) {
-        cdebug_log(149,0) << "Make horizontal in non-preferred direction." << endl;
         hLayer = vLayer;
-        hWidth = vWidth;
+        hWidth = Session::getDPVerticalWidth();
+        cdebug_log(149,0) << "Make horizontal in non-preferred direction (ppW:"
+                          << DbU::getValueString(hWidth).c_str() << ")." << endl;
       }
     }
 
@@ -2645,12 +2682,14 @@ namespace Anabatic {
     DbU::Unit    horizontalWidth = hWidth;
     const Layer* verticalLayer   = vLayer;
     DbU::Unit    verticalWidth   = vWidth;
+    cdebug_log(149,0) << "verticalWidth:" << DbU::getValueString(verticalWidth).c_str() << endl;
 
     uint32_t wPitch = NetRoutingExtension::getWPitch( source->getNet() );
     if (wPitch > 1) {
       horizontalWidth = (wPitch-1) * Session::getDHorizontalPitch() + hWidth;
       verticalWidth   = (wPitch-1) * Session::getDVerticalPitch  () + vWidth;
     }
+    cdebug_log(149,0) << "verticalWidth:" << DbU::getValueString(verticalWidth).c_str() << endl;
 
     if (depth != RoutingGauge::nlayerdepth) {
       horizontalLayer = verticalLayer = Session::getRoutingLayer( depth );
@@ -2659,9 +2698,23 @@ namespace Anabatic {
         horizontalWidth = verticalWidth = (wPitch-1) * Session::getPitch    (depth)
                                                      + Session::getWireWidth(depth);
       } else {
-        horizontalWidth = verticalWidth = Session::getWireWidth( depth );
+        if (dir & Flags::Horizontal) {
+          horizontalWidth = Session::getWireWidth ( depth );
+          verticalWidth   = Session::getPWireWidth( depth );
+        } else {
+          verticalWidth   = Session::getWireWidth ( depth );
+          horizontalWidth = Session::getPWireWidth( depth );
+        }
+        cdebug_log(149,0) << "hW:" << DbU::getValueString(horizontalWidth).c_str()
+                          << "vW:" << DbU::getValueString(  verticalWidth).c_str()
+                          << endl;
+        if (dir & Flags::UseNonPref) {
+          cdebug_log(149,0) << "swap H/W width." << endl;
+          std::swap( horizontalWidth, verticalWidth );
+        }
       }
     }
+    cdebug_log(149,0) << "verticalWidth:" << DbU::getValueString(verticalWidth).c_str() << endl;
 
     AutoSegment* segment;
     AutoContact* reference = source;

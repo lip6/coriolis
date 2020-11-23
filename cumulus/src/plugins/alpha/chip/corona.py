@@ -115,6 +115,7 @@ class HorizontalRail ( Rail ):
 
     def connect ( self, contact ):
         trace( 550, ',+', '\tTry to connect to: {}\n'.format(self) )
+        trace( 550, '\tContact {}\n'.format(contact) )
         contactBb = contact.getBoundingBox()
         if    contactBb.getXMin() < self.side.innerBb.getXMin() \
            or contactBb.getXMax() > self.side.innerBb.getXMax():
@@ -167,8 +168,8 @@ class HorizontalRail ( Rail ):
     def doLayout ( self ):
         trace( 550, ',+', '\tHorizontalRail.doLayout() order:{} @{}\n' \
                           .format( self.order,DbU.getValueString(self.axis )))
-        railVias = [ self.side.corner0(self.order)
-                   , self.side.corner1(self.order) ]
+        railVias = [ self.side.corner0(self.order).getPlate( self.side.getHLayer() )
+                   , self.side.corner1(self.order).getPlate( self.side.getHLayer() ) ]
         for via in self.vias.values():
             if via[1].getNet() != via[2].getNet(): continue
             via[1].mergeDepth( self.side.getLayerDepth(self.side.getVLayer()) )
@@ -206,8 +207,8 @@ class VerticalRail ( Rail ):
                                                     , DbU.getValueString(self.axis) )
 
     def doLayout ( self ):
-        railVias = [ self.side.corner0(self.order)
-                   , self.side.corner1(self.order) ]
+        railVias = [ self.side.corner0(self.order).getPlate( self.side.getVLayer() )
+                   , self.side.corner1(self.order).getPlate( self.side.getVLayer() ) ]
         for via in self.vias.values():
             if via[1].getNet() != via[2].getNet(): continue
             via[1].doLayout()
@@ -465,8 +466,6 @@ class VerticalSide ( Side ):
                 if via[1].getNet() != via[2].getNet(): continue
                 spans.merge( via[1].y - via[1].height/2, via[1].y + via[1].height/2 )
         routingGauge = self.corona.routingGauge
-        print( self.getOuterRail(0) )
-        print( self.getOuterRail(0).vias.values() )
         for depth in range(self.getOuterRail(0).vias.values()[0][1].bottomDepth
                           ,self.getOuterRail(0).vias.values()[0][1].topDepth ):
             blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
@@ -645,33 +644,21 @@ class Builder ( object ):
                 trBox.merge( xTR, yTR )
                 self.routingGauge.getContactLayer(contactDepth)
                 self.corners[SouthWest].append( 
-                    Contact.create( net
-                                  , self.routingGauge.getContactLayer(contactDepth)
-                                  , xBL, yBL
-                                  , self.hRailWidth
-                                  , self.vRailWidth
-                                  ) )
+                    BigVia( net, contactDepth, xBL, yBL, self.hRailWidth, self.vRailWidth ) )
+                self.corners[SouthWest][-1].mergeDepth( contactDepth+1 )
+                self.corners[SouthWest][-1].doLayout()
                 self.corners[NorthWest].append( 
-                    Contact.create( net
-                                  , self.routingGauge.getContactLayer(contactDepth)
-                                  , xBL, yTR
-                                  , self.hRailWidth
-                                  , self.vRailWidth
-                                  ) )
+                    BigVia( net, contactDepth, xBL, yTR, self.hRailWidth, self.vRailWidth ) )
+                self.corners[NorthWest][-1].mergeDepth( contactDepth+1 )
+                self.corners[NorthWest][-1].doLayout()
                 self.corners[SouthEast].append( 
-                    Contact.create( net
-                                  , self.routingGauge.getContactLayer(contactDepth)
-                                  , xTR, yBL
-                                  , self.hRailWidth
-                                  , self.vRailWidth
-                                  ) )
+                    BigVia( net, contactDepth, xTR, yBL, self.hRailWidth, self.vRailWidth ) )
+                self.corners[SouthEast][-1].mergeDepth( contactDepth+1 )
+                self.corners[SouthEast][-1].doLayout()
                 self.corners[NorthEast].append( 
-                    Contact.create( net
-                                  , self.routingGauge.getContactLayer(contactDepth)
-                                  , xTR, yTR
-                                  , self.hRailWidth
-                                  , self.vRailWidth
-                                  ) )
+                    BigVia( net, contactDepth, xTR, yTR, self.hRailWidth, self.vRailWidth ) )
+                self.corners[NorthEast][-1].mergeDepth( contactDepth+1 )
+                self.corners[NorthEast][-1].doLayout()
             self.southSide.doLayout()
             self.northSide.doLayout()
             self.westSide .doLayout()

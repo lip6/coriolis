@@ -88,6 +88,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL1')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA12).
                                           , l(4)                          # obstacle dW.
                                           ) )
@@ -100,6 +101,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL2')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA23).
                                           , l(4)                          # obstacle dW.
                                           ) )
@@ -112,6 +114,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL3')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA34).
                                           , l(4)                          # obstacle dW.
                                           ) )
@@ -124,6 +127,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL4')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA23).
                                           , l(4)                          # obstacle dW.
                                           ) )
@@ -136,6 +140,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL5')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA23).
                                           , l(4)                          # obstacle dW.
                                           ) )
@@ -152,6 +157,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL1')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA12).
                                           , l(4)                          # obstacle dW.
                                           ) )
@@ -164,6 +170,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL2')       # meta
                                           , l(0)                          # track offset from AB.
                                           , l(5)                          # track pitch.
                                           , l(2)                          # wire width.
+                                          , 0                             # perpandicular wire width.
                                           , l(1)                          # VIA side (that is VIA23).
                                           , l(4)                          # obstacle dW.
                                           ) )

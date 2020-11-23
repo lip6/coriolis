@@ -205,10 +205,11 @@ namespace Anabatic {
     size_t maxDepth = 0;
 
     getDepthSpan( minDepth, maxDepth );
-    if (minDepth == maxDepth)
-      setLayer( Session::getRoutingGauge()->getRoutingLayer(minDepth) );
-    else
-      setLayer( Session::getRoutingGauge()->getContactLayer(minDepth) );
+    setLayerAndWidth( maxDepth-minDepth, minDepth );
+    // if (minDepth == maxDepth)
+    //   setLayer( Session::getRoutingGauge()->getRoutingLayer(minDepth) );
+    // else
+    //   setLayer( Session::getRoutingGauge()->getContactLayer(minDepth) );
   }
 
 
@@ -576,8 +577,13 @@ namespace Anabatic {
 
     if (delta == 0) {
       setLayer( Session::getRoutingLayer(depth) );
-      setSizes( Session::getWireWidth   (depth)
-              , Session::getWireWidth   (depth) );
+      if (Session::getDirection(depth) & Flags::Horizontal) {
+        setSizes( Session::getPWireWidth(depth)
+                , Session::getWireWidth (depth) );
+      } else {
+        setSizes( Session::getWireWidth (depth)
+                , Session::getPWireWidth(depth) );
+      }
     } else {
       setLayer( Session::getContactLayer(depth) );
       setSizes( Session::getViaWidth    (depth)

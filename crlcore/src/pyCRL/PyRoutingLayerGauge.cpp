@@ -74,14 +74,15 @@ extern "C" {
     int       type;
     int       depth;
     double    density;
-    PyObject* pyOffset    = NULL;
-    PyObject* pyPitch     = NULL;
-    PyObject* pyWireWidth = NULL;
-    PyObject* pyViaWidth  = NULL;
-    PyObject* pyObsDw     = NULL;
+    PyObject* pyOffset     = NULL;
+    PyObject* pyPitch      = NULL;
+    PyObject* pyWireWidth  = NULL;
+    PyObject* pyPWireWidth = NULL;
+    PyObject* pyViaWidth   = NULL;
+    PyObject* pyObsDw      = NULL;
     
     if (PyArg_ParseTuple( args
-                        , "OIIIdOOOOO:RoutingLayerGauge.create"
+                        , "OIIIdOOOOOO:RoutingLayerGauge.create"
                         , &pyLayer
                         , &direction
                         , &type
@@ -90,6 +91,7 @@ extern "C" {
                         , &pyOffset
                         , &pyPitch
                         , &pyWireWidth
+                        , &pyPWireWidth
                         , &pyViaWidth
                         , &pyObsDw
                         )) {
@@ -120,6 +122,7 @@ extern "C" {
                                      , PyAny_AsLong(pyOffset)
                                      , PyAny_AsLong(pyPitch)
                                      , PyAny_AsLong(pyWireWidth)
+                                     , PyAny_AsLong(pyPWireWidth)
                                      , PyAny_AsLong(pyViaWidth)
                                      , PyAny_AsLong(pyObsDw)
                                      );
@@ -265,10 +268,12 @@ extern "C" {
   DirectGetLongAttribute  (PyRoutingLayerGauge_getPitch        ,getPitch        ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfPitch    ,getHalfPitch    ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getWireWidth    ,getWireWidth    ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectGetLongAttribute  (PyRoutingLayerGauge_getPWireWidth   ,getPWireWidth   ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfWireWidth,getHalfWireWidth,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getViaWidth     ,getViaWidth     ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfViaWidth ,getHalfViaWidth ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getObstacleDw   ,getObstacleDw   ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectSetLongAttribute  (PyRoutingLayerGauge_setPWireWidth   ,setPWireWidth   ,PyRoutingLayerGauge,RoutingLayerGauge)
 
 
   // Standart Destroy (Attribute).
@@ -297,6 +302,8 @@ extern "C" {
                                 , "Returns the half track pitch (center to center)." }
     , { "getWireWidth"          , (PyCFunction)PyRoutingLayerGauge_getWireWidth    , METH_NOARGS
                                 , "Returns the wire width." }
+    , { "getPWireWidth"         , (PyCFunction)PyRoutingLayerGauge_getPWireWidth   , METH_NOARGS
+                                , "Returns the perpandicular wire width (same layer)." }
     , { "getHalfWireWidth"      , (PyCFunction)PyRoutingLayerGauge_getHalfWireWidth, METH_NOARGS
                                 , "Returns the half wire width." }
     , { "getViaWidth"           , (PyCFunction)PyRoutingLayerGauge_getViaWidth     , METH_NOARGS
@@ -311,6 +318,8 @@ extern "C" {
                                 , "Returns the index of track at the given position (with rounding)." }
     , { "getTrackPosition"      , (PyCFunction)PyRoutingLayerGauge_getTrackPosition, METH_VARARGS
                                 , "Compute the position of track number <depth>." }
+    , { "setPWireWidth"         , (PyCFunction)PyRoutingLayerGauge_setPWireWidth   , METH_VARARGS
+                                , "Sets the perpandicular wire width (same layer)." }
   //, { "destroy"               , (PyCFunction)PyRoutingLayerGauge_destroy         , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}     /* sentinel */

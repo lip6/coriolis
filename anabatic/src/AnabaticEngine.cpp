@@ -412,7 +412,7 @@ namespace Anabatic {
       for ( auto isegment : _autoSegmentLut ) {
         if (isegment.second->isFixed()) ++fixedSegments;
         if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
-        if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
+      //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;

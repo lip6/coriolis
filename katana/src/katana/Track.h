@@ -14,16 +14,13 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_H
-#define  KATANA_TRACK_H
-
-#include  "hurricane/Point.h"
+#pragma  once
+#include "hurricane/Point.h"
 namespace Hurricane {
   class Layer;
 }
-
-#include  "katana/TrackCost.h"
-#include  "katana/TrackElement.h"
+#include "katana/TrackCost.h"
+#include "katana/TrackElement.h"
 
 
 namespace Katana {
@@ -102,6 +99,7 @@ namespace Katana {
               DbU::Unit      getSourcePosition   ( size_t index ) const;
               bool           check               ( uint32_t& overlaps, const char* message=NULL ) const;
               uint32_t       checkOverlap        ( uint32_t& overlaps ) const;
+              void           expandMinArea       ();
      inline   void           setLocalAssigned    ( bool );
               void           invalidate          ();
               void           insert              ( TrackElement* );
@@ -231,5 +229,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::Track);
-
-#endif  // KATANA_TRACK_H

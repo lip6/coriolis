@@ -97,11 +97,13 @@ class ClockTree ( object ):
         if qt.isLeaf():
             trace( 550, '-' )
             return False
-
         gaugeConf  = self.spares.conf
         bufferConf = self.spares.conf.bufferConf
         ckNet      = qt.bOutputPlug.getNet()
         self.subNets.append( ckNet )
+        hLeafDepth = gaugeConf.horizontalDepth
+        if gaugeConf.horizontalDepth > 2 and (gaugeConf.horizontalDepth > gaugeConf.verticalDepth):
+            hLeafDepth = gaugeConf.horizontalDepth - 2
         leftSourceContact  = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
         rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffer   , bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
         blContact          = gaugeConf.rpAccessByPlugName( qt.bl.buffer, bufferConf.input , ckNet )
@@ -110,14 +112,17 @@ class ClockTree ( object ):
         trContact          = gaugeConf.rpAccessByPlugName( qt.tr.buffer, bufferConf.input , ckNet )
         leftContact        = gaugeConf.createContact( ckNet, blContact.getX(),  leftSourceContact.getY(), 0 )
         rightContact       = gaugeConf.createContact( ckNet, brContact.getX(), rightSourceContact.getY(), 0 )
-        leftSourceX  = gaugeConf.getNearestVerticalTrack  ( qt.root.area,  leftSourceContact.getX(), 0 )
-        leftSourceY  = gaugeConf.getNearestHorizontalTrack( qt.root.area,  leftSourceContact.getY(), 0 )
-        rightSourceX = gaugeConf.getNearestVerticalTrack  ( qt.root.area, rightSourceContact.getX(), 0 )
-        rightSourceY = gaugeConf.getNearestHorizontalTrack( qt.root.area, rightSourceContact.getY(), 0 )
-        leftX        = gaugeConf.getNearestVerticalTrack  ( qt.root.area,        leftContact.getX(), 0 )
-        rightX       = gaugeConf.getNearestVerticalTrack  ( qt.root.area,       rightContact.getX(), 0 )
-        tlY          = gaugeConf.getNearestHorizontalTrack( qt.root.area,          tlContact.getY(), 0 )
-        blY          = gaugeConf.getNearestHorizontalTrack( qt.root.area,          blContact.getY(), 0 )
+        leftSourceX  = gaugeConf.getNearestVerticalTrack  (  leftSourceContact.getX(), 0 )
+        leftSourceY  = gaugeConf.getNearestHorizontalTrack(  leftSourceContact.getY(), 0 )
+        rightSourceX = gaugeConf.getNearestVerticalTrack  ( rightSourceContact.getX(), 0 )
+        rightSourceY = gaugeConf.getNearestHorizontalTrack( rightSourceContact.getY(), 0 )
+        leftX        = gaugeConf.getNearestVerticalTrack  (        leftContact.getX(), 0 )
+        rightX       = gaugeConf.getNearestVerticalTrack  (       rightContact.getX(), 0 )
+        tlY          = gaugeConf.getTrack( tlContact.getY(), hLeafDepth, 0 )
+        blY          = gaugeConf.getTrack( blContact.getY(), hLeafDepth, 0 )
+        #tlY          = gaugeConf.getNearestHorizontalTrack(          tlContact.getY(), 0 )
+        #blY          = gaugeConf.getNearestHorizontalTrack(          blContact.getY(), 0 )
+        trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
         gaugeConf.setStackPosition(  leftSourceContact,  leftSourceX,  leftSourceY )
         gaugeConf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
         gaugeConf.setStackPosition( tlContact,  leftX, tlY )

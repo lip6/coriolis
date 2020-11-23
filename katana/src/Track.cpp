@@ -18,10 +18,12 @@
 #include <sstream>
 #include <memory>
 #include <algorithm>
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Layer.h"
 #include "hurricane/Net.h"
+#include "anabatic/AutoContact.h"
 #include "katana/RoutingPlane.h"
 #include "katana/Track.h"
 #include "katana/TrackMarker.h"
@@ -31,6 +33,7 @@
 namespace {
 
   using namespace std;
+  using Hurricane::DebugSession;
   using namespace CRL;
   using namespace Katana;
 
@@ -44,6 +47,81 @@ namespace {
   // { return (*(v.begin()+i))->getSourceU(); }
 
 
+  bool  hasSameLayerTurn ( const Layer* layer, TrackElement* segment, Flags flags )
+  {
+    if (not segment or not segment->base()) return false;
+    AutoContact* contact = (flags & Flags::Source) ? segment->base()->getAutoSource()
+                                                   : segment->base()->getAutoTarget() ;
+    if (contact->getLayer() != layer) return false;
+    if (not contact->isTurn()) return false;
+    AutoSegment* pp = contact->getPerpandicular( segment->base() );
+    return contact->getPerpandicular(segment->base())->getLength();
+  }
+
+
+  DbU::Unit  toFoundryGrid ( DbU::Unit u, DbU::SnapMode mode )
+  {
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    return DbU::getOnCustomGrid( u, oneGrid, mode );
+  }
+
+
+  void  expandToMinArea ( TrackElement*   minSegment
+                        , TrackElement*   maxSegment
+                        , const Interval& segSpan
+                        , DbU::Unit       minFree
+                        , DbU::Unit       maxFree )
+  {
+    DebugSession::open( minSegment->getNet(), 150, 160 );
+    cdebug_log(155,1) << "Track::expandMinArea() for:" << endl;
+    cdebug_log(155,0) << "minSegment:" << minSegment << endl;
+    cdebug_log(155,0) << "maxSegment:" << maxSegment << endl;
+
+    const Layer* layer      = minSegment->getLayer();
+    double       minArea    = layer->getMinimalArea();
+    DbU::Unit    minSpacing = layer->getMinimalSpacing();
+    DbU::Unit    minLength
+      = DbU::fromPhysical( minArea / DbU::toPhysical( minSegment->getWidth(), DbU::UnitPower::Micro )
+                         , DbU::UnitPower::Micro );
+    minLength = toFoundryGrid( minLength, DbU::Superior );
+    DbU::Unit segLength = segSpan.getSize() - minSpacing;
+    cdebug_log(155,0) << "minSpacing:" << DbU::getValueString(minSpacing) << endl;
+    cdebug_log(155,0) << " minLength:" << DbU::getValueString(minLength)  << endl;
+    cdebug_log(155,0) << " segLenght:" << DbU::getValueString(segLength)  << endl;
+
+    DbU::Unit sourceECap = minSegment->base()->getExtensionCap( Flags::Source|Flags::LayerCapOnly );
+    DbU::Unit targetECap = maxSegment->base()->getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+    cdebug_log(155,0) << "sourceECap:" << DbU::getValueString(sourceECap) << endl;
+    cdebug_log(155,0) << "targetECap:" << DbU::getValueString(targetECap) << endl;
+
+    if (segLength < minLength) {
+      DbU::Unit marginLeft  = segSpan.getVMin() - minFree;
+      DbU::Unit marginRight = maxFree - segSpan.getVMax();
+      DbU::Unit expandLeft  = toFoundryGrid( (minLength - segLength)/2 + sourceECap, DbU::Inferior );
+      DbU::Unit expandRight = toFoundryGrid( (minLength - segLength)/2 + targetECap, DbU::Superior );
+      if ((marginLeft >= expandLeft) and (marginRight >= expandRight)) {
+        minSegment->base()->setDuSource( minSegment->base()->getDuSource() - expandLeft  );
+        maxSegment->base()->setDuTarget( maxSegment->base()->getDuTarget() + expandRight );
+      } else {
+        if (marginLeft + marginRight >= expandLeft + expandRight) {
+          DbU::Unit shiftLeft = 0;
+          if (marginLeft >= expandLeft + expandRight)
+            shiftLeft = - expandRight;
+          else
+            shiftLeft = - marginLeft + expandLeft;
+          minSegment->base()->setDuSource( minSegment->base()->getDuSource() - expandLeft  + shiftLeft );
+          maxSegment->base()->setDuTarget( maxSegment->base()->getDuTarget() + expandRight + shiftLeft );
+        } else {
+          cerr << Error( "::expandToMinArea(): Cannot expand %s."
+                       , getString(minSegment).c_str() ) << endl;
+        }
+      }
+    }
+    cdebug_tabw(155,-1);
+    DebugSession::close();
+  }
+
+
 } // Anonymous namespace.
 
 
@@ -54,6 +132,7 @@ namespace Katana {
   using std::sort;
   using Hurricane::dbo_ptr;
   using Hurricane::tab;
+  using Hurricane::DebugSession;
   using Hurricane::Warning;
   using Hurricane::Bug;
   using Hurricane::Layer;
@@ -783,6 +862,58 @@ namespace Katana {
     }
 
     return overlaps;
+  }
+
+
+  void  Track::expandMinArea ()
+  {
+    if (_segments.empty()) return;
+
+    double minArea = getLayer()->getMinimalArea();
+    if (minArea == 0.0) return;
+    
+    DbU::Unit     prevSpanMin = getMin();
+    TrackElement* minSegment  = NULL;
+    TrackElement* maxSegment  = NULL;
+    Interval      span;
+    bool          hasTurn     = false;
+    for ( size_t j=0 ; j<_segments.size() ; ) {
+      if (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection())) {
+        ++j;
+        continue;
+      }
+
+      if (not minSegment) {
+        minSegment  = _segments[j];
+        maxSegment  = _segments[j];
+        if (not span.isEmpty()) prevSpanMin = span.getVMax();
+        span.makeEmpty();
+        span = _segments[j]->getCanonicalInterval();
+        hasTurn =    hasSameLayerTurn( getLayer(), _segments[j], Flags::Source )
+                  or hasSameLayerTurn( getLayer(), _segments[j], Flags::Target );
+        ++j;
+        continue;
+      }
+      
+      if (   (_segments[j]->getNet() == minSegment->getNet())
+         and (span.getVMax() >= _segments[j]->getSourceU()) ) {
+        if (_segments[j]->getTargetU() > span.getVMax()) {
+          maxSegment = _segments[j];
+          span.merge( _segments[j]->getTargetU() );
+          hasTurn = hasTurn or hasSameLayerTurn( getLayer(), _segments[j], Flags::Target );
+        }
+        ++j;
+        continue;
+      }
+    
+      if (not hasTurn and minSegment->base())
+        expandToMinArea( minSegment, maxSegment, span, prevSpanMin, _segments[j]->getSourceU() );
+
+      minSegment = NULL;
+    }
+
+    if (not hasTurn and minSegment and minSegment->base())
+      expandToMinArea( minSegment, maxSegment, span, prevSpanMin, getMax() );
   }
 
 

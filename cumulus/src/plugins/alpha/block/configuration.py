@@ -59,6 +59,12 @@ def findCellOutput ( cell, callerName, parameterId ):
                            , '           please check that the Nets directions are set.' ] )
 
 
+def toFoundryGrid ( u, mode ):
+    """Snap the DbU ``u`` to the foundry grid, according to ``mode``."""
+    oneGrid = DbU.fromGrid( 1.0 )
+    return DbU.getOnCustomGrid( u, oneGrid, mode )
+
+
 # ----------------------------------------------------------------------------
 # Class  :  "configuration.GaugeConf".
 
@@ -87,6 +93,7 @@ class GaugeConf ( object ):
         self._plugToRp       = { }
         self._rpToAccess     = { }
         self._loadRoutingGauge()
+        self._routingBb      = Box()
         return
 
     @property
@@ -122,7 +129,14 @@ class GaugeConf ( object ):
     @property
     def vDeepRG       ( self ): return self._routingGauge.getLayerGauge( self.verticalDeepDepth )
 
+    @property
+    def routingBb     ( self ): return self._routingBb
+
     def getPitch ( self, layer ): return self._routingGauge.getPitch( layer )
+
+    def setRoutingBb ( self, bb ):
+        trace( 550, '\tGaugeConf.setRoutingBb(): {}\n'.format(bb) )
+        self._routingBb = bb
 
     def _loadRoutingGauge ( self ):
         trace( 550, ',+', '\tGaugeConf._loadRoutingGauge()\n' )
@@ -206,25 +220,34 @@ class GaugeConf ( object ):
                              , self._routingGauge.getLayerGauge(depth).getViaWidth()
                              )
 
-    def getNearestHorizontalTrack ( self, bb, y, flags ):
+    def getTrack ( self, u, depth, offset ):
+        """
+        Returns the y/x axis position of the H/V track nearest to ``u`` (y/x)
+        with an offset of ``offset`` tracks applied.
+        """
+        trace( 550, '\tGaugeConf.getTrack(): u={}, depth={}, offset={}' \
+                    .format( DbU.getValueString(u), depth, offset ))
+        rg = self._routingGauge.getLayerGauge( depth )
+        if rg.getDirection() == RoutingLayerGauge.Horizontal:
+            bbMin = self.routingBb.getYMin()
+            bbMax = self.routingBb.getYMax()
+        else:
+            bbMin = self.routingBb.getXMin()
+            bbMax = self.routingBb.getXMax()
+        index  = rg.getTrackIndex( bbMin, bbMax, u, RoutingLayerGauge.Nearest )
+        utrack = rg.getTrackPosition( bbMin, index )
+        trace( 550, ' -> utrack={}\n'.format( DbU.getValueString(utrack) ))
+        return utrack + offset*rg.getPitch()
+
+    def getNearestHorizontalTrack ( self, y, flags ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
         else:                           depth = self.horizontalDepth
-        
-        index = self._routingGauge.getLayerGauge(depth).getTrackIndex( bb.getYMin()
-                                                                     , bb.getYMax()
-                                                                     , y
-                                                                     , RoutingLayerGauge.Nearest )
-        return self._routingGauge.getLayerGauge(depth).getTrackPosition( bb.getYMin(), index )
+        return self.getTrack( y, depth, 0 )
 
-    def getNearestVerticalTrack ( self, bb, x, flags ):
+    def getNearestVerticalTrack ( self, x, flags ):
         if flags & GaugeConf.DeepDepth: depth = self.verticalDeepDepth
         else:                           depth = self.verticalDepth
-        
-        index = self._routingGauge.getLayerGauge(depth).getTrackIndex( bb.getXMin()
-                                                                     , bb.getXMax()
-                                                                     , x
-                                                                     , RoutingLayerGauge.Nearest )
-        return self._routingGauge.getLayerGauge(depth).getTrackPosition( bb.getXMin(), index )
+        return self.getTrack( x, depth, 0 )
 
     def createHorizontal ( self, source, target, y, flags ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
@@ -273,17 +296,27 @@ class GaugeConf ( object ):
         else:
             hdepth = self.horizontalDepth
             vdepth = self.verticalDepth
-  
-        hpitch    = self._routingGauge.getLayerGauge(hdepth).getPitch()
-        hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
+        
+        #hpitch    = self._routingGauge.getLayerGauge(hdepth).getPitch()
+        #hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
+        #contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
+        #midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
+        #                                               + self._cellGauge.getSliceHeight() / 2
+        #midTrackY = midSliceY - ((midSliceY - hoffset) % hpitch)
+        #dy        = midSliceY - contact1.getY()
+        #
+        #if flags & GaugeConf.OffsetBottom1: dy += hpitch
+        #if flags & GaugeConf.OffsetTop1:    dy -= hpitch
+        #contact1.setDy( dy )
+
+        yoffset = 0
+        if flags & GaugeConf.OffsetBottom1: yoffset =  1
+        if flags & GaugeConf.OffsetTop1:    yoffset = -1
         contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
         midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
                                                        + self._cellGauge.getSliceHeight() / 2
-        midTrackY = midSliceY - ((midSliceY - hoffset) % hpitch)
-        dy        = midSliceY - contact1.getY()
-    
-        if flags & GaugeConf.OffsetBottom1: dy += hpitch
-        if flags & GaugeConf.OffsetTop1:    dy -= hpitch
+        ytrack = self.getTrack( contact1.getY(), self.horizontalDeepDepth, yoffset )
+        dy     = ytrack - contact1.getY()
         contact1.setDy( dy )
   
         trace( 550, contact1 )
@@ -293,13 +326,20 @@ class GaugeConf ( object ):
         trace( 550, '\tstopDepth:%d\n' % stopDepth )
   
         for depth in range(1,stopDepth):
+            rg      = self._routingGauge.getLayerGauge(depth)
             xoffset = 0
             if flags & GaugeConf.OffsetRight1 and depth == 1:
-                xoffset = self._routingGauge.getLayerGauge(depth+1).getPitch()
+                xoffset = 1
+            if rg.getDirection() == RoutingLayerGauge.Horizontal:
+                xtrack = self.getTrack( contact1.getX(), depth+1, xoffset )
+                ytrack = self.getTrack( contact1.getY(), depth  , 0 )
+            else:
+                xtrack = self.getTrack( contact1.getX(), depth  , xoffset )
+                ytrack = self.getTrack( contact1.getY(), depth+1, 0 )
             contact2 = Contact.create( rp.getNet()
                                      , self._routingGauge.getContactLayer(depth)
-                                     , contact1.getX() + xoffset
-                                     , contact1.getY()
+                                     , xtrack
+                                     , ytrack
                                      , self._routingGauge.getLayerGauge(depth).getViaWidth()
                                      , self._routingGauge.getLayerGauge(depth).getViaWidth()
                                      )
@@ -307,17 +347,17 @@ class GaugeConf ( object ):
             if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
                 segment = Horizontal.create( contact1
                                            , contact2
-                                           , self._routingGauge.getRoutingLayer(depth)
+                                           , rg.getLayer()
                                            , contact1.getY()
-                                           , self._routingGauge.getLayerGauge(depth).getWireWidth()
+                                           , rg.getWireWidth()
                                            )
                 trace( 550, segment )
             else:
                 segment = Vertical.create( contact1
                                          , contact2
-                                         , self._routingGauge.getRoutingLayer(depth)
+                                         , rg.getLayer()
                                          , contact1.getX()
-                                         , self._routingGauge.getLayerGauge(depth).getWireWidth()
+                                         , rg.getWireWidth()
                                          )
                 trace( 550, segment )
             contact1 = contact2
@@ -385,7 +425,54 @@ class GaugeConf ( object ):
             elif isinstance(segment,Vertical):
                 segment.setX( x )
                 segment.getOppositeAnchor( topContact ).setX( x )
+        self.expandMinArea( topContact )
         return
+
+    def expandMinArea ( self, topContact ):
+        segments = []
+        contacts = [ topContact ]
+        i        = 0
+        while i < len(contacts):
+            for component in contacts[i].getSlaveComponents():
+                if not isinstance(component,Horizontal) and not isinstance(component,Vertical):
+                    continue
+                if component not in segments:
+                    segments.append( component )
+                if component.getSource() not in contacts:
+                    contacts.append( component.getSource() )
+                if component.getTarget() not in contacts:
+                    contacts.append( component.getTarget() )
+            i += 1
+        for segment in segments:
+            layer     = segment.getLayer()
+            wireWidth = segment.getWidth()
+            depth     = self._routingGauge.getLayerDepth( layer )
+            minArea   = self._routingGauge.getRoutingLayer( depth ).getMinimalArea()
+            extension = 0
+            if minArea:
+                minLength = DbU.fromPhysical( minArea / DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
+                                            , DbU.UnitPowerMicro )
+                minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior );
+                if isinstance(segment,Horizontal):
+                    uMin = segment.getSource().getX()
+                    uMax = segment.getTarget().getX()
+                    segLength = abs( uMax - uMin )
+                    if segLength < minLength:
+                        extension = toFoundryGrid( (minLength - segLength)/2, DbU.SnapModeSuperior )
+                        if uMin > uMax:
+                            extension = - extension
+                    segment.setDxSource( -extension )
+                    segment.setDxTarget(  extension )
+                if isinstance(segment,Vertical):
+                    uMin = segment.getSource().getY()
+                    uMax = segment.getTarget().getY()
+                    segLength = abs( uMax - uMin )
+                    if segLength < minLength:
+                        extension = toFoundryGrid( (minLength - segLength)/2, DbU.SnapModeSuperior )
+                        if uMin > uMax:
+                            extension = - extension
+                    segment.setDySource( -extension )
+                    segment.setDyTarget(  extension )
 
 
 # -------------------------------------------------------------------
@@ -1004,8 +1091,8 @@ class BlockConf ( GaugeConf ):
     @property
     def coreAb ( self ):
         if not hasattr(self,'coreSize'): return Box()
-        trace( 550, '\tcoreAb:[{} {}]\n'.format( DbU.getValueString(self.coreSize[0])
-                                               , DbU.getValueString(self.coreSize[1]) ))
+        #trace( 550, '\tcoreAb:[{} {}]\n'.format( DbU.getValueString(self.coreSize[0])
+        #                                       , DbU.getValueString(self.coreSize[1]) ))
         return Box( 0, 0, self.coreSize[0], self.coreSize[1] )
 
     @property

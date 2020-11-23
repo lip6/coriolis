@@ -946,6 +946,12 @@ class Corona ( object ):
                 bb = component.getBoundingBox()
                 padInstance.getTransformation().applyOn( bb )
                 trace( 550, '\t| External:{} bb:{}\n'.format(component,bb) )
+                if self.conf.chipConf.ioPadGauge == 'LibreSOCIO':
+                    if chipIntNet.isPower() or chipIntNet.isGround():
+                        if side.type == North or side.type == South:
+                            bb.inflate( -DbU.fromPhysical( 0.6, DbU.UnitPowerMicro ), 0 )
+                        else:
+                            bb.inflate( 0, -DbU.fromPhysical( 0.6, DbU.UnitPowerMicro ) )
                 if bb.intersect(innerBb):
                     trace( 550, '\t| Accepted.\n' )
                     lg    = rg.getLayerGauge( component.getLayer() )
