@@ -51,6 +51,18 @@ class BigVia ( object ):
         self.plates      = {}
         self.vias        = {}
 
+    def __str__ ( self ):
+        global rg
+        if rg is None: rg = CRL.AllianceFramework.get().getRoutingGauge()
+        return '<BigVia {} [{} {}] @({} {}) {} x {}>' \
+               .format( self.net.getName()
+                      , rg.getRoutingLayer(self.bottomDepth).getName()
+                      , rg.getRoutingLayer(self.topDepth).getName()
+                      , DbU.getValueString(self.x)
+                      , DbU.getValueString(self.y)
+                      , DbU.getValueString(self.width)
+                      , DbU.getValueString(self.height) )
+
     def getNet ( self ): return self.net
 
     def getPlate ( self, metal ):
@@ -107,13 +119,23 @@ class BigVia ( object ):
         if not cutSpacing:
             raise ErrorMessage( 1, 'BigVia._doCutMatrix(): Cut spacing on layer "{}" is zero.' \
                                    .format( cutLayer.getName() ))
-        topEnclosure = min( viaLayer.getTopEnclosure( Layer.EnclosureH )
+        topEnclosure = max( viaLayer.getTopEnclosure( Layer.EnclosureH )
                           , viaLayer.getTopEnclosure( Layer.EnclosureV ))
-        botEnclosure = min( viaLayer.getBottomEnclosure( Layer.EnclosureH )
+        botEnclosure = max( viaLayer.getBottomEnclosure( Layer.EnclosureH )
                           , viaLayer.getBottomEnclosure( Layer.EnclosureV ))
         enclosure    = max( topEnclosure, botEnclosure )
-        cutArea      = self.plates[ depth ].getBoundingBox()
-        cutArea.inflate( - enclosure - 2*cutSide )
+        trace( 550, '\tBigVia: {}\n'.format(self) )
+        trace( 550, '\t| topEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(topEnclosure)) )
+        trace( 550, '\t| botEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botEnclosure)) )
+        trace( 550, '\t| enclosure   [{}]: {}\n'.format(depth,DbU.getValueString(enclosure)) )
+        cutArea = self.plates[ depth ].getBoundingBox()
+        cutArea.inflate( - enclosure - cutSide/2 )
+        xoffset = (cutArea.getWidth () % (cutSide+cutSpacing)) / 2
+        yoffset = (cutArea.getHeight() % (cutSide+cutSpacing)) / 2
+        cutArea.translate( xoffset, yoffset )
+       #if cutArea.isEmpty():
+       #    raise ErrorMessage( 1, 'BigVia._doCutMatrix(): Cannot create at least a single cut in {}.' \
+       #                           .format(self))
         self.vias[ depth ] = []
         y = cutArea.getYMin()
         while y <= cutArea.getYMax():

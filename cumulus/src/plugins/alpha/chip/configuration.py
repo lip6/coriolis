@@ -143,8 +143,14 @@ class ChipConf ( BlockConf ):
                     clockNets.append( net )
             self.railsCount = self.cfg.chip.block.rails.count + len(clockNets)
         trace( 550, '\tself.railsCount: {}\n'.format(self.railsCount) )
-        self.minHCorona = self.railsCount*(self.hRailWidth + self.hRailSpace) + self.hRailSpace + self.sliceHeight
-        self.minVCorona = self.railsCount*(self.vRailWidth + self.vRailSpace) + self.vRailSpace + 10*self.sliceStep
+        hRailsSize = self.railsCount*(self.hRailWidth + self.hRailSpace) + self.hRailSpace
+        if hRailsSize % self.sliceHeight:
+            hRailsSize += self.sliceHeight - (hRailsSize % self.sliceHeight)
+        self.minHCorona = hRailsSize + self.sliceHeight
+        vRailsSize = self.railsCount*(self.vRailWidth + self.vRailSpace) + self.vRailSpace
+        if vRailsSize % self.sliceHeight:
+            vRailsSize += self.sliceHeight - (vRailsSize % self.sliceHeight)
+        self.minVCorona = vRailsSize + self.sliceHeight
 
     def chipValidate ( self ):
         #self.checkPads()
