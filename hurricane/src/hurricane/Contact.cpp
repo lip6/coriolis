@@ -25,6 +25,7 @@
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Error.h"
+#include "hurricane/Warning.h"
 #include "hurricane/Slot.h"
 
 namespace Hurricane {
@@ -112,11 +113,27 @@ Contact::Contact(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Un
     _width(width),
     _height(height)
 {
-    if (!_layer)
-        throw Error("Can't create " + _TName("Contact") + " : null layer");
+    if (not _layer)
+        throw Error("Contact::Contact(): Can't create " + _TName("Contact") + ", NULL layer.");
 
-    if ( _width  < _layer->getMinimalSize() ) _width  = _layer->getMinimalSize();
-    if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
+    if ( _width  < _layer->getMinimalSize() ) {
+      cerr << Warning( "Contact::Contact(): Width %s is inferior to layer minimal size %s, bumping.\n"
+                       "          (on %s)"
+                     , DbU::getValueString(_width).c_str()
+                     , DbU::getValueString(_layer->getMinimalSize()).c_str()
+                     , getString(this).c_str() )
+           << endl;
+      _width  = _layer->getMinimalSize();
+    }
+    if ( _height < _layer->getMinimalSize() ) {
+      cerr << Warning( "Contact::Contact(): Height %s is inferior to layer minimal size %s, bumping.\n"
+                       "          (on %s)"
+                     , DbU::getValueString(_height).c_str()
+                     , DbU::getValueString(_layer->getMinimalSize()).c_str()
+                     , getString(this).c_str() )
+           << endl;
+      _height = _layer->getMinimalSize();
+    }
 }
 
 Contact::Contact(Net* net, Component* anchor, const Layer* layer, const DbU::Unit& dx, const DbU::Unit& dy, const DbU::Unit& width, const DbU::Unit& height)
