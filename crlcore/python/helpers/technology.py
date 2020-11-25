@@ -18,7 +18,7 @@ Some helpers to create or load a technology and it's libraries.
 """
 
 from __future__ import print_function
-from Hurricane  import DataBase, Library, BasicLayer, Layer
+from Hurricane  import DataBase, Library, BasicLayer, Layer, ViaLayer
 
 
 __all__ = [ 'safeGetLibrary', 'createBL', 'setEnclosures' ]
@@ -64,6 +64,28 @@ def createBL ( tech, layerName, material, size=None, spacing=None, gds2Layer=Non
     if gds2Layer is not None:
         layer.setGds2Layer   ( gds2Layer )
         layer.setGds2Datatype( gds2DataType )
+    return layer
+
+
+def createVia ( tech, viaName, botName, cutName, topName, size=None ):
+    """
+    Create a new ViaLayer. Parameters ``tech``, ``viaName``, ``botName``,
+    ``cutName`` and ``topName`` are mandatory.
+
+    :param tech:    The technology the basic layer will be part of.
+    :param viaName: The name of the newly defined VIA layer.
+    :param botName: The name of the *bottom* metal layer.
+    :param cutName: The name of the *cut* (aka, via hole) layer.
+    :param topName: The name of the *top* metal layer.
+    :param size:    The minimal side size of the square *cut* layer.
+    """
+    layer = ViaLayer.create( tech
+                           , viaName
+                           , tech.getLayer(botName)
+                           , tech.getLayer(cutName)
+                           , tech.getLayer(topName) )
+    if size is not None:
+        layer.setMinimalSize( size )
     return layer
 
 
