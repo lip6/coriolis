@@ -549,7 +549,7 @@ namespace Etesian {
   size_t  EtesianEngine::toColoquinte ()
   {
     AllianceFramework* af     = AllianceFramework::get();
-    DbU::Unit          hpitch = getHorizontalPitch();
+    DbU::Unit          hpitch = getSliceStep();
     DbU::Unit          vpitch = getSliceStep();
 
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
@@ -1010,7 +1010,7 @@ namespace Etesian {
     using namespace coloquinte::gp;
     using namespace coloquinte::dp;
 
-    int_t sliceHeight = getSliceHeight() / getHorizontalPitch();
+    int_t sliceHeight = getSliceHeight() / getSliceStep();
     roughLegalize(sliceHeight, options);
     // TODO: for uniform density distribution, add some margin to the cell sizes so we don't disrupt it during detailed placement
 
@@ -1103,7 +1103,7 @@ namespace Etesian {
     Effort        placementEffort = getPlaceEffort();
     GraphicUpdate placementUpdate = getUpdateConf();
     Density       densityConf     = getSpreadingConf();
-    double        sliceHeight     = getSliceHeight() / getHorizontalPitch();
+    double        sliceHeight     = getSliceHeight() / getSliceStep();
 
     cmess1 << "  o  Running Coloquinte." << endl;
     cmess2 << "     - Computing initial placement..." << endl;
@@ -1233,7 +1233,7 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
-      DbU::Unit hpitch          = getHorizontalPitch();
+      DbU::Unit hpitch          = getSliceStep();
       DbU::Unit vpitch          = getSliceStep();
       Point     instancePosition;
       Instance* instance        = static_cast<Instance*>(occurrence.getEntity());
