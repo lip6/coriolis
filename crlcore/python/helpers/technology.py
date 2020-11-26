@@ -43,7 +43,7 @@ def safeGetLibrary ( frameworkName, libName ):
     return lib
 
 
-def createBL ( tech, layerName, material, size=None, spacing=None, gds2Layer=None, gds2DataType=0 ):
+def createBL ( tech, layerName, material, size=None, spacing=None, gds2Layer=None, gds2DataType=0, area=None ):
     """
     Create a new BasicLayer. Parameters ``tech``, ``layerName`` and ``material``
     are mandatory.
@@ -55,6 +55,7 @@ def createBL ( tech, layerName, material, size=None, spacing=None, gds2Layer=Non
     :param spacing:      The minimal distance, edge to edge between two wires.
     :param gds2layer:    The GDSII layer number (for the GDSII driver).
     :param gds2DataType: The GDSII DataType (i.e purpose).
+    :param area:         The minimum area (in um2)
     """
     layer = BasicLayer.create( tech, layerName, BasicLayer.Material(material) )
     if size is not None:
@@ -64,6 +65,8 @@ def createBL ( tech, layerName, material, size=None, spacing=None, gds2Layer=Non
     if gds2Layer is not None:
         layer.setGds2Layer   ( gds2Layer )
         layer.setGds2Datatype( gds2DataType )
+    if area is not None:
+        layer.setMinimalArea( area )
     return layer
 
 
