@@ -533,7 +533,7 @@ class IoPadConf ( object ):
 
     def __init__ ( self, datas ):
         if not isinstance(datas,tuple):
-            raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" parameter is not a list.'
+            raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" parameter is not a tuple.'
                                    , str(datas) ] )
         if len(datas) < 5 and len(datas) > 8:
             raise ErrorMessage( 1, [ 'IoPadConf.__init__(): The "datas" list must have between 5 to 7 elements.'
@@ -885,6 +885,20 @@ class IoPin ( object ):
     A_BEGIN = 0x0010
     A_END   = 0x0020
     A_MASK  = A_BEGIN|A_END
+
+    @staticmethod
+    def toStr ( value ):
+        s = ''
+        for constant, name in ( (IoPin.SOUTH  , 'SOUTH'  )
+                              , (IoPin.NORTH  , 'NORTH'  )
+                              , (IoPin.EAST   , 'EAST'   )
+                              , (IoPin.WEST   , 'WEST'   )
+                              , (IoPin.A_BEGIN, 'A_BEGIN')
+                              , (IoPin.A_END  , 'A_END'  ) ):
+            if value & constant:
+                if len(s): s += '|'
+                s += 'IoPin.'+name
+        return s
 
     def __init__ ( self, flags, stem, upos, ustep=0, count=1 ):
         """
