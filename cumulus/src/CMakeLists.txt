@@ -48,6 +48,7 @@
               set ( pyPluginAlphaBlock ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/configuration.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/iospecs.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/bigvia.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/spares.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/block.py
@@ -81,4 +82,4 @@
           install ( FILES    ${pyPluginAlphaBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/block )
           install ( FILES    ${pyPluginAlphaC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/core2chip )
           install ( FILES    ${pyPluginAlphaChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/chip )
-         #install ( PROGRAMS ${pyTools}       DESTINATION bin ) 
+          install ( PROGRAMS ${pyTools}            DESTINATION bin ) 
