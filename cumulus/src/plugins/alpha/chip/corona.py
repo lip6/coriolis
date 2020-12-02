@@ -17,26 +17,15 @@ from   __future__ import print_function
 import bisect
 from   operator   import methodcaller  
 import Cfg        
-from   Hurricane  import DbU
-from   Hurricane  import Point
-from   Hurricane  import Interval
-from   Hurricane  import Box
-from   Hurricane  import Transformation
-from   Hurricane  import Path
-from   Hurricane  import Occurrence
-from   Hurricane  import Net
-from   Hurricane  import Contact
-from   Hurricane  import Horizontal
-from   Hurricane  import Vertical
-from   Hurricane  import Pad
+from   Hurricane  import DbU, Point, Interval, Box, Transformation,   \
+                         Path, Occurrence, Net, Contact, Horizontal,  \
+                         Vertical, Pad
 import CRL          
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
+from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins      
-from   plugins         import StackedVia
 import plugins.alpha.chip
 from   plugins.alpha.block.bigvia import BigVia
 
