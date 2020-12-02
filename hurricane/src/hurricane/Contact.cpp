@@ -103,8 +103,8 @@ class Contact_Hooks : public Collection<Hook*> {
 // Contact implementation
 // ****************************************************************************************************
 
-Contact::Contact(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
-// ****************************************************************************************************
+Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
+// ********************************************************************************************************
 :  Inherit(net),
     _anchorHook(this),
     _layer(layer),
@@ -113,31 +113,12 @@ Contact::Contact(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Un
     _width(width),
     _height(height)
 {
-    if (not _layer)
-        throw Error("Contact::Contact(): Can't create " + _TName("Contact") + ", NULL layer.");
-
-    if ( _width  < _layer->getMinimalSize() ) {
-      cerr << Warning( "Contact::Contact(): Width %s is inferior to layer minimal size %s, bumping.\n"
-                       "          (on %s)"
-                     , DbU::getValueString(_width).c_str()
-                     , DbU::getValueString(_layer->getMinimalSize()).c_str()
-                     , getString(this).c_str() )
-           << endl;
-      _width  = _layer->getMinimalSize();
-    }
-    if ( _height < _layer->getMinimalSize() ) {
-      cerr << Warning( "Contact::Contact(): Height %s is inferior to layer minimal size %s, bumping.\n"
-                       "          (on %s)"
-                     , DbU::getValueString(_height).c_str()
-                     , DbU::getValueString(_layer->getMinimalSize()).c_str()
-                     , getString(this).c_str() )
-           << endl;
-      _height = _layer->getMinimalSize();
-    }
+  if (not _layer)
+    throw Error("Contact::Contact(): Can't create " + _TName("Contact") + ", NULL layer.");
 }
 
-Contact::Contact(Net* net, Component* anchor, const Layer* layer, const DbU::Unit& dx, const DbU::Unit& dy, const DbU::Unit& width, const DbU::Unit& height)
-// ****************************************************************************************************
+Contact::Contact(Net* net, Component* anchor, const Layer* layer, DbU::Unit dx, DbU::Unit dy, DbU::Unit width, DbU::Unit height)
+// *****************************************************************************************************************************
 :  Inherit(net),
     _anchorHook(this),
     _layer(layer),
@@ -164,29 +145,59 @@ Contact::Contact(Net* net, Component* anchor, const Layer* layer, const DbU::Uni
     if ( _height < _layer->getMinimalSize() ) _height = _layer->getMinimalSize();
 }
 
-Contact* Contact::create(Net* net, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
-// ****************************************************************************************************
+Contact* Contact::create(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
+// ****************************************************************************************************************
 {
     Contact* contact = new Contact(net, layer, x, y, width, height);
-
     contact->_postCreate();
-
+    contact->_postCheck();
     return contact;
 }
 
-Contact* Contact::create(Component* anchor, const Layer* layer, const DbU::Unit& dx, const DbU::Unit& dy, const DbU::Unit& width, const DbU::Unit& height)
-// ****************************************************************************************************
+Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, DbU::Unit dy, DbU::Unit width, DbU::Unit height)
+// ***************************************************************************************************************************
 {
-    if (!anchor)
-        throw Error("Can't create " + _TName("Contact") + " : null anchor");
+  if (!anchor)
+    throw Error("Can't create " + _TName("Contact") + " : null anchor");
 
-    Contact* contact = new Contact(anchor->getNet(), anchor, layer, dx, dy, width, height);
-
-    contact->_postCreate();
-
-    return contact;
+  Contact* contact = new Contact(anchor->getNet(), anchor, layer, dx, dy, width, height);
+  contact->_postCreate();
+  contact->_postCheck();
+  return contact;
 }
 
+  bool  Contact::_postCheck ()
+  // *************************
+  {
+    bool rvalue = true;
+    if (_layer->isSymbolic()) {
+      if (not _width ) _width  = _layer->getMinimalSize();
+      if (not _height) _height = _layer->getMinimalSize();
+    } else {
+      if ((_width) and (_width < _layer->getMinimalSize())) {
+        cerr << Warning( "Contact::_postCheck(): Width %s is inferior to layer minimal size %s, bumping.\n"
+                         "          (on %s)"
+                       , DbU::getValueString(_width).c_str()
+                       , DbU::getValueString(_layer->getMinimalSize()).c_str()
+                       , getString(this).c_str() )
+             << endl;
+        _width = _layer->getMinimalSize();
+        rvalue = false;
+      }
+      if ((_height) and (_height < _layer->getMinimalSize())) {
+        cerr << Warning( "Contact::_postCheck(): Height %s is inferior to layer minimal size %s, bumping.\n"
+                         "          (on %s)"
+                       , DbU::getValueString(_height).c_str()
+                       , DbU::getValueString(_layer->getMinimalSize()).c_str()
+                       , getString(this).c_str() )
+             << endl;
+        _height = _layer->getMinimalSize();
+        rvalue = false;
+      }
+    }
+    return rvalue;
+  }
+  
 Hooks Contact::getHooks() const
 // ****************************
 {
@@ -194,14 +205,14 @@ Hooks Contact::getHooks() const
 }
 
 DbU::Unit Contact::getX() const
-// ***********************
+// ****************************
 {
     Component* anchor = getAnchor();
     return (!anchor) ? _dx : anchor->getX() + _dx;
 }
 
 DbU::Unit Contact::getY() const
-// ***********************
+// ****************************
 {
     Component* anchor = getAnchor();
     return (!anchor) ? _dy : anchor->getY() + _dy;
@@ -242,7 +253,7 @@ Component* Contact::getAnchor() const
 }
 
 void Contact::translate(const DbU::Unit& dx, const DbU::Unit& dy)
-// ****************************************************
+// **************************************************************
 {
     if ((dx != 0) || (dy != 0)) {
         invalidate(true);
@@ -252,7 +263,7 @@ void Contact::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 }
 
 void Contact::setLayer(const Layer* layer)
-// *********************************
+// ***************************************
 {
     if (!layer)
         throw Error("Can't set layer : null layer");
@@ -263,8 +274,8 @@ void Contact::setLayer(const Layer* layer)
     }
 }
 
-void Contact::setWidth(const DbU::Unit& width)
-// **************************************
+void Contact::setWidth(DbU::Unit width)
+// ************************************
 {
     if (width != _width) {
         invalidate(false);
@@ -272,8 +283,8 @@ void Contact::setWidth(const DbU::Unit& width)
     }
 }
 
-void Contact::setHeight(const DbU::Unit& height)
-// ****************************************
+void Contact::setHeight(DbU::Unit height)
+// **************************************
 {
     if (height != _height) {
         invalidate(false);
@@ -281,8 +292,8 @@ void Contact::setHeight(const DbU::Unit& height)
     }
 }
 
-void Contact::setSizes(const DbU::Unit& width, const DbU::Unit& height)
-// **********************************************************
+void Contact::setSizes(DbU::Unit width, DbU::Unit height)
+// ******************************************************
 {
     if ((width != _width) || (height != _height)) {
         invalidate(false);
@@ -291,20 +302,20 @@ void Contact::setSizes(const DbU::Unit& width, const DbU::Unit& height)
     }
 }
 
-void Contact::setX(const DbU::Unit& x)
-// ******************************
+void Contact::setX(DbU::Unit x)
+// ****************************
 {
     setPosition(x, getY());
 }
 
-void Contact::setY(const DbU::Unit& y)
-// ******************************
+void Contact::setY(DbU::Unit y)
+// ****************************
 {
     setPosition(getX(), y);
 }
 
-void Contact::setPosition(const DbU::Unit& x, const DbU::Unit& y)
-// ****************************************************
+void Contact::setPosition(DbU::Unit x, DbU::Unit y)
+// ************************************************
 {
     Component* anchor = getAnchor();
     if (!anchor)
@@ -319,20 +330,20 @@ void Contact::setPosition(const Point& position)
     setPosition(position.getX(), position.getY());
 }
 
-void Contact::setDx(const DbU::Unit& dx)
-// ********************************
+void Contact::setDx(DbU::Unit dx)
+// ******************************
 {
     setOffset(dx, _dy);
 }
 
-void Contact::setDy(const DbU::Unit& dy)
-// ********************************
+void Contact::setDy(DbU::Unit dy)
+// ******************************
 {
     setOffset(_dx, dy);
 }
 
-void Contact::setOffset(const DbU::Unit& dx, const DbU::Unit& dy)
-// ****************************************************
+void Contact::setOffset(DbU::Unit dx, DbU::Unit dy)
+// ************************************************
 {
     if ((dx != _dx) || (dy != _dy)) {
         invalidate(true);
@@ -380,7 +391,7 @@ string Contact::_getString() const
 }
 
 Record* Contact::_getRecord() const
-// **************************
+// ********************************
 {
     Record* record = Inherit::_getRecord();
     if (record) {
@@ -427,7 +438,7 @@ string Contact::AnchorHook::_getString() const
 }
 
 Hook* Contact::AnchorHook::_compToHook(Component* component)
-// ***************************************************************
+// *********************************************************
 {
   Contact* contact = dynamic_cast<Contact*>(component);
   if (not contact) {

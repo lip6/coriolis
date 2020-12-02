@@ -17,6 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
+#include "hurricane/Warning.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Pin.h"
 
@@ -28,8 +29,8 @@ namespace Hurricane {
 // Pin implementation
 // ****************************************************************************************************
 
-Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
-// ****************************************************************************************************
+Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
+// **************************************************************************************************************************************************************************************************
 :  Inherit(net, layer, x, y, width, height),
     _name(name),
     _accessDirection(accessDirection),
@@ -41,8 +42,8 @@ Pin::Pin(Net* net, const Name& name, const AccessDirection& accessDirection, con
 
 }
 
-Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, const DbU::Unit& x, const DbU::Unit& y, const DbU::Unit& width, const DbU::Unit& height)
-// ****************************************************************************************************
+Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirection, const PlacementStatus& placementStatus, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
+// **********************************************************************************************************************************************************************************************************
 {
     if (!net)
         throw Error("Can't create " + _TName("Pin") + " : NULL net");
@@ -50,14 +51,46 @@ Pin* Pin::create(Net* net, const Name& name, const AccessDirection& accessDirect
         throw Error("Can't create " + _TName("Pin") + " : NULL layer");
 
     Pin* pin = new Pin(net, name, accessDirection, placementStatus, layer, x, y, width, height);
-
     pin->_postCreate();
-
+    pin->_postCheck();
     return pin;
 }
 
+  bool  Pin::_postCheck ()
+  // *********************
+  {
+    bool rvalue = true;
+    if ((not getLayer()->isSymbolic() or (getWidth()))
+       and (  (_accessDirection == AccessDirection::NORTH)
+           or (_accessDirection == AccessDirection::SOUTH) )
+       and (getWidth() < getLayer()->getMinimalSize())) {
+      cerr << Warning( "Pin::_postCheck(): Width %s is inferior to layer minimal size %s, bumping.\n"
+                       "          (on %s)"
+                     , DbU::getValueString(getWidth()).c_str()
+                     , DbU::getValueString(getLayer()->getMinimalSize()).c_str()
+                     , getString(this).c_str() )
+           << endl;
+      setWidth( getLayer()->getMinimalSize() );
+      rvalue = false;
+    }
+    if ((not getLayer()->isSymbolic() or (getHeight()))
+       and (  (_accessDirection == AccessDirection::WEST)
+           or (_accessDirection == AccessDirection::EAST) )
+       and getHeight() < getLayer()->getMinimalSize()) {
+      cerr << Warning( "Pin::_postCheck(): Height %s is inferior to layer minimal size %s, bumping.\n"
+                       "          (on %s)"
+                     , DbU::getValueString(getHeight()).c_str()
+                     , DbU::getValueString(getLayer()->getMinimalSize()).c_str()
+                     , getString(this).c_str() )
+           << endl;
+      setHeight( getLayer()->getMinimalSize() );
+      rvalue = false;
+    }
+    return rvalue;
+  }
+
 void Pin::setPlacementStatus(const PlacementStatus& placementstatus)
-// **********************************************************************
+// *****************************************************************
 {
     if (placementstatus != _placementStatus) {
         invalidate(true);
@@ -66,7 +99,7 @@ void Pin::setPlacementStatus(const PlacementStatus& placementstatus)
 }
 
 void Pin::_postCreate()
-// **********************
+// ********************
 {
     getCell()->_getPinMap()._insert(this);
 
@@ -74,14 +107,14 @@ void Pin::_postCreate()
 }
 
 void Pin::_preDestroy()
-// *********************
+// ********************
 {
   Inherit::_preDestroy();
   getCell()->_getPinMap()._remove(this);
 }
 
 string Pin::_getString() const
-// *****************************
+// ***************************
 {
     string s = Inherit::_getString();
     s.insert(s.length() - 1, " " + getString(_name));
@@ -90,7 +123,7 @@ string Pin::_getString() const
 }
 
 Record* Pin::_getRecord() const
-// ************************
+// ****************************
 {
     Record* record = Inherit::_getRecord();
     if (record) {
@@ -101,89 +134,31 @@ Record* Pin::_getRecord() const
     return record;
 }
 
-//void Pin::_Draw(View* view, BasicLayer* basicLayer, const Box& updateArea, const Transformation& transformation)
-//// *************************************************************************************************************
-//{
-//    view->FillRectangle(transformation.getBox(getBoundingBox(basicLayer)), true);
-//}
-//
-//void Pin::_Highlight(View* view, const Box& updateArea, const Transformation& transformation)
-//// ******************************************************************************************
-//{
-//    if (_width && _height) {
-//        if (1 < view->getScreenSize(max(_width, _height))) {
-//            for_each_basic_layer(basicLayer, getLayer()->getBasicLayers()) {
-//                basicLayer->_Fill(view, transformation.getBox(getBoundingBox(basicLayer)));
-//                end_for;
-//            }
-//        }
-//    }
-//    if (view->getScale() <= 1)
-//        view->DrawPoint(transformation.getPoint(getPosition()), 1);
-//    else if (view->getScale() <= 3)
-//    {
-//        view->DrawPoint(transformation.getPoint(getPosition()), 2);
-//
-//        if ( view->IsTextVisible() )
-//        {
-//            string text = "("
-//                        + getString ( getValue ( getX() ) ) + ","
-//                        + getString ( getValue ( getY() ) ) + ")";
-//            view->DrawString ( text,
-//                               transformation.getBox ( getBoundingBox() ).getXMin(),
-//                               transformation.getBox ( getBoundingBox() ).getYMax() );
-//        }
-//    }
-//    else {
-//        Point position = getPosition();
-//        view->DrawPoint(transformation.getPoint(position), 3);
-//        if (_width) {
-//            Box box = transformation.getBox(Box(position).Inflate(getHalfWidth(), 0));
-//            view->DrawLine(box.getXMin(), box.getYMin(), box.getXMax(), box.getYMax());
-//        }
-//        if (_height) {
-//            Box box = transformation.getBox(Box(position).Inflate(0, getHalfHeight()));
-//            view->DrawLine(box.getXMin(), box.getYMin(), box.getXMax(), box.getYMax());
-//        }
-//
-//        if ( view->IsTextVisible() )
-//        {
-//            string text = getString ( _name ) + "("
-//                        + getString ( getValue ( getX() ) ) + ","
-//                        + getString ( getValue ( getY() ) ) + ")";
-//            view->DrawString ( text,
-//                               transformation.getBox ( getBoundingBox() ).getXMin(),
-//                               transformation.getBox ( getBoundingBox() ).getYMax() );
-//        }
-//    }
-//}
-//
-
 // ****************************************************************************************************
 // Pin::AccessDirection implementation
 // ****************************************************************************************************
 
-Pin::AccessDirection::AccessDirection(const Code& code)
-// ******************************************************
+Pin::AccessDirection::AccessDirection(Code code)
+// *********************************************
 :    _code(code)
 {
 }
 
 Pin::AccessDirection::AccessDirection(const AccessDirection& accessDirection)
-// ****************************************************************************
+// **************************************************************************
 :    _code(accessDirection._code)
 {
 }
 
 Pin::AccessDirection& Pin::AccessDirection::operator=(const AccessDirection& accessDirection)
-// **********************************************************************************************
+// ******************************************************************************************
 {
     _code = accessDirection._code;
     return *this;
 }
 
 string Pin::AccessDirection::_getString() const
-// **********************************************
+// ********************************************
 {
     switch (_code) {
         case UNDEFINED : return "UNDEFINED";
@@ -196,7 +171,7 @@ string Pin::AccessDirection::_getString() const
 }
 
 Record* Pin::AccessDirection::_getRecord() const
-// *****************************************
+// *********************************************
 {
     Record* record = new Record(getString(this));
     record->add(getSlot("Code", (int)_code));
@@ -209,8 +184,8 @@ Record* Pin::AccessDirection::_getRecord() const
 // Pin::PlacementStatus implementation
 // ****************************************************************************************************
 
-Pin::PlacementStatus::PlacementStatus(const Code& code)
-// ****************************************************
+Pin::PlacementStatus::PlacementStatus(Code code)
+// *********************************************
 :    _code(code)
 {
 }
@@ -240,7 +215,7 @@ string Pin::PlacementStatus::_getString() const
 }
 
 Record* Pin::PlacementStatus::_getRecord() const
-// ***************************************
+// *********************************************
 {
     Record* record = new Record(getString(this));
     record->add(getSlot("Code", (int)_code));
