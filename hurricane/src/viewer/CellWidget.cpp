@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) UPMC 2008-2020, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./CellWidget.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -27,6 +27,7 @@
 #include <QBitmap>
 #include <QLabel>
 
+#include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -869,9 +870,12 @@ namespace Hurricane {
 
   void  CellWidget::TextDrawingQuery::masterCellCallback ()
   {
-    Box bbox = getTransformation().getBox(getMasterCell()->getAbutmentBox());
-    if ( getDepth() == 2 )
-      _cellWidget->drawText ( Point(bbox.getXMin(),bbox.getYMin())
+    Box   bb        = getTransformation().getBox( getMasterCell()->getAbutmentBox() );
+    QRect rectangle = _cellWidget->dbuToScreenRect( bb );
+    if (   (getDepth() == 2)
+       and (rectangle.width () >    _cellWidget->getPixelThreshold())
+       and (rectangle.height() > 15*_cellWidget->getPixelThreshold()))
+      _cellWidget->drawText ( Point(bb.getXMin(),bb.getYMin())
                             , getString(getInstance()->getName()).c_str()
                             , Reverse|Top
                             , -90
@@ -1079,16 +1083,16 @@ namespace Hurricane {
 // Class :  "Hurricane::CellWidget".
 
 
-  int  CellWidget::_initialSide = 350;
-
-
   CellWidget::CellWidget ( QWidget* parent )
     : QWidget               (parent)
     , _technology           (NULL)
     , _palette              (NULL)
-    , _screenArea           (0,0,_initialSide,_initialSide)
+    , _screenArea           ( 0, 0
+                            , Cfg::getParamInt("viewer.minimumSize",350)->asInt()
+                            , Cfg::getParamInt("viewer.minimumSize",350)->asInt() )
     , _redrawManager        (this)
-    , _drawingPlanes        (QSize(_initialSide,_initialSide),this)
+    , _drawingPlanes        (QSize(Cfg::getParamInt("viewer.minimumSize",350)->asInt()
+                                  ,Cfg::getParamInt("viewer.minimumSize",350)->asInt()),this)
     , _drawingQuery         (this)
     , _textDrawingQuery     (this)
     , _darkening            (DisplayStyle::HSVr())
@@ -1106,6 +1110,7 @@ namespace Hurricane {
     , _commands             ()
     , _redrawRectCount      (0)
     , _textFontHeight       (20)
+    , _pixelThreshold       (Cfg::getParamInt("viewer.pixelThreshold",50)->asInt())
   {
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
@@ -1123,8 +1128,8 @@ namespace Hurricane {
     _textFontHeight = QFontMetrics(font).ascent();
 
     if (Graphics::isHighDpi()) {
-      resize( Graphics::toHighDpi(_initialSide)
-            , Graphics::toHighDpi(_initialSide) );
+      resize( Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt())
+            , Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt()) );
     }
   }
 
@@ -1243,7 +1248,8 @@ namespace Hurricane {
 
   QSize  CellWidget::minimumSizeHint () const
   {
-    return QSize(Graphics::toHighDpi(_initialSide),Graphics::toHighDpi(_initialSide));
+    return QSize(Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt())
+                ,Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt()));
   }
 
 
@@ -1351,7 +1357,7 @@ namespace Hurricane {
         Box redrawBox = screenToDbuBox( redrawArea );
 
       //cerr << "redrawBox:" << redrawBox << endl;
-      //cerr << "Threshold:" << DbU::getValueString(screenToDbuLength(20)) << endl;
+      //cerr << "Threshold:" << DbU::getValueString(screenToDbuLength(_pixelThreshold)) << endl;
 
         _drawingQuery.resetGoCount         ();
         _drawingQuery.resetExtensionGoCount();
@@ -1359,7 +1365,7 @@ namespace Hurricane {
         _drawingQuery.setExtensionMask     ( 0 );
         _drawingQuery.setArea              ( redrawBox );
         _drawingQuery.setTransformation    ( Transformation() );
-        _drawingQuery.setThreshold         ( screenToDbuLength(20) );
+        _drawingQuery.setThreshold         ( screenToDbuLength(_pixelThreshold) );
 
         for ( BasicLayer* layer : _technology->getBasicLayers() ) {
           _drawingPlanes.setPen  ( Graphics::getPen  (layer->getName(),getDarkening()) );
@@ -1395,6 +1401,7 @@ namespace Hurricane {
           }
         }
 
+        _drawingQuery.setStopLevel( _state->getStartLevel() + 1 );
         if ( /*not timeout("redraw [markers]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
           if ( isDrawable("text.reference") ) {
              _drawingPlanes.setPen  ( Graphics::getPen  ("text.reference",getDarkening()) );
@@ -1452,6 +1459,7 @@ namespace Hurricane {
             _drawingQuery.doQuery           ();
           }
         }
+        _drawingQuery.setStopLevel( _state->getStopLevel() );
       }
 
       _drawingPlanes.end();
@@ -1610,7 +1618,7 @@ namespace Hurricane {
     DbU::Unit    unity = DbU::lambda(1.0);
 
     if (not item) return false;
-    return item->isItemVisible() and (Graphics::getThreshold(name) < getScale()*unity);
+    return item->isItemVisible(); //and (Graphics::getThreshold(name) < getScale()*unity);
   }
 
 
@@ -1629,7 +1637,7 @@ namespace Hurricane {
     DbU::Unit    unity = DbU::lambda(1.0);
 
     if (not item) return false;
-    return item->isItemVisible() and (Graphics::getThreshold(extensionName) < getScale()*unity);
+    return item->isItemVisible(); // and (Graphics::getThreshold(extensionName) < getScale()*unity);
   }
 
 
@@ -2597,7 +2605,8 @@ namespace Hurricane {
 
   Occurrences  CellWidget::getOccurrencesUnder ( const Box& area ) const
   {
-    return getCell()->getOccurrencesUnder(area,3).getSubSet(Occurrences_IsSelectable(this));
+    return getCell()->getOccurrencesUnder( area, 3, screenToDbuLength(_pixelThreshold) ) \
+                      .getSubSet( Occurrences_IsSelectable(this) );
   }
 
 

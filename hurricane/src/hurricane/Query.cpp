@@ -51,6 +51,7 @@ namespace Hurricane {
     , _topTransformation ()
     , _startLevel        (0)
     , _stopLevel         (std::numeric_limits<unsigned int>::max())
+    , _instanceCount     (0)
   { }
 
 
@@ -110,6 +111,7 @@ namespace Hurricane {
     //      << endl;
 
     _stack.init();
+    //cerr << "doQuery() start:" << _stack.getInstanceCount() << " " << _basicLayer << endl;
 
     while ( not _stack.empty() ) {
     // Process the Components of the current instance.
@@ -164,6 +166,8 @@ namespace Hurricane {
 
       _stack.progress ();
     } // End of while.
+
+  //cerr << "doQuery() count:" << _stack.getInstanceCount() << endl;
   }
 
 

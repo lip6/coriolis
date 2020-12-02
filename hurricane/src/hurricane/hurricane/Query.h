@@ -31,6 +31,7 @@
 
 #pragma  once
 #include <vector>
+#include <iomanip>
 #include "hurricane/Commons.h"
 #include "hurricane/Box.h"
 #include "hurricane/Transformation.h"
@@ -134,6 +135,7 @@ namespace Hurricane {
       inline  void                  levelProgress        ();
       inline  bool                  levelCompleted       ();
       inline  void                  progress             ( bool init=false );
+      inline  size_t                getInstanceCount     () const;
 
     protected:
     // Internal: Attributes.
@@ -144,6 +146,7 @@ namespace Hurricane {
               Transformation        _topTransformation;
               unsigned int          _startLevel;
               unsigned int          _stopLevel;
+              size_t                _instanceCount;
 
     private:
     // Internal: Constructors.
@@ -165,6 +168,7 @@ namespace Hurricane {
   inline  const Transformation& QueryStack::getTransformation    () const { return back()->_transformation; }
   inline  const Path&           QueryStack::getPath              () const { return back()->_path; }
 //inline  const Tabulation&     QueryStack::getTab               () const { return _tab; }
+  inline  size_t                QueryStack::getInstanceCount     () const { return _instanceCount; }
 
 
   inline Instance* QueryStack::getInstance ()
@@ -192,12 +196,13 @@ namespace Hurricane {
 
   inline  void  QueryStack::init ()
   {
-    while ( !empty() ) levelUp();
+    _instanceCount = 0;
+    while (not empty()) levelUp();
 
-    push_back ( new QueryState(NULL,_topArea,_topTransformation,Path()) );
+    push_back( new QueryState(NULL,_topArea,_topTransformation,Path()) );
   //_tab++;
 
-    progress ( true );
+    progress( true );
   }
 
 
@@ -260,33 +265,35 @@ namespace Hurricane {
 
   inline  void  QueryStack::levelProgress ()
   {
-    if ( levelCompleted() ) return;
+    if (levelCompleted()) return;
 
-    back()->_locator->progress ();
-    if ( !back()->_locator->isValid() ) return;
+    back()->_locator->progress();
+    if (not back()->_locator->isValid()) return;
 
-    updateTransformation ();
+  //cerr << "  stack:" << std::setw(3) << _instanceCount << ":" << getPath() << endl;
+    ++_instanceCount;
+    updateTransformation();
   }
 
 
   inline  void  QueryStack::progress ( bool init )
   {
-    if ( !init ) levelProgress ();
+    if (not init) levelProgress ();
     else {
-      if ( !levelDown() && ( size() > _startLevel ) )
+      if (not levelDown() and (size() > _startLevel))
         return;
     }
 
-    while ( !empty() ) {
-      if ( levelCompleted() ) {
+    while (not empty()) {
+      if (levelCompleted()) {
         levelUp ();
       } else {
-        if ( levelDown() ) continue;
+        if (levelDown()) continue;
       }
 
-      if ( size() > _startLevel ) return;
-      if ( empty() ) break;
-      levelProgress ();
+      if (size() > _startLevel) return;
+      if (empty()) break;
+      levelProgress();
     }
   }
 

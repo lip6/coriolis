@@ -166,6 +166,7 @@ namespace Hurricane {
       inline  const DisplayStyle::HSVr& getDarkening               () const;
       inline  void                      copyToPrinter              ( int xpaper, int ypaper, QPrinter*, PainterCb_t& );
       inline  void                      copyToImage                ( QImage*, PainterCb_t& );
+      inline  int                       getPixelThreshold          () const;
       inline  const float&              getScale                   () const;
       inline  const QPoint&             getMousePosition           () const;
       inline  void                      updateMousePosition        ();
@@ -639,7 +640,6 @@ namespace Hurricane {
 
     protected:
     // Internal: Attributes.
-      static  int                        _initialSide;
               vector<Qt::CursorShape>    _cursors;
     //        MapView*                   _mapView;
               Technology*                _technology;
@@ -664,6 +664,7 @@ namespace Hurricane {
               vector<Command*>           _commands;
               size_t                     _redrawRectCount;
               int                        _textFontHeight;
+              int                        _pixelThreshold;
 
       friend class RedrawManager;
   };
@@ -1112,6 +1113,9 @@ namespace Hurricane {
   inline const float& CellWidget::State::getScale () const
   { return _scaleHistory[_ihistory]._scale; }
 
+
+  inline  int  CellWidget::getPixelThreshold () const
+  { return _pixelThreshold; }
 
   inline CellWidget::FindStateName::FindStateName ( const Name& cellHierName )
     : unary_function< const shared_ptr<State>&, bool >()

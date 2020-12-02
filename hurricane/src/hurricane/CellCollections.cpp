@@ -937,6 +937,7 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
         private: const Cell* _cell;
         private: Box _area;
         private: unsigned _searchDepth;
+        private: DbU::Unit _threshold;
         private: unsigned _state;
         private: ComponentLocator _componentLocator;
         private: RubberLocator _rubberLocator;
@@ -946,7 +947,7 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
         private: OccurrenceLocator _occurrenceLocator;
 
         public: Locator();
-        public: Locator(const Cell* cell, const Box& area, unsigned searchDepth = (unsigned)-1);
+        public: Locator(const Cell* cell, const Box& area, unsigned searchDepth = (unsigned)-1, DbU::Unit threshold=0);
         public: Locator(const Locator& locator);
 
         public: Locator& operator=(const Locator& locator);
@@ -968,12 +969,13 @@ class Cell_OccurrencesUnder : public Collection<Occurrence> {
     private: const Cell* _cell;
     private: Box _area;
     private: unsigned _searchDepth;
+    private: DbU::Unit _threshold;
 
 // Constructors
 // ************
 
     public: Cell_OccurrencesUnder();
-    public: Cell_OccurrencesUnder(const Cell* cell, const Box& area, unsigned searchDepth = (unsigned)-1);
+    public: Cell_OccurrencesUnder(const Cell* cell, const Box& area, unsigned searchDepth = (unsigned)-1, DbU::Unit threshold=0);
     public: Cell_OccurrencesUnder(const Cell_OccurrencesUnder& occurrences);
 
 // Operators
@@ -1957,10 +1959,10 @@ Occurrences Cell::getOccurrences(unsigned searchDepth) const
     return Cell_Occurrences(this, searchDepth);
 }
 
-Occurrences Cell::getOccurrencesUnder(const Box& area, unsigned searchDepth) const
-// *****************************************************************************
+Occurrences Cell::getOccurrencesUnder(const Box& area, unsigned searchDepth, DbU::Unit threshold) const
+// ****************************************************************************************************
 {
-    return Cell_OccurrencesUnder(this, area, searchDepth);
+  return Cell_OccurrencesUnder(this, area, searchDepth, threshold);
 }
 
 Occurrences Cell::getTerminalInstanceOccurrences() const
@@ -2840,38 +2842,42 @@ string Cell_Occurrences::Locator::_getString() const
 // ****************************************************************************************************
 
 Cell_OccurrencesUnder::Cell_OccurrencesUnder()
-// *****************************************
+// *******************************************
 :     Inherit(),
     _cell(NULL),
     _area(),
-    _searchDepth(0)
+    _searchDepth(0),
+    _threshold(0)
 {
 }
 
-Cell_OccurrencesUnder::Cell_OccurrencesUnder(const Cell* cell, const Box& area, unsigned searchDepth)
-// ************************************************************************************************
+Cell_OccurrencesUnder::Cell_OccurrencesUnder(const Cell* cell, const Box& area, unsigned searchDepth, DbU::Unit threshold)
+// ***********************************************************************************************************************
 :     Inherit(),
     _cell(cell),
     _area(area),
-    _searchDepth(searchDepth)
+    _searchDepth(searchDepth),
+    _threshold(threshold)
 {
 }
 
 Cell_OccurrencesUnder::Cell_OccurrencesUnder(const Cell_OccurrencesUnder& occurrences)
-// *******************************************************************************
+// ***********************************************************************************
 :     Inherit(),
     _cell(occurrences._cell),
     _area(occurrences._area),
-    _searchDepth(occurrences._searchDepth)
+    _searchDepth(occurrences._searchDepth),
+    _threshold(occurrences._threshold)
 {
 }
 
 Cell_OccurrencesUnder& Cell_OccurrencesUnder::operator=(const Cell_OccurrencesUnder& occurrences)
-// ******************************************************************************************
+// **********************************************************************************************
 {
     _cell = occurrences._cell;
     _area = occurrences._area;
     _searchDepth = occurrences._searchDepth;
+    _threshold = occurrences._threshold;
     return *this;
 }
 
@@ -2884,7 +2890,7 @@ Collection<Occurrence>* Cell_OccurrencesUnder::getClone() const
 Locator<Occurrence>* Cell_OccurrencesUnder::getLocator() const
 // *********************************************************
 {
-    return new Locator(_cell, _area, _searchDepth);
+  return new Locator(_cell, _area, _searchDepth, _threshold);
 }
 
 string Cell_OccurrencesUnder::_getString() const
@@ -2894,7 +2900,8 @@ string Cell_OccurrencesUnder::_getString() const
     if (_cell) {
         s += " " + getString(_cell);
         s += " " + getString(_area);
-        if (_searchDepth != ((unsigned)-1)) s += " " + getString(_searchDepth);
+        if (_searchDepth != ((unsigned)-1)) s += " depth:" + getString(_searchDepth);
+        if (_threshold > 0) s += " threshold:" + DbU::getValueString(_threshold);
     }
     s += ">";
     return s;
@@ -2912,6 +2919,7 @@ Cell_OccurrencesUnder::Locator::Locator()
     _cell(NULL),
     _area(),
     _searchDepth(0),
+    _threshold(0),
     _state(0),
     _componentLocator(),
     _rubberLocator(),
@@ -2922,12 +2930,13 @@ Cell_OccurrencesUnder::Locator::Locator()
 {
 }
 
-Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsigned searchDepth)
-// ********************************************************************************************
+Cell_OccurrencesUnder::Locator::Locator(const Cell* cell, const Box& area, unsigned searchDepth, DbU::Unit threshold)
+// ******************************************************************************************************************
 :    Inherit(),
     _cell(cell),
     _area(area),
     _searchDepth(searchDepth),
+    _threshold(threshold),
     _state(0),
     _componentLocator(),
     _rubberLocator(),
@@ -2969,6 +2978,7 @@ Cell_OccurrencesUnder::Locator::Locator(const Locator& locator)
     _cell(locator._cell),
     _area(locator._area),
     _searchDepth(locator._searchDepth),
+    _threshold(locator._threshold),
     _state(locator._state),
     _componentLocator(locator._componentLocator),
     _rubberLocator(locator._rubberLocator),
@@ -2985,6 +2995,7 @@ Cell_OccurrencesUnder::Locator& Cell_OccurrencesUnder::Locator::operator=(const 
     _cell = locator._cell;
     _area = locator._area;
     _searchDepth = locator._searchDepth;
+    _threshold = locator._threshold;
     _state = locator._state;
     _componentLocator = locator._componentLocator;
     _rubberLocator = locator._rubberLocator;
@@ -3048,7 +3059,7 @@ void Cell_OccurrencesUnder::Locator::progress()
                             if (_extensionGoLocator.isValid())
                                 _state = 4;
                             else {
-                              _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                              _instanceLocator = _cell->getInstancesUnder(_area,_threshold).getLocator();
                               if (_instanceLocator.isValid())
                                 _state = 5;
                               else
@@ -3069,7 +3080,7 @@ void Cell_OccurrencesUnder::Locator::progress()
                         if (_extensionGoLocator.isValid())
                             _state = 4;
                         else {
-                          _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                          _instanceLocator = _cell->getInstancesUnder(_area,_threshold).getLocator();
                           if (_instanceLocator.isValid())
                             _state = 5;
                           else
@@ -3085,7 +3096,7 @@ void Cell_OccurrencesUnder::Locator::progress()
                     if (_extensionGoLocator.isValid())
                         _state = 4;
                     else {
-                      _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                      _instanceLocator = _cell->getInstancesUnder(_area,_threshold).getLocator();
                       if (_instanceLocator.isValid())
                         _state = 5;
                       else
@@ -3096,7 +3107,7 @@ void Cell_OccurrencesUnder::Locator::progress()
             case 4 :
                 _extensionGoLocator.progress();
                 if (!_extensionGoLocator.isValid()) {
-                  _instanceLocator = _cell->getInstancesUnder(_area).getLocator();
+                  _instanceLocator = _cell->getInstancesUnder(_area,_threshold).getLocator();
                   if (_instanceLocator.isValid())
                     _state = 5;
                   else
@@ -3119,7 +3130,7 @@ void Cell_OccurrencesUnder::Locator::progress()
                         instance->getTransformation().getInvert().applyOn(masterArea);
                         Cell* masterCell = instance->getMasterCell();
                         _occurrenceLocator =
-                            masterCell->getOccurrencesUnder(masterArea, _searchDepth - 1).getLocator();
+                            masterCell->getOccurrencesUnder(masterArea, _searchDepth - 1,_threshold).getLocator();
                         if (_occurrenceLocator.isValid())
                             _state = 6;
                         else {

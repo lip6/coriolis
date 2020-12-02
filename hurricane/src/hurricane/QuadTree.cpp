@@ -19,6 +19,7 @@
 
 #include "hurricane/QuadTree.h"
 #include "hurricane/Go.h"
+#include "hurricane/Instance.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 
@@ -861,8 +862,21 @@ void QuadTree_GosUnder::Locator::progress()
         if (_currentQuadTree)
           _goLocator = _currentQuadTree->_getGoSet().getElements().getLocator();
       }
-    } while (isValid() and not getElement()->getBoundingBox().intersect(_area));
+      // if (isValid()) {
+      //   if ((   (getElement()->getBoundingBox().getWidth () < _threshold)
+      //       and (getElement()->getBoundingBox().getHeight() < _threshold)) )
+      //     cerr << "    goUnders: pruning " << getElement() << endl;
+      //   else
+      //     cerr << "    goUnders: display " << getElement() << endl;
+      // }
+    } while (   isValid()
+            and (  not  getElement()->getBoundingBox().intersect(_area)
+                or (   (getElement()->getBoundingBox().getWidth () < _threshold)
+                   and (getElement()->getBoundingBox().getHeight() < _threshold))) );
   }
+  // if (isValid()) {
+  //   cerr << "    goUnders: accept " << getElement() << endl;
+  // }
 }
 
 string QuadTree_GosUnder::Locator::_getString() const

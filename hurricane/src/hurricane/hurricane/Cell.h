@@ -459,7 +459,7 @@ class Cell : public Entity {
     public: Components getComponents(const Layer::Mask& mask = ~0) const;
     public: Components getComponentsUnder(const Box& area, const Layer::Mask& mask = ~0) const;
     public: Occurrences getOccurrences(unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
-    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max()) const;
+    public: Occurrences getOccurrencesUnder(const Box& area, unsigned searchDepth = std::numeric_limits<unsigned int>::max(), DbU::Unit threshold=0) const;
     public: Occurrences getTerminalInstanceOccurrences() const;
     public: Occurrences getTerminalInstanceOccurrencesUnder(const Box& area) const;
     public: Occurrences getTerminalNetlistInstanceOccurrences( const Instance* topInstance=NULL ) const;
