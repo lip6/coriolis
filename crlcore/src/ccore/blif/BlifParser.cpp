@@ -376,21 +376,44 @@ namespace {
     _powerName    = Cfg::getParamString("crlcore.powerName" ,"vdd")->asString();
 
     if (_zeroCell) {
-      for ( Net* net : _zeroCell->getNets() )
+      for ( Net* net : _zeroCell->getNets() ) {
         if (   not net->isSupply   ()
            and not net->isAutomatic()
-           and not net->isBlockage () ) { _masterNetZero = net; break; }
+           and not net->isBlockage () ) {
+          if (getString(net->getName()).find(_powerName) != string::npos) {
+            cerr << Error( "BlifParser::Model::staticInit(): Output \"%s\" of zero (tie low) cell \"%s\" match power supply name."
+                         , getString(net->getName()).c_str(), zeroName.c_str() ) << endl;
+          }
+          if (getString(net->getName()).find(_groundName) != string::npos) {
+            cerr << Error( "BlifParser::Model::staticInit(): Output \"%s\" of zero (tie low) cell \"%s\" match ground name."
+                         , getString(net->getName()).c_str(), zeroName.c_str() ) << endl;
+          }
+          _masterNetZero = net;
+          break;
+        }
+      }
     } else
-      cerr << Warning( "BlifParser::Model::connectSubckts(): The zero (tie high) cell \"%s\" has not been found."
+      cerr << Warning( "BlifParser::Model::staticInit(): The zero (tie low) cell \"%s\" has not been found."
                      , zeroName.c_str() ) << endl;
 
     if (_oneCell) {
       for ( Net* net : _oneCell->getNets() )
         if (   not net->isSupply   ()
            and not net->isAutomatic()
-           and not net->isBlockage () ) { _masterNetOne = net; break; }
+           and not net->isBlockage () ) {
+          if (getString(net->getName()).find(_powerName) != string::npos) {
+            cerr << Error( "BlifParser::Model::staticInit(): Output \"%s\" of one (tie high) cell \"%s\" match power supply name."
+                         , getString(net->getName()).c_str(), zeroName.c_str() ) << endl;
+          }
+          if (getString(net->getName()).find(_groundName) != string::npos) {
+            cerr << Error( "BlifParser::Model::staticInit(): Output \"%s\" of one (tie high) cell \"%s\" match ground name."
+                         , getString(net->getName()).c_str(), zeroName.c_str() ) << endl;
+          }
+          _masterNetOne = net;
+          break;
+        }
     } else
-      cerr << Warning( "BlifParser::Model::connectSubckts(): The one (tie low) cell \"%s\" has not been found."
+      cerr << Warning( "BlifParser::Model::staticInit(): The one (tie high) cell \"%s\" has not been found."
                      , oneName.c_str() ) << endl;
   }
 
@@ -548,11 +571,6 @@ namespace {
   {
     Net* net1 = _cell->getNet( name1 );
     Net* net2 = _cell->getNet( name2 );
-
-    if (_cell->getName() == "sm0") {
-      cerr << "Merge: " << name1 << " + " << name2  << endl;
-      cerr << "  net1:" << net1 << " net2:" << net2 << endl;
-    }
 
     if (net1 and (net1 == net2)) return net1;
     if (net1 and net2) {
@@ -829,16 +847,12 @@ namespace CRL {
       if (tokenize.state() == Tokenize::Inputs) {
         for ( size_t i=1 ; i<blifLine.size() ; ++i ) {
           blifModel->mergeNet( blifLine[i], true, Net::Direction::IN );
-          if (blifModel->getCell()->getName() == "sm0")
-            cerr << "Blif model sm0: plug:" << blifLine[i] << endl;
         }
       }
 
       if (tokenize.state() == Tokenize::Outputs) {
         for ( size_t i=1 ; i<blifLine.size() ; ++i ) {
           blifModel->mergeNet( blifLine[i], true, Net::Direction::OUT );
-          if (blifModel->getCell()->getName() == "sm0")
-            cerr << "Blif model sm0: plug:" << blifLine[i] << endl;
         }
       }
 
@@ -889,10 +903,6 @@ namespace CRL {
           subckt->addConnection( make_pair(blifLine[i].substr(0,equal)
                                           ,blifLine[i].substr(  equal+1)) );
 
-          if (subckt->getModelName() == "sm0") {
-            cerr << "Blif sm0 plug:" << blifLine[i].substr(0,equal)
-                 << " net:"          << blifLine[i].substr(  equal+1) << endl;
-          }
         }
       }
     }

@@ -70,10 +70,9 @@ namespace Vhdl {
                      ) << endl;
       } else {
         cerr << Error( "PortMap::_lookup() Unconnected \"%s\",\n"
-                       "        In instance \"%s\" of \"%s\"."
+                       "        In %s."
                      , getString(plug).c_str()
-                     , getString(instance->getName()).c_str()
-                     , getString(instance->getMasterCell()->getName()).c_str()
+                     , getString(instance).c_str()
                      ) << endl;
       }
     }
