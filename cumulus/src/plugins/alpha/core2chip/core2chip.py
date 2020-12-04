@@ -52,6 +52,7 @@ from   helpers         import trace, netDirectionToStr
 from   helpers.overlay import UpdateSession
 from   helpers.io      import ErrorMessage, WarningMessage
 import plugins.chip
+from   plugins.rsave                     import rsave
 from   plugins.alpha.utils               import getPlugByName
 from   plugins.alpha.block.block         import Block
 from   plugins.alpha.block.configuration import BlockConf, IoPadConf, ConstantsConf
@@ -662,4 +663,4 @@ class CoreToChip ( object ):
                 ioPad.udata.createPad()
             self._connectRing()
             self._connectClocks()
-        self.conf.rsave( self.chip )
+        rsave( self.chip, views=Catalog.State.Logical )

@@ -58,7 +58,9 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
         if sviews: sviews += ','
         sviews += 'layout'
     print( '     {}+ {} ({}).'.format(' '*(depth*2), cell.getName(), sviews) )
-    if cell.isUniquified(): views |= CRL.Catalog.State.Logical
+    if cell.isUniquified():             views |= CRL.Catalog.State.Logical
+    if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
+    if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
     framework.saveCell( cell, views )
     for instance in cell.getInstances():
         #print( '     {}| {}.'.format(' '*(depth*2), instance) )

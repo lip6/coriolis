@@ -44,6 +44,7 @@ from   helpers.io          import WarningMessage
 from   helpers.io          import catch
 from   helpers.overlay     import CfgCache
 from   plugins             import getParameter
+from   plugins.rsave       import rsave
 from   plugins.alpha.utils import getPlugByName
 
 
@@ -1163,21 +1164,23 @@ class BlockConf ( GaugeConf ):
             self.cloneds.append( masterCell )
         return
 
-    def rsave ( self, cell ):
-        """
-        Save the complete cell hierarchy. Saves only the physical view, except
-        for the ones that has been cloned (their names should end up by "_cts"),
-        for which logical and physical views are to be saved. They are completely
-        new cells.
-        """
-        flags = CRL.Catalog.State.Physical
-        if cell.getName().endswith('_cts'):
-            flags = flags | CRL.Catalog.State.Logical
-        self.framework.saveCell( cell, flags )
-        for instance in  cell.getInstances():
-            masterCell = instance.getMasterCell()
-            if not masterCell.isTerminal():
-                self.rsave( masterCell )
+    #def rsave ( self, cell, depth ):
+    #    """
+    #    Save the complete cell hierarchy. Saves only the physical view, except
+    #    for the ones that has been cloned (their names should end up by "_cts"),
+    #    for which logical and physical views are to be saved. They are completely
+    #    new cells.
+    #    """
+    #    if depth == 0: print( '  o  Block Recursive Save-Cell.' )
+    #    flags = CRL.Catalog.State.Physical
+    #    if cell.getName().endswith('_cts'): flags |= CRL.Catalog.State.Logical
+    #    if cell.isUniquified():             flags |= CRL.Catalog.State.Logical
+    #    self.framework.saveCell( cell, flags )
+    #    print( '     {}+ {}.'.format(' '*(depth*2), cell.getName() ) )
+    #    for instance in  cell.getInstances():
+    #        masterCell = instance.getMasterCell()
+    #        if not masterCell.isTerminalNetlist():
+    #            self.rsave( masterCell, depth+1 )
   
     def save ( self ):
         """
@@ -1190,5 +1193,5 @@ class BlockConf ( GaugeConf ):
             cell.setName( cell.getName()+'_cts' )
         if self.chip is None:
             self.cell.setName( self.cell.getName()+'_r' )
-        self.rsave( self.cell )
+        rsave( self.cell )
         return
