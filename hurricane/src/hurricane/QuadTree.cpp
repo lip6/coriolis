@@ -851,8 +851,8 @@ void QuadTree_GosUnder::Locator::progress()
           _currentQuadTree = _currentQuadTree->_getNextQuadTree(_area);
           if (not _currentQuadTree) break;
           if (  (_threshold <= 0)
-             or (   (_currentQuadTree->getBoundingBox().getWidth () > _threshold)
-                and (_currentQuadTree->getBoundingBox().getHeight() > _threshold)) )
+             or (  (_currentQuadTree->getBoundingBox().getWidth () > _threshold)
+                or (_currentQuadTree->getBoundingBox().getHeight() > _threshold)) )
             break;
           // cerr << "Pruning QuadTree:" << _currentQuadTree
           //      << " _threshold:" << DbU::getValueString(_threshold)
