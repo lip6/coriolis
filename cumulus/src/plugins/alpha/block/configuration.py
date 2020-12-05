@@ -1182,7 +1182,7 @@ class BlockConf ( GaugeConf ):
     #        if not masterCell.isTerminalNetlist():
     #            self.rsave( masterCell, depth+1 )
   
-    def save ( self ):
+    def save ( self, flags ):
         """
         Frontend to BlockConf.rsave(). Append the "_cts" suffix to the cloned
         cells, then call rsave().
@@ -1193,5 +1193,5 @@ class BlockConf ( GaugeConf ):
             cell.setName( cell.getName()+'_cts' )
         if self.chip is None:
             self.cell.setName( self.cell.getName()+'_r' )
-        rsave( self.cell )
+        rsave( self.cell, CRL.Catalog.State.Physical|flags )
         return

@@ -630,8 +630,9 @@ class CoreToChip ( object ):
                     if netName is None: continue
                     coreNet = self.core.getNet( netName )
                     if not coreNet:
-                        raise ErrorMessage( 1, 'CoreToChip.buildChip(): Pad "{}" refer net "{}" which do not exist in core "{}".' \
-                                               .format(ioPadConf.instanceName,netName,self.core.getName()) )
+                        print( ErrorMessage( 1, 'CoreToChip.buildChip(): Pad "{}" refer net "{}" which do not exist in core "{}".' \
+                                                .format(ioPadConf.instanceName,netName,self.core.getName()) ))
+                        continue
                     ioNet = self.getIoNet( coreNet )
                     if ioPadConf.isBidir() or ioPadConf.isTristate():
                         if coreNet.getName() == ioPadConf.enableNetName:

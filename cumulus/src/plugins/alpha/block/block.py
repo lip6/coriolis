@@ -619,10 +619,10 @@ class Block ( object ):
         blockIns = BlockInstance( tailInstance, transf )
         self.blockInstances.append( blockIns )
   
-    def save ( self ):
+    def save ( self, flags=0 ):
         if not self.conf.validated:
             raise ErrorMessage( 1, 'block.save(): Chip is not valid, aborting.' )
-        self.conf.save()
+        self.conf.save( flags )
 
 
 # ----------------------------------------------------------------------------
