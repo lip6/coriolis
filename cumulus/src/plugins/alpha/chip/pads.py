@@ -25,7 +25,7 @@ from   Hurricane    import DbU, Point, Transformation, Interval, Box,  \
 import CRL          
 from   CRL          import RoutingLayerGauge
 import helpers      
-from   helpers         import trace
+from   helpers         import trace, l, u, n
 from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins.alpha.chip
@@ -949,9 +949,13 @@ class Corona ( object ):
                 if self.conf.chipConf.ioPadGauge == 'LibreSOCIO':
                     if chipIntNet.isPower() or chipIntNet.isGround():
                         if side.type == North or side.type == South:
-                            bb.inflate( -DbU.fromPhysical( 0.6, DbU.UnitPowerMicro ), 0 )
+                            #bb.inflate( -u(0.6), 0 )
+                            if bb.getWidth() > u(35.0):
+                                bb.inflate( (u(34.0) - bb.getWidth()) / 2, 0 )
                         else:
-                            bb.inflate( 0, -DbU.fromPhysical( 0.6, DbU.UnitPowerMicro ) )
+                            #bb.inflate( 0, -u(0.6) )
+                            if bb.getHeight() > u(35.0):
+                                bb.inflate( 0, (u(34.0) - bb.getHeight()) / 2 )
                 if bb.intersect(innerBb):
                     trace( 550, '\t| Accepted.\n' )
                     lg    = rg.getLayerGauge( component.getLayer() )
