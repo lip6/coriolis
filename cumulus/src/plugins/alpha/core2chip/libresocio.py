@@ -29,9 +29,10 @@ import re
 from   Hurricane  import DbU, DataBase, UpdateSession, Breakpoint, \
                          Transformation , Instance , Net
 import Viewer     
-from   CRL        import Catalog
-from   CRL        import AllianceFramework
-from   helpers.io import ErrorMessage, WarningMessage
+from   CRL             import Catalog
+from   CRL             import AllianceFramework
+from   helpers.io      import ErrorMessage, WarningMessage
+from   helpers.overlay import CfgCache
 from   plugins.alpha.core2chip.core2chip import CoreToChip as BaseCoreToChip, \
                                                 IoNet, IoPad
 
@@ -43,13 +44,30 @@ class CoreToChip ( BaseCoreToChip ):
     rePadType = re.compile(r'(?P<type>.+)_(?P<index>[\d]+)$')
 
     def __init__ ( self, core ):
+        self.ioPadNames = { 'bidir':'GPIO'
+                          , 'vdd'  :'VDD'
+                          , 'vss'  :'VSS'
+                          , 'iovdd':'IOVDD'
+                          , 'iovss':'IOVSS'
+                          }
+        with CfgCache() as cfg:
+            cfg.chip.useAbstractPads = None
+            if not cfg.chip.useAbstractPads:
+                self.ioPadNames = { 'bidir':'IOPadInOut'
+                                  , 'vdd'  :'IOPadVdd'
+                                  , 'vss'  :'IOPadVss'
+                                  , 'iovdd':'IOPadIOVdd'
+                                  , 'iovss':'IOPadIOVss'
+                                  }
         BaseCoreToChip.__init__ ( self, core )
         self.ringNetNames = { 'iovdd' : None
                             , 'iovss' : None
                             , 'vdd'   : None
                             , 'vss'   : None
                             }
-        self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.BIDIR, 'GPIO', 'pad', ['s', 'd', 'de'] )
+        self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.BIDIR
+                                                      , self.ioPadNames['bidir']
+                                                      , 'pad', ['s', 'd', 'de'] )
                             ]
         self._getPadLib()
         return
@@ -95,7 +113,7 @@ class CoreToChip ( BaseCoreToChip ):
             self.ringNetNames['vss'] = chipNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_vss_{}'.format(ioPadConf.index)
-                                              , self.getCell('VSS') ) )
+                                              , self.getCell(self.ioPadNames['vss']) ) )
         self._connect( ioPadConf.pads[0], chipNet, 'vss' )
         self.groundPadCount += 1
         self.chipPads       += ioPadConf.pads
@@ -109,7 +127,7 @@ class CoreToChip ( BaseCoreToChip ):
             self.ringNetNames['iovss'] = padNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_iovss_{}'.format(ioPadConf.index)
-                                              , self.getCell('IOVSS') ) )
+                                              , self.getCell(self.ioPadNames['iovss']) ) )
         self._connect( ioPadConf.pads[0], padNet , 'iovss' )
         self.groundPadCount += 1
         self.chipPads       += ioPadConf.pads
@@ -132,7 +150,7 @@ class CoreToChip ( BaseCoreToChip ):
             self.ringNetNames['vdd'] = chipNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_vdd_{}'.format(ioPadConf.index)
-                                              , self.getCell('VDD') ) )
+                                              , self.getCell(self.ioPadNames['vdd']) ) )
         self._connect( ioPadConf.pads[0], chipNet, 'vdd' )
         self.powerPadCount += 1
         self.chipPads      += ioPadConf.pads
@@ -146,7 +164,7 @@ class CoreToChip ( BaseCoreToChip ):
             self.ringNetNames['iovdd'] = padNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_iovdd_{}'.format(ioPadConf.index)
-                                              , self.getCell('IOVDD') ) )
+                                              , self.getCell(self.ioPadNames['iovdd']) ) )
         self._connect( ioPadConf.pads[0], padNet , 'iovdd' )
         self.powerPadCount += 1
         self.chipPads      += ioPadConf.pads
