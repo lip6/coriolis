@@ -840,6 +840,11 @@ class FeedsConf ( object ):
         trace( 550, '-' )
         return
 
+    def createFeed ( self, cell ):
+        instance = Instance.create( cell, 'spare_feed_{}'.format(self.count), self.feeds[0][1] )
+        self.count += 1
+        return instance
+
     def fillAt ( self, cell, transf, gapWidth ):
         """
         In ``cell``, fill a *one* row gap starting at ``transf`` position and

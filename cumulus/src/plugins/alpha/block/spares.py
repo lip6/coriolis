@@ -17,29 +17,15 @@ import sys
 import os.path
 import Cfg
 from   operator  import itemgetter
-from   Hurricane import Breakpoint
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Transformation
-from   Hurricane import Box
-from   Hurricane import Path
-from   Hurricane import Layer
-from   Hurricane import Occurrence
-from   Hurricane import Net
-from   Hurricane import RoutingPad
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Contact
-from   Hurricane import Pin
-from   Hurricane import Plug
-from   Hurricane import Instance
+from   Hurricane import Breakpoint, DbU, Box, Transformation, Box, \
+                        Path, Layer, Occurrence, Net, RoutingPad,  \
+                        Horizontal, Vertical, Contact, Pin, Plug,  \
+                        Instance
 import CRL
 from   CRL             import RoutingLayerGauge
-from   helpers         import trace
+from   helpers         import trace, l, u, n
 from   helpers         import dots
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
-from   helpers.io      import catch
+from   helpers.io      import ErrorMessage, WarningMessage, catch
 from   helpers.overlay import UpdateSession
 from   plugins         import getParameter
 from   plugins.alpha   import utils
@@ -175,6 +161,46 @@ class BufferPool ( object ):
         self.area = Box( blBufAb.getXMin(), blBufAb.getYMin()
                        , trBufAb.getXMax(), trBufAb.getYMax() )
         trace( 540, '-' )
+
+    def _getTransformation ( self, spareX, spareY ):
+        """Transform (spareX,spareY) into sliced coordinates relatives to the corona."""
+        conf    = self.quadTree.spares.conf
+        yoffset = 0
+        if conf.isCoreBlock:
+            yoffset = conf.icore.getTransformation().getTy()
+        sliceHeight = conf.sliceHeight 
+        x           = self.quadTree.spares.toXPitch( spareX )
+        y           = self.quadTree.spares.toYSlice( spareY )
+        slice       = (y - yoffset) / sliceHeight
+        orientation = Transformation.Orientation.ID
+        y = slice * sliceHeight + yoffset
+        if slice % 2:
+            orientation = Transformation.Orientation.MY
+            y          += sliceHeight
+        transf = Transformation( x, y, orientation )
+        return transf
+
+    def _createTies ( self ):
+        trace( 540, ',+', '\tQuadTree._createTies()\n' )
+        conf        = self.quadTree.spares.conf
+        sliceHeight = conf.sliceHeight 
+        columns     = self.quadTree.area.getWidth() / u(60.0)
+        if columns % 2: columns += 1
+        stepX = self.quadTree.area.getWidth() / columns
+        trace( 540, '\tcolumns:{}, stepX:{}\n' \
+                    .format( columns, DbU.getValueString(stepX) ))
+        y = self.quadTree.area.getYMin()
+        while y < self.quadTree.area.getYMax():
+            for column in range(columns):
+                feed   = conf.feedsConf.createFeed( conf.corona )
+                transf = self._getTransformation \
+                             ( self.quadTree.area.getXMin() + stepX/2 + column*stepX, y )
+                feed.setTransformation( transf )
+                feed.setPlacementStatus( Instance.PlacementStatus.FIXED )
+                trace( 540, '\tBulk tie: {}\n'.format(feed) )
+                trace( 540, '\ttransf:{}\n'.format(transf) )
+            y += sliceHeight
+        trace( 540, ',-' )
 
     def _removeUnuseds ( self ):
         conf = self.quadTree.spares.conf
@@ -439,6 +465,7 @@ class QuadTree ( object ):
         aspectRatio = float(self.area.getWidth()) / float(self.area.getHeight())
 
         if self.area.getHeight() < side*2.0 or self.area.getWidth () < side*2.0:
+            #self.pool._createTies()
             trace( 540, '-' )
             return False
 
@@ -782,7 +809,7 @@ class Spares ( object ):
         if self.conf.isCoreBlock:
             offset = self.conf.icore.getTransformation().getTy()
             self.conf.icore.getTransformation().applyOn( area )
-        trace( 540, '\toffset:\n'.format(DbU.getValueString(offset)) )
+        trace( 540, '\toffset:{}\n'.format(DbU.getValueString(offset)) )
         modulo = (y - offset - area.getYMin()) % self.conf.sliceHeight 
         return y - modulo
 
