@@ -262,6 +262,13 @@ def u ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPow
 def n ( value ): return Hurricane.DbU.fromPhysical( value, Hurricane.DbU.UnitPowerNano  )
 
 
+def onFGrid ( u ):
+    oneGrid = Hurricane.DbU.fromGrid( 1.0 )
+    if u % oneGrid:
+        u -= (u % oneGrid)
+    return u
+
+
 def initTechno ( argQuiet ):
     global quiet
     global ndaDir

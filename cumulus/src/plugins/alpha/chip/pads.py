@@ -25,7 +25,7 @@ from   Hurricane    import DbU, Point, Transformation, Interval, Box,  \
 import CRL          
 from   CRL          import RoutingLayerGauge
 import helpers      
-from   helpers         import trace, l, u, n
+from   helpers         import trace, l, u, n, onFGrid
 from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins.alpha.chip
@@ -58,28 +58,28 @@ class Corner ( object ):
             yCorner = self.conf.chipAb.getYMin() + axis
             xBb     = self.conf.chipAb.getXMin() + self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMin() + self.conf.ioPadHeight
-            xExtend = - long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            xExtend = - onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = xExtend
         elif self.type == SouthEast:
             xCorner = self.conf.chipAb.getXMax() - axis
             yCorner = self.conf.chipAb.getYMin() + axis
             xBb     = self.conf.chipAb.getXMax() - self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMin() + self.conf.ioPadHeight
-            xExtend = long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            xExtend = onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = - xExtend
         elif self.type == NorthEast:
             xCorner = self.conf.chipAb.getXMax() - axis
             yCorner = self.conf.chipAb.getYMax() - axis
             xBb     = self.conf.chipAb.getXMax() - self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMax() - self.conf.ioPadHeight
-            xExtend = long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            xExtend = onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = xExtend
         elif self.type == NorthWest:
             xCorner = self.conf.chipAb.getXMin() + axis
             yCorner = self.conf.chipAb.getYMax() - axis
             xBb     = self.conf.chipAb.getXMin() + self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMax() - self.conf.ioPadHeight
-            xExtend = - long( 0.5 * float(self.conf.ioPadHeight - axis) )
+            xExtend = - onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = - xExtend
         return xCorner, yCorner, xBb, yBb, xExtend, yExtend
 

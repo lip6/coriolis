@@ -68,6 +68,115 @@ namespace {
   } 
 
 
+  bool  isOnGrid ( Instance* instance )
+  {
+    bool      error   = false;
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    Point     position = instance->getTransformation().getTranslation();
+    if (position.getX() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Tx %s is not on grid (%s)"
+                   , getString(instance).c_str()
+                   , getString(instance->getCell()).c_str()
+                   , DbU::getValueString(position.getX()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (position.getY() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Ty %s is not on grid (%s)"
+                   , getString(instance).c_str()
+                   , getString(instance->getCell()).c_str()
+                   , DbU::getValueString(position.getY()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    return error;
+  }
+
+
+  bool  isOnGrid ( Component* component, const Box& bb )
+  {
+    bool      error   = false;
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    if (bb.getXMin() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        X-Min %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getXMin()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (bb.getXMax() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        X-Max %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getXMax()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (bb.getYMin() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Y-Min %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getYMin()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    if (bb.getYMax() % oneGrid) {
+      error = true;
+      cerr << Error( "isOnGrid(): On %s of %s,\n"
+                     "        Y-Max %s is not on grid (%s)"
+                   , getString(component).c_str()
+                   , getString(component->getCell()).c_str()
+                   , DbU::getValueString(bb.getYMax()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   ) << endl;
+    }
+    return error;
+  }
+
+
+  bool  isOnGrid ( Component* component, const vector<Point>& points )
+  {
+    bool      error   = false;
+    DbU::Unit oneGrid = DbU::fromGrid( 1.0 );
+    for ( size_t i=0 ; i<points.size() ; ++i ) {
+      if (points[i].getX() % oneGrid) {
+        error = true;
+        cerr << Error( "isOnGrid(): On %s of %s,\n"
+                       "        Point [%d] X %s is not on grid (%s)"
+                     , getString(component).c_str()
+                     , getString(component->getCell()).c_str()
+                     , i
+                     , DbU::getValueString(points[i].getX()).c_str()
+                     , DbU::getValueString(oneGrid).c_str()
+                     ) << endl;
+      }
+      if (points[i].getY() % oneGrid) {
+        error = true;
+        cerr << Error( "isOnGrid(): On %s of %s,\n"
+                       "        Point [%d] Y %s is not on grid (%s)"
+                     , getString(component).c_str()
+                     , getString(component->getCell()).c_str()
+                     , i
+                     , DbU::getValueString(points[i].getY()).c_str()
+                     , DbU::getValueString(oneGrid).c_str()
+                     ) << endl;
+      }
+    }
+    return error;
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "::DepthOrder".
 
@@ -598,6 +707,7 @@ namespace {
       (*this) << SNAME( instance->getMasterCell()->getName() );
       (*this) << instance->getTransformation();
       (*this) << ENDEL;
+      isOnGrid( instance );
     }
 
     for ( Net* net : cell->getNets() ) {
@@ -623,6 +733,7 @@ namespace {
               (*this) << layer;
               (*this) << rectilinear->getPoints();
               (*this) << ENDEL;
+              isOnGrid( component, rectilinear->getPoints() );
             }
           } else {
             Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
@@ -638,10 +749,14 @@ namespace {
                       or dynamic_cast<Contact   *>(component)
                       or dynamic_cast<Pad       *>(component)) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                Box bb = component->getBoundingBox(layer);
+                if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
+                  continue;
                 (*this) << BOUNDARY;
                 (*this) << layer;
-                (*this) << component->getBoundingBox(layer);
+                (*this) << bb;
                 (*this) << ENDEL;
+                isOnGrid( component, bb );
               }
             }
           }
