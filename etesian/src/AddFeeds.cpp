@@ -66,6 +66,7 @@ namespace {
       inline SliceHoles*     getSliceHoles     () const;
       inline EtesianEngine*  getEtesian        () const;
       inline size_t          getSpinSlice0     () const;
+             DbU::Unit       getAverageChunk   () const;
              void            merge             ( DbU::Unit source, DbU::Unit target );
              void            addFeeds          ( size_t islice );
              void            fillHole          ( DbU::Unit xmin, DbU::Unit xmax, DbU::Unit ybottom, size_t yspin );
@@ -184,6 +185,41 @@ namespace {
   }
 
 
+  DbU::Unit  Slice::getAverageChunk () const
+  {
+    if (_chunks.empty()) return -1;
+
+    DbU::Unit  holeLength = 0;
+    list<Interval>::const_iterator ichunk     = _chunks.begin();
+    list<Interval>::const_iterator ichunknext = ichunk;
+    ++ichunknext;
+
+  // Hole before the first chunk.
+    if ((*ichunk).getVMin() > getXMin()) {
+      holeLength += (*ichunk).getVMin() - getXMin();
+    }
+
+    for ( ; ichunknext != _chunks.end() ; ++ichunk, ++ichunknext ) {
+      holeLength += (*ichunknext).getVMin() - (*ichunk).getVMax();
+    }
+
+  // Hole after the last chunk.
+    if ((*ichunk).getVMax() < getXMax()) {
+      holeLength +=  getXMax() - (*ichunk).getVMax();
+    }
+
+    Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
+    if (feed == NULL) {
+      cerr << Error("EtesianEngine: No feed has been registered, ignoring.") << endl;
+      return -1;
+    }
+
+    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
+
+    return ((getXMax() - getXMin()) * feedWidth) / holeLength;
+  }
+
+
   void  Slice::fillHole ( DbU::Unit xmin, DbU::Unit xmax, DbU::Unit ybottom, size_t yspin )
   {
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
@@ -287,8 +323,11 @@ namespace {
 
   void  SliceHoles::addFeeds ()
   {
-    for ( size_t islice=0 ; islice<_slices.size() ; islice++ )
+    for ( size_t islice=0 ; islice<_slices.size() ; islice++ ) {
+      cerr << setw(3) << islice << " | "
+           << DbU::getValueString(_slices[islice]->getAverageChunk()) << endl;
       _slices[islice]->addFeeds( islice );
+    }
   }
 
 
