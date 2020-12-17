@@ -51,16 +51,19 @@ namespace Etesian {
 // Class  :  "Etesian::Configuration".
 
   Configuration::Configuration ( const RoutingGauge* rg, const CellGauge* cg )
-    : _rg           ( NULL )
-    , _cg           ( NULL )
-    , _placeEffort  ( static_cast<Effort>        (Cfg::getParamEnumerate ("etesian.effort"        , Standard   )->asInt()) )
-    , _updateConf   ( static_cast<GraphicUpdate> (Cfg::getParamEnumerate ("etesian.graphics"      , LowerBound )->asInt()) )
-    , _spreadingConf(                             Cfg::getParamBool      ("etesian.uniformDensity", false      )->asBool()? ForceUniform : MaxDensity )
-    , _routingDriven(                             Cfg::getParamBool      ("etesian.routingDriven" , false      )->asBool())
-    , _spaceMargin  (                             Cfg::getParamPercentage("etesian.spaceMargin"   ,  5.0)->asDouble() )
-    , _aspectRatio  (                             Cfg::getParamPercentage("etesian.aspectRatio"   ,100.0)->asDouble() )
-    , _feedNames    (                             Cfg::getParamString    ("etesian.feedNames"     ,"tie_x0,rowend_x0")->asString() )
-    , _bloat        (                             Cfg::getParamString    ("etesian.bloat"         ,"disabled"        )->asString() )
+    : _rg             ( NULL )
+    , _cg             ( NULL )
+    , _placeEffort    ( static_cast<Effort>
+                        (Cfg::getParamEnumerate ("etesian.effort"         , Standard   )->asInt()) )
+    , _updateConf     ( static_cast<GraphicUpdate>                        
+                        (Cfg::getParamEnumerate ("etesian.graphics"       , LowerBound )->asInt()) )
+    , _spreadingConf  (  Cfg::getParamBool      ("etesian.uniformDensity" , false      )->asBool()? ForceUniform : MaxDensity )
+    , _routingDriven  (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
+    , _spaceMargin    (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
+    , _aspectRatio    (  Cfg::getParamPercentage("etesian.aspectRatio"    ,100.0)->asDouble() )
+    , _feedNames      (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
+    , _bloat          (  Cfg::getParamString    ("etesian.bloat"          ,"disabled"        )->asString() )
+    , _latchUpDistance(  Cfg::getParamInt       ("etesian.latchUpDistance",0                 )->asInt() )
   {
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
     if (cg == NULL) {

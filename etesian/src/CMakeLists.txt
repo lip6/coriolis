@@ -23,6 +23,7 @@
                    set( mocIncludes   etesian/GraphicEtesianEngine.h )
                    set( cpps          Configuration.cpp
                                       AddFeeds.cpp
+                                      Placement.cpp
                                       FeedCells.cpp
                                       BloatCells.cpp
                                       BloatProperty.cpp

@@ -1160,7 +1160,8 @@ namespace Etesian {
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
     cmess2 << "  o  Adding feed cells." << endl;
-    addFeeds();
+    readSlices();
+  //addFeeds();
 
     cmess1 << "  o  Placement finished." << endl;
     stopMeasures();

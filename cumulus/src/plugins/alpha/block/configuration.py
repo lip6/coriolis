@@ -819,9 +819,11 @@ class FeedsConf ( object ):
     Store informations about feed cells and how to fill a gap.
     """
 
-    def __init__ ( self, framework ):
+    def __init__ ( self, framework, cfg ):
         trace( 550, ',+', '\tFeedsConf.__init__()\n' )
-        feeds = Cfg.getParamString('etesian.feedNames').asString().split(',')
+        cfg.etesian.feedNames       = None
+        cfg.etesian.latchUpDistance = None
+        feeds = cfg.etesian.feedNames.split(',')
         self.count = 0
         self.feeds = []
         for feedName in feeds:
@@ -832,6 +834,8 @@ class FeedsConf ( object ):
                 continue
             feedWidth = feedCell.getAbutmentBox().getWidth()
             self.feeds.append( (feedWidth,feedCell) )
+        if cfg.etesian.latchUpDistance is not None:
+            self.maxFeedSpacing = cfg.etesian.latchUpDistance - self.tieWidth()
         self.feeds.sort( key=itemgetter(0) )
         self.feeds.reverse()
         for i in range(len(self.feeds)):
@@ -839,6 +843,11 @@ class FeedsConf ( object ):
                         .format(i,DbU.getValueString(self.feeds[i][0]),self.feeds[i][1]) ) 
         trace( 550, '-' )
         return
+
+    def tieWidth ( self ):
+        """Returns the master cell abutment box width of the tie."""
+        if self.feeds: return self.feeds[0][0]
+        return None
 
     def createFeed ( self, cell ):
         instance = Instance.create( cell, 'spare_feed_{}'.format(self.count), self.feeds[0][1] )
@@ -1061,7 +1070,7 @@ class BlockConf ( GaugeConf ):
         self.cfg           = CfgCache('',Cfg.Parameter.Priority.Interactive)
         self.bufferConf    = BufferConf( self.framework )
         self.constantsConf = ConstantsConf( self.framework, self.cfg )
-        self.feedsConf     = FeedsConf( self.framework )
+        self.feedsConf     = FeedsConf( self.framework, self.cfg )
         self.chipConf      = ChipConf( self )
         self.bColumns      = 2
         self.bRows         = 2
@@ -1083,9 +1092,10 @@ class BlockConf ( GaugeConf ):
             self.ioPins.append( IoPin( *ioPinSpec ) )
         for line in range(len(ioPads)):
             self.chipConf.addIoPad( ioPads[line], line )
-        self.cfg.etesian.aspectRatio = None
-        self.cfg.etesian.spaceMargin = None
-        self.cfg.block.spareSide     = None
+        self.cfg.etesian.aspectRatio     = None
+        self.cfg.etesian.spaceMargin     = None
+        self.cfg.etesian.latchUpDistance = None
+        self.cfg.block.spareSide         = None
 
     @property
     def isCoreBlock ( self ): return self.chip is not None
@@ -1147,6 +1157,9 @@ class BlockConf ( GaugeConf ):
 
     def createBuffer ( self ):
         return self.bufferConf.createBuffer( self.cellPnR )
+
+    def createFeed ( self ):
+        return self.feedsConf.createFeed( self.cellPnR )
 
     def setDeltaAb ( self, dx1, dy1, dx2, dy2 ):
         self.deltaAb = [ dx1, dy1, dx2, dy2 ]

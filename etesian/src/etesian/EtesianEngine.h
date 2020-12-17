@@ -97,6 +97,7 @@ namespace Etesian {
       inline  void                   useFeed             ( Cell* );
               size_t                 findYSpin           ();
               void                   addFeeds            ();
+              void                   readSlices          ();
       inline  void                   selectBloat         ( std::string );
       virtual Record*                _getRecord          () const;
       virtual std::string            _getString          () const;

@@ -133,12 +133,12 @@ class BufferPool ( object ):
         yoffset = 0
         if self.quadTree.spares.conf.isCoreBlock:
             yoffset = self.quadTree.spares.conf.icore.getTransformation().getTy()
-        conf        = self.quadTree.spares.conf
-        sliceHeight = conf.sliceHeight 
-        x           = self.quadTree.spares.toXPitch( self.quadTree.area.getXCenter()
-                                                     - (conf.bufferConf.width  * self.columns)/2 )
-        y           = self.quadTree.spares.toYSlice( self.quadTree.area.getYCenter()
-                                                     - (conf.bufferConf.height * self.rows)/2 )
+        conf           = self.quadTree.spares.conf
+        sliceHeight    = conf.sliceHeight 
+        poolHalfWidth  = (conf.bufferConf.width  * self.columns)/2 + conf.feedsConf.tieWidth()
+        poolHalfHeight = (conf.bufferConf.height * self.rows)/2
+        x = self.quadTree.spares.toXPitch( self.quadTree.area.getXCenter() - poolHalfWidth  )
+        y = self.quadTree.spares.toYSlice( self.quadTree.area.getYCenter() - poolHalfHeight )
         slice = (y - yoffset) / sliceHeight
         trace( 540, '\tSlice height: {}\n'.format(DbU.getValueString(sliceHeight)) )
         trace( 540, '\tSlice #{} (y:{})\n'.format(slice,DbU.getValueString(y)) )
@@ -148,37 +148,24 @@ class BufferPool ( object ):
             if (slice+row)%2:
                 orientation = Transformation.Orientation.MY
                 y          += sliceHeight
-            for column in range(self.columns):
-                index    = self.toIndex(column,row)
-                transf   = Transformation( x + column*conf.bufferConf.width, y, orientation )
-                instance = conf.createBuffer()
+            length = 0
+            for column in range(self.columns+2):
+                transf = Transformation( x + length, y, orientation )
+                if (column > 0) and (column <= self.columns):
+                    index    = self.toIndex(column-1,row)
+                    instance = conf.createBuffer()
+                    self.buffers[ index ][1] = instance 
+                    trace( 540, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
+                else:
+                    instance = conf.createFeed()
                 instance.setTransformation( transf )
                 instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
-                self.buffers[ index ][1] = instance 
-                trace( 540, '\tBuffer[{}]: {} @{}\n'.format(index,self.buffers[index],transf) )
+                length += instance.getMasterCell().getAbutmentBox().getWidth()
         blBufAb   = self.buffers[ 0][1].getAbutmentBox()
         trBufAb   = self.buffers[-1][1].getAbutmentBox()
         self.area = Box( blBufAb.getXMin(), blBufAb.getYMin()
                        , trBufAb.getXMax(), trBufAb.getYMax() )
         trace( 540, '-' )
-
-    def _getTransformation ( self, spareX, spareY ):
-        """Transform (spareX,spareY) into sliced coordinates relatives to the corona."""
-        conf    = self.quadTree.spares.conf
-        yoffset = 0
-        if conf.isCoreBlock:
-            yoffset = conf.icore.getTransformation().getTy()
-        sliceHeight = conf.sliceHeight 
-        x           = self.quadTree.spares.toXPitch( spareX )
-        y           = self.quadTree.spares.toYSlice( spareY )
-        slice       = (y - yoffset) / sliceHeight
-        orientation = Transformation.Orientation.ID
-        y = slice * sliceHeight + yoffset
-        if slice % 2:
-            orientation = Transformation.Orientation.MY
-            y          += sliceHeight
-        transf = Transformation( x, y, orientation )
-        return transf
 
     def _createTies ( self ):
         trace( 540, ',+', '\tQuadTree._createTies()\n' )
@@ -809,9 +796,50 @@ class Spares ( object ):
         if self.conf.isCoreBlock:
             offset = self.conf.icore.getTransformation().getTy()
             self.conf.icore.getTransformation().applyOn( area )
-        trace( 540, '\toffset:{}\n'.format(DbU.getValueString(offset)) )
+        #trace( 540, '\toffset:{}\n'.format(DbU.getValueString(offset)) )
         modulo = (y - offset - area.getYMin()) % self.conf.sliceHeight 
         return y - modulo
+
+    def _getTransformation ( self, spareX, spareY ):
+        """Transform (spareX,spareY) into sliced coordinates relatives to the corona."""
+        yoffset = 0
+        if self.conf.isCoreBlock:
+            yoffset = self.conf.icore.getTransformation().getTy()
+        sliceHeight = self.conf.sliceHeight 
+        x           = self.toXPitch( spareX )
+        y           = self.toYSlice( spareY )
+        slice       = (y - yoffset) / sliceHeight
+        orientation = Transformation.Orientation.ID
+        y = slice * sliceHeight + yoffset
+        if slice % 2:
+            orientation = Transformation.Orientation.MY
+            y          += sliceHeight
+        transf = Transformation( x, y, orientation )
+        return transf
+
+    def _addCapTies ( self ):
+        if self.conf.cfg.etesian.latchUpDistance is None:
+            return
+        trace( 540, ',+', '\tSpares._addCapTies()\n' )
+        area = self.conf.cell.getAbutmentBox()
+        if self.conf.isCoreBlock:
+            area = self.conf.core.getAbutmentBox()
+            self.conf.icore.getTransformation().applyOn( area )
+        y           = area.getYMin()
+        sliceHeight = self.conf.sliceHeight 
+        tieWidth    = self.conf.feedsConf.tieWidth()
+        trace( 540, '\tarea:{}, y:{}\n'.format( area, DbU.getValueString(y) ))
+        while y < area.getYMax():
+            capTie = self.conf.createFeed()
+            capTie.setTransformation ( self._getTransformation(area.getXMin(),y) )
+            capTie.setPlacementStatus( Instance.PlacementStatus.FIXED )
+            trace( 540, '\t{} @{}\n'.format( capTie, capTie.getTransformation() ))
+            capTie = self.conf.createFeed()
+            capTie.setTransformation ( self._getTransformation(area.getXMax()-tieWidth,y) )
+            capTie.setPlacementStatus( Instance.PlacementStatus.FIXED )
+            trace( 540, '\t{} @{}\n'.format( capTie, capTie.getTransformation() ))
+            y += sliceHeight
+        trace( 540, ',-' )
 
     def build ( self ):
         if not self.conf.useSpares: return
@@ -822,6 +850,7 @@ class Spares ( object ):
                                        , DbU.getValueString(7*self.conf.sliceHeight ) ))
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
+            self._addCapTies()
         trace( 540, '-' )
 
     def rshowPoolUse ( self ):
