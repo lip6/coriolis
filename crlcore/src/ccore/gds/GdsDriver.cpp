@@ -16,6 +16,7 @@
 
 #include <ctime>
 #include <cmath>
+#include <cstdio>
 #include <cfenv>
 #include <string>
 #include <sstream>
@@ -36,6 +37,7 @@ using namespace std;
 #include "hurricane/Polygon.h"
 #include "hurricane/Pad.h"
 #include "hurricane/Net.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Instance.h"
@@ -262,7 +264,7 @@ namespace {
     //static const uint16_t  PATH            = 0x0900 | NoData;
       static const uint16_t  SREF            = 0x0a00 | NoData;
     //static const uint16_t  AREF            = 0x0b00 | NoData;
-    //static const uint16_t  TEXT            = 0x0c00 | NoData;
+      static const uint16_t  TEXT            = 0x0c00 | NoData;
       static const uint16_t  LAYER           = 0x0d00 | TwoByteInteger;
       static const uint16_t  DATATYPE        = 0x0e00 | TwoByteInteger;
     //static const uint16_t  WIDTH           = 0x0f00 | FourByteInteger;
@@ -272,10 +274,10 @@ namespace {
     //static const uint16_t  COLROW          = 0x1300 | TwoByteInteger;
     //static const uint16_t  TEXTNODE        = 0x1400 | NoData;  // Unused.
     //static const uint16_t  NODE            = 0x1500 | NoData;
-    //static const uint16_t  TEXTTYPE        = 0x1600 | TwoByteInteger;
-    //static const uint16_t  PRESENTATION    = 0x1700 | BitArray;
+      static const uint16_t  TEXTTYPE        = 0x1600 | TwoByteInteger;
+      static const uint16_t  PRESENTATION    = 0x1700 | BitArray;
     //static const uint16_t  SPACING         = 0x1800 | NoData;  // Discontinued.
-    //static const uint16_t  STRING          = 0x1900 | String;
+      static const uint16_t  STRING          = 0x1900 | String;
       static const uint16_t  STRANS          = 0x1a00 | BitArray;
     //static const uint16_t  MAG             = 0x1b00 | EightByteReal;
       static const uint16_t  ANGLE           = 0x1c00 | EightByteReal;
@@ -428,13 +430,27 @@ namespace {
 
   void  GdsRecord::toStream ( ostream& stream ) const
   {
+    static size_t count = 0;
+    
     uint16_t length = (uint16_t)( _bytes.size()+2 );
     const unsigned char* bytearray = reinterpret_cast<const unsigned char*>( &length );
+
+    // char buffer[512];
+    // sprintf( buffer, "0x%02x", bytearray[1] );
+    // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
+    // sprintf( buffer, "0x%02x", bytearray[0] );
+    // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
+
   // Little endian (x86).
     stream.put( bytearray[1] );
     stream.put( bytearray[0] );
 
-    for ( char byte : _bytes ) stream.put( byte );
+    for ( unsigned char byte : _bytes ) {
+      uint32_t b = byte;
+      // sprintf( buffer, "0x%02x", b );
+      // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
+      stream.put( byte );
+    }
   }
 
 
@@ -452,25 +468,31 @@ namespace {
       static const  GdsRecord  ENDEL;
       static const  GdsRecord  ENDSTR;
       static const  GdsRecord  SREF;
+      static const  GdsRecord  TEXT;
     public:
-                               GdsStream  ( string filename );
-                              ~GdsStream  ();
-             inline int32_t    toGdsDbu   ( DbU::Unit ) const;
-      static inline GdsRecord  PROPATTR   ( int16_t );
-      static inline GdsRecord  DATATYPE   ( int16_t );
-      static inline GdsRecord  PROPVALUE  ( string );
-      static inline GdsRecord  STRNAME    ( string );
-      static inline GdsRecord  STRNAME    ( const Name& );
-      static inline GdsRecord  LIBNAME    ( string );
-      static inline GdsRecord  SNAME      ( string );
-      static inline GdsRecord  SNAME      ( const Name& );
-                    GdsStream& operator<< ( const GdsRecord& );
-                    GdsStream& operator<< ( const BasicLayer* );
-                    GdsStream& operator<< ( const Box& );
-                    GdsStream& operator<< ( const Points );
-                    GdsStream& operator<< ( const vector<Point>& points );
-                    GdsStream& operator<< ( const Cell* );
-                    GdsStream& operator<< ( const Transformation& );
+                               GdsStream    ( string filename );
+                              ~GdsStream    ();
+             inline int32_t    toGdsDbu     ( DbU::Unit ) const;
+      static inline GdsRecord  PROPATTR     ( int16_t );
+      static inline GdsRecord  DATATYPE     ( int16_t );
+      static inline GdsRecord  TEXTTYPE     ( int16_t );
+      static inline GdsRecord  LAYER        ( int16_t );
+      static inline GdsRecord  PRESENTATION ( int16_t );
+      static inline GdsRecord  PROPVALUE    ( string );
+      static inline GdsRecord  STRNAME      ( string );
+      static inline GdsRecord  STRNAME      ( const Name& );
+      static inline GdsRecord  LIBNAME      ( string );
+      static inline GdsRecord  SNAME        ( string );
+      static inline GdsRecord  SNAME        ( const Name& );
+      static inline GdsRecord  STRING       ( const Name& );
+      static inline GdsRecord  STRING       ( const string );
+                    GdsStream& operator<<   ( const GdsRecord& );
+                    GdsStream& operator<<   ( const Box& );
+                    GdsStream& operator<<   ( const Points );
+                    GdsStream& operator<<   ( const Point& point );
+                    GdsStream& operator<<   ( const vector<Point>& points );
+                    GdsStream& operator<<   ( const Cell* );
+                    GdsStream& operator<<   ( const Transformation& );
     private:
       ofstream  _ostream;
       double    _dbuPerUu;
@@ -483,16 +505,22 @@ namespace {
   const  GdsRecord  GdsStream::ENDEL    = GdsRecord(GdsRecord::ENDEL);
   const  GdsRecord  GdsStream::ENDSTR   = GdsRecord(GdsRecord::ENDSTR);
   const  GdsRecord  GdsStream::SREF     = GdsRecord(GdsRecord::SREF);
+  const  GdsRecord  GdsStream::TEXT     = GdsRecord(GdsRecord::TEXT);
 
-  inline GdsRecord  GdsStream::PROPATTR  ( int16_t v )     { return GdsRecord(GdsRecord::PROPATTR,v); }
-  inline GdsRecord  GdsStream::DATATYPE  ( int16_t v )     { return GdsRecord(GdsRecord::DATATYPE,v); }
-  inline GdsRecord  GdsStream::PROPVALUE ( string s )      { return GdsRecord(GdsRecord::PROPVALUE,s); }
-  inline GdsRecord  GdsStream::STRNAME   ( string s )      { return GdsRecord(GdsRecord::STRNAME,s); }
-  inline GdsRecord  GdsStream::STRNAME   ( const Name& n ) { return GdsRecord(GdsRecord::STRNAME,getString(n)); }
-  inline GdsRecord  GdsStream::LIBNAME   ( string s )      { return GdsRecord(GdsRecord::LIBNAME,s); }
-  inline GdsRecord  GdsStream::SNAME     ( string s )      { return GdsRecord(GdsRecord::SNAME,s); }
-  inline GdsRecord  GdsStream::SNAME     ( const Name& n ) { return GdsRecord(GdsRecord::SNAME,getString(n)); }
-  inline int32_t    GdsStream::toGdsDbu  ( DbU::Unit v )   const
+  inline GdsRecord  GdsStream::PROPATTR     ( int16_t v )      { return GdsRecord(GdsRecord::PROPATTR,v); }
+  inline GdsRecord  GdsStream::DATATYPE     ( int16_t v )      { return GdsRecord(GdsRecord::DATATYPE,v); }
+  inline GdsRecord  GdsStream::TEXTTYPE     ( int16_t v )      { return GdsRecord(GdsRecord::TEXTTYPE,v); }
+  inline GdsRecord  GdsStream::LAYER        ( int16_t v )      { return GdsRecord(GdsRecord::LAYER,v); }
+  inline GdsRecord  GdsStream::PRESENTATION ( int16_t v )      { return GdsRecord(GdsRecord::PRESENTATION,v); }
+  inline GdsRecord  GdsStream::PROPVALUE    ( string s )       { return GdsRecord(GdsRecord::PROPVALUE,s); }
+  inline GdsRecord  GdsStream::STRNAME      ( string s )       { return GdsRecord(GdsRecord::STRNAME,s); }
+  inline GdsRecord  GdsStream::STRNAME      ( const Name& n )  { return GdsRecord(GdsRecord::STRNAME,getString(n)); }
+  inline GdsRecord  GdsStream::LIBNAME      ( string s )       { return GdsRecord(GdsRecord::LIBNAME,s); }
+  inline GdsRecord  GdsStream::SNAME        ( string s )       { return GdsRecord(GdsRecord::SNAME,s); }
+  inline GdsRecord  GdsStream::SNAME        ( const Name& n )  { return GdsRecord(GdsRecord::SNAME,getString(n)); }
+  inline GdsRecord  GdsStream::STRING       ( const Name& n )  { return GdsRecord(GdsRecord::STRING,getString(n)); }
+  inline GdsRecord  GdsStream::STRING       ( const string s ) { return GdsRecord(GdsRecord::STRING,s); }
+  inline int32_t    GdsStream::toGdsDbu     ( DbU::Unit v )   const
   { return uint32_t( std::lrint( DbU::toPhysical( v, DbU::UnitPower::Unity ) / _metricDbU )); }
 
 
@@ -502,7 +530,7 @@ namespace {
     , _metricDbU(Cfg::getParamDouble("gdsDriver.metricDbu",10e-9)->asDouble())  // 1um.
   {
     std::fesetround( FE_TONEAREST );
-    _ostream.open( filename, ios_base::out );
+    _ostream.open( filename, ios_base::out|ios_base::binary );
 
     GdsRecord record ( GdsRecord::HEADER );
     record.push( (uint16_t)600 );
@@ -552,18 +580,22 @@ namespace {
   { _ostream << record; return *this; }
 
 
+#if 0
   GdsStream& GdsStream::operator<< ( const BasicLayer* layer )
   {
+    cdebug_log(101,0) << "LAYER" << endl;
     GdsRecord record ( GdsRecord::LAYER );
     record.push( (int16_t)layer->getGds2Layer() );
     _ostream << record;
 
+    cdebug_log(101,0) << "DATATYPE" << endl;
     record = GdsRecord( GdsRecord::DATATYPE );
     record.push( (int16_t)layer->getGds2Datatype() );
     _ostream << record;
 
     return *this;
   }
+#endif
 
 
   GdsStream& GdsStream::operator<< ( const Transformation& transf )
@@ -657,6 +689,16 @@ namespace {
   }
 
 
+  GdsStream& GdsStream::operator<< ( const Point& point )
+  {
+    GdsRecord record ( GdsRecord::XY );
+    record.push( (int32_t)toGdsDbu(point.getX()) );
+    record.push( (int32_t)toGdsDbu(point.getY()) );
+    _ostream << record;
+    return *this;
+  }
+
+
   GdsStream& GdsStream::operator<< ( const vector<Point>& points )
   {
     GdsRecord record ( GdsRecord::XY );
@@ -720,7 +762,8 @@ namespace {
           for ( const vector<Point>& subpolygon : subpolygons ) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
               (*this) << BOUNDARY;
-              (*this) << layer;
+              (*this) << LAYER(layer->getGds2Layer());
+              (*this) << DATATYPE(layer->getGds2Datatype());
               (*this) << subpolygon;
               (*this) << ENDEL;
             }
@@ -730,7 +773,8 @@ namespace {
           if (rectilinear) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
               (*this) << BOUNDARY;
-              (*this) << layer;
+              (*this) << LAYER(layer->getGds2Layer());
+              (*this) << DATATYPE(layer->getGds2Datatype());
               (*this) << rectilinear->getPoints();
               (*this) << ENDEL;
               isOnGrid( component, rectilinear->getPoints() );
@@ -740,7 +784,8 @@ namespace {
             if (diagonal) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
                 (*this) << BOUNDARY;
-                (*this) << layer;
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
                 (*this) << diagonal->getContour();
                 (*this) << ENDEL;
               }
@@ -753,10 +798,34 @@ namespace {
                 if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
                   continue;
                 (*this) << BOUNDARY;
-                (*this) << layer;
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
                 (*this) << bb;
                 (*this) << ENDEL;
                 isOnGrid( component, bb );
+
+                if (NetExternalComponents::isExternal(component)) {
+                  string name = getString( component->getNet()->getName() );
+                  if (name.size() > 511) {
+                    cerr << getString(
+                              Warning( "GdsStream::operator<<(): Truncate Net name to 511 first characters,\n"
+                                       "           on \"%s\"."
+                                     , name.c_str() )) << endl;
+                    name.erase( 511 );
+                  }
+                // PRESENTATION: 0b000101 means font:00, vpres:01 (center), hpres:01 (center)
+                  cdebug_log(101,0) << "TEXT" << endl;
+                  (*this) << TEXT;
+                  (*this) << LAYER(layer->getGds2Layer());
+                  cdebug_log(101,0) << "TEXTTYPE" << endl;
+                  (*this) << TEXTTYPE( 0 );
+                  cdebug_log(101,0) << "TEXTYPE end record" << endl;
+                  (*this) << PRESENTATION( 5 );
+                  (*this) << bb.getCenter();
+                  (*this) << STRING( name );
+                  (*this) << ENDEL;
+                  cdebug_log(101,0) << "TEXT ENDEL" << endl;
+                }
               }
             }
           }
