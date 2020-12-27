@@ -29,7 +29,9 @@ using namespace std;
 
 #include "vlsisapd/configuration/Configuration.h"
 #include "hurricane/Warning.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
+#include "hurricane/Technology.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Diagonal.h"
@@ -430,7 +432,7 @@ namespace {
 
   void  GdsRecord::toStream ( ostream& stream ) const
   {
-    static size_t count = 0;
+    // static size_t count = 0;
     
     uint16_t length = (uint16_t)( _bytes.size()+2 );
     const unsigned char* bytearray = reinterpret_cast<const unsigned char*>( &length );
@@ -446,7 +448,7 @@ namespace {
     stream.put( bytearray[0] );
 
     for ( unsigned char byte : _bytes ) {
-      uint32_t b = byte;
+      // uint32_t b = byte;
       // sprintf( buffer, "0x%02x", b );
       // cerr << setw(6) << hex << count++ << " | " << buffer << endl; 
       stream.put( byte );
@@ -718,6 +720,8 @@ namespace {
   // Temporay patch for "amsOTA".
     if (cell->getName() == "control_r") return *this;
     if (not hasLayout(cell)) return *this;
+
+    Technology* tech = DataBase::getDB()->getTechnology();
     
     time_t t   = time( 0 );
     tm*    now = localtime( &t );
@@ -797,9 +801,17 @@ namespace {
                 Box bb = component->getBoundingBox(layer);
                 if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
                   continue;
+                const BasicLayer* exportLayer = layer;
+                if (NetExternalComponents::isExternal(component)) {
+                  string layerName = getString( layer->getName() );
+                  if (layerName.substr(layerName.size()-4) != ".pin") {
+                    exportLayer = tech->getBasicLayer( layerName+".pin" );
+                    if (not exportLayer) exportLayer = layer;
+                  }
+                }
                 (*this) << BOUNDARY;
-                (*this) << LAYER(layer->getGds2Layer());
-                (*this) << DATATYPE(layer->getGds2Datatype());
+                (*this) << LAYER(exportLayer->getGds2Layer());
+                (*this) << DATATYPE(exportLayer->getGds2Datatype());
                 (*this) << bb;
                 (*this) << ENDEL;
                 isOnGrid( component, bb );
@@ -816,7 +828,7 @@ namespace {
                 // PRESENTATION: 0b000101 means font:00, vpres:01 (center), hpres:01 (center)
                   cdebug_log(101,0) << "TEXT" << endl;
                   (*this) << TEXT;
-                  (*this) << LAYER(layer->getGds2Layer());
+                  (*this) << LAYER(exportLayer->getGds2Layer());
                   cdebug_log(101,0) << "TEXTTYPE" << endl;
                   (*this) << TEXTTYPE( 0 );
                   cdebug_log(101,0) << "TEXTYPE end record" << endl;
