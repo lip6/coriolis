@@ -275,9 +275,15 @@ class IoPad ( object ):
                                               , self.nets[0].coreNet.getName()
                                               , self.padInstanceName ))
             if self.coreToChip.getPadInfo(self.direction) is None:
-                print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to bi-directional.' \
-                                       .format(netDirectionToStr(self.direction),ioNet.padInstanceName)) )
-                self.direction = IoPad.BIDIR
+                if     (self.direction == IoPad.OUT) \
+                   and (self.coreToChip.getPadInfo(IoPad.TRI_OUT) is not None):
+                    print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to output tristate.' \
+                                           .format(netDirectionToStr(self.direction),ioNet.padInstanceName)) )
+                    self.direction = IoPad.TRI_OUT
+                else:
+                    print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to bi-directional.' \
+                                           .format(netDirectionToStr(self.direction),ioNet.padInstanceName)) )
+                    self.direction = IoPad.BIDIR
         elif len(self.nets) == 2:
             if self.direction != IoPad.BIDIR:
                 self.direction = IoPad.TRI_OUT
@@ -321,6 +327,16 @@ class IoPad ( object ):
                 connexions.append( ( self.nets[0].chipIntNet      , padInfo.outputNet ) )
                 connexions.append( ( self.coreToChip.newDummyNet(), padInfo.inputNet  ) )
             connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet  ) )
+        elif (self.direction == IoPad.TRI_OUT) and (len(self.nets) < 2):
+            self.nets[0].setFlags( IoNet.DoExtNet )
+            self.nets[0].buildNets()
+            if len(self.nets) < 2:
+                enableNet = self.coreToChip.newEnableForNet( self.nets[0] )
+                self.nets.append( self.coreToChip.getIoNet( enableNet ) )
+            self.nets[1].buildNets()
+            connexions.append( ( self.nets[0].chipExtNet, padInfo.padNet    ) )
+            connexions.append( ( self.nets[0].chipIntNet, padInfo.inputNet  ) )
+            connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet ) )
         else:
             for ioNet in self.nets:
                 if not ioNet.isEnable():

@@ -53,11 +53,13 @@ class CoreToChip ( BaseCoreToChip ):
         with CfgCache() as cfg:
             cfg.chip.useAbstractPads = None
             if not cfg.chip.useAbstractPads:
-                self.ioPadNames = { 'bidir':'IOPadInOut'
-                                  , 'vdd'  :'IOPadVdd'
-                                  , 'vss'  :'IOPadVss'
-                                  , 'iovdd':'IOPadIOVdd'
-                                  , 'iovss':'IOPadIOVss'
+                self.ioPadNames = { 'in'      :'IOPadIn'
+                                  , 'tri_out' :'IOPadOut'
+                                  , 'bidir'   :'IOPadInOut'
+                                  , 'vdd'     :'IOPadVdd'
+                                  , 'vss'     :'IOPadVss'
+                                  , 'iovdd'   :'IOPadIOVdd'
+                                  , 'iovss'   :'IOPadIOVss'
                                   }
         BaseCoreToChip.__init__ ( self, core )
         self.ringNetNames = { 'iovdd' : None
@@ -65,7 +67,13 @@ class CoreToChip ( BaseCoreToChip ):
                             , 'vdd'   : None
                             , 'vss'   : None
                             }
-        self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.BIDIR
+        self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.IN
+                                                      , self.ioPadNames['in']
+                                                      , 'pad', ['s'] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.TRI_OUT
+                                                      , self.ioPadNames['tri_out']
+                                                      , 'pad', ['d', 'de'] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.BIDIR
                                                       , self.ioPadNames['bidir']
                                                       , 'pad', ['s', 'd', 'de'] )
                             ]
