@@ -58,6 +58,7 @@
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns1.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns2.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns3.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/block/hfns4.py
                   )
               set ( pyPluginAlphaC2C   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/core2chip.py

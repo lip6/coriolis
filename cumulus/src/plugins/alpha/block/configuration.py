@@ -719,6 +719,10 @@ class BufferConf ( object ):
         where ``<Nb>`` is an ever incrementing counter (self.count).
         """
         instance = Instance.create( cell, 'spare_buffer_{}'.format(self.count), self.masterCell )
+        trace( 550, '\tBufferConf.createBuffer(): cell={}, instance={}\n' \
+                    .format( cell, instance ))
+        trace( 550, '\tplug={}\n'.format( instance.getPlug( self.masterCell.getNet('q') ) ))
+        trace( 550, '\tplug.getCell()={}\n'.format( instance.getPlug( self.masterCell.getNet('q') ).getCell() ))
         self.count += 1
         return instance
 
@@ -1155,8 +1159,9 @@ class BlockConf ( GaugeConf ):
                 self.editor.setCell( cell )
         self.editor.fit()
 
-    def createBuffer ( self ):
-        return self.bufferConf.createBuffer( self.cellPnR )
+    def createBuffer ( self, cell=None ):
+        if cell is None: cell = self.cellPnR
+        return self.bufferConf.createBuffer( cell )
 
     def createFeed ( self ):
         return self.feedsConf.createFeed( self.cellPnR )

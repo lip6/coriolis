@@ -928,20 +928,25 @@ class Spares ( object ):
            *plug master net* and the *tail path*.
         """
 
-        trace( 540, '\tSpares.raddTransNet() top:{} path:{}\n'.format(topNet,path) )
+        trace( 540, ',+', '\tSpares.raddTransNet() top:{} path:{}\n'.format(topNet,path) )
         if path.isEmpty():
             self.conf.addClonedCell( topNet.getCell() )
+            trace( 540, '-' )
             return None
         tailPath     = path.getTailPath()
         headInstance = path.getHeadInstance()
         headPlug     = utils.getPlugByNet(headInstance,topNet)
         if not headPlug:
             masterCell = headInstance.getMasterCell()
-            trace( 540, '\tcreate Plug in {}\n'.format(headInstance) )
-            masterNet  = Net.create( masterCell, topNet.getName() )
-            masterNet.setExternal ( True )
-            masterNet.setType     ( topNet.getType() )
-            masterNet.setDirection( Net.Direction.IN )
+            masterNet  = masterCell.getNet( topNet.getName() )
+            trace( 540, '\tmasterCell {}\n'.format(masterCell) )
+            if masterNet is None:
+                trace( 540, '\tcreate Plug in {}\n'.format(headInstance) )
+                masterNet = Net.create( masterCell, topNet.getName() )
+                masterNet.setType     ( topNet.getType() )
+                masterNet.setDirection( Net.Direction.IN )
+            trace( 540, '\tmasterNet {}\n'.format(masterNet) )
+            masterNet.setExternal( True )
             headPlug = headInstance.getPlug( masterNet )
             if not headPlug:
                 raise ErrorMessage( 3, 'Plug not created for %s on instance %s of %s' \
@@ -952,8 +957,10 @@ class Spares ( object ):
         else:
             masterNet = headPlug.getMasterNet()
         trace( 540, '\ttailPath {}\n'.format(tailPath) )
-        if tailPath.isEmpty(): return headPlug
-        return self.raddTransNet( masterNet, tailPath )
+        if not tailPath.isEmpty():
+            headPlug = self.raddTransNet( masterNet, tailPath )
+        trace( 540, '-' )
+        return headPlug
 
     def removeUnusedBuffers ( self ):
         with UpdateSession():

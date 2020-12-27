@@ -21,7 +21,7 @@ from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
                         Box, Path, Layer, Occurrence, Net,           \
                         NetExternalComponents, RoutingPad, Pad,      \
                         Horizontal, Vertical, Contact, Pin, Plug,    \
-                        Instance
+                        Cell, Instance
 import CRL
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace, dots
@@ -37,7 +37,8 @@ from   alpha.block.spares        import Spares
 from   alpha.block.clocktree     import ClockTree
 #from   alpha.block.hfns1         import BufferTree
 #from   alpha.block.hfns2         import BufferTree
-from   alpha.block.hfns3         import BufferTree
+#from   alpha.block.hfns3         import BufferTree
+from   alpha.block.hfns4         import BufferTree
 from   alpha.block.configuration import IoPin, BlockConf, GaugeConf
 
 timing.staticInit()
@@ -407,6 +408,44 @@ class Block ( object ):
         for clockTree in self.clockTrees:
             clockTree.splitClock()
 
+    def findHfnTrees4 ( self ):
+        """Perform simple HFNS, just break nets regardless of placement."""
+        print( '  o  Building high fanout nets trees.' )
+        if self.spares:
+            if self.conf.isCoreBlock:
+               self.conf.corona.flattenNets( self.conf.icore, Cell.Flags_NoClockFlatten )
+            else:
+               self.conf.cell.flattenNets( None, Cell.Flags_NoClockFlatten )
+            beginCount = self.conf.bufferConf.count
+            maxSinks   = 10
+            dots( 82
+                , '     -  Max sinks for buffer "{}"'.format(self.conf.bufferConf.name)
+                , ' {}'.format(maxSinks) )
+            nets  = []
+            block = self.conf.corona if self.conf.isCoreBlock else self.conf.cell
+            for net in block.getNets():
+                sinksCount = 0
+                for rp in net.getRoutingPads(): sinksCount += 1
+                if sinksCount > maxSinks:
+                    nets.append( (net,sinksCount) )
+            with UpdateSession():
+                for net,sinksCount in nets:
+                    trace( 550, '\tBlock.addHfnTrees4(): Found high fanout net "{}" ({} sinks).\n' \
+                                .format(net.getName(),sinksCount) )
+                   #if not net.getName().startswith('alu_m_muls_b(1)'): continue
+                   #if not net.getName().startswith('abc_75177_new_n12236'): continue
+                    sys.stderr.flush()
+                    print( '     - "{}", {} sinks.'.format(net.getName(),sinksCount) )
+                    sys.stdout.flush()
+                    self.hfnTrees.append( BufferTree( self.spares, net ) )
+                    self.hfnTrees[-1].buildBTree()
+            Breakpoint.stop( 100, 'block.findHfnTrees4() done.' )
+        else:
+            print( '     (No spares buffers, disabled)' )
+        endCount = self.conf.bufferConf.count
+        dots( 82, '     -  Added buffers', ' {}'.format(endCount-beginCount) )
+        return len(self.hfnTrees)
+
     def findHfnTrees ( self ):
         """Create the trunk of all the high fanout nets."""
         print( '  o  Building high fanout nets trees.' )
@@ -486,9 +525,13 @@ class Block ( object ):
                 side.expand()
 
     def place ( self ):
+        editor = self.conf.editor
         if self.conf.isCoreBlock:
             etesian = Etesian.EtesianEngine.create( self.conf.corona )
             etesian.setBlock( self.conf.icore )
+            if editor:
+                editor.setCell( self.conf.cell )
+                Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
             etesian = Etesian.EtesianEngine.create( self.conf.cell )
         etesian.place()
@@ -566,12 +609,13 @@ class Block ( object ):
                 self.placeIoPins()
                 self.checkIoPins()
             self.spares.build()
+            if self.conf.useHFNS:      self.findHfnTrees4()
             if self.conf.useClockTree: self.addClockTrees()
-            if self.conf.useHFNS:      self.addHfnBuffers()
+           #if self.conf.useHFNS:      self.addHfnBuffers()
             if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
-            if self.conf.useHFNS: self.findHfnTrees()
+           #if self.conf.useHFNS: self.findHfnTrees()
             break
         if self.conf.useClockTree: self.splitClocks()
         if self.conf.isCoreBlock:  self.doConnectCore()
