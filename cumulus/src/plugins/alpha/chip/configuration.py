@@ -194,6 +194,9 @@ class ChipConf ( BlockConf ):
                     self.coreSize = (ab.getWidth(), ab.getHeight())
                 trace( 550, '\tSetting CORE abutment box:{}\n'.format(ab) )
                 self.core.setAbutmentBox( Box( 0, 0, ab.getWidth(), ab.getHeight() ) )
+            self.coreSize = ( self.coreSize[0] - self.coreSize[0] % self.sliceStep
+                            , self.coreSize[1] - self.coreSize[1] % self.sliceHeight )
+            self.core.setAbutmentBox( Box( 0, 0, self.coreAb.getWidth(), self.coreAb.getHeight() ) )
             trace( 550, '\tCORE ab:{}\n'.format(self.coreAb) )
             coreX = (self.coronaAb.getWidth () - self.coreAb.getWidth ()) / 2
             trace( 550, '\tCore X, {} '.format(DbU.getValueString(coreX)) )
