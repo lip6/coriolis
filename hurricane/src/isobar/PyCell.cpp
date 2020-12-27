@@ -708,6 +708,39 @@ extern "C" {
   }
 
 
+  static PyObject* PyCell_flattenNets ( PyCell* self, PyObject *args )
+  {
+    cdebug_log(20,0) << "PyCell_flattenNets()" << endl;
+    
+    Instance* instance = NULL;
+    PyObject* arg0     = NULL;
+    PyObject* arg1     = NULL;
+
+    HTRY
+      METHOD_HEAD ( "Cell.flattenNets()" )
+      __cs.init( "Cell.flattenNets" );
+      if (not PyArg_ParseTuple(args,"O&O&:Cell.flattenNets"
+                              ,Converter,&arg0
+                              ,Converter,&arg1
+                              )) {
+          PyErr_SetString( ConstructorError, "Cell.flattenNets(): Takes exactly two parameters." );
+          return NULL;
+      }
+  
+      if (arg0 == Py_None) {
+        cell->flattenNets( NULL, PyInt_AsLong(arg1) );
+      } else if (__cs.getObjectIds() == ":ent:int") {
+        cell->flattenNets( PYINSTANCE_O(arg0), PyInt_AsLong(arg1) );
+      } else {
+        string message = "Cell.flattenNets(): Bad type of parameter(s), \"" + __cs.getObjectIds() + "\".";
+        PyErr_SetString( ConstructorError, message.c_str() );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
+
   // ---------------------------------------------------------------
   // Attribute Method  :  "PyCell_destroyPhysical ()"
 
@@ -778,6 +811,7 @@ extern "C" {
     , { "setRouted"           , (PyCFunction)PyCell_setRouted           , METH_VARARGS, "Sets the cell routed status." }
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
+    , { "flattenNets"         , (PyCFunction)PyCell_flattenNets         , METH_VARARGS, "Perform a virtual flatten, possibly limited to one instance." }
     , { "destroyPhysical"     , (PyCFunction)PyCell_destroyPhysical     , METH_NOARGS , "Destroy all physical components, including DeepNets (vflatten)." }
     , { "destroy"             , (PyCFunction)PyCell_destroy             , METH_NOARGS , "Destroy associated hurricane object The python object remains." }
     , {NULL, NULL, 0, NULL}   /* sentinel */
@@ -802,6 +836,18 @@ extern "C" {
   // Link/Creation Method.
   DBoLinkCreateMethod(Cell)
   PyTypeInheritedObjectDefinitions(Cell, Entity)
+
+
+  extern  void  PyCell_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoFlags         ,"Flags_NoFlags");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildRings      ,"Flags_BuildRings");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildClockRings ,"Flags_BuildClockRings");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildSupplyRings,"Flags_BuildSupplyRings");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoClockFlatten  ,"Flags_NoClockFlatten");
+  }
 
 
 #endif  // End of Shared Library Code Part.

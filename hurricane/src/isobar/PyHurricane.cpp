@@ -872,6 +872,7 @@ extern "C" {
     PyRoutingPad_postModuleInit();
     PyNet_postModuleInit();
     PyNetRoutingState_postModuleInit();
+    PyCell_postModuleInit();
     PyInstance_postModuleInit();
     PyQuery_postModuleInit();
 

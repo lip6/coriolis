@@ -646,6 +646,9 @@ namespace Etesian {
 
             _cellsToIds.insert( make_pair(getString(instance->getName()),instanceId) );
             _idsToInsts.push_back( instance );
+            // cerr << "FIXED id=" << instanceId
+            //      << " " << instance << " size:(" << xsize << " " << ysize
+            //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
             ++instanceId;
             dots.dot();
           }
@@ -710,8 +713,9 @@ namespace Etesian {
                                           |coloquinte::YFlippable;
       } else {
         instances[instanceId].attributes = 0;
-      //cerr << "FIXED: " << instance << " size:(" << xsize << " " << ysize
-      //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
+        // cerr << "FIXED id=" << instanceId
+        //      << " " << instance << " size:(" << xsize << " " << ysize
+        //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
       }
 
       _cellsToIds.insert( make_pair(instanceName,instanceId) );
