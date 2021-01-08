@@ -268,10 +268,10 @@ namespace CRL {
   {
     Record* record = Super::_getRecord();
     if ( record ) {
-        record->add ( getSlot ( "Cell"                     , _cell                      ) );
-        record->add ( getSlot ( "Name"                     , getName()                  ) );
-        record->add ( getSlot ( "placementModificationFlag", _placementModificationFlag ) );
-        record->add ( getSlot ( "routingModificationFlag"  , _routingModificationFlag   ) );
+        record->add ( getSlot ( "_cell"                     , _cell                      ) );
+      //record->add ( getSlot ( "Name"                      , getName()                  ) );
+        record->add ( getSlot ( "_placementModificationFlag", _placementModificationFlag ) );
+        record->add ( getSlot ( "_routingModificationFlag"  , _routingModificationFlag   ) );
     }
     return record;
   }

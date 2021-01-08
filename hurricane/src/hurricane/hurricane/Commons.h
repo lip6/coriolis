@@ -161,10 +161,7 @@ namespace Hurricane {
 // Note 3: thoses templates manage all POD & STL types.
 
 
-// Forward declaration of "getSlot<>()" template.
-
-template<typename Data> inline Hurricane::Slot* getSlot ( std::string name, Data  );
-template<typename Data> inline Hurricane::Slot* getSlot ( std::string name, Data* );
+template<typename Data> inline Hurricane::Slot* getSlot ( std::string name, Data );
 
 
 // -------------------------------------------------------------------
@@ -324,7 +321,10 @@ template<> inline std::string  getString<std::string> ( std::string s )
 
 
 template<typename Data> inline Hurricane::Record* getRecord ( Data data )
-{ return NULL; }
+{
+//std::cerr << "::getRecord(Data) Data=" << Hurricane::demangle(typeid(data).name()) << std::endl;
+  return NULL;
+}
 
 
 // -------------------------------------------------------------------
@@ -485,7 +485,7 @@ inline Hurricane::Record* getRecord ( std::vector<Element>* v )
     unsigned n = 0;
     typename std::vector<Element>::iterator iterator = v->begin();
     while ( iterator != v->end() ) {
-      record->add ( getSlot<Element>(getString(n++), &(*iterator)) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -512,9 +512,9 @@ inline Hurricane::Record* getRecord ( std::vector<Element*>* v )
   if ( !v->empty() ) {
     record = new Hurricane::Record ( "std::vector<Element*>*" );
     unsigned n = 0;
-    typename std::vector<Element>::iterator iterator = v->begin();
+    typename std::vector<Element*>::iterator iterator = v->begin();
     while ( iterator != v->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<Element*>(getString(n++), *iterator) );
       ++iterator;
     }
   }
@@ -543,7 +543,7 @@ inline Hurricane::Record* getRecord ( const std::vector<Element>* v )
     unsigned n = 0;
     typename std::vector<Element>::const_iterator iterator = v->begin();
     while ( iterator != v->end() ) {
-      record->add ( getSlot<const Element>(getString(n++), &(*iterator)) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -587,7 +587,7 @@ inline Hurricane::Record* getRecord ( const std::vector<Element*>* v )
 template<typename Element>
 inline std::string  getString ( const std::list<Element>* l )
 {
-  std::string name = "const std::list<Element>:";
+  std::string name = "const std::list<Element>*:";
   return name + getString<size_t>(l->size());
 }
 
@@ -601,7 +601,7 @@ inline Hurricane::Record* getRecord ( const std::list<Element>* l )
     unsigned n = 1;
     typename std::list<Element>::const_iterator iterator = l->begin();
     while ( iterator != l->end() ) {
-      record->add ( getSlot<const Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -612,7 +612,7 @@ inline Hurricane::Record* getRecord ( const std::list<Element>* l )
 template<typename Element>
 inline std::string  getString ( std::list<Element>* l )
 {
-  std::string name = "std::list<Element>:";
+  std::string name = "std::list<Element>*:";
   return name + getString<size_t>(l->size());
 }
 
@@ -626,7 +626,7 @@ inline Hurricane::Record* getRecord ( std::list<Element>* l )
     unsigned n = 1;
     typename std::list<Element>::iterator iterator = l->begin();
     while ( iterator != l->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add ( getSlot<const Element*>(getString(n++), &(*iterator)) );
       ++iterator;
     }
   }
@@ -831,12 +831,12 @@ template< typename Element, typename Compare, typename Allocator >
 inline Hurricane::Record* getRecord ( std::set<Element,Compare,Allocator>* s )
 {
   Hurricane::Record* record = NULL;
-  if ( !s->empty() ) {
+  if (not s->empty()) {
     record = new Hurricane::Record ( "std::set<Element>" );
     unsigned n = 1;
     typename std::set<Element,Compare,Allocator>::iterator iterator = s->begin();
     while ( iterator != s->end() ) {
-      record->add ( getSlot<Element>(getString(n++), *iterator) );
+      record->add( getSlot<Element>(getString(n++), *iterator) );
       ++iterator;
     }
   }

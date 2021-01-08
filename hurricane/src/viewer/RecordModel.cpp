@@ -14,12 +14,11 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <QFont>
-#include  <QApplication>
-
-#include  "hurricane/Name.h"
-#include  "hurricane/viewer/Graphics.h"
-#include  "hurricane/viewer/RecordModel.h"
+#include <QFont>
+#include <QApplication>
+#include "hurricane/Name.h"
+#include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/RecordModel.h"
 
 
 namespace Hurricane {
@@ -44,34 +43,29 @@ namespace Hurricane {
   bool  RecordModel::setSlot ( Slot* slot, Record* record, size_t depth )
   {
   //cerr << "    Slot change" << endl;
-
     emit layoutAboutToBeChanged ();
 
-    vector< pair<QVariant,QVariant> >().swap ( _cache );
+    vector< pair<QVariant,QVariant> >().swap( _cache );
 
-    if ( _slot  ) {
+    if (_slot) {
       delete _slot;
-      if ( _depth ) delete _record;
+      if (_depth) delete _record;
     }
 
     _slot   = NULL;
     _record = NULL;
     _depth  = depth;
-
-    if ( slot == NULL ) {
-    //cerr << "    NULL Slot" << endl;
-
+    if (not slot) {
       emit layoutChanged ();
       return false;
     }
 
   // Now supplied by argument.
-    if ( record == NULL ) {
+    if (not record) {
       record = slot->getDataRecord ();
     //cerr << "    New record build" << endl;
       if ( record == NULL ) {
       //cerr << "    Slot " << slot->getDataString() << " has NULL Record" << endl;
-
         delete slot;
         emit layoutChanged ();
         return false;
@@ -79,20 +73,18 @@ namespace Hurricane {
     }
 
   //cerr << "    New Slot [" << depth << "] " << slot->getDataString() << endl;
-
     _slot   = slot;
     _record = record;
     _depth  = depth;
-
-    Record::SlotVector&          slotVector = _record->_getSlotVector();
-    Record::SlotVector::iterator islot      = slotVector.begin();
-    for ( ; islot != slotVector.end() ; islot++ ) {
-      _cache.push_back ( make_pair(QVariant(getString((*islot)->getName()).c_str())
-                                  ,QVariant((*islot)->getDataString().c_str())) );
+    for ( Slot* child : _record->_getSlotVector() ) {
+    //cerr << "ADD slot to _cache " << child->getPData() << endl;
+    //cerr << "              name= \"" << child->getName() << "\"" << endl;
+    //cerr << "              data= \"" << child->getDataString() << "\"" << endl;
+      _cache.push_back ( make_pair(QVariant(child->getName().c_str())
+                                  ,QVariant(child->getDataString().c_str())) );
     }
 
     emit layoutChanged ();
-
     return true;
   }
 

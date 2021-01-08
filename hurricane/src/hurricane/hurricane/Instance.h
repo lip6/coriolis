@@ -243,14 +243,14 @@ inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::
                                      return record;
                                    }
 
-template<>
-inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::Code>
-                                   ( const Hurricane::Instance::PlacementStatus::Code object )
-                                   {
-                                     Hurricane::Record* record = new Hurricane::Record(getString(object));
-                                     record->add(getSlot("Code", (unsigned int)object));
-                                     return record;
-                                   }
+// template<>
+// inline Hurricane::Record* getRecord<const Hurricane::Instance::PlacementStatus::Code>
+//                                    ( const Hurricane::Instance::PlacementStatus::Code object )
+//                                    {
+//                                      Hurricane::Record* record = new Hurricane::Record(getString(object));
+//                                      record->add(getSlot("Code", (unsigned int)object));
+//                                      return record;
+//                                    }
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Instance);

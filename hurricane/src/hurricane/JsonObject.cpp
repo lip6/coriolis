@@ -32,9 +32,11 @@
 // Needed for registering. May be deleted later.
 #include "hurricane/Initializer.h"
 #include "hurricane/DebugSession.h"
+#include "hurricane/Error.h"
 #include "hurricane/Warning.h"
-#include "hurricane/Library.h"
-#include "hurricane/Cell.h"
+#include "hurricane/Entity.h"
+//#include "hurricane/Library.h"
+//#include "hurricane/Cell.h"
 
 
 namespace Hurricane {
