@@ -45,12 +45,18 @@ Occurrence::Occurrence(const Entity* entity, const Path& path)
   : _entity(const_cast<Entity*>(entity))
   , _sharedPath(path._getSharedPath())
 {
-  if (!_entity) {
-    throw Error("Can't create " + _TName("Occurrence") + " : null entity");
-  }
-  if (_sharedPath)
+  if (not _entity)
+    throw Error( "Occurrence::Occurrence(): NULL Entity." );
+
+  if (_sharedPath) {
     if (_entity->getCell() != _sharedPath->getMasterCell())
-      throw Error("Can't create " + _TName("Occurrence") + " : incompatible path");
+      throw Error( "Occurrence::Occurrence(): Entity incompatible with the path.\n"
+                 "        * Entity master cell: %s\n"
+                 "        * Path master cell: %s"
+                 , getString(entity->getCell()).c_str()
+                 , getString(_sharedPath->getMasterCell()).c_str()
+                 );
+  }
 }
 
 Occurrence::Occurrence(const Occurrence& occurrence)
