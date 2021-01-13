@@ -159,6 +159,13 @@ class netlist{
     index_t get_cell_ind(index_t external_ind) const{ return cell_internal_mapping_[external_ind]; }
     index_t get_net_ind(index_t external_ind) const{ return net_internal_mapping_[external_ind]; }
 
+    point<int_t> get_cell_size(index_t external_ind){
+      return cell_sizes_[ cell_internal_mapping_[external_ind] ];
+    }
+
+    void set_cell_size(index_t external_ind,point<int_t> cell_size){
+      cell_sizes_[cell_internal_mapping_[external_ind]] = cell_size;
+    }
 };
 
 inline netlist::netlist(std::vector<temporary_cell> cells, std::vector<temporary_net> nets, std::vector<temporary_pin> all_pins){
