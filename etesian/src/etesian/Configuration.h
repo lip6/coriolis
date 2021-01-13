@@ -55,27 +55,30 @@ namespace Etesian {
   class Configuration {
     public:
     // Constructor & Destructor.
-                              Configuration      ( const RoutingGauge* rg=NULL, const CellGauge* cg=NULL );
-                             ~Configuration      ();
-             Configuration*   clone              () const;
-    // Methods.                                  
-      inline RoutingGauge*    getGauge           () const;
-      inline CellGauge*       getCellGauge       () const;
-      inline Effort           getPlaceEffort     () const;
-      inline GraphicUpdate    getUpdateConf      () const;
-      inline Density          getSpreadingConf   () const;
-      inline bool             getRoutingDriven   () const;
-      inline double           getSpaceMargin     () const;
-      inline double           getAspectRatio     () const;
-      inline string           getFeedNames       () const;
-      inline string           getBloat           () const;
-      inline DbU::Unit        getLatchUpDistance () const;
-      inline void             setSpaceMargin     ( double );
-      inline void             setAspectRatio     ( double );
-             void             print              ( Cell* ) const;
-             Record*          _getRecord         () const;
-             string           _getString         () const;
-             string           _getTypeName       () const;
+                              Configuration             ( const RoutingGauge* rg=NULL, const CellGauge* cg=NULL );
+                             ~Configuration             ();
+             Configuration*   clone                     () const;
+    // Methods.                                         
+      inline RoutingGauge*    getGauge                  () const;
+      inline CellGauge*       getCellGauge              () const;
+      inline Effort           getPlaceEffort            () const;
+      inline GraphicUpdate    getUpdateConf             () const;
+      inline Density          getSpreadingConf          () const;
+      inline bool             getRoutingDriven          () const;
+      inline double           getSpaceMargin            () const;
+      inline double           getAspectRatio            () const;
+      inline double           getAntennaInsertThreshold () const;
+      inline string           getFeedNames              () const;
+      inline string           getDiodeName              () const;
+      inline string           getBloat                  () const;
+      inline DbU::Unit        getLatchUpDistance        () const;
+      inline DbU::Unit        getAntennaMaxWL           () const;
+      inline void             setSpaceMargin            ( double );
+      inline void             setAspectRatio            ( double );
+             void             print                     ( Cell* ) const;
+             Record*          _getRecord                () const;
+             string           _getString                () const;
+             string           _getTypeName              () const;
     protected:
     // Attributes.
       RoutingGauge*  _rg;
@@ -86,28 +89,34 @@ namespace Etesian {
       bool           _routingDriven;
       double         _spaceMargin;
       double         _aspectRatio;
+      double         _antennaInsertThreshold;
       string         _feedNames;
+      string         _diodeName;
       string         _bloat;
       DbU::Unit      _latchUpDistance;
+      DbU::Unit      _antennaMaxWL;
     private:
                              Configuration ( const Configuration& );
       Configuration& operator=             ( const Configuration& );
   };
 
 
-  inline RoutingGauge* Configuration::getGauge           () const { return _rg; }
-  inline CellGauge*    Configuration::getCellGauge       () const { return _cg; }
-  inline Effort        Configuration::getPlaceEffort     () const { return _placeEffort; }
-  inline GraphicUpdate Configuration::getUpdateConf      () const { return _updateConf; }
-  inline Density       Configuration::getSpreadingConf   () const { return _spreadingConf; }
-  inline bool          Configuration::getRoutingDriven   () const { return _routingDriven; }
-  inline double        Configuration::getSpaceMargin     () const { return _spaceMargin; }
-  inline double        Configuration::getAspectRatio     () const { return _aspectRatio; }
-  inline string        Configuration::getFeedNames       () const { return _feedNames; }
-  inline string        Configuration::getBloat           () const { return _bloat; }
-  inline DbU::Unit     Configuration::getLatchUpDistance () const { return _latchUpDistance; }
-  inline void          Configuration::setSpaceMargin     ( double margin ) { _spaceMargin = margin; }
-  inline void          Configuration::setAspectRatio     ( double ratio  ) { _aspectRatio = ratio; }
+  inline RoutingGauge* Configuration::getGauge                  () const { return _rg; }
+  inline CellGauge*    Configuration::getCellGauge              () const { return _cg; }
+  inline Effort        Configuration::getPlaceEffort            () const { return _placeEffort; }
+  inline GraphicUpdate Configuration::getUpdateConf             () const { return _updateConf; }
+  inline Density       Configuration::getSpreadingConf          () const { return _spreadingConf; }
+  inline bool          Configuration::getRoutingDriven          () const { return _routingDriven; }
+  inline double        Configuration::getSpaceMargin            () const { return _spaceMargin; }
+  inline double        Configuration::getAspectRatio            () const { return _aspectRatio; }
+  inline double        Configuration::getAntennaInsertThreshold () const { return _antennaInsertThreshold; }
+  inline string        Configuration::getFeedNames              () const { return _feedNames; }
+  inline string        Configuration::getDiodeName              () const { return _diodeName; }
+  inline string        Configuration::getBloat                  () const { return _bloat; }
+  inline DbU::Unit     Configuration::getLatchUpDistance        () const { return _latchUpDistance; }
+  inline DbU::Unit     Configuration::getAntennaMaxWL           () const { return _antennaMaxWL; }
+  inline void          Configuration::setSpaceMargin            ( double margin ) { _spaceMargin = margin; }
+  inline void          Configuration::setAspectRatio            ( double ratio  ) { _aspectRatio = ratio; }
 
 
 } // Etesian namespace.

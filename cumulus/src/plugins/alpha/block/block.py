@@ -527,32 +527,37 @@ class Block ( object ):
     def place ( self ):
         editor = self.conf.editor
         if self.conf.isCoreBlock:
-            etesian = Etesian.EtesianEngine.create( self.conf.corona )
-            etesian.setBlock( self.conf.icore )
+            self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
+            self.etesian.setBlock( self.conf.icore )
             if editor:
                 editor.setCell( self.conf.cell )
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
-            etesian = Etesian.EtesianEngine.create( self.conf.cell )
-        etesian.place()
-        etesian.destroy()
+            self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
+        self.etesian.place()
+        Breakpoint.stop( 100, 'Placement done.' )
+        self.etesian.clearColoquinte()
 
     def route ( self ):
         routedCell = self.conf.corona if self.conf.isCoreBlock else self.conf.cell
-        katana = Katana.KatanaEngine.create( routedCell )
-       #katana.printConfiguration   ()
-        katana.digitalInit          ()
+        self.katana = Katana.KatanaEngine.create( routedCell )
+       #self.katana.printConfiguration()
+        self.katana.digitalInit       ()
        #katana.runNegociatePreRouted()
         Breakpoint.stop( 100, 'Block.route() Before global routing.' )
-        katana.runGlobalRouter      ( Katana.Flags.NoFlags )
-        katana.loadGlobalRouting    ( Anabatic.EngineLoadGrByNet )
+        self.katana.runGlobalRouter  ( Katana.Flags.NoFlags )
+        self.katana.loadGlobalRouting( Anabatic.EngineLoadGrByNet )
         Breakpoint.stop( 100, 'Block.route() After global routing.' )
-        katana.layerAssign          ( Anabatic.EngineNoNetLayerAssign )
-        katana.runNegociate         ( Katana.Flags.NoFlags )
-        success = katana.isDetailedRoutingSuccess()
+        self.katana.layerAssign      ( Anabatic.EngineNoNetLayerAssign )
+        self.katana.runNegociate     ( Katana.Flags.NoFlags )
+        success = self.katana.isDetailedRoutingSuccess()
         Breakpoint.stop( 100, 'Block.route() done, success:{}.'.format(success) )
-        katana.finalizeLayout()
-        katana.destroy()
+        self.katana.finalizeLayout()
+        self.katana.destroy()
+        self.katana = None
+        if self.etesian:
+            self.etesian.destroy()
+            self.etesian = None
         return success
 
     def addBlockages ( self ):

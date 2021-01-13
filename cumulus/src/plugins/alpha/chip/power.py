@@ -36,8 +36,8 @@ plugins.chip.importConstants( globals() )
 
 class Side ( object ):
 
-    def __init__ ( self, block, side, net, metal ):
-        self.block      = block
+    def __init__ ( self, builder, side, net, metal ):
+        self.builder    = builder
         self.side       = side
         self.net        = net
         self.metal      = metal
@@ -74,16 +74,16 @@ class Side ( object ):
     def doLayout ( self ):
         if self.side == West:
             width = 0
-            x     = self.block.bb.getXMin()
+            x     = self.builder.icoreAb.getXMin()
         elif self.side == East:
             width = 0
-            x     = self.block.bb.getXMax()
+            x     = self.builder.icoreAb.getXMax()
         elif self.side == South:
             height = 0
-            y      = self.block.bb.getYMin()
+            y      = self.builder.icoreAb.getYMin()
         elif self.side == North:
             height = 0
-            y      = self.block.bb.getYMax()
+            y      = self.builder.icoreAb.getYMax()
         minWidth = DbU.fromLambda( 6.0 )
         for terminal in self.terminals:
             if self.side == West or self.side == East:
@@ -94,7 +94,7 @@ class Side ( object ):
                 center = Point( terminal[0].getCenter(), y )
                 width  = terminal[0].getSize() - self.deltaWidth
                 if width < minWidth: width = minWidth
-            self.block.path.getTransformation().applyOn( center )
+            self.builder.path.getTransformation().applyOn( center )
             contact = Contact.create( self.net, self.metal, center.getX(), center.getY(), width, height )
             terminal[ 1 ] = contact
 
@@ -107,28 +107,33 @@ class Plane ( object ):
     Horizontal = 0001
     Vertical   = 0002
   
-    def __init__ ( self, block, metal ):
-        self.block = block
-        self.metal = metal
-        self.sides = {}
+    def __init__ ( self, builder, metal ):
+        self.builder = builder
+        self.metal   = metal
+        self.sides   = {}
   
     def addTerminal ( self, net, direction, bb ):
         if not self.sides.has_key(net):
-            self.sides[ net ] = { North : Side(self.block,North,net,self.metal)
-                                , South : Side(self.block,South,net,self.metal)
-                                , East  : Side(self.block,East ,net,self.metal)
-                                , West  : Side(self.block,West ,net,self.metal)
+            self.sides[ net ] = { North : Side(self.builder,North,net,self.metal)
+                                , South : Side(self.builder,South,net,self.metal)
+                                , East  : Side(self.builder,East ,net,self.metal)
+                                , West  : Side(self.builder,West ,net,self.metal)
                                 }
         sides = self.sides[ net ]
+        trace( 550, '\tPlane.addTerminal() net={} bb={} direction={}\n' \
+                    .format( net.getName(), bb, direction ))
+        trace( 550, '\tbuilder.icoreAb={}\n'.format( self.builder.icoreAb ))
         if direction == Plane.Horizontal:
-            if bb.getXMin() <= self.block.bb.getXMin():
+            trace( 550, '\t| Horizontal\n' )
+            if bb.getXMin() <= self.builder.icoreAb.getXMin():
                 sides[West].addTerminal( bb.getCenter().getY(), bb.getHeight() )
-            if bb.getXMax() >= self.block.bb.getXMax():
+            if bb.getXMax() >= self.builder.icoreAb.getXMax():
                 sides[East].addTerminal( bb.getCenter().getY(), bb.getHeight() )
         if direction == Plane.Vertical:
-            if bb.getYMin() <= self.block.bb.getYMin():
+            trace( 550, '\t| Vertical\n' )
+            if bb.getYMin() <= self.builder.icoreAb.getYMin():
                 sides[South].addTerminal( bb.getCenter().getX(), bb.getWidth() )
-            if bb.getYMax() >= self.block.bb.getYMax():
+            if bb.getYMax() >= self.builder.icoreAb.getYMax():
                 sides[North].addTerminal( bb.getCenter().getX(), bb.getWidth() )
   
     def doLayout ( self ):
@@ -142,25 +147,28 @@ class Plane ( object ):
 
 class GoCb ( object ):
   
-    def __init__ ( self, block ):
-        self.block = block
+    def __init__ ( self, builder ):
+        self.builder = builder
   
     def __call__ ( self, query, go ):
         direction = None
         if isinstance(go,Horizontal): direction = Plane.Horizontal
         if isinstance(go,Vertical):   direction = Plane.Vertical
         if not direction: return
+        trace( 550, '\t| go={}\n'.format( go ))
         rootNet = None
-        if go.getNet().getType() == long(Net.Type.POWER):  rootNet = self.block.conf.coronaVdd
-        if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.block.conf.coronaVss
+        if go.getNet().getType() == long(Net.Type.POWER):  rootNet = self.builder.conf.coronaVdd
+        if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.builder.conf.coronaVss
         if not rootNet: return
-        if self.block.activePlane:
-            layer = self.block.activePlane.metal
+        if self.builder.activePlane:
+            layer = self.builder.activePlane.metal
             if layer.isSymbolic():
                 layer = layer.getBasicLayer()
+            if self.builder.conf.getLayerDepth(layer) == 0:
+                direction = Plane.Horizontal
             bb = go.getBoundingBox( layer )
             query.getPath().getTransformation().applyOn( bb )
-            self.block.activePlane.addTerminal( rootNet, direction, bb )
+            self.builder.activePlane.addTerminal( rootNet, direction, bb )
         else:
             print WarningMessage( 'BlockPower.GoCb() callback called without an active plane.' )
         return
@@ -173,9 +181,9 @@ class Builder ( object ):
 
     def __init__ ( self, conf ):
         self.conf        = conf
-        self.path        = Path( self.conf.icore )
-        self.block       = self.conf.icore.getMasterCell()
-        self.bb          = self.block.getAbutmentBox()
+        self.path        = Path()
+        self.corona      = self.conf.icorona.getMasterCell()
+        self.icoreAb     = self.conf.icore.getAbutmentBox()
         self.planes      = {}
         self.activePlane = None
         for layerGauge in self.conf.routingGauge.getLayerGauges():
@@ -188,8 +196,8 @@ class Builder ( object ):
         goCb  = GoCb( self )
         query = Query()
         query.setGoCallback( goCb )
-        query.setCell( self.block )
-        query.setArea( self.block.getAbutmentBox() )
+        query.setCell( self.corona )
+        query.setArea( self.icoreAb )
         query.setFilter( Query.DoComponents|Query.DoTerminalCells )
         for layerGauge in self.conf.routingGauge.getLayerGauges():
             self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
@@ -226,13 +234,11 @@ class Builder ( object ):
         with UpdateSession():
             bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), ck, 0 )
             self.conf.expandMinArea( bufferRp )
-            blockAb  = self.block.getAbutmentBox()
-            self.path.getTransformation().applyOn( blockAb )
             layerGauge = self.conf.routingGauge.getLayerGauge(self.conf.verticalDepth)
             contact    = Contact.create( ck
                                        , self.conf.routingGauge.getRoutingLayer(self.conf.verticalDepth)
                                        , bufferRp.getX()
-                                       , blockAb.getYMax() 
+                                       , self.icoreAb.getYMax() 
                                        , layerGauge.getViaWidth()
                                        , layerGauge.getViaWidth()
                                        )
@@ -242,7 +248,6 @@ class Builder ( object ):
             if layer.isSymbolic():
                 layer = layer.getBasicLayer()
             bb = segment.getBoundingBox( layer )
-            self.path.getTransformation().getInvert().applyOn( bb )
             self.activePlane.addTerminal( ck, Plane.Vertical, bb )
             trace( 550, '\tAdded terminal of {} to vertical plane @{}\n'.format(ck,bb) )
   

@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iomanip>
 #include "coloquinte/circuit.hxx"
+#include "coloquinte/circuit_helper.hxx"
 #include "coloquinte/legalizer.hxx"
 #include "vlsisapd/configuration/Configuration.h"
 #include "vlsisapd/utilities/Dots.h"
@@ -39,6 +40,7 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/CellViewer.h"
@@ -55,6 +57,7 @@ namespace {
   using coloquinte::int_t;
   using coloquinte::float_t;
   using coloquinte::point;
+  using Etesian::EtesianEngine;
 
 // Options for both placers
   unsigned const SteinerModel        = 0x0001;
@@ -174,6 +177,42 @@ namespace {
     return Transformation( tx, ty, orient );
   }
 
+
+  uint32_t  getOutputSide ( Cell* cell )
+  {
+    static map<Cell*,uint32_t> cache;
+
+    auto icache = cache.find( cell );
+    if (icache != cache.end()) return (*icache).second;
+    
+    Net* output = NULL;
+    for ( Net* net : cell->getNets() ) {
+      if (net->isSupply()) continue;
+      if (net->getDirection() & Net::Direction::DirOut) {
+        output = net;
+        break;
+      }
+    }
+    if (not output) return EtesianEngine::RightSide;
+
+    Box       ab    = cell->getAbutmentBox();
+    DbU::Unit left  = ab.getWidth();
+    DbU::Unit right = ab.getWidth();
+    for ( Component* comp : NetExternalComponents::get(output) ) {
+      Box       bb       = comp->getBoundingBox();
+      DbU::Unit distance = bb.getXMin() - ab.getXMin();
+      left = std::min( left, distance );
+
+      distance = ab.getXMax() - bb.getXMax();
+      right = std::min( right, distance );
+    }
+
+    uint32_t flags = (left < right) ? EtesianEngine::LeftSide : EtesianEngine::RightSide;
+    cache[ cell ] = flags;
+    return flags;
+  }
+
+  
 } // Anonymous namespace.
 
 
@@ -256,19 +295,24 @@ namespace Etesian {
     , _block        (NULL)
     , _ySpinSet     (false)
     , _flatDesign   (false)
-    , _surface      ()
-    , _circuit      ()
-    , _placementLB  ()
-    , _placementUB  ()
+    , _surface      (NULL)
+    , _circuit      (NULL)
+    , _placementLB  (NULL)
+    , _placementUB  (NULL)
+    , _densityLimits(NULL)
     , _cellsToIds   ()
     , _idsToInsts   ()
+    , _idsToNets    ()
     , _viewer       (NULL)
+    , _diodeCell    (NULL)
     , _feedCells    (this)
     , _bloatCells   (this)
+    , _area         (NULL)
     , _yspinSlice0  (0)
     , _sliceHeight  (0)
     , _fixedAbHeight(0)
     , _fixedAbWidth (0)
+    , _diodeCount   (0)
   {
   }
 
@@ -283,6 +327,13 @@ namespace Etesian {
       cmess2 << "  o  ISPD benchmark <" << getCell()->getName()
              << ">, no feed cells will be added." << endl;
     } else {
+      _diodeCell = DataBase::getDB()->getCell( getConfiguration()->getDiodeName() );;
+      if (not _diodeCell) {
+        cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" diode cell."
+                       , getConfiguration()->getDiodeName().c_str()
+                       ) << endl;
+      }
+
       _bloatCells.select( getConfiguration()->getBloat() );
       
       string feedNames = getConfiguration()->getFeedNames();
@@ -330,20 +381,50 @@ namespace Etesian {
 
   void  EtesianEngine::_preDestroy ()
   {
-    cdebug_log(129,1) << "EtesianEngine::_preDestroy()" << endl;
+    cdebug_log(120,1) << "EtesianEngine::_preDestroy()" << endl;
 
     cmess1 << "  o  Deleting ToolEngine<" << getName() << "> from Cell <"
            << getCell()->getName() << ">" << endl;
 
     Super::_preDestroy();
 
-    cdebug.log(129,-1);
+    cdebug.log(120,-1);
   }
 
 
   EtesianEngine::~EtesianEngine ()
   {
+    clearColoquinte();
+    delete _area;
     delete _configuration;
+  }
+
+
+  void  EtesianEngine::clearColoquinte ()
+  {
+    cmess1 << "  o  Clearing Coloquinte data-structures on <" << getCell()->getName() << ">" << endl;
+
+    delete _surface;
+    delete _circuit;
+    delete _placementLB;
+    delete _placementUB;
+    delete _densityLimits;
+
+    unordered_map<string,unsigned int> emptyCellsToIds;
+    _cellsToIds.swap( emptyCellsToIds );
+
+    vector<InstanceInfos> emptyIdsToInsts;
+    _idsToInsts.swap( emptyIdsToInsts );
+
+    vector<NetInfos> emptyIdsToNets;
+    _idsToNets.swap( emptyIdsToNets );
+
+    _surface       = NULL;
+    _circuit       = NULL;
+    _placementLB   = NULL;
+    _placementUB   = NULL;
+    _densityLimits = NULL;
+    _diodeCount    = 0;
   }
 
 
@@ -645,7 +726,7 @@ namespace Etesian {
             instances[instanceId].attributes = 0;
 
             _cellsToIds.insert( make_pair(getString(instance->getName()),instanceId) );
-            _idsToInsts.push_back( instance );
+            _idsToInsts.push_back( make_tuple(instance,0,0) );
             // cerr << "FIXED id=" << instanceId
             //      << " " << instance << " size:(" << xsize << " " << ysize
             //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
@@ -719,7 +800,7 @@ namespace Etesian {
       }
 
       _cellsToIds.insert( make_pair(instanceName,instanceId) );
-      _idsToInsts.push_back( instance );
+      _idsToInsts.push_back( make_tuple(instance,0,0) );
       ++instanceId;
       dots.dot();
     }
@@ -767,6 +848,7 @@ namespace Etesian {
 
     vector<temporary_net>  nets ( netsNb );
     vector<temporary_pin>  pins;
+    _idsToNets.resize( netsNb );
 
     unsigned int netId = 0;
     for ( Net* net : getCell()->getNets() )
@@ -781,6 +863,7 @@ namespace Etesian {
       dots.dot();
 
       nets[netId] = temporary_net( netId, 1 );
+      _idsToNets[netId] = make_tuple( net, _cellsToIds.size(), 0 );
 
     //cerr << "+ " << net << endl;
 
@@ -822,6 +905,14 @@ namespace Etesian {
           }
         } else {
           pins.push_back( temporary_pin( point<int_t>(xpin,ypin), (*iid).second, netId ) );
+          Net*  rpNet = NULL;
+          Plug* plug  = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+          if (plug) {
+            rpNet = plug->getMasterNet();
+            if (rpNet->getDirection() & Net::Direction::DirOut) {
+              std::get<1>( _idsToNets[netId] ) = (*iid).second;
+            }
+          }
         }
 
       //cerr << "| " << rp << " pos:(" << xpin << " " << ypin << ")" << endl;
@@ -831,16 +922,18 @@ namespace Etesian {
     }
     dots.finish( Dots::Reset );
 
-    _surface = box<int_t>( (int_t)(topAb.getXMin() / vpitch)
-                         , (int_t)(topAb.getXMax() / vpitch)
-                         , (int_t)(topAb.getYMin() / hpitch)
-                         , (int_t)(topAb.getYMax() / hpitch)
-                         );
-    _circuit = netlist( instances, nets, pins );
-    _circuit.selfcheck();
-    _placementLB.positions_    = positions;
-    _placementLB.orientations_ = orientations;
-    _placementUB = _placementLB;
+    _densityLimits = new coloquinte::density_restrictions ();
+    _surface = new box<int_t>( (int_t)(topAb.getXMin() / vpitch)
+                             , (int_t)(topAb.getXMax() / vpitch)
+                             , (int_t)(topAb.getYMin() / hpitch)
+                             , (int_t)(topAb.getYMax() / hpitch)
+                             );
+    _circuit = new netlist( instances, nets, pins );
+    _circuit->selfcheck();
+    _placementLB = new coloquinte::placement_t ();
+    _placementLB->positions_    = positions;
+    _placementLB->orientations_ = orientations;
+    _placementUB = new coloquinte::placement_t ( *_placementLB );
 
     return instancesNb-fixedNb;
   }
@@ -890,18 +983,18 @@ namespace Etesian {
 
     // Perform a very quick legalization pass
     cmess2 << "  o  Simple legalization." << endl;
-    auto first_legalizer = region_distribution::uniform_density_distribution(_surface, _circuit, _placementLB);
+    auto first_legalizer = region_distribution::uniform_density_distribution(*_surface, *_circuit, *_placementLB);
     first_legalizer.selfcheck();
-    get_rough_legalization( _circuit, _placementUB, first_legalizer);
+    get_rough_legalization( *_circuit, *_placementUB, first_legalizer);
 
-    _placementLB = _placementUB;
+    *_placementLB = *_placementUB;
 
     // Early topology-independent solution with a star model + negligible pulling forces to avoid dumb solutions
     // Spreads well to help subsequent optimization passes
     cmess2 << "  o  Star (*) Optimization." << endl;
-    auto solv = get_star_linear_system( _circuit, _placementLB, 1.0, 0, 10) // Limit the number of pins: don't want big awful nets with high weight
-              + get_pulling_forces( _circuit, _placementUB, 1000000.0);
-    solve_linear_system( _circuit, _placementLB, solv, 200 );
+    auto solv = get_star_linear_system( *_circuit, *_placementLB, 1.0, 0, 10) // Limit the number of pins: don't want big awful nets with high weight
+              + get_pulling_forces( *_circuit, *_placementUB, 1000000.0);
+    solve_linear_system( *_circuit, *_placementLB, solv, 200 );
     _progressReport2("     [---]" );
   }
 
@@ -911,8 +1004,8 @@ namespace Etesian {
     using namespace coloquinte::gp;
     // Create a legalizer and bipartition it until we have sufficient precision
     auto legalizer = (options & ForceUniformDensity) != 0 ?
-        region_distribution::uniform_density_distribution (_surface, _circuit, _placementLB, _densityLimits)
-      : region_distribution::full_density_distribution    (_surface, _circuit, _placementLB, _densityLimits);
+        region_distribution::uniform_density_distribution (*_surface, *_circuit, *_placementLB, *_densityLimits)
+      : region_distribution::full_density_distribution    (*_surface, *_circuit, *_placementLB, *_densityLimits);
     while(legalizer.region_dimensions().x > 2*legalizer.region_dimensions().y)
       legalizer.x_bipartition();
     while(2*legalizer.region_dimensions().x < legalizer.region_dimensions().y)
@@ -927,9 +1020,9 @@ namespace Etesian {
       legalizer.selfcheck();
     }
     // Keep the orientation between LB and UB
-    _placementUB = _placementLB;
+    *_placementUB = *_placementLB;
     // Update UB
-    get_rough_legalization( _circuit, _placementUB, legalizer );
+    get_rough_legalization( *_circuit, *_placementUB, legalizer );
   }
 
 
@@ -942,11 +1035,12 @@ namespace Etesian {
   {
     using namespace coloquinte::gp;
 
+    bool    antennaDone     = false;
     float_t penaltyIncrease = minInc;
-    float_t linearDisruption  = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
+    float_t linearDisruption  = get_mean_linear_disruption(*_circuit, *_placementLB, *_placementUB);
     float_t pullingForce = initPenalty;
-    float_t upperWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementUB)),
-            lowerWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementLB));
+    float_t upperWL = static_cast<float_t>(get_HPWL_wirelength(*_circuit, *_placementUB)),
+            lowerWL = static_cast<float_t>(get_HPWL_wirelength(*_circuit, *_placementLB));
     float_t prevOptRatio = lowerWL / upperWL;
 
     index_t i=0;
@@ -957,32 +1051,37 @@ namespace Etesian {
 
       ostringstream label;
       label.str("");
-      label  << "     [" << setw(3) << setfill('0') << i << setfill(' ') << "] Bipart.";
+      label  << "     [" << setw(3) << setfill('0') << i << setfill(' ') << "] "
+             << setw(5) << setprecision(4) << linearDisruption << "% Bipart.";
       _progressReport1(label.str() );
 
-      upperWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementUB));
+      upperWL = static_cast<float_t>(get_HPWL_wirelength(*_circuit, *_placementUB));
     //float_t legRatio = lowerWL / upperWL;
 
       // Get the system to optimize (tolerance, maximum and minimum pin counts)
       // and the pulling forces (threshold distance)
       auto opt_problem = (options & SteinerModel) ?
-        get_RSMT_linear_system  ( _circuit, _placementLB, minDisruption, 2, 100000 ) 
-      : get_HPWLF_linear_system ( _circuit, _placementLB, minDisruption, 2, 100000 ); 
+        get_RSMT_linear_system  ( *_circuit, *_placementLB, minDisruption, 2, 100000 ) 
+      : get_HPWLF_linear_system ( *_circuit, *_placementLB, minDisruption, 2, 100000 ); 
       auto solv = opt_problem
-                + get_linear_pulling_forces( _circuit, _placementUB, _placementLB, pullingForce, 2.0f * linearDisruption);
-      solve_linear_system( _circuit, _placementLB, solv, 200 ); // 200 iterations
-      _progressReport2("           Linear." );
+                + get_linear_pulling_forces( *_circuit
+                                           , *_placementUB
+                                           , *_placementLB
+                                           , pullingForce
+                                           , 2.0f * linearDisruption);
+      solve_linear_system( *_circuit, *_placementLB, solv, 200 ); // 200 iterations
+      _progressReport2("                  Linear." );
 
       if(options & UpdateLB)
-        _updatePlacement( _placementLB );
+        _updatePlacement( _placementUB );
 
       // Optimize orientation sometimes
       if (i%5 == 0) {
-          optimize_exact_orientations( _circuit, _placementLB );
-          _progressReport2("           Orient." );
+          optimize_exact_orientations( *_circuit, *_placementLB );
+          _progressReport2("                  Orient." );
       }
 
-      lowerWL = static_cast<float_t>(get_HPWL_wirelength(_circuit, _placementLB));
+      lowerWL = static_cast<float_t>(get_HPWL_wirelength(*_circuit, *_placementLB));
       float_t optRatio = lowerWL / upperWL;
 
      /*
@@ -1000,8 +1099,13 @@ namespace Etesian {
       pullingForce += penaltyIncrease;
       prevOptRatio = optRatio;
 
-      linearDisruption  = get_mean_linear_disruption(_circuit, _placementLB, _placementUB);
+      linearDisruption  = get_mean_linear_disruption(*_circuit, *_placementLB, *_placementUB);
       ++i;
+
+      if ((linearDisruption < getAntennaInsertThreshold()*100.0) and not antennaDone) {
+        antennaProtect();
+        antennaDone = true;
+      }
       // First way to exit the loop: UB and LB difference is <10%
       // Second way to exit the loop: the legalization is close enough to the previous result
     } while (linearDisruption > minDisruption and prevOptRatio <= 0.9);
@@ -1023,52 +1127,94 @@ namespace Etesian {
         label.str("");
         label  << "     [" << setw(3) << setfill('0') << i << setfill(' ') << "]";
 
-        optimize_x_orientations( _circuit, _placementUB ); // Don't disrupt VDD/VSS connections in a row
+        optimize_x_orientations( *_circuit, *_placementUB ); // Don't disrupt VDD/VSS connections in a row
         _progressReport1(label.str() + " Oriented ......." );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
-        auto legalizer = legalize( _circuit, _placementUB, _surface, sliceHeight );
-        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+        auto legalizer = legalize( *_circuit, *_placementUB, *_surface, sliceHeight );
+        coloquinte::dp::get_result( *_circuit, legalizer, *_placementUB );
         _progressReport1("           Legalized ......" );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
-        row_compatible_orientation( _circuit, legalizer, true );
-        swaps_global_HPWL( _circuit, legalizer, 3, 4 );
-        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+        row_compatible_orientation( *_circuit, legalizer, true );
+        swaps_global_HPWL( *_circuit, legalizer, 3, 4 );
+        coloquinte::dp::get_result( *_circuit, legalizer, *_placementUB );
         _progressReport1("           Global Swaps ..." );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
         if(options & SteinerModel)
-          OSRP_noncvx_RSMT( _circuit, legalizer );
+          OSRP_noncvx_RSMT( *_circuit, legalizer );
         else
-          OSRP_convex_HPWL( _circuit, legalizer );
-        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+          OSRP_convex_HPWL( *_circuit, legalizer );
+        coloquinte::dp::get_result( *_circuit, legalizer, *_placementUB );
         _progressReport1("           Row Optimization" );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
         if(options & SteinerModel)
-          swaps_row_noncvx_RSMT( _circuit, legalizer, effort+2 );
+          swaps_row_noncvx_RSMT( *_circuit, legalizer, effort+2 );
         else
-          swaps_row_convex_HPWL( _circuit, legalizer, effort+2 );
-        coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
+          swaps_row_convex_HPWL( *_circuit, legalizer, effort+2 );
+        coloquinte::dp::get_result( *_circuit, legalizer, *_placementUB );
         _progressReport1("           Local Swaps ...." );
         if(options & UpdateDetailed)
           _updatePlacement( _placementUB );
 
         if (i == iterations-1) {
-          //swaps_row_convex_RSMT( _circuit, legalizer, 4 );
-          row_compatible_orientation( _circuit, legalizer, true );
-          coloquinte::dp::get_result( _circuit, legalizer, _placementUB );
-          verify_placement_legality( _circuit, _placementUB, _surface );
+          //swaps_row_convex_RSMT( *_circuit, legalizer, 4 );
+          row_compatible_orientation( *_circuit, legalizer, true );
+          coloquinte::dp::get_result( *_circuit, legalizer, *_placementUB );
+          verify_placement_legality( *_circuit, *_placementUB, *_surface );
           _progressReport1("           Final Legalize ." );
         }
     }
-    _placementLB = _placementUB; // In case we run other passes
-    _updatePlacement( _placementUB );
+    *_placementLB = *_placementUB; // In case we run other passes
+    _updatePlacement( _placementUB, FinalStage );
+  }
+
+
+  void  EtesianEngine::antennaProtect ()
+  {
+    DbU::Unit maxWL = getAntennaMaxWL();
+    if (not maxWL) return;
+    
+    cmess1 << "  o  Inserting antenna effect protection." << endl;
+    uint32_t count      = 0;
+    int_t    diodeWidth = _diodeCell->getAbutmentBox().getWidth() / getSliceStep();
+    cdebug_log(122,0) << "diodeWidth=" << diodeWidth << "p" << endl;
+
+    for ( coloquinte::index_t inet=0 ; inet < _circuit->net_cnt() ; ++inet ) {
+      DbU::Unit rsmt    = toDbU( coloquinte::get_RSMT_length( *_circuit, *_placementUB, inet ) );
+      size_t    idriver = std::get<1>( _idsToNets[inet]  );
+      if (idriver >= _cellsToIds.size()) continue;
+
+      Instance* instance   = std::get<0>( _idsToInsts[idriver] );
+      string    masterName = getString( instance->getMasterCell()->getName() );
+      uint32_t  drivePower = 1;
+      if (masterName.substr(masterName.size()-3,2) == "_x") {
+        drivePower = std::stoi( masterName.substr(masterName.size()-1) );
+      }
+
+      if (rsmt > drivePower*maxWL) {
+        Net* net = std::get<0>( _idsToNets[inet] );
+        cdebug_log(122,0) << "| Net [" << inet << "] \"" << net->getName() << "\" may have antenna effect, "
+                          << DbU::getValueString(rsmt)
+                          << " drive=" << drivePower
+                          << " \"" << masterName << "\""
+                          << endl;
+        std::get<2>( _idsToNets [inet   ] ) |= NeedsDiode;
+        std::get<2>( _idsToInsts[idriver] ) |= NeedsDiode;
+        std::get<1>( _idsToInsts[idriver] )  = inet;
+        coloquinte::point<int_t> cell_size = _circuit->get_cell_size(idriver);
+        cell_size.x += diodeWidth;
+        _circuit->set_cell_size( idriver, cell_size );
+        ++count;
+      }
+    }
+    cmess1 << ::Dots::asInt( "     - Inserted diodes", count ) << endl;
   }
 
 
@@ -1163,17 +1309,18 @@ namespace Etesian {
     cmess1 << "  o  Detailed Placement." << endl;
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
+    Breakpoint::stop( 100, "Before adding feeds." );
     cmess2 << "  o  Adding feed cells." << endl;
-    readSlices();
+    toHurricane();
   //addFeeds();
 
     cmess1 << "  o  Placement finished." << endl;
     stopMeasures();
     printMeasures();
     cmess1 << ::Dots::asString
-      ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(_circuit,_placementUB )*getSliceStep() ) ) << endl;
+      ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(*_circuit,*_placementUB )*getSliceStep() ) ) << endl;
     cmess1 << ::Dots::asString
-      ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(_circuit,_placementUB )*getSliceStep() ) ) << endl;
+      ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(*_circuit,*_placementUB )*getSliceStep() ) ) << endl;
 
     UpdateSession::open();
     for ( Net* net : getCell()->getNets() ) {
@@ -1202,12 +1349,12 @@ namespace Etesian {
     }
 
     cmess2 << label
-           << " HPWL:" << setw(11) << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementUB )
-           << " RMST:" << setw(11) << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementUB )
+           << " HPWL=" << setw(14) << DbU::getValueString(toDbU(coloquinte::gp::get_HPWL_wirelength( *_circuit, *_placementUB )))
+           << " RMST=" << setw(14) << DbU::getValueString(toDbU(coloquinte::gp::get_RSMT_wirelength( *_circuit, *_placementUB )))
            << endl;
     cparanoid << indent
-           <<   " L-Dsrpt:" << setw(8) << coloquinte::gp::get_mean_linear_disruption   ( _circuit, _placementLB, _placementUB )
-           <<   " Q-Dsrpt:" << setw(8) << coloquinte::gp::get_mean_quadratic_disruption( _circuit, _placementLB, _placementUB )
+           <<   " L-Dsrpt=" << setw(8) << coloquinte::gp::get_mean_linear_disruption   ( *_circuit, *_placementLB, *_placementUB )
+           <<   " Q-Dsrpt=" << setw(8) << coloquinte::gp::get_mean_quadratic_disruption( *_circuit, *_placementLB, *_placementUB )
            << endl;
   }
 
@@ -1222,19 +1369,21 @@ namespace Etesian {
     }
 
     cmess2 << label
-           << " HPWL:" << setw(11) << coloquinte::gp::get_HPWL_wirelength( _circuit, _placementLB )
-           << " RMST:" << setw(11) << coloquinte::gp::get_RSMT_wirelength( _circuit, _placementLB )
+           << " HPWL=" << setw(14) << DbU::getValueString(toDbU(coloquinte::gp::get_HPWL_wirelength( *_circuit, *_placementLB )))
+           << " RMST=" << setw(14) << DbU::getValueString(toDbU(coloquinte::gp::get_RSMT_wirelength( *_circuit, *_placementLB )))
            << endl;
   }
 
 
-  void  EtesianEngine::_updatePlacement ( const coloquinte::placement_t& placement )
+  void  EtesianEngine::_updatePlacement ( const coloquinte::placement_t* placement, uint32_t flags )
   {
     UpdateSession::open();
 
     Transformation topTransformation;
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.invert();
+
+    vector< tuple<Occurrence,size_t,Transformation> > diodeMasters;
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
@@ -1254,26 +1403,103 @@ namespace Etesian {
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
           continue;
 
-        point<int_t>   position = placement.positions_[(*iid).second];
-        Transformation trans    = toTransformation( position
-                                                  , placement.orientations_[(*iid).second]
-                                                  , instance->getMasterCell()
-                                                  , hpitch
-                                                  , vpitch
-                                                  );
+        uint32_t       outputSide = getOutputSide( instance->getMasterCell() );
+        point<int_t>   position   = placement->positions_[(*iid).second];
+        Transformation cellTrans  = toTransformation( position
+                                                    , placement->orientations_[(*iid).second]
+                                                    , instance->getMasterCell()
+                                                    , hpitch
+                                                    , vpitch
+                                                    );
+        topTransformation.applyOn( cellTrans );
       //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
+
+        if ((flags & FinalStage) and (std::get<2>(_idsToInsts[(*iid).second]) & NeedsDiode)) {
+          Transformation diodeTrans;
+
+          if (outputSide & RightSide) {
+            DbU::Unit dx = instance  ->getMasterCell()->getAbutmentBox().getWidth();
+            if (  (cellTrans.getOrientation() == Transformation::Orientation::R2)
+               or (cellTrans.getOrientation() == Transformation::Orientation::MX))
+              dx = -dx;
+            diodeTrans = Transformation( cellTrans.getTx() + dx
+                                       , cellTrans.getTy()
+                                       , cellTrans.getOrientation() );
+          } else {
+            DbU::Unit dx = _diodeCell->getAbutmentBox().getWidth();
+            if (  (cellTrans.getOrientation() == Transformation::Orientation::R2)
+               or (cellTrans.getOrientation() == Transformation::Orientation::MX))
+              dx = -dx;
+            diodeTrans = cellTrans;
+            cellTrans  = Transformation( diodeTrans.getTx() + dx
+                                       , diodeTrans.getTy()
+                                       , diodeTrans.getOrientation() );
+          }
+
+          diodeMasters.push_back( make_tuple( occurrence
+                                            , std::get<1>(_idsToInsts[(*iid).second])
+                                            , diodeTrans ));
+        }
 
       // This is temporary as it's not trans-hierarchic: we ignore the positions
       // of all the intermediary instances.
-        topTransformation.applyOn( trans );
-        instance->setTransformation( trans );
+        instance->setTransformation( cellTrans );
         instance->setPlacementStatus( Instance::PlacementStatus::PLACED );
+      }
+    }
+
+    if (_diodeCell) {
+      Net* diodeOutput = NULL;
+      for ( Net* net : _diodeCell->getNets() ) {
+        if (net->isSupply() or not net->isExternal()) continue;
+        diodeOutput = net;
+        break;
+      }
+
+      for ( auto diodeInfos : diodeMasters ) {
+        Net*      topNet   = std::get<0>( _idsToNets[ std::get<1>(diodeInfos) ] );
+        Instance* instance = static_cast<Instance*>( std::get<0>(diodeInfos).getEntity() );
+        Cell*     ownerCell = instance->getCell();
+        Instance* diode     = _createDiode( ownerCell );
+        diode->setTransformation( std::get<2>( diodeInfos ));
+        diode->setPlacementStatus( Instance::PlacementStatus::PLACED );
+
+        Net* driverOutput = NULL;
+        for ( Net* net : instance->getMasterCell()->getNets() ) {
+          if (net->isSupply() or not net->isExternal()) continue;
+          if (net->getDirection() & Net::Direction::DirOut) {
+            driverOutput = net;
+            break;
+          }
+        }
+
+        if (diodeOutput and driverOutput) {
+          cdebug_log(122,0) << "Bind:" << endl;
+          Plug* diodePlug  = diode   ->getPlug( diodeOutput );
+          Plug* driverPlug = instance->getPlug( driverOutput );
+          diodePlug->setNet( driverPlug->getNet() );
+          
+          cdebug_log(122,0) << "  Driver net=" << topNet << endl;
+          cdebug_log(122,0) << "  " << instance << " @" << instance->getTransformation() << endl;
+          cdebug_log(122,0) << "  " << diode    << " @" << diode   ->getTransformation() << endl;
+          cdebug_log(122,0) << "  topNet->getCell():" << topNet->getCell() << endl;
+          cdebug_log(122,0) << "  " << std::get<0>(diodeInfos).getPath() << endl;
+          Path path = std::get<0>(diodeInfos).getPath();
+          RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
+        }
       }
     }
 
     UpdateSession::close();
 
     if (_viewer) _viewer->getCellWidget()->refresh();
+  }
+
+
+  Instance* EtesianEngine::_createDiode ( Cell* owner )
+  {
+    if (not _diodeCell) return NULL;
+    return Instance::create( owner, string("diode_")+getString(_getNewDiodeId()), _diodeCell );
   }
 
 
@@ -1295,6 +1521,8 @@ namespace Etesian {
                                      
     if (record) {
       record->add( getSlot( "_configuration",  _configuration ) );
+      record->add( getSlot( "_area"         ,  _area ) );
+      record->add( getSlot( "_diodeCount"   ,  _diodeCount ) );
     }
     return record;
   }

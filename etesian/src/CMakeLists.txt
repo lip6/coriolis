@@ -11,6 +11,7 @@
                         ${PYTHON_INCLUDE_PATH}
                       )
                    set( includes      etesian/Configuration.h
+                                      etesian/Placement.h
                                       etesian/FeedCells.h
                                       etesian/BloatCells.h
                                       etesian/BloatProperty.h

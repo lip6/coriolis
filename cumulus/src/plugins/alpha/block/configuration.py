@@ -133,6 +133,8 @@ class GaugeConf ( object ):
     @property
     def routingBb     ( self ): return self._routingBb
 
+    def getLayerDepth ( self, layer ): return self._routingGauge.getLayerDepth( layer )
+
     def getPitch ( self, layer ): return self._routingGauge.getPitch( layer )
 
     def setRoutingBb ( self, bb ):
@@ -1100,6 +1102,8 @@ class BlockConf ( GaugeConf ):
         self.cfg.etesian.spaceMargin     = None
         self.cfg.etesian.latchUpDistance = None
         self.cfg.block.spareSide         = None
+        self.etesian = None
+        self.katana  = None
 
     @property
     def isCoreBlock ( self ): return self.chip is not None

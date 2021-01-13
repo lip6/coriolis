@@ -15,24 +15,13 @@
 
 
 import sys
-from   Hurricane  import DbU
-from   Hurricane  import Point
-from   Hurricane  import Transformation
-from   Hurricane  import Box
-from   Hurricane  import Interval
-from   Hurricane  import Path
-from   Hurricane  import Occurrence
-from   Hurricane  import UpdateSession
-from   Hurricane  import Net
-from   Hurricane  import Contact
-from   Hurricane  import Horizontal
-from   Hurricane  import Vertical
-from   Hurricane  import Query
+from   Hurricane  import DbU, Point, Transformation, Box, Interval, \
+                         Path, Occurrence, UpdateSession, Net,      \
+                         Contact, Horizontal, Vertical, Query
 import CRL
 import helpers
 from   helpers    import trace
-from   helpers.io import ErrorMessage
-from   helpers.io import WarningMessage
+from   helpers.io import ErrorMessage, WarningMessage
 import plugins
 import plugins.chip
 
@@ -134,6 +123,8 @@ class Plane ( object ):
                           , West  : Side(self.block,West ,net,self.metal)
                           }
     sides = self.sides[ net ]
+    trace( 550, '\tPlane.addTerminal() net={} bb={} direction={}\n' \
+                .format( net.getName(), bb, direction ))
 
     if direction == Plane.Horizontal:
       if bb.getXMin() <= self.block.bb.getXMin():

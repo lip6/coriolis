@@ -71,6 +71,7 @@ extern "C" {
 
   DirectVoidMethod(EtesianEngine,etesian,setDefaultAb)
   DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
+  DirectVoidMethod(EtesianEngine,etesian,clearColoquinte)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute(PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
@@ -233,6 +234,8 @@ extern "C" {
                             , "Override the configuration aspect ratio parameter value." }
     , { "resetPlacement"    , (PyCFunction)PyEtesianEngine_resetPlacement    , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
+    , { "clearColoquinte"   , (PyCFunction)PyEtesianEngine_clearColoquinte   , METH_NOARGS
+                            , "De-allocate the Coloquinte related data structures." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS
                             , "Run the placer (Etesian)." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS
