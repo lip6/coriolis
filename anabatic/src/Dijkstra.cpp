@@ -19,6 +19,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Net.h"
+#include "hurricane/Pin.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
@@ -42,6 +43,7 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Component;
+  using Hurricane::Pin;
   using Hurricane::Segment;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
@@ -1546,7 +1548,6 @@ namespace Anabatic {
 
         cdebug_log(112,0) << "@ frp:" << rp << endl;
         rps.push_back( rp ); 
-        continue; 
       }
     }
 
@@ -1555,14 +1556,16 @@ namespace Anabatic {
       return;
     }
 
+    uint32_t driverCount = 0;
     for ( auto rp : rps ) {
       if (not _anabatic->getConfiguration()->selectRpComponent(rp))
         cerr << Warning( "Dijktra::load(): %s has no components on grid.", getString(rp).c_str() ) << endl;
 
       cdebug_log(112,0) << "@ rp: " << rp << ", getCenter(): " << rp->getBoundingBox().getCenter() << endl;
-      Point  center = rp->getBoundingBox().getCenter();
-      GCell* gcell  = _anabatic->getGCellUnder( center );
-      Box    bb     = rp->getBoundingBox();
+      Point  center   = rp->getBoundingBox().getCenter();
+      GCell* gcell    = _anabatic->getGCellUnder( center );
+      Box    bb       = rp->getBoundingBox();
+      bool   isDriver = false;
       
       cdebug_log(112,0) << bb.getXMin() << " " << bb.getXMax() << endl;
       cdebug_log(112,0) << "center X:" << center.getX() << " gcell Xmax:" << gcell->getXMax() << endl;
@@ -1578,6 +1581,29 @@ namespace Anabatic {
                      , getString(_net).c_str()
                      ) << endl;
         continue;
+      }
+
+      Net* rpNet = NULL;
+      Plug* plug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+      if (plug) {
+        rpNet = plug->getMasterNet();
+        if (rpNet->getDirection() & Net::Direction::DirOut) {
+          cdebug_log(112,0) << "Driver/cell: " << rp << endl;
+          cdebug_log(112,0) << "masterNet: " << rpNet << endl;
+          ++driverCount;
+          isDriver = true;
+        }
+      } else {
+        Pin* pin = dynamic_cast<Pin*>( rp->getPlugOccurrence().getEntity() );
+        if (pin) {
+          rpNet = pin->getNet();
+          if (rpNet->getDirection() & Net::Direction::DirIn) {
+            cdebug_log(112,0) << "Driver/pin: " << rp << endl;
+            cdebug_log(112,0) << "masterNet: " << rpNet << endl;
+            ++driverCount;
+            isDriver = true;
+          }
+        }
       }
 
       _searchArea.merge( gcell->getBoundingBox() ); // TO CHANGE
@@ -1604,6 +1630,8 @@ namespace Anabatic {
           vertex->setDegree       ( 0 );
           vertex->setRpCount      ( 0 );
           vertex->setFrom         ( NULL );
+          if (isDriver)
+            vertex->setDriver( true );
 
           vertex->setFrom2        ( NULL);
           vertex->unsetFlags      ( Vertex::UseFromFrom2 );
@@ -1627,6 +1655,17 @@ namespace Anabatic {
       Contact* vcontact = seed->getGContact( _net );
       rp->getBodyHook()->detach();
       rp->getBodyHook()->attach( vcontact->getBodyHook() );
+    }
+
+    if (driverCount == 0) {
+      cerr << Error( "Diskstra::load(): Net \"%s\" do not have a driver.\n"
+                   , getString(_net->getName()).c_str()
+                   ) << endl;
+    }
+    if (driverCount > 1) {
+      cerr << Error( "Diskstra::load(): Net \"%s\" have multiple drivers (%u).\n"
+                   , getString(_net->getName()).c_str(), driverCount
+                   ) << endl;
     }
 
     if (state and state->isSymmetric() and not state->isSelfSym() and state->isSymMaster()) {
@@ -1805,8 +1844,15 @@ namespace Anabatic {
       return;
     }
 
-    Vertex* firstSource = NULL;
+    Vertex*    firstSource = NULL;
+    VertexSet  drivers;
 
+    for (  Vertex* vertex : _targets ) {
+      if (vertex->isDriver()) drivers.insert( vertex );
+    }
+    if (drivers.empty()) drivers = _targets;
+
+#if THIS_IS_DISABLED
     if (_mode & Mode::Monotonic) {
       if (_targets.size() == 2) {
         auto ivertex = _targets.begin();
@@ -1823,24 +1869,25 @@ namespace Anabatic {
         _mode = Mode::Standart;
       }
     }
+#endif
 
     if (not firstSource) {
     // Standart routing.
       bool hasDevice = false;
-      for (  Vertex* ivertex : _targets ) {
-        if (ivertex->getGCell()->isDevice()) hasDevice = true;
+      for (  Vertex* vertex : drivers ) {
+        if (vertex->getGCell()->isDevice()) hasDevice = true;
       }
 
       Point areaCenter;
       if (hasDevice) areaCenter = _getPonderedPoint();
       else           areaCenter = _searchArea.getCenter();
 
-      auto ivertex     = _targets.begin();
+      auto ivertex = drivers.begin();
 
       firstSource = *ivertex++;
       DbU::Unit  minDistance = areaCenter.manhattanDistance( firstSource->getCenter() );
 
-      for ( ; ivertex != _targets.end() ; ++ivertex ) {
+      for ( ; ivertex != drivers.end() ; ++ivertex ) {
         DbU::Unit distance = areaCenter.manhattanDistance( (*ivertex)->getCenter() );
         if (distance < minDistance) {
           minDistance = distance;
