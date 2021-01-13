@@ -341,9 +341,15 @@ namespace Hurricane {
     } else if (mode & SmartTruncate) {
       size_t dot = s.rfind( '.' );
       if (dot != string::npos) {
-        size_t end = dot+1;
-        for ( ; end < s.size() ; ++end ) if (s[end] != '0') break;
-        if (end == s.size()) s.erase( dot );
+        size_t end     = dot;
+        size_t nonzero = end;
+        for ( ; end < s.size() ; ++end ) {
+          if (s[end] != '0') nonzero = end;
+        }
+        if (nonzero == dot) s.erase( dot );
+        else {
+          if (nonzero < s.size()) s.erase( nonzero+1 );
+        }
       }
     }
     if (unitPower != ' ') s += unitPower;
