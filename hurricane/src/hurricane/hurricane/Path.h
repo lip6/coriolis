@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_PATH
-#define HURRICANE_PATH
-
+#pragma  once
 #include "hurricane/Instances.h"
 #include "hurricane/Transformation.h"
 
@@ -87,6 +85,7 @@ class Path {
 // **********
 
     public: bool isEmpty() const;
+    public: int32_t contains(Instance*) const;
 
 // Updators
 // ********
@@ -113,9 +112,6 @@ class Path {
 
 
 INSPECTOR_PR_SUPPORT(Hurricane::Path);
-
-
-#endif // HURRICANE_PATH
 
 
 // ****************************************************************************************************

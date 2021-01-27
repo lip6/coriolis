@@ -233,6 +233,17 @@ bool Path::isEmpty() const
     return (_sharedPath == NULL);
 }
 
+int32_t Path::contains(Instance* element) const
+// ********************************************
+{
+  int32_t depth = 0;
+  for ( Instance* instance : getInstances() ) {
+    if (instance == element) return depth;
+    ++depth;
+  }
+  return -1;
+}
+
 void Path::makeEmpty()
 // *******************
 {
