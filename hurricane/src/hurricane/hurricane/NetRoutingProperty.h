@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_NET_ROUTING_PROPERTY_H
-#define  HURRICANE_NET_ROUTING_PROPERTY_H
-
+#pragma  once
 #include <string>
 #include <map>
 #include "hurricane/Name.h"
@@ -51,6 +49,7 @@ namespace Hurricane {
                  , SymmetricMaster      = (1<< 9)
                  , Analog               = (1<<10)
                  , ShortNet             = (1<<11)
+                 , HasAntenna           = (1<<11)
                  };
     public:
       inline  bool          isExcluded             () const;
@@ -67,6 +66,7 @@ namespace Hurricane {
       inline  bool          isSymSlave             () const;
       inline  bool          isAnalog               () const;
       inline  bool          isShortNet             () const;
+      inline  bool          hasAntenna             () const;
       inline  Net*          getNet                 () const;
       inline  Net*          getSymNet              () const;
       inline  DbU::Unit     getSymAxis             () const;
@@ -109,6 +109,7 @@ namespace Hurricane {
   inline bool          NetRoutingState::isSymMaster            () const { return _flags & SymmetricMaster; }
   inline bool          NetRoutingState::isAnalog               () const { return _flags & Analog; }
   inline bool          NetRoutingState::isShortNet             () const { return _flags & ShortNet; }
+  inline bool          NetRoutingState::hasAntenna             () const { return _flags & HasAntenna; }
   inline Net*          NetRoutingState::getSymNet              () const { return _symNet; }
   inline DbU::Unit     NetRoutingState::getSymAxis             () const { return _axis; }
   inline uint32_t      NetRoutingState::getFlags               () const { return _flags; };
@@ -355,6 +356,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::NetRoutingState);
-
-
-#endif   // HURRICANE_NET_ROUTING_PROPERTY_H
