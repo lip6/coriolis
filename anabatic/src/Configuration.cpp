@@ -90,6 +90,7 @@ namespace Anabatic {
     , _edgeHInc        (Cfg::getParamDouble("anabatic.edgeHInc"        ,  1.5)->asDouble())
     , _edgeHScaling    (Cfg::getParamDouble("anabatic.edgeHScaling"    ,  1.0)->asDouble())
     , _globalIterations(Cfg::getParamInt   ("anabatic.globalIterations", 10  )->asInt())
+    , _antennaMaxWL    (Cfg::getParamInt   ("etesian.antennaMaxWL"     ,  0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -180,6 +181,7 @@ namespace Anabatic {
     , _edgeHInc        (other._edgeHInc)
     , _edgeHScaling    (other._edgeHScaling)
     , _globalIterations(other._globalIterations)
+    , _antennaMaxWL    (other._antennaMaxWL)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -576,17 +578,21 @@ namespace Anabatic {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot( "_gdepthh"     ,  _gdepthh     ) );
-    record->add ( getSlot( "_gdepthv"     ,  _gdepthv     ) );
-    record->add ( getSlot( "_rg"          ,  _rg          ) );
-    record->add ( getSlot( "_gmetalh"     , _gmetalh      ) );
-    record->add ( getSlot( "_gmetalv"     , _gmetalv      ) );
-    record->add ( getSlot( "_gcontact"    , _gcontact     ) );
-    record->add ( getSlot( "_allowedDepth", _allowedDepth ) );
-    record->add ( getSlot( "_edgeCostH"   , _edgeCostH    ) );
-    record->add ( getSlot( "_edgeCostK"   , _edgeCostK    ) );
+    record->add( getSlot( "_gdepthh"         , _gdepthh          ) );
+    record->add( getSlot( "_gdepthv"         , _gdepthv          ) );
+    record->add( getSlot( "_rg"              , _rg               ) );
+    record->add( getSlot( "_gmetalh"         , _gmetalh          ) );
+    record->add( getSlot( "_gmetalv"         , _gmetalv          ) );
+    record->add( getSlot( "_gcontact"        , _gcontact         ) );
+    record->add( getSlot( "_allowedDepth"    , _allowedDepth     ) );
+    record->add( getSlot( "_edgeCostH"       , _edgeCostH        ) );
+    record->add( getSlot( "_edgeCostK"       , _edgeCostK        ) );
+    record->add( getSlot( "_edgeHInc"        , _edgeHInc         ) );
+    record->add( getSlot( "_edgeHScaling"    , _edgeHScaling     ) );
+    record->add( getSlot( "_globalIterations", _globalIterations ) );
+    record->add( DbU::getValueSlot( "_antennaMaxWL", &_antennaMaxWL ) );
                                      
-    return ( record );
+    return record;
   }
 
 

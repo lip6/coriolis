@@ -72,6 +72,12 @@ namespace {
 //unsigned const NonConvexOpt        = 0x0200;
 
 
+  Instance* extractInstance ( const RoutingPad* rp )
+  {
+    return rp->getOccurrence().getPath().getTailInstance();
+  }
+
+
   string  extractInstanceName ( const RoutingPad* rp )
   {
     ostringstream name;
@@ -300,7 +306,8 @@ namespace Etesian {
     , _placementLB  (NULL)
     , _placementUB  (NULL)
     , _densityLimits(NULL)
-    , _cellsToIds   ()
+    , _netsToIds    ()
+    , _instsToIds   ()
     , _idsToInsts   ()
     , _idsToNets    ()
     , _viewer       (NULL)
@@ -410,8 +417,11 @@ namespace Etesian {
     delete _placementUB;
     delete _densityLimits;
 
-    unordered_map<string,unsigned int> emptyCellsToIds;
-    _cellsToIds.swap( emptyCellsToIds );
+    NetsToIds emptyNetsToIds;
+    _netsToIds.swap( emptyNetsToIds );
+
+    InstancesToIds emptyInstsToIds;
+    _instsToIds.swap( emptyInstsToIds );
 
     vector<InstanceInfos> emptyIdsToInsts;
     _idsToInsts.swap( emptyIdsToInsts );
@@ -701,8 +711,8 @@ namespace Etesian {
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
-    getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
-
+  //getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
+    getCell()->flattenNets( NULL, Cell::Flags::NoClockFlatten );
 
     bool    tooManyInstances = false;
     index_t instanceId       = 0;
@@ -725,8 +735,8 @@ namespace Etesian {
             positions[instanceId]            = point<int_t>( xpos, ypos );
             instances[instanceId].attributes = 0;
 
-            _cellsToIds.insert( make_pair(getString(instance->getName()),instanceId) );
-            _idsToInsts.push_back( make_tuple(instance,0,0) );
+            _instsToIds.insert( make_pair(instance,instanceId) );
+            _idsToInsts.push_back( make_tuple(instance,vector<RoutingPad*>()) );
             // cerr << "FIXED id=" << instanceId
             //      << " " << instance << " size:(" << xsize << " " << ysize
             //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
@@ -799,8 +809,8 @@ namespace Etesian {
         //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
       }
 
-      _cellsToIds.insert( make_pair(instanceName,instanceId) );
-      _idsToInsts.push_back( make_tuple(instance,0,0) );
+      _instsToIds.insert( make_pair(instance,instanceId) );
+      _idsToInsts.push_back( make_tuple(instance,vector<RoutingPad*>()) );
       ++instanceId;
       dots.dot();
     }
@@ -862,45 +872,56 @@ namespace Etesian {
 
       dots.dot();
 
+      _netsToIds.insert( make_pair(net,netId) );
+      _idsToNets[netId] = make_tuple( net, _instsToIds.size(), 0 );
       nets[netId] = temporary_net( netId, 1 );
-      _idsToNets[netId] = make_tuple( net, _cellsToIds.size(), 0 );
 
     //cerr << "+ " << net << endl;
-
-      for ( Pin* pin : net->getPins() ) {
-      // For Gabriel Gouvine : the position of this pin should be added as a fixed
-      // attractor in Coloquinte. May be outside the placement area.
-        Point pt = pin->getPosition();
-        topTransformation.applyOn(pt);
-        int_t xpin = pt.getX() / vpitch;
-        int_t ypin = pt.getY() / hpitch;
-      // Dummy last instance
-        pins.push_back( temporary_pin( point<int_t>(xpin,ypin), instanceId, netId ) );
-      //cerr << "Outside Pin: " << pin << endl;
-      }
       
       string topCellInstancePin = getString(getCell()->getName()) + ":C";
 
       for ( RoutingPad* rp : net->getRoutingPads() ) {
-        if (getBlockInstance() and (rp->getOccurrence().getPath().getHeadInstance() != getBlockInstance())) {
+        Path path = rp->getOccurrence().getPath();
+        Pin* pin  = dynamic_cast<Pin*>( rp->getOccurrence().getEntity() ); 
+        if (pin) {
+          if (path.isEmpty()) {
+            Point pt   = rp->getCenter();
+            int_t xpin = pt.getX() / vpitch;
+            int_t ypin = pt.getY() / hpitch;
+          // Dummy last instance
+            pins.push_back( temporary_pin( point<int_t>(xpin,ypin), instanceId, netId ) );
+          }
+          continue;
+        }
+
+        if (getBlockInstance()) {
         // For Gabriel Gouvine : if there are multiple blocks (i.e. we have a true
         // floorplan, there may be RoutingPad that are elsewhere. We should check
         // that the RP is placed or is inside a define area (the abutment box of
         // it's own block). No example yet of that case, though.
-          cerr << Warning("Net %s has a routing pad that is not rooted at the placed instance.", getString(net).c_str()) << endl;
-        //cerr << "Outside RP: " << rp << endl;
-          continue;
+          if (path.getHeadInstance() != getBlockInstance()) {
+            cerr << Warning( "EtesianEngine::toColoquinte(): Net %s has a RoutingPad that is not rooted at the placed instance.\n"
+                             "          * Placed instance: %s\n"
+                             "          * RoutingPad: %s"
+                           , getString(net).c_str()
+                           , getString(getBlockInstance()).c_str()
+                           , getString(rp->getOccurrence()).c_str()
+                           ) << endl;
+          //cerr << "Outside RP: " << rp << endl;
+            continue;
+          }
         }
 
-        string insName = extractInstanceName( rp );
-        Point  offset  = extractRpOffset    ( rp );
+        Instance* instance = extractInstance    ( rp );
+        string    insName  = extractInstanceName( rp );
+        Point     offset   = extractRpOffset    ( rp );
 
         int_t xpin    = offset.getX() / vpitch;
         int_t ypin    = offset.getY() / hpitch;
 
-        auto  iid = _cellsToIds.find( insName );
-        if (iid == _cellsToIds.end()) {
-          if (insName != topCellInstancePin) {
+        auto  iid = _instsToIds.find( instance );
+        if (iid == _instsToIds.end()) {
+          if (not instance) {
             cerr << Error( "Unable to lookup instance \"%s\".", insName.c_str() ) << endl;
           }
         } else {
@@ -914,8 +935,6 @@ namespace Etesian {
             }
           }
         }
-
-      //cerr << "| " << rp << " pos:(" << xpin << " " << ypin << ")" << endl;
       }
 
       netId++;
@@ -1052,7 +1071,7 @@ namespace Etesian {
       ostringstream label;
       label.str("");
       label  << "     [" << setw(3) << setfill('0') << i << setfill(' ') << "] "
-             << setw(5) << setprecision(4) << linearDisruption << "% Bipart.";
+             << setw(7) << fixed << setprecision(1) << linearDisruption << "% Bipart.";
       _progressReport1(label.str() );
 
       upperWL = static_cast<float_t>(get_HPWL_wirelength(*_circuit, *_placementUB));
@@ -1070,7 +1089,7 @@ namespace Etesian {
                                            , pullingForce
                                            , 2.0f * linearDisruption);
       solve_linear_system( *_circuit, *_placementLB, solv, 200 ); // 200 iterations
-      _progressReport2("                  Linear." );
+      _progressReport2("                    Linear." );
 
       if(options & UpdateLB)
         _updatePlacement( _placementUB );
@@ -1078,7 +1097,7 @@ namespace Etesian {
       // Optimize orientation sometimes
       if (i%5 == 0) {
           optimize_exact_orientations( *_circuit, *_placementLB );
-          _progressReport2("                  Orient." );
+          _progressReport2("                    Orient." );
       }
 
       lowerWL = static_cast<float_t>(get_HPWL_wirelength(*_circuit, *_placementLB));
@@ -1093,8 +1112,8 @@ namespace Etesian {
       penaltyIncrease = std::min(maxInc, std::max(minInc,
               penaltyIncrease * std::sqrt( targetImprovement / (optRatio - prevOptRatio) )
           ) );
-      cparanoid << "                  L/U ratio: " << 100*optRatio << "% (previous: " << 100*prevOptRatio << "%)\n"
-                << "                  Pulling force: " <<  pullingForce << " Increase: " << penaltyIncrease << endl;
+      cparanoid << "                    L/U ratio: " << 100*optRatio << "% (previous: " << 100*prevOptRatio << "%)\n"
+                << "                    Pulling force: " <<  pullingForce << " Increase: " << penaltyIncrease << endl;
 
       pullingForce += penaltyIncrease;
       prevOptRatio = optRatio;
@@ -1103,7 +1122,7 @@ namespace Etesian {
       ++i;
 
       if ((linearDisruption < getAntennaInsertThreshold()*100.0) and not antennaDone) {
-        antennaProtect();
+      //antennaProtect();
         antennaDone = true;
       }
       // First way to exit the loop: UB and LB difference is <10%
@@ -1187,31 +1206,33 @@ namespace Etesian {
     cdebug_log(122,0) << "diodeWidth=" << diodeWidth << "p" << endl;
 
     for ( coloquinte::index_t inet=0 ; inet < _circuit->net_cnt() ; ++inet ) {
-      DbU::Unit rsmt    = toDbU( coloquinte::get_RSMT_length( *_circuit, *_placementUB, inet ) );
-      size_t    idriver = std::get<1>( _idsToNets[inet]  );
-      if (idriver >= _cellsToIds.size()) continue;
+      DbU::Unit rsmt = toDbU( coloquinte::get_RSMT_length( *_circuit, *_placementUB, inet ) );
+      Net*      net  = std::get<0>( _idsToNets[inet] );
 
-      Instance* instance   = std::get<0>( _idsToInsts[idriver] );
-      string    masterName = getString( instance->getMasterCell()->getName() );
-      uint32_t  drivePower = 1;
-      if (masterName.substr(masterName.size()-3,2) == "_x") {
-        drivePower = std::stoi( masterName.substr(masterName.size()-1) );
-      }
-
-      if (rsmt > drivePower*maxWL) {
-        Net* net = std::get<0>( _idsToNets[inet] );
+      if ((rsmt > maxWL) or net->isExternal()) {
         cdebug_log(122,0) << "| Net [" << inet << "] \"" << net->getName() << "\" may have antenna effect, "
                           << DbU::getValueString(rsmt)
-                          << " drive=" << drivePower
-                          << " \"" << masterName << "\""
                           << endl;
-        std::get<2>( _idsToNets [inet   ] ) |= NeedsDiode;
-        std::get<2>( _idsToInsts[idriver] ) |= NeedsDiode;
-        std::get<1>( _idsToInsts[idriver] )  = inet;
-        coloquinte::point<int_t> cell_size = _circuit->get_cell_size(idriver);
-        cell_size.x += diodeWidth;
-        _circuit->set_cell_size( idriver, cell_size );
-        ++count;
+        std::get<2>( _idsToNets[inet] ) |= NeedsDiode;
+
+        for ( RoutingPad* rp : net->getRoutingPads() ) {
+          Segment* segment = dynamic_cast<Segment*>( rp->getOccurrence().getEntity() );
+          if (not segment) continue;
+          if (segment->getNet()->getDirection() & Net::Direction::DirOut) continue;
+
+          Instance* instance = extractInstance( rp );
+          if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+            continue;
+
+          auto iinst = _instsToIds.find( instance );
+          if (iinst == _instsToIds.end()) continue;
+          
+          std::get<1>( _idsToInsts[ (*iinst).second ] ).push_back( rp );
+          coloquinte::point<int_t> cell_size = _circuit->get_cell_size( (*iinst).second );
+          cell_size.x += 2*diodeWidth;
+          _circuit->set_cell_size( (*iinst).second, cell_size );
+          ++count;
+        }
       }
     }
     cmess1 << ::Dots::asInt( "     - Inserted diodes", count ) << endl;
@@ -1383,7 +1404,8 @@ namespace Etesian {
     if (getBlockInstance()) topTransformation = getBlockInstance()->getTransformation();
     topTransformation.invert();
 
-    vector< tuple<Occurrence,size_t,Transformation> > diodeMasters;
+    DbU::Unit diodeWidth = (_diodeCell) ? _diodeCell->getAbutmentBox().getWidth() : 0;
+    vector< tuple<RoutingPad*,Transformation> > diodeInsts;
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) )
     {
@@ -1396,14 +1418,14 @@ namespace Etesian {
       instanceName.erase( 0, 1 );
       instanceName.erase( instanceName.size()-1 );
 
-      auto  iid = _cellsToIds.find( instanceName );
-      if (iid == _cellsToIds.end() ) {
+      auto iid = _instsToIds.find( instance );
+      if (iid == _instsToIds.end() ) {
         cerr << Error( "Unable to lookup instance <%s>.", instanceName.c_str() ) << endl;
       } else {
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
           continue;
 
-        uint32_t       outputSide = getOutputSide( instance->getMasterCell() );
+      //uint32_t       outputSide = getOutputSide( instance->getMasterCell() );
         point<int_t>   position   = placement->positions_[(*iid).second];
         Transformation cellTrans  = toTransformation( position
                                                     , placement->orientations_[(*iid).second]
@@ -1412,33 +1434,28 @@ namespace Etesian {
                                                     , vpitch
                                                     );
         topTransformation.applyOn( cellTrans );
-      //cerr << "Setting <" << instanceName << " @" << instancePosition << endl;
+      //if (flags & FinalStage)
+      //  cerr << "Raw position of <" << instanceName << " @" << cellTrans << endl;
 
-        if ((flags & FinalStage) and (std::get<2>(_idsToInsts[(*iid).second]) & NeedsDiode)) {
-          Transformation diodeTrans;
-
-          if (outputSide & RightSide) {
-            DbU::Unit dx = instance  ->getMasterCell()->getAbutmentBox().getWidth();
-            if (  (cellTrans.getOrientation() == Transformation::Orientation::R2)
-               or (cellTrans.getOrientation() == Transformation::Orientation::MX))
-              dx = -dx;
-            diodeTrans = Transformation( cellTrans.getTx() + dx
-                                       , cellTrans.getTy()
-                                       , cellTrans.getOrientation() );
-          } else {
-            DbU::Unit dx = _diodeCell->getAbutmentBox().getWidth();
-            if (  (cellTrans.getOrientation() == Transformation::Orientation::R2)
-               or (cellTrans.getOrientation() == Transformation::Orientation::MX))
-              dx = -dx;
-            diodeTrans = cellTrans;
-            cellTrans  = Transformation( diodeTrans.getTx() + dx
-                                       , diodeTrans.getTy()
-                                       , diodeTrans.getOrientation() );
+        const vector<RoutingPad*>& rps = std::get<1>( _idsToInsts[(*iid).second] );
+        if ((flags & FinalStage) and not rps.empty()) {
+          DbU::Unit sign       = 1;
+          DbU::Unit cellWidth  = instance->getMasterCell()->getAbutmentBox().getWidth();
+          cdebug_log(122,0) << "cellWidth="  << DbU::getValueString(cellWidth) << endl;
+          cdebug_log(122,0) << "diodeWidth=" << DbU::getValueString(diodeWidth) << endl;
+          if (  (cellTrans.getOrientation() == Transformation::Orientation::R2)
+             or (cellTrans.getOrientation() == Transformation::Orientation::MX)) {
+            sign = -1;
           }
-
-          diodeMasters.push_back( make_tuple( occurrence
-                                            , std::get<1>(_idsToInsts[(*iid).second])
-                                            , diodeTrans ));
+          for ( size_t i=0 ; i<rps.size() ; ++i ) {
+            cdebug_log(122,0) << "diode position [" << i << "] " << DbU::getValueString((DbU::Unit)(cellTrans.getTx() + cellWidth + i*diodeWidth)) << endl;
+            diodeInsts.push_back
+              ( make_tuple( rps[i]
+                          , Transformation( cellTrans.getTx() + sign * (cellWidth + i*diodeWidth)
+                                          , cellTrans.getTy()
+                                          , cellTrans.getOrientation() ))
+              );
+          }
         }
 
       // This is temporary as it's not trans-hierarchic: we ignore the positions
@@ -1456,35 +1473,28 @@ namespace Etesian {
         break;
       }
 
-      for ( auto diodeInfos : diodeMasters ) {
-        Net*      topNet   = std::get<0>( _idsToNets[ std::get<1>(diodeInfos) ] );
-        Instance* instance = static_cast<Instance*>( std::get<0>(diodeInfos).getEntity() );
-        Cell*     ownerCell = instance->getCell();
-        Instance* diode     = _createDiode( ownerCell );
-        diode->setTransformation( std::get<2>( diodeInfos ));
+      for ( auto diodeInfos : diodeInsts ) {
+        RoutingPad* rp        = std::get<0>( diodeInfos );
+        Net*        topNet    = rp->getNet();
+        Instance*   instance  = extractInstance( rp );
+        Cell*       ownerCell = instance->getCell();
+        Instance*   diode     = _createDiode( ownerCell );
+        diode->setTransformation ( std::get<1>( diodeInfos ));
         diode->setPlacementStatus( Instance::PlacementStatus::PLACED );
 
-        Net* driverOutput = NULL;
-        for ( Net* net : instance->getMasterCell()->getNets() ) {
-          if (net->isSupply() or not net->isExternal()) continue;
-          if (net->getDirection() & Net::Direction::DirOut) {
-            driverOutput = net;
-            break;
-          }
-        }
+        cdebug_log(122,0) << "Driver net=" << topNet << endl;
+        cdebug_log(122,0) << "  " << instance << " @" << instance->getTransformation() << endl;
 
-        if (diodeOutput and driverOutput) {
-          cdebug_log(122,0) << "Bind:" << endl;
-          Plug* diodePlug  = diode   ->getPlug( diodeOutput );
-          Plug* driverPlug = instance->getPlug( driverOutput );
-          diodePlug->setNet( driverPlug->getNet() );
+        Plug* sinkPlug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+        if (sinkPlug) {
+          cdebug_log(122,0) << "  Bind diode input:" << endl;
+          Plug* diodePlug  = diode->getPlug( diodeOutput );
+          diodePlug->setNet( sinkPlug->getNet() );
           
-          cdebug_log(122,0) << "  Driver net=" << topNet << endl;
-          cdebug_log(122,0) << "  " << instance << " @" << instance->getTransformation() << endl;
-          cdebug_log(122,0) << "  " << diode    << " @" << diode   ->getTransformation() << endl;
-          cdebug_log(122,0) << "  topNet->getCell():" << topNet->getCell() << endl;
-          cdebug_log(122,0) << "  " << std::get<0>(diodeInfos).getPath() << endl;
-          Path path = std::get<0>(diodeInfos).getPath();
+          cdebug_log(122,0) << "    " << diode    << " @" << diode   ->getTransformation() << endl;
+          cdebug_log(122,0) << "    topNet->getCell():" << topNet->getCell() << endl;
+          cdebug_log(122,0) << "    " << rp->getOccurrence().getPath() << endl;
+          Path path = rp->getOccurrence().getPath().getHeadPath();
           RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
         }
       }
@@ -1499,7 +1509,15 @@ namespace Etesian {
   Instance* EtesianEngine::_createDiode ( Cell* owner )
   {
     if (not _diodeCell) return NULL;
-    return Instance::create( owner, string("diode_")+getString(_getNewDiodeId()), _diodeCell );
+    return Instance::create( owner, getUniqueDiodeName(), _diodeCell );
+  }
+
+
+  string  EtesianEngine::getUniqueDiodeName ()
+  {
+    ostringstream os;
+    os << "diode_" << _getNewDiodeId();
+    return os.str();
   }
 
 

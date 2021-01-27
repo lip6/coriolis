@@ -1459,6 +1459,10 @@ namespace Anabatic {
   }
 
 
+  DbU::Unit  Dijkstra::getAntennaMaxWL () const
+  { return _anabatic->getAntennaMaxWL(); }
+
+
   Point Dijkstra::_getPonderedPoint() const
   {
     vector<RoutingPad*> rps;
@@ -1533,12 +1537,13 @@ namespace Anabatic {
     cdebug_log(112,1) << "Dijkstra::load() " << _net << endl;
 
     vector<RoutingPad*> rps;
-    NetRoutingState* state = NetRoutingExtension::get( _net );
+    NetRoutingState*    state = NetRoutingExtension::get( _net );
     
     if (state) {
       if (state->isSelfSym()) {
         cdebug_log(112,0) << "Dijkstra::SELF SYMMETRY CASE " << DbU::getValueString(state->getSymAxis()) << endl;
       }
+      state->unsetFlags( NetRoutingState::HasAntenna );
     }
 
     for ( Component* component : _net->getComponents() ) {
@@ -2196,6 +2201,7 @@ namespace Anabatic {
 
     if (_sources.size() < 2) { cdebug_tabw(112,-1); return; }
 
+    DbU::Unit        gWL   = 0;
     NetRoutingState* state = NetRoutingExtension::get( _net );
   //cerr << "state: " << state << endl; 
 
@@ -2226,8 +2232,8 @@ namespace Anabatic {
         vector<Edge*> aligneds;
         aligneds.push_back( from );
 
-        Vertex*  target       = source->getPredecessor();
-        Interval constraint   = from->getSide();
+        Vertex*  target     = source->getPredecessor();
+        Interval constraint = from->getSide();
         source->setFrom( NULL );
 
         cdebug_log(112,0) << "| " << target << endl;
@@ -2286,6 +2292,7 @@ namespace Anabatic {
                                       , constraint.getCenter()
                                       , width
                                       );
+          gWL += segment->getLength();
           cdebug_log(112,0) << "| ref: " << segment << endl;
 
           for ( Edge* through : aligneds ) through->add( segment );
@@ -2305,6 +2312,7 @@ namespace Anabatic {
                                     , constraint.getCenter()
                                     , width
                                     );
+          gWL += segment->getLength();
           cdebug_log(112,0) << "| ref: " << segment << endl;
 
           for ( Edge* through : aligneds ) through->add( segment );
@@ -2320,6 +2328,14 @@ namespace Anabatic {
         source = (target->getFrom()) ? target : NULL;
         if (isAnalog) prevSource->clearFrom2();
       }
+    }
+
+    if (gWL > getAntennaMaxWL()) {
+      cdebug_log(113,0) << "| \"" << _net->getName() << "\" may have antenna effect, "
+                        << DbU::getValueString(gWL)
+                        << endl;
+      if (state)
+        state->setFlags( NetRoutingState::HasAntenna );
     }
 
     cdebug_tabw(112,-1);

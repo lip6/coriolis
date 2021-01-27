@@ -63,13 +63,15 @@ endif ( CHECK_DETERMINISM )
                                      NetBuilderVH.cpp
                                      ChipTools.cpp
                                      LayerAssign.cpp
+                                     AntennaProtect.cpp
                                      PreRouteds.cpp
                                      AnabaticEngine.cpp
                       )
                    set( pyCpps       PyAnabatic.cpp
                       )
 
-                   set( depLibs      ${CORIOLIS_PYTHON_LIBRARIES}
+                   set( depLibs      ${ETESIAN_LIBRARIES}
+                                     ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
                                      ${HURRICANE_PYTHON_LIBRARIES}
                                      ${HURRICANE_GRAPHICAL_LIBRARIES}

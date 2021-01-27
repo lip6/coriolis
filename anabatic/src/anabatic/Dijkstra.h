@@ -522,6 +522,7 @@ namespace Anabatic {
       inline       bool       isSourceVertex           ( Vertex* ) const;
       inline       Net*       getNet                   () const;
       inline       bool       isTargetVertex           ( Vertex* ) const;
+                   DbU::Unit  getAntennaMaxWL          () const;
       inline       DbU::Unit  getSearchAreaHalo        () const;
       template<typename DistanceT>                     
       inline       DistanceT* setDistance              ( DistanceT );

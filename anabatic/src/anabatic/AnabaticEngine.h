@@ -245,6 +245,7 @@ namespace Anabatic {
       inline        bool              doDestroyBaseContact    () const;
       inline        bool              doDestroyBaseSegment    () const;
       inline        bool              doDestroyTool           () const;
+      inline        DbU::Unit         getAntennaMaxWL         () const;
       inline        DbU::Unit         getGlobalThreshold      () const;
       inline        float             getSaturateRatio        () const;
       inline        size_t            getSaturateRp           () const;
@@ -261,6 +262,8 @@ namespace Anabatic {
       inline        void              setBlockageNet          ( Net* );
                     void              chipPrep                ();
                     void              computeEdgeCapacities   ( int maxHCap, int maxVCap, int termSatThreshold, int maxTermSat );
+                    void              antennaProtect          ( Net*, uint32_t& failed, uint32_t& total );
+                    void              antennaProtect          ();
                     void              setupSpecialNets        ();
                     size_t            setupPreRouteds         ();
                     void              loadGlobalRouting       ( uint32_t method );
@@ -367,6 +370,7 @@ namespace Anabatic {
   inline       bool              AnabaticEngine::doWarnOnGCellOverload () const { return _flags & Flags::WarnOnGCellOverload; }
   inline       bool              AnabaticEngine::isInDemoMode          () const { return _flags & Flags::DemoMode; }
   inline       bool              AnabaticEngine::isChip                () const { return _chipTools.isChip(); }
+  inline       DbU::Unit         AnabaticEngine::getAntennaMaxWL       () const { return getConfiguration()->getAntennaMaxWL(); }
   inline       DbU::Unit         AnabaticEngine::getGlobalThreshold    () const { return _configuration->getGlobalThreshold(); }
   inline       float             AnabaticEngine::getSaturateRatio      () const { return _configuration->getSaturateRatio(); }
   inline       size_t            AnabaticEngine::getSaturateRp         () const { return _configuration->getSaturateRp(); }

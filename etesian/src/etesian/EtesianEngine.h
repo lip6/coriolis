@@ -25,6 +25,7 @@
 namespace Hurricane {
   class Layer;
   class Net;
+  class RoutingPad;
   class Cell;
   class CellWidget;
   class CellViewer;
@@ -43,10 +44,15 @@ namespace Etesian {
   using Hurricane::Timer;
   using Hurricane::Name;
   using Hurricane::Layer;
+  using Hurricane::DBo;
   using Hurricane::Net;
+  using Hurricane::RoutingPad;
   using Hurricane::Cell;
   using Hurricane::Record;
   using Hurricane::Instance;
+  using Hurricane::Point;
+  using Hurricane::Path;
+  using Hurricane::Transformation;
 
 
 // -------------------------------------------------------------------
@@ -60,8 +66,10 @@ namespace Etesian {
       static  const uint32_t  LeftSide   = (1<<3);
     public:
       typedef ToolEngine  Super;
-      typedef std::tuple<Net*,int32_t,uint32_t>       NetInfos;
-      typedef std::tuple<Instance*,int32_t,uint32_t>  InstanceInfos;
+      typedef std::tuple<Net*,int32_t,uint32_t>                NetInfos;
+      typedef std::tuple<Instance*, std::vector<RoutingPad*> > InstanceInfos;
+      typedef std::map<Instance*,size_t,DBo::CompareById>      InstancesToIds;
+      typedef std::map<Net*,size_t,DBo::CompareById>           NetsToIds;
     public:
       static  const Name&            staticGetName             ();
       static  EtesianEngine*         create                    ( Cell* );
@@ -88,6 +96,8 @@ namespace Etesian {
       inline  DbU::Unit              getLatchUpDistance        () const;
       inline  const FeedCells&       getFeedCells              () const;
       inline  Cell*                  getDiodeCell              () const;
+              std::string            getUniqueDiodeName        ();
+      inline  Area*                  getArea                   () const;
       inline  Hurricane::CellViewer* getViewer                 () const;
       inline  void                   setViewer                 ( Hurricane::CellViewer* );
       inline  Cell*                  getBlockCell              () const;
@@ -103,6 +113,13 @@ namespace Etesian {
               void                   clearColoquinte           ();
               void                   loadLeafCellLayouts       ();
       inline  DbU::Unit              toDbU                     ( int64_t ) const;
+      inline  Occurrence             toCell                    ( Occurrence ) const;
+      inline  Point                  toCell                    ( const Point& ) const;
+      inline  Transformation         toCell                    ( Transformation ) const;
+      inline  Path                   toBlock                   ( Path ) const;
+      inline  Occurrence             toBlock                   ( Occurrence ) const;
+      inline  Point                  toBlock                   ( const Point& ) const;
+      inline  Transformation         toBlock                   ( const Transformation& ) const;
               size_t                 toColoquinte              ();
               void                   preplace                  ();
               void                   roughLegalize             ( float minDisruption, unsigned options );
@@ -120,31 +137,32 @@ namespace Etesian {
       virtual std::string            _getTypeName              () const;
     private:
     // Attributes.
-      static Name                                     _toolName;
+      static Name                                 _toolName;
     protected:
-             Configuration*                           _configuration;
-             Instance*                                _block;
-             bool                                     _placed;
-             bool                                     _ySpinSet;
-             bool                                     _flatDesign;
-             coloquinte::box<coloquinte::int_t>*      _surface;
-             coloquinte::netlist*                     _circuit;
-             coloquinte::placement_t*                 _placementLB;
-             coloquinte::placement_t*                 _placementUB;
-             coloquinte::density_restrictions*        _densityLimits;
-             std::unordered_map<string,unsigned int>  _cellsToIds;
-             std::vector<InstanceInfos>               _idsToInsts;
-             std::vector<NetInfos>                    _idsToNets;
-             Hurricane::CellViewer*                   _viewer;
-             Cell*                                    _diodeCell;
-             FeedCells                                _feedCells;
-             BloatCells                               _bloatCells;
-             Area*                                    _area;
-             size_t                                   _yspinSlice0;
-             DbU::Unit                                _sliceHeight;
-             DbU::Unit                                _fixedAbHeight;
-             DbU::Unit                                _fixedAbWidth;
-             uint32_t                                 _diodeCount;
+             Configuration*                       _configuration;
+             Instance*                            _block;
+             bool                                 _placed;
+             bool                                 _ySpinSet;
+             bool                                 _flatDesign;
+             coloquinte::box<coloquinte::int_t>*  _surface;
+             coloquinte::netlist*                 _circuit;
+             coloquinte::placement_t*             _placementLB;
+             coloquinte::placement_t*             _placementUB;
+             coloquinte::density_restrictions*    _densityLimits;
+             NetsToIds                            _netsToIds;
+             InstancesToIds                       _instsToIds;
+             std::vector<InstanceInfos>           _idsToInsts;
+             std::vector<NetInfos>                _idsToNets;
+             Hurricane::CellViewer*               _viewer;
+             Cell*                                _diodeCell;
+             FeedCells                            _feedCells;
+             BloatCells                           _bloatCells;
+             Area*                                _area;
+             size_t                               _yspinSlice0;
+             DbU::Unit                            _sliceHeight;
+             DbU::Unit                            _fixedAbHeight;
+             DbU::Unit                            _fixedAbWidth;
+             uint32_t                             _diodeCount;
 
     protected:
     // Constructors & Destructors.
@@ -197,6 +215,81 @@ namespace Etesian {
   inline  void                   EtesianEngine::setAspectRatio            ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
   inline  DbU::Unit              EtesianEngine::toDbU                     ( int64_t v ) const { return v*getSliceStep(); }
   inline  uint32_t               EtesianEngine::_getNewDiodeId            () { return _diodeCount++; }
+  inline  Area*                  EtesianEngine::getArea                   () const { return _area; }
+
+
+  inline  Occurrence  EtesianEngine::toCell ( Occurrence blockOccurrence ) const
+  {
+    if (not _block) return blockOccurrence;
+    if (blockOccurrence.getOwnerCell() != getBlockCell()) {
+      std::cerr << Error( "EtesianEngine::toCell(Occurrence): %s"
+                          "\n        Is *not* rooted to the block %s but to %s."
+                        , getString(blockOccurrence).c_str()
+                        , getString(getBlockCell()).c_str()
+                        , getString(blockOccurrence.getOwnerCell()).c_str()
+                        ) << std::endl;
+      return blockOccurrence;
+    }
+    return Occurrence( blockOccurrence.getEntity(), Path(_block,blockOccurrence.getPath()) );
+  }
+
+
+  inline  Point  EtesianEngine::toCell ( const Point& blockPoint ) const
+  {
+    if (not _block) return blockPoint;
+    Point cellPoint = blockPoint;
+    _block->getTransformation().applyOn( cellPoint );
+    return cellPoint;
+  }
+
+
+  inline  Transformation  EtesianEngine::toCell ( Transformation blockTransf ) const
+  {
+    if (not _block) return blockTransf;
+    return _block->getTransformation().getTransformation( blockTransf );
+  }
+
+
+  inline  Path  EtesianEngine::toBlock ( Path cellPath ) const
+  {
+    if (not _block) return cellPath;
+    if (cellPath.getHeadInstance() != getBlockInstance()) {
+      std::cerr << Error( "EtesianEngine::toBlock(Path): %s"
+                          "\n        Do *not* go through the block %s but through %s."
+                        , getString(cellPath).c_str()
+                        , getString(getBlockInstance()).c_str()
+                        , getString(cellPath.getHeadInstance()).c_str()
+                        ) << std::endl;
+      return cellPath;
+    }
+    return cellPath.getTailPath();
+  }
+
+
+  inline  Occurrence  EtesianEngine::toBlock ( Occurrence cellOccurrence ) const
+  {
+    if (not _block) return cellOccurrence;
+    return Occurrence( cellOccurrence.getEntity(), toBlock(cellOccurrence.getPath()) );
+  }
+
+
+  inline  Point  EtesianEngine::toBlock ( const Point& cellPoint ) const
+  {
+    if (not _block) return cellPoint;
+    Point blockPoint = cellPoint;
+    Transformation blockTransf = _block->getTransformation();
+    blockTransf.invert().applyOn( blockPoint );
+    return blockPoint;
+  }
+
+
+  inline  Transformation  EtesianEngine::toBlock ( const Transformation& cellTransf ) const
+  {
+    if (not _block) return cellTransf;
+    Transformation blockTransf = _block->getTransformation();
+    return blockTransf.invert().getTransformation( cellTransf );
+  }
+
 
 // Variables.
   extern const char* missingEtesian;

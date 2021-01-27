@@ -1004,6 +1004,8 @@ namespace Anabatic {
     if (_state > EngineGlobalLoaded)
       throw Error ("AnabaticEngine::loadGlobalRouting() : global routing already loaded.");
 
+    antennaProtect();
+
     if (method == EngineLoadGrByNet ) { _loadGrByNet(); }
     else {
       throw Error( badMethod, "Anabatic::loadGlobalRouting()", method, getString(_cell).c_str() );

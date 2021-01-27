@@ -21,6 +21,9 @@
 #include "hurricane/Interval.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Occurrence.h"
+namespace Hurricane {
+    class RoutingPad;
+}
 
 
 namespace Etesian {
@@ -32,6 +35,7 @@ namespace Etesian {
   using Hurricane::Interval;
   using Hurricane::DBo;
   using Hurricane::Cell;
+  using Hurricane::RoutingPad;
   using Hurricane::Instance;
   using Hurricane::Transformation;
   using Hurricane::Occurrence;
@@ -232,7 +236,7 @@ namespace Etesian {
              void             buildSubSlices   ();
              void             showSubSlices    ();
              void             insertTies       ( DbU::Unit latchUpMax );
-             Instance*        createDiodeUnder ( const Box& );
+             Instance*        createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
       inline std::string      _getString       () const;
              Record*          _getRecord       () const;
     private:
@@ -270,7 +274,7 @@ namespace Etesian {
              void           buildSubSlices   ();
              void           showSubSlices    ();
              void           insertTies       ( DbU::Unit latchUpMax );
-             Instance*      createDiodeUnder ( const Box& );
+             Instance*      createDiodeUnder ( RoutingPad*, const Box&, DbU::Unit xHint );
       inline std::string    _getString       () const;
              Record*        _getRecord       () const;
     private:

@@ -24,6 +24,7 @@
  find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
+ find_package(ETESIAN REQUIRED)
  find_package(Doxygen)
  
  add_subdirectory(src)

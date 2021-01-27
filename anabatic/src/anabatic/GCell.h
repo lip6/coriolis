@@ -213,7 +213,8 @@ namespace Anabatic {
                     bool                  doGrid               ();
                     Contact*              getGContact          ( Net* );
       inline const  vector<Contact*>&     getGContacts         () const;
-                    Contact*              breakGoThrough       ( Net* net );
+                    Segment*              hasGoThrough         ( Net* ) const;
+                    Contact*              breakGoThrough       ( Net* );
                     bool                  unrefContact         ( Contact* );
                     void                  setSouthWestCorner   ( DbU::Unit x, DbU::Unit y );
                     void                  cleanupGlobal        ();

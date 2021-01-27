@@ -494,7 +494,7 @@ namespace Katana {
       throw Error ("KatanaEngine::runGlobalRouter(): Global routing already done or loaded.");
 
     if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
-    Breakpoint::stop( 1, "Bloated cells from previous placement iteration." );
+    Breakpoint::stop( 100, "Bloated cells from previous placement iteration." );
 
     startMeasures();
     cmess1 << "  o  Running global routing." << endl;

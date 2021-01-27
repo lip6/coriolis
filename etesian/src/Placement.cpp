@@ -18,7 +18,9 @@
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/UpdateSession.h"
+#include "hurricane/DeepNet.h"
 #include "hurricane/Plug.h"
+#include "hurricane/RoutingPad.h"
 #include "hurricane/Path.h"
 #include "hurricane/Library.h"
 #include "hurricane/viewer/CellWidget.h"
@@ -38,6 +40,9 @@ namespace Etesian {
   using Hurricane::Transformation;
   using Hurricane::DataBase;
   using Hurricane::Library;
+  using Hurricane::DeepNet;
+  using Hurricane::Plug;
+  using Hurricane::RoutingPad;
   using Hurricane::UpdateSession;
   using CRL::AllianceFramework;
   using CRL::CatalogExtension;
@@ -238,26 +243,29 @@ namespace Etesian {
         if (feed == NULL) break;
       }
 
-      Instance* instance = Instance::create
+      Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+      Instance* instance   = Instance::create
         ( getEtesian()->getBlockCell()
         , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
         , feed
         , getTransformation( feed->getAbutmentBox()
-                           , xtie
-                           , _ybottom
-                           , (yspin)?Transformation::Orientation::MY
-                                    :Transformation::Orientation::ID
+                           , blockPoint.getX()
+                           , blockPoint.getY()
+                           , (yspin) ? Transformation::Orientation::MY
+                                     : Transformation::Orientation::ID
                            )
         , Instance::PlacementStatus::PLACED
         );
       _tiles.insert( before
-                   , Tile( xtie, feed->getAbutmentBox().getWidth(), Occurrence(instance) ));
+                   , Tile( xtie
+                         , feed->getAbutmentBox().getWidth()
+                         , getEtesian()->toCell( Occurrence(instance) )));
       xtie += feedWidth;
     }
   }
 
   
-  Instance* Slice::createDiodeUnder ( const Box& diodeArea )
+  Instance* Slice::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint )
   {
     Cell* diode = getEtesian()->getDiodeCell();
     if (diode == NULL) {
@@ -270,15 +278,61 @@ namespace Etesian {
       return NULL;
     }
 
-    Instance* diodeInst = NULL;
+    cdebug_log(147,0) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
+    cdebug_log(147,0) << "  rp=" << rp << endl;
+    cdebug_log(147,0) << "  diodeArea=" << diodeArea << endl;
+
+    Instance* blockInst      = getEtesian()->getBlockInstance();
+    Instance* diodeInst      = NULL;
+    bool      foundCandidate = false;
+    auto      iCandidate     = _tiles.begin();
+    DbU::Unit dCandidate     = 0;
     for ( auto iTile=_tiles.begin() ; iTile != _tiles.end() ; ++iTile ) {
-      if ((*iTile).getXMax() <  diodeArea.getXMin()) continue;
-      if ((*iTile).getXMax() >= diodeArea.getXMax()) break;
+      if ((*iTile).getXMax() <= diodeArea.getXMin()) continue;
+      if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
       if ((*iTile).getMasterCell() != feed) continue;
-      diodeInst = (*iTile).getInstance();
-      diodeInst->setMasterCell( diode );
-      break;
+      if (blockInst) {
+        if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst)
+          continue;
+      }
+      DbU::Unit distance = std::abs( (*iTile).getXMin() - xHint );
+      if (not foundCandidate or (distance < dCandidate)) {
+        foundCandidate = true;
+        iCandidate     = iTile;
+        dCandidate     = distance;
+      }
     }
+    
+    if (not foundCandidate) return NULL;
+
+    auto before = iCandidate;
+    before++;
+
+    DbU::Unit  xmin    = (*iCandidate).getXMin(); 
+    DbU::Unit  width   = (*iCandidate).getWidth(); 
+    diodeInst = (*iCandidate).getInstance();
+    Transformation transf = diodeInst->getTransformation();
+    diodeInst->destroy();
+    _tiles.erase( iCandidate );
+
+    Occurrence rpOccurrence = rp->getPlugOccurrence();
+    Path       instancePath = rpOccurrence.getPath();
+    if (instancePath.isEmpty())
+      transf = getEtesian()->toCell( transf );
+    // transf = getEtesian()->toBlock( transf );
+    // if (instancePath.isEmpty() and blockInst) {
+    //   Transformation blockTransf = blockInst->getTransformation();
+    //   blockTransf.applyOn( transf );
+    // }
+    Plug* plug = static_cast<Plug*>( rpOccurrence.getEntity() );
+    diodeInst = Instance::create( plug->getCell()
+                                , getEtesian()->getUniqueDiodeName()
+                                , diode
+                                , transf
+                                , Instance::PlacementStatus::FIXED );
+    _tiles.insert( before, Tile(xmin,width,Occurrence(diodeInst,instancePath)) );
+    cdebug_log(147,0) << "  " << diodeInst << " @" << transf << endl;
+
     return diodeInst;
   }
 
@@ -301,10 +355,13 @@ namespace Etesian {
   Area::Area ( EtesianEngine* etesian )
     : _etesian    (etesian)
     , _tieLut     ()
-    , _cellAb     (etesian->getBlockCell()->getAbutmentBox())
+    , _cellAb     (etesian->getCell()->getAbutmentBox())
     , _sliceHeight(_etesian->getSliceHeight())
     , _slices     ()
   {
+    if (etesian->getBlockInstance())
+       _cellAb = etesian->getBlockInstance()->getAbutmentBox();
+       
     size_t slicesNb = _cellAb.getHeight() / _sliceHeight;
     for ( size_t islice=0 ; islice<slicesNb ; ++islice )
       _slices.push_back( new Slice( this, _cellAb.getYMin()+islice*_sliceHeight ) );
@@ -569,15 +626,21 @@ namespace Etesian {
   }
 
   
-  Instance* Area::createDiodeUnder ( const Box& diodeArea )
+  Instance* Area::createDiodeUnder ( RoutingPad* rp, const Box& diodeArea, DbU::Unit xHint )
   {
-    DbU::Unit y = diodeArea.getYCenter();
+  //Transformation toBlockTransf = getEtesian()->getBlockInstance()->getTransformation();
+  //toBlockTransf.invert();
+    Box blockDiodeArea ( diodeArea );
+  //toBlockTransf.applyOn( blockDiodeArea );
+  //xHint += toBlockTransf.getTx();
+    
+    DbU::Unit y = blockDiodeArea.getYCenter();
 
     if ((y < _cellAb.getYMin()) or  (y >= _cellAb.getYMax())) return NULL;
-    if (not diodeArea.intersect(_cellAb)) return NULL;
+    if (not blockDiodeArea.intersect(_cellAb)) return NULL;
 
     size_t islice = (y - _cellAb.getYMin()) / _sliceHeight;
-    return _slices[islice]->createDiodeUnder( diodeArea );
+    return _slices[islice]->createDiodeUnder( rp, blockDiodeArea, xHint );
   }
 
 
@@ -595,18 +658,16 @@ namespace Etesian {
 
     if (_area) delete _area;
     _area = new Area ( this );
-    Box  topCellAb = getBlockCell()->getAbutmentBox();
+    Box  topCellAb = getCell()->getAbutmentBox();
 
     _area->setSpinSlice0( _yspinSlice0 );
 
     if (getBlockInstance()) {
-      Transformation toBlockTransf = getBlockInstance()->getTransformation();
-      toBlockTransf.invert();
+      topCellAb = getBlockInstance()->getAbutmentBox();
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
           Box overlapAb = instance->getAbutmentBox();
-          toBlockTransf.applyOn( overlapAb );
           overlapAb = topCellAb.getIntersection( overlapAb );
           if (not overlapAb.isEmpty()) {
             _area->merge( Occurrence(instance), overlapAb );
@@ -617,7 +678,7 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getBlockCell()->getTerminalNetlistInstanceOccurrences() )
     {
-      Instance* instance     = static_cast<Instance*>(occurrence.getEntity());
+      Instance* instance     = static_cast<Instance*>( occurrence.getEntity() );
       Cell*     masterCell   = instance->getMasterCell();
 
       if (CatalogExtension::isFeed(masterCell)) {
@@ -625,19 +686,23 @@ namespace Etesian {
                        , getString(instance->getName()).c_str() ) << endl;
       }
 
-      Box instanceAb = masterCell->getAbutmentBox();
-
-      Transformation instanceTransf = instance->getTransformation();
-      occurrence.getPath().getTransformation().applyOn( instanceTransf );
-      instanceTransf.applyOn( instanceAb );
+      Box instanceAb = instance->getAbutmentBox();
+      Occurrence cellOccurrence = toCell( occurrence );
+      cellOccurrence.getPath().getTransformation().applyOn( instanceAb );
 
       if (not topCellAb.contains(instanceAb)) {
-        cerr << Warning( "EtesianEngine::readSlices(): Instance %s is not fully enclosed in the top cell."
-                       , getString(instance->getName()).c_str() ) << endl;
+        cerr << Warning( "EtesianEngine::readSlices(): Instance %s is not fully enclosed in the top cell.\n"
+                       "          * topCellAb=%s\n"
+                       "          * instanceAb=%s cell=%s"
+                       , getString(instance->getName()).c_str()
+                       , getString(topCellAb).c_str()
+                       , getString(instanceAb).c_str()
+                       , getString(instance->getCell()).c_str()
+                       ) << endl;
         continue;
       }
 
-      _area->merge( occurrence, instanceAb );
+      _area->merge( cellOccurrence, instanceAb );
     }
 
     _area->buildSubSlices();

@@ -508,6 +508,22 @@ namespace Anabatic {
   }
 
 
+  Segment* GCell::hasGoThrough ( Net* net ) const
+  {
+    for ( Edge* edge : _eastEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return segment;
+      }
+    }
+    for ( Edge* edge : _northEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return segment;
+      }
+    }
+    return NULL;
+  }
+
+
   Edge* GCell::getEdgeTo ( GCell* neighbor, Flags sideHint ) const
   {
     for ( Edge* edge : getEdges(sideHint) ) {
