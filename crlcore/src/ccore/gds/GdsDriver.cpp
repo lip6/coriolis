@@ -765,6 +765,7 @@ namespace {
 
           for ( const vector<Point>& subpolygon : subpolygons ) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
               (*this) << BOUNDARY;
               (*this) << LAYER(layer->getGds2Layer());
               (*this) << DATATYPE(layer->getGds2Datatype());
@@ -776,6 +777,7 @@ namespace {
           Rectilinear* rectilinear  = dynamic_cast<Rectilinear*>(component);
           if (rectilinear) {
             for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+              if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
               (*this) << BOUNDARY;
               (*this) << LAYER(layer->getGds2Layer());
               (*this) << DATATYPE(layer->getGds2Datatype());
@@ -787,6 +789,7 @@ namespace {
             Diagonal* diagonal = dynamic_cast<Diagonal*>(component);
             if (diagonal) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
                 (*this) << BOUNDARY;
                 (*this) << LAYER(layer->getGds2Layer());
                 (*this) << DATATYPE(layer->getGds2Datatype());
@@ -798,6 +801,7 @@ namespace {
                       or dynamic_cast<Contact   *>(component)
                       or dynamic_cast<Pad       *>(component)) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
+                if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
                 Box bb = component->getBoundingBox(layer);
                 if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
                   continue;
