@@ -530,7 +530,7 @@ class Block ( object ):
             self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
             self.etesian.setBlock( self.conf.icore )
             if editor:
-                editor.setCell( self.conf.cell )
+                editor.setCell( self.conf.cellPnR )
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
             self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
@@ -547,7 +547,7 @@ class Block ( object ):
         Breakpoint.stop( 100, 'Block.route() Before global routing.' )
         self.katana.runGlobalRouter  ( Katana.Flags.NoFlags )
         self.katana.loadGlobalRouting( Anabatic.EngineLoadGrByNet )
-        Breakpoint.stop( 100, 'Block.route() After global routing.' )
+        Breakpoint.stop( 99, 'Block.route() After global routing.' )
         self.katana.layerAssign      ( Anabatic.EngineNoNetLayerAssign )
         self.katana.runNegociate     ( Katana.Flags.NoFlags )
         success = self.katana.isDetailedRoutingSuccess()
@@ -603,7 +603,7 @@ class Block ( object ):
                 print( '     - Build sub-block "{}".' \
                        .format(blockInstance.block.conf.cell.getName()) )
                 blockInstance.block.build()
-        if editor: editor.setCell( self.conf.cell )
+        if editor: editor.setCell( self.conf.cellPnR )
         self.conf.cfg.apply()
         iteration = -1
         while True:

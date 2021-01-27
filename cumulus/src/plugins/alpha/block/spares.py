@@ -963,5 +963,6 @@ class Spares ( object ):
         return headPlug
 
     def removeUnusedBuffers ( self ):
+        if not self.quadTree: return
         with UpdateSession():
             self.quadTree.removeUnusedBuffers()
