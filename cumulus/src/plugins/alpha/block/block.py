@@ -308,10 +308,20 @@ class Block ( object ):
                               , IoPin.NORTH : Side( self.conf, IoPin.NORTH )
                               }
         if not self.conf.cell.getAbutmentBox().isEmpty():
-            print( '  o  Block "{}" is already done, reusing layout.' \
-                   .format(self.conf.cell.getName()) )
-            self.conf.cell.setTerminalNetlist( True )
-            self.conf.isBuilt = True
+            isBuilt = True
+            for instance in self.conf.cell.getInstances():
+                status = instance.getPlacementStatus()
+                if status == Instance.PlacementStatus.UNPLACED:
+                    isBuilt = False
+                    break
+            if isBuilt:
+                print( '  o  Block "{}" is already done, reusing layout.' \
+                       .format(self.conf.cell.getName()) )
+                self.conf.cell.setTerminalNetlist( True )
+            else:
+                print( '  o  Block "{}" is partially placed, reusing layout.' \
+                       .format(self.conf.cell.getName()) )
+            self.conf.isBuilt = isBuilt
         else:
             print( '  o  Block "{}" will be generated.' \
                    .format(self.conf.cell.getName()) )
@@ -534,6 +544,8 @@ class Block ( object ):
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
             self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
+        if self.conf.placeArea:
+            self.etesian.setPlaceArea( self.conf.placeArea )
         self.etesian.place()
         Breakpoint.stop( 100, 'Placement done.' )
         self.etesian.clearColoquinte()

@@ -665,17 +665,20 @@ class CoreToChip ( object ):
                 elif coreNet.isClock(): continue
                 elif self.hasIoNet(coreNet.getName()): continue
                 # Remaining non configured Standard I/O pads.
-                ioNet     = IoNet( self, coreNet )
-                directPad = IoPadConf( ( 0      # Unkown side.
-                                       , None   # Unknow position.
-                                       , ioNet.padInstanceName
-                                       , ioNet.chipExtNetName
-                                       , ioNet.coreNetName
-                                       ) )
-                directPad.udata = IoPad( self, directPad.instanceName )
-                directPad.udata.addNet( ioNet )
-                ioPads.append( directPad )
-                trace( 550, '\tNon-configured core net {}, adding {}\n'.format(coreNet,directPad) )
+                print( ErrorMessage( 1, 'CoreToChip.buildChip(): No pad configured for core signal "{}".' \
+                                        .format(coreNet.getName()) ) )
+                continue
+               #ioNet     = IoNet( self, coreNet )
+               #directPad = IoPadConf( ( 0      # Unkown side.
+               #                       , None   # Unknow position.
+               #                       , ioNet.padInstanceName
+               #                       , ioNet.chipExtNetName
+               #                       , ioNet.coreNetName
+               #                       ) )
+               #directPad.udata = IoPad( self, directPad )
+               #directPad.udata.addNet( ioNet )
+               #ioPads.append( directPad )
+               #trace( 550, '\tNon-configured core net {}, adding {}\n'.format(coreNet,directPad) )
             for ioPad in ioPads:
                 ioPad.udata.createPad()
             self._connectRing()

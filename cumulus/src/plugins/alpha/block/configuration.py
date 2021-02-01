@@ -1087,6 +1087,7 @@ class BlockConf ( GaugeConf ):
         self.chip          = None
         self.fixedWidth    = None
         self.fixedHeight   = None
+        self.placeArea     = None
         self.deltaAb       = [ 0, 0, 0, 0 ]
         self.useClockTree  = False
         self.useHFNS       = False
