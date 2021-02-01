@@ -266,6 +266,7 @@ namespace Etesian {
       inline void           setSpinSlice0    ( size_t );
       inline DbU::Unit      getXMin          () const;
       inline DbU::Unit      getXMax          () const;
+      inline const Box&     getPlaceArea     () const;
       inline DbU::Unit      getLeftDistance  ( Cell* cell ) const;
       inline DbU::Unit      getRightDistance ( Cell* cell ) const;
              bool           validate         ( DbU::Unit latchUpMax ) const;
@@ -280,7 +281,7 @@ namespace Etesian {
     private:
       EtesianEngine*       _etesian;
       TieLUT               _tieLut;
-      Box                  _cellAb;
+      Box                  _placeArea;
       DbU::Unit            _sliceHeight;
       std::vector<Slice*>  _slices;
       size_t               _spinSlice0;
@@ -290,8 +291,9 @@ namespace Etesian {
   inline EtesianEngine* Area::getEtesian       () const { return _etesian; }
   inline size_t         Area::getSpinSlice0    () const { return _spinSlice0; }
   inline void           Area::setSpinSlice0    ( size_t spinSlice0 ) { _spinSlice0 = spinSlice0; }
-  inline DbU::Unit      Area::getXMin          () const { return _cellAb.getXMin(); }
-  inline DbU::Unit      Area::getXMax          () const { return _cellAb.getXMax(); }
+  inline DbU::Unit      Area::getXMin          () const { return _placeArea.getXMin(); }
+  inline DbU::Unit      Area::getXMax          () const { return _placeArea.getXMax(); }
+  inline const Box&     Area::getPlaceArea     () const { return _placeArea; }
   inline DbU::Unit      Area::getLeftDistance  ( Cell* cell ) const { return _tieLut.getLeftDistance(cell); }
   inline DbU::Unit      Area::getRightDistance ( Cell* cell ) const { return _tieLut.getRightDistance(cell); }
   inline string         Area::_getString       () const { return "<Etesian::Area>"; }

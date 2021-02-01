@@ -97,6 +97,7 @@ namespace Etesian {
       inline  const FeedCells&       getFeedCells              () const;
       inline  Cell*                  getDiodeCell              () const;
               std::string            getUniqueDiodeName        ();
+      inline  const Box&             getPlaceArea              () const;
       inline  Area*                  getArea                   () const;
       inline  Hurricane::CellViewer* getViewer                 () const;
       inline  void                   setViewer                 ( Hurricane::CellViewer* );
@@ -115,11 +116,13 @@ namespace Etesian {
       inline  DbU::Unit              toDbU                     ( int64_t ) const;
       inline  Occurrence             toCell                    ( Occurrence ) const;
       inline  Point                  toCell                    ( const Point& ) const;
+      inline  Box                    toCell                    ( const Box& ) const;
       inline  Transformation         toCell                    ( Transformation ) const;
       inline  Path                   toBlock                   ( Path ) const;
       inline  Occurrence             toBlock                   ( Occurrence ) const;
       inline  Point                  toBlock                   ( const Point& ) const;
       inline  Transformation         toBlock                   ( const Transformation& ) const;
+              void                   setPlaceArea              ( const Box& );
               size_t                 toColoquinte              ();
               void                   preplace                  ();
               void                   roughLegalize             ( float minDisruption, unsigned options );
@@ -144,6 +147,7 @@ namespace Etesian {
              bool                                 _placed;
              bool                                 _ySpinSet;
              bool                                 _flatDesign;
+             Box                                  _placeArea;
              coloquinte::box<coloquinte::int_t>*  _surface;
              coloquinte::netlist*                 _circuit;
              coloquinte::placement_t*             _placementLB;
@@ -208,15 +212,21 @@ namespace Etesian {
                                                                           
   inline  Cell*                  EtesianEngine::getBlockCell              () const { return (_block) ? _block->getMasterCell() : getCell(); }
   inline  Instance*              EtesianEngine::getBlockInstance          () const { return  _block; }
-  inline  void                   EtesianEngine::setBlock                  ( Instance* block ) { _block = block; _placed = _block->getMasterCell()->isPlaced(); }
   inline  void                   EtesianEngine::setFixedAbHeight          ( DbU::Unit abHeight ) { _fixedAbHeight = abHeight; }
   inline  void                   EtesianEngine::setFixedAbWidth           ( DbU::Unit abWidth  ) { _fixedAbWidth  = abWidth; }
   inline  void                   EtesianEngine::setSpaceMargin            ( double margin ) { getConfiguration()->setSpaceMargin(margin); }
   inline  void                   EtesianEngine::setAspectRatio            ( double ratio  ) { getConfiguration()->setAspectRatio(ratio); }
   inline  DbU::Unit              EtesianEngine::toDbU                     ( int64_t v ) const { return v*getSliceStep(); }
   inline  uint32_t               EtesianEngine::_getNewDiodeId            () { return _diodeCount++; }
+  inline  const Box&             EtesianEngine::getPlaceArea              () const { return _placeArea; }
   inline  Area*                  EtesianEngine::getArea                   () const { return _area; }
 
+  inline  void  EtesianEngine::setBlock ( Instance* block )
+  {
+    _block = block;
+    _placed = _block->getMasterCell()->isPlaced();
+    _placeArea = _block->getMasterCell()->getAbutmentBox();
+  }
 
   inline  Occurrence  EtesianEngine::toCell ( Occurrence blockOccurrence ) const
   {
@@ -240,6 +250,15 @@ namespace Etesian {
     Point cellPoint = blockPoint;
     _block->getTransformation().applyOn( cellPoint );
     return cellPoint;
+  }
+
+
+  inline  Box  EtesianEngine::toCell ( const Box& blockBox ) const
+  {
+    if (not _block) return blockBox;
+    Box cellBox = blockBox;
+    _block->getTransformation().applyOn( cellBox );
+    return cellBox;
   }
 
 

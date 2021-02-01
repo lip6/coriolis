@@ -301,6 +301,7 @@ namespace Etesian {
     , _block        (NULL)
     , _ySpinSet     (false)
     , _flatDesign   (false)
+    , _placeArea    (cell->getAbutmentBox())
     , _surface      (NULL)
     , _circuit      (NULL)
     , _placementLB  (NULL)
@@ -320,8 +321,7 @@ namespace Etesian {
     , _fixedAbHeight(0)
     , _fixedAbWidth (0)
     , _diodeCount   (0)
-  {
-  }
+  { }
 
 
   void  EtesianEngine::_postCreate ()
@@ -450,6 +450,27 @@ namespace Etesian {
   { return _configuration; }
 
 
+  void  EtesianEngine::setPlaceArea ( const Box& placeArea )
+  {
+    Box topAb = getBlockCell()->getAbutmentBox();
+    if (not topAb.contains(placeArea)) {
+      cerr << Warning( "EtesianEngine::setPlaceArea(): placedArea is not *fully* inside topAb, trucating.\n"
+                       "          * placedArea=%s\n"
+                       "          * topAb=%s\n"
+                     , getString(placeArea).c_str()
+                     , getString(topAb).c_str()
+                     ) << endl;
+      _placeArea = topAb.getIntersection( placeArea );
+    }
+
+    DbU::Unit sliceHeight = getSliceHeight();
+    _placeArea = Box( DbU::toCeil ( placeArea.getXMin(), sliceHeight )
+                    , DbU::toCeil ( placeArea.getYMin(), sliceHeight )
+                    , DbU::toFloor( placeArea.getXMax(), sliceHeight )
+                    , DbU::toFloor( placeArea.getYMax(), sliceHeight )
+                    );
+  }
+
   void  EtesianEngine::setDefaultAb ()
   {
     _bloatCells.resetDxSpace();
@@ -532,6 +553,7 @@ namespace Etesian {
                                   , abWidth
                                   , rows*getSliceHeight()
                                   ) );
+    _placeArea = getCell()->getAbutmentBox();
     UpdateSession::close();
     if (_viewer) _viewer->getCellWidget()->fitToContents();
 
@@ -629,6 +651,7 @@ namespace Etesian {
     //   setFixedAbHeight( getBlockCell()->getAbutmentBox().getHeight() );
     getBlockCell()->setAbutmentBox( Box() );
     getBlockCell()->resetFlags( Cell::Flags::Placed );
+    _placeArea.makeEmpty();
     UpdateSession::close();
 
     dots.finish( Dots::Reset );
@@ -646,7 +669,6 @@ namespace Etesian {
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
-
     cmess2 << "     o  Looking through the hierarchy." << endl;
 
     for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
@@ -664,13 +686,15 @@ namespace Etesian {
         }
       }
     }
+    cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
+    cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
 
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
     
     size_t  instancesNb = 0;
     size_t  fixedNb     = 0;
-    Box     topAb       = getBlockCell()->getAbutmentBox();
+    Box     topAb       = _placeArea;
     Transformation topTransformation;
     if (getBlockInstance()) {
       topTransformation = getBlockInstance()->getTransformation();

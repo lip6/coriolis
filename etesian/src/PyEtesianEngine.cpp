@@ -14,6 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
+#include "hurricane/isobar/PyBox.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyInstance.h"
 #include "hurricane/viewer/PyCellViewer.h"
@@ -49,6 +50,8 @@ namespace  Etesian {
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::EntityCast;
+  using Isobar::PyBox;
+  using Isobar::PyTypeBox;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
   using Isobar::PyInstance;
@@ -181,6 +184,24 @@ extern "C" {
     Py_RETURN_NONE;
   }
 
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyEtesianEngine_setPLaceArea ()"
+
+  static PyObject* PyEtesianEngine_setPlaceArea ( PyEtesianEngine *self, PyObject* args )
+  {
+    cdebug_log(34,0) << "EtesianEngine.setPLaceArea()" << endl;
+    HTRY
+      METHOD_HEAD ( "EtesianEngine.setPLaceArea()" )
+      PyBox* pyBox;
+      if (not PyArg_ParseTuple(args,"O!:EtesianEngine.setPLaceArea", &PyTypeBox, &pyBox)) {
+        PyErr_SetString( ConstructorError, "EtesianEngine.setPlaceArea(): Parameter is not an Box." );
+        return NULL;
+      }
+      etesian->setPlaceArea( *PYBOX_O(pyBox) );
+    HCATCH
+    Py_RETURN_NONE;
+  }
+
 
   static PyObject* PyEtesianEngine_place ( PyEtesianEngine* self )
   {
@@ -222,6 +243,8 @@ extern "C" {
                             , "Select the Cell bloating profile." }
     , { "setBlock"          , (PyCFunction)PyEtesianEngine_setBlock          , METH_VARARGS
                             , "Set the sub-block (Instance) to place." }
+    , { "setPlaceArea"      , (PyCFunction)PyEtesianEngine_setPlaceArea      , METH_VARARGS
+                            , "Set the sub-area into wich place the cells." }
     , { "setDefaultAb"      , (PyCFunction)PyEtesianEngine_setDefaultAb      , METH_NOARGS
                             , "Compute and set the abutment box using the aspect ratio and the space margin." }
     , { "setFixedAbHeight"  , (PyCFunction)PyEtesianEngine_setFixedAbHeight  , METH_VARARGS

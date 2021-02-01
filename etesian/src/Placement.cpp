@@ -355,16 +355,17 @@ namespace Etesian {
   Area::Area ( EtesianEngine* etesian )
     : _etesian    (etesian)
     , _tieLut     ()
-    , _cellAb     (etesian->getCell()->getAbutmentBox())
+    , _placeArea    (etesian->getPlaceArea())
     , _sliceHeight(_etesian->getSliceHeight())
     , _slices     ()
   {
-    if (etesian->getBlockInstance())
-       _cellAb = etesian->getBlockInstance()->getAbutmentBox();
+    if (etesian->getBlockInstance()) {
+      _placeArea = etesian->toCell( etesian->getPlaceArea() );
+    }
        
-    size_t slicesNb = _cellAb.getHeight() / _sliceHeight;
+    size_t slicesNb = _placeArea.getHeight() / _sliceHeight;
     for ( size_t islice=0 ; islice<slicesNb ; ++islice )
-      _slices.push_back( new Slice( this, _cellAb.getYMin()+islice*_sliceHeight ) );
+      _slices.push_back( new Slice( this, _placeArea.getYMin()+islice*_sliceHeight ) );
 
     Cell* feed = getEtesian()->getFeedCells().getBiggestFeed();
     if (feed) {
@@ -402,13 +403,13 @@ namespace Etesian {
 
   void   Area::merge ( const Occurrence& occurrence, const Box& flatAb )
   {
-    if (flatAb.getYMin() < _cellAb.getYMin()) {
-      cerr << Warning("Area::merge(): Attempt to merge instance outside the Cell abutment box.") << endl;
+    if (flatAb.getYMin() < _placeArea.getYMin()) {
+      cerr << Warning("Area::merge(): Attempt to merge instance outside the placement area.") << endl;
       return;
     }
 
-    size_t ibegin = (flatAb.getYMin()-_cellAb.getYMin()) / _sliceHeight;
-    size_t iend   = (flatAb.getYMax()-_cellAb.getYMin()) / _sliceHeight;
+    size_t ibegin = (flatAb.getYMin()-_placeArea.getYMin()) / _sliceHeight;
+    size_t iend   = (flatAb.getYMax()-_placeArea.getYMin()) / _sliceHeight;
 
     for ( size_t islice=ibegin ; islice<iend ; ++islice ) {
       _slices[islice]->merge( occurrence, flatAb );
@@ -444,7 +445,7 @@ namespace Etesian {
     Record* record = new Record(getString(this));
     record->add( getSlot( "_etesian"    ,  _etesian ) );
     record->add( getSlot( "_tieLut"     , &_tieLut  ) );
-    record->add( getSlot( "_cellAb"     ,  _cellAb  ) );
+    record->add( getSlot( "_placeArea"    ,  _placeArea  ) );
     record->add( DbU::getValueSlot( "_sliceHeight", &_sliceHeight ) );
     record->add( getSlot( "_slices"     , &_slices     ) );
     record->add( getSlot( "_spinSlice0" ,  _spinSlice0 ) );
@@ -636,10 +637,10 @@ namespace Etesian {
     
     DbU::Unit y = blockDiodeArea.getYCenter();
 
-    if ((y < _cellAb.getYMin()) or  (y >= _cellAb.getYMax())) return NULL;
-    if (not blockDiodeArea.intersect(_cellAb)) return NULL;
+    if ((y < _placeArea.getYMin()) or  (y >= _placeArea.getYMax())) return NULL;
+    if (not blockDiodeArea.intersect(_placeArea)) return NULL;
 
-    size_t islice = (y - _cellAb.getYMin()) / _sliceHeight;
+    size_t islice = (y - _placeArea.getYMin()) / _sliceHeight;
     return _slices[islice]->createDiodeUnder( rp, blockDiodeArea, xHint );
   }
 
@@ -658,17 +659,16 @@ namespace Etesian {
 
     if (_area) delete _area;
     _area = new Area ( this );
-    Box  topCellAb = getCell()->getAbutmentBox();
+    Box topPlaceArea = _area->getPlaceArea();
 
     _area->setSpinSlice0( _yspinSlice0 );
 
     if (getBlockInstance()) {
-      topCellAb = getBlockInstance()->getAbutmentBox();
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
           Box overlapAb = instance->getAbutmentBox();
-          overlapAb = topCellAb.getIntersection( overlapAb );
+          overlapAb = topPlaceArea.getIntersection( overlapAb );
           if (not overlapAb.isEmpty()) {
             _area->merge( Occurrence(instance), overlapAb );
           }
@@ -690,15 +690,16 @@ namespace Etesian {
       Occurrence cellOccurrence = toCell( occurrence );
       cellOccurrence.getPath().getTransformation().applyOn( instanceAb );
 
-      if (not topCellAb.contains(instanceAb)) {
-        cerr << Warning( "EtesianEngine::readSlices(): Instance %s is not fully enclosed in the top cell.\n"
-                       "          * topCellAb=%s\n"
-                       "          * instanceAb=%s cell=%s"
-                       , getString(instance->getName()).c_str()
-                       , getString(topCellAb).c_str()
-                       , getString(instanceAb).c_str()
-                       , getString(instance->getCell()).c_str()
-                       ) << endl;
+      if (not topPlaceArea.contains(instanceAb)) {
+        if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED)
+          cerr << Warning( "EtesianEngine::readSlices(): Instance %s is not fully enclosed in the top cell.\n"
+                           "          * topPlaceArea=%s\n"
+                           "          * instanceAb=%s cell=%s"
+                         , getString(instance->getName()).c_str()
+                         , getString(topPlaceArea).c_str()
+                         , getString(instanceAb).c_str()
+                         , getString(instance->getCell()).c_str()
+                         ) << endl;
         continue;
       }
 
