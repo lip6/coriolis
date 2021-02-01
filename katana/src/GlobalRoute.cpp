@@ -80,10 +80,13 @@ namespace {
     if (source->getGCell()->isStdCellRow() and target->getGCell()->isStdCellRow())
       return Vertex::unreachable;
 
+    cdebug_log(112,0) << "DigitalDistance::operator(): " << edge
+                      << " isGostraight():" << source->getGCell()->isGoStraight() << endl;
     if (    source->getGCell()->isGoStraight()
        and  source->getFrom()
        and (source->getFrom()->isHorizontal() xor edge->isHorizontal())) 
       return Vertex::unreachable;
+    cdebug_log(112,0) << "Not a go straight" << endl;
 
     if (edge->getCapacity() <= 0) {
       if (target->getGCell()->isStdCellRow()
@@ -94,9 +97,11 @@ namespace {
          and source->hasValidStamp() and (source->getConnexId() >= 0) )
         return 0;
       
+      cdebug_log(112,0) << "Negative or null edge capacity: " << edge->getCapacity() << endl;
       return Vertex::unreachable;
     }
 
+    cdebug_log(112,0) << "Computing distance" << endl;
     float congestionCost = 1.0;
     float congestion     = ((float)edge->getRealOccupancy() + edge->getEstimateOccupancy())
                          /  (float)edge->getCapacity();
@@ -110,7 +115,6 @@ namespace {
        /*and not source->hasGContact(_net)*/ ) {
       viaCost += 2.5;
     }
-
     
     float realCongestion = (float)edge->getRealOccupancy() /  (float)edge->getCapacity();
     float historicCost   = edge->getHistoricCost();

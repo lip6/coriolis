@@ -26,6 +26,7 @@
 #include "hurricane/Pad.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/Vertical.h"
+#include "hurricane/Rectilinear.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/NetExternalComponents.h"
 #include "hurricane/NetRoutingProperty.h"
@@ -54,6 +55,7 @@ namespace {
   using Hurricane::DeepNet;
   using Hurricane::Horizontal;
   using Hurricane::Pad;
+  using Hurricane::Rectilinear;
   using Hurricane::Vertical;
   using Hurricane::RoutingPad;
   using Hurricane::NetExternalComponents;
@@ -1107,6 +1109,19 @@ namespace {
                               << " " << basicLayer << endl;
             
             _powerRailsPlanes.merge( bb, rootNet );
+          } else {
+            const Rectilinear* rectilinear = dynamic_cast<const Rectilinear*>(component);
+            if (rectilinear and (rectilinear->getPoints().size() == 5)) {
+              _goMatchCount++;
+
+              Box bb = rectilinear->getBoundingBox( basicLayer );
+              transformation.applyOn( bb );
+          
+              cdebug_log(159,0) << "  Merging PowerRail element: " << rectilinear << " bb:" << bb
+                                << " " << basicLayer << endl;
+            
+              _powerRailsPlanes.merge( bb, rootNet );
+            }
           }
         }
       }
