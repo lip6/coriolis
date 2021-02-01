@@ -46,6 +46,7 @@ using namespace CRL;
 namespace {
 
   using namespace std;
+  using CRL::NamingScheme;
 
 
 //inline bool  isAbcAutomaticName ( string name )
@@ -682,13 +683,17 @@ namespace {
         Net* net       = _cell->getNet( netName );
         Net* masterNet = instance->getMasterCell()->getNet(masterNetName);
         if(not masterNet) {
-          ostringstream tmes;
-          tmes << "The master net <" << masterNetName << "> hasn't been found "
-               << "for instance <" << subckt->getInstanceName() << "> "
-               << "of model <" << subckt->getModelName() << ">"
-               << "in model <" << getCell()->getName() << ">"
-               << endl;
-          throw Error(tmes.str());
+          Name vlogMasterNetName = NamingScheme::vlogToVhdl( masterNetName, NamingScheme::NoLowerCase );
+          masterNet = instance->getMasterCell()->getNet(vlogMasterNetName);
+          if(not masterNet) {
+            ostringstream tmes;
+            tmes << "The master net <" << masterNetName << "> hasn't been found "
+                 << "for instance <" << subckt->getInstanceName() << "> "
+                 << "of model <" << subckt->getModelName() << ">"
+                 << "in model <" << getCell()->getName() << ">"
+                 << endl;
+            throw Error(tmes.str());
+          }
         }
 
         Plug* plug = instance->getPlug( masterNet );
