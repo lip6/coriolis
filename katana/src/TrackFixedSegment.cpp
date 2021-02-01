@@ -60,7 +60,7 @@ namespace Katana {
     : TrackElement  (NULL)
     , _segment      (segment)
   {
-    cdebug_log(159,0) << "TrackFixedSegment::TrackFixedSegment() track:" << track << endl;
+    cdebug_log(159,0) << "TrackFixedSegment::TrackFixedSegment() track=" << track << endl;
     Box boundingBox = segment->getBoundingBox();
 
     uint32_t flags = TElemFixed | ((segment->getNet() == Session::getBlockageNet()) ? TElemBlockage : 0);
@@ -74,6 +74,8 @@ namespace Katana {
     //if (layer2) {
       //cerr << track->getLayer() << " minSpace:" << DbU::getValueString(track->getLayer()->getMinimalSpacing()) << endl;
 
+        Point      source;
+        Point      target;
         Interval   segside;
         Interval   uside   = track->getKatanaEngine()->getUSide( track->getDirection() );
         DbU::Unit  cap     = track->getLayer()->getMinimalSpacing()/2 /*+ track->getLayer()->getExtentionCap()*/;
@@ -83,23 +85,31 @@ namespace Katana {
           segside  = Interval( boundingBox.getXMin(), boundingBox.getXMax() );
           _sourceU = max( boundingBox.getXMin() - cap, uside.getVMin());
           _targetU = min( boundingBox.getXMax() + cap, uside.getVMax());
+          source = Point( boundingBox.getXMin(), track->getAxis() );
+          target = Point( boundingBox.getXMax(), track->getAxis() );
         } else {
           segside  = Interval( boundingBox.getYMin(), boundingBox.getYMax() );
           _sourceU = max( boundingBox.getYMin() - cap, uside.getVMin());
           _targetU = min( boundingBox.getYMax() + cap, uside.getVMax());
+          source = Point( track->getAxis(), boundingBox.getYMin() );
+          target = Point( track->getAxis(), boundingBox.getYMax() );
         }
 
         Flags gcellFlags = Flags::NoFlags;
-        if (segment->getNet()->isSupply() and (depth > 0)) {
-          gcellFlags |= Flags::GoStraight;
-        }
+        // if (segment->getNet()->isSupply() and (depth > 0)) {
+        //    cerr << "GoStraight from " << segment << endl;
+        // // gcellFlags |= Flags::GoStraight;
+        // }
 
-        GCellsUnder gcells = track->getKatanaEngine()->getGCellsUnder( segment );
+        GCellsUnder gcells = track->getKatanaEngine()->getGCellsUnder( source, target );
         for ( size_t i=0 ; i<gcells->size() ; ++i ) {
           GCell* gcell = gcells->gcellAt(i);
           gcell->addBlockage
             ( depth, gcell->getSide( track->getDirection() ).getIntersection( segside ).getSize() );
           gcell->flags() |= gcellFlags;
+          // if (gcellFlags & Flags::GoStraight) {
+          //   cerr << "| Set GoStraight on " << gcell << endl;
+          // }
         }
     //}
     } else
