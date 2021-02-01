@@ -462,12 +462,18 @@ namespace Katana {
       if (rp->getLayerGauge()->getType() == Constant::PinOnly) continue;
       if (rp->getLayerGauge()->getDepth() > getConfiguration()->getAllowedDepth()) continue;
 
-      size_t tracksSize = rp->getTracksSize();
+      int    elementCapacity = 1;
+      size_t tracksSize      = rp->getTracksSize();
       for ( size_t itrack=0 ; itrack<tracksSize ; ++itrack ) {
-        Track* track = rp->getTrackByIndex( itrack );
-
+        Track*     track = rp->getTrackByIndex( itrack );
+        DbU::Unit  axis  = track->getAxis();
+        Flags      side  = (track->getDirection() == Flags::Vertical) ? Flags::NorthSide
+                                                                      : Flags::EastSide;
+        Point      source;
+        Point      target;
         cdebug_log(159,0) << "Capacity from: " << track << endl;
 
+        Interval uspan;
         for ( size_t ielement=0 ; ielement<track->getSize() ; ++ielement ) {
           TrackElement* element = track->getSegment( ielement );
          
@@ -482,23 +488,55 @@ namespace Katana {
             continue;
           }
 
-          Segment*   segment = element->getSegment();
-          Flags      side    = Flags::EastSide;
-          DbU::Unit  axis    = track->getAxis();
-          Point      source  = segment->getSourcePosition();
-          Point      target  = segment->getTargetPosition();
-          
-          if (track->getDirection() == Flags::Vertical) {
-            side = Flags::NorthSide;
-            source.setX( axis );
-            target.setX( axis );
+          cdebug_log(159,0) << "Capacity from: " << element << ":" << elementCapacity << endl;
+          Segment*  segment = element->getSegment();
+          Interval  segmentUSpan;
+
+          source = segment->getSourcePosition();
+          target = segment->getTargetPosition();
+          if (track->getDirection() == Flags::Vertical)
+            segmentUSpan = Interval( source.getY(), target.getY() );
+          else
+            segmentUSpan = Interval( source.getX(), target.getX() );
+
+          if (uspan.isEmpty()) {
+            uspan = segmentUSpan;
+            continue;
           } else {
-            source.setY( axis );
-            target.setY( axis );
+            if (uspan.contains(segmentUSpan)) continue;
+            if (uspan.intersect(segmentUSpan)) {
+              uspan.merge( segmentUSpan );
+              continue;
+            }
           }
 
-          int elementCapacity = 1;
-          cdebug_log(159,0) << "Capacity from: " << element << ":" << elementCapacity << endl;
+          if (track->getDirection() == Flags::Vertical) {
+            source = Point( axis, uspan.getVMin() );
+            target = Point( axis, uspan.getVMax() );
+          } else {
+            source = Point( uspan.getVMin(), axis );
+            target = Point( uspan.getVMax(), axis );
+          }
+
+          GCellsUnder gcells = getGCellsUnder( source, target );
+          if (not gcells->empty()) {
+            for ( size_t i=0 ; i<gcells->size()-1 ; ++i ) {
+              Edge* edge = gcells->gcellAt(i)->getEdgeAt( side, axis );
+              edge->reserveCapacity( elementCapacity );
+            }
+          }
+
+          uspan = segmentUSpan;
+        }
+
+        if (not uspan.isEmpty()) {
+          if (track->getDirection() == Flags::Vertical) {
+            source = Point( axis, uspan.getVMin() );
+            target = Point( axis, uspan.getVMax() );
+          } else {
+            source = Point( uspan.getVMin(), axis );
+            target = Point( uspan.getVMax(), axis );
+          }
 
           GCellsUnder gcells = getGCellsUnder( source, target );
           if (not gcells->empty()) {
