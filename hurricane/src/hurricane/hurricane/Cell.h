@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_CELL_H
-#define HURRICANE_CELL_H
-
+#pragma  once
 #include <limits>
 #include "hurricane/Flags.h"
 #include "hurricane/Observer.h"
@@ -502,7 +500,7 @@ class Cell : public Entity {
     public: void setAbutmentBox(const Box& abutmentBox);
     public: void slaveAbutmentBox(Cell*);
     public: void unslaveAbutmentBox(Cell*);
-    public: void setTerminalNetlist(bool isTerminalNetlist) {_flags.set(Flags::TerminalNetlist,isTerminalNetlist);};
+    public: void setTerminalNetlist(bool isTerminalNetlist) { _flags.set(Flags::TerminalNetlist,isTerminalNetlist); };
     public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
     public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
     public: void setRouted(bool isRouted) {_flags.set(Flags::Routed,isRouted);};
@@ -587,9 +585,6 @@ INSPECTOR_P_SUPPORT(Hurricane::Cell::PinMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::SliceMap);
 INSPECTOR_P_SUPPORT(Hurricane::Cell::MarkerSet);
 INSPECTOR_PR_SUPPORT(Hurricane::Cell::SlavedsRelation);
-
-
-#endif // HURRICANE_CELL_H
 
 
 // ****************************************************************************************************

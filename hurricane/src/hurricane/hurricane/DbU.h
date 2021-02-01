@@ -107,6 +107,8 @@ namespace Hurricane {
       static inline void                setSymbolicSnapGridStep ( DbU::Unit step );
       static        DbU::Unit           getOnCustomGrid         ( DbU::Unit u, DbU::Unit step, SnapMode mode=Nearest );
       static inline DbU::Unit           getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode=Superior );
+      static inline DbU::Unit           toCeil                  ( DbU::Unit u, DbU::Unit step );
+      static inline DbU::Unit           toFloor                 ( DbU::Unit u, DbU::Unit step );
     // Conversions.
       static inline Unit                toDb                    ( Unit u );
       static inline double              toGrid                  ( Unit u );
@@ -192,6 +194,12 @@ namespace Hurricane {
   inline void       DbU::setSymbolicSnapGridStep ( DbU::Unit step )             { _symbolicSnapGridStep = step; }
   inline void       DbU::setPolygonStep          ( DbU::Unit step )             { _polygonStep = step; }
   inline DbU::Unit  DbU::getOnPhysicalGrid       ( DbU::Unit u, SnapMode mode ) { return getOnCustomGrid(u, grid(1), mode); }
+
+  inline DbU::Unit  DbU::toCeil ( DbU::Unit u, DbU::Unit step )
+  { DbU::Unit modulo = u % step; return (modulo) ? (u + step - modulo) : u; }
+  
+  inline DbU::Unit  DbU::toFloor ( DbU::Unit u, DbU::Unit step )
+  { DbU::Unit modulo = u % step; return (modulo) ? (u - modulo) : u; }
 
 
 } // End of Hurricane namespace.
