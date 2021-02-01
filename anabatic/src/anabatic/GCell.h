@@ -114,13 +114,14 @@ namespace Anabatic {
     public:
       class Key {
         public:
-          inline              Key        ( const GCell*, size_t depth );
-          inline             ~Key        ();
-          inline       float  getDensity () const;
-          inline const GCell* getGCell   () const;
-          inline       bool   isActive   () const;
-          inline       void   update     ( size_t depth );
-          friend       bool   operator<  ( const Key&, const Key& );
+          inline              Key         ( const GCell*, size_t depth );
+          inline             ~Key         ();
+          inline       float  getDensity  () const;
+          inline const GCell* getGCell    () const;
+          inline       bool   isActive    () const;
+          inline       bool   isSaturated () const;
+          inline       void   update      ( size_t depth );
+          friend       bool   operator<   ( const Key&, const Key& );
         public:
           class Compare {
             public:
@@ -506,10 +507,11 @@ namespace Anabatic {
   inline  GCell::Key::~Key ()
   { if (isActive()) _gcell->clearClonedKey(); }
 
-  inline       float  GCell::Key::getDensity () const { return _density; }
-  inline const GCell* GCell::Key::getGCell   () const { return _gcell; }
-  inline       void   GCell::Key::update     ( size_t depth ) { _density=_gcell->getWDensity(depth); }
-  inline       bool   GCell::Key::isActive   () const { return (this == _gcell->getLastClonedKey()); }
+  inline       float  GCell::Key::getDensity  () const { return _density; }
+  inline const GCell* GCell::Key::getGCell    () const { return _gcell; }
+  inline       void   GCell::Key::update      ( size_t depth ) { _density=_gcell->getWDensity(depth); }
+  inline       bool   GCell::Key::isActive    () const { return (this == _gcell->getLastClonedKey()); }
+  inline       bool   GCell::Key::isSaturated () const { return _gcell->isSaturated(); }
 
   inline bool  operator< ( const GCell::Key& lhs, const GCell::Key& rhs )
   {
@@ -521,8 +523,10 @@ namespace Anabatic {
 
   inline bool  GCell::Key::Compare::operator() ( const GCell::Key* lhs, const GCell::Key* rhs )
   {
+  //if (lhs->isSaturated() xor rhs->isSaturated()) return lhs->isSaturated(); 
+      
     float difference = lhs->_density - rhs->_density;
-    if (difference != 0.0) return (difference > 0.0);
+    if (difference != 0.0) return (difference < 0.0);
 
     return lhs->_gcell->getId() < rhs->_gcell->getId();
   }

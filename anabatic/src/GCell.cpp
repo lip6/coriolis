@@ -1329,7 +1329,7 @@ namespace Anabatic {
     _blockages[depth] += length;
     _flags |= Flags::Invalidated;
 
-    cdebug_log(149,0) << "GCell:addBlockage() " << this << " "
+    cdebug_log(149,0) << "GCell::addBlockage() " << this << " "
                 << depth << ":" << DbU::getValueString(_blockages[depth]) << endl;
   }
 
@@ -1507,7 +1507,14 @@ namespace Anabatic {
     }
 
   // Add the blockages.
-    for ( size_t i=0 ; i<_depth ; i++ ) uLengths2[i] += _blockages[i];
+    for ( size_t i=0 ; i<_depth ; i++ ) {
+      uLengths2[i] += _blockages[i];
+      if (not i) continue;
+      if ((float)(_blockages[i] * Session::getPitch(i)) > 0.40*(float)(width*height)) {
+        flags() |= Flags::GoStraight;
+      //cerr << "| Set GoStraight on " << this << endl;
+      }
+    }
 
   // Compute the number of non pass-through tracks.
     if (not processeds.empty()) {
@@ -1756,7 +1763,7 @@ namespace Anabatic {
 
   bool  GCell::stepNetDesaturate ( size_t depth, set<Net*>& globalNets, GCell::Set& invalidateds )
   {
-    cdebug_log(9000,0) << "Deter| GCell::stepNetDesaturate() depth:" << depth << endl;
+    cdebug_log(149,0) << "GCell::stepNetDesaturate() depth:" << depth << endl;
     cdebug_log(9000,0) << "Deter| " << this << endl;
 
     updateDensity();
@@ -1778,7 +1785,7 @@ namespace Anabatic {
       if (segmentDepth < depth) continue;
       if (segmentDepth > depth) break;
 
-      cdebug_log(9000,0) << "Deter| Move up " << (*isegment) << endl;
+      cdebug_log(149,0) << "Move up " << (*isegment) << endl;
 
       if (getAnabatic()->moveUpNetTrunk(*isegment,globalNets,invalidateds))
         return true;
@@ -1843,7 +1850,7 @@ namespace Anabatic {
       ostringstream s;
       const Layer* layer = rg->getRoutingLayer(depth)->getBlockageLayer();
       s << "_blockages[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
-      record->add( getSlot ( s.str(),  &_blockages[depth] ) );
+      record->add( DbU::getValueSlot( s.str(), &_blockages[depth] ) );
     }
 
     for ( size_t depth=0 ; depth<_depth ; ++depth ) {
