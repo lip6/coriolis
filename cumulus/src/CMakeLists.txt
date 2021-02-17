@@ -73,6 +73,9 @@
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/pads.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/chip.py
                   )
+              set ( pyPluginAlphaMacro ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/macro/__init__.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/macro/macro.py
+                  )
          
           install ( FILES    ${pySources}          DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus )
           install ( FILES    ${pyPlugins}          DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins )
@@ -83,4 +86,5 @@
           install ( FILES    ${pyPluginAlphaBlock} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/block )
           install ( FILES    ${pyPluginAlphaC2C}   DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/core2chip )
           install ( FILES    ${pyPluginAlphaChip}  DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/chip )
+          install ( FILES    ${pyPluginAlphaMacro} DESTINATION ${PYTHON_SITE_PACKAGES}/cumulus/plugins/alpha/macro )
           install ( PROGRAMS ${pyTools}            DESTINATION bin ) 
