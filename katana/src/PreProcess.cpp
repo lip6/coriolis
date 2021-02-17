@@ -142,7 +142,7 @@ namespace {
   // Computing constraints from fixed only TrackElements (caging).
     TrackElement* parallel;
     size_t i = track->find( segment );
-    while ( i > 0 ) {
+    while ( (i != Track::npos) and (i > 0) ) {
       parallel = track->getSegment( --i );
       if (not parallel) continue;
       if (parallel->getTargetU() < uside.getVMin()) break;

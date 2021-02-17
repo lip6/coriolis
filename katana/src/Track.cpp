@@ -54,7 +54,7 @@ namespace {
                                                    : segment->base()->getAutoTarget() ;
     if (contact->getLayer() != layer) return false;
     if (not contact->isTurn()) return false;
-    AutoSegment* pp = contact->getPerpandicular( segment->base() );
+  //AutoSegment* pp = contact->getPerpandicular( segment->base() );
     return contact->getPerpandicular(segment->base())->getLength();
   }
 
@@ -368,17 +368,22 @@ namespace Katana {
 
   TrackCost& Track::addOverlapCost ( TrackCost& cost ) const
   {
-          size_t    begin    = Track::npos;
-          size_t    end      = Track::npos;
-    const Interval& interval = cost.getInterval();
+          size_t    begin        = Track::npos;
+          size_t    end          = Track::npos;
+    const Interval& interval     = cost.getInterval();
+          Interval  freeInterval = getFreeInterval( interval.getCenter(), cost.getNet() );
 
-    getOverlapBounds( cost.getInterval(), begin, end );
+    if (not freeInterval.contains(interval))
+      getOverlapBounds( cost.getInterval(), begin, end );
     cost.setTrack( const_cast<Track*>(this), begin, end );
 
     cdebug_log(155,1) << "addOverlapCost() @" << DbU::getValueString(_axis)
                       << " [" << DbU::getValueString(interval.getVMin())
                       << ":"  << DbU::getValueString(interval.getVMax())
                       << "] <-> [" << begin << ":"  << end << "]"
+                      << endl;
+    cdebug_log(155,0) << "freeInterval [" << DbU::getValueString(freeInterval.getVMin())
+                      << ":"  << DbU::getValueString(freeInterval.getVMax()) << "]"
                       << endl;
 
     vector<TrackMarker*>::const_iterator lowerBound
@@ -407,7 +412,8 @@ namespace Katana {
 
     for ( ; begin < end ; begin++ ) {
       Interval overlap = interval.getIntersection( _segments[begin]->getCanonicalInterval() );
-      cdebug_log(155,0) << "overlap:" << overlap << " size:" << overlap.getSize() << endl;
+      cdebug_log(155,0) << "overlap:" << overlap
+                        << " size:" << DbU::getValueString(overlap.getSize()) << endl;
       if (overlap.getSize() == 0) continue;
       
       if (_segments[begin]->getNet() == cost.getNet()) {
@@ -523,19 +529,15 @@ namespace Katana {
         } else {
           cdebug_log(155,0) << "| same net, end:" << end << " (after last)" << endl;
         }
-
-        if (end == npos) {
-          end  = _segments.size() - 1;
-          setMaximalFlags( state, EndIsTrackMax );
-        } else {
-          setMaximalFlags( state, EndIsSegmentMin );
-        }
-      } else {
-        state = EndIsTrackMax;
-        cdebug_log(155,0) << "| already after last" << endl;
       }
-
+      if (end == npos) {
+        end  = _segments.size() - 1;
+        setMaximalFlags( state, EndIsTrackMax );
+      } else {
+        setMaximalFlags( state, EndIsSegmentMin );
+      }
       cdebug_log(155,0) << "end:" << end << " state:" << state << endl;
+      cdebug_log(155,0) << "end:" << _segments[end] << endl;
     }
 
     cdebug_tabw(155,-1);

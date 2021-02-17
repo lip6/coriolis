@@ -518,9 +518,11 @@ namespace {
     DbU::Unit     axisMin   = 0;
     DbU::Unit     axisMax   = 0;
 
-    if (AllianceFramework::get()->getCellGauge()->getName() == Name("FlexLib")) {
-      if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
-        delta = 2 * plane->getLayerGauge()->getPitch();
+    if (not layer->isBlockage()) {
+      if (AllianceFramework::get()->getCellGauge()->getName() == Name("FlexLib")) {
+        if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
+          delta = 2 * plane->getLayerGauge()->getPitch();
+        }
       }
     }
 

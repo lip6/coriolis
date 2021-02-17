@@ -62,8 +62,11 @@ namespace Katana {
 
     if (not _trackSpan) {
       DbU::Unit mWidth = std::max( Session::getWireWidth(getLayer()), Session::getViaWidth(getLayer()) );
-      if (segment->getWidth() < mWidth) {
+      if (segment->getWidth() <= mWidth) {
         _trackSpan = 1;
+        if (track and (track->getAxis() != segment->getAxis())) {
+          _trackSpan = 2;
+        }
       } else {
         DbU::Unit pitch = Session::getPitch(segment->getLayer());
         DbU::Unit width = segment->getWidth() - mWidth;

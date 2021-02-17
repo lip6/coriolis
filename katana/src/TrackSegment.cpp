@@ -147,10 +147,12 @@ namespace Katana {
           cerr << Error( "TrackSegment::create(): Must not set track when creating a non-preferred element.\n"
                          "        (on %s)", getString(segment).c_str() ) << endl;
       } else {
-        if (segment->base()->getWidth() <= defaultWireWidth)
+        if (segment->isFixed() and track and (segment->getAxis() != track->getAxis()))
+          trackElement = new TrackSegmentWide( segment, track );
+        else if (segment->base()->getWidth() <= defaultWireWidth)
           trackElement = new TrackSegmentRegular( segment, track );
         else
-          trackElement = new TrackSegmentWide   ( segment, track );
+          trackElement = new TrackSegmentWide( segment, track );
       }
 
       trackElement->_postCreate();

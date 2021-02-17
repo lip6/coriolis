@@ -321,45 +321,53 @@ namespace Katana {
     DebugSession::open( autoSegment->getNet(), 159, 160 );
 
     cdebug_log(159,1) << "NegociateWindow::createTrackSegment() - " << autoSegment << endl;
+    RoutingPlane* plane     = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
+    Track*        refTrack  = plane->getTrackByPosition( autoSegment->getAxis() );
+    Track*        insTrack  = NULL;
+    size_t        trackSpan = 1;
 
   // Special case: fixed AutoSegments must not interfere with blockages.
   // Ugly: uses of getExtensionCap().
     if (autoSegment->isFixed()) {
-      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
-      Track*        track = plane->getTrackByPosition( autoSegment->getAxis() );
       size_t        begin;
       size_t        end;
       Interval      fixedSpan;
       Interval      blockageSpan;
 
-      autoSegment->getCanonical( fixedSpan );
-      fixedSpan.inflate( Session::getExtensionCap(autoSegment->getLayer())-1 );
+      if (refTrack->getAxis() != autoSegment->getAxis()) { 
+        trackSpan = 2;
+        refTrack  = plane->getTrackByPosition( autoSegment->getAxis(), Constant::Inferior );
+        insTrack  = refTrack;
+      }
 
-      track->getOverlapBounds( fixedSpan, begin, end );
-      for ( ; (begin < end) ; begin++ ) {
+      Track* track = refTrack;
+      for ( size_t ispan=0 ; track and (ispan < trackSpan) ; ++ispan, track=track->getNextTrack() ) {
+        autoSegment->getCanonical( fixedSpan );
+        fixedSpan.inflate( Session::getExtensionCap(autoSegment->getLayer())-1 );
 
-        TrackElement* other = track->getSegment(begin);
-        cdebug_log(159,0) << "| overlap: " << other << endl;
+        track->getOverlapBounds( fixedSpan, begin, end );
+        for ( ; (begin < end) ; begin++ ) {
+          TrackElement* other = track->getSegment(begin);
+          cdebug_log(159,0) << "| overlap: " << other << endl;
 
-        if (not other->isBlockage()) continue;
+          if (not other->isBlockage()) continue;
 
-        other->getCanonical( blockageSpan );
-        blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
+          other->getCanonical( blockageSpan );
+          blockageSpan.inflate( Session::getExtensionCap(autoSegment->getLayer()) );
 
-        cdebug_log(159,0) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
+          cdebug_log(159,0) << "  fixed:" << fixedSpan << " vs. blockage:" << blockageSpan << endl;
+          if (not fixedSpan.intersect(blockageSpan)) continue;
 
-        if (not fixedSpan.intersect(blockageSpan)) continue;
-
-      // Overlap between fixed & blockage.
-        cdebug_log(159,0) << "* Blockage overlap: " << autoSegment << endl;
-      //Session::destroyRequest( autoSegment );
-
-        cerr << Warning( "Overlap between fixed %s and blockage at %s."
-                       , getString(autoSegment).c_str()
-                       , getString(blockageSpan).c_str() ) << endl;
-        cdebug_tabw(159,-1);
-        DebugSession::close();
-        return NULL;
+        // Overlap between fixed & blockage.
+          cdebug_log(159,0) << "* Blockage overlap: " << autoSegment << endl;
+        //Session::destroyRequest( autoSegment );
+          cerr << Warning( "Overlap between fixed %s and blockage at %s."
+                         , getString(autoSegment).c_str()
+                         , getString(blockageSpan).c_str() ) << endl;
+          cdebug_tabw(159,-1);
+          DebugSession::close();
+          return NULL;
+        }
       }
     }
 
@@ -367,7 +375,7 @@ namespace Katana {
     autoSegment = autoSegment->getCanonical( span );
 
     bool           created;
-    TrackElement*  trackSegment  = TrackSegment::create( autoSegment, NULL, created );
+    TrackElement*  trackSegment = TrackSegment::create( autoSegment, insTrack, created );
 
     if (not (flags & Flags::LoadingStage))
       cdebug_log(159,0) << "* lookup: " << autoSegment << endl;
@@ -383,38 +391,38 @@ namespace Katana {
         return trackSegment;
       }
 
-      RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(autoSegment->getLayer());
-      Track*        track = plane->getTrackByPosition ( autoSegment->getAxis() );
-      Interval      uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
-
-      Interval      constraints;
+      Interval uside = autoSegment->getAutoSource()->getGCell()->getSide( perpandicularTo(autoSegment->getDirection()) );
+      Interval constraints;
       autoSegment->getConstraints( constraints );
       cdebug_log(159,0) << "* Constraints " << constraints << endl;
 
       uside.intersection( constraints );
       cdebug_log(159,0) << "* Constraints+U-side " << constraints << endl;
-      cdebug_log(159,0) << "* Nearest " << track << endl;
+      cdebug_log(159,0) << "* Nearest " << refTrack << endl;
 
-      if (not track)
+      if (not refTrack)
         throw Error( "NegociateWindow::createTrackSegment(): No track near axis of %s."
                    , getString(autoSegment).c_str() );
 
-      if (track->getAxis() > uside.getVMax()) track = track->getPreviousTrack();
-      if (track->getAxis() < uside.getVMin()) track = track->getNextTrack();
-
-      if (not track)
+      if (not insTrack) {
+        insTrack = refTrack;
+        if (refTrack->getAxis() > uside.getVMax()) insTrack = refTrack->getPreviousTrack();
+        if (refTrack->getAxis() < uside.getVMin()) insTrack = refTrack->getNextTrack();
+      }
+      if (not insTrack)
         throw Error( "NegociateWindow::createTrackSegment(): No track near axis of %s (after adjust)." 
                    , getString(autoSegment).c_str() );
 
       cdebug_log(159,0) << "* GCell U-side " << uside << endl;
       cdebug_log(159,0) << "* " << plane << endl;
-      cdebug_log(159,0) << "* " << track << endl;
+      cdebug_log(159,0) << "* " << insTrack << endl;
 
-      trackSegment->setAxis( track->getAxis(), AutoSegment::SegAxisSet );
+      if (trackSpan == 1)
+        trackSegment->setAxis( insTrack->getAxis(), AutoSegment::SegAxisSet );
       trackSegment->invalidate();
 
-      if (trackSegment->isFixed()) {
-        Session::addInsertEvent( trackSegment, track, track->getAxis() );
+      if (trackSegment->isFixed() and not trackSegment->getTrack()) {
+        Session::addInsertEvent( trackSegment, insTrack, refTrack->getAxis() );
       } else {
         _segments.push_back( trackSegment );
       }
