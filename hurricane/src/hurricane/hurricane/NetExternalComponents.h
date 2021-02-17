@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef HURRICANE_NET_EXTERNAL_COMPONENTS_H
-#define HURRICANE_NET_EXTERNAL_COMPONENTS_H
-
+#pragma   once
 #include  "hurricane/Component.h"
 #include  "hurricane/Relation.h"
 
@@ -44,6 +42,7 @@ namespace Hurricane {
   class NetExternalComponents {
     public:
       static Components        get         ( const Net* );
+      static void              setInternal ( Component* );
       static void              setExternal ( Component* );
       static bool              isExternal  ( Component* );
       static void              toJson      ( JsonWriter*, const Net* );
@@ -69,5 +68,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-#endif  // HURRICANE_NET_EXTERNAL_COMPONENTS_H

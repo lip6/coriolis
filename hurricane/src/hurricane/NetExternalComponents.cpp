@@ -67,6 +67,10 @@ namespace Hurricane {
   }
 
 
+  void  NetExternalComponents::setInternal ( Component* component )
+  { component->removeProperty( _name ); }
+
+
   void NetExternalComponents::setExternal ( Component* component )
   {
     Net* net = component->getNet();
