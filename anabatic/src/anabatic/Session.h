@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_SESSION_H
-#define  ANABATIC_SESSION_H
-
+#pragma  once
 #include <string>
 #include <vector>
 #include <set>
@@ -115,6 +113,7 @@ namespace Anabatic {
       static  inline bool                              isGMetal              ( const Layer* );
       static  inline bool                              isGContact            ( const Layer* );
       static  inline bool                              isGaugeLayer          ( const Layer* );
+      static  inline RoutingLayerGauge*                getLayerGauge         ( const Layer* );
       static  inline RoutingLayerGauge*                getLayerGauge         ( size_t depth );
       static  inline size_t                            getDepth              ();
       static  inline size_t                            getViaDepth           ( const Layer* layer );
@@ -259,6 +258,7 @@ namespace Anabatic {
   inline bool                              Session::isGMetal             ( const Layer* layer ) { return getConfiguration()->isGMetal(layer); }
   inline bool                              Session::isGContact           ( const Layer* layer ) { return getConfiguration()->isGContact(layer); }
   inline bool                              Session::isGaugeLayer         ( const Layer* layer ) { return getRoutingGauge()->hasLayer(layer); }
+  inline RoutingLayerGauge*                Session::getLayerGauge        ( const Layer* layer ) { return getRoutingGauge()->getLayerGauge(layer); }
   inline RoutingLayerGauge*                Session::getLayerGauge        ( size_t depth )       { return getRoutingGauge()->getLayerGauge(depth); }
   inline size_t                            Session::getDepth             ()                     { return getRoutingGauge()->getDepth(); }
   inline size_t                            Session::getViaDepth          ( const Layer* layer ) { return getRoutingGauge()->getViaDepth(layer); }
@@ -290,6 +290,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::Session);
-
-
-#endif  // ANABATIC_SESSION_H

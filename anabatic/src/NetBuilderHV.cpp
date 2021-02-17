@@ -168,9 +168,9 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << getTypeName() << "::doRp_Access() - flags:" << flags << endl;
 
-    size_t       rpDepth        = Session::getLayerDepth( rp->getLayer() );
-    AutoContact* rpSourceContact;
-    AutoContact* rpContactTarget;
+    size_t       rpDepth         = Session::getLayerDepth( rp->getLayer() );
+    AutoContact* rpSourceContact = NULL;
+    AutoContact* rpContactTarget = NULL;
 
     Flags useNonPref = Flags::NoFlags;
     if (flags & UseNonPref) useNonPref |= Flags::UseNonPref;
@@ -239,6 +239,22 @@ namespace Anabatic {
 
         AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
       } else {
+#if OFFGRID_M2_DISABLED
+        Box                cellAb    = getAnabatic()->getCell()->getAbutmentBox();
+        RoutingLayerGauge* lgM2      = Session::getLayerGauge( 1 );
+        DbU::Unit          trackAxis = lgM2->getTrackPosition( cellAb.getYMin()
+                                                             , cellAb.getYMax()
+                                                             , rp->getY()
+                                                             , Constant::Nearest );
+        bool offGrid = (trackAxis != rp->getY());
+        if (offGrid) {
+          cdebug_log(145,0) << "Off grid, Misaligned M2 RoutingPad, add vertical strap" << endl;
+          subContact1 = AutoContactTurn::create( getGCell(), getNet(), Session::getContactLayer(1) );
+          AutoSegment::create( rpSourceContact, subContact1, Flags::Vertical );
+          rpSourceContact = subContact1;
+        }
+#endif
+
         subContact1 = AutoContactTurn::create( gcell, rp->getNet(), Session::getContactLayer(1) );
         AutoSegment::create( rpSourceContact, subContact1, Flags::Horizontal );
       }
@@ -1549,6 +1565,20 @@ namespace Anabatic {
 
     const Layer* viaLayer1 = Session::getContactLayer(1);
 
+    Box                cellAb    = getAnabatic()->getCell()->getAbutmentBox();
+    RoutingLayerGauge* lgM3      = Session::getLayerGauge( 2 );
+    DbU::Unit          trackAxis = lgM3->getTrackPosition( cellAb.getXMin()
+                                                         , cellAb.getXMax()
+                                                         , getRoutingPads()[0]->getX()
+                                                         , Constant::Nearest );
+    bool offGrid = (trackAxis != getRoutingPads()[0]->getX());
+    if (offGrid) {
+      cdebug_log(145,0) << "Off grid, Misaligned M3, add horizontal strap" << endl;
+      AutoContactTurn* turn1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+      AutoSegment::create( getSouthWestContact(), turn1, Flags::Horizontal );
+      setBothCornerContacts( turn1 );
+    }
+
     if (flags & HAccess) {
     // HARDCODED VALUE.
       if (getRoutingPads()[0]->getBoundingBox().getHeight() < 3*Session::getPitch(1)) {
@@ -1558,14 +1588,15 @@ namespace Anabatic {
         setBothCornerContacts( subContact );
       }
     } else {
-      if (getSourceContact()) {
-        if (getSourceContact()->getX() != getSouthWestContact()->getX()) {
-          AutoContactTurn* turn1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
-          AutoContactTurn* turn2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
-          AutoSegment::create( getSouthWestContact(), turn1, Flags::Vertical   );
-          AutoSegment::create( turn1                , turn2, Flags::Horizontal );
-          setBothCornerContacts( turn2 );
-        }
+      if (getSourceContact() and (getSourceContact()->getX() != getSouthWestContact()->getX())) {
+        cdebug_log(145,0) << "On grid, Misaligned M3, add dogleg" << endl;
+        AutoContactTurn* turn1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoContactTurn* turn2 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment*     v1    = AutoSegment::create( getSouthWestContact(), turn1, Flags::Vertical   );
+        AutoSegment::create( turn1, turn2, Flags::Horizontal );
+        v1->setAxis( getSouthWestContact()->getX(), Flags::Force );
+        v1->setFlags( AutoSegment::SegFixed|AutoSegment::SegFixedAxis );
+        setBothCornerContacts( turn2 );
       }
     }
     cdebug_tabw(145,-1);
