@@ -27,6 +27,8 @@
 #include "hurricane/isobar/PyVertical.h"
 #include "hurricane/isobar/PyContact.h"
 #include "hurricane/isobar/PyPad.h"
+#include "hurricane/isobar/PyRectilinear.h"
+#include "hurricane/isobar/PyPolygon.h"
 #include "hurricane/isobar/PyPin.h"
 #include "hurricane/isobar/PyRoutingPad.h"
 #include "hurricane/Cell.h"
@@ -126,6 +128,12 @@ extern "C" {
     
     Pin* pin = dynamic_cast<Pin*>( entity );
     if (pin) return PyPin_Link( pin );
+    
+    Polygon* polygon = dynamic_cast<Polygon*>( entity );
+    if (polygon) return PyPolygon_Link( polygon );
+    
+    Rectilinear* rectilinear = dynamic_cast<Rectilinear*>( entity );
+    if (rectilinear) return PyRectilinear_Link( rectilinear );
     
     Net* net = dynamic_cast<Net*>( entity );
     if (net) return PyNet_Link( net );
