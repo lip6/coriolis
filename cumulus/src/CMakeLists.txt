@@ -69,6 +69,7 @@
               set ( pyPluginAlphaChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/configuration.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/power.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/powerplane.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/corona.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/pads.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/chip.py

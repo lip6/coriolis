@@ -129,7 +129,7 @@ class BufferPool ( object ):
 
     def _createBuffers ( self ):
         """Create the matrix of instances buffer."""
-        trace( 540, ',+', '\tBufferPool.createBuffers()\n' )
+        trace( 540, ',+', '\tBufferPool.createBuffers() of {}\n'.format(self.quadTree) )
         yoffset = 0
         if self.quadTree.spares.conf.isCoreBlock:
             yoffset = self.quadTree.spares.conf.icore.getTransformation().getTy()
@@ -239,9 +239,19 @@ class QuadTree ( object ):
 
     @staticmethod
     def create ( spares ):
-        area = spares.conf.cell.getAbutmentBox()
+        #area = spares.conf.cell.getAbutmentBox()
+        #if spares.conf.isCoreBlock:
+        #    area = spares.conf.core.getAbutmentBox()
+        #    spares.conf.icore.getTransformation().applyOn( area )
+        area = spares.conf.placeArea
+        if area is None:
+            area = spares.conf.cell.getAbutmentBox()
         if spares.conf.isCoreBlock:
-            area = spares.conf.core.getAbutmentBox()
+            area = spares.conf.placeArea
+            if area is None:
+                area = spares.conf.core.getAbutmentBox()
+            else:
+                area = Box( area )
             spares.conf.icore.getTransformation().applyOn( area )
         root = QuadTree( spares, None, area )
         root.rpartition()
@@ -277,7 +287,13 @@ class QuadTree ( object ):
         self.pool._destroyBuffers()
 
     def __str__ ( self ):
-        occupancy, capacity = self.pool.getUse()
+        if hasattr(self,'pool'):
+            occupancy, capacity = self.pool.getUse()
+            rtag = self.rtag
+        else:
+            occupancy = 'occ'
+            capacity  = 'cap'
+            rtag      = 'rtag'
         s = '<QuadTree [{},{} {},{}] {}/{} "{}">' \
             .format( DbU.getValueString(self.area.getXMin())
                    , DbU.getValueString(self.area.getYMin())
@@ -285,7 +301,7 @@ class QuadTree ( object ):
                    , DbU.getValueString(self.area.getYMax())
                    , occupancy
                    , capacity
-                   , self.rtag )
+                   , rtag )
         return s
 
     def __eq__ ( self, other ):
@@ -821,10 +837,11 @@ class Spares ( object ):
         if self.conf.cfg.etesian.latchUpDistance is None:
             return
         trace( 540, ',+', '\tSpares._addCapTies()\n' )
-        area = self.conf.cell.getAbutmentBox()
-        if self.conf.isCoreBlock:
-            area = self.conf.core.getAbutmentBox()
-            self.conf.icore.getTransformation().applyOn( area )
+        area = self.quadTree.area
+        #area = self.conf.cell.getAbutmentBox()
+        #if self.conf.isCoreBlock:
+        #    area = self.conf.core.getAbutmentBox()
+        #    self.conf.icore.getTransformation().applyOn( area )
         y           = area.getYMin()
         sliceHeight = self.conf.sliceHeight 
         tieWidth    = self.conf.feedsConf.tieWidth()

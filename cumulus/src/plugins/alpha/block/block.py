@@ -547,6 +547,7 @@ class Block ( object ):
         if self.conf.placeArea:
             self.etesian.setPlaceArea( self.conf.placeArea )
         self.etesian.place()
+        self.etesian.flattenPower()
         Breakpoint.stop( 100, 'Placement done.' )
         self.etesian.clearColoquinte()
 
@@ -559,7 +560,7 @@ class Block ( object ):
         Breakpoint.stop( 100, 'Block.route() Before global routing.' )
         self.katana.runGlobalRouter  ( Katana.Flags.NoFlags )
         self.katana.loadGlobalRouting( Anabatic.EngineLoadGrByNet )
-        Breakpoint.stop( 99, 'Block.route() After global routing.' )
+        Breakpoint.stop( 100, 'Block.route() After global routing.' )
         self.katana.layerAssign      ( Anabatic.EngineNoNetLayerAssign )
         self.katana.runNegociate     ( Katana.Flags.NoFlags )
         success = self.katana.isDetailedRoutingSuccess()

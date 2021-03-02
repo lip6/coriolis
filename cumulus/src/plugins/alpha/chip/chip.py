@@ -13,8 +13,7 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
-from   __future__ import absolute_import
+from   __future__ import print_function, absolute_import
 import sys
 import traceback
 import os.path
@@ -24,30 +23,16 @@ import cProfile
 import pstats
 import Cfg
 import Hurricane
-from   Hurricane  import DataBase
-from   Hurricane  import DbU
-from   Hurricane  import Point
-from   Hurricane  import Transformation
-from   Hurricane  import Box
-from   Hurricane  import Path
-from   Hurricane  import Occurrence
-from   Hurricane  import UpdateSession
-from   Hurricane  import Breakpoint
-from   Hurricane  import Net
-from   Hurricane  import RoutingPad
-from   Hurricane  import Contact
-from   Hurricane  import Horizontal
-from   Hurricane  import Vertical
-from   Hurricane  import Instance
-from   Hurricane  import HyperNet
-from   Hurricane  import Query
+from   Hurricane  import DataBase, DbU ,Point, Transformation, Box,      \
+                         Path, Occurrence, UpdateSession, Breakpoint,    \
+                         Net, RoutingPad, Contact, Horizontal, Vertical, \
+                         Instance, HyperNet, Query
 import Viewer
 import CRL
 from   CRL        import RoutingLayerGauge
 import helpers
 from   helpers         import trace
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
+from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import Etesian
 import Anabatic
@@ -58,6 +43,7 @@ import plugins.rsave
 from   plugins.alpha.block.block import Block
 import plugins.alpha.chip.pads
 import plugins.alpha.chip.power
+import plugins.alpha.chip.powerplane
 import plugins.alpha.chip.corona
 
 
@@ -114,15 +100,22 @@ class Chip ( Block ):
             self.conf.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
 
     def doConnectCore ( self ):
-        power = plugins.alpha.chip.power.Builder( self.conf )
-        power.connectPower()
-        power.connectClocks()
-        power.doLayout()
-        self.conf.refresh()
-        corona = plugins.alpha.chip.corona.Builder( power )
-        corona.connectPads( self.padsCorona )
-        corona.connectCore()
-        corona.doLayout()
+        if self.conf.routingGauge.hasPowerSupply():
+            power = plugins.alpha.chip.powerplane.Builder( self.conf )
+            power.connectPower()
+            power.connectClocks()
+            power.doLayout()
+            Breakpoint.stop( 101, 'After Query power.' )
+        else:
+            power = plugins.alpha.chip.power.Builder( self.conf )
+            power.connectPower()
+            power.connectClocks()
+            power.doLayout()
+            self.conf.refresh()
+            corona = plugins.alpha.chip.corona.Builder( power )
+            corona.connectPads( self.padsCorona )
+            corona.connectCore()
+            corona.doLayout()
         self.conf.refresh()
   
     def doPnR ( self ):
@@ -140,6 +133,7 @@ class Chip ( Block ):
         self.padsCorona.doLayout()
         self.validate()
         self.doCoronaFloorplan()
+        self.padsCorona.doPowerLayout()
         self.conf.refresh()
         super(Chip,self).doPnR()
         self.conf.refresh( self.conf.chip )

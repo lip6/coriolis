@@ -38,18 +38,29 @@ class BigVia ( object ):
     """
     Draw a large are VIA and manage the matrix of cuts.
     """
+    AllowTopMetalExpand   = 0x0001
+    AllowBotMetalExpand   = 0x0002
+    AllowHorizontalExpand = 0x0004
+    AllowVerticalExpand   = 0x0008
+    AllowAllExpand        = AllowTopMetalExpand   \
+                          | AllowBotMetalExpand   \
+                          | AllowHorizontalExpand \
+                          | AllowVerticalExpand
 
-    def __init__ ( self, net, depth, x, y, width, height ):
+    def __init__ ( self, net, depth, x, y, width, height, flags=0 ):
+        self.flags       = flags
         self.hasLayout   = False
         self.net         = net
         self.bottomDepth = depth
         self.topDepth    = depth
         self.x           = x
         self.y           = y
-        self.width       = width
-        self.height      = height
+        self.widths      = {}
+        self.heights     = {}
         self.plates      = {}
         self.vias        = {}
+        self.widths [depth] = width
+        self.heights[depth] = height
 
     def __str__ ( self ):
         global rg
@@ -60,8 +71,22 @@ class BigVia ( object ):
                       , rg.getRoutingLayer(self.topDepth).getName()
                       , DbU.getValueString(self.x)
                       , DbU.getValueString(self.y)
-                      , DbU.getValueString(self.width)
-                      , DbU.getValueString(self.height) )
+                      , DbU.getValueString(self.widths [self.topDepth])
+                      , DbU.getValueString(self.heights[self.topDepth]) )
+
+    @property
+    def height ( self ):
+        maxHeight = 0
+        for depth in range(self.bottomDepth,self.topDepth+1):
+            maxHeight = max( maxHeight, self.heights[depth] )
+        return maxHeight
+
+    @property
+    def width ( self ):
+        maxWidth = 0
+        for depth in range(self.bottomDepth,self.topDepth+1):
+            maxWidth = max( maxWidth, self.widths[depth] )
+        return maxWidth
 
     def getNet ( self ): return self.net
 
@@ -75,25 +100,53 @@ class BigVia ( object ):
         if self.hasLayout:
             print( WarningMessage( 'BigVia.mergeDepth(): Cannot be called *after* BigVia.doLayout()' ))
             return
-        if depth < self.bottomDepth: self.bottomDepth = depth
-        if depth > self.topDepth:    self.topDepth    = depth
+        if depth < self.bottomDepth:
+            bdepth = depth
+            while depth < self.bottomDepth:
+                self.widths [depth] = self.widths [self.topDepth]
+                self.heights[depth] = self.heights[self.topDepth]
+                depth += 1
+            self.bottomDepth = bdepth
+        if depth > self.topDepth:
+            tdepth = depth
+            while depth > self.topDepth:
+                self.widths [depth] = self.widths [self.topDepth]
+                self.heights[depth] = self.heights[self.topDepth]
+                depth -= 1
+            self.topDepth = tdepth
 
     def doLayout ( self ):
         global rg
         if rg is None: rg = CRL.AllianceFramework.get().getRoutingGauge()
         for depth in range(self.bottomDepth,self.topDepth+1):
+            minSize = rg.getRoutingLayer( depth ).getMinimalSize()
+            if self.widths[depth] < minSize and (self.flags & BigVia.AllowHorizontalExpand):
+                self.widths[depth] = minSize
+            if self.heights[depth] < minSize and (self.flags & BigVia.AllowVerticalExpand):
+                self.heights[depth] = minSize
+        for depth in range(self.bottomDepth,self.topDepth+1):
             minArea   = rg.getRoutingLayer( depth ).getMinimalArea()
-            minLength = DbU.fromPhysical( minArea / DbU.toPhysical( self.width, DbU.UnitPowerMicro )
-                                        , DbU.UnitPowerMicro )
-            #minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior )
-            plateArea = DbU.toPhysical( self.width , DbU.UnitPowerMicro ) \
-                      * DbU.toPhysical( self.height, DbU.UnitPowerMicro )
+            plateArea = DbU.toPhysical( self.widths [depth], DbU.UnitPowerMicro ) \
+                      * DbU.toPhysical( self.heights[depth], DbU.UnitPowerMicro )
             if plateArea < minArea:
-                print( WarningMessage( 'BigVia::doLayout(): Area too small for {}'.format(self.net) ))
+                if depth == self.bottomDepth and not (self.flags & BigVia.AllowBotMetalExpand):
+                    print( WarningMessage( 'BigVia::doLayout(): @({},{}) Area too small for {} in layer "{}"' \
+                                           .format( DbU.getValueString(self.x)
+                                                  , DbU.getValueString(self.y)
+                                                  , rg.getRoutingLayer(depth).getName()
+                                                  , self.net
+                                                  ) ))
+                if depth == self.topDepth and not (self.flags & BigVia.AllowTopMetalExpand):
+                    print( WarningMessage( 'BigVia::doLayout(): @({},{}) Area too small for {} in layer "{}"' \
+                                           .format( DbU.getValueString(self.x)
+                                                  , DbU.getValueString(self.y)
+                                                  , rg.getRoutingLayer(depth).getName()
+                                                  , self.net
+                                                  ) ))
             self.plates[ depth ] = Contact.create( self.net
                                                  , rg.getRoutingLayer(depth)
-                                                 , self.x    , self.y
-                                                 , self.width, self.height
+                                                 , self.x            , self.y
+                                                 , self.widths[depth], self.heights[depth]
                                                  )
         if rg.isSymbolic():
             for depth in range(self.bottomDepth,self.topDepth):
@@ -101,8 +154,8 @@ class BigVia ( object ):
                               , rg.getContactLayer( depth )
                               , self.x
                               , self.y
-                              , self.width  - DbU.fromLambda( 1.0 )
-                              , self.height - DbU.fromLambda( 1.0 ) )
+                              , self.widths [depth] - DbU.fromLambda( 1.0 )
+                              , self.heights[depth] - DbU.fromLambda( 1.0 ) )
         else:
             for depth in range(self.bottomDepth,self.topDepth):
                 self._doCutMatrix( depth )
@@ -128,14 +181,29 @@ class BigVia ( object ):
         trace( 550, '\t| topEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(topEnclosure)) )
         trace( 550, '\t| botEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botEnclosure)) )
         trace( 550, '\t| enclosure   [{}]: {}\n'.format(depth,DbU.getValueString(enclosure)) )
-        cutArea = self.plates[ depth ].getBoundingBox()
-        cutArea.inflate( - enclosure - cutSide/2 )
+        cutArea    = self.plates[ depth ].getBoundingBox()
+        hEnclosure = enclosure + cutSide/2
+        vEnclosure = hEnclosure
+        if hEnclosure*2 > cutArea.getWidth():
+            if self.flags & BigVia.AllowHorizontalExpand:
+                hEnclosure = cutArea.getWidth()/2
+            else:
+                raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
+                                         .format( cutLayer.getName(), self )
+                                       , 'Width is too small to fit a single VIA cut.' 
+                                       ] )
+        if vEnclosure*2 > cutArea.getHeight():
+            if self.flags & BigVia.AllowVerticalExpand:
+                vEnclosure = cutArea.getHeight()/2
+            else:
+                raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
+                                         .format( cutLayer.getName(), self )
+                                       , 'Height is too small to fit a single VIA cut.' 
+                                       ] )
+        cutArea.inflate( -hEnclosure, -vEnclosure )
         xoffset = (cutArea.getWidth () % (cutSide+cutSpacing)) / 2
         yoffset = (cutArea.getHeight() % (cutSide+cutSpacing)) / 2
         cutArea.translate( xoffset, yoffset )
-       #if cutArea.isEmpty():
-       #    raise ErrorMessage( 1, 'BigVia._doCutMatrix(): Cannot create at least a single cut in {}.' \
-       #                           .format(self))
         self.vias[ depth ] = []
         y = cutArea.getYMin()
         while y <= cutArea.getYMax():

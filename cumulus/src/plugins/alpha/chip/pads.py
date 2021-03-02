@@ -21,14 +21,15 @@ from   Hurricane    import DbU, Point, Transformation, Interval, Box,  \
                            Path, Occurrence, UpdateSession, Layer,     \
                            BasicLayer, Net, Pin, Contact, Segment,     \
                            Horizontal, Vertical, Diagonal, RoutingPad, \
-                           Instance
+                           Instance, DataBase
 import CRL          
-from   CRL          import RoutingLayerGauge
+from   CRL          import RoutingGauge, RoutingLayerGauge
 import helpers      
 from   helpers         import trace, l, u, n, onFGrid
 from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins.alpha.chip
+from   plugins.alpha.block.bigvia import BigVia
 
 plugins.alpha.chip.importConstants( globals() )
 
@@ -790,26 +791,27 @@ class Corona ( object ):
                     duplicateds.append( [ position, padInstance ] )
             return duplicateds
         
-        self.conf            = conf  
-        self.conf.validated  = False
-        self.northPads       = _dupPads( self.conf.chipConf.northPads )
-        self.southPads       = _dupPads( self.conf.chipConf.southPads )
-        self.eastPads        = _dupPads( self.conf.chipConf.eastPads )
-        self.westPads        = _dupPads( self.conf.chipConf.westPads )
-        self.northSide       = Side( self, North )
-        self.southSide       = Side( self, South )
-        self.eastSide        = Side( self, East  )
-        self.westSide        = Side( self, West  )
-        self.corners         = { SouthWest : Corner( self, SouthWest )
-                               , SouthEast : Corner( self, SouthEast )
-                               , NorthWest : Corner( self, NorthWest )
-                               , NorthEast : Corner( self, NorthEast )
-                               }
-        self.padLib          = None
-        self.padOrient       = Transformation.Orientation.ID
-        self.padSpacers      = []
-        self.padCorner       = []
-        self.padRails        = []  # [ , [net, layer, axis, width] ]
+        self.conf             = conf  
+        self.conf.validated   = False
+        self.northPads        = _dupPads( self.conf.chipConf.northPads )
+        self.southPads        = _dupPads( self.conf.chipConf.southPads )
+        self.eastPads         = _dupPads( self.conf.chipConf.eastPads )
+        self.westPads         = _dupPads( self.conf.chipConf.westPads )
+        self.northSide        = Side( self, North )
+        self.southSide        = Side( self, South )
+        self.eastSide         = Side( self, East  )
+        self.westSide         = Side( self, West  )
+        self.corners          = { SouthWest : Corner( self, SouthWest )
+                                , SouthEast : Corner( self, SouthEast )
+                                , NorthWest : Corner( self, NorthWest )
+                                , NorthEast : Corner( self, NorthEast )
+                                }
+        self.padLib           = None
+        self.padOrient        = Transformation.Orientation.ID
+        self.padSpacers       = []
+        self.padCorner        = []
+        self.padRails         = []  # [ , [net, layer, axis, width] ]
+        self.powerCount       = 0
         self.conf.cfg.chip.padCoreSide = None
         if self.conf.cfg.chip.padCoreSide.lower() == 'south':
             self.padOrient = Transformation.Orientation.MY
@@ -826,6 +828,12 @@ class Corona ( object ):
                 self.padSpacers.sort( _cmpPad )
         if self.conf.cfg.chip.padCorner is not None:
             self.padCorner = self.padLib.getCell( self.conf.cfg.chip.padCorner )
+
+    @property
+    def supplyRailWidth ( self ): return self.conf.cfg.chip.supplyRailWidth
+
+    @property
+    def supplyRailPitch ( self ): return self.conf.cfg.chip.supplyRailPitch
   
     def toGrid ( self, u ): return u - (u % self.conf.ioPadPitch)
   
@@ -946,6 +954,10 @@ class Corona ( object ):
                 bb = component.getBoundingBox()
                 padInstance.getTransformation().applyOn( bb )
                 trace( 550, '\t| External:{} bb:{}\n'.format(component,bb) )
+                if self.conf.routingGauge.hasPowerSupply():
+                    if chipIntNet.isPower() or chipIntNet.isGround():
+                        trace( 550, '\t| Skipped, pads uses distributed power terminals.\n' )
+                        continue
                 if self.conf.chipConf.ioPadGauge == 'LibreSOCIO':
                     if chipIntNet.isPower() or chipIntNet.isGround():
                         if side.type == North or side.type == South:
@@ -1041,9 +1053,10 @@ class Corona ( object ):
                     if not padNet: continue
                     padConnected = self._createCoreWire( chipIntNet, padNet, doneInstances[-1], padConnected )
             if padConnected == 0:
-                trace( 550, '-' )
-                raise ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Chip net "{}" is not connected to a pad.' \
-                                       .format(chipIntNet.getName()) )
+                if not (chipIntNet.isSupply() and self.conf.routingGauge.hasPowerSupply()):
+                    trace( 550, '-' )
+                    raise ErrorMessage( 1, 'PadsCorona._placeInnerCorona(): Chip net "{}" is not connected to a pad.' \
+                                           .format(chipIntNet.getName()) )
         self.conf.setupCorona( self.westSide.gap, self.southSide.gap, self.eastSide.gap, self.northSide.gap )
         self.coreSymBb = self.conf.getInstanceAb( self.conf.icorona )
         self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap /2, Superior )
@@ -1088,6 +1101,88 @@ class Corona ( object ):
                                       , self.eastSide .coreWires[-1].chipNet.getName()) ] ))
         trace( 550, '-' )
 
+    def _supplyToPad ( self, chipNet, coronaNet, coronaAxis, stripeWidth, side ):
+        trace( 550, ',+', '\tCorona.Builder._supplyToPads()\n' )
+        supplyLayerDepth = self.conf.routingGauge.getPowerSupplyGauge().getDepth()
+        supplyLayer      = self.conf.routingGauge.getPowerSupplyGauge().getLayer()
+        chipLayer        = self.conf.getRoutingLayer( self.conf.routingGauge.getPowerSupplyGauge().getDepth() - 1 )
+        coronaAb         = self.conf.icorona.getAbutmentBox()
+        chipAxis         = coronaAxis + self.conf.icorona.getTransformation().getTx()
+        trace( 550, '\tchipLayer={}\n'.format(chipLayer) )
+        for rail in self.padRails:
+            net      = rail[0]
+            layer    = rail[1]
+            railAxis = rail[2]
+            width    = rail[3]
+            if net != chipNet or chipLayer.getMask() != layer.getMask():
+                continue
+            if side == North:
+                trace( 550, '\tcoronaAb={}\n'.format(coronaAb) )
+                trace( 550, '\tcoronaAxis={}\n'.format(DbU.getValueString(coronaAxis)) ) 
+                trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
+                trace( 550, '\trailNet={} <-> {}\n'.format(net,chipNet) )
+                trace( 550, '\trailAxis={}\n'.format(DbU.getValueString(railAxis)) )
+                Vertical.create( chipNet
+                               , supplyLayer
+                               , chipAxis
+                               , stripeWidth
+                               , coronaAb.getYMax()
+                               , self.conf.chipAb.getYMax() - railAxis
+                               )
+                via = BigVia( chipNet
+                            , supplyLayerDepth
+                            , chipAxis
+                            , self.conf.chipAb.getYMax() - railAxis
+                            , stripeWidth
+                            , width
+                            , BigVia.AllowAllExpand
+                            )
+                trace( 550, '\tpower depth: {}\n'.format( self.conf.routingGauge.getPowerSupplyGauge().getDepth() ))
+                via.mergeDepth( self.conf.routingGauge.getPowerSupplyGauge().getDepth()-1 )
+                via.doLayout()
+                pin = Pin.create( coronaNet
+                                , '{}.{}'.format(coronaNet.getName(),self.powerCount)
+                                , Pin.Direction.NORTH
+                                , Pin.PlacementStatus.FIXED
+                                , supplyLayer
+                                , coronaAxis
+                                , self.conf.icorona.getMasterCell().getAbutmentBox().getYMax()
+                                , stripeWidth
+                                , DbU.fromLambda( 1.0 )
+                                )
+                trace( 550, '\tpin={}\n'.format(pin) )
+                self.powerCount += 1
+            elif side == South:
+                Vertical.create( chipNet
+                               , supplyLayer
+                               , chipAxis
+                               , stripeWidth
+                               , self.conf.chipAb.getYMin() + railAxis
+                               , coronaAb.getYMin()
+                               )
+                via = BigVia( chipNet
+                            , supplyLayerDepth
+                            , chipAxis
+                            , self.conf.chipAb.getYMin() + railAxis
+                            , stripeWidth
+                            , width
+                            , BigVia.AllowAllExpand
+                            )
+                via.mergeDepth( supplyLayerDepth-1 )
+                via.doLayout()
+                pin = Pin.create( coronaNet
+                                , '{}.{}'.format(coronaNet.getName(),self.powerCount)
+                                , Pin.Direction.SOUTH
+                                , Pin.PlacementStatus.FIXED
+                                , supplyLayer
+                                , coronaAxis
+                                , self.conf.icorona.getMasterCell().getAbutmentBox().getYMin()
+                                , stripeWidth
+                                , DbU.fromLambda( 1.0 )
+                                )
+                self.powerCount += 1
+        trace( 550, '-' )
+
     def doLayout ( self ):
         if not self.conf.validated: return
         with UpdateSession():
@@ -1099,3 +1194,85 @@ class Corona ( object ):
             self.westSide.doLayout()
             self._placeInnerCorona()
             self.conf.chip.setRouted( True )
+
+    def doPowerLayout ( self ):
+        if not self.conf.routingGauge.hasPowerSupply(): return
+        with UpdateSession():
+            capViaWidth   = self.conf.vDeepRG.getPitch()*3
+            coreAb        = self.conf.coreAb
+            stripesNb     = int( (coreAb.getWidth() - 8*capViaWidth + self.supplyRailWidth) \
+                                 / self.supplyRailPitch - 1 )
+            offset        = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) / 2
+            powerNet      = None
+            groundNet     = None
+            chipPowerNet  = None
+            chipGroundNet = None
+            corona = self.conf.corona
+            for net in corona.getNets():
+                if net.isPower (): powerNet  = net
+                if net.isGround(): groundNet = net
+            if powerNet:
+                if powerNet.isGlobal():
+                    chipPowerNet = self.conf.chip.getNet( powerNet.getName() )
+                else:
+                    for net in self.conf.chip.getNets():
+                        if net.getName() == powerNet.getName():
+                            chipPowerNet = net
+                            break
+                if not chipPowerNet:
+                    raise ErrorMessage( 1, 'pads.Corona.doPowerLayout(): No core power net not connected in "{}"' \
+                                           .format(self.conf.chip.getName()) )
+            else:
+                raise ErrorMessage( 1, 'pads.Corona.doPowerLayout(): No power net found in "{}"' \
+                                       .format(corona.getName()) )
+            if groundNet:
+                if groundNet.isGlobal():
+                    chipGroundNet = self.conf.chip.getNet( groundNet.getName() )
+                else:
+                    for net in self.conf.chip.getNets():
+                        if net.getName() == groundNet.getName():
+                            chipGroundNet = net
+                            break
+                if not chipGroundNet:
+                    raise ErrorMessage( 1, 'pads.Corona.doPowerLayout(): No core power net not connected in "{}"' \
+                                           .format(self.conf.chip.getName()) )
+            else:
+                raise ErrorMessage( 1, 'pads.Corona.doPowerLayout(): No ground net found in "{}"' \
+                                       .format(corona.getName()) )
+            icore = self.conf.icore
+            xcore = icore.getTransformation().getTx()
+            trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )
+            print( 'capViaWidth={}'.format(DbU.getValueString(capViaWidth)))
+            stripeSpecs = []
+            for i in range(stripesNb+4):
+                if i % 2:
+                    coronaNet = groundNet
+                    chipNet   = chipGroundNet
+                else:
+                    coronaNet = powerNet
+                    chipNet   = chipPowerNet
+                if i < 2:
+                    axis  = xcore + 2*i*capViaWidth + capViaWidth/2
+                    width = capViaWidth
+                elif i >= stripesNb+2:
+                    axis  = xcore + coreAb.getWidth() - 2*(i-stripesNb-1)*capViaWidth + capViaWidth/2
+                    width = capViaWidth
+                else:
+                    axis  = xcore + offset + (i-2)*self.supplyRailPitch
+                    width = self.supplyRailWidth
+                stripeSpecs.append( [ chipNet, coronaNet, axis, width ] )
+            for chipNet, coronaNet, axis, width in stripeSpecs:
+                self._supplyToPad( chipNet, coronaNet, axis, width, North )
+                self._supplyToPad( chipNet, coronaNet, axis, width, South )
+            #for istripe in range(stripesNb):
+            #    trace( 550, '\tistripe={}\n'.format(istripe) )
+            #    axis = xcore + offset + istripe*self.supplyRailPitch
+            #    if istripe % 2:
+            #        coronaNet = groundNet
+            #        chipNet   = chipGroundNet
+            #    else:
+            #        coronaNet = powerNet
+            #        chipNet   = chipPowerNet
+            #    self._supplyToPad( chipNet, coronaNet, axis, North )
+            #    self._supplyToPad( chipNet, coronaNet, axis, South )
+            

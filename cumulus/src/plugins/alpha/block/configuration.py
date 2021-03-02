@@ -18,30 +18,15 @@ import re
 import os.path
 from   operator  import itemgetter
 import Cfg
-from   Hurricane import Breakpoint
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Transformation
-from   Hurricane import Box
-from   Hurricane import Path
-from   Hurricane import Layer
-from   Hurricane import Occurrence
-from   Hurricane import Net
-from   Hurricane import NetExternalComponents
-from   Hurricane import RoutingPad
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Contact
-from   Hurricane import Pin
-from   Hurricane import Plug
-from   Hurricane import Instance
+from   Hurricane import DataBase, Breakpoint, DbU, Box, Transformation, \
+                        Path, Layer, Occurrence, Net,                   \
+                        NetExternalComponents, RoutingPad, Horizontal,  \
+                        Vertical, Contact, Pin, Plug, Instance
 import CRL
 from   CRL                 import RoutingLayerGauge
 from   helpers             import trace, l, u, n
 from   helpers.utils       import classdecorator
-from   helpers.io          import ErrorMessage
-from   helpers.io          import WarningMessage
-from   helpers.io          import catch
+from   helpers.io          import ErrorMessage, WarningMessage, catch
 from   helpers.overlay     import CfgCache
 from   plugins             import getParameter
 from   plugins.rsave       import rsave
@@ -133,7 +118,13 @@ class GaugeConf ( object ):
     @property
     def routingBb     ( self ): return self._routingBb
 
-    def getLayerDepth ( self, layer ): return self._routingGauge.getLayerDepth( layer )
+    def getRoutingLayer ( self, depth ):
+        return self._routingGauge.getRoutingLayer( depth )
+
+    def getLayerDepth ( self, layer ):
+        if isinstance(layer,str):
+            layer = DataBase.getDB().getTechnology().getLayer( layer )
+        return self._routingGauge.getLayerDepth( layer )
 
     def getPitch ( self, layer ): return self._routingGauge.getPitch( layer )
 
@@ -172,6 +163,8 @@ class GaugeConf ( object ):
             trace( 550, '\tdepth:{} {}\n'.format(depth,self._routingGauge.getLayerGauge(depth) ))
             
             if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PinOnly:
+                continue
+            if self._routingGauge.getLayerGauge(depth).getType() == RoutingLayerGauge.PowerSupply:
                 continue
             if self._routingGauge.getLayerGauge(depth).getDirection() == RoutingLayerGauge.Horizontal:
                 if self.horizontalDeepDepth < 0:
