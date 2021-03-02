@@ -799,7 +799,8 @@ namespace {
             } else if (  dynamic_cast<Horizontal*>(component)
                       or dynamic_cast<Vertical  *>(component)
                       or dynamic_cast<Contact   *>(component)
-                      or dynamic_cast<Pad       *>(component)) {
+                      or dynamic_cast<Pad       *>(component)
+                      or dynamic_cast<Pin       *>(component)) {
               for ( const BasicLayer* layer : component->getLayer()->getBasicLayers() ) {
                 if (getString(layer->getName()).substr(0,8) == "CORIOBLK") continue;
                 Box bb = component->getBoundingBox(layer);
@@ -820,7 +821,7 @@ namespace {
                 (*this) << ENDEL;
                 isOnGrid( component, bb );
 
-                if (NetExternalComponents::isExternal(component)) {
+                if (NetExternalComponents::isExternal(component) or dynamic_cast<Pin*>(component)) {
                   string name = getString( component->getNet()->getName() );
                   if (name.size() > 511) {
                     cerr << getString(
