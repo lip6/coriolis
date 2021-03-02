@@ -75,6 +75,7 @@ extern "C" {
   DirectVoidMethod(EtesianEngine,etesian,setDefaultAb)
   DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
   DirectVoidMethod(EtesianEngine,etesian,clearColoquinte)
+  DirectVoidMethod(EtesianEngine,etesian,flattenPower)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute(PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
@@ -261,6 +262,8 @@ extern "C" {
                             , "De-allocate the Coloquinte related data structures." }
     , { "place"             , (PyCFunction)PyEtesianEngine_place             , METH_NOARGS
                             , "Run the placer (Etesian)." }
+    , { "flattenPower"      , (PyCFunction)PyEtesianEngine_flattenPower      , METH_NOARGS
+                            , "Build abstract interface in top cell for supply & blockages." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS
                             , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL} /* sentinel */

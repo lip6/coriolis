@@ -469,6 +469,16 @@ namespace Etesian {
                     , DbU::toFloor( placeArea.getXMax(), sliceHeight )
                     , DbU::toFloor( placeArea.getYMax(), sliceHeight )
                     );
+    size_t bottomSlice = (_placeArea.getYMin() - topAb.getYMin()) / sliceHeight;
+    if (bottomSlice % 2)
+      throw Error( "EtesianEngine::setPlaceArea(): placedArea bottom must be on an even slice relative to topAb.\n"
+                   "          * placedArea=%s\n"
+                   "          * topAb=%s\n"
+                   "          * bottomSlice=%u\n"
+                 , getString(placeArea).c_str()
+                 , getString(topAb).c_str()
+                 , bottomSlice
+                 );
   }
 
   void  EtesianEngine::setDefaultAb ()
@@ -1292,7 +1302,7 @@ namespace Etesian {
       setDefaultAb();
     }
 
-    findYSpin();
+  //findYSpin();
     if (not toColoquinte()) return;
 
     Effort        placementEffort = getPlaceEffort();

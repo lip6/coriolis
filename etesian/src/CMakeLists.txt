@@ -25,6 +25,7 @@
                    set( cpps          Configuration.cpp
                                       AddFeeds.cpp
                                       Placement.cpp
+                                      FlattenPower.cpp
                                       FeedCells.cpp
                                       BloatCells.cpp
                                       BloatProperty.cpp

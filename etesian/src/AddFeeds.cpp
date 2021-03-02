@@ -347,10 +347,12 @@ namespace Etesian {
     _ySpinSet     = false;
     _yspinSlice0  = 0;
 
-    Box topCellAb = getBlockCell()->getAbutmentBox();
+    Box blockAb = getBlockCell()->getAbutmentBox();
+    if (not _placeArea.isEmpty())
+      blockAb = _placeArea;
 
-    if (not topCellAb.isEmpty()) {
-      for ( Occurrence occurrence : getBlockCell()->getTerminalNetlistInstanceOccurrences() )
+    if (not blockAb.isEmpty()) {
+      for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
       {
         Instance*      instance       = static_cast<Instance*>(occurrence.getEntity());
         Cell*          masterCell     = instance->getMasterCell();
@@ -360,11 +362,11 @@ namespace Etesian {
         occurrence.getPath().getTransformation().applyOn( instanceTransf );
         instanceTransf.applyOn( instanceAb );
   
-        if (not topCellAb.contains(instanceAb)) continue;
+        if (not blockAb.contains(instanceAb)) continue;
   
         _ySpinSet = true;
   
-        int islice = (instanceAb.getYMin() - getBlockCell()->getAbutmentBox().getYMin()) / getSliceHeight();
+        int islice = (instanceAb.getYMin() - blockAb.getYMin()) / getSliceHeight();
   
         switch ( instanceTransf.getOrientation() ) {
           case Transformation::Orientation::ID:

@@ -134,6 +134,7 @@ namespace Etesian {
               size_t                 findYSpin                 ();
               void                   addFeeds                  ();
               void                   toHurricane               ();
+              void                   flattenPower              ();
       inline  void                   selectBloat               ( std::string );
       virtual Record*                _getRecord                () const;
       virtual std::string            _getString                () const;
