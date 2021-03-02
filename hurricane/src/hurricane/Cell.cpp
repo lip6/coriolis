@@ -1190,32 +1190,6 @@ void Cell::_slaveAbutmentBox ( Cell* topCell )
   }
   put( slaveds );
   _flags.set( Flags::SlavedAb );
-
-//_changeQuadTree( topCell );
-}
-
-
-void Cell::_changeQuadTree ( Cell* topCell )
-// *****************************************
-{
-  bool isMaterialized = _flags.isset(Flags::Materialized);
-
-  unmaterialize();
-
-  if (topCell or _flags.isset(Flags::MergedQuadTree)) {
-    delete _sliceMap;
-    delete _quadTree;
-
-    if (topCell) {
-      _sliceMap = topCell->_getSliceMap();
-      _quadTree = topCell->_getQuadTree();
-    } else {
-      _sliceMap = new SliceMap();
-      _quadTree = new QuadTree();
-    }
-  }
-
-  if (isMaterialized) materialize();
 }
 
 
@@ -1256,10 +1230,8 @@ void Cell::_preDestroy()
   for ( Slice* slice  : getSlices()  ) slice->_destroy();
   while ( not _extensionSlices.empty() ) _removeSlice( _extensionSlices.begin()->second );
 
-  if (not _flags.isset(Flags::MergedQuadTree)) {
-    delete _sliceMap;
-    delete _quadTree;
-  }
+  delete _sliceMap;
+  delete _quadTree;
  
   _library->_getCellMap()._remove( this );
 
@@ -1420,13 +1392,14 @@ void Cell::_toJsonCollections(JsonWriter* writer) const
     if (not _flags) return "<NoFlags>";
 
     string s = "<";
-    if (_flags & Pad            ) { s += "Pad"; }
-    if (_flags & TerminalNetlist) { if (s.size() > 1) s += "|"; s += "TerminalNetlist"; }
-    if (_flags & FlattenedNets  ) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
-    if (_flags & Placed         ) { if (s.size() > 1) s += "|"; s += "Placed"; }
-    if (_flags & Routed         ) { if (s.size() > 1) s += "|"; s += "Routed"; }
-    if (_flags & SlavedAb       ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
-    if (_flags & Materialized   ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
+    if (_flags & Pad             ) { s += "Pad"; }
+    if (_flags & TerminalNetlist ) { if (s.size() > 1) s += "|"; s += "TerminalNetlist"; }
+    if (_flags & FlattenedNets   ) { if (s.size() > 1) s += "|"; s += "FlattenedNets"; }
+    if (_flags & Placed          ) { if (s.size() > 1) s += "|"; s += "Placed"; }
+    if (_flags & Routed          ) { if (s.size() > 1) s += "|"; s += "Routed"; }
+    if (_flags & AbstractedSupply) { if (s.size() > 1) s += "|"; s += "AbstractedSupply"; }
+    if (_flags & SlavedAb        ) { if (s.size() > 1) s += "|"; s += "SlavedAb"; }
+    if (_flags & Materialized    ) { if (s.size() > 1) s += "|"; s += "Materialized"; }
     s += ">";
 
     return s;

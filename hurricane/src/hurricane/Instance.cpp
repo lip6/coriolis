@@ -109,9 +109,6 @@ class Instance_IsTerminalNetlistFilter : public Filter<Instance*>
                                                   { return instance->isTerminalNetlist(); };
       virtual string                            _getString            () const
                                                   { return "<" + _TName("Instance::IsTerminalNetlistFilter") + ">"; };
-  private:
-    uint32_t _flags;
-
 };
 
 class Instance_IsUnplacedFilter : public Filter<Instance*> {
@@ -163,6 +160,24 @@ class Instance_IsFixedFilter : public Filter<Instance*> {
 
     public: virtual string _getString() const {return "<" + _TName("Net::IsFixedFilter>");};
 
+};
+
+
+class Instance_PruneMasterFilter : public Filter<Instance*>
+{
+    public:
+                                         Instance_PruneMasterFilter ( Cell::Flags flags ) : _flags(flags) {};
+                                         Instance_PruneMasterFilter ( const Instance_PruneMasterFilter& filter ) : _flags(filter._flags) {};
+              Instance_PruneMasterFilter& operator=                 ( const Instance_PruneMasterFilter& filter )
+                                           { _flags = filter._flags; return *this; };
+      virtual Filter<Instance*>*         getClone () const
+                                           { return new Instance_PruneMasterFilter( *this ); };
+      virtual bool                       accept ( Instance* instance ) const
+                                           { return instance->getMasterCell()->getFlags().isset(_flags); };
+      virtual string                     _getString () const
+                                           { return "<" + _TName("Instance::PruneMasterFilter") + getString(_flags) + ">"; };
+  private:
+    Cell::Flags _flags;
 };
 
 // ****************************************************************************************************
@@ -343,6 +358,13 @@ InstanceFilter Instance::getIsNotUnplacedFilter()
 // **********************************************
 {
     return !Instance_IsUnplacedFilter();
+}
+
+
+InstanceFilter Instance::getPruneMasterFilter( uint64_t flags )
+// ************************************************************
+{
+  return Instance_PruneMasterFilter( flags );
 }
 
 void Instance::materialize()

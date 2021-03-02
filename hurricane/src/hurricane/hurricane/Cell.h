@@ -72,7 +72,7 @@ class Cell : public Entity {
 
     public: class Flags : public BaseFlags {
       public:
-        enum Flag { NoFlags                 = (1 <<  0)
+        enum Flag { NoFlags                 =  0
                   , BuildRings              = (1 <<  1)
                   , BuildClockRings         = (1 <<  2)
                   , BuildSupplyRings        = (1 <<  3)
@@ -89,9 +89,9 @@ class Cell : public Entity {
                   , Pad                     = (1 << 21)
                   , Feed                    = (1 << 22)
                   , FlattenedNets           = (1 << 23)
-                  , Placed                  = (1 << 24)
-                  , Routed                  = (1 << 25)
-                  , MergedQuadTree          = (1 << 26)
+                  , AbstractedSupply        = (1 << 24) 
+                  , Placed                  = (1 << 25)
+                  , Routed                  = (1 << 26)
                   , SlavedAb                = (1 << 27)
                   , Materialized            = (1 << 28) 
                   };
@@ -387,7 +387,6 @@ class Cell : public Entity {
     public: void _insertSlice(ExtensionSlice*);
     public: void _removeSlice(ExtensionSlice*);
     public: void _slaveAbutmentBox(Cell*);
-    public: void _changeQuadTree(Cell*);
     public: void _setShuntedPath(Path path) { _shuntedPath=path; }
     protected: void _setAbutmentBox(const Box& abutmentBox);
 
@@ -489,6 +488,7 @@ class Cell : public Entity {
     public: bool isPad() const {return _flags.isset(Flags::Pad);};
     public: bool isFeed() const {return _flags.isset(Flags::Feed);};
     public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
+    public: bool isAbstractedSupply() const {return _flags.isset(Flags::AbstractedSupply);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
     public: bool isRouted() const {return _flags.isset(Flags::Routed);};
     public: bool isNetAlias(const Name& name) const;
@@ -500,10 +500,11 @@ class Cell : public Entity {
     public: void setAbutmentBox(const Box& abutmentBox);
     public: void slaveAbutmentBox(Cell*);
     public: void unslaveAbutmentBox(Cell*);
-    public: void setTerminalNetlist(bool isTerminalNetlist) { _flags.set(Flags::TerminalNetlist,isTerminalNetlist); };
-    public: void setPad(bool isPad) {_flags.set(Flags::Pad,isPad);};
-    public: void setFeed(bool isFeed) {_flags.set(Flags::Feed,isFeed);};
-    public: void setRouted(bool isRouted) {_flags.set(Flags::Routed,isRouted);};
+    public: void setTerminalNetlist(bool state) { _flags.set(Flags::TerminalNetlist,state); };
+    public: void setPad(bool state) {_flags.set(Flags::Pad,state);};
+    public: void setFeed(bool state) {_flags.set(Flags::Feed,state);};
+    public: void setRouted(bool state) {_flags.set(Flags::Routed,state);};
+    public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
     public: void createRoutingPadRings(uint64_t flags=Flags::BuildRings);

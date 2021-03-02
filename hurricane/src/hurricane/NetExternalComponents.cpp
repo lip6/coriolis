@@ -84,10 +84,10 @@ namespace Hurricane {
   }
 
 
-  bool  NetExternalComponents::isExternal ( Component* component )
+  bool  NetExternalComponents::isExternal ( const Component* component )
   {
     Net* net = component->getNet();
-    if (!net->isExternal()) return false;
+    if (not net->isExternal()) return false;
 
     return component->getProperty(_name) != NULL;
   }

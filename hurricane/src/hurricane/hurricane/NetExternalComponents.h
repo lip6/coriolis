@@ -44,7 +44,7 @@ namespace Hurricane {
       static Components        get         ( const Net* );
       static void              setInternal ( Component* );
       static void              setExternal ( Component* );
-      static bool              isExternal  ( Component* );
+      static bool              isExternal  ( const Component* );
       static void              toJson      ( JsonWriter*, const Net* );
     protected:
       static StandardRelation* getRelation ( const Net* );

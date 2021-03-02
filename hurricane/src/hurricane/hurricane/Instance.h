@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_INSTANCE_H
-#define HURRICANE_INSTANCE_H
-
+#pragma  once
 #include "hurricane/Go.h"
 #include "hurricane/Plug.h"
 #include "hurricane/SharedPath.h"
@@ -152,6 +150,7 @@ class Instance : public Go {
     public: static InstanceFilter getIsPlacedFilter();
     public: static InstanceFilter getIsFixedFilter();
     public: static InstanceFilter getIsNotUnplacedFilter();
+    public: static InstanceFilter getPruneMasterFilter( uint64_t );
 
 // Updators
 // ********
@@ -263,8 +262,6 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, const Hurricane:
   w->key( key );
   w->write( getString(status.getCode()) );
 }
-
-#endif // HURRICANE_INSTANCE
 
 
 // ****************************************************************************************************

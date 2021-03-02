@@ -656,7 +656,7 @@ extern "C" {
   
   
   // ---------------------------------------------------------------
-  // Attribute Method  :  "PyCell_setTerminal ()"
+  // Attribute Method  :  "PyCell_setTerminalNetlist ()"
 
   static PyObject* PyCell_setTerminalNetlist ( PyCell *self, PyObject* args ) {
     cdebug_log(20,0) << "PyCell_setTerminalNetlist ()" << endl;
@@ -668,6 +668,24 @@ extern "C" {
       return NULL;
     }
     PyObject_IsTrue(arg0)?cell->setTerminalNetlist(true):cell->setTerminalNetlist(false);
+    HCATCH
+    Py_RETURN_NONE;
+  }
+  
+  
+  // ---------------------------------------------------------------
+  // Attribute Method  :  "PyCell_setAbstractedSupply ()"
+
+  static PyObject* PyCell_setAbstractedSupply ( PyCell *self, PyObject* args ) {
+    cdebug_log(20,0) << "PyCell_setAbstractedSupply ()" << endl;
+    HTRY
+      METHOD_HEAD( "Cell.setAbstractedSupply()" )
+      PyObject* arg0 = NULL;
+      if (not PyArg_ParseTuple(args,"O:Cell.setAbstractedSupply", &arg0)
+         and PyBool_Check(arg0)) {
+        return NULL;
+      }
+      PyObject_IsTrue(arg0) ? cell->setAbstractedSupply(true) : cell->setAbstractedSupply(false);
     HCATCH
     Py_RETURN_NONE;
   }
@@ -808,6 +826,7 @@ extern "C" {
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
     , { "setTerminalNetlist"  , (PyCFunction)PyCell_setTerminalNetlist  , METH_VARARGS, "Sets the cell terminal netlist status." }
+    , { "setAbstractedSupply" , (PyCFunction)PyCell_setAbstractedSupply , METH_VARARGS, "Sets the cell abstracted supply status." }
     , { "setRouted"           , (PyCFunction)PyCell_setRouted           , METH_VARARGS, "Sets the cell routed status." }
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
@@ -847,6 +866,7 @@ extern "C" {
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildClockRings ,"Flags_BuildClockRings");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildSupplyRings,"Flags_BuildSupplyRings");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoClockFlatten  ,"Flags_NoClockFlatten");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::AbstractedSupply,"Flags_AbstractedSupply");
   }
 
 

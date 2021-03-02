@@ -125,16 +125,16 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
 
-  // +-------------------------------------------------------------+
-  // |                "PyQuery" Attribute Methods                  |
-  // +-------------------------------------------------------------+
+  DirectSetLongAttribute(PyQuery_setThreshold    ,setThreshold    ,PyQuery,Query)
+  DirectSetLongAttribute(PyQuery_setStartLevel   ,setStartLevel   ,PyQuery,Query)
+  DirectSetLongAttribute(PyQuery_setStopLevel    ,setStopLevel    ,PyQuery,Query)
+  DirectSetLongAttribute(PyQuery_setStopCellFlags,setStopCellFlags,PyQuery,Query)
 
 
-  static PyObject* PyQuery_getMasterCell ( PyQuery *self ) {
+  static PyObject* PyQuery_getMasterCell ( PyQuery *self )
+  {
     cdebug_log(20,0) << "PyQuery.getMasterCell()" << endl;
-
     Cell* cell = NULL;
-
     HTRY
       METHOD_HEAD("PyQuery.getMasterCell()")
       cell = query->getMasterCell();
@@ -144,11 +144,10 @@ extern "C" {
   }
 
 
-  static PyObject* PyQuery_getInstance ( PyQuery *self ) {
+  static PyObject* PyQuery_getInstance ( PyQuery *self )
+  {
     cdebug_log(20,0) << "PyQuery.getInstance()" << endl;
-
     Instance* instance = NULL;
-
     HTRY
       METHOD_HEAD("PyQuery.getInstance()")
       instance = query->getInstance();
@@ -161,14 +160,11 @@ extern "C" {
   static PyObject* PyQuery_getPath ( PyQuery *self )
   {
     cdebug_log(20,0) << "PyQuery_getPath ()" << endl;
-    
     METHOD_HEAD( "PyQuery.getPath()" )
-
     PyPath* pyPath = PyObject_NEW( PyPath, &PyTypePath );
     if (pyPath == NULL) return NULL;
-
     HTRY
-    pyPath->_object = new Path ( query->getPath() );
+      pyPath->_object = new Path ( query->getPath() );
     HCATCH
     
     return (PyObject*)pyPath;
@@ -178,14 +174,11 @@ extern "C" {
   static PyObject* PyQuery_getTransformation ( PyQuery *self )
   {
     cdebug_log(20,0) << "PyQuery_getTransformation ()" << endl;
-    
     METHOD_HEAD( "PyQuery.getTransformation()" )
-
     PyTransformation* pyTransformation = PyObject_NEW( PyTransformation, &PyTypeTransformation );
     if (pyTransformation == NULL) return NULL;
-
     HTRY
-    pyTransformation->_object = new Transformation ( query->getTransformation() );
+      pyTransformation->_object = new Transformation ( query->getTransformation() );
     HCATCH
     
     return (PyObject*)pyTransformation;
@@ -196,7 +189,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setCell()" << endl;
     METHOD_HEAD("PyQuery.setCell()")
-
     HTRY
       PyObject* pyCell = NULL;
 
@@ -219,7 +211,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setFilter()" << endl;
     METHOD_HEAD("PyQuery.setFilter()")
-
     HTRY
       int  mask = 0;
       if (PyArg_ParseTuple(args,"i:Query.setFilter()",&mask) ) {
@@ -237,7 +228,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setArea()" << endl;
     METHOD_HEAD("PyQuery.setArea()")
-
     HTRY
       PyObject* pyBox = NULL;
 
@@ -260,7 +250,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setTransformation()" << endl;
     METHOD_HEAD("PyQuery.setTransformation()")
-
     HTRY
       PyObject* pyTransformation = NULL;
 
@@ -283,7 +272,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setBasicLayer()" << endl;
     METHOD_HEAD("PyQuery.setBasicLayer()")
-
     HTRY
       PyObject* pyBasicLayer = NULL;
 
@@ -306,7 +294,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setMasterCellCallback()" << endl;
     METHOD_HEAD("PyQuery.setMasterCellCallback()")
-
     HTRY
       PyObject* pyCallback = NULL;
 
@@ -329,7 +316,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setGoCallback()" << endl;
     METHOD_HEAD("PyQuery.setGoCallback()")
-
     HTRY
       PyObject* pyCallback = NULL;
 
@@ -352,7 +338,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setMarkerCallback()" << endl;
     METHOD_HEAD("PyQuery.setMarkerCallback()")
-
     HTRY
       PyObject* pyCallback = NULL;
 
@@ -375,7 +360,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setRubberCallback()" << endl;
     METHOD_HEAD("PyQuery.setRubberCallback()")
-
     HTRY
       PyObject* pyCallback = NULL;
 
@@ -398,7 +382,6 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQuery.setExtensionGoCallback()" << endl;
     METHOD_HEAD("PyQuery.setExtensionGoCallback()")
-
     HTRY
       PyObject* pyCallback = NULL;
 
@@ -420,15 +403,13 @@ extern "C" {
   PyObject* PyQuery_NEW ( PyObject* module, PyObject* args )
   {
     cdebug_log(20,0) << "PyQuery.new()" << endl;
-
     BaseQuery* query   = NULL;
     PyQuery*   pyQuery = NULL;
-
     HTRY
-    pyQuery = PyObject_NEW( PyQuery, &PyTypeQuery );
-    if (pyQuery == NULL) return NULL;
-    query = new BaseQuery( pyQuery );
-    pyQuery->_object = query;
+      pyQuery = PyObject_NEW( PyQuery, &PyTypeQuery );
+      if (pyQuery == NULL) return NULL;
+      query = new BaseQuery( pyQuery );
+      pyQuery->_object = query;
     HCATCH
 
     return (PyObject*)pyQuery;
@@ -466,6 +447,14 @@ extern "C" {
                                 , "Set the initial transformation applied to the query area." }
     , { "setBasicLayer"         , (PyCFunction)PyQuery_setBasicLayer        , METH_VARARGS
                                 , "Set the BasicLayer on which perform the query." }
+    , { "setThreshold"          , (PyCFunction)PyQuery_setThreshold         , METH_VARARGS
+                                , "Quadtree leafs below this size will be pruned." }
+    , { "setStartLevel"         , (PyCFunction)PyQuery_setStartLevel        , METH_VARARGS
+                                , "Hierarchical depth from which to start the query." }
+    , { "setStopLevel"          , (PyCFunction)PyQuery_setStopLevel         , METH_VARARGS
+                                , "Hierarchical depth below this one will be pruned." }
+    , { "setStopCellFlags"      , (PyCFunction)PyQuery_setStopCellFlags     , METH_VARARGS
+                                , "Instances below such flagged master cells wiil be pruned." }
     , { "setGoCallback"         , (PyCFunction)PyQuery_setGoCallback        , METH_VARARGS
                                 , "Set the callback function for the Gos." }
     , { "setMarkerCallback"     , (PyCFunction)PyQuery_setMarkerCallback    , METH_VARARGS

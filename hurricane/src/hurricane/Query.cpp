@@ -51,6 +51,7 @@ namespace Hurricane {
     , _topTransformation ()
     , _startLevel        (0)
     , _stopLevel         (std::numeric_limits<unsigned int>::max())
+    , _stopCellFlags     (Cell::Flags::NoFlags)
     , _instanceCount     (0)
   { }
 
