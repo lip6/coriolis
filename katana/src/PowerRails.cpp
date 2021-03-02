@@ -1215,6 +1215,7 @@ namespace Katana {
     QueryPowerRails query ( this );
     Technology*     technology = DataBase::getDB()->getTechnology();
 
+    query.setStopCellFlags( Cell::Flags::AbstractedSupply );
     for ( BasicLayer* layer : technology->getBasicLayers() ) {
       if (   (layer->getMaterial() != BasicLayer::Material::metal)
          and (layer->getMaterial() != BasicLayer::Material::blockage) )
