@@ -402,6 +402,19 @@ extern "C" {
   }
 
 
+  static PyObject* PyRoutingGauge_getPowerSupplyGauge ( PyRoutingGauge* self )
+  {
+    cdebug_log(30,0) << "PyRoutingGauge_getPowerSupplyGauge()" << endl;
+    RoutingLayerGauge* rlg = NULL;
+    HTRY
+      METHOD_HEAD("RoutingGauge.getPowerSupplyGauge()")
+      rlg = rg->getPowerSupplyGauge();
+      if (not rlg) Py_RETURN_NONE;
+    HCATCH
+    return PyRoutingLayerGauge_Link( rlg );
+  }
+
+
   static PyObject* PyRoutingGauge_getRoutingLayer ( PyRoutingGauge* self, PyObject* args )
   {
     cdebug_log(30,0) << "PyRoutingGauge_getRoutingLayer()" << endl;
@@ -490,10 +503,11 @@ extern "C" {
   // Standard Attributes.
   GetNameMethod(RoutingGauge,rg)
   accessorVectorFromVoid(getLayerGauges,PyRoutingGauge,RoutingGauge,RoutingLayerGauge)
-  DirectGetBoolAttribute(PyRoutingGauge_isSymbolic ,isSymbolic ,PyRoutingGauge,RoutingGauge)
-  DirectSetBoolAttribute(PyRoutingGauge_setSymbolic,setSymbolic,PyRoutingGauge,RoutingGauge)
-  DirectGetBoolAttribute(PyRoutingGauge_isHV       ,isHV       ,PyRoutingGauge,RoutingGauge)
-  DirectGetBoolAttribute(PyRoutingGauge_isVH       ,isVH       ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isSymbolic    ,isSymbolic    ,PyRoutingGauge,RoutingGauge)
+  DirectSetBoolAttribute(PyRoutingGauge_setSymbolic   ,setSymbolic   ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isHV          ,isHV          ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_isVH          ,isVH          ,PyRoutingGauge,RoutingGauge)
+  DirectGetBoolAttribute(PyRoutingGauge_hasPowerSupply,hasPowerSupply,PyRoutingGauge,RoutingGauge)
 
 
   // Standart Destroy (Attribute).
@@ -508,6 +522,8 @@ extern "C" {
                                 , "The first routing layer (metal2) is horizontal." }
     , { "isVH"                  , (PyCFunction)PyRoutingGauge_isVH              , METH_NOARGS
                                 , "The first routing layer (metal2) is vertical." }
+    , { "hasPowerSupply"        , (PyCFunction)PyRoutingGauge_hasPowerSupply    , METH_NOARGS
+                                , "Is there a dedicated layer for power supplies." }
     , { "getName"               , (PyCFunction)PyRoutingGauge_getName           , METH_NOARGS
                                 , "Return the maximum depth of the RoutingGauge." }
     , { "getTechnology"         , (PyCFunction)PyRoutingGauge_getTechnology     , METH_NOARGS
@@ -522,12 +538,14 @@ extern "C" {
                                 , "Return the depth of the given layer." }
     , { "getPitch"              , (PyCFunction)PyRoutingGauge_getPitch          , METH_VARARGS
                                 , "Return the routing pitch of the given layer." }
-    , { "getOffset"             , (PyCFunction)PyRoutingGauge_getOffset          , METH_VARARGS
+    , { "getOffset"             , (PyCFunction)PyRoutingGauge_getOffset         , METH_VARARGS
                                 , "Return the offset of the first track of the given layer." }
-    , { "getWireWidth"          , (PyCFunction)PyRoutingGauge_getWireWidth          , METH_VARARGS
+    , { "getWireWidth"          , (PyCFunction)PyRoutingGauge_getWireWidth      , METH_VARARGS
                                 , "Return the default wire width of the given layer." }
-    , { "getViaWidth"           , (PyCFunction)PyRoutingGauge_getViaWidth          , METH_VARARGS
+    , { "getViaWidth"           , (PyCFunction)PyRoutingGauge_getViaWidth       , METH_VARARGS
                                 , "Return the default via width of the given layer." }
+    , { "getPowerSupplyGauge"   , (PyCFunction)PyRoutingGauge_getPowerSupplyGauge, METH_NOARGS
+                                , "Return the power supply gauge (None if there isn't)." }
     , { "getLayerGauge"         , (PyCFunction)PyRoutingGauge_getLayerGauge     , METH_VARARGS
                                 , "Return the RoutingLayerGauge of the given layer/depth." }
     , { "getLayerDirection"     , (PyCFunction)PyRoutingGauge_getLayerDirection , METH_VARARGS
@@ -556,6 +574,14 @@ extern "C" {
   
   IteratorNextMethod(RoutingLayerGauge)
   VectorMethods     (RoutingLayerGauge)
+
+
+  extern  void  PyRoutingGauge_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeRoutingGauge.tp_dict,RoutingGauge::nlayerdepth,"nlayerdepth");
+  }
 
 
 #else  // End of Python Module Code Part.

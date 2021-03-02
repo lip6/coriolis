@@ -212,6 +212,7 @@ extern "C" {
 
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();
+    PyRoutingGauge_postModuleInit ();
     PyRoutingLayerGauge_postModuleInit ();
     PyAllianceFramework_postModuleInit ();
     

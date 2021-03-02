@@ -14,10 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_ROUTING_LAYER_GAUGE_H
-#define  CRL_ROUTING_LAYER_GAUGE_H
-
-
+#pragma  once
 #include <map>
 #include "hurricane/Commons.h"
 #include "hurricane/Error.h"
@@ -39,6 +36,7 @@ namespace Constant {
 
   enum LayerGaugeType { Default      = (1<<0)
                       , PinOnly      = (1<<1)
+                      , PowerSupply  = (1<<2)
                       };
 
   enum Round          { Superior     = (1<<2)
@@ -277,8 +275,9 @@ inline std::string  getString<const Constant::LayerGaugeType*>
                             ( const Constant::LayerGaugeType* layerGaugeType )
 {
   switch ( *layerGaugeType ) {
-    case Constant::Default: return "Default";
-    case Constant::PinOnly: return "PinOnly";
+    case Constant::Default:     return "Default";
+    case Constant::PinOnly:     return "PinOnly";
+    case Constant::PowerSupply: return "PowerSupply";
   }
   return "Unknown Constant::LayerGaugeType";
 }
@@ -295,8 +294,9 @@ inline std::string  getString<const Constant::LayerGaugeType>
                             ( const Constant::LayerGaugeType layerGaugeType )
 {
   switch ( layerGaugeType ) {
-    case Constant::Default: return "Default";
-    case Constant::PinOnly: return "PinOnly";
+    case Constant::Default:     return "Default";
+    case Constant::PinOnly:     return "PinOnly";
+    case Constant::PowerSupply: return "PowerSupply";
   }
   return "Unknown Constant::LayerGaugeType";
 }
@@ -309,6 +309,3 @@ inline std::string  getString<Constant::LayerGaugeType>
 
 
 IOSTREAM_POINTER_SUPPORT(Constant::LayerGaugeType);
-
-
-#endif  // CRL_ROUTING_LAYER_GAUGE_H

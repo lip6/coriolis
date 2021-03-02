@@ -108,7 +108,8 @@ extern "C" {
       }
       switch( type ) {
         case Constant::Default:
-        case Constant::PinOnly: break;
+        case Constant::PinOnly:
+        case Constant::PowerSupply: break;
         default:
           PyErr_SetString ( ConstructorError, "Bad value for type argument of RoutingLayerGauge.create()." );
           return NULL;
@@ -347,14 +348,15 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Horizontal ,"Horizontal");
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Vertical   ,"Vertical"  );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Default    ,"Default"   );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PinOnly    ,"PinOnly"   );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Superior   ,"Superior"  );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Inferior   ,"Inferior"  );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Nearest    ,"Nearest"   );
-    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Exact      ,"Exact"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Horizontal ,"Horizontal"  );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Vertical   ,"Vertical"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Default    ,"Default"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PinOnly    ,"PinOnly"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::PowerSupply,"PowerSupply" );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Superior   ,"Superior"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Inferior   ,"Inferior"    );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Nearest    ,"Nearest"     );
+    LoadObjectConstant(PyTypeRoutingLayerGauge.tp_dict,Constant::Exact      ,"Exact"       );
   }
 
 

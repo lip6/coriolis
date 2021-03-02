@@ -126,6 +126,19 @@ namespace CRL {
   { return (getLayerGauge(layer) != NULL) or (getViaDepth(layer) != nlayerdepth); }
 
 
+  RoutingLayerGauge* RoutingGauge::getPowerSupplyGauge () const
+  {
+    size_t i = _layerGauges.size();
+    if (i == 0) return NULL;
+    do {
+      --i;
+      if (_layerGauges[i]->getType() == Constant::PowerSupply)
+        return _layerGauges[i];
+    } while ( i > 0);
+    return NULL;
+  }
+
+
   RoutingLayerGauge* RoutingGauge::getHorizontalGauge () const
   {
     RoutingLayerGauge* pinOnly = NULL;
