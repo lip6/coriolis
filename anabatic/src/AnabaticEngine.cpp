@@ -25,6 +25,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Cell.h"
+#include "hurricane/NetExternalComponents.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "crlcore/RoutingGauge.h"
@@ -139,6 +140,7 @@ namespace Anabatic {
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
   using Hurricane::NetRoutingExtension;
+  using Hurricane::NetExternalComponents;
   using Hurricane::Cell;
   using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
@@ -444,9 +446,23 @@ namespace Anabatic {
       _ovEdges.clear();
     }
 
+    exportExternalNets();
     Session::close();
   }
 
+
+  void  AnabaticEngine::exportExternalNets ()
+  {
+    for ( Net* net : getCell()->getNets() ) {
+      if (not net->isExternal()) continue;
+      if (net->isSupply()) continue;
+
+      for ( Segment* segment : net->getSegments() ) {
+        NetExternalComponents::setExternal( segment );
+      }
+    }
+  }
+  
 
   Configuration* AnabaticEngine::getConfiguration ()
   { return _configuration; }

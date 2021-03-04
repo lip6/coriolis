@@ -273,6 +273,7 @@ namespace Anabatic {
                     bool              moveUpNetTrunk          ( AutoSegment*, set<Net*>& globalNets, GCell::Set& invalidateds );
                     void              layerAssign             ( uint32_t method );
                     void              finalizeLayout          ();
+                    void              exportExternalNets      ();
       inline const  AutoContactLut&   _getAutoContactLut      () const;
       inline const  AutoSegmentLut&   _getAutoSegmentLut      () const;
                     void              _link                   ( AutoContact* );

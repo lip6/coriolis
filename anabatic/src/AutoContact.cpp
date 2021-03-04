@@ -474,12 +474,13 @@ namespace Anabatic {
 
   void  AutoContact::setConstraintBox ( const Box& box )
   {
+    cdebug_log(149,0) << "setConstraintBox() " << this << " " << getConstraintBox()
+                      << " from:" << box << endl;
     setCBXMin ( box.getXMin() );
     setCBXMax ( box.getXMax() );
     setCBYMin ( box.getYMin() );
     setCBYMax ( box.getYMax() );
-    cdebug_log(149,0) << "setConstraintBox() - " << this << " " << getConstraintBox()
-                      << " from:" << box << endl;
+    cdebug_log(149,0) << "setConstraintBox() " << this << " " << getConstraintBox() << endl;
     cdebug_log(149,0) << "* " << _gcell << endl;
   }
 
