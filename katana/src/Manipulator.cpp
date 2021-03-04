@@ -1697,14 +1697,10 @@ namespace Katana {
       return false;
     }
 
-    AutoContact* terminal         = _segment->base()->getAutoSource();
-    AutoContact* turn             = _segment->base()->getAutoTarget();
-    bool         isSourceTerminal = true;
+    AutoContact* terminal = _segment->base()->getAutoSource();
+    AutoContact* turn     = _segment->base()->getAutoTarget();
 
-    if (not terminal->isTerminal()) {
-      std::swap( terminal, turn );
-      isSourceTerminal = false;
-    }
+    if (not terminal->isTerminal()) std::swap( terminal, turn );
 
     TrackElement*  perpandicular = _event->getPerpandiculars()[0];
     DataNegociate* data          = perpandicular->getDataNegociate();
@@ -1716,30 +1712,52 @@ namespace Katana {
 
     Box termConstraints ( terminal->getConstraintBox() );
     Box turnConstraints ( turn    ->getConstraintBox() );
+    Interval axisRange = terminal->getUConstraints( Flags::Vertical );
 
-    if (isSourceTerminal) {
-      terminal->setConstraintBox( Box( termConstraints.getXMin()
-                                     , termConstraints.getYMin()
-                                     , termConstraints.getXMax()
-                                     , perpandicular->getAxis() - perpandicular->getPitch()
-                                     ) );
-      turn->setConstraintBox( Box( turnConstraints.getXMin()
-                                 , turnConstraints.getYMin()
-                                 , turnConstraints.getXMax()
-                                 , perpandicular->getAxis() - perpandicular->getPitch()
-                                 ) );
-    } else {
-      terminal->setConstraintBox( Box( termConstraints.getXMin()
-                                     , perpandicular->getAxis() + perpandicular->getPitch()
-                                     , termConstraints.getXMax()
-                                     , termConstraints.getYMax()
-                                     ) );
-      turn->setConstraintBox( Box( turnConstraints.getXMin()
-                                 , perpandicular->getAxis() + perpandicular->getPitch()
-                                 , turnConstraints.getXMax()
-                                 , turnConstraints.getYMax()
-                                 ) );
+    size_t offset      = Track::npos;
+    size_t minBlockage = Track::npos;
+    size_t maxBlockage = Track::npos;
+    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(_segment->getLayer());
+    for ( Track* track : Tracks_Range::get(plane,axisRange) ) {
+      if (offset == Track::npos) offset = track->getIndex();
+      TrackElement* element = track->getSegment( terminal->getX() );
+      if (element and (element->isBlockage() or element->isFixed())) {
+        if (track->getIndex() == offset) {
+          minBlockage = track->getIndex();
+          continue;
+        }
+        if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
+          minBlockage = track->getIndex();
+          continue;
+        }
+        maxBlockage = track->getIndex();
+        break;
+      }
     }
+    Interval nonBlocked ( (minBlockage == Track::npos) ? terminal->getGCell()->getYMin()
+                                                       : plane->getTrackByIndex(minBlockage)->getAxis()
+                        , (maxBlockage == Track::npos) ? terminal->getGCell()->getYMax()
+                                                       : plane->getTrackByIndex(maxBlockage)->getAxis() );
+    cdebug_log(159,0) << "Non blocked vertical " << nonBlocked << endl;
+    Interval turnVConstraints = Interval( turn    ->getUConstraints(Flags::Vertical) );
+    Interval termVConstraints = Interval( terminal->getUConstraints(Flags::Vertical) );
+    turnVConstraints.inflate( perpandicular->getPitch() );
+    turnVConstraints.intersection( nonBlocked );
+    termVConstraints.intersection( nonBlocked );
+
+    cdebug_log(159,0) << "Using: pitch=" << DbU::getValueString(perpandicular->getPitch())
+                      << " axis=" << DbU::getValueString(perpandicular->getAxis())
+                      << " pp=" << perpandicular << endl;
+    terminal->setConstraintBox( Box( termConstraints.getXMin()
+                                   , termVConstraints.getVMin()
+                                   , termConstraints.getXMax()
+                                   , termVConstraints.getVMax()
+                                   ) );
+    turn->setConstraintBox( Box( turnConstraints.getXMin()
+                               , turnVConstraints.getVMin()
+                               , turnConstraints.getXMax()
+                               , turnVConstraints.getVMax()
+                               ) );
 
     cdebug_log(159,0) << "Restrict: " << terminal << " to " << terminal->getConstraintBox() << endl;
     cdebug_log(159,0) << "Restrict: " << turn     << " to " << turn    ->getConstraintBox() << endl;

@@ -522,6 +522,8 @@ namespace {
       if (AllianceFramework::get()->getCellGauge()->getName() == Name("FlexLib")) {
         if (_width >= DbU::fromPhysical( 10.0, DbU::UnitPower::Micro )) {
           delta = 2 * plane->getLayerGauge()->getPitch();
+        } else {
+          delta = plane->getLayerGauge()->getPitch();
         }
       }
     }
@@ -595,7 +597,7 @@ namespace {
       list<Interval>::iterator ichunk = _chunks.begin();
       for ( ; ichunk != _chunks.end() ; ichunk++ ) {
         cdebug_log(159,0) << "  chunk: [" << DbU::getValueString((*ichunk).getVMin())
-                    << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
+                          << ":" << DbU::getValueString((*ichunk).getVMax()) << "]" << endl;
 
         segment = Vertical::create ( net
                                    , layer
