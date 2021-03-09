@@ -209,7 +209,6 @@ class IoNet ( object ):
 # Class : "IoPad".
 
 class IoPad ( object ):
-
     """
     Manage I/O pad instanciation. Gather between one and three IoNet.
     The number of IoNet implies the kind of I/O pad to be used.
@@ -263,6 +262,7 @@ class IoPad ( object ):
         respectively to simple input/output pad, tristate output pad and
         bidirectional pad. See the class definition.
         """
+        trace( 550, '\tIoPad.addNet() net={} iopad={}\n'.format(ioNet,self))
         self.nets.append( ioNet )
         if len(self.nets) == 1:
             if   self.nets[0].coreNet.getDirection() == Net.Direction.IN:  self.direction = IoPad.IN
@@ -306,6 +306,11 @@ class IoPad ( object ):
         """
         padInfo = self.coreToChip.getPadInfo( self.direction )
         if padInfo is None:
+            if len(self.nets) == 0:
+                raise ErrorMessage( 1, [ 'IoPad.createPad(): Cannot find net(s) connected(s) to pad "{}".' \
+                                         .format( self.padInstanceName )
+                                       , '({})'.format( self.ioPadConf ) ] )
+                    
             raise ErrorMessage( 1, 'IoPad.createPad(): Unsupported direction {} ({}) for pad "{}".' \
                                    .format( self.direction
                                           , IoPad.directionToStr(self.direction)

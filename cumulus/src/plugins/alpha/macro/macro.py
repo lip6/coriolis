@@ -54,6 +54,10 @@ class Macro ( object ):
         return rg.getLayerPitch( pdepth )
 
     @staticmethod
+    def getWireWidth ( rg, metal ):
+        return rg.getWireWidth( metal )
+
+    @staticmethod
     def place ( instance, transf, status ):
         ab      = instance.getMasterCell().getAbutmentBox()
         abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
@@ -121,6 +125,7 @@ class Macro ( object ):
                 NetExternalComponents.setInternal( component )
                 pitch  = rg.getPitch( component.getLayer() )
                 ppitch = Macro.getPPitch( rg, component.getLayer() )
+                wwidth = Macro.getWireWidth( rg, component.getLayer() )
                 bb     = component.getBoundingBox()
                 yAxis  = bb.getYCenter()
                 xMax   = bb.getXMin()
@@ -136,7 +141,7 @@ class Macro ( object ):
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
                                               , yAxis
-                                              , pitch
+                                              , pitch + wwidth
                                               , xMin
                                               , xMax - (hMargin-1) * ppitch
                                               )
@@ -145,6 +150,7 @@ class Macro ( object ):
                 NetExternalComponents.setInternal( component )
                 pitch  = rg.getPitch( component.getLayer() )
                 ppitch = Macro.getPPitch( rg, component.getLayer() )
+                wwidth = Macro.getWireWidth( rg, component.getLayer() )
                 bb     = component.getBoundingBox()
                 yAxis  = bb.getYCenter()
                 xMin   = innerAb.getXMax()
@@ -160,20 +166,21 @@ class Macro ( object ):
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
                                               , yAxis
-                                              , pitch
+                                              , pitch + wwidth
                                               , xMin + (hMargin-1) * ppitch
                                               , xMax
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in southPins:
                 NetExternalComponents.setInternal( component )
-                pitch   = rg.getPitch( component.getLayer() )
-                ppitch  = Macro.getPPitch( rg, component.getLayer() )
-                bb      = component.getBoundingBox()
-                xAxis   = bb.getXCenter()
-                yMax    = bb.getYMin()
-                yMin    = xMax - vMargin*ppitch
-                width   = bb.getWidth()
+                pitch  = rg.getPitch( component.getLayer() )
+                ppitch = Macro.getPPitch( rg, component.getLayer() )
+                wwidth = Macro.getWireWidth( rg, component.getLayer() )
+                bb     = component.getBoundingBox()
+                xAxis  = bb.getXCenter()
+                yMax   = bb.getYMin()
+                yMin   = xMax - vMargin*ppitch
+                width  = bb.getWidth()
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
                                           , xAxis
@@ -184,7 +191,7 @@ class Macro ( object ):
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
                                           , xAxis
-                                          , width
+                                          , pitch + wwidth
                                           , yMin
                                           , yMax - (vMargin-1) * ppitch
                                           )
@@ -193,6 +200,7 @@ class Macro ( object ):
                 NetExternalComponents.setInternal( component )
                 pitch  = rg.getPitch( component.getLayer() )
                 ppitch = Macro.getPPitch( rg, component.getLayer() )
+                wwidth = Macro.getWireWidth( rg, component.getLayer() )
                 bb     = component.getBoundingBox()
                 xAxis  = bb.getXCenter()
                 yMin   = innerAb.getYMax()
@@ -208,7 +216,7 @@ class Macro ( object ):
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
                                           , xAxis
-                                          , width
+                                          , pitch + wwidth
                                           , yMin + (vMargin-1) * ppitch
                                           , yMax
                                           )

@@ -103,12 +103,14 @@ class IoSpecs ( object ):
         spec = IoPadSpec( instance, side )
         self._ioPadsLUT[ instance ] = spec
         self._ioPadsSpec.append( spec )
+        trace( 560, '\tIoSpecs.addIoPadSpec() side={} spec={}\n'.format(side,spec) )
         return spec
 
     def loadFromPinmux ( self, fileName ):
         """
         Load ioPadsSpec from a LibreSOC generated pinmux file in JSON format.
         """
+        print( '  o  Loading I/O pad specifications from "{}".'.format(fileName) )
         if not os.path.isfile(fileName):
             raise ErrorMessage( 2, [ 'IoSpecs.loadFromPinmux(): JSON pinmux file not found.'
                                    , '("{}")'.format(fileName) ] )
@@ -128,6 +130,7 @@ class IoSpecs ( object ):
             end = None 
             if padDatas[-1] in '+-*': end = -1
             self._ioPadsLUT[padName].addNets( padDatas[1:end] )
+        trace( 560, '-' )
 
     @property
     def ioPadsSpec ( self ):

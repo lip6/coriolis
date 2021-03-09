@@ -609,11 +609,11 @@ class IoPadConf ( object ):
     def isBidir      ( self ): return self.flags & IoPadConf.BIDIR
   
     def __repr__ ( self ):
-        s = '<IoPadConf {} pad:{} from:{}'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
+        s = '<IoPadConf {} iopad="{}" from="{}"'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
         if self.isBidir():
-          s += ' to:{} en:{}'.format(self.toCoreNetName,self.enableNetName)
+          s += ' to="{}" en="{}"'.format(self.toCoreNetName,self.enableNetName)
         if self.isTristate():
-          s += ' en:{}'.format(self.enableNetName)
+          s += ' en="{}"'.format(self.enableNetName)
         s += '>'
         return s
 
@@ -892,13 +892,14 @@ class IoPin ( object ):
     Create an I/O Pin on a side of a block for one net or a vector of nets.
     """
 
-    SOUTH   = 0x0001
-    NORTH   = 0x0002
-    EAST    = 0x0004
-    WEST    = 0x0008
-    A_BEGIN = 0x0010
-    A_END   = 0x0020
-    A_MASK  = A_BEGIN|A_END
+    SOUTH     = 0x0001
+    NORTH     = 0x0002
+    EAST      = 0x0004
+    WEST      = 0x0008
+    A_BEGIN   = 0x0010
+    A_END     = 0x0020
+    A_MASK    = A_BEGIN|A_END
+    SIDE_MASK = EAST|WEST|NORTH|SOUTH
 
     @staticmethod
     def toStr ( value ):
