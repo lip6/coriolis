@@ -183,8 +183,9 @@ namespace {
         TrackElement* parallel;
         for( Segment* osegment : rp->getSlaveComponents().getSubSet<Segment*>() ) {
           parallel = Session::lookup( osegment );
-          cdebug_log(159,0) << "* " << parallel << endl;
+          if (not parallel) continue;
 
+          cdebug_log(159,0) << "* " << parallel << endl;
           if (parallel->isFixed ()) continue;
           if (parallel->isGlobal()) continue;
           getPerpandiculars( parallel, source, direction, perpandiculars );

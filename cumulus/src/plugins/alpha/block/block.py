@@ -32,6 +32,7 @@ import Anabatic
 import Katana
 import plugins.rsave
 from   plugins                   import getParameter
+from   alpha.macro.macro         import Macro
 from   alpha.block               import timing
 from   alpha.block.spares        import Spares
 from   alpha.block.clocktree     import ClockTree
@@ -327,6 +328,34 @@ class Block ( object ):
                    .format(self.conf.cell.getName()) )
         Block.LUT[ self.conf.cell ] = self
 
+    @staticmethod
+    def _rgetInstance ( cell, path ):
+        """
+        Get the instance designated by path (recursively). The path argument can be
+        either a string of instance names separated by dots or directly a list of
+        instances names.
+        """
+        if isinstance(path,str):
+            path = path.split( '.' )
+        elif not isinstance(path,list):
+            raise ErrorMessage( 1, 'Block._rgetInstance(): "path" argument is neither a string or a list ({})"' \
+                                   .format(path) )
+        instance = cell.getInstance( path[0] )
+        if instance is None:
+            raise ErrorMessage( 1, 'Block._rgetInstance(): no instance "{}" in cell "{}"' \
+                                   .format(path[0],cell.getName()) )
+        if len(path) == 1:
+            return instance
+        return Block._rgetInstance( instance.getMasterCell(), path[1:] )
+
+    def rgetCoreInstance ( self, path ):
+        """
+        Get the instance designated by path (recursively). The path argument can be
+        either a string of instance names separated by dots or directly a list of
+        instances names. The root of the path must be *core* cell.
+        """
+        return Block._rgetInstance( self.conf.core, path )
+
     def setUnexpandPins ( self, sides ):
         """
         Prevent Pins from the selected sides to be stick out of one pitch.
@@ -550,6 +579,50 @@ class Block ( object ):
         self.etesian.flattenPower()
         Breakpoint.stop( 100, 'Placement done.' )
         self.etesian.clearColoquinte()
+
+    def placeMacro ( self, ipath, transf ):
+        """
+        Place the instance refered by ``ipath`` at position ``transformation``.
+        Both  parameters are relative to the core cell.
+        """
+        with UpdateSession():
+            instance   = self.rgetCoreInstance( ipath )
+            macro      = Macro.wrap( instance.getMasterCell()
+                                   , self.conf.routingGauge.getName(), 2, 2 )
+            instanceAb = instance.getMasterCell().getAbutmentBox()
+            coreTransf = self.conf.icore.getTransformation()
+            if self.conf.isCoreBlock:
+                pnrAb = self.conf.icorona.getMasterCell().getAbutmentBox()
+            else:
+                pnrAb = self.conf.core.getAbutmentBox()
+            print( 'pnrAb={}'.format(pnrAb) )
+            print( 'coreTransf={}'.format(coreTransf) )
+            macroPosition = transf.getTranslation()
+            coreTransf.applyOn( macroPosition )
+            xoffset = macroPosition.getX() - pnrAb.getXMin()
+            xpitch  = self.conf.vDeepRG.getPitch()
+            print( 'Original X offset: {}'.format(DbU.getValueString(xoffset)) )
+            if xoffset % xpitch:
+                xoffset += xpitch - (xoffset % xpitch)
+            print( 'Pitched X offset: {}'.format(DbU.getValueString(xoffset)) )
+            yoffset = macroPosition.getY() - pnrAb.getYMin()
+            ypitch  = self.conf.hDeepRG.getPitch()
+            print( 'Original Y offset: {}'.format(DbU.getValueString(yoffset)) )
+            if yoffset % ypitch:
+                yoffset += ypitch - (yoffset % ypitch)
+            print( 'Pitched Y offset: {}'.format(DbU.getValueString(yoffset)) )
+            macroPosition = Point( xoffset, yoffset )
+            print( 'Position in corona={}'.format(macroPosition) )
+            coreTransf.invert()
+            coreTransf.applyOn( macroPosition )
+            print( 'Position in core={}'.format(macroPosition) )
+            print( 'instanceAb={}'.format(instanceAb) )
+            Macro.place( instance.getCell()
+                       , instance
+                       , Transformation( macroPosition.getX()
+                                       , macroPosition.getY()
+                                       , Transformation.Orientation.ID )
+                       , Instance.PlacementStatus.FIXED )
 
     def route ( self ):
         routedCell = self.conf.corona if self.conf.isCoreBlock else self.conf.cell

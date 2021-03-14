@@ -16,6 +16,7 @@
 from   __future__ import print_function
 import sys
 import os.path
+from   operator  import itemgetter, attrgetter, methodcaller
 import Cfg
 from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
                         Box, Path, Layer, Occurrence, Net,           \
@@ -43,22 +44,12 @@ class Macro ( object ):
 
     @staticmethod
     def lookup ( macroCell ):
-        if Macro.LUT.has_key(macroCell): return True
-        return False
+        if Macro.LUT.has_key(macroCell): return Macro.LUT[ macroCell ]
+        return None
 
     @staticmethod
-    def getPPitch ( rg, metal ):
-        depth = rg.getLayerDepth( metal )
-        if depth < rg.getDepth(): pdepth = depth + 1
-        else:                     pdepth = depth - 1
-        return rg.getLayerPitch( pdepth )
-
-    @staticmethod
-    def getWireWidth ( rg, metal ):
-        return rg.getWireWidth( metal )
-
-    @staticmethod
-    def place ( instance, transf, status ):
+    def place ( topCell, instance, transf, status ):
+        macro   = Macro.lookup( instance.getMasterCell() )
         ab      = instance.getMasterCell().getAbutmentBox()
         abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
         abShift.applyOn( transf )
@@ -68,15 +59,48 @@ class Macro ( object ):
     @staticmethod
     def wrap ( macroCell, gaugeName, hMargin, vMargin ):
         """
-        Encapsulate the macro cell, if not already done. Returns True
-        if the encapsulation actually takes place.
+        Adjust the interface of a macro block cell to better fit a
+        given routing gauge. Keep a table of the already processed
+        blocks (must be run only once for a block).
+
+        For an explanation of the parameters, see Macro.__init__().
+        """
+
+        macro = Macro.lookup( macroCell )
+        if macro is not None:
+            return macro
+        return Macro( macroCell, gaugeName, hMargin, vMargin )
+
+    def getPPitch ( self, metal ):
+        depth = self.rg.getLayerDepth( metal )
+        if depth < self.rg.getDepth(): pdepth = depth + 1
+        else:                          pdepth = depth - 1
+        return self.rg.getLayerPitch( pdepth )
+
+    def getWireWidth ( self, metal ):
+        return self.rg.getWireWidth( metal )
+
+    def getNearestTrackAxis ( self, metal, axis ):
+        lg = self.rg.getLayerGauge( metal )
+        if lg.getDirection() == RoutingLayerGauge.Horizontal:
+            axisMin = self.outerAb.getYMin()
+            axisMax = self.outerAb.getYMax()
+        else:
+            axisMin = self.outerAb.getXMin()
+            axisMax = self.outerAb.getXMax()
+        trackIndex = lg.getTrackIndex( axisMin, axisMax, axis, RoutingLayerGauge.Nearest )
+        return axisMin + lg.getOffset() + trackIndex * lg.getPitch()
+
+    def __init__ ( self, macroCell, gaugeName, hMargin, vMargin ):
+        """
+        Encapsulate a macro cell.to better fit the routing gauge.
 
         :param macroCell: The macro cell to be encapsulated.
         :param gaugeName: The name of the RoutingGauge to use.
-        :param xMargin:   The horizontal margin, expressed in pitchs of the
-                          lowest vertical routing metal (usually METAL3).
-        :param yMargin:   The vertical margin, expressed in pitchs of the
-                          lowesthorizontal routing metal (usually METAL2).
+        :param hMargin:   The number of pitchs the horizontal terminals
+                          will stick out of the original abutment box.
+        :param vMargin:   The number of pitchs the vertical terminals
+                          will stick out of the original abutment box.
 
         The abutment box of the block is enlarged so both it's dimensions
         are a multiple of the sliceHeight. It is then enlarged of one  more
@@ -88,17 +112,19 @@ class Macro ( object ):
           that are half free and half occluded by the block itself may
           cause (stupid) deadlock to appear.
         """
-        if Macro.lookup(macroCell): return False
+        self.cell = macroCell
+        Macro.LUT[ self.cell ] = self
 
         af = CRL.AllianceFramework.get()
-        rg = af.getRoutingGauge( gaugeName )
-        ab = macroCell.getAbutmentBox()
+        ab = self.cell.getAbutmentBox()
+        self.rg      = af.getRoutingGauge( gaugeName )
+        self.innerAb = ab
         sliceHeight = af.getCellGauge( gaugeName ).getSliceHeight()
         westPins  = []
         eastPins  = []
         northPins = []
         southPins = []
-        for net in macroCell.getNets():
+        for net in self.cell.getNets():
             if not net.isExternal() or net.isSupply() or net.isClock():
                 continue
             for component in net.getComponents():
@@ -111,114 +137,185 @@ class Macro ( object ):
                 elif ab.getXMin() == bb.getXMin():  westPins.append( component )
                 elif ab.getYMax() == bb.getYMax(): northPins.append( component )
                 elif ab.getYMin() == bb.getYMin(): southPins.append( component )
-        innerAb = ab
         xAdjust = 0
         yAdjust = 0
         if ab.getWidth () % sliceHeight: xAdjust = sliceHeight - ab.getWidth () % sliceHeight
         if ab.getHeight() % sliceHeight: yAdjust = sliceHeight - ab.getHeight() % sliceHeight
-        innerAb.inflate( 0, 0, xAdjust, yAdjust )
-        outerAb = innerAb
-        outerAb.inflate( sliceHeight )
+        self.innerAb.inflate( 0, 0, xAdjust, yAdjust )
+        self.outerAb = self.innerAb
+        self.outerAb.inflate( sliceHeight )
+        westPins .sort( key=lambda k: k.getBoundingBox().getYCenter() )
+        eastPins .sort( key=lambda k: k.getBoundingBox().getYCenter() )
+        northPins.sort( key=lambda k: k.getBoundingBox().getXCenter() )
+        southPins.sort( key=lambda k: k.getBoundingBox().getXCenter() )
                             
         with UpdateSession():
             for component in westPins:
                 NetExternalComponents.setInternal( component )
-                pitch  = rg.getPitch( component.getLayer() )
-                ppitch = Macro.getPPitch( rg, component.getLayer() )
-                wwidth = Macro.getWireWidth( rg, component.getLayer() )
-                bb     = component.getBoundingBox()
-                yAxis  = bb.getYCenter()
-                xMax   = bb.getXMin()
-                xMin   = xMax - hMargin*ppitch
-                width  = bb.getHeight()
+                pitch     = self.rg.getPitch( component.getLayer() )
+                ppitch    = self.getPPitch( component.getLayer() )
+                wwidth    = self.getWireWidth( component.getLayer() )
+                bb        = component.getBoundingBox()
+                yAxis     = bb.getYCenter()
+                yOngrid   = self.getNearestTrackAxis( component.getLayer(), yAxis )
+                xMax      = bb.getXMin()
+                xMin      = xMax - hMargin*ppitch
+                width     = bb.getHeight()
+                ppYAxis   = yAxis
+                ppYOngrid = yOngrid
+                if not self.rg.isSymbolic():
+                    if ppYAxis < ppYOngrid:
+                        ppYAxis   -= width/2
+                        ppYOngrid += wwidth/2
+                    else:
+                        ppYAxis   += width/2
+                        ppYOngrid -= wwidth/2
+                vertical = Vertical.create( component.getNet()
+                                          , component.getLayer()
+                                          , bb.getXMin()
+                                          , width
+                                          , ppYAxis
+                                          , ppYOngrid
+                                          )
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
-                                              , yAxis
-                                              , width
+                                              , yOngrid
+                                              , wwidth
                                               , xMin
                                               , xMax
                                               )
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
-                                              , yAxis
-                                              , pitch + wwidth
+                                              , yOngrid
+                                              , wwidth
                                               , xMin
-                                              , xMax - (hMargin-1) * ppitch
+                                              , xMax - ppitch
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:
                 NetExternalComponents.setInternal( component )
-                pitch  = rg.getPitch( component.getLayer() )
-                ppitch = Macro.getPPitch( rg, component.getLayer() )
-                wwidth = Macro.getWireWidth( rg, component.getLayer() )
-                bb     = component.getBoundingBox()
-                yAxis  = bb.getYCenter()
-                xMin   = innerAb.getXMax()
-                xMax   = xMin + hMargin*ppitch
-                width  = bb.getHeight()
+                pitch     = self.rg.getPitch( component.getLayer() )
+                ppitch    = self.getPPitch( component.getLayer() )
+                wwidth    = self.getWireWidth( component.getLayer() )
+                bb        = component.getBoundingBox()
+                yAxis     = bb.getYCenter()
+                yOngrid   = self.getNearestTrackAxis( component.getLayer(), yAxis )
+                xMin      = self.innerAb.getXMax()
+                xMax      = xMin + hMargin*ppitch
+                width     = bb.getHeight()
+                ppYAxis   = yAxis
+                ppYOngrid = yOngrid
+                if not self.rg.isSymbolic():
+                    if ppYAxis < ppYOngrid:
+                        ppYAxis   -= width/2
+                        ppYOngrid += wwidth/2
+                    else:
+                        ppYAxis   += width/2
+                        ppYOngrid -= wwidth/2
+                vertical = Vertical.create( component.getNet()
+                                          , component.getLayer()
+                                          , bb.getXMax()
+                                          , width
+                                          , ppYAxis
+                                          , ppYOngrid
+                                          )
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
-                                              , yAxis
-                                              , width
+                                              , yOngrid
+                                              , pitch + wwidth
                                               , xMin
                                               , xMax
                                               )
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
-                                              , yAxis
+                                              , yOngrid
                                               , pitch + wwidth
-                                              , xMin + (hMargin-1) * ppitch
+                                              , xMin + ppitch
                                               , xMax
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in southPins:
                 NetExternalComponents.setInternal( component )
-                pitch  = rg.getPitch( component.getLayer() )
-                ppitch = Macro.getPPitch( rg, component.getLayer() )
-                wwidth = Macro.getWireWidth( rg, component.getLayer() )
-                bb     = component.getBoundingBox()
-                xAxis  = bb.getXCenter()
-                yMax   = bb.getYMin()
-                yMin   = xMax - vMargin*ppitch
-                width  = bb.getWidth()
+                pitch     = self.rg.getPitch( component.getLayer() )
+                ppitch    = self.getPPitch( component.getLayer() )
+                wwidth    = self.getWireWidth( component.getLayer() )
+                bb        = component.getBoundingBox()
+                xAxis     = bb.getXCenter()
+                xOngrid   = self.getNearestTrackAxis( component.getLayer(), xAxis )
+                yMax      = bb.getYMin()
+                yMin      = yMax - vMargin*ppitch
+                width     = bb.getWidth()
+                ppXAxis   = xAxis
+                ppXOngrid = xOngrid
+                if not self.rg.isSymbolic():
+                    if ppXAxis < ppXOngrid:
+                        ppXAxis   -= width/2
+                        ppXOngrid += wwidth/2
+                    else:
+                        ppXAxis   += width/2
+                        ppXOngrid -= wwidth/2
+                horizontal = Horizontal.create( component.getNet()
+                                              , component.getLayer()
+                                              , bb.getYMin()
+                                              , width
+                                              , ppXAxis
+                                              , ppXOngrid
+                                              )
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
-                                          , xAxis
-                                          , width
+                                          , xOngrid
+                                          , wwidth
                                           , yMin
                                           , yMax
                                           )
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
-                                          , xAxis
-                                          , pitch + wwidth
+                                          , xOngrid
+                                          , wwidth
                                           , yMin
-                                          , yMax - (vMargin-1) * ppitch
+                                          , yMax - ppitch
                                           )
                 NetExternalComponents.setExternal( vertical )
             for component in northPins:
                 NetExternalComponents.setInternal( component )
-                pitch  = rg.getPitch( component.getLayer() )
-                ppitch = Macro.getPPitch( rg, component.getLayer() )
-                wwidth = Macro.getWireWidth( rg, component.getLayer() )
-                bb     = component.getBoundingBox()
-                xAxis  = bb.getXCenter()
-                yMin   = innerAb.getYMax()
-                yMax   = xMin + vMargin*ppitch
-                width  = bb.getWidth()
+                pitch     = self.rg.getPitch( component.getLayer() )
+                ppitch    = self.getPPitch( component.getLayer() )
+                wwidth    = self.getWireWidth( component.getLayer() )
+                bb        = component.getBoundingBox()
+                xAxis     = bb.getXCenter()
+                xOngrid   = self.getNearestTrackAxis( component.getLayer(), xAxis )
+                yMin      = self.innerAb.getYMax()
+                yMax      = yMin + vMargin*ppitch
+                width     = bb.getWidth()
+                ppXAxis   = xAxis
+                ppXOngrid = xOngrid
+                if not self.rg.isSymbolic():
+                    if ppXAxis < ppXOngrid:
+                        ppXAxis   -= width/2
+                        ppXOngrid += wwidth/2
+                    else:
+                        ppXAxis   += width/2
+                        ppXOngrid -= wwidth/2
+                horizontal = Horizontal.create( component.getNet()
+                                              , component.getLayer()
+                                              , bb.getYMax()
+                                              , width
+                                              , ppXAxis
+                                              , ppXOngrid
+                                              )
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
-                                          , xAxis
-                                          , width
+                                          , xOngrid
+                                          , pitch + wwidth
                                           , yMin
                                           , yMax
                                           )
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
-                                          , xAxis
+                                          , xOngrid
                                           , pitch + wwidth
-                                          , yMin + (vMargin-1) * ppitch
+                                          , yMin + ppitch
                                           , yMax
                                           )
                 NetExternalComponents.setExternal( vertical )
-            macroCell.setAbutmentBox( outerAb )
+        self.cell.setAbutmentBox( self.outerAb )

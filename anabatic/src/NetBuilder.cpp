@@ -228,22 +228,44 @@ namespace Anabatic {
 
   void  NetBuilder::getPositions ( Component* anchor, Point& source, Point& target )
   {
-    Segment* segment = dynamic_cast<Segment*>( anchor );
+    Segment* segment   = dynamic_cast<Segment*>( anchor );
     if (segment) {
       source = segment->getSourcePosition();
       target = segment->getTargetPosition();
-      return;
+    } else {
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( anchor );
+      if (rp) {
+        source = rp->getSourcePosition();
+        target = rp->getTargetPosition();
+      } else {
+        source = anchor->getPosition();
+        target = anchor->getPosition();
+        return;
+      }
     }
 
-    RoutingPad* rp = dynamic_cast<RoutingPad*>( anchor );
-    if (rp) {
-      source = rp->getSourcePosition();
-      target = rp->getTargetPosition();
-      return;
-    }
+    if (source == target) return;
+    if (source.getX() > target.getX()) swap( source, target );
+    if (source.getY() > target.getY()) swap( source, target );
 
-    source = anchor->getPosition();
-    target = anchor->getPosition();
+    if (not Session::getRoutingGauge()->isSymbolic()) {
+      size_t    rpDepth   = Session::getLayerDepth( anchor->getLayer() );
+      Flags     direction = Session::getDirection ( rpDepth );
+      DbU::Unit wwidth    = Session::getWireWidth (rpDepth) / 2;
+      cdebug_log(145,0) << "Not a symbolic gauge, shrink positions of " << DbU::getValueString(wwidth)  << endl;
+      if (rpDepth == 0) return;
+      if (direction.contains(Flags::Horizontal)) {
+        cdebug_log(145,0) << "H shrink" << endl;
+        source.translate(  wwidth, 0 );
+        target.translate( -wwidth, 0 );
+      } else {
+        cdebug_log(145,0) << "V shrink" << endl;
+        source.translate( 0,  wwidth );
+        target.translate( 0, -wwidth );
+      }
+    } else {
+      cdebug_log(145,0) << "Symbolic gauge, no shrink" << endl;
+    }
   }
 
 

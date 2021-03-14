@@ -70,10 +70,20 @@ class Chip ( Block ):
                 self.conf.validated = False
         return self.conf.validated
   
-    def doCoronaFloorplan ( self ):
+    def doChipFloorplan ( self ):
+        self.conf.computeCoronaBorder()
+        self.conf.chipValidate()
         if not self.conf.validated:
-            raise ErrorMessage( 1, 'chip.doCoronaFloorplan(): Chip is not valid, aborting.' )
-            return
+            raise ErrorMessage( 1, 'chip.doChipFloorplan(): Chip is not valid, aborting.' )
+        self.conf.chip.setAbutmentBox( self.conf.chipAb )
+        trace( 550, '\tSet chip ab:{}\n'.format(self.conf.chip.getAbutmentBox()) )
+        trace( 550, '\tUsing core ab:{}\n'.format(self.conf.core.getAbutmentBox()) )
+        self.padsCorona = plugins.alpha.chip.pads.Corona( self.conf )
+        self.conf.validated =  self.padsCorona.validate()
+        if not self.conf.validated:
+            return False
+        self.padsCorona.doLayout()
+        self.validate()
         minHCorona = self.conf.minHCorona
         minVCorona = self.conf.minVCorona
         innerBb    = Box( self.conf.coreAb )
@@ -98,6 +108,8 @@ class Chip ( Block ):
             y = y - (y % self.conf.sliceHeight)
             self.conf.icore.setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
             self.conf.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.padsCorona.doPowerLayout()
+        self.conf.refresh()
 
     def doConnectCore ( self ):
         if self.conf.routingGauge.hasPowerSupply():
@@ -119,22 +131,6 @@ class Chip ( Block ):
         self.conf.refresh()
   
     def doPnR ( self ):
-        self.conf.computeCoronaBorder()
-        self.conf.chipValidate()
-        if not self.conf.validated:
-            raise ErrorMessage( 1, 'chip.doChipPnR(): Chip is not valid, aborting.' )
-        self.conf.chip.setAbutmentBox( self.conf.chipAb )
-        trace( 550, '\tSet chip ab:{}\n'.format(self.conf.chip.getAbutmentBox()) )
-        trace( 550, '\tUsing core ab:{}\n'.format(self.conf.core.getAbutmentBox()) )
-        self.padsCorona = plugins.alpha.chip.pads.Corona( self.conf )
-        self.conf.validated =  self.padsCorona.validate()
-        if not self.conf.validated:
-            return False
-        self.padsCorona.doLayout()
-        self.validate()
-        self.doCoronaFloorplan()
-        self.padsCorona.doPowerLayout()
-        self.conf.refresh()
         super(Chip,self).doPnR()
         self.conf.refresh( self.conf.chip )
         return self.conf.validated

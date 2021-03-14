@@ -360,6 +360,31 @@ namespace Anabatic {
   }
 
 
+  DbU::Unit  Session::_getNearestTrackAxis ( const Layer* layer, DbU::Unit axis, uint32_t mode )
+  {
+    Box ab = _anabatic->getCell()->getAbutmentBox();
+
+    RoutingLayerGauge* lg = _routingGauge->getLayerGauge( layer );
+    if (not lg) return axis;
+    
+    DbU::Unit minAxis = 0;
+    DbU::Unit maxAxis = 0;
+    if (lg->getDirection() == Constant::Horizontal) {
+      minAxis = ab.getYMin();
+      maxAxis = ab.getYMax();
+    } else {
+      minAxis = ab.getXMin();
+      maxAxis = ab.getXMax();
+    }
+    DbU::Unit trackAxis = lg->getTrackPosition( minAxis
+                                              , lg->getTrackIndex( minAxis
+                                                                 , maxAxis
+                                                                 , axis
+                                                                 , mode ) );
+    return trackAxis;
+  }
+
+
   Point  Session::_getNearestGridPoint ( Point p, Box constraint )
   {
     Box ab = _anabatic->getCell()->getAbutmentBox();

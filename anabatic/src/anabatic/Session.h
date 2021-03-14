@@ -132,6 +132,7 @@ namespace Anabatic {
       static  inline DbU::Unit                         getWireWidth          ( const Layer* );
       static  inline DbU::Unit                         getViaWidth           ( const Layer* );
       static  inline DbU::Unit                         getExtensionCap       ( const Layer* );
+      static  inline DbU::Unit                         getNearestTrackAxis   ( const Layer*,  DbU::Unit, uint32_t mode );
       static  inline Point                             getNearestGridPoint   ( Point, Box constraints );
       static  inline size_t                            getSegmentStackSize   ();
       static  inline size_t                            getContactStackSize   ();
@@ -173,6 +174,7 @@ namespace Anabatic {
                      void                              _revalidateTopology   ();
       virtual        size_t                            _revalidate           ();
                      DbU::Unit                         _getPitch             ( size_t depth, Flags flags ) const;
+                     DbU::Unit                         _getNearestTrackAxis  ( const Layer*, DbU::Unit, uint32_t mode );
                      Point                             _getNearestGridPoint  ( Point, Box constraints );
                      Record*                           _getRecord            () const;
                      string                            _getString            () const;
@@ -277,6 +279,7 @@ namespace Anabatic {
   inline DbU::Unit                         Session::getExtensionCap      ( const Layer* layer ) { return getConfiguration()->getExtensionCap(layer); }
   inline Flags                             Session::getDirection         ( const Layer* layer ) { return getDirection( getLayerDepth(layer) ); }
   inline Point                             Session::getNearestGridPoint  ( Point p, Box b )     { return get("getNearestGridPoint()")->_getNearestGridPoint(p,b); }
+  inline DbU::Unit                         Session::getNearestTrackAxis  ( const Layer* layer, DbU::Unit axis, uint32_t mode ) { return get("getNearestTrackAxis()")->_getNearestTrackAxis(layer,axis,mode); }
                                            
   inline void                              Session::_dogleg              ( AutoSegment* segment ) { _doglegs.push_back(segment); }
   inline void                              Session::_doglegReset         () { _doglegs.clear(); }
