@@ -866,6 +866,7 @@ extern "C" {
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildClockRings ,"Flags_BuildClockRings");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildSupplyRings,"Flags_BuildSupplyRings");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoClockFlatten  ,"Flags_NoClockFlatten");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::TerminalNetlist ,"Flags_TerminalNetlist");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::AbstractedSupply,"Flags_AbstractedSupply");
   }
 
