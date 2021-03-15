@@ -33,6 +33,7 @@ namespace  CRL {
   using std::cerr;
   using std::endl;
   using std::hex;
+  using std::string;
   using std::ostringstream;
   using Hurricane::tab;
   using Hurricane::Exception;
@@ -45,6 +46,8 @@ namespace  CRL {
   using Isobar::HurricaneError;
   using Isobar::HurricaneWarning;
   using Isobar::getPyHash;
+  using Isobar::__cs;
+  using Isobar::Converter;
   using Isobar::ParseOneArg;
   using Isobar::ParseTwoArg;
   using Isobar::PyCell;
@@ -72,19 +75,42 @@ extern "C" {
   extern PyObject* PyToolBox_createPartRing ( PyObject* module, PyObject* args )
   { 
     cdebug_log(30,0) << "PyToolBox_createPartRing ()" << endl;
-
     HTRY
-    PyObject* arg0;
-    PyObject* arg1;
-
-    if ( not ParseTwoArg ( "CRL.createPartRing", args, CELL_STRING_ARG, &arg0, &arg1 ) )
-      return NULL;
-
-    createPartRing ( PYCELL_O(arg0), PyString_AsString(arg1) );
-    HCATCH
-
+      PyObject* arg0;
+      PyObject* arg1;
+      if ( not ParseTwoArg( "CRL.createPartRing", args, CELL_STRING_ARG, &arg0, &arg1 ) )
+        return NULL;
+      createPartRing( PYCELL_O(arg0), PyString_AsString(arg1) );
+      HCATCH
     Py_RETURN_NONE;
   } 
+
+
+  extern PyObject* PyToolBox_restoreNetsDirection ( PyObject* module, PyObject* args )
+  {
+    cdebug_log(30,0) << "PyToolbox_restoreNetsDirection()" << endl;
+    HTRY
+      PyObject* arg0 = NULL;
+      PyObject* arg1 = NULL;
+      __cs.init( "CRL.restoreNetsDirection" );
+      if (not PyArg_ParseTuple(args,"O&O&:CRL.restoreNetsDirection"
+                              ,Converter,&arg0
+                              ,Converter,&arg1
+                              )) {
+          PyErr_SetString( ConstructorError, "CRL.restoreNetsDirection(): Takes exactly two parameters." );
+          return NULL;
+      }
+  
+      if (__cs.getObjectIds() == ":ent:int") {
+        restoreNetsDirection( PYCELL_O(arg0), PyInt_AsLong(arg1) );
+      } else {
+        string message = "CRL.restoreNetsDirection(): Bad type of parameter(s), \"" + __cs.getObjectIds() + "\".";
+        PyErr_SetString( ConstructorError, message.c_str() );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
 
 
 #endif  // End of Shared Library Code Part.

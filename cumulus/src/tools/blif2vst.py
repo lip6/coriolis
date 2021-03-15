@@ -7,16 +7,12 @@ try:
     import optparse
     import helpers
     from   helpers    import showPythonTrace
-    from   helpers.io import ErrorMessage
-    from   helpers.io import catch
+    from   helpers.io import ErrorMessage, catch
     helpers.loadUserSettings()
     import Cfg
     import Hurricane
-    from   Hurricane  import DbU
-    from   Hurricane  import UpdateSession
-    from   Hurricane  import Breakpoint
-    from   Hurricane  import Transformation
-    from   Hurricane  import Instance
+    from   Hurricane  import DbU, UpdateSession, Breakpoint, Transformation, \
+                             Cell, Instance
     import Viewer
     import CRL
     import plugins.rsave
@@ -73,6 +69,7 @@ if __name__ == '__main__':
         print '  o  Renaming RTLIL anonymous top cell "top" into "%s".' % options.cellName
         cell.setName( options.cellName )
     renameNMigenUniquify( cell )
+    CRL.restoreNetsDirection( cell, Cell.Flags_TerminalNetlist )
   
     kw          = {}
     kw['views'] = views

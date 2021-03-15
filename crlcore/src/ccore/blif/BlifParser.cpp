@@ -553,7 +553,8 @@ namespace {
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
 
-      if (_cell->getName() == "sm0") cerr << "sm0 netPlug:" << name << endl;
+      // if (_cell->getName() == "ALU_dec19")
+      //   cerr << "ALU_dec19 net create:" << direction << " " << net << endl;
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
@@ -562,7 +563,8 @@ namespace {
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
 
-      if (_cell->getName() == "sm0") cerr << "sm0 netPlug:" << name << endl;
+      // if (_cell->getName() == "ALU_dec19")
+      //   cerr << "ALU_dec19 net merge:" << direction << " " << net << endl;
     }
     return net;
   }

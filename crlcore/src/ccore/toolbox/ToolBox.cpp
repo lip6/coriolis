@@ -18,6 +18,7 @@
 #include "hurricane/Pin.h"
 #include "hurricane/Library.h"
 #include "hurricane/Net.h"
+#include "hurricane/HyperNet.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Instance.h"
 #include "hurricane/Segment.h"
@@ -26,6 +27,7 @@
 #include "hurricane/Warning.h"
 using namespace Hurricane;
 
+#include "crlcore/Utilities.h"
 #include "crlcore/ToolBox.h"
 
     
@@ -54,7 +56,70 @@ namespace {
   }
 
 
-} // End of anonymous namespace.
+// -------------------------------------------------------------------
+// Class  :  "::DepthOrder".
+
+  class DepthOrder {
+    private:
+      typedef  map <const Cell*,size_t,Entity::CompareById>  CellMap;
+      typedef  pair<const Cell*,size_t>                      CellDepth;
+
+      class CompareDepth {
+        public:
+          inline bool operator() ( const CellDepth& lhs, const CellDepth& rhs );
+      };
+    public:
+                                      DepthOrder    ( const Cell*, Cell::Flags stopMask=Cell::Flags::NoFlags );
+      inline const vector<CellDepth>& getCellDepths () const;
+    private:
+      size_t                          computeDepth  ( CellMap&, const Cell* );
+    private:
+      Cell::Flags        _stopMask;
+      vector<CellDepth>  _cellDepths;
+  };
+
+
+  inline bool DepthOrder::CompareDepth::operator() ( const CellDepth& lhs, const CellDepth& rhs )
+  {
+    if (lhs.second < rhs.second) return true;
+    if (lhs.second > rhs.second) return false;
+    return lhs.first->getId() < rhs.first->getId();
+  }
+
+
+  inline const vector<DepthOrder::CellDepth>& DepthOrder::getCellDepths () const { return _cellDepths; }
+
+
+  DepthOrder::DepthOrder ( const Cell* top, Cell::Flags stopMask )
+    : _stopMask  (stopMask)
+    , _cellDepths()
+  {
+    CellMap  cellMap;
+
+    computeDepth( cellMap, top );
+
+    for ( auto element : cellMap ) _cellDepths.push_back( element );
+    sort( _cellDepths.begin(), _cellDepths.end(), CompareDepth() );
+  }
+
+
+  size_t  DepthOrder::computeDepth ( CellMap& cellMap, const Cell* cell )
+  {
+    auto ielement = cellMap.find( cell );
+    if (ielement != cellMap.end()) return (*ielement).second;
+
+    size_t depth = 0;
+    for ( const Instance* instance : cell->getInstances() ) {
+      if (not (instance->getMasterCell()->getFlags() & _stopMask)) {
+        depth = std::max( depth, computeDepth(cellMap,instance->getMasterCell()) + 1 );
+      }
+    }
+    cellMap.insert( make_pair(cell,depth) );
+    return depth;
+  }
+
+
+} // Anonymous namespace.
 
 
 namespace CRL {
@@ -559,6 +624,103 @@ void ConnectPlugHooks(Cell* cell)
     map<const Cell*,size_t,Entity::CompareById>  gatesByMaster;
 
     return _getInstancesCount ( cell, gatesByMaster );
+  }
+
+
+  void  _restoreNetsDirection ( Cell* cell )
+  {
+    for ( Net* net : cell->getNets() ) {
+      if (not net->isExternal()) continue;
+      if (net->isSupply()) continue;
+
+      size_t drivers = 0;
+      size_t sinks   = 0;
+      for ( Plug* plug : net->getPlugs() ) {
+        Net* masterNet = plug->getMasterNet();
+        Net::Direction direction = masterNet->getDirection();
+        if (direction & Net::Direction::DirIn)  {
+          sinks += 1;
+        } else {
+          if (direction & Net::Direction::DirOut) { 
+            drivers += 1;
+          }
+        }
+        if ((direction & Net::Direction::INOUT) == Net::Direction::INOUT) {
+          cparanoid << Warning( "Net \"%s\" of cell \"%s\" has INOUT plug, considered as IN."
+                              , getString(net->getName()).c_str()
+                              , getString(cell->getName()).c_str()
+                              ) << endl;
+        }
+      }
+      if ((drivers == 0) and (sinks == 0)) {
+        cparanoid << Warning( "Net \"%s\" of cell \"%s\" has neither driver nor sink, default as IN."
+                            , getString(net->getName()).c_str()
+                            , getString(cell->getName()).c_str()
+                            ) << endl;
+        net->setDirection( Net::Direction::DirIn );
+        continue;
+      }
+      Net::Direction direction = net->getDirection();
+      if (drivers == 0) {
+        if (not (direction & Net::Direction::DirIn)) {
+          cerr << Warning( "In Cell \"%s\" restoring %s as input (d=%d, s=%d)."
+                         , getString(cell->getName()).c_str()
+                         , getString(net).c_str()
+                         , drivers
+                         , sinks
+                         ) << endl;
+          net->setDirection( Net::Direction::DirIn );
+        }
+        continue;
+      }
+      if (not (direction & Net::Direction::DirOut)) {
+        cerr << Warning( "In Cell \"%s\" restoring %s as output (d=%d, s=%d)."
+                       , getString(cell->getName()).c_str()
+                       , getString(net).c_str()
+                       , drivers
+                       , sinks
+                       ) << endl;
+        net->setDirection( Net::Direction::DirOut );
+        for ( Occurrence occurrence : HyperNet(Occurrence(net)).getComponentOccurrences() ) {
+          Plug* plug = dynamic_cast<Plug*>( occurrence.getEntity() );
+          if (plug) {
+            cerr << "          | " << occurrence.getPath().getCompactString(false)
+                 << "." << plug->getInstance()->getName()
+                 << ":" << plug->getMasterNet()->getName()
+                 << " (" << plug->getMasterNet()->getCell()->getName() << ")" << endl;
+          } else {
+            cerr << "          | " << occurrence << endl;
+          }
+        }
+      }
+      if (drivers > 1) {
+        cerr << Warning( "In Cell \"%s\", %s has more than one driver (%d)."
+                       , getString(cell->getName()).c_str()
+                       , getString(net).c_str()
+                       , drivers
+                       ) << endl;
+        for ( Occurrence occurrence : HyperNet(Occurrence(net)).getComponentOccurrences() ) {
+          Plug* plug = dynamic_cast<Plug*>( occurrence.getEntity() );
+          if (plug) {
+            cerr << "          | " << occurrence.getPath().getCompactString(false)
+                 << "." << plug->getInstance()->getName()
+                 << ":" << plug->getMasterNet()->getName()
+                 << " (" << plug->getMasterNet()->getCell()->getName() << ")" << endl;
+          } else {
+            cerr << "          | " << occurrence << endl;
+          }
+        }
+      }
+    }
+  }
+
+
+  void  restoreNetsDirection ( Cell* topCell, Cell::Flags mask )
+  {
+    DepthOrder cellOrder ( topCell, mask );
+    for ( auto item : cellOrder.getCellDepths() ) {
+      _restoreNetsDirection( const_cast<Cell*>( item.first ) );
+    }
   }
 
 

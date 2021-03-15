@@ -79,11 +79,9 @@ extern "C" {
   static PyObject* PyVhdl_destroyAllVHDL ( PyObject* module )
   {
     cdebug_log(30,0) << "PyVhdl_destroyAllVHDL()" << endl;
-
     HTRY
       EntityExtension::destroyAll();
     HCATCH
-
     Py_RETURN_NONE;
   }
 
@@ -94,9 +92,11 @@ extern "C" {
 
 
   static PyMethodDef PyCRL_Methods[] =
-    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing, METH_VARARGS
+    { { "createPartRing"      , (PyCFunction)PyToolBox_createPartRing      , METH_VARARGS
                               , "Partial build of a ring" }
-    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL, METH_NOARGS
+    , { "restoreNetsDirection", (PyCFunction)PyToolBox_restoreNetsDirection, METH_VARARGS
+                              , "Compute and set nets direction of a complete cell hierarchy." }
+    , { "destroyAllVHDL"      , (PyCFunction)PyVhdl_destroyAllVHDL         , METH_NOARGS
                               , "Clear all VHDL informations on all cells." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
     };

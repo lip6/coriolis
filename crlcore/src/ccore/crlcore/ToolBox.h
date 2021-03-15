@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  CRL_TOOLBOX_H
-#define  CRL_TOOLBOX_H
-
+#pragma  once
 #include <functional>
 #include "hurricane/Cell.h"
 #include "hurricane/Net.h"
@@ -58,6 +56,7 @@ namespace CRL {
   void            connectPlugHooks            ( Cell* );
   size_t          getInstancesCount           ( const Cell* cell );
   void            setNetsPosition             ( Cell* );
+  void            restoreNetsDirection        ( Cell* , Cell::Flags );
 
 
   class NamingScheme {
@@ -89,5 +88,3 @@ namespace CRL {
 
 
 } // CRL namespace.
-
-#endif // CRL_TOOLBOX_H
