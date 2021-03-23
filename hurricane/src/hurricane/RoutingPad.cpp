@@ -295,19 +295,25 @@ namespace Hurricane {
 
   void RoutingPad::setExternalComponent ( Component* component )
   {
-    if ( isMaterialized() ) invalidate(false);
+    if (isMaterialized()) invalidate( false );
 
     Occurrence plugOccurrence = getPlugOccurrence();
-    Plug*      plug           = static_cast<Plug*>(plugOccurrence.getEntity());
-    if ( plug->getMasterNet() != component->getNet() )
-      throw Error("Cannot Set External Component to Routing Pad : Inconsistant Net");
+    Plug*      plug           = static_cast<Plug*>( plugOccurrence.getEntity() );
+    if (plug->getMasterNet() != component->getNet())
+      throw Error( "RoutingPad::setExternalComponent(): Cannot set external Component of RoutingPadn, inconsistant net.\n"
+                   "        * RoutingPad:%s\n"
+                   "        * Component:%s"
+                 , getString(getNet()).c_str()
+                 , getString(component).c_str()
+                 );
 
-    _occurrence.getMasterCell()->_removeSlaveEntity(_occurrence.getEntity(),this);
-    _occurrence = Occurrence(component,Path(plugOccurrence.getPath(),plug->getInstance()));
+    _occurrence.getMasterCell()->_removeSlaveEntity( _occurrence.getEntity(), this );
+    _occurrence = Occurrence( component, Path(plugOccurrence.getPath(),plug->getInstance()) );
+    _occurrence.getMasterCell()->_addSlaveEntity( _occurrence.getEntity(), this );
 
-    _occurrence.getMasterCell()->_addSlaveEntity(_occurrence.getEntity(),this);
-
-    if (!isMaterialized()) materialize();
+    if (not isMaterialized() and not Go::autoMaterializationIsDisabled())
+    //if (not isMaterialized())
+      materialize();
   }
 
 
