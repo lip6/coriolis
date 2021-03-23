@@ -13,6 +13,7 @@
                    set( includes      etesian/Configuration.h
                                       etesian/Placement.h
                                       etesian/FeedCells.h
+                                      etesian/BufferCells.h
                                       etesian/BloatCells.h
                                       etesian/BloatProperty.h
                                       etesian/EtesianEngine.h
@@ -23,10 +24,12 @@
                       )
                    set( mocIncludes   etesian/GraphicEtesianEngine.h )
                    set( cpps          Configuration.cpp
+		                      HFNS.cpp
                                       AddFeeds.cpp
                                       Placement.cpp
                                       FlattenPower.cpp
                                       FeedCells.cpp
+                                      BufferCells.cpp
                                       BloatCells.cpp
                                       BloatProperty.cpp
                                       EtesianEngine.cpp

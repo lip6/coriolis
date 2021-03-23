@@ -35,6 +35,7 @@ namespace Hurricane {
 #include "crlcore/ToolEngine.h"
 #include "etesian/Configuration.h"
 #include "etesian/FeedCells.h"
+#include "etesian/BufferCells.h"
 #include "etesian/BloatCells.h"
 #include "etesian/Placement.h"
 
@@ -95,6 +96,7 @@ namespace Etesian {
       inline  DbU::Unit              getAntennaMaxWL           () const;
       inline  DbU::Unit              getLatchUpDistance        () const;
       inline  const FeedCells&       getFeedCells              () const;
+      inline  const BufferCells&     getBufferCells            () const;
       inline  Cell*                  getDiodeCell              () const;
               std::string            getUniqueDiodeName        ();
       inline  const Box&             getPlaceArea              () const;
@@ -130,6 +132,7 @@ namespace Etesian {
               void                   detailedPlace             ( int iterations, int effort, unsigned options=0 );
               void                   antennaProtect            ();
               void                   place                     ();
+              uint32_t               doHFNS                    ();
       inline  void                   useFeed                   ( Cell* );
               size_t                 findYSpin                 ();
               void                   addFeeds                  ();
@@ -161,6 +164,7 @@ namespace Etesian {
              Hurricane::CellViewer*               _viewer;
              Cell*                                _diodeCell;
              FeedCells                            _feedCells;
+             BufferCells                          _bufferCells;
              BloatCells                           _bloatCells;
              Area*                                _area;
              size_t                               _yspinSlice0;
@@ -168,6 +172,7 @@ namespace Etesian {
              DbU::Unit                            _fixedAbHeight;
              DbU::Unit                            _fixedAbWidth;
              uint32_t                             _diodeCount;
+             uint32_t                             _bufferCount;
 
     protected:
     // Constructors & Destructors.
@@ -208,6 +213,7 @@ namespace Etesian {
   inline  DbU::Unit              EtesianEngine::getLatchUpDistance        () const { return getConfiguration()->getLatchUpDistance(); }
   inline  void                   EtesianEngine::useFeed                   ( Cell* cell ) { _feedCells.useFeed(cell); }
   inline  const FeedCells&       EtesianEngine::getFeedCells              () const { return _feedCells; }
+  inline  const BufferCells&     EtesianEngine::getBufferCells            () const { return _bufferCells; }
   inline  Cell*                  EtesianEngine::getDiodeCell              () const { return _diodeCell; }
   inline  void                   EtesianEngine::selectBloat               ( std::string profile ) { _bloatCells.select(profile); }
                                                                           

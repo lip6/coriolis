@@ -65,6 +65,7 @@ namespace Etesian {
                       (  Cfg::getParamDouble    ("etesian.antennaInsertThreshold",       50.0)->asDouble() )
     , _feedNames      (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
     , _diodeName      (  Cfg::getParamString    ("etesian.diodeName"      ,"dio_x0"          )->asString() )
+    , _spareBufferName(  Cfg::getParamString    ("spares.buffer"          ,"buf_x8"          )->asString() )
     , _bloat          (  Cfg::getParamString    ("etesian.bloat"          ,"disabled"        )->asString() )
     , _latchUpDistance(  Cfg::getParamInt       ("etesian.latchUpDistance",0                 )->asInt() )
     , _antennaMaxWL   (  Cfg::getParamInt       ("etesian.antennaMaxWL"   ,0                 )->asInt() )
@@ -99,6 +100,7 @@ namespace Etesian {
     , _antennaInsertThreshold( other._antennaInsertThreshold )
     , _feedNames      ( other._feedNames       )
     , _diodeName      ( other._diodeName       )
+    , _spareBufferName( other._spareBufferName )
     , _bloat          ( other._bloat           )
     , _latchUpDistance( other._latchUpDistance )
     , _antennaMaxWL   ( other._antennaMaxWL    )
@@ -152,19 +154,20 @@ namespace Etesian {
   Record* Configuration::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot( "_rg"                    ,       _rg            ) );
-    record->add ( getSlot( "_cg"                    ,       _cg            ) );
-    record->add ( getSlot( "_placeEffort"           ,  (int)_placeEffort   ) );
-    record->add ( getSlot( "_updateConf"            ,  (int)_updateConf    ) );
-    record->add ( getSlot( "_spreadingConf"         ,  (int)_spreadingConf ) );
-    record->add ( getSlot( "_spaceMargin"           ,       _spaceMargin   ) );
-    record->add ( getSlot( "_aspectRatio"           ,       _aspectRatio   ) );
+    record->add ( getSlot( "_rg"                    ,       _rg              ) );
+    record->add ( getSlot( "_cg"                    ,       _cg              ) );
+    record->add ( getSlot( "_placeEffort"           ,  (int)_placeEffort     ) );
+    record->add ( getSlot( "_updateConf"            ,  (int)_updateConf      ) );
+    record->add ( getSlot( "_spreadingConf"         ,  (int)_spreadingConf   ) );
+    record->add ( getSlot( "_spaceMargin"           ,       _spaceMargin     ) );
+    record->add ( getSlot( "_aspectRatio"           ,       _aspectRatio     ) );
     record->add ( getSlot( "_antennaInsertThreshold",       _antennaInsertThreshold   ) );
-    record->add ( getSlot( "_feedNames"             ,       _feedNames     ) );
-    record->add ( getSlot( "_diodeName"             ,       _diodeName     ) );
-    record->add ( getSlot( "_bloat"                 ,       _bloat         ) );
-    record->add ( DbU::getValueSlot( "_latchUpDistance", &_latchUpDistance ) );
-    record->add ( DbU::getValueSlot( "_antennaMaxWL"   , &_antennaMaxWL    ) );
+    record->add ( getSlot( "_feedNames"             ,       _feedNames       ) );
+    record->add ( getSlot( "_diodeName"             ,       _diodeName       ) );
+    record->add ( getSlot( "_spareBufferName"       ,       _spareBufferName ) );
+    record->add ( getSlot( "_bloat"                 ,       _bloat           ) );
+    record->add ( DbU::getValueSlot( "_latchUpDistance", &_latchUpDistance   ) );
+    record->add ( DbU::getValueSlot( "_antennaMaxWL"   , &_antennaMaxWL      ) );
     return record;
   }
 

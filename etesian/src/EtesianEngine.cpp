@@ -314,6 +314,7 @@ namespace Etesian {
     , _viewer       (NULL)
     , _diodeCell    (NULL)
     , _feedCells    (this)
+    , _bufferCells  (this)
     , _bloatCells   (this)
     , _area         (NULL)
     , _yspinSlice0  (0)
@@ -321,6 +322,7 @@ namespace Etesian {
     , _fixedAbHeight(0)
     , _fixedAbWidth (0)
     , _diodeCount   (0)
+    , _bufferCount  (0)
   { }
 
 
@@ -342,6 +344,16 @@ namespace Etesian {
       }
 
       _bloatCells.select( getConfiguration()->getBloat() );
+
+      string bufferName = getConfiguration()->getSpareBufferName();;
+      Cell*  buffer = DataBase::getDB()->getCell( bufferName );
+      if (buffer) {
+        _bufferCells.useBuffer( buffer, 8, 20 );
+      } else {
+        cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" spare buffer cell."
+                       , bufferName.c_str()
+                       ) << endl;
+      }
       
       string feedNames = getConfiguration()->getFeedNames();
       char   separator = ',';
@@ -741,6 +753,11 @@ namespace Etesian {
     vector< point<bool> >   orientations( instancesNb+1, point<bool>(true, true) );
 
     cmess1 << "     - Converting " << instancesNb << " instances" << endl;
+    if (instancesNb) {
+      float bufferRatio = ((float)_bufferCount / (float)instancesNb) * 100.0;
+      cmess1 << "     - Buffers " << _bufferCount
+             << " (" << fixed << setprecision(2) << bufferRatio << "%)" << endl;
+    }
     cout.flush();
 
     cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;

@@ -76,6 +76,7 @@ extern "C" {
   DirectVoidMethod(EtesianEngine,etesian,resetPlacement)
   DirectVoidMethod(EtesianEngine,etesian,clearColoquinte)
   DirectVoidMethod(EtesianEngine,etesian,flattenPower)
+  DirectGetUIntAttribute  (PyEtesianEngine_doHFNS          ,doHFNS          ,PyEtesianEngine,EtesianEngine)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
   DirectSetLongAttribute  (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
   DirectSetDoubleAttribute(PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
@@ -264,6 +265,8 @@ extern "C" {
                             , "Run the placer (Etesian)." }
     , { "flattenPower"      , (PyCFunction)PyEtesianEngine_flattenPower      , METH_NOARGS
                             , "Build abstract interface in top cell for supply & blockages." }
+    , { "doHFNS"            , (PyCFunction)PyEtesianEngine_doHFNS            , METH_NOARGS
+                            , "Perform the high fanout net synthesis." }
     , { "destroy"           , (PyCFunction)PyEtesianEngine_destroy           , METH_NOARGS
                             , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL} /* sentinel */
