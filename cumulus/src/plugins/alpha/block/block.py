@@ -575,6 +575,8 @@ class Block ( object ):
             self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
         if self.conf.placeArea:
             self.etesian.setPlaceArea( self.conf.placeArea )
+        self.etesian.getCell().flattenNets( None, Cell.Flags_NoClockFlatten )
+        if self.conf.useHFNS: self.etesian.doHFNS()
         self.etesian.place()
         self.etesian.flattenPower()
         Breakpoint.stop( 100, 'Placement done.' )
@@ -700,7 +702,7 @@ class Block ( object ):
                 self.placeIoPins()
                 self.checkIoPins()
             self.spares.build()
-            if self.conf.useHFNS:      self.findHfnTrees4()
+           #if self.conf.useHFNS:      self.findHfnTrees4()
             if self.conf.useClockTree: self.addClockTrees()
            #if self.conf.useHFNS:      self.addHfnBuffers()
             if editor: editor.fit()

@@ -71,6 +71,10 @@ class Chip ( Block ):
         return self.conf.validated
   
     def doChipFloorplan ( self ):
+        print( '     - Chip has {} north pads.'.format(len(self.conf.chipConf.northPads)) )
+        print( '     - Chip has {} south pads.'.format(len(self.conf.chipConf.southPads)) )
+        print( '     - Chip has {} east pads.' .format(len(self.conf.chipConf.eastPads )) )
+        print( '     - Chip has {} west pads.' .format(len(self.conf.chipConf.westPads )) )
         self.conf.computeCoronaBorder()
         self.conf.chipValidate()
         if not self.conf.validated:

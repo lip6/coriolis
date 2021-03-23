@@ -952,7 +952,7 @@ class Spares ( object ):
             return None
         tailPath     = path.getTailPath()
         headInstance = path.getHeadInstance()
-        headPlug     = utils.getPlugByNet(headInstance,topNet)
+        headPlug     = utils.getPlugByNet( headInstance, topNet )
         if not headPlug:
             masterCell = headInstance.getMasterCell()
             masterNet  = masterCell.getNet( topNet.getName() )
