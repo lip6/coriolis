@@ -100,7 +100,7 @@ namespace Anabatic {
 
   class NetData {
     public:
-                                    NetData            ( Net* );
+                                    NetData            ( Net*, AnabaticEngine* );
       inline       bool             isGlobalEstimated  () const;
       inline       bool             isGlobalRouted     () const;
       inline       bool             isGlobalFixed      () const;
@@ -112,6 +112,7 @@ namespace Anabatic {
       inline const Box&             getSearchArea      () const;
       inline       DbU::Unit        getHalfPerimeter   () const;
       inline       size_t           getRpCount         () const;
+      inline       size_t           getDiodeRpCount    () const;
       inline       DbU::Unit        getSparsity        () const;
       inline       void             setNetRoutingState ( NetRoutingState* );
       inline       void             setSearchArea      ( Box );
@@ -129,6 +130,7 @@ namespace Anabatic {
       NetRoutingState* _state;
       Box              _searchArea;
       size_t           _rpCount;
+      size_t           _diodeCount;
       DbU::Unit        _sparsity;
       Flags            _flags;
   };
@@ -145,6 +147,7 @@ namespace Anabatic {
   inline const Box&       NetData::getSearchArea      () const { return _searchArea; }
   inline DbU::Unit        NetData::getHalfPerimeter   () const { return (_searchArea.isEmpty()) ? 0.0 : (_searchArea.getWidth()+_searchArea.getHeight()); }
   inline size_t           NetData::getRpCount         () const { return _rpCount; }
+  inline size_t           NetData::getDiodeRpCount    () const { return _diodeCount; }
   inline void             NetData::setNetRoutingState ( NetRoutingState* state ) { _state=state; }
   inline DbU::Unit        NetData::getSparsity        () const { return _sparsity; }
   inline void             NetData::setGlobalEstimated ( bool state ) { _flags.set(Flags::GlobalEstimated,state); }
@@ -250,6 +253,7 @@ namespace Anabatic {
       inline        float             getSaturateRatio        () const;
       inline        size_t            getSaturateRp           () const;
       inline        DbU::Unit         getExtensionCap         () const;
+      inline        Cell*             getDiodeCell            () const;
       inline        Net*              getBlockageNet          () const;
       inline const  ChipTools&        getChipTools            () const;
       inline const  vector<NetData*>& getNetOrdering          () const;
@@ -342,6 +346,7 @@ namespace Anabatic {
              AutoContactLut      _autoContactLut;
              EdgeCapacityLut     _edgeCapacitiesLut;
              Net*                _blockageNet;
+             Cell*               _diodeCell;
   };
 
 
@@ -377,6 +382,7 @@ namespace Anabatic {
   inline       size_t            AnabaticEngine::getSaturateRp         () const { return _configuration->getSaturateRp(); }
   inline       void              AnabaticEngine::setSaturateRatio      ( float ratio ) { _configuration->setSaturateRatio(ratio); }
   inline       void              AnabaticEngine::setSaturateRp         ( size_t threshold ) { _configuration->setSaturateRp(threshold); }
+  inline       Cell*             AnabaticEngine::getDiodeCell          () const { return _diodeCell; }
   inline       Net*              AnabaticEngine::getBlockageNet        () const { return _blockageNet; }
   inline const ChipTools&        AnabaticEngine::getChipTools          () const { return _chipTools; }
   inline const vector<NetData*>& AnabaticEngine::getNetOrdering        () const { return _netOrdering; }

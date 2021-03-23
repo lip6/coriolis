@@ -20,6 +20,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
+#include "hurricane/DataBase.h"
 #include "hurricane/RegularLayer.h"
 #include "hurricane/Horizontal.h"
 #include "hurricane/RoutingPad.h"
@@ -135,6 +136,7 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Breakpoint;
+  using Hurricane::DataBase;
   using Hurricane::RegularLayer;
   using Hurricane::Component;
   using Hurricane::Horizontal;
@@ -282,19 +284,27 @@ namespace Anabatic {
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::NetData".
 
-  NetData::NetData ( Net* net )
+  NetData::NetData ( Net* net, AnabaticEngine* anabatic )
     : _net       (net)
     , _state     (NetRoutingExtension::get(net))
     , _searchArea()
     , _rpCount   (0)
+    , _diodeCount(0)
     , _sparsity  (0)
     , _flags     ()
   {
     if (_state and _state->isMixedPreRoute()) return;
 
+    Cell* diodeCell = anabatic->getDiodeCell();
     for ( RoutingPad* rp : _net->getRoutingPads() ) {
       _searchArea.merge( rp->getBoundingBox() );
       ++_rpCount;
+
+      if (diodeCell) {
+        Plug* plug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+        if (plug and (plug->getInstance()->getMasterCell() == diodeCell))
+          ++_diodeCount;
+      }
     }
     _update();
   }
@@ -336,6 +346,7 @@ namespace Anabatic {
     , _autoContactLut   ()
     , _edgeCapacitiesLut()
     , _blockageNet      (cell->getNet("blockagenet"))
+    , _diodeCell        (NULL)
   {
     _matrix.setCell( cell, _configuration->getSliceHeight() );
     Edge::unity = _configuration->getSliceHeight();
@@ -350,6 +361,13 @@ namespace Anabatic {
   void  AnabaticEngine::_postCreate ()
   {
     Super::_postCreate();
+
+    _diodeCell = DataBase::getDB()->getCell( getConfiguration()->getDiodeName() );;
+    if (not _diodeCell) {
+      cerr << Warning( "AnabaticEngine::_postCreate() Unable to find \"%s\" diode cell."
+                     , getConfiguration()->getDiodeName().c_str()
+                     ) << endl;
+    }
 
     UpdateSession::open();
     GCell::create( this );
@@ -644,10 +662,10 @@ namespace Anabatic {
     size_t  oindex = _netOrdering.size();
     for ( Net* net : _cell->getNets() ) {
       if (_netDatas.find(net->getId()) != _netDatas.end()) continue;
-      NetData* data = new NetData( net );
+      NetData* data = new NetData( net, this );
       _netOrdering.push_back( data );
 
-      netHistogram.addSample( (float)data->getRpCount(), 0 );
+      netHistogram.addSample( (float)(data->getRpCount() - data->getDiodeRpCount()), 0 );
     }
 
     for ( ; oindex < _netOrdering.size() ; ++oindex ) {
@@ -725,7 +743,7 @@ namespace Anabatic {
     NetData*            data = NULL;
     NetDatas::iterator idata = _netDatas.find( net->getId() );
     if (idata == _netDatas.end()) {
-      data = new NetData( net );
+      data = new NetData( net, this );
       _netDatas.insert( make_pair(net->getId(),data) );
       _netOrdering.push_back( data );
       // cerr << Bug( "AnabaticEngine::getNetData() - %s is missing in NetDatas table."

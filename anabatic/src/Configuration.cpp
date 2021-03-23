@@ -85,12 +85,13 @@ namespace Anabatic {
     , _allowedDepth    (0)
     , _edgeLength      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
     , _edgeWidth       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
-    , _edgeCostH       (Cfg::getParamDouble("anabatic.edgeCostH"       ,  9.0)->asDouble())
-    , _edgeCostK       (Cfg::getParamDouble("anabatic.edgeCostK"       ,-10.0)->asDouble())
-    , _edgeHInc        (Cfg::getParamDouble("anabatic.edgeHInc"        ,  1.5)->asDouble())
-    , _edgeHScaling    (Cfg::getParamDouble("anabatic.edgeHScaling"    ,  1.0)->asDouble())
-    , _globalIterations(Cfg::getParamInt   ("anabatic.globalIterations", 10  )->asInt())
-    , _antennaMaxWL    (Cfg::getParamInt   ("etesian.antennaMaxWL"     ,  0  )->asInt())
+    , _edgeCostH       (Cfg::getParamDouble("anabatic.edgeCostH"       ,      9.0)->asDouble())
+    , _edgeCostK       (Cfg::getParamDouble("anabatic.edgeCostK"       ,    -10.0)->asDouble())
+    , _edgeHInc        (Cfg::getParamDouble("anabatic.edgeHInc"        ,      1.5)->asDouble())
+    , _edgeHScaling    (Cfg::getParamDouble("anabatic.edgeHScaling"    ,      1.0)->asDouble())
+    , _globalIterations(Cfg::getParamInt   ("anabatic.globalIterations",     10  )->asInt())
+    , _diodeName       (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
+    , _antennaMaxWL    (Cfg::getParamInt   ("etesian.antennaMaxWL"     ,      0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -181,6 +182,7 @@ namespace Anabatic {
     , _edgeHInc        (other._edgeHInc)
     , _edgeHScaling    (other._edgeHScaling)
     , _globalIterations(other._globalIterations)
+    , _diodeName       (other._diodeName)
     , _antennaMaxWL    (other._antennaMaxWL)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
