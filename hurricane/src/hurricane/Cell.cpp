@@ -818,7 +818,7 @@ void Cell::flattenNets (uint64_t flags )
 void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 // ****************************************************************
 {
-  cdebug_log(18,0) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
+  cdebug_log(18,1) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
 
   UpdateSession::open();
 
@@ -868,8 +868,12 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 
   for ( size_t i=0 ; i<hyperNets.size() ; ++i ) {
     DeepNet* deepNet = DeepNet::create( hyperNets[i] );
+    cdebug_log(18,1) << "Flattening hyper net: " << deepNet << endl;
     if (deepNet) deepNet->_createRoutingPads( flags );
+    cdebug_log(18,0) << "Done: " << deepNet << endl;
+    cdebug_tabw(18,-1);
   }
+  cdebug_log(18,0) << "Non-root HyperNet (DeepNet) done" << endl;
 
   unsigned int rpFlags = (flags & Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
     
@@ -903,7 +907,9 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
     DebugSession::close();
   }
 
+  cdebug_log(18,0) << "Before closing UpdateSession" << endl;
   UpdateSession::close();
+  cdebug_log(18,-1) << "Cell::flattenNets() Done" << endl;
 }
 
 

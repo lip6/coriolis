@@ -51,9 +51,11 @@ Occurrence::Occurrence(const Entity* entity, const Path& path)
   if (_sharedPath) {
     if (_entity->getCell() != _sharedPath->getMasterCell())
       throw Error( "Occurrence::Occurrence(): Entity incompatible with the path.\n"
-                 "        * Entity master cell: %s\n"
-                 "        * Path master cell: %s"
+                   "        * Entity %s, master cell %s\n"
+                   "        * Path %s, master cell %s"
+                 , getString(entity).c_str()
                  , getString(entity->getCell()).c_str()
+                 , getString(path).c_str()
                  , getString(_sharedPath->getMasterCell()).c_str()
                  );
   }

@@ -1224,23 +1224,32 @@ void HyperNet_ComponentOccurrences::Locator::progress()
     if (_componentLocator.isValid()) {
       Path       path      = _netOccurrenceLocator.getElement().getPath();
       Component* component = _componentLocator.getElement();
+      cdebug_log(18,0) << "| progress component: " << component << endl;
+    //_componentOccurrence = Occurrence( component, path.getHeadPath() );
+      _componentOccurrence = Occurrence( component, path );
+      cdebug_log(18,0) << "| component occ OK" << endl;
       _componentLocator.progress();
       
-      _componentOccurrence = Occurrence( component, path.getHeadPath() );
     } else {
+      _netOccurrenceLocator.progress();
       if (_netOccurrenceLocator.isValid()) {
         Occurrence netOccurrence = _netOccurrenceLocator.getElement();
-        _netOccurrenceLocator.progress();
+        cdebug_log(18,0) << "| progress net occ: " << _netOccurrenceLocator.getElement() << endl;
 
         Net* net = static_cast<Net*>( netOccurrence.getEntity() );
       //if (_withTerminalNetlistCells or not net->getCell()->isTerminal()) {
         if (not net->getCell()->isTerminalNetlist()) {
+          cdebug_log(18,0) << "| Non Terminal netlist: " << net->getCell() << endl;
+          cdebug_log(18,0) << "| set component loc on: " << net << endl;
           _componentLocator = net->getComponents().getLocator();
+        } else {
+          cdebug_log(18,0) << "| Terminal netlist: " << net->getCell() << endl;
         }
       } else
         break;
     }
   }
+  cdebug_log(18,0) << "| progress done: " << endl;
 }
 
 string HyperNet_ComponentOccurrences::Locator::_getString() const

@@ -74,6 +74,7 @@ namespace Hurricane {
 
   bool  ExceptionWidget::catchAllWrapper ( std::function< void() > method )
   {
+    cdebug_log(18,0) << "ExceptionWidget::catchAllWrapper()" << endl;
     bool failure = true;
     try {
       method();

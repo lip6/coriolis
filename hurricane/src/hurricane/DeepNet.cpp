@@ -85,6 +85,8 @@ namespace Hurricane {
 
   size_t  DeepNet::_createRoutingPads ( unsigned int flags )
   {
+    cdebug_log(18,1) << "DeepNet::_createRoutingPads(): " << this << endl;
+
     size_t        nbRoutingPads = 0;
     HyperNet      hyperNet      ( _netOccurrence );
     RoutingPad*   currentRp     = NULL;
@@ -92,24 +94,33 @@ namespace Hurricane {
   //unsigned int  rpFlags       = (flags & Cell::Flags::StayOnPlugs) ? 0 : RoutingPad::BiggestArea;
 
     for ( Occurrence occurrence : hyperNet.getComponentOccurrences() ) {
-      RoutingPad* rp = dynamic_cast<RoutingPad*>(occurrence.getEntity());
-      if ( rp and (rp->getCell() == getCell()) ) { createRp = false; break; }
-      if ( dynamic_cast<Segment*>(occurrence.getEntity()) ) { createRp = false; break; }
+      cdebug_log(18,0) << "| occurrence=" << occurrence << endl;
+      RoutingPad* rp = dynamic_cast<RoutingPad*>( occurrence.getEntity() );
+      cdebug_log(18,0) << "| rp=" << rp << endl;
+      if (rp and (rp->getCell() == getCell())) { createRp = false; break; }
+      if (dynamic_cast<Segment*>(occurrence.getEntity())) { createRp = false; break; }
+      cdebug_log(18,0) << "| dynamic_cast OK createRp=" << createRp << endl;
     }
-    if (not createRp) return 0;
+    if (not createRp) {
+      cdebug_log(18,0) << "DeepNet::_createRoutingPads(): No RoutingPad created" << endl;
+      cdebug_tabw(18,-1);
+      return 0;
+    }
 
     for ( Occurrence occurrence : hyperNet.getTerminalNetlistPlugOccurrences() ) {
       nbRoutingPads++;
 
       currentRp = RoutingPad::create( this, occurrence, RoutingPad::BiggestArea );
       if (flags & Cell::Flags::WarnOnUnplacedInstances)
-        currentRp->isPlacedOccurrence ( RoutingPad::ShowWarning );
+        currentRp->isPlacedOccurrence( RoutingPad::ShowWarning );
 
       if (nbRoutingPads == 1) {
         currentRp->getNet();
       }
     }
 
+    cdebug_log(18,0) << "DeepNet::_createRoutingPads(): done on " << this << endl;
+    cdebug_tabw(18,-1);
     return nbRoutingPads;
   }
 
