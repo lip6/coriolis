@@ -14,6 +14,12 @@
 // +-----------------------------------------------------------------+
 
 
+#include <sstream>
+#include <iostream>
+#include <stdexcept>
+#include "hurricane/Error.h"
+#include "hurricane/Warning.h"
+#include "hurricane/UpdateSession.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Pin.h"
 #include "hurricane/Library.h"
@@ -23,8 +29,6 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Segment.h"
 #include "hurricane/NetExternalComponents.h"
-#include "hurricane/UpdateSession.h"
-#include "hurricane/Warning.h"
 using namespace Hurricane;
 
 #include "crlcore/Utilities.h"
@@ -123,6 +127,9 @@ namespace {
 
 
 namespace CRL {
+
+  using std::string;
+  using std::ostringstream;
 
 
 Component* getBestExternalComponent ( Net* net )
@@ -721,6 +728,78 @@ void ConnectPlugHooks(Cell* cell)
     for ( auto item : cellOrder.getCellDepths() ) {
       _restoreNetsDirection( const_cast<Cell*>( item.first ) );
     }
+  }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::SubNetNames".
+
+  bool     SubNetNames::_compiled = false;
+  regex_t  SubNetNames::_pattern;
+
+
+  SubNetNames::SubNetNames ()
+    : _base ()
+    , _index(-1)
+    , _count(0)
+  {
+    const char* textPattern = "^([^(]+)\\(([[:digit:]]+)\\)$";
+    if (not _compiled) {
+      int code = regcomp( &_pattern, textPattern, REG_EXTENDED );
+      if (code) {
+        char cmessage[1024];
+        regerror( code, &_pattern, cmessage, sizeof(cmessage) );
+        throw Error( "SubNetNames::SubNetNames(): Pattern compilation error \"%s\"."
+                   , textPattern );
+      }
+      _compiled = true;
+    }
+  }
+
+
+  bool  SubNetNames::match ( string s )
+  {
+    _count = 0;
+    regmatch_t matches[3];
+    int code = regexec( &_pattern, s.c_str(), 3, matches, 0 );
+    if (not code) {
+      _base  = s.substr( matches[1].rm_so, matches[1].rm_eo-matches[1].rm_so );
+      string sindex = s.substr( matches[2].rm_so, matches[2].rm_eo-matches[2].rm_so ); 
+      try {
+        _index = std::stoi( sindex );
+      }
+      catch ( std::invalid_argument e ) {
+        cerr << Error( "SubNetNames::match(): std::stoi() catched an exception on \"%s\"."
+                     , sindex.c_str() ) << endl;
+      }
+      return true;
+    } else {
+      if (code == REG_NOMATCH) {
+        size_t pos = s.find( '(' );
+        if (pos != string::npos) {
+          cerr << Error( "SubNetNames::match(): Strange CHDL signal name \"%s\"."
+                       , s.c_str() ) << endl;
+        }
+      } else {
+        char cmessage[1024];
+        regerror( code, &_pattern, cmessage, sizeof(cmessage) );
+        cerr << "[ERROR] Pattern matching error: " << cmessage << " for " << s << endl;
+        throw Error( "SubNetNames::match(): Pattern matching error %s on \"%s\"."
+                   , cmessage, s.c_str() );
+      }
+    }
+    _base  = s;
+    _index = -1;
+    return false;
+  }
+
+
+  string  SubNetNames::getSubNetName () const
+  {
+    ostringstream name;
+    if (_index < 0) name << _base << "_hfns_" << _count;
+    else            name << _base << "_bit" << _index << "_hfns_" << _count;
+    return name.str();
   }
 
 

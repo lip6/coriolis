@@ -15,6 +15,7 @@
 
 
 #pragma  once
+#include <regex.h>
 #include <functional>
 #include "hurricane/Cell.h"
 #include "hurricane/Net.h"
@@ -59,6 +60,9 @@ namespace CRL {
   void            restoreNetsDirection        ( Cell* , Cell::Flags );
 
 
+// -------------------------------------------------------------------
+// Class  :  "CRL::NamingScheme".
+
   class NamingScheme {
     public:
       enum Flag { NoFlags     = 0x0000
@@ -85,6 +89,31 @@ namespace CRL {
     if (state) _flags |=  NoLowerCase;
     else       _flags &= ~NoLowerCase;
   }
+
+
+// -------------------------------------------------------------------
+// Class  :  "CRL::SubNetNames".
+
+  class  SubNetNames {
+    public:
+                           SubNetNames   ();
+             bool          match         ( std::string );
+      inline int32_t       getIndex      () const;
+      inline std::string   getBase       () const;
+      inline uint32_t      nextSubNet    ();
+             std::string   getSubNetName () const;
+    private:
+      static bool         _compiled;
+      static regex_t      _pattern;
+             std::string  _base;
+             int32_t      _index;
+             uint32_t     _count;
+  };
+
+
+  inline int32_t      SubNetNames::getIndex   () const { return _index; }
+  inline std::string  SubNetNames::getBase    () const { return _base; }
+  inline uint32_t     SubNetNames::nextSubNet () { return ++_count; }
 
 
 } // CRL namespace.
