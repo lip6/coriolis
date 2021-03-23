@@ -16,6 +16,7 @@
 
 #include <map>
 #include <list>
+#include "hurricane/Error.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -43,6 +44,7 @@
 namespace {
 
   using namespace std;
+  using Hurricane::Error;
   using Hurricane::DebugSession;
   using Hurricane::tab;
   using Hurricane::ForEachIterator;
@@ -55,6 +57,7 @@ namespace {
   using Hurricane::RegularLayer;
   using Hurricane::Horizontal;
   using Hurricane::Vertical;
+  using Hurricane::Plug;
   using Hurricane::Transformation;
   using Hurricane::RoutingPad;
   using Hurricane::Occurrence;
@@ -78,6 +81,14 @@ namespace {
     Net*            masterNet      = usedComponent->getNet();
     Transformation  transformation = path.getTransformation();
 
+    if (dynamic_cast<Plug*>(usedComponent)) {
+      cerr << Error( "Katana::protectRoutingPad(): A RoutingPad of \"%s\" is still on it's Plug.\n"
+                     "        (%s)"
+                   , getString(rp->getNet()->getName()).c_str()
+                   , getString(usedComponent).c_str()
+                   ) << endl;
+      return;
+    }
     if (Session::getRoutingGauge()->getLayerType(usedComponent->getLayer()) == Constant::PinOnly) {
       cdebug_tabw(145,-1);
       return;
