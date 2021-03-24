@@ -493,13 +493,14 @@ namespace Etesian {
                  );
   }
 
+
   void  EtesianEngine::setDefaultAb ()
   {
     _bloatCells.resetDxSpace();
-    double spaceMargin = getSpaceMargin();
-    double aspectRatio = getAspectRatio();
-    size_t instanceNb  = 0;
-    double cellLength  = 0;
+    double    spaceMargin = getSpaceMargin();
+    double    aspectRatio = getAspectRatio();
+    size_t    instanceNb  = 0;
+    DbU::Unit cellLength  = 0;
 
     cmess2 << "  o  Looking through the hierarchy." << endl;
 
@@ -524,7 +525,7 @@ namespace Etesian {
         cerr << Error( "EtesianEngine::setDefaultAb(): Block instances are not managed, \"%s\"."
                      , getString(instance->getName()).c_str() ) << endl;
       }
-      cellLength += DbU::toLambda( _bloatCells.getAb( occurrence ).getWidth() );
+      cellLength += _bloatCells.getAb( occurrence ).getWidth();
       instanceNb += 1;
     }
 
@@ -539,12 +540,12 @@ namespace Etesian {
                  , getString(getCell()->getName()).c_str()
                  );
 
-    double bloatLength = DbU::toLambda( _bloatCells.getDxSpace() );
-    double bloatMargin = ( cellLength / (cellLength - bloatLength) ) - 1.0;
+    DbU::Unit bloatLength = _bloatCells.getDxSpace();
+    double    bloatMargin = ( (double)cellLength / (double)(cellLength - bloatLength) ) - 1.0;
     
-    double gcellLength = cellLength*(1.0+spaceMargin) / DbU::toLambda( getSliceHeight() );
+    DbU::Unit gcellLength = (double)cellLength*(1.0+spaceMargin) / (double)getSliceHeight();
 
-    if (gcellLength == 0.0) {
+    if (gcellLength == 0) {
       throw Error( "EtesianEngine::setDefaultAb(): Null g-length for \"%s\" (are you using the right gauge?)."
                  , getString(getCell()->getName()).c_str()
                  );
@@ -554,11 +555,11 @@ namespace Etesian {
     double columns = 0.0;
     if (not getFixedAbWidth()) {
       if (getFixedAbHeight()) rows = getFixedAbHeight() / getSliceHeight();
-      else                    rows = std::ceil( sqrt( gcellLength/aspectRatio ) );
-      columns = std::ceil( gcellLength / rows );
+      else                    rows = std::ceil( sqrt( (double)gcellLength/aspectRatio ) );
+      columns = std::ceil( (double)gcellLength / rows );
     } else {
       columns = getFixedAbWidth() / getSliceHeight();
-      rows    = std::ceil( gcellLength / columns );
+      rows    = std::ceil( (double)gcellLength / columns );
     }
 
     UpdateSession::open();
@@ -570,8 +571,8 @@ namespace Etesian {
     DbU::Unit adjust  = abWidth % getSliceStep();
     if (adjust) abWidth += getSliceStep() - adjust;
 
-    getCell()->setAbutmentBox( Box( DbU::fromLambda(0)
-                                  , DbU::fromLambda(0)
+    getCell()->setAbutmentBox( Box( 0
+                                  , 0
                                   , abWidth
                                   , rows*getSliceHeight()
                                   ) );
@@ -581,7 +582,7 @@ namespace Etesian {
 
     cmess1 << "  o  Creating abutment box (margin:" << (spaceMargin*100.0)
            << "% aspect ratio:" << (aspectRatio*100.0)
-           << "% g-length:" << (cellLength/DbU::toLambda(getSliceHeight()))
+           << "% g-length:" << DbU::getValueString(cellLength)
            << ")" << endl;
     if (getFixedAbHeight())
        cmess1 << "     - Fixed AB height: " << DbU::getValueString(getFixedAbHeight()) << endl;
@@ -684,9 +685,10 @@ namespace Etesian {
 
   size_t  EtesianEngine::toColoquinte ()
   {
-    AllianceFramework* af     = AllianceFramework::get();
-    DbU::Unit          hpitch = getSliceStep();
-    DbU::Unit          vpitch = getSliceStep();
+    AllianceFramework* af          = AllianceFramework::get();
+    DbU::Unit          hpitch      = getSliceStep();
+    DbU::Unit          vpitch      = getSliceStep();
+    DbU::Unit          sliceHeight = getSliceHeight();
 
     cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
@@ -710,6 +712,8 @@ namespace Etesian {
     }
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
+    DbU::Unit totalLength = (_placeArea.getHeight()/sliceHeight) * _placeArea.getWidth();
+    DbU::Unit usedLength  = 0;
 
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
@@ -723,10 +727,12 @@ namespace Etesian {
       topTransformation.applyOn( topAb );
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
+        Box instanceAb = instance->getAbutmentBox();
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
-          if (topAb.intersect(instance->getAbutmentBox())) {
+          if (topAb.intersect(instanceAb)) {
             ++instancesNb;
             ++fixedNb;
+            totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
           }
         }
       }
@@ -734,9 +740,15 @@ namespace Etesian {
 
     for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences(getBlockInstance()) ) {
       ++instancesNb;
-      Instance* instance = static_cast<Instance*>(occurrence.getEntity());
-      if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED)
+      Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
+      Box       instanceAb = instance->getAbutmentBox();
+      if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
         ++fixedNb;
+        totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+      } else {
+        usedLength += (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+      //cerr << DbU::getValueString(usedLength) << " " << instance << endl;
+      }
     }
     if (instancesNb <= fixedNb) {
       cerr << Error( "EtesianEngine::toColoquinte(): \"%s\" has no instance to place, doing nothing."
@@ -744,6 +756,10 @@ namespace Etesian {
                    ) << endl;
       return 0;
     }
+  //cerr << "total length=" << DbU::getValueString(totalLength) << endl;
+  //cerr << "used length=" << DbU::getValueString(usedLength) << endl;
+    cmess1 << ::Dots::asPercentage( "     - Effective space margin"
+                                  , (float)(totalLength-usedLength)/(float)totalLength ) << endl;
 
   // Coloquinte circuit description data-structures.
   // One dummy fixed instance at the end
@@ -752,15 +768,17 @@ namespace Etesian {
     vector< point<int_t> >  positions   ( instancesNb+1 );
     vector< point<bool> >   orientations( instancesNb+1, point<bool>(true, true) );
 
-    cmess1 << "     - Converting " << instancesNb << " instances" << endl;
+    cmess1 << ::Dots::asUInt( "     - Number of instances ", instancesNb ) << endl;
     if (instancesNb) {
       float bufferRatio = ((float)_bufferCount / (float)instancesNb) * 100.0;
-      cmess1 << "     - Buffers " << _bufferCount
-             << " (" << fixed << setprecision(2) << bufferRatio << "%)" << endl;
+      ostringstream os;
+      os << _bufferCount << " (" << fixed << setprecision(2) << bufferRatio << "%)";
+      cmess1 << ::Dots::asString( "     - Buffers ", os.str() ) << endl;
+             
     }
     cout.flush();
 
-    cmess1 << "     - Building RoutingPads (transhierarchical) ..." << endl;
+    cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
   //getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
     getCell()->flattenNets( NULL, Cell::Flags::NoClockFlatten );
