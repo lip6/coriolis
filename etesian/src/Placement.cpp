@@ -690,7 +690,7 @@ namespace Etesian {
       Occurrence cellOccurrence = toCell( occurrence );
       cellOccurrence.getPath().getTransformation().applyOn( instanceAb );
 
-      if (not topPlaceArea.contains(instanceAb)) {
+      if (not topPlaceArea.intersect(instanceAb)) {
         if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED)
           cerr << Warning( "EtesianEngine::readSlices(): Instance %s is not fully enclosed in the top cell.\n"
                            "          * topPlaceArea=%s\n"
@@ -701,6 +701,19 @@ namespace Etesian {
                          , getString(instance->getCell()).c_str()
                          ) << endl;
         continue;
+      }
+
+      if (not topPlaceArea.contains(instanceAb)) {
+        if (instance->getPlacementStatus() != Instance::PlacementStatus::FIXED)
+          cerr << Warning( "EtesianEngine::readSlices(): Instance %s is not fully enclosed in the top cell.\n"
+                           "          * topPlaceArea=%s\n"
+                           "          * instanceAb=%s cell=%s"
+                         , getString(instance->getName()).c_str()
+                         , getString(topPlaceArea).c_str()
+                         , getString(instanceAb).c_str()
+                         , getString(instance->getCell()).c_str()
+                         ) << endl;
+        instanceAb = topPlaceArea.getIntersection( instanceAb );
       }
 
       _area->merge( cellOccurrence, instanceAb );
