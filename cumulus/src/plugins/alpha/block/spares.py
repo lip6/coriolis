@@ -1,4 +1,4 @@
-#
+
 # This file is part of the Coriolis Software.
 # Copyright (c) SU 2020-2020, All Rights Reserved
 #
@@ -253,9 +253,42 @@ class QuadTree ( object ):
             else:
                 area = Box( area )
             spares.conf.icore.getTransformation().applyOn( area )
-        root = QuadTree( spares, None, area )
+        root = QuadTree._create( spares, None, area, 'root', raiseError=True )
         root.rpartition()
         return root
+
+    @staticmethod
+    def isUsedArea ( spares, area, rtag, raiseError ):
+        centerArea  = Box( area.getCenter() )
+        sliceHeight = spares.conf.sliceHeight
+        centerArea.inflate( 4*sliceHeight, sliceHeight )
+        trace( 540, '\tQuadTree.isUnderArea(): {} {} of {}\n'.format(rtag,centerArea,spares.conf.cell) )
+        trace( 540, '\t{}\n'.format( spares.conf.cellPnR ))
+        for occurrence in spares.conf.cellPnR.getTerminalNetlistInstanceOccurrencesUnder( centerArea ):
+            if not isinstance(occurrence.getEntity(),Instance):
+                continue
+            instance   = occurrence.getEntity()
+            masterCell = instance.getMasterCell()
+            if not masterCell.isTerminalNetlist():
+                continue
+            trace( 540, '\t| Overlap {}\n'.format(occurrence.getEntity()) )
+            if raiseError:
+                raise Error%essage( 1, [ 'QuadTree.create(): Unable to create QuadTree under area {}' \
+                                         .format(area)
+                                       , 'Area center is under fixed block {}' .format()
+                                       ] )
+            return True
+        sys.stdout.flush()
+        sys.stderr.flush()
+        return False
+
+    @staticmethod
+    def _create ( spares, parent, area, rtag, raiseError=False ):
+        childRtag = parent.rtag+'_'+rtag if parent else rtag
+        if QuadTree.isUsedArea( spares, area, childRtag, raiseError ):
+            return None
+        qt = QuadTree( spares, parent, area, childRtag )
+        return qt
 
     def __init__ ( self, spares, parent, area, rtag='root' ):
         self.spares    = spares
@@ -474,73 +507,73 @@ class QuadTree ( object ):
 
         if aspectRatio < 0.5:
             self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()/2 )
-            self.bl   = QuadTree( self.spares
-                                , self
-                                , Box( self.area.getXMin()
-                                     , self.area.getYMin()
-                                     , self.area.getXMax()
-                                     , self.ycut )
-                                , 'bl' )
-            self.tl   = QuadTree( self.spares
-                                , self
-                                , Box( self.area.getXMin()
-                                     , self.ycut
-                                     , self.area.getXMax()
-                                     , self.area.getYMax() )
-                                , 'tl' )
+            self.bl   = QuadTree._create( self.spares
+                                        , self
+                                        , Box( self.area.getXMin()
+                                             , self.area.getYMin()
+                                             , self.area.getXMax()
+                                             , self.ycut )
+                                        , 'bl' )
+            self.tl   = QuadTree._create( self.spares
+                                        , self
+                                        , Box( self.area.getXMin()
+                                             , self.ycut
+                                             , self.area.getXMax()
+                                             , self.area.getYMax() )
+                                        , 'tl' )
             trace( 540, '\tVertical bi-partition @Y:{}\n'.format(DbU.getValueString(self.ycut)) )
             trace( 540, '-' )
             return True
         elif aspectRatio > 2.0:
             self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth()/2 )
-            self.bl   = QuadTree( self.spares
-                                , self
-                                , Box( self.area.getXMin()
-                                     , self.area.getYMin()
-                                     , self.xcut
-                                     , self.area.getYMax() )
-                                , 'bl' )
-            self.br   = QuadTree( self.spares
-                                , self
-                                , Box( self.xcut
-                                     , self.area.getYMin()
-                                     , self.area.getXMax()
-                                     , self.area.getYMax() )
-                                , 'br' )
+            self.bl   = QuadTree._create( self.spares
+                                        , self
+                                        , Box( self.area.getXMin()
+                                             , self.area.getYMin()
+                                             , self.xcut
+                                             , self.area.getYMax() )
+                                        , 'bl' )
+            self.br   = QuadTree._create( self.spares
+                                        , self
+                                        , Box( self.xcut
+                                             , self.area.getYMin()
+                                             , self.area.getXMax()
+                                             , self.area.getYMax() )
+                                        , 'br' )
             trace( 540, '\tHorizontal bi-partition @X:{}\n'.format(DbU.getValueString(self.xcut)) )
             trace( 540, '-' )
             return True
 
         self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()/2 )
         self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth ()/2 )
-        self.bl   = QuadTree( self.spares
-                            , self
-                            , Box( self.area.getXMin()
-                                 , self.area.getYMin()
-                                 , self.xcut
-                                 , self.ycut )
-                            , 'bl' )
-        self.br   = QuadTree( self.spares
-                            , self
-                            , Box( self.xcut
-                                 , self.area.getYMin()
-                                 , self.area.getXMax()
-                                 , self.ycut )
-                            , 'br' )
-        self.tl   = QuadTree( self.spares
-                            , self
-                            , Box( self.area.getXMin()
-                                 , self.ycut
-                                 , self.xcut
-                                 , self.area.getYMax() )
-                            , 'tl' )
-        self.tr   = QuadTree( self.spares
-                            , self
-                            , Box( self.xcut
-                                 , self.ycut
-                                 , self.area.getXMax()
-                                 , self.area.getYMax() )
-                            , 'tr' )
+        self.bl   = QuadTree._create( self.spares
+                                    , self
+                                    , Box( self.area.getXMin()
+                                         , self.area.getYMin()
+                                         , self.xcut
+                                         , self.ycut )
+                                    , 'bl' )
+        self.br   = QuadTree._create( self.spares
+                                    , self
+                                    , Box( self.xcut
+                                         , self.area.getYMin()
+                                         , self.area.getXMax()
+                                         , self.ycut )
+                                    , 'br' )
+        self.tl   = QuadTree._create( self.spares
+                                    , self
+                                    , Box( self.area.getXMin()
+                                         , self.ycut
+                                         , self.xcut
+                                         , self.area.getYMax() )
+                                    , 'tl' )
+        self.tr   = QuadTree._create( self.spares
+                                    , self
+                                    , Box( self.xcut
+                                         , self.ycut
+                                         , self.area.getXMax()
+                                         , self.area.getYMax() )
+                                    , 'tr' )
 
         trace( 540, '\tQuadri-partition @X:{} + @Y:{}\n'\
                .format(DbU.getValueString(self.xcut),DbU.getValueString(self.ycut)) )
@@ -658,11 +691,21 @@ class QuadTree ( object ):
         if self.isVBipart():
             if position.getY() < self.ycut: return self.bl.getLeafUnder(position)
             return self.tl.getLeafUnder(position)
+        leaf = None
         if position.getX() < self.xcut:
-            if position.getY() < self.ycut: return self.bl.getLeafUnder(position)
-            return self.tl.getLeafUnder(position)
-        if position.getY() < self.ycut: return self.br.getLeafUnder(position)
-        return self.tr.getLeafUnder(position)
+            if position.getY() < self.ycut: leaf = self.bl
+            else:                           leaf = self.tl
+        else:
+            if position.getY() < self.ycut: leaf = self.br
+            else:                           leaf = self.tr
+        if not leaf:
+            dx = abs( position.getX() - self.xcut )
+            dy = abs( position.getY() - self.ycut )
+            if self.tr and ((dx <  dy) or not leaf): leaf = self.tr
+            if self.tl and ((dx <  dy) or not leaf): leaf = self.tl
+            if self.br and ((dx >= dy) or not leaf): leaf = self.br
+            if self.bl and ((dx >= dy) or not leaf): leaf = self.bl
+        return leaf.getLeafUnder(position)
 
     def getFreeLeafUnder ( self, area, attractor=None ):
         """
@@ -867,7 +910,7 @@ class Spares ( object ):
                                        , DbU.getValueString(7*self.conf.sliceHeight ) ))
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
-            self._addCapTies()
+            #self._addCapTies()
         trace( 540, '-' )
 
     def rshowPoolUse ( self ):

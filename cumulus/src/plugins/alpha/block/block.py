@@ -438,6 +438,7 @@ class Block ( object ):
                 self.clockTrees.append( ClockTree(self.spares,clockNet,len(self.clockTrees)) )
                 self.clockTrees[-1].buildHTree()
                 trace( 550, '-' )
+        Breakpoint.stop( 100, 'Block.addClockTrees() on {} done.'.format(self.conf.cellPnR) )
 
     def splitClocks ( self ):
         """
