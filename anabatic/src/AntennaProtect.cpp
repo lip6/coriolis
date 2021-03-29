@@ -256,14 +256,18 @@ namespace {
     cdebug_log(147,0) << "DiodeCluster::createDiode(): from=" << gcell
                       << " distance=" << distance << endl;
 
-    GCell* neighbor = gcell;
-    for ( uint32_t i=0 ; i<distance and neighbor ; ++i ) {
-      if      (side.contains(Flags::WestSide )) neighbor = neighbor->getWest();
-      else if (side.contains(Flags::EastSide )) neighbor = neighbor->getEast();
-      else if (side.contains(Flags::NorthSide)) neighbor = neighbor->getNorth();
-      else if (side.contains(Flags::SouthSide)) neighbor = neighbor->getSouth();
+    GCell*   neighbor = gcell;
+    GCell*   current  = gcell;
+    uint32_t i        = 0;
+    while ( i<distance ) {
+      if      (side.contains(Flags::WestSide )) current = current->getWest();
+      else if (side.contains(Flags::EastSide )) current = current->getEast();
+      else if (side.contains(Flags::NorthSide)) current = current->getNorth();
+      else if (side.contains(Flags::SouthSide)) current = current->getSouth();
+      if (not current) break;
+      neighbor = current;
+      ++i;
     }
-    if (not neighbor) return NULL;
 
     DbU::Unit xHint = 0;
     if      (side.contains(Flags::WestSide )) xHint = neighbor->getBoundingBox().getXMax();
@@ -275,6 +279,10 @@ namespace {
     Instance* diode = area->createDiodeUnder( getRefRp(), bb, xHint );
     if (diode) {
       _diodes.push_back( diode );
+      Transformation trans  = getRefRp()->getPlugOccurrence().getPath().getTransformation();
+      Point          center = diode->getAbutmentBox().getCenter();
+      trans.applyOn( center );
+      neighbor = _anabatic->getGCellUnder( center );
       cdebug_log(147,0) << "> GCell area (neighbor): " << bb << endl;
       Contact* sourceContact = gcell->breakGoThrough( getTopNet() );
       Contact* targetContact = neighbor->hasGContact( getTopNet() );
@@ -282,8 +290,10 @@ namespace {
       if (not targetContact) {
         bool hasGoThrough = (neighbor->hasGoThrough(getTopNet()) != NULL);
         targetContact = neighbor->breakGoThrough( getTopNet() );
+        cdebug_log(147,0) << "| breakGoThrough(), targetContact= " << targetContact << endl;
 
         if (not hasGoThrough) {
+          cdebug_log(147,0) << "| Target GCell do not have a go-through, connecting. " << endl;
           if (side & Flags::Horizontal) {
             if (sourceContact->getX() > targetContact->getX())
               std::swap( sourceContact, targetContact );
