@@ -720,6 +720,7 @@ namespace Etesian {
     
     size_t  instancesNb = 0;
     size_t  fixedNb     = 0;
+    size_t  registerNb  = 0;
     Box     topAb       = _placeArea;
     Transformation topTransformation;
     if (getBlockInstance()) {
@@ -727,6 +728,8 @@ namespace Etesian {
       topTransformation.applyOn( topAb );
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
+        string masterName = getString( instance->getMasterCell()->getName() );
+        if (masterName.substr(0,3) == "sff") ++registerNb;
         Box instanceAb = instance->getAbutmentBox();
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
           if (topAb.intersect(instanceAb)) {
@@ -742,6 +745,8 @@ namespace Etesian {
       ++instancesNb;
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
       Box       instanceAb = instance->getAbutmentBox();
+      string    masterName = getString( instance->getMasterCell()->getName() );
+      if (masterName.substr(0,3) == "sff") ++registerNb;
       if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
         ++fixedNb;
         totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
@@ -770,11 +775,13 @@ namespace Etesian {
 
     cmess1 << ::Dots::asUInt( "     - Number of instances ", instancesNb ) << endl;
     if (instancesNb) {
-      float bufferRatio = ((float)_bufferCount / (float)instancesNb) * 100.0;
+      float ratio = ((float)registerNb / (float)instancesNb) * 100.0;
       ostringstream os;
-      os << _bufferCount << " (" << fixed << setprecision(2) << bufferRatio << "%)";
+      os << registerNb << " (" << fixed << setprecision(2) << ratio << "%)";
+      cmess1 << ::Dots::asString( "     - Registers (DFF) ", os.str() ) << endl;
+      ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
+      os << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
       cmess1 << ::Dots::asString( "     - Buffers ", os.str() ) << endl;
-             
     }
     cout.flush();
 
