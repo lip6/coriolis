@@ -806,6 +806,13 @@ namespace {
                 Box bb = component->getBoundingBox(layer);
                 if ((bb.getWidth() == 0) or (bb.getHeight() == 0))
                   continue;
+                (*this) << BOUNDARY;
+                (*this) << LAYER(layer->getGds2Layer());
+                (*this) << DATATYPE(layer->getGds2Datatype());
+                (*this) << bb;
+                (*this) << ENDEL;
+                isOnGrid( component, bb );
+
                 const BasicLayer* exportLayer = layer;
                 if (NetExternalComponents::isExternal(component)) {
                   string layerName = getString( layer->getName() );
@@ -813,13 +820,12 @@ namespace {
                     exportLayer = tech->getBasicLayer( layerName+".pin" );
                     if (not exportLayer) exportLayer = layer;
                   }
+                  (*this) << BOUNDARY;
+                  (*this) << LAYER(exportLayer->getGds2Layer());
+                  (*this) << DATATYPE(exportLayer->getGds2Datatype());
+                  (*this) << bb;
+                  (*this) << ENDEL;
                 }
-                (*this) << BOUNDARY;
-                (*this) << LAYER(exportLayer->getGds2Layer());
-                (*this) << DATATYPE(exportLayer->getGds2Datatype());
-                (*this) << bb;
-                (*this) << ENDEL;
-                isOnGrid( component, bb );
 
                 if (NetExternalComponents::isExternal(component) or dynamic_cast<Pin*>(component)) {
                   string name = getString( component->getNet()->getName() );
