@@ -158,7 +158,7 @@ class ChipConf ( BlockConf ):
         #self.checkPads()
         #self.checkCorona()
         #self.computeChipSize()
-        self.checkChipSize()
+        #self.checkChipSize()
         self.findPowerAndClockNets()
         return
 
