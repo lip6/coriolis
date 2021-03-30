@@ -488,7 +488,9 @@ class Builder ( object ):
             coronaAb   = self.conf.cellPnR.getAbutmentBox()
             bufferRp   = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), ck, 0 )
             pinRp      = self.conf.rpAccessByOccurrence( Occurrence(coronaPin , Path()), ck, 0 )
+            trace( 550, '\tpinRp={}\n'.format(pinRp) )
             self.conf.expandMinArea( bufferRp )
+            self.conf.expandMinArea( pinRp )
             if coronaPin.getAccessDirection() == Pin.Direction.NORTH:
                 isVertical = True
                 axis       = coronaAb.getYMax()
@@ -514,6 +516,8 @@ class Builder ( object ):
                 self.conf.createVertical  ( bufferRp, contact1, xaxisRp , 0 )
                 self.conf.createHorizontal( contact1, contact2, yaxis   , 0 )
                 self.conf.createVertical  ( contact2, pinRp   , xaxisPin, 0 )
+                trace( 550, '\tcontact1={}\n'.format(contact1) )
+                trace( 550, '\tcontact2={}\n'.format(contact2) )
             else:
                 pitch    = self.conf.hRoutingGauge.getPitch()
                 xaxis    = axis + pitch * trackNb

@@ -250,6 +250,7 @@ class Builder ( object ):
             bb = segment.getBoundingBox( layer )
             self.activePlane.addTerminal( ck, Plane.Vertical, bb )
             trace( 550, '\tAdded terminal of {} to vertical plane @{}\n'.format(ck,bb) )
+       #Breakpoint.stop( 99, '_connectClock() on {} done.'.format(ck) )
   
     def connectClocks ( self ):
         if not self.conf.useClockTree:

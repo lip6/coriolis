@@ -280,12 +280,12 @@ class GaugeConf ( object ):
         return segment
   
     def rpAccess ( self, rp, flags ):
-        trace( 550, ',+', '\t_rpAccess() %s\n' % str(rp) )
-  
+        trace( 550, ',+', '\tGaugeConf.rpAccess() {}\n'.format(rp) )
+        startDepth = self.routingGauge.getLayerDepth( rp.getOccurrence().getEntity().getLayer() )
+        trace( 550, '\tlayer:{} startDepth:{}\n'.format(rp.getOccurrence().getEntity().getLayer(),startDepth) )
         if self._rpToAccess.has_key(rp):
             trace( 550, '-' )
             return self._rpToAccess[rp]
-  
         if flags & GaugeConf.DeepDepth:
             hdepth = self.horizontalDeepDepth
             vdepth = self.verticalDeepDepth
@@ -308,30 +308,37 @@ class GaugeConf ( object ):
         yoffset = 0
         if flags & GaugeConf.OffsetBottom1: yoffset =  1
         if flags & GaugeConf.OffsetTop1:    yoffset = -1
-        contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
-        midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
-                                                       + self._cellGauge.getSliceHeight() / 2
-        ytrack = self.getTrack( contact1.getY(), self.horizontalDeepDepth, yoffset )
-        dy     = ytrack - contact1.getY()
-        contact1.setDy( dy )
-  
+        if startDepth == 0:
+            contact1 = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
+            ytrack   = self.getTrack( contact1.getY(), self.horizontalDeepDepth, yoffset )
+            dy       = ytrack - contact1.getY()
+            contact1.setDy( dy )
+        else:
+            contact1 = Contact.create( rp, self._routingGauge.getContactLayer(startDepth), 0, 0 )
+            ytrack   = self.getTrack( contact1.getY(), startDepth, 0 )
+            dy       = ytrack - contact1.getY()
+        startDepth += 1
         trace( 550, contact1 )
     
         if flags & GaugeConf.HAccess: stopDepth = hdepth
         else:                         stopDepth = vdepth
         trace( 550, '\tstopDepth:%d\n' % stopDepth )
   
-        for depth in range(1,stopDepth):
-            rg      = self._routingGauge.getLayerGauge(depth)
+        for depth in range(startDepth,stopDepth):
+            rg      = self.routingGauge.getLayerGauge(depth)
             xoffset = 0
             if flags & GaugeConf.OffsetRight1 and depth == 1:
                 xoffset = 1
             if rg.getDirection() == RoutingLayerGauge.Horizontal:
                 xtrack = self.getTrack( contact1.getX(), depth+1, xoffset )
                 ytrack = self.getTrack( contact1.getY(), depth  , 0 )
+                trace( 550, '\tHorizontal depth={} xtrack={} ytrack={}\n' \
+                            .format(depth,DbU.getValueString(xtrack),DbU.getValueString(ytrack)) )
             else:
                 xtrack = self.getTrack( contact1.getX(), depth  , xoffset )
                 ytrack = self.getTrack( contact1.getY(), depth+1, 0 )
+                trace( 550, '\tVertical depth={} xtrack={} ytrack={}\n' \
+                            .format(depth,DbU.getValueString(xtrack),DbU.getValueString(ytrack)) )
             contact2 = Contact.create( rp.getNet()
                                      , self._routingGauge.getContactLayer(depth)
                                      , xtrack
@@ -400,8 +407,18 @@ class GaugeConf ( object ):
         return self.rpAccess( self.rpByPlugName(instance,plugName,net), flags )
 
     def setStackPosition ( self, topContact, x, y ):
-        topContact.setX( x )
-        topContact.setY( y )
+        trace( 550, '\tGaugeConf.setStackPosition() @({},{}) for {}\n' \
+                    .format(DbU.getValueString(x),DbU.getValueString(y),topContact) )
+        lg = self.routingGauge.getLayerGauge( topContact.getLayer().getTop() )
+        if lg:
+            if lg.getDirection() == RoutingLayerGauge.Horizontal:
+                topContact.setY( y )
+            else:
+                topContact.setX( x )
+        else:
+            trace( 550, '\tNo LayerGauge for top layer\n' )
+            topContact.setX( x )
+            topContact.setY( y )
         
         count = 0
         for component in topContact.getSlaveComponents():
@@ -414,13 +431,17 @@ class GaugeConf ( object ):
                 message.append( '| {}'.format(component) )
             raise ErrorMessage( 1, message )
         
-        if count == 1:
-            if isinstance(segment,Horizontal):
-                segment.setY( y )
-                segment.getOppositeAnchor( topContact ).setY( y )
-            elif isinstance(segment,Vertical):
-                segment.setX( x )
-                segment.getOppositeAnchor( topContact ).setX( x )
+        #if count == 1:
+        #    if isinstance(segment,Horizontal):
+        #        trace( 550, '\tAdjust horizontal slave @{} {}\n' \
+        #                    .format(DbU.getValueString(y),segment) )
+        #        segment.setY( y )
+        #        segment.getOppositeAnchor( topContact ).setY( y )
+        #    elif isinstance(segment,Vertical):
+        #        trace( 550, '\tAdjust vertical slave @{} {}\n' \
+        #                    .format(DbU.getValueString(x),segment) )
+        #        segment.setX( x )
+        #        segment.getOppositeAnchor( topContact ).setX( x )
         self.expandMinArea( topContact )
         return
 
@@ -440,6 +461,7 @@ class GaugeConf ( object ):
                     contacts.append( component.getTarget() )
             i += 1
         for segment in segments:
+            trace( 550, '\tGaugeConf.expandMinArea() on {}\n'.format(segment) )
             layer     = segment.getLayer()
             wireWidth = segment.getWidth()
             depth     = self._routingGauge.getLayerDepth( layer )
