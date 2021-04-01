@@ -776,12 +776,13 @@ namespace Etesian {
     cmess1 << ::Dots::asUInt( "     - Number of instances ", instancesNb ) << endl;
     if (instancesNb) {
       float ratio = ((float)registerNb / (float)instancesNb) * 100.0;
-      ostringstream os;
-      os << registerNb << " (" << fixed << setprecision(2) << ratio << "%)";
-      cmess1 << ::Dots::asString( "     - Registers (DFF) ", os.str() ) << endl;
+      ostringstream os1;
+      os1 << registerNb << " (" << fixed << setprecision(2) << ratio << "%)";
+      cmess1 << ::Dots::asString( "     - Registers (DFF) ", os1.str() ) << endl;
       ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
-      os << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
-      cmess1 << ::Dots::asString( "     - Buffers ", os.str() ) << endl;
+      ostringstream os2;
+      os2 << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
+      cmess1 << ::Dots::asString( "     - Buffers ", os2.str() ) << endl;
     }
     cout.flush();
 

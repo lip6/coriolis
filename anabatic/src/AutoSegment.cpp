@@ -418,7 +418,7 @@ namespace Anabatic {
   bool                           AutoSegment::_analogMode    = false;
   bool                           AutoSegment::_shortNetMode  = false;
   bool                           AutoSegment::_initialized   = false;
-  vector< array<DbU::Unit*,3> >  AutoSegment::_extensionCaps;
+  vector< array<DbU::Unit*,4> >  AutoSegment::_extensionCaps;
 
 
   void  AutoSegment::setAnalogMode   ( bool state ) { _analogMode = state; }
@@ -435,6 +435,7 @@ namespace Anabatic {
       DbU::Unit* viaToTopCap    = new DbU::Unit ( 0 );
       DbU::Unit* viaToBottomCap = new DbU::Unit ( 0 );
       DbU::Unit* viaToSameCap   = new DbU::Unit ( 0 );
+      DbU::Unit* minimalLength  = new DbU::Unit ( 0 );
       bool       isVertical     = (depth == 0) or (Session::getLayerGauge(depth)->isVertical());
       uint32_t   flags          = (isVertical) ? Layer::EnclosureV : Layer::EnclosureH ;
 
@@ -455,6 +456,12 @@ namespace Anabatic {
           *viaToBottomCap = Session::getViaWidth(depth-1)/2 + viaLayer->getTopEnclosure( flags );
       }
 
+      const Layer* routingLayer = Session::getRoutingLayer( depth );
+      double minimalArea = routingLayer->getMinimalArea();
+      if (minimalArea != 0.0) {
+        *minimalLength = DbU::fromMicrons( minimalArea / DbU::toMicrons( Session::getWireWidth(depth) ) );
+      }
+
     //cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
     //cerr << "  viaToTopCap:      " << DbU::getValueString(*viaToTopCap   ) << endl;
     //if (depth > 0)                                                                          
@@ -462,7 +469,10 @@ namespace Anabatic {
     //cerr << "  viaToBottomCap:   " << DbU::getValueString(*viaToBottomCap) << endl;
     //cerr << "  viaToSameCap:     " << DbU::getValueString(*viaToSameCap  ) << endl;
  
-      _extensionCaps.push_back( std::array<DbU::Unit*,3>( {{ viaToTopCap, viaToBottomCap, viaToSameCap }} ) );
+      _extensionCaps.push_back( std::array<DbU::Unit*,4>( {{ viaToTopCap
+                                                           , viaToBottomCap
+                                                           , viaToSameCap
+                                                           , minimalLength }} ) );
     }
   }
 
@@ -737,6 +747,12 @@ namespace Anabatic {
       if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
+    }
+
+    if (not isCreated() and (getMinimalLength(depth) != 0.0) and isMiddleStack()) {
+      if (getLength() < getMinimalLength(depth)) {
+        cap = std::max( cap, getMinimalLength(depth)/2 );
+      }
     }
 
     if (getLayer()->isSymbolic() and (cap < getWidth()/2)) cap  = getWidth()/2;
@@ -1534,6 +1550,22 @@ namespace Anabatic {
     cerr << "  PSource:" << onPSourceSource << " PTarget:" << onPTargetSource << endl;
 
     return not (onPSourceSource xor onPTargetSource);
+  }
+
+
+  bool  AutoSegment::isMiddleStack () const
+  {
+    if (isGlobal()) return false;
+    if (isSpinTopOrBottom()) return false;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+
+    if (not source->isTurn() or not target->isTurn()) return false;
+    if (source->getPerpandicular(this)->isNonPref()) return false;
+    if (target->getPerpandicular(this)->isNonPref()) return false;
+
+    return true;
   }
 
 

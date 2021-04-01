@@ -141,6 +141,7 @@ namespace Anabatic {
       inline static  DbU::Unit           getViaToTopCap             ( size_t depth );
       inline static  DbU::Unit           getViaToBottomCap          ( size_t depth );
       inline static  DbU::Unit           getViaToSameCap            ( size_t depth );
+      inline static  DbU::Unit           getMinimalLength           ( size_t depth );
              static  AutoSegment*        create                     ( AutoContact*  source
                                                                     , AutoContact*  target
                                                                     , Segment*      hurricaneSegment
@@ -221,6 +222,7 @@ namespace Anabatic {
       inline         bool                isUnsetAxis                () const;
       inline         bool                isSlackened                () const;
       inline         bool                isUserDefined              () const;
+                     bool                isMiddleStack              () const;
                      bool                isReduceCandidate          () const;
                      bool                isUTurn                    () const;
       inline         bool                isAnalog                   () const;
@@ -373,7 +375,7 @@ namespace Anabatic {
       static bool                          _analogMode;
       static bool                          _shortNetMode;
       static bool                          _initialized;
-      static vector< array<DbU::Unit*,3> > _extensionCaps;
+      static vector< array<DbU::Unit*,4> > _extensionCaps;
     // Internal: Attributes.      
       const  unsigned long                 _id;
              GCell*                        _gcell;
@@ -467,6 +469,7 @@ namespace Anabatic {
   inline  DbU::Unit       AutoSegment::getViaToTopCap         ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][0]) : 0; }
   inline  DbU::Unit       AutoSegment::getViaToBottomCap      ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][1]) : 0; }
   inline  DbU::Unit       AutoSegment::getViaToSameCap        ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][2]) : 0; }
+  inline  DbU::Unit       AutoSegment::getMinimalLength       ( size_t depth ) { return (depth < _extensionCaps.size()) ? *(_extensionCaps[depth][3]) : 0; }
   inline  unsigned long   AutoSegment::getId                  () const { return _id; }
   inline  Cell*           AutoSegment::getCell                () const { return base()->getCell(); }
   inline  Net*            AutoSegment::getNet                 () const { return base()->getNet(); }
