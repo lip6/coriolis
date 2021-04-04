@@ -227,7 +227,7 @@ namespace Anabatic {
       size_t     depth  = Session::getRoutingGauge()->getLayerDepth(segment->getLayer());
       DbU::Unit  length;
       if (segment->isLocal()) {
-        length = segment->getLength();
+        length = segment->getAnchoredLength();
         lengths[depth] += length;
 
         DbU::Unit sideLength = (segment->isHorizontal()) ? hSideLength : vSideLength;

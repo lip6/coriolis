@@ -122,6 +122,8 @@ namespace Anabatic {
   const BaseFlags  Flags::UseNonPref          = (1L << 34);
   const BaseFlags  Flags::Force               = (1L << 35);
   const BaseFlags  Flags::LayerCapOnly        = (1L << 36);
+  const BaseFlags  Flags::NoMinLength         = (1L << 37);
+  const BaseFlags  Flags::NoSegExt            = (1L << 38);
 
 
   Flags::~Flags ()

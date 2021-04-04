@@ -41,8 +41,8 @@ namespace Anabatic {
   Segment*   AutoVertical::base         ()       { return _vertical; }
   Segment*   AutoVertical::base         () const { return _vertical; }
   Vertical*  AutoVertical::getVertical  ()       { return _vertical; }
-  DbU::Unit  AutoVertical::getSourceU   () const { return _vertical->getSourceY(); }
-  DbU::Unit  AutoVertical::getTargetU   () const { return _vertical->getTargetY(); }
+  DbU::Unit  AutoVertical::getSourceU   () const { return _vertical->getSource()->getY(); }
+  DbU::Unit  AutoVertical::getTargetU   () const { return _vertical->getTarget()->getY(); }
   DbU::Unit  AutoVertical::getDuSource  () const { return _vertical->getDySource(); }
   DbU::Unit  AutoVertical::getDuTarget  () const { return _vertical->getDyTarget(); }
   Interval   AutoVertical::getSpanU     () const { return Interval(_vertical->getSourceY(),_vertical->getTargetY()); }
@@ -268,13 +268,13 @@ namespace Anabatic {
 
     if (not isDrag()) {
       if (   not isStrongTerminal()
-         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < getPitch()*5)) )
+         or (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < getPitch()*5)) )
         { cdebug_tabw(149,-1); return false; }
     }
 
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
-    cdebug_log(149,0) << "test:" << (getLength() < getPitch()*5) << endl;
-    cdebug_log(149,0) << "length:" << DbU::getValueString(getLength()) << endl;
+    cdebug_log(149,0) << "test:" << (getAnchoredLength() < getPitch()*5) << endl;
+    cdebug_log(149,0) << "length:" << DbU::getValueString(getAnchoredLength()) << endl;
 
     bool         success         = false;
     bool         sourceSlackened = false;
@@ -382,6 +382,10 @@ namespace Anabatic {
     if (_vertical->getTargetY() < _vertical->getSourceY()) {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _vertical->invert();
+      DbU::Unit duSource = getDuSource();
+      DbU::Unit duTarget = getDuTarget();
+      setDuSource( -duTarget );
+      setDuTarget( -duSource );
 
       unsigned int spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );
@@ -405,8 +409,8 @@ namespace Anabatic {
 
   void  AutoVertical::updatePositions ()
   {
-    _sourcePosition = _vertical->getSourceY() - getExtensionCap(Flags::Source);
-    _targetPosition = _vertical->getTargetY() + getExtensionCap(Flags::Target);
+    _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
+    _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
   }
 
 
@@ -426,8 +430,8 @@ namespace Anabatic {
   bool  AutoVertical::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _vertical->getSourceY() - getExtensionCap(Flags::Source);
-    DbU::Unit targetPosition = _vertical->getTargetY() + getExtensionCap(Flags::Target);
+    DbU::Unit sourcePosition = _vertical->getSource()->getY() - getExtensionCap(Flags::Source);
+    DbU::Unit targetPosition = _vertical->getTarget()->getY() + getExtensionCap(Flags::Target);
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << Error ( "%s\n        Source position incoherency: "

@@ -47,8 +47,8 @@ namespace Anabatic {
   Segment*    AutoHorizontal::base          ()       { return _horizontal; }
   Segment*    AutoHorizontal::base          () const { return _horizontal; }
   Horizontal* AutoHorizontal::getHorizontal ()       { return _horizontal; }
-  DbU::Unit   AutoHorizontal::getSourceU    () const { return _horizontal->getSourceX(); }
-  DbU::Unit   AutoHorizontal::getTargetU    () const { return _horizontal->getTargetX(); }
+  DbU::Unit   AutoHorizontal::getSourceU    () const { return _horizontal->getSource()->getX(); }
+  DbU::Unit   AutoHorizontal::getTargetU    () const { return _horizontal->getTarget()->getX(); }
   DbU::Unit   AutoHorizontal::getDuSource   () const { return _horizontal->getDxSource(); }
   DbU::Unit   AutoHorizontal::getDuTarget   () const { return _horizontal->getDxTarget(); }
   Interval    AutoHorizontal::getSpanU      () const { return Interval(_horizontal->getSourceX(),_horizontal->getTargetX()); }
@@ -335,11 +335,11 @@ namespace Anabatic {
 
     cdebug_tabw(149,1);
     cdebug_log(149,0) << "_flags:" << (_flags & (SegGlobal|SegWeakGlobal)) << endl;
-    cdebug_log(149,0) << "test:" << (getLength() < 5*getPitch()) << endl;
-    cdebug_log(149,0) << "length:" << DbU::getValueString(getLength()) << endl;
+    cdebug_log(149,0) << "test:" << (getAnchoredLength() < 5*getPitch()) << endl;
+    cdebug_log(149,0) << "length:" << DbU::getValueString(getAnchoredLength()) << endl;
 
     if (height >= 4*getPitch()) {
-      if (not (_flags & (SegGlobal|SegWeakGlobal)) and (getLength() < 5*getPitch())) {
+      if (not (_flags & (SegGlobal|SegWeakGlobal)) and (getAnchoredLength() < 5*getPitch())) {
         cdebug_log(149,0) << "Too short terminal segment to slacken." << endl;
         cdebug_tabw(149,-1);
         return false;
@@ -486,9 +486,18 @@ namespace Anabatic {
 
   void  AutoHorizontal::updateOrient ()
   {
-    if (_horizontal->getTargetX() < _horizontal->getSourceX()) {
+    if (_horizontal->getTarget()->getX() < _horizontal->getSource()->getX()) {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
-      _horizontal->invert();
+      if (isAtMinArea()) {
+        DbU::Unit sourceX = _horizontal->getSourceX();
+        DbU::Unit targetX = _horizontal->getTargetX();
+        _horizontal->invert();
+        setDuSource( sourceX - getSourceU() );
+        setDuTarget( targetX - getTargetU() );
+      } else {
+        _horizontal->invert();
+      }
+      cdebug_log(145,0) << "updateOrient() " << this << " (after S/T swap)" << endl;
 
       uint64_t spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );
@@ -512,8 +521,8 @@ namespace Anabatic {
 
   void  AutoHorizontal::updatePositions ()
   {
-    _sourcePosition = _horizontal->getSourceX() - getExtensionCap(Flags::Source);
-    _targetPosition = _horizontal->getTargetX() + getExtensionCap(Flags::Target);
+    _sourcePosition = getSourceU() - getExtensionCap(Flags::Source);
+    _targetPosition = getTargetU() + getExtensionCap(Flags::Target);
   }
 
 
@@ -533,8 +542,8 @@ namespace Anabatic {
   bool  AutoHorizontal::checkPositions () const
   {
     bool      coherency      = true;
-    DbU::Unit sourcePosition = _horizontal->getSourceX() - getExtensionCap(Flags::Source);
-    DbU::Unit targetPosition = _horizontal->getTargetX() + getExtensionCap(Flags::Target);
+    DbU::Unit sourcePosition = _horizontal->getSource()->getX() - getExtensionCap(Flags::Source);
+    DbU::Unit targetPosition = _horizontal->getTarget()->getX() + getExtensionCap(Flags::Target);
 
     if ( _sourcePosition != sourcePosition ) {
       cerr << "extensionCap: " << DbU::getValueString(getExtensionCap(Flags::Source)) << endl;

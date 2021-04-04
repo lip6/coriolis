@@ -324,6 +324,25 @@ namespace Katana {
         TrackElement* trackSegment = lookup( revalidateds[i] );
         if (trackSegment) trackSegment->reschedule( 0 );
       }
+      // if (revalidateds[i]->isUnderMinLength()) {
+      //   cdebug_log(159,0) << "Session: under min length:" << revalidateds[i] << endl;
+      //   revalidateds[i]->expandToMinLength();
+      //   TrackElement* trackSegment = lookup( revalidateds[i] );
+      //   if (trackSegment) {
+      //     trackSegment->invalidate();
+      //     trackSegment->reschedule( 0 );
+      //   }
+      // } else {
+      //   if (revalidateds[i]->isAtMinArea()) {
+      //     if (revalidateds[i]->unexpandToMinLength()) {
+      //       TrackElement* trackSegment = lookup( revalidateds[i] );
+      //       if (trackSegment) {
+      //         trackSegment->invalidate();
+      //         trackSegment->reschedule( 0 );
+      //       }
+      //     }
+      //   }
+      // }
       if (revalidateds[i]->canReduce()) {
         revalidateds[i]->reduce();
         TrackElement* trackSegment = lookup( revalidateds[i] );

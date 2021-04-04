@@ -1737,7 +1737,7 @@ namespace Anabatic {
       cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
   
     // HARDCODED VALUE.
-      if ( (getTopology() & Global_Fixed) and (globalSegment->getLength() < 2*Session::getSliceHeight()) )
+      if ( (getTopology() & Global_Fixed) and (globalSegment->getAnchoredLength() < 2*Session::getSliceHeight()) )
         addToFixSegments( globalSegment );
         
       if (getConnexity().fields.globals < 2) {

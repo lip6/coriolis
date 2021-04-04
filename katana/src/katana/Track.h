@@ -99,6 +99,7 @@ namespace Katana {
               DbU::Unit      getSourcePosition   ( size_t index ) const;
               bool           check               ( uint32_t& overlaps, const char* message=NULL ) const;
               uint32_t       checkOverlap        ( uint32_t& overlaps ) const;
+              uint32_t       checkMinArea        () const;
               void           expandMinArea       ();
      inline   void           setLocalAssigned    ( bool );
               void           invalidate          ();

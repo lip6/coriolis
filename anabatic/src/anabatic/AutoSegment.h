@@ -107,6 +107,7 @@ namespace Anabatic {
       static const uint64_t  SegShortNet          = (1L<<35);
       static const uint64_t  SegUnbreakable       = (1L<<36);
       static const uint64_t  SegNonPref           = (1L<<37);
+      static const uint64_t  SegAtMinArea         = (1L<<38);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -173,6 +174,7 @@ namespace Anabatic {
       inline         DbU::Unit           getContactWidth            () const;
       inline         DbU::Unit           getLength                  () const;
       inline         DbU::Unit           getSpanLength              () const;
+      inline         DbU::Unit           getAnchoredLength          () const;
       inline         DbU::Unit           getSourcePosition          () const;
       inline         DbU::Unit           getTargetPosition          () const;
       inline         DbU::Unit           getSourceX                 () const;
@@ -200,6 +202,7 @@ namespace Anabatic {
       inline         bool                isUnbreakable              () const;
       inline         bool                isNonPref                  () const;
       inline         bool                isDrag                     () const;
+      inline         bool                isAtMinArea                () const;
       inline         bool                isNotSourceAligned         () const;
       inline         bool                isNotTargetAligned         () const;
       inline         bool                isNotAligned               () const;
@@ -212,6 +215,7 @@ namespace Anabatic {
       inline         bool                isSpinBottom               () const;
       inline         bool                isSpinTopOrBottom          () const;
       inline         bool                isReduced                  () const;
+                     bool                isUnderMinLength           () const;
       inline         bool                isStrap                    () const;
       inline         bool                isDogleg                   () const;
       inline         bool                isUnbound                  () const;
@@ -332,6 +336,8 @@ namespace Anabatic {
                      bool                bloatStackedStrap          ();
                      bool                reduce                     ();
                      bool                raise                      ();
+                     bool                expandToMinLength          ( Interval );
+                     bool                unexpandToMinLength        ();
     // Canonical Modifiers.                                            
                      AutoSegment*        canonize                   ( Flags flags=Flags::NoFlags );
              virtual void                invalidate                 ( Flags flags=Flags::Propagate );
@@ -423,6 +429,10 @@ namespace Anabatic {
       };
     public:
       struct CompareBySourceU : public binary_function<AutoSegment*,AutoSegment*,bool> {
+          bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
+      };
+    public:
+      struct CompareByRevalidate : public binary_function<AutoSegment*,AutoSegment*,bool> {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
     public:
@@ -526,6 +536,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isTargetTerminal       () const { return _flags & SegTargetTerminal; }
   inline  bool            AutoSegment::isTerminal             () const { return (_rpDistance == 0); }
   inline  bool            AutoSegment::isDrag                 () const { return _flags & SegDrag; }
+  inline  bool            AutoSegment::isAtMinArea            () const { return _flags & SegAtMinArea; }
   inline  bool            AutoSegment::isNotSourceAligned     () const { return _flags & SegNotSourceAligned; }
   inline  bool            AutoSegment::isNotTargetAligned     () const { return _flags & SegNotTargetAligned; }
   inline  bool            AutoSegment::isNotAligned           () const { return (_flags & SegNotAligned) == SegNotAligned; }
@@ -564,6 +575,7 @@ namespace Anabatic {
   inline  void            AutoSegment::resetNativeConstraints ( DbU::Unit min, DbU::Unit max ) { _nativeConstraints = Interval( min, max ); }
 //inline  void            AutoSegment::mergeUserConstraints   ( const Interval& constraints ) { _userConstraints.intersection(constraints); }
   inline  void            AutoSegment::resetUserConstraints   () { _userConstraints = Interval(false); }
+  inline  DbU::Unit       AutoSegment::getAnchoredLength      () const { return std::abs(getTargetU() - getSourceU()); }
 
   inline  void  AutoSegment::setLayer ( size_t depth )
   {
@@ -579,8 +591,8 @@ namespace Anabatic {
   { return getWidth() + Session::getViaWidth(getLayer()) - Session::getWireWidth(getLayer()); }
 
   inline  DbU::Unit  AutoSegment::getSpanLength () const
-  { return getLength() + getExtensionCap( Flags::Source|Flags::LayerCapOnly )
-                       + getExtensionCap( Flags::Target|Flags::LayerCapOnly );
+  { return getAnchoredLength() + getExtensionCap( Flags::Source|Flags::LayerCapOnly|Flags::NoMinLength )
+                               + getExtensionCap( Flags::Target|Flags::LayerCapOnly|Flags::NoMinLength );
   }
 
   inline  void  AutoSegment::setParent ( AutoSegment* parent )

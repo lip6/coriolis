@@ -348,7 +348,7 @@ namespace Anabatic {
     if ( deltaUnit < 0 ) return true;  // Smallest source first.
     if ( deltaUnit > 0 ) return false;
 
-    deltaUnit = lhs->getLength() - rhs->getLength();
+    deltaUnit = lhs->getAnchoredLength() - rhs->getAnchoredLength();
     if ( deltaUnit > 0 ) return true;  // Longest first.
     if ( deltaUnit < 0 ) return false;
 
@@ -410,6 +410,22 @@ namespace Anabatic {
 
 
 // -------------------------------------------------------------------
+// Class  :  "Anabatic::AutoSegment::CompareByRevalidate".
+
+
+  bool  AutoSegment::CompareByRevalidate::operator() ( AutoSegment* lhs, AutoSegment* rhs ) const
+  {
+    if (lhs->isNonPref() xor rhs->isNonPref() ) return lhs->isNonPref();
+
+    DbU::Unit deltaLength = lhs->getAnchoredLength() - rhs->getAnchoredLength();
+    if (deltaLength > 0) return true;  // Longest length first.
+    if (deltaLength < 0) return false;
+
+    return lhs->getId() < rhs->getId(); // Smallest Id first.
+  }
+
+
+// -------------------------------------------------------------------
 // Class  :  "Anabatic::AutoSegment".
 
 
@@ -431,6 +447,7 @@ namespace Anabatic {
   //cerr << "AutoSegment::_initialize()" << endl;
 
     _initialized = true;
+    DbU::Unit twoGrid = DbU::fromGrid( 2 );
     for ( size_t depth=0 ; depth<Session::getDepth() ; ++depth ) {
       DbU::Unit* viaToTopCap    = new DbU::Unit ( 0 );
       DbU::Unit* viaToBottomCap = new DbU::Unit ( 0 );
@@ -460,6 +477,9 @@ namespace Anabatic {
       double minimalArea = routingLayer->getMinimalArea();
       if (minimalArea != 0.0) {
         *minimalLength = DbU::fromMicrons( minimalArea / DbU::toMicrons( Session::getWireWidth(depth) ) );
+        DbU::Unit modulo = *minimalLength % twoGrid;
+        if (modulo)
+          *minimalLength += twoGrid - modulo;
       }
 
     //cerr << "  viaToTop width:   " << DbU::getValueString( Session::getViaWidth(depth) ) << endl;
@@ -684,6 +704,10 @@ namespace Anabatic {
         incReduceds();
     }
 
+    Interval oldSpan = Interval( _sourcePosition, _targetPosition );
+    if (not expandToMinLength(oldSpan)) {
+      unexpandToMinLength();
+    }
     updatePositions();
 
     unsigned int observerFlags = Revalidate;
@@ -736,24 +760,49 @@ namespace Anabatic {
       if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-      cdebug_log(150,0) << "getExtensionCap(): flags:" << getFlags()
+      cdebug_log(150,0) << "getExtensionCap(): (source) flags:" << getFlags()
                         << " VIA cap:" << DbU::getValueString(cap)
                         << " t:" << (getFlags() & SegSourceBottom)
                         << " b:" << (getFlags() & SegSourceTop)
                         << endl;
+      if (not (flags & Flags::NoSegExt)) {
+        cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
+        if (-getDuSource() > cap) {
+          cap = -getDuSource();
+          cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+        }
+      }
     }
 
     if (flags & Flags::Target) {
       if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-    }
-
-    if (not isCreated() and (getMinimalLength(depth) != 0.0) and isMiddleStack()) {
-      if (getLength() < getMinimalLength(depth)) {
-        cap = std::max( cap, getMinimalLength(depth)/2 );
+      cdebug_log(150,0) << "getExtensionCap(): (target) flags:" << getFlags()
+                        << " VIA cap:" << DbU::getValueString(cap)
+                        << " t:" << (getFlags() & SegSourceBottom)
+                        << " b:" << (getFlags() & SegSourceTop)
+                        << endl;
+      if (not (flags & Flags::NoSegExt)) {
+        cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
+        if (getDuTarget() > cap) {
+          cap = getDuTarget();
+          cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+        }
       }
     }
+
+    // if (   not isCreated()
+    //    and not (flags & Flags::NoMinLength)
+    //    and     (flags & Flags::Target)
+    //    and (getMinimalLength(depth) != 0.0)
+    //    and isMiddleStack() ) {
+    //   DbU::Unit realLength = getExtensionCap( Flags::Source|Flags::LayerCapOnly|Flags::NoMinLength )
+    //                        + getAnchoredLength();
+    //   if (realLength + cap < getMinimalLength(depth)) {
+    //     cap = getMinimalLength(depth) - realLength;
+    //   }
+    // }
 
     if (getLayer()->isSymbolic() and (cap < getWidth()/2)) cap  = getWidth()/2;
     if (not (flags & Flags::LayerCapOnly))                 cap += getLayer()->getMinimalSpacing()/2;
@@ -1329,7 +1378,7 @@ namespace Anabatic {
               if (terminalMin != terminalMax)
                 attractors.addAttractor( terminalMax );
             }
-          } else if (autoSegment->isLongLocal() or (autoSegment->getLength() > getPPitch()*20)) {
+          } else if (autoSegment->isLongLocal() or (autoSegment->getAnchoredLength() > getPPitch()*20)) {
             cdebug_log(145,0) << "Used as long global attractor." << endl;
 
             DbU::Unit perpandMin = autoSegment->getSourceU();
@@ -1555,16 +1604,95 @@ namespace Anabatic {
 
   bool  AutoSegment::isMiddleStack () const
   {
-    if (isGlobal()) return false;
-    if (isSpinTopOrBottom()) return false;
-
+    cdebug_log(149,0) << "AutoSegment::isMiddleStack() - " << this << endl;
+    if (isGlobal() or isNonPref()) return false;
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
+    if (not source or not target) return false;
+    if (isSpinTopOrBottom()) return false;
+    if (not source->isTurn() and not source->isTerminal()) return false;
+    if (not target->isTurn() and not target->isTerminal()) return false;
+    if (source->isTurn()) {
+      AutoSegment* perpandicular = source->getPerpandicular( this );
+      if (perpandicular->isNonPref() and (perpandicular->getAnchoredLength() != 0)) {
+        cdebug_log(149,0) << "| false, perpandicular is non-pref and non-zero. " << this << endl;
+        return false;
+      }
+    }
+    if (target->isTurn()) {
+      AutoSegment* perpandicular = target->getPerpandicular( this );
+      if (perpandicular->isNonPref() and (perpandicular->getAnchoredLength() != 0)) {
+        cdebug_log(149,0) << "| false, perpandicular is non-pref and non-zero. " << this << endl;
+        return false;
+      }
+    }
+    cdebug_log(149,0) << "  Middle stack or terminal bound." << endl;
+    return true;
+  }
 
-    if (not source->isTurn() or not target->isTurn()) return false;
-    if (source->getPerpandicular(this)->isNonPref()) return false;
-    if (target->getPerpandicular(this)->isNonPref()) return false;
 
+  bool  AutoSegment::isUnderMinLength () const
+  {
+    return false;
+    // cdebug_log(149,0) << "AutoSegment::isUnderMinLength() - " << this << endl;
+    // if (not isMiddleStack()) return false;
+    // DbU::Unit spanLength    = getSpanLength();
+    // DbU::Unit minimalLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
+    // cdebug_log(149,0) << "  span="  << DbU::getValueString(spanLength)
+    //                   <<  " < min=" << DbU::getValueString(minimalLength)<< endl;
+    // return spanLength < minimalLength;
+  }
+
+
+  bool  AutoSegment::expandToMinLength ( Interval span )
+  {
+    if (not isMiddleStack()) return false;
+    cdebug_log(149,1) << "AutoSegment::expandToMinLength() " << this << endl;
+    cdebug_log(149,0) << "In span=" << span << endl;
+    cdebug_log(149,0) << "Before: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
+                      << " "         << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
+                      << "]" << endl;
+
+    DbU::Unit sourceCap    = getExtensionCap( Flags::Source|Flags::NoSegExt|Flags::LayerCapOnly );
+    DbU::Unit targetCap    = getExtensionCap( Flags::Target|Flags::NoSegExt|Flags::LayerCapOnly );
+    DbU::Unit segMinLength = getAnchoredLength() + sourceCap + targetCap;
+    DbU::Unit techMinLength = getMinimalLength( Session::getLayerDepth( getLayer() ));
+    if (techMinLength <= segMinLength) {
+      cdebug_log(149,0) << "Above minimal length (" << DbU::getValueString(segMinLength)
+                        << " >= " << DbU::getValueString(techMinLength) << ")" << endl;
+      cdebug_tabw(149,-1);
+      return false;
+    }
+    
+    DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
+    DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
+    if (not span.isEmpty()) {
+      DbU::Unit shiftLeft = span.getVMax() - (getTargetU() + targetExpand);
+      if (shiftLeft < 0) {
+        targetExpand += shiftLeft;
+        sourceExpand += shiftLeft;
+      }
+    }
+    setDuSource( sourceExpand );
+    setDuTarget( targetExpand );
+    cdebug_log(149,0) <<  "sourceExpand=" << DbU::getValueString(sourceExpand)
+                      << " targetExpand=" << DbU::getValueString(targetExpand) << endl;
+    cdebug_log(149,0) << "After: [" << DbU::getValueString(getSourceU() - getExtensionCap( Flags::Source|Flags::LayerCapOnly ))
+                      << " "        << DbU::getValueString(getTargetU() + getExtensionCap( Flags::Target|Flags::LayerCapOnly ))
+                      << "] expand:" << DbU::getValueString(techMinLength - segMinLength)<< endl;
+    setFlags( SegAtMinArea );
+    cdebug_tabw(149,-1);
+    return true;
+  }
+
+
+  bool  AutoSegment::unexpandToMinLength ()
+  {
+    if (not isAtMinArea()) return false;
+    cdebug_log(149,0) << "AutoSegment::unexpandToMinLength() " << this << endl;
+    setDuSource( 0 );
+    setDuTarget( 0 );
+    unsetFlags( SegAtMinArea );
     return true;
   }
 
@@ -1614,8 +1742,8 @@ namespace Anabatic {
     } else
       return false;
 
-    cdebug_log(159,0) << "  length:" << DbU::getValueString(getLength()) << endl;
-    if (getLength() >= (Session::getPitch(perpandicularDepth) * 2)) return false;
+    cdebug_log(159,0) << "  length:" << DbU::getValueString(getAnchoredLength()) << endl;
+    if (getAnchoredLength() >= (Session::getPitch(perpandicularDepth) * 2)) return false;
 
     return true;
   }
@@ -1653,7 +1781,7 @@ namespace Anabatic {
     else if (isSpinTop   ()) ++perpandicularDepth;
     else return true;
 
-    return (getLength() >= (Session::getPitch(perpandicularDepth) * 2));
+    return (getAnchoredLength() >= (Session::getPitch(perpandicularDepth) * 2));
   }
 
 
@@ -2846,7 +2974,7 @@ namespace Anabatic {
     exploreds.insert( seed->getAutoSource() );
     exploreds.insert( seed->getAutoTarget() );
 
-    if (seed->getLength()) {
+    if (seed->getAnchoredLength()) {
       if (flags & Flags::Superior) stack.push_back( seed->getAutoTarget() );
       else                    stack.push_back( seed->getAutoSource() );
     } else {
@@ -2871,7 +2999,7 @@ namespace Anabatic {
         AutoSegment* autoSegment = Session::lookup( segment );
         if (not autoSegment) continue;
 
-        if (not autoSegment->getLength()) {
+        if (not autoSegment->getAnchoredLength()) {
           AutoContact* contact = autoSegment->getAutoSource();
           if (contact and (contact != currentContact)) {
             if (exploreds.find(contact) == exploreds.end())

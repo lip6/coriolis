@@ -754,7 +754,7 @@ namespace Anabatic {
         if (not segment->isStrongTerminal()) locals.push_back( segment );
         continue;
       }
-      if ( (segment->getLength() < 3*Session::getSliceHeight()) and (segment != seed) ) {
+      if ( (segment->getAnchoredLength() < 3*Session::getSliceHeight()) and (segment != seed) ) {
         locals.push_back( segment );
         continue;
       }

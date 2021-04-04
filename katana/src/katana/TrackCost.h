@@ -131,6 +131,7 @@ namespace Katana {
       inline       DbU::Unit     getDeltaPerpand     () const;
       inline       DbU::Unit     getLongestOverlap   () const;
       inline       DbU::Unit     getAxisWeight       () const;
+      inline       DbU::Unit     getFreeLength       () const;
       inline       int           getRipupCount       () const;
       inline       uint32_t      getDataState        () const;
       inline       uint32_t      setFlags            ( uint32_t );
@@ -152,6 +153,7 @@ namespace Katana {
       inline       void          incDeltaShared      ( DbU::Unit );
       inline       void          incAxisWeight       ( DbU::Unit );
       inline       void          setLonguestOverlap  ( DbU::Unit );
+      inline       void          setFreeLength       ( DbU::Unit );
       inline       void          mergeRipupCount     ( int );
       inline       void          mergeDataState      ( uint32_t );
       inline       bool          selectNextTrack     ();
@@ -183,6 +185,7 @@ namespace Katana {
       DbU::Unit     _axisWeight;
       DbU::Unit     _distanceToFixed;
       DbU::Unit     _longuestOverlap;
+      DbU::Unit     _freeLength;
       uint32_t      _dataState;
       int           _ripupCount;
       uint32_t      _selectFlags;
@@ -223,6 +226,7 @@ namespace Katana {
   inline const Interval&     TrackCost::getInterval2        () const { return _interval2; }
   inline       uint32_t      TrackCost::getTerminals        () const { return _terminals; }
   inline       DbU::Unit     TrackCost::getLongestOverlap   () const { return _longuestOverlap; }
+  inline       DbU::Unit     TrackCost::getFreeLength       () const { return _freeLength; }
   inline       DbU::Unit     TrackCost::getDelta            () const { return _delta; }
   inline       DbU::Unit     TrackCost::getAxisWeight       () const { return _axisWeight; }
   inline       int           TrackCost::getRipupCount       () const { return _ripupCount; }
@@ -245,6 +249,7 @@ namespace Katana {
   inline       void          TrackCost::incDeltaShared      ( DbU::Unit delta )       { _deltaShared  += delta; }
   inline       void          TrackCost::incAxisWeight       ( DbU::Unit weight )      { _axisWeight   += weight; }
   inline       void          TrackCost::setLonguestOverlap  ( DbU::Unit overlap )     { _longuestOverlap = std::max( overlap, _longuestOverlap ); }
+  inline       void          TrackCost::setFreeLength       ( DbU::Unit length )      { _freeLength      = std::min( length , _freeLength      ); }
   inline       void          TrackCost::mergeRipupCount     ( int count )             { _ripupCount      = std::max( count  , _ripupCount      ); }
   inline       void          TrackCost::mergeDataState      ( uint32_t state )        { _dataState       = std::max( state  , _dataState       ); }
   inline       string        TrackCost::_getTypeName        () const { return "TrackCost"; }

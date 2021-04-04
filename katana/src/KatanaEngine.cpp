@@ -844,13 +844,13 @@ namespace Katana {
 
     cdebug_tabw(155,1);
 
-    openSession();
-    for ( RoutingPlane* plane : _routingPlanes ) {
-      for ( Track* track : plane->getTracks() ) {
-        track->expandMinArea();
-      }
-    }
-    Session::close();
+    // openSession();
+    // for ( RoutingPlane* plane : _routingPlanes ) {
+    //   for ( Track* track : plane->getTracks() ) {
+    //     track->expandMinArea();
+    //   }
+    // }
+    // Session::close();
 
     setState( Anabatic::EngineDriving );
     _gutKatana();

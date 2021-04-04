@@ -259,6 +259,8 @@ namespace Anabatic {
     cdebug_log(145,0) << "_segmentInvalidateds.size(): " << _segmentInvalidateds.size() << endl;
 
     _segmentRevalidateds.clear();
+    std::sort( _segmentInvalidateds.begin(), _segmentInvalidateds.end()
+             , AutoSegment::CompareByRevalidate() );
     for ( size_t i=0 ; i < _segmentInvalidateds.size() ; ++i, ++count ) {
       _segmentInvalidateds[i]->revalidate();
       if ( not _destroyedSegments.empty()

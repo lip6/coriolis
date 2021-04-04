@@ -373,8 +373,12 @@ namespace Katana {
     const Interval& interval     = cost.getInterval();
           Interval  freeInterval = getFreeInterval( interval.getCenter(), cost.getNet() );
 
-    if (not freeInterval.contains(interval))
+    if (not freeInterval.contains(interval)) {
       getOverlapBounds( cost.getInterval(), begin, end );
+      cost.setFreeLength( 0 );
+    } else {
+      cost.setFreeLength( freeInterval.getSize() );
+    }
     cost.setTrack( const_cast<Track*>(this), begin, end );
 
     cdebug_log(155,1) << "addOverlapCost() @" << DbU::getValueString(_axis)
@@ -658,6 +662,8 @@ namespace Katana {
     if (not holes)
       coherency = (checkOverlap(overlaps) == 0) and coherency;
 
+    coherency = (checkMinArea() == 0) and coherency;
+
     return coherency;
   }
 
@@ -864,6 +870,30 @@ namespace Katana {
     }
 
     return overlaps;
+  }
+
+
+  uint32_t  Track::checkMinArea () const
+  {
+    if (_segments.empty()) return 0;
+
+    uint32_t  nonMinArea    = 0;
+    DbU::Unit techMinLength = AutoSegment::getMinimalLength( Session::getLayerDepth( getLayer() ));
+    for ( size_t j=0 ; j<_segments.size() ; ++j ) {
+      if (not _segments[j]->base() or not (_segments[j]->getDirection() & getDirection())) {
+        ++j;
+        continue;
+      }
+      if (not _segments[j]->base()->isMiddleStack()) continue;
+      if (_segments[j]->base()->getSpanLength() < techMinLength) {
+        cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
+                     , getString(_segments[j]).c_str()
+                     , DbU::getValueString(_segments[j]->base()->getSpanLength()).c_str()
+                     , DbU::getValueString(techMinLength).c_str() ) << endl;
+        ++nonMinArea;
+      }
+    }
+    return nonMinArea;
   }
 
 

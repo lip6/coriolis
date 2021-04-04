@@ -1355,7 +1355,7 @@ namespace Anabatic {
     set<const Layer*>  connectedLayers;
 
     forEach ( Segment*, segment, net->getSegments() ) {
-      if (segment->getLength()) {
+      if (segment->getAnchoredLength()) {
         if (net->isExternal()) {
           NetExternalComponents::setExternal( *segment );
         }

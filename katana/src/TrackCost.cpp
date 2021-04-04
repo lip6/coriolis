@@ -57,6 +57,7 @@ namespace Katana {
     , _axisWeight      (0)
     , _distanceToFixed (2*Session::getSliceHeight())
     , _longuestOverlap (0)
+    , _freeLength      (DbU::Max)
     , _dataState       (0)
     , _ripupCount      (0)
     , _selectFlags     (NoFlags)
