@@ -210,18 +210,19 @@ class Net : public Entity {
 // Predicates
 // **********
 
-    public: virtual bool isDeepNet  () const {return false;};
-    public:         bool isGlobal   () const {return _isGlobal;};
-    public:         bool isExternal () const {return _isExternal;};
-    public:         bool isAutomatic() const {return _isAutomatic;};
-    public:         bool isBlockage () const {return (_type == Type::BLOCKAGE);};
-    public:         bool isFused    () const {return (_type == Type::FUSED);};
-    public:         bool isLogical  () const {return (_type == Type::LOGICAL);};
-    public:         bool isClock    () const {return (_type == Type::CLOCK);};
-    public:         bool isPower    () const {return (_type == Type::POWER);};
-    public:         bool isGround   () const {return (_type == Type::GROUND);};
-    public:         bool isSupply   () const {return (isPower() || isGround());};
-    public:         bool hasAlias   (const Name& name) const;
+    public: virtual bool          isDeepNet  () const {return false;};
+    public:         bool          isGlobal   () const {return _isGlobal;};
+    public:         bool          isExternal () const {return _isExternal;};
+    public:         bool          isAutomatic() const {return _isAutomatic;};
+    public:         bool          isBlockage () const {return (_type == Type::BLOCKAGE);};
+    public:         bool          isFused    () const {return (_type == Type::FUSED);};
+    public:         bool          isLogical  () const {return (_type == Type::LOGICAL);};
+    public:         bool          isClock    () const {return (_type == Type::CLOCK);};
+    public:         bool          isPower    () const {return (_type == Type::POWER);};
+    public:         bool          isGround   () const {return (_type == Type::GROUND);};
+    public:         bool          isSupply   () const {return (isPower() || isGround());};
+    public:         bool          hasAlias   (const Name& ) const;
+    public:         NetAliasHook* getAlias   (const Name& ) const;
 
 // Updators
 // ********
@@ -237,7 +238,7 @@ class Net : public Entity {
     public: void setRoutingState(uint32_t state);
     public: void materialize();
     public: void unmaterialize();
-    public: bool addAlias(const Name& name);
+    public: bool addAlias(const Name& name, bool isExternal=false);
     public: bool removeAlias(const Name& name);
     public: void merge(Net* net);
     public: Net* getClone(Cell* cloneCell);

@@ -66,6 +66,7 @@ class Yosys ( object ):
                        'yosys hierarchy        -top %(designTop)s\n'
 
         tclScript += 'yosys dfflibmap -liberty    %(libertyFile)s\n' \
+                     'yosys memorydff\n'                             \
                      'yosys abc       -liberty    %(libertyFile)s\n' \
                      'yosys clean\n'                                 \
                      'yosys write_blif %(designName)s.blif\n'

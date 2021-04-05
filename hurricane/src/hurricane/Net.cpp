@@ -526,10 +526,24 @@ bool Net::hasAlias(const Name& name) const
   return false;
 }
 
-bool Net::addAlias(const Name& name)
-// *********************************
+NetAliasHook* Net::getAlias(const Name& name) const
+// ************************************************
 {
-  if (hasAlias(name)) return true;
+  if (name == _name) return dynamic_cast<NetAliasHook*>( const_cast<NetMainName*>( &_mainName ));
+  for ( NetAliasHook* alias : getAliases() ) {
+    if (alias->getName() == name) return alias;
+  }
+  return NULL;
+}
+
+bool Net::addAlias(const Name& name, bool isExternal )
+// ***************************************************
+{
+  NetAliasHook* alias = getAlias( name );
+  if (alias) {
+    if (isExternal) alias->setExternal( true );
+    return true;
+  }
 
   if (getCell()->getNet(name)) {
     cerr << Warning( "Net::addAlias(): Cannot add alias %s to net %s, already taken."
@@ -539,7 +553,7 @@ bool Net::addAlias(const Name& name)
     return false;
   }
 
-  NetAliasName* slave = new NetAliasName ( name );
+  NetAliasName* slave = new NetAliasName ( name, isExternal );
   _mainName.attach( slave );
   getCell()->_addNetAlias( slave );
 
@@ -677,19 +691,22 @@ void Net::merge(Net* net)
         }
     }
 
-    Name mergedName = net->getName();
+    bool mergedExternal = net->isExternal();
+    Name mergedName     = net->getName();
     NetAliasName* slaves = NULL;
     if (net->_mainName.isAttached()) {
       slaves = dynamic_cast<NetAliasName*>( net->_mainName.getNext() );
       net->_mainName.detach();
     }
 
-    if (net->isExternal() and not isExternal())
+    if (mergedExternal and not isExternal()) {
       setExternal( true );
+    }
     net->destroy();
 
     if (slaves) _mainName.attach( slaves );
-    addAlias( mergedName );
+    addAlias( mergedName, mergedExternal );
+    
 }
 
 void Net::_postCreate()
@@ -711,6 +728,8 @@ void Net::_preDestroy()
 // *******************
 {
   cdebug_log(18,1) << "entering Net::_preDestroy: " << this << endl;
+  if (getName() == "pipe_middle_0_rb[0]")
+    cerr << "entering Net::_preDestroy: " << this << endl;
 
   Inherit::_preDestroy();
 

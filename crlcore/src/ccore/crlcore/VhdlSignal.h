@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  VHDL_SIGNAL_H
-#define  VHDL_SIGNAL_H
-
+#pragma  once
 #include <set>
 #include "hurricane/Net.h"
 #include "crlcore/VhdlBit.h"
@@ -40,6 +38,7 @@ namespace Vhdl {
       virtual bool            isVector     () const = 0;
       virtual bool            isExternal   () const = 0;
       virtual bool            isContiguous () const = 0;
+      virtual size_t          getSize      () const = 0;
       inline  std::string     getName      () const;
       virtual const Bit*      getBit       () const = 0;
       virtual const Bit*      getBit       ( size_t ) const = 0;
@@ -80,6 +79,7 @@ namespace Vhdl {
       virtual bool            isVector      () const;
       virtual bool            isExternal    () const;
       virtual bool            isContiguous  () const;
+      virtual size_t          getSize       () const;
       virtual const Bit*      getBit        () const;
       virtual const Bit*      getBit        ( size_t ) const;
       virtual const Net*      getNet        () const;
@@ -106,6 +106,7 @@ namespace Vhdl {
       virtual bool             isVector     () const;
       virtual bool             isExternal   () const;
       virtual bool             isContiguous () const;
+      virtual size_t           getSize      () const;
       virtual const Bit*       getBit       () const;
       virtual const Bit*       getBit       ( size_t ) const;
       virtual const Net*       getNet       () const;
@@ -135,5 +136,3 @@ namespace Vhdl {
 INSPECTOR_P_SUPPORT(Vhdl::Signal);
 INSPECTOR_P_SUPPORT(Vhdl::ScalarSignal);
 INSPECTOR_P_SUPPORT(Vhdl::VectorSignal);
-
-#endif  // VHDL_SIGNAL_H

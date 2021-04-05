@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_CATALOG_H
-#define CRL_CATALOG_H
-
+#pragma  once
 #include <string>
 #include <map>
 #include "hurricane/Name.h"
@@ -77,19 +75,20 @@ namespace CRL {
       class State {
         public:
         // Flags Constants.
-          enum Flags { TerminalNetlist = 1 << 0
-                     , Feed            = 1 << 1
-                     , Pad             = 1 << 2
-                     , GDS             = 1 << 3
-                     , Delete          = 1 << 4
-                     , Logical         = 1 << 5
-                     , Physical        = 1 << 6
-                     , InMemory        = 1 << 7
-                     , Foreign         = 1 << 8
-                     , VstUseConcat    = 1 << 9
-                     , VstNoLowerCase  = 1 << 10
-                     , VstNoLinkage    = 1 << 11
-                     , Views           = Physical|Logical
+          enum Flags { TerminalNetlist      = 1 << 0
+                     , Feed                 = 1 << 1
+                     , Pad                  = 1 << 2
+                     , GDS                  = 1 << 3
+                     , Delete               = 1 << 4
+                     , Logical              = 1 << 5
+                     , Physical             = 1 << 6
+                     , InMemory             = 1 << 7
+                     , Foreign              = 1 << 8
+                     , VstUseConcat         = 1 << 9
+                     , VstNoLowerCase       = 1 << 10
+                     , VstUniquifyUpperCase = 1 << 11
+                     , VstNoLinkage         = 1 << 12
+                     , Views                = Physical|Logical
                      };
         // Constructors.
           inline               State              ();
@@ -436,6 +435,3 @@ inline std::string  getPrint ( const CRL::Catalog &CATAL ) { return CATAL._getPr
 
 INSPECTOR_P_SUPPORT(CRL::Catalog);
 INSPECTOR_P_SUPPORT(CRL::Catalog::State);
-
-
-#endif  // CRL_CATALOG_H

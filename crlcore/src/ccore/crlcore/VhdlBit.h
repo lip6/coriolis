@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  VHDL_BIT_H
-#define  VHDL_BIT_H
-
+#pragma  once
 #include <cstddef>
 #include <string>
 #include "hurricane/Name.h"
@@ -159,6 +157,3 @@ namespace Vhdl {
 
 
 INSPECTOR_P_SUPPORT(Vhdl::Bit);
-
-
-#endif  // VHDL_BIT_H

@@ -105,7 +105,8 @@ namespace Vhdl {
     , _globals()
     , _flags  (flags)
   {
-    if (flags & VstNoLowerCase) _ns.setNoLowerCase( true );
+    if (flags & VstNoLowerCase)       _ns.setNoLowerCase( true );
+    if (flags & VstUniquifyUpperCase) _ns.setUniquifyUpperCase( true );
     if (not _offset) {
     //_offset = offsetof(EntityProperty,_entity);
       _offset = (ptrdiff_t)this - (ptrdiff_t)property;
@@ -331,8 +332,12 @@ namespace Vhdl {
     out << "-- \n";
     if (_flags & OptionMask) {
       out << "-- Genarated with options:\n";
-      if (_flags & VstUseConcat)   out << "-- * VstUseConcat:   Use concat (&) in port map.\n";
-      if (_flags & VstNoLowerCase) out << "-- * VstNoLowerCase: Identifiers are *not* put in lowercase.\n";
+      if (_flags & VstUseConcat)         out << "-- * VstUseConcat:   Use concat (&) in port map.\n";
+      if (_flags & VstNoLowerCase)       out << "-- * VstNoLowerCase: Identifiers are *not* put in lowercase.\n";
+      if (_flags & VstUniquifyUpperCase) {
+        out << "-- * VstUniquifyUpperCase: Upper case identifiers are uniquified.\n";
+        out << "--                         (one 'u' before each lowered letter)\n";
+      }
       out << "-- \n";
     }
     if (isIeeeMode()) {

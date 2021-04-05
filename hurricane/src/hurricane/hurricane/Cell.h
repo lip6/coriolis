@@ -431,7 +431,7 @@ class Cell : public Entity {
     public: Instances getTerminalNetlistInstancesUnder(const Box& area) const;
     public: Instances getNonTerminalNetlistInstances() const;
     public: Instances getNonTerminalNetlistInstancesUnder(const Box& area) const;
-    public: Net* getNet(const Name& name) const;
+    public: Net* getNet(const Name& name, bool useAlias=true) const;
     public: DeepNet* getDeepNet( Path, const Net* ) const;
     public: Nets getNets() const {return _netMap.getElements();};
     public: Nets getGlobalNets() const;

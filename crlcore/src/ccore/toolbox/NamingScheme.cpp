@@ -43,6 +43,8 @@ namespace CRL {
       if (vlogName[i] == ')') { posRightPar=i; }
       if (vlogName[i] == ']') { posRightPar=i; }
       loweredName.push_back( tolower(vlogName[i]) );
+      if ( (flags & UniquifyUpperCase) and (vlogName[i] != tolower(vlogName[i])) )
+         loweredName.push_back( 'u' );
     }
     char leftPar  = (parCount > 1) ? '_' : '(';
     char rightPar = (parCount > 1) ? '_' : ')';
@@ -84,7 +86,7 @@ namespace CRL {
       if (translated == '_') {
         if (vhdlName.empty()      ) continue;
         if (i == refName.size()-1) break;
-      //if (vhdlName.back() == '_') continue;
+        if (vhdlName.back() == '_') continue;
       }
 
       vhdlName += translated;

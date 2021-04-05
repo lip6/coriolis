@@ -65,19 +65,21 @@ namespace CRL {
 
   class NamingScheme {
     public:
-      enum Flag { NoFlags     = 0x0000
-                , Recursive   = 0x0001
-                , FromVerilog = 0x0002
-                , NoLowerCase = 0x0004
+      enum Flag { NoFlags           = 0x0000
+                , Recursive         = 0x0001
+                , FromVerilog       = 0x0002
+                , NoLowerCase       = 0x0004
+                , UniquifyUpperCase = 0x0008
                 };
     public:
       typedef std::function< Name(const Name&,uint32_t) >  converter_t;
     public:
-      static Name  vlogToVhdl     ( const Name& vlogName, uint32_t flags );
-      static void  toVhdl         ( Cell* topCell, uint32_t flags );
-                   NamingScheme   ( uint32_t flags );
-      inline void  setNoLowerCase ( bool state );
-             Name  convert        ( const Name& ) const;
+      static Name  vlogToVhdl           ( const Name& vlogName, uint32_t flags );
+      static void  toVhdl               ( Cell* topCell, uint32_t flags );
+                   NamingScheme         ( uint32_t flags );
+      inline void  setNoLowerCase       ( bool state );
+      inline void  setUniquifyUpperCase ( bool state );
+             Name  convert              ( const Name& ) const;
     private:
       uint32_t     _flags;
       converter_t  _converter;
@@ -88,6 +90,13 @@ namespace CRL {
   {
     if (state) _flags |=  NoLowerCase;
     else       _flags &= ~NoLowerCase;
+  }
+
+
+  inline void  NamingScheme::setUniquifyUpperCase ( bool state )
+  {
+    if (state) _flags |=  UniquifyUpperCase;
+    else       _flags &= ~UniquifyUpperCase;
   }
 
 

@@ -158,19 +158,22 @@ namespace Hurricane {
   }
 
 
-  bool    NetMainName::isMaster   () const { return true; }
-  bool    NetMainName::isSlave    () const { return false; }
-  Name    NetMainName::getName    () const { return getNet()->getName(); }
-  Net*    NetMainName::getNet     () const { return (Net*)((ptrdiff_t)this - _offset); }
-  string  NetMainName::_getString () const { return "<NetMainName " + getString(getName()) + ">"; }
+  bool    NetMainName::isMaster    () const { return true; }
+  bool    NetMainName::isSlave     () const { return false; }
+  bool    NetMainName::isExternal  () const { return getNet()->isExternal(); }
+  Name    NetMainName::getName     () const { return getNet()->getName(); }
+  Net*    NetMainName::getNet      () const { return (Net*)((ptrdiff_t)this - _offset); }
+  string  NetMainName::_getString  () const { return "<NetMainName " + getString(getName()) + ">"; }
+  void    NetMainName::setExternal ( bool state ) { getNet()->setExternal(state); }
   
 
 // -------------------------------------------------------------------
 // Class  :  "Hurricane::NetAliasName".
 
-  NetAliasName::NetAliasName ( Name name )
+  NetAliasName::NetAliasName ( Name name, bool isExternal )
     : NetAliasHook()
     , _name       (name)
+    , _isExternal (isExternal)
   { }
 
 
@@ -182,9 +185,11 @@ namespace Hurricane {
   }
 
 
-  bool    NetAliasName::isMaster () const { return false; }
-  bool    NetAliasName::isSlave  () const { return true; }
-  Name    NetAliasName::getName  () const { return _name; }
+  bool    NetAliasName::isMaster    () const { return false; }
+  bool    NetAliasName::isSlave     () const { return true; }
+  bool    NetAliasName::isExternal  () const { return _isExternal; }
+  Name    NetAliasName::getName     () const { return _name; }
+  void    NetAliasName::setExternal ( bool state ) { _isExternal=state; }
 
 
   Net* NetAliasName::getNet () const
@@ -206,7 +211,8 @@ namespace Hurricane {
   {
     Record* record = NetAliasHook::_getRecord();
     if (record) {
-      record->add ( getSlot("_name", &_name) );
+      record->add ( getSlot("_name"      , &_name      ) );
+      record->add ( getSlot("_isExternal", &_isExternal) );
     }
     return record;
   }

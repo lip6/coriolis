@@ -51,6 +51,8 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
             sviews += ' uses &'
         if views & CRL.Catalog.State.VstNoLowerCase:
             if sviews: sviews += ', no lowercase'
+        if views & CRL.Catalog.State.VstUniquifyUpperCase:
+            if sviews: sviews += ', uniquify uppercase'
         if views & CRL.Catalog.State.VstNoLinkage:
             if sviews: sviews += ', no linkage'
             sviews += ''

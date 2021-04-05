@@ -515,14 +515,11 @@ namespace {
   Net* Model::newOne ()
   {
     if (not _masterNetOne) return NULL; 
-    if (_oneInstance) return _oneInstance->getPlug( _masterNetOne )->getNet();
-
+    // if (_oneInstance) return _oneInstance->getPlug( _masterNetOne )->getNet();
     ostringstream name; name << "one_" << _supplyCount++;
     _oneInstance = Instance::create( _cell, name.str(), _oneCell );
-    
     Net* one = Net::create( _cell, name.str() );
     _oneInstance->getPlug( _masterNetOne )->setNet( one );
-
     return one;
   }
 
@@ -530,14 +527,11 @@ namespace {
   Net* Model::newZero ()
   {
     if (not _masterNetZero) return NULL;
-    if (_zeroInstance) return _zeroInstance->getPlug( _masterNetZero )->getNet();
-    
+    // if (_zeroInstance) return _zeroInstance->getPlug( _masterNetZero )->getNet();
     ostringstream name; name << "zero_" << _supplyCount++;
     _zeroInstance = Instance::create( _cell, name.str(), _zeroCell );
-    
     Net* zero = Net::create( _cell, name.str() );
     _zeroInstance->getPlug( _masterNetZero )->setNet( zero );
-
     return zero;
   }
 
@@ -553,8 +547,8 @@ namespace {
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
 
-      // if (_cell->getName() == "ALU_dec19")
-      //   cerr << "ALU_dec19 net create:" << direction << " " << net << endl;
+      // if (_cell->getName() == "alu_div0")
+      //   cerr << "alu_div0 net create:" << direction << " " << net << endl;
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
@@ -563,8 +557,8 @@ namespace {
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
 
-      // if (_cell->getName() == "ALU_dec19")
-      //   cerr << "ALU_dec19 net merge:" << direction << " " << net << endl;
+      // if (_cell->getName() == "alu_div0")
+      //   cerr << "alu_div0 net merge:" << direction << " " << net << endl;
     }
     return net;
   }
@@ -607,13 +601,16 @@ namespace {
         if (not message.str().empty()) cerr << Warning( message.str() ) << endl;
         return net2;
       }
-
         
       if (  (not net1->isExternal() and net2->isExternal()) 
          or (    net1->isExternal() and net2->isExternal() and (net1->getId() > net2->getId()) ) ) {
         std::swap( net1 , net2  );
         std::swap( name1, name2 );
       }
+
+      // if (_cell->getName() == "alu_div0")
+      //   cerr << "alu_div0 alias net merge:" << net2 << " -> " << net1 << endl;
+
       net1->merge( net2 ); return net1;
     }
 
@@ -625,6 +622,9 @@ namespace {
     if (not net1) {
       net1 = Net::create( _cell, name1 );
       net1->setExternal ( false );
+
+      // if (_cell->getName() == "alu_div0")
+      //   cerr << "alu_div0 alias net create:" << net1 << endl;
     }
 
     net1->addAlias( name2 );
@@ -683,7 +683,7 @@ namespace {
         //          << "external: <" << netName << ">."
         //          << endl;
         Net* net       = _cell->getNet( netName );
-        Net* masterNet = instance->getMasterCell()->getNet(masterNetName);
+        Net* masterNet = instance->getMasterCell()->getNet(masterNetName,false);
         if(not masterNet) {
           Name vlogMasterNetName = NamingScheme::vlogToVhdl( masterNetName, NamingScheme::NoLowerCase );
           masterNet = instance->getMasterCell()->getNet(vlogMasterNetName);
@@ -721,13 +721,15 @@ namespace {
           plugNet->addAlias( netName );
         }
         else if (plugNet != net){ // Plus already connected to another net
-          if (not plugNet->isExternal()) net->merge( plugNet );
+          if (not plugNet->isExternal()) {
+            net->merge( plugNet );
+          }
           else plugNet->merge( net );
         }
 
-        if (subckt->getModel()->getCell()->getName() == "sm0") {
-          cerr << "sm0 plug:" << plug->getMasterNet()->getName() << " => net:" << net->getName() << endl;
-        }
+        // if (subckt->getModel()->getCell()->getName() == "sm0") {
+        //   cerr << "sm0 plug:" << plug->getMasterNet()->getName() << " => net:" << net->getName() << endl;
+        // }
 
         if (plugNet->isSupply() and not plug->getMasterNet()->isSupply()) {
           ostringstream message;

@@ -727,16 +727,19 @@ Entity* Cell::getEntity(const Signature& signature) const
   return NULL;
 }
 
-Net* Cell::getNet ( const Name& name ) const
-//******************************************
+Net* Cell::getNet ( const Name& name, bool useAlias ) const
+//*********************************************************
 {
   Net* net = _netMap.getElement(name);
   if (net) return net;
 
   NetAliasName key(name);
   AliasNameSet::iterator ialias = _netAliasSet.find( &key );
-  if (ialias != _netAliasSet.end())
+  if (ialias != _netAliasSet.end()) {
+    if (not (useAlias or (*ialias)->isExternal()))
+      return NULL;
     return (*ialias)->getNet();
+  }
 
   return NULL;
 }
