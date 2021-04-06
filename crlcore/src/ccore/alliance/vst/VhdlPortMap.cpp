@@ -190,7 +190,8 @@ namespace Vhdl {
           if (end    <  0) end   = bitp->getIndex();
           if (deltap == 0) deltap = delta;
   
-          if ( (delta == deltap) and ((delta == -1) or (delta == +1)) ) {
+        //if ( (delta == deltap) and ((delta == -1) or (delta == +1)) ) {
+          if ( (delta == deltap) and (delta == -1) ) {
             end = bit->getIndex();
             deltap = delta;
             continue;

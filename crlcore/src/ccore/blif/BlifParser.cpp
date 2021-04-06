@@ -516,9 +516,10 @@ namespace {
   {
     if (not _masterNetOne) return NULL; 
     // if (_oneInstance) return _oneInstance->getPlug( _masterNetOne )->getNet();
-    ostringstream name; name << "one_" << _supplyCount++;
-    _oneInstance = Instance::create( _cell, name.str(), _oneCell );
-    Net* one = Net::create( _cell, name.str() );
+    ostringstream sigName; sigName <<      "one_" << _supplyCount;
+    ostringstream insName; insName << "cmpt_one_" << _supplyCount++;
+    _oneInstance = Instance::create( _cell, insName.str(), _oneCell );
+    Net* one = Net::create( _cell, sigName.str() );
     _oneInstance->getPlug( _masterNetOne )->setNet( one );
     return one;
   }
@@ -528,9 +529,10 @@ namespace {
   {
     if (not _masterNetZero) return NULL;
     // if (_zeroInstance) return _zeroInstance->getPlug( _masterNetZero )->getNet();
-    ostringstream name; name << "zero_" << _supplyCount++;
-    _zeroInstance = Instance::create( _cell, name.str(), _zeroCell );
-    Net* zero = Net::create( _cell, name.str() );
+    ostringstream sigName; sigName <<      "zero_" << _supplyCount;
+    ostringstream insName; insName << "cmpt_zero_" << _supplyCount++;
+    _zeroInstance = Instance::create( _cell, insName.str(), _zeroCell );
+    Net* zero = Net::create( _cell, sigName.str() );
     _zeroInstance->getPlug( _masterNetZero )->setNet( zero );
     return zero;
   }
@@ -547,8 +549,8 @@ namespace {
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
 
-      // if (_cell->getName() == "alu_div0")
-      //   cerr << "alu_div0 net create:" << direction << " " << net << endl;
+      // if (_cell->getName() == "CR_dec19")
+      //   cerr << "CR_dec19 net create:" << direction << " " << net << endl;
     } else {
       net->addAlias( name );
       if (isExternal) net->setExternal( true );
@@ -557,8 +559,8 @@ namespace {
       net->setDirection( (Net::Direction::Code)direction );
       if (isClock) net->setType( Net::Type::CLOCK );
 
-      // if (_cell->getName() == "alu_div0")
-      //   cerr << "alu_div0 net merge:" << direction << " " << net << endl;
+      // if (_cell->getName() == "CR_dec19")
+      //   cerr << "CR_dec19 net merge:" << direction << " " << net << endl;
     }
     return net;
   }
@@ -608,8 +610,8 @@ namespace {
         std::swap( name1, name2 );
       }
 
-      // if (_cell->getName() == "alu_div0")
-      //   cerr << "alu_div0 alias net merge:" << net2 << " -> " << net1 << endl;
+      // if (_cell->getName() == "CR_dec19")
+      //   cerr << "CR_dec19 alias net merge:" << net2 << " -> " << net1 << endl;
 
       net1->merge( net2 ); return net1;
     }
@@ -623,8 +625,8 @@ namespace {
       net1 = Net::create( _cell, name1 );
       net1->setExternal ( false );
 
-      // if (_cell->getName() == "alu_div0")
-      //   cerr << "alu_div0 alias net create:" << net1 << endl;
+      // if (_cell->getName() == "CR_dec19")
+      //   cerr << "CR_dec19 alias net create:" << net1 << endl;
     }
 
     net1->addAlias( name2 );
@@ -854,15 +856,19 @@ namespace CRL {
       }
 
       if (tokenize.state() == Tokenize::Inputs) {
+      //cerr << "Reading .inputs of " << blifModel->getCell() << endl;
         for ( size_t i=1 ; i<blifLine.size() ; ++i ) {
           blifModel->mergeNet( blifLine[i], true, Net::Direction::IN );
         }
+      //cerr << "Reading .inputs of " << blifModel->getCell() << " DONE" << endl;
       }
 
       if (tokenize.state() == Tokenize::Outputs) {
+      //cerr << "Reading .outputs of " << blifModel->getCell() << endl;
         for ( size_t i=1 ; i<blifLine.size() ; ++i ) {
           blifModel->mergeNet( blifLine[i], true, Net::Direction::OUT );
         }
+      //cerr << "Reading .outputs of " << blifModel->getCell() << " DONE" << endl;
       }
 
       if (tokenize.state() & Tokenize::Names) {
