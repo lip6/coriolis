@@ -283,8 +283,8 @@ class QuadTree ( object ):
         return False
 
     @staticmethod
-    def _create ( spares, parent, area, rtag, raiseError=False ):
-        childRtag = parent.rtag+'_'+rtag if parent else rtag
+    def _create ( spares, parent, area, tag, raiseError=False ):
+        childRtag = parent.rtag+'_'+tag if parent else tag
         if QuadTree.isUsedArea( spares, area, childRtag, raiseError ):
             return None
         qt = QuadTree( spares, parent, area, childRtag )
@@ -307,10 +307,7 @@ class QuadTree ( object ):
         self.bufferNet = None
         self.pool      = BufferPool( self )
         self.plugs     = []
-        if self.parent and self.parent.rtag != '':
-            self.rtag = self.parent.rtag + '_' + rtag
-        else:
-            self.rtag = rtag
+        self.rtag      = rtag
 
     def destroy ( self ):
         if self.bl: self.bl.destroy()
