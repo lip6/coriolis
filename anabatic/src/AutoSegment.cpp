@@ -1608,23 +1608,38 @@ namespace Anabatic {
     if (isGlobal() or isNonPref()) return false;
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
-    if (not source or not target) return false;
-    if (isSpinTopOrBottom()) return false;
-    if (not source->isTurn() and not source->isTerminal()) return false;
-    if (not target->isTurn() and not target->isTerminal()) return false;
-    if (source->isTurn()) {
-      AutoSegment* perpandicular = source->getPerpandicular( this );
-      if (perpandicular->isNonPref() and (perpandicular->getAnchoredLength() != 0)) {
-        cdebug_log(149,0) << "| false, perpandicular is non-pref and non-zero. " << this << endl;
-        return false;
-      }
+    if (not source or not target) {
+      cdebug_log(149,0) << "| false, missing source or target (in creation?). " << endl;
+      return false;
     }
-    if (target->isTurn()) {
-      AutoSegment* perpandicular = target->getPerpandicular( this );
-      if (perpandicular->isNonPref() and (perpandicular->getAnchoredLength() != 0)) {
-        cdebug_log(149,0) << "| false, perpandicular is non-pref and non-zero. " << this << endl;
+    if (isSpinTopOrBottom()) {
+      cdebug_log(149,0) << "| false, neither spin top nor bottom. " << endl;
+      return false;
+    }
+    if (not (source->isTerminal() xor target->isTerminal())) {
+      if (source->isTerminal() and target->isTerminal()) {
+        cdebug_log(149,0) << "| false, source & target are terminals. " << endl;
         return false;
       }
+      if (source->isTurn()) {
+        AutoSegment* perpandicular = source->getPerpandicular( this );
+        if (perpandicular->isNonPref() and (perpandicular->getAnchoredLength() != 0)) {
+          cdebug_log(149,0) << "| false, perpandicular is non-pref and non-zero. " << this << endl;
+          return false;
+        }
+      } else if (target->isTurn()) {
+        AutoSegment* perpandicular = target->getPerpandicular( this );
+        if (perpandicular->isNonPref() and (perpandicular->getAnchoredLength() != 0)) {
+          cdebug_log(149,0) << "| false, perpandicular is non-pref and non-zero. " << this << endl;
+          return false;
+        }
+      } else if ((source->isHTee() or target->isHTee()) and isHorizontal()) {
+        cdebug_log(149,0) << "| false, S/T HTee and horizontal. " << this << endl;
+        return false;
+      } else if ((source->isVTee() or target->isVTee()) and isVertical()) {
+        cdebug_log(149,0) << "| false, S/T VTee and vertical. " << this << endl;
+        return false;
+      } 
     }
     cdebug_log(149,0) << "  Middle stack or terminal bound." << endl;
     return true;
