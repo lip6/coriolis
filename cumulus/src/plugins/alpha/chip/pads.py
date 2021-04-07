@@ -362,9 +362,17 @@ class Side ( object ):
                 pad[0] = self.toGrid( pad[0] )
                 position = pad[0] + pad[1].getMasterCell().getAbutmentBox().getWidth()  
         else:
-            position = self.u
+            print( 'padSpacing:{}'.format(DbU.getValueString(padSpacing) ))
+            spacing    = 0
+            minSpacing = self.corona.minPadSpacing
+            position   = self.u
             for i in range(len(self.pads)):
-                position += padSpacing
+                spacing     += padSpacing
+                nextPosition = self.toGrid( position + spacing )
+                if nextPosition - position >= minSpacing:
+                    print( 'add spacing @{}:{}'.format(i,DbU.getValueString(spacing) ))
+                    position += spacing
+                    spacing   = 0
                 self.pads[i][0] = self.toGrid( position )
                 position += self.pads[i][1].getMasterCell().getAbutmentBox().getWidth()
         for pad in self.pads:
@@ -817,8 +825,9 @@ class Corona ( object ):
             self.padOrient = Transformation.Orientation.MY
         trace( 550, '\tchip.padCoreSide: {}\n'.format(self.conf.cfg.chip.padCoreSide) )
         self._allPadsAnalysis()
-        self.conf.cfg.chip.padSpacers = None
-        self.conf.cfg.chip.padCorner  = None
+        self.conf.cfg.chip.minPadSpacing = None
+        self.conf.cfg.chip.padSpacers    = None
+        self.conf.cfg.chip.padCorner     = None
         if self.conf.cfg.chip.padSpacers is not None:
             for spacerName in self.conf.cfg.chip.padSpacers.split(','):
                 spacerCell = self.padLib.getCell( spacerName )
@@ -828,12 +837,17 @@ class Corona ( object ):
                 self.padSpacers.sort( _cmpPad )
         if self.conf.cfg.chip.padCorner is not None:
             self.padCorner = self.padLib.getCell( self.conf.cfg.chip.padCorner )
+        if self.conf.cfg.chip.minPadSpacing is None:
+            self.conf.cfg.chip.minPadSpacing = 0
 
     @property
     def supplyRailWidth ( self ): return self.conf.cfg.chip.supplyRailWidth
 
     @property
     def supplyRailPitch ( self ): return self.conf.cfg.chip.supplyRailPitch
+
+    @property
+    def minPadSpacing ( self ): return self.conf.cfg.chip.minPadSpacing
   
     def toGrid ( self, u ): return u - (u % self.conf.ioPadPitch)
   
