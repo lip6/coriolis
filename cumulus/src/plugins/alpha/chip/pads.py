@@ -362,7 +362,6 @@ class Side ( object ):
                 pad[0] = self.toGrid( pad[0] )
                 position = pad[0] + pad[1].getMasterCell().getAbutmentBox().getWidth()  
         else:
-            print( 'padSpacing:{}'.format(DbU.getValueString(padSpacing) ))
             spacing    = 0
             minSpacing = self.corona.minPadSpacing
             position   = self.u
@@ -370,7 +369,6 @@ class Side ( object ):
                 spacing     += padSpacing
                 nextPosition = self.toGrid( position + spacing )
                 if nextPosition - position >= minSpacing:
-                    print( 'add spacing @{}:{}'.format(i,DbU.getValueString(spacing) ))
                     position += spacing
                     spacing   = 0
                 self.pads[i][0] = self.toGrid( position )
