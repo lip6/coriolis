@@ -106,25 +106,38 @@ class IoSpecs ( object ):
         trace( 560, '\tIoSpecs.addIoPadSpec() side={} spec={}\n'.format(side,spec) )
         return spec
 
+    def addIoPadSpecs(self, names, side):
+        for i, padName in enumerate(names):
+            actual_side = side
+            # add start and end
+            if i == 0:
+                actual_side |= IoPin.A_BEGIN
+            elif i == len(names)-1:
+                actual_side |= IoPin.A_END
+            self.addIoPadSpec( padName, actual_side)
+
     def loadFromPinmux ( self, fileName ):
         """
         Load ioPadsSpec from a LibreSOC generated pinmux file in JSON format.
         """
         print( '  o  Loading I/O pad specifications from "{}".'.format(fileName) )
         if not os.path.isfile(fileName):
-            raise ErrorMessage( 2, [ 'IoSpecs.loadFromPinmux(): JSON pinmux file not found.'
+            raise ErrorMessage( 2, [ 'IoSpecs.loadFromPinmux(): '
+                                     'JSON pinmux file not found.'
                                    , '("{}")'.format(fileName) ] )
         with open(fileName) as fd:
             datas = utf8toStr( json.loads( fd.read(), object_hook=utf8toStr )
                              , ignoreDicts=True )
-        for padName in datas['pads.east' ]: self.addIoPadSpec( padName, IoPin.EAST  )
-        for padName in datas['pads.west' ]: self.addIoPadSpec( padName, IoPin.WEST  )
-        for padName in datas['pads.north']: self.addIoPadSpec( padName, IoPin.NORTH )
-        for padName in datas['pads.south']: self.addIoPadSpec( padName, IoPin.SOUTH )
+        self.addIoPadSpecs(datas['pads.east' ], IoPin.EAST  )
+        self.addIoPadSpecs(datas['pads.west' ], IoPin.WEST  )
+        self.addIoPadSpecs(datas['pads.north'], IoPin.NORTH )
+        self.addIoPadSpecs(datas['pads.south'], IoPin.SOUTH )
+
         for padDatas in datas['pads.instances']:
             padName = padDatas[0]
             if not self._ioPadsLUT.has_key(padName):
-                print( WarningMessage('IoSpecs.loadFromPinmux(): Pad "{}" is not on any side, ignored.' \
+                print( WarningMessage('IoSpecs.loadFromPinmux(): ' \
+                                      'Pad "{}" is not on any side, ignored.' \
                                       .format(padName) ))
                 continue
             end = None 
