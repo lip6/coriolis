@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_ROUTING_EVENT_H
-#define  KATANA_ROUTING_EVENT_H
-
+#pragma  once
 #include <set>
 #include <vector>
 #include <cstdlib>
@@ -94,7 +92,7 @@ namespace Katana {
     friend class Compare;
 
     public:
-      enum Mode { Negociate=1, Pack=2, Repair=3 };
+      enum Mode { Negociate=1, Pack=2, Repair=3, Realign=4 };
 
     public:
       static  uint32_t                     getStage              ();
@@ -163,6 +161,7 @@ namespace Katana {
               void                         _processNegociate     ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processPack          ( RoutingEventQueue&, RoutingEventHistory& );
               void                         _processRepair        ( RoutingEventQueue&, RoutingEventHistory& );
+              void                         _processRealign       ( RoutingEventQueue&, RoutingEventHistory& );
               Record*                      _getRecord            () const;
               string                       _getString            () const;
               string                       _getTypeName          () const;
@@ -287,6 +286,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::RoutingEvent);
-
-
-#endif  // KATANA_ROUTING_EVENT_H

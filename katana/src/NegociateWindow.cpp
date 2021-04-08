@@ -681,6 +681,43 @@ namespace Katana {
         if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
       }
 
+      if (_katana->getConfiguration()->runRealignStage()) {
+        cmess1 << "     o  Realign Stage." << endl;
+        
+        cdebug_log(159,0) << "Loadind realign queue." << endl;
+        RoutingEvent::setStage( RoutingEvent::Realign );
+        for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
+          RoutingEvent* event = _eventHistory.getNth(i);
+          if (not event->isCloned() and event->getSegment()->canRealign())
+            event->reschedule( _eventQueue, 0 );
+        }
+        _eventQueue.commit();
+        cmess2 << "        <realign.queue:" <<  right << setw(8) << setfill('0')
+               << _eventQueue.size() << ">" << setfill(' ') << endl;
+        count = 0;
+        while ( not _eventQueue.empty() and not isInterrupted() ) {
+          RoutingEvent* event = _eventQueue.pop();
+          if (tty::enabled()) {
+            cmess2 << "        <realign.event:" << tty::bold << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << tty::reset
+                   << " remains:" << right << setw(8) << setfill('0')
+                   << _eventQueue.size() << ">"
+                   << setfill(' ') << tty::reset << tty::cr;
+            cmess2.flush();
+          } else {
+            cmess2 << "        <realign.event:" << setw(8) << setfill('0')
+                   << RoutingEvent::getProcesseds() << setfill(' ') << " "
+                   << event->getEventLevel() << ":" << event->getPriority() << "> "
+                   << event->getSegment()
+                   << endl;
+            cmess2.flush();
+          }
+          event->process( _eventQueue, _eventHistory, _eventLoop );
+          count++;
+          if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
+        }
+      }
+
       if (count and cmess2.enabled() and tty::enabled()) cmess1 << endl;
   //}
 

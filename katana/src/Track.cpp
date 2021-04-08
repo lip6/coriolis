@@ -374,11 +374,11 @@ namespace Katana {
           Interval  freeInterval = getFreeInterval( interval.getCenter(), cost.getNet() );
 
     if (not freeInterval.contains(interval)) {
-      getOverlapBounds( cost.getInterval(), begin, end );
       cost.setFreeLength( 0 );
     } else {
       cost.setFreeLength( freeInterval.getSize() );
     }
+    getOverlapBounds( cost.getInterval(), begin, end );
     cost.setTrack( const_cast<Track*>(this), begin, end );
 
     cdebug_log(155,1) << "addOverlapCost() @" << DbU::getValueString(_axis)
@@ -386,6 +386,7 @@ namespace Katana {
                       << ":"  << DbU::getValueString(interval.getVMax())
                       << "] <-> [" << begin << ":"  << end << "]"
                       << endl;
+    cdebug_log(155,0) << "initial:" << &cost << endl;
     cdebug_log(155,0) << "freeInterval [" << DbU::getValueString(freeInterval.getVMin())
                       << ":"  << DbU::getValueString(freeInterval.getVMax()) << "]"
                       << endl;
@@ -409,7 +410,20 @@ namespace Katana {
     }
 
     if (begin == npos) {
+      if (not _segments.empty()
+         and (_segments.back()->getNet() == cost.getNet())
+         and (cost.getRefElement()->getAxis() != getAxis())
+         ) {
+        Interval overlap = interval.getIntersection( _segments.back()->getCanonicalInterval() );
+        cdebug_log(155,0) << "overlap:" << overlap
+                          << " size:" << DbU::getValueString(overlap.getSize()) << endl;
+        if (overlap.getSize() > 0) {
+          cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
+          cost.incDeltaShared ( overlap.getSize() );
+        }
+      }
       cdebug_log(155,0) << "  begin == npos (after last TrackElement)." << endl;
+      cdebug_log(155,0) << "  current:" << &cost << endl;
       cdebug_tabw(155,-1);
       return cost;
     }
@@ -420,7 +434,9 @@ namespace Katana {
                         << " size:" << DbU::getValueString(overlap.getSize()) << endl;
       if (overlap.getSize() == 0) continue;
       
-      if (_segments[begin]->getNet() == cost.getNet()) {
+      if (    (_segments[begin]->getNet() == cost.getNet())
+         and ((cost.getRefElement()->getAxis() != getAxis())
+             or not _segments[begin]->isNonPref() ) ) {
         cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }

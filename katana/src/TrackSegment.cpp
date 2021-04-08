@@ -601,6 +601,16 @@ namespace Katana {
 
   float  TrackSegment::getMaxUnderDensity ( Flags flags ) const
   { return _base->getMaxUnderDensity( flags ); }
+  
+
+  bool  TrackSegment::canRealign () const
+  {
+    if (isGlobal() or isNonPref() or isReduced()) return false;
+    for ( TrackElement* perpandicular : const_cast<TrackSegment*>(this)->getPerpandiculars() ) {
+      if (perpandicular->isReduced()) return false;
+    }
+    return true;
+  }
 
 
   bool  TrackSegment::canPivotUp ( float reserve, Flags flags ) const

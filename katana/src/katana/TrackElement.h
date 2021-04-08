@@ -142,6 +142,7 @@ namespace Katana {
       virtual bool                    canDogleg              ();
       virtual bool                    canDogleg              ( Interval );
       virtual bool                    canDogleg              ( Anabatic::GCell*, Flags flags=0 );
+      virtual bool                    canRealign             () const;
     // Accessors                                             
       inline  Observer<TrackElement>* getObserver            ();
       virtual unsigned long           getId                  () const;

@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_CONFIGURATION_H
-#define  KATANA_CONFIGURATION_H
-
+#pragma  once
 #include <functional>
 #include "anabatic/Configuration.h"
 #include "katana/Constants.h"
@@ -67,6 +65,7 @@ namespace Katana {
       inline        bool                       useGlobalEstimate       () const;
       inline        bool                       useStaticBloatProfile   () const;
       inline        bool                       profileEventCosts       () const;
+      inline        bool                       runRealignStage         () const;
     // Methods.                                                  
       inline        Anabatic::Configuration*   base                    ();
       inline  const Anabatic::Configuration*   base                    () const;
@@ -94,6 +93,7 @@ namespace Katana {
       inline        void                       setFlags                ( unsigned int );
       inline        void                       unsetFlags              ( unsigned int );
       inline        void                       setProfileEventCosts    ( bool );
+      inline        void                       setRunRealignStage      ( bool );
       virtual       void                       print                   ( Cell* ) const;
       virtual       Record*                    _getRecord              () const;
       virtual       string                     _getString              () const;
@@ -114,6 +114,7 @@ namespace Katana {
              uint32_t       _bloatOverloadAdd;
              unsigned int   _flags;
              bool           _profileEventCosts;
+             bool           _runRealignStage;
     private:
                      Configuration ( const Configuration& other );
       Configuration& operator=     ( const Configuration& );
@@ -142,9 +143,11 @@ namespace Katana {
   inline       bool                          Configuration::useGlobalEstimate       () const { return _flags & UseGlobalEstimate; }
   inline       bool                          Configuration::useStaticBloatProfile   () const { return _flags & UseStaticBloatProfile; }
   inline       bool                          Configuration::profileEventCosts       () const { return _profileEventCosts; }
+  inline       bool                          Configuration::runRealignStage         () const { return _runRealignStage; }
   inline       void                          Configuration::setFlags                ( unsigned int flags ) { _flags |=  flags; }
   inline       void                          Configuration::unsetFlags              ( unsigned int flags ) { _flags &= ~flags; }
   inline       void                          Configuration::setProfileEventCosts    ( bool state ) { _profileEventCosts = state; }
+  inline       void                          Configuration::setRunRealignStage      ( bool state ) { _runRealignStage = state; }
 
 
 
@@ -152,6 +155,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::Configuration);
-
-
-#endif  // KATANA_CONFIGURATION_H

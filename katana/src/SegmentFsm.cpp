@@ -636,7 +636,8 @@ namespace Katana {
              and (_data1->getState() < DataNegociate::Minimize)
              and (_data1->getRipupCount() < 5))
              ? TrackCost::DiscardGlobals : 0;
-    flags |= (RoutingEvent::getStage() == RoutingEvent::Repair) ? TrackCost::IgnoreSharedLength : 0;
+    flags |= (RoutingEvent::getStage() == RoutingEvent::Repair ) ? TrackCost::IgnoreSharedLength : 0;
+    flags |= (RoutingEvent::getStage() == RoutingEvent::Realign) ? TrackCost::IgnoreTerminals    : 0;
 
     if (flags & TrackCost::DiscardGlobals) {
       cdebug_log(159,0) << "TrackCost::Compare() - DiscardGlobals" << endl;

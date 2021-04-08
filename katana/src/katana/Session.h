@@ -80,7 +80,7 @@ namespace Katana {
       inline static Interval&           toAxisInterval       ( Interval&, size_t depth );
       inline static void                addIndirectInvalid   ( TrackElement* );
       inline static void                addInsertEvent       ( TrackMarker*  , Track* );
-      inline static void                addInsertEvent       ( TrackElement* , Track*, DbU::Unit axis );
+      inline static void                addInsertEvent       ( TrackElement* , Track*, DbU::Unit axis, bool check=true );
       inline static void                addRemoveEvent       ( TrackElement* );
       inline static void                addMoveEvent         ( TrackElement* , Track*, DbU::Unit axis );
       inline static void                addSortEvent         ( Track*, bool forced=false );
@@ -107,7 +107,7 @@ namespace Katana {
                                         _getIndirectInvalids ();
       inline        void                _addIndirectInvalid  ( TrackElement* );
                     void                _addInsertEvent      ( TrackMarker*  , Track* );
-                    void                _addInsertEvent      ( TrackElement* , Track*, DbU::Unit axis );
+                    void                _addInsertEvent      ( TrackElement* , Track*, DbU::Unit axis, bool check );
                     void                _addRemoveEvent      ( TrackElement* );
                     void                _addMoveEvent        ( TrackElement* , Track*, DbU::Unit axis );
                     void                _addSortEvent        ( Track*, bool forced );
@@ -191,8 +191,8 @@ namespace Katana {
   inline void  Session::addInsertEvent ( TrackMarker* marker, Track* track )
   { get("addInsertEvent(TrackMarker*)")->_addInsertEvent(marker,track); }
 
-  inline void  Session::addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis )
-  { get("addInsertEvent(TrackElement*)")->_addInsertEvent(segment,track,axis); }
+  inline void  Session::addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
+  { get("addInsertEvent(TrackElement*)")->_addInsertEvent(segment,track,axis,check); }
 
   inline void  Session::addRemoveEvent ( TrackElement* segment )
   { get("addRemoveEvent()")->_addRemoveEvent(segment); }

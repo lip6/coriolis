@@ -161,6 +161,7 @@ namespace Katana {
   bool           TrackElement::canDogleg            () { return false; };
   bool           TrackElement::canDogleg            ( Interval ) { return false; };
   bool           TrackElement::canDogleg            ( Anabatic::GCell*, Flags ) { return false; };
+  bool           TrackElement::canRealign           () const { return false; };
 // Accessors.
   unsigned long  TrackElement::getId                () const { return 0; }
   unsigned long  TrackElement::getFreedomDegree     () const { return 0; }

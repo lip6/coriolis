@@ -93,6 +93,7 @@ namespace Katana {
       virtual bool                  canPivotDown           ( float reserve, Flags ) const;
       virtual bool                  canMoveUp              ( float reserve, Flags ) const;
       virtual bool                  canSlacken             () const;
+      virtual bool                  canRealign             () const;
       virtual float                 getMaxUnderDensity     ( Flags ) const;
       virtual unsigned long         getId                  () const;
       virtual Flags                 getDirection           () const;

@@ -132,8 +132,10 @@ namespace Katana {
 
     if ( lhs->isOverlap() xor rhs->isOverlap() ) return rhs->isOverlap();
 
-    if ( lhs->_terminals < rhs->_terminals ) return true;
-    if ( lhs->_terminals > rhs->_terminals ) return false;
+    if (not (_flags & TrackCost::IgnoreTerminals)) {
+      if ( lhs->_terminals < rhs->_terminals ) return true;
+      if ( lhs->_terminals > rhs->_terminals ) return false;
+    }
 
     if (lhs->_delta != rhs->_delta) {
     //cdebug_log(155,0) << "TrackCost::Compare() lhs->_delta:" << lhs->_delta << " rhs->_delta:" << rhs->_delta << endl;
@@ -203,7 +205,8 @@ namespace Katana {
   void  TrackCost::consolidate ()
   {
     if ( not isInfinite() and not isHardOverlap() ) {
-      cdebug_log(159,0) << "TrackCost::consolidate() " << _delta << " - " << _deltaShared << endl;
+      cdebug_log(159,0) << "TrackCost::consolidate() " << DbU::getValueString(_delta)
+                        << " - " << DbU::getValueString(_deltaShared) << endl;
     //_deltaPerpand += - (_deltaShared << 1);
       _delta -= _deltaShared;
     //if (_delta > 0) _delta -= _deltaShared;
@@ -270,8 +273,8 @@ namespace Katana {
     s +=          string ( (isAnalog        ())?"a":"-" );
     s +=          string ( (isShortNet      ())?"N":"-" );
     s += " t:"  + getString(_terminals);
-    s += "/d:"  + /*DbU::getValueString(_delta)*/       getString(_delta);
-    s += "-"    + /*DbU::getValueString(_deltaShared)*/ getString(_deltaShared);
+    s += "/d:"  + /*DbU::getValueString(_delta)*/       DbU::getValueString(_delta);
+    s += "-"    + /*DbU::getValueString(_deltaShared)*/ DbU::getValueString(_deltaShared);
     s += "/aw:" + DbU::getValueString(_axisWeight);
     s += "/dp:" + DbU::getValueString(_deltaPerpand);
     s += "/df:" + DbU::getValueString(_distanceToFixed);

@@ -404,13 +404,13 @@ namespace Katana {
   }
 
 
-  void  Session::_addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis )
+  void  Session::_addInsertEvent ( TrackElement* segment, Track* track, DbU::Unit axis, bool check )
   {
     cdebug_log(159,0) <<  "addInsertEvent() " << segment
                       << "\n               @" << DbU::getValueString(axis)
                       << " " << track << endl;
 
-    if ( segment->getTrack() != NULL ) {
+    if ( check and (segment->getTrack() != NULL) ) {
       cerr << Bug("Session::addInsertEvent(): Segment already in Track."
                  "\n      %s."
                  "\n      to %s."
@@ -460,8 +460,7 @@ namespace Katana {
     } else {
       _addRemoveEvent( segment );
     }
-
-    _addInsertEvent( segment, track, axis );
+    _addInsertEvent( segment, track, axis, false );
   }
 
 

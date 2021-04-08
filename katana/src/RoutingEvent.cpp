@@ -377,6 +377,8 @@ namespace Katana {
       _segment->getDataNegociate()->setState( DataNegociate::Repair );
     } else if (getStage() == RoutingEvent::Pack) {
       fork->setMode( RoutingEvent::Pack );
+    } else if (getStage() == RoutingEvent::Realign) {
+      fork->setMode( RoutingEvent::Realign );
     }
 
     queue.repush( fork );
@@ -470,6 +472,7 @@ namespace Katana {
         case Negociate: _processNegociate( queue, history ); break;
         case Pack:      _processPack     ( queue, history ); break;
         case Repair:    _processRepair   ( queue, history ); break;
+        case Realign:   _processRealign  ( queue, history ); break;
         default:
           cerr << Bug( "RoutingEvent::process() - Unknown mode value:%d.", _mode ) << endl;
           break;
@@ -657,6 +660,31 @@ namespace Katana {
           setState( DataNegociate::RepairFailed );
           break;
       }
+    }
+  }
+
+
+  void  RoutingEvent::_processRealign ( RoutingEventQueue& queue, RoutingEventHistory& history )
+  {
+    cdebug_log(159,0) << "* Mode:Realign." << endl;
+
+    SegmentFsm fsm ( this, queue, history );
+    if (fsm.getState() == SegmentFsm::MissingData   ) return;
+    if (fsm.getState() == SegmentFsm::EmptyTrackList) return;
+    if (fsm.isSymmetric()) return;
+
+    cdebug_log(159,0) << "| Candidate Tracks:" << endl;
+    size_t itrack = 0;
+    for ( itrack = 0 ; itrack < fsm.getCosts().size() ; itrack++ )
+      cdebug_log(159,0) << "| " << itrack << ":" << fsm.getCost(itrack) << endl;
+
+    if (   fsm.getCosts().size()
+       and fsm.getCost(0)->isFree()
+       and (fsm.getCost(0)->getTrack() != getSegment()->getTrack())) {
+      cdebug_log(159,0) << "Insert in free space." << endl;
+      fsm.moveToTrack( 0 );
+      fsm.doActions();
+      queue.commit();
     }
   }
 

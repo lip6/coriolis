@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_COST_H
-#define  KATANA_TRACK_COST_H
-
+#pragma  once
 #include <string>
 #include <tuple>
 #include "hurricane/Interval.h"
@@ -61,6 +59,7 @@ namespace Katana {
                  , OverlapGlobal      = (1 << 16)
                  , GlobalEnclosed     = (1 << 17)
                  , AtRipupLimit       = (1 << 18)
+                 , IgnoreTerminals    = (1 << 19)
                  , MergeMask          = ForGlobal     |Blockage|Fixed       |Infinite
                                        |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
                                        |GlobalEnclosed         |AtRipupLimit
@@ -326,6 +325,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackCost);
-
-
-#endif  // KATANA_TRACK_COST_H
