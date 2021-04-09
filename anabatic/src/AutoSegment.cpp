@@ -1634,13 +1634,21 @@ namespace Anabatic {
           return false;
         }
       } else if ((source->isHTee() or target->isHTee()) and isHorizontal()) {
-        cdebug_log(149,0) << "| false, S/T HTee and horizontal. " << this << endl;
+        cdebug_log(149,0) << "| false, S/T HTee+Terminal and horizontal. " << this << endl;
         return false;
       } else if ((source->isVTee() or target->isVTee()) and isVertical()) {
-        cdebug_log(149,0) << "| false, S/T VTee and vertical. " << this << endl;
+        cdebug_log(149,0) << "| false, S/T VTee+Terminal and vertical. " << this << endl;
         return false;
       } 
     }
+
+    if ((source->isHTee() or target->isHTee()) and isHorizontal()) {
+      cdebug_log(149,0) << "| false, S/T HTee and horizontal. " << this << endl;
+      return false;
+    } else if ((source->isVTee() or target->isVTee()) and isVertical()) {
+      cdebug_log(149,0) << "| false, S/T VTee and vertical. " << this << endl;
+      return false;
+    } 
     cdebug_log(149,0) << "  Middle stack or terminal bound." << endl;
     return true;
   }
