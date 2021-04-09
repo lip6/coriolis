@@ -745,6 +745,13 @@ namespace {
     if (_gdsLayerTable.empty()) _staticInit();
     
     _stream.open( gdsPath, ios_base::in|ios_base::binary );
+    if (not _stream.is_open()) {
+      cerr << Error( "GdsStream::GdsStream(): Unable to open stream, check path.\n"
+                     "        \"%s\""
+                   , _gdsPath.c_str() ) << endl;
+      _validSyntax = false;
+      return;
+    }
 
     _stream >> _record;
     if (not _record.isHEADER()) {
@@ -857,13 +864,14 @@ namespace {
     
     if (_record.isSTRNAME()) {
       if (_library) {
-        _cell = _library->getCell( _record.getName() );
+        string cellName = "gds_" + _record.getName();
+        _cell = _library->getCell( cellName );
         if (not _cell) {
-          cerr << Warning( "GdsStream::readStructure(): No Cell named \"%s\" in Library \"%s\" (created)."
+          cerr << Warning( "GdsStream::readStructure(): No Cell named \"gds_%s\" in Library \"%s\" (created)."
                          , _record.getName().c_str()
                          , getString(_library).c_str()
                          ) << endl;
-          _cell = Cell::create( _library, _record.getName() );
+          _cell = Cell::create( _library, cellName );
         }
       }
       _stream >> _record;
@@ -1192,7 +1200,7 @@ namespace {
       //      << " " << Transformation(xpos,ypos,orient)
       //      << " in " << _cell << endl;
       _delayedInstances.push_back( DelayedInstance( _cell
-                                                  , masterName
+                                                  , "gds_" + masterName
                                                   , Transformation(xpos,ypos,orient)) );
     }
 
