@@ -175,8 +175,8 @@ class ClockTree ( object ):
                     pin.destroy()
                 layerGauge  = gaugeConf.vRoutingGauge
                 rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
-                x           = gaugeConf.getNearestVerticalTrack  ( qt.area, rootContact.getX(), 0 )
-                y           = gaugeConf.getNearestHorizontalTrack( qt.area, rootContact.getY(), 0 )
+                x           = gaugeConf.getNearestVerticalTrack  ( rootContact.getX(), 0 )
+                y           = gaugeConf.getNearestHorizontalTrack( rootContact.getY(), 0 )
                 rootPin     = Pin.create( ckNet
                                         , ckNet.getName()+'.0'
                                         , Pin.Direction.NORTH
