@@ -68,8 +68,8 @@ namespace Katana {
 
     if (track) {
       uint32_t      depth      = track->getDepth();
-      Technology*   technology = DataBase::getDB()->getTechnology();
-      const Layer*  layer1     = track->getLayer()->getBlockageLayer();
+    //Technology*   technology = DataBase::getDB()->getTechnology();
+    //const Layer*  layer1     = track->getLayer()->getBlockageLayer();
     //RegularLayer* layer2     = dynamic_cast<RegularLayer*>(technology->getLayer(layer1->getMask()));
     //if (layer2) {
       //cerr << track->getLayer() << " minSpace:" << DbU::getValueString(track->getLayer()->getMinimalSpacing()) << endl;

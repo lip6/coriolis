@@ -38,6 +38,95 @@ namespace {
   using namespace Katana;
 
 
+  class GapSet {
+    public:
+                              GapSet  ( const Track* );
+      inline       size_t     size    () const;
+      inline const vector< pair<size_t,size_t> >&
+                              spans   () const;
+      inline       DbU::Unit  sourceU ( size_t ) const;
+      inline       DbU::Unit  targetU ( size_t ) const;
+                   void       merge   ( size_t );
+      inline       void       clear   ();
+    private:
+      const Track*                   _track;                 
+      DbU::Unit                      _halfSpacing;
+      vector< pair<size_t,size_t> >  _spans;
+  };
+
+
+  GapSet::GapSet ( const Track* track )
+    : _track(track)
+    , _halfSpacing(_track->getLayer()->getMinimalSpacing()/2)
+    , _spans()
+  { }
+
+  inline       size_t                         GapSet::size  () const { return _spans.size(); }
+  inline const vector< pair<size_t,size_t> >& GapSet::spans () const { return _spans; }
+  inline       void                           GapSet::clear ()
+  {
+    // cerr << "GapSet::clear()" << endl;
+    // for ( size_t i=0 ; i < _spans.size() ; ++i ) {
+    //   cerr << "  " << i << "=[" << DbU::getValueString(sourceU(i))
+    //        <<              " " <<  DbU::getValueString(targetU(i)) << "] " ;
+    // }
+    // cerr << endl;
+    _spans.clear();
+  }
+
+  inline DbU::Unit  GapSet::sourceU  ( size_t i ) const
+  {
+    // if (_track->getSegment( _spans[i].first)->isNonPref()) {
+    //   cerr << "  Non-pref sourceU: " << DbU::getValueString(_track->getSegment( _spans[i].first )->getSourceU()) << endl;
+    //   cerr << "  " << _track->getSegment( _spans[i].first ) << endl;
+    // }
+    return (i<_spans.size()) ? _track->getSegment( _spans[i].first )->getSourceU()+_halfSpacing : 0;
+  }
+
+  inline DbU::Unit  GapSet::targetU  ( size_t i ) const
+  {
+    // if (_track->getSegment( _spans[i].second)->isNonPref()) {
+    //   cerr << "  Non-pref targetU: " << DbU::getValueString(_track->getSegment( _spans[i].second )->getTargetU()) << endl;
+    //   cerr << "  " << _track->getSegment( _spans[i].second ) << endl;
+    // }
+    return (i<_spans.size()) ? _track->getSegment( _spans[i].second )->getTargetU()-_halfSpacing : 0;
+  }
+
+
+  void  GapSet::merge ( size_t i )
+  {
+    // cerr << "GapSet::merge() " << _track->getSegment( i ) << endl;
+    if (_spans.empty()) {
+      _spans.push_back( make_pair(i,i) );
+      return;
+    }
+
+    size_t        ispan      = 0;
+    TrackElement* element    = _track->getSegment( i );
+    DbU::Unit     segSourceU = element->getSourceU()+_halfSpacing;
+    DbU::Unit     segTargetU = element->getTargetU()-_halfSpacing;
+    for ( ; ispan<_spans.size() ; ++ispan ) {
+      if (targetU(ispan) >= segSourceU) {
+        if (targetU(ispan) >= segTargetU)
+          return;
+        _spans[ispan].second = i;
+        break;
+      }
+    }
+    if (ispan == _spans.size()) {
+      _spans.push_back( make_pair(i,i) );
+      return;
+    }
+    while ( ispan+1 < _spans.size() ) {
+      if (targetU(ispan) >= sourceU(ispan+1)) {
+        _spans[ispan].second = std::max( targetU(ispan), targetU(ispan+1) );
+        _spans.erase( _spans.begin()+ispan+1 );
+      }
+    }
+  }
+
+  
+
   struct isDetachedSegment {
       bool operator() ( const TrackElement* s ) { return not s->getTrack(); };
   };
@@ -847,6 +936,48 @@ namespace Katana {
   }
 
 
+  uint32_t  Track::repair () const
+  {
+    if (_segments.empty()) return 0;
+    DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
+
+    uint32_t gaps   = 0;
+    GapSet   gapset ( this );
+    for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
+      gapset.merge( i );
+      if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
+         or  _segments[i]->getLayer()->isBlockage() ) {
+        if (gapset.size() > 1) {
+          // cerr << "potential gap around " << _segments[i] << endl;
+          for ( size_t j=0 ; j+1 < gapset.size() ; ++j ) {
+          //   cerr << j << "=[" << DbU::getValueString(gapset.sourceU(j))
+          //        <<       " " << DbU::getValueString(gapset.targetU(j)) << "], "
+          //        << j+1 << "=[" << DbU::getValueString(gapset.sourceU(j+1))
+          //        <<         " " << DbU::getValueString(gapset.targetU(j+1)) << "]" << endl;
+            DbU::Unit spacing = gapset.sourceU(j+1) - gapset.targetU(j);
+            // cerr << "| spacing=" << DbU::getValueString(spacing) << endl;
+            if (spacing < minSpacing) {
+              AutoSegment* first = _segments[j+1]->base();
+              for ( AutoSegment* segment : _segments[j]->base()->getAligneds() ) {
+                if (segment->getSourcePosition() < first->getSourcePosition())
+                  first = segment;
+              }
+              first->setDuSource( first->getDuSource() - spacing );
+              ++gaps;
+              cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
+                             , getString(this).c_str()
+                             , getString(_segments[i-1]).c_str() ) << endl;
+            }
+          }
+        }
+        gapset.clear();
+      }
+    }
+
+    return gaps;
+  }
+
+
   uint32_t  Track::checkOverlap ( uint32_t& overlaps ) const
   {
     if ( !_segments.size() ) return 0;
@@ -873,8 +1004,8 @@ namespace Katana {
         j = i+1;
       }
 
-      if (   (j<_segments.size())
-          && (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
+      if (    (j<_segments.size())
+          and (_segments[i]->getTargetU() > _segments[j]->getSourceU()) ) {
         cerr << Error("Overlap in %s between:\n  %s\n  %s\n  TargetU:%s SourceU:%s"
                      ,getString(this).c_str()
                      ,getString(_segments[i]).c_str()
