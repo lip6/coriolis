@@ -1742,6 +1742,7 @@ namespace Anabatic {
 
     if (isGlobal() or isDrag() or isFixed()) return false;
     if (not isSpinTopOrBottom()) return false;
+    if ((getDepth() == 1) and isSpinBottom()) return false;
     if (_reduceds) return false;
 
     AutoContact* source = getAutoSource();
