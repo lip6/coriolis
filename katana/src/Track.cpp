@@ -44,6 +44,8 @@ namespace {
       inline       size_t     size    () const;
       inline const vector< pair<size_t,size_t> >&
                               spans   () const;
+      inline const pair<size_t,size_t>&
+                              span    ( size_t ) const;
       inline       DbU::Unit  sourceU ( size_t ) const;
       inline       DbU::Unit  targetU ( size_t ) const;
                    void       merge   ( size_t );
@@ -72,6 +74,12 @@ namespace {
     // }
     // cerr << endl;
     _spans.clear();
+  }
+
+  inline const pair<size_t,size_t>& GapSet::span ( size_t i ) const
+  {
+    static pair<size_t,size_t> nospan = make_pair(0,0);
+    return (i < _spans.size()) ? _spans[i] : nospan;
   }
 
   inline DbU::Unit  GapSet::sourceU  ( size_t i ) const
@@ -957,16 +965,18 @@ namespace Katana {
             DbU::Unit spacing = gapset.sourceU(j+1) - gapset.targetU(j);
             // cerr << "| spacing=" << DbU::getValueString(spacing) << endl;
             if (spacing < minSpacing) {
-              AutoSegment* first = _segments[j+1]->base();
-              for ( AutoSegment* segment : _segments[j]->base()->getAligneds() ) {
+              AutoSegment* first = _segments[gapset.span(j+1).first]->base();
+              for ( AutoSegment* segment : first->getAligneds() ) {
                 if (segment->getSourcePosition() < first->getSourcePosition())
                   first = segment;
               }
+            //cerr << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
               first->setDuSource( first->getDuSource() - spacing );
               ++gaps;
               cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
                              , getString(this).c_str()
                              , getString(_segments[i-1]).c_str() ) << endl;
+            //cerr << first << endl;
             }
           }
         }
