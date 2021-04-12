@@ -425,6 +425,16 @@ namespace Anabatic {
   }
 
 
+  bool  AutoSegment::CompareByReduceds::operator() ( AutoSegment* lhs, AutoSegment* rhs ) const
+  {
+    uint32_t deltaReduceds = lhs->getReduceds() - rhs->getReduceds();
+    if (deltaReduceds < 0) return true;  // Smallest source first.
+    if (deltaReduceds > 0) return false;
+
+    return lhs->getId() < rhs->getId(); // Smallest Id first.
+  }
+
+
 // -------------------------------------------------------------------
 // Class  :  "Anabatic::AutoSegment".
 
@@ -1735,7 +1745,7 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::canReduce () const
+  bool  AutoSegment::canReduce ( Flags flags ) const
   {
     cdebug_log(159,0) << "AutoSegment::canReduce():" << this << endl;
     cdebug_log(159,0) << "  _reduceds:" << _reduceds << endl;
@@ -1743,7 +1753,8 @@ namespace Anabatic {
     if (isGlobal() or isDrag() or isFixed()) return false;
     if (not isSpinTopOrBottom()) return false;
     if ((getDepth() == 1) and isSpinBottom()) return false;
-    if (_reduceds) return false;
+    if ((flags & Flags::WithPerpands) and _reduceds) return false;
+    if ((flags & Flags::NullLength) and (getAnchoredLength() > 0)) return false;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -1773,10 +1784,10 @@ namespace Anabatic {
   }
 
 
-  bool  AutoSegment::reduce ()
+  bool  AutoSegment::reduce ( Flags flags )
   {
     if (isReduced()) return false;
-    if (not canReduce()) return false;
+    if (not canReduce(flags)) return false;
     cdebug_log(159,0) << "AutoSegment::reduce():" << this << endl;
 
     AutoContact* source = getAutoSource();
@@ -1793,6 +1804,28 @@ namespace Anabatic {
     }
     
     return true;
+  }
+
+
+  uint32_t  AutoSegment::getNonReduceds ( Flags flags ) const
+  {
+    if (not canReduce(flags)) return false;
+    cdebug_log(159,0) << "AutoSegment::getNonReduceds():" << this << endl;
+
+    AutoContact* source = getAutoSource();
+    AutoContact* target = getAutoTarget();
+    uint32_t     nonReduceds = 0;
+
+    for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
+      if (perpandicular == this) continue;
+      if (perpandicular->getAnchoredLength()) ++nonReduceds;
+    }
+    for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
+      if (perpandicular == this) continue;
+      if (perpandicular->getAnchoredLength()) ++nonReduceds;
+    }
+    
+    return nonReduceds;
   }
 
 
@@ -2192,8 +2225,9 @@ namespace Anabatic {
     DebugSession::open( getNet(), 149, 160 );
     cdebug_log(159,1) << "AutoSegment::reduceDoglegLayer(): " << this << endl;
 
-    AutoContact* source = getAutoSource();
-    AutoContact* target = getAutoTarget();
+    bool         success = false;
+    AutoContact* source  = getAutoSource();
+    AutoContact* target  = getAutoTarget();
 
     unsigned int minSourceDepth = Session::getAllowedDepth();
     unsigned int maxSourceDepth = 0;
@@ -2204,9 +2238,11 @@ namespace Anabatic {
       unsigned int anchorDepth = Session::getLayerDepth( source->base()->getAnchor()->getLayer() );
       minSourceDepth = std::min( minSourceDepth, anchorDepth );
       maxSourceDepth = std::max( maxSourceDepth, anchorDepth );
+      cdebug_log(151,0) << "  source:" << source << endl;
     } else {
       for ( AutoSegment* perpandicular : source->getAutoSegments() ) {
         if (perpandicular == this) continue;
+        cdebug_log(151,0) << "  connected:" << perpandicular << endl;
         minSourceDepth = std::min( minSourceDepth, perpandicular->getDepth() );
         maxSourceDepth = std::max( maxSourceDepth, perpandicular->getDepth() );
       }
@@ -2215,9 +2251,11 @@ namespace Anabatic {
       unsigned int anchorDepth = Session::getLayerDepth( target->base()->getAnchor()->getLayer() );
       minTargetDepth = std::min( minTargetDepth, anchorDepth );
       maxTargetDepth = std::max( maxTargetDepth, anchorDepth );
+      cdebug_log(151,0) << "  target:" << target << endl;
     } else {
       for ( AutoSegment* perpandicular : target->getAutoSegments() ) {
         if (perpandicular == this) continue;
+        cdebug_log(151,0) << "  connected:" << perpandicular << endl;
         minTargetDepth = std::min( minTargetDepth, perpandicular->getDepth() );
         maxTargetDepth = std::max( maxTargetDepth, perpandicular->getDepth() );
       }
@@ -2230,20 +2268,26 @@ namespace Anabatic {
        and (minTargetDepth == maxTargetDepth)
        and (minSourceDepth == minTargetDepth) ) {
       const Layer* layer = Session::getRoutingLayer(minSourceDepth);
-      DbU::Unit    side  = Session::getWireWidth   (minSourceDepth);
+      DbU::Unit    vside = Session::getWireWidth   (minSourceDepth);
+      DbU::Unit    hside = Session::getPWireWidth  (minSourceDepth);
+      if (Session::getDirection(minSourceDepth) & Flags::Vertical)
+        std::swap( hside, vside );
 
       cdebug_log(159,0) << "Reducing to " << minSourceDepth << " " << layer << endl;
     
       source->setLayer( layer );
       target->setLayer( layer );
       setLayer( layer );
-      source->setSizes( side, side );
-      target->setSizes( side, side );
+      setWidth( hside );
+      source->setSizes( hside, vside );
+      target->setSizes( hside, vside );
+
+      success = true;
     }
 
     cdebug_tabw(159,-1);
     DebugSession::close();
-    return true;
+    return success;
 
     
     // if (not source->isTurn() or not target->isTurn()) return true;

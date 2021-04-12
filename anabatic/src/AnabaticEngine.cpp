@@ -122,6 +122,33 @@ namespace {
   }
 
 
+  class NonReducedItem {
+    public:
+      inline              NonReducedItem ( AutoSegment* segment=NULL, uint32_t nonReduceds=0 );
+      inline AutoSegment* segment        () const;
+      inline uint32_t     nonReduceds    () const;
+    private:
+      AutoSegment* _segment;
+      uint32_t     _nonReduceds;
+  };
+
+
+  inline NonReducedItem::NonReducedItem ( AutoSegment* segment, uint32_t nonReduceds )
+    : _segment    (segment)
+    , _nonReduceds(nonReduceds)
+  { }
+
+  inline AutoSegment* NonReducedItem::segment     () const { return _segment; }
+  inline uint32_t     NonReducedItem::nonReduceds () const { return _nonReduceds; }
+
+  bool  operator< ( const NonReducedItem& lhs, const NonReducedItem& rhs )
+  {
+    int32_t deltaReduceds = (int32_t)lhs.nonReduceds() - (int32_t)rhs.nonReduceds();
+    if (deltaReduceds > 0) return true;  // Most connected first.
+    if (deltaReduceds < 0) return false;
+    return lhs.segment()->getId() < rhs.segment()->getId(); // Smallest Id first.
+  }
+
 }  // Anonymous namespace.
 
 
@@ -426,13 +453,30 @@ namespace Anabatic {
     if (_state == EngineDriving) {
       cdebug_log(145,1) << "Saving AutoContacts/AutoSegments." << endl;
 
+      vector<NonReducedItem> reduceds;
       size_t fixedSegments    = 0;
       size_t sameLayerDoglegs = 0;
       size_t bloatedStraps    = 0;
       for ( auto isegment : _autoSegmentLut ) {
         if (isegment.second->isFixed()) ++fixedSegments;
-        if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
+        if (isegment.second->canReduce( Flags::NullLength )) {
+        //cerr << "push_back() " << (void*)isegment.second << ":" << isegment.second << endl;
+          reduceds.push_back( NonReducedItem( isegment.second
+                                            , isegment.second->getNonReduceds( Flags::NoFlags ) ));
+        } else {
+          if (isegment.second->reduceDoglegLayer()) ++sameLayerDoglegs;
+        }
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
+      }
+      sort( reduceds.begin(), reduceds.end() );
+      // for ( size_t i=0 ; i<reduceds.size() ; ++i ) {
+      //   cerr << "| " << setw(3) << i
+      //        << " " << reduceds[i].nonReduceds()
+      //        << " " << reduceds[i].segment() << endl;
+      // }
+      for ( auto& item : reduceds ) {
+        item.segment()->reduce( Flags::NoFlags );
+        if (item.segment()->reduceDoglegLayer()) ++sameLayerDoglegs;
       }
 
       cmess1 << "  o  Driving Hurricane data-base." << endl;

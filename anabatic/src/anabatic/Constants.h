@@ -105,6 +105,7 @@ namespace Anabatic {
       static const BaseFlags  LayerCapOnly        ;
       static const BaseFlags  NoMinLength         ;
       static const BaseFlags  NoSegExt            ;
+      static const BaseFlags  NullLength          ;
     public:
       inline               Flags        ( uint64_t flags = NoFlags );
       inline               Flags        ( const Hurricane::BaseFlags& );

@@ -233,7 +233,7 @@ namespace Anabatic {
       inline         bool                isWide                     () const;
       inline         bool                isShortNet                 () const;
              virtual bool                _canSlacken                () const = 0;
-                     bool                canReduce                  () const;
+                     bool                canReduce                  ( Flags flags=Flags::WithPerpands ) const;
                      bool                mustRaise                  () const;
                      Flags               canDogleg                  ( Interval );
              virtual bool                canMoveULeft               ( float reserve=0.0 ) const = 0;
@@ -290,6 +290,8 @@ namespace Anabatic {
              virtual AutoSegment*        getCanonical               ( DbU::Unit& min , DbU::Unit& max );
       inline         AutoSegment*        getCanonical               ( Interval& i );
                      float               getMaxUnderDensity         ( Flags flags );
+      inline         uint32_t            getReduceds                () const;
+                     uint32_t            getNonReduceds             ( Flags flags=Flags::WithPerpands ) const;
     // Modifiers.                                            
       inline         void                unsetFlags                 ( uint64_t );
       inline         void                setFlags                   ( uint64_t );
@@ -334,7 +336,7 @@ namespace Anabatic {
                      bool                moveDown                   ( Flags flags=Flags::NoFlags );
                      bool                reduceDoglegLayer          ();
                      bool                bloatStackedStrap          ();
-                     bool                reduce                     ();
+                     bool                reduce                     ( Flags flags=Flags::WithPerpands );
                      bool                raise                      ();
                      bool                expandToMinLength          ( Interval );
                      bool                unexpandToMinLength        ();
@@ -435,6 +437,9 @@ namespace Anabatic {
       struct CompareByRevalidate : public binary_function<AutoSegment*,AutoSegment*,bool> {
           bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
       };
+      struct CompareByReduceds : public binary_function<AutoSegment*,AutoSegment*,bool> {
+          bool operator() ( AutoSegment* lhs, AutoSegment* rhs ) const;
+      };
     public:
       typedef std::set<AutoSegment*,CompareByDepthLength>  DepthLengthSet;
       typedef std::set<AutoSegment*,CompareId>             IdSet;
@@ -517,6 +522,7 @@ namespace Anabatic {
   inline  DbU::Unit       AutoSegment::getNativeMax           () const { return _nativeConstraints.getVMax(); }
   inline  const Interval& AutoSegment::getUserConstraints     () const { return _userConstraints; }
   inline  const Interval& AutoSegment::getNativeConstraints   () const { return _nativeConstraints; }
+  inline  uint32_t        AutoSegment::getReduceds            () const { return _reduceds; }
                                                               
   inline  bool            AutoSegment::isHorizontal           () const { return _flags & SegHorizontal; }
   inline  bool            AutoSegment::isVertical             () const { return not (_flags & SegHorizontal); }

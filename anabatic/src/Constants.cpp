@@ -124,6 +124,7 @@ namespace Anabatic {
   const BaseFlags  Flags::LayerCapOnly        = (1L << 36);
   const BaseFlags  Flags::NoMinLength         = (1L << 37);
   const BaseFlags  Flags::NoSegExt            = (1L << 38);
+  const BaseFlags  Flags::NullLength          = (1L << 39);
 
 
   Flags::~Flags ()
