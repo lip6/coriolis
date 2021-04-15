@@ -82,7 +82,7 @@ class Chip ( Block ):
         self.conf.chip.setAbutmentBox( self.conf.chipAb )
         trace( 550, '\tSet chip ab:{}\n'.format(self.conf.chip.getAbutmentBox()) )
         trace( 550, '\tUsing core ab:{}\n'.format(self.conf.core.getAbutmentBox()) )
-        self.padsCorona = plugins.alpha.chip.pads.Corona( self.conf )
+        self.padsCorona = plugins.alpha.chip.pads.Corona( self )
         self.conf.validated =  self.padsCorona.validate()
         if not self.conf.validated:
             return False
@@ -112,10 +112,11 @@ class Chip ( Block ):
             y = y - (y % self.conf.sliceHeight)
             self.conf.icore.setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
             self.conf.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
-        self.padsCorona.doPowerLayout()
         self.conf.refresh()
 
     def doConnectCore ( self ):
+        if self.padsCorona:
+            self.padsCorona.doPowerLayout()
         if self.conf.routingGauge.hasPowerSupply():
             power = plugins.alpha.chip.powerplane.Builder( self.conf )
             power.connectPower()

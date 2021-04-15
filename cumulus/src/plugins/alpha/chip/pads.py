@@ -780,7 +780,7 @@ class CoreWire ( object ):
 
 class Corona ( object ):
 
-    def __init__ ( self, conf ):
+    def __init__ ( self, chip ):
 
         def _cmpPad ( pad1, pad2):
             width1 = pad1.getAbutmentBox().getWidth()
@@ -797,7 +797,7 @@ class Corona ( object ):
                     duplicateds.append( [ position, padInstance ] )
             return duplicateds
         
-        self.conf             = conf  
+        self.chip             = chip
         self.conf.validated   = False
         self.northPads        = _dupPads( self.conf.chipConf.northPads )
         self.southPads        = _dupPads( self.conf.chipConf.southPads )
@@ -837,6 +837,9 @@ class Corona ( object ):
             self.padCorner = self.padLib.getCell( self.conf.cfg.chip.padCorner )
         if self.conf.cfg.chip.minPadSpacing is None:
             self.conf.cfg.chip.minPadSpacing = 0
+
+    @property
+    def conf ( self ): return self.chip.conf
 
     @property
     def supplyRailWidth ( self ): return self.conf.cfg.chip.supplyRailWidth
@@ -1212,9 +1215,6 @@ class Corona ( object ):
         with UpdateSession():
             capViaWidth   = self.conf.vDeepRG.getPitch()*3
             coreAb        = self.conf.coreAb
-            stripesNb     = int( (coreAb.getWidth() - 8*capViaWidth + self.supplyRailWidth) \
-                                 / self.supplyRailPitch - 1 )
-            offset        = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) / 2
             powerNet      = None
             groundNet     = None
             chipPowerNet  = None
@@ -1251,31 +1251,59 @@ class Corona ( object ):
             else:
                 raise ErrorMessage( 1, 'pads.Corona.doPowerLayout(): No ground net found in "{}"' \
                                        .format(corona.getName()) )
+
             icore = self.conf.icore
             xcore = icore.getTransformation().getTx()
-            trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )
-            print( 'capViaWidth={}'.format(DbU.getValueString(capViaWidth)))
             stripeSpecs = []
-            for i in range(stripesNb+4):
+            stripesNb = int( (coreAb.getWidth() - 8*capViaWidth + self.supplyRailWidth) \
+                                 / self.supplyRailPitch - 1 )
+            offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) / 2
+            stripeSpecs.append( [ xcore + capViaWidth/2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + 2*capViaWidth + capViaWidth/2 , capViaWidth ] )
+            if self.chip.spares:
+                rleafX     = self.chip.spares.rleafX
+                spacing    = (rleafX[1] - rleafX[0]) / 2
+                stepOffset = 0
+                step       = 1
+                trace( 550, '\trleafX\n' )
+                for i in range(len(rleafX)):
+                    trace( 550, '\t| rleafX[{}] = {}\n'.format(i,DbU.getValueString(rleafX[i])))
+                if spacing < self.supplyRailPitch:
+                    stepOffset = 1
+                    step       = 2
+                    spacing    = (rleafX[2] - rleafX[0]) / 2
+                if step == 1:
+                    stripeSpecs.append( [ rleafX[0] - spacing, self.supplyRailWidth ] )
+                    trace( 550, '\tstripe[N/A] @{}\n'.format(DbU.getValueString(stripeSpecs[-1][0])))
+                else:
+                    stripeSpecs.append( [ rleafX[0], self.supplyRailWidth ] )
+                    trace( 550, '\tstripe[N/A] @{}\n'.format(DbU.getValueString(stripeSpecs[-1][0])))
+                for i in range( stepOffset, len(rleafX)-stepOffset, step ):
+                    if step == 1:
+                        stripeSpecs.append( [ rleafX[i], self.supplyRailWidth ] )
+                        trace( 550, '\tstripe[{}] @{}\n'.format(i,DbU.getValueString(stripeSpecs[-1][0])))
+                    stripeSpecs.append( [ rleafX[i] + spacing, self.supplyRailWidth ] )
+                    trace( 550, '\tstripe[{}] @{}\n'.format(i,DbU.getValueString(stripeSpecs[-1][0])))
+            else:
+                for i in range(stripesNb):
+                    stripeSpecs.append( [ xcore + offset + i*self.supplyRailPitch
+                                        , self.supplyRailWidth
+                                        ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth + capViaWidth/2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - capViaWidth/2 , capViaWidth ] )
+
+            trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )
+            trace( 550, '\tcapViaWidth={}\n'.format(DbU.getValueString(capViaWidth)))
+            for i in range(len(stripeSpecs)):
                 if i % 2:
-                    coronaNet = groundNet
-                    chipNet   = chipGroundNet
-                else:
-                    coronaNet = powerNet
                     chipNet   = chipPowerNet
-                if i < 2:
-                    axis  = xcore + 2*i*capViaWidth + capViaWidth/2
-                    width = capViaWidth
-                elif i >= stripesNb+2:
-                    axis  = xcore + coreAb.getWidth() - 2*(i-stripesNb-1)*capViaWidth + capViaWidth/2
-                    width = capViaWidth
+                    coronaNet = powerNet
                 else:
-                    axis  = xcore + offset + (i-2)*self.supplyRailPitch
-                    width = self.supplyRailWidth
-                stripeSpecs.append( [ chipNet, coronaNet, axis, width ] )
-            for chipNet, coronaNet, axis, width in stripeSpecs:
-                self._supplyToPad( chipNet, coronaNet, axis, width, North )
-                self._supplyToPad( chipNet, coronaNet, axis, width, South )
+                    chipNet   = chipGroundNet
+                    coronaNet = groundNet
+                trace( 550, '\tstripe[{}] @{}\n'.format(i,DbU.getValueString(stripeSpecs[i][0])))
+                self._supplyToPad( chipNet, coronaNet, stripeSpecs[i][0], stripeSpecs[i][1], North )
+                self._supplyToPad( chipNet, coronaNet, stripeSpecs[i][0], stripeSpecs[i][1], South )
             #for istripe in range(stripesNb):
             #    trace( 550, '\tistripe={}\n'.format(istripe) )
             #    axis = xcore + offset + istripe*self.supplyRailPitch

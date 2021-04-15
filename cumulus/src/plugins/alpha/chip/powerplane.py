@@ -448,7 +448,7 @@ class Builder ( object ):
             if layer.isSymbolic():
                 layer = layer.getBasicLayer()
             query.setBasicLayer( layer )
-            trace( 550, ',+', 'query.doQuery() {}'.format(layer) )
+            trace( 550, ',+', '\tquery.doQuery() {}\n'.format(layer) )
             query.doQuery()
             trace( 550, '-' )
         self.activePlane = None

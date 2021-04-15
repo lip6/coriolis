@@ -1239,3 +1239,27 @@ class BlockConf ( GaugeConf ):
             self.cell.setName( self.cell.getName()+'_r' )
         rsave( self.cell, CRL.Catalog.State.Physical|flags )
         return
+        
+    def toXPitch ( self, x, superior=False ):
+        """
+        Returns the coordinate of the pitch immediately inferior to X.
+        Compute in the "P&R cell" coordinate system which may be core
+        or corona.
+        """
+        area   = self.cellPnR.getAbutmentBox()
+        modulo = (x - area.getXMin()) % self.sliceStep 
+        if modulo and superior:
+            x += self.sliceStep
+        return x - modulo
+
+    def toYSlice ( self, y, superior=False ):
+        """
+        Returns the coordinate of the slice immediately inferior to Y.
+        Compute in the "P&R cell" coordinate system which may be core
+        or corona.
+        """
+        area   = self.cellPnR.getAbutmentBox()
+        modulo = (y - area.getYMin()) % self.sliceHeight 
+        if modulo and superior:
+            y += self.sliceHeight
+        return y - modulo

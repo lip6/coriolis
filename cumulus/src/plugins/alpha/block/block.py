@@ -24,7 +24,7 @@ from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
                         Cell, Instance
 import CRL
 from   CRL             import RoutingLayerGauge
-from   helpers         import trace, dots
+from   helpers         import trace, dots, l, u, n
 from   helpers.io      import ErrorMessage, WarningMessage, catch
 from   helpers.overlay import UpdateSession
 import Etesian
@@ -32,15 +32,15 @@ import Anabatic
 import Katana
 import plugins.rsave
 from   plugins                   import getParameter
-from   alpha.macro.macro         import Macro
-from   alpha.block               import timing
-from   alpha.block.spares        import Spares
-from   alpha.block.clocktree     import ClockTree
-#from   alpha.block.hfns1         import BufferTree
-#from   alpha.block.hfns2         import BufferTree
-#from   alpha.block.hfns3         import BufferTree
-from   alpha.block.hfns4         import BufferTree
-from   alpha.block.configuration import IoPin, BlockConf, GaugeConf
+from   plugins.alpha.macro.macro         import Macro
+from   plugins.alpha.block               import timing
+from   plugins.alpha.block.spares        import Spares
+from   plugins.alpha.block.clocktree     import ClockTree
+#from   plugins.alpha.block.hfns1         import BufferTree
+#from   plugins.alpha.block.hfns2         import BufferTree
+#from   plugins.alpha.block.hfns3         import BufferTree
+from   plugins.alpha.block.hfns4         import BufferTree
+from   plugins.alpha.block.configuration import IoPin, BlockConf, GaugeConf
 
 timing.staticInit()
 
@@ -297,17 +297,18 @@ class Block ( object ):
         Create a Block object. The only parameter ``conf`` must be a BlockConf
         object which contains the complete block configuration.
         """
-        self.flags          = 0
-        self.conf           = conf
-        self.spares         = Spares( self )
-        self.clockTrees     = []
-        self.hfnTrees       = []
-        self.blockInstances = []
-        self.sides          = { IoPin.WEST  : Side( self.conf, IoPin.WEST  )
-                              , IoPin.EAST  : Side( self.conf, IoPin.EAST  )
-                              , IoPin.SOUTH : Side( self.conf, IoPin.SOUTH )
-                              , IoPin.NORTH : Side( self.conf, IoPin.NORTH )
-                              }
+        self.flags            = 0
+        self.conf             = conf
+        self.spares           = Spares( self )
+        self.clockTrees       = []
+        self.hfnTrees         = []
+        self.blockInstances   = []
+        self.placeHolderCount = 0
+        self.sides            = { IoPin.WEST  : Side( self.conf, IoPin.WEST  )
+                                , IoPin.EAST  : Side( self.conf, IoPin.EAST  )
+                                , IoPin.SOUTH : Side( self.conf, IoPin.SOUTH )
+                                , IoPin.NORTH : Side( self.conf, IoPin.NORTH )
+                                }
         if not self.conf.cell.getAbutmentBox().isEmpty():
             isBuilt = True
             for instance in self.conf.cell.getInstances():
@@ -604,6 +605,7 @@ class Block ( object ):
             coreTransf.applyOn( macroPosition )
             xoffset = macroPosition.getX() - pnrAb.getXMin()
             xpitch  = self.conf.vDeepRG.getPitch()
+            print( 'X placement pitch: {}'.format(DbU.getValueString(xpitch)) )
             print( 'Original X offset: {}'.format(DbU.getValueString(xoffset)) )
             if xoffset % xpitch:
                 xoffset += xpitch - (xoffset % xpitch)
@@ -626,6 +628,33 @@ class Block ( object ):
                                        , macroPosition.getY()
                                        , Transformation.Orientation.ID )
                        , Instance.PlacementStatus.FIXED )
+
+    def addPlaceHolder ( self, area, inCore=False ):
+        if area.isEmpty():
+            print( ErrorMessage( 1, 'Block.addPlaceHolder(): Request for an empty place holder area.' ))
+            return
+        af = CRL.AllianceFramework.get()
+        phCellName = 'placeholder_{}'.format(self.placeHolderCount)
+        placeHolder = Cell.create( af.getLibrary(0), phCellName )
+        if inCore:
+            self.conf.icore.getTransformation().applyOn( area )
+        pitchedArea = Box( self.conf.toXPitch(area.getXMin(),True)
+                         , self.conf.toYSlice(area.getYMin(),True)
+                         , self.conf.toXPitch(area.getXMax())
+                         , self.conf.toYSlice(area.getYMax()) )
+        placeHolder.setAbutmentBox( Box( u(0.0)
+                                       , u(0.0)
+                                       , pitchedArea.getWidth()
+                                       , pitchedArea.getHeight() ))
+        print( 'pitchedArea={}'.format(pitchedArea) )
+        placeHolder.setTerminalNetlist( True )
+        instance = Instance.create( self.conf.cellPnR, phCellName, placeHolder )
+        instance.setTransformation( Transformation( pitchedArea.getXMin()
+                                                  , pitchedArea.getYMin()
+                                                  , Transformation.Orientation.ID ) )
+        instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+        self.placeHolderCount += 1
+        return instance
 
     def route ( self ):
         routedCell = self.conf.corona if self.conf.isCoreBlock else self.conf.cell

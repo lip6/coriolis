@@ -308,6 +308,7 @@ class QuadTree ( object ):
         self.pool      = BufferPool( self )
         self.plugs     = []
         self.rtag      = rtag
+        self.rleafX    = [ area.getXCenter() ]
 
     def destroy ( self ):
         if self.bl: self.bl.destroy()
@@ -481,6 +482,17 @@ class QuadTree ( object ):
             for leaf in self.leafs: leaf.rselectBuffer( column, row, flags )
         trace( 540, '-' )
 
+    def _mergeLeafX ( self, leafX ):
+        for x in leafX:
+            if not (x in self.rleafX):
+                self.rleafX.append( x )
+            self.rleafX.sort()
+
+    def _upMergeLeafX ( self ):
+        if self.parent:
+            self.parent._mergeLeafX( self.rleafX )
+            self.parent._upMergeLeafX()
+
     def partition ( self ):
         """
         Build one level of the quad-tree, if the side of the area is bigger than
@@ -584,6 +596,8 @@ class QuadTree ( object ):
             for leaf in self.leafs:
                 trace( 540, '\tLeaf rtag:"{}"\n'.format(leaf.rtag) )
                 leaf.rpartition()
+        else:
+            self._upMergeLeafX()
         trace( 540, '-' )
         if self.isRoot():
             self._rsetMaxDepth()
@@ -804,6 +818,11 @@ class Spares ( object ):
         self.quadTree     = None
         self.strayBuffers = []
 
+    @property
+    def rleafX ( self ):
+        if self.quadTree: return self.quadTree.rleafX
+        return []
+
     def reset ( self ):
         self.quadTree.destroy()
         for buffer in self.strayBuffers:
@@ -908,6 +927,9 @@ class Spares ( object ):
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
             #self._addCapTies()
+            print( "X Centers of the QuadTree leaf" )
+            for x in self.quadTree.rleafX:
+                print( '| {}'.format(DbU.getValueString(x) ))
         trace( 540, '-' )
 
     def rshowPoolUse ( self ):

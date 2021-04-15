@@ -22,7 +22,7 @@ from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
                         Box, Path, Layer, Occurrence, Net,           \
                         NetExternalComponents, RoutingPad, Pad,      \
                         Horizontal, Vertical, Contact, Pin, Plug,    \
-                        Cell, Instance
+                        Cell, Instance, Rectilinear
 import CRL
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace, dots
@@ -40,10 +40,12 @@ class Macro ( object ):
     processeds macros so they are modified only once.
     """
 
+    trace( 550, '\tStatic init of Macro\n' )
     LUT = {}
 
     @staticmethod
     def lookup ( macroCell ):
+        trace( 550, '\tMacro.lookup() on {}\n'.format(macroCell) )
         if Macro.LUT.has_key(macroCell): return Macro.LUT[ macroCell ]
         return None
 
@@ -68,6 +70,7 @@ class Macro ( object ):
 
         macro = Macro.lookup( macroCell )
         if macro is not None:
+            trace( 550, '\tReusing macro wrapper {}\n'.format(macroCell) )
             return macro
         return Macro( macroCell, gaugeName, hMargin, vMargin )
 
@@ -112,12 +115,53 @@ class Macro ( object ):
           that are half free and half occluded by the block itself may
           cause (stupid) deadlock to appear.
         """
+        trace( 550, '\tMacro.__init__() {}\n'.format(macroCell) )
         self.cell = macroCell
         Macro.LUT[ self.cell ] = self
 
         af = CRL.AllianceFramework.get()
         ab = self.cell.getAbutmentBox()
-        self.rg      = af.getRoutingGauge( gaugeName )
+        self.rg = af.getRoutingGauge( gaugeName )
+        gaugeMetal2      = self.rg.getLayerGauge( 1 )
+        gaugeMetal3      = self.rg.getLayerGauge( 2 )
+        gaugeMetal4      = self.rg.getLayerGauge( 3 )
+        blockageMetal2   = gaugeMetal2.getBlockageLayer()
+        blockageMetal3   = gaugeMetal3.getBlockageLayer()
+        blockageMetal4   = gaugeMetal4.getBlockageLayer()
+        minSpacingMetal2 = gaugeMetal2.getLayer().getMinimalSpacing()
+        minSpacingMetal3 = gaugeMetal3.getLayer().getMinimalSpacing()
+        minSpacingMetal4 = gaugeMetal4.getLayer().getMinimalSpacing()
+        if self.cell.getName() == 'SPBlock_512W64B8W':
+            print( '  o  Ad-hoc blockage patch for "{}".'.format(self.cell.getName()) )
+            for net in self.cell.getNets():
+                for component in net.getComponents():
+                    if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
+                        bb = component.getBoundingBox()
+                        bb.inflate( minSpacingMetal2/2 )
+                        Horizontal.create( component.getNet()
+                                         , blockageMetal2
+                                         , bb.getYCenter()
+                                         , bb.getHeight()
+                                         , bb.getXMin()
+                                         , bb.getXMax() )
+                    elif isinstance(component,Rectilinear) and component.getLayer() == blockageMetal3:
+                        bb = component.getBoundingBox()
+                        bb.inflate( 2*minSpacingMetal3, minSpacingMetal3/2 )
+                        Vertical.create( component.getNet()
+                                       , blockageMetal3
+                                       , bb.getXCenter()
+                                       , bb.getWidth()
+                                       , bb.getYMin()
+                                       , bb.getYMax() )
+                    elif isinstance(component,Rectilinear) and component.getLayer() == blockageMetal4:
+                        bb = component.getBoundingBox()
+                        bb.inflate( minSpacingMetal4/2 )
+                        Horizontal.create( component.getNet()
+                                         , blockageMetal4
+                                         , bb.getYCenter()
+                                         , bb.getHeight()
+                                         , bb.getXMin()
+                                         , bb.getXMax() )
         self.innerAb = ab
         sliceHeight = af.getCellGauge( gaugeName ).getSliceHeight()
         westPins  = []
