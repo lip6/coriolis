@@ -1754,7 +1754,6 @@ namespace Anabatic {
     if (not isSpinTopOrBottom()) return false;
     if ((getDepth() == 1) and isSpinBottom()) return false;
     if ((flags & Flags::WithPerpands) and _reduceds) return false;
-    if ((flags & Flags::NullLength) and (getAnchoredLength() > 0)) return false;
 
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
@@ -1768,6 +1767,9 @@ namespace Anabatic {
     // if (  source->isHTee() or source->isVTee()
     //    or target->isHTee() or target->isVTee() ) return false;
 
+    cdebug_log(159,0) << "  length:" << DbU::getValueString(getAnchoredLength()) << endl;
+    if (flags & Flags::NullLength) return (getAnchoredLength() == 0); 
+
     unsigned int perpandicularDepth = getDepth();
     if (isSpinBottom()) {
       if (perpandicularDepth > 0) --perpandicularDepth;
@@ -1776,9 +1778,8 @@ namespace Anabatic {
       if (perpandicularDepth >= Session::getDepth()) return false;
     } else
       return false;
-
-    cdebug_log(159,0) << "  length:" << DbU::getValueString(getAnchoredLength()) << endl;
-    if (getAnchoredLength() >= (Session::getPitch(perpandicularDepth) * 2)) return false;
+    
+    if (getAnchoredLength() >= Session::getPitch(perpandicularDepth) * 2) return false;
 
     return true;
   }

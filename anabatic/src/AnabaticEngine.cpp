@@ -446,6 +446,7 @@ namespace Anabatic {
 
   void  AnabaticEngine::_gutAnabatic ()
   {
+  //DebugSession::open( 159, 160 );
     openSession();
 
     _flags.reset( Flags::DestroyBaseContact|Flags::DestroyBaseSegment );
@@ -469,6 +470,7 @@ namespace Anabatic {
       //if (isegment.second->bloatStackedStrap()) ++bloatedStraps;
       }
       sort( reduceds.begin(), reduceds.end() );
+      // cerr << "Reduced segment queue:" << endl;
       // for ( size_t i=0 ; i<reduceds.size() ; ++i ) {
       //   cerr << "| " << setw(3) << i
       //        << " " << reduceds[i].nonReduceds()
@@ -510,6 +512,7 @@ namespace Anabatic {
 
     exportExternalNets();
     Session::close();
+  //DebugSession::close();
   }
 
 
