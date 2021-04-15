@@ -689,10 +689,13 @@ namespace Etesian {
     DbU::Unit          hpitch      = getSliceStep();
     DbU::Unit          vpitch      = getSliceStep();
     DbU::Unit          sliceHeight = getSliceHeight();
+    bool               isFlexLib   = (getGauge()->getName() == "FlexLib");
 
-    cmess1 << "  o  Converting <" << getCell()->getName() << "> into Coloquinte." << endl;
+    cmess1 << "  o  Converting \"" << getCell()->getName() << "\" into Coloquinte." << endl;
     cmess1 << ::Dots::asString("     - H-pitch"    , DbU::getValueString(hpitch)) << endl;
     cmess1 << ::Dots::asString("     - V-pitch"    , DbU::getValueString(vpitch)) << endl;
+    if (isFlexLib)
+      cmess1 << ::Dots::asString("     - Using patches for"    , "\"FlexLib\"") << endl;
     cmess2 << "     o  Looking through the hierarchy." << endl;
 
     for( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() )
@@ -814,7 +817,9 @@ namespace Etesian {
 
             _instsToIds.insert( make_pair(instance,instanceId) );
             _idsToInsts.push_back( make_tuple(instance,vector<RoutingPad*>()) );
-            // cerr << "FIXED id=" << instanceId
+            // cerr << endl;
+            // cerr << "FIXED " << instance << endl;
+            // cerr << "  id=" << instanceId
             //      << " " << instance << " size:(" << xsize << " " << ysize
             //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
             ++instanceId;
@@ -869,6 +874,10 @@ namespace Etesian {
       // cerr << instance << " size:(" << xsize << " " << ysize
       //     << ") pos:(" << xpos << " " << ypos << ")" << endl;
 
+      string masterName = getString( instance->getMasterCell()->getName() );
+      if (isFlexLib and not instance->isFixed() and (masterName == "buf_x8"))
+         ++xsize;
+
       instances[instanceId].size       = point<int_t>( xsize, ysize );
       instances[instanceId].list_index = instanceId;
       instances[instanceId].area       = static_cast<capacity_t>(xsize) * static_cast<capacity_t>(ysize);
@@ -881,7 +890,9 @@ namespace Etesian {
                                           |coloquinte::YFlippable;
       } else {
         instances[instanceId].attributes = 0;
-        // cerr << "FIXED id=" << instanceId
+        // cerr << endl;
+        // cerr << "FIXED " << instance << endl;
+        // cerr << "  id=" << instanceId
         //      << " " << instance << " size:(" << xsize << " " << ysize
         //      << ") pos:(" << xpos << " " << ypos << ")" << endl;
       }
