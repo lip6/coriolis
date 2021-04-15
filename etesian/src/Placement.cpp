@@ -131,6 +131,18 @@ namespace Etesian {
 
   void  Slice::merge ( const Occurrence& occurrence, const Box& flatAb )
   {
+    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceStep();
+    if (modulo) {
+      cerr << "Misaligned instance " << occurrence << endl;
+      cerr << "  y=" << DbU::getValueString(flatAb.getYMin()) << " (" << flatAb.getYMin() << ") "
+           << " x=" <<  DbU::getValueString(flatAb.getXMin()) << " (" << flatAb.getXMin() << ") "
+           << " modulo=" <<  DbU::getValueString(modulo)
+           << " getXMin()=" <<  DbU::getValueString(getXMin())
+           << " sliceStep=" <<  DbU::getValueString(getEtesian()->getSliceStep())
+           << " (" << getEtesian()->getSliceStep() << ")"
+           << endl;
+    }
+
     if (_tiles.empty() or (_tiles.front().getXMin() > flatAb.getXMin())) {
       _tiles.insert( _tiles.begin(), Tile(flatAb.getXMin(), flatAb.getWidth(), occurrence) );
       return;
@@ -227,11 +239,22 @@ namespace Etesian {
 
     DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
     DbU::Unit xtie      = xmin;
+    DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceStep();
+    if (modulo) {
+      xtie += getEtesian()->getSliceStep() - modulo;
+      cerr << "Misaligned hole @" << yspin
+           << " ybottom=" << DbU::getValueString(ybottom)
+           << " xmin=" <<  DbU::getValueString(xmin)
+           << " modulo=" <<  DbU::getValueString(modulo)
+           << " getXMin()=" <<  DbU::getValueString(getXMin())
+           << endl;
+    }
 
     while ( true ) {
       if (xtie           >= xmax) break;
       if (xtie+feedWidth >  xmax) {
       // Feed is too big, try to find a smaller one.
+        feed = NULL;
         int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
         for ( ; pitch > 0 ; --pitch ) {
           feed = getEtesian()->getFeedCells().getFeed( pitch );
