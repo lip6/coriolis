@@ -60,6 +60,9 @@ namespace Etesian {
 
   class Cluster {
     public:
+      const uint32_t AS_DRIVER = (1<<0);
+      const uint32_t AS_SINK   = (1<<1);
+    public:
                              Cluster        ( EtesianEngine* );
       virtual               ~Cluster        ();
       inline  size_t         getSize        () const;
@@ -72,8 +75,8 @@ namespace Etesian {
       inline  void           swapRps        ( Cluster* );
       inline  Net*           getInputNet    ();
       inline  Net*           getOutputNet   ();
-              Plug*          raddTransPlug  ( Net* topNet, Path ); 
-              Net*           raddTransNet   ( Net* topNet, Path ); 
+              Plug*          raddTransPlug  ( Net* topNet, Path, uint32_t flags ); 
+              Net*           raddTransNet   ( Net* topNet, Path, uint32_t flags ); 
               Plug*          getPlugByNet   ( Instance* instance, Net* cellNet );
               void           createInput    ( Net* );
               void           createOutput   ();
@@ -143,7 +146,7 @@ namespace Etesian {
   }
   
 
-  Plug* Cluster::raddTransPlug ( Net* topNet, Path path )
+  Plug* Cluster::raddTransPlug ( Net* topNet, Path path, uint32_t flags )
   {
     if (path.isEmpty()) return NULL;
     if (topNet->getCell() != path.getOwnerCell() ) {
@@ -166,9 +169,12 @@ namespace Etesian {
       if (not masterNet) {
         masterNet = Net::create( masterCell, topNet->getName() );
         masterNet->setType     ( topNet->getType() );
-        masterNet->setDirection( Net::Direction::IN );
       }
-
+      uint32_t direction = masterNet->getDirection();
+      if (flags & AS_DRIVER) direction |= Net::Direction::OUT; 
+      if (flags & AS_SINK  ) direction |= Net::Direction::IN; 
+      masterNet->setDirection( (Net::Direction::Code)direction );
+      
       masterNet->setExternal( true );
       headPlug = headInstance->getPlug( masterNet );
       if (not headPlug)
@@ -182,16 +188,16 @@ namespace Etesian {
     }
 
     if (not tailPath.isEmpty())
-      headPlug = raddTransPlug( masterNet, tailPath );
+      headPlug = raddTransPlug( masterNet, tailPath, flags );
 
     return headPlug;
   }
   
 
-  Net* Cluster::raddTransNet ( Net* topNet, Path path )
+  Net* Cluster::raddTransNet ( Net* topNet, Path path, uint32_t flags )
   {
     if (path.isEmpty()) return topNet;
-    return raddTransPlug( topNet, path )->getMasterNet();
+    return raddTransPlug( topNet, path, flags )->getMasterNet();
   }
 
 
@@ -206,7 +212,7 @@ namespace Etesian {
 
     if (topCell != cellPnR) {
       inputPath = Path( instancePnR );
-      blockNet = raddTransNet( upDriver, inputPath );
+      blockNet = raddTransNet( upDriver, inputPath, AS_SINK );
     }
     Plug* inputPlug = bufferDatas->getInput( _buffer );
     inputPlug->setNet( blockNet );
@@ -224,14 +230,16 @@ namespace Etesian {
     Net*         blockNet    = NULL;
     Path         outputPath  = Path();
 
+    driverName.insert( 0, "cmpt_" );
     _buffer = Instance::create( cellPnR, driverName, bufferDatas->getCell() );
 
     getSubNetNames()->nextSubNet();
     _driverNet = Net::create( topCell, driverName );
+    _driverNet->setDirection( Net::Direction::OUT );
     if (topCell == cellPnR) blockNet = _driverNet;
     else {
       outputPath = Path( instancePnR );
-      blockNet = raddTransNet( _driverNet, outputPath );
+      blockNet = raddTransNet( _driverNet, outputPath, AS_DRIVER );
     }
     Plug* outputPlug = bufferDatas->getOutput( _buffer );
     outputPlug->setNet( blockNet );
@@ -247,7 +255,7 @@ namespace Etesian {
     }
     for ( RoutingPad* rp : _rps ) {
       Occurrence  plugOcc = rp->getPlugOccurrence();
-      Net*        deepNet = raddTransNet( _driverNet, plugOcc.getPath() );
+      Net*        deepNet = raddTransNet( _driverNet, plugOcc.getPath(), AS_SINK );
       if (dynamic_cast<Pin*>(plugOcc.getEntity())) {
         continue;
       }
@@ -333,7 +341,7 @@ namespace Etesian {
       Occurrence driverRpOcc = _rpDriver->getPlugOccurrence();
       _rootNet->destroy();
       _rootNet = Net::create( topCell, topNetName );
-      Net* deepDriverNet = raddTransNet( _rootNet, driverRpOcc.getPath() );
+      Net* deepDriverNet = raddTransNet( _rootNet, driverRpOcc.getPath(), AS_DRIVER );
       dynamic_cast<Plug*>( driverRpOcc.getEntity() )->setNet( deepDriverNet );
       RoutingPad::create( _rootNet, driverRpOcc, RoutingPad::BiggestArea );
     }
