@@ -721,6 +721,8 @@ namespace {
     if (cell->getName() == "control_r") return *this;
     if (not hasLayout(cell)) return *this;
 
+  //cerr << "GdsStream::operator<<(Cell*): " << getString(cell) << endl;
+
     Technology* tech = DataBase::getDB()->getTechnology();
     
     time_t t   = time( 0 );
@@ -746,6 +748,7 @@ namespace {
     for ( Instance* instance : cell->getInstances() ) {
       if (instance->getMasterCell()->getName() == "control_r") continue;
       if (not hasLayout(instance->getMasterCell())) continue;
+    //cerr << "| " << getString(instance) << endl;
 
       if (instance->getPlacementStatus() == Instance::PlacementStatus::UNPLACED) continue;
 

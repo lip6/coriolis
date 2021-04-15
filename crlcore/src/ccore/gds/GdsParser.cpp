@@ -867,10 +867,10 @@ namespace {
         string cellName = "gds_" + _record.getName();
         _cell = _library->getCell( cellName );
         if (not _cell) {
-          cerr << Warning( "GdsStream::readStructure(): No Cell named \"gds_%s\" in Library \"%s\" (created)."
-                         , _record.getName().c_str()
-                         , getString(_library).c_str()
-                         ) << endl;
+          cparanoid << Warning( "GdsStream::readStructure(): No Cell named \"gds_%s\" in Library \"%s\" (created)."
+                              , _record.getName().c_str()
+                              , getString(_library).c_str()
+                              ) << endl;
           _cell = Cell::create( _library, cellName );
         }
       }
