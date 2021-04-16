@@ -31,10 +31,10 @@ def renameNMigen( occurrence ):
     replName   = origName.replace( '$$', '_unm' )
     if not masterCell.isTerminalNetlist() and not replName.startswith('cmpt_'):
         replName = 'cmpt_' + replName
-    #for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-    #    replName = replName.replace(letter, '{}u'.format(letter))
+    for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+        replName = replName.replace(letter, letter.lower())
     if origName != replName:
-        print( '  - "{}" => "{}"'.format(origName,replName) )
+        print( '  - "{}" => "{}"'.format(origName, replName) )
         masterCell.setName( replName )
 
 
