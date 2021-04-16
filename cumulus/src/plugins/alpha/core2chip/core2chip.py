@@ -189,7 +189,8 @@ class IoNet ( object ):
             self.coreToChip.icore.getPlug( self.coreNet ).setNet( self.coronaNet  )
         # Chip "internal" net, connect Corona instance net to I/O inside the chip.
         if not self.chipIntNet:
-            self.chipIntNet = Net.create( self.coreToChip.chip, self.coronaNetName )
+            internal_net = "internal_" + self.coronaNetName
+            self.chipIntNet = Net.create( self.coreToChip.chip, internal_net )
             if netType != Net.Type.LOGICAL:
                 self.chipIntNet.setType( netType )
             self.coreToChip.icorona.getPlug( self.coronaNet ).setNet( self.chipIntNet )
@@ -326,11 +327,11 @@ class IoPad ( object ):
             self.nets[1].buildNets()
             connexions.append( ( self.nets[0].chipExtNet, padInfo.padNet ) )
             if self.nets[0].coreNet.getDirection() == Net.Direction.IN:
-                connexions.append( ( self.nets[0].chipIntNet      , padInfo.inputNet  ) )
-                connexions.append( ( self.coreToChip.newDummyNet(), padInfo.outputNet ) )
-            else:
                 connexions.append( ( self.nets[0].chipIntNet      , padInfo.outputNet ) )
                 connexions.append( ( self.coreToChip.newDummyNet(), padInfo.inputNet  ) )
+            else:
+                connexions.append( ( self.nets[0].chipIntNet      , padInfo.inputNet  ) )
+                connexions.append( ( self.coreToChip.newDummyNet(), padInfo.outputNet ) )
             connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet  ) )
         elif (self.direction == IoPad.TRI_OUT) and (len(self.nets) < 2):
             self.nets[0].setFlags( IoNet.DoExtNet )
