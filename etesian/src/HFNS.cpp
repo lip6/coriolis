@@ -230,12 +230,12 @@ namespace Etesian {
     Net*         blockNet    = NULL;
     Path         outputPath  = Path();
 
-    driverName.insert( 0, "cmpt_" );
-    _buffer = Instance::create( cellPnR, driverName, bufferDatas->getCell() );
-
-    getSubNetNames()->nextSubNet();
     _driverNet = Net::create( topCell, driverName );
     _driverNet->setDirection( Net::Direction::OUT );
+    getSubNetNames()->nextSubNet();
+
+    driverName.insert( 0, "cmpt_" );
+    _buffer = Instance::create( cellPnR, driverName, bufferDatas->getCell() );
     if (topCell == cellPnR) blockNet = _driverNet;
     else {
       outputPath = Path( instancePnR );
