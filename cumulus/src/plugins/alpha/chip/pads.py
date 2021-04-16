@@ -1260,7 +1260,7 @@ class Corona ( object ):
             offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) / 2
             stripeSpecs.append( [ xcore + capViaWidth/2 , capViaWidth ] )
             stripeSpecs.append( [ xcore + 2*capViaWidth + capViaWidth/2 , capViaWidth ] )
-            if self.chip.spares:
+            if self.chip.spares and len(self.chip.spares.rleafX) > 1:
                 rleafX     = self.chip.spares.rleafX
                 spacing    = (rleafX[1] - rleafX[0]) / 2
                 stepOffset = 0
