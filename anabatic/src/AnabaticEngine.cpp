@@ -1074,6 +1074,17 @@ namespace Anabatic {
     UpdateSession::open();
     for ( GCell* gcell : _gcells ) gcell->cleanupGlobal();
     UpdateSession::close();
+
+    for ( Net* net : getCell()->getNets() ) {
+      for ( Component* component : net->getComponents() ) {
+        if (getConfiguration()->isGLayer(component->getLayer())) {
+          cerr << Error( "AnabaticEngine::cleanupGlobal(): Remaining global routing,\n"
+                         "        %s"
+                       , getString(component).c_str()
+                       ) << endl;
+        }
+      }
+    }
   }
 
 

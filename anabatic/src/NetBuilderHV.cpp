@@ -863,6 +863,9 @@ namespace Anabatic {
       AutoContact* htee2 = AutoContactHTee::create( getGCell(), getNet(), Session::getContactLayer(1) );
       AutoSegment::create( htee1, htee2, Flags::Horizontal );
       
+      if (pinDir == Pin::AccessDirection::EAST)
+        std::swap( htee1, htee2 );
+
       setSouthWestContact( htee1 );
       setNorthEastContact( htee2 );
     }
