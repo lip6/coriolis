@@ -1289,7 +1289,7 @@ class Corona ( object ):
                     stripeSpecs.append( [ xcore + offset + i*self.supplyRailPitch
                                         , self.supplyRailWidth
                                         ] )
-            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth + capViaWidth/2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth - capViaWidth/2 , capViaWidth ] )
             stripeSpecs.append( [ xcore + coreAb.getWidth() - capViaWidth/2 , capViaWidth ] )
 
             trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )
