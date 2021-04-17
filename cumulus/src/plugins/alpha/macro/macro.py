@@ -137,7 +137,7 @@ class Macro ( object ):
                 for component in net.getComponents():
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
                         bb = component.getBoundingBox()
-                        bb.inflate( minSpacingMetal2/2 )
+                        bb.inflate( minSpacingMetal2 )
                         Horizontal.create( component.getNet()
                                          , blockageMetal2
                                          , bb.getYCenter()
@@ -155,7 +155,7 @@ class Macro ( object ):
                                        , bb.getYMax() )
                     elif isinstance(component,Rectilinear) and component.getLayer() == blockageMetal4:
                         bb = component.getBoundingBox()
-                        bb.inflate( minSpacingMetal4/2 )
+                        bb.inflate( minSpacingMetal4 )
                         Horizontal.create( component.getNet()
                                          , blockageMetal4
                                          , bb.getYCenter()
