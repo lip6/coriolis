@@ -805,9 +805,17 @@ namespace Anabatic {
       AutoSegment* vertical = AutoSegment::create( rpSourceContact, turn, Flags::Vertical );
       rpSourceContact = turn;
 
-      DbU::Unit axis = getGCell()->getXMax() - Session::getDVerticalPitch();
+      Box                cellAb = getAnabatic()->getCell()->getAbutmentBox();
+      RoutingLayerGauge* lgM3   = Session::getLayerGauge( 2 );
+      DbU::Unit axis = lgM3->getTrackPosition( cellAb.getXMin()
+                                             , cellAb.getXMax()
+                                             , getGCell()->getXMax() - Session::getDVerticalPitch()
+                                             , Constant::Superior );
       if (pinDir == Pin::AccessDirection::WEST)
-        axis = getGCell()->getXMin() + Session::getDVerticalPitch();
+        axis = lgM3->getTrackPosition( cellAb.getXMin()
+                                     , cellAb.getXMax()
+                                     , getGCell()->getXMin() + Session::getDVerticalPitch()
+                                     , Constant::Inferior );
       cdebug_log(145,0) << "axis:" << DbU::getValueString(axis) << endl;
       
       vertical->setAxis( axis, Flags::Force );
