@@ -276,6 +276,16 @@ namespace Katana {
     size_t  begin = _track->find( this );
     size_t  end   = begin;
 
+    if (begin == Track::npos) {
+      cerr << Error( "TrackSegment::getFreeInterval(): Segment not found in it's assigned track.\n"
+                   "        * %s\n"
+                   "        * %s\n"
+                   , getString(_track).c_str()
+                   , getString(this).c_str()
+                   ) << endl;
+      return Interval(false);
+    }
+
     return _track->expandFreeInterval( begin, end, Track::InsideElement, getNet() );
   }
 

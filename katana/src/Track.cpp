@@ -382,6 +382,8 @@ namespace Katana {
 
   void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
+    cdebug_log(155,0) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
+                      << "begin=" << begin << endl;
     if (_segments.empty()) {
       state = EmptyTrack;
       begin = 0;
@@ -424,10 +426,18 @@ namespace Katana {
     if ( (begin == 0) and (position < _segments[0]->getSourceU()) ) {
       state = BeforeFirstElement;
     } else {
+      cdebug_log(155,0) << "  Expanding from begin=" << begin << endl;
       if (begin and not sameNetDelta) begin -= 1;
 
       size_t   usedBegin    = begin;
       Interval usedInterval = getOccupiedInterval( usedBegin );
+      cdebug_log(155,0) << "  Used interval " << usedInterval << endl;
+
+      if (usedInterval.isEmpty()) {
+        for ( size_t j=0 ; j<_segments.size() ; ++j ) {
+          cerr << j << ":" << _segments[j] << endl;
+        }
+      }
 
       if (position < usedInterval.getVMax())
         state = InsideElement;
@@ -621,7 +631,8 @@ namespace Katana {
   {
     cdebug_log(155,1) << "Track::expandFreeInterval() begin:" << begin << " end:" << end
                       << " state:" << state << " " << net << endl;
-    cdebug_log(155,0) << _segments[begin] << endl;
+    if (begin != Track::npos)
+      cdebug_log(155,0) << _segments[begin] << endl;
 
     DbU::Unit minFree = _min;
     cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " (track min)" << endl;
@@ -870,6 +881,7 @@ namespace Katana {
 
   Interval  Track::getOccupiedInterval ( size_t& begin ) const
   {
+    cdebug_log(155,0) << "Track::getOccupiedInterval() begin=" << begin << endl;
     if (begin == npos) return Interval();
 
     size_t  seed  = begin;
