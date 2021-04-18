@@ -932,7 +932,7 @@ namespace {
       _stream >> _record;
     } else { _validSyntax = false; return _validSyntax; }
 
-    readTextbody( layer  );
+    readTextbody( layer );
 
   //cdebug(101,0) << "GdsStream::readText() - return:" << _validSyntax << endl;
     return _validSyntax;
@@ -985,6 +985,11 @@ namespace {
     if (_record.isSTRING()) {
       _text = _record.getName();
       _stream >> _record;
+      if (not layer) {
+        cerr << Error( "GdsStream::readTextbody(): Discarted text is \"%s\"."
+                     , _text.c_str()
+                     ) << endl;
+      }
     }
     else {
       _validSyntax = false;
@@ -1483,7 +1488,12 @@ namespace {
 
   void  GdsStream::addNetReference  ( Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y )
   {
+    cdebug_log(101,0) << "addNetReference(): " << net << " " << layer << " "
+                      << DbU::getValueString(x) << " " << DbU::getValueString(y) << endl;
+
     if (not layer) return;
+
+    string layerName = getString( layer->getName() );
 
     auto inet = _netReferences.find( net );
     if (inet == _netReferences.end()) {
@@ -1510,6 +1520,8 @@ namespace {
                           << " @" << ref._position
                           << endl;
         if (not layer) continue;
+
+        vector<Component*> toDestroy;
         for ( Component* component : net->getCell()
                 ->getComponentsUnder( Box(ref._position).inflate(1),layer->getMask() ) ) {
           cdebug_log(101,0) << "| " << component << endl;
@@ -1523,6 +1535,7 @@ namespace {
                                               , href->getTargetX()
                                               );
             NetExternalComponents::setExternal( h );
+            toDestroy.push_back( component );
           } else {
             Vertical* vref = dynamic_cast<Vertical*>( component );
             if (vref) {
@@ -1534,8 +1547,23 @@ namespace {
                                             , vref->getTargetY()
                                             );
               NetExternalComponents::setExternal( v );
+              toDestroy.push_back( component );
+            } else {
+              Pad* pref = dynamic_cast<Pad*>( component );
+              if (pref) {
+                Pad* p = Pad::create( net
+                                    , pref->getLayer()
+                                    , pref->getBoundingBox()
+                                    );
+                NetExternalComponents::setExternal( p );
+                toDestroy.push_back( component );
+              }
             }
           }
+        }
+
+        for ( Component* component : toDestroy ) {
+          component->destroy();
         }
       }
     }
