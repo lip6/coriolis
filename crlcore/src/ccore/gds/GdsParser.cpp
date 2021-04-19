@@ -1327,11 +1327,19 @@ namespace {
 
   void  GdsStream::xyToComponent ( const Layer* layer )
   {
+    DbU::Unit oneGrid = DbU::fromGrid( 1 );
+    
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
-    for ( size_t i=0 ; i<coordinates.size() ; i += 2 )
+    for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
+      if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
+        cerr << Error( "GdsStream::xyToComponent(): Offgrid %s (foundry grid: %s)."
+                     , getString(points.back()).c_str()
+                     , DbU::getValueString(oneGrid).c_str() ) << endl;
+      }
+    }
 
     _stream >> _record;
 
