@@ -17,11 +17,11 @@ from   __future__   import print_function
 import sys
 import re
 from   operator     import itemgetter  
-from   Hurricane    import DbU, Point, Transformation, Interval, Box,  \
-                           Path, Occurrence, UpdateSession, Layer,     \
-                           BasicLayer, Net, Pin, Contact, Segment,     \
-                           Horizontal, Vertical, Diagonal, RoutingPad, \
-                           Instance, DataBase
+from   Hurricane    import DbU, Point, Transformation, Interval, Box,   \
+                           Path, Occurrence, UpdateSession, Layer,      \
+                           BasicLayer, Net, Pin, Contact, Segment, Pad, \
+                           Horizontal, Vertical, Diagonal, RoutingPad,  \
+                           Instance, DataBase, NetExternalComponents
 import CRL          
 from   CRL          import RoutingGauge, RoutingLayerGauge
 import helpers      
@@ -329,23 +329,36 @@ class Side ( object ):
         p = None
         if self.conf.ioPadGauge.getName() == 'pxlib':
             p = re.compile( r'p(?P<power>v[sd]{2}[ei])ck_px' )
-        if self.conf.ioPadGauge.getName().startswith('phlib'):
+        elif self.conf.ioPadGauge.getName().startswith('phlib'):
             p = re.compile( r'p(?P<power>v[sd]{2})ck2_sp' )
-        if self.conf.ioPadGauge.getName() == 'niolib':
+        elif self.conf.ioPadGauge.getName() == 'niolib':
             p = re.compile( r'(?P<power>(io)?v[sd]{2})' )
+        elif self.conf.ioPadGauge.getName() == 'LibreSOCIO':
+            p = re.compile( r'IOPad(?P<power>(IO)?V[sd]{2})' )
         if p:
             m = p.match( padInstance.getMasterCell().getName() )
             padName = 'pad'
-            if m: padName = m.group( 'power' )
+            if m:
+                padName = m.group( 'power' )
+                if self.conf.ioPadGauge.getName() == 'LibreSOCIO':
+                    padName = padName.lower()
             padNet = padInstance.getMasterCell().getNet( padName )
-            trace( 550, '\tpadName:{} padNet:{}\n'.format(padName,padNet) )
+            trace( 550, '\tpadName:{} padNet:{} (power/ground)\n'.format(padName,padNet) )
             if padNet:
                 plug    = padInstance.getPlug( padNet )
                 chipNet = plug.getNet()
-                if not chipNet and padNet.isGlobal():
-                    chipNet = padInstance.getCell().getNet( padNet.getName() )
+                if not chipNet:
+                    if padNet.isGlobal():
+                        chipNet = padInstance.getCell().getNet( padNet.getName() )
+                    else:
+                        print( ErrorMessage( 1, 'Side._placePad(): The "pad" terminal is unconnected on {}.' \
+                                                .format(padInstance.getName()) ))
                 if chipNet:
-                    rp = RoutingPad.create( chipNet, Occurrence(plug), RoutingPad.BiggestArea )
+                    rp  = RoutingPad.create( chipNet, Occurrence(plug), RoutingPad.BiggestArea )
+                    pad = Pad.create( chipNet
+                                    , rp.getOccurrence().getEntity().getLayer()
+                                    , rp.getBoundingBox() )
+                    NetExternalComponents.setExternal( pad )
         return
 
     def _placePads ( self ):
