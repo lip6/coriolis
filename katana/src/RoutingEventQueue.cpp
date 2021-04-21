@@ -66,7 +66,7 @@ namespace Katana {
         cinfo << "[INFO] Already in Track - " << segments[i] << endl;
         continue;
       }
-      RoutingEvent* event = RoutingEvent::create(segments[i]);
+      RoutingEvent* event = RoutingEvent::create( segments[i] );
       event->updateKey();
       _events.insert( event );
     }

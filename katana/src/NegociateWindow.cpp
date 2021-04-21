@@ -510,8 +510,7 @@ namespace Katana {
   void  NegociateWindow::_pack ( size_t& count, bool last )
   {
     uint64_t limit     = _katana->getEventsLimit();
-    uint32_t pushStage = RoutingEvent::getStage();
-    RoutingEvent::setStage( RoutingEvent::Pack );
+    _katana->setStage( StagePack );
 
     RoutingEventQueue  packQueue;
   //for ( size_t i = (count > 600) ? count-600 : 0
@@ -554,8 +553,6 @@ namespace Katana {
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
   // Count will be wrong!
-
-    RoutingEvent::setStage( pushStage );
   }
 
 
@@ -578,7 +575,7 @@ namespace Katana {
     if (cdebug.enabled(9000)) _eventQueue.dump();
 
     size_t count = 0;
-    RoutingEvent::setStage( RoutingEvent::Negociate );
+    _katana->setStage( StageNegociate );
     while ( not _eventQueue.empty() and not isInterrupted() ) {
       RoutingEvent* event = _eventQueue.pop();
 
@@ -642,7 +639,7 @@ namespace Katana {
       cmess1 << "     o  Repair Stage." << endl;
 
       cdebug_log(159,0) << "Loadind Repair queue." << endl;
-      RoutingEvent::setStage( RoutingEvent::Repair );
+      _katana->setStage( StageRepair );
       for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
         RoutingEvent* event = _eventHistory.getNth(i);
 
@@ -685,7 +682,7 @@ namespace Katana {
         cmess1 << "     o  Realign Stage." << endl;
         
         cdebug_log(159,0) << "Loadind realign queue." << endl;
-        RoutingEvent::setStage( RoutingEvent::Realign );
+        _katana->setStage( StageRealign );
         for ( size_t i=0 ; (i<_eventHistory.size()) and not isInterrupted() ; i++ ) {
           RoutingEvent* event = _eventHistory.getNth(i);
           if (not event->isCloned() and event->getSegment()->canRealign())

@@ -196,6 +196,7 @@ namespace Katana {
     , _shortDoglegs   ()
     , _symmetrics     ()
     , _mode           (DigitalMode)
+    , _stage          (StageNegociate)
     , _successState   (0)
   {
   //Entity::setMemoryLimit( 1024 ); // 1Gb.

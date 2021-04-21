@@ -92,17 +92,13 @@ namespace Katana {
     friend class Compare;
 
     public:
-      enum Mode { Negociate=1, Pack=2, Repair=3, Realign=4 };
-
-    public:
       static  uint32_t                     getStage              ();
       static  uint32_t                     getAllocateds         ();
       static  uint32_t                     getProcesseds         ();
       static  uint32_t                     getCloneds            ();
       static  void                         resetProcesseds       ();
-      static  void                         setStage              ( uint32_t );
     public:                                                      
-      static  RoutingEvent*                create                ( TrackElement*, uint32_t mode=Negociate );
+      static  RoutingEvent*                create                ( TrackElement* );
               RoutingEvent*                clone                 () const;
               void                         destroy               ();
       inline  bool                         isCloned              () const;
@@ -142,7 +138,6 @@ namespace Katana {
                                                                  );
               void                         setSegment            ( TrackElement* );
               RoutingEvent*                reschedule            ( RoutingEventQueue&, uint32_t eventLevel );
-              void                         setMode               ( uint32_t );
               void                         setState              ( uint32_t );
       inline  void                         setTimeStamp          ( uint32_t );
       inline  void                         setProcessed          ( bool state=true );
@@ -166,7 +161,7 @@ namespace Katana {
               string                       _getString            () const;
               string                       _getTypeName          () const;
     private:                                                 
-                                           RoutingEvent          ( TrackElement*, uint32_t mode );
+                                           RoutingEvent          ( TrackElement* );
                                           ~RoutingEvent          ();
 
     protected:
@@ -195,7 +190,6 @@ namespace Katana {
       unsigned int          _tracksNb        :16;
       unsigned int          _tracksFree      :16;
       unsigned int          _insertState     : 6;
-      unsigned int          _mode            : 4;
       unsigned int          _rippleState     : 4;
       uint32_t              _eventLevel;
     //vector<TrackElement*> _perpandiculars;
@@ -212,7 +206,6 @@ namespace Katana {
   inline bool                          RoutingEvent::isOverConstrained       () const { return _overConstrained; }
   inline uint32_t                      RoutingEvent::getId                   () const { return _id; }
   inline uint32_t                      RoutingEvent::getTimeStamp            () const { return _timeStamp; }
-  inline bool                          RoutingEvent::getMode                 () const { return _mode; }
   inline bool                          RoutingEvent::canMinimize             () const { return not _minimized; }
   inline const RoutingEvent::Key&      RoutingEvent::getKey                  () const { return _key; }
   inline TrackElement*                 RoutingEvent::getSegment              () const { return _segment; }

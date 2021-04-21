@@ -84,6 +84,7 @@ namespace Katana {
       inline  Configuration*           getKatanaConfiguration     ();
       virtual Configuration*           getConfiguration           ();
       inline  uint32_t                 getSuccessState            () const;
+      inline  uint32_t                 getStage                   () const;
       inline  uint64_t                 getEventsLimit             () const;
       inline  uint32_t                 getRipupLimit              ( uint32_t type ) const;
               uint32_t                 getRipupLimit              ( const TrackElement* ) const;
@@ -113,6 +114,7 @@ namespace Katana {
       inline  void                     setGlobalRoutingSuccess    ( bool ) const;
       inline  void                     setDetailedRoutingSuccess  ( bool ) const;
       virtual void                     openSession                ();
+      inline  void                     setStage                   ( uint32_t );
       inline  void                     setViewer                  ( CellViewer* );
       inline  void                     setPostEventCb             ( Configuration::PostEventCb_t );
       inline  void                     setEventLimit              ( uint64_t );
@@ -170,6 +172,7 @@ namespace Katana {
               TrackElementPairing      _shortDoglegs;
               DataSymmetricMap         _symmetrics;
               uint32_t                 _mode;
+              uint32_t                 _stage;
       mutable uint32_t                 _successState;
     protected:
     // Constructors & Destructors.
@@ -196,6 +199,7 @@ namespace Katana {
   inline  CellViewer*                   KatanaEngine::getViewer               () const { return _viewer; }
   inline  AnabaticEngine*               KatanaEngine::base                    () { return static_cast<AnabaticEngine*>(this); }
   inline  Configuration*                KatanaEngine::getKatanaConfiguration  () { return _configuration; }
+  inline  uint32_t                      KatanaEngine::getStage                () const { return _stage; }
   inline  Configuration::PostEventCb_t& KatanaEngine::getPostEventCb          () { return _configuration->getPostEventCb(); }
   inline  uint32_t                      KatanaEngine::getSuccessState         () const { return _successState; }
   inline  uint64_t                      KatanaEngine::getEventsLimit          () const { return _configuration->getEventsLimit(); }
@@ -213,6 +217,7 @@ namespace Katana {
   inline  NegociateWindow*              KatanaEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KatanaEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }
   inline  void                          KatanaEngine::setViewer               ( CellViewer* viewer ) { _viewer=viewer; }
+  inline  void                          KatanaEngine::setStage                ( uint32_t stage ) { _stage=stage; }
   inline  void                          KatanaEngine::setEventLimit           ( uint64_t limit ) { _configuration->setEventsLimit(limit); }
   inline  void                          KatanaEngine::setRipupLimit           ( uint32_t type, uint32_t limit ) { _configuration->setRipupLimit(limit,type); }
   inline  void                          KatanaEngine::setRipupCost            ( uint32_t cost ) { _configuration->setRipupCost(cost); }

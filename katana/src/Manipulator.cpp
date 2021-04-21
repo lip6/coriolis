@@ -1671,7 +1671,7 @@ namespace Katana {
       if (not data) continue;
       if (data->getState() >= DataNegociate::RepairFailed) continue;
 
-      if (RoutingEvent::getStage() == RoutingEvent::Repair) {
+      if (RoutingEvent::getStage() == StageRepair) {
         if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
           _segment->getDataNegociate()->resetRipupCount();
 

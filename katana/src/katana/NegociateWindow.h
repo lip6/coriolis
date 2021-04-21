@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_NEGOCIATE_WINDOW_H
-#define  KATANA_NEGOCIATE_WINDOW_H
-
+#pragma  once
 #include <set>
 #include <queue>
 #include <vector>
@@ -89,11 +87,6 @@ namespace Katana {
 // Class  :  "Katana::NegociateWindow".
 
   class NegociateWindow {
-
-    public:
-      enum Stage { Negociation = 1
-                 , Packing     = 2
-                 };
     public:
       static NegociateWindow*              create               ( KatanaEngine* );
              void                          destroy              ();
@@ -104,10 +97,8 @@ namespace Katana {
       inline RoutingEventQueue&            getEventQueue        ();
       inline RoutingEventHistory&          getEventHistory      ();
       inline RoutingEventLoop&             getEventLoop         ();
-      inline Stage                         getStage             () const;
              void                          setGCells            ( const vector<GCell*>& );
       inline void                          setInterrupt         ( bool );
-      inline void                          setStage             ( Stage );
              double                        computeWirelength    ();
              TrackElement*                 createTrackSegment   ( AutoSegment*, Flags flags );
              void                          addRoutingEvent      ( TrackElement*, uint32_t level );
@@ -157,6 +148,3 @@ namespace Katana {
 
 
 }  // Katana namespace.
-
-
-#endif  // KATANA_NEGOCIATE_WINDOW_H

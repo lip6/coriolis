@@ -173,21 +173,19 @@ namespace Katana {
 
 
   uint32_t  RoutingEvent::_idCounter  = 0;
-  uint32_t  RoutingEvent::_stage      = RoutingEvent::Negociate;
   uint32_t  RoutingEvent::_allocateds = 0;
   uint32_t  RoutingEvent::_processeds = 0;
   uint32_t  RoutingEvent::_cloneds    = 0;
 
 
-  uint32_t  RoutingEvent::getStage        () { return _stage; }
+  uint32_t  RoutingEvent::getStage        () { return Session::getStage(); }
   uint32_t  RoutingEvent::getAllocateds   () { return _allocateds; }
   uint32_t  RoutingEvent::getProcesseds   () { return _processeds; }
   uint32_t  RoutingEvent::getCloneds      () { return _cloneds; }
-  void      RoutingEvent::setStage        ( uint32_t stage ) { _stage = stage; }
   void      RoutingEvent::resetProcesseds () { _processeds = 0; }
 
 
-  RoutingEvent::RoutingEvent ( TrackElement* segment, uint32_t mode )
+  RoutingEvent::RoutingEvent ( TrackElement* segment )
     : _cloned              (false)
     , _processed           (false)
     , _disabled            (false)
@@ -205,7 +203,6 @@ namespace Katana {
     , _tracksNb            (0)
     , _tracksFree          (0)
     , _insertState         (0)
-    , _mode                (mode)
     , _rippleState         (0)
     , _eventLevel          (0)
     , _key                 (this)
@@ -229,7 +226,7 @@ namespace Katana {
   }
 
 
-  RoutingEvent* RoutingEvent::create ( TrackElement* segment, uint32_t mode )
+  RoutingEvent* RoutingEvent::create ( TrackElement* segment )
   {
     // if (not dynamic_cast<TrackSegment*>(segment)) {
     //   cerr << Error( "RoutingEvent::create() Can only create event from TrackSegment:\n"
@@ -237,7 +234,7 @@ namespace Katana {
     //                ) << endl;
     // }
 
-    RoutingEvent* event = new RoutingEvent ( segment, mode );
+    RoutingEvent* event = new RoutingEvent ( segment  );
     ++_allocateds;
 
     return event;
@@ -286,10 +283,6 @@ namespace Katana {
   { return getState() == DataNegociate::Unimplemented; }
 
 
-  void  RoutingEvent::setMode ( uint32_t mode )
-  { _mode = mode; }
-
-
   uint32_t  RoutingEvent::getState () const
   {
     DataNegociate* data = _segment->getDataNegociate();
@@ -313,7 +306,7 @@ namespace Katana {
 
   void  RoutingEvent::setAxisHintFromParent ()
   {
-    if (getStage() == Repair) return;
+    if (Session::getStage() == StageRepair) return;
 
     TrackElement* parent = _segment->getParent();
     if (not parent) return;
@@ -348,7 +341,7 @@ namespace Katana {
       return NULL;
     }
 
-    if ( (getStage() != Repair) and isUnimplemented() ) {
+    if ( (Session::getStage() != StageRepair) and isUnimplemented() ) {
       cdebug_log(159,0) << "Reschedule: cancelled (Unimplemented) -> " << fork << endl;
       return NULL;
     }
@@ -370,15 +363,10 @@ namespace Katana {
     if (fork->_eventLevel < eventLevel)
       fork->_eventLevel = eventLevel;
 
-    if (getStage() == Repair) {
-      fork->setMode( RoutingEvent::Repair );
+    if (Session::getStage() == StageRepair) {
       if (_segment->getDataNegociate()->getState() < DataNegociate::Repair)
         _segment->getDataNegociate()->resetRipupCount();
       _segment->getDataNegociate()->setState( DataNegociate::Repair );
-    } else if (getStage() == RoutingEvent::Pack) {
-      fork->setMode( RoutingEvent::Pack );
-    } else if (getStage() == RoutingEvent::Realign) {
-      fork->setMode( RoutingEvent::Realign );
     }
 
     queue.repush( fork );
@@ -457,7 +445,7 @@ namespace Katana {
   //_preCheck( _segment );
     _eventLevel = 0;
 
-    if (_mode != Pack) history.push( this );
+    if (Session::getStage() != StagePack) history.push( this );
 
     if ( isProcessed() or isDisabled() ) {
       cdebug_log(159,0) << "Already processed or disabled." << endl;
@@ -468,13 +456,13 @@ namespace Katana {
       setProcessed();
       setTimeStamp( _processeds );
 
-      switch ( _mode ) {
-        case Negociate: _processNegociate( queue, history ); break;
-        case Pack:      _processPack     ( queue, history ); break;
-        case Repair:    _processRepair   ( queue, history ); break;
-        case Realign:   _processRealign  ( queue, history ); break;
+      switch ( Session::getStage() ) {
+        case StageNegociate: _processNegociate( queue, history ); break;
+        case StagePack:      _processPack     ( queue, history ); break;
+        case StageRepair:    _processRepair   ( queue, history ); break;
+        case StageRealign:   _processRealign  ( queue, history ); break;
         default:
-          cerr << Bug( "RoutingEvent::process() - Unknown mode value:%d.", _mode ) << endl;
+          cerr << Bug( "RoutingEvent::process() - Unknown stage value:%d.", Session::getStage() ) << endl;
           break;
       }
     }
@@ -707,7 +695,7 @@ namespace Katana {
     _segment->base()->getOptimal    ( _optimal );
 
     cdebug_log(159,0) << "Stage:" << RoutingEvent::getStage() << endl;
-    if (RoutingEvent::getStage() == RoutingEvent::Repair) {
+    if (Session::getStage() == StageRepair) {
       if (_segment->isStrongTerminal(Flags::Propagate)) {
         cdebug_log(159,0) << "Not expanding on Terminals:" << _constraints << endl;
       } else if (  _segment->base()->getAutoSource()->isFixed()

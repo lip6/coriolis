@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_DATA_NEGOCIATE_H
-#define  KATANA_DATA_NEGOCIATE_H
-
+#pragma  once
 #include <string>
 #include <iostream>
 
@@ -169,5 +167,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::DataNegociate);
-
-#endif  // KATANA_DATA_NEGOCIATE_H

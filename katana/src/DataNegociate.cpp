@@ -131,7 +131,7 @@ namespace Katana {
         continue;
       }
 
-      if (RoutingEvent::getStage() == RoutingEvent::Repair)
+      if (RoutingEvent::getStage() == StageRepair)
         perpandicular->base()->setFlagsOnAligneds( AutoSegment::SegUnbound );
 
     //cerr << "perpandicular:" << perpandicular << endl;
@@ -169,7 +169,8 @@ namespace Katana {
         if (not source->canDrag() and not target->canDrag())
           perpandicular->base()->getCanonical( trackFree );
 
-        trackFree.inflate( 1*pitch, 1*pitch );
+        if (Session::getStage() < StagePack)
+          trackFree.inflate( 1*pitch, 1*pitch );
         cdebug_log(159,0) << "Non-Pref Track Perpandicular Free: " << trackFree << endl;
 
         //_perpandicularFree.intersection

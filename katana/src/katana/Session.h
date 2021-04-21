@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_SESSION_H
-#define  KATANA_SESSION_H
-
+#pragma  once
 #include <set>
 #include <vector>
 #include <string>
@@ -68,6 +66,7 @@ namespace Katana {
              static Session*            get                  ( const char* message=NULL );
       inline static Super*              base                 ();
       inline static bool                isEmpty              ();
+             static uint32_t            getStage             ();
       inline static KatanaEngine*       getKatanaEngine      ();
              static Configuration*      getConfiguration     ();
       inline static Net*                getBlockageNet       ();
@@ -77,6 +76,7 @@ namespace Katana {
       inline static const std::vector<TrackElement*>&        
                                         getIndirectInvalids  ();
              static void                setInterrupt         ( bool );
+             static void                setStage             ( uint32_t );
       inline static Interval&           toAxisInterval       ( Interval&, size_t depth );
       inline static void                addIndirectInvalid   ( TrackElement* );
       inline static void                addInsertEvent       ( TrackMarker*  , Track* );
@@ -220,5 +220,3 @@ namespace Katana {
 
 
 }  // Katana namespace.
-
-#endif  // KATANA_SESSION_H

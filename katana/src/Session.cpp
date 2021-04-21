@@ -146,6 +146,10 @@ namespace Katana {
   { return Session::getKatanaEngine()->getConfiguration(); }
 
 
+  uint32_t  Session::getStage ()
+  { return get("getStage()")->_getKatanaEngine()->getStage(); }
+
+
   AutoContact* Session::lookup ( Contact* contact )
   { return Super::lookup(contact); }
 
@@ -474,6 +478,10 @@ namespace Katana {
     for ( Track* elem : _sortEvents ) if (elem == track) return;
     _sortEvents.push_back( track );
   }
+
+
+  void  Session::setStage ( uint32_t stage )
+  { get("setStage()")->_getKatanaEngine()->setStage(stage); }
 
 
   string  Session::_getTypeName () const
