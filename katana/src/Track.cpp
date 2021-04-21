@@ -40,16 +40,21 @@ namespace {
 
   class GapSet {
     public:
-                              GapSet  ( const Track* );
-      inline       size_t     size    () const;
+                              GapSet       ( const Track* );
+      inline       size_t     size         () const;
       inline const vector< pair<size_t,size_t> >&
-                              spans   () const;
+                              spans        () const;
       inline const pair<size_t,size_t>&
-                              span    ( size_t ) const;
-      inline       DbU::Unit  sourceU ( size_t ) const;
-      inline       DbU::Unit  targetU ( size_t ) const;
-                   void       merge   ( size_t );
-      inline       void       clear   ();
+                              span         ( size_t ) const;
+      inline       DbU::Unit  sourceU      ( size_t ) const;
+      inline       DbU::Unit  targetU      ( size_t ) const;
+      inline       DbU::Unit  spansSourceU () const;
+      inline       DbU::Unit  spansTargetU () const;
+      inline       size_t     spansSourceI () const;
+      inline       size_t     spansTargetI () const;
+                   void       merge        ( size_t );
+                   void       swap         ( GapSet& );
+      inline       void       clear        ();
     private:
       const Track*                   _track;                 
       DbU::Unit                      _halfSpacing;
@@ -76,6 +81,18 @@ namespace {
     _spans.clear();
   }
 
+  inline size_t     GapSet::spansSourceI () const { return _spans.empty() ? 0 : _spans.front().first; }
+  inline size_t     GapSet::spansTargetI () const { return _spans.empty() ? 0 : _spans.back().second; }
+  inline DbU::Unit  GapSet::spansSourceU () const { return _spans.empty() ? 0 : sourceU(0); }
+  inline DbU::Unit  GapSet::spansTargetU () const { return _spans.empty() ? 0 : targetU(_spans.size()-1); }
+
+  void  GapSet::swap ( GapSet& other )
+  {
+    std::swap( _track      , other._track );
+    std::swap( _halfSpacing, other._halfSpacing );
+    std::swap( _spans      , other._spans );
+  }
+  
   inline const pair<size_t,size_t>& GapSet::span ( size_t i ) const
   {
     static pair<size_t,size_t> nospan = make_pair(0,0);
@@ -961,29 +978,58 @@ namespace Katana {
     if (_segments.empty()) return 0;
     DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
 
-    uint32_t gaps   = 0;
-    GapSet   gapset ( this );
+    uint32_t gaps       = 0;
+    GapSet   gapsetPrev ( this );
+    GapSet   gapsetCurr ( this );
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
-      gapset.merge( i );
+      gapsetCurr.merge( i );
       if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
          or  _segments[i]->getLayer()->isBlockage() ) {
-        if (gapset.size() > 1) {
+        if (gapsetPrev.size() and gapsetCurr.size()) {
+          DbU::Unit spacing = gapsetCurr.spansSourceU() - gapsetPrev.spansTargetU();
+          if (spacing < minSpacing) {
+            spacing = minSpacing - spacing;
+            AutoSegment* prev = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ]->base();
+            if (prev and (prev->getDuTarget() >= spacing)) {
+              prev->setDuSource( prev->getDuSource() - spacing );
+              prev->setDuTarget( prev->getDuTarget() - spacing );
+              cerr << Warning( " Track::repair(): Enlarging narrow gap in %s near (shift left):\n  %s"
+                             , getString(this).c_str()
+                             , getString(prev).c_str() ) << endl;
+            } else {
+              AutoSegment* curr = _segments[ gapsetCurr.span(0).first ]->base();
+              if (curr and (-curr->getDuSource() >= spacing)) {
+                curr->setDuSource( curr->getDuSource() + spacing );
+                curr->setDuTarget( curr->getDuTarget() + spacing );
+                cerr << Warning( " Track::repair(): Enlarging narrow gap in %s near (shift right):\n  %s"
+                               , getString(this).c_str()
+                               , getString(curr).c_str() ) << endl;
+              }
+            }
+          }
+        }
+
+        if (gapsetCurr.size() > 1) {
           // cerr << "potential gap around " << _segments[i] << endl;
-          for ( size_t j=0 ; j+1 < gapset.size() ; ++j ) {
-          //   cerr << j << "=[" << DbU::getValueString(gapset.sourceU(j))
-          //        <<       " " << DbU::getValueString(gapset.targetU(j)) << "], "
-          //        << j+1 << "=[" << DbU::getValueString(gapset.sourceU(j+1))
-          //        <<         " " << DbU::getValueString(gapset.targetU(j+1)) << "]" << endl;
-            DbU::Unit spacing = gapset.sourceU(j+1) - gapset.targetU(j);
+          for ( size_t j=0 ; j+1 < gapsetCurr.size() ; ++j ) {
+          //   cerr << j << "=[" << DbU::getValueString(gapsetCurr.sourceU(j))
+          //        <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
+          //        << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
+          //        <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
+            DbU::Unit spacing = gapsetCurr.sourceU(j+1) - gapsetCurr.targetU(j);
             // cerr << "| spacing=" << DbU::getValueString(spacing) << endl;
             if (spacing < minSpacing) {
-              AutoSegment* first = _segments[gapset.span(j+1).first]->base();
+              // cerr << j << "=[" << DbU::getValueString(gapsetCurr.sourceU(j))
+              //      <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
+              //      << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
+              //      <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
+              AutoSegment* first = _segments[gapsetCurr.span(j+1).first]->base();
               for ( AutoSegment* segment : first->getAligneds() ) {
                 if (segment->getSourcePosition() < first->getSourcePosition())
                   first = segment;
               }
-            //cerr << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
-              first->setDuSource( first->getDuSource() - spacing );
+              // cerr << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
+              first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
               ++gaps;
               cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
                              , getString(this).c_str()
@@ -992,7 +1038,8 @@ namespace Katana {
             }
           }
         }
-        gapset.clear();
+        gapsetPrev.swap( gapsetCurr );
+        gapsetCurr.clear();
       }
     }
 
