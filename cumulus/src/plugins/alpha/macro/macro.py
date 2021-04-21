@@ -233,7 +233,7 @@ class Macro ( object ):
                                               , yOngrid
                                               , wwidth
                                               , xMin
-                                              , xMax - ppitch
+                                              , xMin + ppitch + ppitch/2
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:

@@ -927,9 +927,9 @@ class Spares ( object ):
         with UpdateSession():
             self.quadTree = QuadTree.create( self )
             #self._addCapTies()
-            print( "X Centers of the QuadTree leaf" )
+            trace( 540, "\tX Centers of the QuadTree leaf\n" )
             for x in self.quadTree.rleafX:
-                print( '| {}'.format(DbU.getValueString(x) ))
+                trace( 540, '\t| {}\n'.format(DbU.getValueString(x) ))
         trace( 540, '-' )
 
     def rshowPoolUse ( self ):
