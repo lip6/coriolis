@@ -2103,6 +2103,8 @@ namespace Anabatic {
   {
     cdebug_log(159,0) << "AutoSegment::canMoveUp() " << flags
                       << " (reserve:" << reserve << ") " << this << endl;
+    if (Session::getRoutingGauge()->getName() == "FlexLib")
+      reserve += 1.0;
 
     bool   nLowDensity   = true;
     bool   nLowUpDensity = true;
