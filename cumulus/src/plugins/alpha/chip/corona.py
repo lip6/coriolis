@@ -109,9 +109,11 @@ class HorizontalRail ( Rail ):
         if    contactBb.getXMin() < self.side.innerBb.getXMin() \
            or contactBb.getXMax() > self.side.innerBb.getXMax():
             trace( 550, '-' )
-            raise ErrorMessage( 1, [ '{} is outside rail/corona X range,'.format(contact)
+            # XXX turn this into a non-fatal case. ERROR is still printed,
+            # but it continues, allowing testing to continue
+            print (ErrorMessage( 1, [ '{} is outside rail/corona X range,'.format(contact)
                                   , 'power pad is likely to be to far off west or east.'
-                                  , '(core:{})'.format(self.side.innerBb) ] ) 
+                                  , '(core:{})'.format(self.side.innerBb) ] ) )
         if self.vias.has_key(contact.getX()): return False
         trace( 550, '\tvias:{}\n'.format(self.vias) )
         keys = self.vias.keys()
@@ -143,7 +145,7 @@ class HorizontalRail ( Rail ):
                                               , self.axis
                                               , viaWidth
                                               , viaHeight
-                                              )
+                                              , flags=BigVia.AllowAllExpand )
                                       , contact ]
         trace( 550, '\tADD "{}" contact "{}" @ [{} {}]\n' \
                .format( contact.getNet().getName()
@@ -221,9 +223,11 @@ class VerticalRail ( Rail ):
         contactBb = contact.getBoundingBox()
         if    contactBb.getYMin() < self.side.innerBb.getYMin() \
            or contactBb.getYMax() > self.side.innerBb.getYMax():
-            raise ErrorMessage( 1, [ '{} is outside rail/corona Y range'.format(contact)
+            # XXX turn this into a non-fatal case. ERROR is still printed,
+            # but it continues, allowing testing to continue
+            print (ErrorMessage( 1, [ '{} is outside rail/corona Y range'.format(contact)
                                    , 'power pad is likely to be to far off north or south.'
-                                   , '(core:{})'.format(self.side.innerBb) ] ) 
+                                   , '(core:{})'.format(self.side.innerBb) ] ) )
         if self.vias.has_key(contact.getY()): return False
         trace( 550, ',+', '\tVerticalRail.connect() [{}] @{}\n'.format(self.order,DbU.getValueString(self.axis)) )
         trace( 550, '\t{}\n'.format(contact) )
@@ -264,7 +268,7 @@ class VerticalRail ( Rail ):
                                               , contact.getY()
                                               , self.side.vRailWidth - DbU.fromLambda(1.0)
                                               , contact.getHeight()  - DbU.fromLambda(1.0)
-                                              )
+                                              , flags=BigVia.AllowAllExpand )
                                       , contact ]
         trace(550, ',--' '\tADD {}\n'.format(contact) )
         self.vias[ contact.getY() ][1].mergeDepth( self.side.getLayerDepth(contact.getLayer()) )
@@ -633,19 +637,19 @@ class Builder ( object ):
                 trBox.merge( xTR, yTR )
                 self.routingGauge.getContactLayer(contactDepth)
                 self.corners[SouthWest].append( 
-                    BigVia( net, contactDepth, xBL, yBL, self.hRailWidth, self.vRailWidth ) )
+                    BigVia( net, contactDepth, xBL, yBL, self.hRailWidth, self.vRailWidth , flags=BigVia.AllowAllExpand ) )
                 self.corners[SouthWest][-1].mergeDepth( contactDepth+1 )
                 self.corners[SouthWest][-1].doLayout()
                 self.corners[NorthWest].append( 
-                    BigVia( net, contactDepth, xBL, yTR, self.hRailWidth, self.vRailWidth ) )
+                    BigVia( net, contactDepth, xBL, yTR, self.hRailWidth, self.vRailWidth , flags=BigVia.AllowAllExpand ) )
                 self.corners[NorthWest][-1].mergeDepth( contactDepth+1 )
                 self.corners[NorthWest][-1].doLayout()
                 self.corners[SouthEast].append( 
-                    BigVia( net, contactDepth, xTR, yBL, self.hRailWidth, self.vRailWidth ) )
+                    BigVia( net, contactDepth, xTR, yBL, self.hRailWidth, self.vRailWidth , flags=BigVia.AllowAllExpand ) )
                 self.corners[SouthEast][-1].mergeDepth( contactDepth+1 )
                 self.corners[SouthEast][-1].doLayout()
                 self.corners[NorthEast].append( 
-                    BigVia( net, contactDepth, xTR, yTR, self.hRailWidth, self.vRailWidth ) )
+                    BigVia( net, contactDepth, xTR, yTR, self.hRailWidth, self.vRailWidth , flags=BigVia.AllowAllExpand ) )
                 self.corners[NorthEast][-1].mergeDepth( contactDepth+1 )
                 self.corners[NorthEast][-1].doLayout()
             self.southSide.doLayout()
