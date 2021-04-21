@@ -539,7 +539,7 @@ class Builder ( object ):
             raise ErrorMessage( 1, 'Cannot build clock terminal as no clock is not known.' )
             return
         for i in range(len(self.conf.coronaCks)):
-            self._connectClock( self.conf.coronaCks[i], i+1 )
+            self._connectClock( self.conf.coronaCks[i], i+2 )
   
     def doLayout ( self ):
         with UpdateSession():
