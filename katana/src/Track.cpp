@@ -1024,12 +1024,18 @@ namespace Katana {
               //      << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
               //      <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
               AutoSegment* first = _segments[gapsetCurr.span(j+1).first]->base();
-              for ( AutoSegment* segment : first->getAligneds() ) {
-                if (segment->getSourcePosition() < first->getSourcePosition())
-                  first = segment;
-              }
-              // cerr << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
-              first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
+
+              cerr << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
+	      if (first == NULL) {
+		    cerr << Error("null first, NOT correcting gap") << endl;
+	      } else {
+                for ( AutoSegment* segment : first->getAligneds() ) {
+                  if (segment->getSourcePosition() < first->getSourcePosition())
+                    first = segment;
+                }
+                // cerr << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
+                first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
+	      }
               ++gaps;
               cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
                              , getString(this).c_str()
