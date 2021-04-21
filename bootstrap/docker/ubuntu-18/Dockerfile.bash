@@ -1,5 +1,5 @@
 
-FROM ununtu18.coriolis
+FROM ubuntu18.coriolis
 
 COPY root/dot.bashrc  /root/.bashrc
 

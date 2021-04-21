@@ -203,6 +203,13 @@ class CommandArg ( object ):
         return
 
 
+class YosysCommand ( CommandArg ):
+
+    def __init__ ( self, yosysBin, fdLog=None ):
+        CommandArg.__init__ ( self, [ yosysBin ], fdLog=fdLog )
+        return
+
+
 class AllianceCommand ( CommandArg ):
 
     def __init__ ( self, alcBin, fdLog=None ):
@@ -286,7 +293,7 @@ class Configuration ( object ):
         , 'success'     , 'rcode'
         ]
     SecondaryNames = \
-        [ 'rootDir', 'srcDir', 'logDir', 'logs', 'fds', 'alcBin', 'ccbBin', 'benchsDir'
+        [ 'rootDir', 'srcDir', 'logDir', 'logs', 'fds', 'yosysBin', 'alcBin', 'ccbBin', 'benchsDir'
         ]
 
     def __init__ ( self ):
@@ -301,8 +308,9 @@ class Configuration ( object ):
         self._rmSource     = False
         self._rmBuild      = False
         self._doGit        = True
-        self._doCoriolis   = False
+        self._doYosys      = False
         self._doAlliance   = False
+        self._doCoriolis   = False
         self._doBenchs     = False
         self._doSendReport = False
         self._nightlyMode  = False
@@ -355,6 +363,7 @@ class Configuration ( object ):
           self._rootDir  = self._homeDir + '/coriolis-2.x'
         self._srcDir     = self._rootDir + '/src'
         self._logDir     = self._srcDir  + '/logs'
+        self._yosysBin   = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/yosysInstaller.sh'
         self._alcBin     = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/allianceInstaller.sh'
         self._ccbBin     = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/ccb.py'
         self._benchsDir  = self._srcDir  + '/' + GitRepository.getLocalRepository(self._benchsRepo  ) + '/benchs'
@@ -415,6 +424,13 @@ class Configuration ( object ):
     def getCommands ( self, target ):
         commands  = []
 
+        if self.doYosys:
+          if not os.path.isfile( self.yosysBin ):
+            raise ErrorMessage( 1, [ 'Cannot find <yosysInstaller.sh>, should be here:'
+                                   , '   <%s>' % self.yosysBin
+                                   ] )
+          commands.append( YosysCommand( self.yosysBin, fdLog=self.fds['yosys'] ) )
+
         if self.doAlliance:
           if not os.path.isfile( self.alcBin ):
             raise ErrorMessage( 1, [ 'Cannot find <allianceInstaller.sh>, should be here:'
@@ -440,7 +456,7 @@ class Configuration ( object ):
             otherArgs.append( '--devtoolset=8' )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-          elif target == 'Ubuntu18' or target == 'Debian9':
+          elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
             if target == 'Ubuntu18': otherArgs.append( '--qt5' )
             commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
 
@@ -524,6 +540,7 @@ class Report ( object ):
 parser = optparse.OptionParser ()  
 parser.add_option ( "--debug"       , action="store_true" ,                dest="debug"        , help="Build a <Debug> aka (-g) version." )
 parser.add_option ( "--no-git"      , action="store_true" ,                dest="noGit"        , help="Do not pull/update Git repositories before building." )
+parser.add_option ( "--do-yosys"    , action="store_true" ,                dest="doYosys"      , help="Rebuild Yosys." )
 parser.add_option ( "--do-alliance" , action="store_true" ,                dest="doAlliance"   , help="Rebuild the Alliance tools." )
 parser.add_option ( "--do-coriolis" , action="store_true" ,                dest="doCoriolis"   , help="Rebuild the Coriolis tools." )
 parser.add_option ( "--do-report"   , action="store_true" ,                dest="doReport"     , help="Send a final report." )
@@ -547,14 +564,16 @@ try:
     if options.docker:                    conf.dockerMode   = True
     if options.chroot:                    conf.chrootMode   = True
     if options.noGit:                     conf.doGit        = False
-    if options.doCoriolis:                conf.doCoriolis   = True
+    if options.doYosys:                   conf.doYosys      = True
     if options.doAlliance:                conf.doAlliance   = True
+    if options.doCoriolis:                conf.doCoriolis   = True
     if options.benchs:                    conf.doBenchs     = True
     if options.doReport:                  conf.doSendReport = True
     if options.rmSource or options.rmAll: conf.rmSource     = True
     if options.rmBuild  or options.rmAll: conf.rmBuild      = True
 
 
+    if conf.doYosys:    conf.openLog( 'yosys'    )
     if conf.doAlliance: conf.openLog( 'alliance' )
     if conf.doCoriolis: conf.openLog( 'coriolis' )
     if conf.doBenchs:   conf.openLog( 'benchs'   )
@@ -563,68 +582,68 @@ try:
 
     gitSupports = []
     for supportRepo in conf.supportRepos:
-      gitSupports.append( GitRepository( supportRepo, conf.srcDir+'/support' ) )
+        gitSupports.append( GitRepository( supportRepo, conf.srcDir+'/support' ) )
     gitCoriolis = GitRepository( conf.coriolisRepo, conf.srcDir, conf.fds['coriolis'] )
     gitBenchs   = GitRepository( conf.benchsRepo  , conf.srcDir, conf.fds['coriolis'] )
 
     if conf.doAlliance:
-      gitAlliance = GitRepository( conf.allianceRepo, conf.srcDir, conf.fds['alliance'] )
+        gitAlliance = GitRepository( conf.allianceRepo, conf.srcDir, conf.fds['alliance'] )
 
     if conf.doGit:
-      for gitSupport in gitSupports:
-        if conf.rmSource: gitSupport.removeLocalRepo()
-        gitSupport.clone()
-       #if gitSupport.url.endswith('rapidjson'):
-       #  gitSupport.checkout( 'a1c4f32' )
-
-      if conf.doCoriolis:
-        if conf.rmSource: gitCoriolis.removeLocalRepo()
-        gitCoriolis.clone   ()
-        gitCoriolis.checkout( 'devel' )
-
-      if conf.doAlliance:
-        if conf.rmSource: gitAlliance.removeLocalRepo()
-        gitAlliance.clone   ()
-       #gitAlliance.checkout( 'devel' )
-
-      if conf.rmSource: gitBenchs.removeLocalRepo()
-      gitBenchs.clone()
+        for gitSupport in gitSupports:
+            if conf.rmSource: gitSupport.removeLocalRepo()
+            gitSupport.clone()
+           #if gitSupport.url.endswith('rapidjson'):
+           #  gitSupport.checkout( 'a1c4f32' )
+        
+            if conf.doAlliance:
+                if conf.rmSource: gitAlliance.removeLocalRepo()
+                gitAlliance.clone   ()
+               #gitAlliance.checkout( 'devel' )
+            
+            if conf.doCoriolis:
+                if conf.rmSource: gitCoriolis.removeLocalRepo()
+                gitCoriolis.clone   ()
+                gitCoriolis.checkout( 'devel' )
+      
+        if conf.rmSource: gitBenchs.removeLocalRepo()
+        gitBenchs.clone()
 
     if conf.rmBuild:
-      for entry in os.listdir(conf.rootDir):
-        if entry.startswith('Linux.'):
-          buildDir = conf.rootDir+'/'+entry
-          print 'Removing OS build directory: <%s>' % buildDir
-          shutil.rmtree( buildDir )
+        for entry in os.listdir(conf.rootDir):
+            if entry.startswith('Linux.'):
+                buildDir = conf.rootDir+'/'+entry
+                print 'Removing OS build directory: <%s>' % buildDir
+                shutil.rmtree( buildDir )
 
     commands = conf.getCommands( options.profile )
     for command in commands:
-      if command.host:
-        print 'Executing command on remote host <%s>:' % host
-      else:
-        print 'Executing command on *local* host:'
-      print '  %s' % str(command)
-      command.execute()
+        if command.host:
+            print 'Executing command on remote host <%s>:' % host
+        else:
+            print 'Executing command on *local* host:'
+        print '  %s' % str(command)
+        command.execute()
 
     conf.closeLogs()
 
     conf.success = True
 
 except ErrorMessage, e:
-  print e
-  conf.closeLogs()
-  conf.success = False
-
-  if showTrace:
-    print '\nPython stack trace:'
-    traceback.print_tb( sys.exc_info()[2] )
-  conf.rcode = e.code
+    print e
+    conf.closeLogs()
+    conf.success = False
+    
+    if showTrace:
+        print '\nPython stack trace:'
+        traceback.print_tb( sys.exc_info()[2] )
+    conf.rcode = e.code
 
 if conf.doSendReport:
-  report = Report( conf )
-  report.attachLog( conf.logs['coriolis' ] )
-  report.attachLog( conf.logs['benchs'   ] )
-  report.send()
+    report = Report( conf )
+    report.attachLog( conf.logs['coriolis' ] )
+    report.attachLog( conf.logs['benchs'   ] )
+    report.send()
 
 conf.compressLogs()
 
