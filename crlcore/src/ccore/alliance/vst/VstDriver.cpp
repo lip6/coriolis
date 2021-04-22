@@ -39,11 +39,15 @@ namespace CRL {
 
   void  vstDriver ( const string cellPath, Cell *cell, unsigned int& saveState )
   {
+    NamingScheme ns (NamingScheme::FromVerilog);
     unsigned int entityFlags = Vhdl::Entity::EntityMode /* | Vhdl::Entity::IeeeMode */;
     if (saveState & Catalog::State::VstUseConcat        ) entityFlags |= Vhdl::Entity::VstUseConcat;
     if (saveState & Catalog::State::VstNoLowerCase      ) entityFlags |= Vhdl::Entity::VstNoLowerCase;
-    if (saveState & Catalog::State::VstUniquifyUpperCase) entityFlags |= Vhdl::Entity::VstUniquifyUpperCase;
     if (saveState & Catalog::State::VstNoLinkage        ) entityFlags |= Vhdl::Entity::VstNoLinkage;
+    if (saveState & Catalog::State::VstUniquifyUpperCase) {
+      entityFlags |= Vhdl::Entity::VstUniquifyUpperCase;
+      ns.setUniquifyUpperCase( true );
+    }
     
   //NamingScheme::toVhdl( cell, NamingScheme::FromVerilog );
     Vhdl::Entity* vhdlEntity = Vhdl::EntityExtension::create( cell, entityFlags );
@@ -61,7 +65,6 @@ namespace CRL {
       } else {
         file = cellPath;
       }
-      NamingScheme ns (NamingScheme::FromVerilog);
       file     = getString( ns.convert(file) );
       celltest = path + '/' + file + '.' + ext;
 
