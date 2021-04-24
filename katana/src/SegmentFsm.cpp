@@ -1286,6 +1286,13 @@ namespace Katana {
         if (nextState == DataNegociate::Minimize) {
           if (isFullBlocked() and not segment->isTerminal()) {
             cdebug_log(159,0) << "Is Fully blocked." << endl;
+            if (_costs.size() > 7) {
+              success = manipulator.moveUp( Manipulator::AllowLocalMoveUp );
+              if (success) {
+                cdebug_log(159,0) << "Was able to move up." << endl;
+                break;
+              }
+            }
             nextState = DataNegociate::Unimplemented;
             break;
           }
@@ -1388,7 +1395,8 @@ namespace Katana {
                           << ((manipulator.getEvent())
                              ? manipulator.getEvent()->getConstraints() : "(no event yet)") << endl;
         if (  manipulator.getEvent()
-           and manipulator.getEvent()->getConstraints().isPonctual()
+           and (  manipulator.getEvent()->getConstraints().isPonctual()
+               or (isFullBlocked() and (_costs.size() > 7)))
            and segment->canMoveUp(1.0,Flags::CheckLowUpDensity|Flags::AllowTerminal) ) {
           moveUpFlags |= Manipulator::AllowTerminalMoveUp;
         } else {

@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_SEGMENT_FSM_H
-#define  KATANA_SEGMENT_FSM_H
-
+#pragma  once
 #include "katana/TrackCost.h"
 
 namespace Katana {
@@ -240,5 +238,3 @@ namespace Katana {
   }
 
 }  // Katana namespace.
-
-#endif  // KATANA_SEGMENT_FSM_H
