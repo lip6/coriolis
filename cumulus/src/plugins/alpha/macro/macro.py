@@ -131,7 +131,7 @@ class Macro ( object ):
         minSpacingMetal2 = gaugeMetal2.getLayer().getMinimalSpacing()
         minSpacingMetal3 = gaugeMetal3.getLayer().getMinimalSpacing()
         minSpacingMetal4 = gaugeMetal4.getLayer().getMinimalSpacing()
-        if self.cell.getName() == 'SPBlock_512W64B8W':
+        if self.cell.getName().lower() == 'spblock_512w64b8w':
             print( '  o  Ad-hoc blockage patch for "{}".'.format(self.cell.getName()) )
             for net in self.cell.getNets():
                 for component in net.getComponents():
