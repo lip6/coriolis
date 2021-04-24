@@ -131,18 +131,6 @@ namespace Etesian {
 
   void  Slice::merge ( const Occurrence& occurrence, const Box& flatAb )
   {
-    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceStep();
-    if (modulo) {
-      cerr << "Misaligned instance " << occurrence << endl;
-      cerr << "  y=" << DbU::getValueString(flatAb.getYMin()) << " (" << flatAb.getYMin() << ") "
-           << " x=" <<  DbU::getValueString(flatAb.getXMin()) << " (" << flatAb.getXMin() << ") "
-           << " modulo=" <<  DbU::getValueString(modulo)
-           << " getXMin()=" <<  DbU::getValueString(getXMin())
-           << " sliceStep=" <<  DbU::getValueString(getEtesian()->getSliceStep())
-           << " (" << getEtesian()->getSliceStep() << ")"
-           << endl;
-    }
-
     if (_tiles.empty() or (_tiles.front().getXMin() > flatAb.getXMin())) {
       _tiles.insert( _tiles.begin(), Tile(flatAb.getXMin(), flatAb.getWidth(), occurrence) );
       return;
@@ -242,12 +230,12 @@ namespace Etesian {
     DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceStep();
     if (modulo) {
       xtie += getEtesian()->getSliceStep() - modulo;
-      cerr << "Misaligned hole @" << yspin
-           << " ybottom=" << DbU::getValueString(ybottom)
-           << " xmin=" <<  DbU::getValueString(xmin)
-           << " modulo=" <<  DbU::getValueString(modulo)
-           << " getXMin()=" <<  DbU::getValueString(getXMin())
-           << endl;
+      // cerr << "Misaligned hole @" << yspin
+      //      << " ybottom=" << DbU::getValueString(ybottom)
+      //      << " xmin=" <<  DbU::getValueString(xmin)
+      //      << " modulo=" <<  DbU::getValueString(modulo)
+      //      << " getXMin()=" <<  DbU::getValueString(getXMin())
+      //      << endl;
     }
 
     while ( true ) {
@@ -429,6 +417,19 @@ namespace Etesian {
     if (flatAb.getYMin() < _placeArea.getYMin()) {
       cerr << Warning("Area::merge(): Attempt to merge instance outside the placement area.") << endl;
       return;
+    }
+
+    DbU::Unit modulo = (flatAb.getXMin() - getXMin()) % getEtesian()->getSliceStep();
+    if (modulo) {
+      cerr << Warning( "Area::merge(): Misaligned instance %s\n"
+                       "           y=%s (%d) x=%d (%d) area.getXMin()=%s sliceStep=%s (%d)"
+                     , occurrence.getCompactString().c_str()
+                     , DbU::getValueString(flatAb.getYMin()).c_str(), flatAb.getYMin()
+                     , DbU::getValueString(flatAb.getXMin()).c_str(), flatAb.getXMin()
+                     , DbU::getValueString(getXMin()).c_str()
+                     , DbU::getValueString(getEtesian()->getSliceStep()).c_str()
+                     , getEtesian()->getSliceStep()
+                     ) << endl;
     }
 
     size_t ibegin = (flatAb.getYMin()-_placeArea.getYMin()) / _sliceHeight;
