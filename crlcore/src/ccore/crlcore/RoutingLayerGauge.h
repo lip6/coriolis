@@ -112,6 +112,7 @@ namespace CRL {
       inline  DbU::Unit                 getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const;
               DbU::Unit                 getTrackPosition ( DbU::Unit start, long index ) const;
       inline  void                      setPWireWidth    ( DbU::Unit );
+      inline  void                      setType          ( uint32_t );
     // Hurricane Managment.             
               void                      toJson           ( JsonWriter* ) const;
       virtual string                    _getTypeName     () const;
@@ -190,6 +191,7 @@ namespace CRL {
   inline  DbU::Unit                 RoutingLayerGauge::getTrackPosition ( DbU::Unit start, DbU::Unit stop, DbU::Unit position, unsigned mode ) const
                                                                         { return getTrackPosition( start, getTrackIndex(start,stop,position,mode) ); }
   inline  void                      RoutingLayerGauge::setPWireWidth    ( DbU::Unit pwidth ) { _pwireWidth = pwidth; }
+  inline  void                      RoutingLayerGauge::setType          ( uint32_t type ) { _type = (Constant::LayerGaugeType)type; }
 
 
 // -------------------------------------------------------------------

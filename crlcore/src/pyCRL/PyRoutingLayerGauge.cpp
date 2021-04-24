@@ -275,6 +275,7 @@ extern "C" {
   DirectGetLongAttribute  (PyRoutingLayerGauge_getHalfViaWidth ,getHalfViaWidth ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectGetLongAttribute  (PyRoutingLayerGauge_getObstacleDw   ,getObstacleDw   ,PyRoutingLayerGauge,RoutingLayerGauge)
   DirectSetLongAttribute  (PyRoutingLayerGauge_setPWireWidth   ,setPWireWidth   ,PyRoutingLayerGauge,RoutingLayerGauge)
+  DirectSetLongAttribute  (PyRoutingLayerGauge_setType         ,setType         ,PyRoutingLayerGauge,RoutingLayerGauge)
 
 
   // Standart Destroy (Attribute).
@@ -321,6 +322,8 @@ extern "C" {
                                 , "Compute the position of track number <depth>." }
     , { "setPWireWidth"         , (PyCFunction)PyRoutingLayerGauge_setPWireWidth   , METH_VARARGS
                                 , "Sets the perpandicular wire width (same layer)." }
+    , { "setType"               , (PyCFunction)PyRoutingLayerGauge_setType         , METH_VARARGS
+                                , "Sets the kind of gauge." }
   //, { "destroy"               , (PyCFunction)PyRoutingLayerGauge_destroy         , METH_VARARGS
   //                            , "Destroy the associated hurricane object. The python object remains." }
     , {NULL, NULL, 0, NULL}     /* sentinel */
