@@ -589,6 +589,7 @@ class Block ( object ):
         Place the instance refered by ``ipath`` at position ``transformation``.
         Both  parameters are relative to the core cell.
         """
+        trace( 550, ',+', '\tBlock.placeMacro() {} @{}\n'.format( ipath, transf ))
         with UpdateSession():
             instance   = self.rgetCoreInstance( ipath )
             macro      = Macro.wrap( instance.getMasterCell()
@@ -599,35 +600,37 @@ class Block ( object ):
                 pnrAb = self.conf.icorona.getMasterCell().getAbutmentBox()
             else:
                 pnrAb = self.conf.core.getAbutmentBox()
-            print( 'pnrAb={}'.format(pnrAb) )
-            print( 'coreTransf={}'.format(coreTransf) )
+            trace( 550, '\tpnrAb={}, coreTransf={}\n'.format(pnrAb,coreTransf) )
             macroPosition = transf.getTranslation()
             coreTransf.applyOn( macroPosition )
             xoffset = macroPosition.getX() - pnrAb.getXMin()
             xpitch  = self.conf.vDeepRG.getPitch()
-            print( 'X placement pitch: {}'.format(DbU.getValueString(xpitch)) )
-            print( 'Original X offset: {}'.format(DbU.getValueString(xoffset)) )
+            trace( 550, '\tX offset: {} (X pitch:{})\n' \
+                        .format( DbU.getValueString(xoffset)
+                               , DbU.getValueString(xpitch) ))
             if xoffset % xpitch:
                 xoffset += xpitch - (xoffset % xpitch)
-            print( 'Pitched X offset: {}'.format(DbU.getValueString(xoffset)) )
+            trace( 550, '\tPitched X offset: {}\n'.format( DbU.getValueString(xoffset) ))
             yoffset = macroPosition.getY() - pnrAb.getYMin()
             ypitch  = self.conf.hDeepRG.getPitch()
-            print( 'Original Y offset: {}'.format(DbU.getValueString(yoffset)) )
+            trace( 550, '\tY offset: {} (Y pitch:{})\n' \
+                        .format( DbU.getValueString(yoffset)
+                               , DbU.getValueString(ypitch) ))
             if yoffset % ypitch:
                 yoffset += ypitch - (yoffset % ypitch)
-            print( 'Pitched Y offset: {}'.format(DbU.getValueString(yoffset)) )
+            trace( 550, '\tPitched Y offset: {}\n'.format( DbU.getValueString(yoffset) ))
             macroPosition = Point( xoffset, yoffset )
-            print( 'Position in corona={}'.format(macroPosition) )
             coreTransf.invert()
             coreTransf.applyOn( macroPosition )
-            print( 'Position in core={}'.format(macroPosition) )
-            print( 'instanceAb={}'.format(instanceAb) )
+            trace( 550, '\tPosition in core:{}, instanceAb:{}\n' \
+                        .format( macroPosition, instanceAb ))
             Macro.place( instance.getCell()
                        , instance
                        , Transformation( macroPosition.getX()
                                        , macroPosition.getY()
                                        , Transformation.Orientation.ID )
                        , Instance.PlacementStatus.FIXED )
+        trace( 550, '-' )
 
     def addPlaceHolder ( self, area, inCore=False ):
         if area.isEmpty():
