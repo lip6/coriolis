@@ -162,7 +162,7 @@ class HorizontalRail ( Rail ):
                                 )
                     via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
                     via.doLayout()
-                else:
+                elif overlap.getWidth() > 2*plane.conf.vDeepRG.getPitch():
                     trace( 550, '\t| Narrow overlap={}\n'.format(overlap) )
                     via = BigVia( stripe.getNet()
                                 , plane.getLayerDepth(stripe.getLayer())
@@ -174,6 +174,8 @@ class HorizontalRail ( Rail ):
                                 )
                     via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
                     via.doLayout()
+                else:
+                    trace( 550, '\t| Too narrow overlap={}, no BigVia\n'.format(overlap) )
             trace( 550, '-' )
         trace( 550, '-' )
         return
