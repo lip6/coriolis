@@ -94,6 +94,7 @@ class ChipConf ( BlockConf ):
 #       trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
         self.validated = True
         # Block Corona parameters (triggers loading from disk).
+        self.cfg.chip.padCoreSide          = None
         self.cfg.chip.supplyRailWidth      = None
         self.cfg.chip.supplyRailPitch      = None
         self.cfg.chip.block.rails.count    = None
@@ -111,6 +112,10 @@ class ChipConf ( BlockConf ):
         self.blockageNet      = None
         self.padsHavePosition = False
         trace( 550, '-' )
+
+    @property
+    def padCoreSide ( self ):
+        return self.cfg.chip.padCoreSide
 
     @property
     def railsCount ( self ):

@@ -16,6 +16,7 @@
 from   __future__   import print_function
 import sys
 import re
+import copy
 from   operator     import itemgetter  
 from   Hurricane    import DbU, Point, Transformation, Interval, Box,   \
                            Path, Occurrence, UpdateSession, Layer,      \
@@ -952,6 +953,7 @@ class Corona ( object ):
                                                   , component.getLayer()
                                                   , axis
                                                   , width ) )
+        self.padRails.sort( key=itemgetter(2) )
   
     def _createCoreWire ( self, chipIntNet, padNet, padInstance, count ):
         trace( 550, ',+', '\tCorona._createCoreWire()\n' )
@@ -1136,8 +1138,13 @@ class Corona ( object ):
         chipLayer        = self.conf.getRoutingLayer( self.conf.routingGauge.getPowerSupplyGauge().getDepth() - 1 )
         coronaAb         = self.conf.icorona.getAbutmentBox()
         chipAxis         = coronaAxis + self.conf.icorona.getTransformation().getTx()
+        rails = []
         trace( 550, '\tchipLayer={}\n'.format(chipLayer) )
         for rail in self.padRails:
+            rails.append( [ rail[0], rail[1], rail[2], rail[3] ] )
+        if self.conf.padCoreSide == 'North':
+            rails.reverse()
+        for rail in rails:
             net      = rail[0]
             layer    = rail[1]
             railAxis = rail[2]
@@ -1145,6 +1152,7 @@ class Corona ( object ):
             if net != chipNet or chipLayer.getMask() != layer.getMask():
                 continue
             if side == North:
+                trace( 550, '\tNorth side supply\n' )
                 trace( 550, '\tcoronaAb={}\n'.format(coronaAb) )
                 trace( 550, '\tcoronaAxis={}\n'.format(DbU.getValueString(coronaAxis)) ) 
                 trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
@@ -1180,7 +1188,14 @@ class Corona ( object ):
                                 )
                 trace( 550, '\tpin={}\n'.format(pin) )
                 self.powerCount += 1
+                break
             elif side == South:
+                trace( 550, '\tSouth side supply\n' )
+                trace( 550, '\tcoronaAb={}\n'.format(coronaAb) )
+                trace( 550, '\tcoronaAxis={}\n'.format(DbU.getValueString(coronaAxis)) ) 
+                trace( 550, '\tchipAxis={}\n'.format(DbU.getValueString(chipAxis)) )
+                trace( 550, '\trailNet={} <-> {}\n'.format(net,chipNet) )
+                trace( 550, '\trailAxis={}\n'.format(DbU.getValueString(railAxis)) )
                 Vertical.create( chipNet
                                , supplyLayer
                                , chipAxis
@@ -1209,6 +1224,7 @@ class Corona ( object ):
                                 , DbU.fromLambda( 1.0 )
                                 )
                 self.powerCount += 1
+                break
         trace( 550, '-' )
 
     def doLayout ( self ):
