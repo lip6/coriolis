@@ -82,8 +82,10 @@ class CoreToChip ( BaseCoreToChip ):
             chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
             chipNet.setExternal( True )
             chipNet.setType    ( Net.Type.GROUND )
-            self.icorona.getPlug( coronaNet ).setNet( chipNet  )
-            self.ringNetNames['vss'] = chipNet
+        coronaPlug = self.icorona.getPlug( coronaNet )
+        if not coronaPlug.getNet():
+            coronaPlug.setNet( chipNet  )
+        self.ringNetNames['vss'] = chipNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_vss_{}'.format(ioPadConf.index)
                                               , self.getCell('vss') ) )
@@ -92,12 +94,12 @@ class CoreToChip ( BaseCoreToChip ):
         self.chipPads       += ioPadConf.pads
 
     def _buildIoGroundPads ( self, ioPadConf ):
-        padNet = self.chip.getNet( ioPadConf.padSupplyNetName  )
+        padNet = self.chip.getNet( ioPadConf.padSupplyNetName )
         if not padNet:
             padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
             padNet.setExternal( True )
             padNet.setType    ( Net.Type.GROUND )
-            self.ringNetNames['iovss'] = padNet
+        self.ringNetNames['iovss'] = padNet
         ioPadConf.pads.append( Instance.create( self.chip
                                               , 'p_iovss_{}'.format(ioPadConf.index)
                                               , self.getCell('iovss') ) )
