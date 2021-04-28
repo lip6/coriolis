@@ -549,6 +549,8 @@ class CoreToChip ( object ):
     def _connectPadRing ( self, padInstance ):
         """Connect ring signals to the I/O pad."""
         for masterNetName, netName in self.ringNetNames.items():
+            if masterNetName == 'iovss':
+                netName = 'vss'
             trace( 550, '\tCoreToChip._connectPadRing(): master:{} net:{}\n'.format(masterNetName,netName) )
             CoreToChip._connect( padInstance, netName, masterNetName )
 
