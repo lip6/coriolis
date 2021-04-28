@@ -57,6 +57,7 @@ namespace CRL {
     if (_cell) {
       if (isPad ()) _cell->setPad ( true );
       if (isFeed()) _cell->setFeed( true );
+      _library = _cell->getLibrary();
     }
     return _cell;
   }

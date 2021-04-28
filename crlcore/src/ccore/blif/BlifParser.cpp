@@ -303,7 +303,11 @@ namespace {
       if (af->isInCatalog(modelName)) {
         model = Model::find( modelName );
         if (not model) {
-          model = new Model ( af->getCell( modelName, Catalog::State::Views, 0 ) );
+          cell  = af->getCell( modelName, Catalog::State::Views, 0 );
+          if (not cell)
+            throw Error( "Subckt::createModel(): Cell \"%s\" has a catalog entry but is not loaded."
+                       , modelName.c_str() );
+          model = new Model ( cell );
         }
       }
     } else {

@@ -69,13 +69,15 @@ extern "C" {
 
     char*           name  = NULL;
     Catalog::State* state = NULL;
+    PyObject*       pyAdd = NULL;
     HTRY
       METHOD_HEAD("Catalog.getState()")
-      if ( not PyArg_ParseTuple(args,"s",&name) ) {
+      if ( not PyArg_ParseTuple(args,"s|O:Catalog.getState",&name,&pyAdd) ) {
         PyErr_SetString( ConstructorError, "Catalog.getState(): Invalid number or bad type of parameters.");
         return NULL;
       }
-      state = catalog->getState( Name(name) );
+      bool add = (pyAdd) and PyObject_IsTrue(pyAdd);
+      state = catalog->getState( Name(name), add );
     HCATCH
     if (not state) Py_RETURN_FALSE;
     return PyCatalogState_Link(state);

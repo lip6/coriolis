@@ -43,12 +43,13 @@ namespace  CRL {
   using Isobar::PyLibrary_Link;
   using Isobar::PyCell;
   using Isobar::PyCell_Link;
+  using Isobar::PyTypeCell;
 
 
 extern "C" {
 
 
-#define METHOD_HEAD(function) GENERIC_METHOD_HEAD(CatalogState,state,function)
+#define METHOD_HEAD(function) GENERIC_METHOD_HEAD(Catalog::State,state,function)
 
 
 // x=================================================================x
@@ -65,6 +66,7 @@ extern "C" {
   DirectGetBoolAttribute(PyCatalogState_isDelete         ,isDelete         ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isPhysical       ,isPhysical       ,PyCatalogState,Catalog::State)
   DirectGetBoolAttribute(PyCatalogState_isLogical        ,isLogical        ,PyCatalogState,Catalog::State)
+  DirectGetBoolAttribute(PyCatalogState_isInMemory       ,isInMemory       ,PyCatalogState,Catalog::State)
 
   DirectSetBoolAttribute(PyCatalogState_setTerminalNetlist,setTerminalNetlist,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setFeed           ,setFeed           ,PyCatalogState,Catalog::State)
@@ -72,6 +74,29 @@ extern "C" {
   DirectSetBoolAttribute(PyCatalogState_setDelete         ,setDelete         ,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setPhysical       ,setPhysical       ,PyCatalogState,Catalog::State)
   DirectSetBoolAttribute(PyCatalogState_setLogical        ,setLogical        ,PyCatalogState,Catalog::State)
+  DirectSetBoolAttribute(PyCatalogState_setInMemory       ,setInMemory       ,PyCatalogState,Catalog::State)
+
+
+  static PyObject* PyCatalogState_setCell ( PyCatalogState* self, PyObject* args )
+  {
+    cdebug_log(20,0) << "PyCatalogState.setCell()" << endl;
+    METHOD_HEAD("PyCatalogState.setCell()")
+    HTRY
+      PyObject* pyCell = NULL;
+
+      if (PyArg_ParseTuple(args,"O:State.setCell()",&pyCell) ) {
+        if (not IsPyCell(pyCell)) {
+          PyErr_SetString ( ConstructorError, "State.setCell(): Argument is not of type Cell." );
+          return NULL;
+        }
+        state->setCell( PYCELL_O(pyCell) );
+      } else {
+        PyErr_SetString ( ConstructorError, "Bad parameters given to State.setCell()." );
+        return NULL;
+      }
+    HCATCH
+    Py_RETURN_NONE;
+  }
 
 
   // Standart Destroy (Attribute).
@@ -91,6 +116,10 @@ extern "C" {
                             , "Return true if the Cell possesses a physical (layout) view." }
     , { "isLogical"         , (PyCFunction)PyCatalogState_isLogical, METH_NOARGS
                             , "Return true if the Cell possesses a logical (netlist) view." }
+    , { "isInMemory"        , (PyCFunction)PyCatalogState_isInMemory, METH_NOARGS
+                            , "Return true if the Cell is already loaded in memory." }
+    , { "setCell"           , (PyCFunction)PyCatalogState_setCell, METH_VARARGS
+                            , "Set the cell associated with this state." }
     , { "setTerminalNetlist", (PyCFunction)PyCatalogState_setTerminalNetlist, METH_VARARGS
                             , "Sets/reset the TerminalNetlist flag of a Cell." }
     , { "setFeed"           , (PyCFunction)PyCatalogState_setFeed, METH_VARARGS
@@ -103,6 +132,8 @@ extern "C" {
                             , "Sets/reset the Pysical flag of a Cell." }
     , { "setLogical"        , (PyCFunction)PyCatalogState_setLogical, METH_VARARGS
                             , "Sets/reset the Logical flag of a Cell." }
+    , { "setInMemory"       , (PyCFunction)PyCatalogState_setInMemory, METH_VARARGS
+                            , "Sets/reset the in memory flag of a Cell." }
     , {NULL, NULL, 0, NULL} /* sentinel */
     };
 
