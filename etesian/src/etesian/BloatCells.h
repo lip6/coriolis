@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef ETESIAN_BLOATCELLS_H
-#define ETESIAN_BLOATCELLS_H
-
+#pragma  once
 #include <set>
 #include "hurricane/Box.h"
 #include "hurricane/Cell.h"
@@ -85,6 +83,14 @@ namespace Etesian {
   };
 
 
+  class BloatFlexlib : public BloatCell {
+    public:
+                         BloatFlexlib ();
+      virtual           ~BloatFlexlib ();
+      virtual DbU::Unit  getDx        ( const Cell*, const EtesianEngine* ) const;
+  };
+
+
   class Bloat3Metals : public BloatCell {
     public:
                          Bloat3Metals ();
@@ -125,6 +131,7 @@ namespace Etesian {
   {
     _bloatCells.insert( new BloatDisabled  () );
     _bloatCells.insert( new BloatNsxlib    () );
+    _bloatCells.insert( new BloatFlexlib   () );
     _bloatCells.insert( new Bloat3Metals   () );
     _bloatCells.insert( new Bloat90Percents() );
     select( "disabled" );
@@ -142,5 +149,3 @@ namespace Etesian {
 
 
 } // Etesian namespace.
-
-#endif  // ETESIAN_BLOATCELLS_H

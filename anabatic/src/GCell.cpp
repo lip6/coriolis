@@ -476,6 +476,26 @@ namespace Anabatic {
   }
 
 
+  bool  GCell::hasNet ( const Net* net ) const
+  {
+    if (hasGContact(net)) return true;
+
+    for ( Edge* edge : _eastEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return true;
+      }
+    }
+
+    for ( Edge* edge : _northEdges ) {
+      for ( Segment* segment : edge->getSegments() ) {
+        if (segment->getNet() == net) return true;
+      }
+    }
+
+    return false;
+  }
+
+
   Contact* GCell::hasGContact ( const Contact* owned ) const
   {
     for ( Contact* contact : _gcontacts ) {

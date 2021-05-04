@@ -301,13 +301,17 @@ namespace Etesian {
     for ( auto iTile=_tiles.begin() ; iTile != _tiles.end() ; ++iTile ) {
       if ((*iTile).getXMax() <= diodeArea.getXMin()) continue;
       if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
+      cdebug_log(147,0) << "| " << (*iTile) << endl;
       if ((*iTile).getMasterCell() != feed) continue;
       if (blockInst) {
-        if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst)
+        if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst) {
+          cdebug_log(147,0) << "> Reject, not in block instance" << endl;
           continue;
+        }
       }
       DbU::Unit distance = std::abs( (*iTile).getXMin() - xHint );
       if (not foundCandidate or (distance < dCandidate)) {
+        cdebug_log(147,0) << "> candidate" << endl;
         foundCandidate = true;
         iCandidate     = iTile;
         dCandidate     = distance;

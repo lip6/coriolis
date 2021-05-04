@@ -163,6 +163,7 @@ namespace Anabatic {
                     bool                  isEast               ( GCell* ) const;
                     bool                  isNorth              ( GCell* ) const;
                     bool                  isSouth              ( GCell* ) const;
+                    bool                  hasNet               ( const Net* ) const;
                     Contact*              hasGContact          ( const Contact* ) const;
                     Contact*              hasGContact          ( const Net* ) const;
                     bool                  isHorizontalPlane    ( size_t depth ) const;
