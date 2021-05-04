@@ -1237,7 +1237,15 @@ class BlockConf ( GaugeConf ):
             cell.setName( cell.getName()+'_cts' )
         if self.chip is None:
             self.cell.setName( self.cell.getName()+'_r' )
-        rsave( self.cell, CRL.Catalog.State.Physical|flags )
+        views = CRL.Catalog.State.Logical
+        if self.routingGauge.isSymbolic():
+            views = views | CRL.Catalog.State.Physical
+        rsave( self.cell, views|flags )
+        if not self.routingGauge.isSymbolic():
+            topCell = self.chip
+            if topCell is None:
+                topCell = self.cell
+            CRL.Gds.save( topCell )
         return
         
     def toXPitch ( self, x, superior=False ):
