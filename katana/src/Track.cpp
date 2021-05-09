@@ -561,6 +561,11 @@ namespace Katana {
       if (    (_segments[begin]->getNet() == cost.getNet())
          and ((cost.getRefElement()->getAxis() != getAxis())
              or not _segments[begin]->isNonPref() ) ) {
+        if (  (_segments[begin] == cost.getRefElement())
+           or (_segments[begin] == cost.getSymElement())) {
+          cdebug_log(155,0) << "Segment istself in track, skip." << endl;
+          continue;
+        }
         cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
