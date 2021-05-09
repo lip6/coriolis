@@ -148,7 +148,7 @@ class Chip ( Block ):
         views = CRL.Catalog.State.Logical
         if self.conf.routingGauge.isSymbolic():
             views = views | CRL.Catalog.State.Physical
+        super(Chip,self).save( flags )
         af = CRL.AllianceFramework.get()
         af.saveCell( self.conf.corona, views|flags )
         af.saveCell( self.conf.chip  , views|flags )
-        super(Chip,self).save( flags )
