@@ -132,6 +132,8 @@ namespace Etesian {
   class Tile {
     public:
       inline                   Tile          ( DbU::Unit xMin, DbU::Unit width, const Occurrence& );
+      inline                   Tile          ( const Tile& );
+      inline                  ~Tile          ();
       inline       bool        isFixed       () const;
       inline       DbU::Unit   getXMin       () const;
       inline       DbU::Unit   getXMax       () const;
@@ -140,6 +142,7 @@ namespace Etesian {
       inline       Instance*   getInstance   () const;
       inline const Occurrence& getOccurrence () const;
       inline       void        translate     ( DbU::Unit );
+      inline       Tile&       operator=     ( const Tile& );
       inline       std::string _getString    () const;
                    Record*     _getRecord    () const;
     private:
@@ -149,7 +152,26 @@ namespace Etesian {
   };
 
   inline Tile::Tile ( DbU::Unit xMin, DbU::Unit width, const Occurrence& occurrence )
-    : _xMin(xMin), _width(width), _occurrence(occurrence)
+    : _xMin(xMin)
+    , _width(width)
+    , _occurrence(occurrence)
+  { }
+
+  inline Tile::Tile ( const Tile& other )
+    : _xMin(other._xMin)
+    , _width(other._width)
+    , _occurrence(other._occurrence)
+  { }
+
+  inline Tile& Tile::operator= ( const Tile& other )
+  {
+    _xMin       = other._xMin;
+    _width      = other._width;
+    _occurrence = other._occurrence;
+    return *this;
+  }
+
+  inline Tile::~Tile ()
   { }
 
   inline       DbU::Unit   Tile::getXMin       () const { return _xMin; }

@@ -17,6 +17,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/DeepNet.h"
 #include "hurricane/Plug.h"
@@ -43,6 +44,7 @@ namespace Etesian {
   using Hurricane::DeepNet;
   using Hurricane::Plug;
   using Hurricane::RoutingPad;
+  using Hurricane::DebugSession;
   using Hurricane::UpdateSession;
   using CRL::AllianceFramework;
   using CRL::CatalogExtension;
@@ -327,8 +329,8 @@ namespace Etesian {
     DbU::Unit  width   = (*iCandidate).getWidth(); 
     diodeInst = (*iCandidate).getInstance();
     Transformation transf = diodeInst->getTransformation();
-    diodeInst->destroy();
     _tiles.erase( iCandidate );
+    diodeInst->destroy();
 
     Occurrence rpOccurrence = rp->getPlugOccurrence();
     Path       instancePath = rpOccurrence.getPath();
@@ -683,6 +685,10 @@ namespace Etesian {
       return;
     }
 
+  //Breakpoint::stop( 100, "Before adding feeds." );
+    cmess2 << "  o  Adding feed cells." << endl;
+
+  //DebugSession::open( 145, 150 );
     UpdateSession::open();
 
     if (_area) delete _area;
@@ -759,6 +765,7 @@ namespace Etesian {
     _area->addFeeds();
 
     UpdateSession::close();
+  //DebugSession::close();
 
     if (_viewer) _viewer->getCellWidget()->refresh();
   }

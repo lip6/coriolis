@@ -1418,9 +1418,7 @@ namespace Etesian {
     cmess1 << "  o  Detailed Placement." << endl;
     detailedPlace(detailedIterations, detailedEffort, detailedOptions);
 
-    Breakpoint::stop( 100, "Before adding feeds." );
-    cmess2 << "  o  Adding feed cells." << endl;
-    toHurricane();
+  //toHurricane();
   //addFeeds();
 
     cmess1 << "  o  Placement finished." << endl;
