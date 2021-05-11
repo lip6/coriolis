@@ -580,7 +580,6 @@ class Block ( object ):
         self.etesian.getCell().flattenNets( None, Cell.Flags_NoClockFlatten )
         if self.conf.useHFNS: self.etesian.doHFNS()
         self.etesian.place()
-        self.etesian.flattenPower()
         Breakpoint.stop( 100, 'Placement done.' )
         self.etesian.clearColoquinte()
 
@@ -744,8 +743,10 @@ class Block ( object ):
            #if self.conf.useHFNS: self.findHfnTrees()
             break
         if self.conf.useClockTree: self.splitClocks()
-        if self.conf.isCoreBlock:  self.doConnectCore()
         self.spares.removeUnusedBuffers()
+        self.etesian.toHurricane()
+        self.etesian.flattenPower()
+        if self.conf.isCoreBlock: self.doConnectCore()
         status = self.route()
         if not self.conf.isCoreBlock:
             self.addBlockages()

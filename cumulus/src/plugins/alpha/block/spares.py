@@ -774,7 +774,9 @@ class QuadTree ( object ):
         netBuff = self.bOutputPlug.getNet()
         trace( 540, '\tBuffer: {}\n'.format(self.buffer) )
         trace( 540, '\tBuffer output: {}\n'.format(netBuff) )
-        if not self.plugs: return
+        if not self.plugs:
+            trace( 540, '-' )
+            return
         for plug in self.plugs:
             trace( 540, '\t| Leaf: {}\n'.format(plug) )
             trace( 540, '\t| netBuff: {}\n'.format(netBuff) )

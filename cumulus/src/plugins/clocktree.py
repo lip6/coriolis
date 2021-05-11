@@ -87,10 +87,11 @@ def scriptMain ( **kw ):
         if editor: editor.refresh()
         etesian = Etesian.EtesianEngine.create( cell )
         etesian.place()
-        etesian.destroy()
         ht.connectLeaf()
        #ht.prune()
         ht.route()
+        etesian.toHurricane()
+        etesian.destroy()
         ht.save( cell )
     except Exception, e:
         helpers.io.catch( e )
