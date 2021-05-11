@@ -250,6 +250,16 @@ namespace Utilities {
   unsigned int  Path::mode () const
   {
     struct stat  bstat;
+    bstat.st_dev     = 0;
+    bstat.st_ino     = 0;
+    bstat.st_mode    = 0;
+    bstat.st_nlink   = 0;
+    bstat.st_uid     = 0;
+    bstat.st_gid     = 0;
+    bstat.st_rdev    = 0;
+    bstat.st_size    = 0;
+    bstat.st_blksize = 0;
+    bstat.st_blocks  = 0;
   //int          status = 0;
   //status =
       ::stat( toString().c_str(), &bstat );
