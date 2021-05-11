@@ -48,6 +48,32 @@ namespace {
   using namespace Anabatic;
   using Etesian::EtesianEngine;
 
+  class CompareByLength {
+    public:
+      inline bool operator() ( const Segment* lhs, const Segment* rhs )
+      {
+        DbU::Unit delta = lhs->getLength() - rhs->getLength();
+        if (delta < 0) return false;
+        if (delta > 0) return true;
+        return lhs->getId() < rhs->getId();
+      }
+  };
+
+  class CompareBySegmentBox {
+    public:
+      inline bool operator() ( const Box& lhs, const Box& rhs )
+      {
+        bool lhsH = (lhs.getWidth() >= lhs.getHeight());
+        bool rhsH = (rhs.getWidth() >= rhs.getHeight());
+        if (lhsH xor rhsH) return lhsH;
+
+        DbU::Unit lhsLength = (lhsH) ? lhs.getWidth() : lhs.getHeight();
+        DbU::Unit rhsLength = (rhsH) ? rhs.getWidth() : rhs.getHeight();
+        return lhsLength > rhsLength;
+      }
+  };
+
+
   typedef tuple<RoutingPad*,uint32_t>  RPInfosItem;
 
   class CompareRPInfos {
@@ -62,7 +88,9 @@ namespace {
   
   typedef tuple<GCell*,uint32_t,GCell*>  GCellInfosItem;
 
-  inline uint32_t& flags ( GCellInfosItem& item ) { return std::get<1>(item); }
+  inline const uint32_t& elemFlags ( const GCellInfosItem& item ) { return std::get<1>(item); }
+  inline       uint32_t& elemFlags (       GCellInfosItem& item ) { return std::get<1>(item); }
+  inline       GCell*    elemGCell ( const GCellInfosItem& item ) { return std::get<0>(item); }
 
   class CompareGCellInfos {
     public:
@@ -92,27 +120,35 @@ namespace {
       static const uint32_t  InCluster;
       static       string    toStr ( uint32_t );
     public:
-                                      DiodeCluster   ( RoutingPad*, AnabaticEngine* );
-      inline       bool               hasRp          ( RoutingPad* ) const;
-                   bool               hasGCell       ( GCell* ) const;
-      inline       Net*               getTopNet      () const;
-      inline       RoutingPad*        getRefRp       () const;
-      inline const RoutingPadInfos&   getRoutingPads () const;
-      inline const vector<Instance*>& getDiodes      () const;
-      inline       DbU::Unit          getWL          () const;
-                   void               showArea       () const;
-                   bool               needsDiode     () const;
-                   Box                getBoundingBox () const;
-                   void               merge          ( GCell*, uint32_t distance, GCell* back=NULL );
-                   void               merge          ( RoutingPad* );
-                   void               merge          ( Segment* );
-                   void               mergeHalo      ( Segment*, uint32_t flags );
-                   void               inflateArea    (); 
-                   Instance*          createDiode    ( Etesian::Area*, GCell*, GCell* );
-             const vector<Instance*>& createDiodes   ( Etesian::Area* );
+                                       DiodeCluster    ( AnabaticEngine*, RoutingPad* );
+      virtual                         ~DiodeCluster    ();
+                    DbU::Unit          getAntennaMaxWL () const;
+      inline        bool               hasRp           ( RoutingPad* ) const;
+                    bool               hasGCell        ( GCell* ) const;
+      inline        Net*               getTopNet       () const;
+      inline        RoutingPad*        getRefRp        () const;
+      inline        GCellArea&         _getArea        ();
+      inline        AnabaticEngine*    _getAnabatic    () const;
+      inline  const RoutingPadInfos&   getRoutingPads  () const;
+      inline        RoutingPadInfos&   _getRoutingPads () ;
+      inline  const vector<Instance*>& getDiodes       () const;
+      inline        vector<Instance*>& _getDiodes      ();
+      inline        DbU::Unit          getWL           () const;
+      inline        DbU::Unit&         _getWL          ();
+                    void               showArea        () const;
+      virtual       bool               needsDiode      () const = 0;
+                    Box                getBoundingBox  () const;
+                    void               merge           ( GCell*, uint32_t distance, GCell* back=NULL );
+      virtual       void               merge           ( RoutingPad* );
+      virtual       void               merge           ( Segment* ) = 0;
+      virtual       void               mergeHalo       ( Segment*, uint32_t flags );
+      virtual       void               inflateArea     (); 
+                    Instance*          _createDiode    ( Etesian::Area*, const Box&, DbU::Unit uHint );
+                    Instance*          _createDiode    ( Etesian::Area*, GCell*, GCell* );
+      virtual const vector<Instance*>& createDiode     ( Etesian::Area* );
+                    bool               connectDiodes   ();
     private:
       AnabaticEngine*   _anabatic;
-      bool              _sortArea;
       DbU::Unit         _WL;
       RoutingPadInfos   _routingPads;
       GCellArea         _area;
@@ -139,9 +175,8 @@ namespace {
   }
 
 
-  DiodeCluster::DiodeCluster ( RoutingPad* rp, AnabaticEngine* anabatic )
+  DiodeCluster::DiodeCluster ( AnabaticEngine* anabatic, RoutingPad* rp )
     : _anabatic(anabatic)
-    , _sortArea(true)
     , _WL(0)
     , _routingPads()
     , _area()
@@ -151,18 +186,26 @@ namespace {
   }
 
 
-  inline       Net*               DiodeCluster::getTopNet      () const { return getRefRp()->getNet(); }
-  inline       DbU::Unit          DiodeCluster::getWL          () const { return _WL; }
-  inline const RoutingPadInfos&   DiodeCluster::getRoutingPads () const { return _routingPads; }
-  inline const vector<Instance*>& DiodeCluster::getDiodes      () const { return _diodes; }
+  DiodeCluster::~DiodeCluster ()
+  { }
 
 
-  bool  DiodeCluster::needsDiode () const
+  inline       AnabaticEngine*    DiodeCluster::_getAnabatic    () const { return _anabatic; }
+  inline       GCellArea&         DiodeCluster::_getArea        () { return _area; }
+  inline       Net*               DiodeCluster::getTopNet       () const { return getRefRp()->getNet(); }
+  inline       DbU::Unit          DiodeCluster::getWL           () const { return _WL; }
+  inline       DbU::Unit&         DiodeCluster::_getWL          () { return _WL; }
+  inline const RoutingPadInfos&   DiodeCluster::getRoutingPads  () const { return _routingPads; }
+  inline       RoutingPadInfos&   DiodeCluster::_getRoutingPads () { return _routingPads; }
+  inline const vector<Instance*>& DiodeCluster::getDiodes       () const { return _diodes; }
+  inline       vector<Instance*>& DiodeCluster::_getDiodes      () { return _diodes; }
+
+
+  DbU::Unit  DiodeCluster::getAntennaMaxWL () const
   {
-    for ( auto& infos : _routingPads ) {
-      if (std::get<1>(infos) & IsSink) return true;
-    }
-    return false;
+    EtesianEngine* etesian = static_cast<EtesianEngine*>
+      ( ToolEngine::get( _getAnabatic()->getCell(), EtesianEngine::staticGetName() ));
+    return etesian->getAntennaMaxWL();
   }
 
   
@@ -174,7 +217,7 @@ namespace {
   {
     if (not gcell) return false;
     for ( auto& item : _area ) {
-      if (std::get<0>(item) == gcell) return true;
+      if (elemGCell(item) == gcell) return true;
     }
     return false;
   }
@@ -203,32 +246,19 @@ namespace {
   {
     Plug* rpPlug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() ); 
     if (rpPlug) {
-      merge( _anabatic->getGCellUnder( rp->getPosition() ), 0 );
+      DiodeCluster::merge( _getAnabatic()->getGCellUnder( rp->getPosition() ), 0 );
       if (rpPlug->getMasterNet()->getDirection() & Net::Direction::DirIn) {
         cdebug_log(147,0) << "| Sink " << rp << endl;
-        _routingPads.insert( make_tuple(rp,IsSink) );
+        _getRoutingPads().insert( make_tuple(rp,IsSink) );
       } else {
-        _routingPads.insert( make_tuple(rp,IsDriver) );
+        _getRoutingPads().insert( make_tuple(rp,IsDriver) );
         cdebug_log(147,0) << "| Driver " << rp << endl;
       }
     } else {
       Pin* rpPin = dynamic_cast<Pin*>( rp->getPlugOccurrence().getEntity() ); 
       if (rpPin) {
-        _routingPads.insert( make_tuple(rp,IsDriver) );
+        _getRoutingPads().insert( make_tuple(rp,IsDriver) );
         cdebug_log(147,0) << "| Pin (considered driver) " << rp << endl;
-      }
-    }
-  }
-
-
-  void  DiodeCluster::merge ( Segment* segment )
-  {
-    _WL += segment->getLength();
-    GCellsUnder gcells = _anabatic->getGCellsUnder( segment );
-    if (not gcells->empty()) {
-      _sortArea = true;
-      for ( size_t i=0 ; i<gcells->size() ; ++i ) {
-        merge( gcells->gcellAt(i), 0 );
       }
     }
   }
@@ -246,69 +276,56 @@ namespace {
   Box  DiodeCluster::getBoundingBox () const
   {
     Box bb;
-    for ( auto& infos : _routingPads ) bb.merge( std::get<0>(infos)->getPosition() );
+    for ( auto& item : _area ) bb.merge( elemGCell(item)->getBoundingBox() );
     return bb;
   }
 
 
   void  DiodeCluster::mergeHalo ( Segment* segment, uint32_t flags )
   {
-    cdebug_log(147,0) << "DiodeCluster::mergeHalo(): " << segment << endl;
-    if (not segment) return;
-
-    GCellsUnder gcells = _anabatic->getGCellsUnder( segment );
-    if (not gcells->empty()) {
-      size_t count = std::min( gcells->size(), (size_t)10 );
-      for ( size_t i=0 ; i<count ; ++i ) {
-        size_t igcell = (flags & IsSegSource) ? i : (gcells->size()-1-i);
-        merge( gcells->gcellAt(igcell), i+1 );
-      }
-    }
+    cerr << Error( "DiodeCluster::mergeHalo(Segment*): Unimplemented (%s). "
+                 , getString(segment).c_str() ) << endl;
   }
 
 
   void  DiodeCluster::inflateArea ()
   {
-    vector< tuple<GCell*,GCell*> > border;
-    for ( auto& item : _area ) {
-      GCell* current = std::get<0>( item );
-      if (std::get<2>(item)) continue;
+    cerr << Error( "DiodeCluster::inflateArea(): Unimplemented. " ) << endl;
+  }
+  
+  
+  
+  Instance* DiodeCluster::_createDiode ( Etesian::Area* area, const Box& bb, DbU::Unit uHint )
+  {
+    cdebug_log(147,1) << "DiodeCluster::_createDiode(): under=" << bb
+                      << " uHint=" << DbU::getValueString(uHint) << endl;
 
-      GCell* neighbor = current->getEast();
-      if (neighbor and not neighbor->hasNet(getTopNet()))
-        border.push_back( make_tuple(neighbor,current) );
-      neighbor = current->getWest();
-      if (neighbor and not neighbor->hasNet(getTopNet()))
-        border.push_back( make_tuple(neighbor,current) );
+    Instance* diode = area->createDiodeUnder( getRefRp(), bb, uHint );
+    if (diode) {
+      cdebug_log(147,0) << "| New diode " << diode << endl;
+      _diodes.push_back( diode );
+      GCell*   gcell   = _anabatic->getGCellUnder( diode->getAbutmentBox().getCenter() );
+      Contact* contact = gcell->hasGContact( getTopNet() );
+      if (not contact)
+        contact = gcell->breakGoThrough( getTopNet() );
+      cdebug_log(147,0) << "| breakGoThrough(), contact= " << contact << endl;
     }
-
-    for ( auto& item : _area ) {
-      GCell* current = std::get<0>( item );
-      if (std::get<2>(item)) continue;
-
-      GCell* neighbor = current->getNorth();
-      if (neighbor and not neighbor->hasNet(getTopNet()))
-        border.push_back( make_tuple(neighbor,current) );
-      neighbor = current->getSouth();
-      if (neighbor and not neighbor->hasNet(getTopNet()))
-        border.push_back( make_tuple(neighbor,current) );
-    }
-
-    for ( auto& item : border ) {
-      merge( std::get<0>(item), 1, std::get<1>(item) );
-    }
+    
+    cdebug_tabw(147,-1);
+    return diode;
   }
 
   
-  Instance* DiodeCluster::createDiode ( Etesian::Area* area, GCell* gcell, GCell* backGCell )
+  Instance* DiodeCluster::_createDiode ( Etesian::Area* area, GCell* gcell, GCell* backGCell )
   {
-    cdebug_log(147,0) << "DiodeCluster::createDiode(): from=" << gcell << endl;
+    cdebug_log(147,1) << "DiodeCluster::_createDiode(): under=" << gcell << endl;
 
     Box bb = gcell->getBoundingBox(); 
     cdebug_log(147,0) << "> GCell area: " << bb << endl;
 
     Instance* diode = area->createDiodeUnder( getRefRp(), bb, 0 );
     if (diode) {
+      cdebug_log(147,0) << "| New diode " << diode << endl;
       _diodes.push_back( diode );
       Transformation trans  = getRefRp()->getPlugOccurrence().getPath().getTransformation();
       Point          center = diode->getAbutmentBox().getCenter();
@@ -345,7 +362,7 @@ namespace {
                             , _anabatic->getConfiguration()->getGHorizontalPitch()
                             );
           } else {
-            cerr << Error( "DiodeCluster::createDiode(): Back GCell not aligned with diode GCell.\n"
+            cerr << Error( "DiodeCluster::_createDiode(): Back GCell not aligned with diode GCell.\n"
                            "        * %s\n"
                            "        * %s"
                          , getString(gcell).c_str()
@@ -355,28 +372,265 @@ namespace {
         }
       }
     }
+    cdebug_tabw(147,-1);
     return diode;
   }
 
   
-  const vector<Instance*>& DiodeCluster::createDiodes ( Etesian::Area* area )
+  const vector<Instance*>& DiodeCluster::createDiode ( Etesian::Area* area )
   {
     if (not needsDiode()) return _diodes;
+
+    DbU::Unit antennaMaxWL = getAntennaMaxWL();
+    size_t    diodeCount   = getWL() / antennaMaxWL;
+    if (not diodeCount) diodeCount = 1;
+
     showArea();
 
-    cdebug_log(147,1) << "DiodeCluster::createDiodes()" << endl;
+    cdebug_log(147,1) << "DiodeCluster::createDiode() count=" << diodeCount << endl;
     Instance* diode = NULL;
     for ( auto& item : _area ) {
       GCell* gcell     = std::get<0>( item );
       GCell* backGCell = std::get<2>( item );
       cdebug_log(147,0) << "| d=" << std::get<1>(item) << " " << gcell << endl;
-      diode = createDiode( area, gcell, backGCell );
-      if (diode) break;
+      diode = _createDiode( area, gcell, backGCell );
+      if (diode) {
+        if (_diodes.size() < diodeCount) {
+          diode = NULL;
+          continue;
+        }
+        break;
+      }
     }
     cdebug_tabw(147,-1);
 
     return _diodes;
   }
+
+
+  bool  DiodeCluster::connectDiodes ()
+  {
+    EtesianEngine* etesian = static_cast<EtesianEngine*>
+      ( ToolEngine::get( _anabatic->getCell(), EtesianEngine::staticGetName() ));
+
+    Cell* diodeCell   = etesian->getDiodeCell();
+    Net*  diodeOutput = NULL;
+    for ( Net* net : diodeCell->getNets() ) {
+      if (net->isSupply() or not net->isExternal()) continue;
+      diodeOutput = net;
+      break;
+    }
+
+    Net*  topNet   = getTopNet();
+    Net*  diodeNet = topNet;
+    Plug* sinkPlug = dynamic_cast<Plug*>( getRefRp()->getPlugOccurrence().getEntity() );
+    Path  path     = Path();
+
+    if (sinkPlug) {
+      diodeNet = sinkPlug->getNet();
+      path     = getRefRp()->getOccurrence().getPath().getHeadPath();
+    }
+
+    for ( Instance* diode : _diodes ) {
+      cdebug_log(147,0) << "  Bind diode input:" << endl;
+      cdebug_log(147,0) << "    " << diode    << " @" << diode->getTransformation() << endl;
+      cdebug_log(147,0) << "    topNet->getCell():" << topNet->getCell() << endl;
+      cdebug_log(147,0) << "    " << getRefRp()->getOccurrence().getPath() << endl;
+      Plug* diodePlug = diode->getPlug( diodeOutput );
+      diodePlug->setNet( diodeNet );
+      RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
+      cdebug_log(147,0) << "    " << getRefRp() << endl;
+
+      GCell* gcell = _anabatic->getGCellUnder( diodeRp->getPosition() );
+      if (gcell) {
+        Contact* contact = gcell->breakGoThrough( topNet );
+        contact->getBodyHook()->merge( diodeRp->getBodyHook() );
+      }
+    }
+
+    return true;
+  }
+
+
+// -----------------------------------------------------------------
+// Class : "::DiodeRps".
+
+  class DiodeRps : public DiodeCluster {
+    public:
+                    DiodeRps    ( AnabaticEngine*, RoutingPad* );
+      virtual bool  needsDiode  () const;
+      virtual void  merge       ( Segment* );
+      virtual void  mergeHalo   ( Segment*, uint32_t flags );
+      virtual void  inflateArea (); 
+  };
+
+
+  DiodeRps::DiodeRps ( AnabaticEngine* anabatic, RoutingPad* rp )
+    : DiodeCluster(anabatic,rp)
+  { }
+
+
+  bool  DiodeRps::needsDiode () const
+  {
+    for ( auto& infos : getRoutingPads() ) {
+      if (std::get<1>(infos) & IsSink) return true;
+    }
+    return false;
+  }
+
+
+  void  DiodeRps::merge ( Segment* segment )
+  {
+    _getWL() += segment->getLength();
+    GCellsUnder gcells = _getAnabatic()->getGCellsUnder( segment );
+    if (not gcells->empty()) {
+      for ( size_t i=0 ; i<gcells->size() ; ++i ) {
+        DiodeCluster::merge( gcells->gcellAt(i), 0 );
+      }
+    }
+  }
+
+
+  void  DiodeRps::mergeHalo ( Segment* segment, uint32_t flags )
+  {
+    cdebug_log(147,0) << "DiodeRps::mergeHalo(): " << segment << endl;
+    if (not segment) return;
+
+    GCellsUnder gcells = _getAnabatic()->getGCellsUnder( segment );
+    if (not gcells->empty()) {
+      size_t count = std::min( gcells->size(), (size_t)10 );
+      for ( size_t i=0 ; i<count ; ++i ) {
+        size_t igcell = (flags & IsSegSource) ? i : (gcells->size()-1-i);
+        DiodeCluster::merge( gcells->gcellAt(igcell), i+1 );
+      }
+    }
+  }
+
+
+  void  DiodeRps::inflateArea ()
+  {
+    vector< tuple<GCell*,GCell*> > border;
+    for ( auto& item : _getArea() ) {
+      GCell* current = std::get<0>( item );
+      if (std::get<2>(item)) continue;
+
+      GCell* neighbor = current->getEast();
+      if (neighbor and not neighbor->hasNet(getTopNet()))
+        border.push_back( make_tuple(neighbor,current) );
+      neighbor = current->getWest();
+      if (neighbor and not neighbor->hasNet(getTopNet()))
+        border.push_back( make_tuple(neighbor,current) );
+    }
+
+    for ( auto& item : _getArea() ) {
+      GCell* current = std::get<0>( item );
+      if (std::get<2>(item)) continue;
+
+      GCell* neighbor = current->getNorth();
+      if (neighbor and not neighbor->hasNet(getTopNet()))
+        border.push_back( make_tuple(neighbor,current) );
+      neighbor = current->getSouth();
+      if (neighbor and not neighbor->hasNet(getTopNet()))
+        border.push_back( make_tuple(neighbor,current) );
+    }
+
+    for ( auto& item : border ) {
+      DiodeCluster::merge( std::get<0>(item), 1, std::get<1>(item) );
+    }
+  }
+
+
+// -----------------------------------------------------------------
+// Class : "::DiodeWire".
+
+  class DiodeWire : public DiodeCluster {
+    public:
+                                       DiodeWire   ( AnabaticEngine*, RoutingPad* );
+      virtual       bool               needsDiode  () const;
+      virtual       void               merge       ( Segment* );
+      virtual const vector<Instance*>& createDiode ( Etesian::Area* );
+    private:
+      set<Box,CompareBySegmentBox>   _boxes;
+      set<Contact*,Go::CompareById>  _contacts;
+  };
+
+
+  DiodeWire::DiodeWire ( AnabaticEngine* anabatic, RoutingPad* rp )
+    : DiodeCluster(anabatic,rp)
+    , _boxes()
+    , _contacts()
+  { }
+
+
+  bool  DiodeWire::needsDiode () const
+  { return getWL() > getAntennaMaxWL(); }
+
+
+  void  DiodeWire::merge ( Segment* segment )
+  {
+    Box bb = segment->getBoundingBox();
+    if (_boxes.find(bb) != _boxes.end()) return;
+    cdebug_log(147,0) << "| merge: " << segment << endl;
+    _boxes.insert( bb );
+    _getWL() += segment->getLength();
+  }
+
+  
+  const vector<Instance*>& DiodeWire::createDiode ( Etesian::Area* area )
+  {
+    cdebug_log(147,1) << "DiodeWire::createDiode() " << endl;
+    DbU::Unit antennaMaxWL = getAntennaMaxWL();
+
+    size_t diodeCount = getWL() / antennaMaxWL;
+    if (not diodeCount)  return _getDiodes();
+    
+    for ( const Box& bb : _boxes ) {
+      bool       bbH           = (bb.getWidth() >= bb.getHeight());
+      DbU::Unit  bbLength      = (bbH) ? bb.getWidth() : bb.getHeight();
+      size_t     segDiodeCount = bbLength / antennaMaxWL;
+      if (not segDiodeCount) ++segDiodeCount;
+      cdebug_log(147,0) << "diodes=" << segDiodeCount << " " << bb << endl;
+      if (bbLength < antennaMaxWL/4) continue;
+
+      if (bbH) {
+        DbU::Unit uHint = bb.getXMin();
+        DbU::Unit uMax  = bb.getXMax();
+        while ( uHint < uMax ) {
+          _createDiode( area, bb, uHint );
+          uHint += antennaMaxWL;
+        }
+        if (_getDiodes().size() >= diodeCount) break;
+      } else {
+        GCellsUnder gcells = _getAnabatic()->getGCellsUnder( Point(bb.getXCenter(),bb.getYMin())
+                                                           , Point(bb.getXCenter(),bb.getYMax()) );
+        if (gcells->size()) {
+          size_t gcellPeriod = antennaMaxWL / gcells->gcellAt(0)->getHeight();
+          for ( size_t i=0 ; i<gcells->size() ; ++i ) {
+            Instance* diode = _createDiode( area, gcells->gcellAt(i), NULL );
+            if (diode) {
+              i += gcellPeriod - (i%gcellPeriod);
+            }
+          }
+        }
+      }
+    }
+
+    if (_getDiodes().size() < diodeCount) {
+      cerr << Error( "DiodeWire::createDiode(): On cluster of net \"%s\",\n"
+                     "        Allocated only %u diodes of %u."
+                   , getString(getTopNet()->getName()).c_str()
+                   , _getDiodes().size()
+                   , diodeCount
+                   ) << endl;
+    }
+
+    cdebug_tabw(147,-1);
+    return _getDiodes();
+  }
+
+
+// -----------------------------------------------------------------
+// Local functions.
 
 
 }  // Anonymous namespace.
@@ -504,13 +758,14 @@ namespace Anabatic {
 
     vector<DiodeCluster*>              clusters;
     set<RoutingPad*,DBo::CompareById>  rpsDone;
+    set<Segment*,DBo::CompareById>     clusterSegments;
     for ( RoutingPad* rp : net->getRoutingPads() ) {
       set<Segment*,DBo::CompareById>  segmentsDone;
 
       if (rpsDone.find(rp) != rpsDone.end()) continue;
       
       cdebug_log(147,0) << "New cluster from " << rp << endl;
-      DiodeCluster* cluster = new DiodeCluster ( rp, this );
+      DiodeCluster* cluster = new DiodeRps ( this, rp );
       clusters.push_back( cluster );
       rpsDone.insert( rp );
 
@@ -573,6 +828,7 @@ namespace Anabatic {
             else                                  branchWL  = 0;
             cluster->merge( segment );
             std::get<3>( hooksStack[backIndex] ) |= DiodeCluster::InCluster;
+            clusterSegments.insert( segment );
             cdebug_log(147,0) << "| back=" << backIndex
                               << " -> " << std::get<2>( hooksStack[backIndex] )
                               << " " << DbU::getValueString(segment->getLength())
@@ -626,20 +882,58 @@ namespace Anabatic {
       cluster->inflateArea();
     }
 
-    Cell* diodeCell   = etesian->getDiodeCell();
-    Net*  diodeOutput = NULL;
-    for ( Net* net : diodeCell->getNets() ) {
-      if (net->isSupply() or not net->isExternal()) continue;
-      diodeOutput = net;
-      break;
-    }
-
     if (clusters.size() > 1) {
+      cdebug_log(147,0) << "Cluster wiring" << endl;
+      for ( Segment* segment : net->getSegments() ) {
+        if (clusterSegments.find(segment) != clusterSegments.end()) continue;
+
+        cdebug_log(147,0) << "New wiring cluster from " << segment << endl;
+        DiodeWire* cluster = new DiodeWire( this, clusters[0]->getRefRp() );
+        cluster->merge( segment );
+        clusters.push_back( cluster );
+        clusterSegments.insert( segment );
+
+        size_t               stackTop = 0;
+        vector< StackItem >  hooksStack;
+        hooksStack.push_back( make_tuple( segment->getSourceHook()
+                                        , segment
+                                        , 0
+                                        , DiodeCluster::IsSegSource ) );
+        hooksStack.push_back( make_tuple( segment->getTargetHook()
+                                        , segment
+                                        , 0
+                                        , 0 ) );
+
+        while ( stackTop < hooksStack.size() ) {
+          Hook*    toHook      = std::get<0>( hooksStack[stackTop] );
+          Segment* fromSegment = std::get<1>( hooksStack[stackTop] );
+        
+          for ( Hook* hook : toHook->getHooks() ) {
+            Segment* segment = dynamic_cast<Segment*>( hook->getComponent() );
+            if (segment) {
+              if (segment == fromSegment) continue;
+              if (clusterSegments.find(segment) != clusterSegments.end()) continue;
+              clusterSegments.insert( segment );
+              cluster->merge( segment );
+              uint32_t flags = (segment->getSourceHook() == hook) ? DiodeCluster::IsSegSource : 0;
+              if (dynamic_cast<Segment::SourceHook*>(hook)) {
+                hooksStack.push_back( make_tuple( segment->getTargetHook(), segment, stackTop, flags ) );
+              } else {
+                hooksStack.push_back( make_tuple( segment->getSourceHook(), segment, stackTop, flags ) );
+              }
+            }
+          }
+
+          ++stackTop;
+        }
+      }
+
       total += clusters.size();
       cdebug_log(147,1) << "Net \"" << net->getName() << " has " << clusters.size() << " diode clusters." << endl;
       for ( size_t i=0 ; i<clusters.size() ; ++i ) {
         cdebug_log(147,1) << "Cluster [" << i << "] needsDiode=" << clusters[i]->needsDiode()
                           << " bb=" << clusters[i]->getBoundingBox() << endl;
+        cdebug_log(147,0) << "  WL=" << DbU::getValueString(clusters[i]->getWL()) << endl;
         for ( auto& item : clusters[i]->getRoutingPads() ) {
           cdebug_log(147,0) << "| flags=" << DiodeCluster::toStr(std::get<1>(item))
                             << " " << std::get<0>(item) << endl;
@@ -649,39 +943,9 @@ namespace Anabatic {
           continue;
         }
         
-        const vector<Instance*> diodes = clusters[i]->createDiodes( etesian->getArea() );
-        RoutingPad* rp = clusters[i]->getRefRp();
+        const vector<Instance*>& diodes = clusters[i]->createDiode( etesian->getArea() );
         if (not diodes.empty()) {
-          Net*  topNet   = rp->getNet();
-          Plug* sinkPlug = dynamic_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
-          Path  path     = rp->getOccurrence().getPath().getHeadPath();
-          if (sinkPlug) {
-            for ( Instance* diode : diodes ) {
-              cdebug_log(147,0) << "  Bind diode input:" << endl;
-              cdebug_log(147,0) << "    " << diode    << " @" << diode   ->getTransformation() << endl;
-              cdebug_log(147,0) << "    topNet->getCell():" << topNet->getCell() << endl;
-              cdebug_log(147,0) << "    " << rp->getOccurrence().getPath() << endl;
-            //Path path = rp->getOccurrence().getPath().getHeadPath();
-              Plug* diodePlug  = diode->getPlug( diodeOutput );
-              diodePlug->setNet( sinkPlug->getNet() );
-              RoutingPad* diodeRp = RoutingPad::create( topNet, Occurrence(diodePlug,path), RoutingPad::BiggestArea );
-              cdebug_log(147,0) << "    " << rp << endl;
-
-              GCell* gcell = getGCellUnder( diodeRp->getPosition() );
-              if (gcell) {
-                Contact* contact = gcell->breakGoThrough( topNet );
-                contact->getBodyHook()->merge( diodeRp->getBodyHook() );
-              }
-            }
-          } else {
-            cerr << Error( "EtesianEngine::antennaProtect(): For %s (rps:%u, clusters:%u)\n"
-                         "        Cannot get a Plug from %s (?)."
-                         , getString(net).c_str()
-                         , rpsDone.size()
-                         , clusters.size()
-                         , getString(clusters[i]->getRefRp()).c_str()
-                         ) << endl;
-          }
+          clusters[i]->connectDiodes();
         } else {
           cerr << Error( "EtesianEngine::antennaProtect(): For %s (rps:%u, clusters:%u)\n"
                          "        Cannot find a diode nearby %s."
@@ -694,7 +958,12 @@ namespace Anabatic {
         }
         cdebug_tabw(147,-1);
       }
+
       cdebug_tabw(147,-1);
+    }
+
+    if ((rpsDone.size() == 2) and (clusters.size() == 2)) {
+      cerr << "Long bipoint " << net << endl;
     }
 
     for ( DiodeCluster* cluster : clusters ) delete cluster;
