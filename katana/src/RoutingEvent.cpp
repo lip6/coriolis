@@ -671,6 +671,8 @@ namespace Katana {
        and (fsm.getCost(0)->getTrack() != getSegment()->getTrack())) {
       cdebug_log(159,0) << "Insert in free space." << endl;
       fsm.moveToTrack( 0 );
+      cdebug_log(155,0) << "          @" << DbU::getValueString(getSegment()->getAxis())
+                        << "  -> "       << DbU::getValueString(fsm.getCost(0)->getTrack()->getAxis()) << endl;
       fsm.doActions();
       queue.commit();
     }

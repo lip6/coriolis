@@ -566,7 +566,15 @@ namespace Katana {
           cdebug_log(155,0) << "Segment istself in track, skip." << endl;
           continue;
         }
-        cdebug_log(155,0) << "Same net overlap, increase delta shared." << endl;
+        if (     cost.doIgnoreShort()
+           and (_segments[begin]->getLength() < 2*_segments[begin]->getPPitch())) {
+          cdebug_log(155,0) << "Overlap with same net and less than one p-pitch, skip." << endl;
+          continue;
+        }
+        cdebug_log(155,0) << "Same net overlap, increase delta shared ("
+                          <<            DbU::getValueString(_segments[begin]->getLength())
+                          << " > 2*" << DbU::getValueString(_segments[begin]->getPPitch())
+                          << ")" << endl;
         cost.incDeltaShared ( overlap.getSize() );
       }
       _segments[begin]->incOverlapCost( cost );

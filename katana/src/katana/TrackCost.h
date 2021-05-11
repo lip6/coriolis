@@ -60,6 +60,7 @@ namespace Katana {
                  , GlobalEnclosed     = (1 << 17)
                  , AtRipupLimit       = (1 << 18)
                  , IgnoreTerminals    = (1 << 19)
+                 , IgnoreShort        = (1 << 20)
                  , MergeMask          = ForGlobal     |Blockage|Fixed       |Infinite
                                        |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
                                        |GlobalEnclosed         |AtRipupLimit
@@ -104,6 +105,7 @@ namespace Katana {
                    bool          isFree              () const;
       inline       bool          isSymmetric         () const;
       inline       bool          isWide              () const;
+      inline       bool          doIgnoreShort       () const;
       inline       uint32_t      getFlags            () const;
       inline       size_t        getSpan             () const;
       inline       Net*          getNet              () const;
@@ -208,6 +210,7 @@ namespace Katana {
   inline       bool          TrackCost::isAtRipupLimit      () const { return _flags & AtRipupLimit; }
   inline       bool          TrackCost::isSymmetric         () const { return _flags & Symmetric; }
   inline       bool          TrackCost::isWide              () const { return (_span > 1); }
+  inline       bool          TrackCost::doIgnoreShort       () const { return _flags & IgnoreShort; }
   inline       uint32_t      TrackCost::getFlags            () const { return _flags; }
   inline       size_t        TrackCost::getSpan             () const { return _span; }
   inline       Net*          TrackCost::getNet              () const { return (_selectFlags & Symmetric) ? getNet2() : getNet1(); }
