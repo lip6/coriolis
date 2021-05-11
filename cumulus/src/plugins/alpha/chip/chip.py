@@ -143,12 +143,12 @@ class Chip ( Block ):
     def save ( self, flags=0 ):
         if not self.conf.validated:
             raise ErrorMessage( 1, 'chip.save(): Chip is not valid, aborting.' )
-        self.conf.corona.setName( self.conf.corona.getName()+'_r' )
-        self.conf.chip  .setName( self.conf.chip  .getName()+'_r' )
         views = CRL.Catalog.State.Logical
         if self.conf.routingGauge.isSymbolic():
             views = views | CRL.Catalog.State.Physical
         super(Chip,self).save( flags )
+        self.conf.corona.setName( self.conf.corona.getName()+'_r' )
+        self.conf.chip  .setName( self.conf.chip  .getName()+'_r' )
         af = CRL.AllianceFramework.get()
         af.saveCell( self.conf.corona, views|flags )
         af.saveCell( self.conf.chip  , views|flags )
