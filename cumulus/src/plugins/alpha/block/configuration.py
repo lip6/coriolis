@@ -1207,24 +1207,6 @@ class BlockConf ( GaugeConf ):
             trace( 550, '\tNew cloned cell: "{}"\n'.format(masterCell) )
             self.cloneds.append( masterCell )
         return
-
-    #def rsave ( self, cell, depth ):
-    #    """
-    #    Save the complete cell hierarchy. Saves only the physical view, except
-    #    for the ones that has been cloned (their names should end up by "_cts"),
-    #    for which logical and physical views are to be saved. They are completely
-    #    new cells.
-    #    """
-    #    if depth == 0: print( '  o  Block Recursive Save-Cell.' )
-    #    flags = CRL.Catalog.State.Physical
-    #    if cell.getName().endswith('_cts'): flags |= CRL.Catalog.State.Logical
-    #    if cell.isUniquified():             flags |= CRL.Catalog.State.Logical
-    #    self.framework.saveCell( cell, flags )
-    #    print( '     {}+ {}.'.format(' '*(depth*2), cell.getName() ) )
-    #    for instance in  cell.getInstances():
-    #        masterCell = instance.getMasterCell()
-    #        if not masterCell.isTerminalNetlist():
-    #            self.rsave( masterCell, depth+1 )
   
     def save ( self, flags ):
         """
@@ -1232,19 +1214,24 @@ class BlockConf ( GaugeConf ):
         cells, then call rsave().
         """
         trace( 550,'\tBlockConf.save() on "{}"\n'.format(self.cell.getName()) )
+        views = CRL.Catalog.State.Logical
+        if self.routingGauge.isSymbolic():
+            views = views | CRL.Catalog.State.Physical
         for cell in self.cloneds:
             trace( 550, '\tRenaming cloned cell: "{}"\n'.format(cell) )
             cell.setName( cell.getName()+'_cts' )
         if self.chip is None:
+            topCell = self.cell
             self.cell.setName( self.cell.getName()+'_r' )
-        views = CRL.Catalog.State.Logical
-        if self.routingGauge.isSymbolic():
-            views = views | CRL.Catalog.State.Physical
-        rsave( self.cell, views|flags )
-        if not self.routingGauge.isSymbolic():
+            rsave( topCell, views|flags )
+        else:
             topCell = self.chip
-            if topCell is None:
-                topCell = self.cell
+            self.corona.setName( self.corona.getName()+'_r' )
+            self.chip  .setName( self.chip  .getName()+'_r' )
+            rsave( self.corona, views|flags )
+            rsave( self.chip  , views|flags )
+        if not self.routingGauge.isSymbolic():
+            print( '     + {} (GDSII).'.format( topCell.getName() ))
             CRL.Gds.save( topCell )
         return
         
