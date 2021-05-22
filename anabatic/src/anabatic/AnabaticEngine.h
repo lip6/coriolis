@@ -248,7 +248,8 @@ namespace Anabatic {
       inline        bool              doDestroyBaseContact    () const;
       inline        bool              doDestroyBaseSegment    () const;
       inline        bool              doDestroyTool           () const;
-      inline        DbU::Unit         getAntennaMaxWL         () const;
+      inline        DbU::Unit         getAntennaGateMaxWL     () const;
+      inline        DbU::Unit         getAntennaDiodeMaxWL    () const;
       inline        DbU::Unit         getGlobalThreshold      () const;
       inline        float             getSaturateRatio        () const;
       inline        size_t            getSaturateRp           () const;
@@ -376,7 +377,8 @@ namespace Anabatic {
   inline       bool              AnabaticEngine::doWarnOnGCellOverload () const { return _flags & Flags::WarnOnGCellOverload; }
   inline       bool              AnabaticEngine::isInDemoMode          () const { return _flags & Flags::DemoMode; }
   inline       bool              AnabaticEngine::isChip                () const { return _chipTools.isChip(); }
-  inline       DbU::Unit         AnabaticEngine::getAntennaMaxWL       () const { return getConfiguration()->getAntennaMaxWL(); }
+  inline       DbU::Unit         AnabaticEngine::getAntennaGateMaxWL   () const { return getConfiguration()->getAntennaGateMaxWL(); }
+  inline       DbU::Unit         AnabaticEngine::getAntennaDiodeMaxWL  () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
   inline       DbU::Unit         AnabaticEngine::getGlobalThreshold    () const { return _configuration->getGlobalThreshold(); }
   inline       float             AnabaticEngine::getSaturateRatio      () const { return _configuration->getSaturateRatio(); }
   inline       size_t            AnabaticEngine::getSaturateRp         () const { return _configuration->getSaturateRp(); }

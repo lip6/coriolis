@@ -108,6 +108,10 @@ namespace {
   typedef set<GCellInfosItem,CompareGCellInfos>  GCellArea;
 
 
+  inline DbU::Unit getBoxLength ( const Box& bb )
+  { return (bb.getWidth() > bb.getHeight()) ? bb.getWidth() : bb.getHeight(); }
+
+
 // -----------------------------------------------------------------
 // Class : "::DiodeCluster".
 
@@ -120,34 +124,35 @@ namespace {
       static const uint32_t  InCluster;
       static       string    toStr ( uint32_t );
     public:
-                                       DiodeCluster    ( AnabaticEngine*, RoutingPad* );
-      virtual                         ~DiodeCluster    ();
-                    DbU::Unit          getAntennaMaxWL () const;
-      inline        bool               hasRp           ( RoutingPad* ) const;
-                    bool               hasGCell        ( GCell* ) const;
-      inline        Net*               getTopNet       () const;
-      inline        RoutingPad*        getRefRp        () const;
-      inline        vector<GCellArea>& _getAreas       ();
-      inline        AnabaticEngine*    _getAnabatic    () const;
-      inline  const RoutingPadInfos&   getRoutingPads  () const;
-      inline        RoutingPadInfos&   _getRoutingPads () ;
-      inline  const vector<Instance*>& getDiodes       () const;
-      inline        vector<Instance*>& _getDiodes      ();
-      inline        DbU::Unit          getWL           () const;
-      inline        DbU::Unit&         _getWL          ();
-                    void               showArea        () const;
-      virtual       bool               needsDiode      () const = 0;
-                    Box                getBoundingBox  () const;
-                    void               merge           ( GCell*, uint32_t distance, GCell* back=NULL );
-      virtual       void               merge           ( RoutingPad* );
-      virtual       void               merge           ( Segment* ) = 0;
-                    void               mergeForcedHalo ( size_t iarea, GCell*, uint32_t distance );
-      virtual       void               mergeHalo       ( Segment*, uint32_t flags );
-      virtual       void               inflateArea     (); 
-                    Instance*          _createDiode    ( Etesian::Area*, const Box&, DbU::Unit uHint );
-                    Instance*          _createDiode    ( Etesian::Area*, GCell*, GCell* );
-      virtual const vector<Instance*>& createDiodes    ( Etesian::Area* );
-                    bool               connectDiodes   ();
+                                       DiodeCluster         ( AnabaticEngine*, RoutingPad* );
+      virtual                         ~DiodeCluster         ();
+                    DbU::Unit          getAntennaGateMaxWL  () const;
+                    DbU::Unit          getAntennaDiodeMaxWL () const;
+      inline        bool               hasRp                ( RoutingPad* ) const;
+                    bool               hasGCell             ( GCell* ) const;
+      inline        Net*               getTopNet            () const;
+      inline        RoutingPad*        getRefRp             () const;
+      inline        vector<GCellArea>& _getAreas            ();
+      inline        AnabaticEngine*    _getAnabatic         () const;
+      inline  const RoutingPadInfos&   getRoutingPads       () const;
+      inline        RoutingPadInfos&   _getRoutingPads      () ;
+      inline  const vector<Instance*>& getDiodes            () const;
+      inline        vector<Instance*>& _getDiodes           ();
+      inline        DbU::Unit          getWL                () const;
+      inline        DbU::Unit&         _getWL               ();
+                    void               showArea             () const;
+      virtual       bool               needsDiode           () const = 0;
+                    Box                getBoundingBox       () const;
+                    void               merge                ( GCell*, uint32_t distance, GCell* back=NULL );
+      virtual       void               merge                ( RoutingPad* );
+      virtual       void               merge                ( Segment* ) = 0;
+                    void               mergeForcedHalo      ( size_t iarea, GCell*, uint32_t distance );
+      virtual       void               mergeHalo            ( Segment*, uint32_t flags );
+      virtual       void               inflateArea          (); 
+                    Instance*          _createDiode         ( Etesian::Area*, const Box&, DbU::Unit uHint );
+                    Instance*          _createDiode         ( Etesian::Area*, GCell*, GCell* );
+      virtual const vector<Instance*>& createDiodes         ( Etesian::Area* );
+                    bool               connectDiodes        ();
     private:
       AnabaticEngine*    _anabatic;
       DbU::Unit          _WL;
@@ -202,11 +207,19 @@ namespace {
   inline       vector<Instance*>&  DiodeCluster::_getDiodes      () { return _diodes; }
 
 
-  DbU::Unit  DiodeCluster::getAntennaMaxWL () const
+  DbU::Unit  DiodeCluster::getAntennaGateMaxWL () const
   {
     EtesianEngine* etesian = static_cast<EtesianEngine*>
       ( ToolEngine::get( _getAnabatic()->getCell(), EtesianEngine::staticGetName() ));
-    return etesian->getAntennaMaxWL();
+    return etesian->getAntennaGateMaxWL();
+  }
+
+
+  DbU::Unit  DiodeCluster::getAntennaDiodeMaxWL () const
+  {
+    EtesianEngine* etesian = static_cast<EtesianEngine*>
+      ( ToolEngine::get( _getAnabatic()->getCell(), EtesianEngine::staticGetName() ));
+    return etesian->getAntennaDiodeMaxWL();
   }
 
   
@@ -393,13 +406,13 @@ namespace {
   {
     if (not needsDiode()) return _diodes;
 
-    DbU::Unit antennaMaxWL = getAntennaMaxWL();
-    size_t    diodeCount   = getWL() / antennaMaxWL;
+    DbU::Unit antennaDiodeMaxWL = getAntennaDiodeMaxWL();
+    size_t    diodeCount = getWL() / antennaDiodeMaxWL;
     if (not diodeCount) diodeCount = 1;
 
     showArea();
 
-    cdebug_log(147,1) << "DiodeCluster::createDiode() count=" << diodeCount
+    cdebug_log(147,1) << "DiodeCluster::createDiodes() count=" << diodeCount
                       << ", forcedHalo=" << (_areas.size()-1) << endl;
     Instance* diode = NULL;
     for ( size_t i=0 ; i<_areas.size() ; ++i ) {
@@ -514,12 +527,12 @@ namespace {
     if (not segment) return;
 
     if (   (dynamic_cast<Horizontal*>(segment))
-       and (getWL() + segment->getLength() > getAntennaMaxWL())) {
+       and (getWL() + segment->getLength() > getAntennaGateMaxWL())) {
       cdebug_log(147,0) << "  Put in forced halo." << segment << endl;
       GCellsUnder gcells = _getAnabatic()->getGCellsUnder( segment );
       if (not gcells->empty()) {
         size_t iarea = _getAreas().size();
-        size_t count = std::min( gcells->size(), (size_t)10 );
+        size_t count = std::min( gcells->size(), (size_t)50 );
         for ( size_t i=0 ; i<count ; ++i ) {
           size_t igcell = (flags & IsSegSource) ? i : (gcells->size()-1-i);
           DiodeCluster::mergeForcedHalo( iarea, gcells->gcellAt(igcell), i );
@@ -595,7 +608,7 @@ namespace {
 
 
   bool  DiodeWire::needsDiode () const
-  { return getWL() > getAntennaMaxWL(); }
+  { return getWL() >= getAntennaDiodeMaxWL(); }
 
 
   void  DiodeWire::merge ( Segment* segment )
@@ -610,33 +623,36 @@ namespace {
   
   const vector<Instance*>& DiodeWire::createDiodes ( Etesian::Area* area )
   {
-    cdebug_log(147,1) << "DiodeWire::createDiode() " << endl;
-    DbU::Unit antennaMaxWL = getAntennaMaxWL();
+    cdebug_log(147,1) << "DiodeWire::createDiodes() " << endl;
+    DbU::Unit antennaDiodeMaxWL = getAntennaDiodeMaxWL();
 
-    size_t diodeCount = getWL() / antennaMaxWL;
+    size_t diodeCount = getWL() / antennaDiodeMaxWL;
     if (not diodeCount)  return _getDiodes();
     
     for ( const Box& bb : _boxes ) {
       bool       bbH           = (bb.getWidth() >= bb.getHeight());
       DbU::Unit  bbLength      = (bbH) ? bb.getWidth() : bb.getHeight();
-      size_t     segDiodeCount = bbLength / antennaMaxWL;
+      size_t     segDiodeCount = bbLength / antennaDiodeMaxWL;
       if (not segDiodeCount) ++segDiodeCount;
-      cdebug_log(147,0) << "diodes=" << segDiodeCount << " " << bb << endl;
-      if (bbLength < antennaMaxWL/4) continue;
+      bool isH = (bb.getWidth() >= bb.getHeight());
+      cdebug_log(147,0) << "diodes=" << segDiodeCount << " " << bb
+                        << " isH=" << isH
+                        << " length:" << DbU::getValueString(getBoxLength(bb)) << endl;
+    //if (bbLength < antennaDiodeMaxWL/4) continue;
 
       if (bbH) {
         DbU::Unit uHint = bb.getXMin();
         DbU::Unit uMax  = bb.getXMax();
         while ( uHint < uMax ) {
           _createDiode( area, bb, uHint );
-          uHint += antennaMaxWL;
+          uHint += antennaDiodeMaxWL;
         }
         if (_getDiodes().size() >= diodeCount) break;
       } else {
         GCellsUnder gcells = _getAnabatic()->getGCellsUnder( Point(bb.getXCenter(),bb.getYMin())
                                                            , Point(bb.getXCenter(),bb.getYMax()) );
         if (gcells->size()) {
-          size_t gcellPeriod = antennaMaxWL / gcells->gcellAt(0)->getHeight();
+          size_t gcellPeriod = antennaDiodeMaxWL / gcells->gcellAt(0)->getHeight();
           for ( size_t i=0 ; i<gcells->size() ; ++i ) {
             Instance* diode = _createDiode( area, gcells->gcellAt(i), NULL );
             if (diode) {
@@ -786,7 +802,7 @@ namespace Anabatic {
     EtesianEngine* etesian = static_cast<EtesianEngine*>
       ( ToolEngine::get( getCell(), EtesianEngine::staticGetName() ));
 
-    DbU::Unit antennaMaxWL = etesian->getAntennaMaxWL();
+    DbU::Unit antennaGateMaxWL = etesian->getAntennaGateMaxWL();
 
     vector<DiodeCluster*>              clusters;
     set<RoutingPad*,DBo::CompareById>  rpsDone;
@@ -796,7 +812,7 @@ namespace Anabatic {
 
       if (rpsDone.find(rp) != rpsDone.end()) continue;
       
-      cdebug_log(147,0) << "New cluster [" << clusters.size() << "] from " << rp << endl;
+      cdebug_log(147,0) << "New Cluster [" << clusters.size() << "] from " << rp << endl;
       DiodeCluster* cluster = new DiodeRps ( this, rp );
       clusters.push_back( cluster );
       rpsDone.insert( rp );
@@ -814,7 +830,7 @@ namespace Anabatic {
 
         cdebug_log(147,0) << "| PROCESS [" << stackTop << "] " << fromSegment << endl;
         if (fromSegment) {
-          if (fromSegment->getLength() > antennaMaxWL/2) {
+          if (fromSegment->getLength() > antennaGateMaxWL/2) {
             cdebug_log(147,0) << "| Long connecting wire, skipping" << endl;
             ++stackTop;
             continue;
@@ -832,7 +848,7 @@ namespace Anabatic {
         cdebug_log(147,0) << "| wl=" << DbU::getValueString(cluster->getWL())
                           << " + " << DbU::getValueString(branchWL) << endl;
 
-        if (cluster->getWL() + branchWL > antennaMaxWL) {
+        if (cluster->getWL() + branchWL > antennaGateMaxWL) {
           cdebug_log(147,0) << "| Cluster above maximul WL, skipping" << endl;
           ++stackTop;
           continue;
@@ -919,7 +935,8 @@ namespace Anabatic {
       for ( Segment* segment : net->getSegments() ) {
         if (clusterSegments.find(segment) != clusterSegments.end()) continue;
 
-        cdebug_log(147,0) << "New wiring cluster from " << segment << endl;
+        cdebug_log(147,0) << "New Cluster [" << clusters.size()
+                          << "] wiring from " << segment << endl;
         DiodeWire* cluster = new DiodeWire( this, clusters[0]->getRefRp() );
         cluster->merge( segment );
         clusters.push_back( cluster );
@@ -940,18 +957,28 @@ namespace Anabatic {
           Hook*    toHook      = std::get<0>( hooksStack[stackTop] );
           Segment* fromSegment = std::get<1>( hooksStack[stackTop] );
         
+          bool hasRp = false;
           for ( Hook* hook : toHook->getHooks() ) {
-            Segment* segment = dynamic_cast<Segment*>( hook->getComponent() );
-            if (segment) {
-              if (segment == fromSegment) continue;
-              if (clusterSegments.find(segment) != clusterSegments.end()) continue;
-              clusterSegments.insert( segment );
-              cluster->merge( segment );
-              uint32_t flags = (segment->getSourceHook() == hook) ? DiodeCluster::IsSegSource : 0;
-              if (dynamic_cast<Segment::SourceHook*>(hook)) {
-                hooksStack.push_back( make_tuple( segment->getTargetHook(), segment, stackTop, flags ) );
-              } else {
-                hooksStack.push_back( make_tuple( segment->getSourceHook(), segment, stackTop, flags ) );
+            if (dynamic_cast<RoutingPad*>(hook->getComponent())) {
+              hasRp = true;
+              break;
+            }
+          }
+
+          if (not hasRp) {
+            for ( Hook* hook : toHook->getHooks() ) {
+              Segment* segment = dynamic_cast<Segment*>( hook->getComponent() );
+              if (segment) {
+                if (segment == fromSegment) continue;
+                if (clusterSegments.find(segment) != clusterSegments.end()) continue;
+                clusterSegments.insert( segment );
+                cluster->merge( segment );
+                uint32_t flags = (segment->getSourceHook() == hook) ? DiodeCluster::IsSegSource : 0;
+                if (dynamic_cast<Segment::SourceHook*>(hook)) {
+                  hooksStack.push_back( make_tuple( segment->getTargetHook(), segment, stackTop, flags ) );
+                } else {
+                  hooksStack.push_back( make_tuple( segment->getSourceHook(), segment, stackTop, flags ) );
+                }
               }
             }
           }
@@ -1015,7 +1042,7 @@ namespace Anabatic {
     }
     EtesianEngine* etesian = static_cast<EtesianEngine*>
       ( ToolEngine::get( getCell(), EtesianEngine::staticGetName() ));
-    DbU::Unit segmentMaxWL = etesian->getAntennaMaxWL() / 2;
+    DbU::Unit segmentMaxWL = etesian->getAntennaDiodeMaxWL() / 2;
 
     if (not etesian->getDiodeCell()) {
       cerr << Warning( "AnabaticEngine::antennaProtect(): No diode cell found, skipped." ) << endl;
@@ -1033,8 +1060,9 @@ namespace Anabatic {
       if (net->isClock ()) continue;
       antennaProtect( net, failed, total );
     }
-    cmess2 << Dots::asString    ( "     - Antenna maximum WL" , DbU::getValueString(etesian->getAntennaMaxWL()) ) << endl;
-    cmess2 << Dots::asString    ( "     - Segment maximum WL" , DbU::getValueString(segmentMaxWL) ) << endl;
+    cmess2 << Dots::asString    ( "     - Antenna gate maximum WL"   , DbU::getValueString(etesian->getAntennaGateMaxWL()) ) << endl;
+    cmess2 << Dots::asString    ( "     - Antenna diode maximum WL"  , DbU::getValueString(etesian->getAntennaDiodeMaxWL()) ) << endl;
+    cmess2 << Dots::asString    ( "     - Antenna segment maximum WL", DbU::getValueString(segmentMaxWL) ) << endl;
     cmess2 << Dots::asInt       ( "     - Total needed diodes", total  ) << endl;
     cmess2 << Dots::asInt       ( "     - Failed to allocate" , failed ) << endl;
     cmess2 << Dots::asPercentage( "     - Success ratio"      , (float)(total-failed)/(float)total ) << endl;

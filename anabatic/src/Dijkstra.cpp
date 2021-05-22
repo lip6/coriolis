@@ -1459,8 +1459,8 @@ namespace Anabatic {
   }
 
 
-  DbU::Unit  Dijkstra::getAntennaMaxWL () const
-  { return _anabatic->getAntennaMaxWL(); }
+  DbU::Unit  Dijkstra::getAntennaGateMaxWL () const
+  { return _anabatic->getAntennaGateMaxWL(); }
 
 
   Point Dijkstra::_getPonderedPoint() const
@@ -2330,7 +2330,7 @@ namespace Anabatic {
       }
     }
 
-    if (gWL > getAntennaMaxWL()) {
+    if (gWL > getAntennaGateMaxWL()) {
       cdebug_log(113,0) << "| \"" << _net->getName() << "\" may have antenna effect, "
                         << DbU::getValueString(gWL)
                         << endl;

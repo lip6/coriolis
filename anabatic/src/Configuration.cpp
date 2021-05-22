@@ -71,27 +71,28 @@ namespace Anabatic {
 
 
   Configuration::Configuration ( const CellGauge* cg, const RoutingGauge* rg )
-    : _gdepthv         (ndepth)
-    , _gdepthh         (ndepth)
-    , _ddepthv         (ndepth)
-    , _ddepthh         (ndepth)
-    , _ddepthc         (ndepth)
-    , _cg              (NULL)
-    , _rg              (NULL)
-    , _extensionCaps   ()
-    , _saturateRatio   (Cfg::getParamPercentage("anabatic.saturateRatio",80.0)->asDouble())
-    , _saturateRp      (Cfg::getParamInt       ("anabatic.saturateRp"   ,8   )->asInt())
-    , _globalThreshold (0)
-    , _allowedDepth    (0)
-    , _edgeLength      (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
-    , _edgeWidth       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
-    , _edgeCostH       (Cfg::getParamDouble("anabatic.edgeCostH"       ,      9.0)->asDouble())
-    , _edgeCostK       (Cfg::getParamDouble("anabatic.edgeCostK"       ,    -10.0)->asDouble())
-    , _edgeHInc        (Cfg::getParamDouble("anabatic.edgeHInc"        ,      1.5)->asDouble())
-    , _edgeHScaling    (Cfg::getParamDouble("anabatic.edgeHScaling"    ,      1.0)->asDouble())
-    , _globalIterations(Cfg::getParamInt   ("anabatic.globalIterations",     10  )->asInt())
-    , _diodeName       (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
-    , _antennaMaxWL    (Cfg::getParamInt   ("etesian.antennaMaxWL"     ,      0  )->asInt())
+    : _gdepthv          (ndepth)
+    , _gdepthh          (ndepth)
+    , _ddepthv          (ndepth)
+    , _ddepthh          (ndepth)
+    , _ddepthc          (ndepth)
+    , _cg               (NULL)
+    , _rg               (NULL)
+    , _extensionCaps    ()
+    , _saturateRatio    (Cfg::getParamPercentage("anabatic.saturateRatio",80.0)->asDouble())
+    , _saturateRp       (Cfg::getParamInt       ("anabatic.saturateRp"   ,8   )->asInt())
+    , _globalThreshold  (0)
+    , _allowedDepth     (0)
+    , _edgeLength       (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeLength",24)->asInt()))
+    , _edgeWidth        (DbU::fromLambda(Cfg::getParamInt("anabatic.edgeWidth" , 4)->asInt()))
+    , _edgeCostH        (Cfg::getParamDouble("anabatic.edgeCostH"       ,      9.0)->asDouble())
+    , _edgeCostK        (Cfg::getParamDouble("anabatic.edgeCostK"       ,    -10.0)->asDouble())
+    , _edgeHInc         (Cfg::getParamDouble("anabatic.edgeHInc"        ,      1.5)->asDouble())
+    , _edgeHScaling     (Cfg::getParamDouble("anabatic.edgeHScaling"    ,      1.0)->asDouble())
+    , _globalIterations (Cfg::getParamInt   ("anabatic.globalIterations",     10  )->asInt())
+    , _diodeName        (Cfg::getParamString("etesian.diodeName"        , "dio_x0")->asString() )
+    , _antennaGateMaxWL (Cfg::getParamInt   ("etesian.antennaGateMaxWL" ,      0  )->asInt())
+    , _antennaDiodeMaxWL(Cfg::getParamInt   ("etesian.antennaDiodeMaxWL",      0  )->asInt())
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -159,31 +160,40 @@ namespace Anabatic {
         }
       }
     }
+
+    if (_antennaGateMaxWL and not _antennaDiodeMaxWL) {
+      _antennaDiodeMaxWL = _antennaGateMaxWL;
+      cerr << Warning( "Anabatic::Configuration(): \"etesian.antennaGateMaxWL\" is defined but not \"etesian.antennaDiodeMaxWL\".\n"
+                      "          Setting both to %s"
+                     , DbU::getValueString(_antennaGateMaxWL).c_str()
+                     ) << endl;
+    }
   }
 
 
   Configuration::Configuration ( const Configuration& other )
-    : _gmetalh         (other._gmetalh)
-    , _gmetalv         (other._gmetalv)
-    , _gcontact        (other._gcontact)
-    , _gdepthv         (other._gdepthv)
-    , _gdepthh         (other._gdepthh)
-    , _ddepthv         (other._ddepthv)
-    , _ddepthh         (other._ddepthh)
-    , _ddepthc         (other._ddepthc)
-    , _cg              (NULL)
-    , _rg              (NULL)
-    , _extensionCaps   (other._extensionCaps)
-    , _saturateRatio   (other._saturateRatio)
-    , _globalThreshold (other._globalThreshold)
-    , _allowedDepth    (other._allowedDepth)
-    , _edgeCostH       (other._edgeCostH)
-    , _edgeCostK       (other._edgeCostK)
-    , _edgeHInc        (other._edgeHInc)
-    , _edgeHScaling    (other._edgeHScaling)
-    , _globalIterations(other._globalIterations)
-    , _diodeName       (other._diodeName)
-    , _antennaMaxWL    (other._antennaMaxWL)
+    : _gmetalh          (other._gmetalh)
+    , _gmetalv          (other._gmetalv)
+    , _gcontact         (other._gcontact)
+    , _gdepthv          (other._gdepthv)
+    , _gdepthh          (other._gdepthh)
+    , _ddepthv          (other._ddepthv)
+    , _ddepthh          (other._ddepthh)
+    , _ddepthc          (other._ddepthc)
+    , _cg               (NULL)
+    , _rg               (NULL)
+    , _extensionCaps    (other._extensionCaps)
+    , _saturateRatio    (other._saturateRatio)
+    , _globalThreshold  (other._globalThreshold)
+    , _allowedDepth     (other._allowedDepth)
+    , _edgeCostH        (other._edgeCostH)
+    , _edgeCostK        (other._edgeCostK)
+    , _edgeHInc         (other._edgeHInc)
+    , _edgeHScaling     (other._edgeHScaling)
+    , _globalIterations (other._globalIterations)
+    , _diodeName        (other._diodeName)
+    , _antennaGateMaxWL (other._antennaGateMaxWL)
+    , _antennaDiodeMaxWL(other._antennaDiodeMaxWL)
   {
     GCell::setDisplayMode( Cfg::getParamEnumerate("anabatic.gcell.displayMode", GCell::Boundary)->asInt() );
 
@@ -592,7 +602,8 @@ namespace Anabatic {
     record->add( getSlot( "_edgeHInc"        , _edgeHInc         ) );
     record->add( getSlot( "_edgeHScaling"    , _edgeHScaling     ) );
     record->add( getSlot( "_globalIterations", _globalIterations ) );
-    record->add( DbU::getValueSlot( "_antennaMaxWL", &_antennaMaxWL ) );
+    record->add( DbU::getValueSlot( "_antennaGateMaxWL" , &_antennaGateMaxWL  ) );
+    record->add( DbU::getValueSlot( "_antennaDiodeMaxWL", &_antennaDiodeMaxWL ) );
                                      
     return record;
   }

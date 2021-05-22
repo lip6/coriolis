@@ -116,7 +116,8 @@ namespace Anabatic {
               float              getSaturateRatio     () const;
               size_t             getSaturateRp        () const;
       inline  std::string        getDiodeName         () const;
-      inline  DbU::Unit          getAntennaMaxWL      () const;
+      inline  DbU::Unit          getAntennaGateMaxWL  () const;
+      inline  DbU::Unit          getAntennaDiodeMaxWL () const;
               DbU::Unit          getGlobalThreshold   () const;
               void               setAllowedDepth      ( size_t );
               void               setSaturateRatio     ( float );
@@ -160,7 +161,8 @@ namespace Anabatic {
       float                   _edgeHScaling;
       int                     _globalIterations;
       std::string             _diodeName;
-      DbU::Unit               _antennaMaxWL;
+      DbU::Unit               _antennaGateMaxWL;
+      DbU::Unit               _antennaDiodeMaxWL;
     private:
       Configuration& operator=           ( const Configuration& ) = delete;
       void           _setTopRoutingLayer ( Name name );
@@ -189,7 +191,8 @@ namespace Anabatic {
   inline  DbU::Unit    Configuration::getDContactWidth     () const { return getWireWidth   ( getDContactDepth() ); }
   inline  DbU::Unit    Configuration::getDContactPitch     () const { return getPitch       ( getDContactDepth(), Flags::NoFlags ); }
   inline  std::string  Configuration::getDiodeName         () const { return _diodeName; }
-  inline  DbU::Unit    Configuration::getAntennaMaxWL      () const { return _antennaMaxWL; }
+  inline  DbU::Unit    Configuration::getAntennaGateMaxWL  () const { return _antennaGateMaxWL; }
+  inline  DbU::Unit    Configuration::getAntennaDiodeMaxWL () const { return _antennaDiodeMaxWL; }
 
 
 } // Anabatic namespace.
