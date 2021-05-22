@@ -249,7 +249,7 @@ extern "C" {
     METHOD_HEAD("Cell.getComponentsUnder()")
 
     PyBox* pyBox;
-    if (!PyArg_ParseTuple(args,"O!:Cell.getInstancesUnder", &PyTypeBox, &pyBox)) {
+    if (!PyArg_ParseTuple(args,"O!:Cell.getComponentsUnder", &PyTypeBox, &pyBox)) {
         return NULL;
     }
     PyComponentCollection* pyComponentCollection = NULL;
