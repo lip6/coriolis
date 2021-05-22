@@ -329,8 +329,21 @@ class Block ( object ):
                    .format(self.conf.cell.getName()) )
         Block.LUT[ self.conf.cell ] = self
 
+
     @staticmethod
-    def _rgetInstance ( cell, path ):
+    def _getInstance ( cell, pattern, level=0 ):
+        """
+        getInstanceMatching(): returns first instance with the word being searched.
+        """
+        for instance in cell.getInstances():
+            name = instance.getName()
+            if pattern in name:
+                trace( 550, '\t{} {} match pattern "{}"\n'.format('  '*level,instance,pattern) )
+                return instance
+        return None
+
+    @staticmethod
+    def _rgetInstance ( cell, path, level=0 ):
         """
         Get the instance designated by path (recursively). The path argument can be
         either a string of instance names separated by dots or directly a list of
@@ -341,13 +354,13 @@ class Block ( object ):
         elif not isinstance(path,list):
             raise ErrorMessage( 1, 'Block._rgetInstance(): "path" argument is neither a string or a list ({})"' \
                                    .format(path) )
-        instance = cell.getInstance( path[0] )
+        instance = Block._getInstance( cell, path[0], level )
         if instance is None:
-            raise ErrorMessage( 1, 'Block._rgetInstance(): no instance "{}" in cell "{}"' \
+            raise ErrorMessage( 1, 'Block._rgetInstance(): no instance matching "{}" in cell "{}"' \
                                    .format(path[0],cell.getName()) )
         if len(path) == 1:
             return instance
-        return Block._rgetInstance( instance.getMasterCell(), path[1:] )
+        return Block._rgetInstance( instance.getMasterCell(), path[1:], level+1 )
 
     def rgetCoreInstance ( self, path ):
         """
