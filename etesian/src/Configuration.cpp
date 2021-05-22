@@ -51,24 +51,25 @@ namespace Etesian {
 // Class  :  "Etesian::Configuration".
 
   Configuration::Configuration ( const RoutingGauge* rg, const CellGauge* cg )
-    : _rg             ( NULL )
-    , _cg             ( NULL )
-    , _placeEffort    ( static_cast<Effort>
-                        (Cfg::getParamEnumerate ("etesian.effort"         , Standard   )->asInt()) )
-    , _updateConf     ( static_cast<GraphicUpdate>                        
-                        (Cfg::getParamEnumerate ("etesian.graphics"       , LowerBound )->asInt()) )
-    , _spreadingConf  (  Cfg::getParamBool      ("etesian.uniformDensity" , false      )->asBool()? ForceUniform : MaxDensity )
-    , _routingDriven  (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
-    , _spaceMargin    (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
-    , _aspectRatio    (  Cfg::getParamPercentage("etesian.aspectRatio"    ,100.0)->asDouble() )
+    : _rg               ( NULL )
+    , _cg               ( NULL )
+    , _placeEffort      ( static_cast<Effort>
+                          (Cfg::getParamEnumerate ("etesian.effort"         , Standard   )->asInt()) )
+    , _updateConf       ( static_cast<GraphicUpdate>                        
+                          (Cfg::getParamEnumerate ("etesian.graphics"       , LowerBound )->asInt()) )
+    , _spreadingConf    (  Cfg::getParamBool      ("etesian.uniformDensity" , false      )->asBool()? ForceUniform : MaxDensity )
+    , _routingDriven    (  Cfg::getParamBool      ("etesian.routingDriven"  , false      )->asBool())
+    , _spaceMargin      (  Cfg::getParamPercentage("etesian.spaceMargin"    ,  5.0)->asDouble() )
+    , _aspectRatio      (  Cfg::getParamPercentage("etesian.aspectRatio"    ,100.0)->asDouble() )
     , _antennaInsertThreshold
-                      (  Cfg::getParamDouble    ("etesian.antennaInsertThreshold",       50.0)->asDouble() )
-    , _feedNames      (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
-    , _diodeName      (  Cfg::getParamString    ("etesian.diodeName"      ,"dio_x0"          )->asString() )
-    , _spareBufferName(  Cfg::getParamString    ("spares.buffer"          ,"buf_x8"          )->asString() )
-    , _bloat          (  Cfg::getParamString    ("etesian.bloat"          ,"disabled"        )->asString() )
-    , _latchUpDistance(  Cfg::getParamInt       ("etesian.latchUpDistance",0                 )->asInt() )
-    , _antennaMaxWL   (  Cfg::getParamInt       ("etesian.antennaMaxWL"   ,0                 )->asInt() )
+                        (  Cfg::getParamDouble    ("etesian.antennaInsertThreshold",       50.0)->asDouble() )
+    , _feedNames        (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
+    , _diodeName        (  Cfg::getParamString    ("etesian.diodeName"      ,"dio_x0"          )->asString() )
+    , _spareBufferName  (  Cfg::getParamString    ("spares.buffer"          ,"buf_x8"          )->asString() )
+    , _bloat            (  Cfg::getParamString    ("etesian.bloat"          ,"disabled"        )->asString() )
+    , _latchUpDistance  (  Cfg::getParamInt       ("etesian.latchUpDistance",0                 )->asInt() )
+    , _antennaGateMaxWL (  Cfg::getParamInt       ("etesian.antennaGateMaxWL"   ,0                 )->asInt() )
+    , _antennaDiodeMaxWL(  Cfg::getParamInt       ("etesian.antennaDiodeMaxWL"   ,0                 )->asInt() )
   {
     string gaugeName = Cfg::getParamString("anabatic.routingGauge","sxlib")->asString();
     if (cg == NULL) {
@@ -86,24 +87,33 @@ namespace Etesian {
 
     _rg = rg->getClone();
     _cg = cg->getClone();
+
+    if (_antennaGateMaxWL and not _antennaDiodeMaxWL) {
+      _antennaDiodeMaxWL = _antennaGateMaxWL;
+      cerr << Warning( "Etesian::Configuration(): \"etesian.antennaGateMaxWL\" is defined but not \"etesian.antennaDiodeMaxWL\".\n"
+                      "          Setting both to %s"
+                     , DbU::getValueString(_antennaGateMaxWL).c_str()
+                     ) << endl;
+    }
   }
 
 
   Configuration::Configuration ( const Configuration& other )
-    : _rg             (NULL)
-    , _cg             (NULL)
-    , _placeEffort    ( other._placeEffort     )
-    , _updateConf     ( other._updateConf      )
-    , _spreadingConf  ( other._spreadingConf   )
-    , _spaceMargin    ( other._spaceMargin     )
-    , _aspectRatio    ( other._aspectRatio     )
+    : _rg               (NULL)
+    , _cg               (NULL)
+    , _placeEffort      ( other._placeEffort     )
+    , _updateConf       ( other._updateConf      )
+    , _spreadingConf    ( other._spreadingConf   )
+    , _spaceMargin      ( other._spaceMargin     )
+    , _aspectRatio      ( other._aspectRatio     )
     , _antennaInsertThreshold( other._antennaInsertThreshold )
-    , _feedNames      ( other._feedNames       )
-    , _diodeName      ( other._diodeName       )
-    , _spareBufferName( other._spareBufferName )
-    , _bloat          ( other._bloat           )
-    , _latchUpDistance( other._latchUpDistance )
-    , _antennaMaxWL   ( other._antennaMaxWL    )
+    , _feedNames        ( other._feedNames       )
+    , _diodeName        ( other._diodeName       )
+    , _spareBufferName  ( other._spareBufferName )
+    , _bloat            ( other._bloat           )
+    , _latchUpDistance  ( other._latchUpDistance )
+    , _antennaGateMaxWL ( other._antennaGateMaxWL    )
+    , _antennaDiodeMaxWL( other._antennaDiodeMaxWL    )
   {
     if (other._rg) _rg = other._rg->getClone();
     if (other._cg) _cg = other._cg->getClone();
@@ -132,7 +142,8 @@ namespace Etesian {
     cmess1 << Dots::asPercentage("     - Aspect Ratio"     ,_aspectRatio             ) << endl;
     cmess1 << Dots::asString    ("     - Bloat model"      ,_bloat                   ) << endl;
     cmess1 << Dots::asPercentage("     - Antenna Insert"   ,_antennaInsertThreshold  ) << endl;
-    cmess1 << Dots::asString    ("     - Antenna Max. WL"  ,DbU::getValueString(_antennaMaxWL   )) << endl;
+    cmess1 << Dots::asString    ("     - Antenna gate Max. WL" ,DbU::getValueString(_antennaGateMaxWL )) << endl;
+    cmess1 << Dots::asString    ("     - Antenna diode Max. WL",DbU::getValueString(_antennaDiodeMaxWL)) << endl;
     cmess1 << Dots::asString    ("     - Latch up Distance",DbU::getValueString(_latchUpDistance)) << endl;
   }
 
@@ -166,8 +177,9 @@ namespace Etesian {
     record->add ( getSlot( "_diodeName"             ,       _diodeName       ) );
     record->add ( getSlot( "_spareBufferName"       ,       _spareBufferName ) );
     record->add ( getSlot( "_bloat"                 ,       _bloat           ) );
-    record->add ( DbU::getValueSlot( "_latchUpDistance", &_latchUpDistance   ) );
-    record->add ( DbU::getValueSlot( "_antennaMaxWL"   , &_antennaMaxWL      ) );
+    record->add ( DbU::getValueSlot( "_latchUpDistance"  , &_latchUpDistance   ) );
+    record->add ( DbU::getValueSlot( "_antennaGateMaxWL" , &_antennaGateMaxWL  ) );
+    record->add ( DbU::getValueSlot( "_antennaDiodeMaxWL", &_antennaDiodeMaxWL ) );
     return record;
   }
 

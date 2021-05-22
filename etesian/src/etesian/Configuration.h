@@ -73,7 +73,8 @@ namespace Etesian {
       inline string           getSpareBufferName        () const;
       inline string           getBloat                  () const;
       inline DbU::Unit        getLatchUpDistance        () const;
-      inline DbU::Unit        getAntennaMaxWL           () const;
+      inline DbU::Unit        getAntennaGateMaxWL       () const;
+      inline DbU::Unit        getAntennaDiodeMaxWL      () const;
       inline void             setSpaceMargin            ( double );
       inline void             setAspectRatio            ( double );
              void             print                     ( Cell* ) const;
@@ -96,7 +97,8 @@ namespace Etesian {
       string         _spareBufferName;
       string         _bloat;
       DbU::Unit      _latchUpDistance;
-      DbU::Unit      _antennaMaxWL;
+      DbU::Unit      _antennaGateMaxWL;
+      DbU::Unit      _antennaDiodeMaxWL;
     private:
                              Configuration ( const Configuration& );
       Configuration& operator=             ( const Configuration& );
@@ -117,7 +119,8 @@ namespace Etesian {
   inline string        Configuration::getSpareBufferName        () const { return _spareBufferName; }
   inline string        Configuration::getBloat                  () const { return _bloat; }
   inline DbU::Unit     Configuration::getLatchUpDistance        () const { return _latchUpDistance; }
-  inline DbU::Unit     Configuration::getAntennaMaxWL           () const { return _antennaMaxWL; }
+  inline DbU::Unit     Configuration::getAntennaGateMaxWL       () const { return _antennaGateMaxWL; }
+  inline DbU::Unit     Configuration::getAntennaDiodeMaxWL      () const { return _antennaDiodeMaxWL; }
   inline void          Configuration::setSpaceMargin            ( double margin ) { _spaceMargin = margin; }
   inline void          Configuration::setAspectRatio            ( double ratio  ) { _aspectRatio = ratio; }
 

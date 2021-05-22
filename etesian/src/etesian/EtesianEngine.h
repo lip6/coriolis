@@ -93,7 +93,8 @@ namespace Etesian {
       inline  double                 getSpaceMargin            () const;
       inline  double                 getAspectRatio            () const;
       inline  double                 getAntennaInsertThreshold () const;
-      inline  DbU::Unit              getAntennaMaxWL           () const;
+      inline  DbU::Unit              getAntennaGateMaxWL       () const;
+      inline  DbU::Unit              getAntennaDiodeMaxWL      () const;
       inline  DbU::Unit              getLatchUpDistance        () const;
       inline  const FeedCells&       getFeedCells              () const;
       inline  const BufferCells&     getBufferCells            () const;
@@ -209,7 +210,8 @@ namespace Etesian {
   inline  double                 EtesianEngine::getSpaceMargin            () const { return getConfiguration()->getSpaceMargin(); }
   inline  double                 EtesianEngine::getAspectRatio            () const { return getConfiguration()->getAspectRatio(); }
   inline  double                 EtesianEngine::getAntennaInsertThreshold () const { return getConfiguration()->getAntennaInsertThreshold(); }
-  inline  DbU::Unit              EtesianEngine::getAntennaMaxWL           () const { return getConfiguration()->getAntennaMaxWL(); }
+  inline  DbU::Unit              EtesianEngine::getAntennaGateMaxWL       () const { return getConfiguration()->getAntennaGateMaxWL(); }
+  inline  DbU::Unit              EtesianEngine::getAntennaDiodeMaxWL      () const { return getConfiguration()->getAntennaDiodeMaxWL(); }
   inline  DbU::Unit              EtesianEngine::getLatchUpDistance        () const { return getConfiguration()->getLatchUpDistance(); }
   inline  void                   EtesianEngine::useFeed                   ( Cell* cell ) { _feedCells.useFeed(cell); }
   inline  const FeedCells&       EtesianEngine::getFeedCells              () const { return _feedCells; }

@@ -1285,7 +1285,7 @@ namespace Etesian {
 
   void  EtesianEngine::antennaProtect ()
   {
-    DbU::Unit maxWL = getAntennaMaxWL();
+    DbU::Unit maxWL = getAntennaGateMaxWL();
     if (not maxWL) return;
     
     cmess1 << "  o  Inserting antenna effect protection." << endl;
