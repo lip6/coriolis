@@ -1331,15 +1331,31 @@ namespace {
     
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
+    vector<size_t>  offgrids;
     for ( size_t i=0 ; i<coordinates.size() ; i += 2 ) {
       points.push_back( Point( coordinates[i  ]*_scale
                              , coordinates[i+1]*_scale ) );
       if ( (points.back().getX() % oneGrid) or (points.back().getX() % oneGrid) ) {
-        cerr << Error( "GdsStream::xyToComponent(): Offgrid %s (foundry grid: %s)."
-                     , getString(points.back()).c_str()
-                     , DbU::getValueString(oneGrid).c_str() ) << endl;
+        offgrids.push_back( i );
       }
     }
+    if (not offgrids.empty()) {
+      size_t offgrid = 0;
+      ostringstream m;
+      for ( size_t i=0 ; i<points.size() ; ++i ) {
+        if (i) m << "\n";
+        m << "        | " << points[i];
+        if ((offgrid < offgrids.size()) and (i == offgrid)) {
+          m << " offgrid";
+          ++offgrid;
+        }
+      }
+      cerr << Error( "GdsStream::xyToComponent(): Offgrid points on layer \"%s\" (foundry grid: %s).\n"
+                     "%s"
+                   , getString(layer->getName()).c_str()
+                   , DbU::getValueString(oneGrid).c_str()
+                   , m.str().c_str() ) << endl;
+    } 
 
     _stream >> _record;
 

@@ -678,6 +678,7 @@ namespace {
 
   GdsStream& GdsStream::operator<< ( Points points )
   {
+  //cerr << "GdsStream::operator<<(Points&) " << points.getSize() << endl;
     GdsRecord record ( GdsRecord::XY );
     Point first = points.getFirst();
     for ( Point p : points ) {
@@ -703,6 +704,7 @@ namespace {
 
   GdsStream& GdsStream::operator<< ( const vector<Point>& points )
   {
+  //cerr << "GdsStream::operator<<(vector<Points>&) " << points.size() << endl;
     GdsRecord record ( GdsRecord::XY );
     for ( Point p : points ) {
       record.push( (int32_t)toGdsDbu(p.getX()) );
