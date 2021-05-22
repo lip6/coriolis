@@ -56,6 +56,7 @@ class CoreToChip ( BaseCoreToChip ):
                 self.ioPadNames = { 'in'      :'IOPadIn'
                                   , 'tri_out' :'IOPadOut'
                                   , 'bidir'   :'IOPadInOut'
+                                  , 'analog'  :'IOPadAnalog'
                                   , 'vdd'     :'IOPadVdd'
                                   , 'vss'     :'IOPadVss'
                                   , 'iovdd'   :'IOPadIOVdd'
@@ -76,6 +77,9 @@ class CoreToChip ( BaseCoreToChip ):
                             , BaseCoreToChip.IoPadInfo( IoPad.BIDIR
                                                       , self.ioPadNames['bidir']
                                                       , 'pad', ['s', 'd', 'de'] )
+                            , BaseCoreToChip.IoPadInfo( IoPad.ANALOG
+                                                      , self.ioPadNames['analog']
+                                                      , 'pad', ['pad', 'padres'] )
                             ]
         self._getPadLib()
         return

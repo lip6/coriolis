@@ -86,6 +86,7 @@ class IoNet ( object ):
 
     IsElem         = 0x0001
     IsEnable       = 0x0002
+    IsAnalog       = 0x0004
     DoExtNet       = 0x0008
     PadPassthrough = 0x0010
     reVHDLVector   = re.compile( r'(?P<name>[^(]*)\((?P<index>[\d]+)\)$' )
@@ -116,6 +117,7 @@ class IoNet ( object ):
     
     def isElem     ( self ): return self._flags & IoNet.IsElem
     def isEnable   ( self ): return self._flags & IoNet.IsEnable
+    def isAnalog   ( self ): return self._flags & IoNet.IsAnalog
     def isGlobal   ( self ): return self.isGlobal( self._name )
     def isSpecial  ( self ): return self._type != Net.Type.LOGICAL
     def setFlags   ( self, flags ): self._flags |=  flags
@@ -137,9 +139,9 @@ class IoNet ( object ):
     def coronaNetName ( self ):
         s = self._name
         if self.coreNet.getDirection() & Net.Direction.IN:
-          s += '_from_pad'
+            s += '_from_pad'
         elif self.coreNet.getDirection() & Net.Direction.OUT:
-          s += '_to_pad'
+            s += '_to_pad'
         if self._flags & IoNet.IsElem: s  += '({})'.format(self._index)
         return s
     
@@ -169,6 +171,10 @@ class IoNet ( object ):
         if state == True: self._flags |=  IoNet.IsEnable
         else:             self._flags &= ~IoNet.IsEnable
     
+    def setAnalog ( self, state ):
+        if state == True: self._flags |=  IoNet.IsAnalog
+        else:             self._flags &= ~IoNet.IsAnalog
+    
     def buildNets ( self ):
         """
         Creates the signals in corona and chip Cells, then connect them
@@ -189,13 +195,15 @@ class IoNet ( object ):
             self.coreToChip.icore.getPlug( self.coreNet ).setNet( self.coronaNet  )
         # Chip "internal" net, connect Corona instance net to I/O inside the chip.
         if not self.chipIntNet:
-            internal_net = "internal_" + self.coronaNetName
-            self.chipIntNet = Net.create( self.coreToChip.chip, internal_net )
+            chipIntNetName = "internal_" + self.coronaNetName
+            if self._flags & IoNet.IsAnalog:
+                chipIntNetName = self.coronaNetName
+            self.chipIntNet = Net.create( self.coreToChip.chip, chipIntNetName )
             if netType != Net.Type.LOGICAL:
                 self.chipIntNet.setType( netType )
             self.coreToChip.icorona.getPlug( self.coronaNet ).setNet( self.chipIntNet )
         # Chip "external" net, connected to the pad I/O to the outside world.
-        if self._flags & IoNet.PadPassthrough:
+        if self._flags & (IoNet.PadPassthrough | IoNet.IsAnalog):
             self.chipExtNet = self.chipIntNet
         elif not self.chipExtNet and (self._flags & IoNet.DoExtNet):
             self.chipExtNet = self.coreToChip.chip.getNet( self.chipExtNetName )
@@ -225,7 +233,8 @@ class IoPad ( object ):
     OUT         = 0x0002
     BIDIR       = 0x0004
     TRI_OUT     = 0x0008
-    UNSUPPORTED = 0x0010
+    ANALOG      = 0x0010
+    UNSUPPORTED = 0x0020
   
     @staticmethod
     def directionToStr ( direction ):
@@ -233,6 +242,7 @@ class IoPad ( object ):
         if direction == IoPad.OUT:         return "OUT"
         if direction == IoPad.BIDIR:       return "BIDIR"
         if direction == IoPad.TRI_OUT:     return "TRI_OUT"
+        if direction == IoPad.ANALOG:      return "ANALOG"
         if direction == IoPad.UNSUPPORTED: return "UNSUPPORTED"
         return "Invalid value"
   
@@ -254,6 +264,7 @@ class IoPad ( object ):
         s = '<IoPad "{}" '.format(self.padInstanceName)
         for ioNet in self.nets:
             s += ' {}'.format(ioNet.coreNetName)
+        s += ' direction={}'.format(self.direction)
         s += '>'
         return s
   
@@ -266,7 +277,8 @@ class IoPad ( object ):
         trace( 550, '\tIoPad.addNet() net={} iopad={}\n'.format(ioNet,self))
         self.nets.append( ioNet )
         if len(self.nets) == 1:
-            if   self.nets[0].coreNet.getDirection() == Net.Direction.IN:  self.direction = IoPad.IN
+            if   self.nets[0].isAnalog():                                  self.direction = IoPad.ANALOG
+            elif self.nets[0].coreNet.getDirection() == Net.Direction.IN:  self.direction = IoPad.IN
             elif self.nets[0].coreNet.getDirection() == Net.Direction.OUT: self.direction = IoPad.OUT
             elif self.nets[0].coreNet.getName()      == 'scout':           self.direction = IoPad.OUT
             else:
@@ -279,11 +291,11 @@ class IoPad ( object ):
                 if     (self.direction == IoPad.OUT) \
                    and (self.coreToChip.getPadInfo(IoPad.TRI_OUT) is not None):
                     print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to output tristate.' \
-                                           .format(netDirectionToStr(self.direction),ioNet.padInstanceName)) )
+                                           .format(IoPad.directionToStr(self.direction),ioNet.padInstanceName)) )
                     self.direction = IoPad.TRI_OUT
                 else:
                     print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to bi-directional.' \
-                                           .format(netDirectionToStr(self.direction),ioNet.padInstanceName)) )
+                                           .format(IoPad.directionToStr(self.direction),ioNet.padInstanceName)) )
                     self.direction = IoPad.BIDIR
         elif len(self.nets) == 2:
             if self.direction != IoPad.BIDIR:
@@ -305,6 +317,7 @@ class IoPad ( object ):
         enable signal (if any) do not need an external chip signal
         (it is *not* connected to the outside world).
         """
+        trace( 550, '\tIoPad.createPad() {}\n'.format( self ))
         padInfo = self.coreToChip.getPadInfo( self.direction )
         if padInfo is None:
             if len(self.nets) == 0:
@@ -317,8 +330,12 @@ class IoPad ( object ):
                                           , IoPad.directionToStr(self.direction)
                                           , self.padInstanceName ))
         connexions = []
-        # Case of BIDIR as fallback for simple IN/OUT.
+        if (self.direction == IoPad.ANALOG):
+            self.nets[0].buildNets()
+            connexions.append( ( self.nets[0].chipExtNet      , padInfo.padNet ) )
+            connexions.append( ( self.coreToChip.newDummyNet(), padInfo.coreNets[1] ) )
         if (self.direction == IoPad.BIDIR) and (len(self.nets) < 3):
+            # Case of BIDIR as fallback for simple IN/OUT.
             self.nets[0].setFlags( IoNet.DoExtNet )
             self.nets[0].buildNets()
             if len(self.nets) < 2:
@@ -658,11 +675,14 @@ class CoreToChip ( object ):
                                                 .format(ioPadConf.instanceName,netName,self.core.getName()) ))
                         continue
                     ioNet = self.getIoNet( coreNet )
-                    if ioPadConf.isBidir() or ioPadConf.isTristate():
-                        if coreNet.getName() == ioPadConf.enableNetName:
-                            ioNet.setEnable( True )
-                    if not ioNet.isEnable():
-                        ioNet.chipExtNetName = ioPadConf.padNetName
+                    if ioPadConf.isAnalog():
+                        ioNet.setAnalog( True )
+                    else:
+                        if ioPadConf.isBidir() or ioPadConf.isTristate():
+                            if coreNet.getName() == ioPadConf.enableNetName:
+                                ioNet.setEnable( True )
+                        if not ioNet.isEnable():
+                            ioNet.chipExtNetName = ioPadConf.padNetName
                     ioPadConf.udata.addNet( ioNet )
                 ioPads.append( ioPadConf )
             trace( 550, '\tProcessed all IoPadConf, looking for orphaned core nets...\n' )

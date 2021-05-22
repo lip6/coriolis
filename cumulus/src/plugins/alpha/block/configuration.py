@@ -1,4 +1,4 @@
-#
+
 # This file is part of the Coriolis Software.
 # Copyright (c) SU 2020-2020, All Rights Reserved
 #
@@ -629,6 +629,7 @@ class IoPadConf ( object ):
     def isClock      ( self ): return self.flags & IoPadConf.CLOCK
     def isTristate   ( self ): return self.flags & IoPadConf.TRISTATE
     def isBidir      ( self ): return self.flags & IoPadConf.BIDIR
+    def isAnalog     ( self ): return self._datas[0] & IoPin.ANALOG
   
     def __repr__ ( self ):
         s = '<IoPadConf {} iopad="{}" from="{}"'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
@@ -920,6 +921,7 @@ class IoPin ( object ):
     WEST      = 0x0008
     A_BEGIN   = 0x0010
     A_END     = 0x0020
+    ANALOG    = 0x0040
     A_MASK    = A_BEGIN|A_END
     SIDE_MASK = EAST|WEST|NORTH|SOUTH
 
@@ -931,7 +933,8 @@ class IoPin ( object ):
                               , (IoPin.EAST   , 'EAST'   )
                               , (IoPin.WEST   , 'WEST'   )
                               , (IoPin.A_BEGIN, 'A_BEGIN')
-                              , (IoPin.A_END  , 'A_END'  ) ):
+                              , (IoPin.A_END  , 'A_END'  )
+                              , (IoPin.ANALOG , 'ANALOG' ) ):
             if value & constant:
                 if len(s): s += '|'
                 s += 'IoPin.'+name
