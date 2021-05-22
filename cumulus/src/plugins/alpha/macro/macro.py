@@ -28,6 +28,7 @@ from   CRL             import RoutingLayerGauge
 from   helpers         import trace, dots
 from   helpers.io      import ErrorMessage, WarningMessage, catch
 from   helpers.overlay import UpdateSession
+from   plugins.alpha.block.bigvia import BigVia
 
 
 # ----------------------------------------------------------------------------
@@ -53,8 +54,14 @@ class Macro ( object ):
     def place ( topCell, instance, transf, status ):
         macro   = Macro.lookup( instance.getMasterCell() )
         ab      = instance.getMasterCell().getAbutmentBox()
-        abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
+        if transf.getOrientation() == Transformation.Orientation.ID:
+            abShift = Transformation( -ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
+        if transf.getOrientation() == Transformation.Orientation.MX:
+            abShift = Transformation( ab.getXMin(), -ab.getYMin(), Transformation.Orientation.ID )
+        print( 'transf={}'.format(transf) )
+        print( 'abShift={}'.format(abShift) )
         abShift.applyOn( transf )
+        print( 'transf={}'.format(transf) )
         instance.setTransformation( transf )
         instance.setPlacementStatus( status )
 
@@ -67,7 +74,6 @@ class Macro ( object ):
 
         For an explanation of the parameters, see Macro.__init__().
         """
-
         macro = Macro.lookup( macroCell )
         if macro is not None:
             trace( 550, '\tReusing macro wrapper {}\n'.format(macroCell) )
@@ -82,6 +88,9 @@ class Macro ( object ):
 
     def getWireWidth ( self, metal ):
         return self.rg.getWireWidth( metal )
+
+    def getLayerDepth ( self, metal ):
+        return self.rg.getLayerDepth( metal )
 
     def getNearestTrackAxis ( self, metal, axis ):
         lg = self.rg.getLayerGauge( metal )
@@ -132,7 +141,7 @@ class Macro ( object ):
         minSpacingMetal3 = gaugeMetal3.getLayer().getMinimalSpacing()
         minSpacingMetal4 = gaugeMetal4.getLayer().getMinimalSpacing()
         if self.cell.getName().lower() == 'spblock_512w64b8w':
-            print( '  o  Ad-hoc blockage patch for "{}".'.format(self.cell.getName()) )
+            print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
             for net in self.cell.getNets():
                 for component in net.getComponents():
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
@@ -162,6 +171,8 @@ class Macro ( object ):
                                          , bb.getHeight()
                                          , bb.getXMin()
                                          , bb.getXMax() )
+        if self.cell.getName().lower() in [ 'pll', 'gds_pll', 'cmpt_pll' ]:
+            print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
         self.innerAb = ab
         sliceHeight = af.getCellGauge( gaugeName ).getSliceHeight()
         westPins  = []
@@ -186,7 +197,7 @@ class Macro ( object ):
         if ab.getWidth () % sliceHeight: xAdjust = sliceHeight - ab.getWidth () % sliceHeight
         if ab.getHeight() % sliceHeight: yAdjust = sliceHeight - ab.getHeight() % sliceHeight
         self.innerAb.inflate( 0, 0, xAdjust, yAdjust )
-        self.outerAb = self.innerAb
+        self.outerAb = Box( self.innerAb )
         self.outerAb.inflate( sliceHeight )
         westPins .sort( key=lambda k: k.getBoundingBox().getYCenter() )
         eastPins .sort( key=lambda k: k.getBoundingBox().getYCenter() )
@@ -237,15 +248,19 @@ class Macro ( object ):
                                               )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:
+                layer = component.getLayer()
+                if layer.getMask() != gaugeMetal2.getLayer().getMask():
+                    useBigVia = True
+                    layer     = gaugeMetal2.getLayer()
                 NetExternalComponents.setInternal( component )
-                pitch     = self.rg.getPitch( component.getLayer() )
-                ppitch    = self.getPPitch( component.getLayer() )
-                wwidth    = self.getWireWidth( component.getLayer() )
+                pitch     = self.rg.getPitch( layer )
+                ppitch    = self.getPPitch( layer )
+                wwidth    = self.getWireWidth( layer )
                 bb        = component.getBoundingBox()
                 yAxis     = bb.getYCenter()
-                yOngrid   = self.getNearestTrackAxis( component.getLayer(), yAxis )
-                xMin      = self.innerAb.getXMax()
-                xMax      = xMin + hMargin*ppitch
+                yOngrid   = self.getNearestTrackAxis( layer, yAxis )
+                xMin      = self.innerAb.getXMax() - xAdjust
+                xMax      = xMin + xAdjust + hMargin*ppitch
                 width     = bb.getHeight()
                 ppYAxis   = yAxis
                 ppYOngrid = yOngrid
@@ -264,17 +279,17 @@ class Macro ( object ):
                                           , ppYOngrid
                                           )
                 horizontal = Horizontal.create( component.getNet()
-                                              , component.getLayer()
+                                              , layer
                                               , yOngrid
-                                              , pitch + wwidth
+                                              , wwidth
                                               , xMin
                                               , xMax
                                               )
                 horizontal = Horizontal.create( component.getNet()
-                                              , component.getLayer()
+                                              , layer
                                               , yOngrid
-                                              , pitch + wwidth
-                                              , xMin + ppitch
+                                              , wwidth
+                                              , xMin + xAdjust + ppitch
                                               , xMax
                                               )
                 NetExternalComponents.setExternal( horizontal )
@@ -321,15 +336,19 @@ class Macro ( object ):
                                           )
                 NetExternalComponents.setExternal( vertical )
             for component in northPins:
+                layer = component.getLayer()
+                if layer.getMask() != gaugeMetal3.getLayer().getMask():
+                    useBigVia = True
+                    layer     = gaugeMetal3.getLayer()
                 NetExternalComponents.setInternal( component )
-                pitch     = self.rg.getPitch( component.getLayer() )
-                ppitch    = self.getPPitch( component.getLayer() )
-                wwidth    = self.getWireWidth( component.getLayer() )
+                pitch     = self.rg.getPitch( layer )
+                ppitch    = self.getPPitch( layer )
+                wwidth    = self.getWireWidth( layer )
                 bb        = component.getBoundingBox()
                 xAxis     = bb.getXCenter()
-                xOngrid   = self.getNearestTrackAxis( component.getLayer(), xAxis )
-                yMin      = self.innerAb.getYMax()
-                yMax      = yMin + vMargin*ppitch
+                xOngrid   = self.getNearestTrackAxis( layer, xAxis )
+                yMin      = self.innerAb.getYMax() - yAdjust
+                yMax      = yMin + yAdjust + vMargin*ppitch
                 width     = bb.getWidth()
                 ppXAxis   = xAxis
                 ppXOngrid = xOngrid
@@ -340,25 +359,36 @@ class Macro ( object ):
                     else:
                         ppXAxis   += width/2
                         ppXOngrid -= wwidth/2
-                horizontal = Horizontal.create( component.getNet()
-                                              , component.getLayer()
-                                              , bb.getYMax()
-                                              , width
-                                              , ppXAxis
-                                              , ppXOngrid
-                                              )
+                if useBigVia:
+                    bvia = BigVia( component.getNet()
+                                 , self.getLayerDepth(component.getLayer())
+                                 , xOngrid
+                                 , bb.getYMax() - wwidth
+                                 , wwidth
+                                 , 3*wwidth
+                                 , flags=BigVia.AllowAllExpand )
+                    bvia.mergeDepth( self.getLayerDepth(layer) )
+                    bvia.doLayout()
+                else:
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , bb.getYMax()
+                                                  , width
+                                                  , ppXAxis
+                                                  , ppXOngrid
+                                                  )
                 vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
+                                          , layer
                                           , xOngrid
-                                          , pitch + wwidth
+                                          , wwidth
                                           , yMin
                                           , yMax
                                           )
                 vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
+                                          , layer
                                           , xOngrid
-                                          , pitch + wwidth
-                                          , yMin + ppitch
+                                          , wwidth
+                                          , yMin + ppitch + yAdjust
                                           , yMax
                                           )
                 NetExternalComponents.setExternal( vertical )

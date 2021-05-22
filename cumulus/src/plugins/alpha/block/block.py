@@ -627,7 +627,7 @@ class Block ( object ):
                        , instance
                        , Transformation( macroPosition.getX()
                                        , macroPosition.getY()
-                                       , Transformation.Orientation.ID )
+                                       , transf.getOrientation() )
                        , Instance.PlacementStatus.FIXED )
         trace( 550, '-' )
 
