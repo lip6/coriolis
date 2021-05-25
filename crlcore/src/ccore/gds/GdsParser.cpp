@@ -27,6 +27,7 @@
 using namespace std;
 
 #include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -203,6 +204,8 @@ namespace {
                    void              readUnits      ();
                    void              readLayer      ();
                    void              readWidth      ();
+                   void              readBgnextn    ();
+                   void              readEndextn    ();
                    void              readPathtype   ();
                    void              readStrname    ();
                    void              readXy         ();
@@ -381,8 +384,8 @@ namespace {
       case BOX:          readDummy( false ); break;
       case BOXTYPE:      readDummy( false ); break;
       case PLEX:         readDummy( false ); break;
-      case BGNEXTN:      readDummy( false ); break;
-      case ENDEXTN:      readDummy( false ); break;
+      case BGNEXTN:      readBgnextn(); break;
+      case ENDEXTN:      readEndextn(); break;
       case TAPENUM:      readDummy( false ); break;
       case TAPECODE:     readDummy( false ); break;
       case STRCLASS:     readDummy( false ); break;
@@ -543,6 +546,14 @@ namespace {
   { _int32s.push_back( _readInt<uint32_t>() ); }
 
 
+  void  GdsRecord::readBgnextn ()
+  { _int32s.push_back( _readInt<uint32_t>() ); }
+
+
+  void  GdsRecord::readEndextn ()
+  { _int32s.push_back( _readInt<uint32_t>() ); }
+
+
   void  GdsRecord::readPathtype ()
   { _int16s.push_back( _readInt<uint16_t>() ); }
 
@@ -650,7 +661,11 @@ namespace {
                    bool   readStrans       ();
                    bool   readProperty     ();
                    void   xyToComponent    ( const Layer* );
-                   void   xyToPath         ( uint16_t pathtype, const Layer*, DbU::Unit width );
+                   void   xyToPath         ( uint16_t pathtype
+                                           , const Layer*
+                                           , DbU::Unit width
+                                           , DbU::Unit bgnextn
+                                           , DbU::Unit endextn );
                    void   makeInstances    ();
                    void   makeExternals    ();
                    Net*   fusedNet         ();
@@ -1074,9 +1089,11 @@ namespace {
   {
     cdebug_log(101,1) << "GdsStream::readPath()" << endl;
     
-    const Layer*    layer    = NULL;
-          DbU::Unit width    = 0;
-          uint16_t  pathtype = 0;
+    const Layer*     layer    = NULL;
+          DbU::Unit  width    = 0;
+          uint16_t   pathtype = 0;
+          DbU::Unit  bgnextn  = 0;
+          DbU::Unit  endextn  = 0;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
@@ -1114,11 +1131,17 @@ namespace {
       width = _record.getInt32s()[0] * _scale;
       _stream >> _record;
     }
-    if (_record.isBGNEXTN ()) { _stream >> _record; }
-    if (_record.isENDEXTN ()) { _stream >> _record; }
+    if (_record.isBGNEXTN ()) {
+      bgnextn = _record.getInt32s()[0] * _scale;
+      _stream >> _record;
+    }
+    if (_record.isENDEXTN ()) {
+      endextn = _record.getInt32s()[0] * _scale;
+      _stream >> _record;
+    }
 
     if (_record.isXY()) {
-      if (_cell and layer) xyToPath( pathtype, layer, width );
+      if (_cell and layer) xyToPath( pathtype, layer, width, bgnextn, endextn );
     } else {
       _validSyntax = false;
       cdebug_tabw(101,-1);
@@ -1409,11 +1432,17 @@ namespace {
   }
 
 
-  void  GdsStream::xyToPath ( uint16_t pathtype, const Layer* layer, DbU::Unit width )
+  void  GdsStream::xyToPath ( uint16_t     pathtype
+                            , const Layer* layer
+                            , DbU::Unit    width
+                            , DbU::Unit    bgnextn
+                            , DbU::Unit    endextn )
   {
     cdebug_log(101,0) << "GdsStream::xyToPath(): pathtype=" << pathtype
                       << " layer=" << layer->getName()
-                      << " width=" << DbU::getValueString(width) << endl;
+                      << " width=" << DbU::getValueString(width)
+                      << " bgnextn=" << DbU::getValueString(bgnextn)
+                      << " endextn=" << DbU::getValueString(endextn) << endl;
 
     vector<Point>   points;
     vector<int32_t> coordinates = _record.getInt32s();
@@ -1428,7 +1457,10 @@ namespace {
 
     Net* net = fusedNet();
 
+    cdebug_log(101,0) << "Points" << endl;
+    cdebug_log(101,0) << " 0 | " << points[0] << endl;
     for ( size_t i=1 ; i<points.size() ; ++i ) {
+      cdebug_log(101,0) << " " << i << " | " << points[i] << endl;
       if (   (points[i-1].getX() != points[i].getX()) 
          and (points[i-1].getY() != points[i].getY()) ) {
         cerr << Error( "GdsStream::xyToPath(): Non-rectilinear paths are not supporteds (skipped)."
@@ -1437,35 +1469,86 @@ namespace {
       }
     }
 
+    DbU::Unit twoGrid   = DbU::fromGrid( 2 );
+    DbU::Unit xadjust   = 0;
+    DbU::Unit yadjust   = 0;
     DbU::Unit hWidthCap = width;
     DbU::Unit vWidthCap = width;
     if (pathtype == 0) {
       if (points[0].getX() == points[1].getX()) vWidthCap = 0;
       else                                      hWidthCap = 0;
     }
+    if (pathtype == 4) {
+      if (not (bgnextn % twoGrid)) twoGrid = 0;
+      else {
+        cdebug_log(101,0) << "bgnextn is an odd number of grid." << endl;
+        twoGrid >>= 1;
+      }
+      if (points[0].getX() == points[1].getX()) {
+        hWidthCap = width;
+        vWidthCap = bgnextn + twoGrid;
+        yadjust   = -vWidthCap/2 + twoGrid;
+        if (points[0].getY() > points[1].getY())
+          yadjust = -yadjust;
+      } else {
+        hWidthCap = bgnextn + twoGrid;
+        vWidthCap = width;
+        xadjust   = -hWidthCap/2 + twoGrid;
+        if (points[0].getX() > points[1].getX())
+          xadjust = -xadjust;
+      }
+    }
     Contact* source = Contact::create( net
                                      , layer
-                                     , points[0].getX()
-                                     , points[0].getY()
+                                     , points[0].getX() + xadjust
+                                     , points[0].getY() + yadjust
                                      , hWidthCap
                                      , vWidthCap );
-    hWidthCap = width;
-    vWidthCap = width;
+    cdebug_log(101,0) << "+ " << source << endl;
     Contact* target  = NULL;
     Segment* segment = NULL;
     for ( size_t i=1 ; i<points.size() ; ++i ) {
+      hWidthCap = width;
+      vWidthCap = width;
+      xadjust   = 0;
+      yadjust   = 0;
       if (i == points.size()-1) {
         if (pathtype == 0) {
-          if (points[0].getX() == points[1].getX()) vWidthCap = 0;
-          else                                      hWidthCap = 0;
+          if (points[i].getX() == points[i-1].getX()) vWidthCap = 0;
+          else                                        hWidthCap = 0;
+        }
+        if (pathtype == 4) {
+          twoGrid = DbU::fromGrid( 2 );
+          if (not (endextn % twoGrid)) twoGrid = 0;
+          else {
+            cdebug_log(101,0) << "endextn is an odd number of grid." << endl;
+            twoGrid >>= 1;
+          }
+          if (points[i-1].getX() == points[i].getX()) {
+            hWidthCap = width;
+            vWidthCap = endextn + twoGrid;
+            yadjust   = vWidthCap/2 - twoGrid;
+            if (points[i-1].getY() > points[i].getY())
+              yadjust = -yadjust;
+          } else {
+            cdebug_log(101,0) << "endextn="  << DbU::getValueString(endextn)
+                              << " twoGrid=" << DbU::getValueString(twoGrid) << endl;
+            hWidthCap = endextn + twoGrid;
+            vWidthCap = width;
+            xadjust   = hWidthCap/2 - twoGrid;
+            if (points[i-1].getX() > points[i].getX())
+              xadjust = -xadjust;
+            cdebug_log(101,0) << "xadjust=" << DbU::getValueString(xadjust) << endl;
+          }
         }
       }
       target = Contact::create( net
                               , layer
-                              , points[i].getX()
-                              , points[i].getY()
+                              , points[i].getX() + xadjust
+                              , points[i].getY() + yadjust
                               , hWidthCap
                               , vWidthCap );
+      cdebug_log(101,0) << "+ " << target << endl;
       if (points[i-1].getY() == points[i].getY()) {
         segment = Horizontal::create( source
                                     , target
@@ -1481,6 +1564,7 @@ namespace {
                                   , width
                                   , 0, 0 );
       }
+      cdebug_log(101,0) << "| " << segment << endl;
       if (not net->isAutomatic()) NetExternalComponents::setExternal( segment );
       source = target;
     }
@@ -1620,7 +1704,9 @@ namespace CRL {
 
   bool  Gds::load ( Library* library, string gdsPath )
   {
+  //DebugSession::open( 101, 110 );
     UpdateSession::open();
+    Contact::disableCheckMinSize();
 
     GdsStream gstream ( gdsPath );
 
@@ -1630,7 +1716,9 @@ namespace CRL {
                    , gdsPath.c_str()
                    ) << endl;
 
+    Contact::enableCheckMinSize();
     UpdateSession::close();
+  //DebugSession::close();
 
     return true;
   }
