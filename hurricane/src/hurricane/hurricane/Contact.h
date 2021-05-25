@@ -75,20 +75,22 @@ namespace Hurricane {
               ,       DbU::Unit  height
               );
     public:
-      static Contact* create (       Net*      net
-                             , const Layer*    layer
-                             ,       DbU::Unit x
-                             ,       DbU::Unit y
-                             ,       DbU::Unit width =0
-                             ,       DbU::Unit height=0
-                             );
-      static Contact* create (       Component* anchor
-                             , const Layer*     layer
-                             ,       DbU::Unit  dx
-                             ,       DbU::Unit  dy
-                             ,       DbU::Unit  width =0
-                             ,       DbU::Unit  height=0
-                             );
+      static inline void     enableCheckMinSize  ();
+      static inline void     disableCheckMinSize ();
+      static        Contact* create (       Net*      net
+                                    , const Layer*    layer
+                                    ,       DbU::Unit x
+                                    ,       DbU::Unit y
+                                    ,       DbU::Unit width =0
+                                    ,       DbU::Unit height=0
+                                    );
+      static        Contact* create (       Component* anchor
+                                    , const Layer*     layer
+                                    ,       DbU::Unit  dx
+                                    ,       DbU::Unit  dy
+                                    ,       DbU::Unit  width =0
+                                    ,       DbU::Unit  height=0
+                                    );
     public:
       virtual       Hooks        getHooks       () const;
       virtual       DbU::Unit    getX           () const;
@@ -128,18 +130,23 @@ namespace Hurricane {
       virtual       std::string  _getString     () const;
       virtual       Record*      _getRecord     () const;
     private:
-            AnchorHook  _anchorHook;
-      const Layer*      _layer;
-            DbU::Unit   _dx;
-            DbU::Unit   _dy;
+      static bool        _checkMinSize;
+             AnchorHook  _anchorHook;
+      const  Layer*      _layer;
+             DbU::Unit   _dx;
+             DbU::Unit   _dy;
     protected:
-            DbU::Unit   _width;
-            DbU::Unit   _height;
+             DbU::Unit   _width;
+             DbU::Unit   _height;
   };
+
+  
+  inline void  Contact::enableCheckMinSize  () { _checkMinSize=true; }
+  inline void  Contact::disableCheckMinSize () { _checkMinSize=false; }
 
 
 // -------------------------------------------------------------------
-// Class  :  "Hurricane::Contact".
+// Class  :  "Hurricane::JsonContact".
 
   class JsonContact : public JsonComponent {
     public:

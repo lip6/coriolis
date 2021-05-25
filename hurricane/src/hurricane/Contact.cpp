@@ -103,6 +103,9 @@ class Contact_Hooks : public Collection<Hook*> {
 // Contact implementation
 // ****************************************************************************************************
 
+bool  Contact::_checkMinSize = true;
+
+
 Contact::Contact(Net* net, const Layer* layer, DbU::Unit x, DbU::Unit y, DbU::Unit width, DbU::Unit height)
 // ********************************************************************************************************
 :  Inherit(net),
@@ -169,12 +172,13 @@ Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, Db
   bool  Contact::_postCheck ()
   // *************************
   {
+    DbU::Unit twoGrid = DbU::fromGrid( 2 );
     bool rvalue = true;
     if (_layer->isSymbolic()) {
       if (not _width ) _width  = _layer->getMinimalSize();
       if (not _height) _height = _layer->getMinimalSize();
     } else {
-      if ((_width) and (_width < _layer->getMinimalSize())) {
+      if ((_width) and _checkMinSize and (_width < _layer->getMinimalSize())) {
         cerr << Warning( "Contact::_postCheck(): Width %s is inferior to layer minimal size %s, bumping.\n"
                          "          (on %s)"
                        , DbU::getValueString(_width).c_str()
@@ -184,7 +188,7 @@ Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, Db
         _width = _layer->getMinimalSize();
         rvalue = false;
       }
-      if ((_height) and (_height < _layer->getMinimalSize())) {
+      if ((_height) and _checkMinSize and (_height < _layer->getMinimalSize())) {
         cerr << Warning( "Contact::_postCheck(): Height %s is inferior to layer minimal size %s, bumping.\n"
                          "          (on %s)"
                        , DbU::getValueString(_height).c_str()
@@ -193,6 +197,24 @@ Contact* Contact::create(Component* anchor, const Layer* layer, DbU::Unit dx, Db
              << endl;
         _height = _layer->getMinimalSize();
         rvalue = false;
+      }
+      if ((_width % twoGrid) and _checkMinSize) {
+        cerr << Warning( "Contact::_postCheck(): Width %s is not a multiple of 2*%s, shrinking.\n"
+                         "          (on %s)"
+                       , DbU::getValueString(_width).c_str()
+                       , DbU::getValueString(DbU::fromGrid(1)).c_str()
+                       , getString(this).c_str() )
+             << endl;
+        _width -= (_width % twoGrid);
+      }
+      if ((_height % twoGrid) and _checkMinSize) {
+        cerr << Warning( "Contact::_postCheck(): Height %s is not a multiple of 2*%s, shrinking.\n"
+                         "          (on %s)"
+                       , DbU::getValueString(_height).c_str()
+                       , DbU::getValueString(DbU::fromGrid(1)).c_str()
+                       , getString(this).c_str() )
+             << endl;
+        _height -= (_height % twoGrid);
       }
     }
     return rvalue;
