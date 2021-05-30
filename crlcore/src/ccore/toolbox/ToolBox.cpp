@@ -677,6 +677,17 @@ void ConnectPlugHooks(Cell* cell)
                          , sinks
                          ) << endl;
           net->setDirection( Net::Direction::DirIn );
+          for ( Occurrence occurrence : HyperNet(Occurrence(net)).getComponentOccurrences() ) {
+            Plug* plug = dynamic_cast<Plug*>( occurrence.getEntity() );
+            if (plug) {
+              cerr << "          | " << occurrence.getPath().getCompactString(false)
+                   << "." << plug->getInstance()->getName()
+                   << ":" << plug->getMasterNet()->getName()
+                   << " (" << plug->getMasterNet()->getCell()->getName() << ")" << endl;
+            } else {
+              cerr << "          | " << occurrence << endl;
+            }
+          }
         }
         continue;
       }
