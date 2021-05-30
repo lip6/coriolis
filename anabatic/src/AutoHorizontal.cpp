@@ -94,13 +94,13 @@ namespace Anabatic {
       }
     }
 
-    if (getId() == 1518590) {
-      cerr << "AutoHorizontal::_postCreate(): " << this << endl;
-      cerr << "| Source contact:" << source     << endl; 
-      cerr << "| Source GCell:  " << getGCell() << endl; 
-      cerr << "| Target contact:" << target     << endl; 
-      cerr << "| Target GCell:  " << target->getGCell() << endl; 
-    }
+    // if (getId() == 1518590) {
+    //   cerr << "AutoHorizontal::_postCreate(): " << this << endl;
+    //   cerr << "| Source contact:" << source     << endl; 
+    //   cerr << "| Source GCell:  " << getGCell() << endl; 
+    //   cerr << "| Target contact:" << target     << endl; 
+    //   cerr << "| Target GCell:  " << target->getGCell() << endl; 
+    // }
   }
 
 

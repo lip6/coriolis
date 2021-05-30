@@ -323,6 +323,7 @@ namespace Etesian {
     , _fixedAbWidth (0)
     , _diodeCount   (0)
     , _bufferCount  (0)
+    , _excludedNets ()
   { }
 
 
@@ -792,7 +793,7 @@ namespace Etesian {
     cmess1 << "     - Building RoutingPads (transhierarchical)" << endl;
   //getCell()->flattenNets( Cell::Flags::BuildRings|Cell::Flags::NoClockFlatten );
   //getCell()->flattenNets( getBlockInstance(), Cell::Flags::NoClockFlatten );
-    getCell()->flattenNets( NULL, Cell::Flags::NoClockFlatten );
+    getCell()->flattenNets( NULL, _excludedNets, Cell::Flags::NoClockFlatten );
 
     bool    tooManyInstances = false;
     index_t instanceId       = 0;
@@ -929,9 +930,10 @@ namespace Etesian {
     for ( Net* net : getCell()->getNets() )
     {
       const char* excludedType = NULL;
-      if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
-      if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
-      if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
+      if (net->getType() == Net::Type::POWER )   excludedType = "POWER";
+      if (net->getType() == Net::Type::GROUND)   excludedType = "GROUND";
+      if (net->getType() == Net::Type::CLOCK )   excludedType = "CLOCK";
+      if (isExcluded(getString(net->getName()))) excludedType = "USER_EXCLUDED";
       if (excludedType) {
         cparanoid << Warning( "%s is not a routable net (%s,excluded)."
                             , getString(net).c_str(), excludedType ) << endl;
@@ -952,9 +954,10 @@ namespace Etesian {
     for ( Net* net : getCell()->getNets() )
     {
       const char* excludedType = NULL;
-      if (net->getType() == Net::Type::POWER ) excludedType = "POWER";
-      if (net->getType() == Net::Type::GROUND) excludedType = "GROUND";
-      if (net->getType() == Net::Type::CLOCK ) excludedType = "CLOCK";
+      if (net->getType() == Net::Type::POWER )   excludedType = "POWER";
+      if (net->getType() == Net::Type::GROUND)   excludedType = "GROUND";
+      if (net->getType() == Net::Type::CLOCK )   excludedType = "CLOCK";
+      if (isExcluded(getString(net->getName()))) excludedType = "USER_EXCLUDED";
       if (excludedType) continue;
       if (af->isBLOCKAGE(net->getName())) continue;
 

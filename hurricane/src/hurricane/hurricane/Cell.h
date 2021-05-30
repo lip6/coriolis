@@ -507,6 +507,7 @@ class Cell : public Entity {
     public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
     public: void flattenNets(const Instance* instance, uint64_t flags=Flags::BuildRings);
+    public: void flattenNets(const Instance* instance, const std::set<std::string>& excludeds, uint64_t flags=Flags::BuildRings);
     public: void createRoutingPadRings(uint64_t flags=Flags::BuildRings);
     public: void setFlags(uint64_t flags) { _flags |= flags; }
     public: void resetFlags(uint64_t flags) { _flags &= ~flags; }

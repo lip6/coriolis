@@ -456,6 +456,8 @@ namespace Etesian {
     BufferDatas* bufferDatas = getBufferCells().getBiggestBuffer();
     vector< tuple<Net*,uint32_t> > netDatas;
     for ( Net* net : getCell()->getNets() ) {
+      if (isExcluded(getString(net->getName()))) continue;
+      
       uint32_t rpCount = 0;
       for ( RoutingPad* rp : net->getRoutingPads() ) {
         Occurrence rpOcc = rp->getPlugOccurrence();

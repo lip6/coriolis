@@ -16,6 +16,7 @@
 from   __future__ import print_function
 import sys
 import os.path
+from   copy      import deepcopy
 import Cfg
 from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
                         Box, Path, Layer, Occurrence, Net,           \
@@ -35,7 +36,7 @@ from   plugins                   import getParameter
 from   plugins.alpha.macro.macro         import Macro
 from   plugins.alpha.block               import timing
 from   plugins.alpha.block.spares        import Spares
-from   plugins.alpha.block.clocktree     import ClockTree
+from   plugins.alpha.block.htree         import HTree
 #from   plugins.alpha.block.hfns1         import BufferTree
 #from   plugins.alpha.block.hfns2         import BufferTree
 #from   plugins.alpha.block.hfns3         import BufferTree
@@ -286,6 +287,7 @@ class Block ( object ):
     """
 
     LUT = {}
+    FLATTENED = 0x0001
 
     @staticmethod
     def lookup ( cell ):
@@ -300,10 +302,11 @@ class Block ( object ):
         self.flags            = 0
         self.conf             = conf
         self.spares           = Spares( self )
-        self.clockTrees       = []
+        self.hTrees           = []
         self.hfnTrees         = []
         self.blockInstances   = []
         self.placeHolderCount = 0
+        self.excludedNets     = deepcopy( self.conf.hTreeNames )
         self.sides            = { IoPin.WEST  : Side( self.conf, IoPin.WEST  )
                                 , IoPin.EAST  : Side( self.conf, IoPin.EAST  )
                                 , IoPin.SOUTH : Side( self.conf, IoPin.SOUTH )
@@ -328,7 +331,6 @@ class Block ( object ):
             print( '  o  Block "{}" will be generated.' \
                    .format(self.conf.cell.getName()) )
         Block.LUT[ self.conf.cell ] = self
-
 
     @staticmethod
     def _getInstance ( cell, pattern, level=0 ):
@@ -369,6 +371,35 @@ class Block ( object ):
         instances names. The root of the path must be *core* cell.
         """
         return Block._rgetInstance( self.conf.core, path )
+
+    @staticmethod
+    def _rinstancesToPath ( path, instances ):
+        instance = path.getTailInstance().getMasterCell().getInstance( instances[0] )
+        path     = Path( path, instance )
+        if len(instances) > 1:
+            return Block._rinstanceToPath( path, instances[1:] )
+        return path
+
+    @staticmethod
+    def _instancesToPath ( cell, instances ):
+        instance = cell.getInstance( instances[0] )
+        return Block._rinstancesToPath( Path(instance), instances[1:] )
+
+    def getFlattenedNet ( self, path ):
+        """
+        Find a net in the hierarchy. The path argument is a  list pathname of instance
+        endind by a net name, like "instance1.instance2.net_name". The function returns
+        a an Occurrence, the instance path and the Net, or None.
+        """
+        for net in self.conf.cellPnR.getNets():
+            if net.getName() == path:
+                return Occurrence( net, Path() )
+        elements = path.split('.')
+        if len(elements) == 1:
+            return None
+        path = Block._instancesToPath( self.conf.cellPnR, elements[:-1] )
+        net  = path.getTailInstance().getMasterCell().getNet( elements[-1] )
+        return Occurrence( net, path )
 
     def setUnexpandPins ( self, sides ):
         """
@@ -433,43 +464,65 @@ class Block ( object ):
         else:
             self.conf.setRoutingBb( self.conf.cell.getAbutmentBox() )
 
-    def addClockTrees ( self ):
-        """Create the trunk of all the clock trees (recursive H-Tree)."""
-        print( '  o  Building clock tree(s).' )
-        af = CRL.AllianceFramework.get()
-        clockNets = []
-        for net in self.conf.cellPnR.getNets():
-            if af.isCLOCK(net.getName()): 'CLOCK: {}'.format(net)
-            if net.isClock():
-                trace( 550, '\tBlock.addClockTrees(): Found clock {}.\n'.format(net) )
-                clockNets.append( net )
-        if not clockNets:
-            raise ErrorMessage( 3, 'Block.clockTree(): Cell "{}" has no clock net(s).'.format(self.conf.cell.getName()) )
-        with UpdateSession():
-            for clockNet in clockNets:
-                print( '     - "{}".'.format(clockNet.getName()) )
-                trace( 550, ',+', '\tBlock.addClockTrees(): Build clock tree for {}.\n'.format(clockNet) )
-                self.clockTrees.append( ClockTree(self.spares,clockNet,len(self.clockTrees)) )
-                self.clockTrees[-1].buildHTree()
-                trace( 550, '-' )
-        Breakpoint.stop( 100, 'Block.addClockTrees() on {} done.'.format(self.conf.cellPnR) )
+    def flattenNets ( self ):
+        if self.flags & Block.FLATTENED: return
+        if self.conf.isCoreBlock:
+            self.conf.corona.flattenNets( self.conf.icore, self.conf.hTreeNames, Cell.Flags_NoClockFlatten )
+        else:
+            self.conf.cell.flattenNets( None, self.excludedNets, Cell.Flags_NoClockFlatten )
+        self.flags |= Block.FLATTENED
 
-    def splitClocks ( self ):
+    def addHTrees ( self ):
+        """Create the trunk of all the clock trees (recursive H-Tree)."""
+        print( '  o  Building H-Tree(s).' )
+        af = CRL.AllianceFramework.get()
+        hTreeNets = []
+        netOcc    = None
+        self.flattenNets()
+        for netName in self.conf.hTreeNames:
+            netOcc = self.getFlattenedNet( netName )
+           #if self.conf.isCoreBlock:
+           #    coreNet = self.conf.cell.getNet( netName )
+           #    if coreNet is not None:
+           #        trace( 550, '\tFound coreNet={}\n'.format(coreNet) )
+           #        for plug in self.conf.icore.getPlugs():
+           #            if plug.getMasterNet() == coreNet:
+           #                net = plug.getNet()
+           #                break
+           #else:
+           #    net = self.conf.cellPnR.getNet( netName )
+            if netOcc is None:
+                print( ErrorMessage( 3, 'Block.addHTrees(): Cell "{}" has no H-Tree net "{}".' \
+                                        .format( self.conf.cellPnR.getName(), netName )))
+                continue
+            trace( 550, '\tBlock.addHTrees(): Found H-Tree {}.\n'.format(netOcc) )
+            hTreeNets.append( netOcc )
+            self.etesian.exclude( netName )
+        with UpdateSession():
+            for hTreeNet in hTreeNets:
+                print( '     - "{}".'.format(hTreeNet.getName()) )
+                trace( 550, ',+', '\tBlock.addHTrees(): Build clock tree for {}.\n'.format(hTreeNet) )
+                self.hTrees.append( HTree(self.spares,hTreeNet,len(self.hTrees)) )
+                self.hTrees[-1].buildHTree()
+                for net in self.hTrees[-1].subNets:
+                    self.etesian.exclude( net.getName() )
+                    self.excludedNets.append( net.getName() )
+                trace( 550, '-' )
+        Breakpoint.stop( 100, 'Block.addHTrees() on {} done.'.format(self.conf.cellPnR) )
+
+    def splitHTrees ( self ):
         """
-        Break the clock net and attach all it's Pins to the closest leaf
+        Break the H-Tree root nets and attach all it's Pins to the closest leaf
         if the H-Tree.
         """
-        for clockTree in self.clockTrees:
-            clockTree.splitClock()
+        for hTree in self.hTrees:
+            hTree.splitNet()
 
     def findHfnTrees4 ( self ):
         """Perform simple HFNS, just break nets regardless of placement."""
         print( '  o  Building high fanout nets trees.' )
         if self.spares:
-            if self.conf.isCoreBlock:
-               self.conf.corona.flattenNets( self.conf.icore, Cell.Flags_NoClockFlatten )
-            else:
-               self.conf.cell.flattenNets( None, Cell.Flags_NoClockFlatten )
+            self.flattenNets()
             beginCount = self.conf.bufferConf.count
             maxSinks   = 10
             dots( 82
@@ -578,7 +631,7 @@ class Block ( object ):
             for side in self.sides.values():
                 side.expand()
 
-    def place ( self ):
+    def initEtesian ( self ):
         editor = self.conf.editor
         if self.conf.isCoreBlock:
             self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
@@ -588,9 +641,11 @@ class Block ( object ):
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
             self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
+        self.etesian.getCell().flattenNets( None, self.excludedNets, Cell.Flags_NoClockFlatten )
+
+    def place ( self ):
         if self.conf.placeArea:
             self.etesian.setPlaceArea( self.conf.placeArea )
-        self.etesian.getCell().flattenNets( None, Cell.Flags_NoClockFlatten )
         if self.conf.useHFNS: self.etesian.doHFNS()
         self.etesian.place()
         Breakpoint.stop( 100, 'Placement done.' )
@@ -738,6 +793,7 @@ class Block ( object ):
                 blockInstance.block.build()
         if editor: editor.setCell( self.conf.cellPnR )
         self.conf.cfg.apply()
+        self.initEtesian()
         iteration = -1
         while True:
             iteration += 1
@@ -748,14 +804,14 @@ class Block ( object ):
                 self.checkIoPins()
             self.spares.build()
            #if self.conf.useHFNS:      self.findHfnTrees4()
-            if self.conf.useClockTree: self.addClockTrees()
+            self.addHTrees()
            #if self.conf.useHFNS:      self.addHfnBuffers()
             if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
            #if self.conf.useHFNS: self.findHfnTrees()
             break
-        if self.conf.useClockTree: self.splitClocks()
+        self.splitHTrees()
         self.spares.removeUnusedBuffers()
         self.etesian.toHurricane()
         self.etesian.flattenPower()

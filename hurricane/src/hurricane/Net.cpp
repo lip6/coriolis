@@ -728,9 +728,6 @@ void Net::_preDestroy()
 // *******************
 {
   cdebug_log(18,1) << "entering Net::_preDestroy: " << this << endl;
-  if (getName() == "pipe_middle_0_rb[0]")
-    cerr << "entering Net::_preDestroy: " << this << endl;
-
   Inherit::_preDestroy();
 
   cdebug_log(18,0) << "Net::_preDestroy: " << this << " slave Plugs..." << endl;

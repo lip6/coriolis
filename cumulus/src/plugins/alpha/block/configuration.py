@@ -1109,6 +1109,7 @@ class BlockConf ( GaugeConf ):
         self.placeArea     = None
         self.deltaAb       = [ 0, 0, 0, 0 ]
         self.useClockTree  = False
+        self.hTreeNames    = [ ]
         self.useHFNS       = False
         self.useSpares     = True
         self.isBuilt       = False
@@ -1210,6 +1211,10 @@ class BlockConf ( GaugeConf ):
             trace( 550, '\tNew cloned cell: "{}"\n'.format(masterCell) )
             self.cloneds.append( masterCell )
         return
+
+    def useHTree ( self, netName ):
+        if not netName in self.hTreeNames:
+            self.hTreeNames.append( netName );
   
     def save ( self, flags ):
         """

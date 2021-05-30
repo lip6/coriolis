@@ -29,6 +29,24 @@
 
 namespace  Isobar {
 
+  
+  bool  pyListToStringSet ( PyObject* list, set<string>& v )
+  {
+    if (not PyList_Check(list)) return false;
+
+    int length = PyList_Size( list );
+    for ( int i=0 ; i<length ; ++i ) {
+      PyObject* item = PyList_GetItem( list, i );
+      if (not PyString_Check(item)) {
+        string message =  "pyListToStringSet: Item at position " + getString(i) + " is not a string.";
+        PyErr_SetString( ConstructorError, message.c_str() );
+        return false;
+      }
+      v.insert( PyString_AsString(item) );
+    }
+    return true;
+  }
+
 
 using namespace Hurricane;
 
@@ -730,30 +748,36 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyCell_flattenNets()" << endl;
     
-    Instance* instance = NULL;
-    PyObject* arg0     = NULL;
-    PyObject* arg1     = NULL;
+    uint64_t     flags    = 0;
+    set<string>  excludeds;
+    Instance*    instance = NULL;
+    PyObject*    arg0     = NULL;
+    PyObject*    arg1     = NULL;
+    PyObject*    arg2     = NULL;
 
     HTRY
       METHOD_HEAD ( "Cell.flattenNets()" )
       __cs.init( "Cell.flattenNets" );
-      if (not PyArg_ParseTuple(args,"O&O&:Cell.flattenNets"
-                              ,Converter,&arg0
-                              ,Converter,&arg1
-                              )) {
-          PyErr_SetString( ConstructorError, "Cell.flattenNets(): Takes exactly two parameters." );
-          return NULL;
-      }
-  
-      if (arg0 == Py_None) {
-        cell->flattenNets( NULL, PyInt_AsLong(arg1) );
-      } else if (__cs.getObjectIds() == ":ent:int") {
-        cell->flattenNets( PYINSTANCE_O(arg0), PyInt_AsLong(arg1) );
-      } else {
-        string message = "Cell.flattenNets(): Bad type of parameter(s), \"" + __cs.getObjectIds() + "\".";
-        PyErr_SetString( ConstructorError, message.c_str() );
+      if (not PyArg_ParseTuple(args,"OO|O:Cell.flattenNets", &arg0, &arg1, &arg2 )) {
+        PyErr_SetString( ConstructorError, "Cell.flattenNets(): Takes between two and three parameters." );
         return NULL;
       }
+  
+      if (arg0 != Py_None) {
+        if (not IsPyInstance(arg0)) {
+          PyErr_SetString( ConstructorError, "Cell.flattenNets(): First argument must be None or an Instance." );
+          return NULL;
+        }
+        instance = PYINSTANCE_O( arg0 );
+      }
+      if (arg2) {
+        pyListToStringSet( arg1, excludeds );
+        flags = PyInt_AsLong( arg2 );
+      } else {
+        flags = PyInt_AsLong( arg1 );
+      }
+
+      cell->flattenNets( instance, excludeds, flags );
     HCATCH
     Py_RETURN_NONE;
   }

@@ -9,7 +9,7 @@
 # |  Author      :                    Jean-Paul CHAPUT              |
 # |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
-# |  Python      :       "./plugins/block/clocktree.py"             |
+# |  Python      :       "./plugins/block/htree.py"                 |
 # +-----------------------------------------------------------------+
 
 
@@ -17,29 +17,14 @@ from   __future__ import print_function
 import sys
 import os.path
 import Cfg
-from   Hurricane import Breakpoint
-from   Hurricane import DbU
-from   Hurricane import Box
-from   Hurricane import Transformation
-from   Hurricane import Box
-from   Hurricane import Path
-from   Hurricane import Layer
-from   Hurricane import Occurrence
-from   Hurricane import Net
-from   Hurricane import HyperNet
-from   Hurricane import RoutingPad
-from   Hurricane import Horizontal
-from   Hurricane import Vertical
-from   Hurricane import Contact
-from   Hurricane import Pin
-from   Hurricane import Plug
-from   Hurricane import Instance
+from   Hurricane import Breakpoint, DbU, Box, Transformation, Box, \
+                        Path, Layer, Occurrence, Net, HyperNet,    \
+                        RoutingPad, Horizontal, Vertical, Contact, \
+                        Pin, Plug, Instance
 import CRL
 from   CRL             import RoutingLayerGauge
 from   helpers         import trace
-from   helpers.io      import ErrorMessage
-from   helpers.io      import WarningMessage
-from   helpers.io      import catch
+from   helpers.io      import ErrorMessage, WarningMessage, catch
 from   helpers.overlay import UpdateSession
 from   plugins         import getParameter
 from   plugins.alpha   import utils
@@ -48,33 +33,47 @@ from   plugins.alpha.block.spares        import Spares
 
 
 # ----------------------------------------------------------------------------
-# Class  :  "clocktree.ClockTree".
+# Class  :  "htree.HTree".
 
-class ClockTree ( object ):
+class HTree ( object ):
     """
-    Build a clock tree on a block.
+    Build a H-Tree on a net occurrene.
     """
 
-    def __init__ ( self, spares, clockNet, index ):
+    def __init__ ( self, spares, treeNetOcc, index ):
         self.spares     = spares
-        self.clockNet   = clockNet
-        self.clockIndex = index
+        self.treeNetOcc = treeNetOcc
+        self.treeIndex  = index
         self.subNets    = []
-        if not self.clockNet.isClock():
-            print( WarningMessage( 'ClockTree.__init__(): Net "{}" is not of CLOCK type.' \
-                                   .format(self.clockNet.getName()) ))
+       #if not self.treeNetOcc.getEntity().isClock():
+       #    print( WarningMessage( 'HTree.__init__(): Net "{}" is not of CLOCK type.' \
+       #                           .format(self.treeNet.getEntity().getName()) ))
+        if treeNetOcc.getPath().isEmpty():
+            self.treeNet = self.treeNetOcc.getEntity()
+        else:
+            botNet = self.treeNetOcc.getEntity()
+            botNet.setExternal( True )
+            topNetName = self.treeNetOcc.getName()
+            topNet     = Net.create( self.treeNetOcc.getPath().getOwnerCell(), topNetName )
+            topNet.setType     ( botNet.getType() )
+            topNet.setDirection( botNet.getDirection() )
+            path   = self.treeNetOcc.getPath().getHeadPath()
+            self.spares.raddTransNet( topNet, path )
+            botInstance = self.treeNetOcc.getPath().getTailInstance()
+            botInstance.getPlug( botNet ).setNet( botInstance.getCell().getNet( topNetName ))
+            self.treeNet = topNet
 
     def destroy ( self ):
-        trace( 550, ',+', '\tClockTree.destroy() "{}"\n'.format(self.clockNet.getName()) )
+        trace( 550, ',+', '\tHTree.destroy() "{}"\n'.format(self.treeNet.getName()) )
         with UpdateSession():
-            for subNet in self.subNets + [ self.clockNet ]:
+            for subNet in self.subNets + [ self.treeNet ]:
                 components = []
                 for comp in subNet.getComponents():
                     if isinstance(comp,RoutingPad): components.append( comp )
                     if isinstance(comp,Pin       ): components.append( comp )
                 for comp in components:
                     comp.destroy()
-                if subNet != self.clockNet:
+                if subNet != self.treeNet:
                     subNet.destroy()
         trace( 550, '-' )
 
@@ -82,7 +81,7 @@ class ClockTree ( object ):
         if qt.isLeaf(): return False
         qt.rconnectBuffer()
         driverNet = qt.bOutputPlug.getNet()
-        driverNet.setType( Net.Type.CLOCK )
+        driverNet.setType( self.treeNet.getType() )
         for leaf in qt.leafs:
             leaf.bInputPlug.setNet( driverNet )
             self._rconnectHTree( leaf )
@@ -92,7 +91,7 @@ class ClockTree ( object ):
         """
         Recursively build one HTree branch for all non-terminal nodes of the QuadTree.
         """
-        trace( 550, ',+', '\tClockTree._rrouteHTree() {}\n'.format(qt.bOutputPlug.getNet()) )
+        trace( 550, ',+', '\tHTree._rrouteHTree() {}\n'.format(qt.bOutputPlug.getNet()) )
         trace( 550, '\tOn: {}\n'.format(qt) )
         if qt.isLeaf():
             trace( 550, '-' )
@@ -165,13 +164,13 @@ class ClockTree ( object ):
             gaugeConf.setStackPosition( brContact, rightX, blY )
             gaugeConf.createVertical  ( rightContact, brContact, rightX, 0 )
         if qt.isRoot():
-            ckNet = self.clockNet
+            ckNet = self.treeNet
             if not self.spares.conf.isCoreBlock:
                 trace( 550, '\tRemoving any previous pin...\n' )
                 pins = []
                 for pin in ckNet.getPins(): pins.append( pin )
                 for pin in pins:
-                    print( WarningMessage('ClockTree._rrouteHTree(): Removing {}.'.format(pin)) )
+                    print( WarningMessage('HTree._rrouteHTree(): Removing {}.'.format(pin)) )
                     pin.destroy()
                 layerGauge  = gaugeConf.vRoutingGauge
                 rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
@@ -196,41 +195,44 @@ class ClockTree ( object ):
         
     def buildHTree ( self ):
         """
-        Create the clock tree netlist in two steps:
+        Create the tree tree netlist in two steps:
         1. Connect the buffers of the spares QuadTree to form a H-Tree.
-        2. Detach the all the clock sink point and reconnect them to the
+        2. Detach the all the tree sink point and reconnect them to the
            buffers of the leafs of the QuadTree.
         """
         qt           = self.spares.quadTree
-        qt.bufferTag = self.clockNet.getName()
-        qt.rselectBuffer( self.clockIndex, self.clockIndex, Spares.CHECK_USED|Spares.MARK_USED)
+        qt.bufferTag = self.treeNet.getName()
+        qt.rselectBuffer( self.treeIndex, self.treeIndex, Spares.CHECK_USED|Spares.MARK_USED)
         with UpdateSession():
             self._rconnectHTree( qt )
             self._rrouteHTree  ( qt )
 
-    def splitClock ( self ):
+    def splitNet ( self ):
         """
-        Disconnect the registers from the main clock and reconnect them to
-        the leaf buffers of the clock tree.
+        Disconnect the sinks from the main tree and reconnect them to
+        the leaf buffers of the tree tree.
         """
         bufferConf         = self.spares.conf.bufferConf
         quadTree           = self.spares.quadTree
-        quadTree.bufferTag = self.clockNet.getName()
-        quadTree.rselectBuffer( self.clockIndex, self.clockIndex, 0 )
+        quadTree.bufferTag = self.treeNet.getName()
+        quadTree.rselectBuffer( self.treeIndex, self.treeIndex, 0 )
         with UpdateSession():
-            coronaPlugs = []
-            hyperClock  = HyperNet.create( Occurrence(self.clockNet) )
-            for plugOccurrence in hyperClock.getTerminalNetlistPlugOccurrences():
-                if quadTree.isUnderArea(plugOccurrence):
-                    quadTree.attachToLeaf( plugOccurrence )
+            driverPlugs = []
+            hyperNet    = HyperNet.create( Occurrence(self.treeNet) )
+            for plugOcc in hyperNet.getTerminalNetlistPlugOccurrences():
+                trace( 550, '\tReattach "{}"\n'.format(plugOcc) )
+                plug = plugOcc.getEntity()
+                if not (plug.getMasterNet().getDirection() & Net.Direction.OUT) \
+                   and quadTree.isUnderArea(plugOcc):
+                    quadTree.attachToLeaf( plugOcc )
                 else:
-                    coronaPlugs.append( plugOccurrence )
+                    driverPlugs.append( plugOcc )
             quadTree.rsplitNetlist()
             if self.spares.conf.isCoreBlock:
                 plug = utils.getPlugByName( quadTree.buffer, bufferConf.input )
-                plug.setNet( self.clockNet )
-                trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.clockNet.getName()) )
-                trace( 550, '\tPlug of "{}" (Cell:{})\n'.format(self.clockNet.getName()
-                                                               ,self.clockNet.getCell()) )
-                for plug in self.clockNet.getPlugs():
+                plug.setNet( self.treeNet )
+                trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.treeNet.getName()) )
+                trace( 550, '\tPlug of "{}" (Cell:{})\n'.format(self.treeNet.getName()
+                                                               ,self.treeNet.getCell()) )
+                for plug in self.treeNet.getPlugs():
                     trace( 550, '\t| {}\n'.format(plug) )

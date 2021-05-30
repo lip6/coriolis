@@ -455,23 +455,23 @@ class Builder ( object ):
             trace( 550, '-' )
         self.activePlane = None
   
-    def _connectClock ( self, ck, trackNb ):
-        trace( 550, '\tpower.Builder._connectClock() {}\n'.format(ck) )
-        blockCk = None
+    def _connectHTree ( self, coronaNet, trackNb ):
+        trace( 550, '\tpower.Builder._connectHTree() {} on track {}\n'.format(coronaNet,trackNb) )
+        coreNet = None
         for plug in self.conf.icore.getPlugs():
-            if plug.getNet() == ck:
-                blockCk = plug.getMasterNet()
-        if not blockCk:
-            raise ErrorMessage( 1, 'Block "{}" has no net connected to the clock "{}".' \
-                                   .format(self.conf.icore.getName(),ck.getName()) )
+            if plug.getNet() == coronaNet:
+                coreNet = plug.getMasterNet()
+        if not coreNet:
+            raise ErrorMessage( 1, 'Block "{}" has no net connected to the H-Tree "{}".' \
+                                   .format(self.conf.icore.getName(),coronaNet.getName()) )
             return
         htPlugs = []
-        for plug in ck.getPlugs():
+        for plug in coronaNet.getPlugs():
             if plug.getInstance().isTerminalNetlist():
                 htPlugs.append( plug )
         if len(htPlugs) != 1:
-            message = [ 'Clock "{}" of block "{}" is not organized as a H-Tree ({} plugs).' \
-                        .format( ck.getName()
+            message = [ 'Net "{}" of block "{}" is not organized as a H-Tree ({} plugs).' \
+                        .format( coronaNet.getName()
                                , self.conf.icore.getName()
                                , len(htPlugs)) ]
             for plug in htPlugs:
@@ -479,17 +479,17 @@ class Builder ( object ):
             raise ErrorMessage( 1, message )
             return
         coronaPin = None
-        for pin in ck.getPins():
+        for pin in coronaNet.getPins():
             coronaPin = pin
             break
         if not coronaPin:
-            message = [ 'Clock "{}" of block "{}" is not connected to a corona Pin.' \
-                        .format( ck.getName() , self.conf.icore.getName() ) ]
+            message = [ 'Net "{}" of block "{}" is not connected to a corona Pin.' \
+                        .format( coronaNet.getName() , self.conf.icore.getName() ) ]
             raise ErrorMessage( 1, message )
         with UpdateSession():
             coronaAb   = self.conf.cellPnR.getAbutmentBox()
-            bufferRp   = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), ck, 0 )
-            pinRp      = self.conf.rpAccessByOccurrence( Occurrence(coronaPin , Path()), ck, 0 )
+            bufferRp   = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), coronaNet, 0 )
+            pinRp      = self.conf.rpAccessByOccurrence( Occurrence(coronaPin , Path()), coronaNet, 0 )
             trace( 550, '\tpinRp={}\n'.format(pinRp) )
             self.conf.expandMinArea( bufferRp )
             self.conf.expandMinArea( pinRp )
@@ -508,40 +508,39 @@ class Builder ( object ):
                 isVertical = False
                 axis       = coronaAb.getXMin()
             if isVertical:
-                pitch    = self.conf.vRoutingGauge.getPitch()
-                yaxis    = axis + pitch * trackNb
+                pitch    = self.conf.hRoutingGauge.getPitch()
+                yaxis    = axis + 2 * pitch * trackNb
+                trace( 550, '\tyaxis(request)={}\n'.format(DbU.getValueString(yaxis)) )
                 yaxis    = self.conf.getNearestHorizontalTrack( yaxis, 0 )
                 xaxisRp  = self.conf.getNearestVerticalTrack( bufferRp.getX(), 0 )
                 xaxisPin = self.conf.getNearestVerticalTrack( pin.getX(), 0 )
-                contact1 = self.conf.createContact( ck, xaxisRp , yaxis, 0 )
-                contact2 = self.conf.createContact( ck, xaxisPin, yaxis, 0 )
+                contact1 = self.conf.createContact( coronaNet, xaxisRp , yaxis, 0 )
+                contact2 = self.conf.createContact( coronaNet, xaxisPin, yaxis, 0 )
                 self.conf.createVertical  ( bufferRp, contact1, xaxisRp , 0 )
                 self.conf.createHorizontal( contact1, contact2, yaxis   , 0 )
                 self.conf.createVertical  ( contact2, pinRp   , xaxisPin, 0 )
+                trace( 550, '\tyaxis(track)={}\n'.format(DbU.getValueString(yaxis)) )
                 trace( 550, '\tcontact1={}\n'.format(contact1) )
                 trace( 550, '\tcontact2={}\n'.format(contact2) )
             else:
-                pitch    = self.conf.hRoutingGauge.getPitch()
-                xaxis    = axis + pitch * trackNb
+                pitch    = self.conf.vRoutingGauge.getPitch()
+                xaxis    = axis + 2 * pitch * trackNb
+                trace( 550, '\txaxis(request)={} vpitch={}\n' \
+                            .format(DbU.getValueString(xaxis), DbU.getValueString(pitch)) )
                 xaxis    = self.conf.getNearestVerticalTrack( xaxis, 0 )
                 yaxisRp  = self.conf.getNearestHorizontalTrack( bufferRp.getY(), 0 )
                 yaxisPin = self.conf.getNearestHorizontalTrack( pin.getY(), 0 )
-                contact1 = self.conf.createContact( ck, xaxis, yaxisRp , 0 )
-                contact2 = self.conf.createContact( ck, xaxis, yaxisPin, 0 )
+                contact1 = self.conf.createContact( coronaNet, xaxis, yaxisRp , 0 )
+                contact2 = self.conf.createContact( coronaNet, xaxis, yaxisPin, 0 )
                 self.conf.createHorizontal( bufferRp, contact1, yaxisRp , 0 )
                 self.conf.createVertical  ( contact1, contact2, xaxis   , 0 )
                 self.conf.createHorizontal( contact2, pinRp   , yaxisPin, 0 )
+                trace( 550, '\txaxis(track)={}\n'.format(DbU.getValueString(xaxis)) )
         return
   
-    def connectClocks ( self ):
-        if not self.conf.useClockTree:
-            print( WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." ))
-            return
-        if len(self.conf.coronaCks) == 0:
-            raise ErrorMessage( 1, 'Cannot build clock terminal as no clock is not known.' )
-            return
-        for i in range(len(self.conf.coronaCks)):
-            self._connectClock( self.conf.coronaCks[i], i+2 )
+    def connectHTrees ( self, hTrees ):
+        for i in range(len(hTrees)):
+            self._connectHTree( hTrees[i].treeNet, i+2 )
   
     def doLayout ( self ):
         with UpdateSession():

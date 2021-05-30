@@ -1241,6 +1241,8 @@ namespace Anabatic {
         //AutoSegment::setShortNetMode( true );
           ++shortNets;
         }
+        if (NetRoutingExtension::isManualDetailRoute(net))
+          continue;
         if (  NetRoutingExtension::isManualGlobalRoute(net)
            or NetRoutingExtension::isAutomaticGlobalRoute(net)) {
           DebugSession::open( net, 145, 150 );

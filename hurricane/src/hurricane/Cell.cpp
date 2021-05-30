@@ -821,6 +821,13 @@ void Cell::flattenNets (uint64_t flags )
 void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 // ****************************************************************
 {
+  static set<string> excludeds;
+  flattenNets( instance, excludeds, flags );
+}
+
+void Cell::flattenNets ( const Instance* instance, const std::set<string>& excludeds, uint64_t flags )
+// ***************************************************************************************************
+{
   cdebug_log(18,1) << "Cell::flattenNets() flags:0x" << hex << flags << endl;
 
   UpdateSession::open();
@@ -837,6 +844,7 @@ void Cell::flattenNets ( const Instance* instance, uint64_t flags )
 
     if (net->isClock() and (flags & Flags::NoClockFlatten)) continue;
     if (net->isPower() or net->isGround() or net->isBlockage()) continue;
+    if (excludeds.find(getString(occurrence.getName())) != excludeds.end()) continue;
 
     HyperNet  hyperNet ( occurrence );
     if ( not occurrence.getPath().isEmpty() ) {

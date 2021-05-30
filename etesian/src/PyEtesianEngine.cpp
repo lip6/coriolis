@@ -77,13 +77,14 @@ extern "C" {
   DirectVoidMethod(EtesianEngine,etesian,clearColoquinte)
   DirectVoidMethod(EtesianEngine,etesian,flattenPower)
   DirectVoidMethod(EtesianEngine,etesian,toHurricane)
-  DirectGetUIntAttribute  (PyEtesianEngine_doHFNS          ,doHFNS          ,PyEtesianEngine,EtesianEngine)
-  DirectSetLongAttribute  (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
-  DirectSetLongAttribute  (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
-  DirectSetDoubleAttribute(PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
-  DirectSetDoubleAttribute(PyEtesianEngine_setAspectRatio  ,setAspectRatio  ,PyEtesianEngine,EtesianEngine)
-  DirectGetLongAttribute  (PyEtesianEngine_getFixedAbHeight,getFixedAbHeight,PyEtesianEngine,EtesianEngine)
-  DirectGetLongAttribute  (PyEtesianEngine_getFixedAbWidth ,getFixedAbWidth ,PyEtesianEngine,EtesianEngine)
+  DirectGetUIntAttribute   (PyEtesianEngine_doHFNS          ,doHFNS          ,PyEtesianEngine,EtesianEngine)
+  DirectSetLongAttribute   (PyEtesianEngine_setFixedAbHeight,setFixedAbHeight,PyEtesianEngine,EtesianEngine)
+  DirectSetLongAttribute   (PyEtesianEngine_setFixedAbWidth ,setFixedAbWidth ,PyEtesianEngine,EtesianEngine)
+  DirectSetDoubleAttribute (PyEtesianEngine_setSpaceMargin  ,setSpaceMargin  ,PyEtesianEngine,EtesianEngine)
+  DirectSetDoubleAttribute (PyEtesianEngine_setAspectRatio  ,setAspectRatio  ,PyEtesianEngine,EtesianEngine)
+  DirectGetLongAttribute   (PyEtesianEngine_getFixedAbHeight,getFixedAbHeight,PyEtesianEngine,EtesianEngine)
+  DirectGetLongAttribute   (PyEtesianEngine_getFixedAbWidth ,getFixedAbWidth ,PyEtesianEngine,EtesianEngine)
+  DirectSetCStringAttribute(PyEtesianEngine_exclude         ,exclude         ,PyEtesianEngine,EtesianEngine)
 
 
   static PyObject* PyEtesianEngine_get ( PyObject*, PyObject* args )
@@ -236,6 +237,8 @@ extern "C" {
                             , "Returns the Etesian engine attached to the Cell, None if there isn't." }
     , { "create"            , (PyCFunction)PyEtesianEngine_create            , METH_VARARGS|METH_STATIC
                             , "Create an Etesian engine on this cell." }
+    , { "exclude"           , (PyCFunction)PyEtesianEngine_exclude           , METH_VARARGS
+                            , "Add the specified net to the exclusion list." }
     , { "getFixedAbHeight"  , (PyCFunction)PyEtesianEngine_getFixedAbHeight  , METH_NOARGS
                             , "Returns the forced abutment box height." }
     , { "getFixedAbWidth"   , (PyCFunction)PyEtesianEngine_getFixedAbWidth   , METH_NOARGS

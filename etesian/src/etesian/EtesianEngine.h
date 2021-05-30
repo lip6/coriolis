@@ -71,11 +71,13 @@ namespace Etesian {
       typedef std::tuple<Instance*, std::vector<RoutingPad*> > InstanceInfos;
       typedef std::map<Instance*,size_t,DBo::CompareById>      InstancesToIds;
       typedef std::map<Net*,size_t,DBo::CompareById>           NetsToIds;
+      typedef std::set<std::string>                            NetNameSet;
     public:
       static  const Name&            staticGetName             ();
       static  EtesianEngine*         create                    ( Cell* );
       static  EtesianEngine*         get                       ( const Cell* );
     public:                                                    
+      inline  bool                   isExcluded                ( std::string ) const;
       virtual Configuration*         getConfiguration          ();
       virtual const Configuration*   getConfiguration          () const;
       virtual const Name&            getName                   () const;
@@ -106,6 +108,7 @@ namespace Etesian {
       inline  void                   setViewer                 ( Hurricane::CellViewer* );
       inline  Cell*                  getBlockCell              () const;
       inline  Instance*              getBlockInstance          () const;
+      inline  const NetNameSet&      getExcludedNets           () const;
       inline  void                   setBlock                  ( Instance* );
       inline  void                   setFixedAbHeight          ( DbU::Unit );
       inline  void                   setFixedAbWidth           ( DbU::Unit );
@@ -136,6 +139,7 @@ namespace Etesian {
               uint32_t               doHFNS                    ();
       inline  void                   useFeed                   ( Cell* );
               size_t                 findYSpin                 ();
+      inline  void                   exclude                   ( string netName );
               void                   addFeeds                  ();
               void                   toHurricane               ();
               void                   flattenPower              ();
@@ -174,6 +178,7 @@ namespace Etesian {
              DbU::Unit                            _fixedAbWidth;
              uint32_t                             _diodeCount;
              uint32_t                             _bufferCount;
+             NetNameSet                           _excludedNets;
 
     protected:
     // Constructors & Destructors.
@@ -229,6 +234,8 @@ namespace Etesian {
   inline  uint32_t               EtesianEngine::_getNewDiodeId            () { return _diodeCount++; }
   inline  const Box&             EtesianEngine::getPlaceArea              () const { return _placeArea; }
   inline  Area*                  EtesianEngine::getArea                   () const { return _area; }
+  inline  const EtesianEngine::NetNameSet&
+                                 EtesianEngine::getExcludedNets           () const { return _excludedNets; }
 
   inline  void  EtesianEngine::setBlock ( Instance* block )
   {
@@ -318,6 +325,24 @@ namespace Etesian {
     return blockTransf.invert().getTransformation( cellTransf );
   }
 
+
+  inline  bool  EtesianEngine::isExcluded ( string netName ) const
+  { return (_excludedNets.find(netName) != _excludedNets.end()); }
+
+
+  inline  void  EtesianEngine::exclude ( string netName )
+  {
+    // Net* net = getCell()->getNet( netName );
+    // if (not net) {
+    //   std::cerr << Error( "EtesianEngine::exclude(Net*): %s has no net named \"%s\"."
+    //                     , getString(getCell()).c_str()
+    //                     , netName.c_str()
+    //                     ) << std::endl;
+    //   return;
+    // }
+    if (isExcluded(netName)) return;
+    _excludedNets.insert( netName );
+  }
 
 // Variables.
   extern const char* missingEtesian;

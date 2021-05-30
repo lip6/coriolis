@@ -1057,7 +1057,9 @@ namespace Anabatic {
     uint32_t total  = 0;
     for ( Net* net : getCell()->getNets() ) {
       if (net->isSupply()) continue;
-      if (net->isClock ()) continue;
+      if (  NetRoutingExtension::isManualDetailRoute(net)
+         or NetRoutingExtension::isFixed(net))
+        continue;
       antennaProtect( net, failed, total );
     }
     cmess2 << Dots::asString    ( "     - Antenna gate maximum WL"   , DbU::getValueString(etesian->getAntennaGateMaxWL()) ) << endl;
