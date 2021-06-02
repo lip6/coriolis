@@ -18,6 +18,7 @@ from Hurricane  import Breakpoint
 from Hurricane  import Box
 from Hurricane  import Vertical
 from Hurricane  import RoutingPad
+from helpers    import trace
 
 
 def breakpoint ( editor, level, message ):
@@ -96,3 +97,45 @@ def hpathToName ( path ):
         if len(s): s += '_'
         s += head.getName()
     return s
+
+
+def getInstanceMatching ( cell, pattern, level=0 ):
+    """
+    getInstanceMatching(): returns first instance with the word being searched.
+    """
+    for instance in cell.getInstances():
+        name = instance.getName()
+        if pattern in name:
+            trace( 550, '\t{} {} match pattern "{}"\n'.format('  '*level,instance,pattern) )
+            return instance
+    return None
+
+
+def rgetInstanceMatching ( cell, path, level=0 ):
+    """
+    Get the instance designated by path (recursively). The path argument can be
+    either a string of instance names separated by dots or directly a list of
+    instances names.
+ 
+    It also "reconstructs" the actual full path name of the instances
+    found recursively.
+    """
+    if isinstance(path,str):
+        path = path.split( '.' )
+    elif not isinstance(path, list):
+        raise ErrorMessage( 1, 'rgetInstanceMatching(): "path" argument is ' \
+                               'neither a string or a list ({})."' \
+                               .format(path) )
+    # Find instance at this level.
+    instance = getInstanceMatching( cell, path[0], level )
+    if instance is None:
+        raise ErrorMessage( 1, 'rgetInstanceMatching(): No instance "{}" in cell "{}".' \
+                               .format(path[0], cell.getName()) )
+    iname = instance.getName()
+    # Last instance (leaf search), return it.
+    if len(path) == 1:
+        return instance, iname
+    # Chew down another level, another brick in the wall
+    rinstance, rname = rgetInstanceLike( instance.getMasterCell(), path[1:], level+1 )
+    # Accumulate the names recursively found "level0.level1.level2..."
+    return rinstance, '{}.{}'.format( iname, rname )
