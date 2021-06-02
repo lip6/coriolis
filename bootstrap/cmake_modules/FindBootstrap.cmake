@@ -94,12 +94,14 @@
    set(ADDTIONAL_FLAGS "")
    set(CXX_STANDARD "c++11")
  endif()
-#set(CMAKE_C_FLAGS_DEBUG     "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
- set(CMAKE_C_FLAGS_DEBUG     "                     -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
+ set(CMAKE_C_FLAGS_DEBUG     "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
+#set(CMAKE_C_FLAGS_DEBUG     "                     -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
  set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -O2                ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
-#set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
- set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+#set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
+ set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+#set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
  set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -O2                ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
+#set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
 
 
 #
