@@ -116,8 +116,6 @@ namespace {
       inline Net*  getCk                () const;
       inline Net*  getBlockage          () const;
       inline void  setBlockage          ( Net* );
-    private:                            
-             bool  guessGlobalNet       ( const Name&, Net* );
     private:
       uint32_t  _flags;
       Name      _vddCoreName;
@@ -217,37 +215,6 @@ namespace {
   }
 
 
-  bool  GlobalNetTable::guessGlobalNet ( const Name& name, Net* net )
-  {
-    if (name == _vddCoreName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vdd) power net." << endl;
-      _vdd = net;
-      return true;
-    }
-
-    if (name == _vssCoreName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:vss) ground net." << endl;
-      _vss = net;
-      return true;
-    }
-
-    if (name == _ckCoreName) {
-      cmess1 << "        - Using <" << net->getName() << "> as core (internal:ck) clock net." << endl;
-      _ck = net;
-
-      if (NetRoutingExtension::isMixedPreRoute(_ck)) {
-        cmess1 << "          (core clock net is already routed)" << endl;
-        _flags |= ClockIsRouted;
-      } else {
-        cmess1 << "          (core clock net will be routed as an ordinary signal)" << endl;
-      }
-      return true;
-    }
-
-    return false;
-  }
-
-
   Net* GlobalNetTable::getRootNet ( const Net* net, Path path ) const
   {
     cdebug_log(159,0) << "    getRootNet:" << path << ":" << net << endl;
@@ -255,21 +222,20 @@ namespace {
     if (net == _blockage) return _blockage;
     if (net->getType() == Net::Type::POWER ) return _vdd;
     if (net->getType() == Net::Type::GROUND) return _vss;
-    if (net->getType() != Net::Type::CLOCK ) return NULL;
 
   // Track up, *only* for clocks.
     const Net* upNet = net;
 
     if (not path.isEmpty()) {
       cdebug_log(159,0) << "    Path is *not* empty:" << path << endl;
-      DeepNet* deepClockNet = getTopCell()->getDeepNet( path, net );
-      if (deepClockNet) {
-        cdebug_log(159,0) << "    Deep Clock Net:" << deepClockNet
-                    << " state:" << NetRoutingExtension::getFlags(deepClockNet) << endl;
+      DeepNet* deepNet = getTopCell()->getDeepNet( path, net );
+      if (deepNet) {
+        cdebug_log(159,0) << "    Deep Clock Net:" << deepNet
+                    << " state:" << NetRoutingExtension::getFlags(deepNet) << endl;
 
-        return NetRoutingExtension::isFixed(deepClockNet) ? _blockage : NULL;
+        return NetRoutingExtension::isFixed(deepNet) ? _blockage : NULL;
       } else {
-        cdebug_log(159,0) << "    Top Clock Net:" << net
+        cdebug_log(159,0) << "    Top DeepNet:" << net
                     << " state:" << NetRoutingExtension::getFlags(net) << endl;
       }
 
