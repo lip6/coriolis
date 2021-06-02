@@ -726,17 +726,23 @@ namespace {
         else if (not net) { // Net doesn't exist yet
           plugNet->addAlias( netName );
         }
-        else if (plugNet != net){ // Plus already connected to another net
+        else if (plugNet != net){ // Plug already connected to another net
           if (not plugNet->isExternal()) {
             net->merge( plugNet );
+            plugNet = net;
           }
-          else plugNet->merge( net );
+          else {
+            plugNet->merge( net );
+            net = plugNet;
+          }
         }
 
         // if (subckt->getModel()->getCell()->getName() == "sm0") {
         //   cerr << "sm0 plug:" << plug->getMasterNet()->getName() << " => net:" << net->getName() << endl;
         // }
 
+        cerr << "plugNet=" << (void*)plugNet << endl;
+        cerr << "plug->getMasterNet()=" << (void*)(plug->getMasterNet()) << endl;
         if (plugNet->isSupply() and not plug->getMasterNet()->isSupply()) {
           ostringstream message;
           message << "In " << instance << "\n          "
