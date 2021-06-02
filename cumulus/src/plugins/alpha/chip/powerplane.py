@@ -478,6 +478,7 @@ class Builder ( object ):
                 message += [ '\n        - {} {}'.format(plug,plug.getInstance()) ]
             raise ErrorMessage( 1, message )
             return
+        if not coronaNet.isExternal(): return
         coronaPin = None
         for pin in coronaNet.getPins():
             coronaPin = pin
