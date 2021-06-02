@@ -312,6 +312,7 @@ class Block ( object ):
                                 , IoPin.SOUTH : Side( self.conf, IoPin.SOUTH )
                                 , IoPin.NORTH : Side( self.conf, IoPin.NORTH )
                                 }
+        self.etesian          = None
         if not self.conf.cell.getAbutmentBox().isEmpty():
             isBuilt = True
             for instance in self.conf.cell.getInstances():
@@ -467,7 +468,7 @@ class Block ( object ):
     def flattenNets ( self ):
         if self.flags & Block.FLATTENED: return
         if self.conf.isCoreBlock:
-            self.conf.corona.flattenNets( self.conf.icore, self.conf.hTreeNames, Cell.Flags_NoClockFlatten )
+            self.conf.corona.flattenNets( None, self.excludedNets, Cell.Flags_NoClockFlatten )
         else:
             self.conf.cell.flattenNets( None, self.excludedNets, Cell.Flags_NoClockFlatten )
         self.flags |= Block.FLATTENED
@@ -633,6 +634,8 @@ class Block ( object ):
 
     def initEtesian ( self ):
         editor = self.conf.editor
+        if self.etesian:
+            return
         if self.conf.isCoreBlock:
             self.etesian = Etesian.EtesianEngine.create( self.conf.corona )
             self.etesian.setBlock( self.conf.icore )
@@ -641,9 +644,10 @@ class Block ( object ):
                 Breakpoint.stop( 100, 'Block.place(), corona loaded.')
         else:
             self.etesian = Etesian.EtesianEngine.create( self.conf.cell )
-        self.etesian.getCell().flattenNets( None, self.excludedNets, Cell.Flags_NoClockFlatten )
+        self.flattenNets()
 
     def place ( self ):
+        self.initEtesian()
         if self.conf.placeArea:
             self.etesian.setPlaceArea( self.conf.placeArea )
         if self.conf.useHFNS: self.etesian.doHFNS()
@@ -793,7 +797,6 @@ class Block ( object ):
                 blockInstance.block.build()
         if editor: editor.setCell( self.conf.cellPnR )
         self.conf.cfg.apply()
-        self.initEtesian()
         iteration = -1
         while True:
             iteration += 1
@@ -803,9 +806,10 @@ class Block ( object ):
                 self.placeIoPins()
                 self.checkIoPins()
             self.spares.build()
-           #if self.conf.useHFNS:      self.findHfnTrees4()
+           #if self.conf.useHFNS: self.findHfnTrees4()
+            self.initEtesian()
             self.addHTrees()
-           #if self.conf.useHFNS:      self.addHfnBuffers()
+           #if self.conf.useHFNS: self.addHfnBuffers()
             if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
