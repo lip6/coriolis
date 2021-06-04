@@ -741,8 +741,6 @@ namespace {
         //   cerr << "sm0 plug:" << plug->getMasterNet()->getName() << " => net:" << net->getName() << endl;
         // }
 
-        cerr << "plugNet=" << (void*)plugNet << endl;
-        cerr << "plug->getMasterNet()=" << (void*)(plug->getMasterNet()) << endl;
         if (plugNet->isSupply() and not plug->getMasterNet()->isSupply()) {
           ostringstream message;
           message << "In " << instance << "\n          "

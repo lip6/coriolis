@@ -61,6 +61,7 @@ namespace CRL {
   // VHDL reserved keywords (scalar).
     if (loweredName == "in"   ) return "in_v";
     if (loweredName == "out"  ) return "out_v";
+    if (loweredName == "ref"  ) return "ref_v";
     if (loweredName == "inout") return "inout_v";
     if (loweredName == "true" ) return "bool_true";
     if (loweredName == "false") return "bool_false";
