@@ -854,6 +854,12 @@ association_element
                       << "  Port map assignment discrepency "
                       << "instance:" << Vst::states->_instanceNets.size()
                       << " vs. model:"   << Vst::states->_masterNets.size();
+              message << "\nModel:";
+              for ( Net* net : Vst::states->_masterNets )
+	         message << " \"" << net->getName() << "\"";
+              message << "\nInstance:";
+              for ( Net* net : Vst::states->_instanceNets )
+	         message << " \"" << net->getName() << "\"";
               throw Error( message.str() );
             }
 	    
