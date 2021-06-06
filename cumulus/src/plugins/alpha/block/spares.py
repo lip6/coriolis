@@ -345,6 +345,10 @@ class QuadTree ( object ):
         if self.tr: self.tr.removeUnusedBuffers()
         self.pool._removeUnuseds()
 
+    def getDistance ( self, point ):
+        """Return the Manhattan distance between ``point`` and the area center."""
+        return self.area.getCenter().manhattanDistance( point )
+
     def rshowPoolUse ( self ):
         rused  = 0
         rtotal = 0
@@ -696,27 +700,27 @@ class QuadTree ( object ):
     def getLeafUnder ( self, position ):
         """Find the QuadTree leaf under ``position``."""
         if self.isLeaf(): return self
-        if self.isHBipart():
-            if position.getX() < self.xcut: return self.bl.getLeafUnder(position)
-            return self.br.getLeafUnder(position)
-        if self.isVBipart():
-            if position.getY() < self.ycut: return self.bl.getLeafUnder(position)
-            return self.tl.getLeafUnder(position)
-        leaf = None
-        if position.getX() < self.xcut:
-            if position.getY() < self.ycut: leaf = self.bl
-            else:                           leaf = self.tl
-        else:
-            if position.getY() < self.ycut: leaf = self.br
-            else:                           leaf = self.tr
-        if not leaf:
-            dx = abs( position.getX() - self.xcut )
-            dy = abs( position.getY() - self.ycut )
-            if self.tr and ((dx <  dy) or not leaf): leaf = self.tr
-            if self.tl and ((dx <  dy) or not leaf): leaf = self.tl
-            if self.br and ((dx >= dy) or not leaf): leaf = self.br
-            if self.bl and ((dx >= dy) or not leaf): leaf = self.bl
-        return leaf.getLeafUnder(position)
+        candidate = None
+        minDist   = None
+        if self.bl:
+            minDist   = self.bl.getDistance( position )
+            candidate = self.bl
+        if self.br:
+            distance = self.br.getDistance( position )
+            if (candidate is None) or (distance < minDist):
+                minDist   = distance
+                candidate = self.br
+        if self.tl:
+            distance = self.tl.getDistance( position )
+            if (candidate is None) or (distance < minDist):
+                minDist   = distance
+                candidate = self.tl
+        if self.tr:
+            distance = self.tr.getDistance( position )
+            if (candidate is None) or (distance < minDist):
+                minDist   = distance
+                candidate = self.tr
+        return candidate.getLeafUnder(position)
 
     def getFreeLeafUnder ( self, area, attractor=None ):
         """
