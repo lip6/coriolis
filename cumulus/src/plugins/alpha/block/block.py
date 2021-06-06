@@ -383,8 +383,10 @@ class Block ( object ):
 
     @staticmethod
     def _instancesToPath ( cell, instances ):
-        instance = cell.getInstance( instances[0] )
-        return Block._rinstancesToPath( Path(instance), instances[1:] )
+        path = Path( cell.getInstance( instances[0] ))
+        if len(instances) == 1:
+            return path
+        return Block._rinstancesToPath( path, instances[1:] )
 
     def getFlattenedNet ( self, path ):
         """
@@ -398,9 +400,14 @@ class Block ( object ):
         elements = path.split('.')
         if len(elements) == 1:
             return None
-        path = Block._instancesToPath( self.conf.cellPnR, elements[:-1] )
-        net  = path.getTailInstance().getMasterCell().getNet( elements[-1] )
-        return Occurrence( net, path )
+        ipath = Block._instancesToPath( self.conf.cellPnR, elements[:-1] )
+        net   = ipath.getTailInstance().getMasterCell().getNet( elements[-1] )
+        if net is None:
+            raise ErrorMessage( 1, [ 'Block.getFlattenedNet(): On "{}" (deep)net,'.format( path )
+                                   , 'Tail {} has no net "{}".' \
+                                     .format( ipath.getTailInstance(), elements[-1] )
+                                   ] )
+        return Occurrence( net, ipath )
 
     def setUnexpandPins ( self, sides ):
         """
