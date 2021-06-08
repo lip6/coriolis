@@ -513,6 +513,7 @@ class CoreWire ( object ):
         self.offset        = 0
         self.offsetType    = CoreWire.NoOffset
         self.side          = side
+        self.addJumper     = False
         self.preferredDir  = preferredDir
         self.inCoronaRange = True
         self.arraySize     = None
@@ -520,6 +521,8 @@ class CoreWire ( object ):
         self.viaPitch      = DbU.fromLambda( 4.0 )
         self.gapWidth      = 0
         self._computeCoreLayers()
+        if self.conf.routingGauge.getName() == 'FlexLib':
+            self.addJumper = True
 
     @property
     def conf ( self ): return self.corona.conf
@@ -627,13 +630,68 @@ class CoreWire ( object ):
                 if not self.preferredDir:
                    #xPadMin -= self.bbSegment.getHeight()/2
                     xPadMin -= 3*vPitch
-            hReal = Horizontal.create( self.chipNet
-                                     , self.padSegment.getLayer()
-                                     , self.bbSegment.getCenter().getY()
-                                     , self.bbSegment.getHeight()
-                                     , xPadMin
-                                     , xPadMax
-                                     )
+            if self.addJumper:
+                rg        = self.conf.routingGauge
+                gaugeM5   = rg.getLayerGauge( 4 )
+                wwidthM5  = gaugeM5.getWireWidth()
+                jumperGap = 3*gaugeM5.getPitch()
+                if self.side == East:
+                    gapCenter = xPadMin + 5*gaugeM5.getPitch()
+                else:
+                    gapCenter = xPadMax - 5*gaugeM5.getPitch()
+                xJumpMin  = gapCenter - jumperGap/2
+                xJumpMax  = gapCenter + jumperGap/2
+                hReal1 = Horizontal.create( self.chipNet
+                                          , self.padSegment.getLayer()
+                                          , self.bbSegment.getCenter().getY()
+                                          , self.bbSegment.getHeight()
+                                          , xPadMin
+                                          , xJumpMin
+                                          )
+                trace( 550, '\thReal1: %s\n' % str(hReal1) )
+                hReal2 = Horizontal.create( self.chipNet
+                                          , self.padSegment.getLayer()
+                                          , self.bbSegment.getCenter().getY()
+                                          , self.bbSegment.getHeight()
+                                          , xJumpMax
+                                          , xPadMax
+                                          )
+                trace( 550, '\thReal2: %s\n' % str(hReal2) )
+                hReal = hReal2 if self.side == West else hReal1
+                bvia1 = BigVia( self.chipNet
+                              , rg.getLayerDepth( self.padSegment.getLayer() )
+                              , xJumpMin
+                              , self.bbSegment.getCenter().getY()
+                              , wwidthM5
+                              , 2*wwidthM5
+                              , flags=BigVia.AllowAllExpand )
+                bvia1.mergeDepth( gaugeM5.getDepth() )
+                trace( 550, '\tbvia1: %s\n' % str(bvia1) )
+                bvia1.doLayout()
+                bvia2 = BigVia( self.chipNet
+                              , rg.getLayerDepth( self.padSegment.getLayer() )
+                              , xJumpMax
+                              , self.bbSegment.getCenter().getY()
+                              , wwidthM5
+                              , 2*wwidthM5
+                              , flags=BigVia.AllowAllExpand )
+                bvia2.mergeDepth( gaugeM5.getDepth() )
+                bvia2.doLayout()
+                trace( 550, '\tbvia2: %s\n' % str(bvia2) )
+                Horizontal.create( bvia1.getPlate( gaugeM5.getLayer() )
+                                 , bvia2.getPlate( gaugeM5.getLayer() )
+                                 , gaugeM5.getLayer()
+                                 , self.bbSegment.getCenter().getY()
+                                 , wwidthM5
+                                 )
+            else:
+                hReal = Horizontal.create( self.chipNet
+                                         , self.padSegment.getLayer()
+                                         , self.bbSegment.getCenter().getY()
+                                         , self.bbSegment.getHeight()
+                                         , xPadMin
+                                         , xPadMax
+                                         )
             trace( 550, '\tself.arraySize: %s\n' % str(self.arraySize) )
             if self.arraySize:
                 contacts = self.conf.coronaContactArray( self.chipNet

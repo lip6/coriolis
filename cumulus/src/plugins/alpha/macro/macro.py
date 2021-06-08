@@ -134,19 +134,33 @@ class Macro ( object ):
         gaugeMetal2      = self.rg.getLayerGauge( 1 )
         gaugeMetal3      = self.rg.getLayerGauge( 2 )
         gaugeMetal4      = self.rg.getLayerGauge( 3 )
+        gaugeMetal5      = self.rg.getLayerGauge( 4 )
         blockageMetal2   = gaugeMetal2.getBlockageLayer()
         blockageMetal3   = gaugeMetal3.getBlockageLayer()
         blockageMetal4   = gaugeMetal4.getBlockageLayer()
         minSpacingMetal2 = gaugeMetal2.getLayer().getMinimalSpacing()
         minSpacingMetal3 = gaugeMetal3.getLayer().getMinimalSpacing()
         minSpacingMetal4 = gaugeMetal4.getLayer().getMinimalSpacing()
+        useJumper  = False
+        xMinAdjust = 0
+        yMinAdjust = 0
+        xMaxAdjust = 0
+        yMaxAdjust = 0
         if self.cell.getName().lower() == 'spblock_512w64b8w':
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
+            useJumper  = True
+            xMinAdjust = 3*self.rg.getPitch( gaugeMetal5.getLayer() )
+            pitch      = gaugeMetal2.getPitch()
+            if xMinAdjust % pitch:
+                xMinAdjust += pitch - (xMinAdjust % pitch)
             for net in self.cell.getNets():
                 for component in net.getComponents():
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
                         bb = component.getBoundingBox()
-                        bb.inflate( minSpacingMetal2 )
+                        bb.inflate( minSpacingMetal2 + xMinAdjust
+                                  , minSpacingMetal2
+                                  , minSpacingMetal2
+                                  , minSpacingMetal2 )
                         Horizontal.create( component.getNet()
                                          , blockageMetal2
                                          , bb.getYCenter()
@@ -192,11 +206,9 @@ class Macro ( object ):
                 elif ab.getXMin() == bb.getXMin():  westPins.append( component )
                 elif ab.getYMax() == bb.getYMax(): northPins.append( component )
                 elif ab.getYMin() == bb.getYMin(): southPins.append( component )
-        xAdjust = 0
-        yAdjust = 0
-        if ab.getWidth () % sliceHeight: xAdjust = sliceHeight - ab.getWidth () % sliceHeight
-        if ab.getHeight() % sliceHeight: yAdjust = sliceHeight - ab.getHeight() % sliceHeight
-        self.innerAb.inflate( 0, 0, xAdjust, yAdjust )
+        if ab.getWidth () % sliceHeight: xMaxAdjust = sliceHeight - (ab.getWidth ()+xMinAdjust) % sliceHeight
+        if ab.getHeight() % sliceHeight: yMaxAdjust = sliceHeight - (ab.getHeight()+yMinAdjust) % sliceHeight
+        self.innerAb.inflate( xMinAdjust, 0, xMaxAdjust, yMaxAdjust )
         self.outerAb = Box( self.innerAb )
         self.outerAb.inflate( sliceHeight )
         westPins .sort( key=lambda k: k.getBoundingBox().getYCenter() )
@@ -225,27 +237,78 @@ class Macro ( object ):
                     else:
                         ppYAxis   += width/2
                         ppYOngrid -= wwidth/2
-                vertical = Vertical.create( component.getNet()
-                                          , component.getLayer()
-                                          , bb.getXMin()
-                                          , width
-                                          , ppYAxis
-                                          , ppYOngrid
-                                          )
-                horizontal = Horizontal.create( component.getNet()
+                if useJumper:
+                    jpitch  = self.rg.getPitch    ( gaugeMetal5.getLayer() )
+                    jwwidth = self.rg.getWireWidth( gaugeMetal5.getLayer() )
+                    xMin   -= 4*jpitch
+                    bvia1 = BigVia( component.getNet()
+                                  , self.getLayerDepth(component.getLayer())
+                                  , xMax
+                                  , yOngrid
+                                  , wwidth
+                                  , 3*wwidth
+                                  , flags=BigVia.AllowAllExpand )
+                    bvia1.mergeDepth( gaugeMetal5.getDepth() )
+                    bvia1.doLayout()
+                    bvia2 = BigVia( component.getNet()
+                                  , self.getLayerDepth(component.getLayer())
+                                  , xMax - 3*jpitch
+                                  , yOngrid
+                                  , wwidth
+                                  , 3*wwidth
+                                  , flags=BigVia.AllowAllExpand )
+                    bvia2.mergeDepth( gaugeMetal5.getDepth() )
+                    bvia2.doLayout()
+                    Horizontal.create( bvia1.getPlate( gaugeMetal5.getLayer() )
+                                     , bvia2.getPlate( gaugeMetal5.getLayer() )
+                                     , gaugeMetal5.getLayer()
+                                     , yOngrid
+                                     , jwwidth
+                                     )
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , yOngrid
+                                                  , wwidth
+                                                  , xMin
+                                                  , xMax - 3*jpitch
+                                                  )
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , yOngrid
+                                                  , wwidth
+                                                  , xMin
+                                                  , xMin + ppitch + ppitch/2
+                                                  )
+                    blockageNet = self.cell.getNet( '*'  )
+                    for gauge in [ gaugeMetal3, gaugeMetal3, gaugeMetal4, gaugeMetal5 ]:
+                        bb =      bvia1.getPlate( gauge.getLayer() ).getBoundingBox()
+                        bb.merge( bvia2.getPlate( gauge.getLayer() ).getBoundingBox() )
+                        bb.inflate( gauge.getLayer().getMinimalSpacing() )
+                        Pad.create( blockageNet
+                                  , gauge.getLayer().getBlockageLayer()
+                                  , bb )
+                else:
+                    vertical = Vertical.create( component.getNet()
                                               , component.getLayer()
-                                              , yOngrid
-                                              , wwidth
-                                              , xMin
-                                              , xMax
+                                              , bb.getXMin()
+                                              , width
+                                              , ppYAxis
+                                              , ppYOngrid
                                               )
-                horizontal = Horizontal.create( component.getNet()
-                                              , component.getLayer()
-                                              , yOngrid
-                                              , wwidth
-                                              , xMin
-                                              , xMin + ppitch + ppitch/2
-                                              )
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , yOngrid
+                                                  , wwidth
+                                                  , xMin
+                                                  , xMax
+                                                  )
+                    horizontal = Horizontal.create( component.getNet()
+                                                  , component.getLayer()
+                                                  , yOngrid
+                                                  , wwidth
+                                                  , xMin
+                                                  , xMin + ppitch + ppitch/2
+                                                  )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:
                 layer = component.getLayer()
@@ -259,8 +322,8 @@ class Macro ( object ):
                 bb        = component.getBoundingBox()
                 yAxis     = bb.getYCenter()
                 yOngrid   = self.getNearestTrackAxis( layer, yAxis )
-                xMin      = self.innerAb.getXMax() - xAdjust
-                xMax      = xMin + xAdjust + hMargin*ppitch
+                xMin      = self.innerAb.getXMax() - xMaxAdjust
+                xMax      = xMin + xMaxAdjust + hMargin*ppitch
                 width     = bb.getHeight()
                 ppYAxis   = yAxis
                 ppYOngrid = yOngrid
@@ -289,7 +352,7 @@ class Macro ( object ):
                                               , layer
                                               , yOngrid
                                               , wwidth
-                                              , xMin + xAdjust + ppitch
+                                              , xMin + xMaxAdjust + ppitch
                                               , xMax
                                               )
                 NetExternalComponents.setExternal( horizontal )
@@ -347,8 +410,8 @@ class Macro ( object ):
                 bb        = component.getBoundingBox()
                 xAxis     = bb.getXCenter()
                 xOngrid   = self.getNearestTrackAxis( layer, xAxis )
-                yMin      = self.innerAb.getYMax() - yAdjust
-                yMax      = yMin + yAdjust + vMargin*ppitch
+                yMin      = self.innerAb.getYMax() - yMaxAdjust
+                yMax      = yMin + yMaxAdjust + vMargin*ppitch
                 width     = bb.getWidth()
                 ppXAxis   = xAxis
                 ppXOngrid = xOngrid
@@ -388,7 +451,7 @@ class Macro ( object ):
                                           , layer
                                           , xOngrid
                                           , wwidth
-                                          , yMin + ppitch + yAdjust
+                                          , yMin + ppitch + yMaxAdjust
                                           , yMax
                                           )
                 NetExternalComponents.setExternal( vertical )
