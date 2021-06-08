@@ -124,6 +124,11 @@ namespace {
       static const uint32_t  InCluster;
       static       string    toStr ( uint32_t );
     public:
+      template<typename DerivedT>
+      inline const DerivedT* as () const { return dynamic_cast<const DerivedT>( this ); }
+      template<typename DerivedT>
+      inline DerivedT* as () { return dynamic_cast<DerivedT>( this ); }
+    public:
                                        DiodeCluster         ( AnabaticEngine*, RoutingPad* );
       virtual                         ~DiodeCluster         ();
                     DbU::Unit          getAntennaGateMaxWL  () const;
@@ -136,13 +141,17 @@ namespace {
       inline        AnabaticEngine*    _getAnabatic         () const;
       inline  const RoutingPadInfos&   getRoutingPads       () const;
       inline        RoutingPadInfos&   _getRoutingPads      () ;
+      inline  const set<size_t>&       getNeighbors         () const;
       inline  const vector<Instance*>& getDiodes            () const;
       inline        vector<Instance*>& _getDiodes           ();
+      inline        uint32_t           getForcedDiodes      () const;
       inline        DbU::Unit          getWL                () const;
       inline        DbU::Unit&         _getWL               ();
                     void               showArea             () const;
       virtual       bool               needsDiode           () const = 0;
                     Box                getBoundingBox       () const;
+      inline        void               addNeighbor          ( size_t );
+      inline        void               addForcedDiodes      ( uint32_t );
                     void               merge                ( GCell*, uint32_t distance, GCell* back=NULL );
       virtual       void               merge                ( RoutingPad* );
       virtual       void               merge                ( Segment* ) = 0;
@@ -159,6 +168,8 @@ namespace {
       RoutingPadInfos    _routingPads;
       vector<GCellArea>  _areas;
       vector<Instance*>  _diodes;
+      set<size_t>        _neighbors;
+      uint32_t           _forcedDiodes;
   };
 
   
@@ -187,6 +198,8 @@ namespace {
     , _routingPads()
     , _areas(1)
     , _diodes()
+    , _neighbors()
+    , _forcedDiodes(0)
   {
     merge( rp );
   }
@@ -205,6 +218,10 @@ namespace {
   inline       RoutingPadInfos&    DiodeCluster::_getRoutingPads () { return _routingPads; }
   inline const vector<Instance*>&  DiodeCluster::getDiodes       () const { return _diodes; }
   inline       vector<Instance*>&  DiodeCluster::_getDiodes      () { return _diodes; }
+  inline const set<size_t>&        DiodeCluster::getNeighbors    () const { return _neighbors; }
+  inline       void                DiodeCluster::addNeighbor     ( size_t neighbor ) { _neighbors.insert(neighbor); }
+  inline       uint32_t            DiodeCluster::getForcedDiodes () const { return _forcedDiodes; }
+  inline       void                DiodeCluster::addForcedDiodes ( uint32_t count ) { _forcedDiodes += count; }
 
 
   DbU::Unit  DiodeCluster::getAntennaGateMaxWL () const
@@ -415,6 +432,7 @@ namespace {
     cdebug_log(147,1) << "DiodeCluster::createDiodes() count=" << diodeCount
                       << ", forcedHalo=" << (_areas.size()-1) << endl;
     Instance* diode = NULL;
+  //for ( size_t i=(_areas.size() == 1)?0:1 ; i<_areas.size() ; ++i ) {
     for ( size_t i=0 ; i<_areas.size() ; ++i ) {
       if (i) diodeCount = 1;
       cdebug_log(147,0) << "Diode for area [" << i << "]" << endl;
@@ -502,6 +520,7 @@ namespace {
 
   bool  DiodeRps::needsDiode () const
   {
+    if (getForcedDiodes()) return true;
     for ( auto& infos : getRoutingPads() ) {
       if (std::get<1>(infos) & IsSink) return true;
     }
@@ -526,8 +545,9 @@ namespace {
     cdebug_log(147,0) << "DiodeRps::mergeHalo(): " << segment << endl;
     if (not segment) return;
 
-    if (   (dynamic_cast<Horizontal*>(segment))
-       and (getWL() + segment->getLength() > getAntennaGateMaxWL())) {
+    // if (   (dynamic_cast<Horizontal*>(segment))
+    //    and (getWL() + segment->getLength() > getAntennaGateMaxWL())) {
+    if (dynamic_cast<Horizontal*>(segment)) {
       cdebug_log(147,0) << "  Put in forced halo." << segment << endl;
       GCellsUnder gcells = _getAnabatic()->getGCellsUnder( segment );
       if (not gcells->empty()) {
@@ -590,20 +610,26 @@ namespace {
 
   class DiodeWire : public DiodeCluster {
     public:
-                                       DiodeWire    ( AnabaticEngine*, RoutingPad* );
-      virtual       bool               needsDiode   () const;
-      virtual       void               merge        ( Segment* );
-      virtual const vector<Instance*>& createDiodes ( Etesian::Area* );
+                                                   DiodeWire    ( AnabaticEngine*, RoutingPad* );
+      virtual       bool                           needsDiode   () const;
+      virtual       void                           merge        ( Segment* );
+      virtual const vector<Instance*>&             createDiodes ( Etesian::Area* );
+      inline  const set<Segment*,Go::CompareById>& getSegments  () const;
     private:
       set<Box,CompareBySegmentBox>   _boxes;
       set<Contact*,Go::CompareById>  _contacts;
+      set<Segment*,Go::CompareById>  _segments;
   };
+
+  
+  inline  const set<Segment*,Go::CompareById>& DiodeWire::getSegments  () const { return _segments; }
 
 
   DiodeWire::DiodeWire ( AnabaticEngine* anabatic, RoutingPad* rp )
     : DiodeCluster(anabatic,rp)
     , _boxes()
     , _contacts()
+    , _segments()
   { }
 
 
@@ -613,9 +639,10 @@ namespace {
 
   void  DiodeWire::merge ( Segment* segment )
   {
+    if (_segments.find(segment) != _segments.end()) return;
     Box bb = segment->getBoundingBox();
-    if (_boxes.find(bb) != _boxes.end()) return;
     cdebug_log(147,0) << "| merge: " << segment << endl;
+    _segments.insert( segment );
     _boxes.insert( bb );
     _getWL() += segment->getLength();
   }
@@ -623,7 +650,14 @@ namespace {
   
   const vector<Instance*>& DiodeWire::createDiodes ( Etesian::Area* area )
   {
-    cdebug_log(147,1) << "DiodeWire::createDiodes() " << endl;
+    cdebug_log(147,1) << "DiodeWire::createDiodes() on " << _boxes.size() << " boxes." << endl;
+
+    ostringstream m;
+    m << "Neighbors: [";
+    for ( size_t neighbor : getNeighbors() ) { m << " " << neighbor; }
+    m << " ]";
+    cdebug_log(147,0) << m.str() << endl;
+    
     DbU::Unit antennaDiodeMaxWL = getAntennaDiodeMaxWL();
 
     size_t diodeCount = getWL() / antennaDiodeMaxWL;
@@ -635,7 +669,7 @@ namespace {
       size_t     segDiodeCount = bbLength / antennaDiodeMaxWL;
       if (not segDiodeCount) ++segDiodeCount;
       bool isH = (bb.getWidth() >= bb.getHeight());
-      cdebug_log(147,0) << "diodes=" << segDiodeCount << " " << bb
+      cdebug_log(147,0) << "Processing wire diodes=" << segDiodeCount << " " << bb
                         << " isH=" << isH
                         << " length:" << DbU::getValueString(getBoxLength(bb)) << endl;
     //if (bbLength < antennaDiodeMaxWL/4) continue;
@@ -647,7 +681,6 @@ namespace {
           _createDiode( area, bb, uHint );
           uHint += antennaDiodeMaxWL;
         }
-        if (_getDiodes().size() >= diodeCount) break;
       } else {
         GCellsUnder gcells = _getAnabatic()->getGCellsUnder( Point(bb.getXCenter(),bb.getYMin())
                                                            , Point(bb.getXCenter(),bb.getYMax()) );
@@ -660,6 +693,11 @@ namespace {
             }
           }
         }
+      }
+
+      if (_getDiodes().size() >= diodeCount) {
+        cdebug_log(147,0) << "Added enough diodes " << _getDiodes().size() << endl;
+        break;
       }
     }
 
@@ -804,9 +842,9 @@ namespace Anabatic {
 
     DbU::Unit antennaGateMaxWL = etesian->getAntennaGateMaxWL();
 
-    vector<DiodeCluster*>              clusters;
-    set<RoutingPad*,DBo::CompareById>  rpsDone;
-    set<Segment*,DBo::CompareById>     clusterSegments;
+    vector<DiodeCluster*>                     clusters;
+    map<RoutingPad*,size_t,DBo::CompareById>  rpsDone;
+    map<Segment*,size_t,DBo::CompareById>     clusterSegments;
     for ( RoutingPad* rp : net->getRoutingPads() ) {
       set<Segment*,DBo::CompareById>  segmentsDone;
 
@@ -815,7 +853,7 @@ namespace Anabatic {
       cdebug_log(147,0) << "New Cluster [" << clusters.size() << "] from " << rp << endl;
       DiodeCluster* cluster = new DiodeRps ( this, rp );
       clusters.push_back( cluster );
-      rpsDone.insert( rp );
+      rpsDone.insert( make_pair( rp, clusters.size()-1 ) );
 
       size_t               stackTop = 0;
       vector< StackItem >  hooksStack;
@@ -861,7 +899,7 @@ namespace Anabatic {
             if (rpsDone.find(toRp) == rpsDone.end()) {
               cdebug_log(147,0) << "> Agglomerate " << toRp << endl;
               cluster->merge( toRp );
-              rpsDone.insert( toRp );
+              rpsDone.insert( make_pair( toRp, clusters.size()-1 ) );
               rp = toRp;
             }
           }
@@ -876,7 +914,7 @@ namespace Anabatic {
             else                                  branchWL  = 0;
             cluster->merge( segment );
             std::get<3>( hooksStack[backIndex] ) |= DiodeCluster::InCluster;
-            clusterSegments.insert( segment );
+            clusterSegments.insert( make_pair( segment, clusters.size()-1 ) );
             cdebug_log(147,0) << "| back=" << backIndex
                               << " -> " << std::get<2>( hooksStack[backIndex] )
                               << " " << DbU::getValueString(segment->getLength())
@@ -931,7 +969,9 @@ namespace Anabatic {
     }
 
     if (clusters.size() > 1) {
-      cdebug_log(147,0) << "Cluster wiring" << endl;
+      size_t rpClustersSize = clusters.size();
+
+      cdebug_log(147,0) << "Cluster wiring, rpClustersSize=" << rpClustersSize << endl;
       for ( Segment* segment : net->getSegments() ) {
         if (clusterSegments.find(segment) != clusterSegments.end()) continue;
 
@@ -940,7 +980,7 @@ namespace Anabatic {
         DiodeWire* cluster = new DiodeWire( this, clusters[0]->getRefRp() );
         cluster->merge( segment );
         clusters.push_back( cluster );
-        clusterSegments.insert( segment );
+        clusterSegments.insert( make_pair( segment, clusters.size()-1 ) );
 
         size_t               stackTop = 0;
         vector< StackItem >  hooksStack;
@@ -959,8 +999,15 @@ namespace Anabatic {
         
           bool hasRp = false;
           for ( Hook* hook : toHook->getHooks() ) {
-            if (dynamic_cast<RoutingPad*>(hook->getComponent())) {
+            RoutingPad* rp = dynamic_cast<RoutingPad*>( hook->getComponent() );
+            if (rp) {
               hasRp = true;
+              auto irp = rpsDone.find( rp );
+              if (irp != rpsDone.end()) {
+                size_t neighbor = (*irp).second;
+                cdebug_log(147,0) << "| " << rp << " belongs to [" << neighbor << "]" << endl; 
+                cluster->addNeighbor( neighbor );
+              }
               break;
             }
           }
@@ -970,8 +1017,15 @@ namespace Anabatic {
               Segment* segment = dynamic_cast<Segment*>( hook->getComponent() );
               if (segment) {
                 if (segment == fromSegment) continue;
-                if (clusterSegments.find(segment) != clusterSegments.end()) continue;
-                clusterSegments.insert( segment );
+                auto iclusterSegment = clusterSegments.find( segment ); 
+                if (iclusterSegment != clusterSegments.end()) {
+                  size_t neighbor = (*iclusterSegment).second;
+                  cdebug_log(147,0) << "| " << segment << " belongs to [" << neighbor << "]" << endl; 
+                  if (neighbor < rpClustersSize)
+                    cluster->addNeighbor( neighbor );
+                  continue;
+                }
+                clusterSegments.insert( make_pair( segment, clusters.size()-1 ) );
                 cluster->merge( segment );
                 uint32_t flags = (segment->getSourceHook() == hook) ? DiodeCluster::IsSegSource : 0;
                 if (dynamic_cast<Segment::SourceHook*>(hook)) {
@@ -989,7 +1043,8 @@ namespace Anabatic {
 
       total += clusters.size();
       cdebug_log(147,1) << "Net \"" << net->getName() << " has " << clusters.size() << " diode clusters." << endl;
-      for ( size_t i=0 ; i<clusters.size() ; ++i ) {
+      size_t i = clusters.size()-1;
+      while ( true ) {
         cdebug_log(147,1) << "Cluster [" << i << "] needsDiode=" << clusters[i]->needsDiode()
                           << " bb=" << clusters[i]->getBoundingBox() << endl;
         cdebug_log(147,0) << "  WL=" << DbU::getValueString(clusters[i]->getWL()) << endl;
@@ -997,25 +1052,29 @@ namespace Anabatic {
           cdebug_log(147,0) << "| flags=" << DiodeCluster::toStr(std::get<1>(item))
                             << " " << std::get<0>(item) << endl;
         }
-        if (not clusters[i]->needsDiode()) {
-          cdebug_tabw(147,-1);
-          continue;
+
+        if (clusters[i]->needsDiode()) {
+          const vector<Instance*>& diodes = clusters[i]->createDiodes( etesian->getArea() );
+          if (not diodes.empty()) {
+            clusters[i]->connectDiodes();
+          } else {
+            cerr << Error( "EtesianEngine::antennaProtect(): For %s (rps:%u, clusters:%u)\n"
+                           "        Cannot find a diode nearby %s."
+                         , getString(net).c_str()
+                         , rpsDone.size()
+                         , clusters.size()
+                         , getString(clusters[i]->getRefRp()).c_str()
+                         ) << endl;
+            failed += 1;
+            for ( size_t icluster : clusters[i]->getNeighbors() ) {
+              clusters[icluster]->addForcedDiodes( 1 );
+            }
+          }
         }
-        
-        const vector<Instance*>& diodes = clusters[i]->createDiodes( etesian->getArea() );
-        if (not diodes.empty()) {
-          clusters[i]->connectDiodes();
-        } else {
-          cerr << Error( "EtesianEngine::antennaProtect(): For %s (rps:%u, clusters:%u)\n"
-                         "        Cannot find a diode nearby %s."
-                       , getString(net).c_str()
-                       , rpsDone.size()
-                       , clusters.size()
-                       , getString(clusters[i]->getRefRp()).c_str()
-                       ) << endl;
-          failed += 1;
-        }
+
         cdebug_tabw(147,-1);
+        if (i == 0) break;
+        --i;
       }
 
       cdebug_tabw(147,-1);
