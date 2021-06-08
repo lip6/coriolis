@@ -1697,8 +1697,13 @@ namespace Anabatic {
       return false;
     }
     
+    DbU::Unit oneGrid      = DbU::fromGrid( 1 );
     DbU::Unit targetExpand =   (techMinLength - segMinLength) / 2 + targetCap;
     DbU::Unit sourceExpand = - (techMinLength - segMinLength) / 2 - sourceCap;
+    if (targetExpand % oneGrid)
+      targetExpand += oneGrid - targetExpand % oneGrid;
+    if (sourceExpand % oneGrid)
+      sourceExpand -= oneGrid + sourceExpand % oneGrid;
     if (not span.isEmpty()) {
       DbU::Unit shiftLeft = span.getVMax() - (getTargetU() + targetExpand);
       if (shiftLeft < 0) {
