@@ -25,7 +25,7 @@ from   Hurricane import Breakpoint, DbU, Box, Transformation, Point, \
                         Cell, Instance, Rectilinear
 import CRL
 from   CRL             import RoutingLayerGauge
-from   helpers         import trace, dots
+from   helpers         import trace, dots, l, u, n
 from   helpers.io      import ErrorMessage, WarningMessage, catch
 from   helpers.overlay import UpdateSession
 from   plugins.alpha.block.bigvia import BigVia
@@ -158,11 +158,17 @@ class Macro ( object ):
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
                         bb = component.getBoundingBox()
                         bb.inflate( minSpacingMetal2 + xMinAdjust
-                                  , minSpacingMetal2
+                                  , minSpacingMetal2 + u(0.19)
                                   , minSpacingMetal2
                                   , minSpacingMetal2 )
                         Horizontal.create( component.getNet()
                                          , blockageMetal2
+                                         , bb.getYCenter()
+                                         , bb.getHeight()
+                                         , bb.getXMin()
+                                         , bb.getXMax() )
+                        Horizontal.create( component.getNet()
+                                         , blockageMetal4
                                          , bb.getYCenter()
                                          , bb.getHeight()
                                          , bb.getXMin()
