@@ -120,7 +120,7 @@ class IoSpecs ( object ):
         """
         Load ioPadsSpec from a LibreSOC generated pinmux file in JSON format.
         """
-        print( '  o  Loading I/O pad specifications from "{}".'.format(fileName) )
+        print( '  o  Loading I/O pad specifications from "%s".' % fileName )
         if not os.path.isfile(fileName):
             raise ErrorMessage( 2, [ 'IoSpecs.loadFromPinmux(): '
                                      'JSON pinmux file not found.'
@@ -128,10 +128,12 @@ class IoSpecs ( object ):
         with open(fileName) as fd:
             datas = utf8toStr( json.loads( fd.read(), object_hook=utf8toStr )
                              , ignoreDicts=True )
-        self.addIoPadSpecs(datas['pads.east' ], IoPin.EAST  )
-        self.addIoPadSpecs(datas['pads.west' ], IoPin.WEST  )
-        self.addIoPadSpecs(datas['pads.north'], IoPin.NORTH )
-        self.addIoPadSpecs(datas['pads.south'], IoPin.SOUTH )
+        # check if pad is analog or not: last spec item starts with "A"
+        analog = IoPin.ANALOG if padDatas[-1][0] == 'A' else 0
+        self.addIoPadSpecs(datas['pads.east' ], IoPin.EAST  | analog )
+        self.addIoPadSpecs(datas['pads.west' ], IoPin.WEST  | analog )
+        self.addIoPadSpecs(datas['pads.north'], IoPin.NORTH | analog )
+        self.addIoPadSpecs(datas['pads.south'], IoPin.SOUTH | analog )
 
         for padDatas in datas['pads.instances']:
             padName = padDatas[0]
@@ -141,7 +143,8 @@ class IoSpecs ( object ):
                                       .format(padName) ))
                 continue
             end = None 
-            if padDatas[-1] in '+-*': end = -1
+            # remove the direction info: + output - input * bi-directional
+            if padDatas[-1][-1] in '+-*': end = -1
             self._ioPadsLUT[padName].addNets( padDatas[1:end] )
         trace( 560, '-' )
 
