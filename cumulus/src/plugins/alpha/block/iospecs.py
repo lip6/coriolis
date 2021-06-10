@@ -67,6 +67,9 @@ class IoPadSpec ( object ):
         self._id      = IoPadSpec.id
         IoPadSpec.id += 1
 
+    def setAnalog ( self ):
+        self.side |= IoPin.ANALOG
+
     def addNets ( self, nets ):
         self.nets += nets
 
@@ -128,12 +131,10 @@ class IoSpecs ( object ):
         with open(fileName) as fd:
             datas = utf8toStr( json.loads( fd.read(), object_hook=utf8toStr )
                              , ignoreDicts=True )
-        # check if pad is analog or not: last spec item starts with "A"
-        analog = IoPin.ANALOG if padDatas[-1][0] == 'A' else 0
-        self.addIoPadSpecs(datas['pads.east' ], IoPin.EAST  | analog )
-        self.addIoPadSpecs(datas['pads.west' ], IoPin.WEST  | analog )
-        self.addIoPadSpecs(datas['pads.north'], IoPin.NORTH | analog )
-        self.addIoPadSpecs(datas['pads.south'], IoPin.SOUTH | analog )
+        self.addIoPadSpecs(datas['pads.east' ], IoPin.EAST  )
+        self.addIoPadSpecs(datas['pads.west' ], IoPin.WEST  )
+        self.addIoPadSpecs(datas['pads.north'], IoPin.NORTH )
+        self.addIoPadSpecs(datas['pads.south'], IoPin.SOUTH )
 
         for padDatas in datas['pads.instances']:
             padName = padDatas[0]
@@ -145,6 +146,10 @@ class IoSpecs ( object ):
             end = None 
             # remove the direction info: + output - input * bi-directional
             if padDatas[-1][-1] in '+-*': end = -1
+            # check if pad is analog or not: last spec item starts with "A"
+            if padDatas[-1][0] == 'A':
+                self._ioPadsLUT[padName].setAnalog()
+            # add the nets to the pad
             self._ioPadsLUT[padName].addNets( padDatas[1:end] )
         trace( 560, '-' )
 
