@@ -119,9 +119,11 @@ class IoSpecs ( object ):
                 actual_side |= IoPin.A_END
             self.addIoPadSpec( padName, actual_side)
 
-    def loadFromPinmux ( self, fileName ):
+    def loadFromPinmux ( self, fileName , cheat_dont_do_analog=False):
         """
         Load ioPadsSpec from a LibreSOC generated pinmux file in JSON format.
+        The cheat_dont_do_analog is there, sigh, because nsxlib doesn't
+        have analog pads.  it's a terrible hack.
         """
         print( '  o  Loading I/O pad specifications from "%s".' % fileName )
         if not os.path.isfile(fileName):
@@ -147,7 +149,7 @@ class IoSpecs ( object ):
             # remove the direction info: + output - input * bi-directional
             if padDatas[-1][-1] in '+-*': end = -1
             # check if pad is analog or not: last spec item starts with "A"
-            if padDatas[-1][0] == 'A':
+            if padDatas[-1][0] == 'A' and not cheat_dont_do_analog:
                 self._ioPadsLUT[padName].setAnalog()
             # add the nets to the pad
             self._ioPadsLUT[padName].addNets( padDatas[1:end] )
