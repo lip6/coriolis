@@ -1258,9 +1258,12 @@ namespace Anabatic {
     if (getConnexity().fields.globals == 2) {
       if (north() and south()) {
         AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], HAccess );
-        AutoContact* contact2 = AutoContactVTee::create( getGCell(), getNet(), viaLayer1 );
+        AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
         AutoSegment::create( contact1, contact2, Flags::Horizontal );
-        setBothCornerContacts( contact2 );
+        contact1 = AutoContactTurn::create( getGCell(), getNet(), viaLayer1 );
+        AutoSegment::create( contact1, contact2, Flags::Horizontal );
+        setNorthEastContact( contact1 );
+        setSouthWestContact( contact2 );
       } else if (east() and west()) {
         // AutoContact* contact1 = doRp_Access( getGCell(), getRoutingPads()[0], NoFlags );
         // AutoContact* contact2 = AutoContactHTee::create( getGCell(), getNet(), viaLayer1 );
