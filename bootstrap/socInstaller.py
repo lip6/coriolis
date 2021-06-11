@@ -593,8 +593,8 @@ try:
         for gitSupport in gitSupports:
             if conf.rmSource: gitSupport.removeLocalRepo()
             gitSupport.clone()
-           #if gitSupport.url.endswith('rapidjson'):
-           #  gitSupport.checkout( 'a1c4f32' )
+            if gitSupport.url.endswith('rapidjson'):
+              gitSupport.checkout( 'b1a4d91' )
         
             if conf.doAlliance:
                 if conf.rmSource: gitAlliance.removeLocalRepo()
