@@ -26,7 +26,8 @@ from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins
 import plugins.chip
-from   plugins.alpha.block.bigvia import BigVia
+from   plugins.alpha.block.bigvia        import BigVia
+from   plugins.alpha.block.configuration import GaugeConf
 
 __all__ = [ 'Builder' ]
 
@@ -489,11 +490,6 @@ class Builder ( object ):
             raise ErrorMessage( 1, message )
         with UpdateSession():
             coronaAb   = self.conf.cellPnR.getAbutmentBox()
-            bufferRp   = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), coronaNet, 0 )
-            pinRp      = self.conf.rpAccessByOccurrence( Occurrence(coronaPin , Path()), coronaNet, 0 )
-            trace( 550, '\tpinRp={}\n'.format(pinRp) )
-            self.conf.expandMinArea( bufferRp )
-            self.conf.expandMinArea( pinRp )
             if coronaPin.getAccessDirection() == Pin.Direction.NORTH:
                 isVertical = True
                 axis       = coronaAb.getYMax()
@@ -508,6 +504,10 @@ class Builder ( object ):
             elif coronaPin.getAccessDirection() == Pin.Direction.WEST:
                 isVertical = False
                 axis       = coronaAb.getXMin()
+            flags    = 0 if isVertical else GaugeConf.HAccess
+            bufferRp = self.conf.rpAccessByOccurrence( Occurrence(htPlugs[0], Path()), coronaNet, flags )
+            pinRp    = self.conf.rpAccessByOccurrence( Occurrence(coronaPin , Path()), coronaNet, flags )
+            trace( 550, '\tpinRp={}\n'.format(pinRp) )
             if isVertical:
                 pitch    = self.conf.hRoutingGauge.getPitch()
                 yaxis    = axis + 2 * pitch * trackNb
@@ -537,6 +537,8 @@ class Builder ( object ):
                 self.conf.createVertical  ( contact1, contact2, xaxis   , 0 )
                 self.conf.createHorizontal( contact2, pinRp   , yaxisPin, 0 )
                 trace( 550, '\txaxis(track)={}\n'.format(DbU.getValueString(xaxis)) )
+            self.conf.expandMinArea( bufferRp )
+            self.conf.expandMinArea( pinRp )
         return
   
     def connectHTrees ( self, hTrees ):
