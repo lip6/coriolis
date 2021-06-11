@@ -1652,13 +1652,13 @@ namespace Anabatic {
       } 
     }
 
-    if ((source->isHTee() or target->isHTee()) and isHorizontal()) {
-      cdebug_log(149,0) << "| false, S/T HTee and horizontal. " << this << endl;
+    DbU::Unit sourceAxis = 0;
+    DbU::Unit targetAxis = 0;
+    getEndAxes( sourceAxis, targetAxis );
+    if ((targetAxis - sourceAxis) >= getPPitch()) {
+      cdebug_log(149,0) << "| Canonical axis length superior to P-Pitch " << this << endl;
       return false;
-    } else if ((source->isVTee() or target->isVTee()) and isVertical()) {
-      cdebug_log(149,0) << "| false, S/T VTee and vertical. " << this << endl;
-      return false;
-    } 
+    }
     cdebug_log(149,0) << "  Middle stack or terminal bound." << endl;
     return true;
   }
