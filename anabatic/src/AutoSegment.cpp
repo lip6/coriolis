@@ -1615,7 +1615,12 @@ namespace Anabatic {
   bool  AutoSegment::isMiddleStack () const
   {
     cdebug_log(149,0) << "AutoSegment::isMiddleStack() - " << this << endl;
-    if (isGlobal() or isNonPref()) return false;
+    if (isNonPref()) return false;
+    if (isGlobal()) {
+      if (getLength() > getPPitch()) return false;
+      cdebug_log(149,0) << "| Considering this global anyway because it is too short. " << endl;
+    }
+
     AutoContact* source = getAutoSource();
     AutoContact* target = getAutoTarget();
     if (not source or not target) {
