@@ -1003,7 +1003,7 @@ namespace Katana {
 
   uint32_t  Track::repair () const
   {
-  //cerr << "Track::repair() " << this << endl;
+    cerr << "Track::repair() " << this << endl;
     
     if (_segments.empty()) return 0;
     DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
@@ -1014,7 +1014,7 @@ namespace Katana {
     GapSet   gapsetCurr ( this );
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
       // if (getIndex() == 1750)
-      //   cerr << "[" << i << "] " << _segments[i] << endl;
+      cerr << "[" << i << "] " << _segments[i] << endl;
       netChange = false;
       gapsetCurr.merge( i );
       if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
@@ -1050,7 +1050,7 @@ namespace Katana {
 
       if (netChange or (i+2 == _segments.size())) {
         if (gapsetCurr.size() > 1) {
-          // cerr << "potential gap around " << _segments[i] << endl;
+          cerr << "potential gap around " << _segments[i] << endl;
           for ( size_t j=0 ; j+1 < gapsetCurr.size() ; ++j ) {
             // cerr << j << "=[" << DbU::getValueString(gapsetCurr.sourceU(j))
             //      <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
@@ -1063,24 +1063,28 @@ namespace Katana {
               //      <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
               //      << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
               //      <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
-              AutoSegment* first = _segments[gapsetCurr.span(j+1).first]->base();
-
-              // cerr << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
-	          if (first == NULL) {
-		        cerr << Error("null first, NOT correcting gap") << endl;
-	          } else {
-                for ( AutoSegment* segment : first->getAligneds() ) {
-                  if (segment->getSourcePosition() < first->getSourcePosition())
-                    first = segment;
-                }
-                // cerr << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
-                first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
-	          }
-              ++gaps;
-              cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
-                             , getString(this).c_str()
-                             , getString(_segments[i-1]).c_str() ) << endl;
-            //cerr << first << endl;
+              if (gapsetCurr.span(j+1).first >= _segments.size()) {
+                cerr << Error("gapsetCurr.span(j+1).first >= _segments.size()") << endl;
+              } else {
+                AutoSegment* first = _segments[gapsetCurr.span(j+1).first]->base();
+                
+                // cerr << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
+	            if (first == NULL) {
+		          cerr << Error("null first, NOT correcting gap") << endl;
+	            } else {
+                  for ( AutoSegment* segment : first->getAligneds() ) {
+                    if (segment->getSourcePosition() < first->getSourcePosition())
+                      first = segment;
+                  }
+                  // cerr << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
+                  first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
+	            }
+                ++gaps;
+                cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
+                               , getString(this).c_str()
+                               , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
+              // cerr << first << endl;
+              }
             }
           }
         }
