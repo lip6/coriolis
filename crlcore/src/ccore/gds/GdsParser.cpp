@@ -723,10 +723,10 @@ namespace {
 
   void  GdsStream::_staticInit ()
   {
-    _gdsLayerTable = vector<const Layer*>( 256, NULL );
+    _gdsLayerTable = vector<const Layer*>( 1024, NULL );
     for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
       uint16_t gdsNumber = layer->getGds2Layer();
-      if (gdsNumber < 256) _gdsLayerTable[gdsNumber] = layer;
+      if (gdsNumber < 1024) _gdsLayerTable[gdsNumber] = layer;
     }
   }
 
