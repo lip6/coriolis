@@ -120,7 +120,7 @@ class Chip ( Block ):
         if self.conf.routingGauge.hasPowerSupply():
             power = plugins.alpha.chip.powerplane.Builder( self.conf )
             power.connectPower()
-            power.connectHTrees( self.hTrees )
+           #power.connectHTrees( self.hTrees )
             power.doLayout()
             Breakpoint.stop( 101, 'After Query power.' )
         else:
