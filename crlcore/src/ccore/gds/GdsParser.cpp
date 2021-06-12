@@ -505,7 +505,7 @@ namespace {
     for ( ; _count<_length ; ++_count ) {
       _stream->get( c );   
       sprintf( _buffer, "0x%02x", c );
-      cdebug_log(101,0) << setw(6) << hex << _offset++ << " | " << _buffer << endl; 
+      cdebug_log(101,0) << tsetw(6) << hex << _offset++ << " | " << _buffer << endl; 
     }
     if (showError) {
       cdebug_log(101,0) << Error( "GdsRecord type %s unsupported.", toStrType(_type).c_str() ) << endl;
@@ -723,10 +723,10 @@ namespace {
 
   void  GdsStream::_staticInit ()
   {
-    _gdsLayerTable = vector<const Layer*>( 64, NULL );
+    _gdsLayerTable = vector<const Layer*>( 256, NULL );
     for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
-      unsigned int gdsNumber = layer->getGds2Layer();
-      if (gdsNumber < 64) _gdsLayerTable[gdsNumber] = layer;
+      uint16_t gdsNumber = layer->getGds2Layer();
+      if (gdsNumber < 256) _gdsLayerTable[gdsNumber] = layer;
     }
   }
 
@@ -938,7 +938,7 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
     if (_record.isLAYER  ()) {
-      layer = gdsToLayer( _record.getInt16s()[0] );
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
       if (not layer) {
         cerr << Error( "GdsStream::readText(): No BasicLayer id:%d in GDS conversion table (skipped)."
                      , _record.getInt16s()[0]
@@ -1051,7 +1051,8 @@ namespace {
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isLAYER()) {
-      layer = gdsToLayer( _record.getInt16s()[0] );
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
+      cdebug_log(101,0) << "Layer id:" << ((uint32_t)_record.getInt16s()[0]) << " " << layer << endl;
       if (not layer) {
         cerr << Error( "GdsStream::readBoundary(): No BasicLayer id:%d in GDS conversion table (skipped)."
                      , _record.getInt16s()[0]
@@ -1099,7 +1100,7 @@ namespace {
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isLAYER()) {
-      layer = gdsToLayer( _record.getInt16s()[0] );
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
       if (not layer) {
         cerr << Error( "GdsStream::readPath(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
                      , _record.getInt16s()[0]
@@ -1285,7 +1286,16 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER  ()) { _stream >> _record; }
+    if (_record.isLAYER  ()) {
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
+      if (not layer) {
+        cerr << Error( "GdsStream::readNode(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
+                     , _record.getInt16s()[0]
+                     ) << endl;
+      }
+      _stream >> _record;
+      cdebug_log(101,0) << layer << endl;
+    }
     else { _validSyntax = false; return _validSyntax; }
 
     if (_record.isNODETYPE()) {
@@ -1315,7 +1325,16 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER  ()) { _stream >> _record; }
+    if (_record.isLAYER  ()) {
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
+      if (not layer) {
+        cerr << Error( "GdsStream::readNode(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
+                     , _record.getInt16s()[0]
+                     ) << endl;
+      }
+      _stream >> _record;
+      cdebug_log(101,0) << layer << endl;
+    }
     else { _validSyntax = false; return _validSyntax; }
 
     if (_record.isBOXTYPE()) {
@@ -1424,8 +1443,8 @@ namespace {
       } else {
         _component = Rectilinear::create( net, layer, points );
       }
-      // cdebug(101,0) << "| " << net->getCell() << endl;
-      // cdebug(101,0) << "| " << _component << endl;
+      // cdebug_log(101,0) << "| " << net->getCell() << endl;
+      cdebug_log(101,0) << "| " << _component << endl;
 
       if (not net->isAutomatic()) NetExternalComponents::setExternal( _component );
     }
