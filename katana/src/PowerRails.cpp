@@ -915,9 +915,10 @@ namespace {
       virtual void          doQuery             ();
       inline  void          doLayout            ();
       inline  uint32_t      getGoMatchCount     () const;
+      inline  RoutingGauge* getRoutingGauge     () const;
     private:
       AllianceFramework*      _framework;
-      KatanaEngine*             _katana;
+      KatanaEngine*           _katana;
       RoutingGauge*           _routingGauge;
       const ChipTools&        _chipTools;
       PowerRailsPlanes        _powerRailsPlanes;
@@ -955,6 +956,10 @@ namespace {
 
   inline  void  QueryPowerRails::doLayout ()
   { return _powerRailsPlanes.doLayout(); }
+
+
+  inline  RoutingGauge* QueryPowerRails::getRoutingGauge () const
+  { return _routingGauge; }
 
 
   bool  QueryPowerRails::hasBasicLayer ( const BasicLayer* basicLayer )
@@ -1030,6 +1035,12 @@ namespace {
 
       cdebug_log(159,0) << "  rootNet " << rootNet << " (" << rootNet->isClock() << ") "
                         << go->getCell() << " (" << go->getCell()->isTerminal() << ")" << endl;
+
+      // unsigned int type = _powerRailsPlanes.getActivePlane()->getRoutingPlane()->getLayerGauge()->getType();
+      if (go->getCell()->isTerminalNetlist()) {
+        if (not rootNet->isSupply() and not rootNet->isClock() and not _isBlockagePlane)
+          return;
+      }
 
       const Segment* segment = dynamic_cast<const Segment*>(component);
       if ( segment != NULL ) {
