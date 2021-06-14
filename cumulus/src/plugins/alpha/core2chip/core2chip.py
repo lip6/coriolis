@@ -196,14 +196,15 @@ class IoNet ( object ):
         # Chip "internal" net, connect Corona instance net to I/O inside the chip.
         if not self.chipIntNet:
             chipIntNetName = "internal_" + self.coronaNetName
-            if self._flags & IoNet.IsAnalog:
-                chipIntNetName = self.coronaNetName
+           #if self._flags & IoNet.IsAnalog:
+           #    chipIntNetName = self.coronaNetName
             self.chipIntNet = Net.create( self.coreToChip.chip, chipIntNetName )
             if netType != Net.Type.LOGICAL:
                 self.chipIntNet.setType( netType )
             self.coreToChip.icorona.getPlug( self.coronaNet ).setNet( self.chipIntNet )
         # Chip "external" net, connected to the pad I/O to the outside world.
-        if self._flags & (IoNet.PadPassthrough | IoNet.IsAnalog):
+        #if self._flags & (IoNet.PadPassthrough | IoNet.IsAnalog):
+        if self._flags & IoNet.PadPassthrough:
             self.chipExtNet = self.chipIntNet
         elif not self.chipExtNet and (self._flags & IoNet.DoExtNet):
             self.chipExtNet = self.coreToChip.chip.getNet( self.chipExtNetName )
@@ -331,10 +332,11 @@ class IoPad ( object ):
                                           , self.padInstanceName ))
         connexions = []
         if (self.direction == IoPad.ANALOG):
+            self.nets[0].setFlags( IoNet.DoExtNet )
             self.nets[0].buildNets()
-            connexions.append( ( self.nets[0].chipExtNet      , padInfo.padNet ) )
-            connexions.append( ( self.coreToChip.newDummyNet(), padInfo.coreNets[1] ) )
-        if (self.direction == IoPad.BIDIR) and (len(self.nets) < 3):
+            connexions.append( ( self.nets[0].chipExtNet, padInfo.padNet ) )
+            connexions.append( ( self.nets[0].chipIntNet, padInfo.coreNets[1] ) )
+        elif (self.direction == IoPad.BIDIR) and (len(self.nets) < 3):
             # Case of BIDIR as fallback for simple IN/OUT.
             self.nets[0].setFlags( IoNet.DoExtNet )
             self.nets[0].buildNets()
