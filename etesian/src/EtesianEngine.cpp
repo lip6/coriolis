@@ -579,7 +579,7 @@ namespace Etesian {
                                   ) );
     _placeArea = getCell()->getAbutmentBox();
     UpdateSession::close();
-    if (_viewer) _viewer->getCellWidget()->fitToContents();
+  //if (_viewer) _viewer->getCellWidget()->fitToContents();
 
     cmess1 << "  o  Creating abutment box (margin:" << (spaceMargin*100.0)
            << "% aspect ratio:" << (aspectRatio*100.0)

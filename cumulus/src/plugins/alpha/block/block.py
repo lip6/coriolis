@@ -817,7 +817,7 @@ class Block ( object ):
             self.initEtesian()
             self.addHTrees()
            #if self.conf.useHFNS: self.addHfnBuffers()
-            if editor: editor.fit()
+           #if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
            #if self.conf.useHFNS: self.findHfnTrees()
