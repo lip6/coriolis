@@ -333,6 +333,22 @@ class Block ( object ):
                    .format(self.conf.cell.getName()) )
         Block.LUT[ self.conf.cell ] = self
 
+        
+    @staticmethod
+    def abPlace ( instance, transf ):
+        """
+        Place an instance so it is it's abutment box which will be
+        placed at ``transf``. Incomplete implementation for now, only
+        Orientation::ID in ``transf`` is supported.
+        """
+        ab       = instance.getMasterCell().getAbutmentBox()
+        abTransf = Transformation( ab.getXMin(), ab.getYMin(), Transformation.Orientation.ID )
+        abTransf.invert()
+        abTransf.applyOn( transf )
+        instance.setTransformation( transf )
+        instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+
+
     @staticmethod
     def _getInstance ( cell, pattern, level=0 ):
         """

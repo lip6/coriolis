@@ -22,7 +22,8 @@ from   Hurricane    import DbU, Point, Transformation, Interval, Box,   \
                            Path, Occurrence, UpdateSession, Layer,      \
                            BasicLayer, Net, Pin, Contact, Segment, Pad, \
                            Horizontal, Vertical, Diagonal, RoutingPad,  \
-                           Instance, DataBase, NetExternalComponents
+                           Instance, DataBase, NetExternalComponents,   \
+                           Library
 import CRL          
 from   CRL          import RoutingGauge, RoutingLayerGauge
 import helpers      
@@ -30,9 +31,13 @@ from   helpers         import trace, l, u, n, onFGrid
 from   helpers.io      import ErrorMessage, WarningMessage
 from   helpers.overlay import UpdateSession
 import plugins.alpha.chip
+from   plugins.alpha.block.block  import Block
 from   plugins.alpha.block.bigvia import BigVia
 
 plugins.alpha.chip.importConstants( globals() )
+
+
+af = CRL.AllianceFramework.get()
 
 
 # --------------------------------------------------------------------
@@ -1295,6 +1300,7 @@ class Corona ( object ):
             self.eastSide.doLayout()
             self.westSide.doLayout()
             self._placeInnerCorona()
+            self.doLogosLayout()
             self.conf.chip.setRouted( True )
 
     def doPowerLayout ( self ):
@@ -1402,4 +1408,36 @@ class Corona ( object ):
             #        chipNet   = chipPowerNet
             #    self._supplyToPad( chipNet, coronaNet, axis, North )
             #    self._supplyToPad( chipNet, coronaNet, axis, South )
+
+    def doLogosLayout ( self ):
+        """
+        Add GDS logos layout in the bottom left corner of the chip, if any.
+        """
+        global af
+        print( '  o  Inserting chip logo(s).' )
+        if not len(self.conf.chipLogos): return
+        with UpdateSession():
+            rootLib  = DataBase.getDB().getRootLibrary()
+            logosLib = rootLib.getLibrary( 'Logos' )
+            if not logosLib:
+                print( '     o  Creating GDS Logos library.' )
+                logosLib = Library.create( rootLib, 'LogosLib' )
+                af.wrapLibrary( logosLib, 0 )
+            xLogo     = 0
+            yLogo     = 0
+            rowHeight = 0
+            count     = 0
+            for logo in self.conf.chipLogos:
+                print( '        - GDS Logo "{0}.gds".'.format(logo) )
+                CRL.Gds.load( logosLib, './{}.gds'.format(logo) )
+                logoCell     = logosLib.getCell( 'gds_{}'.format(logo) )
+                logoInstance = Instance.create( self.conf.chip, logo, logoCell )
+                Block.abPlace( logoInstance
+                             , Transformation( xLogo, yLogo, Transformation.Orientation.ID ))
+                xLogo += logoCell.getAbutmentBox().getWidth()
+                rowHeight = max( rowHeight, logoCell.getAbutmentBox().getHeight() )
+                if count % 2:
+                    xLogo = 0
+                    yLogo += rowHeight
+                count += 1
             

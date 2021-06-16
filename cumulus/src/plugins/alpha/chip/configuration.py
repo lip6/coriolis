@@ -91,7 +91,7 @@ class ChipConf ( BlockConf ):
     def __init__ ( self, cell, ioPins=[], ioPads=[] ):
         trace( 550, ',+', 'ChipConf.__init__(): "{}"'.format(cell.getName()) )
         super(ChipConf,self).__init__( cell, ioPins, ioPads )
-#       trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
+        #trace( 550, '\tONE LAMBDA = %s\n' % DbU.getValueString(DbU.fromLambda(1.0)) )
         self.validated = True
         # Block Corona parameters (triggers loading from disk).
         self.cfg.chip.padCoreSide          = None
@@ -111,6 +111,7 @@ class ChipConf ( BlockConf ):
         self.coronaCks        = []
         self.blockageNet      = None
         self.padsHavePosition = False
+        self.chipLogos        = []
         trace( 550, '-' )
 
     @property
