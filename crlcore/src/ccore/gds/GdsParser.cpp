@@ -203,6 +203,7 @@ namespace {
                    void              readString     ();
                    void              readUnits      ();
                    void              readLayer      ();
+                   void              readDatatype   ();
                    void              readWidth      ();
                    void              readBgnextn    ();
                    void              readEndextn    ();
@@ -352,7 +353,7 @@ namespace {
       case AREF:         readDummy( false ); break;
       case TEXT:         readDummy( false ); break;
       case LAYER:        readLayer();        break;
-      case DATATYPE:     readDummy( false ); break;
+      case DATATYPE:     readDatatype();     break;
       case WIDTH:        readWidth();        break;
       case XY:           readXy();           break;
       case ENDEL:        readDummy( false ); break;
@@ -542,6 +543,10 @@ namespace {
   { _int16s.push_back( _readInt<uint16_t>() ); }
 
 
+  void  GdsRecord::readDatatype ()
+  { _int16s.push_back( _readInt<uint16_t>() ); }
+
+
   void  GdsRecord::readWidth ()
   { _int32s.push_back( _readInt<uint32_t>() ); }
 
@@ -640,36 +645,37 @@ namespace {
 
   class GdsStream {
     public:
-      static const Layer* gdsToLayer       ( uint16_t );
-    public:                                
-      static       void   _staticInit      ();
-                          GdsStream        ( string gdsPath );
-      inline       bool   isValidSyntax    () const;
-                   bool   misplacedRecord  ();
-      inline       void   resetStrans      ();
-                   bool   read             ( Library* );
-                   bool   readFormatType   ();
-                   bool   readStructure    ();
-                   bool   readBoundary     ();
-                   bool   readPath         ();
-                   bool   readSref         ();
-                   bool   readAref         ();
-                   bool   readNode         ();
-                   bool   readBox          ();
-                   bool   readText         ();
-                   bool   readTextbody     ( const Layer* );
-                   bool   readStrans       ();
-                   bool   readProperty     ();
-                   void   xyToComponent    ( const Layer* );
-                   void   xyToPath         ( uint16_t pathtype
-                                           , const Layer*
-                                           , DbU::Unit width
-                                           , DbU::Unit bgnextn
-                                           , DbU::Unit endextn );
-                   void   makeInstances    ();
-                   void   makeExternals    ();
-                   Net*   fusedNet         ();
-                   void   addNetReference  ( Net*, const Layer*, DbU::Unit x, DbU::Unit y );
+      static const Layer* gdsToLayer           ( uint16_t gdsLayer, uint16_t datatype );
+    public:                                    
+      static       void   _staticInit          ();
+                          GdsStream            ( string gdsPath );
+      inline       bool   isValidSyntax        () const;
+                   bool   misplacedRecord      ();
+      inline       void   resetStrans          ();
+                   bool   read                 ( Library* );
+                   bool   readFormatType       ();
+                   bool   readStructure        ();
+             const Layer* readLayerAndDatatype ();
+                   bool   readBoundary         ();
+                   bool   readPath             ();
+                   bool   readSref             ();
+                   bool   readAref             ();
+                   bool   readNode             ();
+                   bool   readBox              ();
+                   bool   readText             ();
+                   bool   readTextbody         ( const Layer* );
+                   bool   readStrans           ();
+                   bool   readProperty         ();
+                   void   xyToComponent        ( const Layer* );
+                   void   xyToPath             ( uint16_t pathtype
+                                               , const Layer*
+                                               , DbU::Unit width
+                                               , DbU::Unit bgnextn
+                                               , DbU::Unit endextn );
+                   void   makeInstances        ();
+                   void   makeExternals        ();
+                   Net*   fusedNet             ();
+                   void   addNetReference      ( Net*, const Layer*, DbU::Unit x, DbU::Unit y );
     private:
       struct DelayedInstance {
           inline DelayedInstance ( Cell* owner, string masterName, const Transformation& );
@@ -685,21 +691,21 @@ namespace {
           Point        _position;
       };
     private:
-      static vector<const Layer*>     _gdsLayerTable;
-             vector<DelayedInstance>  _delayedInstances;
-             string                   _gdsPath;
-             ifstream                 _stream;
-             GdsRecord                _record;
-             double                   _angle;
-             bool                     _xReflection;
-             Library*                 _library;
-             Cell*                    _cell;
-             Component*               _component;
-             string                   _text;
-             DbU::Unit                _scale;
-             int64_t                  _SREFCount;
-             bool                     _validSyntax;
-             bool                     _skipENDEL;
+      static map<uint32_t,const Layer*>  _gdsLayerTable;
+             vector<DelayedInstance>     _delayedInstances;
+             string                      _gdsPath;
+             ifstream                    _stream;
+             GdsRecord                   _record;
+             double                      _angle;
+             bool                        _xReflection;
+             Library*                    _library;
+             Cell*                       _cell;
+             Component*                  _component;
+             string                      _text;
+             DbU::Unit                   _scale;
+             int64_t                     _SREFCount;
+             bool                        _validSyntax;
+             bool                        _skipENDEL;
              map< Net*
                 , vector<PinPoint>
                 , DBo::CompareById >  _netReferences;
@@ -718,15 +724,14 @@ namespace {
   { }
 
   
-  vector<const Layer*>  GdsStream::_gdsLayerTable;
+  map<uint32_t,const Layer*>  GdsStream::_gdsLayerTable;
 
 
   void  GdsStream::_staticInit ()
   {
-    _gdsLayerTable = vector<const Layer*>( 1024, NULL );
     for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() ) {
-      uint16_t gdsNumber = layer->getGds2Layer();
-      if (gdsNumber < 1024) _gdsLayerTable[gdsNumber] = layer;
+      uint32_t gdsNumber = (layer->getGds2Layer() << 16) + layer->getGds2Datatype();
+      _gdsLayerTable[gdsNumber] = layer;
     }
   }
 
@@ -734,8 +739,14 @@ namespace {
   inline  void  GdsStream::resetStrans () { _angle = 0.0; _xReflection = false; }
 
 
-  const Layer* GdsStream::gdsToLayer ( uint16_t gdsLayer )
-  { return (gdsLayer < _gdsLayerTable.size()) ? _gdsLayerTable[gdsLayer] : NULL; }
+  const Layer* GdsStream::gdsToLayer ( uint16_t gdsLayer, uint16_t datatype )
+  {
+    uint32_t gdsIndex = (gdsLayer << 16) + datatype;
+    auto ilayer = _gdsLayerTable.find( gdsIndex );
+    if (ilayer == _gdsLayerTable.end())
+      return NULL;
+    return (*ilayer).second;
+  }
 
 
   inline bool  GdsStream::isValidSyntax () const { return _validSyntax; }
@@ -930,6 +941,45 @@ namespace {
   }
 
 
+  const Layer* GdsStream::readLayerAndDatatype ()
+  {
+    uint16_t  gdsLayer    = 0;
+    uint16_t  gdsDatatype = 0;
+
+    if (_record.isLAYER()) {
+      gdsLayer = (uint16_t)_record.getInt16s()[0];
+      _stream >> _record;
+    } else {
+      cerr << Error( "GdsStream::readLayerAndDatatype(): Expecting LAYER record, got %s."
+                   , GdsRecord::toStrType(_record.getType()).c_str()
+                   ) << endl;
+      _validSyntax = false;
+      return NULL;;
+    }
+
+    if (_record.isDATATYPE()) {
+      gdsDatatype = (uint16_t)_record.getInt16s()[0];
+      _stream >> _record;
+    } else {
+      cerr << Error( "GdsStream::readLayerAndDatatype(): Expecting DATATYPE record, got %s."
+                   , GdsRecord::toStrType(_record.getType()).c_str()
+                   ) << endl;
+      _validSyntax = false;
+      return NULL;;
+    }
+
+    const Layer* layer = gdsToLayer( gdsLayer, gdsDatatype );
+    cdebug_log(101,0) << "Layer id+datatype:" << gdsLayer << "+" << gdsDatatype << " " << layer << endl;
+    if (not layer) {
+      cerr << Error( "GdsStream::readLayerAndDatatype(): No BasicLayer id:%d+%d in GDS conversion table (skipped)."
+                   , gdsLayer, gdsDatatype
+                   ) << endl;
+    }
+
+    return layer;
+  }
+
+
   bool  GdsStream::readText ()
   {
     const Layer* layer = NULL;
@@ -938,7 +988,7 @@ namespace {
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
     if (_record.isLAYER  ()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
       if (not layer) {
         cerr << Error( "GdsStream::readText(): No BasicLayer id:%d in GDS conversion table (skipped)."
                      , _record.getInt16s()[0]
@@ -1045,29 +1095,11 @@ namespace {
   {
     cdebug_log(101,1) << "GdsStream::readBoundary()" << endl;
     
-    const Layer* layer = NULL;
-
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
-      cdebug_log(101,0) << "Layer id:" << ((uint32_t)_record.getInt16s()[0]) << " " << layer << endl;
-      if (not layer) {
-        cerr << Error( "GdsStream::readBoundary(): No BasicLayer id:%d in GDS conversion table (skipped)."
-                     , _record.getInt16s()[0]
-                     ) << endl;
-      }
-      _stream >> _record;
-    } else {
-      _validSyntax = false;
-      cdebug_tabw(101,-1);
-      return _validSyntax;
-    }
-
-    if (_record.isDATATYPE()) { _stream >> _record; }
-    else {
-      _validSyntax = false;
+    const Layer* layer = readLayerAndDatatype();
+    if (not _validSyntax) {
       cdebug_tabw(101,-1);
       return _validSyntax;
     }
@@ -1090,36 +1122,16 @@ namespace {
   {
     cdebug_log(101,1) << "GdsStream::readPath()" << endl;
     
-    const Layer*     layer    = NULL;
-          DbU::Unit  width    = 0;
-          uint16_t   pathtype = 0;
-          DbU::Unit  bgnextn  = 0;
-          DbU::Unit  endextn  = 0;
+    DbU::Unit  width    = 0;
+    uint16_t   pathtype = 0;
+    DbU::Unit  bgnextn  = 0;
+    DbU::Unit  endextn  = 0;
 
     if (_record.isELFLAGS()) { _stream >> _record; }
     if (_record.isPLEX   ()) { _stream >> _record; }
 
-    if (_record.isLAYER()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
-      if (not layer) {
-        cerr << Error( "GdsStream::readPath(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
-                     , _record.getInt16s()[0]
-                     ) << endl;
-      }
-      _stream >> _record;
-      cdebug_log(101,0) << layer << endl;
-    } else {
-      _validSyntax = false;
-      cdebug_tabw(101,-1);
-      return _validSyntax;
-    }
-
-    if (_record.isDATATYPE()) { _stream >> _record; }
-    else {
-      cerr << Error( "GdsStream::readPath(): Expecting DATATYPE record, got %s."
-                   , GdsRecord::toStrType(_record.getType()).c_str()
-                   ) << endl;
-      _validSyntax = false;
+    const Layer* layer = readLayerAndDatatype();
+    if (not layer) {
       cdebug_tabw(101,-1);
       return _validSyntax;
     }
@@ -1287,7 +1299,7 @@ namespace {
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isLAYER  ()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
       if (not layer) {
         cerr << Error( "GdsStream::readNode(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
                      , _record.getInt16s()[0]
@@ -1326,7 +1338,7 @@ namespace {
     if (_record.isPLEX   ()) { _stream >> _record; }
 
     if (_record.isLAYER  ()) {
-      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0] );
+      layer = gdsToLayer( (uint16_t)_record.getInt16s()[0], 0 );
       if (not layer) {
         cerr << Error( "GdsStream::readNode(): No BasicLayer id \"%d\" in GDS conversion table (skipped)."
                      , _record.getInt16s()[0]
