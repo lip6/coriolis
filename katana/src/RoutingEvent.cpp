@@ -430,7 +430,7 @@ namespace Katana {
     cdebug_log(9000,0) << "Deter| Event "
                      <<         getProcesseds()
                      << ","  << getEventLevel()
-                     << ","  << setw(6) << getPriority()
+                     << ","  << tsetw(6) << getPriority()
                      << ": " << _segment << endl;
     _processeds++;
 
