@@ -1615,6 +1615,7 @@ namespace Anabatic {
   bool  AutoSegment::isMiddleStack () const
   {
     cdebug_log(149,0) << "AutoSegment::isMiddleStack() - " << this << endl;
+    if (not isCanonical()) return false;
     if (isNonPref()) return false;
     if (isGlobal()) {
       if (getLength() > getPPitch()) return false;
@@ -1760,7 +1761,10 @@ namespace Anabatic {
     cdebug_log(159,0) << "AutoSegment::canReduce():" << this << endl;
     cdebug_log(159,0) << "  _reduceds:" << _reduceds << endl;
 
-    if (isGlobal() or isDrag() or isFixed()) return false;
+    DbU::Unit length = getAnchoredLength();
+    if (isGlobal() and (length > getPPitch())) return false;
+
+    if (isDrag() or isFixed()) return false;
     if (not isSpinTopOrBottom()) return false;
     if ((getDepth() == 1) and isSpinBottom()) return false;
     if ((flags & Flags::WithPerpands) and _reduceds) return false;
@@ -1777,8 +1781,8 @@ namespace Anabatic {
     // if (  source->isHTee() or source->isVTee()
     //    or target->isHTee() or target->isVTee() ) return false;
 
-    cdebug_log(159,0) << "  length:" << DbU::getValueString(getAnchoredLength()) << endl;
-    if (flags & Flags::NullLength) return (getAnchoredLength() == 0); 
+    cdebug_log(159,0) << "  length:" << DbU::getValueString(length) << endl;
+    if (flags & Flags::NullLength) return (length == 0); 
 
     unsigned int perpandicularDepth = getDepth();
     if (isSpinBottom()) {
@@ -2115,6 +2119,10 @@ namespace Anabatic {
                       << " (reserve:" << reserve << ") " << this << endl;
     if (Session::getRoutingGauge()->getName() == "FlexLib")
       reserve += 2.0;
+
+  // ls180 hard-coded hack.
+  //if (getId() == 10023986) return false;
+    if (getId() == 6378409) return false;
 
     bool   nLowDensity   = true;
     bool   nLowUpDensity = true;
