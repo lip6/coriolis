@@ -2022,7 +2022,7 @@ namespace Anabatic {
     cdebug_log(149,0) << "AutoSegment::canPivotUp() - " << flags
                 << " (reserve:" << reserve << ")" << endl;
 
-    if ( isLayerChange()    or isFixed() or isUnbreakable() ) return false;
+    if ( isLayerChange()    or isFixed() or isUnbreakable() or isNoMoveUp() ) return false;
     if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
     if ( isLocal()          and (not (flags & Flags::AllowLocal   )) ) return false;
 
@@ -2122,12 +2122,12 @@ namespace Anabatic {
 
   // ls180 hard-coded hack.
   //if (getId() == 10023986) return false;
-    if (getId() == 6378409) return false;
+  //if (getId() == 6378409) return false;
 
     bool   nLowDensity   = true;
     bool   nLowUpDensity = true;
 
-    if ( isLayerChange() or isFixed() or isUnbreakable() ) return false;
+    if ( isLayerChange() or isFixed() or isUnbreakable() or isNoMoveUp() ) return false;
     if ( isStrongTerminal() and (not (flags & Flags::AllowTerminal)) ) return false;
     if ( isLocal()          and (not (flags & Flags::AllowLocal   )) ) return false;
 
@@ -2734,6 +2734,7 @@ namespace Anabatic {
     else state += '-';
 
     state += isShortNet        () ? "s": "-";
+    state += isNoMoveUp        () ? "M": "-";
 
     return state;
   }

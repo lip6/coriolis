@@ -1743,11 +1743,15 @@ namespace Anabatic {
         ? getNorthEastContact() : getSouthWestContact() ;
       if (not getFromHook()) cerr << "getFromHook() is NULL !" << endl;
 
+      Segment*     baseSegment   = static_cast<Segment*>( getFromHook()->getComponent() );
       AutoSegment* globalSegment = AutoSegment::create( getSourceContact()
                                                       , targetContact
-                                                      , static_cast<Segment*>( getFromHook()->getComponent() )
+                                                      , baseSegment
                                                       );
       globalSegment->setFlags( (getDegree() == 2) ? AutoSegment::SegBipoint : 0 );
+      if (getNetData() and getNetData()->isNoMoveUp(baseSegment)) {
+        globalSegment->setFlags( AutoSegment::SegNoMoveUp );
+      }
       cdebug_log(145,0) << "Create global segment: " << globalSegment << endl;
   
     // HARDCODED VALUE.

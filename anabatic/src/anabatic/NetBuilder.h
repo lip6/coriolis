@@ -13,9 +13,7 @@
 // |  C++ Header  :  "./anabatic/NetBuilder.h"                       |
 // +-----------------------------------------------------------------+
 
-#ifndef  ANABATIC_NET_BUILDER_H
-#define  ANABATIC_NET_BUILDER_H
-
+#pragma  once
 #include <vector>
 #include <map>
 
@@ -41,6 +39,7 @@ namespace Anabatic {
   class AutoContact;
   class AutoSegment;
   class AnabaticEngine;
+  class NetData;
   
 
 // -------------------------------------------------------------------
@@ -162,6 +161,7 @@ namespace Anabatic {
       inline  UConnexity                    getConnexity           () const;
       inline  UConnexity&                   getConnexity           ();
       inline  Net*                          getNet                 () const;
+      inline  NetData*                      getNetData             () const;
       inline  GCell*                        getGCell               () const;
       inline  AutoContact*                  getSourceContact       () const;
       inline  AutoContact*                  getSouthWestContact    () const;
@@ -354,6 +354,7 @@ namespace Anabatic {
              UConnexity                   _connexity;
              unsigned int                 _topology;
              Net*                         _net;
+             NetData*                     _netData;
              GCell*                       _gcell;
              AutoContact*                 _sourceContact;
              AutoContact*                 _southWestContact;
@@ -383,6 +384,7 @@ namespace Anabatic {
   inline unsigned int                  NetBuilder::getStateG              () const { return _connexity.fields.globals; }
   inline GCell*                        NetBuilder::getGCell               () const { return _gcell; }
   inline Net*                          NetBuilder::getNet                 () const { return _net; }
+  inline NetData*                      NetBuilder::getNetData             () const { return _netData; }
   inline AutoContact*                  NetBuilder::getSourceContact       () const { return _sourceContact; }
   inline AutoContact*                  NetBuilder::getSouthWestContact    () const { return _southWestContact; }
   inline AutoContact*&                 NetBuilder::getSouthWestContact    ()       { return _southWestContact; }
@@ -418,5 +420,3 @@ namespace Anabatic {
   void  NetBuilder::load ( AnabaticEngine* engine, Net* net ) {  BuilderT()._load(engine,net); }
 
 }
-
-#endif  // ANABATIC_NET_BUILDER_H

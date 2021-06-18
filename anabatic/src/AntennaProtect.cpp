@@ -969,7 +969,15 @@ namespace Anabatic {
     }
 
     if (clusters.size() > 1) {
-      size_t rpClustersSize = clusters.size();
+      NetData* netData        = getNetData( net );
+      size_t   rpClustersSize = clusters.size();
+
+      if (netData) {
+        for ( auto item : clusterSegments ) {
+          cdebug_log(147,0) << "No move up: " << item.first << endl;
+          netData->setNoMoveUp( item.first );
+        }
+      }
 
       cdebug_log(147,0) << "Cluster wiring, rpClustersSize=" << rpClustersSize << endl;
       for ( Segment* segment : net->getSegments() ) {

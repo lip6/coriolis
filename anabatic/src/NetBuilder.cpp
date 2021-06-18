@@ -351,6 +351,8 @@ namespace Anabatic {
     , _forks                 ()
     , _connexity             ()
     , _topology              (0)
+    , _net                   (NULL)
+    , _netData               (NULL)
     , _gcell                 (NULL)
     , _sourceContact         (NULL)
     , _southWestContact      (NULL)
@@ -376,6 +378,8 @@ namespace Anabatic {
   {
     _connexity.connexity = 0;
     _topology            = 0;
+    _net                 = NULL;
+    _netData             = NULL;
     _gcell               = NULL;
     _sourceContact       = NULL;
     _southWestContact    = NULL;
@@ -417,7 +421,8 @@ namespace Anabatic {
     }
 
     Segment* fromSegment = static_cast<Segment*>( _fromHook->getComponent() );
-    _net = fromSegment->getNet();
+    _net     = fromSegment->getNet();
+    _netData = anbt->getNetData( _net );
 
     cdebug_log(145,0) << "For Hooks from fromHook" << endl;
     for ( Hook* hook : fromHook->getHooks() ) {
@@ -738,11 +743,15 @@ namespace Anabatic {
                  , getString(_net).c_str()
                  );
 
-      if ( (_sourceContact) && (targetContact) ){
+      if ( (_sourceContact) and (targetContact) ){
+        Segment*     baseSegment   = static_cast<Segment*>( _fromHook->getComponent() );
         AutoSegment* globalSegment = AutoSegment::create( _sourceContact
                                                         , targetContact
-                                                        , static_cast<Segment*>( _fromHook->getComponent() )
+                                                        , baseSegment
                                                         );
+        if (_netData and _netData->isNoMoveUp(baseSegment)) {
+          globalSegment->setFlags( AutoSegment::SegNoMoveUp );
+        }
         cdebug_log(145,0) << "[Create global segment (1)]: " << globalSegment << endl;
       }     
     }

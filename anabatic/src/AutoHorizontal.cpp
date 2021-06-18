@@ -828,10 +828,10 @@ namespace Anabatic {
 
   //Session::doglegReset();
 
-    AutoContact*  autoTarget      = getAutoTarget();
-    AutoContact*  autoSource      = getAutoSource();
-    GCell*        begin           = autoSource->getGCell();
-    GCell*        end             = autoTarget->getGCell();
+    AutoContact*  autoTarget = getAutoTarget();
+    AutoContact*  autoSource = getAutoSource();
+    GCell*        begin      = autoSource->getGCell();
+    GCell*        end        = autoTarget->getGCell();
 
     if (not autoSource->canDrag()) unsetFlags( SegDrag );
 
@@ -935,6 +935,10 @@ namespace Anabatic {
     if (isAnalog()) {
       segment1->setFlags( SegAnalog );
       segment2->setFlags( SegAnalog );
+    }
+    if (isNoMoveUp()) {
+      segment1->setFlags( SegNoMoveUp );
+      segment2->setFlags( SegNoMoveUp );
     }
 
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;

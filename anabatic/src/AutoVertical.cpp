@@ -796,6 +796,10 @@ namespace Anabatic {
       segment1->setFlags( SegAnalog );
       segment2->setFlags( SegAnalog );
     }
+    if (isNoMoveUp()) {
+      segment1->setFlags( SegNoMoveUp );
+      segment2->setFlags( SegNoMoveUp );
+    }
 
     cdebug_log(149,0) << "Session::dogleg[x+1] perpand:   " << segment1 << endl;
     cdebug_log(149,0) << "Session::dogleg[x+2] new paral: " << segment2 << endl;

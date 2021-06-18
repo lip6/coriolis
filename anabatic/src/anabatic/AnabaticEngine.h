@@ -107,6 +107,7 @@ namespace Anabatic {
       inline       bool             isMixedPreRoute    () const;
       inline       bool             isFixed            () const;
       inline       bool             isExcluded         () const;
+      inline       bool             isNoMoveUp         ( Segment* ) const;
       inline       Net*             getNet             () const;
       inline       NetRoutingState* getNetRoutingState () const;
       inline const Box&             getSearchArea      () const;
@@ -121,18 +122,20 @@ namespace Anabatic {
       inline       void             setGlobalFixed     ( bool );
       inline       void             setExcluded        ( bool );
       inline       void             setRpCount         ( size_t );
+      inline       void             setNoMoveUp        ( Segment* );
     private:                                     
                               NetData            ( const NetData& );
              NetData&         operator=          ( const NetData& );
       inline void             _update            ();
     private:
-      Net*             _net;
-      NetRoutingState* _state;
-      Box              _searchArea;
-      size_t           _rpCount;
-      size_t           _diodeCount;
-      DbU::Unit        _sparsity;
-      Flags            _flags;
+      Net*                                 _net;
+      NetRoutingState*                     _state;
+      Box                                  _searchArea;
+      size_t                               _rpCount;
+      size_t                               _diodeCount;
+      DbU::Unit                            _sparsity;
+      Flags                                _flags;
+      std::set<Segment*,DBo::CompareById>  _noMoveUp;
   };
 
 
@@ -142,6 +145,7 @@ namespace Anabatic {
   inline bool             NetData::isMixedPreRoute    () const { return (_state) ? _state->isMixedPreRoute() : false; }
   inline bool             NetData::isFixed            () const { return (_state) ? _state->isFixed        () : false; }
   inline bool             NetData::isExcluded         () const { return _flags & Flags::ExcludeRoute; }
+  inline bool             NetData::isNoMoveUp         ( Segment* segment ) const { return (_noMoveUp.find(segment) != _noMoveUp.end()); }
   inline Net*             NetData::getNet             () const { return _net; }
   inline NetRoutingState* NetData::getNetRoutingState () const { return _state; }
   inline const Box&       NetData::getSearchArea      () const { return _searchArea; }
@@ -155,6 +159,7 @@ namespace Anabatic {
   inline void             NetData::setGlobalFixed     ( bool state ) { _flags.set(Flags::GlobalFixed    ,state); }
   inline void             NetData::setExcluded        ( bool state ) { _flags.set(Flags::ExcludeRoute   ,state); }
   inline void             NetData::setRpCount         ( size_t count ) { _rpCount=count; _update(); }
+  inline void             NetData::setNoMoveUp        ( Segment* segment ) { _noMoveUp.insert(segment); }
 
 
   inline void  NetData::_update ()

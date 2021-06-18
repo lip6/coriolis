@@ -319,6 +319,7 @@ namespace Anabatic {
     , _diodeCount(0)
     , _sparsity  (0)
     , _flags     ()
+    , _noMoveUp  ()
   {
     if (_state and _state->isMixedPreRoute()) return;
 
@@ -810,8 +811,8 @@ namespace Anabatic {
 
   Contact* AnabaticEngine::breakAt ( Segment* segment, GCell* breakGCell )
   {
-    size_t       i      = 0;
-    GCellsUnder  gcells ( new RawGCellsUnder(this,segment) );
+    size_t       i       = 0;
+    GCellsUnder  gcells  ( new RawGCellsUnder(this,segment) );
     for ( ; i<gcells->size() ; ++i ) {
       if (gcells->gcellAt(i) == breakGCell) break;
     }
@@ -852,6 +853,9 @@ namespace Anabatic {
         return breakContact;
     }
 
+    NetData* netData = getNetData( segment->getNet() );
+    if (netData and netData->isNoMoveUp(segment))
+      netData->setNoMoveUp( splitted );
     for ( ; i<gcells->size()-1 ; ++i ) gcells->edgeAt(i)->replace( segment, splitted );
 
     return breakContact;

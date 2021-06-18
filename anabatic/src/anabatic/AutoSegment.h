@@ -108,6 +108,7 @@ namespace Anabatic {
       static const uint64_t  SegUnbreakable       = (1L<<36);
       static const uint64_t  SegNonPref           = (1L<<37);
       static const uint64_t  SegAtMinArea         = (1L<<38);
+      static const uint64_t  SegNoMoveUp          = (1L<<39);
     // Masks.
       static const uint64_t  SegWeakTerminal      = SegStrongTerminal|SegWeakTerminal1|SegWeakTerminal2;
       static const uint64_t  SegNotAligned        = SegNotSourceAligned|SegNotTargetAligned;
@@ -232,6 +233,7 @@ namespace Anabatic {
       inline         bool                isAnalog                   () const;
       inline         bool                isWide                     () const;
       inline         bool                isShortNet                 () const;
+      inline         bool                isNoMoveUp                 () const;
              virtual bool                _canSlacken                () const = 0;
                      bool                canReduce                  ( Flags flags=Flags::WithPerpands ) const;
                      bool                mustRaise                  () const;
@@ -564,6 +566,7 @@ namespace Anabatic {
   inline  bool            AutoSegment::isAnalog               () const { return _flags & SegAnalog; }
   inline  bool            AutoSegment::isWide                 () const { return _flags & SegWide; }
   inline  bool            AutoSegment::isShortNet             () const { return _flags & SegShortNet; }
+  inline  bool            AutoSegment::isNoMoveUp             () const { return _flags & SegNoMoveUp; }
   inline  void            AutoSegment::setFlags               ( uint64_t flags ) { _flags |=  flags; }
   inline  void            AutoSegment::unsetFlags             ( uint64_t flags ) { _flags &= ~flags; }
                                                               
