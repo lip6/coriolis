@@ -21,7 +21,7 @@
 #include "crlcore/ParsersDrivers.h"
 #include "Ap.h"
 #include "Vst.h"
-#include "Spice.h"
+//#include "Spice.h"
 #include "openaccess/OpenAccess.h"
 
 
@@ -171,7 +171,7 @@ namespace CRL {
     registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vbe"  );
   //registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhd"  );
   //registerSlot ( "vst"  , (CellParser_t*)vstParser      , "vhdl" );
-    registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi"  );
+  //registerSlot ( "spi"  , (CellParser_t*)spiceParser    , "spi"  );
     registerSlot ( "oa"   , (CellParser_t*)OpenAccess::oaCellParser  , "oa" );
   //registerSlot ( "oa"   , (LibraryParser_t*)OpenAccess::oaLibParser, "oa" );
   }
@@ -283,7 +283,7 @@ namespace CRL {
     registerSlot ( "ap" , (CellDriver_t*)apDriver       , "ap"       );
     registerSlot ( "vst", (CellDriver_t*)vstDriver      , "vst"      );
   //registerSlot ( "def", (CellDriver_t*)defDriver      , "def"      );
-    registerSlot ( "spi", (CellDriver_t*)spiceDriver    , "spi"      );
+  //registerSlot ( "spi", (CellDriver_t*)spiceDriver    , "spi"      );
   //registerSlot ( "oa" , (CellDriver_t*)OpenAccess::oaDriver, "oa");
   }
 

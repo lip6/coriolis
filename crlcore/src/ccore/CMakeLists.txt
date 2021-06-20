@@ -20,13 +20,12 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/ispd04
                              ${CRLCORE_SOURCE_DIR}/src/ccore/ispd05
                              ${CRLCORE_SOURCE_DIR}/src/ccore/iccad04
-                             ${CRLCORE_SOURCE_DIR}/src/ccore/cspice
+                            #${CRLCORE_SOURCE_DIR}/src/ccore/cspice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/lefdef
                              ${CRLCORE_SOURCE_DIR}/src/ccore/blif
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/ap
                              ${CRLCORE_SOURCE_DIR}/src/ccore/alliance/vst
                              ${CRLCORE_SOURCE_DIR}/src/ccore/cif
-                             ${CRLCORE_SOURCE_DIR}/src/ccore/spice
                              ${CRLCORE_SOURCE_DIR}/src/ccore/liberty
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                              ${HURRICANE_INCLUDE_DIR}
@@ -106,10 +105,10 @@
                                                ToolEngine.cpp
                                                GraphicToolEngine.cpp
                            )
-                       set ( spice_cpps        spice/SpiceParser.cpp
-                                               spice/SpiceDriver.cpp
-                                               spice/Spice.cpp
-                           )
+                      #set ( spice_cpps        spice/SpiceParser.cpp
+                      #                        spice/SpiceDriver.cpp
+                      #                        spice/Spice.cpp
+                      #    )
                        set ( bookshelf_cpps    bookshelf/BookshelfParser.cpp
                                                bookshelf/BookshelfDriver.cpp
                            )
@@ -297,7 +296,7 @@
                                         ${ispd04_cpps}
                                         ${ispd05_cpps}
                                         ${blif_cpps}
-                                        ${spice_cpps}
+                                       #${spice_cpps}
                                         ${lefdef_cpps}
                                         ${openaccess_cpps}
                              )
