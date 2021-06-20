@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2010-2018, All Rights Reserved
+// Copyright (c) SU 2010-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -32,6 +32,7 @@
 #include "crlcore/PyToolEngineCollection.h"
 #include "crlcore/PyAcmSigda.h"
 #include "crlcore/PyIspd05.h"
+#include "crlcore/PySpice.h"
 #include "crlcore/PyBlif.h"
 #include "crlcore/PyGds.h"
 #include "crlcore/PyLefImport.h"
@@ -125,6 +126,7 @@ extern "C" {
     PyToolEngineCollection_LinkPyType ();
     PyAcmSigda_LinkPyType ();
     PyIspd05_LinkPyType ();
+    PySpice_LinkPyType ();
     PyBlif_LinkPyType ();
     PyGds_LinkPyType ();
     PyLefImport_LinkPyType ();
@@ -147,6 +149,7 @@ extern "C" {
     PYTYPE_READY ( ToolEngineCollectionLocator );
     PYTYPE_READY ( AcmSigda );
     PYTYPE_READY ( Ispd05 );
+    PYTYPE_READY ( Spice );
     PYTYPE_READY ( Blif );
     PYTYPE_READY ( Gds );
     PYTYPE_READY ( LefImport );
@@ -201,6 +204,8 @@ extern "C" {
     PyModule_AddObject ( module, "AcmSigda", (PyObject*)&PyTypeAcmSigda );
     Py_INCREF ( &PyTypeIspd05 );
     PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
+    Py_INCREF ( &PyTypeSpice );
+    PyModule_AddObject ( module, "Spice", (PyObject*)&PyTypeSpice );
     Py_INCREF ( &PyTypeBlif );
     PyModule_AddObject ( module, "Blif", (PyObject*)&PyTypeBlif );
     Py_INCREF ( &PyTypeGds );

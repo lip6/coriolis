@@ -1236,11 +1236,12 @@ class BlockConf ( GaugeConf ):
             topCell = self.chip
             self.corona.setName( self.corona.getName()+'_r' )
             self.chip  .setName( self.chip  .getName()+'_r' )
-            rsave( self.corona, views|flags )
-            rsave( self.chip  , views|flags )
+            rsave( self.corona, views|flags, enableSpice=True )
+            rsave( self.chip  , views|flags, enableSpice=True )
         if not self.routingGauge.isSymbolic():
             print( '     + {} (GDSII).'.format( topCell.getName() ))
             CRL.Gds.save( topCell )
+        CRL.Spice.clearProperties()
         return
         
     def toXPitch ( self, x, superior=False ):

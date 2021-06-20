@@ -44,6 +44,7 @@
                                     PyGraphicToolEngine.cpp
                                     PyAcmSigda.cpp
                                     PyIspd05.cpp
+                                    PySpice.cpp
                                     PyBlif.cpp
                                     PyGds.cpp
                                     PyLefImport.cpp
@@ -65,6 +66,7 @@
                                     crlcore/PyGraphicToolEngine.h
                                     crlcore/PyAcmSigda.h
                                     crlcore/PyIspd05.h
+                                    crlcore/PySpice.h
                                     crlcore/PyBlif.h
                                     crlcore/PyGds.h
                                     crlcore/PyLefImport.h

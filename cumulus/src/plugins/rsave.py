@@ -31,7 +31,7 @@ except Exception, e:
     sys.exit(2)
 
 
-def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
+def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False ):
     """
     Write back layout to disk if everything has gone fine.
     Must write all the sub-blocks of the core but *not* the
@@ -47,15 +47,20 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
     if views & CRL.Catalog.State.Logical:
         sviews += 'netlist'
         if views & CRL.Catalog.State.VstUseConcat:
-            if sviews: sviews += ','
-            sviews += ' uses &'
+            if sviews: sviews += ', '
+            sviews += 'uses &'
         if views & CRL.Catalog.State.VstNoLowerCase:
-            if sviews: sviews += ', no lowercase'
+            if sviews: sviews += ', '
+            sviews += 'no lowercase'
         if views & CRL.Catalog.State.VstUniquifyUpperCase:
-            if sviews: sviews += ', uniquify uppercase'
+            if sviews: sviews += ', '
+            sviews += 'uniquify uppercase'
         if views & CRL.Catalog.State.VstNoLinkage:
-            if sviews: sviews += ', no linkage'
-            sviews += ''
+            if sviews: sviews += ', '
+            sviews += 'no linkage'
+        if enableSpice:
+            if sviews: sviews += ', '
+            sviews += 'SPICE'
     if views & CRL.Catalog.State.Physical:
         if sviews: sviews += ','
         sviews += 'layout'
@@ -64,11 +69,12 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0 ):
     if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
     if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
     framework.saveCell( cell, views )
+    CRL.Spice.save( cell )
     for instance in cell.getInstances():
         #print( '     {}| {}.'.format(' '*(depth*2), instance) )
         masterCell = instance.getMasterCell()
         if not masterCell.isTerminalNetlist():
-            rsave( masterCell, views, depth+1 )
+            rsave( masterCell, views, depth+1, enableSpice )
         #else:
         #    print( '     {}| Master cell is terminal netlist {}.'.format(' '*(depth*2), instance.getMasterCell()) )
     return
