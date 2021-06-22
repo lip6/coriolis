@@ -35,6 +35,7 @@ namespace {
 namespace Spice {
 
   using namespace std;
+  using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Property;
   using Hurricane::_TName;
@@ -167,15 +168,37 @@ namespace Spice {
       for ( Plug* plug : sortedPlugs ) {
         Net* plugNet = plug->getNet();
         if (plugNet) {
-          out << " " << BitExtension::getName(plugNet);
+          Bit* bit = BitExtension::get( plugNet );
+          if (bit)
+            out << " " << bit->getName();
+          else {
+            cerr << Error( "SpiceEntity::toEntity(): In %s, Net \"%s\" is missing a Spice::Bit extension.\n"
+                         , getString(getCell()).c_str()
+                         , getString(plugNet).c_str()
+                         ) << endl;
+          }
         } else {
-          if (plug->getMasterNet()->isPower()) {
-            out << " " << _powerNode;
-          } else {
-            if (plug->getMasterNet()->isGround()) {
-              out << " " << _groundNode;
-            } else
+          Net* masterNet = plug->getMasterNet();
+          if (masterNet->isGlobal()) {
+            plugNet = getCell()->getNet( masterNet->getName() );
+            if (plugNet) {
+              Bit* bit = BitExtension::get( plugNet );
+              if (bit)
+                out << " " << bit->getName();
+              else {
+                cerr << Error( "SpiceEntity::toEntity(): In %s, Net \"%s\" is missing a Spice::Bit extension.\n"
+                             , getString(getCell()).c_str()
+                             , getString(plugNet).c_str()
+                             ) << endl;
+              }
+            } else {
+              cerr << Error( "SpiceEntity::toEntity(): In %s, unconnected Plug,\n"
+                             "        %s"
+                           , getString(getCell()).c_str()
+                           , getString(plug).c_str()
+                           ) << endl;
               out << " ?";
+            }
           }
         }
       }

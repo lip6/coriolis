@@ -1658,6 +1658,7 @@ namespace {
                           << "\" in " << layer
                           << " @" << ref._position
                           << endl;
+        cdebug_log(101,0) << "| In  " << net->getCell() << endl;
         if (not layer) continue;
 
         vector<Component*> toDestroy;
@@ -1675,6 +1676,7 @@ namespace {
                                               );
             NetExternalComponents::setExternal( h );
             toDestroy.push_back( component );
+            cdebug_log(101,0) << "> external duplicate " << h << endl;
           } else {
             Vertical* vref = dynamic_cast<Vertical*>( component );
             if (vref) {
@@ -1687,6 +1689,7 @@ namespace {
                                             );
               NetExternalComponents::setExternal( v );
               toDestroy.push_back( component );
+              cdebug_log(101,0) << "> external duplicate " << v << endl;
             } else {
               Pad* pref = dynamic_cast<Pad*>( component );
               if (pref) {
@@ -1696,6 +1699,7 @@ namespace {
                                     );
                 NetExternalComponents::setExternal( p );
                 toDestroy.push_back( component );
+                cdebug_log(101,0) << "> external duplicate " << p << endl;
               }
             }
           }
