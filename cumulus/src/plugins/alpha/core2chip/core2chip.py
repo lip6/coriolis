@@ -47,12 +47,13 @@ from   __future__      import print_function
 from   exceptions      import NotImplementedError
 import re
 from   Hurricane       import UpdateSession, Net, Instance
-from   CRL             import Catalog, AllianceFramework
+from   CRL             import Catalog, AllianceFramework, Spice
 from   helpers         import trace, netDirectionToStr
 from   helpers.overlay import UpdateSession
 from   helpers.io      import ErrorMessage, WarningMessage
 import plugins.chip
 from   plugins.rsave                     import rsave
+from   plugins.checks                    import oneDriver
 from   plugins.alpha.utils               import getPlugByName
 from   plugins.alpha.block.block         import Block
 from   plugins.alpha.block.configuration import BlockConf, IoPadConf, ConstantsConf
@@ -713,4 +714,6 @@ class CoreToChip ( object ):
                 ioPad.udata.createPad()
             self._connectRing()
             self._connectClocks()
-        rsave( self.chip, views=Catalog.State.Logical )
+        oneDriver( self.chip )
+        rsave( self.chip, views=Catalog.State.Logical, enableSpice=True )
+        Spice.clearProperties()

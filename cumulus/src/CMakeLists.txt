@@ -16,6 +16,7 @@
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/block.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsave.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/rsaveall.py
+                                  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/checks.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/s2r.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/aboutwindow.py
                                   ${CMAKE_CURRENT_SOURCE_DIR}/plugins/stats.py
