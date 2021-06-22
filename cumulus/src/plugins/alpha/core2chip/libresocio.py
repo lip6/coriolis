@@ -54,6 +54,7 @@ class CoreToChip ( BaseCoreToChip ):
             cfg.chip.useAbstractPads = None
             if not cfg.chip.useAbstractPads:
                 self.ioPadNames = { 'in'      :'IOPadIn'
+                                 #, 'out'     :'IOPadOut'
                                   , 'tri_out' :'IOPadOut'
                                   , 'bidir'   :'IOPadInOut'
                                   , 'analog'  :'IOPadAnalog'
@@ -71,12 +72,15 @@ class CoreToChip ( BaseCoreToChip ):
         self.ioPadInfos   = [ BaseCoreToChip.IoPadInfo( IoPad.IN
                                                       , self.ioPadNames['in']
                                                       , 'pad', ['s'] )
+                           #, BaseCoreToChip.IoPadInfo( IoPad.OUT
+                           #                          , self.ioPadNames['out']
+                           #                          , 'pad', ['d'] )
                             , BaseCoreToChip.IoPadInfo( IoPad.TRI_OUT
                                                       , self.ioPadNames['tri_out']
                                                       , 'pad', ['d', 'de'] )
                             , BaseCoreToChip.IoPadInfo( IoPad.BIDIR
                                                       , self.ioPadNames['bidir']
-                                                      , 'pad', ['s', 'd', 'de'] )
+                                                      , 'pad', ['d', 's', 'de'] )
                             , BaseCoreToChip.IoPadInfo( IoPad.ANALOG
                                                       , self.ioPadNames['analog']
                                                       , 'pad', ['pad', 'padres'] )
