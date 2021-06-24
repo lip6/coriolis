@@ -32,7 +32,7 @@ namespace CRL {
 
   class Spice {
     public:
-      static bool  save ( Cell* );
+      static bool  save ( Cell*, uint64_t flags );
       static bool  load ( Library*, std::string spicePath );
       static void  clearProperties ();
   };

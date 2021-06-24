@@ -62,9 +62,9 @@ namespace CRL {
 // -------------------------------------------------------------------
 // Class  :  "CRL::Spice".
 
-  bool  Spice::save ( Cell* cell )
+  bool  Spice::save ( Cell* cell, uint64_t flags )
   {
-    ::Spice::Entity* spiceEntity = ::Spice::EntityExtension::create( cell );
+    ::Spice::Entity* spiceEntity = ::Spice::EntityExtension::create( cell, flags );
 
     string cellFile = getString(cell->getName()) + ".spi";
     ofstream cellStream ( cellFile );

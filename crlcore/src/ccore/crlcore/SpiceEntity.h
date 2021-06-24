@@ -50,12 +50,15 @@ namespace Spice {
 
   class Entity {
     public:
+      static const uint64_t  TopCell = (1 << 0);
+    public:
       static std::vector<Entity*>&
                               getAllEntities  ();
       static void             orderPlugs      ( Instance*, std::vector<Plug*>& );
     public:           
-                              Entity          ( EntityProperty*, Cell* );
+                              Entity          ( EntityProperty*, Cell*, uint64_t flags );
                              ~Entity          ();
+     inline        uint64_t   getFlags        () const;
              const Cell*      getCell         () const;
      inline  const BitVector& getBits         () const;
              void             toNodeList      ( ostream&, bool asInterf=true ) const;
@@ -68,10 +71,12 @@ namespace Spice {
              BitVector             _bits;
              size_t                _powerNode;
              size_t                _groundNode;
+             uint64_t              _flags;
   };
 
 
-  inline  const BitVector& Entity::getBits () const { return _bits; }
+  inline        uint64_t   Entity::getFlags () const { return _flags; }
+  inline  const BitVector& Entity::getBits  () const { return _bits; }
 
 
 // -------------------------------------------------------------------
@@ -82,7 +87,7 @@ namespace Spice {
     public:
       static  Name  _name;
     public:
-      static  EntityProperty* create          ( Cell* owner );
+      static  EntityProperty* create          ( Cell* owner, uint64_t flags );
       static  Name            getPropertyName ();
       virtual Name            getName         () const;
       inline  Entity*         getEntity       ();
@@ -96,12 +101,12 @@ namespace Spice {
       
     protected:
     // Constructor.
-      inline  EntityProperty ( Cell* owner );
+      inline  EntityProperty ( Cell* owner, uint64_t flags );
   };
 
 
-  inline  EntityProperty::EntityProperty ( Cell* owner )
-    : PrivateProperty(), _entity(this,owner)
+  inline  EntityProperty::EntityProperty ( Cell* owner, uint64_t flags )
+    : PrivateProperty(), _entity(this,owner,flags)
   { }
 
 
@@ -115,7 +120,7 @@ namespace Spice {
     public:
       static        void             destroyAll  ();
       static        Entity*          get         ( const Cell* );
-      static        Entity*          create      ( Cell* );
+      static        Entity*          create      ( Cell*, uint64_t flags );
       static        void             destroy     ( Cell* );
     private:
       static const Cell*         _owner;

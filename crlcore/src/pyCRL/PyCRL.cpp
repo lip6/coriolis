@@ -220,6 +220,7 @@ extern "C" {
     PyRoutingGauge_postModuleInit ();
     PyRoutingLayerGauge_postModuleInit ();
     PyAllianceFramework_postModuleInit ();
+    PySpice_postModuleInit ();
     
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //DbULoadConstants ( dictionnary );

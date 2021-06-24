@@ -25,6 +25,7 @@ namespace {
 
   using Hurricane::Net;
   using Hurricane::Instance;
+  using Hurricane::Occurrence;
   using Spice::Bit;
   using Spice::Entity;
 
@@ -57,10 +58,11 @@ namespace Spice {
   ptrdiff_t        Entity::_offset = 0;
 
 
-  Entity::Entity ( EntityProperty* property, Cell* cell )
+  Entity::Entity ( EntityProperty* property, Cell* cell, uint64_t flags )
     : _bits()
     , _powerNode (Bit::nindex)
     , _groundNode(Bit::nindex)
+    , _flags(flags)
   {
     if (not _offset) {
     //_offset = offsetof(EntityProperty,_entity);
@@ -143,14 +145,26 @@ namespace Spice {
     out << "* \n";
     toNodeList( out, true );
 
-    for ( Instance* instance : getCell()->getInstances() ) {
-      Cell* model = instance->getMasterCell();
-      if (processedsModels.find(model) != processedsModels.end())
-         continue;
-      out << ".include " << model->getName() << ".spi\n";
-      processedsModels.insert( model );
+    if (_flags & TopCell) {
+      out << "* Terminal models (aka standard cells) used througout all the hierarchy.\n";
+      for ( Occurrence occurrence : getCell()->getTerminalNetlistInstanceOccurrences() ) {
+        Cell* model = static_cast<Instance*>( occurrence.getEntity() )->getMasterCell();
+        if (processedsModels.find(model) != processedsModels.end())
+          continue;
+        out << ".include " << model->getName() << ".spi\n";
+        processedsModels.insert( model );
+      }
+      out << "\n";
+      out << "* Non-terminal models (part of the user's design hierarchy).\n";
+      for ( Occurrence occurrence : getCell()->getNonTerminalNetlistInstanceOccurrences() ) {
+        Cell* model = static_cast<Instance*>( occurrence.getEntity() )->getMasterCell();
+        if (processedsModels.find(model) != processedsModels.end())
+          continue;
+        out << ".include " << model->getName() << ".spi\n";
+        processedsModels.insert( model );
+      }
+      out << "\n";
     }
-    out << "\n";
 
     out << ".subckt " << getCell()->getName();
     for ( Bit* bit : _bits ) {
@@ -161,7 +175,7 @@ namespace Spice {
     toNodeList( out, false );
 
     for ( Instance* instance : getCell()->getInstances() ) {
-      Entity* masterEntity = EntityExtension::create( instance->getMasterCell() );
+      Entity* masterEntity = EntityExtension::create( instance->getMasterCell(), 0 );
       out << "x" << instance->getName();
       vector<Plug*> sortedPlugs;
       masterEntity->orderPlugs( instance, sortedPlugs );
@@ -222,6 +236,7 @@ namespace Spice {
       record->add( getSlot("_bits"      , _bits       ) );
       record->add( getSlot("_powerNode" , _powerNode  ) );
       record->add( getSlot("_groundNode", _groundNode ) );
+      record->add( getSlot("_flags"     , _flags      ) );
     }
     return record;
   }
@@ -233,9 +248,9 @@ namespace Spice {
   Name  EntityProperty::_name = "Spice::Entity";
 
 
-  EntityProperty* EntityProperty::create ( Cell* owner )
+  EntityProperty* EntityProperty::create ( Cell* owner, uint64_t flags )
   {
-    EntityProperty *property = new EntityProperty( owner );
+    EntityProperty *property = new EntityProperty( owner, flags );
 
     property->_postCreate ();
     return property;
@@ -299,11 +314,11 @@ namespace Spice {
   }
 
 
-  Entity* EntityExtension::create ( Cell* cell )
+  Entity* EntityExtension::create ( Cell* cell, uint64_t flags )
   {
     get( cell );
     if (not _cache) {
-      EntityProperty* property = new EntityProperty( cell );
+      EntityProperty* property = new EntityProperty( cell, flags );
       cell->put( property );
 
       _cache = property->getEntity();

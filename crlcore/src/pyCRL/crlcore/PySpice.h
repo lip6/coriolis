@@ -39,7 +39,8 @@ extern "C" {
   extern  PyTypeObject  PyTypeSpice;
   extern  PyMethodDef   PySpice_Methods[];
 
-  extern  void          PySpice_LinkPyType();
+  extern  void          PySpice_LinkPyType     ();
+  extern  void          PySpice_postModuleInit ();
 
 
 #define IsPySpice(v)    ( (v)->ob_type == &PyTypeSpice )

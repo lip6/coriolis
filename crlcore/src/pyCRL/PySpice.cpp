@@ -17,6 +17,7 @@
 #include "crlcore/PySpice.h"
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/isobar/PyLibrary.h"
+#include "crlcore/SpiceEntity.h"
 #include <string>
 #include <sstream>
 
@@ -65,10 +66,11 @@ extern "C" {
     cdebug_log(30,0) << "PySpice_save()" << endl;
 
     HTRY
+      long      flags  = 0;
       PyObject* pyCell = NULL;
-      if (PyArg_ParseTuple( args, "O:Spice.save", &pyCell )) {
+      if (PyArg_ParseTuple( args, "Ol:Spice.save", &pyCell, &flags )) {
         if (IsPyCell(pyCell)) {
-          Spice::save( PYCELL_O(pyCell) );
+          Spice::save( PYCELL_O(pyCell), flags );
         } else {
           PyErr_SetString( ConstructorError, "Spice.save(): Bad parameter type (not a Cell)." );
           return NULL;
@@ -145,6 +147,14 @@ extern "C" {
 
   // Type Definition.
   PyTypeObjectDefinitionsOfModule(CRL,Spice)
+
+
+  extern  void  PySpice_postModuleInit ()
+  {
+    PyObject* constant;
+
+    LoadObjectConstant(PyTypeSpice.tp_dict,::Spice::Entity::TopCell,"TopCell");
+  }
 
 
 #endif  // End of Shared Library Code Part.
