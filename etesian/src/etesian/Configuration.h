@@ -68,6 +68,7 @@ namespace Etesian {
       inline double           getSpaceMargin            () const;
       inline double           getAspectRatio            () const;
       inline double           getAntennaInsertThreshold () const;
+      inline string           getTieName                () const;
       inline string           getFeedNames              () const;
       inline string           getDiodeName              () const;
       inline string           getSpareBufferName        () const;
@@ -92,6 +93,7 @@ namespace Etesian {
       double         _spaceMargin;
       double         _aspectRatio;
       double         _antennaInsertThreshold;
+      string         _tieName;
       string         _feedNames;
       string         _diodeName;
       string         _spareBufferName;
@@ -114,6 +116,7 @@ namespace Etesian {
   inline double        Configuration::getSpaceMargin            () const { return _spaceMargin; }
   inline double        Configuration::getAspectRatio            () const { return _aspectRatio; }
   inline double        Configuration::getAntennaInsertThreshold () const { return _antennaInsertThreshold; }
+  inline string        Configuration::getTieName                () const { return _tieName; }
   inline string        Configuration::getFeedNames              () const { return _feedNames; }
   inline string        Configuration::getDiodeName              () const { return _diodeName; }
   inline string        Configuration::getSpareBufferName        () const { return _spareBufferName; }

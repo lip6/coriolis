@@ -63,6 +63,7 @@ namespace Etesian {
     , _aspectRatio      (  Cfg::getParamPercentage("etesian.aspectRatio"    ,100.0)->asDouble() )
     , _antennaInsertThreshold
                         (  Cfg::getParamDouble    ("etesian.antennaInsertThreshold",       50.0)->asDouble() )
+    , _tieName          (  Cfg::getParamString    ("etesian.tieName"        ,"tie_x0"          )->asString() )
     , _feedNames        (  Cfg::getParamString    ("etesian.feedNames"      ,"tie_x0,rowend_x0")->asString() )
     , _diodeName        (  Cfg::getParamString    ("etesian.diodeName"      ,"dio_x0"          )->asString() )
     , _spareBufferName  (  Cfg::getParamString    ("spares.buffer"          ,"buf_x8"          )->asString() )
@@ -107,6 +108,7 @@ namespace Etesian {
     , _spaceMargin      ( other._spaceMargin     )
     , _aspectRatio      ( other._aspectRatio     )
     , _antennaInsertThreshold( other._antennaInsertThreshold )
+    , _tieName          ( other._tieName         )
     , _feedNames        ( other._feedNames       )
     , _diodeName        ( other._diodeName       )
     , _spareBufferName  ( other._spareBufferName )
@@ -173,6 +175,7 @@ namespace Etesian {
     record->add ( getSlot( "_spaceMargin"           ,       _spaceMargin     ) );
     record->add ( getSlot( "_aspectRatio"           ,       _aspectRatio     ) );
     record->add ( getSlot( "_antennaInsertThreshold",       _antennaInsertThreshold   ) );
+    record->add ( getSlot( "_tieName"             ,         _tieName         ) );
     record->add ( getSlot( "_feedNames"             ,       _feedNames       ) );
     record->add ( getSlot( "_diodeName"             ,       _diodeName       ) );
     record->add ( getSlot( "_spareBufferName"       ,       _spareBufferName ) );

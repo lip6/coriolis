@@ -69,7 +69,8 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
     if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
     if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
     framework.saveCell( cell, views )
-    CRL.Spice.save( cell )
+    spiceFlags = CRL.Spice.TopCell if depth == 0 else 0
+    CRL.Spice.save( cell, spiceFlags )
     for instance in cell.getInstances():
         #print( '     {}| {}.'.format(' '*(depth*2), instance) )
         masterCell = instance.getMasterCell()

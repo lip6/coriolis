@@ -370,7 +370,7 @@ namespace Etesian {
           feedNames.clear();
         }
 
-        Cell*  feed = DataBase::getDB()->getCell( feedName );
+        Cell* feed = DataBase::getDB()->getCell( feedName );
         if (not feed)
           feed = AllianceFramework::get()->getCell( feedName, Catalog::State::Views|Catalog::State::Foreign );
 
@@ -381,6 +381,13 @@ namespace Etesian {
                          , feedName.c_str()
                          ) << endl;
       }
+
+      string tieName = getConfiguration()->getTieName();
+      Cell*  tie     = DataBase::getDB()->getCell( tieName );
+      if (not tie)
+        tie = AllianceFramework::get()->getCell( tieName, Catalog::State::Views|Catalog::State::Foreign );
+      if (tie)
+        _feedCells.useTie( tie );
     }
     _sliceHeight = getCellGauge()->getSliceHeight();
 

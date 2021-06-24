@@ -32,6 +32,25 @@ namespace Etesian {
   using Hurricane::DbU;
 
 
+  void  FeedCells::useTie ( Cell* cell )
+  {
+    if (cell == NULL) return;
+
+    DbU::Unit pitch = _etesian->getSliceStep();
+
+    if (cell->getAbutmentBox().getWidth() % pitch != 0)
+      cerr << Warning( "FeedCells::useTie(): \"%s\" has not a width (%s) multiple of pitch (%s)."
+                     , getString(cell->getName()).c_str()
+                     , DbU::getValueString(cell->getAbutmentBox().getWidth()).c_str()
+                     , DbU::getValueString(pitch).c_str()
+                     ) << endl;
+
+    int pitchNb = (int)( cell->getAbutmentBox().getWidth() / pitch );
+
+    _tieCell = cell;
+  }
+
+
   void  FeedCells::useFeed ( Cell* cell )
   {
     if ( cell == NULL ) return;
@@ -39,7 +58,7 @@ namespace Etesian {
     DbU::Unit pitch = _etesian->getSliceStep();
 
     if (cell->getAbutmentBox().getWidth() % pitch != 0)
-      cerr << Warning( "FeedCells::addFeed(): \"%s\" has not a width (%s) multiple of pitch (%s)."
+      cerr << Warning( "FeedCells::useFeed(): \"%s\" has not a width (%s) multiple of pitch (%s)."
                      , getString(cell->getName()).c_str()
                      , DbU::getValueString(cell->getAbutmentBox().getWidth()).c_str()
                      , DbU::getValueString(pitch).c_str()

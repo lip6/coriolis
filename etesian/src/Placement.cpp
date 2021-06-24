@@ -227,9 +227,8 @@ namespace Etesian {
       return;
     }
 
-    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
-    DbU::Unit xtie      = xmin;
-    DbU::Unit modulo    = (xmin - getXMin()) % getEtesian()->getSliceStep();
+    DbU::Unit xtie   = xmin;
+    DbU::Unit modulo = (xmin - getXMin()) % getEtesian()->getSliceStep();
     if (modulo) {
       xtie += getEtesian()->getSliceStep() - modulo;
       // cerr << "Misaligned hole @" << yspin
@@ -239,7 +238,60 @@ namespace Etesian {
       //      << " getXMin()=" <<  DbU::getValueString(getXMin())
       //      << endl;
     }
+    modulo = (xmax - getXMin()) % getEtesian()->getSliceStep();
+    if (modulo) xmax -= modulo;
 
+    Cell*     tie       = getEtesian()->getFeedCells().getTie();
+    DbU::Unit feedWidth = 0;
+    if (tie) {
+      DbU::Unit feedWidth = tie->getAbutmentBox().getWidth();
+      if (xtie+feedWidth < xmax) {
+        Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+        Instance* instance   = Instance::create
+          ( getEtesian()->getBlockCell()
+          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+          , tie
+          , getTransformation( tie->getAbutmentBox()
+                             , blockPoint.getX()
+                             , blockPoint.getY()
+                             , (yspin) ? Transformation::Orientation::MY
+                             : Transformation::Orientation::ID
+                             )
+          , Instance::PlacementStatus::PLACED
+          );
+        _tiles.insert( before
+                     , Tile( xtie
+                           , tie->getAbutmentBox().getWidth()
+                           , getEtesian()->toCell( Occurrence(instance) )));
+        xtie += feedWidth;
+      }
+
+      if (xtie+feedWidth < xmax) {
+        Point     blockPoint = getEtesian()->toBlock( Point(xmax-feedWidth,_ybottom) );
+        Instance* instance   = Instance::create
+          ( getEtesian()->getBlockCell()
+          , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+          , tie
+          , getTransformation( tie->getAbutmentBox()
+                             , blockPoint.getX()
+                             , blockPoint.getY()
+                             , (yspin) ? Transformation::Orientation::MY
+                             : Transformation::Orientation::ID
+                             )
+          , Instance::PlacementStatus::PLACED
+          );
+        _tiles.insert( before
+                     , Tile( xmax-feedWidth
+                           , tie->getAbutmentBox().getWidth()
+                           , getEtesian()->toCell( Occurrence(instance) )));
+        xmax -= feedWidth;
+        before--;
+      }
+    } else {
+      cerr << Error("Slice::fillHole(): No tie has been registered, not inserting.") << endl;
+    }
+
+    feedWidth = feed->getAbutmentBox().getWidth();
     while ( true ) {
       if (xtie           >= xmax) break;
       if (xtie+feedWidth >  xmax) {
@@ -290,6 +342,11 @@ namespace Etesian {
       cerr << Error("Slice::createDiodeUnder(): No feed has been registered, ignoring.") << endl;
       return NULL;
     }
+    Cell* tie = getEtesian()->getFeedCells().getTie();
+    if (tie == NULL) {
+      cerr << Error("Slice::createDiodeUnder(): No tie has been registered, ignoring.") << endl;
+      return NULL;
+    }
 
     cdebug_log(147,0) << "Slice::createDiodeUnder(): xHint=" << DbU::getValueString(xHint) << endl;
     cdebug_log(147,0) << "  rp=" << rp << endl;
@@ -304,7 +361,8 @@ namespace Etesian {
       if ((*iTile).getXMax() <= diodeArea.getXMin()) continue;
       if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
       cdebug_log(147,0) << "| " << (*iTile) << endl;
-      if ((*iTile).getMasterCell() != feed) continue;
+      if (   ((*iTile).getMasterCell() != feed)
+         and ((*iTile).getMasterCell() != tie )) continue;
       if (blockInst) {
         if ((*iTile).getOccurrence().getPath().getHeadInstance() != blockInst) {
           cdebug_log(147,0) << "> Reject, not in block instance" << endl;
