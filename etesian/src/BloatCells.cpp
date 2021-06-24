@@ -104,7 +104,7 @@ namespace Etesian {
     DbU::Unit vpitch = etesian->getSliceStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
-    if (cell->getName() == "mx2_x2"  ) return   vpitch;
+    if (cell->getName() == "mx2_x2"  ) return 2*vpitch;
     if (cell->getName() == "mx3_x2"  ) return 2*vpitch;
     if (cell->getName() == "sff1r_x4") return   vpitch;
     if (xsize < 6) return vpitch*2;
