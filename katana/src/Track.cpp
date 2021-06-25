@@ -28,6 +28,7 @@
 #include "katana/Track.h"
 #include "katana/TrackMarker.h"
 #include "katana/DataNegociate.h"
+#include "katana/KatanaEngine.h"
 
 
 namespace {
@@ -120,8 +121,7 @@ namespace {
 
   void  GapSet::merge ( size_t i )
   {
-    TrackElement* element    = _track->getSegment( i );
-    uint64_t      id         = element->getNet()->getId();
+    TrackElement* element = _track->getSegment( i );
 
     if (_spans.empty()) {
       cdebug_log(159,0) << "GapSet::merge() new range " << i
@@ -260,6 +260,8 @@ namespace Katana {
   using Hurricane::Bug;
   using Hurricane::Layer;
   using Hurricane::Net;
+  using Hurricane::Horizontal;
+  using Hurricane::Vertical;
 
 
 // -------------------------------------------------------------------
@@ -325,6 +327,10 @@ namespace Katana {
 
   KatanaEngine* Track::getKatanaEngine () const
   { return _routingPlane->getKatanaEngine(); }
+
+
+  RoutingLayerGauge* Track::getLayerGauge () const
+  { return _routingPlane->getLayerGauge(); }
 
 
   uint32_t  Track::getDepth () const
@@ -1000,8 +1006,15 @@ namespace Katana {
   //if ((getIndex() == 6428) and isVertical()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
-    if (_segments.empty()) return 0;
+    if (_segments.empty()) {
+      fillHole( getMin(), getMax() );
+      return 0;
+    }
     DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
+
+    DbU::Unit spacing = _segments[0]->getSourceU() - getMin();
+    if (spacing > 10*getLayerGauge()->getPitch())
+      fillHole( getMin(), _segments[0]->getSourceU() );
 
     bool     netChange  = false;
     uint32_t gaps       = 0;
@@ -1015,7 +1028,7 @@ namespace Katana {
          or  _segments[i]->getLayer()->isBlockage() ) {
         netChange = true;
         if (gapsetPrev.size() and gapsetCurr.size()) {
-          DbU::Unit spacing = gapsetCurr.spansSourceU() - gapsetPrev.spansTargetU();
+          spacing = gapsetCurr.spansSourceU() - gapsetPrev.spansTargetU();
           if (spacing < minSpacing) {
             spacing = minSpacing - spacing;
             AutoSegment* prev = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ]->base();
@@ -1035,7 +1048,8 @@ namespace Katana {
                                , getString(curr).c_str() ) << endl;
               }
             }
-          }
+          } else if (spacing > 10*getLayerGauge()->getPitch())
+            fillHole( gapsetPrev.spansTargetU(), gapsetCurr.spansSourceU() );
         }
       }
 
@@ -1050,7 +1064,7 @@ namespace Katana {
                               <<       " " << DbU::getValueString(gapsetCurr.targetU(j)) << "], "
                               << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
                               <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
-            DbU::Unit spacing = gapsetCurr.sourceU(j+1) - gapsetCurr.targetU(j);
+            spacing = gapsetCurr.sourceU(j+1) - gapsetCurr.targetU(j);
             cdebug_log(159,0) << "| spacing=" << DbU::getValueString(spacing) << endl;
             if (spacing < minSpacing) {
               cdebug_log(159,0) << j << "=[" << DbU::getValueString(gapsetCurr.sourceU(j))
@@ -1079,7 +1093,8 @@ namespace Katana {
                                , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
                 cdebug_log(159,0) << first << endl;
               }
-            }
+            } else if (spacing > 10*getLayerGauge()->getPitch())
+              fillHole( gapsetCurr.targetU(j), gapsetCurr.sourceU(j+1) );
           }
         }
 
@@ -1087,6 +1102,22 @@ namespace Katana {
         gapsetCurr.clear();
       }
     }
+
+    Net*      lastNet     = NULL;
+    DbU::Unit lastTargetU = getMax();
+    for ( auto isegment = _segments.rbegin() ; isegment != _segments.rend() ; ++isegment ) {
+      if (not lastNet) {
+        lastNet     = (*isegment)->getNet();
+        lastTargetU = (*isegment)->getTargetU();
+      } else {
+        if (lastNet != (*isegment)->getNet()) break;
+        lastTargetU = max( lastTargetU, (*isegment)->getTargetU() );
+      }
+    }
+
+    spacing = getMax() - lastTargetU;
+    if (spacing > 10*getLayerGauge()->getPitch())
+      fillHole( lastTargetU, getMax() );
 
   //if ((getIndex() == 6428) and isVertical()) DebugSession::close();
     return gaps;
@@ -1132,6 +1163,38 @@ namespace Katana {
     }
 
     return overlaps;
+  }
+
+
+  void  Track::fillHole ( DbU::Unit umin, DbU::Unit umax ) const
+  {
+    if (getIndex() % 2) return;
+    if (getLayerGauge()->getType() == Constant::PinOnly) return;
+    if (getLayerGauge()->getDepth() > getKatanaEngine()->getConfiguration()->getAllowedDepth()) return;
+
+    Net* fillNet = getKatanaEngine()->getCell()->getNet( "dummy_filler_net" );
+    if (not fillNet)
+      fillNet = Net::create( getKatanaEngine()->getCell(), "dummy_filler_net" );
+
+    DbU::Unit gapLength = umax - umin;
+    if (gapLength > 10*getLayerGauge()->getPitch()) {
+      if (isHorizontal())
+        Horizontal::create( fillNet
+                          , getLayer()
+                          , getAxis()
+                          , getLayerGauge()->getWireWidth()
+                          , umin +  2*getLayerGauge()->getPitch()
+                          , umax -  2*getLayerGauge()->getPitch()
+                          );
+      else
+        Vertical::create( fillNet
+                        , getLayer()
+                        , getAxis()
+                        , getLayerGauge()->getWireWidth()
+                        , umin +  2*getLayerGauge()->getPitch()
+                        , umax -  2*getLayerGauge()->getPitch()
+                        );
+    }
   }
 
 
