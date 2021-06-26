@@ -1025,7 +1025,7 @@ namespace Katana {
       netChange = false;
       gapsetCurr.merge( i );
       if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
-         or  _segments[i]->getLayer()->isBlockage() ) {
+         /*or  _segments[i]->getLayer()->isBlockage()*/ ) {
         netChange = true;
         if (gapsetPrev.size() and gapsetCurr.size()) {
           spacing = gapsetCurr.spansSourceU() - gapsetPrev.spansTargetU();
