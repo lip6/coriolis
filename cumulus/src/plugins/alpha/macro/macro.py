@@ -141,6 +141,10 @@ class Macro ( object ):
         minSpacingMetal2 = gaugeMetal2.getLayer().getMinimalSpacing()
         minSpacingMetal3 = gaugeMetal3.getLayer().getMinimalSpacing()
         minSpacingMetal4 = gaugeMetal4.getLayer().getMinimalSpacing()
+        pitchMetal2      = gaugeMetal2.getPitch()
+        pitchMetal3      = gaugeMetal3.getPitch()
+        pitchMetal4      = gaugeMetal4.getPitch()
+        pitchMetal5      = gaugeMetal5.getPitch()
         useJumper  = False
         xMinAdjust = 0
         yMinAdjust = 0
@@ -149,18 +153,18 @@ class Macro ( object ):
         if self.cell.getName().lower() == 'spblock_512w64b8w':
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
             useJumper  = True
-            xMinAdjust = 3*self.rg.getPitch( gaugeMetal5.getLayer() )
+            xMinAdjust = self.rg.getPitch( gaugeMetal5.getLayer() )
             pitch      = gaugeMetal2.getPitch()
             if xMinAdjust % pitch:
                 xMinAdjust += pitch - (xMinAdjust % pitch)
             for net in self.cell.getNets():
                 for component in net.getComponents():
                     if isinstance(component,Rectilinear) and component.getLayer() == blockageMetal2:
-                        bb = component.getBoundingBox()
-                        bb.inflate( minSpacingMetal2 + xMinAdjust
-                                  , minSpacingMetal2 + u(0.19)
-                                  , minSpacingMetal2
-                                  , minSpacingMetal2 )
+                        bb = Box( component.getBoundingBox() )
+                        bb.inflate( 2*pitchMetal5 + xMinAdjust
+                                  , pitchMetal2 + u(0.19)
+                                  , pitchMetal2
+                                  , pitchMetal2 )
                         Horizontal.create( component.getNet()
                                          , blockageMetal2
                                          , bb.getYCenter()
@@ -174,23 +178,19 @@ class Macro ( object ):
                                          , bb.getXMin()
                                          , bb.getXMax() )
                     elif isinstance(component,Rectilinear) and component.getLayer() == blockageMetal3:
-                        bb = component.getBoundingBox()
-                        bb.inflate( 2*minSpacingMetal3, minSpacingMetal3/2 )
+                        bb = Box( component.getBoundingBox() )
+                        deltaAbXMin = bb.getXMin() + minSpacingMetal3/2 - ab.getXMin()
+                        bb.inflate( pitchMetal3 + deltaAbXMin
+                                  , minSpacingMetal3/2
+                                  , pitchMetal3
+                                  , pitchMetal3
+                                  )
                         Vertical.create( component.getNet()
                                        , blockageMetal3
                                        , bb.getXCenter()
                                        , bb.getWidth()
                                        , bb.getYMin()
                                        , bb.getYMax() )
-                    elif isinstance(component,Rectilinear) and component.getLayer() == blockageMetal4:
-                        bb = component.getBoundingBox()
-                        bb.inflate( minSpacingMetal4 )
-                        Horizontal.create( component.getNet()
-                                         , blockageMetal4
-                                         , bb.getYCenter()
-                                         , bb.getHeight()
-                                         , bb.getXMin()
-                                         , bb.getXMax() )
         if self.cell.getName().lower() in [ 'pll', 'gds_pll', 'cmpt_pll' ]:
             print( '  o  Ad-hoc patch for "{}".'.format(self.cell.getName()) )
         self.innerAb = ab
@@ -289,7 +289,7 @@ class Macro ( object ):
                     for gauge in [ gaugeMetal3, gaugeMetal3, gaugeMetal4, gaugeMetal5 ]:
                         bb =      bvia1.getPlate( gauge.getLayer() ).getBoundingBox()
                         bb.merge( bvia2.getPlate( gauge.getLayer() ).getBoundingBox() )
-                        bb.inflate( gauge.getLayer().getMinimalSpacing() )
+                        bb.inflate( gauge.getPitch() )
                         Pad.create( blockageNet
                                   , gauge.getLayer().getBlockageLayer()
                                   , bb )
