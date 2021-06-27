@@ -1168,7 +1168,8 @@ namespace Katana {
 
   void  Track::fillHole ( DbU::Unit umin, DbU::Unit umax ) const
   {
-    if (getIndex() % 2) return;
+    if (not getKatanaEngine()->getTrackFill()) return;
+    if (getIndex() % getKatanaEngine()->getTrackFill() != 0) return;
     if (getLayerGauge()->getType() == Constant::PinOnly) return;
     if (getLayerGauge()->getDepth() > getKatanaEngine()->getConfiguration()->getAllowedDepth()) return;
 

@@ -51,6 +51,7 @@ namespace Katana {
     , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
     , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
     , _bloatOverloadAdd    (Cfg::getParamInt ("katana.bloatOverloadAdd"    ,      4)->asInt())
+    , _trackFill           (Cfg::getParamInt ("katana.trackFill"           ,      0)->asInt())
     , _flags               (0)
     , _profileEventCosts   (Cfg::getParamBool("katana.profileEventCosts"   ,false  )->asBool())
     , _runRealignStage     (Cfg::getParamBool("katana.runRealignStage"     ,true   )->asBool())
@@ -99,6 +100,7 @@ namespace Katana {
     , _ripupCost           (other._ripupCost)
     , _eventsLimit         (other._eventsLimit)
     , _bloatOverloadAdd    (other._bloatOverloadAdd)
+    , _trackFill           (other._trackFill)
     , _flags               (other._flags)
     , _profileEventCosts   (other._profileEventCosts)
     , _runRealignStage     (other._runRealignStage)
@@ -188,6 +190,7 @@ namespace Katana {
     cout << Dots::asUInt  ("     - Ripup limit, globals"               ,_ripupLimits[GlobalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Ripup limit, long globals"          ,_ripupLimits[LongGlobalRipupLimit]) << endl;
     cout << Dots::asUInt  ("     - Bloat overload additional penalty"  ,_bloatOverloadAdd) << endl;
+    cout << Dots::asUInt  ("     - Fill every nth track"               ,_trackFill) << endl;
 
     Super::print( cell );
   }

@@ -1,14 +1,14 @@
 // -*- mode: C++; explicit-buffer-name: "Configuration.h<katana>" -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) SU 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :   "./katana/Configuration.h"                     |
 // +-----------------------------------------------------------------+
@@ -81,6 +81,7 @@ namespace Katana {
       inline        uint32_t                   getHTracksReservedMin   () const;
       inline        uint32_t                   getVTracksReservedMin   () const;
       inline        uint32_t                   getTermSatThreshold     () const;
+      inline        uint32_t                   getTrackFill            () const;
       inline        void                       setEventsLimit          ( uint64_t );
       inline        void                       setRipupCost            ( uint32_t );
                     void                       setRipupLimit           ( uint32_t limit, uint32_t type );
@@ -112,6 +113,7 @@ namespace Katana {
              uint32_t       _ripupCost;
              uint64_t       _eventsLimit;
              uint32_t       _bloatOverloadAdd;
+             uint32_t       _trackFill;
              unsigned int   _flags;
              bool           _profileEventCosts;
              bool           _runRealignStage;
@@ -135,6 +137,7 @@ namespace Katana {
   inline       uint32_t                      Configuration::getHTracksReservedMin   () const { return _hTracksReservedMin; }
   inline       uint32_t                      Configuration::getVTracksReservedMin   () const { return _vTracksReservedMin; }
   inline       uint32_t                      Configuration::getTermSatThreshold     () const { return _termSatThreshold; }
+  inline       uint32_t                      Configuration::getTrackFill            () const { return _trackFill; }
   inline       void                          Configuration::setBloatOverloadAdd     ( uint32_t add ) { _bloatOverloadAdd = add; }
   inline       void                          Configuration::setRipupCost            ( uint32_t cost ) { _ripupCost = cost; }
   inline       void                          Configuration::setPostEventCb          ( PostEventCb_t cb ) { _postEventCb = cb; }
