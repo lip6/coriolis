@@ -15,6 +15,7 @@
 
 import sys
 import os.path
+import math
 import Cfg
 from   operator  import itemgetter
 from   Hurricane import Breakpoint, DbU, Box, Transformation, Box, \
@@ -44,29 +45,34 @@ class BufferPool ( object ):
     """
 
     def __init__ ( self, quadTree ):
-        self.quadTree      = quadTree
-        self.columns       = quadTree.spares.conf.bColumns
-        self.rows          = quadTree.spares.conf.bRows
-        self.area          = Box()
-        self.buffers       = []
-        self.selectedIndex = None
+        self.quadTree        = quadTree
+        self.columns         = quadTree.spares.conf.bColumns
+        self.rows            = quadTree.spares.conf.bRows
+        self.area            = Box()
+        self.buffers         = []
+        self.selectedIndexes = []
         for i in range(self.rows*self.columns):
             self.buffers.append( [ 0, None ] )
         self._createBuffers()
 
     @property
-    def selected ( self ):
+    def selecteds ( self ):
         """
-        Returns the selected buffer instance within the pool. Selection is to
+        Returns the selected(s) buffer(s) instance(s) within the pool. Selection is to
         be made with either select() or selectFree().
         """
-        if self.selectedIndex is None:
-            raise ErrorMessage( 3, 'BufferPool.selected: No buffer has been selected yet.' )
-        return self.buffers[ self.selectedIndex ][ 1 ]
+        if not len(self.selectedIndexes):
+            raise ErrorMessage( 3, 'BufferPool.selecteds: No buffer has been selected yet.' )
+        selectedBuffers = []
+        for index in self.selectedIndexes:
+            selectedBuffers.append( self.buffers[ index ][ 1 ] )
+        return selectedBuffers
 
     def toIndex ( self, column, row ): return column + row*self.columns
 
     def fromIndex ( self, index ): return (index%self.columns, index/self.columns)
+
+    def unselect ( self ): self.selectedIndexes = []
 
     def select ( self, column, row, flags=0 ):
         """
@@ -99,11 +105,15 @@ class BufferPool ( object ):
         trace( 540, '-' )
 
     def _select ( self, index, flags ):
-        self.selectedIndex = index
-        selectedBuffer = self.buffers[ self.selectedIndex ]
+        for i in range(len(self.selectedIndexes)):
+            if index == self.selectedIndexes[i]:
+                del self.selectedIndexes[i]
+                break
+        self.selectedIndexes.append( index )
+        selectedBuffer = self.buffers[ self.selectedIndexes[-1] ]
         if flags & Spares.CHECK_USED and selectedBuffer[0] & Spares.USED:
             raise ErrorMessage( 3, 'BufferPool.select(): Buffer a index {} is already used.' \
-                                   .format(self.selectedIndex) )
+                                   .format(self.selectedIndexes[-1]) )
         if flags & Spares.MARK_USED:
             selectedBuffer[0] |= Spares.USED
 
@@ -428,19 +438,25 @@ class QuadTree ( object ):
         return parent
 
     @property
-    def buffer ( self ):
-        """The the currently selected buffer instance in the pool."""
-        return self.pool.selected
+    def buffers ( self ):
+        """The the currently selected set of buffer instances in the pool."""
+        return self.pool.selecteds
 
     @property
-    def bInputPlug ( self ):
+    def bInputPlugs ( self ):
+        """The list of input Plugs of the currently selected buffers in the pool."""
+        plugs = []
+        for buffer in self.buffers:
+            plugs.append( utils.getPlugByName( buffer, self.spares.conf.bufferConf.input ))
+        return plugs
+
+    def bInputPlug ( self, index ):
         """The input Plug of the currently selected buffer in the pool."""
-        return utils.getPlugByName( self.buffer, self.spares.conf.bufferConf.input )
+        return utils.getPlugByName( self.buffers[index], self.spares.conf.bufferConf.input )
 
-    @property
-    def bOutputPlug ( self ):
+    def bOutputPlug ( self, index ):
         """The output Plug of the currently selected buffer in the pool."""
-        return utils.getPlugByName( self.buffer, self.spares.conf.bufferConf.output )
+        return utils.getPlugByName( self.buffers[index], self.spares.conf.bufferConf.output )
 
     def selectFree ( self ):
         """
@@ -451,20 +467,21 @@ class QuadTree ( object ):
 
     def connectBuffer ( self, doLeaf=False ):
         """
-        Create output nets for the currently selected buffer, if they do not
+        Create output nets for the currently selected buffers, if they do not
         already exists. The nets are created in the top level cell, and their
         names are derived from the `rtag` attribute.
         """
         if self.isLeaf() and not doLeaf: return
 
         trace( 540, '\tQuadTree.connectBuffer(): rtag:"{}"\n'.format(self.rtag) )
-        plug = self.bOutputPlug
-        if not plug.getNet():
-            outputNetBuff = Net.create( self.spares.conf.cellPnR,'{}_{}' \
-                                        .format(self.root.bufferTag,self.rtag) )
-            plug.setNet( outputNetBuff )
-            trace( 540, '\t| {}\n'.format(plug) )
-            trace( 540, '\t| {}\n'.format(outputNetBuff) )
+        for ibuffer in range(len(self.buffers)):
+            plug = self.bOutputPlug(ibuffer)
+            if not plug.getNet():
+                outputNetBuff = Net.create( self.spares.conf.cellPnR,'{}_{}_{}' \
+                                            .format(self.root.bufferTag,self.rtag,ibuffer) )
+                plug.setNet( outputNetBuff )
+                trace( 540, '\t| {}\n'.format(plug) )
+                trace( 540, '\t| {}\n'.format(outputNetBuff) )
 
     def rconnectBuffer ( self ):
         """[R]ecursive call of connectBuffer()"""
@@ -484,7 +501,19 @@ class QuadTree ( object ):
         self.pool.select( column, row, flags )
         if not self.isLeaf():
             for leaf in self.leafs: leaf.rselectBuffer( column, row, flags )
+        else:
+            if flags & Spares.HEAVY_LEAF_LOAD:
+                self.pool.select( column+1, row  , flags )
+                self.pool.select( column  , row+1, flags )
         trace( 540, '-' )
+
+    def runselect ( self ):
+        """
+        Clear any previous buffer selection.
+        """
+        self.pool.unselect()
+        if not self.isLeaf():
+            for leaf in self.leafs: leaf.runselect()
 
     def _mergeLeafX ( self, leafX ):
         for x in leafX:
@@ -774,27 +803,80 @@ class QuadTree ( object ):
         output net created.
         """
         trace( 540, ',+', '\tQuadTree.spliNetlist()\n' )
+        trace( 540, '\tPlug numbers {}\n'.format(len(self.plugs)) )
+        trace( 540, '\tBuffers numbers {}\n'.format(len(self.buffers)) )
         self.connectBuffer( doLeaf=True )
-        netBuff = self.bOutputPlug.getNet()
-        trace( 540, '\tBuffer: {}\n'.format(self.buffer) )
-        trace( 540, '\tBuffer output: {}\n'.format(netBuff) )
         if not self.plugs:
             trace( 540, '-' )
             return
-        for plug in self.plugs:
-            trace( 540, '\t| Leaf: {}\n'.format(plug) )
+        coreTransf = Transformation()
+        if self.spares.conf.isCoreBlock:
+            coreTransf = self.spares.conf.icore.getTransformation()
+        maxSinks        = self.spares.conf.bufferConf.maxSinks
+       #maxSinks        = 7
+        plugOccsByAngle = []
+        areaCenter      = self.area.getCenter()
+       #coreTransf.applyOn( areaCenter )
+        trace( 540, '\tArea {}\n'.format(self.area) )
+        trace( 540, '\tArea center {}\n'.format(areaCenter) )
+        for plugOcc in self.plugs:
+            instCenter = plugOcc.getEntity().getInstance().getAbutmentBox().getCenter()
+            plugOcc.getPath().getTransformation().applyOn( instCenter )
+            dx = instCenter.getX() - areaCenter.getX()
+            dy = instCenter.getY() - areaCenter.getY()
+            angle = math.atan2( dy, dx )
+            plugOccsByAngle.append( [ angle, plugOcc ] )
+        plugOccsByAngle.sort( key=itemgetter(0) )
+        splitIndexes = []
+        if (len(plugOccsByAngle) > maxSinks) and (len(self.buffers) > 1):
+            partSize = len(plugOccsByAngle) / len(self.buffers)
+            trace( 540, '\tpartSize: {}\n'.format(partSize) )
+            for isplit in range(1,len(self.buffers)):
+                maxdAngle = 0
+                maxisplit = partSize*isplit-2
+                for i in range(maxisplit,maxisplit+4):
+                    dAngle = plugOccsByAngle[i+1][0] - plugOccsByAngle[i][0]
+                    trace( 540, '\t{:-2} dAngle={}\n'.format(i,dAngle) )
+                    if dAngle > maxdAngle:
+                        maxdAngle = dAngle
+                        maxisplit = i
+                splitIndexes.append( maxisplit )
+        splitIndexes.append( len(plugOccsByAngle) )
+        for i in range(len(plugOccsByAngle)):
+            angle, plugOcc = plugOccsByAngle[i]
+            instCenter = plugOcc.getEntity().getInstance().getAbutmentBox().getCenter()
+            plugOcc.getPath().getTransformation().applyOn( instCenter )
+            dx = instCenter.getX()
+            dy = instCenter.getY()
+            trace( 540, '\t {:-2} | {:-5.2} : dx:{} dy:{} {}\n' \
+                        .format(i,angle,DbU.getValueString(dx),DbU.getValueString(dy),plugOcc) )
+        trace( 540, '\tspitIndexes = {}\n'.format(splitIndexes) )
+        minIndex = 0
+        for i in range(len(splitIndexes)):
+            sinks    = splitIndexes[i] - minIndex
+            minIndex = splitIndexes[i]
+            if sinks > maxSinks:
+                print( WarningMessage( 'QuadTree.splitNetlist(): More than {} sink points ({}) on "{}".' \
+                                       .format( maxSinks
+                                              , sinks
+                                              , self.bOutputPlug(i).getNet().getName())) )
+        ibuffer  = 0
+        netBuff  = self.bOutputPlug(ibuffer).getNet()
+        for i in range(len(plugOccsByAngle)):
+            angle, plugOcc = plugOccsByAngle[i]
+            if i > splitIndexes[ibuffer]:
+                ibuffer += 1
+                netBuff  = self.bOutputPlug(ibuffer).getNet()
+                trace( 540, '\tBuffer: {}\n'.format(self.buffers[ibuffer]) )
+                trace( 540, '\tBuffer output: {}\n'.format(netBuff) )
+            trace( 540, '\t| Leaf: {}\n'.format(plugOcc) )
             trace( 540, '\t| netBuff: {}\n'.format(netBuff) )
-            deepPlug    = self.spares.raddTransNet( netBuff, plug.getPath() )
+            deepPlug    = self.spares.raddTransNet( netBuff, plugOcc.getPath() )
             trace( 540, '\t| netBuff: {}\n'.format(netBuff) )
             trace( 540, '\t| Deep Plug: {}\n'.format(deepPlug) )
             deepNetBuff = deepPlug.getMasterNet() if deepPlug else netBuff
             trace( 540, '\t| deepNetBuff: {} {}\n'.format(deepNetBuff,netBuff) )
-            plug.getEntity().setNet( deepNetBuff )
-
-        maxSinks = self.spares.conf.bufferConf.maxSinks
-        if len(self.plugs) > maxSinks:
-            print( WarningMessage( 'QuadTree.splitNetlist(): More than {} sink points ({}) on "{}".' \
-                                   .format(maxSinks,len(self.plugs),netBuff.getName())) )
+            plugOcc.getEntity().setNet( deepNetBuff )
         trace( 540, '-' )
 
     def rsplitNetlist ( self ):
@@ -815,9 +897,10 @@ class Spares ( object ):
     Excess area is put in the topmost and rightmost pools.
     """
 
-    USED       = 0x00000001
-    CHECK_USED = 0x00010000
-    MARK_USED  = 0x00020000
+    USED            = 0x00000001
+    CHECK_USED      = 0x00010000
+    MARK_USED       = 0x00020000
+    HEAVY_LEAF_LOAD = 0x00040000
 
     def __init__ ( self, block ):
         self.conf         = block.conf

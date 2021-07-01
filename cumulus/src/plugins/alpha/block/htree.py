@@ -40,10 +40,11 @@ class HTree ( object ):
     Build a H-Tree on a net occurrene.
     """
 
-    def __init__ ( self, spares, treeNetOcc, index ):
+    def __init__ ( self, spares, treeNetOcc, index, flags ):
         self.spares     = spares
         self.treeNetOcc = treeNetOcc
         self.treeIndex  = index
+        self.flags      = flags
         self.subNets    = []
        #if not self.treeNetOcc.getEntity().isClock():
        #    print( WarningMessage( 'HTree.__init__(): Net "{}" is not of CLOCK type.' \
@@ -80,25 +81,44 @@ class HTree ( object ):
     def _rconnectHTree ( self, qt ):
         if qt.isLeaf(): return False
         qt.rconnectBuffer()
-        driverNet = qt.bOutputPlug.getNet()
+        driverNet = qt.bOutputPlug(0).getNet()
         driverNet.setType( self.treeNet.getType() )
         for leaf in qt.leafs:
-            leaf.bInputPlug.setNet( driverNet )
+            for plug in leaf.bInputPlugs:
+                plug.setNet( driverNet )
             self._rconnectHTree( leaf )
         return True
+
+    def _connectLeaf ( self, leaf, ckNet, forkContact, contact, x, y ):
+        gaugeConf  = self.spares.conf
+        bufferConf = self.spares.conf.bufferConf
+        hLeafDepth = gaugeConf.horizontalDepth
+        if gaugeConf.horizontalDepth > 2 and (gaugeConf.horizontalDepth > gaugeConf.verticalDepth):
+            hLeafDepth = gaugeConf.horizontalDepth - 2
+        gaugeConf.setStackPosition( contact, x, y )
+        gaugeConf.createVertical  ( contact, forkContact, x, 0 )
+        if len(leaf.buffers) > 1:
+            tl1Contact = gaugeConf.rpAccessByPlugName( leaf.buffers[1], bufferConf.input , ckNet, GaugeConf.DeepDepth|GaugeConf.HAccess )
+            tl2Contact = gaugeConf.rpAccessByPlugName( leaf.buffers[2], bufferConf.input , ckNet )
+            tl2Y       = gaugeConf.getTrack( tl2Contact.getY(), hLeafDepth, 2 )
+            left1X     = gaugeConf.getNearestVerticalTrack( tl1Contact.getX(), 0, 0 )
+            gaugeConf.expandMinArea( tl2Contact )
+            gaugeConf.setStackPosition( tl1Contact, left1X    , y  )
+            gaugeConf.createHorizontal( contact   , tl1Contact, y  , GaugeConf.DeepDepth|GaugeConf.SourceExtend )
+            gaugeConf.createVertical  ( contact   , tl2Contact, x, 0 )
 
     def _rrouteHTree ( self, qt ):
         """
         Recursively build one HTree branch for all non-terminal nodes of the QuadTree.
         """
-        trace( 550, ',+', '\tHTree._rrouteHTree() {}\n'.format(qt.bOutputPlug.getNet()) )
+        trace( 550, ',+', '\tHTree._rrouteHTree() {}\n'.format(qt.bOutputPlug(0).getNet()) )
         trace( 550, '\tOn: {}\n'.format(qt) )
         if qt.isLeaf():
             trace( 550, '-' )
             return False
         gaugeConf  = self.spares.conf
         bufferConf = self.spares.conf.bufferConf
-        ckNet      = qt.bOutputPlug.getNet()
+        ckNet      = qt.bOutputPlug(0).getNet()
         self.subNets.append( ckNet )
         hLeafDepth = gaugeConf.horizontalDepth
         if gaugeConf.horizontalDepth > 2 and (gaugeConf.horizontalDepth > gaugeConf.verticalDepth):
@@ -110,16 +130,16 @@ class HTree ( object ):
         leftContact        = None
         rigthContact       = None
         if qt.bl:
-            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffer, bufferConf.input , ckNet )
+            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input , ckNet )
         if qt.br:
-            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffer, bufferConf.input , ckNet )
+            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input , ckNet )
         if qt.tl:
-            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffer, bufferConf.input , ckNet )
+            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input , ckNet )
         if qt.tr:
-            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffer, bufferConf.input , ckNet )
+            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input , ckNet )
         if qt.bl or qt.tl:
             leafContact       = blContact if brContact else tlContact
-            leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+            leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
             leftSourceX       = gaugeConf.getNearestVerticalTrack  ( leftSourceContact.getX(), 0 )
             leftSourceY       = gaugeConf.getNearestHorizontalTrack( leftSourceContact.getY(), 0 )
             leftContact       = gaugeConf.createContact( ckNet, leafContact.getX(),  leftSourceContact.getY(), 0 )
@@ -129,7 +149,7 @@ class HTree ( object ):
             leftContact .setY( leftSourceY )
         if qt.br or qt.tr:
             leafContact        = brContact if brContact else trContact
-            rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+            rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
             rightSourceX       = gaugeConf.getNearestVerticalTrack( rightSourceContact.getX(), 0 )
             rightSourceY       = gaugeConf.getNearestHorizontalTrack( rightSourceContact.getY(), 0 )
             rightContact       = gaugeConf.createContact( ckNet, leafContact.getX(), rightSourceContact.getY(), 0 )
@@ -152,17 +172,13 @@ class HTree ( object ):
             blY = gaugeConf.getTrack( brContact.getY(), hLeafDepth, 0 )
             trace( 550, '\tblY:{}\n'.format( DbU.getValueString(blY) ))
         if qt.tl:
-            gaugeConf.setStackPosition( tlContact, leftX, tlY )
-            gaugeConf.createVertical  ( tlContact, leftContact, leftX, 0 )
+            self._connectLeaf( qt.tl, ckNet, leftContact, tlContact, leftX, tlY )
         if qt.bl:
-            gaugeConf.setStackPosition( blContact, leftX, blY )
-            gaugeConf.createVertical  ( leftContact, blContact, leftX, 0 )
+            self._connectLeaf( qt.bl, ckNet, leftContact, blContact, leftX, blY )
         if qt.tr:
-            gaugeConf.setStackPosition( trContact, rightX, tlY )
-            gaugeConf.createVertical  ( trContact, rightContact, rightX, 0 )
+            self._connectLeaf( qt.tr, ckNet, rightContact, trContact, rightX, tlY )
         if qt.br:
-            gaugeConf.setStackPosition( brContact, rightX, blY )
-            gaugeConf.createVertical  ( rightContact, brContact, rightX, 0 )
+            self._connectLeaf( qt.br, ckNet, rightContact, brContact, rightX, blY )
         if qt.isRoot():
             ckNet = self.treeNet
             if not self.spares.conf.isCoreBlock:
@@ -173,7 +189,7 @@ class HTree ( object ):
                     print( WarningMessage('HTree._rrouteHTree(): Removing {}.'.format(pin)) )
                     pin.destroy()
                 layerGauge  = gaugeConf.vRoutingGauge
-                rootContact = gaugeConf.rpAccessByPlugName( qt.buffer, bufferConf.input, ckNet, 0 )
+                rootContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckNet, 0 )
                 x           = gaugeConf.getNearestVerticalTrack  ( rootContact.getX(), 0 )
                 y           = gaugeConf.getNearestHorizontalTrack( rootContact.getY(), 0 )
                 rootPin     = Pin.create( ckNet
@@ -202,7 +218,10 @@ class HTree ( object ):
         """
         qt           = self.spares.quadTree
         qt.bufferTag = self.treeNet.getName()
-        qt.rselectBuffer( self.treeIndex, self.treeIndex, Spares.CHECK_USED|Spares.MARK_USED)
+        qt.runselect()
+        qt.rselectBuffer( self.treeIndex
+                        , self.treeIndex
+                        , Spares.CHECK_USED|Spares.MARK_USED|self.flags)
         with UpdateSession():
             self._rconnectHTree( qt )
             self._rrouteHTree  ( qt )
@@ -215,7 +234,8 @@ class HTree ( object ):
         bufferConf         = self.spares.conf.bufferConf
         quadTree           = self.spares.quadTree
         quadTree.bufferTag = self.treeNet.getName()
-        quadTree.rselectBuffer( self.treeIndex, self.treeIndex, 0 )
+        quadTree.runselect()
+        quadTree.rselectBuffer( self.treeIndex, self.treeIndex, self.flags)
         with UpdateSession():
             driverPlugs = []
             hyperNet    = HyperNet.create( Occurrence(self.treeNet) )
@@ -229,7 +249,7 @@ class HTree ( object ):
                     driverPlugs.append( plugOcc )
             quadTree.rsplitNetlist()
             if self.spares.conf.isCoreBlock:
-                plug = utils.getPlugByName( quadTree.buffer, bufferConf.input )
+                plug = utils.getPlugByName( quadTree.buffers[0], bufferConf.input )
                 plug.setNet( self.treeNet )
                 trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.treeNet.getName()) )
                 trace( 550, '\tPlug of "{}" (Cell:{})\n'.format(self.treeNet.getName()

@@ -70,6 +70,7 @@ class GaugeConf ( object ):
     DeepDepth       = 0x0010
     UseContactWidth = 0x0020
     ExpandWidth     = 0x0040
+    SourceExtend    = 0x0080
 
     def __init__ ( self ):
         self._cellGauge      = None
@@ -235,21 +236,24 @@ class GaugeConf ( object ):
         trace( 550, ' -> utrack={}\n'.format( DbU.getValueString(utrack) ))
         return utrack + offset*rg.getPitch()
 
-    def getNearestHorizontalTrack ( self, y, flags ):
+    def getNearestHorizontalTrack ( self, y, flags, offset=0 ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
         else:                           depth = self.horizontalDepth
-        return self.getTrack( y, depth, 0 )
+        return self.getTrack( y, depth, offset )
 
-    def getNearestVerticalTrack ( self, x, flags ):
+    def getNearestVerticalTrack ( self, x, flags, offset=0 ):
         if flags & GaugeConf.DeepDepth: depth = self.verticalDeepDepth
         else:                           depth = self.verticalDepth
-        return self.getTrack( x, depth, 0 )
+        return self.getTrack( x, depth, offset )
 
     def createHorizontal ( self, source, target, y, flags ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
         else:                           depth = self.horizontalDepth
         
         layer = self._routingGauge.getRoutingLayer(depth)
+
+        dxSource = 0
+        if flags & GaugeConf.SourceExtend: dxSource = self._routingGauge.getPitch(layer)
         
         if flags & GaugeConf.UseContactWidth:
             width = source.getBoundingBox(layer.getBasicLayer()).getHeight()
@@ -259,6 +263,7 @@ class GaugeConf ( object ):
             width += DbU.fromLambda( 1.0 )
         
         segment = Horizontal.create( source, target, layer, y, width )
+        segment.setDxSource( -dxSource )
         trace( 550, segment )
         return segment
   
@@ -1109,7 +1114,7 @@ class BlockConf ( GaugeConf ):
         self.placeArea     = None
         self.deltaAb       = [ 0, 0, 0, 0 ]
         self.useClockTree  = False
-        self.hTreeNames    = [ ]
+        self.hTreeDatas    = [ ]
         self.useHFNS       = False
         self.useSpares     = True
         self.isBuilt       = False
@@ -1212,9 +1217,13 @@ class BlockConf ( GaugeConf ):
             self.cloneds.append( masterCell )
         return
 
-    def useHTree ( self, netName ):
-        if not netName in self.hTreeNames:
-            self.hTreeNames.append( netName );
+    def useHTree ( self, netName, flags=0 ):
+        for item in self.hTreeDatas:
+            if item[0] == netName:
+                print( WarningMessage( 'block.configuration.useHTree(): Redefinition of "{}" H-Tree ignored.' \
+                                       .format(netName)) )
+                return
+        self.hTreeDatas.append( [ netName, flags ] );
   
     def save ( self, flags ):
         """

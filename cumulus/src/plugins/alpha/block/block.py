@@ -306,13 +306,15 @@ class Block ( object ):
         self.hfnTrees         = []
         self.blockInstances   = []
         self.placeHolderCount = 0
-        self.excludedNets     = deepcopy( self.conf.hTreeNames )
         self.sides            = { IoPin.WEST  : Side( self.conf, IoPin.WEST  )
                                 , IoPin.EAST  : Side( self.conf, IoPin.EAST  )
                                 , IoPin.SOUTH : Side( self.conf, IoPin.SOUTH )
                                 , IoPin.NORTH : Side( self.conf, IoPin.NORTH )
                                 }
         self.etesian          = None
+        self.excludedNets     = []
+        for item in self.conf.hTreeDatas:
+            self.excludedNets.append( item[0] )
         if not self.conf.cell.getAbutmentBox().isEmpty():
             isBuilt = True
             for instance in self.conf.cell.getInstances():
@@ -503,7 +505,7 @@ class Block ( object ):
         hTreeNets = []
         netOcc    = None
         self.flattenNets()
-        for netName in self.conf.hTreeNames:
+        for netName, flags in self.conf.hTreeDatas:
             netOcc = self.getFlattenedNet( netName )
            #if self.conf.isCoreBlock:
            #    coreNet = self.conf.cell.getNet( netName )
@@ -520,13 +522,13 @@ class Block ( object ):
                                         .format( self.conf.cellPnR.getName(), netName )))
                 continue
             trace( 550, '\tBlock.addHTrees(): Found H-Tree {}.\n'.format(netOcc) )
-            hTreeNets.append( netOcc )
+            hTreeNets.append( [ netOcc, flags ] )
             self.etesian.exclude( netName )
         with UpdateSession():
-            for hTreeNet in hTreeNets:
-                print( '     - "{}".'.format(hTreeNet.getName()) )
-                trace( 550, ',+', '\tBlock.addHTrees(): Build clock tree for {}.\n'.format(hTreeNet) )
-                self.hTrees.append( HTree(self.spares,hTreeNet,len(self.hTrees)) )
+            for netOcc, flags in hTreeNets:
+                print( '     - "{}".'.format(netOcc.getName()) )
+                trace( 550, ',+', '\tBlock.addHTrees(): Build clock tree for {}.\n'.format(netOcc) )
+                self.hTrees.append( HTree(self.spares,netOcc,len(self.hTrees),flags) )
                 self.hTrees[-1].buildHTree()
                 for net in self.hTrees[-1].subNets:
                     self.etesian.exclude( net.getName() )
