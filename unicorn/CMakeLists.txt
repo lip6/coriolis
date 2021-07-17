@@ -2,6 +2,8 @@
 
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(UNICORN)
+
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
  
  cmake_minimum_required(VERSION 2.8.9)
 
@@ -16,7 +18,9 @@
  setup_boost(program_options python regex)
  setup_qt()
  
- find_package(Libbfd)
+ if (USE_LIBBFD)
+   find_package(Libbfd)
+ endif()
  find_package(LibXml2            REQUIRED)
  find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)

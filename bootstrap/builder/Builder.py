@@ -39,6 +39,7 @@ class Builder:
         self._macports         = False
         self._devtoolset       = 0
         self._llvmtoolset      = 0
+        self._bfd              = "OFF"
         self._qt5              = False
         self._openmp           = False
         self._enableShared     = "ON"
@@ -72,6 +73,7 @@ class Builder:
             if value: self._noSystemBoost = True
         elif attribute == "llvmtoolset":
             self._llvmtoolset = value
+        elif attribute == "bfd":              self._bfd              = value
         elif attribute == "qt5":              self._qt5              = value
         elif attribute == "openmp":           self._openmp           = value
         elif attribute == "enableDoc":        self._enableDoc        = value
@@ -190,6 +192,7 @@ class Builder:
                                           #, "-D", "BOOST_INCLUDEDIR:STRING=/usr/include/boost169"
                                           #, "-D", "BOOST_LIBRARYDIR:STRING=/usr/lib64/boost169"
                                            ]
+        if self._bfd:           command += [ "-D", "USE_LIBBFD:STRING=%s" % self._bfd ]
         if self._qt5:           command += [ "-D", "WITH_QT5:STRING=TRUE" ]
         if self._openmp:        command += [ "-D", "WITH_OPENMP:STRING=TRUE" ]
 

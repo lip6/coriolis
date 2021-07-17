@@ -3,6 +3,7 @@
  project(OROSHI)
  
  cmake_minimum_required(VERSION 2.4.0)
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}")
  
@@ -14,7 +15,9 @@
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options filesystem python)
  
- find_package(Libbfd)
+ if (USE_LIBBFD)
+   find_package(Libbfd)
+ endif()
  find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages   REQUIRED)
  find_package(HURRICANE            REQUIRED)

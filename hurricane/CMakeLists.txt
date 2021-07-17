@@ -5,7 +5,8 @@
 
  set(ignoreVariables "${CMAKE_INSTALL_DIR}")
 
- option(BUILD_DOC "Build the documentation (doxygen)" OFF)
+ option(BUILD_DOC  "Build the documentation (doxygen)" OFF)
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
 
  cmake_minimum_required(VERSION 2.8.9)
 
@@ -26,7 +27,9 @@
  find_package(PythonSitePackages REQUIRED)
  find_package(VLSISAPD           REQUIRED)
  find_package(Libexecinfo        REQUIRED)
- find_package(Libbfd)
+ if (USE_LIBBFD)
+   find_package(Libbfd)
+ endif()
  find_package(Doxygen)
  
  add_subdirectory(src)

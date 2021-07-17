@@ -211,6 +211,7 @@ parser.add_option (       "--macports"       , action="store_true" ,            
 parser.add_option (       "--devtoolset"     , action="store"      , type="int"   , dest="devtoolset"   , help="Build against TUV Dev Toolset N." )
 parser.add_option (       "--llvm-toolset"   , action="store"      , type="int"   , dest="llvmtoolset"  , help="Build against TUV Dev LLVM Toolset N." )
 parser.add_option (       "--qt5"            , action="store_true" ,                dest="qt5"          , help="Build against Qt 5 (default: Qt 4)." )
+parser.add_option (       "--bfd"            , action="store_true" ,                dest="bfd"          , help="Build against Qt 5 (default: Qt 4)." )
 parser.add_option (       "--openmp"         , action="store_true" ,                dest="openmp"       , help="Enable the use of OpenMP in Gcc." )
 parser.add_option (       "--ninja"          , action="store_true" ,                dest="ninja"        , help="Use Ninja instead of UNIX Makefile." )
 parser.add_option (       "--clang"          , action="store_true" ,                dest="clang"        , help="Force use of Clang C/C++ compiler instead of system default." )
@@ -289,6 +290,7 @@ else:
     if options.macports:                     builder.macports          = True
     if options.devtoolset:                   builder.devtoolset        = options.devtoolset
     if options.llvmtoolset:                  builder.llvmtoolset       = options.llvmtoolset
+    if options.bfd:                          builder.bfd               = "ON"
     if options.qt5:                          builder.qt5               = True
     if options.openmp:                       builder.openmp            = True
     if options.makeArguments:                builder.makeArguments     = options.makeArguments

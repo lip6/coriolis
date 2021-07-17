@@ -7,7 +7,8 @@
 
  cmake_minimum_required(VERSION 2.8.9)
 
- OPTION(BUILD_DOC "Build the documentation (latex+doxygen)" OFF)
+ OPTION(BUILD_DOC  "Build the documentation (latex+doxygen)"       OFF)
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
@@ -21,6 +22,9 @@
  setup_boost(program_options python regex wave)
  setup_qt()
 
+ if (USE_LIBBFD)
+   find_package(Libbfd)
+ endif()
  find_package(LibXml2            REQUIRED)
  find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
@@ -31,7 +35,6 @@
  find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(Libexecinfo        REQUIRED)
- find_package(Libbfd)
 #include(UseLATEX)
  find_package(Doxygen)
  
