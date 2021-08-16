@@ -196,9 +196,9 @@
    else(ARGC LESS 1)
      foreach(component ${ARGV})
        if(${component} STREQUAL "python")
-         set(component ${component}${Boost_PYVER})
+       else()
+	       set(components ${components} ${component})
        endif()
-       set(components ${components} ${component})
      endforeach()
      
      find_package(Boost 1.35.0 COMPONENTS ${components} system)

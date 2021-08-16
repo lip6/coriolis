@@ -45,7 +45,10 @@
             runHook postBuild
           '';
 
-          installPhase = "true";
+          installPhase = ''
+            mkdir $out
+            mv /build/coriolis-2.x/*.* -t $out
+          '';
 
           checkPhase = "true";
 
