@@ -20,7 +20,7 @@
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
 
       coriolis =
-        { lib, stdenv, python2, cmake, boost, bison, flex, libxml2, rapidjson, which, qt4 }:
+        { lib, stdenv, python2, cmake_2_8, boost, bison, flex, libxml2, rapidjson, which, qt4 }:
         let boostWithPython = boost.override { enablePython = true; python = python2; }; in
         stdenv.mkDerivation {
           name = "coriolis-${version}";
@@ -53,7 +53,7 @@
           checkPhase = "true";
 
           buildInputs = [ python2 boostWithPython libxml2 rapidjson qt4 ];
-          nativeBuildInputs = [ cmake bison flex which ];
+          nativeBuildInputs = [ cmake_2_8 bison flex which ];
 
           meta = with lib; {
             description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
