@@ -86,12 +86,14 @@
       overlay = final: prev: {
         coriolis-vlsisapd = final.callPackage (import ./nix/vlsisapd.nix { inherit version meta; }) {};
         coriolis-bootstrap = final.callPackage (import ./nix/bootstrap.nix { inherit version meta; }) {};
+        coriolis-hurricane = final.callPackage (import ./nix/hurricane.nix { inherit version meta; }) {};
       };
 
       packages = forAllSystems (system:
         with nixpkgsFor.${system}; {
           vlsisapd = coriolis-vlsisapd;
           bootstrap = coriolis-bootstrap;
+          hurricane = coriolis-hurricane;
         });
 
       defaultPackage = forAllSystems (system: self.packages.${system}.coriolis);
