@@ -19,6 +19,7 @@
       # Nixpkgs instantiated for supported system types.
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
 
+      /*
       coriolis =
         { lib, stdenv, python2, cmake_2_8, boost, bison, flex
         , libxml2, rapidjson, which, qt4, zlib, bzip2 }:
@@ -29,14 +30,21 @@
           src = ./.;
 
           postPatch = ''
-            patchShebangs .
             export HOME=/build
             mkdir -p /build/coriolis-2.x/src
             dir="$PWD"
             mv "$PWD" -T /build/coriolis-2.x/src/coriolis
+
+            patchShebangs .
+            fixCmakeFiles .
           '';
 
-          configurePhase = "runHook preConfigure; runHook postConfigure";
+          configurePhase = ''
+            runHook preConfigure
+            makeCmakeFindLibs
+            export LDFLAGS="$NIX_LDFLAGS"
+            runHook postConfigure
+          '';
 
           hardeningDisable = [ "format" ];
 
@@ -63,22 +71,32 @@
             platforms   = platforms.all;
           };
         };
+      */
+
+      meta = with nixpkgs.lib; {
+        description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
+        homepage    = "http://coriolis.lip6.fr/";
+        license     = licenses.gpl3;
+        platforms   = platforms.all;
+      };
 
     in
 
     rec {
       overlay = final: prev: {
-        coriolis = final.callPackage coriolis {};
+        coriolis-vlsisapd = final.callPackage (import ./nix/vlsisapd.nix { inherit version meta; }) {};
+        coriolis-bootstrap = final.callPackage (import ./nix/bootstrap.nix { inherit version meta; }) {};
       };
 
       packages = forAllSystems (system:
-        {
-          inherit (nixpkgsFor.${system}) coriolis;
+        with nixpkgsFor.${system}; {
+          vlsisapd = coriolis-vlsisapd;
+          bootstrap = coriolis-bootstrap;
         });
 
       defaultPackage = forAllSystems (system: self.packages.${system}.coriolis);
       devShell = defaultPackage;
 
-      hydraJobs.coriolis = self.defaultPackage;
+      #hydraJobs.coriolis = self.defaultPackage;
     };
 }
