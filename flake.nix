@@ -80,24 +80,22 @@
         platforms   = platforms.all;
       };
 
+      components = [ "vlsisapd" "lefdef" "bootstrap" "hurricane" ];
+
     in
 
     rec {
-      overlay = final: prev: {
-        coriolis-vlsisapd = final.callPackage (import ./nix/vlsisapd.nix { inherit version meta; }) {};
-        coriolis-lefdef = final.callPackage (import ./nix/lefdef.nix { inherit version meta; }) {};
-        coriolis-bootstrap = final.callPackage (import ./nix/bootstrap.nix { inherit version meta; }) {};
-        coriolis-hurricane = final.callPackage (import ./nix/hurricane.nix { inherit version meta; }) {};
-      };
+      overlay = final: prev:
+        builtins.foldl'
+          (acc: elem: acc // {
+            "coriolis-${elem}" = final.callPackage (
+              import "${self}/nix/${elem}.nix" { inherit version meta; }
+            ) {};
+          }) {} components;
 
-      packages = forAllSystems (system:
-        with nixpkgsFor.${system}; {
-          vlsisapd = coriolis-vlsisapd;
-          bootstrap = coriolis-bootstrap;
-          coloquinte = coriolis-coloquinte;
-          lefdef = coriolis-lefdef;
-          hurricane = coriolis-hurricane;
-        });
+      packages = forAllSystems (system: builtins.foldl' (acc: elem: acc // {
+        ${elem} = nixpkgsFor.${system}.${"coriolis-${elem}"};
+      }) {} components);
 
       defaultPackage = forAllSystems (system: self.packages.${system}.coriolis);
       devShell = defaultPackage;

@@ -1,7 +1,6 @@
 { version, meta }:
 
-{ lib, stdenv, python2, cmake, boost, bison, flex
-, libxml2, rapidjson, which, qt4, zlib, bzip2, ninja }:
+{ lib, stdenv, python2, cmake, ninja }:
 
 stdenv.mkDerivation {
   pname = "coriolis-bootstrap";
