@@ -80,7 +80,7 @@
         platforms   = platforms.all;
       };
 
-      components = [ "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore" ];
+      components = [ "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore" "cumulus" ];
 
     in
 
