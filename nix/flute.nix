@@ -1,15 +1,15 @@
 { version, meta }:
 
-{ lib, stdenv, python2, cmake, boost, bison, flex, libxml2, qt4, ninja
+{ lib, stdenv, cmake, ninja, python2, boost
 , coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, coriolis-lefdef }:
+, coriolis-crlcore }:
 
 let boostWithPython = boost.override { enablePython = true; python = python2; }; in
 
 stdenv.mkDerivation {
-  pname = "coriolis-crlcore";
+  pname = "coriolis-flute";
 
-  src = ../crlcore;
+  src = ../flute;
 
   cmakeFlags = [
     (
@@ -17,13 +17,11 @@ stdenv.mkDerivation {
         + "${coriolis-bootstrap}/share/cmake/Modules"
         + ";${coriolis-vlsisapd}/share/cmake/Modules"
         + ";${coriolis-hurricane}/share/cmake/Modules"
+        + ";${coriolis-crlcore}/share/cmake/Modules"
     )
   ];
 
-  buildInputs = [
-    python2 boostWithPython coriolis-bootstrap coriolis-lefdef
-    coriolis-hurricane coriolis-vlsisapd libxml2 bison flex qt4
-  ];
+  buildInputs = [ python2 boostWithPython coriolis-bootstrap coriolis-vlsisapd coriolis-hurricane coriolis-crlcore ];
   nativeBuildInputs = [ cmake ninja ];
 
   inherit version meta;
