@@ -8,6 +8,7 @@ endif ( CHECK_DETERMINISM )
    include_directories( ${KATABATIC_SOURCE_DIR}/src
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
+                        ${KNIK_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
                         ${QtX_INCLUDE_DIR}
