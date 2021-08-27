@@ -36,8 +36,8 @@
  find_package(KNIK               REQUIRED)
  find_package(KATABATIC          REQUIRED)
  find_package(KITE               REQUIRED)
-#find_package(EQUINOX            REQUIRED)
-#find_package(SOLSTICE           REQUIRED)
+ find_package(EQUINOX            REQUIRED)
+ find_package(SOLSTICE           REQUIRED)
  find_package(Doxygen)
 
  if(WITH_OPENMP)

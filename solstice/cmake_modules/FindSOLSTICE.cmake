@@ -15,7 +15,7 @@ IF(UNIX)
   #
   # Look for an installation.
   #
-  FIND_PATH(SOLSTICE_INCLUDE_PATH NAMES solstice/Equi.h PATHS
+  FIND_PATH(SOLSTICE_INCLUDE_PATH NAMES solstice/Brick.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
     PATH_SUFFIXES include/coriolis2
