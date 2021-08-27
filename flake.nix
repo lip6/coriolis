@@ -37,7 +37,7 @@
         "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore"
         "cumulus" "flute" "etesian" "anabatic" "coloquinte"
         "katana" "bora" "equinox" "knik" "katabatic" "ispd"
-        "karakaze" "kite" "nimbus" "metis" "mauka"
+        "karakaze" "kite" "nimbus" "metis" "mauka" "oroshi"
       ];
 
     in
