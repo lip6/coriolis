@@ -38,7 +38,7 @@
         "cumulus" "flute" "etesian" "anabatic" "coloquinte"
         "katana" "bora" "equinox" "knik" "katabatic" "ispd"
         "karakaze" "kite" "nimbus" "metis" "mauka" "oroshi"
-        "solstice" "stratus1"
+        "solstice" "stratus1" "tutorial"
       ];
 
     in
