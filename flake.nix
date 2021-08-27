@@ -8,8 +8,7 @@
     let
 
       # Generate a user-friendly version numer.
-      #version = builtins.substring 0 8 self.lastModifiedDate;
-      version = "unstable";
+      version = builtins.substring 0 8 self.lastModifiedDate;
 
       # System types to support.
       supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
@@ -58,7 +57,7 @@
         ${elem} = nixpkgsFor.${system}.${"coriolis-${elem}"};
       }) {} components);
 
-      defaultPackage = forAllSystems (system: self.packages.${system}.coriolis);
+      defaultPackage = forAllSystems (system: self.packages.${system}.unicorn);
       devShell = defaultPackage;
 
       #hydraJobs.coriolis = self.defaultPackage;
