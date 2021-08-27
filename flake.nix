@@ -31,6 +31,7 @@
         preConfigure = ''
           cmakeFlagsArray+=(-DCMAKE_MODULE_PATH="$(sed -e 's|:|/share/cmake/Modules;|g' <<< "$CMAKE_PREFIX_PATH:")")
         '' + (o.preConfigure or "");
+        cmakeFlags = [ "-DBUILD_DOC=ON" ] ++ (o.cmakeFlags or []);
       });
 
       components = [
