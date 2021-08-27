@@ -4,7 +4,7 @@
 , coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
 , coriolis-crlcore, coriolis-etesian, qt4
 , coriolis-flute, coriolis-anabatic
-, coriolis-lefdef, libxml2 }:
+, coriolis-lefdef, libxml2, doxygen }:
 
 let boostWithPython = boost.override { enablePython = true; python = python2; }; in
 
@@ -19,7 +19,7 @@ stdenv.mkDerivation {
     coriolis-etesian qt4 coriolis-flute coriolis-anabatic
     coriolis-lefdef libxml2
   ];
-  nativeBuildInputs = [ cmake ninja ];
+  nativeBuildInputs = [ cmake ninja doxygen ];
 
   inherit version meta;
 }

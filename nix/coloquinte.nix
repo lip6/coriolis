@@ -1,6 +1,6 @@
 { version, meta }:
 
-{ lib, stdenv, python2, cmake, boost, qt4, ninja, coriolis-bootstrap }:
+{ lib, stdenv, python2, cmake, boost, qt4, ninja, coriolis-bootstrap, doxygen }:
 
 let boostWithPython = boost.override { enablePython = true; python = python2; }; in
 
@@ -10,7 +10,7 @@ stdenv.mkDerivation {
   src = ../coloquinte;
 
   buildInputs = [ boostWithPython coriolis-bootstrap qt4 ];
-  nativeBuildInputs = [ cmake ninja ];
+  nativeBuildInputs = [ cmake ninja doxygen ];
 
   inherit version meta;
 }

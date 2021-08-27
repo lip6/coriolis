@@ -3,7 +3,7 @@
 { lib, stdenv, cmake, ninja, python2, boost
 , coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
 , coriolis-crlcore, coriolis-flute, coriolis-knik
-, qt4 }:
+, qt4, doxygen }:
 
 let boostWithPython = boost.override { enablePython = true; python = python2; }; in
 
@@ -17,7 +17,7 @@ stdenv.mkDerivation {
     coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
     coriolis-flute coriolis-knik qt4
   ];
-  nativeBuildInputs = [ cmake ninja ];
+  nativeBuildInputs = [ cmake ninja doxygen ];
 
   inherit version meta;
 }
