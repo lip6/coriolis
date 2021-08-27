@@ -39,6 +39,7 @@
         "katana" "bora" "equinox" "knik" "katabatic" "ispd"
         "karakaze" "kite" "nimbus" "metis" "mauka" "oroshi"
         "solstice" "stratus1" "tutorial" "unicorn" "documentation"
+        "unittests"
       ];
 
     in
