@@ -12,8 +12,6 @@ stdenv.mkDerivation {
 
   hardeningDisable = [ "format" ];
 
-  cmakeFlags = [ "-DCMAKE_MODULE_PATH=${coriolis-bootstrap}/share/cmake/Modules" ];
-
   buildInputs = [ python2 boostWithPython coriolis-bootstrap bison flex zlib ];
   nativeBuildInputs = [ cmake ninja ];
 

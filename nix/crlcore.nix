@@ -11,15 +11,6 @@ stdenv.mkDerivation {
 
   src = ../crlcore;
 
-  cmakeFlags = [
-    (
-      "-DCMAKE_MODULE_PATH="
-        + "${coriolis-bootstrap}/share/cmake/Modules"
-        + ";${coriolis-vlsisapd}/share/cmake/Modules"
-        + ";${coriolis-hurricane}/share/cmake/Modules"
-    )
-  ];
-
   buildInputs = [
     python2 boostWithPython coriolis-bootstrap coriolis-lefdef
     coriolis-hurricane coriolis-vlsisapd libxml2 bison flex qt4

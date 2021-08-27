@@ -9,8 +9,6 @@ stdenv.mkDerivation {
 
   src = ../coloquinte;
 
-  cmakeFlags = [ "-DCMAKE_MODULE_PATH=${coriolis-bootstrap}/share/cmake/Modules" ];
-
   buildInputs = [ boostWithPython coriolis-bootstrap qt4 ];
   nativeBuildInputs = [ cmake ninja ];
 

@@ -10,8 +10,6 @@ stdenv.mkDerivation {
 
   src = ../vlsisapd;
 
-  cmakeFlags = [ "-DCMAKE_MODULE_PATH=${coriolis-bootstrap}/share/cmake/Modules" ];
-
   buildInputs = [ python2 boostWithPython coriolis-bootstrap libxml2 bison flex qt4 ];
   nativeBuildInputs = [ cmake ninja ];
 

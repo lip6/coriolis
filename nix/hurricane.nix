@@ -11,8 +11,6 @@ stdenv.mkDerivation {
 
   src = ../hurricane;
 
-  cmakeFlags = [ "-DCMAKE_MODULE_PATH=${coriolis-bootstrap}/share/cmake/Modules;${coriolis-vlsisapd}/share/cmake/Modules" ];
-
   buildInputs = [ python2 boostWithPython coriolis-bootstrap libxml2 bison flex qt4 bzip2 coriolis-vlsisapd rapidjson ];
   nativeBuildInputs = [ cmake ninja ];
 

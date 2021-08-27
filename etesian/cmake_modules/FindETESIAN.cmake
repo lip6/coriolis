@@ -5,6 +5,7 @@
 #  ETESIAN_INCLUDE_DIR - the path to where the Coriolis include files are.
 #  ETESIAN_LIBRARIES   - The path to where the Coriolis library files are.
 
+find_package(COLOQUINTE REQUIRED)
 
 SET(ETESIAN_INCLUDE_PATH_DESCRIPTION "directory containing the Etesian include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
 
@@ -24,6 +25,8 @@ IF(UNIX)
     # Help the user find it if we cannot.
     DOC "The ${ETESIAN_INCLUDE_PATH_DESCRIPTION}"
   )
+	SET(ETESIAN_INCLUDE_PATH "${ETESIAN_INCLUDE_PATH};${COLOQUINTE_INCLUDE_DIR}")
+	MESSAGE("djaa${ETESIAN_INCLUDE_PATH};${COLOQUINTE_INCLUDE_DIR}djau")
 
   FIND_LIBRARY(ETESIAN_LIBRARY_PATH
     NAMES etesian

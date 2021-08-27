@@ -8,7 +8,8 @@
     let
 
       # Generate a user-friendly version numer.
-      version = builtins.substring 0 8 self.lastModifiedDate;
+      #version = builtins.substring 0 8 self.lastModifiedDate;
+      version = "unstable";
 
       # System types to support.
       supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
@@ -19,60 +20,6 @@
       # Nixpkgs instantiated for supported system types.
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
 
-      /*
-      coriolis =
-        { lib, stdenv, python2, cmake_2_8, boost, bison, flex
-        , libxml2, rapidjson, which, qt4, zlib, bzip2 }:
-        let boostWithPython = boost.override { enablePython = true; python = python2; }; in
-        stdenv.mkDerivation {
-          name = "coriolis-${version}";
-
-          src = ./.;
-
-          postPatch = ''
-            export HOME=/build
-            mkdir -p /build/coriolis-2.x/src
-            dir="$PWD"
-            mv "$PWD" -T /build/coriolis-2.x/src/coriolis
-
-            patchShebangs .
-            fixCmakeFiles .
-          '';
-
-          configurePhase = ''
-            runHook preConfigure
-            makeCmakeFindLibs
-            export LDFLAGS="$NIX_LDFLAGS"
-            runHook postConfigure
-          '';
-
-          hardeningDisable = [ "format" ];
-
-          buildPhase = ''
-            runHook preBuild
-            ./bootstrap/ccb.py --project=coriolis --make="-j$NIX_BUILD_CORES install"
-            runHook postBuild
-          '';
-
-          installPhase = ''
-            mkdir $out
-            mv /build/coriolis-2.x/*.* -t $out
-          '';
-
-          checkPhase = "true";
-
-          buildInputs = [ python2 boostWithPython libxml2 rapidjson qt4 zlib bzip2 ];
-          nativeBuildInputs = [ cmake_2_8 bison flex which ];
-
-          meta = with lib; {
-            description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
-            homepage    = "http://coriolis.lip6.fr/";
-            license     = licenses.gpl3;
-            platforms   = platforms.all;
-          };
-        };
-      */
-
       meta = with nixpkgs.lib; {
         description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
         homepage    = "http://coriolis.lip6.fr/";
@@ -80,7 +27,13 @@
         platforms   = platforms.all;
       };
 
-      components = [ "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore" "cumulus" "flute" ];
+      override = drv: drv.overrideAttrs (o: {
+        preConfigure = ''
+          cmakeFlagsArray+=(-DCMAKE_MODULE_PATH="$(sed -e 's|:|/share/cmake/Modules;|g' <<< "$CMAKE_PREFIX_PATH:")")
+        '' + (o.preConfigure or "");
+      });
+
+      components = [ "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore" "cumulus" "flute" "etesian" "anabatic" "coloquinte" ];
 
     in
 
@@ -88,9 +41,9 @@
       overlay = final: prev:
         builtins.foldl'
           (acc: elem: acc // {
-            "coriolis-${elem}" = final.callPackage (
+            "coriolis-${elem}" = override (final.callPackage (
               import "${self}/nix/${elem}.nix" { inherit version meta; }
-            ) {};
+            ) {});
           }) {} components;
 
       packages = forAllSystems (system: builtins.foldl' (acc: elem: acc // {
