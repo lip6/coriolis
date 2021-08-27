@@ -6,7 +6,7 @@
 #  EQUINOX_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(EQUINOX_INCLUDE_PATH_DESCRIPTION "directory containing the Equinox include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(EQUINOX_INCLUDE_PATH_DESCRIPTION "directory containing the Equinox include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(EQUINOX_DIR_MESSAGE "Set the EQUINOX_INCLUDE_DIR cmake cache entry to the ${EQUINOX_INCLUDE_PATH_DESCRIPTION}")
 
@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(EQUINOX_INCLUDE_PATH NAMES equinox/Equi.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${EQUINOX_INCLUDE_PATH_DESCRIPTION}"
   )

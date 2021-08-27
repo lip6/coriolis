@@ -6,7 +6,7 @@
 #  KITE_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(KITE_INCLUDE_PATH_DESCRIPTION "directory containing the Kite include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(KITE_INCLUDE_PATH_DESCRIPTION "directory containing the Kite include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(KITE_DIR_MESSAGE "Set the KITE_INCLUDE_DIR cmake cache entry to the ${KITE_INCLUDE_PATH_DESCRIPTION}")
 
@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(KITE_INCLUDE_PATH NAMES kite/KiteEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${KITE_INCLUDE_PATH_DESCRIPTION}"
   )

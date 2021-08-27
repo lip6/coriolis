@@ -6,7 +6,7 @@
 #  FLUTE_LIBRARIES - The path to where the Coriolis library files are.
 
 
-set( FLUTE_INCLUDE_PATH_DESCRIPTION "The directory containing the FLUTE include files. E.g /usr/local/include/coriolis/flute/3.1 or /soc/coriolis2/include/coriolis/flute/3.1" )
+set( FLUTE_INCLUDE_PATH_DESCRIPTION "The directory containing the FLUTE include files. E.g /usr/local/include/coriolis2/flute/3.1 or /soc/coriolis2/include/coriolis2/flute/3.1" )
 set( FLUTE_DIR_MESSAGE              "Set the FLUTE_INCLUDE_DIR cmake cache entry to the ${FLUTE_INCLUDE_PATH_DESCRIPTION}" )
 
 if( UNIX )

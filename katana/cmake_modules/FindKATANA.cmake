@@ -6,7 +6,7 @@
 #  KATANA_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(KATANA_INCLUDE_PATH_DESCRIPTION "directory containing the Katana include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(KATANA_INCLUDE_PATH_DESCRIPTION "directory containing the Katana include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(KATANA_DIR_MESSAGE "Set the KATANA_INCLUDE_DIR cmake cache entry to the ${KATANA_INCLUDE_PATH_DESCRIPTION}")
 
