@@ -3,6 +3,7 @@
 
    include_directories ( ${SOLSTICE_SOURCE_DIR}/src
                          ${HURRICANE_INCLUDE_DIR}
+                         ${EQUINOX_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                          ${UTILITIES_INCLUDE_DIR}
                          ${QtX_INCLUDE_DIR}

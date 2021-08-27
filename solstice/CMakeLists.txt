@@ -19,6 +19,7 @@
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
  find_package(EQUINOX REQUIRED)
- 
+
+
  add_subdirectory(src)
  add_subdirectory(cmake_modules)
