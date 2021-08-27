@@ -20,5 +20,7 @@ stdenv.mkDerivation {
   ];
   nativeBuildInputs = [ cmake ninja ];
 
-  inherit version meta;
+  inherit version;
+
+  meta = meta // { broken = true; };
 }
