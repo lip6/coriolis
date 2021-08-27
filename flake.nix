@@ -33,7 +33,11 @@
         '' + (o.preConfigure or "");
       });
 
-      components = [ "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore" "cumulus" "flute" "etesian" "anabatic" "coloquinte" ];
+      components = [
+        "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore"
+        "cumulus" "flute" "etesian" "anabatic" "coloquinte"
+        "katana"
+      ];
 
     in
 
