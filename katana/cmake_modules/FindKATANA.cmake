@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(KATANA_INCLUDE_PATH NAMES katana/KatanaEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${KATANA_INCLUDE_PATH_DESCRIPTION}"
   )
