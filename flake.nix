@@ -36,7 +36,7 @@
       components = [
         "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore"
         "cumulus" "flute" "etesian" "anabatic" "coloquinte"
-        "katana" "bora" "equinox"
+        "katana" "bora" "equinox" "knik"
       ];
 
     in
