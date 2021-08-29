@@ -1,4 +1,4 @@
-{ version, meta, generic, ... }:
+{ generic, ... }:
 let pkg =
   { libxml2, qt4, bison, flex, doxygen }:
   {

@@ -37,9 +37,13 @@
 
       # not generic: solstice lefdef equinox knik coloquinte bootstrap
 
-      components = [
-        "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore"
-        "cumulus" "flute" "etesian" "anabatic" "coloquinte"
+      pythonComponents = [
+        "vlsisapd" "hurricane" "crlcore" "flute"
+      ];
+
+      components = pythonComponents ++ [
+        "lefdef" "bootstrap"
+        "cumulus" "etesian" "anabatic" "coloquinte"
         "katana" "bora" "equinox" "knik" "katabatic" "ispd"
         "karakaze" "kite" "nimbus" "metis" "mauka" "oroshi"
         "solstice" "stratus1" "tutorial" "unicorn" "documentation"
@@ -70,7 +74,7 @@
         let
           pkgs = nixpkgsFor.${system};
           env = pkgs.python2.buildEnv.override {
-            extraLibs = builtins.map (x: pkgs.${"coriolis-${x}"}) [ "vlsisapd" "hurricane" "crlcore" ];
+            extraLibs = builtins.map (x: pkgs.${"coriolis-${x}"}) pythonComponents;
           };
         in env.env
       );
