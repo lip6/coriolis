@@ -38,12 +38,12 @@
       # not generic: solstice lefdef equinox knik coloquinte bootstrap
 
       pythonComponents = [
-        "vlsisapd" "hurricane" "crlcore" "flute"
+        "vlsisapd" "hurricane" "crlcore" "flute" "etesian"
+        "anabatic"
       ];
 
       components = pythonComponents ++ [
-        "lefdef" "bootstrap"
-        "cumulus" "etesian" "anabatic" "coloquinte"
+        "lefdef" "bootstrap" "cumulus" "coloquinte"
         "katana" "bora" "equinox" "knik" "katabatic" "ispd"
         "karakaze" "kite" "nimbus" "metis" "mauka" "oroshi"
         "solstice" "stratus1" "tutorial" "unicorn" "documentation"

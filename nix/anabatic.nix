@@ -1,23 +1,17 @@
-{ version, meta }:
-
-{ lib, stdenv, cmake, ninja, python2, boost
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, coriolis-crlcore, coriolis-etesian, qt4
-, coriolis-flute, doxygen }:
-
-let boostWithPython = boost.override { enablePython = true; python = python2; }; in
-
-stdenv.mkDerivation {
-  pname = "coriolis-anabatic";
-
-  src = ../anabatic;
-
-  buildInputs = [
-    python2 boostWithPython coriolis-bootstrap
-    coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
-    coriolis-etesian qt4 coriolis-flute
-  ];
-  nativeBuildInputs = [ cmake ninja doxygen ];
-
-  inherit version meta;
-}
+{ generic, ... }:
+let pkg =
+  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd
+  , coriolis-hurricane, coriolis-crlcore
+  , coriolis-flute, coriolis-etesian }:
+  {
+    name = "anabatic";
+    src = ../anabatic;
+    buildInputs = [
+      qt4 coriolis-coloquinte coriolis-vlsisapd
+      coriolis-hurricane coriolis-crlcore
+      coriolis-flute coriolis-etesian
+    ];
+    nativeBuildInputs = [ doxygen ];
+    pythonImportsCheck = [ "Anabatic" ];
+  };
+in generic pkg

@@ -1,22 +1,14 @@
-{ version, meta }:
-
-{ lib, stdenv, cmake, ninja, python2, boost
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, coriolis-crlcore, coriolis-coloquinte, qt4, doxygen }:
-
-let boostWithPython = boost.override { enablePython = true; python = python2; }; in
-
-stdenv.mkDerivation {
-  pname = "coriolis-etesian";
-
-  src = ../etesian;
-
-  buildInputs = [
-    qt4 python2 boostWithPython coriolis-bootstrap coriolis-vlsisapd
-    coriolis-hurricane coriolis-coloquinte coriolis-crlcore
-  ];
-  propagatedBuildInputs = [ coriolis-coloquinte ];
-  nativeBuildInputs = [ cmake ninja doxygen ];
-
-  inherit version meta;
-}
+{ generic, ... }:
+let pkg =
+  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore }:
+  {
+    name = "etesian";
+    src = ../etesian;
+    buildInputs = [
+      qt4 coriolis-coloquinte coriolis-vlsisapd
+      coriolis-hurricane coriolis-crlcore
+    ];
+    nativeBuildInputs = [ doxygen ];
+    pythonImportsCheck = [ "Etesian" ];
+  };
+in generic pkg
