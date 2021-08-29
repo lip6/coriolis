@@ -1,25 +1,19 @@
-{ version, meta }:
-
-{ lib, stdenv, cmake, ninja, python2, boost
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, coriolis-crlcore, coriolis-etesian, qt4
-, coriolis-flute, coriolis-anabatic
-, coriolis-lefdef, libxml2, doxygen }:
-
-let boostWithPython = boost.override { enablePython = true; python = python2; }; in
-
-stdenv.mkDerivation {
-  pname = "coriolis-katana";
-
-  src = ../katana;
-
-  buildInputs = [
-    python2 boostWithPython coriolis-bootstrap
-    coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
-    coriolis-etesian qt4 coriolis-flute coriolis-anabatic
-    coriolis-lefdef libxml2
-  ];
-  nativeBuildInputs = [ cmake ninja doxygen ];
-
-  inherit version meta;
-}
+{ generic, ... }:
+let pkg =
+  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd
+  , coriolis-hurricane, coriolis-crlcore, libxml2
+  , coriolis-flute, coriolis-etesian, coriolis-lefdef
+  , coriolis-anabatic }:
+  {
+    name = "katana";
+    src = ../katana;
+    buildInputs = [
+      qt4 coriolis-coloquinte coriolis-vlsisapd
+      coriolis-hurricane coriolis-crlcore
+      coriolis-flute coriolis-etesian libxml2
+      coriolis-lefdef coriolis-anabatic
+    ];
+    nativeBuildInputs = [ doxygen ];
+    pythonImportsCheck = [ "Katana" ];
+  };
+in generic pkg
