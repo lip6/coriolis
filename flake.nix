@@ -58,7 +58,15 @@
       }) {} components);
 
       defaultPackage = forAllSystems (system: self.packages.${system}.unicorn);
-      devShell = defaultPackage;
+
+      devShell = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor.${system};
+          env = pkgs.python2.buildEnv.override {
+            extraLibs = [ pkgs.coriolis-vlsisapd ];
+          };
+        in env.env
+      );
 
       #hydraJobs.coriolis = self.defaultPackage;
     };
