@@ -33,6 +33,10 @@
         cmakeFlags = [ "-DBUILD_DOC=ON" ] ++ (o.cmakeFlags or []);
       });
 
+      generic = import ./nix/generic.nix { inherit version meta; };
+
+      # not generic: solstice lefdef equinox knik coloquinte bootstrap
+
       components = [
         "vlsisapd" "lefdef" "bootstrap" "hurricane" "crlcore"
         "cumulus" "flute" "etesian" "anabatic" "coloquinte"
@@ -42,6 +46,8 @@
         "unittests"
       ];
 
+      commonArgs = { inherit version meta generic; };
+
     in
 
     rec {
@@ -49,7 +55,8 @@
         builtins.foldl'
           (acc: elem: acc // {
             "coriolis-${elem}" = override (final.callPackage (
-              import "${self}/nix/${elem}.nix" { inherit version meta; }
+              let f = import (./nix + "/${elem}.nix"); in
+              f (builtins.intersectAttrs (builtins.functionArgs f) commonArgs)
             ) {});
           }) {} components;
 
