@@ -70,7 +70,7 @@
         let
           pkgs = nixpkgsFor.${system};
           env = pkgs.python2.buildEnv.override {
-            extraLibs = [ pkgs.coriolis-vlsisapd ];
+            extraLibs = builtins.map (x: pkgs.${"coriolis-${x}"}) [ "vlsisapd" "hurricane" "crlcore" ];
           };
         in env.env
       );

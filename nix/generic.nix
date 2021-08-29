@@ -14,8 +14,11 @@ let f =
     drv = stdenv.mkDerivation {
       pname = "coriolis-${name}";
 
-      buildInputs = [ python2Packages.python boostWithPython coriolis-bootstrap ] ++ buildInputs;
-      nativeBuildInputs = [ cmake ninja python2Packages.pythonImportsCheckHook ] ++ nativeBuildInputs;
+      buildInputs = [ python2Packages.python boostWithPython ] ++ buildInputs;
+      nativeBuildInputs = [
+        coriolis-bootstrap cmake ninja
+        python2Packages.pythonImportsCheckHook
+      ] ++ nativeBuildInputs;
 
       preInstall = ''
           export PYTHONPATH="$out/${python2Packages.python.sitePackages}:$PYTHONPATH"
