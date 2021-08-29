@@ -39,15 +39,15 @@
 
       pythonComponents = [
         "vlsisapd" "hurricane" "crlcore" "flute" "etesian"
-        "anabatic" "katana"
+        "anabatic" "katana" "bora" "katabatic" "kite"
+        "tutorial" "unicorn"
       ];
 
       components = pythonComponents ++ [
         "lefdef" "bootstrap" "cumulus" "coloquinte"
-        "bora" "equinox" "knik" "katabatic" "ispd"
-        "karakaze" "kite" "nimbus" "metis" "mauka" "oroshi"
-        "solstice" "stratus1" "tutorial" "unicorn" "documentation"
-        "unittests"
+        "equinox" "knik" "ispd" "karakaze" "nimbus"
+        "metis" "mauka" "oroshi" "solstice" "stratus1"
+        "documentation" "unittests"
       ];
 
       commonArgs = { inherit version meta generic; };

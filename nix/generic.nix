@@ -7,6 +7,7 @@ let f =
   , src
   , buildInputs ? []
   , nativeBuildInputs ? []
+  , propagatedBuildInputs ? []
   , pythonImportsCheck
   }:
   let
@@ -19,6 +20,7 @@ let f =
         coriolis-bootstrap cmake ninja
         python2Packages.pythonImportsCheckHook
       ] ++ nativeBuildInputs;
+      inherit propagatedBuildInputs;
 
       preInstall = ''
           export PYTHONPATH="$out/${python2Packages.python.sitePackages}:$PYTHONPATH"

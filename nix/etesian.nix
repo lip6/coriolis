@@ -8,6 +8,9 @@ let pkg =
       qt4 coriolis-coloquinte coriolis-vlsisapd
       coriolis-hurricane coriolis-crlcore
     ];
+    propagatedBuildInputs = [
+      coriolis-coloquinte
+    ];
     nativeBuildInputs = [ doxygen ];
     pythonImportsCheck = [ "Etesian" ];
   };

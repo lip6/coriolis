@@ -1,23 +1,18 @@
-{ version, meta }:
+{ generic, ... }:
 
-{ lib, stdenv, cmake, ninja, python2, boost
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, coriolis-crlcore, coriolis-flute, coriolis-knik
-, qt4, doxygen }:
+let pkg =
+  { coriolis-vlsisapd, coriolis-hurricane
+  , coriolis-crlcore, coriolis-flute, coriolis-knik
+  , qt4, doxygen }:
+  {
+    name = "katabatic";
+    src = ../katabatic;
 
-let boostWithPython = boost.override { enablePython = true; python = python2; }; in
-
-stdenv.mkDerivation {
-  pname = "coriolis-katabatic";
-
-  src = ../katabatic;
-
-  buildInputs = [
-    python2 boostWithPython coriolis-bootstrap
-    coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
-    coriolis-flute coriolis-knik qt4
-  ];
-  nativeBuildInputs = [ cmake ninja doxygen ];
-
-  inherit version meta;
-}
+    buildInputs = [
+      coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+      coriolis-flute coriolis-knik qt4
+    ];
+    nativeBuildInputs = [ doxygen ];
+    pythonImportsCheck = [ "Katabatic" ];
+  };
+in generic pkg
