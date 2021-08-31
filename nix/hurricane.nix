@@ -8,6 +8,6 @@ let pkg =
     buildInputs = [ libxml2 qt4 bzip2 rapidjson coriolis-vlsisapd ];
     nativeBuildInputs = [ bison flex doxygen ];
     pythonImportsCheck = [ "Viewer" "Hurricane" "Cfg2" "Analog" ];
-    continuation = drv: drv.overrideAttrs (o: { meta = o.meta // { license = lib.licenses.lgpl3Plus; });
+    meta.license = lib.licenses.lgpl3Plus;
   };
 in generic pkg

@@ -1,35 +1,41 @@
 { version, meta }:
 
-let f =
-  { lib, stdenv, cmake, ninja, boost
-  , coriolis-bootstrap, python2Packages }:
-  { name
-  , src
-  , buildInputs ? []
-  , nativeBuildInputs ? []
-  , propagatedBuildInputs ? []
-  , pythonImportsCheck
-  , continuation ? (x: x)
-  }:
-  let
-    boostWithPython = boost.override { enablePython = true; inherit (python2Packages) python; };
-    drv = stdenv.mkDerivation {
-      pname = "coriolis-${name}";
+let
+  meta' = meta;
+  f =
+    { lib, stdenv, cmake, ninja, boost
+    , coriolis-bootstrap, python2Packages }:
+    let self =
+      { name
+      , buildInputs ? []
+      , nativeBuildInputs ? []
+      , meta ? {}
+      , pythonImportsCheck
+      , continuation ? (x: x)
+      , ...
+      }@args':
+      let
+        args = builtins.removeAttrs args' (builtins.attrNames (builtins.functionArgs self));
+        boostWithPython = boost.override { enablePython = true; inherit (python2Packages) python; };
+        drv = stdenv.mkDerivation ({
+          pname = "coriolis-${name}";
 
-      buildInputs = [ python2Packages.python boostWithPython ] ++ buildInputs;
-      nativeBuildInputs = [
-        coriolis-bootstrap cmake ninja
-        python2Packages.pythonImportsCheckHook
-      ] ++ nativeBuildInputs;
-      inherit propagatedBuildInputs;
+          buildInputs = [ python2Packages.python boostWithPython ] ++ buildInputs;
+          nativeBuildInputs = [
+            coriolis-bootstrap cmake ninja
+            python2Packages.pythonImportsCheckHook
+          ] ++ nativeBuildInputs;
 
-      preInstall = ''
-          export PYTHONPATH="$out/${python2Packages.python.sitePackages}:$PYTHONPATH"
-      '';
+          preInstall = ''
+              export PYTHONPATH="$out/${python2Packages.python.sitePackages}:$PYTHONPATH"
+          '';
 
-      inherit version meta src pythonImportsCheck;
-    };
-  in continuation (python2Packages.toPythonModule drv);
+          meta = meta // meta';
+
+          inherit version pythonImportsCheck;
+        } // args);
+      in continuation (python2Packages.toPythonModule drv);
+    in self;
 in
 
 pkg:

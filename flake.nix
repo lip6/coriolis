@@ -36,8 +36,6 @@
 
       generic = import ./nix/generic.nix { inherit version meta; };
 
-      # not generic: solstice lefdef equinox knik coloquinte bootstrap
-
       pythonComponents = [
         "vlsisapd" "hurricane" "crlcore" "flute" "etesian"
         "anabatic" "katana" "bora" "katabatic" "kite"
