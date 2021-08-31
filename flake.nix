@@ -1,3 +1,5 @@
+# The license for this file is included in the `nix` directory next to this file.
+
 {
   description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
 
