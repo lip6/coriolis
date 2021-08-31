@@ -9,6 +9,7 @@ let f =
   , nativeBuildInputs ? []
   , propagatedBuildInputs ? []
   , pythonImportsCheck
+  , continuation ? (x: x)
   }:
   let
     boostWithPython = boost.override { enablePython = true; inherit (python2Packages) python; };
@@ -28,7 +29,7 @@ let f =
 
       inherit version meta src pythonImportsCheck;
     };
-  in python2Packages.toPythonModule drv;
+  in continuation (python2Packages.toPythonModule drv);
 in
 
 pkg:
