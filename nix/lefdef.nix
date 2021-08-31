@@ -15,5 +15,7 @@ stdenv.mkDerivation {
   buildInputs = [ python2 boostWithPython coriolis-bootstrap bison flex zlib ];
   nativeBuildInputs = [ cmake ninja ];
 
-  inherit version meta;
+  inherit version;
+
+  meta = meta // { license = lib.licenses.apsl20; };
 }

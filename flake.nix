@@ -22,7 +22,6 @@
       meta = with nixpkgs.lib; {
         description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
         homepage    = "http://coriolis.lip6.fr/";
-        license     = licenses.gpl3;
         platforms   = platforms.all;
       };
 
