@@ -70,6 +70,14 @@
 
       defaultPackage = forAllSystems (system: self.packages.${system}.unicorn);
 
+      devShells = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor.${system};
+          envFor = comp: (pkgs.python2.buildEnv.override {
+            extraLibs = [ pkgs.${"coriolis-${comp}"} ];
+          }).env;
+        in builtins.catAttrs (builtins.map (comp: { ${comp} = envFor comp; }) pythonComponents)
+      );
       devShell = forAllSystems (system:
         let
           pkgs = nixpkgsFor.${system};
