@@ -18,21 +18,38 @@
       # Helper function to generate an attrset '{ x86_64-linux = f "x86_64-linux"; ... }'.
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
-      # Nixpkgs instantiated for supported system types.
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ self.overlay ]; });
-
       meta = with nixpkgs.lib; {
         description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
         homepage    = "http://coriolis.lip6.fr/";
         platforms   = platforms.all;
       };
 
-      override = drv: drv.overrideAttrs (o: {
-        preConfigure = ''
-          cmakeFlagsArray+=(-DCMAKE_MODULE_PATH="$(sed -e 's|:|/share/cmake/Modules;|g' <<< "$CMAKE_PREFIX_PATH:")")
-        '' + (o.preConfigure or "");
-        cmakeFlags = [ "-DBUILD_DOC=ON" ] ++ (o.cmakeFlags or []);
-      });
+      pythonOverlay = self: super: {
+        python2Packages = super.python2Packages.override {
+          overrides = pself: psuper: {
+            pyqt4 = psuper.pyqt4.overridePythonAttrs (o: rec {
+              version = "4.12.1";
+              src = super.fetchurl {
+                url = "mirror://sourceforge/pyqt/PyQt4_gpl_x11-${version}.tar.gz";
+                sha256 = "RdckRhrliwGbm+lQdsoH4hLrcwhK7JEluyVIJcOgU4M=";
+              };
+              pythonImportsCheck = [ "PyQt4.QtCore" "PyQt4.QtGui" ];
+            });
+          };
+        };
+      };
+
+      # Nixpkgs instantiated for supported system types.
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ pythonOverlay self.overlay ]; });
+
+
+      override = drv:
+        drv.overrideAttrs (o: {
+          preConfigure = ''
+            cmakeFlagsArray+=(-DCMAKE_MODULE_PATH="$(sed -e 's|:|/share/cmake/Modules;|g' <<< "$CMAKE_PREFIX_PATH:")")
+          '' + (o.preConfigure or "");
+          cmakeFlags = [ "-DBUILD_DOC=ON" ] ++ (o.cmakeFlags or []);
+        });
 
       generic = import ./nix/generic.nix { inherit version meta; };
 
