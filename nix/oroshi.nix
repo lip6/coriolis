@@ -7,7 +7,7 @@ let pkg =
     name = "oroshi";
     src = ../oroshi;
 
-    buildInputs = [
+    propagatedBuildInputs = [
       coriolis-vlsisapd qt4 python2Packages.pyqt4
       coriolis-crlcore coriolis-hurricane qt4
       python2Packages.numpy

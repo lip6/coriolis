@@ -2,10 +2,10 @@
 let pkg =
   { lib, libxml2, qt4, bison, flex, doxygen, coriolis-vlsisapd
   , coriolis-lefdef, coriolis-hurricane, python2Packages }:
-  {
+  rec {
     name = "crlcore";
     src = ../crlcore;
-    buildInputs = [ libxml2 qt4 coriolis-lefdef coriolis-vlsisapd coriolis-hurricane python2Packages.pyqt4 ];
+    propagatedBuildInputs = [ libxml2 qt4 coriolis-lefdef coriolis-vlsisapd coriolis-hurricane python2Packages.pyqt4 ];
     nativeBuildInputs = [ bison flex doxygen python2Packages.pyqt4 ];
     postInstall = ''
       ln -s crlcore/helpers $out/${python2Packages.python.sitePackages}/helpers

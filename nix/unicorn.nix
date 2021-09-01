@@ -6,19 +6,23 @@ let pkg =
   , coriolis-flute, coriolis-anabatic, coriolis-coloquinte
   , coriolis-lefdef, coriolis-knik, coriolis-kite
   , coriolis-katabatic, coriolis-etesian, coriolis-equinox
-  , coriolis-solstice, libxml2, doxygen }:
+  , coriolis-solstice, libxml2, doxygen, python2Packages }:
   {
     name = "unicorn";
     src = ../unicorn;
 
-    buildInputs = [
+    propagatedBuildInputs = [
       coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
       coriolis-katana qt4 coriolis-flute coriolis-anabatic
       coriolis-lefdef libxml2 coriolis-knik coriolis-kite
       coriolis-katabatic coriolis-etesian coriolis-equinox
       coriolis-solstice
     ];
-    nativeBuildInputs = [ doxygen ];
+    nativeBuildInputs = [ doxygen python2Packages.wrapPython ];
     pythonImportsCheck = [ "Unicorn" ];
+
+    postFixup = ''
+      wrapPythonPrograms
+    '';
   };
 in generic pkg

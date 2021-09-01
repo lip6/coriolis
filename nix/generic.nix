@@ -12,6 +12,7 @@ let
       , meta ? {}
       , pythonImportsCheck
       , continuation ? (x: x)
+      , postInstall ? ""
       , ...
       }@args':
       let
@@ -26,11 +27,11 @@ let
             python2Packages.pythonImportsCheckHook
           ] ++ nativeBuildInputs;
 
-          preInstall = ''
+          postInstall = postInstall + ''
               export PYTHONPATH="$out/${python2Packages.python.sitePackages}:$PYTHONPATH"
           '';
 
-          meta = meta // meta';
+          meta = meta' // meta;
 
           inherit version pythonImportsCheck;
         } // args);
