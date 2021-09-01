@@ -18,5 +18,15 @@ stdenv.mkDerivation {
   ];
   nativeBuildInputs = [ cmake ninja ];
 
+  doInstallCheck = true;
+
+  installCheckPhase = ''
+    runHook preInstallCheck
+    $out/bin/unittests
+    $out/bin/unittests --rb-tree
+    $out/bin/unittests --intv-tree
+    runHook postInstallCheck
+  '';
+
   inherit version meta;
 }
