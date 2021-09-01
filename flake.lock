@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "alliance-check-toolkit": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1624038537,
+        "narHash": "sha256-Z8erR1YbKR7ndHU75Yb6DOSzj07ZJB2GGx+zSJvNJ7Y=",
+        "ref": "master",
+        "rev": "f28f970148e8f942fb2cf971d41333d42c1d886b",
+        "revCount": 269,
+        "type": "git",
+        "url": "https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1628776130,
@@ -18,6 +34,7 @@
     },
     "root": {
       "inputs": {
+        "alliance-check-toolkit": "alliance-check-toolkit",
         "nixpkgs": "nixpkgs"
       }
     }

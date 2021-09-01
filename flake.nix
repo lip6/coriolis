@@ -5,8 +5,10 @@
 
   # Nixpkgs / NixOS version to use.
   inputs.nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-21.05";
+  inputs.alliance-check-toolkit.url = "git+https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git";
+  inputs.alliance-check-toolkit.flake = false;
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, alliance-check-toolkit }:
     let
 
       # Generate a user-friendly version numer.
@@ -63,10 +65,10 @@
         "lefdef" "bootstrap" "cumulus" "coloquinte"
         "equinox" "knik" "ispd" "karakaze" "nimbus"
         "metis" "mauka" "solstice" "stratus1"
-        "documentation" "unittests"
+        "documentation" "unittests" "alliance-check-toolkit"
       ];
 
-      commonArgs = { inherit version meta generic; };
+      commonArgs = { inherit version meta generic; alliance-src = alliance-check-toolkit; };
 
     in
 
