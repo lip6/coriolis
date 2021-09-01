@@ -3,6 +3,7 @@ from   Hurricane import DbU
 from   Hurricane import DataBase
 import oroshi.dtr
 
+if not DataBase.getDB(): DataBase.create()
 
 rules = None
 

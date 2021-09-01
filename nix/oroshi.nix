@@ -1,21 +1,43 @@
-{ version, meta }:
+{ generic, ... }:
 
-{ lib, stdenv, cmake, ninja, python2, qt4, coriolis-crlcore
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, doxygen, boost }:
+let pkg =
+  { qt4, coriolis-crlcore, doxygen, lib, python2Packages
+  , coriolis-vlsisapd, coriolis-hurricane }:
+  {
+    name = "oroshi";
+    src = ../oroshi;
 
-let boostWithPython = boost.override { enablePython = true; python = python2; }; in
+    buildInputs = [
+      coriolis-vlsisapd qt4 python2Packages.pyqt4
+      coriolis-crlcore coriolis-hurricane qt4
+      python2Packages.numpy
+    ];
+    nativeBuildInputs = [ doxygen ];
 
-stdenv.mkDerivation {
-  pname = "coriolis-oroshi";
+    postInstall = ''
+      # for import check
+      mkdir -p /build/coriolistop/etc/coriolis2
+      export CORIOLIS_TOP=/build/coriolistop
+    '';
+    pythonImportsCheck = [
+      "oroshi.wip_transistor"
+      "oroshi.wip_dp"
+      "oroshi.wip_csp"
+      "oroshi.stack"
+      "oroshi.resistorsnake"
+      "oroshi.resistor"
+      "oroshi.paramsmatrix"
+      "oroshi.nonunitcapacitor"
+      "oroshi.multicapacitor"
+      "oroshi.dtr"
+      "oroshi.capacitorvrtracks"
+      "oroshi.capacitorunit"
+      "oroshi.capacitorroutedsingle"
+      "oroshi.capacitorrouted"
+      "oroshi.capacitormatrix"
+      "oroshi"
+    ];
 
-  src = ../oroshi;
-
-  buildInputs = [
-    python2 coriolis-bootstrap coriolis-vlsisapd
-    coriolis-crlcore coriolis-hurricane qt4 boostWithPython
-  ];
-  nativeBuildInputs = [ cmake ninja doxygen ];
-
-  inherit version meta;
-}
+    meta.license = lib.licenses.gpl2Plus;
+  };
+in generic pkg
