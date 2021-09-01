@@ -43,6 +43,7 @@ import Hurricane
 import Viewer
 import CRL
 import helpers.io
+from helpers.io import ErrorMessage
 
 
 def stype ( o ): return str(type(o)).split("'")[1]
