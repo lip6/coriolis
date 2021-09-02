@@ -4,7 +4,7 @@
   description = "Coriolis is a free database, placement tool and routing tool for VLSI design.";
 
   # Nixpkgs / NixOS version to use.
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-21.05";
+  inputs.nixpkgs.url = "github:L-as/nixpkgs?ref=alliance"; # for alliance
   inputs.alliance-check-toolkit.url = "git+https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git";
   inputs.alliance-check-toolkit.flake = false;
 
