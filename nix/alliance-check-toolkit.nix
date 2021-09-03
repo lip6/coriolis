@@ -2,16 +2,12 @@
 
 { stdenv, coriolis-unicorn, coriolis-cumulus, python2Packages, alliance, yosys }:
 
-let
-  env = python2Packages.python.buildEnv.override {
-    extraLibs = [ coriolis-unicorn coriolis-cumulus ];
-  };
-in stdenv.mkDerivation {
+stdenv.mkDerivation {
   pname = "alliance-check-toolkit";
   version = builtins.substring 0 8 alliance-src.lastModifiedDate;
   src = alliance-src;
 
-  nativeBuildInputs = [ alliance coriolis-unicorn yosys ];
+  nativeBuildInputs = [ alliance coriolis-unicorn coriolis-cumulus yosys ];
 
   YOSYS_TOP = "${yosys}";
   ALLIANCE_TOP = "${alliance}";
@@ -20,6 +16,7 @@ in stdenv.mkDerivation {
   # which is why we use it.
   USER = "verhaegs";
 
+  patchPhase = "true";
   configurePhase = "true";
   buildPhase = ''
     cd benchs/adder/cmos
@@ -29,4 +26,5 @@ in stdenv.mkDerivation {
     make lvx
   '';
   installPhase = "true";
+  fixupPhase = "true";
 }
