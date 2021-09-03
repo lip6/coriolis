@@ -20,9 +20,9 @@
  
  find_package(PythonLibs         2 REQUIRED)
  find_package(PythonSitePackages REQUIRED)
- find_package(VLSISAPD REQUIRED)
+ find_package(VLSISAPD  REQUIRED)
  find_package(HURRICANE REQUIRED)
- find_package(CORIOLIS REQUIRED)
+ find_package(CORIOLIS  REQUIRED)
  
  add_subdirectory(src)
  add_subdirectory(etc)
