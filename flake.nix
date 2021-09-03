@@ -88,21 +88,15 @@
 
       defaultPackage = forAllSystems (system: self.packages.${system}.unicorn);
 
-      devShells = forAllSystems (system:
-        let
-          pkgs = nixpkgsFor.${system};
-          envFor = comp: (pkgs.python2.buildEnv.override {
-            extraLibs = [ pkgs.${"coriolis-${comp}"} ];
-          });
-        in builtins.catAttrs (builtins.map (comp: { ${comp} = envFor comp; }) pythonComponents)
-      );
       devShell = forAllSystems (system:
         let
           pkgs = nixpkgsFor.${system};
           env = pkgs.python2.buildEnv.override {
             extraLibs = builtins.map (x: pkgs.${"coriolis-${x}"}) pythonComponents;
           };
-        in env.env
+        in pkgs.mkShell {
+          buildInputs = [ env ];
+        }
       );
 
       #hydraJobs.coriolis = self.defaultPackage;
