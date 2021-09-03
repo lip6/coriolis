@@ -58,11 +58,11 @@
       pythonComponents = [
         "vlsisapd" "hurricane" "crlcore" "flute" "etesian"
         "anabatic" "katana" "bora" "katabatic" "kite"
-        "tutorial" "unicorn" "oroshi"
+        "tutorial" "unicorn" "oroshi" "cumulus"
       ];
 
       components = pythonComponents ++ [
-        "lefdef" "bootstrap" "cumulus" "coloquinte"
+        "lefdef" "bootstrap" "coloquinte"
         "equinox" "knik" "ispd" "karakaze" "nimbus"
         "metis" "mauka" "solstice" "stratus1"
         "documentation" "unittests" "alliance-check-toolkit"

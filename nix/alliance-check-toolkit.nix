@@ -1,10 +1,10 @@
 { alliance-src, ... }:
 
-{ stdenv, coriolis-unicorn, coriolis-crlcore, python2Packages, alliance, yosys }:
+{ stdenv, coriolis-unicorn, coriolis-cumulus, python2Packages, alliance, yosys }:
 
 let
   env = python2Packages.python.buildEnv.override {
-    extraLibs = [ coriolis-unicorn ];
+    extraLibs = [ coriolis-unicorn coriolis-cumulus ];
   };
 in stdenv.mkDerivation {
   pname = "alliance-check-toolkit";

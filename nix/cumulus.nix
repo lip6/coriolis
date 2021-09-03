@@ -1,16 +1,27 @@
-{ version, meta }:
+{ generic, ... }:
 
-{ lib, stdenv, cmake, ninja, python2
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
-, coriolis-crlcore }:
+let pkg =
+  { lib, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore
+  , coriolis-etesian, coriolis-anabatic, coriolis-katana
+  , coriolis-unicorn }:
+  {
+    name = "cumulus";
 
-stdenv.mkDerivation {
-  pname = "coriolis-cumulus";
+    src = ../cumulus;
 
-  src = ../cumulus;
+    postInstall = ''
+      # for import check
+      mkdir -p /build/coriolistop/etc/coriolis2
+      export CORIOLIS_TOP=/build/coriolistop
+    '';
 
-  buildInputs = [ python2 coriolis-bootstrap coriolis-vlsisapd coriolis-hurricane coriolis-crlcore ];
-  nativeBuildInputs = [ cmake ninja ];
+    propagatedBuildInputs = [
+      coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+      coriolis-etesian coriolis-anabatic coriolis-katana
+      coriolis-unicorn
+    ];
+    pythonImportsCheck = [ "plugins" ];
 
-  inherit version meta;
-}
+    meta.license = lib.licenses.gpl2Plus;
+  };
+in generic pkg
