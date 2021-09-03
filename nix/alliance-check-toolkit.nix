@@ -18,7 +18,7 @@ stdenv.mkDerivation {
   USER = "verhaegs";
 
   postPatch = "patchShebangs .";
-  configurePhase = "true";
+  configurePhase = "export CHECK_TOOLKIT=\"$PWD\"";
   buildPhase = ''
     cd benchs
     ../bin/go.sh
