@@ -1,8 +1,8 @@
 { generic, ... }:
 
 let pkg =
-  { coriolis-vlsisapd, coriolis-hurricane
-  , coriolis-crlcore, qt4, coriolis-katana
+  { coriolis-vlsisapd, coriolis-hurricane, coriolis-tutorial
+  , coriolis-crlcore, qt4, coriolis-katana, coriolis-bora
   , coriolis-flute, coriolis-anabatic, coriolis-coloquinte
   , coriolis-lefdef, coriolis-knik, coriolis-kite
   , coriolis-katabatic, coriolis-etesian, coriolis-equinox
@@ -16,7 +16,7 @@ let pkg =
       coriolis-katana qt4 coriolis-flute coriolis-anabatic
       coriolis-lefdef libxml2 coriolis-knik coriolis-kite
       coriolis-katabatic coriolis-etesian coriolis-equinox
-      coriolis-solstice
+      coriolis-solstice coriolis-bora coriolis-tutorial
     ];
     nativeBuildInputs = [ doxygen python2Packages.wrapPython ];
     pythonImportsCheck = [ "Unicorn" ];
