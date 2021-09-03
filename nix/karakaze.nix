@@ -1,18 +1,23 @@
-{ version, meta }:
+{ generic, ... }:
 
-{ lib, stdenv, cmake, ninja, python2, qt4, coriolis-crlcore
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane }:
+let pkg =
+  { lib, coriolis-crlcore, coriolis-bora, coriolis-katana, coriolis-anabatic
+  , coriolis-vlsisapd, coriolis-hurricane }:
+  {
+    name = "coriolis-karakaze";
+    src = ../karakaze;
 
-stdenv.mkDerivation {
-  pname = "coriolis-karakaze";
+    propagatedBuildInputs = [
+      coriolis-vlsisapd coriolis-crlcore coriolis-hurricane coriolis-katana
+      coriolis-bora coriolis-anabatic
+    ];
+    postInstall = ''
+      # for import check
+      mkdir -p /build/coriolistop/etc/coriolis2
+      export CORIOLIS_TOP=/build/coriolistop
+    '';
+    pythonImportsCheck = [ "karakaze" "karakaze.analogdesign" ];
 
-  src = ../karakaze;
-
-  buildInputs = [
-    python2 coriolis-bootstrap coriolis-vlsisapd
-    coriolis-crlcore coriolis-hurricane qt4
-  ];
-  nativeBuildInputs = [ cmake ninja ];
-
-  inherit version meta;
-}
+    meta.license = lib.licenses.gpl2Plus;
+  };
+in generic pkg
