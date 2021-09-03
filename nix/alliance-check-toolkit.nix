@@ -17,14 +17,11 @@ stdenv.mkDerivation {
   # which is why we use it.
   USER = "verhaegs";
 
-  patchPhase = "true";
+  postPatch = "patchShebangs .";
   configurePhase = "true";
   buildPhase = ''
-    cd benchs/adder/cmos
-    echo 'doing make druc'
-    make druc
-    echo 'doing make lvx'
-    make lvx
+    cd benchs
+    ../bin/go.sh
   '';
   installPhase = "touch $out";
   fixupPhase = "true";
