@@ -1,27 +1,22 @@
 #!/usr/bin/env python
 
-
-try:
-  import sys
-  import os.path
-  import optparse
-  import helpers
-  helpers.loadUserSettings()
-  import Cfg
-  import Hurricane
-  import Viewer
-  import CRL
-  import Etesian
-  import Anabatic
-  import Katana
-  import Katabatic
-  import Kite
-  import Bora
-  import Tutorial
-  import Unicorn
-except Exception, e:
-  helpers.showPythonTrace( sys.argv[0], e )
-  sys.exit(2)
+import sys
+import os.path
+import optparse
+import helpers.io
+helpers.loadUserSettings()
+import Cfg
+import Hurricane
+import Viewer
+import CRL
+import Etesian
+import Anabatic
+import Katana
+import Katabatic
+import Kite
+import Bora
+import Tutorial
+import Unicorn
 
 
 def setCgtBanner ( banner ):
