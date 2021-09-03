@@ -66,6 +66,7 @@
         "equinox" "knik" "ispd" "karakaze" "nimbus"
         "metis" "mauka" "solstice" "stratus1"
         "documentation" "unittests" "alliance-check-toolkit"
+        "combined"
       ];
 
       commonArgs = { inherit version meta generic; alliance-src = alliance-check-toolkit; };
@@ -82,9 +83,17 @@
             ) {});
           }) {} components;
 
-      packages = forAllSystems (system: builtins.foldl' (acc: elem: acc // {
-        ${elem} = nixpkgsFor.${system}.${"coriolis-${elem}"};
-      }) {} components);
+      packages = forAllSystems (system:
+        let pkgs = nixpkgsFor.${system}; in
+        builtins.foldl' (acc: elem: acc // {
+          ${elem} = pkgs.${"coriolis-${elem}"};
+        }) {} components
+        // {
+          test = pkgs.python2.buildEnv.override {
+            extraLibs = [ pkgs.coriolis-unicorn pkgs.coriolis-cumulus ];
+          };
+        }
+      );
 
       defaultPackage = forAllSystems (system: self.packages.${system}.unicorn);
 
