@@ -101,7 +101,7 @@
       });
 
       # CORIOLIS_TOP must be set before execution
-      # example: CORIOLIS_TOP="$(mktemp -d)" && ./result/bin/cgt
+      # example: `env CORIOLIS_TOP="$(mktemp -d)" ./result/bin/cgt`
       defaultPackage = forAllSystems (system: self.packages.${system}.unicorn);
 
       devShell = forAllSystems (system:
