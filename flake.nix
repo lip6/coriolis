@@ -7,10 +7,18 @@
   inputs.nixpkgs.url = "github:L-as/nixpkgs?ref=alliance"; # for alliance
   inputs.alliance-check-toolkit.url = "git+https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git";
   inputs.alliance-check-toolkit.flake = false;
-  inputs.soclayout.url = git://git.libre-soc.org/soclayout.git;
+  inputs.soclayout.url = "git+https://git.libre-soc.org/git/soclayout.git";
   inputs.soclayout.flake = false;
+  inputs.pinmux.url = "git+https://git.libre-soc.org/git/pinmux.git";
+  inputs.pinmux.flake = false;
+  inputs.c4m-pdk-freepdk45 = {
+    type = "gitlab";
+    owner = "Chips4Makers";
+    repo = "c4m-pdk-freepdk45";
+    flake = false;
+  };
 
-  outputs = { self, nixpkgs, alliance-check-toolkit, soclayout }@inputs:
+  outputs = { self, nixpkgs, alliance-check-toolkit, soclayout, pinmux, c4m-pdk-freepdk45 }:
     let
 
       # Generate a user-friendly version numer.
@@ -66,10 +74,10 @@
         "lefdef" "bootstrap" "coloquinte"
         "equinox" "knik" "ispd" "karakaze" "nimbus"
         "metis" "mauka" "solstice" "stratus1"
-        "documentation" "combined" "libresoc-experiments9"
+        "documentation" "combined"
       ];
 
-      commonArgs = { inherit version meta generic inputs; };
+      commonArgs = { inherit version meta generic; };
 
     in
 
@@ -93,6 +101,10 @@
       checks = forAllSystems (system: {
         alliance-check-toolkit = nixpkgsFor.${system}.callPackage (
           import ./nix/alliance-check-toolkit.nix { inherit alliance-check-toolkit; }
+        ) {};
+
+        libresoc = nixpkgsFor.${system}.callPackage (
+          import ./nix/libresoc.nix { inherit soclayout pinmux; }
         ) {};
 
         unittests = override (nixpkgsFor.${system}.callPackage (
