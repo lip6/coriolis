@@ -95,9 +95,9 @@
           import ./nix/alliance-check-toolkit.nix { inherit alliance-check-toolkit; }
         ) {};
 
-        unittests = nixpkgsFor.${system}.callPackage (
+        unittests = override (nixpkgsFor.${system}.callPackage (
           import ./nix/unittests.nix { inherit version meta; }
-        ) {};
+        ) {});
       });
 
       # CORIOLIS_TOP must be set before execution
