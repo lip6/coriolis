@@ -104,7 +104,7 @@
         ) {};
 
         libresoc = nixpkgsFor.${system}.callPackage (
-          import ./nix/libresoc.nix { inherit soclayout pinmux; }
+          import ./nix/libresoc.nix { inherit alliance-check-toolkit soclayout pinmux; }
         ) {};
 
         unittests = override (nixpkgsFor.${system}.callPackage (
@@ -130,5 +130,6 @@
       hydraJobs.combined = forAllSystems (system: self.packages.${system}.combined);
       hydraJobs.alliance-check-toolkit = forAllSystems (system: self.checks.${system}.alliance-check-toolkit);
       hydraJobs.unittests = forAllSystems (system: self.checks.${system}.unittests);
+      hydraJobs.libresoc = forAllSystems (system: self.checks.${system}.libresoc);
     };
 }
