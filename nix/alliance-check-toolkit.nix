@@ -1,4 +1,4 @@
-{ alliance-src, ... }:
+{ alliance-src }:
 
 { stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus
 , python2Packages, alliance, yosys }:

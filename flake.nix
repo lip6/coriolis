@@ -7,8 +7,10 @@
   inputs.nixpkgs.url = "github:L-as/nixpkgs?ref=alliance"; # for alliance
   inputs.alliance-check-toolkit.url = "git+https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git";
   inputs.alliance-check-toolkit.flake = false;
+  inputs.soclayout.url = git://git.libre-soc.org/soclayout.git;
+  inputs.soclayout.flake = false;
 
-  outputs = { self, nixpkgs, alliance-check-toolkit }:
+  outputs = { self, nixpkgs, alliance-check-toolkit, soclayout }@inputs:
     let
 
       # Generate a user-friendly version numer.
@@ -65,11 +67,11 @@
         "lefdef" "bootstrap" "coloquinte"
         "equinox" "knik" "ispd" "karakaze" "nimbus"
         "metis" "mauka" "solstice" "stratus1"
-        "documentation" "unittests" "alliance-check-toolkit"
-        "combined"
+        "documentation" "unittests" "combined"
+        "libresoc-experiments9"
       ];
 
-      commonArgs = { inherit version meta generic; alliance-src = alliance-check-toolkit; };
+      commonArgs = { inherit version meta generic inputs; };
 
     in
 
@@ -88,12 +90,15 @@
         builtins.foldl' (acc: elem: acc // {
           ${elem} = pkgs.${"coriolis-${elem}"};
         }) {} components
-        // {
-          test = pkgs.python2.buildEnv.override {
-            extraLibs = [ pkgs.coriolis-unicorn pkgs.coriolis-cumulus ];
-          };
-        }
       );
+
+      checks = forAllSystems (system: {
+        alliance-check-toolkit = nixpkgsFor.${system}.callPackage (
+          import ./nix/alliance-check-toolkit.nix {
+            alliance-src = alliance-check-toolkit;
+          }
+        ) {};
+      });
 
       # CORIOLIS_TOP must be set before execution
       # example: CORIOLIS_TOP="$(mktemp -d)" && ./result/bin/cgt

@@ -35,7 +35,24 @@
     "root": {
       "inputs": {
         "alliance-check-toolkit": "alliance-check-toolkit",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "soclayout": "soclayout"
+      }
+    },
+    "soclayout": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1625141014,
+        "narHash": "sha256-9W104e0jl2raFWtVo/J/F9bfIPi67THR5YaftT8YmYI=",
+        "ref": "master",
+        "rev": "81d267598a931153815db6cbf0e44f86973575aa",
+        "revCount": 507,
+        "type": "git",
+        "url": "git://git.libre-soc.org/soclayout.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "git://git.libre-soc.org/soclayout.git"
       }
     }
   },
