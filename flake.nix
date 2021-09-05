@@ -46,7 +46,6 @@
       # Nixpkgs instantiated for supported system types.
       nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; overlays = [ pythonOverlay self.overlay ]; });
 
-
       override = drv:
         drv.overrideAttrs (o: {
           preConfigure = ''
@@ -67,8 +66,7 @@
         "lefdef" "bootstrap" "coloquinte"
         "equinox" "knik" "ispd" "karakaze" "nimbus"
         "metis" "mauka" "solstice" "stratus1"
-        "documentation" "unittests" "combined"
-        "libresoc-experiments9"
+        "documentation" "combined" "libresoc-experiments9"
       ];
 
       commonArgs = { inherit version meta generic inputs; };
@@ -94,9 +92,11 @@
 
       checks = forAllSystems (system: {
         alliance-check-toolkit = nixpkgsFor.${system}.callPackage (
-          import ./nix/alliance-check-toolkit.nix {
-            alliance-src = alliance-check-toolkit;
-          }
+          import ./nix/alliance-check-toolkit.nix { inherit alliance-check-toolkit; }
+        ) {};
+
+        unittests = nixpkgsFor.${system}.callPackage (
+          import ./nix/unittests.nix { inherit version meta; }
         ) {};
       });
 
@@ -115,6 +115,8 @@
         }
       );
 
-      #hydraJobs.coriolis = self.defaultPackage;
+      hydraJobs.combined = forAllSystems (system: self.packages.${system}.combined);
+      hydraJobs.alliance-check-toolkit = forAllSystems (system: self.checks.${system}.alliance-check-toolkit);
+      hydraJobs.unittests = forAllSystems (system: self.checks.${system}.unittests);
     };
 }

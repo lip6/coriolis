@@ -1,12 +1,12 @@
-{ alliance-src }:
+{ alliance-check-toolkit }:
 
 { stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus
 , python2Packages, alliance, yosys }:
 
 stdenv.mkDerivation {
   pname = "alliance-check-toolkit";
-  version = builtins.substring 0 8 alliance-src.lastModifiedDate;
-  src = alliance-src;
+  version = builtins.substring 0 8 alliance-check-toolkit.lastModifiedDate;
+  src = alliance-check-toolkit;
 
   nativeBuildInputs = [ alliance coriolis-unicorn coriolis-cumulus yosys ];
 
