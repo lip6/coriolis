@@ -1,11 +1,22 @@
 { alliance-check-toolkit, soclayout, pinmux, ... }:
 
 { stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus
-, python2Packages, alliance, yosys, writeShellScriptBin }:
+, python2Packages, alliance, yosys, writeShellScriptBin, fetchFromGitHub }:
 
 let
   fakegit = writeShellScriptBin "git" "exit 0";
-in stdenv.mkDerivation rec {
+  yosys' = yosys.overrideAttrs (_: {
+    version = "0.9+4008";
+    src = fetchFromGitHub {
+      owner = "YosysHQ";
+      repo = "yosys";
+      rev = "049e3abf9baf795e69b9ecb9c4f19de6131f8418";
+      sha256 = "0h3w91jr5yws4wxk3n45h1pdq65jhj957d5pzy2799gzwkba5adh";
+    };
+  });
+in
+let yosys = yosys'; in
+stdenv.mkDerivation rec {
   name = "libresoc-check";
 
   src = soclayout;
