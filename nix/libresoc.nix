@@ -7,12 +7,11 @@ let
   fakegit = writeShellScriptBin "git" "exit 0";
 in stdenv.mkDerivation rec {
   name = "libresoc-check";
+
   src = soclayout;
 
   YOSYS_TOP = "${yosys}";
   ALLIANCE_TOP = "${alliance}";
-  ALLIANCE_TOOLKIT = "${alliance-check-toolkit}";
-  CHECK_TOOLKIT = ALLIANCE_TOOLKIT;
   CORIOLIS_TOP = "${coriolis-combined}";
   # The user configuration for verhaegs is empty,
   # which is why we use it.
@@ -22,7 +21,14 @@ in stdenv.mkDerivation rec {
 
   prePatch = ''
     rmdir pinmux
-    ln -s ${pinmux} pinmux
+    cp -r ${pinmux} -T pinmux
+
+    cp -r ${alliance-check-toolkit} -T alliance-check-toolkit
+
+    chmod a+w -R alliance-check-toolkit pinmux
+
+    export ALLIANCE_TOOLKIT="$PWD/alliance-check-toolkit"
+    export CHECK_TOOLKIT="$ALLIANCE_TOOLKIT"
   '';
   postPatch = "patchShebangs .";
 
