@@ -1,10 +1,28 @@
 { alliance-check-toolkit, soclayout, pinmux, ... }:
 
-{ stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus
+{ stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus, fetchurl
 , python2Packages, alliance, yosys, writeShellScriptBin, fetchFromGitHub }:
 
 let
+  C4MLogo = fetchurl {
+    url = "https://ftp.libre-soc.org/C4MLogo.gds";
+    sha256 = "0s1a2l4rh6vc1xg94jq87lsdkiqv68b0zi2rnv6wwcl9i2smacbf";
+  };
+  lip6 = fetchurl {
+    url = "https://ftp.libre-soc.org/lip6.gds";
+    sha256 = "0jj4z2d0is1vr3fziaqva39s7d85j0xqmmib0mdqnf2bg9iv91s4";
+  };
+  sorbonne_logo = fetchurl {
+    url = "https://ftp.libre-soc.org/sorbonne_logo.gds";
+    sha256 = "1p3plmb90kqljwsba2fahqzsy18iapmw2zvgkjh745c87lynn3dq";
+  };
+  libresoc_logo = fetchurl {
+    url = "https://ftp.libre-soc.org/libresoc_logo.gds";
+    sha256 = "1wbc5qrjlyrykaixdgp5d7brv5imlx71909y49xss907mil76bwh";
+  };
+
   fakegit = writeShellScriptBin "git" "exit 0";
+  fakewget = writeShellScriptBin "wget" "exit 0";
   yosys' = yosys.overrideAttrs (_: {
     version = "0.9+4008";
     src = fetchFromGitHub {
@@ -28,7 +46,7 @@ stdenv.mkDerivation rec {
   # which is why we use it.
   USER = "verhaegs";
 
-  nativeBuildInputs = [ fakegit alliance coriolis-unicorn coriolis-cumulus yosys ];
+  nativeBuildInputs = [ fakewget fakegit alliance coriolis-unicorn coriolis-cumulus yosys ];
 
   prePatch = ''
     rmdir pinmux
@@ -46,6 +64,12 @@ stdenv.mkDerivation rec {
   buildPhase = ''
     runHook preBuild
     cd experiments9
+
+    ln -s ${C4MLogo} C4MLogo.gds
+    ln -s ${lip6} lip6.gds
+    ln -s ${sorbonne_logo} sorbonne_logo.gds
+    ln -s ${libresoc_logo} libresoc_logo.gds
+
     ./mksym.sh
     ln -s ${alliance-check-toolkit}/etc/mk/users.d/user-${USER}.mk mk/users.d/user-${USER}.mk
     ./build_full_4ksram.sh
