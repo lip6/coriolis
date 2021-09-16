@@ -11,14 +11,8 @@
   inputs.soclayout.flake = false;
   inputs.pinmux.url = "git+https://git.libre-soc.org/git/pinmux.git";
   inputs.pinmux.flake = false;
-  inputs.c4m-pdk-freepdk45 = {
-    type = "gitlab";
-    owner = "Chips4Makers";
-    repo = "c4m-pdk-freepdk45";
-    flake = false;
-  };
 
-  outputs = { self, nixpkgs, alliance-check-toolkit, soclayout, pinmux, c4m-pdk-freepdk45 }:
+  outputs = { self, nixpkgs, alliance-check-toolkit, soclayout, pinmux }:
     let
 
       # Generate a user-friendly version numer.
