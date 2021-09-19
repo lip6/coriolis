@@ -493,7 +493,7 @@ class Report ( object ):
             pass
         tailLines = ''
         for line in fd.readlines()[1:]:
-            tailLines += line
+            tailLines += line.decode( 'latin_1' )
         fd.close()
         self.mainText += '    "{}"\n'.format(logFile)
         
