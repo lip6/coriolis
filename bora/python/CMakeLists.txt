@@ -1,2 +1,2 @@
 
- install ( FILES  boraInit.py  DESTINATION ${PYTHON_SITE_PACKAGES}/bora )
+ install ( FILES  boraInit.py  DESTINATION ${Python_CORIOLISLIB}/bora )

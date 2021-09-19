@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -129,7 +128,7 @@ class Synopsys:
           self._change_ck2st(filename, False) # false for no debug
   
     if debug:
-      print ' - VHDL conversion done.'
+      print( ' - VHDL conversion done.' )
 
   # -------------------------------------------------------------
   ## Remove power supply connectors from a VHDL file.
@@ -153,7 +152,7 @@ class Synopsys:
         removed += 1
 
     if debug:
-      print ' - removed %d power supply declarations'%removed
+      print( ' - removed %d power supply declarations'%removed )
 
     input.close()
 
@@ -178,7 +177,7 @@ class Synopsys:
     out.write(previous)
 
     if debug:
-      print ' - corrected %s syntax errors'%corrected
+      print( ' - corrected %s syntax errors'%corrected )
 
     # END -------------------------------------------------------
     temp.close()
@@ -221,7 +220,7 @@ class Synopsys:
         temp.write(line)
 
     if debug:
-      print ' - changed %d ck'%changed
+      print( ' - changed %d ck'%changed )
 
     # STEP2: write changes to input file ------------------------
     temp.seek(0)
@@ -782,7 +781,7 @@ class Synopsys:
           self.convert_to_vhdl(st=st, debug=debug)
 
       if debug:
-          print ' - generate test bench and build simulator (Synopsys) ...'
+          print( ' - generate test bench and build simulator (Synopsys) ...' )
       try:
           self._cell.pat
       except AttributeError:

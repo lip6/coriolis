@@ -38,11 +38,6 @@ extern "C" {
 #define  ACCESS_CLASS(_pyObject)  &(_pyObject->_baseObject)
 #define  METHOD_HEAD(function)   GENERIC_METHOD_HEAD(Instance,instance,function)
 
-#define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)              \
-  constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
-  PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
-  Py_DECREF ( constant );
-
 
 // +=================================================================+
 // |              "PyInstance" Python Module Code Part               |

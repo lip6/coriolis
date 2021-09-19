@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2018-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2018-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |            G D S I I / Hurricane  Interface                     |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :   "./gds/GdsParser.cpp"                          |
 // +-----------------------------------------------------------------+
@@ -26,7 +26,7 @@
 #include <vector>
 using namespace std;
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"

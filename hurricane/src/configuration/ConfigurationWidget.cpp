@@ -31,7 +31,7 @@
 #include "hurricane/configuration/ConfigurationWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::max;
   using std::cerr;
@@ -172,8 +172,8 @@ namespace Cfg2 {
 
   void  ConfigurationWidget::syncSlaves ()
   {
-    const map<const string,Parameter*>& parameters = Configuration::get()->getParameters ();
-    map<const string,Parameter*>::const_iterator iparam = parameters.begin();
+    const map<string,Parameter*>& parameters = Configuration::get()->getParameters ();
+    map<string,Parameter*>::const_iterator iparam = parameters.begin();
 
     for ( ; iparam != parameters.end() ; ++iparam ) {
       if ( (*iparam).second->getSlaves().empty() ) continue;

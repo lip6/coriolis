@@ -1,7 +1,8 @@
+
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2012-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -13,7 +14,6 @@
 # |  Python      :   "./crlcore/helpers/io.py"                      |
 # +-----------------------------------------------------------------+
 
-from   __future__ import print_function
 import sys
 import os
 import os.path
@@ -37,7 +37,7 @@ try:
     from PyQt4.QtGui  import QHBoxLayout
     from PyQt4.QtGui  import QAction
     from PyQt4.QtGui  import QKeySequence
-except Exception, e:
+except Exception as e:
     try:
         from PyQt5.QtCore    import Qt
         from PyQt5.QtWidgets import QSizePolicy
@@ -56,7 +56,7 @@ except Exception, e:
         from PyQt5.QtWidgets import QHBoxLayout
         from PyQt5.QtWidgets import QAction
         from PyQt5.QtGui     import QKeySequence
-    except e:
+    except Exception:
         print( '[ERROR] helpers.io, neither PyQt4 nor PyQt5 is available.' )
         sys.exit( 1 )
 import Cfg
@@ -183,10 +183,9 @@ class ErrorMessage ( Exception ):
         elif len(arguments) > 1:
             sys.stdout.flush()
             text = list(arguments)
-
         if text:
             self.errors = []
-            while len(text[0]) == 0: del text[0]
+            while len(text) == 0: del text[0]
             
             lstrip = 0
             if text[0].startswith('[ERROR]'): lstrip = 8 
@@ -203,7 +202,6 @@ class ErrorMessage ( Exception ):
     def __str__ ( self ):
         if not isinstance(self.errors,list):
             return "[ERROR] %s" % self.errors
-
         formatted = "\n"
         for i in range(len(self.errors)):
             if i == 0: formatted += "[ERROR] %s" % self.errors[i]
@@ -213,7 +211,6 @@ class ErrorMessage ( Exception ):
 
     def getLinesAsString ( self ):
         if not isinstance(self.errors,list): return self.errors
-
         lines = ''
         for line in self.errors: lines += line + '\n'
         return lines
@@ -256,13 +253,10 @@ def catch ( errorObject ):
         em            = ErrorMessage( 2, errorObject )
         em.trace      = traceback.extract_tb( sys.exc_info()[2] )
        #em.scriptPath = __file__
-
     print( em )
     print( helpers.textStackTrace( em.trace, True, em.scriptPath ) )
-
     if Viewer.Graphics.get().isEnabled():
         tryCont = ErrorWidget( em ).exec_()
-
     if UpdateSession.getStackSize() > 0: UpdateSession.close()
     return
 

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -113,15 +112,15 @@ class top_rf2 ( Model ) :
     global adrange
     
     if nword % 2 == 1 or nword > 32 or nword < 4 :
-      print "Error in DpgenRf2 : the word number must be even, larger than 4 and no larger than 32\n" 	
+      print( "Error in DpgenRf2 : the word number must be even, larger than 4 and no larger than 32\n" )
       sys.exit ( 1 )
     
     if nword == 4 and ( type == 2 or type == 3 ) :
-      print "Error in DpgenRf2 : the word number must be larger than 4\n"
+      print( "Error in DpgenRf2 : the word number must be larger than 4\n" )
       sys.exit ( 1 )
     
     if nbit % 2 == 1 or nbit > 64 or nbit < 2 :
-      print "Error in DpgenRf2 : the bit number must be even and no larger than 64\n"
+      print( "Error in DpgenRf2 : the bit number must be even and no larger than 64\n" )
       sys.exit ( 1 )
     
     adrange = 2
@@ -1080,7 +1079,7 @@ class top_rf2 ( Model ) :
   ## VBE ##
   #########
   def Vbe ( self ) :
-    print 'RF2 behavior not implemented'
+    print( 'RF2 behavior not implemented' )
 
 
 

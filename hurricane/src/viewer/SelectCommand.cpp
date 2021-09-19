@@ -18,9 +18,6 @@
 #include  <QMouseEvent>
 #include  <QKeyEvent>
 #include  <QAction>
-
-//#include  <boost/regex.hpp>
-
 #include  "hurricane/Path.h"
 #include  "hurricane/Entity.h"
 #include  "hurricane/Net.h"
@@ -132,9 +129,6 @@ namespace Hurricane {
   {
     cdebug_log(18,0) << "Occurrences_GetNets::Locator::progress()" << endl;
 
-  //boost::regex   pattern ( "onymous" );
-  //boost::smatch  match;
-
     for ( ; _primaryLoc->isValid() ; _primaryLoc->progress() ) {
       Occurrence element = _primaryLoc->getElement();
 
@@ -144,9 +138,6 @@ namespace Hurricane {
       Net*       net = component->getNet();
       Occurrence netOccurrence ( net, element.getPath() );
 
-      //if ( _hideAnonymous
-      //   and boost::regex_search(getString(net->getName()),match,pattern,boost::match_extra) )
-      //  continue;
       if ( _hideAnonymous
          and QString(getString(net->getName()).c_str()).contains("onymous") )
         continue;

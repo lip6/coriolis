@@ -14,7 +14,7 @@
 // +-----------------------------------------------------------------+
 
 #include <unistd.h>
-#include "vlsisapd/utilities/Path.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/Initializer.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"

@@ -17,7 +17,7 @@
                         ${HURRICANE_INCLUDE_DIR}
                         ${CIF_INCLUDE_DIR}
                         ${CONFIGURATION_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIR}
                       )
 
@@ -43,7 +43,7 @@
                                     PyToolEngineCollection.cpp
                                     PyGraphicToolEngine.cpp
                                     PyAcmSigda.cpp
-                                    PyIspd05.cpp
+                                   #PyIspd05.cpp
                                     PySpice.cpp
                                     PyBlif.cpp
                                     PyGds.cpp
@@ -65,7 +65,7 @@
                                     crlcore/PyToolEngineCollection.h
                                     crlcore/PyGraphicToolEngine.h
                                     crlcore/PyAcmSigda.h
-                                    crlcore/PyIspd05.h
+                                   #crlcore/PyIspd05.h
                                     crlcore/PySpice.h
                                     crlcore/PyBlif.h
                                     crlcore/PyGds.h

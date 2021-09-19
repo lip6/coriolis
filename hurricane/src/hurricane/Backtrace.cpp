@@ -90,7 +90,7 @@
 #include  <sstream>
 #include  <iomanip>
 #include  <map>
-#include  <boost/regex.hpp>
+#include  <regex>
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 #include  "hurricane/Backtrace.h"
@@ -458,18 +458,18 @@ namespace Hurricane {
 #endif
 
 #if (defined __linux__ || defined __FreeBSD__)
-    boost::regex  re ( "(?<dsoPath>[^(]+)\\((?<symbol>[^+]+)\\+(?<symoff>[^)]+)\\) \\[(?<rlocAddr>.+)]" ); 
-    boost::cmatch match;
+    std::regex  re ( "([^(]+)\\(([^+]+)\\+([^)]+)\\) \\[(.+)]" ); 
+    std::cmatch match;
     string        homeDir = getHome();
 
     for ( size_t i=0 ; i<depth ; ++i ) {
-      if (boost::regex_search(symbols[i],match,re)) {
-        int64_t       symbolOffset = std::stol( match["symoff"  ], 0, 16 );
-        int64_t       rlocAddress  = std::stol( match["rlocAddr"], 0, 16 );
+      if (std::regex_search(symbols[i],match,re)) {
+        // int64_t       symbolOffset = std::stol( match[3], 0, 16 );
+        // int64_t       rlocAddress  = std::stol( match[4], 0, 16 );
         ostringstream debugline;
 
 #ifdef HAVE_LIBBFD
-        Bfd::Request  request ( match["dsoPath"], match["symbol"], symbolOffset, rlocAddress );
+        Bfd::Request  request ( match[1], match[2], symbolOffset, rlocAddress );
 
         if (bfds.lookup(request) and not request.fileName().empty()) {
           string fileName = request.fileName();
@@ -480,8 +480,8 @@ namespace Hurricane {
                     << fileName << ":" << request.lineno();
         } else {
 #endif
-          string demangled = demangle( match["symbol"] );
-          if (demangled.empty()) demangled = match["symbol"];
+          string demangled = demangle( match[2] );
+          if (demangled.empty()) demangled = match[2];
 
           debugline << "<b>" << demangled << "</b>";
 #ifdef HAVE_LIBBFD
@@ -493,12 +493,12 @@ namespace Hurricane {
       }
     }
 #else
-#  ifdef  __APPLE__
-    boost::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\+\\s+(\\d+)" ); 
-    boost::cmatch match;
+#ifdef  __APPLE__
+    std::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\+\\s+(\\d+)" ); 
+    std::cmatch match;
 
     for ( size_t i=0 ; i<depth ; ++i ) {
-      if ( boost::regex_search(symbols[i],match,re) ) {
+      if ( std::regex_search(symbols[i],match,re) ) {
         string function  ( match[4].first, match[4].second );
         string demangled ( demangle(function.c_str()) );
         if (demangled.empty())
@@ -512,9 +512,9 @@ namespace Hurricane {
         _stack.push_back( symbols[i] );
       }
     }
-#  else
+#else
     _stack.push_back( "Backtrace only supported under FreeBSD, Linux and OSX." );
-#  endif
+#endif
 #endif
     _inConstructor = false;
   }

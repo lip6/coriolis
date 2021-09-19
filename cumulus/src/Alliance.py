@@ -360,7 +360,7 @@ def staticInitialization ():
   try:
     print '     o  Running configuration hook: Alliance.staticInitialization().'
     print '        - Loading \"%s\".' % helpers.truncPath(confFile)
-    execfile( confFile, moduleGlobals )
+    exec( open(confFile).read() ) #, moduleGlobals )
   except Exception, e:
     print '[ERROR] An exception occured while loading the configuration file:'
     print '        <%s>\n' % (confFile)

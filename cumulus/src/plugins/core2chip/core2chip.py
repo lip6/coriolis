@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2018, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -238,7 +238,7 @@ class IoPad ( object ):
 
         ioNet.buildNets( context )
 
-      if not self.coreToChip.ioPadInfos.has_key(self.direction):
+      if not self.direction in self.coreToChip.ioPadInfos:
         raise ErrorMessage( 1, 'IoPad.createPad(): Unsupported direction %d (%s) for pad "%s".' \
                                % (self.direction
                                  ,IoPad.directionToStr(self.direction)
@@ -315,16 +315,16 @@ class CoreToChip ( object ):
 
 
     def hasIoNet ( self, netName ):
-        if self._ioNets.has_key(netName): return True
+        if netName in self._ioNets: return True
         return False
 
 
     def getIoNet ( self, coreNet ):
         if isinstance(coreNet,str):
-          if self._ioNets.has_key(coreNet): return self._ioNet[ coreNet ]
+          if coreNet in self._ioNets: return self._ioNet[ coreNet ]
           raise ErrorMessage( 1, 'CoreToChip.getIoNet(): Cannot lookup net "%s" by name.' % coreNet )
 
-        if not self._ioNets.has_key(coreNet.getName()):
+        if not coreNet.getName() in self._ioNets:
           self._ioNets[ coreNet.getName() ] = IoNet( self, coreNet )
 
         return self._ioNets[ coreNet.getName() ]
@@ -350,7 +350,7 @@ class CoreToChip ( object ):
         return
 
     def _buildStandardPad ( self, ioNet ):
-      if not self.ioPadInfos.has_key(ioNet.coreNet.getDirection()):
+      if not ioNet.coreNet.getDirection() in self.ioPadInfos:
         raise ErrorMessage( 1, 'CoreToChip._buildStandardPad(): Unsupported direction %d (%s) for core net "%s".' \
                                % (ioNet.coreNet.getDirection()
                                  ,netDirectionToStr(ioNet.coreNet.getDirection())

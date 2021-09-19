@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -29,7 +28,6 @@ import plugins.chip.chip
 def unicornHook ( **kw ):
     kw['beforeAction'] = 'placeAndRoute.stepByStep'
    #kw['beforeAction'] = 'placeAndRoute.clockTree'
-
     plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
     plugins.kwUnicornHook( 'placeAndRoute.placeChip'
                          , 'PLace Chip'
@@ -45,19 +43,15 @@ def scriptMain ( **kw ):
     try:
        #helpers.setTraceLevel( 550 )
         cell, editor = plugins.kwParseMain( **kw )
-      
         conf = plugins.chip.configuration.loadConfiguration( cell, editor )
         conf.chipValidate()
         if not conf.validated: return False
-      
         placeChip = plugins.chip.chip.PlaceRoute( conf )
         placeChip.doChipPlacement()
         return placeChip.validated
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
         rvalue = False
-
     sys.stdout.flush()
     sys.stderr.flush()
-        
     return rvalue

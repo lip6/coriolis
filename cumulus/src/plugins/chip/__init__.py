@@ -1,7 +1,6 @@
-# -*- explicit-buffer-name: "__init__.py<cumulus/plugins/chip>" -*-
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -41,12 +40,12 @@ OnVerticalPitch   = 0x0100
 
 def importConstants ( symbols ):
     if not isinstance(symbols,dict):
-      print WarningMessage( 'plugins.chip.__init__.importConstants(), argument is not a symbol table.' )
+      print( WarningMessage( 'plugins.chip.__init__.importConstants(), argument is not a symbol table.' ))
       return
 
     for symbol in globals().items():
-      if isinstance(symbol[1],int) or  isinstance(symbol[1],long):
-        if not symbols.has_key(symbol[0]):
+      if isinstance(symbol[1],int):
+        if not symbol[0] in symbols:
           symbols[ symbol[0] ] = symbol[1]
   
     return

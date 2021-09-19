@@ -12,10 +12,9 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options)
  setup_qt()
  
- find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
  find_package(EQUINOX REQUIRED)

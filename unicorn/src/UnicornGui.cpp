@@ -29,8 +29,8 @@
 #include "crlcore/LibraryManager.h"
 #include "crlcore/GraphicToolEngine.h"
 #include "crlcore/AcmSigda.h"
-#include "crlcore/Ispd04Bookshelf.h"
-#include "crlcore/Ispd05Bookshelf.h"
+//#include "crlcore/Ispd04Bookshelf.h"
+//#include "crlcore/Ispd05Bookshelf.h"
 #include "crlcore/Gds.h"
 #include "crlcore/Blif.h"
 #include "crlcore/Iccad04Lefdef.h"
@@ -59,8 +59,8 @@ namespace Unicorn {
   using CRL::AllianceFramework;
   using CRL::LibraryManager;
   using CRL::AcmSigda;
-  using CRL::Ispd04;
-  using CRL::Ispd05;
+//using CRL::Ispd04;
+//using CRL::Ispd05;
   using CRL::Gds;
   using CRL::Blif;
   using CRL::Iccad04Lefdef;
@@ -102,8 +102,8 @@ namespace Unicorn {
     _importCell.addImporter<Cell*>   ( "ACM/SIGDA (aka MCNC, .bench)", std::bind( &AcmSigda::load     , placeholders::_1 ) );
     /* Disabled because this is never the one you want
     _importCell.addImporter<Cell*>   ( "ISPD'04 (Bookshelf)"         , std::bind( &Ispd04::load       , placeholders::_1 ) );
-    */
     _importCell.addImporter<Cell*>   ( "ISPD'05 (Bookshelf)"         , std::bind( &Ispd05::load       , placeholders::_1 ) );
+    */
     _importCell.addImporter<Cell*>   ( "ICCAD'04 (LEF/DEF)"          , std::bind( &Iccad04Lefdef::load, placeholders::_1, 0 ) );
     _importCell.addImporter<Cell*>   ( "Alliance compliant DEF"      , std::bind( &DefImport::load    , placeholders::_1, DefImport::FitAbOnCells) );
     _importCell.addImporter<Library*>( "Cadence LEF"                 , std::bind( &LefImport::load    , placeholders::_1 ) );

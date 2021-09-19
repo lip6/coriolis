@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2021-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2021-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 from   Hurricane  import DbU, Point, Transformation, Box, Interval,  \
                          Path, Occurrence, UpdateSession, Net,       \
@@ -136,16 +135,16 @@ class HorizontalRail ( Rail ):
                 trace( 550, '\t| Chunk=[{} {}]\n'.format( DbU.getValueString(chunk.getVMin())
                                                         , DbU.getValueString(chunk.getVMax()) ))
                 chunkBb = Box( chunk.getVMin()
-                             , self.axis - self.width/2
+                             , self.axis - self.width//2
                              , chunk.getVMax()
-                             , self.axis + self.width/2 )
+                             , self.axis + self.width//2 )
                 overlap = stripeBb.getIntersection( chunkBb )
                 if overlap.isEmpty(): continue
                 if overlap.getWidth() > 5*viaWidth:
                     trace( 550, '\t| Large overlap={}\n'.format(overlap) )
                     via = BigVia( stripe.getNet()
                                 , plane.getLayerDepth(stripe.getLayer())
-                                , overlap.getXMin() + viaWidth/2
+                                , overlap.getXMin() + viaWidth//2
                                 , overlap.getYCenter()
                                 , viaWidth
                                 , overlap.getHeight()
@@ -155,7 +154,7 @@ class HorizontalRail ( Rail ):
                     via.doLayout()
                     via = BigVia( stripe.getNet()
                                 , plane.getLayerDepth(stripe.getLayer())
-                                , overlap.getXMax() - viaWidth/2
+                                , overlap.getXMax() - viaWidth//2
                                 , overlap.getYCenter()
                                 , viaWidth
                                 , overlap.getHeight()
@@ -217,9 +216,9 @@ class Rails ( object ):
         else:
             axis  = bb.getXCenter()
             width = bb.getWidth()
-        if not self.axisLut.has_key(axis):
+        if not axis in self.axisLut:
             self.axisLut[ axis ] = {}
-        if not self.axisLut[axis].has_key(width):
+        if not width in self.axisLut[axis]:
             if self.isHorizontal:
                 self.axisLut[ axis ][ width ] = HorizontalRail( bb )
             else:
@@ -259,8 +258,8 @@ class VerticalRails ( Rails ):
 
 class Plane ( object ):
   
-    Horizontal = 0001
-    Vertical   = 0002
+    Horizontal = 1
+    Vertical   = 2
   
     def __init__ ( self, builder, metal ):
         self.builder      = builder
@@ -358,20 +357,20 @@ class Stripes ( object ):
             if pin.getLayer() != self.supplyLayer: continue
             key = pin.getX()
             if pin.getAccessDirection() == Pin.Direction.SOUTH:
-                if not self.powers.has_key(key): self.powers[ key ] = Stripe( self, pin, None )
-                else:                            self.powers[ key ].southPin = pin
+                if not key in self.powers: self.powers[ key ] = Stripe( self, pin, None )
+                else:                      self.powers[ key ].southPin = pin
             elif pin.getAccessDirection() == Pin.Direction.NORTH:
-                if not self.powers.has_key(key): self.powers[ key ] = Stripe( self, None, pin )
-                else:                            self.powers[ key ].northPin = pin
+                if not key in self.powers: self.powers[ key ] = Stripe( self, None, pin )
+                else:                      self.powers[ key ].northPin = pin
         for pin in self.conf.coronaVss.getPins():
             if pin.getLayer() != self.supplyLayer: continue
             key = pin.getX()
             if pin.getAccessDirection() == Pin.Direction.SOUTH:
-                if not self.grounds.has_key(key): self.grounds[ key ] = Stripe( self, pin, None )
-                else:                             self.grounds[ key ].southPin = pin
+                if not key in self.grounds: self.grounds[ key ] = Stripe( self, pin, None )
+                else:                       self.grounds[ key ].southPin = pin
             elif pin.getAccessDirection() == Pin.Direction.NORTH:
-                if not self.grounds.has_key(key): self.grounds[ key ] = Stripe( self, None, pin )
-                else:                             self.grounds[ key ].northPin = pin
+                if not key in self.grounds: self.grounds[ key ] = Stripe( self, None, pin )
+                else:                       self.grounds[ key ].northPin = pin
 
     @property
     def conf ( self ): return self.builder.conf
@@ -401,8 +400,8 @@ class GoCb ( object ):
         elif isinstance(go,Vertical):   managed = True
         if not managed: return
         rootNet = None
-        if go.getNet().getType() == long(Net.Type.POWER):  rootNet = self.builder.conf.coronaVdd
-        if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.builder.conf.coronaVss
+        if go.getNet().getType() == int(Net.Type.POWER):  rootNet = self.builder.conf.coronaVdd
+        if go.getNet().getType() == int(Net.Type.GROUND): rootNet = self.builder.conf.coronaVss
         if not rootNet: return
         if not NetExternalComponents.isExternal(go): return
         if self.builder.activePlane:

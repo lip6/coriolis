@@ -94,12 +94,12 @@
    set(ADDTIONAL_FLAGS "")
    set(CXX_STANDARD "c++11")
  endif()
- set(CMAKE_C_FLAGS_DEBUG     "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
-#set(CMAKE_C_FLAGS_DEBUG     "                     -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
+#set(CMAKE_C_FLAGS_DEBUG     "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
+ set(CMAKE_C_FLAGS_DEBUG     "                     -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C Compiler Debug options."     FORCE)
  set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -O2                ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
 #set(CMAKE_C_FLAGS_RELEASE   "                     -Wall -fsanitize=address ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C Compiler Release options."   FORCE)
- set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
-#set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+#set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
+ set(CMAKE_CXX_FLAGS_DEBUG   "-std=${CXX_STANDARD} -Wall                    ${ADDTIONAL_FLAGS} ${DEBUG_FLAGS}" CACHE STRING "C++ Compiler Debug options."   FORCE)
  set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -O2                ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
 #set(CMAKE_CXX_FLAGS_RELEASE "-std=${CXX_STANDARD} -Wall -fsanitize=address ${ADDTIONAL_FLAGS} -DNDEBUG"       CACHE STRING "C++ Compiler Release options." FORCE)
 
@@ -418,8 +418,30 @@
                         )
    target_link_libraries( ${pytarget}  ${pyDeplibs} )
 
-                 install( TARGETS      ${pytarget}    DESTINATION ${PYTHON_SITE_PACKAGES} )
+                 install( TARGETS      ${pytarget}    DESTINATION ${Python_CORIOLISARCH} )
    if( NOT ("${pyIncludes}" STREQUAL "None") )
                  install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
    endif()
  endmacro( add_python_module )
+
+
+#
+# Build a Python extention module (3rd version).
+# Usage:
+#   * pyCpps:          The list of C/C++ module files.
+#   * pyIncludes:      The list of C/C++ header files (will be installed in
+#                      "inc_install_dir").
+#   * pymodule:        The name of the Python module (for "import PYMODULE").
+#   * deplibs:         The list of dependencies.
+#   * inc_install_dir: The directory into which install the includes.
+#
+ macro( add_python_module3 pyCpps pyIncludes pymodule deplibs inc_install_dir )
+             add_library( ${pymodule}  MODULE ${pyCpps} ) 
+   set_target_properties( ${pymodule}  PROPERTIES PREFIX "" )
+   target_link_libraries( ${pymodule}  ${deplibs} )
+
+                 install( TARGETS      ${pymodule}    DESTINATION ${Python_CORIOLISARCH} )
+   if( NOT ("${pyIncludes}" STREQUAL "None") )
+                 install( FILES        ${pyIncludes}  DESTINATION ${inc_install_dir} )
+   endif()
+ endmacro( add_python_module3 )

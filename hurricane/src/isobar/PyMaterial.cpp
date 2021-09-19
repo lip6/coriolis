@@ -129,15 +129,19 @@ extern "C" {
   // |                "PyMaterial" Object Methods                  |
   // +-------------------------------------------------------------+
 
-  static int  PyMaterial_Cmp ( PyMaterial *self, PyObject* other )
+  static PyObject* PyMaterial_Cmp ( PyMaterial *self, PyObject* other, int op )
   {
-    if (not IsPyMaterial(other) ) return -1;
+    if (not IsPyMaterial(other) ) Py_RETURN_FALSE;
 
     PyMaterial* otherPyObject = (PyMaterial *)other;
-    if (self->_object->getCode() == otherPyObject->_object->getCode()) return  0;
-    if (self->_object->getCode() <  otherPyObject->_object->getCode()) return -1;
+    if ((op == Py_LT) and (self->_object->getCode() <  otherPyObject->_object->getCode())) Py_RETURN_TRUE;
+    if ((op == Py_LE) and (self->_object->getCode() <= otherPyObject->_object->getCode())) Py_RETURN_TRUE;
+    if ((op == Py_EQ) and (self->_object->getCode() == otherPyObject->_object->getCode())) Py_RETURN_TRUE;
+    if ((op == Py_NE) and (self->_object->getCode() != otherPyObject->_object->getCode())) Py_RETURN_TRUE;
+    if ((op == Py_GT) and (self->_object->getCode() >  otherPyObject->_object->getCode())) Py_RETURN_TRUE;
+    if ((op == Py_GE) and (self->_object->getCode() >= otherPyObject->_object->getCode())) Py_RETURN_TRUE;
 
-    return 1;
+    Py_RETURN_FALSE;
   }
 
   DirectHashMethod  (PyMaterial_Hash   , Material)
@@ -148,13 +152,13 @@ extern "C" {
   extern void  PyMaterial_LinkPyType() {
     cdebug_log(20,0) << "PyMaterial_LinkType()" << endl;
 
-    PyTypeMaterial.tp_new     =              PyMaterial_new;
-    PyTypeMaterial.tp_dealloc = (destructor) PyMaterial_DeAlloc;
-    PyTypeMaterial.tp_repr    = (reprfunc)   PyMaterial_Repr;
-    PyTypeMaterial.tp_str     = (reprfunc)   PyMaterial_Str;
-    PyTypeMaterial.tp_compare = (cmpfunc)    PyMaterial_Cmp;
-    PyTypeMaterial.tp_hash    = (hashfunc)   PyMaterial_Hash;
-    PyTypeMaterial.tp_methods = PyMaterial_Methods;
+    PyTypeMaterial.tp_new         =              PyMaterial_new;
+    PyTypeMaterial.tp_dealloc     = (destructor) PyMaterial_DeAlloc;
+    PyTypeMaterial.tp_repr        = (reprfunc)   PyMaterial_Repr;
+    PyTypeMaterial.tp_str         = (reprfunc)   PyMaterial_Str;
+    PyTypeMaterial.tp_richcompare = (richcmpfunc)PyMaterial_Cmp;
+    PyTypeMaterial.tp_hash        = (hashfunc)   PyMaterial_Hash;
+    PyTypeMaterial.tp_methods     = PyMaterial_Methods;
   }
 
 

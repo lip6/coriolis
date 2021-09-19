@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 from Hurricane  import DbU
 from helpers    import trace
 
@@ -99,7 +98,7 @@ class Rules ( object ):
         return
     
     def addAttr ( self, attribute ):
-        if self.__dict__.has_key(attribute): return
+        if attribute in self.__dict__: return
         
        #print( 'Rules.addAttr(): {}'.format(attribute) )
         value = None
@@ -120,7 +119,7 @@ class Rules ( object ):
                 else:
                     value = rule.getValue()
                    #print( 'Accessed value (DbU):{}'.format(DbU.getValueString(value)) )
-        except Exception, e:
+        except Exception as e:
             print( e )
         
         if not value is None:

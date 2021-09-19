@@ -27,7 +27,7 @@
 #include "hurricane/configuration/LogWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::set;
   using std::string;

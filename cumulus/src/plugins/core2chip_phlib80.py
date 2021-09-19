@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -28,7 +28,6 @@ import core2chip.phlib80
 def unicornHook ( **kw ):
     kw['beforeAction'] = 'placeAndRoute.stepByStep'
    #kw['beforeAction'] = 'placeAndRoute.clockTree'
-
     plugins.kwAddMenu    ( 'placeAndRoute'          , 'P&&R', **kw )
     plugins.kwAddMenu    ( 'placeAndRoute.core2chip', 'Core To Chip', **kw )
     plugins.kwUnicornHook( 'placeAndRoute.core2chip.phlib80'
@@ -41,24 +40,18 @@ def unicornHook ( **kw ):
 
 
 def scriptMain ( **kw ):
-  rvalue = True
-  try:
-   #helpers.setTraceLevel( 550 )
-
-    cell, editor = plugins.kwParseMain( **kw )
-    if not cell:
-      raise ErrorMessage( 1, 'CoreToChip_phlib80.scriptMain(): No cell (core) loaded in the editor yet.' )
-
-    chip_phlib80 = core2chip.phlib80.phlib80( cell )
-    chip_phlib80.buildChip()
-    
-    if editor: editor.setCell( chip_phlib80.chip )
-
-  except Exception, e:
-    helpers.io.catch( e )
-    rvalue = False
-
-  sys.stdout.flush()
-  sys.stderr.flush()
-      
-  return rvalue
+    rvalue = True
+    try:
+       #helpers.setTraceLevel( 550 )
+        cell, editor = plugins.kwParseMain( **kw )
+        if not cell:
+          raise ErrorMessage( 1, 'CoreToChip_phlib80.scriptMain(): No cell (core) loaded in the editor yet.' )
+        chip_phlib80 = core2chip.phlib80.phlib80( cell )
+        chip_phlib80.buildChip()
+        if editor: editor.setCell( chip_phlib80.chip )
+    except Exception as e:
+        helpers.io.catch( e )
+        rvalue = False
+    sys.stdout.flush()
+    sys.stderr.flush()
+    return rvalue

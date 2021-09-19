@@ -19,7 +19,7 @@
 #include <fstream>
 #include <iomanip>
 #include "flute.h"
-#include "vlsisapd/utilities/Path.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/Bug.h"

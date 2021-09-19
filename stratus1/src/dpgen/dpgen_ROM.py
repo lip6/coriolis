@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -113,12 +112,12 @@ class TopRom ( Model ) :
     elif self.nword ==  512 : adrange =  9
     elif self.nword == 1024 : adrange = 10
     else :
-      print "Error : DPGEN_ROM"
-      print "The word number (nword := %d) ", nword, "can only takes values : 64, 128, 256, 512 or 1024.\n"
+      print( "Error : DPGEN_ROM" )
+      print( "The word number (nword := %d) ", nword, "can only takes values : 64, 128, 256, 512 or 1024.\n" )
       sys.exit ( 3 )
     
     if self.nbit % 4 != 0 or self.nbit > 64 or self.nbit < 4 :
-      raise "\n[Stratus ERROR] DPGEN_ROM : The bus width (nbit := %d) ", nbit, "must be multiple of 4 and no larger than 64.\n"
+      raise( "\n[Stratus ERROR] DPGEN_ROM : The bus width (nbit := %d) ", nbit, "must be multiple of 4 and no larger than 64.\n" )
     
     self.ck     = SignalIn  (     "ck", 1 )
     self.selrom = SignalIn  ( "selrom", 1 )

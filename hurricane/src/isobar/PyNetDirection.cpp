@@ -69,12 +69,12 @@ extern "C" {
 
   extern void  PyNetDirection_LinkPyType() {
     cdebug_log(20,0) << "PyNetDirection_LinkType()" << endl;
-    PyTypeNetDirection.tp_dealloc = (destructor) PyNetDirection_DeAlloc;
-    PyTypeNetDirection.tp_compare = (cmpfunc)    PyNetDirection_Cmp;
-    PyTypeNetDirection.tp_repr    = (reprfunc)   PyNetDirection_Repr;
-    PyTypeNetDirection.tp_str     = (reprfunc)   PyNetDirection_Str;
-    PyTypeNetDirection.tp_hash    = (hashfunc)   PyNetDirection_Hash;
-    PyTypeNetDirection.tp_methods = PyNetDirection_Methods;
+    PyTypeNetDirection.tp_dealloc     = (destructor) PyNetDirection_DeAlloc;
+    PyTypeNetDirection.tp_richcompare = (richcmpfunc)PyNetDirection_Cmp;
+    PyTypeNetDirection.tp_repr        = (reprfunc)   PyNetDirection_Repr;
+    PyTypeNetDirection.tp_str         = (reprfunc)   PyNetDirection_Str;
+    PyTypeNetDirection.tp_hash        = (hashfunc)   PyNetDirection_Hash;
+    PyTypeNetDirection.tp_methods     = PyNetDirection_Methods;
   }
 
 

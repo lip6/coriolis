@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import traceback
 import os.path
@@ -37,7 +35,7 @@ try:
     import Katana
     import Unicorn
     import plugins
-except Exception, e:
+except Exception as e:
     catch( e )
     sys.exit(2)
 
@@ -88,11 +86,11 @@ def scriptMain ( **kw ):
             useFixedAbHeight = Cfg.getParamBool('conductor.useFixedAbHeight').asBool()
       
         cell = None
-        if kw.has_key('cell') and kw['cell']:
+        if ('cell' in kw) and kw['cell']:
             cell = kw['cell']
       
         editor = None
-        if kw.has_key('editor') and kw['editor']:
+        if ('editor' in kw) and kw['editor']:
             editor = kw['editor']
             print( '  o  Editor found, running in graphic mode.' )
             editor.setLayerVisible( 'rubber', False )
@@ -168,7 +166,7 @@ def scriptMain ( **kw ):
       
         Cfg.Configuration.popDefaultPriority()
   
-    except Exception, e:
+    except Exception as e:
         catch( e )
         
     return 0

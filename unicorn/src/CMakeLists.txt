@@ -9,7 +9,7 @@
                         ${QtX_INCLUDE_DIR}
                         ${Boost_INCLUDE_DIRS}
                         ${LEFDEF_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
        add_definitions( -DSYS_CONF_DIR="${SYS_CONF_DIR}" )
 
@@ -69,7 +69,7 @@
                                       ${OA_LIBRARIES}
                                       ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
-                                      ${PYTHON_LIBRARIES}
+                                      ${Python_LIBRARIES}
                                       -lutil
                                       ${LIBXML2_LIBRARIES}
                                       ${LIBBFD_LIBRARIES}

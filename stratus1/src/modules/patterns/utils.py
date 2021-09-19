@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -174,7 +173,7 @@ def str2uint(val):
 def int2str(value, wl):
     res = ""
     for pos in range(wl):
-        res = str( (value & 1L<<pos) >>pos) + res
+        res = str( (value & 1<<pos) >>pos) + res
     return res
 
 # ------------------------------------------------------
@@ -233,7 +232,7 @@ def runpat(name_vst, name_pat, options='', stdout=False, stderr=True):
         cmd_str += ' 2> /dev/null'
 
     result = system(cmd_str)
-    if not result : print "Simulation OK"
+    if not result : print( "Simulation OK" )
 
     return result
 

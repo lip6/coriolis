@@ -1,7 +1,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2012-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -25,7 +25,6 @@ Contains:
 * ``overlay.CfgCache``      : A cache for Cfg parameters.
 """
 
-from   __future__ import print_function
 import Cfg
 import Hurricane
 
@@ -80,9 +79,6 @@ class Configuration:
                 Cfg.getParamEnumerate(attr).setInt( val )
             else:
                 Cfg.getParamInt(attr).setInt( val )
-        elif isinstance(val, long):
-            p = Cfg.getParamInt( attr ) # all params have a type
-            p.setInt( val )
         elif isinstance(val, float):
             p = Cfg.getParamDouble( attr ).setDouble( val )
         elif '%' in val:
@@ -138,7 +134,6 @@ class CachedParameter ( object ):
             if   len(self.vEnum):          p = Cfg.getParamEnumerate( self.path )
             elif isinstance(self.v,bool ): p = Cfg.getParamBool     ( self.path )
             elif isinstance(self.v,int  ): p = Cfg.getParamInt      ( self.path )
-            elif isinstance(self.v,long ): p = Cfg.getParamInt      ( self.path )
             elif isinstance(self.v,float): p = Cfg.getParamDouble   ( self.path )
             else:                          p = Cfg.getParamString   ( self.path )
         if   p.type == Cfg.Parameter.Type.Enumerate:  p.setInt      ( self.v )
@@ -281,7 +276,7 @@ class CfgCache ( object ):
         vEnum  = None
         if isinstance(v,list ): vRange = v; v = None
         if isinstance(v,tuple): vEnum  = v; v = None
-        if not self._rattr.has_key(attr):
+        if not attr in self._rattr:
             self._rattr[ attr ] = CachedParameter( self._path+'.'+attr, v )
         if   vRange is not None: self._rattr[ attr ].vRange = vRange
         elif vEnum  is not None: self._rattr[ attr ].vEnum  = vEnum
@@ -292,7 +287,7 @@ class CfgCache ( object ):
         Get an attribute, if it doesn't exists, then we are in an intermediate
         level like ``katana``, so create a new sub CfgCache for that attribute.
         """
-        if not self._rattr.has_key(attr):
+        if not attr in self._rattr:
             path = self._path+'.'+attr if len(self._path) else attr
             self._rattr[attr] = CfgCache( path, self._priority )
         if isinstance(self._rattr[attr],CachedParameter):
@@ -300,7 +295,7 @@ class CfgCache ( object ):
         return self._rattr[attr]
 
     def _hasCachedParam ( self, elements ):
-        if not self._rattr.has_key(elements[0]):
+        if not elements[0] in self._rattr:
             return False
         if len(elements) == 1:
             return True

@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2021-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2021-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import traceback
 import os.path
@@ -27,7 +25,7 @@ try:
     from   helpers.io import WarningMessage
     import plugins
     from   Hurricane  import Net, Plug
-except Exception, e:
+except Exception as e:
     helpers.io.catch( e )
     sys.exit(2)
 
@@ -92,7 +90,7 @@ def scriptMain ( **kw ):
             print( WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' ) )
             return 0
         oneDriver( cell )
-    except Exception, e:
+    except Exception as e:
       helpers.io.catch( e )
     sys.stdout.flush()
     sys.stderr.flush()

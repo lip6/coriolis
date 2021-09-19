@@ -1,7 +1,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -17,7 +17,6 @@
 Some helpers to create or load a technology and it's libraries.
 """
 
-from __future__ import print_function
 from Hurricane  import DataBase, Library, BasicLayer, Layer, ViaLayer
 
 

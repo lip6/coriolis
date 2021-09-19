@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -153,10 +152,10 @@ class Constant ( Model ) :
     nb = param['nb']
     
     # Error : if nb is not a string
-    if type ( nb ) not in [types.StringType, types.IntType, types.LongType] : raise "\n[Stratus ERROR] Constant : the argument must be a string, int or long.\n"
+    if not isinstance(nb,str) and not isinstance(nb,int): raise "\n[Stratus ERROR] Constant : the argument must be a string, int or long.\n"
       
     ### String representing a binary number ( from the LSB to the MSB ) ###
-    if isinstance(nb, types.StringType):
+    if isinstance(nb,str):
       bina = re.search (         "0[bB]([0-1]+)", nb )
       hexa = re.search ( "0[xX]([0-9,A-F,a-f]+)", nb )
       oct  = re.search (         "0[oO]([0-7]+)", nb )

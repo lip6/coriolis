@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2015-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <QFont>
 #include <QApplication>
-#include "vlsisapd/utilities/Path.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/Error.h"
 #include "hurricane/Cells.h"
 #include "hurricane/Library.h"
@@ -26,7 +26,7 @@
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/Catalog.h"
 #include "crlcore/AcmSigda.h"
-#include "crlcore/Ispd05Bookshelf.h"
+//#include "crlcore/Ispd05Bookshelf.h"
 #include "crlcore/Blif.h"
 #include "crlcore/Iccad04Lefdef.h"
 #include "crlcore/CellsModel.h"
@@ -94,11 +94,11 @@ namespace CRL {
                                         , CellLoader::Importer
                                         , Catalog::State::Logical
                                         , std::bind( &AcmSigda::load, placeholders::_1 ) ) );
-      loaders->addLoader( new CellLoader("aux"
-                                        , "ISPD'05 (Bookshelf)"
-                                        , CellLoader::Importer
-                                        , Catalog::State::Logical|Catalog::State::Physical
-                                        , std::bind( &Ispd05::load, placeholders::_1 ) ) );
+//    loaders->addLoader( new CellLoader("aux"
+//                                      , "ISPD'05 (Bookshelf)"
+//                                      , CellLoader::Importer
+//                                      , Catalog::State::Logical|Catalog::State::Physical
+//                                      , std::bind( &Ispd05::load, placeholders::_1 ) ) );
       loaders->addLoader( new CellLoader("blif"
                                         , "BLIF (Yosys/ABC)"
                                         , CellLoader::Importer|CellLoader::MultiCell

@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -124,8 +123,8 @@ class PlaceRoute ( object ):
 
     UpdateSession.open()
     self.conf.core.setAbutmentBox( self.conf.coreSize )
-    x = (coronaAb.getWidth () - self.conf.coreSize.getWidth ()) / 2
-    y = (coronaAb.getHeight() - self.conf.coreSize.getHeight()) / 2
+    x = (coronaAb.getWidth () - self.conf.coreSize.getWidth ()) // 2
+    y = (coronaAb.getHeight() - self.conf.coreSize.getHeight()) // 2
     x = x - (x % self.conf.getSliceHeight())
     y = y - (y % self.conf.getSliceHeight())
     self.conf.icore.setTransformation ( Transformation(x,y,Transformation.Orientation.ID) )
@@ -150,7 +149,7 @@ class PlaceRoute ( object ):
         if plug.getInstance() == self.conf.icore:
           coreCk = plug.getMasterNet()
       if not coreCk:
-        print WarningMessage( 'Core <%s> is not connected to chip clock.' % self.conf.icore.getName() )
+        print( WarningMessage( 'Core "{}" is not connected to chip clock.'.format(self.conf.icore.getName()) ))
 
     if self.conf.useClockTree and coreCk:
       ht = plugins.cts.clocktree.HTree.create( self.conf, coreCell, coreCk, coreCell.getAbutmentBox() )
@@ -160,6 +159,8 @@ class PlaceRoute ( object ):
       etesian.setBlock(  self.conf.icore )
       etesian.setViewer( self.conf.viewer )
       etesian.place()
+      etesian.toHurricane()
+      etesian.flattenPower()
       etesian.destroy()
 
       ht.connectLeaf()
@@ -169,6 +170,8 @@ class PlaceRoute ( object ):
       etesian = Etesian.EtesianEngine.create( self.conf.corona )
       etesian.setBlock( self.conf.icore )
       etesian.place()
+      etesian.toHurricane()
+      etesian.flattenPower()
       etesian.destroy()
     return
 

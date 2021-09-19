@@ -19,7 +19,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/UpdateSession.h"

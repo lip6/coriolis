@@ -28,7 +28,7 @@
 #include "hurricane/configuration/ConfigurationWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::cerr;
   using std::endl;

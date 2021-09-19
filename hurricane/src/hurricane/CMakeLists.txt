@@ -1,8 +1,10 @@
 
- include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane 
-                       ${CONFIGURATION_INCLUDE_DIR}
+ include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+                       ${HURRICANE_SOURCE_DIR}/src/configuration3 
+                       ${RapidJSON_INCLUDE_DIRS}
                        ${Boost_INCLUDE_DIRS}
                        ${BZIP2_INCLUDE_DIR}
+                       ${CMAKE_INSTALL_PREFIX}/include
                      )
                  set ( includes hurricane/Mask.h
                                 hurricane/Flags.h

@@ -1,7 +1,6 @@
-# -*- explicit-buffer-name: "__init__.py<cumulus/plugins>" -*-
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,6 +15,7 @@
 
 import os
 import sys
+import traceback
 import Cfg
 import helpers
 from   helpers.io import vprint
@@ -30,26 +30,22 @@ import CRL
 from   CRL        import RoutingLayerGauge
 
 
-NoFlags           = 0000
-ShowWarnings      = 0001
-WarningsAreErrors = 0002
+NoFlags           = 0
+ShowWarnings      = 1
+WarningsAreErrors = 2
 loaded            = False
 
 
-
-def  kwParseMain ( **kw ):
+def kwParseMain ( **kw ):
     cell = None
-    if kw.has_key('cell') and kw['cell']:
+    if ('cell' in kw) and kw['cell']:
         cell = kw['cell']
-
     editor = None
-    if kw.has_key('editor') and kw['editor']:
+    if ('editor' in kw) and kw['editor']:
         editor = kw['editor']
         if cell == None: cell = editor.getCell()
-
    #if cell == None:
    #  raise ErrorMessage( 3, 'Chip: No cell loaded yet.' )
-
     return cell, editor
 
 
@@ -66,8 +62,7 @@ def kwUnicornHook ( menuPath, menuName, menuTip, moduleFile, **kw ):
     editor = kw['editor']
     if moduleFile.endswith('.pyc') or moduleFile.endswith('.pyo'):
         moduleFile = moduleFile[:-1]
-
-    if kw.has_key('beforeAction'):
+    if 'beforeAction' in kw:
         editor.addToMenu( menuPath, menuName, menuTip, moduleFile, kw['beforeAction'] )
     else:  
         editor.addToMenu( menuPath, menuName, menuTip, moduleFile )
@@ -110,7 +105,7 @@ class CheckUnplaced ( object ):
                 error = ErrorMessage( 3, message )
                 
                 if self.flags & WarningsAreErrors: raise error
-                else:                              print error
+                else:                              print( error )
         return self.unplaceds
 
 
@@ -137,7 +132,7 @@ class StackedVia ( object ):
 
     def mergeDepth ( self, depth ):
         if self._hasLayout:
-            print WarningMessage( 'StackedVia.mergeDepth(): Cannot be called *after* StackVia.doLayout()' )
+            print( WarningMessage( 'StackedVia.mergeDepth(): Cannot be called *after* StackVia.doLayout()' ))
             return
         if depth < self._bottomDepth: self._bottomDepth = depth
         if depth > self._topDepth:    self._topDepth    = depth
@@ -187,17 +182,32 @@ class StackedVia ( object ):
                                                      , 0          , 0
                                                      , self._width, self._height
                                                      ) )
-                   #print '    Sub-via: ', self._vias[-1]
+                   #print( '    Sub-via: ', self._vias[-1] )
         return
 
 
 def loadPlugins ( pluginsDir ):
+    """
+    Forced import of all the modules that resides in the directory ``pluginsDir``.
+    Works in three stages:
+   
+    1. Build a list of all the ``.py`` files in the ``pluginsDir``, in case of
+       directories, import the whole package (it is assumed it *is* a Python
+       package directory).
+
+    2. Sort the list of modules to be loaded (alphabetical order).
+       This is an attempt to get the initialization done in deterministic order. 
+
+    3. Import each module in order. 
+
+    .. note:: Those modules will be searched later (in ``unicornInit.py``) for any
+              potential ``unicornHook()`` function.
+    """
     sys.path.append( pluginsDir )
     sys.modules['plugins'].__path__.append( pluginsDir )
-
     if not os.path.isdir(pluginsDir):
-        print ErrorMessage( 3, 'cumulus.__init__.py: Cannot find <cumulus/plugins> directory:' \
-                             , '<%s>' % pluginsDir )
+        print( ErrorMessage( 3, 'cumulus.__init__.py: Cannot find <cumulus/plugins> directory:' \
+                              , '"{}"'.format(pluginsDir) ))
         return
 
     moduleNames = []
@@ -207,26 +217,24 @@ def loadPlugins ( pluginsDir ):
             path = os.path.join(pluginsDir,entry)
             if os.path.isdir(path):
                 packageName = "plugins." + entry
-                if not sys.modules.has_key(packageName):
+                if not packageName in sys.modules:
                     module = __import__( packageName, globals(), locals() )
                 else:
                     module = sys.modules[packageName]
-              
                 module.__path__.append( path )
             continue
         moduleNames.append( entry[:-3] )
 
     moduleNames.sort()
-
     for moduleName in moduleNames:
         try:
-            vprint( 2, '     - "%s"' % moduleName )
+            vprint( 2, '     - "{}"'.format(moduleName) )
             module = __import__( moduleName, globals(), locals() )
-        except ErrorMessage, e:
-            print e
+        except ErrorMessage as e:
+            print( e )
             helpers.showStackTrace( e.trace )
-        except Exception, e:
-            print e
+        except Exception as e:
+            print( e )
             helpers.showPythonTrace( __file__, e )
 
     return
@@ -235,7 +243,6 @@ def loadPlugins ( pluginsDir ):
 def staticInitialization ():
     global loaded
     if loaded: return
-
     try:
         vprint( 1, '  o  Preload standard plugins.' )
         pluginsDir = os.path.dirname(__file__)
@@ -243,13 +250,14 @@ def staticInitialization ():
         
         if helpers.ndaTopDir:
             vprint( 1, '  o  Preload NDA protected plugins.' )
-            pluginsDir = os.path.join( helpers.ndaTopDir, 'python2.7/site-packages/cumulus/plugins' )
+            pluginsDir = os.path.join( helpers.ndaTopDir, 'python{}.{}/site-packages/cumulus/plugins' \
+                                                          .format( sys.version_info.major
+                                                                 , sys.version_info.minor ))
             loadPlugins( pluginsDir )
         else:
             vprint( 1, '  o  No NDA protected plugins.' )
-    except Exception, e:
+    except Exception as e:
         helpers.showPythonTrace( __file__, e )
-
     loaded = True
     return
 

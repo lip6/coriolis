@@ -21,7 +21,7 @@ class QLabel;
 class QPushButton;
 
 
-namespace Cfg2 {
+namespace Cfg {
 
 
   class LogWidget : public QDialog {

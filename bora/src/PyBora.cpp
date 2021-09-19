@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2016-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2016-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -63,12 +63,21 @@ extern "C" {
     };
 
 
-  // ---------------------------------------------------------------
-  // Module Initialization  :  "initBora ()"
+  static PyModuleDef  PyBora_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , .m_name    = "Bora"
+    , .m_doc     = "Analog Place & Global Route."
+    , .m_size    = -1
+    , .m_methods = PyBora_Methods
+    };
 
-  DL_EXPORT(void) initBora ()
+
+  // ---------------------------------------------------------------
+  // Module Initialization  :  "PyInit_Bora ()"
+
+  PyMODINIT_FUNC PyInit_Bora ( void )
   {
-    cdebug.log(61) << "initBora()" << endl;
+    cdebug.log(61) << "PyInit_Bora()" << endl;
 
     PyParameterRange_LinkPyType();
     PyStepParameterRange_LinkPyType();
@@ -95,12 +104,11 @@ extern "C" {
     PYTYPE_READY_SUB( BoraEngine          , ToolEngine     );
     PYTYPE_READY_SUB( GraphicBoraEngine   , GraphicTool    );
 
-
-    PyObject* module = Py_InitModule( "Bora", PyBora_Methods );
+    PyObject* module = PyModule_Create( &PyBora_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Bora module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF( &PyTypeParameterRange );
@@ -128,6 +136,8 @@ extern "C" {
 
     PySlicingNode_postModuleInit();
     PyBoraEngine_postModuleInit();
+
+    return module;
   }
 
   

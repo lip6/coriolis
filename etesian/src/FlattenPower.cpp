@@ -16,7 +16,7 @@
 
 #include <map>
 #include <list>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/Error.h"

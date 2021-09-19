@@ -77,7 +77,7 @@ extern "C" {
     HTRY
       PyObject* arg0;
       if (ParseOneArg("AllianceFramework.create()", args, INT_ARG, &arg0)) {
-        flags = PyInt_AsUnsignedLongMask(arg0);
+        flags = PyLong_AsUnsignedLongMask(arg0);
       }
       af = AllianceFramework::create( flags );
     HCATCH
@@ -230,6 +230,8 @@ extern "C" {
 
     if ( not ParseTwoArg ( "AllianceFramework.saveCell", args, CELL_INT_ARG, &arg0, &arg1) ) return NULL;
 
+  //if (PyAny_AsLong(arg1) & CRL::Catalog::State::Logical)
+  //  cerr << "saveSell() " << PYCELL_O(arg0) << " Logical set" << endl;
     af->saveCell ( PYCELL_O(arg0),PyAny_AsLong(arg1) );
 
     HCATCH

@@ -11,7 +11,7 @@ endif ( CHECK_DETERMINISM )
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
                         ${QtX_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes     katabatic/Constants.h
                                      katabatic/Observer.h
@@ -72,7 +72,7 @@ endif ( CHECK_DETERMINISM )
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                     ${Python_LIBRARIES} -lutil
                       )
 
            add_library( katabatic    ${cpps} )

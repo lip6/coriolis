@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -15,12 +15,12 @@
 
 
 #include <iostream>
-//#include "vlsisapd/utilities/Path.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/configuration/Parameter.h"
 #include "hurricane/configuration/Configuration.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::cerr;
   using std::endl;
@@ -70,7 +70,7 @@ namespace Cfg2 {
   }
 
 
-  Parameter::Type  Parameter::stringToType ( const std::string& stype )
+  Parameter::Type  Parameter::stringToType ( std::string stype )
   {
     if      (stype == "string"    ) return String;
     else if (stype == "int"       ) return Int;
@@ -97,7 +97,7 @@ namespace Cfg2 {
   }
 
 
-  Parameter::Priority  Parameter::stringToPriority ( const std::string& spriority )
+  Parameter::Priority  Parameter::stringToPriority ( std::string spriority )
   {
     if      (spriority == "UseDefault"        ) return UseDefault;
     else if (spriority == "ApplicationBuiltin") return ApplicationBuiltin;
@@ -110,10 +110,10 @@ namespace Cfg2 {
   }
 
 
-  Parameter::Parameter ( const std::string& id
-                       , Type               type
-                       , const std::string& value
-                       , Priority           priority
+  Parameter::Parameter ( std::string id
+                       , Type        type
+                       , std::string value
+                       , Priority    priority
                        )
     : _id       (id)
     , _type     (type)
@@ -195,14 +195,14 @@ namespace Cfg2 {
   }
 
 
-  bool  Parameter::setRawString ( const string& s, Priority priority )
+  bool  Parameter::setRawString ( string s, Priority priority )
   {
     if ( not _updatePriority(priority) ) return false;
     return _doChange ( _flags|FromString, s, false, 0, 0.0 );
   }
 
 
-  bool  Parameter::setString ( const std::string& s, Priority priority, unsigned int flags )
+  bool  Parameter::setString ( std::string s, Priority priority, unsigned int flags )
   {
     if ( not _updatePriority(priority) ) return false;
 
@@ -294,7 +294,7 @@ namespace Cfg2 {
   }
 
 
-  bool  Parameter::_doChange ( unsigned int flags, const string& s, bool b, int i, double d )
+  bool  Parameter::_doChange ( unsigned int flags, string s, bool b, int i, double d )
   {
   //cerr << "_doChange: " << _id << ":" << _value << " -> \"" << s << "\"|" << b << "|" << i << "|" << d
   //     << " [" << _flags << "]";

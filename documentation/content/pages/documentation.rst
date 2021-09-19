@@ -55,7 +55,10 @@ Coriolis Documentation
       A Tutorial to use Coriolis through Python
 
       `Python/C++ Tutorial <{filename}/pages/python-cpp/PythonCpp_HTML.rst>`_ |br|
-      A Tutorial to the Python/C++ interface |API|
+      A Tutorial to the Python/C++ interface |API| (C-macros version)
+
+      `Python/C++ Tutorial (template) <{filename}/pages/python-cpp-new/PythonCppNew_HTML.rst>`_ |br|
+      A Tutorial to the Python/C++ interface |API| (C++ template version)
 
       `Stratus Language <{filename}/pages/stratus/Stratus_HTML.rst>`_ |br|
       A Netlist Capture Language (on top of Python)

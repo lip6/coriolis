@@ -21,8 +21,8 @@
 #include "coloquinte/circuit.hxx"
 #include "coloquinte/circuit_helper.hxx"
 #include "coloquinte/legalizer.hxx"
-#include "vlsisapd/configuration/Configuration.h"
-#include "vlsisapd/utilities/Dots.h"
+#include "hurricane/configuration/Configuration.h"
+#include "hurricane/utilities/Dots.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Bug.h"
 #include "hurricane/Error.h"
@@ -853,8 +853,12 @@ namespace Etesian {
       instanceName.erase( instanceName.size()-1 );
 
       if (CatalogExtension::isFeed(masterCell)) {
-        throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
-                   , instanceName.c_str() );
+        string feedName = getString( instance->getName() );
+        if (  (feedName.substr(0,11) != "spare_feed_")
+           or (not instance->isFixed())) {
+          throw Error( "EtesianEngine::toColoquinte(): Feed instance \"%s\" found."
+                     , instanceName.c_str() );
+        }
       }
 
       Box instanceAb = _bloatCells.getAb( occurrence );

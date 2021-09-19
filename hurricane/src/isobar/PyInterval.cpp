@@ -74,7 +74,9 @@ extern "C" {
     else if (__cs.getObjectIds() == INTS2_ARG) { interval = new Interval ( PyAny_AsLong(arg0) , PyAny_AsLong(arg1) ); }
     else if (__cs.getObjectIds() == INTV_ARG ) { interval = new Interval ( *PYINTERVAL_O(arg0) ); }
     else {
-      PyErr_SetString(ConstructorError, "invalid number of parameters for Interval constructor." );
+      string message = "PyInterval_NEW(): Invalid types or number of parameters (\""
+                     + __cs.getObjectIds() + "\").";
+      PyErr_SetString( ConstructorError, message.c_str() );
       return NULL;
     }
     HCATCH

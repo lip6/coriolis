@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne University 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -12,7 +12,6 @@
 # |  Python      :       "./plugins/block/iospecs.py"               |
 # +-----------------------------------------------------------------+
 
-from   __future__ import print_function
 import sys
 import re
 import os.path
@@ -99,7 +98,7 @@ class IoSpecs ( object ):
         self._ioPadsSpec = []
 
     def addIoPadSpec ( self, instance, side ):
-        if self._ioPadsLUT.has_key(instance):
+        if instance in self._ioPadsLUT:
             print( ErrorMessage( 2, 'IoSpecs.addIoPadSpec(): Duplicate pad specification for "{}" (ignored).' \
                                     .format(instance) ) )
             return self._ioPadsLUT[ instance ]
@@ -140,7 +139,7 @@ class IoSpecs ( object ):
 
         for padDatas in datas['pads.instances']:
             padName = padDatas[0]
-            if not self._ioPadsLUT.has_key(padName):
+            if not padName in self._ioPadsLUT:
                 print( WarningMessage('IoSpecs.loadFromPinmux(): ' \
                                       'Pad "{}" is not on any side, ignored.' \
                                       .format(padName) ))

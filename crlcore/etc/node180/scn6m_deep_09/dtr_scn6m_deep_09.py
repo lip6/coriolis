@@ -9,7 +9,7 @@
 # Used revision 8.00 of May 11, 2009.
 
 import helpers.io
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
 
 from Hurricane            import DbU
 from helpers.analogtechno import Length

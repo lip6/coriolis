@@ -211,7 +211,7 @@ extern "C" {
 
       for ( Py_ssize_t colIndex = 0; colIndex<cols ; ++colIndex ) {
         PyObject* element = PyList_GetItem( row, colIndex );
-        if (not PyInt_Check(element)) {
+        if (not PyLong_Check(element)) {
           ostringstream message;
           message << "Matrix_FromListOfList(): Element [" << colIndex << "," << rowIndex << "] is not an integer.";
           PyErr_SetString( ConstructorError, message.str().c_str() );

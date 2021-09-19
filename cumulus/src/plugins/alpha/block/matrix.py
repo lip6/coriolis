@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2021-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2021-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -127,7 +127,7 @@ class RegisterMatrix ( object ):
         sliceHeight = self.conf.sliceHeight 
         x           = self.toXPitch( originX )
         y           = self.toYSlice( originY )
-        slice       = (y - yoffset) / sliceHeight
+        slice       = (y - yoffset) // sliceHeight
         orientation = Transformation.Orientation.ID
         y = slice * sliceHeight + yoffset
         if slice % 2:

@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2014-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -292,7 +292,7 @@ class Graph ( object ):
 
     def lookupNode ( self, x, y ):
         geoKey = GeoKey( x, y )
-        if self.nodesLUT.has_key(geoKey):
+        if geoKey in self.nodesLUT:
             return self.nodesLUT[geoKey]
         return None
 

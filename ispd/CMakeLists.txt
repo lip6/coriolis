@@ -11,14 +11,13 @@
  
  set_cmake_policies()
 #setup_apple()
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options)
  
  find_package(LibXml2 REQUIRED)
  set(QT_USE_QTXML "true")
  find_package(Qt4 REQUIRED)
- find_package(PythonLibs         2 REQUIRED)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
- find_package(VLSISAPD REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)
  find_package(KNIK REQUIRED)

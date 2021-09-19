@@ -68,12 +68,12 @@ extern "C" {
 
   extern void  PyNetType_LinkPyType() {
     cdebug_log(20,0) << "PyNetType_LinkType()" << endl;
-    PyTypeNetType.tp_dealloc = (destructor) PyNetType_DeAlloc;
-    PyTypeNetType.tp_compare = (cmpfunc)    PyNetType_Cmp;
-    PyTypeNetType.tp_repr    = (reprfunc)   PyNetType_Repr;
-    PyTypeNetType.tp_str     = (reprfunc)   PyNetType_Str;
-    PyTypeNetType.tp_hash    = (hashfunc)   PyNetType_Hash;
-    PyTypeNetType.tp_methods = PyNetType_Methods;
+    PyTypeNetType.tp_dealloc     = (destructor) PyNetType_DeAlloc;
+    PyTypeNetType.tp_richcompare = (richcmpfunc)PyNetType_Cmp;
+    PyTypeNetType.tp_repr        = (reprfunc)   PyNetType_Repr;
+    PyTypeNetType.tp_str         = (reprfunc)   PyNetType_Str;
+    PyTypeNetType.tp_hash        = (hashfunc)   PyNetType_Hash;
+    PyTypeNetType.tp_methods     = PyNetType_Methods;
   }
 
 

@@ -83,12 +83,9 @@ extern "C" {
         return NULL;
       }
       char*       strCopy = NULL;
-      char*       strData = NULL;
-      Py_ssize_t  strSize = 0;
-
-      PyString_AsStringAndSize(pyStr, &strData, &strSize);
-      strCopy = new char[(size_t)strSize+1];
-      strncpy(strCopy, strData, (size_t)strSize+1);
+      string      strData = PyString_AsString( pyStr );
+      strCopy = new char[ strData.size()+1 ];
+      strncpy( strCopy, strData.c_str(), strData.size()+1 );
       
       vargv.push_back(strCopy);
     }

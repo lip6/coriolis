@@ -20,9 +20,10 @@
 #include <sstream>
 #include <iostream>
 #include <functional>
+#include <hurricane/Commons.h>
 
 
-namespace Cfg2 {
+namespace Cfg {
 
 
   class Parameter {
@@ -56,7 +57,7 @@ namespace Cfg2 {
     public:
       class EnumValue {
         public:
-          inline EnumValue ( const std::string&, int );
+          inline EnumValue ( std::string, int );
         public:
           std::string  _label;
           int          _value;
@@ -64,16 +65,16 @@ namespace Cfg2 {
     public:
       static std::string        typeToString        ( Type );
       static std::string        priorityToString    ( Priority );
-      static Type               stringToType        ( const std::string& );
-      static Priority           stringToPriority    ( const std::string& );
+      static Type               stringToType        ( std::string );
+      static Priority           stringToPriority    ( std::string );
       static Priority           pushDefaultPriority ( Priority );
       static Priority           popDefaultPriority  ();
       static Priority           getDefaultPriority  ();
     public:                                        
-                                Parameter           ( const std::string& id
-                                                    , Type               type
-                                                    , const std::string& value
-                                                    , Priority           priority=UseDefault );
+                                Parameter           ( std::string id
+                                                    , Type        type
+                                                    , std::string value
+                                                    , Priority    priority=UseDefault );
       inline bool               isFile              () const;
       inline bool               isPath              () const;
       inline bool               hasMin              () const;
@@ -81,7 +82,7 @@ namespace Cfg2 {
       inline bool               hasNeedRestart      () const;
       inline bool               hasMustExist        () const;
       inline bool               hasFlags            ( int mask ) const;
-      inline const std::string& getId               () const;
+      inline std::string        getId               () const;
       inline Type               getType             () const;
       inline Priority           getPriority         () const;
       inline const std::vector<EnumValue>&          
@@ -95,19 +96,19 @@ namespace Cfg2 {
       inline double             getMaxDouble        () const;
       inline bool               checkValue          ( int ) const;
       inline bool               checkValue          ( double ) const;
-      inline const std::string& asString            () const;
+      inline std::string        asString            () const;
              std::string        asPercentageString  () const;
              bool               asBool              () const;
              int                asInt               () const;
              double             asDouble            () const;
              double             asPercentage        () const;
-      inline void               addValue            ( const std::string&, int );
-      inline void               addSlave            ( const std::string& );
+      inline void               addValue            ( std::string, int );
+      inline void               addSlave            ( std::string );
       inline void               setPriority         ( Priority );
       inline void               setFlags            ( int mask );
       inline void               unsetFlags          ( int mask );
-             bool               setRawString        ( const std::string& , Priority priority=UseDefault );
-             bool               setString           ( const std::string&
+             bool               setRawString        ( std::string , Priority priority=UseDefault );
+             bool               setString           ( std::string
                                                     , Priority     priority=UseDefault
                                                     , unsigned int flags   =AllRequirements
                                                     );
@@ -122,10 +123,11 @@ namespace Cfg2 {
       inline void               registerCb          ( void* tag, ParameterChangedCb_t );
       inline void               unregisterCb        ( void* tag );
       inline void               valueChanged        ();
+      inline std::string        _getString          () const;
     private:                                        
       inline void               _onValueChanged     ();
       inline bool               _updatePriority     ( Priority );
-             bool               _doChange           ( unsigned int flags, const std::string&, bool, int, double );
+             bool               _doChange           ( unsigned int flags, std::string, bool, int, double );
     private:
     // Attributes.
       static std::vector<Priority>  _defaultPriorities;
@@ -151,7 +153,7 @@ namespace Cfg2 {
   inline bool                   Parameter::hasMax         () const { return hasFlags(HasMax); };
   inline bool                   Parameter::hasNeedRestart () const { return hasFlags(NeedRestart); };
   inline bool                   Parameter::hasMustExist   () const { return hasFlags(MustExist); };
-  inline const std::string&     Parameter::getId          () const { return _id; }
+  inline std::string            Parameter::getId          () const { return _id; }
   inline Parameter::Type        Parameter::getType        () const { return _type; }
   inline Parameter::Priority    Parameter::getPriority    () const { return _priority; }
   inline int                    Parameter::getFlags       () const { return _flags; }
@@ -160,7 +162,7 @@ namespace Cfg2 {
   inline int                    Parameter::getMaxInt      () const { return _maxInt; }
   inline double                 Parameter::getMinDouble   () const { return _minDouble; }
   inline double                 Parameter::getMaxDouble   () const { return _maxDouble; }
-  inline const std::string&     Parameter::asString       () const { return _value; }
+  inline std::string            Parameter::asString       () const { return _value; }
   inline void                   Parameter::setFlags       ( int mask ) { _flags |= mask; }
   inline void                   Parameter::unsetFlags     ( int mask ) { _flags &= ~mask; }
   inline void                   Parameter::setPriority    ( Priority priority ) { _priority = priority; }
@@ -186,9 +188,9 @@ namespace Cfg2 {
 
   inline const std::vector<Parameter::EnumValue>& Parameter::getValues () const { return _values; }
   inline const std::vector<std::string>&          Parameter::getSlaves () const { return _slaves; }
-  inline void                                     Parameter::addSlave  ( const std::string& id ) { _slaves.push_back ( id ); }
+  inline void                                     Parameter::addSlave  ( std::string id ) { _slaves.push_back ( id ); }
 
-  inline void  Parameter::addValue ( const std::string& label, int value ) {
+  inline void  Parameter::addValue ( std::string label, int value ) {
     if ( _type != Enumerate ) {
       std::cerr << "[ERROR] Cannot add item on parameter <" << _id
                 << ">, not enumerated." << std::endl;
@@ -197,7 +199,7 @@ namespace Cfg2 {
     _values.push_back ( EnumValue(label,value) );
   }
 
-  inline Parameter::EnumValue::EnumValue ( const std::string& label, int value )
+  inline Parameter::EnumValue::EnumValue ( std::string label, int value )
     : _label(label), _value(value) { }
 
   inline void  Parameter::registerCb ( void* tag, ParameterChangedCb_t cb )
@@ -224,4 +226,35 @@ namespace Cfg2 {
   { for ( size_t icb=0 ; icb<_callbacks.size() ; ++icb ) _callbacks[icb].second( this ); }
 
 
+  inline std::string  Parameter::_getString () const
+  {
+    std::string s = "<Parameter id=\"" + _id
+                  + "\" type=" + typeToString(_type)
+                  + " value=\"" + asString() + "\">";
+    return s;
+  }
+
+
 }  // Cfg namespace.
+
+
+template<> inline std::string  getString<const Cfg::Parameter*> ( const Cfg::Parameter* p )
+{ return p->_getString(); }
+
+
+template<> inline std::string  getString<Cfg::Parameter*> ( Cfg::Parameter* p )
+{ return p->_getString(); }
+
+
+inline std::ostream& operator<< ( std::ostream& o, const Cfg::Parameter* p )
+{
+  if (not p) return o << "NULL [const Parameter*]";
+  return o << "&" << getString<const Cfg::Parameter*>(p);
+}
+
+
+inline std::ostream& operator<< ( std::ostream& o, Cfg::Parameter* p )
+{
+  if (not p) return o << "NULL [const Parameter*]";
+  return o << "&" << getString<const Cfg::Parameter*>(p);
+}

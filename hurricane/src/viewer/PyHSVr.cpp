@@ -82,14 +82,14 @@ extern "C" {
     HSVr* hsvr = self->_object;
 
     if ( hsvr == NULL )
-      return PyString_FromString("<PyObject unbound>");
+      return PyUnicode_FromString("<PyObject unbound>");
 
     ostringstream s;
     s << "<HSVr " << hsvr->getHue()
       << " "      << hsvr->getSaturation()
       << " "      << hsvr->getValue()
       << ">";
-    return PyString_FromString(s.str().c_str());
+    return PyUnicode_FromString(s.str().c_str());
   }
 
   

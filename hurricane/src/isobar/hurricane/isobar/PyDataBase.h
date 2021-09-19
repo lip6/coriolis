@@ -44,7 +44,7 @@ namespace  Isobar {
     extern  void      PyDataBase_LinkPyType   ();
 
 
-#define IsPyDataBase(v)    ( (v)->ob_type == &PyTypeDataBase )
+#define IsPyDataBase(v)    ( Py_TYPE(v) == &PyTypeDataBase )
 #define PYDATABASE(v)      ( (PyDataBase*)(v) )
 #define PYDATABASE_O(v)    ( PYDATABASE(v)->_object )
 

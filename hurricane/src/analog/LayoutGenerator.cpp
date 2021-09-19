@@ -197,7 +197,7 @@ namespace Analog {
     if (pCheckOk == Py_False) {
       if (flags & ShowError)
         cerr << Error( "%s\n        (\"%s\")"
-                     , PyString_AsString(PyTuple_GetItem(pTupleCheck,1))
+                     , PyString_AsString(PyTuple_GetItem(pTupleCheck,1)).c_str()
                      , _script->getFileName()
                      ) << endl;
       return false;

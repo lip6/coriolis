@@ -4,9 +4,9 @@
    include_directories( ${HURRICANE_SOURCE_DIR}/src/hurricane
                         ${HURRICANE_SOURCE_DIR}/src/viewer
                         ${HURRICANE_SOURCE_DIR}/src/isobar
+                        ${HURRICANE_SOURCE_DIR}/src/configuration3
                         ${Boost_INCLUDE_DIRS}
-                        ${CONFIGURATION_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( pyCpps     ProxyProperty.cpp
                                    PyBreakpoint.cpp

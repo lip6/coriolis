@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,7 +16,6 @@
 Manage High Fanout Net Synthesis (HFNS).
 """
 
-from   __future__ import print_function
 import sys
 import os.path
 import re

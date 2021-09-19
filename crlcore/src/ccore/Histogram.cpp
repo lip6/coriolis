@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) Sorbonne Universite 2008-2019, All Rights Reserved
+// Copyright (c) Sorbonne Universite 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -18,7 +18,7 @@
 #include  <sstream>
 #include  <fstream>
 #include  <iomanip>
-#include  "vlsisapd/utilities/Path.h"
+#include  "hurricane/utilities/Path.h"
 #include  "crlcore/Histogram.h"
 
 

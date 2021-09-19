@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2014-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import bisect
 from   operator   import methodcaller  
 import Cfg        
@@ -114,9 +113,9 @@ class HorizontalRail ( Rail ):
             print (ErrorMessage( 1, [ '{} is outside rail/corona X range,'.format(contact)
                                   , 'power pad is likely to be to far off west or east.'
                                   , '(core:{})'.format(self.side.innerBb) ] ) )
-        if self.vias.has_key(contact.getX()): return False
+        if contact.getX() in self.vias: return False
         trace( 550, '\tvias:{}\n'.format(self.vias) )
-        keys = self.vias.keys()
+        keys = list( self.vias.keys() )
         keys.sort()
         insertIndex = bisect.bisect_left( keys, contact.getX() )
         if len(keys) > 0:
@@ -228,10 +227,10 @@ class VerticalRail ( Rail ):
             print (ErrorMessage( 1, [ '{} is outside rail/corona Y range'.format(contact)
                                    , 'power pad is likely to be to far off north or south.'
                                    , '(core:{})'.format(self.side.innerBb) ] ) )
-        if self.vias.has_key(contact.getY()): return False
+        if contact.getY() in self.vias: return False
         trace( 550, ',+', '\tVerticalRail.connect() [{}] @{}\n'.format(self.order,DbU.getValueString(self.axis)) )
         trace( 550, '\t{}\n'.format(contact) )
-        keys = self.vias.keys()
+        keys = list( self.vias.keys() )
         keys.sort()
         insertIndex = bisect.bisect_left( keys, contact.getY() )
         trace( 550, ',+', '\tkeys:' )
@@ -362,7 +361,7 @@ class Side ( object ):
             if self.horizontalDepth > self.verticalDepth:
                 return range( len(self.coronaCks), len(self.rails) )
         trace( 550, '\tUsing half rails only.\n' )
-        return range( len(self.coronaCks) + len(self.rails)/2 - 2, len(self.rails) )
+        return range( len(self.coronaCks) + len(self.rails)//2 - 2, len(self.rails) )
 
     def connectPads ( self, padSide ):
        #for contact in padSide.pins:
@@ -412,8 +411,8 @@ class SouthSide ( HorizontalSide ):
     def side ( self ): return South
 
     def getRailAxis ( self, i ):
-        return self.innerBb.getYMin() -    self.hRailWidth/2 - self.hRailSpace \
-                                      - i*(self.hRailWidth   + self.hRailSpace)
+        return self.innerBb.getYMin() -    self.hRailWidth//2 - self.hRailSpace \
+                                      - i*(self.hRailWidth    + self.hRailSpace)
 
     def corner0 ( self, i ): return self.corners[SouthWest][i]
     def corner1 ( self, i ): return self.corners[SouthEast][i]
@@ -432,8 +431,8 @@ class NorthSide ( HorizontalSide ):
     def side ( self ): return North
 
     def getRailAxis ( self, i ):
-        return self.innerBb.getYMax() +    self.hRailWidth/2 + self.hRailSpace \
-                                      + i*(self.hRailWidth   + self.hRailSpace)
+        return self.innerBb.getYMax() +    self.hRailWidth//2 + self.hRailSpace \
+                                      + i*(self.hRailWidth    + self.hRailSpace)
 
     def corner0 ( self, i ): return self.corners[NorthWest][i]
     def corner1 ( self, i ): return self.corners[NorthEast][i]
@@ -457,16 +456,16 @@ class VerticalSide ( Side ):
         for rail in self.rails:
             for via in rail.vias.values():
                 if via[1].getNet() != via[2].getNet(): continue
-                spans.merge( via[1].y - via[1].height/2, via[1].y + via[1].height/2 )
+                spans.merge( via[1].y - via[1].height//2, via[1].y + via[1].height//2 )
         routingGauge = self.corona.routingGauge
-        for depth in range(self.getOuterRail(0).vias.values()[0][1].bottomDepth
-                          ,self.getOuterRail(0).vias.values()[0][1].topDepth ):
+        for depth in range(next(iter(self.getOuterRail(0).vias.values()))[1].bottomDepth
+                          ,next(iter(self.getOuterRail(0).vias.values()))[1].topDepth ):
             blockageLayer = routingGauge.getRoutingLayer(depth).getBlockageLayer()
             pitch         = routingGauge.getLayerPitch(depth)
             for chunk in spans.chunks:
                 Horizontal.create( self.blockageNet
                                  , blockageLayer
-                                 , (chunk.getVMax() + chunk.getVMin())/2
+                                 , (chunk.getVMax() + chunk.getVMin())//2
                                  ,  chunk.getVMax() - chunk.getVMin() + pitch*2
                                  , sideXMin
                                  , sideXMax
@@ -478,7 +477,7 @@ class VerticalSide ( Side ):
                 for chunk in spans.chunks:
                     Horizontal.create( self.blockageNet
                                      , blockageLayer
-                                     , (chunk.getVMax() + chunk.getVMin())/2
+                                     , (chunk.getVMax() + chunk.getVMin())//2
                                      ,  chunk.getVMax() - chunk.getVMin() + pitch*2
                                      , sideXMin
                                      , sideXMax
@@ -497,8 +496,8 @@ class WestSide ( VerticalSide ):
     def side ( self ): return West
 
     def getRailAxis ( self, i ):
-        return self.innerBb.getXMin() -    self.vRailWidth/2 - self.vRailSpace \
-                                      - i*(self.vRailWidth   + self.vRailSpace)
+        return self.innerBb.getXMin() -    self.vRailWidth//2 - self.vRailSpace \
+                                      - i*(self.vRailWidth    + self.vRailSpace)
 
     def corner0 ( self, i ): return self.corners[SouthWest][i]
     def corner1 ( self, i ): return self.corners[NorthWest][i]
@@ -521,8 +520,8 @@ class EastSide ( VerticalSide ):
     def side ( self ): return East
 
     def getRailAxis ( self, i ):
-        return self.innerBb.getXMax() +    self.vRailWidth/2 + self.vRailSpace \
-                                      + i*(self.vRailWidth   + self.vRailSpace)
+        return self.innerBb.getXMax() +    self.vRailWidth//2 + self.vRailSpace \
+                                      + i*(self.vRailWidth    + self.vRailSpace)
 
     def corner0 ( self, i ): return self.corners[SouthEast][i]
     def corner1 ( self, i ): return self.corners[NorthEast][i]
@@ -542,7 +541,7 @@ class Builder ( object ):
         self.block      = block
         self.innerBb    = self.block.icoreAb
         self.block.path.getTransformation().applyOn( self.innerBb )
-        self.innerBb.inflate( self.hRailSpace/2, self.vRailSpace/2 )
+        self.innerBb.inflate( self.hRailSpace//2, self.vRailSpace//2 )
         self.southSide  = SouthSide( self )
         self.northSide  = NorthSide( self )
         self.westSide   = WestSide ( self )

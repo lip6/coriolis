@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,23 +16,21 @@
 import os
 import os.path
 import helpers.io
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
 
 from   CRL        import Environment
 from   CRL        import AllianceFramework
 
 allianceTop = None
-if os.environ.has_key('ALLIANCE_TOP'):
-  allianceTop = os.environ['ALLIANCE_TOP']
-  if not os.path.isdir(allianceTop):
-    allianceTop = None
-
+if 'ALLIANCE_TOP' in os.environ:
+    allianceTop = os.environ['ALLIANCE_TOP']
+    if not os.path.isdir(allianceTop):
+        allianceTop = None
 if not allianceTop: allianceTop = '/soc/alliance'
 
 cellsTop = allianceTop+'/cells'
-
-af  = AllianceFramework.get()
-env = af.getEnvironment()
+af       = AllianceFramework.get()
+env      = af.getEnvironment()
 
 env.setSCALE_X        ( 100 )
 env.setCATALOG        ( 'CATAL' )

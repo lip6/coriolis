@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,7 +16,6 @@
 Manage High Fanout Net Synthesis (HFNS).
 """
 
-from   __future__ import print_function
 import sys
 import os.path
 import re
@@ -328,14 +327,14 @@ class Cluster ( object ):
         graph.addNode( self
                      , driverCenter.getX()
                      ,   self.bufferTree.spares.toYGCellGrid(driverCenter.getY())
-                       + self.bufferTree.spares.conf.sliceHeight / 2
+                       + self.bufferTree.spares.conf.sliceHeight // 2
                      , rsmt.Node.Driver )
         for anchor in self.mergedAnchors:
             sinkCenter = anchor.bInputRp.getPosition()
             graph.addNode( anchor
                          , sinkCenter.getX()
                          ,   self.bufferTree.spares.toYGCellGrid(sinkCenter.getY())
-                           + self.bufferTree.spares.conf.sliceHeight / 2 )
+                           + self.bufferTree.spares.conf.sliceHeight // 2 )
        #graph.doIteratedOneSteiner()
         graph.doFlute()
         graph.createGRSegments()
@@ -479,7 +478,7 @@ class BufferTree ( object ):
             maxWL = timing.tech.getWlEstimate( self.bufName, clusterA.size+clusterB.size )
             area = Box( clusterA.area )
             area.merge( clusterB.area )
-            hpWL = (area.getWidth() + area.getHeight()) / 2
+            hpWL = (area.getWidth() + area.getHeight()) // 2
             trace( 550, '\t> BufferTree.canMerge(): estimatedWL >= maxWL ({} >= {}).\n' \
                         .format(DbU.getValueString(estimatedWL),DbU.getValueString(maxWL)) )
             if estimatedWL >= maxWL:
@@ -493,7 +492,7 @@ class BufferTree ( object ):
             return False
         area = Box( clusterA.area )
         area.merge( clusterB.area )
-        hpwl = (area.getWidth() + area.getHeight()) / 2
+        hpwl = (area.getWidth() + area.getHeight()) // 2
         if hpwl > 2*self.edgeLimit:
             trace( 550, '\t> Reject merge, over HPWL threshold of 2*{}.\n' \
                         .format(DbU.getValueString(self.edgeLimit)))

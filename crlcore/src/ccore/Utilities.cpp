@@ -1,14 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |          Alliance / Hurricane  Interface                        |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :   "./Utilities.cpp"                              |
 // +-----------------------------------------------------------------+
@@ -23,8 +23,8 @@
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 
-#include  "vlsisapd/utilities/Path.h"
-#include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/utilities/Path.h"
+#include  "hurricane/configuration/Configuration.h"
 #include  "hurricane/Backtrace.h"
 #include  "hurricane/Warning.h"
 #include  "hurricane/viewer/Script.h"

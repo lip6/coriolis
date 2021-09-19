@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -70,7 +70,7 @@ class BufferPool ( object ):
 
     def toIndex ( self, column, row ): return column + row*self.columns
 
-    def fromIndex ( self, index ): return (index%self.columns, index/self.columns)
+    def fromIndex ( self, index ): return (index%self.columns, index//self.columns)
 
     def unselect ( self ): self.selectedIndexes = []
 
@@ -145,11 +145,11 @@ class BufferPool ( object ):
             yoffset = self.quadTree.spares.conf.icore.getTransformation().getTy()
         conf           = self.quadTree.spares.conf
         sliceHeight    = conf.sliceHeight 
-        poolHalfWidth  = (conf.bufferConf.width  * self.columns)/2 + conf.feedsConf.tieWidth()
-        poolHalfHeight = (conf.bufferConf.height * self.rows)/2
+        poolHalfWidth  = (conf.bufferConf.width  * self.columns)//2 + conf.feedsConf.tieWidth()
+        poolHalfHeight = (conf.bufferConf.height * self.rows)//2
         x = self.quadTree.spares.toXPitch( self.quadTree.area.getXCenter() - poolHalfWidth  )
         y = self.quadTree.spares.toYSlice( self.quadTree.area.getYCenter() - poolHalfHeight )
-        slice = (y - yoffset) / sliceHeight
+        slice = (y - yoffset) // sliceHeight
         trace( 540, '\tSlice height: {}\n'.format(DbU.getValueString(sliceHeight)) )
         trace( 540, '\tSlice #{} (y:{})\n'.format(slice,DbU.getValueString(y)) )
         for row in range(self.rows):
@@ -181,9 +181,9 @@ class BufferPool ( object ):
         trace( 540, ',+', '\tQuadTree._createTies()\n' )
         conf        = self.quadTree.spares.conf
         sliceHeight = conf.sliceHeight 
-        columns     = self.quadTree.area.getWidth() / u(60.0)
+        columns     = self.quadTree.area.getWidth() // u(60.0)
         if columns % 2: columns += 1
-        stepX = self.quadTree.area.getWidth() / columns
+        stepX = self.quadTree.area.getWidth() // columns
         trace( 540, '\tcolumns:{}, stepX:{}\n' \
                     .format( columns, DbU.getValueString(stepX) ))
         y = self.quadTree.area.getYMin()
@@ -191,7 +191,7 @@ class BufferPool ( object ):
             for column in range(columns):
                 feed   = conf.feedsConf.createFeed( conf.corona )
                 transf = self._getTransformation \
-                             ( self.quadTree.area.getXMin() + stepX/2 + column*stepX, y )
+                             ( self.quadTree.area.getXMin() + stepX//2 + column*stepX, y )
                 feed.setTransformation( transf )
                 feed.setPlacementStatus( Instance.PlacementStatus.FIXED )
                 trace( 540, '\tBulk tie: {}\n'.format(feed) )
@@ -548,7 +548,7 @@ class QuadTree ( object ):
             return False
 
         if aspectRatio < 0.5:
-            self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()/2 )
+            self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()//2 )
             self.bl   = QuadTree._create( self.spares
                                         , self
                                         , Box( self.area.getXMin()
@@ -567,7 +567,7 @@ class QuadTree ( object ):
             trace( 540, '-' )
             return True
         elif aspectRatio > 2.0:
-            self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth()/2 )
+            self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth()//2 )
             self.bl   = QuadTree._create( self.spares
                                         , self
                                         , Box( self.area.getXMin()
@@ -586,8 +586,8 @@ class QuadTree ( object ):
             trace( 540, '-' )
             return True
 
-        self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()/2 )
-        self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth ()/2 )
+        self.ycut = self.spares.toYSlice( self.area.getYMin() + self.area.getHeight()//2 )
+        self.xcut = self.spares.toXPitch( self.area.getXMin() + self.area.getWidth ()//2 )
         self.bl   = QuadTree._create( self.spares
                                     , self
                                     , Box( self.area.getXMin()
@@ -829,7 +829,7 @@ class QuadTree ( object ):
         plugOccsByAngle.sort( key=itemgetter(0) )
         splitIndexes = []
         if (len(plugOccsByAngle) > maxSinks) and (len(self.buffers) > 1):
-            partSize = len(plugOccsByAngle) / len(self.buffers)
+            partSize = len(plugOccsByAngle) // len(self.buffers)
             trace( 540, '\tpartSize: {}\n'.format(partSize) )
             for isplit in range(1,len(self.buffers)):
                 maxdAngle = 0
@@ -931,7 +931,7 @@ class Spares ( object ):
         if not spareSide:
             raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): "block.spareSide" parameter is zero ({}).' \
                                    .format(spareSide) )
-        areaLength   = spareSide * spareSide / self.conf.sliceHeight
+        areaLength   = spareSide * spareSide // self.conf.sliceHeight
         bufferLength = self.conf.bufferConf.width * self.conf.bColumns * self.conf.bRows
         if not areaLength:
             raise ErrorMessage( 3, 'Spares.getSpareSpaceMargin(): Spare leaf area is zero.' )
@@ -972,7 +972,7 @@ class Spares ( object ):
         sliceHeight = self.conf.sliceHeight 
         x           = self.toXPitch( spareX )
         y           = self.toYSlice( spareY )
-        slice       = (y - yoffset) / sliceHeight
+        slice       = (y - yoffset) // sliceHeight
         orientation = Transformation.Orientation.ID
         y = slice * sliceHeight + yoffset
         if slice % 2:
@@ -1032,7 +1032,7 @@ class Spares ( object ):
         sliceHeight = self.conf.sliceHeight 
         x           = self.quadTree.toXPitch( position.getX() )
         y           = self.quadTree.toYSlice( position.getY() )
-        slice       = y / sliceHeight
+        slice       = y // sliceHeight
         orientation = Transformation.Orientation.ID
         y = slice * sliceHeight
         if slice % 2:

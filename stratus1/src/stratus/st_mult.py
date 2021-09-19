@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -70,7 +69,7 @@ class Multiplier ( Model ) :
     else :
        self._signed = True
     
-    if self.nbit0 < 3 or self.nbit1 < 3 : raise SizeError, 'input arities must be greater than 2'
+    if self.nbit0 < 3 or self.nbit1 < 3 : raise SizeError( 'input arities must be greater than 2' )
     
     self.type = "nr"
     self.nType = 1
@@ -90,8 +89,8 @@ class Multiplier ( Model ) :
   def Netlist ( self ) :
     size_A = self.nbit0 + 2
     
-    if self.nbit1 % 2 == 0 : size_B =   self.nbit1     / 2
-    else                   : size_B = ( self.nbit1+1 ) / 2
+    if self.nbit1 % 2 == 0 : size_B =   self.nbit1     // 2
+    else                   : size_B = ( self.nbit1+1 ) // 2
       
     if self.nbit1 % 2 == 0 : parite = 1
     else                   : parite = 0

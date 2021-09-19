@@ -60,13 +60,26 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyEtesian_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Etesian"           /* m_name     */
+    , "Standard cell analytical placer (based on SimPL)."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyEtesian_Methods   /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
 
 
   // ---------------------------------------------------------------
   // Module Initialization  :  "initEtesian ()"
 
-  DL_EXPORT(void) initEtesian () {
-    cdebug_log(34,0) << "initEtesian()" << endl;
+  PyMODINIT_FUNC PyInit_Etesian ( void )
+  {
+    cdebug_log(34,0) << "PyInit_Etesian()" << endl;
 
     PyEtesianEngine_LinkPyType();
     PyGraphicEtesianEngine_LinkPyType();
@@ -75,11 +88,11 @@ extern "C" {
     PYTYPE_READY_SUB( GraphicEtesianEngine, GraphicTool );
 
 
-    PyObject* module = Py_InitModule( "Etesian", PyEtesian_Methods );
+    PyObject* module = PyModule_Create( &PyEtesian_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Etesian module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF( &PyTypeEtesianEngine );
@@ -88,6 +101,7 @@ extern "C" {
     PyModule_AddObject( module, "GraphicEtesianEngine", (PyObject*)&PyTypeGraphicEtesianEngine );
 
     PyEtesianEngine_postModuleInit();
+    return module;
   }
 
   

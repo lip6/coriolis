@@ -67,10 +67,25 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyAnalog_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Analog"            /* m_name     */
+    , "Coriolis Analogic Database."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyAnalog_Methods    /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
   // ---------------------------------------------------------------
   // Module Initialization  :  "initAnalog ()"
 
-  DL_EXPORT(void) initAnalog () {
+  PyMODINIT_FUNC PyInit_Analog ( void )
+  {
   //trace_on();
     cdebug.log(49) << "initAnalog()" << endl;
 
@@ -171,11 +186,11 @@ extern "C" {
     __cs.addType( "laygen"   , &PyTypeLayoutGenerator         , "<LayoutGenerator>"         , false );
 
 
-    PyObject* module = Py_InitModule( "Analog", PyAnalog_Methods );
+    PyObject* module = PyModule_Create( &PyAnalog_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Analog module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF( &PyTypeTransistorFamily );
@@ -250,6 +265,8 @@ extern "C" {
   
   //PyObject* dictionnary = PyModule_GetDict ( module );
   //trace_off();
+
+    return module;
   }
 
   

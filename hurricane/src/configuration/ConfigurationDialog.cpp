@@ -22,7 +22,7 @@
 #include "hurricane/configuration/ConfigurationDialog.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
 
   ConfigurationDialog::ConfigurationDialog ( QWidget* parent )

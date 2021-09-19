@@ -15,11 +15,11 @@
 
 
 #pragma  once
-#include "hurricane/configuration/PyHurricane2.h"
+#include "hurricane/configuration/PyTypeManager.h"
 #include "hurricane/configuration/Configuration.h"
 
 
-namespace  Cfg2 {
+namespace  Cfg {
 
 
 extern "C" {
@@ -28,19 +28,8 @@ extern "C" {
 // -------------------------------------------------------------------
 // Functions & Types exported to "PyConfiguration.cpp".
 
-  extern PyTypeObject  PyTypeConfiguration;
-  extern PyMethodDef   PyConfiguration_Methods[];
-
-
-//   extern PyObject* PyConfiguration_create         ( PyObject* self, PyObject* args );
-//   extern PyObject* PyConfiguration_Link           ( Hurricane::Configuration* object );
-//   extern void      PyConfiguration_LinkPyType     ();
-//   extern void      PyConfiguration_postModuleInit ();
-
-
-// #define  IsPyConfiguration(v)   ( (v)->ob_type == &PyTypeConfiguration )
-// #define  PYCELLVIEWER(v)        ( (PyConfiguration*)(v) )
-// #define  PYCELLVIEWER_O(v)      ( PYCELLVIEWER(v)->_object )
+  extern PyMethodDef  PyConfiguration_Methods[];
+  extern PyGetSetDef  PyConfiguration_Getsets[];
 
 
 }  // extern "C".

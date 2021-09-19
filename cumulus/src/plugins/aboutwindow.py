@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -12,7 +11,6 @@
 # | =============================================================== |
 # |  Python      :       "./plugins/aboutwindow.py"                 |
 # +-----------------------------------------------------------------+
-
 
 
 try:
@@ -48,14 +46,14 @@ try:
             from PyQt5.QtGui     import QKeySequence
             from PyQt5.QtWidgets import QApplication
         except:
-            print '[ERROR] AboutWindow: Neither PyQt4 nor PyQt5 is available.'
+            print( '[ERROR] AboutWindow: Neither PyQt4 nor PyQt5 is available.' )
             sys.exit( 1 )
     import Viewer
     import helpers
     from   helpers.io   import ErrorMessage
     from   helpers.io   import WarningMessage
     import plugins
-except Exception, e:
+except Exception as e:
     helpers.io.catch( e )
     sys.exit(2)
 
@@ -154,16 +152,12 @@ def scriptMain ( **kw ):
     rvalue = True
     try:
        #helpers.setTraceLevel( 550 )
-      
         aboutWidget = AboutWidget()
         answer = aboutWidget.exec_()
-        print 'answer:', answer
+        print( 'answer:', answer )
         if not answer: return True
-    
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
-    
     sys.stdout.flush()
     sys.stderr.flush()
-        
     return rvalue

@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -45,7 +44,7 @@ class Side ( object ):
         self.terminals  = []
   
     def addTerminal ( self, position, width ):
-        toMerge = Interval( position-width/2, position+width/2 )
+        toMerge = Interval( position-width//2, position+width//2 )
         length  = len(self.terminals)
         imerge  = length
         ichunk  = 0
@@ -104,8 +103,8 @@ class Side ( object ):
 
 class Plane ( object ):
   
-    Horizontal = 0001
-    Vertical   = 0002
+    Horizontal = 1
+    Vertical   = 2
   
     def __init__ ( self, builder, metal ):
         self.builder = builder
@@ -113,7 +112,7 @@ class Plane ( object ):
         self.sides   = {}
   
     def addTerminal ( self, net, direction, bb ):
-        if not self.sides.has_key(net):
+        if not net in self.sides:
             self.sides[ net ] = { North : Side(self.builder,North,net,self.metal)
                                 , South : Side(self.builder,South,net,self.metal)
                                 , East  : Side(self.builder,East ,net,self.metal)
@@ -135,6 +134,7 @@ class Plane ( object ):
                 sides[South].addTerminal( bb.getCenter().getX(), bb.getWidth() )
             if bb.getYMax() >= self.builder.icoreAb.getYMax():
                 sides[North].addTerminal( bb.getCenter().getX(), bb.getWidth() )
+        trace( 550, '\tTerminal added\n' )
   
     def doLayout ( self ):
         for sidesOfNet in self.sides.values():
@@ -157,8 +157,8 @@ class GoCb ( object ):
         if not direction: return
         trace( 550, '\t| go={}\n'.format( go ))
         rootNet = None
-        if go.getNet().getType() == long(Net.Type.POWER):  rootNet = self.builder.conf.coronaVdd
-        if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.builder.conf.coronaVss
+        if go.getNet().getType() == int(Net.Type.POWER):  rootNet = self.builder.conf.coronaVdd
+        if go.getNet().getType() == int(Net.Type.GROUND): rootNet = self.builder.conf.coronaVss
         if not rootNet: return
         if self.builder.activePlane:
             layer = self.builder.activePlane.metal
@@ -170,7 +170,7 @@ class GoCb ( object ):
             query.getPath().getTransformation().applyOn( bb )
             self.builder.activePlane.addTerminal( rootNet, direction, bb )
         else:
-            print WarningMessage( 'BlockPower.GoCb() callback called without an active plane.' )
+            print( WarningMessage( 'BlockPower.GoCb() callback called without an active plane.' ))
         return
 
 
@@ -254,7 +254,7 @@ class Builder ( object ):
   
     def connectClocks ( self ):
         if not self.conf.useClockTree:
-            print WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." )
+            print( WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." ))
             return
         if len(self.conf.coronaCks) == 0:
             raise ErrorMessage( 1, 'Cannot build clock terminal as no clock is not known.' )

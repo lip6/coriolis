@@ -70,16 +70,16 @@ class ParamsMatrix ( object ):
 
   def setStacks ( self, stacks ):
     if not isinstance(stacks,list):
-      print Error( 3, 'ParamsMatrix::setGlobalParams(): <stack> argument must be of <list> type.' )
+      print( Error( 3, 'ParamsMatrix::setGlobalParams(): <stack> argument must be of <list> type.' ))
       return
 
     if not len(stacks):
-      print Error( 3, 'ParamsMatrix::setGlobalParams(): There must be at least one Stack.' )
+      print( Error( 3, 'ParamsMatrix::setGlobalParams(): There must be at least one Stack.' ))
       return
 
     mtIds = []
     if len(stacks[0].metaTransistors) == 0:
-      print Error( 3, 'ParamsMatrix::setGlobalParams(): Stack without any meta-transistor.' )
+      print( Error( 3, 'ParamsMatrix::setGlobalParams(): Stack without any meta-transistor.' ))
       return
     else:
       for gateName in stacks[0].metaTransistors.keys():
@@ -88,15 +88,15 @@ class ParamsMatrix ( object ):
 
     for i in range(1,len(stacks)):
       if len(stacks[0].metaTransistors) != len(stacks[i].metaTransistors):
-        print Error( 3, 'ParamsMatrix::setGlobalParams(): Stacks %d and %d' \
-                        ' have different numbers of meta-transistor.' % (0,i) )
+        print( Error( 3, 'ParamsMatrix::setGlobalParams(): Stacks {} and {}' \
+                         ' have different numbers of meta-transistor.'.format(0,i) ))
         return
 
       for id in mtIds:
         gateName = ParamsMatrix.idToGate( id )
-        if not stacks[i].metaTransistors.has_key(gateName):
-          print Error( 3, 'ParamsMatrix::setGlobalParams(): Stack %d ' \
-                          ' is missing meta-transistor "%s".' % (i,gateName) )
+        if not gateName in stacks[i].metaTransistors:
+          print( Error( 3, 'ParamsMatrix::setGlobalParams(): Stack {} ' \
+                           ' is missing meta-transistor "{}".'.format(i,gateName) ))
           return
 
    # Thoses parameters must be the same in all the stacks.

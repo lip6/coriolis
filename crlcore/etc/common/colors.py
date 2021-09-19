@@ -54,7 +54,7 @@ def toRGB ( color ):
                                , str(options[attribute])] )
 
     # Try a predefined color lookup.
-    if stdColors.has_key(color): return stdColors[color]
+    if color in stdColors: return stdColors[color]
 
     # Try a RGB hexa: #RRGGBB.
     if color[0] == '#':

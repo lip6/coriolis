@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Cell.h"
 #include "hurricane/Box.h"
 #include "crlcore/AllianceFramework.h"

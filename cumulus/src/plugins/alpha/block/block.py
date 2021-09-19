@@ -1,6 +1,6 @@
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import os.path
 from   copy      import deepcopy
@@ -122,12 +121,12 @@ class Side ( object ):
                 if flags & IoPin.A_BEGIN:
                     self.ubegin += ustep
                     pinOffset = self.ubegin
-                    if not self.pins.has_key(self.ubegin):
+                    if not self.ubegin in self.pins:
                         break
                 else: 
                     self.uend -= ustep
                     pinOffset = self.uend
-                    if not self.pins.has_key(self.uend):
+                    if not self.uend in self.pins:
                         break
         else:
             pinOffset = upos
@@ -148,7 +147,7 @@ class Side ( object ):
             upos = pin.getY()
         else:
             upos = pin.getX()
-        if not self.pins.has_key(upos):
+        if not upos in self.pins:
             self.pins[upos] = [ pin ]
         else:
             self.pins[upos].append( pin )
@@ -194,7 +193,7 @@ class Side ( object ):
                                 , pinPos.getX()
                                 , pinPos.getY()
                                 , gauge.getWireWidth()
-                                , gauge.getWireWidth() / 2
+                                , gauge.getWireWidth() // 2
                                 )
                 NetExternalComponents.setExternal( pin )
                 self.append( pin )
@@ -227,7 +226,7 @@ class Side ( object ):
                                 , gauge.getLayer()
                                 , pinPos.getX()
                                 , pinPos.getY()
-                                , gauge.getWireWidth() / 2
+                                , gauge.getWireWidth() // 2
                                 , gauge.getWireWidth()
                                 )
                 NetExternalComponents.setExternal( pin )
@@ -291,7 +290,7 @@ class Block ( object ):
 
     @staticmethod
     def lookup ( cell ):
-        if Block.LUT.has_key(cell): return Block.LUT[cell]
+        if cell in Block.LUT: return Block.LUT[cell]
         return None
 
     def __init__ ( self, conf ):
@@ -834,6 +833,8 @@ class Block ( object ):
            #if self.conf.useHFNS: self.findHfnTrees4()
             self.initEtesian()
             self.addHTrees()
+            sys.stdout.flush()
+            sys.stderr.flush()
            #if self.conf.useHFNS: self.addHfnBuffers()
            #if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )

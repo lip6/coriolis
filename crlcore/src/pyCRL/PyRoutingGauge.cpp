@@ -544,6 +544,8 @@ extern "C" {
                                 , "Return the default wire width of the given layer." }
     , { "getViaWidth"           , (PyCFunction)PyRoutingGauge_getViaWidth       , METH_VARARGS
                                 , "Return the default via width of the given layer." }
+    , { "getPWireWidth"         , (PyCFunction)PyRoutingGauge_getPWireWidth     , METH_VARARGS
+                                , "Return the default perpandicular wire width of the given layer." }
     , { "getPowerSupplyGauge"   , (PyCFunction)PyRoutingGauge_getPowerSupplyGauge, METH_NOARGS
                                 , "Return the power supply gauge (None if there isn't)." }
     , { "getLayerGauge"         , (PyCFunction)PyRoutingGauge_getLayerGauge     , METH_VARARGS

@@ -16,7 +16,7 @@
 import Cfg
 import helpers.io
 helpers.io.vprint( 1, '  o  Loading "node180.scn6m_deep_09" technology.' )
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
 
 from   Hurricane import DataBase
 from   CRL       import System

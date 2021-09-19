@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2012, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :  "./CellImage.cpp"                               |
 // +-----------------------------------------------------------------+
@@ -21,7 +21,7 @@
 #include  <boost/bind.hpp>
 #include  <QApplication>
 #include  <QImage>
-#include  "vlsisapd/configuration/Configuration.h"
+#include  "hurricane/configuration/Configuration.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/viewer/Graphics.h"

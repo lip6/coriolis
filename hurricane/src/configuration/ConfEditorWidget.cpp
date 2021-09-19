@@ -24,7 +24,7 @@
 #include "hurricane/configuration/ConfEditorWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using namespace std;
 

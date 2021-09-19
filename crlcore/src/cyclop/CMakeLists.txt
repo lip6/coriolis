@@ -22,19 +22,16 @@
 
         add_executable ( cyclop        ${cpps} ${moccpps} )
  target_link_libraries ( cyclop        crlcore
+                                       ${HURRICANE_PYTHON_NEW_LIBRARIES}
                                        ${HURRICANE_PYTHON_LIBRARIES}
                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
                                        ${HURRICANE_LIBRARIES}
                                        ${BOOKSHELF_LIBRARY}
-                                       ${AGDS_LIBRARY}
-                                       ${CIF_LIBRARY}
-                                       ${CONFIGURATION_LIBRARY}
-                                       ${UTILITIES_LIBRARY}
                                        ${LEFDEF_LIBRARIES}
                                        ${OA_LIBRARIES}
                                        ${QtX_LIBRARIES}
                                        ${Boost_LIBRARIES}
-                                       ${PYTHON_LIBRARIES}
+                                       ${Python_LIBRARIES}
                                        -lutil
                                        ${LIBXML2_LIBRARIES}
                                        ${LIBEXECINFO_LIBRARIES}

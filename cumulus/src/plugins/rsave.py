@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import traceback
 import os.path
@@ -26,7 +24,7 @@ try:
     from   helpers.io import ErrorMessage
     from   helpers.io import WarningMessage
     import plugins
-except Exception, e:
+except Exception as e:
     helpers.io.catch( e )
     sys.exit(2)
 
@@ -43,6 +41,9 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
     """
     framework = CRL.AllianceFramework.get()
     if depth == 0: print( '  o  Recursive Save-Cell.' )
+    if cell.isUniquified():             views |= CRL.Catalog.State.Logical
+    if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
+    if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
     sviews = ''
     if views & CRL.Catalog.State.Logical:
         sviews += 'netlist'
@@ -65,9 +66,6 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
         if sviews: sviews += ','
         sviews += 'layout'
     print( '     {}+ {} ({}).'.format(' '*(depth*2), cell.getName(), sviews) )
-    if cell.isUniquified():             views |= CRL.Catalog.State.Logical
-    if cell.getName().endswith('_cts'): views |= CRL.Catalog.State.Logical
-    if cell.getName().endswith('_r'  ): views |= CRL.Catalog.State.Logical
     framework.saveCell( cell, views )
     spiceFlags = CRL.Spice.TopCell if depth == 0 else 0
     CRL.Spice.save( cell, spiceFlags )
@@ -101,13 +99,13 @@ def scriptMain ( **kw ):
        #helpers.setTraceLevel( 550 )
         cell, editor = plugins.kwParseMain( **kw )
         views        = CRL.Catalog.State.Physical
-        if kw.has_key('views'): views = kw['views']
+        if 'views' in kw: views = kw['views']
         if not cell:
             print( WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' ) )
             return 0
         rsave( cell, views )
         CRL.destroyAllVHDL()
-    except Exception, e:
+    except Exception as e:
       helpers.io.catch( e )
     sys.stdout.flush()
     sys.stderr.flush()

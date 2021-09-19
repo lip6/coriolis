@@ -1,2 +1,2 @@
 
- install ( FILES  katanaInit.py  DESTINATION ${PYTHON_SITE_PACKAGES}/katana )
+ install ( FILES  katanaInit.py  DESTINATION ${Python_CORIOLISLIB}/katana )

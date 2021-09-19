@@ -73,12 +73,12 @@ extern "C" {
 
   extern void  PyPlacementStatus_LinkPyType() {
     cdebug_log(20,0) << "PyPlacementStatus_LinkType()" << endl;
-    PyTypePlacementStatus.tp_dealloc = (destructor) PyPlacementStatus_DeAlloc;
-    PyTypePlacementStatus.tp_compare = (cmpfunc)    PyPlacementStatus_Cmp;
-    PyTypePlacementStatus.tp_repr    = (reprfunc)   PyPlacementStatus_Repr;
-    PyTypePlacementStatus.tp_str     = (reprfunc)   PyPlacementStatus_Str;
-    PyTypePlacementStatus.tp_hash    = (hashfunc)   PyPlacementStatus_Hash;
-    PyTypePlacementStatus.tp_methods = PyPlacementStatus_Methods;
+    PyTypePlacementStatus.tp_dealloc     = (destructor) PyPlacementStatus_DeAlloc;
+    PyTypePlacementStatus.tp_richcompare = (richcmpfunc)PyPlacementStatus_Cmp;
+    PyTypePlacementStatus.tp_repr        = (reprfunc)   PyPlacementStatus_Repr;
+    PyTypePlacementStatus.tp_str         = (reprfunc)   PyPlacementStatus_Str;
+    PyTypePlacementStatus.tp_hash        = (hashfunc)   PyPlacementStatus_Hash;
+    PyTypePlacementStatus.tp_methods     = PyPlacementStatus_Methods;
   }
 
 

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -137,10 +136,10 @@ def ltox ( aDigit ) :
 class newxl :
 
   def __init__ ( self ) :
-    self._size = 0L
+    self._size = 0
     self._l    = []
 
-    for i in range ( XLONG_SIZE ) : self._l.append ( 0L )
+    for i in range ( XLONG_SIZE ) : self._l.append ( 0 )
 
 
   ###########
@@ -151,7 +150,7 @@ class newxl :
   
     LV_const = asConst
 
-    if type ( asConst ) != types.StringType : raise Exception ( "\n[Stratus ERROR] : the constant must be described in a string.\n" )
+    if not isinstance(asConst,str): raise Exception ( "\n[Stratus ERROR] : the constant must be described in a string.\n" )
   
     base   = 1
     offset = 2
@@ -171,12 +170,12 @@ class newxl :
   
     self._size = (length - offset) * base
   
-    xl_size = self._size / 32
+    xl_size = self._size // 32
     if self._size % 32 : xl_size += 1
   
     for i in range ( xl_size ) :
-      iRight = length - 1 - ( 32 / base ) *   i
-      iLeft  = length     - ( 32 / base ) * ( i + 1 )
+      iRight = length - 1 - ( 32 // base ) *   i
+      iLeft  = length     - ( 32 // base ) * ( i + 1 )
   
       if iLeft < offset : iLeft = offset
   
@@ -222,7 +221,7 @@ class newxl :
   ## getxlbit ##
   ##############
   def getxlbit ( self, aBit ) :
-    i    = aBit / 32
+    i    = aBit // 32
     
 #    mask = ( 1 << ( aBit % 32 ) )
     mask = 1
@@ -236,15 +235,15 @@ class newxl :
       err = "\n[Stratus ERROR] : Requested bit", aBit, "is out of range\n"
       raise Exception ( err )
   
-    if   self._l[i] & mask : return 1L
-    else                   : return 0L
+    if   self._l[i] & mask : return 1
+    else                   : return 0
 
     
   ###############
   ## getxlhexa ##
   ###############
   def getxlhexa ( self, aBit ) :
-    i     = aBit / 32
+    i     = aBit // 32
     shift = aBit % 32
 
     if i >= XLONG_SIZE :

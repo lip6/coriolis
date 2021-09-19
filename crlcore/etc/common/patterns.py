@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Universit 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,6 +16,7 @@
 import sys
 import math
 import helpers
+from   helpers    import irange
 from   helpers.io import ErrorMessage
 from   helpers.io import WarningMessage
 
@@ -67,10 +68,9 @@ class Pattern ( object ):
                 byte = byte << 1
                 if line[i] != ' ': byte += 1
             hexasLSB += [ hex(byte)[2:] ]
-
        # Convert in MSB mode. Invert the bytes by pairs.
         self._hexa = ''
-        for i in range(len(hexasLSB)/2):
+        for i in irange(len(hexasLSB)/2):
             self._hexa += hexasLSB[i*2+1] + hexasLSB[i*2]
         return self._hexa
 
@@ -79,7 +79,7 @@ class Pattern ( object ):
     
         side = math.sqrt(4*len(self._hexa))
         if pow(side,2) != 4*len(self._hexa):
-            print '[ERROR] The pattern is not square (%d self._bits).' % (4*len(self._hexa))
+            print( '[ERROR] The pattern is not square ({} self._bits).'.format(4*len(self._hexa)))
             return None
     
         side /= 4
@@ -154,17 +154,17 @@ def add ( **keywords ):
     global LUT
 
     try:
-      if not keywords.has_key('name'):
+      if not 'name' in keywords:
         raise ErrorMessage(1,['patterns.add(): Malformed pattern, missing "name" argument.', str(keywords) ])
 
-      if keywords.has_key('bits') and keywords.has_key('hexa'):
+      if ('bits' in keywords) and ('hexa' in keywords):
         w = WarningMessage( 'patterns.add(): Pattern "%s" has both bits & hexa, ignoring hexa.' % keywords['name'] )
-        print w
+        print( w )
         del keywords['hexa']
 
       LUT[ keywords['name'] ] = Pattern( **keywords ) 
 
-    except Exception, e:
+    except Exception as e:
       helpers.io.catch( e )
 
     return
@@ -173,7 +173,7 @@ def add ( **keywords ):
 def toHexa ( key ):
     global LUT
 
-    if isinstance(key,int) or isinstance(key,long) or not LUT.has_key(key): return key
+    if isinstance(key,int) or not (key in LUT): return key
     return LUT[key].hexa
 
 

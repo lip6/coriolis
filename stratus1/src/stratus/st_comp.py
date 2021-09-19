@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -65,7 +64,7 @@ class Comp ( Model ) :
     else         : self.func = "Ne"    
 
     # Error : if net is not a string    
-    if type ( self.nb ) != types.StringType :
+    if isinstance(self.nb,str):
       err = "\n[Stratus ERROR] " + self.func + " : the argument must be a string.\n"
       raise Exception ( err )
 

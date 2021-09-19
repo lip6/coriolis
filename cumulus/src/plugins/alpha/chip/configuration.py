@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2014-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -12,7 +12,6 @@
 # |  Python      :       "./plugins/chip/configuration.py"          |
 # +-----------------------------------------------------------------+
 
-from   __future__ import print_function
 import sys
 import os.path
 import Cfg
@@ -69,7 +68,7 @@ class ChipConf ( BlockConf ):
           * Outwards: the pitched box will fully enclose the original
             box.
         """
-        if isinstance(v,long): return ChipConf._toSymbolic( v, rounding )
+        if isinstance(v,int): return ChipConf._toSymbolic( v, rounding )
         if isinstance(v,Box):
             if rounding & Inwards:
                 roundings = [ Superior
@@ -206,12 +205,12 @@ class ChipConf ( BlockConf ):
                             , self.coreSize[1] - self.coreSize[1] % self.sliceHeight )
             self.core.setAbutmentBox( Box( 0, 0, self.coreAb.getWidth(), self.coreAb.getHeight() ) )
             trace( 550, '\tCORE ab:{}\n'.format(self.coreAb) )
-            coreX = (self.coronaAb.getWidth () - self.coreAb.getWidth ()) / 2
+            coreX = (self.coronaAb.getWidth () - self.coreAb.getWidth ()) // 2
             trace( 550, '\tCore X, {} '.format(DbU.getValueString(coreX)) )
             coreX = coreX - (coreX % self.sliceHeight)
             trace( 550, ' adjusted on {}, {}\n'.format( DbU.getValueString(self.sliceHeight)
                                                       , DbU.getValueString(coreX)) )
-            coreY = (self.coronaAb.getHeight() - self.coreAb.getHeight()) / 2
+            coreY = (self.coronaAb.getHeight() - self.coreAb.getHeight()) // 2
             coreY = coreY - (coreY % self.sliceHeight)
             self.icore.setTransformation( Transformation( coreX, coreY, Transformation.Orientation.ID ) )
             self.icore.setPlacementStatus( Instance.PlacementStatus.FIXED )
@@ -255,13 +254,13 @@ class ChipConf ( BlockConf ):
             if iTrackMax < iTrackMin: iTrackMax = iTrackMin
             uTrackMin = lg.getTrackPosition( abMin, iTrackMin )
             uTrackMax = lg.getTrackPosition( abMin, iTrackMax )
-            axis  = (uTrackMax + uTrackMin) / 2
+            axis  = (uTrackMax + uTrackMin) // 2
             width = (iTrackMax - iTrackMin) * lg.getPitch() + lg.getWireWidth()
             if self.routingGauge.isSymbolic():
                 trace( 550, '\tRoutingGauge is symbolic, adjust on lambda.\n' )
                 oneLambda = DbU.fromLambda( 1.0 )
                 if axis % oneLambda:
-                    axis  -= oneLambda / 2
+                    axis  -= oneLambda // 2
                     width -= oneLambda
             trace( 550, '\t[{} {}] -> [{} {}]\n'.format( iTrackMin
                                                        , iTrackMax
@@ -270,7 +269,7 @@ class ChipConf ( BlockConf ):
             trace( 550, '\taxis:  {:.1f}L {}\n'.format(DbU.toLambda(axis ), DbU.getValueString(axis )) )
             trace( 550, '\twidth: {:.1f}L {}\n'.format(DbU.toLambda(width), DbU.getValueString(width)) )
         else:
-            axis  = (uMax + uMin) / 2
+            axis  = (uMax + uMin) // 2
             width = (uMax - uMin)
         trace( 550, '-' )
         return axis, width
@@ -323,7 +322,7 @@ class ChipConf ( BlockConf ):
                     .format( DbU.getValueString(chipXMin - coronaAb.getXMin())
                            , DbU.toLambda(chipXMin - coronaAb.getXMin()) ) )
         trace( 550, '\t|   dxMax:{}\n'.format(DbU.getValueString(chipXMax - coronaAb.getXMin())) )
-        coronaY, width = self.toRoutingGauge( coronaY - width/2, coronaY + width/2, layer )
+        coronaY, width = self.toRoutingGauge( coronaY - width//2, coronaY + width//2, layer )
         trace( 550, '\t| On Grid\n' )
         trace( 550, '\t|   axis: {:.1f}L or {}\n'.format(DbU.toLambda(coronaY), DbU.getValueString(coronaY)) )
         trace( 550, '\t|   width:{:.1f}L or {}\n'.format(DbU.toLambda(width)  , DbU.getValueString(width)) )
@@ -346,7 +345,7 @@ class ChipConf ( BlockConf ):
         trace( 550, '\t| Real\n' )
         trace( 550, '\t|   axis: {}\n'.format(DbU.getValueString(coronaX)) )
         trace( 550, '\t|   width:{}\n'.format(DbU.getValueString(width)) )
-        coronaX, width = self.toRoutingGauge( coronaX - width/2, coronaX + width/2, layer )
+        coronaX, width = self.toRoutingGauge( coronaX - width//2, coronaX + width//2, layer )
         trace( 550, '\t| On Grid\n' )
         trace( 550, '\t|   axis: {:.1f}L or {}\n'.format(DbU.toLambda(coronaX), DbU.getValueString(coronaX)) )
         trace( 550, '\t|   width:{:.1f}L or {}\n'.format(DbU.toLambda(width)  , DbU.getValueString(width)) )
@@ -369,11 +368,11 @@ class ChipConf ( BlockConf ):
         topLayer = layer.getTop()
         botLayer = layer.getBottom()
         if self.isHorizontal(topLayer):
-            coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, botLayer )
-            coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
+            coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, botLayer )
+            coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, topLayer )
         else:
-            coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
-            coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, botLayer )
+            coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, topLayer )
+            coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, botLayer )
         if not (flags & OnHorizontalPitch):
             trace( 550, '\tNot on horizontal routing pitch, Y on lambda only.\n' )
             coronaY = self.toSymbolic( chipY - coronaAb.getYMin(), Superior )
@@ -437,8 +436,8 @@ class ChipConf ( BlockConf ):
             trace( 550, '\tNot on vertical routing pitch, X on lambda only.\n' )
             coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), Superior )
         contacts    = []
-        xContact    = coronaX - viaPitch * (array[0]-1)/2
-        yContact    = coronaY - viaPitch * (array[1]-1)/2
+        xContact    = coronaX - viaPitch * (array[0]-1)//2
+        yContact    = coronaY - viaPitch * (array[1]-1)//2
         contactSize = layer.getMinimalSize()
         trace( 550, '\txContact:{} yContact:{}\n'.format(DbU.getValueString(xContact),DbU.getValueString(yContact)) )
         for i in range(array[0]):
@@ -468,11 +467,11 @@ class ChipConf ( BlockConf ):
         trace( 550, '\t|   WxH:    {} {}\n'.format(DbU.getValueString(width  ), DbU.getValueString(height )) )
         topLayer = layer.getTop()
         if self.isHorizontal(topLayer):
-            coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, layer.getBottom() )
-            coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
+            coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, layer.getBottom() )
+            coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, topLayer )
         else:
-            coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
-            coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, layer.getBottom() )
+            coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, topLayer )
+            coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, layer.getBottom() )
         if direction == Pin.Direction.NORTH or direction == Pin.Direction.SOUTH: 
             trace( 550, '\tEast/West not on horizontal routing pitch, Y on lambda only.\n' )
             coronaY = self.toSymbolic( chipY - coronaAb.getYMin(), Superior )
@@ -648,7 +647,7 @@ class ChipConf ( BlockConf ):
             if not padNet and coronaNet.isGlobal():
                 padNet = self.chip.getNet( coronaNet.getName() )
             if padNet:
-                if not netPads.has_key(padNet):
+                if not padNet in netPads:
                     trace( 550, '\t{:>20} <-> {:<20}\n'.format(padNet.getName(),coronaNet.getName()) )
                     netPads[ padNet ] = coronaNet
                 else:

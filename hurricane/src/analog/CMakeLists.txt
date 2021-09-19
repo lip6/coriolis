@@ -6,10 +6,10 @@
                          ${HURRICANE_SOURCE_DIR}/src/isobar
                          ${HURRICANE_SOURCE_DIR}/src/viewer
                          ${HURRICANE_SOURCE_DIR}/src/analog
-                         ${CONFIGURATION_INCLUDE_DIR}
+                         ${HURRICANE_SOURCE_DIR}/src/configuration3
                          ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIRS}
-                         ${PYTHON_INCLUDE_PATH}
+                         ${Python_INCLUDE_DIRS}
                        )
 
                    set( cpps        AnalogCellExtension.cpp
@@ -156,11 +156,9 @@
                       )
 
                    set( depLibs     viewer
-		                    isobar
-		                    hurricane
+		                            isobar
+		                            hurricane
                                     ${UTILITIES_LIBRARY}
-                                    ${CONFIGURATION_LIBRARY}
-                                    ${Boost_LIBRARIES}
                                     ${QtX_LIBRARIES}
                       )
 

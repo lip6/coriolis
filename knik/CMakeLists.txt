@@ -13,11 +13,10 @@
  print_cmake_module_path()
 
  set_cmake_policies()
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options)
  setup_qt()
  
  find_package(FLUTE     REQUIRED)
- find_package(VLSISAPD  REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS  REQUIRED)
  

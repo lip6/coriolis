@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -12,7 +12,6 @@
 # |  Python      :       "./plugins/block/configuration.py"         |
 # +-----------------------------------------------------------------+
 
-from   __future__ import print_function
 import sys
 import re
 import os.path
@@ -288,7 +287,7 @@ class GaugeConf ( object ):
         trace( 550, ',+', '\tGaugeConf.rpAccess() {}\n'.format(rp) )
         startDepth = self.routingGauge.getLayerDepth( rp.getOccurrence().getEntity().getLayer() )
         trace( 550, '\tlayer:{} startDepth:{}\n'.format(rp.getOccurrence().getEntity().getLayer(),startDepth) )
-        if self._rpToAccess.has_key(rp):
+        if rp in self._rpToAccess:
             trace( 550, '-' )
             return self._rpToAccess[rp]
         if flags & GaugeConf.DeepDepth:
@@ -302,7 +301,7 @@ class GaugeConf ( object ):
         #hoffset   = self._routingGauge.getLayerGauge(hdepth).getOffset()
         #contact1  = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
         #midSliceY = contact1.getY() - (contact1.getY() % self._cellGauge.getSliceHeight()) \
-        #                                               + self._cellGauge.getSliceHeight() / 2
+        #                                               + self._cellGauge.getSliceHeight() // 2
         #midTrackY = midSliceY - ((midSliceY - hoffset) % hpitch)
         #dy        = midSliceY - contact1.getY()
         #
@@ -377,7 +376,7 @@ class GaugeConf ( object ):
 
     def rpByOccurrence ( self, occurrence, net ):
         plug = occurrence.getEntity()
-        if self._plugToRp.has_key(plug):
+        if plug in self._plugToRp:
             rp = self._plugToRp[plug]
         else:
             rp = RoutingPad.create( net, occurrence, RoutingPad.BiggestArea )
@@ -386,7 +385,7 @@ class GaugeConf ( object ):
   
     def rpAccessByOccurrence ( self, occurrence, net, flags ):
         plug = occurrence.getEntity()
-        if self._plugToRp.has_key(plug):
+        if plug in self._plugToRp:
             rp = self._plugToRp[plug]
         else:
             rp = RoutingPad.create( net, occurrence, RoutingPad.BiggestArea )
@@ -394,7 +393,7 @@ class GaugeConf ( object ):
         return self.rpAccess( self.rpByOccurrence(occurrence,net), flags )
   
     def rpByPlug ( self, plug, net ):
-        if self._plugToRp.has_key(plug):
+        if plug in self._plugToRp:
             rp = self._plugToRp[plug]
         else:
             occurrence = Occurrence( plug, Path(net.getCell(),'') )
@@ -473,7 +472,7 @@ class GaugeConf ( object ):
             minArea   = self._routingGauge.getRoutingLayer( depth ).getMinimalArea()
             extension = 0
             if minArea:
-                minLength = DbU.fromPhysical( minArea / DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
+                minLength = DbU.fromPhysical( minArea // DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
                                             , DbU.UnitPowerMicro )
                 minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior );
                 if isinstance(segment,Horizontal):
@@ -481,7 +480,7 @@ class GaugeConf ( object ):
                     uMax = segment.getTarget().getX()
                     segLength = abs( uMax - uMin )
                     if segLength < minLength:
-                        extension = toFoundryGrid( (minLength - segLength)/2, DbU.SnapModeSuperior )
+                        extension = toFoundryGrid( (minLength - segLength)//2, DbU.SnapModeSuperior )
                         if uMin > uMax:
                             extension = - extension
                     segment.setDxSource( -extension )
@@ -491,7 +490,7 @@ class GaugeConf ( object ):
                     uMax = segment.getTarget().getY()
                     segLength = abs( uMax - uMin )
                     if segLength < minLength:
-                        extension = toFoundryGrid( (minLength - segLength)/2, DbU.SnapModeSuperior )
+                        extension = toFoundryGrid( (minLength - segLength)//2, DbU.SnapModeSuperior )
                         if uMin > uMax:
                             extension = - extension
                     segment.setDySource( -extension )
@@ -1033,7 +1032,7 @@ class IoPin ( object ):
 #                               , pinPos.getX()
 #                               , pinPos.getY()
 #                               , gauge.getWireWidth()
-#                               , gauge.getWireWidth() / 2
+#                               , gauge.getWireWidth() // 2
 #                               )
 #               NetExternalComponents.setExternal( pin )
 #               side.append( self.flags, pin )
@@ -1061,7 +1060,7 @@ class IoPin ( object ):
 #                               , gauge.getLayer()
 #                               , pinPos.getX()
 #                               , pinPos.getY()
-#                               , gauge.getWireWidth() / 2
+#                               , gauge.getWireWidth() // 2
 #                               , gauge.getWireWidth()
 #                               )
 #               NetExternalComponents.setExternal( pin )
@@ -1200,12 +1199,12 @@ class BlockConf ( GaugeConf ):
         self.deltaAb = [ dx1, dy1, dx2, dy2 ]
 
     def incIoPinsCounts ( self, net ):
-        if not self.ioPinsCounts.has_key(net):
+        if not net in self.ioPinsCounts:
             self.ioPinsCounts[net] = 0
         self.ioPinsCounts[net] += 1
 
     def getIoPinsCounts ( self, net ):
-        if not self.ioPinsCounts.has_key(net): return 0
+        if not net in self.ioPinsCounts: return 0
         return self.ioPinsCounts[net]
 
     def resetBufferCount ( self ):

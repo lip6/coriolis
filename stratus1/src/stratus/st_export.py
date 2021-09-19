@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-#
+
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.

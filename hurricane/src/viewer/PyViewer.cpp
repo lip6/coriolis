@@ -59,10 +59,25 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyViewer_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Viewer"            /* m_name     */
+    , "Coriolis Graphical Interface."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyViewer_Methods    /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
   // ---------------------------------------------------------------
   // Module Initialization  :  "initViewer ()"
 
-  DL_EXPORT(void) initViewer () {
+  PyMODINIT_FUNC PyInit_Viewer ( void )
+  {
     cdebug_log(20,0) << "initViewer()" << endl;
 
     PyHSVr_LinkPyType ();
@@ -96,11 +111,11 @@ extern "C" {
     __cs.addType ( "graphics"  , &PyTypeGraphics    , "<Graphics>"    , false );
     __cs.addType ( "cellView"  , &PyTypeCellViewer  , "<CellViewer>"  , false );
     
-    PyObject* module = Py_InitModule ( "Viewer", PyViewer_Methods );
+    PyObject* module = PyModule_Create( &PyViewer_ModuleDef );
     if ( module == NULL ) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Viewer module." << endl;
-      return;
+      return NULL;
     }
     
     Py_INCREF ( &PyTypeDisplayStyle );
@@ -116,6 +131,8 @@ extern "C" {
     PyCellViewer_postModuleInit();
 
     cdebug_log(20,0) << "Viewer.so loaded " << (void*)&typeid(string) << endl;
+
+    return module;
   }
 
   

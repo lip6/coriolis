@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -64,14 +63,14 @@ class HTree ( object ):
                              % aspectRatio )
 
     ht = HTree( conf, cell, clockNet, clockBox )
-    print '  o  Creating clock H-Tree for "%s".' % cell.getName()
-    print '     - Clock is "%s"' % ht.masterClock.getName()
+    print( '  o  Creating clock H-Tree for "{}".'.format(cell.getName()) )
+    print( '     - Clock is "{}"'.format(ht.masterClock.getName()) )
     ht.build()
     trace( 550, '\tht.build() OK\n' )
     ht.place()
     trace( 550, '\tht.place() OK\n' )
    #ht.route()
-    print '     - H-Tree depth: %d' % ht.getTreeDepth()
+    print( '     - H-Tree depth: {}'.format(ht.getTreeDepth()) )
     trace( 550, '\tusedVTracks: %s\n' % str(ht.usedVTracks) )
     return ht
 
@@ -82,7 +81,7 @@ class HTree ( object ):
     if self.minSide < DbU.fromLambda(100.0):
       raise ErrorMessage( 3, 'ClockTree: clockTree.minimumSide (%g) is less than 100 lambda.' \
                              % DbU.toLambda(self.minSide) )
-    print '     - Minimum side for clock area: %sl' % DbU.toLambda(self.minSide)
+    print( '     - Minimum side for clock area: {}'.format(DbU.toLambda(self.minSide)) )
 
     UpdateSession.open()
     self.framework    = CRL.AllianceFramework.get()
@@ -150,7 +149,7 @@ class HTree ( object ):
     yslice = self.toYCellGrid(y)
 
     transformation = Transformation.Orientation.ID
-    if ((yslice-self.area.getYMin()) / self.conf.cellGauge.getSliceHeight()) % 2 != 0:
+    if ((yslice-self.area.getYMin()) // self.conf.cellGauge.getSliceHeight()) % 2 != 0:
       transformation = Transformation.Orientation.MY
       yslice        += self.conf.cellGauge.getSliceHeight()
 
@@ -165,7 +164,7 @@ class HTree ( object ):
 
     instance.destroy()
     x = transformation.getTx()
-    for i in range(instanceWidth/tieWidth):
+    for i in range(instanceWidth//tieWidth):
       feed = Instance.create( self.cell
                             , 'htree_feed_%i' % self.feedCounter()
                             , self.tieCell
@@ -248,7 +247,7 @@ class HTree ( object ):
        # This is a Steiner point.
         node.component = self.conf.createContact( net
                                                 , x
-                                                , node.y + self.conf.cellGauge.getSliceHeight()/2 - self.conf.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch()
+                                                , node.y + self.conf.cellGauge.getSliceHeight()//2 - self.conf.routingGauge.getLayerGauge(self.horizontalDeepDepth).getPitch()
                                                 , GaugeConf.DeepDepth )
         trace( 550, '\tCreate (Steiner) node.component: @Y%d (y:%d - %d) %s\n' \
                  % (DbU.toLambda(node.realY)
@@ -478,8 +477,8 @@ class HTreeNode ( object ):
 
   def place ( self ):
     trace( 550, '\rplace HTreeNode %s\n' % self.ckNet.getName() )
-    x          = self.area.getXMin() + self.area.getWidth ()/4
-    y          = self.area.getYMin() + self.area.getHeight()/4
+    x          = self.area.getXMin() + self.area.getWidth ()//4
+    y          = self.area.getYMin() + self.area.getHeight()//4
     halfWidth  = self.area.getHalfWidth ()
     halfHeight = self.area.getHalfHeight()
 
@@ -578,18 +577,18 @@ def computeAbutmentBox ( cell, spaceMargin, aspectRatio, cellGauge ):
   #    instancesNb += 1
   #    cellLength  += int( DbU.toLambda(instance.getMasterCell().getAbutmentBox().getWidth()) )
   #
-  # # ar = x/y    S = x*y = spaceMargin*SH    x=S/y    ar = S/y^2
-  # # y = sqrt(S/AR)
-  #  gcellLength = float(cellLength)*(1+spaceMargin) / sliceHeight
-  #  rows = math.sqrt( gcellLength/aspectRatio )
+  # # ar = x//y    S = x*y = spaceMargin*SH    x=S//y    ar = S//y^2
+  # # y = sqrt(S//AR)
+  #  gcellLength = float(cellLength)*(1+spaceMargin) // sliceHeight
+  #  rows = math.sqrt( gcellLength//aspectRatio )
   #  if math.trunc(rows) != rows: rows = math.trunc(rows) + 1
   #  else:                        rows = math.trunc(rows)
-  #  columns = gcellLength / rows
+  #  columns = gcellLength // rows
   #  if math.trunc(columns) != columns: columns = math.trunc(columns) + 1
   #  else:                              columns = math.trunc(columns)
   #
   #  print '  o  Creating abutment box (margin:%.1f%%, aspect ratio:%.1f%%, g-length:%.1fl)' \
-  #      % (spaceMargin*100.0,aspectRatio*100.0,(cellLength/sliceHeight))
+  #      % (spaceMargin*100.0,aspectRatio*100.0,(cellLength//sliceHeight))
   #  print '     - GCell grid: [%dx%d]' % (columns,rows)
 
   UpdateSession.open()

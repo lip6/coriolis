@@ -27,6 +27,7 @@ PLUGINS      = [ 'bootstrap-rst' ]
 
 STATIC_PATHS = [ 'pages/users-guide'
                , 'pages/python-tutorial'
+               , 'pages/python-cpp-new'
                , 'pages/python-cpp'
                , 'pages/stratus'
                , 'pages/check-toolkit'
@@ -88,8 +89,9 @@ IGNORE_FILES = [ 'UsersGuide.rst'       # For User's Guide.
                , 'ScriptsPlugins.rst'
                , 'ViewerTools.rst'
 
-               , 'PythonTutorial.rst' # For Python Tutorial
+               , 'PythonTutorial.rst' # For Python Tutorial & New.
                , 'Introduction.rst'
+               , 'Implementation.rst'
                , 'Environment.rst'
                , 'CellNetComponent.rst'
                , 'Collections.rst'

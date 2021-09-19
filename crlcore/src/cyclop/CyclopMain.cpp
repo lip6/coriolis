@@ -29,7 +29,7 @@ namespace boptions = boost::program_options;
 #  include  <QGtkStyle>
 #endif
 
-#include  "vlsisapd/utilities/Path.h"
+#include  "hurricane/utilities/Path.h"
 #include  "hurricane/DataBase.h"
 #include  "hurricane/Technology.h"
 #include  "hurricane/Layer.h"

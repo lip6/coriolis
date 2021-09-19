@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -20,8 +20,8 @@
 #include  <QVBoxLayout>
 #include  <QCheckBox>
 #include  <QComboBox>
-#include  <vlsisapd/configuration/Configuration.h>
-#include  <vlsisapd/configuration/ConfigurationWidget.h>
+#include  <hurricane/configuration/Configuration.h>
+#include  <hurricane/configuration/ConfigurationWidget.h>
 #include  <hurricane/DataBase.h>
 #include  <hurricane/Cell.h>
 #include  <hurricane/viewer/Graphics.h>

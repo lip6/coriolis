@@ -69,12 +69,12 @@ extern "C" {
 
   extern void  PyPinDirection_LinkPyType() {
     cdebug_log(20,0) << "PyPinDirection_LinkType()" << endl;
-    PyTypePinDirection.tp_dealloc = (destructor) PyPinDirection_DeAlloc;
-    PyTypePinDirection.tp_compare = (cmpfunc)    PyPinDirection_Cmp;
-    PyTypePinDirection.tp_repr    = (reprfunc)   PyPinDirection_Repr;
-    PyTypePinDirection.tp_str     = (reprfunc)   PyPinDirection_Str;
-    PyTypePinDirection.tp_hash    = (hashfunc)   PyPinDirection_Hash;
-    PyTypePinDirection.tp_methods = PyPinDirection_Methods;
+    PyTypePinDirection.tp_dealloc     = (destructor) PyPinDirection_DeAlloc;
+    PyTypePinDirection.tp_richcompare = (richcmpfunc)PyPinDirection_Cmp;
+    PyTypePinDirection.tp_repr        = (reprfunc)   PyPinDirection_Repr;
+    PyTypePinDirection.tp_str         = (reprfunc)   PyPinDirection_Str;
+    PyTypePinDirection.tp_hash        = (hashfunc)   PyPinDirection_Hash;
+    PyTypePinDirection.tp_methods     = PyPinDirection_Methods;
   }
 
 

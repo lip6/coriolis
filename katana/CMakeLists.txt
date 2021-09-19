@@ -15,16 +15,15 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options)
  setup_qt()
  
  find_package(Libexecinfo        REQUIRED)
  find_package(LibXml2            REQUIRED)
- find_package(PythonLibs         2 REQUIRED)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(LEFDEF             REQUIRED)
  find_package(FLUTE              REQUIRED)
- find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
  find_package(CORIOLIS           REQUIRED)
  find_package(ANABATIC           REQUIRED)
