@@ -39,7 +39,7 @@ namespace  Isobar3 {
   
 
   template<>
-  inline void  pyTypePostModuleInit<Hurricane::BasicLayer::Material> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Hurricane::BasicLayer::Material> ( PyTypeObject* typeObject )
   {
     addConstant( typeObject, "nWell"   , BasicLayer::Material::nWell    );
     addConstant( typeObject, "pWell"   , BasicLayer::Material::pWell    );

@@ -98,9 +98,9 @@ namespace Isobar3 {
 
 
   template<>
-  inline void  pyTypePostModuleInit<Cfg::Parameter> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Cfg::Parameter> ( PyTypeObject* typeObject )
   {
-    // std::cerr << "pyTypePostModuleInit<Cfg::Parameter>()" << std::endl;
+    // std::cerr << "pyTypePostInit<Cfg::Parameter>()" << std::endl;
     PyTypeManagerNonDBo<Cfg::Parameter::Priority>::create( (PyObject*)typeObject
                                                          , Cfg::PyParameterPriority_Methods
                                                          , NULL
@@ -123,7 +123,7 @@ namespace Isobar3 {
   
 
   template<>
-  inline void  pyTypePostModuleInit<Cfg::Parameter::Priority> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Cfg::Parameter::Priority> ( PyTypeObject* typeObject )
   {
   // Parameter::Priority enum.
     addConstant( typeObject, "UseDefault"        , Cfg::Parameter::UseDefault );
@@ -136,7 +136,7 @@ namespace Isobar3 {
   
 
   template<>
-  inline void  pyTypePostModuleInit<Cfg::Parameter::Type> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Cfg::Parameter::Type> ( PyTypeObject* typeObject )
   {
   // Parameter::Type enum.
     addConstant( typeObject, "Unknown"   , Cfg::Parameter::Unknown );
@@ -150,7 +150,7 @@ namespace Isobar3 {
   
 
   template<>
-  inline void  pyTypePostModuleInit<Cfg::Parameter::Flags> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Cfg::Parameter::Flags> ( PyTypeObject* typeObject )
   {
   // Parameter::Flags enum.
     addConstant( typeObject, "HasMin"         , Cfg::Parameter::HasMin );

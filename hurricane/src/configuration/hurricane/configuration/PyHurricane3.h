@@ -101,9 +101,9 @@ extern "C" {
   
 
   template< typename CppT >
-  inline void  pyTypePostModuleInit ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit ( PyTypeObject* typeObject )
   {
-  //cerr << "pyTypePostModuleInit<CppT>() default for <"
+  //cerr << "pyTypePostInit<CppT>() default for <"
   //      << demangle(typeid(CppT).name()) << ">." << endl;
   }
 
@@ -252,7 +252,7 @@ extern "C" {
     _managerByCppTypes[ std::type_index(typeid(CppT)) ] = manager;
     _managerByPyTypes [ manager->_getTypeObject()     ] = manager;
     manager->_addToModule( module );
-    pyTypePostModuleInit<CppT>( manager->_getTypeObject() );
+    pyTypePostInit<CppT>( manager->_getTypeObject() );
     // std::cerr << "_managerByCppTypes.size()=" << _managerByCppTypes.size() << std::endl;
   }
 

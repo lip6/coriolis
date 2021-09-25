@@ -32,7 +32,7 @@ extern "C" {
   
 
   template<>
-  inline void  pyTypePostModuleInit<Hurricane::DbU> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Hurricane::DbU> ( PyTypeObject* typeObject )
   {
     addConstant( typeObject, "SnapModeInferior"      , Hurricane::DbU::Inferior );
     addConstant( typeObject, "SnapModeSuperior"      , Hurricane::DbU::Superior );

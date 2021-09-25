@@ -33,7 +33,7 @@ extern "C" {
 
 
   template<>
-  inline void  pyTypePostModuleInit<Hurricane::BasicLayer> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Hurricane::BasicLayer> ( PyTypeObject* typeObject )
   {
     PyTypeManagerNonDBo<Hurricane::BasicLayer::Material>::create( (PyObject*)typeObject
                                                                 , PyMaterial_Methods

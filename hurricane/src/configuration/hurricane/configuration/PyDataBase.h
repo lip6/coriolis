@@ -43,7 +43,7 @@ namespace Isobar3 {
 
 
   template<>
-  inline void  pyTypePostModuleInit<Hurricane::DataBase> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Hurricane::DataBase> ( PyTypeObject* typeObject )
   {
     PyTypeManagerNonDBo<Hurricane::DataBase::Flags>::create( (PyObject*)typeObject
                                                            , PyDataBaseFlags_Methods
@@ -54,7 +54,7 @@ namespace Isobar3 {
   
 
   template<>
-  inline void  pyTypePostModuleInit<Hurricane::DataBase::Flags> ( PyTypeObject* typeObject )
+  inline void  pyTypePostInit<Hurricane::DataBase::Flags> ( PyTypeObject* typeObject )
   {
   // Parameter::Flags enum.
     addConstant( typeObject, "NoFlags"      , Hurricane::DataBase::NoFlags );
