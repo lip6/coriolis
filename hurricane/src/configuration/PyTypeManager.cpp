@@ -29,30 +29,30 @@ namespace Isobar3 {
 
 
     void  _tpDeAlloc ( PyObject* self )
-    { PyTypeManager::get( Py_TYPE(self) )->_getTpDeAlloc( asVPtr(self) ); }
+    { PyTypeManager::get( Py_TYPE(self) )->_getTpDeAlloc( self ); }
 
     
     PyObject* _tpStr ( PyObject* self )
-    { return PyTypeManager::get( Py_TYPE(self) )->_getTpStr( asVPtr(self) ); }
+    { return PyTypeManager::get( Py_TYPE(self) )->_getTpStr( self ); }
 
     
     long  _tpHash ( PyObject* self )
-    { return PyTypeManager::get( Py_TYPE(self) )->_getTpHash( asVPtr(self) ); }
+    { return PyTypeManager::get( Py_TYPE(self) )->_getTpHash( self ); }
 
 
-    Py_ssize_t  _sqLength ( PyVoidPointer* self ) 
+    Py_ssize_t  _sqLength ( PyObject* self ) 
     { return PyTypeManager::get( Py_TYPE(self) )->_getSqLength( self ); }
 
 
-    PyObject* _sqConcat ( PyVoidPointer* a, PyVoidPointer* b ) 
+    PyObject* _sqConcat ( PyObject* a, PyObject* b ) 
     { return PyTypeManager::get( Py_TYPE(a) )->_getSqConcat( a, b ); }
 
 
-    PyObject* _sqRepeat ( PyVoidPointer* a, Py_ssize_t count ) 
+    PyObject* _sqRepeat ( PyObject* a, Py_ssize_t count ) 
     { return PyTypeManager::get( Py_TYPE(a) )->_getSqRepeat( a, count ); }
 
 
-    PyObject* _sqItem ( PyVoidPointer* self, Py_ssize_t count ) 
+    PyObject* _sqItem ( PyObject* self, Py_ssize_t count ) 
     { return PyTypeManager::get( Py_TYPE(self) )->_getSqItem( self, count ); }
 
 
@@ -87,8 +87,8 @@ namespace Isobar3 {
 // PyTypeObject & PyObject wrapper / manager.
 
   
-  std::map< std::type_index, PyTypeManager* >  PyTypeManager::_managerByCppTypes;
-  std::map< PyTypeObject*  , PyTypeManager* >  PyTypeManager::_managerByPyTypes;
+  std::map< size_t       , PyTypeManager* >  PyTypeManager::_managerByCppTypes;
+  std::map< PyTypeObject*, PyTypeManager* >  PyTypeManager::_managerByPyTypes;
 
 
   PyTypeManager::~PyTypeManager ()
@@ -111,28 +111,28 @@ namespace Isobar3 {
   }
 
   
-  Py_ssize_t PyTypeManager::_getSqLength ( PyVoidPointer* )
+  Py_ssize_t PyTypeManager::_getSqLength ( PyObject* )
   {
     throw Error( "PyTypeManager::_getSqLength(): Not implemented on <%s>.", _getCppTypeName().c_str() );
     return 0;
   }
 
   
-  PyObject* PyTypeManager::_getSqConcat ( PyVoidPointer*, PyVoidPointer* )
+  PyObject* PyTypeManager::_getSqConcat ( PyObject*, PyObject* )
   {
     throw Error( "PyTypeManager::_getSqConcat(): Not implemented on <%s>.", _getCppTypeName().c_str() );
     return NULL;
   }
 
   
-  PyObject* PyTypeManager::_getSqRepeat ( PyVoidPointer*, Py_ssize_t )
+  PyObject* PyTypeManager::_getSqRepeat ( PyObject*, Py_ssize_t )
   {
     throw Error( "PyTypeManager::_getSqRepeat(): Not implemented on <%s>.", _getCppTypeName().c_str() );
     return NULL;
   }
 
   
-  PyObject* PyTypeManager::_getSqItem ( PyVoidPointer*, Py_ssize_t )
+  PyObject* PyTypeManager::_getSqItem ( PyObject*, Py_ssize_t )
   {
     throw Error( "PyTypeManager::_getSqItem(): Not implemented on <%s>.", _getCppTypeName().c_str() );
     return NULL;
@@ -174,6 +174,10 @@ namespace Isobar3 {
   }
 
 
+  PyTypeManager* PyTypeManager::_getBaseManager ()
+  { return NULL; }
+
+
   void  PyTypeManager::_setupPyType ()
   {
     PyTypeObject* ob_type = _getTypeObject();
@@ -183,6 +187,8 @@ namespace Isobar3 {
     ob_type->tp_hash        = (hashfunc)   &::Isobar3::_tpHash;
     ob_type->tp_methods     = _getMethods();
     ob_type->tp_getset      = _getGetsets();
+    if (_getBaseManager())
+      ob_type->tp_base = _getBaseManager()->_getTypeObject();
     // cerr << "_setupPyType() on \"" << _getPyTypeName()
     //      << "\" ob_type=" << (void*)ob_type << endl;
   }

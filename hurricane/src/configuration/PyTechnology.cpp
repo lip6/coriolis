@@ -77,41 +77,41 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyTechnology_create ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_create ( PyObject* self, PyObject* args )
   {
   //Name test;
   //pyToC( NULL, &test );
     return callFunction("Technology.create",&Technology::create,args);
   }
 
-  static PyObject* PyTechnology_getDataBase ( PyVoidPointer* self )
-  { return callMethod("Technology.getDataBase",&Technology::getDataBase,self,NULL); }
+  static PyObject* PyTechnology_getDataBase ( PyObject* self, PyObject* args )
+  { return callMethod("Technology.getDataBase",&Technology::getDataBase,self,args); }
 
-  static PyObject* PyTechnology_getLayer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getLayer ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Technology.getLayer",&getLayer2,self,args);
     if (not rvalue) rvalue = callMethod("Technology.getLayer",&getLayer1,self,args);
     return rvalue;
   }
 
-  static PyObject* PyTechnology_getBasicLayers ( PyVoidPointer* self )
+  static PyObject* PyTechnology_getBasicLayers ( PyObject* self, PyObject* args )
   {
-    PyObject*       rvalue = callMethod("Technology.getBasicLayers",&getBasicLayers1,self,NULL);
-    if (not rvalue) rvalue = callMethod("Technology.getBasicLayers",&getBasicLayers0,self,NULL);
+    PyObject*       rvalue = callMethod("Technology.getBasicLayers",&getBasicLayers1,self,args);
+    if (not rvalue) rvalue = callMethod("Technology.getBasicLayers",&getBasicLayers0,self,args);
     return rvalue;
   }
 
-  static PyObject* PyTechnology_setSymbolicLayer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_setSymbolicLayer ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Technology.setSymbolicLayer",&setSymbolicLayerLayer ,self,args);
     if (not rvalue) rvalue = callMethod("Technology.setSymbolicLayer",&setSymbolicLayerString,self,args);
     return rvalue;
   }
 
-  static PyObject* PyTechnology_getUnitRule ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getUnitRule ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getUnitRule",&Technology::getUnitRule,self,args); }
 
-  static PyObject* PyTechnology_getPhysicalRule ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getPhysicalRule ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Technology.getPhysicalRule",&getPhysicalRule3,self,args);
     if (not rvalue) rvalue = callMethod("Technology.getPhysicalRule",&getPhysicalRule2,self,args);
@@ -119,10 +119,10 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyTechnology_addUnitRule ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_addUnitRule ( PyObject* self, PyObject* args )
   { return callMethod("Technology.addUnitRule",&Technology::addUnitRule,self,args); }
 
-  static PyObject* PyTechnology_addPhysicalRule ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_addPhysicalRule ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Technology.addPhysicalRule",&addPhysicalRule4,self,args);
     if (not rvalue) rvalue = callMethod("Technology.addPhysicalRule",&addPhysicalRule3,self,args);
@@ -130,59 +130,59 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyTechnology_getDeviceDescriptor ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getDeviceDescriptor ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getDeviceDescriptor",&Technology::getDeviceDescriptor,self,args); }
 
-  static PyObject* PyTechnology_addDeviceDescriptor ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_addDeviceDescriptor ( PyObject* self, PyObject* args )
   { return callMethod("Technology.addDeviceDescriptor",&Technology::addDeviceDescriptor,self,args); }
 
-  static PyObject* PyTechnology_getName ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getName ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getName",&Technology::getName,self,args); }
 
-  static PyObject* PyTechnology_setName ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_setName ( PyObject* self, PyObject* args )
   { return callMethod("Technology.setName",&setName,self,args); }
 
-  static PyObject* PyTechnology_isMetal ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_isMetal ( PyObject* self, PyObject* args )
   { return callMethod("Technology.isMetal",&Technology::isMetal,self,args); }
 
-  static PyObject* PyTechnology_getBasicLayer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getBasicLayer ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getBasicLayer",&Technology::getBasicLayer,self,args); }
 
-  static PyObject* PyTechnology_getRegularLayer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getRegularLayer ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getRegularLayer",&Technology::getRegularLayer,self,args); }
 
-  static PyObject* PyTechnology_getViaLayer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getViaLayer ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getViaLayer",&Technology::getViaLayer,self,args); }
 
-  static PyObject* PyTechnology_getLayers ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getLayers ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getLayers",&Technology::getLayers,self,args); }
 
-  static PyObject* PyTechnology_getRegularLayers ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getRegularLayers ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getRegularLayers",&Technology::getRegularLayers,self,args); }
 
-  static PyObject* PyTechnology_getViaLayers ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getViaLayers ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getViaLayers",&Technology::getViaLayers,self,args); }
 
-  static PyObject* PyTechnology_getMetalAbove ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getMetalAbove ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getMetalAbove",&Technology::getMetalAbove,self,args); }
 
-  static PyObject* PyTechnology_getMetalBelow ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getMetalBelow ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getMetalBelow",&Technology::getMetalBelow,self,args); }
 
-  static PyObject* PyTechnology_getCutAbove ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getCutAbove ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getCutAbove",&Technology::getCutAbove,self,args); }
 
-  static PyObject* PyTechnology_getCutBelow ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getCutBelow ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getCutBelow",&Technology::getCutBelow,self,args); }
 
-  static PyObject* PyTechnology_getViaBetween ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getViaBetween ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getViaBetween",&Technology::getViaBetween,self,args); }
 
-  static PyObject* PyTechnology_getNthMetal ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyTechnology_getNthMetal ( PyObject* self, PyObject* args )
   { return callMethod("Technology.getNthMetal",&Technology::getNthMetal,self,args); }
   
-  static PyObject* PyTechnology_destroy ( PyVoidPointer* self )
-  { return callMethod("Technology.destroy",&Technology::destroy,self,NULL); }
+  static PyObject* PyTechnology_destroy ( PyObject* self, PyObject* args )
+  { return callMethod("Technology.destroy",&Technology::destroy,self,args); }
 
 
   // ---------------------------------------------------------------

@@ -82,23 +82,23 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyLayoutDescription_addTab ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayoutDescription_addTab ( PyObject* self, PyObject* args )
   { return callMethod("LayoutDescription.addTab",&addTab,self,args); }
 
-  static PyObject* PyLayoutDescription_addRule ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayoutDescription_addRule ( PyObject* self, PyObject* args )
   { return callMethod("LayoutDescription.addRule",&LayoutDescription::addRule,self,args); }
 
-  static PyObject* PyLayoutDescription_addTitle ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayoutDescription_addTitle ( PyObject* self, PyObject* args )
   { return callMethod("LayoutDescription.addTitle",&LayoutDescription::addTitle,self,args); }
 
-  static PyObject* PyLayoutDescription_addSection ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayoutDescription_addSection ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("LayoutDescription.addSection",&addSection3,self,args);
     if (not rvalue) rvalue = callMethod("LayoutDescription.addSection",&addSection2,self,args);
     return rvalue;
   }
 
-  static PyObject* PyLayoutDescription_addParameter ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayoutDescription_addParameter ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("LayoutDescription.addParameter",&addParameter6,self,args);
     if (not rvalue) rvalue = callMethod("LayoutDescription.addParameter",&addParameter5,self,args);

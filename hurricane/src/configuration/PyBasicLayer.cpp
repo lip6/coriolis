@@ -28,6 +28,12 @@ extern "C" {
 
 // Thin wrappers for overloadeds member functions.
   
+  static BasicLayer*  create3 ( Technology*           technology
+                              , Name                  name
+                              , BasicLayer::Material  material
+                              )
+  { return BasicLayer::create( technology, name, material ); }
+  
   static BasicLayer*  create5 ( Technology*           technology
                               , Name                  name
                               , BasicLayer::Material  material
@@ -45,15 +51,21 @@ extern "C" {
                               )
   { return BasicLayer::create( technology, name, material, gds2Layer, gds2Datatype, minimalSize ); }
   
-  static BasicLayer*  create7 ( Technology*           technology
-                              , Name                  name
-                              , BasicLayer::Material  material
-                              , unsigned              gds2Layer
-                              , unsigned              gds2Datatype
-                              , DbU::Unit             minimalSize
-                              , DbU::Unit             minimalSpacing
-                              )
-  { return BasicLayer::create( technology, name, material, gds2Layer, gds2Datatype, minimalSize, minimalSpacing ); }
+  static BasicLayer* create7 ( Technology*           technology
+                             , Name                  name
+                             , BasicLayer::Material  material
+                             , unsigned              gds2Layer
+                             , unsigned              gds2Datatype
+                             , DbU::Unit             minimalSize
+                             , DbU::Unit             minimalSpacing
+                             )
+  { return BasicLayer::create( technology
+                             , name
+                             , material
+                             , gds2Layer
+                             , gds2Datatype
+                             , minimalSize
+                             , minimalSpacing ); }
 
 
 // Python methods.
@@ -63,29 +75,30 @@ extern "C" {
     PyObject*       rvalue = callFunction("BasicLayer.create",&create7,args);
     if (not rvalue) rvalue = callFunction("BasicLayer.create",&create6,args);
     if (not rvalue) rvalue = callFunction("BasicLayer.create",&create5,args);
+    if (not rvalue) rvalue = callFunction("BasicLayer.create",&create3,args);
     return rvalue;
   }
 
-  static PyObject* PyBasicLayer_getMaterial ( PyVoidPointer* self )
-  { return callMethod("BasicLayer.getMaterial",&BasicLayer::getMaterial,self,NULL); }
+  static PyObject* PyBasicLayer_getMaterial ( PyObject* self, PyObject* args )
+  { return callMethod("BasicLayer.getMaterial",&BasicLayer::getMaterial,self,args); }
 
-  static PyObject* PyBasicLayer_getBlockageLayer ( PyVoidPointer* self )
-  { return callMethod("BasicLayer.getBlockageLayer",&BasicLayer::getBlockageLayer,self,NULL); }
+  static PyObject* PyBasicLayer_getBlockageLayer ( PyObject* self, PyObject* args )
+  { return callMethod("BasicLayer.getBlockageLayer",&BasicLayer::getBlockageLayer,self,args); }
 
-  static PyObject* PyBasicLayer_setBlockageLayer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBasicLayer_setBlockageLayer ( PyObject* self, PyObject* args )
   { return callMethod("BasicLayer.setBlockageLayer",&BasicLayer::setBlockageLayer,self,args); }
 
-  static PyObject* PyBasicLayer_setGds2Layer ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBasicLayer_setGds2Layer ( PyObject* self, PyObject* args )
   { return callMethod("BasicLayer.setGds2Layer",&BasicLayer::setGds2Layer,self,args); }
 
-  static PyObject* PyBasicLayer_setGds2Datatype ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBasicLayer_setGds2Datatype ( PyObject* self, PyObject* args )
   { return callMethod("BasicLayer.setGds2Datatype",&BasicLayer::setGds2Datatype,self,args); }
 
-  static PyObject* PyBasicLayer_setRealName ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBasicLayer_setRealName ( PyObject* self, PyObject* args )
   { return callMethod("BasicLayer.setRealName",&BasicLayer::setRealName,self,args); }
 
-  static PyObject* PyBasicLayer_destroy ( PyVoidPointer* self )
-  { return callMethod("BasicLayer.destroy",&BasicLayer::destroy,self,NULL); }
+  static PyObject* PyBasicLayer_destroy ( PyObject* self, PyObject* args )
+  { return callMethod("BasicLayer.destroy",&BasicLayer::destroy,self,args); }
 
 
   // ---------------------------------------------------------------

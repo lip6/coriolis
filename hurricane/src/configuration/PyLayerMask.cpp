@@ -49,28 +49,28 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyLayerMask_zero ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_zero ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.zero",&Layer::Mask::zero,self,args); }
 
-  static PyObject* PyLayerMask_set ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_set ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.set",&Layer::Mask::set,self,args); }
 
-  static PyObject* PyLayerMask_unset ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_unset ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.unset",&Layer::Mask::unset,self,args); }
 
-  static PyObject* PyLayerMask_isSet ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_isSet ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.isSet",&Layer::Mask::isSet,self,args); }
 
-  static PyObject* PyLayerMask_contains ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_contains ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.contains",&Layer::Mask::contains,self,args); }
 
-  static PyObject* PyLayerMask_intersect ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_intersect ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.intersect",&Layer::Mask::intersect,self,args); }
 
-  static PyObject* PyLayerMask_nthbit ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayerMask_nthbit ( PyObject* self, PyObject* args )
   { return callMethod("PyLayerMask.nthbit",&Layer::Mask::nthbit,self,args); }
 
-  static PyObject* PyLayerMask_fromString ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyLayerMask_fromString ( PyObject*, PyObject* args )
   { return callFunction("PyLayerMask.fromString",&Layer::Mask::fromString,args); }
 
   PyObject* PyLayerMask_NEW ( PyTypeObject* pyType, PyObject* args, PyObject* kwargs )
@@ -96,8 +96,8 @@ extern "C" {
       PyErr_SetString( PyExc_TypeError, message.c_str() );
       return NULL;
     }
-    Layer::Mask* cself  = reinterpret_cast<Layer::Mask*>( asVPtr(self )->_object );
-    Layer::Mask* cother = reinterpret_cast<Layer::Mask*>( asVPtr(other)->_object );
+    Layer::Mask* cself  = reinterpret_cast<Layer::Mask*>( object1(self ) );
+    Layer::Mask* cother = reinterpret_cast<Layer::Mask*>( object1(other) );
 
     bool result = false;
     if ((op == Py_LT) and (*cself <  *cother)) result = true;
@@ -140,7 +140,7 @@ extern "C" {
   { return callPredicate( "Layer::Mask::nonzero", &Layer::Mask::zero,object ); }
 
   static PyObject*  PyLayerMask_invert ( PyObject* object )
-  { return callMethod( "Layer::Mask::invert", &invert, (PyVoidPointer*)object, NULL ); }
+  { return callMethod( "Layer::Mask::invert", &invert, object, NULL ); }
 
   static PyObject* PyLayerMask_bitand ( PyObject* pyLhs, PyObject* pyRhs )
   { return callOperator<Layer::Mask,std::bit_and>( "Layer::Mask::bitand", pyLhs, pyRhs ); }

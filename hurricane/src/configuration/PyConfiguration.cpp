@@ -56,10 +56,10 @@ extern "C" {
 
 // Getter & Setters, for members/attributes.
   
-  static PyObject* PyConfiguration_getFlags ( PyVoidPointer* self, void* closure )
+  static PyObject* PyConfiguration_getFlags ( PyObject* self, void* closure )
   { return callMethod("Configuration.getFlags",&Configuration::getFlags,self,NULL); }
 
-  static PyObject* PyConfiguration_setFlags ( PyVoidPointer* self, PyObject* value, void* closure )
+  static PyObject* PyConfiguration_setFlags ( PyObject* self, PyObject* value, void* closure )
   {
     callMethod("Configuration.setFlags",&Configuration::setFlags,self,PyTuple_Pack(1,value));
     return 0;
@@ -68,23 +68,23 @@ extern "C" {
 
 // Object methods.
   
-  static PyObject* PyConfiguration_get ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyConfiguration_get ( PyObject*, PyObject* args )
   { return callFunction("Configuration.get",&Configuration::get,args); }
 
 
-  static PyObject* PyConfiguration_pushDefaultPriority ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyConfiguration_pushDefaultPriority ( PyObject*, PyObject* args )
   { return callFunction("Configuration.pushDefaultPriority",&Configuration::pushDefaultPriority,args); }
 
 
-  static PyObject* PyConfiguration_popDefaultPriority ( PyVoidPointer* )
-  { return callFunction("Configuration.popDefaultPriority",&Configuration::popDefaultPriority,NULL); }
+  static PyObject* PyConfiguration_popDefaultPriority ( PyObject*, PyObject* args )
+  { return callFunction("Configuration.popDefaultPriority",&Configuration::popDefaultPriority,args); }
 
 
-  static PyObject* PyConfiguration_getDefaultPriority ( PyVoidPointer* )
-  { return callFunction("Configuration.getDefaultPriority",&Configuration::getDefaultPriority,NULL); }
+  static PyObject* PyConfiguration_getDefaultPriority ( PyObject*, PyObject* args )
+  { return callFunction("Configuration.getDefaultPriority",&Configuration::getDefaultPriority,args); }
 
 
-  static PyObject* PyConfiguration_getParameter ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyConfiguration_getParameter ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Configuration.getParameter",&getParameter2,self,args);
     if (not rvalue) rvalue = callMethod("Configuration.getParameter",&getParameter1,self,args);
@@ -92,7 +92,7 @@ extern "C" {
   }
 
 
-  static PyObject* PyConfiguration_addParameter ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyConfiguration_addParameter ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Configuration.addParameter",&addParameter4,self,args);
     if (not rvalue) rvalue = callMethod("Configuration.addParameter",&addParameter3,self,args);
@@ -100,11 +100,11 @@ extern "C" {
   }
 
 
-  static PyObject* PyConfiguration_getParameters ( PyVoidPointer* self )
-  { return callMethod("Configuration.getParameters",&Configuration::getParameters,self,NULL); }
+  static PyObject* PyConfiguration_getParameters ( PyObject* self, PyObject* args )
+  { return callMethod("Configuration.getParameters",&Configuration::getParameters,self,args); }
 
 
-  static PyObject* PyConfiguration_getLayout ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyConfiguration_getLayout ( PyObject* self, PyObject* args )
   { return callMethod("Configuration.getLayout",&getLayout,self,args); }
 
 

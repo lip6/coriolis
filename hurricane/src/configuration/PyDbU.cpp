@@ -74,134 +74,134 @@ extern "C" {
   
 // Python methods.
 
-  static PyObject* PyDbU_fromDb ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_fromDb ( PyObject*, PyObject* args )
   { return callFunction("DbU.fromDb",&DbU::fromDb,args); }
 
-  static PyObject* PyDbU_fromGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_fromGrid ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.fromGrid",&fromGridDouble,args);
     if (not rvalue) rvalue = callFunction("DbU.fromGrid",&fromGridLong,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_fromLambda ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_fromLambda ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.fromLambda",&fromLambdaDouble,args);
     if (not rvalue) rvalue = callFunction("DbU.fromLambda",&fromLambdaLong,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_fromPhysical ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_fromPhysical ( PyObject*, PyObject* args )
   { return callFunction("DbU.fromPhysical",&DbU::fromPhysical,args); }
 
-  static PyObject* PyDbU_getPrecision ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getPrecision ( PyObject*, PyObject* args )
   { return callFunction("DbU.getPrecision",&DbU::getPrecision,args); }
 
-  static PyObject* PyDbU_getMaximalPrecision ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getMaximalPrecision ( PyObject*, PyObject* args )
   { return callFunction("DbU.getMaximalPrecision",&DbU::getMaximalPrecision,args); }
 
-  static PyObject* PyDbU_getResolution ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getResolution ( PyObject*, PyObject* args )
   { return callFunction("DbU.getResolution",&DbU::getResolution,args); }
 
-  static PyObject* PyDbU_setPrecision ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setPrecision ( PyObject*, PyObject* args )
   { return callFunction("DbU.setPrecision",&setPrecision1,args); }
 
-  static PyObject* PyDbU_getPolygonStep ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getPolygonStep ( PyObject*, PyObject* args )
   { return callFunction("DbU.getPolygonStep",&DbU::getPolygonStep,args); }
 
-  static PyObject* PyDbU_setPolygonStep ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setPolygonStep ( PyObject*, PyObject* args )
   { return callFunction("DbU.setPolygonStep",&DbU::setPolygonStep,args); }
 
-  static PyObject* PyDbU_getUnitPower ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getUnitPower ( PyObject*, PyObject* args )
   { return callFunction("DbU.getUnitPower",&DbU::getUnitPower,args); }
 
-  static PyObject* PyDbU_setPhysicalsPerGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setPhysicalsPerGrid ( PyObject*, PyObject* args )
   { return callFunction("DbU.setPhysicalsPerGrid",&DbU::setPhysicalsPerGrid,args); }
 
-  static PyObject* PyDbU_getPhysicalsPerGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getPhysicalsPerGrid ( PyObject*, PyObject* args )
   { return callFunction("DbU.getPhysicalsPerGrid",&DbU::getPhysicalsPerGrid,args); }
 
-  static PyObject* PyDbU_physicalToGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_physicalToGrid ( PyObject*, PyObject* args )
   { return callFunction("DbU.physicalToGrid",&DbU::physicalToGrid,args); }
 
-  static PyObject* PyDbU_setGridsPerLambda ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setGridsPerLambda ( PyObject*, PyObject* args )
   { return callFunction("DbU.setGridsPerLambda",&setGridsPerLambda1,args); }
 
-  static PyObject* PyDbU_getGridsPerLambda ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getGridsPerLambda ( PyObject*, PyObject* args )
   { return callFunction("DbU.getGridsPerLambda",&DbU::getGridsPerLambda,args); }
 
-  static PyObject* PyDbU_getRealSnapGridStep ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getRealSnapGridStep ( PyObject*, PyObject* args )
   { return callFunction("DbU.getRealSnapGridStep",&DbU::getRealSnapGridStep,args); }
 
-  static PyObject* PyDbU_getOnRealSnapGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getOnRealSnapGrid ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.getOnRealSnapGrid",&getOnRealSnapGrid2,args);
     if (not rvalue) rvalue = callFunction("DbU.getOnRealSnapGrid",&getOnRealSnapGrid1,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_setRealSnapGridStep ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setRealSnapGridStep ( PyObject*, PyObject* args )
   { return callFunction("DbU.setRealSnapGridStep",&DbU::setRealSnapGridStep,args); }
 
-  static PyObject* PyDbU_getSymbolicSnapGridStep ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getSymbolicSnapGridStep ( PyObject*, PyObject* args )
   { return callFunction("DbU.getSymbolicSnapGridStep",&DbU::getSymbolicSnapGridStep,args); }
 
-  static PyObject* PyDbU_getOnSymbolicSnapGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getOnSymbolicSnapGrid ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.getOnSymbolicSnapGrid",&getOnSymbolicSnapGrid2,args);
     if (not rvalue) rvalue = callFunction("DbU.getOnSymbolicSnapGrid",&getOnSymbolicSnapGrid1,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_setSymbolicSnapGridStep ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setSymbolicSnapGridStep ( PyObject*, PyObject* args )
   { return callFunction("DbU.setSymbolicSnapGridStep",&DbU::setSymbolicSnapGridStep,args); }
 
-  static PyObject* PyDbU_getOnCustomGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getOnCustomGrid ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.getOnCustomGrid",&getOnCustomGrid3,args);
     if (not rvalue) rvalue = callFunction("DbU.getOnCustomGrid",&getOnCustomGrid2,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_getOnPhysicalGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getOnPhysicalGrid ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.getOnPhysicalGrid",&getOnPhysicalGrid2,args);
     if (not rvalue) rvalue = callFunction("DbU.getOnPhysicalGrid",&getOnPhysicalGrid1,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_toDb ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_toDb ( PyObject*, PyObject* args )
   { return callFunction("DbU.toDb",&DbU::toDb,args); }
 
-  static PyObject* PyDbU_toGrid ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_toGrid ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.toGrid",&toGridDouble,args);
     if (not rvalue) rvalue = callFunction("DbU.toGrid",&toGridLong,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_toLambda ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_toLambda ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.toLambda",&toLambdaDouble,args);
     if (not rvalue) rvalue = callFunction("DbU.toLambda",&toLambdaLong,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_toPhysical ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_toPhysical ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.toPhysical",&toPhysicalDouble,args);
     if (not rvalue) rvalue = callFunction("DbU.toPhysical",&toPhysicalLong,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_getValueString ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_getValueString ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.getValueString",&getValueString2,args);
     if (not rvalue) rvalue = callFunction("DbU.getValueString",&getValueString1,args);
     return rvalue;
   }
 
-  static PyObject* PyDbU_setStringMode ( PyVoidPointer*, PyObject* args )
+  static PyObject* PyDbU_setStringMode ( PyObject*, PyObject* args )
   {
     PyObject* rvalue = callFunction("DbU.setStringMode",&setStringMode2,args);
     if (not rvalue) rvalue = callFunction("DbU.setStringMode",&setStringMode1,args);

@@ -37,7 +37,12 @@
 		                             hurricane/configuration/PyTechnology.h
 		                             hurricane/configuration/PyLayerMask.h
 		                             hurricane/configuration/PyLayer.h
+		                             hurricane/configuration/PyMaterial.h
 		                             hurricane/configuration/PyBasicLayer.h
+		                             hurricane/configuration/PyViaLayer.h
+		                             hurricane/configuration/PyRegularLayer.h
+		                             hurricane/configuration/PyDiffusionLayer.h
+		                             hurricane/configuration/PyTransistorLayer.h
                       )
                    set( cpps                 Parameter.cpp
                                              LayoutDescription.cpp
@@ -64,7 +69,12 @@
                                              PyTechnology.cpp
                                              PyLayerMask.cpp
                                              PyLayer.cpp
+                                             PyMaterial.cpp
                                              PyBasicLayer.cpp
+                                             PyViaLayer.cpp
+                                             PyRegularLayer.cpp
+                                             PyDiffusionLayer.cpp
+                                             PyTransistorLayer.cpp
                                              PyHurricane3.cpp
                       )
                         

@@ -87,61 +87,61 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyBox_isEmpty ( PyVoidPointer* self )
-  { return callMethod("Box.isEmpty",&Box::isEmpty,self,NULL); }
+  static PyObject* PyBox_isEmpty ( PyObject* self, PyObject* args )
+  { return callMethod("Box.isEmpty",&Box::isEmpty,self,args); }
 
-  static PyObject* PyBox_isFlat ( PyVoidPointer* self )
-  { return callMethod("Box.isFlat",&Box::isFlat,self,NULL); }
+  static PyObject* PyBox_isFlat ( PyObject* self, PyObject* args )
+  { return callMethod("Box.isFlat",&Box::isFlat,self,args); }
 
-  static PyObject* PyBox_isPonctual ( PyVoidPointer* self )
-  { return callMethod("Box.isPonctual",&Box::isPonctual,self,NULL); }
+  static PyObject* PyBox_isPonctual ( PyObject* self, PyObject* args )
+  { return callMethod("Box.isPonctual",&Box::isPonctual,self,args); }
 
-  static PyObject* PyBox_getXMin ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getXMin ( PyObject* self, PyObject* args )
   { return callMethod("Box.getXMin",&Box::getXMin,self,args); }
 
-  static PyObject* PyBox_getYMin ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getYMin ( PyObject* self, PyObject* args )
   { return callMethod("Box.getYMin",&Box::getYMin,self,args); }
 
-  static PyObject* PyBox_getXMax ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getXMax ( PyObject* self, PyObject* args )
   { return callMethod("Box.getXMax",&Box::getXMax,self,args); }
 
-  static PyObject* PyBox_getYMax ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getYMax ( PyObject* self, PyObject* args )
   { return callMethod("Box.getYMax",&Box::getYMax,self,args); }
 
-  static PyObject* PyBox_getXCenter ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getXCenter ( PyObject* self, PyObject* args )
   { return callMethod("Box.getXCenter",&Box::getXCenter,self,args); }
 
-  static PyObject* PyBox_getYCenter ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getYCenter ( PyObject* self, PyObject* args )
   { return callMethod("Box.getYCenter",&Box::getYCenter,self,args); }
 
-  static PyObject* PyBox_getCenter ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getCenter ( PyObject* self, PyObject* args )
   { return callMethod("Box.getCenter",&Box::getCenter,self,args); }
 
-  static PyObject* PyBox_getWidth ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getWidth ( PyObject* self, PyObject* args )
   { return callMethod("Box.getWidth",&Box::getWidth,self,args); }
 
-  static PyObject* PyBox_getHalfWidth ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getHalfWidth ( PyObject* self, PyObject* args )
   { return callMethod("Box.getHalfWidth",&Box::getHalfWidth,self,args); }
 
-  static PyObject* PyBox_getHeight ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getHeight ( PyObject* self, PyObject* args )
   { return callMethod("Box.getHeight",&Box::getHeight,self,args); }
 
-  static PyObject* PyBox_getHalfHeight ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getHalfHeight ( PyObject* self, PyObject* args )
   { return callMethod("Box.getHalfHeight",&Box::getHalfHeight,self,args); }
 
-  static PyObject* PyBox_getUnion ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getUnion ( PyObject* self, PyObject* args )
   { return callMethod("Box.getUnion",&Box::getUnion,self,args); }
 
-  static PyObject* PyBox_getIntersection ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_getIntersection ( PyObject* self, PyObject* args )
   { return callMethod("Box.getIntersection",&Box::getIntersection,self,args); }
 
-  static PyObject* PyBox_intersect ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_intersect ( PyObject* self, PyObject* args )
   { return callMethod("Box.intersect",&Box::intersect,self,args); }
 
-  static PyObject* PyBox_isConstrainedBy ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_isConstrainedBy ( PyObject* self, PyObject* args )
   { return callMethod("Box.isConstrainedBy",&Box::isConstrainedBy,self,args); }
 
-  static PyObject* PyBox_inflate ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_inflate ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Box.inflate",&inflate4,self,args);
     if (not rvalue) rvalue = callMethod("Box.inflate",&inflate2,self,args);
@@ -149,7 +149,7 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyBox_merge ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_merge ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Box.merge4",&merge4 ,self,args);
     if (not rvalue) rvalue = callMethod("Box.merge2",&merge2 ,self,args);
@@ -158,7 +158,7 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyBox_contains ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_contains ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Box.contains",&contains2 ,self,args);
     if (not rvalue) rvalue = callMethod("Box.contains",&contains1b,self,args);
@@ -166,7 +166,7 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyBox_makeEmpty ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyBox_makeEmpty ( PyObject* self, PyObject* args )
   { return callMethod("Box.makeEmpty",&Box::makeEmpty,self,args); }
 
   PyObject* PyBox_NEW ( PyTypeObject* pyType, PyObject* args, PyObject* kwargs )

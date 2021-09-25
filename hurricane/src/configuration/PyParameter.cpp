@@ -63,58 +63,58 @@ extern "C" {
 
 // Python getters & setters.
 
-  static PyObject* PyParameter_getFlags ( PyVoidPointer* self, void* closure )
+  static PyObject* PyParameter_getFlags ( PyObject* self, void* closure )
   { return callMethod("Parameter.getFlags",&Parameter::getFlags,self,NULL); }
 
-  static PyObject* PyParameter_setFlags ( PyVoidPointer* self, PyObject* value, void* closure )
+  static PyObject* PyParameter_setFlags ( PyObject* self, PyObject* value, void* closure )
   {
     callMethod("Parameter.setFlags",&Parameter::setFlags,self,PyTuple_Pack(1,value));
     return 0;
   }
 
-  static PyObject* PyParameter_getType ( PyVoidPointer* self, void* closure )
+  static PyObject* PyParameter_getType ( PyObject* self, void* closure )
   { return callMethod("Parameter.getType",&Parameter::getType,self,NULL); }
 
 
 // Python methods.
 
-  static PyObject* PyParameter_isFile ( PyVoidPointer* self )
-  { return callMethod("Parameter.isFile",&Parameter::isFile,self,NULL); }
+  static PyObject* PyParameter_isFile ( PyObject* self, PyObject* args )
+  { return callMethod("Parameter.isFile",&Parameter::isFile,self,args); }
 
-  static PyObject* PyParameter_isPath ( PyVoidPointer* self )
-  { return callMethod("Parameter.isPath",&Parameter::isPath,self,NULL); }
+  static PyObject* PyParameter_isPath ( PyObject* self, PyObject* args )
+  { return callMethod("Parameter.isPath",&Parameter::isPath,self,args); }
 
-  static PyObject* PyParameter_hasMin ( PyVoidPointer* self )
-  { return callMethod("Parameter.hasMin",&Parameter::hasMin,self,NULL); }
+  static PyObject* PyParameter_hasMin ( PyObject* self, PyObject* args )
+  { return callMethod("Parameter.hasMin",&Parameter::hasMin,self,args); }
 
-  static PyObject* PyParameter_hasMax ( PyVoidPointer* self )
-  { return callMethod("Parameter.hasMax",&Parameter::hasMax,self,NULL); }
+  static PyObject* PyParameter_hasMax ( PyObject* self, PyObject* args )
+  { return callMethod("Parameter.hasMax",&Parameter::hasMax,self,args); }
 
-  static PyObject* PyParameter_hasNeedRestart ( PyVoidPointer* self )
-  { return callMethod("Parameter.hasNeedRestart",&Parameter::hasNeedRestart,self,NULL); }
+  static PyObject* PyParameter_hasNeedRestart ( PyObject* self, PyObject* args )
+  { return callMethod("Parameter.hasNeedRestart",&Parameter::hasNeedRestart,self,args); }
 
-  static PyObject* PyParameter_hasMustExist ( PyVoidPointer* self )
-  { return callMethod("Parameter.hasMustExist",&Parameter::hasMustExist,self,NULL); }
+  static PyObject* PyParameter_hasMustExist ( PyObject* self, PyObject* args )
+  { return callMethod("Parameter.hasMustExist",&Parameter::hasMustExist,self,args); }
 
-  static PyObject* PyParameter_hasFlags ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_hasFlags ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.hasFlags",&Parameter::hasFlags,self,args); }
   
-  static PyObject* PyParameter_getId ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_getId ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.getId",&Parameter::getId,self,args); }
 
-  static PyObject* PyParameter_getMinInt ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_getMinInt ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.getMinInt",&Parameter::getMinInt,self,args); }
 
-  static PyObject* PyParameter_getMaxInt ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_getMaxInt ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.getMaxInt",&Parameter::getMaxInt,self,args); }
 
-  static PyObject* PyParameter_getMinDouble ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_getMinDouble ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.getMinDouble",&Parameter::getMinDouble,self,args); }
 
-  static PyObject* PyParameter_getMaxDouble ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_getMaxDouble ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.getMaxDouble",&Parameter::getMaxDouble,self,args); }
 
-  static PyObject* PyParameter_checkValue ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_checkValue ( PyObject* self, PyObject* args )
   {
     PyObject* rvalue = callMethod("Parameter.checkValue",&checkValueInt,self,args);
     if (not rvalue) 
@@ -122,34 +122,34 @@ extern "C" {
     return rvalue;
   }
   
-  static PyObject* PyParameter_asBool ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_asBool ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.asBool",&Parameter::asBool,self,args); }
   
-  static PyObject* PyParameter_asInt ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_asInt ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.asInt",&Parameter::asInt,self,args); }
   
-  static PyObject* PyParameter_asDouble ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_asDouble ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.asDouble",&Parameter::asDouble,self,args); }
   
-  static PyObject* PyParameter_asPercentage ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_asPercentage ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.asPercentage",&Parameter::asPercentage,self,args); }
   
-  static PyObject* PyParameter_asString ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_asString ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.asString",&Parameter::asString,self,args); }
 
-  static PyObject* PyParameter_asPercentageString ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_asPercentageString ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.asPercentageString",&Parameter::asPercentageString,self,args); }
 
-  static PyObject* PyParameter_addValue ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_addValue ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.addValue",&Parameter::addValue,self,args); }
 
-  static PyObject* PyParameter_addSlave ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_addSlave ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.addSlave",&Parameter::addSlave,self,args); }
 
-  static PyObject* PyParameter_setPriority ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setPriority ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.setPriority",&Parameter::setPriority,self,args); }
 
-  static PyObject* PyParameter_setString ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setString ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setString",&setString3,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setString",&setString2,self,args);
@@ -157,28 +157,28 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyParameter_setBool ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setBool ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setBool",&setBool2,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setBool",&setBool1,self,args);
     return rvalue;
   }
 
-  static PyObject* PyParameter_setInt ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setInt ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setInt",&setInt2,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setInt",&setInt1,self,args);
     return rvalue;
   }
 
-  static PyObject* PyParameter_setDouble ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setDouble ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setDouble",&setDouble2,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setDouble",&setDouble1,self,args);
     return rvalue;
   }
 
-  static PyObject* PyParameter_setPercentage ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setPercentage ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setPercentage",&setPercentage2 ,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setPercentage",&setPercentage2i,self,args);
@@ -187,21 +187,21 @@ extern "C" {
     return rvalue;
   }
 
-  static PyObject* PyParameter_setMin ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setMin ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setMin",&setMinDouble,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setMin",&setMinInt   ,self,args);
     return rvalue;
   }
 
-  static PyObject* PyParameter_setMax ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_setMax ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Parameter.setMax",&setMaxDouble,self,args);
     if (not rvalue) rvalue = callMethod("Parameter.setMax",&setMaxInt   ,self,args);
     return rvalue;
   }
 
-  static PyObject* PyParameter_getSlaves ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyParameter_getSlaves ( PyObject* self, PyObject* args )
   { return callMethod("Parameter.getSlaves",&Parameter::getSlaves,self,args); }
 
 

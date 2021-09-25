@@ -50,131 +50,131 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyLayer_getTechnology ( PyVoidPointer* self )
-  { return callMethod("Layer.getTechnology",&Layer::getTechnology,self,NULL); }
+  static PyObject* PyLayer_getTechnology ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getTechnology",&Layer::getTechnology,self,args); }
 
-  static PyObject* PyLayer_getName ( PyVoidPointer* self )
-  { return callMethod("Layer.getName",&Layer::getName,self,NULL); }
+  static PyObject* PyLayer_getName ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getName",&Layer::getName,self,args); }
 
-  static PyObject* PyLayer_getMask ( PyVoidPointer* self )
-  { return callMethod("Layer.getMask",&Layer::getMask,self,NULL); }
+  static PyObject* PyLayer_getMask ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getMask",&Layer::getMask,self,args); }
 
-  static PyObject* PyLayer_getExtractMask ( PyVoidPointer* self )
-  { return callMethod("Layer.getExtractMask",&Layer::getExtractMask,self,NULL); }
+  static PyObject* PyLayer_getExtractMask ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getExtractMask",&Layer::getExtractMask,self,args); }
 
-  static PyObject* PyLayer_getMinimalSize ( PyVoidPointer* self )
-  { return callMethod("Layer.getMinimalSize",&Layer::getMinimalSize,self,NULL); }
+  static PyObject* PyLayer_getMinimalSize ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getMinimalSize",&Layer::getMinimalSize,self,args); }
 
-  static PyObject* PyLayer_getMinimalSpacing ( PyVoidPointer* self )
-  { return callMethod("Layer.getMinimalSpacing",&Layer::getMinimalSpacing,self,NULL); }
+  static PyObject* PyLayer_getMinimalSpacing ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getMinimalSpacing",&Layer::getMinimalSpacing,self,args); }
 
-  static PyObject* PyLayer_getBasicLayers ( PyVoidPointer* self )
-  { return callMethod("Layer.getBasicLayers",&Layer::getBasicLayers,self,NULL); }
+  static PyObject* PyLayer_getBasicLayers ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getBasicLayers",&Layer::getBasicLayers,self,args); }
 
-  static PyObject* PyLayer_getBlockageLayer ( PyVoidPointer* self )
-  { return callMethod("Layer.getBlockageLayer",&Layer::getBlockageLayer,self,NULL); }
+  static PyObject* PyLayer_getBlockageLayer ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getBlockageLayer",&Layer::getBlockageLayer,self,args); }
 
-  static PyObject* PyLayer_getCut ( PyVoidPointer* self )
-  { return callMethod("Layer.getCut",&Layer::getCut,self,NULL); }
+  static PyObject* PyLayer_getCut ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getCut",&Layer::getCut,self,args); }
 
-  static PyObject* PyLayer_getTop ( PyVoidPointer* self )
-  { return callMethod("Layer.getTop",&Layer::getTop,self,NULL); }
+  static PyObject* PyLayer_getTop ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getTop",&Layer::getTop,self,args); }
 
-  static PyObject* PyLayer_getBottom ( PyVoidPointer* self )
-  { return callMethod("Layer.getBottom",&Layer::getBottom,self,NULL); }
+  static PyObject* PyLayer_getBottom ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getBottom",&Layer::getBottom,self,args); }
 
-  static PyObject* PyLayer_getOpposite ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getOpposite ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getOpposite",&Layer::getOpposite,self,args); }
 
-  static PyObject* PyLayer_getMetalAbove ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getMetalAbove ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getMetalAbove",&Layer::getMetalAbove,self,args); }
 
-  static PyObject* PyLayer_getMetalBelow ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getMetalBelow ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getMetalBelow",&Layer::getMetalBelow,self,args); }
 
-  static PyObject* PyLayer_getCutAbove ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getCutAbove ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getCutAbove",&Layer::getCutAbove,self,args); }
 
-  static PyObject* PyLayer_getCutBelow ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getCutBelow ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getCutBelow",&Layer::getCutBelow,self,args); }
 
-  static PyObject* PyLayer_getEnclosure ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getEnclosure ( PyObject* self, PyObject* args )
   { 
     PyObject*       rvalue = callMethod("Layer.getEnclosure",&getEnclosure2,self,args);
     if (not rvalue) rvalue = callMethod("Layer.getEnclosure",&getEnclosure1,self,args);
     return rvalue;
   }
 
-  static PyObject* PyLayer_getExtentionCap ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getExtentionCap ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Layer.getExtensionCap",&getExtentionCap1,self,args);
     if (not rvalue) rvalue = callMethod("Layer.getExtensionCap",&getExtentionCap0,self,args);
     return rvalue;
   }
 
-  static PyObject* PyLayer_getExtentionWidth ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getExtentionWidth ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("Layer.getExtensionWidth",&getExtentionWidth1,self,args);
     if (not rvalue) rvalue = callMethod("Layer.getExtensionWidth",&getExtentionWidth0,self,args);
     return rvalue;
   }
 
-  static PyObject* PyLayer_getTopEnclosure ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getTopEnclosure ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getTopEnclosure",&Layer::getTopEnclosure,self,args); }
 
-  static PyObject* PyLayer_getBottomEnclosure ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_getBottomEnclosure ( PyObject* self, PyObject* args )
   { return callMethod("Layer.getBottomEnclosure",&Layer::getBottomEnclosure,self,args); }
 
-  static PyObject* PyLayer_getMinimalArea ( PyVoidPointer* self )
-  { return callMethod("Layer.getMinimalArea",&Layer::getMinimalArea,self,NULL); }
+  static PyObject* PyLayer_getMinimalArea ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.getMinimalArea",&Layer::getMinimalArea,self,args); }
 
-  static PyObject* PyLayer_above ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_above ( PyObject* self, PyObject* args )
   { return callMethod("Layer.above",&Layer::above,self,args); }
 
-  static PyObject* PyLayer_below ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_below ( PyObject* self, PyObject* args )
   { return callMethod("Layer.below",&Layer::below,self,args); }
 
-  static PyObject* PyLayer_contains ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_contains ( PyObject* self, PyObject* args )
   { return callMethod("Layer.contains",&Layer::contains,self,args); }
 
-  static PyObject* PyLayer_intersect ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_intersect ( PyObject* self, PyObject* args )
   { return callMethod("Layer.intersect",&Layer::intersect,self,args); }
 
-  static PyObject* PyLayer_isSymbolic ( PyVoidPointer* self )
-  { return callMethod("Layer.isSymbolic",&Layer::isSymbolic,self,NULL); }
+  static PyObject* PyLayer_isSymbolic ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.isSymbolic",&Layer::isSymbolic,self,args); }
 
-  static PyObject* PyLayer_isBlockage ( PyVoidPointer* self )
-  { return callMethod("Layer.isBlockage",&Layer::isBlockage,self,NULL); }
+  static PyObject* PyLayer_isBlockage ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.isBlockage",&Layer::isBlockage,self,args); }
 
-  static PyObject* PyLayer_setName ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setName ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setName",&Layer::setName,self,args); }
 
-  static PyObject* PyLayer_setSymbolic ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setSymbolic ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setSymbolic",&Layer::setSymbolic,self,args); }
 
-  static PyObject* PyLayer_setBlockage ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setBlockage ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setBlockage",&Layer::setBlockage,self,args); }
 
-  static PyObject* PyLayer_setMinimalSize ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setMinimalSize ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setMinimalSize",&Layer::setMinimalSize,self,args); }
 
-  static PyObject* PyLayer_setMinimalSpacing ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setMinimalSpacing ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setMinimalSpacing",&Layer::setMinimalSpacing,self,args); }
 
-  static PyObject* PyLayer_setEnclosure ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setEnclosure ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setEnclosure",&Layer::setEnclosure,self,args); }
 
-  static PyObject* PyLayer_setExtentionCap ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setExtentionCap ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setExtentionCap",&Layer::setExtentionCap,self,args); }
 
-  static PyObject* PyLayer_setExtentionWidth ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setExtentionWidth ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setExtentionWidth",&Layer::setExtentionWidth,self,args); }
 
-  static PyObject* PyLayer_setMinimalArea ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyLayer_setMinimalArea ( PyObject* self, PyObject* args )
   { return callMethod("Layer.setMinimalArea",&Layer::setMinimalArea,self,args); }
 
-  static PyObject* PyLayer_destroy ( PyVoidPointer* self )
-  { return callMethod("Layer.destroy",&Layer::destroy,self,NULL); }
+  static PyObject* PyLayer_destroy ( PyObject* self, PyObject* args )
+  { return callMethod("Layer.destroy",&Layer::destroy,self,args); }
 
 
   // ---------------------------------------------------------------

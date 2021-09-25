@@ -36,8 +36,8 @@ namespace Isobar3 {
       static  PyTypeManagerVectorIterator* create         ( PyObject* module, uint64_t flags );
       virtual PyObject*                    _getTpIter     ( PyObject* );
       virtual PyObject*                    _getTpIterNext ( PyObject* );
-      virtual void                         _getTpDeAlloc  ( PyVoidPointer* );
-      virtual long                         _getTpHash     ( PyVoidPointer* );
+      virtual void                         _getTpDeAlloc  ( PyObject* );
+      virtual long                         _getTpHash     ( PyObject* );
     private:
       PyMethodDef* _noMethods;
   };
@@ -48,6 +48,7 @@ namespace Isobar3 {
     : PyTypeManagerVTrunk< typename std::vector<CppT>::iterator >(NULL,NULL,flags|PyTypeManager::IsIterator)
     , _noMethods( NULL )
   {
+    _getTypeObject()->tp_basicsize = sizeof(PyTwoVoid);
     _noMethods = new PyMethodDef;
     _noMethods[0].ml_name  = NULL;
     _noMethods[0].ml_meth  = NULL;
@@ -62,11 +63,11 @@ namespace Isobar3 {
 
     
   template< typename CppT >
-  void  PyTypeManagerVectorIterator<CppT>::_getTpDeAlloc ( PyVoidPointer* self )
+  void  PyTypeManagerVectorIterator<CppT>::_getTpDeAlloc ( PyObject* self )
   {
-    Py_XDECREF( ((PyIteratorPointer*)self)->_container );
+    Py_XDECREF( object2(self) );
     typename std::vector<CppT>::iterator* piterator = NULL;
-    pyToC( (PyObject*)self, &piterator );
+    pyToC( self, &piterator );
     delete piterator;
     PyObject_DEL( self );
   }
@@ -89,7 +90,7 @@ namespace Isobar3 {
     typename std::vector<CppT>::iterator* piterator = NULL;
     typename std::vector<CppT>* pvector = NULL;
     pyToC( self, &piterator );
-    pyToC( (PyObject*)(asIPtr(self)->_container), &pvector );
+    pyToC( object2(self), &pvector );
                                                                                              
     if ((*piterator) != pvector->end()) {
       PyObject* item = cToPy( **piterator );
@@ -102,8 +103,8 @@ namespace Isobar3 {
 
 
   template< typename CppT >
-  long  PyTypeManagerVectorIterator<CppT>::_getTpHash ( PyVoidPointer *self )
-  { return (long)(self->_object); }
+  long  PyTypeManagerVectorIterator<CppT>::_getTpHash ( PyObject *self )
+  { return (long)(object1(self)); }
 
 
   template< typename CppT >
@@ -143,10 +144,10 @@ namespace Isobar3 {
       virtual      ~PyTypeManagerVector ();
     public:
       static  PyTypeManagerVector* create        ( PyObject* module, uint64_t flags );
-      virtual Py_ssize_t           _getSqLength  ( PyVoidPointer* );
-      virtual PyObject*            _getSqItem    ( PyVoidPointer*, Py_ssize_t );
-      virtual void                 _getTpDeAlloc ( PyVoidPointer* );
-      virtual long                 _getTpHash    ( PyVoidPointer* );
+      virtual Py_ssize_t           _getSqLength  ( PyObject* );
+      virtual PyObject*            _getSqItem    ( PyObject*, Py_ssize_t );
+      virtual void                 _getTpDeAlloc ( PyObject* );
+      virtual long                 _getTpHash    ( PyObject* );
       virtual PyObject*            _getTpIter    ( PyObject* );
     private:
       PyMethodDef*       _noMethods;
@@ -182,33 +183,33 @@ namespace Isobar3 {
 
     
   template< typename CppT >
-  void  PyTypeManagerVector<CppT>::_getTpDeAlloc ( PyVoidPointer* self )
+  void  PyTypeManagerVector<CppT>::_getTpDeAlloc ( PyObject* self )
   {
     PyObject_DEL( self );
   }
 
     
   template< typename CppT >
-  Py_ssize_t  PyTypeManagerVector<CppT>::_getSqLength ( PyVoidPointer* self )
+  Py_ssize_t  PyTypeManagerVector<CppT>::_getSqLength ( PyObject* self )
   {
     std::vector<CppT>* pvector = NULL;
-    pyToC( (PyObject*)self, &pvector );
+    pyToC( self, &pvector );
     return pvector->size();
   }
 
     
   template< typename CppT >
-  PyObject* PyTypeManagerVector<CppT>::_getSqItem ( PyVoidPointer* self, Py_ssize_t index )
+  PyObject* PyTypeManagerVector<CppT>::_getSqItem ( PyObject* self, Py_ssize_t index )
   {
     std::vector<CppT>* pvector = NULL;
-    pyToC( (PyObject*)self, &pvector );
+    pyToC( self, &pvector );
     return cToPy( (*pvector)[index] );
   }
 
 
   template< typename CppT >
-  long  PyTypeManagerVector<CppT>::_getTpHash ( PyVoidPointer *self )
-  { return (long)(self->_object); }
+  long  PyTypeManagerVector<CppT>::_getTpHash ( PyObject *self )
+  { return (long)( object1(self) ); }
 
     
   template< typename CppT >
@@ -218,9 +219,9 @@ namespace Isobar3 {
     // std::cerr << "PyTypeManagerVector<CppT>::_getTpIter() on " << (void*)self << std::endl;
     std::vector<CppT>* pvector = NULL;
     pyToC( self, &pvector );
-    PyIteratorPointer* pyIterator = (PyIteratorPointer*)cToPy
+    PyTwoVoid* pyIterator = (PyTwoVoid*)cToPy
       ( new typename std::vector<CppT>::iterator(pvector->begin()) );
-    pyIterator->_container = (PyVoidPointer*)self;
+    object2(pyIterator) = self;
     Py_INCREF( self );
     // std::cerr << "First iterator:" << (void*)pyIterator << std::endl;
     return (PyObject*)pyIterator;
@@ -252,15 +253,4 @@ namespace Isobar3 {
 
 
 }  // Isobar3 namespace.
-
-
-template< typename CppT >
-inline PyObject* cToPy ( const typename std::vector<CppT>::iterator* pit )
-{ return Isobar3::PyTypeManager::link< typename std::vector<CppT>::iterator >
-    ( std::addressof(const_cast< typename std::vector<CppT>::iterator* >(pit)) ); }
-
-
-template< typename CppT >
-inline PyObject* cToPy ( const std::vector<CppT>& vobject )
-{ return Isobar3::PyTypeManager::link< std::vector<CppT> >( std::addressof(const_cast< std::vector<CppT>& >(vobject)) ); }
 

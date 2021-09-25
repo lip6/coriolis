@@ -10,12 +10,13 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./hurricane/configuration/PyLayer.h"           |
+// |  C++ Header  :  "./hurricane/configuration/PyBasicLayer.h"      |
 // +-----------------------------------------------------------------+
 
 
 #pragma  once
 #include "hurricane/configuration/PyTypeManager.h"
+#include "hurricane/configuration/PyMaterial.h"
 #include "hurricane/BasicLayer.h"
 
 
@@ -29,5 +30,19 @@ extern "C" {
 
 
 }  // extern "C".
+
+
+  template<>
+  inline void  pyTypePostModuleInit<Hurricane::BasicLayer> ( PyTypeObject* typeObject )
+  {
+    PyTypeManagerNonDBo<Hurricane::BasicLayer::Material>::create( (PyObject*)typeObject
+                                                                , PyMaterial_Methods
+                                                                , NULL
+                                                                , PyTypeManager::NoCppDelete
+                                                                , "Material"
+                                                                , PyMaterial_NEW
+                                                                , PyMaterial_Init
+                                                                );
+  }
 
 }  // Isobar3 namespace.

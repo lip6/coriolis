@@ -36,8 +36,8 @@ namespace Isobar3 {
       static  PyTypeManagerLocator* create         ( PyObject* module, uint64_t flags );
       virtual PyObject*             _getTpIter     ( PyObject* );
       virtual PyObject*             _getTpIterNext ( PyObject* );
-      virtual void                  _getTpDeAlloc  ( PyVoidPointer* );
-      virtual long                  _getTpHash     ( PyVoidPointer* );
+      virtual void                  _getTpDeAlloc  ( PyObject* );
+      virtual long                  _getTpHash     ( PyObject* );
     private:
       PyMethodDef* _noMethods;
   };
@@ -48,6 +48,7 @@ namespace Isobar3 {
     : PyTypeManagerVTrunk< typename Hurricane::Locator<CppT*> >(NULL,NULL,flags|PyTypeManager::IsIterator)
     , _noMethods( NULL )
   {
+    _getTypeObject()->tp_basicsize = sizeof(PyTwoVoid);
     _noMethods = new PyMethodDef;
     _noMethods[0].ml_name  = NULL;
     _noMethods[0].ml_meth  = NULL;
@@ -62,11 +63,11 @@ namespace Isobar3 {
 
     
   template< typename CppT >
-  void  PyTypeManagerLocator<CppT>::_getTpDeAlloc ( PyVoidPointer* self )
+  void  PyTypeManagerLocator<CppT>::_getTpDeAlloc ( PyObject* self )
   {
-    Py_XDECREF( ((PyIteratorPointer*)self)->_container );
+    Py_XDECREF( object2(self) );
     typename Hurricane::Locator<CppT*>* plocator = NULL;
-    pyToC( self, &plocator );
+    pyToC( (PyObject*)self, &plocator );
     delete plocator;
     PyObject_DEL( self );
   }
@@ -85,8 +86,9 @@ namespace Isobar3 {
     typename Hurricane::Locator   <CppT*>* plocator    = NULL;
     typename Hurricane::Collection<CppT*>* pcollection = NULL;
     pyToC( self, &plocator );
-    pyToC( asIPtr(self)->_container, &pcollection );
+    pyToC( (PyObject*)asIPtr(self)->_object2, &pcollection );
                                                                                              
+  //std::cerr << "Collection::Iterator::_getTpIterNext() on " << (void*)pcollection << std::endl;
     if (plocator and plocator->isValid()) {
       PyObject* item = cToPy( plocator->getElement() );
       plocator->progress();
@@ -97,8 +99,8 @@ namespace Isobar3 {
 
 
   template< typename CppT >
-  long  PyTypeManagerLocator<CppT>::_getTpHash ( PyVoidPointer *self )
-  { return (long)(self->_object); }
+  long  PyTypeManagerLocator<CppT>::_getTpHash ( PyObject* self )
+  { return (long)object1(self); }
 
 
   template< typename CppT >
@@ -138,8 +140,8 @@ namespace Isobar3 {
       virtual      ~PyTypeManagerCollection ();
     public:
       static  PyTypeManagerCollection* create       ( PyObject* module, uint64_t flags );
-      virtual void                    _getTpDeAlloc ( PyVoidPointer* );
-      virtual long                    _getTpHash    ( PyVoidPointer* );
+      virtual void                    _getTpDeAlloc ( PyObject* );
+      virtual long                    _getTpHash    ( PyObject* );
       virtual PyObject*               _getTpIter    ( PyObject* );
     private:
       PyMethodDef*       _noMethods;
@@ -165,18 +167,19 @@ namespace Isobar3 {
 
     
   template< typename CppT >
-  void  PyTypeManagerCollection<CppT>::_getTpDeAlloc ( PyVoidPointer* self )
+  void  PyTypeManagerCollection<CppT>::_getTpDeAlloc ( PyObject* self )
   {
     Hurricane::Collection<CppT*>* pcollection = NULL;
-    pyToC( self->_object, &pcollection );
+    pyToC( self, &pcollection );
+  //std::cerr << "PyCollection::_getTpDeAlloc() on " << (void*)pcollection << std::endl;
     delete pcollection;
     PyObject_DEL( self );
   }
 
 
   template< typename CppT >
-  long  PyTypeManagerCollection<CppT>::_getTpHash ( PyVoidPointer *self )
-  { return (long)(self->_object); }
+  long  PyTypeManagerCollection<CppT>::_getTpHash ( PyObject *self )
+  { return (long)object1(self); }
 
     
   template< typename CppT >
@@ -184,9 +187,10 @@ namespace Isobar3 {
   {
     Hurricane::Collection<CppT*>* pcollection = NULL;
     pyToC( self, &pcollection );
-    PyIteratorPointer* pyLocator = (PyIteratorPointer*)cToPy( pcollection->getLocator() );
-    pyLocator->_container = (PyVoidPointer*)self;
+    PyTwoVoid* pyLocator = (PyTwoVoid*)cToPy( pcollection->getLocator() );
+    pyLocator->_object2 = self;
     Py_INCREF( self );
+  //std::cerr << "Collection::_getTpIter() on " << (void*)pcollection << std::endl;
     return (PyObject*)pyLocator;
   }
 
@@ -207,7 +211,10 @@ namespace Isobar3 {
     PyTypeObject* ob_type = manager->_getTypeObject();
     ob_type->tp_iter      = (getiterfunc)&::Isobar3::_tpIter;
 
-    PyTypeManager::add< Hurricane::Collection<CppT*> >( module, manager );
+    std::cerr << "Add to manager: <"
+              << ::Hurricane::demangle(typeid( Hurricane::Collection<CppT*> )) << ">" << std::endl;
+    PyTypeManager::add< Hurricane::Collection<CppT*> >
+      ( module, manager, typeid(Hurricane::Collection<CppT*>).hash_code() );
     PyTypeManagerLocator<CppT>::create( module, flags );
 
     return manager;
@@ -215,15 +222,4 @@ namespace Isobar3 {
 
 
 }  // Isobar3 namespace.
-
-
-template< typename CppT >
-inline PyObject* cToPy ( const typename Hurricane::Locator<CppT*>* plocator )
-{ return Isobar3::PyTypeManager::link< typename Hurricane::Locator<CppT*> >
-    ( std::addressof(const_cast< typename Hurricane::Locator<CppT*>* >(plocator)) ); }
-
-
-template< typename CppT >
-inline PyObject* cToPy ( const Hurricane::Collection<CppT*>* pcollection )
-{ return Isobar3::PyTypeManager::link< Hurricane::Collection<CppT*> >( std::addressof(const_cast< Hurricane::Collection<CppT*>* >(pcollection)) ); }
 

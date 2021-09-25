@@ -56,24 +56,24 @@ extern "C" {
 
   typedef struct {
       PyObject_HEAD
-      void* _object;
-  } PyVoidPointer;
+      void* _object1;
+  } PyOneVoid;
 
 
   typedef struct {
       PyObject_HEAD
-      void*          _object;    // pointer to iterator.
-      PyVoidPointer* _container;
-  } PyIteratorPointer;
+      void*     _object1;    // pointer to iterator.
+      PyObject* _object2;    // pointer to container.
+  } PyTwoVoid;
 
 
   extern void        _tpDeAlloc     ( PyObject* );
   extern PyObject*   _tpStr         ( PyObject* );
   extern long        _tpHash        ( PyObject* );
-  extern Py_ssize_t  _sqLength      ( PyVoidPointer* ); 
-  extern PyObject*   _sqConcat      ( PyVoidPointer* , PyVoidPointer*  ); 
-  extern PyObject*   _sqRepeat      ( PyVoidPointer* , Py_ssize_t );
-  extern PyObject*   _sqItem        ( PyVoidPointer* , Py_ssize_t );
+  extern Py_ssize_t  _sqLength      ( PyObject* ); 
+  extern PyObject*   _sqConcat      ( PyObject* , PyObject*  ); 
+  extern PyObject*   _sqRepeat      ( PyObject* , Py_ssize_t );
+  extern PyObject*   _sqItem        ( PyObject* , Py_ssize_t );
   extern int         _sqContains    ( PyObject*, PyObject* );
   extern Py_ssize_t  _mpLength      ( PyObject* ); 
   extern PyObject*   _mpSubscript   ( PyObject*, PyObject* ); 
@@ -85,9 +85,13 @@ extern "C" {
 } // "C" linkage.
 
 
-  inline PyVoidPointer*     asVPtr ( PyObject*      o ) { return reinterpret_cast<PyVoidPointer    *>(o); }
-  inline PyIteratorPointer* asIPtr ( PyObject*      o ) { return reinterpret_cast<PyIteratorPointer*>(o); }
-  inline PyIteratorPointer* asIPtr ( PyVoidPointer* o ) { return reinterpret_cast<PyIteratorPointer*>(o); }
+  inline PyOneVoid* asVPtr  ( PyObject*  o ) { return reinterpret_cast<PyOneVoid*>(o); }
+  inline PyTwoVoid* asIPtr  ( PyObject*  o ) { return reinterpret_cast<PyTwoVoid*>(o); }
+  inline void*&     object1 ( PyObject*  o ) { return asVPtr(o)->_object1; }
+  inline void*&     object1 ( PyOneVoid* o ) { return o->_object1; }
+  inline void*&     object1 ( PyTwoVoid* o ) { return o->_object1; }
+  inline PyObject*& object2 ( PyObject*  o ) { return asIPtr(o)->_object2; }
+  inline PyObject*& object2 ( PyTwoVoid* o ) { return o->_object2; }
 
 
 // -------------------------------------------------------------------
@@ -123,8 +127,8 @@ extern "C" {
       PyErr_SetString( PyExc_TypeError, message.c_str() );
       return NULL;
     }
-    CppT* cself  = reinterpret_cast<CppT*>( asVPtr(self )->_object );
-    CppT* cother = reinterpret_cast<CppT*>( asVPtr(other)->_object );
+    CppT* cself  = reinterpret_cast<CppT*>( object1(self ) );
+    CppT* cother = reinterpret_cast<CppT*>( object1(other) );
 
     bool result = false;
     if ((op == Py_LT) and (cself <  cother)) result = true;
@@ -148,8 +152,8 @@ extern "C" {
       PyErr_SetString( PyExc_TypeError, message.c_str() );
       return NULL;
     }
-    CppT* cself  = reinterpret_cast<CppT*>( asVPtr(self )->_object );
-    CppT* cother = reinterpret_cast<CppT*>( asVPtr(other)->_object );
+    CppT* cself  = reinterpret_cast<CppT*>( object1(self ) );
+    CppT* cother = reinterpret_cast<CppT*>( object1(other) );
 
     bool result = false;
     if ((op == Py_LT) and (  cself  <    cother )) result = true;
@@ -173,8 +177,8 @@ extern "C" {
       PyErr_SetString( PyExc_TypeError, message.c_str() );
       return NULL;
     }
-    CppT* cself  = reinterpret_cast<CppT*>( asVPtr(self )->_object );
-    CppT* cother = reinterpret_cast<CppT*>( asVPtr(other)->_object );
+    CppT* cself  = reinterpret_cast<CppT*>( object1(self ) );
+    CppT* cother = reinterpret_cast<CppT*>( object1(other) );
 
     bool result = false;
     if ((op == Py_LT) and (cself->getId() <  cother->getId())) result = true;
@@ -195,8 +199,8 @@ extern "C" {
 
   class PyTypeManager {
     public:
-      typedef std::map<std::type_index,PyTypeManager*>  ManagerByCppTypes;
-      typedef std::map<PyTypeObject*  ,PyTypeManager*>  ManagerByPyTypes;
+      typedef std::map<size_t       ,PyTypeManager*>  ManagerByCppTypes;
+      typedef std::map<PyTypeObject*,PyTypeManager*>  ManagerByPyTypes;
     public:
       static const uint64_t  NoFlags      =  0;
       static const uint64_t  IsDBo        = (1 << 0);
@@ -206,29 +210,32 @@ extern "C" {
       inline   PyTypeManager ( PyMethodDef*, PyGetSetDef*, uint64_t flags );
       virtual ~PyTypeManager ();
     public:
-                                      inline  bool               _isDBo            () const;
-                                      inline  bool               _isIterator       () const;
-                                      inline  std::string        _getCppTypeName   () const;
-                                      inline  std::string        _getPyTypeName    () const;
-                                      inline  PyTypeObject*      _getTypeObject    ();
-                                      inline  PyMethodDef*       _getMethods       ();
-                                      inline  PyGetSetDef*       _getGetsets       ();
-                                              void               _setTypeNames     ( std::string className );
-                                              void               _addToModule      ( PyObject* );
-                                      virtual void               _getTpDeAlloc     ( PyVoidPointer* ) = 0;
-                                      virtual PyObject*          _getTpStr         ( PyVoidPointer* ) = 0;
-                                      virtual long               _getTpHash        ( PyVoidPointer* ) = 0;
-                                      virtual Py_ssize_t         _getSqLength      ( PyVoidPointer* );
-                                      virtual PyObject*          _getSqConcat      ( PyVoidPointer*, PyVoidPointer* );
-                                      virtual PyObject*          _getSqRepeat      ( PyVoidPointer*, Py_ssize_t );
-                                      virtual PyObject*          _getSqItem        ( PyVoidPointer*, Py_ssize_t );
-                                      virtual int                _getSqContains    ( PyObject*, PyObject* );
-                                      virtual Py_ssize_t         _getMpLength      ( PyObject* );
-                                      virtual PyObject*          _getMpSubscript   ( PyObject*, PyObject* );
-                                      virtual PyObject*          _getTpIter        ( PyObject* );
-                                      virtual PyObject*          _getTpIterNext    ( PyObject* );
-                                      virtual void               _setupPyType      ();
-                                      inline  void               _setMethods       ( PyMethodDef* );
+                                      inline  bool                  _isDBo            () const;
+                                      inline  bool                  _isIterator       () const;
+                                      inline  std::string           _getCppTypeName   () const;
+                                      inline  std::string           _getPyTypeName    () const;
+                                      inline  std::string           _getTypeInfo      () const;
+                                      inline  PyTypeObject*         _getTypeObject    ();
+                                      inline  PyMethodDef*          _getMethods       ();
+                                      inline  PyGetSetDef*          _getGetsets       ();
+                                              void                  _setTypeNames     ( std::string className );
+                                              void                  _addToModule      ( PyObject* );
+                                      virtual void                  _getTpDeAlloc     ( PyObject* ) = 0;
+                                      virtual PyObject*             _getTpStr         ( PyObject* ) = 0;
+                                      virtual long                  _getTpHash        ( PyObject* ) = 0;
+                                      virtual Py_ssize_t            _getSqLength      ( PyObject* );
+                                      virtual PyObject*             _getSqConcat      ( PyObject*, PyObject* );
+                                      virtual PyObject*             _getSqRepeat      ( PyObject*, Py_ssize_t );
+                                      virtual PyObject*             _getSqItem        ( PyObject*, Py_ssize_t );
+                                      virtual int                   _getSqContains    ( PyObject*, PyObject* );
+                                      virtual Py_ssize_t            _getMpLength      ( PyObject* );
+                                      virtual PyObject*             _getMpSubscript   ( PyObject*, PyObject* );
+                                      virtual PyObject*             _getTpIter        ( PyObject* );
+                                      virtual PyObject*             _getTpIterNext    ( PyObject* );
+                                      virtual PyTypeManager*        _getBaseManager   ();
+                                      virtual void                  _setupPyType      ();
+                                      inline  void                  _setMethods       ( PyMethodDef* );
+                                      inline  void                  _setTypeInfo      ( std::string );
     public:                                   
                               static  inline  ManagerByCppTypes& getManagerByCppTypes ();
                                       inline  uint64_t           flags           () const;
@@ -236,14 +243,15 @@ extern "C" {
       template<typename CppT> static  inline  bool               hasType         ();
       template<typename CppT> static  inline  PyTypeManager*     _get            ();
       template<typename CppT> static  inline  PyObject*          link            ( CppT* );
-      template<typename CppT> static          void               add             ( PyObject*, PyTypeManager* );
+      template<typename CppT> static          void               add             ( PyObject*, PyTypeManager*, size_t hashCode=0 );
     private:
-      uint64_t      _flags;
-      std::string   _pyTypeName;
-      std::string   _cppTypeName;
-      PyTypeObject  _typeObject;
-      PyMethodDef*  _methods;
-      PyGetSetDef*  _getsets;
+      uint64_t                     _flags;
+      std::string                  _pyTypeName;
+      std::string                  _cppTypeName;
+      std::string                  _typeInfo;
+      PyTypeObject                 _typeObject;
+      PyMethodDef*                 _methods;
+      PyGetSetDef*                 _getsets;
     private:
       static ManagerByCppTypes  _managerByCppTypes;
       static ManagerByPyTypes   _managerByPyTypes;
@@ -262,17 +270,24 @@ extern "C" {
 
   template<typename CppT> inline bool  PyTypeManager::hasType ()
   {
-    auto element = _managerByCppTypes.find( std::type_index(typeid(CppT)) );
+    auto element = _managerByCppTypes.find( typeid(CppT).hash_code() );
     return (element != _managerByCppTypes.end());
   }
 
 
   template<typename CppT> inline PyTypeManager* PyTypeManager::_get ()
   {
-    auto element = _managerByCppTypes.find( std::type_index(typeid(CppT)) );
-    if (element == _managerByCppTypes.end())
+    auto element = _managerByCppTypes.find( typeid(CppT).hash_code() );
+    if (element == _managerByCppTypes.end()) {
+      std::cerr << "PyTypeManager<CppT>::_get(): Unregistered type <"
+                << demangle(typeid(CppT).name()) << ">."  << std::endl;
+      for ( auto item : _managerByCppTypes ) {
+        std::cerr << "| " << std::setw(30) << std::right << item.first
+                  << ":"  << item.second->_getTypeInfo() << std::endl;
+      }
       throw Error( "PyTypeManager<CppT>::_get(): Unregistered type <%s>."
                  , demangle(typeid(CppT).name()).c_str() );
+    }
     return (*element).second;
   }
 
@@ -281,9 +296,10 @@ extern "C" {
     : _flags        (flags)
     , _pyTypeName   ()
     , _cppTypeName  ()
+    , _typeInfo     ()
     , _typeObject   { PyVarObject_HEAD_INIT(&PyType_Type,0)
                       .tp_name        = NULL
-                    , .tp_basicsize   = sizeof(PyVoidPointer)
+                    , .tp_basicsize   = sizeof(PyOneVoid)
                     , .tp_itemsize    = 0
                     , .tp_dealloc     = NULL
                     , .tp_print       = NULL
@@ -306,7 +322,7 @@ extern "C" {
     , _methods      (methods)
     , _getsets      (getsets)
   {
-    if (_isIterator()) _typeObject.tp_basicsize = sizeof(PyIteratorPointer);
+    if (_isIterator()) _typeObject.tp_basicsize = sizeof(PyTwoVoid);
   }
 
 
@@ -321,19 +337,22 @@ extern "C" {
   inline void               PyTypeManager::_setMethods          ( PyMethodDef* methods ) { _methods=methods; }
   inline PyTypeManager::ManagerByCppTypes&
                             PyTypeManager::getManagerByCppTypes () { return _managerByCppTypes; }
+  inline  std::string       PyTypeManager::_getTypeInfo         () const { return _typeInfo; }
+  inline  void              PyTypeManager::_setTypeInfo         ( std::string ti ) { _typeInfo=ti; }
 
 
   template< typename CppT >
-  void  PyTypeManager::add ( PyObject* module, PyTypeManager* manager )
+  void  PyTypeManager::add ( PyObject* module, PyTypeManager* manager, size_t hashCode )
   {
     if (ProxyProperty::getOffset() == (size_t)-1)
-      ProxyProperty::setOffset( offsetof( PyVoidPointer, _object ));
+      ProxyProperty::setOffset( offsetof( PyOneVoid, _object1 ));
 
     // std::cerr << "PyTypeManager::add<" << demangle(typeid(CppT).name())
     //           << "> hash=" << std::type_index(typeid(CppT)).hash_code()
     //           << " manager=" << manager << std::endl;
-    _managerByCppTypes[ std::type_index(typeid(CppT)) ] = manager;
-    _managerByPyTypes [ manager->_getTypeObject()     ] = manager;
+    if (not hashCode) hashCode = typeid(CppT).hash_code();
+    _managerByCppTypes[ hashCode                  ] = manager;
+    _managerByPyTypes [ manager->_getTypeObject() ] = manager;
     manager->_addToModule( module );
     pyTypePostModuleInit<CppT>( manager->_getTypeObject() );
     // std::cerr << "_managerByCppTypes.size()=" << _managerByCppTypes.size() << std::endl;
@@ -347,18 +366,22 @@ extern "C" {
   template<typename CppT>
   class PyTypeManagerVTrunk : public PyTypeManager {
     public:
-      inline   PyTypeManagerVTrunk ( PyMethodDef*, PyGetSetDef*, uint64_t flags );
-      virtual ~PyTypeManagerVTrunk ();
+      inline   PyTypeManagerVTrunk       ( PyMethodDef*, PyGetSetDef*, uint64_t flags );
+      virtual ~PyTypeManagerVTrunk       ();
     public:
-      virtual  PyObject* _getTpStr ( PyVoidPointer* );
-      virtual  PyObject* _link     ( CppT* );
+      template<typename BaseT>
+      inline   bool      _canDynamicCast ( BaseT* ) const;
+      virtual  PyObject* _getTpStr       ( PyObject* );
+      virtual  PyObject* _link           ( CppT* );
   };
   
 
   template< typename CppT >
   inline PyTypeManagerVTrunk<CppT>::PyTypeManagerVTrunk ( PyMethodDef* methods, PyGetSetDef* getsets, uint64_t flags )
     : PyTypeManager(methods,getsets,flags)
-  { }
+  {
+    _setTypeInfo( ::Hurricane::demangle( typeid(CppT).name() ));
+  }
   
 
   template< typename CppT >
@@ -366,9 +389,15 @@ extern "C" {
 
 
   template< typename CppT >
-  PyObject* PyTypeManagerVTrunk<CppT>::_getTpStr ( PyVoidPointer *self )
+  template< typename BaseT >
+  bool  PyTypeManagerVTrunk<CppT>::_canDynamicCast ( BaseT *cppObject ) const
+  { return (dynamic_cast<CppT*>(cppObject) != NULL); }
+
+
+  template< typename CppT >
+  PyObject* PyTypeManagerVTrunk<CppT>::_getTpStr ( PyObject *self )
   {
-    CppT* object = reinterpret_cast<CppT*>( self->_object );
+    CppT* object = reinterpret_cast<CppT*>( object1(self) );
     if (not object) {
       std::ostringstream repr;
       repr << "<" << _getPyTypeName() <<  " [" << (void*)self << " <-> NULL] unbound>";
@@ -383,16 +412,16 @@ extern "C" {
   {
     if (not object) Py_RETURN_NONE;
 
-    PyVoidPointer* pyObject = NULL;
+    PyOneVoid* pyObject = NULL;
     if (_isIterator())
-      pyObject = (PyVoidPointer*)PyObject_NEW( PyIteratorPointer, _getTypeObject() );
+      pyObject = (PyOneVoid*)PyObject_NEW( PyTwoVoid, _getTypeObject() );
     else
-      pyObject = PyObject_NEW( PyVoidPointer, _getTypeObject() );
+      pyObject = PyObject_NEW( PyOneVoid, _getTypeObject() );
     if (pyObject == NULL) return NULL;
 
-    pyObject->_object = (void*)object;
+    object1(pyObject) = (void*)object;
     cdebug_log(20,0) << "PyTypeManager::_link(): " << _getPyTypeName() << " "
-                     << (void*)pyObject << ") " << (void*)object << ":" << object << endl;
+                     << (void*)pyObject << ") " << (void*)object << ":" << object << std::endl;
 
     return (PyObject*)pyObject;
   }
@@ -436,8 +465,8 @@ extern "C" {
                                                  , richcmpfunc      tpRichCompare=tpRichCompareByPtr<CppT>
                                                  , PyNumberMethods* tpAsNumber=NULL
                                                  );
-      virtual void                 _getTpDeAlloc ( PyVoidPointer* );
-      virtual long                 _getTpHash    ( PyVoidPointer* );
+      virtual void                 _getTpDeAlloc ( PyObject* );
+      virtual long                 _getTpHash    ( PyObject* );
   };
   
 
@@ -452,17 +481,17 @@ extern "C" {
 
     
   template< typename CppT >
-  void  PyTypeManagerNonDBo<CppT>::_getTpDeAlloc ( PyVoidPointer* self )
+  void  PyTypeManagerNonDBo<CppT>::_getTpDeAlloc ( PyObject* self )
   {
     if (not (PyTypeManager::flags() & PyTypeManager::NoCppDelete))
-      delete reinterpret_cast<CppT*>( self->_object );
+      delete reinterpret_cast<CppT*>( object1(self) );
     PyObject_DEL( self );
   }
 
 
   template< typename CppT >
-  long  PyTypeManagerNonDBo<CppT>::_getTpHash ( PyVoidPointer *self )
-  { return (long)(self->_object); }
+  long  PyTypeManagerNonDBo<CppT>::_getTpHash ( PyObject *self )
+  { return (long)(object1(self)); }
 
 
   template< typename CppT >
@@ -508,8 +537,8 @@ extern "C" {
                                                   , richcmpfunc  tpRichCompare=tpRichCompareByDBo<CppT>
                                                   );
       virtual PyObject*         _link             ( CppT* );
-      virtual void              _getTpDeAlloc     ( PyVoidPointer* );
-      virtual long              _getTpHash        ( PyVoidPointer* );
+      virtual void              _getTpDeAlloc     ( PyObject* );
+      virtual long              _getTpHash        ( PyObject* );
   };
   
 
@@ -528,19 +557,19 @@ extern "C" {
   {
     if (not object) Py_RETURN_NONE;
 
-    PyVoidPointer* pyObject = NULL;
-    ProxyProperty* proxy = static_cast<ProxyProperty*>
+    PyOneVoid*     pyObject = NULL;
+    ProxyProperty* proxy    = static_cast<ProxyProperty*>
       ( object->getProperty ( ProxyProperty::getPropertyName() ) );
 
     if (not proxy) {
-      pyObject = PyObject_NEW( PyVoidPointer, _getTypeObject() );
+      pyObject = PyObject_NEW( PyOneVoid, _getTypeObject() );
       if (not pyObject) return NULL;
 
       proxy = ProxyProperty::create( (void*)pyObject );
-      pyObject->_object = (void*)object;
+      object1(pyObject) = (void*)object;
       object->put( proxy );
     } else {
-      pyObject = (PyVoidPointer*)proxy->getShadow ();
+      pyObject = (PyOneVoid*)proxy->getShadow ();
       Py_INCREF( pyObject );
     }
     cdebug_log(20,0) << "PyTypeManagerDBo<" << demangle(typeid(CppT).name()) << ">() "
@@ -551,11 +580,11 @@ extern "C" {
     
 
   template< typename CppT >
-  void  PyTypeManagerDBo<CppT>::_getTpDeAlloc ( PyVoidPointer* self )
+  void  PyTypeManagerDBo<CppT>::_getTpDeAlloc ( PyObject* self )
   {
-    DBo* object = reinterpret_cast<DBo*>( self->_object );
+    DBo* object = reinterpret_cast<DBo*>( object1(self) );
     cdebug_log(20,0) << "PyTypeManager_DeAlloc(" << (void*)self << ") "
-                     << (void*)(self->_object) << ":" << object << endl;
+                     << object1(self) << ":" << object << endl;
 
     Isobar3::ProxyProperty* proxy =
       static_cast<Isobar3::ProxyProperty*>( object->getProperty( Isobar3::ProxyProperty::getPropertyName() ) );
@@ -572,9 +601,9 @@ extern "C" {
 
 
   template< typename CppT >
-  long PyTypeManagerDBo<CppT>::_getTpHash ( PyVoidPointer *self )
+  long PyTypeManagerDBo<CppT>::_getTpHash ( PyObject *self )
   {
-    DBo* object = reinterpret_cast<DBo*>( self->_object );
+    DBo* object = reinterpret_cast<DBo*>( object1(self) );
     return object->getId();
   }
 
@@ -595,6 +624,79 @@ extern "C" {
     manager->_setupPyType();
     PyTypeObject* ob_type = manager->_getTypeObject();
     if (tpRichCompare) ob_type->tp_richcompare = tpRichCompare;
+    PyTypeManager::add<CppT>( module, manager );
+    return manager;
+  }
+
+
+// -------------------------------------------------------------------
+// PyTypeObject & PyObject for DBo objects with inheritance.
+
+
+  template<typename CppT, typename BaseT >
+  class PyTypeManagerDerivedDBo : public PyTypeManagerDBo<CppT> {
+    public:
+      using         PyTypeManager::_getTypeObject;
+      inline        PyTypeManagerDerivedDBo ( PyMethodDef*, PyGetSetDef*, uint64_t flags );
+      virtual      ~PyTypeManagerDerivedDBo ();
+    public:
+      static  PyTypeManagerDerivedDBo* create          ( PyObject*    module
+                                                       , PyMethodDef* methods
+                                                       , PyGetSetDef* getsets
+                                                       , uint64_t     flags
+                                                       , richcmpfunc  tpRichCompare=tpRichCompareByDBo<CppT>
+                                                       );
+      virtual PyTypeManager*           _getBaseManager ();
+    private:
+      PyTypeManager* _baseManager;
+  };
+
+
+  template< typename CppT, typename BaseT >
+  inline PyTypeManagerDerivedDBo<CppT,BaseT>::PyTypeManagerDerivedDBo ( PyMethodDef* methods, PyGetSetDef* getsets, uint64_t flags )
+    : PyTypeManagerDBo<CppT>(methods,getsets,flags|PyTypeManager::IsDBo)
+    , _baseManager(NULL)
+  { }
+
+
+  template< typename CppT, typename BaseT >
+  PyTypeManagerDerivedDBo<CppT,BaseT>::~PyTypeManagerDerivedDBo () { }
+
+
+  template< typename CppT, typename BaseT >
+  PyTypeManager* PyTypeManagerDerivedDBo<CppT,BaseT>::_getBaseManager ()
+  { return _baseManager; }
+
+
+  template< typename CppT, typename BaseT >
+  PyTypeManagerDerivedDBo<CppT,BaseT>* PyTypeManagerDerivedDBo<CppT,BaseT>::create ( PyObject*    module
+                                                                                   , PyMethodDef* methods
+                                                                                   , PyGetSetDef* getsets
+                                                                                   , uint64_t     flags
+                                                                                   , richcmpfunc  tpRichCompare )
+  {
+    // if (not std::is_base_of<Hurricane::Entity,CppT>::value)
+    //   throw ::Hurricane::Error( "PyManagerDerivedDBo<CppT>::create(): The C++ class <%s> is *not* derived from DBo."
+    //                           , ::Hurricane::demangle(typeid(CppT).name()).c_str() );
+    if (not std::is_base_of<BaseT,CppT>::value)
+      throw ::Hurricane::Error( "PyManagerDerivedDBo<CppT>::create(): The C++ class <%s> is *not* derived from <%s>."
+                              , ::Hurricane::demangle(typeid(CppT ).name()).c_str()
+                              , ::Hurricane::demangle(typeid(BaseT).name()).c_str()
+                              );
+    PyTypeManager* baseManager = PyTypeManager::_get<BaseT>();
+    if (not baseManager)
+      throw ::Hurricane::Error( "PyManagerDerivedDBo<CppT>::create(): The Python base class <%s> for <%s> has not been registered first."
+                              , ::Hurricane::demangle(typeid(BaseT).name()).c_str()
+                              , ::Hurricane::demangle(typeid(CppT  ).name()).c_str()
+                              );
+    
+    PyTypeManagerDerivedDBo<CppT,BaseT>* manager = new PyTypeManagerDerivedDBo<CppT,BaseT>( methods, getsets, flags );
+    manager->_baseManager = baseManager;
+    manager->_setTypeNames( ::Hurricane::demangle(typeid(CppT)) );
+    manager->_setupPyType();
+    PyTypeObject* ob_type = manager->_getTypeObject();
+    if (tpRichCompare) ob_type->tp_richcompare = tpRichCompare;
+    ob_type->tp_base = baseManager->_getTypeObject();
     PyTypeManager::add<CppT>( module, manager );
     return manager;
   }
@@ -665,16 +767,45 @@ template<> inline PyObject* cToPy<const double*> ( const double* d ) { return Py
 
 
 // Forward declaration for PyVector.h
-template< typename CppT > inline PyObject* cToPy ( const typename std::vector<CppT>::iterator* );
-template< typename CppT > inline PyObject* cToPy ( const std::vector<CppT>& );
+template< typename CppT >
+inline PyObject* cToPy ( const typename std::vector<CppT>::iterator* pit )
+{ return Isobar3::PyTypeManager::link< typename std::vector<CppT>::iterator >
+    ( std::addressof(const_cast< typename std::vector<CppT>::iterator* >(pit)) ); }
+
+
+template< typename CppT >
+inline PyObject* cToPy ( const std::vector<CppT>& vobject )
+{ return Isobar3::PyTypeManager::link< std::vector<CppT> >( std::addressof(const_cast< std::vector<CppT>& >(vobject)) ); }
+
 
 // Forward declaration for PyMap.h
-template< typename CppK, typename CppT > inline PyObject* cToPy ( const typename std::map<CppK,CppT>::iterator* );
-template< typename CppK, typename CppT > inline PyObject* cToPy ( const std::map<CppK,CppT>& vobject );
+template< typename CppK, typename CppT >
+inline PyObject* cToPy ( const typename std::map<CppK,CppT>::iterator* pit )
+{ return Isobar3::PyTypeManager::link< typename std::map<CppK,CppT>::iterator >
+    ( std::addressof(const_cast< typename std::map<CppK,CppT>::iterator* >(pit)) ); }
+
+
+template< typename CppK, typename CppT >
+inline PyObject* cToPy ( const std::map<CppK,CppT>& vobject )
+{
+  return Isobar3::PyTypeManager::link< std::map<CppK,CppT> >
+    ( std::addressof(const_cast< std::map<CppK,CppT>& >(vobject)) );
+}
+
 
 // Forward declaration for PyCollection.h
-template< typename CppT > inline PyObject* cToPy ( const typename Hurricane::Locator<CppT>* );
-template< typename CppT > inline PyObject* cToPy ( const Hurricane::Collection<CppT>* );
+template< typename CppT >
+inline PyObject* cToPy ( const typename Hurricane::Locator<CppT*>* plocator )
+{ return Isobar3::PyTypeManager::link< typename Hurricane::Locator<CppT*> >
+    ( std::addressof(const_cast< typename Hurricane::Locator<CppT*>* >(plocator)) ); }
+
+
+template< typename CppT >
+inline PyObject* cToPy ( Hurricane::GenericCollection<CppT*> collection )
+{
+  Hurricane::Collection<CppT*>* clone = collection.getClone();
+  return Isobar3::PyTypeManager::link< Hurricane::Collection<CppT*> >( clone );
+}
 
 
 namespace Isobar3 {
@@ -1457,7 +1588,7 @@ inline bool  pyToC ( PyObject* pyArg, T* arg )
       return false;
     }
     if (Py_TYPE(pyArg) != manager->_getTypeObject()) return false;
-    *arg = (T)( Isobar3::asVPtr( pyArg )->_object );
+    *arg = (T)( Isobar3::object1( pyArg ));
     return true;
   }
   
@@ -1478,7 +1609,7 @@ inline bool  pyToC ( PyObject* pyArg, T* arg )
     return false;
   }
   if (Py_TYPE(pyArg) != manager->_getTypeObject()) return false;
-  *(const_cast< NonConstT* >(arg)) = *(( T* )( Isobar3::asVPtr( pyArg )->_object ));
+  *(const_cast< NonConstT* >(arg)) = *(( T* )( Isobar3::object1( pyArg )));
   return true;
 }
 
@@ -1492,7 +1623,7 @@ inline bool  pyToC ( PyObject* pyArg, T** arg )
     return false;
   }
   // std::cerr << "pyToC< " << demangle(typeid(T).name()) << " >() called." << std::endl;
-  *arg = (T*)( Isobar3::asVPtr( pyArg )->_object );
+  *arg = (T*)( Isobar3::object1( pyArg ));
   return true;
 }
 
@@ -1597,7 +1728,7 @@ namespace Isobar3 {
     success = success and pyToC( pyArgs[count], &(as<T>( args[count])) );
   //std::cerr << "success=" << success << std::endl;
     if (not success) {
-      message += "\n  " + getString(nth) + " argument is not convertible to \"" + Hurricane::demangle(typeid(T).name()) + "\".";
+      message += "\n  " + getString(nth) + " X argument is not convertible to \"" + Hurricane::demangle(typeid(T).name()) + "\".";
       PyErr_SetString( Isobar3::ConstructorError, message.c_str() );
     } else {
       parse_pyobjects<index,Tail...>( pyArgs, args, success, message, count+1 );
@@ -1692,7 +1823,7 @@ namespace Isobar3 {
       }
     }
     if (success) {
-    //std::cerr << "_call() " << demangle(typeid(FunctionType).name()) << " (with " << nargs << " parameters) rvalue = " << (void*)rvalue << std::endl;
+    //std::cerr << "_call() " << demangle(typeid(FunctionType).name()) << " (with " << nargs << " parameters)" << std::endl;
       return _callFunction<TR,TArgs...>( _method, cppArgs );
     }
 
@@ -1742,7 +1873,7 @@ namespace Isobar3 {
 
     setMessage( funcName() + "(): " );
     bool           success = true;
-    TC*            cppObject = static_cast<TC*>( asVPtr(self)->_object );
+    TC*            cppObject = static_cast<TC*>( object1(self) );
     PyObject*      rvalue    = NULL;
     Args<TArgs...> cppArgs;
     if (nargs) {
@@ -1754,7 +1885,7 @@ namespace Isobar3 {
                                                  , &args[5], &args[6], &args[7], &args[8], &args[9] )) {
         success = cppArgs.parse( args, message() );
       } else {
-        cerr << fargs << endl;
+      //cerr << fargs << endl;
         size_t pynargs = (size_t)PyTuple_Size( fargs );
         message() += "Invalid number of parameters, got "
                   + getString(pynargs) + " (expected " + getString(nargs) + ").";
@@ -1952,7 +2083,7 @@ namespace Isobar3 {
 
   
   template< typename TC, typename TR, typename... TArgs >
-  inline PyObject* callMethod ( std::string fname, TR(TC::* method )(TArgs...), PyVoidPointer* self, PyObject* args )
+  inline PyObject* callMethod ( std::string fname, TR(TC::* method )(TArgs...), PyObject* self, PyObject* args )
   {
     cdebug_log(30,0) << "[Python]" << fname << "()" << endl;
     return PyMethodWrapper<TC,TR,TArgs...>( fname, method ).call( (PyObject*)self, args );
@@ -1960,14 +2091,14 @@ namespace Isobar3 {
 
   
   template< typename TC, typename TR, typename... TArgs >
-  inline PyObject* callMethod ( std::string fname, TR(TC::* method )(TArgs...) const, PyVoidPointer* self, PyObject* args )
+  inline PyObject* callMethod ( std::string fname, TR(TC::* method )(TArgs...) const, PyObject* self, PyObject* args )
   {
     return callMethod<TC,TR,TArgs...>( fname, (TR(TC::*)(TArgs...))(method), self, args );
   }
 
   
   template< typename TC, typename TR, typename... TArgs >
-  inline PyObject* callMethod ( std::string fname, TR(* fmethod )(TC*,TArgs...), PyVoidPointer* self, PyObject* args )
+  inline PyObject* callMethod ( std::string fname, TR(* fmethod )(TC*,TArgs...), PyObject* self, PyObject* args )
   {
     cdebug_log(30,0) << "[Python]" << fname << "()" << endl;
     return PyMethodWrapper<TC,TR,TArgs...>( fname, fmethod ).call( (PyObject*)self, args );
@@ -1975,7 +2106,7 @@ namespace Isobar3 {
 
   
   template< typename TC, typename TR, typename... TArgs >
-  inline PyObject* callMethod ( std::string fname, TR(* fmethod )(const TC*,TArgs...), PyVoidPointer* self, PyObject* args )
+  inline PyObject* callMethod ( std::string fname, TR(* fmethod )(const TC*,TArgs...), PyObject* self, PyObject* args )
   {
     return callMethod<TC,TR,TArgs...>( fname, (TR(*)(TC*,TArgs...))(fmethod), self, args );
   }

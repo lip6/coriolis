@@ -84,8 +84,8 @@ namespace Hurricane {
       static  BasicLayer*     create                 ( Technology*      technology
                                                      , const Name&      name
                                                      , const Material&  material
-                                                     , unsigned         gds2Layer
-                                                     , unsigned         gds2Datatype
+                                                     , unsigned         gds2Layer      = 0
+                                                     , unsigned         gds2Datatype   = 0
                                                      , const DbU::Unit& minimalSize    = 0
                                                      , const DbU::Unit& minimalSpacing = 0
                                                      );

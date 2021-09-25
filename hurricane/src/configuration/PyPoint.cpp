@@ -47,16 +47,16 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyPoint_getX ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyPoint_getX ( PyObject* self, PyObject* args )
   { return callMethod("Point.getX",&Point::getX,self,args); }
 
-  static PyObject* PyPoint_getY ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyPoint_getY ( PyObject* self, PyObject* args )
   { return callMethod("Point.getY",&Point::getY,self,args); }
 
-  static PyObject* PyPoint_setX ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyPoint_setX ( PyObject* self, PyObject* args )
   { return callMethod("Point.setX",&Point::setX,self,args); }
 
-  static PyObject* PyPoint_setY ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyPoint_setY ( PyObject* self, PyObject* args )
   { return callMethod("Point.setY",&Point::setY,self,args); }
 
   PyObject* PyPoint_NEW ( PyTypeObject* pyType, PyObject* args, PyObject* kwargs )

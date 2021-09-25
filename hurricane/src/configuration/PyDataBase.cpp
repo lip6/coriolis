@@ -38,30 +38,30 @@ extern "C" {
 
 // Python methods.
 
-  static PyObject* PyDataBase_create ( PyVoidPointer* self )
-  { return callFunction("DataBase.create",&DataBase::create,NULL); }
+  static PyObject* PyDataBase_create ( PyObject* self, PyObject* args )
+  { return callFunction("DataBase.create",&DataBase::create,args); }
 
-  static PyObject* PyDataBase_getDB ( PyVoidPointer* self )
-  { return callFunction("DataBase.getDB",&DataBase::getDB,NULL); }
+  static PyObject* PyDataBase_getDB ( PyObject* self, PyObject* args )
+  { return callFunction("DataBase.getDB",&DataBase::getDB,args); }
 
-  static PyObject* PyDataBase_getTechnology ( PyVoidPointer* self )
-  { return callMethod("DataBase.getTechnology",&DataBase::getTechnology,self,NULL); }
+  static PyObject* PyDataBase_getTechnology ( PyObject* self, PyObject* args )
+  { return callMethod("DataBase.getTechnology",&DataBase::getTechnology,self,args); }
 
-  static PyObject* PyDataBase_getRootLibrary ( PyVoidPointer* self )
-  { return callMethod("DataBase.getRootLibrary",&DataBase::getRootLibrary,self,NULL); }
+  static PyObject* PyDataBase_getRootLibrary ( PyObject* self, PyObject* args )
+  { return callMethod("DataBase.getRootLibrary",&DataBase::getRootLibrary,self,args); }
 
-  static PyObject* PyDataBase_getCell ( PyVoidPointer* self, PyObject* args )
+  static PyObject* PyDataBase_getCell ( PyObject* self, PyObject* args )
   {
     PyObject*       rvalue = callMethod("DataBase.getCell",&getCell2,self,args);
     if (not rvalue) rvalue = callMethod("DataBase.getCell",&getCell1,self,args);
     return rvalue;
   }
 
-  static PyObject* PyDataBase_clear ( PyVoidPointer* self )
-  { return callMethod("DataBase.clear",&DataBase::clear,self,NULL); }
+  static PyObject* PyDataBase_clear ( PyObject* self, PyObject* args )
+  { return callMethod("DataBase.clear",&DataBase::clear,self,args); }
 
-  static PyObject* PyDataBase_destroy ( PyVoidPointer* self )
-  { return callMethod("DataBase.destroy",&DataBase::destroy,self,NULL); }
+  static PyObject* PyDataBase_destroy ( PyObject* self, PyObject* args )
+  { return callMethod("DataBase.destroy",&DataBase::destroy,self,args); }
 
 
   // ---------------------------------------------------------------
