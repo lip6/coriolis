@@ -12,7 +12,7 @@
   directly your functions with the original API or any mix between.
   You only have to respect some naming convention.
 
-* Coriolis is build against Python 2.7.
+* Coriolis is build against Python 3.6.
 
 
 1.1 About Technical Choices
@@ -52,10 +52,10 @@ Some would say, why not use *off the shelf* wrappers like  ``swig``,
 
 #. **Linking accross modules.** As far as I understand, the wrappers
    are for monolithic libraries. That is, you wrap the entire library
-   in one go. But Hurricane has a modular design, the core database
+   in one go. But Coriolis has a modular design, the core database
    then various tools. We do not, and cannot, have one gigantic wrapper
    that would encompass all the libraries in one go. We do one Python
-   module for one C++ library.
+   module for each C++ library.
 
    This brings another issue, at Python level this time. The Python
    modules for the libraries have to share some functions. Python

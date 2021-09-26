@@ -1577,28 +1577,6 @@ namespace Isobar3 {
 
 
 template< typename T
-        , typename std::enable_if< std::is_pointer<T>::value,bool >::type = true >
-inline bool  pyToC ( PyObject* pyArg, T* arg )
-{
-  typedef typename std::remove_pointer<T>::type  ValueT;
-  if (std::is_pointer<ValueT>::value) {
-    Isobar3::PyTypeManager* manager = Isobar3::PyTypeManager::_get<ValueT>();
-    if (not manager) {
-      std::cerr << "Isobar3::pyToC<>(T**): Unsupported type." << std::endl;
-      return false;
-    }
-    if (Py_TYPE(pyArg) != manager->_getTypeObject()) return false;
-    *arg = (T)( Isobar3::object1( pyArg ));
-    return true;
-  }
-  
-  std::cerr << "Isobar3::pyToC<T>(T*): Unsupported type \""
-            << Hurricane::demangle(typeid(T).name()) << "\"" << std::endl;
-  return false;
-}
-
-
-template< typename T
         , typename std::enable_if< !std::is_pointer<T>::value, bool >::type = true >
 inline bool  pyToC ( PyObject* pyArg, T* arg )
 {
@@ -1754,23 +1732,28 @@ namespace Isobar3 {
       inline               PyWrapper  ();
       virtual             ~PyWrapper  ();
       inline  std::string& message    ();
-      virtual PyObject*    call       ( PyObject* self, PyObject* args );
-      virtual PyObject*    call       ( PyObject* args );
-      virtual int          predicate  ( PyObject* self );
+      inline  PyObject*    call       ( PyObject* self, PyObject* args );
+      inline  PyObject*    call       ( PyObject* args );
+      inline  int          predicate  ( PyObject* self );
+      virtual PyObject*    _call      ( PyObject* self, PyObject* args );
+      virtual PyObject*    _call      ( PyObject* args );
+      virtual int          _predicate ( PyObject* self );
       inline  void         setMessage ( std::string header );
     private:
       std::string  _message;
   };
 
 
+  extern PyObject* exceptionWrapper          ( PyWrapper* wrapper, PyObject* self, PyObject* args );
+  extern PyObject* exceptionWrapper          ( PyWrapper* wrapper, PyObject* args );
+  extern int       exceptionPredicateWrapper ( PyWrapper* wrapper, PyObject* self );
+
   inline               PyWrapper::PyWrapper  () : _message("Wrapper(): Base class.") {}
   inline  std::string& PyWrapper::message    () { return _message; }
   inline  void         PyWrapper::setMessage ( std::string header ) { _message = header; }
-
-
-  extern PyObject* exceptionWrapper          ( PyWrapper& wrapper, PyObject* self, PyObject* args );
-  extern PyObject* exceptionWrapper          ( PyWrapper& wrapper, PyObject* args );
-  extern int       exceptionPredicateWrapper ( PyWrapper& wrapper, PyObject* self );
+  inline PyObject*     PyWrapper::call       ( PyObject* self, PyObject* args ) { return exceptionWrapper( this, self, args ); }
+  inline PyObject*     PyWrapper::call       ( PyObject* args ) { return exceptionWrapper( this, args ); }
+  inline int           PyWrapper::predicate  ( PyObject* self ) { return exceptionPredicateWrapper( this, self ); }
 
 
 // -------------------------------------------------------------------
@@ -1785,7 +1768,7 @@ namespace Isobar3 {
       inline               PyFunctionWrapper ( std::string fname, FunctionType method )
                                              : PyWrapper(), _funcName(fname), _method(method) { };
       inline  std::string  funcName          () const { return _funcName; };
-      virtual PyObject*    call              ( PyObject* fargs );
+      virtual PyObject*    _call             ( PyObject* fargs );
     private:
       std::string   _funcName;
       FunctionType  _method;
@@ -1793,7 +1776,7 @@ namespace Isobar3 {
 
   
   template< typename TR, typename... TArgs >
-  PyObject* PyFunctionWrapper<TR,TArgs...>::call ( PyObject* fargs )
+  PyObject* PyFunctionWrapper<TR,TArgs...>::_call ( PyObject* fargs )
   {
     PyErr_Clear();
   //std::cerr << "_call() " << demangle(typeid(FunctionType).name()) << std::endl;
@@ -1855,7 +1838,7 @@ namespace Isobar3 {
                                            , _fMethod(method)
                                            { };
       inline  std::string  funcName        () const { return _funcName; };
-      virtual PyObject*    call            ( PyObject* self, PyObject* fargs );
+      virtual PyObject*    _call           ( PyObject* self, PyObject* fargs );
     private:
       std::string  _funcName;
       OMethodType  _oMethod;
@@ -1864,7 +1847,7 @@ namespace Isobar3 {
 
 
   template< typename TC, typename TR, typename... TArgs >
-  inline PyObject* PyMethodWrapper<TC,TR,TArgs...>::call ( PyObject* self, PyObject* fargs )
+  inline PyObject* PyMethodWrapper<TC,TR,TArgs...>::_call ( PyObject* self, PyObject* fargs )
   {
     PyErr_Clear();
     size_t nargs   = sizeof...(TArgs);
@@ -1925,7 +1908,7 @@ namespace Isobar3 {
                                             , _oMethod(mbinary)
                                             { };
       inline  std::string  funcName         () const { return _funcName; };
-      virtual PyObject*    call             ( PyObject* self, PyObject* arg );
+      virtual PyObject*    _call            ( PyObject* self, PyObject* arg );
     private:
       std::string  _funcName;
       OMethodType  _oMethod;
@@ -1933,7 +1916,7 @@ namespace Isobar3 {
 
 
   template< typename TC, typename TArg >
-  inline PyObject* PyMBinaryWrapper<TC,TArg>::call ( PyObject* pyObject, PyObject* pyArg )
+  inline PyObject* PyMBinaryWrapper<TC,TArg>::_call ( PyObject* pyObject, PyObject* pyArg )
   {
     PyErr_Clear();
     setMessage( funcName() + "(): " );
@@ -1962,14 +1945,14 @@ namespace Isobar3 {
                                              , _funcName (fname)
                                              { };
       inline  std::string  funcName          () const { return _funcName; };
-      virtual PyObject*    call              ( PyObject* self, PyObject* arg );
+      virtual PyObject*    _call             ( PyObject* self, PyObject* arg );
     private:
       std::string   _funcName;
   };
 
 
   template< typename TC, template<typename> class OperatorT >
-  inline PyObject* PyOperatorWrapper<TC,OperatorT>::call ( PyObject* pyObject, PyObject* pyArg )
+  inline PyObject* PyOperatorWrapper<TC,OperatorT>::_call ( PyObject* pyObject, PyObject* pyArg )
   {
     PyErr_Clear();
     setMessage( funcName() + "(): " );
@@ -2002,7 +1985,7 @@ namespace Isobar3 {
                                                     , _oInPlace(minplace)
                                                     { };
       inline  std::string  funcName                 () const { return _funcName; };
-      virtual PyObject*    call                     ( PyObject* self, PyObject* arg );
+      virtual PyObject*    _call                    ( PyObject* self, PyObject* arg );
     private:
       std::string   _funcName;
       OInPlaceType  _oInPlace;
@@ -2010,7 +1993,7 @@ namespace Isobar3 {
 
 
   template< typename TC, typename TArg >
-  inline PyObject* PyInPlaceOperatorWrapper<TC,TArg>::call ( PyObject* pyObject, PyObject* pyArg )
+  inline PyObject* PyInPlaceOperatorWrapper<TC,TArg>::_call ( PyObject* pyObject, PyObject* pyArg )
   {
     PyErr_Clear();
     setMessage( funcName() + "(): " );
@@ -2044,7 +2027,7 @@ namespace Isobar3 {
                                               , _oPredicate(pred)
                                               { };
       inline  std::string  funcName           () const { return _funcName; };
-      virtual int          predicate          ( PyObject* self );
+      virtual int          _predicate         ( PyObject* self );
     private:
       std::string     _funcName;
       OPredicateType  _oPredicate;
@@ -2052,7 +2035,7 @@ namespace Isobar3 {
 
 
   template< typename TC >
-  inline int  PyPredicateWrapper<TC>::predicate ( PyObject* self )
+  inline int  PyPredicateWrapper<TC>::_predicate ( PyObject* self )
   {
     PyErr_Clear();
     setMessage( funcName() + "(): " );

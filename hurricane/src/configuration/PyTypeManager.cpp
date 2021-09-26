@@ -224,95 +224,95 @@ namespace Isobar3 {
   { }
 
 
-  PyObject* PyWrapper::call ( PyObject* self, PyObject* args )
+  PyObject* PyWrapper::_call ( PyObject* self, PyObject* args )
   {
-    throw Error( "PyWrapper::call(PyObject*,PyObject*): Base class method must never be called." );
+    throw Error( "PyWrapper::_call(PyObject*,PyObject*): Base class method must never be called." );
     return NULL;
   }
 
 
-  PyObject* PyWrapper::call ( PyObject* args )
+  PyObject* PyWrapper::_call ( PyObject* args )
   {
-    throw Error( "PyWrapper::call(PyObject*): Base class method must never be called." );
+    throw Error( "PyWrapper::_call(PyObject*): Base class method must never be called." );
     return NULL;
   }
 
 
-  int  PyWrapper::predicate ( PyObject* args )
+  int  PyWrapper::_predicate ( PyObject* args )
   {
-    throw Error( "PyWrapper::predicate(PyObject*): Base class method must never be called." );
+    throw Error( "PyWrapper::_predicate(PyObject*): Base class method must never be called." );
     return 0;
   }
 
 
-  PyObject* exceptionWrapper ( PyWrapper& wrapper, PyObject* self, PyObject* args )
+  PyObject* exceptionWrapper ( PyWrapper* wrapper, PyObject* self, PyObject* args )
   {
     try {
-      return wrapper.call( self, args );
+      return wrapper->_call( self, args );
     } catch ( const Warning& w ) {
-      wrapper.message() += "\n" + getString(w);
+      wrapper->message() += "\n" + getString(w);
     } catch ( const Error& e ) {
-      wrapper.message() += "\n" + getString(e);
-      if (not e.where().empty()) wrapper.message() += "\n" + e.where();
+      wrapper->message() += "\n" + getString(e);
+      if (not e.where().empty()) wrapper->message() += "\n" + e.where();
     } catch ( const Bug& e ) {
-      wrapper.message() += "\n" + getString(e);
+      wrapper->message() += "\n" + getString(e);
     } catch ( const Exception& e ) {
-      wrapper.message() += "\nUnknown Hurricane::Exception";
+      wrapper->message() += "\nUnknown Hurricane::Exception";
     } catch ( const std::exception& e )  {
-      wrapper.message() += "\n" + std::string(e.what());
+      wrapper->message() += "\n" + std::string(e.what());
     } catch ( ... ) {
-      wrapper.message() += "\nUnmanaged exception, neither a Hurricane::Error nor"
-                           " a std::exception.";
+      wrapper->message() += "\nUnmanaged exception, neither a Hurricane::Error nor"
+                            " a std::exception.";
     }
-    PyErr_SetString( HurricaneError, wrapper.message().c_str() );
+    PyErr_SetString( HurricaneError, wrapper->message().c_str() );
     return NULL;
   }
 
 
-  PyObject* exceptionWrapper ( PyWrapper& wrapper, PyObject* args )
+  PyObject* exceptionWrapper ( PyWrapper* wrapper, PyObject* args )
   {
     try {
-      return wrapper.call( args );
+      return wrapper->_call( args );
     } catch ( const Warning& w ) {
-      wrapper.message() += "\n" + getString(w);
+      wrapper->message() += "\n" + getString(w);
     } catch ( const Error& e ) {
-      wrapper.message() += "\n" + getString(e);
-      if (not e.where().empty()) wrapper.message() += "\n" + e.where();
+      wrapper->message() += "\n" + getString(e);
+      if (not e.where().empty()) wrapper->message() += "\n" + e.where();
     } catch ( const Bug& e ) {
-      wrapper.message() += "\n" + getString(e);
+      wrapper->message() += "\n" + getString(e);
     } catch ( const Exception& e ) {
-      wrapper.message() += "\nUnknown Hurricane::Exception";
+      wrapper->message() += "\nUnknown Hurricane::Exception";
     } catch ( const std::exception& e )  {
-      wrapper.message() += "\n" + std::string(e.what());
+      wrapper->message() += "\n" + std::string(e.what());
     } catch ( ... ) {
-      wrapper.message() += "\nUnmanaged exception, neither a Hurricane::Error nor"
-                           " a std::exception.";
+      wrapper->message() += "\nUnmanaged exception, neither a Hurricane::Error nor"
+                            " a std::exception.";
     }
-    PyErr_SetString( HurricaneError, wrapper.message().c_str() );
+    PyErr_SetString( HurricaneError, wrapper->message().c_str() );
     return NULL;
   }
 
 
-  int  exceptionPredicateWrapper ( PyWrapper& wrapper, PyObject* self )
+  int  exceptionPredicateWrapper ( PyWrapper* wrapper, PyObject* self )
   {
     try {
-      return wrapper.predicate( self );
+      return wrapper->_predicate( self );
     } catch ( const Warning& w ) {
-      wrapper.message() += "\n" + getString(w);
+      wrapper->message() += "\n" + getString(w);
     } catch ( const Error& e ) {
-      wrapper.message() += "\n" + getString(e);
-      if (not e.where().empty()) wrapper.message() += "\n" + e.where();
+      wrapper->message() += "\n" + getString(e);
+      if (not e.where().empty()) wrapper->message() += "\n" + e.where();
     } catch ( const Bug& e ) {
-      wrapper.message() += "\n" + getString(e);
+      wrapper->message() += "\n" + getString(e);
     } catch ( const Exception& e ) {
-      wrapper.message() += "\nUnknown Hurricane::Exception";
+      wrapper->message() += "\nUnknown Hurricane::Exception";
     } catch ( const std::exception& e )  {
-      wrapper.message() += "\n" + std::string(e.what());
+      wrapper->message() += "\n" + std::string(e.what());
     } catch ( ... ) {
-      wrapper.message() += "\nUnmanaged exception, neither a Hurricane::Error nor"
-                           " a std::exception.";
+      wrapper->message() += "\nUnmanaged exception, neither a Hurricane::Error nor"
+                            " a std::exception.";
     }
-    PyErr_SetString( HurricaneError, wrapper.message().c_str() );
+    PyErr_SetString( HurricaneError, wrapper->message().c_str() );
     return 0;
   }
 
