@@ -1,7 +1,7 @@
 // ****************************************************************************************************
 // File: ./hurricane/IntrusiveMap.h
 // Authors: R. Escassut
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2021, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_INTRUSIVE_MAP
-#define HURRICANE_INTRUSIVE_MAP
-
+#pragma  once
 #include <cstring>
 #include <algorithm>
 
@@ -988,7 +986,6 @@ inline void  jsonWrite ( JsonWriter* w, const std::string& key, Hurricane::Intru
   for ( Element* element : intrusiveMap->getElements() ) jsonWrite( w, element );
   w->endArray();
 }
-#endif // HURRICANE_INTRUSIVE_MAP
 
 
 // ****************************************************************************************************

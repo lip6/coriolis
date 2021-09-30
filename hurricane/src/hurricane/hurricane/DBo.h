@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2021, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,13 +29,11 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_DBO_H
-#define  HURRICANE_DBO_H
-
-#include  "hurricane/Error.h"
-#include  "hurricane/DBos.h"
-#include  "hurricane/Name.h"
-#include  "hurricane/Properties.h"
+#pragma  once
+#include "hurricane/Error.h"
+#include "hurricane/DBos.h"
+#include "hurricane/Name.h"
+#include "hurricane/Properties.h"
 
 
 namespace Hurricane {
@@ -83,7 +81,7 @@ namespace Hurricane {
               void               toJsonSignature     ( JsonWriter* ) const;
     protected:                   
                                  DBo                 ();
-      virtual                   ~DBo                 () throw(Error);
+      virtual                   ~DBo                 ();
       virtual void               _postCreate         ();
       virtual void               _preDestroy         ();
     private:                                         
@@ -136,5 +134,3 @@ namespace Hurricane {
 } // Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::DBo);
-
-#endif // HURRICANE_DBO_H

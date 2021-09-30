@@ -157,7 +157,7 @@ namespace Hurricane {
   }
 
 
-  DBo::~DBo () throw(Error)
+  DBo::~DBo ()
   {
     if (_idCount) --_idCount;
     else {

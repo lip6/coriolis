@@ -7,9 +7,9 @@
 namespace SPICE {
 class SpiceException {
 	public:
-        SpiceException(const std::string& what) throw() : _what(what) {}
-        virtual const char* what() const throw() { return _what.c_str(); }
-        virtual ~SpiceException() throw() {}
+        SpiceException(const std::string& what) : _what(what) {}
+        virtual const char* what() const { return _what.c_str(); }
+        virtual ~SpiceException() {}
         
     private:
         std::string _what;

@@ -38,7 +38,7 @@ namespace Hurricane {
   { }
 
 
-  Entity::~Entity() throw(Error)
+  Entity::~Entity()
   { }
   
 
