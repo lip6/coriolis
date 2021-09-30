@@ -783,12 +783,13 @@ void ConnectPlugHooks(Cell* cell)
         cerr << Error( "SubNetNames::match(): std::stoi() catched an exception on \"%s\"."
                      , sindex.c_str() ) << endl;
       }
+      cerr << "true" << endl;
       return true;
     } else {
       if (code == REG_NOMATCH) {
         size_t pos = s.find( '(' );
         if (pos != string::npos) {
-          cerr << Error( "SubNetNames::match(): Strange CHDL signal name \"%s\"."
+          cerr << Error( "SubNetNames::match(): Strange VHDL signal name \"%s\"."
                        , s.c_str() ) << endl;
         }
       } else {
@@ -801,6 +802,7 @@ void ConnectPlugHooks(Cell* cell)
     }
     _base  = s;
     _index = -1;
+    cerr << "false" << endl;
     return false;
   }
 
