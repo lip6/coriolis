@@ -257,9 +257,12 @@ if __name__ == "__main__":
       pyVersion = sys.version_info
       version   = "%d.%d" % (pyVersion[0],pyVersion[1])
       sitePackagesDir = "sitePackageDir_has_been_not_found"
-      for pyPackageDir in [ "%s/python%s/site-packages" % (absLibDir,version)
-                          , "%s/python%s/dist-packages" % (absLibDir,version)
-                          , "%s/%s/site-packages"       % (absLibDir,version)
+      for pyPackageDir in [ "%s/python%s.%s/site-packages" % (absLibDir,pyVersion[0],pyVersion[1])
+                          , "%s/python%s.%s/dist-packages" % (absLibDir,pyVersion[0],pyVersion[1])
+                          , "%s/%s.%s/site-packages"       % (absLibDir,pyVersion[0],pyVersion[1])
+                          , "%s/python%s/site-packages"    % (absLibDir,pyVersion[0])
+                          , "%s/python%s/dist-packages"    % (absLibDir,pyVersion[0])
+                          , "%s/%s/site-packages"          % (absLibDir,pyVersion[0])
                           ]:
           if os.path.isdir(pyPackageDir):
             sitePackagesDir = pyPackageDir
