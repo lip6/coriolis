@@ -90,7 +90,8 @@
 #include  <sstream>
 #include  <iomanip>
 #include  <map>
-#include  <regex>
+//#include  <regex>
+#include  <regex.h>
 #include  <boost/program_options.hpp>
 namespace boptions = boost::program_options;
 #include  "hurricane/Backtrace.h"
@@ -431,7 +432,6 @@ namespace Hurricane {
     : _stack()
   {
     if (not enabled) return;
-    
     if (_inConstructor) {
       _stack.push_back( "[BUG] Backtrace::Backtrace(): An error occurred in the backtace *istself*." );
       _stack.push_back( "" );
@@ -458,18 +458,27 @@ namespace Hurricane {
 #endif
 
 #if (defined __linux__ || defined __FreeBSD__)
-    std::regex  re ( "([^(]+)\\(([^+]+)\\+([^)]+)\\) \\[(.+)]" ); 
-    std::cmatch match;
-    string        homeDir = getHome();
+  //std::regex  re ( "([^(]+)\\(([^+]+)\\+([^)]+)\\) \\[(.+)]", std::regex::extended ); 
+  //std::cmatch match;
+    regex_t     re;
+    regmatch_t  match[5];
+    string      homeDir = getHome();
+    regcomp( &re, "([^(]+)\\(([^+]+)\\+([^)]+)\\) \\[(.+)]", REG_EXTENDED ); 
 
     for ( size_t i=0 ; i<depth ; ++i ) {
-      if (std::regex_search(symbols[i],match,re)) {
-        // int64_t       symbolOffset = std::stol( match[3], 0, 16 );
-        // int64_t       rlocAddress  = std::stol( match[4], 0, 16 );
+    //if (std::regex_search(symbols[i],match,re)) {
+      if (not regexec(&re,symbols[i],5,match,0)) {
         ostringstream debugline;
+        string match1 = string(symbols[i]).substr( match[1].rm_so, match[1].rm_eo - match[1].rm_so );
+        string match2 = string(symbols[i]).substr( match[2].rm_so, match[2].rm_eo - match[2].rm_so );
 
 #ifdef HAVE_LIBBFD
-        Bfd::Request  request ( match[1], match[2], symbolOffset, rlocAddress );
+        string match3 = string(symbols[i]).substr( match[3].rm_so, match[3].rm_eo - match[3].rm_so );
+        string match4 = string(symbols[i]).substr( match[4].rm_so, match[4].rm_eo - match[4].rm_so );
+
+        int64_t       symbolOffset = std::stol( match3, 0, 16 );
+        int64_t       rlocAddress  = std::stol( match4, 0, 16 );
+        Bfd::Request  request ( match1, match2, symbolOffset, rlocAddress );
 
         if (bfds.lookup(request) and not request.fileName().empty()) {
           string fileName = request.fileName();
@@ -480,8 +489,8 @@ namespace Hurricane {
                     << fileName << ":" << request.lineno();
         } else {
 #endif
-          string demangled = demangle( match[2] );
-          if (demangled.empty()) demangled = match[2];
+          string demangled = demangle( match2 );
+          if (demangled.empty()) demangled = match2;
 
           debugline << "<b>" << demangled << "</b>";
 #ifdef HAVE_LIBBFD
@@ -492,6 +501,7 @@ namespace Hurricane {
         _stack.push_back( symbols[i] );
       }
     }
+    regfree( &re );
 #else
 #ifdef  __APPLE__
     std::regex re ( "(\\d+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+\\+\\s+(\\d+)" ); 
