@@ -42,8 +42,8 @@
       <type>static BasicLayer *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1BasicLayer.html</anchorfile>
-      <anchor>a76ccb64abaaf9c834c8ee8f010d5d24f</anchor>
-      <arglist>(Technology *technology, const Name &amp;name, const Material &amp;material, unsigned gds2Layer, unsigned gds2Datatype, const DbU::Unit &amp;minimalSize=0, const DbU::Unit &amp;minimalSpacing=0)</arglist>
+      <anchor>aecdcb9bef9b3c1c2bcb6d4513e1ca657</anchor>
+      <arglist>(Technology *technology, const Name &amp;name, const Material &amp;material, unsigned gds2Layer=0, unsigned gds2Datatype=0, const DbU::Unit &amp;minimalSize=0, const DbU::Unit &amp;minimalSpacing=0)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -380,8 +380,8 @@
       <type>Net *</type>
       <name>getNet</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a63cb19881279b5af0a4e7dae707ef1bd</anchor>
-      <arglist>(const Name &amp;name) const</arglist>
+      <anchor>a70f06abd224895aeeeeb042365dbf48a</anchor>
+      <arglist>(const Name &amp;name, bool useAlias=true) const</arglist>
     </member>
     <member kind="function">
       <type>Nets</type>
@@ -478,8 +478,8 @@
       <type>Occurrences</type>
       <name>getOccurrencesUnder</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a7fb09c8e350923c47ce4c4407bdb00ce</anchor>
-      <arglist>(const Box &amp;area, unsigned searchDepth=std::numeric_limits&lt; unsigned int &gt;::max()) const</arglist>
+      <anchor>aee27efc0497992f811c9812ffa272a5a</anchor>
+      <arglist>(const Box &amp;area, unsigned searchDepth=std::numeric_limits&lt; unsigned int &gt;::max(), DbU::Unit threshold=0) const</arglist>
     </member>
     <member kind="function">
       <type>Occurrences</type>
@@ -569,8 +569,8 @@
       <type>void</type>
       <name>setTerminalNetlist</name>
       <anchorfile>classHurricane_1_1Cell.html</anchorfile>
-      <anchor>a15958b25e911e8f5543557b6deea5618</anchor>
-      <arglist>(bool isTerminalNetlist)</arglist>
+      <anchor>a47ce34631bb9f6862caa13e5b25a4d8f</anchor>
+      <arglist>(bool state)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -987,24 +987,24 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getDx</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>acf8405f74b97239ea74ec629d0b4e194</anchor>
+      <anchor>a8a5c4475668b6c6730ed5265e5447553</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getDy</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>aa7bc32ab9211fd5f6ad3aacdf1214f20</anchor>
+      <anchor>af674c59fcaf1f5214d54a558fe30e41a</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getWidth</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a28bd18de9ca6e5cf2b77fce5e22af43a</anchor>
+      <anchor>a794ce7c3aa5ffe894c1231f7c5ac3c52</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1015,10 +1015,10 @@
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>const DbU::Unit &amp;</type>
+      <type>DbU::Unit</type>
       <name>getHeight</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>adf6487485a4f48bd15aa6f9a8ac5fd27</anchor>
+      <anchor>a07a4ecc7ea2479e2d63f5f31d9325dde</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1032,92 +1032,92 @@
       <type>void</type>
       <name>setLayer</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a147644849f33bc4d58b6b997543c8306</anchor>
-      <arglist>(const Layer *layer)</arglist>
+      <anchor>aec627634d5b6cfc5079a02b1b518b50e</anchor>
+      <arglist>(const Layer *)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setWidth</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>aae6d5c96862fd6c834ff4abd61edc86f</anchor>
-      <arglist>(const DbU::Unit &amp;width)</arglist>
+      <anchor>a08d14ce6cdf3696e472f4a621b936afe</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setHeight</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a2fc2e7c85dc5495810544c48bb604712</anchor>
-      <arglist>(const DbU::Unit &amp;height)</arglist>
+      <anchor>a6480b6a75cc098d3227f27080a2cb42b</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setSizes</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>aa18aa1e78eba9f4c10ece0e20683faf5</anchor>
-      <arglist>(const DbU::Unit &amp;width, const DbU::Unit &amp;height)</arglist>
+      <anchor>a1bded13596d448c6bb9c93271fffe5fd</anchor>
+      <arglist>(DbU::Unit width, DbU::Unit height)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setX</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a181436f128b65467e1ab94ffcb0c345b</anchor>
-      <arglist>(const DbU::Unit &amp;x)</arglist>
+      <anchor>a5b2338675993259feabb641fd9a1996e</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setY</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a455b8925aae10157c9143b58a3a52e57</anchor>
-      <arglist>(const DbU::Unit &amp;y)</arglist>
+      <anchor>a232a49a5dd180e9ff8dfb2bd2a67f2cd</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setPosition</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>afac88ee8442e3e943a24bb526057851a</anchor>
-      <arglist>(const DbU::Unit &amp;x, const DbU::Unit &amp;y)</arglist>
+      <anchor>ae44d4d7655428705f13dca34c7167690</anchor>
+      <arglist>(DbU::Unit x, DbU::Unit y)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setPosition</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>ad3ff25d47d1c00c53bb07bb0ff4067f1</anchor>
-      <arglist>(const Point &amp;position)</arglist>
+      <anchor>aedcc63fe54538939c03fe81a16b0bae0</anchor>
+      <arglist>(const Point &amp;)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setDx</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a6ee60b9d228fe5487bf73dc396b94706</anchor>
-      <arglist>(const DbU::Unit &amp;dx)</arglist>
+      <anchor>a82f29c6b48b0c5a51fe3c1678d71876c</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setDy</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a32ee96c21115ee9d197bc505fd48e37d</anchor>
-      <arglist>(const DbU::Unit &amp;dy)</arglist>
+      <anchor>ac5dadc06ae38c1ff287f031864f58850</anchor>
+      <arglist>(DbU::Unit)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setOffset</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a41ba972136e77d768f58ad0407d18f8e</anchor>
-      <arglist>(const DbU::Unit &amp;dx, const DbU::Unit &amp;dy)</arglist>
+      <anchor>a5c8cb75debcbe10aedc092e2089a975c</anchor>
+      <arglist>(DbU::Unit dx, DbU::Unit dy)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Contact *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a5402fec0518c81d35fbec2c2b2ec0f8f</anchor>
-      <arglist>(Net *net, const Layer *layer, const DbU::Unit &amp;x, const DbU::Unit &amp;y, const DbU::Unit &amp;width=0, const DbU::Unit &amp;height=0)</arglist>
+      <anchor>ab66989c2dce4d398f1f7647aca50d983</anchor>
+      <arglist>(Net *net, const Layer *layer, DbU::Unit x, DbU::Unit y, DbU::Unit width=0, DbU::Unit height=0)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Contact *</type>
       <name>create</name>
       <anchorfile>classHurricane_1_1Contact.html</anchorfile>
-      <anchor>a6645345f819cb4769fac075a0b1ea028</anchor>
-      <arglist>(Component *anchor, const Layer *layer, const DbU::Unit &amp;dx, const DbU::Unit &amp;dy, const DbU::Unit &amp;width=0, const DbU::Unit &amp;height=0)</arglist>
+      <anchor>a2e555edb8984b599c391f16db105c1f5</anchor>
+      <arglist>(Component *anchor, const Layer *layer, DbU::Unit dx, DbU::Unit dy, DbU::Unit width=0, DbU::Unit height=0)</arglist>
     </member>
     <docanchor file="classHurricane_1_1Contact" title="Introduction">secContactIntro</docanchor>
   </compound>
@@ -4791,15 +4791,15 @@
       <type>void</type>
       <name>setX</name>
       <anchorfile>classHurricane_1_1Point.html</anchorfile>
-      <anchor>a713ba6d38358fc1820371f74647b4214</anchor>
-      <arglist>(const DbU::Unit &amp;x)</arglist>
+      <anchor>adebab98c82f881b1d2e1e7680a907830</anchor>
+      <arglist>(DbU::Unit x)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setY</name>
       <anchorfile>classHurricane_1_1Point.html</anchorfile>
-      <anchor>a5b5c5811c3e354235142eacffc2d887e</anchor>
-      <arglist>(const DbU::Unit &amp;y)</arglist>
+      <anchor>a14a51f177d298ccccb25066c0298a268</anchor>
+      <arglist>(DbU::Unit y)</arglist>
     </member>
     <member kind="function">
       <type>Point &amp;</type>
