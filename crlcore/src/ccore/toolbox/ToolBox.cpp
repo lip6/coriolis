@@ -783,7 +783,6 @@ void ConnectPlugHooks(Cell* cell)
         cerr << Error( "SubNetNames::match(): std::stoi() catched an exception on \"%s\"."
                      , sindex.c_str() ) << endl;
       }
-      cerr << "true" << endl;
       return true;
     } else {
       if (code == REG_NOMATCH) {
@@ -802,7 +801,6 @@ void ConnectPlugHooks(Cell* cell)
     }
     _base  = s;
     _index = -1;
-    cerr << "false" << endl;
     return false;
   }
 
