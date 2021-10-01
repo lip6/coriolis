@@ -81,7 +81,7 @@ namespace Hurricane {
               void               toJsonSignature     ( JsonWriter* ) const;
     protected:                   
                                  DBo                 ();
-      virtual                   ~DBo                 ();
+      virtual                   ~DBo                 () noexcept(false);
       virtual void               _postCreate         ();
       virtual void               _preDestroy         ();
     private:                                         

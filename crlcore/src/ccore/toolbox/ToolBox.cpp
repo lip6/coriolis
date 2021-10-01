@@ -401,7 +401,7 @@ static void AttachContacts(Net* net)
     {
         if (contact->getBodyHook()->isAttached())
             throw Error("Cannot create contacts ring: A bodyHook is attached");
-            componentsToAttachList.push_back(contact);
+        componentsToAttachList.push_back(contact);
         end_for;
     }
     list<Component*>::iterator lcit = componentsToAttachList.begin();
@@ -779,7 +779,7 @@ void ConnectPlugHooks(Cell* cell)
       try {
         _index = std::stoi( sindex );
       }
-      catch ( std::invalid_argument e ) {
+      catch ( std::invalid_argument& e ) {
         cerr << Error( "SubNetNames::match(): std::stoi() catched an exception on \"%s\"."
                      , sindex.c_str() ) << endl;
       }

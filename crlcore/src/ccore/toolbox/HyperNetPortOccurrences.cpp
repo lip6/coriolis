@@ -515,7 +515,7 @@ Occurrence CHyperNetReceiverPortOccurrences::Locator::getElement() const
 {
     if (_pinLocator.isValid())
         return _pinLocator.getElement();
-	return _plugOccurrenceLocator.getElement();
+    return _plugOccurrenceLocator.getElement();
 }
 
 Locator<Occurrence>* CHyperNetReceiverPortOccurrences::Locator::getClone() const

@@ -52,7 +52,7 @@ class Hook {
 // Destructor
 // **********
 
-  protected: virtual ~Hook();
+  protected: virtual ~Hook() noexcept(false);
 
 // Operators
 // *********

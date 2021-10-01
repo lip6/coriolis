@@ -374,7 +374,7 @@ namespace CRL {
         if (state->getFlags(loadMode) != 0) continue;
 
       // Transmit all flags except thoses related to views.
-        loadMode |= (mode & (!Catalog::State::Views));
+        loadMode |= (mode & (~Catalog::State::Views));
         parser    = & (_parsers.getParserSlot( name, loadMode, _environment ));
 
       // Try to open cell file (file extention is supplied by the parser).
@@ -864,7 +864,7 @@ namespace CRL {
 
       if ( catalogProperty != NULL ) {
         Catalog::State* state = catalogProperty->getState ();
-        if ( (flags and IgnoreFeeds) and state->isFeed() ) continue;
+        if ( (flags & IgnoreFeeds) and state->isFeed() ) continue;
       }
       ++gates;
 

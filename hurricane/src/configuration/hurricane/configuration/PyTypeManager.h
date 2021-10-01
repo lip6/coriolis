@@ -1998,8 +1998,8 @@ namespace Isobar3 {
     PyErr_Clear();
     setMessage( funcName() + "(): " );
 
-    TC*   object;
-    TArg* arg;
+    TC*   object = NULL;
+    TArg* arg    = NULL;
     pyToC( pyObject, &object );
     if (not pyToC( pyArg, &arg )) {
       string message = "PyInPlaceOperatorWrapper():";
