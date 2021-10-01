@@ -130,8 +130,9 @@ class IoSpecs ( object ):
                                      'JSON pinmux file not found.'
                                    , '("{}")'.format(fileName) ] )
         with open(fileName) as fd:
-            datas = utf8toStr( json.loads( fd.read(), object_hook=utf8toStr )
-                             , ignoreDicts=True )
+           #datas = utf8toStr( json.loads( fd.read(), object_hook=utf8toStr )
+           #                 , ignoreDicts=True )
+            datas = json.loads( fd.read() )
         self.addIoPadSpecs(datas['pads.east' ], IoPin.EAST  )
         self.addIoPadSpecs(datas['pads.west' ], IoPin.WEST  )
         self.addIoPadSpecs(datas['pads.north'], IoPin.NORTH )
