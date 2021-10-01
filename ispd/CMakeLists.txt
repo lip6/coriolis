@@ -5,6 +5,8 @@
  
  cmake_minimum_required(VERSION 2.4.0)
 
+ option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
+
  list(INSERT CMAKE_MODULE_PATH 0 "$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)
  setup_project_paths(CORIOLIS)

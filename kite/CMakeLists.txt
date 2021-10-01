@@ -5,6 +5,7 @@
 
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  option(CHECK_DATABASE "Run database in full check mode (very slow)" OFF)
+ option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
  
  cmake_minimum_required(VERSION 2.8.9)
 

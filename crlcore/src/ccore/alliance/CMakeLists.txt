@@ -1,1 +1,1 @@
-#add_subdirectory(vst)
+add_subdirectory(vst)

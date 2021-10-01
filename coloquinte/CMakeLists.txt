@@ -3,9 +3,10 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(COLOQUINTE)
 
- set(ignoreVariables "${CMAKE_INSTALL_DIR}")
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}" "${BUILD_DOC}")
 
- option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
+#option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
+ option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
  
  cmake_minimum_required(VERSION 2.8.9)
 
