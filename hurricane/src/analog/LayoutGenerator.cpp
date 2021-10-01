@@ -179,7 +179,7 @@ namespace Analog {
     if (not pTupleCheck) {
       cerr << Error( "LayoutGenerator::callCheckCoherency(): An exception may have occured in checkCoherency().\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       finalize( NoFlags );
       return false;
@@ -188,7 +188,7 @@ namespace Analog {
     if ( not PyTuple_Check(pTupleCheck) or (PyTuple_Size(pTupleCheck) != 2) ) {
       cerr << Error( "LayoutGenerator::callCheckCoherency(): checkCoherency() did not return a tuple (bool,str).\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       return false;
     }
@@ -198,13 +198,13 @@ namespace Analog {
       if (flags & ShowError)
         cerr << Error( "%s\n        (\"%s\")"
                      , PyString_AsString(PyTuple_GetItem(pTupleCheck,1)).c_str()
-                     , _script->getFileName()
+                     , _script->getFileName().c_str()
                      ) << endl;
       return false;
     }
     if (not pCheckOk) {
         cerr << Error( "%s\n        A Python exception has occurred."
-                     , _script->getFileName()
+                     , _script->getFileName().c_str()
                      ) << endl;
       return false;
     }
@@ -218,7 +218,7 @@ namespace Analog {
     if (not _matrix) {
       cerr << Error( "LayoutGenerator::callLayout(): An exception may have occured in layout().\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       finalize( NoFlags );
       return false;
@@ -251,7 +251,7 @@ namespace Analog {
       finalize( NoFlags );
       cerr << Error( "LayoutGenerator::getDeviceBox(): No \"box\" key in returned dictionary.\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       return Box();
     }
@@ -259,7 +259,7 @@ namespace Analog {
     if (not IsPyBox(pyBox)) {
       cerr << Error( "LayoutGenerator::getDeviceBox(): Value associated with \"box\" key is *not* of Box type.\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       finalize( NoFlags );
       return Box();
@@ -275,7 +275,7 @@ namespace Analog {
     if (not pyBox) {
       cerr << Error( "LayoutGenerator::getDeviceBox(): No \"globalActiveBox\" key in returned dictionary.\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       finalize( NoFlags );
       return Box();
@@ -284,7 +284,7 @@ namespace Analog {
     if (not IsPyBox(pyBox)) {
       cerr << Error( "LayoutGenerator::getDeviceBox(): Value associated with \"globalActiveBox\" key is *not* of Box type.\n"
                      "        (\"%s\")"
-                   , _script->getFileName()
+                   , _script->getFileName().c_str()
                    ) << endl;
       finalize( NoFlags );
     }
