@@ -100,27 +100,34 @@ def guessOs ():
     return ( osType, useDevtoolset )
 
 
-def guessShell ():
+def guessShell ( forcedShell ):
    # This environement variable cannot be trusted as it is set once when
    # the user logs in. If aftewards it changes it that variable is *not*
    # affected :-(.
-   #if os.environ.has_key('SHELL'): return os.environ['SHELL']
-    psCommand     = subprocess.Popen ( ['ps', '-p', str(os.getppid()) ], stdout=subprocess.PIPE )
-    shell         = psCommand.stdout.readlines()[1].decode('ascii')[:-1].split()[3].lstrip('-')
-    whichCommand  = subprocess.Popen ( ['which', shell ], stdout=subprocess.PIPE )
-    shellPath     = whichCommand.stdout.readlines()[0][:-1]
+   #if 'SHELL' in os.environ: return os.environ['SHELL']
     isBourneShell = True
-    cshBins       = [ '/usr/bin/tcsh'
-                    , '/bin/tcsh'
-                    , '/usr/pkg/bin/tcsh'
-                    , '/usr/local/bin/tcsh'
-                    , '/usr/bin/csh'
-                    , '/bin/csh'
-                    , '/usr/pkg/bin/csh'
-                    , '/usr/local/bin/csh'
+    cshBins       = [ u'/usr/bin/tcsh'
+                    , u'/bin/tcsh'
+                    , u'/usr/pkg/bin/tcsh'
+                    , u'/usr/local/bin/tcsh'
+                    , u'/usr/bin/csh'
+                    , u'/bin/csh'
+                    , u'/usr/pkg/bin/csh'
+                    , u'/usr/local/bin/csh'
                     ]
-    if shellPath in cshBins: isBourneShell = False
-   #print( 'GUESSED SHELL: "{}"'.format( shellPath ))
+    if shellName is None:
+        psCommand    = subprocess.Popen ( ['ps', '-p', str(os.getppid()) ], stdout=subprocess.PIPE )
+        shell        = psCommand.stdout.readlines()[1].decode('utf8')[:-1].split()[3].lstrip('-')
+        whichCommand = subprocess.Popen ( ['which', shell ], stdout=subprocess.PIPE )
+        shellPath    = whichCommand.stdout.readlines()[0][:-1].decode('utf8')
+       #print( 'GUESSED shellPath={}'.format(shellPath) )
+    else:
+        shellPath = forcedShell
+       #print( 'FORCED shellPath={}'.format(shellPath) )
+    if shellPath in cshBins:
+       #print( 'Matched C-Shell' )
+        isBourneShell = False
+   #print( 'isBourneShell={}\n'.format(isBourneShell) )
     return shellPath, isBourneShell
 
 
@@ -130,7 +137,7 @@ if __name__ == "__main__":
   buildType               = "Release"
   linkType                = "Shared"
   rootDir                 = None
-  shellBin, isBourneShell = guessShell()
+  shellName               = None
 
   parser = optparse.OptionParser()  
  # Build relateds.
@@ -144,6 +151,7 @@ if __name__ == "__main__":
   parser.add_option ( "--no-python"      , action="store_true" ,                dest="nopython"      )
   parser.add_option ( "--root"           , action="store"      , type="string", dest="rootDir"       )
   parser.add_option ( "--remove"         , action="store_true" ,                dest="remove"        )
+  parser.add_option ( "--shell"          , action="store"      , type="string", dest="shell"         )
   ( options, args ) = parser.parse_args()
 
   if options.release:    buildType = "Release"
@@ -152,6 +160,8 @@ if __name__ == "__main__":
   if options.static:     linkType  = "Static"
   if options.shared:     linkType  = "Shared"
   if options.rootDir:    rootDir   = options.rootDir
+  if options.shell:      shellName = options.shell
+  shellBin, isBourneShell = guessShell( shellName )
 
   scriptPath = os.path.abspath( os.path.dirname( sys.argv[0] ))
   if 'Debug.' in scriptPath: buildType = 'Debug'
@@ -186,20 +196,22 @@ if __name__ == "__main__":
 
 
   shellScriptSh = \
-      'echo "%(MESSAGE)s";'                                          \
-      'echo "Switching to Coriolis 2.x (%(buildDir)s)";'             \
-      'PATH="%(PATH)s";'                                             \
-      'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";'                           \
-      'CORIOLIS_TOP="%(CORIOLIS_TOP)s";'                             \
+      'echo "Issuing commands for Bourne shell like interpreters";'   \
+      'echo "%(MESSAGE)s";'                                           \
+      'echo "Switching to Coriolis 2.x (%(buildDir)s)";'              \
+      'PATH="%(PATH)s";'                                              \
+      'BOOTSTRAP_TOP="%(BOOTSTRAP_TOP)s";'                            \
+      'CORIOLIS_TOP="%(CORIOLIS_TOP)s";'                              \
       'export PATH BOOTSTRAP_TOP CORIOLIS_TOP STRATUS_MAPPING_NAME;'
 
 #     'STRATUS_MAPPING_NAME="%(SYSCONF_DIR)s/stratus2sxlib.xml";'    \
 
   shellScriptCsh = \
-      'echo "%(MESSAGE)s";'                              \
-      'echo "Switching to Coriolis 2.x (%(buildDir)s)";' \
-      'setenv PATH "%(PATH)s";'                          \
-      'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";'        \
+      'echo "Issuing commands for C-shell like interpreters";'  \
+      'echo "%(MESSAGE)s";'                                     \
+      'echo "Switching to Coriolis 2.x (%(buildDir)s)";'        \
+      'setenv PATH "%(PATH)s";'                                 \
+      'setenv BOOTSTRAP_TOP "%(BOOTSTRAP_TOP)s";'               \
       'setenv CORIOLIS_TOP "%(CORIOLIS_TOP)s";'
 
 #     'setenv STRATUS_MAPPING_NAME "%(SYSCONF_DIR)s/stratus2sxlib.xml";' \
