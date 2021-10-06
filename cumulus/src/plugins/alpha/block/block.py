@@ -826,6 +826,7 @@ class Block ( object ):
             iteration += 1
             if iteration > 0: break
             self.setupAb()
+            if editor: editor.fit()
             if not self.conf.isCoreBlock:
                 self.placeIoPins()
                 self.checkIoPins()
@@ -836,7 +837,6 @@ class Block ( object ):
             sys.stdout.flush()
             sys.stderr.flush()
            #if self.conf.useHFNS: self.addHfnBuffers()
-           #if editor: editor.fit()
            #Breakpoint.stop( 0, 'Clock tree(s) done.' )
             self.place()
            #if self.conf.useHFNS: self.findHfnTrees()
