@@ -14,5 +14,5 @@ stdenv.mkDerivation {
 
   inherit version;
 
-  meta = meta // { broken = true; };
+  meta = meta // { broken = true; license = lib.licenses.cc-by-nc-sa-40; };
 }

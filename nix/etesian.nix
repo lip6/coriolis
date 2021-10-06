@@ -1,6 +1,7 @@
 { generic, ... }:
 let pkg =
-  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore }:
+  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd, coriolis-hurricane,
+  , lib, coriolis-crlcore }:
   {
     name = "etesian";
     src = ../etesian;
@@ -13,5 +14,6 @@ let pkg =
     ];
     nativeBuildInputs = [ doxygen ];
     pythonImportsCheck = [ "Etesian" ];
+    meta.license = lib.licenses.gpl2Plus;
   };
 in generic pkg

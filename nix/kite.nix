@@ -14,5 +14,6 @@ let pkg =
     ];
     nativeBuildInputs = [ doxygen ];
     pythonImportsCheck = [ "Kite" ];
+    meta.license = lib.licenses.gpl2Plus;
   };
 in generic pkg

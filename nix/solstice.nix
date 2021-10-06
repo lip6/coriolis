@@ -18,5 +18,7 @@ stdenv.mkDerivation {
   ];
   nativeBuildInputs = [ cmake ninja ];
 
-  inherit version meta;
+  inherit version;
+
+  meta = meta // { license = lib.licenses.gpl2Plus; };
 }

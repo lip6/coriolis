@@ -14,5 +14,7 @@ stdenv.mkDerivation {
 
   cmakeFlags = [ "-DWITH_OPENMP:STRING=TRUE" ];
 
-  inherit version meta;
+  inherit version;
+
+  meta = meta // { license = lib.licenses.gpl2Plus; };
 }

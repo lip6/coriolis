@@ -15,5 +15,6 @@ let pkg =
     ];
     nativeBuildInputs = [ doxygen ];
     pythonImportsCheck = "Bora";
+    meta.license = lib.licenses.gpl2Plus;
   };
 in generic pkg

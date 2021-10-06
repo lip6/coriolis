@@ -1,4 +1,4 @@
-{ version, meta }:
+{ version, meta, ... }:
 
 { lib, stdenv, cmake, ninja, python2, boost
 , coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
@@ -18,5 +18,7 @@ stdenv.mkDerivation {
   ];
   nativeBuildInputs = [ cmake ninja ];
 
-  inherit version meta;
+  inherit version;
+
+  meta = meta // { license = lib.licenses.gpl2Plus; }
 }

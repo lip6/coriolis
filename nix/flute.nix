@@ -7,5 +7,6 @@ let pkg =
     buildInputs = [ coriolis-vlsisapd coriolis-hurricane coriolis-crlcore ];
     nativeBuildInputs = [ ];
     pythonImportsCheck = [ "Flute" ];
+    meta.license = lib.licenses.gpl2Plus;
   };
 in generic pkg

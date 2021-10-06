@@ -24,5 +24,7 @@ let pkg =
     postFixup = ''
       wrapPythonPrograms
     '';
+
+    meta.license = lib.licenses.gpl2Plus;
   };
 in generic pkg

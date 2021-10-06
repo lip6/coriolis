@@ -7,5 +7,7 @@ let pkg =
     buildInputs = [ libxml2 qt4 ];
     nativeBuildInputs = [ bison flex doxygen ];
     pythonImportsCheck = [ "SPICE" "LIBERTY" "DTR" "Cfg" "CIF" "AGDS" ];
+
+    meta.license = lib.licenses.gpl2Plus;
   };
 in generic pkg
