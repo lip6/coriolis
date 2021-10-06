@@ -83,7 +83,8 @@ namespace Etesian {
     DbU::Unit vpitch = etesian->getSliceStep();;
     int       xsize  = (ab.getWidth() + vpitch - 1) / vpitch;
 
-    if (xsize < 6) return vpitch*2;
+    if (xsize < 6) return vpitch*4;
+    if (xsize < 8) return vpitch*2;
     
     return 0;
   }  
