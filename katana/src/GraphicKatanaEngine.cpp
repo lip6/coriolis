@@ -153,7 +153,7 @@ namespace Katana {
 
       float edgeOccupancy = edge->getEstimateOccupancy() + (float)edge->getRealOccupancy();
 
-#define EDGE_OVERLOAD_DISPLAY 1
+#define NORMAL_DENSITY_DISPLAY 1
 #if NORMAL_DENSITY_DISPLAY
       if ((unsigned int)edgeOccupancy <= edge->getCapacity())
         occupancy = (uint32_t)( 255.0 * (edgeOccupancy / (float)edge->getCapacity()) );
