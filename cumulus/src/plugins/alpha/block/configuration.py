@@ -472,14 +472,16 @@ class GaugeConf ( object ):
             minArea   = self._routingGauge.getRoutingLayer( depth ).getMinimalArea()
             extension = 0
             if minArea:
-                minLength = DbU.fromPhysical( minArea // DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
+                minLength = DbU.fromPhysical( minArea / DbU.toPhysical( wireWidth, DbU.UnitPowerMicro )
                                             , DbU.UnitPowerMicro )
                 minLength = toFoundryGrid( minLength, DbU.SnapModeSuperior );
                 if isinstance(segment,Horizontal):
+                    trace( 550, '\tminLength={}\n'.format(DbU.getValueString(minLength)) )
                     uMin = segment.getSource().getX()
                     uMax = segment.getTarget().getX()
                     segLength = abs( uMax - uMin )
                     if segLength < minLength:
+                        trace( 550, '\texpand\n' )
                         extension = toFoundryGrid( (minLength - segLength)//2, DbU.SnapModeSuperior )
                         if uMin > uMax:
                             extension = - extension
