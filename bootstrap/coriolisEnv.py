@@ -244,15 +244,22 @@ if __name__ == "__main__":
           shellMessage = "Using SoC network-wide Coriolis 2 (/soc/coriolis2)"
       else:
           if not rootDir:
-              rootDir = os.getenv("HOME") + "/coriolis-2.x"
-          coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
-          sysconfDir   = coriolisTop + "/etc/coriolis2"
-          shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
+              scriptRoot = '/'.join( scriptDir.split('/')[:-2] )
+              if not os.path.exists(scriptRoot):
+                  rootDir      = os.getenv("HOME") + "/coriolis-2.x"
+                  coriolisTop  = "%s/%s/%s/install" % ( rootDir, osType, buildDir )
+                  sysconfDir   = coriolisTop + "/etc/coriolis2"
+                  shellMessage = "Using user-selected Coriolis 2 (%s)" % rootDir
+              else:
+                  rootDir      = scriptRoot
+                  coriolisTop  = rootDir
+                  sysconfDir   = coriolisTop + "/etc/coriolis2"
+                  shellMessage = "Using script location Coriolis 2 (%s)" % rootDir
 
   if osType.startswith("Cygwin"):
       strippedPath = "%s/lib:%s" % ( coriolisTop, libDir, strippedPath )
   if not os.path.exists(coriolisTop):
-      print( 'echo "[ERROR] coriolisEnv.py, top directory <%s> do not exists."'.format( coriolisTop ))
+      print( 'echo "[ERROR] coriolisEnv.py, top directory "{}" do not exists."'.format( coriolisTop ))
       sys.exit( 1 )
   for lib in [ 'lib64', 'lib' ]:
       libDir    = lib
