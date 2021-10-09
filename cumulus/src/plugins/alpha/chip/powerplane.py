@@ -140,7 +140,7 @@ class HorizontalRail ( Rail ):
                              , self.axis + self.width//2 )
                 overlap = stripeBb.getIntersection( chunkBb )
                 if overlap.isEmpty(): continue
-                if overlap.getWidth() > 5*viaWidth:
+                if overlap.getWidth() > 2*viaWidth:
                     trace( 550, '\t| Large overlap={}\n'.format(overlap) )
                     via = BigVia( stripe.getNet()
                                 , plane.getLayerDepth(stripe.getLayer())
