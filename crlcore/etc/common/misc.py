@@ -32,7 +32,7 @@ param.setInt( 0 )
 param.setMin( 0 )
 
 Cfg.getParamInt( 'viewer.minimumSize'   ).setInt( 500  )
-Cfg.getParamInt( 'viewer.pixelThreshold').setInt(  20  )
+Cfg.getParamInt( 'viewer.pixelThreshold').setInt(   5 )
 
 param = Cfg.getParamInt( 'viewer.printer.DPI' )
 param.setInt( 150 )
