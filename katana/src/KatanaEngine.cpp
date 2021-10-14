@@ -583,12 +583,12 @@ namespace Katana {
 
         for ( Edge* edge : gcell->getEdges( Flags::NorthSide) ) {
           if (edge->getReservedCapacity() < vReservedMin) {
-            edge->reserveCapacity( vReservedMin );
+            edge->reserveCapacity( vReservedMin - edge->getReservedCapacity() );
           }
         }
         for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
           if (edge->getReservedCapacity() < hReservedMin)
-            edge->reserveCapacity( hReservedMin );
+            edge->reserveCapacity( hReservedMin - edge->getReservedCapacity()  );
         }
       }
     }
