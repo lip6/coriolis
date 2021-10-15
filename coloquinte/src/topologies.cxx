@@ -9,6 +9,7 @@
 #include <functional>
 #include <cmath>
 #include <array>
+#include <limits>
 
 namespace coloquinte{
 using edge_t = std::pair<index_t, index_t>;

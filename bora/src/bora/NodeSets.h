@@ -17,6 +17,7 @@
 #ifndef BORA_NODE_SETS_H
 #define BORA_NODE_SETS_H
 
+#include <algorithm>
 #include <cstddef>
 #include <limits>
 #include "BoxSet.h"

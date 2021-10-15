@@ -38,6 +38,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 
+#include <limits>
 
 namespace Hurricane {
 

@@ -4,6 +4,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <cmath>
+#include <limits>
 
 namespace coloquinte{
 namespace gp{

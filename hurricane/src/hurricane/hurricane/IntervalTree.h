@@ -40,6 +40,8 @@
 #include "hurricane/Interval.h"
 #include "hurricane/RbTree.h"
 
+#include <algorithm>
+
 namespace Hurricane {
 
 

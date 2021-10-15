@@ -17,6 +17,7 @@
 #include "crlcore/VhdlBit.h"
 #include "crlcore/VhdlSignal.h"
 
+#include <limits>
 
 namespace Vhdl {
 
