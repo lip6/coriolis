@@ -17,6 +17,7 @@
  list(INSERT CMAKE_MODULE_PATH 0 "${HURRICANE_SOURCE_DIR}/cmake_modules/")
 
  set_cmake_policies()
+ cmake_policy(SET CMP0054 NEW)
  setup_boost(program_options)
  setup_qt()
 

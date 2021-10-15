@@ -3,7 +3,7 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(Bootstrap)
 
- cmake_minimum_required(VERSION 2.4.0)
+ cmake_minimum_required(VERSION 2.8.0)
 
  set(ignoreVariables USE_LIBBFD "${BUILD_DOC} ${CMAKE_INSTALL_DIR}")
 

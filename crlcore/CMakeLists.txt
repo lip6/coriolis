@@ -22,6 +22,8 @@
  setup_boost(program_options)
  setup_qt()
 
+ cmake_policy(SET CMP0054 NEW)
+
  if (USE_LIBBFD)
    find_package(Libbfd)
  endif()

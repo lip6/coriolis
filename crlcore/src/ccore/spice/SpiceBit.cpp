@@ -16,6 +16,7 @@
 
 #include "crlcore/SpiceBit.h"
 
+#include <limits>
 
 namespace Spice {
 
