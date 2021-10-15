@@ -821,7 +821,7 @@ namespace {
                 const BasicLayer* exportLayer = layer;
                 if (NetExternalComponents::isExternal(component)) {
                   string layerName = getString( layer->getName() );
-                  if (layerName.substr(layerName.size()-4) != ".pin") {
+                  if ((layerName.size() > 4) and (layerName.substr(layerName.size()-4) != ".pin")) {
                     exportLayer = tech->getBasicLayer( layerName+".pin" );
                     if (not exportLayer) exportLayer = layer;
                   }
