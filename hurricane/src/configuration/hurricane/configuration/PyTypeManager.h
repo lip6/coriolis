@@ -302,7 +302,6 @@ extern "C" {
                     , .tp_basicsize   = sizeof(PyOneVoid)
                     , .tp_itemsize    = 0
                     , .tp_dealloc     = NULL
-                    , .tp_print       = NULL
                     , .tp_getattr     = NULL
                     , .tp_setattr     = NULL
                     , .tp_as_async    = NULL
