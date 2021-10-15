@@ -15,6 +15,7 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
+ cmake_policy(SET CMP0054 NEW)
  setup_sysconfdir("${CMAKE_INSTALL_PREFIX}")
  setup_boost(program_options)
  setup_qt()
