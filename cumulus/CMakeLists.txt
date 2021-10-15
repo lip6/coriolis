@@ -3,7 +3,7 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(CUMULUS)
  
- cmake_minimum_required(VERSION 2.4.0)
+ cmake_minimum_required(VERSION 2.8.0)
 
  set(ignoreVariables "${BUILD_DOC}" "${CMAKE_INSTALL_DIR}")
  option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
