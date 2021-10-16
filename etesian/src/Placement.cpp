@@ -16,6 +16,7 @@
 
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
+#include "hurricane/Breakpoint.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
@@ -35,8 +36,9 @@ namespace Etesian {
 
   using namespace std;
   using Hurricane::tab;
-  using Hurricane::Warning;
   using Hurricane::Error;
+  using Hurricane::Warning;
+  using Hurricane::Breakpoint;
   using Hurricane::Path;
   using Hurricane::Transformation;
   using Hurricane::DataBase;
@@ -738,6 +740,8 @@ namespace Etesian {
 
   void  EtesianEngine::toHurricane ()
   {
+    Breakpoint::stop( 101, "EtesianEngine::toHurricane() called." );
+    
     if (not getFeedCells().feedNumbers()) {
       cerr << Warning( "EtesianEngine::readSlices(): No feed cells available, skipping." ) << endl;
       return;
@@ -813,6 +817,7 @@ namespace Etesian {
 
     _area->buildSubSlices();
     _area->showSubSlices();
+#if DISABLED_TIE_INSERTION
     if (getConfiguration()->getLatchUpDistance()) {
       Cell*     feed       = getFeedCells().getBiggestFeed();
       DbU::Unit tieSpacing = getConfiguration()->getLatchUpDistance()*2 - feed->getAbutmentBox().getWidth();
@@ -820,12 +825,15 @@ namespace Etesian {
         tieSpacing -= feed->getAbutmentBox().getWidth();
       _area->insertTies( tieSpacing );
     }
+#endif
     _area->addFeeds();
 
     UpdateSession::close();
   //DebugSession::close();
 
     if (_viewer) _viewer->getCellWidget()->refresh();
+
+    Breakpoint::stop( 101, "EtesianEngine::toHurricane() finished." );
   }
 
 
