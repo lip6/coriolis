@@ -81,7 +81,8 @@
           add_custom_command ( OUTPUT   def.tab.cpp
                                DEPENDS  ${DefParserGrammar}
                                COMMAND  ${BISON_EXECUTABLE} -v -p defyy -d ${DefParserGrammar} -o def.tab.cpp 
-                               COMMAND  ln -s def.tab.hpp def.tab.h
+                               COMMAND  cp def.tab.hpp  ${LEFDEF_SOURCE_DIR}/def.tab.hpp
+                               COMMAND  cp def.tab.hpp  ${LEFDEF_SOURCE_DIR}/def.tab.h
                               #COMMAND  mv def.tab.cpp ${LEFDEF_SOURCE_DIR}/src/def/def/def.tab.cpp
                                COMMENT  "Generating DEF parser (bison)"
                              )
