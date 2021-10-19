@@ -102,10 +102,11 @@ static char NAME_SEPARATOR = '.';
 
 SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
 // ***********************************************************************
-  : _headInstance(headInstance),
-    _tailSharedPath(tailSharedPath),
-    _quarkMap(),
-    _nextOfInstanceSharedPathMap(NULL)
+  : _hash(0)
+  , _headInstance(headInstance)
+  , _tailSharedPath(tailSharedPath)
+  , _quarkMap()
+  , _nextOfInstanceSharedPathMap(NULL)
 {
     if (!_headInstance)
         throw Error("Can't create " + _TName("SharedPath") + " : null head instance");
@@ -126,6 +127,7 @@ SharedPath::SharedPath(Instance* headInstance, SharedPath* tailSharedPath)
                    , getString(_tailSharedPath->getOwnerCell ()).c_str()
                    );
 
+    _hash = (_headInstance->getId() << 1) + ((_tailSharedPath) ? _tailSharedPath->getHash() << 1: 0);
     _headInstance->_getSharedPathMap()._insert(this);
 
     cdebug_log(0,0) << "SharedPath::SharedPath() pathHash:" << getHash() << " \"" << this << "\"" << endl;
@@ -187,7 +189,8 @@ string SharedPath::getName() const
 
 unsigned long  SharedPath::getHash() const
 // ***************************************
-{ return (_headInstance->getId() << 1) + ((_tailSharedPath) ? _tailSharedPath->getHash() << 1: 0); }
+//{ return (_headInstance->getId() << 1) + ((_tailSharedPath) ? _tailSharedPath->getHash() << 1: 0); }
+{ return _hash; }
 
 string SharedPath::getJsonString(unsigned long flags) const
 // ********************************************************
@@ -244,6 +247,10 @@ void SharedPath::setNameSeparator(char nameSeparator)
 {
     NAME_SEPARATOR = nameSeparator;
 }
+
+std::string SharedPath::_getTypeName () const
+// ******************************************
+{ return _TName("SharedPath"); }
 
 string SharedPath::_getString() const
 // **********************************
