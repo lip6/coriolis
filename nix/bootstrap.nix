@@ -1,13 +1,13 @@
 { version, meta }:
 
-{ lib, stdenv, python2, cmake, ninja }:
+{ lib, stdenv, python3, cmake, ninja }:
 
 stdenv.mkDerivation {
   pname = "coriolis-bootstrap";
 
   src = ../bootstrap;
 
-  buildInputs = [ python2 ];
+  buildInputs = [ python3 ];
   nativeBuildInputs = [ cmake ninja ];
 
   inherit version;

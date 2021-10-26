@@ -2,7 +2,7 @@
 
 let pkg =
   { lib, coriolis-crlcore, coriolis-vlsisapd, coriolis-hurricane
-  , python2Packages, coriolis-cumulus }:
+  , python3Packages, coriolis-cumulus }:
   {
     name = "coriolis-stratus1";
     src = ../stratus1;
@@ -11,8 +11,8 @@ let pkg =
       coriolis-vlsisapd coriolis-crlcore coriolis-hurricane coriolis-cumulus
     ];
     postInstall = ''
-      ln -s -t $out/${python2Packages.python.sitePackages} \
-        $out/${python2Packages.python.sitePackages}/stratus/*
+      ln -s -t $out/${python3Packages.python.sitePackages} \
+        $out/${python3Packages.python.sitePackages}/stratus/*
     '';
     pythonImportsCheck = [ "stratus" "patterns" "patread" "synopsys" "utils" "util" ];
 

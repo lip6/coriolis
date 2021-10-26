@@ -3,14 +3,14 @@
 let pkg =
   { lib, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore
   , coriolis-etesian, coriolis-anabatic, coriolis-katana
-  , coriolis-unicorn, python2Packages }:
+  , coriolis-unicorn, python3Packages }:
   {
     name = "cumulus";
 
     src = ../cumulus;
 
     postInstall = ''
-      ln -s -t $out/${python2Packages.python.sitePackages} $out/${python2Packages.python.sitePackages}/cumulus/*
+      ln -s -t $out/${python3Packages.python.sitePackages} $out/${python3Packages.python.sitePackages}/cumulus/*
 
       # for import check
       mkdir -p /build/coriolistop/etc/coriolis2

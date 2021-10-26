@@ -31,7 +31,7 @@
       };
 
       pythonOverlay = self: super: {
-        python2Packages = super.python2Packages.override {
+        python3Packages = super.python3Packages.override {
           overrides = pself: psuper: {
             pyqt4 = psuper.pyqt4.overridePythonAttrs (o: rec {
               version = "4.12.1";
@@ -39,7 +39,7 @@
                 url = "mirror://sourceforge/pyqt/PyQt4_gpl_x11-${version}.tar.gz";
                 sha256 = "RdckRhrliwGbm+lQdsoH4hLrcwhK7JEluyVIJcOgU4M=";
               };
-              pythonImportsCheck = [ "PyQt4.QtCore" "PyQt4.QtGui" ];
+              pythonImportsCheck = (o.pythonImportsCheck or []) ++ [ "PyQt4.QtCore" "PyQt4.QtGui" ];
             });
           };
         };
@@ -113,7 +113,7 @@
       devShell = forAllSystems (system:
         let
           pkgs = nixpkgsFor.${system};
-          env = pkgs.python2.buildEnv.override {
+          env = pkgs.python3.buildEnv.override {
             extraLibs = builtins.map (x: pkgs.${"coriolis-${x}"}) pythonComponents;
           };
         in pkgs.mkShell {

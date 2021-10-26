@@ -4,7 +4,7 @@ let
   meta' = meta;
   f =
     { lib, stdenv, cmake, ninja, boost
-    , coriolis-bootstrap, python2Packages }:
+    , coriolis-bootstrap, python3Packages }:
     let self =
       { name
       , buildInputs ? []
@@ -17,25 +17,25 @@ let
       }@args':
       let
         args = builtins.removeAttrs args' (builtins.attrNames (builtins.functionArgs self));
-        boostWithPython = boost.override { enablePython = true; inherit (python2Packages) python; };
+        boostWithPython = boost.override { enablePython = true; inherit (python3Packages) python; };
         drv = stdenv.mkDerivation ({
           pname = "coriolis-${name}";
 
-          buildInputs = [ python2Packages.python boostWithPython ] ++ buildInputs;
+          buildInputs = [ python3Packages.python boostWithPython ] ++ buildInputs;
           nativeBuildInputs = [
             coriolis-bootstrap cmake ninja
-            python2Packages.pythonImportsCheckHook
+            python3Packages.pythonImportsCheckHook
           ] ++ nativeBuildInputs;
 
           postInstall = postInstall + ''
-              export PYTHONPATH="$out/${python2Packages.python.sitePackages}:$PYTHONPATH"
+              export PYTHONPATH="$out/${python3Packages.python.sitePackages}:$PYTHONPATH"
           '';
 
           meta = meta' // meta;
 
           inherit version pythonImportsCheck;
         } // args);
-      in continuation (python2Packages.toPythonModule drv);
+      in continuation (python3Packages.toPythonModule drv);
     in self;
 in
 

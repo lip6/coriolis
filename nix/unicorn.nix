@@ -6,7 +6,7 @@ let pkg =
   , coriolis-flute, coriolis-anabatic, coriolis-coloquinte
   , coriolis-lefdef, coriolis-knik, coriolis-kite
   , coriolis-katabatic, coriolis-etesian, coriolis-equinox
-  , coriolis-solstice, libxml2, doxygen, python2Packages }:
+  , coriolis-solstice, libxml2, doxygen, python3Packages }:
   {
     name = "unicorn";
     src = ../unicorn;
@@ -18,7 +18,7 @@ let pkg =
       coriolis-katabatic coriolis-etesian coriolis-equinox
       coriolis-solstice coriolis-bora coriolis-tutorial
     ];
-    nativeBuildInputs = [ doxygen python2Packages.wrapPython ];
+    nativeBuildInputs = [ doxygen python3Packages.wrapPython ];
     pythonImportsCheck = [ "Unicorn" ];
 
     postFixup = ''

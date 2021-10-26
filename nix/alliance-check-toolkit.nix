@@ -1,7 +1,7 @@
 { alliance-check-toolkit }:
 
 { stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus
-, python2Packages, alliance, yosys }:
+, python3Packages, alliance, yosys }:
 
 stdenv.mkDerivation {
   pname = "alliance-check-toolkit";

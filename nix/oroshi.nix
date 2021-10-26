@@ -1,16 +1,16 @@
 { generic, ... }:
 
 let pkg =
-  { qt4, coriolis-crlcore, doxygen, lib, python2Packages
+  { qt4, coriolis-crlcore, doxygen, lib, python3Packages
   , coriolis-vlsisapd, coriolis-hurricane }:
   {
     name = "oroshi";
     src = ../oroshi;
 
     propagatedBuildInputs = [
-      coriolis-vlsisapd qt4 python2Packages.pyqt4
+      coriolis-vlsisapd qt4 python3Packages.pyqt4
       coriolis-crlcore coriolis-hurricane qt4
-      python2Packages.numpy
+      python3Packages.numpy
     ];
     nativeBuildInputs = [ doxygen ];
 

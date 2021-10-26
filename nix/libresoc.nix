@@ -1,7 +1,7 @@
 { alliance-check-toolkit, soclayout, pinmux, ... }:
 
 { stdenv, coriolis-combined, coriolis-unicorn, coriolis-cumulus, fetchurl
-, python2Packages, alliance, yosys, writeShellScriptBin, fetchFromGitHub }:
+, python3Packages, alliance, yosys, writeShellScriptBin, fetchFromGitHub }:
 
 let
   C4MLogo = fetchurl {

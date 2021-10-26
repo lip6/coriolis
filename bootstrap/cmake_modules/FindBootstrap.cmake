@@ -187,7 +187,7 @@
    else(ARGC LESS 1)
      foreach(component ${ARGV})
        if(${component} STREQUAL "python")
-         set(components ${components} ${component}27)
+         set(components ${components} ${component}39)
        else()
          set(components ${components} ${component})
        endif()
