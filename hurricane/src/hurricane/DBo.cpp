@@ -38,6 +38,7 @@
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 
+#include <limits>
 
 namespace Hurricane {
 
@@ -157,7 +158,7 @@ namespace Hurricane {
   }
 
 
-  DBo::~DBo () throw(Error)
+  DBo::~DBo () noexcept(false)
   {
     if (_idCount) --_idCount;
     else {

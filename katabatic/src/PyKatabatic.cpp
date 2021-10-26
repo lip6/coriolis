@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -48,19 +48,27 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyKatabatic_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , .m_name    = "Katabatic"
+    , .m_doc     = "Detailed router low-level database."
+    , .m_size    = -1
+    , .m_methods = PyKatabatic_Methods
+    };
 
 
   // ---------------------------------------------------------------
-  // Module Initialization  :  "initKatabatic ()"
+  // Module Initialization  :  "PyInit_Katabatic ()"
 
-  DL_EXPORT(void) initKatabatic () {
-    cdebug_log(38,0) << "initKatabatic()" << endl;
+  PyMODINIT_FUNC PyInit_Katabatic ( void )
+  {
+    cdebug_log(38,0) << "Py_Init_Katabatic()" << endl;
 
-    PyObject* module = Py_InitModule ( "Katabatic", PyKatabatic_Methods );
+    PyObject* module = PyModule_Create( &PyKatabatic_ModuleDef );
     if ( module == NULL ) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Katabatic module." << endl;
-      return;
+      return NULL;
     }
 
     PyObject* dictionnary = PyModule_GetDict(module);
@@ -71,6 +79,8 @@ extern "C" {
     LoadObjectConstant(dictionnary,EngineLayerAssignByLength,"EngineLayerAssignByLength");
     LoadObjectConstant(dictionnary,EngineLayerAssignByTrunk ,"EngineLayerAssignByTrunk" );
     LoadObjectConstant(dictionnary,EngineNoNetLayerAssign   ,"EngineNoNetLayerAssign"   );
+
+    return module;
   }
 
   

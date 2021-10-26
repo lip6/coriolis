@@ -27,17 +27,17 @@ namespace DTR {
 
   class DTRException {
 	public:
-      inline                     DTRException (const std::string& what) throw();
-      inline virtual            ~DTRException () throw();
-      inline virtual const char* what         () const throw();
+      inline                     DTRException (const std::string& what);
+      inline virtual            ~DTRException ();
+      inline virtual const char* what         () const;
     private:
       std::string  _what;
   };
 
 
-  inline             DTRException::DTRException  ( const std::string& what ) throw() : _what(what) {}
-  inline             DTRException::~DTRException () throw() {}
-  inline const char* DTRException::what          () const throw() { return _what.c_str(); }
+  inline             DTRException::DTRException  ( const std::string& what ) : _what(what) {}
+  inline             DTRException::~DTRException () {}
+  inline const char* DTRException::what          () const { return _what.c_str(); }
 
 
 } // DTR namespace.

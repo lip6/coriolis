@@ -1,7 +1,7 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -21,7 +21,6 @@ Miscellaeous utilities. Contains:
   and methods.
 """
 
-from   __future__ import print_function
 import types
 import inspect
 import functools
@@ -82,15 +81,15 @@ def classdecorator ( cls ):
     def isprop ( attr ): return isinstance( attr, property )
 
     def wrappedSetattr ( self, attr, v ):
-        if attr != '_baseClass' and self._baseClass.__dict__.has_key(attr):
+        if attr != '_baseClass' and (attr in self._baseClass.__dict__):
             self._baseClass.__setattr__( attr, v )
         object.__setattr__( self, attr, v )
     
     def wrappedGetattr ( self, attr ):
         if attr == '_baseClass': return self.__dict__['_baseClass']
-        if self.__dict__.has_key(attr): return self.__dict__[attr]
+        if attr in self.__dict__: return self.__dict__[attr]
         selfClass = type( self )
-        if selfClass.__dict__.has_key(attr):
+        if attr in selfClass.__dict__:
             prop = selfClass.__dict__[attr]
             if isprop(prop):
                 return prop.__get__(self)

@@ -90,7 +90,7 @@ extern "C" {
       treeTuple = PyTuple_New( 2*tree.deg - 2 );
       for ( size_t i=0 ; (int)i < 2*tree.deg - 2 ; ++i ) {
         PyObject* flutePoint = PyTuple_New( 3 );
-        PyTuple_SetItem( flutePoint, 0, PyInt_FromLong(           tree.branch[i].n) );
+        PyTuple_SetItem( flutePoint, 0, PyLong_FromLong(          tree.branch[i].n) );
         PyTuple_SetItem( flutePoint, 1, PyDbU_FromLong((DbU::Unit)tree.branch[i].x) );
         PyTuple_SetItem( flutePoint, 2, PyDbU_FromLong((DbU::Unit)tree.branch[i].y) );
         PyTuple_SetItem( treeTuple, i, flutePoint);
@@ -108,21 +108,36 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyFlute_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Flute"             /* m_name     */
+    , "FLUTE, Fast Rectilinear Steiner Tree builder."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyFlute_Methods     /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
   // ---------------------------------------------------------------
   // Module Initialization  :  "initFlute ()"
 
-  DL_EXPORT(void) initFlute ()
+  PyMODINIT_FUNC PyInit_Flute ( void )
   {
-    cdebug_log(20,0) << "initFlute()" << endl;
+    cdebug_log(20,0) << "PyInit_Flute()" << endl;
 
-    PyObject* module = Py_InitModule( "Flute", PyFlute_Methods );
+    PyObject* module = PyModule_Create( &PyFlute_ModuleDef );
     if (not module) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Flute module." << endl;
-      return;
+      return NULL;
     }
 
     cdebug_log(20,0) << "Flute.so loaded " << (void*)&typeid(string) << endl;
+    return module;
   }
 
   

@@ -22,7 +22,7 @@ class QMenu;
 class QAction;
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   class ConfigurationWidget;
 

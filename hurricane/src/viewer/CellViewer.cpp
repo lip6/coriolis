@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -30,8 +30,8 @@
 #include <QPrintDialog>
 #include <QFileDialog>
 
-#include "vlsisapd/utilities/Path.h"
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/utilities/Path.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Library.h"

@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2021-2021, All Rights Reserved
+# Copyright (c) Sorbonne Université 2021-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import os.path
 from   operator  import itemgetter, attrgetter, methodcaller
@@ -47,7 +46,7 @@ class Macro ( object ):
     @staticmethod
     def lookup ( macroCell ):
         trace( 550, '\tMacro.lookup() on {}\n'.format(macroCell) )
-        if Macro.LUT.has_key(macroCell): return Macro.LUT[ macroCell ]
+        if macroCell in Macro.LUT: return Macro.LUT[ macroCell ]
         return None
 
     @staticmethod
@@ -179,9 +178,9 @@ class Macro ( object ):
                                          , bb.getXMax() )
                     elif isinstance(component,Rectilinear) and component.getLayer() == blockageMetal3:
                         bb = Box( component.getBoundingBox() )
-                        deltaAbXMin = bb.getXMin() + minSpacingMetal3/2 - ab.getXMin()
+                        deltaAbXMin = bb.getXMin() + minSpacingMetal3//2 - ab.getXMin()
                         bb.inflate( pitchMetal3 + deltaAbXMin
-                                  , minSpacingMetal3/2
+                                  , minSpacingMetal3//2
                                   , pitchMetal3
                                   , pitchMetal3
                                   )
@@ -238,11 +237,11 @@ class Macro ( object ):
                 ppYOngrid = yOngrid
                 if not self.rg.isSymbolic():
                     if ppYAxis < ppYOngrid:
-                        ppYAxis   -= width/2
-                        ppYOngrid += wwidth/2
+                        ppYAxis   -= width//2
+                        ppYOngrid += wwidth//2
                     else:
-                        ppYAxis   += width/2
-                        ppYOngrid -= wwidth/2
+                        ppYAxis   += width//2
+                        ppYOngrid -= wwidth//2
                 if useJumper:
                     jpitch  = self.rg.getPitch    ( gaugeMetal5.getLayer() )
                     jwwidth = self.rg.getWireWidth( gaugeMetal5.getLayer() )
@@ -283,7 +282,7 @@ class Macro ( object ):
                                                   , yOngrid
                                                   , wwidth
                                                   , xMin
-                                                  , xMin + ppitch + ppitch/2
+                                                  , xMin + ppitch + ppitch//2
                                                   )
                     blockageNet = self.cell.getNet( '*'  )
                     for gauge in [ gaugeMetal3, gaugeMetal3, gaugeMetal4, gaugeMetal5 ]:
@@ -313,7 +312,7 @@ class Macro ( object ):
                                                   , yOngrid
                                                   , wwidth
                                                   , xMin
-                                                  , xMin + ppitch + ppitch/2
+                                                  , xMin + ppitch + ppitch//2
                                                   )
                 NetExternalComponents.setExternal( horizontal )
             for component in eastPins:
@@ -335,11 +334,11 @@ class Macro ( object ):
                 ppYOngrid = yOngrid
                 if not self.rg.isSymbolic():
                     if ppYAxis < ppYOngrid:
-                        ppYAxis   -= width/2
-                        ppYOngrid += wwidth/2
+                        ppYAxis   -= width//2
+                        ppYOngrid += wwidth//2
                     else:
-                        ppYAxis   += width/2
-                        ppYOngrid -= wwidth/2
+                        ppYAxis   += width//2
+                        ppYOngrid -= wwidth//2
                 vertical = Vertical.create( component.getNet()
                                           , component.getLayer()
                                           , bb.getXMax()
@@ -377,11 +376,11 @@ class Macro ( object ):
                 ppXOngrid = xOngrid
                 if not self.rg.isSymbolic():
                     if ppXAxis < ppXOngrid:
-                        ppXAxis   -= width/2
-                        ppXOngrid += wwidth/2
+                        ppXAxis   -= width//2
+                        ppXOngrid += wwidth//2
                     else:
-                        ppXAxis   += width/2
-                        ppXOngrid -= wwidth/2
+                        ppXAxis   += width//2
+                        ppXOngrid -= wwidth//2
                 horizontal = Horizontal.create( component.getNet()
                                               , component.getLayer()
                                               , bb.getYMin()
@@ -423,11 +422,11 @@ class Macro ( object ):
                 ppXOngrid = xOngrid
                 if not self.rg.isSymbolic():
                     if ppXAxis < ppXOngrid:
-                        ppXAxis   -= width/2
-                        ppXOngrid += wwidth/2
+                        ppXAxis   -= width//2
+                        ppXOngrid += wwidth//2
                     else:
-                        ppXAxis   += width/2
-                        ppXOngrid -= wwidth/2
+                        ppXAxis   += width//2
+                        ppXOngrid -= wwidth//2
                 if useBigVia:
                     bvia = BigVia( component.getNet()
                                  , self.getLayerDepth(component.getLayer())

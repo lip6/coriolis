@@ -32,6 +32,6 @@ def adjustOnGrid ( unit, mode='upper' ):
     elif mode == 'lower': return DbU.getOnPhysicalGrid(unit, DbU.SnapModeInferior)
     elif mode == 'near' : return DbU.getOnPhysicalGrid(unit, DbU.SnapModeNearest )
     else:
-      print '[ERROR] oroshi.adjustOnGrid(): "%s" is not a valid mode.' % mode
-      print '        ("upper", "lower" or "near")'
+      print( '[ERROR] oroshi.adjustOnGrid(): "{}" is not a valid mode.'.format(mode) )
+      print( '        ("upper", "lower" or "near")' )
       return 0

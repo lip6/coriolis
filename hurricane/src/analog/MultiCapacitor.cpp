@@ -95,12 +95,12 @@ namespace Analog {
   unsigned int  MultiCapacitor::getRestriction ( Net* net ) const
   {
     unsigned int ok    = 0x1;
-    unsigned int yes   = 0x2;
+  //unsigned int yes   = 0x2;
   
     unsigned int west  = 0;
     unsigned int east  = 2;
-    unsigned int south = 4;
-    unsigned int north = 6;
+  //unsigned int south = 4;
+  //unsigned int north = 6;
     unsigned int rule  = 0;
     
     rule |= (ok << east) | (ok << west);

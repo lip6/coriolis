@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -454,7 +453,7 @@ class Side ( object ):
         if m: padName = m.group( 'power' )
           
         padNet = padInstance.getMasterCell().getNet( padName )
-       #print 'padName:', padName, 'padNet:', padNet
+       #print( 'padName:', padName, 'padNet:', padNet )
         if padNet:
           plug    = padInstance.getPlug( padNet )
           chipNet = plug.getNet()
@@ -470,7 +469,7 @@ class Side ( object ):
     def _placePads ( self ):
       padLength = 0
       for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
-      padSpacing = (self.sideLength - 2*self.conf.getIoPadHeight() - padLength) / (len(self.pads) + 1)
+      padSpacing = (self.sideLength - 2*self.conf.getIoPadHeight() - padLength) // (len(self.pads) + 1)
 
       if self.conf.padsHavePosition:
         for i in range(len(self.pads)):
@@ -510,8 +509,8 @@ class Side ( object ):
           uMin -= DbU.fromLambda(5.0)
           uMax += DbU.fromLambda(5.0)
         else:
-          uMin -= width/2
-          uMax += width/2
+          uMin -= width//2
+          uMax += width//2
       
       if self.type == North or self.type == South:
         if self.type == North:
@@ -706,7 +705,7 @@ class CoreWire ( object ):
                          +   self.symContactLayer.getMinimalSize()
 
           arrayWidth = self.symContactSize[0]
-          arrayCount = (arrayWidth - contactMinSize) / CoreWire.viaPitch
+          arrayCount = (arrayWidth - contactMinSize) // CoreWire.viaPitch
           trace( 550, '\tCoreWire.viaPitch: %sl\n' % (DbU.toLambda(CoreWire.viaPitch)) )
           trace( 550, '\tcontactMinSize: %sl, arrayWidth: %sl, arrayCount: %d\n'
                       % (DbU.toLambda(contactMinSize),DbU.toLambda(arrayWidth),arrayCount) )
@@ -758,7 +757,7 @@ class CoreWire ( object ):
         xPadMax         = xContact
         xCore           = coronaAb.getXMin()
         if not self.preferredDir:
-          xPadMax += self.bbSegment.getHeight()/2
+          xPadMax += self.bbSegment.getHeight()//2
       else:
         accessDirection = Pin.Direction.EAST
         xPadMax         = self.bbSegment.getXMax()
@@ -766,7 +765,7 @@ class CoreWire ( object ):
         xPadMin         = xContact
         xCore           = coronaAb.getXMax()
         if not self.preferredDir:
-          xPadMin -= self.bbSegment.getHeight()/2
+          xPadMin -= self.bbSegment.getHeight()//2
 
       hReal = Horizontal.create( self.chipNet
                                , self.padSegment.getLayer()
@@ -856,7 +855,7 @@ class CoreWire ( object ):
         yContact        = yPadMax
         yCore           = coronaAb.getYMin()
         if not self.preferredDir:
-          yPadMax += self.bbSegment.getWidth()/2
+          yPadMax += self.bbSegment.getWidth()//2
       else:
         accessDirection = Pin.Direction.NORTH
         yPadMax         = self.bbSegment.getYMax()
@@ -864,7 +863,7 @@ class CoreWire ( object ):
         yContact        = yPadMin
         yCore           = coronaAb.getYMax()
         if not self.preferredDir:
-          yPadMin -= self.bbSegment.getWidth()/2
+          yPadMin -= self.bbSegment.getWidth()//2
 
       vReal = Vertical.create( self.chipNet
                              , self.padSegment.getLayer()
@@ -1054,7 +1053,7 @@ class Corona ( object ):
             if plug.getMasterNet().isClock():
               hspan.inflate( DbU.fromLambda(5.0) )
             else:
-              hspan.inflate( component.getWidth() / 2 )
+              hspan.inflate( component.getWidth() // 2 )
 
           if hspan.contains( ab.getXMin() ) or hspan.contains( ab.getXMax() ):
             duplicate = False
@@ -1116,10 +1115,10 @@ class Corona ( object ):
           if depth > self.conf.gaugeConf.topLayerDepth: continue
 
           if lg.getDirection() == RoutingLayerGauge.Vertical:
-            if not vsegments.has_key(depth): vsegments[ depth ] = []
+            if not depth in vsegments: vsegments[ depth ] = []
             vsegments[ depth ].append( (component,bb) )
           else:
-            if not hsegments.has_key(depth): hsegments[ depth ] = []
+            if not depth in hsegments: hsegments[ depth ] = []
             hsegments[ depth ].append( (component,bb) )
 
    #if len(vsegments) + len(hsegments) == 0:
@@ -1215,10 +1214,10 @@ class Corona ( object ):
     self.conf.setupCorona( self.westSide.gap, self.southSide.gap, self.eastSide.gap, self.northSide.gap )
 
     self.coreSymBb = self.conf.getInstanceAb( self.conf.icorona )
-    self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap /2, Superior )
-                          , self.conf.toSymbolic( self.southSide.gap/2, Superior )
-                          , self.conf.toSymbolic( self.eastSide.gap /2, Inferior )
-                          , self.conf.toSymbolic( self.northSide.gap/2, Inferior ) )
+    self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap //2, Superior )
+                          , self.conf.toSymbolic( self.southSide.gap//2, Superior )
+                          , self.conf.toSymbolic( self.eastSide.gap //2, Inferior )
+                          , self.conf.toSymbolic( self.northSide.gap//2, Inferior ) )
 
     self.southSide.drawCoreWires()
     self.northSide.drawCoreWires()
@@ -1229,45 +1228,44 @@ class Corona ( object ):
        and len(self.westSide .coreWires) \
        and not self.southSide.coreWires[0].inCoronaRange \
        and not self.westSide .coreWires[0].inCoronaRange:
-        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on south-east corner are outside corona range.'
-                               , 'This will generate a short-circuit between S:"%s" and W:"%s".' % \
-                                 ( self.southSide.coreWires[0].chipNet.getName()
-                                 , self.westSide .coreWires[0].chipNet.getName()) ] )
+        print( ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on south-east corner are outside corona range.'
+                                , 'This will generate a short-circuit between S:"{}" and W:"{}".' \
+                                  .format( self.southSide.coreWires[0].chipNet.getName()
+                                         , self.westSide .coreWires[0].chipNet.getName()) ] ))
 
     if     len(self.southSide.coreWires) \
        and len(self.eastSide .coreWires) \
        and not self.southSide.coreWires[-1].inCoronaRange \
        and not self.eastSide .coreWires[ 0].inCoronaRange:
-        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on south-west corner are outside corona range.'
-                               , 'This will generate a short-circuit between S:"%s" and E:"%s.' % \
-                                 ( self.southSide.coreWires[-1].chipNet.getName()
-                                 , self.eastSide .coreWires[ 0].chipNet.getName()) ] )
+        print( ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on south-west corner are outside corona range.'
+                                , 'This will generate a short-circuit between S:"{}" and E:"{}".' \
+                                  .format( self.southSide.coreWires[-1].chipNet.getName()
+                                         , self.eastSide .coreWires[ 0].chipNet.getName()) ] ))
 
     if     len(self.northSide.coreWires) \
        and len(self.westSide .coreWires) \
        and not self.northSide.coreWires[ 0].inCoronaRange \
        and not self.westSide .coreWires[-1].inCoronaRange:
-        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on north-east corner are outside corona range.'
-                               , 'This will generate a short-circuit between N:"%s" and W:"%s".' % \
-                                 ( self.northSide.coreWires[ 0].chipNet.getName()
-                                 , self.westSide .coreWires[-1].chipNet.getName()) ] )
+        print( ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on north-east corner are outside corona range.'
+                                , 'This will generate a short-circuit between N:"{}" and W:"{}".' \
+                                  .format( self.northSide.coreWires[ 0].chipNet.getName()
+                                         , self.westSide .coreWires[-1].chipNet.getName()) ] ))
 
     if     len(self.northSide.coreWires) \
        and len(self.eastSide .coreWires) \
        and not self.northSide.coreWires[-1].inCoronaRange \
        and not self.eastSide .coreWires[-1].inCoronaRange:
-        print ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on north-west corner are outside corona range.'
-                               , 'This will generate a short-circuit between N:"%s" and E:"%s.' % \
-                                 ( self.northSide.coreWires[-1].chipNet.getName()
-                                 , self.eastSide .coreWires[-1].chipNet.getName()) ] )
-
+        print( ErrorMessage( 1, [ 'Corona._placeInnerCorona(): Both pads on north-west corner are outside corona range.'
+                                , 'This will generate a short-circuit between N:"{}" and E:"{}".' \
+                                  .format( self.northSide.coreWires[-1].chipNet.getName()
+                                         , self.eastSide .coreWires[-1].chipNet.getName()) ] ))
     return
 
 
 # def _locatePadRails ( self ):
 #   if not self.clockPad:
-#     print ErrorMessage( 1, 'There must be at least one pad of model "%s" to guess the pad rails.' \
-#                            % self.pckName )
+#     print( ErrorMessage( 1, 'There must be at least one pad of model "%s" to guess the pad rails.' \
+#                             .format(self.pckName) ))
 #     return False
 #
 #   for plug in self.clockPad.getPlugs():

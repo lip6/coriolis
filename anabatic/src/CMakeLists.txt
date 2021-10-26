@@ -12,7 +12,7 @@ endif ( CHECK_DETERMINISM )
                         ${FLUTE_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
                         ${QtX_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes     anabatic/Constants.h
                                      anabatic/Configuration.h
@@ -86,7 +86,7 @@ endif ( CHECK_DETERMINISM )
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
                                      ${LIBXML2_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                     ${Python_LIBRARIES} -lutil
                       )
 
            add_library( anabatic    ${cpps} )

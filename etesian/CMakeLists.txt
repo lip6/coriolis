@@ -3,9 +3,10 @@
  set(CMAKE_LEGACY_CYGWIN_WIN32 0)
  project(ETESIAN)
 
- set(ignoreVariables "${CMAKE_INSTALL_DIR}")
+ set(ignoreVariables "${CMAKE_INSTALL_DIR}" "${BUILD_DOC}")
 
- option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
+#option(BUILD_DOC  "Build the documentation (doxygen)" OFF)
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
  
  cmake_minimum_required(VERSION 2.8.9)
 
@@ -15,11 +16,10 @@
  setup_qt()
  
  set_cmake_policies()
- setup_boost(program_options python regex)
+ setup_boost(program_options)
  
- find_package(PythonLibs         2 REQUIRED)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
- find_package(VLSISAPD           REQUIRED)
  find_package(HURRICANE          REQUIRED)
 #find_package(KATABATIC          REQUIRED)
  find_package(CORIOLIS           REQUIRED)

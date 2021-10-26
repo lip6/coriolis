@@ -25,7 +25,7 @@
 #include "hurricane/configuration/ParameterWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::string;
   using std::map;
@@ -76,7 +76,7 @@ namespace Cfg2 {
   { return new ConfigurationDialog(); }
 
 
-  Parameter* Configuration::getParameter ( const string& name, Parameter::Type type ) const
+  Parameter* Configuration::getParameter ( string name, Parameter::Type type ) const
   {
     map<const string,Parameter*>::const_iterator iparameter = _parameters.find(name);
     if ( iparameter == _parameters.end() ) return NULL;
@@ -99,9 +99,9 @@ namespace Cfg2 {
   }
 
 
-  Parameter* Configuration::addParameter ( const string&       id
+  Parameter* Configuration::addParameter ( string              id
                                          , Parameter::Type     type
-                                         , const string&       value
+                                         , string              value
                                          , Parameter::Priority priority )
   {
     Parameter* p = getParameter ( id );
@@ -127,7 +127,7 @@ namespace Cfg2 {
     return _failsafe;
   }
 
-  void  Configuration::addLog ( unsigned int mask, const string& id )
+  void  Configuration::addLog ( unsigned int mask, string id )
   {
     map< unsigned int, set<LogEntry> >::iterator ilog = _logSets.find(mask);
     if ( ilog == _logSets.end() ) {
@@ -138,7 +138,7 @@ namespace Cfg2 {
   }
 
 
-  void  Configuration::removeLog ( unsigned int mask, const string& id )
+  void  Configuration::removeLog ( unsigned int mask, string id )
   {
     map< unsigned int, set<LogEntry> >::iterator ilog = _logSets.find(mask);
     if ( ilog != _logSets.end() ) (*ilog).second.erase ( id );
@@ -150,19 +150,16 @@ namespace Cfg2 {
   }
 
 
-  bool  Configuration::writeToFile ( const std::string& fileName, unsigned int flags, const string& tabs ) const
-  {
-  }
+  bool  Configuration::writeToFile ( std::string fileName, unsigned int flags, string tabs ) const
+  { return false; }
 
 
-  void  Configuration::writeToStream ( ostream& out, unsigned int flags, const string& tabs ) const
-  {
-  }
+  void  Configuration::writeToStream ( ostream& out, unsigned int flags, string tabs ) const
+  { }
 
 
-  bool  Configuration::readFromFile ( const std::string& fileName )
-  {
-  }
+  bool  Configuration::readFromFile ( std::string fileName )
+  { return false; }
 
 
 }  // Cfg namespace.

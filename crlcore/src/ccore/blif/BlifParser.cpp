@@ -24,7 +24,7 @@
 #include <vector>
 using namespace std;
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Net.h"

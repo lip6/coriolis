@@ -1,27 +1,26 @@
-
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2013, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./StratusScript.cpp"                      |
 // +-----------------------------------------------------------------+
 
 
-#include  <Python.h>
-#include  <iostream>
+#include <Python.h>
+#include <iostream>
 using namespace std;
 
-#include  "vlsisapd/utilities/Path.h"
-#include  "hurricane/Warning.h"
-#include  "hurricane/viewer/StratusScript.h"
+#include "hurricane/utilities/Path.h"
+#include "hurricane/Warning.h"
+#include "hurricane/viewer/StratusScript.h"
 
 
 namespace Hurricane {

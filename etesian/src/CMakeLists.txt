@@ -8,7 +8,7 @@
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes      etesian/Configuration.h
                                       etesian/Placement.h
@@ -58,7 +58,7 @@
                                       ${QtX_LIBRARIES}
                                       ${Boost_LIBRARIES}
                                       ${LIBXML2_LIBRARIES}
-                                      ${PYTHON_LIBRARIES} -lutil
+                                      ${Python_LIBRARIES} -lutil
                                       ${LIBEXECINFO_LIBRARIES}
                       )
 

@@ -1218,8 +1218,8 @@
       <type>static RoutingLayerGauge *</type>
       <name>create</name>
       <anchorfile>classCRL_1_1RoutingLayerGauge.html</anchorfile>
-      <anchor>afe17db013bf6a933c2af4e847bfd7918</anchor>
-      <arglist>(const Layer *layer, Constant::Direction direction, Constant::LayerGaugeType type, unsigned int depth, double density, DbU::Unit offset, DbU::Unit pitch, DbU::Unit wireWidth, DbU::Unit viaWidth, DbU::Unit obsDw)</arglist>
+      <anchor>afb41e7be2a6d258a691aacbe7a78154f</anchor>
+      <arglist>(const Layer *layer, Constant::Direction direction, Constant::LayerGaugeType type, unsigned int depth, double density, DbU::Unit offset, DbU::Unit pitch, DbU::Unit wireWidth, DbU::Unit pwireWidth, DbU::Unit viaWidth, DbU::Unit obsDw)</arglist>
     </member>
   </compound>
   <compound kind="class">

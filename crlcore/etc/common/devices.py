@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -26,23 +26,21 @@ def addDevice ( **kw ):
     global tech
     
     try:
-      if kw.has_key('name'):
-        devDesc = tech.addDeviceDescriptor( kw['name'] )
-
-        if kw.has_key('spice'):
-          devDesc.setSpiceFilePath( kw['spice'] )
-        
-        if kw.has_key('connectors'):
-          for connector in kw['connectors']:
-            devDesc.addConnector( connector )
-        else:
-          print WarningMessage( 'common.addDevice(): Missing connectors on device "%s".' % kw['name' ])
-        
-        if kw.has_key('layouts'):
-          for layout in kw['layouts']:
-            devDesc.addLayout( layout[0], layout[1] )
-        else:
-          print WarningMessage( 'common.addDevice(): Missing layouts on device "%s".' % kw['name' ])
-    except Exception, e:
-      helpers.io.catch( e )
+        if 'name' in kw:
+            devDesc = tech.addDeviceDescriptor( kw['name'] )
+            if 'spice' in kw: devDesc.setSpiceFilePath( kw['spice'] )
+            if 'connectors' in kw:
+                for connector in kw['connectors']:
+                    devDesc.addConnector( connector )
+            else:
+                print( WarningMessage( 'common.addDevice(): Missing connectors on device "{}".' \
+                                       .format(kw['name'])))
+            if 'layouts' in kw:
+                for layout in kw['layouts']:
+                    devDesc.addLayout( layout[0], layout[1] )
+            else:
+                print( WarningMessage( 'common.addDevice(): Missing layouts on device "{}".' \
+                                       .format( kw['name'] )))
+    except Exception as e:
+        helpers.io.catch( e )
     return

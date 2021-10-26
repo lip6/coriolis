@@ -33,6 +33,28 @@
 #include "hurricane/DbU.h"
 #include "hurricane/isobar/ProxyProperty.h"
 
+
+inline long  PyInt_AsLong ( PyObject* object )
+{ return PyLong_AsLong(object); }
+
+
+inline bool  PyString_Check ( PyObject* object )
+{ return PyUnicode_Check(object); }
+
+
+inline std::string  PyString_AsString ( PyObject* object )
+{
+  PyObject* pyBytes = PyUnicode_AsASCIIString( object );
+  std::string s = PyBytes_AsString( pyBytes );
+  Py_DECREF( pyBytes );
+  return s;
+}
+
+
+inline  PyObject* PyString_FromString ( const char* s )
+{ return PyUnicode_FromString( s ); }
+
+
 namespace Isobar {
 
 
@@ -116,8 +138,7 @@ namespace Isobar {
   inline int  PyAny_AsInt ( PyObject* object )
   {
     long value = 0;
-    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
-    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
     return (int)value;
   }
 
@@ -125,8 +146,7 @@ namespace Isobar {
   inline uint32_t  PyAny_AsUInt32 ( PyObject* object )
   {
     int64_t value = 0;
-    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
-    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
     return (uint32_t)value;
   }
 
@@ -135,8 +155,7 @@ namespace Isobar {
   inline T  PyAny_AsLong ( PyObject* object )
   {
     T  value = 0;
-    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong ( object );
-    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
+    if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLong( object );
     return value;
   }
 
@@ -145,8 +164,7 @@ namespace Isobar {
   inline T  PyAny_AsLong ( PyObject* object )
   {
     T  value = 0;
-    if      (PyObject_IsInstance(object,(PyObject*)&PyInt_Type )) value = PyInt_AsLong     ( object );
-    else if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLongLong( object );
+    if (PyObject_IsInstance(object,(PyObject*)&PyLong_Type)) value = PyLong_AsLongLong( object );
 
   //if (value > numeric_limits<int>::max()) {
   //  throw Error( "PyAny_AsLong(): Suspiciously big int %s, db:%lli"
@@ -240,12 +258,12 @@ extern "C" {
 
 
 #define  LOAD_CONSTANT(CONSTANT_VALUE,CONSTANT_NAME)             \
- constant = PyInt_FromLong ( (long)CONSTANT_VALUE );             \
+ constant = PyLong_FromLong ( (long)CONSTANT_VALUE );            \
  PyDict_SetItemString ( dictionnary, CONSTANT_NAME, constant );  \
  Py_DECREF ( constant );
 
 #define  LoadObjectConstant(DICTIONARY,CONSTANT_VALUE,CONSTANT_NAME)  \
- constant = PyInt_FromLong ( (long)CONSTANT_VALUE );                  \
+ constant = PyLong_FromLong ( (long)CONSTANT_VALUE );                 \
  PyDict_SetItemString ( DICTIONARY, CONSTANT_NAME, constant );        \
  Py_DECREF ( constant );
 
@@ -756,7 +774,7 @@ extern "C" {
     cdebug_log(20,0) << "Py"#SELF_TYPE"_getName()" << endl;              \
     HTRY                                                               \
     METHOD_HEAD (#SELF_TYPE".getName()")                               \
-    return PyString_FromString(getString(SELF->getName()).c_str());    \
+    return PyUnicode_FromString(getString(SELF->getName()).c_str());    \
     HCATCH                                                             \
     return NULL;                                                       \
   }
@@ -845,7 +863,7 @@ extern "C" {
 #define DirectVoidMethod(SELF_TYPE, SELF_OBJECT, FUNC_NAME)             \
   static PyObject* Py##SELF_TYPE##_##FUNC_NAME(Py##SELF_TYPE* self)     \
   {                                                                     \
-    cdebug_log(20,0) << "Py" #SELF_TYPE "_" #FUNC_NAME "()" << endl;      \
+    cdebug_log(20,0) << "Py" #SELF_TYPE "_" #FUNC_NAME "()" << endl;    \
     HTRY                                                                \
       METHOD_HEAD(#SELF_TYPE "." #FUNC_NAME "()")                       \
       SELF_OBJECT->FUNC_NAME();                                         \
@@ -1085,16 +1103,16 @@ extern "C" {
     if (self->ACCESS_OBJECT == NULL) {                                        \
       ostringstream repr;                                                     \
       repr << "<" #PY_SELF_TYPE " [" << (void*)self << " <-> NULL] unbound>"; \
-      return PyString_FromString( repr.str().c_str() );                       \
+      return PyUnicode_FromString( repr.str().c_str() );                       \
     }                                                                         \
     SELF_TYPE* object = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);        \
     if (object == NULL)                                                       \
-      return PyString_FromString( "<PyObject invalid dynamic_cast>" );        \
+      return PyUnicode_FromString( "<PyObject invalid dynamic_cast>" );        \
                                                                               \
     ostringstream repr;                                                       \
     repr << "[" << (void*)self << "<->" << (void*)object << " " << getString(object) << "]"; \
                                                                               \
-    return PyString_FromString(repr.str().c_str() );                          \
+    return PyUnicode_FromString(repr.str().c_str() );                          \
   }
 
 
@@ -1109,13 +1127,13 @@ extern "C" {
     if (self->ACCESS_OBJECT == NULL) {                                        \
       ostringstream repr;                                                     \
       repr << "<" #PY_SELF_TYPE " [" << (void*)self << " <-> NULL] unbound>"; \
-      return PyString_FromString( repr.str().c_str() );                       \
+      return PyUnicode_FromString( repr.str().c_str() );                       \
     }                                                                         \
     SELF_TYPE* object = dynamic_cast<SELF_TYPE*>(self->ACCESS_OBJECT);        \
     if (object == NULL)                                                       \
-      return PyString_FromString("<PyObject invalid dynamic_cast>" );         \
+      return PyUnicode_FromString("<PyObject invalid dynamic_cast>" );         \
                                                                               \
-    return PyString_FromString(getString(object).c_str() );                   \
+    return PyUnicode_FromString(getString(object).c_str() );                   \
   }
 
 
@@ -1124,16 +1142,20 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For Cmp, compare pointer value (unicity)
 
-# define  DirectCmpByPtrMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)        \
-  static int  PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* other )            \
-  {                                                                           \
-    if (not IS_PY_OBJECT(other)) return -1;                                   \
-                                                                              \
-    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE*)other;                       \
-    if (self->ACCESS_OBJECT == otherPyObject->ACCESS_OBJECT) return  0;       \
-    if (self->ACCESS_OBJECT <  otherPyObject->ACCESS_OBJECT) return -1;       \
-                                                                              \
-    return 1;                                                                 \
+# define  DirectCmpByPtrMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)                           \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* other, int op  )                 \
+  {                                                                                              \
+    if (not IS_PY_OBJECT(other)) Py_RETURN_FALSE;                                                \
+                                                                                                 \
+    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE*)other;                                          \
+    if ((op == Py_LT) and (self->ACCESS_OBJECT <  otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_LE) and (self->ACCESS_OBJECT <= otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_EQ) and (self->ACCESS_OBJECT == otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_NE) and (self->ACCESS_OBJECT != otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_GT) and (self->ACCESS_OBJECT >  otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_GE) and (self->ACCESS_OBJECT >= otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+                                                                                                 \
+    Py_RETURN_FALSE;                                                                             \
   }
 
 
@@ -1142,16 +1164,20 @@ extern "C" {
 // -------------------------------------------------------------------
 // Attribute Method For Cmp, compare object contents
 
-# define  DirectCmpByValueMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)      \
-  static int  PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* other )            \
-  {                                                                           \
-    if (not IS_PY_OBJECT(other)) return -1;                                   \
-                                                                              \
-    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE*)other;                       \
-    if (*(self->ACCESS_OBJECT) == *(otherPyObject->ACCESS_OBJECT)) return  0; \
-    if (  self->ACCESS_OBJECT  <    otherPyObject->ACCESS_OBJECT ) return -1; \
-                                                                              \
-    return 1;                                                                 \
+# define  DirectCmpByValueMethod(PY_FUNC_NAME,IS_PY_OBJECT,PY_SELF_TYPE)        \
+  static PyObject* PY_FUNC_NAME ( PY_SELF_TYPE *self, PyObject* other, int op ) \
+  {                                                                             \
+    if (not IS_PY_OBJECT(other)) Py_RETURN_FALSE;                               \
+                                                                                \
+    PY_SELF_TYPE* otherPyObject = (PY_SELF_TYPE*)other;                         \
+    if ((op == Py_LT) and  (self->ACCESS_OBJECT  <    otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_LE) and  (self->ACCESS_OBJECT  <=   otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_EQ) and *(self->ACCESS_OBJECT) == *(otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_NE) and  (self->ACCESS_OBJECT  !=   otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_GT) and  (self->ACCESS_OBJECT  >    otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+    if ((op == Py_GE) and  (self->ACCESS_OBJECT  >=   otherPyObject->ACCESS_OBJECT)) Py_RETURN_TRUE; \
+                                                                                \
+    Py_RETURN_FALSE;                                                            \
   }
 
 
@@ -1327,12 +1353,12 @@ extern "C" {
   extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                      \
     cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                     \
                                                                                       \
-    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;        \
-    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;            \
-    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;           \
-    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;            \
-    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;           \
-    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                     \
+    PyType##PY_SELF_TYPE.tp_dealloc     = (destructor) Py##PY_SELF_TYPE##_DeAlloc;    \
+    PyType##PY_SELF_TYPE.tp_richcompare = (richcmpfunc)Py##PY_SELF_TYPE##_Cmp;        \
+    PyType##PY_SELF_TYPE.tp_repr        = (reprfunc)   Py##PY_SELF_TYPE##_Repr;       \
+    PyType##PY_SELF_TYPE.tp_str         = (reprfunc)   Py##PY_SELF_TYPE##_Str;        \
+    PyType##PY_SELF_TYPE.tp_hash        = (hashfunc)   Py##PY_SELF_TYPE##_Hash;       \
+    PyType##PY_SELF_TYPE.tp_methods     = Py##PY_SELF_TYPE##_Methods;                 \
   }
 
 
@@ -1344,14 +1370,14 @@ extern "C" {
   extern void  Py##PY_SELF_TYPE##_LinkPyType() {                                       \
     cdebug_log(20,0) << "Py" #PY_SELF_TYPE "_LinkType()" << endl;                      \
                                                                                        \
-    PyType##PY_SELF_TYPE.tp_dealloc = (destructor) Py##PY_SELF_TYPE##_DeAlloc;         \
-    PyType##PY_SELF_TYPE.tp_compare = (cmpfunc)    Py##PY_SELF_TYPE##_Cmp;             \
-    PyType##PY_SELF_TYPE.tp_repr    = (reprfunc)   Py##PY_SELF_TYPE##_Repr;            \
-    PyType##PY_SELF_TYPE.tp_str     = (reprfunc)   Py##PY_SELF_TYPE##_Str;             \
-    PyType##PY_SELF_TYPE.tp_hash    = (hashfunc)   Py##PY_SELF_TYPE##_Hash;            \
-    PyType##PY_SELF_TYPE.tp_new     = (newfunc)    Py##PY_SELF_TYPE##_NEW;             \
-    PyType##PY_SELF_TYPE.tp_init    = (initproc)   Py##PY_SELF_TYPE##_Init;            \
-    PyType##PY_SELF_TYPE.tp_methods = Py##PY_SELF_TYPE##_Methods;                      \
+    PyType##PY_SELF_TYPE.tp_dealloc     = (destructor) Py##PY_SELF_TYPE##_DeAlloc;     \
+    PyType##PY_SELF_TYPE.tp_richcompare = (richcmpfunc)Py##PY_SELF_TYPE##_Cmp;         \
+    PyType##PY_SELF_TYPE.tp_repr        = (reprfunc)   Py##PY_SELF_TYPE##_Repr;        \
+    PyType##PY_SELF_TYPE.tp_str         = (reprfunc)   Py##PY_SELF_TYPE##_Str;         \
+    PyType##PY_SELF_TYPE.tp_hash        = (hashfunc)   Py##PY_SELF_TYPE##_Hash;        \
+    PyType##PY_SELF_TYPE.tp_new         = (newfunc)    Py##PY_SELF_TYPE##_NEW;         \
+    PyType##PY_SELF_TYPE.tp_init        = (initproc)   Py##PY_SELF_TYPE##_Init;        \
+    PyType##PY_SELF_TYPE.tp_methods     = Py##PY_SELF_TYPE##_Methods;                  \
   }
 
 
@@ -1370,14 +1396,14 @@ extern "C" {
   extern void  Py##SELF_TYPE##_LinkPyType() {                                  \
     cdebug_log(20,0) << "Py" #SELF_TYPE "_LinkType()" << endl;                 \
                                                                                \
-    PyType##SELF_TYPE.tp_dealloc = (destructor) Py##SELF_TYPE##_DeAlloc;       \
-    PyType##SELF_TYPE.tp_compare = (cmpfunc)    Py##SELF_TYPE##_Cmp;           \
-    PyType##SELF_TYPE.tp_repr    = (reprfunc)   Py##SELF_TYPE##_Repr;          \
-    PyType##SELF_TYPE.tp_str     = (reprfunc)   Py##SELF_TYPE##_Str;           \
-    PyType##SELF_TYPE.tp_hash    = (hashfunc)   Py##SELF_TYPE##_Hash;          \
-    PyType##SELF_TYPE.tp_new     = (newfunc)    Py##SELF_TYPE##_NEW;           \
-    PyType##SELF_TYPE.tp_init    = (initproc)   Py##SELF_TYPE##_Init;          \
-    PyType##SELF_TYPE.tp_methods = Py##SELF_TYPE##_Methods;                    \
+    PyType##SELF_TYPE.tp_dealloc     = (destructor) Py##SELF_TYPE##_DeAlloc;   \
+    PyType##SELF_TYPE.tp_richcompare = (richcmpfunc)Py##SELF_TYPE##_Cmp;       \
+    PyType##SELF_TYPE.tp_repr        = (reprfunc)   Py##SELF_TYPE##_Repr;      \
+    PyType##SELF_TYPE.tp_str         = (reprfunc)   Py##SELF_TYPE##_Str;       \
+    PyType##SELF_TYPE.tp_hash        = (hashfunc)   Py##SELF_TYPE##_Hash;      \
+    PyType##SELF_TYPE.tp_new         = (newfunc)    Py##SELF_TYPE##_NEW;       \
+    PyType##SELF_TYPE.tp_init        = (initproc)   Py##SELF_TYPE##_Init;      \
+    PyType##SELF_TYPE.tp_methods     = Py##SELF_TYPE##_Methods;                \
   }
 
 
@@ -1390,18 +1416,17 @@ extern "C" {
   {                                                                                                            \
     cdebug_log(20,0) << "Py" #PY_SELF_TYPE "Locator_LinkType()" << endl;                                       \
                                                                                                                \
-    PyType##PY_SELF_TYPE##Locator.tp_dealloc = (destructor)Py##PY_SELF_TYPE##Locator_DeAlloc;                  \
-    PyType##PY_SELF_TYPE##Locator.tp_compare = (cmpfunc)   Py##PY_SELF_TYPE##Locator_Cmp;                      \
-    PyType##PY_SELF_TYPE##Locator.tp_repr    = (reprfunc)  Py##PY_SELF_TYPE##Locator_Repr;                     \
-    PyType##PY_SELF_TYPE##Locator.tp_str     = (reprfunc)  Py##PY_SELF_TYPE##Locator_Str;                      \
-    PyType##PY_SELF_TYPE##Locator.tp_methods = Py##PY_SELF_TYPE##Locator_Methods;                              \
+    PyType##PY_SELF_TYPE##Locator.tp_dealloc     = (destructor) Py##PY_SELF_TYPE##Locator_DeAlloc;             \
+    PyType##PY_SELF_TYPE##Locator.tp_richcompare = (richcmpfunc)Py##PY_SELF_TYPE##Locator_Cmp;                 \
+    PyType##PY_SELF_TYPE##Locator.tp_repr        = (reprfunc)   Py##PY_SELF_TYPE##Locator_Repr;                \
+    PyType##PY_SELF_TYPE##Locator.tp_str         = (reprfunc)   Py##PY_SELF_TYPE##Locator_Str;                 \
+    PyType##PY_SELF_TYPE##Locator.tp_methods     = Py##PY_SELF_TYPE##Locator_Methods;                          \
   }
 
 #define PyTypeObjectDefinitions(SELF_TYPE)                              \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(NULL)                                          \
-      0                               /* ob_size.          */           \
-    , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
+    { PyVarObject_HEAD_INIT(NULL,0)                                     \
+      "Hurricane."#SELF_TYPE          /* tp_name.          */           \
     , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1426,9 +1451,8 @@ extern "C" {
 
 #define PyTypeObjectDefinitionsOfModule(MODULE,SELF_TYPE)               \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(NULL)                                          \
-      0                               /* ob_size.          */           \
-    , #MODULE "." #SELF_TYPE          /* tp_name.          */           \
+    { PyVarObject_HEAD_INIT(NULL,0)                                     \
+      #MODULE "." #SELF_TYPE          /* tp_name.          */           \
     , sizeof(Py##SELF_TYPE)           /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1453,9 +1477,8 @@ extern "C" {
 
 #define PyTypeRootObjectDefinitions(SELF_TYPE)                          \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(&PyType_Type)                                  \
-       0                              /* ob_size.          */           \
-    ,  "Hurricane.Py" #SELF_TYPE      /* tp_name.          */           \
+    { PyVarObject_HEAD_INIT(&PyType_Type,0)                             \
+       "Hurricane.Py" #SELF_TYPE      /* tp_name.          */           \
     ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1481,9 +1504,8 @@ extern "C" {
 
 #define PyTypeInheritedObjectDefinitions(SELF_TYPE, INHERITED_TYPE)     \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(DEFERRED_ADDRESS(&PyType##INHERITED_TYPE))     \
-       0                              /* ob_size.          */           \
-    ,  "Hurricane." #SELF_TYPE        /* tp_name.          */           \
+    { PyVarObject_HEAD_INIT(DEFERRED_ADDRESS(&PyType##INHERITED_TYPE),0)  \
+       "Hurricane." #SELF_TYPE        /* tp_name.          */           \
     ,  sizeof(Py##SELF_TYPE)          /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1520,9 +1542,8 @@ extern "C" {
 
 #define PyTypeCollectionObjectDefinitions(SELF_TYPE)                    \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(NULL)                                          \
-      0                               /* ob_size.          */           \
-    , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
+    { PyVarObject_HEAD_INIT(NULL,0)                                     \
+      "Hurricane."#SELF_TYPE          /* tp_name.          */           \
     , sizeof(Py ##SELF_TYPE)          /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1548,9 +1569,8 @@ extern "C" {
 
 #define PyTypeVectorObjectDefinitions(SELF_TYPE)  \
   PyTypeObject  PyType##SELF_TYPE =                                     \
-    { PyObject_HEAD_INIT(NULL)                                          \
-      0                               /* ob_size.          */           \
-    , "Hurricane."#SELF_TYPE          /* tp_name.          */           \
+    { PyVarObject_HEAD_INIT(NULL,0)                                     \
+      "Hurricane."#SELF_TYPE          /* tp_name.          */           \
     , sizeof(Py ##SELF_TYPE)          /* tp_basicsize.     */           \
     , 0                               /* tp_itemsize.      */           \
     /* methods. */                                                      \
@@ -1581,7 +1601,7 @@ extern "C" {
   if ( PyType_Ready( &PyType##TYPE ) < 0 ) {                 \
     cerr << "[ERROR]\n"                                      \
          << "  Failed to initialize <Py" #TYPE ">." << endl; \
-    return;                                                  \
+    return NULL;                                             \
   }
 
 
@@ -1590,7 +1610,7 @@ extern "C" {
   if ( PyType_Ready( &PyType##TYPE ) < 0 ) {                 \
     cerr << "[ERROR]\n"                                      \
          << "  Failed to initialize <Py" #TYPE ">." << endl; \
-    return;                                                  \
+    return NULL;                                             \
   }
 
 
@@ -1605,26 +1625,31 @@ extern "C" {
     catch ( const Warning& w ) {                                    \
       std::string message = getString(w);                           \
       PyErr_Warn ( HurricaneWarning, const_cast<char*>(message.c_str()) ); \
+      std::cerr << message << std::endl; \
     }                                                               \
     catch ( const Error& e ) {                                      \
       std::string message = getString(e);                           \
       if (not e.where().empty()) message += "\n" + e.where();       \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
+      std::cerr << message << std::endl; \
       return NULL;                                                  \
     }                                                               \
     catch ( const Bug& e ) {                                        \
       std::string message = getString(e);                           \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
+      std::cerr << message << std::endl; \
       return NULL;                                                  \
     }                                                               \
     catch ( const Exception& e ) {                                  \
       std::string message = "Unknown Hurricane::Exception";         \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
+      std::cerr << message << std::endl; \
       return NULL;                                                  \
     }                                                               \
     catch ( const std::exception& e )  {                            \
       std::string message = std::string(e.what());                  \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
+      std::cerr << message << std::endl; \
       return NULL;                                                  \
     }                                                               \
     catch ( ... ) {                                                 \
@@ -1632,6 +1657,7 @@ extern "C" {
         "Unmanaged exception, neither a Hurricane::Error nor"       \
         " a std::exception.";                                       \
       PyErr_SetString ( HurricaneError, message.c_str() );          \
+      std::cerr << message << std::endl; \
       return NULL;                                                  \
     }                                                               \
 

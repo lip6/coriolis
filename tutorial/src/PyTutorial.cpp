@@ -2,7 +2,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2017-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2017-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -58,12 +58,22 @@ extern "C" {
     { {NULL, NULL, 0, NULL}     /* sentinel */
     };
 
+  
+  static PyModuleDef  PyTutorial_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , .m_name    = "Tutorial"
+    , .m_doc     = "Show how to interface Coriolis/C++ to Python."
+    , .m_size    = -1
+    , .m_methods = PyTutorial_Methods
+    };
+
 
   // ---------------------------------------------------------------
-  // Module Initialization  :  "initTutorial ()"
+  // Module Initialization  :  "PyInit_Tutorial ()"
 
-  DL_EXPORT(void) initTutorial () {
-    cdebug_log(40,0) << "initTutorial()" << endl;
+  PyMODINIT_FUNC PyInit_Tutorial ( void )
+  {
+    cdebug_log(40,0) << "PyInit_Tutorial()" << endl;
 
     PyTutorialEngine_LinkPyType();
     PyGraphicTutorialEngine_LinkPyType();
@@ -71,17 +81,19 @@ extern "C" {
     PYTYPE_READY_SUB( TutorialEngine       , ToolEngine  );
     PYTYPE_READY_SUB( GraphicTutorialEngine, GraphicTool );
 
-    PyObject* module = Py_InitModule( "Tutorial", PyTutorial_Methods );
+    PyObject* module = PyModule_Create( &PyTutorial_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Tutorial module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF( &PyTypeTutorialEngine );
     PyModule_AddObject( module, "TutorialEngine", (PyObject*)&PyTypeTutorialEngine );
     Py_INCREF( &PyTypeGraphicTutorialEngine );
     PyModule_AddObject( module, "GraphicTutorialEngine", (PyObject*)&PyTypeGraphicTutorialEngine );
+
+    return module;
   }
 
   

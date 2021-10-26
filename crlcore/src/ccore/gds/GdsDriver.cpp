@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2018-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2018-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
@@ -27,7 +27,7 @@
 #include <vector>
 using namespace std;
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
@@ -821,7 +821,7 @@ namespace {
                 const BasicLayer* exportLayer = layer;
                 if (NetExternalComponents::isExternal(component)) {
                   string layerName = getString( layer->getName() );
-                  if (layerName.substr(layerName.size()-4) != ".pin") {
+                  if ((layerName.size() > 4) and (layerName.substr(layerName.size()-4) != ".pin")) {
                     exportLayer = tech->getBasicLayer( layerName+".pin" );
                     if (not exportLayer) exportLayer = layer;
                   }

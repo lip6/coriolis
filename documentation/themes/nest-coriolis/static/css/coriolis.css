@@ -99,6 +99,10 @@ div#contents ul > li > a {
 }
 */
 
+span.cb {
+  background: yellow;
+}
+
 div.note {
 /*
   margin:             8px 2% 0px 2%;

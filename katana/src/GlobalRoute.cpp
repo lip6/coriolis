@@ -15,7 +15,7 @@
 
 
 #include "flute.h"
-#include "vlsisapd/utilities/Dots.h"
+#include "hurricane/utilities/Dots.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Breakpoint.h"
 #include "hurricane/RoutingPad.h"

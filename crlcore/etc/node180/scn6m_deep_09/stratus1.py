@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Universié 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -15,10 +15,9 @@
 
 import Cfg
 import helpers.io
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
 
 import common.stratus1
-
 
 Cfg.getParamString( "stratus1.format"    ).setString( "vst"    )
 Cfg.getParamString( "stratus1.simulator" ).setString( "asimut" )

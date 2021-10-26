@@ -38,12 +38,12 @@ class Parameters ( object ):
 
     def addTransistor ( self, name, index ):
         lname = name.lower()
-        if self.transistors.has_key(lname):
-          print 'Duplicated transistor "%s" (ignored).' % lname
+        if lname in self.transistors:
+          print( 'Duplicated transistor "%s" (ignored).' % lname )
         else:
-          if self.indexToName.has_key(index):
-            print 'Transistors "%s" and "%s" have the same index %d (ignored).' % \
-                (self.indexToName[index],lname,index)
+          if index in self.indexToName:
+            print( 'Transistors "%s" and "%s" have the same index %d (ignored).' % \
+                (self.indexToName[index],lname,index))
           self.transistors[ lname ] = Parameters.Transistor( lname )
           self.indexToName[ index ] = lname
           
@@ -54,15 +54,15 @@ class Parameters ( object ):
         transistor = None
         if isinstance(ref,str):
           lname = ref.lower()
-          if self.transistors.has_key(lname):
+          if lname in self.transistors:
             transistor = self.transistors[lname]
           else:
-            print 'No transistor named "%s".' % ref
+            print( 'No transistor named "%s".' % ref )
         if isinstance(ref,int):
-          if self.indexToName.has_key(ref):
+          if ref in self.indexToName:
             transistor = self.transistors[self.indexToName[ref]]
           else:
-            print 'No transistor with index %d.' % ref
+            print( 'No transistor with index %d.' % ref )
         return transistor
 
    #def getTransistorL ( self, ref ): return self.getTransistor(ref)[0]
@@ -72,10 +72,10 @@ class Parameters ( object ):
 
     def addCapacitor ( self, name, value ):
         lname = name.lower()
-        if self.capacitors.has_key(lname):
-          print 'Duplicated capacitor "%s" (ignored).' % lname
+        if lname in self.capacitors:
+          print( 'Duplicated capacitor "%s" (ignored).' % lname )
         else:
-         #print 'Add capacitor "%s"' % lname
+         #print( 'Add capacitor "%s"' % lname )
           self.capacitors[ lname ]   = Parameters.Capacitor( lname )
           self.capacitors[ lname ].C = value
           
@@ -85,17 +85,17 @@ class Parameters ( object ):
     def getCapacitor ( self, ref ):
         capacitor = None
         lname     = ref.lower()
-        if self.capacitors.has_key(lname):
+        if lname in self.capacitors:
           capacitor = self.capacitors[lname]
         else:
-          print 'No capacitor named "%s".' % ref
+          print( 'No capacitor named "%s".' % ref )
         return capacitor
 
 
     def addResistor ( self, name, value ):
         lname = name.lower()
-        if self.resistors.has_key(lname):
-          print 'Duplicated resistor "%s" (ignored).' % lname
+        if lname in self.resistors:
+          print( 'Duplicated resistor "%s" (ignored).' % lname )
         else:
           self.resistors[ lname ]   = Parameters.Resistor( lname )
           self.resistors[ lname ].R = value
@@ -106,10 +106,10 @@ class Parameters ( object ):
     def getResistor ( self, ref ):
         resistor = None
         lname     = ref.lower()
-        if self.capactors.has_key(lname):
+        if lname in self.capactors:
           resistor = self.capactors[lname]
         else:
-          print 'No resistor named "%s".' % ref
+          print( 'No resistor named "%s".' % ref )
         return resistor
 
 
@@ -127,7 +127,7 @@ class Parameters ( object ):
           m = reSpecTran.match( line[:-1] )
           if m:
             i = int(m.group('index'))
-           #print 'Found transistor %d:<%s>' % (i, m.group('name'))
+           #print( 'Found transistor %d:<%s>' % (i, m.group('name')) )
             self.addTransistor( m.group('name'), i )
             continue
 
@@ -135,7 +135,7 @@ class Parameters ( object ):
           if m:
             i = int  (m.group('index'))
             L = float(m.group('float'))
-           #print '  %d:L: %g' % (int(m.group('index')), L)
+           #print( '  %d:L: %g' % (int(m.group('index')), L) )
             self.getTransistor(i).L = L
             continue
 
@@ -143,7 +143,7 @@ class Parameters ( object ):
           if m:
             i = int  (m.group('index'))
             W = float(m.group('float'))
-           #print '  %d:W: %g' % (int(m.group('index')), W)
+           #print( '  %d:W: %g' % (int(m.group('index')), W) )
             self.getTransistor(i).W = W
             continue
 
@@ -151,7 +151,7 @@ class Parameters ( object ):
           if m:
             i = int(m.group('index'))
             M = int(m.group('int'  ))
-           #print '  %d:M: %d' % (int(m.group('index')), M)
+           #print( '  %d:M: %d' % (int(m.group('index')), M) )
             self.getTransistor(i).M = M
             self.getTransistor(i).W = M * self.getTransistor(i).W
 

@@ -35,12 +35,12 @@ namespace Bookshelf {
 
   class Exception : public std::exception {
     public:
-               Exception ( const std::string& ) throw();
-               Exception ( const char* format, ... ) throw();
-               Exception ( const Exception& ) throw();
-      virtual ~Exception () throw();
+               Exception ( const std::string& );
+               Exception ( const char* format, ... );
+               Exception ( const Exception& );
+      virtual ~Exception ();
     public:
-      virtual const char* what       () const throw ();
+      virtual const char* what       () const;
     private:
       static std::string  _addHeader ( const char* );
     private:

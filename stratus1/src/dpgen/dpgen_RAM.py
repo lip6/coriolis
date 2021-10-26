@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -62,12 +61,12 @@ class DpgenRam ( Model ) :
     self._nmot = self._param['nword']
     
     if self._nbit % 2 == 1 or self._nbit > 64 or self._nbit < 2 :
-      print "Error in DpgenRam : the bit number must be even and no larger than 64\n"
+      print( "Error in DpgenRam : the bit number must be even and no larger than 64\n" )
       sys.exit ( 3 )
 
     if self._nmot % 8 != 0 or self._nmot > 256 or self._nmot < 32 :
-      print "Error in instanciaton of DpgenRam"
-      print "The word number (nword = %d) " % self._nmot, "must be multiple of 8, at least 32 and no larger than 256.\n"
+      print( "Error in instanciaton of DpgenRam" )
+      print( "The word number (nword = %d) " % self._nmot, "must be multiple of 8, at least 32 and no larger than 256.\n" )
       sys.exit ( 3 )
 
     if   self._nmot > 128 : adrange = 8
@@ -674,4 +673,4 @@ class DpgenRam ( Model ) :
   ## VBE ##
   #########
   def Vbe () :
-    print "RAM behavior not yet implemented"
+    print( "RAM behavior not yet implemented" )

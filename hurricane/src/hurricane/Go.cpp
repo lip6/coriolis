@@ -38,7 +38,7 @@ Go::Go()
 {
 }
 
-Go::~Go() throw(Error)
+Go::~Go()
 { }
 
 bool Go::autoMaterializationIsDisabled()

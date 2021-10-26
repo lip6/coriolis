@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import os.path
 import Cfg
@@ -182,11 +181,11 @@ class BigVia ( object ):
         trace( 550, '\t| botEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botEnclosure)) )
         trace( 550, '\t| enclosure   [{}]: {}\n'.format(depth,DbU.getValueString(enclosure)) )
         cutArea    = self.plates[ depth ].getBoundingBox()
-        hEnclosure = enclosure + cutSide/2
+        hEnclosure = enclosure + cutSide//2
         vEnclosure = hEnclosure
         if hEnclosure*2 > cutArea.getWidth():
             if self.flags & BigVia.AllowHorizontalExpand:
-                hEnclosure = cutArea.getWidth()/2
+                hEnclosure = cutArea.getWidth()//2
             else:
                 raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
                                          .format( cutLayer.getName(), self )
@@ -194,15 +193,15 @@ class BigVia ( object ):
                                        ] )
         if vEnclosure*2 > cutArea.getHeight():
             if self.flags & BigVia.AllowVerticalExpand:
-                vEnclosure = cutArea.getHeight()/2
+                vEnclosure = cutArea.getHeight()//2
             else:
                 raise ErrorMessage( 1, [ 'BigVia._doCutMatrix(): Cannot create cut of {} in {}.' \
                                          .format( cutLayer.getName(), self )
                                        , 'Height is too small to fit a single VIA cut.' 
                                        ] )
         cutArea.inflate( -hEnclosure, -vEnclosure )
-        xoffset = (cutArea.getWidth () % (cutSide+cutSpacing)) / 2
-        yoffset = (cutArea.getHeight() % (cutSide+cutSpacing)) / 2
+        xoffset = (cutArea.getWidth () % (cutSide+cutSpacing)) // 2
+        yoffset = (cutArea.getHeight() % (cutSide+cutSpacing)) // 2
         cutArea.translate( xoffset, yoffset )
         self.vias[ depth ] = []
         y = cutArea.getYMin()

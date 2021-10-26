@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -81,7 +81,7 @@ class TechTimings ( object ):
         self.capaPerLambda = 0.0
 
     def addCell ( self, cellTiming ):
-        if self.cells.has_key(cellTiming.name):
+        if cellTiming.name in self.cells:
             print( ErrorMessage( 1, 'TechTimings.addCell(): Redefinition of timings for "{}"' \
                                     .format(cellTiming.name) ))
         self.cells[ cellTiming.name ] = cellTiming
@@ -92,12 +92,12 @@ class TechTimings ( object ):
     def getWlEstimate ( self, cellName, sinks ):
         drivingCapa = self.getDrivingCapa( cellName )
        #print( 'sinks:{}, dC:{}, avgFanin:{}, CpL:{}'.format(sinks,drivingCapa,self.capaAvgFanin,self.capaPerLambda) )
-       #print( '{}'.format((drivingCapa - self.capaAvgFanin*sinks) / self.capaPerLambda) )
-        return DbU.fromLambda( (drivingCapa - self.capaAvgFanin*sinks) / self.capaPerLambda )
+       #print( '{}'.format((drivingCapa - self.capaAvgFanin*sinks) // self.capaPerLambda) )
+        return DbU.fromLambda( (drivingCapa - self.capaAvgFanin*sinks) // self.capaPerLambda )
 
     def getOneSinkEqWL ( self ):
         """Return the equivalent wirelength of the sink average capacity."""
-        return DbU.fromLambda(self.capaAvgFanin / self.capaPerLambda)
+        return DbU.fromLambda(self.capaAvgFanin // self.capaPerLambda)
 
     def getSinksEstimate ( self, cellName ):
         """
@@ -105,10 +105,10 @@ class TechTimings ( object ):
         wire to connect to each sink.
         """
         drivingCapa = self.getDrivingCapa( cellName )
-        return drivingCapa / (self.capaAvgFanin + 100.0*self.capaPerLambda)
+        return int(drivingCapa / (self.capaAvgFanin + 100.0*self.capaPerLambda))
 
     def getDrivingCapa ( self, name ):
-        if not self.cells.has_key(name):
+        if not name in self.cells:
             print( ErrorMessage( 1, 'TechTimings.getDrivingCapa(): No timings for "{}"' \
                                     .format(name) ))
             return 0.0

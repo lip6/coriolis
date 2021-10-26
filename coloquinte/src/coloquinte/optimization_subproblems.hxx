@@ -9,6 +9,7 @@
 #include <cassert>
 #include <numeric>
 #include <cmath>
+#include <limits>
 
 namespace coloquinte{
 

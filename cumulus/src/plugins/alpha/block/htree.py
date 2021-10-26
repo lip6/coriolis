@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import os.path
 import Cfg
@@ -248,11 +247,11 @@ class HTree ( object ):
                 else:
                     driverPlugs.append( plugOcc )
             quadTree.rsplitNetlist()
-            if self.spares.conf.isCoreBlock:
-                plug = utils.getPlugByName( quadTree.buffers[0], bufferConf.input )
-                plug.setNet( self.treeNet )
-                trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.treeNet.getName()) )
-                trace( 550, '\tPlug of "{}" (Cell:{})\n'.format(self.treeNet.getName()
-                                                               ,self.treeNet.getCell()) )
-                for plug in self.treeNet.getPlugs():
-                    trace( 550, '\t| {}\n'.format(plug) )
+           #if self.spares.conf.isCoreBlock:
+            plug = utils.getPlugByName( quadTree.buffers[0], bufferConf.input )
+            plug.setNet( self.treeNet )
+            trace( 550, '\tCore mode, setting only root plug "{}"\n'.format(self.treeNet.getName()) )
+            trace( 550, '\tPlug of "{}" (Cell:{})\n'.format(self.treeNet.getName()
+                                                           ,self.treeNet.getCell()) )
+            for plug in self.treeNet.getPlugs():
+                trace( 550, '\t| {}\n'.format(plug) )

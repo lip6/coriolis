@@ -1,22 +1,39 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+#
+# This file is part of the Coriolis Software.
+# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
+#
+# +-----------------------------------------------------------------+ 
+# |                   C O R I O L I S                               |
+# |     C o r i o l i s  -  Generic Program Launcher                |
+# |                                                                 |
+# |  Author      :                    Jean-Paul CHAPUT              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+# | =============================================================== |
+# |  Python      :  "./src/cgt.py"                                  |
+# +-----------------------------------------------------------------+
 
-import sys
-import os.path
-import optparse
-import helpers.io
-helpers.loadUserSettings()
-import Cfg
-import Hurricane
-import Viewer
-import CRL
-import Etesian
-import Anabatic
-import Katana
-import Katabatic
-import Kite
-import Bora
-import Tutorial
-import Unicorn
+try:
+    import sys
+    import os.path
+    import optparse
+    import helpers
+    helpers.loadUserSettings()
+    import Cfg
+    import Hurricane
+    import Viewer
+    import CRL
+    import Etesian
+    import Anabatic
+    import Katana
+    import Katabatic
+    import Kite
+    import Bora
+    import Tutorial
+    import Unicorn
+except Exception as e:
+    helpers.showPythonTrace( sys.argv[0], e )
+    sys.exit(2)
 
 
 def setCgtBanner ( banner ):
@@ -56,25 +73,25 @@ def runScript ( scriptPath, editor ):
       sys.path.insert( 0, os.path.dirname(scriptPath) )
     
       module = __import__( os.path.basename(scriptPath), globals(), locals() )
-      if not module.__dict__.has_key('scriptMain'):
-          print '[ERROR] Script module is missing function scriptMain().'
-          print '        <%s>' % scriptPath
+      if not 'scriptMain' in module.__dict__:
+          print( '[ERROR] Script module is missing function scriptMain().' )
+          print( '        "{}"'.format( scriptPath ))
           return
       if not callable( module.__dict__['scriptMain'] ):
-          print '[ERROR] Script module symbol scriptMain is not callable (not a function?).'
-          print '        <%s>' % scriptPath
+          print( '[ERROR] Script module symbol scriptMain is not callable (not a function?).' )
+          print( '        "{}"'.format( scriptPath ))
           return
     
       module.__dict__['scriptMain']( **kw )
 
-  except ImportError, e:
+  except ImportError as e:
      #module = str(e).split()[-1]
-     #print '[ERROR] The <%s> script cannot be loaded.' % os.path.basename(scriptPath)
-     #print '        Please check your design hierarchy or the Python syntax.'
-     #print '        Error was:'
-     #print '          %s\n' % e
+     #print( '[ERROR] The "{}" script cannot be loaded.'.format(os.path.basename(scriptPath)) )
+     #print( '        Please check your design hierarchy or the Python syntax.' )
+     #print( '        Error was:' )
+     #print( '          {}\n'.format(e))
       helpers.io.catch( e )
-  except Exception, e:
+  except Exception as e:
       helpers.io.catch( e )
   return
 
@@ -124,7 +141,7 @@ if __name__ == '__main__':
         flags |= CRL.AllianceFramework.NoPythonInit
 
       af = CRL.AllianceFramework.create( flags )
-      if helpers.io.isVL(2): print af.getEnvironment().getPrint()
+      if helpers.io.isVL(2): print( af.getEnvironment().getPrint() )
 
       Cfg.Configuration.pushDefaultPriority(Cfg.Parameter.Priority.CommandLine)
 
@@ -188,8 +205,8 @@ if __name__ == '__main__':
               runScript(options.script,unicorn)
           
           setCgtBanner(unicorn.getBanner())
-         #print unicorn.getBanner()
-         #print credits()
+         #print( unicorn.getBanner() )
+         #print( credits() )
 
           if cell: unicorn.setCell(cell)
           unicorn.show()
@@ -254,7 +271,7 @@ if __name__ == '__main__':
 
           sys.exit(not kiteSuccess)
 
-    except Exception, e:
+    except Exception as e:
       helpers.showPythonTrace( sys.argv[0], e )
 
     sys.exit(0)

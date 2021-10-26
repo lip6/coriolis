@@ -25,7 +25,7 @@
 #include "hurricane/configuration/ConfTabWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::max;
   using std::cerr;

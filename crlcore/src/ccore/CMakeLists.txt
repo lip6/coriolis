@@ -29,16 +29,14 @@
                              ${CRLCORE_SOURCE_DIR}/src/ccore/liberty
                              ${CRLCORE_SOURCE_DIR}/src/ccore/toolbox
                              ${HURRICANE_INCLUDE_DIR}
-                             ${CIF_INCLUDE_DIR}
-                             ${CONFIGURATION_INCLUDE_DIR}
-                             ${PYTHON_INCLUDE_PATH}
+                             ${Python_INCLUDE_DIRS}
                              ${Boost_INCLUDE_DIR}
                              ${QtX_INCLUDE_DIR}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
                              -DSYS_CONF_DIR="${SYS_CONF_DIR}"
-                             -DPYTHON_SITE_PACKAGES="${PYTHON_SITE_PACKAGES}"
+                             -DPYTHON_SITE_PACKAGES="${Python_CORIOLISLIB}"
                            )
 
                        set ( includes          crlcore/Utilities.h
@@ -49,7 +47,6 @@
                                                crlcore/GdsDriver.h
                                                crlcore/OAParser.h
                                                crlcore/OADriver.h
-                                               crlcore/CifDriver.h
                                                crlcore/SearchPath.h
                                                crlcore/Environment.h
                                                crlcore/Catalog.h
@@ -64,8 +61,8 @@
                                                crlcore/Blif.h
                                                crlcore/AcmSigda.h
                                                crlcore/Iccad04Lefdef.h
-                                               crlcore/Ispd04Bookshelf.h
-                                               crlcore/Ispd05Bookshelf.h
+#                                              crlcore/Ispd04Bookshelf.h
+#                                              crlcore/Ispd05Bookshelf.h
                                                crlcore/Ioc.h
                                                crlcore/VhdlBit.h
                                                crlcore/VhdlSignal.h
@@ -92,7 +89,6 @@
                                                COptions.cpp
                                                Histogram.cpp
                                                OAParserDriver.cpp
-                                               CifDriver.cpp
                                                SearchPath.cpp
                                                Environment.cpp
                                                Catalog.cpp
@@ -118,8 +114,6 @@
                            )
                        set ( gds_cpps          gds/GdsDriver.cpp
                                                gds/GdsParser.cpp
-                           )
-                       set ( cif_cpps          cif/CifDriver.cpp
                            )
                        set ( toolbox_cpps      toolbox/HyperNetPortOccurrences.cpp
                                                toolbox/ToolBox.cpp
@@ -155,8 +149,8 @@
                                                lefdef/LefDefExtension.cpp
                            )
                        set ( iccad04_cpps      iccad04/Iccad04Lefdef.cpp )
-                       set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
-                       set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
+#                      set ( ispd04_cpps       ispd04/Ispd04Bookshelf.cpp )
+#                      set ( ispd05_cpps       ispd05/Ispd05Bookshelf.cpp )
                        set ( blif_cpps         blif/BlifParser.cpp )
  if ( LEFDEF_FOUND )
        include_directories ( ${LEFDEF_INCLUDE_DIR} )
@@ -302,14 +296,11 @@
                                         ${openaccess_cpps}
                              )
        set_target_properties ( crlcore  PROPERTIES VERSION 1.0 SOVERSION 1 )
-       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_LIBRARIES}
+       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
+                                        ${HURRICANE_PYTHON_LIBRARIES}
                                         ${HURRICANE_GRAPHICAL_LIBRARIES}
                                         ${HURRICANE_LIBRARIES}
                                         ${BOOKSHELF_LIBRARY}
-                                        ${CONFIGURATION_LIBRARY}
-                                        ${CIF_LIBRARY}
-                                        ${AGDS_LIBRARY}
-                                        ${UTILITIES_LIBRARY}
                                         ${LEFDEF_LIBRARIES}
                                         ${OA_LIBRARIES}
                                         ${QtX_LIBRARIES}

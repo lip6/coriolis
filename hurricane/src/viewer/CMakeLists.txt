@@ -2,13 +2,15 @@
 
 #              include ( ${QT_USE_FILE} )
 
-   include_directories ( ${HURRICANE_SOURCE_DIR}/src/hurricane
+   include_directories ( ${HURRICANE_SOURCE_DIR}/src/utilities
+                         ${HURRICANE_SOURCE_DIR}/src/configuration
+                         ${HURRICANE_SOURCE_DIR}/src/hurricane
                          ${HURRICANE_SOURCE_DIR}/src/isobar
                          ${HURRICANE_SOURCE_DIR}/src/viewer
-                         ${CONFIGURATION_INCLUDE_DIR}
                          ${QtX_INCLUDE_DIRS}
                          ${Boost_INCLUDE_DIRS}
-                         ${PYTHON_INCLUDE_PATH}
+                         ${Python_INCLUDE_DIRS}
+                         ${CMAKE_INSTALL_PREFIX}/include
                        )
 
                    set( mocIncludes hurricane/viewer/HApplication.h
@@ -135,10 +137,10 @@
 
                    set( depLibs     hurricane
                                     isobar
+                                    utils
+                                    configuration
                                     ${UTILITIES_LIBRARY}
-                                    ${CONFIGURATION_LIBRARY}
                                     ${LIBXML2_LIBRARIES}
-                                    ${Boost_LIBRARIES}
                                     ${QtX_LIBRARIES}
                       )
 

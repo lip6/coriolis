@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -66,15 +65,16 @@ class VChannels ( object ):
         xMin = self.cell.getAbutmentBox().getXMin()
         xMax = self.cell.getAbutmentBox().getXMax()
         if x < xMin or x >= xMax:
-          print ErrorMessage( 1, [ 'VChannels.addChannelAt(): Attempt to add a channel outside abutment box, ignored.'
-                                 , '(%s must be included in [%s..%s]' % ( DbU.getValueString(x)
-                                                                        , DbU.getValueString(xMin)
-                                                                        , DbU.getValueString(xMax) ) ] ),
+          print( ErrorMessage( 1, [ 'VChannels.addChannelAt(): Attempt to add a channel outside abutment box, ignored.'
+                                  , '({} must be included in [{}..{}]'.format( DbU.getValueString(x)
+                                                                             , DbU.getValueString(xMin)
+                                                                             , DbU.getValueString(xMax) ) ] ))
           return False
             
         for i in range(len(self.vchannels)):
           if self.vchannels[i][0] == x:
-            print ErrorMessage( 1, 'VChannels.addChannelAt(): Attempt to add a channel twice at position %s, ignored.' % DbU.getValueString(x) ),
+            print( ErrorMessage( 1, 'VChannels.addChannelAt(): Attempt to add a channel twice at position {}, ignored.' \
+                                    .format(DbU.getValueString(x)) ))
             return False
           if self.vchannels[i][0] > x:
             self.vchannels.insert( i, (x,width) )
@@ -126,5 +126,5 @@ class VChannels ( object ):
         UpdateSession.close()
 
         spaceMargin = (float(dw) * 100.0) / float(ab.getWidth())
-        vprint( 1, '     - V-Channels space margin: %d%%.' % spaceMargin )
+        vprint( 1, '     - V-Channels space margin: {}%%.'.format(spaceMargin) )
         return

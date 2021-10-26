@@ -11,7 +11,7 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
- setup_boost(program_options python regex)
+ setup_boost(program_options python)
  setup_qt()
  
  find_package(LibXml2 REQUIRED)

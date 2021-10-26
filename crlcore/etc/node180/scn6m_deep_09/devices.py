@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,15 +14,13 @@
 
 
 import helpers.io
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
 
 import common.devices
 from   common.devices import addDevice
 
-
 chamsDir = helpers.sysConfDir + '/share/coriolis2/'
 spiceDir = chamsDir + 'spice/'
-
 
 addDevice( name       = 'DifferentialPairBulkConnected'
          , spice      = spiceDir+'DiffPairBulkConnected.spi'

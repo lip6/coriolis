@@ -1109,12 +1109,17 @@ namespace Anabatic {
     }
     EtesianEngine* etesian = static_cast<EtesianEngine*>
       ( ToolEngine::get( getCell(), EtesianEngine::staticGetName() ));
-    DbU::Unit segmentMaxWL = etesian->getAntennaDiodeMaxWL() / 2;
 
     if (not etesian->getDiodeCell()) {
       cerr << Warning( "AnabaticEngine::antennaProtect(): No diode cell found, skipped." ) << endl;
       return;
     }
+    if (etesian->getAntennaDiodeMaxWL() <= 0) {
+      cerr << Warning( "AnabaticEngine::antennaProtect(): Maximum antenna diode WL not set, skipped." ) << endl;
+      return;
+    }
+
+    DbU::Unit segmentMaxWL = etesian->getAntennaDiodeMaxWL() / 2;
 
     cmess1 << "  o  Antenna effect protection." << endl;
     startMeasures();

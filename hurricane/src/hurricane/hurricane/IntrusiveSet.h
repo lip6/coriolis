@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_INTRUSIVE_SET
-#define HURRICANE_INTRUSIVE_SET
-
+#pragma  once
 #include <cstring>
 #include <algorithm>
 
@@ -495,9 +493,6 @@ inline std::string  getString ( Hurricane::IntrusiveSet<Type>& intrusiveSet )
 template<typename Type>
 inline Hurricane::Record* getRecord ( Hurricane::IntrusiveSet<Type>& intrusiveSet )
 { return intrusiveSet._getRecord(); }
-
-
-#endif // HURRICANE_INTRUSIVE_SET
 
 
 // ****************************************************************************************************

@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2015-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -24,7 +23,7 @@ try:
     from   helpers.io import ErrorMessage
     from   helpers.io import WarningMessage
     import plugins
-except Exception, e:
+except Exception as e:
     helpers.io.catch( e )
     sys.exit(2)
 
@@ -36,23 +35,19 @@ except Exception, e:
 # standard cell (mainly the feed-through).
 
 def rsave ( cell, depth=0 ):
-  if cell.isTerminal(): return
-
-  framework = CRL.AllianceFramework.get()
-  if depth == 0: print '  o  Recursive Save-Cell.'
-
-  print '     %s+ %s (netlist+layout).' % ( ' '*(depth*2), cell.getName() )
-  flags = CRL.Catalog.State.Logical
-  if not cell.getAbutmentBox().isEmpty():
-    flags |= CRL.Catalog.State.Physical
-
-  framework.saveCell( cell, flags )
-
-  for instance in cell.getInstances():
-    masterCell = instance.getMasterCell()
-    if not masterCell.isTerminal():
-      rsave( masterCell, depth+1 )
-  return
+    if cell.isTerminal(): return
+    framework = CRL.AllianceFramework.get()
+    if depth == 0: print( '  o  Recursive Save-Cell.' )
+    print( '     {}+ {} (netlist+layout).'.format( ' '*(depth*2), cell.getName() ))
+    flags = CRL.Catalog.State.Logical
+    if not cell.getAbutmentBox().isEmpty():
+        flags |= CRL.Catalog.State.Physical
+    framework.saveCell( cell, flags )
+    for instance in cell.getInstances():
+        masterCell = instance.getMasterCell()
+        if not masterCell.isTerminal():
+            rsave( masterCell, depth+1 )
+    return
 
 
 # --------------------------------------------------------------------
@@ -69,22 +64,16 @@ def unicornHook ( **kw ):
 
 
 def scriptMain ( **kw ):
-  try:
-   #helpers.setTraceLevel( 550 )
-
-    cell, editor = plugins.kwParseMain( **kw )
-
-    if not cell:
-      print WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' )
-      return 0
-
-    rsave( cell )
-    CRL.destroyAllVHDL()
-
-  except Exception, e:
-    helpers.io.catch( e )
-
-  sys.stdout.flush()
-  sys.stderr.flush()
-      
-  return 0
+    try:
+       #helpers.setTraceLevel( 550 )
+        cell, editor = plugins.kwParseMain( **kw )
+        if not cell:
+            print( WarningMessage( 'No Cell loaded in the editor (yet), nothing done.' ))
+            return 0
+        rsave( cell )
+        CRL.destroyAllVHDL()
+    except Exception as e:
+        helpers.io.catch( e )
+    sys.stdout.flush()
+    sys.stderr.flush()
+    return 0

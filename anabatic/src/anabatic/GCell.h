@@ -140,6 +140,7 @@ namespace Anabatic {
     public:                                                    
       static        GCell*                create               ( AnabaticEngine* );
     public:                                                    
+      inline        bool                  isSatProcessed       ( size_t depth ) const;
       inline        bool                  isSaturated          () const;
                     bool                  isSaturated          ( size_t depth ) const;
       inline        bool                  isInvalidated        () const;
@@ -257,6 +258,7 @@ namespace Anabatic {
                     size_t                checkDensity         () const;
                     bool                  checkEdgeSaturation  ( size_t hreserved, size_t vreserved) const;
                     void                  setType              ( Flags );
+      inline        void                  setSatProcessed      ( size_t depth );
                     void                  addBlockage          ( size_t depth, DbU::Unit );
       inline        void                  addHSegment          ( AutoSegment* );
       inline        void                  addVSegment          ( AutoSegment* );
@@ -334,6 +336,7 @@ namespace Anabatic {
               vector<AutoContact*>  _contacts;
               size_t                _depth;
               size_t                _pinDepth;
+              uint32_t              _satProcessed;
               int                   _rpCount;
               DbU::Unit*            _blockages;
               float                 _cDensity;
@@ -485,6 +488,12 @@ namespace Anabatic {
 
   inline  void  GCell::addContact ( AutoContact* contact )
   { _flags |= Flags::Invalidated; _contacts.push_back(contact); }
+
+  inline bool GCell::isSatProcessed ( size_t depth ) const
+  { return (_satProcessed & (1 << depth)); }
+
+  inline void GCell::setSatProcessed ( size_t depth )
+  { _satProcessed |= (1 << depth); }
 
 
   inline bool  operator< ( const GCell& lhs, const GCell& rhs )

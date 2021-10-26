@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2013, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyKatana.cpp"                           |
 // +-----------------------------------------------------------------+
@@ -61,13 +61,23 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyKatana_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , .m_name    = "Katana"
+    , .m_doc     = "The detailed router."
+    , .m_size    = -1
+    , .m_methods = PyKatana_Methods
+    };
+
+
 
 
   // ---------------------------------------------------------------
-  // Module Initialization  :  "initKatana ()"
+  // Module Initialization  :  "PyInit_Katana ()"
 
-  DL_EXPORT(void) initKatana () {
-    cdebug_log(40,0) << "initKatana()" << endl;
+  PyMODINIT_FUNC PyInit_Katana ( void )
+  {
+    cdebug_log(40,0) << "PyInit_Katana()" << endl;
 
     PyKatanaFlags_LinkPyType();
     PyKatanaEngine_LinkPyType();
@@ -78,11 +88,11 @@ extern "C" {
     PYTYPE_READY_SUB( GraphicKatanaEngine, GraphicTool );
 
 
-    PyObject* module = Py_InitModule( "Katana", PyKatana_Methods );
+    PyObject* module = PyModule_Create( &PyKatana_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Katana module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF( &PyTypeKatanaEngine );
@@ -98,6 +108,7 @@ extern "C" {
     // LoadObjectConstant( dictionnary, KtLoadGlobalRouting , "KtLoadGlobalRouting"  );
 
     PyKatanaEngine_postModuleInit();
+    return module;
   }
 
   

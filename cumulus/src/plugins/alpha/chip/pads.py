@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2014-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__   import print_function
 import sys
 import re
 import copy
@@ -65,28 +64,28 @@ class Corner ( object ):
             yCorner = self.conf.chipAb.getYMin() + axis
             xBb     = self.conf.chipAb.getXMin() + self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMin() + self.conf.ioPadHeight
-            xExtend = - onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
+            xExtend = - onFGrid( int( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = xExtend
         elif self.type == SouthEast:
             xCorner = self.conf.chipAb.getXMax() - axis
             yCorner = self.conf.chipAb.getYMin() + axis
             xBb     = self.conf.chipAb.getXMax() - self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMin() + self.conf.ioPadHeight
-            xExtend = onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
+            xExtend = onFGrid( int( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = - xExtend
         elif self.type == NorthEast:
             xCorner = self.conf.chipAb.getXMax() - axis
             yCorner = self.conf.chipAb.getYMax() - axis
             xBb     = self.conf.chipAb.getXMax() - self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMax() - self.conf.ioPadHeight
-            xExtend = onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
+            xExtend = onFGrid( int( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = xExtend
         elif self.type == NorthWest:
             xCorner = self.conf.chipAb.getXMin() + axis
             yCorner = self.conf.chipAb.getYMax() - axis
             xBb     = self.conf.chipAb.getXMin() + self.conf.ioPadHeight
             yBb     = self.conf.chipAb.getYMax() - self.conf.ioPadHeight
-            xExtend = - onFGrid( long( 0.5 * float(self.conf.ioPadHeight - axis) ) )
+            xExtend = - onFGrid( int( 0.5 * float(self.conf.ioPadHeight - axis) ) )
             yExtend = - xExtend
         return xCorner, yCorner, xBb, yBb, xExtend, yExtend
 
@@ -370,7 +369,7 @@ class Side ( object ):
     def _placePads ( self ):
         padLength = 0
         for pad in self.pads: padLength += pad[1].getMasterCell().getAbutmentBox().getWidth() 
-        padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) / (len(self.pads) + 1)
+        padSpacing = (self.sideLength - 2*self.conf.ioPadHeight - padLength) // (len(self.pads) + 1)
         if self.conf.padsHavePosition:
             position = self.u
             for pad in self.pads:
@@ -414,8 +413,8 @@ class Side ( object ):
                 uMin -= DbU.fromLambda(5.0)
                 uMax += DbU.fromLambda(5.0)
             else:
-                uMin -= width/2
-                uMax += width/2
+                uMin -= width//2
+                uMax += width//2
         if self.type == North or self.type == South:
             if self.type == North:
                 axis = self.conf.chipAb.getYMax() - axis
@@ -583,7 +582,7 @@ class CoreWire ( object ):
                                                                         , Layer.EnclosureH|Layer.EnclosureV ) \
                                    +   self.symContactLayer.getMinimalSize()
                     arrayWidth = self.symContactSize[0]
-                    arrayCount = (arrayWidth - contactMinSize) / self.viaPitch
+                    arrayCount = (arrayWidth - contactMinSize) // self.viaPitch
                     trace( 550, '\tcontactMinSize: {}, arrayWidth: {}, arrayCount: {}\n' \
                                 .format(DbU.getValueString(contactMinSize),DbU.getValueString(arrayWidth),arrayCount) )
                     if arrayCount < 0: arrayCount = 0
@@ -624,7 +623,7 @@ class CoreWire ( object ):
                 xPadMax         = xContact
                 xCore           = coronaAb.getXMin()
                 if not self.preferredDir:
-                   #xPadMax += self.bbSegment.getHeight()/2
+                   #xPadMax += self.bbSegment.getHeight()//2
                     xPadMin += 3*vPitch
             else:
                 accessDirection = Pin.Direction.EAST
@@ -633,7 +632,7 @@ class CoreWire ( object ):
                 xPadMin         = xContact
                 xCore           = coronaAb.getXMax()
                 if not self.preferredDir:
-                   #xPadMin -= self.bbSegment.getHeight()/2
+                   #xPadMin -= self.bbSegment.getHeight()//2
                     xPadMin -= 3*vPitch
             if self.addJumper:
                 rg        = self.conf.routingGauge
@@ -644,8 +643,8 @@ class CoreWire ( object ):
                     gapCenter = xPadMin + 5*gaugeM5.getPitch()
                 else:
                     gapCenter = xPadMax - 5*gaugeM5.getPitch()
-                xJumpMin  = gapCenter - jumperGap/2
-                xJumpMax  = gapCenter + jumperGap/2
+                xJumpMin  = gapCenter - jumperGap//2
+                xJumpMax  = gapCenter + jumperGap//2
                 hReal1 = Horizontal.create( self.chipNet
                                           , self.padSegment.getLayer()
                                           , self.bbSegment.getCenter().getY()
@@ -771,7 +770,7 @@ class CoreWire ( object ):
                 yContact        = yPadMax
                 yCore           = coronaAb.getYMin()
                #if not self.preferredDir:
-               #    yPadMax += self.bbSegment.getWidth()/2
+               #    yPadMax += self.bbSegment.getWidth()//2
                #    yPadMin += 3*hPitch
             else:
                 accessDirection = Pin.Direction.NORTH
@@ -780,7 +779,7 @@ class CoreWire ( object ):
                 yContact        = yPadMin
                 yCore           = coronaAb.getYMax()
                #if not self.preferredDir:
-               #    yPadMin -= self.bbSegment.getWidth()/2
+               #    yPadMin -= self.bbSegment.getWidth()//2
                #    yPadMin -= 3*hPitch
             vReal = Vertical.create( self.chipNet
                                    , self.padSegment.getLayer()
@@ -987,7 +986,7 @@ class Corona ( object ):
                     if plug.getMasterNet().isClock():
                         hspan.inflate( DbU.fromLambda(5.0) )
                     else:
-                        hspan.inflate( component.getWidth() / 2 )
+                        hspan.inflate( component.getWidth() // 2 )
                 if hspan.contains( ab.getXMin() ) or hspan.contains( ab.getXMax() ):
                     duplicate = False
                     if self.padOrient == Transformation.Orientation.ID:
@@ -1056,21 +1055,21 @@ class Corona ( object ):
                         if side.type == North or side.type == South:
                             #bb.inflate( -u(0.6), 0 )
                             if bb.getWidth() > u(35.0):
-                                bb.inflate( (u(34.0) - bb.getWidth()) / 2, 0 )
+                                bb.inflate( (u(34.0) - bb.getWidth()) // 2, 0 )
                         else:
                             #bb.inflate( 0, -u(0.6) )
                             if bb.getHeight() > u(35.0):
-                                bb.inflate( 0, (u(34.0) - bb.getHeight()) / 2 )
+                                bb.inflate( 0, (u(34.0) - bb.getHeight()) // 2 )
                 if bb.intersect(innerBb):
                     trace( 550, '\t| Accepted.\n' )
                     lg    = rg.getLayerGauge( component.getLayer() )
                     depth = lg.getDepth()
                     if depth > self.conf.topLayerDepth: continue
                     if lg.getDirection() == RoutingLayerGauge.Vertical:
-                        if not vsegments.has_key(depth): vsegments[ depth ] = []
+                        if not depth in vsegments: vsegments[ depth ] = []
                         vsegments[ depth ].append( (component,bb) )
                     else:
-                        if not hsegments.has_key(depth): hsegments[ depth ] = []
+                        if not depth in hsegments: hsegments[ depth ] = []
                         hsegments[ depth ].append( (component,bb) )
         gapWidth       = 0
         segments       = None
@@ -1152,10 +1151,10 @@ class Corona ( object ):
                                            .format(chipIntNet.getName()) )
         self.conf.setupCorona( self.westSide.gap, self.southSide.gap, self.eastSide.gap, self.northSide.gap )
         self.coreSymBb = self.conf.getInstanceAb( self.conf.icorona )
-        self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap /2, Superior )
-                              , self.conf.toSymbolic( self.southSide.gap/2, Superior )
-                              , self.conf.toSymbolic( self.eastSide.gap /2, Inferior )
-                              , self.conf.toSymbolic( self.northSide.gap/2, Inferior ) )
+        self.coreSymBb.inflate( self.conf.toSymbolic( self.westSide.gap //2, Superior )
+                              , self.conf.toSymbolic( self.southSide.gap//2, Superior )
+                              , self.conf.toSymbolic( self.eastSide.gap //2, Inferior )
+                              , self.conf.toSymbolic( self.northSide.gap//2, Inferior ) )
         self.southSide.drawCoreWires()
         self.northSide.drawCoreWires()
         self.eastSide .drawCoreWires()
@@ -1349,13 +1348,13 @@ class Corona ( object ):
             xcore = icore.getTransformation().getTx()
             stripeSpecs = []
             stripesNb = int( (coreAb.getWidth() - 8*capViaWidth + self.supplyRailWidth) \
-                                 / self.supplyRailPitch - 1 )
-            offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) / 2
-            stripeSpecs.append( [ xcore + capViaWidth/2 , capViaWidth ] )
-            stripeSpecs.append( [ xcore + 2*capViaWidth + capViaWidth/2 , capViaWidth ] )
+                                 // self.supplyRailPitch - 1 )
+            offset    = (coreAb.getWidth() - self.supplyRailPitch*(stripesNb-1)) // 2
+            stripeSpecs.append( [ xcore + capViaWidth//2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + 2*capViaWidth + capViaWidth//2 , capViaWidth ] )
             if self.chip.spares and len(self.chip.spares.rleafX) > 1:
                 rleafX     = self.chip.spares.rleafX
-                spacing    = (rleafX[1] - rleafX[0]) / 2
+                spacing    = (rleafX[1] - rleafX[0]) // 2
                 stepOffset = 0
                 step       = 1
                 trace( 550, '\trleafX\n' )
@@ -1364,7 +1363,7 @@ class Corona ( object ):
                 if spacing < self.supplyRailPitch:
                     stepOffset = 1
                     step       = 2
-                    spacing    = (rleafX[2] - rleafX[0]) / 2
+                    spacing    = (rleafX[2] - rleafX[0]) // 2
                 if step == 1:
                     stripeSpecs.append( [ rleafX[0] - spacing, self.supplyRailWidth ] )
                     trace( 550, '\tstripe[N/A] @{}\n'.format(DbU.getValueString(stripeSpecs[-1][0])))
@@ -1382,8 +1381,8 @@ class Corona ( object ):
                     stripeSpecs.append( [ xcore + offset + i*self.supplyRailPitch
                                         , self.supplyRailWidth
                                         ] )
-            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth - capViaWidth/2 , capViaWidth ] )
-            stripeSpecs.append( [ xcore + coreAb.getWidth() - capViaWidth/2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - 2*capViaWidth - capViaWidth//2 , capViaWidth ] )
+            stripeSpecs.append( [ xcore + coreAb.getWidth() - capViaWidth//2 , capViaWidth ] )
 
             trace( 550, '\ticoreAb={}\n'.format(icore.getAbutmentBox()) )
             trace( 550, '\tcapViaWidth={}\n'.format(DbU.getValueString(capViaWidth)))

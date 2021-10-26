@@ -62,12 +62,12 @@ extern "C" {
     DSlicingNode* node             = NULL;
 
     HTRY
-      if (not PyArg_ParseTuple( args,"SOO|O:DSlicingNode.create"
+      if (not PyArg_ParseTuple( args,"OOO|O:DSlicingNode.create"
                               , &pyInstance
                               , &pyCell
                               , &pyParameterRange
                               , &pyRoutingGauge ) ) {
-        PyErr_SetString ( ConstructorError, "DSlicingNode.create(): Invalid/bad number of parameters ." );
+        PyErr_SetString ( ConstructorError, "DSlicingNode.create(): Invalid/bad number of parameters." );
         return NULL;
       }
       if (not IsPyCell(pyCell)) {

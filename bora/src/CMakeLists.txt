@@ -9,7 +9,7 @@
                         ${Boost_INCLUDE_DIRS}
                         ${QWT_INCLUDE_DIR}
                         ${QtX_INCLUDE_DIR}
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
                    set( includes     bora/Constants.h
                                      bora/ParameterRange.h
@@ -101,7 +101,7 @@
                                      ${QWT_LIBRARY}
                                      ${QtX_LIBRARIES}
                                      ${Boost_LIBRARIES}
-                                     ${PYTHON_LIBRARIES} -lutil
+                                     ${Python_LIBRARIES} -lutil
                       )
 
            add_library( bora         ${cpps} ${mocCpps} ${pyCpps} )

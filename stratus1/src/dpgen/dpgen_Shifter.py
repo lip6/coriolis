@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -260,4 +259,4 @@ class DpgenShifter ( Model ) :
   ## VBE ##
   #########
   def Vbe ( self ) :
-    print "vbe of DpgenShifter not implemented"
+    print( "vbe of DpgenShifter not implemented" )

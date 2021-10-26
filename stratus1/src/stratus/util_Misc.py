@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -95,4 +94,4 @@ def log2 ( x ) :
   except OverflowError:
     # x is too large for direct float handling
     # with this method, no limit is known
-    return log2((x+0xffffffffL)/0x100000000L)+32
+    return log2((x+0xffffffff)//0x100000000)+32

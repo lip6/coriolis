@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -40,7 +39,6 @@ from   plugins.chip.configuration  import ChipConf
 
 def unicornHook ( **kw ):
     kw['beforeAction'] = 'placeAndRoute.placeChip'
-
     plugins.kwAddMenu    ( 'placeAndRoute', 'P&&R', **kw )
     plugins.kwUnicornHook( 'placeAndRoute.clockTree'
                          , 'Place Block && Clock Tree'
@@ -55,34 +53,27 @@ def scriptMain ( **kw ):
     try:
        #helpers.setTraceLevel( 550 )
         errorCode = 0
-      
-        print '  o  Cleaning up any previous run.'
+        print( '  o  Cleaning up any previous run.' )
         for fileName in os.listdir('.'):
             if fileName.endswith('.ap'):
-                print '      - <%s>' % fileName
+                print( '      - "{}"'.format(fileName) )
                 os.unlink(fileName)
-      
         cell = None
-        if kw.has_key('cell') and kw['cell']:
+        if ('cell' in kw) and kw['cell']:
             cell = kw['cell']
-      
         editor = None
-        if kw.has_key('editor') and kw['editor']:
+        if ('editor' in kw) and kw['editor']:
             editor = kw['editor']
-            print '  o  Editor detected, running in graphic mode.'
+            print( '  o  Editor detected, running in graphic mode.' )
             if cell == None: cell = editor.getCell()
-      
         if cell == None:
             raise ErrorMessage( 3, 'ClockTree: No cell loaded yet.' )
-      
         conf = ChipConf( {}, cell, editor )
-      
         if cell.getAbutmentBox().isEmpty():
             spaceMargin = Cfg.getParamPercentage('etesian.spaceMargin').asPercentage() / 100.0 + 0.01
             aspectRatio = Cfg.getParamPercentage('etesian.aspectRatio').asPercentage() / 100.0
             computeAbutmentBox( cell, spaceMargin, aspectRatio, conf.cellGauge )
             if editor: editor.fit()
-      
         ht = HTree.create( conf, cell, None, cell.getAbutmentBox() )
         if editor: editor.refresh()
         etesian = Etesian.EtesianEngine.create( cell )
@@ -91,9 +82,9 @@ def scriptMain ( **kw ):
        #ht.prune()
         ht.route()
         etesian.toHurricane()
+        etesian.flattenPower()
         etesian.destroy()
         ht.save( cell )
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
-      
     return 0

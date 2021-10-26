@@ -19,7 +19,7 @@
 #include <fstream>
 #include <iomanip>
 #include "flute.h"
-#include "vlsisapd/utilities/Path.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/UpdateSession.h"
 #include "hurricane/Bug.h"
@@ -583,12 +583,12 @@ namespace Katana {
 
         for ( Edge* edge : gcell->getEdges( Flags::NorthSide) ) {
           if (edge->getReservedCapacity() < vReservedMin) {
-            edge->reserveCapacity( vReservedMin );
+            edge->reserveCapacity( vReservedMin - edge->getReservedCapacity() );
           }
         }
         for ( Edge* edge : gcell->getEdges( Flags::EastSide) ) {
           if (edge->getReservedCapacity() < hReservedMin)
-            edge->reserveCapacity( hReservedMin );
+            edge->reserveCapacity( hReservedMin - edge->getReservedCapacity()  );
         }
       }
     }

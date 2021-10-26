@@ -1,2 +1,2 @@
 
- install ( FILES  kiteInit.py  DESTINATION ${PYTHON_SITE_PACKAGES}/kite )
+ install ( FILES  kiteInit.py  DESTINATION ${Python_CORIOLISLIB}/kite )

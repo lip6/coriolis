@@ -69,12 +69,12 @@ extern "C" {
 
   extern void  PyKatanaFlags_LinkPyType() {
     cdebug_log(20,0) << "PyKatanaFlags_LinkType()" << endl;
-    PyTypeKatanaFlags.tp_dealloc = (destructor) PyKatanaFlags_DeAlloc;
-    PyTypeKatanaFlags.tp_compare = (cmpfunc)    PyKatanaFlags_Cmp;
-    PyTypeKatanaFlags.tp_repr    = (reprfunc)   PyKatanaFlags_Repr;
-    PyTypeKatanaFlags.tp_str     = (reprfunc)   PyKatanaFlags_Str;
-    PyTypeKatanaFlags.tp_hash    = (hashfunc)   PyKatanaFlags_Hash;
-    PyTypeKatanaFlags.tp_methods = PyKatanaFlags_Methods;
+    PyTypeKatanaFlags.tp_dealloc     = (destructor) PyKatanaFlags_DeAlloc;
+    PyTypeKatanaFlags.tp_richcompare = (richcmpfunc)PyKatanaFlags_Cmp;
+    PyTypeKatanaFlags.tp_repr        = (reprfunc)   PyKatanaFlags_Repr;
+    PyTypeKatanaFlags.tp_str         = (reprfunc)   PyKatanaFlags_Str;
+    PyTypeKatanaFlags.tp_hash        = (hashfunc)   PyKatanaFlags_Hash;
+    PyTypeKatanaFlags.tp_methods     = PyKatanaFlags_Methods;
   }
 
 

@@ -1,7 +1,8 @@
+
 # -*- coding: utf-8 -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -43,8 +44,7 @@ The double level chip+corona serves two purpose:
    small dogleg instead of a straight wire. 
 """
 
-from   __future__      import print_function
-from   exceptions      import NotImplementedError
+#from   exceptions      import NotImplementedError
 import re
 from   Hurricane       import UpdateSession, Net, Instance
 from   CRL             import Catalog, AllianceFramework, Spice
@@ -523,7 +523,7 @@ class CoreToChip ( object ):
         """
         Look for an IoNet associated to *core* net ``netName``.
         """
-        if self._ioNets.has_key(netName): return True
+        if netName in self._ioNets: return True
         return False
 
     def newDummyNet ( self ):
@@ -560,9 +560,9 @@ class CoreToChip ( object ):
                         or the net object itself.
         """
         if isinstance(coreNet,str):
-            if self._ioNets.has_key(coreNet): return self._ioNet[ coreNet ]
+            if coreNet in self._ioNets: return self._ioNet[ coreNet ]
             raise ErrorMessage( 1, 'CoreToChip.getIoNet(): Cannot lookup net "%s" by name.' % coreNet )
-        if not self._ioNets.has_key(coreNet.getName()):
+        if not coreNet.getName() in self._ioNets:
             self._ioNets[ coreNet.getName() ] = IoNet( self, coreNet )
         return self._ioNets[ coreNet.getName() ]
 

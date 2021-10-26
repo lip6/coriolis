@@ -74,20 +74,36 @@ extern "C" {
     };
 
 
-  DL_EXPORT(void) initConstant () {
-    cdebug_log(30,0) << "initConstant()" << endl;
+  static PyModuleDef  PyConstant_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Constant"          /* m_name     */
+    , "Constants values used througout Coriolis."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyConstant_Methods  /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
 
-    PyObject* module = Py_InitModule( "Constant", PyConstant_Methods );
+
+  PyMODINIT_FUNC PyInit_Constant ( void )
+  {
+    cdebug_log(30,0) << "PyInit_Constant()" << endl;
+
+    PyObject* module = PyModule_Create( &PyConstant_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Constant module." << endl;
-      return;
+      return NULL;
     }
 
     PyObject* dictionnary = PyModule_GetDict( module );
     LoadConstants( dictionnary );
 
     cdebug_log(30,0) << "Constant.so loaded " << (void*)&typeid(string) << endl;
+    return module;
   }
 
   

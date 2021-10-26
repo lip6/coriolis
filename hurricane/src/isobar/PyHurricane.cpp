@@ -258,10 +258,7 @@ using namespace Hurricane;
         return _types[i]->_id;
         
       if (object->ob_type == _types[i]->_pyType) return _types[i]->_id;
-      if (&PyLong_Type    == _types[i]->_pyType) {
-        cerr << "PyLong_Type, now check for PyInt_Type" << endl;
-        if (object->ob_type == &PyInt_Type) return _types[i]->_id;
-      }
+      if (&PyLong_Type    == _types[i]->_pyType) return _types[i]->_id;
     }
 
     return ( "unknown" ); // return 'X'
@@ -311,9 +308,7 @@ using namespace Hurricane;
     ConverterState::ObjectType* baseType;
 
     for ( unsigned i=0 ; i < __cs.getTypes().size() ; i++ ) {
-      PyTypeObject* obType = object->ob_type;
-      if (obType == &PyInt_Type) obType = &PyLong_Type;
-
+      PyTypeObject* obType = Py_TYPE( object );
       baseType = __cs.getTypes()[i]->PyBase( obType );
       if (PyCallable_Check(object) or baseType) {
         *pArg = object;
@@ -511,10 +506,25 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyHurricane_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "Hurricane"         /* m_name     */
+    , "Hurricane Database."
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyHurricane_Methods /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
   // ---------------------------------------------------------------
   // Module Initialization  :  "initHurricane ()"
 
-  DL_EXPORT(void) initHurricane () {
+  PyMODINIT_FUNC PyInit_Hurricane ( void )
+  {
   //trace_on();
     cdebug_log(20,0) << "initHurricane()" << endl;
 
@@ -699,7 +709,7 @@ extern "C" {
     __cs.addType( "float"      , &PyFloat_Type                , "<Float>"                 , true  );
     __cs.addType( "int"        , &PyLong_Type                 , "<Int>"                   , true  );
     __cs.addType( "bool"       , &PyBool_Type                 , "<Bool>"                  , true  );
-    __cs.addType( "string"     , &PyString_Type               , "<String>"                , true  );
+    __cs.addType( "string"     , &PyUnicode_Type              , "<String>"                , true  );
     __cs.addType( "list"       , &PyList_Type                 , "<List>"                  , true  );
     // Do not change the "function" string. It's hardwired to callable (function) objects.
     __cs.addType( "function"   , NULL                         , "<Function>"              , true  );
@@ -756,11 +766,11 @@ extern "C" {
     __cs.addType( "2prule"     , &PyTypeTwoLayersPhysicalRule , "<TwoLayersPhysicalRule>" , false, "prule" );
 
 
-    PyObject* module = Py_InitModule ( "Hurricane", PyHurricane_Methods );
+    PyObject* module = PyModule_Create( &PyHurricane_ModuleDef );
     if ( module == NULL ) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Hurricane module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF ( &PyTypeDbU );
@@ -877,6 +887,8 @@ extern "C" {
     PyQuery_postModuleInit();
 
     cdebug_log(20,0) << "Hurricane.so loaded " << (void*)&typeid(string) << endl;
+
+    return module;
   }
 
   

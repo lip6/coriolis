@@ -368,10 +368,13 @@ namespace Anabatic {
           
           if (not finished) {
             optimized = gcell->stepNetDesaturate( depth, globalNets, invalidateds );
+            gcell->setSatProcessed( depth );
             if (optimized) {
               for ( GCell* gcell : invalidateds ) {
-                queue.push( gcell->cloneKey(depth) );
+                if (not gcell->isSatProcessed(depth))
+                  queue.push( gcell->cloneKey(depth) );
               }
+              invalidateds.clear();
             }
           }
         }
@@ -830,7 +833,7 @@ namespace Anabatic {
     cmess1 << "  o  Balance Global Density "
            << Session::getRoutingGauge()->getRoutingLayer(depth)->getName() << endl;
 
-    GCellDensitySet queue ( depth, getGCells()) );
+    GCellDensitySet queue ( depth, getGCells() );
     GCell::Set      invalidateds;
 
     bool optimized = true;

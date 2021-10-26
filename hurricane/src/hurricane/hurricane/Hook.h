@@ -17,9 +17,7 @@
 // not, see <http://www.gnu.org/licenses/>.
 // ****************************************************************************************************
 
-#ifndef HURRICANE_HOOK
-#define HURRICANE_HOOK
-
+#pragma  once
 #include "hurricane/Error.h"
 #include "hurricane/Hooks.h"
 
@@ -54,7 +52,7 @@ class Hook {
 // Destructor
 // **********
 
-  protected: virtual ~Hook() throw(Error);
+  protected: virtual ~Hook() noexcept(false);
 
 // Operators
 // *********
@@ -113,9 +111,6 @@ class Hook {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Hook);
-
-
-#endif // HURRICANE_HOOK
 
 
 // ****************************************************************************************************

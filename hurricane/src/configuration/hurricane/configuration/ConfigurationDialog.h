@@ -20,7 +20,7 @@
 class QPushButton;
 
 
-namespace Cfg2 {
+namespace Cfg {
 
 
   class ConfigurationDialog : public QDialog {

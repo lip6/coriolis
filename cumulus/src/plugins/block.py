@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,7 +16,6 @@
 This script hook the Block plugin inside GCT/Unicorn.
 """
 
-from   __future__ import print_function
 import sys
 import traceback
 import helpers
@@ -40,7 +39,6 @@ from   plugins.alpha.block.block import Block
 
 def unicornHook ( **kw ):
     kw['beforeAction'] = 'misc.alpha'
-
     plugins.kwUnicornHook( 'misc.alpha.block'
                          , 'Block P&&R'
                          , 'Perform block-level placement'
@@ -56,15 +54,12 @@ def scriptMain ( **kw ):
     try:
         helpers.setTraceLevel( 550 )
         cell, editor = plugins.kwParseMain( **kw )
-
         block = Block.create( cell )
         if editor: block.setEditor( editor )
         rvalue = block.build()
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
         rvalue = False
-
     sys.stdout.flush()
     sys.stderr.flush()
-        
     return rvalue

@@ -1,7 +1,8 @@
+
 # -*- Mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2015-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -14,7 +15,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import os
 import os.path
 import sys
@@ -126,7 +126,7 @@ def _loadAnalogTechno ( techno, ruleTable ):
                                  , 0 )
                 else:
                     rule.addValue( valueToDbU(entry[3], unit, entry[4]), 0 )
-        except Exception, e:
+        except Exception as e:
             e = ErrorMessage( 1, e )
             e.addMessage( 'In {}:<analogTechnologyTable> at index {}.'.format(technoFile,entryNo) )
             print( str(e) )

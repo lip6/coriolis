@@ -2,14 +2,14 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC/LIP6 2012-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |          T o o l c h a i n   B u i l d e r                      |
 # |                                                                 |
 # |  Author      :                    Jean-Paul Chaput              |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :   "./builder/Project.py"                         |
 # +-----------------------------------------------------------------+

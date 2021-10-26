@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -121,11 +120,11 @@ class Bool ( Model ) :
       elif self.m in A :
         # sxlib fulladder:
         import types
-        if type ( self.dictInOut['a'] ) == types.ListType :
+        if isinstance( self.dictInOut['a'], list ):
           for realpin in self.dictInOut['a'] : boolMap[realpin] = self._a[i]
         else :
           boolMap[self.dictInOut['a']]    = self._a[i]
-        if type ( self.dictInOut['b'] ) == types.ListType :
+        if isinstance( self.dictInOut['b'], list ):
           for realpin in self.dictInOut['b'] : boolMap[realpin] = self._b[i]
         else :
           boolMap[self.dictInOut['b']]    = self._b[i]
@@ -136,7 +135,7 @@ class Bool ( Model ) :
         boolMap[self.dictInOut['i3']]   = self._i3[i]
 
       if self.m in CIN :
-        if type ( self.dictInOut['cin'] ) == types.ListType :
+        if isinstance( self.dictInOut['cin'], list ):
           for realpin in self.dictInOut['cin'] : boolMap[realpin] = self._cin[i]
         else :
           boolMap[self.dictInOut['cin']]    = self._cin[i]

@@ -1,5 +1,4 @@
-#!/usr/bin/python
-#
+
 # This file is part of the Coriolis Software.
 # Copyright (c) UPMC/LIP6 2008-2012, All Rights Reserved
 #
@@ -52,7 +51,7 @@ class Model() :
     global FRAMEWORK, CELLS
 
     # Look up the editor
-    if globals().has_key ( "__editor" ) : setEditor ( __editor )
+    if '__editor' in globals(): setEditor ( __editor )
 
     self._name         = nom
     self._param        = param
@@ -125,16 +124,16 @@ class Model() :
       from st_net import VssInFromHur
       
       try:
-        netVdd = iter(hurCell.getPowerNets()).next()
+        netVdd = iter(hurCell.getPowerNets()).__next__()
         self._st_vdds.append ( VddInFromHur ( netVdd ) )
       except StopIteration:
-        print "[Stratus Warning] : Cell", self._name, "does not have a vdd port."
+        print( "[Stratus Warning] : Cell", self._name, "does not have a vdd port." )
         pass
       try:
-        netVss = iter(hurCell.getGroundNets()).next()
+        netVss = iter(hurCell.getGroundNets()).__next__()
         self._st_vsss.append ( VssInFromHur ( netVss ) )
       except StopIteration:
-        print "[Stratus Warning] : Cell", self._name, "does not have a vss port."
+        print( "[Stratus Warning] : Cell", self._name, "does not have a vss port." )
         pass
 
     self._st_cks = []
@@ -336,17 +335,17 @@ class Model() :
   ##### Print of the cell #####
   #############################
   def Print ( self ) :
-    print "################## The Cell ##################"
+    print( "################## The Cell ##################" )
     for inst in self._st_insts :
-      print " * inst name :", inst._name
-      print "    inst model :", inst._model
+      print( " * inst name :", inst._name )
+      print( "    inst model :", inst._model )
       for pin in inst._map :
         if pin != 'vdd' and pin != 'vss' :
           net = inst._map[pin]
-          print "     pin :", pin, "net :", net._name, "with arity :", net._arity
+          print( "     pin :", pin, "net :", net._name, "with arity :", net._arity )
           if net._to_merge :
             net = inst._map[pin]._to_merge[0][0]
-            print "       net merged with :", net._name, "with arity :", net._arity
+            print( "       net merged with :", net._name, "with arity :", net._arity )
 
   #############################
   ##### Find An Instance  #####
@@ -367,29 +366,29 @@ class Model() :
         err = "\n[Stratus ERROR] PrintGraph : The graph does not exist. Use initGraph before.\n"
         raise Exception ( err )
       
-    print "################## Cell's Graph features ##################"
+    print( "################## Cell's Graph features ##################" )
     for inst in self._st_insts :
-      print " => inst name :", inst._name, "( model :", inst._model, ")"
-      print "    inst st_nets_in :"
-      for net in inst._st_nets_in : print "        ", net._name
-      print "    inst st_nets_out :"
-      for net in inst._st_nets_out : print "        ", net._name
+      print( " => inst name :", inst._name, "( model :", inst._model, ")" )
+      print( "    inst st_nets_in :" )
+      for net in inst._st_nets_in : print( "        ", net._name )
+      print( "    inst st_nets_out :" )
+      for net in inst._st_nets_out : print( "        ", net._name )
     for port in self._st_ports :
-      print " => port name :", port._name
-      if port._st_inst_in : print "    port _st_inst_in :", port._st_inst_in._name
-      print "    port _st_insts_out :"
-      for p in port._st_insts_out : print "        ", p._name
+      print( " => port name :", port._name )
+      if port._st_inst_in : print( "    port _st_inst_in :", port._st_inst_in._name )
+      print( "    port _st_insts_out :" )
+      for p in port._st_insts_out : print( "        ", p._name )
     for sig in self._st_sigs :
-      print " => sig name :", sig._name
-      if sig._st_inst_in : print "    sig _st_inst_in :", sig._st_inst_in._name
-      print "    sig _st_insts_out :"
-      for s in sig._st_insts_out : print "        ", s._name
+      print( " => sig name :", sig._name )
+      if sig._st_inst_in : print( "    sig _st_inst_in :", sig._st_inst_in._name )
+      print( "    sig _st_insts_out :" )
+      for s in sig._st_insts_out : print( "        ", s._name )
     for psig in self._st_partsigs :
-      print " => part sig name :", psig._name
-      if '_st_inst_in' in psig.__dict__ and psig._st_inst_in: print "   part sig _st_inst_in :", psig._st_inst_in._name
+      print( " => part sig name :", psig._name )
+      if '_st_inst_in' in psig.__dict__ and psig._st_inst_in: print( "   part sig _st_inst_in :", psig._st_inst_in._name )
       if '_st_insts_out' in psig.__dict__ :
-        print "   part sig _st_insts_out :"
-        for s in psig._st_insts_out : print "        ", s._name
+        print( "   part sig _st_insts_out :" )
+        for s in psig._st_insts_out : print( "        ", s._name )
 
   #####################
   ##### overloard #####
@@ -407,16 +406,16 @@ class Model() :
   ########################
   ##### Interface #####
   def Interface ( self ) :
-    print "[Stratus Warning] : Execution of empty Interface method for", self._name, "."
+    print( "[Stratus Warning] : Execution of empty Interface method for", self._name, "." )
                            
   ##### Netlist #####
   def Netlist ( self ) :
-    print "[Stratus Warning] : Execution of empty Netlist method for", self._name, "."
+    print( "[Stratus Warning] : Execution of empty Netlist method for", self._name, "." )
     pass
                               
   ##### Layout #####
   def Layout ( self ) :
-    print "[Stratus Warning] : Execution of empty Layout method for", self._name, "."
+    print( "[Stratus Warning] : Execution of empty Layout method for", self._name, "." )
     pass
                         
   ##### Vbe #####
@@ -587,7 +586,7 @@ class Model() :
     
     file = open ( fileName, "w+" )
     
-    file.write ( "#!/usr/bin/python\n\n" )
+    file.write ( "#!/usr/bin/env python3\n\n" )
     file.write ( "from stratus import *\n\n" )
 
     file.write ( "class %s ( Model ) :\n\n" % nom )
@@ -708,10 +707,10 @@ class Model() :
           tata = True
           nom = catName ( netInMap, netInMap._to_cat )
             
-        if toto and tata : print "Attention est ce un cas bien gere ???"
+        if toto and tata : print( "Attention est ce un cas bien gere ???" )
 
-        if pin == inst._map.keys()[0] : file.write ( "\"%s\" : %s\n" % ( pin, nom ) )
-        else                          : file.write ( "                                  , \"%s\" : %s\n" % ( pin, nom ) )
+        if pin == list(inst._map.keys()[0]) : file.write ( "\"%s\" : %s\n" % ( pin, nom ) )
+        else                                : file.write ( "                                  , \"%s\" : %s\n" % ( pin, nom ) )
 
       file.write ( "                                  }\n" )
       file.write ( "                          )\n\n" )
@@ -779,8 +778,8 @@ class Model() :
       #classe = str(cell.__class__)
       #nom    = cell._name
       #param  = cell._param
-      #print "nom " + nom
-      #print "classe " + classe
+      #print( "nom " + nom )
+      #print( "classe " + classe )
     
       ## Gestion of libraries with specific treatment
       #chaine = re.search ( "(.*)\.([^\.]*)", classe )
@@ -893,11 +892,11 @@ class Model() :
           tata = True
           nom = catName ( netInMap, netInMap._to_cat )
             
-        if toto and tata : print "Attention est ce un cas bien gere ???"
+        if toto and tata : print( "Attention est ce un cas bien gere ???" )
 
         if netInMap not in self._st_vdds + self._st_vsss :
-          if pin == inst._map.keys()[0] : strMap += "      %s => %s,\n" % ( pin, nom )
-          else                          : strMap += "      %s => %s,\n" % ( pin, nom )
+          if pin == list(inst._map.keys())[0] : strMap += "      %s => %s,\n" % ( pin, nom )
+          else                                : strMap += "      %s => %s,\n" % ( pin, nom )
 
       file.write(strMap[:-2] + '\n')
       file.write ( "    );\n\n" )
@@ -951,7 +950,7 @@ class Model() :
   #############################
   ##### Creation of model #####
   #############################
-  def ModelCreation ( self, modele, modele2, dict, hierarchy, realModele = None, inOut = None ) :
+  def ModelCreation ( self, modele, modele2, args, hierarchy, realModele = None, inOut = None ) :
     global CELLS
 
     from st_parser     import BVg
@@ -984,20 +983,20 @@ class Model() :
 
     from util_Gen      import F_MSB_FIRST
     
-    if type ( dict ) != types.DictType :
+    if not isinstance(args,dict):
       err = "\n[Stratus ERROR] Inst : instanciation of a user's defined generator. The methods' arguments must be dictionnaries.\n"
       raise Exception ( err )
       
     ##### Creation of the instance #####
-#   dict['flags'] = F_MSB_FIRST # When vst driver permits to do F_LSB_FIRST or F_LSB_FIRST TODO
-#   dict['flags'] = 0
+#   args['flags'] = F_MSB_FIRST # When vst driver permits to do F_LSB_FIRST or F_LSB_FIRST TODO
+#   args['flags'] = 0
     
     ## Virtual library ## 
     if modele in BVg :
-      dict['model']     = modele.lower()
-      dict['realModel'] = realModele
+      args['model']     = modele.lower()
+      args['realModel'] = realModele
   
-      instCell = Bool ( modele2, dict, inOut )
+      instCell = Bool ( modele2, args, inOut )
       
     ## Generator ##
     elif re.search ( "\.", modele ) :
@@ -1017,10 +1016,10 @@ class Model() :
       #   modeleClass =   getattr  ( moduleClass, className )
       # fin Roselyne
       
-      instCell = modeleClass ( modele2, dict )
+      instCell = modeleClass ( modele2, args )
       
     else :
-      instCell = eval ( "%s ( \"%s\", %s )" % ( modele, modele2, str(dict) ) )
+      instCell = eval ( "%s ( \"%s\", %s )" % ( modele, modele2, str(args) ) )
   
     ## MAJ of the hierarchy ##
     instCell._hierarchy = hierarchy
@@ -1031,16 +1030,16 @@ class Model() :
     instCell.Interface()
     instCell.Netlist()
 
-    if ( 'clean' in dict ) and ( dict['clean'] != False  ) :
-      if 'interactive' not in dict : dict['interactive'] = False
-      instCell.Clean ( dict['interactive'], dict['clean'] )
+    if ( 'clean' in args ) and ( args['clean'] != False  ) :
+      if 'interactive' not in args : args['interactive'] = False
+      instCell.Clean ( args['interactive'], args['clean'] )
     
-    if ( 'behavioral' in dict ) and ( dict['behavioral'] == True  ) :
+    if ( 'behavioral' in args ) and ( args['behavioral'] == True  ) :
       instCell.Vbe()
     
     if instCell._hur_cell :
       v = 0
-      if ( 'physical' in dict ) and ( dict['physical'] == True ) :
+      if ( 'physical' in args ) and ( args['physical'] == True ) :
         instCell.Layout()
         v = CRL.Catalog.State.Physical
       instCell.Save( v|CRL.Catalog.State.Logical )
@@ -1059,7 +1058,7 @@ class Model() :
     global FRAMEWORK, CELLS
 
     if self._hur_cell :
-      print "[Stratus Warning] : The stratus cell already exists."
+      print( "[Stratus Warning] : The stratus cell already exists." )
       return
     
     self._hur_plug = True
@@ -1150,7 +1149,7 @@ class Model() :
         for net in net_sortie :
           if net_name == str ( net.getName() ) :
             file.insert ( 0, net )
-            if interactive : print "Output Net", net, "has to be erased, it is put in the fifo."
+            if interactive : print( "Output Net", net, "has to be erased, it is put in the fifo." )
 
     ## Internal nets ##
     # Number of plugs of each net :
@@ -1160,15 +1159,15 @@ class Model() :
       nb_plugs = self.count_plugs ( net )
     
       if nb_plugs == 0 :
-        if interactive : print "* One net suppressed (a) :", net
+        if interactive : print( "* One net suppressed (a) :", net )
         TAB_NETS.append ( net.getName () )
         cpt_net_del += 1
         
         net.Delete()
         
       elif nb_plugs == 1 :
-        if net.getPlugs().next().getMasterNet().getDirection() == DirectionOUT: # output of an instance
-          if interactive : print "* One net put in the fifo :", net
+        if net.getPlugs().__next__().getMasterNet().getDirection() == DirectionOUT: # output of an instance
+          if interactive : print( "* One net put in the fifo :", net )
           file.insert ( 0, net )
     
     ## Ouput nets ##
@@ -1177,7 +1176,7 @@ class Model() :
     for net in net_sortie + net_entree :
       cpt_plugs_sor = self.count_plugs ( net )    
       if cpt_plugs_sor == 0 :
-        print "[Stratus Warning] Clean : Interface of", self._name, "changed, net :", net, "is suppressed"
+        print( "[Stratus Warning] Clean : Interface of", self._name, "changed, net :", net, "is suppressed")
         TAB_NETS.append ( net.getName() )
         cpt_net_del += 1
         
@@ -1186,7 +1185,7 @@ class Model() :
     ##### Algorithm #####
     while len ( file ) > 0 :
       net_file = file.pop()
-      plug     = net_file.getPlugs().next()
+      plug     = net_file.getPlugs().__next__()
       inst     = plug.getInstance()
     
       # input nets of the instance
@@ -1210,13 +1209,13 @@ class Model() :
       ### Deletion of te instance ###
       # If the instance has only one output
       if cpt_sortie == 1 :
-        if interactive : print "* One net suppressed (b) :", net_file
+        if interactive : print( "* One net suppressed (b) :", net_file )
         TAB_NETS.append ( net_file.getName() )
         cpt_net_del += 1
         
         net_file.Delete()
         
-        if interactive : print "* One instance suppressed (a) :", inst, inst
+        if interactive : print( "* One instance suppressed (a) :", inst, inst )
         TAB_INSTS.append(inst.getName())
         cpt_inst_del += 1
         
@@ -1228,14 +1227,14 @@ class Model() :
           cpt_plugs_in = self.count_plugs ( net_ent )   
           if cpt_plugs_in == 0 : 
             if net_ent in net_entree :
-              print "[Stratus Warning] Clean : Interface of", self._name, "changed, net :", net_ent, "is suppressed"
+              print( "[Stratus Warning] Clean : Interface of", self._name, "changed, net :", net_ent, "is suppressed" )
               
               TAB_NETS.append ( net_ent.getName() )
               cpt_net_del += 1
               
               net_ent.Delete()
             else :
-              if interactive : print "* One net suppressed (c) : ", net_ent
+              if interactive : print( "* One net suppressed (c) : ", net_ent )
               
               TAB_NETS.append ( net_ent.getName() )
               cpt_net_del += 1
@@ -1243,8 +1242,8 @@ class Model() :
               net_ent.Delete()
               
           elif cpt_plugs_in == 1 :
-            if net_ent.getPlugs().next().getMasterNet().getDirection() ==  DirectionOUT : # is an output net of another instance
-              if interactive : print "* One net put in the fifo :", net_ent
+            if net_ent.getPlugs().__next__().getMasterNet().getDirection() ==  DirectionOUT : # is an output net of another instance
+              if interactive : print( "* One net put in the fifo :", net_ent )
               file.insert ( 0, net_ent )
     
       # If the instance has more than one output
@@ -1261,7 +1260,7 @@ class Model() :
               break
               
         if not ( connect ) :
-          if interactive : print "* One net suppressed (d) :", net_file
+          if interactive : print( "* One net suppressed (d) :", net_file )
 
           TAB_NETS.append ( net_file.getName() )
           cpt_net_del += 1
@@ -1271,13 +1270,13 @@ class Model() :
           for net_sor in net_sortie_inst :
             if net_sor in file : file.remove ( net_sor )
     
-            if interactive : print "* One net suppressed (e) :", net_sor
+            if interactive : print( "* One net suppressed (e) :", net_sor )
             TAB_NETS.append ( net_sor.getName() )
             cpt_net_del += 1
             
             net_sor.Delete()
           
-          if interactive : print "* One instance suppressed (b) :", inst
+          if interactive : print( "* One instance suppressed (b) :", inst )
           TAB_INSTS.append ( inst.getName() )
           cpt_inst_del += 1
           
@@ -1290,7 +1289,7 @@ class Model() :
     
             if cpt_plugs_in == 0 :
               if net_ent in net_entree :
-                print "[Stratus Warning] Clean : Interface of", self._name, "changed, net :", net_ent, "is suppressed"
+                print( "[Stratus Warning] Clean : Interface of", self._name, "changed, net :", net_ent, "is suppressed" )
                 
                 TAB_NETS.append ( net_ent.getName() )
                 cpt_net_del += 1
@@ -1298,7 +1297,7 @@ class Model() :
                 net_ent.Delete()
                 
               else :
-                if interactive : print "* One net suppressed (f) :", net_ent
+                if interactive : print( "* One net suppressed (f) :", net_ent )
                 
                 TAB_NETS.append ( net_ent.getName() )
                 cpt_net_del += 1
@@ -1306,24 +1305,24 @@ class Model() :
                 net_ent.Delete()
 
             elif cpt_plugs_in == 1 :
-              if net_ent.getPlugs().next().getMasterNet().getDirection() == DirectionOUT: # in an output net of another instance
-                if interactive : print "* One net net put in the fifo :", net_ent
+              if net_ent.getPlugs().__next__().getMasterNet().getDirection() == DirectionOUT: # in an output net of another instance
+                if interactive : print( "* One net net put in the fifo :", net_ent )
                 file.insert ( 0, net_ent )
                     
         else :
-          if interactive : print "The net", net_file, "can not be delayed, it may be delayed later"
+          if interactive : print( "The net", net_file, "can not be delayed, it may be delayed later" )
     
       else :
-        print "[Warning] Pb in Clean."
+        print( "[Warning] Pb in Clean." )
    
     if interactive : 
-      print ""
-      print "* Number of net suppressed :",       cpt_net_del
-      print "* List of these nets :",             TAB_NETS
-      print ""
-      print "* Number of instances suppressed :", cpt_inst_del     
-      print "* List of these instance :",         TAB_INSTS
-      print ""
+      print( "" )
+      print( "* Number of net suppressed :",       cpt_net_del )
+      print( "* List of these nets :",             TAB_NETS )
+      print( "" )
+      print( "* Number of instances suppressed :", cpt_inst_del )
+      print( "* List of these instance :",         TAB_INSTS )
+      print( "" )
 
   ###############################
   def count_plugs ( self, net ) :

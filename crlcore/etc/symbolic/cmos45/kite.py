@@ -45,7 +45,7 @@ p = Cfg.getParamInt( "kite.globalRipupLimit"     ); p.setInt( 5       ); p.setMi
 p = Cfg.getParamInt( "kite.longGlobalRipupLimit" ); p.setInt( 5       ); p.setMin( 1 )
 
 # Anabatic & Katana parameters are temporarily hosted here.
-p = Cfg.getParamString    ( 'anabatic.routingGauge'          ); p.setString    ( 'msxlib' )
+p = Cfg.getParamString    ( 'anabatic.routingGauge'          ); p.setString    ( 'msxlib_uniform' )
 p = Cfg.getParamInt       ( "anabatic.globalLengthThreshold" ); p.setInt       ( 1450     )
 p = Cfg.getParamPercentage( "anabatic.saturateRatio"         ); p.setPercentage( 80       )
 p = Cfg.getParamInt       ( "anabatic.saturateRp"            ); p.setInt       ( 8        )
@@ -150,7 +150,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL5')       # meta
 
 rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL6')       # metal.
                                           , RoutingLayerGauge.Horizontal  # preferred routing direction.
-                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , RoutingLayerGauge.PowerSupply # layer usage.
                                           , 5                             # depth.
                                           , 0.0                           # density (deprecated).
                                           , l(0)                          # track offset from AB.
@@ -231,7 +231,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL5')       # meta
 
 rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL6')       # metal.
                                           , RoutingLayerGauge.Horizontal  # preferred routing direction.
-                                          , RoutingLayerGauge.Default     # layer usage.
+                                          , RoutingLayerGauge.PowerSupply # layer usage.
                                           , 5                             # depth.
                                           , 0.0                           # density (deprecated).
                                           , l(0)                          # track offset from AB.
@@ -330,7 +330,7 @@ rg.addLayerGauge( RoutingLayerGauge.create( tech.getLayer('METAL2')       # meta
 
 af.addRoutingGauge( rg )
 
-af.setRoutingGauge( 'msxlib' )
+af.setRoutingGauge( 'msxlib_uniform' )
 
 # Gauge for standard cells.
 cg = CellGauge.create( 'msxlib_uniform'

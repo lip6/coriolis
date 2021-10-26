@@ -22,7 +22,7 @@ class QPushButton;
 class QTabWidget;
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   class Configuration;
   class Parameter;

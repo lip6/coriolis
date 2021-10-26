@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2014-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -13,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function, absolute_import
 import sys
 import traceback
 import os.path
@@ -103,8 +102,8 @@ class Chip ( Block ):
                                           , DbU.getValueString(coronaAb.getHeight()) ) )
         with UpdateSession():
             self.conf.core.setAbutmentBox( self.conf.coreAb )
-            x = (coronaAb.getWidth () - self.conf.coreAb.getWidth ()) / 2
-            y = (coronaAb.getHeight() - self.conf.coreAb.getHeight()) / 2
+            x = (coronaAb.getWidth () - self.conf.coreAb.getWidth ()) // 2
+            y = (coronaAb.getHeight() - self.conf.coreAb.getHeight()) // 2
             trace( 550, '\tCore X, {} '.format(DbU.getValueString(x)) )
             x = x - (x % self.conf.sliceHeight)
             trace( 550, ' adjusted on {}, {}\n'.format( DbU.getValueString(self.conf.sliceHeight)

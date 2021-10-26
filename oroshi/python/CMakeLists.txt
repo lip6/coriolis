@@ -18,7 +18,7 @@
                   resistor.py
                 )
 
- install( FILES ${pythonFiles}    DESTINATION ${PYTHON_SITE_PACKAGES}/oroshi ) 
+ install( FILES ${pythonFiles}    DESTINATION ${Python_CORIOLISLIB}/oroshi ) 
 
 
 #if(BUILD_DOC)

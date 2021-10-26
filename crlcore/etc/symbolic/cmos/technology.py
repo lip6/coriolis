@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,7 +16,7 @@
 from   helpers    import l, u, n
 from   helpers.io import WarningMessage
 import helpers.io
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
 
 from   Hurricane  import DbU
 from   Hurricane  import DataBase
@@ -25,9 +25,9 @@ from   Hurricane  import Technology
 
 tech = DataBase.getDB().getTechnology()
 if tech:
-  print WarningMessage( 'cmos.technology: Technology already exists, "%s"' % tech.getName() )
+    print( WarningMessage( 'cmos.technology: Technology already exists, "{}"'.format(tech.getName()) ))
 else:
-  tech = Technology.create( DataBase.getDB(), 'cmos' )
+    tech = Technology.create( DataBase.getDB(), 'cmos' )
 
 DbU.setPrecision           ( 2 )
 DbU.setPhysicalsPerGrid    ( 0.5, DbU.UnitPowerMicro )

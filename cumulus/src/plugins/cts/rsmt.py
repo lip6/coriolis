@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |

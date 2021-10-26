@@ -115,7 +115,7 @@ namespace Hurricane {
   inline bool    PhysicalRule::isDouble       () const { return _doubleValue != 0; }
   inline bool    PhysicalRule::isDbU          () const { return not _stepsValue.empty(); }
   inline bool    PhysicalRule::isSymmetric    () const { return _symmetric; }
-  inline bool    PhysicalRule::hasSteps       () const { return not _stepsValue.size() > 1; }
+  inline bool    PhysicalRule::hasSteps       () const { return not (_stepsValue.size() > 1); }
   inline double  PhysicalRule::getDoubleValue () const { return _doubleValue; }
   inline void    PhysicalRule::setSymmetric   ( bool state ) { _symmetric = state; }
   inline void    PhysicalRule::addValue       ( double value ) { _doubleValue = value; }

@@ -5,6 +5,7 @@
 
  option(BUILD_DOC      "Build the documentation (doxygen)" OFF)
  option(CHECK_DATABASE "Run database in full check mode (very slow)" OFF)
+ option(USE_LIBBFD     "Link with BFD libraries to print stack traces" OFF)
  
  cmake_minimum_required(VERSION 2.8.9)
 
@@ -15,14 +16,13 @@
  setup_project_paths(CORIOLIS)
  
  set_cmake_policies()
- setup_boost(program_options filesystem python regex)
+ setup_boost(program_options)
  setup_qt()
  
  find_package(LibXml2 REQUIRED)
- find_package(PythonLibs         2 REQUIRED)
+ find_package(Python 3           REQUIRED COMPONENTS Interpreter Development)
  find_package(PythonSitePackages REQUIRED)
  find_package(FLUTE REQUIRED)
- find_package(VLSISAPD REQUIRED)
  find_package(LEFDEF REQUIRED)
  find_package(HURRICANE REQUIRED)
  find_package(CORIOLIS REQUIRED)

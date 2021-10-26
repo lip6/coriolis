@@ -23,7 +23,7 @@ from   CRL        import AllianceFramework
 
 
 allianceTop = None
-if os.environ.has_key('ALLIANCE_TOP'):
+if 'ALLIANCE_TOP' in os.environ:
   allianceTop = os.environ['ALLIANCE_TOP']
   if not os.path.isdir(allianceTop):
     allianceTop = None

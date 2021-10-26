@@ -20,7 +20,7 @@
 #include "hurricane/configuration/ConfigurationWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   using std::cerr;
   using std::endl;
@@ -47,7 +47,7 @@ namespace Cfg2 {
   }
 
 
-  WidgetDescription::Type  WidgetDescription::stringToType ( const string& s )
+  WidgetDescription::Type  WidgetDescription::stringToType ( string s )
   {
     if (s == "Title"    ) return Title;
     if (s == "Section"  ) return Section;
@@ -72,7 +72,7 @@ namespace Cfg2 {
   size_t  LayoutDescription::_timestamp = 0;
 
 
-  WidgetDescription* LayoutDescription::getWidget ( const string& id )
+  WidgetDescription* LayoutDescription::getWidget ( string id )
   {
     map<const string,WidgetDescription*>::iterator iwid = _widgets.find(id);
     if ( iwid != _widgets.end() ) return (*iwid).second;
@@ -87,7 +87,7 @@ namespace Cfg2 {
   }
 
 
-  TabDescription* LayoutDescription::getTab ( const string& tabName, const string& id )
+  TabDescription* LayoutDescription::getTab ( string tabName, string id )
   {
     for ( size_t itab=0 ; itab<_tabs.size() ; ++itab ) {
       if ( _tabs[itab]->getName() == tabName ) return _tabs[itab];
@@ -98,7 +98,7 @@ namespace Cfg2 {
   }
   
 
-  void  LayoutDescription::addRule ( const string& tabName )
+  void  LayoutDescription::addRule ( string tabName )
   {
     TabDescription* tab = getTab ( tabName );
     tab->addWidget ( WidgetDescription::rule() );
@@ -106,7 +106,7 @@ namespace Cfg2 {
   }
 
 
-  void  LayoutDescription::addTitle ( const string& tabName, const string& title )
+  void  LayoutDescription::addTitle ( string tabName, string title )
   {
     TabDescription* tab = getTab ( tabName );
     tab->addWidget ( WidgetDescription::title(title) );
@@ -114,7 +114,7 @@ namespace Cfg2 {
   }
 
 
-  void  LayoutDescription::addSection ( const string& tabName, const string& section, int column )
+  void  LayoutDescription::addSection ( string tabName, string section, int column )
   {
     TabDescription* tab = getTab ( tabName );
     tab->addWidget ( WidgetDescription::section(section,column) );
@@ -122,9 +122,9 @@ namespace Cfg2 {
   }
 
 
-  void  LayoutDescription::addParameter ( const string& tabName
-                                        , const string& id
-                                        , const string& label
+  void  LayoutDescription::addParameter ( string tabName
+                                        , string id
+                                        , string label
                                         , int           column
                                         , int           span
                                         , unsigned int  flags )
@@ -185,7 +185,7 @@ namespace Cfg2 {
   }
 
 
-  void  LayoutDescription::writeToStream ( ostream& out, const string& tabs ) const
+  void  LayoutDescription::writeToStream ( ostream& out, string tabs ) const
   {
   }
 

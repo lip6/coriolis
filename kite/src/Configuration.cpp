@@ -15,7 +15,7 @@
 
 
 #include <string>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
 #include "kite/Configuration.h"

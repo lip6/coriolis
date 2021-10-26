@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,7 +13,6 @@
 # +-----------------------------------------------------------------+
 
 
-from   __future__ import print_function
 import sys
 import traceback
 import helpers
@@ -162,8 +160,8 @@ class NetDatas ( object ):
                 tags[tag] = 1
         else:
             tags = self._dtags if direction & DIRECT else self._rtags
-            if tags.has_key(tag): tags[tag] += 1
-            else:                 tags[tag]  = 1
+            if tag in tags: tags[tag] += 1
+            else:           tags[tag]  = 1
             return
 
     def mergeTags ( self, tags, direction ):
@@ -277,8 +275,8 @@ class InstanceDatas ( object ):
                 tags[tag] = 1
         else:
             tags = self._dtags if direction & DIRECT else self._rtags
-            if tags.has_key(tag): tags[tag] += 1
-            else:                 tags[tag]  = 1
+            if tag in tags: tags[tag] += 1
+            else:           tags[tag]  = 1
             return
 
     def mergeTags ( self, tags, direction ):
@@ -321,8 +319,8 @@ class MatchSet ( object ):
         for instanceDatas in cellDag.directOrdereds:
             matched = True
             for tag in self.tags:
-                if     not instanceDatas.dtags.has_key(tag) \
-                   and not instanceDatas.rtags.has_key(tag):
+                if     not tag in instanceDatas.dtags \
+                   and not tag in instanceDatas.rtags:
                     matched = False
                     break
             if matched:
@@ -469,11 +467,11 @@ class CellDag ( object ):
 
     def lookup ( self, element ):
         if isinstance(element,Net):
-            if self.netsDatas.has_key(element.getId()):
+            if element.getId() in self.netsDatas:
                 return self.netsDatas[element.getId()]
             raise ErrorMessage( 1, 'CellDag.lookup(): Missing NetDatas for {}.'.format(element) )
         if isinstance(element,Instance):
-            if self.instancesDatas.has_key(element.getId()):
+            if element.getId() in self.instancesDatas:
                 return self.instancesDatas[element.getId()]
             raise ErrorMessage( 1, 'CellDag.lookup(): Missing InstanceDatas for {}.'.format(element) )
         raise ErrorMessage( 1, 'CellDag.lookup(): {} has not Datas support.'.format(element) )
@@ -644,7 +642,7 @@ class CellDag ( object ):
         histogram = {}
         for netDatas in self.netsDatas.values():
             print( 'netDatas:{}'.format(netDatas) )
-            if histogram.has_key(netDatas.plugCount):
+            if netDatas.plugCount in histogram:
                 histogram[netDatas.plugCount] += 1
             else:
                 histogram[netDatas.plugCount] = 1
@@ -1034,14 +1032,14 @@ class MatrixPlacer ( object ):
         self.finalizeBottom()
 
     def tagRow ( self, row, nets ):
-        if not self.tagRows.has_key(row):
+        if not row in self.tagRows:
             self.tagRows[row] = []
         self.tagRows[row] += nets
         for net in nets:
             self.dag.addNetTag( net, 'h{}'.format(row) )
 
     def tagColumn ( self, column, nets ):
-        if not self.tagColumns.has_key(column):
+        if not column in self.tagColumns:
             self.tagColumns[column] = []
         self.tagColumns[column] += nets
         for net in nets:
@@ -1151,7 +1149,7 @@ def scriptMain ( **kw ):
         matrix.dag.showReverseCone( 'subckt_5_dm13_subckt_332_src3_c_63_subckt_112_sff1_x4', 10 )
       
         return True
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
         rvalue = False
 

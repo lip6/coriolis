@@ -1,6 +1,6 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -14,26 +14,23 @@
 
 
 import helpers.io
-helpers.io.vprint( 2, '     - "%s".' % helpers.truncPath(__file__) )
-
-from   helpers              import l, u, n
-from   Hurricane            import DbU
-from   Hurricane            import DataBase
-from   Hurricane            import Technology
-
+helpers.io.vprint( 2, '     - "{}".'.format(helpers.truncPath(__file__)) )
+from   helpers   import l, u, n
+from   Hurricane import DbU
+from   Hurricane import DataBase
+from   Hurricane import Technology
 
 tech = DataBase.getDB().getTechnology()
 if tech:
-  print WarningMessage( 'cmos.technology: Technology already exists, "%s"' % tech.getName() )
+    print( WarningMessage( 'cmos.technology: Technology already exists, "{}"'.format(tech.getName()) ))
 else:
-  tech = Technology.create( DataBase.getDB(), 'scn6m_deep_09' )
+    tech = Technology.create( DataBase.getDB(), 'scn6m_deep_09' )
 
 DbU.setPrecision           ( 2 )
 DbU.setPhysicalsPerGrid    ( 0.005, DbU.UnitPowerMicro )
 DbU.setGridsPerLambda      ( 18 )
 DbU.setSymbolicSnapGridStep( DbU.fromLambda( 1.0) )
 DbU.setPolygonStep         ( DbU.fromGrid  ( 9.0) )
-
 
 import common
 from   common.technology import *

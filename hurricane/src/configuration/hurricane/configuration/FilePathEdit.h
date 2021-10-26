@@ -22,7 +22,7 @@ class QToolButton;
 class QFileDialog;
 
 
-namespace Cfg2 {
+namespace Cfg {
 
 
   class FilePathEdit : public QLineEdit

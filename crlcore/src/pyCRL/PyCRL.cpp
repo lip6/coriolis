@@ -31,7 +31,7 @@
 #include "crlcore/PyToolEngine.h"
 #include "crlcore/PyToolEngineCollection.h"
 #include "crlcore/PyAcmSigda.h"
-#include "crlcore/PyIspd05.h"
+// #include "crlcore/PyIspd05.h"
 #include "crlcore/PySpice.h"
 #include "crlcore/PyBlif.h"
 #include "crlcore/PyGds.h"
@@ -103,13 +103,28 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyCRL_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , "CRL"               /* m_name     */
+    , "Coriolis Core I/O framework"
+                          /* m_doc      */
+    , -1                  /* m_size     */
+    , PyCRL_Methods       /* m_methods  */
+    , NULL                /* m_reload   */
+    , NULL                /* m_traverse */
+    , NULL                /* m_clear    */
+    , NULL                /* m_free     */
+    };
+
+
 
 
   // ---------------------------------------------------------------
   // Module Initialization  :  "initCRL ()"
 
-  DL_EXPORT(void) initCRL () {
-    cdebug_log(30,0) << "initCRL()" << endl;
+  PyMODINIT_FUNC PyInit_CRL ( void )
+  {
+    cdebug_log(30,0) << "PyInit_CRL()" << endl;
 
     PySystem_LinkPyType ();
     PyBanner_LinkPyType ();
@@ -125,7 +140,7 @@ extern "C" {
     PyToolEngine_LinkPyType ();
     PyToolEngineCollection_LinkPyType ();
     PyAcmSigda_LinkPyType ();
-    PyIspd05_LinkPyType ();
+    // PyIspd05_LinkPyType ();
     PySpice_LinkPyType ();
     PyBlif_LinkPyType ();
     PyGds_LinkPyType ();
@@ -148,7 +163,7 @@ extern "C" {
     PYTYPE_READY ( ToolEngineCollection );
     PYTYPE_READY ( ToolEngineCollectionLocator );
     PYTYPE_READY ( AcmSigda );
-    PYTYPE_READY ( Ispd05 );
+    // PYTYPE_READY ( Ispd05 );
     PYTYPE_READY ( Spice );
     PYTYPE_READY ( Blif );
     PYTYPE_READY ( Gds );
@@ -165,11 +180,11 @@ extern "C" {
     __cs.addType ( "alcCatalog" , &PyTypeCatalog          , "<Catalog>"          , false );
     __cs.addType ( "alcCatStat" , &PyTypeCatalogState     , "<Catalog::State>"   , false );
 
-    PyObject* module = Py_InitModule ( "CRL", PyCRL_Methods );
-    if ( module == NULL ) {
+    PyObject* module = PyModule_Create( &PyCRL_ModuleDef );
+    if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize CRL module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF ( &PyTypeSystem );
@@ -202,8 +217,8 @@ extern "C" {
     PyModule_AddObject ( module, "ToolEngineCollectionLocator", (PyObject*)&PyTypeToolEngineCollectionLocator );
     Py_INCREF ( &PyTypeAcmSigda );
     PyModule_AddObject ( module, "AcmSigda", (PyObject*)&PyTypeAcmSigda );
-    Py_INCREF ( &PyTypeIspd05 );
-    PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
+    // Py_INCREF ( &PyTypeIspd05 );
+    // PyModule_AddObject ( module, "Ispd05", (PyObject*)&PyTypeIspd05 );
     Py_INCREF ( &PyTypeSpice );
     PyModule_AddObject ( module, "Spice", (PyObject*)&PyTypeSpice );
     Py_INCREF ( &PyTypeBlif );
@@ -226,6 +241,7 @@ extern "C" {
   //DbULoadConstants ( dictionnary );
 
     cdebug_log(30,0) << "CRL.so loaded " << (void*)&typeid(string) << endl;
+    return module;
   }
 
   

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -67,11 +66,11 @@ def GetRefXY ( pathname, refname ) :
   cell = CELLS[-1]
     
   # Check arguments type
-  if type ( pathname ) != types.StringType :
+  if not isinstance(pathname,str):
     err = "\n[Stratus ERROR] GetRefXY : The instance's path must be put with a string.\n"
     raise Exception ( err )
     
-  if type ( refname ) != types.StringType :
+  if not isinstance(refname,str):
     err = "\n[Stratus ERROR] GetRefXY : The reference must be done with it's name : a string.\n"
     raise Exception ( err )
 
@@ -87,11 +86,11 @@ def PlaceRef ( ref, name ) :
   cell = CELLS[-1]
   
   # Check arguments type
-  if ( str ( ref.__class__ ) != "st_ref.XY" ) :
+  if ( str ( ref.__class__ ) != "<class 'st_ref.XY'>" ) :
     err = "\n[Stratus ERROR] PlaceRef : Wrong argument, the coordinates of the reference must be put in a XY object.\n"
     raise Exception ( err )
     
-  if type ( name ) != types.StringType :
+  if not isinstance(name,str):
     err = "\n[Stratus ERROR] PlaceRef : Argument layer must be a string.\n"
     raise Exception ( err )
    
@@ -103,7 +102,7 @@ def PlaceContact ( net, layer, ref, width, height ) :
   from st_model import FRAMEWORK
 
   # Check arguments type
-  if type ( layer ) != types.StringType :
+  if not isinstance(layer,str):
     err = "\n[Stratus ERROR] PlaceContact : Argument layer must be a string.\n"
     raise Exception ( err )
   myLayer = getDataBase().getTechnology().getLayer ( layer )
@@ -111,7 +110,7 @@ def PlaceContact ( net, layer, ref, width, height ) :
 #    err = "\n[Stratus ERROR] PlaceContact : Argument layer does not exist.\n"
 #    raise err
 
-  if ( str ( ref.__class__ ) != "st_ref.XY" ) :
+  if ( str ( ref.__class__ ) != "<class 'st_ref.XY'>" ) :
     err = "\n[Stratus ERROR] PlaceContact : Wrong argument, the coordinates of the contact must be put in a XY object.\n"
     raise Exception ( err )
 
@@ -133,7 +132,7 @@ def PlacePin ( net, layer, direction, ref, width, height ) :
   from st_model    import FRAMEWORK
 
   # Check arguments type
-  if type ( layer ) != types.StringType :
+  if not isinstance(layer,str):
     err = "\n[Stratus ERROR] PlacePin : Argument layer must be a string.\n"
     raise Exception ( err )
   # No CALU permitted for Pin
@@ -155,7 +154,7 @@ def PlacePin ( net, layer, direction, ref, width, height ) :
     err = "\n[Stratus ERROR] PlacePin : Illegal pin access direction. The values are : UNDEFINED, NORTH, SOUTH, EAST, WEST.\n"
     raise Exception ( err )
 
-  if ( str ( ref.__class__ ) != "st_ref.XY" ) :
+  if ( str ( ref.__class__ ) != "<class 'st_ref.XY'>" ) :
     err = "\n[Stratus ERROR] PlacePin : Wrong argument, the coordinates of the pin must be put in a XY object.\n"
     raise Exception ( err )
 
@@ -181,11 +180,12 @@ def PlaceSegment ( net, layer, ref1, ref2, width ) :
   from st_model import FRAMEWORK
 
   # Check arguments type
-  if type ( layer ) != types.StringType :
+  if not isinstance(layer,str):
     err = "\n[Stratus ERROR] PlaceSegment : Argument layer must be a string.\n"
     raise Exception ( err )
 
-  if ( str ( ref1.__class__ ) != "st_ref.XY" )  or ( str ( ref2.__class__ ) != "st_ref.XY" ) :
+  if    ( str ( ref1.__class__ ) != "<class 'st_ref.XY'>" ) \
+     or ( str ( ref2.__class__ ) != "<class 'st_ref.XY'>" ) :
     err = "\n[Stratus ERROR] PlaceSegment : Wrong argument, the coordinates of the segment must be put in XY objects.\n"  
     raise Exception ( err )
 
@@ -218,11 +218,11 @@ def CopyUpSegment ( pathname, netname, newnet ) :
   cell = CELLS[-1]
     
   # Check arguments type
-  if type ( pathname ) != types.StringType :
+  if not isintance(pathname,str):
     err = "\n[Stratus ERROR] CopyUpSegment : The instance's path must be put with a string.\n"
     raise Exception ( err )
     
-  if type ( netname ) != types.StringType :
+  if not isinstance(netname,str):
     err = "\n[Stratus ERROR] CopyUpSegment : The segment must be done with it's name : a string.\n"
     raise Exception ( err )
 

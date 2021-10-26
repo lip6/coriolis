@@ -1,6 +1,6 @@
 // -*- C++ -*-
 //
-// Copyright (c) BULL S.A. 2000-2018, All Rights Reserved
+// Copyright (c) BULL S.A. 2000-2021, All Rights Reserved
 //
 // This file is part of Hurricane.
 //
@@ -29,13 +29,11 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_PROPERTY_H
-#define  HURRICANE_PROPERTY_H
-
-#include  "hurricane/Name.h"
-#include  "hurricane/Properties.h"
-#include  "hurricane/DBo.h"
-#include  "hurricane/Error.h"
+#pragma  once
+#include "hurricane/Name.h"
+#include "hurricane/Properties.h"
+#include "hurricane/DBo.h"
+#include "hurricane/Error.h"
 
 
 namespace Hurricane {
@@ -597,6 +595,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::Property);
-
-
-#endif // HURRICANE_PROPERTY_H

@@ -2,14 +2,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2012-2013, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                   C O R I O L I S                               |
 // |      K i t e  -  D e t a i l e d   R o u t e r                  |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./PyKite.cpp"                             |
 // +-----------------------------------------------------------------+
@@ -60,13 +60,21 @@ extern "C" {
     };
 
 
+  static PyModuleDef  PyKite_ModuleDef =
+    { PyModuleDef_HEAD_INIT
+    , .m_name    = "Kite"
+    , .m_doc     = "Detailed router."
+    , .m_size    = -1
+    , .m_methods = PyKite_Methods
+    };
 
 
   // ---------------------------------------------------------------
-  // Module Initialization  :  "initKite ()"
+  // Module Initialization  :  "PyInit_Kite ()"
 
-  DL_EXPORT(void) initKite () {
-    cdebug_log(40,0) << "initKite()" << endl;
+  PyMODINIT_FUNC PyInit_Kite ( void )
+  {
+    cdebug_log(40,0) << "PyInit_Kite()" << endl;
 
     PyKiteEngine_LinkPyType();
     PyGraphicKiteEngine_LinkPyType();
@@ -74,12 +82,11 @@ extern "C" {
     PYTYPE_READY_SUB( KiteEngine       , ToolEngine  );
     PYTYPE_READY_SUB( GraphicKiteEngine, GraphicTool );
 
-
-    PyObject* module = Py_InitModule( "Kite", PyKite_Methods );
+    PyObject* module = PyModule_Create( &PyKite_ModuleDef );
     if (module == NULL) {
       cerr << "[ERROR]\n"
            << "  Failed to initialize Kite module." << endl;
-      return;
+      return NULL;
     }
 
     Py_INCREF( &PyTypeKiteEngine );
@@ -92,6 +99,8 @@ extern "C" {
 
     LoadObjectConstant( dictionnary, KtBuildGlobalRouting, "KtBuildGlobalRouting" );
     LoadObjectConstant( dictionnary, KtLoadGlobalRouting , "KtLoadGlobalRouting"  );
+
+    return module;
   }
 
   

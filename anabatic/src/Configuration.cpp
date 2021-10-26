@@ -17,7 +17,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
 #include "hurricane/Error.h"
 #include "hurricane/Technology.h"

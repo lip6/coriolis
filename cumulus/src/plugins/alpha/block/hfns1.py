@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -16,7 +16,6 @@
 Manage High Fanout Net Synthesis (HFNS).
 """
 
-from   __future__ import print_function
 import sys
 import os.path
 import re
@@ -121,11 +120,11 @@ class SlicedArea ( object ):
             transf     = instance.getTransformation()
             occurrence.getPath().getTransformation().applyOn( transf )
             transf.applyOn( ab )
-            y = (ab.getYMin() - cellAb.getYMin()) / sliceHeight
+            y = (ab.getYMin() - cellAb.getYMin()) // sliceHeight
             if (ab.getYMin() - cellAb.getYMin()) % sliceHeight:
                 print( ErrorMessage( 1, 'SlicedArea.__init__(): Misaligned {}.'.format(occurrence) ))
                 continue
-            if not self.rows.has_key(y):
+            if not y in self.rows:
                 self.rows[y] = []
             row = self.rows[ y ]
             row.append( (occurrence,ab) )
@@ -584,7 +583,7 @@ class BufferTree ( object ):
             maxWL = timing.tech.getWlEstimate( self.bufName, clusterA.size+clusterB.size )
             area = Box( clusterA.area )
             area.merge( clusterB.area )
-            hpWL = (area.getWidth() + area.getHeight()) / 2
+            hpWL = (area.getWidth() + area.getHeight()) // 2
             if hpWL >= maxWL:
                 return True
                 trace( 550, '\t> Reject merge: hpWL >= maxWL ({} >= {}).\n' \
@@ -596,7 +595,7 @@ class BufferTree ( object ):
             return False
         area = Box( clusterA.area )
         area.merge( clusterB.area )
-        hpwl = (area.getWidth() + area.getHeight()) / 2
+        hpwl = (area.getWidth() + area.getHeight()) // 2
         if hpwl > 2*self.edgeLimit:
             trace( 550, '\t> Reject merge, over HPWL threshold of 2*{}.\n' \
                         .format(DbU.getValueString(self.edgeLimit)))

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -85,7 +84,7 @@ class Parser :
   #########################################
   def start_element ( self, name, attrs ) :
     # Print which the technology is
-#    if   name == 'technology' : print "  - Stratus virtual technology targets:", attrs['name']
+#    if   name == 'technology' : print( "  - Stratus virtual technology targets:", attrs['name'] )
 
     # Modification of attributes
     if name == 'model' :
@@ -111,7 +110,7 @@ class Parser :
   def end_element ( self, name ) : pass
      
   ############################## 
-  def char_data ( self, data ) : pass  # print repr(data)
+  def char_data ( self, data ) : pass  # print( repr(data) )
  
   # Parsing a file
   ################
@@ -160,14 +159,14 @@ class InitParser :
   def end_element ( self, name ) : pass
      
   ############################## 
-  def char_data ( self, data ) : pass  # print repr(data)
+  def char_data ( self, data ) : pass  # print( repr(data) )
  
   # Parsing a file
   ################
   def Parse ( self, nameFile ) :
     if not os.path.isfile(nameFile):
-      print '[ERROR] Parser.Parse(): stratus1.mappingName (\"%s\") file not found.' % nameFile
-    self._p.ParseFile ( open ( nameFile, "r" ) )
+      print( '[ERROR] Parser.Parse(): stratus1.mappingName (\"%s\") file not found.' % nameFile )
+    self._p.ParseFile ( open ( nameFile, "rb" ) )
 
     # Given the tab of the name of the cells, contruction of a tab giving the name of the generators (first letter uppered)
     for name in BV :
@@ -199,7 +198,7 @@ class WeightParser :
         if 'time' in attrs :
           temp = float(attrs['time'])
         else :
-#          print 'Warning: no weight done in the file, weight put to 1.'
+#          print( 'Warning: no weight done in the file, weight put to 1.' )
           temp = 1
       
         #self._weightTime[virtName][0] = temp
@@ -217,7 +216,7 @@ class WeightParser :
         if 'area' in attrs :
           temp = float(attrs['area'])
         else :
-#          print 'Warning: no weight done in the file, weight put to 1.'
+#          print( 'Warning: no weight done in the file, weight put to 1.' )
           temp = 1
       
         self._weightArea[virtName] = temp
@@ -225,7 +224,7 @@ class WeightParser :
         if 'power' in attrs :
           temp = float(attrs['power'])
         else :
-#          print 'Warning: no weight done in the file, weight put to 1.'
+#          print( 'Warning: no weight done in the file, weight put to 1.' )
           temp = 1
       
         self._weightPower[virtName] = temp
@@ -234,7 +233,7 @@ class WeightParser :
   def end_element ( self, name ) : pass
      
   ############################## 
-  def char_data ( self, data ) : pass  # print repr(data)
+  def char_data ( self, data ) : pass  # print( repr(data) )
  
   # Parsing a file
   ################

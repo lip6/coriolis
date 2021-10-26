@@ -1,13 +1,13 @@
 
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2019-2019, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
 # |          Alliance / Hurricane  Interface                        |
 # |                                                                 |
 # |  Author      :                    Jean-Paul CHAPUT              |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :       "./etc/common/misc.py"                     |
 # +-----------------------------------------------------------------+
@@ -32,7 +32,7 @@ param.setInt( 0 )
 param.setMin( 0 )
 
 Cfg.getParamInt( 'viewer.minimumSize'   ).setInt( 500  )
-Cfg.getParamInt( 'viewer.pixelThreshold').setInt(  20  )
+Cfg.getParamInt( 'viewer.pixelThreshold').setInt(   5 )
 
 param = Cfg.getParamInt( 'viewer.printer.DPI' )
 param.setInt( 150 )

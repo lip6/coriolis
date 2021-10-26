@@ -73,7 +73,7 @@ class Wiring ( object ):
     self.wTrack   =  1
     if len(chain) >= 3: self.wTrack = int(chain[2])
     length = len(side)
-    for i in range( 0, length/2, 2 ):
+    for i in range( 0, length//2, 2 ):
       track = -2
       if side[i+1] != 'X': track = int( side[i+1] )
 
@@ -237,22 +237,22 @@ class Bulk ( object ):
                        , metal1
                        , self.axis
                        , width
-                       , xsource-self.stack.wire1Width/2
-                       , xtarget+self.stack.wire1Width/2 )
+                       , xsource-self.stack.wire1Width//2
+                       , xtarget+self.stack.wire1Width//2 )
       width = self.stack.minWidth_cut0 + 2* self.stack.minEnclosure_active_cut0
       Horizontal.create( bulkNet
                        , active
                        , self.axis
                        , width
-                       , self.usource-width/2
-                       , self.utarget+width/2 )
+                       , self.usource-width//2
+                       , self.utarget+width//2 )
       width += 2* self.stack.minEnclosure_bImplant_active
       Horizontal.create( bulkNet
                        , self.stack.bImplantLayer
                        , self.axis
                        , width
-                       , self.usource-width/2
-                       , self.utarget+width/2 )
+                       , self.usource-width//2
+                       , self.utarget+width//2 )
 
       for xcontact, enabled in self.ucontactsBulk:
         if enabled:
@@ -288,17 +288,17 @@ class Bulk ( object ):
 
           cutBb = Box( xcontact, self.axis, xcontact, self.axis  ) 
 
-          metal1EnclBb = Box( cutBb ).inflate( self.stack.minEnclosure_metal1_cut1 + self.stack.minWidth_cut1/2 )
+          metal1EnclBb = Box( cutBb ).inflate( self.stack.minEnclosure_metal1_cut1 + self.stack.minWidth_cut1//2 )
           Pad.create( bulkNet, metal1, metal1EnclBb )
           
-          metal2EnclBb = Box( cutBb ).inflate( self.stack.minEnclosure_metal2_cut1 + self.stack.minWidth_cut1/2 )
+          metal2EnclBb = Box( cutBb ).inflate( self.stack.minEnclosure_metal2_cut1 + self.stack.minWidth_cut1//2 )
           if self.stack.isVH:
-            metal2EnclBb.merge( Box( cutBb ).inflate( self.stack.minEnclosure_metal2_cut2 + self.stack.minWidth_cut2/2 ) )
+            metal2EnclBb.merge( Box( cutBb ).inflate( self.stack.minEnclosure_metal2_cut2 + self.stack.minWidth_cut2//2 ) )
 
           Pad.create( bulkNet, metal2, metal2EnclBb )
             
           if self.stack.isVH:
-            metal3EnclBb = Box( cutBb ).inflate( self.stack.minEnclosure_metal3_cut2 + self.stack.minWidth_cut2/2 )
+            metal3EnclBb = Box( cutBb ).inflate( self.stack.minEnclosure_metal3_cut2 + self.stack.minWidth_cut2//2 )
             Pad.create( bulkNet, metal3, metal3EnclBb )
     
     if self.flags & (Stack.EastBulk | Stack.WestBulk):
@@ -310,22 +310,22 @@ class Bulk ( object ):
                      , metal1
                      , self.axis
                      , metal1Width
-                     , self.usource-self.stack.wire1Width/2
-                     , self.utarget+self.stack.wire1Width/2 )
+                     , self.usource-self.stack.wire1Width//2
+                     , self.utarget+self.stack.wire1Width//2 )
       width = self.stack.minWidth_cut0 + 2*self.stack.minEnclosure_active_cut0
       Vertical.create( bulkNet
                      , active
                      , self.axis
                      , width
-                     , self.usource-width/2
-                     , self.utarget+width/2 )
+                     , self.usource-width//2
+                     , self.utarget+width//2 )
       width += 2*self.stack.minEnclosure_bImplant_active
       Vertical.create( bulkNet
                      , self.stack.bImplantLayer
                      , self.axis
                      , width
-                     , self.usource-width/2
-                     , self.utarget+width/2 )
+                     , self.usource-width//2
+                     , self.utarget+width//2 )
 
       for icontact in range(len(self.ucontacts)):
         if    (icontact   == 0                   and self.stack.hasSouthBulk()) \
@@ -480,7 +480,7 @@ class Stack ( object ):
 
   def __setattr__ ( self, attribute, value ):
     if hasattr(Stack.rules,attribute):
-      print '[ERROR] Stack.%s attribute is read-only (ignored).' % attribute
+      print( '[ERROR] Stack.{} attribute is read-only (ignored).'.format(attribute) )
       return
     self.__dict__[attribute] = value
     return
@@ -502,7 +502,7 @@ class Stack ( object ):
       
       return getattr(Stack.rules,attribute)
 
-    if self.__dict__.has_key(attribute):   return self.__dict__[attribute]
+    if attribute in self.__dict__: return self.__dict__[attribute]
     return None
 
 
@@ -559,7 +559,7 @@ class Stack ( object ):
    # Modes 9 & 10 are not clear to me, but we shouldn't need it ever.
 
     if geomod in [0, 4, 6, 8] and nf%2 == 0:
-      print '[WARNING] Stack.toGeomod(): In geomod %i, NF must be odd (%i)' % (geomod,nf)
+      print( '[WARNING] Stack.toGeomod(): In geomod {}, NF must be odd ({})'.format(geomod,nf))
 
     return geomod
 
@@ -578,7 +578,7 @@ class Stack ( object ):
   def __init__ ( self, device, NERC, NIRC ):
     self.dimensioned     = False
     self.device          = device
-    self.w               = oroshi.adjustOnGrid(device.getW() / device.getM())
+    self.w               = oroshi.adjustOnGrid(device.getW() // device.getM())
     self.L               = oroshi.adjustOnGrid(device.getL())
     self.NDs             = device.getExternalDummy()                    # Number of Dummies at each end of the stack.
     self.NFs             = device.getM() * self.metaTnb() + self.NDs*2  # Total number of Fingers (including dummies).
@@ -733,7 +733,7 @@ class Stack ( object ):
      # MIN means "minimize the number of sources", so according to the
      # number of transistor fingers, it is almost equivalent to
      # "drain first".
-      if not self.metaTransistors.has_key(gateName):
+      if not gateName in self.metaTransistors:
         MIN = 0
         if self.wirings[i-1].isDrain(): MIN = 1
 
@@ -769,14 +769,14 @@ class Stack ( object ):
         if mt['MIN']:
           mt['style.NDend'] = 2
           mt['style.NSend'] = 0
-          mt['style.NDint'] = (nf/2 - 1)*2
+          mt['style.NDint'] = (nf//2 - 1)*2
           mt['style.NSint'] =  nf
           if mt['leftMost'] or mt['rightMost']: geoFlags |= Stack.DrainIsolated
           else:                                 geoFlags |= Stack.DrainShared
         else:
           mt['style.NDend'] = 0
           mt['style.NSend'] = 2
-          mt['style.NSint'] = (nf/2 - 1)*2
+          mt['style.NSint'] = (nf//2 - 1)*2
           mt['style.NDint'] =  nf
           if mt['leftMost'] or mt['rightMost']: geoFlags |= Stack.SourceIsolated
           else:                                 geoFlags |= Stack.SourceShared
@@ -840,7 +840,7 @@ class Stack ( object ):
   def getLastTopWTracks  ( self ):            return self.topWTracks[self.topTracksNb()-2]
   def getLastBotWTracks  ( self ):            return self.botWTracks[self.botTracksNb()-2]
   def getHorizontalWidth ( self, trackSpan ): return (self.horPitch * (trackSpan - 1))
-  def getHorizontalAxis  ( self, trackSpan ): return self.getHorizontalWidth(trackSpan)/2
+  def getHorizontalAxis  ( self, trackSpan ): return self.getHorizontalWidth(trackSpan)//2
       
   def getWiringWidth ( self, wiring, isTopConnect ):
     if isTopConnect: return self.horPitch * (self.topWTracks[wiring.topTrack] - 1)
@@ -850,13 +850,13 @@ class Stack ( object ):
   def DMCI ( self ):
     if not self.dimensioned: self.computeDimensions()
     return   self.sideActiveWidth \
-           - self.L/2             \
+           - self.L//2            \
            - self.metal1ToGate    \
-           - self.eDiffMetal1Width/2
+           - self.eDiffMetal1Width//2
 
   def DMCG ( self ):
     if not self.dimensioned: self.computeDimensions()
-    return (self.gatePitch - self.L)/2
+    return (self.gatePitch - self.L)//2
 
   def DMCGT ( self ): return 0.0
 
@@ -866,7 +866,7 @@ class Stack ( object ):
 
   def DGI ( self ):
     if not self.dimensioned: self.computeDimensions()
-    return self.sideActiveWidth - self.L/2
+    return self.sideActiveWidth - self.L//2
   
 
   ## <b>[internal]</b> Compute Stack dimensions from the technological rules.
@@ -962,29 +962,29 @@ class Stack ( object ):
            + self.iDiffMetal1Width    \
            + max( self.L, gateVia1Side+2*overlap )
     self.gatePitch    = max( pitch1, pitch2, pitch3 )
-    self.metal1ToGate = (self.gatePitch - self.L - self.iDiffMetal1Width) / 2
+    self.metal1ToGate = (self.gatePitch - self.L - self.iDiffMetal1Width) // 2
 
     self.sideActiveWidth = self.minEnclosure_active_cut0 \
                          - self.minEnclosure_metal1_cut0 \
                          + self.eDiffMetal1Width         \
                          + self.metal1ToGate             \
-                         + self.L/2
+                         + self.L//2
 
-    hTrackDistance1 = self.minWidth_cut0/2 + self.minSpacing_cut0_active
-    hTrackDistance2 = self.minWidth_cut0/2 + self.minEnclosure_poly_cut0 + self.minSpacing_poly_active
+    hTrackDistance1 = self.minWidth_cut0//2 + self.minSpacing_cut0_active
+    hTrackDistance2 = self.minWidth_cut0//2 + self.minEnclosure_poly_cut0 + self.minSpacing_poly_active
     self.hTrackDistance = max( hTrackDistance1, hTrackDistance2 )
 
-    vBulkDistance1 = self.minWidth_cut0/2              \
+    vBulkDistance1 = self.minWidth_cut0//2             \
                    + self.minEnclosure_active_cut0     \
                    + self.minEnclosure_tImplant_active \
                    + self.minEnclosure_bImplant_active
-    vBulkDistance2 = self.minWidth_cut0/2           \
+    vBulkDistance2 = self.minWidth_cut0//2          \
                    + self.minEnclosure_active_cut0  \
                    + self.minSpacing_nImplant_pImplant
     self.vBulkDistance = max( vBulkDistance1, vBulkDistance2 )
 
     activeHeight  = self.w + 2*self.hTrackDistance
-    self.ypitches = activeHeight / self.horPitch
+    self.ypitches = activeHeight // self.horPitch
     if activeHeight % self.horPitch: self.ypitches += 1
     if (self.ypitches + self.tracksNbPitch()) % 2: self.ypitches += 1
 
@@ -993,7 +993,7 @@ class Stack ( object ):
     if self.flags & Stack.WestBulk: deviceMinWidth += self.vBulkDistance + self.verPitch
     if self.flags & Stack.EastBulk: deviceMinWidth += self.vBulkDistance + self.verPitch
 
-    self.xpitches  = deviceMinWidth / self.verPitch
+    self.xpitches  = deviceMinWidth // self.verPitch
     if self.xpitches % 2:
       self.xpitches += 1
     else:
@@ -1002,7 +1002,7 @@ class Stack ( object ):
     
     self.activeOffsetY = self.getBotTrackY(0) + self.getHorizontalWidth(self.botWTracks[0]) \
                        + self.hTrackDistance \
-                       + (self.ypitches*self.horPitch - activeHeight)/2 \
+                       + (self.ypitches*self.horPitch - activeHeight)//2 \
 
     self.bbHeight      = self.getLastTopTrackY() 
 
@@ -1010,7 +1010,7 @@ class Stack ( object ):
     diffusionRealWidth = self.bbWidth
     if self.flags & Stack.WestBulk: diffusionRealWidth -= self.vBulkDistance + self.verPitch
     if self.flags & Stack.EastBulk: diffusionRealWidth -= self.vBulkDistance + self.verPitch
-    self.activeOffsetX = self.minEnclosure_tImplant_active + (diffusionRealWidth - diffusionWidth)/2
+    self.activeOffsetX = self.minEnclosure_tImplant_active + (diffusionRealWidth - diffusionWidth)//2
     if self.flags & Stack.WestBulk: self.activeOffsetX += self.vBulkDistance + self.verPitch
 
     self.boundingBox = Box( 0, 0, self.bbWidth, self.bbHeight )
@@ -1043,13 +1043,13 @@ class Stack ( object ):
       self.bulks[1] = Bulk( self, southBulkY, westBulkX, eastBulkX, Stack.SouthBulk )
 
     self.DMCI  = oroshi.toUnity(   self.sideActiveWidth 
-                                 - self.L/2
+                                 - self.L//2
                                  - self.metal1ToGate
-                                 - self.eDiffMetal1Width/2 )
-    self.DMCG  = oroshi.toUnity( (self.gatePitch - self.L)/2 )
+                                 - self.eDiffMetal1Width//2 )
+    self.DMCG  = oroshi.toUnity( (self.gatePitch - self.L)//2 )
     self.DMCGT = 0
     self.DGG   = oroshi.toUnity(  self.gatePitch - self.L )
-    self.DGI   = oroshi.toUnity( self.sideActiveWidth - self.L/2 )
+    self.DGI   = oroshi.toUnity( self.sideActiveWidth - self.L//2 )
 
     trace( 100, '+' )
     trace( 100, '\t  +----------------------------------+\n' )
@@ -1107,30 +1107,30 @@ class Stack ( object ):
           width = self.eDiffMetal1Width
           axis  = self.activeOffsetX        \
                 + self.sideActiveWidth      \
-                - self.L/2                  \
+                - self.L//2                 \
                 - self.metal1ToGate         \
-                - width/2
+                - width//2
         elif i == self.NFs: # Rightmost diffusion area.
           NRC   = self.NERC
           width = self.eDiffMetal1Width
           axis  = self.activeOffsetX            \
                 + self.sideActiveWidth          \
                 + self.gatePitch*(self.NFs - 1) \
-                + self.L/2                      \
+                + self.L//2                     \
                 + self.metal1ToGate             \
-                + width/2
+                + width//2
         else:               # Middle diffusion areas.
           NRC   = self.NIRC
           width = self.iDiffMetal1Width
           axis  = self.activeOffsetX   \
                 + self.sideActiveWidth \
-                - self.gatePitch/2     \
+                - self.gatePitch//2    \
                 + self.gatePitch*i
       
         self.drawSourceDrain( axis, self.wirings[2*i], width, NRC )
 
-      capSpacing = self.minSpacing_metal2 + self.minWidth_metal2/2
-      capSpacing = max( capSpacing, self.minSpacing_metal3 + self.minWidth_metal3/2 )
+      capSpacing = self.minSpacing_metal2 + self.minWidth_metal2//2
+      capSpacing = max( capSpacing, self.minSpacing_metal3 + self.minWidth_metal3//2 )
       
       metal2  = DataBase.getDB().getTechnology().getLayer( 'metal2' )
       metal3  = DataBase.getDB().getTechnology().getLayer( 'metal3' )
@@ -1196,14 +1196,14 @@ class Stack ( object ):
     active      = DataBase.getDB().getTechnology().getLayer( 'active' )
     width       = self.w
     length      = (self.NFs - 1) * self.gatePitch + 2*self.sideActiveWidth
-    axis        = width / 2
+    axis        = width // 2
     xoffset     = self.activeOffsetX
     yoffset     = self.activeOffsetY
     segment     = Horizontal.create( activeNet, active, yoffset+axis, width, xoffset, xoffset+length )
 
     width       = width  + 2*self.minEnclosure_tImplant_active 
     length      = length + 2*self.minEnclosure_tImplant_active 
-    axis        = width / 2
+    axis        = width // 2
     xoffset     = self.activeOffsetX - self.minEnclosure_tImplant_active
     yoffset     = self.activeOffsetY - self.minEnclosure_tImplant_active
     segment     = Horizontal.create( tImplantNet
@@ -1244,9 +1244,9 @@ class Stack ( object ):
 
     contactHeight = self.minWidth_cut0 + 2*self.minEnclosure_poly_cut0
     contactWidth  = max( contactHeight, self.L )
-    contactsNb    = (contactWidth - 2*self.minEnclosure_poly_cut0) / self.gateVia1Pitch
+    contactsNb    = (contactWidth - 2*self.minEnclosure_poly_cut0) // self.gateVia1Pitch
     if contactsNb:
-      contactPitch = contactWidth / contactsNb
+      contactPitch = contactWidth // contactsNb
     else:
       contactsNb   = 1
       contactPitch = self.L
@@ -1259,22 +1259,22 @@ class Stack ( object ):
 
       isTopConnect = connector[2]
       yoffset      = connector[1]
-      xcontact     = axis - self.L/2 + contactPitch/2
-      contactBb    = Box( axis, yoffset ).inflate( contactWidth/2, contactHeight/2)
+      xcontact     = axis - self.L//2 + contactPitch//2
+      contactBb    = Box( axis, yoffset ).inflate( contactWidth//2, contactHeight//2)
       width        = gateVia1Side + 2*gateVia1Overlap + self.getWiringWidth(wiring, isTopConnect)
-      y            = yoffset + self.getWiringWidth(wiring, isTopConnect)/2
+      y            = yoffset + self.getWiringWidth(wiring, isTopConnect)//2
       rowHeight    = self.horPitch
 
       if isTopConnect:
-        contactBb = Box( axis, yoffset ).inflate( contactWidth/2, contactHeight/2+self.getWiringWidth(wiring, isTopConnect))
+        contactBb = Box( axis, yoffset ).inflate( contactWidth//2, contactHeight//2+self.getWiringWidth(wiring, isTopConnect))
 
       Pad.create( wiring.net, gate, contactBb ) # GateExtension Contact
       Horizontal.create( wiring.net
                        , metal1
                        , y
                        , width
-                       , xcontact - gateVia1Side/2 - gateVia1Overlap
-                       , xcontact + (contactsNb-1)*contactPitch + gateVia1Side/2 + gateVia1Overlap )# M1 area
+                       , xcontact - gateVia1Side//2 - gateVia1Overlap
+                       , xcontact + (contactsNb-1)*contactPitch + gateVia1Side//2 + gateVia1Overlap )# M1 area
       
 
       cut1Bb = Box()
@@ -1284,13 +1284,13 @@ class Stack ( object ):
         else:            rangeWidth = range(self.botWTracks[wiring.botTrack])
 
         for j in rangeWidth:
-          contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut0/2 )
+          contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut0//2 )
           Pad.create( wiring.net, cut0, contactBb )
-          contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut1/2 )
+          contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut1//2 )
           Pad.create( wiring.net, cut1, contactBb )
           cut1Bb.merge( contactBb )
           if self.isVH:
-            contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut2/2 )
+            contactBb = Box( xcontact, yoffset ).inflate( self.minWidth_cut2//2 )
             Pad.create( wiring.net, cut2, contactBb )
             cut2Bb.merge( contactBb )
           yoffset += rowHeight
@@ -1324,12 +1324,12 @@ class Stack ( object ):
     cut0    = DataBase.getDB().getTechnology().getLayer( 'cut0' )
     cut1    = DataBase.getDB().getTechnology().getLayer( 'cut1' )
     cut2    = DataBase.getDB().getTechnology().getLayer( 'cut2' )
-    rows    = max( 1, (self.w - 2*self.minEnclosure_active_cut0) / self.contactDiffPitch )
-    ypitch  = self.w / rows
-    yoffset = self.activeOffsetY + ypitch/2
+    rows    = max( 1, (self.w - 2*self.minEnclosure_active_cut0) // self.contactDiffPitch )
+    ypitch  = self.w // rows
+    yoffset = self.activeOffsetY + ypitch//2
     xpitch  = self.contactDiffPitch
     ypitch2 = self.horPitch
-    xoffset = axis - (self.contactDiffPitch * (cols - 1))/2
+    xoffset = axis - (self.contactDiffPitch * (cols - 1))//2
 
     if self.w < 2*self.minEnclosure_active_cut0 + self.minWidth_cut0:
       active = DataBase.getDB().getTechnology().getLayer( 'active' )
@@ -1377,11 +1377,11 @@ class Stack ( object ):
                    , xoffset + xpitch *(cols - 1)
                    , ytarget + ypitch2*(self.topWTracks[wiring.topTrack] - 1) )
         
-        metal2EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal2_cut1 + self.minWidth_cut1/2 )
-        metal2EnclBb.merge( Box( cutBb ).inflate( self.minEnclosure_metal2_cut2 + self.minWidth_cut2/2 ) )
+        metal2EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal2_cut1 + self.minWidth_cut1//2 )
+        metal2EnclBb.merge( Box( cutBb ).inflate( self.minEnclosure_metal2_cut2 + self.minWidth_cut2//2 ) )
         Pad.create( wiring.net, metal2, metal2EnclBb )
         
-        metal3EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal3_cut2 + self.minWidth_cut2/2 )
+        metal3EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal3_cut2 + self.minWidth_cut2//2 )
         Pad.create( wiring.net, metal3, metal3EnclBb )
         
       ytarget += ypitch2*(self.topWTracks[wiring.topTrack]-1)
@@ -1417,11 +1417,11 @@ class Stack ( object ):
                      , xoffset + xpitch *(cols - 1)
                      , ysource + ypitch2*(self.botWTracks[wiring.botTrack] - 1) )
           
-          metal2EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal2_cut1 + self.minWidth_cut1/2 )
-          metal2EnclBb.merge( Box( cutBb ).inflate( self.minEnclosure_metal2_cut2 + self.minWidth_cut2/2 ) )
+          metal2EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal2_cut1 + self.minWidth_cut1//2 )
+          metal2EnclBb.merge( Box( cutBb ).inflate( self.minEnclosure_metal2_cut2 + self.minWidth_cut2//2 ) )
           Pad.create( wiring.net, metal2, metal2EnclBb )
           
-          metal3EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal3_cut2 + self.minWidth_cut2/2 )
+          metal3EnclBb =      Box( cutBb ).inflate( self.minEnclosure_metal3_cut2 + self.minWidth_cut2//2 )
           Pad.create( wiring.net, metal3, metal3EnclBb )
     else:
       ysource = yoffset

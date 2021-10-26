@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2015-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2015-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -24,77 +24,73 @@
 showTrace = True
 
 try:
-  import sys
-  import os.path
-  import shutil
-  import optparse
-  import time
-  import traceback
-  import distutils.sysconfig
-  import subprocess
-  import socket
-  import re
-  import bz2
-  import smtplib
-  from email.mime.text        import MIMEText
-  from email.mime.multipart   import MIMEMultipart
-  from email.mime.application import MIMEApplication
-except ImportError, e:
-  module = str(e).split()[-1]
+    import sys
+    import os.path
+    import shutil
+    import optparse
+    import time
+    import traceback
+    import distutils.sysconfig
+    import subprocess
+    import socket
+    import re
+    import bz2
+    import smtplib
+    from io                     import IOBase
+    from email.mime.text        import MIMEText
+    from email.mime.multipart   import MIMEMultipart
+    from email.mime.application import MIMEApplication
+except ImportError as e:
+    module = str(e).split()[-1]
 
 
 class ErrorMessage ( Exception ):
 
     def __init__ ( self, code, *arguments ):
         self._code   = code
-        self._errors = [ 'Malformed call to ErrorMessage()', '%s' % str(arguments) ]
-        
+        self._errors = [ 'Malformed call to ErrorMessage()', '{}'.format(arguments) ]
         text = None
         if len(arguments) == 1:
-          if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
-          else:
-            self._errors = arguments[0]
-        elif len(arguments) > 1:
-          text = list(arguments)
-        
-        if text:
-          self._errors = []
-          while len(text[0]) == 0: del text[0]
-        
-          lstrip = 0
-          if text[0].startswith('[ERROR]'): lstrip = 8
-        
-          for line in text:
-            if line[0:lstrip  ] == ' '*lstrip or \
-               line[0:lstrip-1] == '[ERROR]':
-              self._errors += [ line[lstrip:] ]
+            if isinstance(arguments[0],Exception): text = str(arguments[0]).split('\n')
             else:
-              self._errors += [ line.lstrip() ]
+                self._errors = arguments[0]
+        elif len(arguments) > 1:
+            text = list(arguments)
+        if text:
+            self._errors = []
+            while len(text[0]) == 0: del text[0]
+            lstrip = 0
+            if text[0].startswith('[ERROR]'): lstrip = 8
+            for line in text:
+                if line[0:lstrip  ] == ' '*lstrip or \
+                   line[0:lstrip-1] == '[ERROR]':
+                    self._errors += [ line[lstrip:] ]
+                else:
+                    self._errors += [ line.lstrip() ]
         return
 
     def __str__ ( self ):
         if not isinstance(self._errors,list):
-          return "[ERROR] %s" % self._errors
-
+            return "[ERROR] {}".format(self._errors)
         formatted = "\n"
         for i in range(len(self._errors)):
-          if i == 0: formatted += "[ERROR] %s" % self._errors[i]
-          else:      formatted += "        %s" % self._errors[i]
-          if i+1 < len(self._errors): formatted += "\n"
+            if i == 0: formatted += "[ERROR] {}".format(self._errors[i])
+            else:      formatted += "        {}".format(self._errors[i])
+            if i+1 < len(self._errors): formatted += "\n"
         return formatted
 
     def addMessage ( self, message ):
         if not isinstance(self._errors,list):
-          self._errors = [ self._errors ]
+            self._errors = [ self._errors ]
         if isinstance(message,list):
-          for line in message:
-              self._errors += [ line ]
+            for line in message:
+                  self._errors += [ line ]
         else:
-          self._errors += [ message ]
+            self._errors += [ message ]
         return
 
     def terminate ( self ):
-        print self
+        print( self )
         sys.exit(self._code)
 
     @property
@@ -104,14 +100,14 @@ class ErrorMessage ( Exception ):
 class BadBinary ( ErrorMessage ):
 
     def __init__ ( self, binary ):
-        ErrorMessage.__init__( self, 1, "Binary not found: <%s>." % binary )
+        ErrorMessage.__init__( self, 1, 'Binary not found: "{}".'.format(binary) )
         return
 
 
 class BadReturnCode ( ErrorMessage ):
 
     def __init__ ( self, status ):
-        ErrorMessage.__init__( self, 1, "Command returned status:%d." % status )
+        ErrorMessage.__init__( self, 1, 'Command returned status:{}.'.format(status) )
         return
 
 
@@ -120,25 +116,31 @@ class Command ( object ):
     def __init__ ( self, arguments, fdLog=None ):
         self.arguments = arguments
         self.fdLog     = fdLog
-        
-        if self.fdLog != None and not isinstance(self.fdLog,file):
-          print '[WARNING] Command.__init__(): <fdLog> is neither None or a file.'
+        if self.fdLog != None and not isinstance(self.fdLog,IOBase):
+            print( '[WARNING] Command.__init__(): "fdLog" is neither None or a file.' )
         return
 
     def _argumentsToStr ( self, arguments ):
         s = ''
         for argument in arguments:
-          if argument.find(' ') >= 0: s += ' "' + argument + '"'
-          else:                       s += ' '  + argument
+            if argument.find(' ') >= 0: s += ' "' + argument + '"'
+            else:                       s += ' '  + argument
         return s
 
     def log ( self, text ):
-        print text[:-1]
+        if isinstance(self.fdLog,IOBase):
+            if isinstance(text,bytes):
+                print( text[:-1].decode('utf-8') )
+                self.fdLog.write( text.decode('utf-8') )
+            elif isinstance(text,str):
+                print( text[:-1] )
+                self.fdLog.write( text )
+            else:
+                print( '[ERROR] Command.log(): "text" is neither bytes or str.' )
+                print( '        {}'.format(text) )
+            self.fdLog.flush()
         sys.stdout.flush()
         sys.stderr.flush()
-        if isinstance(self.fdLog,file):
-          self.fdLog.write( text )
-          self.fdLog.flush()
         return
 
     def execute ( self ):
@@ -149,29 +151,26 @@ class Command ( object ):
         homeDir = os.environ['HOME']
         workDir = os.getcwd()
         if homeDir.startswith(homeDir):
-           workDir = '~' + workDir[ len(homeDir) : ]
+            workDir = '~' + workDir[ len(homeDir) : ]
         user = 'root'
-        if os.environ.has_key('USER'): user = os.environ['USER']
-        prompt = '%s@%s:%s$' % (user,conf.masterHost,workDir)
+        if 'USER' in os.environ: user = os.environ['USER']
+        prompt = '{}@{}:{}$'.format(user,conf.masterHost,workDir)
         
         try:
-          self.log( '%s%s\n' % (prompt,self._argumentsToStr(self.arguments)) )
-          print self.arguments
-          child = subprocess.Popen( self.arguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-        
-          while True:
-            line = child.stdout.readline()
-            if not line: break
-        
-            self.log( line )
-        except OSError, e:
-          raise BadBinary( self.arguments[0] )
+            self.log( '{}{}\n'.format(prompt,self._argumentsToStr(self.arguments)) )
+            print( self.arguments )
+            child = subprocess.Popen( self.arguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+            while True:
+                line = child.stdout.readline()
+                if not line: break
+                self.log( line )
+        except OSError as e:
+            raise BadBinary( self.arguments[0] )
         
         (pid,status) = os.waitpid( child.pid, 0 )
         status >>= 8
         if status != 0:
-          raise BadReturnCode( status )
-        
+            raise BadReturnCode( status )
         return
 
 
@@ -186,11 +185,10 @@ class CommandArg ( object ):
 
     def __str__ ( self ):
         s = ''
-        if self.wd: s = 'cd %s && ' % self.wd
-
+        if self.wd: s = 'cd {} && '.format(self.wd)
         for i in range(len(self.command)):
-          if i: s += ' '
-          s += self.command[i]
+            if i: s += ' '
+            s += self.command[i]
         return s
 
     def getArgs ( self ):
@@ -223,7 +221,7 @@ class CoriolisCommand ( CommandArg ):
         CommandArg.__init__ ( self, [ ccbBin
                                     , '--root='+rootDir
                                     , '--project=coriolis'
-                                    , '--make=-j%d install' % threads
+                                    , '--make=-j{} install'.format(threads)
                                     ] + otherArgs
                                   , fdLog=fdLog )
         return
@@ -258,21 +256,20 @@ class GitRepository ( object ):
 
     def removeLocalRepo ( self ):
         if os.path.isdir(self.localRepoDir):
-          print 'Removing Git local repository: <%s>' % self.localRepoDir
-          shutil.rmtree( self.localRepoDir )
+            print( 'Removing Git local repository: "{}"'.format(self.localRepoDir) )
+            shutil.rmtree( self.localRepoDir )
         return
 
     def clone ( self ):
-        print 'Clone/pull from:', self.url
+        print( 'Clone/pull from:', self.url )
         if not os.path.isdir(self.cloneDir):
-          os.makedirs( self.cloneDir )
-        
+            os.makedirs( self.cloneDir )
         if not os.path.isdir(self.localRepoDir):
-          os.chdir( self.cloneDir )
-          Command( [ 'git', 'clone', self.url ], self.fdLog ).execute()
+            os.chdir( self.cloneDir )
+            Command( [ 'git', 'clone', self.url ], self.fdLog ).execute()
         else:
-          os.chdir( self.localRepoDir )
-          Command( [ 'git', 'pull' ], self.fdLog ).execute()
+            os.chdir( self.localRepoDir )
+            Command( [ 'git', 'pull' ], self.fdLog ).execute()
         return
 
     def checkout ( self, branch ):
@@ -323,28 +320,26 @@ class Configuration ( object ):
         self._masterHost   = self._detectMasterHost()
         self._success      = False
         self._rcode        = 0
-        
         self._updateSecondaries()
         return
 
     def __setattr__ ( self, attribute, value ):
         if attribute in Configuration.SecondaryNames:
-          print ErrorMessage( 1, 'Attempt to write in read-only attribute <%s> in Configuration.'%attribute )
-          return
+            print( ErrorMessage( 1, 'Attempt to write in read-only attribute "{}" in Configuration.' \
+                                    .format(attribute) ))
+            return
         
         if attribute == 'masterHost' or attribute == '_masterHost':
-          if value == 'lepka':
-            print 'Never touch the Git tree when running on <lepka>.'
-            self._rmSource     = False
-            self._rmBuild      = False
-            self._doGit        = False
-            self._doSendReport = False
-        
+            if value == 'lepka':
+                print( 'Never touch the Git tree when running on "lepka".' )
+                self._rmSource     = False
+                self._rmBuild      = False
+                self._doGit        = False
+                self._doSendReport = False
         if attribute[0] == '_':
-          self.__dict__[attribute] = value
-          return
-        
-        if   attribute == 'homeDir': value = os.path.expanduser(value)
+            self.__dict__[attribute] = value
+            return
+        if attribute == 'homeDir': value = os.path.expanduser(value)
         
         self.__dict__['_'+attribute] = value
         self._updateSecondaries()
@@ -352,15 +347,15 @@ class Configuration ( object ):
 
     def __getattr__ ( self, attribute ):
         if attribute[0] != '_': attribute = '_'+attribute
-        if not self.__dict__.has_key(attribute):
-          raise ErrorMessage( 1, 'Configuration has no attribute <%s>.'%attribute )
+        if not attribute in self.__dict__:
+            raise ErrorMessage( 1, 'Configuration has no attribute "{}".'.format(attribute) )
         return self.__dict__[attribute]
 
     def _updateSecondaries ( self ):
         if self._nightlyMode:
-          self._rootDir = self._homeDir + '/nightly/coriolis-2.x'
+            self._rootDir = self._homeDir + '/nightly/coriolis-2.x'
         else:
-          self._rootDir  = self._homeDir + '/coriolis-2.x'
+            self._rootDir  = self._homeDir + '/coriolis-2.x'
         self._srcDir     = self._rootDir + '/src'
         self._logDir     = self._srcDir  + '/logs'
         self._yosysBin   = self._srcDir  + '/' + GitRepository.getLocalRepository(self._coriolisRepo) + '/bootstrap/yosysInstaller.sh'
@@ -373,27 +368,24 @@ class Configuration ( object ):
     def _detectMasterHost ( self ):
         if self._chrootMode is None: return 'unknown'
         if self._chrootMode: return 'chrooted-host'
-
         masterHost = 'unknown'
         hostname   = socket.gethostname()
         hostAddr   = socket.gethostbyname(hostname)
-        
         if hostname == 'lepka' and hostAddr == '127.0.0.1':
-          masterHost = 'lepka'
+            masterHost = 'lepka'
         else:
-          masterHost = hostname.split('.')[0]
+            masterHost = hostname.split('.')[0]
         return masterHost
 
     def openLog ( self, stem ):
         if not os.path.isdir(self._logDir):
-          os.makedirs( self._logDir )
-        
+            os.makedirs( self._logDir )
         index   = 0
         timeTag = time.strftime( "%Y.%m.%d" )
         while True:
-            logFile = os.path.join(self._logDir,"%s-%s-%02d.log" % (stem,timeTag,index))
+            logFile = os.path.join(self._logDir,"{}-{}-{:02}.log".format(stem,timeTag,index))
             if not os.path.isfile(logFile):
-                print "Report log: <%s>" % logFile
+                print( 'Report log: "{}"'.format(logFile) )
                 break
             index += 1
         fd = open( logFile, "w" )
@@ -403,65 +395,59 @@ class Configuration ( object ):
 
     def closeLogs ( self ):
         for fd in self._fds.values():
-          if fd: fd.close()
+            if fd: fd.close()
         return
 
     def compressLogs ( self ):
         for log in self._logs.values():
-          if not log: continue
-        
-          fd   = open( log, 'r' )
-          bzfd = bz2.BZ2File( log+'.bz2', 'w' )
-        
-          for line in fd.readlines(): bzfd.write( line )
-        
-          bzfd.close()
-          fd.close()
-        
-          os.unlink( log )
+            if not log: continue
+            fd   = open( log, 'r' )
+            bzfd = bz2.BZ2File( log+'.bz2', 'w' )
+            for line in fd.readlines():
+                if isinstance(line,str):
+                  bzfd.write( line.encode('utf-8') )
+                elif isinstance(line,bytes):
+                  bzfd.write( line )
+            bzfd.close()
+            fd.close()
+            os.unlink( log )
         return
 
     def getCommands ( self, target ):
-        commands  = []
-
+        commands = []
         if self.doYosys:
-          if not os.path.isfile( self.yosysBin ):
-            raise ErrorMessage( 1, [ 'Cannot find <yosysInstaller.sh>, should be here:'
-                                   , '   <%s>' % self.yosysBin
-                                   ] )
-          commands.append( YosysCommand( self.yosysBin, fdLog=self.fds['yosys'] ) )
-
+            if not os.path.isfile( self.yosysBin ):
+                raise ErrorMessage( 1, [ 'Cannot find <yosysInstaller.sh>, should be here:'
+                                       , '   "{}"'.format(self.yosysBin)
+                                       ] )
+            commands.append( YosysCommand( self.yosysBin, fdLog=self.fds['yosys'] ) )
         if self.doAlliance:
-          if not os.path.isfile( self.alcBin ):
-            raise ErrorMessage( 1, [ 'Cannot find <allianceInstaller.sh>, should be here:'
-                                   , '   <%s>' % self.alcBin
-                                   ] )
-          commands.append( AllianceCommand( self.alcBin, fdLog=self.fds['alliance'] ) )
-
+            if not os.path.isfile( self.alcBin ):
+                raise ErrorMessage( 1, [ 'Cannot find <allianceInstaller.sh>, should be here:'
+                                       , '   "{}"'.format(self.alcBin)
+                                       ] )
+            commands.append( AllianceCommand( self.alcBin, fdLog=self.fds['alliance'] ) )
         if self.doCoriolis:
-          if not os.path.isfile( self.ccbBin ):
-            raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
-                                   , '   <%s>' % self.ccbBin
-                                   ] )
-
-          otherArgs = []
-          if self.debugArg: otherArgs.append( self.debugArg )
-
-          if target == 'SL7_64':
-            otherArgs.append( '--project=support' )
-            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
-            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-          elif target == 'SL6_64' or target == 'SL6':
-            otherArgs.append( '--project=support' )
-            otherArgs.append( '--devtoolset=8' )
-            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
-            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
-          elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
-            if target == 'Ubuntu18': otherArgs.append( '--qt5' )
-            commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
-
+            if not os.path.isfile( self.ccbBin ):
+                raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
+                                       , '   "{}"'.format(self.ccbBin)
+                                       ] )
+            otherArgs = []
+            if self.debugArg: otherArgs.append( self.debugArg )
+            if target == 'SL7_64':
+                otherArgs.append( '--project=support' )
+                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
+                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
+            elif target == 'SL6_64' or target == 'SL6':
+                otherArgs.append( '--project=support' )
+                otherArgs.append( '--devtoolset=8' )
+                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
+                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
+            elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
+                if target == 'Ubuntu18': otherArgs.append( '--qt5' )
+                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
         if self.doBenchs:
-          commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
+            commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )
         return commands
 
 
@@ -469,33 +455,30 @@ class Report ( object ):
 
     def __init__ ( self, conf ):
         self.conf = conf
-        
         commaspace = ', '
         date       = time.strftime( "%A %d %B %Y" )
         stateText  = 'FAILED'
         modeText   = 'SoC installation'
         if self.conf.success:     stateText = 'SUCCESS'
         if self.conf.nightlyMode: modeText  = 'Nightly build'
-        
         self.message = MIMEMultipart()
-        self.message['Subject'] = '[%s] Coriolis %s %s' % (stateText,modeText,date)
+        self.message['Subject'] = '[{}] Coriolis {} {}'.format(stateText,modeText,date)
         self.message['From'   ] = self.conf.sender
         self.message['To'     ] = commaspace.join( self.conf.receivers )
         self.attachements = []
-        
         self.mainText  = '\n'
         self.mainText += 'Salut le Crevard,\n'
         self.mainText += '\n'
         if self.conf.nightlyMode:
-          self.mainText += 'This is the nightly build report of Coriolis.\n'
+            self.mainText += 'This is the nightly build report of Coriolis.\n'
         else:
-          self.mainText += 'SoC installer report of Coriolis.\n'
-        self.mainText += '%s\n' % date
+            self.mainText += 'SoC installer report of Coriolis.\n'
+        self.mainText += '{}\n'.format(date)
         self.mainText += '\n'
         if self.conf.success:
-          self.mainText += 'Build was SUCCESSFUL\n'
+            self.mainText += 'Build was SUCCESSFUL\n'
         else:
-          self.mainText += 'Build has FAILED, please have a look to the attached log file(s).\n'
+            self.mainText += 'Build has FAILED, please have a look to the attached log file(s).\n'
         self.mainText += '\n'
         self.mainText += 'Complete log file(s) can be found here:\n'
         return
@@ -505,28 +488,27 @@ class Report ( object ):
         
         fd = open( logFile, 'rb' )
         try:
-          fd.seek( -1024*100, os.SEEK_END )
-        except IOError, e:
-          pass
+            fd.seek( -1024*100, os.SEEK_END )
+        except IOError as e:
+            pass
         tailLines = ''
         for line in fd.readlines()[1:]:
-          tailLines += line
+            tailLines += line.decode( 'latin_1' )
         fd.close()
-        self.mainText += '    <%s>\n' % logFile
+        self.mainText += '    "{}"\n'.format(logFile)
         
         attachement = MIMEApplication(tailLines)
         attachement.add_header( 'Content-Disposition', 'attachment', filename=os.path.basename(logFile) )
-        
         self.attachements.append( attachement )
         return
 
     def send ( self ):
         self.message.attach( MIMEText(self.mainText) )
         for attachement in self.attachements:
-          self.message.attach( attachement )
+            self.message.attach( attachement )
         
-        print "Sending mail report to:"
-        for receiver in self.conf.receivers: print '  <%s>' % receiver
+        print( "Sending mail report to:" )
+        for receiver in self.conf.receivers: print( '  <{}>'.format(receiver) )
         session = smtplib.SMTP( 'localhost' )
         session.sendmail( self.conf.sender, self.conf.receivers, self.message.as_string() )
         session.quit()
@@ -577,7 +559,6 @@ try:
     if conf.doAlliance: conf.openLog( 'alliance' )
     if conf.doCoriolis: conf.openLog( 'coriolis' )
     if conf.doBenchs:   conf.openLog( 'benchs'   )
-
     if conf.dockerMode: os.environ['USER'] = 'root'
 
     gitSupports = []
@@ -613,29 +594,28 @@ try:
         for entry in os.listdir(conf.rootDir):
             if entry.startswith('Linux.'):
                 buildDir = conf.rootDir+'/'+entry
-                print 'Removing OS build directory: <%s>' % buildDir
+                print( 'Removing OS build directory: "{}"'.format(buildDir) )
                 shutil.rmtree( buildDir )
 
     commands = conf.getCommands( options.profile )
     for command in commands:
         if command.host:
-            print 'Executing command on remote host <%s>:' % host
+            print( 'Executing command on remote host "{}":'.format(host) )
         else:
-            print 'Executing command on *local* host:'
-        print '  %s' % str(command)
+            print( 'Executing command on *local* host:' )
+        print( '  {}'.format(command) )
         command.execute()
 
     conf.closeLogs()
-
     conf.success = True
 
-except ErrorMessage, e:
-    print e
+except ErrorMessage as e:
+    print( e )
     conf.closeLogs()
     conf.success = False
     
     if showTrace:
-        print '\nPython stack trace:'
+        print( '\nPython stack trace:' )
         traceback.print_tb( sys.exc_info()[2] )
     conf.rcode = e.code
 

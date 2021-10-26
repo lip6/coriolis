@@ -29,7 +29,7 @@ const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& \mbox{\hyperlink{classH
 \item 
 \mbox{\hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances}} \mbox{\hyperlink{classHurricane_1_1Cell_a7e51bee5db73dd44f788e591a5c175c8}{get\+Slave\+Instances}} () const
 \item 
-\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Cell_a63cb19881279b5af0a4e7dae707ef1bd}{get\+Net}} (const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name) const
+\mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ \mbox{\hyperlink{classHurricane_1_1Cell_a70f06abd224895aeeeeb042365dbf48a}{get\+Net}} (const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&name, bool use\+Alias=true) const
 \item 
 \mbox{\hyperlink{namespaceHurricane_a3404a8b17130a1824f4a281704b04df7}{Nets}} \mbox{\hyperlink{classHurricane_1_1Cell_a8b4728abe83e9ec21d7bee1154218279}{get\+Nets}} () const
 \item 
@@ -57,7 +57,7 @@ const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \& \mbox{\hyperlink{classH
 \item 
 \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_ab5bbab0a59106855d61deb94805e6115}{get\+Occurrences}} (unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max()) const
 \item 
-\mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}{get\+Occurrences\+Under}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max()) const
+\mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_aee27efc0497992f811c9812ffa272a5a}{get\+Occurrences\+Under}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&area, unsigned search\+Depth=std\+::numeric\+\_\+limits$<$ unsigned int $>$\+::max(), \mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}} threshold=0) const
 \item 
 \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} \mbox{\hyperlink{classHurricane_1_1Cell_a30b71d9a35ff4e0b59b98ef515f26fc0}{get\+Terminal\+Instance\+Occurrences}} () const
 \item 
@@ -83,7 +83,7 @@ void \mbox{\hyperlink{classHurricane_1_1Cell_ad2c9face922062664110c66ee205eab2}{
 \item 
 void \mbox{\hyperlink{classHurricane_1_1Cell_ab1949e2b708f0bd2d215ab90cfe864e0}{set\+Abutment\+Box}} (const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&abutment\+Box)
 \item 
-void \mbox{\hyperlink{classHurricane_1_1Cell_a15958b25e911e8f5543557b6deea5618}{set\+Terminal\+Netlist}} (bool \mbox{\hyperlink{classHurricane_1_1Cell_a6fe2b5a80d4b344733416b25ea559497}{is\+Terminal\+Netlist}})
+void \mbox{\hyperlink{classHurricane_1_1Cell_a47ce34631bb9f6862caa13e5b25a4d8f}{set\+Terminal\+Netlist}} (bool state)
 \item 
 void \mbox{\hyperlink{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}{materialize}} ()
 \item 
@@ -169,11 +169,11 @@ Returns the collection of all instances of the \mbox{\hyperlink{classHurricane_1
 \subsubsection{\texorpdfstring{get\+Slave\+Instances()}{getSlaveInstances()}}
 {\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_ac9436b03a2926f34ad6863deae2baadc}{Instances}} Hurricane\+::\+Cell\+::get\+Slave\+Instances (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
 
-Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of instances whose master is this \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. \mbox{\Hypertarget{classHurricane_1_1Cell_a63cb19881279b5af0a4e7dae707ef1bd}\label{classHurricane_1_1Cell_a63cb19881279b5af0a4e7dae707ef1bd}} 
+Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of instances whose master is this \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}}. \mbox{\Hypertarget{classHurricane_1_1Cell_a70f06abd224895aeeeeb042365dbf48a}\label{classHurricane_1_1Cell_a70f06abd224895aeeeeb042365dbf48a}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Net@{get\+Net}}
 \index{get\+Net@{get\+Net}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
 \subsubsection{\texorpdfstring{get\+Net()}{getNet()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ Hurricane\+::\+Cell\+::get\+Net (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHurricane_1_1Net}{Net}} $\ast$ Hurricane\+::\+Cell\+::get\+Net (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Name}{Name}} \&}]{name,  }\item[{bool}]{use\+Alias = {\ttfamily true} }\end{DoxyParamCaption}) const}
 
 Returns the \mbox{\hyperlink{classHurricane_1_1Net}{Net}} of name {\itshape name} if it exists, else {\ttfamily N\+U\+LL}. \mbox{\Hypertarget{classHurricane_1_1Cell_a8b4728abe83e9ec21d7bee1154218279}\label{classHurricane_1_1Cell_a8b4728abe83e9ec21d7bee1154218279}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Nets@{get\+Nets}}
@@ -268,11 +268,11 @@ Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all O
 \begin{DoxyRemark}{Remarks}
 The search depth is decremented each time a hirearchical level is crossed. The search ends when depth becomes null (the value {\ttfamily I\+N\+F\+I\+N\+I\+TE} is equal to {\ttfamily }(unsigned)-\/1) . 
 \end{DoxyRemark}
-\mbox{\Hypertarget{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}\label{classHurricane_1_1Cell_a7fb09c8e350923c47ce4c4407bdb00ce}} 
+\mbox{\Hypertarget{classHurricane_1_1Cell_aee27efc0497992f811c9812ffa272a5a}\label{classHurricane_1_1Cell_aee27efc0497992f811c9812ffa272a5a}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!get\+Occurrences\+Under@{get\+Occurrences\+Under}}
 \index{get\+Occurrences\+Under@{get\+Occurrences\+Under}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
 \subsubsection{\texorpdfstring{get\+Occurrences\+Under()}{getOccurrencesUnder()}}
-{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Cell\+::get\+Occurrences\+Under (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{unsigned}]{search\+Depth = {\ttfamily std\+:\+:numeric\+\_\+limits$<$unsigned~int$>$\+:\+:max()} }\end{DoxyParamCaption}) const}
+{\footnotesize\ttfamily \mbox{\hyperlink{namespaceHurricane_a1912927c128eee859af62dbe4cbe0a6b}{Occurrences}} Hurricane\+::\+Cell\+::get\+Occurrences\+Under (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classHurricane_1_1Box}{Box}} \&}]{area,  }\item[{unsigned}]{search\+Depth = {\ttfamily std\+:\+:numeric\+\_\+limits$<$unsigned~int$>$\+:\+:max()},  }\item[{\mbox{\hyperlink{group__DbUGroup_ga4fbfa3e8c89347af76c9628ea06c4146}{Db\+U\+::\+Unit}}}]{threshold = {\ttfamily 0} }\end{DoxyParamCaption}) const}
 
 Returns the \mbox{\hyperlink{classHurricane_1_1Collection}{Collection}} of all Occurrences belonging to this \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} and intersecting the given rectangular area.
 
@@ -324,11 +324,7 @@ Returns {\bfseries true} if the cell contains no instances. This is a layout lea
 \subsubsection{\texorpdfstring{is\+Terminal\+Netlist()}{isTerminalNetlist()}}
 {\footnotesize\ttfamily bool Hurricane\+::\+Cell\+::is\+Terminal\+Netlist (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
-Returns {\bfseries true} if the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is marked as terminal for the {\itshape netlist} hierarchy. A terminal {\itshape netlist} cell may, however contains further level of physical (layout) instances. This is a state that can be set or unset. 
-
-Referenced by set\+Terminal\+Netlist().
-
-\mbox{\Hypertarget{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}\label{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}} 
+Returns {\bfseries true} if the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} is marked as terminal for the {\itshape netlist} hierarchy. A terminal {\itshape netlist} cell may, however contains further level of physical (layout) instances. This is a state that can be set or unset. \mbox{\Hypertarget{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}\label{classHurricane_1_1Cell_a6c2f2fd9f6f6e0578937a90c0c37a507}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!is\+Unique@{is\+Unique}}
 \index{is\+Unique@{is\+Unique}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
 \subsubsection{\texorpdfstring{is\+Unique()}{isUnique()}}
@@ -368,17 +364,13 @@ sets \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} abutment box.
 \begin{DoxyRemark}{Remarks}
 At the \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} creation the abutment box is empty. This one must be set through this function. It is possible also, once fixed, to reset it to empty (undefined) by passing an empty \mbox{\hyperlink{classHurricane_1_1Box}{Box}} as argument. 
 \end{DoxyRemark}
-\mbox{\Hypertarget{classHurricane_1_1Cell_a15958b25e911e8f5543557b6deea5618}\label{classHurricane_1_1Cell_a15958b25e911e8f5543557b6deea5618}} 
+\mbox{\Hypertarget{classHurricane_1_1Cell_a47ce34631bb9f6862caa13e5b25a4d8f}\label{classHurricane_1_1Cell_a47ce34631bb9f6862caa13e5b25a4d8f}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!set\+Terminal\+Netlist@{set\+Terminal\+Netlist}}
 \index{set\+Terminal\+Netlist@{set\+Terminal\+Netlist}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
 \subsubsection{\texorpdfstring{set\+Terminal\+Netlist()}{setTerminalNetlist()}}
 {\footnotesize\ttfamily void Hurricane\+::\+Cell\+::set\+Terminal\+Netlist (\begin{DoxyParamCaption}\item[{bool}]{state }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-sets \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} {\itshape netlist} terminal status to {\itshape state}. 
-
-References is\+Terminal\+Netlist().
-
-\mbox{\Hypertarget{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}\label{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}} 
+sets \mbox{\hyperlink{classHurricane_1_1Cell}{Cell}} {\itshape netlist} terminal status to {\itshape state}. \mbox{\Hypertarget{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}\label{classHurricane_1_1Cell_affefc597317063857f4904d4b16d5d4f}} 
 \index{Hurricane\+::\+Cell@{Hurricane\+::\+Cell}!materialize@{materialize}}
 \index{materialize@{materialize}!Hurricane\+::\+Cell@{Hurricane\+::\+Cell}}
 \subsubsection{\texorpdfstring{materialize()}{materialize()}}

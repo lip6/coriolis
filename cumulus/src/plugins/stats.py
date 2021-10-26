@@ -1,6 +1,6 @@
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2020-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2020-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -18,7 +18,6 @@ This script hook the Stats plugin inside GCT/Unicorn.
 Compute some statistics on a hierarchical block.
 """
 
-from   __future__ import print_function
 import sys
 import traceback
 import helpers
@@ -44,7 +43,7 @@ class Stats ( object ):
     def lookup ( p ):
         if isinstance(p,Cell): cell = p
         else:                  cell = p.getMasterCell()
-        if Stats.LUT.has_key(cell): return Stats.LUT[ cell ]
+        if cell in Stats.LUT: return Stats.LUT[ cell ]
         return None
 
     @staticmethod
@@ -59,7 +58,7 @@ class Stats ( object ):
     def consolidate ():
         ordereds = {}
         for item in Stats.LUT.values():
-            if not ordereds.has_key(item.depth):
+            if not item.depth in ordereds:
                 ordereds[item.depth] = []
             ordereds[item.depth].append( item )
         rkeys = ordereds.keys()
@@ -150,7 +149,7 @@ def scriptMain ( **kw ):
 
         stats = Stats( cell, 0 )
         stats.display()
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
         rvalue = False
 

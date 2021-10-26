@@ -86,7 +86,10 @@ extern "C" {
   void  BaseQuery::goCallback ( Go* go )
   {
     if (PyCallable_Check(_goCallback)) {
-      PyObject_CallFunctionObjArgs( _goCallback, _self, PyEntity_NEW(go), NULL );
+      if (not PyObject_CallFunctionObjArgs( _goCallback, _self, PyEntity_NEW(go), NULL )) {
+        PyErr_Print();
+        PyErr_Clear();
+      }
     }
   }
 

@@ -2,14 +2,14 @@
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2008-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
-# |    C o r i o l i s  /  C h a m s   B u i l d e r                |
+# |          T o o l c h a i n   B u i l d e r                      |
 # |                                                                 |
 # |  Author      :                   Jean-Paul Chaput               |
-# |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+# |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 # | =============================================================== |
 # |  Python      :   "./builder/Configuration.py"                   |
 # +-----------------------------------------------------------------+
@@ -21,8 +21,8 @@ import os
 import os.path
 import datetime
 import subprocess
-from   .       import ErrorMessage
-from   Project import Project
+from   .        import ErrorMessage
+from   .Project import Project
 
 
 class Configuration ( object ):
@@ -64,30 +64,25 @@ class Configuration ( object ):
         self._updateSecondary()
         return
 
-
     def __setattr__ ( self, attribute, value ):
         if attribute in Configuration.SecondaryNames:
-            print ErrorMessage( 1, 'Attempt to write in read-only attribute <%s> in Configuration.'%attribute )
+            print( ErrorMessage( 1, 'Attempt to write in read-only attribute "{}" in Configuration.' \
+                                    .format(attribute) ))
             return
-
         if attribute[0] == '_':
             self.__dict__[attribute] = value
             return
-
         if   attribute == 'rootDir': value = os.path.expanduser(value)
         elif attribute == 'enableShared' and value != 'ON': value = 'OFF'
-
         self.__dict__['_'+attribute] = value
         self._updateSecondary()
         return
 
-
     def __getattr__ ( self, attribute ):
         if attribute[0] != '_': attribute = '_'+attribute
-        if not self.__dict__.has_key(attribute):
+        if not attribute in self.__dict__:
             raise ErrorMessage( 1, 'Configuration has no attribute <%s>.'%attribute )
         return self.__dict__[attribute]
-
 
     def _updateSecondary ( self ):
         if self._enableShared == "ON": self._libMode = "Shared"
@@ -109,7 +104,6 @@ class Configuration ( object ):
                                           , "%s.%s" % (self._buildMode,self._libMode) )
         self._buildDir     = os.path.join ( self._osDir, "build" )
         self._installDir   = os.path.join ( self._osDir, "install" )
-
         self._specFileIn     = os.path.join ( self._bootstrapDir, "%s.spec.in"%self._packageName )
         self._specFile       = os.path.join ( self._bootstrapDir, "%s.spec"   %self._packageName )
         self._debianDir      = os.path.join ( self._bootstrapDir, "debian" )
@@ -125,7 +119,6 @@ class Configuration ( object ):
                                                                       ,self._gitHash)
         self._distribPatch   = os.path.join ( self._sourceDir, "bootstrap", "%s-for-distribution.patch"%self._packageName )
         return
-
 
     def _guessOs ( self ):
         self._libSuffix         = None
@@ -149,75 +142,71 @@ class Configuration ( object ):
         self._osCygwinW10_64    = re.compile (".*CYGWIN_NT-10\.[0-3].*x86_64.*")
         self._osCygwinW10       = re.compile (".*CYGWIN_NT-10\.[0-3].*i686.*")
 
-        uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
-        lines = uname.stdout.readlines()
-
-        if self._osSlsoc7x_64.match(lines[0]):
+        uname  = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
+        lines  = uname.stdout.readlines()
+        osLine = lines[0].decode( 'ascii' )
+        if self._osSlsoc7x_64.match(osLine):
             self._osType    = "Linux.el7_64"
             self._libSuffix = "64"
-        elif self._osSlsoc6x_64.match(lines[0]):
+        elif self._osSlsoc6x_64.match(osLine):
             self._osType    = "Linux.slsoc6x_64"
             self._libSuffix = "64"
-        elif self._osSlsoc6x   .match(lines[0]): self._osType = "Linux.slsoc6x"
-        elif self._osSLSoC5x_64.match(lines[0]):
+        elif self._osSlsoc6x   .match(osLine): self._osType = "Linux.slsoc6x"
+        elif self._osSLSoC5x_64.match(osLine):
             self._osType    = "Linux.SLSoC5x_64"
             self._libSuffix = "64"
-        elif self._osSLSoC5x   .match(lines[0]): self._osType = "Linux.SLSoC5x"
-        elif self._osFedora_64 .match(lines[0]):
+        elif self._osSLSoC5x   .match(osLine): self._osType = "Linux.SLSoC5x"
+        elif self._osFedora_64 .match(osLine):
             self._osType    = "Linux.fc_64"
             self._libSuffix = "64"
-        elif self._osFedora    .match(lines[0]): self._osType = "Linux.fc"
-        elif self._osLinux_64  .match(lines[0]):
+        elif self._osFedora    .match(osLine): self._osType = "Linux.fc"
+        elif self._osLinux_64  .match(osLine):
             self._osType    = "Linux.x86_64"
             if os.path.exists("/usr/lib64/"):
                 self._libSuffix = "64"
-        elif self._osLinux     .match(lines[0]): self._osType = "Linux.i386"
-        elif self._osDarwin    .match(lines[0]): self._osType = "Darwin"
-        elif self._osFreeBSD8x_amd64.match(lines[0]):
+        elif self._osLinux     .match(osLine): self._osType = "Linux.i386"
+        elif self._osDarwin    .match(osLine): self._osType = "Darwin"
+        elif self._osFreeBSD8x_amd64.match(osLine):
             self._osType    = "FreeBSD.8x.amd64"
             self._libSuffix = "64"
-        elif self._osFreeBSD8x_64.match(lines[0]):
+        elif self._osFreeBSD8x_64.match(osLine):
             self._osType    = "FreeBSD.8x.x86_64"
             self._libSuffix = "64"
-        elif self._osFreeBSD8x .match(lines[0]): self._osType = "FreeBSD.8x.i386"
-        elif self._osCygwinW7_64.match(lines[0]):
+        elif self._osFreeBSD8x .match(osLine): self._osType = "FreeBSD.8x.i386"
+        elif self._osCygwinW7_64.match(osLine):
             self._osType = "Cygwin.W7_64"
             self._libSuffix = "64"
-        elif self._osCygwinW7.match(lines[0]): self._osType = "Cygwin.W7"
-        elif self._osCygwinW8_64.match(lines[0]):
+        elif self._osCygwinW7.match(osLine): self._osType = "Cygwin.W7"
+        elif self._osCygwinW8_64.match(osLine):
             self._osType = "Cygwin.W8_64"
             self._libSuffix = "64"
-        elif self._osCygwinW8.match(lines[0]): self._osType = "Cygwin.W8"
-        elif self._osCygwinW10_64.match(lines[0]):
+        elif self._osCygwinW8.match(osLine): self._osType = "Cygwin.W8"
+        elif self._osCygwinW10_64.match(osLine):
             self._osType = "Cygwin.W10_64"
             self._libSuffix = "64"
-        elif self._osCygwinW10.match(lines[0]): self._osType = "Cygwin.W10"
+        elif self._osCygwinW10.match(osLine): self._osType = "Cygwin.W10"
         else:
             uname = subprocess.Popen ( ["uname", "-sr"], stdout=subprocess.PIPE )
             self._osType = uname.stdout.readlines()[0][:-1]
 
-            print "[WARNING] Unrecognized OS: \"%s\"." % lines[0][:-1]
-            print "          (using: \"%s\")" % self._osType
+            print( '[WARNING] Unrecognized OS: "{}."'.format(osLine[:-1]) )
+            print( '          (using: "{}")'.format(self._osType) )
 
         if self._libSuffix == '64' and not os.path.exists('/usr/lib64'):
             self._libSuffix = None
-        
         return
-
 
     def getPrimaryIds   ( self ): return Configuration.PrimaryNames
     def getSecondaryIds ( self ): return Configuration.SecondaryNames
     def getAllIds       ( self ): return Configuration.PrimaryNames + Configuration.SecondaryNames
 
-
     def register ( self, project ):
         for registered in self._projects:
             if registered.getName() == project.getName():
-                print ErrorMessage( 0, "Project \"%s\" is already registered (ignored)." )
+                print( ErrorMessage( 0, 'Project "{}" is already registered (ignored).'.format(project.getName()) ))
                 return
         self._projects += [ project ]
         return
-
 
     def getProject ( self, name ):
         for project in self._projects:
@@ -225,19 +214,17 @@ class Configuration ( object ):
                 return project
         return None
 
-
     def getToolProject ( self, name ):
         for project in self._projects:
             if project.hasTool(name):
                 return project
         return None
 
-
     def load ( self, confFile ):
         moduleGlobals = globals()
 
         if not confFile:
-            print 'Making an educated guess to locate the configuration file:'
+            print( 'Making an educated guess to locate the configuration file:' )
             locations = [ os.path.abspath(os.path.dirname(sys.argv[0]))
                         , os.environ['HOME']+'/coriolis-2.x/src/coriolis/bootstrap'
                         , os.environ['HOME']+'/coriolis/src/coriolis/bootstrap'
@@ -247,86 +234,82 @@ class Configuration ( object ):
 
             for location in locations:
                 self._confFile = location + '/build.conf'
-                print '  <%s>' % self._confFile
+                print( '  "{}"'.format(self._confFile) )
 
                 if os.path.isfile(self._confFile): break
             if not self._confFile:
                 ErrorMessage( 1, 'Cannot locate any configuration file.' ).terminate()
         else:
-            print 'Using user-supplied configuration file:'
-            print '  <%s>' % confFile
+            print( 'Using user-supplied configuration file:' )
+            print( '  "{}"'.format(confFile) )
 
             self._confFile = confFile
             if not os.path.isfile(self._confFile):
                 ErrorMessage( 1, 'Missing configuration file:', '<%s>'%self._confFile ).terminate()
 
-        print 'Reading configuration from:'
-        print '  <%s>' % self._confFile
-        
+        print( 'Reading configuration from:' )
+        print( '  "{}"'.format(self._confFile) )
         try:
-            execfile( self._confFile, moduleGlobals )
-        except Exception, e:
+            exec( open(self._confFile).read(), globals() )
+        except Exception as e:
             ErrorMessage( 1, 'An exception occured while loading the configuration file:'
                            , '<%s>\n' % (self._confFile)
                            , 'You should check for simple python errors in this file.'
                            , 'Error was:'
                            , '%s\n' % e ).terminate()
-        
-        if moduleGlobals.has_key('projects'):
+
+        if 'projects' in moduleGlobals:
             entryNb = 0
             for entry in moduleGlobals['projects']:
                 entryNb += 1
-                if not entry.has_key('name'):
+                if not 'name' in entry:
                     raise ErrorMessage( 1, 'Missing project name in project entry #%d.' % entryNb )
-                if not entry.has_key('tools'):
+                if not 'tools' in entry:
                     raise ErrorMessage( 1, 'Missing tools list in project entry #%d (<%s>).' \
                                            % (entryNb,entry['name']) )
                 if not isinstance(entry['tools'],list):
                     raise ErrorMessage( 1, 'Tools item of project entry #%d (<%s>) is not a list.' \
                                            % (entryNb,entry['name']) )
-                if not entry.has_key('repository'):
+                if not 'repository' in entry:
                     raise ErrorMessage( 1, 'Missing project repository in project entry #%d.' \
                                            % entryNb )
 
                 self.register( Project(entry['name'],entry['tools'],entry['repository']) )
         else:
-            ErrorMessage( 1, 'Configuration file is missing the \'project\' symbol.'
-                           , '<%s>'%self._confFile ).terminate()
+            ErrorMessage( 1, 'Configuration file is missing the "project" symbol.'
+                           , '"{}"'.format(self._confFile) ).terminate()
 
-        if moduleGlobals.has_key('projectdir'):
+        if 'projectdir' in moduleGlobals:
             self.projectDir = moduleGlobals['projectdir']
-
-        if moduleGlobals.has_key('svnconfig'):
+        if 'svnconfig' in moduleGlobals:
             svnconfig = moduleGlobals['svnconfig']
-            if svnconfig.has_key('method'): self._svnMethod = svnconfig['method']
-
-        if moduleGlobals.has_key('package'):
+            if 'method' in svnconfig: self._svnMethod = svnconfig['method']
+        if 'package' in moduleGlobals:
             package = moduleGlobals['package']
-            if package.has_key('name'    ): self.packageName    = package['name']
-            if package.has_key('version' ): self.packageVersion = package['version']
-            if package.has_key('excludes'):
+            if 'name'     in package: self.packageName    = package['name']
+            if 'version'  in package: self.packageVersion = package['version']
+            if 'excludes' in package:
                 if not isinstance(package['excludes'],list):
                     raise ErrorMessage( 1, 'Excludes of package configuration is not a list.')
                 self._packageExcludes = package['excludes']
-            if package.has_key('projects'):
+            if 'projects' in package:
                 if not isinstance(package['projects'],list):
                     raise ErrorMessage( 1, 'Projects to package is not a list.')
                 self._packageProjects = package['projects']
         return
 
-
     def show ( self ):
-        print 'CCB Configuration:'
+        print( 'CCB Configuration:' )
         if self._gitMethod:
-            print '  Git Method: <%s>' % self._gitMethod
+            print( '  Git Method: "{}"'.format(self._gitMethod) )
         else:
-            print '  Git Method not defined, will not be able to push/pull.'
-
+            print( '  Git Method not defined, will not be able to push/pull.' )
         for project in self._projects:
-            print '  project:%-15s repository:<%s>' % ( ('<%s>'%project.getName()), project.getRepository() )
+            print( '  project:{0:>15} repository:"{1}"' \
+                   .format( '"{}"'.format(project.getName()), project.getRepository() ))
             toolOrder = 1
             for tool in project.getTools():
-                print '%s%02d:<%s>' % (' '*26,toolOrder,tool)
+                print( '{0}{1:02}:"{2}"'.format( ' '*26, toolOrder, tool ))
                 toolOrder += 1
             print
         return

@@ -159,7 +159,9 @@ namespace Hurricane {
     _resolution = 1;
     while ( precision-- ) _resolution /= 10;
 
-    if (not (flags & NoTechnoUpdate) and DataBase::getDB()->getTechnology())
+    if (not (flags & NoTechnoUpdate)
+       and DataBase::getDB()
+       and DataBase::getDB()->getTechnology())
       DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda( 1.0) );
@@ -209,7 +211,9 @@ namespace Hurricane {
 
     _gridsPerLambda = gridsPerLambda;
 
-    if (not (flags & NoTechnoUpdate) and DataBase::getDB()->getTechnology())
+    if (not (flags & NoTechnoUpdate)
+       and DataBase::getDB()
+       and DataBase::getDB()->getTechnology())
       DataBase::getDB()->getTechnology()->_onDbuChange ( scale );
 
     setSymbolicSnapGridStep ( DbU::lambda(1) );

@@ -1,7 +1,8 @@
+
 # -*- coding: utf-8 -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2019-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2019-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -18,7 +19,6 @@ Core2Chip configuration for the SxLib/PxLib Alliance historical
 standard cell library.
 """
 
-from   __future__ import print_function
 import sys
 import re
 from   Hurricane  import DbU

@@ -298,6 +298,7 @@ namespace Anabatic {
     , _contacts      ()
     , _depth         (Session::getRoutingGauge()->getDepth())
     , _pinDepth      (0)
+    , _satProcessed  (0)
     , _rpCount       (0)
     , _blockages     (new DbU::Unit [_depth])
     , _cDensity      (0.0)

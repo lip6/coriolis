@@ -13,6 +13,7 @@
         add_executable ( cx2y        ${cpps} )
  target_link_libraries ( cx2y        crlcore
                                      ${UTILITIES_LIBRARY}
+                                     ${Python_LIBRARIES}
                                      ${LIBEXECINFO_LIBRARIES} 
                                      ${LIBBFD_LIBRARIES} 
                        )

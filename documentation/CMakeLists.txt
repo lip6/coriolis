@@ -7,7 +7,8 @@
 
  set(ignoreVariables "${LIB_SUFFIX} ${CMAKE_INSTALL_DIR}")
 
- option(BUILD_DOC "Build the documentation (html+pdf)" OFF)
+ option(BUILD_DOC  "Build the documentation (html+pdf)" OFF)
+ option(USE_LIBBFD "Link with BFD libraries to print stack traces" OFF)
 
  list(INSERT CMAKE_MODULE_PATH 0 "${DESTDIR}$ENV{CORIOLIS_TOP}/share/cmake/Modules/")
  find_package(Bootstrap REQUIRED)

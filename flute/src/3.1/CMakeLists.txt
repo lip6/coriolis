@@ -4,7 +4,7 @@
                         ${CRLCORE_INCLUDE_PATH}
                         ${HURRICANE_INCLUDE_DIR}
                         ${CONFIGURATION_INCLUDE_DIR} 
-                        ${PYTHON_INCLUDE_PATH}
+                        ${Python_INCLUDE_DIRS}
                       )
 
                    set( includes      flute.h
@@ -32,7 +32,7 @@
                                       ${CORIOLIS_LIBRARIES}
                                       ${HURRICANE_PYTHON_LIBRARIES}
                                       ${UTILITIES_LIBRARY}
-                                      ${PYTHON_LIBRARIES}
+                                      ${Python_LIBRARIES}
                                       -lutil
                       )
 

@@ -401,7 +401,7 @@ static void AttachContacts(Net* net)
     {
         if (contact->getBodyHook()->isAttached())
             throw Error("Cannot create contacts ring: A bodyHook is attached");
-            componentsToAttachList.push_back(contact);
+        componentsToAttachList.push_back(contact);
         end_for;
     }
     list<Component*>::iterator lcit = componentsToAttachList.begin();
@@ -779,7 +779,7 @@ void ConnectPlugHooks(Cell* cell)
       try {
         _index = std::stoi( sindex );
       }
-      catch ( std::invalid_argument e ) {
+      catch ( std::invalid_argument& e ) {
         cerr << Error( "SubNetNames::match(): std::stoi() catched an exception on \"%s\"."
                      , sindex.c_str() ) << endl;
       }
@@ -788,7 +788,7 @@ void ConnectPlugHooks(Cell* cell)
       if (code == REG_NOMATCH) {
         size_t pos = s.find( '(' );
         if (pos != string::npos) {
-          cerr << Error( "SubNetNames::match(): Strange CHDL signal name \"%s\"."
+          cerr << Error( "SubNetNames::match(): Strange VHDL signal name \"%s\"."
                        , s.c_str() ) << endl;
         }
       } else {

@@ -22,7 +22,7 @@
 #if defined(HAVE_LEFDEF)
 #  include  "lefrReader.hpp"
 #endif
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/Error.h"
 #include "hurricane/Warning.h"
 #include "hurricane/DataBase.h"
@@ -446,7 +446,7 @@ namespace {
                                     , parser->fromUnitsMicrons( r->yh )
                                     );
         }
-      //cerr << "       | " << segment << endl;
+        cdebug_log(100,0) << "| " << segment << endl;
       }
     }
 

@@ -27,7 +27,7 @@
 #include <QBitmap>
 #include <QLabel>
 
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/SharedName.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Technology.h"
@@ -1615,7 +1615,7 @@ namespace Hurricane {
   {
     PaletteItem* item  = (_palette) ? _palette->find(name) : NULL;
   //DbU::Unit    unity = symbolicMode() ? DbU::lambda(1.0) : DbU::grid(10.0);
-    DbU::Unit    unity = DbU::lambda(1.0);
+  //DbU::Unit    unity = DbU::lambda(1.0);
 
     if (not item) return false;
     return item->isItemVisible(); //and (Graphics::getThreshold(name) < getScale()*unity);
@@ -1634,7 +1634,7 @@ namespace Hurricane {
   bool  CellWidget::isDrawableExtension ( const Name& extensionName )
   {
     PaletteItem* item  = (_palette) ? _palette->find(extensionName) : NULL;
-    DbU::Unit    unity = DbU::lambda(1.0);
+  //DbU::Unit    unity = DbU::lambda(1.0);
 
     if (not item) return false;
     return item->isItemVisible(); // and (Graphics::getThreshold(extensionName) < getScale()*unity);
@@ -1846,7 +1846,7 @@ namespace Hurricane {
     _drawingPlanes.setBrush( Graphics::getBrush(("grid"), getDarkening() ));
 
     Box  redrawBox    = screenToDbuBox( redrawArea ).inflate( DbU::lambda(1.0) );
-    bool detailedGrid = _underDetailedGridThreshold();
+  //bool detailedGrid = _underDetailedGridThreshold();
 
     DbU::Unit  gridStep      = ((symbolicMode()) ? 1 : 10) * _snapGridStep();
     DbU::Unit  superGridStep = gridStep*10;

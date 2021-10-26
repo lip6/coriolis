@@ -147,12 +147,12 @@ extern "C" {
 
   extern void  PyCatalogState_LinkPyType() {
     cdebug_log(30,0) << "PyCatalogState_LinkType()" << endl;
-    PyTypeCatalogState.tp_dealloc = (destructor) PyCatalogState_DeAlloc;
-    PyTypeCatalogState.tp_compare = (cmpfunc)    PyCatalogState_Cmp;
-    PyTypeCatalogState.tp_repr    = (reprfunc)   PyCatalogState_Repr;
-    PyTypeCatalogState.tp_str     = (reprfunc)   PyCatalogState_Str;
-    PyTypeCatalogState.tp_hash    = (hashfunc)   PyCatalogState_Hash;
-    PyTypeCatalogState.tp_methods = PyCatalogState_Methods;
+    PyTypeCatalogState.tp_dealloc     = (destructor) PyCatalogState_DeAlloc;
+    PyTypeCatalogState.tp_richcompare = (richcmpfunc)PyCatalogState_Cmp;
+    PyTypeCatalogState.tp_repr        = (reprfunc)   PyCatalogState_Repr;
+    PyTypeCatalogState.tp_str         = (reprfunc)   PyCatalogState_Str;
+    PyTypeCatalogState.tp_hash        = (hashfunc)   PyCatalogState_Hash;
+    PyTypeCatalogState.tp_methods     = PyCatalogState_Methods;
   }
 
 

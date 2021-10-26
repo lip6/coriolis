@@ -45,7 +45,7 @@ namespace Etesian {
                      , DbU::getValueString(pitch).c_str()
                      ) << endl;
 
-    int pitchNb = (int)( cell->getAbutmentBox().getWidth() / pitch );
+  //int pitchNb = (int)( cell->getAbutmentBox().getWidth() / pitch );
 
     _tieCell = cell;
   }

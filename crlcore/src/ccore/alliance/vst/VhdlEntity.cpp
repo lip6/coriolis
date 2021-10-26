@@ -187,24 +187,28 @@ namespace Vhdl {
       else if (rightpar + 1 != name.size())
         error = "malformed net name, right parenthesis is *not* the last character";
       else {
-        size_t endindex = 0;
-        int    value    = stoi( name.substr(leftpar+1), &endindex );
-
-        if (endindex != rightpar-leftpar-1)
-          error = "unable to convert index (not a number)";
-        else if (value < 0)
-          error = "negative index";
-        else {
-          stem  = name.substr( 0, leftpar );
-          index = (size_t)value;
-          return true;
+        try {
+          size_t endindex = 0;
+          int    value    = stoi( name.substr(leftpar+1), &endindex );
+          
+          if (endindex != rightpar-leftpar-1)
+            error = "unable to convert index (not a number)";
+          else if (value < 0)
+            error = "negative index";
+          else {
+            stem  = name.substr( 0, leftpar );
+            index = (size_t)value;
+            return true;
+          }
+        } catch ( exception& e ) {
+          error = e.what();
         }
       }
     }
 
     if (not error.empty()) {
       cerr << Warning( "Entity::parseVector() Net has not a valid VHDL name, %s.\n"
-                       "          %s\n"
+                       "          \"%s\"\n"
                      , error.c_str()
                      , getString(net->getName()).c_str()
                      ) << endl;

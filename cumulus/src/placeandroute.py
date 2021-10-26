@@ -186,7 +186,7 @@ def pyAlimVerticalRail ( cell, xcoord ) :
   # Check the value of x
   nb_col = cell.getAbutmentBox().getWidth() / DbU_lambda(PITCH)
   if ( xcoord >=  nb_col ) or ( xcoord < 0 ) : 
-    print 'This is it'
+    print( 'This is it' )
     message = "AlimVerticalRail : Illegal argument x , x must be between %d and %d\n" % ( 0, nb_col )  
     raise ErrorMessage(2,message)
 
@@ -926,7 +926,7 @@ def pyPowerRing ( cell, core, n ) :
   topRoutingLayer     = db.getTechnology().getLayer( topRoutingLayerName )
   allowedDepth        = CRL.AllianceFramework.get().getRoutingGauge().getLayerDepth( topRoutingLayer )
 
-  print 'topRoutingLayer: <%s> depth:%d' % (topRoutingLayer.getName(), allowedDepth)
+  print( 'topRoutingLayer: <%s> depth:%d' % (topRoutingLayer.getName(), allowedDepth) )
   
   UpdateSession.open()
   
@@ -1576,7 +1576,7 @@ def pyPowerRing ( cell, core, n ) :
       # end of while
   # end of while
 
-  #print "\n\n\n\npoints_0 : ", points_0 , "\n\npoints_1 : " ,points_1 , "\n\npoints_2 : " ,points_2 , "\n\npoints_3 : " , points_3 , "\n\n\n\n" 
+  #print( "\n\n\n\npoints_0 : ", points_0 , "\n\npoints_1 : " ,points_1 , "\n\npoints_2 : " ,points_2 , "\n\npoints_3 : " , points_3 , "\n\n\n\n"  )
 
   # Placer au cote du nord 
   for ins_pad in pad_north :
@@ -1976,16 +1976,16 @@ def isExternalClockPad ( ins ) :
 def affichePad ( cell ) :
   global pad_north, pad_south, pad_east, pad_west
   
-  print "Pads in the north are :"
+  print( "Pads in the north are :" )
   for pad in pad_north : print cell.getInstance ( pad.getName() ).getMasterCell().getName() 
 
-  print "Pads in the south are :"
+  print( "Pads in the south are :" )
   for pad in pad_south : print cell.getInstance ( pad.getName() ).getMasterCell().getName() 
 
-  print "Pads in the east are :"
+  print( "Pads in the east are :" )
   for pad in pad_east  : print cell.getInstance ( pad.getName() ).getMasterCell().getName() 
 
-  print "Pads in the west are :"
+  print( "Pads in the west are :" )
   for pad in pad_west  : print cell.getInstance ( pad.getName() ).getMasterCell().getName()
 
 ############

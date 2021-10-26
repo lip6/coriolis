@@ -23,7 +23,7 @@ class QGridLayout;
 #include "hurricane/configuration/ConfigurationWidget.h"
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   class ParameterWidget;
 

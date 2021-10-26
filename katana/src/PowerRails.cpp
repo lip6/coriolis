@@ -797,8 +797,7 @@ namespace {
   {
     _globalNets.setBlockage( katana->getBlockageNet() );
 
-    Technology*   technology = DataBase::getDB()->getTechnology();
-    RoutingGauge* rg         = _katana->getConfiguration()->getRoutingGauge();
+    RoutingGauge* rg = _katana->getConfiguration()->getRoutingGauge();
 
     for ( RoutingLayerGauge* lg : rg->getLayerGauges() ) {
       cdebug_log(159,0) << "Gauge: [" << lg->getDepth() << "] " << lg << endl;

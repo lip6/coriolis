@@ -14,7 +14,7 @@ try:
     import oroshi
     import oroshi.paramsmatrix
     import oroshi.stack
-except Exception, e:
+except Exception as e:
     helpers.io.catch( e )
 
 
@@ -26,7 +26,7 @@ def checkCoherency ( device, bbMode ):
 
     W    = device.getParameter( 'W' ).getValue()
     M    = device.getParameter( 'M' ).getValue()
-    mMax = W / rules.transistorMinW
+    mMax = W // rules.transistorMinW
     if M > mMax:
       message += \
         '        W/M ratio must be greater than transistor minimal width (%s)\n' \
@@ -76,7 +76,7 @@ def layout ( device, bbMode ):
     westWirings = westWirings + 'S.b1.{Sw}  '
 
     mintWirings = ''
-    for i in range( (M / device.getMint())*2 ):
+    for i in range( (M // device.getMint())*2 ):
       if (i + remain) % 2: mintWirings += 'G.b0.{Gw}  D2.t1.{D2w}  G.b0.{Gw}  S.b1.{Sw}  '
       else:                mintWirings += 'G.b0.{Gw}  D1.t0.{D1w}  G.b0.{Gw}  S.b1.{Sw}  '
 

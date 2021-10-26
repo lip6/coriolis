@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2012-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -20,7 +20,7 @@
 #include <boost/bind.hpp>
 #include <QApplication>
 #include <QPrinter>
-#include "vlsisapd/configuration/Configuration.h"
+#include "hurricane/configuration/Configuration.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/BasicLayer.h"
 #include "hurricane/Technology.h"

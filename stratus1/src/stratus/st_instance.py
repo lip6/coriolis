@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 # This file is part of the Coriolis Project.
 # Copyright (C) Laboratoire LIP6 - Departement ASIM
@@ -50,7 +49,10 @@
 
 import CRL
 from Hurricane        import *
-
+#from st_net           import Signal, SignalIn, SignalOut, SignalInOut,      \
+#                             SignalUnknown, TriState, CkIn, SignalCk,       \
+#                             Sig, VddIn, VssIn, VddInFromHur, VssInFromHur, \
+#                             SignalVdd, SignalVss
 from st_model         import Model, MODELMAP
 from st_getrealmodel  import GetRealModel, InitBV
 
@@ -77,16 +79,26 @@ DPSXLIB = "dp_.*_x[1-8]"
 #  chaine = re.search ( "([^:]*):(.*)", cata_lib )
 
 ## Class of nets ##
-NET = ( "st_net.SignalIn", "st_net.SignalOut", "st_net.SignalInOut" \
-      , "st_net.SignalUnknown", "st_net.TriState" \
-      , "st_net.CkIn", "st_net.SignalCk" \
-      , "st_net.Signal", "st_net.Sig" \
-      , "st_net.VddIn", "st_net.VssIn" \
-      , "st_net.VddInFromHur", "st_net.VssInFromHur" \
-      , "st_net.SignalVdd" , "st_net.SignalVss" \
+NET = ( "<class 'st_net.SignalIn'>"
+      , "<class 'st_net.SignalOut'>"
+      , "<class 'st_net.SignalInOut'>"
+      , "<class 'st_net.SignalUnknown'>"
+      , "<class 'st_net.TriState'>"
+      , "<class 'st_net.CkIn'>"
+      , "<class 'st_net.SignalCk'>"
+      , "<class 'st_net.Signal'>"
+      , "<class 'st_net.Sig'>"
+      , "<class 'st_net.VddIn'>"
+      , "<class 'st_net.VssIn'>"
+      , "<class 'st_net.VddInFromHur'>"
+      , "<class 'st_net.VssInFromHur'>"
+      , "<class 'st_net.SignalVdd'>"
+      , "<class 'st_net.SignalVss'>"
       )
-ALIM_NET = ( "st_net.VddIn", "st_net.VssIn" \
-           , "st_net.VddInFromHur", "st_net.VssInFromHur"
+ALIM_NET = ( "<class 'st_net.VddIn'>"
+           , "<class 'st_net.VssIn'>"
+           , "<class 'st_net.VddInFromHur'>"
+           , "<class 'st_net.VssInFromHur'>"
            )
 
 ################
@@ -130,12 +142,12 @@ class Inst :
     
     ##### Errors #####
     # Error : if the model is not a string
-    if type ( model ) != types.StringType :
+    if not isinstance(model,str):
       err = "\n[Stratus ERROR] Inst : the model must be described in a string.\n"
       raise Exception ( err )
     # Warning : the model can not contain capitalized letters
     if re.search ( "[A-Z]", model ) :
-      print "[Stratus Warning] Inst : Upper case letters are not supported, the name", model, "is lowered."
+      print( "[Stratus Warning] Inst : Upper case letters are not supported, the name", model, "is lowered.")
       model = model.lower()
     # Error : spaces are forbidden
     if re.search ( " ", model ) :
@@ -147,13 +159,13 @@ class Inst :
         raise Exception ( err )
       # Warning : the name can not contain capitalized letters
       if re.search ( "[A-Z]", name ) :
-        print "[Stratus Warning] : Upper case letters are not supported, the name", name, "is lowered."
+        print( "[Stratus Warning] : Upper case letters are not supported, the name", name, "is lowered." )
         name = name.lower ()
     
     # Error : if map[pin] is not a net
     if map :
       for pin in map :
-        if str ( map[pin].__class__ ) not in NET :
+        if (str(type(map[pin])) not in NET):
           err = "\n[Stratus ERROR] Inst : \"" + name + "\" one argument is not a net : "
           err += "pin is : " + pin + " and is associated to : "
           if map[pin] : err += str(map[pin])
@@ -169,7 +181,7 @@ class Inst :
       if self._model == c._name :
         self._st_masterCell = c
         break
-#    if not( self._hur_masterCell or self._st_masterCell ) : print "\n[Stratus Warning] Inst : no master cell found for instance " + self._name
+#    if not( self._hur_masterCell or self._st_masterCell ) : print( "\n[Stratus Warning] Inst : no master cell found for instance " + self._name )
 
     # Creation of the hurricane instance 
     if CELLS[0]._hur_plug : self.create_hur_inst ( model )
@@ -199,7 +211,7 @@ class Inst :
       raise Exception ( err )
 
     if not self._st_masterCell :
-      if MODELMAP.has_key ( str ( self._hur_masterCell ) ) :
+      if str ( self._hur_masterCell ) in MODELMAP:
         self._st_masterCell = MODELMAP[str ( self._hur_masterCell )]
       else :
         self._st_masterCell = Model ( str ( self._hur_masterCell.getName() ), hurCell = self._hur_masterCell )
@@ -292,7 +304,7 @@ class Inst :
           
           # If the net which is concatened is an alias
           if ( net._alias ) and ( net._alias[bit] ) :
-            netA = net._alias[bit].keys()[0]
+            netA = list(net._alias[bit].keys())[0]
             bitA = net._alias[bit][netA]
             if net._real_net : netA = netA._real_net
           
@@ -302,7 +314,7 @@ class Inst :
           
         # If the net is an alias
         elif ( realNet._alias ) and ( realNet._alias[i] ) :
-          net = realNet._alias[i].keys()[0]
+          net = list(realNet._alias[i].keys())[0]
           bit = realNet._alias[i][net]
           if net._real_net : net = net._real_net
           
@@ -334,7 +346,7 @@ class Inst :
       ### Virtual library ###
       if "_inout" in self.__dict__ :
         import types
-        if type ( self._inout[pin] ) == types.ListType :
+        if isinstance( self._inout[pin], list ):
           for realpin in self._inout[pin] :
             connectPin ( realpin )
         else :
@@ -363,17 +375,17 @@ class Inst :
   ### Prints ###
   ##############
   def printInstance ( self ) :
-    print "  => model", self._model
-    print "  => map"
+    print( "  => model", self._model )
+    print( "  => map" )
     for pin in self._map :
       n = self._map[pin]
       if n._to_merge : n = n._to_merge[0][0]
-      print "    ", pin, "->", n._name
+      print( "    ", pin, "->", n._name )
 
   def printMap ( self ) :
-    print "Map:", self._name
+    print( "Map:", self._name )
     for pin in self._map :
-      print "  ", pin, self._map[pin]._name
+      print( "  ", pin, self._map[pin]._name )
 
 #########################
 #### SetCurrentModel ####

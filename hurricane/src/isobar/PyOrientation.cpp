@@ -73,12 +73,12 @@ extern "C" {
 
   extern void  PyOrientation_LinkPyType() {
     cdebug_log(20,0) << "PyOrientation_LinkType()" << endl;
-    PyTypeOrientation.tp_dealloc = (destructor) PyOrientation_DeAlloc;
-    PyTypeOrientation.tp_compare = (cmpfunc)    PyOrientation_Cmp;
-    PyTypeOrientation.tp_repr    = (reprfunc)   PyOrientation_Repr;
-    PyTypeOrientation.tp_str     = (reprfunc)   PyOrientation_Str;
-    PyTypeOrientation.tp_hash    = (hashfunc)   PyOrientation_Hash;
-    PyTypeOrientation.tp_methods = PyOrientation_Methods;
+    PyTypeOrientation.tp_dealloc     = (destructor) PyOrientation_DeAlloc;
+    PyTypeOrientation.tp_richcompare = (richcmpfunc)PyOrientation_Cmp;
+    PyTypeOrientation.tp_repr        = (reprfunc)   PyOrientation_Repr;
+    PyTypeOrientation.tp_str         = (reprfunc)   PyOrientation_Str;
+    PyTypeOrientation.tp_hash        = (hashfunc)   PyOrientation_Hash;
+    PyTypeOrientation.tp_methods     = PyOrientation_Methods;
   }
 
 

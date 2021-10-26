@@ -20,7 +20,7 @@
 class QLabel;
 
 
-namespace Cfg2 {
+namespace Cfg {
 
   class Parameter;
   class ConfTabWidget;
@@ -33,7 +33,7 @@ namespace Cfg2 {
   class ParameterWidget : public QObject {
       Q_OBJECT;
     public:
-      enum Flags { UseSpinBox=0x1, IsFileName=0x2, IsPathName=0x4 };
+      enum Flags { UseSpinBox=0x1000, IsFileName=0x2000, IsPathName=0x4000 };
     public:
                                    ParameterWidget        ( ConfTabWidget* parent, Parameter*, const std::string& label, int flags );
       virtual                     ~ParameterWidget        ();

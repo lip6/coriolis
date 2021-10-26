@@ -1,7 +1,8 @@
+
 # -*- mode:Python -*-
 #
 # This file is part of the Coriolis Software.
-# Copyright (c) SU 2012-2020, All Rights Reserved
+# Copyright (c) Sorbonne Université 2012-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+ 
 # |                   C O R I O L I S                               |
@@ -17,12 +18,11 @@
 # rather than an ordinary directory, thus enabling the uses of the
 # 'dot' notation in import.
 
-#print 'helpers.__init__()'
-
 import sys
 import os
 import os.path
 import re
+import math
 import traceback
 
 quiet          = False
@@ -46,13 +46,23 @@ import helpers.io
 from helpers.io import ErrorMessage
 
 
+def irange ( value ):
+    if isinstance(value,int): return range(value)
+    if isinstance(value,float):
+        r,i = math.modf( value )
+        if r != 0.0:
+            print( '[WARNING] helpers.irange(): value={} is not an integer (truncated).'\
+                   .format(value) )
+    return range(int( value ))
+
+
 def stype ( o ): return str(type(o)).split("'")[1]
 
 
 def isderived ( derived, base ):
     btype = base.mro()[0]
     for dtype in derived.mro():
-      if dtype == btype: return True
+        if dtype == btype: return True
     return False
 
 
@@ -61,20 +71,15 @@ def truncPath ( path, maxlength=80 ):
     components = path.split(os.sep)
     trunc      = ''
     for i in range(-1,-len(components),-1):
-      if len(trunc)+len(components[i]) >= maxlength: break
-      if not len(trunc): trunc = components[i]
-      else:              trunc = os.path.join( components[i], trunc ) 
-        
+        if len(trunc)+len(components[i]) >= maxlength: break
+        if not len(trunc): trunc = components[i]
+        else:              trunc = os.path.join( components[i], trunc ) 
     return '...' + os.sep + trunc
 
 
 def textStackTrace ( trace, showIndent=True, scriptPath=None ):
-   #for entry in traceback.format_list( trace ):
-   #    print entry,
-
     indent = ''
     if showIndent: indent = '        '
-
     s = ''
     if scriptPath:
         if len(scriptPath) > 100:
@@ -83,7 +88,7 @@ def textStackTrace ( trace, showIndent=True, scriptPath=None ):
       
         if showIndent: s += '[ERROR] '
         s += 'An exception occured while loading the Python script module:\n'
-        s += indent + '\"%s\"\n' % (filename)
+        s += indent + '\"{}\"\n' % (filename)
         s += indent + 'You should check for simple python errors in this module.\n\n'
 
     s += indent + 'Python stack trace:\n'
@@ -93,13 +98,13 @@ def textStackTrace ( trace, showIndent=True, scriptPath=None ):
         if len(filename) > 58:
             filename = filename[-58:]
             filename = '.../' + filename[ filename.find('/')+1 : ]
-       #s += indent + '[%02d] %45s:%-5d in \"%s()\"' % ( maxdepth-depth-1, filename, line, function )
-        s += indent + '#%d in %25s() at %s:%d\n' % ( depth, function, filename, line )
+       #s += indent + '[%02d] %45s:%-5d in \"{}()\"' % ( maxdepth-depth-1, filename, line, function )
+        s += indent + '#{} in {:>25}() at {}:{}\n'.format( depth, function, filename, line )
     return s
 
 
 def showStackTrace ( trace ):
-    print textStackTrace( trace, True )
+    print( textStackTrace( trace, True ))
     return
 
 
@@ -112,24 +117,24 @@ def textPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
         else:
             filename = scriptPath
         s += '[ERROR] An exception occured while loading the Python script module:\n'
-        s += '        \"%s\"\n' % (filename)
+        s += '        \"{}\"\n'.format(filename)
         s += '        You should check for simple python errors in this module.\n'
-
-    if isinstance(e,helpers.io.ErrorMessage): trace = e.trace
-    else:                                     trace = traceback.extract_tb( sys.exc_info()[2] )
-    s += textStackTrace( trace )
-
-    if e:
-        s += '        Error was:\n'
-        s += '          %s\n' % e
-
+    if isinstance(e,helpers.io.ErrorMessage):
+        trace = e.trace
+        s += textStackTrace( trace )
+        if e:
+            s += '        Error was:\n'
+            s += '          {}\n'.format(e)
+    else:
+        #trace = traceback.extract_tb( sys.exc_info()[2] )
+        print( traceback.format_exc() )
     if tryContinue:
         s += '        Trying to continue anyway...'
     return s
 
 
 def showPythonTrace ( scriptPath=None, e=None, tryContinue=True ):
-    print textPythonTrace( scriptPath, e, tryContinue ) 
+    print( textPythonTrace( scriptPath, e, tryContinue ))
     return
 
 
@@ -146,7 +151,7 @@ class Dots ( object ):
             sys.stdout.write(self._header)
         else:
             if not (self._count % self._width):
-                sys.stdout.write("\n%s"%self._header)
+                sys.stdout.write("\n{}".format(self._header))
 
         sys.stdout.write(".")
         sys.stdout.flush()
@@ -217,10 +222,10 @@ class Trace ( object ):
                 sys.stderr.write( message[1:] )
             else:
                 sys.stderr.write( message )
-            sys.stderr.flush()
         for f in sflags[1]:
             if f == '+': self._tab.inc()
             if f == '-': self._tab.dec()
+        sys.stderr.flush()
         return
 
 
@@ -245,16 +250,13 @@ def dots ( ttyWidth, leftText, rightText ):
 def overload ( defaultParameters, parameters ):
     overloads          = {}
     overloadParameters = []
-    
     for parameter in parameters:
         overloads[ parameter[0] ] = parameter
-    
     for parameter in defaultParameters:
-        if overloads.has_key(parameter[0]):
+        if parameter[0] in overloads:
             overloadParameters.append( overloads[parameter[0]] )
         else:
             overloadParameters.append( parameter )
-          
     return tuple(overloadParameters)
 
 
@@ -277,32 +279,28 @@ def initTechno ( argQuiet ):
     global technoDir
     global techno
     
-    quiet = argQuiet
-    
+    quiet        = argQuiet
     technoFiles  = [ sysConfDir+'/techno.conf' ]
     if os.getenv('HOME'):
         technoFiles += [ os.getenv('HOME')+'/.coriolis2/techno.py' ]
     technoFiles += [ os.getcwd()+'/.coriolis2/techno.py' ]
-    
     technoFiles.reverse()
     for technoFile in technoFiles:
         if os.path.isfile(technoFile):
-            if not quiet: print '     - Loading \"%s\".' % truncPath(technoFile)
-            execfile(technoFile,moduleGlobals)
+            if not quiet: print( '     - Loading "{}".'.format( truncPath(technoFile) ))
+            exec(open( technoFile ).read())  # moduleGlobals
             break
-    if moduleGlobals.has_key('technology'):
+    if 'technology' in moduleGlobals:
         techno = technology
     else:
-        print '[WARNING] The technology is not set. Using <%s>.' % techno
-    
-    if moduleGlobals.has_key('NdaDirectory'):
+        print( '[WARNING] The technology is not set. Using "{}".'.format( techno ))
+    if 'NdaDirectory' in moduleGlobals:
         ndaDir     = NdaDirectory
         ndaConfDir = os.path.join( NdaDirectory, 'etc/coriolis2' )
     else:
         ndaConfDir = sysConfDir
-    
     technoDir = os.path.join( ndaConfDir, techno )
-    if not quiet: print '     - Technology: %s.' % techno
+    if not quiet: print( '     - Technology: {}.'.format( techno ))
 
   
 unitsLambda = True
@@ -315,7 +313,7 @@ def setNdaTopDir ( ndaTopDirArg ):
     global ndaTopDir
 
     if not os.path.isdir(ndaTopDirArg):
-        print helpers.io.WarningMessage( 'helpers.setNdaTopDir(): Directory "%s" does not exists.' % ndaTopDirArg )
+        print( helpers.io.WarningMessage( 'helpers.setNdaTopDir(): Directory "{}" does not exists.'.format( ndaTopDirArg )))
     else:
         ndaTopDir = ndaTopDirArg
         sys.path.append( os.path.join(ndaTopDir,'etc/coriolis2') )
@@ -332,18 +330,14 @@ def staticInitialization ( quiet=False ):
     global unitsLambda
     
     if sysConfDir != None:
-       #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
         return
-    
     reSysConfDir = re.compile(r'.*etc\/coriolis2')
-    if not quiet: print '  o  Locating configuration directory:'
-    
+    if not quiet: print( '  o  Locating configuration directory:' )
     for path in sys.path:
         if reSysConfDir.match(path):
             sysConfDir = path
-            if not quiet: print '     - "%s"' % sysConfDir
+            if not quiet: print( '     - "{}"'.format( sysConfDir ))
             break
-    
     if not sysConfDir:
         coriolisTop = os.getenv('CORIOLIS_TOP')
         if coriolisTop == '/usr':
@@ -353,8 +347,7 @@ def staticInitialization ( quiet=False ):
         else:
             raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
                                    , 'The path is something ending by <.../etc/coriolis2>.'] )
-    
-    if not quiet: print '     - "%s"' % sysConfDir
+    if not quiet: print( '     - "{}"'.format( sysConfDir ))
     initTechno( quiet )
     return
 
@@ -363,18 +356,14 @@ def setSysConfDir ( quiet=False ):
     global sysConfDir
   
     if sysConfDir != None:
-       #if not quiet: print '  o  helpers.staticInitialization() Already run, exit.'
         return
-
     reSysConfDir = re.compile(r'.*etc\/coriolis2')
-    if not quiet: print '  o  Locating configuration directory:'
-
+    if not quiet: print( '  o  Locating configuration directory:' )
     for path in sys.path:
         if reSysConfDir.match(path):
             sysConfDir = path
-            if not quiet: print '     - "%s"' % sysConfDir
+            if not quiet: print( '     - "{}"'.format( sysConfDir ))
             break
-    
     if not sysConfDir:
         coriolisTop = os.getenv('CORIOLIS_TOP')
         if coriolisTop == '/usr':
@@ -384,8 +373,7 @@ def setSysConfDir ( quiet=False ):
         else:
             raise ErrorMessage( 1, [ 'Cannot locate the directoty holding the configuration files.'
                                    , 'The path is something ending by <.../etc/coriolis2>.'] )
-    
-    if not quiet: print '     - "%s"' % sysConfDir
+    if not quiet: print( '     - "{}"'.format( sysConfDir ))
     sys.path.append( sysConfDir )
     return
 
@@ -416,40 +404,37 @@ setSysConfDir( False )
 def unloadUserSettings ():
     global confModules
 
-    print '  o  Unloading Python user\'s modules.'
+    print( '  o  Unloading Python user\'s modules.' )
 
     for moduleName in confModules:
-      refcount = sys.getrefcount( sys.modules[moduleName] )
-      warning  = ''
-      if refcount > 3:
-        warning = '(NOTE: More than 3 refcount %d)' % refcount
-       #print helpers.io.WarningMessage( [ 'Configuration module "%s" has more than 3 references (%d)".' \
-       #                                   % (moduleName,refcount)
-       #                                 , 'May be unable to unload it from the Python process.'
-       #                                 ] )
-      print '     - %-34s %-35s' % ('"%s".'%moduleName, warning)
-      del sys.modules[ moduleName ]
+        refcount = sys.getrefcount( sys.modules[moduleName] )
+        warning  = ''
+        if refcount > 3:
+            warning = '(NOTE: More than 3 refcount %d)' % refcount
+           #print( helpers.io.WarningMessage( [ 'Configuration module "{}" has more than 3 references ({})".' \
+           #                                    .format(moduleName,refcount)
+           #                                  , 'May be unable to unload it from the Python process.'
+           #                                  ] ))
+        print( '     - {:-34} {:-35}'.format( '"{}".'.format(moduleName), warning ))
+        del sys.modules[ moduleName ]
     confModules = set()
     return
 
 
 def loadUserSettings ():
     rvalue        = False
-
     if os.path.isfile('./coriolis2/settings.py'):
         if os.path.isfile('./coriolis2/__init__.py'):
             sys.path.insert( 0, os.getcwd() )
             import coriolis2.settings
             rvalue = True
         else:
-            print helpers.io.WarningMessage( [ 'User\'s settings directory "%s" exists, but do not contains "__init__.py".' % './coriolis2/'
-                                             , '(path:"%s")' % os.path.abspath(os.getcwd())
-                                             ] )
+            print( helpers.io.WarningMessage( [ 'User\'s settings directory "{}" exists, but do not contains "__init__.py".'.format( './coriolis2/' )
+                                             , '(path:"{}")'.format( os.path.abspath(os.getcwd()) )
+                                             ] ))
     else:
       import symbolic.cmos
-
     tagConfModules()
-
     return rvalue
 
 
@@ -462,13 +447,9 @@ def tagConfModules ():
         if not (moduleName in sysModules):
             confModules.add( moduleName )
 
-   #print 'Configuration modules:'
-   #for moduleName in confModules:
-   #  print '-', moduleName
-
 
 def resetCoriolis ():
-    print '  o  Full reset of Coriolis/Hurricane databases.'
+    print( '  o  Full reset of Coriolis/Hurricane databases.' )
     CRL.AllianceFramework.get().destroy()
     Viewer.Graphics.get().clear()
     Hurricane.DataBase.getDB().destroy()

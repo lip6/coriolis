@@ -22,9 +22,9 @@ using namespace std;
 #include <boost/program_options.hpp>
 namespace bopts = boost::program_options;
 
-#include "vlsisapd/utilities/Path.h"
-#include "vlsisapd/bookshelf/Exception.h"
-#include "vlsisapd/configuration/Configuration.h"
+// #include "vlsisapd/bookshelf/Exception.h"
+#include "hurricane/configuration/Configuration.h"
+#include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/DataBase.h"
 #include "hurricane/Cell.h"
@@ -49,7 +49,7 @@ using namespace Hurricane;
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/Hierarchy.h"
 #include "crlcore/ToolBox.h"
-#include "crlcore/Ispd04Bookshelf.h"
+//#include "crlcore/Ispd04Bookshelf.h"
 #include "crlcore/Iccad04Lefdef.h"
 #include "crlcore/DefImport.h"
 #include "crlcore/DefExport.h"
@@ -218,9 +218,9 @@ int main ( int argc, char *argv[] )
                                  );
     }
 
-    if ( (cell == NULL) and arguments.count("import-ispd04-bk") ) {
-      cell = Ispd04::load ( arguments["import-ispd04-bk"].as<string>().c_str() );
-    }
+    // if ( (cell == NULL) and arguments.count("import-ispd04-bk") ) {
+    //   cell = Ispd04::load ( arguments["import-ispd04-bk"].as<string>().c_str() );
+    // }
 
     if ( saveImport and (cell != NULL) ) {
       cmess1 << "  o  Immediate write back of <" << cell->getName() << ">" << endl;
@@ -425,10 +425,10 @@ int main ( int argc, char *argv[] )
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );
   }
-  catch ( Bookshelf::Exception& e ) {
-    cerr << e.what() << endl;
-    exit ( 1 );
-  }
+  // catch ( Bookshelf::Exception& e ) {
+  //   cerr << e.what() << endl;
+  //   exit ( 1 );
+  // }
   catch ( exception& e ) {
     cerr << "[ERROR] " << e.what() << endl;
     exit ( 1 );

@@ -54,6 +54,6 @@ def loadGdsLayers ( gdsLayersTable ):
         basicLayer.setGds2Layer   ( gdsiiLayer )
         basicLayer.setGds2Datatype( gdsiiDatatype )
 
-      except Exception, e:
+      except Exception as e:
         helpers.io.catch( e )
     return

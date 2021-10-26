@@ -1,7 +1,6 @@
-# -*- explicit-buffer-name: "configuration.py<cumulus/src/plugins/chip>" -*-
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -83,12 +82,12 @@ def getRpBb ( instance, netName ):
 def showNet ( cell, netName ):
   net = cell.getNet(netName)
   if not net:
-    print ErrorMessage( 3, 'Cell %s doesn\'t have net %s' % (cell.getName(),netName) ) 
+    print( ErrorMessage( 3, 'Cell {} doesn\'t have net {}'.format(cell.getName(),netName) ))
     return
   
-  print 'Components of', netName
+  print( 'Components of', netName )
   for component in net.getComponents():
-    print '| ', component, component.getBoundingBox() 
+    print( '| ', component, component.getBoundingBox() )
   return
 
 
@@ -240,8 +239,8 @@ class GaugeConf ( object ):
           self.topLayerDepth = layerGauge.getDepth()
           break
       if not self.topLayerDepth:
-        print WarningMessage( 'Gauge top layer not defined, using top of gauge (%d).' \
-                              % self.routingGauge.getDepth() )
+        print( WarningMessage( 'Gauge top layer not defined, using top of gauge ({}).' \
+                               .format(self.routingGauge.getDepth()) ))
         self.topLayerDepth = self.routingGauge.getDepth() - 1
 
       self.horizontalDepth     = -1
@@ -271,7 +270,7 @@ class GaugeConf ( object ):
     def _loadIoPadGauge ( self, ioPadGaugeName ):
       self.ioPadGauge = CRL.AllianceFramework.get().getCellGauge( ioPadGaugeName )
       if not self.ioPadGauge:
-        print WarningMessage( 'IO pad gauge "%s" not found.' % ioPadGaugeName )
+        print( WarningMessage( 'IO pad gauge "{}" not found.'.format(ioPadGaugeName) ))
       return
 
     def isHorizontal ( self, layer ):
@@ -281,8 +280,8 @@ class GaugeConf ( object ):
           if lg.getDirection() == RoutingLayerGauge.Horizontal: return True
           return False
 
-      print ErrorMessage( 1, 'GaugeConf.isHorizontal(): Layer "%s" is not part of gauge "%s", cannot know preferred direction.' \
-                              % (layer.getName(), self.routingGauge.getName()) )
+      print( ErrorMessage( 1, 'GaugeConf.isHorizontal(): Layer "{}" is not part of gauge "{}", cannot know preferred direction.' \
+                              .format(layer.getName(), self.routingGauge.getName()) ))
       return False
 
     def isVertical ( self, layer ): return not self.isHorizontal( layer )
@@ -347,7 +346,7 @@ class GaugeConf ( object ):
     def _rpAccess ( self, rp, flags ):
       trace( 550, ',+', '\t_rpAccess() %s\n' % str(rp) )
 
-      if self._rpToAccess.has_key(rp):
+      if rp in self._rpToAccess:
         trace( 550, '-' )
         return self._rpToAccess[rp]
 
@@ -362,7 +361,7 @@ class GaugeConf ( object ):
       hoffset   = self.routingGauge.getLayerGauge(hdepth).getOffset()
       contact1  = Contact.create( rp, self.routingGauge.getContactLayer(0), 0, 0 )
       midSliceY = contact1.getY() - (contact1.getY() % self.cellGauge.getSliceHeight()) \
-                                                     + self.cellGauge.getSliceHeight() / 2
+                                                     + self.cellGauge.getSliceHeight() // 2
       midTrackY = midSliceY - ((midSliceY - hoffset) % hpitch)
       dy        = midSliceY - contact1.getY()
   
@@ -413,7 +412,7 @@ class GaugeConf ( object ):
   
     def _rpByOccurrence ( self, occurrence, net ):
       plug = occurrence.getEntity()
-      if self._plugToRp.has_key(plug):
+      if plug in self._plugToRp:
         rp = self._plugToRp[plug]
       else:
         rp = RoutingPad.create( net, occurrence, RoutingPad.BiggestArea )
@@ -423,7 +422,7 @@ class GaugeConf ( object ):
   
     def _rpAccessByOccurrence ( self, occurrence, net, flags ):
       plug = occurrence.getEntity()
-      if self._plugToRp.has_key(plug):
+      if plug in self._plugToRp:
         rp = self._plugToRp[plug]
       else:
         rp = RoutingPad.create( net, occurrence, RoutingPad.BiggestArea )
@@ -432,7 +431,7 @@ class GaugeConf ( object ):
       return self._rpAccess( self._rpByOccurrence(occurrence,net), flags )
   
     def _rpByPlug ( self, plug, net ):
-      if self._plugToRp.has_key(plug):
+      if plug in self._plugToRp:
         rp = self._plugToRp[plug]
       else:
         occurrence = Occurrence( plug, Path(net.getCell(),'') )
@@ -488,7 +487,7 @@ class ChipConf ( object ):
 
     @staticmethod
     def toSymbolic ( v, rounding ): 
-      if isinstance(v,long): return ChipConf._toSymbolic( v, rounding )
+      if isinstance(v,int): return ChipConf._toSymbolic( v, rounding )
       if isinstance(v,Box):
         if rounding & Inwards:
           roundings = [ Superior
@@ -510,28 +509,28 @@ class ChipConf ( object ):
 
     @staticmethod
     def _readChipSize( chipConfigDict ):
-      if not chipConfigDict.has_key('chip.size'): return Box()
+      if not 'chip.size' in chipConfigDict: return Box()
       chipSize = chipConfigDict['chip.size']
       if not isinstance(chipSize,tuple):
-        print ErrorMessage( 1, 'The Chip size parameter is *not* a tuple.' )
+        print( ErrorMessage( 1, 'The Chip size parameter is *not* a tuple.' ))
         return Box()
       if len(chipSize) != 2:
-        print ErrorMessage( 1, 'The Chip size parameter is *not* a tuple of exactly two items.' )
+        print( ErrorMessage( 1, 'The Chip size parameter is *not* a tuple of exactly two items.' ))
         return Box()
       return Box( 0, 0, chipSize[0], chipSize[1] )
 
 
     @staticmethod
     def _readCoreSize( chipConfigDict ):
-      if not chipConfigDict.has_key('core.size'):
-        print ErrorMessage( 1, 'The Core size parameter is missing.' )
+      if not 'core.size' in chipConfigDict:
+        print( ErrorMessage( 1, 'The Core size parameter is missing.' ))
         return Box()
       coreSize = chipConfigDict['core.size']
       if not isinstance(coreSize,tuple):
-        print ErrorMessage( 1, 'The Core size parameter is *not* a tuple.' )
+        print( ErrorMessage( 1, 'The Core size parameter is *not* a tuple.' ))
         return Box()
       if len(coreSize) != 2:
-        print ErrorMessage( 1, 'The Core size parameter is *not* a tuple of exactly two items.' )
+        print( ErrorMessage( 1, 'The Core size parameter is *not* a tuple of exactly two items.' ))
         return Box()
       return Box( 0, 0, coreSize[0], coreSize[1] )
 
@@ -539,7 +538,7 @@ class ChipConf ( object ):
     @staticmethod
     def _readClockTree( chipConfigDict ):
       useClockTree = False
-      if chipConfigDict.has_key('chip.clockTree'):
+      if 'chip.clockTree' in chipConfigDict:
         if chipConfigDict['chip.clockTree']:
           useClockTree = True
       return useClockTree
@@ -547,12 +546,12 @@ class ChipConf ( object ):
 
     @staticmethod
     def _readChipName( chipConfigDict ):
-      if chipConfigDict.has_key('chip.name'): return chipConfigDict['chip.name']
+      if 'chip.name' in chipConfigDict: return chipConfigDict['chip.name']
       return 'chip'
 
 
     def _loadIoPadGauge ( self, chipConfigDict ):
-      if not chipConfigDict.has_key('pads.ioPadGauge'):
+      if not 'pads.ioPadGauge' in chipConfigDict:
        #raise ErrorMessage( 1, 'The IO pad gauge configuration parameter "pads.ioPadGauge" is missing.' )
         return
       self.gaugeConf._loadIoPadGauge( chipConfigDict['pads.ioPadGauge'] )
@@ -560,7 +559,7 @@ class ChipConf ( object ):
 
 
     def _readPads ( self, chipConfigDict, keyword ):
-      if not chipConfigDict.has_key(keyword): return []
+      if not keyword in chipConfigDict: return []
       padConfList = chipConfigDict[keyword]
       if not isinstance(padConfList,list):
           raise ErrorMessage( 1, 'The "%s" entry is not a list.' )
@@ -575,7 +574,7 @@ class ChipConf ( object ):
           instanceName = padConfList[i]
         elif isinstance(padConfList[i],list):
           self.padsHavePosition = True
-          if isinstance(padConfList[i][0],long) and isinstance(padConfList[i][1],str):
+          if isinstance(padConfList[i][0],int) and isinstance(padConfList[i][1],str):
             position     = padConfList[i][0]
             instanceName = padConfList[i][1]
 
@@ -590,7 +589,7 @@ class ChipConf ( object ):
 
 
     def _readPadInstances ( self, chipConfigDict ):
-      if not chipConfigDict.has_key('pads.instances'): return [ ]
+      if not 'pads.instances' in chipConfigDict: return [ ]
 
       padInstancesConf = chipConfigDict['pads.instances']
       if not isinstance(padInstancesConf,list):
@@ -734,20 +733,20 @@ class ChipConf ( object ):
         uTrackMin = lg.getTrackPosition( abMin, iTrackMin )
         uTrackMax = lg.getTrackPosition( abMin, iTrackMax )
 
-        axis  = (uTrackMax + uTrackMin) / 2
+        axis  = (uTrackMax + uTrackMin) // 2
         width = (iTrackMax - iTrackMin) * lg.getPitch() + lg.getWireWidth()
 
         if self.gaugeConf.routingGauge.isSymbolic():
           oneLambda = DbU.fromLambda( 1.0 )
           if axis % oneLambda:
-            axis  -= oneLambda / 2
+            axis  -= oneLambda // 2
             width -= oneLambda
 
         trace( 550, '\t[%i %i]\n' % (iTrackMin, iTrackMax) )
         trace( 550, '\taxis:  %sl %s\n' %  (DbU.toLambda(axis ), DbU.getValueString(axis )) )
         trace( 550, '\twidth: %sl %s\n' %  (DbU.toLambda(width), DbU.getValueString(width)) )
       else:
-        axis  = (uMax + uMin) / 2
+        axis  = (uMax + uMin) // 2
         width = (uMax - uMin)
 
       trace( 550, '-' )
@@ -812,7 +811,7 @@ class ChipConf ( object ):
              % (DbU.getValueString(chipXMin - coronaAb.getXMin()), DbU.toLambda(chipXMin - coronaAb.getXMin()) ) )
       trace( 550, '\t|   dxMax:%10s\n' % DbU.getValueString(chipXMax - coronaAb.getXMin()) )
 
-      coronaY, width = self.toRoutingGauge( coronaY - width/2, coronaY + width/2, layer )
+      coronaY, width = self.toRoutingGauge( coronaY - width//2, coronaY + width//2, layer )
 
       trace( 550, '\t| On Grid\n' )
       trace( 550, '\t|   axis: %10sl or %10s\n' % (DbU.toLambda(coronaY), DbU.getValueString(coronaY)) )
@@ -843,7 +842,7 @@ class ChipConf ( object ):
       trace( 550, '\t|   axis: %s\n' % DbU.getValueString(coronaX) )
       trace( 550, '\t|   width:%s\n' % DbU.getValueString(width) )
 
-      coronaX, width = self.toRoutingGauge( coronaX - width/2, coronaX + width/2, layer )
+      coronaX, width = self.toRoutingGauge( coronaX - width//2, coronaX + width//2, layer )
 
       trace( 550, '\t| On Grid\n' )
       trace( 550, '\t|   axis: %s or %s\n' % (DbU.toLambda(coronaX), DbU.getValueString(coronaX)) )
@@ -873,11 +872,11 @@ class ChipConf ( object ):
 
       topLayer = layer.getTop()
       if self.gaugeConf.isHorizontal(topLayer):
-        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, layer.getBottom() )
-        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
+        coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, layer.getBottom() )
+        coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, topLayer )
       else:
-        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
-        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, layer.getBottom() )
+        coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, topLayer )
+        coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, layer.getBottom() )
 
       if not (flags & OnHorizontalPitch):
         trace( 550, '\tNot on horizontal routing pitch, Y on lambda only.\n' )
@@ -934,8 +933,8 @@ class ChipConf ( object ):
         coronaX = self.toSymbolic( chipX - coronaAb.getXMin(), Superior )
 
       contacts    = []
-      xContact    = coronaX - viaPitch * (array[0]-1)/2
-      yContact    = coronaY - viaPitch * (array[1]-1)/2
+      xContact    = coronaX - viaPitch * (array[0]-1)//2
+      yContact    = coronaY - viaPitch * (array[1]-1)//2
       contactSize = layer.getMinimalSize()
 
       trace( 550, '\txContact:%sl yContact:%sl\n' % (DbU.toLambda(xContact),DbU.toLambda(yContact)) )
@@ -973,11 +972,11 @@ class ChipConf ( object ):
 
       topLayer = layer.getTop()
       if self.gaugeConf.isHorizontal(topLayer):
-        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, layer.getBottom() )
-        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, topLayer )
+        coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, layer.getBottom() )
+        coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, topLayer )
       else:
-        coronaX, width  = self.toRoutingGauge( coronaX - width /2, coronaX + width /2, topLayer )
-        coronaY, height = self.toRoutingGauge( coronaY - height/2, coronaY + height/2, layer.getBottom() )
+        coronaX, width  = self.toRoutingGauge( coronaX - width //2, coronaX + width //2, topLayer )
+        coronaY, height = self.toRoutingGauge( coronaY - height//2, coronaY + height//2, layer.getBottom() )
 
       if direction == Pin.Direction.NORTH or direction == Pin.Direction.SOUTH: 
         trace( 550, '\tEast/West not on horizontal routing pitch, Y on lambda only.\n' )
@@ -1023,8 +1022,8 @@ class ChipConf ( object ):
       def checkNotFounds ( padList, side ):
         for i in range(len(padList)):
           if not isinstance(padList[i][1],Instance):
-            print ErrorMessage( 1, 'The pad [%d] (%s) of list %s do not exists in netlist (skipped).'
-                                   % (i,padList[i][1],side) )
+            print( ErrorMessage( 1, 'The pad [{}] ({}) of list %s do not exists in netlist (skipped).' \
+                                    .format(i,padList[i][1],side) ))
         return
     
         
@@ -1158,7 +1157,7 @@ class ChipConf ( object ):
           padNet = self.cell.getNet( coronaNet.getName() )
 
         if padNet:
-          if not netPads.has_key(padNet):
+          if not padNet in netPads:
             trace( 550, '\t%20s <-> %-20s\n' % (padNet.getName(),coronaNet.getName()) )
             netPads[ padNet ] = coronaNet
           else:
@@ -1298,7 +1297,7 @@ def loadConfiguration ( cell, viewer=None ):
           raise ErrorMessage( 1, 'ChipPlugin, configuration directory "./coriolis2/" is missing "__init__.py".' )
       
       from coriolis2.ioring import chip
-    except Exception, e:
+    except Exception as e:
       catch( e )
 
     return ChipConf( chip, cell, viewer )

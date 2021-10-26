@@ -225,31 +225,26 @@ extern "C" {
        0                                // binaryfunc  nb_add;
      , 0                                // binaryfunc  nb_subtract;
      , 0                                // binaryfunc  nb_multiply;
-     , 0                                // binaryfunc  nb_divide;
      , 0                                // binaryfunc  nb_remainder;
      , 0                                // binaryfunc  nb_divmod;
      , 0                                // ternaryfunc nb_power;
      , 0                                // unaryfunc   nb_negative;
      , 0                                // unaryfunc   nb_positive;
      , 0                                // unaryfunc   nb_absolute;
-     , (inquiry)   PyQueryMask_nonzero  // inquiry     nb_nonzero;      -- Used by PyObject_IsTrue
+     , (inquiry)   PyQueryMask_nonzero  // inquiry     nb_bool;      -- Used by PyObject_IsTrue
      , (unaryfunc) PyQueryMask_invert   // unaryfunc   nb_invert;
      , (binaryfunc)PyQueryMask_lshift   // binaryfunc  nb_lshift;
      , (binaryfunc)PyQueryMask_rshift   // binaryfunc  nb_rshift;
      , (binaryfunc)PyQueryMask_and      // binaryfunc  nb_and;
      , (binaryfunc)PyQueryMask_xor      // binaryfunc  nb_xor;
      , (binaryfunc)PyQueryMask_or       // binaryfunc  nb_or;
-     , 0                                // coercion    nb_coerce;       -- Used by the coerce() function
      , 0                                // unaryfunc   nb_int;
-     , 0                                // unaryfunc   nb_long;
+     , NULL                             // void*       nb_reserved;
      , 0                                // unaryfunc   nb_float;
-     , 0                                // unaryfunc   nb_oct;
-     , 0                                // unaryfunc   nb_hex;
                                         // Added in release 2.0
      , 0                                // binaryfunc  nb_inplace_add;
      , 0                                // binaryfunc  nb_inplace_subtract;
      , 0                                // binaryfunc  nb_inplace_multiply;
-     , 0                                // binaryfunc  nb_inplace_divide;
      , 0                                // binaryfunc  nb_inplace_remainder;
      , 0                                // ternaryfunc nb_inplace_power;
      , 0                                // binaryfunc  nb_inplace_lshift;
@@ -264,6 +259,8 @@ extern "C" {
      , 0                                // binaryfunc  nb_inplace_true_divide;
                                         // Added in release 2.5
      , 0                                // unaryfunc   nb_index;
+     , 0                                // binaryfunc  nb_matrix_mutiply;
+     , 0                                // binaryfunc  nb_inplace_matrix_mutiply;
     };
 
 
@@ -314,14 +311,14 @@ extern "C" {
   {
     cdebug_log(20,0) << "PyQueryMask_LinkType()" << endl;
 
-    PyTypeQueryMask.tp_new       =              PyQueryMask_new;
-    PyTypeQueryMask.tp_dealloc   = (destructor) PyQueryMask_DeAlloc;
-    PyTypeQueryMask.tp_compare   = (cmpfunc)    PyQueryMask_Cmp;
-    PyTypeQueryMask.tp_repr      = (reprfunc)   PyQueryMask_Repr;
-    PyTypeQueryMask.tp_str       = (reprfunc)   PyQueryMask_Str;
-    PyTypeQueryMask.tp_hash      = (hashfunc)   PyQueryMask_Hash;
-    PyTypeQueryMask.tp_methods   =  PyQueryMask_Methods;
-    PyTypeQueryMask.tp_as_number = &PyQueryMask_NumberMethods;
+    PyTypeQueryMask.tp_new         =              PyQueryMask_new;
+    PyTypeQueryMask.tp_dealloc     = (destructor) PyQueryMask_DeAlloc;
+    PyTypeQueryMask.tp_richcompare = (richcmpfunc)PyQueryMask_Cmp;
+    PyTypeQueryMask.tp_repr        = (reprfunc)   PyQueryMask_Repr;
+    PyTypeQueryMask.tp_str         = (reprfunc)   PyQueryMask_Str;
+    PyTypeQueryMask.tp_hash        = (hashfunc)   PyQueryMask_Hash;
+    PyTypeQueryMask.tp_methods     =  PyQueryMask_Methods;
+    PyTypeQueryMask.tp_as_number   = &PyQueryMask_NumberMethods;
   }
 
 
@@ -350,9 +347,8 @@ extern "C" {
   // PyQuery Object Definitions.
 
   PyTypeObject  PyTypeQueryMask =
-    { PyObject_HEAD_INIT(NULL)
-      0                               /* ob_size.          */
-    , "Hurricane.Query.Mask"          /* tp_name.          */
+    { PyVarObject_HEAD_INIT(NULL,0)
+      "Hurricane.Query.Mask"          /* tp_name.          */
     , sizeof(PyQueryMask)             /* tp_basicsize.     */
     , 0                               /* tp_itemsize.      */
     /* methods. */

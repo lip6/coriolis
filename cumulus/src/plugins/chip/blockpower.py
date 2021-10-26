@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-#
+
 # This file is part of the Coriolis Software.
-# Copyright (c) UPMC 2014-2018, All Rights Reserved
+# Copyright (c) Sorbonne Université 2014-2021, All Rights Reserved
 #
 # +-----------------------------------------------------------------+
 # |                   C O R I O L I S                               |
@@ -40,7 +39,7 @@ class Side ( object ):
     return
 
   def addTerminal ( self, position, width ):
-    toMerge = Interval( position-width/2, position+width/2 )
+    toMerge = Interval( position-width//2, position+width//2 )
 
     length = len(self.terminals)
     imerge = length
@@ -106,8 +105,8 @@ class Side ( object ):
 
 class Plane ( object ):
 
-  Horizontal = 0001
-  Vertical   = 0002
+  Horizontal = 1
+  Vertical   = 2
 
   def __init__ ( self, block, metal ):
     self.block = block
@@ -116,7 +115,7 @@ class Plane ( object ):
     return
 
   def addTerminal ( self, net, direction, bb ):
-    if not self.sides.has_key(net):
+    if not net in self.sides:
       self.sides[ net ] = { North : Side(self.block,North,net,self.metal)
                           , South : Side(self.block,South,net,self.metal)
                           , East  : Side(self.block,East ,net,self.metal)
@@ -160,8 +159,8 @@ class GoCb ( object ):
     if not direction: return
 
     rootNet = None
-    if go.getNet().getType() == long(Net.Type.POWER):  rootNet = self.block.conf.coronaVdd
-    if go.getNet().getType() == long(Net.Type.GROUND): rootNet = self.block.conf.coronaVss
+    if go.getNet().getType() == int(Net.Type.POWER):  rootNet = self.block.conf.coronaVdd
+    if go.getNet().getType() == int(Net.Type.GROUND): rootNet = self.block.conf.coronaVss
     if not rootNet: return
 
     if self.block.activePlane:
@@ -169,7 +168,7 @@ class GoCb ( object ):
       query.getPath().getTransformation().applyOn( bb )
       self.block.activePlane.addTerminal( rootNet, direction, bb )
     else:
-      print WarningMessage( 'BlockPower.GoCb() callback called without an active plane.' )
+      print( WarningMessage( 'BlockPower.GoCb() callback called without an active plane.' ))
     return
 
 
@@ -211,7 +210,7 @@ class Block ( object ):
 
   def connectClock ( self ):
     if not self.conf.useClockTree:
-      print WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." )
+      print( WarningMessage( "Clock tree generation has been disabled ('chip.clockTree':False)." ))
       return
  
     if not self.conf.coronaCk:
