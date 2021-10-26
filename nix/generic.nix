@@ -33,7 +33,8 @@ let
 
           meta = meta' // meta;
 
-          inherit version pythonImportsCheck;
+          # FIXME: inherit pythonImportsCheck;
+          inherit version;
         } // args);
       in continuation (python3Packages.toPythonModule drv);
     in self;
