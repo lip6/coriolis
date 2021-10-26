@@ -59,7 +59,7 @@
       generic = import ./nix/generic.nix { inherit version meta; };
 
       pythonComponents = [
-        "vlsisapd" "hurricane" "crlcore" "flute" "etesian"
+        "hurricane" "crlcore" "flute" "etesian"
         "anabatic" "katana" "bora" "katabatic" "kite"
         "tutorial" "unicorn" "oroshi" "cumulus"
       ];

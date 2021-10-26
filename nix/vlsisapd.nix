@@ -9,5 +9,6 @@ let pkg =
     pythonImportsCheck = [ "SPICE" "LIBERTY" "DTR" "Cfg" "CIF" "AGDS" ];
 
     meta.license = lib.licenses.gpl2Plus;
+    meta.broken = true;
   };
 in generic pkg
