@@ -71,7 +71,6 @@ stdenv.mkDerivation rec {
     ln -s ${libresoc_logo} libresoc_logo.gds
 
     ./mksym.sh
-    ln -s ${alliance-check-toolkit}/etc/mk/users.d/user-${USER}.mk mk/users.d/user-${USER}.mk
     ./build_full_4ksram.sh
     runHook postBuild
   '';
