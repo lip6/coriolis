@@ -1,6 +1,6 @@
 { generic, ... }:
 let pkg =
-  { libxml2, qt4, bison, flex, doxygen }:
+  { lib, libxml2, qt4, bison, flex, doxygen }:
   {
     name = "vlsisapd";
     src = ../vlsisapd;

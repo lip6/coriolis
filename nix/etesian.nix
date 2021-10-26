@@ -1,6 +1,6 @@
 { generic, ... }:
 let pkg =
-  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd, coriolis-hurricane,
+  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd, coriolis-hurricane
   , lib, coriolis-crlcore }:
   {
     name = "etesian";

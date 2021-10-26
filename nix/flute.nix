@@ -1,6 +1,6 @@
 { generic, ... }:
 let pkg =
-  { coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore }:
+  { lib, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore }:
   {
     name = "flute";
     src = ../flute;

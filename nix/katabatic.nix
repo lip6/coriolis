@@ -1,7 +1,7 @@
 { generic, ... }:
 
 let pkg =
-  { coriolis-vlsisapd, coriolis-hurricane
+  { lib, coriolis-vlsisapd, coriolis-hurricane
   , coriolis-crlcore, coriolis-flute, coriolis-knik
   , qt4, doxygen }:
   {

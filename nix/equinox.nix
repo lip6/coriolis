@@ -20,5 +20,5 @@ stdenv.mkDerivation {
 
   inherit version;
 
-  meta = meta // { license = lib.licenses.gpl2Plus; }
+  meta = meta // { license = lib.licenses.gpl2Plus; };
 }
