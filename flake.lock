@@ -3,47 +3,30 @@
     "alliance-check-toolkit": {
       "flake": false,
       "locked": {
-        "lastModified": 1624038537,
-        "narHash": "sha256-Z8erR1YbKR7ndHU75Yb6DOSzj07ZJB2GGx+zSJvNJ7Y=",
+        "lastModified": 1635073274,
+        "narHash": "sha256-pK0dV1ZY52TB/ZMBxXd2ekkspxSYt4h258js/I0NBWA=",
         "ref": "master",
-        "rev": "f28f970148e8f942fb2cf971d41333d42c1d886b",
-        "revCount": 269,
+        "rev": "0e5744fd98acadee44bc5cfc4949146f1d30506f",
+        "revCount": 291,
         "type": "git",
         "url": "https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git"
       },
       "original": {
         "type": "git",
         "url": "https://gitlab.lip6.fr/vlsi-eda/alliance-check-toolkit.git"
-      }
-    },
-    "c4m-pdk-freepdk45": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1615733320,
-        "narHash": "sha256-EFBYtNi9ZgLkaPrdM0lNVvfGp+/BMRH52Pm92GWcbPo=",
-        "owner": "Chips4Makers",
-        "repo": "c4m-pdk-freepdk45",
-        "rev": "985af7afbcfc3ae7c8fc7e78f688d4c5c78cab5e",
-        "type": "gitlab"
-      },
-      "original": {
-        "owner": "Chips4Makers",
-        "repo": "c4m-pdk-freepdk45",
-        "type": "gitlab"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1630612789,
-        "narHash": "sha256-f1q5ExkMX2CBqBcRmrlnpewADt3EjhyncP/PfwUhK/Q=",
-        "owner": "L-as",
+        "lastModified": 1635279144,
+        "narHash": "sha256-YnTZ/BgZukF8wt2dFhl446H6NfOYTDfz7w3BzcW1V3k=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "11f9ff27bc66bf653ccbbfae1412e6f5705e4a5c",
+        "rev": "6fd9e0cec6118df8557407c66d8a880a2c6d0675",
         "type": "github"
       },
       "original": {
-        "owner": "L-as",
-        "ref": "alliance",
+        "owner": "NixOS",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -67,7 +50,6 @@
     "root": {
       "inputs": {
         "alliance-check-toolkit": "alliance-check-toolkit",
-        "c4m-pdk-freepdk45": "c4m-pdk-freepdk45",
         "nixpkgs": "nixpkgs",
         "pinmux": "pinmux",
         "soclayout": "soclayout"
@@ -76,11 +58,11 @@
     "soclayout": {
       "flake": false,
       "locked": {
-        "lastModified": 1625141014,
-        "narHash": "sha256-9W104e0jl2raFWtVo/J/F9bfIPi67THR5YaftT8YmYI=",
+        "lastModified": 1634647854,
+        "narHash": "sha256-hNLjvVDlGzTvpSGfNkZtqXUtlfObqI5ORyWLJ7qfxHU=",
         "ref": "master",
-        "rev": "81d267598a931153815db6cbf0e44f86973575aa",
-        "revCount": 507,
+        "rev": "6316f6a48c6a6167603f01733b5df8300dae435c",
+        "revCount": 512,
         "type": "git",
         "url": "https://git.libre-soc.org/git/soclayout.git"
       },
