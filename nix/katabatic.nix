@@ -1,7 +1,7 @@
 { generic, ... }:
 
 let pkg =
-  { lib, coriolis-vlsisapd, coriolis-hurricane
+  { lib, coriolis-hurricane
   , coriolis-crlcore, coriolis-flute, coriolis-knik
   , qt4, doxygen }:
   {
@@ -9,7 +9,7 @@ let pkg =
     src = ../katabatic;
 
     buildInputs = [
-      coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+      coriolis-hurricane coriolis-crlcore
       coriolis-flute coriolis-knik qt4
     ];
     nativeBuildInputs = [ doxygen ];

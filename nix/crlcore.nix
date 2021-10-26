@@ -1,11 +1,11 @@
 { generic, ... }:
 let pkg =
-  { lib, libxml2, qt4, bison, flex, doxygen, coriolis-vlsisapd
+  { lib, libxml2, qt4, bison, flex, doxygen
   , coriolis-lefdef, coriolis-hurricane, python3Packages }:
   rec {
     name = "crlcore";
     src = ../crlcore;
-    propagatedBuildInputs = [ libxml2 qt4 coriolis-lefdef coriolis-vlsisapd coriolis-hurricane python3Packages.pyqt4 ];
+    propagatedBuildInputs = [ libxml2 qt4 coriolis-lefdef coriolis-hurricane python3Packages.pyqt4 ];
     nativeBuildInputs = [ bison flex doxygen python3Packages.pyqt4 ];
     postInstall = ''
       ln -s crlcore/helpers $out/${python3Packages.python.sitePackages}/helpers

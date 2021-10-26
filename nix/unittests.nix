@@ -1,7 +1,7 @@
 { version, meta }:
 
 { lib, stdenv, cmake, ninja, python3, boost
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
+, coriolis-bootstrap, coriolis-hurricane
 , coriolis-crlcore, coriolis-lefdef, qt4 }:
 
 let boostWithPython = boost.override { enablePython = true; python = python3; }; in
@@ -13,7 +13,7 @@ stdenv.mkDerivation {
 
   buildInputs = [
     python3 boostWithPython coriolis-bootstrap qt4
-    coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+    coriolis-hurricane coriolis-crlcore
     coriolis-lefdef
   ];
   nativeBuildInputs = [ cmake ninja ];

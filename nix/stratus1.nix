@@ -1,14 +1,14 @@
 { generic, ... }:
 
 let pkg =
-  { lib, coriolis-crlcore, coriolis-vlsisapd, coriolis-hurricane
+  { lib, coriolis-crlcore, coriolis-hurricane
   , python3Packages, coriolis-cumulus }:
   {
     name = "coriolis-stratus1";
     src = ../stratus1;
 
     propagatedBuildInputs = [
-      coriolis-vlsisapd coriolis-crlcore coriolis-hurricane coriolis-cumulus
+      coriolis-crlcore coriolis-hurricane coriolis-cumulus
     ];
     postInstall = ''
       ln -s -t $out/${python3Packages.python.sitePackages} \

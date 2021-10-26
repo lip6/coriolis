@@ -1,7 +1,7 @@
 { version, meta }:
 
 { lib, stdenv, cmake, ninja, python3, boost
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
+, coriolis-bootstrap, coriolis-hurricane
 , coriolis-crlcore, coriolis-flute, coriolis-knik
 , coriolis-lefdef, coriolis-katabatic, libxml2, qt4 }:
 
@@ -14,7 +14,7 @@ stdenv.mkDerivation {
 
   buildInputs = [
     python3 boostWithPython coriolis-bootstrap libxml2
-    coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+    coriolis-hurricane coriolis-crlcore
     coriolis-flute coriolis-knik coriolis-lefdef
     coriolis-katabatic qt4
   ];

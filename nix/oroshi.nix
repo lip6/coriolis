@@ -2,13 +2,13 @@
 
 let pkg =
   { qt4, coriolis-crlcore, doxygen, lib, python3Packages
-  , coriolis-vlsisapd, coriolis-hurricane }:
+  , coriolis-hurricane }:
   {
     name = "oroshi";
     src = ../oroshi;
 
     propagatedBuildInputs = [
-      coriolis-vlsisapd qt4 python3Packages.pyqt4
+      qt4 python3Packages.pyqt4
       coriolis-crlcore coriolis-hurricane qt4
       python3Packages.numpy
     ];

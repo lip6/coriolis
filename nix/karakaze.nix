@@ -2,13 +2,13 @@
 
 let pkg =
   { lib, coriolis-crlcore, coriolis-bora, coriolis-katana, coriolis-anabatic
-  , coriolis-vlsisapd, coriolis-hurricane }:
+  , coriolis-hurricane }:
   {
     name = "coriolis-karakaze";
     src = ../karakaze;
 
     propagatedBuildInputs = [
-      coriolis-vlsisapd coriolis-crlcore coriolis-hurricane coriolis-katana
+      coriolis-crlcore coriolis-hurricane coriolis-katana
       coriolis-bora coriolis-anabatic
     ];
     postInstall = ''

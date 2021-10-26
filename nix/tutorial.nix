@@ -1,7 +1,7 @@
 { generic, ... }:
 
 let pkg =
-  { lib, coriolis-vlsisapd, coriolis-hurricane
+  { lib, coriolis-hurricane
   , coriolis-crlcore, qt4, coriolis-lefdef, libxml2
   , doxygen }:
   {
@@ -9,7 +9,7 @@ let pkg =
     src = ../tutorial;
 
     buildInputs = [
-      coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+      coriolis-hurricane coriolis-crlcore
       coriolis-lefdef libxml2 qt4
     ];
     nativeBuildInputs = [ doxygen ];

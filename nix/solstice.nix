@@ -1,7 +1,7 @@
 { version, meta }:
 
 { lib, stdenv, cmake, ninja, python3, qt4, coriolis-crlcore
-, coriolis-bootstrap, coriolis-vlsisapd, coriolis-hurricane
+, coriolis-bootstrap, coriolis-hurricane
 , coriolis-equinox, boost }:
 
 let boostWithPython = boost.override { enablePython = true; python = python3; }; in
@@ -12,7 +12,7 @@ stdenv.mkDerivation {
   src = ../solstice;
 
   buildInputs = [
-    python3 coriolis-bootstrap coriolis-vlsisapd
+    python3 coriolis-bootstrap
     coriolis-crlcore coriolis-hurricane qt4 boostWithPython
     coriolis-equinox
   ];

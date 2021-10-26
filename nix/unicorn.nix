@@ -1,7 +1,7 @@
 { generic, ... }:
 
 let pkg =
-  { lib, coriolis-vlsisapd, coriolis-hurricane, coriolis-tutorial
+  { lib, coriolis-hurricane, coriolis-tutorial
   , coriolis-crlcore, qt4, coriolis-katana, coriolis-bora
   , coriolis-flute, coriolis-anabatic, coriolis-coloquinte
   , coriolis-lefdef, coriolis-knik, coriolis-kite
@@ -12,7 +12,7 @@ let pkg =
     src = ../unicorn;
 
     propagatedBuildInputs = [
-      coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+      coriolis-hurricane coriolis-crlcore
       coriolis-katana qt4 coriolis-flute coriolis-anabatic
       coriolis-lefdef libxml2 coriolis-knik coriolis-kite
       coriolis-katabatic coriolis-etesian coriolis-equinox

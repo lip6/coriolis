@@ -1,7 +1,7 @@
 { version, meta, ... }:
 
 { buildEnv
-, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore
+, coriolis-hurricane, coriolis-crlcore
 , coriolis-anabatic, coriolis-katana, coriolis-bora
 , coriolis-katabatic, coriolis-kite, coriolis-tutorial
 , coriolis-unicorn, coriolis-oroshi, coriolis-cumulus
@@ -18,7 +18,7 @@ buildEnv {
     coriolis-etesian coriolis-anabatic coriolis-katana
     coriolis-bora coriolis-katabatic coriolis-kite
     coriolis-tutorial coriolis-unicorn coriolis-oroshi
-    coriolis-cumulus coriolis-lefdef coriolis-vlsisapd
+    coriolis-cumulus coriolis-lefdef
     coriolis-coloquinte coriolis-equinox coriolis-knik
     coriolis-karakaze coriolis-solstice coriolis-stratus1
   ];

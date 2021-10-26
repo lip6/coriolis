@@ -1,12 +1,12 @@
 { generic, ... }:
 let pkg =
-  { doxygen, qt4, coriolis-coloquinte, coriolis-vlsisapd, coriolis-hurricane
+  { doxygen, qt4, coriolis-coloquinte, coriolis-hurricane
   , lib, coriolis-crlcore }:
   {
     name = "etesian";
     src = ../etesian;
     buildInputs = [
-      qt4 coriolis-coloquinte coriolis-vlsisapd
+      qt4 coriolis-coloquinte
       coriolis-hurricane coriolis-crlcore
     ];
     propagatedBuildInputs = [

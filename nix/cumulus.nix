@@ -1,7 +1,7 @@
 { generic, ... }:
 
 let pkg =
-  { lib, coriolis-vlsisapd, coriolis-hurricane, coriolis-crlcore
+  { lib, coriolis-hurricane, coriolis-crlcore
   , coriolis-etesian, coriolis-anabatic, coriolis-katana
   , coriolis-unicorn, python3Packages }:
   {
@@ -18,7 +18,7 @@ let pkg =
     '';
 
     propagatedBuildInputs = [
-      coriolis-vlsisapd coriolis-hurricane coriolis-crlcore
+      coriolis-hurricane coriolis-crlcore
       coriolis-etesian coriolis-anabatic coriolis-katana
       coriolis-unicorn
     ];

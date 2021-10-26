@@ -1,6 +1,6 @@
 { generic, ... }:
 let pkg =
-  { doxygen, qt4, lib, coriolis-coloquinte, coriolis-vlsisapd
+  { doxygen, qt4, lib, coriolis-coloquinte
   , coriolis-hurricane, coriolis-crlcore, libxml2
   , coriolis-flute, coriolis-etesian, coriolis-lefdef
   , coriolis-anabatic }:
@@ -8,7 +8,7 @@ let pkg =
     name = "katana";
     src = ../katana;
     buildInputs = [
-      qt4 coriolis-coloquinte coriolis-vlsisapd
+      qt4 coriolis-coloquinte
       coriolis-hurricane coriolis-crlcore
       coriolis-flute coriolis-etesian libxml2
       coriolis-lefdef coriolis-anabatic
