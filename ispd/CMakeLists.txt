@@ -24,7 +24,7 @@
  find_package(CORIOLIS REQUIRED)
  find_package(KNIK REQUIRED)
  find_package(LEFDEF REQUIRED)
-#find_package(KATABATIC REQUIRED)
+ find_package(KATABATIC REQUIRED)
 #find_package(KITE REQUIRED)
 #find_package(EQUINOX REQUIRED)
 #find_package(SOLSTICE REQUIRED)

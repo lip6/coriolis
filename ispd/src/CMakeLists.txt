@@ -1,6 +1,8 @@
 
                include ( ${QT_USE_FILE} )
    include_directories ( ${Boost_INCLUDE_DIRS}
+                         ${KNIK_INCLUDE_DIR}
+                         ${KATABATIC_INCLUDE_DIR}
                          ${HURRICANE_INCLUDE_DIR}
                          ${CORIOLIS_INCLUDE_DIR}
                        )

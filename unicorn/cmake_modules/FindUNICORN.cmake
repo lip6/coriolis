@@ -6,7 +6,7 @@
 #  UNICORN_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(UNICORN_INCLUDE_PATH_DESCRIPTION "directory containing the Unicorn include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(UNICORN_INCLUDE_PATH_DESCRIPTION "directory containing the Unicorn include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(UNICORN_DIR_MESSAGE "Set the UNICORN_INCLUDE_DIR cmake cache entry to the ${UNICORN_INCLUDE_PATH_DESCRIPTION}")
 

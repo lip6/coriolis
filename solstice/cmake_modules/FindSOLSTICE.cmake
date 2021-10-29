@@ -6,7 +6,7 @@
 #  SOLSTICE_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(SOLSTICE_INCLUDE_PATH_DESCRIPTION "directory containing the Solstice include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(SOLSTICE_INCLUDE_PATH_DESCRIPTION "directory containing the Solstice include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(SOLSTICE_DIR_MESSAGE "Set the SOLSTICE_INCLUDE_DIR cmake cache entry to the ${SOLSTICE_INCLUDE_PATH_DESCRIPTION}")
 
@@ -15,10 +15,10 @@ IF(UNIX)
   #
   # Look for an installation.
   #
-  FIND_PATH(SOLSTICE_INCLUDE_PATH NAMES solstice/Equi.h PATHS
+  FIND_PATH(SOLSTICE_INCLUDE_PATH NAMES solstice/Brick.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${SOLSTICE_INCLUDE_PATH_DESCRIPTION}"
   )

@@ -1,6 +1,8 @@
 # -*- explicit-buffer-name: "CMakeLists.txt<bora/src>" -*-
 
    include_directories( ${BORA_SOURCE_DIR}/src
+                        ${ANABATIC_INCLUDE_DIR}
+                        ${KATANA_INCLUDE_DIR}
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 

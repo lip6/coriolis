@@ -1,7 +1,7 @@
 # -*- mode: CMAKE explicit-buffer-name: "CMakeLists.txt<flute/src/3.1>" -*-
 
    include_directories( ${FLUTE_SOURCE_DIR}/src/3.1
-                        ${CORIOLIS_LIBRARIES}
+                        ${CRLCORE_INCLUDE_PATH}
                         ${HURRICANE_INCLUDE_DIR}
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Python_INCLUDE_DIRS}

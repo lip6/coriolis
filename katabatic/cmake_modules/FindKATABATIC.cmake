@@ -6,7 +6,7 @@
 #  KATABATIC_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(KATABATIC_INCLUDE_PATH_DESCRIPTION "directory containing the Katabatic include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(KATABATIC_INCLUDE_PATH_DESCRIPTION "directory containing the Katabatic include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(KATABATIC_DIR_MESSAGE "Set the KATABATIC_INCLUDE_DIR cmake cache entry to the ${KATABATIC_INCLUDE_PATH_DESCRIPTION}")
 
@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(KATABATIC_INCLUDE_PATH NAMES katabatic/KatabaticEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${KATABATIC_INCLUDE_PATH_DESCRIPTION}"
   )

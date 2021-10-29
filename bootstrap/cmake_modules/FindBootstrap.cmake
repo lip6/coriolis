@@ -40,15 +40,6 @@
  endmacro(check_distribution)
 
 #
-# Specific setup for MacOS X.
-#
- if(WITH_MACPORTS)
-   set(Boost_PYVER "27")
- else()
-   set(Boost_PYVER "")
- endif()
-
-#
 # Get the svn revision version and configure a svn.h.in file based on this version
 # The include directory name is passed as argument
 #
@@ -196,9 +187,10 @@
    else(ARGC LESS 1)
      foreach(component ${ARGV})
        if(${component} STREQUAL "python")
-         set(component ${component}${Boost_PYVER})
+         set(components ${components} ${component}39)
+       else()
+         set(components ${components} ${component})
        endif()
-       set(components ${components} ${component})
      endforeach()
      
      find_package(Boost 1.35.0 COMPONENTS ${components} system)

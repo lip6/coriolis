@@ -6,7 +6,7 @@
 #  METIS_LIBRARIES - The path to where the Coriolis library files are.
 
 
-SET(METIS_INCLUDE_PATH_DESCRIPTION "directory containing the Metis/hmetis include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(METIS_INCLUDE_PATH_DESCRIPTION "directory containing the Metis/hmetis include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(METIS_DIR_MESSAGE "Set the METIS_INCLUDE_DIR cmake cache entry to the ${METIS_INCLUDE_PATH_DESCRIPTION}")
 

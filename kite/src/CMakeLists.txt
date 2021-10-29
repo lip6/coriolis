@@ -3,6 +3,8 @@
 #              include( ${QT_USE_FILE} )
    include_directories( ${KITE_SOURCE_DIR}/src
                         ${CORIOLIS_INCLUDE_DIR} 
+                        ${KNIK_INCLUDE_DIR}
+                        ${KATABATIC_INCLUDE_DIR}
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${FLUTE_INCLUDE_DIR} 

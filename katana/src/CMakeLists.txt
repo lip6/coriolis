@@ -2,6 +2,8 @@
 
 #              include( ${QT_USE_FILE} )
    include_directories( ${KATANA_SOURCE_DIR}/src
+                        ${ANABATIC_INCLUDE_DIR} 
+                        ${ETESIAN_INCLUDE_DIR} 
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 

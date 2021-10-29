@@ -6,7 +6,7 @@
 #  SMURF_LIBRARIES   - The path to where the Coriolis library files are.
 
 
-SET(SMURF_INCLUDE_PATH_DESCRIPTION "directory containing the Smurf include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(SMURF_INCLUDE_PATH_DESCRIPTION "directory containing the Smurf include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(SMURF_DIR_MESSAGE "Set the SMURF_INCLUDE_DIR cmake cache entry to the ${SMURF_INCLUDE_PATH_DESCRIPTION}")
 
@@ -18,7 +18,7 @@ IF(UNIX)
   FIND_PATH(SMURF_INCLUDE_PATH NAMES smurf/SmurfEngine.h PATHS
     # Look in other places.
     ${CORIOLIS_DIR_SEARCH}
-    PATH_SUFFIXES include/coriolis
+    PATH_SUFFIXES include/coriolis2
     # Help the user find it if we cannot.
     DOC "The ${SMURF_INCLUDE_PATH_DESCRIPTION}"
   )

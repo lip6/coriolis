@@ -61,7 +61,6 @@
           add_custom_command ( OUTPUT   lef.tab.cpp
                                DEPENDS  ${LefParserGrammar}
                                COMMAND  ${BISON_EXECUTABLE} -v -p lefyy -d ${LefParserGrammar} -o lef.tab.cpp 
-                               COMMAND  cp lef.tab.hpp ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.tab.hpp
                                COMMAND  cp lef.tab.hpp ${LEFDEF_SOURCE_DIR}/src/lef/lef/lef.tab.h
                                COMMENT  "Generating LEF parser (bison)"
                              )

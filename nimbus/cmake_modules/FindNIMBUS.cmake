@@ -6,7 +6,7 @@
 #  NIMBUS_LIBRARIES - The path to where the Coriolis library files are.
 
 
-SET(NIMBUS_INCLUDE_PATH_DESCRIPTION "directory containing the Nimbus include files. E.g /usr/local/include/coriolis or /asim/coriolis/include/coriolis")
+SET(NIMBUS_INCLUDE_PATH_DESCRIPTION "directory containing the Nimbus include files. E.g /usr/local/include/coriolis2 or /asim/coriolis/include/coriolis2")
 
 SET(NIMBUS_DIR_MESSAGE "Set the NIMBUS_INCLUDE_DIR cmake cache entry to the ${NIMBUS_INCLUDE_PATH_DESCRIPTION}")
 
