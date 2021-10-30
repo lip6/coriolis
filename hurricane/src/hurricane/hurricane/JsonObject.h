@@ -214,7 +214,7 @@ namespace std {
 
   template<>
   struct less<Hurricane::JsonObject*> {
-      inline bool operator() ( const Hurricane::JsonObject* lhs, const Hurricane::JsonObject* rhs )
+      inline bool operator() ( const Hurricane::JsonObject* lhs, const Hurricane::JsonObject* rhs ) const
       { return lhs->getTypeName() < rhs->getTypeName(); }
   };
 

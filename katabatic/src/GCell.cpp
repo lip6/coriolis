@@ -66,7 +66,7 @@ namespace {
     private:
       class AxisCompare {
         public:
-          bool operator() ( const Axis* lhs, const Axis* rhs );
+          bool operator() ( const Axis* lhs, const Axis* rhs ) const;
       };
 
       class AxisMatch : public unary_function<Axis*,bool> {
@@ -166,7 +166,7 @@ namespace {
   }
 
 
-  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs )
+  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs ) const
   {
     if ( lhs->getAxis () < rhs->getAxis () ) return true;
     return false;
@@ -273,7 +273,7 @@ namespace Katabatic {
   { }
 
 
-  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs )
+  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs ) const
   {
   //float difference = roundfp ( lhs->getDensity(_depth) - rhs->getDensity(_depth) );
     float difference = lhs->getDensity(_depth) - rhs->getDensity(_depth);
@@ -292,7 +292,7 @@ namespace Katabatic {
 // lhs < rhs --> true
 
 
-  bool  GCell::CompareByKey::operator() ( const GCell* lhs, const GCell* rhs )
+  bool  GCell::CompareByKey::operator() ( const GCell* lhs, const GCell* rhs ) const
   {
     return lhs->getKey() < rhs->getKey();
   }

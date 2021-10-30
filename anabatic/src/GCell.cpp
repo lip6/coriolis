@@ -55,7 +55,7 @@ namespace {
     private:
       class AxisCompare {
         public:
-          bool operator() ( const Axis* lhs, const Axis* rhs );
+          bool operator() ( const Axis* lhs, const Axis* rhs ) const;
       };
 
       class AxisMatch : public unary_function<Axis*,bool> {
@@ -155,7 +155,7 @@ namespace {
   }
 
 
-  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs )
+  inline bool  UsedFragments::AxisCompare::operator() ( const Axis* lhs, const Axis* rhs ) const
   {
     if (lhs->getAxis () < rhs->getAxis ()) return true;
     return false;
@@ -259,7 +259,7 @@ namespace Anabatic {
   { }
 
 
-  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs )
+  bool  GCell::CompareByDensity::operator() ( GCell* lhs, GCell* rhs ) const
   {
     float difference = lhs->getDensity(_depth) - rhs->getDensity(_depth);
     if (difference != 0.0) return (difference > 0.0);

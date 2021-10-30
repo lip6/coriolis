@@ -1359,7 +1359,7 @@ namespace Anabatic {
   PriorityQueue* PriorityQueue::CompareByDistance::_pqueue = NULL;
 
 
-  bool PriorityQueue::CompareByDistance::operator() ( const Vertex* lhs, const Vertex* rhs )
+  bool PriorityQueue::CompareByDistance::operator() ( const Vertex* lhs, const Vertex* rhs ) const
   {
     if (lhs->getDistance() == rhs->getDistance()) {
       if (_pqueue and _pqueue->hasAttractor()) {

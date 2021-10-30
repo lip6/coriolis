@@ -47,11 +47,11 @@ namespace {
 
   class SortAcByXY {
     public:
-      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 );
+      inline bool  operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 ) const;
   };
 
 
-  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 )
+  inline bool  SortAcByXY::operator() ( AutoContactTerminal* contact1, AutoContactTerminal* contact2 ) const
   {
     DbU::Unit x1 = contact1->getX();
     DbU::Unit x2 = contact2->getX();
