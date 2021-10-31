@@ -76,18 +76,18 @@ namespace Katabatic {
     public:
       class CompareByIndex : public binary_function<const GCell*,const GCell*,bool> {
         public:
-          bool operator() ( const GCell* lhs, const GCell* rhs );
+          bool operator() ( const GCell* lhs, const GCell* rhs ) const;
       };
       class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
         public:
                CompareByDensity ( unsigned int depth );
-          bool operator()       ( GCell* lhs, GCell* rhs );
+          bool operator()       ( GCell* lhs, GCell* rhs ) const;
         private:
           unsigned int  _depth;
       };
       class CompareByKey : public binary_function<const GCell*,const GCell*,bool> {
         public:
-          bool  operator() ( const GCell* lhs, const GCell* rhs );
+          bool  operator() ( const GCell* lhs, const GCell* rhs ) const;
       };
 
       class Key {
@@ -289,7 +289,7 @@ namespace Katabatic {
 
 
 // GCell::CompareByIndex Inline Functions.
-  inline bool  GCell::CompareByIndex::operator() ( const GCell* lhs, const GCell* rhs )
+  inline bool  GCell::CompareByIndex::operator() ( const GCell* lhs, const GCell* rhs ) const
   { return ( lhs->getIndex() < rhs->getIndex() ); }
 
 

@@ -50,7 +50,7 @@ namespace {
 
   class CompareByLength {
     public:
-      inline bool operator() ( const Segment* lhs, const Segment* rhs )
+      inline bool operator() ( const Segment* lhs, const Segment* rhs ) const
       {
         DbU::Unit delta = lhs->getLength() - rhs->getLength();
         if (delta < 0) return false;
@@ -61,7 +61,7 @@ namespace {
 
   class CompareBySegmentBox {
     public:
-      inline bool operator() ( const Box& lhs, const Box& rhs )
+      inline bool operator() ( const Box& lhs, const Box& rhs ) const
       {
         bool lhsH = (lhs.getWidth() >= lhs.getHeight());
         bool rhsH = (rhs.getWidth() >= rhs.getHeight());

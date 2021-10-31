@@ -439,7 +439,7 @@ namespace Anabatic {
       class CompareByDistance {
         public:
                  inline      CompareByDistance ();
-                        bool operator()        ( const Vertex* lhs, const Vertex* rhs );
+                        bool operator()        ( const Vertex* lhs, const Vertex* rhs ) const;
           static inline void setQueue          ( PriorityQueue* );
         private:
           static PriorityQueue* _pqueue;

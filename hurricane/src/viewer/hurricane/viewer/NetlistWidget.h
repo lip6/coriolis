@@ -76,11 +76,11 @@ namespace Hurricane {
 
 
   struct SelectedNetCompare {
-      inline bool operator() ( const SelectedNet& lhs, const SelectedNet& rhs );
+      inline bool operator() ( const SelectedNet& lhs, const SelectedNet& rhs ) const;
   };
 
 
-  inline bool SelectedNetCompare::operator() ( const SelectedNet& lhs, const SelectedNet& rhs )
+  inline bool SelectedNetCompare::operator() ( const SelectedNet& lhs, const SelectedNet& rhs ) const
   {
     return lhs.getNet()->getName() < rhs.getNet()->getName();
   }

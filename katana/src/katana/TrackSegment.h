@@ -52,7 +52,7 @@ namespace Katana {
     public:
       class CompareById : public binary_function<const TrackSegment*,const TrackSegment*,bool> {
         public:
-          inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs );
+          inline bool  operator() ( const TrackSegment* lhs, const TrackSegment* rhs ) const;
       };
 
     public:
@@ -181,7 +181,7 @@ namespace Katana {
   };
 
 
-  inline bool  TrackSegment::CompareById::operator() ( const TrackSegment* lhs, const TrackSegment* rhs )
+  inline bool  TrackSegment::CompareById::operator() ( const TrackSegment* lhs, const TrackSegment* rhs ) const
   { return lhs->getId() < rhs->getId(); }
 
 

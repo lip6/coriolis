@@ -103,13 +103,13 @@ namespace Anabatic {
       class CompareByDensity : public binary_function<GCell*,GCell*,bool> {
         public:
                       CompareByDensity ( size_t depth );
-          inline bool operator()       ( GCell* lhs, GCell* rhs );
+          inline bool operator()       ( GCell* lhs, GCell* rhs ) const;
         private:
           size_t  _depth;
       };
       class CompareByKey : public binary_function<const GCell*,const GCell*,bool> {
         public:
-          inline bool  operator() ( const GCell* lhs, const GCell* rhs );
+          inline bool  operator() ( const GCell* lhs, const GCell* rhs ) const;
       };
     public:
       class Key {
@@ -125,7 +125,7 @@ namespace Anabatic {
         public:
           class Compare {
             public:
-              inline bool operator() ( const Key*, const Key* );
+              inline bool operator() ( const Key*, const Key* ) const;
           };
         private:
           const GCell* _gcell;
@@ -504,7 +504,7 @@ namespace Anabatic {
   }
 
 // GCell::CompareByKey Inline Functions.
-  inline bool  GCell::CompareByKey::operator() ( const GCell* lhs, const GCell* rhs )
+  inline bool  GCell::CompareByKey::operator() ( const GCell* lhs, const GCell* rhs ) const
   { return lhs->getKey() < rhs->getKey(); }
 
 
@@ -531,7 +531,7 @@ namespace Anabatic {
     return lhs._gcell->getId() < rhs._gcell->getId();
   }
 
-  inline bool  GCell::Key::Compare::operator() ( const GCell::Key* lhs, const GCell::Key* rhs )
+  inline bool  GCell::Key::Compare::operator() ( const GCell::Key* lhs, const GCell::Key* rhs ) const
   {
   //if (lhs->isSaturated() xor rhs->isSaturated()) return lhs->isSaturated(); 
       
