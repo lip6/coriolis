@@ -96,14 +96,18 @@ class HTree ( object ):
             hLeafDepth = gaugeConf.horizontalDepth - 2
         gaugeConf.setStackPosition( contact, x, y )
         gaugeConf.createVertical  ( contact, forkContact, x, 0 )
+        trace( 550, '\tLeaf contact:{}\n'.format( contact ))
         if len(leaf.buffers) > 1:
             tl1Contact = gaugeConf.rpAccessByPlugName( leaf.buffers[1], bufferConf.input , ckNet, GaugeConf.DeepDepth|GaugeConf.HAccess )
             tl2Contact = gaugeConf.rpAccessByPlugName( leaf.buffers[2], bufferConf.input , ckNet )
             tl2Y       = gaugeConf.getTrack( tl2Contact.getY(), hLeafDepth, 2 )
             left1X     = gaugeConf.getNearestVerticalTrack( tl1Contact.getX(), 0, 0 )
+            left1Y     = gaugeConf.getStackY( contact, GaugeConf.DeepDepth )
+            dxLeft     = contact.getX() - gaugeConf.getStackX( contact, GaugeConf.DeepDepth )
             gaugeConf.expandMinArea( tl2Contact )
-            gaugeConf.setStackPosition( tl1Contact, left1X    , y  )
-            gaugeConf.createHorizontal( contact   , tl1Contact, y  , GaugeConf.DeepDepth|GaugeConf.SourceExtend )
+            gaugeConf.setStackPosition( tl1Contact, left1X    , left1Y )
+           #gaugeConf.createHorizontal( contact   , tl1Contact, left1Y , GaugeConf.DeepDepth|GaugeConf.SourceExtend )
+            gaugeConf.createHorizontal( contact   , tl1Contact, left1Y , GaugeConf.DeepDepth, dxLeft )
             gaugeConf.createVertical  ( contact   , tl2Contact, x, 0 )
 
     def _rrouteHTree ( self, qt ):
@@ -173,6 +177,7 @@ class HTree ( object ):
         if qt.tl:
             self._connectLeaf( qt.tl, ckNet, leftContact, tlContact, leftX, tlY )
         if qt.bl:
+            trace( 550, '\tConnect BL leaf, leftX={} blY={}\n'.format( DbU.getValueString(leftX), DbU.getValueString(blY) ))
             self._connectLeaf( qt.bl, ckNet, leftContact, blContact, leftX, blY )
         if qt.tr:
             self._connectLeaf( qt.tr, ckNet, rightContact, trContact, rightX, tlY )

@@ -245,22 +245,18 @@ class GaugeConf ( object ):
         else:                           depth = self.verticalDepth
         return self.getTrack( x, depth, offset )
 
-    def createHorizontal ( self, source, target, y, flags ):
+    def createHorizontal ( self, source, target, y, flags, dxSource=0 ):
         if flags & GaugeConf.DeepDepth: depth = self.horizontalDeepDepth
         else:                           depth = self.horizontalDepth
-        
         layer = self._routingGauge.getRoutingLayer(depth)
-
-        dxSource = 0
-        if flags & GaugeConf.SourceExtend: dxSource = self._routingGauge.getPitch(layer)
-        
+        if not dxSource and flags & GaugeConf.SourceExtend:
+            dxSource = self._routingGauge.getPitch(layer)
         if flags & GaugeConf.UseContactWidth:
             width = source.getBoundingBox(layer.getBasicLayer()).getHeight()
         else:
             width = self._routingGauge.getLayerGauge(depth).getWireWidth()
         if flags & GaugeConf.ExpandWidth:
             width += DbU.fromLambda( 1.0 )
-        
         segment = Horizontal.create( source, target, layer, y, width )
         segment.setDxSource( -dxSource )
         trace( 550, segment )
@@ -448,6 +444,98 @@ class GaugeConf ( object ):
         #        segment.getOppositeAnchor( topContact ).setX( x )
         self.expandMinArea( topContact )
         return
+
+    def getStackY ( self, topContact, flags ):
+        """
+        Get the Y coordinate of a stack contact, on the top level or in
+        the deep routing level.
+
+        :param topContact:  The topmost contact of the VIA stack.
+
+        .. note:: A stacked contact is a set of contacts with short
+                  segments to connect them. Segments are alternately
+                  H & V, according to the routing gauge. Segments are
+                  put on the routing tracks, so the X/Y coordinates 
+                  of the various contacts *may* slighlty vary.
+        """
+        trace( 550, '\tgetStackY() {}\n'.format( topContact ))
+        y  = topContact.getY()
+        lg = self.routingGauge.getLayerGauge( topContact.getLayer().getTop() )
+        if lg:
+            if lg.getDirection() == RoutingLayerGauge.Horizontal:
+                y = topContact.getY()
+        if not (flags & GaugeConf.DeepDepth):
+            return y
+        contact = topContact
+        depth   = -1
+        while contact:
+            count   = 0
+            segment = None
+            for component in contact.getSlaveComponents():
+                if isinstance(component,Horizontal):
+                    horizontal = component
+                    lg         = self.routingGauge.getLayerGauge( horizontal.getLayer() )
+                    if depth == -1 or lg.getDepth() < depth:
+                        segment = horizontal
+                        depth   = lg.getDepth()
+                if isinstance(component,Vertical):
+                    vertical = component
+                    lg       = self.routingGauge.getLayerGauge( vertical.getLayer() )
+                    if depth == -1 or lg.getDepth() < depth:
+                        segment = vertical
+                        depth   = lg.getDepth()
+            if not segment:
+                return y
+            if depth == self.horizontalDeepDepth:
+                return segment.getY()
+            contact = segment.getOppositeAnchor( contact )
+        return y
+
+    def getStackX ( self, topContact, flags ):
+        """
+        Get the X coordinate of a stack contact, on the top level or in
+        the deep routing level.
+
+        :param topContact:  The topmost contact of the VIA stack.
+
+        .. note:: A stacked contact is a set of contacts with short
+                  segments to connect them. Segments are alternately
+                  H & V, according to the routing gauge. Segments are
+                  put on the routing tracks, so the X/Y coordinates 
+                  of the various contacts *may* slighlty vary.
+        """
+        trace( 550, '\tgetStackX() {}\n'.format( topContact ))
+        x  = topContact.getX()
+        lg = self.routingGauge.getLayerGauge( topContact.getLayer().getTop() )
+        if lg:
+            if lg.getDirection() == RoutingLayerGauge.Horizontal:
+                x = topContact.getX()
+        if not (flags & GaugeConf.DeepDepth):
+            return y
+        contact = topContact
+        depth   = -1
+        while contact:
+            count   = 0
+            segment = None
+            for component in contact.getSlaveComponents():
+                if isinstance(component,Horizontal):
+                    horizontal = component
+                    lg         = self.routingGauge.getLayerGauge( horizontal.getLayer() )
+                    if depth == -1 or lg.getDepth() < depth:
+                        segment = horizontal
+                        depth   = lg.getDepth()
+                if isinstance(component,Vertical):
+                    vertical = component
+                    lg       = self.routingGauge.getLayerGauge( vertical.getLayer() )
+                    if depth == -1 or lg.getDepth() < depth:
+                        segment = vertical
+                        depth   = lg.getDepth()
+            if not segment:
+                return x
+            if depth == self.verticalDeepDepth:
+                return segment.getX()
+            contact = segment.getOppositeAnchor( contact )
+        return x
 
     def expandMinArea ( self, topContact ):
         segments = []
