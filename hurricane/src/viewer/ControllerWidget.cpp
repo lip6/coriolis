@@ -605,7 +605,7 @@ namespace Hurricane {
 
     Graphics::getGraphics()->addObserver( &_observer );
                                         
-    resize( Graphics::toHighDpi(620), Graphics::toHighDpi(500) );
+    resize( Graphics::toHighDpi(1000), Graphics::toHighDpi(700) );
   }
 
 

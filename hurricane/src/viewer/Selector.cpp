@@ -186,7 +186,7 @@ namespace Hurricane {
 	if (not widget)
       throw Error( "Selector::attachTo(): Cannot attach, NULL widget argument." );
 
-	_cellWidgets.insert( make_pair(widget,0) );
+	_cellWidgets.insert( make_pair(widget,Selected) );
 	widget->getSelectorSet().insert( this );
   }
 

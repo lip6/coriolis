@@ -1128,8 +1128,8 @@ namespace Hurricane {
     _textFontHeight = QFontMetrics(font).ascent();
 
     if (Graphics::isHighDpi()) {
-      resize( Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt())
-            , Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",350)->asInt()) );
+      resize( Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",500)->asInt())
+            , Graphics::toHighDpi(Cfg::getParamInt("viewer.minimumSize",500)->asInt()) );
     }
   }
 
@@ -1285,7 +1285,6 @@ namespace Hurricane {
       _state->setShowSelection ( state );
       _selectionHasChanged = false;
       refresh ();
-
       emit selectionModeChanged ();
     }
   }
@@ -1320,7 +1319,7 @@ namespace Hurricane {
 
   void  CellWidget::_redraw ( QRect redrawArea )
   {
-  //cerr << "CellWidget::redraw() - start "
+  //cerr << "CellWidget::_redraw() - start "
   //     << _selectionHasChanged << " filter:"
   //     << _state->getQueryFilter() << endl;
 
@@ -2788,6 +2787,7 @@ namespace Hurricane {
 	if ( occurrence.getOwnerCell() != getCell() )
       throw Error( "CellWidget::toggleSelection(): Occurrence do not belong to the loaded cell." );
 
+    cerr << "CellWidget::toggleSelection() " << occurrence << endl;
 	Property* property = occurrence.getProperty( Selector::getPropertyName() );
     Selector* selector = NULL;
 	if (not property) {

@@ -754,10 +754,10 @@ namespace Hurricane {
   }
 
 
-  void  CellViewer::setShowSelection ( bool state )
+  void  CellViewer::setShowSelection ( bool )
   {
     _updateState = InternalEmit;
-    _cellWidget->setShowSelection ( state );
+    _cellWidget->setShowSelection ( not _cellWidget->showSelection() );
   }
 
 
