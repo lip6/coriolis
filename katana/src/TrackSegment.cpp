@@ -1122,7 +1122,8 @@ namespace Katana {
     string s2 = " ["   + DbU::getValueString(_sourceU)
               +  ":"   + DbU::getValueString(_targetU) + "]"
               +  " "   + DbU::getValueString(_targetU-_sourceU)
-              +  " "   + getString(_dogLegLevel)
+              +  " "   + getString(_dogLegLevel) + " "
+              + ((isNonPref()      ) ? "P" : "-")
               + ((isRouted()       ) ? "R" : "-")
               + ((isSlackened()    ) ? "S" : "-")
               + ((_track           ) ? "T" : "-")

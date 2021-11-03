@@ -459,8 +459,10 @@ namespace Katana {
   void  Session::_addMoveEvent ( TrackElement* segment, Track* track, DbU::Unit axis )
   {
     if (not segment->getTrack()) {
-      cerr << Bug( " Katana::Session::addMoveEvent() : %s is not yet in a track."
-                 , getString(segment).c_str() ) << endl;
+      if (not segment->isNonPref() and not segment->isReduced()) {
+        cerr << Bug( " Katana::Session::addMoveEvent() : %s is not yet in a track."
+                   , getString(segment).c_str() ) << endl;
+      }
     } else {
       _addRemoveEvent( segment );
     }
