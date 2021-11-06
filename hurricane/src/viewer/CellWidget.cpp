@@ -370,7 +370,7 @@ namespace Hurricane {
   {
     _normalPen = pen;
     _linePen   = pen;
-    _linePen.setStyle( Qt::SolidLine );
+  //_linePen.setStyle( Qt::SolidLine );
 
 #if 0
   //#if (QT_VERSION == QT_VERSION_CHECK(4,8,5))
@@ -1841,17 +1841,26 @@ namespace Hurricane {
     // _drawingPlanes.select ( PlaneId::Normal );
     // _drawingPlanes.begin  ();
     // _drawingPlanes.painter().setClipRect( redrawArea );
-    _drawingPlanes.setPen  ( Graphics::getPen  (("grid"), getDarkening() ));
+    QPen pen = Graphics::getPen( ("grid"), getDarkening() );
+    pen.setStyle( Qt::DashLine );
+    _drawingPlanes.setPen  ( pen );
+  //_drawingPlanes.setPen  ( Graphics::getPen  (("grid"), getDarkening() ));
     _drawingPlanes.setBrush( Graphics::getBrush(("grid"), getDarkening() ));
 
     Box  redrawBox    = screenToDbuBox( redrawArea ).inflate( DbU::lambda(1.0) );
   //bool detailedGrid = _underDetailedGridThreshold();
 
+    DbU::Unit  longerSide = std::max( _screenArea.getWidth(), _screenArea.getHeight() );
+    double     scale      = std::pow( 10.0
+                                    , std::max( 1.0
+                                              , std::floor( std::log10( longerSide / _snapGridStep() ))));
+
     DbU::Unit  gridStep      = ((symbolicMode()) ? 1 : 10) * _snapGridStep();
-    DbU::Unit  superGridStep = gridStep*10;
+    DbU::Unit  superGridStep = _snapGridStep() * scale;
     DbU::Unit  xGrid;
     DbU::Unit  yGrid;
     QPoint     center;
+  //cerr << "scale=" << scale << " superGridstep=" << DbU::getValueString(superGridStep) << endl;
 
 #if 0
     cerr << "CellWidget::drawGrid() step:" << DbU::getValueString(gridStep)
