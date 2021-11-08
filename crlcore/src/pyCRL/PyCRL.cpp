@@ -36,6 +36,7 @@
 #include "crlcore/PyBlif.h"
 #include "crlcore/PyGds.h"
 #include "crlcore/PyLefImport.h"
+#include "crlcore/PyLefExport.h"
 #include "crlcore/PyDefImport.h"
 #include "crlcore/VhdlEntity.h"
 
@@ -146,6 +147,7 @@ extern "C" {
     PyGds_LinkPyType ();
     PyLefImport_LinkPyType ();
     PyDefImport_LinkPyType ();
+    PyLefExport_LinkPyType ();
 
     PYTYPE_READY ( System );
     PYTYPE_READY ( Banner );
@@ -169,7 +171,8 @@ extern "C" {
     PYTYPE_READY ( Gds );
     PYTYPE_READY ( LefImport );
     PYTYPE_READY ( DefImport );
-   
+    PYTYPE_READY ( LefExport );
+
     // Identifier string can take up to 10 characters.
     __cs.addType ( "alcLib"     , &PyTypeAllianceLibrary  , "<AllianceLibrary>"  , false );
     __cs.addType ( "alcEnv"     , &PyTypeEnvironment      , "<Environment>"      , false );
@@ -229,6 +232,8 @@ extern "C" {
     PyModule_AddObject ( module, "LefImport", (PyObject*)&PyTypeLefImport );
     Py_INCREF ( &PyTypeDefImport );
     PyModule_AddObject ( module, "DefImport", (PyObject*)&PyTypeDefImport );
+    Py_INCREF ( &PyTypeLefExport );
+    PyModule_AddObject ( module, "LefExport", (PyObject*)&PyTypeLefExport );
 
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();
