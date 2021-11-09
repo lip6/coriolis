@@ -160,7 +160,7 @@ namespace Hurricane {
     connect( _cellWidget, SIGNAL(selectionChanged(const SelectorSet&))
            , this       , SLOT  (setSelection    (const SelectorSet&)) );
 
-    connect( _cellWidget, SIGNAL(selectionToggled(Selector*)), this      , SLOT(toggleSelection(Selector*)) );
+    connect( _cellWidget, SIGNAL(selectionToggled(Selector*)), this, SLOT(toggleSelection(Selector*)) );
 
     _updateState = ExternalEmit;
     changeSelectionMode ();
@@ -169,22 +169,20 @@ namespace Hurricane {
 
   void  SelectionWidget::changeSelectionMode ()
   {
-    if ( !_cellWidget ) return;
+    if (not _cellWidget) return;
 
-    if ( _updateState == InternalEmit ) {
+    if (_updateState == InternalEmit) {
       _updateState = InternalReceive;
       emit selectionModeChanged ();
     } else {
-      if ( _updateState == ExternalEmit ) {
-        blockAllSignals ( true );
-
-        _showSelection->setChecked ( _cellWidget->getState()->showSelection      () );
-        _cumulative   ->setChecked ( _cellWidget->getState()->cumulativeSelection() );
-
-        blockAllSignals ( false );
+      if (_updateState == ExternalEmit) {
+        blockAllSignals( true );
+        _showSelection->setChecked( _cellWidget->getState()->showSelection      () );
+        _cumulative   ->setChecked( _cellWidget->getState()->cumulativeSelection() );
+        blockAllSignals( false );
       }
-      _updateState = ExternalEmit;
     }
+    _updateState = ExternalEmit;
   }
 
 

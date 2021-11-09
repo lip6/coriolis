@@ -1281,6 +1281,7 @@ namespace Hurricane {
 
   void  CellWidget::setShowSelection ( bool state )
   {
+  //cerr << "CellWidget::setShowSelection(): " << state << " vs. " << _state->showSelection() << endl;
     if ( state != _state->showSelection() ) {
       _state->setShowSelection ( state );
       _selectionHasChanged = false;
@@ -2796,7 +2797,6 @@ namespace Hurricane {
 	if ( occurrence.getOwnerCell() != getCell() )
       throw Error( "CellWidget::toggleSelection(): Occurrence do not belong to the loaded cell." );
 
-    cerr << "CellWidget::toggleSelection() " << occurrence << endl;
 	Property* property = occurrence.getProperty( Selector::getPropertyName() );
     Selector* selector = NULL;
 	if (not property) {

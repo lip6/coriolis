@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -14,20 +14,20 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <QString>
-#include  <QMouseEvent>
-#include  <QKeyEvent>
-#include  <QAction>
-#include  "hurricane/Path.h"
-#include  "hurricane/Entity.h"
-#include  "hurricane/Net.h"
-#include  "hurricane/Component.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/HyperNet.h"
-#include  "hurricane/Cell.h"
-#include  "hurricane/viewer/CellWidget.h"
-#include  "hurricane/viewer/SelectCommand.h"
-#include  "hurricane/viewer/SelectionPopup.h"
+#include <QString>
+#include <QMouseEvent>
+#include <QKeyEvent>
+#include <QAction>
+#include "hurricane/Path.h"
+#include "hurricane/Entity.h"
+#include "hurricane/Net.h"
+#include "hurricane/Component.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/HyperNet.h"
+#include "hurricane/Cell.h"
+#include "hurricane/viewer/CellWidget.h"
+#include "hurricane/viewer/SelectCommand.h"
+#include "hurricane/viewer/SelectionPopup.h"
 
 
 namespace Hurricane {
@@ -217,34 +217,34 @@ namespace Hurricane {
 
   void  SelectCommand::mousePressEvent (  QMouseEvent* event )
   {
-    if ( isActive() ) return;
+    if (isActive()) return;
 
-    if ( event->button() == Qt::RightButton ) {
-      if ( !event->modifiers() ) {
-        event->accept ();
-        setActive         ( true );
-        setStartPoint     ( event->pos() );
-        setDrawingEnabled ( true );
-      } else if ( event->modifiers() == Qt::ControlModifier ) {
-        event->accept ();
+    if (event->button() == Qt::RightButton) {
+      if (not event->modifiers() ) {
+        event->accept();
+        setActive        ( true );
+        setStartPoint    ( event->pos() );
+        setDrawingEnabled( true );
+      } else if (event->modifiers() == Qt::ControlModifier) {
+        event->accept();
 
         QRect selectArea ( event->pos() - QPoint(2,2), QSize(4,4) );
         Occurrences  selection;
         switch ( _selectMode ) {
           case AllMode: // 0
-            selection = _cellWidget->getOccurrencesUnder(selectArea);
+            selection = _cellWidget->getOccurrencesUnder( selectArea );
             break;
           case NetMode: // 1
-            selection = Occurrences_GetNets(_cellWidget->getOccurrencesUnder(selectArea),false);
+            selection = Occurrences_GetNets( _cellWidget->getOccurrencesUnder(selectArea), false );
             break;
           case NoAnonNetMode: // 2
-            selection = Occurrences_GetNets(_cellWidget->getOccurrencesUnder(selectArea),true);
+            selection = Occurrences_GetNets( _cellWidget->getOccurrencesUnder(selectArea), true );
             break;
         }
-        _selectionPopup->loadOccurrences ( selection );
-        _selectionPopup->updateLayout ();
-        _selectionPopup->move ( event->globalPos() );
-        _selectionPopup->popup ();
+        _selectionPopup->loadOccurrences( selection );
+        _selectionPopup->updateLayout();
+        _selectionPopup->move( event->globalPos() );
+        _selectionPopup->popup();
       }
     }
   }
@@ -257,25 +257,37 @@ namespace Hurricane {
 
     event->accept ();
 
-    setActive ( false );
-    setDrawingEnabled ( false );
+    setActive( false );
+    setDrawingEnabled( false );
 
     QRect selectArea;
     if ( _startPoint == _stopPoint )
-      selectArea = QRect ( _startPoint - QPoint(2,2), QSize(4,4) );
+      selectArea = QRect( _startPoint - QPoint(2,2), QSize(4,4) );
     else
-      selectArea = QRect ( _startPoint, _stopPoint );
+      selectArea = QRect( _startPoint, _stopPoint );
       
   //_cellWidget->unselectAll ();
-    _cellWidget->selectOccurrencesUnder ( _cellWidget->screenToDbuBox(selectArea) );
-    bool somethingSelected = not _cellWidget->getSelectorSet().empty();
-
-    if ( _cellWidget->showSelection() != somethingSelected )
-      _cellWidget->setShowSelection ( somethingSelected );
-    else
-      _cellWidget->refresh ();
+    _cellWidget->selectOccurrencesUnder( _cellWidget->screenToDbuBox(selectArea) );
+    setShowSelection( not _cellWidget->getSelectorSet().empty() );
   }
 
+
+  void  SelectCommand::setCellWidget ( CellWidget* cellWidget )
+  {
+    Super::setCellWidget( cellWidget );
+    _selectionPopup->setCellWidget( cellWidget );
+  }
+
+  
+  void  SelectCommand::setShowSelection ( bool state )
+  {
+  //cerr << "SelectCommand::setShowSelection(): "
+  //     << state << " vs. " << _cellWidget->showSelection() << endl;
+    if (_cellWidget->showSelection() != state)
+      _cellWidget->setShowSelection( state );
+    else
+      _cellWidget->refresh();
+  }
 
 
 } // End of Hurricane namespace.

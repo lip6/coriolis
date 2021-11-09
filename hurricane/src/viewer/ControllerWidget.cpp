@@ -14,26 +14,26 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <QAction>
-#include  <QFrame>
-#include  <QHBoxLayout>
-#include  <QVBoxLayout>
-#include  <QCheckBox>
-#include  <QComboBox>
-#include  <hurricane/configuration/Configuration.h>
-#include  <hurricane/configuration/ConfigurationWidget.h>
-#include  <hurricane/DataBase.h>
-#include  <hurricane/Cell.h>
-#include  <hurricane/viewer/Graphics.h>
-#include  <hurricane/viewer/CellWidget.h>
-#include  <hurricane/viewer/GraphicsWidget.h>
-#include  <hurricane/viewer/PaletteWidget.h>
-#include  <hurricane/viewer/DisplayFilterWidget.h>
-#include  <hurricane/viewer/NetlistWidget.h>
-#include  <hurricane/viewer/HierarchyWidget.h>
-#include  <hurricane/viewer/SelectionWidget.h>
-#include  <hurricane/viewer/InspectorWidget.h>
-#include  <hurricane/viewer/ControllerWidget.h>
+#include <QAction>
+#include <QFrame>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QCheckBox>
+#include <QComboBox>
+#include <hurricane/configuration/Configuration.h>
+#include <hurricane/configuration/ConfigurationWidget.h>
+#include <hurricane/DataBase.h>
+#include <hurricane/Cell.h>
+#include <hurricane/viewer/Graphics.h>
+#include <hurricane/viewer/CellWidget.h>
+#include <hurricane/viewer/GraphicsWidget.h>
+#include <hurricane/viewer/PaletteWidget.h>
+#include <hurricane/viewer/DisplayFilterWidget.h>
+#include <hurricane/viewer/NetlistWidget.h>
+#include <hurricane/viewer/HierarchyWidget.h>
+#include <hurricane/viewer/SelectionWidget.h>
+#include <hurricane/viewer/InspectorWidget.h>
+#include <hurricane/viewer/ControllerWidget.h>
 
 
 namespace Hurricane {

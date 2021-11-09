@@ -1,22 +1,20 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./hurricane/viewer/SelectionPopup.h"      |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_SELECTION_POPUP_WIDGET_H
-#define  HURRICANE_SELECTION_POPUP_WIDGET_H
-
+#pragma  once
 #include <QWidget>
 #include <QTableView>
 #include "hurricane/Commons.h"
@@ -38,15 +36,16 @@ namespace Hurricane {
 
 
   class SelectionPopupModel;
+  class CellWidget;
 
 
   class SelectionPopup : public QWidget {
       Q_OBJECT;
-
     public:
                     SelectionPopup    ( QWidget* parent=NULL );
+      inline  void  setCellWidget     ( CellWidget* );
               void  updateLayout      ();
-              void  popup             ();
+              bool  popup             ();
               void  clearFilter       ();
               void  setFilter         ( OccurrenceFilter );
     signals:
@@ -59,8 +58,8 @@ namespace Hurricane {
       virtual void  keyPressEvent     ( QKeyEvent * );
       virtual void  mouseMoveEvent    ( QMouseEvent* );
       virtual void  mouseReleaseEvent ( QMouseEvent* );
-
     private:
+      CellWidget*           _cellWidget;
       SelectionPopupModel*  _model;
       QTableView*           _view;
       int                   _rowHeight;
@@ -68,6 +67,7 @@ namespace Hurricane {
   };
 
 
-} // Hurricane namespace.
+  inline  void  SelectionPopup::setCellWidget ( CellWidget* cellWidget ) { _cellWidget=cellWidget; }
 
-#endif // HURRICANE_SELECTION_POPUP_WIDGET_H
+
+} // Hurricane namespace.

@@ -993,6 +993,15 @@ inline Hurricane::Record* getRecord ( const std::multiset<Element,Compare>* s )
   GETRECORD_REFERENCE_SUPPORT(Data)
 
 
+# define INSPECTOR_PV_SUPPORT(Data)  \
+  GETSTRING_POINTER_SUPPORT(Data)    \
+  GETSTRING_VALUE_SUPPORT(Data)      \
+  IOSTREAM_POINTER_SUPPORT(Data)     \
+  IOSTREAM_VALUE_SUPPORT(Data)       \
+  GETRECORD_POINTER_SUPPORT(Data)    \
+  GETRECORD_VALUE_SUPPORT(Data)
+
+
 #include "hurricane/Tabulation.h"
 
 

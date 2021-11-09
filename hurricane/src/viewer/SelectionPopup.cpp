@@ -1,13 +1,14 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
+// |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@asim.lip6.fr              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Module  :       "./SelectionPopup.cpp"                     |
 // +-----------------------------------------------------------------+
@@ -21,6 +22,7 @@
 #include <QVBoxLayout>
 #include "hurricane/Commons.h"
 #include "hurricane/viewer/Graphics.h"
+#include "hurricane/viewer/CellWidget.h"
 #include "hurricane/viewer/SelectionPopupModel.h"
 #include "hurricane/viewer/SelectionPopup.h"
 
@@ -34,6 +36,7 @@ namespace Hurricane {
 
   SelectionPopup::SelectionPopup ( QWidget* parent )
     : QWidget(parent)
+    , _cellWidget(NULL)
     , _model(NULL)
     , _view(NULL)
     , _rowHeight(20)
@@ -75,10 +78,10 @@ namespace Hurricane {
   }
 
 
-  void  SelectionPopup::popup ()
+  bool  SelectionPopup::popup ()
   {
-    show ();
-    grabMouse ();
+    show();
+    grabMouse();
   }
 
 
@@ -96,7 +99,6 @@ namespace Hurricane {
   }
 
 
-
   void  SelectionPopup::mouseMoveEvent ( QMouseEvent* event )
   {
     QModelIndex index = _view->indexAt ( event->pos() );
@@ -107,20 +109,21 @@ namespace Hurricane {
   }
 
 
-
   void  SelectionPopup::mouseReleaseEvent ( QMouseEvent* event )
   {
-    releaseMouse ();
-    hide ();
+    releaseMouse();
+    hide();
 
-    QModelIndex index = _view->indexAt ( event->pos() );
-    if ( index.isValid() ) {
+    QModelIndex index = _view->indexAt( event->pos() );
+    if (index.isValid()) {
       Occurrence occurrence = _model->getOccurrence(index.row());
-      if ( occurrence.getEntity() )
-        emit selectionToggled ( occurrence );
+      if (occurrence.getEntity()) {
+        if (_cellWidget) _cellWidget->setShowSelection( true );
+        emit selectionToggled( occurrence );
+      }
     }
 
-    clear ();
+    clear();
   }
 
 

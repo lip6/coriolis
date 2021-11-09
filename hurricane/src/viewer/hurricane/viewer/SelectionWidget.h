@@ -1,29 +1,27 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2019, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
 // |     V L S I   B a c k e n d   D a t a - B a s e                 |
 // |                                                                 |
 // |  Author      :                    Jean-Paul CHAPUT              |
-// |  E-mail      :       Jean-Paul.Chaput@lip6.fr                   |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
 // |  C++ Header  :       "./hurricane/viewer/SelectionWidget.h"     |
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_SELECTION_WIDGET_H
-#define  HURRICANE_SELECTION_WIDGET_H
-
-#include  <QWidget>
-#include  <QTableView>
-#include  <QSortFilterProxyModel>
-#include  "hurricane/Commons.h"
-#include  "hurricane/Occurrence.h"
-#include  "hurricane/viewer/SelectionModel.h"
-#include  "hurricane/viewer/CellWidget.h"
+#pragma  once
+#include <QWidget>
+#include <QTableView>
+#include <QSortFilterProxyModel>
+#include "hurricane/Commons.h"
+#include "hurricane/Occurrence.h"
+#include "hurricane/viewer/SelectionModel.h"
+#include "hurricane/viewer/CellWidget.h"
 
 class QCloseEvent;
 class QSortFilterProxyModel;
@@ -42,7 +40,6 @@ namespace Hurricane {
 
   class SelectionWidget : public QWidget {
       Q_OBJECT;
-
     public:
                                      SelectionWidget        ( QWidget* parent=NULL );
               void                   inspect                ( const QModelIndex& index  );
@@ -84,5 +81,3 @@ namespace Hurricane {
 
 
 } // Hurricane namespace.
-
-#endif  // HURRICANE_SELECTION_WIDGET_H

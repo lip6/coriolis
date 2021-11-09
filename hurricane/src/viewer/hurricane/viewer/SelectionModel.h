@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC/LIP6 2008-2018, All Rights Reserved
+// Copyright (c) Sornonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+ 
 // |                  H U R R I C A N E                              |
@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_SELECTION_MODEL_H
-#define  HURRICANE_SELECTION_MODEL_H
-
+#pragma  once
 #include <vector>
 #include <QFont>
 #include <QApplication>
@@ -34,10 +32,10 @@ namespace Hurricane {
 
   class SelectionModel : public QAbstractTableModel {
       Q_OBJECT;
-
     public:
                                      SelectionModel  ( QObject* parent=NULL );
                                     ~SelectionModel  ();
+      inline CellWidget*             getCellWidget   () const;
              void                    setCellWidget   ( CellWidget* );
              Selector*               getSelector     ( const QModelIndex& index );
              void                    setSelection    ( const SelectorSet& selection );
@@ -53,13 +51,13 @@ namespace Hurricane {
     public slots:
              void                    unlink          ( Selector* );
              void                    clear           ();
-
     private:
              CellWidget*        _cellWidget;
              vector<Selector*>  _selection;
   };
 
+  
+  inline CellWidget* SelectionModel::getCellWidget () const { return _cellWidget; }
+
 
 } // Hurricane namespace.
-
-#endif // HURRICANE_SELECTION_MODEL_H
