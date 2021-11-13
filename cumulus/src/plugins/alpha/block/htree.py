@@ -194,8 +194,8 @@ class HTree ( object ):
                     pin.destroy()
                 layerGauge  = gaugeConf.vRoutingGauge
                 rootContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckNet, 0 )
-                x           = gaugeConf.getNearestVerticalTrack  ( rootContact.getX(), 0 )
-                y           = gaugeConf.getNearestHorizontalTrack( rootContact.getY(), 0 )
+                x           = gaugeConf.getNearestVerticalTrack  ( rootContact.getX(), 0, -2 )
+                y           = gaugeConf.getNearestHorizontalTrack( rootContact.getY(), 0, -2 )
                 rootPin     = Pin.create( ckNet
                                         , ckNet.getName()+'.0'
                                         , Pin.Direction.NORTH
