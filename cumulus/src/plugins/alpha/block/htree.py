@@ -185,7 +185,9 @@ class HTree ( object ):
             self._connectLeaf( qt.br, ckNet, rightContact, brContact, rightX, blY )
         if qt.isRoot():
             ckNet = self.treeNet
-            if not self.spares.conf.isCoreBlock and ckNet.isExternal():
+            if not self.spares.conf.isCoreBlock \
+               and ckNet.isExternal() \
+               and (self.flags & Spares.ROUTE_ROOT_NET):
                 trace( 550, '\tRemoving any previous pin...\n' )
                 pins = []
                 for pin in ckNet.getPins(): pins.append( pin )

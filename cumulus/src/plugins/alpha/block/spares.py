@@ -892,7 +892,7 @@ class QuadTree ( object ):
 class Spares ( object ):
     """
     Manages all the spare buffer over a Cell abutment box. Used for clock tree
-    synthesis (CTS) and high fanout net synthesis (HFS). 4 buffers are created
+    synthesis (CTS) and high fanout net synthesis (HNFS). 4 buffers are created
     in each pool. Pools are set in a regular matrix over the whole abutment box.
     Excess area is put in the topmost and rightmost pools.
     """
@@ -901,6 +901,7 @@ class Spares ( object ):
     CHECK_USED      = 0x00010000
     MARK_USED       = 0x00020000
     HEAVY_LEAF_LOAD = 0x00040000
+    ROUTE_ROOT_NET  = 0x00080000
 
     def __init__ ( self, block ):
         self.conf         = block.conf
