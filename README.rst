@@ -40,7 +40,7 @@ Building Coriolis
 
 To build Coriolis, ensure the following prerequisites are met:
 
-* Python 2.7 or 3.
+* Python 3.
 * cmake.
 * boost.
 * bison & flex.
@@ -65,6 +65,7 @@ Then, build the tool: ::
 
     ego@home:coriolis$ make install
 
+If you encounter issues, please consult SUPPORT.rst for tips.
 Coriolis gets installed at the root of the following tree: ::
 
     ~/coriolis-2.x/<OS>.<DISTRIB>/Release.Shared/install/
