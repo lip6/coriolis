@@ -40,7 +40,7 @@ Building Coriolis
 
 To build Coriolis, ensure the following prerequisites are met:
 
-* Python 2.7.
+* Python 2.7 or 3.
 * cmake.
 * boost.
 * bison & flex.
@@ -58,12 +58,8 @@ the repository in the right place. Proceed as follow: ::
    ego@home:~$ git clone http://github.com/miloyip/rapidjson
    ego@home:~$ git checkout ec322005072076ef53984462fb4a1075c27c7dfd
    ego@home:~$ cd ~/coriolis-2.x/src
-   ego@home:src$ git clone https://www-soc.lip6.fr/git/coriolis.git
+   ego@home:src$ git clone https://gitlab.lip6.fr/vlsi-eda/coriolis.git
    ego@home:src$ cd coriolis
-
-If you want to use the *devel* branch: ::
-
-    ego@home:coriolis$ git checkout devel
 
 Then, build the tool: ::
 
