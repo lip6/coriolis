@@ -17,12 +17,12 @@
                                          vlsisapd/configuration/ConfigurationWidget.h
                                          vlsisapd/configuration/ConfEditorWidget.h
                        )	         
-		   set ( includes        vlsisapd/configuration/Parameter.h
+                   set ( includes        vlsisapd/configuration/Parameter.h
                                          vlsisapd/configuration/LayoutDescription.h
                                          vlsisapd/configuration/Configuration.h
                                          vlsisapd/configuration/BoostPythonStlWrappers.h
                        )	         
-		   set ( cpps            Parameter.cpp
+                   set ( cpps            Parameter.cpp
                                          LayoutDescription.cpp
                                          Configuration.cpp
                                          FilePathEdit.cpp
@@ -41,12 +41,12 @@
 				         
            add_library ( configuration   ${cpps} ${mocCpps} ${RCC_SRCS} )
  set_target_properties ( configuration   PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries ( configuration   vlsisapdutils
-                                         ${QtX_LIBRARIES}
-                                         ${PYTHON_LIBRARIES}
-                                         ${LIBXML2_LIBRARIES}
-                                         ${Boost_LIBRARIES}
-                       )
+#target_link_libraries ( configuration   vlsisapdutils
+#                                        ${QtX_LIBRARIES}
+#                                        ${PYTHON_LIBRARIES}
+#                                        ${LIBXML2_LIBRARIES}
+#                                        ${Boost_LIBRARIES}
+#                      )
 
  if (Boost_FOUND)
            add_library ( pyConfiguration MODULE ${pycpps})
@@ -54,11 +54,11 @@
                                          OUTPUT_NAME "Cfg"
                                          PREFIX      ""
                        )
- target_link_libraries ( pyConfiguration configuration
-                                         ${PYTHON_LIBRARIES}
-                                         ${LIBXML2_LIBRARIES}
-                                         ${Boost_LIBRARIES}
-                       )
+#target_link_libraries ( pyConfiguration configuration
+#                                        ${PYTHON_LIBRARIES}
+#                                        ${LIBXML2_LIBRARIES}
+#                                        ${Boost_LIBRARIES}
+#                      )
                install ( TARGETS         pyConfiguration DESTINATION ${PYTHON_SITE_PACKAGES} )
  endif(Boost_FOUND)
 

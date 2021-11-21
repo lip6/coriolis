@@ -11,7 +11,7 @@ endif ( CHECK_DETERMINISM )
                         ${KNIK_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
-                        ${QtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
                    set( includes     katabatic/Constants.h
@@ -78,7 +78,7 @@ endif ( CHECK_DETERMINISM )
 
            add_library( katabatic    ${cpps} )
  set_target_properties( katabatic    PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( katabatic    ${depLibs} )
+#target_link_libraries( katabatic    ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

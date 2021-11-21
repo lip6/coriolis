@@ -29,6 +29,7 @@
  find_package(CORIOLIS           REQUIRED)
  find_package(ANABATIC           REQUIRED)
  find_package(ETESIAN            REQUIRED)
+ find_package(COLOQUINTE         REQUIRED)
  find_package(Doxygen)
  
  if(CHECK_DATABASE)

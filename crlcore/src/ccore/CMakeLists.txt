@@ -31,7 +31,7 @@
                              ${HURRICANE_INCLUDE_DIR}
                              ${Python_INCLUDE_DIRS}
                              ${Boost_INCLUDE_DIR}
-                             ${QtX_INCLUDE_DIR}
+                             ${QtX_INCLUDE_DIRS}
                            )
 
            add_definitions ( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
@@ -253,7 +253,7 @@
                                OUTPUT           ${AcmSigdaParserScannerCpp}
                                COMMAND          ${FLEX_EXECUTABLE}
                                ARGS             -PAcmSigda_ -o${AcmSigdaParserScannerCpp}
-			                                      ${AcmSigdaParserScanner}
+			                                                  ${AcmSigdaParserScanner}
                              )
           add_custom_command ( MAIN_DEPENDENCY   ${AcmSigdaParserGrammar}
                                DEPENDS           ${AcmSigdaParserScannerCpp}
@@ -261,7 +261,7 @@
                                OUTPUT            ${AcmSigdaParserGrammarCpp}
                                COMMAND           ${BISON_EXECUTABLE} 
                                ARGS              -d -v -p AcmSigda_ -y ${AcmSigdaParserGrammar}
-			                         -o ${AcmSigdaParserGrammarCpp}
+			                                                        -o ${AcmSigdaParserGrammarCpp}
                              )
          include_directories ( ${AcmSigdaParserBinaryDir} )
                          set ( acmsigda_parser_cpps ${AcmSigdaParserScannerCpp}
@@ -272,6 +272,13 @@
 
 
                 qtX_wrap_cpp ( moc_cpps ${mocincludes} )
+                set_property ( SOURCE ${VstParserGrammarCpp}
+                                      ${VstParserScannerCpp}
+                                      ${AcmSigdaParserGrammarCpp}
+                                      ${AcmSigdaParserScannerCpp}
+                                      ${IocParserGrammarCpp}
+                                      ${IocParserScannerCpp}
+                               PROPERTY SKIP_AUTOMOC ON)
 
                  add_library ( crlcore  ${ccore_cpps}
                                         ${moc_cpps}
@@ -296,18 +303,18 @@
                                         ${openaccess_cpps}
                              )
        set_target_properties ( crlcore  PROPERTIES VERSION 1.0 SOVERSION 1 )
-       target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
-                                        ${HURRICANE_PYTHON_LIBRARIES}
-                                        ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                        ${HURRICANE_LIBRARIES}
-                                        ${BOOKSHELF_LIBRARY}
-                                        ${LEFDEF_LIBRARIES}
-                                        ${OA_LIBRARIES}
-                                        ${QtX_LIBRARIES}
-                                        ${Boost_LIBRARIES}
-                                        ${LIBXML2_LIBRARIES}
-                                        ${PYTHON_LIBRARIES} -lutil
-                             )
+#      target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
+#                                       ${HURRICANE_PYTHON_LIBRARIES}
+#                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
+#                                       ${HURRICANE_LIBRARIES}
+#                                       ${BOOKSHELF_LIBRARY}
+#                                       ${LEFDEF_LIBRARIES}
+#                                       ${OA_LIBRARIES}
+#                                       ${QtX_LIBRARIES}
+#                                       ${Boost_LIBRARIES}
+#                                       ${LIBXML2_LIBRARIES}
+#                                       ${PYTHON_LIBRARIES} -lutil
+#                            )
 
                      install ( TARGETS  crlcore DESTINATION lib${LIB_SUFFIX} )
                      install ( FILES    ${includes} ${mocincludes} DESTINATION include/coriolis2/crlcore ) 

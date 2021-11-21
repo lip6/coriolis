@@ -11,7 +11,7 @@ endif ( CHECK_DETERMINISM )
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${FLUTE_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
-                        ${QtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
                    set( includes     anabatic/Constants.h
@@ -80,6 +80,7 @@ endif ( CHECK_DETERMINISM )
                                      ${CONFIGURATION_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
+                                     ${COLOQUINTE_LIBRARIES}
                                      ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
                                      ${OA_LIBRARIES}
@@ -91,7 +92,7 @@ endif ( CHECK_DETERMINISM )
 
            add_library( anabatic    ${cpps} )
  set_target_properties( anabatic    PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( anabatic    ${depLibs} )
+#target_link_libraries( anabatic    ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

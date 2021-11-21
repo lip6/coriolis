@@ -14,7 +14,7 @@
                         ${CORIOLIS_INCLUDE_DIR}
                         ${BOOKSHELF_INCLUDE_DIR}
                         ${CONFIGURATION_INCLUDE_DIR}
-                        ${QtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
                         ${LEFDEF_INCLUDE_DIR}
                         ${Python_INCLUDE_DIRS}
@@ -30,7 +30,7 @@
                       )
                    set( pyIncludes    unicorn/PyUnicornGui.h
                       )
-		   set( cpps          ImportCell.cpp
+                   set( cpps          ImportCell.cpp
                                       OpenCellDialog.cpp
                                       SaveCellDialog.cpp
                                       ImportCellDialog.cpp
@@ -80,12 +80,13 @@
                                       ${Python_LIBRARIES}
                                       -lutil
                                       ${LIBXML2_LIBRARIES}
+                                      ${BZIP2_LIBRARIES}
                                       ${LIBBFD_LIBRARIES}
                       )
 
            add_library( unicorn       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( unicorn       PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( unicorn       ${depLibs} )
+#target_link_libraries( unicorn       ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

@@ -8,7 +8,7 @@
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${FLUTE_INCLUDE_DIR}
-                        ${WtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
@@ -101,6 +101,7 @@
                                      ${BOOKSHELF_LIBRARY}
                                      ${CIF_LIBRARY}
                                      ${AGDS_LIBRARY}
+                                     ${COLOQUINTE_LIBRARIES}
                                      ${UTILITIES_LIBRARY}
                                      ${FLUTE_LIBRARIES}
                                      ${LEFDEF_LIBRARIES}
@@ -114,7 +115,7 @@
 
            add_library( katana       ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( katana       PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( katana       ${depLibs} )
+#target_link_libraries( katana       ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

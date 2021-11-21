@@ -19,6 +19,7 @@
                         ${CONFIGURATION_INCLUDE_DIR}
                         ${Python_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                       )
 
        add_definitions( -DCORIOLIS_TOP="${CORIOLIS_TOP}"
@@ -72,9 +73,25 @@
                                     crlcore/PyLefImport.h
                                     crlcore/PyDefImport.h
                       )	         
+#      target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
+#                                       ${HURRICANE_PYTHON_LIBRARIES}
+#                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
+#                                       ${HURRICANE_LIBRARIES}
+#                                       ${BOOKSHELF_LIBRARY}
+#                                       ${OA_LIBRARIES}
+#                                       ${Boost_LIBRARIES}
+#                                       ${LIBXML2_LIBRARIES}
+#                                       ${PYTHON_LIBRARIES} -lutil
+#                            )
+
                    set( depLibs     crlcore
+                                    ${HURRICANE_GRAPHICAL_LIBRARIES}
+                                    ${HURRICANE_PYTHON_NEW_LIBRARIES}
                                     ${HURRICANE_PYTHON_LIBRARIES}
+                                    ${HURRICANE_LIBRARIES}
+                                    ${LEFDEF_LIBRARIES}
                                     ${PYTHON_LIBRARIES}
+                                    ${QtX_LIBRARIES}
                                     -lutil
                       )
 

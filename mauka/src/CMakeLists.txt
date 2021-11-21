@@ -22,7 +22,7 @@
                                        mauka/Surface.h
                                        mauka/MaukaEngine.h
                        )
-		   set ( mocIncludes   mauka/GraphicMaukaEngine.h )
+                   set ( mocIncludes   mauka/GraphicMaukaEngine.h )
                    set ( pyIncludes    mauka/PyMaukaEngine.h
                                        mauka/PyGraphicMaukaEngine.h
                        )
@@ -50,31 +50,31 @@
 
            add_library ( mauka         ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties ( mauka         PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries ( mauka         ${METIS_LIBRARIES}
-                                       ${NIMBUS_LIBRARIES}
-                                       ${CORIOLIS_LIBRARIES}
-                                       ${HURRICANE_PYTHON_LIBRARIES}
-                                       ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                       ${HURRICANE_LIBRARIES}
-                                       ${CONFIGURATION_LIBRARY}
-                                       ${CIF_LIBRARY}
-                                       ${AGDS_LIBRARY}
-                                       ${LEFDEF_LIBRARIES}
-                                       ${OA_LIBRARIES}
-                                       ${QtX_LIBRARIES}
-                                       ${Boost_LIBRARIES}
-                                       ${LIBXML2_LIBRARIES}
-                                       ${PYTHON_LIBRARIES} -lutil
-                       )
+#target_link_libraries ( mauka         ${METIS_LIBRARIES}
+#                                      ${NIMBUS_LIBRARIES}
+#                                      ${CORIOLIS_LIBRARIES}
+#                                      ${HURRICANE_PYTHON_LIBRARIES}
+#                                      ${HURRICANE_GRAPHICAL_LIBRARIES}
+#                                      ${HURRICANE_LIBRARIES}
+#                                      ${CONFIGURATION_LIBRARY}
+#                                      ${CIF_LIBRARY}
+#                                      ${AGDS_LIBRARY}
+#                                      ${LEFDEF_LIBRARIES}
+#                                      ${OA_LIBRARIES}
+#                                      ${QtX_LIBRARIES}
+#                                      ${Boost_LIBRARIES}
+#                                      ${LIBXML2_LIBRARIES}
+#                                      ${PYTHON_LIBRARIES} -lutil
+#                      )
 
            add_library ( pyMauka       MODULE ${pyCpps} )
  set_target_properties ( pyMauka       PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                                   PREFIX        ""
                                                   OUTPUT_NAME   "Mauka"
                        )
- target_link_libraries ( pyMauka       mauka
-                                       ${CORIOLIS_PYTHON_LIBRARIES}
-                       )
+#target_link_libraries ( pyMauka       mauka
+#                                      ${CORIOLIS_PYTHON_LIBRARIES}
+#                      )
 
                install ( TARGETS       mauka           DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS       pyMauka         DESTINATION ${PYTHON_SITE_PACKAGES} )

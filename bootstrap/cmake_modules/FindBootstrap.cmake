@@ -220,16 +220,16 @@
      find_package(Qt5Svg          REQUIRED)
      find_package(Qt5PrintSupport REQUIRED)
      set(CMAKE_AUTOMOC ON)
-     set(QtX_INCLUDE_DIR ${Qt5PrintSupport_INCLUDE_DIRS}
-                         ${Qt5Widgets_INCLUDE_DIRS}
-                         ${Qt5Svg_INCLUDE_DIRS}
-                         ${Qt5Gui_INCLUDE_DIRS}
-                         ${Qt5Core_INCLUDE_DIRS} )
-     set(QtX_LIBRARIES   ${Qt5PrintSupport_LIBRARIES}
-                         ${Qt5Widgets_LIBRARIES}
-                         ${Qt5Gui_LIBRARIES}
-                         ${Qt5Core_LIBRARIES} )
-    #message(STATUS "QtX_INCLUDE_DIR: ${QtX_INCLUDE_DIR}")
+     set(QtX_INCLUDE_DIRS ${Qt5PrintSupport_INCLUDE_DIRS}
+                          ${Qt5Widgets_INCLUDE_DIRS}
+                          ${Qt5Svg_INCLUDE_DIRS}
+                          ${Qt5Gui_INCLUDE_DIRS}
+                          ${Qt5Core_INCLUDE_DIRS} )
+     set(QtX_LIBRARIES    ${Qt5PrintSupport_LIBRARIES}
+                          ${Qt5Widgets_LIBRARIES}
+                          ${Qt5Gui_LIBRARIES}
+                          ${Qt5Core_LIBRARIES} )
+    #message(STATUS "QtX_INCLUDE_DIRS: ${QtX_INCLUDE_DIRS}")
     #message(STATUS "QtX_LIBRARIES: ${QtX_LIBRARIES}")
    else()
      message(STATUS "Attempt to find Qt 4...")
@@ -239,7 +239,8 @@
      find_package(Qt4 REQUIRED)
      include(${QT_USE_FILE})
     # ${QT_QTSVG_LIBRARY}
-     set(QtX_LIBRARIES ${QT_LIBRARIES})
+     set(QtX_INCLUDE_DIRS ${QT_INCLUDE_DIR})
+     set(QtX_LIBRARIES    ${QT_LIBRARIES})
    endif()
  endmacro()
 

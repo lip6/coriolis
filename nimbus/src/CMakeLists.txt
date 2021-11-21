@@ -45,29 +45,29 @@
 
            add_library ( nimbus    ${cpps} ${pyCpps} )
  set_target_properties ( nimbus    PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries ( nimbus    ${CORIOLIS_LIBRARIES}  
-                                   ${HURRICANE_PYTHON_LIBRARIES}
-                                   ${HURRICANE_GRAPHICAL_LIBRARIES}
-                                   ${HURRICANE_LIBRARIES}
-                                   ${CONFIGURATION_LIBRARY}
-                                   ${CIF_LIBRARY}
-                                   ${AGDS_LIBRARY}
-                                   ${LEFDEF_LIBRARIES}
-                                   ${OA_LIBRARIES}
-                                   ${QtX_LIBRARIES}
-                                   ${Boost_LIBRARIES}
-                                   ${LIBXML2_LIBRARIES}
-                                   ${PYTHON_LIBRARIES} -lutil
-                       )
+#target_link_libraries ( nimbus    ${CORIOLIS_LIBRARIES}  
+#                                  ${HURRICANE_PYTHON_LIBRARIES}
+#                                  ${HURRICANE_GRAPHICAL_LIBRARIES}
+#                                  ${HURRICANE_LIBRARIES}
+#                                  ${CONFIGURATION_LIBRARY}
+#                                  ${CIF_LIBRARY}
+#                                  ${AGDS_LIBRARY}
+#                                  ${LEFDEF_LIBRARIES}
+#                                  ${OA_LIBRARIES}
+#                                  ${QtX_LIBRARIES}
+#                                  ${Boost_LIBRARIES}
+#                                  ${LIBXML2_LIBRARIES}
+#                                  ${PYTHON_LIBRARIES} -lutil
+#                      )
 
            add_library ( pyNimbus  MODULE ${pyCpps} )
  set_target_properties ( pyNimbus  PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -D__PYTHON_MODULE__=1"
                                               PREFIX        ""
                                               OUTPUT_NAME   "Nimbus"
                        )
- target_link_libraries ( pyNimbus  nimbus 
-                                   ${CORIOLIS_PYTHON_LIBRARIES}
-                       )
+#target_link_libraries ( pyNimbus  nimbus 
+#                                  ${CORIOLIS_PYTHON_LIBRARIES}
+#                      )
 
                install ( TARGETS nimbus         DESTINATION lib${LIB_SUFFIX} )
                install ( TARGETS pyNimbus       DESTINATION ${PYTHON_SITE_PACKAGES} )

@@ -1,5 +1,6 @@
 
    message( "Python_INCLUDE_DIRS=${Python_INCLUDE_DIRS}" )
+   message( "QtX_INCLUDE_DIRS=${QtX_INCLUDE_DIRS}" )
    include_directories( ${HURRICANE_SOURCE_DIR}/src/utilities
                         ${HURRICANE_SOURCE_DIR}/src/hurricane
                         ${HURRICANE_SOURCE_DIR}/src/configuration
@@ -83,28 +84,21 @@
                         
            add_library( configuration  ${cpps} ${mocCpps} ${RCC_SRCS} )
  set_target_properties( configuration  PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( configuration  hurricane
-                                       ${QtX_LIBRARIES}
-                                       ${PYTHON_LIBRARIES}
-                      )
                         
            add_library( pytypemanager  ${pyTypeCpps} )
  set_target_properties( pytypemanager  PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( pytypemanager  hurricane
-                                       ${PYTHON_LIBRARIES}
-                      )
 
     add_python_module3( "${pyCfgCpps}"
                         "${pyCfgIncludes}"
                         Cfg
-                        "pytypemanager;configuration"
+                        "pytypemanager;configuration;hurricane;${QtX_LIBRARIES};${PYTHON_LIBRARIES}"
                         include/coriolis2/hurricane/configuration
                       )
 
     add_python_module3( "${pyHurricane3Cpps}"
                         "${pyHurricane3Includes}"
                         Hurricane3
-                        "pytypemanager;configuration"
+                        "pytypemanager;configuration;hurricane;${PYTHON_LIBRARIES}"
                         include/coriolis2/hurricane/configuration
                       )
 

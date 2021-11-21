@@ -8,7 +8,7 @@
                         ${CONFIGURATION_INCLUDE_DIR} 
                         ${Boost_INCLUDE_DIRS}
                         ${QWT_INCLUDE_DIR}
-                        ${QtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
                    set( includes     bora/Constants.h
@@ -106,7 +106,7 @@
 
            add_library( bora         ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( bora         PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( bora         ${depLibs} )
+#target_link_libraries( bora         ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"

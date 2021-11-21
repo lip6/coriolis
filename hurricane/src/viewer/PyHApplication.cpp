@@ -142,7 +142,7 @@ extern "C" {
     };
 
 
-  DirectDeleteMethod(PyHApplication_DeAlloc,PyHApplication)
+  PythonOnlyDeleteMethod(HApplication)
   PyTypeObjectLinkPyType(HApplication)
 
 

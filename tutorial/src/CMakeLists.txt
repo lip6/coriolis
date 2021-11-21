@@ -5,7 +5,7 @@
                         ${CORIOLIS_INCLUDE_DIR} 
                         ${HURRICANE_INCLUDE_DIR} 
                         ${CONFIGURATION_INCLUDE_DIR} 
-                        ${QtX_INCLUDE_DIR}
+                        ${QtX_INCLUDE_DIRS}
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
@@ -46,7 +46,7 @@
 
            add_library( tutorial     ${cpps} ${mocCpps} ${pyCpps} )
  set_target_properties( tutorial     PROPERTIES VERSION 1.0 SOVERSION 1 )
- target_link_libraries( tutorial     ${depLibs} )
+#target_link_libraries( tutorial     ${depLibs} )
 
      add_python_module( "${pyCpps}"
                         "${pyIncludes}"
