@@ -180,6 +180,8 @@ namespace Katana {
     cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
     cout << Dots::asBool  ("     - Use static bloat profile"           ,useStaticBloatProfile()) << endl;
     cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
+    cout << Dots::asUInt  ("     - Edge min H reserved local"          ,_hTracksReservedMin) << endl;
+    cout << Dots::asUInt  ("     - Edge min V reserved local"          ,_vTracksReservedMin) << endl;
     cout << Dots::asUInt  ("     - Edge max H reserved local"          ,_hTracksReservedLocal) << endl;
     cout << Dots::asUInt  ("     - Edge max V reserved local"          ,_vTracksReservedLocal) << endl;
     cout << Dots::asUInt  ("     - Terminal saturated edge capacity"   ,_termSatReservedLocal) << endl;
