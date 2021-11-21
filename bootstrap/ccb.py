@@ -234,7 +234,7 @@ if options.gui:
     BuilderGui   = safeImport( 'builder.BuilderGui', 'BuilderGui'   )
     try:
         app = QApplication( sys.argv )
-        app.setOrganizationName  ( 'UPMC' )
+        app.setOrganizationName  ( 'Sorbonne Universite' )
         app.setOrganizationDomain( 'lip6.fr' )
         app.setApplicationName   ( 'CoriolisBuilder' )
         gui = BuilderGui( options.conf )
