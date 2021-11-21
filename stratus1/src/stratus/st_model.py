@@ -42,7 +42,7 @@ def setEditor ( editor ):
 #######################
 ##### Class Model #####
 #######################
-class Model() :
+class Model ( object ) :
  
   ##########################
   ##### Initialisation #####
@@ -435,6 +435,9 @@ class Model() :
       EDITOR.fit     ()
       if stopLevel > 0:
         Breakpoint.stop ( stopLevel, message )
+
+  def getCell ( self ):
+      return self._hur_cell
     
   ##### Save : in order to create the output files #####
   def Save ( self, views = 0, fileName = None ) :
