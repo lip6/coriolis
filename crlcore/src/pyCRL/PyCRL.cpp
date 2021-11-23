@@ -38,6 +38,7 @@
 #include "crlcore/PyLefImport.h"
 #include "crlcore/PyLefExport.h"
 #include "crlcore/PyDefImport.h"
+#include "crlcore/PyDefExport.h"
 #include "crlcore/VhdlEntity.h"
 
 
@@ -148,6 +149,7 @@ extern "C" {
     PyLefImport_LinkPyType ();
     PyDefImport_LinkPyType ();
     PyLefExport_LinkPyType ();
+    PyDefExport_LinkPyType ();
 
     PYTYPE_READY ( System );
     PYTYPE_READY ( Banner );
@@ -172,6 +174,7 @@ extern "C" {
     PYTYPE_READY ( LefImport );
     PYTYPE_READY ( DefImport );
     PYTYPE_READY ( LefExport );
+    PYTYPE_READY ( DefExport );
 
     // Identifier string can take up to 10 characters.
     __cs.addType ( "alcLib"     , &PyTypeAllianceLibrary  , "<AllianceLibrary>"  , false );
@@ -234,6 +237,8 @@ extern "C" {
     PyModule_AddObject ( module, "DefImport", (PyObject*)&PyTypeDefImport );
     Py_INCREF ( &PyTypeLefExport );
     PyModule_AddObject ( module, "LefExport", (PyObject*)&PyTypeLefExport );
+    Py_INCREF ( &PyTypeDefExport );
+    PyModule_AddObject ( module, "DefExport", (PyObject*)&PyTypeDefExport );
 
     PyCatalog_postModuleInit ();
     PyEnvironment_postModuleInit ();

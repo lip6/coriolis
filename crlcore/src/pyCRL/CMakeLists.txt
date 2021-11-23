@@ -51,6 +51,7 @@
                                     PyLefImport.cpp
                                     PyDefImport.cpp
                                     PyLefExport.cpp
+                                    PyDefExport.cpp
                       )	    
                    set( pyIncludes  crlcore/PySystem.h
                                     crlcore/PyBanner.h
@@ -74,6 +75,7 @@
                                     crlcore/PyLefImport.h
                                     crlcore/PyDefImport.h
                                     crlcore/PyLefExport.h
+                                    crlcore/PyDefExport.h
                       )	         
 #      target_link_libraries ( crlcore  ${HURRICANE_PYTHON_NEW_LIBRARIES}
 #                                       ${HURRICANE_PYTHON_LIBRARIES}
