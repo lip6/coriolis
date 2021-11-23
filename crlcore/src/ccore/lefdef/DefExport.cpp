@@ -150,7 +150,7 @@ namespace {
 
 
          int           DefDriver::getUnits       () { return _units; }
-         int           DefDriver::toDefUnits     ( DbU::Unit u ) { return (int)round(DbU::getLambda(u)*getUnits()); }
+         int           DefDriver::toDefUnits     ( DbU::Unit u ) { return (int)round(DbU::getGrid(u)); }
          DbU::Unit     DefDriver::getSliceHeight () { return _sliceHeight; }
          DbU::Unit     DefDriver::getPitchWidth  () { return _pitchWidth; }; 
   inline Cell*         DefDriver::getCell        () { return _cell; }
