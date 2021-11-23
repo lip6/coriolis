@@ -218,6 +218,7 @@ namespace {
 
     _sliceHeight = cg->getSliceHeight ();
     _pitchWidth  = cg->getPitch       ();
+    _units = DbU::toGrid(DbU::fromMicrons(1.0));
 
     _status = defwInitCbk ( _defStream );
     if ( _status != 0 ) return;
@@ -331,7 +332,7 @@ namespace {
   int  DefDriver::_technologyCbk ( defwCallbackType_e, defiUserData udata )
   {
     DefDriver* driver = (DefDriver*)udata;
-    return driver->checkStatus ( defwTechnology("symbolic") );
+    return driver->checkStatus ( defwTechnology( getString(driver->getCell()->getLibrary()->getName()).c_str() ) );
   }
 
 
