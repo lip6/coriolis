@@ -1217,6 +1217,7 @@ class BlockConf ( GaugeConf ):
         self.cfg.etesian.spaceMargin     = None
         self.cfg.etesian.latchUpDistance = None
         self.cfg.block.spareSide         = None
+        self.cfg.katana.dumpMeasures     = None
         self.etesian = None
         self.katana  = None
 

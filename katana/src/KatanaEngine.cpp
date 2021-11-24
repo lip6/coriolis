@@ -200,6 +200,9 @@ namespace Katana {
     , _successState   (0)
   {
   //Entity::setMemoryLimit( 1024 ); // 1Gb.
+    addMeasure<size_t>( "Gates"
+                      , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
+                                                                 |AllianceFramework::Recursive) );
   }
 
 
@@ -599,6 +602,8 @@ namespace Katana {
   {
     if (_negociateWindow) return;
 
+    addMeasure<size_t>( "GCells", getGCells().size() );
+
     startMeasures();
     openSession();
 
@@ -664,13 +669,19 @@ namespace Katana {
     vector<TrackElement*>  unrouteds;
     vector<TrackElement*>  reduceds;
     ostringstream          result;
+    bool                   isSymbolic =
+      const_cast<KatanaEngine*>(this)->getConfiguration()->getRoutingGauge()->isSymbolic();
 
     AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
     for ( ; ilut != _getAutoSegmentLut().end() ; ilut++ ) {
       TrackElement* segment = _lookup( ilut->second );
       if (segment == NULL) continue;
 
-      uint64_t wl = (unsigned long long)DbU::toLambda( segment->getLength() );
+      uint64_t wl = 0;
+      if (isSymbolic)
+        wl = (unsigned long long)DbU::toLambda( segment->getLength() );
+      else
+        wl = (unsigned long long)DbU::toPhysical( segment->getLength(), DbU::UnitPower::Nano );
       if (wl > 100000) {
         cerr << Error("KatanaEngine::printCompletion(): Suspiciously long wire: %llu for %p:%s"
                      ,wl,ilut->first,getString(segment).c_str()) << endl;
@@ -711,6 +722,10 @@ namespace Katana {
     //   }
     // }
 
+    if (not isSymbolic) {
+      totalWireLength  /= 1000;
+      routedWireLength /= 1000;
+    }
     result << setprecision(4) << segmentRatio
            << "% [" << routeds << "+" << unrouteds.size() << "]";
     cmess1 << Dots::asString( "     - Track Segment Completion Ratio", result.str() ) << endl;
@@ -741,8 +756,8 @@ namespace Katana {
     cmess1 << Dots::asString( "     - Unrouted verticals", result.str() ) << endl;
 
     addMeasure<size_t>  ( "Segs"   , routeds+unrouteds.size() );
-    addMeasure<uint64_t>( "DWL(l)" , totalWireLength                  , 12 );
-    addMeasure<uint64_t>( "fWL(l)" , totalWireLength-routedWireLength , 12 );
+    addMeasure<uint64_t>( "DWL"    , totalWireLength                  , 12 );
+    addMeasure<uint64_t>( "fWL"    , totalWireLength-routedWireLength , 12 );
     addMeasure<double>  ( "WLER(%)", expandRatio );
   }
 
@@ -768,8 +783,8 @@ namespace Katana {
     measuresLabels.push_back( getMeasureLabel("algoS"   ) );
     measuresLabels.push_back( getMeasureLabel("finT"    ) );
     measuresLabels.push_back( getMeasureLabel("Segs"    ) );
-    measuresLabels.push_back( getMeasureLabel("DWL(l)"  ) );
-    measuresLabels.push_back( getMeasureLabel("fWL(l)"  ) );
+    measuresLabels.push_back( getMeasureLabel("DWL"     ) );
+    measuresLabels.push_back( getMeasureLabel("fWL"     ) );
     measuresLabels.push_back( getMeasureLabel("WLER(%)" ) );
     measuresLabels.push_back( getMeasureLabel("Events"  ) );
     measuresLabels.push_back( getMeasureLabel("UEvents" ) );

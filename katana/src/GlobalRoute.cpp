@@ -623,14 +623,14 @@ namespace Katana {
     stopMeasures();
     printMeasures( "Dijkstra" );
 
+    uint32_t hoverflow = 0;
+    uint32_t voverflow = 0;
     if (not ovEdges.empty()) {
       Histogram  ovHistogram ( 0.0, 1.0, 1 );
       ovHistogram.setTitle ( "Overflowed", 0 );
       ovHistogram.setColor ( "green"     , 0 );
       ovHistogram.setIndent( "       "   , 0 );
 
-      uint32_t                            hoverflow = 0;
-      uint32_t                            voverflow = 0;
       set<const Net*,Net::CompareByName>  nets;
       set<Segment*  ,DBo::CompareById  >  segments;
 
@@ -693,6 +693,9 @@ namespace Katana {
       if (flags & Flags::ShowOverloadedGCells) selectOverloadedGCells( this );
       if (flags & Flags::ShowBloatedInstances) selectBloatedInstances( this );
     }
+
+    addMeasure<uint32_t>( "H-ovE", hoverflow, 12 );
+    addMeasure<uint32_t>( "V-ovE", voverflow, 12 );
 
     if (getBlock(0)) {
       getBlock(0)->resizeChannels();

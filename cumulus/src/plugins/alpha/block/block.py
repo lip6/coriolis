@@ -769,6 +769,8 @@ class Block ( object ):
         success = self.katana.isDetailedRoutingSuccess()
         Breakpoint.stop( 100, 'Block.route() done, success:{}.'.format(success) )
         self.katana.finalizeLayout()
+        if self.conf.cfg.katana.dumpMeasures is True:
+            self.katana.dumpMeasures()
         self.katana.destroy()
         self.katana = None
         if self.etesian:

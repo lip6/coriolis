@@ -1757,10 +1757,10 @@ namespace Anabatic {
   {
     Super::printMeasures();
 
-    // if (not tag.empty()) {
-    //   addMeasure<double>( getCell(), tag+"T",  getTimer().getCombTime  () );
-    //   addMeasure<size_t>( getCell(), tag+"S", (getTimer().getMemorySize() >> 20) );
-    // }
+    if (not tag.empty()) {
+      addMeasure<double>( tag+"T",  getTimer().getCombTime  () );
+      addMeasure<size_t>( tag+"S", (getTimer().getMemorySize() >> 20) );
+    }
   }
 
 

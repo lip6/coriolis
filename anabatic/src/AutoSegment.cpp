@@ -529,10 +529,10 @@ namespace Anabatic {
 
     if (dynamic_cast<Horizontal*>(segment)) setFlags( SegHorizontal );
 
-    _globalsCount += isGlobal() ? 1 : 0;
 
     AutoContact* source = Session::lookup(dynamic_cast<Contact*>(segment->getSource()));
     AutoContact* target = Session::lookup(dynamic_cast<Contact*>(segment->getTarget()));
+    _globalsCount += (source->getGCell() != target->getGCell()) ? 1 : 0;
 
     if (source->isTerminal()) setFlags( SegSourceTerminal );
     if (target->isTerminal()) setFlags( SegTargetTerminal );
