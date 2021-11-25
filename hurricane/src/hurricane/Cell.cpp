@@ -799,17 +799,10 @@ DeepNet* Cell::getDeepNet ( Path path, const Net* leafNet ) const
   if (not (_flags.isset(Flags::FlattenedNets))) return NULL;
 
   Occurrence rootNetOccurrence ( getHyperNetRootNetOccurrence(Occurrence(leafNet,path)) );
-
-  forEach ( Net*, inet, getNets() ) {
-    DeepNet* deepNet = dynamic_cast<DeepNet*>( *inet );
-    if (not deepNet) continue;
-
-    Occurrence deepNetOccurrence = deepNet->getRootNetOccurrence();
-    if (   (rootNetOccurrence.getEntity() == deepNetOccurrence.getEntity())
-       and (rootNetOccurrence.getPath  () == deepNetOccurrence.getPath  ()) )
-      return deepNet;
-  }
-  return NULL;
+  DeepNet::Uplink* uplink = static_cast<DeepNet::Uplink*>
+    ( rootNetOccurrence.getProperty( DeepNet::Uplink::staticGetName() ));
+  if (not uplink) return NULL;
+  return uplink->getUplink();
 }
 
 void Cell::flattenNets (uint64_t flags )

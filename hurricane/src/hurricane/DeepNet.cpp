@@ -57,6 +57,7 @@ namespace Hurricane {
     , _netOccurrence(netOccurrence)
   {
     cdebug_log(18,0) << "DeepNet::DeepNet() " << getCell() << " " << this << endl;
+    _netOccurrence.put( Uplink::create(this) );
   }
 
 
@@ -82,6 +83,14 @@ namespace Hurricane {
     return deepNet;
   }
 
+
+  void  DeepNet::_preDestroy ()
+  {
+    _netOccurrence.removeProperty( Uplink::staticGetName() );
+    Inherit::_preDestroy();
+  }
+
+  
 
   size_t  DeepNet::_createRoutingPads ( unsigned int flags )
   {
@@ -204,6 +213,57 @@ namespace Hurricane {
     update( stack, _net );
 
     cdebug_tabw(19,-1);
+  }
+
+
+
+// -------------------------------------------------------------------
+// Class  :  "Uplink"
+
+  Name  DeepNet::Uplink::_name = "DeepNet::Uplink";
+
+
+  DeepNet::Uplink* DeepNet::Uplink::create ( DeepNet* uplink )
+  {
+    Uplink *property = new Uplink( uplink );
+    property->_postCreate (); 
+    return property;
+  }
+
+
+  void  DeepNet::Uplink::onReleasedBy ( DBo* owner )
+  { PrivateProperty::onReleasedBy( owner ); }
+
+
+  Name  DeepNet::Uplink::getPropertyName ()
+  { return _name; }
+
+
+  Name  DeepNet::Uplink::getName () const
+  { return getPropertyName(); }
+
+
+  string  DeepNet::Uplink::_getTypeName () const
+  { return _TName( "DeepNet::Uplink" ); }
+
+
+  string  DeepNet::Uplink::_getString () const
+  {
+    string s = PrivateProperty::_getString ();
+    s.insert ( s.length() - 1 , " " + getString(_uplink) );
+
+    return s;
+  }
+
+
+  Record* DeepNet::Uplink::_getRecord () const
+  {
+    Record* record = PrivateProperty::_getRecord();
+    if (record) {
+      record->add( getSlot( "_name"  , _name   ) );
+      record->add( getSlot( "_uplink", _uplink ) );
+    }
+    return record;
   }
 
 

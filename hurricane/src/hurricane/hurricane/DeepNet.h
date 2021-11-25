@@ -29,9 +29,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_DEEPNET_H
-#define  HURRICANE_DEEPNET_H
-
+#pragma  once
+#include "hurricane/Property.h"
 #include "hurricane/Net.h"
 #include "hurricane/HyperNet.h"
 #include "hurricane/Occurrence.h"
@@ -46,6 +45,23 @@ namespace Hurricane {
     public:
       typedef  Net  Inherit;
     public:
+      class Uplink : public Hurricane::PrivateProperty {
+          static  Name         _name;
+        public:
+          static  Uplink*      create          ( DeepNet* uplink );
+          static  Name         getPropertyName (); 
+          virtual Name         getName         () const;
+          inline  DeepNet*     getUplink       ();
+          virtual void         onReleasedBy    ( DBo* owner );
+          virtual std::string  _getTypeName    () const;
+          virtual std::string  _getString      () const;
+          virtual Record*      _getRecord      () const;
+        protected:
+          DeepNet* _uplink;
+        protected:
+          inline  Uplink ( DeepNet* uplink );
+      };  
+    public:
       static  DeepNet*    create               ( HyperNet& hyperNet );
       inline  Occurrence  getRootNetOccurrence () const;
       virtual bool        isDeepNet            () const { return true; };
@@ -55,6 +71,7 @@ namespace Hurricane {
       virtual void        _toJson              ( JsonWriter* ) const;
     protected:
                           DeepNet              ( Occurrence& netOccurrence );
+      virtual void        _preDestroy          ();
     protected:
       Occurrence  _netOccurrence;
 
@@ -64,6 +81,14 @@ namespace Hurricane {
   inline Occurrence  DeepNet::getRootNetOccurrence() const { return _netOccurrence; }
 
   Net* getDeepNet(HyperNet& hyperNet);
+
+
+  inline  DeepNet::Uplink::Uplink ( DeepNet* uplink )
+    : PrivateProperty(), _uplink(uplink)
+  { } 
+
+  inline DeepNet* DeepNet::Uplink::getUplink () { return _uplink; }
+
 
 
 // -------------------------------------------------------------------
@@ -83,5 +108,3 @@ namespace Hurricane {
 } // Hurricane namespace.
 
 INSPECTOR_P_SUPPORT(Hurricane::DeepNet);
-
-#endif
