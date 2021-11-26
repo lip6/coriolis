@@ -1003,7 +1003,7 @@ namespace Katana {
 
   uint32_t  Track::repair () const
   {
-  //if ((getIndex() == 6428) and isVertical()) DebugSession::open( 150, 160 );
+    if ((getIndex() == 1011) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
@@ -1084,8 +1084,11 @@ namespace Katana {
                     if (segment->getSourcePosition() < first->getSourcePosition())
                       first = segment;
                   }
+                  spacing += first->getSourceU() - gapsetCurr.sourceU(j+1);
+                  cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
                   cdebug_log(159,0) << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
-                  first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
+                //first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
+                  first->setDuSource( first->getDuSource() - spacing );
 	            }
                 ++gaps;
                 cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
@@ -1119,7 +1122,7 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-  //if ((getIndex() == 6428) and isVertical()) DebugSession::close();
+    if ((getIndex() == 1011) and isHorizontal()) DebugSession::close();
     return gaps;
   }
 
