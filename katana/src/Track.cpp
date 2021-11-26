@@ -1003,7 +1003,7 @@ namespace Katana {
 
   uint32_t  Track::repair () const
   {
-    if ((getIndex() == 1011) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 1011) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
@@ -1122,7 +1122,7 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-    if ((getIndex() == 1011) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 1011) and isHorizontal()) DebugSession::close();
     return gaps;
   }
 
