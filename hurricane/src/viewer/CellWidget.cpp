@@ -1112,6 +1112,7 @@ namespace Hurricane {
     , _textFontHeight       (20)
     , _pixelThreshold       (Cfg::getParamInt("viewer.pixelThreshold",50)->asInt())
   {
+  //cerr << "viewer.pixelThreshold=" << _pixelThreshold << endl;
   //setBackgroundRole ( QPalette::Dark );
   //setAutoFillBackground ( false );
     setAttribute     ( Qt::WA_OpaquePaintEvent );

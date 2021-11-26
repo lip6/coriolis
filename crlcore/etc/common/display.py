@@ -13,12 +13,17 @@
 # +-----------------------------------------------------------------+
 
 
+import Cfg
 import Viewer
+from   helpers         import overlay, l, u, n
 from   common.colors   import toRGB
 from   common.patterns import toHexa
 
 
 def createStyles ( scale=1.0 ):
+    with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
+        cfg.viewer.minimumSize = 500 
+        cfg.viewer.pixelThreshold = 5 
 
     # ----------------------------------------------------------------------
     # Style: Alliance.Coriolis [black].
