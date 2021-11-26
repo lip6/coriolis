@@ -858,18 +858,19 @@ namespace CRL {
   {
     size_t gates = 0;
 
-    forEach ( Instance*, iinstance,  cell->getInstances() ) {
+    for ( Instance* instance : cell->getInstances() ) {
       CatalogProperty *catalogProperty = static_cast<CatalogProperty*>
-        ((*iinstance)->getMasterCell()->getProperty ( CatalogProperty::getPropertyName()) );
+        (instance->getMasterCell()->getProperty ( CatalogProperty::getPropertyName()) );
 
-      if ( catalogProperty != NULL ) {
-        Catalog::State* state = catalogProperty->getState ();
-        if ( (flags & IgnoreFeeds) and state->isFeed() ) continue;
+      if (catalogProperty) {
+        Catalog::State* state = catalogProperty->getState();
+        if ((flags & IgnoreFeeds) and state->isFeed()) continue;
       }
-      ++gates;
+      if (not (flags & TerminalNetlist) or instance->getMasterCell()->isTerminalNetlist())
+        ++gates;
 
-      if ( flags & Recursive ) {
-        gates += getInstancesCount ( iinstance->getMasterCell(), flags );
+      if (flags & Recursive) {
+        gates += getInstancesCount( instance->getMasterCell(), flags );
       }
     }
 

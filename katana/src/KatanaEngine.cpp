@@ -202,6 +202,7 @@ namespace Katana {
   //Entity::setMemoryLimit( 1024 ); // 1Gb.
     addMeasure<size_t>( "Gates"
                       , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
+                                                                 |AllianceFramework::TerminalNetlist
                                                                  |AllianceFramework::Recursive) );
   }
 
@@ -671,6 +672,8 @@ namespace Katana {
     ostringstream          result;
     bool                   isSymbolic =
       const_cast<KatanaEngine*>(this)->getConfiguration()->getRoutingGauge()->isSymbolic();
+  // Max symbolic wire: 100000L, max real wire: 2mm.
+    uint64_t               maxWL = (isSymbolic) ? 100000 : 2000000;
 
     AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
     for ( ; ilut != _getAutoSegmentLut().end() ; ilut++ ) {
@@ -682,7 +685,7 @@ namespace Katana {
         wl = (unsigned long long)DbU::toLambda( segment->getLength() );
       else
         wl = (unsigned long long)DbU::toPhysical( segment->getLength(), DbU::UnitPower::Nano );
-      if (wl > 100000) {
+      if (wl > maxWL) {
         cerr << Error("KatanaEngine::printCompletion(): Suspiciously long wire: %llu for %p:%s"
                      ,wl,ilut->first,getString(segment).c_str()) << endl;
         continue;
