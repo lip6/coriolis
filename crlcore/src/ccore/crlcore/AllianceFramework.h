@@ -42,20 +42,23 @@ namespace CRL {
   class AllianceFramework : public DBo {
       typedef DBo Super;
     public:
-      enum FunctionsFlags      { NoFlags         = 0
-                               , NoPythonInit    = (1<<0)
-                               };                
-      enum InstancesCountFlags { Recursive       = (1<<0)
-                               , IgnoreFeeds     = (1<<1)
-                               , TerminalNetlist = (1<<1)
-                               };                  
-      enum LibraryFlags        { CreateLibrary   = (1<<0)
-                               , AppendLibrary   = (1<<1)
-                               , HasCatalog      = (1<<2)
-                               };                
-      enum NotifyFlags         { AddedLibrary    = (1<<0)
-                               , RemovedLibrary  = (1<<1)
-                               , ConfigChanged   = (1<<2)
+      enum FunctionsFlags      { NoFlags          = 0
+                               , NoPythonInit     = (1<<0)
+                               };                 
+      enum InstancesCountFlags { Recursive        = (1<<0)
+                               , IgnoreFeeds      = (1<<1)
+                               , IgnoreDiodes     = (1<<2)
+                               , IgnorePowerFeeds = (1<<3)
+                               , IgnoreNonLogic   = IgnoreFeeds|IgnoreDiodes|IgnorePowerFeeds
+                               , TerminalNetlist  = (1<<4)
+                               };                   
+      enum LibraryFlags        { CreateLibrary    = (1<<0)
+                               , AppendLibrary    = (1<<1)
+                               , HasCatalog       = (1<<2)
+                               };                 
+      enum NotifyFlags         { AddedLibrary     = (1<<0)
+                               , RemovedLibrary   = (1<<1)
+                               , ConfigChanged    = (1<<2)
                                };
     public:
       static  AllianceFramework*       create                   ( unsigned long flags=NoFlags );

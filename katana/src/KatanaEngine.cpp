@@ -201,7 +201,7 @@ namespace Katana {
   {
   //Entity::setMemoryLimit( 1024 ); // 1Gb.
     addMeasure<size_t>( "Gates"
-                      , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreFeeds
+                      , AllianceFramework::getInstancesCount(cell,AllianceFramework::IgnoreNonLogic
                                                                  |AllianceFramework::TerminalNetlist
                                                                  |AllianceFramework::Recursive) );
   }
@@ -672,8 +672,8 @@ namespace Katana {
     ostringstream          result;
     bool                   isSymbolic =
       const_cast<KatanaEngine*>(this)->getConfiguration()->getRoutingGauge()->isSymbolic();
-  // Max symbolic wire: 100000L, max real wire: 2mm.
-    uint64_t               maxWL = (isSymbolic) ? 100000 : 2000000;
+  // Max symbolic wire: 100000L, max real wire: 3mm.
+    uint64_t               maxWL = (isSymbolic) ? 100000 : 3000000;
 
     AutoSegmentLut::const_iterator ilut = _getAutoSegmentLut().begin();
     for ( ; ilut != _getAutoSegmentLut().end() ; ilut++ ) {

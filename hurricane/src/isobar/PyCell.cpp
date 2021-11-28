@@ -804,7 +804,18 @@ extern "C" {
   DirectGetBoolAttribute(PyCell_isUniquified     , isUniquified     ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isUniquifyMaster , isUniquifyMaster ,PyCell,Cell)
   DirectGetBoolAttribute(PyCell_isRouted         , isRouted         ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isPad            , isPad            ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isFeed           , isFeed           ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isDiode          , isDiode          ,PyCell,Cell)
+  DirectGetBoolAttribute(PyCell_isPowerFeed      , isPowerFeed      ,PyCell,Cell)
+  //DirectGetLongAttribute(PyCell_getFlags         , getFlags         ,PyCell,Cell)
   DirectSetBoolAttribute(PyCell_setRouted        , setRouted        ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setPad           , setPad           ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setFeed          , setFeed          ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setDiode         , setDiode         ,PyCell,Cell)
+  DirectSetBoolAttribute(PyCell_setPowerFeed     , setPowerFeed     ,PyCell,Cell)
+  DirectSetLongAttribute(PyCell_setFlags         , setFlags         ,PyCell,Cell)
+  DirectSetLongAttribute(PyCell_resetFlags       , resetFlags       ,PyCell,Cell)
 
   GetBoundStateAttribute(PyCell_isPyBound        ,PyCell,Cell)
 
@@ -814,6 +825,7 @@ extern "C" {
   PyMethodDef PyCell_Methods[] =
     { { "create"              , (PyCFunction)PyCell_create               , METH_VARARGS|METH_STATIC
                               , "Create a new cell." }
+  //, { "getFlags"            , (PyCFunction)PyCell_getFlags             , METH_NOARGS , "Returns state flags." }
     , { "getLibrary"          , (PyCFunction)PyCell_getLibrary           , METH_NOARGS , "Returns the library owning the cell." }
     , { "getName"             , (PyCFunction)PyCell_getName              , METH_NOARGS , "Returns the name of the cell." }
     , { "getInstance"         , (PyCFunction)PyCell_getInstance          , METH_VARARGS, "Returns the instance of name <name> if it exists, else NULL." }
@@ -846,12 +858,22 @@ extern "C" {
     , { "isUniquified"        , (PyCFunction)PyCell_isUniquified        , METH_NOARGS , "Returns true if the cell is the result of an uniquification." }
     , { "isUniquifyMaster"    , (PyCFunction)PyCell_isUniquifyMaster    , METH_NOARGS , "Returns true if the cell is the reference for an uniquification." }
     , { "isRouted"            , (PyCFunction)PyCell_isRouted            , METH_NOARGS , "Returns true if the cell is flagged as routed." }
+    , { "isPad"               , (PyCFunction)PyCell_isPad               , METH_NOARGS , "Returns true if the cell is flagged as I/O pad." }
+    , { "isFeed"              , (PyCFunction)PyCell_isFeed              , METH_NOARGS , "Returns true if the cell is flagged as feed (filler cell)." }
+    , { "isDiode"             , (PyCFunction)PyCell_isDiode             , METH_NOARGS , "Returns true if the cell is flagged as diode." }
+    , { "isPowerFeed"         , (PyCFunction)PyCell_isPowerFeed         , METH_NOARGS , "Returns true if the cell is flagged as power rail element." }
     , { "isBound"             , (PyCFunction)PyCell_isPyBound           , METH_NOARGS , "Returns true if the cell is bounded to the hurricane cell" }    
+    , { "setFlags"            , (PyCFunction)PyCell_setFlags            , METH_VARARGS, "Set state flags." }
+    , { "resetFlags"          , (PyCFunction)PyCell_resetFlags          , METH_VARARGS, "Reset state flags." }
     , { "setName"             , (PyCFunction)PyCell_setName             , METH_VARARGS, "Allows to change the cell name." }
     , { "setAbutmentBox"      , (PyCFunction)PyCell_setAbutmentBox      , METH_VARARGS, "Sets the cell abutment box." }
     , { "setTerminalNetlist"  , (PyCFunction)PyCell_setTerminalNetlist  , METH_VARARGS, "Sets the cell terminal netlist status." }
     , { "setAbstractedSupply" , (PyCFunction)PyCell_setAbstractedSupply , METH_VARARGS, "Sets the cell abstracted supply status." }
     , { "setRouted"           , (PyCFunction)PyCell_setRouted           , METH_VARARGS, "Sets the cell routed status." }
+    , { "setPad"              , (PyCFunction)PyCell_setPad              , METH_VARARGS, "Sets/reset the cell I/O pad flag." }
+    , { "setFeed"             , (PyCFunction)PyCell_setFeed             , METH_VARARGS, "Sets/reset the cell feed (filler cell) flag." }
+    , { "setDiode"            , (PyCFunction)PyCell_setDiode            , METH_VARARGS, "Sets/reset the cell diode flag." }
+    , { "setPowerFeed"        , (PyCFunction)PyCell_setPowerFeed        , METH_VARARGS, "Sets/reset the cell power rail element flag." }
     , { "uniquify"            , (PyCFunction)PyCell_uniquify            , METH_VARARGS, "Uniquify the Cell and it's instances up to <depth>." }
     , { "getClone"            , (PyCFunction)PyCell_getClone            , METH_NOARGS , "Return a copy of the Cell (placement only)." }
     , { "flattenNets"         , (PyCFunction)PyCell_flattenNets         , METH_VARARGS, "Perform a virtual flatten, possibly limited to one instance." }
@@ -891,7 +913,14 @@ extern "C" {
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::BuildSupplyRings,"Flags_BuildSupplyRings");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::NoClockFlatten  ,"Flags_NoClockFlatten");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::TerminalNetlist ,"Flags_TerminalNetlist");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Pad             ,"Flags_Pad");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Feed            ,"Flags_Feed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Diode           ,"Flags_Diode");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::PowerFeed       ,"Flags_PowerFeed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::FlattenedNets   ,"Flags_FlattenedNets");
     LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::AbstractedSupply,"Flags_AbstractedSupply");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Placed          ,"Flags_Placed");
+    LoadObjectConstant(PyTypeCell.tp_dict,Cell::Flags::Routed          ,"Flags_Routed");
   }
 
 

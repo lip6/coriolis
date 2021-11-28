@@ -88,12 +88,14 @@ class Cell : public Entity {
                   , TerminalNetlist         = (1 << 20)
                   , Pad                     = (1 << 21)
                   , Feed                    = (1 << 22)
-                  , FlattenedNets           = (1 << 23)
-                  , AbstractedSupply        = (1 << 24) 
-                  , Placed                  = (1 << 25)
-                  , Routed                  = (1 << 26)
-                  , SlavedAb                = (1 << 27)
-                  , Materialized            = (1 << 28) 
+                  , Diode                   = (1 << 23)
+                  , PowerFeed               = (1 << 24)
+                  , FlattenedNets           = (1 << 25)
+                  , AbstractedSupply        = (1 << 26) 
+                  , Placed                  = (1 << 27)
+                  , Routed                  = (1 << 28)
+                  , SlavedAb                = (1 << 29)
+                  , Materialized            = (1 << 30) 
                   };
 
       public:
@@ -487,6 +489,8 @@ class Cell : public Entity {
     public: bool isUniquifyMaster() const;
     public: bool isPad() const {return _flags.isset(Flags::Pad);};
     public: bool isFeed() const {return _flags.isset(Flags::Feed);};
+    public: bool isDiode() const {return _flags.isset(Flags::Diode);};
+    public: bool isPowerFeed() const {return _flags.isset(Flags::PowerFeed);};
     public: bool isFlattenedNets() const {return _flags.isset(Flags::FlattenedNets);};
     public: bool isAbstractedSupply() const {return _flags.isset(Flags::AbstractedSupply);};
     public: bool isPlaced() const {return _flags.isset(Flags::Placed);};
@@ -503,6 +507,8 @@ class Cell : public Entity {
     public: void setTerminalNetlist(bool state) { _flags.set(Flags::TerminalNetlist,state); };
     public: void setPad(bool state) {_flags.set(Flags::Pad,state);};
     public: void setFeed(bool state) {_flags.set(Flags::Feed,state);};
+    public: void setDiode(bool state) {_flags.set(Flags::Diode,state);};
+    public: void setPowerFeed(bool state) {_flags.set(Flags::PowerFeed,state);};
     public: void setRouted(bool state) {_flags.set(Flags::Routed,state);};
     public: void setAbstractedSupply(bool state) { _flags.set(Flags::AbstractedSupply,state); };
     public: void flattenNets(uint64_t flags=Flags::BuildRings);
