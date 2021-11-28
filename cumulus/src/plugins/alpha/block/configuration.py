@@ -1002,6 +1002,75 @@ class FeedsConf ( object ):
 
 
 # ----------------------------------------------------------------------------
+# Class  :  "configuration.PowersConf".
+
+class PowersConf ( object ):
+    """
+    Store informations about power cells to build vertical power rails in
+    technologies with low number of routing layers.
+    """
+
+    def __init__ ( self, framework, cfg ):
+        trace( 550, ',+', '\tPowersConf.__init__()\n' )
+        cfg.etesian.cell.power = None
+        self.power = None
+        powerName = cfg.etesian.cell.power
+        self.count   = 0
+        if cfg.etesian.cell.power:
+            self.power   = framework.getCell( powerName, CRL.Catalog.State.Views )
+            if not self.power:
+                print( WarningMessage( 'PowersConf.__init__(): Power cell "{}" not found in library (skipped).' \
+                                       .format(powerName)) )
+        trace( 550, '-' )
+        return
+
+    def createPower ( self, cell ):
+        instance = Instance.create( cell, 'power_{}'.format(self.count), self.power )
+        self.count += 1
+        return instance
+
+    def columnAt ( self, cell, x, y, orient, sliceCount ):
+        """
+        In ``cell``, build a column which bottom is at ``transf`` position and
+        span over ``sliceCount`` slices.
+        """
+        sliceHeight = self.power.getAbutmentBox().getHeight()
+        if orient == Transformation.Orientation.ID:
+            offset  = 1
+            orients = ( Transformation.Orientation.ID, Transformation.Orientation.MX )
+        elif orient == Transformation.Orientation.MX:
+            offset  = 1
+            orients = ( Transformation.Orientation.MX, Transformation.Orientation.ID )
+        elif orient == Transformation.Orientation.R2:
+            y      += sliceHeight
+            offset  = 0
+            orients = ( Transformation.Orientation.R2, Transformation.Orientation.MY )
+        elif orient == Transformation.Orientation.MY:
+            y      += sliceHeight
+            offset  = 0
+            orients = ( Transformation.Orientation.MY, Transformation.Orientation.R2 )
+        else:
+            raise ErrorMessage( [ 'PowersConf.columnAt(): Rotations are not allowed for power columns, in "{}".' \
+                                  .format(cell.getName())
+                                , '           (@{}, sliceCount:{})' \
+                                  .format(orient,sliceCount) 
+                                ] )
+
+        for islice in range(sliceCount):
+            instance = Instance.create( cell, 'power_{}'.format(self.count), self.power )
+            instance.setTransformation( Transformation( x
+                                                      , y
+                                                      , orients[ islice%2 ] ))
+            instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
+            if (islice+offset) % 2:
+                y += 2*sliceHeight
+            self.count += 1
+
+    def resetPowerCount ( self ):
+        self.count = 0
+
+
+# ----------------------------------------------------------------------------
 # Class  :  "configuration.IoPin".
 
 class IoPin ( object ):
@@ -1190,6 +1259,7 @@ class BlockConf ( GaugeConf ):
         self.bufferConf    = BufferConf( self.framework )
         self.constantsConf = ConstantsConf( self.framework, self.cfg )
         self.feedsConf     = FeedsConf( self.framework, self.cfg )
+        self.powersConf    = PowersConf( self.framework, self.cfg )
         self.chipConf      = ChipConf( self )
         self.bColumns      = 2
         self.bRows         = 2
@@ -1217,6 +1287,7 @@ class BlockConf ( GaugeConf ):
         self.cfg.etesian.spaceMargin     = None
         self.cfg.etesian.latchUpDistance = None
         self.cfg.block.spareSide         = None
+        self.cfg.block.vRailsPeriod      = None
         self.cfg.katana.dumpMeasures     = None
         self.etesian = None
         self.katana  = None
@@ -1285,6 +1356,9 @@ class BlockConf ( GaugeConf ):
 
     def createFeed ( self ):
         return self.feedsConf.createFeed( self.cellPnR )
+
+    def createPower ( self ):
+        return self.powersConf.createPower( self.cellPnR )
 
     def setDeltaAb ( self, dx1, dy1, dx2, dy2 ):
         self.deltaAb = [ dx1, dy1, dx2, dy2 ]

@@ -53,6 +53,7 @@ class BufferPool ( object ):
         self.selectedIndexes = []
         for i in range(self.rows*self.columns):
             self.buffers.append( [ 0, None ] )
+        self._xRight = None
         self._createBuffers()
 
     @property
@@ -171,6 +172,10 @@ class BufferPool ( object ):
                 instance.setTransformation( transf )
                 instance.setPlacementStatus( Instance.PlacementStatus.FIXED )
                 length += instance.getMasterCell().getAbutmentBox().getWidth()
+                if self._xRight is None:
+                    self._xRight = x + length
+                else:
+                    self._xRight = max( self._xRight, x+length )
         blBufAb   = self.buffers[ 0][1].getAbutmentBox()
         trBufAb   = self.buffers[-1][1].getAbutmentBox()
         self.area = Box( blBufAb.getXMin(), blBufAb.getYMin()
@@ -779,6 +784,32 @@ class QuadTree ( object ):
         position = plugOccurrence.getBoundingBox().getCenter()
         self.getLeafUnder(position).plugs.append( plugOccurrence )
 
+    def getBottomLeafs ( self, bottoms=[] ):
+        """
+        Recursively build a list of all the QuadTree leaf cells at the bottom
+        of the tree. Sorted left to right by X position.
+        """
+        if self.isLeaf():
+            bottoms.append( self )
+            return
+        if   self.bl: self.bl.getBottomLeafs( bottoms )
+        elif self.tl: self.tl.getBottomLeafs( bottoms )
+        if   self.br: self.br.getBottomLeafs( bottoms )
+        elif self.tr: self.tr.getBottomLeafs( bottoms )
+
+    def getTopLeafs ( self, tops=[] ):
+        """
+        Recursively build a list of all the QuadTree leaf cells at the top
+        of the tree. Sorted left to right by X position.
+        """
+        if self.isLeaf():
+            tops.append( self )
+            return
+        if   self.tl: self.tl.getTopLeafs( tops )
+        elif self.bl: self.bl.getTopLeafs( tops )
+        if   self.tr: self.tr.getTopLeafs( tops )
+        elif self.br: self.br.getTopLeafs( tops )
+
     def isUnderArea ( self, plugOccurrence ):
         return self.area.contains( plugOccurrence.getBoundingBox().getCenter() )
 
@@ -1020,6 +1051,44 @@ class Spares ( object ):
             trace( 540, "\tX Centers of the QuadTree leaf\n" )
             for x in self.quadTree.rleafX:
                 trace( 540, '\t| {}\n'.format(DbU.getValueString(x) ))
+            self._buildPower()
+        trace( 540, '-' )
+
+    def _buildPower ( self ):
+        trace( 540, '+', '\tSpares._buildPower()\n' )
+        if not self.conf.powersConf.power: return
+        bottoms = []
+        self.quadTree.getBottomLeafs( bottoms )
+        trace( 540, '\tBottom leafs of the QuadTree:\n' )
+        for leaf in bottoms:
+            trace( 540, '\t| {} xRight={}\n'.format( leaf, DbU.getValueString(leaf.pool._xRight) ))
+        tops = []
+        self.quadTree.getTopLeafs( tops )
+        trace( 540, '\tTop leafs of the QuadTree:\n' )
+        for leaf in tops:
+            trace( 540, '\t| {} xRight={}\n'.format( leaf, DbU.getValueString(leaf.pool._xRight) ))
+        if len(tops) != len(bottoms):
+            print( ErrorMessage( 2, 'Spares._buildPower(): Discrepency between QuadTree top and bottom leafs lists, {} vs {}.'
+                                    .format( len(tops), len(bottoms) )))
+            trace( 540, '-' )
+            return
+        vRailsPeriod = self.conf.cfg.block.vRailsPeriod
+        if vRailsPeriod is None:
+            vRailsPeriod = 1
+        if vRailsPeriod == 0:
+            trace( 540, '-' )
+            return
+        sliceHeight = self.conf.sliceHeight 
+        for column in range(len(bottoms)):
+            if column % vRailsPeriod: continue
+            x    = bottoms[column].pool._xRight
+            y    = bottoms[column].area.getYMin()
+            ymax = tops   [column].area.getYMax() - sliceHeight
+            while y <= ymax:
+                power = self.conf.createPower()
+                power.setTransformation ( self._getTransformation(x,y) )
+                power.setPlacementStatus( Instance.PlacementStatus.FIXED )
+                y += sliceHeight
         trace( 540, '-' )
 
     def rshowPoolUse ( self ):
