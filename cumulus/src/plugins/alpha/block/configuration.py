@@ -24,9 +24,8 @@ from   Hurricane import DataBase, Breakpoint, DbU, Box, Transformation, \
 import CRL
 from   CRL                 import RoutingLayerGauge
 from   helpers             import trace, l, u, n
-from   helpers.utils       import classdecorator
 from   helpers.io          import ErrorMessage, WarningMessage, catch
-from   helpers.overlay     import CfgCache
+from   helpers.overlay     import CfgCache, UpdateSession
 from   plugins             import getParameter
 from   plugins.rsave       import rsave
 from   plugins.alpha.utils import getPlugByName
@@ -657,8 +656,12 @@ class IoPadConf ( object ):
         if   len(self._datas) == 5: self._datas += [ None, None ]
         elif len(self._datas) == 6: self._datas.insert( 5, None )
         self._datas.append( [] )
-        reSpecialPads = re.compile( r'^(?P<type>.+)_(?P<index>[\d+])$' )
-        m = reSpecialPads.match( self.instanceName )
+        m = None
+        if isinstance(self.instanceName,str):
+            reSpecialPads = re.compile( r'^(?P<type>.+)_(?P<index>[\d+])$' )
+            m = reSpecialPads.match( self.instanceName )
+        else:
+            self.flags |= IoPadConf.ALL_POWER
         if m:
             self.index = m.group('index')
             if m.group('type') == 'allpower':  self.flags |= IoPadConf.ALL_POWER
@@ -723,15 +726,20 @@ class IoPadConf ( object ):
     def isClock      ( self ): return self.flags & IoPadConf.CLOCK
     def isTristate   ( self ): return self.flags & IoPadConf.TRISTATE
     def isBidir      ( self ): return self.flags & IoPadConf.BIDIR
-    def isAnalog     ( self ): return self._datas[0] & IoPin.ANALOG
+
+    def isAnalog ( self ):
+        if self._datas[0] is None: return False
+        return self._datas[0] & IoPin.ANALOG
   
     def __repr__ ( self ):
-        s = '<IoPadConf {} iopad="{}" from="{}"'.format(self.instanceName,self.padNetName,self.fromCoreNetName)
+        s = '<IoPadConf {} iopad="{}" from="{}"'.format(self.instanceName
+                                                       ,self.padNetName
+                                                       ,self.fromCoreNetName)
         if self.isBidir():
           s += ' to="{}" en="{}"'.format(self.toCoreNetName,self.enableNetName)
         if self.isTristate():
           s += ' en="{}"'.format(self.enableNetName)
-        s += '>'
+        s += ' flags={:x}>'.format(self.flags)
         return s
 
 
@@ -753,6 +761,10 @@ class ChipConf ( object ):
         self.northPads    = []
         self.eastPads     = []
         self.westPads     = []
+        self.southPins    = []
+        self.northPins    = []
+        self.eastPins     = []
+        self.westPins     = []
 
     def __setattr__ ( self, attr, value ):
         object.__setattr__( self, attr, value )
@@ -764,14 +776,27 @@ class ChipConf ( object ):
         Add an I/O pad specification. The spec argument must be of the form:
         """
         ioPadConf = IoPadConf( spec ) 
-        if   spec[0] & IoPin.SOUTH: self.southPads.append( ioPadConf )
-        elif spec[0] & IoPin.NORTH: self.northPads.append( ioPadConf )
-        elif spec[0] & IoPin.EAST:  self.eastPads .append( ioPadConf )
-        elif spec[0] & IoPin.WEST:  self.westPads .append( ioPadConf )
-        else:
-            raise ErrorMessage( 1, [ 'ChipConf.addIoPad(): Unspectified side for {}'.format(ioPadConf)
-                                   , '(must be NORTH, SOUTH, EAST or WEST)' ] )
+        if spec[0] is not None:
+            if   spec[0] & IoPin.SOUTH: self.southPads.append( ioPadConf )
+            elif spec[0] & IoPin.NORTH: self.northPads.append( ioPadConf )
+            elif spec[0] & IoPin.EAST:  self.eastPads .append( ioPadConf )
+            elif spec[0] & IoPin.WEST:  self.westPads .append( ioPadConf )
+            else:
+                raise ErrorMessage( 1, [ 'ChipConf.addIoPad(): Unspecified side for {}'.format(ioPadConf)
+                                       , '(must be NORTH, SOUTH, EAST or WEST)' ] )
         self.padInstances.append( ioPadConf )
+
+    def addHarnessPin ( self, pin, side ):
+        """
+        Add an Pin to a side. This the terminal pin found in the harness.
+        """
+        if   side & IoPin.SOUTH: self.southPins.append( pin )
+        elif side & IoPin.NORTH: self.northPins.append( pin )
+        elif side & IoPin.EAST:  self.eastPins .append( pin )
+        elif side & IoPin.WEST:  self.westPins .append( pin )
+        else:
+            raise ErrorMessage( 1, [ 'ChipConf.addHarnessPin(): Unspecified side for {}'.format(pin)
+                                   , '(must be NORTH, SOUTH, EAST or WEST)' ] )
 
 
 # ----------------------------------------------------------------------------
@@ -1277,6 +1302,7 @@ class BlockConf ( GaugeConf ):
         self.useHFNS       = False
         self.useSpares     = True
         self.isBuilt       = False
+        self.useHarness    = False
         self.ioPins        = []
         self.ioPinsCounts  = {}
         for ioPinSpec in ioPins:
@@ -1407,8 +1433,9 @@ class BlockConf ( GaugeConf ):
             rsave( topCell, views|flags )
         else:
             topCell = self.chip
-            self.corona.setName( self.corona.getName()+'_r' )
-            self.chip  .setName( self.chip  .getName()+'_r' )
+            if not self.useHarness:
+                self.corona.setName( self.corona.getName()+'_r' )
+                self.chip  .setName( self.chip  .getName()+'_r' )
             rsave( self.corona, views|flags, enableSpice=True )
             rsave( self.chip  , views|flags, enableSpice=True )
         if not self.routingGauge.isSymbolic():

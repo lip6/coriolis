@@ -486,8 +486,7 @@ class Block ( object ):
         trace( 550, '\tCORE AB is {}\n'.format(self.conf.cell.getAbutmentBox()) )
         if self.conf.isCoreBlock:
             self.conf.setupICore()
-        else:
-            self.conf.setRoutingBb( self.conf.cell.getAbutmentBox() )
+        self.conf.setRoutingBb( self.conf.cellPnR.getAbutmentBox() )
 
     def flattenNets ( self ):
         if self.flags & Block.FLATTENED: return

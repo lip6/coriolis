@@ -46,8 +46,8 @@ The double level chip+corona serves two purpose:
 
 #from   exceptions      import NotImplementedError
 import re
-from   Hurricane       import UpdateSession, Net, Instance
-from   CRL             import Catalog, AllianceFramework, Spice
+from   Hurricane       import DbU, UpdateSession, Net, Instance, Transformation, Box
+from   CRL             import Catalog, AllianceFramework, Spice, DefImport
 from   helpers         import trace, netDirectionToStr
 from   helpers.overlay import UpdateSession
 from   helpers.io      import ErrorMessage, WarningMessage
@@ -108,6 +108,7 @@ class IoNet ( object ):
         else:
             self._name   = self.coreNet.getName()
             self._index  = 0
+        if self.coreToChip.useHarness(): self._flags |= IoNet.PadPassthrough
         self._type = self.coreToChip.getNetType( self._name )
         trace( 550, '\tIoNet.__init__(): {}\n'.format(self) )
     
@@ -139,6 +140,7 @@ class IoNet ( object ):
     @property
     def coronaNetName ( self ):
         s = self._name
+        if self.coreNet.isSupply(): return s
         if self.coreNet.getDirection() & Net.Direction.IN:
             s += '_from_pad'
         elif self.coreNet.getDirection() & Net.Direction.OUT:
@@ -167,7 +169,15 @@ class IoNet ( object ):
         s = self._name
         if self._flags & IoNet.IsElem: s  += '_{}'.format(self._index)
         return s
-    
+
+    @property
+    def enableNetName ( self ):
+        if self.coreToChip.useHarness():
+            m = IoNet.reVHDLVector.match(self.chipExtNetName)
+            if m:
+                return 'io_oeb({})'.format( m.group('index') )
+        return '{}_enable'.format(self.padInstanceName)   
+
     def setEnable ( self, state ):
         if state == True: self._flags |=  IoNet.IsEnable
         else:             self._flags &= ~IoNet.IsEnable
@@ -194,6 +204,13 @@ class IoNet ( object ):
                 self.coronaNet.setType  ( netType )
                 self.coronaNet.setGlobal( True )
             self.coreToChip.icore.getPlug( self.coreNet ).setNet( self.coronaNet  )
+        # In case of harness, the chip external net should already exists.
+        if self.coreToChip.useHarness():
+            self.chipExtNet = self.coreToChip.chip.getNet( self.chipExtNetName )
+            self.chipIntNet = self.chipExtNet
+            if not self.chipExtNet:
+                raise ErrorMessage( 1, 'IoNet.buildNets(): Not harness net "{}" to connect core net "{}".' \
+                                       .format( self.chipExtNetName, self.coreNet.getName() ))
         # Chip "internal" net, connect Corona instance net to I/O inside the chip.
         if not self.chipIntNet:
             chipIntNetName = "internal_" + self.coronaNetName
@@ -202,7 +219,9 @@ class IoNet ( object ):
             self.chipIntNet = Net.create( self.coreToChip.chip, chipIntNetName )
             if netType != Net.Type.LOGICAL:
                 self.chipIntNet.setType( netType )
-            self.coreToChip.icorona.getPlug( self.coronaNet ).setNet( self.chipIntNet )
+        coronaNetPlug = self.coreToChip.icorona.getPlug( self.coronaNet )
+        if not coronaNetPlug.getNet():
+            coronaNetPlug.setNet( self.chipIntNet )
         # Chip "external" net, connected to the pad I/O to the outside world.
         #if self._flags & (IoNet.PadPassthrough | IoNet.IsAnalog):
         if self._flags & IoNet.PadPassthrough:
@@ -214,6 +233,7 @@ class IoNet ( object ):
         if self.chipExtNet:
             self.chipExtNet.setExternal ( True )
             self.chipExtNet.setDirection( self.coreNet.getDirection() )
+        trace( 550, '\tIoNet.buildNets() {}\n'.format( self ))
 
 
 # -------------------------------------------------------------------
@@ -292,12 +312,14 @@ class IoPad ( object ):
             if self.coreToChip.getPadInfo(self.direction) is None:
                 if     (self.direction == IoPad.OUT) \
                    and (self.coreToChip.getPadInfo(IoPad.TRI_OUT) is not None):
-                    print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to output tristate.' \
-                                           .format(IoPad.directionToStr(self.direction),ioNet.padInstanceName)) )
+                    if not self.coreToChip.useHarness():
+                        print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to output tristate.' \
+                                               .format(IoPad.directionToStr(self.direction),ioNet.padInstanceName)) )
                     self.direction = IoPad.TRI_OUT
                 else:
-                    print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to bi-directional.' \
-                                           .format(IoPad.directionToStr(self.direction),ioNet.padInstanceName)) )
+                    if not self.coreToChip.useHarness():
+                        print( WarningMessage( 'IoPad.addNet(): No simple pad in direction {} for "{}", fallback to bi-directional.' \
+                                               .format(IoPad.directionToStr(self.direction),ioNet.padInstanceName)) )
                     self.direction = IoPad.BIDIR
         elif len(self.nets) == 2:
             if self.direction != IoPad.BIDIR:
@@ -341,10 +363,14 @@ class IoPad ( object ):
             # Case of BIDIR as fallback for simple IN/OUT.
             self.nets[0].setFlags( IoNet.DoExtNet )
             self.nets[0].buildNets()
-            if len(self.nets) < 2:
-                enableNet = self.coreToChip.newEnableForNet( self.nets[0] )
-                self.nets.append( self.coreToChip.getIoNet( enableNet ) )
-            self.nets[1].buildNets()
+            hasEnable = not self.coreToChip.useHarness() \
+                        or self.nets[0].chipExtNetName.startswith('io_in') \
+                        or self.nets[0].chipExtNetName.startswith('io_out')
+            if hasEnable:
+                if len(self.nets) < 2:
+                    enableNet = self.coreToChip.newEnableForNet( self.nets[0] )
+                    self.nets.append( self.coreToChip.getIoNet( enableNet ) )
+                self.nets[1].buildNets()
             connexions.append( ( self.nets[0].chipExtNet, padInfo.padNet ) )
             if self.nets[0].coreNet.getDirection() == Net.Direction.IN:
                 connexions.append( ( self.nets[0].chipIntNet      , padInfo.outputNet ) )
@@ -352,7 +378,8 @@ class IoPad ( object ):
             else:
                 connexions.append( ( self.nets[0].chipIntNet      , padInfo.inputNet  ) )
                 connexions.append( ( self.coreToChip.newDummyNet(), padInfo.outputNet ) )
-            connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet  ) )
+            if hasEnable:
+                connexions.append( ( self.nets[1].chipIntNet, padInfo.enableNet  ) )
         elif (self.direction == IoPad.TRI_OUT) and (len(self.nets) < 2):
             self.nets[0].setFlags( IoNet.DoExtNet )
             self.nets[0].buildNets()
@@ -380,12 +407,13 @@ class IoPad ( object ):
                 connexions.append( ( self.nets[0].chipIntNet, padInfo.inputNet  ) )
                 connexions.append( ( self.nets[1].chipIntNet, padInfo.outputNet ) )
                 connexions.append( ( self.nets[2].chipIntNet, padInfo.enableNet ) )
-        self.pads.append( Instance.create( self.coreToChip.chip
-                                         , self.padInstanceName
-                                         , self.coreToChip.getCell(padInfo.name) ) )
-        for connexion in connexions:
-            CoreToChip._connect( self.pads[0], connexion[0], connexion[1] )
-        self.coreToChip.chipPads += self.pads
+        if not self.coreToChip.useHarness():
+            self.pads.append( Instance.create( self.coreToChip.chip
+                                             , self.padInstanceName
+                                             , self.coreToChip.getCell(padInfo.name) ) )
+            for connexion in connexions:
+                CoreToChip._connect( self.pads[0], connexion[0], connexion[1] )
+            self.coreToChip.chipPads += self.pads
 
 
 # -------------------------------------------------------------------
@@ -394,7 +422,7 @@ class IoPad ( object ):
 class CoreToChip ( object ):
     """
     Semi-automated build of a complete chip with I/O pad around a Cell core.
-    ``Core2Chip`` expect configuration informations to be present in the
+    ``CoreToChip`` expect configuration informations to be present in the
     state attribute of the Block class. So a Block class must be created
     before calling it.
 
@@ -484,21 +512,22 @@ class CoreToChip ( object ):
         else:
             block = Block.lookup( core )
             if not block:
-                raise ErrorMessage( 1, [ 'Core2Chip.__init__(): Core cell "{}" has no Block defined.' \
+                raise ErrorMessage( 1, [ 'CoreToChip.__init__(): Core cell "{}" has no Block defined.' \
                                          .format( core.getName() )
                                        ] )
             conf = block.state
-        self.conf           = conf
-        self.ringNetNames   = []
-        self.ioPadInfos     = []
-        self.chipPads       = []
-        self.padLib         = None
-        self.corona         = None
-        self._ioNets        = {}
-        self.powerPadCount  = 0
-        self.groundPadCount = 0
-        self.clockPadCount  = 0
-        self.dummyNetCount  = 0
+        self.conf            = conf
+        self.conf.useHarness = False
+        self.ringNetNames    = []
+        self.ioPadInfos      = []
+        self.chipPads        = []
+        self.padLib          = None
+        self.corona          = None
+        self._ioNets         = {}
+        self.powerPadCount   = 0
+        self.groundPadCount  = 0
+        self.clockPadCount   = 0
+        self.dummyNetCount   = 0
         return
 
     @property
@@ -512,6 +541,8 @@ class CoreToChip ( object ):
 
     @property
     def chip ( self ): return self.conf.chip
+
+    def useHarness ( self ): return self.conf.useHarness
 
     def getPadInfo ( self, padType ):
         for ioPadInfo in self.ioPadInfos:
@@ -544,7 +575,7 @@ class CoreToChip ( object ):
             raise ErrorMessage( 2, 'CoreToChip.newEnableForNet(): Net "{}" is neither IN nor OUT.' \
                                    .format(ioNet.coreNet.getName()) )
         instance = self.conf.constantsConf.createInstance( self.core, constantType )
-        enable   = Net.create( self.core, '{}_enable'.format(ioNet.padInstanceName) )
+        enable   = Net.create( self.core, ioNet.enableNetName )
         enable.setExternal ( True )
         enable.setDirection( Net.Direction.OUT )
         getPlugByName( instance, self.conf.constantsConf.output(constantType) ).setNet( enable )
@@ -599,35 +630,47 @@ class CoreToChip ( object ):
 
     def _buildCoreGroundPads ( self, ioPadConf ):
         """Build I/O pad relateds to core ground signals."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildGroundPads(): This method must be overloaded.' )
 
     def _buildIoGroundPads ( self, ioPadConf ):
         """Build I/O pad relateds to pad internal ground signals."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildGroundPads(): This method must be overloaded.' )
 
     def _buildAllGroundPads ( self, ioPadConf ):
         """Build I/O pad relateds to ground signals for core and pads."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildGroundPads(): This method must be overloaded.' )
 
     def _buildCorePowerPads ( self, ioPadConf ):
         """Build I/O pad relateds to core power signals."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildPowerPads(): This method must be overloaded.' )
 
     def _buildIoPowerPads ( self, ioPadConf ):
         """Build I/O pad relateds to pad internal power signals."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildPowerPads(): This method must be overloaded.' )
 
     def _buildAllPowerPads ( self, ioPadConf ):
         """Build I/O pad relateds to power signals for core and pads."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildPowerPads(): This method must be overloaded.' )
 
     def _buildClockPads ( self, ioPadConf ):
         """Build I/O pad relateds to clock signals."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._buildClockPads(): This method must be overloaded.' )
 
     def _connectClocks ( self ):
         """Connect inner clocks signal to the corona (towards the core) ."""
+        if self.useHarness(): return
         raise NotImplementedError( 'coreToChip._connectClocks(): This method must be overloaded.' )
+
+    def _loadHarness ( self ):
+        """Load the DEF file containing the reference harness layout."""
+        raise NotImplementedError( 'coreToChip._loadHarness(): This method must be overloaded.' )
 
     def buildChip ( self ):
         """
@@ -636,18 +679,33 @@ class CoreToChip ( object ):
         """
         af = AllianceFramework.get()
         self.conf.cfg.apply()
+        chipName = self.conf.chipConf.name
+        if self.useHarness():
+            self.conf.chip = self._loadHarness()
+        else:
+            self.conf.chip = af.createCell( self.conf.chipConf.name )
         with UpdateSession():
             print( '  o  Build Chip from Core.' )
-            print( '     - Core:   "{}".'.format(self.conf.cell.getName()) )
-            print( '     - Corona: "{}".'.format('corona') )
-            print( '     - Chip:   "{}".'.format(self.conf.chipConf.name) )
-            self.conf.chip    = af.createCell( self.conf.chipConf.name )
+            print( '     - Core:    "{}".'.format(self.conf.cell.getName()) )
+            print( '     - Corona:  "{}".'.format('corona') )
+            print( '     - Chip:    "{}".'.format(self.conf.chip.getName()) )
             self.corona       = af.createCell( 'corona' )
             self.conf.icore   = Instance.create( self.corona   , 'core'  , self.conf.cell )
             self.conf.icorona = Instance.create( self.conf.chip, 'corona', self.corona    )
+            if self.useHarness():
+                harnessBb = self.conf.chip.getBoundingBox()
+                harnessAb = self.conf.chip.getAbutmentBox()
+                self.conf.chip.setAbutmentBox( harnessBb )
+                self.conf.corona.setAbutmentBox( Box( 0, 0, harnessAb.getWidth(), harnessAb.getHeight() ))
+                self.conf.icorona.setTransformation( Transformation( harnessAb.getXMin()
+                                                                   , harnessAb.getYMin()
+                                                                   , Transformation.Orientation.ID ))
+                self.conf.icorona.setPlacementStatus( Instance.PlacementStatus.FIXED )
             ioPads      = []
             clockIoNets = []
             for ioPadConf in self.conf.chipConf.padInstances:
+                if self.useHarness():
+                    ioPadConf.flags = IoPadConf.BIDIR
                 if ioPadConf.isAllPower():
                     self._buildAllPowerPads( ioPadConf )
                     continue
@@ -685,6 +743,7 @@ class CoreToChip ( object ):
                             if coreNet.getName() == ioPadConf.enableNetName:
                                 ioNet.setEnable( True )
                         if not ioNet.isEnable():
+                            trace( 550, '\tForce pad net name to "{}"\n'.format( ioPadConf.padNetName ))
                             ioNet.chipExtNetName = ioPadConf.padNetName
                     ioPadConf.udata.addNet( ioNet )
                 ioPads.append( ioPadConf )
@@ -712,8 +771,11 @@ class CoreToChip ( object ):
                #trace( 550, '\tNon-configured core net {}, adding {}\n'.format(coreNet,directPad) )
             for ioPad in ioPads:
                 ioPad.udata.createPad()
-            self._connectRing()
-            self._connectClocks()
+           #if self.useHarness():
+           #    self._connectCorona()
+            else:
+                self._connectRing()
+                self._connectClocks()
         oneDriver( self.chip )
         rsave( self.chip, views=Catalog.State.Logical, enableSpice=True )
         Spice.clearProperties()

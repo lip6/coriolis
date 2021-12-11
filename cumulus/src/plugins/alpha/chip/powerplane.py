@@ -14,10 +14,11 @@
 
 
 import sys
+from   operator   import methodcaller  
 from   Hurricane  import DbU, Point, Transformation, Box, Interval,  \
                          Path, Occurrence, UpdateSession, Net,       \
                          Contact, Horizontal, Vertical, Cell, Query, \
-                         DataBase, Pin, NetExternalComponents
+                         DataBase, Pin, NetExternalComponents, Layer
 import CRL
 import helpers
 from   helpers         import trace
@@ -122,63 +123,58 @@ class HorizontalRail ( Rail ):
     def merge ( self, bb ):
         self.intervals.merge( bb.getXMin(), bb.getXMax() )
 
-    def doLayout ( self, plane, stripes ):
-        trace( 550, ',+', '\tHorizontalRail.doLayout() metal={} {}\n' \
-                          .format( plane.metal.getName(), self ))
+    def computeBigViaBbs ( self, plane, stripe, leftBigViaBbs, rightBigViaBbs ):
+        """
+        Compute the bounding boxes of the intersection of the stripe (vertical)
+        and this horizontal rail. If the stripe is very wide, we put one BigVia
+        on the left adge and another one on the right edge. Hence the two lists.
+        If the stripe is *narrow*, only the left list is filled.
+          The minimal *horizontal* size of the BigVias are such as they contains
+        at least one top level power contact (which is usually very large) or
+        two, if possible.
+        """
+        trace( 550, ',+', '\tHorizontalRail.computeBigViaBbs() metal={} {} stipe={}\n' \
+                          .format( plane.metal.getName(), self, stripe ))
+        viaLayer     = plane.conf.routingGauge.getContactLayer( stripe.getLayerDepth()-1 )
+        cutLayer     = viaLayer.getCut()
+        cutSide      = cutLayer.getMinimalSize()
+        cutSpacing   = cutLayer.getMinimalSpacing()
+        enclosure    = viaLayer.getTopEnclosure( Layer.EnclosureH )
+        oneCutWidth  = cutSide + 2*enclosure
+        twoCutWidth  = oneCutWidth + cutSpacing + cutSide
         viaWidth = plane.conf.vDeepRG.getPitch()*5
-        for stripe in stripes:
-            trace( 550, ',+', '\t{}\n'.format(stripe) )
-            stripeBb = stripe.getBoundingBox()
-            for chunk in self.intervals.chunks:
-                if chunk.getVMax() <= stripeBb.getXMin(): continue
-                if chunk.getVMin() >= stripeBb.getXMax(): break
-                trace( 550, '\t| Chunk=[{} {}]\n'.format( DbU.getValueString(chunk.getVMin())
-                                                        , DbU.getValueString(chunk.getVMax()) ))
-                chunkBb = Box( chunk.getVMin()
-                             , self.axis - self.width//2
-                             , chunk.getVMax()
-                             , self.axis + self.width//2 )
-                overlap = stripeBb.getIntersection( chunkBb )
-                if overlap.isEmpty(): continue
-                if overlap.getWidth() > 2*viaWidth:
-                    trace( 550, '\t| Large overlap={}\n'.format(overlap) )
-                    via = BigVia( stripe.getNet()
-                                , plane.getLayerDepth(stripe.getLayer())
-                                , overlap.getXMin() + viaWidth//2
-                                , overlap.getYCenter()
-                                , viaWidth
-                                , overlap.getHeight()
-                                , BigVia.AllowTopMetalExpand|BigVia.AllowVerticalExpand
-                                )
-                    via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
-                    via.doLayout()
-                    via = BigVia( stripe.getNet()
-                                , plane.getLayerDepth(stripe.getLayer())
-                                , overlap.getXMax() - viaWidth//2
-                                , overlap.getYCenter()
-                                , viaWidth
-                                , overlap.getHeight()
-                                , BigVia.AllowTopMetalExpand|BigVia.AllowVerticalExpand
-                                )
-                    via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
-                    via.doLayout()
-                elif overlap.getWidth() > 2*plane.conf.vDeepRG.getPitch():
-                    trace( 550, '\t| Narrow overlap={}\n'.format(overlap) )
-                    via = BigVia( stripe.getNet()
-                                , plane.getLayerDepth(stripe.getLayer())
-                                , overlap.getXCenter()
-                                , overlap.getYCenter()
-                                , overlap.getWidth()
-                                , overlap.getHeight()
-                                , BigVia.AllowTopMetalExpand|BigVia.AllowVerticalExpand
-                                )
-                    via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
-                    via.doLayout()
-                else:
-                    trace( 550, '\t| Too narrow overlap={}, no BigVia\n'.format(overlap) )
-            trace( 550, '-' )
+        stripeBb = stripe.getBoundingBox()
+        for chunk in self.intervals.chunks:
+            if chunk.getVMax() <= stripeBb.getXMin(): continue
+            if chunk.getVMin() >= stripeBb.getXMax(): break
+            trace( 550, '\t| Chunk=[{} {}]\n'.format( DbU.getValueString(chunk.getVMin())
+                                                    , DbU.getValueString(chunk.getVMax()) ))
+            chunkBb = Box( chunk.getVMin()
+                         , self.axis - self.width//2
+                         , chunk.getVMax()
+                         , self.axis + self.width//2 )
+            overlap = stripeBb.getIntersection( chunkBb )
+            if overlap.isEmpty(): continue
+            if overlap.getWidth() > 2*viaWidth:
+                trace( 550, '\t| Large overlap={}\n'.format(overlap) )
+                leftBigViaBbs.append( Box( overlap.getXMin()
+                                         , overlap.getYMin()
+                                         , overlap.getXMin() + twoCutWidth
+                                         , overlap.getYMax()
+                                         ))
+                rightBigViaBbs.append( Box( overlap.getXMax() - twoCutWidth
+                                          , overlap.getYMin()
+                                          , overlap.getXMax()
+                                          , overlap.getYMax()
+                                          ))
+                trace( 550, '\t| left={} right={}\n'.format(leftBigViaBbs[-1],rightBigViaBbs[-1]) )
+            elif overlap.getWidth() > 2*plane.conf.vDeepRG.getPitch():
+                trace( 550, '\t| Narrow overlap={}\n'.format(overlap) )
+                leftBigViaBbs.append( overlap )
+                trace( 550, '\t| left={} right=N/A\n'.format(leftBigViaBbs[-1]) )
+            else:
+                trace( 550, '\t| Too narrow overlap={}, no BigVia\n'.format(overlap) )
         trace( 550, '-' )
-        return
 
 
 # --------------------------------------------------------------------
@@ -227,9 +223,14 @@ class Rails ( object ):
         self.axisLut[ axis ][ width ].merge( bb )
 
     def doLayout ( self, plane, stripes ):
-        for wrail in self.axisLut.values():
-            for rail in wrail.values():
-                rail.doLayout( plane, stripes )
+        for stripe in stripes:
+            leftBigViaBbs  = []
+            rightBigViaBbs = []
+            for wrail in self.axisLut.values():
+                for rail in wrail.values():
+                    rail.computeBigViaBbs( plane, stripe, leftBigViaBbs, rightBigViaBbs )
+            stripe.doBigViaLayout( plane,  leftBigViaBbs )
+            stripe.doBigViaLayout( plane, rightBigViaBbs )
         return
 
 
@@ -275,6 +276,8 @@ class Plane ( object ):
     def getLayer ( self ): return self.metal
 
     def getLayerDepth ( self, layer ): return self.conf.getLayerDepth( layer )
+
+    def getPlaneDepth ( self ): return self.conf.getLayerDepth( self.metal )
   
     def addRail ( self, net, bb ):
         if net.isPower():
@@ -306,8 +309,8 @@ class Stripe ( object ):
     def conf ( self ): return self.builder.conf
 
     def __str__ ( self ):
-        s = '<Stripe "{}" @{}>'.format( self.southPin.getNet().getName()
-                                      , DbU.getValueString(self.southPin.getX()) )
+        s = '<Stripe "{}" @{}>'.format( self.getNet().getName()
+                                      , DbU.getValueString(self.getX()) )
         return s
 
     def getNet ( self ):
@@ -315,10 +318,18 @@ class Stripe ( object ):
         if self.northPin: return self.northPin.getNet()
         return None
 
+    def getX ( self ):
+        if self.southPin: return self.southPin.getX()
+        if self.northPin: return self.northPin.getX()
+        return None
+
     def getLayer ( self ):
         if self.southPin: return self.southPin.getLayer()
         if self.northPin: return self.northPin.getLayer()
         return None
+
+    def getLayerDepth ( self ):
+        return self.conf.routingGauge.getLayerDepth( self.getLayer() )
 
     def getBoundingBox ( self ):
         if self.stripe: return self.stripe.getBoundingBox()
@@ -328,19 +339,54 @@ class Stripe ( object ):
         return bb
                 
     def doLayout ( self ):
+        """
+        Draw one vertical wire between the north and south Pins of the
+        power stripe. For the computation & drawing of the big VIA, see
+        ``doBigViaLayout()``.
+        """
         if self.southPin is None:
             print( ErrorMessage( 1, [ 'Stripes.doLayout(): Power/ground stripe is missing a south Pin.'
-                                    , '(north:'.format(self.northPin) ] ))
+                                    , '(north:{})'.format(self.northPin) ] ))
             return
         if self.northPin is None:
             print( ErrorMessage( 1, [ 'Stripes.doLayout(): Power/ground stripe is missing a north Pin.'
-                                    , '(north:'.format(self.southPin) ] ))
+                                    , '(south:{})'.format(self.southPin) ] ))
             return
         self.stripe = Vertical.create( self.southPin
                                      , self.northPin
                                      , self.southPin.getLayer()
                                      , self.southPin.getX()
                                      , self.southPin.getWidth() )
+
+    def doBigViaLayout ( self, plane, bigViaBbs ):
+        """
+        Draw the layout of the BigVias located at the intersection of the
+        stripe (vertical) and the deep (horizontal) power lines. The VIAs
+        are given as a list of bounding box. Do a pre-processing to try
+        to merge two vertically contiguous vias (with the same width).
+        """
+        trace( 550, ',+', '\tStripe.doBigViaLayout()\n' )
+        bigViaBbs.sort( key=methodcaller('getYMin') )
+        i = 0
+        while i+1 < len(bigViaBbs):
+            if     bigViaBbs[i].getYMax () >= bigViaBbs[i+1].getYMin () \
+               and bigViaBbs[i].getWidth() == bigViaBbs[i+1].getWidth():
+                bigViaBbs[i].merge( bigViaBbs[i+1] )
+                del bigViaBbs[i+1]
+                continue
+            i += 1
+        for viaBb in bigViaBbs:
+            via = BigVia( self.getNet()
+                        , plane.getLayerDepth(self.getLayer())
+                        , viaBb.getXCenter()
+                        , viaBb.getYCenter()
+                        , viaBb.getWidth()
+                        , viaBb.getHeight()
+                        , BigVia.AllowTopMetalExpand|BigVia.AllowVerticalExpand
+                        )
+            via.mergeDepth( plane.getLayerDepth(plane.getLayer()) )
+            via.doLayout()
+        trace( 550, '-' )
 
 
 # --------------------------------------------------------------------
@@ -353,24 +399,26 @@ class Stripes ( object ):
         self.powers      = {}
         self.grounds     = {}
         self.supplyLayer = self.conf.routingGauge.getPowerSupplyGauge().getLayer()
-        for pin in self.conf.coronaVdd.getPins():
-            if pin.getLayer() != self.supplyLayer: continue
-            key = pin.getX()
-            if pin.getAccessDirection() == Pin.Direction.SOUTH:
-                if not key in self.powers: self.powers[ key ] = Stripe( self, pin, None )
-                else:                      self.powers[ key ].southPin = pin
-            elif pin.getAccessDirection() == Pin.Direction.NORTH:
-                if not key in self.powers: self.powers[ key ] = Stripe( self, None, pin )
-                else:                      self.powers[ key ].northPin = pin
-        for pin in self.conf.coronaVss.getPins():
-            if pin.getLayer() != self.supplyLayer: continue
-            key = pin.getX()
-            if pin.getAccessDirection() == Pin.Direction.SOUTH:
-                if not key in self.grounds: self.grounds[ key ] = Stripe( self, pin, None )
-                else:                       self.grounds[ key ].southPin = pin
-            elif pin.getAccessDirection() == Pin.Direction.NORTH:
-                if not key in self.grounds: self.grounds[ key ] = Stripe( self, None, pin )
-                else:                       self.grounds[ key ].northPin = pin
+        if self.conf.coronaVdd:
+            for pin in self.conf.coronaVdd.getPins():
+                if pin.getLayer() != self.supplyLayer: continue
+                key = pin.getX()
+                if pin.getAccessDirection() == Pin.Direction.SOUTH:
+                    if not key in self.powers: self.powers[ key ] = Stripe( self, pin, None )
+                    else:                      self.powers[ key ].southPin = pin
+                elif pin.getAccessDirection() == Pin.Direction.NORTH:
+                    if not key in self.powers: self.powers[ key ] = Stripe( self, None, pin )
+                    else:                      self.powers[ key ].northPin = pin
+        if self.conf.coronaVss:
+            for pin in self.conf.coronaVss.getPins():
+                if pin.getLayer() != self.supplyLayer: continue
+                key = pin.getX()
+                if pin.getAccessDirection() == Pin.Direction.SOUTH:
+                    if not key in self.grounds: self.grounds[ key ] = Stripe( self, pin, None )
+                    else:                       self.grounds[ key ].southPin = pin
+                elif pin.getAccessDirection() == Pin.Direction.NORTH:
+                    if not key in self.grounds: self.grounds[ key ] = Stripe( self, None, pin )
+                    else:                       self.grounds[ key ].northPin = pin
 
     @property
     def conf ( self ): return self.builder.conf
@@ -434,8 +482,9 @@ class Builder ( object ):
           self.planes[ layerGauge.getLayer().getName() ] = Plane( self, layerGauge.getLayer() )
   
     def connectPower ( self ):
+        trace( 550, '\tpower.Builder.connectPower()\n' )
         if not self.conf.coronaVdd or not self.conf.coronaVss:
-            raise ErrorMessage( 1, 'Cannot build block power terminals as core vdd and/or vss are not known.' )
+            print( ErrorMessage( 1, 'Cannot build block power terminals as core vdd and/or vss are not known.' ))
             return
         goCb  = GoCb( self )
         query = Query()
@@ -444,6 +493,7 @@ class Builder ( object ):
         query.setArea( self.icoreAb )
         query.setFilter( Query.DoComponents|Query.DoTerminalCells )
         query.setStopCellFlags( Cell.Flags_AbstractedSupply )
+        trace( 550, '\tloop over the layer gauge\n' )
         for layerGauge in self.conf.routingGauge.getLayerGauges():
             self.activePlane = self.planes[ layerGauge.getLayer().getName() ]
             layer = layerGauge.getLayer()

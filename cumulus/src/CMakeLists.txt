@@ -67,6 +67,7 @@
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/cmos.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/niolib.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/libresocio.py
+                                       ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/core2chip/sky130.py
                   )
               set ( pyPluginAlphaChip  ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/chip/configuration.py
@@ -79,15 +80,20 @@
               set ( pyPluginAlphaMacro ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/macro/__init__.py
                                        ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/macro/macro.py
                   )
+              set ( pyPluginAlphaHarness ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/harness/__init__.py
+                                         ${CMAKE_CURRENT_SOURCE_DIR}/plugins/alpha/harness/pads.py
+                  )
          
-          install ( FILES    ${pySources}          DESTINATION ${Python_CORIOLISLIB}/cumulus )
-          install ( FILES    ${pyPlugins}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins )
-          install ( FILES    ${pyPluginCTS}        DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/cts )
-          install ( FILES    ${pyPluginC2C}        DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/core2chip )
-          install ( FILES    ${pyPluginChip}       DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/chip )
-          install ( FILES    ${pyPluginAlpha}      DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha )
-          install ( FILES    ${pyPluginAlphaBlock} DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/block )
-          install ( FILES    ${pyPluginAlphaC2C}   DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/core2chip )
-          install ( FILES    ${pyPluginAlphaChip}  DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/chip )
-          install ( FILES    ${pyPluginAlphaMacro} DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/macro )
-          install ( PROGRAMS ${pyTools}            DESTINATION bin ) 
+          install ( FILES    ${pySources}            DESTINATION ${Python_CORIOLISLIB}/cumulus )
+          install ( FILES    ${pyPlugins}            DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins )
+          install ( FILES    ${pyPluginCTS}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/cts )
+          install ( FILES    ${pyPluginC2C}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/core2chip )
+          install ( FILES    ${pyPluginC2C}          DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/core2chip )
+          install ( FILES    ${pyPluginChip}         DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/chip )
+          install ( FILES    ${pyPluginAlpha}        DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha )
+          install ( FILES    ${pyPluginAlphaBlock}   DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/block )
+          install ( FILES    ${pyPluginAlphaC2C}     DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/core2chip )
+          install ( FILES    ${pyPluginAlphaChip}    DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/chip )
+          install ( FILES    ${pyPluginAlphaMacro}   DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/macro )
+          install ( FILES    ${pyPluginAlphaHarness} DESTINATION ${Python_CORIOLISLIB}/cumulus/plugins/alpha/harness )
+          install ( PROGRAMS ${pyTools}              DESTINATION bin ) 

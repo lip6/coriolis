@@ -180,6 +180,8 @@ class BigVia ( object ):
         trace( 550, '\t| topEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(topEnclosure)) )
         trace( 550, '\t| botEnclosure[{}]: {}\n'.format(depth,DbU.getValueString(botEnclosure)) )
         trace( 550, '\t| enclosure   [{}]: {}\n'.format(depth,DbU.getValueString(enclosure)) )
+        trace( 550, '\t| cut spacing of {}: {}\n'.format(cutLayer.getName(),DbU.getValueString(cutSpacing)) )
+        trace( 550, '\t| cut side of {}: {}\n'.format(cutLayer.getName(),DbU.getValueString(cutSide)) )
         cutArea    = self.plates[ depth ].getBoundingBox()
         hEnclosure = enclosure + cutSide//2
         vEnclosure = hEnclosure
@@ -209,6 +211,7 @@ class BigVia ( object ):
             x = cutArea.getXMin()
             self.vias[ depth ].append( [] )
             while x <= cutArea.getXMax():
+                trace( 550, '\t| cut @({} {})\n'.format( DbU.getValueString(x), DbU.getValueString(y) ))
                 cut = Contact.create( self.net, cutLayer, x, y, cutSide, cutSide )
                 self.vias[ depth ][ -1 ].append( cut )
                 x += cutSide + cutSpacing

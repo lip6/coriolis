@@ -44,6 +44,7 @@ import plugins.alpha.chip.pads
 import plugins.alpha.chip.power
 import plugins.alpha.chip.powerplane
 import plugins.alpha.chip.corona
+import plugins.alpha.harness.pads
 
 
 # --------------------------------------------------------------------
@@ -70,26 +71,33 @@ class Chip ( Block ):
         return self.conf.validated
   
     def doChipFloorplan ( self ):
-        print( '     - Chip has {} north pads.'.format(len(self.conf.chipConf.northPads)) )
-        print( '     - Chip has {} south pads.'.format(len(self.conf.chipConf.southPads)) )
-        print( '     - Chip has {} east pads.' .format(len(self.conf.chipConf.eastPads )) )
-        print( '     - Chip has {} west pads.' .format(len(self.conf.chipConf.westPads )) )
-        self.conf.computeCoronaBorder()
-        self.conf.chipValidate()
-        if not self.conf.validated:
-            raise ErrorMessage( 1, 'chip.doChipFloorplan(): Chip is not valid, aborting.' )
-        self.conf.chip.setAbutmentBox( self.conf.chipAb )
-        trace( 550, '\tSet chip ab:{}\n'.format(self.conf.chip.getAbutmentBox()) )
-        trace( 550, '\tUsing core ab:{}\n'.format(self.conf.core.getAbutmentBox()) )
-        self.padsCorona = plugins.alpha.chip.pads.Corona( self )
-        self.conf.validated =  self.padsCorona.validate()
-        if not self.conf.validated:
-            return False
-        self.padsCorona.doLayout()
-        self.validate()
+        self.padsCorona = None
         minHCorona = self.conf.minHCorona
         minVCorona = self.conf.minVCorona
-        innerBb    = Box( self.conf.coreAb )
+        self.conf.chipValidate()
+        if not self.conf.useHarness:
+            print( '     - Chip has {} north pads.'.format(len(self.conf.chipConf.northPads)) )
+            print( '     - Chip has {} south pads.'.format(len(self.conf.chipConf.southPads)) )
+            print( '     - Chip has {} east pads.' .format(len(self.conf.chipConf.eastPads )) )
+            print( '     - Chip has {} west pads.' .format(len(self.conf.chipConf.westPads )) )
+            self.conf.computeCoronaBorder()
+            if not self.conf.validated:
+                raise ErrorMessage( 1, 'chip.doChipFloorplan(): Chip is not valid, aborting.' )
+            self.conf.chip.setAbutmentBox( self.conf.chipAb )
+            trace( 550, '\tSet chip ab:{}\n'.format(self.conf.chip.getAbutmentBox()) )
+            trace( 550, '\tUsing core ab:{}\n'.format(self.conf.core.getAbutmentBox()) )
+            self.padsCorona = plugins.alpha.chip.pads.Corona( self )
+            self.conf.validated =  self.padsCorona.validate()
+            if not self.conf.validated:
+                return False
+            self.padsCorona.doLayout()
+            self.validate()
+            minHCorona = self.conf.minHCorona
+            minVCorona = self.conf.minVCorona
+        else:
+            self.padsCorona = plugins.alpha.harness.pads.Corona( self )
+            self.padsCorona.doLayout()
+        innerBb = Box( self.conf.coreAb )
         innerBb.inflate( minHCorona, minVCorona )
         coronaAb = self.conf.corona.getAbutmentBox()
         if innerBb.getWidth() > coronaAb.getWidth():
@@ -121,8 +129,9 @@ class Chip ( Block ):
             power.connectPower()
            #power.connectHTrees( self.hTrees )
             power.doLayout()
-            Breakpoint.stop( 101, 'After Query power.' )
         else:
+            if self.conf.useHarness:
+                return
             power = plugins.alpha.chip.power.Builder( self.conf )
             power.connectPower()
             power.connectClocks()

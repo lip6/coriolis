@@ -111,6 +111,8 @@ class ChipConf ( BlockConf ):
         self.blockageNet      = None
         self.padsHavePosition = False
         self.chipLogos        = []
+        self.minHCorona       = 0
+        self.minVCorona       = 0
         trace( 550, '-' )
 
     @property
@@ -294,7 +296,7 @@ class ChipConf ( BlockConf ):
             else:
                 uCorona = uCore - coronaAb.getXMin()
         uCorona, width = self.toRoutingGauge( uCorona, uCorona, layer )
-        trace( 550, '\ttoCoronaPitchInChip(): uCorona:  {:.1f}L {}\n' \
+        trace( 550, '\ttoCoronaPitchInChip(): uCorona: {:.1f}L {}\n' \
                     .format(DbU.toLambda(uCorona), DbU.getValueString(uCorona)) )
         if lg:
             if lg.getDirection() == RoutingLayerGauge.Horizontal:
