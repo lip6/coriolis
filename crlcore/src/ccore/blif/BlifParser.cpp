@@ -491,16 +491,18 @@ namespace {
 
       if (not cell->getNet(_groundName)) {
         Net* vss = Net::create ( _cell, _groundName );
-        vss->setExternal( true );
-        vss->setGlobal  ( true );
-        vss->setType    ( Net::Type::GROUND );
+        vss->setExternal ( true );
+        vss->setGlobal   ( true );
+        vss->setType     ( Net::Type::GROUND );
+        vss->setDirection( Net::Direction::IN );
       }
   
       if (not cell->getNet(_powerName)) {
         Net* vdd = Net::create ( _cell, _powerName );
-        vdd->setExternal( true );
-        vdd->setGlobal  ( true );
-        vdd->setType    ( Net::Type::POWER );
+        vdd->setExternal ( true );
+        vdd->setGlobal   ( true );
+        vdd->setType     ( Net::Type::POWER );
+        vdd->setDirection( Net::Direction::IN );
       }
     }
   }

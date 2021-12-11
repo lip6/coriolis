@@ -89,6 +89,7 @@ namespace {
                                 DefParser                ( string file, AllianceLibrary*, unsigned int flags );
                                ~DefParser                ();
       inline bool               hasErrors                ();
+      inline bool               isSky130                 () const;
       inline unsigned int       getFlags                 () const;
       inline AllianceLibrary*   getLibrary               ();
       inline Cell*              getCell                  ();
@@ -194,6 +195,7 @@ namespace {
          AllianceFramework* DefParser::getFramework             () { return _framework; }
   inline void               DefParser::setUnits                 ( double units ) { _defUnits = 1/units; }
   inline DbU::Unit          DefParser::fromDefUnits             ( int u ) { return DbU::fromPhysical(_defUnits*(double)u,DbU::UnitPower::Micro); }
+  inline bool               DefParser::isSky130                 () const { return _flags & Sky130; }
   inline bool               DefParser::hasErrors                () { return not _errors.empty(); }
   inline unsigned int       DefParser::getFlags                 () const { return _flags; }
   inline string             DefParser::getBusBits               () const { return _busBits; }
@@ -538,6 +540,8 @@ namespace {
     string pinName = pin->pinName();
     parser->toHurricaneName( netName );
     parser->toHurricaneName( pinName );
+    if (parser->isSky130() and (pinName.substr(0,3) == "io_" ))
+      netName = pinName;
 
     NetDatas* netDatas = parser->lookupNet( netName );
     Net*      hnet     = NULL;
@@ -914,8 +918,14 @@ namespace {
     _framework  = AllianceFramework::get();
     _technology = DataBase::getDB()->getTechnology();
 
-    size_t                islash     = file.rfind ( '/' );
-    string                designName = file.substr( ((islash == string::npos) ? 0 : islash), file.size()-4 );
+    size_t istart = 0;
+    size_t length = file.size() - 4;
+    size_t islash = file.rfind ( '/' );
+    if (islash != string::npos) {
+      istart = islash + 1;
+      length = file.size() - istart - 4;
+    }
+    string                designName = file.substr( istart, length );
     AllianceLibrary*      library    = _framework->getAllianceLibrary( (unsigned int)0 );
     unique_ptr<DefParser> parser     ( new DefParser(file,library,flags) );
 
@@ -951,7 +961,9 @@ namespace CRL {
 
     Cell* cell = NULL;
 #if defined(HAVE_LEFDEF)
-    cell = DefParser::parse ( design+".def", flags );
+    if ((design.size() > 4) and (design.substr(design.size()-4) != ".def"))
+      design += ".def";
+    cell = DefParser::parse ( design, flags );
 #else
     cerr << "[ERROR] CRL::DefImport::load(): \n"
          << "  Coriolis2 hasn't been compiled with LEF/DEF support. To enable LEF/DEF\n"
