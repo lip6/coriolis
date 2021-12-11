@@ -384,7 +384,8 @@ namespace {
       for ( Net* net : _zeroCell->getNets() ) {
         if (   not net->isSupply   ()
            and not net->isAutomatic()
-           and not net->isBlockage () ) {
+           and not net->isBlockage ()
+           and net->isExternal() ) {
           if (getString(net->getName()).find(_powerName) != string::npos) {
             cerr << Error( "BlifParser::Model::staticInit(): Output \"%s\" of zero (tie low) cell \"%s\" match power supply name."
                          , getString(net->getName()).c_str(), zeroName.c_str() ) << endl;
@@ -405,7 +406,8 @@ namespace {
       for ( Net* net : _oneCell->getNets() )
         if (   not net->isSupply   ()
            and not net->isAutomatic()
-           and not net->isBlockage () ) {
+           and not net->isBlockage ()
+           and net->isExternal() ) {
           if (getString(net->getName()).find(_powerName) != string::npos) {
             cerr << Error( "BlifParser::Model::staticInit(): Output \"%s\" of one (tie high) cell \"%s\" match power supply name."
                          , getString(net->getName()).c_str(), zeroName.c_str() ) << endl;
