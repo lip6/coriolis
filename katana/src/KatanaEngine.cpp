@@ -768,29 +768,30 @@ namespace Katana {
   void  KatanaEngine::dumpMeasures ( ostream& out ) const
   {
     vector<Name> measuresLabels;
-    measuresLabels.push_back( getMeasureLabel("Gates"   ) );
-    measuresLabels.push_back( getMeasureLabel("GCells"  ) );
-  //measuresLabels.push_back( getMeasureLabel("knikT"   ) );
-  //measuresLabels.push_back( getMeasureLabel("knikS"   ) );
-  //measuresLabels.push_back( getMeasureLabel("GWL(l)"  ) );
-    measuresLabels.push_back( getMeasureLabel("Area(l2)") );
-    measuresLabels.push_back( getMeasureLabel("Sat."    ) );
-    measuresLabels.push_back( getMeasureLabel("loadT"   ) );
-    measuresLabels.push_back( getMeasureLabel("loadS"   ) );
-    measuresLabels.push_back( getMeasureLabel("H-ovE"   ) );
-    measuresLabels.push_back( getMeasureLabel("V-ovE"   ) );
-    measuresLabels.push_back( getMeasureLabel("Globals" ) );
-    measuresLabels.push_back( getMeasureLabel("Edges"   ) );
-    measuresLabels.push_back( getMeasureLabel("assignT" ) );
-    measuresLabels.push_back( getMeasureLabel("algoT"   ) );
-    measuresLabels.push_back( getMeasureLabel("algoS"   ) );
-    measuresLabels.push_back( getMeasureLabel("finT"    ) );
-    measuresLabels.push_back( getMeasureLabel("Segs"    ) );
-    measuresLabels.push_back( getMeasureLabel("DWL"     ) );
-    measuresLabels.push_back( getMeasureLabel("fWL"     ) );
-    measuresLabels.push_back( getMeasureLabel("WLER(%)" ) );
-    measuresLabels.push_back( getMeasureLabel("Events"  ) );
-    measuresLabels.push_back( getMeasureLabel("UEvents" ) );
+    measuresLabels.push_back( getMeasureLabel("Gates"  ) );
+    measuresLabels.push_back( getMeasureLabel("GCells" ) );
+  //measuresLabels.push_back( getMeasureLabel("knikT"  ) );
+  //measuresLabels.push_back( getMeasureLabel("knikS"  ) );
+  //measuresLabels.push_back( getMeasureLabel("GWL"    ) );
+    measuresLabels.push_back( "Etesian::EtesianEngine.placeT" );
+    measuresLabels.push_back( getMeasureLabel("Area"   ) );
+    measuresLabels.push_back( getMeasureLabel("Sat"    ) );
+    measuresLabels.push_back( getMeasureLabel("loadT"  ) );
+    measuresLabels.push_back( getMeasureLabel("loadS"  ) );
+    measuresLabels.push_back( getMeasureLabel("H-ovE"  ) );
+    measuresLabels.push_back( getMeasureLabel("V-ovE"  ) );
+    measuresLabels.push_back( getMeasureLabel("Globals") );
+    measuresLabels.push_back( getMeasureLabel("Edges"  ) );
+    measuresLabels.push_back( getMeasureLabel("assignT") );
+    measuresLabels.push_back( getMeasureLabel("algoT"  ) );
+    measuresLabels.push_back( getMeasureLabel("algoS"  ) );
+    measuresLabels.push_back( getMeasureLabel("finT"   ) );
+    measuresLabels.push_back( getMeasureLabel("Segs"   ) );
+    measuresLabels.push_back( getMeasureLabel("DWL"    ) );
+    measuresLabels.push_back( getMeasureLabel("fWL"    ) );
+    measuresLabels.push_back( getMeasureLabel("WLER(%)") );
+    measuresLabels.push_back( getMeasureLabel("Events" ) );
+    measuresLabels.push_back( getMeasureLabel("UEvents") );
 
     const MeasuresSet* measures = Measures::get( getCell() );
 

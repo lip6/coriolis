@@ -16,6 +16,7 @@
 
 #include  <iomanip>
 #include  "hurricane/Error.h"
+#include  "hurricane/Warning.h"
 #include  "hurricane/DBo.h"
 #include  "crlcore/Measures.h"
 
@@ -30,11 +31,13 @@ namespace CRL {
   using std::string;
   using std::vector;
   using std::ostringstream;
+  using std::cout;
   using std::cerr;
   using std::endl;
   using std::setw;
   using std::right;
   using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::ForEachIterator;
 
   
@@ -68,7 +71,16 @@ namespace CRL {
 
     for ( size_t i=0 ; i<names.size() ; ++i ) {
       const_iterator imeasure = find( names[i] );
-      if (imeasure == end()) continue;
+      if (imeasure == end()) {
+        string label = getString( names[i] );
+        label.erase( 0, label.find_last_of('.')+1 );
+        if (label.empty())
+          cerr << Warning( "MeasureSet::toStringHeaders(): Label \"%\" must not end with a dot."
+                         , getString(names[i]).c_str()
+                         ) << endl;
+        out << setw(10) << right << label;
+        continue;
+      }
 
       const BaseMeasure* measure = (*imeasure).second;
       if (measure->isSimpleData()) {
@@ -89,7 +101,10 @@ namespace CRL {
 
     for ( size_t i=0 ; i<names.size() ; ++i ) {
       const_iterator imeasure = find( names[i] );
-      if (imeasure == end()) continue;
+      if (imeasure == end()) {
+        out << setw(10) << right << 0;
+        continue;
+      }
 
       const BaseMeasure* measure = (*imeasure).second;
       if (measure->isSimpleData())

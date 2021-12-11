@@ -1442,6 +1442,7 @@ namespace Etesian {
       ( "     - HPWL", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_HPWL_wirelength(*_circuit,*_placementUB )*getSliceStep() ) ) << endl;
     cmess1 << ::Dots::asString
       ( "     - RMST", DbU::getValueString( (DbU::Unit)coloquinte::gp::get_RSMT_wirelength(*_circuit,*_placementUB )*getSliceStep() ) ) << endl;
+    addMeasure<double>( "placeT", getTimer().getCombTime() );
 
     UpdateSession::open();
     for ( Net* net : getCell()->getNets() ) {

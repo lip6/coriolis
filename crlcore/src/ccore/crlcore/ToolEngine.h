@@ -1,7 +1,7 @@
 // -*- C++ -*-
 //
 // This file is part of the Coriolis Software.
-// Copyright (c) UPMC 2008-2018, All Rights Reserved
+// Copyright (c) Sorbonne Université 2008-2021, All Rights Reserved
 //
 // +-----------------------------------------------------------------+
 // |                   C O R I O L I S                               |
@@ -14,10 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-
-#ifndef CRL_TOOL_ENGINE_H
-#define CRL_TOOL_ENGINE_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Commons.h"
 #include "hurricane/Timer.h"
@@ -75,7 +72,7 @@ namespace CRL {
       template<typename Data>
       inline        void         addMeasure                          ( std::string, Data* ) const;
       template<typename Data>
-      inline        const Data&  getMeasure                          ( std::string ) const;
+      inline        const Data*  getMeasure                          ( std::string ) const;
       virtual       std::string  _getTypeName                        () const;
       virtual       std::string  _getString                          () const;
       virtual       Record*      _getRecord                          () const;
@@ -127,10 +124,12 @@ namespace CRL {
   { ::CRL::addMeasure( getCell(), getMeasureLabel(name), getPassNumber(), data ); }
 
   template<typename Data>
-  inline const Data& ToolEngine::getMeasure ( std::string name ) const
-  { return ::CRL::getMeasure<Data>( getCell(), getMeasureLabel(name) )->getData( getPassNumber() ); }
+  inline const Data* ToolEngine::getMeasure ( std::string name ) const
+  {
+    const Measure<Data>* measure = ::CRL::getMeasure<Data>( getCell(), getMeasureLabel(name) );
+    if (not measure) return NULL;
+    return &(measure->getData( getPassNumber() ));
+  }
 
 
 } // CRL namespace.
-
-#endif // CRL_TOOL_ENGINE_H
