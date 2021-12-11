@@ -2770,10 +2770,23 @@ namespace Anabatic {
                                    , Segment*      hurricaneSegment
                                    )
   {
+    Horizontal*  horizontal = dynamic_cast<Horizontal*>( hurricaneSegment );
+    Vertical*    vertical   = dynamic_cast<Vertical*  >( hurricaneSegment );
+
     const Layer* horizontalLayer = Session::getDHorizontalLayer();
     DbU::Unit    horizontalWidth = Session::getDHorizontalWidth();
     const Layer* verticalLayer   = Session::getDVerticalLayer();
     DbU::Unit    verticalWidth   = Session::getDVerticalWidth();
+    if (not Session::getAnabatic()->getConfiguration()->isGMetal(hurricaneSegment->getLayer())) {
+      size_t depth = Session::getAnabatic()->getConfiguration()->getLayerDepth( hurricaneSegment->getLayer() );
+      if (depth > 2) {
+        horizontalLayer = verticalLayer = hurricaneSegment->getLayer();
+        horizontalWidth = Session::getAnabatic()->getConfiguration()->getWireWidth( depth );
+        verticalWidth   = Session::getAnabatic()->getConfiguration()->getPWireWidth( depth );
+        if (vertical)
+          std::swap( horizontalWidth, verticalWidth );
+      }
+    }
 
     uint32_t wPitch = NetRoutingExtension::getWPitch( source->getNet() );
     if (wPitch > 1) {
@@ -2788,9 +2801,7 @@ namespace Anabatic {
 
     bool         reattachSource = false;
     bool         reattachTarget = false;
-    AutoSegment* segment;
-    Horizontal*  horizontal = dynamic_cast<Horizontal*>( hurricaneSegment );
-    Vertical*    vertical   = dynamic_cast<Vertical*  >( hurricaneSegment );
+    AutoSegment* segment   = NULL;
     AutoContact* reference = NULL;
 
     cdebug_log(149,0) << "Source:" << source << endl;

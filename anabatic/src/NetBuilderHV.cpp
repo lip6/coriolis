@@ -170,7 +170,8 @@ namespace Anabatic {
         sourceProtect->setFlags( CntFixed );
         targetProtect->setFlags( CntFixed );
 
-        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction );
+        if (rpDepth == 0) rpDepth = 1;
+        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction, rpDepth );
         segment->setFlags( AutoSegment::SegFixed );
 
         getRpLookup().insert( make_pair(rp,segment) );

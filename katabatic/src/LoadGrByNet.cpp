@@ -2037,7 +2037,7 @@ namespace Katabatic {
   void  KatabaticEngine::_loadGrByNet ()
   {
     cmess1 << "  o  Loading Nets global routing from Knik." << endl;
-    cmess1 << Dots::asDouble("     - Saturation",getMeasure<double>("Sat.")) << endl;
+    cmess1 << Dots::asDouble("     - Saturation",*getMeasure<double>("Sat.")) << endl;
 
     startMeasures();
     Session::open( this );

@@ -334,6 +334,11 @@ namespace Katana {
       Interval      fixedSpan;
       Interval      blockageSpan;
 
+      if (not refTrack) {
+        string message = "NULL refTrack for " + getString(autoSegment);
+        Breakpoint::stop( 0, message );
+      }
+      
       if (refTrack->getAxis() != autoSegment->getAxis()) { 
         trackSpan = 2;
         refTrack  = plane->getTrackByPosition( autoSegment->getAxis(), Constant::Inferior );
