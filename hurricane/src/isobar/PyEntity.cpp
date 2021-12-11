@@ -54,7 +54,7 @@ extern "C" {
   DBoDestroyAttribute(PyEntity_destroy ,PyEntity)
 
 
-  static PyObject* PyEntity_getCell ( PyEntity *self )
+  static PyObject* PyEntity_getCell ( PyEntity* self )
   {
     cdebug_log(20,0) << "PyEntity_getCell()" << endl;
     Cell* cell = NULL;
@@ -66,12 +66,26 @@ extern "C" {
   }
 
 
+  static PyObject* PyEntity_getBoundingBox ( PyEntity* self )
+  {
+    cdebug_log(20,0) << "PyEntity_getBoundingBox()" << endl;
+    METHOD_HEAD( "Entity.getBoundingBox()" )
+    PyBox* boundingBox = PyObject_NEW( PyBox, &PyTypeBox );
+    if (not boundingBox) return NULL;
+    HTRY
+      boundingBox->_object = new Box ( entity->getBoundingBox() );
+    HCATCH
+    return ( (PyObject*)boundingBox );
+  }
+
+
   PyMethodDef PyEntity_Methods[] =
-    { { "getCell"              , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
-    , { "getId"                , (PyCFunction)PyEntity_getId         , METH_NOARGS , "Returns unique object (DBo) identifier." }
-    , { "isBound"              , (PyCFunction)PyEntity_isPyBound     , METH_NOARGS , "Returns true if the Entity is bounded to it's Hurricane counterpart." }    
-    , { "destroy"              , (PyCFunction)PyEntity_destroy       , METH_NOARGS
-                               , "Destroy associated hurricane object, the python object remains." }
+    { { "getCell"         , (PyCFunction)PyEntity_getCell       , METH_NOARGS , "Returns the entity cell." }
+    , { "getId"           , (PyCFunction)PyEntity_getId         , METH_NOARGS , "Returns unique object (DBo) identifier." }
+    , { "isBound"         , (PyCFunction)PyEntity_isPyBound     , METH_NOARGS , "Returns true if the Entity is bounded to it's Hurricane counterpart." }    
+    , { "getBoundingBox"  , (PyCFunction)PyEntity_getBoundingBox, METH_NOARGS , "Returns entity bounding box." }    
+    , { "destroy"         , (PyCFunction)PyEntity_destroy       , METH_NOARGS
+                          , "Destroy associated hurricane object, the python object remains." }
     , {NULL, NULL, 0, NULL}    /* sentinel */
     };
 
