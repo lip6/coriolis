@@ -101,6 +101,16 @@ namespace Etesian {
   }
 
 
+  Cell* FeedCells::getFeedByWidth ( DbU::Unit width ) const
+  {
+    for ( auto item : _feedCells ) {
+      if (item.second->getAbutmentBox().getWidth() == width)
+        return item.second;
+    }
+    return NULL;
+  }
+
+
   string  FeedCells::getUniqueInstanceName () const
   {
     ostringstream name;

@@ -243,8 +243,45 @@ namespace Etesian {
     modulo = (xmax - getXMin()) % getEtesian()->getSliceStep();
     if (modulo) xmax -= modulo;
 
-    Cell*     tie       = getEtesian()->getFeedCells().getTie();
-    DbU::Unit feedWidth = 0;
+    DbU::Unit feedWidth = feed->getAbutmentBox().getWidth();
+    while ( true ) {
+      if (xtie           >= xmax) return;
+      if (xtie+feedWidth >  xmax) {
+      // Feed is too big, try to find a smaller one.
+        feed = NULL;
+        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
+        for ( ; pitch > 0 ; --pitch ) {
+          feed = getEtesian()->getFeedCells().getFeed( pitch );
+          if (feed == NULL) continue;
+          
+          feedWidth = feed->getAbutmentBox().getWidth();
+          if (feed != NULL) break;
+        }
+        if (feed == NULL) break;
+      }
+
+      Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
+      Instance* instance   = Instance::create
+        ( getEtesian()->getBlockCell()
+        , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+        , feed
+        , getTransformation( feed->getAbutmentBox()
+                           , blockPoint.getX()
+                           , blockPoint.getY()
+                           , (yspin) ? Transformation::Orientation::MY
+                                     : Transformation::Orientation::ID
+                           )
+        , Instance::PlacementStatus::PLACED
+        );
+      _tiles.insert( before
+                   , Tile( xtie
+                         , feed->getAbutmentBox().getWidth()
+                         , getEtesian()->toCell( Occurrence(instance) )));
+      xtie += feedWidth;
+    }
+
+    Cell* tie = getEtesian()->getFeedCells().getTie();
+    feedWidth = 0;
     if (tie) {
       DbU::Unit feedWidth = tie->getAbutmentBox().getWidth();
       if (xtie+feedWidth < xmax) {
@@ -292,43 +329,6 @@ namespace Etesian {
     } else {
       cerr << Error("Slice::fillHole(): No tie has been registered, not inserting.") << endl;
     }
-
-    feedWidth = feed->getAbutmentBox().getWidth();
-    while ( true ) {
-      if (xtie           >= xmax) break;
-      if (xtie+feedWidth >  xmax) {
-      // Feed is too big, try to find a smaller one.
-        feed = NULL;
-        int pitch = (int)((xmax-xtie) / getEtesian()->getSliceStep());
-        for ( ; pitch > 0 ; --pitch ) {
-          feed = getEtesian()->getFeedCells().getFeed( pitch );
-          if (feed == NULL) continue;
-          
-          feedWidth = feed->getAbutmentBox().getWidth();
-          if (feed != NULL) break;
-        }
-        if (feed == NULL) break;
-      }
-
-      Point     blockPoint = getEtesian()->toBlock( Point(xtie,_ybottom) );
-      Instance* instance   = Instance::create
-        ( getEtesian()->getBlockCell()
-        , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
-        , feed
-        , getTransformation( feed->getAbutmentBox()
-                           , blockPoint.getX()
-                           , blockPoint.getY()
-                           , (yspin) ? Transformation::Orientation::MY
-                                     : Transformation::Orientation::ID
-                           )
-        , Instance::PlacementStatus::PLACED
-        );
-      _tiles.insert( before
-                   , Tile( xtie
-                         , feed->getAbutmentBox().getWidth()
-                         , getEtesian()->toCell( Occurrence(instance) )));
-      xtie += feedWidth;
-    }
   }
 
   
@@ -345,7 +345,7 @@ namespace Etesian {
       return NULL;
     }
     Cell* tie = getEtesian()->getFeedCells().getTie();
-    if (tie == NULL) {
+    if (not feed and not tie) {
       cerr << Error("Slice::createDiodeUnder(): No tie has been registered, ignoring.") << endl;
       return NULL;
     }
@@ -361,6 +361,7 @@ namespace Etesian {
     DbU::Unit dCandidate     = 0;
     for ( auto iTile=_tiles.begin() ; iTile != _tiles.end() ; ++iTile ) {
       if ((*iTile).getXMax() <= diodeArea.getXMin()) continue;
+      if ((*iTile).getXMin() <  diodeArea.getXMin()) continue;
       if ((*iTile).getXMin() >= diodeArea.getXMax()) break;
       cdebug_log(147,0) << "| " << (*iTile) << endl;
       if (   ((*iTile).getMasterCell() != feed)
@@ -385,15 +386,17 @@ namespace Etesian {
     auto before = iCandidate;
     before++;
 
-    DbU::Unit  xmin    = (*iCandidate).getXMin(); 
-    DbU::Unit  width   = (*iCandidate).getWidth(); 
+    DbU::Unit  xmin        = (*iCandidate).getXMin(); 
+    DbU::Unit  width       = (*iCandidate).getWidth(); 
+    DbU::Unit  fillerWidth = width - diode->getAbutmentBox().getWidth();
     diodeInst = (*iCandidate).getInstance();
-    Transformation transf = diodeInst->getTransformation();
+    Transformation refTransf = diodeInst->getTransformation();
     _tiles.erase( iCandidate );
     diodeInst->destroy();
 
-    Occurrence rpOccurrence = rp->getPlugOccurrence();
-    Path       instancePath = rpOccurrence.getPath();
+    Occurrence      rpOccurrence = rp->getPlugOccurrence();
+    Path            instancePath = rpOccurrence.getPath();
+    Transformation  transf       = refTransf;
     if (instancePath.isEmpty())
       transf = getEtesian()->toCell( transf );
     // transf = getEtesian()->toBlock( transf );
@@ -409,6 +412,24 @@ namespace Etesian {
                                 , Instance::PlacementStatus::FIXED );
     _tiles.insert( before, Tile(xmin,width,Occurrence(diodeInst,instancePath)) );
     cdebug_log(147,0) << "  " << diodeInst << " @" << transf << endl;
+
+    if (fillerWidth > 0) {
+      Cell* filler = getEtesian()->getFeedCells().getFeedByWidth( fillerWidth );
+      if (not filler) {
+        cerr << Error("Slice::createDiodeUnder(): No gap filler of width %s."
+                     , DbU::getValueString(fillerWidth).c_str() ) << endl;
+        return diodeInst;
+      }
+      transf = refTransf;
+      Transformation( fillerWidth, 0 ).applyOn( transf );
+      Instance* fillerInst = Instance::create( getEtesian()->getBlockCell()
+                                             , getEtesian()->getFeedCells().getUniqueInstanceName().c_str()
+                                             , filler
+                                             , transf
+                                             , Instance::PlacementStatus::FIXED );
+      _tiles.insert( before, Tile(xmin+width,fillerWidth,Occurrence(fillerInst,instancePath)) );
+      cdebug_log(147,0) << "  " << fillerInst << " @" << transf << endl;
+    }
 
     return diodeInst;
   }

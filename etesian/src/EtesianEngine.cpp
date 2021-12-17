@@ -359,6 +359,12 @@ namespace Etesian {
       string feedNames = getConfiguration()->getFeedNames();
       char   separator = ',';
 
+      if (feedNames.empty()) {
+        cerr << Warning( "EtesianEngine::_postCreate() No feed cells configured.\n"
+                         "          (please configure \"cfg.etesian.feedNames\")"
+                       ) << endl;
+      }
+
       while ( not feedNames.empty() ) {
         size_t cut = feedNames.find( separator );
         string feedName;
@@ -388,6 +394,10 @@ namespace Etesian {
         tie = AllianceFramework::get()->getCell( tieName, Catalog::State::Views|Catalog::State::Foreign );
       if (tie)
         _feedCells.useTie( tie );
+      else
+        cerr << Warning( "EtesianEngine::_postCreate() Unable to find \"%s\" tie cell."
+                       , tieName.c_str()
+                       ) << endl;
     }
     _sliceHeight = getCellGauge()->getSliceHeight();
 

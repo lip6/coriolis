@@ -21,6 +21,7 @@
 
 namespace Etesian {
 
+  using Hurricane::DbU;
   using Hurricane::Cell;
   class EtesianEngine;
 
@@ -35,6 +36,7 @@ namespace Etesian {
               Cell*        getSmallestFeed       () const;
       inline  Cell*        getTie                () const;
               Cell*        getFeed               ( int pitches ) const;
+              Cell*        getFeedByWidth        ( DbU::Unit width ) const;
               std::string  getUniqueInstanceName () const;
     private:
       EtesianEngine*        _etesian;
