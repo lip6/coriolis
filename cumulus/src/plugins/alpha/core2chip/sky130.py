@@ -33,6 +33,93 @@ from   plugins.alpha.core2chip.core2chip import CoreToChip as BaseCoreToChip, \
                                                 IoNet, IoPad
 
 
+# -------------------------------------------------------------------
+# Class : "MatchHarnessIos".
+
+class MatchHarnessIos ( object ):
+    """
+    In case the connections of the core to the I/O pins are not specified
+    (empty ioPadsSpecs list), try to guess the connection by names.
+
+    .. note:: Currently, only matching with the (io_in,io_out,io_oeb),
+              power and clock are supported.
+    """
+
+    def __init__ ( self, coreToChip ):
+        self.coreToChip = coreToChip
+        self.digitalIos = []
+        for i in range(38):
+            self.digitalIos.append( [None, None, None] )
+        self.clock      = None
+        self.digitalVdd = None
+        self.digitalVss = None
+
+    @property
+    def conf ( self ): return self.coreToChip.conf
+
+    def matchCore ( self ):
+        print( '  o  Using implicit Caravel harness connections.' )
+        reIoIn = re.compile( r'^(?P<name>\w+)\((?P<index>\d+)\)$' )
+        for net in self.conf.core.getNets():
+            if not net.isExternal(): continue
+            if net.isClock():
+                self.clock = net
+                continue
+            if net.isPower():
+                self.digitalVdd = net
+                continue
+            if net.isGround():
+                self.digitalVss = net
+                continue
+            m = reIoIn.match( net.getName() )
+            if m:
+                index = int( m.group('index') )
+                if index >= 38:
+                    continue
+                if m.group('name') == 'io_in':
+                    self.digitalIos[ index ][0] = net
+                elif m.group('name') == 'io_out':
+                    self.digitalIos[ index ][1] = net
+                elif m.group('name') == 'io_oeb':
+                    self.digitalIos[ index ][2] = net
+                else:
+                    print( WarningMessage('Unable to match "{}" into harness net.'.format( net.getName() )))
+            else:
+                print( WarningMessage('Unable to match "{}" into harness net.'.format( net.getName() )))
+        if self.digitalVdd:
+            self.conf.chipConf.addIoPad( (None, None, 'power_0', 'vccd1', self.digitalVdd.getName()), 0 )
+        else:
+            print( WarningMessage('Missing digital power net in "{}".'.format(self.conf.core.getName())) )
+        if self.digitalVss:
+            self.conf.chipConf.addIoPad( (None, None, 'ground_0', 'vssd1', self.digitalVss.getName()), 0 )
+        else:
+            print( WarningMessage('Missing digital ground net in "{}".'.format(self.conf.core.getName())) )
+        if self.clock:
+            self.conf.chipConf.addIoPad( (None, None, None, 'user_clock2', self.clock.getName()), 0 )
+        else:
+            print( WarningMessage('Missing digital clock net in "{}".'.format(self.conf.core.getName())) )
+        for i in range(38):
+            ioNets = self.digitalIos[ i ]
+            if ioNets[0] and ioNets[1] and ioNets[2]:
+                self.conf.chipConf.addIoPad( ( None, None, None, ioNets[0].getName()
+                                                               , ioNets[0].getName()
+                                                               , ioNets[1].getName()
+                                                               , ioNets[2].getName() ), 0 )
+            elif ioNets[0] and not ioNets[1] and not ioNets[2]:
+                self.conf.chipConf.addIoPad( ( None, None, None, ioNets[0].getName()
+                                                               , ioNets[0].getName() ), 0 )
+            elif not ioNets[0] and not ioNets[1] and ioNets[2]:
+                self.conf.chipConf.addIoPad( ( None, None, None, ioNets[2].getName()
+                                                               , ioNets[2].getName() ), 0 )
+            elif not ioNets[0] and not ioNets[1] and not ioNets[2]:
+                continue
+            else:
+                print( WarningMessage( [ 'Incomplete digital connexion to I/O pad "{}".'.format(index)
+                                         , '* In :{}'.format( ioNets[0] )
+                                         , '* Out:{}'.format( ioNets[1] )
+                                         , '* OEb:{}'.format( ioNets[2] ) ]))
+
+
 # --------------------------------------------------------------------
 # Class  :  "sky130.CoreToChip"
 
@@ -70,6 +157,8 @@ class CoreToChip ( BaseCoreToChip ):
                                                       , 'pad', ['pad', 'padres'] )
                             ]
         self._getPadLib()
+        if self.conf.chipConf.ioPadsCount() == 0:
+            MatchHarnessIos( self ).matchCore()
         return
 
     def _getPadLib ( self ):
@@ -88,80 +177,47 @@ class CoreToChip ( BaseCoreToChip ):
         raise NotImplementedError( 'coreToChip.getCell(): Harness does not provides I/O pad cells.' )
 
     def _buildCoreGroundPads ( self, ioPadConf ):
+        trace( 550, '\tsky130.CoreToChip._buildGroundPowerPads()\n' )
         coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
         coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
-        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.padSupplyNetName )
         if not coronaNet:
             coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
-            coronaNet.setExternal( True )
-            coronaNet.setGlobal  ( True )
-            coronaNet.setType    ( Net.Type.GROUND )
+            coronaNet.setExternal ( True )
+            coronaNet.setGlobal   ( True )
+            coronaNet.setDirection( Net.Direction.IN )
+            coronaNet.setType     ( Net.Type.GROUND )
             self.icore.getPlug( coreNet ).setNet( coronaNet  )
+            trace( 550, '\tCreated corona ground net: {}\n'.format(coronaNet) )
         if not chipNet:
-            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
-            chipNet.setExternal( True )
-            chipNet.setType    ( Net.Type.GROUND )
+            raise ErrorMessage( 1, 'Harness do not provide ground net ""{}' \
+                                   .format( ioPadConf.padSupplyNetName ))
         coronaPlug = self.icorona.getPlug( coronaNet )
         if not coronaPlug.getNet():
             coronaPlug.setNet( chipNet  )
-        self.ringNetNames['vss'] = chipNet
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_vss_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['vss']) ) )
-        self._connect( ioPadConf.pads[0], chipNet, 'vss' )
         self.groundPadCount += 1
-        self.chipPads       += ioPadConf.pads
-
-    def _buildIoGroundPads ( self, ioPadConf ):
-        padNet = self.chip.getNet( ioPadConf.padSupplyNetName  )
-        if not padNet:
-            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
-            padNet.setExternal( True )
-            padNet.setType    ( Net.Type.GROUND )
-        self.ringNetNames['iovss'] = padNet
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_iovss_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['iovss']) ) )
-        self._connect( ioPadConf.pads[0], padNet , 'iovss' )
-        self.groundPadCount += 1
-        self.chipPads       += ioPadConf.pads
 
     def _buildCorePowerPads ( self, ioPadConf ):
+        trace( 550, '\tsky130.CoreToChip._buildCorePowerPads()\n' )
         coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
         coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
-        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.padSupplyNetName )
         if not coronaNet:
             coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
-            coronaNet.setExternal( True )
-            coronaNet.setGlobal  ( True )
-            coronaNet.setType    ( Net.Type.POWER )
+            coronaNet.setExternal ( True )
+            coronaNet.setGlobal   ( True )
+            coronaNet.setDirection( Net.Direction.IN )
+            coronaNet.setType     ( Net.Type.POWER )
             self.icore.getPlug( coreNet ).setNet( coronaNet  )
+            trace( 550, '\tCreated corona power net: {}\n'.format(coronaNet) )
         if not chipNet:
-            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
-            chipNet.setExternal( True )
-            chipNet.setType    ( Net.Type.POWER )
+            raise ErrorMessage( 1, 'Harness do not provide power net ""{}' \
+                                   .format( ioPadConf.padSupplyNetName ))
             self.icorona.getPlug( coronaNet ).setNet( chipNet  )
-            self.ringNetNames['vdd'] = chipNet
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_vdd_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['vdd']) ) )
-        self._connect( ioPadConf.pads[0], chipNet, 'vdd' )
+        coronaPlug = self.icorona.getPlug( coronaNet )
+        if not coronaPlug.getNet():
+            coronaPlug.setNet( chipNet  )
         self.powerPadCount += 1
-        self.chipPads      += ioPadConf.pads
-
-    def _buildIoPowerPads ( self, ioPadConf ):
-        padNet = self.chip  .getNet( ioPadConf.padSupplyNetName  )
-        if not padNet:
-            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
-            padNet.setExternal( True )
-            padNet.setType    ( Net.Type.POWER )
-            self.ringNetNames['iovdd'] = padNet
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_iovdd_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['iovdd']) ) )
-        self._connect( ioPadConf.pads[0], padNet , 'iovdd' )
-        self.powerPadCount += 1
-        self.chipPads      += ioPadConf.pads
 
     def _buildClockPads ( self, ioPadConf ):
         """For "Sky130" there is no specialized clock I/O pad. So do nothing."""

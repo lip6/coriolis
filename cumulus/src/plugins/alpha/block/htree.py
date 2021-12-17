@@ -15,6 +15,7 @@
 
 import sys
 import os.path
+import re
 import Cfg
 from   Hurricane import Breakpoint, DbU, Box, Transformation, Box, \
                         Path, Layer, Occurrence, Net, HyperNet,    \
@@ -29,6 +30,16 @@ from   plugins         import getParameter
 from   plugins.alpha   import utils
 from   plugins.alpha.block.configuration import GaugeConf
 from   plugins.alpha.block.spares        import Spares
+
+
+def unbitify ( rawName ):
+    """
+    Remove the bit indexation from the net name, if any.
+    """
+    p = re.compile( r'(?P<name>.+)\((?P<index>\d+)\)' )
+    m = p.match( rawName )
+    if not m: return rawName
+    return '{}_bit{}'.format( m.group('name'), m.group('index') )
 
 
 # ----------------------------------------------------------------------------
@@ -223,7 +234,7 @@ class HTree ( object ):
            buffers of the leafs of the QuadTree.
         """
         qt           = self.spares.quadTree
-        qt.bufferTag = self.treeNet.getName()
+        qt.bufferTag = unbitify( self.treeNet.getName() )
         qt.runselect()
         qt.rselectBuffer( self.treeIndex
                         , self.treeIndex
@@ -239,7 +250,7 @@ class HTree ( object ):
         """
         bufferConf         = self.spares.conf.bufferConf
         quadTree           = self.spares.quadTree
-        quadTree.bufferTag = self.treeNet.getName()
+        quadTree.bufferTag = unbitify( self.treeNet.getName() )
         quadTree.runselect()
         quadTree.rselectBuffer( self.treeIndex, self.treeIndex, self.flags)
         with UpdateSession():

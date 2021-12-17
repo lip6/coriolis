@@ -574,7 +574,7 @@ class ChipConf ( BlockConf ):
                     net = self.corona.getNet( masterNet.getName() )
                     if not net:
                         raise ErrorMessage( 1, 'ChipConf.findPowerAndClockNets(): Missing global net "{}" at corona level.' \
-                                               .format(asterNet.getName()) )
+                                               .format(masterNet.getName()) )
                         self._validated = False
                         continue
                 if netType == Net.Type.GROUND:

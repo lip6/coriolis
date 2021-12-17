@@ -661,7 +661,8 @@ class IoPadConf ( object ):
             reSpecialPads = re.compile( r'^(?P<type>.+)_(?P<index>[\d+])$' )
             m = reSpecialPads.match( self.instanceName )
         else:
-            self.flags |= IoPadConf.ALL_POWER
+            if self.instanceName is not None:
+                self.flags |= IoPadConf.ALL_POWER
         if m:
             self.index = m.group('index')
             if m.group('type') == 'allpower':  self.flags |= IoPadConf.ALL_POWER
@@ -770,6 +771,8 @@ class ChipConf ( object ):
         object.__setattr__( self, attr, value )
         if attr == 'ioPadGauge' and value is not None:
             self.blockConf._loadIoPadGauge( value )
+
+    def ioPadsCount ( self ): return len(self.padInstances)
 
     def addIoPad ( self, spec, specNb ):
         """
