@@ -198,7 +198,7 @@ class CoreWire ( object ):
         if not isinstance(padLayer,BasicLayer):
             padLayer = padLayer.getBasicLayer()
         if self.side == West or self.side == East:
-            flags = OnHorizontalPitch
+            flags  = OnHorizontalPitch
             hPitch = self.conf.getPitch( self.symSegmentLayer )
             vPitch = self.conf.getPitch( self.padSegment.getLayer() )
             yCore  = self.conf.toCoronaPitchInChip( self.bbSegment.getCenter().getY(), self.symSegmentLayer )
@@ -221,7 +221,7 @@ class CoreWire ( object ):
                 xPadMax         = self.bbSegment.getXMax()
                 xContact        = self.corona.coreSymBb.getXMax() + self.offset * 2*vPitch
                 xPadMin         = xContact
-                xCore           = coronaAb.getXMax()
+                xCore           = coronaAb.getXMax() - vPitch
                 if not self.preferredDir:
                    #xPadMin -= self.bbSegment.getHeight()//2
                     xPadMin -= 3*vPitch
@@ -375,7 +375,7 @@ class CoreWire ( object ):
                 yPadMax         = self.bbSegment.getYMax()
                 yPadMin         = self.corona.coreSymBb.getYMax() + self.offset * 2*hPitch
                 yContact        = yPadMin
-                yCore           = coronaAb.getYMax()
+                yCore           = coronaAb.getYMax() - vPitch
                #if not self.preferredDir:
                #    yPadMin -= self.bbSegment.getWidth()//2
                #    yPadMin -= 3*hPitch

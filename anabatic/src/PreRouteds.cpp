@@ -83,6 +83,7 @@ namespace Anabatic {
       if (net->getType() == Net::Type::GROUND) continue;
     // Don't skip the clock.
 
+      vector<Pin*>      pins;
       vector<Segment*>  segments;
       vector<Contact*>  contacts;
 
@@ -92,7 +93,11 @@ namespace Anabatic {
       size_t rpCount              = 0;
 
       for( Component* component : net->getComponents() ) {
-        if (dynamic_cast<Pin *>(component)) continue;
+        Pin* pin = dynamic_cast<Pin *>( component );
+        if (pin) {
+          pins.push_back( pin );
+          continue;
+        }
         if (dynamic_cast<Plug*>(component)) continue;
 
         const RegularLayer* layer = dynamic_cast<const RegularLayer*>(component->getLayer());
@@ -139,34 +144,49 @@ namespace Anabatic {
                 isFixed = true;
             }
           } else {
-            Contact* contact = dynamic_cast<Contact*>(component);
-            if (contact) {
-              if (not ab.contains(contact->getCenter())) continue;
-
-              if (Session::isGLayer(component->getLayer())) {
-                isManualGlobalRouted = true;
-              } else {
-                isManualGlobalRouted = true;
-                contacts.push_back( contact );
-                if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
-                   or (contact->getHeight() != Session::getViaWidth(contact->getLayer()))
-                   or (contact->getLayer () == Session::getContactLayer(0)) )
-                  isFixed = true;
-              }
+            Pin* pin = dynamic_cast<Pin*>(component);
+            if (pin) {
+            //cerr << "| " << pin << endl;
+              if (not ab.intersect(pin->getBoundingBox())) continue;
+              pins.push_back( pin );
             } else {
-              RoutingPad* rp = dynamic_cast<RoutingPad*>(component);
-              if (rp) {
-                ++rpCount;
+              Contact* contact = dynamic_cast<Contact*>(component);
+              if (contact) {
+                if (not ab.contains(contact->getCenter())) continue;
+              
+                if (Session::isGLayer(component->getLayer())) {
+                  isManualGlobalRouted = true;
+                } else {
+                  isManualGlobalRouted = true;
+                  contacts.push_back( contact );
+                  if (  (contact->getWidth () != Session::getViaWidth(contact->getLayer()))
+                     or (contact->getHeight() != Session::getViaWidth(contact->getLayer()))
+                     or (contact->getLayer () == Session::getContactLayer(0)) )
+                    isFixed = true;
+                }
               } else {
-                // Plug* plug = dynamic_cast<Plug*>(component);
-                // if (plug) {
-                //   cerr << "buildPreRouteds(): " << plug << endl;
-                //   ++rpCount;
-                // }
+                RoutingPad* rp = dynamic_cast<RoutingPad*>(component);
+                if (rp) {
+                  ++rpCount;
+                } else {
+                  // Plug* plug = dynamic_cast<Plug*>(component);
+                  // if (plug) {
+                  //   cerr << "buildPreRouteds(): " << plug << endl;
+                  //   ++rpCount;
+                  // }
+                }
               }
             }
           }
         }
+      }
+
+      // cerr << net << " deepNet:" << net->isDeepNet()
+      //      << " pins:" << pins.size() 
+      //      << " segments:" << segments.size() << endl;
+      if (not net->isDeepNet() and (pins.size() >= 1) and (segments.size() < 2)) {
+        ++toBeRouteds;
+        continue;
       }
 
       if (   (not isFixed)
@@ -213,6 +233,10 @@ namespace Anabatic {
             for ( auto segment : segments ) {
               AutoContact* source = Session::lookup( dynamic_cast<Contact*>( segment->getSource() ));
               AutoContact* target = Session::lookup( dynamic_cast<Contact*>( segment->getTarget() ));
+              if (not source or not target) {
+                cerr << Error( "Unable to protect %s", getString(segment).c_str() ) << endl;
+                continue;
+              }
               AutoSegment* autoSegment = AutoSegment::create( source, target, segment );
               autoSegment->setFlags( AutoSegment::SegUserDefined|AutoSegment::SegAxisSet );
             }
