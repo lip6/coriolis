@@ -29,6 +29,7 @@ namespace Katana {
 
   using std::cerr;
   using std::endl;
+  using std::tuple;
   using std::map;
   using std::multimap;
   using std::make_pair;
@@ -91,7 +92,7 @@ namespace Katana {
     DbU::Unit            pitch            = _trackSegment->getPitch();
 #endif
     vector<AutoSegment*> collapseds;
-    vector<AutoSegment*> perpandiculars;
+    vector< tuple<AutoSegment*,Anabatic::Flags> > perpandiculars;
     map<DbU::Unit,int>   attractorSpins;
 
     _reduceRanges[0].makeEmpty();
@@ -113,20 +114,21 @@ namespace Katana {
     cdebug_log(159,0) << "Extracting attractors from perpandiculars." << endl;
     for ( size_t i=0 ; i < perpandiculars.size() ; i++ ) {
       Interval      interval;
+      AutoSegment*  basePerpand = std::get<0>( perpandiculars[i] );
       TrackElement* perpandicular;
 
-      if (perpandiculars[i]->isCanonical()) {
-        perpandicular = Session::lookup( perpandiculars[i]->base() );
+      if (basePerpand->isCanonical()) {
+        perpandicular = Session::lookup( basePerpand->base() );
         if (perpandicular) perpandicular->getCanonical( interval );
       } else {
-        perpandicular = Session::lookup( perpandiculars[i]->getCanonical(interval)->base() );
+        perpandicular = Session::lookup( basePerpand->getCanonical(interval)->base() );
       }
       if (not perpandicular) {
         cerr << Bug( "Not a TrackSegment: %s\n      (perpandicular: %s)"
-                 //, getString((void*)perpandiculars[i]->getCanonical(interval)->base()).c_str()
-                   , getString(perpandiculars[i]->getCanonical(interval)).c_str()
-                 //, getString((void*)perpandiculars[i]->base()).c_str()
-                   , getString(perpandiculars[i]).c_str()
+                 //, getString((void*)basePerpand->getCanonical(interval)->base()).c_str()
+                   , getString(basePerpand->getCanonical(interval)).c_str()
+                 //, getString((void*)basePerpand->base()).c_str()
+                   , getString(basePerpand).c_str()
                    ) << endl;
         continue;
       }
@@ -138,7 +140,7 @@ namespace Katana {
     //cerr << "  " << interval << endl;
     //interval.inflate( DbU::fromLambda(-0.5) );
 
-      cdebug_log(159,0) << "| perpandicular: " << perpandiculars[i] << endl;
+      cdebug_log(159,0) << "| perpandicular: " << basePerpand << endl;
       cdebug_log(159,1) << "| canonical:     " << perpandicular << endl;
       cdebug_log(159,0) << "Canonical // interval: " << interval << endl;
 
@@ -181,9 +183,13 @@ namespace Katana {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
-        _perpandicularFree.intersection
-          ( trackFree.inflate ( -perpandicular->getExtensionCap(Flags::Source)
-                              , -perpandicular->getExtensionCap(Flags::Target)) );
+        DbU::Unit sourceCap = perpandicular->getExtensionCap( Flags::Source );
+        DbU::Unit targetCap = perpandicular->getExtensionCap( Flags::Target );
+        if (std::get<1>(perpandiculars[i]) & Flags::Source)
+          targetCap = std::max( targetCap, sourceCap );
+        else
+          sourceCap = std::max( targetCap, sourceCap );
+        _perpandicularFree.intersection( trackFree.inflate ( -sourceCap, -targetCap ) );
         cdebug_log(159,0) << "Source cap:"
                           << DbU::getValueString(perpandicular->getExtensionCap(Flags::Source)) << endl;
       } else if (perpandicular->isFixedAxis() /*or _trackSegment->isDogleg()*/) {
@@ -200,9 +206,10 @@ namespace Katana {
             cdebug_log(159,0) << "Track Perpandicular Free (fixed axis, target): " << trackFree << endl;
           }
 
+          Flags isSource = std::get<1>( perpandiculars[i] );
           _perpandicularFree.intersection
-            ( trackFree.inflate ( -perpandicular->getExtensionCap(Flags::Source)
-                                , -perpandicular->getExtensionCap(Flags::Target)) );
+            ( trackFree.inflate ( -perpandicular->getExtensionCap( isSource )
+                                , -perpandicular->getExtensionCap( isSource ) ));
         }
       } else {
         cdebug_log(159,0) << "Not in any track " << perpandicular << endl;
@@ -217,7 +224,7 @@ namespace Katana {
       }
 
       if (  (interval.getVMin() != _trackSegment->getAxis())
-         or AutoSegment::isTopologicalBound(perpandiculars[i]
+         or AutoSegment::isTopologicalBound(basePerpand
                                            ,perpandicular->isHorizontal() ? Flags::Horizontal : 0
                                            ) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find( interval.getVMin() );
@@ -230,7 +237,7 @@ namespace Katana {
       }
 
       if (  (interval.getVMax() != _trackSegment->getAxis())
-         or AutoSegment::isTopologicalBound(perpandiculars[i]
+         or AutoSegment::isTopologicalBound(basePerpand
                                            ,Flags::Propagate | (perpandicular->isHorizontal() ? Flags::Horizontal : 0)
                                            ) ) {
         map<DbU::Unit,int>::iterator iattractor = attractorSpins.find( interval.getVMax() );

@@ -251,15 +251,15 @@ namespace Anabatic {
        or (source.getY() >  gcellsArea.getYMax())
        or (target.getX() <= gcellsArea.getXMin())
        or (target.getY() <= gcellsArea.getYMin()) ) {
-      cerr << Error( "RawGCellsUnder::commonCtor(): Area is completly outside the GCells area (ignored).\n"
-                     "        * GCells area: %s\n" 
-                     "        * Obstacle area: [%s %s %s %s]" 
-                   , getString(gcellsArea).c_str()
-                   , DbU::getValueString(source.getX()).c_str()
-                   , DbU::getValueString(source.getY()).c_str()
-                   , DbU::getValueString(target.getX()).c_str()
-                   , DbU::getValueString(target.getY()).c_str()
-                   ) << endl;
+      cerr << Warning( "RawGCellsUnder::commonCtor(): Area is completly outside the GCells area (ignored).\n"
+                       "          * GCells area: %s\n" 
+                       "          * Obstacle area: [%s %s %s %s]" 
+                     , getString(gcellsArea).c_str()
+                     , DbU::getValueString(source.getX()).c_str()
+                     , DbU::getValueString(source.getY()).c_str()
+                     , DbU::getValueString(target.getX()).c_str()
+                     , DbU::getValueString(target.getY()).c_str()
+                     ) << endl;
       cdebug_tabw(112,-1);
       DebugSession::close();
       return;

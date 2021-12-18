@@ -572,9 +572,9 @@ namespace Anabatic {
 
       for ( AutoSegment* horizontal : horizontals ) {
         vector<AutoSegment*> collapseds;
-        vector<AutoSegment*> perpandiculars;
-        vector<AutoSegment*> northBounds;
-        vector<AutoSegment*> southBounds;
+        vector< tuple<AutoSegment*,Flags> > perpandicularsDatas;
+      //vector<AutoSegment*> northBounds;
+      //vector<AutoSegment*> southBounds;
         DbU::Unit            leftBound;
         DbU::Unit            rightBound;
       //bool                 hasNorth = false;
@@ -582,12 +582,13 @@ namespace Anabatic {
 
         AutoSegment::getTopologicalInfos( horizontal
                                         , collapseds
-                                        , perpandiculars
+                                        , perpandicularsDatas
                                         , leftBound
                                         , rightBound
                                         );
 
-        for ( AutoSegment* perpandicular : perpandiculars ) {
+        for ( auto perpandicularDatas : perpandicularsDatas ) {
+          AutoSegment* perpandicular = std::get<0>( perpandicularDatas );
           if (Session::getLayerDepth(perpandicular->getLayer()) > 2) continue;
 
           bool hasGlobal = false;

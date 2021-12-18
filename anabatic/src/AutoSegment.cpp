@@ -3173,7 +3173,8 @@ namespace Anabatic {
 
   void  AutoSegment::getTopologicalInfos ( AutoSegment*          seed
                                          , vector<AutoSegment*>& aligneds
-                                         , vector<AutoSegment*>& perpandiculars
+                                         , vector< tuple<AutoSegment*,Flags> >&
+                                                                 perpandiculars
                                          , DbU::Unit&            leftBound
                                          , DbU::Unit&            rightBound
                                          )
@@ -3234,7 +3235,9 @@ namespace Anabatic {
           }
         } else {
           cdebug_log(149,0) << "| perpandicular " << currentSegment << endl; 
-          perpandiculars.push_back( currentSegment );
+          Flags perpandFlags = (currentSegment->getAutoSource() == sourceContact)
+            ? Flags::Source : Flags::Target;
+          perpandiculars.push_back( make_tuple( currentSegment, perpandFlags ));
         }
       }
     }

@@ -446,6 +446,7 @@ namespace Katana {
 
   double  NegociateWindow::computeWirelength ()
   {
+    bool isSymbolic = getKatanaEngine()->getConfiguration()->getRoutingGauge()->isSymbolic();
     set<TrackElement*> accounteds;
     double totalWL = 0.0;
 
@@ -466,7 +467,10 @@ namespace Katana {
             if (accounteds.find(trackSegment) != accounteds.end()) continue;
 
             accounteds.insert( trackSegment );
-            gcellWL += DbU::getLambda( trackSegment->getLength() );
+            if (isSymbolic)
+              gcellWL += DbU::getLambda( trackSegment->getLength() );
+            else
+              gcellWL += DbU::toPhysical( trackSegment->getLength(), DbU::UnitPower::Nano );
           }
         }
       }
@@ -475,6 +479,7 @@ namespace Katana {
       totalWL += gcellWL;
     }
 
+    if (not isSymbolic) totalWL /= 1000.0;
     return totalWL;
   }
 
@@ -634,6 +639,11 @@ namespace Katana {
     //  _pack( count, false );
     //} 
 
+      // if (RoutingEvent::getProcesseds() == 330332) {
+      //   UpdateSession::close();
+      //   Breakpoint::stop( 0, "Overlap has happened" );
+      //   UpdateSession::open();
+      // }
       if (RoutingEvent::getProcesseds() >= limit) setInterrupt( true );
     }
   //_pack( count, true );

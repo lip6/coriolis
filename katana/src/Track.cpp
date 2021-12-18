@@ -772,6 +772,8 @@ namespace Katana {
 
   bool  Track::check ( uint32_t& overlaps, const char* message ) const
   {
+  //if ((getIndex() != 5627) or not isHorizontal()) return true;
+
     bool coherency = true;
     bool holes     = false;
 

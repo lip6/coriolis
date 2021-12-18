@@ -14,9 +14,8 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_AUTOSEGMENT_H
-#define  ANABATIC_AUTOSEGMENT_H
-
+#pragma  once
+#include <tuple>
 #include <set>
 #include <iostream>
 #include <functional>
@@ -39,6 +38,7 @@ namespace Hurricane {
 
 namespace Anabatic {
 
+  using std::tuple;
   using std::array;
   using std::set;
   using std::cerr;
@@ -468,7 +468,8 @@ namespace Anabatic {
                                                              );
       static void                 getTopologicalInfos        ( AutoSegment*          seed
                                                              , vector<AutoSegment*>& collapseds
-                                                             , vector<AutoSegment*>& perpandiculars
+                                                             , vector< tuple<AutoSegment*,Flags> >&
+                                                                                     perpandiculars
                                                              , DbU::Unit&            leftBound
                                                              , DbU::Unit&            rightBound
                                                              );
@@ -667,7 +668,8 @@ namespace Anabatic {
     cdebug_log(145,0) << "getTerminalCount() - " << seed << endl;
 
     vector<AutoSegment*>  collapseds;
-    vector<AutoSegment*>  perpandiculars;
+    vector< tuple<AutoSegment*,Flags> >
+                          perpandiculars;
     DbU::Unit             leftBound;
     DbU::Unit             rightBound;
 
@@ -703,6 +705,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::AutoSegment);
-
-
-# endif  // ANABATIC_AUTOSEGMENT_H
