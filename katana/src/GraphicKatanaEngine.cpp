@@ -187,9 +187,10 @@ namespace Katana {
       if (fontHeight > ((edge->isHorizontal()) ? pixelBb.height() : pixelBb.width()) + 4) return; 
 
     //QString text  = QString("%1/%2").arg(edge->getRealOccupancy()).arg(edge->getCapacity());
-      QString text  = QString("%1/%2 %3")
+      QString text  = QString("%1/%2[-%3] %4")
         .arg( edgeOccupancy )
         .arg( edge->getCapacity() )
+        .arg( edge->getReservedCapacity() )
         .arg( edge->getHistoricCost() );
       QColor  color ( (occupancy > 170) ? Qt::black : Qt::white );
       painter.setPen (DisplayStyle::darken(color,widget->getDarkening()));

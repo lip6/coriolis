@@ -75,6 +75,8 @@ namespace Katana {
                     uint32_t                   getRipupLimit           ( uint32_t type ) const;
       inline        uint32_t                   getSearchHalo           () const;
       inline        uint32_t                   getBloatOverloadAdd     () const;
+      inline        uint32_t                   getLongWireUpThreshold1 () const;
+      inline        double                     getLongWireUpReserve1   () const;
       inline        uint32_t                   getHTracksReservedLocal () const;
       inline        uint32_t                   getVTracksReservedLocal () const;
       inline        uint32_t                   getTermSatReservedLocal () const;
@@ -103,6 +105,8 @@ namespace Katana {
     // Attributes.
              PostEventCb_t  _postEventCb;
              uint32_t       _searchHalo;
+             uint32_t       _longWireUpThreshold1;
+             double         _longWireUpReserve1;
              uint32_t       _hTracksReservedLocal;
              uint32_t       _vTracksReservedLocal;
              uint32_t       _termSatReservedLocal;
@@ -131,6 +135,8 @@ namespace Katana {
   inline       uint32_t                      Configuration::getSearchHalo           () const { return _searchHalo; }
   inline       uint32_t                      Configuration::getRipupCost            () const { return _ripupCost; }
   inline       uint32_t                      Configuration::getBloatOverloadAdd     () const { return _bloatOverloadAdd; }
+  inline       uint32_t                      Configuration::getLongWireUpThreshold1 () const { return _longWireUpThreshold1; }
+  inline       double                        Configuration::getLongWireUpReserve1   () const { return _longWireUpReserve1; }
   inline       uint32_t                      Configuration::getHTracksReservedLocal () const { return _hTracksReservedLocal; }
   inline       uint32_t                      Configuration::getVTracksReservedLocal () const { return _vTracksReservedLocal; }
   inline       uint32_t                      Configuration::getTermSatReservedLocal () const { return _termSatReservedLocal; }

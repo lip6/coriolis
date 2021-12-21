@@ -415,7 +415,7 @@ namespace Katana {
   void  Track::getBeginIndex ( DbU::Unit position, size_t& begin, uint32_t& state ) const
   {
     cdebug_log(155,0) << "Track::getBeginIndex(): @" << DbU::getValueString(position)
-                      << "begin=" << begin << endl;
+                      << " begin=" << begin << endl;
     if (_segments.empty()) {
       state = EmptyTrack;
       begin = 0;

@@ -106,6 +106,10 @@ namespace Katana {
   { DebugSession::close(); }
 
 
+  uint32_t  Manipulator::getLongWireUpThreshold1 () const { return Session::getConfiguration()->getLongWireUpThreshold1(); }
+  double    Manipulator::getLongWireUpReserve1   () const { return Session::getConfiguration()->getLongWireUpReserve1(); }
+
+
   bool  Manipulator::canRipup ( uint32_t flags ) const
   {
     if (_data) {
@@ -1183,7 +1187,7 @@ namespace Katana {
     float reserve = 1.0;
   //float reserve = 0.5;
     if (_segment->base() and (_segment->base()->getRpDistance() > 2)) reserve = 1.0;
-    if (_segment->getLength() > 60*getPitch()) reserve = 1.0;
+    if (_segment->getLength() > getLongWireUpThreshold1()*getPitch()) reserve = getLongWireUpReserve1();
 
     if (_segment->isFixed()) return false;
     if (not (flags & AllowLocalMoveUp)) {
@@ -1697,8 +1701,9 @@ namespace Katana {
       return false;
     }
 
-    AutoContact* terminal = _segment->base()->getAutoSource();
-    AutoContact* turn     = _segment->base()->getAutoTarget();
+    RoutingPlane* plane    = Session::getKatanaEngine()->getRoutingPlaneByLayer(_segment->getLayer());
+    AutoContact*  terminal = _segment->base()->getAutoSource();
+    AutoContact*  turn     = _segment->base()->getAutoTarget();
 
     if (not terminal->isTerminal()) std::swap( terminal, turn );
 
@@ -1710,30 +1715,52 @@ namespace Katana {
       return false;
     }
 
+    Interval xspan ( terminal->getX() );
+    xspan.inflate( ( plane->getLayerGauge()->getPWireWidth()
+                   + plane->getLayerGauge()->getPitch()
+                   - plane->getLayerGauge()->getWireWidth()) / 2 );
+
     Box termConstraints ( terminal->getConstraintBox() );
     Box turnConstraints ( turn    ->getConstraintBox() );
     Interval axisRange = terminal->getUConstraints( Flags::Vertical );
+    axisRange.inflate( plane->getLayerGauge()->getPitch() );
+    cdebug_log(159,0) << "Axis range (UConstraints) " << axisRange << endl;
 
     size_t offset      = Track::npos;
     size_t minBlockage = Track::npos;
     size_t maxBlockage = Track::npos;
-    RoutingPlane* plane = Session::getKatanaEngine()->getRoutingPlaneByLayer(_segment->getLayer());
     for ( Track* track : Tracks_Range::get(plane,axisRange) ) {
       if (offset == Track::npos) offset = track->getIndex();
-      TrackElement* element = track->getSegment( terminal->getX() );
-      if (element and (element->isBlockage() or element->isFixed())) {
-        if (track->getIndex() == offset) {
-          minBlockage = track->getIndex();
-          continue;
+      cdebug_log(159,0) << "| track=" << track << endl;
+      Interval  freeInterval = track->getFreeInterval( xspan.getCenter(), _segment->getNet() );
+      if (freeInterval.contains(xspan)) continue;
+
+      size_t begin = Track::npos;
+      size_t end   = Track::npos;
+      track->getOverlapBounds( xspan, begin, end );
+      if (begin == Track::npos) continue;
+
+      for ( bool trackDone=false ; not trackDone and (begin < end) ; begin++ ) {
+        TrackElement* element = track->getSegment( begin );
+        if (element->getNet() == _segment->getNet()) continue;
+        if (xspan.getIntersection( element->getCanonicalInterval() ).getSize() == 0) continue;
+        if (element->isBlockage() or element->isFixed()) {
+          trackDone = true;
+          if (track->getIndex() == offset) {
+            minBlockage = track->getIndex();
+            continue;
+          }
+          if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
+            minBlockage = track->getIndex();
+            continue;
+          }
+          maxBlockage = track->getIndex();
         }
-        if ((minBlockage != Track::npos) and (minBlockage+1 == track->getIndex())) {
-          minBlockage = track->getIndex();
-          continue;
-        }
-        maxBlockage = track->getIndex();
-        break;
       }
+      if (maxBlockage != Track::npos) break;
     }
+    cdebug_log(159,0) << "minBlockage=" << minBlockage << endl;
+    cdebug_log(159,0) << "maxBlockage=" << maxBlockage << endl;
     Interval nonBlocked ( (minBlockage == Track::npos) ? terminal->getGCell()->getYMin()
                                                        : plane->getTrackByIndex(minBlockage)->getAxis()
                         , (maxBlockage == Track::npos) ? terminal->getGCell()->getYMax()

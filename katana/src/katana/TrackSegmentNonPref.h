@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_SEGMENT_NON_PREF_H
-#define  KATANA_TRACK_SEGMENT_NON_PREF_H
-
+#pragma  once
 #include <set>
 #include <functional>
 #include "katana/TrackSegment.h"
@@ -72,5 +70,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackSegmentNonPref);
-
-#endif  // KATANA_TRACK_SEGMENT_WIDE_H

@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_TRACK_ELEMENT_H
-#define  KATANA_TRACK_ELEMENT_H
-
+#pragma   once
 #include  <string>
 #include  <map>
 #include  <set>
@@ -295,5 +293,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::TrackElement);
-
-#endif

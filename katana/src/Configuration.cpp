@@ -40,21 +40,23 @@ namespace Katana {
   Configuration::Configuration ()
     : Anabatic::Configuration()
     , _postEventCb         ()
-    , _searchHalo          (Cfg::getParamInt ("katana.searchHalo"          ,      1)->asInt())
-    , _hTracksReservedLocal(Cfg::getParamInt ("katana.hTracksReservedLocal",      3)->asInt())
-    , _vTracksReservedLocal(Cfg::getParamInt ("katana.vTracksReservedLocal",      3)->asInt())
-    , _termSatReservedLocal(Cfg::getParamInt ("katana.termSatReservedLocal",      9)->asInt())
-    , _hTracksReservedMin  (Cfg::getParamInt ("katana.hTracksReservedMin"  ,      1)->asInt())
-    , _vTracksReservedMin  (Cfg::getParamInt ("katana.vTracksReservedMin"  ,      1)->asInt())
-    , _termSatThreshold    (Cfg::getParamInt ("katana.termSatThreshold"    ,      8)->asInt())
+    , _searchHalo          (Cfg::getParamInt   ("katana.searchHalo"           ,      1)->asInt())
+    , _longWireUpThreshold1(Cfg::getParamInt   ("katana.longWireUpThreshold1" ,     60)->asInt())
+    , _longWireUpReserve1  (Cfg::getParamDouble("katana.longWireUpReserve1"   ,    1.0)->asDouble())
+    , _hTracksReservedLocal(Cfg::getParamInt   ("katana.hTracksReservedLocal" ,      3)->asInt())
+    , _vTracksReservedLocal(Cfg::getParamInt   ("katana.vTracksReservedLocal" ,      3)->asInt())
+    , _termSatReservedLocal(Cfg::getParamInt   ("katana.termSatReservedLocal" ,      9)->asInt())
+    , _hTracksReservedMin  (Cfg::getParamInt   ("katana.hTracksReservedMin"   ,      1)->asInt())
+    , _vTracksReservedMin  (Cfg::getParamInt   ("katana.vTracksReservedMin"   ,      1)->asInt())
+    , _termSatThreshold    (Cfg::getParamInt   ("katana.termSatThreshold"     ,      8)->asInt())
     , _ripupLimits         ()
-    , _ripupCost           (Cfg::getParamInt ("katana.ripupCost"           ,      3)->asInt())
-    , _eventsLimit         (Cfg::getParamInt ("katana.eventsLimit"         ,4000000)->asInt())
-    , _bloatOverloadAdd    (Cfg::getParamInt ("katana.bloatOverloadAdd"    ,      4)->asInt())
-    , _trackFill           (Cfg::getParamInt ("katana.trackFill"           ,      0)->asInt())
+    , _ripupCost           (Cfg::getParamInt   ("katana.ripupCost"            ,      3)->asInt())
+    , _eventsLimit         (Cfg::getParamInt   ("katana.eventsLimit"          ,4000000)->asInt())
+    , _bloatOverloadAdd    (Cfg::getParamInt   ("katana.bloatOverloadAdd"     ,      4)->asInt())
+    , _trackFill           (Cfg::getParamInt   ("katana.trackFill"            ,      0)->asInt())
     , _flags               (0)
-    , _profileEventCosts   (Cfg::getParamBool("katana.profileEventCosts"   ,false  )->asBool())
-    , _runRealignStage     (Cfg::getParamBool("katana.runRealignStage"     ,true   )->asBool())
+    , _profileEventCosts   (Cfg::getParamBool  ("katana.profileEventCosts"    ,false  )->asBool())
+    , _runRealignStage     (Cfg::getParamBool  ("katana.runRealignStage"      ,true   )->asBool())
   {
     _ripupLimits[StrapRipupLimit]      = Cfg::getParamInt("katana.strapRipupLimit"      ,16)->asInt();
     _ripupLimits[LocalRipupLimit]      = Cfg::getParamInt("katana.localRipupLimit"      , 7)->asInt();
@@ -90,6 +92,8 @@ namespace Katana {
     : Anabatic::Configuration(*other.base())
     , _postEventCb         (other._postEventCb)
     , _searchHalo          (other._searchHalo)
+    , _longWireUpThreshold1(other._longWireUpThreshold1)
+    , _longWireUpReserve1  (other._longWireUpReserve1)
     , _hTracksReservedLocal(other._hTracksReservedLocal)
     , _vTracksReservedLocal(other._vTracksReservedLocal)
     , _termSatReservedLocal(other._termSatReservedLocal)
@@ -180,6 +184,8 @@ namespace Katana {
     cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
     cout << Dots::asBool  ("     - Use static bloat profile"           ,useStaticBloatProfile()) << endl;
     cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
+    cout << Dots::asUInt  ("     - Long wire threshold1 for move up"   ,_longWireUpThreshold1) << endl;
+    cout << Dots::asDouble("     - Long wire reserved1 for move up"    ,_longWireUpReserve1) << endl;
     cout << Dots::asUInt  ("     - Edge min H reserved local"          ,_hTracksReservedMin) << endl;
     cout << Dots::asUInt  ("     - Edge min V reserved local"          ,_vTracksReservedMin) << endl;
     cout << Dots::asUInt  ("     - Edge max H reserved local"          ,_hTracksReservedLocal) << endl;
@@ -217,8 +223,12 @@ namespace Katana {
     Record* record = Super::_getRecord();
     if ( record ) {
       record->add ( getSlot("_searchHalo"           ,_searchHalo           ) );
+      record->add ( getSlot("_longWireUpThreshold1" ,_longWireUpThreshold1 ) );
+      record->add ( getSlot("_longWireUpReserved1"  ,_longWireUpReserve1   ) );
       record->add ( getSlot("_hTracksReservedLocal" ,_hTracksReservedLocal ) );
       record->add ( getSlot("_vTracksReservedLocal" ,_vTracksReservedLocal ) );
+      record->add ( getSlot("_hTracksReservedMin"   ,_hTracksReservedMin   ) );
+      record->add ( getSlot("_vTracksReservedMin"   ,_vTracksReservedMin   ) );
       record->add ( getSlot("_ripupCost"            ,_ripupCost            ) );
       record->add ( getSlot("_eventsLimit"          ,_eventsLimit          ) );
 
