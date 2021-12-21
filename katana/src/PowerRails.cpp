@@ -492,6 +492,9 @@ namespace {
           delta = plane->getLayerGauge()->getPitch();
         }
       }
+      if (AllianceFramework::get()->getCellGauge()->getName() == Name("StdCellLib")) {
+        delta = plane->getLayerGauge()->getPitch();
+      }
     }
 
     cdebug_log(159,0) << "  delta:" << DbU::getValueString(delta)
