@@ -183,6 +183,7 @@ namespace Katana {
     cout << Dots::asUInt  ("     - Dijkstra GR search halo"            ,getSearchHalo()) << endl;
     cout << Dots::asBool  ("     - Use GR density estimate"            ,useGlobalEstimate()) << endl;
     cout << Dots::asBool  ("     - Use static bloat profile"           ,useStaticBloatProfile()) << endl;
+    cout << Dots::asInt   ("     - GCell terminal(RP) saturate number" ,getSaturateRp()) << endl;
     cout << Dots::asDouble("     - GCell saturate ratio (LA)"          ,getSaturateRatio()) << endl;
     cout << Dots::asUInt  ("     - Long wire threshold1 for move up"   ,_longWireUpThreshold1) << endl;
     cout << Dots::asDouble("     - Long wire reserved1 for move up"    ,_longWireUpReserve1) << endl;

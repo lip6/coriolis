@@ -987,7 +987,7 @@ namespace Anabatic {
           rps.insert( terminal->getRoutingPad() );
         }
       }
-      if (rps.size() > 8) {
+      if (rps.size() > getConfiguration()->getSaturateRp()) {
         GCellRps* gcellRps = new GCellRps ( gcell, this );
         gcellRpss.insert( gcellRps );
 
