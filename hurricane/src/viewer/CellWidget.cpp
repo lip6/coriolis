@@ -676,7 +676,7 @@ namespace Hurricane {
       rectangle = _cellWidget->dbuToScreenRect( bb );
 
       if (component->isNonRectangle()) {
-        if ( (rectangle.width() > 4) and (rectangle.height() > 4) ) {
+        if ( (rectangle.width() > 4) or (rectangle.height() > 4) ) {
           QPolygon contour;
           for ( Point point : component->getContour() )
             contour << _cellWidget->dbuToScreenPoint( transformation.getPoint(point) );

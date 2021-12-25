@@ -865,9 +865,13 @@ void QuadTree_GosUnder::Locator::progress()
       // if (isValid()) {
       //   if ((   (getElement()->getBoundingBox().getWidth () < _threshold)
       //       and (getElement()->getBoundingBox().getHeight() < _threshold)) )
-      //     cerr << "    goUnders: pruning " << getElement() << endl;
+      //     cerr << "    goUnders: pruning " << DbU::getValueString(_threshold)
+      //          << " " << getElement() << endl;
       //   else
-      //     cerr << "    goUnders: display " << getElement() << endl;
+      //     cerr << "    goUnders: display " << DbU::getValueString(_threshold)
+      //          << " w:" <<  DbU::getValueString(getElement()->getBoundingBox().getWidth ())
+      //          << " h:" <<  DbU::getValueString(getElement()->getBoundingBox().getHeight())
+      //          << " " << getElement() << endl;
       // }
     } while (   isValid()
             and (  not  getElement()->getBoundingBox().intersect(_area)

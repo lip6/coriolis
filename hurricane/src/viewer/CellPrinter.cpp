@@ -82,6 +82,7 @@ namespace Hurricane {
     setCentralWidget( _cellWidget );
     _palette->readGraphics ();
 
+    _cellWidget->setPixelThreshold( 1 );
     _cellWidget->setPrinter( true );
     _cellWidget->bindToPalette( _palette );
     _cellWidget->refresh();

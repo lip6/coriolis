@@ -151,6 +151,7 @@ namespace Hurricane {
       inline  bool                      showBoundaries             () const;
       inline  bool                      showSelection              () const;
       inline  bool                      cumulativeSelection        () const;
+      inline  void                      setPixelThreshold          ( int );
       inline  void                      setDbuMode                 ( int );
       inline  void                      setUnitPower               ( DbU::UnitPower );
       inline  void                      setRubberShape             ( RubberShape );
@@ -1114,8 +1115,13 @@ namespace Hurricane {
   { return _scaleHistory[_ihistory]._scale; }
 
 
+  inline  void  CellWidget::setPixelThreshold ( int pixelThreshold )
+  { _pixelThreshold = pixelThreshold; }
+
+
   inline  int  CellWidget::getPixelThreshold () const
   { return _pixelThreshold; }
+
 
   inline CellWidget::FindStateName::FindStateName ( const Name& cellHierName )
     : unary_function< const shared_ptr<State>&, bool >()
