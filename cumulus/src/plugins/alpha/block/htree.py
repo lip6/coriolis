@@ -137,35 +137,39 @@ class HTree ( object ):
         hLeafDepth = gaugeConf.horizontalDepth
         if gaugeConf.horizontalDepth > 2 and (gaugeConf.horizontalDepth > gaugeConf.verticalDepth):
             hLeafDepth = gaugeConf.horizontalDepth - 2
-        blContact          = None
-        brContact          = None
-        tlContact          = None
-        trContact          = None
-        leftContact        = None
-        rigthContact       = None
+        blContact    = None
+        brContact    = None
+        tlContact    = None
+        trContact    = None
+        leftContact  = None
+        rigthContact = None
         if qt.bl:
-            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input , ckNet )
+            blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
         if qt.br:
-            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input , ckNet )
+            brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
         if qt.tl:
-            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input , ckNet )
+            tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
         if qt.tr:
-            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input , ckNet )
+            trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+        flags   = GaugeConf.OffsetTop1
+        yoffset = -1
         if qt.bl or qt.tl:
             leafContact       = blContact if brContact else tlContact
-            leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+            leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
             leftSourceX       = gaugeConf.getNearestVerticalTrack  ( leftSourceContact.getX(), 0 )
-            leftSourceY       = gaugeConf.getNearestHorizontalTrack( leftSourceContact.getY(), 0 )
+            leftSourceY       = gaugeConf.getNearestHorizontalTrack( leftSourceContact.getY(), 0, yoffset )
             leftContact       = gaugeConf.createContact( ckNet, leafContact.getX(),  leftSourceContact.getY(), 0 )
             leftX             = gaugeConf.getNearestVerticalTrack( leftContact.getX(), 0 )
             gaugeConf.setStackPosition( leftSourceContact, leftSourceX, leftSourceY )
             leftContact .setX(       leftX )
             leftContact .setY( leftSourceY )
+            flags   = 0
+            yoffset = 0
         if qt.br or qt.tr:
             leafContact        = brContact if brContact else trContact
-            rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|GaugeConf.OffsetBottom1 )
+            rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
             rightSourceX       = gaugeConf.getNearestVerticalTrack( rightSourceContact.getX(), 0 )
-            rightSourceY       = gaugeConf.getNearestHorizontalTrack( rightSourceContact.getY(), 0 )
+            rightSourceY       = gaugeConf.getNearestHorizontalTrack( rightSourceContact.getY(), 0, yoffset )
             rightContact       = gaugeConf.createContact( ckNet, leafContact.getX(), rightSourceContact.getY(), 0 )
             rightX             = gaugeConf.getNearestVerticalTrack( rightContact.getX(), 0 )
             gaugeConf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )

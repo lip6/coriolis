@@ -62,13 +62,14 @@ class GaugeConf ( object ):
     """
 
     HAccess         = 0x0001
-    OffsetRight1    = 0x0002
-    OffsetTop1      = 0x0004
-    OffsetBottom1   = 0x0008
-    DeepDepth       = 0x0010
-    UseContactWidth = 0x0020
-    ExpandWidth     = 0x0040
-    SourceExtend    = 0x0080
+    OffsetLeft1     = 0x0002
+    OffsetRight1    = 0x0004
+    OffsetTop1      = 0x0008
+    OffsetBottom1   = 0x0010
+    DeepDepth       = 0x0020
+    UseContactWidth = 0x0040
+    ExpandWidth     = 0x0080
+    SourceExtend    = 0x0100
 
     def __init__ ( self ):
         self._cellGauge      = None
@@ -307,10 +308,12 @@ class GaugeConf ( object ):
         yoffset = 0
         if flags & GaugeConf.OffsetBottom1: yoffset =  1
         if flags & GaugeConf.OffsetTop1:    yoffset = -1
+        trace( 550, '\tyoffset:{}\n'.format(yoffset) )
         if startDepth == 0:
             contact1 = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )
             ytrack   = self.getTrack( contact1.getY(), self.horizontalDeepDepth, yoffset )
             dy       = ytrack - contact1.getY()
+            trace( 550, '\tPut on Y-tracks:{}\n'.format(DbU.getValueString(ytrack)) )
             contact1.setDy( dy )
         else:
             contact1 = Contact.create( rp, self._routingGauge.getContactLayer(startDepth), 0, 0 )
@@ -328,6 +331,8 @@ class GaugeConf ( object ):
             xoffset = 0
             if flags & GaugeConf.OffsetRight1 and depth == 1:
                 xoffset = 1
+            if flags & GaugeConf.OffsetLeft1 and depth == 1:
+                xoffset = -1
             if rg.getDirection() == RoutingLayerGauge.Horizontal:
                 xtrack = self.getTrack( contact1.getX(), depth+1, xoffset )
                 ytrack = self.getTrack( contact1.getY(), depth  , 0 )
@@ -388,6 +393,13 @@ class GaugeConf ( object ):
         return self.rpAccess( self.rpByOccurrence(occurrence,net), flags )
   
     def rpByPlug ( self, plug, net ):
+        """
+        Create a RoutingPad on a ``Plug`` for ``net``, in the cell owning the net.
+        This will be a *top level* RoutingPad, that is one with an empty Path.
+
+        Only creates *one* RoutingPad per Plug. Maintains a lookup table to
+        return the one associated to a Plug if it is requested a second time.
+        """
         if plug in self._plugToRp:
             rp = self._plugToRp[plug]
         else:
@@ -397,12 +409,19 @@ class GaugeConf ( object ):
         return rp
   
     def rpByPlugName ( self, instance, plugName, net ):
+        """
+        Frontend for ``rpByPlug()``, extract the plug from the pair ``(instance,plugName)``. 
+        """
         return self.rpByPlug( getPlugByName(instance,plugName), net )
   
     def rpAccessByPlug ( self, plug, net, flags ):
         return self.rpAccess( self.rpByPlug(plug,net), flags )
   
     def rpAccessByPlugName ( self, instance, plugName, net, flags=0 ):
+        """
+        Creates a RoutingPad from a Plug (using ``rpByPlug()``) and build a contact
+        stack using a relative positionning specified by ``flags``.
+        """
         return self.rpAccess( self.rpByPlugName(instance,plugName,net), flags )
 
     def setStackPosition ( self, topContact, x, y ):
