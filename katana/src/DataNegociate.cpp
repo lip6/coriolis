@@ -183,8 +183,8 @@ namespace Katana {
         Interval  trackFree = perpandicular->getFreeInterval();
         cdebug_log(159,0) << "Track Perpandicular Free: " << trackFree << endl;
 
-        DbU::Unit sourceCap = perpandicular->getExtensionCap( Flags::Source );
-        DbU::Unit targetCap = perpandicular->getExtensionCap( Flags::Target );
+        DbU::Unit sourceCap = basePerpand->getExtensionCap( Flags::Source );
+        DbU::Unit targetCap = basePerpand->getExtensionCap( Flags::Target );
         if (std::get<1>(perpandiculars[i]) & Flags::Source)
           targetCap = std::max( targetCap, sourceCap );
         else
