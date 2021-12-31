@@ -65,11 +65,12 @@ class GaugeConf ( object ):
     OffsetLeft1     = 0x0002
     OffsetRight1    = 0x0004
     OffsetTop1      = 0x0008
-    OffsetBottom1   = 0x0010
-    DeepDepth       = 0x0020
-    UseContactWidth = 0x0040
-    ExpandWidth     = 0x0080
-    SourceExtend    = 0x0100
+    OffsetTop2      = 0x0010
+    OffsetBottom1   = 0x0020
+    DeepDepth       = 0x0040
+    UseContactWidth = 0x0080
+    ExpandWidth     = 0x0100
+    SourceExtend    = 0x0200
 
     def __init__ ( self ):
         self._cellGauge      = None
@@ -308,6 +309,7 @@ class GaugeConf ( object ):
         yoffset = 0
         if flags & GaugeConf.OffsetBottom1: yoffset =  1
         if flags & GaugeConf.OffsetTop1:    yoffset = -1
+        if flags & GaugeConf.OffsetTop2:    yoffset = -2
         trace( 550, '\tyoffset:{}\n'.format(yoffset) )
         if startDepth == 0:
             contact1 = Contact.create( rp, self._routingGauge.getContactLayer(0), 0, 0 )

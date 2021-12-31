@@ -143,33 +143,49 @@ class HTree ( object ):
         trContact    = None
         leftContact  = None
         rigthContact = None
+        driverY      = None
+        if not qt.isRoot():
+            ckParentNet   = qt.bInputPlug(0).getNet()
+            driverContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.input, ckParentNet )
+            driverY       = driverContact.getY()
         if qt.bl:
+            trace( 550, '+,', '\tblContact\n' )
             blContact = gaugeConf.rpAccessByPlugName( qt.bl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            trace( 550, ',-', '\tblContact={}\n'.format(blContact) )
         if qt.br:
+            trace( 550, '+,', '\trlContact\n' )
             brContact = gaugeConf.rpAccessByPlugName( qt.br.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            trace( 550, ',-', '\tbrContact={}\n'.format(brContact) )
         if qt.tl:
+            trace( 550, '+,', '\ttlContact\n' )
             tlContact = gaugeConf.rpAccessByPlugName( qt.tl.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
+            trace( 550, ',-', '\ttlContact={}\n'.format(tlContact) )
         if qt.tr:
+            trace( 550, '+,', '\ttrContact\n' )
             trContact = gaugeConf.rpAccessByPlugName( qt.tr.buffers[0], bufferConf.input, ckNet, GaugeConf.OffsetLeft1 )
-        flags   = GaugeConf.OffsetTop1
-        yoffset = -1
+            trace( 550, ',-', '\ttrContact={}\n'.format(trContact) )
+        flags   = GaugeConf.OffsetTop2
+        yoffset = -2
         if qt.bl or qt.tl:
+            trace( 550, '\tLeft branch\n' )
             leafContact       = blContact if brContact else tlContact
             leftSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
             leftSourceX       = gaugeConf.getNearestVerticalTrack  ( leftSourceContact.getX(), 0 )
-            leftSourceY       = gaugeConf.getNearestHorizontalTrack( leftSourceContact.getY(), 0, yoffset )
+            if driverY is None: driverY = leftSourceContact.getY()
+            leftSourceY       = gaugeConf.getNearestHorizontalTrack( driverY, 0, yoffset )
             leftContact       = gaugeConf.createContact( ckNet, leafContact.getX(),  leftSourceContact.getY(), 0 )
             leftX             = gaugeConf.getNearestVerticalTrack( leftContact.getX(), 0 )
             gaugeConf.setStackPosition( leftSourceContact, leftSourceX, leftSourceY )
             leftContact .setX(       leftX )
             leftContact .setY( leftSourceY )
             flags   = 0
-            yoffset = 0
         if qt.br or qt.tr:
+            trace( 550, '\tRight branch\n' )
             leafContact        = brContact if brContact else trContact
             rightSourceContact = gaugeConf.rpAccessByPlugName( qt.buffers[0], bufferConf.output, ckNet , GaugeConf.HAccess|flags )
+            if driverY is None: driverY = rightSourceContact.getY()
             rightSourceX       = gaugeConf.getNearestVerticalTrack( rightSourceContact.getX(), 0 )
-            rightSourceY       = gaugeConf.getNearestHorizontalTrack( rightSourceContact.getY(), 0, yoffset )
+            rightSourceY       = gaugeConf.getNearestHorizontalTrack( driverY, 0, yoffset )
             rightContact       = gaugeConf.createContact( ckNet, leafContact.getX(), rightSourceContact.getY(), 0 )
             rightX             = gaugeConf.getNearestVerticalTrack( rightContact.getX(), 0 )
             gaugeConf.setStackPosition( rightSourceContact, rightSourceX, rightSourceY )
