@@ -38,6 +38,7 @@ def scrubPath ( pathName ):
 
 def guessOs ():
     useDevtoolset     = False
+    osEL9             = re.compile (".*Linux.*el9.*x86_64.*")
     osSlsoc7x_64      = re.compile (".*Linux.*el7.*x86_64.*")
     osSlsoc6x_64      = re.compile (".*Linux.*el6.*x86_64.*")
     osSlsoc6x         = re.compile (".*Linux.*(el|slsoc)6.*")
@@ -65,6 +66,7 @@ def guessOs ():
 
     line = lines[0].decode( 'ascii' )
     if   osSlsoc7x_64.match(line): osType = "Linux.el7_64"
+    elif osEL9.match(line):        osType = "Linux.el9"
     elif osSlsoc6x_64.match(line):
         osType         = "Linux.slsoc6x_64"
         useDevtoolset  = True

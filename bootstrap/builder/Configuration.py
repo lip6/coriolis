@@ -122,6 +122,7 @@ class Configuration ( object ):
 
     def _guessOs ( self ):
         self._libSuffix         = None
+        self._osEL9             = re.compile (".*Linux.*(el9|al9).*x86_64.*")
         self._osSlsoc7x_64      = re.compile (".*Linux.*(el7|slsoc7).*x86_64.*")
         self._osSlsoc6x_64      = re.compile (".*Linux.*(el6|slsoc6).*x86_64.*")
         self._osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
@@ -145,7 +146,10 @@ class Configuration ( object ):
         uname  = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
         lines  = uname.stdout.readlines()
         osLine = lines[0].decode( 'ascii' )
-        if self._osSlsoc7x_64.match(osLine):
+        if self._osEL9.match(osLine):
+            self._osType    = "Linux.el9"
+            self._libSuffix = "64"
+        elif self._osSlsoc7x_64.match(osLine):
             self._osType    = "Linux.el7_64"
             self._libSuffix = "64"
         elif self._osSlsoc6x_64.match(osLine):

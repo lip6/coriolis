@@ -432,8 +432,12 @@ class Configuration ( object ):
                 raise ErrorMessage( 1, [ 'Cannot find <ccb.py>, should be here:'
                                        , '   "{}"'.format(self.ccbBin)
                                        ] )
-            otherArgs = []
+            otherArgs = [ '--qt5' ]
             if self.debugArg: otherArgs.append( self.debugArg )
+            if target == 'EL9':
+                otherArgs.append( '--project=support' )
+                commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
+               #commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
             if target == 'SL7_64':
                 otherArgs.append( '--project=support' )
                 commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs          , fdLog=self.fds['coriolis'] ) )
@@ -444,7 +448,6 @@ class Configuration ( object ):
                 commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 6, otherArgs          , fdLog=self.fds['coriolis'] ) )
                 commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 1, otherArgs+['--doc'], fdLog=self.fds['coriolis'] ) )
             elif target == 'Ubuntu18' or target == 'Debian9' or target == 'Debian10':
-                if target == 'Ubuntu18': otherArgs.append( '--qt5' )
                 commands.append( CoriolisCommand( self.ccbBin, self.rootDir, 3, otherArgs, fdLog=self.fds['coriolis'] ) )
         if self.doBenchs:
             commands.append( BenchsCommand( self.benchsDir, fdLog=self.fds['benchs'] ) )

@@ -62,6 +62,7 @@ def checkCMake ():
 
 def guessOs ():
     libDir            = 'lib'
+    osEL9             = re.compile (".*Linux.*(el9|al9).*x86_64.*")
     osSlsoc7x_64      = re.compile (".*Linux.*(el7|slsoc7).*x86_64.*")
     osSlsoc6x_64      = re.compile (".*Linux.*(el6|slsoc6).*x86_64.*")
     osSlsoc6x         = re.compile (".*Linux.*(el6|slsoc6).*")
@@ -85,7 +86,10 @@ def guessOs ():
     uname = subprocess.Popen ( ["uname", "-srm"], stdout=subprocess.PIPE )
     lines = uname.stdout.readlines()
     line  = lines[0].decode( 'ascii' )
-    if osSlsoc7x_64.match(line):
+    if osEL9.match(line):
+        osType = "Linux.el9"
+        libDir = "lib64"
+    elif osSlsoc7x_64.match(line):
         osType = "Linux.el7_64"
         libDir = "lib64"
     elif osSlsoc6x_64.match(line):

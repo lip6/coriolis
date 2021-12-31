@@ -1,7 +1,7 @@
 #!/bin/bash
 
       srcDir=${HOME}/coriolis-2.x/src/alliance/alliance/src
-  commonRoot=${HOME}/coriolis-2.x/Linux.el7_64/Release.Shared
+  commonRoot=${HOME}/coriolis-2.x/Linux.el9/Release.Shared
     buildDir=${commonRoot}/build
   installDir=${commonRoot}/install
 
