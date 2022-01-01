@@ -79,10 +79,12 @@ namespace Hurricane {
   {
     _charWidth = 50;
     if (not _occurrences) _occurrences = new vector<Occurrence> ();
-    forEach ( Occurrence, ioccurrence, occurrences.getSubSet(getFilter()) ) {
-      _occurrences->push_back( *ioccurrence );
-      string name = getString( (*ioccurrence).getPath().getName() ) + "::"
-                  + getString( (*ioccurrence).getEntity() );
+    else                  _occurrences->clear();
+
+    for ( Occurrence occurrence : occurrences.getSubSet(getFilter()) ) {
+      _occurrences->push_back( occurrence );
+      string name = getString( (occurrence).getPath().getName() ) + "::"
+                  + getString( (occurrence).getEntity() );
       _charWidth = std::max( _charWidth, (int)name.size() );
     }
     if (showChange) emit layoutChanged ();

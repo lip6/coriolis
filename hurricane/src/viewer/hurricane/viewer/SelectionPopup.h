@@ -15,7 +15,6 @@
 
 
 #pragma  once
-#include <QWidget>
 #include <QTableView>
 #include "hurricane/Commons.h"
 #include "hurricane/Occurrence.h"
@@ -45,7 +44,7 @@ namespace Hurricane {
                     SelectionPopup    ( QWidget* parent=NULL );
       inline  void  setCellWidget     ( CellWidget* );
               void  updateLayout      ();
-              bool  popup             ();
+              void  showPopup         ();
               void  clearFilter       ();
               void  setFilter         ( OccurrenceFilter );
     signals:
@@ -53,11 +52,10 @@ namespace Hurricane {
     public slots:
               void  loadOccurrences   ( Occurrences, bool showChange=false );
               void  clear             ();
-              void  forceRowHeight    ();
     protected:
       virtual void  keyPressEvent     ( QKeyEvent * );
       virtual void  mouseMoveEvent    ( QMouseEvent* );
-      virtual void  mouseReleaseEvent ( QMouseEvent* );
+      virtual void  mousePressEvent   ( QMouseEvent* );
     private:
       CellWidget*           _cellWidget;
       SelectionPopupModel*  _model;

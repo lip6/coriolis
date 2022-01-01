@@ -244,7 +244,7 @@ namespace Hurricane {
         _selectionPopup->loadOccurrences( selection );
         _selectionPopup->updateLayout();
         _selectionPopup->move( event->globalPos() );
-        _selectionPopup->popup();
+        _selectionPopup->showPopup();
       }
     }
   }
