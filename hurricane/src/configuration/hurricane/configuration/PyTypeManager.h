@@ -212,8 +212,8 @@ extern "C" {
     public:
                                       inline  bool                  _isDBo            () const;
                                       inline  bool                  _isIterator       () const;
-                                      inline  std::string           _getCppTypeName   () const;
-                                      inline  std::string           _getPyTypeName    () const;
+                                      inline  const std::string&    _getCppTypeName   () const;
+                                      inline  const std::string&    _getPyTypeName    () const;
                                       inline  std::string           _getTypeInfo      () const;
                                       inline  PyTypeObject*         _getTypeObject    ();
                                       inline  PyMethodDef*          _getMethods       ();
@@ -330,8 +330,8 @@ extern "C" {
 
   inline bool               PyTypeManager::_isDBo               () const { return _flags & IsDBo; }
   inline bool               PyTypeManager::_isIterator          () const { return _flags & IsIterator; }
-  inline std::string        PyTypeManager::_getCppTypeName      () const { return _cppTypeName; }
-  inline std::string        PyTypeManager::_getPyTypeName       () const { return _pyTypeName; }
+  inline const std::string& PyTypeManager::_getCppTypeName      () const { return _cppTypeName; }
+  inline const std::string& PyTypeManager::_getPyTypeName       () const { return _pyTypeName; }
   inline PyTypeObject*      PyTypeManager::_getTypeObject       () { return &_typeObject; }
   inline PyMethodDef*       PyTypeManager::_getMethods          () { return _methods; }
   inline PyGetSetDef*       PyTypeManager::_getGetsets          () { return _getsets; }
