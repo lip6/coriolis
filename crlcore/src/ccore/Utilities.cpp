@@ -378,7 +378,7 @@ namespace CRL {
 
   void  System::_trapSig ( int sig )
   {
-    cerr << "\n\n[CRL ERROR] System::_trapSig():\n" << endl;
+    cerr << "\n\n[CRL ERROR] System::_trapSig(): sig=" << sig << "\n" << endl;
     cerr << "Program stack:\n" << Backtrace(true).textWhere() << endl;
 
     switch ( sig ) {
@@ -398,10 +398,25 @@ namespace CRL {
       // Ouch!! This may result from a program bug.
         cerr << "  An program internal bug have occur ";
 
-        if (sig == SIGFPE ) cerr << "(SIGFPE).";
+        if (sig == SIGABRT) cerr << "(SIGABRT).";
+        if (sig == SIGALRM) cerr << "(SIGALARM).";
         if (sig == SIGBUS ) cerr << "(SIGBUS).";
-        if (sig == SIGSEGV) cerr << "(SIGSEGV).";
+        if (sig == SIGCHLD) cerr << "(SIGCHLD).";
+        if (sig == SIGCONT) cerr << "(SIGCONT).";
+        if (sig == SIGFPE ) cerr << "(SIGFPE).";
+        if (sig == SIGHUP ) cerr << "(SIGHUP).";
+        if (sig == SIGILL ) cerr << "(SIGILL).";
+        if (sig == SIGINT ) cerr << "(SIGINT).";
+        if (sig == SIGIO  ) cerr << "(SIGIO).";
+        if (sig == SIGKILL) cerr << "(SIGKILL).";
         if (sig == SIGPIPE) cerr << "(SIGPIPE).";
+        if (sig == SIGQUIT) cerr << "(SIGQUIT).";
+        if (sig == SIGSEGV) cerr << "(SIGSEGV).";
+        if (sig == SIGSTOP) cerr << "(SIGSTOP).";
+        if (sig == SIGTSTP) cerr << "(SIGTSTP).";
+        if (sig == SIGSYS ) cerr << "(SIGSYS).";
+        if (sig == SIGTERM) cerr << "(SIGTERM).";
+        if (sig == SIGTRAP) cerr << "(SIGTRAP).";
 
         cerr << "\n  Please e-mail to <alliance-users@asim.lip6.fr>.\n"
              << "\n  program terminated ";

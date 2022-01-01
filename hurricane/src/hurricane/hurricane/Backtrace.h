@@ -29,9 +29,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_BACKTRACE_H
-#define  HURRICANE_BACKTRACE_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Commons.h"
 #include "hurricane/TextTranslator.h"
@@ -65,5 +63,3 @@ namespace Hurricane {
   
 
 } // Hurricane namespace.
-
-#endif  // HURRICANE_BACKTRACE_H
