@@ -601,10 +601,18 @@ namespace {
       if ( status != 0 ) return driver->checkStatus(status);
 
       for ( RoutingPad* rp : net->getRoutingPads() ) {
-        status = defwNetConnection ( extractInstanceName(rp).c_str()
-                                   , getString(static_cast<Plug*>(rp->getPlugOccurrence().getEntity())->getMasterNet()->getName()).c_str()
-                                   , 0
-                                   );
+        Plug *plug = dynamic_cast<Plug*>(rp->getPlugOccurrence().getEntity());
+        if (plug) {
+          status = defwNetConnection ( extractInstanceName(rp).c_str()
+                                     , getString(plug->getMasterNet()->getName()).c_str()
+                                     , 0
+                                     );
+        } else {
+          Pin *pin = dynamic_cast<Pin*>(rp->getPlugOccurrence().getEntity());
+          if (!pin)
+            throw Error("RP PlugOccurrence neither a plug nor a pin!");
+          // TODO: do we need to write something ?
+        }
         if ( status != 0 ) return driver->checkStatus(status);
       }
 
