@@ -178,12 +178,13 @@ namespace {
 
   void  DefDriver::toDefCoordinates ( Instance* instance, Transformation transf, int& statusX, int& statusY, int& statusOrient )
   {
-    instance->getTransformation().applyOn( transf );
-    statusX      = toDefUnits ( transf.getTx() );
-    statusY      = toDefUnits ( transf.getTy() );
-    statusOrient = toDefOrient( transf.getOrientation() );
+    Transformation inst_transf = instance->getTransformation();
+    transf.applyOn( inst_transf );
+    statusX      = toDefUnits ( inst_transf.getTx() );
+    statusY      = toDefUnits ( inst_transf.getTy() );
+    statusOrient = toDefOrient( inst_transf.getOrientation() );
 
-    switch ( transf.getOrientation() ) {
+    switch ( inst_transf.getOrientation() ) {
       case Transformation::Orientation::ID: break;
       case Transformation::Orientation::R1: break;
       case Transformation::Orientation::R2:
