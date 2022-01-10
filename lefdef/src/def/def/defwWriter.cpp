@@ -3127,7 +3127,7 @@ defwSpecialNetPathStart(const char *typ)
     if (strcmp(typ, "NEW") == 0) {
         if (defwState != DEFW_PATH)
             return DEFW_BAD_DATA;
-        fprintf(defwFile, " NEW");
+        fprintf(defwFile, "\n      NEW");
     } else if (strcmp(typ, "SHIELD") == 0) {
         fprintf(defwFile, "\n      + %s", typ);
         defwSpNetShield = 1;

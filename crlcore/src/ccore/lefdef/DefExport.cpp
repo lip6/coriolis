@@ -32,6 +32,9 @@
 #include  "hurricane/Cell.h"
 #include  "hurricane/Library.h"
 #include  "hurricane/UpdateSession.h"
+#include  "hurricane/ViaLayer.h"
+#include  "hurricane/Rectilinear.h"
+
 #include  "crlcore/Utilities.h"
 #include  "crlcore/ToolBox.h"
 #include  "crlcore/RoutingGauge.h"
@@ -108,6 +111,7 @@ namespace {
       inline unsigned int  getFlags         () const;
       inline int           getStatus        () const;
              int           checkStatus      ( int status );
+      static int           writeRouting     ( Net*, bool special );
     private:               
       static int           _designCbk       ( defwCallbackType_e, defiUserData );
       static int           _designEndCbk    ( defwCallbackType_e, defiUserData );
@@ -573,6 +577,73 @@ namespace {
   }
 
 
+  int  DefDriver::writeRouting     ( Net* net, bool special )
+  {
+    int status = 0;
+    int i = 0;
+    for ( Component *component : net->getComponents() ) {
+
+      std::string layer = component->getLayer() ? getString(component->getLayer()->getName()) : "";
+      if (layer.size() >= 4 && layer.substr(layer.size() - 4) == ".pin")
+        continue;
+      if (layer.size() >= 6 && layer.substr(layer.size() - 6) == ".block")
+        continue;
+
+      Segment *seg = dynamic_cast<Segment*>(component);
+      if (seg) {
+        status = (special ? defwSpecialNetPathStart : defwNetPathStart)((i++) ? "NEW" : "ROUTED");
+        if (special) {
+          status = defwSpecialNetPathLayer(layer.c_str());
+          status = defwSpecialNetPathWidth(int(toDefUnits(seg->getWidth())));
+        } else {
+          status = defwNetPathLayer(layer.c_str(), 0, nullptr);
+        }
+        double x[2], y[2];
+        x[0] = toDefUnits(seg->getSourceX());
+        y[0] = toDefUnits(seg->getSourceY());
+        x[1] = toDefUnits(seg->getTargetX());
+        y[1] = toDefUnits(seg->getTargetY());
+        status = (special ? defwSpecialNetPathPoint : defwNetPathPoint)(2, x, y);
+      } else {
+        Contact *contact = dynamic_cast<Contact*>(component);
+        if (contact) {
+          const ViaLayer *viaLayer = dynamic_cast<const ViaLayer*>(contact->getLayer());
+          if (viaLayer) {
+            status = (special ? defwSpecialNetPathStart : defwNetPathStart)((i++) ? "NEW" : "ROUTED");
+            if (special)
+              status = defwSpecialNetPathLayer(getString(viaLayer->getBottom()->getName()).c_str());
+            else
+              status = defwNetPathLayer(getString(viaLayer->getBottom()->getName()).c_str(), 0, nullptr);
+            double x[1], y[1];
+            x[0] = toDefUnits(contact->getX());
+            y[0] = toDefUnits(contact->getY());
+            status = (special ? defwSpecialNetPathPoint : defwNetPathPoint)(1, x, y);
+            status = (special ? defwSpecialNetPathVia : defwNetPathVia)(getString(viaLayer->getName()).c_str());
+          }
+        } else {
+          Rectilinear *rl = dynamic_cast<Rectilinear*>(component);
+          if (rl) {
+            Box box = rl->getBoundingBox();
+            status = (special ? defwSpecialNetPathStart : defwNetPathStart)((i++) ? "NEW" : "ROUTED");
+            if (special)
+              status = defwSpecialNetPathLayer(layer.c_str());
+            else
+              status = defwNetPathLayer(layer.c_str(), 0, nullptr);
+            double x[1], y[1];
+            x[0] = toDefUnits(box.getXMin());
+            y[0] = toDefUnits(box.getYMin());
+            status = (special ? defwSpecialNetPathPoint : defwNetPathPoint)(1, x, y);
+            defwNetPathRect(0, 0, toDefUnits(box.getWidth()), toDefUnits(box.getHeight()));
+          }
+        }
+      }
+    }
+    if (i > 0)
+      status = (special ? defwSpecialNetPathEnd : defwNetPathEnd)();
+    return status;
+  }
+
+
   int  DefDriver::_netCbk ( defwCallbackType_e, defiUserData udata )
   {
     DefDriver* driver      = (DefDriver*)udata;
@@ -617,6 +688,7 @@ namespace {
         if ( status != 0 ) return driver->checkStatus(status);
       }
 
+      status = writeRouting(net, false);
       status = defwNetEndOneNet ();
       if ( status != 0 ) return driver->checkStatus(status);
     }
@@ -656,6 +728,9 @@ namespace {
       if ( status != 0 ) return driver->checkStatus(status);
 
       status = defwSpecialNetUse ( netUse );
+      if ( status != 0 ) return driver->checkStatus(status);
+
+      status = writeRouting(*inet, true);
       if ( status != 0 ) return driver->checkStatus(status);
 
       status = defwSpecialNetEndOneNet ();
