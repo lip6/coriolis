@@ -73,6 +73,7 @@ def unicornConfigure ( **kw ):
             if not 'unicornHook' in module.__dict__:
                 if module.__name__.endswith( '.__pycache__' ): continue
                 if not '__file__' in module.__dict__: continue
+                if module.__file__ is None: continue
                 elements = module.__file__.split( os.sep )
                 if elements[-1] == 'plugins':
                     print( WarningMessage( 'Plugin "{}" do not provides the unicornHook() method, skipped.' \

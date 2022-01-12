@@ -457,13 +457,13 @@ class net :
     cell._TAB_NETS_OUT += [Signal ( "sh_o%d" % num_net, inputNet._arity )]
 
     # Initialisation of shiftType
-    if direction is "left" :
-      if   type is "logical" : shiftType = 0x12
-      elif type is "arith"   : shiftType = 0xa
+    if direction == "left" :
+      if   type == "logical" : shiftType = 0x12
+      elif type == "arith"   : shiftType = 0xa
       else                   : shiftType = 0x6
     else :
-      if   type is "logical" : shiftType = 0x11
-      elif type is "arith"   : shiftType = 0x9
+      if   type == "logical" : shiftType = 0x11
+      elif type == "arith"   : shiftType = 0x9
       else                   : shiftType = 0x5
 
     inst_name = self._st_cell._shift.lower()

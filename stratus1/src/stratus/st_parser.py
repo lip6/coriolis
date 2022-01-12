@@ -115,7 +115,7 @@ class Parser :
   # Parsing a file
   ################
   def Parse ( self, nameFile ) :
-    self._p.ParseFile ( open ( nameFile, "r" ) )
+    self._p.ParseFile ( open ( nameFile, "rb" ) )
 
 ##################
 class InitParser :
