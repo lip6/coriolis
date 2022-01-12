@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  KATANA_KATANA_ENGINE_H
-#define  KATANA_KATANA_ENGINE_H
-
+#pragma  once
 #include <iostream>
 
 #include "hurricane/Name.h"
@@ -265,6 +263,3 @@ namespace Katana {
 
 
 INSPECTOR_P_SUPPORT(Katana::KatanaEngine);
-
-
-#endif  // KATANA_KATANA_ENGINE_H

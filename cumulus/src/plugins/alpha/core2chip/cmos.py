@@ -31,7 +31,7 @@ from   Hurricane  import Net
 import Viewer     
 from   CRL        import Catalog
 from   CRL        import AllianceFramework
-from   helpers.io import ErrorMessage
+from   helpers.io import ErrorMessage, trace
 from   plugins.alpha.core2chip.core2chip import CoreToChip as BaseCoreToChip
 from   plugins.alpha.core2chip.core2chip import IoNet
 from   plugins.alpha.core2chip.core2chip import IoPad
