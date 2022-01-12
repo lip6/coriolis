@@ -481,7 +481,13 @@ namespace {
                        );
     if ( status != 0 ) return driver->checkStatus(status);
 
-    return driver->checkStatus ( lefwEndUnits() );
+    status = lefwEndUnits();
+
+    status = lefwManufacturingGrid ( LefDriver::toLefUnits(DbU::fromGrid(1.0)) );
+
+    if ( status != 0 ) return driver->checkStatus(status);
+
+    return driver->checkStatus ( status );
   }
 
 
@@ -566,14 +572,7 @@ namespace {
 
   int  LefDriver::_manufacturingGridCbk ( lefwCallbackType_e, lefiUserData udata )
   {
-#if 1
-  // The driver puts it before UNITS, which seems to displease Cadence Encounter.
-  // So, as long as it doesn't prevent Encounter to works, disable it. 
-    LefDriver* driver = (LefDriver*)udata;
-    return driver->checkStatus ( lefwManufacturingGrid ( LefDriver::toLefUnits(DbU::fromGrid(1.0)) ) );
-#else
     return 0;
-#endif
   }
 
 
