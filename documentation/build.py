@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from   __future__ import print_function
 import re
 import os
 import os.path
@@ -98,7 +97,7 @@ class Configuration ( object ):
             log( 'Using *Source* configuration.' )
             self.pelicanDir = scriptDir
             self.apacheDir  = None
-        self.localDocDir      = '/dsk/l1/jpc/coriolis-2.x/Linux.el7_64/Release.Shared/install/share/doc/coriolis2/en/html/doc'
+        self.localDocDir      = '/dsk/l1/jpc/coriolis-2.x/Linux.el9/Release.Shared/install/share/doc/coriolis2/en/html/doc'
         self.remoteDocDir     = '/data'
         self.remoteGitDir     = '/data/git'
         self.remotePelicanDir = os.path.join( self.remoteGitDir, 'coriolis.lip6.fr/pelican' )
@@ -130,8 +129,8 @@ class Command ( object ):
                                               , stdout=subprocess.PIPE
                                               , stderr=subprocess.PIPE )
         self.outlog, self.errlog = child.communicate()
-        if len(self.outlog): logging.info ( self.outlog )
-        if len(self.errlog): logging.error( self.errlog )
+        if len(self.outlog): logging.info ( self.outlog.decode('utf-8') )
+        if len(self.errlog): logging.error( self.errlog.decode('utf-8'))
         status   = child.returncode
         status >>= 8
         if status != 0:
@@ -144,7 +143,7 @@ class Command ( object ):
         try:
             log( command )
             shutil.rmtree( path )
-        except shutil.Error, e:
+        except shutil.Error as e:
             logging.error( str(e) )
             return 1
         return 0
@@ -155,10 +154,10 @@ class Command ( object ):
         try:
             log( command )
             shutil.copytree( src, dst )
-        except OSError, e:
+        except OSError as e:
             logging.error( e )
             return 1
-        except shutil.Error, errors:
+        except shutil.Error as errors:
             for error in errors:
                 logging.error( 'cp {} {}: {}'.format(src,dst,error) )
             return 1
@@ -215,7 +214,9 @@ class Document ( object ):
         fdo.close()
         Command( [ 'pdflatex', '-halt-on-error', documentTex ] ).execute()
         Command( [ 'pdflatex', '-halt-on-error', documentTex ] ).execute()
-        for file in documentTmps: os.unlink( file )
+        for file in documentTmps:
+            if os.path.isfile( file ):
+                os.unlink( file )
         if not os.path.isdir( pdfDir ):
             log( 'mkdir {}'.format( pdfDir ))
             os.mkdir( pdfDir )
@@ -259,7 +260,7 @@ class Site ( object ):
         lines = ''
         cmd   = Command( ['git', 'status', 'content/pdfs'] )
         cmd.execute()
-        if cmd.outlog: lines = cmd.outlog.split('\n')
+        if cmd.outlog: lines = cmd.outlog.decode('utf-8').split('\n')
         if lines[-2] != 'nothing to commit, working directory clean':
             message = 'Updated PDFs, %s.' % time.strftime( '%B %d, %Y (%H:%M)' )
             Command( ['git', 'add'   , 'content/pdfs'] ).execute()
@@ -333,13 +334,16 @@ if __name__ == '__main__':
     parser.add_option( '-p', '--pelican' , action='store_true', dest='doPelican' , help='Run pelican.' )
     parser.add_option( '-P', '--pdfs'    , action='store_true', dest='doPdfs'    , help='Generate the PDFs.' )
     parser.add_option( '-C', '--coriolis', action='store_true', dest='doCoriolis', help='Build/update the web site on the server (docker).' )
+    parser.add_option( '-g', '--git'     , action='store_true', dest='doCommit'  , help='Commit the PDFs.' )
     (options, args) = parser.parse_args()
     conf = Configuration()
     if not os.path.isdir( conf.logDir ):
         os.mkdir( conf.logDir )
     logging.basicConfig( filename='logs/build-{}.log'.format(time.strftime( '%Y%m%d-%H%M' ))
+                       , encoding='utf-8'
                        ,   format='%(asctime)s:%(levelname)s| %(message)s'
                        ,    level=logging.INFO
+                       ,    force=True
                        )
     documents = [ Document( conf, 'content/pages/users-guide/UsersGuide' )
                 , Document( conf, 'content/pages/python-tutorial/PythonTutorial' )
@@ -351,7 +355,7 @@ if __name__ == '__main__':
     coriolis = Site( conf )
     if options.doPdfs:
         for document in documents: document.toPdf()
-        if not conf.onSource or not conf.onLepka:
+        if options.doCommit:
             coriolis.gitCommitPdfs()
     if options.doPelican:
         coriolis.build()
