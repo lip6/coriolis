@@ -118,7 +118,8 @@ namespace Hurricane {
 
   void Selector::_preDestroy()
   {
-    for ( auto iwidget : _cellWidgets ) detachFrom( iwidget.first, true );
+    while ( not _cellWidgets.empty() )
+      detachFrom( _cellWidgets.begin()->first, true );
 	PrivateProperty::_preDestroy();
   }
 
