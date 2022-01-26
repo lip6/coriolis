@@ -23,6 +23,8 @@
 #include  <QImage>
 #include  "hurricane/configuration/Configuration.h"
 #include  "hurricane/DataBase.h"
+#include  "hurricane/Technology.h"
+#include  "hurricane/BasicLayer.h"
 #include  "hurricane/Cell.h"
 #include  "hurricane/viewer/Graphics.h"
 #include  "hurricane/viewer/CellImage.h"
@@ -81,11 +83,38 @@ namespace Hurricane {
     _screenCellWidget = cellWidget;
 
     shared_ptr<CellWidget::State> clone ( _screenCellWidget->getStateClone() );
-    _cellWidget->setState       ( clone );
-    _cellWidget->setLayerVisible("grid"          , _screenCellWidget->isLayerVisible("grid"          ));
-    _cellWidget->setLayerVisible("text.instance" , _screenCellWidget->isLayerVisible("text.instance" ));
-    _cellWidget->setLayerVisible("text.component", _screenCellWidget->isLayerVisible("text.component"));
-    _cellWidget->setLayerVisible("rubber"        , _screenCellWidget->isLayerVisible("rubber"        ));
+    _cellWidget->setState( clone );
+    _cellWidget->setPixelThreshold( 5 );
+
+    array<string,14> labels = {{ string("fallback"        )
+                               , string("rubber"          )
+                               , string("phantom"         )
+                               , string("boundaries"      )
+                               , string("marker"          )
+                               , string("grid"            )
+                               , string("spot"            )
+                               , string("ghost"           )
+                               , string("text.ruler"      )
+                               , string("text.cell"       )
+                               , string("text.instance"   )
+                               , string("text.components" )
+                               , string("text.references" )
+                               , string("undef"           )
+                              }};
+
+    for ( string label : labels )
+      _cellWidget->setLayerVisible( label
+                                  , _screenCellWidget->isLayerVisible(label) );
+
+    for ( const BasicLayer* layer : DataBase::getDB()->getTechnology()->getBasicLayers() )
+      _cellWidget->setLayerVisible( layer->getName()
+                                  , _screenCellWidget->isLayerVisible( layer->getName() ));
+
+    _cellWidget->copyDrawExtensionGos( _screenCellWidget );
+
+    for ( ExtensionSlice* extension : cellWidget->getCell()->getExtensionSlices() )
+      _cellWidget->setLayerVisible( extension->getName()
+                                  , _screenCellWidget->isLayerVisible( extension->getName() ));
   }
 
 
@@ -159,7 +188,7 @@ namespace Hurricane {
       setFitOnAbutmentBox( true );
       _cellWidget->fitToContents();
     } else {
-      _cellWidget->reframe( _screenCellWidget->getVisibleArea() );
+    //_cellWidget->reframe( _screenCellWidget->getVisibleArea() );
     }
 
     cerr << "  After resize CellWidget: " << _cellWidget->geometry().width() << "x" << _cellWidget->geometry().height() << endl;
