@@ -1368,6 +1368,20 @@ namespace Hurricane {
         _drawingQuery.setTransformation    ( Transformation() );
         _drawingQuery.setThreshold         ( screenToDbuLength(_pixelThreshold) );
 
+        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
+          if (isDrawable("boundaries")) {
+             _drawingPlanes.setPen  ( Graphics::getPen  ("boundaries",getDarkening()) );
+             _drawingPlanes.setBrush( Graphics::getBrush("boundaries",getDarkening()) );
+
+             _drawingQuery.setBasicLayer( NULL );
+             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
+                                                                |Query::DoRubbers
+                                                                |Query::DoMarkers
+                                                                |Query::DoExtensionGos) );
+             _drawingQuery.doQuery      ();
+          }
+        }
+
         for ( BasicLayer* layer : _technology->getBasicLayers() ) {
           _drawingPlanes.setPen  ( Graphics::getPen  (layer->getName(),getDarkening()) );
           _drawingPlanes.setBrush( Graphics::getBrush(layer->getName(),getDarkening()) );
@@ -1386,20 +1400,6 @@ namespace Hurricane {
             break;
           }
         //if ( timeout("redraw [layer]",timer,10.0,timedout) ) break;
-        }
-
-        if ( /*not timeout("redraw [boundaries]",timer,10.0,timedout) and*/ (not _redrawManager.interrupted()) ) {
-          if (isDrawable("boundaries")) {
-             _drawingPlanes.setPen  ( Graphics::getPen  ("boundaries",getDarkening()) );
-             _drawingPlanes.setBrush( Graphics::getBrush("boundaries",getDarkening()) );
-
-             _drawingQuery.setBasicLayer( NULL );
-             _drawingQuery.setFilter    ( getQueryFilter().unset(Query::DoComponents
-                                                                |Query::DoRubbers
-                                                                |Query::DoMarkers
-                                                                |Query::DoExtensionGos) );
-             _drawingQuery.doQuery      ();
-          }
         }
 
         _drawingQuery.setStopLevel( _state->getStartLevel() + 1 );
