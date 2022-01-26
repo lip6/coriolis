@@ -283,7 +283,7 @@ namespace {
 
     obfd->_slurpSymtab();
 
-    if (not (bfd_get_section_flags(obfd->_abfd, obfd->_textSection) & SEC_ALLOC)) { obfd->_clear(); return obfd; }
+    if (not (bfd_section_flags(obfd->_textSection) & SEC_ALLOC)) { obfd->_clear(); return obfd; }
 
     obfd->_scratchSymbol = bfd_make_empty_symbol( obfd->_abfd );
     if (not obfd->_scratchSymbol) { obfd->_clear(); return obfd; }
@@ -324,8 +324,8 @@ namespace {
     if (not _isRelocated and not _computeRelocation(request)) return false;
 
     int64_t       dsoAddress      = request.relocatedAddress() - _relocationOffset;
-    bfd_vma       textSectionVma  = bfd_get_section_vma( _abfd, _textSection );
-    bfd_size_type textSectionSize = bfd_section_size   ( _abfd, _textSection );
+    bfd_vma       textSectionVma  = bfd_section_vma ( _textSection );
+    bfd_size_type textSectionSize = bfd_section_size( _textSection );
     const char*   fileName        = NULL;
     const char*   funcName        = NULL;
 
