@@ -67,6 +67,8 @@ namespace Hurricane {
   void  NetlistModel::setCell ( Cell* cell )
   {
     if (_cell != cell) {
+      emit layoutAboutToBeChanged ();
+
       if (_cell) delete _netlist;
 
       _cell    = cell;

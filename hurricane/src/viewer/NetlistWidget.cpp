@@ -178,7 +178,7 @@ namespace Hurricane {
 
   void  NetlistWidget::textFilterChanged ()
   {
-    _sortModel->setFilterRegExp ( _filterPatternLineEdit->text() );
+    _sortModel->setFilterRegExp( _filterPatternLineEdit->text() );
   //updateSelecteds ();
   }
 

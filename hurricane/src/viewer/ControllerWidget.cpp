@@ -218,32 +218,32 @@ namespace Hurricane {
 
   void  TabNetlist::setSyncNetlist ( bool state )
   {
-    if ( state and getCellWidget() ) {
-      _netlistBrowser->setCell<SimpleNetInformations> ( getCellWidget()->getCell() );
+    if (state and getCellWidget()) {
+      _netlistBrowser->setCell<SimpleNetInformations>( getCellWidget()->getCell() );
     } else {
-      _netlistBrowser->setCell<SimpleNetInformations> ( NULL );
+      _netlistBrowser->setCell<SimpleNetInformations>( NULL );
     }
   }
 
 
   void  TabNetlist::setSyncSelection ( bool state )
   {
-    if ( state and getCellWidget() and _syncNetlist->isChecked() ) {
+    if (state and getCellWidget() and _syncNetlist->isChecked()) {
       _cwCumulativeSelection = getCellWidget()->cumulativeSelection();
-      if ( not _cwCumulativeSelection ) {
+      if (not _cwCumulativeSelection) {
         getCellWidget()->openRefreshSession ();
         getCellWidget()->unselectAll ();
         getCellWidget()->closeRefreshSession ();
       }
-      getCellWidget()->setShowSelection ( true );
-      connect ( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
-      connect ( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
-      _netlistBrowser->updateSelecteds ();
+      getCellWidget()->setShowSelection( true );
+      connect( _netlistBrowser, SIGNAL(netSelected  (Occurrence)), getCellWidget(), SLOT(select  (Occurrence)) );
+      connect( _netlistBrowser, SIGNAL(netUnselected(Occurrence)), getCellWidget(), SLOT(unselect(Occurrence)) );
+      _netlistBrowser->updateSelecteds();
     } else {
-      getCellWidget()->setShowSelection ( false );
-      getCellWidget()->setCumulativeSelection ( _cwCumulativeSelection );
-      _netlistBrowser->disconnect ( getCellWidget(), SLOT(select  (Occurrence)) );
-      _netlistBrowser->disconnect ( getCellWidget(), SLOT(unselect(Occurrence)) );
+      getCellWidget()->setShowSelection( false );
+      getCellWidget()->setCumulativeSelection( _cwCumulativeSelection );
+      _netlistBrowser->disconnect( getCellWidget(), SLOT(select  (Occurrence)) );
+      _netlistBrowser->disconnect( getCellWidget(), SLOT(unselect(Occurrence)) );
     }
   }
 
@@ -269,13 +269,13 @@ namespace Hurricane {
 
   void  TabNetlist::cellPreModificate ()
   {
-    _netlistBrowser->setCell<SimpleNetInformations> ( NULL );
+    _netlistBrowser->setCell<SimpleNetInformations>( NULL );
   }
 
 
   void  TabNetlist::cellPostModificate ()
   {
-    setSyncNetlist ( _syncNetlist->isChecked() );
+    setSyncNetlist( _syncNetlist->isChecked() );
   }
 
 
