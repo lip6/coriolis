@@ -89,13 +89,14 @@ extern "C" {
   {
     cdebug_log(30,0) << "PySpice_load()" << endl;
 
-    char* path = NULL;
     
     HTRY
-      PyObject* pyLibrary = NULL;
-      if (PyArg_ParseTuple( args, "Os:Spice.load", &pyLibrary, &path )) {
+      unsigned long  mode      = 0;
+      char*          path      = NULL;
+      PyObject*      pyLibrary = NULL;
+      if (PyArg_ParseTuple( args, "Osk:Spice.load", &pyLibrary, &path, &mode )) {
         if (IsPyLibrary(pyLibrary)) {
-          Spice::load( PYLIBRARY_O(pyLibrary), string(path) );
+          Spice::load( PYLIBRARY_O(pyLibrary), string(path), (uint64_t)mode );
         } else {
           PyErr_SetString( ConstructorError, "Spice.load(): Bad parameter type (not a Library)." );
           return NULL;
@@ -153,7 +154,8 @@ extern "C" {
   {
     PyObject* constant;
 
-    LoadObjectConstant(PyTypeSpice.tp_dict,::Spice::Entity::TopCell,"TopCell");
+    LoadObjectConstant(PyTypeSpice.tp_dict,::Spice::Entity::TopCell  ,"TopCell");
+    LoadObjectConstant(PyTypeSpice.tp_dict,::CRL::Spice::PIN_ORDERING,"PIN_ORDERING");
   }
 
 

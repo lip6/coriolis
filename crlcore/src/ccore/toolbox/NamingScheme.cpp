@@ -29,6 +29,20 @@ namespace CRL {
   using Hurricane::Instance;
 
 
+  Name NamingScheme::vhdlToVlog ( const Name& vhdlName )
+  {
+    string  vlogName;
+
+    for ( size_t i=0 ; i<vhdlName.size() ; ++i ) {
+      char translated = vhdlName[i];
+      if (translated == '(' ) translated = '[';
+      if (translated == ')' ) translated = ']';
+      vlogName += translated;
+    }
+    return Name(vlogName);
+  }
+
+
   Name NamingScheme::vlogToVhdl ( const Name& vlogName, uint32_t flags )
   {
     string  vhdlName;

@@ -74,6 +74,7 @@ namespace CRL {
     public:
       typedef std::function< Name(const Name&,uint32_t) >  converter_t;
     public:
+      static Name  vhdlToVlog           ( const Name& vhdlName );
       static Name  vlogToVhdl           ( const Name& vlogName, uint32_t flags );
       static void  toVhdl               ( Cell* topCell, uint32_t flags );
                    NamingScheme         ( uint32_t flags );

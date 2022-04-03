@@ -21,18 +21,6 @@
 #include "crlcore/SpiceEntity.h"
 
 
-namespace {
-
-  using Hurricane::Net;
-  using Hurricane::Instance;
-  using Hurricane::Occurrence;
-  using Spice::Bit;
-  using Spice::Entity;
-
-  
-}
-
-
 namespace Spice {
 
   using namespace std;
@@ -41,6 +29,8 @@ namespace Spice {
   using Hurricane::Property;
   using Hurricane::_TName;
   using Hurricane::Plug;
+  using Hurricane::Occurrence;
+  using CRL::NamingScheme;
 
 
   class ComparePlugBySpiceIndex {
@@ -64,6 +54,7 @@ namespace Spice {
     , _groundNode(Bit::nindex)
     , _flags(flags)
   {
+  //cerr << "Entity::Entity() on " << cell << endl;
     if (not _offset) {
     //_offset = offsetof(EntityProperty,_entity);
       _offset = (ptrdiff_t)this - (ptrdiff_t)property;
@@ -84,15 +75,31 @@ namespace Spice {
   }
 
 
+  void  Entity::setOrder ( const vector<Net*>& orderedNets )
+  {
+    for ( auto bit : _bits )
+      BitExtension::remove( bit->getNet() );
+    _bits.clear();
+
+    for ( auto net : orderedNets ) {
+      Bit* bit = BitExtension::create( net, _bits.size() );
+      _bits.push_back( bit );
+      if (net->isPower ()) _powerNode  = bit->getIndex();
+      if (net->isGround()) _groundNode = bit->getIndex();
+    }
+  }
+
+
   Entity::~Entity ()
   {
-    for ( auto bit : _bits ) bit->destroy();
     for ( auto ientity=_entities.begin() ; ientity!=_entities.end() ; ++ientity ) {
       if (*ientity == this) {
         _entities.erase( ientity );
         break;
       }
     }
+    for ( auto bit : _bits )
+      BitExtension::remove( bit->getNet() );
   }
 
 
@@ -122,9 +129,13 @@ namespace Spice {
     for ( Bit* bit : _bits ) {
       const Net* net = bit->getNet();
       if (not net->isExternal() and asInterf) continue;
-      out << "* " << ((asInterf) ? "INTERF" : "NET")
-          << setw(6) << BitExtension::getName(net)
-          << "  " << net->getName() << ".\n";
+      if (asInterf) {
+        out << "* " << "INTERF" //<< setw(6) << BitExtension::getName(net)
+            << " " << NamingScheme::vhdlToVlog(net->getName()) << "\n";
+      } else {
+        out << "* " << "NET" << setw(6) << BitExtension::getName(net)
+            << " = " << NamingScheme::vhdlToVlog(net->getName()) << "\n";
+      }
     }
     out << "\n";
   }
@@ -233,10 +244,10 @@ namespace Spice {
   {
     Record* record = new Record ( "<Entity " + _getString() + " >" );
     if (record != NULL) {
-      record->add( getSlot("_bits"      , _bits       ) );
-      record->add( getSlot("_powerNode" , _powerNode  ) );
-      record->add( getSlot("_groundNode", _groundNode ) );
-      record->add( getSlot("_flags"     , _flags      ) );
+      record->add( getSlot("_bits"      , &_bits       ) );
+      record->add( getSlot("_powerNode" ,  _powerNode  ) );
+      record->add( getSlot("_groundNode",  _groundNode ) );
+      record->add( getSlot("_flags"     ,  _flags      ) );
     }
     return record;
   }
@@ -340,8 +351,17 @@ namespace Spice {
   void  EntityExtension::destroyAll ()
   {
     vector<Entity*>& entities = Entity::getAllEntities();
+    size_t current = 0;
+    while ( current < entities.size() ) {
+      if (entities[current]->isReferenceCell()) {
+        ++current;
+      } else {
+      //cerr << "Destroy SPICE entity on " << entities[current]->getCell() << endl;
+        destroy( const_cast<Cell*>(entities[current]->getCell()) );
+      }
+    }
 
-    while ( not entities.empty() ) destroy( const_cast<Cell*>(entities.back()->getCell()) );
+  //while ( not entities.empty() ) destroy( const_cast<Cell*>(entities.back()->getCell()) );
   }
 
 

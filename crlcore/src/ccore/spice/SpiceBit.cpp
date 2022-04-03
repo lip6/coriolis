@@ -102,7 +102,10 @@ namespace Spice {
 
 
   void  BitProperty::onReleasedBy ( DBo* owner )
-  { PrivateProperty::onReleasedBy( owner ); }
+  {
+    BitExtension::clearCache( static_cast<Net*>(owner) );
+    PrivateProperty::onReleasedBy( owner );
+  }
 
 
   Name  BitProperty::getPropertyName ()
@@ -143,6 +146,16 @@ namespace Spice {
 
   const Net* BitExtension::_owner = NULL;
   Bit*       BitExtension::_cache = NULL;
+
+
+  void  BitExtension::remove ( const Net* net )
+  {
+    Property* property = net->getProperty( BitProperty::getPropertyName() );
+    if (property) {
+      const_cast<Net*>( net )->remove( property );
+    }
+    if (net == _owner) _owner = NULL;
+  }
 
 
   Bit* BitExtension::get ( const Net* net )

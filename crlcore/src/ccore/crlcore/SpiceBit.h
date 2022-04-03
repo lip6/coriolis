@@ -61,9 +61,6 @@ namespace Spice {
   inline std::string   Bit::getName () const { return _name; }
 
 
-  typedef  std::vector<Bit*>  BitVector;
-
-
   struct GreaterBitByIndex {
       inline bool  operator() ( const Bit* lhs, const Bit* rhs ) const
       { return lhs->getIndex() > rhs->getIndex(); }
@@ -82,6 +79,7 @@ namespace Spice {
       static  Name         getPropertyName ();
       virtual Name         getName         () const;
       inline  Bit*         getBit          ();
+      inline  Net*         getNet          ();
       inline  std::string  getBitName      () const;
       virtual void         onReleasedBy    ( DBo* owner );
       virtual std::string  _getTypeName    () const;
@@ -100,6 +98,7 @@ namespace Spice {
     : PrivateProperty(), _bit(this,owner,index)
   { }
 
+  inline Net*         BitProperty::getNet     () { return const_cast<Net*>( _bit.getNet() ); }
   inline Bit*         BitProperty::getBit     () { return &_bit; }
   inline std::string  BitProperty::getBitName () const { return _bit.getName(); }
 
@@ -109,10 +108,12 @@ namespace Spice {
 
   class BitExtension {
     public:
-      static inline  size_t        getIndex  ( const Net* );
-      static inline  std::string   getName   ( const Net* );
-      static         Bit*          get       ( const Net* );
-      static         Bit*          create    ( Net*, size_t index=Bit::nindex );
+      static inline  size_t        getIndex    ( const Net* );
+      static inline  std::string   getName     ( const Net* );
+      static         Bit*          get         ( const Net* );
+      static         void          remove      ( const Net* );
+      static         Bit*          create      ( Net*, size_t index=Bit::nindex );
+      static inline  void          clearCache  ( Net* );
     private:
       static const Net* _owner;
       static Bit*       _cache;
@@ -125,12 +126,14 @@ namespace Spice {
     return (bit == NULL) ? false : bit->getIndex();
   }
 
-
   inline std::string  BitExtension::getName ( const Net* net )
   {
     Bit* bit = get( net );
     return (bit == NULL) ? "?" : bit->getName();
   }
+
+  inline void  BitExtension::clearCache ( Net* net )
+  { if (_owner == net) { _owner = NULL; _cache = NULL; } }
 
   
   inline BitProperty* Bit::getProperty () const { return (BitProperty*)((ptrdiff_t)(this) - _offset); }

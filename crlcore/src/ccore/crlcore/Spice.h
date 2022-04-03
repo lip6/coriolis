@@ -32,8 +32,10 @@ namespace CRL {
 
   class Spice {
     public:
+      static const uint64_t PIN_ORDERING = (1<<0);
+    public:
       static bool  save ( Cell*, uint64_t flags );
-      static bool  load ( Library*, std::string spicePath );
+      static bool  load ( Library*, std::string spicePath, uint64_t mode );
       static void  clearProperties ();
   };
 

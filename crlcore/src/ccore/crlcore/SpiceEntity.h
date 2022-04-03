@@ -50,33 +50,42 @@ namespace Spice {
 
   class Entity {
     public:
-      static const uint64_t  TopCell = (1 << 0);
+      static const uint64_t  TopCell       = (1 << 0);
+      static const uint64_t  ReferenceCell = (1 << 1);
     public:
       static std::vector<Entity*>&
-                              getAllEntities  ();
-      static void             orderPlugs      ( Instance*, std::vector<Plug*>& );
+                               getAllEntities  ();
+      static void              orderPlugs      ( Instance*, std::vector<Plug*>& );
     public:           
-                              Entity          ( EntityProperty*, Cell*, uint64_t flags );
-                             ~Entity          ();
-     inline        uint64_t   getFlags        () const;
-             const Cell*      getCell         () const;
-     inline  const BitVector& getBits         () const;
-             void             toNodeList      ( ostream&, bool asInterf=true ) const;
-             void             toEntity        ( ostream& ) const;
-             std::string      _getString      () const;
-             Record*          _getRecord      () const;
+                               Entity          ( EntityProperty*, Cell*, uint64_t flags );
+                              ~Entity          ();
+      inline        bool       isTopCell       () const;
+      inline        bool       isReferenceCell () const;
+      inline        uint64_t   getFlags        () const;
+              const Cell*      getCell         () const;
+      inline  const std::vector<Bit*>&
+                               getBits         () const;
+      inline        void       setFlags        ( uint64_t );
+              void             setOrder        ( const std::vector<Net*>& );
+              void             toNodeList      ( ostream&, bool asInterf=true ) const;
+              void             toEntity        ( ostream& ) const;
+              std::string      _getString      () const;
+              Record*          _getRecord      () const;
     private:
       static std::vector<Entity*>  _entities;
       static std::ptrdiff_t        _offset;
-             BitVector             _bits;
+             std::vector<Bit*>     _bits;
              size_t                _powerNode;
              size_t                _groundNode;
              uint64_t              _flags;
   };
 
 
-  inline        uint64_t   Entity::getFlags () const { return _flags; }
-  inline  const BitVector& Entity::getBits  () const { return _bits; }
+  inline        bool               Entity::isTopCell       () const { return _flags & TopCell; }
+  inline        bool               Entity::isReferenceCell () const { return _flags & ReferenceCell; }
+  inline        uint64_t           Entity::getFlags        () const { return _flags; }
+  inline  const std::vector<Bit*>& Entity::getBits         () const { return _bits; }
+  inline        void               Entity::setFlags        ( uint64_t flags ) { _flags |= flags; }
 
 
 // -------------------------------------------------------------------
