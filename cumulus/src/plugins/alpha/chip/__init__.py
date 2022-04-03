@@ -31,6 +31,7 @@ from CRL             import RoutingGauge, RoutingLayerGauge
 from helpers         import trace, l, u, n, onFGrid
 from helpers.io      import ErrorMessage, WarningMessage
 from helpers.overlay import UpdateSession
+from plugins.alpha.block.bigvia import BigVia
 
 
 North      = 0x0001
@@ -243,7 +244,7 @@ class CoreWire ( object ):
                                           , xPadMin
                                           , xJumpMin
                                           )
-                trace( 550, '\tChipl1: %s\n' % str(Chipl1) )
+                trace( 550, '\thChip1: %s\n' % str(hChip1) )
                 hChip2 = Horizontal.create( self.chipNet
                                           , self.padSegment.getLayer()
                                           , self.bbSegment.getCenter().getY()
