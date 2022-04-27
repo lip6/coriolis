@@ -470,9 +470,9 @@ namespace Katana {
 
     queue.repushInvalidateds();
 
-    // if (getProcesseds() == 286892 + 1) {
+    // if (getProcesseds() == 48172 + 1) {
     //   UpdateSession::close();
-    //   Breakpoint::stop( 1, "Stopping before revalidating event 286892." );
+    //   Breakpoint::stop( 0, "Stopping before revalidating event 3107." );
     //   UpdateSession::open();
     // }
     

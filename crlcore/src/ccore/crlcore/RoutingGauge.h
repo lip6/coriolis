@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef CRL_ROUTING_GAUGE_H
-#define CRL_ROUTING_GAUGE_H
-
+#pragma  once
 #include <string>
 #include <vector>
 #include "hurricane/Name.h"
@@ -56,6 +54,7 @@ namespace CRL {
     // Predicates.                                     
       inline  bool                isSymbolic          () const;
       inline  bool                isTwoMetals         () const;
+      inline  bool                isSuperPitched      () const;
       inline  bool                isHV                () const;
       inline  bool                isVH                () const;
       inline  bool                hasPowerSupply      () const;
@@ -109,6 +108,7 @@ namespace CRL {
       vector<Layer*>              _viaLayers;
       Technology*                 _technology;
       bool                        _isSymbolic;
+      bool                        _isSuperPitched;
 
     // Internal - Constructors & Destructors.
                                   RoutingGauge ( const char* name );
@@ -120,6 +120,7 @@ namespace CRL {
 
 
   inline bool          RoutingGauge::isSymbolic         () const { return _isSymbolic; }
+  inline  bool         RoutingGauge::isSuperPitched     () const { return _isSuperPitched; }
   inline bool          RoutingGauge::isTwoMetals        () const { return (getDepth() < 3); }
   inline bool          RoutingGauge::isHV               () const { return not isTwoMetals() and (getLayerGauge(1)->isHorizontal()); }
   inline bool          RoutingGauge::isVH               () const { return not isTwoMetals() and (getLayerGauge(1)->isVertical()); }
@@ -155,5 +156,3 @@ namespace CRL {
 } // CRL namespace.
 
 INSPECTOR_P_SUPPORT(CRL::RoutingGauge);
-
-#endif

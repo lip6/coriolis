@@ -594,6 +594,7 @@ namespace Katana {
           if (edge->getReservedCapacity() < hReservedMin)
             edge->reserveCapacity( hReservedMin - edge->getReservedCapacity()  );
         }
+        gcell->postGlobalAnnotate();
       }
     }
   }

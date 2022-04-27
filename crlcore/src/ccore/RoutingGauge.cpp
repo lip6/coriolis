@@ -56,20 +56,22 @@ namespace CRL {
 
 
   RoutingGauge::RoutingGauge ( const char* name )
-    : _name       (name)
-    , _layerGauges()
-    , _viaLayers  ()
-    , _technology (DataBase::getDB()->getTechnology())
-    , _isSymbolic (true)
+    : _name          (name)
+    , _layerGauges   ()
+    , _viaLayers     ()
+    , _technology    (DataBase::getDB()->getTechnology())
+    , _isSymbolic    (true)
+    , _isSuperPitched(true)
   { }
 
 
   RoutingGauge::RoutingGauge ( const RoutingGauge& gauge )
-    : _name       (gauge._name)
-    , _layerGauges()
-    , _viaLayers  ()
-    , _technology (gauge._technology)
-    , _isSymbolic (gauge._isSymbolic)
+    : _name          (gauge._name)
+    , _layerGauges   ()
+    , _viaLayers     ()
+    , _technology    (gauge._technology)
+    , _isSymbolic    (gauge._isSymbolic)
+    , _isSuperPitched(gauge._isSuperPitched)
   {
   // Make a deep copy of the map.
     for ( size_t i=0 ; i<gauge._layerGauges.size() ; i++ ) {
@@ -303,6 +305,12 @@ namespace CRL {
                      , getString(_layerGauges[gaugeSize-1]).c_str() ) << endl;
       }
       _viaLayers.push_back( viaLayer );
+    }
+
+    if ((gaugeSize > 3) and _isSuperPitched) {
+      float r = ((float)layerGauge->getPitch() / (float)_layerGauges[gaugeSize-3]->getPitch());
+      if (fabsf(roundf(r) - r) > 0.00001f)
+        _isSuperPitched = false;
     }
   }
 

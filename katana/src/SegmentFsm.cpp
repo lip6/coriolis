@@ -1399,10 +1399,12 @@ namespace Katana {
            and (  manipulator.getEvent()->getConstraints().isPonctual()
                or (isFullBlocked() and (_costs.size() > 7)))
            and segment->canMoveUp(1.0,Flags::CheckLowUpDensity|Flags::AllowTerminal) ) {
+          cdebug_log(159,0) << "Next state: MoveUp." << endl;
           moveUpFlags |= Manipulator::AllowTerminalMoveUp;
         } else {
           if ((success = manipulator.slacken(Flags::HalfSlacken))) {
             nextState = DataNegociate::RipupPerpandiculars;
+            cdebug_log(159,0) << "Next state: RipupPerpandiculars (half-slacken succeeded)." << endl;
             break;
           }
         }

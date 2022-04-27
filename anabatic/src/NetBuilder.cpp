@@ -37,6 +37,7 @@
 #include "hurricane/Instance.h"
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
+#include "hurricane/Rectilinear.h"
 #include "crlcore/AllianceFramework.h"
 #include "crlcore/RoutingGauge.h"
 #include "anabatic/AutoContactTerminal.h"
@@ -220,6 +221,7 @@ namespace Anabatic {
   using Hurricane::Error;
   using Hurricane::Warning;
   using Hurricane::Bug;
+  using Hurricane::Rectilinear;
 
   
 // -------------------------------------------------------------------
@@ -367,6 +369,8 @@ namespace Anabatic {
     , _toFixSegments         ()
     , _degree                (0)
     , _isTwoMetals           (false)
+    , _sourceFlags           (0)
+    , _flags                 (0)
   { }
 
 
@@ -377,6 +381,8 @@ namespace Anabatic {
   void  NetBuilder::clear ()
   {
     _connexity.connexity = 0;
+    _sourceFlags         = 0;
+    _flags               = 0;
     _topology            = 0;
     _net                 = NULL;
     _netData             = NULL;
@@ -403,11 +409,15 @@ namespace Anabatic {
   }
 
 
-  NetBuilder& NetBuilder::setStartHook ( AnabaticEngine* anbt, Hook* fromHook, AutoContact* sourceContact )
+  NetBuilder& NetBuilder::setStartHook ( AnabaticEngine* anbt
+                                       , Hook*           fromHook
+                                       , AutoContact*    sourceContact
+                                       , uint64_t        sourceFlags )
   {
     clear();
 
     _isTwoMetals   = anbt->getConfiguration()->isTwoMetals();
+    _sourceFlags   = sourceFlags;
     _sourceContact = sourceContact;
     _fromHook      = fromHook;
 
@@ -470,6 +480,12 @@ namespace Anabatic {
               throw Error( mismatchGCell );
             }
 
+            if (  (_gcell->getDensity( Session::getDHorizontalDepth() ) > 0.9)
+               or (_gcell->getDensity( Session::getDVerticalDepth  () ) > 0.9)) {
+              cdebug_log(145,0) << "Base layers blockeds, moving up" << endl;
+              _flags |= ToUpperRouting;
+            }
+
             if (not _gcell->isMatrix()) {
               cdebug_log(145,0) << "* Non-matrix GCell under: " << contact << endl;
               cdebug_log(145,0) << "| " << gcell << endl;
@@ -489,11 +505,23 @@ namespace Anabatic {
                 continue;
               }
 
-              if      (layer->getMask() == Session::getRoutingLayer(0)->getMask()) _connexity.fields.M1++; // M1 V
-              else if (layer->getMask() == Session::getRoutingLayer(1)->getMask()) _connexity.fields.M2++; // M2 H
-              else if (layer->getMask() == Session::getRoutingLayer(2)->getMask()) _connexity.fields.M3++; // M3 V
-              else if (layer->getMask() == Session::getRoutingLayer(3)->getMask()) _connexity.fields.M2++; // M4 H
-              else if (layer->getMask() == Session::getRoutingLayer(4)->getMask()) _connexity.fields.M3++; // M5 V
+              size_t rpDepth = 0;
+              for ( size_t depth=0 ; depth < Session::getRoutingGauge()->getDepth() ; ++depth ) {
+                if (layer->getMask() == Session::getRoutingLayer(depth)->getMask()) {
+                  rpDepth = depth;
+                  break;
+                }
+              }
+              if ((rpDepth > 0) and not Session::getRoutingGauge()->isSuperPitched()) {
+                _flags |= ToUpperRouting;
+                cdebug_log(145,0) << "ToUpperRouting set, getFlags():" << getFlags() << endl;
+              }
+
+              if      (rpDepth == 0) _connexity.fields.M1++; // M1 V
+              else if (rpDepth == 1) _connexity.fields.M2++; // M2 H
+              else if (rpDepth == 2) _connexity.fields.M3++; // M3 V
+              else if (rpDepth == 3) _connexity.fields.M2++; // M4 H
+              else if (rpDepth == 4) _connexity.fields.M3++; // M5 V
               else {
                 cerr << Warning( "Terminal layer \"%s\" of %s is not managed yet (ignored)."
                                , getString(layer->getName()).c_str()
@@ -553,6 +581,7 @@ namespace Anabatic {
     cdebug_log(145,0) << "NetBuilder::push()" << endl;
     cdebug_log(145,0) << "* toHook:   " << toHook << endl;
     cdebug_log(145,0) << "* _fromHook:" << _fromHook << endl;
+    cdebug_log(145,0) << "* flags:" << flags << endl;
 
     if (not toHook or (toHook == _fromHook)) {
       if (contact) {
@@ -571,11 +600,59 @@ namespace Anabatic {
     Hook* toHookOpposite = getSegmentOppositeHook( toHook );
     cdebug_log(145,0) << "Pushing (to)   " << getString(toHook) << endl;
     cdebug_log(145,0) << "Pushing (from) " << contact << endl;
-    _forks.push( toHookOpposite, contact );
+    _forks.push( toHookOpposite, contact, getFlags() );
 
     return true;
   }
 
+
+  bool  NetBuilder::isInsideBlockage ( GCell* gcell, Component* rp ) const
+  {
+    cdebug_log(145,1) << getTypeName() << "::isInsideBlockage() " << endl;
+    cdebug_log(145,0) << rp << endl;
+    cdebug_log(145,0) << rp->getLayer()->getMask() << endl;
+
+    size_t rpDepth = Session::getLayerDepth( rp->getLayer() );
+    if (gcell->getDensity(rpDepth) < 0.5) {
+      cdebug_tabw(145,-1);
+      return false;
+    }
+    
+    Box         rpBb   = rp->getBoundingBox();
+    Layer::Mask rpMask = rp->getLayer()->getBlockageLayer()->getMask();
+    cdebug_log(145,0) << "rpBb: " << rpBb << endl;
+    for ( Occurrence occurrence : getAnabatic()->getCell()->getOccurrencesUnder(rpBb) ) {
+      cdebug_log(145,0) << "| " << occurrence.getEntity() << endl;
+      Component* component = dynamic_cast<Component*>( occurrence.getEntity() );
+      if (not component) continue;
+
+      const Layer* blockageLayer = component->getLayer();
+      Box          blockageBb    = component->getBoundingBox();
+      cdebug_log(145,0) << "  Mask: " << blockageLayer->getMask() << endl;
+      if (    blockageLayer->isBlockage()
+         and (blockageLayer->getMask() == rpMask)) {
+        occurrence.getPath().getTransformation().applyOn( blockageBb );
+        cdebug_log(145,0) << "  Bb: " << blockageBb << endl;
+        if (blockageBb.contains(rpBb)) {
+          cdebug_log(145,-1) << "* Inside " << component << endl;
+          return true;
+        }
+        if (blockageBb.intersect(rpBb)) {
+          cerr << Warning( "NetBuilder::isInsideBlockage(): RoutingPad is only partially inside blocked area.\n"
+                           "           * %s\n"
+                           "           * %s"
+                         , getString(rp).c_str()
+                         , getString(component).c_str()
+                         ) << endl; 
+          cdebug_log(145,-1) << "* Partially inside " << component << endl;
+          return true;
+        }
+      }
+    }
+    cdebug_tabw(145,-1);
+    return false;
+  }
+  
 
   void  NetBuilder::construct ()
   {
@@ -589,6 +666,8 @@ namespace Anabatic {
                       << "+"  << (int)_connexity.fields.Pad
                       << "] " << _gcell
                       << endl;
+    cdebug_log(145,0) << "getSourceFlags():" << getSourceFlags()
+                      << " getFlags():" << getFlags() << endl;
 
     if (not isTwoMetals()) {
       _southWestContact = NULL;
@@ -2374,6 +2453,7 @@ namespace Anabatic {
 
     Hook*        sourceHook    = NULL;
     AutoContact* sourceContact = NULL;
+    uint64_t     sourceFlags   = NoFlags;
     RoutingPads  routingPads   = net->getRoutingPads();
     size_t       degree        = routingPads.getSize();
 
@@ -2412,7 +2492,7 @@ namespace Anabatic {
           ++connecteds;
           segmentFound = true;
 
-          setStartHook( anabatic, hook, NULL );
+          setStartHook( anabatic, hook, NULL, NoFlags );
           if (getStateG() == 1) {
             if ( (lowestGCell == NULL) or (*getGCell() < *lowestGCell) ) {
               cdebug_log(145,0) << "Potential starting GCell " << getGCell() << endl;
@@ -2440,9 +2520,9 @@ namespace Anabatic {
     }
     cdebug_tabw(145,-1);
 
-    if (startHook == NULL) { setStartHook(anabatic,NULL,NULL).singleGCell(anabatic,net); cdebug_tabw(145,-1); return; }
+    if (startHook == NULL) { setStartHook(anabatic,NULL,NULL,NoFlags).singleGCell(anabatic,net); cdebug_tabw(145,-1); return; }
 
-    setStartHook( anabatic, startHook, NULL );
+    setStartHook( anabatic, startHook, NULL, NoFlags );
     cdebug_log(145,0) << endl;
     cdebug_log(145,0) << "--------~~~~=={o}==~~~~--------" << endl;
     cdebug_log(145,0) << endl;
@@ -2451,18 +2531,21 @@ namespace Anabatic {
 
     sourceHook    = _forks.getFrom   ();
     sourceContact = _forks.getContact();
+    sourceFlags   = _forks.getFlags  ();
     _forks.pop();
 
     while ( sourceHook ) {
-      setStartHook( anabatic, sourceHook, sourceContact );
+      setStartHook( anabatic, sourceHook, sourceContact, sourceFlags );
       construct();
 
-      sourceHook    = _forks.getFrom();
+      sourceHook    = _forks.getFrom   ();
       sourceContact = _forks.getContact();
+      sourceFlags   = _forks.getFlags  ();
       _forks.pop();
 
-      cdebug_log(145,0) << "Popping (from) " << sourceHook << endl;
-      cdebug_log(145,0) << "Popping (to)   " << sourceContact << endl;
+      cdebug_log(145,0) << "Popping (from)  " << sourceHook << endl;
+      cdebug_log(145,0) << "Popping (to)    " << sourceContact << endl;
+      cdebug_log(145,0) << "Popping (flags) " << sourceFlags << endl;
     }
 
     Session::revalidate();
@@ -2473,10 +2556,11 @@ namespace Anabatic {
     for ( ; iover != overconstraineds.end() ; ++iover ) {
       (*iover)->makeDogLeg( (*iover)->getAutoSource()->getGCell(), true );
     }
+    Session::revalidate();
 #endif
 
-    Session::revalidate();
     fixSegments();
+    Session::revalidate();
     cdebug_tabw(145,-1);
 
   //DebugSession::close();

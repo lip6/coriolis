@@ -389,14 +389,14 @@ namespace Katana {
 
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
-    for ( index-- ; index != npos ; index-- ) {
-      cdebug_log(140,0) << index << ":" << _segments[index] << endl;
-
-      if (_segments[index]->getNet() == net) continue;
-      return _segments[index];
-    }
+    cdebug_log(155,0) << "Track::getPrevious() " << index << " for " << net << endl;
+    if ((index == npos) or (index == 0)) return NULL;
+    do {
+      --index;
+      cdebug_log(155,0) << "| " << index << ":" << _segments[index] << endl;
+      if (_segments[index]->getNet() != net) return _segments[index];
+    } while ( index != 0 );
     index = npos;
-
     return NULL;
   }
 
@@ -682,7 +682,7 @@ namespace Katana {
     DbU::Unit minFree = _min;
     cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " (track min)" << endl;
 
-    if (not (state & BeginIsTrackMin) ) {
+    if (not (state & BeginIsTrackMin) and (begin > 0)) {
       if (_segments[begin]->getNet() == net)
         getPrevious( begin, net );
 

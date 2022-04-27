@@ -215,6 +215,7 @@ namespace Anabatic {
   {
     cdebug_log(145,1) << "Anabatic::Session::_revalidateTopology()" << endl;
 
+    _anabatic->disableCanonize();
     for ( Net* net : _netInvalidateds ) {
       cdebug_log(145,0) << "Anabatic::Session::_revalidateTopology(Net*)" << net << endl;
       _anabatic->updateNetTopology    ( net );
@@ -222,6 +223,7 @@ namespace Anabatic {
       _anabatic->_computeNetOptimals  ( net );
     //_anabatic->_computeNetTerminals ( net );
     }
+    _anabatic->enableCanonize();
     _canonize ();
 
     AutoSegment* segment = NULL;

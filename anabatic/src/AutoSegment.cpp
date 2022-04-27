@@ -770,16 +770,16 @@ namespace Anabatic {
       if      (getFlags() & SegSourceTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegSourceBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-      cdebug_log(150,0) << "getExtensionCap(): (source) flags:" << getFlags()
-                        << " VIA cap:" << DbU::getValueString(cap)
-                        << " t:" << (getFlags() & SegSourceBottom)
-                        << " b:" << (getFlags() & SegSourceTop)
-                        << endl;
+      // cdebug_log(150,0) << "getExtensionCap(): (source) flags:" << getFlags()
+      //                   << " VIA cap:" << DbU::getValueString(cap)
+      //                   << " t:" << (getFlags() & SegSourceBottom)
+      //                   << " b:" << (getFlags() & SegSourceTop)
+      //                   << endl;
       if (not (flags & Flags::NoSegExt)) {
-        cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
+        // cdebug_log(150,0) << "duSource=" << DbU::getValueString(getDuSource()) << endl;
         if (-getDuSource() > cap) {
           cap = -getDuSource();
-          cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
+          // cdebug_log(150,0) << "-> Custom cap (-duSource):" << DbU::getValueString(cap) << endl;
         }
       }
     }
@@ -788,16 +788,16 @@ namespace Anabatic {
       if      (getFlags() & SegTargetTop   ) cap = getViaToTopCap   (depth);
       else if (getFlags() & SegTargetBottom) cap = getViaToBottomCap(depth);
       else                                   cap = getViaToSameCap  (depth);
-      cdebug_log(150,0) << "getExtensionCap(): (target) flags:" << getFlags()
-                        << " VIA cap:" << DbU::getValueString(cap)
-                        << " t:" << (getFlags() & SegSourceBottom)
-                        << " b:" << (getFlags() & SegSourceTop)
-                        << endl;
+      // cdebug_log(150,0) << "getExtensionCap(): (target) flags:" << getFlags()
+      //                   << " VIA cap:" << DbU::getValueString(cap)
+      //                   << " t:" << (getFlags() & SegSourceBottom)
+      //                   << " b:" << (getFlags() & SegSourceTop)
+      //                   << endl;
       if (not (flags & Flags::NoSegExt)) {
-        cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
+        // cdebug_log(150,0) << "duTarget=" << DbU::getValueString(getDuTarget()) << endl;
         if (getDuTarget() > cap) {
           cap = getDuTarget();
-          cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
+          // cdebug_log(150,0) << "-> Custom cap (+duTarget):" << DbU::getValueString(cap) << endl;
         }
       }
     }
@@ -1455,6 +1455,7 @@ namespace Anabatic {
   AutoSegment* AutoSegment::canonize ( Flags flags )
   {
     cdebug_log(149,0) << "canonize() - " << this << endl;
+    if (Session::getAnabatic()->isCanonizeDisabled()) return this;
 
     // if (isCanonical() and isGlobal()) {
     //   cdebug_log(149,0) << "* " << this << " canonical" << endl;
