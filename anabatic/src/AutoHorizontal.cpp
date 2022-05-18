@@ -14,18 +14,19 @@
 // +-----------------------------------------------------------------+
 
 
-#include  <algorithm>
-#include  "hurricane/Bug.h"
-#include  "hurricane/Error.h"
-#include  "hurricane/DebugSession.h"
-#include  "hurricane/ViaLayer.h"
-#include  "hurricane/RoutingPad.h"
-#include  "crlcore/RoutingGauge.h"
-#include  "anabatic/Configuration.h"
-#include  "anabatic/AutoContactTerminal.h"
-#include  "anabatic/AutoContactTurn.h"
-#include  "anabatic/AutoHorizontal.h"
-#include  "anabatic/AutoVertical.h"
+#include <algorithm>
+#include "hurricane/Bug.h"
+#include "hurricane/Error.h"
+#include "hurricane/Warning.h"
+#include "hurricane/DebugSession.h"
+#include "hurricane/ViaLayer.h"
+#include "hurricane/RoutingPad.h"
+#include "crlcore/RoutingGauge.h"
+#include "anabatic/Configuration.h"
+#include "anabatic/AutoContactTerminal.h"
+#include "anabatic/AutoContactTurn.h"
+#include "anabatic/AutoHorizontal.h"
+#include "anabatic/AutoVertical.h"
 
 
 namespace Anabatic {
@@ -33,8 +34,10 @@ namespace Anabatic {
 
   using std::min;
   using std::max;
-  using Hurricane::Error;
+  using std::abs;
   using Hurricane::Bug;
+  using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::DebugSession;
   using Hurricane::ViaLayer;
   using Hurricane::RoutingPad;
@@ -52,8 +55,6 @@ namespace Anabatic {
   DbU::Unit   AutoHorizontal::getDuSource   () const { return _horizontal->getDxSource(); }
   DbU::Unit   AutoHorizontal::getDuTarget   () const { return _horizontal->getDxTarget(); }
   Interval    AutoHorizontal::getSpanU      () const { return Interval(_horizontal->getSourceX(),_horizontal->getTargetX()); }
-  void        AutoHorizontal::setDuSource   ( DbU::Unit du ) { _horizontal->setDxSource(du); }
-  void        AutoHorizontal::setDuTarget   ( DbU::Unit du ) { _horizontal->setDxTarget(du); }
   string      AutoHorizontal::_getTypeName  () const { return "AutoHorizontal"; }
 
 
@@ -127,6 +128,30 @@ namespace Anabatic {
       cdebug_log(149,0) << "~AutoHorizontal() - " << endl;
       _horizontal->destroy ();
     }
+  }
+
+
+  void  AutoHorizontal::setDuSource ( DbU::Unit du )
+  {
+    _horizontal->setDxSource(du);
+    if (abs(du) > getPitch())
+      cerr << Warning( "AutoHorizontal::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , DbU::getValueString(getPitch()).c_str()
+                     , getString(this).c_str() ) << endl;
+  }
+
+  
+  void  AutoHorizontal::setDuTarget ( DbU::Unit du )
+  {
+    _horizontal->setDxTarget(du);
+    if (abs(du) > getPitch())
+      cerr << Warning( "AutoHorizontal::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , DbU::getValueString(getPitch()).c_str()
+                     , getString(this).c_str() ) << endl;
   }
 
 
@@ -487,17 +512,9 @@ namespace Anabatic {
   void  AutoHorizontal::updateOrient ()
   {
     if (_horizontal->getTarget()->getX() < _horizontal->getSource()->getX()) {
-      cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
-      if (isAtMinArea()) {
-        DbU::Unit sourceX = _horizontal->getSourceX();
-        DbU::Unit targetX = _horizontal->getTargetX();
-        _horizontal->invert();
-        setDuSource( sourceX - getSourceU() );
-        setDuTarget( targetX - getTargetU() );
-      } else {
-        _horizontal->invert();
-      }
-      cdebug_log(145,0) << "updateOrient() " << this << " (after S/T swap)" << endl;
+      cdebug_log(149,1) << "updateOrient() " << this << " (before S/T swap)" << endl;
+      _horizontal->invert();
+      cdebug_log(149,0) << "updateOrient() " << this << " (after S/T swap)" << endl;
 
       uint64_t spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );
@@ -515,6 +532,7 @@ namespace Anabatic {
       unsetFlags( SegStrongTerminal );
       if (terminalFlags & SegSourceTerminal) setFlags( SegTargetTerminal );
       if (terminalFlags & SegTargetTerminal) setFlags( SegSourceTerminal );
+      cdebug_tabw(149,-1);
     }
   }
 

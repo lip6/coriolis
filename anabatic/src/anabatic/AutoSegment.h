@@ -216,7 +216,6 @@ namespace Anabatic {
       inline         bool                isSpinBottom               () const;
       inline         bool                isSpinTopOrBottom          () const;
       inline         bool                isReduced                  () const;
-                     bool                isUnderMinLength           () const;
       inline         bool                isStrap                    () const;
       inline         bool                isDogleg                   () const;
       inline         bool                isUnbound                  () const;
@@ -227,7 +226,7 @@ namespace Anabatic {
       inline         bool                isUnsetAxis                () const;
       inline         bool                isSlackened                () const;
       inline         bool                isUserDefined              () const;
-                     bool                isMiddleStack              () const;
+                     bool                isNearMinArea              () const;
                      bool                isReduceCandidate          () const;
                      bool                isUTurn                    () const;
       inline         bool                isAnalog                   () const;
@@ -340,8 +339,8 @@ namespace Anabatic {
                      bool                bloatStackedStrap          ();
                      bool                reduce                     ( Flags flags=Flags::WithPerpands );
                      bool                raise                      ();
-                     bool                expandToMinLength          ( Interval );
-                     bool                unexpandToMinLength        ();
+                     void                expandToMinLength          ( Interval );
+                     void                unexpandToMinLength        ();
     // Canonical Modifiers.                                            
                      AutoSegment*        canonize                   ( Flags flags=Flags::NoFlags );
              virtual void                invalidate                 ( Flags flags=Flags::Propagate );

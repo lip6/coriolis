@@ -100,6 +100,8 @@ namespace Katana {
                                        getPostEventCb             ();
       inline  NegociateWindow*         getNegociateWindow         ();
       inline  size_t                   getRoutingPlanesSize       () const;
+      inline  const std::vector<RoutingPlane*>&
+                                       getRoutingPlanes           () const;
               RoutingPlane*            getRoutingPlaneByIndex     ( size_t index ) const;
               RoutingPlane*            getRoutingPlaneByLayer     ( const Layer* ) const;
               Track*                   getTrackByPosition         ( const Layer*, DbU::Unit axis, uint32_t mode=Constant::Nearest ) const;
@@ -216,6 +218,8 @@ namespace Katana {
   inline  Block*                        KatanaEngine::getBlock                ( size_t i ) const { return (i < _blocks.size()) ? _blocks[i] : NULL; }
   inline  NegociateWindow*              KatanaEngine::getNegociateWindow      () { return _negociateWindow; }
   inline  size_t                        KatanaEngine::getRoutingPlanesSize    () const { return _routingPlanes.size(); }
+  inline  const std::vector<RoutingPlane*>&
+                                        KatanaEngine::getRoutingPlanes        () const { return _routingPlanes; }
   inline  void                          KatanaEngine::setViewer               ( CellViewer* viewer ) { _viewer=viewer; }
   inline  void                          KatanaEngine::setStage                ( uint32_t stage ) { _stage=stage; }
   inline  void                          KatanaEngine::setEventLimit           ( uint64_t limit ) { _configuration->setEventsLimit(limit); }

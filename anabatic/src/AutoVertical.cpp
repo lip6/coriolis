@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include "hurricane/Bug.h"
+#include "hurricane/Warning.h"
 #include "hurricane/ViaLayer.h"
 #include "hurricane/Vertical.h"
 #include "crlcore/RoutingGauge.h"
@@ -29,8 +30,10 @@ namespace Anabatic {
 
   using std::min;
   using std::max;
-  using Hurricane::Error;
+  using std::abs;
   using Hurricane::Bug;
+  using Hurricane::Error;
+  using Hurricane::Warning;
   using Hurricane::ViaLayer;
 
 
@@ -46,8 +49,6 @@ namespace Anabatic {
   DbU::Unit  AutoVertical::getDuSource  () const { return _vertical->getDySource(); }
   DbU::Unit  AutoVertical::getDuTarget  () const { return _vertical->getDyTarget(); }
   Interval   AutoVertical::getSpanU     () const { return Interval(_vertical->getSourceY(),_vertical->getTargetY()); }
-  void       AutoVertical::setDuSource  ( DbU::Unit du ) { _vertical->setDySource(du); }
-  void       AutoVertical::setDuTarget  ( DbU::Unit du ) { _vertical->setDyTarget(du); }
   string     AutoVertical::_getTypeName () const { return "AutoVertical"; }
 
 
@@ -114,6 +115,30 @@ namespace Anabatic {
       cdebug_log(149,0) << "~AutoVertical() - " << endl;
       _vertical->destroy ();
     }
+  }
+
+
+  void  AutoVertical::setDuSource ( DbU::Unit du )
+  {
+    _vertical->setDySource(du);
+    if (abs(du) > getPitch())
+      cerr << Warning( "AutoVertical::setDuSource(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , DbU::getValueString(getPitch()).c_str()
+                     , getString(this).c_str() ) << endl;
+  }
+
+  
+  void  AutoVertical::setDuTarget ( DbU::Unit du )
+  {
+    _vertical->setDyTarget(du);
+    if (abs(du) > getPitch())
+      cerr << Warning( "AutoVertical::setDuTarget(): Suspiciously big du=%s (should not exceed routing pitch %s)\n"
+                       "          On %s"
+                     , DbU::getValueString(du).c_str()
+                     , DbU::getValueString(getPitch()).c_str()
+                     , getString(this).c_str() ) << endl;
   }
 
 
@@ -382,10 +407,6 @@ namespace Anabatic {
     if (_vertical->getTargetY() < _vertical->getSourceY()) {
       cdebug_log(145,0) << "updateOrient() " << this << " (before S/T swap)" << endl;
       _vertical->invert();
-      DbU::Unit duSource = getDuSource();
-      DbU::Unit duTarget = getDuTarget();
-      setDuSource( -duTarget );
-      setDuTarget( -duSource );
 
       unsigned int spinFlags = _flags & SegDepthSpin;
       unsetFlags( SegDepthSpin );

@@ -478,6 +478,8 @@ namespace Katana {
 
   void  TrackSegment::revalidate ()
   {
+    DebugSession::open( getNet(), 159, 160 );
+
     unsetFlags( TElemCreated ); 
     cdebug_log(159,0) << "revalidate() - " << this << endl;
 
@@ -501,6 +503,8 @@ namespace Katana {
       }
     }
     unsetFlags( TElemInvalidated );
+
+    DebugSession::close();
   }
 
 

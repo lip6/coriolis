@@ -790,7 +790,12 @@ namespace Katana {
     if (flags & Flags::PreRoutedStage) {
       _katana->setFixedPreRouted();
     }
+    Session::revalidate();
 
+    for ( RoutingPlane* plane : _katana->getRoutingPlanes() ) {
+      for ( Track* track : plane->getTracks() )
+        track->repair();
+    }
     Session::revalidate();
     Session::get()->isEmpty();
 
