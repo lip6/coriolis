@@ -428,8 +428,8 @@ namespace Katana {
       return;
     }
 
-    if (position < _min) {
-      cerr << Warning( " Position %s inferior to the lower bound of %s. Returning npos."
+    if (position < _min - getLayerGauge()->getPitch()*2) {
+      cerr << Warning( " Position %s too far outside the lower bound of %s. Returning npos."
                      , DbU::getValueString(position).c_str()
                      , getString(this).c_str() ) << endl;
       state = BeforeFirstElement;
@@ -437,8 +437,8 @@ namespace Katana {
       return;
     }
 
-    if (position > _max) {
-      cerr << Warning( " Position %s superior to the upper bound of %s. Returning npos."
+    if (position > _max + getLayerGauge()->getPitch()*2) {
+      cerr << Warning( " Position %s is too far outside the upper bound of %s. Returning npos."
                      , DbU::getValueString(position).c_str()
                      , getString(this).c_str() ) << endl;
       state = AfterLastElement;
