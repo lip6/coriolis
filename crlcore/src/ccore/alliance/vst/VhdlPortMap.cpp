@@ -63,7 +63,7 @@ namespace Vhdl {
         Bit* bit = BitExtension::get( net );
         if (bit) return bit;
 
-        cerr << Error( "PortMap::_lookup() VHDL extension missing on \"%s\"."
+        cerr << Error( "PortMap::_lookup() VHDL extension missing on \"%s\".\n"
                        "        In cell \"%s\"."
                      , getString(net).c_str()
                      , getString(net->getCell()->getName()).c_str()

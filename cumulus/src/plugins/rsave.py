@@ -29,6 +29,9 @@ except Exception as e:
     sys.exit(2)
 
 
+saveds = set()
+
+
 def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False ):
     """
     Write back layout to disk if everything has gone fine.
@@ -39,6 +42,12 @@ def rsave ( cell, views=CRL.Catalog.State.Physical, depth=0, enableSpice=False )
     of abutment box for placement, the netlist view must also
     be saved.
     """
+    global saveds
+
+    if depth == 0: saveds.clear()
+    if cell in saveds: return
+    saveds.add( cell )
+    
     framework = CRL.AllianceFramework.get()
     if depth == 0: print( '  o  Recursive Save-Cell.' )
     if cell.isUniquified():             views |= CRL.Catalog.State.Logical
