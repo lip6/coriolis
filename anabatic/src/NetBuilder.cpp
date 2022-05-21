@@ -505,6 +505,7 @@ namespace Anabatic {
                 continue;
               }
 
+              bool   isPin   = (dynamic_cast<Pin*>( rp->getOccurrence().getEntity() ) != nullptr);
               size_t rpDepth = 0;
               for ( size_t depth=0 ; depth < Session::getRoutingGauge()->getDepth() ; ++depth ) {
                 if (layer->getMask() == Session::getRoutingLayer(depth)->getMask()) {
@@ -512,7 +513,8 @@ namespace Anabatic {
                   break;
                 }
               }
-              if ((rpDepth > 0) and not Session::getRoutingGauge()->isSuperPitched()) {
+              if ((rpDepth > 0) and not isPin
+                                and not Session::getRoutingGauge()->isSuperPitched()) {
                 _flags |= ToUpperRouting;
                 cdebug_log(145,0) << "ToUpperRouting set, getFlags():" << getFlags() << endl;
               }
@@ -530,7 +532,7 @@ namespace Anabatic {
               //continue;
               }
 
-              if (dynamic_cast<Pin*>(rp->getOccurrence().getEntity())) _connexity.fields.Pin++; 
+              if (isPin) _connexity.fields.Pin++; 
             }
 
             cdebug_log(145,0) << "| Component to connect: " << anchor << endl;
