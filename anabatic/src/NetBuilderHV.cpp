@@ -182,6 +182,7 @@ namespace Anabatic {
   // Non-M1 terminal or punctual M1 protections.
     if (isInsideBlockage(gcell,rp)) flags |= NoProtect;
     if ( ((rpDepth != 0) or (sourcePosition == targetPosition)) and not (flags & NoProtect) ) {
+      if (rpDepth == 0) rpDepth = 1;
       map<Component*,AutoSegment*>::iterator irp = getRpLookup().find( rp );
       if (irp == getRpLookup().end()) {
         AutoContact* sourceProtect = AutoContactTerminal::create( sourceGCell
@@ -199,7 +200,7 @@ namespace Anabatic {
         sourceProtect->setFlags( CntFixed );
         targetProtect->setFlags( CntFixed );
 
-        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction );
+        AutoSegment* segment = AutoSegment::create( sourceProtect, targetProtect, direction, rpDepth );
         segment->setFlags( AutoSegment::SegFixed );
 
         getRpLookup().insert( make_pair(rp,segment) );
