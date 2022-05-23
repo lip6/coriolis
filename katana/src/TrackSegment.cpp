@@ -510,6 +510,10 @@ namespace Katana {
 
   void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
   {
+    if (_data) {
+      if (axis == getAxis()) _data->incSameRipup();
+      else _data->resetSameRipup();
+    }
     _base->setAxis( axis, flags );
     invalidate();
   }

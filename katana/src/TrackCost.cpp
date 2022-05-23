@@ -110,17 +110,18 @@ namespace Katana {
 
   bool  TrackCost::Compare::operator() ( const TrackCost* lhs, const TrackCost* rhs )
   {
-    if ( lhs->isInfinite    () xor rhs->isInfinite    () ) return rhs->isInfinite();
-    if ( lhs->isAtRipupLimit() xor rhs->isAtRipupLimit() ) return rhs->isAtRipupLimit();
+    if (lhs->isInfinite    () xor rhs->isInfinite    ()) return rhs->isInfinite();
+    if (lhs->isAtRipupLimit() xor rhs->isAtRipupLimit()) return rhs->isAtRipupLimit();
+    if (lhs->isBlacklisted()  xor rhs->isBlacklisted ()) return rhs->isBlacklisted();
 
     if (   (_flags & TrackCost::DiscardGlobals)
        and (lhs->isOverlapGlobal() xor rhs->isOverlapGlobal()) )
       return rhs->isOverlapGlobal();
 
-    if ( lhs->isHardOverlap() xor rhs->isHardOverlap() ) return rhs->isHardOverlap();
+    if (lhs->isHardOverlap() xor rhs->isHardOverlap()) return rhs->isHardOverlap();
 
-    if ( lhs->_ripupCount + (int)Session::getRipupCost() < rhs->_ripupCount ) return true;
-    if ( lhs->_ripupCount > (int)Session::getRipupCost() + rhs->_ripupCount ) return false;
+    if (lhs->_ripupCount + (int)Session::getRipupCost() < rhs->_ripupCount) return true;
+    if (lhs->_ripupCount > (int)Session::getRipupCost() + rhs->_ripupCount) return false;
 
   //int lhsRipupCost = (lhs->_dataState<<2) + lhs->_ripupCount;
   //int rhsRipupCost = (rhs->_dataState<<2) + rhs->_ripupCount;
@@ -132,7 +133,7 @@ namespace Katana {
   //  if ( lhs->_longuestOverlap > rhs->_longuestOverlap ) return false;
   //}
 
-    if ( lhs->isOverlap() xor rhs->isOverlap() ) return rhs->isOverlap();
+    if (lhs->isOverlap() xor rhs->isOverlap()) return rhs->isOverlap();
 
     if (not (_flags & TrackCost::IgnoreTerminals)) {
       if ( lhs->_terminals < rhs->_terminals ) return true;
@@ -166,15 +167,15 @@ namespace Katana {
 #endif
 
     if ( not (_flags & TrackCost::IgnoreAxisWeight) ) {
-      if ( lhs->_axisWeight < rhs->_axisWeight ) return true;
-      if ( lhs->_axisWeight > rhs->_axisWeight ) return false;
+      if (lhs->_axisWeight < rhs->_axisWeight) return true;
+      if (lhs->_axisWeight > rhs->_axisWeight) return false;
     }
 
-    if ( lhs->_deltaPerpand < rhs->_deltaPerpand ) return true;
-    if ( lhs->_deltaPerpand > rhs->_deltaPerpand ) return false;
+    if (lhs->_deltaPerpand < rhs->_deltaPerpand) return true;
+    if (lhs->_deltaPerpand > rhs->_deltaPerpand) return false;
 
-    if ( lhs->_distanceToFixed > rhs->_distanceToFixed ) return true;
-    if ( lhs->_distanceToFixed < rhs->_distanceToFixed ) return false;
+    if (lhs->_distanceToFixed > rhs->_distanceToFixed) return true;
+    if (lhs->_distanceToFixed < rhs->_distanceToFixed) return false;
 
     return lhs->getTrack(0)->getAxis() < rhs->getTrack(0)->getAxis();
   }

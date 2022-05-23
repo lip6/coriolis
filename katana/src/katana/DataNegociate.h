@@ -75,6 +75,7 @@ namespace Katana {
       inline uint32_t                     getState              () const;
       inline uint32_t                     getStateCount         () const;
       inline uint32_t                     getRipupCount         () const;
+      inline uint32_t                     getSameRipup          () const;
       inline uint32_t                     getStateAndRipupCount () const;
              DbU::Unit                    getWiringDelta        ( DbU::Unit axis ) const;
       inline const vector<TrackElement*>& getPerpandiculars     () const;
@@ -87,6 +88,8 @@ namespace Katana {
       inline void                         decRipupCount         ();
       inline void                         resetRipupCount       ();
       inline void                         resetStateCount       ();
+      inline void                         resetSameRipup        ();
+      inline void                         incSameRipup          ();
              void                         update                ();
       static string                       getStateString        ( uint32_t state, unsigned int stateCount  );
       static string                       getStateString        ( DataNegociate* );
@@ -103,6 +106,7 @@ namespace Katana {
       unsigned int          _stateCount :  5;
       unsigned int          _terminals  :  5;
       unsigned int          _ripupCount : 16;
+      unsigned int          _sameRipup  :  8;
       DbU::Unit             _leftMinExtend;
       DbU::Unit             _rightMinExtend;
       vector<DbU::Unit>     _attractors;
@@ -124,6 +128,7 @@ namespace Katana {
   inline uint32_t                     DataNegociate::getState             () const { return _state; }
   inline uint32_t                     DataNegociate::getTerminals         () const { return _terminals; }
   inline uint32_t                     DataNegociate::getRipupCount        () const { return _ripupCount; }
+  inline uint32_t                     DataNegociate::getSameRipup         () const { return _sameRipup; }
   inline DbU::Unit                    DataNegociate::getLeftMinExtend     () const { return _leftMinExtend; }
   inline DbU::Unit                    DataNegociate::getRightMinExtend    () const { return _rightMinExtend; }
   inline Net*                         DataNegociate::getNet               () const { return _net; }
@@ -137,6 +142,8 @@ namespace Katana {
   inline void                         DataNegociate::incRipupCount        () { _ripupCount++; }
   inline void                         DataNegociate::decRipupCount        () { if (_ripupCount) _ripupCount--; }
   inline void                         DataNegociate::resetRipupCount      () { _ripupCount = 0; }
+  inline void                         DataNegociate::incSameRipup         () { _sameRipup++; }
+  inline void                         DataNegociate::resetSameRipup       () { _sameRipup = 0; }
   inline string                       DataNegociate::_getTypeName         () const { return "DataNegociate"; }
 
   inline void  DataNegociate::setState ( uint32_t state, Flags flags )

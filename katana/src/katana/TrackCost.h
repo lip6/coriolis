@@ -61,6 +61,7 @@ namespace Katana {
                  , AtRipupLimit       = (1 << 18)
                  , IgnoreTerminals    = (1 << 19)
                  , IgnoreShort        = (1 << 20)
+                 , Blacklisted        = (1 << 21)
                  , MergeMask          = ForGlobal     |Blockage|Fixed       |Infinite
                                        |HardOverlap   |Overlap |RightOverlap|LeftOverlap|OverlapGlobal
                                        |GlobalEnclosed         |AtRipupLimit
@@ -102,6 +103,7 @@ namespace Katana {
       inline       bool          isOverlapGlobal     () const;
       inline       bool          isGlobalEnclosed    () const;
       inline       bool          isAtRipupLimit      () const;
+      inline       bool          isBlacklisted       () const;
                    bool          isFree              () const;
       inline       bool          isSymmetric         () const;
       inline       bool          isWide              () const;
@@ -148,6 +150,7 @@ namespace Katana {
       inline       void          setOverlapGlobal    ();
       inline       void          setGlobalEnclosed   ();
       inline       void          setAtRipupLimit     ();
+      inline       void          setBlacklisted      ();
       inline       void          incTerminals        ( uint32_t );
       inline       void          incDelta            ( DbU::Unit );
       inline       void          incDeltaPerpand     ( DbU::Unit );
@@ -208,6 +211,7 @@ namespace Katana {
   inline       bool          TrackCost::isOverlapGlobal     () const { return _flags & OverlapGlobal; }
   inline       bool          TrackCost::isGlobalEnclosed    () const { return _flags & GlobalEnclosed; }
   inline       bool          TrackCost::isAtRipupLimit      () const { return _flags & AtRipupLimit; }
+  inline       bool          TrackCost::isBlacklisted       () const { return _flags & Blacklisted; }
   inline       bool          TrackCost::isSymmetric         () const { return _flags & Symmetric; }
   inline       bool          TrackCost::isWide              () const { return (_span > 1); }
   inline       bool          TrackCost::doIgnoreShort       () const { return _flags & IgnoreShort; }
@@ -245,6 +249,7 @@ namespace Katana {
   inline       void          TrackCost::setOverlapGlobal    () { _flags |= OverlapGlobal; }
   inline       void          TrackCost::setGlobalEnclosed   () { _flags |= GlobalEnclosed; }
   inline       void          TrackCost::setAtRipupLimit     () { _flags |= AtRipupLimit; }
+  inline       void          TrackCost::setBlacklisted      () { _flags |= Blacklisted; }
   inline       void          TrackCost::incTerminals        ( uint32_t terminals    ) { _terminals    += terminals; }
   inline       void          TrackCost::incDelta            ( DbU::Unit delta )       { _delta        += delta; }
   inline       void          TrackCost::incDeltaPerpand     ( DbU::Unit delta )       { _deltaPerpand += delta; }

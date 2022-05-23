@@ -52,6 +52,7 @@ namespace Katana {
     , _stateCount       (1)
     , _terminals        (0)
     , _ripupCount       (0)
+    , _sameRipup        (0)
     , _leftMinExtend    (DbU::Max)
     , _rightMinExtend   (DbU::Min)
     , _attractors       ()
