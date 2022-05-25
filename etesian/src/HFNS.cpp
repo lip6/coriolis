@@ -38,6 +38,7 @@ namespace Etesian {
   using Hurricane::tab;
   using Hurricane::Warning;
   using Hurricane::Error;
+  using Hurricane::DebugSession;
   using Hurricane::Path;
   using Hurricane::Transformation;
   using Hurricane::DataBase;
@@ -249,6 +250,7 @@ namespace Etesian {
 
   void  Cluster::splitNet ()
   {
+    cdebug_log(123,0) << "Cluster::splitNet()" << endl;
     createOutput();
     for ( Cluster* cluster : _clusters ) {
       cluster->createInput( _driverNet );
@@ -291,10 +293,10 @@ namespace Etesian {
       virtual void         splitNet       ();
               void         rpartition     ();
               uint32_t     build          ();
+              bool         rcleanupNet    ( Net* );
               string       _getTypeName   () const;
     private:
       SubNetNames  _subNetNames;
-      bool         _isDeepNet;
       Net*         _rootNet;
       RoutingPad*  _rpDriver;
       vector< vector<Cluster*> >  _clustersStack;
@@ -304,7 +306,6 @@ namespace Etesian {
   BufferTree::BufferTree ( EtesianEngine* etesian, Net* rootNet )
     : Cluster(etesian)
     , _subNetNames  ()
-    , _isDeepNet    (true)
     , _rootNet      (rootNet)
     , _rpDriver     (NULL)
     , _clustersStack()
@@ -331,14 +332,18 @@ namespace Etesian {
 
   void  BufferTree::splitNet ()
   {
+    cdebug_log(123,0) << "BufferTree::splitNet()" << endl;
     if (not _rpDriver)
       throw Error( "BufferTree::splitNet(): Missing driver on %s.", getString(_rootNet).c_str() );
 
+    Net* origDriver = _rootNet;
+
     Cluster::splitNet();
-    if (_isDeepNet) {
+    if (_rootNet->isDeepNet()) {
       Cell*      topCell     = getEtesian()->getCell();
       Name       topNetName  = _rootNet->getName();
       Occurrence driverRpOcc = _rpDriver->getPlugOccurrence();
+      origDriver = dynamic_cast<Net*>( static_cast<DeepNet*>( _rootNet )->getRootNetOccurrence().getEntity() );
       _rootNet->destroy();
       _rootNet = Net::create( topCell, topNetName );
       Net* deepDriverNet = raddTransNet( _rootNet, driverRpOcc.getPath(), AS_DRIVER );
@@ -346,6 +351,7 @@ namespace Etesian {
       RoutingPad::create( _rootNet, driverRpOcc, RoutingPad::BiggestArea );
     }
     createInput( _rootNet );
+    rcleanupNet( origDriver );
   }
 
 
@@ -361,16 +367,15 @@ namespace Etesian {
     RoutingPad* rpPin = NULL;
     for ( RoutingPad* rp : _rootNet->getRoutingPads() ) {
       Occurrence rpOccurrence = rp->getPlugOccurrence();
-      if (rpOccurrence.getPath().isEmpty())
-        _isDeepNet = false;
       Pin* pin = dynamic_cast<Pin* >( rpOccurrence.getEntity() );
       if (pin) {
         if (not rpPin) {
           if (dynamic_cast<Pin* >( rpOccurrence.getEntity() )) {
+            cdebug_log(123,0) << "pin: " << rp << endl;
             rpPin = rp;
           }
         }
-        cdebug_log(123,0) << "Excluded: " << pin << endl;
+        cdebug_log(123,0) << "Excluded second pin: " << pin << endl;
         continue;
       }
       Plug* rpPlug = dynamic_cast<Plug*>( rpOccurrence.getEntity() );
@@ -383,6 +388,7 @@ namespace Etesian {
         cdebug_log(123,0) << "merge: " << _clustersStack[0].back()->getSize() << " " << rp << endl;
         _clustersStack[0].back()->merge( rp );
       } else {
+        cdebug_log(123,0) << "driver: " << rp << endl;
         _rpDriver = rp;
       }
     }
@@ -432,6 +438,8 @@ namespace Etesian {
 
   uint32_t  BufferTree::build ()
   {
+    DebugSession::open( _rootNet, 120, 130 );
+    cdebug_log(123,1) << "BufferTree::build() " << _rootNet << endl;
     uint32_t bufferCount = 0;
     rpartition();
     for ( vector<Cluster*>& clusters : _clustersStack ) {
@@ -440,7 +448,27 @@ namespace Etesian {
         ++bufferCount;
       }
     }
+    cdebug_tabw(123,-1);
+    DebugSession::close();
     return bufferCount;
+  }
+
+
+  bool  BufferTree::rcleanupNet ( Net* net )
+  {
+    if (net->getCell()->isTerminalNetlist() or net->getCell()->isTerminal())
+      return false;
+    vector<Plug*> plugs;
+    for ( Plug* plug : net->getPlugs() ) plugs.push_back( plug );
+    for ( Plug* plug : plugs ) {
+      rcleanupNet( plug->getMasterNet() );
+    }
+    if (net->getPlugs().getFirst() == nullptr) {
+      cdebug_log(123,0) << "BufferTree::rcleanupNet() " << net << " of " << net->getCell() << endl;
+      net->destroy();
+      return true;
+    }
+    return false;
   }
 
   
@@ -484,6 +512,7 @@ namespace Etesian {
       }
     }
 
+  //DebugSession::open( 120, 130 );
     UpdateSession::open();
     Go::disableAutoMaterialization();
     _bufferCount = 0;
@@ -508,6 +537,7 @@ namespace Etesian {
     // }
     Go::enableAutoMaterialization();
     UpdateSession::close();
+  //DebugSession::close();
 
     stopMeasures();
     printMeasures();
