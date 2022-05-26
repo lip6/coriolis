@@ -906,12 +906,12 @@ namespace Anabatic {
     sourceAxis = getSourceU();
     targetAxis = getTargetU();
 
-    if (not isNotAligned()) {
+  //if (not isNotAligned()) {
       for( AutoSegment* aligned : const_cast<AutoSegment*>(this)->getAligneds() ) {
         sourceAxis = std::min( sourceAxis, aligned->getSourceU() );
-        targetAxis = std::min( targetAxis, aligned->getTargetU() );
+        targetAxis = std::max( targetAxis, aligned->getTargetU() );
       }
-    }
+  //}
   }
 
 
