@@ -1186,19 +1186,18 @@ class IoPin ( object ):
         self.stem  = stem
         self.upos  = upos
         self.ustep = ustep
-        self.count = count
+        if isinstance(count,int):
+            self.count   = count
+            self.indexes = range(self.count)
+        else:
+            self.count   = len(count)
+            self.indexes = count
         if self.upos == 0 and not (self.flags & IoPin.A_MASK):
             raise ErrorMessage( 1, [ 'IoPin.__init__(): "upos" parameter cannot be zero, corners are forbidden.'
                                    , 'For net "{}"'.format(stem) ] )
         if self.count > 1 and (self.ustep == 0) and not (self.flags & IoPin.A_MASK):
             raise ErrorMessage( 1, [ 'IoPin.__init__(): "ustep" parameter cannot be zero when "count" more than 1.'
                                    , 'For net "{}"'.format(stem) ] )
-
-    @property
-    def indexes ( self ):
-        if isinstance(self.count,int):
-            return range(self.count)
-        return self.count
 
 #   def place ( self, block ):
 #       """

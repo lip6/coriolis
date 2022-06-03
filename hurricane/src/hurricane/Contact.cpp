@@ -287,13 +287,13 @@ void Contact::translate(const DbU::Unit& dx, const DbU::Unit& dy)
 void Contact::setLayer(const Layer* layer)
 // ***************************************
 {
-    if (!layer)
-        throw Error("Can't set layer : null layer");
+  if (not layer)
+    throw Error( "Contact::setLayer(): Invalid NULL layer on %s.", getString(this).c_str() );
 
-    if (layer != _layer) {
-        invalidate(false);
-        _layer = layer;
-    }
+  if (layer != _layer) {
+    invalidate( false );
+    _layer = layer;
+  }
 }
 
 void Contact::setWidth(DbU::Unit width)

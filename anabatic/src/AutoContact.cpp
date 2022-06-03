@@ -183,19 +183,26 @@ namespace Anabatic {
 
   void  AutoContact::getDepthSpan ( size_t& minDepth, size_t& maxDepth ) const
   {
+    cdebug_log(145,1) << "AutoContact::getDepthSpan() of " << this << endl;
     minDepth = (size_t)-1;
     maxDepth = 0;
 
     Component* anchor = getAnchor ();
     if (anchor) {
+      cdebug_log(145,0) << "* Anchor depth: "
+                        << Session::getRoutingGauge()->getLayerDepth(anchor->getLayer())<< endl;
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
       maxDepth = std::max( maxDepth, Session::getRoutingGauge()->getLayerDepth(anchor->getLayer()) );
     }
 
     for ( AutoSegment* segment : const_cast<AutoContact*>(this)->getAutoSegments() ) {
+      cdebug_log(145,0) << "* segment depth: "
+                        << Session::getRoutingGauge()->getLayerDepth(segment->getLayer())<< endl;
       minDepth = std::min( minDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
       maxDepth = std::max( maxDepth, Session::getRoutingGauge()->getLayerDepth(segment->getLayer()) );
     }
+
+    cdebug_tabw(145,-1);
   }
 
 

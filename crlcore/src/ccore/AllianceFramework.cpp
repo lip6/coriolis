@@ -825,7 +825,7 @@ namespace CRL {
 
   CellGauge* AllianceFramework::matchCellGauge ( DbU::Unit width, DbU::Unit height ) const
   {
-    for ( const auto item : _cellGauges ) {
+    for ( const auto& item : _cellGauges ) {
       CellGauge* cg       = item.second;
       DbU::Unit  hcount   = width  / cg->getSliceStep  ();
       DbU::Unit  hremains = width  % cg->getSliceStep  ();
@@ -842,7 +842,7 @@ namespace CRL {
 
   CellGauge* AllianceFramework::matchCellGaugeByHeight ( DbU::Unit height ) const
   {
-    for ( const auto item : _cellGauges ) {
+    for ( const auto& item : _cellGauges ) {
       CellGauge* cg       = item.second;
       DbU::Unit  vcount   = height / cg->getSliceHeight();
       DbU::Unit  vremains = height % cg->getSliceHeight();

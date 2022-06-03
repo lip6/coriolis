@@ -1343,6 +1343,26 @@ namespace Anabatic {
   }
 
 
+  void  GCell::postGlobalAnnotate ()
+  {
+    if (isInvalidated()) updateDensity();
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      RoutingLayerGauge* rlg = Session::getLayerGauge( depth );
+      if (rlg->getType() & Constant::PinOnly) continue;
+      if (_densities[depth] >= 0.9) {
+        if (depth+2 < _depth) {
+          Edge* edge = (rlg->getDirection() == Constant::Vertical) ? getNorthEdge()
+                                                                   : getEastEdge();
+          if (edge) {
+            edge->reserveCapacity( 2 );
+          }
+        }
+      }
+    }
+  }
+
+
   void  GCell::addBlockage ( size_t depth, DbU::Unit length )
   {
     if (depth >= _depth) return;
@@ -1371,6 +1391,7 @@ namespace Anabatic {
     if (found) {
       cdebug_log(149,0) << "remove " << ac << " from " << this << endl;
       _contacts.pop_back();
+      _flags |= Flags::Invalidated;
     } else {
       cerr << Bug("%p:%s do not belong to %s."
                  ,ac->base(),getString(ac).c_str(),_getString().c_str()) << endl;
@@ -1404,6 +1425,7 @@ namespace Anabatic {
                  , _getString().c_str(), getString(segment).c_str() ) << endl;
 
     _hsegments.erase( _hsegments.begin() + end, _hsegments.end() );
+    _flags |= Flags::Invalidated;
   }
 
 
@@ -1429,6 +1451,7 @@ namespace Anabatic {
                  , getString(segment).c_str() ) << endl;
 
     _vsegments.erase( _vsegments.begin() + end, _vsegments.end() );
+    _flags |= Flags::Invalidated;
   }
 
 
@@ -1528,13 +1551,20 @@ namespace Anabatic {
     }
 
   // Add the blockages.
+    int contiguousNonSaturated = 0;
     for ( size_t i=0 ; i<_depth ; i++ ) {
       uLengths2[i] += _blockages[i];
       if (not i) continue;
-      if ((float)(_blockages[i] * Session::getPitch(i)) > 0.40*(float)(width*height)) {
-        flags() |= Flags::GoStraight;
-      //cerr << "| Set GoStraight on " << this << endl;
-      }
+      if (Session::getLayerGauge(i)->getType() & Constant::PowerSupply)
+        continue;
+      if ((float)(_blockages[i] * Session::getPitch(i)) > 0.60*(float)(width*height))
+        contiguousNonSaturated = 0;
+      else
+        contiguousNonSaturated++;
+    }
+    if (contiguousNonSaturated < 2) {
+      flags() |= Flags::GoStraight;
+    //cerr << "| Set GoStraight on " << this << endl;
     }
 
   // Compute the number of non pass-through tracks.
@@ -1879,6 +1909,13 @@ namespace Anabatic {
       const Layer* layer = rg->getRoutingLayer(depth);
       s << "_densities[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
       record->add( getSlot ( s.str(),  &_densities[depth] ) );
+    }
+
+    for ( size_t depth=0 ; depth<_depth ; ++depth ) {
+      ostringstream s;
+      const Layer* layer = rg->getRoutingLayer(depth);
+      s << "_feedthroughs[" << depth << ":" << ((layer) ? layer->getName() : "None") << "]";
+      record->add( getSlot ( s.str(),  &_feedthroughs[depth] ) );
     }
     return record;
   }

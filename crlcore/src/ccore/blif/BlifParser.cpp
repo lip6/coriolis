@@ -280,13 +280,15 @@ namespace {
              void           connectSubckts ();
              Net*           mergeNet       ( string name, bool isExternal, unsigned int );
              Net*           mergeAlias     ( string name1, string name2 );
+             Net*           newDummyNet    ();
     private:
-      Cell*     _cell;
-      Subckts   _subckts;
-      size_t    _depth;
-      size_t    _supplyCount;
-      Instance* _oneInstance;
-      Instance* _zeroInstance;
+      Cell*         _cell;
+      Subckts       _subckts;
+      size_t        _depth;
+      size_t        _supplyCount;
+      Instance*     _oneInstance;
+      Instance*     _zeroInstance;
+      vector<Net*>  _dummyOutputs;
   };
 
 
@@ -482,6 +484,7 @@ namespace {
     , _supplyCount (0)
     , _oneInstance (NULL)
     , _zeroInstance(NULL)
+    , _dummyOutputs()
   {
     if (not _staticInit) staticInit();
     
@@ -543,6 +546,15 @@ namespace {
     Net* zero = Net::create( _cell, sigName.str() );
     _zeroInstance->getPlug( _masterNetZero )->setNet( zero );
     return zero;
+  }
+
+
+  Net* Model::newDummyNet ()
+  {
+    ostringstream name;
+    name << "blif_dummy_output_" << _dummyOutputs.size();
+    _dummyOutputs.push_back( Net::create( _cell, name.str().c_str() ) );
+    return _dummyOutputs.back();
   }
 
 
@@ -764,6 +776,29 @@ namespace {
             message << "\n          (no tie low, connexion has been LEFT OPEN)";
 
           if (not message.str().empty()) cerr << Warning( message.str() ) << endl;
+        }
+      }
+
+      for ( Plug* plug : instance->getPlugs()) {
+        if (plug->getMasterNet()->isSupply()) continue;
+        Net* connectedNet = plug->getNet();
+        if (not connectedNet) {
+          if (plug->getMasterNet()->getDirection() & Net::Direction::DirIn) {
+            ostringstream message;
+            message << "In " << instance << "\n          "
+                    << "*input* Terminal \"" << plug->getMasterNet()->getName()
+                    << "\" is *not* connected.";
+            cerr << Error( message.str() ) << endl;
+          } else {
+            Net* dummyNet = newDummyNet();
+            plug->setNet( dummyNet );
+            ostringstream message;
+            message << "In " << instance << "\n          "
+                    << "*output* Terminal \"" << plug->getMasterNet()->getName()
+                    << "\" is *not* connected, generating dummy net \""
+                    << dummyNet->getName() << "\".";
+            cerr << Warning( message.str() ) << endl;
+          }
         }
       }
     }

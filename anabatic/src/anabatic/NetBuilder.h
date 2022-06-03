@@ -47,31 +47,39 @@ namespace Anabatic {
 
   class ForkStack {
     public:
-      inline void         push       ( Hook* from, AutoContact* contact );
+      inline void         push       ( Hook* from, AutoContact* contact, uint64_t flags );
       inline void         pop        ();
       inline Hook*        getFrom    () const;
       inline AutoContact* getContact () const;
+      inline uint64_t     getFlags   () const;
+      inline void         setFlags   ( uint64_t );
     private:
       struct Element {
                  Hook*         _from;
                  AutoContact*  _contact;
-          inline               Element ( Hook* from, AutoContact* contact );
+                 uint64_t      _flags;
+          inline               Element ( Hook* from, AutoContact* contact, uint64_t flags );
       };
     private:
       list<Element>  _stack;
   };
 
 
-  inline              ForkStack::Element::Element ( Hook* from, AutoContact* contact ) : _from(from), _contact(contact) {}
+  inline              ForkStack::Element::Element ( Hook* from, AutoContact* contact, uint64_t flags ) : _from(from), _contact(contact), _flags(flags) {}
   inline void         ForkStack::pop              () { if (not _stack.empty()) _stack.pop_back(); }
   inline Hook*        ForkStack::getFrom          ()  const { return _stack.empty() ? NULL : _stack.back()._from; }
   inline AutoContact* ForkStack::getContact       ()  const { return _stack.empty() ? NULL : _stack.back()._contact; }
+  inline uint64_t     ForkStack::getFlags         ()  const { return _stack.empty() ? 0    : _stack.back()._flags; }
+  inline void         ForkStack::setFlags         ( uint64_t flags ) { if (not _stack.empty()) _stack.back()._flags |= flags; }
 
 
-  inline void  ForkStack::push ( Hook* from, AutoContact* contact )
+  inline void  ForkStack::push ( Hook* from, AutoContact* contact, uint64_t flags )
   {
-    cdebug_log(145,0) << "    Stacking " << from << " + " << contact << endl;
-    _stack.push_back( Element(from,contact) );
+    cdebug_log(145,0) << "  Stacking: " << endl;
+    cdebug_log(145,0) << "  + " << from << endl;
+    cdebug_log(145,0) << "  + " << contact << endl;
+    cdebug_log(145,0) << "  + " << flags << endl;
+    _stack.push_back( Element(from,contact,flags) );
   }
 
 
@@ -99,6 +107,7 @@ namespace Anabatic {
                          , Middle          = (1 << 16)
                          , UseNonPref      = (1 << 17)
                          , NoProtect       = (1 << 18)
+                         , ToUpperRouting  = (1 << 19)
                          , HBothAccess     = HAccess|HAccessEW
                          , SouthWest       = SouthBound|WestBound
                          , NorthEast       = NorthBound|EastBound
@@ -149,13 +158,15 @@ namespace Anabatic {
       virtual                              ~NetBuilder             ();
               void                          clear                  ();
       inline  bool                          isTwoMetals            () const;
+      inline  bool                          isUpperMetalRp         () const;
       inline  AnabaticEngine*               getAnabatic            () const;
       inline  unsigned int                  getDegree              () const;
       inline  void                          setDegree              ( unsigned int degree );
               void                          fixSegments            ();
               NetBuilder&                   setStartHook           ( AnabaticEngine*
                                                                    , Hook*        fromHook
-                                                                   , AutoContact* sourceContact=NULL );
+                                                                   , AutoContact* sourceContact=NULL
+                                                                   , uint64_t     sourceFlags=0 );
               void                          construct              ();
       inline  unsigned int                  getStateG              () const;
       inline  UConnexity                    getConnexity           () const;
@@ -169,6 +180,8 @@ namespace Anabatic {
       inline  AutoContact*                  getNorthEastContact    () const;
       inline  AutoContact*&                 getNorthEastContact    ();
       inline  Hook*                         getFromHook            () const;
+      inline  uint64_t                      getSourceFlags         () const;
+      inline  uint64_t                      getFlags               () const;
       inline  ForkStack&                    getForks               ();
       inline  vector<RoutingPad*>&          getRoutingPads         ();
       inline  map<Component*,AutoSegment*>& getRpLookup            ();
@@ -187,6 +200,7 @@ namespace Anabatic {
       inline  void                          clearSouths            ();
       inline  void                          clearEasts             ();
       inline  void                          clearWests             ();
+      inline  void                          setFlags               ( uint64_t );
       inline  void                          setFromHook            ( Hook* );
       inline  void                          setSouthWestContact    ( AutoContact* );
       inline  void                          setNorthEastContact    ( AutoContact* );
@@ -194,6 +208,7 @@ namespace Anabatic {
       inline  void                          swapCornerContacts     ();
       inline  void                          addToFixSegments       ( AutoSegment* );
               bool                          push                   ( Hook* to, AutoContact* contact, uint64_t flags=0 );
+              bool                          isInsideBlockage       ( GCell*, Component* ) const;
       virtual void                          doRp_AutoContacts      ( GCell*, Component*, AutoContact*& source, AutoContact*& target, uint64_t flags ) = 0;
       virtual AutoContact*                  doRp_Access            ( GCell*, Component*, uint64_t  flags ) = 0;
       virtual AutoContact*                  doRp_AccessPad         ( RoutingPad*, uint64_t flags );
@@ -372,9 +387,8 @@ namespace Anabatic {
              vector<AutoSegment*>         _toFixSegments;
              unsigned int                 _degree;
              bool                         _isTwoMetals;
-
-    // Sort classes.
-    public:
+             uint64_t                     _sourceFlags;
+             uint64_t                     _flags;
   };
 
 
@@ -394,6 +408,8 @@ namespace Anabatic {
   inline AutoContact*                  NetBuilder::getNorthEastContact    () const { return _northEastContact; }
   inline AutoContact*&                 NetBuilder::getNorthEastContact    ()       { return _northEastContact; }
   inline Hook*                         NetBuilder::getFromHook            () const { return _fromHook; }
+  inline uint64_t                      NetBuilder::getSourceFlags         () const { return _sourceFlags; }
+  inline uint64_t                      NetBuilder::getFlags               () const { return _flags; }
   inline unsigned int                  NetBuilder::getTopology            () const { return _topology; }
   inline vector<RoutingPad*>&          NetBuilder::getRoutingPads         () { return _routingPads; }
   inline map<Component*,AutoSegment*>& NetBuilder::getRpLookup            () { return _routingPadAutoSegments; }
@@ -403,6 +419,7 @@ namespace Anabatic {
   inline Hook*                         NetBuilder::south                  ( size_t i ) const { return (i<_souths.size()) ? _souths[i] : NULL; }
   inline Hook*                         NetBuilder::east                   ( size_t i ) const { return (i<_easts .size()) ? _easts [i] : NULL; }
   inline Hook*                         NetBuilder::west                   ( size_t i ) const { return (i<_wests .size()) ? _wests [i] : NULL; }
+  inline void                          NetBuilder::setFlags               ( uint64_t flags ) { _flags |= flags; }
   inline void                          NetBuilder::setDegree              ( unsigned int degree ) { _degree = degree; }
   inline void                          NetBuilder::setFromHook            ( Hook* hook ) { _fromHook = hook; }
   inline void                          NetBuilder::setBothCornerContacts  ( AutoContact* ac ) { _southWestContact = _northEastContact = ac; }

@@ -594,6 +594,11 @@ namespace Katana {
         }
 
         _costs.push_back( new TrackCost(segment1,segment2,track1,track2,track1->getAxis(),symAxis) );
+        cdebug_log(155,0) << "Same Ripup:" << _data1->getSameRipup() << endl;
+        if ((_data1->getSameRipup() > 10) and (track1->getAxis() == segment1->getAxis())) {
+          cdebug_log(155,0) << "Track blacklisted" << endl;
+          _costs.back()->setBlacklisted();
+        }
       
         cdebug_log(155,0) << "AxisWeight:" << DbU::getValueString(_costs.back()->getRefCandidateAxis())
                           << " sum:" << DbU::getValueString(_costs.back()->getAxisWeight())
@@ -1399,10 +1404,12 @@ namespace Katana {
            and (  manipulator.getEvent()->getConstraints().isPonctual()
                or (isFullBlocked() and (_costs.size() > 7)))
            and segment->canMoveUp(1.0,Flags::CheckLowUpDensity|Flags::AllowTerminal) ) {
+          cdebug_log(159,0) << "Next state: MoveUp." << endl;
           moveUpFlags |= Manipulator::AllowTerminalMoveUp;
         } else {
           if ((success = manipulator.slacken(Flags::HalfSlacken))) {
             nextState = DataNegociate::RipupPerpandiculars;
+            cdebug_log(159,0) << "Next state: RipupPerpandiculars (half-slacken succeeded)." << endl;
             break;
           }
         }

@@ -88,15 +88,16 @@ namespace CRL {
       if ( vhdlName.empty() and (isdigit(translated)) )
         vhdlName += 'n';
 
-      if (translated == '\\') translated = '_';
-      if (translated == '/' ) translated = '_';
-      if (translated == '.' ) translated = '_';
-      if (translated == '%' ) translated = '_';
-      if (translated == '$' ) translated = '_';
-      if (translated == '?' ) translated = '_';
-      if (translated == ':' ) translated = '_';
-      if (translated == '[' ) translated = leftPar;
-      if (translated == ']' ) translated = rightPar;
+      if (translated == '\\' ) translated = '_';
+      if (translated == '/'  ) translated = '_';
+      if (translated == '.'  ) translated = '_';
+      if (translated == '%'  ) translated = '_';
+      if (translated == '$'  ) translated = '_';
+      if (translated == '?'  ) translated = '_';
+      if (translated == '\'' ) translated = '_';
+      if (translated == ':'  ) translated = '_';
+      if (translated == '['  ) translated = leftPar;
+      if (translated == ']'  ) translated = rightPar;
 
       if (translated == '_') {
         if (vhdlName.empty()      ) continue;

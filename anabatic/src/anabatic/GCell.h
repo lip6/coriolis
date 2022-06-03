@@ -259,6 +259,7 @@ namespace Anabatic {
                     bool                  checkEdgeSaturation  ( size_t hreserved, size_t vreserved) const;
                     void                  setType              ( Flags );
       inline        void                  setSatProcessed      ( size_t depth );
+                    void                  postGlobalAnnotate   ();
                     void                  addBlockage          ( size_t depth, DbU::Unit );
       inline        void                  addHSegment          ( AutoSegment* );
       inline        void                  addVSegment          ( AutoSegment* );

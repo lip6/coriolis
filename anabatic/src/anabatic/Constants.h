@@ -51,6 +51,7 @@ namespace Anabatic {
       static const BaseFlags  DestroyGCell        ; // = (1 <<  7);
       static const BaseFlags  DestroyBaseContact  ; // = (1 <<  8);
       static const BaseFlags  DestroyBaseSegment  ; // = (1 <<  9);
+      static const BaseFlags  DisableCanonize     ; // = (1 << 10);
     // Flags for NetDatas objects states only.                      
       static const BaseFlags  GlobalFixed         ; // = (1 <<  5);
       static const BaseFlags  GlobalEstimated     ; // = (1 <<  6);

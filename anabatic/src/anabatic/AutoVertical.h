@@ -14,11 +14,9 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  ANABATIC_AUTOVERTICAL_H
-#define  ANABATIC_AUTOVERTICAL_H
-
-#include  "hurricane/Vertical.h"
-#include  "anabatic/AutoSegment.h"
+#pragma  once
+#include "hurricane/Vertical.h"
+#include "anabatic/AutoSegment.h"
 
 
 namespace Anabatic {
@@ -91,6 +89,3 @@ namespace Anabatic {
 
 
 INSPECTOR_P_SUPPORT(Anabatic::AutoVertical);
-
-
-#endif  // ANABATIC_AUTOHORIZONTAL_H

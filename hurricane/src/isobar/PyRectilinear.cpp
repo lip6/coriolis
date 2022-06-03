@@ -62,8 +62,9 @@ extern "C" {
 #if defined(__PYTHON_MODULE__)
 
   // Standard Accessors (Attributes).
-  DirectGetLongAttribute(PyRectilinear_getX, getX, PyRectilinear, Rectilinear)
-  DirectGetLongAttribute(PyRectilinear_getY, getY, PyRectilinear, Rectilinear)
+  DirectGetLongAttribute(PyRectilinear_getX          , getX          , PyRectilinear, Rectilinear)
+  DirectGetLongAttribute(PyRectilinear_getY          , getY          , PyRectilinear, Rectilinear)
+  DirectGetBoolAttribute(PyRectilinear_isNonRectangle, isNonRectangle, PyRectilinear, Rectilinear)
 
   // Standard Destroy (Attribute).
   DBoDestroyAttribute(PyRectilinear_destroy, PyRectilinear)
@@ -173,6 +174,7 @@ extern "C" {
   PyMethodDef PyRectilinear_Methods[] =
     { { "create"        , (PyCFunction)PyRectilinear_create        , METH_VARARGS|METH_STATIC
                         , "Create a new Rectilinear polygon." }
+    , { "isNonRectangle", (PyCFunction)PyRectilinear_isNonRectangle, METH_NOARGS , "Tells if the shape is not a rectangle." }
     , { "getX"          , (PyCFunction)PyRectilinear_getX          , METH_NOARGS , "Return the Rectilinear X value." }
     , { "getY"          , (PyCFunction)PyRectilinear_getY          , METH_NOARGS , "Return the Rectilinear Y value." }
     , { "getBoundingBox", (PyCFunction)PyRectilinear_getBoundingBox, METH_NOARGS , "Return the Rectilinear Bounding Box." }

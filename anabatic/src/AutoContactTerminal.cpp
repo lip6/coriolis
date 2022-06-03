@@ -559,11 +559,11 @@ namespace Anabatic {
       if (delta > 1) {
       //_segment = _segment->makeDogleg( this );
         _segment->makeDogleg( this );
-        cdebug_log(145,0) << "Update seg: " << _segment << endl;
         delta = abssub( anchorDepth, rg->getLayerDepth( _segment->getLayer() ) );
+        cdebug_log(145,0) << "Delta: " << delta << " Update seg: " << _segment << endl;
       }
-      else if (delta == 0) setLayerAndWidth( delta, anchorDepth );
-      else if (delta == 1) setLayerAndWidth( delta, std::min(anchorDepth,segmentDepth) );
+      if (delta == 0) setLayerAndWidth( delta, anchorDepth );
+      if (delta == 1) setLayerAndWidth( delta, std::min(anchorDepth,segmentDepth) );
     }
     _segment->invalidate( this );
 

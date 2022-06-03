@@ -673,7 +673,9 @@ class Block ( object ):
         self.initEtesian()
         if self.conf.placeArea:
             self.etesian.setPlaceArea( self.conf.placeArea )
-        if self.conf.useHFNS: self.etesian.doHFNS()
+        if self.conf.useHFNS:
+            self.etesian.doHFNS()
+            Breakpoint.stop( 100, 'HFNS (Etesian) done.' )
         self.etesian.place()
         Breakpoint.stop( 100, 'Placement done.' )
         self.etesian.clearColoquinte()

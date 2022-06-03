@@ -121,19 +121,25 @@ namespace {
 
   void  GapSet::merge ( size_t i )
   {
-    TrackElement* element = _track->getSegment( i );
+    TrackElement* element    = _track->getSegment( i );
+    DbU::Unit     segSourceU = element->getSourceU()+_halfSpacing;
+    DbU::Unit     segTargetU = element->getTargetU()-_halfSpacing;
 
     if (_spans.empty()) {
-      cdebug_log(159,0) << "GapSet::merge() new range " << i
+      cdebug_log(159,0) << "GapSet::merge() new range ["
+                        << DbU::getValueString(segSourceU) << " "
+                        << DbU::getValueString(segTargetU) << "] "
+                        << i
                         << " " << _track->getSegment(i) << endl;
       _spans.push_back( make_pair(i,i) );
       return;
     }
 
-    size_t        ispan      = 0;
-    DbU::Unit     segSourceU = element->getSourceU()+_halfSpacing;
-    DbU::Unit     segTargetU = element->getTargetU()-_halfSpacing;
-    cdebug_log(159,0) << "GapSet::merge() " << element << endl;
+    size_t     ispan      = 0;
+    cdebug_log(159,0) << "GapSet::merge() ["
+                      << DbU::getValueString(segSourceU) << " "
+                      << DbU::getValueString(segTargetU) << "] "
+                      << element << endl;
     for ( ; ispan<_spans.size() ; ++ispan ) {
       if (targetU(ispan) >= segSourceU) {
         if (targetU(ispan) >= segTargetU) {
@@ -389,14 +395,14 @@ namespace Katana {
 
   TrackElement* Track::getPrevious ( size_t& index, Net* net ) const
   {
-    for ( index-- ; index != npos ; index-- ) {
-      cdebug_log(140,0) << index << ":" << _segments[index] << endl;
-
-      if (_segments[index]->getNet() == net) continue;
-      return _segments[index];
-    }
+    cdebug_log(155,0) << "Track::getPrevious() " << index << " for " << net << endl;
+    if ((index == npos) or (index == 0)) return NULL;
+    do {
+      --index;
+      cdebug_log(155,0) << "| " << index << ":" << _segments[index] << endl;
+      if (_segments[index]->getNet() != net) return _segments[index];
+    } while ( index != 0 );
     index = npos;
-
     return NULL;
   }
 
@@ -422,8 +428,8 @@ namespace Katana {
       return;
     }
 
-    if (position < _min) {
-      cerr << Warning( " Position %s inferior to the lower bound of %s. Returning npos."
+    if (position < _min - getLayerGauge()->getPitch()*2) {
+      cerr << Warning( " Position %s too far outside the lower bound of %s. Returning npos."
                      , DbU::getValueString(position).c_str()
                      , getString(this).c_str() ) << endl;
       state = BeforeFirstElement;
@@ -431,8 +437,8 @@ namespace Katana {
       return;
     }
 
-    if (position > _max) {
-      cerr << Warning( " Position %s superior to the upper bound of %s. Returning npos."
+    if (position > _max + getLayerGauge()->getPitch()*2) {
+      cerr << Warning( " Position %s is too far outside the upper bound of %s. Returning npos."
                      , DbU::getValueString(position).c_str()
                      , getString(this).c_str() ) << endl;
       state = AfterLastElement;
@@ -682,7 +688,7 @@ namespace Katana {
     DbU::Unit minFree = _min;
     cdebug_log(155,0) << "minFree:" << DbU::getValueString(minFree) << " (track min)" << endl;
 
-    if (not (state & BeginIsTrackMin) ) {
+    if (not (state & BeginIsTrackMin) and (begin > 0)) {
       if (_segments[begin]->getNet() == net)
         getPrevious( begin, net );
 
@@ -1005,11 +1011,12 @@ namespace Katana {
 
   uint32_t  Track::repair () const
   {
-  //if ((getIndex() == 1011) and isHorizontal()) DebugSession::open( 150, 160 );
+  //if ((getIndex() == 3473) and isHorizontal()) DebugSession::open( 150, 160 );
     cdebug_log(159,0) << "Track::repair() " << this << endl;
     
     if (_segments.empty()) {
       fillHole( getMin(), getMax() );
+    //if ((getIndex() == 3473) and isHorizontal()) DebugSession::close();
       return 0;
     }
     DbU::Unit minSpacing = getLayer()->getMinimalSpacing();
@@ -1024,6 +1031,7 @@ namespace Katana {
     GapSet   gapsetCurr ( this );
     for ( size_t i=0 ; i<_segments.size()-1 ; i++ ) {
       cdebug_log(159,0) << "[" << i << "] " << _segments[i] << endl;
+      if (_segments[i]->isNonPref()) continue;
       netChange = false;
       gapsetCurr.merge( i );
       if (  (_segments[i]->getNet() != _segments[i+1]->getNet())
@@ -1033,19 +1041,25 @@ namespace Katana {
           spacing = gapsetCurr.spansSourceU() - gapsetPrev.spansTargetU();
           if (spacing < minSpacing) {
             spacing = minSpacing - spacing;
-            AutoSegment* prev = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ]->base();
+            TrackElement* element = _segments[ gapsetPrev.span(gapsetPrev.size()-1).second ];
+            AutoSegment*  prev    = element->base();
             if (prev and (prev->getDuTarget() >= spacing)) {
               prev->setDuSource( prev->getDuSource() - spacing );
               prev->setDuTarget( prev->getDuTarget() - spacing );
-              cerr << Warning( " Track::repair(): Enlarging narrow gap in %s near (shift left):\n  %s"
+              element->invalidate();
+              cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift left):\n"
+                               "          %s"
                              , getString(this).c_str()
                              , getString(prev).c_str() ) << endl;
             } else {
-              AutoSegment* curr = _segments[ gapsetCurr.span(0).first ]->base();
+              TrackElement* element = _segments[ gapsetCurr.span(0).first ];
+              AutoSegment*  curr    = element->base();
               if (curr and (-curr->getDuSource() >= spacing)) {
                 curr->setDuSource( curr->getDuSource() + spacing );
                 curr->setDuTarget( curr->getDuTarget() + spacing );
-                cerr << Warning( " Track::repair(): Enlarging narrow gap in %s near (shift right):\n  %s"
+                element->invalidate();
+                cerr << Warning( "Track::repair(): Enlarging narrow gap in %s near (shift right):\n"
+                                 "          %s"
                                , getString(this).c_str()
                                , getString(curr).c_str() ) << endl;
               }
@@ -1074,14 +1088,15 @@ namespace Katana {
                                 << j+1 << "=[" << DbU::getValueString(gapsetCurr.sourceU(j+1))
                                 <<         " " << DbU::getValueString(gapsetCurr.targetU(j+1)) << "]" << endl;
               if (gapsetCurr.span(j+1).first >= _segments.size()) {
-                cerr << Error("gapsetCurr.span(j+1).first >= _segments.size()") << endl;
+                cerr << Bug("Track::repair(): Assersion gapsetCurr.span(j+1).first < _segments.size() is false.") << endl;
               } else {
-                AutoSegment* first = _segments[gapsetCurr.span(j+1).first]->base();
+                TrackElement* element = _segments[gapsetCurr.span(j+1).first];
+                AutoSegment*  first   = element->base();
                 
                 cdebug_log(159,0) << "spacing:" << DbU::getValueString(spacing) << " " << first << endl;
 	            if (first == NULL) {
-		          cerr << Error("null first, NOT correcting gap") << endl;
-	            } else {
+		          cerr << Bug("Track::repair(): Base of first element is NULL, *unable* to correct gap.") << endl;
+                } else if (not first->isNonPref()) {
                   for ( AutoSegment* segment : first->getAligneds() ) {
                     if (segment->getSourcePosition() < first->getSourcePosition())
                       first = segment;
@@ -1091,9 +1106,10 @@ namespace Katana {
                   cdebug_log(159,0) << "duSource:" << DbU::getValueString(first->getDuSource()) << endl;
                 //first->setDuSource( first->getDuSource() - spacing - minSpacing/2 );
                   first->setDuSource( first->getDuSource() - spacing );
+                  element->invalidate();
 	            }
                 ++gaps;
-                cerr << Warning( " Track::repair(): Closing same net gap in %s near:\n  %s"
+                cerr << Warning( "Track::repair(): Closing same net gap in %s near:\n          %s"
                                , getString(this).c_str()
                                , getString(_segments[(i) ? i-1 : 0]).c_str() ) << endl;
                 cdebug_log(159,0) << first << endl;
@@ -1124,7 +1140,7 @@ namespace Katana {
     if (spacing > 10*getLayerGauge()->getPitch())
       fillHole( lastTargetU, getMax() );
 
-  //if ((getIndex() == 1011) and isHorizontal()) DebugSession::close();
+  //if ((getIndex() == 3473) and isHorizontal()) DebugSession::close();
     return gaps;
   }
 
@@ -1215,7 +1231,9 @@ namespace Katana {
         ++j;
         continue;
       }
-      if (not _segments[j]->base()->isMiddleStack()) continue;
+      if ((j   > 0)                and (_segments[j-1]->getNet() == _segments[j]->getNet())) continue;
+      if ((j+1 < _segments.size()) and (_segments[j+1]->getNet() == _segments[j]->getNet())) continue;
+      if (not _segments[j]->base()->isNearMinArea()) continue;
       if (_segments[j]->base()->getSpanLength() < techMinLength) {
         cerr << Error( "Below minimal length/area for %s:\n  length:%s, minimal length:%s"
                      , getString(_segments[j]).c_str()

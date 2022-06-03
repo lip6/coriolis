@@ -13,9 +13,7 @@
 // |  C++ Header  :  "./anabatic/NetBuilderVH.h"                     |
 // +-----------------------------------------------------------------+
 
-#ifndef  ANABATIC_NET_BUILDER_VH_H
-#define  ANABATIC_NET_BUILDER_VH_H
-
+#pragma  once
 #include "anabatic/NetBuilder.h"
 
 
@@ -50,5 +48,3 @@ namespace Anabatic {
 
 
 }  // Anabatic namespace.
-
-#endif  // ANABATIC_NET_BUILDER_VH_H

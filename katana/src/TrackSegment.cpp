@@ -478,6 +478,8 @@ namespace Katana {
 
   void  TrackSegment::revalidate ()
   {
+    DebugSession::open( getNet(), 159, 160 );
+
     unsetFlags( TElemCreated ); 
     cdebug_log(159,0) << "revalidate() - " << this << endl;
 
@@ -501,11 +503,17 @@ namespace Katana {
       }
     }
     unsetFlags( TElemInvalidated );
+
+    DebugSession::close();
   }
 
 
   void  TrackSegment::setAxis ( DbU::Unit axis, uint32_t flags  )
   {
+    if (_data) {
+      if (axis == getAxis()) _data->incSameRipup();
+      else _data->resetSameRipup();
+    }
     _base->setAxis( axis, flags );
     invalidate();
   }

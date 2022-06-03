@@ -204,6 +204,7 @@ namespace Anabatic {
     public:
       static        AnabaticEngine*   create                  ( Cell* );
       static        AnabaticEngine*   get                     ( const Cell* );
+      inline        bool              isCanonizeDisabled      () const;
       static  const Name&             staticGetName           ();
       virtual const Name&             getName                 () const;
       virtual       Configuration*    getConfiguration        ();
@@ -227,6 +228,8 @@ namespace Anabatic {
       virtual       void              openSession             ();
       inline        void              setState                ( EngineState state );
       inline        void              setDensityMode          ( uint64_t );
+      inline        void              disableCanonize         ();
+      inline        void              enableCanonize          ();
       inline        void              addOv                   ( Edge* );
       inline        void              removeOv                ( Edge* );
       inline const  NetDatas&         getNetDatas             () const;
@@ -380,6 +383,7 @@ namespace Anabatic {
   inline       bool              AnabaticEngine::doDestroyBaseSegment  () const { return _flags & Flags::DestroyBaseSegment; }
   inline       bool              AnabaticEngine::doDestroyTool         () const { return _state >= EngineGutted; }
   inline       bool              AnabaticEngine::doWarnOnGCellOverload () const { return _flags & Flags::WarnOnGCellOverload; }
+  inline       bool              AnabaticEngine::isCanonizeDisabled    () const { return _flags & Flags::DisableCanonize; }
   inline       bool              AnabaticEngine::isInDemoMode          () const { return _flags & Flags::DemoMode; }
   inline       bool              AnabaticEngine::isChip                () const { return _chipTools.isChip(); }
   inline       DbU::Unit         AnabaticEngine::getAntennaGateMaxWL   () const { return getConfiguration()->getAntennaGateMaxWL(); }
@@ -399,6 +403,8 @@ namespace Anabatic {
   inline       void              AnabaticEngine::_resizeMatrix         () { _matrix.resize( getCell(), getGCells() ); }
   inline       void              AnabaticEngine::_updateGContacts      ( Flags flags ) { for ( GCell* gcell : getGCells() ) gcell->updateGContacts(flags); }
   inline       bool              AnabaticEngine::_inDestroy            () const { return _flags & Flags::DestroyMask; }
+  inline       void              AnabaticEngine::disableCanonize       () { _flags |= Flags::DisableCanonize; }
+  inline       void              AnabaticEngine::enableCanonize        () { _flags.reset( Flags::DisableCanonize ); }
   
   inline void  AnabaticEngine::_add ( GCell* gcell )
   {

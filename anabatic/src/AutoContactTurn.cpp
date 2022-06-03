@@ -263,7 +263,9 @@ namespace Anabatic {
         setFlags( CntBadTopology );
       } else {
         if (delta > 1) {
-          if (_horizontal1->isInvalidatedLayer()) {
+          bool updateH1 = (_horizontal1->isInvalidatedLayer() and not _horizontal1->isNonPref())
+                          or _vertical1->isNonPref();
+          if (updateH1) {
           //_horizontal1 = static_cast<AutoHorizontal*>( _horizontal1->makeDogleg(this) );
             _horizontal1->makeDogleg(this);
             cdebug_log(145,0) << "Update h1: " << _horizontal1 << endl;

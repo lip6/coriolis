@@ -144,9 +144,9 @@ class Chip ( Block ):
         self.conf.refresh()
   
     def doPnR ( self ):
-        super(Chip,self).doPnR()
+        status = super(Chip,self).doPnR()
         self.conf.refresh( self.conf.chip )
-        return self.conf.validated
+        return self.conf.validated and status
   
     def save ( self, flags=0 ):
         if not self.conf.validated:

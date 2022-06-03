@@ -227,7 +227,8 @@ namespace Hurricane {
 
   NetRoutingState* NetRoutingExtension::get ( const Net* net )
   {
-    if (net == _owner) return _cache;
+    if (not net) return NULL;
+    if ((net == _owner) and _cache) return _cache;
     _owner = net;
 
     Property* property = _owner->getProperty( NetRoutingProperty::getPropertyName() );

@@ -594,6 +594,7 @@ namespace Katana {
           if (edge->getReservedCapacity() < hReservedMin)
             edge->reserveCapacity( hReservedMin - edge->getReservedCapacity()  );
         }
+        gcell->postGlobalAnnotate();
       }
     }
   }
@@ -863,16 +864,6 @@ namespace Katana {
     if (getState() > Anabatic::EngineDriving) return;
 
     cdebug_tabw(155,1);
-
-    openSession();
-    for ( RoutingPlane* plane : _routingPlanes ) {
-      for ( Track* track : plane->getTracks() ) {
-      //track->expandMinArea();
-        track->repair();
-      }
-    }
-    Session::close();
-
     setState( Anabatic::EngineDriving );
     _gutKatana();
 

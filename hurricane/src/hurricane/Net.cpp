@@ -777,6 +777,7 @@ string Net::_getString() const
 {
   string bs = Inherit::_getString();
   string ds = "\"" + getString(_name) + "\" ";
+  ds += ((isDeepNet() ) ? "d" : "-");
   ds += ((_isExternal ) ? "e" : "-");
   ds += ((_isGlobal   ) ? "g" : "-");
   ds += ((_isAutomatic) ? "a" : "-");
