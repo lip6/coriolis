@@ -1,0 +1,102 @@
+// -*- C++ -*-
+
+namespace Seabreeze {
+
+/*! \class      Elmore
+ *  \brief      Main class for computing the Elmore's delay
+ */
+
+/*! \var        vector<Contact*> Elmore::_conts
+ *              The list of Contacts contained in the considered Net
+ */
+
+/*! \var        vector<Contact*> Elmore::checker
+ *              The list of Contacts that we have treated. It serves as a checker 
+ *              of circles. If a circle exists in the Net, Elmore's delay cannot be
+ *              computed.
+ */
+
+/*! \var        Tree Elmore::_tree 
+ *              The tree necessary to run the algorithm to compute Elmore's delay
+ */
+
+/*! \function  Elmore::Elmore( Net* net = NULL ) 
+ *             Constructor
+ */
+
+/*! \function  Elmore::~Elmore() 
+ *             Default destructor
+ */
+
+/*! \function  void Elmore::contFromNet( Net* net )
+ *             Build the list _const from net
+ */
+
+/*! \function  void Elmore::buildTree( Contact* ct )
+ *             Build the _tree with ct as the root
+ */
+
+/*! \function  void Elmore::clearTree()
+ *             Clean the _tree and the list checker
+ */
+
+/*! \function  Tree* Elmore::getTree()
+ *  \Return    the _tree
+ */
+
+/*! \function  int Elmore::delayElmore()
+ *  \Return    the value of Elmore's delay
+ */
+
+/*! \function  void Elmore::toTree( ostream& )
+ *             Print the _tree to an output file
+ */
+
+/*! \class     ElmoreProperty
+ *  
+ */
+
+/*! \var       Name ElmorerProperty::_name  
+ *             
+ */
+
+/*! \var       Elmore ElmoreProperty::_elmore  
+ *             
+ */
+
+/*! \function  ElmoreProperty::ElmoreProperty( Net* )
+ *             Constructor
+ */
+
+/*! \function  ElmoreProperty* ElmoreProperty::create( Net* net )
+ *  \Return    the ElmoreProperty created from the net
+ */
+
+/*! \function  Name ElmoreProperty::getName()
+ *  \Return    the name of the property
+ */
+
+/*! \class     ElmoreExtension
+ *  \brief     Useful to access to functions of Elmore class without having to calling it
+ */
+
+/*! \var       Net* ElmoreExtension::Nets 
+ *             
+ */
+
+/*! \function  void ElmoreExtension::destroyAll()
+ *             
+ */
+
+/*! \function  void ElmoreExtension::destroy() 
+ *             
+ */
+
+/*! \function  Tree ElmoreExtension::getTree( Elmore* elmore )
+ *  \Return    the _tree of elmore
+ */
+
+/*! \function  void ElmoreExtension::toTree( Elmore* elmore, std::ostream& out )
+ *             Print the _tree of elmore to the output file out
+ */
+}

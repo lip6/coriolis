@@ -1,0 +1,49 @@
+
+// -*- C++ -*-
+
+
+/*! \class      Node
+ *! \brief      Node description(\b API)
+ *
+ */
+
+/*! \var        int Node::R
+ *              The Resistor of a point in the circuit / node in the tree.
+ */
+
+/*! \var        int Node::Rt
+ *              The Resister "total" - the value of resistor that is used 
+ *              to compute the Elmore's delay.
+ */
+ 
+/*! \var        int Node::C    
+ *              The Capacitor of a point in the circuit / node in the tree.
+ */
+
+/*! \var        Node* Node::Np
+ *              The parent node of current node
+ */
+
+/* \var         std::vector<Node*> Node::Ne
+ *              A list of children nodes of current node
+ */
+
+/*! \var        int Node::label
+ *              The label / Id of current node
+ */
+
+/*! \var        int Node::ap
+ *              A boolean variable to determine whether the current node
+ *              is after or before node i at where we need to compute the
+ *              Elmore's delay.
+ */
+
+/*! \function   Node::Node();
+ *              Default constructor.
+ */
+
+/*! \function   Node::~Node();
+ *              Default destructor.
+ */
+
+
