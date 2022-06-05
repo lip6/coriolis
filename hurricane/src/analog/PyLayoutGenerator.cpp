@@ -287,8 +287,8 @@ extern "C" {
 
 
   PyMethodDef PyLayoutGenerator_Methods[] =
-    { { "getVerboseLevel"    , (PyCFunction)PyLayoutGenerator_getVerboseLevel    , METH_NOARGS|METH_CLASS, "Return the verbosity level." }
-    , { "setVerboseLevel"    , (PyCFunction)PyLayoutGenerator_setVerboseLevel    ,             METH_CLASS, "Sets the verbosity level." }
+    { { "getVerboseLevel"    , (PyCFunction)PyLayoutGenerator_getVerboseLevel    , METH_NOARGS |METH_STATIC, "Return the verbosity level." }
+    , { "setVerboseLevel"    , (PyCFunction)PyLayoutGenerator_setVerboseLevel    , METH_VARARGS|METH_STATIC, "Sets the verbosity level." }
     , { "getDevice"          , (PyCFunction)PyLayoutGenerator_getDevice          , METH_NOARGS , "Return the Device currently loaded." }
     , { "getNumberTransistor", (PyCFunction)PyLayoutGenerator_getNumberTransistor, METH_NOARGS , "Return how many real transistors (fingers) are useds." }
     , { "getNumberStack"     , (PyCFunction)PyLayoutGenerator_getNumberStack     , METH_NOARGS , "Return how many transistor stacks are useds." }
