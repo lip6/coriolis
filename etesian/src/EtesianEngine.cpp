@@ -733,8 +733,9 @@ namespace Etesian {
     }
     cmess2 << "        - Whole place area: " << getBlockCell()->getAbutmentBox() << "." << endl;
     cmess2 << "        - Sub-place Area: " << _placeArea << "." << endl;
-    DbU::Unit totalLength = (_placeArea.getHeight()/sliceHeight) * _placeArea.getWidth();
-    DbU::Unit usedLength  = 0;
+    DbU::Unit totalLength    = (_placeArea.getHeight()/sliceHeight) * _placeArea.getWidth();
+    DbU::Unit usedLength     = 0;
+    DbU::Unit registerLength = 0;
 
     Dots  dots ( cmess2, "       ", 80, 1000 );
     if (not cmess2.enabled()) dots.disable();
@@ -750,14 +751,20 @@ namespace Etesian {
       for ( Instance* instance : getCell()->getInstances() ) {
         if (instance == getBlockInstance()) continue;
         string masterName = getString( instance->getMasterCell()->getName() );
-        if (masterName.substr(0,3) == "sff") ++registerNb;
-        Box instanceAb = instance->getAbutmentBox();
+        Box    instanceAb = instance->getAbutmentBox();
+        if (masterName.substr(0,3) == "sff") {
+          ++registerNb;
+          registerLength += instanceAb.getWidth();
+        }
         if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
           if (topAb.intersect(instanceAb)) {
             ++instancesNb;
             ++fixedNb;
             totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
           }
+        }
+        if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
+          cerr << "PLACED " << instance << endl;
         }
       }
     }
@@ -767,10 +774,15 @@ namespace Etesian {
       Instance* instance   = static_cast<Instance*>(occurrence.getEntity());
       Box       instanceAb = instance->getAbutmentBox();
       string    masterName = getString( instance->getMasterCell()->getName() );
-      if (masterName.substr(0,3) == "sff") ++registerNb;
+      if (masterName.substr(0,3) == "sff") {
+        ++registerNb;
+        registerLength += instanceAb.getWidth();
+      }
       if (instance->getPlacementStatus() == Instance::PlacementStatus::FIXED) {
         ++fixedNb;
         totalLength -= (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
+      } else if (instance->getPlacementStatus() == Instance::PlacementStatus::PLACED) {
+        cerr << "PLACED " << instance << endl;
       } else {
         usedLength += (instanceAb.getHeight()/sliceHeight) * instanceAb.getWidth();
       //cerr << DbU::getValueString(usedLength) << " " << instance << endl;
@@ -799,7 +811,9 @@ namespace Etesian {
       float ratio = ((float)registerNb / (float)instancesNb) * 100.0;
       ostringstream os1;
       os1 << registerNb << " (" << fixed << setprecision(2) << ratio << "%)";
-      cmess1 << ::Dots::asString( "     - Registers (DFF) ", os1.str() ) << endl;
+      cmess1 << ::Dots::asString    ( "     - Registers (DFF) ", os1.str() ) << endl;
+      cmess1 << ::Dots::asPercentage( "     - Registers (DFF) area "
+                                  , (float)(registerLength)/(float)totalLength ) << endl;
       ratio = ((float)_bufferCount / (float)instancesNb) * 100.0;
       ostringstream os2;
       os2 << _bufferCount << " (" << fixed << setprecision(2) << ratio << "%)";
