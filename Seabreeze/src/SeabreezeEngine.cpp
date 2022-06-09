@@ -106,7 +106,9 @@ namespace Seabreeze {
     }
 
     Elmore* elm = ElmoreProperty::create(net)->getElmore();
+    elm->contFromNet(net);
     elm->buildTree(driver);
+    cerr << "Tree built succesfully !" << endl;
   }
 
   SeabreezeEngine::SeabreezeEngine ( Cell* cell )

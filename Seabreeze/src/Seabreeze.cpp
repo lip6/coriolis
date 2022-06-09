@@ -44,14 +44,26 @@ namespace Seabreeze {
       cerr << "Input RoutingPad is NULL. Please select a RoutingPad !" << endl;
       return;
     }
-    Contact* ct = dynamic_cast<Contact*>(rp);
-    if ( not ct ) {
+    Contact* ct = nullptr;
+    for ( Component* c : rp->getSlaveComponents() ) {
+      Contact* cont = dynamic_cast<Contact*>(c);
+        
+      if ( cont ) {
+        ct = cont;
+        break;
+      }
+    }
+
+    if ( ct == nullptr ) {
       cerr << "No contact found" << endl;
       return;
     }
     
+    cerr << "Start building tree..." << endl;
     Node* s = new Node(nullptr, ct);
     build_from_node(s);
+    cerr << "Finished building tree !" << endl;
+    _tree->print(cerr);
   }
 
   void Elmore::build_from_node ( Node* s  )

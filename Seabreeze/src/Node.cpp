@@ -16,7 +16,10 @@ Node::Node ( Node* p, Contact* ct )
   , _contact(ct)
   , label(-1)
   , ap(0)
-{ (p->Ne).push_back(this); }
+{ 
+  if( p != nullptr) 
+    (p->Ne).push_back(this); 
+}
 
 Node::~Node ()
 {}

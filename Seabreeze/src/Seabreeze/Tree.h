@@ -8,9 +8,12 @@
 
 #include "hurricane/Contact.h"
 #include "hurricane/RoutingPad.h"
+#include "hurricane/Component.h"
 
 using namespace std;
+using Hurricane::Contact;
 using Hurricane::RoutingPad;
+using Hurricane::Component;
 
 class Tree{
   public:

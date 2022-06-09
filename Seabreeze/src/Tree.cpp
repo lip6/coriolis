@@ -6,7 +6,7 @@
 using namespace std;
 
 Tree::Tree ()
- :nodes()
+  :nodes()
 {}
 
 Tree::~Tree ()
@@ -79,8 +79,18 @@ int Tree::Delay_Elmore ( RoutingPad* rp )
     cerr << "Input RoutingPad is NULL. Please select a RoutingPad !" << endl;
     return -1;
   }
-  Contact* ct = dynamic_cast<Contact*>(rp);
-  if ( not ct ) {
+
+  Contact* ct = nullptr;
+  for ( Component* c : rp->getSlaveComponents() ) {
+    Contact* cont = dynamic_cast<Contact*>(c);
+
+    if ( ct ) {
+      ct = cont;
+      break;
+    }
+  }
+
+  if ( ct == nullptr ) {
     cerr << "No contact found" << endl;
     return -1;
   }
@@ -121,15 +131,15 @@ int Tree::Delay_Elmore ( RoutingPad* rp )
 
 void Tree::print ( ostream& out )
 {
+  out << "Start printing tree" << endl;
   out << "Tree has " << nodes.size() << " nodes :" << endl;
- 
   out << nodes[0]->label << " -> ";
   for(Node* n : nodes[0]->Ne){
     out << n->label << ", "; 
   }
   out << std::endl;
 
-  for ( int i = 1; i < nodes.size(); i++ ) {
+  for ( size_t i = 1; i < nodes.size(); i++ ) {
     out << nodes[i]->Np->label 
          << " -> " << nodes[i]->label 
          << " : R = " << nodes[i]->R 
