@@ -30,20 +30,27 @@ namespace Seabreeze {
 
   class Elmore {
     public:
-            Elmore          ( Net* net = NULL );
-           ~Elmore          ();
-      void  contFromNet     ( Net* net );
-      void  buildTree       ( RoutingPad* rp );
-      void  build_from_node ( Node* source ); 
-      void  clearTree       ();
-      Tree* getTree         ();
-      int   delayElmore     ( RoutingPad* rp );
-      void  toTREE          ( ostream& ) const;
+                                  Elmore          ( Net* net = NULL );
+                                 ~Elmore          ();
+      void                        contFromNet     ( Net* net );
+      void                        buildTree       ( RoutingPad* rp );
+      void                        build_from_node ( Node* source ); 
+      void                        clearTree       ();
+      Tree*                       getTree         ();
+      inline const set<Contact*>& get_conts       () const;
+      int                         delayElmore     ( RoutingPad* rp );
+      void                        toTREE          ( ostream& ) const;
     private:
       set<Contact*> _conts;
       set<Contact*> checker;
       Tree*          _tree;
   };
+  
+  inline const set<Contact*>& Elmore::get_conts () const
+  {
+    return _conts;
+  }
+
 
 //---------------------------------------------------------
 // Class : Seabreeze::ElmoreProperty

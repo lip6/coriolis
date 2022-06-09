@@ -15,7 +15,7 @@ using Hurricane::Contact;
 using Hurricane::RoutingPad;
 using Hurricane::Component;
 
-class Tree{
+class Tree {
   public:
                   Tree          ();
                  ~Tree          ();

@@ -1,5 +1,6 @@
 #include "Seabreeze/Seabreeze.h"
 #include "hurricane/Net.h"
+#include "hurricane/Segment.h"
 
 namespace Seabreeze {
 
@@ -10,6 +11,7 @@ namespace Seabreeze {
   using Hurricane::Instance;
   using Hurricane::PrivateProperty;
   using Hurricane::Component;
+  using Hurricane::Segment;
 
 //---------------------------------------------------------
 // Class : "Elmore"
@@ -17,7 +19,7 @@ namespace Seabreeze {
   Elmore::Elmore ( Net* net )
     : _conts()
     , checker()
-    , _tree()
+    , _tree(new Tree())
   {}
 
   Elmore::~Elmore ()
@@ -29,6 +31,8 @@ namespace Seabreeze {
     for ( RoutingPad* rp : net->getRoutingPads() ) {
 
       for ( Component* c : rp->getSlaveComponents() ) {
+
+        
         Contact* ct = dynamic_cast<Contact*>(c);
         
         if ( not ct )   continue;
@@ -68,7 +72,11 @@ namespace Seabreeze {
 
   void Elmore::build_from_node ( Node* s  )
   {
-    if ( s->_contact == nullptr || find(_conts.begin(), _conts.end(), s->_contact) == _conts.end() ) {
+//-----------------------------------------------------------------------
+    cerr << "Elmore::build_from_node" << endl; 
+//-----------------------------------------------------------------------
+    if ( s->_contact == nullptr ) {
+      cerr << "No contact found" << s->_contact << endl;
       return;
     }
 
@@ -77,26 +85,35 @@ namespace Seabreeze {
     // To check for circle
     checker.insert(s->_contact);
 
-    for ( Component* c : (s->_contact)->getSlaveComponents() ) {
+    for ( Component* comp : (s->_contact)->getSlaveComponents() ) {
 
-      Contact* ccont = dynamic_cast<Contact*>(c);
-
+      Segment* seg = dynamic_cast<Segment*>(comp);
+//-----------------------------------------
+      cerr << "Segment : " << seg << endl;
+//-----------------------------------------
+      if ( not seg ) continue;
+ 
+      Contact* ccont = dynamic_cast<Contact*>(seg->getOppositeAnchor(s->_contact));
+//----------------------------------------------------------------
+      cerr << ccont << endl;
+//----------------------------------------------------------------
       if ( not ccont )
         continue;
       else{
-        if ( find( _conts.begin(), _conts.end(), ccont) != _conts.end() ) {
-
+          
           if ( find( checker.begin(), checker.end(), ccont) != checker.end() ) {
             cerr << "Net contains a circle. Cannot apply Elmore's delay here !" << endl;
             return;
           }
           else {
-            if ( ccont != (s->Np)->_contact ) {
+//-----------------------------------------------------------------------
+            cerr << "Contact found in the net" << endl;
+//-----------------------------------------------------------------------
+            if ( not s->Np || ccont != (s->Np)->_contact ) {
               Node* node = new Node( s, ccont );
               build_from_node(node);
             }
           }
-        }
       }
     }
   }
