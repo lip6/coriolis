@@ -93,7 +93,7 @@ namespace Bora {
     _picker->setStateMachine(new QwtPickerClickPointMachine());
     setStyleSheet ( "border: 0px" );
 
-    int ptSize = Graphics::isHighDpi() ? 5 : 3;
+    int ptSize = Graphics::isHighDpi() ? 2 : 2;
 
     QwtText xTitle ( QString::fromUtf8("Width (µm)") );
     QwtText yTitle ( QString::fromUtf8("Height (µm)") );
@@ -124,8 +124,8 @@ namespace Bora {
     _STreeCurve->attach  ( _plot );
 
     QwtSymbol* symbol = new QwtSymbol();
-    symbol->setStyle( QwtSymbol::Cross );
-    symbol->setSize ( 20 );
+    symbol->setStyle( QwtSymbol::Triangle );
+    symbol->setSize ( 6 );
     symbol->setPen  ( dotPen );
     _STreeCurve->setSymbol( symbol );
 
