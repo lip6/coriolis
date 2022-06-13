@@ -108,7 +108,12 @@ namespace Seabreeze {
     Elmore* elm = ElmoreProperty::create(net)->getElmore();
     elm->contFromNet(net);
 //-------------------------------------------------------------------------
+    cerr << endl;
     cerr << "There are : " << (elm->get_conts()).size() << " contacts" << endl;
+    for ( Contact* ct : elm->get_conts() ) {
+        cerr << ct << endl;
+    }
+    cerr << endl;
 //-------------------------------------------------------------------------
     elm->buildTree(driver);
     cerr << "Tree built succesfully !" << endl;
