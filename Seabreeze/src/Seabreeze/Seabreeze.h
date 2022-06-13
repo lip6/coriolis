@@ -35,6 +35,7 @@ namespace Seabreeze {
       void                        contFromNet     ( Net* net );
       void                        buildTree       ( RoutingPad* rp );
       void                        build_from_node ( Node* source ); 
+      Contact*                    build_branch    ( Contact* ct );
       void                        clearTree       ();
       Tree*                       getTree         ();
       inline const set<Contact*>& get_conts       () const;

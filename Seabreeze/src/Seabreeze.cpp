@@ -136,6 +136,29 @@ namespace Seabreeze {
     }
   }
 
+  Contact* Elmore::build_branch ( Contact* ct ) {
+    int count = 0;
+    checker.insert(ct);
+    for ( Component* cp : ct->getSlaveComponents() ) {
+      count += (dynamic_cast<Segment*>(cp)) ? 1 : 0;
+    }
+    
+    if ( count == 0 )
+      cerr << "Something is not right here : Contact " << ct << " is isolated ?" << endl;
+    else if ( count != 2 )
+      return ct;
+
+    for ( Component* cp : ct->getSlaveComponents() ) {
+      Segment* sm = dynamic_cast<Segment*>(cp);      
+      if ( not sm ) continue;
+      Contact* cct = dynamic_cast<Contact*>(sm->getOppositeAnchor(ct));
+      if ( not cct || find(checker.begin(), checker.end(), cct) != checker.end() )
+        continue;
+      else
+        build_branch(cct);
+    }
+  }
+
   void Elmore::clearTree ()
   {
     _tree->clear();
