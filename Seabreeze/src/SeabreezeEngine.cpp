@@ -109,7 +109,7 @@ namespace Seabreeze {
     elm->contFromNet(net);
 //-------------------------------------------------------------------------
     cerr << endl;
-    cerr << "There are : " << (elm->get_conts()).size() << " contacts" << endl;
+    cerr << "There are : " << (elm->get_conts()).size() << " routing pads presented by :" << endl;
     for ( Contact* ct : elm->get_conts() ) {
         cerr << ct << endl;
     }

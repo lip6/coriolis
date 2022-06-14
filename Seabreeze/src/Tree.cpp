@@ -131,7 +131,7 @@ int Tree::Delay_Elmore ( RoutingPad* rp )
 
 void Tree::print ( ostream& out )
 {
-  out << "Start printing tree" << endl;
+  out << "Start printing tree..." << endl;
   out << "Tree has " << nodes.size() << " nodes :" << endl;
   out << nodes[0]->label << " -> ";
   for(Node* n : nodes[0]->Ne){
