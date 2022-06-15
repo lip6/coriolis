@@ -5,6 +5,7 @@
 #include "hurricane/Property.h"
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Contact.h"
+#include "hurricane/Segment.h"
 
 #include "Tree.h"
 
@@ -23,6 +24,7 @@ namespace Seabreeze {
   using Hurricane::RoutingPad;
   using Hurricane::Contact;
   using Hurricane::Instance;
+  using Hurricane::Segment;
   using Hurricane::PrivateProperty;
 
 //----------------------------------------------------------

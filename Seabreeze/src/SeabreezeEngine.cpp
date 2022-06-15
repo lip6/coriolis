@@ -116,7 +116,6 @@ namespace Seabreeze {
     cerr << endl;
 //-------------------------------------------------------------------------
     elm->buildTree(driver);
-    cerr << "Tree built succesfully !" << endl;
   }
 
   SeabreezeEngine::SeabreezeEngine ( Cell* cell )
