@@ -138,11 +138,14 @@ namespace Seabreeze {
 //----------------------------------------------------------------------------------------
     cerr << "Target contact : " << ccont << endl;
 //----------------------------------------------------------------------------------------
-    ccont = build_branch(ccont);
+//    ccont = build_branch(ccont);
+    Contact* ctr = nullptr;
+    build_branch(ctr, ccont);
 //----------------------------------------------------------------------------------------
-    cerr << "Found a node : " << ccont << endl;
+    cerr << "Found a node : " << ctr << endl;
 //----------------------------------------------------------------------------------------
-    if ( not ccont ) {
+//    if ( not ccont ) {
+    if ( not ctr ) {
       cerr << "This branch leads to a NULL contact ?" << endl;
       cerr << "Tree build failed" << endl;
       return;
@@ -150,14 +153,16 @@ namespace Seabreeze {
 
     Node* node = new Node(s, ccont);
     int count = 1;
-    for ( Component* comp : ccont->getSlaveComponents() ) {
+//    for ( Component* comp : ccont->getSlaveComponents() ) {
+    for ( Component* comp : ctr->getSlaveComponents() ) {
       count += (dynamic_cast<Segment*>(comp)) ? 1 : 0;
     }
     if ( count == 1 ){
       _tree->add_node(node);
     }
     else if ( count > 2 ) {
-      for ( Component* comp : ccont->getSlaveComponents() ) {
+//      for ( Component* comp : ccont->getSlaveComponents() ) {
+      for ( Component* comp : ctr->getSlaveComponents() ) {
         Segment* segmt = dynamic_cast<Segment*>(comp);
         if ( not segmt ) continue;
         build_from_Node(node, segmt);
@@ -165,6 +170,46 @@ namespace Seabreeze {
     }
   }
 
+  void Elmore::build_branch ( Contact* ctr, Contact* ct ) {
+    int count = 0;
+    checker.insert(ct);
+//-----------------------------------------------------------------------------------
+    cerr << "Build branch from contact : " << ct << endl;
+//-----------------------------------------------------------------------------------
+    for ( Component* cp : ct->getSlaveComponents() ) {
+      count += (dynamic_cast<Segment*>(cp)) ? 1 : 0;
+    }
+
+    if ( count == 0 ) {
+      cerr << "Something is not right here : Contact " << ct << " is isolated ?" << endl;
+    }
+    else if ( count == 2 ) {
+      Segment* sm = nullptr;
+      for ( Component* cp : ct->getSlaveComponents() ) {
+        sm = dynamic_cast<Segment*>(cp);      
+        if ( not sm ) continue;
+      }
+
+      Contact* cct = dynamic_cast<Contact*>(sm->getOppositeAnchor(ct));
+//------------------------------------------------------------------------------------
+      cerr << "To contact : " << cct << endl;
+//------------------------------------------------------------------------------------
+      if ( not cct || find(checker.begin(), checker.end(), cct) != checker.end() ) {
+        cerr << "This branch leads to no where ?" << endl;
+      }
+      else {
+        build_branch(ctr, cct);
+      }
+    }
+    else {
+      ctr = ct;
+//-------------------------------------------------------------------
+      cerr << "Return contact : " << ctr << endl;
+//-------------------------------------------------------------------
+    }
+  }
+
+/*
   Contact* Elmore::build_branch ( Contact* ct ) {
     int count = 0;
     checker.insert(ct);
@@ -174,7 +219,7 @@ namespace Seabreeze {
     for ( Component* cp : ct->getSlaveComponents() ) {
       count += (dynamic_cast<Segment*>(cp)) ? 1 : 0;
     }
-    
+
     Contact* cont = nullptr;
     if ( count == 0 ) {
       cerr << "Something is not right here : Contact " << ct << " is isolated ?" << endl;
@@ -205,10 +250,50 @@ namespace Seabreeze {
     }
 //-------------------------------------------------------------------
     cerr << "After the else : " << cont << endl;
+    cerr << "Is this line printed twice ?" << endl;
 //-------------------------------------------------------------------
     return cont;
   }
+*/
 
+  Contact* Elmore::build_branch ( Contact* ct ) {
+    Contact* tmp = ct;
+
+    int count;
+    do {
+      checker.insert(tmp);
+      count = 0;
+      for ( Component* cp : tmp->getSlaveComponents() ) {
+        count += (dynamic_cast<Segment*>(cp)) ? 1 : 0;
+      }
+      if ( count == 0 ) {
+        cerr << "Something is not right here : Contact " << tmp << " is isolated ?" << endl;
+        break;
+      }
+      else if ( count != 2 ) {
+        break;
+      }
+      else {
+        Segment* sm = nullptr;
+        for ( Component* cp : tmp->getSlaveComponents() ) {
+          sm = dynamic_cast<Segment*>(cp);
+          if ( not sm ) continue;
+        }
+        
+        Contact* cct = dynamic_cast<Contact*>(sm->getOppositeAnchor(ct));
+        if ( not cct || checker.count(cct) != 0 ) {
+          cerr << "This branch leads to no where ?" << endl;
+          tmp = nullptr;
+          break;
+        }
+        else
+          tmp = cct;
+      }
+    } while ( count == 2 );
+
+    return tmp;
+  }
+  
   void Elmore::clearTree ()
   {
     _tree->clear();

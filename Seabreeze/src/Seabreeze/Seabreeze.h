@@ -38,7 +38,8 @@ namespace Seabreeze {
       void                        buildTree       ( RoutingPad* rp );
       void                        build_from_node ( Node* source ); 
       void                        build_from_Node ( Node* source, Segment* seg );
-      Contact*                    build_branch    ( Contact* ct );
+      Contact*                    build_branch    ( Contact* contact );
+      void                        build_branch    ( Contact* ctr, Contact* contact );
       void                        clearTree       ();
       Tree*                       getTree         ();
       inline const set<Contact*>& get_conts       () const;
