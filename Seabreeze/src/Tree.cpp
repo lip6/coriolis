@@ -46,7 +46,8 @@ void Tree::new_node ()
 void Tree::add_node ( Node* node )
 {
   node->label = nodes.size();
-  nodes.push_back(node);
+  if ( find(nodes.begin(), nodes.end(), node) == nodes.end() )
+    nodes.push_back(node);
 }
 
 void Tree::After_i ( Node *ni )
@@ -133,21 +134,21 @@ void Tree::print ( ostream& out )
 {
   out << "Start printing tree..." << endl;
   out << "Tree has " << nodes.size() << " nodes :" << endl;
-  out << nodes[0]->label << " -> ";
+  out << nodes[0]->_contact << " -> ";
   for(Node* n : nodes[0]->Ne){
-    out << n->label << ", "; 
+    out << n->_contact << ", "; 
   }
   out << std::endl;
 
   for ( size_t i = 1; i < nodes.size(); i++ ) {
-    out << nodes[i]->Np->label 
-         << " -> " << nodes[i]->label 
+    out << nodes[i]->Np->_contact 
+         << " -> " << nodes[i]->_contact 
          << " : R = " << nodes[i]->R 
          << ", C = " << nodes[i]->C;
     if ( !(nodes[i]->Ne).empty() ) {
       out << " -> ";
       for ( Node* n : nodes[i]->Ne ) {
-        out << n->label << ", ";
+        out << n->_contact << ", ";
       }
     }
     else
