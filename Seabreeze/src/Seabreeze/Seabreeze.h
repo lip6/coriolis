@@ -6,7 +6,7 @@
 #include "hurricane/RoutingPad.h"
 #include "hurricane/Contact.h"
 #include "hurricane/Segment.h"
-
+#include "Configuration.h"
 #include "Tree.h"
 
 namespace Hurricane {
@@ -38,14 +38,17 @@ namespace Seabreeze {
       void                        buildTree       ( RoutingPad* rp ); 
       void                        build_from_Node ( Node* source, Segment* seg );
       Contact*                    build_branch    ( Contact* contact );
+      void                        Set_RC          ( double* R, double* C, Contact* ct, Segment* sm );
       void                        clearTree       ();
       Tree*                       getTree         ();
       inline const set<Contact*>& get_conts       () const;
+      inline       Configuration* getConfig       ();
       int                         delayElmore     ( RoutingPad* rp );
       void                        toTREE          ( ostream& ) const;
     private:
-      set<Contact*> _conts;
-      set<Contact*> checker;
+      Configuration* _config;
+      set<Contact*>  _conts;
+      set<Contact*>  checker;
       Tree*          _tree;
   };
   
@@ -54,6 +57,10 @@ namespace Seabreeze {
     return _conts;
   }
 
+  inline Configuration* Elmore::getConfig ()
+  {
+    return _config;
+  }
 
 //---------------------------------------------------------
 // Class : Seabreeze::ElmoreProperty

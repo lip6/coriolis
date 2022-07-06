@@ -56,9 +56,8 @@ void Tree::After_i ( Node *ni )
     return;
 	
   ni->ap = 1;
-  int size = ni->Ne.size();
-  for(int i = 0; i < size; i++){
-    After_i(ni->Ne[i]);
+  for ( Node* ne : ni->Ne ) {
+    After_i(ne);
   }
 }
 
@@ -66,7 +65,7 @@ set<Node*> Tree::Branch_i ( Contact* ct )
 {
   set<Node*> ln;
   Node *ni = get_node(ct);
-  while(ni != nullptr){
+  while ( ni != nullptr ) {
     ln.insert(ni->Np);
     ni = ni->Np;
   }

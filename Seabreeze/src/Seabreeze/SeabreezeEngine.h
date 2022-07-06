@@ -55,15 +55,15 @@ namespace Seabreeze {
               SeabreezeEngine& operator=       ( const SeabreezeEngine& );
     private :
     // Attributes.
-      static  Name        _toolName;
+      static  Name           _toolName;
     protected :
               CellViewer* _viewer;
   };
 
 // Inline Functions.
-  inline CellViewer* SeabreezeEngine::getViewer () const { return _viewer; }
-  inline ToolEngine* SeabreezeEngine::base      () { return static_cast<ToolEngine*>(this); }
-  inline void        SeabreezeEngine::setViewer ( CellViewer* viewer ) { _viewer = viewer; }
+  inline CellViewer*    SeabreezeEngine::getViewer () const { return _viewer; }
+  inline ToolEngine*    SeabreezeEngine::base      () { return static_cast<ToolEngine*>(this); }
+  inline void           SeabreezeEngine::setViewer ( CellViewer* viewer ) { _viewer = viewer; }
 } // Seabreeze namespace.
 
 INSPECTOR_P_SUPPORT(Seabreeze::SeabreezeEngine);

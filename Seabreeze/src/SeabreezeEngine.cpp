@@ -94,7 +94,10 @@ namespace Seabreeze {
   void SeabreezeEngine::runTool ( Net* net )
   {
     cerr << "SeabreezeEngine::runTool() has been called." << endl;
-    
+
+    DebugSession::addToTrace(net);
+    DebugSession::open(net, 190, 200);
+
     RoutingPad* driver=  nullptr;
 
     for ( RoutingPad* rp : net->getRoutingPads() ) {
@@ -107,15 +110,16 @@ namespace Seabreeze {
 
     Elmore* elm = ElmoreProperty::create(net)->getElmore();
     elm->contFromNet(net);
-//-------------------------------------------------------------------------
-    cerr << endl;
-    cerr << "There are : " << (elm->get_conts()).size() << " routing pads presented by :" << endl;
+
+    cdebug_log(199, 0) << endl << "There are : " << (elm->get_conts()).size() << " routing pads presented by :" << endl;
     for ( Contact* ct : elm->get_conts() ) {
-        cerr << ct << endl;
+        cdebug_log(199, 1) << ct << endl;
+        cdebug_tabw(199, -1);
     }
-    cerr << endl;
-//-------------------------------------------------------------------------
+    cdebug_log(199,0) << endl;
+
     elm->buildTree(driver);
+    DebugSession::close();
   }
 
   SeabreezeEngine::SeabreezeEngine ( Cell* cell )

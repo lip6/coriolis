@@ -20,6 +20,7 @@
                                      Seabreeze.cpp
                                      Node.cpp
                                      Tree.cpp
+                                     Configuration.cpp
                                      #GraphicSeabreezeEngine.cpp
                       )
                    set( pyCpps       PySeabreeze.cpp

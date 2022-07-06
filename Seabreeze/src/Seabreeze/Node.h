@@ -8,9 +8,9 @@ using Hurricane::Contact;
 
 class Node {
   public :
-    int                R;
-    int                Rt;
-    int                C;
+    double             R;
+    double             Rt;
+    double             C;
     Node*              Np;
     std::vector<Node*> Ne;
     Contact*           _contact;
