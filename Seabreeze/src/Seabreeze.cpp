@@ -72,10 +72,9 @@ namespace Seabreeze {
     double R = 0;
     double C = 0;
     Set_RC(&R, &C, ct, nullptr);
-//---------------------------------------------------------
     s->R = R;
-    s->C = C;
-    
+    s->C = 1/C;
+//---------------------------------------------------------   
     Segment* seg = nullptr;
     int c = 0;
     for ( Component* comp : ct->getSlaveComponents() ) {
@@ -116,7 +115,7 @@ namespace Seabreeze {
     double Rb = 0;
     double Cb = 0;
 //-----------------------------------------------------------------------
-    ccont = build_branch(ccont);
+    ccont = build_branch(&Rb, &Cb, ccont);
 
     cdebug_log(199, 0) << "Found a node : " << ccont << endl;
 
@@ -127,9 +126,8 @@ namespace Seabreeze {
 
     Node* node = new Node(s, ccont);
 //-----------------------------------------------------------------------
-    Set_RC(&Rb, &Cb, ccont, seg);
     node->R = Rb;
-    node->C = Cb;
+    node->C = 1/Cb;
 //-----------------------------------------------------------------------
     int count = 0;
     for ( Component* comp : ccont->getSlaveComponents() ) {
@@ -167,7 +165,7 @@ namespace Seabreeze {
     }
   }
 
-  Contact* Elmore::build_branch ( Contact* ct ) 
+  Contact* Elmore::build_branch ( double* R, double* C, Contact* ct ) 
   {
     Contact* tmp = ct;
 
@@ -216,7 +214,7 @@ namespace Seabreeze {
         }
         else
           tmp = cct;
-//        Set_RC(R, C, tmp, sm);
+          Set_RC(R, C, tmp, sm);
       }
     } while ( count == 2 );
 
@@ -244,7 +242,7 @@ namespace Seabreeze {
       double w_sm = DbU::toPhysical(sm->getWidth(), DbU::UnitPower::Nano);
       double S_sm = l_sm*w_sm;
       (*R) += Rsm*S_sm;
-      (*C) += Csm*S_sm;
+      (*C) += 1/(Csm*S_sm);
     }
   }
  
