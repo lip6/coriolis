@@ -45,8 +45,8 @@ namespace Seabreeze {
               double          getRct         ();
               double          getRsm         ();
               double          getCsm         ();
-      virtual Record*        _getRecord      () const;
-      virtual string         _getString      () const;
+      //virtual Record*        _getRecord      () const;
+      //virtual string         _getString      () const;
       virtual string         _getTypeName    () const;
     protected :
     // Attributes

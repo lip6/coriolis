@@ -65,4 +65,19 @@ namespace Seabreeze {
   {
     return _Csm;
   }
+/*
+  Record* Configuration::_getRecord () const 
+  {
+
+  }
+
+  string Configuration::_getString () const
+  {
+    
+  }
+*/
+  string Configuration::_getTypeName () const
+  {
+    return "Configuration";
+  }
 }
