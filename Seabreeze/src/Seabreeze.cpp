@@ -67,6 +67,7 @@ namespace Seabreeze {
     cerr << "Root contact : " << ct->getId() << endl;
     cerr << "Start building tree..." << endl;
 
+    checker.insert(ct);
     Node* s = new Node(nullptr, ct);
 //---------------------------------------------------------
     double R = 0;
@@ -91,7 +92,6 @@ namespace Seabreeze {
       return;
     }
     build_from_Node(s, seg);
-
     cerr << endl << "Finished building tree !" << endl << endl;
     _tree->print(cerr);
   }
@@ -107,7 +107,7 @@ namespace Seabreeze {
     cdebug_log(199,0) << endl 
                       << endl 
                       << "Build from contact : " << s->_contact->getId() << endl
-                      << "With segment : " << seg << endl;
+                      << "With segment : " << seg->getId() << endl;
     
     Contact* ccont = dynamic_cast<Contact*>(seg->getOppositeAnchor(s->_contact));
     if ( not ccont || (s->Np && ccont == (s->Np)->_contact) )
@@ -120,7 +120,7 @@ namespace Seabreeze {
 //-----------------------------------------------------------------------
     ccont = build_branch(&Rb, &Cb, ccont);
 
-    cdebug_log(199, 0) << "Found a node : " << ccont << endl;
+    cdebug_log(199, 0) << "Found a node : " << ccont->getId() << endl;
 
     if ( not ccont ) {
       cerr << "This branch leads to a NULL contact ?" << endl;
@@ -162,7 +162,7 @@ namespace Seabreeze {
           continue;
         }
 
-        cdebug_log(199,0) << "Target is : " << target << endl;
+        cdebug_log(199,0) << "Target is : " << target->getId() << endl;
         cdebug_tabw(199,-1);
 
         if ( checker.count(target) == 0 ){
@@ -177,14 +177,25 @@ namespace Seabreeze {
   {
     Contact* tmp = ct;
 
-    cdebug_log(199,1) << endl << "Start building branch with contact : " << ct << endl;
+    cdebug_log(199,1) << endl << "Start building branch with contact : " << ct->getId() << endl;
 
     int count;
     do {
       checker.insert(tmp);
       count = 0;
+      Segment* sm = nullptr; 
       for ( Component* cp : tmp->getSlaveComponents() ) {
-        count += (dynamic_cast<Segment*>(cp)) ? 1 : 0;
+        sm = dynamic_cast<Segment*>(cp);
+        if ( not sm ) 
+          continue;
+
+        Contact* tar = dynamic_cast<Contact*>(sm->getOppositeAnchor(tmp));
+        if ( tar && checker.count(tar) != 0 )   {
+          Set_RC(R, C, tmp, sm);
+          cdebug_log(199,0) << "RC from build_branch :" << endl;
+          cdebug_log(199,0) << "tmp = " << tmp->getId() << "; sm = " << sm->getId() << "; R = " << *R << "; C = " << *C << endl;
+        }
+        count += 1;
       }
       if ( count == 0 ) {
         cerr << "Something is not right here : Contact " << tmp << " is isolated ?" << endl;
@@ -194,26 +205,25 @@ namespace Seabreeze {
         break;
       }
       else {
-        Segment* sm = nullptr;
         Contact* cct = nullptr;
         for ( Component* cp : tmp->getSlaveComponents() ) {
           sm = dynamic_cast<Segment*>(cp);
           if ( not sm ) 
             continue;
 
-          cdebug_log(199,1) << "Sm  : " << sm << endl;
+          cdebug_log(199,1) << "Sm  : " << sm->getId() << endl;
           cdebug_tabw(199,-1);
 
           Contact* tar = dynamic_cast<Contact*>(sm->getOppositeAnchor(tmp));
 
-          cdebug_log(199,0) << "tar : " << tar << endl << endl;
+          cdebug_log(199,0) << "tar : " << tar->getId() << endl << endl;
  
           if ( tar && checker.count(tar) == 0 )
             cct = tar;
         }
 
         cdebug_tabw(199,-1);
-        cdebug_log(199,0) << "cct : " << cct << endl;
+        cdebug_log(199,0) << "cct : " << cct->getId() << endl;
 
         if ( not cct || checker.count(cct) != 0 ) {
           cerr << "This branch leads to no where ?" << endl;
@@ -222,8 +232,6 @@ namespace Seabreeze {
         }
         else
           tmp = cct;
-          Set_RC(R, C, tmp, sm);
-          cdebug_log(199,0) << "tmp = " << tmp << "; sm = " << sm << "; R = " << R << "; C = " << C << endl;
       }
     } while ( count == 2 );
 
@@ -242,7 +250,7 @@ namespace Seabreeze {
     (*R) += Rct*S_ct;
 
     if ( sm == nullptr ) {
-      C = 0;
+      *C = 0;
     }
     else {
       double Rsm = getConfig()->getRsm();
@@ -250,10 +258,15 @@ namespace Seabreeze {
       double l_sm = DbU::toPhysical(sm->getLength(), DbU::UnitPower::Nano);
       double w_sm = DbU::toPhysical(sm->getWidth(), DbU::UnitPower::Nano);
       double S_sm = l_sm*w_sm;
+//---------------------------------------------------------------------------------------
+      cdebug_log(199,0) << "sm = " << sm->getId() <<  "; l_sm = " << l_sm << "; w_sm = " << w_sm << "; S_sm = " << S_sm << endl;
+//---------------------------------------------------------------------------------------
       (*R) += Rsm*S_sm;
-      (*C) += 1/(Csm*S_sm);
+      if ( S_sm == 0 )
+        (*C) += 0;
+      else
+        (*C) += 1/(Csm*S_sm);
     }
-    cdebug_log(199,0) << "ct = " << ct << "; sm = " << sm << "; R = " << R, "; C = " << C << endl;
   }
  
   void Elmore::clearTree ()

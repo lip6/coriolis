@@ -133,21 +133,24 @@ void Tree::print ( ostream& out )
 {
   out << "Start printing tree..." << endl;
   out << "Tree has " << nodes.size() << " nodes :" << endl;
-  out << nodes[0]->_contact << " -> ";
+  out << nodes[0]->_contact->getId() 
+      << " : R = " << nodes[0]->R 
+      << ", C = " << nodes[0]->C
+      << " -> ";
   for(Node* n : nodes[0]->Ne){
-    out << n->_contact << ", "; 
+    out << n->_contact->getId() << ", "; 
   }
   out << std::endl;
 
   for ( size_t i = 1; i < nodes.size(); i++ ) {
-    out << nodes[i]->Np->_contact 
-         << " -> " << nodes[i]->_contact 
+    out << nodes[i]->Np->_contact->getId() 
+         << " -> " << nodes[i]->_contact->getId() 
          << " : R = " << nodes[i]->R 
          << ", C = " << nodes[i]->C;
     if ( !(nodes[i]->Ne).empty() ) {
       out << " -> ";
       for ( Node* n : nodes[i]->Ne ) {
-        out << n->_contact << ", ";
+        out << n->_contact->getId() << ", ";
       }
     }
     else
