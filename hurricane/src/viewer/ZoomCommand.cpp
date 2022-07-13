@@ -52,8 +52,8 @@ namespace Hurricane {
 
   void  ZoomCommand::wheelEvent ( QWheelEvent* event )
   {
-    if      ( event->delta() > 0 ) _cellWidget->setScale ( _cellWidget->getScale()/1.2 );
-    else if ( event->delta() < 0 ) _cellWidget->setScale ( _cellWidget->getScale()*1.2 );
+    if      (event->delta() > 0) _cellWidget->setScale ( _cellWidget->getScale()/1.2 );
+    else if (event->delta() < 0) _cellWidget->setScale ( _cellWidget->getScale()*1.2 );
     event->accept ();
   }
 

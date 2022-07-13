@@ -7,7 +7,7 @@ from   Hurricane import Box
 from   Hurricane import Net
 import helpers
 import helpers.io
-from   helpers   import trace
+from   helpers   import trace, l, u, n
 
 #helpers.setTraceLevel( 100 )
 
@@ -45,7 +45,12 @@ def layout ( device, bbMode ):
         length     = device.getParameter( 'L' ).getValue()
         bends      = device.getParameter( 'bends' ).getValue()
   
+        width  = u(  8.0)
+        length = u(100.0)
+        bends  = 1
+        trace( 100, '\tpR:{0}\n'.format(device.getParameter('R')) )
         trace( 100, '\tpW:{0}\n'.format(device.getParameter('W')) )
+        trace( 100, '\tpL:{0}\n'.format(device.getParameter('L')) )
         trace( 100, '\tresistance:{0}, width:{1}, length:{2}\n'.format(resistance,width,length) )
   
         typeArg = 'UnknownType'
@@ -72,7 +77,7 @@ def layout ( device, bbMode ):
         trace( 100, '++' )
        #paramsMatrix.trace()
 
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
 
     trace( 100, '---' )

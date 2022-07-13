@@ -14,9 +14,7 @@
 // +-----------------------------------------------------------------+
 
 
-#ifndef  HURRICANE_SELECTOR_CRITERION_H
-#define  HURRICANE_SELECTOR_CRITERION_H
-
+#pragma  once
 #include <string>
 #include "hurricane/Commons.h"
 #include "hurricane/Name.h"
@@ -35,7 +33,7 @@ namespace Hurricane {
       virtual SelectorCriterion* clone             () const = 0;
       virtual bool               isValid           ( CellWidget* ) const = 0;
       inline  bool               isEnabled         () const;
-      virtual const Net*         getNet            () const;
+      virtual Occurrence         getNetOccurrence  () const;
       virtual const Box&         getArea           () const;
       inline  void               enable            ();
       inline  void               disable           ();
@@ -57,19 +55,18 @@ namespace Hurricane {
 
   class NetSelectorCriterion : public SelectorCriterion {
     public:
-                                    NetSelectorCriterion ( const Net* );
-      virtual                      ~NetSelectorCriterion ();
-      virtual NetSelectorCriterion* clone                () const;
-      virtual const Net*            getNet               () const;
-      virtual bool                  isValid              ( CellWidget* ) const;
-      virtual void                  doSelection          ( CellWidget* );
-      virtual void                  undoSelection        ( CellWidget* );
-      virtual Record*               _getRecord           () const;
-      virtual string                _getString           () const;
-      virtual string                _getTypeName         () const;
+                                    NetSelectorCriterion   ( Occurrence netOccurrence );
+      virtual                      ~NetSelectorCriterion   ();
+      virtual NetSelectorCriterion* clone                  () const;
+      virtual Occurrence            getNetOccurrence       () const;
+      virtual bool                  isValid                ( CellWidget* ) const;
+      virtual void                  doSelection            ( CellWidget* );
+      virtual void                  undoSelection          ( CellWidget* );
+      virtual Record*               _getRecord             () const;
+      virtual string                _getString             () const;
+      virtual string                _getTypeName           () const;
     protected:
-      const Net* _net;
-      const Name _name;
+      const Occurrence  _netOccurrence;
   };
 
 
@@ -93,5 +90,3 @@ namespace Hurricane {
 
 
 INSPECTOR_P_SUPPORT(Hurricane::SelectorCriterion);
-
-#endif  // HURRICANE_SELECTOR_CRITERION_H

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys		
+import sys        
 from   Hurricane        import *
 from   CRL              import *
 import Constant
@@ -16,8 +16,8 @@ def doBreak( level, message ):
     Breakpoint.stop( level, message )
     UpdateSession.open()
 
-def toDbU    ( l ): return DbU.fromPhysical( l, DbU.UnitPowerMicro )
-def toPhy    ( l ): return DbU.toPhysical  ( l, DbU.UnitPowerMicro )
+def toDbU    ( l ): return DbU.fromPhysical(     l , DbU.UnitPowerMicro )
+def toPhy    ( l ): return DbU.toPhysical  ( int(l), DbU.UnitPowerMicro )
 
 def toFoundryGrid ( l ):
     twoGrid = DbU.fromGrid( 2.0 )
@@ -152,7 +152,8 @@ class Resistor ( object ):
 
         self.setSidesDimRules()
 
-        if resdim.keys() == ["width","length"] and side in ["width","length"]:
+        print( resdim )
+        if list(resdim.keys()) == ["width","length"] and side in ["width","length"]:
         
             if side == "width"  :
                 rule = self.minWidth_resistorPlate
@@ -304,7 +305,7 @@ class Resistor ( object ):
         if self.resistorType == "RPOLYH"   : self.layers["hres"  ] =  technology.getLayer( "hres"   )
         if self.resistorType == "RPOLY2PH" : self.layers["restrm"] =  technology.getLayer( "restrm" )
  
-	return self.layers
+        return self.layers
 
 
     def create( self, bbMode = False ):
@@ -312,7 +313,7 @@ class Resistor ( object ):
         UpdateSession.open()           
 
         layerDict = self.getLayers()
-	self.computeDimensions(bbMode)
+        self.computeDimensions(bbMode)
         self.drawAbutmentBox  ()
         self.device.setAbutmentBox( self.abutmentBox )
         
@@ -436,7 +437,7 @@ class Resistor ( object ):
             abutmentBoxSide2 = self.resDim             ["length"] + 2*self.resPlateExtrimities["length"]  + 2*self.enclosure_resistor_abutmentBox
 
         if self.snakeMode     :
-            if self.resistorType == "RPOLYH"   : resistor_width = self.hresLayerDict.values()[0]
+            if self.resistorType == "RPOLYH"   : resistor_width = list(self.hresLayerDict.values())[0]
             if self.resistorType == "RPOLY2PH" : resistor_width = (self.bends+1)*self.snakeSegmentDict["width"] + self.bends*self.snakeSegments_spacing  
 
             abutmentBoxSide1 = resistor_width + 2*self.enclosure_resistor_abutmentBox  #width
@@ -479,8 +480,8 @@ class Resistor ( object ):
         self.resistorPlateDict["width"  ]     = self.resDim["width" ]
         self.resistorPlateDict["length" ]     = self.resDim["length"]
 
- 	if self.direction == "vertical"      : keysList = ["XCenter","YMin","YMax","XMin","width" ]
- 	if self.direction == "horizontal"    : keysList = ["YCenter","XMin","XMax","YMin","height"]
+        if self.direction == "vertical"      : keysList = ["XCenter","YMin","YMax","XMin","width" ]
+        if self.direction == "horizontal"    : keysList = ["YCenter","XMin","XMax","YMin","height"]
 
         self.resistorPlateDict[ keysList[0] ] = self.abutmentBoxDict  [keysList[3]] + self.abutmentBoxDict  [keysList[4]]/2
         self.resistorPlateDict[ keysList[1] ] = self.abutmentBoxDict  [keysList[1]] + self.enclosure_resistor_abutmentBox + self.resPlateExtrimities["length"]
@@ -512,7 +513,7 @@ class Resistor ( object ):
     ## The first bend is the lowest one (horizontally)
     def computeFirstSnakeSegmentPosition( self ) :
 
- 	if self.direction == "vertical"        :
+     if self.direction == "vertical"        :
 
             if self.bends >  1 : firstExtrimity_width = self.resPlateExtrimities["width"]
             if self.bends == 1 : firstExtrimity_width = self.resPlateExtrimity1 ["width"]
@@ -528,7 +529,7 @@ class Resistor ( object ):
             self.snakeSegmentDict    ["YMax"   ] = self.snakeSegmentDict["YMin"] + self.snakeSegmentDict["length"]
 
 
- 	if self.direction == "horizontal"      :
+     if self.direction == "horizontal"      :
 
             if self.bends >  1 : firstExtrimity_length = self.resPlateExtrimities["length"]
             if self.bends == 1 : firstExtrimity_length = self.resPlateExtrimity1 ["length"]
@@ -543,24 +544,17 @@ class Resistor ( object ):
 
             self.snakeSegmentDict    ["XMax"   ] = self.snakeSegmentDict["XMin"] + self.snakeSegmentDict["length"]
 
-        return
-
-
 
     def computeHRESLayerPosition( self ):
-
- 	if self.direction == "vertical"      :
+        if self.direction == "vertical"      :
             self.hresLayerDict["XCenter"] = self.abutmentBox.getXCenter()
             self.hresLayerDict["YMin"   ] = self.abutmentBox.getYMin() + self.enclosure_resistor_abutmentBox
             self.hresLayerDict["YMax"   ] = self.abutmentBox.getYMax() - self.enclosure_resistor_abutmentBox
-
- 	if self.direction == "horizontal"    :
+       
+        if self.direction == "horizontal"    :
             self.hresLayerDict["YCenter"] = self.abutmentBox.getYCenter()
             self.hresLayerDict["XMin"   ] = self.abutmentBox.getXMin() + self.enclosure_resistor_abutmentBox
             self.hresLayerDict["XMax"   ] = self.abutmentBox.getXMax() - self.enclosure_resistor_abutmentBox
-
-
-        return
 
 
     def drawLayer( self, layerLabel, layer):
@@ -588,25 +582,25 @@ class Resistor ( object ):
 
         if self.direction == "vertical"        : 
             for i in range(0, maxIterations)   :
-                print self.nets[0], layer \
+                print( self.nets[0], layer \
                     , positionParams["XCenter"  ] + i*centerTranslation \
                     , positionParams[thiknessKey] \
                     , positionParams["YMin"     ] \
-                    , positionParams["YMax"     ] 
+                    , positionParams["YMax"     ] )
                 Vertical.create  ( self.nets[0], layer
-                                 , positionParams["XCenter"  ] + i*centerTranslation
-                                 , positionParams[thiknessKey]
-                                 , positionParams["YMin"     ] 
-                                 , positionParams["YMax"     ] 
+                                 , int(positionParams["XCenter"  ] + i*centerTranslation)
+                                 , int(positionParams[thiknessKey])
+                                 , int(positionParams["YMin"     ])
+                                 , int(positionParams["YMax"     ])
                                  )
 
         if self.direction == "horizontal"      : 
             for i in range(0, maxIterations)   :
                 Horizontal.create( self.nets[0], layer
-                                 , positionParams["YCenter"  ] + i*centerTranslation
-                                 , positionParams[thiknessKey]
-                                 , positionParams["XMin"     ]
-                                 , positionParams["XMax"     ] 
+                                 , int(positionParams["YCenter"  ] + i*centerTranslation)
+                                 , int(positionParams[thiknessKey])
+                                 , int(positionParams["XMin"     ])
+                                 , int(tositionParams["XMax"     ] )
                                  ) 
         return
 
@@ -629,18 +623,18 @@ class Resistor ( object ):
 
         if self.direction == "vertical"        :
             Vertical.create  ( self.nets[0], layer
-                             , self.resdefLayerDict["XCenter"]
-                             , self.resdefLayerDict["width"  ]
-                             , self.resdefLayerDict["YMin"   ] 
-                             , self.resdefLayerDict["YMax"   ] 
+                             , int(self.resdefLayerDict["XCenter"])
+                             , int(self.resdefLayerDict["width"  ])
+                             , int(self.resdefLayerDict["YMin"   ])
+                             , int(self.resdefLayerDict["YMax"   ])
                              )
 
         if self.direction == "horizontal"      : 
             Horizontal.create( self.nets[0], layer
-                             , self.resdefLayerDict["YCenter"] 
-                             , self.resdefLayerDict["width"  ]
-                             , self.resdefLayerDict["XMin"   ] 
-                             , self.resdefLayerDict["XMax"   ] 
+                             , int(self.resdefLayerDict["YCenter"])
+                             , int(self.resdefLayerDict["width"  ])
+                             , int(self.resdefLayerDict["XMin"   ])
+                             , int(self.resdefLayerDict["XMax"   ])
                              ) 
         print("self.resdefLayerDict['width'  ]",self.resdefLayerDict["width"  ])
         print("self.resistorPlateDict['width'  ]",self.resistorPlateDict["width"  ])
@@ -664,10 +658,10 @@ class Resistor ( object ):
                     factor0 = 0 if ( i == self.bends and self.bends % 2 == 0 )           else 1
                     factor1 = 0 if ( i == self.bends and self.bends % 2 != 0 ) or i == 0 else 1
                 Vertical.create  ( self.nets[0], layer
-                                 , self.resdefLayerDict["XCenter"] + i*centerTranslation
-                                 , self.resdefLayerDict["width"  ]
-                                 , self.resdefLayerDict["YMin"   ] + factor0*extrimityTranslation
-                                 , self.resdefLayerDict["YMax"   ] - factor1*extrimityTranslation
+                                 , int(self.resdefLayerDict["XCenter"] + i*centerTranslation)
+                                 , int(self.resdefLayerDict["width"  ])
+                                 , int(self.resdefLayerDict["YMin"   ] + factor0*extrimityTranslation)
+                                 , int(self.resdefLayerDict["YMax"   ] - factor1*extrimityTranslation)
                                  )
 
         if self.direction == "horizontal"      : 
@@ -678,10 +672,10 @@ class Resistor ( object ):
                     factor0 = 0 if i == 0 or (i == self.bends and self.bends % 2 != 0) else 1
                     factor1 = 0 if            i == self.bends and self.bends % 2 == 0  else 1
                 Horizontal.create( self.nets[0], layer
-                                 , self.resdefLayerDict["YCenter"] + i*centerTranslation
-                                 , self.resdefLayerDict["width"  ]
-                                 , self.resdefLayerDict["XMin"   ] + factor0*extrimityTranslation
-                                 , self.resdefLayerDict["XMax"   ] - factor1*extrimityTranslation
+                                 , int(self.resdefLayerDict["YCenter"] + i*centerTranslation)
+                                 , int(self.resdefLayerDict["width"  ])
+                                 , int(self.resdefLayerDict["XMin"   ] + factor0*extrimityTranslation)
+                                 , int(self.resdefLayerDict["XMax"   ] - factor1*extrimityTranslation)
                                  ) 
         return
 
@@ -706,10 +700,10 @@ class Resistor ( object ):
 
             for i in range(0,self.bends)       : 
                 Horizontal.create( self.nets[0], layer
-                                 , snakeCornersYCenters[k]      
-                                 , self.snakeCornerDict["width"] + widthExtension 
-                                 , self.snakeCornerDict["XMin" ] - self.minWidth_contact/4 + i*translation
-                                 , self.snakeCornerDict["XMax" ] + self.minWidth_contact/4 + i*translation
+                                 , int(snakeCornersYCenters[k]      )
+                                 , int(self.snakeCornerDict["width"] + widthExtension )
+                                 , int(self.snakeCornerDict["XMin" ] - self.minWidth_contact/4 + i*translation)
+                                 , int(self.snakeCornerDict["XMax" ] + self.minWidth_contact/4 + i*translation)
                                  ) 
                 k = k+1 if k<1 else 0
 
@@ -719,10 +713,10 @@ class Resistor ( object ):
 
             for i in range(0,self.bends)       : 
                 Vertical.create  ( self.nets[0], layer
-                                 , snakeCornersXCenters[k]
-                                 , self.snakeCornerDict["width"] + widthExtension  
-                                 , self.snakeCornerDict["YMin" ] - self.minWidth_contact/4 + i*translation
-                                 , self.snakeCornerDict["YMax" ] + self.minWidth_contact/4 + i*translation 
+                                 , int(snakeCornersXCenters[k])
+                                 , int(self.snakeCornerDict["width"] + widthExtension  )
+                                 , int(self.snakeCornerDict["YMin" ] - self.minWidth_contact/4 + i*translation)
+                                 , int(self.snakeCornerDict["YMax" ] + self.minWidth_contact/4 + i*translation) 
                                  ) 
                 k = k+1 if k<1 else 0
 
@@ -769,13 +763,13 @@ class Resistor ( object ):
         heightAdjust  = height % (2*self.hpitch)
         if heightAdjust:
           heightAdjust = 2*self.hpitch - heightAdjust
-          ab.inflate( 0, heightAdjust/2 )
+          ab.inflate( 0, heightAdjust//2 )
 
         width = ab.getWidth()
         widthAdjust = width % (2*self.vpitch)
         if widthAdjust:
           widthAdjust = 2*self.vpitch - widthAdjust
-          ab.inflate( widthAdjust/2, 0 )
+          ab.inflate( widthAdjust//2, 0 )
 
         self.abutmentBox = ab
         return
@@ -848,16 +842,16 @@ class Resistor ( object ):
             if     self.snakeMode and self.bends % 2 == 0 : [ hTranslation , vTranslation ] = [ translation2 , translation1 ]
             if     self.snakeMode and self.bends % 2 != 0 : [ hTranslation , vTranslation ] = [ translation2 , 0            ]
 
-            self.terminal1Box = Box( self.resPlateExtensions["ex1"]["XMin"]
-                                   , self.resPlateExtensions["ex1"]["YMin"]
-                                   , self.resPlateExtensions["ex1"]["XMax"]
-                                   , self.resPlateExtensions["ex1"]["YMax"]
+            self.terminal1Box = Box( int(self.resPlateExtensions["ex1"]["XMin"])
+                                   , int(self.resPlateExtensions["ex1"]["YMin"])
+                                   , int(self.resPlateExtensions["ex1"]["XMax"])
+                                   , int(self.resPlateExtensions["ex1"]["YMax"])
                                    )
 
-            self.terminal2Box = Box( self.resPlateExtensions["ex1"]["XMin"] - hTranslation
-                                   , self.resPlateExtensions["ex1"]["YMin"] + vTranslation
-                                   , self.resPlateExtensions["ex1"]["XMax"] - hTranslation
-                                   , self.resPlateExtensions["ex1"]["YMax"] + vTranslation
+            self.terminal2Box = Box( int(self.resPlateExtensions["ex1"]["XMin"] - hTranslation)
+                                   , int(self.resPlateExtensions["ex1"]["YMin"] + vTranslation)
+                                   , int(self.resPlateExtensions["ex1"]["XMax"] - hTranslation)
+                                   , int(self.resPlateExtensions["ex1"]["YMax"] + vTranslation)
                                    )
 
         if self.direction == "horizontal" :
@@ -927,18 +921,18 @@ class Resistor ( object ):
 
         if self.direction == "vertical"   :
             for i in [0,1] : Horizontal.create( self.nets[i], layer
-                                              , self.pImplant_layerDict["YCenter"] + i*centerTranslation
-                                              , self.pImplant_layerDict["length" ]
-                                              , self.pImplant_layerDict["XMin"   ] - i*extrimitiesTranslation
-                                              , self.pImplant_layerDict["XMax"   ] - i*extrimitiesTranslation
+                                              , int(self.pImplant_layerDict["YCenter"] + i*centerTranslation)
+                                              , int(self.pImplant_layerDict["length" ])
+                                              , int(self.pImplant_layerDict["XMin"   ] - i*extrimitiesTranslation)
+                                              , int(self.pImplant_layerDict["XMax"   ] - i*extrimitiesTranslation)
                                               )
 
         if self.direction == "horizontal" :
             for i in [0,1] : Vertical.create  ( self.nets[i], layer
-                                              , self.pImplant_layerDict["XCenter"] + i*centerTranslation
-                                              , self.pImplant_layerDict["length" ]
-                                              , self.pImplant_layerDict["YMin"   ] + i*extrimitiesTranslation
-                                              , self.pImplant_layerDict["YMax"   ] + i*extrimitiesTranslation
+                                              , int(self.pImplant_layerDict["XCenter"] + i*centerTranslation)
+                                              , int(self.pImplant_layerDict["length" ])
+                                              , int(self.pImplant_layerDict["YMin"   ] + i*extrimitiesTranslation)
+                                              , int(self.pImplant_layerDict["YMax"   ] + i*extrimitiesTranslation)
 
                                               )
 
@@ -1030,16 +1024,17 @@ class Resistor ( object ):
 
         if self.direction == "vertical"   :
             Horizontal.create( self.nets[0]
-                             , layer, self.t1CutCenterDict["YCenter"]
-                             , layer_width
-                             , source1
-                             , target1 )
+                             , layer
+                             , int(self.t1CutCenterDict["YCenter"])
+                             , int(layer_width)
+                             , int(source1)
+                             , int(target1) )
             Horizontal.create( self.nets[1]
                              , layer
-                             , self.t2CutCenterDict["YCenter"]
-                             , layer_width
-                             , source2
-                             , target2) 
+                             , int(self.t2CutCenterDict["YCenter"])
+                             , int(layer_width)
+                             , int(source2)
+                             , int(target2)) 
 
             trace( 101, '\tIN PAD self.t1CutCenterDict["XCenter"] = {0}\n'.format(DbU.getValueString(self.t1CutCenterDict["XCenter"])) )
             trace( 101, '\tIN PAD source1 = {0}\n'.format(DbU.getValueString(source1)) )
@@ -1260,8 +1255,8 @@ class Resistor ( object ):
                                  , [rx8 , ry8 ] , [rx9, ry9 ]
                                  ]
         for p in rightCorCordinatesList : 
-            self.rightCorPointsVector.append(Point(p[0],p[1]))
-            self.leftCorPointsVector.append (Point(p[0],p[1]))
+            self.rightCorPointsVector.append(Point(int(p[0]),int(p[1])))
+            self.leftCorPointsVector.append (Point(int(p[0]),int(p[1])))
 
         translationList = [ self.snakeSegmentDict["length"]
                              , self.snakeSegmentDict["length"] + 2*param1
@@ -1276,9 +1271,9 @@ class Resistor ( object ):
                              ]
 
         if self.direction == "vertical"   : 
-            for i in range(0, len(self.leftCorPointsVector)) : self.leftCorPointsVector[i].translate( 0 ,  translationList[i] ) 
+            for i in range(0, len(self.leftCorPointsVector)) : self.leftCorPointsVector[i].translate( 0 ,  int(translationList[i]) ) 
         if self.direction == "horizontal" :
-            for i in range(0, len(self.leftCorPointsVector)) : self.leftCorPointsVector[i].translate( - translationList[i] , 0) 
+            for i in range(0, len(self.leftCorPointsVector)) : self.leftCorPointsVector[i].translate( int(- translationList[i]) , 0) 
           
         return
 
@@ -1286,8 +1281,8 @@ class Resistor ( object ):
     def drawCorners135( self, layer ):
 
         self.computeFirstSnakeCornerPosition135()
-        if self.bends % 2 == 0 : [ rightCornersNum, leftCornersNum ] = [  self.bends/2    ,  self.bends/2    ]
-        if self.bends % 2 != 0 : [ rightCornersNum, leftCornersNum ] = [ (self.bends+1)/2 , (self.bends-1)/2 ]
+        if self.bends % 2 == 0 : [ rightCornersNum, leftCornersNum ] = [  self.bends//2    ,  self.bends//2    ]
+        if self.bends % 2 != 0 : [ rightCornersNum, leftCornersNum ] = [ (self.bends+1)//2 , (self.bends-1)//2 ]
 
         translationFactor = 2*(self.snakeSegmentDict["width"] + self.snakeSegments_spacing)
 
@@ -1299,12 +1294,12 @@ class Resistor ( object ):
 
         for i in range(0, leftCornersNum ) :
             if i == 0 : 
-                 if self.direction == "vertical"  : Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(dxTranslation/2,dyTranslation)
-                 if self.direction == "horizontal": Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(dxTranslation,dyTranslation/2)
+                 if self.direction == "vertical"  : Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(dxTranslation//2,dyTranslation)
+                 if self.direction == "horizontal": Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(dxTranslation,dyTranslation//2)
                 
             if i != 0 : 
-                if self.direction == "vertical"  : Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(i*3*dxTranslation/2,dyTranslation)
-                if self.direction == "horizontal": Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(dxTranslation,i*3*dyTranslation/2)
+                if self.direction == "vertical"  : Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(i*3*dxTranslation//2,dyTranslation)
+                if self.direction == "horizontal": Rectilinear.create(self.nets[0], layer, self.leftCorPointsVector).translate(dxTranslation,i*3*dyTranslation//2)
 
         return
 
@@ -1332,7 +1327,20 @@ class Resistor ( object ):
     def cutLine( self, net, layer, firstCutXCenter, firstCutYCenter, width_cut, height_cut, spacing_cut, cutNumber, direction ):       
  
         for i in range(0, cutNumber) :
-            segment = Contact.create( net, layer, firstCutXCenter + i*(width_cut + spacing_cut), firstCutYCenter, width_cut, height_cut ) if direction == 'horizontal' else Contact.create( net, layer, firstCutXCenter, firstCutYCenter + i*(height_cut + spacing_cut), width_cut, height_cut )
+            if direction == 'horizontal':
+                segment = Contact.create( net
+                                        , layer
+                                        , int(firstCutXCenter + i*(width_cut + spacing_cut))
+                                        , int(firstCutYCenter)
+                                        , int(width_cut)
+                                        , int(height_cut) )
+            else:
+                segment = Contact.create( net
+                                        , layer
+                                        , int(firstCutXCenter)
+                                        , int(firstCutYCenter + i*(height_cut + spacing_cut))
+                                        , int(width_cut)
+                                        , int(height_cut) )
 
         return segment
 
@@ -1389,32 +1397,32 @@ class Resistor ( object ):
         edgeDelta = self.minWidth_contact/2 + self.minEnclosure_metal1_cut0
 
         if t1OnNorth:
-            t1BoxM1 = Box( 0
-                         , self.t1CutCenterDict["YCenter"] - edgeDelta
-                         , m1Width
-                         , t1YM2 + VIA1overhang
+            t1BoxM1 = Box( int(0)
+                         , int(self.t1CutCenterDict["YCenter"] - edgeDelta)
+                         , int(m1Width)
+                         , int(t1YM2 + VIA1overhang)
                          )
         else:
-            t1BoxM1 = Box( 0
-                         , t1YM2 - VIA1overhang
-                         , m1Width
-                         , self.t1CutCenterDict["YCenter"] + edgeDelta
+            t1BoxM1 = Box( int(0)
+                         , int(t1YM2 - VIA1overhang)
+                         , int(m1Width)
+                         , int(self.t1CutCenterDict["YCenter"] + edgeDelta)
                          )
-        t1BoxM1.translate( self.t1CutCenterDict["XCenter"] - edgeDelta, 0 )
+        t1BoxM1.translate( int(self.t1CutCenterDict["XCenter"] - edgeDelta), 0 )
 
         if t2OnNorth:
-            t2BoxM1 = Box( 0
-                         , self.t2CutCenterDict["YCenter"] - edgeDelta
-                         , m1Width
-                         , t2YM2 + VIA1overhang
+            t2BoxM1 = Box( int(0)
+                         , int(self.t2CutCenterDict["YCenter"] - edgeDelta)
+                         , int(m1Width)
+                         , int(t2YM2 + VIA1overhang)
                          )
         else:
-            t2BoxM1 = Box( 0
-                         , t2YM2 - VIA1overhang
-                         , m1Width
-                         , self.t2CutCenterDict["YCenter"] + edgeDelta
+            t2BoxM1 = Box( int(0)
+                         , int(t2YM2 - VIA1overhang)
+                         , int(m1Width)
+                         , int(self.t2CutCenterDict["YCenter"] + edgeDelta)
                          )
-        t2BoxM1.translate( self.t2CutCenterDict["XCenter"] - edgeDelta, 0 )
+        t2BoxM1.translate( int(self.t2CutCenterDict["XCenter"] - edgeDelta), 0 )
 
         self.drawM2Terminal( t1net, t1BoxM1, t1YM2 )
         self.drawM2Terminal( t2net, t2BoxM1, t2YM2 )
@@ -1426,43 +1434,43 @@ class Resistor ( object ):
         ab = self.device.getAbutmentBox()
 
         minBoxM1 = Box( boxM1.getCenter().getX(), axisM2 )
-        minBoxM1.inflate( self.minWidth_cut1/2 + self.minEnclosure_metal1_cut1 )
+        minBoxM1.inflate( int(self.minWidth_cut1/2 + self.minEnclosure_metal1_cut1) )
         boxM1.merge( minBoxM1 )
 
         h = Horizontal.create( net
                              , self.metal2
-                             , axisM2
-                             , self.metal2Width
-                             , ab.getXMin()
-                             , ab.getXMax() )
+                             , int(axisM2)
+                             , int(self.metal2Width)
+                             , int(ab.getXMin())
+                             , int(ab.getXMax()) )
         NetExternalComponents.setExternal( h )
 
         Vertical.create( net
                        , self.metal1
-                       , boxM1.getCenter().getX()
-                       , boxM1.getWidth()
-                       , boxM1.getYMin()
-                       , boxM1.getYMax()
+                       , int(boxM1.getCenter().getX())
+                       , int(boxM1.getWidth())
+                       , int(boxM1.getYMin())
+                       , int(boxM1.getYMax())
                        )
 
         cutNumber = ((boxM1.getWidth() - 2*self.minEnclosure_metal1_cut1 - self.minWidth_cut1) \
-                    / (self.minSpacing_cut1 + self.minWidth_cut1))
+                    // (self.minSpacing_cut1 + self.minWidth_cut1))
         if cutNumber <= 0: cutNumber = 1
         centering = (boxM1.getWidth() - 2*self.minEnclosure_metal1_cut1 \
                   -  cutNumber    * self.minWidth_cut1               \
-                  - (cutNumber-1) * self.minSpacing_cut1) / 2
+                  - (cutNumber-1) * self.minSpacing_cut1) // 2
         xcut1     = boxM1.getXMin() + centering \
-                  + self.minEnclosure_metal1_cut1 + self.minWidth_cut1/2
+                  + self.minEnclosure_metal1_cut1 + self.minWidth_cut1//2
 
         trace( 101, '\tcutNumber = {0}\n'.format(cutNumber) )
         for i in range(cutNumber):
             trace( 101, '\t[{0}]\n'.format(i) )
             Contact.create( net
                           , self.cut1
-                          , xcut1
-                          , axisM2
-                          , self.minWidth_cut1
-                          , self.minWidth_cut1
+                          , int(xcut1)
+                          , int(axisM2)
+                          , int(self.minWidth_cut1)
+                          , int(self.minWidth_cut1)
                           )
             xcut1 += self.minWidth_cut1 + self.minSpacing_cut1
         
@@ -1473,7 +1481,7 @@ class Resistor ( object ):
 def scriptMain( **kw ):
 
     editor = None
-    if kw.has_key('editor') and kw['editor']:
+    if 'editor' in kw and kw['editor']:
         editor = kw['editor']
 
     UpdateSession.open()

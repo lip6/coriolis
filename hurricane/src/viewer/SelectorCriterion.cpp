@@ -29,8 +29,8 @@ namespace Hurricane {
   { }
 
 
-  const Net* SelectorCriterion::getNet () const
-  { return NULL; }
+  Occurrence  SelectorCriterion::getNetOccurrence () const
+  { return Occurrence(); }
 
 
   const Box& SelectorCriterion::getArea () const
@@ -45,9 +45,8 @@ namespace Hurricane {
 // Class  :  "Hurricane::NetSelectorCriterion".
 
 
-  NetSelectorCriterion::NetSelectorCriterion ( const Net* net )
-    : _net (net)
-    , _name(_net->getName())
+  NetSelectorCriterion::NetSelectorCriterion ( Occurrence netOccurrence )
+    : _netOccurrence(netOccurrence)
   { }
 
 
@@ -56,27 +55,26 @@ namespace Hurricane {
 
 
   NetSelectorCriterion* NetSelectorCriterion::clone () const
-  { return new NetSelectorCriterion(_net); }
+  { return new NetSelectorCriterion(_netOccurrence); }
 
 
-  const Net* NetSelectorCriterion::getNet () const
-  { return _net; }
+  Occurrence  NetSelectorCriterion::getNetOccurrence () const
+  { return _netOccurrence; }
 
 
   bool  NetSelectorCriterion::isValid ( CellWidget* cw ) const
   {
-    if ( cw->getCell() == NULL ) return false;
-    if ( not cw->getCell()->getNet(_name) ) return false;
-    return true;
+    if (cw->getCell() == NULL) return false;
+    return _netOccurrence.isValid();
   }
 
 
   void  NetSelectorCriterion::doSelection ( CellWidget* cw )
-  { cw->select ( Occurrence(_net) ); }
+  { cw->select( _netOccurrence ); }
 
 
   void  NetSelectorCriterion::undoSelection ( CellWidget* cw )
-  { cw->unselect ( Occurrence(_net) ); }
+  { cw->unselect( _netOccurrence ); }
 
 
   string  NetSelectorCriterion::_getTypeName () const
@@ -85,7 +83,7 @@ namespace Hurricane {
 
   string  NetSelectorCriterion::_getString () const
   {
-    string s = "<" + _getTypeName() + " " + getString(_net) + ">";
+    string s = "<" + _getTypeName() + " " + getString(_netOccurrence) + ">";
     return s;
   }
 
@@ -93,7 +91,7 @@ namespace Hurricane {
   Record* NetSelectorCriterion::_getRecord () const
   {
     Record* record = new Record ( _getString() );
-    record->add ( getSlot("_net",_net) );
+    record->add ( getSlot("_netOccurrence",&_netOccurrence) );
     return record;
   }
 

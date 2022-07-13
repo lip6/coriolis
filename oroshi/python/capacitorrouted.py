@@ -29,7 +29,7 @@ helpers.staticInitialization( True )
 #  An elementary capacitor unit can be a part of C1 or C2 according to the matching scheme. However, to respect common-centroid layout specifications, for C1 and C2 to be equal, the matrix number of colums and number of rows must be both even. Addionnally, the number of elementary capacitors dedicated to C1 must be equal to those dedicated to C2. These two conditions are tested in one of the class methods. An exception is raised if at least one of the two is not respected.
 
 
-class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks ):
+class RoutMatchedCapacitor( VerticalRoutingTracks ):
 
     rules = oroshi.getRules()
 
@@ -152,34 +152,37 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
             trace( 101, '\tminimum before adjust: {0}\n'.format( DbU.getValueString(self.minimumPosition) ))
             trace( 101, '\tdY: {0}\n'.format( DbU.getValueString(dY) ))
 
-            firstVRTId = "t0"
-            lastVRTId  = self.vRoutingTrackXCenter[-1].keys()[-1]
+            firstVRTId = 't0'
+            lastVRTId  = list(self.vRoutingTrackXCenter[-1].keys())[-1]
+            firstIndex = int(firstVRTId[1])
+            lastIndex  = int( lastVRTId[1])
+            print( lastVRTId )
             if self.dummyRing:
               xMin = self.abutmentBox.getXMin()
               xMax = self.abutmentBox.getXMax()
             else:
               trackSpacing = (self.vRoutingTrack_width + self.vpitch + self.metal3Width)/2
-              if firstVRTId > len(self.vRoutingTrackXCenter[ 0]):
+              if firstIndex > len(self.vRoutingTrackXCenter[0]):
                   xMin = self.abutmentBox.getXMin() - trackSpacing
               else:
-                  xMin = self.vRoutingTrackXCenter[ 0][firstVRTId] - trackSpacing
+                  xMin = self.vRoutingTrackXCenter[0][firstVRTId] - trackSpacing
 
-              if lastVRTId > len(self.vRoutingTrackXCenter[-1]):
+              if lastIndex > len(self.vRoutingTrackXCenter[-1]):
                   xMax = self.abutmentBox.getXMax() + trackSpacing
               else:
-                  xMax = self.vRoutingTrackXCenter[-1][ lastVRTId] + trackSpacing
+                  xMax = self.vRoutingTrackXCenter[-1][lastVRTId] + trackSpacing
 
             width       = xMax - xMin
             widthAdjust = width % (2*self.vpitch)
             if widthAdjust:
               widthAdjust = 2*self.vpitch - widthAdjust
-              xMax += widthAdjust/2
-              xMin -= widthAdjust/2
+              xMax += widthAdjust//2
+              xMin -= widthAdjust//2
         
-            self.device.setAbutmentBox( Box( xMin
-                                           , self.minimumPosition - dY
-                                           , xMax
-                                           , self.maximumPosition + dY ) )
+            self.device.setAbutmentBox( Box( int(xMin)
+                                           , int(self.minimumPosition - dY)
+                                           , int(xMax)
+                                           , int(self.maximumPosition + dY )) )
             trace( 101, '\tHeight after tracks enclosure: {0}\n'.format( DbU.getValueString(self.device.getAbutmentBox().getHeight()) ))
 
             if not bbMode :
@@ -503,7 +506,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
     def drawHRoutingTracks( self , routingTracksLayer ):
 
-        lastVRTId   = self.vRoutingTrackXCenter[-1].keys()[-1]
+        lastVRTId   = list(self.vRoutingTrackXCenter[-1].keys())[-1]
         firstVRTId  = "t0"
        #doDummyRing = 1 if self.dummyRing == True else 0
        #dxSource    = self.vRoutingTrackXCenter[0][firstVRTId] - self.vRoutingTrack_width/2 if not self.dummyRing else self.abutmentBox.getXMin()
@@ -519,10 +522,10 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
             horizontal = Horizontal.create( net
                                           , routingTracksLayer
-                                          , self.hRoutingtrackYCenter[i][j]
-                                          , self.hRoutingTrack_width
-                                          , dxSource
-                                          , dxTarget )
+                                          , int(self.hRoutingtrackYCenter[i][j])
+                                          , int(self.hRoutingTrack_width)
+                                          , int(dxSource)
+                                          , int(dxTarget) )
             NetExternalComponents.setExternal( horizontal )
         return
 
@@ -537,8 +540,18 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
                 [ t , b ] = [  self.nets[self.matchingScheme[i][j]][0], self.nets[self.matchingScheme[i][j]][1] ]  
                 dxDict                           =    self.__computeConnections__( i,j, self.matchingScheme[i][j] )
 
-                Horizontal.create ( t, xPlateRLayer , self.hRoutingLayerYCenter["topPlate"   ][i][j] , self.hRoutingLayer_width , dxDict["topPlate"    ][ "source" ] , dxDict["topPlate"    ][ "target" ] ) 
-                Horizontal.create ( b, xPlateRLayer , self.hRoutingLayerYCenter["bottomPlate"][i][j] , self.hRoutingLayer_width , dxDict["bottomPlate" ][ "source" ] , dxDict["bottomPlate" ][ "target" ] ) 
+                Horizontal.create ( t
+                                  , xPlateRLayer
+                                  , int(self.hRoutingLayerYCenter["topPlate"   ][i][j])
+                                  , int(self.hRoutingLayer_width)
+                                  , int(dxDict["topPlate"    ][ "source" ])
+                                  , int(dxDict["topPlate"    ][ "target" ]) ) 
+                Horizontal.create ( b
+                                  , xPlateRLayer
+                                  , int(self.hRoutingLayerYCenter["bottomPlate"][i][j])
+                                  , int(self.hRoutingLayer_width)
+                                  , int(dxDict["bottomPlate" ][ "source" ])
+                                  , int(dxDict["bottomPlate" ][ "target" ]) ) 
 
         return
 
@@ -570,12 +583,12 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
             for j in range( 0, self.matrixDim["columns"] ):
 
                 if ( j % 2 == 0 ):
-                    leftVRTIds   = self.capacitorIds[0:self.capacitorsNumber/2]                       if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[0: int(self.capacitorsNumber/2+1)]
-                    rightVRTIds  = self.capacitorIds[self.capacitorsNumber/2 : self.capacitorsNumber] if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[int(self.capacitorsNumber/2+1) : self.capacitorsNumber]
+                    leftVRTIds   = self.capacitorIds[0:self.capacitorsNumber//2]                       if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[0: int(self.capacitorsNumber//2+1)]
+                    rightVRTIds  = self.capacitorIds[self.capacitorsNumber//2 : self.capacitorsNumber] if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[int(self.capacitorsNumber//2+1) : self.capacitorsNumber]
 
                 else:
-                    leftVRTIds   = self.capacitorIds[self.capacitorsNumber/2 : self.capacitorsNumber] if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[int(self.capacitorsNumber/2+1) : self.capacitorsNumber]
-                    rightVRTIds  = self.capacitorIds[0:self.capacitorsNumber/2]                       if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[0: int(self.capacitorsNumber/2+1)]
+                    leftVRTIds   = self.capacitorIds[self.capacitorsNumber//2 : self.capacitorsNumber] if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[int(self.capacitorsNumber//2+1) : self.capacitorsNumber]
+                    rightVRTIds  = self.capacitorIds[0:self.capacitorsNumber//2]                       if (self.capacitorsNumber % 2 == 0)        else self.capacitorIds[0: int(self.capacitorsNumber//2+1)]
 
                 index1           = j                                                                  if self.matchingScheme[i][j] in leftVRTIds else j+1
 
@@ -605,7 +618,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
     ## Draws cuts to connect vertical routing tracks in metal 2 and horizontal routing tracks in metal 3.    
     def drawCuts_vRoutingTrack_hRoutingTrack( self,cutLayer, cutNumber, enclosure_cut ):
 
-        keysList   = self.hRoutingtrackYCenter.keys() 
+        keysList   = list(self.hRoutingtrackYCenter.keys())
 
         for i in range(0, len(self.vRoutingTrackXCenter) ):
             for k in self.vRoutingTrackXCenter[i]:
@@ -698,10 +711,10 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 
         Vertical.create( net
                        , routingLayer
-                       , topPlateRLayerXCenter
-                       , topPlateRLayer_width
-                       , dySource
-                       , dyTarget ) 
+                       , int(topPlateRLayerXCenter)
+                       , int(topPlateRLayer_width)
+                       , int(dySource)
+                       , int(dyTarget) ) 
         return
 
 
@@ -731,12 +744,12 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
             dxDict = { "bottomPlate": {}, "topPlate": {} }
 
             if ( j % 2 == 0 ):
-                leftVRTIds   = self.capacitorIds[0                       :self.capacitorsNumber/2  ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[0                              : int(self.capacitorsNumber/2+1)]
-                rightVRTIds  = self.capacitorIds[self.capacitorsNumber/2 : self.capacitorsNumber   ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[int(self.capacitorsNumber/2+1) : self.capacitorsNumber         ]
+                leftVRTIds   = self.capacitorIds[0                       :self.capacitorsNumber//2] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[0                              : int(self.capacitorsNumber/2+1)]
+                rightVRTIds  = self.capacitorIds[self.capacitorsNumber//2 : self.capacitorsNumber  ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[int(self.capacitorsNumber//2+1) : self.capacitorsNumber         ]
 
             else:
-                leftVRTIds   = self.capacitorIds[self.capacitorsNumber/2 : self.capacitorsNumber   ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[int(self.capacitorsNumber/2+1) : self.capacitorsNumber         ]
-                rightVRTIds  = self.capacitorIds[0                       : self.capacitorsNumber/2 ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[0                              : int(self.capacitorsNumber/2+1)]
+                leftVRTIds   = self.capacitorIds[self.capacitorsNumber//2 : self.capacitorsNumber   ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[int(self.capacitorsNumber//2+1) : self.capacitorsNumber         ]
+                rightVRTIds  = self.capacitorIds[0                       : self.capacitorsNumber//2 ] if (self.capacitorsNumber % 2 == 0)          else self.capacitorIds[0                              : int(self.capacitorsNumber//2+1)]
 
             
             [topPlateLabel, bottomPlateLabel  ] = [self.__setPlatesLabels__(i,j)["t"] , self.__setPlatesLabels__(i,j)["b"]]
@@ -830,7 +843,7 @@ class RoutMatchedCapacitor( CapacitorUnit, CapacitorStack, VerticalRoutingTracks
 def scriptMain( **kw ):
 
     editor = None
-    if kw.has_key('editor') and kw['editor']:
+    if 'editor' in kw and kw['editor']:
         editor = kw['editor']
 
     UpdateSession.open()

@@ -132,20 +132,18 @@ namespace Hurricane {
     for ( ; _primaryLoc->isValid() ; _primaryLoc->progress() ) {
       Occurrence element = _primaryLoc->getElement();
 
-      Component* component = dynamic_cast<Component*>(element.getEntity());
-      if ( not component ) continue;
+      Component* component = dynamic_cast<Component*>( element.getEntity() );
+      if (not component) continue;
   
       Net*       net = component->getNet();
       Occurrence netOccurrence ( net, element.getPath() );
 
-      if ( _hideAnonymous
-         and QString(getString(net->getName()).c_str()).contains("onymous") )
+      if (_hideAnonymous and QString(getString(net->getName()).c_str()).contains("onymous") )
         continue;
 
-      _element = getHyperNetRootNetOccurrence ( netOccurrence );
-
-      if ( _netOccurrences.find(_element) != _netOccurrences.end() ) continue;
-      _netOccurrences.insert ( _element );
+      _element = getHyperNetRootNetOccurrence( netOccurrence );
+      if (_netOccurrences.find(_element) != _netOccurrences.end()) continue;
+      _netOccurrences.insert( _element );
 
       break;
     }
