@@ -65,7 +65,7 @@ set<Node*> Tree::Branch_i ( Contact* ct )
 {
   set<Node*> ln;
   Node *ni = get_node(ct);
-  while ( ni != nullptr ) {
+  while ( ni->Np != nullptr ) {
     ln.insert(ni->Np);
     ni = ni->Np;
   }
@@ -73,7 +73,7 @@ set<Node*> Tree::Branch_i ( Contact* ct )
   return ln;
 }
 
-int Tree::Delay_Elmore ( RoutingPad* rp )
+double Tree::Delay_Elmore ( RoutingPad* rp )
 {
   if ( rp == nullptr ) {
     cerr << "Input RoutingPad is NULL. Please select a RoutingPad !" << endl;
@@ -84,29 +84,29 @@ int Tree::Delay_Elmore ( RoutingPad* rp )
   for ( Component* c : rp->getSlaveComponents() ) {
     Contact* cont = dynamic_cast<Contact*>(c);
 
-    if ( ct ) {
+    if ( cont ) {
       ct = cont;
       break;
     }
   }
-
   if ( ct == nullptr ) {
     cerr << "No contact found" << endl;
     return -1;
   }
   
-  int t = 0;
+  double t = 0;
+//---------------------------------------------------------------------------------------
+  cerr << "Contact to be calculated : " << ct->getId() << endl;
+//---------------------------------------------------------------------------------------
 
   set<Node*> br = Branch_i(ct);
-
   Node *ni = get_node(ct);
   After_i(ni);
   ni->ap = 0;
-
   // Compute Rt of all nodes
   for ( size_t k = 0; k < nodes.size(); k++ ) {
     if ( k == 0 )
-      nodes[k]->Rt = 0;
+      nodes[k]->Rt = nodes[k]->R;
     else{
       if ( nodes[k]->ap == 0 ) {
         if ( br.count(nodes[k]) > 0 ) {

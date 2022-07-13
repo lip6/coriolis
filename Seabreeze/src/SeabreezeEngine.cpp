@@ -95,7 +95,7 @@ namespace Seabreeze {
   {
     cerr << "SeabreezeEngine::runTool() has been called." << endl;
 
-    DebugSession::addToTrace(net);
+//    DebugSession::addToTrace(net);
     DebugSession::open(net, 190, 200);
 
     RoutingPad* driver=  nullptr;
@@ -119,6 +119,14 @@ namespace Seabreeze {
     cdebug_log(199,0) << endl;
 
     elm->buildTree(driver);
+    for ( RoutingPad* rp : net->getRoutingPads() ) {
+      Plug* p = static_cast<Plug*>(rp->getPlugOccurrence().getEntity());
+      if ( p->getMasterNet()->getDirection() & Net::Direction::DirOut ) {
+        continue;
+      }
+
+      cerr << "Elmore's delay : " << elm->delayElmore(rp) << endl;     
+    } 
     DebugSession::close();
   }
 

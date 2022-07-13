@@ -280,7 +280,7 @@ namespace Seabreeze {
     return _tree;
   }
 
-  int Elmore::delayElmore ( RoutingPad* rp )
+  double Elmore::delayElmore ( RoutingPad* rp )
   {
     return _tree->Delay_Elmore(rp);
   }
