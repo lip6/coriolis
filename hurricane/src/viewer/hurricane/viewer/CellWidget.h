@@ -536,10 +536,10 @@ namespace Hurricane {
                                                   ~SelectorCriterions ();
           inline void                              setCellWidget      ( CellWidget* );
           inline const vector<SelectorCriterion*>& getCriterions      () const;
-                 SelectorCriterion*                add                ( const Net* net );
+                 SelectorCriterion*                add                ( Occurrence netOccurrence );
                  SelectorCriterion*                add                ( Box area );
           inline SelectorCriterion*                add                ( SelectorCriterion* );
-                 bool                              remove             ( const Net* net );
+                 bool                              remove             ( Occurrence netOccurrence );
                  void                              clear              ();
                  void                              invalidate         ();
                  void                              revalidate         ();

@@ -921,16 +921,19 @@ namespace Hurricane {
   { clear (); }
 
 
-  SelectorCriterion* CellWidget::SelectorCriterions::add ( const Net* net )
+  SelectorCriterion* CellWidget::SelectorCriterions::add ( Occurrence hyperNetOcc )
   {
-    if ( _cellWidget == NULL ) return NULL;
-    if ( not _cellWidget->isSelected(Occurrence(net)) ) {
-      _criterions.push_back ( new NetSelectorCriterion(net) );
+    if (_cellWidget == NULL) return NULL;
+    if (not _cellWidget->isSelected(hyperNetOcc)) {
+      _criterions.push_back ( new NetSelectorCriterion(hyperNetOcc) );
     //_criterions.back()->doSelection ( _cellWidget );
       return _criterions.back();
     }
     for ( size_t i=0 ; i<_criterions.size() ; ++i ) {
-      if ( _criterions[i]->getNet() == net ) return _criterions[i];
+      if (not _criterions[i]->getNetOccurrence().getEntity())
+        continue;
+      if (_criterions[i]->getNetOccurrence() == hyperNetOcc)
+        return _criterions[i];
     }
     return NULL;
   }
@@ -949,19 +952,19 @@ namespace Hurricane {
   }
 
 
-  bool  CellWidget::SelectorCriterions::remove (  const Net* net )
+  bool  CellWidget::SelectorCriterions::remove ( Occurrence netOccurrence )
   {
-    if ( _cellWidget == NULL ) return false;
-    if ( not _cellWidget->isSelected(Occurrence(net)) ) return false;
+    if (not _cellWidget) return false;
+    if (not _cellWidget->isSelected(netOccurrence)) return false;
 
     size_t i=0;
     for ( ; i<_criterions.size() ; i++ )
-      if ( _criterions[i]->getNet() == net ) break;
+      if (_criterions[i]->getNetOccurrence() == netOccurrence) break;
 
-    if ( i < _criterions.size() ) {
-      swap ( _criterions[i], *(_criterions.end()-1) );
+    if (i < _criterions.size()) {
+      swap( _criterions[i], *(_criterions.end()-1) );
     //_criterions.back()->undoSelection ( _cellWidget );
-      _criterions.pop_back ();
+      _criterions.pop_back();
     } else
       return false;
 
@@ -1700,7 +1703,7 @@ namespace Hurricane {
     if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
-    int          width   = metrics.width  ( text );
+    int          width   = metrics.horizontalAdvance( text );
   //int          height  = metrics.height ();
     int          angle   = 0;
 
@@ -1857,7 +1860,7 @@ namespace Hurricane {
                                     , std::max( 1.0
                                               , std::floor( std::log10( longerSide / _snapGridStep() ))));
 
-    DbU::Unit  gridStep      = ((symbolicMode()) ? 1 : 10) * _snapGridStep();
+  //DbU::Unit  gridStep      = ((symbolicMode()) ? 1 : 10) * _snapGridStep();
     DbU::Unit  superGridStep = _snapGridStep() * scale;
     DbU::Unit  xGrid;
     DbU::Unit  yGrid;
@@ -1940,7 +1943,7 @@ namespace Hurricane {
   {
     QFont        font          = Graphics::getNormalFont();
     QFontMetrics metrics       = QFontMetrics(font);
-    int          tickLength    = metrics.width ( "+00000u" );
+    int          tickLength    = metrics.horizontalAdvance( "+00000u" );
     Point        origin        = ruler->getOrigin    ();
     Point        extremity     = ruler->getExtremity ();
     Point        angle         = ruler->getAngle     ();
@@ -2622,23 +2625,23 @@ namespace Hurricane {
 
   bool  CellWidget::isSelected ( Occurrence occurrence )
   {
-	if ( !occurrence.isValid() )
-      throw Error ( "Can't select occurrence : invalid occurrence" );
+    if (not occurrence.isValid())
+      throw Error( "Can't select occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() ) {
-      string s1 = Graphics::toHtml ( getString(getCell()) );
-      string s2 = Graphics::toHtml ( getString(occurrence.getOwnerCell()) );
-      throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s"
-                  , s1.c_str(), s2.c_str() );
+    if (occurrence.getOwnerCell() != getCell()) {
+      string s1 = Graphics::toHtml( getString(getCell()) );
+      string s2 = Graphics::toHtml( getString(occurrence.getOwnerCell()) );
+      throw Error( "Can't select occurrence : incompatible occurrence %s vs. %s"
+                 , s1.c_str(), s2.c_str() );
     }
 
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
-	if ( !property )
+	Property* property = occurrence.getProperty( Selector::getPropertyName() );
+	if (not property)
       return false;
 
     Selector* selector = dynamic_cast<Selector*>(property);
     if ( !selector )
-      throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+      throw Error( "Abnormal property named " + getString(Selector::getPropertyName()) );
 
 	return selector->isAttachedTo(this);
   }
@@ -2687,34 +2690,38 @@ namespace Hurricane {
   void  CellWidget::select ( Occurrence occurrence )
   {
     if ( (++_delaySelectionChanged == 1) and not _state->cumulativeSelection() ) {
-      openRefreshSession ();
-      unselectAll ();
-      closeRefreshSession ();
+      openRefreshSession();
+      unselectAll();
+      closeRefreshSession();
     }
 
 	if (not occurrence.isValid())
-      throw Error ( "Can't select occurrence : invalid occurrence" );
+      throw Error( "Can't select occurrence : invalid occurrence" );
 
 	if (occurrence.getOwnerCell() != getCell()) {
       string s1 = Graphics::toHtml( getString(getCell()) );
       string s2 = Graphics::toHtml( getString(occurrence.getOwnerCell()) );
-      throw Error ( "Can't select occurrence : incompatible occurrence %s vs. %s" 
-                  , s1.c_str(), s2.c_str() );
+      throw Error( "Can't select occurrence : incompatible occurrence %s vs. %s" 
+                 , s1.c_str(), s2.c_str() );
     }
 
     bool       selected = true;
     const Net* net      = dynamic_cast<const Net*>( occurrence.getEntity() );
-    if ( net ) {
-      SelectorCriterion* criterion = _state->getSelection().add( net );
+    if (net) {
+      SelectorCriterion* criterion = _state->getSelection().add( occurrence );
       if ( criterion and (not criterion->isEnabled()) ) {
         criterion->enable();
-        for ( Component* component : net->getComponents() ) {
-          Occurrence occurrence ( component );
-          select( occurrence );
-        }
-        for ( Rubber* rubber : net->getRubbers() ) {
-          Occurrence occurrence ( rubber );
-          select( occurrence );
+        HyperNet hyperNet ( occurrence );
+        for ( Occurrence netOcc : hyperNet.getNetOccurrences() ) {
+          Net* subNet = static_cast<Net*>( netOcc.getEntity() );
+          for ( Component* component : subNet->getComponents() ) {
+            Occurrence occurrence ( component, netOcc.getPath() );
+            select( occurrence );
+          }
+          for ( Rubber* rubber : subNet->getRubbers() ) {
+            Occurrence occurrence ( rubber, netOcc.getPath() );
+            select( occurrence );
+          }
         }
       } else
         selected = false;
@@ -2753,29 +2760,29 @@ namespace Hurricane {
 
   void  CellWidget::unselect ( Occurrence occurrence )
   {
-	if ( not occurrence.isValid() )
+	if (not occurrence.isValid())
 		throw Error ( "Can't unselect occurrence : invalid occurrence" );
 
-	if ( occurrence.getOwnerCell() != getCell() )
+	if (occurrence.getOwnerCell() != getCell())
 		throw Error ( "Can't unselect occurrence : incompatible occurrence" );
 
     bool       unselected = true;
     const Net* net        = dynamic_cast<const Net*>(occurrence.getEntity());
-    if ( net ) {
-      unselected = _state->getSelection().remove ( net );
+    if (net) {
+      unselected = _state->getSelection().remove( occurrence );
     }
 
-	Property* property = occurrence.getProperty ( Selector::getPropertyName() );
-	if ( property ) {
-      Selector* selector = dynamic_cast<Selector*>(property);
-      if ( not selector )
-        throw Error ( "Abnormal property named " + getString(Selector::getPropertyName()) );
+	Property* property = occurrence.getProperty( Selector::getPropertyName() );
+	if (property) {
+      Selector* selector = dynamic_cast<Selector*>( property );
+      if (not selector)
+        throw Error( "Abnormal property named " + getString(Selector::getPropertyName()) );
 
-      selector->detachFrom(this);
+      selector->detachFrom( this );
     }
 
     _selectionHasChanged = true;
-    if ( (_delaySelectionChanged == 0) and unselected ) emit selectionChanged(_selectors);
+    if ( (_delaySelectionChanged == 0) and unselected ) emit selectionChanged( _selectors );
   }
 
 
