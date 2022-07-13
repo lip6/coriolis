@@ -95,16 +95,16 @@ class CapacitorUnit():
 
 
     def __initCapDim__( self, capacitance, capDim ):
-        if capacitance != 0 and capDim.values() != []:
+        if capacitance != 0 and len(capDim.values()):
           if self.__computeCapacitance__( capDim, self.capacitorType ) == capacitance :
             self.capDim = capDim
           else:
             raise Error( 1, [ 'CapacitorUnit.__initCapDim__(): Please check compatibility between capacitance value {0},'.format(capacitance)
                             , 'and the given capacitor dimensions {0}.'.format(capDim) ] )
-        elif capacitance == 0 and capDim.values() != []: 
+        elif capacitance == 0 and len(capDim.values()): 
           self.capDim = capDim 
           capacitance = self.__computeCapacitance__( capDim, self.capacitorType )
-        elif capacitance != 0 and capDim.values() == [] :
+        elif capacitance != 0 and len(capDim.values()) == 0 :
           self.capDim = self.__computeCapDim__( capacitance, self.capacitorType ) 
         else:
           raise Error( 1, [ 'CapacitorUnit.__initCapDim__(): Invalid capacitance and/or capacitance dimensions {0}, {1}.'.format(capacitance, capDim)
@@ -161,12 +161,10 @@ class CapacitorUnit():
 
 
     def __computeCapacitance__( self, capDim, capacitorType ):
-
         [ areaCapacitorPerUnit, perimeterCapacitorPerUnit ] = self.__setCapacitorPerUnit__( capacitorType )
         areaCapacitance      =   toPhY(capDim["width"]) * toPhY(capDim["height"])  *areaCapacitorPerUnit
         perimeterCapacitance = ( toPhY(capDim["width"]) + toPhY(capDim["height"]) )*perimeterCapacitorPerUnit
         capacitance          =   areaCapacitance        + perimeterCapacitance 
-
         return capacitance
 
 
@@ -678,19 +676,19 @@ class CapacitorUnit():
     def drawRoutingLayers( self, bottomPlateLayer, topPlateLayer, t, b ):
 
         Vertical.create ( t, topPlateLayer
-                        , self.topPlateRLayerDict["XCenter"]
-                        , self.topPlateRLayerDict["width"  ]
-                        , self.topPlateRLayerDict["YMin"   ]
-                        , self.topPlateRLayerDict["YMax"   ] 
+                        , int(self.topPlateRLayerDict["XCenter"])
+                        , int(self.topPlateRLayerDict["width"  ])
+                        , int(self.topPlateRLayerDict["YMin"   ])
+                        , int(self.topPlateRLayerDict["YMax"   ]) 
                         ) 
 
         cutLinesXMins = [ self.cutLeftLineDict["XMin"], self.cutRightLineDict["XMin"] ]
         for i in range(2):
             Vertical.create ( b, bottomPlateLayer
-                            , cutLinesXMins[i]
-                            , self.bottomPlateRLayerDict["width"]
-                            , self.bottomPlateRLayerDict["YMin" ]
-                            , self.bottomPlateRLayerDict["YMax" ]
+                            , int(cutLinesXMins[i])
+                            , int(self.bottomPlateRLayerDict["width"])
+                            , int(self.bottomPlateRLayerDict["YMin" ])
+                            , int(self.bottomPlateRLayerDict["YMax" ])
                             )
         return 
 
@@ -711,8 +709,18 @@ class CapacitorUnit():
     def cutLine( self, net, layer, firstCutXCenter, firstCutYCenter, width_cut, height_cut, spacing_cut, cutNumber, direction ):       
  
         for i in range( cutNumber) :
-            segment = Contact.create( net, layer, firstCutXCenter + i*(width_cut + spacing_cut), firstCutYCenter, width_cut, height_cut ) if direction == 'horizontal' else Contact.create( net, layer, firstCutXCenter, firstCutYCenter + i*(height_cut + spacing_cut), width_cut, height_cut )
-
+            if direction == 'horizontal':
+                segment = Contact.create( net, layer
+                                        , int(firstCutXCenter + i*(width_cut + spacing_cut))
+                                        , int(firstCutYCenter)
+                                        , width_cut
+                                        , height_cut )
+            else:
+                segment = Contact.create( net
+                                        , layer, int(firstCutXCenter)
+                                        , int(firstCutYCenter + i*(height_cut + spacing_cut))
+                                        , width_cut
+                                        , height_cut )
         return segment
 
 
@@ -829,7 +837,7 @@ class CapacitorUnit():
 def scriptMain( **kw ):
 
     editor = None
-    if kw.has_key('editor') and kw['editor']:
+    if 'editor' in kw and kw['editor']:
         editor = kw['editor']
 
     UpdateSession.open()

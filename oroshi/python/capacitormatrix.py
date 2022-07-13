@@ -74,7 +74,7 @@ class CapacitorStack( CapacitorUnit ):
 
             if unitCap == 0:
               self.__initGivenZeroUnitCap__( capacitance[0] )
-            elif unitCap <> 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ):
+            elif unitCap != 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ):
               self.__initGivenNonZeroUnitCap__( capacitance[0], unitCap )
             else:
               raise Error( 1, [ 'CapacitorStack.__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small.'
@@ -85,7 +85,7 @@ class CapacitorStack( CapacitorUnit ):
             if unitCap == 0:
               self.__initGivenZeroUnitCapInMatchingMode__( capacitance )
 
-            elif unitCap <> 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ):
+            elif unitCap != 0 and CapacitorUnit.__isCapacitorUnitOK__( self, self.unitCapDim ):
               self.__initGivenNonZeroUnitCapInMatchingMode__( capacitance, unitCap )
             else:
               raise Error( 1, [ 'CapacitorStack.__init__(): Impossible to draw the unit capacitor, dimensions are either too large or too small.'
@@ -166,13 +166,13 @@ class CapacitorStack( CapacitorUnit ):
             if self.matrixDim.values()[0]*self.matrixDim.values()[1] == capacitance/unitCap : 
                 self.__initMatrixMode__( capacitance, unitCap )
 
-            else : raise Error( 1, '__init__() : Matrix dimensions and unit capacitance are not compatible : "capacitance %d divides by unit capacitance %s <> columns %d * rows %d ".' %( capacitance, unitCap, self.matrixDim["columns"], self.matrixDim["rows"] ) ) 
+            else : raise Error( 1, '__init__() : Matrix dimensions and unit capacitance are not compatible : "capacitance %d divides by unit capacitance %s != columns %d * rows %d ".' %( capacitance, unitCap, self.matrixDim["columns"], self.matrixDim["rows"] ) ) 
 
         else : # self.matrixDim.values() == [1,1]  : # jai donne ou jai ps donne
 
             if capacitance == unitCap : #compact
                 [ self.capacitance , self.unitCapDim  ] = [ capacitance , self.compactCapDim ]
-            elif capacitance <> unitCap : #matrice
+            elif capacitance != unitCap : #matrice
                 self.__initMatrixMode__( capacitance, unitCap )
                 self.matrixDim  = {"columns" : int(sqrt(capacitance/unitCap)), "rows" : int(sqrt(capacitance/unitCap)) } # ici mettre toutes les combi si matching mode = [] sinon utiliser la meme combi que matching scheme
 
@@ -230,8 +230,7 @@ class CapacitorStack( CapacitorUnit ):
 
 
 
-    def __areMatrixDimOK__( self ): return True if self.matrixDim.values() > 0 else False
-
+    def __areMatrixDimOK__( self ): return True if len(self.matrixDim.values()) else False
 
 
     def computeUnitCap( self, capacitance ):
@@ -307,13 +306,13 @@ class CapacitorStack( CapacitorUnit ):
             if self.matchingMode in [False, True] and self.dummyRing in [False,True] and self.dummyElement in [False,True]:
 
                 [ matchingSchemeCapIds , capacitanceIds ] = [ list( numpy.unique(self.matchingScheme) ) , range(0,self.capacitorsNumber) ]
-                if (self.matchingScheme != [] and set(matchingSchemeCapIds) == set(capacitanceIds) ) or (self.matchingScheme == [] and len(capacitance) == 1) :
+                if (len(self.matchingScheme) and set(matchingSchemeCapIds) == set(capacitanceIds) ) or (len(self.matchingScheme) == 0 and len(capacitance) == 1) :
                     if    (len(self.nets) == self.capacitorsNumber + 1 and self.dummyElement == False and self.dummyRing == True ) \
                        or (len(self.nets) == self.capacitorsNumber     and self.dummyElement == False and self.dummyRing == False) \
                        or (len(self.nets) == self.capacitorsNumber     and self.dummyElement == True  and self.dummyRing == True ) \
                        or (len(self.nets) == self.capacitorsNumber     and self.dummyElement == True  and self.dummyRing == False):
 
-                        if ( self.matchingMode == True and self.__isMatchingSchemeOK__() ) or ( self.matchingMode == False and self.matchingScheme == [] ): 
+                        if ( self.matchingMode == True and self.__isMatchingSchemeOK__() ) or ( self.matchingMode == False and len(self.matchingScheme) == 0 ): 
                             state = True  
                         else: raise Error(1, '__areInputDataOK__(): Please check compatibility of the entered parameters (Matching mode, matching scheme, capacitance). It must be either equal to (False, [], one capacitance value) or ( True, matching scheme, capacitance values as much as there are capacitor ids in matching scheme ). The entered parameters are (%s, %s, %s).' %(self.matchingMode, self.matchingScheme, capacitance) ) #com2 : tester 
 
@@ -559,7 +558,7 @@ class CapacitorStack( CapacitorUnit ):
 def scriptMain( **kw ):
 
    editor = None
-   if  kw.has_key('editor') and kw['editor']:
+   if  'editor' in kw and kw['editor']:
        editor = kw['editor']
 
    UpdateSession.open()

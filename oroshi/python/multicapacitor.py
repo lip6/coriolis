@@ -166,7 +166,7 @@ def layout ( device, bbMode ):
         trace( 100, '++' )
        #paramsMatrix.trace()
 
-    except Exception, e:
+    except Exception as e:
         helpers.io.catch( e )
 
     trace( 100, '---' )

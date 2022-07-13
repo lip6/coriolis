@@ -38,7 +38,7 @@ import numpy
 #  is not respected.
 
 
-class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
+class VerticalRoutingTracks ( CapacitorStack ):
 
     rules = oroshi.getRules()
 
@@ -128,10 +128,10 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
             if self.vRoutingTrackXCenter[j][key] is not None:
               Vertical.create( netsDistribution[j][k]
                              , vRoutingTracksLayer
-                             , self.vRoutingTrackXCenter[j][key]
-                             , self.vRoutingTrack_width
-                             , self.getVTrackYMin()
-                             , self.getVTrackYMax() )
+                             , int(self.vRoutingTrackXCenter[j][key])
+                             , int(self.vRoutingTrack_width)
+                             , int(self.getVTrackYMin())
+                             , int(self.getVTrackYMax() ))
               k = k + 1 if k < len(key)-1 else 0
         return
 
@@ -265,18 +265,18 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
         capIdsToEliminate = []
         capIdsj       = capIdsToEliminatePerColumn[0]
         #print('capIdsj',capIdsj)
-        sharedVRTIds  = self.capacitorIds[0:self.capacitorsNumber/2] if self.capacitorsNumber % 2 == 0 else self.capacitorIds[0: int(self.capacitorsNumber/2+1)]        
+        sharedVRTIds  = self.capacitorIds[0:self.capacitorsNumber//2] if self.capacitorsNumber % 2 == 0 else self.capacitorIds[0: int(self.capacitorsNumber//2+1)]        
         #print('sharedVRTIds',sharedVRTIds)
         intersection2 = list( set(capIdsj).intersection(set(sharedVRTIds)) ) 
-        capIdsToEliminate.append( [None] )  if intersection2 == []  else capIdsToEliminate.append( intersection2 )
+        capIdsToEliminate.append( [None] )  if len(intersection2) == 0  else capIdsToEliminate.append( intersection2 )
 
         for j in range(0, len(capIdsToEliminatePerColumn) ):
             capIdsj       = capIdsToEliminatePerColumn[j]
             if (j % 2 == 0):
-                sharedVRTIds  = self.capacitorIds[self.capacitorsNumber/2 : self.capacitorsNumber] if (self.capacitorsNumber % 2 == 0) else self.capacitorIds[int(self.capacitorsNumber/2+1) : self.capacitorsNumber]
+                sharedVRTIds  = self.capacitorIds[self.capacitorsNumber//2 : self.capacitorsNumber] if (self.capacitorsNumber % 2 == 0) else self.capacitorIds[int(self.capacitorsNumber//2+1) : self.capacitorsNumber]
         
             else:
-                sharedVRTIds  = self.capacitorIds[0:self.capacitorsNumber/2] if (self.capacitorsNumber % 2 == 0) else self.capacitorIds[0: int(self.capacitorsNumber/2+1)]
+                sharedVRTIds  = self.capacitorIds[0:self.capacitorsNumber//2] if (self.capacitorsNumber % 2 == 0) else self.capacitorIds[0: int(self.capacitorsNumber//2+1)]
 
             #print('sharedVRTIds',sharedVRTIds)
 
@@ -287,7 +287,7 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
                 intersection1 = list( set(capIdsj).intersection(set(capIdsjp1)) )
 
             intersection2 = list( set(intersection1).intersection(set(sharedVRTIds)) ) 
-            capIdsToEliminate.append( [None] )  if intersection2 == []  else capIdsToEliminate.append( intersection2 )
+            capIdsToEliminate.append( [None] )  if len(intersection2) == 0  else capIdsToEliminate.append( intersection2 )
 
         return capIdsToEliminate
 
@@ -347,8 +347,12 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
 
 
     def __setVRTsDistribution__( self ):
-
-        element = [ self.capacitorIds[0:self.capacitorsNumber/2], self.capacitorIds[self.capacitorsNumber/2:self.capacitorsNumber] ] if self.capacitorsNumber % 2 == 0 else [ self.capacitorIds[0:int( self.capacitorsNumber/2 + 1 )], self.capacitorIds[int( self.capacitorsNumber/2 + 1 ):self.capacitorsNumber] ]
+        if self.capacitorsNumber % 2 == 0:
+            element = [ self.capacitorIds[0:self.capacitorsNumber//2]
+                      , self.capacitorIds[self.capacitorsNumber//2:self.capacitorsNumber] ]
+        else:
+            element = [ self.capacitorIds[0:int( self.capacitorsNumber//2 + 1 )]
+                      , self.capacitorIds[int( self.capacitorsNumber//2 + 1 ):self.capacitorsNumber] ]
         u = 0
         for j in range(0,self.matrixDim["columns"]+1) :
             self.vRTsDistribution.append( element[u] ) 
@@ -363,7 +367,12 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
     def __setNetsDistribution__( self ):
 
         netsList = self.nets[0:len(self.nets)-1] if self.dummyRing == True and self.dummyElement == False else self.nets
-        element = [ netsList[0:len(netsList)/2], netsList[len(netsList)/2:len(netsList)] ] if len(netsList) % 2 == 0 else [ netsList[0:int( len(netsList)/2 + 1 )], netsList[int( len(netsList)/2 + 1 ):len(netsList)] ]
+        if len(netsList) % 2 == 0:
+            element = [ netsList[0:len(netsList)//2]
+                      , netsList[len(netsList)//2:len(netsList)] ]
+        else:
+            element = [ netsList[0:int( len(netsList)//2 + 1 )]
+                      , netsList[int( len(netsList)//2 + 1 ):len(netsList)] ]
         u = 0
         netsDistribution = []
         for j in range(0,self.matrixDim["columns"]+1) :
@@ -382,7 +391,7 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
 
     def __setPlatesDistribution__( self ):
 
-        element = [ self.capacitorIds[0:self.capacitorsNumber/2], self.capacitorIds[self.capacitorsNumber/2:self.capacitorsNumber] ] if self.capacitorsNumber % 2 == 0 else [ self.capacitorIds[0:int( self.capacitorsNumber/2 + 1 )], self.capacitorIds[int( self.capacitorsNumber/2 + 1 ):self.capacitorsNumber] ]
+        element = [ self.capacitorIds[0:self.capacitorsNumber//2], self.capacitorIds[self.capacitorsNumber//2:self.capacitorsNumber] ] if self.capacitorsNumber % 2 == 0 else [ self.capacitorIds[0:int( self.capacitorsNumber//2 + 1 )], self.capacitorIds[int( self.capacitorsNumber//2 + 1 ):self.capacitorsNumber] ]
         u = 0
         for j in range(0,self.matrixDim["columns"]+1) :
                 
@@ -420,7 +429,7 @@ class VerticalRoutingTracks ( CapacitorUnit, CapacitorStack ):
 def scriptMain( **kw ):
 
     editor = None
-    if kw.has_key('editor') and kw['editor']:
+    if 'editor' in kw and kw['editor']:
         editor = kw['editor']
 
     UpdateSession.open()
