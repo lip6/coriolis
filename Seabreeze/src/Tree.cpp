@@ -6,7 +6,7 @@
 using namespace std;
 
 Tree::Tree ()
- :nodes()
+  :nodes()
 {}
 
 Tree::~Tree ()
@@ -46,7 +46,8 @@ void Tree::new_node ()
 void Tree::add_node ( Node* node )
 {
   node->label = nodes.size();
-  nodes.push_back(node);
+  if ( find(nodes.begin(), nodes.end(), node) == nodes.end() )
+    nodes.push_back(node);
 }
 
 void Tree::After_i ( Node *ni )
@@ -55,9 +56,8 @@ void Tree::After_i ( Node *ni )
     return;
 	
   ni->ap = 1;
-  int size = ni->Ne.size();
-  for(int i = 0; i < size; i++){
-    After_i(ni->Ne[i]);
+  for ( Node* ne : ni->Ne ) {
+    After_i(ne);
   }
 }
 
@@ -65,7 +65,7 @@ set<Node*> Tree::Branch_i ( Contact* ct )
 {
   set<Node*> ln;
   Node *ni = get_node(ct);
-  while(ni != nullptr){
+  while ( ni != nullptr ) {
     ln.insert(ni->Np);
     ni = ni->Np;
   }
@@ -79,8 +79,18 @@ int Tree::Delay_Elmore ( RoutingPad* rp )
     cerr << "Input RoutingPad is NULL. Please select a RoutingPad !" << endl;
     return -1;
   }
-  Contact* ct = dynamic_cast<Contact*>(rp);
-  if ( not ct ) {
+
+  Contact* ct = nullptr;
+  for ( Component* c : rp->getSlaveComponents() ) {
+    Contact* cont = dynamic_cast<Contact*>(c);
+
+    if ( ct ) {
+      ct = cont;
+      break;
+    }
+  }
+
+  if ( ct == nullptr ) {
     cerr << "No contact found" << endl;
     return -1;
   }
@@ -121,23 +131,26 @@ int Tree::Delay_Elmore ( RoutingPad* rp )
 
 void Tree::print ( ostream& out )
 {
+  out << "Start printing tree..." << endl;
   out << "Tree has " << nodes.size() << " nodes :" << endl;
- 
-  out << nodes[0]->label << " -> ";
+  out << nodes[0]->_contact->getId() 
+      << " : R = " << nodes[0]->R 
+      << ", C = " << nodes[0]->C
+      << " -> ";
   for(Node* n : nodes[0]->Ne){
-    out << n->label << ", "; 
+    out << n->_contact->getId() << ", "; 
   }
   out << std::endl;
 
-  for ( int i = 1; i < nodes.size(); i++ ) {
-    out << nodes[i]->Np->label 
-         << " -> " << nodes[i]->label 
+  for ( size_t i = 1; i < nodes.size(); i++ ) {
+    out << nodes[i]->Np->_contact->getId() 
+         << " -> " << nodes[i]->_contact->getId() 
          << " : R = " << nodes[i]->R 
          << ", C = " << nodes[i]->C;
     if ( !(nodes[i]->Ne).empty() ) {
       out << " -> ";
       for ( Node* n : nodes[i]->Ne ) {
-        out << n->label << ", ";
+        out << n->_contact->getId() << ", ";
       }
     }
     else
