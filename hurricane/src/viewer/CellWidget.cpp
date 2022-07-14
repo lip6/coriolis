@@ -1703,7 +1703,7 @@ namespace Hurricane {
     if ( flags & BigFont ) font.setPointSize ( Graphics::isHighDpi() ? 7 : 18 );
 
     QFontMetrics metrics = QFontMetrics(font);
-    int          width   = metrics.horizontalAdvance( text );
+    int          width   = metrics.width( text );
   //int          height  = metrics.height ();
     int          angle   = 0;
 
@@ -1943,7 +1943,7 @@ namespace Hurricane {
   {
     QFont        font          = Graphics::getNormalFont();
     QFontMetrics metrics       = QFontMetrics(font);
-    int          tickLength    = metrics.horizontalAdvance( "+00000u" );
+    int          tickLength    = metrics.width( "+00000u" );
     Point        origin        = ruler->getOrigin    ();
     Point        extremity     = ruler->getExtremity ();
     Point        angle         = ruler->getAngle     ();
