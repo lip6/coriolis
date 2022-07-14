@@ -43,7 +43,7 @@ namespace Seabreeze {
       Tree*                       getTree         ();
       inline const set<Contact*>& get_conts       () const;
       inline       Configuration* getConfig       ();
-      int                         delayElmore     ( RoutingPad* rp );
+      double                      delayElmore     ( RoutingPad* rp );
       void                        toTREE          ( ostream& ) const;
     private:
       Configuration* _config;

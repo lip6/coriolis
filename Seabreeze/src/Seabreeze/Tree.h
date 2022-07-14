@@ -26,7 +26,7 @@ class Tree {
     void          add_node      ( Node* node );
     void          After_i       ( Node* ni );
     set<Node*>    Branch_i      ( Contact* ct );
-    int           Delay_Elmore  ( RoutingPad* rp );
+    double        Delay_Elmore  ( RoutingPad* rp );
     void          print         ( ostream& out );
     void          clear         ();
   private:	
