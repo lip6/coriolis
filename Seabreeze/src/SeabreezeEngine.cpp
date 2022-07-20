@@ -143,9 +143,19 @@ namespace Seabreeze {
       if (plug->getMasterNet()->getDirection() & Net::Direction::DirOut) {
         continue;
       }
-      cdebug_log(199,0) << "| Elmore's delay: " << elmore->delayElmore(rp) << " " << rp << endl;     
+      cdebug_log(199,0) << "| Elmore's delay: " << elmore->delayElmore(rp) << " " << rp << endl;    
+/*
+      Contact* ct = nullptr;
+      for ( Component* comp : rp->getSlaveComponents() ) {
+        Contact* cont = dynamic_cast<Contact*>(comp);
+        if (cont) {
+          ct = cont;
+          break;
+        }
+      } 
+      cerr << "| Elmore's delay: " << elmore->delayElmore(rp) << " " << ct << endl;     
     }
-
+*/
     cdebug_tabw(199,-1);
     DebugSession::close();
   }

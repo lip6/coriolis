@@ -82,7 +82,7 @@ namespace Seabreeze {
 
   class ElmoreProperty : public Hurricane::PrivateProperty {
       friend class ElmoreExtension;
-    public:
+    private:
       static Name _name;
     public:
       static  ElmoreProperty* create        ( Net* net );

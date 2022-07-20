@@ -132,7 +132,7 @@ namespace Seabreeze {
       cerr << Error( "Elmore::buildFromNode(): rootNode has no contact, aborting." ) << endl;
       return;
     }
-    _tree->add_node( rootNode );
+    _tree->addNode( rootNode );
 
     cdebug_log(199,1) << "Elmore::buildFromNode()" << endl;
     cdebug_log(199,0) << "rootNode->_contact=" << rootNode->contact() << endl;
@@ -167,7 +167,7 @@ namespace Seabreeze {
     cdebug_log(199,0) << "Node's contact has : " << count << " segments" << endl;
 
     if (count == 1) {
-      _tree->add_node( node );
+      _tree->addNode( node );
     } else if (count > 2) {
       for ( Component* component : opposite->getSlaveComponents() ) {
         Segment* segment = dynamic_cast<Segment*>( component );
@@ -288,7 +288,7 @@ namespace Seabreeze {
 
 
   double Elmore::delayElmore ( RoutingPad* rp )
-  { return _tree->Delay_Elmore( rp ); }
+  { return _tree->computeElmoreDelay( rp ); }
  
 
   void Elmore::toTree ( ostream& os ) const

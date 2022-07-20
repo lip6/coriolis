@@ -36,26 +36,26 @@ namespace Seabreeze {
   
   class Tree {
     public:
-                                       Tree          ();
-                                      ~Tree          ();
-      inline       size_t              get_N         ();
-                   Node*               get_node      ( Contact* );
-      inline const std::vector<Node*>& get_node_list () const;
-                   void                new_node      ();
-                   void                add_node      ( Node* );
-                   void                After_i       ( Node* );
-                   std::set<Node*>     Branch_i      ( Contact* );
-                   double              Delay_Elmore  ( RoutingPad* );
-                   void                printNode     ( std::ostream& , Node* , size_t depth );
-                   void                print         ( std::ostream& );
-                   void                clear         ();
+                                       Tree               ();
+                                      ~Tree               ();
+      inline       size_t              getN               ();
+                   Node*               getNode            ( Contact* );
+      inline const std::vector<Node*>& getNodeList        () const;
+                   void                newNode            ();
+                   void                addNode            ( Node* );
+                   void                markNodeAfter      ( Node* );
+                   std::set<Node*>     getParents         ( Contact* );
+                   double              computeElmoreDelay ( RoutingPad* );
+                   void                printNode          ( std::ostream& , Node* , size_t depth );
+                   void                print              ( std::ostream& );
+                   void                clear              ();
     private:	
       std::vector<Node*>  _nodes;
   };
 
 
-  inline       size_t              Tree::get_N         ()       { return _nodes.size(); }
-  inline const std::vector<Node*>& Tree::get_node_list () const { return _nodes; }
+  inline       size_t              Tree::getN         ()       { return _nodes.size(); }
+  inline const std::vector<Node*>& Tree::getNodeList () const { return _nodes; }
 
 
 }  // Seabreeze namespace.

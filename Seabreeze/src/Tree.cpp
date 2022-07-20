@@ -43,7 +43,7 @@ namespace Seabreeze {
   }
 
 
-  Node* Tree::get_node ( Contact* contact )
+  Node* Tree::getNode ( Contact* contact )
   {
     for ( Node* n : _nodes ) {
       if (n->contact() == contact) return n;
@@ -52,11 +52,11 @@ namespace Seabreeze {
   }
 
 
-  void  Tree::new_node ()
+  void  Tree::newNode ()
   { _nodes.push_back( new Node() ); }
 
 
-  void Tree::add_node ( Node* node )
+  void Tree::addNode ( Node* node )
   {
     node->setLabel( _nodes.size() );
     if (find(_nodes.begin(), _nodes.end(), node) == _nodes.end())
@@ -64,20 +64,20 @@ namespace Seabreeze {
   }
 
 
-  void  Tree::After_i ( Node *ni )
+  void  Tree::markNodeAfter ( Node *ni )
   {
     if (not ni) return;
     ni->setAp( 1 );
     for ( Node* child : ni->childs() ) {
-      After_i( child );
+      markNodeAfter( child );
     }
   }
 
 
-  set<Node*> Tree::Branch_i ( Contact* contact )
+  set<Node*> Tree::getParents ( Contact* contact )
   {
     set<Node*> parents;
-    Node *ni = get_node( contact );
+    Node *ni = getNode( contact );
     while ( ni->parent() ) {
       parents.insert( ni->parent() );
       ni = ni->parent();
@@ -86,7 +86,7 @@ namespace Seabreeze {
   }
 
 
-  double  Tree::Delay_Elmore ( RoutingPad* rp )
+  double  Tree::computeElmoreDelay ( RoutingPad* rp )
   {
     if (not rp) {
       cerr << Error( "Tree::computeDelay(): Sink RoutingPad argument is NULL." ) << endl;
@@ -113,9 +113,9 @@ namespace Seabreeze {
     cdebug_log(199,0) << "  rp=" << rp << endl;
     cdebug_log(199,0) << "  sink=" << sink << endl;
   
-    set<Node*> br = Branch_i( sink );
-    Node*      ni = get_node( sink );
-    After_i( ni );
+    set<Node*> br = getParents( sink );
+    Node*      ni = getNode( sink );
+    markNodeAfter( ni );
     ni->setAp( 0 );
 
   // Compute Rt of all nodes

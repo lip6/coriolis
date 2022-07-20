@@ -36,7 +36,7 @@ namespace Seabreeze {
     public :
                              Configuration   ();
                              Configuration   ( const Configuration& );
-                            ~Configuration   ();
+      virtual               ~Configuration   ();
       virtual Configuration* clone           () const;
       inline  double         getRct          () const;
       inline  double         getRsm          () const;
