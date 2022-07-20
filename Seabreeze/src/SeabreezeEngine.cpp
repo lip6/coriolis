@@ -1,6 +1,19 @@
-#include <Python.h>
-#include <sstream>
-#include <fstream>
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) SU 2022-2022, All Rights Reserved
+//
+// +-----------------------------------------------------------------+
+// |                   C O R I O L I S                               |
+// |        S e a b r e e z e  -  Timing Analysis                    |
+// |                                                                 |
+// |  Author      :                   Vu Hoang Anh PHAM              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :  "./SeabreezeEngine.cpp"                         |
+// +-----------------------------------------------------------------+
+
+
 #include <iomanip>
 #include "hurricane/utilities/Path.h"
 #include "hurricane/DebugSession.h"
@@ -20,7 +33,8 @@
 #include "hurricane/Vertical.h"
 #include "hurricane/Horizontal.h"
 #include "crlcore/AllianceFramework.h"
-#include "Seabreeze/SeabreezeEngine.h"
+#include "seabreeze/SeabreezeEngine.h"
+#include "seabreeze/Elmore.h"
 
 namespace Seabreeze {
 
@@ -50,13 +64,16 @@ namespace Seabreeze {
   using Hurricane::Transformation;
   using Hurricane::Occurrence;
 
+
 //---------------------------------------------------------
 // Class : "Seabreeze::SeabreezeEngine".
 
   Name SeabreezeEngine::_toolName = "Seabreeze";
 
+
   const Name& SeabreezeEngine::staticGetName ()
   { return _toolName; }
+
 
   SeabreezeEngine* SeabreezeEngine::create ( Cell* cell )
   {
@@ -65,11 +82,14 @@ namespace Seabreeze {
     return seabreeze;
   }
 
+
   SeabreezeEngine* SeabreezeEngine::get ( const Cell* cell )
   { return static_cast<SeabreezeEngine*>(ToolEngine::get(cell, staticGetName())); }
 
+
   const Name& SeabreezeEngine::getName () const
   { return _toolName; };
+
 
   Record* SeabreezeEngine::_getRecord () const
   {
@@ -81,69 +101,77 @@ namespace Seabreeze {
     return record;
   }
 
-  string SeabreezeEngine::_getString () const
+
+  string  SeabreezeEngine::_getString () const
   {
     ostringstream os;
     os << "<" << "SeabreezeEngine " << _cell->getName() << ">";
     return os.str();
   }
 
-  string SeabreezeEngine::_getTypeName () const
+
+  string  SeabreezeEngine::_getTypeName () const
   { return "Seabreeze::SeabreezeEngine"; }
 
-  void SeabreezeEngine::runTool ( Net* net )
+
+  void  SeabreezeEngine::buildElmore ( Net* net )
   {
-    cerr << "SeabreezeEngine::runTool() has been called." << endl;
+    DebugSession::open( net, 190, 200 );
+    cdebug_log(199,1) << "SeabreezeEngine::buildElmore()" << endl;
+    cdebug_log(199,0) << "Run on " << net << endl;
 
-//    DebugSession::addToTrace(net);
-    DebugSession::open(net, 190, 200);
-
-    RoutingPad* driver=  nullptr;
-
+    RoutingPad* driver = nullptr;
     for ( RoutingPad* rp : net->getRoutingPads() ) {
-      Plug* p = static_cast<Plug*>(rp->getPlugOccurrence().getEntity());
-      if ( p->getMasterNet()->getDirection() & Net::Direction::DirOut ) {
+      Plug* p = static_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+      if (p->getMasterNet()->getDirection() & Net::Direction::DirOut) {
         driver = rp;
         break;
       }
     }
 
-    Elmore* elm = ElmoreProperty::create(net)->getElmore();
-    elm->contFromNet(net);
+    Elmore* elmore = ElmoreProperty::create( net )->getElmore();
+    elmore->contFromNet( net );
 
-    cdebug_log(199, 0) << endl << "There are : " << (elm->get_conts()).size() << " routing pads presented by :" << endl;
-    for ( Contact* ct : elm->get_conts() ) {
-        cdebug_log(199, 1) << ct << endl;
-        cdebug_tabw(199, -1);
+    cdebug_log(199,0) << "Found " << elmore->getContacts().size() << " RoutingPads:" << endl;
+    for ( Contact* contact : elmore->getContacts() ) {
+      cdebug_log(199,0) << "| " << contact << endl;
     }
-    cdebug_log(199,0) << endl;
 
-    elm->buildTree(driver);
+    elmore->buildTree( driver );
     for ( RoutingPad* rp : net->getRoutingPads() ) {
-      Plug* p = static_cast<Plug*>(rp->getPlugOccurrence().getEntity());
-      if ( p->getMasterNet()->getDirection() & Net::Direction::DirOut ) {
+      Plug* plug = static_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+      if (plug->getMasterNet()->getDirection() & Net::Direction::DirOut) {
         continue;
       }
+      cdebug_log(199,0) << "| Elmore's delay: " << elmore->delayElmore(rp) << " " << rp << endl;     
+    }
 
-      cerr << "Elmore's delay : " << elm->delayElmore(rp) << endl;     
-    } 
+    cdebug_tabw(199,-1);
     DebugSession::close();
   }
 
+
   SeabreezeEngine::SeabreezeEngine ( Cell* cell )
-    : Super   (cell)
-    , _viewer (NULL)
+    : Super         (cell)
+    , _configuration(new Configuration())
+    , _viewer       (NULL)
   {}
 
+
   SeabreezeEngine::~SeabreezeEngine ()
-  {}
+  {
+    delete _configuration;
+  }
+
 
   void SeabreezeEngine::_postCreate()
   {
     Super::_postCreate ();
   }
 
+
   void SeabreezeEngine::_preDestroy ()
   {}
   
-}
+
+}  // Seabreeze namespace.

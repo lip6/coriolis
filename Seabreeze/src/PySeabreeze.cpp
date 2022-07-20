@@ -17,8 +17,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "hurricane/isobar/PyCell.h"
-#include "Seabreeze/PySeabreezeEngine.h"
-//#include "Seabreeze/PyGraphicSeabreezeEngine.h"
+#include "seabreeze/PySeabreezeEngine.h"
 
 
 namespace Seabreeze {

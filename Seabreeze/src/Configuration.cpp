@@ -1,3 +1,19 @@
+// -*- C++ -*-
+//
+// This file is part of the Coriolis Software.
+// Copyright (c) SU 2022-2022, All Rights Reserved
+//
+// +-----------------------------------------------------------------+
+// |                   C O R I O L I S                               |
+// |        S e a b r e e z e  -  Timing Analysis                    |
+// |                                                                 |
+// |  Author      :                   Vu Hoang Anh PHAM              |
+// |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
+// | =============================================================== |
+// |  C++ Module  :  "./Configuration.cpp"                           |
+// +-----------------------------------------------------------------+
+
+
 #include <iostream>
 #include <iomanip>
 #include "hurricane/configuration/Configuration.h"
@@ -11,7 +27,8 @@
 #include "hurricane/Segment.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
-#include "Seabreeze/Configuration.h"
+#include "seabreeze/Configuration.h"
+
 
 namespace Seabreeze {
 
@@ -30,6 +47,7 @@ namespace Seabreeze {
   using Hurricane::Layer;
   using Hurricane::DbU;
 
+
 //------------------------------------------------------------------------
 // Class : "Seabreeze::Configuration"
 
@@ -39,8 +57,10 @@ namespace Seabreeze {
     , _Csm (1)
   {}
 
+
   Configuration::~Configuration () 
   {}
+
 
   Configuration::Configuration ( const Configuration& other )
     : _Rct (other._Rct)
@@ -48,36 +68,27 @@ namespace Seabreeze {
     , _Csm (other._Csm)
   {}
 
+
   Configuration* Configuration::clone () const
-  { return new Configuration(*this); }
+  { return new Configuration( *this ); }
 
-  double Configuration::getRct () 
-  {
-    return _Rct;
-  }
-
-  double Configuration::getRsm ()
-  {
-    return _Rsm;
-  }
-
-  double Configuration::getCsm ()
-  {
-    return _Csm;
-  }
+  
 /*
   Record* Configuration::_getRecord () const 
   {
 
   }
 
+
   string Configuration::_getString () const
   {
     
   }
 */
+
+  
   string Configuration::_getTypeName () const
-  {
-    return "Configuration";
-  }
-}
+  { return "Configuration"; }
+
+  
+} // Seabreeze namespace.

@@ -3,7 +3,7 @@
 
 #include "hurricane/isobar/PyHurricane.h"
 #include "crlcore/PyToolEngine.h"
-#include "SeabreezeEngine.h"
+#include "seabreeze/SeabreezeEngine.h"
 
 
 namespace  Seabreeze {

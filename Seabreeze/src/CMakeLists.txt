@@ -9,25 +9,25 @@
                         ${Boost_INCLUDE_DIRS}
                         ${Python_INCLUDE_DIRS}
                       )
-                   set( includes     Seabreeze/SeabreezeEngine.h
-                                     #Seabreeze/GraphicSeabreezeEngine.h
+                   set( includes     seabreeze/SeabreezeEngine.h
+                                    #seabreeze/GraphicSeabreezeEngine.h
                       )
-                   set( pyIncludes   Seabreeze/PySeabreezeEngine.h
-                   #                  Seabreeze/PyGraphicSeabreezeEngine.h
+                   set( pyIncludes   seabreeze/PySeabreezeEngine.h
+                                    #seabreeze/PyGraphicSeabreezeEngine.h
                       )
-                   #set( mocIncludes  Seabreeze/GraphicSeabreezeEngine.h )
-                   set( cpps         SeabreezeEngine.cpp
-                                     Seabreeze.cpp
+                  #set( mocIncludes  seabreeze/GraphicSeabreezeEngine.h )
+                   set( cpps         Configuration.cpp
                                      Node.cpp
                                      Tree.cpp
-                                     Configuration.cpp
-                                     #GraphicSeabreezeEngine.cpp
+                                     Elmore.cpp
+				     SeabreezeEngine.cpp
+                                    #GraphicSeabreezeEngine.cpp
                       )
                    set( pyCpps       PySeabreeze.cpp
                                      PySeabreezeEngine.cpp
-                   #                 PyGraphicSeabreezeEngine.cpp
+                                    #PyGraphicSeabreezeEngine.cpp
                       )
-          #qtX_wrap_cpp( mocCpps      ${mocIncludes} )
+         #qtX_wrap_cpp( mocCpps      ${mocIncludes} )
 
                    set( depLibs      ${CORIOLIS_PYTHON_LIBRARIES}
                                      ${CORIOLIS_LIBRARIES}
@@ -57,12 +57,11 @@
                         "Do_not_generate_C_library"
                         Seabreeze
                         "Seabreeze;${depLibs}"
-                        include/coriolis2/Seabreeze
+                        include/coriolis2/seabreeze
                       )
 
                install( TARGETS      Seabreeze       DESTINATION lib${LIB_SUFFIX} )
-               #install( PROGRAMS     Seabreeze.py    DESTINATION bin RENAME Seabreeze )
                install( FILES        ${includes}
-                                     ${mocIncludes} DESTINATION include/coriolis2/Seabreeze ) 
+                                     ${mocIncludes} DESTINATION include/coriolis2/seabreeze ) 
 
    

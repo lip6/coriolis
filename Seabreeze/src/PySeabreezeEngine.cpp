@@ -10,18 +10,18 @@
 // |  Author      :                    Jean-Paul CHAPUT              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Module  :  "./PySeabreezeEngine.cpp"                        |
+// |  C++ Module  :  "./PySeabreezeEngine.cpp"                       |
 // +-----------------------------------------------------------------+
 
 
+#include <functional>
 #include "hurricane/isobar/PyCell.h"
 #include "hurricane/viewer/PyCellViewer.h"
 #include "hurricane/isobar/PyNet.h"
 #include "hurricane/viewer/ExceptionWidget.h"
 #include "hurricane/Cell.h"
 #include "crlcore/Utilities.h"
-#include "Seabreeze/PySeabreezeEngine.h"
-#include <functional>
+#include "seabreeze/PySeabreezeEngine.h"
 
 # undef   ACCESS_OBJECT
 # undef   ACCESS_CLASS
@@ -153,15 +153,14 @@ extern "C" {
   }
 */
 
-  static PyObject* PySeabreezeEngine_runTool ( PySeabreezeEngine* self, PyObject* args )
+  static PyObject* PySeabreezeEngine_buildElmore ( PySeabreezeEngine* self, PyObject* args )
   {
-    cdebug_log(40,0) << "PySeabreezeEngine_runTool()" << endl;
-
+    cdebug_log(40,0) << "PySeabreezeEngine_buildElmore()" << endl;
     HTRY
       PyObject* arg0 = NULL;
-      METHOD_HEAD("SeabreezeEngine.runTool()")
-      if (not ParseOneArg("Seabreeze.runTool()", args, NET_ARG, &arg0)) return NULL;
-      seabreeze->runTool(PYNET_O(arg0));
+      METHOD_HEAD("SeabreezeEngine.buildElmore()")
+      if (not ParseOneArg("Seabreeze.buildElmore()", args, NET_ARG, &arg0)) return NULL;
+      seabreeze->buildElmore(PYNET_O(arg0));
     HCATCH
 
     Py_RETURN_NONE;
@@ -183,7 +182,7 @@ extern "C" {
                                , "Associate a Viewer to this SeabreezeEngine." }
   //, { "runDemoPart1"         , (PyCFunction)PySeabreezeEngine_runDemoPart1         , METH_NOARGS
   //                           , "Run the first part of the demo." }
-    , { "runTool"              , (PyCFunction)PySeabreezeEngine_runTool              , METH_VARARGS
+    , { "buildElmore"          , (PyCFunction)PySeabreezeEngine_buildElmore          , METH_VARARGS
                                , "Run the Seabreeze tool." }
     , { "destroy"              , (PyCFunction)PySeabreezeEngine_destroy              , METH_NOARGS
                                , "Destroy the associated hurricane object. The python object remains." }
