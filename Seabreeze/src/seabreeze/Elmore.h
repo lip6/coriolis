@@ -22,6 +22,7 @@
 #include "hurricane/Segment.h"
 #include "Configuration.h"
 #include "Tree.h"
+#include "Delay.h"
 
 namespace Hurricane {
   class Net;
@@ -40,45 +41,52 @@ namespace Seabreeze {
   using Hurricane::Segment;
   using Hurricane::PrivateProperty;
   class SeabreezeEngine;
+  class ElmoreProperty;
 
 
 //----------------------------------------------------------
 // Class : Seabreeze::Elmore
 
   class Elmore {
-    public:
-      typedef  std::set<Contact*,DBo::CompareById>  ContactSet;
+      friend class ElmoreProperty;
     public:
                                    Elmore           ( Net* );
                                   ~Elmore           ();
       inline  SeabreezeEngine*     getSeabreeze     () const;
               const Configuration* getConfiguration () const;
-              void                 contFromNet      ( Net* );
-              void                 buildTree        ( RoutingPad* ); 
+      inline  Net*                 getNet           () const;
+      inline  RoutingPad*          getDriver        () const;
+              Delay*               getDelay         ( RoutingPad* ) const;
+      inline  const std::vector<Delay*>&
+                                   getDelays        () const;
+              void                 buildTree        (); 
               void                 buildFromNode    ( Node* source, Segment* );
               Contact*             buildBranch      ( double* R, double* C, Contact* contact );
               void                 setRC            ( double* R, double* C, Contact* , Segment* );
-              void                 clearTree        ();
       inline  Tree*                getTree          ();
-      inline  const ContactSet&    getContacts      () const;
-              double               delayElmore      ( RoutingPad* );
+              void                 setup            ();
+              Delay*               delayElmore      ( RoutingPad* );
               void                 toTree           ( std::ostream& ) const;
       inline  void                 setSeabreeze     ( SeabreezeEngine* );
-      virtual Record*              _getRecord       () const;
-      virtual std::string          _getString       () const;
-      virtual std::string          _getTypeName     () const;
+              Record*              _getRecord       () const;
+              std::string          _getString       () const;
+              std::string          _getTypeName     () const;
     private:
-      SeabreezeEngine* _seabreeze;
-      ContactSet       _contacts;
-      ContactSet       _checker;
-      Tree*            _tree;
+    private:
+      SeabreezeEngine*     _seabreeze;
+      Net*                 _net;
+      RoutingPad*          _driver;
+      Tree*                _tree;
+      std::vector<Delay*>  _delays;
   };
 
 
-  inline SeabreezeEngine*          Elmore::getSeabreeze () const { return _seabreeze; }
-  inline const Elmore::ContactSet& Elmore::getContacts  () const { return _contacts; }
-  inline       Tree*               Elmore::getTree      () { return _tree; }
-  inline       void                Elmore::setSeabreeze ( SeabreezeEngine* seabreeze ) { _seabreeze = seabreeze; }
+  inline       SeabreezeEngine*     Elmore::getSeabreeze () const { return _seabreeze; }
+  inline       Net*                 Elmore::getNet       () const { return _net; }
+  inline       RoutingPad*          Elmore::getDriver    () const { return _driver; }
+  inline       Tree*                Elmore::getTree      () { return _tree; }
+  inline       void                 Elmore::setSeabreeze ( SeabreezeEngine* seabreeze ) { _seabreeze = seabreeze; }
+  inline const std::vector<Delay*>& Elmore::getDelays    () const { return _delays; }
 
 
 //---------------------------------------------------------

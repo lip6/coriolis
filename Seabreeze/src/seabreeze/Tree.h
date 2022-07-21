@@ -18,18 +18,18 @@
 #include <set>
 #include <vector>
 #include <iostream>
-namespace Hurricane {
-  class Contact;
-  class RoutingPad;
-}
+#include "hurricane/RoutingPad.h"
 
 
 namespace Seabreeze {
 
   using Hurricane::Record;
+  using Hurricane::DBo;
   using Hurricane::Contact;
   using Hurricane::RoutingPad;
   class Node;
+  class Delay;
+  class Elmore;
 
 
 //---------------------------------------------------------
@@ -37,29 +37,38 @@ namespace Seabreeze {
   
   class Tree {
     public:
-                                       Tree               ();
+      typedef  std::set<Contact*,DBo::CompareById>  ContactSet;
+    public:
+                                       Tree               ( Elmore* );
                                       ~Tree               ();
+      inline       bool                isReached          ( Contact* ) const;
+      inline       Elmore*             getElmore          () const;
       inline       size_t              getN               ();
                    Node*               getNode            ( Contact* );
       inline const std::vector<Node*>& getNodeList        () const;
-                   void                newNode            ();
+      inline       void                setReached         ( Contact* );
                    void                addNode            ( Node* );
                    void                markNodeAfter      ( Node* );
                    void                getBranch          ( Contact* );
-                   double              computeElmoreDelay ( RoutingPad* );
+                   Delay*              computeElmoreDelay ( RoutingPad* );
                    void                printNode          ( std::ostream& , Node* , size_t depth );
                    void                print              ( std::ostream& );
-                   void                clear              ();
                    Record*             _getRecord         () const;
                    std::string         _getString         () const;
                    std::string         _getTypeName       () const;
-    private:	
+    private:
+      Elmore*             _elmore;
       std::vector<Node*>  _nodes;
+      ContactSet          _reacheds;
   };
 
 
+  inline       Elmore*             Tree::getElmore   () const { return _elmore; }
   inline       size_t              Tree::getN        ()       { return _nodes.size(); }
   inline const std::vector<Node*>& Tree::getNodeList () const { return _nodes; }
+
+  inline  void  Tree::setReached ( Contact* contact ) { _reacheds.insert( contact ); }
+  inline  bool  Tree::isReached  ( Contact* contact ) const { return _reacheds.count( contact ); }
 
 
 }  // Seabreeze namespace.

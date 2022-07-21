@@ -12,11 +12,17 @@
                    set( includes     seabreeze/SeabreezeEngine.h
                                     #seabreeze/GraphicSeabreezeEngine.h
                       )
-                   set( pyIncludes   seabreeze/PySeabreezeEngine.h
+                   set( pyIncludes   seabreeze/Configuration.h
+                                     seabreeze/Delay.h
+                                     seabreeze/Node.h
+                                     seabreeze/Tree.h
+                                     seabreeze/Elmore.h
+				     seabreeze/PySeabreezeEngine.h
                                     #seabreeze/PyGraphicSeabreezeEngine.h
                       )
                   #set( mocIncludes  seabreeze/GraphicSeabreezeEngine.h )
                    set( cpps         Configuration.cpp
+                                     Delay.cpp
                                      Node.cpp
                                      Tree.cpp
                                      Elmore.cpp

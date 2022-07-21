@@ -14,38 +14,58 @@
 // +-----------------------------------------------------------------+
 
 
-#pragma once
 #include <map>
 #include <iostream>
 #include "hurricane/RoutingPad.h"
 #include "seabreeze/Delay.h"
+#include "seabreeze/Elmore.h"
 
 using namespace std;
+
 
 namespace Seabreeze {
 
   using Hurricane::RoutingPad; 
 
+
 //---------------------------------------------------------
 // Class : Seabreeze::Delay
 
-    Delay::Delay()
-      : _values()
-    {}
+  Delay::Delay ( Elmore* elmore, RoutingPad* sink )
+    : _elmore(elmore)
+    , _sink  (sink)
+    , _delay (0.0)
+  { }
 
-    Delay::~Delay()
-    {}
-    
-    void Delay::addPair ( RoutingPad* driver, RoutingPad* sink, double delay)
-    { 
-      if ( _values.count(driver) > 0 ) {
-        cerr << "Driver already exist." << endl
-             << "If you want to add value, please use the function addValue( RoutingPad*, RoutingPad*, double)" << endl
-             << "Example : addValue(driver, sink, delay)" << endl;
-      }
-      else {
-        map<RoutingPad*, double> val { {sink, delay}, };
-        _values.insert(driver, val);
-      }
+
+  Delay::~Delay ()
+  { }
+
+
+  string  Delay::_getTypeName () const
+  { return "Seabreeze::Delay"; }
+
+
+  string  Delay::_getString () const
+  {
+    string  s = "<Delay ";
+    s += getString( _sink );
+    s += " d=" + getString( _delay );
+    s += ">";
+    return s;
+  }
+
+
+  Record* Delay::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_elmore" ,  _elmore) );
+      record->add( getSlot("_sink"   ,  _sink  ) );
+      record->add( getSlot("_delay"  ,  _delay ) );
     }
-}
+    return record;
+  }
+
+  
+}  // Seabreeze namespace.

@@ -36,6 +36,7 @@
 #include "seabreeze/SeabreezeEngine.h"
 #include "seabreeze/Elmore.h"
 
+
 namespace Seabreeze {
 
   using namespace std;
@@ -117,41 +118,15 @@ namespace Seabreeze {
     cdebug_log(199,1) << "SeabreezeEngine::buildElmore()" << endl;
     cdebug_log(199,0) << "Run on " << net << endl;
 
-    RoutingPad* driver = nullptr;
-    for ( RoutingPad* rp : net->getRoutingPads() ) {
-      Plug* p = static_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
-      if (p->getMasterNet()->getDirection() & Net::Direction::DirOut) {
-        driver = rp;
-        break;
-      }
-    }
-
     Elmore* elmore = ElmoreExtension::create( net );
-    elmore->contFromNet( net );
-
-    cdebug_log(199,0) << "Found " << elmore->getContacts().size() << " RoutingPads:" << endl;
-    for ( Contact* contact : elmore->getContacts() ) {
-      cdebug_log(199,0) << "| " << contact << endl;
-    }
-
-    elmore->buildTree( driver );
+    elmore->buildTree();
+    cerr << "Net has " << elmore->getDelays().size() << " sink(s)." << endl;
     for ( RoutingPad* rp : net->getRoutingPads() ) {
       Plug* plug = static_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
       if (plug->getMasterNet()->getDirection() & Net::Direction::DirOut) {
         continue;
       }
-      cdebug_log(199,0) << "| Elmore's delay: " << elmore->delayElmore(rp) << " " << rp << endl;    
-
-      Contact* ct = nullptr;
-      for ( Component* comp : rp->getSlaveComponents() ) {
-        Contact* cont = dynamic_cast<Contact*>(comp);
-        if (cont) {
-          ct = cont;
-          break;
-        }
-      } 
-      cerr << "| Elmore's delay: " << elmore->delayElmore(rp) << " " << ct << endl;     
-
+      cerr << "| Elmore's delay: " << elmore->delayElmore(rp) << endl;     
     }
     cdebug_tabw(199,-1);
     DebugSession::close();

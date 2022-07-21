@@ -22,8 +22,10 @@
 
 namespace Seabreeze {
 
+  using Hurricane::Record; 
   using Hurricane::DBo; 
   using Hurricane::RoutingPad; 
+  class Elmore;
 
 
 //---------------------------------------------------------
@@ -31,28 +33,31 @@ namespace Seabreeze {
 
   class Delay {
     public:
-      typedef std::map< RoutingPad*
-                      , std::map< RoutingPad*, double, DBo::CompareById >
-                      , DBo::CompareById>  DelayMap;
-    public:
-                                Delay        ();
-                               ~Delay        ();
-      inline const DelayMap&    getValues    () const ;
-                   void         addPair      ( RoutingPad*, RoutingPad*, double );
-                   void         addValue     ( RoutingPad*, RoutingPad*, double );
-                   void         printDelays  ();
-                   Record*      _getRecord   () const;
-                   std::string  _getString   () const;
-                   std::string  _getTypeName () const;
+                          Delay        ( Elmore*, RoutingPad* );
+                         ~Delay        ();
+      inline Elmore*      getElmore    () const;
+      inline RoutingPad*  getSink      () const;
+      inline double       getDelay     () const;
+      inline void         setDelay     ( double );
+      inline void         incDelay     ( double );
+             std::string  _getTypeName () const;
+             std::string  _getString   () const;
+             Record*      _getRecord   () const;
       
     private:
-      DelayMap  _values;
+      Elmore*     _elmore;
+      RoutingPad* _sink;
+      double      _delay;
   };
-  
-
-  inline const Delay::DelayMap& Delay::getValues () const { return _values; }
 
   
+  inline Elmore*      Delay::getElmore () const { return _elmore; }
+  inline RoutingPad*  Delay::getSink   () const { return _sink; }
+  inline double       Delay::getDelay  () const { return _delay; }
+  inline void         Delay::setDelay  ( double delay ) { _delay  = delay; }
+  inline void         Delay::incDelay  ( double delay ) { _delay += delay; }
+  
+
 }  // Seabreeze namespace.
 
 
