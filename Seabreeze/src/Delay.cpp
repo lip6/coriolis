@@ -10,7 +10,7 @@
 // |  Author      :                   Vu Hoang Anh PHAM              |
 // |  E-mail      :            Jean-Paul.Chaput@lip6.fr              |
 // | =============================================================== |
-// |  C++ Header  :  "./seabreeze/Delay.h"                            |
+// |  C++ Header  :  "./seabreeze/Delay.h"                           |
 // +-----------------------------------------------------------------+
 
 

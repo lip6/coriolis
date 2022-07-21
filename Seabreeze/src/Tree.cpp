@@ -18,7 +18,9 @@
 #include <iostream>
 #include <algorithm>
 #include "hurricane/Error.h"
+#include "hurricane/RoutingPad.h"
 #include "seabreeze/Tree.h"
+#include "seabreeze/Node.h"
 
 
 namespace Seabreeze {
@@ -30,6 +32,7 @@ namespace Seabreeze {
   using std::endl;
   using std::ostream;
   using Hurricane::Error;
+  using Hurricane::Component;
 
 
   Tree::Tree ()
@@ -166,6 +169,27 @@ namespace Seabreeze {
   void  Tree::clear ()
   {
     _nodes.clear();
+  }
+
+
+  string Tree::_getTypeName () const
+  { return "Seabreeze::Tree"; }
+
+
+  string  Tree::_getString () const
+  {
+    string  s = "<" + _getTypeName() + ">";
+    return s;
+  }
+
+
+  Record* Tree::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_nodes", &_nodes) );
+    }
+    return record;
   }
 
 

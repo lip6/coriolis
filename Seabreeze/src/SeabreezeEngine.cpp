@@ -89,29 +89,26 @@ namespace Seabreeze {
 
   const Name& SeabreezeEngine::getName () const
   { return _toolName; };
+  
 
-
-  Record* SeabreezeEngine::_getRecord () const
-  {
-    Record* record= Super::_getRecord ();
-
-    if ( record ) {
-    // Add new records here
-    }
-    return record;
-  }
+  string  SeabreezeEngine::_getTypeName () const
+  { return getString(_toolName); }
 
 
   string  SeabreezeEngine::_getString () const
   {
     ostringstream os;
-    os << "<" << "SeabreezeEngine " << _cell->getName() << ">";
+    os << "<" << _toolName << " " << _cell->getName() << ">";
     return os.str();
   }
 
 
-  string  SeabreezeEngine::_getTypeName () const
-  { return "Seabreeze::SeabreezeEngine"; }
+  Record* SeabreezeEngine::_getRecord () const
+  {
+    Record* record = Super::_getRecord();
+    record->add( getSlot("_configuration",  _configuration) );
+    return record;
+  }
 
 
   void  SeabreezeEngine::buildElmore ( Net* net )
@@ -129,7 +126,7 @@ namespace Seabreeze {
       }
     }
 
-    Elmore* elmore = ElmoreProperty::create( net )->getElmore();
+    Elmore* elmore = ElmoreExtension::create( net );
     elmore->contFromNet( net );
 
     cdebug_log(199,0) << "Found " << elmore->getContacts().size() << " RoutingPads:" << endl;
@@ -182,6 +179,5 @@ namespace Seabreeze {
 
   void SeabreezeEngine::_preDestroy ()
   {}
-  
 
 }  // Seabreeze namespace.

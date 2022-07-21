@@ -15,12 +15,12 @@
 
 #pragma  once
 #include <vector>
-namespace Hurricane {
-  class Contact;
-}
+#include "hurricane/Contact.h"
+
 
 namespace Seabreeze {
   
+  using Hurricane::Record;
   using Hurricane::Contact;
 
 
@@ -29,23 +29,26 @@ namespace Seabreeze {
 
   class Node {
     public:
-                                        Node     ();
-                                        Node     ( Node* parent, Contact* );
-                                       ~Node     ();
-      inline        double              R        () const;
-      inline        double              Rt       () const;
-      inline        double              C        () const;
-      inline        int                 label    () const;
-      inline        int                 ap       () const;
-      inline        Contact*            contact  () const;
-      inline        Node*               parent   () const;
-      inline  const std::vector<Node*>& childs   () const;
-      inline        void                addChild ( Node* );
-      inline        void                setLabel ( int );
-      inline        void                setAp    ( int );
-      inline        void                setRt    ( double );
-      inline        void                setR     ( double );
-      inline        void                setC     ( double );
+                                        Node         ();
+                                        Node         ( Node* parent, Contact* );
+                                       ~Node         ();
+      inline        double              R            () const;
+      inline        double              Rt           () const;
+      inline        double              C            () const;
+      inline        int                 label        () const;
+      inline        int                 ap           () const;
+      inline        Contact*            contact      () const;
+      inline        Node*               parent       () const;
+      inline  const std::vector<Node*>& childs       () const;
+      inline        void                addChild     ( Node* );
+      inline        void                setLabel     ( int );
+      inline        void                setAp        ( int );
+      inline        void                setRt        ( double );
+      inline        void                setR         ( double );
+      inline        void                setC         ( double );
+                    Record*             _getRecord   () const;
+                    std::string         _getString   () const;
+                    std::string         _getTypeName () const;
     private :
       double              _R;
       double              _Rt;
@@ -75,3 +78,6 @@ namespace Seabreeze {
 
 
 }  // Seabreeze namespace;
+
+
+INSPECTOR_P_SUPPORT(Seabreeze::Node);

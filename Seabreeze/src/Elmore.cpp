@@ -18,6 +18,7 @@
 #include "hurricane/DebugSession.h"
 #include "hurricane/Error.h"
 #include "seabreeze/Elmore.h"
+#include "seabreeze/Node.h"
 #include "seabreeze/SeabreezeEngine.h"
 
 namespace Seabreeze {
@@ -49,6 +50,7 @@ namespace Seabreeze {
 
   Elmore::~Elmore ()
   {
+    cdebug_log(199,0) << "Elmore::~Elmore() " << endl;
     delete _tree;
   }
 
@@ -295,6 +297,30 @@ namespace Seabreeze {
   { _tree->print( os ); }
 
 
+  string Elmore::_getTypeName () const
+  { return "Seabreeze::Elmore"; }
+
+
+  string  Elmore::_getString () const
+  {
+    string  s = "<" + _getTypeName() + ">";
+    return s;
+  }
+
+
+  Record* Elmore::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_seabreeze", _seabreeze) );
+      record->add( getSlot("_contacts" , &_contacts) );
+      record->add( getSlot("_checker"  , &_checker ) );
+      record->add( getSlot("_tree"     ,  _tree    ) );
+    }
+    return record;
+  }
+
+
 //---------------------------------------------------------
 // Class : "ElmoreProperty"
 
@@ -314,6 +340,7 @@ namespace Seabreeze {
       }
       _elmore.setSeabreeze( seabreeze );
     }
+    cdebug_log(199,0) << "ElmoreProperty::ElmoreProperty() on " << net << endl;
   }
   
 
@@ -337,25 +364,48 @@ namespace Seabreeze {
   { return "ElmoreProperty"; }
 
 
+  string  ElmoreProperty::_getString () const
+  {
+    string s = PrivateProperty::_getString ();
+    s.insert ( s.length() - 1 , " " + getString(&_elmore) );
+    return s;
+  }
+
+
+  Record* ElmoreProperty::_getRecord () const
+  {
+    Record* record = PrivateProperty::_getRecord();
+    if ( record ) {
+      record->add( getSlot( "_name"  ,  _name   ) );
+      record->add( getSlot( "_elmore", &_elmore ) );
+    }
+    return record;
+  }
+
+
 //---------------------------------------------------------
 // Class : "ElmoreExtension"
 
   Elmore* ElmoreExtension::create ( Net* net )
   {
+    cdebug_log(199,1) << "ElmoreExtension::create() " << net << endl;
     Elmore* elmore = get( net );
     if (not elmore) {
       ElmoreProperty* property = new ElmoreProperty( net );
       net->put( property );
       elmore = property->getElmore();
     }
+    cdebug_tabw(199,-1);
     return elmore;
   }
 
 
   void ElmoreExtension::destroy ( Net* net )
   {
+    cdebug_log(199,1) << "ElmoreExtension::destroy() " << net << endl;
     Property* property = net->getProperty( ElmoreProperty::staticGetName() );
     if (property) net->remove( property );
+    cdebug_tabw(199,-1);
   }
 
 

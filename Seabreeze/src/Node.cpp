@@ -19,6 +19,8 @@
 
 namespace Seabreeze {
 
+  using std::string;
+
 
   Node::Node ()
     : _R      (0.0)
@@ -49,5 +51,36 @@ namespace Seabreeze {
   Node::~Node ()
   { }
 
+
+  string  Node::_getTypeName () const
+  { return "Seabreeze::Node"; }
+
+
+  string  Node::_getString () const
+  {
+    string  s = "<Node ";
+    s += getString( _contact );
+    s += " R=" + getString( _R );
+    s += " C=" + getString( _C );
+    s += ">";
+    return s;
+  }
+
+
+  Record* Node::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_R"      ,  _R      ) );
+      record->add( getSlot("_Rt"     ,  _Rt     ) );
+      record->add( getSlot("_C"      ,  _C      ) );
+      record->add( getSlot("_parent" ,  _parent ) );
+      record->add( getSlot("_childs" , &_childs ) );
+      record->add( getSlot("_contact",  _contact) );
+      record->add( getSlot("_label"  ,  _label  ) );
+      record->add( getSlot("_ap"     ,  _ap     ) );
+    }
+    return record;
+  }
 
 }  // Seabreeze namespace.

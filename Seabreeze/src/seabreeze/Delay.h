@@ -19,27 +19,41 @@
 #include <iostream>
 #include "hurricane/RoutingPad.h"
 
-using namespace std;
 
 namespace Seabreeze {
 
+  using Hurricane::DBo; 
   using Hurricane::RoutingPad; 
+
 
 //---------------------------------------------------------
 // Class : Seabreeze::Delay
 
   class Delay {
     public:
-                                                               Delay       ();
-                                                              ~Delay       ();
-      inline const map<RoutingPad*, map<RoutingPad*, double>>& getValues   () const ;
-                   void                                        addPair     ( RoutingPad*, RoutingPad*, double );
-                   void                                        addValue    ( RoutingPad*, RoutingPad*, double );
-                   void                                        printDelays ();
+      typedef std::map< RoutingPad*
+                      , std::map< RoutingPad*, double, DBo::CompareById >
+                      , DBo::CompareById>  DelayMap;
+    public:
+                                Delay        ();
+                               ~Delay        ();
+      inline const DelayMap&    getValues    () const ;
+                   void         addPair      ( RoutingPad*, RoutingPad*, double );
+                   void         addValue     ( RoutingPad*, RoutingPad*, double );
+                   void         printDelays  ();
+                   Record*      _getRecord   () const;
+                   std::string  _getString   () const;
+                   std::string  _getTypeName () const;
       
     private:
-      map<RoutingPad*, map<RoutingPad*, double>> _values;
+      DelayMap  _values;
   };
   
-    inline const map<RoutingPad*, map<RoutingPad*, double>>& Delay::getValues () const { return _values; }
-}
+
+  inline const Delay::DelayMap& Delay::getValues () const { return _values; }
+
+  
+}  // Seabreeze namespace.
+
+
+INSPECTOR_P_SUPPORT(Seabreeze::Delay);

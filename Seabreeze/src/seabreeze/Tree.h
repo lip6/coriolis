@@ -18,17 +18,18 @@
 #include <set>
 #include <vector>
 #include <iostream>
-#include "hurricane/Contact.h"
-#include "hurricane/RoutingPad.h"
-#include "hurricane/Component.h"
-#include "Node.h"
+namespace Hurricane {
+  class Contact;
+  class RoutingPad;
+}
 
 
 namespace Seabreeze {
 
+  using Hurricane::Record;
   using Hurricane::Contact;
   using Hurricane::RoutingPad;
-  using Hurricane::Component;
+  class Node;
 
 
 //---------------------------------------------------------
@@ -49,6 +50,9 @@ namespace Seabreeze {
                    void                printNode          ( std::ostream& , Node* , size_t depth );
                    void                print              ( std::ostream& );
                    void                clear              ();
+                   Record*             _getRecord         () const;
+                   std::string         _getString         () const;
+                   std::string         _getTypeName       () const;
     private:	
       std::vector<Node*>  _nodes;
   };
@@ -59,3 +63,6 @@ namespace Seabreeze {
 
 
 }  // Seabreeze namespace.
+
+
+INSPECTOR_P_SUPPORT(Seabreeze::Tree);

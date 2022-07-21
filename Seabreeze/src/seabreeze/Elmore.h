@@ -30,7 +30,6 @@ namespace Hurricane {
 
 namespace Seabreeze {
 
-  using namespace std;
   using Hurricane::Name;
   using Hurricane::DBo;
   using Hurricane::Net;
@@ -48,33 +47,38 @@ namespace Seabreeze {
 
   class Elmore {
     public:
-                                  Elmore           ( Net* );
-                                 ~Elmore           ();
-      inline SeabreezeEngine*     getSeabreeze     () const;
-             const Configuration* getConfiguration () const;
-             void                 contFromNet      ( Net* );
-             void                 buildTree        ( RoutingPad* ); 
-             void                 buildFromNode    ( Node* source, Segment* );
-             Contact*             buildBranch      ( double* R, double* C, Contact* contact );
-             void                 setRC            ( double* R, double* C, Contact* , Segment* );
-             void                 clearTree        ();
-      inline Tree*                getTree          ();
-      inline const set<Contact*>& getContacts      () const;
-             double               delayElmore      ( RoutingPad* );
-             void                 toTree           ( ostream& ) const;
-      inline void                 setSeabreeze     ( SeabreezeEngine* );
+      typedef  std::set<Contact*,DBo::CompareById>  ContactSet;
+    public:
+                                   Elmore           ( Net* );
+                                  ~Elmore           ();
+      inline  SeabreezeEngine*     getSeabreeze     () const;
+              const Configuration* getConfiguration () const;
+              void                 contFromNet      ( Net* );
+              void                 buildTree        ( RoutingPad* ); 
+              void                 buildFromNode    ( Node* source, Segment* );
+              Contact*             buildBranch      ( double* R, double* C, Contact* contact );
+              void                 setRC            ( double* R, double* C, Contact* , Segment* );
+              void                 clearTree        ();
+      inline  Tree*                getTree          ();
+      inline  const ContactSet&    getContacts      () const;
+              double               delayElmore      ( RoutingPad* );
+              void                 toTree           ( std::ostream& ) const;
+      inline  void                 setSeabreeze     ( SeabreezeEngine* );
+      virtual Record*              _getRecord       () const;
+      virtual std::string          _getString       () const;
+      virtual std::string          _getTypeName     () const;
     private:
       SeabreezeEngine* _seabreeze;
-      set<Contact*>    _contacts;
-      set<Contact*>    _checker;
+      ContactSet       _contacts;
+      ContactSet       _checker;
       Tree*            _tree;
   };
 
 
-  inline SeabreezeEngine*     Elmore::getSeabreeze () const { return _seabreeze; }
-  inline const set<Contact*>& Elmore::getContacts  () const { return _contacts; }
-  inline       Tree*          Elmore::getTree      () { return _tree; }
-  inline       void           Elmore::setSeabreeze ( SeabreezeEngine* seabreeze ) { _seabreeze = seabreeze; }
+  inline SeabreezeEngine*          Elmore::getSeabreeze () const { return _seabreeze; }
+  inline const Elmore::ContactSet& Elmore::getContacts  () const { return _contacts; }
+  inline       Tree*               Elmore::getTree      () { return _tree; }
+  inline       void                Elmore::setSeabreeze ( SeabreezeEngine* seabreeze ) { _seabreeze = seabreeze; }
 
 
 //---------------------------------------------------------
@@ -90,6 +94,8 @@ namespace Seabreeze {
               Name            getName       () const;
       inline  Elmore*         getElmore     ();  
       virtual string          _getTypeName  () const;  
+      virtual Record*         _getRecord    () const;
+      virtual std::string     _getString    () const;
     protected:
       Elmore  _elmore;
     protected:
@@ -129,3 +135,7 @@ namespace Seabreeze {
 
   
 }  // Seabreeze Namespace
+
+
+INSPECTOR_P_SUPPORT(Seabreeze::Elmore);
+INSPECTOR_P_SUPPORT(Seabreeze::ElmoreProperty);
