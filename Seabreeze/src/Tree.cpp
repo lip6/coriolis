@@ -58,7 +58,6 @@ namespace Seabreeze {
 
   void Tree::addNode ( Node* node )
   {
-    node->setLabel( _nodes.size() );
     if (find(_nodes.begin(), _nodes.end(), node) == _nodes.end())
       _nodes.push_back( node );
   }
@@ -74,15 +73,18 @@ namespace Seabreeze {
   }
 
 
-  set<Node*> Tree::getParents ( Contact* contact )
+  void Tree::getBranch ( Contact* contact )
   {
-    set<Node*> parents;
+    for ( Node* n : _nodes ) {
+      n->setLabel(0);
+    }
+
     Node *ni = getNode( contact );
+    ni->setLabel(1);
     while ( ni->parent() ) {
-      parents.insert( ni->parent() );
+      ni->parent()->setLabel(1);
       ni = ni->parent();
     }
-    return parents;
   }
 
 
@@ -113,18 +115,17 @@ namespace Seabreeze {
     cdebug_log(199,0) << "  rp=" << rp << endl;
     cdebug_log(199,0) << "  sink=" << sink << endl;
   
-    set<Node*> br = getParents( sink );
+    getBranch( sink );
     Node*      ni = getNode( sink );
     markNodeAfter( ni );
     ni->setAp( 0 );
-
   // Compute Rt of all nodes
     for ( size_t k = 0; k < _nodes.size(); k++ ) {
       if (k == 0)
         _nodes[k]->setRt( _nodes[k]->R() );
       else {
         if (_nodes[k]->ap() == 0) {
-          if (br.count(_nodes[k]) > 0) {
+          if (_nodes[k]->label() == 1) {
             _nodes[k]->setRt( _nodes[k]->parent()->Rt() + _nodes[k]->R() );
           } else {
             _nodes[k]->setRt( _nodes[k]->parent()->Rt() );
@@ -133,8 +134,7 @@ namespace Seabreeze {
           _nodes[k]->setRt( ni->Rt() );
         }
       }
-    }
-  
+    } 
   // Compute Elmore delay time 
     double delay = 0.0;
     for ( size_t k = 0; k < _nodes.size(); k++ ) {

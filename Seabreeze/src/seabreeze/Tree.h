@@ -31,7 +31,7 @@ namespace Seabreeze {
   using Hurricane::Component;
 
 
-//----------------------------------------------------------
+//---------------------------------------------------------
 // Class : Seabreeze::Tree.
   
   class Tree {
@@ -44,7 +44,7 @@ namespace Seabreeze {
                    void                newNode            ();
                    void                addNode            ( Node* );
                    void                markNodeAfter      ( Node* );
-                   std::set<Node*>     getParents         ( Contact* );
+                   void                getBranch          ( Contact* );
                    double              computeElmoreDelay ( RoutingPad* );
                    void                printNode          ( std::ostream& , Node* , size_t depth );
                    void                print              ( std::ostream& );
@@ -54,7 +54,7 @@ namespace Seabreeze {
   };
 
 
-  inline       size_t              Tree::getN         ()       { return _nodes.size(); }
+  inline       size_t              Tree::getN        ()       { return _nodes.size(); }
   inline const std::vector<Node*>& Tree::getNodeList () const { return _nodes; }
 
 

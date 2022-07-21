@@ -27,7 +27,7 @@ namespace Seabreeze {
     , _parent (nullptr)
     , _childs ()
     , _contact(nullptr)
-    , _label  (-1)
+    , _label  (0)
     , _ap     (0)
   { }
 
@@ -39,7 +39,7 @@ namespace Seabreeze {
     , _parent (parent)
     , _childs ()
     , _contact(contact)
-    , _label  (-1)
+    , _label  (0)
     , _ap     (0)
   { 
     if (parent) parent->addChild( this ); 
