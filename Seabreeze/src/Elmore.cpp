@@ -158,6 +158,49 @@ namespace Seabreeze {
     }
 
     buildFromNode( rootNode, segment );
+    
+//---------- More than 1 Contact in 1 RoutingPad ----------
+    for ( RoutingPad* rp : getNet()->getRoutingPads() ) {
+      Node* mainNode;
+      for ( Component* rpComp : rp->getSlaveComponents() ) {
+        Contact* mainContact = dynamic_cast<Contact*>(rpComp);
+        if ( not mainContact ) continue;
+        mainNode = _tree->getNode( mainContact );
+        if ( mainNode ) break;
+      }
+      for ( Component* rpComp : rp->getSlaveComponents() ) {
+        Contact* sideContact = dynamic_cast<Contact*>(rpComp);
+        if ( not sideContact || sideContact == mainNode->contact() ) continue;
+
+        Node* sideNode = new Node( mainNode, sideContact );
+        double sR      = 0;
+        double sC      = 0;
+        setRC( &sR, &sC, sideContact, nullptr );
+        sideNode->setR( sR );
+        sideNode->setC( (sC == 0.0) ? 0.0 : 1/sC );
+
+        Segment* sideSegment = nullptr;
+        size_t   sideCount   = 0;
+        for ( Component* component : sideContact->getSlaveComponents() ) {
+          sideSegment = dynamic_cast<Segment*>( component );
+          if (not sideSegment) continue;
+          ++sideCount;
+        }
+        if (sideCount != 1) {
+          cerr << Error( "Elmore::buildTree(): Terminal side contact has to have one segment (%d), aborting.\n"
+                         "        (on %s)"
+                         , sideCount
+                         , getString(sideContact).c_str()
+                       ) << endl;
+          cdebug_tabw(199,-1);
+          return;
+        }
+
+        buildFromNode( sideNode, sideSegment );
+      }
+    }
+//---------------------------------------------------------
+
     cdebug_log(199,0) << "Elmore::buildTree() - Finished" << endl;
     cdebug_tabw(199,-1);
 
@@ -176,7 +219,7 @@ namespace Seabreeze {
     cdebug_log(199,1) << "Elmore::buildFromNode()" << endl;
     cdebug_log(199,0) << "rootNode->_contact=" << rootNode->contact() << endl;
     cdebug_log(199,0)  << "toSegment=" << toSegment << endl;
-    
+
     Contact* opposite = dynamic_cast<Contact*>( toSegment->getOppositeAnchor( rootNode->contact()) );
     if (not opposite or (rootNode->parent() and (opposite == rootNode->parent()->contact())) ) {
       cdebug_tabw(199,-1);
@@ -225,6 +268,7 @@ namespace Seabreeze {
         }
       }
     }
+
     cdebug_tabw(199,-1);
   }
 
