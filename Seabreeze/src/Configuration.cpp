@@ -15,6 +15,7 @@
 
 
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include "hurricane/configuration/Configuration.h"
 #include "hurricane/Warning.h"
@@ -33,6 +34,7 @@
 namespace Seabreeze {
 
   using std::string;
+  using std::ostringstream;
   using Hurricane::Warning;
   using Hurricane::Error;
   using Hurricane::Technology;
@@ -73,22 +75,28 @@ namespace Seabreeze {
   { return new Configuration( *this ); }
 
   
-/*
-  Record* Configuration::_getRecord () const 
-  {
-
-  }
+  string Configuration::_getTypeName () const
+  { return "Seabreeze::Configuration"; }
 
 
   string Configuration::_getString () const
   {
-    
+    ostringstream os;
+    os << "<" << _getTypeName() << ">";
+    return os.str();
   }
-*/
 
   
-  string Configuration::_getTypeName () const
-  { return "Configuration"; }
+  Record* Configuration::_getRecord () const 
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_Rct", _Rct) );
+      record->add( getSlot("_Rsm", _Rsm) );
+      record->add( getSlot("_Csm", _Csm) );
+    }
+    return record;
+  }
 
   
 } // Seabreeze namespace.

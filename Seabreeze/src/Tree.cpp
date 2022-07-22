@@ -18,7 +18,12 @@
 #include <iostream>
 #include <algorithm>
 #include "hurricane/Error.h"
+#include "hurricane/RoutingPad.h"
+#include "hurricane/Net.h"
+#include "seabreeze/Elmore.h"
 #include "seabreeze/Tree.h"
+#include "seabreeze/Node.h"
+#include "seabreeze/Delay.h"
 
 
 namespace Seabreeze {
@@ -30,10 +35,13 @@ namespace Seabreeze {
   using std::endl;
   using std::ostream;
   using Hurricane::Error;
+  using Hurricane::Component;
 
 
-  Tree::Tree ()
-    : _nodes()
+  Tree::Tree ( Elmore* elmore )
+    : _elmore  (elmore)
+    , _nodes   ()
+    , _reacheds()
   {}
 
 
@@ -52,14 +60,12 @@ namespace Seabreeze {
   }
 
 
-  void  Tree::newNode ()
-  { _nodes.push_back( new Node() ); }
-
-
   void Tree::addNode ( Node* node )
   {
-    if (find(_nodes.begin(), _nodes.end(), node) == _nodes.end())
+    if (find(_nodes.begin(), _nodes.end(), node) == _nodes.end()) {
+      setReached( node->contact() );
       _nodes.push_back( node );
+    }
   }
 
 
@@ -88,11 +94,17 @@ namespace Seabreeze {
   }
 
 
-  double  Tree::computeElmoreDelay ( RoutingPad* rp )
+  Delay* Tree::computeElmoreDelay ( RoutingPad* rp )
   {
     if (not rp) {
       cerr << Error( "Tree::computeDelay(): Sink RoutingPad argument is NULL." ) << endl;
-      return -1.0;
+      return nullptr;
+    }
+    Delay* delay = _elmore->getDelay( rp );
+    if (not delay) {
+      cerr << Error( "Tree::computeDelay(): No delay for %s, aborting."
+                   , getString(rp).c_str() ) << endl;
+      return nullptr;
     }
   
     Contact* sink = nullptr;
@@ -108,7 +120,7 @@ namespace Seabreeze {
                      "        (on %s)"
                    , getString(rp).c_str()
                    ) << endl;
-      return -1.0;
+      return nullptr;
     }
     
     cdebug_log(199,1) << "Tree::computeDelay()" << endl;
@@ -136,9 +148,9 @@ namespace Seabreeze {
       }
     } 
   // Compute Elmore delay time 
-    double delay = 0.0;
+    delay->setDelay( 0.0 );
     for ( size_t k = 0; k < _nodes.size(); k++ ) {
-      delay += (_nodes[k]->Rt()) * (_nodes[k]->C());
+      delay->incDelay( (_nodes[k]->Rt()) * (_nodes[k]->C()) );
     }
 
     return delay;
@@ -163,9 +175,25 @@ namespace Seabreeze {
   }
 
 
-  void  Tree::clear ()
+  string Tree::_getTypeName () const
+  { return "Seabreeze::Tree"; }
+
+
+  string  Tree::_getString () const
   {
-    _nodes.clear();
+    string  s = "<" + _getTypeName() + ">";
+    return s;
+  }
+
+
+  Record* Tree::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_nodes"   , &_nodes   ) );
+      record->add( getSlot("_reacheds", &_reacheds) );
+    }
+    return record;
   }
 
 

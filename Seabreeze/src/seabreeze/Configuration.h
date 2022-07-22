@@ -41,9 +41,9 @@ namespace Seabreeze {
       inline  double         getRct          () const;
       inline  double         getRsm          () const;
       inline  double         getCsm          () const;
-    //virtual Record*        _getRecord      () const;
-    //virtual string         _getString      () const;
-      virtual string         _getTypeName    () const;
+              string         _getTypeName    () const;
+              string         _getString      () const;
+              Record*        _getRecord      () const;
     protected :
     // Attributes
       double _Rct;
@@ -60,3 +60,5 @@ namespace Seabreeze {
 
 
 } // Seabreeze namespace.
+
+INSPECTOR_P_SUPPORT(Seabreeze::Configuration);

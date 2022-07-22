@@ -13,11 +13,13 @@
 // |  C++ Module  :  "./Elmore.cpp"                                  |
 // +-----------------------------------------------------------------+
 
-#include "hurricane/Net.h"
-#include "hurricane/Segment.h"
 #include "hurricane/DebugSession.h"
 #include "hurricane/Error.h"
+#include "hurricane/Segment.h"
+#include "hurricane/Plug.h"
+#include "hurricane/Net.h"
 #include "seabreeze/Elmore.h"
+#include "seabreeze/Node.h"
 #include "seabreeze/SeabreezeEngine.h"
 
 namespace Seabreeze {
@@ -26,6 +28,7 @@ namespace Seabreeze {
   using Hurricane::Error;
   using Hurricane::DBo;
   using Hurricane::DbU;
+  using Hurricane::Plug;
   using Hurricane::Net;
   using Hurricane::Cell;
   using Hurricane::Instance;
@@ -41,15 +44,55 @@ namespace Seabreeze {
 
   Elmore::Elmore ( Net* net )
     : _seabreeze(nullptr)
-    , _contacts ()
-    , _checker  ()
-    , _tree     (new Tree())
+    , _net      (net)
+    , _driver   (nullptr)
+    , _tree     (new Tree(this))
+    , _delays   ()
   {}
 
 
   Elmore::~Elmore ()
   {
+    cdebug_log(199,0) << "Elmore::~Elmore() " << endl;
     delete _tree;
+    for ( Delay* delay : _delays ) delete delay;
+  }
+
+
+  void  Elmore::setup ()
+  {
+    cdebug_log(199,1) << "Elmore::findDriver()" << endl;
+
+    for ( RoutingPad* rp : _net->getRoutingPads() ) {
+      Plug* plug = static_cast<Plug*>( rp->getPlugOccurrence().getEntity() );
+      if (plug->getMasterNet()->getDirection() & Net::Direction::DirOut) {
+        if (_driver) {
+          cerr << Error( "Elmore::setup(): %s has more than one driver:\n"
+                         "        * Using:    %s\n"
+                         "        * Ignoring: %s"
+                       , getString(_net).c_str()
+                       , getString(_driver).c_str()
+                       , getString(rp).c_str()
+                       ) << endl;
+          continue;
+        }
+        _driver = rp;
+      } else {
+        _delays.push_back( new Delay(this,rp) );
+      }
+    }
+    cdebug_log(199,0) << "Found " << _delays.size() << " sink points:" << endl;
+    for ( Delay* delay : _delays ) {
+      cdebug_log(199,0) << "| " << delay << endl;
+    }
+    if (not _driver) {
+      cerr << Error( "Elmore::_postCreate(): No driver found on %s, aborting."
+                   , getString(_net).c_str() ) << endl;
+      cdebug_tabw(199,-1);
+      return;
+    }
+
+    cdebug_tabw(199,-1);
   }
 
 
@@ -57,27 +100,24 @@ namespace Seabreeze {
   { return _seabreeze->getConfiguration(); }
 
 
-  void Elmore::contFromNet ( Net* net )
+  Delay* Elmore::getDelay ( RoutingPad* rp ) const
   {
-    for ( RoutingPad* rp : net->getRoutingPads() ) {
-      for ( Component* component : rp->getSlaveComponents() ) {
-        Contact* contact = dynamic_cast<Contact*>( component );
-        if (not contact) continue;
-        _contacts.insert( contact );
-      }
+    for ( Delay* delay : _delays ) {
+      if (delay->getSink() == rp) return delay;
     }
+    return nullptr;
   }
 
 
-  void Elmore::buildTree ( RoutingPad* rp )
+  void Elmore::buildTree ()
   {
-    if (not rp) {
-      cerr << Error( "Elmore::buildTree(): NULL RoutingPad, aborting." ) << endl;
+    if (not _driver) {
+      cerr << Error( "Elmore::buildTree(): Net has no driver, aborting." ) << endl;
       return;
     }
 
     Contact* rootContact = nullptr;
-    for ( Component* component : rp->getSlaveComponents() ) {
+    for ( Component* component : _driver->getSlaveComponents() ) {
       Contact* contact = dynamic_cast<Contact*>(component);
       if (contact) {
         rootContact = contact;
@@ -86,14 +126,13 @@ namespace Seabreeze {
     }
     if (not rootContact) {
       cerr << Error( "Elmore::buildTree(): No Contact anchored on %s."
-                   , getString(rp).c_str() ) << endl;
+                   , getString(_driver).c_str() ) << endl;
       return;
     }
 
     cdebug_log(199,1) << "Elmore::buildTree()" << endl;
     cdebug_log(199,0) << "Root contact " << rootContact << endl;
 
-    _checker.insert( rootContact );
     Node*  rootNode = new Node( nullptr, rootContact );
     double R        = 0;
     double C        = 0;
@@ -181,7 +220,7 @@ namespace Seabreeze {
         }
         cdebug_log(199,0) << "target=" << target << endl;
 
-        if (not _checker.count(target)) {
+        if (not _tree->isReached(target)) {
           buildFromNode( node, segment);
         }
       }
@@ -196,7 +235,7 @@ namespace Seabreeze {
     cdebug_log(199,0) << "current=" << current << endl;
 
     while ( true ) {
-      _checker.insert( current );
+      _tree->setReached( current );
       int      count   = 0;
       Segment* segment = nullptr; 
       for ( Component* component : current->getSlaveComponents() ) {
@@ -204,7 +243,7 @@ namespace Seabreeze {
         if (not segment) continue;
 
         Contact* opposite = dynamic_cast<Contact*>( segment->getOppositeAnchor(current) );
-        if (opposite and (_checker.count(opposite)) != 0) {
+        if (opposite and _tree->isReached(opposite)) {
           setRC( R, C, current, segment );
           cdebug_log(199,0) << "current=" << current << endl;
           cdebug_log(199,0) << "segment=" << segment << endl;
@@ -233,7 +272,7 @@ namespace Seabreeze {
 
         Contact* opposite = dynamic_cast<Contact*>( segment->getOppositeAnchor(current) );
         cdebug_log(199,0) << "opposite=" << opposite << endl;
-        if (opposite and (_checker.count(opposite) == 0))
+        if (opposite and not _tree->isReached(opposite))
           next = opposite;
       }
 
@@ -278,21 +317,39 @@ namespace Seabreeze {
       *C += (Aseg) ? 1/(Cseg*Aseg) : 0.0;
     }
   }
- 
-
-  void Elmore::clearTree ()
-  {
-    _tree->clear();
-    _checker.clear();
-  }
 
 
-  double Elmore::delayElmore ( RoutingPad* rp )
+  Delay* Elmore::delayElmore ( RoutingPad* rp )
   { return _tree->computeElmoreDelay( rp ); }
  
 
-  void Elmore::toTree ( ostream& os ) const
+  void  Elmore::toTree ( ostream& os ) const
   { _tree->print( os ); }
+
+
+  string  Elmore::_getTypeName () const
+  { return "Seabreeze::Elmore"; }
+
+
+  string  Elmore::_getString () const
+  {
+    string  s = "<" + _getTypeName() + ">";
+    return s;
+  }
+
+
+  Record* Elmore::_getRecord () const
+  {
+    Record* record = new Record ( _getString() );
+    if (record != nullptr) {
+      record->add( getSlot("_seabreeze", _seabreeze) );
+      record->add( getSlot("_net"      ,  _net     ) );
+      record->add( getSlot("_driver"   ,  _driver  ) );
+      record->add( getSlot("_tree"     ,  _tree    ) );
+      record->add( getSlot("_delays"   , &_delays  ) );
+    }
+    return record;
+  }
 
 
 //---------------------------------------------------------
@@ -313,7 +370,9 @@ namespace Seabreeze {
                      , getString(net->getCell()).c_str()) << endl;
       }
       _elmore.setSeabreeze( seabreeze );
+      _elmore.setup();
     }
+    cdebug_log(199,0) << "ElmoreProperty::ElmoreProperty() on " << net << endl;
   }
   
 
@@ -337,25 +396,48 @@ namespace Seabreeze {
   { return "ElmoreProperty"; }
 
 
+  string  ElmoreProperty::_getString () const
+  {
+    string s = PrivateProperty::_getString ();
+    s.insert ( s.length() - 1 , " " + getString(&_elmore) );
+    return s;
+  }
+
+
+  Record* ElmoreProperty::_getRecord () const
+  {
+    Record* record = PrivateProperty::_getRecord();
+    if ( record ) {
+      record->add( getSlot( "_name"  ,  _name   ) );
+      record->add( getSlot( "_elmore", &_elmore ) );
+    }
+    return record;
+  }
+
+
 //---------------------------------------------------------
 // Class : "ElmoreExtension"
 
   Elmore* ElmoreExtension::create ( Net* net )
   {
+    cdebug_log(199,1) << "ElmoreExtension::create() " << net << endl;
     Elmore* elmore = get( net );
     if (not elmore) {
       ElmoreProperty* property = new ElmoreProperty( net );
       net->put( property );
       elmore = property->getElmore();
     }
+    cdebug_tabw(199,-1);
     return elmore;
   }
 
 
   void ElmoreExtension::destroy ( Net* net )
   {
+    cdebug_log(199,1) << "ElmoreExtension::destroy() " << net << endl;
     Property* property = net->getProperty( ElmoreProperty::staticGetName() );
     if (property) net->remove( property );
+    cdebug_tabw(199,-1);
   }
 
 
