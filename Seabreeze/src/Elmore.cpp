@@ -18,6 +18,7 @@
 #include "hurricane/Segment.h"
 #include "hurricane/Plug.h"
 #include "hurricane/Net.h"
+#include "hurricane/Hook.h"
 #include "seabreeze/Elmore.h"
 #include "seabreeze/Node.h"
 #include "seabreeze/SeabreezeEngine.h"
@@ -31,6 +32,7 @@ namespace Seabreeze {
   using Hurricane::Plug;
   using Hurricane::Net;
   using Hurricane::Cell;
+  using Hurricane::Hook;
   using Hurricane::Instance;
   using Hurricane::Property;
   using Hurricane::PrivateProperty;
@@ -158,15 +160,52 @@ namespace Seabreeze {
     }
 
     buildFromNode( rootNode, segment );
-    
-//---------- More than 1 Contact in 1 RoutingPad ----------
+
+//---------- More than 1 Contact in main RoutingPad ------- ( 1 )
+    for ( Component* component : _driver->getSlaveComponents() ) {
+      Contact* sideContact = dynamic_cast<Contact*>(component);
+      if (sideContact && sideContact != rootContact) {
+        Node* sideNode = new Node( rootNode, sideContact );
+        double sR = 0;
+        double sC = 0;
+        setRC ( &sR, &sC, sideContact, nullptr );
+        sideNode->setR( sR );
+        sideNode->setC( (sC == 0.0 ) ? 0.0: 1/sC );
+
+        Segment* sideSegment = nullptr;
+        size_t   count   = 0;
+        for ( Component* component : sideContact->getSlaveComponents() ) {
+          sideSegment = dynamic_cast<Segment*>( component );
+          if (not sideSegment) continue;
+          ++count;
+        }
+        if (count != 1) {
+          cerr << Error( "Elmore::buildTree(): Terminal contact has more than one segment (%d), aborting.\n"
+                         "        (on %s)"
+                       , count
+                       , getString(sideContact).c_str()
+                       ) << endl;
+          cdebug_tabw(199,-1);
+          return;
+        }
+
+        buildFromNode( sideNode, sideSegment );
+      }
+    }   
+//---------------------------------------------------------------
+/*
+//---------- More than 1 Contact in 1 RoutingPad ---------- ( 2 )
     for ( RoutingPad* rp : getNet()->getRoutingPads() ) {
-      Node* mainNode;
+      Node* mainNode = nullptr;
       for ( Component* rpComp : rp->getSlaveComponents() ) {
         Contact* mainContact = dynamic_cast<Contact*>(rpComp);
         if ( not mainContact ) continue;
         mainNode = _tree->getNode( mainContact );
         if ( mainNode ) break;
+      }
+      if ( mainNode == nullptr ) {
+        cerr << "No mainNode found!" << endl;
+        break;
       }
       for ( Component* rpComp : rp->getSlaveComponents() ) {
         Contact* sideContact = dynamic_cast<Contact*>(rpComp);
@@ -200,7 +239,7 @@ namespace Seabreeze {
       }
     }
 //---------------------------------------------------------
-
+*/
     cdebug_log(199,0) << "Elmore::buildTree() - Finished" << endl;
     cdebug_tabw(199,-1);
 
@@ -268,6 +307,47 @@ namespace Seabreeze {
         }
       }
     }
+
+//---------- More than 1 Contact in this RoutingPad ------- ( 1 )
+    Hook* masterHook = opposite->getAnchorHook()->getMasterHook();
+    RoutingPad* currentRP = nullptr;
+    if ( masterHook ) {
+      currentRP = dynamic_cast<RoutingPad*>( masterHook->getComponent() );
+      cdebug_log(199,0) << " Look back = " <<currentRP << endl;
+    }
+    if ( currentRP ) {
+      for ( Component* component : currentRP->getSlaveComponents() ) {
+        Contact* sideContact = dynamic_cast<Contact*>(component);
+        if (sideContact && sideContact != opposite) {
+          Node* sideNode = new Node( node, sideContact );
+          double sR = 0;
+          double sC = 0;
+          setRC ( &sR, &sC, sideContact, nullptr );
+          sideNode->setR( sR );
+          sideNode->setC( (sC == 0.0 ) ? 0.0: 1/sC );
+
+          Segment* sideSegment = nullptr;
+          size_t   count   = 0;
+          for ( Component* component : sideContact->getSlaveComponents() ) {
+            sideSegment = dynamic_cast<Segment*>( component );
+            if (not sideSegment) continue;
+            ++count;
+          }
+          if (count != 1) {
+            cerr << Error( "Elmore::buildTree(): Terminal contact has more than one segment (%d), aborting.\n"
+                           "        (on %s)"
+                         , count
+                         , getString(sideContact).c_str()
+                         ) << endl;
+            cdebug_tabw(199,-1);
+            return;
+          }
+
+          buildFromNode( sideNode, sideSegment );
+        }
+      }   
+    }   
+//---------------------------------------------------------------
 
     cdebug_tabw(199,-1);
   }
